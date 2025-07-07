@@ -1,137 +1,124 @@
-Return-Path: <linux-kernel+bounces-719471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB4AAFAE57
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:15:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C564AAFAEAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5978189FDA2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:15:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E3213B3C1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D529021D3EF;
-	Mon,  7 Jul 2025 08:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KlIUnSnc"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BC028A3E1;
+	Mon,  7 Jul 2025 08:32:43 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B4D27AC34
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 08:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855D6286D49
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 08:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751876086; cv=none; b=uxtaWEKfbFAJwh50siIx3mIbIhrlpOREhp036YfEiAdlw3u3Dml2uPiXw45DU1Rd8nMG6PrEiyFEpkHotfjzQXR8NE6iN7wbwZZ/weL5Va9O1W36ZglhrlsG2TScqqXEm2X8L3b+U53PuIJ79R29SWoVzvHEVcGbnEQBt5O5lkw=
+	t=1751877163; cv=none; b=lK6QrxP8etHdxadWE3Xw3lE4pq8hOhB7JM3ueBBdhvT32pZUHPPjr2beOTmkvrG5y/ddTEZZqxsb/2OYalc39I3tISMCKvQtWKwsktL63BbRMH/zlebRacaYCq8ldctV9fyRFiZru82DKR4+R7CVoEqMX+gq6fDy1srF0yQZirs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751876086; c=relaxed/simple;
-	bh=REDttirfsJlFO7OpsoIYpKcHqpgtFT0zAuY6MizcGfI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C+3lwHKO8mwCe9puKdRXbumiE8D+aESyA1VUSuz9ml8SFhV37pdFP2dHSQ71ona0KkTr8xqLRSCntQLwGgnVD2OYGx3CNvf7cyM8bl9AVvTQl17F5wzqczkdxSfdmAucN+mQ8lx5xZTz5YbttSnlGnO+rLe48PFQx0u3Wpd4Mk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KlIUnSnc; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1751876081; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=al3xd+vqfx8QYsniRark/BwtIMxmJYpnPra7XC6K1e8=;
-	b=KlIUnSncfNDhPgUzrD2GiqhaZFBP5UYyCg9tXHDggRFraYYlE+Wz18nutfnDMj3+LZB5Uzx+z9IjnrvebIaDl6DN5vXWidbRntxhdqEeG5QWMYtaFK1ZMuxifix6vcsRPJ4MRtysDyg4bpoogJGphyhoKpnIJTubnJsQkwmaSi0=
-Received: from 30.74.144.127(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wi3TIo._1751876079 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 07 Jul 2025 16:14:40 +0800
-Message-ID: <f3a54399-6a1b-467f-97d7-ee2481ac811b@linux.alibaba.com>
-Date: Mon, 7 Jul 2025 16:14:39 +0800
+	s=arc-20240116; t=1751877163; c=relaxed/simple;
+	bh=N28g1F/GAVhDi2xUO77/m6a0U1YY0tiDRP0slsHHAIs=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=U2OlzuKmx3xqmP3aTc6IJICgqG5EpVlTop2F7ZKXxOIMdHbAFd79xk2jHcjyawBdDpS+EYTqMG8XijJHLvuErqE0KUb2UYeTRZVZWtMIhiXu8InL4I2hD8B1jNakLpYg6Nbf7qpdHZF+tUrWAmZ+rQr8gWShMmf0wLJtdJjh+XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: "oleg@redhat.com" <oleg@redhat.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"vschneid@redhat.com" <vschneid@redhat.com>, "mgorman@suse.de"
+	<mgorman@suse.de>, "bsegall@google.com" <bsegall@google.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>, "dietmar.eggemann@arm.com"
+	<dietmar.eggemann@arm.com>, "vincent.guittot@linaro.org"
+	<vincent.guittot@linaro.org>, "juri.lelli@redhat.com"
+	<juri.lelli@redhat.com>, "peterz@infradead.org" <peterz@infradead.org>,
+	"mingo@redhat.com" <mingo@redhat.com>
+Subject: divide error in x86 and cputime
+Thread-Topic: divide error in x86 and cputime
+Thread-Index: AdvvFOeRwP1XMiJ8Sh6ojy4vzov+4A==
+Date: Mon, 7 Jul 2025 08:14:41 +0000
+Message-ID: <78a0d7bb20504c0884d474868eccd858@baidu.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/9] mm/shmem, swap: simplify swapin path and result
- handling
-To: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
- <hughd@google.com>, Matthew Wilcox <willy@infradead.org>,
- Kemeng Shi <shikemeng@huaweicloud.com>, Chris Li <chrisl@kernel.org>,
- Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>,
- Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org
-References: <20250704181748.63181-1-ryncsn@gmail.com>
- <20250704181748.63181-8-ryncsn@gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250704181748.63181-8-ryncsn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-FEAS-Client-IP: 172.31.50.16
+X-FE-Policy-ID: 52:10:53:SYSTEM
+
+Hi:
+
+I see a divide error on x86 machine, the stack is below:
 
 
+[78250815.703847] divide error: 0000 [#1] PREEMPT SMP NOPTI
+[78250815.703852] CPU: 127 PID: 83435 Comm: killall Kdump: loaded Tainted: =
+P           OE K   5.10.0 #1
+[78250815.703853] Hardware name: Inspur SSINSPURMBX-XA3-100D-B356/NF5280A6,=
+ BIOS 3.00.21 06/27/2022
+[78250815.703859] RIP: 0010:cputime_adjust+0x55/0xb0
+[78250815.703860] Code: 3b 4c 8b 4d 10 48 89 c6 49 8d 04 38 4c 39 c8 73 38 =
+48 8b 45 00 48 8b 55 08 48 85 c0 74 16 48 85 d2 74 49 48 8d 0c 10 49 f7 e1 =
+<48> f7 f1 49 39 c0 4c 0f 42 c0 4c 89 c8 4c 29 c0 48 39 c7 77 25 48
+[78250815.703861] RSP: 0018:ffffa34c2517bc40 EFLAGS: 00010887
+[78250815.703864] RAX: 69f98da9ba980c00 RBX: ffff976c93d2a5e0 RCX: 00000007=
+09e00900
+[78250815.703864] RDX: 00f5dfffab0fc352 RSI: 0000000000000082 RDI: ff07410d=
+ca0bcd5e
+[78250815.703865] RBP: ffffa34c2517bc70 R08: 00f5dfff54f8e5ce R09: fffd213a=
+abd74626
+[78250815.703866] R10: ffffa34c2517bed8 R11: 0000000000000000 R12: ffff976c=
+93d2a5f0
+[78250815.703867] R13: ffffa34c2517bd78 R14: ffffa34c2517bd70 R15: 00000000=
+00001000
+[78250815.703868] FS:  00007f58060f97a0(0000) GS:ffff976afe9c0000(0000) knl=
+GS:0000000000000000
+[78250815.703869] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[78250815.703870] CR2: 00007f580610e000 CR3: 0000017e3b3d2004 CR4: 00000000=
+00770ee0
+[78250815.703870] PKRU: 55555554
+[78250815.703871] Call Trace:
+[78250815.703877]  thread_group_cputime_adjusted+0x4a/0x70
+[78250815.703881]  do_task_stat+0x2ed/0xe00
+[78250815.703885]  ? khugepaged_enter_vma_merge+0x12/0xd0
+[78250815.703888]  proc_single_show+0x51/0xc0
+[78250815.703892]  seq_read_iter+0x185/0x3c0
+[78250815.703895]  seq_read+0x106/0x150
+[78250815.703898]  vfs_read+0x98/0x180
+[78250815.703900]  ksys_read+0x59/0xd0
+[78250815.703904]  do_syscall_64+0x33/0x40
+[78250815.703907]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[78250815.703910] RIP: 0033:0x318aeda360
 
-On 2025/7/5 02:17, Kairui Song wrote:
-> From: Kairui Song <kasong@tencent.com>
-> 
-> Slightly tidy up the different handling of swap in and error handling
-> for SWP_SYNCHRONOUS_IO and non-SWP_SYNCHRONOUS_IO devices. Now swapin
-> will always use either shmem_swapin_direct or shmem_swapin_cluster,
-> then check the result.
-> 
-> Simplify the control flow and avoid a redundant goto label.
-> 
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> ---
->   mm/shmem.c | 31 +++++++++++++------------------
->   1 file changed, 13 insertions(+), 18 deletions(-)
-> 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 1fe9a3eb92b1..782162c0c4e0 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -2327,33 +2327,28 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
->   			count_vm_event(PGMAJFAULT);
->   			count_memcg_event_mm(fault_mm, PGMAJFAULT);
->   		}
-> -		/* Skip swapcache for synchronous device. */
->   		if (data_race(si->flags & SWP_SYNCHRONOUS_IO)) {
-> +			/* Direct mTHP swapin skipping swap cache & readhaed */
->   			folio = shmem_swapin_direct(inode, vma, index, swap,
->   						    index_entry, order, gfp);
-> -			if (!IS_ERR(folio)) {
-> +			if (IS_ERR(folio)) {
-> +				error = PTR_ERR(folio);
-> +				folio = NULL;
-> +				goto failed;
-> +			} else {
 
-The 'else' can be avoided, otherwise LGTM.
+It caused by a process with many threads running very long, and utime+stime=
+ overflowed 64bit, then cause the below div
 
->   				if (folio_test_large(folio))
->   					swap = index_entry;
->   				skip_swapcache = true;
-> -				goto alloced;
->   			}
-> -
-> -			/*
-> -			 * Direct swapin handled order 0 fallback already,
-> -			 * if it failed, abort.
-> -			 */
-> -			error = PTR_ERR(folio);
-> -			folio = NULL;
-> -			goto failed;
-> -		}
-> -		/* Cached swapin with readahead, only supports order 0 */
-> -		folio = shmem_swapin_cluster(swap, gfp, info, index);
-> -		if (!folio) {
-> -			error = -ENOMEM;
-> -			goto failed;
-> +		} else {
-> +			/* Cached swapin with readhaed, only supports order 0 */
-> +			folio = shmem_swapin_cluster(swap, gfp, info, index);
-> +			if (!folio) {
-> +				error = -ENOMEM;
-> +				goto failed;
-> +			}
->   		}
->   	}
-> -alloced:
->   	if (order > folio_order(folio)) {
->   		/*
->   		 * Swapin may get smaller folios due to various reasons:
+mul_u64_u64_div_u64(0x69f98da9ba980c00, 0xfffd213aabd74626, 0x09e00900);
+
+I see the comments of mul_u64_u64_div_u64() say:
+
+Will generate an #DE when the result doesn't fit u64, could fix with an
+__ex_table[] entry when it becomes an issu
+
+
+Seem __ex_table[] entry for div does not work ?
+
+Thanks
+
+-Li
+
+
 
 
