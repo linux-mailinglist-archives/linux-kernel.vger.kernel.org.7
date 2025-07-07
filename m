@@ -1,132 +1,112 @@
-Return-Path: <linux-kernel+bounces-719933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD876AFB4CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:41:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E9D4AFB4D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F15923BD018
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:40:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F0D61894E15
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF912BDC0B;
-	Mon,  7 Jul 2025 13:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7814629E0F2;
+	Mon,  7 Jul 2025 13:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NAxQ9PCN"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lcHylehk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A030B29CB3E;
-	Mon,  7 Jul 2025 13:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D633E28750E;
+	Mon,  7 Jul 2025 13:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751895649; cv=none; b=dVpCe4ZshQ8TylUGYbieDVZ07OEqEbH3rWzH2ltsAXQBB0tZkruM1T8QKlqnIzmD6ynl+m+enOPrVBGJtBK/yjLDtRtbkiw1okO6J0TSl2eSpiN2hpuTJ/TSdzQnMniijX8jNZYgVHdXDEnh/czVxmsviOBYl4SW9uuVFNysxcE=
+	t=1751895750; cv=none; b=USiOxctkCVuNX6y39AlSt3YKKG0W0MX4xzLSuOMQ6/F0lH13BMWjhpztfQ3rQDPbBbtPcgyhuEyqPR5ylM39+AgHy5HOJJrqvke0YGoHhG1xZIrNrPskm8gNusYxl7BOdATkmXAh39kBe4XubqMzv/cxcUXQettLroQk0QViGDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751895649; c=relaxed/simple;
-	bh=/X0ZP+cNnh5Q8n+OcF4lzhTGTx9HqGR+OxusKrEL+7E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Pp8BVQe6v7OkfXzIC/4FcRGqQ3BVERsEXxMzJO/HCk8GnwAPgjBDRK7NE3mhnSI0vBqMZDtCAT2vF6+mf0eqmaAmTa/xRWF5KDjnSA3C5wTrZkz3R6l+MAKxTSycxjIYlu7Naj3Su3Darl9ZjNhCsdrDWI8/tCucHkW5KOKg8Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NAxQ9PCN; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 598DC204CF;
-	Mon,  7 Jul 2025 13:40:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1751895644;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/X0ZP+cNnh5Q8n+OcF4lzhTGTx9HqGR+OxusKrEL+7E=;
-	b=NAxQ9PCNCt+QtxEXrgd1O3wUw/F9QcI/7qcGtmXqHkgJvGK0feOXHk4eXpW9bi9vEsS2y8
-	F0223UncwuuKPJnsJbdF60c63avxGrUbg3rLtHlzyrRkt4bkVtJ7nDFJDZw5j/NlcFkbU5
-	rxVxCgepMpR/hIR2NyCxFqEMBIARPsxyEi50UG4Hbt+vk+GpntHM1DpWW1ZFY3xLkaaXK5
-	AQqF2JnyNfiZ/GMRqXULtlAkTnK4aozssp1RSfEsYmwabK6ABBZQuzD1hWjX1eBzvRIFY7
-	YSnXVPKOsLFDKqI8L7rRIq4w5PvcFrMMfLvHlXLpn0tbYTUEjvwOac03DRDYvg==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>
-Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, =?utf-8?Q?Th?=
- =?utf-8?Q?=C3=A9o?= Lebrun
- <theo.lebrun@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] MIPS: CPS: Improve
- mips_cps_first_online_in_cluster()
-In-Reply-To: <b3b3d5f5-e62f-4081-9fb0-a176a91361f2@app.fastmail.com>
-References: <20250704-smp_calib-v2-0-bade7e9c0463@bootlin.com>
- <20250704-smp_calib-v2-1-bade7e9c0463@bootlin.com>
- <b3b3d5f5-e62f-4081-9fb0-a176a91361f2@app.fastmail.com>
-Date: Mon, 07 Jul 2025 15:40:43 +0200
-Message-ID: <8734b8glus.fsf@BLaptop.bootlin.com>
+	s=arc-20240116; t=1751895750; c=relaxed/simple;
+	bh=VIeOoT9ZnXv6E2NaHqTSzrn3b9DbwMxUShiN0VuJpJE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KX6MJ4xGjM8M0jLNoG7vO/+CaCtUHtAxGsx/S1mxNz7YS4B2R1W20zlkOQ0xmssODvZ/LM+PSmRbmEDFtmyZwHro8mVyb0BxpxBbJqlRu99ia+yjLtFRXB5veiiOPbDWPKecqk5BIfALzFlgaw4U5e/Q8i2FFIVYSMMaQaIM7O4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lcHylehk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B102C4CEE3;
+	Mon,  7 Jul 2025 13:42:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751895750;
+	bh=VIeOoT9ZnXv6E2NaHqTSzrn3b9DbwMxUShiN0VuJpJE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lcHylehkHJjr5c1vgbo3YTN4xBnKvAGa4BBMPUVQ4fKap0/8mD8B33OsKaOnkjBCN
+	 ESGJsNcY5MR3zS/xbQCaGchtsFkGNJ5wip62OS29+yWkaAehGt+dGOqJUreqVIFahv
+	 8T0FeFSvJxUYR66mdPC45kqUA2+EA8GwMCICd/uWVL8/qbdU9p4YoIQ/Ill/gjL8rF
+	 gqxUrcwtMIFanLeRibaGKPW5OflTTQWDE7hx8YUhm2x7BUG4PcV7GdN9+w0/aVk0Pl
+	 m/l9/uD16HM9TrDfff+RXNz68TZuPX5FWiqIA44DnncYOJ12GuW0nKy10Epd02YQQ5
+	 DJM5FNEnhnBOQ==
+From: Philipp Stanner <phasta@kernel.org>
+To: Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Philipp Stanner <phasta@kernel.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
+	Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+Cc: dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org
+Subject: [PATCH v2 0/7] drm/sched: Fix memory leaks with cancel_job() callback
+Date: Mon,  7 Jul 2025 15:42:13 +0200
+Message-ID: <20250707134221.34291-2-phasta@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefudelgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffffkgggtgfesthhqredttddtjeenucfhrhhomhepifhrvghgohhrhicuvefngffogffpvfcuoehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefghfegvdehgfdtjedvtefhvdeikefgteeuhfeukeettefgvdeuueettddtkeegveenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeduudgujeemkeefieejmeeitgdtvdemsghfieejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeduudgujeemkeefieejmeeitgdtvdemsghfieejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeekpdhrtghpthhtohepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomhdprhgtphhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtohepvhhlrggui
- hhmihhrrdhkohhnughrrghtihgvvhesmhhosghilhgvhigvrdgtohhmpdhrtghpthhtohepthhhvghordhlvggsrhhunhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehtrgiffhhikhdrsggrhihouhhksehmohgsihhlvgihvgdrtghomhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhigqdhmihhpshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: gregory.clement@bootlin.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello Jiaxun,
+Changes in v2:
+  - Add new unit test to test cancel_job()'s behavior. (Tvrtko)
+  - Add RB from Maíra
 
-> =E5=9C=A82025=E5=B9=B47=E6=9C=884=E6=97=A5=E5=91=A8=E4=BA=94 =E4=B8=8B=E5=
-=8D=884:13=EF=BC=8CGregory CLEMENT=E5=86=99=E9=81=93=EF=BC=9A
->> The initial implementation of this function goes through all the CPUs
->> in a cluster to determine if the current CPU is the only one
->> running. This process occurs every time the function is called.
->>
->> However, during boot, we already perform this task, so let's take
->> advantage of this opportunity to create and fill a CPU bitmask that
->> can be easily and efficiently used later.
->>
->> This requires creating a single CPU bitmask per cluster, which is why
->> it's essential to know how many clusters can be utilized. The default
->> setting is 4 clusters, but this value can be changed when configuring
->> the kernel or even customized for a given SoC family.
->
-> Hmm, I think we should avoid this sort of random limitation.
+Changes since the RFC:
+  - Rename helper function for drm_sched_fini(). (Tvrtko)
+  - Add Link to Tvrtko's RFC patch to patch 1.
 
-It's not great, but it seemed like the best approach to keep optimized
-boot times and memory consumption.
 
->
-> You can actually store per cluster cpumask_var_t into `mips_cps_cluster_b=
-ootcfg`,
-> which is allocated in cps_prepare_cpus(), and generate cpumask just
-> there.
->
-> It should be pretty straightforward to handle.
->
+Since a long time, drm_sched_fini() can leak jobs that are still in
+drm_sched.pending_list.
 
-The drawback of this option is that cps_prepare_cpus() is called after
-the building of the topology. However, I am trying to see how to insert
-this in the loop already used in cps_prepare_cpus().
+This series solves the leaks in a backwards-compatible manner by adding
+a new, optional callback. If that callback is implemented, the scheduler
+uses it to cancel all jobs from pending_list and then frees them.
 
-Gregory
+Philipp Stanner (7):
+  drm/sched: Avoid memory leaks with cancel_job() callback
+  drm/sched/tests: Implement cancel_job() callback
+  drm/sched/tests: Add unit test for cancel_job()
+  drm/sched: Warn if pending list is not empty
+  drm/nouveau: Make fence container helper usable driver-wide
+  drm/nouveau: Add new callback for scheduler teardown
+  drm/nouveau: Remove waitque for sched teardown
 
-> Thanks!
->
->>
->> This patch modifies the function to allow providing the first
->> available online CPU when one already exists, which is necessary for
->> delay CPU calibration optimization.
->>
->> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
->> ---
-> [...]
-> --=20
-> - Jiaxun
+ drivers/gpu/drm/nouveau/nouveau_fence.c       | 35 ++++++----
+ drivers/gpu/drm/nouveau/nouveau_fence.h       |  7 ++
+ drivers/gpu/drm/nouveau/nouveau_sched.c       | 35 ++++++----
+ drivers/gpu/drm/nouveau/nouveau_sched.h       |  9 +--
+ drivers/gpu/drm/nouveau/nouveau_uvmm.c        |  8 +--
+ drivers/gpu/drm/scheduler/sched_main.c        | 37 +++++++----
+ .../gpu/drm/scheduler/tests/mock_scheduler.c  | 66 +++++++------------
+ drivers/gpu/drm/scheduler/tests/tests_basic.c | 43 ++++++++++++
+ include/drm/gpu_scheduler.h                   | 18 +++++
+ 9 files changed, 165 insertions(+), 93 deletions(-)
 
---=20
-Gr=C3=A9gory CLEMENT, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+-- 
+2.49.0
+
 
