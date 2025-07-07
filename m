@@ -1,144 +1,120 @@
-Return-Path: <linux-kernel+bounces-719699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8F0DAFB18C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:46:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62652AFB192
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:47:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A7BB4A2274
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:46:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 026D23BCEB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295A7293C55;
-	Mon,  7 Jul 2025 10:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r16dEH0n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A188D295516;
+	Mon,  7 Jul 2025 10:47:13 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769AD1C1F2F;
-	Mon,  7 Jul 2025 10:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389DA288CB2;
+	Mon,  7 Jul 2025 10:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751885208; cv=none; b=PD+3kwb2maIsqwogjUmpiJGABvGPTegKxqDHlC16AJbnCPTzl2nT5L8FXvDhNqqpezOsNK1HPWqKVHHoxQQQGQM24hVQtKAkaWX6qn8UvelnOG0O28XaDUHY/bRtGvRtruNFOE67vJ36Hxd+PZ0tdwHWm9kasQDfVLQRRFg7yHg=
+	t=1751885233; cv=none; b=Lj7Kml36Hp5VgxPhAyr/i0V5AyCIGPY7YBHxmqmSwOejpEYIyEpnU+X0QKHEQkqLahpCLyMXr9VvnrqbC5OzzD+zvF3uOCjFlcMM3bnRdbLVbVz6ijqCIQOBcyktHn8x5Pu3ZDr04TCFay06kEh+iZHOZjwubxPVJSfEoWo42po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751885208; c=relaxed/simple;
-	bh=YMr6Z21DwvHqAbXD7j969et+sd26hv6REsI5k+LxlXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gYSjQVpx+XtvcKUNkOym5FYCmVJjGBtZ1EGVJGqXIZQwbPzVX091RXolBDjxbiBKqAuSWuKaFJki849n1Kjl0vnySQOqxGNIl1sf357jPVaAx32Fz6Ro6SWFDUC2r/Cdd6IGyAlkBoNBANKHirRci4GWYBQrsrtgeQar6rWfFmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r16dEH0n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B69D7C4CEE3;
-	Mon,  7 Jul 2025 10:46:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751885208;
-	bh=YMr6Z21DwvHqAbXD7j969et+sd26hv6REsI5k+LxlXA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r16dEH0n0lgbxKKqj+wN7R6jbMpglYDMjZRtK00Q+IwTJrx86muZ25yzTocxosifc
-	 YyCiO4wpToze5QyHh8mc6cBwfGUbqxIuxUcVfw2YQEEP5p46ULlOYbebRdw6qEXZVg
-	 pTGeY89oTIIMp2clFo3qSUYawyFQ4f4uH5g+kjvZmGDGbLAy1kvBcRBazmmbxzeapH
-	 ZXWwUSi/3XTb1g9rpo8TAi3yIwmMcXxldLW0MKZJ0BFxhmciDZvbRg1DJnGi0QRvQE
-	 pg87bMf8GRUCx7GaEHg38QiK+H3oJYVnzBRlffanjJcw2rXRty3sQJTjF5U4PtsyAB
-	 IMY7iqwjsN6AQ==
-Date: Mon, 7 Jul 2025 12:46:41 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neil@brown.name>
-Cc: Song Liu <songliubraving@meta.com>, Tingmao Wang <m@maowtm.org>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, Song Liu <song@kernel.org>, 
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
-	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
-	"martin.lau@linux.dev" <martin.lau@linux.dev>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
-	"jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
-	"mattbobrowski@google.com" <mattbobrowski@google.com>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
-Message-ID: <20250707-kneifen-zielvereinbarungen-62c1ccdbb9c6@brauner>
-References: <>
- <127D7BC6-1643-403B-B019-D442A89BADAB@meta.com>
- <175097828167.2280845.5635569182786599451@noble.neil.brown.name>
+	s=arc-20240116; t=1751885233; c=relaxed/simple;
+	bh=AHW8Pu974MQbEtBUk7tWFfLCPbD4JU1hydUTWObK6Hk=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=CRWMdOGXinThGMvm5Qc9tqIuDDIcDzjSMQRBr0G3gEkqLcow/ERiUiAHo2+5sDxSMaQ2GWb/kIrbKcQxZQi/w8ShM0ZxVFSUF/2fGUjq6eDqlVhrmIrE8Q+Ru1SK07g8r7bas8d/1pTe7Bc9Mvyr0aomnBqe8uhgclL5GQasuDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4bbLXJ1d95z4xPSj;
+	Mon,  7 Jul 2025 18:46:56 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl2.zte.com.cn with SMTP id 567AkhB1004402;
+	Mon, 7 Jul 2025 18:46:43 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Mon, 7 Jul 2025 18:46:45 +0800 (CST)
+Date: Mon, 7 Jul 2025 18:46:45 +0800 (CST)
+X-Zmail-TransId: 2afa686ba59535f-afcd3
+X-Mailer: Zmail v1.0
+Message-ID: <202507071846455418y7RHD-cnstxL3SlD6hBH@zte.com.cn>
+In-Reply-To: <CANn89iJvyYjiweCESQL8E-Si7M=gosYvh1BAVWwAWycXW8GSdg@mail.gmail.com>
+References: 20250701174051880riwWtq_0siCJ5Yfsa6ZOQ@zte.com.cn,CANn89iJvyYjiweCESQL8E-Si7M=gosYvh1BAVWwAWycXW8GSdg@mail.gmail.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <175097828167.2280845.5635569182786599451@noble.neil.brown.name>
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <edumazet@google.com>
+Cc: <kuba@kernel.org>, <kuniyu@amazon.com>, <ncardwell@google.com>,
+        <davem@davemloft.net>, <horms@kernel.org>, <dsahern@kernel.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-trace-kernel@vger.kernel.org>, <fan.yu9@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCBuZXQtbmV4dCB2Ml0gdGNwOiBleHRlbmQgdGNwX3JldHJhbnNtaXRfc2tiIHRyYWNlcG9pbnQgd2l0aCBmYWlsdXJlIHJlYXNvbnM=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 567AkhB1004402
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 686BA5A0.000/4bbLXJ1d95z4xPSj
 
-On Fri, Jun 27, 2025 at 08:51:21AM +1000, NeilBrown wrote:
-> On Fri, 27 Jun 2025, Song Liu wrote:
-> > 
-> > 
-> > > On Jun 26, 2025, at 3:22 AM, NeilBrown <neil@brown.name> wrote:
-> > 
-> > [...]
-> > 
-> > >> I guess I misunderstood the proposal of vfs_walk_ancestors() 
-> > >> initially, so some clarification:
-> > >> 
-> > >> I think vfs_walk_ancestors() is good for the rcu-walk, and some 
-> > >> rcu-then-ref-walk. However, I don’t think it fits all use cases. 
-> > >> A reliable step-by-step ref-walk, like this set, works well with 
-> > >> BPF, and we want to keep it.
-> > > 
-> > > The distinction between rcu-walk and ref-walk is an internal
-> > > implementation detail.  You as a caller shouldn't need to think about
-> > > the difference.  You just want to walk.  Note that LOOKUP_RCU is
-> > > documented in namei.h as "semi-internal".  The only uses outside of
-> > > core-VFS code is in individual filesystem's d_revalidate handler - they
-> > > are checking if they are allowed to sleep or not.  You should never
-> > > expect to pass LOOKUP_RCU to an VFS API - no other code does.
-> > > 
-> > > It might be reasonable for you as a caller to have some control over
-> > > whether the call can sleep or not.  LOOKUP_CACHED is a bit like that.
-> > > But for dotdot lookup the code will never sleep - so that is not
-> > > relevant.
-> > 
-> > Unfortunately, the BPF use case is more complicated. In some cases, 
-> > the callback function cannot be call in rcu critical sections. For 
-> > example, the callback may need to read xatter. For these cases, we
-> > we cannot use RCU walk at all. 
+> >
+> > -/*
+> > - * tcp event with arguments sk and skb
+> > - *
+> > - * Note: this class requires a valid sk pointer; while skb pointer could
+> > - *       be NULL.
+> > - */
+> > -DECLARE_EVENT_CLASS(tcp_event_sk_skb,
+> > +#define TCP_RETRANSMIT_QUIT_REASON             \
+> > +               ENUM(TCP_RETRANS_ERR_DEFAULT,           "retransmit terminate unexpectedly")    \
+> > +               ENUM(TCP_RETRANS_SUCCESS,               "retransmit successfully")              \
+> > +               ENUM(TCP_RETRANS_IN_HOST_QUEUE,         "packet still queued in driver")        \
+> > +               ENUM(TCP_RETRANS_END_SEQ_ERROR,         "invalid end sequence")                 \
+> > +               ENUM(TCP_RETRANS_TRIM_HEAD_NOMEM,       "trim head no memory")                  \
+> > +               ENUM(TCP_RETRANS_UNCLONE_NOMEM,         "skb unclone keeptruesize no memory")   \
+> > +               ENUM(TCP_RETRANS_FRAG_NOMEM,            "fragment no memory")                   \
 > 
-> I really think you should stop using the terms RCU walk and ref-walk.  I
-> think they might be focusing your thinking in an unhelpful direction.
+> Do we really need 3 + 1 different 'NOMEMORY' status ? 
 
-Thank you! I really appreciate you helping to shape this API and it
-aligns a lot with my thinking.
+Yes, different "NOMEM" status pinpoint exact failure stages in packet retransmission,
+which helps distinguish which process triggered it. Beneficial for troubleshooting.
 
-> The key issue about reading xattrs is that it might need to sleep.
-> Focusing on what might need to sleep and what will never need to sleep
-> is a useful approach - the distinction is wide spread in the kernel and
-> several function take a flag indicating if they are permitted to sleep,
-> or if failure when sleeping would be required.
+> > +               ENUM(TCP_RETRANS_ROUTE_FAIL,            "routing failure")                      \
+> > +               ENUM(TCP_RETRANS_RCV_ZERO_WINDOW,       "closed recevier window")               \
 > 
-> So your above observation is better described as 
+> receiver
 > 
->    The vfs_walk_ancestors() API has an (implicit) requirement that the
->    callback mustn't sleep.  This is a problem for some use-cases
->    where the call back might need to sleep - e.g. for accessing xattrs.
+
+Thanks, will fix it in V3.
+
+> > +               ENUMe(TCP_RETRANS_PSKB_COPY_NOBUFS,     "no buffer for skb copy")               \
 > 
-> That is a good and useful observation.  I can see three possibly
-> responses:
+> -> another NOMEM...
 > 
-> 1/ Add a vfs_walk_ancestors_maysleep() API for which the callback is
->    always allowed to sleep.  I don't particularly like this approach.
-
-Agreed.
-
+> > +
+> > +
 > 
-> 2/ Use repeated calls to vfs_walk_parent() when the handling of each
->    ancestor might need to sleep.  I see no problem with supporting both
->    vfs_walk_ancestors() and vfs_walk_parent().  There is plenty of
->    precedent for having different  interfaces for different use cases.
-
-Meh.
-
 > 
-> 3/ Extend vfs_walk_ancestors() to pass a "may sleep" flag to the callback.
+> > +               __entry->quit_reason = quit_reason;
+> >         ),
+> >
+> > -       TP_printk("skbaddr=%p skaddr=%p family=%s sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c state=%s",
+> > +       TP_printk("skbaddr=%p skaddr=%p family=%s sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c state=%s quit_reason=%s",
+> 
+> quit_reason is really weird, since most retransmits are a success.
+> 
+> What about using : status or result ?
+> 
+> Also, for scripts parsing the output, I would try to keep  key=val
+> format (no space in @val), and concise 'vals'
 
-I think that's fine.
+Good idea. Will fix it in V3.
 
