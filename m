@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-720510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE990AFBCB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:44:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE5D7AFBCB9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F36683B5C1E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:44:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 225627A5F4A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE96223DF1;
-	Mon,  7 Jul 2025 20:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2919C22B8D0;
+	Mon,  7 Jul 2025 20:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tdlMng6J"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mvnsGMyi"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77F71E8322
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 20:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70064221F01
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 20:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751921059; cv=none; b=YlGzfuNs1gfa6OsbfneXsYeTxk/bS1dwhnBJxRDfB+100y2CVVp7X63KE1kjl7/1Auw1EIn7UF886ZSWw/TJ54vyM5Dtf3K4+y4UIwPFLj5bIst3AjU8DevvjjA6pNYvlXtzMDQGAuznmnq/Xf+fkPkDuCACzCrQc/FvBzy4EH8=
+	t=1751921061; cv=none; b=ZfVt5ilg/V6lFbsnJraU4/y6zmGJTyCH/UPFsr3pOAEQ1IdPe4Mu/rl072oMtoVBjzl4B/+bPor/8o/IyZplfO6dS5JeIuDM2z+pOEUG69EXYJ7CfUW8yNvV8MO/DXRx1VnHT3GZHlWNQYXdhCBZQexaBURhrzRtMrjOdeCoDdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751921059; c=relaxed/simple;
-	bh=vtzyhv9a/esCi91sq/GucpYona1JPGP894PNVA+Aruw=;
+	s=arc-20240116; t=1751921061; c=relaxed/simple;
+	bh=lCYOFYCQ5X/O9LF0+RaTNfvNehIilJ5msdeFK7VN4CI=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Kbfi7iyf7S5Uq/X6kvpE+Daux/uzJs+BLUQDAdidZzRbBdUng7PaPIyTnq7XqNQ0Xb365My/dYqvMTNSPdWKx8l3esp5mMVoLX2fvVfjdu5+W7//UbN5hcH3VFQ7C/NuugpINj14kOmgG8NDiot7hMwXvQUS/77MPu+ECtvw6vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tdlMng6J; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=pGCMlA9GeGojSNaDEEpj3OGyTU1jMzRezdyyBULVTQ75y8W4IzsjVx26gd3de0HnzQpxvsk4OH4FxaYKl6gUL8vlyknVMeBIB+5UuDhggcghUK9CuXs3KPsfSkRtLnzeMiViU5X3d0uuH6Mcvo0LHemebE1t63eZZvDeknd/AAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mvnsGMyi; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b2fb347b3e6so4348319a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 13:44:17 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b2c37558eccso2975756a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 13:44:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751921057; x=1752525857; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1751921059; x=1752525859; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GtamtensSo2O4q2/DkAjxE9NIlfjTtUqP5/1W59cAKQ=;
-        b=tdlMng6JPjQMn2friiwjg01ItE+73Gdjdjw8E6TezqrTvxdtZRDUJjEZTuM16dRlVl
-         fkhXrxkrUDKmMYlxZ34VLqVleeQRrwHleytTTpRIfiel5yjE7ect50O3xrNu2GqqzQ5M
-         ztrFnAuUB4/V5CGMI0IsQbEVZvnAxYfaKGF6OWvEP0UpZXWKWhks8TexkmR+hEGEqAlg
-         MwvwLE76AfqvrNTKMtan33DHjnHt5rgA/0JSuLaeMJT3uFFh/ZLabTz+Jui/DL683ayK
-         V7VlKabpqLSY74FukhRBJSbUHfU1rEtO5SZaLM7tglHuFGbjnyNxIGdIkY3SsIlt4cxC
-         Jd2A==
+        bh=Q+W26I4UoVcgtTG2t49WkryD3K6H1+lyiZhKPVWcdyM=;
+        b=mvnsGMyiFSaF5MyGcxHOxvCsI4mQEGFrufsV/0kAbn9l9/xWuxu3CIiDg6z8SaL1GK
+         MxV8VpKGf++un1O/MjkxVXGMTyubEqtM69uPsPyFG2TgpfRa6FKha0tEmqM298s9R1Zl
+         vWY17FTyPQHv/oqZVd73ftzwDzbhvUSmMw2Aj+knwP8eG1DR25whDdVjyOF6D0dzBZfa
+         JP/En8Lc/mE+FenoOnycDGvI7LeVukQ9apjJufr+owlA2pP+Oh6U5Kp7kasCFuuL97F8
+         EoDI+dBbeZhsR3sxwrjscRaO1UJ3xX5pkIs5XLsW2HHap5lMqJgKbMdsaezd3un0I/k9
+         /L+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751921057; x=1752525857;
+        d=1e100.net; s=20230601; t=1751921059; x=1752525859;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GtamtensSo2O4q2/DkAjxE9NIlfjTtUqP5/1W59cAKQ=;
-        b=ALmr7gfsdbw4dnpTb2tPoN4zuz4/jRiSGg+vRg3lotjEg2Uu3/LraEakpByai4Y04g
-         qPRpXztx3OpD1M4bT3kLhFg7DGuc81JdtZjbfK7Ge3ZCyi7l6wtQO2MQZGNSOUmgBliO
-         cXy8n+QHpsj25xcAtk25MMHz2JpypUq9qYharwW3OOa2cn0jsQRYWVPCsVY8/NwVh4iz
-         5oxPwglAXAbwcNKIVA+rI34DO3WV7+5dZCPcOgh+QKcKdGb/mEIDG04bQTD5mq8sS4p8
-         qzsoarPfHd/CD3ALsARKt6JAuQy5TWtebiCM82DnnXEN1x1fOmPp+VYbObFlpzDSFScp
-         EIfw==
-X-Gm-Message-State: AOJu0YzTBbuZGuHkU8ayKRQ1aAjTlEJdX3LKzyEvbPbfmw2qguiPB/HL
-	1dHGqmyAF9h/KJlg3DNwZOkObKFiwB7n2tgdoHl6f0osd/3yu5j7Shjks4eIpIjoa4J8JhDcpWp
-	nygliLbgDstd5uiUYD82v0J1s9B7bEzoz8VWl5mzKjlua/fbd78dZFfvKftq/AwFAscaNL5Fq8C
-	gOME3h6jX4/un85cTW9CNbbGoalEW3t+jCwOhT19LWjpdYyfSb
-X-Google-Smtp-Source: AGHT+IG4FN6+gTahsP4YSBFaxpNQCv9V8b+i4y0+uAiReg1PMGVLD93sWSc6lTngqfi/r0t5ViTPJL40vo9c
-X-Received: from pgbda5.prod.google.com ([2002:a05:6a02:2385:b0:b2e:beba:356])
- (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:b98:b0:215:fb74:2dc2
- with SMTP id adf61e73a8af0-22b4214ddabmr855529637.11.1751921057122; Mon, 07
- Jul 2025 13:44:17 -0700 (PDT)
-Date: Mon,  7 Jul 2025 20:43:48 +0000
+        bh=Q+W26I4UoVcgtTG2t49WkryD3K6H1+lyiZhKPVWcdyM=;
+        b=hqp8FX7jaYotGfA3XjcQgOetaeKcHE+9wQRtU0l1mQSCyyNBPgD5YpL2BsoOv215Jc
+         VWHvscFmeHaeqzC5K+qZ1ufBGAdXvg4p+fAWiVfl8KIJSfWDPdQo8kKHpxDgS4NmFGQf
+         yHimWIdyqxpRFE5msMcUs4li89Ga972cCLcPEgd83yMAmfOqDrvJyo4at8yMHkF6J1Uz
+         qnHitxd/y6wszNRzn+8HrFa1zwg+vy+Czz0MIS1msn9gDxDy6koQ4ybiZnToI7/DaTgR
+         BoGBY5BCK5GSGOxXbFtL8cf6RghRgc94ssrRaYyVV6iKdNL2Q64fRjbFYbc6fQrA7gn7
+         4GGQ==
+X-Gm-Message-State: AOJu0YxT1XbNAjiTa1ezUZBbzk0/tzBdOnR3/eK7+sxvtHOLENyZUZjY
+	Beg0eqCOo4uxnHt+j/P2JIjA75W0cJdq6T68sEWCnbbrmN1W7za3t7tEHMNTOTlaiHsYyUWTd8N
+	m6F4Hv5rSgKeG4sdcZ9l/xFkwKbHJrC8NcdLY8nzUd2YKjV7H6aEBS9Egfsloq6G18noonZbqiy
+	Uy2JrQpeZaQZ6XfyG7XYl9/Gll8MuancHThdtyCv/Ct+jPZfX/
+X-Google-Smtp-Source: AGHT+IEh2nqsVZ8R4lb/7cnmZFdEFkJb3LTSruJ4cuFRbvE3mEQxIjclK8OFefnprMHPKh6PWBpRIWFt70hi
+X-Received: from pgbdn3.prod.google.com ([2002:a05:6a02:e03:b0:b31:e758:d80])
+ (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:6da0:b0:226:d285:302d
+ with SMTP id adf61e73a8af0-22b4252ae70mr850302637.4.1751921058337; Mon, 07
+ Jul 2025 13:44:18 -0700 (PDT)
+Date: Mon,  7 Jul 2025 20:43:49 +0000
 In-Reply-To: <20250707204409.1028494-1-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,66 +73,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250707204409.1028494-1-jstultz@google.com>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250707204409.1028494-2-jstultz@google.com>
-Subject: [RESEND][PATCH v18 1/8] sched: Add CONFIG_SCHED_PROXY_EXEC & boot
- argument to enable/disable
+Message-ID: <20250707204409.1028494-3-jstultz@google.com>
+Subject: [RESEND][PATCH v18 2/8] locking/mutex: Rework task_struct::blocked_on
 From: John Stultz <jstultz@google.com>
 To: LKML <linux-kernel@vger.kernel.org>
-Cc: John Stultz <jstultz@google.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Qais Yousef <qyousef@layalina.io>, 
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+Cc: Peter Zijlstra <peterz@infradead.org>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, "Connor O'Brien" <connoro@google.com>, 
+	John Stultz <jstultz@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Valentin Schneider <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
 	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
 	Xuewen Yan <xuewen.yan94@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
 	Daniel Lezcano <daniel.lezcano@linaro.org>, Suleiman Souhlal <suleiman@google.com>, 
 	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 
-Add a CONFIG_SCHED_PROXY_EXEC option, along with a boot argument
-sched_proxy_exec= that can be used to disable the feature at boot
-time if CONFIG_SCHED_PROXY_EXEC was enabled.
+From: Peter Zijlstra <peterz@infradead.org>
 
-Also uses this option to allow the rq->donor to be different from
-rq->curr.
+Track the blocked-on relation for mutexes, to allow following this
+relation at schedule time.
+
+   task
+     | blocked-on
+     v
+   mutex
+     | owner
+     v
+   task
+
+This all will be used for tracking blocked-task/mutex chains
+with the prox-execution patch in a similar fashion to how
+priority inheritance is done with rt_mutexes.
+
+For serialization, blocked-on is only set by the task itself
+(current). And both when setting or clearing (potentially by
+others), is done while holding the mutex::wait_lock.
 
 Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+[minor changes while rebasing]
+Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Connor O'Brien <connoro@google.com>
+[jstultz: Fix blocked_on tracking in __mutex_lock_common in error paths]
 Signed-off-by: John Stultz <jstultz@google.com>
 ---
+v2:
+* Fixed blocked_on tracking in error paths that was causing crashes
+v4:
+* Ensure we clear blocked_on when waking ww_mutexes to die or wound.
+  This is critical so we don't get circular blocked_on relationships
+  that can't be resolved.
+v5:
+* Fix potential bug where the skip_wait path might clear blocked_on
+  when that path never set it
+* Slight tweaks to where we set blocked_on to make it consistent,
+  along with extra WARN_ON correctness checking
+* Minor comment changes
 v7:
-* Switch to CONFIG_SCHED_PROXY_EXEC/sched_proxy_exec= as
-  suggested by Metin Kaya.
-* Switch boot arg from =disable/enable to use kstrtobool(),
-  which supports =yes|no|1|0|true|false|on|off, as also
-  suggested by Metin Kaya, and print a message when a boot
-  argument is used.
+* Minor commit message change suggested by Metin Kaya
+* Fix WARN_ON conditionals in unlock path (as blocked_on might already
+  be cleared), found while looking at issue Metin Kaya raised.
+* Minor tweaks to be consistent in what we do under the
+  blocked_on lock, also tweaked variable name to avoid confusion
+  with label, and comment typos, as suggested by Metin Kaya
+* Minor tweak for CONFIG_SCHED_PROXY_EXEC name change
+* Moved unused block of code to later in the series, as suggested
+  by Metin Kaya
+* Switch to a tri-state to be able to distinguish from waking and
+  runnable so we can later safely do return migration from ttwu
+* Folded together with related blocked_on changes
 v8:
-* Move CONFIG_SCHED_PROXY_EXEC under Scheduler Features as
-  Suggested by Metin
-* Minor rework reordering with split sched contexts patch
-v12:
-* Rework for selected -> donor renaming
+* Fix issue leaving task BO_BLOCKED when calling into optimistic
+  spinning path.
+* Include helper to better handle BO_BLOCKED->BO_WAKING transitions
+v9:
+* Typo fixup pointed out by Metin
+* Cleanup BO_WAKING->BO_RUNNABLE transitions for the !proxy case
+* Many cleanups and simplifications suggested by Metin
+v11:
+* Whitespace fixup pointed out by Metin
+v13:
+* Refactor set_blocked_on helpers clean things up a bit
 v14:
-* Depend on !PREEMPT_RT to avoid build issues for now
+* Small build fixup with PREEMPT_RT
 v15:
-* Depend on EXPERT while patch series upstreaming is
-  in progress.
+* Improve consistency of names for functions that assume blocked_lock
+  is held, as suggested by Peter
+* Use guard instead of separate spinlock/unlock calls, also suggested
+  by Peter
+* Drop blocked_on_state tri-state for now, as its not needed until
+  later in the series, when we get to proxy-migration and return-
+  migration.
 v16:
-* Allow "sched_proxy_exec" without "=true" to enable
-  proxy-execution at boot time, in addition to the
-  "sched_proxy_exec=true" or "sched_proxy_exec=false" options
-  as suggested by Steven
-* Drop the "default n" in Kconfig as suggested by Steven
-* Add !SCHED_CLASS_EXT dependency until I can investigate if
-  sched_ext can understand split contexts, as suggested by
-  Peter
-v17:
-* Expanded the commit message a bit to clarify that the option
-  allows the split contexts (rq->donor and rq->curr) to be
-  different tasks, from feedback from Juri Lelli
+* Clear blocked on before optimistic spinning
 
 Cc: Joel Fernandes <joelagnelf@nvidia.com>
 Cc: Qais Yousef <qyousef@layalina.io>
@@ -160,154 +197,181 @@ Cc: kuyo chang <kuyo.chang@mediatek.com>
 Cc: hupu <hupu.gm@gmail.com>
 Cc: kernel-team@android.com
 ---
- .../admin-guide/kernel-parameters.txt         |  5 ++++
- include/linux/sched.h                         | 13 +++++++++
- init/Kconfig                                  | 12 ++++++++
- kernel/sched/core.c                           | 29 +++++++++++++++++++
- kernel/sched/sched.h                          | 12 ++++++++
- 5 files changed, 71 insertions(+)
+ include/linux/sched.h        |  5 +----
+ kernel/fork.c                |  3 +--
+ kernel/locking/mutex-debug.c |  9 +++++----
+ kernel/locking/mutex.c       | 22 ++++++++++++++++++++++
+ kernel/locking/ww_mutex.h    | 18 ++++++++++++++++--
+ 5 files changed, 45 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index f1f2c0874da9d..5b89464ca570a 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6387,6 +6387,11 @@
- 	sa1100ir	[NET]
- 			See drivers/net/irda/sa1100_ir.c.
- 
-+	sched_proxy_exec= [KNL]
-+			Enables or disables "proxy execution" style
-+			solution to mutex-based priority inversion.
-+			Format: <bool>
-+
- 	sched_verbose	[KNL,EARLY] Enables verbose scheduler debug messages.
- 
- 	schedstats=	[KNL,X86] Enable or disable scheduled statistics.
 diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 4f78a64beb52c..ba2a02ead8c7e 100644
+index ba2a02ead8c7e..aa7966141a090 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
-@@ -1664,6 +1664,19 @@ struct task_struct {
- 	randomized_struct_fields_end
- } __attribute__ ((aligned (64)));
+@@ -1238,10 +1238,7 @@ struct task_struct {
+ 	struct rt_mutex_waiter		*pi_blocked_on;
+ #endif
  
-+#ifdef CONFIG_SCHED_PROXY_EXEC
-+DECLARE_STATIC_KEY_TRUE(__sched_proxy_exec);
-+static inline bool sched_proxy_exec(void)
-+{
-+	return static_branch_likely(&__sched_proxy_exec);
-+}
-+#else
-+static inline bool sched_proxy_exec(void)
-+{
-+	return false;
-+}
-+#endif
+-#ifdef CONFIG_DEBUG_MUTEXES
+-	/* Mutex deadlock detection: */
+-	struct mutex_waiter		*blocked_on;
+-#endif
++	struct mutex			*blocked_on;	/* lock we're blocked on */
+ 
+ #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+ 	/*
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 1ee8eb11f38ba..5f87f05aff4a0 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2123,9 +2123,8 @@ __latent_entropy struct task_struct *copy_process(
+ 	lockdep_init_task(p);
+ #endif
+ 
+-#ifdef CONFIG_DEBUG_MUTEXES
+ 	p->blocked_on = NULL; /* not blocked yet */
+-#endif
 +
- #define TASK_REPORT_IDLE	(TASK_REPORT + 1)
- #define TASK_REPORT_MAX		(TASK_REPORT_IDLE << 1)
- 
-diff --git a/init/Kconfig b/init/Kconfig
-index af4c2f0854554..6844b25303913 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -875,6 +875,18 @@ config UCLAMP_BUCKETS_COUNT
- 
- 	  If in doubt, use the default value.
- 
-+config SCHED_PROXY_EXEC
-+	bool "Proxy Execution"
-+	# Avoid some build failures w/ PREEMPT_RT until it can be fixed
-+	depends on !PREEMPT_RT
-+	# Need to investigate how to inform sched_ext of split contexts
-+	depends on !SCHED_CLASS_EXT
-+	# Not particularly useful until we get to multi-rq proxying
-+	depends on EXPERT
-+	help
-+	  This option enables proxy execution, a mechanism for mutex-owning
-+	  tasks to inherit the scheduling context of higher priority waiters.
-+
- endmenu
- 
- #
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 8988d38d46a38..853157b27f384 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -119,6 +119,35 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(sched_compute_energy_tp);
- 
- DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
- 
-+#ifdef CONFIG_SCHED_PROXY_EXEC
-+DEFINE_STATIC_KEY_TRUE(__sched_proxy_exec);
-+static int __init setup_proxy_exec(char *str)
-+{
-+	bool proxy_enable = true;
-+
-+	if (*str && kstrtobool(str + 1, &proxy_enable)) {
-+		pr_warn("Unable to parse sched_proxy_exec=\n");
-+		return 0;
-+	}
-+
-+	if (proxy_enable) {
-+		pr_info("sched_proxy_exec enabled via boot arg\n");
-+		static_branch_enable(&__sched_proxy_exec);
-+	} else {
-+		pr_info("sched_proxy_exec disabled via boot arg\n");
-+		static_branch_disable(&__sched_proxy_exec);
-+	}
-+	return 1;
-+}
-+#else
-+static int __init setup_proxy_exec(char *str)
-+{
-+	pr_warn("CONFIG_SCHED_PROXY_EXEC=n, so it cannot be enabled or disabled at boot time\n");
-+	return 0;
-+}
-+#endif
-+__setup("sched_proxy_exec", setup_proxy_exec);
-+
- /*
-  * Debugging: various feature bits
-  *
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 475bb5998295e..6b61e0c7f6e78 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1151,10 +1151,15 @@ struct rq {
- 	 */
- 	unsigned int		nr_uninterruptible;
- 
-+#ifdef CONFIG_SCHED_PROXY_EXEC
-+	struct task_struct __rcu	*donor;  /* Scheduling context */
-+	struct task_struct __rcu	*curr;   /* Execution context */
-+#else
- 	union {
- 		struct task_struct __rcu *donor; /* Scheduler context */
- 		struct task_struct __rcu *curr;  /* Execution context */
- 	};
-+#endif
- 	struct sched_dl_entity	*dl_server;
- 	struct task_struct	*idle;
- 	struct task_struct	*stop;
-@@ -1349,10 +1354,17 @@ DECLARE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
- #define cpu_curr(cpu)		(cpu_rq(cpu)->curr)
- #define raw_rq()		raw_cpu_ptr(&runqueues)
- 
-+#ifdef CONFIG_SCHED_PROXY_EXEC
-+static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
-+{
-+	rcu_assign_pointer(rq->donor, t);
-+}
-+#else
- static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
+ #ifdef CONFIG_BCACHE
+ 	p->sequential_io	= 0;
+ 	p->sequential_io_avg	= 0;
+diff --git a/kernel/locking/mutex-debug.c b/kernel/locking/mutex-debug.c
+index 6e6f6071cfa27..758b7a6792b0c 100644
+--- a/kernel/locking/mutex-debug.c
++++ b/kernel/locking/mutex-debug.c
+@@ -53,17 +53,18 @@ void debug_mutex_add_waiter(struct mutex *lock, struct mutex_waiter *waiter,
  {
- 	/* Do nothing */
- }
-+#endif
+ 	lockdep_assert_held(&lock->wait_lock);
  
- #ifdef CONFIG_SCHED_CORE
- static inline struct cpumask *sched_group_span(struct sched_group *sg);
+-	/* Mark the current thread as blocked on the lock: */
+-	task->blocked_on = waiter;
++	/* Current thread can't be already blocked (since it's executing!) */
++	DEBUG_LOCKS_WARN_ON(task->blocked_on);
+ }
+ 
+ void debug_mutex_remove_waiter(struct mutex *lock, struct mutex_waiter *waiter,
+ 			 struct task_struct *task)
+ {
++	struct mutex *blocked_on = READ_ONCE(task->blocked_on);
++
+ 	DEBUG_LOCKS_WARN_ON(list_empty(&waiter->list));
+ 	DEBUG_LOCKS_WARN_ON(waiter->task != task);
+-	DEBUG_LOCKS_WARN_ON(task->blocked_on != waiter);
+-	task->blocked_on = NULL;
++	DEBUG_LOCKS_WARN_ON(blocked_on && blocked_on != lock);
+ 
+ 	INIT_LIST_HEAD(&waiter->list);
+ 	waiter->task = NULL;
+diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
+index a39ecccbd106a..e2f59863a866e 100644
+--- a/kernel/locking/mutex.c
++++ b/kernel/locking/mutex.c
+@@ -644,6 +644,8 @@ __mutex_lock_common(struct mutex *lock, unsigned int state, unsigned int subclas
+ 			goto err_early_kill;
+ 	}
+ 
++	WARN_ON(current->blocked_on);
++	current->blocked_on = lock;
+ 	set_current_state(state);
+ 	trace_contention_begin(lock, LCB_F_MUTEX);
+ 	for (;;) {
+@@ -680,6 +682,12 @@ __mutex_lock_common(struct mutex *lock, unsigned int state, unsigned int subclas
+ 
+ 		first = __mutex_waiter_is_first(lock, &waiter);
+ 
++		/*
++		 * As we likely have been woken up by task
++		 * that has cleared our blocked_on state, re-set
++		 * it to the lock we are trying to aquire.
++		 */
++		current->blocked_on = lock;
+ 		set_current_state(state);
+ 		/*
+ 		 * Here we order against unlock; we must either see it change
+@@ -691,8 +699,11 @@ __mutex_lock_common(struct mutex *lock, unsigned int state, unsigned int subclas
+ 
+ 		if (first) {
+ 			trace_contention_begin(lock, LCB_F_MUTEX | LCB_F_SPIN);
++			/* clear blocked_on as mutex_optimistic_spin may schedule() */
++			current->blocked_on = NULL;
+ 			if (mutex_optimistic_spin(lock, ww_ctx, &waiter))
+ 				break;
++			current->blocked_on = lock;
+ 			trace_contention_begin(lock, LCB_F_MUTEX);
+ 		}
+ 
+@@ -700,6 +711,7 @@ __mutex_lock_common(struct mutex *lock, unsigned int state, unsigned int subclas
+ 	}
+ 	raw_spin_lock_irqsave(&lock->wait_lock, flags);
+ acquired:
++	current->blocked_on = NULL;
+ 	__set_current_state(TASK_RUNNING);
+ 
+ 	if (ww_ctx) {
+@@ -729,9 +741,11 @@ __mutex_lock_common(struct mutex *lock, unsigned int state, unsigned int subclas
+ 	return 0;
+ 
+ err:
++	current->blocked_on = NULL;
+ 	__set_current_state(TASK_RUNNING);
+ 	__mutex_remove_waiter(lock, &waiter);
+ err_early_kill:
++	WARN_ON(current->blocked_on);
+ 	trace_contention_end(lock, ret);
+ 	raw_spin_unlock_irqrestore_wake(&lock->wait_lock, flags, &wake_q);
+ 	debug_mutex_free_waiter(&waiter);
+@@ -942,6 +956,14 @@ static noinline void __sched __mutex_unlock_slowpath(struct mutex *lock, unsigne
+ 		next = waiter->task;
+ 
+ 		debug_mutex_wake_waiter(lock, waiter);
++		/*
++		 * Unlock wakeups can be happening in parallel
++		 * (when optimistic spinners steal and release
++		 * the lock), so blocked_on may already be
++		 * cleared here.
++		 */
++		WARN_ON(next->blocked_on && next->blocked_on != lock);
++		next->blocked_on = NULL;
+ 		wake_q_add(&wake_q, next);
+ 	}
+ 
+diff --git a/kernel/locking/ww_mutex.h b/kernel/locking/ww_mutex.h
+index 37f025a096c9d..00db40946328e 100644
+--- a/kernel/locking/ww_mutex.h
++++ b/kernel/locking/ww_mutex.h
+@@ -284,6 +284,14 @@ __ww_mutex_die(struct MUTEX *lock, struct MUTEX_WAITER *waiter,
+ #ifndef WW_RT
+ 		debug_mutex_wake_waiter(lock, waiter);
+ #endif
++		/*
++		 * When waking up the task to die, be sure to clear the
++		 * blocked_on pointer. Otherwise we can see circular
++		 * blocked_on relationships that can't resolve.
++		 */
++		WARN_ON(waiter->task->blocked_on &&
++			waiter->task->blocked_on != lock);
++		waiter->task->blocked_on = NULL;
+ 		wake_q_add(wake_q, waiter->task);
+ 	}
+ 
+@@ -331,9 +339,15 @@ static bool __ww_mutex_wound(struct MUTEX *lock,
+ 		 * it's wounded in __ww_mutex_check_kill() or has a
+ 		 * wakeup pending to re-read the wounded state.
+ 		 */
+-		if (owner != current)
++		if (owner != current) {
++			/*
++			 * When waking up the task to wound, be sure to clear the
++			 * blocked_on pointer. Otherwise we can see circular
++			 * blocked_on relationships that can't resolve.
++			 */
++			owner->blocked_on = NULL;
+ 			wake_q_add(wake_q, owner);
+-
++		}
+ 		return true;
+ 	}
+ 
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
