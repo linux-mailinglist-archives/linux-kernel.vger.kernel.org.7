@@ -1,64 +1,96 @@
-Return-Path: <linux-kernel+bounces-720019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B50AFB5F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:26:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3458AFB596
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6238D4A6318
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:25:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4474B17C3CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3F42DCBFB;
-	Mon,  7 Jul 2025 14:23:06 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA862BE048;
+	Mon,  7 Jul 2025 14:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yxh0fZDU"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7C12DAFAE;
-	Mon,  7 Jul 2025 14:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1039D2BDC27;
+	Mon,  7 Jul 2025 14:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751898186; cv=none; b=YOCinodBD+HezEDbZwp5pTGKphD9j1YTUffCV/7EqOFXJK7shPrvHtvN6u8YP3L1cIYD0dqcEfq6nfFlr5Ejd+iq//Q38ojQTaJWg4qGmW8gghzWdE6jmHOhKLyrLa/Ws/xLPuyEAeekVElbsnx+PdfdM1ev7Y3pJ4tJzmLyLWk=
+	t=1751897417; cv=none; b=TLYpXfrzJjAR7yrYxZIMIJ/XX7j57gogVgSjakUZKghWJXwJGpxxgdRA8EUjN7N6npKE8KrnOrCHWfzl4fahrVZi1EX/Cyusomf5Ens6OuGDfruOpBt3nSvhilYDt1K521LLl9PQ48XRl4unn8tmMV8W3xTxlax0sqLyQm1fJ2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751898186; c=relaxed/simple;
-	bh=pD7hY1OcA4uWjfnB809xyY1iSJS5H+vjuHjwhhn46dY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PnuYIMVxRvtmYoxD6IrR8qzovorcyQ/SPiQlUyedTn6wJu7TGH81Z4MacZKJSV+jvwmuGFnVFWYdJkercNxabGrW0/BOKehusxVddjKS9EbIRUBL8yMlrGi/nXXwy5kAj9oMntkbw8fZpOhVLegDY52N/USYRW2Da3ROGqbowVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bbRKg094BzYQttj;
-	Mon,  7 Jul 2025 22:23:03 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id CF7661A0CF1;
-	Mon,  7 Jul 2025 22:23:01 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP3 (Coremail) with SMTP id _Ch0CgBnxyQ22GtoNazLAw--.46745S15;
-	Mon, 07 Jul 2025 22:23:01 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1751897417; c=relaxed/simple;
+	bh=Ym1eaiaVRia3tu27Gd2iINJBWKHQtzx9zAsS8xqQYcc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GyUtpXBEHDGdG7x7bOD8Nb4VV+b7TIq6GxLkgPJeazu1lQa6Mtlldnl483wDAgE9LuDQxqVcVLVHvHwnQTkiXZ+hU1ODUk6V+ZckjshQGws0aUdHEmfHB/GsARyFhq53N29Rmr61dZRuvD7O5MU25S23NGX7WSYE/ntmeU5YoyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yxh0fZDU; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-60fdd24613fso346687a12.1;
+        Mon, 07 Jul 2025 07:10:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751897414; x=1752502214; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zfoXr039Mj+Ko7iKVd/LqK9c7pPjVthdjnKyL8+H+oc=;
+        b=Yxh0fZDU21aGKLXozCDotpb/micivIORtk8Q7MtX6VmjfB+Q0DAgeDPhYQV8BwtPKq
+         Z+tEfZoEmhDxAjlhItPFuySQQBsghQij2YkdBBVEAIbKBnPK1s5f5WcArOnka39NOBzo
+         Y3ttQ8AOeqTjT9LZz7BhQpml97nlUANMbgbLmnqfjlR1jJBLXjUAEytBg7gzh91U8HPg
+         Gq//8KgFzxx4E5cvc6OqXthHCeEDHDdZK3ZkqTJTU4HnstjhcwrSNEzU/gvic2vid+b4
+         Bs3EN8zNMd2wSF8qbIQ5YmwTfHEPdlkdymUCvsXbug+HK+GsT68F8xW93A7ktgBDxV3y
+         lxyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751897414; x=1752502214;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zfoXr039Mj+Ko7iKVd/LqK9c7pPjVthdjnKyL8+H+oc=;
+        b=WyeO01gf6AMKzMYJaPFIri6qG1RAs4tLjczh4Ro2qZjEqrI8W1mlFYjASDSR+dvzjJ
+         /gXBC3JFVNTFIMl/lO6mzl/YsY5l+WMOTflFRHOTxCuX6x/HySSV08x2KmffbPnb31if
+         XELkqKtdD1A1efwJDi5yeRZvbJItkb8FpHFglEyaz6//UKf+cFJ5zUmFmlQMaPvJ67aR
+         LP6WMso0uESSmYrjLgJ3OAZ8fdwp7Sr1QtovroWn/q53fMQG5abnSmMy0anpP6tutoGa
+         GVzvrVhgbNbdmAs0cW/zGl8xhtr3yGm96uhwNx3jMj7QfBRAzU3Ajgxg599v4yv41rSI
+         L3bw==
+X-Forwarded-Encrypted: i=1; AJvYcCWs86znmGDI0XydcR3YsHp8FRLFAJmeW//CFvES3UXxG+sStp3L/1WpWgIVr9VNAyhByYFXtpuNgAfBKSM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxAQg7R3UratI4BETXuIfVJ20vPm8HiI1C8q5L9mGwq8DGgJ+H
+	0gc6FKhCcLpeijFMBDlxrOxBtW2Ynacv/1aFgaNznCuZuAWCsBzSYfWo
+X-Gm-Gg: ASbGncu+xC/46rZMxNEoONKhVFrRuK8A55m2i0GXcZYIo24n6VQfLwtrDN+/pM66YN9
+	c7Ra4Yq142M4C6BROXVNufPCo67vCe08FJpoPeorUV6G6GDJB8fdtGPTWOPh/IhaQRUfxxqg/iu
+	IDeUEHC0bbGY6geKXcnws0BaWH0tqbq/ShVOjg/ZZH4Qb7kTvuAyZIBElmUpSUTAAsmPLmETNCs
+	6jVGbr6w2lSl2nFH31QJZNdCjRADNaVI7BpFWRgYhjXw7QKVOcg1RZlkPeFvR6XRpncf9bH7GA6
+	kiNXuvfc/P29vmMDtcIhIx4QBBlYUwv8LY34RccDSk03JXI2RSVgP2l6GleR78otfynGlmamFif
+	CbTY3JxzqjGkKPTNsHHqkc/WZwqe5vJ76sBej9F0eSAYXWp7ODHg12aCdSRtc
+X-Google-Smtp-Source: AGHT+IEKnVBWadATSlejdndh1B5AdduKqoWoYdl+TXtUEryj64Oa+knTxIvJk4uK+Ngcdhrr6ocq9Q==
+X-Received: by 2002:a17:907:8688:b0:ae4:1eb:c461 with SMTP id a640c23a62f3a-ae401ebc908mr384594066b.14.1751897413716;
+        Mon, 07 Jul 2025 07:10:13 -0700 (PDT)
+Received: from yousrii-VirtualBox.hotspot.internet-for-guests.com ([82.129.154.18])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f66d1ae3sm710370466b.7.2025.07.07.07.10.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 07:10:13 -0700 (PDT)
+From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+To: hansg@kernel.org,
+	mchehab@kernel.org,
+	sakari.ailus@linux.intel.org,
+	andy@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: linux-media@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ojaswin@linux.ibm.com,
-	sashal@kernel.org,
-	naresh.kamboju@linaro.org,
-	jiangqi903@gmail.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	libaokun1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH v4 11/11] ext4: limit the maximum folio order
-Date: Mon,  7 Jul 2025 22:08:14 +0800
-Message-ID: <20250707140814.542883-12-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20250707140814.542883-1-yi.zhang@huaweicloud.com>
-References: <20250707140814.542883-1-yi.zhang@huaweicloud.com>
+	linux-staging@lists.linux.dev,
+	linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org,
+	dan.carpenter@linaro.org,
+	Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+Subject: [PATCH 1/2] staging: media: atomisp: return early on hmm_bo_device_init() failure
+Date: Mon,  7 Jul 2025 17:09:22 +0300
+Message-Id: <20250707140923.58935-2-abdelrahmanfekry375@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250707140923.58935-1-abdelrahmanfekry375@gmail.com>
+References: <20250707140923.58935-1-abdelrahmanfekry375@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,122 +98,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgBnxyQ22GtoNazLAw--.46745S15
-X-Coremail-Antispam: 1UD129KBjvJXoWxCr4kWw1rtr1xJw4kJF18Xwb_yoW5KFyfpF
-	y7GF1rGr40q3sFgr4xtw47Zr13tayxGrWUA3yfCw43ZFWUX34rtF40kF13Z3WUtrWkXa1S
-	qF42kFyUua13CrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0JUWMKtUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-From: Zhang Yi <yi.zhang@huawei.com>
+hmm_init() would continue execution even if hmm_bo_device_init() failed,
+potentially leading to bad behaviour when calling hmm_alloc().
 
-In environments with a page size of 64KB, the maximum size of a folio
-can reach up to 128MB. Consequently, during the write-back of folios,
-the 'rsv_blocks' will be overestimated to 1,577, which can make
-pressure on the journal space where the journal is small. This can
-easily exceed the limit of a single transaction. Besides, an excessively
-large folio is meaningless and will instead increase the overhead of
-traversing the bhs within the folio. Therefore, limit the maximum order
-of a folio to 2048 filesystem blocks.
+- returns the error immediately if hmm_bo_device_init() fails.
 
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Reported-by: Joseph Qi <jiangqi903@gmail.com>
-Closes: https://lore.kernel.org/linux-ext4/CA+G9fYsyYQ3ZL4xaSg1-Tt5Evto7Zd+hgNWZEa9cQLbahA1+xg@mail.gmail.com/
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Signed-off-by: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
 ---
- fs/ext4/ext4.h   |  2 +-
- fs/ext4/ialloc.c |  3 +--
- fs/ext4/inode.c  | 22 +++++++++++++++++++---
- 3 files changed, 21 insertions(+), 6 deletions(-)
+ drivers/staging/media/atomisp/pci/hmm/hmm.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index f705046ba6c6..9ac0a7d4fa0c 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -3020,7 +3020,7 @@ int ext4_walk_page_buffers(handle_t *handle,
- 				     struct buffer_head *bh));
- int do_journal_get_write_access(handle_t *handle, struct inode *inode,
- 				struct buffer_head *bh);
--bool ext4_should_enable_large_folio(struct inode *inode);
-+void ext4_set_inode_mapping_order(struct inode *inode);
- #define FALL_BACK_TO_NONDELALLOC 1
- #define CONVERT_INLINE_DATA	 2
+diff --git a/drivers/staging/media/atomisp/pci/hmm/hmm.c b/drivers/staging/media/atomisp/pci/hmm/hmm.c
+index f998b57f90c4..c2ee9d2ec0d5 100644
+--- a/drivers/staging/media/atomisp/pci/hmm/hmm.c
++++ b/drivers/staging/media/atomisp/pci/hmm/hmm.c
+@@ -36,6 +36,7 @@ int hmm_init(void)
+ 				 ISP_VM_START, ISP_VM_SIZE);
+ 	if (ret)
+ 		dev_err(atomisp_dev, "hmm_bo_device_init failed.\n");
++		return ret;
  
-diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-index 79aa3df8d019..df4051613b29 100644
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -1335,8 +1335,7 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
- 		}
- 	}
+ 	hmm_initialized = true;
  
--	if (ext4_should_enable_large_folio(inode))
--		mapping_set_large_folios(inode->i_mapping);
-+	ext4_set_inode_mapping_order(inode);
+@@ -48,7 +49,7 @@ int hmm_init(void)
+ 	 */
+ 	dummy_ptr = hmm_alloc(1);
  
- 	ext4_update_inode_fsync_trans(handle, inode, 1);
- 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 4b679cb6c8bd..1bce9ebaedb7 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5181,7 +5181,7 @@ static int check_igot_inode(struct inode *inode, ext4_iget_flags flags,
- 	return -EFSCORRUPTED;
+-	return ret;
++	return 0;
  }
  
--bool ext4_should_enable_large_folio(struct inode *inode)
-+static bool ext4_should_enable_large_folio(struct inode *inode)
- {
- 	struct super_block *sb = inode->i_sb;
- 
-@@ -5198,6 +5198,22 @@ bool ext4_should_enable_large_folio(struct inode *inode)
- 	return true;
- }
- 
-+/*
-+ * Limit the maximum folio order to 2048 blocks to prevent overestimation
-+ * of reserve handle credits during the folio writeback in environments
-+ * where the PAGE_SIZE exceeds 4KB.
-+ */
-+#define EXT4_MAX_PAGECACHE_ORDER(i)		\
-+		min(MAX_PAGECACHE_ORDER, (11 + (i)->i_blkbits - PAGE_SHIFT))
-+void ext4_set_inode_mapping_order(struct inode *inode)
-+{
-+	if (!ext4_should_enable_large_folio(inode))
-+		return;
-+
-+	mapping_set_folio_order_range(inode->i_mapping, 0,
-+				      EXT4_MAX_PAGECACHE_ORDER(inode));
-+}
-+
- struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 			  ext4_iget_flags flags, const char *function,
- 			  unsigned int line)
-@@ -5515,8 +5531,8 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 		ret = -EFSCORRUPTED;
- 		goto bad_inode;
- 	}
--	if (ext4_should_enable_large_folio(inode))
--		mapping_set_large_folios(inode->i_mapping);
-+
-+	ext4_set_inode_mapping_order(inode);
- 
- 	ret = check_igot_inode(inode, flags, function, line);
- 	/*
+ void hmm_cleanup(void)
 -- 
-2.46.1
+2.25.1
 
 
