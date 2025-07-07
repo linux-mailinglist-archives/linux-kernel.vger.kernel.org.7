@@ -1,564 +1,334 @@
-Return-Path: <linux-kernel+bounces-719295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9F73AFAC54
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:59:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A99E6AFAC49
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF37017CBC6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 06:59:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 277283AC350
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 06:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1903427AC44;
-	Mon,  7 Jul 2025 06:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A2E27A926;
+	Mon,  7 Jul 2025 06:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HtSbRZXC"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="OgCt0eZX"
+Received: from mail-10629.protonmail.ch (mail-10629.protonmail.ch [79.135.106.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634A027FD75
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 06:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6283A2797AB;
+	Mon,  7 Jul 2025 06:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751871521; cv=none; b=ZE2r1EgMOVaHn3ZaoaExkqfr+qZXb2aYwS68ywwewJyT6EDpn2Tm5HIULphoqB8ZEIrgiDqPMY2/+vsL71azOdrawPoE2EBs1Ej1yU9/qYjTSNgEbrMpo3Zbt74SnhSiTJO68nEcSQxMEC/uvpIhsYo+Bp+Zop82cMK5oMHSvPo=
+	t=1751871494; cv=none; b=iPugobOxe2p6sPxyuhKD4P93f48U9VGvSkIfLwTkmoV3LE9CooN/CPGRVkO0xfWj7iF4jqn3GNBWh16MVhsXt+syQY8QcyNuIjtwy6dOw9jcxYE4Z89GB+WCSdj6qB2Hlf3N8VtX2kb5DQaBA6K1BkSpmJjR/3rZARYtdByXs/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751871521; c=relaxed/simple;
-	bh=nQ27ss6uuj7zGLk4y5usMHiKjTG+dxY0h6Sv6Y1n7ME=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JWJkQEOMGjagO+eQ89vPM8sDNiDSn2qElunmJjd6uCmaAPB3niPT60lEvvjbck0GuC19daiQ6BOwMhvnm/kdZ6Twdwpyz3IkgD1ewI7vHF3QlFlKscT7QH5UDoazfSvkihKSXQwZIlg1Zj96QACMSKgoNyk+vqSY8Ll4mr4D/TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HtSbRZXC; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1751871516;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3PUlpPDbpi7y0jf3mT7+hL815VHO/SWrZUy4nVvLaZI=;
-	b=HtSbRZXCmuNlaeUheFiSEX2UoNhEbiyRPISplmVcTE0LTHqCaYf8ibUJyccG7+wLlqkWSR
-	wjSSR24WI9lHAyMRdUnkBJxsmADc0G7HYoLZUfzq4dxT6tinxpykLdRV7VzBXg3tItcRyh
-	iPLlv8wmhao7W3AmuMMQNGhcb2lE1no=
-From: Dongsheng Yang <dongsheng.yang@linux.dev>
-To: mpatocka@redhat.com,
-	agk@redhat.com,
-	snitzer@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	dan.j.williams@intel.com,
-	Jonathan.Cameron@Huawei.com
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	dm-devel@lists.linux.dev,
-	Dongsheng Yang <dongsheng.yang@linux.dev>
-Subject: [PATCH v2 02/11] dm-pcache: add backing device management
-Date: Mon,  7 Jul 2025 06:58:00 +0000
-Message-ID: <20250707065809.437589-3-dongsheng.yang@linux.dev>
-In-Reply-To: <20250707065809.437589-1-dongsheng.yang@linux.dev>
-References: <20250707065809.437589-1-dongsheng.yang@linux.dev>
+	s=arc-20240116; t=1751871494; c=relaxed/simple;
+	bh=QuwqS+8MrnD/aJe2B9yZ3QUkShfxUPXSEz4mXhp5jks=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZtKkPPxQOsxzgf3wVCLCotQlVmuwj33R03nUStGkrtlo40q3JIJNTJKQ1+pTx6qabf1fKQ9D8sCDqWRcwf6bkfkJdTK9Up6TguY1dD09mVeT1U4AFLCUHbg+iUwSWqRDqmZx1LKYJX/+sRZh6aiz95gElNnugnYyxpjM7CPc2P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=OgCt0eZX; arc=none smtp.client-ip=79.135.106.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1751871489; x=1752130689;
+	bh=4gyyhHWGHbnB8HN6frabXfV0QvcOoiL0TK5svu7brX8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=OgCt0eZXnJcWB8NLtdnBQtkxl0GB6guz2xJjt88lHiMSRm9mRPVXVpj6t073HekVN
+	 n9F3FZM/4PxT74SVT8Php+pJVVU4bMPKJirSTmBUtcoGIkqL0+sLIDp4dStDmaBAmS
+	 qvF4MYQgO4XZtgy5k889BkDUK5QbtK/o7pw4+gb1GqRabV/0Q96YZFZBtpXTNhaWsN
+	 s8NMN1ouhiwR4KmIHaUAQa1Juq0FcxR0SQ/OaYpSSVKqS0qpaDPHYrY+IxFhHZz2qD
+	 B8A6t/WZ1IUSelw9kanfZuxzypRRmWDRPN65v28ih0OKOhQNzSubSp0QwJDd4j7b6x
+	 F5RCoKbrd9QLw==
+Date: Mon, 07 Jul 2025 06:58:01 +0000
+To: Benno Lossin <lossin@kernel.org>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina+kernel@asahilina.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 1/4] rust: types: Add Ownable/Owned types
+Message-ID: <aGtv9qs682gTyQWX@mango>
+In-Reply-To: <DB1IPFNLFDWV.2V5O73DOB2RV6@kernel.org>
+References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me> <20250618-unique-ref-v11-1-49eadcdc0aa6@pm.me> <DB1IPFNLFDWV.2V5O73DOB2RV6@kernel.org>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: 94d6cf8bb8ca11cb7bf715761831682a66010d46
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-This patch introduces *backing_dev.{c,h}*, a self-contained layer that
-handles all interaction with the *backing block device* where cache
-write-back and cache-miss reads are serviced.  Isolating this logic
-keeps the core dm-pcache code free of low-level bio plumbing.
+On 250702 1303, Benno Lossin wrote:
+> On Wed Jun 18, 2025 at 2:27 PM CEST, Oliver Mangold wrote:
+> > From: Asahi Lina <lina+kernel@asahilina.net>
+> >
+> > By analogy to `AlwaysRefCounted` and `ARef`, an `Ownable` type is a
+> > (typically C FFI) type that *may* be owned by Rust, but need not be. Un=
+like
+> > `AlwaysRefCounted`, this mechanism expects the reference to be unique
+> > within Rust, and does not allow cloning.
+> >
+> > Conceptually, this is similar to a `KBox<T>`, except that it delegates
+> > resource management to the `T` instead of using a generic allocator.
+> >
+> > Link: https://lore.kernel.org/all/20250202-rust-page-v1-1-e3170d7fe55e@=
+asahilina.net/
+> > Signed-off-by: Asahi Lina <lina@asahilina.net>
+> > [ om:
+> >   - split code into separate file and `pub use` it from types.rs
+> >   - make from_raw() and into_raw() public
+> >   - fixes to documentation and commit message
+> > ]
+> > Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
+> > Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+> > ---
+> >  rust/kernel/types.rs         |   7 +++
+> >  rust/kernel/types/ownable.rs | 134 +++++++++++++++++++++++++++++++++++=
+++++++++
+>=20
+> I think we should name this file `owned.rs` instead. It's also what
+> we'll have for `ARef` when that is moved to `sync/`.
+>=20
+> Also, I do wonder does this really belong into the `types` module? I
+> feel like it's becoming our `utils` module and while it does fit, I
+> think we should just make this a top level module. So
+> `rust/kernel/owned.rs`. Thoughts?
 
-* Device setup / teardown
-  - Opens the target with `dm_get_device()`, stores `bdev`, file and
-    size, and initialises a dedicated `bioset`.
-  - Gracefully releases resources via `backing_dev_stop()`.
+I don't have much of an opinion on on that. But maybe refactoring types.rs
+should be an independent task?
 
-* Request object (`struct pcache_backing_dev_req`)
-  - Two request flavours:
-    - REQ-type – cloned from an upper `struct bio` issued to
-      dm-pcache; trimmed and re-targeted to the backing LBA.
-    - KMEM-type – maps an arbitrary kernel memory buffer
-      into a freshly built.
-  - Private completion callback (`end_req`) propagates status to the
-    upper layer and handles resource recycling.
+>=20
+> > +
+> > +use core::{
+> > +    marker::PhantomData,
+> > +    mem::ManuallyDrop,
+> > +    ops::{Deref, DerefMut},
+> > +    ptr::NonNull,
+> > +};
+> > +
+> > +/// Types that may be owned by Rust code or borrowed, but have a lifet=
+ime managed by C code.
+>=20
+> This seems wrong, `var: Owned<T>` should life until `min(var, T)`, so
+> whatever is earlier: until the user drops the `var` or `T`'s lifetime
+> ends.
 
-* Submission & completion path
-  - Lock-protected submit queue + worker (`req_submit_work`) let pcache
-    push many requests asynchronously, at the same time, allow caller
-    to submit backing_dev_req in atomic context.
-  - End-io handler moves finished requests to a completion list processed
-    by `req_complete_work`, ensuring callbacks run in process context.
-  - Direct-submit option for non-atomic context.
+Yes, I guess that sounds sloppy.
 
-* Flush
-  - `backing_dev_flush()` issues a flush to persist backing-device data.
+> How about we just say:
+>=20
+>     Type allocated and destroyed on the C side, but owned by Rust.
 
-Signed-off-by: Dongsheng Yang <dongsheng.yang@linux.dev>
----
- drivers/md/dm-pcache/backing_dev.c | 345 +++++++++++++++++++++++++++++
- drivers/md/dm-pcache/backing_dev.h |  93 ++++++++
- 2 files changed, 438 insertions(+)
- create mode 100644 drivers/md/dm-pcache/backing_dev.c
- create mode 100644 drivers/md/dm-pcache/backing_dev.h
+Would be okay with me.
 
-diff --git a/drivers/md/dm-pcache/backing_dev.c b/drivers/md/dm-pcache/backing_dev.c
-new file mode 100644
-index 000000000000..29b9988f372b
---- /dev/null
-+++ b/drivers/md/dm-pcache/backing_dev.c
-@@ -0,0 +1,345 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+#include <linux/blkdev.h>
-+
-+#include "../dm-core.h"
-+#include "pcache_internal.h"
-+#include "cache_dev.h"
-+#include "backing_dev.h"
-+#include "cache.h"
-+#include "dm_pcache.h"
-+
-+static void backing_dev_exit(struct pcache_backing_dev *backing_dev)
-+{
-+	mempool_exit(&backing_dev->req_pool);
-+	kmem_cache_destroy(backing_dev->backing_req_cache);
-+}
-+
-+static void req_submit_fn(struct work_struct *work);
-+static void req_complete_fn(struct work_struct *work);
-+static int backing_dev_init(struct dm_pcache *pcache)
-+{
-+	struct pcache_backing_dev *backing_dev = &pcache->backing_dev;
-+	int ret;
-+
-+	backing_dev->backing_req_cache = KMEM_CACHE(pcache_backing_dev_req, 0);
-+	if (!backing_dev->backing_req_cache) {
-+		ret = -ENOMEM;
-+		goto err;
-+	}
-+
-+	ret = mempool_init_slab_pool(&backing_dev->req_pool, 128, backing_dev->backing_req_cache);
-+	if (ret)
-+		goto cache_destroy;
-+
-+	INIT_LIST_HEAD(&backing_dev->submit_list);
-+	INIT_LIST_HEAD(&backing_dev->complete_list);
-+	spin_lock_init(&backing_dev->submit_lock);
-+	spin_lock_init(&backing_dev->complete_lock);
-+	INIT_WORK(&backing_dev->req_submit_work, req_submit_fn);
-+	INIT_WORK(&backing_dev->req_complete_work, req_complete_fn);
-+
-+	return 0;
-+cache_destroy:
-+	kmem_cache_destroy(backing_dev->backing_req_cache);
-+err:
-+	return ret;
-+}
-+
-+int backing_dev_start(struct dm_pcache *pcache)
-+{
-+	struct pcache_backing_dev *backing_dev = &pcache->backing_dev;
-+	int ret;
-+
-+	ret = backing_dev_init(pcache);
-+	if (ret)
-+		return ret;
-+
-+	backing_dev->dev_size = bdev_nr_sectors(backing_dev->dm_dev->bdev);
-+
-+	return 0;
-+}
-+
-+void backing_dev_stop(struct dm_pcache *pcache)
-+{
-+	struct pcache_backing_dev *backing_dev = &pcache->backing_dev;
-+
-+	flush_work(&backing_dev->req_submit_work);
-+	flush_work(&backing_dev->req_complete_work);
-+
-+	/* There should be no inflight backing_dev_request */
-+	BUG_ON(!list_empty(&backing_dev->submit_list));
-+	BUG_ON(!list_empty(&backing_dev->complete_list));
-+
-+	backing_dev_exit(backing_dev);
-+}
-+
-+/* pcache_backing_dev_req functions */
-+void backing_dev_req_end(struct pcache_backing_dev_req *backing_req)
-+{
-+	struct pcache_backing_dev *backing_dev = backing_req->backing_dev;
-+
-+	if (backing_req->end_req)
-+		backing_req->end_req(backing_req, backing_req->ret);
-+
-+	switch (backing_req->type) {
-+	case BACKING_DEV_REQ_TYPE_REQ:
-+		if (backing_req->req.upper_req)
-+			pcache_req_put(backing_req->req.upper_req, backing_req->ret);
-+		break;
-+	case BACKING_DEV_REQ_TYPE_KMEM:
-+		if (backing_req->kmem.bvecs != backing_req->kmem.inline_bvecs)
-+			kfree(backing_req->kmem.bvecs);
-+		break;
-+	default:
-+		BUG();
-+	}
-+
-+	mempool_free(backing_req, &backing_dev->req_pool);
-+}
-+
-+static void req_complete_fn(struct work_struct *work)
-+{
-+	struct pcache_backing_dev *backing_dev = container_of(work, struct pcache_backing_dev, req_complete_work);
-+	struct pcache_backing_dev_req *backing_req;
-+	LIST_HEAD(tmp_list);
-+
-+	spin_lock_irq(&backing_dev->complete_lock);
-+	list_splice_init(&backing_dev->complete_list, &tmp_list);
-+	spin_unlock_irq(&backing_dev->complete_lock);
-+
-+	while (!list_empty(&tmp_list)) {
-+		backing_req = list_first_entry(&tmp_list,
-+					    struct pcache_backing_dev_req, node);
-+		list_del_init(&backing_req->node);
-+		backing_dev_req_end(backing_req);
-+	}
-+}
-+
-+static void backing_dev_bio_end(struct bio *bio)
-+{
-+	struct pcache_backing_dev_req *backing_req = bio->bi_private;
-+	struct pcache_backing_dev *backing_dev = backing_req->backing_dev;
-+	unsigned long flags;
-+
-+	backing_req->ret = bio->bi_status;
-+
-+	spin_lock_irqsave(&backing_dev->complete_lock, flags);
-+	list_move_tail(&backing_req->node, &backing_dev->complete_list);
-+	queue_work(BACKING_DEV_TO_PCACHE(backing_dev)->task_wq, &backing_dev->req_complete_work);
-+	spin_unlock_irqrestore(&backing_dev->complete_lock, flags);
-+}
-+
-+static void req_submit_fn(struct work_struct *work)
-+{
-+	struct pcache_backing_dev *backing_dev = container_of(work, struct pcache_backing_dev, req_submit_work);
-+	struct pcache_backing_dev_req *backing_req;
-+	LIST_HEAD(tmp_list);
-+
-+	spin_lock(&backing_dev->submit_lock);
-+	list_splice_init(&backing_dev->submit_list, &tmp_list);
-+	spin_unlock(&backing_dev->submit_lock);
-+
-+	while (!list_empty(&tmp_list)) {
-+		backing_req = list_first_entry(&tmp_list,
-+					    struct pcache_backing_dev_req, node);
-+		list_del_init(&backing_req->node);
-+		submit_bio_noacct(&backing_req->bio);
-+	}
-+}
-+
-+void backing_dev_req_submit(struct pcache_backing_dev_req *backing_req, bool direct)
-+{
-+	struct pcache_backing_dev *backing_dev = backing_req->backing_dev;
-+
-+	if (direct) {
-+		submit_bio_noacct(&backing_req->bio);
-+		return;
-+	}
-+
-+	spin_lock(&backing_dev->submit_lock);
-+	list_add_tail(&backing_req->node, &backing_dev->submit_list);
-+	queue_work(BACKING_DEV_TO_PCACHE(backing_dev)->task_wq, &backing_dev->req_submit_work);
-+	spin_unlock(&backing_dev->submit_lock);
-+}
-+
-+static void bio_map(struct bio *bio, void *base, size_t size)
-+{
-+	struct page *page;
-+	unsigned int offset;
-+	unsigned int len;
-+
-+	if (!is_vmalloc_addr(base)) {
-+		page = virt_to_page(base);
-+		offset = offset_in_page(base);
-+
-+		BUG_ON(!bio_add_page(bio, page, size, offset));
-+		return;
-+	}
-+
-+	flush_kernel_vmap_range(base, size);
-+	while (size) {
-+		page = vmalloc_to_page(base);
-+		offset = offset_in_page(base);
-+		len = min_t(size_t, PAGE_SIZE - offset, size);
-+
-+		BUG_ON(!bio_add_page(bio, page, len, offset));
-+		size -= len;
-+		base += len;
-+	}
-+}
-+
-+static struct pcache_backing_dev_req *req_type_req_alloc(struct pcache_backing_dev *backing_dev,
-+							struct pcache_backing_dev_req_opts *opts)
-+{
-+	struct pcache_request *pcache_req = opts->req.upper_req;
-+	struct pcache_backing_dev_req *backing_req;
-+	struct bio *orig = pcache_req->bio;
-+	int ret;
-+
-+	backing_req = mempool_alloc(&backing_dev->req_pool, GFP_NOIO);
-+	if (!backing_req)
-+		return NULL;
-+
-+	memset(backing_req, 0, sizeof(struct pcache_backing_dev_req));
-+
-+	ret = bio_init_clone(backing_dev->dm_dev->bdev, &backing_req->bio, orig, GFP_NOIO);
-+	if (ret)
-+		goto err_free_req;
-+
-+	backing_req->type = BACKING_DEV_REQ_TYPE_REQ;
-+	backing_req->backing_dev = backing_dev;
-+
-+	return backing_req;
-+
-+err_free_req:
-+	mempool_free(backing_req, &backing_dev->req_pool);
-+	return NULL;
-+}
-+
-+static u32 get_n_vecs(void *data, u32 len)
-+{
-+	if (!is_vmalloc_addr(data))
-+		return 1;
-+
-+	return DIV_ROUND_UP(len, PAGE_SIZE);
-+}
-+
-+static struct pcache_backing_dev_req *kmem_type_req_alloc(struct pcache_backing_dev *backing_dev,
-+						struct pcache_backing_dev_req_opts *opts)
-+{
-+	struct pcache_backing_dev_req *backing_req;
-+	u32 n_vecs = get_n_vecs(opts->kmem.data, opts->kmem.len);
-+
-+	backing_req = mempool_alloc(&backing_dev->req_pool, GFP_NOIO);
-+	if (!backing_req)
-+		return NULL;
-+
-+	memset(backing_req, 0, sizeof(struct pcache_backing_dev_req));
-+
-+	if (n_vecs > BACKING_DEV_REQ_INLINE_BVECS) {
-+		backing_req->kmem.bvecs = kmalloc_array(n_vecs, sizeof(struct bio_vec), GFP_NOIO);
-+		if (!backing_req->kmem.bvecs)
-+			goto err_free_req;
-+	} else {
-+		backing_req->kmem.bvecs = backing_req->kmem.inline_bvecs;
-+	}
-+
-+	backing_req->kmem.n_vecs = n_vecs;
-+	backing_req->type = BACKING_DEV_REQ_TYPE_KMEM;
-+	backing_req->backing_dev = backing_dev;
-+
-+	return backing_req;
-+
-+err_free_req:
-+	mempool_free(backing_req, &backing_dev->req_pool);
-+	return NULL;
-+}
-+
-+struct pcache_backing_dev_req *backing_dev_req_alloc(struct pcache_backing_dev *backing_dev,
-+						struct pcache_backing_dev_req_opts *opts)
-+{
-+	if (opts->type == BACKING_DEV_REQ_TYPE_REQ)
-+		return req_type_req_alloc(backing_dev, opts);
-+
-+	if (opts->type == BACKING_DEV_REQ_TYPE_KMEM)
-+		return kmem_type_req_alloc(backing_dev, opts);
-+
-+	return NULL;
-+}
-+
-+static void req_type_req_init(struct pcache_backing_dev_req *backing_req,
-+			struct pcache_backing_dev_req_opts *opts)
-+{
-+	struct pcache_request *pcache_req = opts->req.upper_req;
-+	struct bio *clone;
-+	u32 off = opts->req.req_off;
-+	u32 len = opts->req.len;
-+
-+	clone = &backing_req->bio;
-+	BUG_ON(off & SECTOR_MASK);
-+	BUG_ON(len & SECTOR_MASK);
-+	bio_trim(clone, off >> SECTOR_SHIFT, len >> SECTOR_SHIFT);
-+
-+	clone->bi_iter.bi_sector = (pcache_req->off + off) >> SECTOR_SHIFT;
-+	clone->bi_private = backing_req;
-+	clone->bi_end_io = backing_dev_bio_end;
-+
-+	INIT_LIST_HEAD(&backing_req->node);
-+	backing_req->end_req     = opts->end_fn;
-+
-+	pcache_req_get(pcache_req);
-+	backing_req->req.upper_req	= pcache_req;
-+	backing_req->req.bio_off	= off;
-+}
-+
-+static void kmem_type_req_init(struct pcache_backing_dev_req *backing_req,
-+			struct pcache_backing_dev_req_opts *opts)
-+{
-+	struct pcache_backing_dev *backing_dev = backing_req->backing_dev;
-+	struct bio *backing_bio;
-+
-+	bio_init(&backing_req->bio, backing_dev->dm_dev->bdev, backing_req->kmem.bvecs,
-+			backing_req->kmem.n_vecs, opts->kmem.opf);
-+
-+	backing_bio = &backing_req->bio;
-+	bio_map(backing_bio, opts->kmem.data, opts->kmem.len);
-+
-+	backing_bio->bi_iter.bi_sector = (opts->kmem.backing_off) >> SECTOR_SHIFT;
-+	backing_bio->bi_private = backing_req;
-+	backing_bio->bi_end_io = backing_dev_bio_end;
-+
-+	INIT_LIST_HEAD(&backing_req->node);
-+	backing_req->end_req	= opts->end_fn;
-+	backing_req->priv_data	= opts->priv_data;
-+}
-+
-+void backing_dev_req_init(struct pcache_backing_dev_req *backing_req,
-+			struct pcache_backing_dev_req_opts *opts)
-+{
-+	if (opts->type == BACKING_DEV_REQ_TYPE_REQ)
-+		return req_type_req_init(backing_req, opts);
-+
-+	if (opts->type == BACKING_DEV_REQ_TYPE_KMEM)
-+		return kmem_type_req_init(backing_req, opts);
-+
-+	BUG();
-+}
-+
-+struct pcache_backing_dev_req *backing_dev_req_create(struct pcache_backing_dev *backing_dev,
-+						struct pcache_backing_dev_req_opts *opts)
-+{
-+	struct pcache_backing_dev_req *backing_req;
-+
-+	backing_req = backing_dev_req_alloc(backing_dev, opts);
-+	if (!backing_req)
-+		return NULL;
-+
-+	backing_dev_req_init(backing_req, opts);
-+
-+	return backing_req;
-+}
-+
-+void backing_dev_flush(struct pcache_backing_dev *backing_dev)
-+{
-+	blkdev_issue_flush(backing_dev->dm_dev->bdev);
-+}
-diff --git a/drivers/md/dm-pcache/backing_dev.h b/drivers/md/dm-pcache/backing_dev.h
-new file mode 100644
-index 000000000000..2115ebbff49e
---- /dev/null
-+++ b/drivers/md/dm-pcache/backing_dev.h
-@@ -0,0 +1,93 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+#ifndef _BACKING_DEV_H
-+#define _BACKING_DEV_H
-+
-+#include <linux/device-mapper.h>
-+
-+#include "pcache_internal.h"
-+
-+struct pcache_backing_dev_req;
-+typedef void (*backing_req_end_fn_t)(struct pcache_backing_dev_req *backing_req, int ret);
-+
-+#define BACKING_DEV_REQ_TYPE_REQ		1
-+#define BACKING_DEV_REQ_TYPE_KMEM		2
-+
-+#define BACKING_DEV_REQ_INLINE_BVECS		4
-+
-+struct pcache_request;
-+struct pcache_backing_dev_req {
-+	u8				type;
-+	struct bio			bio;
-+	struct pcache_backing_dev	*backing_dev;
-+
-+	void				*priv_data;
-+	backing_req_end_fn_t		end_req;
-+
-+	struct list_head		node;
-+	int				ret;
-+
-+	union {
-+		struct {
-+			struct pcache_request		*upper_req;
-+			u32				bio_off;
-+		} req;
-+		struct {
-+			struct bio_vec	inline_bvecs[BACKING_DEV_REQ_INLINE_BVECS];
-+			struct bio_vec	*bvecs;
-+			u32		n_vecs;
-+		} kmem;
-+	};
-+};
-+
-+struct pcache_backing_dev {
-+	struct pcache_cache		*cache;
-+
-+	struct dm_dev			*dm_dev;
-+	struct kmem_cache		*backing_req_cache;
-+	mempool_t			req_pool;
-+
-+	struct list_head		submit_list;
-+	spinlock_t			submit_lock;
-+	struct work_struct		req_submit_work;
-+
-+	struct list_head		complete_list;
-+	spinlock_t			complete_lock;
-+	struct work_struct		req_complete_work;
-+
-+	u64				dev_size;
-+};
-+
-+struct dm_pcache;
-+int backing_dev_start(struct dm_pcache *pcache);
-+void backing_dev_stop(struct dm_pcache *pcache);
-+
-+struct pcache_backing_dev_req_opts {
-+	u32 type;
-+	union {
-+		struct {
-+			struct pcache_request *upper_req;
-+			u32 req_off;
-+			u32 len;
-+		} req;
-+		struct {
-+			void *data;
-+			blk_opf_t opf;
-+			u32 len;
-+			u64 backing_off;
-+		} kmem;
-+	};
-+
-+	backing_req_end_fn_t	end_fn;
-+	void			*priv_data;
-+};
-+
-+void backing_dev_req_submit(struct pcache_backing_dev_req *backing_req, bool direct);
-+void backing_dev_req_end(struct pcache_backing_dev_req *backing_req);
-+struct pcache_backing_dev_req *backing_dev_req_create(struct pcache_backing_dev *backing_dev,
-+						struct pcache_backing_dev_req_opts *opts);
-+struct pcache_backing_dev_req *backing_dev_req_alloc(struct pcache_backing_dev *backing_dev,
-+						struct pcache_backing_dev_req_opts *opts);
-+void backing_dev_req_init(struct pcache_backing_dev_req *backing_req,
-+			struct pcache_backing_dev_req_opts *opts);
-+void backing_dev_flush(struct pcache_backing_dev *backing_dev);
-+#endif /* _BACKING_DEV_H */
--- 
-2.43.0
+> > +///
+> > +/// It allows such types to define their own custom destructor functio=
+n to be called when a
+> > +/// Rust-owned reference is dropped.
+>=20
+> We shouldn't call this a reference. Also we should start the first
+> paragraph with how this trait enables the usage of `Owned<Self>`.
+>=20
+> > +///
+> > +/// This is usually implemented by wrappers to existing structures on =
+the C side of the code.
+> > +///
+> > +/// Note: Implementing this trait allows types to be wrapped in an [`O=
+wned<Self>`]. This does not
+> > +/// provide reference counting but represents a unique, owned referenc=
+e. If reference counting is
+> > +/// required [`AlwaysRefCounted`](crate::types::AlwaysRefCounted) shou=
+ld be implemented which allows
+> > +/// types to be wrapped in an [`ARef<Self>`](crate::types::ARef).
+>=20
+> I think this is more confusing than helpful. We should mention
+> `AlwaysRefCounted`, but the phrasing needs to be changed. Something
+> along the lines: if you need reference counting, implement
+> `AlwaysRefCounted` instead.
+
+I guess you have a point. The shortened version is probably good enough.
+
+> > +///
+> > +/// # Safety
+> > +///
+> > +/// Implementers must ensure that:
+> > +/// - The [`release()`](Ownable::release) method leaves the underlying=
+ object in a state which the
+> > +///   kernel expects after ownership has been relinquished (i.e. no da=
+ngling references in the
+> > +///   kernel is case it frees the object, etc.).
+>=20
+> This invariant sounds weird to me. It's vague "a state which the kernel
+> expects" and difficult to use (what needs this invariant?).
+>=20
+> > +pub unsafe trait Ownable {
+> > +    /// Releases the object (frees it or returns it to foreign ownersh=
+ip).
+>=20
+> Let's remove the part in parenthesis.
+>=20
+> > +    ///
+> > +    /// # Safety
+> > +    ///
+> > +    /// Callers must ensure that:
+> > +    /// - `this` points to a valid `Self`.
+> > +    /// - The object is no longer referenced after this call.
+>=20
+> s/The object/`*this`/
+>=20
+> s/referenced/used/
+>=20
+> > +    unsafe fn release(this: NonNull<Self>);
+> > +}
+> > +
+> > +/// Type where [`Owned<Self>`] derefs to `&mut Self`.
+>=20
+> How about:
+>=20
+>     Type allowing mutable access via [`Owned<Self>`].
+>=20
+> > +///
+> > +/// # Safety
+> > +///
+> > +/// Implementers must ensure that access to a `&mut T` is safe, implyi=
+ng that:
+>=20
+> s/T/Self/
+
+Okay with all of the above.
+
+> > +/// - It is safe to call [`core::mem::swap`] on the [`Ownable`]. This =
+excludes pinned types
+> > +///   (i.e. most kernel types).
+>=20
+> Can't we implicitly pin `Owned`?
+
+I have been thinking about that. But this would mean that the blanket
+implementation for `Deref` would conflict with the one for `OwnableMut`.
+
+> > +/// - The kernel will never access the underlying object (excluding in=
+ternal mutability that follows
+> > +///   the usual rules) while Rust owns it.
+> > +pub unsafe trait OwnableMut: Ownable {}
+> > +
+> > +/// An owned reference to an ownable kernel object.
+>=20
+> How about
+>=20
+>     An owned `T`.
+
+    A wrapper around `T`.
+
+maybe?
+
+> > +///
+> > +/// The object is automatically freed or released when an instance of =
+[`Owned`] is
+> > +/// dropped.
+>=20
+> I don't think we need to say this, I always assume this for all Rust
+> types except they document otherwise (eg `ManuallyDrop`, `MaybeUninit`
+> and thus also `Opaque`.)
+
+Hmm, it is an important feature of the wrapper that it turns the `*Ownable`
+into an object that is automatically dropped. So shouldn't that be
+mentioned here?
+
+> How about we provide some examples here?
+>=20
+> > +///
+> > +/// # Invariants
+> > +///
+> > +/// The pointer stored in `ptr` can be considered owned by the [`Owned=
+`] instance.
+>=20
+> What exactly is "owned" supposed to mean? It depends on the concrete `T`
+> and that isn't well-defined (since it's a generic)...
+
+"owned" means that access to the `T` is exclusive through the `Owned<T>`,
+so normal Rust semantics can be applied.
+
+> Maybe we should give `Ownable` the task to document the exact ownership
+> semantics of `T`?
+>=20
+> > +pub struct Owned<T: Ownable> {
+> > +    ptr: NonNull<T>,
+> > +    _p: PhantomData<T>,
+> > +}
+> > +
+> > +// SAFETY: It is safe to send `Owned<T>` to another thread when the un=
+derlying `T` is `Send` because
+> > +// it effectively means sending a `&mut T` (which is safe because `T` =
+is `Send`).
+>=20
+> How does this amount to sending a `&mut T`?
+
+Good point. That documentation hasn't been updated since `&mut T` access
+has been split out into `OwnableMut`. Not sure how to phrase it now.
+
+> I guess this also needs to be guaranteed by `Owned::from_raw`... ah the
+> list grows...
+>=20
+> I'll try to come up with something to simplify this design a bit wrt the
+> safety docs.
+>=20
+> > +unsafe impl<T: Ownable + Send> Send for Owned<T> {}
+> > +
+> > +// SAFETY: It is safe to send `&Owned<T>` to another thread when the u=
+nderlying `T` is `Sync`
+> > +// because it effectively means sharing `&T` (which is safe because `T=
+` is `Sync`).
+>=20
+> Same here.
+>=20
+> > +unsafe impl<T: Ownable + Sync> Sync for Owned<T> {}
+> > +
+> > +impl<T: Ownable> Owned<T> {
+> > +    /// Creates a new instance of [`Owned`].
+> > +    ///
+> > +    /// It takes over ownership of the underlying object.
+> > +    ///
+> > +    /// # Safety
+> > +    ///
+> > +    /// Callers must ensure that:
+> > +    /// - Ownership of the underlying object can be transferred to the=
+ `Owned<T>` (i.e. operations
+> > +    ///   which require ownership will be safe).
+> > +    /// - No other Rust references to the underlying object exist. Thi=
+s implies that the underlying
+> > +    ///   object is not accessed through `ptr` anymore after the funct=
+ion call (at least until the
+> > +    ///   the `Owned<T>` is dropped).
+> > +    /// - The C code follows the usual shared reference requirements. =
+That is, the kernel will never
+> > +    ///   mutate or free the underlying object (excluding interior mut=
+ability that follows the usual
+> > +    ///   rules) while Rust owns it.
+> > +    /// - In case `T` implements [`OwnableMut`] the previous requireme=
+nt is extended from shared to
+> > +    ///   mutable reference requirements. That is, the kernel will not=
+ mutate or free the underlying
+> > +    ///   object and is okay with it being modified by Rust code.
+> > +    pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
+> > +        // INVARIANT: The safety requirements guarantee that the new i=
+nstance now owns the
+> > +        // reference.
+>=20
+> This doesn't follow for me. Well the first issue is that the safety
+> invariant of `Self` isn't well-defined, so let's revisit this when that
+> is fixed.
+
+I guess it follows from:
+
+> > +    /// It takes over ownership of the underlying object.
+
+Okay, sure, it not in the safety requirement.
+
+Best,
+
+Oliver
 
 
