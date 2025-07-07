@@ -1,204 +1,174 @@
-Return-Path: <linux-kernel+bounces-720050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB026AFB644
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:42:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4057FAFB646
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23720189A4B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:42:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AED723BB969
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFE42D97AF;
-	Mon,  7 Jul 2025 14:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gm7GOlYa"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975F32D8DA0
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 14:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40582DC355;
+	Mon,  7 Jul 2025 14:42:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0551F2D8DA0;
+	Mon,  7 Jul 2025 14:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751899341; cv=none; b=ViGxoVN9/LrQg5dRxN/I8m7LvMAo3ok7yl9TO4rvx0DHRubYNdsgfKweLELqOwRXH4w2cRD2loI3pR2dMZtuEjv2u0KLFQUtD0aifIbvBxpL+y/AFKYl3Q3ziqFM+xqXKEoxmwOibGyp5E4QgsiQCC+hblV3y3cGYw3EZgMybro=
+	t=1751899361; cv=none; b=MNiU4O419wbJiF7fiA0OH1YZXht7x7cVaxAuXP4mw84i2GobiwFn1YF4+VFD/oEJzJcqCZtX9yZJmETx2Dzn13WIGFmI4H2akFfA2AR55G/F1VCmXUFRlBzvtu/L7GY0xK9mJz8RP4jvB/0xAJm76WPY2ZqMRbVlLOCIfuLknyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751899341; c=relaxed/simple;
-	bh=WdArDEtLe89Q6g7L4LligwAlwWkbQ5MDMZfw7t5oEXo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ahiTJvxHINocLsj3djxOrhUobeiJCBl+Rx9kmg0oPjuP8JmGR7VkmB5J7iykYais1bmPh2f8T1g+D4cQvDwgXHBrT2Tbi+pFgxCpWHJmHnaTNxk8SQ4pUJGrNwYtvXDCxYsR5CF5vWOl8s12QxmL7I8zqokIVvSPOcW7w4w6pFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gm7GOlYa; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a57c8e247cso2417541f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 07:42:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751899336; x=1752504136; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PG8mV4pDhYymeozzS82ZZcM9xZV+pEOeW3uE1qROtU0=;
-        b=gm7GOlYapgAzIhHWkI9PQZFa/3JYUN7jYeN7v9dgRIDXhT9JPSIZQKhYHHOYEJ/I9F
-         xVMxX5vhx1Zixu95kLwJcnYkUvtM9vKTBTa24j73pR0VdQxVSy0pg2+Jhi+gKBMQD3Sg
-         iyT7duN/l0rL1wKkdeD+u8vc0d+YpA7kUeNfAzHCIGKhzG1deGPKYANhbRdWsWZYhJjq
-         zN/c4ZJGaDvjQGKDxJuHe4Kg89KydPzCUYTZiDARUGVPYFmVRYqV7Yu3CbRNBpmS227l
-         akRAwE6vdKJX1sfIhmHb9Ts+o3GKGpJIwhwCyll3554vDzJEp9OO2b+891+7mklueidY
-         Ua0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751899336; x=1752504136;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PG8mV4pDhYymeozzS82ZZcM9xZV+pEOeW3uE1qROtU0=;
-        b=LsCiCaBwjzmRjcV4UqaVH7b/hI5eZCcNaWnTTaNc07JjoGwnGhHOPX5JKNZmBMi5O2
-         7WmipSilIgbQqhjpo61hkGgDXKR5965cZ+qP087yd0sNIcDelyLb9KsqpvQZfttdrXJf
-         yMFUDKbeGdJLVHPTzgA0CtzUluQxybywpv41u4aKwTBRRzXyOXMou6Pem+By7gHtwvrP
-         lXeVDcBcX/67icFjWNchl3Ao/JWVr31E28jT0nK/ZQLF/jNg/rucmuk5rPSWSmWiyzBZ
-         67qIpEq6WQ202zoHPPoe7iKzS99xA/ZZ9HnY6ZIzere++bpLm+hPmCJ+SMlExJKwyxqr
-         cnYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbaGoDFe3ajsJvVHbTXbamcXxIH+Z35GKsY7lcxyj1+67PfKLtQMbcPLVfPp4L2q51OyzsAGASjM2VuZw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxtez4gQd7RNaffaETTqfyQncRE+SxyZEdwSF92/a5bE1QJWBJl
-	6SyPp9Sq1JkNbjWppJjUuZQYDKYw+bjyllleBiWOVxez4Vas1wCcTUem9NdLyqXEt2t8Mb0h/4c
-	V7T6A
-X-Gm-Gg: ASbGncsgF6np/WYMLokwUXLD00QL+ZpTRh4ldKntUL2BqgdLRNEB4WCvAQpkhEC+FTF
-	u+Po+yq1APJJq5nzbu842A2Bk9cReTj2brjHp2OEQ5PZzHnhekEkb4tzBqARqqBUxU38G0wcYYF
-	w2SlMLc230/iEBV6mAj8uIRnHx1yDCfH0i0ciFv2PqMqo9sMySHGZxmptiEed1fz5b5jUCAFM6p
-	y51GUFn8SzsBJztXOsGK6Ny9SwezhWvfnTh+DVtJM/Sxv9Uk5GXgAlunGaeIWBjC4u1ZNNBDqSV
-	rDc9IfoZuMmTzVdzGVNJn7Dp6XSqCZVq1OBe3uTke+fDnoyqoBWrJqLJDSK/j/H6BEYvTzyfvTY
-	C5CW8DKGtZU1TzenvQJozgoliDWQGyl8=
-X-Google-Smtp-Source: AGHT+IGyYoZy50qjmAjoyeY/+RRpyL9VdrWvFAUJlbX9qLSoaWQqvRrm9Uhn/ZI8f2iL8dQXzws9/w==
-X-Received: by 2002:a5d:6f0a:0:b0:3a4:ef70:e0e1 with SMTP id ffacd0b85a97d-3b49703dd84mr10413739f8f.55.1751899335190;
-        Mon, 07 Jul 2025 07:42:15 -0700 (PDT)
-Received: from [192.168.1.159] (p4fc3d4fa.dip0.t-ipconnect.de. [79.195.212.250])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b471b968ebsm10252375f8f.47.2025.07.07.07.42.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jul 2025 07:42:14 -0700 (PDT)
-Message-ID: <fe454257-aa21-4304-868f-aefbea9963c4@linaro.org>
-Date: Mon, 7 Jul 2025 16:42:13 +0200
+	s=arc-20240116; t=1751899361; c=relaxed/simple;
+	bh=aGSW7OBBLIvjnmpwU5rvqybWN2QOUzpmJie8klPw+rs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L7xYJsT9gv0FpnJpJhPkhqdCquwWsdOgpoTQaDlydNZ6aKBCHo5q9mhC/1Q+xeW8F0e3dS1EoG3dLM1wSJaYWBKjAn13YSfMmt5qbD9Vp8/u0/6KrGS9Zm12GCTEV27VuUuOoKsu5D2BYsChgLPaPa2vo4EpFVpsobQhHGhhm/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 90A95168F;
+	Mon,  7 Jul 2025 07:42:22 -0700 (PDT)
+Received: from pluto.guest.local (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A7083F694;
+	Mon,  7 Jul 2025 07:42:33 -0700 (PDT)
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org
+Cc: sudeep.holla@arm.com,
+	peng.fan@oss.nxp.com,
+	Cristian Marussi <cristian.marussi@arm.com>
+Subject: [PATCH] firmware: arm_scmi: Optimize notifiers registration
+Date: Mon,  7 Jul 2025 15:42:20 +0100
+Message-ID: <20250707144220.485365-1-cristian.marussi@arm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] pmdomain: qcom: rpmhpd: Add Milos power domains
-To: Luca Weiss <luca.weiss@fairphone.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20250707-sm7635-rpmhpd-v2-0-b4aa37acb065@fairphone.com>
- <20250707-sm7635-rpmhpd-v2-2-b4aa37acb065@fairphone.com>
- <06760125-4800-4068-8936-dddf27c28d17@linaro.org>
- <DB5VDDKCAQQG.LDCMHXAZN17S@fairphone.com>
-Content-Language: en-US, en-GB
-From: Casey Connolly <casey.connolly@linaro.org>
-In-Reply-To: <DB5VDDKCAQQG.LDCMHXAZN17S@fairphone.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Some platforms could be configured not to support notification events from
+specific sources and such a case is already handled properly by avoiding
+even to attempt to send a notification enable request since it would be
+doomed to fail anyway.
 
+In an extreme scenario, though, a platform could support not even one
+single source on a specific event: in such a case would be meaningless to
+even allow to register a notifier and we can bail-out immediately, saving
+a lot of needless computation.
 
-On 7/7/25 15:49, Luca Weiss wrote:
-> Hi Casey,
-> 
-> On Mon Jul 7, 2025 at 3:23 PM CEST, Casey Connolly wrote:
->>
->>
->> On 7/7/25 12:18, Luca Weiss wrote:
->>> Add the power domains exposed by RPMH in the Qualcomm Milos platform.
->>
->> \o/ codenames!
->>
->>>
->>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->>> ---
->>>    drivers/pmdomain/qcom/rpmhpd.c | 19 +++++++++++++++++++
->>>    1 file changed, 19 insertions(+)
->>>
->>> diff --git a/drivers/pmdomain/qcom/rpmhpd.c b/drivers/pmdomain/qcom/rpmhpd.c
->>> index 078323b85b5648e33dd89e08cf31bdc5ab76d553..e09552a469264f28952fc46c3ab8c125e87310da 100644
->>> --- a/drivers/pmdomain/qcom/rpmhpd.c
->>> +++ b/drivers/pmdomain/qcom/rpmhpd.c
->>> @@ -217,6 +217,24 @@ static struct rpmhpd gmxc = {
->>>    	.res_name = "gmxc.lvl",
->>>    };
->>>    
->>> +/* Milos RPMH powerdomains */
->>
->> I can't find any public docs telling us which SoC is Milos (the only
->> relevant result is Bjorn's email asking you to use that name instead of
->> SM7635). So for the sake of future generations could you reference both
->> names in a comment somewhere? Or even the commit message would be enough
->> tbh.
-> 
-> I don't know the full list of model numbers for Milos. I assume it's
-> SM7635, SM6650, SM6650P, QCM6690 and QCS6690 based on the info I could
-> fine, but such info is hard to get. So this is not a definite list that
-> all those are actually Milos, or that this is the full list of Milos
-> chipsets.
+Flag such condition, when detected at protocol initialization time, and
+reject upfront any attempt to register a notifier for such completely
+unsupported events with -ENOTSUPP.
 
-oof, I see... that complicates things. It sure would be good if this 
-list was documented in the kernel though imo.
+Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+---
+ drivers/firmware/arm_scmi/notify.c | 39 +++++++++++++++++++++++-------
+ 1 file changed, 30 insertions(+), 9 deletions(-)
 
-> 
->> Off-topic here, but maybe it would be a good idea to add some Qualcomm
->> platform docs to the kernel with a table of all the publicly known names
->> for each SoC? This would also be really helpful even ignoring codenames
->> just to know that SM8550 is Snapdragon 8 Gen 2 for example.
-> 
-> So far my source for this has been the postmarketOS wiki, and this
-> Google Doc, but the latter hasn't been updated for new chips since a
-> year or so, and is also probably not very complete:
-> https://docs.google.com/spreadsheets/d/1WrKHLj_oSoiykhSc6xqXAkT3nlD2hq-fzUPSGiq3Kbc/edit?gid=1270863184#gid=1270863184
-> 
-> And I've got some notes locally for a couple that I regularly need.
-> 
-> But I'd love a more central place that isn't specific to postmarketOS
-> for example. Not sure where though?
-
-kernel docs seem sensible to me? Maybe a wiki on gh/linux-msm?
-
-> 
-> Regards
-> Luca
-> 
->>
->> Kind regards,
->> Casey (she/they)
->>
->>> +static struct rpmhpd *milos_rpmhpds[] = {
->>> +	[RPMHPD_CX] = &cx,
->>> +	[RPMHPD_CX_AO] = &cx_ao,
->>> +	[RPMHPD_EBI] = &ebi,
->>> +	[RPMHPD_GFX] = &gfx,
->>> +	[RPMHPD_LCX] = &lcx,
->>> +	[RPMHPD_LMX] = &lmx,
->>> +	[RPMHPD_MSS] = &mss,
->>> +	[RPMHPD_MX] = &mx,
->>> +	[RPMHPD_MX_AO] = &mx_ao,
->>> +};
->>> +
->>> +static const struct rpmhpd_desc milos_desc = {
->>> +	.rpmhpds = milos_rpmhpds,
->>> +	.num_pds = ARRAY_SIZE(milos_rpmhpds),
->>> +};
->>> +
->>>    /* SA8540P RPMH powerdomains */
->>>    static struct rpmhpd *sa8540p_rpmhpds[] = {
->>>    	[SC8280XP_CX] = &cx,
->>> @@ -723,6 +741,7 @@ static const struct rpmhpd_desc qcs615_desc = {
->>>    };
->>>    
->>>    static const struct of_device_id rpmhpd_match_table[] = {
->>> +	{ .compatible = "qcom,milos-rpmhpd", .data = &milos_desc },
->>>    	{ .compatible = "qcom,qcs615-rpmhpd", .data = &qcs615_desc },
->>>    	{ .compatible = "qcom,qcs8300-rpmhpd", .data = &qcs8300_desc },
->>>    	{ .compatible = "qcom,qdu1000-rpmhpd", .data = &qdu1000_desc },
->>>
-> 
+diff --git a/drivers/firmware/arm_scmi/notify.c b/drivers/firmware/arm_scmi/notify.c
+index e160ecb22948..dee9f238f6fd 100644
+--- a/drivers/firmware/arm_scmi/notify.c
++++ b/drivers/firmware/arm_scmi/notify.c
+@@ -318,6 +318,9 @@ struct scmi_registered_events_desc {
+  *	    customized event report
+  * @num_sources: The number of possible sources for this event as stated at
+  *		 events' registration time
++ * @not_supported_by_platform: A flag to indicate that not even one source was
++ *			       found to be supported by the platform for this
++ *			       event
+  * @sources: A reference to a dynamically allocated array used to refcount the
+  *	     events' enable requests for all the existing sources
+  * @sources_mtx: A mutex to serialize the access to @sources
+@@ -334,6 +337,7 @@ struct scmi_registered_event {
+ 	const struct scmi_event	*evt;
+ 	void		*report;
+ 	u32		num_sources;
++	bool		not_supported_by_platform;
+ 	refcount_t	*sources;
+ 	/* locking to serialize the access to sources */
+ 	struct mutex	sources_mtx;
+@@ -811,10 +815,19 @@ int scmi_register_protocol_events(const struct scmi_handle *handle, u8 proto_id,
+ 		if (!r_evt->report)
+ 			return -ENOMEM;
+ 
+-		for (id = 0; id < r_evt->num_sources; id++)
+-			if (ee->ops->is_notify_supported &&
+-			    !ee->ops->is_notify_supported(ph, r_evt->evt->id, id))
+-				refcount_set(&r_evt->sources[id], NOTIF_UNSUPP);
++		if (ee->ops->is_notify_supported) {
++			int supported = 0;
++
++			for (id = 0; id < r_evt->num_sources; id++) {
++				if (!ee->ops->is_notify_supported(ph, r_evt->evt->id, id))
++					refcount_set(&r_evt->sources[id], NOTIF_UNSUPP);
++				else
++					supported++;
++			}
++
++			/* Not even one source has been found to be supported */
++			r_evt->not_supported_by_platform = !supported;
++		}
+ 
+ 		pd->registered_events[i] = r_evt;
+ 		/* Ensure events are updated */
+@@ -936,6 +949,11 @@ static inline int scmi_bind_event_handler(struct scmi_notify_instance *ni,
+ 	 * of protocol instance.
+ 	 */
+ 	hash_del(&hndl->hash);
++
++	/* Bailout if event is not supported at all */
++	if (r_evt->not_supported_by_platform)
++		return -EOPNOTSUPP;
++
+ 	/*
+ 	 * Acquire protocols only for NON pending handlers, so as NOT to trigger
+ 	 * protocol initialization when a notifier is registered against a still
+@@ -1060,6 +1078,9 @@ __scmi_event_handler_get_ops(struct scmi_notify_instance *ni,
+ 	r_evt = SCMI_GET_REVT(ni, KEY_XTRACT_PROTO_ID(evt_key),
+ 			      KEY_XTRACT_EVT_ID(evt_key));
+ 
++	if (r_evt && r_evt->not_supported_by_platform)
++		return ERR_PTR(-EOPNOTSUPP);
++
+ 	mutex_lock(&ni->pending_mtx);
+ 	/* Search registered events at first ... if possible at all */
+ 	if (r_evt) {
+@@ -1087,7 +1108,7 @@ __scmi_event_handler_get_ops(struct scmi_notify_instance *ni,
+ 				hndl->key);
+ 			/* this hndl can be only a pending one */
+ 			scmi_put_handler_unlocked(ni, hndl);
+-			hndl = NULL;
++			hndl = ERR_PTR(-EINVAL);
+ 		}
+ 	}
+ 	mutex_unlock(&ni->pending_mtx);
+@@ -1370,8 +1391,8 @@ static int scmi_notifier_register(const struct scmi_handle *handle,
+ 	evt_key = MAKE_HASH_KEY(proto_id, evt_id,
+ 				src_id ? *src_id : SRC_ID_MASK);
+ 	hndl = scmi_get_or_create_handler(ni, evt_key);
+-	if (!hndl)
+-		return -EINVAL;
++	if (IS_ERR(hndl))
++		return PTR_ERR(hndl);
+ 
+ 	blocking_notifier_chain_register(&hndl->chain, nb);
+ 
+@@ -1416,8 +1437,8 @@ static int scmi_notifier_unregister(const struct scmi_handle *handle,
+ 	evt_key = MAKE_HASH_KEY(proto_id, evt_id,
+ 				src_id ? *src_id : SRC_ID_MASK);
+ 	hndl = scmi_get_handler(ni, evt_key);
+-	if (!hndl)
+-		return -EINVAL;
++	if (IS_ERR(hndl))
++		return PTR_ERR(hndl);
+ 
+ 	/*
+ 	 * Note that this chain unregistration call is safe on its own
+-- 
+2.47.0
 
 
