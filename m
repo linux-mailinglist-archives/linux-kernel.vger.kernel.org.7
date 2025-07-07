@@ -1,119 +1,117 @@
-Return-Path: <linux-kernel+bounces-720549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06BC2AFBD3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:09:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB264AFBD3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB93F1893BE7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:10:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF3343AFBF1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370CD2857DE;
-	Mon,  7 Jul 2025 21:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52104285C87;
+	Mon,  7 Jul 2025 21:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="c79jGM2o"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J+dqu00G"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01AD42857C6;
-	Mon,  7 Jul 2025 21:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30433270559
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 21:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751922584; cv=none; b=kgHSiHbZZt25doMQEkxXHwR7iOaVhSUl7bfpk3OR44Dn87jCv+6XCStelYKjqOanQehq9CHxQafozKFgtkP11adFkuorkJ001zi/Um82OB1oE+7M0iL3ySYTblX8Elq6KoUgXcrKU7np8jPjapcAe8Px7pBhBo9EOka/98yA86Q=
+	t=1751922721; cv=none; b=l1MuIxqYKLoVMzyI2lpJ5Dy/H80cL6UeVFuoOki+EnjixgtHCNIERMUZadxq41vWczYBpZ2ItQjWGISyrUwIKAFsH6zfLFF9Xew+UwLE3CmWG9WXWs+IdN60ag3SgZayJOhunq9zy1aVHaCtrWwiHvGnf5azgWTcNCDHLXs3KuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751922584; c=relaxed/simple;
-	bh=KR3L9g3pCadHfqpRPsb15XaHk4wdhh99Q+TWkMSZl/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qqws4aPPDMOY+5oyeNuzGJaWupMDuHoZevOayUF3Y5UDBdlGCoVxj0/Uqjebxg9z8a9byquM9RwqacAmqnx68DmZYqU4DEnruYxpNNOF4IAcLdELe7wtBDKCt+o4V+mlmufitdumlWUlOqolIHKEK9MWX93XuAi/+BJEa9TgaWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=c79jGM2o; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4bbcLs6GLqzlv4VM;
-	Mon,  7 Jul 2025 21:09:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1751922579; x=1754514580; bh=dRfytkfle3F/Uu3PA6L0oggv
-	NxFFAgHeETxJSpCAi1s=; b=c79jGM2olG7mWvn6DDmGIxS8rNxa0xTPXlbYZjol
-	dJ2OwrZWT0YQQGDrdtVE86tnoJSPlIEiWGK8/ANnj/tdzhuJ1NQOyFcLd8pk7jhD
-	OR2NDx8XDgKhaz5eoAxG2j+497U+7kO2lKHet7URzw6aD3fneNd4IyA926PMLugQ
-	Mz5AAjXs7tR7L9qMnLt/kMZtMsTAlQLxyarztfNM6Q2gNQFOjH49JkvsFlrUFkEA
-	Y6268W78sFoNCSS4pqOnu1F6+hAsG7RjZTNd+kGFzkFmv6L/6zclfC1oOG/8ONn8
-	yCBsIIwK/kpjLFQ0vLojXLcRkWZVgG882WxZLBY3Pp9yag==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id xlLesTVfmTtE; Mon,  7 Jul 2025 21:09:39 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4bbcLh3bC2zlgqVr;
-	Mon,  7 Jul 2025 21:09:31 +0000 (UTC)
-Message-ID: <39018410-4208-4ab6-bf74-7dbd32bdd10a@acm.org>
-Date: Mon, 7 Jul 2025 14:09:30 -0700
+	s=arc-20240116; t=1751922721; c=relaxed/simple;
+	bh=5oHfqG3O17w9lU7WjSakJmAdXME54KmOmq0/lL5/hZA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=G7dQ/x4ngSZwFGLpIofpCVNoJq30AmH6kK29qOGEkfkEpbXLibNSjBs5HcZNF4Z6HJhV/bUaDA+f+i6IcmW7CRqZewYyYJk3+uV4T9V396S1dEwmTeC9Mm64BNzz75k4OSNaSSSGBcQ+AW09rVhy+BvmdtQV/6HF1Qb4I7toJyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J+dqu00G; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2355651d204so31250695ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 14:11:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751922719; x=1752527519; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NNJvYTiuCPMoM+Qw7ByUKwzYFADxxCOxfSQ7GgdZSps=;
+        b=J+dqu00Giw9+L2Dy1nG/O97XCSWMD2BryCxCW5UpoSH30b3ScflSuSAx3MZe+v/Xx2
+         bapZrj7TLwUxQVBZFcPdOkcESbuD9vqZ8EpXakjnD4wO30sxtW01vZSjVscI6cWXD+cj
+         tUK0HQ8vmWsOIItnk8Svb4yVClg/OjCllMrwl4/EYmm4mXCNId893bxAUC2/ubjlOz6+
+         QDBcQhndtGa54e9EIScgFIkmbK2GkPxnN7apAxq1p4hsKVOn16j9seWdvPeHkEuURcm4
+         ggZxivNp2fcEZ/+ZmSktAEsK2oAg6/tkb1LKi3r/Xk24PPpJEXgNKCqLyDpsXQESmcPL
+         rl7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751922719; x=1752527519;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NNJvYTiuCPMoM+Qw7ByUKwzYFADxxCOxfSQ7GgdZSps=;
+        b=LbpQoQM3l0YS+trm2JZppAF/cJr/1iInO8Fq7P0Sc/LDWYfX7yHdcs4scR9WJN5gnX
+         MhwXcpYjNtYdBd/aZ57TKKlaRn/TVyM1UcDEHsAMWqeBvfKigMVPxE6e9xIek4QA9XRc
+         RDHe8335gRJ8DZRvfK5g9yizuasuJWep3PhECjTN9qQv95tAUSqWdFWuDAftzXe/brHE
+         n/ROjmbYXsIa34DP/5VKYSwWaM12tCQwFFr/iej0uk4vRQ5Xgyryk4EVMboQbrDPMzlB
+         X1FPCBsWN7C4YYJnChs6zCST6VLTSC/Vyw5RhksqGQoJEiaU7G8vC/pfzPWOmNzYlxQw
+         Nduw==
+X-Forwarded-Encrypted: i=1; AJvYcCWN5E4grzRfIq2XRUglymfYam0Jz8d26KB36pv48iRQXTIFt/Uyqdr2DlcG4uF9ryx/DyptISIDvF5h1jQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHBUCmIgoL/nhGt5r6rH27TwJLL7rlmvDySZZg2SYhtsbuZA0g
+	jCbvpizSH6QPP3zdAJhymR0xHjfQlO+4W+7QK1sJK9eC/XWPmoibNqVIqSqu3kjCz7//76HN83r
+	fBEOoqA==
+X-Google-Smtp-Source: AGHT+IGJy8/HAYZ+mJ+u83dKaw3e9sS0A0P09Sg/tbUEeisklKIzvxNCu1A0ex7hEjGeKZ6UNo0l36fO/yE=
+X-Received: from plbma14.prod.google.com ([2002:a17:903:94e:b0:234:3f28:4851])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ce8d:b0:234:ba37:87b0
+ with SMTP id d9443c01a7336-23dd1cdfc93mr2252575ad.13.1751922719448; Mon, 07
+ Jul 2025 14:11:59 -0700 (PDT)
+Date: Mon, 7 Jul 2025 14:11:58 -0700
+In-Reply-To: <202506271342.8913E9B@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/3] scsi: ufs: core: Add ufshcd_dme_rmw to modify DME
- attributes
-To: Nitin Rawat <quic_nitirawa@quicinc.com>, mani@kernel.org,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
- avri.altman@wdc.com, ebiggers@google.com, neil.armstrong@linaro.org,
- konrad.dybcio@oss.qualcomm.com
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-scsi@vger.kernel.org
-References: <20250707210300.561-1-quic_nitirawa@quicinc.com>
- <20250707210300.561-3-quic_nitirawa@quicinc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250707210300.561-3-quic_nitirawa@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250624231930.583689-1-seanjc@google.com> <202506271342.8913E9B@keescook>
+Message-ID: <aGw4Hm2G1gkf2WcK@google.com>
+Subject: Re: [PATCH] selftests: harness: Rework is_signed_type() to avoid
+ collision with overflow.h
+From: Sean Christopherson <seanjc@google.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 7/7/25 2:02 PM, Nitin Rawat wrote:
-> +/**
-> + * ufshcd_dme_rmw - get modify set a dme attribute
-> + * @hba - per adapter instance
-> + * @mask - mask to apply on read value
-> + * @val - actual value to write
-> + * @attr - dme attribute
-> + */
-> +static inline int ufshcd_dme_rmw(struct ufs_hba *hba, u32 mask,
-> +				 u32 val, u32 attr)
-> +{
-> +	u32 cfg = 0;
-> +	int err = 0;
+On Fri, Jun 27, 2025, Kees Cook wrote:
+> On Tue, Jun 24, 2025 at 04:19:30PM -0700, Sean Christopherson wrote:
+> > Rename is_signed_type() to is_signed_var() to avoid colliding with a macro
+> > of the same name defined by linux/overflow.h.  Note, overflow.h's version
+> > takes a type as the input, whereas the harness's version takes a variable!
+> 
+> Can we just update compiler.h to use typeof() and drop duplicates?
 
-I don't think that it is necessary to zero-initialize 'err' because the
-next statement overwrites the value of 'err'.
+I have no objection to doing so, but I'd prefer any such change go on top.  I'd
+like to get this fixed in 6.16, and as your diff alludes to, I think tools' version
+of compiler.h should follow the kernel's version (and presumably the below isn't
+an rc6+ candidate :-) ).
 
-> +
-> +	err = ufshcd_dme_get(hba, UIC_ARG_MIB(attr), &cfg);
-> +	if (err)
-> +		goto out;
-> +
-> +	cfg &= ~mask;
-> +	cfg |= (val & mask);
-> +
-> +	err = ufshcd_dme_set(hba, UIC_ARG_MIB(attr), cfg);
-> +
-> +out:
-> +	return err;
-> +}
-Since this code is not performance-critical, please move the function
-definition into source file ufshcd.c.
-
-Thanks,
-
-Bart.
+> (typeof() a type is a pass-thru). Totally untested:
+> 
+> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+> index 6f04a1d8c720..cb925b883806 100644
+> --- a/include/linux/compiler.h
+> +++ b/include/linux/compiler.h
+> @@ -347,7 +347,7 @@ static inline void *offset_to_ptr(const int *off)
+>   * Whether 'type' is a signed type or an unsigned type. Supports scalar types,
+>   * bool and also pointer types.
+>   */
+> -#define is_signed_type(type) (((type)(-1)) < (__force type)1)
+> +#define is_signed_type(type) (((typeof(type))(-1)) < (__force typeof(type))1)
+>  #define is_unsigned_type(type) (!is_signed_type(type))
+>  
+>  /*
+> 
+> 
+> -- 
+> Kees Cook
 
