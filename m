@@ -1,185 +1,277 @@
-Return-Path: <linux-kernel+bounces-720211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C53FCAFB8A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:29:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39CB2AFB8A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17E6017E3CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:29:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5ED41AA0F89
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFEC21E08D;
-	Mon,  7 Jul 2025 16:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914C0222565;
+	Mon,  7 Jul 2025 16:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="feLCwmh5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="CpDakYP5"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013001.outbound.protection.outlook.com [40.107.162.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B19F202963;
-	Mon,  7 Jul 2025 16:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751905779; cv=none; b=hby+L7KUkfMly9Hokm1kwCBN6qTkv6MaoYYLnA9AOr+G5Pyr2g9M/hekoEmrRV+TvVLGhxMlW5GczZW0uwbIonMEFybjf3jAN/bCTs+y4/uM7oGOgvFzdKuhQYVYlsO+nOiidAqW7/MEasKKj4GqWOy99wqGPNCWvZcfekqhwcs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751905779; c=relaxed/simple;
-	bh=x6xy6Nd7dJ9i3jyg0TWuMRSyOLMSWqFMfnjYToAUBZ4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=aiFn9IWj1GVitfA7kAxIhSXMY1DRVfQPXodj1064mr6ENm1txTD/gRuUrhRpt0EeHWmIwD5wUfX1Ylm57Fl8HGkMDiLpg86i4vYeW1bllsm/2Lx8r1gmtdCl+969L4nskZ/Abx325QZNvlPnS5P8FdirT43U62l5Gy/1vDPf21k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=feLCwmh5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E59CC4CEE3;
-	Mon,  7 Jul 2025 16:29:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751905779;
-	bh=x6xy6Nd7dJ9i3jyg0TWuMRSyOLMSWqFMfnjYToAUBZ4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=feLCwmh5YdpJZXI29tCuzXYsUyUphB7cCHw7buA5DLz71bWk38f1R/NnFcVuDn5JP
-	 tzMI0IJbP9lLJkDKuPzgdGmBnngferkCMTwpRR7XQc5SnLAwQpaxul8opYGiEEao2y
-	 crd76J6aB5/tVB6A02G4pxElsPvYB/q75dnRauB2mJwVNRfl5/iUFRr6LIS5U3Dyuf
-	 gHk56Z92frw+MRvzU2uC2f2yoLbgZENdI+/qfhh2zORLpaGYBNDoAuYaLJzIJnGsDs
-	 20RMCudzbNcnm6qt+G5tUMptb1pdB38J7NKxNpSB+qiUbBHxtERz8J4JAPUEDnpcTN
-	 G8R0zirh/1Sew==
-From: Mark Brown <broonie@kernel.org>
-To: linux-pm@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
-In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
-Subject: Re: (subset) [PATCH 00/80] treewide: Remove redundant
- pm_runtime_mark_last_busy() calls
-Message-Id: <175190577792.67593.6107021560229375929.b4-ty@kernel.org>
-Date: Mon, 07 Jul 2025 17:29:37 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920F418035;
+	Mon,  7 Jul 2025 16:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.1
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751905835; cv=fail; b=qxooVu203N0Z47pZM7Mzl7oxRVhqJnlDlAhr7BsXmfDh2dTM7IKcsb8VgD7a1hEu2YfU6RjoNR2ugjwS+/ZmtuXveix2xMXWhjEnixRbC8MTffWh708/DuydZsjudjL+LXlwo7dtHhdpwvAcjXobqB4YhmR9o1qzJeo/EKSfDqg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751905835; c=relaxed/simple;
+	bh=T2s2pyrfP/b755KkGWHF8dSguyig1LZ9iZRJxhyMWFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=EIpX2fHdMiKaL7x/J7Irpjxj3ZA7wOcDrmERg4johT4UhXRZPkPl33TXHuh/NIxQ/l8bZ47mowLh1vr8JCeq896vW91gh+5W8V0pVEp3rXrYrqaViQvWtWJn296HULIHJT3cg9Sj7esW2wMXIwLFNXzDhqgg2320JcSqi3jtVXE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=CpDakYP5; arc=fail smtp.client-ip=40.107.162.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qjjdKSn13jpx34pU9CPTsCmfqQznzv21rYidJah7dlXOj/ljU6g6F+5NVUII2rW99g9DuA4aO+qp98SY7VhO1XjUTgi8Gh0rh8wLx10MbxmwKgpk7rpWaDCmSIryYZjNje/7LQSMu6BIcBT89LjFx0l3zsjbxzOUlYBDGvUYjCyo9ak0DEwW1ejAKLEQcnC6qPy2C3r3IXjsnlsbWmzujy4VukQkfgtU/AU7QF8wsclnn9XAGrBrARvm64o+6JiHV/I9nUKvTUYvuAd9Y61tQEYKFULijFF1t3YV4zrpY3OM0bf5ktdEj16Yg6ol5avVgUiBn/NMCUyY4oxz/pfgfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7VlnYGO+m2VMVsDiJuo2NyXJWz1uRLD1pmS7NZRGfU4=;
+ b=rbQ+ZAMwsKscKxNT3KNmEcFlBhjQpaAYCOP2oPU1e4MzPnICnRZrkRPWR9PmvC9O18d1PIw9VXAdxRMSeXv687uovnh8DWH5j+13z+cxBSl/j1T9vKb6AJY7UM5woSJJ2S+qJnEWEw9+xTG+5ADlD5hRgRyEnUpYfFvHnFW7SBVVMcwnqlHvP5+BMlbRTCxYZ+Fl4wG6j+uct7lRyHscBEr58abm23Q4iWzhIyI5GVN3RzLbDk08MpzfLXBBOqDedDGpUCoP27nusdlYduniACwv18iUl770WYN3VBAyPZqy/E5+3I4va4DZhqnKfj/I57l/MIGnCaeYaO6b7fs93Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7VlnYGO+m2VMVsDiJuo2NyXJWz1uRLD1pmS7NZRGfU4=;
+ b=CpDakYP5g51WBZ70O06wJisxTdtuRpLuv3keJtcJXHXP0wORmiIjoNy5Uy85x3n+7YjzQ2uDvO3si0ySTVjJo9y7PxDrnaG3Vt0+hZUR5+ciET03ic9cXUKWA5eLhi0L0d74MhwX4H7MvbYyajhJRoSwMh5/2qE2lXKuW4uPnMo03nlBSeHKdDPqbLQtvOzkLVEDIrS0kwJ3vZ6kI7eD9m7jAvBl1OlxhWXI3DoCpHjBWDZZuSREy3UZmxPjKbQHT52Q741z+o7TO78MhXFFG0proWBLSV799VRsfr9rCffBph/6et02aZQ1xLuBNXfb6i331M5UTPDb////MbTH+A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.25; Mon, 7 Jul
+ 2025 16:30:29 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8901.023; Mon, 7 Jul 2025
+ 16:30:28 +0000
+Date: Mon, 7 Jul 2025 12:30:21 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Anup Patel <apatel@ventanamicro.com>, Marc Zyngier <maz@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Shuah Khan <shuah@kernel.org>, Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>, dlemoal@kernel.org,
+	jdmason@kudzu.us, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v19 01/10] PCI: endpoint: Set ID and of_node for function
+ driver
+Message-ID: <aGv2HWBAsZm6Fi+X@lizhi-Precision-Tower-5810>
+References: <20250609-ep-msi-v19-0-77362eaa48fa@nxp.com>
+ <20250609-ep-msi-v19-1-77362eaa48fa@nxp.com>
+ <ne5yrjtdevmndqds4uwo2ppq6gay2wuwjouyf33lqr5g3nfkwr@lkwqlwqjqbmx>
+ <aGVE6veZm3bL0mVJ@lizhi-Precision-Tower-5810>
+ <75opnvi46fbmsnmykjwn3gmir7r3uqhzp7tfoua42cado6aopu@dmos2v2qd3jn>
+ <aGVN/5yoLumfmlDv@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aGVN/5yoLumfmlDv@lizhi-Precision-Tower-5810>
+X-ClientProxiedBy: AM0PR04CA0069.eurprd04.prod.outlook.com
+ (2603:10a6:208:1::46) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU0PR04MB9496:EE_
+X-MS-Office365-Filtering-Correlation-Id: 77005f4d-b8ff-42e3-67a9-08ddbd7395b8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|52116014|376014|19092799006|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aXBDdkQwdUJLa0phZ2grbjZsYnBuaGl0UkFqWmNxYmNWcGZnOHdKT3cycUh4?=
+ =?utf-8?B?dE9KSklVRmwwMjZFWHEyMXh6UE44aW5YZFVvVG9aZkRNeVdkNEVrV3BkV0JB?=
+ =?utf-8?B?TFVscXJXZzh5K0sremUwbXNmbnUxcy9lRlVIdUlyS2ozVUxqSnlaOXdpeVNo?=
+ =?utf-8?B?cmlwd2VRYVpoNmF1MmlWQUpNQkVmOWkzclI0OFdzQ2xpWTUzRG1xWG9maEpi?=
+ =?utf-8?B?aWtmcVpzeUVsY3M4MEh5K3JLS1BaL1VVZDJmcG5QUys3a2RXZy9pcUVVYnRU?=
+ =?utf-8?B?aEhwQzgyL0lLUVBYSURVdC9GeHFOMGVxaW5lMHhhVlpNcE9sRTlDWlhrenhP?=
+ =?utf-8?B?WEl3VWs2cXJMTHI3WkFBbk9uVU56VW5rUHlpMUlxTkRtaUFYWTBDaE1DSkZX?=
+ =?utf-8?B?bytnNDJQR0IzR1A4bXpLejhBSzRESUozaXZpNXhTeGM0OXdONTlBZzR0OVUv?=
+ =?utf-8?B?dlJ5MWZHc0J6VktORngzUERqRXVXbnJkcEZOT0pEVTgvcEVsZDVQdiszcTNa?=
+ =?utf-8?B?TFc4TDdIQktGeU1aNUJQd3p0bENnS0dGK1R1dWxFcGZJWlIwMUdteGRaR2Zr?=
+ =?utf-8?B?OEwybDgwZ3R3bHFScjVxKzRzV3BMdHJvckx2aytpMEFra1dVYkcwQWhjalU4?=
+ =?utf-8?B?ejU5NjQzNnNmVEIxWlBKNjNLNHFsdzM0RWlOUjZHWWVxblltN2IzUTEvUFpP?=
+ =?utf-8?B?bkN1aVN4MlBSY0krWW5SS094aFViTzlNRzlrSzluaHNNWVdoU2ZwQUV4Uito?=
+ =?utf-8?B?aURVU0N2K2txcy9oaXBTcmNqMHdNTFI2a1ViUmNlelpHZnN3bko0VFU4MzZB?=
+ =?utf-8?B?TFJDM09nSVJvVXpaU2pXbE8zRTBtdy9aaHJLMmtTaTVvVmNQRTY1a1JVYS9y?=
+ =?utf-8?B?Q2RVRzBueDNHTUpmSDdHRVNzazBTbFNRS2RsSjZJamlpK01rY0NTQTJlODRQ?=
+ =?utf-8?B?UTNGVVlnOHE0djRRNGV5eVRFWjlnZFcycVo0Y0xoRkgyc05LTmJDQ2trTkh3?=
+ =?utf-8?B?MGtVVmdqRG5YR0FhSm11amtra3FXcElmM2p0UEU2YTYxUlBDZ2JBNkFpc0RU?=
+ =?utf-8?B?cys1dmxjQytYQ2U1MFBwa2NFaEVmb0hhRTgzVmx3L3Bla3pyZmNSZHBHQ2o1?=
+ =?utf-8?B?SGxzSStEelQrR3o5QmtzemlrcENoc09qOUg3SnZ2emJXNDNna0RQaU41MkRR?=
+ =?utf-8?B?MHVEL25IZmxxQjNhSVdoMVM4RWpwTnBYY0hpSWVQY0paOTFHNUlRMTZ6bHQx?=
+ =?utf-8?B?Umkvc1NacVIxbGVTb1hYa2ZJWGF0QllIY2Z5bGloRnZlOHRRYWxraDdMNTRY?=
+ =?utf-8?B?bHMxM0lUVVFkeHNWOVZPdkdqZWFqZXIzWWtVUDg4VnNSWWFjUWlmd3hZRjA5?=
+ =?utf-8?B?aWEyN1pBNDFIUXBnNlA4SWpieEZJOGd5SnQ3Y2djRGw4R0xZQmdqdTgwSjdP?=
+ =?utf-8?B?MWMvN3pTMWVOdHowcUZmdlpORDI1aS9zczFHY3Q2QXl0Qzk4NHFxYUhsZFpF?=
+ =?utf-8?B?SlJhTGJlSjV3elVUNERlalhkVHROV0ZudU9KazdENjRCWlVhOEYveGhpTmZ6?=
+ =?utf-8?B?SG5VaFg5aGxGUnREY1BHYlE1a0lRRi9UYjc3VlBBR0xDOWZMbGZKM2lTNVhr?=
+ =?utf-8?B?eVlkUnhML1Q1RkhhU3dGRWQ2UTdGNWJmMkpZbFdrOUpwM3A1QUttVEVmcW84?=
+ =?utf-8?B?S0xRUDA0NWk1QkxkeHB2TG1PTGJCSG5PNXVvMng4c0t2am1MOG0xa0VwZndn?=
+ =?utf-8?B?b2ZTOGxiblRkZDNYUEpEZThZU01EUTZrY0t1d0R6dUJUSEdScWVnc1VpZHEv?=
+ =?utf-8?B?V3g5WDhLYkoxY0laV0JXRTM4cENFT3BjT1l5ZldBbEZCbWxUeDVTSmF0NXU1?=
+ =?utf-8?B?dUI2K0NVWVhYTUVlVjJVaWw1OU9DOUo5UURwaFFsK3VEVFZERklHN2lWdFNR?=
+ =?utf-8?B?eWRXWituUVVSY3F1NlFlRUlyaklxczRQSlVIb2pCYXU4WHFPUXFSTUowVWR1?=
+ =?utf-8?B?THFwbXNPMVZRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(19092799006)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aEpSazZMbHUxRzdiN3BGWFpRWU9Bb0dTYXUzOUpDc2RWYk9xVmRjVEVRRVBI?=
+ =?utf-8?B?eHF1NlZvV1IrMmhrYVJwN0NpQWdZaE43Y2ErVFJydDVrTnoyQ0RNa1RITTlT?=
+ =?utf-8?B?Nk1GWE1ZWlZwRFZ1VTFUYUdBdlRQU2Q3U0x6REdLL3IwMVVhV3ViV2R3TkJ3?=
+ =?utf-8?B?VlNXS3FxckNwck5yZnFuUFk5ci9ZaUhzL1JIRUlvWGllQTU5azZubHhXY2pW?=
+ =?utf-8?B?SUxDZkJXdXJjd0E3VjE3ZDVHa25FdSt1ZXFRT2luejNuNkJYVk43dzdacmRt?=
+ =?utf-8?B?SkVLMnRQT1JCOGVwcWt4Szl4YjhxRGpHMjd6dGJJQUJob25CLzNZZ2I5bVFZ?=
+ =?utf-8?B?cjdPZnRsb2pQNFBEUk5CNmV5ZnRtaDFidDZYTGczWVQrZHV5aWZqODBvR2V2?=
+ =?utf-8?B?NjkvTSs5TWd4S3JleGttRXlFV2xWVjVweDk5TzNsTDlTc3IrMmJZbS9PRmtD?=
+ =?utf-8?B?VWFmUXljSzQ5YkRTMm40S1RkQ3duMWVQT3l6cWNpSzFFVzhkMUNWOHBUVjg1?=
+ =?utf-8?B?OVFQUitBSldiYXRQUGoxVzFpU3hPY0cvYWxFc3pjcERWUWNTS2FuQVVoaGVs?=
+ =?utf-8?B?dlJLcVdaKzM4b0pTZU12eHZUMHo4WXo2T0lDUzNvVnpBMWVabk9TeXRjVkZ1?=
+ =?utf-8?B?d2xBZWlXUTFWaWhaQWJyVysyOWJhdUZ2K0djUnV6ejNuQUtua2RaWFEycU5Z?=
+ =?utf-8?B?eGwrZ2Vua2NpWW85SG1tUStMVDh2aktEMVROVWtjZlZXSHRQMS9jaFptTjcz?=
+ =?utf-8?B?K0lKR2NFYytmYlhCY09sZ05BbGN1dUszM0VoZ1V6Ny80eFhVK0JzRTRjYXh4?=
+ =?utf-8?B?RGdETGdXR1RocWROSjBlTEo3c3pPYUVIclRIK21iMG4rcDlKcjhYOW9vRk5l?=
+ =?utf-8?B?aTZheDI3NkdIc0RPcXB2dzRBZ20vMzB3WXQ1amwrRGg0L0xYNDJGK2UwRFAv?=
+ =?utf-8?B?N0lFSSthdWhXWnp1emx0U3BubXJJMEJHajRpUDNvQnJSVnNsVE5pU0NMV3do?=
+ =?utf-8?B?YkRzN0tVdW9mc2JLaFVMemlXK3NqLzBJM2ZhU2Q1cUJnR0lqNFJrak9CeXBq?=
+ =?utf-8?B?Z2RTSXFETmdVQ0VNd0RZejFOcmxJWnhRWFlRalVKcVEvK2JWNnBlS09ZdTNO?=
+ =?utf-8?B?cS96ZWpac0NsYTR5ejRTQUYvWHFUaWd2UmRpaHlnbVdFQXhEVVlHc1FycmtH?=
+ =?utf-8?B?YXV4cE5McmxKTFpyWldwN21VaXdJUmtyYXhHTlBUbFdOUkhNbG9udXRuSUJH?=
+ =?utf-8?B?UTQ3eTFnTkxEWkFRV0h0cEU0UFFuWW42MExQc01OQXJXVEhkcnp2M2VIYTR2?=
+ =?utf-8?B?bEJmWHE5a1R0RjlQTEpjeUhucEJHOSt0dVo1bjVLVnBuY3lZWXJLMXI0bjc5?=
+ =?utf-8?B?M3RxSXcvekJHaWFjWGlRdlcxSmdQd1QwdlMvblEzVXplQUxBYUhTZ2pnOStX?=
+ =?utf-8?B?dnpmVzhDS1dTbm1IUXprdWFQM0d2bzVRSDFZbFJYanB2MFJYRldnNmwzVXF3?=
+ =?utf-8?B?MWVPcFVDejFwM3dPL1c1QjZWYW02bTNDSXNNdTBBaTVvKzRKTUZncEQzTTJY?=
+ =?utf-8?B?Y1hkbmI1aEVSMjR0VXNHTGlkaXM5MlltMFJyZTZnOVBwSXBoQThCMHNGdFdV?=
+ =?utf-8?B?bFl0UlBRNmNXTjRSVktIZGs2MXBPTmpyOE5pQnNBaGttdFVqMmorQXBVRi9H?=
+ =?utf-8?B?bVhzVmRaY3ErVFB2Q0VzSFdFbFBaT2JrbTNCZUlNUFRBQmNzTzJXUVNhaXNo?=
+ =?utf-8?B?SytRR25qVU5jMnJuSFMwNGVzamMza2FLRlA1REZXUHZYWm16YVJ4dDNqSUVl?=
+ =?utf-8?B?bGFVSnl2dU5kME5WK0dMNjdIM2ZsbGVmTGk1QS9UYU5KT0IzZEs3TkVENDBD?=
+ =?utf-8?B?NURJZVQxUU1FSDJ2ZDVCbHhBZldtaW1BUHZiNGlsK2dTWjZwcVp2MWxhWmll?=
+ =?utf-8?B?dGFUeDZCTEVDbkFEajFsZ25td2ZibENNNTBuV3Z2V1pXNll2akJhS1JsdXcy?=
+ =?utf-8?B?ZVMyUTF3eDVjMGlwck5IaTFGL2xLcHVjRG1IOEVkR1J5N1JMbGwzV1NFMU5s?=
+ =?utf-8?B?anI1cFVsRWxYU2tyVjNMN2didzcybEE0RUFTdzRpWFNDQ3VFMUVQZGNESDh2?=
+ =?utf-8?Q?8O5Iuk6OR80dvmVOtUK3Lu+pc?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77005f4d-b8ff-42e3-67a9-08ddbd7395b8
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 16:30:28.9313
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: c2wwEKmDTWtRzNH/MfXtjvBK5XNqXuv9qIL9Mkx4fDv+WtawcNZMkodSiRV36kA/0Pmre1wDR98+eYevIVyeiQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9496
 
-On Fri, 04 Jul 2025 10:52:25 +0300, Sakari Ailus wrote:
-> Sakari Ailus (80):
->   accel/ivpu: Remove redundant pm_runtime_mark_last_busy() calls
->   accel/amdxdna: Remove redundant pm_runtime_mark_last_busy() calls
->   Bluetooth: Remove redundant pm_runtime_mark_last_busy() calls
->   bus: sunxi-rsb: Remove redundant pm_runtime_mark_last_busy() calls
->   hwrng: Remove redundant pm_runtime_mark_last_busy() calls
->   clk: imx: Remove redundant pm_runtime_mark_last_busy() calls
->   clk: qcom: Remove redundant pm_runtime_mark_last_busy() calls
->   crypto: Remove redundant pm_runtime_mark_last_busy() calls
->   dmaengine: at_xdmac: Remove redundant pm_runtime_mark_last_busy()
->     calls
->   dmaengine: pl330: Remove redundant pm_runtime_mark_last_busy() calls
->   dmaengine: qcom: Remove redundant pm_runtime_mark_last_busy() calls
->   dmaengine: ste_dma40: Remove redundant pm_runtime_mark_last_busy()
->     calls
->   dmaengine: ti: Remove redundant pm_runtime_mark_last_busy() calls
->   dmaengine: zynqmp_dma: Remove redundant pm_runtime_mark_last_busy()
->     calls
->   gpio: arizona: Remove redundant pm_runtime_mark_last_busy() calls
->   drm/amd: Remove redundant pm_runtime_mark_last_busy() calls
->   drm/nouveau: Remove redundant pm_runtime_mark_last_busy() calls
->   drm/radeon: Remove redundant pm_runtime_mark_last_busy() calls
->   drm/panfrost: Remove redundant pm_runtime_mark_last_busy() calls
->   drivers: drm: Remove redundant pm_runtime_mark_last_busy() calls
->   HSI: omap_ssi_port: Remove redundant pm_runtime_mark_last_busy() calls
->   stm class: Remove redundant pm_runtime_mark_last_busy() calls
->   i2c: Remove redundant pm_runtime_mark_last_busy() calls
->   i3c: master: svc: Remove redundant pm_runtime_mark_last_busy() calls
->   i3c: dw: Remove redundant pm_runtime_mark_last_busy() calls
->   HID: intel-thc-hid: Remove redundant pm_runtime_mark_last_busy() calls
->   iio: accel: Remove redundant pm_runtime_mark_last_busy() calls
->   iio: adc: Remove redundant pm_runtime_mark_last_busy() calls
->   iio: chemical: Remove redundant pm_runtime_mark_last_busy() calls
->   iio: common: Remove redundant pm_runtime_mark_last_busy() calls
->   iio: dac: Remove redundant pm_runtime_mark_last_busy() calls
->   iio: gyro: Remove redundant pm_runtime_mark_last_busy() calls
->   iio: imu: Remove redundant pm_runtime_mark_last_busy() calls
->   iio: light: Remove redundant pm_runtime_mark_last_busy() calls
->   iio: magnetometer: Remove redundant pm_runtime_mark_last_busy() calls
->   iio: pressure: Remove redundant pm_runtime_mark_last_busy() calls
->   iio: proximity: Remove redundant pm_runtime_mark_last_busy() calls
->   iio: temperature: Remove redundant pm_runtime_mark_last_busy() calls
->   Input: omap4-keypad: Remove redundant pm_runtime_mark_last_busy()
->     calls
->   Input: cs40l50: Remove redundant pm_runtime_mark_last_busy() calls
->   media: Remove redundant pm_runtime_mark_last_busy() calls
->   mfd: Remove redundant pm_runtime_mark_last_busy() calls
->   mei: Remove redundant pm_runtime_mark_last_busy() calls
->   mmc: Remove redundant pm_runtime_mark_last_busy() calls
->   mtd: rawnand: gpmi: Remove redundant pm_runtime_mark_last_busy() calls
->   net: ethernet: Remove redundant pm_runtime_mark_last_busy() calls
->   net: ipa: Remove redundant pm_runtime_mark_last_busy() calls
->   net: wireless: Remove redundant pm_runtime_mark_last_busy() calls
->   net: wwan: Remove redundant pm_runtime_mark_last_busy() calls
->   nfc: trf7970a: Remove redundant pm_runtime_mark_last_busy() calls
->   PCI/portdrv: Remove redundant pm_runtime_mark_last_busy() calls
->   phy: motorola: phy-mapphone-mdm6600: Remove redundant
->     pm_runtime_mark_last_busy() calls
->   phy: ti: phy-twl4030-usb: Remove redundant pm_runtime_mark_last_busy()
->     calls
->   power: supply: bq24190: Remove redundant pm_runtime_mark_last_busy()
->     calls
->   power: supply: twl4030_charger: Remove redundant
->     pm_runtime_mark_last_busy() calls
->   pwm: img: Remove redundant pm_runtime_mark_last_busy() calls
->   regulator: stm32-vrefbuf: Remove redundant pm_runtime_mark_last_busy()
->     calls
->   remoteproc: omap: Remove redundant pm_runtime_mark_last_busy() calls
->   slimbus: Remove redundant pm_runtime_mark_last_busy() calls
->   soundwire: Remove redundant pm_runtime_mark_last_busy() calls
->   spi: Remove redundant pm_runtime_mark_last_busy() calls
->   staging: greybus: Remove redundant pm_runtime_mark_last_busy() calls
->   greybus: Remove redundant pm_runtime_mark_last_busy() calls
->   media: rkvdec: Remove redundant pm_runtime_mark_last_busy() calls
->   thunderbolt: Remove redundant pm_runtime_mark_last_busy() calls
->   serial: Remove redundant pm_runtime_mark_last_busy() calls
->   usb: Remove redundant pm_runtime_mark_last_busy() calls
->   w1: omap-hdq: Remove redundant pm_runtime_mark_last_busy() calls
->   ALSA: hda: Remove redundant pm_runtime_mark_last_busy() calls
->   ASoC: atmel: Remove redundant pm_runtime_mark_last_busy() calls
->   ASoC: codecs: Remove redundant pm_runtime_mark_last_busy() calls
->   ASoC: Intel: Remove redundant pm_runtime_mark_last_busy() calls
->   ASoC: component: Remove redundant pm_runtime_mark_last_busy() calls
->   ASoC: SOF: Remove redundant pm_runtime_mark_last_busy() calls
->   ALSA: intel_hdmi: Remove redundant pm_runtime_mark_last_busy() calls
->   soc: apple: mailbox: Remove redundant pm_runtime_mark_last_busy()
->     calls
->   block: pm: Remove redundant pm_runtime_mark_last_busy() calls
->   Input: cyapa - Remove redundant pm_runtime_mark_last_busy() calls
->   mei: Remove redundant pm_runtime_mark_last_busy() calls
->   scsi: block: pm: Remove redundant pm_runtime_mark_last_busy() calls
-> 
-> [...]
+On Wed, Jul 02, 2025 at 11:19:36AM -0400, Frank Li wrote:
+> On Wed, Jul 02, 2025 at 08:25:17PM +0530, Manivannan Sadhasivam wrote:
+> > On Wed, Jul 02, 2025 at 10:40:53AM GMT, Frank Li wrote:
+> > > On Wed, Jul 02, 2025 at 04:30:48PM +0530, Manivannan Sadhasivam wrote:
+> > > > On Mon, Jun 09, 2025 at 12:34:13PM GMT, Frank Li wrote:
+> > > > > Set device ID as 'vfunc_no << 3 | func_no' and use
+> > > > > 'device_set_of_node_from_dev()' to set 'of_node' the same as the EPC parent
+> > > > > device.
+> > > > >
+> > > > > Currently, EPF 'of_node' is NULL, but many functions depend on 'of_node'
+> > > > > settings, such as DMA, IOMMU, and MSI. At present, all DMA allocation
+> > > > > functions use the EPC's device node, but they should use the EPF one.
+> > > > > For multiple function drivers, IOMMU/MSI should be different for each
+> > > > > function driver.
+> > > > >
+> > > >
+> > > > We don't define OF node for any function, so device_set_of_node_from_dev() also
+> > > > ends up reusing the EPC node. So how can you make use of it in multi EPF setup?
+> > >
+> > > In mfd devices, children devices reuse parent's of_node
+> > > drivers/gpio/gpio-adp5585.c
+> > > drivers/input/keyboard/adp5589-keys.c
+> > > drivers/pwm/pwm-adp5585.c
+> > >
+> > > multi EPF should be similar to create multi children devices of mfd.
+> > >
+> >
+> > No, they are not similar. MFD are real physical devices, but EPFs are (so far)
+> > software based entities.
+> >
+> > > > I don't understand.
+> > >
+> > > >
+> > > > > If multiple function devices share the same EPC device, there will be
+> > > > > no isolation between them. Setting the ID and 'of_node' prepares for
+> > > > > proper support.
+> > >
+> > > Only share the same of_node.
+> > >
+> > > Actually pci host bridge have similar situation, all pci ep devices reuse
+> > > bridge's of node. framework use rid to distringuish it. EPF can use device::id
+> > > to do similar things.
+> > >
+> > > Actually iommu face the similar problem. So far, there are not EP device enable
+> > > iommu yet, because it needs special mapping.
+> > >
+> > > Prevously, I consider create dymatic of_node for each EPF and copy iommu/msi
+> > > information to each children. But when I see adp5585 case, I think direct
+> > > use parent's of_node should be simple and good enough.
+> > >
+> > > In future, I suggest add children dt binding for it. For example: EPF provide
+> > > a mailbox interface. how other dts node to refer to this mailbox's phandle?
+> > >
+> >
+> > As I said above, EPFs are not real devices. There is currently only one
+> > exception, MHI, which is backed by a hardware entity. So we cannot add
+> > devicetree nodes for EPF, unless each EPF is a hardware entity.
+>
+> But how resolve this problem, if a DT device need phandle to a EPF? anyway
+> this is off topic. let go back this doorbell.
+>
+> It needs an of_node for EPF device, I tried many method before.
+>
+> Create dymatic of_node for it? MSI framework still go through to parent
+> of_node to get such information. not big differnece as my view.
 
-Applied to
+Hi, any idea?  how to move forward? we can dynmatic create of_node for it.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Frank
 
-Thanks!
-
-[61/80] spi: Remove redundant pm_runtime_mark_last_busy() calls
-        commit: 2fca750160f29015ab1109bb478537a4e415f7cd
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+>
+> Frank
+>
+> >
+> > - Mani
+> >
+> > --
+> > மணிவண்ணன் சதாசிவம்
 
