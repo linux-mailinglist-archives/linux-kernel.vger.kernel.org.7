@@ -1,164 +1,86 @@
-Return-Path: <linux-kernel+bounces-719127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B961AFAA3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 05:31:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44085AFAA36
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 05:30:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F232189ABF6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 03:31:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C3657A9F46
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 03:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C207725A2BF;
-	Mon,  7 Jul 2025 03:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A436B25A2CC;
+	Mon,  7 Jul 2025 03:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LcTtXg57"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="kP8AdzW6"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D241C5496
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 03:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1F61C5496;
+	Mon,  7 Jul 2025 03:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751859071; cv=none; b=QjHH0xr8i/ouL08RCG9Y9WNyRWaaXaOKlrlUTftW1QxjH/l78im81nskkeI7cklO/w3VGaFM6dFIICiLASS1uOP8uPdPomu/7rPhLOibVYLVfUpS+5IBypem5MR3nA5ML+AIkAENbOeyb/B9lHXnzPHDGxOMCh55ZUq3ElyV6m4=
+	t=1751859029; cv=none; b=VU7ptOtd5zbtyxqa+b2MDleTHBZQ8DtYo/97sXhYvgHDqoGkeIPLGsVxeRQmMJeBRll6VUi5JguB3CxUT4rYkQVkZfiMnallojQTIIQ/yZzaI+ffhvGufQKGRSf/7SUC8CXMikMTuRmGkCXNPEXXuyZfiL4frl7GmcY7MT6sYfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751859071; c=relaxed/simple;
-	bh=5bGLlcz2LNZcz7V3A8E5z8rSY2F/sUreYHn4QIcKulI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Be7EfUCX2Vflz4IB+6w8ThNJWJJD4+or9fmCShzsnOuSRwbANjLcQXQm9qfPPyunPp2dERvUg4S8x8hDcPU1DvwrYuQVLedMuDL0u4XkFQyDgNDKz6F3iObWlCM91Cq97YKL4xFzsy8X+9iysPawBLO2tL7pHdFOJzSjwQxSSc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LcTtXg57; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-23649faf69fso21782515ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jul 2025 20:31:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751859069; x=1752463869; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6D4FNc+ZPSxMXR0yzDGObqB7ha5/gNIAEBywyOv4ZVY=;
-        b=LcTtXg578i992XbUZWtRG7EYYzL7uFwH5IWxnn+avTbqCw7+pQZRzEdD/Y3qmMR7L0
-         2oJH8okPQn7Tr+ow8kW/ymNtJCThYlnvI9d1gmi5LHUtcVSmFU/qSdoCz1hjxE1ry48/
-         +0V9N+nNzxlqLbA1g2u7QxmUIw6gNutYDlTMIZHJzhJvdU7cATF1GyhiXk5W8A2W25oC
-         yKaXwFuZ94LH/XxzIaxecaQ7Uk43eZpa5itZAK1zM66Epxn/X/7uo72bqMePdpr+Entv
-         80GxeJzOuaVmKrikCrIr6K+ELkFMb+8eWvRc2pg3W6Uw+bLqrybAis4w+eWPTn/jMnPH
-         bqNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751859069; x=1752463869;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6D4FNc+ZPSxMXR0yzDGObqB7ha5/gNIAEBywyOv4ZVY=;
-        b=pjrn8x+mXqXcnG7p/Hmo3Lf9TMpB5Aae8q/lxeMMcobLge0mGdBBMlVJn48t5KdP4J
-         j5Loyi3G64BO8V9M1G1I7uD9SDhpxSG0B06/y08JvSGuBMU4iyuDwu/flgpRSBPhjNZ+
-         7W5vztIqQAPGSIPBbUDca9XVOL+YzOy8BLGMdjHlsRb7X8SqURgA95mZE1sqgAHQBKTw
-         IjHiLte1/M6H+Wm+CJ20JwbLHAjMYhdPQbf/ToUsuCmDx6Hd7E2ODxTWd5xmZZ/MUplY
-         UOlb6V8d1LAFWULjCQtM8ynaQGQw94klpR8TJIII80VsY4SbxHwiRLF7ofKDBVxef4Go
-         evNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzqpz4q1x+IEH7DvQ20mtOSJS0piDK4otb49wRzehCuj/XhKQeB1zHE+YPLNb7E8zOeg9zOoTz/GCOG5A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypjtFIkbNYR/Mgpc9e0P6R2/pVwAgo1NEvtnz9fGzXwKSn2cen
-	aKct7q6nXEEtDIugo6nUaNlXnoUcDZyRP9uMIvj7CQXQ/5jIk3Ikhv+v
-X-Gm-Gg: ASbGnct7o4uY/sgwO8BkyVZM6MWi9t4EXjfFHLrDUM5pKvKV0kYwc9RU7D5iA8H3d6t
-	3xRLfPgN/Fkvkij71dARoXv5crL9lznImIISy0tzV6Wyfm7rqFMqn4R1efIvdqFn2a2aYDBG/WX
-	P1CbiLLraDCHNqngrjUQoSmSixRhSprpzoOIumrYaUi1xEEyjMOEOE9fi5rqz6DYXEHMlA4gyEA
-	Q4fovnmvkMYJ3c72FmcjFlexEJkLGpJQ2+gn5JV1JQQKVbocn6EgB7zL0epTz9fygYjaliL+Qpt
-	NmeLnpoE3DafgFcftJt4K8xvKomhhLq32YphAGJmNI/OdTVgbk6/n0wG+1hr6spDbmiIpInV/8W
-	8VdxH1vMbdGIWPGbm/Kz9tCL4ZAw3skv4CuyJiXKoH7HWJkZURw==
-X-Google-Smtp-Source: AGHT+IEVYxAqKEVcCfg4J8NqSrjAG5zg58gwvdEAbHHYEWOVkuup7CGKWYMfT6CQpOy35AnTNXLlXA==
-X-Received: by 2002:a17:902:ce89:b0:234:d7b2:2ab9 with SMTP id d9443c01a7336-23c87472898mr163559135ad.12.1751859068755;
-        Sun, 06 Jul 2025 20:31:08 -0700 (PDT)
-Received: from ipravd-Nitro-AN515-55.hsd1.ca.comcast.net ([2601:646:a000:5fc0:5e93:4ea0:4954:ef6c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8fcf6715sm48359415ad.51.2025.07.06.20.31.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Jul 2025 20:31:08 -0700 (PDT)
-From: Ivan Pravdin <ipravdin.official@gmail.com>
-To: mark@fasheh.com,
-	jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com,
-	ocfs2-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Ivan Pravdin <ipravdin.official@gmail.com>,
-	syzbot+6bf948e47f9bac7aacfa@syzkaller.appspotmail.com
-Subject: [PATCH v2] ocfs2: avoid potential ABBA deadlock by reordering tl_inode lock
-Date: Sun,  6 Jul 2025 23:29:51 -0400
-Message-ID: <20250707032951.361331-1-ipravdin.official@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1751859029; c=relaxed/simple;
+	bh=zgWUWXnoOgs4WQuXqxUYSa99tUfMSnh9VTi0Y3wUe+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WSNOAq9Dv7kGfqfvsac9hlhRT86Gx3RiU/+K41vrlvnDzYkhqZX1QSZw5xaX/EvRESKZaymX8IE0ntthbUcXcwAGLq/DkjdjNzBhuOfp8k7xsXo9pa43QrKCCQBTP2D9wY/WXJk9vl6qhgROi8BjX31xJAxA1GEcPJh07eqO+xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=kP8AdzW6; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=P42oqXCvwCJVBODBakO9+1nFTMsi65NMFfVdfyqI3BI=; b=kP8AdzW6dCKfboNvFPIeFURHjh
+	5PjGFmVcbTJrGZH/VeEuJ5//mjuSgBSUsmGaQQZhDi9NASRXdbQMo3+bDkuWP2v+MwefmdcWc0m8H
+	DOinMvWTgsB/4UBZPpA5rAVqnUXOyUtpieGvryvaX2KFAtdDsdTq+5P2Tonqb6y/fvncvOgW8WOUk
+	U5GjK3FTRVkCzMorpq3pjB3Pq+CHYRdGuI9oajnradFupMmuehdcglFoKP/z/IJA4P8BglqKJpuQG
+	DGoixtx5Pi8yyMmExjq6iY8Ni6GAYuoAci5ywmkq/RJGc55UVQzSNRaK0dsIk2qnmquWt/B8VupSk
+	IaAVHPvA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uYcJC-004Vag-2H;
+	Mon, 07 Jul 2025 11:30:20 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 07 Jul 2025 15:30:19 +1200
+Date: Mon, 7 Jul 2025 15:30:19 +1200
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Thomas Fourier <fourier.thomas@gmail.com>
+Cc: Antoine Tenart <atenart@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] crypto: inside-secure: Fix `dma_unmap_sg()` nents
+ value
+Message-ID: <aGs_S7tDvsxXtJO9@gondor.apana.org.au>
+References: <20250620072930.8223-2-fourier.thomas@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250620072930.8223-2-fourier.thomas@gmail.com>
 
-In ocfs2_move_extent(), tl_inode is currently locked after the global
-bitmap inode. However, in ocfs2_flush_truncate_log(), the lock order
-is reversed: tl_inode is locked first, followed by the global bitmap
-inode.
+On Fri, Jun 20, 2025 at 09:29:26AM +0200, Thomas Fourier wrote:
+> The `dma_unmap_sg()` functions should be called with the same nents as the
+> `dma_map_sg()`, not the value the map function returned.
+> 
+> Fixes: c957f8b3e2e5 ("crypto: inside-secure - avoid unmapping DMA memory that was not mapped")
+> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+> Reviewed-by: Antoine Tenart <atenart@kernel.org>
+> ---
+>  drivers/crypto/inside-secure/safexcel_hash.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 
-This creates a classic ABBA deadlock scenario if two threads attempt
-these operations concurrently and acquire the locks in different orders.
-
-To prevent this, move the tl_inode locking earlier in
-ocfs2_move_extent(), so that it always precedes the global bitmap
-inode lock.
-
-No functional changes beyond lock ordering.
-
-Reported-by: syzbot+6bf948e47f9bac7aacfa@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/67d5645c.050a0220.1dc86f.0004.GAE@google.com/
-Signed-off-by: Ivan Pravdin <ipravdin.official@gmail.com>
----
-v1 -> v2: Fixed unlocking order in ocfs2_move_extent.
-
- fs/ocfs2/move_extents.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
-index 369c7d27befd..aaf8eb2693a4 100644
---- a/fs/ocfs2/move_extents.c
-+++ b/fs/ocfs2/move_extents.c
-@@ -617,6 +617,8 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
- 	 */
- 	credits += OCFS2_INODE_UPDATE_CREDITS + 1;
- 
-+	inode_lock(tl_inode);
-+
- 	/*
- 	 * ocfs2_move_extent() didn't reserve any clusters in lock_allocators()
- 	 * logic, while we still need to lock the global_bitmap.
-@@ -637,13 +639,11 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
- 		goto out_unlock_gb_mutex;
- 	}
- 
--	inode_lock(tl_inode);
--
- 	handle = ocfs2_start_trans(osb, credits);
- 	if (IS_ERR(handle)) {
- 		ret = PTR_ERR(handle);
- 		mlog_errno(ret);
--		goto out_unlock_tl_inode;
-+		goto out_unlock_gb_inode;
- 	}
- 
- 	new_phys_blkno = ocfs2_clusters_to_blocks(inode->i_sb, *new_phys_cpos);
-@@ -704,12 +704,13 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
- 	ocfs2_commit_trans(osb, handle);
- 	brelse(gd_bh);
- 
--out_unlock_tl_inode:
--	inode_unlock(tl_inode);
--
-+out_unlock_gb_inode:
- 	ocfs2_inode_unlock(gb_inode, 1);
-+
- out_unlock_gb_mutex:
- 	inode_unlock(gb_inode);
-+
-+	inode_unlock(tl_inode);
- 	brelse(gb_bh);
- 	iput(gb_inode);
- 
+Patch applied.  Thanks.
 -- 
-2.45.2
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
