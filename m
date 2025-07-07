@@ -1,202 +1,136 @@
-Return-Path: <linux-kernel+bounces-720503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B04AFBCA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:38:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F046AFBCA9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0EC3422C0D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:37:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8EA8168206
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC23221C9E9;
-	Mon,  7 Jul 2025 20:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9060221561;
+	Mon,  7 Jul 2025 20:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="W3iwJDl8"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QWrYm+hV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D6EA932
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 20:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0AB1FBE8B;
+	Mon,  7 Jul 2025 20:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751920691; cv=none; b=XQJpLYStCVhjDe8UtNzHDsevNO0xWvxebafQZmV1K/UHD0KKL6D7Z2oqqDZ1mG93T3DARcZCfKq9zISc2N2dEqEWLYX6Cn9IU608lN5bj7azSrhzZG2JgzhDHNqe25tR/e7hRn9s9N1VsazRsxuc0pL8wzeZBOa3ryF5ocW6Bd4=
+	t=1751920758; cv=none; b=iWK7qD9zEYR8nMVaALdkh6rEaPzByh3R3AiJ2zr3pHQ8w842J9ic+20oyvTOVzhfB2Hxyyx33d+hJjEKnwb9WJpXbbDkrSvaBQmP2G8+xMRT3r2mBpaPzDOVXcUs7BiSD1HaOvyveeycTe5p8pyVK1gOvLxq2HvAK1/Jh7rJ3n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751920691; c=relaxed/simple;
-	bh=yRVqyPat7GN9F8zNJwC3S9yF+wNlVd/chrVQuraG1+s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tMwx992gC7yW0ad8S9N6ZVAmr9cwN00hLAmTx2CEgEFKqrG3lcD2+H0l4ZcPL0KCAhyMfhWOylsgm4D4joMeDrzoWYoGBEJOKQSethItqDscVPonSVLicDRlJIn9Q/Zu1Hsbv058JN4mNPMUf5Ohxen5Qo7mcux4yB/Iv2T8OYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=W3iwJDl8; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ieee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7d9e2f85ab4so34127785a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 13:38:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1751920687; x=1752525487; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6BTlWpVgqOV5ugp/e3CPL0JyQGmCCQPxWeyY4pt9b7I=;
-        b=W3iwJDl8wwMUn9NpmfyDfAYRi7F1mpA7raB8MGwfygO8B5lQMtB0dMaYldyPg+v8kV
-         MEWoDYIWwbFa2I+U3DomiLAQfI12Od1KMKwdOdX2Jc1PFgY7IASyAur67CBPqP5jzaZ5
-         CuxIbBMriQvnfGYOvtQ59vQJsC4VLKVlsN/EY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751920687; x=1752525487;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6BTlWpVgqOV5ugp/e3CPL0JyQGmCCQPxWeyY4pt9b7I=;
-        b=txL0sVgODKw4uI5iwUSH6snez1y3cKoptPalaOsWODuSxSYhaINJlfWxzW2TS4FG6d
-         eOInzwzyAjmIYFpebqjgX4ilHMVpgFv1azkJBX72Mz8wlnJ9g5Ki0Sy2xux/bbhAK7rC
-         uz4RIPsPHcuMnaFNtJqJ/tEfeHYqL1yri0idXLrLbWQzU5JtWrnCnvC6+sAmQ4dQ6T5r
-         qm2lIiViIV31menqwXtN9l3LxOj2QYToLq74Of7CobX0OVrqvRuEtpZ/uzH3rNs+LnSP
-         ytJb5txTIDsuylQLe8MZCQGuK963d2ipppsOHQi1JYMVxvwYF01CFJFMEWO9VAznsR8V
-         Sizg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1jgAeDNrbjOEJJAKMlSjanhVtY0wDLX2MssFxb5/5k/2yrPRZxnbuMWS7xZ1NpwSVmASh3fw8RZgoQ/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6c1DQCe9zPHndxd8bk/ljX3nVNuZV7cOpUCcYluIPBnUiQ3fd
-	jC3208gsWnfauKSU5CPNzOKk1pk4klmcJCpPIXafGOm6MIDrpLjA3z6ufxzot//ZOw==
-X-Gm-Gg: ASbGncs5UYN72mFV/Yr5/QA7hydeSyKW6quUW1OQt7PzDJECjcU8IxvwKUlWoEt1a36
-	VcTb7CiK+4xY3TLgIUIeutEMHbgC+ta8H7Lw43HsIDOebaMF0b+HMf+59qWEdLx+qs+MSSTdlUV
-	w0JAakmS1bgXr303sG8gqd06FRuZHWrc/aYEATHLqFZo/pBy/xre/ww1KhyMQiMb2y/rHpqbkJX
-	N9EH230Hhk0qVd/PJhUQkMwghqGfyI1oJS9K8nVAQJqZDAOt8OEIDpsPEpbeuuXnbe/n9V5/qZi
-	gXu1p8GwMJz0gA+W2yjmo2rKoB7n1vmZu7KVPK8YCXYP+ODszqZhWmvYTIb/Z31fXWIrYXAonvg
-	4NvWPR/MzBB//fvH6gVWSX26AZERCn64dMYi5q3utl3mWL00=
-X-Google-Smtp-Source: AGHT+IEaHKHQ7/gC3ce/2SRKioHppqzpcheDCakLklCvAnjqt9HnqlAKfKYaZRVlYc4h5UFY3+OS2w==
-X-Received: by 2002:a05:620a:2916:b0:7d5:d240:ba4d with SMTP id af79cd13be357-7da01d74aaamr74728885a.22.1751920687191;
-        Mon, 07 Jul 2025 13:38:07 -0700 (PDT)
-Received: from ?IPV6:2601:145:c283:58e0:5dee:da73:58da:ff15? ([2601:145:c283:58e0:5dee:da73:58da:ff15])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-702c4ccd60csm64345516d6.35.2025.07.07.13.38.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jul 2025 13:38:06 -0700 (PDT)
-Message-ID: <48916a70-2a89-4d24-8e36-d15ccc112519@ieee.org>
-Date: Mon, 7 Jul 2025 16:38:00 -0400
+	s=arc-20240116; t=1751920758; c=relaxed/simple;
+	bh=kcrB6F2mxoqFMPRnDijT6o6h3KVvHamrCsmEhzHfJiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ojZCsbENrfrohihtcqIR3QZ7Py5fctMO+0nrkDTAlfsovrC1JeBAb88jnwxzASgz4JGQuDkGdg0c+Ar9FpakvMuqoC7nawqx21Mx5zXsfm9WbuzvBptkMdQ52wNVzwPQWlZ0Gv6pNYb68AarYdtJiPMiN5jYwsEuI9BSejWglz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QWrYm+hV; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751920757; x=1783456757;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kcrB6F2mxoqFMPRnDijT6o6h3KVvHamrCsmEhzHfJiQ=;
+  b=QWrYm+hVoOBvaM1dosFsuV3oloBBzgvWx/+Nzt06LYELr2u/hBitTrAu
+   vKUXPQi94q0i49hMvSRPNYx8yzZQuptMo/JIIPwvUR0sGemReV193bMcH
+   b0UJ+JAfWs6DT5kw/7vNlGeyQy05SW/dPUDZYuugdKAec7+F3MNJyL1zS
+   nlExRR7vvi7u02pLP0WZEtSyASWx5ijtjAl7OjydSygTQOT9e2x/xhw0D
+   PGnUk7eu4kyCydWVDRey9P9pcZCXT1+F2FKVZi4Pk1fgp/GOdrPV3xMOD
+   +WIvyQ6Zk/2+dxy6IP5ZEan5N/yHnGVcA9V5g448KYE2spKdF+cZ6+WLu
+   A==;
+X-CSE-ConnectionGUID: XZKvKVPcRwCC4J5Kor88kw==
+X-CSE-MsgGUID: im2bvxoLR7u+lY64K5yNkw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="64397516"
+X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
+   d="scan'208";a="64397516"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 13:39:16 -0700
+X-CSE-ConnectionGUID: vD4xfab6Q4iMgufgeuM4pw==
+X-CSE-MsgGUID: i1AYe1TLR5CbsO1FTsLDjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
+   d="scan'208";a="192494134"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 13:39:09 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uYscD-0000000DOQV-12J7;
+	Mon, 07 Jul 2025 23:39:05 +0300
+Date: Mon, 7 Jul 2025 23:39:04 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 14/24] ACPI: property: Refactor
+ acpi_fwnode_get_reference_args() to support nargs_prop
+Message-ID: <aGwwaGmiIxdElk1Y@smile.fi.intel.com>
+References: <20250704070356.1683992-1-apatel@ventanamicro.com>
+ <20250704070356.1683992-15-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] fs: generalize anon_inode_make_secure_inode() and fix
- secretmem LSM bypass
-To: Paul Moore <paul@paul-moore.com>, Shivank Garg <shivankg@amd.com>
-Cc: david@redhat.com, akpm@linux-foundation.org, brauner@kernel.org,
- rppt@kernel.org, viro@zeniv.linux.org.uk, seanjc@google.com, vbabka@suse.cz,
- willy@infradead.org, pbonzini@redhat.com, tabba@google.com,
- afranji@google.com, ackerleytng@google.com, jack@suse.cz, hch@infradead.org,
- cgzones@googlemail.com, ira.weiny@intel.com, roypat@amazon.co.uk,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- selinux@vger.kernel.org, selinux-refpolicy@vger.kernel.org
-References: <20250626191425.9645-5-shivankg@amd.com>
- <a888364d0562815ca7e848b4d4f5b629@paul-moore.com>
- <67c40ef1-8d90-44c5-b071-b130a960ecc4@amd.com>
- <CAHC9VhTXheV6vxEFMUw4M=fN3mKsT0Ygv2oRFU7Sq_gEcx2iyg@mail.gmail.com>
-Content-Language: en-US
-From: Chris PeBenito <pebenito@ieee.org>
-In-Reply-To: <CAHC9VhTXheV6vxEFMUw4M=fN3mKsT0Ygv2oRFU7Sq_gEcx2iyg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250704070356.1683992-15-apatel@ventanamicro.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 7/7/2025 4:01 PM, Paul Moore wrote:
-> On Fri, Jul 4, 2025 at 6:41 AM Shivank Garg <shivankg@amd.com> wrote:
->> On 7/3/2025 7:43 AM, Paul Moore wrote:
->>> On Jun 26, 2025 Shivank Garg <shivankg@amd.com> wrote:
->>
->> ...
->>
->>> Thanks again for your continued work on this!  I think the patch looks
->>> pretty reasonable, but it would be good to hear a bit about how you've
->>> tested this before ACK'ing the patch.  For example, have you tested this
->>> against any of the LSMs which provide anonymous inode support?
->>>
->>> At the very least, the selinux-testsuite has a basic secretmem test, it
->>> would be good to know if the test passes with this patch or if any
->>> additional work is needed to ensure compatibility.
->>>
->>> https://github.com/SELinuxProject/selinux-testsuite
->>
->> Hi Paul,
->>
->> Thank you for pointing me to the selinux-testsuite. I wasn't sure how to properly
->> test this patch, so your guidance was very helpful.
->>
->> With the current test policy (test_secretmem.te), I initially encountered the following failures:
->>
->> ~/selinux-testsuite/tests/secretmem# ./test
->> memfd_secret() failed:  Permission denied
->> 1..6
->> memfd_secret() failed:  Permission denied
->> ok 1
->> ftruncate failed:  Permission denied
->> unable to mmap secret memory:  Permission denied
->> not ok 2
+On Fri, Jul 04, 2025 at 12:33:46PM +0530, Anup Patel wrote:
 > 
-> ...
+> Currently, acpi_fwnode_get_reference_args() delegates to the internal
+> function __acpi_node_get_property_reference() to retrieve property
+> references. However, this function does not handle the nargs_prop (cells
+> property) parameter, and instead expects the number of arguments (nargs)
+> to be known or hardcoded.
 > 
->> To resolve this, I updated test_secretmem.te to add additional required
->> permissions {create, read, write, map}
->> With this change, all tests now pass successfully:
->>
->> diff --git a/policy/test_secretmem.te b/policy/test_secretmem.te
->> index 357f41d..4cce076 100644
->> --- a/policy/test_secretmem.te
->> +++ b/policy/test_secretmem.te
->> @@ -13,12 +13,12 @@ testsuite_domain_type_minimal(test_nocreate_secretmem_t)
->>   # Domain allowed to create secret memory with the own domain type
->>   type test_create_secretmem_t;
->>   testsuite_domain_type_minimal(test_create_secretmem_t)
->> -allow test_create_secretmem_t self:anon_inode create;
->> +allow test_create_secretmem_t self:anon_inode { create read write map };
->>
->>   # Domain allowed to create secret memory with the own domain type and allowed to map WX
->>   type test_create_wx_secretmem_t;
->>   testsuite_domain_type_minimal(test_create_wx_secretmem_t)
->> -allow test_create_wx_secretmem_t self:anon_inode create;
->> +allow test_create_wx_secretmem_t self:anon_inode { create read write map };
+> As a result, when fwnode_property_get_reference_args() is used with a
+> valid nargs_prop, the ACPI backend ignores it, whereas the Device Tree
+> (DT) backend uses the #*-cells property from the reference node to
+> determine the number of arguments dynamically.
 > 
-> I believe this domain also needs the anon_inode/execute permission.
+> To support the nargs_prop in ACPI, refactor the code as follows:
 > 
->>   allow test_create_wx_secretmem_t self:process execmem;
->>
->>   # Domain not allowed to create secret memory via a type transition to a private type
->> @@ -30,4 +30,4 @@ type_transition test_nocreate_transition_secretmem_t test_nocreate_transition_se
->>   type test_create_transition_secretmem_t;
->>   testsuite_domain_type_minimal(test_create_transition_secretmem_t)
->>   type_transition test_create_transition_secretmem_t test_create_transition_secretmem_t:anon_inode test_secretmem_inode_t "[secretmem]";
->> -allow test_create_transition_secretmem_t test_secretmem_inode_t:anon_inode create;
->> +allow test_create_transition_secretmem_t test_secretmem_inode_t:anon_inode { create read write map };
->>
->> Does this approach look correct to you? Please let me know if my understanding
->> makes sense and what should be my next step for patch.
+> - Move the implementation from __acpi_node_get_property_reference()
+>   into acpi_fwnode_get_reference_args().
 > 
-> [NOTE: added selinux@vger and selinux-refpolicy@vger to the To/CC line]
-> 
-> Hi Shivank,
-> 
-> My apologies for not responding earlier, Friday was a holiday and I
-> was away over the weekend.  Getting back at it this morning I ran into
-> the same failures as you described, and had to make similar changes to
-> the selinux-testsuite policy (see the anon_inode/execute comment
-> above, I also added the capability/ipc_lock permission as needed).
-> 
-> Strictly speaking this is a regression in the kernel, even if the new
-> behavior is correct.  I'm CC'ing the SELinux and Reference Policy
-> lists so that the policy devs can take a look and see what impacts
-> there might be to the various public SELinux policies.  If this looks
-> like it may be a significant issue, we'll need to work around this
-> with a SELinux "policy capability" or some other compatibility
-> solution.
+> - Update __acpi_node_get_property_reference() to call the (now updated)
+>   acpi_fwnode_get_reference_args() passing NULL as nargs_prop to keep
+>   the behavior of __acpi_node_get_property_reference() intact.
 
-In refpolicy, there are 34 rules for anon_inode and they all have { 
-create read write map } -- none of them have the execute permission.  Of 
-these, only 4 are explict and could potentially be broken.  The 
-remaining get it due to being unconfined, thus can be immediately fixed, 
-since it's unconfined.
-
-IMO, this is very low impact.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
 -- 
-Chris PeBenito
+With Best Regards,
+Andy Shevchenko
+
+
 
