@@ -1,92 +1,61 @@
-Return-Path: <linux-kernel+bounces-719990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF06CAFB593
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:10:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C96DFAFB5D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7F9C1AA00CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:10:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 392944A370F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3E52BE037;
-	Mon,  7 Jul 2025 14:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NeIcxo4T"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043AA2D94A7;
+	Mon,  7 Jul 2025 14:23:01 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3939429A333;
-	Mon,  7 Jul 2025 14:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306C82D8375;
+	Mon,  7 Jul 2025 14:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751897405; cv=none; b=h9Rrf4WSrI+WPRWevJ10lKJ4dpV7hv14kl6Ok6+I/MVNsDR4e0YVY8F8UcWQ0gWxSi5tmx/ld2fw+HUhBo6SxDLIG9cx073ujnrg1eGG0LVsM8HP2vRvJggDIYNiKkac0+ACqB6gY+BMP+49Tsl4M2SmanCCCFWGudPlNifg1Mo=
+	t=1751898180; cv=none; b=CIJnPZBhcpTvMjB+uwcOr+vlgZNY+vKT+gvjKsjHL3o+ZyaZBFgfE8s2+kRTdlXVYXiUCpf5V5rTU6l4FDJA5zdnd1SbSvZW8blEJvjerYjSWD9S93vY75KaKJ2JX4FAcNgFdNPkWAEczFqL25q4hV7Nvz/We9bmIrG3xr+4MYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751897405; c=relaxed/simple;
-	bh=AHdaYOSI3SgombZBC8dmiHualEDlfjhpn8V0V/DgMuk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TIA17NjaYAK+tfwR2bWWmVxFJ0vEzvnKau0XoBQAfKzn6K/9XhKJpo8CY0j0w9ojh7vvvLnRl2/rbLkEuL6ii1QWIyrO2ZQVp2dS4wkNycOpZMlg5gzyzFAaSTlD3juRmPgB9U5dOfa0Me4eSNaVS8Y0F5Z56y2Xy/aXHO45uBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NeIcxo4T; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-607fbf8acb6so558614a12.3;
-        Mon, 07 Jul 2025 07:10:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751897402; x=1752502202; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uyCqESTaPkXyHbkcmpNd2gMmLJmq6htwbjOFYD33r8M=;
-        b=NeIcxo4TNkTSDXN+5m5PqEjmpBbfJjlJaW9RqPENnTc8Ab1C+VxVOXScK2qX1u4Npv
-         CzI8jfBrPH7SKK7YyXDBuEEKr1AxQgo4Juh6GOYMAht8fcghP8yeHICCPJE98G0gmt5M
-         FzNozQQeqjOoykFvdaxXEI/RUDYCqLkNP23lJFnNssFuHLcGzBJaS7Drp2hppcbvbKP0
-         jQL1ZVEXXxkdlcXons8PGiha165zaA434J1B+QDLJi6Rds3I1VSd2Hu2bJUOL16JCwNZ
-         C7Ms3duvi76pZQTDAygf7DRk6exWL9QfPjKp8nEa77phGeXRlLfkkruQ8QUWMfJcB5uR
-         tmrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751897402; x=1752502202;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uyCqESTaPkXyHbkcmpNd2gMmLJmq6htwbjOFYD33r8M=;
-        b=eEbZ0bbKyJPSL+0XIsnOUQey7BxU0axAuwcOQ4TLaid1VBA/zr6xMCzOSVzHHP5cxc
-         ulDJ572cFLrv5uNofQrM6mX6LCwmWlOw2X0gW0rjI3Ypuc5qWsqk3RLTsLq8/vZz2adC
-         UlbezjzX2HjjQZ9aP50HsZit1Xojcl/IkPGNF3pBO90q9tFBRv7+Opr34r1qpOjN1Jsf
-         9f/qgfFPlJ/hlUNo8AtjBiOoH+j8K+9T1aH2uSKE+YzIrqjXDdj3KwztmFufAKTvx2W8
-         rWPzsmvkjA8YIcFr5c81lSdXE9Fws5xQj8b8hsl5fQy6DMMoRgopZfZRUIRm0PKZTk+n
-         8H3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWv7PfRd13z8T30fmSehKw5mJSxYGtmOreekwEK5ovqUJLCaMPjcCFz6y3wYwhNI+B+hemBAtCiB7i+a20=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww8bRrQO7pUXje9UUa2Lm6V7NJPrejz4boWHvEZYeAlJQFZofa
-	m77x0NgXzM1OtrcwbvBiErt2IXohL+E68MNoUDVST2oQKHd85ine1yeB
-X-Gm-Gg: ASbGncuMQqUUoOrXN0HTFHB6CTNwNajMAugr/e7lmE/ADc8ML3cfDtKsalaRj5pu9Wq
-	jPpSBQJPn1DtBsIfafCS8unA1BlNCzJfWYLxDvimR73cWMZjH2tU0ASzUQRRE6rBUMNJpOvdK/r
-	IhDA6GC0cmdY5nnMtOlJ1sny5lpENerp2xm3YFC8eoE0NGp7JzRU8oEPkpSqTEni1kT+zBcRCB1
-	vc7icyI9SCPls7/YvKaDLzeuaQsHKMlkuQNM6goCCwYhntOHJ7M0HkJYojbxVQykG97Sd8udIyV
-	VK4ulBkcxO+R4uY0URKPYQXsasmzXD/FqmDjQMjeHCWpv+c6wLR/EcLgdFW4pk3ep8m2EvSxi4B
-	fvYjK4/GQ7A3IEOoSww8/vesXM+Y2/U+dJI4+/yBpqxnI3ownrmv60GREYvpZ
-X-Google-Smtp-Source: AGHT+IFoyq3U+1/o3AJhEJGB7FOf5qPE24zYohu/ZNZ7tgwRy0GsIfZj+9LrwSnh8D5/P/Tiid5//A==
-X-Received: by 2002:a17:907:9443:b0:ae0:dcd5:ea6d with SMTP id a640c23a62f3a-ae3fbd57f27mr434916066b.11.1751897401998;
-        Mon, 07 Jul 2025 07:10:01 -0700 (PDT)
-Received: from yousrii-VirtualBox.hotspot.internet-for-guests.com ([82.129.154.18])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f66d1ae3sm710370466b.7.2025.07.07.07.10.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 07:10:01 -0700 (PDT)
-From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-To: hansg@kernel.org,
-	mchehab@kernel.org,
-	sakari.ailus@linux.intel.org,
-	andy@kernel.org,
-	gregkh@linuxfoundation.org
-Cc: linux-media@vger.kernel.org,
+	s=arc-20240116; t=1751898180; c=relaxed/simple;
+	bh=mwRNkUG9Ads6twT1NddkxxWfD8nyJM5H91oOZh3c1t4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nnULpuRBOTpjmldiXHrQ3Eta4+IrLlBUwzv+iDAp3Fl05ORZCszhi+fe4vGY0VsG5TBhWlfJ5NO2vn1V64ylAloxKiInorQCsAtBxpZgvhJAaeDfYPQgQekRC48L9hBXpHfvAVJwB9yxNlChgKHW4XjGL4M6zoI0af2M9hpHZFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bbRKX4lN0zYQtvZ;
+	Mon,  7 Jul 2025 22:22:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 780E91A0E25;
+	Mon,  7 Jul 2025 22:22:55 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.112.188])
+	by APP3 (Coremail) with SMTP id _Ch0CgBnxyQ22GtoNazLAw--.46745S4;
+	Mon, 07 Jul 2025 22:22:53 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org,
-	dan.carpenter@linaro.org,
-	Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-Subject: [PATCH 0/2] staging: media: atomisp: clean up and unify HMM initialization logic
-Date: Mon,  7 Jul 2025 17:09:21 +0300
-Message-Id: <20250707140923.58935-1-abdelrahmanfekry375@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	ojaswin@linux.ibm.com,
+	sashal@kernel.org,
+	naresh.kamboju@linaro.org,
+	jiangqi903@gmail.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	libaokun1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH v4 00/11] ext4: fix insufficient credits when writing back large folios
+Date: Mon,  7 Jul 2025 22:08:03 +0800
+Message-ID: <20250707140814.542883-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,24 +63,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgBnxyQ22GtoNazLAw--.46745S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxAFy5tF4kWry5tr1DKFyUJrb_yoWrJF4UpF
+	W3CF15Gr1rZw17Za9rXa18CF1rGan5Cr47Xry3K3s8uayDuFyIkFZaga1Y9FyUArZ3GFy0
+	qr4jyryDCFy5A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUFjjgDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Continuing the series of cleaning up the atomisp driver as discussed in
-[1], This patch series improves the consistency and reliability of the
-initialization logic in the AtomISP driver's Hybrid Memory Manager (HMM)
-subsystem.
+From: Zhang Yi <yi.zhang@huawei.com>
 
-These modifications were tested by building the AtomISP driver
+Changes since v3:
+ - Fix the end_pos assignment in patch 01.
+ - Rename mpage_submit_buffers() to mpage_submit_partial_folio(), and
+   fix a left shift out-of-bounds problem in patch 03.
+ - Fix the spelling errors in patch 04.
+ - Add a comment for NULL 'handle' test in
+   ext4_journal_ensure_extent_credits().
+ - Add patch 11 to limit the maximum order of the folio to 2048 fs
+   blocks, prevent the overestimation of reserve journal credits during
+   folios write-back.
+Changes since v2:
+ - Convert the processing of folios writeback in bytes instead of pages.
+ - Refactor ext4_page_mkwrite() and ensure journal credits in
+   ext4_block_write_begin() instead of in _ext4_get_block().
+ - Enhance tracepoints in ext4_do_writepages().
+ - Replace the outdated ext4_da_writepages_trans_blocks() and
+   ext4_writepage_trans_blocks() with the new helper used to reserve
+   credits for a single extent.
+Changes since v1:
+ - Make the write-back process supports writing a partial folio if it
+   exits the mapping loop prematurely due to insufficient sapce or
+   journal credits, it also fix the potential stale data and
+   inconsistency issues.
+ - Fix the same issue regarding the allocation of blocks in
+   ext4_write_begin() and ext4_page_mkwrite() when delalloc is not
+   enabled.
 
-Link: https://lore.kernel.org/all/fbfbd0e5-2c27-4f32-a3d7-9cf57fde5098@kernel.org/ [1]
-Abdelrahman Fekry (2):
-  staging: media: atomisp: return early on hmm_bo_device_init() failure
-  staging: media: atomisp: unify initialization flag usage in HMM
+v3: https://lore.kernel.org/linux-ext4/20250701130635.4079595-1-yi.zhang@huaweicloud.com/
+v2: https://lore.kernel.org/linux-ext4/20250611111625.1668035-1-yi.zhang@huaweicloud.com/
+v1: https://lore.kernel.org/linux-ext4/20250530062858.458039-1-yi.zhang@huaweicloud.com/
 
- .../media/atomisp/include/hmm/hmm_bo.h        |  9 +++++++--
- drivers/staging/media/atomisp/pci/hmm/hmm.c   | 19 ++++++-------------
- 2 files changed, 13 insertions(+), 15 deletions(-)
+Original Description
+
+This series addresses the issue that Jan pointed out regarding large
+folios support for ext4[1]. The problem is that the credits calculation
+may insufficient in ext4_meta_trans_blocks() when allocating blocks
+during write back a sufficiently large and discontinuous folio, it
+doesn't involve the credits for updating bitmap and group descriptor
+block. However, if we fix this issue, it may lead to significant
+overestimation on the some filesystems with a lot of block groups.
+
+The solution involves first ensure that the current journal transaction
+has enough credits when we mapping an extent during allocating blocks.
+Then if the credits reach the upper limit, exit the current mapping
+loop, submit the partial folio and restart a new transaction. Finally,
+fix the wrong credits calculation in ext4_meta_trans_blocks(). Please
+see the following patches for details.
+
+[1] https://lore.kernel.org/linux-ext4/ht54j6bvjmiqt62xmcveqlo7bmrunqs4ji7wikfteftdjijzek@7tz5gpejaoen/
+
+Thanks,
+Yi.
+
+Zhang Yi (11):
+  ext4: process folios writeback in bytes
+  ext4: move the calculation of wbc->nr_to_write to mpage_folio_done()
+  ext4: fix stale data if it bail out of the extents mapping loop
+  ext4: refactor the block allocation process of ext4_page_mkwrite()
+  ext4: restart handle if credits are insufficient during allocating
+    blocks
+  ext4: enhance tracepoints during the folios writeback
+  ext4: correct the reserved credits for extent conversion
+  ext4: reserved credits for one extent during the folio writeback
+  ext4: replace ext4_writepage_trans_blocks()
+  ext4: fix insufficient credits calculation in ext4_meta_trans_blocks()
+  ext4: limit the maximum folio order
+
+ fs/ext4/ext4.h              |   4 +-
+ fs/ext4/extents.c           |   6 +-
+ fs/ext4/ialloc.c            |   3 +-
+ fs/ext4/inline.c            |   6 +-
+ fs/ext4/inode.c             | 349 +++++++++++++++++++++++-------------
+ fs/ext4/move_extent.c       |   3 +-
+ fs/ext4/xattr.c             |   2 +-
+ include/trace/events/ext4.h |  47 ++++-
+ 8 files changed, 272 insertions(+), 148 deletions(-)
 
 -- 
-2.25.1
+2.46.1
 
 
