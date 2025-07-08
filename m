@@ -1,114 +1,91 @@
-Return-Path: <linux-kernel+bounces-720824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62F4BAFC0C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:20:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C136AAFC0D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:28:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA23A3BD1D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:20:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9908D1AA42F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36CE5225A32;
-	Tue,  8 Jul 2025 02:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C2C2206A6;
+	Tue,  8 Jul 2025 02:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t0Z7yeAK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="NFM3FZkZ"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEC220766C;
-	Tue,  8 Jul 2025 02:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD6939FF3
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 02:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751941230; cv=none; b=tpLf/kIu7M9UTFFvRY1WkETFl6AUczL9WWfkYmeZtyQPtoIqxN1e8lrYQ1VYX9FCL50Jn3+z2cMfmAVC88HFmmZgux1f+07unUc6q07j08n0JscxK0YvsCpUYCtkbtO45xdrGOhHC1wWopDCpoZh/iM0e+4bhHAwPVjCp7hHvOE=
+	t=1751941719; cv=none; b=dOv1UbuUMSTI/UOrcpkJ14sHMYRoH2759pyhAe7QkkNA7buauMV1xSITy+s4tZJY3V5u7Syd3JEzBaZQEP4yy6b+/lnuZ28rFJAMw7DPcPlQVyJN/ptjD77RF9CEIliukTzmrnKMESB1RKmDdqG7Ugr8/Qtilq35/emXBLTKYVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751941230; c=relaxed/simple;
-	bh=M1q9eKLn1p0r6Ruy94dsM/SECj373UWggsq9/COMgUc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=e37xy/jpXxIHMFYzUExaMaOZxJPcnRGVr7TBsCnkgHQ1DqfcQY8+vZTXXGMCFSehWVZsZOpZWjio1X2UA5b/Mi3cHI8Cbx4T7w6dlKcjMFAaHlmy6UggTD5orvDz95dgmKSJcNIqtvFrBKUV0A3SbO96BkM662RVOIy9LT0KG6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t0Z7yeAK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2E32C4CEE3;
-	Tue,  8 Jul 2025 02:20:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751941230;
-	bh=M1q9eKLn1p0r6Ruy94dsM/SECj373UWggsq9/COMgUc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=t0Z7yeAKMH16T5HZNhuwBMKIgtgLhy0E6Utj6h8G00QNlY5BE/4RlpotEJMYv2kJQ
-	 UQYSuRGGFwB85JSRi6Pt+FRle0Ok9b83vkyE5STSdUffU+y0dbAcgxQ8HG0rMEISxf
-	 jq5piSaDVdops6i7NXbHjAe1/zkePp52eb5Tgej+sc+WiqbP9dCv1e4JYZxJusIrFI
-	 M4cKPVMkmPEamQytK3AzIV4sUTk5hwN9xqIX8jNqKuH0W4AbTBUurEch3W/q9J+s8w
-	 cFLmPiKndfibR93+MzjVwvG8hj4CzuAua9Zb7boFqpt7AoCC77aJXC+BCiw+TxlHVu
-	 bjsxbw126OjfA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E2338111DD;
-	Tue,  8 Jul 2025 02:20:54 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1751941719; c=relaxed/simple;
+	bh=3GyprSow3qAcCb8N0tiXSPXrfzwpKm5e/wQnFqQvVlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H6CliDK3CTyZMUCeceAgUZpUEFz2Lqke3hApHeAWuSbr+614TsSzVyNMZTG77TwucZcaU2m4ylQPoJ+dnjk7W35txu0J+6gGF80McVVQEwean8Dtn2yDxd1Tkb5Cg0chqWXyvsQA3mtiNZq6xZU4U/g7hk9pMGzWDoTlSlE5Fr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=NFM3FZkZ; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org (99-196-129-211.cust.exede.net [99.196.129.211] (may be forged))
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 5682OxxB003551
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 7 Jul 2025 22:25:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1751941514; bh=3uCx93Iv+v3s8K0GDB0GAMbR0St+3evdPm0IH3wN5V0=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=NFM3FZkZQz6ukcpE/p21w8mCplytjOD3wh88kAH8JWpUCBfLKOKuaecswB2Adtmzn
+	 txbtWtYL5DfIbcL4zYYiFVtP25Zgh2wXFNZ6toEVMazhkEARFbHXjFlmZ4A7whLtyY
+	 Iy70zo3KZRS4vtIJ37DsZ7n/VnZ9CslHiwYzI7MLRqysDSh989RyF56WIMRlGTE3E2
+	 4opT4jwI77hjL80lKlz6HtQHa7BoMQ6mf6AM4oTrkmESYKKTG86c4q0HdMM9FbTf5n
+	 /TmWG9ghHbigLYvwJIfC9kxZ/zUcTVKc+xqcHp1jc6E6xvLep3+9P7XpV0ZXJEBOdL
+	 RmVlKmf/5/C1g==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id 7701B3405F0; Mon, 07 Jul 2025 22:24:53 -0400 (EDT)
+Date: Mon, 7 Jul 2025 22:24:53 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: I Hsin Cheng <richard120310@gmail.com>
+Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] ext4: Refactor breaking condition for xattr_find_entry()
+Message-ID: <20250708022453.GB1845251@mit.edu>
+References: <20250708020013.175728-1-richard120310@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3 00/10] net/mlx5: HWS,
- Optimize matchers ICM usage
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175194125285.3546943.3231273757948141290.git-patchwork-notify@kernel.org>
-Date: Tue, 08 Jul 2025 02:20:52 +0000
-References: <20250703185431.445571-1-mbloch@nvidia.com>
-In-Reply-To: <20250703185431.445571-1-mbloch@nvidia.com>
-To: Mark Bloch <mbloch@nvidia.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
- edumazet@google.com, andrew+netdev@lunn.ch, horms@kernel.org,
- saeedm@nvidia.com, gal@nvidia.com, leonro@nvidia.com, tariqt@nvidia.com,
- leon@kernel.org, netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708020013.175728-1-richard120310@gmail.com>
 
-Hello:
+On Tue, Jul 08, 2025 at 10:00:13AM +0800, I Hsin Cheng wrote:
+> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+> index 8d15acbacc20..1993622e3c74 100644
+> --- a/fs/ext4/xattr.c
+> +++ b/fs/ext4/xattr.c
+> @@ -338,7 +338,7 @@ xattr_find_entry(struct inode *inode, struct ext4_xattr_entry **pentry,
+>  			cmp = name_len - entry->e_name_len;
+>  		if (!cmp)
+>  			cmp = memcmp(name, entry->e_name, name_len);
+> -		if (cmp <= 0 && (sorted || cmp == 0))
+> +		if (!cmp || (cmp < 0 && sorted))
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+This is *not* identical.  Suppose memcmp returns a positive value
+(say, 1).  Previously, the conditional would be false.  With your
+change, !cmp would be true, so the overall conditional would be true.
 
-On Thu, 3 Jul 2025 21:54:21 +0300 you wrote:
-> This series optimizes ICM usage for unidirectional rules and
-> empty matchers and with the last patch we make hardware steering
-> the default FDB steering provider for NICs that don't support software
-> steering.
-> 
-> Hardware steering (HWS) uses a type of rule table container (RTC) that
-> is unidirectional, so matchers consist of two RTCs to accommodate
-> bidirectional rules.
-> 
-> [...]
+So this does not appear to be a valid transformation.
 
-Here is the summary with links:
-  - [net-next,v3,01/10] net/mlx5: HWS, remove unused create_dest_array parameter
-    https://git.kernel.org/netdev/net-next/c/60afb51c8941
-  - [net-next,v3,02/10] net/mlx5: HWS, remove incorrect comment
-    https://git.kernel.org/netdev/net-next/c/26b06579d50d
-  - [net-next,v3,03/10] net/mlx5: HWS, Export rule skip logic
-    https://git.kernel.org/netdev/net-next/c/d8e7ab591b50
-  - [net-next,v3,04/10] net/mlx5: HWS, Refactor rule skip logic
-    https://git.kernel.org/netdev/net-next/c/3dcac700d20b
-  - [net-next,v3,05/10] net/mlx5: HWS, Create STEs directly from matcher
-    https://git.kernel.org/netdev/net-next/c/59807d071724
-  - [net-next,v3,06/10] net/mlx5: HWS, Decouple matcher RX and TX sizes
-    https://git.kernel.org/netdev/net-next/c/c8332ce09691
-  - [net-next,v3,07/10] net/mlx5: HWS, Track matcher sizes individually
-    https://git.kernel.org/netdev/net-next/c/6b44fffdc7b7
-  - [net-next,v3,08/10] net/mlx5: HWS, Rearrange to prevent forward declaration
-    https://git.kernel.org/netdev/net-next/c/29063103f864
-  - [net-next,v3,09/10] net/mlx5: HWS, Shrink empty matchers
-    https://git.kernel.org/netdev/net-next/c/96e4c4a1a5bc
-  - [net-next,v3,10/10] net/mlx5: Add HWS as secondary steering mode
-    https://git.kernel.org/netdev/net-next/c/a9aec713d0d9
+(Note that valid transformations will be done by the compiler
+automatically, without needing to make code changes.)
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+   	     	 	      - Ted
 
