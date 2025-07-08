@@ -1,73 +1,94 @@
-Return-Path: <linux-kernel+bounces-722242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 619F5AFD6D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:03:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7623AFD6EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:13:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F8153A6136
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:03:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DEC3564A44
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F472E5B10;
-	Tue,  8 Jul 2025 19:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZaZWLDH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11C92E6131;
+	Tue,  8 Jul 2025 19:13:13 +0000 (UTC)
+Received: from sxb1plsmtpa01-05.prod.sxb1.secureserver.net (sxb1plsmtpa01-05.prod.sxb1.secureserver.net [188.121.53.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E334801;
-	Tue,  8 Jul 2025 19:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B366B2BE020
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 19:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752001418; cv=none; b=XbOnS03CkTi6vyE4TH8Mx8lg6HgVdjeil2IH0DRYkQ+rfwNZ8U+4vzyRSNX2sbkDEevvfawHZ/0msuaH5Jb6/mFw+2ld3tiAi9Llq0x+7tmf+t7ojmtiyk5PR/nm5j4G+JQ2CixXvX11HUlzgusP7yO8fz5VsCeA5giRAoymu+o=
+	t=1752001993; cv=none; b=n/ewyqnEwpGbsSxyrqkn8OG0Yqz14+V+Aq/xt1P2ZR+Z8Wh8jbssQiibhg78bpOEKVvMc0PlFykR+Lr7KsZY8IcnmT9v/qlFAbHvMy3FlRMnOuHxXLLPjgMUSdoOXPN0F7qQorwlKyUwxQKHORHAG2vmE02UKaWOz0ZHwS3NyZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752001418; c=relaxed/simple;
-	bh=GHcZnk2bIg2LnEuxbdd9Nbxx/LOWDNPMl+Rh13K5rGs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qZ5oX151xLJmW9W7EDnAt01NKb+1pUqAbR7V2i2u2dbF4GAOShxRg7XLXHPWfOIw0XumBg7VIcWCZKphNHgXG8R7xew9ngHtZ2HSZIHN9El1dPj3RqpAywgg0zi4tm5eleSQfsmwK6hCsM8C+V7bW1Ro/rnlXOJPsh/nFHZ+0H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZaZWLDH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81176C4CEED;
-	Tue,  8 Jul 2025 19:03:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752001418;
-	bh=GHcZnk2bIg2LnEuxbdd9Nbxx/LOWDNPMl+Rh13K5rGs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EZaZWLDHIls3zFiL6RkrOHXTN2RdqBsCrNWrk1rq2edSY9SYL2XUWZM/xK6qTXakv
-	 BbxzRJOTtCmGRBYPbdPAZV3NYxWBvxRJ8b1bDkbY7rIwWeAVd3WfMK1LwSYs1Mjyfw
-	 haUHBdpZuSVlJTMs63KMC8CsowiLEUYoK07+0GF72EHqgz9ACvM3w2HcQYr3BQsDAi
-	 WaFi3h3QogaK82PqX24TrW7L0lvV3j7EegCmADT+ZjfOKpdO47G+VVkARdIKM045oN
-	 G0aQVo7EBPJ5/xpNlHcox2tTFk6szhMwelkdjqz9uTUcgJV8ll9GWLC8WdKWhMdKA0
-	 vhbXCKoU2BNNw==
-Date: Tue, 8 Jul 2025 12:03:36 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: netdev@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, linux-afs@lists.infradead.org,
- linux-kernel@vger.kernel.org, "Junvyyang, Tencent Zhuque Lab"
- <zhuque@tencent.com>, Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net 2/2] rxrpc: Fix bug due to prealloc collision
-Message-ID: <20250708120336.03383758@kernel.org>
-In-Reply-To: <20250707102435.2381045-3-dhowells@redhat.com>
-References: <20250707102435.2381045-1-dhowells@redhat.com>
-	<20250707102435.2381045-3-dhowells@redhat.com>
+	s=arc-20240116; t=1752001993; c=relaxed/simple;
+	bh=NDIxyMy96oaGTIrC7fMq8LGGd1EB5Tkke6BGzWzJnzQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gScYpdPzfBTOVQ8ixZSmcqW3+TGiZtYKRMdCxg2ulDcIKvqkioUkhxhljXioYRIeRI9lx0YRAiRNqCjQFBomQS4vJKxU+Nb6mdOsuE217NWWsygbrgKrVrdHbYibuo4MXRokSeEJgJORvXQeJDHc6awBJ87OMNaiKducQLAUWfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
+Received: from [192.168.178.95] ([82.69.79.175])
+	by :SMTPAUTH: with ESMTPSA
+	id ZDdBuA7VzdDAfZDdDueRZi; Tue, 08 Jul 2025 12:05:32 -0700
+X-CMAE-Analysis: v=2.4 cv=GKgIEvNK c=1 sm=1 tr=0 ts=686d6bfc
+ a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
+ a=IkcTkHD0fZMA:10 a=pGLkceISAAAA:8 a=FXvPX3liAAAA:8 a=ry9jMNirEf-YdYR-n9AA:9
+ a=QEXdDO2ut3YA:10 a=UObqyxdv-6Yh2QiB9mM_:22
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk
+Message-ID: <47a56ddc-eedc-40f4-a7a1-1aeea6224e1c@squashfs.org.uk>
+Date: Tue, 8 Jul 2025 20:05:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] squashfs: Fix incorrect argument to sizeof in
+ kmalloc_array call
+To: Colin Ian King <colin.i.king@gmail.com>, Chanho Min <chanho.min@lge.com>
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton
+ <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+References: <20250708142604.1891156-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From: Phillip Lougher <phillip@squashfs.org.uk>
+In-Reply-To: <20250708142604.1891156-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfE4N1qyTbEDZ4KaQ9qaUZcHEctV6RDBOcmAnJTGpeK9qA4ZJAu80Ugb0XZlDdc8v8QkePRcVI0UsoQa+3poA1bbizzjXlAGZYPIfaErY0UkKgkVTCtVV
+ Hknaw2pRwPpQOH6bCfSBXkl02h50MmcRkwhhAmlsBGxAfZGQJ1o9ckXk3viZWTqgaqTNyG7++7BwdBdi+VqcxV7gZ85Ndg/h8ytX0upX6dpr325kjpp34M87
+ FYloTVm92jdLxtM2njQhq6hvOoAyMB4Rre/QeNd7NtcdnX5laFuVRjw6b17kbHS9uqqsibLsTZtqa5i8cl5Kf+wc2w2f5Evb3dkkAVup0s3AuNV3eOu9M2wG
+ rFB6TRoz
 
-On Mon,  7 Jul 2025 11:24:34 +0100 David Howells wrote:
-> +	rxrpc_prefail_call(call, RXRPC_CALL_LOCAL_ERROR, -EBADSLT);
-> +	__set_bit(RXRPC_CALL_RELEASED, &call->flags);
+On 08/07/2025 15:26, Colin Ian King wrote:
+> The sizeof(void *) is the incorrect argument in the kmalloc_array call,
+> it best to fix this by using sizeof(*folio) instead. Fortunately the
+> sizes of void * and *folio happen to be the same, so this has not shown
+> up as a run time issue.
+> 
+> Fixes: 2e227ff5e272 ("squashfs: add optional full compressed block caching")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-is the __set_bit() needed / intentional here?
-Looks like rxrpc_prefail_call() does:
+Thanks
 
-	WARN_ON_ONCE(__test_and_set_bit(RXRPC_CALL_RELEASED, &call->flags));
+Reviewed-by: Phillip Lougher <phillip@squashfs.org.uk>
+
+> ---
+>   fs/squashfs/block.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/squashfs/block.c b/fs/squashfs/block.c
+> index b3ae3b1cc0e5..00049b7b10c8 100644
+> --- a/fs/squashfs/block.c
+> +++ b/fs/squashfs/block.c
+> @@ -89,7 +89,7 @@ static int squashfs_bio_read_cached(struct bio *fullbio,
+>   	int err = 0;
+>   #ifdef CONFIG_SQUASHFS_COMP_CACHE_FULL
+>   	struct folio **cache_folios = kmalloc_array(page_count,
+> -			sizeof(void *), GFP_KERNEL | __GFP_ZERO);
+> +			sizeof(*folio), GFP_KERNEL | __GFP_ZERO);
+>   #endif
+>   
+>   	bio_for_each_folio_all(fi, fullbio) {
 
