@@ -1,202 +1,106 @@
-Return-Path: <linux-kernel+bounces-722475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0DFAFDB15
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:26:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6A5EAFDB1A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:26:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8990B3B3D5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:25:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D91503A38BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F134265CAA;
-	Tue,  8 Jul 2025 22:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E4025A2DD;
+	Tue,  8 Jul 2025 22:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="5vUkb1eS"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ObErs2xw"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D73259C92;
-	Tue,  8 Jul 2025 22:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C72259CA4
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 22:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752013409; cv=none; b=AfNJpAb4laHPpMA4j26O2yV8bCM0dUCZbmqwwgJ9yLHPGS2BauqcwHZVp4zlGbYwYYwdQ1Ynq/ohWTcut23/rctSgQzjecyGGbII348lnk1yZFDCxAEIVTWJvDOrObz4FWvMyhY/H2rLrVsbEQ8fBAM3XbnAU3Rjp4p6A9sJEVI=
+	t=1752013504; cv=none; b=sv1i/gBu3I4exq10+8YvP7pQRdDd+MCFrcBbC+tpW22W491EptL/rmZurfzwAL1dqbYkftbBe4MuL/njPv7ySzPPY6X0JUPw9vzgtP8rCJDTMrNfJeMkEVZLhuAtadkJwPDRpkUE4W+u0Lww4gYnkgjwcgleLoENwjqkFHKJ6Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752013409; c=relaxed/simple;
-	bh=ZBNoeQyLyiY4yXuySNMA8rN+EHcqPY3lwpzVv06gCQU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bTN4IOpk1VnK7RlfaaJoG1OdC2azCp3aCkVrZP0aTAAuy+8XdkX8eUScQF6rj+E62LBNhaGLHeFO/IqIhBAuZPBb9nOuhJtj7ibIwJPwLm/xZa0TBbjtVJG5P9th2mLwdZseBDiPoNVV9U81pLQeC9hb3TFP7sd3fs0Kt8NqC+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=5vUkb1eS; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=leAIKd/Cae2S6Coo0S346IXWPMqLG46ufx1tlunreB8=; b=5vUkb1eS7BGNjweOJRkPLeCWbz
-	Qi38TTVGzjo5ov8KU+zvQQDGgozOAfPhHOKBOUbdeR4yWH+BE7q76P/VTgTKYJ0rKkpgogE5JVWdq
-	wJQ/9jYKUKthRK2fbzN8jmJgRZztAluJ59isZ3ZqNfGGUbsYFWi4qZ0uRpltfKAinQoo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uZGia-000sPr-8a; Wed, 09 Jul 2025 00:23:16 +0200
-Date: Wed, 9 Jul 2025 00:23:16 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Michael Dege <michael.dege@renesas.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	Paul Barker <paul@pbarker.dev>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	s=arc-20240116; t=1752013504; c=relaxed/simple;
+	bh=l6krfXpeh11Ta0y6LX9X7L4QIzGIeN9upT1tk3QaitQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZhHe3rXbDQwul6OD7rojfLOlO7w0lfvNBJDN1VaLliR4sQlrXCmd+GlyylT03fZJUb0gI9BE/Tb2FfgsxEFekv3jnrS7RNcUgkndNZaFiv983lWaMmoD5MtzExtm8GaVawJ6vPf5+kgiPTLQfiyE4BQf8o89GBaTTdXq9TBXRtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ObErs2xw; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752013489;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0gHIIODrhhdGVls2rVmx9Uyz58la+lWfKW4V8WRh8gI=;
+	b=ObErs2xwKsqnb0SvubU2oaDqfFoLy9/r7regRmN+aeuOP0dEicWqzO8kBD+NoJw/5Pax+t
+	GSuifAGT1pEeHmnDpPUnYR76R8ZHopXgM/d2EST9N+JVHjP91gAXpLer/RgeRV+HVO7K5P
+	UMP10J9uQjXq/GbJH3MUl2Ewn4DUrvc=
+From: Oliver Upton <oliver.upton@linux.dev>
+To: linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: Re: [PATCH v2 3/4] net: renesas: rswitch: add offloading for L2
- switching
-Message-ID: <787197f2-c9d2-4ec9-8cac-99c8bbaecdcf@lunn.ch>
-References: <20250708-add_l2_switching-v2-0-f91f5556617a@renesas.com>
- <20250708-add_l2_switching-v2-3-f91f5556617a@renesas.com>
+	kvm@vger.kernel.org,
+	Sascha Bischoff <Sascha.Bischoff@arm.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	nd <nd@arm.com>,
+	maz@kernel.org,
+	Joey Gouly <Joey.Gouly@arm.com>,
+	Suzuki Poulose <Suzuki.Poulose@arm.com>,
+	yuzenghui@huawei.com,
+	will@kernel.org,
+	tglx@linutronix.de,
+	lpieralisi@kernel.org,
+	Timothy Hayes <Timothy.Hayes@arm.com>
+Subject: Re: [PATCH v2 0/5] KVM: arm64: Enable GICv3 guests on GICv5 hosts using FEAT_GCIE_LEGACY
+Date: Tue,  8 Jul 2025 15:24:38 -0700
+Message-Id: <175201339872.1946470.9170349330766710670.b4-ty@linux.dev>
+In-Reply-To: <20250627100847.1022515-1-sascha.bischoff@arm.com>
+References: <20250627100847.1022515-1-sascha.bischoff@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250708-add_l2_switching-v2-3-f91f5556617a@renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-> +void rswitch_update_l2_offload(struct rswitch_private *priv)
-> +{
-> +	bool learning_needed, forwarding_needed;
-> +	unsigned int all_ports_mask, fwd_mask;
-> +	struct rswitch_device *rdev;
-> +
-> +	/* calculate fwd_mask with zeroes in bits corresponding to ports that
-> +	 * shall participate in hardware forwarding
-> +	 */
-> +	all_ports_mask = GENMASK(RSWITCH_NUM_AGENTS - 1, 0);
-> +	fwd_mask = all_ports_mask;
-> +
-> +	rswitch_for_all_ports(priv, rdev) {
-> +		if (rdev_for_l2_offload(rdev) && rdev->forwarding_requested)
-> +			fwd_mask &= ~BIT(rdev->port);
-> +	}
-> +
-> +	rswitch_for_all_ports(priv, rdev) {
-> +		if (rdev_for_l2_offload(rdev)) {
-> +			learning_needed = rdev->learning_requested;
-> +			forwarding_needed = rdev->forwarding_requested;
-> +		} else {
-> +			learning_needed = false;
-> +			forwarding_needed = false;
-> +		}
-> +
-> +		if (!rdev->learning_offloaded && learning_needed) {
-> +			rswitch_modify(priv->addr, FWPC0(rdev->port),
-> +				       0,
-> +				       FWPC0_MACSSA | FWPC0_MACHLA | FWPC0_MACHMA);
-> +
-> +			rdev->learning_offloaded = true;
-> +			netdev_info(rdev->ndev, "starting hw learning\n");
-> +		}
-> +
-> +		if (rdev->learning_offloaded && !learning_needed) {
-> +			rswitch_modify(priv->addr, FWPC0(rdev->port),
-> +				       FWPC0_MACSSA | FWPC0_MACHLA | FWPC0_MACHMA,
-> +				       0);
-> +
-> +			rdev->learning_offloaded = false;
-> +			netdev_info(rdev->ndev, "stopping hw learning\n");
-> +		}
-> +
-> +		if (forwarding_needed) {
-> +			/* Update allowed offload destinations even for ports
-> +			 * with L2 offload enabled earlier.
-> +			 *
-> +			 * Do not allow L2 forwarding to self for hw port.
-> +			 */
-> +			iowrite32(FIELD_PREP(FWCP2_LTWFW_MASK, fwd_mask | BIT(rdev->port)),
-> +				  priv->addr + FWPC2(rdev->port));
-> +
-> +			if (!rdev->forwarding_offloaded) {
-> +				rswitch_modify(priv->addr, FWPC0(rdev->port),
-> +					       0,
-> +					       FWPC0_MACDSA);
-> +
-> +				rdev->forwarding_offloaded = true;
-> +				netdev_info(rdev->ndev,
-> +					    "starting hw forwarding\n");
-> +			}
-> +		} else if (rdev->forwarding_offloaded) {
-> +			iowrite32(FIELD_PREP(FWCP2_LTWFW_MASK, fwd_mask | BIT(rdev->port)),
-> +				  priv->addr + FWPC2(rdev->port));
-> +
-> +			rswitch_modify(priv->addr, FWPC0(rdev->port),
-> +				       FWPC0_MACDSA,
-> +				       0);
-> +
-> +			rdev->forwarding_offloaded = false;
-> +			netdev_info(rdev->ndev, "stopping hw forwarding\n");
-> +		}
-> +	}
-> +}
+On Fri, 27 Jun 2025 10:09:01 +0000, Sascha Bischoff wrote:
+> This series introduces support for running GICv3 guests on GICv5 hosts
+> by leveraging the GICv5 legacy compatibility feature
+> (FEAT_GCIE_LEGACY). The main motivation is to enable existing GICv3
+> VMs on GICv5 system without VM or VMM modifications - things should
+> work out of the box.
+> 
+> The changes are focused on two main areas:
+> 
+> [...]
 
-This function seems overly complicated.
+I've picked this up now that the GICv5 driver is baking in -next. No
+promises that these patches actually land in 6.17 (if the host side
+doesn't land) but I'm quite happy with the KVM bits.
 
-Normally you can change a ports STP state without needing to consider
-other ports. Can you separate STP from joining ports to a bridge? That
-might help simplify this function, break it up into two functions.
+Applied to next, thanks!
 
-> +static int rswitch_port_obj_add(struct net_device *ndev, const void *ctx,
-> +				const struct switchdev_obj *obj,
-> +				struct netlink_ext_ack *extack)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static int rswitch_port_obj_del(struct net_device *ndev, const void *ctx,
-> +				const struct switchdev_obj *obj)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
+[1/5] irqchip/gic-v5: Skip deactivate for forwarded PPI interrupts
+      https://git.kernel.org/kvmarm/kvmarm/c/244e9a89ca76
+[2/5] irqchip/gic-v5: Populate struct gic_kvm_info
+      https://git.kernel.org/kvmarm/kvmarm/c/1ec38ce3d024
+[3/5] arm64/sysreg: Add ICH_VCTLR_EL2
+      https://git.kernel.org/kvmarm/kvmarm/c/b62f4b5dec91
+[4/5] KVM: arm64: gic-v5: Support GICv3 compat
+      https://git.kernel.org/kvmarm/kvmarm/c/c017e49ed138
+[5/5] KVM: arm64: gic-v5: Probe for GICv5
+      https://git.kernel.org/kvmarm/kvmarm/c/ff2aa6495d4b
 
-> +static int rswitch_switchdev_blocking_event(struct notifier_block *nb,
-> +					    unsigned long event, void *ptr)
-> +{
-> +	struct net_device *ndev = switchdev_notifier_info_to_dev(ptr);
-> +	int ret;
-> +
-> +	switch (event) {
-> +	case SWITCHDEV_PORT_OBJ_ADD:
-> +		ret = switchdev_handle_port_obj_add(ndev, ptr,
-> +						    rswitch_port_check,
-> +						    rswitch_port_obj_add);
-> +		break;
-> +	case SWITCHDEV_PORT_OBJ_DEL:
-> +		ret = switchdev_handle_port_obj_del(ndev, ptr,
-> +						    rswitch_port_check,
-> +						    rswitch_port_obj_del);
-> +		break;
-
-Since these two are hard coded to return EOPNOTSUPP, it seems like you
-could just return that here?
-
->  /* Forwarding engine block (MFWD) */
-> -static void rswitch_fwd_init(struct rswitch_private *priv)
-> +static int rswitch_fwd_init(struct rswitch_private *priv)
->  {
-> +	/* Initialize MAC hash table */
-> +	iowrite32(FWMACTIM_MACTIOG, priv->addr + FWMACTIM);
-> +	ret = rswitch_reg_wait(priv->addr, FWMACTIM, FWMACTIM_MACTIOG, 0);
-> +
-> +	return ret;
-
-Just
-
-	return rswitch_reg_wait(priv->addr, FWMACTIM, FWMACTIM_MACTIOG, 0);
-
-	Andrew
+--
+Best,
+Oliver
 
