@@ -1,156 +1,94 @@
-Return-Path: <linux-kernel+bounces-722075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4AA4AFD4FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:16:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E6EDAFD4F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:15:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC8B83BA925
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:14:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95FDC1685E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614B32E6122;
-	Tue,  8 Jul 2025 17:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD3D2E610A;
+	Tue,  8 Jul 2025 17:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnPxz3QT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZstwGqe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9BA1DC9B5;
-	Tue,  8 Jul 2025 17:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B541DDC18;
+	Tue,  8 Jul 2025 17:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751994917; cv=none; b=f8YvEPg6vti1urf2yg0mrloE1p+gg2zHDissathVDP8sEoLU5R9ST1Ixwlbsi5WuJ2Z9B+pDTHR7cslIOl5JpiB8dWFD9Nnb43/DWZ+NNtznASgmB1g0ArdeFPYGZQEMJQEb2JtASocKAWvtbWrR4V4m7qe0VIVnuIf9rPg/1Fo=
+	t=1751994925; cv=none; b=r7KDfste670p6yVXlaUhy2Z6wckEqzInlxX4OoQamVekYAuQnPBW2q3lmJwG6XE2J+CdB2DuM2tKdKOcYOWEQr3vWccy7K87IJJ0PCp0ZYuxNJPPo5DFax83rPQ7tz0S6UH1Ba28+lPResFsNTv0DCvgi65/4slOMCRXU+ES5KE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751994917; c=relaxed/simple;
-	bh=zN56Kcanmm2CK6PlyASbW3cQE6ADHzafSCUuBxwC2dY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B6pewuxpc1+tpALTGiUyjVatU7k8iCrMFwvHn86eToBkohMkKLGk/z8pVmo3PKuEzcXQp98SwxIoiwDBqfx2RJbx9Gj4dEAzt7eIQcyrBjNRaIvCoyCI4Pqm9ps8MwbtJEKr8ch1V5lQbX2K4VFg9s72RUyPVaN/uLJnM17529Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnPxz3QT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF322C4CEED;
-	Tue,  8 Jul 2025 17:15:16 +0000 (UTC)
+	s=arc-20240116; t=1751994925; c=relaxed/simple;
+	bh=0H0aF7cRHHB/Br97rsZdQr6cJ2PDUaga3Bt+QUveVQk=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=WOLl8n5GNqFNOcZvWGmclibsnEVY79C1DxT1EnH3Bvt4Y6ma94Ik/WarIXTheZG1c+C3RWmRZL79C6KVVZQ+yqDXrWFWtQW0nNCjg2U7XlaRKV1nAXUSvyK2AdMZ3OBWrY5Hp7iK7PZy9ncun4fmmh1m4DgFkry8PVp3GoISCGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZstwGqe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB58AC4CEED;
+	Tue,  8 Jul 2025 17:15:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751994917;
-	bh=zN56Kcanmm2CK6PlyASbW3cQE6ADHzafSCUuBxwC2dY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fnPxz3QTmKrnPuKFneFht/NRDKDsD+03YX3V7I+FRPaggTCn1DWx+XA0g34uivyTV
-	 odRko5WyDqDPAUIRXHjw5k6wNeY7CEXWhxwczwutDGalGgsX5ipQ5PH/rWiPlyC+pn
-	 WtfWqtRxtJTLG1yWk5r2E5KfgJHNiy/YGBx+ljwsfSRsECeKZwMIdqUzUy+XD6llCm
-	 q4g2HlwDbaaBhN30eh3JOBY4Tng6F5sbeDuPZ8ydx7SZgvtm+cInudZbCWPK5YiHGl
-	 EINgcElxaLfa/KeT4B8WuGzNWiPz/+GjJjHsEHSmVUSm8PVxJps20YraFSW96YAe9M
-	 /fqFxIcYeyzjg==
-Date: Tue, 8 Jul 2025 12:15:15 -0500
-From: Rob Herring <robh@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Luca Weiss <luca.weiss@fairphone.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: document the Milos Top
- Level Mode Multiplexer
-Message-ID: <20250708171515.GA640511-robh@kernel.org>
-References: <20250702-sm7635-pinctrl-v2-0-c138624b9924@fairphone.com>
- <20250702-sm7635-pinctrl-v2-1-c138624b9924@fairphone.com>
- <20250703-daring-burgundy-limpet-a1c97e@krzk-bin>
- <DB293G0PC5P8.13IW22M6DDESM@fairphone.com>
- <a453bd90-b7c7-42eb-b769-b4c87b6dac12@oss.qualcomm.com>
- <424285fb-14a0-452b-8d18-6165d2a78497@kernel.org>
- <3d3g2sq4r7pruu4c2sl2itclx7xuja6inasaicm67t4sx6u5fl@xq5g7h4rabno>
+	s=k20201202; t=1751994925;
+	bh=0H0aF7cRHHB/Br97rsZdQr6cJ2PDUaga3Bt+QUveVQk=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=cZstwGqeVD86NuqZ6sVHNLn2zaeM/oBrLcmGRw8G4apR9Ejvt92hbm3hvL3Byotgg
+	 OKzJp4x6Av7FFF/bHdrChQwIhlNPLheBpCJzme+ZRpgH3qfONBf1JAxdckVCLHr3Rp
+	 A0Frr9LAWvxK9yZqdwW5mKm6XcIYpPnNfj4LEz7XUqSc3IcM2AldsaHR6BmcVP57k/
+	 amaLPlYkauoipOGTlfkfyteyh3VJ71eenPL7vUkCqe3Z4M5MynOYhrvpeaM5esV0/j
+	 BKQP+sNNB6NYmXPxl9OiHgYCZidmbBzthsydKGZ2YvNxQu3rb+hVgJqKzbiRXLtWNW
+	 aq02rU2MgnjWA==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Thomas Falcon <thomas.falcon@intel.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+ Kan Liang <kan.liang@linux.intel.com>, 
+ =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ Caleb Biggers <caleb.biggers@intel.com>, linux-kernel@vger.kernel.org, 
+ linux-perf-users@vger.kernel.org, Ian Rogers <irogers@google.com>
+In-Reply-To: <20250630163101.1920170-1-irogers@google.com>
+References: <20250630163101.1920170-1-irogers@google.com>
+Subject: Re: [PATCH v2 00/15] perf vendor events: Update Intel events
+Message-Id: <175199492491.1307843.10305341895448801662.b4-ty@kernel.org>
+Date: Tue, 08 Jul 2025 10:15:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3d3g2sq4r7pruu4c2sl2itclx7xuja6inasaicm67t4sx6u5fl@xq5g7h4rabno>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c04d2
 
-On Thu, Jul 03, 2025 at 12:31:46PM -0500, Bjorn Andersson wrote:
-> On Thu, Jul 03, 2025 at 01:26:11PM +0200, Krzysztof Kozlowski wrote:
-> > On 03/07/2025 12:04, Konrad Dybcio wrote:
-> > > 
-> > > 
-> > > On 03-Jul-25 09:44, Luca Weiss wrote:
-> > >> On Thu Jul 3, 2025 at 9:41 AM CEST, Krzysztof Kozlowski wrote:
-> > >>> On Wed, Jul 02, 2025 at 05:56:16PM +0200, Luca Weiss wrote:
-> > >>>> Document the Top Level Mode Multiplexer on the Milos Platform.
-> > >>>
-> > >>> What is Milos platform? Does it have some sort of model number how we
-> > >>> usually expect? Wasn't this SM7325 or similar?
-> > >>>
+On Mon, 30 Jun 2025 09:30:45 -0700, Ian Rogers wrote:
+> Update:
+>  - ADL/ADLN v1.29 -> 1.31
+>  - ARL 1.08 -> 1.09
+>  - CLX 1.23 -> 1.25
+>  - EMR 1.11 -> 1.14
+>  - GRR 1.07 -> 1.09
+>  - GNR 1.08 -> 1.10
+>  - ICX 1.27 -> 1.28
+>  - LNL 1.11 -> 1.14
+>  - MTL 1.13 -> 1.14
+>  - PTL new v1.00
+>  - SPR 1.25 -> 1.28
+>  - SRF 1.09 -> 1.11
+>  - SKX 1.36 -> 1.37
+>  - TGL 1.17 -> 1.18
 > 
-> Milos is the actual name of the SoC.
-> 
-> > >>> The problem with such new naming that it awfully sounds like family
-> > >>> names, so just expand the name and explain it.
-> > >>
-> > >> Please go argue with Bjorn/Konrad about this, wasn't my idea.
-> > >>
-> > >> https://lore.kernel.org/linux-arm-msm/aGMI1Zv6D+K+vWZL@hu-bjorande-lv.qualcomm.com/
-> > >> https://lore.kernel.org/linux-arm-msm/b98d305b-247f-415b-8675-50d073452feb@oss.qualcomm.com/
-> > > 
-> > > Milos is the "real-est" name of this silicon. All the associated
-> > > S[AM]|QC[MS]s are just variations of it, with different fusing.
-> > > 
-> > > You'll stumble upon it across e.g. firmware build strings, as
-> > > well as in any documentation pieces.
-> > > 
-> > > There are various internal reasons for the switch, but the most
-> > > obvious external-facing one is not to have the user buy a devkit
-> > > and wonder whether they should use QCS9100 or QCS9075 DTB, and
-> > > why there's zero drivers code for these magic numbers (they
-> > > include SA8775P). We can simply point them to "codename" and
-> > > all C code will refer to it as well.
-> > 
-> > These are different SoCs, optionally with different firmware, so they
-> > cannot use the same top-level compatible chain. I hope you did not
-> > propose that.
-> > 
-> 
-> No they are not different SoCs, and that's the problem with the current
-> naming scheme.
-> 
-> > For me list like "qcs9100, sa8775p" is clear enough, but if you want
-> > "qcs9100, koala-bear" or "brown-bear, koala-bear" it is fine as well.
-> > You just cannot use koala-bear for all of them.
-> > 
-> 
-> It looks "clear enough", but it's wrong. The problem is that sa8775p,
-> qca9100, and qcs9075 are the "same" hardware and firmware.
-> 
-> The difference between sa8775p and qcs9100 is the reserved-memory map,
-> the difference between qcs9100 and qcs9075 is one IP block being status
-> = "okay" vs "disabled", due to fuses.
-> 
-> It's exactly the same problem we first saw in QRB5165, but we let the
-> problem explode. Now we use the names sc7280, sm7325, qcm6490, and
-> qcs6490 for the same SoC.
-> 
-> Using the SoC's actual name here will remove the need for playing games
-> with DT includes etc to try to map things to the current naming scheme.
-> 
-> 
-> The one case that isn't being taking care of such naming is when there
-> are differences in the firmware. But as can be seen in the "sc7280"
-> familiy, those software differences doesn't align with the chosen names.
-> And even within a given SoC, with a (overall) given firmware, the
-> reserved-memory map ends up differing.
-> 
-> 
-> So, the name of the SoC in this patch is "Milos". We already have ways
-> of dealing with firmware and/or hardware variations within one SoC, we
-> should use them (and refine them as necessary), rather than pretending
-> that something like SM7325 will define those properties.
+> [...]
+Applied to perf-tools-next, thanks!
 
-I for one prefer 1 compatible per die. We often don't know if that's 
-the case, but in this case we do so let's take advantage of it. 
+Best regards,
+Namhyung
 
-Rob
+
 
