@@ -1,152 +1,202 @@
-Return-Path: <linux-kernel+bounces-722136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E24AFD5BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:51:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08C09AFD5C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6C481C23363
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:52:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21C9C542507
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1A52E716E;
-	Tue,  8 Jul 2025 17:51:30 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614D52E7BB1;
+	Tue,  8 Jul 2025 17:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="mWC2RkfD"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011021.outbound.protection.outlook.com [52.101.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DEA2E540C
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 17:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751997089; cv=none; b=c0BO2cDvNOx8oLDmjpzvmHrClvi6NvhFY6l9swn1GP/fzrgkEmWY6M2pkxzidWXwV9tzhk4wxccYcZlfCBFnHaWb4Z4Ec0bsNNDNXC+HbYc6TrkEl5JDRiDnUWAoXgFkrcU/27hd4xUVSKC8MNmOY18uLyUp12uVjDHGRxh5n/w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751997089; c=relaxed/simple;
-	bh=16snbKbPrv8rHmFVZTG3K8M4q+P3FCRpUHEua0CsI6A=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HXcTInTLfolswlhGVTEA2DdKc3f47QKqW8Kb/V8kKveYVXzPJXB8kkpdz6bkkwplNnxj9m+9ZKZ+/g9ElayNxRuZiSPGSOi0KA7lp6N6Q6r0IKA2BdL3s7+RilHkCIxCv4KsP3dw9ngJL0nnWjEu3Oi2vCAYmVYXf7Y5MvKV53A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3e055be2288so41585915ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 10:51:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751997087; x=1752601887;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TJemdCw5jND5Annd3/nq9OT4Nf4Nr8oL4Q80bImD8XA=;
-        b=tLlXYD4DKRScM6/w1JJeotD94pL4YBFxApY0wF65iwVu4botV4T3hMDO6hVtvcWYu9
-         MkPk1Xl+3UXgt2NPDFdRyiHAsg9+pdSxcoeddqb2IngZkFJKVjo2naMaOX2HIJR912zt
-         bjf9fQ0tmjdkDlMPgdnfT1xjOQ/co+j/CkMtTsLxfounVI6hOjPjM808536y/C91qY9R
-         kjW5L/01RhtSmVTEBDBD2r5VYNlGIMQxIDJLmfA2XVOJ0Mnosm+K9FHAX9lp4orePXtZ
-         e0AxLGBJ5LJK2vwDHp4W/ZxUJtC8nmf5bhbGDXkU7MtMhCW/ZFO5nKniSK2Hb+1uz2ze
-         Bufg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqzeU8PgStFqM/a+gUGe3YU09k9QK0xs+dWTkOPWmHGKbjzeJUSy3KLjkdDT2jJTlCsNZSFzR3QHQjDpI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5swRxMLcIvGZRSzk6i3V34fXqy4UMDPCNlsPWaMWwBHJNYllP
-	K5EzHi6AwhNb/saEl0LT3D6lHF1Ncuw/t8Ss/09UIm30WVgbtqyklBo0O6wBnDpAM4qFfALkQ+3
-	LEy8s+s7A00B/j2q955RHaGHvc1zF/L9VJoAt0Yr0REnUIndx9pnccl+LoKQ=
-X-Google-Smtp-Source: AGHT+IFRnNn9sgDNyHJt23b7Mr7Ft7Q+dyuXSydoZ0gp2f60eUG3E0i27e/t7AxHn/AAywySkoC92IHPOfSdCltId0sqofMbm4qs
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E81F2E540C;
+	Tue,  8 Jul 2025 17:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751997159; cv=fail; b=OTpcFrAUDiIvSVipnpPpwmupVLaMbOZ67IF0YzJ2Ps90okZTq6XGG3wxJYxfNh/noYUrib1aq5+1PvsSX8Plh+12F0wjBev1zkwE18za3f5LZAa+Ymq4SSmgzVCC08CdQChEEr5QBTGRsMea9j8C3MUDlhAMcVZIYrCB7yrf2uc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751997159; c=relaxed/simple;
+	bh=seaPSbWumajjggfBS6i68E6a6TxAWvjdIOeD2a6QGpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=eVQ5q7jA515pDeibDS1LvDxpkot45eBTBB/9XkyDUQ3Ed54MTvoyDjkk70bjwe+6KK7YtkKiavUj3fYm0vnqZpsiGS98sVgxUy+hssY8RETyxuYJwpjDtBN9oKrex/6+fWisGa/e6bKRF2bUuap0Uk/dDLz3jrlJHJubQWroUt8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=mWC2RkfD; arc=fail smtp.client-ip=52.101.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Rj0CM8kP/6fOo5gb9X/AgB5IFrMcA2ItZU8P35T2uXz7hCK8WDRtRicPDFCy9jlaJx8eHGIJIFRbYyiiAhspOHWQBEDxReJYHe0or9brq0fFdR5xiGmdJfcPpKTVMk24h6yCy4Q4AEQbyUzWI5S3+IXXtXsMQ+6WfoyZy1KykvagatSq4WvGmwVU7twYmmXnvJp8zuDK3RiRXEllJXqncl8EjGUBYbJMonebAhV3kAB+rDe2TTEN30xGxATyFjArHEDTQJfpV2rs8/NrNtdK1kQi8l4l+ZjwBYS+8EZtSnqhECfyTfBYVgekBIbVba4/T2nW8JCYKbj+YQNpKBewHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Gc4LRkY9aVExtAb1rfYm3BD/kal2CN1SFphnc1pLvH0=;
+ b=Sn2U9AxwWZXcvE/OMlb2qMTgIvWs+KUP+2QA/Jf5X7TbQeRzk36K54CCPRPKgK8YJB3nmd8pvCDAa4Q/IeBjnipYG9uTEns+rJayduSVMdOv8F+8uKTI7YegiQZigpmNisXpINJ0VPRBPtM7kCq2d62eQ1OfE48EjfqLRrvj4sju6SI2G/zpEncUCplVyj9B+BDqMfDQhxU4m44VSSHSthBqeByKq9d58Ro+F/npHVk8jHvlUp++8uo3aIUicnY85vduTIinh5vpECyUL9yBaMXlu72S0E5p4ig4hcQFvT83tXXOywkSi8JGSm1xMdjI5jk2kgbZhi8cJJx0sQOILg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Gc4LRkY9aVExtAb1rfYm3BD/kal2CN1SFphnc1pLvH0=;
+ b=mWC2RkfDdAadM2SlwtnUjT4t2cibRKG28HZIGsEf3GDu+DVlz2ukeHEzGdTCtqd0zvI0YWtFtusGnQ/h+vAg/jnhExlMiGj9vzpmn2JEaC4S48WGEZ6BgymBdfmp/ncHAnyyPYuvRDShYr6M3ZumgFhhCATEhC+Mw3sGSLn64YoP6dxjQRD1PXJXFMxDWiIi1ItrRGNFwJb1M8MVQ9DBgzz6yUZz7scLTHLa2dmTJ4o348W4qS+XCleu5TxMNEEwQ9vdvFS4OL6cOsbWZThmZh1iurpjwP3AYP/B0lSaL3JLqllTywdKJxZYQNaP7oqy+Xd+yX23vB85wjCnE3TB8Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by GV1PR04MB10154.eurprd04.prod.outlook.com (2603:10a6:150:1ac::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Tue, 8 Jul
+ 2025 17:52:32 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8901.023; Tue, 8 Jul 2025
+ 17:52:32 +0000
+Date: Tue, 8 Jul 2025 13:52:26 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
+	Allen Hubbe <allenbh@gmail.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, ntb@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: endpoint: pci-epf-vntb: fix MW2 configfs id
+Message-ID: <aG1a2iy1/2RWd2FX@lizhi-Precision-Tower-5810>
+References: <20250708-vntb-mw-fixup-v1-1-22da511247ed@baylibre.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708-vntb-mw-fixup-v1-1-22da511247ed@baylibre.com>
+X-ClientProxiedBy: AS4PR10CA0020.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d8::10) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2591:b0:3df:3222:278e with SMTP id
- e9e14a558f8ab-3e136ea4bf6mr178291795ab.1.1751997087355; Tue, 08 Jul 2025
- 10:51:27 -0700 (PDT)
-Date: Tue, 08 Jul 2025 10:51:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686d5a9f.050a0220.1ffab7.0016.GAE@google.com>
-Subject: [syzbot] [mm?] WARNING in move_to_new_folio (2)
-From: syzbot <syzbot+3a24467a5470194c4175@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, apopple@nvidia.com, byungchul@sk.com, 
-	david@redhat.com, gourry@gourry.net, joshua.hahnjy@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, matthew.brost@intel.com, 
-	rakie.kim@sk.com, syzkaller-bugs@googlegroups.com, 
-	ying.huang@linux.alibaba.com, ziy@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GV1PR04MB10154:EE_
+X-MS-Office365-Filtering-Correlation-Id: ab7deeed-b8ea-4831-2964-08ddbe4836d3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|19092799006|52116014|7416014|376014|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0SJKnVwtmaWupAjUOyY5e7mmK6XpG/KF4BvOHkTYsvq5QNTT2TtDt1aAKkkM?=
+ =?us-ascii?Q?LA/D8/VLG9qihwIZRbvGH8uz2IvMV9vC3xfsbNP9/O/8miQQQA6sdF8t6AIg?=
+ =?us-ascii?Q?DbwNcsIGG5aUyEA75ozd1diDvZiUDe6hqaThUI+31ZnYbW6pSx5A2J40SgLt?=
+ =?us-ascii?Q?/Kp/52lRQPUyPltCKzH3fwTzEYEqlbvt1NIh3QaUrUgWCKrOEGsCG10Vh2YS?=
+ =?us-ascii?Q?5Schv9SyfqkgBW2v/wC5UnZBK4+HVw4cwhKYDMTUjjHk2stGmmaWfiGpfkmf?=
+ =?us-ascii?Q?oadjfEI02mLGzk1zgMpI4Yn+EMgC1lp+fCuKBYQhni+Ic2uRg5NaMFBH4I+4?=
+ =?us-ascii?Q?wt11HR0wAI+kZO/RVGj5XFcq+0MNbhn8poQ1NS5rQVc3XKyowyurLePia+ai?=
+ =?us-ascii?Q?evsyPz47AggUmUgItmlzQkjXKvUNWQMMKuQ+hsqi5z6irawNEk6qL0WJFZ6M?=
+ =?us-ascii?Q?a6Ji48L7o4IT3P/Mgvn+sAxkmLfCv4wKjQ1npmrFDWm9TMWjtNwytj3LOb+k?=
+ =?us-ascii?Q?ddSKjWrqfJpkph5Iscfq9INo/iH80Do/wMlRKquYjGMc4zkrrwd0HbmgdmUv?=
+ =?us-ascii?Q?R8svhAs+11wHDvvxIIBcu7i65dLK6LSkA3lZPyqSLbSTjw5s6kFho43Qbi0L?=
+ =?us-ascii?Q?ghKLz329BE4aSDcyZEybl7r5F0tWI+bTNOT3T7lD/Yfpt1OccolZ0jzDmN1v?=
+ =?us-ascii?Q?nwxu4Mekay2J0VGaXSf9O9qKcKADltTmkvl2/tD8L9eJFbGiv26/Sw+cV7z4?=
+ =?us-ascii?Q?bkwMoYMiiQXzJwXRSts7jvY/Dlc9M/XZtwF+hekbIWU8NLdaADH7T5Xux1JY?=
+ =?us-ascii?Q?PaZ7TCR/rtckpNCEx7QqbBqYWDjwmaODbbs2oGkWmAs7f3moQ61pRFdBTCvS?=
+ =?us-ascii?Q?qbbxICHa3Uoa9RLurw5bDZalRRundVvii+dbCEpYTsvhMxdYp2t8gfYfEcUe?=
+ =?us-ascii?Q?Vex9ShxLgbuSDIc0O0YJUTigpp9KPGbfJzuPTSkzwxHFpzDGmEmVRk3oK1C/?=
+ =?us-ascii?Q?A6y59qfh9NFr/SE425F+emEWCd0zeUZl5povBl2KjwOL6oMpoOA6PkUYm4Co?=
+ =?us-ascii?Q?Y6iXYSPNU0NWUJOYshQwrr51eQXrxUg9KCs16Xd1DRnFdrfLEq9flmeqDo4w?=
+ =?us-ascii?Q?Fqi4p4qI5jx3EvGnYLKi845uKX5s/Rg4HBsXTeXx4SAd8/zIcCzin2DGF4xY?=
+ =?us-ascii?Q?VUWUsxXuNVrUZztEksReIELCuhzFQmE0PQyVhgRPpEF4j74mq+AydIdCcO42?=
+ =?us-ascii?Q?4AuqAeB1xwrWE+k0gZ+QamdEeFwOS8mNC8kxGVYpfxArgSHSZpyRp5buwzOt?=
+ =?us-ascii?Q?K4F//E80pnBqq5Nk/N8FXGFT1rt0fq8sUdKIfKb3JdIyUiTPQSQtdeuH9Xb0?=
+ =?us-ascii?Q?EELqGKQ44H9FGAcBaA/aRuTpdSrVgTmRvT9OquRo0aTJncu7lUgQ20LAfs7I?=
+ =?us-ascii?Q?VFgU8mSX4PEE0gVTTFIG1bFOVitPtufIszhMEbUJHzklY7ePYdFvtw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(52116014)(7416014)(376014)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?UGVwlC2HUt6nCIyeOI+MzLGJ0IkIMhZgitdLutxG4fvAcoMaLHouz7TXCasS?=
+ =?us-ascii?Q?z1h6469qjsiicgS9qJXo/2RUIR9ivyK08qtIoeE6wpLBm+NlEXDSn8IOeBT1?=
+ =?us-ascii?Q?NPVIAzYG3eK+g/bM1YnWi4v9nI5KL4ZNADqpL6LbA2KgELjQUzqPIcb56NNm?=
+ =?us-ascii?Q?Kz4SuEsB0xXdn5gSRbxyDHQgpdX/s4xlwk495Wja8N/hlusztx6M7o/aQUqe?=
+ =?us-ascii?Q?mRhkWjwFCsrKWG9BQkfUDf/IQWYNV6En/yg8eflMhgER3ytcYS8eOSgR0XQm?=
+ =?us-ascii?Q?bw+Jhzg4HP3ddnmKflC6XnuZ+HQYZXFqWe2+nZdT94ENJc2t5NtSu2toGHu/?=
+ =?us-ascii?Q?M6SnB0lFzS/irh+C9pdM4e0d0Euro6Aqyz4f8O7dI/XVkz3Yc/a6woAycv2Y?=
+ =?us-ascii?Q?ZUW8HD+fDquYqqcRoNQ8+M10PTFF+uSgEYMgKlLjudz3JKHVVKMpV6nnHOK9?=
+ =?us-ascii?Q?2Dpl1uUichGyAfm27r1gHNXUW6Hlv/sFzqgQLNCLWDDL/AcItT0CyHA0XFin?=
+ =?us-ascii?Q?OEwcA8hCpp4ZDQ6WUVV0oA6NUL8Gax+DamIHO8XhLstX0fbTTJb+zbdftOpT?=
+ =?us-ascii?Q?+1TUnmeQ2xUREdjOUUvN9imFQlcVDo7eTjNfsD3HJwloLnxii2Me5T3h3BS3?=
+ =?us-ascii?Q?cqQJW9Y5V8QRekEDZZplsUqR3EOk5EQ4cosOJV1MJtLu0PQzJiltsTOyA089?=
+ =?us-ascii?Q?lwOyVCYJ74+3y8D5CZwMlYLcHAK5qQIW9DpquRBgomqkntgWPk9/sEFlwInz?=
+ =?us-ascii?Q?H8h7E5TAPbNASg7T46b1kT9bBdGp9oCk5YPKxuKxIJCL0Qrx4/ENRtMAMsOx?=
+ =?us-ascii?Q?UxH1QwieIRXE5eitkunOtIgtl9aSX8KfWTiel5LK05LNrWjv92MYiZFH9YB2?=
+ =?us-ascii?Q?YnZc+6gJ+qUNTKizYaSrJ9Li2qFAhwwC4PsPFb9IMhLLyA97GPQ6Z920BIfa?=
+ =?us-ascii?Q?MH0CVtCNlGUX2273TXNEkup5k2xIRUiXHuMiUGgM14Lt5JP3X4DL+sJUeVDx?=
+ =?us-ascii?Q?Q82Aq8nEh61z+dPec7NVnj/WFfEFMslfQd3BSRUiZ4k2c0J3icba/+AWWP7O?=
+ =?us-ascii?Q?PyxjfBoxYoaGnRVfk3D7Ux120YiUXL5nv8RbKxduO89+rHA034mrN9Jo7S5N?=
+ =?us-ascii?Q?Ylva0PbNdI7QXbUEVZj8MBBuvQ084xf/IZ+7RvCEo5q6UHCIPCM+6lf3cLx4?=
+ =?us-ascii?Q?UNESLDkWLJYS9mdXyQhn4i23NWjWrxFHYZghp1fPaq+d69ansqB6HGVfgb2J?=
+ =?us-ascii?Q?ryMWUIlIJhJmQ8pFsGMte2XVuvcJSLtD8XFNSBtVxgWrvABIzdN0Yk3j1AmE?=
+ =?us-ascii?Q?HNRfdgoSUtADZSJptZjClppsTdR2e25juH+T0QuFJkSlQZf4g5O+QUQlVWdJ?=
+ =?us-ascii?Q?wHVHaWwsshYbH9UW0JkDvPkQPtxKlGh0gRQg9mGTd/4+5hc2sBmxMZqHpoIn?=
+ =?us-ascii?Q?ZJE6OUHn4fKpL+emfU7d7ySBlE4ip8ogYWu11JkQ2IT/0xtQGgonG/fr7k0H?=
+ =?us-ascii?Q?adYvaRKQr3hSFx7h7PKPPxLndHkhgzjPgCCGaoKsSB8H16tU0I1jgPZ0Ja3Q?=
+ =?us-ascii?Q?DKGe5LFnHiM6Hh9PY8newl+7mbe9WwQ9hGhJ1NYA?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab7deeed-b8ea-4831-2964-08ddbe4836d3
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 17:52:32.4944
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: U/+phubKKdzIG50yQZ6TBtOvqWQB6Rw0SFX/MQ6zBsMOMhbwybClpFALLa63Gbj1+ACB9pKikM3DoKev2AI5UQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10154
 
-Hello,
+On Tue, Jul 08, 2025 at 04:49:57PM +0200, Jerome Brunet wrote:
+> The id associated with MW2 configfs entry is wrong.
+> Trying to use MW2 will overwrite the existing BAR setup associated with
+> MW1.
 
-syzbot found the following issue on:
+:%s/id/ID
 
-HEAD commit:    d7b8f8e20813 Linux 6.16-rc5
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16ff728c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f6cfc97245100778
-dashboard link: https://syzkaller.appspot.com/bug?extid=3a24467a5470194c4175
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=132adf70580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ff728c580000
+need new line between two paragraph.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-d7b8f8e2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/88e0e9607487/vmlinux-d7b8f8e2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c0e31868d902/bzImage-d7b8f8e2.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/02a26963f634/mount_0.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=150e5582580000)
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3a24467a5470194c4175@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-gfs2_meta_aops does not implement migrate_folio
-WARNING: CPU: 0 PID: 30 at mm/migrate.c:944 fallback_migrate_folio mm/migrate.c:942 [inline]
-WARNING: CPU: 0 PID: 30 at mm/migrate.c:944 move_to_new_folio+0x696/0x7a0 mm/migrate.c:996
-Modules linked in:
-CPU: 0 UID: 0 PID: 30 Comm: kcompactd1 Not tainted 6.16.0-rc5-syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:fallback_migrate_folio mm/migrate.c:942 [inline]
-RIP: 0010:move_to_new_folio+0x696/0x7a0 mm/migrate.c:996
-Code: 0d 01 90 42 80 7c 3d 00 00 74 0a 48 8b 7c 24 20 e8 3f 53 fe ff 48 8b 44 24 20 48 8b 30 48 c7 c7 80 b4 97 8b e8 bb b0 5e ff 90 <0f> 0b 90 90 49 bf 00 00 00 00 00 fc ff df e9 7e fd ff ff e8 62 d0
-RSP: 0018:ffffc900005171d0 EFLAGS: 00010246
-RAX: 07a7b0ed2cfb0500 RBX: ffffea0000fecc00 RCX: ffff888030f20000
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
-RBP: 1ffff1100a4b8921 R08: ffff88801fc24293 R09: 1ffff11003f84852
-R10: dffffc0000000000 R11: ffffed1003f84853 R12: ffffea00012c1a80
-R13: ffff8880525c47e8 R14: ffffea0000fecc08 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff88808d21d000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c0000cc000 CR3: 000000003fab7000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- migrate_folio_move mm/migrate.c:1301 [inline]
- migrate_folios_move mm/migrate.c:1653 [inline]
- migrate_pages_batch+0x1c34/0x2830 mm/migrate.c:1900
- migrate_pages_sync mm/migrate.c:1930 [inline]
- migrate_pages+0x1bcc/0x2930 mm/migrate.c:2039
- compact_zone+0x23f4/0x4ad0 mm/compaction.c:2683
- kcompactd_do_work mm/compaction.c:3134 [inline]
- kcompactd+0x97d/0x1290 mm/compaction.c:3228
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Frank
+>
+> Just put the correct id for MW2 to fix the situation
+>
+> Fixes: 4eacb24f6fa3 ("PCI: endpoint: pci-epf-vntb: Allow BAR assignment via configfs")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/pci/endpoint/functions/pci-epf-vntb.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+> index 41b297b16574558e7ab99fb047204ac29f6f3391..ac83a6dc6116be190f955adc46a30d065d3724fd 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+> @@ -993,8 +993,8 @@ EPF_NTB_BAR_R(db_bar, BAR_DB)
+>  EPF_NTB_BAR_W(db_bar, BAR_DB)
+>  EPF_NTB_BAR_R(mw1_bar, BAR_MW1)
+>  EPF_NTB_BAR_W(mw1_bar, BAR_MW1)
+> -EPF_NTB_BAR_R(mw2_bar, BAR_MW1)
+> -EPF_NTB_BAR_W(mw2_bar, BAR_MW1)
+> +EPF_NTB_BAR_R(mw2_bar, BAR_MW2)
+> +EPF_NTB_BAR_W(mw2_bar, BAR_MW2)
+>  EPF_NTB_BAR_R(mw3_bar, BAR_MW3)
+>  EPF_NTB_BAR_W(mw3_bar, BAR_MW3)
+>  EPF_NTB_BAR_R(mw4_bar, BAR_MW4)
+>
+> ---
+> base-commit: 38be2ac97d2df0c248b57e19b9a35b30d1388852
+> change-id: 20250708-vntb-mw-fixup-bc30a3e29061
+>
+> Best regards,
+> --
+> Jerome
+>
 
