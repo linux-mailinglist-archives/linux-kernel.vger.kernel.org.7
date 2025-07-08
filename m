@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-721631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C177FAFCBCF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:23:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BEBFAFCBD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B9A07B1F84
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:22:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DDFB483708
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A702DC34F;
-	Tue,  8 Jul 2025 13:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B852DCF68;
+	Tue,  8 Jul 2025 13:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpIUSsJc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dvey3kkV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003BF2AF07;
-	Tue,  8 Jul 2025 13:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FFF2DCBF7;
+	Tue,  8 Jul 2025 13:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751981015; cv=none; b=OHHZuJwC7Sl2M0OHSWQ2zJoYajGBgFEvz+Sao+gOgUqVL7U7AvehBQec1EydM9OCm487q1ubAMYkcac6rzeSbntLpnNWSwHL0DxHfd3DbzyTO0nThUfu6UNxyFAtxKR8Fvq8gcVD2K9ZGUIQieGixu0Qg778RebPXnncet3VtNo=
+	t=1751981016; cv=none; b=fn+2M6QI8nYSLfsB6GObWNQvP32T25mm796eZdpADl98u7R6ml5W3zuPZ7wNFaT1KbO+ZEum+sMiBV8i7xc/+do73BgyKr3VkBzlU5tegvaHX7LMgagl8EkkidO1MxYf94eWBPefkIh/3uZxfal0ptkfaOIsTyr8R1QHAbikVDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751981015; c=relaxed/simple;
-	bh=/1iFN9Ws/aEeuST/Nfzh/QqtvoeQni33+rb0JMvW6b0=;
+	s=arc-20240116; t=1751981016; c=relaxed/simple;
+	bh=kG5yQ4Z0omO38H0cx6vA3VUsN+la842ikKfx/Pkvzds=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Wg3Eb2dVNw29jJkB/RHec5ivwQ1oaRK4hGOQQPqCDkfQHLofMdJH/pxofOL4XW3sBizUr2m9niIo+AQjYtzNcOPFrar+I8HhW62G1Zm5IlvqK2W6q3PL5P8Nr8IwV380tShczDT8WbMRVfT63KpXAMMLiPJR/GiO30KJ83YppHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cpIUSsJc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 441BEC4CEED;
-	Tue,  8 Jul 2025 13:23:33 +0000 (UTC)
+	 Message-Id:Subject; b=ai4dPuEJxf6pWEdckvMu5UuNY4AbE7NZGlFrgkSJkuwL/wED36Kv+EFLQZF4XuBBHjXXcbU1EU4ko0Kc0oMUkg1mQy512jX1w3XjOXTbXlfUeMio2QFxPrG5e6maulj0GBulxSqFArGno1PlBsV50rI7hhirbrx61ErB3JjEcZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dvey3kkV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A23DAC4CEED;
+	Tue,  8 Jul 2025 13:23:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751981014;
-	bh=/1iFN9Ws/aEeuST/Nfzh/QqtvoeQni33+rb0JMvW6b0=;
+	s=k20201202; t=1751981015;
+	bh=kG5yQ4Z0omO38H0cx6vA3VUsN+la842ikKfx/Pkvzds=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=cpIUSsJc926Rqyxocwd9lOms7TgwgZMOkrmp/AILO1nw8CLCpJJIOzZAEcvb8c1EI
-	 M/nzsm19kBajLlzM5aVK/JXJAXG0VBkVn751qqlmpvKoZ3XK1UwNlfXnMzMrAc094D
-	 NGBJL7zSwmQ9qrdoY0up1H/91xVmLzh1RAVE3Hc+KcefD++h2XWUj644Eav37D+zim
-	 PH1PaGJvikusjpB8YbKAZ/M6MgKN/FmsSMLuzfUkNz7de8y0k5VPb81MPexZSLEq3s
-	 Sa/UDPHar4p2YF2xV3f5yQmETgc2LWzQMiw7l4QaQb/TJn0Ert14Ba0AhlublyFTaF
-	 ugsCqQ5LZvkLw==
-Date: Tue, 08 Jul 2025 08:23:32 -0500
+	b=Dvey3kkVvoDRgilLqHRQwtysdmaJHNksaZZaxZOz/Q0SrLBbH7QEMmvl8le3jMbsY
+	 DL6R4AapbMHL3yjiiz6WDE6N9QHZbgGA0AQZtBPrda6zWn5w6fqQ2AAL2Od7B/7FIa
+	 Pt4Xcta8PVEBtEDyCuQ3MV8R3c8ZsgeWXlyVQ5VfXt7fLJ5hzdxMKm6H0Sl6LvIDS6
+	 1KAmOX4zMdaiLHdZGxEUwBpRp5LkmUTaKkZeCI1fVchf7VyG+DpwYMeW3AC0gZ7ryO
+	 NveFnIAk7fJQXg8eefGXjFpXQwBGXmM59SA6jvezMlP63kGJIWs//srLaEk6i3n6JA
+	 nbKu8iKZI1uNQ==
+Date: Tue, 08 Jul 2025 08:23:34 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,72 +50,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: mripard@kernel.org, andy.yan@rock-chips.com, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, andyshrk@163.com, hjc@rock-chips.com, 
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- tzimmermann@suse.de, conor+dt@kernel.org, dri-devel@lists.freedesktop.org, 
- quic_jesszhan@quicinc.com, maarten.lankhorst@linux.intel.com, 
- neil.armstrong@linaro.org, krzk+dt@kernel.org, 
- nicolas.frattaroli@collabora.com
-To: Heiko Stuebner <heiko@sntech.de>
-In-Reply-To: <20250707164906.1445288-1-heiko@sntech.de>
-References: <20250707164906.1445288-1-heiko@sntech.de>
-Message-Id: <175198090646.436895.4175521744544423549.robh@kernel.org>
-Subject: Re: [PATCH 00/13] Support DSI output on rk3576 and roc-rk3576-pc
- board
+Cc: s-vadapalli@ti.com, Conor Dooley <conor+dt@kernel.org>, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>, 
+ linux-arm-kernel@lists.infradead.org, Tero Kristo <kristo@kernel.org>
+To: Chintan Vankar <c-vankar@ti.com>
+In-Reply-To: <20250708084252.1028191-1-c-vankar@ti.com>
+References: <20250708084252.1028191-1-c-vankar@ti.com>
+Message-Id: <175198090755.436953.6586253094300469079.robh@kernel.org>
+Subject: Re: [PATCH v5 0/4] Add bootph-all property to enable Ethernet boot
 
 
-On Mon, 07 Jul 2025 18:48:53 +0200, Heiko Stuebner wrote:
-> This enables all the necesary bits and bindings to get display output
-> on the dm-m10r800-v3s addon module for the Firefly roc-rk3576-pc board.
+On Tue, 08 Jul 2025 14:12:48 +0530, Chintan Vankar wrote:
+> This series adds bootph-all property to necessary nodes to enable
+> ethernet boot support for SK-AM68, AM62P5-SK, J722S, and SK-AM69.
 > 
-> A bit of cleanup of the ili9881c, because the driver was still trying
-> to send dcs commands when the underlying DSI driver might have already
-> switched to video-mode, which caused me quite a bit of headache until
-> I realized this being the culprit for my garbled display output :-) .
+> This series is based on commit '8d6c58332c7a' of linux-next tagged
+> next-20250703.
 > 
-> Only the last patch has a dependency on Nicolas' pwm series [0]
-> everything else, is directly usable.
+> Link to v4:
+> https://lore.kernel.org/r/20250429072644.2400295-1-c-vankar@ti.com/
 > 
+> Changes from v4 to v5:
+> - Updated [PATCH v4 2/2] by adding properties to the respective board
+>   files and split [PATCH v4 2/2] for AM62P5-SK and J722S-EVM.
+> - Added a new patch to enable Ethernet boot on SK-AM69.
 > 
-> [0] https://lore.kernel.org/lkml/20250602-rk3576-pwm-v2-0-a6434b0ce60c@collabora.com/
+> This series is based on linux-next tagged next-20250428.
 > 
-> Guochun Huang (1):
->   drm/rockchip: dsi2: add support rk3576
+> Chintan Vankar (4):
+>   arm64: dts: ti: k3-am68-sk-base-board: Add bootph-all property to
+>     enable Ethernet boot
+>   arm64: dts: ti: k3-am62p5-sk: Add bootph-all property to enable
+>     Ethernet boot
+>   arm64: dts: ti: k3-j722s-evm: Add bootph-all property to enable
+>     Ethernet boot
+>   arm64: dts: ti: k3-am69-sk: Add bootph-all property to enable Ethernet
+>     boot
 > 
-> Heiko Stuebner (12):
->   drm/panel: ilitek-ili9881c: turn off power-supply when init fails
->   drm/panel: ilitek-ili9881c: move display_on/_off dcs calls to
->     (un-)prepare
->   drm/panel: ilitek-ili9881c: convert (un-)prepare to
->     mipi_dsi_multi_context
->   dt-bindings: vendor-prefixes: Add prefix for Shenzhen Bestar
->     Electronic
->   dt-bindings: display: ili9881c: Add Bestar BSD1218-A101KL68 LCD panel
->   drm/panel: ilitek-ili9881c: Add Bestar BSD1218-A101KL68 support
->   dt-bindings: soc: rockchip: add rk3576 mipi dcphy syscon
->   dt-bindings: display: rockchip: Add rk3576 to RK3588 DW DSI2
->     controller schema
->   arm64: dts: rockchip: add mipi-dcphy to rk3576
->   arm64: dts: rockchip: add the dsi controller to rk3576
->   arm64: dts: rockchip: add vcc3v3-lcd-s0 regulator to roc-rk3576-pc
->   arm64: dts: rockchip: add dm-m10r800-v3s overlay for roc-rk3576-pc
-> 
->  .../display/panel/ilitek,ili9881c.yaml        |   1 +
->  .../rockchip/rockchip,rk3588-mipi-dsi2.yaml   |   1 +
->  .../devicetree/bindings/soc/rockchip/grf.yaml |   1 +
->  .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
->  arch/arm64/boot/dts/rockchip/Makefile         |   5 +
->  .../rk3576-roc-pc-dm-m10r800-v3s.dtso         | 134 ++++++++
->  .../arm64/boot/dts/rockchip/rk3576-roc-pc.dts |  16 +
->  arch/arm64/boot/dts/rockchip/rk3576.dtsi      |  50 +++
->  drivers/gpu/drm/panel/panel-ilitek-ili9881c.c | 301 ++++++++++++++----
->  .../gpu/drm/rockchip/dw-mipi-dsi2-rockchip.c  |  21 ++
->  10 files changed, 475 insertions(+), 57 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-roc-pc-dm-m10r800-v3s.dtso
+>  arch/arm64/boot/dts/ti/k3-am62p5-sk.dts          |  7 +++++++
+>  arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts | 12 ++++++++++++
+>  arch/arm64/boot/dts/ti/k3-am69-sk.dts            | 12 ++++++++++++
+>  arch/arm64/boot/dts/ti/k3-j722s-evm.dts          |  8 ++++++++
+>  4 files changed, 39 insertions(+)
 > 
 > --
-> 2.47.2
+> 2.34.1
 > 
 > 
 > 
@@ -137,49 +118,15 @@ make sure dt-schema is up to date:
 
 This patch series was applied (using b4) to base:
  Base: attempting to guess base-commit...
- Base: tags/v6.16-rc1-17-g63289206e26f (best guess, 8/9 blobs matched)
+ Base: tags/next-20250704 (exact match)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/rockchip/' for 20250707164906.1445288-1-heiko@sntech.de:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/ti/' for 20250708084252.1028191-1-c-vankar@ti.com:
 
-arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm1:pwm1m1-ch5:rockchip,pins:0:2: 14 is greater than the maximum of 13
-	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
-arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm0:pwm0m1-ch1:rockchip,pins:0:2: 14 is greater than the maximum of 13
-	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
-arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): i3c1:i3c1m1-xfer:rockchip,pins:0:2: 14 is greater than the maximum of 13
-	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
-arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): i3c1:i3c1m1-xfer:rockchip,pins:1:2: 14 is greater than the maximum of 13
-	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
-arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): i3c1_sda:i3c1_sdam1-pu:rockchip,pins:0:2: 14 is greater than the maximum of 13
-	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
-arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm2:pwm2m1-ch1:rockchip,pins:0:2: 14 is greater than the maximum of 13
-	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
-arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm2:pwm2m0-ch4:rockchip,pins:0:2: 14 is greater than the maximum of 13
-	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
-arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm2:pwm2m1-ch0:rockchip,pins:0:2: 14 is greater than the maximum of 13
-	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
-arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm2:pwm2m0-ch2:rockchip,pins:0:2: 14 is greater than the maximum of 13
-	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
-arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm2:pwm2m1-ch2:rockchip,pins:0:2: 14 is greater than the maximum of 13
-	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
-arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm2:pwm2m1-ch5:rockchip,pins:0:2: 14 is greater than the maximum of 13
-	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
-arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm2:pwm2m1-ch6:rockchip,pins:0:2: 14 is greater than the maximum of 13
-	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
-arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm2:pwm2m0-ch3:rockchip,pins:0:2: 14 is greater than the maximum of 13
-	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
-arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm2:pwm2m1-ch3:rockchip,pins:0:2: 14 is greater than the maximum of 13
-	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
-arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: syscon@26034000 (rockchip,rk3576-dcphy-grf): clocks: False schema does not allow [[21, 492]]
-	from schema $id: http://devicetree.org/schemas/soc/rockchip/grf.yaml#
-arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dtb: syscon@26034000 (rockchip,rk3576-dcphy-grf): clocks: False schema does not allow [[20, 492]]
-	from schema $id: http://devicetree.org/schemas/soc/rockchip/grf.yaml#
-arch/arm64/boot/dts/rockchip/rk3576-evb1-v10.dtb: syscon@26034000 (rockchip,rk3576-dcphy-grf): clocks: False schema does not allow [[21, 492]]
-	from schema $id: http://devicetree.org/schemas/soc/rockchip/grf.yaml#
-arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dtb: syscon@26034000 (rockchip,rk3576-dcphy-grf): clocks: False schema does not allow [[21, 492]]
-	from schema $id: http://devicetree.org/schemas/soc/rockchip/grf.yaml#
+arch/arm64/boot/dts/ti/k3-am69-sk.dtb: pinctrl@4301c068 (ti,j7200-padconf): mcu-cpsw-default-pins: 'booph-all' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/pinctrl/pinctrl-single.yaml#
 
 
 
