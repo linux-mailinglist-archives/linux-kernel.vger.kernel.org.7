@@ -1,215 +1,142 @@
-Return-Path: <linux-kernel+bounces-722509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C113CAFDB70
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:55:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E15CAFDB71
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:57:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DDBD172835
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:55:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE5BD7B8111
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA3B22A4E5;
-	Tue,  8 Jul 2025 22:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PqNP7R7d"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2899122330F;
+	Tue,  8 Jul 2025 22:57:07 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256BE1B4257
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 22:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456D21B4257
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 22:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752015305; cv=none; b=q/Jo0cBl4n5x6UGOozLpHC4tYqBSMxyoSsFHBHKI6az7fjKJEotHliiZspZgJpv75Gj+lHMvDtEiKpthPDiQ6Y4iWnVJNkj8K25XEdDYeWL5L14Vel6eBgCrcLXvc5MbASQUxXWKSwB7OGUtfTxQD3sMtL48jR3yiOJCp0cev94=
+	t=1752015426; cv=none; b=NJK2V7cdbO66UhJuTFqChSluPwHqlwzPFuOSXJL2wfn5Fiu8jgnbD0FQOcy0+bC8E79eQLfwWwG3J8Upr27NC088JML9vNBckvba+zbwyV866TXYasSFIDwgxhpAPxld0JSTz6S037PjeIK03uedq23fjkN2zeJirUZZ6rztVCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752015305; c=relaxed/simple;
-	bh=azscrZ4AZfsZtzg45YIlsj3hKxFzj165H2cs57Ej3pw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EmxZ34nSasbbVwq1waCL4wYQXHOh52aw0DiJu2JQXXE56VbqDNdE96AF6Aaci8ql3oNBsOsBJh+IHPgY5xJB0kTfzOBKJSxBSchsi723KKJfVd5PgInAoWfbg0xjazhmVHlb2vXH75TBjrLcM1R1NNOf3sCA7nmpmF+igUm48rM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PqNP7R7d; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2357c61cda7so33605ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 15:55:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752015303; x=1752620103; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sVRWLCIynL9morDWnQADm8WuJ5jAoeJ4mXqExkRmYFA=;
-        b=PqNP7R7dxPjb8OCYDA3Ekph+4+7+ocyZYbekhDyYGSnFQMHSLBo/RHje24oc6svjxm
-         6bGn1GgntwhkbD9opJevUa/CQNiBueEuQSUoScwmUWnEUKA6tclaPjmzGzgdcuXUnJcf
-         T3QGMUCDZD+EesMN5CPGUVaG3epP47+PDCACI6JP/4eUAzdWUBr3khQsX9NXWXVpgbPA
-         5JhgXGek9NmUl7Npv0hStagVTtXCY0vtYco2YavO9/EWbu6Ob/tTAdsBB/aAesCo0Zry
-         hOg9Tb3f0Nj25yQU1USZIzGiAvMhuYbtJMEFAuT28qjLRqLO020c4+AkxHWKBHXPOTzM
-         Lbkg==
+	s=arc-20240116; t=1752015426; c=relaxed/simple;
+	bh=GbMBD734YBPdLhnECCYw3mooBvzxUe3rrmDyjR2l4m0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=tUTNfyW5uhIBC5PO2NQLUJIJo3Lxx508Nw9BHjXmD65M1h+FkuaUdTOEqaYVXM3AHU1wRYE9JCcglwns+oUptv4KKnYGye1Bv2j/5rlhecg3lokpJ9K7foqzegY5WDEF0AX7CCII09z833fZuD2c1OE8tipQgZ+tD0XFZtzz2hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-86cfea700daso427565139f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 15:57:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752015303; x=1752620103;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sVRWLCIynL9morDWnQADm8WuJ5jAoeJ4mXqExkRmYFA=;
-        b=gaW2B4JVYQ2M+ob0KRxQ/8/iMCl/yaTvXWTbxHaVTrwLVZJNzPlwxTZapRv2wcMUmk
-         ZAZgVqPUo4EY+eJ1H7wmxdyeN7IxkfMBbqPIY5FnHXCGU7BpijXL0NhImVBrZ+7GZk2S
-         u5Owb/y3fx+jyX7wYrKAF2JduI/w+0GKNEjmlYoTSHTBa3t2eOZ006ldGjCw+3AX09JE
-         nphlNRE2hlewmalc8kegqkv+Bv0ZqHejXpVRgTGBirpUAlOdCrI4wRgC+9WFO3m7GPcy
-         UuN1QRTZACLSJhDoFmOkllCMwPc9V9H0vdyP4S0e841vbllira/BAM2Bm9q0rBDA9mtA
-         iY6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXQbg/4a7Qe4iXxSj2rVk4Hq1Vio7uQJ1h+Q2/atS4NJ6q9XD6zLjmFyVzFMUBL8s3yjJ7y1wr+QJW64jY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjaLHmlaCoQDJBJS4m1UOaMHON8uWS2yiSP5kqFLma98F/WysC
-	3DbOPai5A10lgUnA8miq2/aEqTf6kcUWa/KN0Aw2Prn40TEsmtb95432EDMrzGdDJ/tkTKde4v9
-	/LQAEBsa5SXRD/TlimvIptiiM8R+7x4ZQJFBO1uEf
-X-Gm-Gg: ASbGncuao+zWjDF9gTLDEPayJcn99HUZPhaUFI2PNkKupwnUjWQddKs50kn3Mc96D5y
-	GFHHpw0K0H7xeZkAT6O9Eyyjec5hG0PkPgmFrVVCjA9lms2XEoHWNLN7WgZ7/woVssbCGqUcFeb
-	RZz3aqYS8fx67e1XHpoK5j39T3avoQSjpD7uw63o3MO0UeNCOz3Sn2mgzs23yGRpvWe2yWnjGns
-	QuO3CPUheVW
-X-Google-Smtp-Source: AGHT+IFppI8EWFIKjUXPtViP+KrA09dQbTHMiXzo/hVpg329+fXbE9z6q1NN0DYucfeQOt83ReE7/FOzhTi0IjwwLl4=
-X-Received: by 2002:a17:903:320d:b0:216:48d4:b3a8 with SMTP id
- d9443c01a7336-23dda3cf61dmr1101735ad.16.1752015303037; Tue, 08 Jul 2025
- 15:55:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752015422; x=1752620222;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qhv184HDALO8fFw/rEl/SW7vo8z/YJC+ZE8quW5DMc4=;
+        b=PmG8Vxr11+jpYoc2yzCgQWJzyOSkFx0/zCP7K3sTJgerRJAHlAF6/mukdJBn858Vn/
+         RMfU/E2L/ggyF3X9myQKObnzUEy7bwQsW1fNNcj/Pog6a+zIQwESHH10wF6MyQ5mEVZf
+         fCvN5ZtbVGWoTR6YunC4/C/VuVQxtNqdIs/tByLjo4YXchptWxGCHwMLDB8taF18yASL
+         CjvbueMwgMGGEISIjMWNHmldcmK9slIVc/3pXQEaTqXW2BLbFZqlsRRcaVzuua9h/vGh
+         Nmck8KskX0bOCqHW3m5rTOpKjcciGjcY47l8H9PxJO2N8sktf6z3ZQUG0Gw++WPNc+a2
+         +SSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyY20ZKAHjaCh6QtzxhBeuGfcHdV9WwmtOFqEmlFbBoLoFnMIfbgSEZgFIj8WDY9alUx5eCB8XOf+nJyA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3rpQmb4V1p8cxwp2asVZzO4YQ1cSaeG4+MjYZdpGJlpmHxOrF
+	mHVPCMqF2ysSZLqu4weeHjM/Eib6P6Fn5wk0jEImKjF+fw2D0olZ1eNIvmLUeiPvWzGXle3b+hT
+	ojMo1m51P5iMutqRU3zliEeC67BRKcf9HVb+xMYcdzqBNZLX/vePJSSC/K50=
+X-Google-Smtp-Source: AGHT+IEmQkcGNq/DLEfrzrrN4F9drEZmb8/SaODZKdh3M7VJxlBx7AndmhsgrC8lcUqL9MClqW3Sqt5xN5v+gXjLAcHofXobJwlW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGtprH_57HN4Psxr5MzAZ6k+mLEON2jVzrLH4Tk+Ws29JJuL4Q@mail.gmail.com>
- <006899ccedf93f45082390460620753090c01914.camel@intel.com>
- <aG0pNijVpl0czqXu@google.com> <a0129a912e21c5f3219b382f2f51571ab2709460.camel@intel.com>
- <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com>
- <eeb8f4b8308b5160f913294c4373290a64e736b8.camel@intel.com>
- <CAGtprH8cg1HwuYG0mrkTbpnZfHoKJDd63CAQGEScCDA-9Qbsqw@mail.gmail.com>
- <b1348c229c67e2bad24e273ec9a7fc29771e18c5.camel@intel.com>
- <aG1dbD2Xnpi_Cqf_@google.com> <CAGtprH-ESrdhCeHkuRtiDoaqxCS9JVKu_CC9fbDRo+k+3jKCcQ@mail.gmail.com>
- <aG14gLz9C_601TJ3@google.com>
-In-Reply-To: <aG14gLz9C_601TJ3@google.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Tue, 8 Jul 2025 15:54:49 -0700
-X-Gm-Features: Ac12FXyERUa_xOAJgG7dIrmMf4kvAAP-pOIx0wDj5UJ0uC1eIt2Bz0JJ6_rlubA
-Message-ID: <CAGtprH-+gPN8J_RaEit=M_ErHWTmFHeCipC6viT6PHhG3ELg6A@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
-To: Sean Christopherson <seanjc@google.com>
-Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "pvorel@suse.cz" <pvorel@suse.cz>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
-	Jun Miao <jun.miao@intel.com>, "nsaenz@amazon.es" <nsaenz@amazon.es>, 
-	Kirill Shutemov <kirill.shutemov@intel.com>, "pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, 
-	"peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"tabba@google.com" <tabba@google.com>, "amoorthy@google.com" <amoorthy@google.com>, 
-	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "jack@suse.cz" <jack@suse.cz>, 
-	"vkuznets@redhat.com" <vkuznets@redhat.com>, "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, 
-	"keirf@google.com" <keirf@google.com>, 
-	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, 
-	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, Wei W Wang <wei.w.wang@intel.com>, 
-	"palmer@dabbelt.com" <palmer@dabbelt.com>, 
-	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, "willy@infradead.org" <willy@infradead.org>, 
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, Dave Hansen <dave.hansen@intel.com>, 
-	"aik@amd.com" <aik@amd.com>, "usama.arif@bytedance.com" <usama.arif@bytedance.com>, 
-	"quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "fvdl@google.com" <fvdl@google.com>, 
-	"rppt@kernel.org" <rppt@kernel.org>, "quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, 
-	"maz@kernel.org" <maz@kernel.org>, "vbabka@suse.cz" <vbabka@suse.cz>, 
-	"anup@brainfault.org" <anup@brainfault.org>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mic@digikod.net" <mic@digikod.net>, 
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, Fan Du <fan.du@intel.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "steven.price@arm.com" <steven.price@arm.com>, 
-	"muchun.song@linux.dev" <muchun.song@linux.dev>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, Zhiquan1 Li <zhiquan1.li@intel.com>, 
-	"rientjes@google.com" <rientjes@google.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>, 
-	Erdem Aktas <erdemaktas@google.com>, "david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
-	"hughd@google.com" <hughd@google.com>, "jhubbard@nvidia.com" <jhubbard@nvidia.com>, Haibo1 Xu <haibo1.xu@intel.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
-	"steven.sistare@oracle.com" <steven.sistare@oracle.com>, 
-	"quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, "jarkko@kernel.org" <jarkko@kernel.org>, 
-	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, Kai Huang <kai.huang@intel.com>, 
-	"shuah@kernel.org" <shuah@kernel.org>, "bfoster@redhat.com" <bfoster@redhat.com>, 
-	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, Chao P Peng <chao.p.peng@intel.com>, 
-	"pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, Alexander Graf <graf@amazon.com>, 
-	"nikunj@amd.com" <nikunj@amd.com>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "yuzenghui@huawei.com" <yuzenghui@huawei.com>, 
-	"jroedel@suse.de" <jroedel@suse.de>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
-	"jgowans@amazon.com" <jgowans@amazon.com>, Yilun Xu <yilun.xu@intel.com>, 
-	"liam.merwick@oracle.com" <liam.merwick@oracle.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
-	"quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Ira Weiny <ira.weiny@intel.com>, 
-	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
-	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "qperret@google.com" <qperret@google.com>, 
-	"dmatlack@google.com" <dmatlack@google.com>, "james.morse@arm.com" <james.morse@arm.com>, 
-	"brauner@kernel.org" <brauner@kernel.org>, "roypat@amazon.co.uk" <roypat@amazon.co.uk>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>, "pgonda@google.com" <pgonda@google.com>, 
-	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "hch@infradead.org" <hch@infradead.org>, 
-	"will@kernel.org" <will@kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
+X-Received: by 2002:a05:6602:210e:b0:873:35c8:16f9 with SMTP id
+ ca18e2360f4ac-8795b0f1021mr42561139f.8.1752015422642; Tue, 08 Jul 2025
+ 15:57:02 -0700 (PDT)
+Date: Tue, 08 Jul 2025 15:57:02 -0700
+In-Reply-To: <20250708223525.3029-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <686da23e.050a0220.1ffab7.0024.GAE@google.com>
+Subject: Re: [syzbot] [usb?] WARNING in usbnet_status_start
+From: syzbot <syzbot+3f89ec3d1d0842e95d50@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 8, 2025 at 12:59=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> On Tue, Jul 08, 2025, Vishal Annapurve wrote:
-> > On Tue, Jul 8, 2025 at 11:03=E2=80=AFAM Sean Christopherson <seanjc@goo=
-gle.com> wrote:
-> > Few points that seem important here:
-> > 1) Userspace can and should be able to only dictate if memory contents
-> > need to be preserved on shared to private conversion.
->
-> No, I was wrong, pKVM has use cases where it's desirable to preserve data=
- on
-> private =3D> shared conversions.
->
-> Side topic, if you're going to use fancy indentation, align the indentati=
-on so
-> it's actually readable.
->
-> >   -> For SNP/TDX VMs:
-> >        * Only usecase for preserving contents is initial memory
-> >          population, which can be achieved by:
-> >               -  Userspace converting the ranges to shared, populating =
-the contents,
-> >                  converting them back to private and then calling SNP/T=
-DX specific
-> >                  existing ABI functions.
-> >        * For runtime conversions, guest_memfd can't ensure memory conte=
-nts are
-> >          preserved during shared to private conversions as the architec=
-tures
-> >          don't support that behavior.
-> >        * So IMO, this "preserve" flag doesn't make sense for SNP/TDX VM=
-s, even
->
-> It makes sense, it's just not supported by the architecture *at runtime*.=
-  Case
-> in point, *something* needs to allow preserving data prior to launching t=
-he VM.
-> If we want to go with the PRIVATE =3D> SHARED =3D> FILL =3D> PRIVATE appr=
-oach for TDX
-> and SNP, then we'll probably want to allow PRESERVE only until the VM ima=
-ge is
-> finalized.
+Hello,
 
-Maybe we can simplify the story a bit here for today, how about:
-1) For shared to private conversions:
-       * Is it safe to say that the conversion itself is always
-content preserving, it's upto the
-           architecture what it does with memory contents on the private fa=
-ults?
-                 - During initial memory setup, userspace can control
-how private memory would
-                   be faulted in by architecture supported ABI operations.
-                 - After initial memory setup, userspace can't control
-how private memory would
-                   be faulted in.
-2) For private to shared conversions:
-       * Architecture decides what should be done with the memory on
-shared faults.
-                 - guest_memfd can query architecture whether to zero
-memory or not.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in usbnet_status_start
 
--> guest_memfd will only take on the responsibility of zeroing if
-needed by the architecture on shared faults.
--> Architecture is responsible for the behavior on private faults.
+sierra_net 4-1:0.11 wwan0: register 'sierra_net' at usb-dummy_hcd.3-1, Sierra Wireless USB-to-WWAN Modem, 00:00:00:00:01:0b
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 37 at drivers/net/usb/usbnet.c:268 usbnet_status_start+0x189/0x1e0 drivers/net/usb/usbnet.c:268
+Modules linked in:
+CPU: 1 UID: 0 PID: 37 Comm: kworker/1:1 Not tainted 6.16.0-rc4-syzkaller-00311-gd1b07cc0868f-dirty #0 PREEMPT(voluntary) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Workqueue: usb_hub_wq hub_event
+RIP: 0010:usbnet_status_start+0x189/0x1e0 drivers/net/usb/usbnet.c:268
+Code: 00 fc ff df 48 c1 ea 03 80 3c 02 00 75 4e 48 8b bb 70 03 00 00 89 ee e8 25 95 0c 00 41 89 c5 e9 36 ff ff ff e8 a8 3f ec fc 90 <0f> 0b 90 45 31 ed e9 39 ff ff ff 4c 89 ff e8 d4 41 49 fd e9 e9 fe
+RSP: 0018:ffffc90000277098 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff888107f64d00 RCX: ffffffff84930727
+RDX: ffff888105693a00 RSI: ffffffff84919188 RDI: ffff888107f64d00
+RBP: 0000000000000cc0 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: ffff888107f65070
+R13: ffffffff89be8f70 R14: ffff888116be6028 R15: ffff888116be6024
+FS:  0000000000000000(0000) GS:ffff888269262000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f6e767f1d60 CR3: 000000011f9fc000 CR4: 00000000003506f0
+Call Trace:
+ <TASK>
+ sierra_net_probe drivers/net/usb/sierra_net.c:929 [inline]
+ sierra_net_probe+0x70/0xb0 drivers/net/usb/sierra_net.c:921
+ usb_probe_interface+0x303/0x9c0 drivers/usb/core/driver.c:396
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:657
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:799
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:829
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:957
+ bus_for_each_drv+0x156/0x1e0 drivers/base/bus.c:462
+ __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1029
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
+ device_add+0x1148/0x1a70 drivers/base/core.c:3692
+ usb_set_configuration+0x1187/0x1e20 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:250
+ usb_probe_device+0xef/0x3e0 drivers/usb/core/driver.c:291
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:657
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:799
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:829
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:957
+ bus_for_each_drv+0x156/0x1e0 drivers/base/bus.c:462
+ __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1029
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
+ device_add+0x1148/0x1a70 drivers/base/core.c:3692
+ usb_new_device+0xd07/0x1a20 drivers/usb/core/hub.c:2694
+ hub_port_connect drivers/usb/core/hub.c:5566 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
+ port_event drivers/usb/core/hub.c:5866 [inline]
+ hub_event+0x2f85/0x5030 drivers/usb/core/hub.c:5948
+ process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3238
+ process_scheduled_works kernel/workqueue.c:3321 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
+ kthread+0x3c2/0x780 kernel/kthread.c:464
+ ret_from_fork+0x5b3/0x6c0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
-In future, if there is a usecase for controlling runtime behavior of
-private faults, architecture can expose additional ABI that userspace
-can use after initiating guest_memfd conversion.
+
+Tested on:
+
+commit:         d1b07cc0 arm64: dts: s32g: Add USB device tree informa..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=10ea6bd4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=28729dff5d03ad1
+dashboard link: https://syzkaller.appspot.com/bug?extid=3f89ec3d1d0842e95d50
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17cc8a8c580000
+
 
