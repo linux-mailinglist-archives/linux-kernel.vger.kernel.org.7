@@ -1,110 +1,204 @@
-Return-Path: <linux-kernel+bounces-721628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E8CAFCBCE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:23:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A20E4AFCBD5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA2D03ACD9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:22:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FD033BDA14
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F182DC32B;
-	Tue,  8 Jul 2025 13:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FLebeMfV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3FE2DD5F6;
+	Tue,  8 Jul 2025 13:23:04 +0000 (UTC)
+Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E44317C21E;
-	Tue,  8 Jul 2025 13:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D532DC32E;
+	Tue,  8 Jul 2025 13:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751980954; cv=none; b=CxVCPLkjmptcoe0OsStzPXgb1E24c5TLUoWmsQwaMSLUGDeDyZwCIDZoupDyI/yw0UlaOy04wS9Tmuqvu//geCMP8aKT8pgDm1uoLWtUiST1tJVEkAze2dzgKEGd2KxGo+FE1qLfe5cMBtD2icvp64DZqM7OSMXEoishDREKLys=
+	t=1751980983; cv=none; b=sHfhNBSApGfsXhUByUDFKXZ9PiJYdz7FmB9C2+WjBwzQQD+UrfYWLzalaNI04aq4lgnDbq8c4AfBOMNFWbENfQDNDiC6MVhGXqJhSyKbkHTj+74FlGwtPQIL0uthvJ3ICv95AJ/CYZy2hSuM58xgZNPl4rzB+eJZSUslkHsEHhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751980954; c=relaxed/simple;
-	bh=+T7k4pW9zu9L9kYieKGcZhmdFngMDzLfDLPI/Y816oo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UWByW4lBcvkB0pM+pHZg7tCN1ijnQtZrbLPrwEXsG63sxpTmkpYUUfnNeOC+B4FaXJbygmZ8VbNPAXn47LrSObvBrMZf6ep35AqLh5/TWihGSchwsEyytkb4BmaAWWS5xFDxZytfVumXP7uz7ZI71xURzi/2ce4TmmvLMkxt5M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FLebeMfV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12298C4CEED;
-	Tue,  8 Jul 2025 13:22:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751980953;
-	bh=+T7k4pW9zu9L9kYieKGcZhmdFngMDzLfDLPI/Y816oo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=FLebeMfVVuXhCgT8P3SHPbIzW4hPVNUbPFYWcLJXNSBk04spAGa2H8uq84xBo8Cuh
-	 7wqfk0zqhwCa9LmqP3A7IE9scxBtVrv2N4OYgzjF9r0XUg6aAqFX8BGwGer6deBJlV
-	 vymHhORihOfuvjORkBD2jAiXVyexoVoXoC1s7JtlFgfUlHLw5vs+e2X0GhpZTk1NhR
-	 1Pu+gHhZHgA5YjjvbQ2TFEqGlWaP1zUqEu2+mzHSAbWYNmjKp3ZviRGA02hvLmib/K
-	 yDY/Y3r4TlVigQ9yKqvqYoHU3rVO8dgVZ20S0h82qgmcJxqZ1vTRlSqVjAqdXW4j5N
-	 EIlY3Tsi/mpuw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
-Cc: "Oliver Mangold" <oliver.mangold@pm.me>,  "Benno Lossin"
- <lossin@kernel.org>,  "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice
- Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,  "Asahi
- Lina" <lina+kernel@asahilina.net>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v11 1/4] rust: types: Add Ownable/Owned types
-In-Reply-To: <CANiq72kWFYS-inzFPTQAGdPRBr7MffZLR9q7iWiT_j2w_e99MQ@mail.gmail.com>
- (Miguel
-	Ojeda's message of "Tue, 08 Jul 2025 12:16:19 +0200")
-References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me>
-	<20250618-unique-ref-v11-1-49eadcdc0aa6@pm.me>
-	<DB1IPFNLFDWV.2V5O73DOB2RV6@kernel.org> <aGtv9qs682gTyQWX@mango>
-	<DB5PPGOWNW4K.2C5A4UE9V9IEF@kernel.org> <aGzrZqIrStGD_UBp@mango>
-	<XIUikJ12Zp37g2qKiSTF2q3jsq6PBPyhXcd_TDUgKfXYSLTG6ob0IxTuWkdNGuqq_bnb034eXyJ3j7MpETb83g==@protonmail.internalid>
-	<CANiq72kWFYS-inzFPTQAGdPRBr7MffZLR9q7iWiT_j2w_e99MQ@mail.gmail.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Tue, 08 Jul 2025 15:22:26 +0200
-Message-ID: <87ecuqom0d.fsf@kernel.org>
+	s=arc-20240116; t=1751980983; c=relaxed/simple;
+	bh=FtLE0RISCQiIlj28mcdE/l6rPIAYAGJuDLAz4eL2YbA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VDjn9Mw0Vy0GMERFabgAPlU+zi7XBBhO8LYTXxma4IIPwrO7xb+IiP7ZASEDVbPD2gh15S7s3GZz5Fk+TptFFBwkVLTpX8juJRK/V4LqOYT1YA9qsZ9SkOZMp5LnkPVcI2J5WI3tqMnh1JnluSxzOjwicLJTfZa7zAlyyX3r86A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
+Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
+	by leonov.paulk.fr (Postfix) with ESMTPS id F0E9C1F00051;
+	Tue,  8 Jul 2025 13:22:54 +0000 (UTC)
+Received: by laika.paulk.fr (Postfix, from userid 65534)
+	id 9B221ACB315; Tue,  8 Jul 2025 13:22:53 +0000 (UTC)
+X-Spam-Level: 
+Received: from collins (unknown [192.168.1.1])
+	by laika.paulk.fr (Postfix) with ESMTPSA id EF06CACB30D;
+	Tue,  8 Jul 2025 13:22:51 +0000 (UTC)
+Date: Tue, 8 Jul 2025 15:22:49 +0200
+From: Paul Kocialkowski <paulk@sys-base.io>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Andre Przywara <andre.przywara@arm.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 4/4] arm64: dts: allwinner: a133-liontron-h-a133l: Add
+ Ethernet support
+Message-ID: <aG0bqasOYUwwgiQY@collins>
+References: <20250707165155.581579-1-paulk@sys-base.io>
+ <20250707165155.581579-5-paulk@sys-base.io>
+ <20250708003348.58fe509f@minigeek.lan>
+ <CAGb2v650h05aNvsQeQOjg63Ljcarxy2zqXnvNnjJ5+5ooGOELQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="AKuaO1c0htNCAj0c"
+Content-Disposition: inline
+In-Reply-To: <CAGb2v650h05aNvsQeQOjg63Ljcarxy2zqXnvNnjJ5+5ooGOELQ@mail.gmail.com>
+
+
+--AKuaO1c0htNCAj0c
 Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-"Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
+Hi,
 
-> On Tue, Jul 8, 2025 at 11:57=E2=80=AFAM Oliver Mangold <oliver.mangold@pm=
-me> wrote:
->>
->> Note, though, that I already moved it from types.rs to types/ownable.rs =
-on
->> request. It seems to me different people here have different ideas where=
- it
->> should be placed. I feel now, that it would make sense to come to an
->> agreement between the interested parties about where it should finally be
->> placed, before I move it again. Could I ask that we settle that question
->> once and for all before my next revision?
->
-> Yeah, if there is a disagreement with something said previously, then
-> it should be resolved before starting to ping-pong between approaches
-> with more and more patch versions. Reviewers can forget or they may
-> not have read an earlier comment, but you did the right thing
-> mentioning there is such a conflict in opinions.
+Le Tue 08 Jul 25, 16:18, Chen-Yu Tsai a =C3=A9crit :
+> On Tue, Jul 8, 2025 at 7:36=E2=80=AFAM Andre Przywara <andre.przywara@arm=
+=2Ecom> wrote:
+> >
+> > On Mon,  7 Jul 2025 18:51:55 +0200
+> > Paul Kocialkowski <paulk@sys-base.io> wrote:
+> >
+> > Hi Paul,
+> >
+> > > The Liontron H-A133L board features an Ethernet controller with a
+> > > JLSemi JL1101 PHY. Its reset pin is tied to the PH12 GPIO.
+> > >
+> > > Note that the reset pin must be handled as a bus-wide reset GPIO in
+> > > order to let the MDIO core properly reset it before trying to read
+> > > its identification registers. There's no other device on the MDIO bus.
+> >
+> > putting the PHY reset GPIO into the MDIO node is a clever solution, I
+> > was struggling with putting it either in the MAC or PHY node, though
+> > conceptually it would still belong in the latter, I think. But this
+> > might be a more generic problem: for most other devices we activate
+> > reset and clock gates *before* trying to access them, though this might
+> > be historically different for Ethernet PHYs.
+>=20
+> The phylib core has code to deal with reset GPIOs listed under the PHY no=
+de.
+> It might be worth checking why that doesn't work.
 
-Didn't we start with this placed in the top level kernel crate?
+While this code does exist, it's too early to be called when the mdio bus is
+trying to probe the phy. I was also surprised the existing reset gpio suppo=
+rt
+in the phylib core didn't take effect (that's how I tried to implement it f=
+irst)
+only to find that the code was never called. It's only called once the phy =
+was
+probed and registered.
 
-Anyway, I think it should go next to `ARef` and `AlwaysRefCounted`,
-which is in `types`. I think I asked to have it moved to a submodule at
-some point to keep types.rs manageable.
+Cheers,
 
-If we place this one to top level, we should move `ARef` and
-`AlwaysRefCounted` as well.
+Paul
 
+> OOTH, there's no code to deal with regulator supplies for PHYs.
+>=20
+> ChenYu
+>=20
+> > > The datasheet of the PHY mentions that the reset signal must be held
+> > > for 1 ms to take effect. Make it 2 ms (and the same for post-delay) to
+> > > be on the safe side without wasting too much time during boot.
+> > >
+> > > Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
+> >
+> > Despite the above, this looks fine, and works for me:
+> >
+> > Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+> > Tested-by: Andre Przywara <andre.przywara@arm.com>
+> >
+> > Cheers,
+> > Andre
+> >
+> > > ---
+> > >  .../sun50i-a133-liontron-h-a133l.dts          | 19 +++++++++++++++++=
+++
+> > >  1 file changed, 19 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a133-liontron-h-a13=
+3l.dts b/arch/arm64/boot/dts/allwinner/sun50i-a133-liontron-h-a133l.dts
+> > > index fe77178d3e33..90a50910f07b 100644
+> > > --- a/arch/arm64/boot/dts/allwinner/sun50i-a133-liontron-h-a133l.dts
+> > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a133-liontron-h-a133l.dts
+> > > @@ -65,6 +65,25 @@ &ehci1 {
+> > >       status =3D "okay";
+> > >  };
+> > >
+> > > +&emac0 {
+> > > +     pinctrl-names =3D "default";
+> > > +     pinctrl-0 =3D <&rmii0_pins>;
+> > > +     phy-handle =3D <&rmii_phy>;
+> > > +     phy-mode =3D "rmii";
+> > > +     status =3D "okay";
+> > > +};
+> > > +
+> > > +&mdio0 {
+> > > +     reset-gpios =3D <&pio 7 12 GPIO_ACTIVE_LOW>; /* PH12 */
+> > > +     reset-delay-us =3D <2000>;
+> > > +     reset-post-delay-us =3D <2000>;
+> > > +
+> > > +     rmii_phy: ethernet-phy@1 {
+> > > +             compatible =3D "ethernet-phy-ieee802.3-c22";
+> > > +             reg =3D <1>;
+> > > +     };
+> > > +};
+> > > +
+> > >  &mmc0 {
+> > >       vmmc-supply =3D <&reg_dcdc1>;
+> > >       cd-gpios =3D <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
+> >
+> >
 
-Best regards,
-Andreas Hindborg
+--=20
+Paul Kocialkowski,
 
+Independent contractor - sys-base - https://www.sys-base.io/
+Free software developer - https://www.paulk.fr/
 
+Expert in multimedia, graphics and embedded hardware support with Linux.
 
+--AKuaO1c0htNCAj0c
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmhtG6kACgkQhP3B6o/u
+lQxyDQ//cjeBa5VAClnAeDGIbRC52Ala2SFJm9pL1Kkm6GPyKpaAbDPz4DkKtZqD
+Rwt9Ti1nxSCtuhIg7pkHcAw0TSroMTZNFtQu4Y15216kq9bGylwSHVCMnWBCmpbz
+SSps3qJzNVrIHJuPizt+Mc07Cl9ub18D1AoEgnIVmPRQwLI9UC9YPA7YpG2uO1fc
+L+SQHu60k24t+5wDAWCs6YsTJhmkrDynisOiWD69By1idydb5pWdQJmWnUIHN6ep
+y+B2E748yLeNcBVjnvW9oyIPUXk0sl/KuhnI5DVsHzvL2qIZc+qirsMMatC3soZC
+rCRW3ggnKt0Ug7trxK0fR8/oEexl3q19uQcsJNH0U4a5qqDNvGWw1sYxBObQGjX9
+Byyupz8Ob3q3ylq+KNTxXqXVmnGLqRf+RTaCuCs8ludvdc4aPsZvvLbZpbbYRBpM
+GNaEFZafjW7eza5M/fvKvirSi8V9MrZbLfYS9ouN8Ge5qIYWl+1uZOjt1zSSj0SQ
+LSmdHfKAVJ/0cNXp4x25AMb7GG0P/B/FdunNgLz+hPazZMKgAiyEcxDV5NeIQ48x
+WVRb21+ijbWDrDM6p2VN+7+FNbnovBrbCxErK3QyrE1v9Om7pOHIFXpsUEX1RZOg
+DR/j1w2Z8WoWAK45XWj6Ex9finr12EICE6OJUjw2zoI+smniwbs=
+=O4+y
+-----END PGP SIGNATURE-----
+
+--AKuaO1c0htNCAj0c--
 
