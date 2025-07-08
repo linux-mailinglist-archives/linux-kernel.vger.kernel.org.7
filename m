@@ -1,192 +1,230 @@
-Return-Path: <linux-kernel+bounces-721474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A1BAFC9A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:32:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97E92AFC9AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85A4A5649A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:32:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBCB73BFF4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805372D8DAA;
-	Tue,  8 Jul 2025 11:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5634E2D3752;
+	Tue,  8 Jul 2025 11:31:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="FQ6TY4z+"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00222285C87;
-	Tue,  8 Jul 2025 11:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kcAJJqIG"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380EF2D8DD6;
+	Tue,  8 Jul 2025 11:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751974304; cv=none; b=ZNQnIgcwxb05k3CVNuz/S7UUhBTG5NmV7pvu/E4W2TmcFdhc4y0wFsO646NEmTbZUb40d64lLc713LU/dki9ooyauNvJl5DE7kZQBQ3GGMFSGClM2gjJoLiItlF0oIJYeWtltoJR2xrzQDEXKdT4alw/T8CUHUxSfsUBTFpaAJs=
+	t=1751974286; cv=none; b=Yz+9ul4AxbsZHgo+xLlEVOMbeDiEjs4lmNSzDS9nV/k7K9GMS1x8l7bsVcJr36YEtDscvjSJ8vjy7S0X4Erx33N/IqMob8EpwlsvIynjQwp5DNbdRZlMU/Kq8ZCvIEbearIEYT78gtbyFCJpqfxsH4Z0XOhOyFUhlH4qzQvEgnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751974304; c=relaxed/simple;
-	bh=KIdQp6aMol63johUM1LH/RC/wGt6/2XpndmRU16+Okk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=kNIi7sMxFeARGSNgckVhhLsU4CImxdnzY5/ShR3djCFfQzvZ5STUViiKLi3yoleXIxq4JC1VKw4VR7VfNj2+IhAYawJAgjM1l8nstTbeT2cEgiiKXE6mxBn4EgtcVxr3wlxEacxMTDu3Em/D3QnKzt8QF6Wp7oXT3MuxrKkHWjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=FQ6TY4z+ reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=hC9f6FRYG82+Ylwr7PLPhnV0dPrLyxYCBoJ56MsaH+w=; b=F
-	Q6TY4z+SdXT5ppwOVk/J9Ky1yUxtNiavHkrxXSOBft2PkVKXEF0f0f236QGjSJ3L
-	+5vU9avmS8CT2Bs9Er/vIoDEfHZNxeN8HylK//6UycZMRsPcEc4rUdxVQyxMUDbm
-	PtI1oAvfOxZ2aQqo0lqaY4UaQnntqdDSwTmivrycVM=
-Received: from slark_xiao$163.com ( [2408:8459:3840:997f:4072:3a4a:a2f3:b4e]
- ) by ajax-webmail-wmsvr-40-125 (Coremail) ; Tue, 8 Jul 2025 19:30:40 +0800
- (CST)
-Date: Tue, 8 Jul 2025 19:30:40 +0800 (CST)
-From: "Slark Xiao" <slark_xiao@163.com>
-To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
-Cc: "Manivannan Sadhasivam" <mani@kernel.org>,
-	manivannan.sadhasivam@linaro.org, johan+linaro@kernel.org,
-	mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re:Re: [PATCH v2] bus: mhi: host: pci_generic: Add Foxconn T99W696
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <o45vqmp26vu6jjijq5an2s3xtxieyqx37sitpqal2fijnpanxq@2rtmibk5lkqi>
-References: <20250528092232.16111-1-slark_xiao@163.com>
- <4k7426oxhrnfoshkcqwwilq5lqldjovvtrwfownllwxwgudwjo@a3i47vma4lhr>
- <cb7bd34.6056.1978c2466d2.Coremail.slark_xiao@163.com>
- <o45vqmp26vu6jjijq5an2s3xtxieyqx37sitpqal2fijnpanxq@2rtmibk5lkqi>
-X-NTES-SC: AL_Qu2eA/Wcu0ov5ieeY+kfmk8Sg+84W8K3v/0v1YVQOpF8jAzp9woYb2VSHFXQ9Ma0FBuxgQmGcxpo++tDdIZyXYAB5gU1jmMJPxelwuVPZF2mCA==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1751974286; c=relaxed/simple;
+	bh=k6NRDXgZjHB0dbMWOAtajHFgB3DAi0mz4xkaerrE8ho=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=Aq/TnrG9m42KcJI2Vv21xPz6DIQ3eNaHO/cq2hmR4cx14ig2FNeZiu2fr07U49SyXo5C672+bYF3reIvgFX8w9foFbpbOW3mLf8OHqzuZ6DwCWEH93VgL/NoquxnmO2o/LEYenNESUlK6+zTvbJZRsNA7ee36xhg9OWjuxwJ7H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kcAJJqIG; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AE02C4424F;
+	Tue,  8 Jul 2025 11:31:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1751974280;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7LSoQx5fTD/38a4GcvM7MJ0lnfSUZP0mXkSlQAQ16fY=;
+	b=kcAJJqIGoTN6u8HQpcIa/He+1R90CcM4yzYK5u+GV5EA3rdxyM2k4e3DnyspYG+je4+DLf
+	cmyh2XmrXrXmct3O7MKeaHdKf80zmraU6tchGd0W59NOCrptvBSSb/KfpsFPkGRnTGx8Us
+	9i49WkZv+ZbpdavADPVS9E0tC4AzawJSmlyzyJKVgCLWtjlz+GNVXLdZgZZt5INeCTS0ek
+	MHcaaLb7FxoQmolSENmWj2o06XIqoUPNvzvrAnMw1izZniD7K/TL74CTNxpzLQpf2HDy0z
+	iNWsoY2uJSgSKNA+iSavjTbFnVCg//Jiy7oe5UIaeTFw38OuODyVUp8srbuyZA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <7368dc3c.5e.197e9cd6208.Coremail.slark_xiao@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:fSgvCgD315xgAW1ozmQFAA--.50467W
-X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiowOEZGhs-5IZsQABsA
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 08 Jul 2025 13:31:19 +0200
+Message-Id: <DB6N1SVPVSQJ.15KQKOBOCHDCQ@bootlin.com>
+Subject: Re: [PATCH v10 04/11] pwm: max7360: Add MAX7360 PWM support
+Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>, "Michael Walle"
+ <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, <andriy.shevchenko@intel.com>,
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+X-Mailer: aerc 0.19.0-0-gadd9e15e475d
+References: <20250530-mdb-max7360-support-v10-0-ce3b9e60a588@bootlin.com>
+ <20250530-mdb-max7360-support-v10-4-ce3b9e60a588@bootlin.com>
+ <amukbuzpu34jbcjhmzmvfgh6eik5isrwcicfmlqmsyibvhij72@nnmhdj3celnt>
+In-Reply-To: <amukbuzpu34jbcjhmzmvfgh6eik5isrwcicfmlqmsyibvhij72@nnmhdj3celnt>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefgeehiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkffuvefhvffofhgjsehtqhertdertdejnecuhfhrohhmpedfofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugdfuceomhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkefhkeeifeethfejteevfeduheduvddvuedvvddugfffhfevkefftefhuefftddunecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddvpdhrtghpthhtohepuhhklhgvihhnvghksehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtt
+ hhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghmvghlrdgsohhuhhgrrhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplh
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-CgpBdCAyMDI1LTA2LTI0IDEwOjUwOjExLCAiRG1pdHJ5IEJhcnlzaGtvdiIgPGRtaXRyeS5iYXJ5
-c2hrb3ZAb3NzLnF1YWxjb21tLmNvbT4gd3JvdGU6Cj5PbiBGcmksIEp1biAyMCwgMjAyNSBhdCAw
-MzowMToyNVBNICswODAwLCBTbGFyayBYaWFvIHdyb3RlOgo+PiAKPj4gCj4+IEF0IDIwMjUtMDYt
-MTcgMTc6Mzk6MTEsICJNYW5pdmFubmFuIFNhZGhhc2l2YW0iIDxtYW5pQGtlcm5lbC5vcmc+IHdy
-b3RlOgo+PiA+T24gV2VkLCBNYXkgMjgsIDIwMjUgYXQgMDU6MjI6MzJQTSArMDgwMCwgU2xhcmsg
-WGlhbyB3cm90ZToKPj4gPj4gVDk5VzY5NiBpcyBkZXNpZ25lZCBiYXNlZCBvbiBRdWFsY29tbSBT
-RFg2MSBjaGlwIHdoaWNoIGlzIGEgY29zdAo+PiA+PiBkb3duIGNoaXAgcmVmZXIgdG8gcHJldmlv
-dXMgU0RYNjIvU0RYNjUuIFRob3VnaCB3ZSBoYXZlIGEgc3VwcG9ydAo+PiA+PiBvbiBTRFg2Mi9T
-RFg2NSwgd2UgY3JlYXRlIGEgbmV3IGNoYW5uZWwgY29uZmlnIGZvciBTRFg2MSBzaW5jZQo+PiA+
-PiB3ZSBhZGQgYSBOTUVBIGNoYW5uZWwgc3VwcG9ydCBmcm9tIHRoaXMgcHJvZHVjdC4KPj4gPj4g
-Rm9yIG5ldyBwcm9kdWN0cyB3ZSBhcmUgYWxsb3dlZCB0byBjdXN0b21pemUgdGhlIHN1YlZJRCBh
-bmQKPj4gPj4gc3ViUElEIG9ubHkuCj4+ID4+IAo+PiA+Cj4+ID5Db3VsZCB5b3UgcGxlYXNlIHB1
-c2ggdGhlIGZpcm13YXJlIHRvIGxpbnV4LWZpcm13YXJlPyBJIGRvbid0IGV4cGVjdCB0aGUgdXNl
-cnMKPj4gPm9mIHRoZSBwcm9kdWN0cyB0byB1cHN0cmVhbSB0aGUgZmlybXdhcmUsIGJ1dCBJIGRv
-IGV4cGVjdCB0aGUgdmVuZG9ycyB0byBkbyBzby4KPj4gPgo+PiA+RllJOiBRY29tIHdhcyBhYmxl
-IHRvIHVwc3RyZWFtIHRoZSBmaXJtd2FyZSBmb3Igb25lIG9mIHRoZWlyIG1vZGVtczoKPj4gPmh0
-dHBzOi8vd2ViLmdpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9maXJtd2Fy
-ZS9saW51eC1maXJtd2FyZS5naXQvY29tbWl0L3Fjb20vcWR1MTAwL3hibF9zLm1lbGY/aWQ9MDE4
-NDJkYTQ1ZGYwYTlmODYyMDk4ZDE1OTdmNmFlNTc3NGIzZTQ4YQo+PiA+Cj4+ID5TbyB0aGVyZSBz
-aG91bGQgYmUgbm8gbGljZW5zaW5nIGlzc3Vlcy4gR29pbmcgZm9yd2FyZCwgSSB3YW50IGJvdGgg
-UWNvbSBhbmQKPj4gPnZlbmRvcnMgdG8gdXBzdHJlYW0gdGhlIGZpcm13YXJlIGJlZm9yZSB0aGUg
-bW9kZW0gc3VwcG9ydCBnZXRzIGluLgo+PiA+Cj4+ID4tIE1hbmkKPj4gPgo+PiBJdCBzaG91bGQg
-YmUgb2theS4gQnV0IHdlIGFyZSBmYWNpbmcgdGhhdCB3ZSBjYW4ndCBjb21taXQgZmlsZXMgdG8g
-bGludXgtZmlybXdhcmUKPj4gc2luY2UgQ2hpbmEgd2FzIGJhbm5lZCBmcm9tIHRoYXQgY29tbXVu
-aXR5Lgo+PiBJIHdpbGwgc2hhcmUgdGhlIGVkbCBmaWxlIHRvIHlvdSBpbiBhbm90aGVyIG1haWwu
-Cj4KPllvdSBjYW4gdXNlIGI0IFdlYiBSZWxheSB0byBzZW5kIHBhdGNoZXMuIE9yIHlvdSBjYW4g
-dXNlIHRoZSBnaXQKPnNlbmQtZW1haWwgdG8gc2VuZCBpdCB0byB0aGUgbGludXgtZmlybXdhcmUg
-TUwuIFRoZSBpc3N1ZSBpcyB0aGF0Cj5saW51eC1maXJtd2FyZSBtYWludGFpbmVycyBjb3VsZCBu
-b3QgaWRlbnRpZnkgeW91IGFzIGEgdmFsaWQgc2VuZGVyIG9mCj50aGUgZmlybXdhcmUuIEVpdGhl
-ciB1c2UgYSBGb3hjb25uLXJlbGF0ZWQgYnVzaW5lc3MgZW1haWwgdG8gU2lnbi1vZmYKPnRoZSBw
-YXRjaCAoYW5kIHByb2JhYmx5IHNlbmQgdGhlIGVtYWlsIHRocm91Z2ggRm94Y29ubiBlbWFpbCBj
-aGFubmVscykKPm9yIGZpbmQgc29tZWJvZHkgaW4gUXVhbGNvbW0gd2hvIGNhbiBhY2tub3dsZWRn
-ZSB5b3UgYXMgYSB2YWxpZCBzZW5kZXIKPmZvciBGb3hjb25uIGZpcm13YXJlLiBPdGhlcndpc2Ug
-eW91ciBlbWFpbHMgdG8gbGludXgtZmlybXdhcmUgbG9vayBsaWtlCj5jb21pbmcgZnJvbSB0aGUg
-cmFuZG9tIHVzZXIuCj4+IAo+PiBUaGFua3MKCkhpIE1hbmksClRoZSBlZGwgZmlsZSBoYXMgYmVl
-biBtZXJnZWQgaW50byBsaW51eC1maXJtd2FyZS4gWW91IGNhbiByZWZlciB0byBiZWxvdyBsaW5r
-OgpodHRwczovL2dpdGxhYi5jb20va2VybmVsLWZpcm13YXJlL2xpbnV4LWZpcm13YXJlLy0vbWVy
-Z2VfcmVxdWVzdHMvNTk0ClNvIHBsZWFzZSBoZWxwIGRvIGEgcmV2aWV3IGluIGRyaXZlciBzaWRl
-LiAoIEN1cnJlbnRseSBMVkZTL01NL2xpbnV4LWZpcm13YXJlCnN1cHBvcnQgb2YgRm94Y29ubiBT
-RFg2MSBhcmUgcmVhZHksIGV4Y2VwdCBkcml2ZXIpLgoKVGhhbmtzCgo+PiA+PiBTaWduZWQtb2Zm
-LWJ5OiBTbGFyayBYaWFvIDxzbGFya194aWFvQDE2My5jb20+Cj4+ID4+IC0tLQo+PiA+PiB2Mjog
-Q29ycmVjdCB0aGUgY2hfY2ZnIGFzIHNkeDYxIGNoYW5uZWxzCj4+ID4+IC0tLQo+PiA+PiAgZHJp
-dmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYyB8IDUyICsrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKwo+PiA+PiAgMSBmaWxlIGNoYW5nZWQsIDUyIGluc2VydGlvbnMoKykKPj4gPj4g
-Cj4+ID4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2J1cy9taGkvaG9zdC9wY2lfZ2VuZXJpYy5jIGIv
-ZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYwo+PiA+PiBpbmRleCBhNGE2MjQyOWM3
-ODQuLmE5MGFiMzFjNDZhOSAxMDA2NDQKPj4gPj4gLS0tIGEvZHJpdmVycy9idXMvbWhpL2hvc3Qv
-cGNpX2dlbmVyaWMuYwo+PiA+PiArKysgYi9kcml2ZXJzL2J1cy9taGkvaG9zdC9wY2lfZ2VuZXJp
-Yy5jCj4+ID4+IEBAIC00OTAsNiArNDkwLDIzIEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgbWhpX2No
-YW5uZWxfY29uZmlnIG1oaV9mb3hjb25uX3NkeDU1X2NoYW5uZWxzW10gPSB7Cj4+ID4+ICAJTUhJ
-X0NIQU5ORUxfQ09ORklHX0hXX0RMKDEwMSwgIklQX0hXMF9NQklNIiwgMTI4LCAzKSwKPj4gPj4g
-IH07Cj4+ID4+ICAKPj4gPj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgbWhpX2NoYW5uZWxfY29uZmln
-IG1oaV9mb3hjb25uX3NkeDYxX2NoYW5uZWxzW10gPSB7Cj4+ID4+ICsJTUhJX0NIQU5ORUxfQ09O
-RklHX1VMKDAsICJMT09QQkFDSyIsIDMyLCAwKSwKPj4gPj4gKwlNSElfQ0hBTk5FTF9DT05GSUdf
-REwoMSwgIkxPT1BCQUNLIiwgMzIsIDApLAo+PiA+PiArCU1ISV9DSEFOTkVMX0NPTkZJR19VTCg0
-LCAiRElBRyIsIDMyLCAxKSwKPj4gPj4gKwlNSElfQ0hBTk5FTF9DT05GSUdfREwoNSwgIkRJQUci
-LCAzMiwgMSksCj4+ID4+ICsJTUhJX0NIQU5ORUxfQ09ORklHX1VMKDEyLCAiTUJJTSIsIDMyLCAw
-KSwKPj4gPj4gKwlNSElfQ0hBTk5FTF9DT05GSUdfREwoMTMsICJNQklNIiwgMzIsIDApLAo+PiA+
-PiArCU1ISV9DSEFOTkVMX0NPTkZJR19VTCgzMiwgIkRVTiIsIDMyLCAwKSwKPj4gPj4gKwlNSElf
-Q0hBTk5FTF9DT05GSUdfREwoMzMsICJEVU4iLCAzMiwgMCksCj4+ID4+ICsJTUhJX0NIQU5ORUxf
-Q09ORklHX1VMX0ZQKDM0LCAiRklSRUhPU0UiLCAzMiwgMCksCj4+ID4+ICsJTUhJX0NIQU5ORUxf
-Q09ORklHX0RMX0ZQKDM1LCAiRklSRUhPU0UiLCAzMiwgMCksCj4+ID4+ICsJTUhJX0NIQU5ORUxf
-Q09ORklHX1VMKDUwLCAiTk1FQSIsIDMyLCAwKSwKPj4gPj4gKwlNSElfQ0hBTk5FTF9DT05GSUdf
-REwoNTEsICJOTUVBIiwgMzIsIDApLAo+PiA+PiArCU1ISV9DSEFOTkVMX0NPTkZJR19IV19VTCgx
-MDAsICJJUF9IVzBfTUJJTSIsIDEyOCwgMiksCj4+ID4+ICsJTUhJX0NIQU5ORUxfQ09ORklHX0hX
-X0RMKDEwMSwgIklQX0hXMF9NQklNIiwgMTI4LCAzKSwKPj4gPj4gK307Cj4+ID4+ICsKPj4gPj4g
-IHN0YXRpYyBzdHJ1Y3QgbWhpX2V2ZW50X2NvbmZpZyBtaGlfZm94Y29ubl9zZHg1NV9ldmVudHNb
-XSA9IHsKPj4gPj4gIAlNSElfRVZFTlRfQ09ORklHX0NUUkwoMCwgMTI4KSwKPj4gPj4gIAlNSElf
-RVZFTlRfQ09ORklHX0RBVEEoMSwgMTI4KSwKPj4gPj4gQEAgLTUwNiw2ICs1MjMsMTUgQEAgc3Rh
-dGljIGNvbnN0IHN0cnVjdCBtaGlfY29udHJvbGxlcl9jb25maWcgbW9kZW1fZm94Y29ubl9zZHg1
-NV9jb25maWcgPSB7Cj4+ID4+ICAJLmV2ZW50X2NmZyA9IG1oaV9mb3hjb25uX3NkeDU1X2V2ZW50
-cywKPj4gPj4gIH07Cj4+ID4+ICAKPj4gPj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgbWhpX2NvbnRy
-b2xsZXJfY29uZmlnIG1vZGVtX2ZveGNvbm5fc2R4NjFfY29uZmlnID0gewo+PiA+PiArCS5tYXhf
-Y2hhbm5lbHMgPSAxMjgsCj4+ID4+ICsJLnRpbWVvdXRfbXMgPSAyMDAwMCwKPj4gPj4gKwkubnVt
-X2NoYW5uZWxzID0gQVJSQVlfU0laRShtaGlfZm94Y29ubl9zZHg2MV9jaGFubmVscyksCj4+ID4+
-ICsJLmNoX2NmZyA9IG1oaV9mb3hjb25uX3NkeDYxX2NoYW5uZWxzLAo+PiA+PiArCS5udW1fZXZl
-bnRzID0gQVJSQVlfU0laRShtaGlfZm94Y29ubl9zZHg1NV9ldmVudHMpLAo+PiA+PiArCS5ldmVu
-dF9jZmcgPSBtaGlfZm94Y29ubl9zZHg1NV9ldmVudHMsCj4+ID4+ICt9Owo+PiA+PiArCj4+ID4+
-ICBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9jb250cm9sbGVyX2NvbmZpZyBtb2RlbV9mb3hjb25u
-X3NkeDcyX2NvbmZpZyA9IHsKPj4gPj4gIAkubWF4X2NoYW5uZWxzID0gMTI4LAo+PiA+PiAgCS50
-aW1lb3V0X21zID0gMjAwMDAsCj4+ID4+IEBAIC02MTUsNiArNjQxLDE3IEBAIHN0YXRpYyBjb25z
-dCBzdHJ1Y3QgbWhpX3BjaV9kZXZfaW5mbyBtaGlfZm94Y29ubl9kdzU5MzRlX2luZm8gPSB7Cj4+
-ID4+ICAJLnNpZGViYW5kX3dha2UgPSBmYWxzZSwKPj4gPj4gIH07Cj4+ID4+ICAKPj4gPj4gK3N0
-YXRpYyBjb25zdCBzdHJ1Y3QgbWhpX3BjaV9kZXZfaW5mbyBtaGlfZm94Y29ubl90OTl3Njk2X2lu
-Zm8gPSB7Cj4+ID4+ICsJLm5hbWUgPSAiZm94Y29ubi10OTl3Njk2IiwKPj4gPj4gKwkuZWRsID0g
-InFjb20vc2R4NjEvZm94Y29ubi9wcm9nX2ZpcmVob3NlX2xpdGUuZWxmIiwKPj4gPj4gKwkuZWRs
-X3RyaWdnZXIgPSB0cnVlLAo+PiA+PiArCS5jb25maWcgPSAmbW9kZW1fZm94Y29ubl9zZHg2MV9j
-b25maWcsCj4+ID4+ICsJLmJhcl9udW0gPSBNSElfUENJX0RFRkFVTFRfQkFSX05VTSwKPj4gPj4g
-KwkuZG1hX2RhdGFfd2lkdGggPSAzMiwKPj4gPj4gKwkubXJ1X2RlZmF1bHQgPSAzMjc2OCwKPj4g
-Pj4gKwkuc2lkZWJhbmRfd2FrZSA9IGZhbHNlLAo+PiA+PiArfTsKPj4gPj4gKwo+PiA+PiAgc3Rh
-dGljIGNvbnN0IHN0cnVjdCBtaGlfY2hhbm5lbF9jb25maWcgbWhpX212M3hfY2hhbm5lbHNbXSA9
-IHsKPj4gPj4gIAlNSElfQ0hBTk5FTF9DT05GSUdfVUwoMCwgIkxPT1BCQUNLIiwgNjQsIDApLAo+
-PiA+PiAgCU1ISV9DSEFOTkVMX0NPTkZJR19ETCgxLCAiTE9PUEJBQ0siLCA2NCwgMCksCj4+ID4+
-IEBAIC04NjMsNiArOTAwLDIxIEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcGNpX2RldmljZV9pZCBt
-aGlfcGNpX2lkX3RhYmxlW10gPSB7Cj4+ID4+ICAJLyogVGVsaXQgRkU5OTBBICovCj4+ID4+ICAJ
-eyBQQ0lfREVWSUNFX1NVQihQQ0lfVkVORE9SX0lEX1FDT00sIDB4MDMwOCwgMHgxYzVkLCAweDIw
-MTUpLAo+PiA+PiAgCQkuZHJpdmVyX2RhdGEgPSAoa2VybmVsX3Vsb25nX3QpICZtaGlfdGVsaXRf
-ZmU5OTBhX2luZm8gfSwKPj4gPj4gKwkvKiBGb3hjb25uIFQ5OVc2OTYuMDEsIExlbm92byBHZW5l
-cmljIFNLVSAqLwo+PiA+PiArCXsgUENJX0RFVklDRV9TVUIoUENJX1ZFTkRPUl9JRF9RQ09NLCAw
-eDAzMDgsIFBDSV9WRU5ET1JfSURfRk9YQ09OTiwgMHhlMTQyKSwKPj4gPj4gKwkJLmRyaXZlcl9k
-YXRhID0gKGtlcm5lbF91bG9uZ190KSAmbWhpX2ZveGNvbm5fdDk5dzY5Nl9pbmZvIH0sCj4+ID4+
-ICsJLyogRm94Y29ubiBUOTlXNjk2LjAyLCBMZW5vdm8gWDEgQ2FyYm9uIFNLVSAqLwo+PiA+PiAr
-CXsgUENJX0RFVklDRV9TVUIoUENJX1ZFTkRPUl9JRF9RQ09NLCAweDAzMDgsIFBDSV9WRU5ET1Jf
-SURfRk9YQ09OTiwgMHhlMTQzKSwKPj4gPj4gKwkJLmRyaXZlcl9kYXRhID0gKGtlcm5lbF91bG9u
-Z190KSAmbWhpX2ZveGNvbm5fdDk5dzY5Nl9pbmZvIH0sCj4+ID4+ICsJLyogRm94Y29ubiBUOTlX
-Njk2LjAzLCBMZW5vdm8gWDEgMmluMSBTS1UgKi8KPj4gPj4gKwl7IFBDSV9ERVZJQ0VfU1VCKFBD
-SV9WRU5ET1JfSURfUUNPTSwgMHgwMzA4LCBQQ0lfVkVORE9SX0lEX0ZPWENPTk4sIDB4ZTE0NCks
-Cj4+ID4+ICsJCS5kcml2ZXJfZGF0YSA9IChrZXJuZWxfdWxvbmdfdCkgJm1oaV9mb3hjb25uX3Q5
-OXc2OTZfaW5mbyB9LAo+PiA+PiArCS8qIEZveGNvbm4gVDk5VzY5Ni4wNCwgTGVub3ZvIFBSQyBT
-S1UgKi8KPj4gPj4gKwl7IFBDSV9ERVZJQ0VfU1VCKFBDSV9WRU5ET1JfSURfUUNPTSwgMHgwMzA4
-LCBQQ0lfVkVORE9SX0lEX0ZPWENPTk4sIDB4ZTE0NSksCj4+ID4+ICsJCS5kcml2ZXJfZGF0YSA9
-IChrZXJuZWxfdWxvbmdfdCkgJm1oaV9mb3hjb25uX3Q5OXc2OTZfaW5mbyB9LAo+PiA+PiArCS8q
-IEZveGNvbm4gVDk5VzY5Ni4wMCwgRm94Y29ubiBTS1UgKi8KPj4gPj4gKwl7IFBDSV9ERVZJQ0Vf
-U1VCKFBDSV9WRU5ET1JfSURfUUNPTSwgMHgwMzA4LCBQQ0lfVkVORE9SX0lEX0ZPWENPTk4sIDB4
-ZTE0NiksCj4+ID4+ICsJCS5kcml2ZXJfZGF0YSA9IChrZXJuZWxfdWxvbmdfdCkgJm1oaV9mb3hj
-b25uX3Q5OXc2OTZfaW5mbyB9LAo+PiA+PiAgCXsgUENJX0RFVklDRShQQ0lfVkVORE9SX0lEX1FD
-T00sIDB4MDMwOCksCj4+ID4+ICAJCS5kcml2ZXJfZGF0YSA9IChrZXJuZWxfdWxvbmdfdCkgJm1o
-aV9xY29tX3NkeDY1X2luZm8gfSwKPj4gPj4gIAl7IFBDSV9ERVZJQ0UoUENJX1ZFTkRPUl9JRF9R
-Q09NLCAweDAzMDkpLAo+PiA+PiAtLSAKPj4gPj4gMi4yNS4xCj4+ID4+IAo+PiA+Cj4+ID4tLSAK
-Pj4gPuCuruCuo+Cuv+CuteCuo+CvjeCuo+CuqeCvjSDgrprgrqTgrr7grprgrr/grrXgrq7gr40K
-Pgo+LS0gCj5XaXRoIGJlc3Qgd2lzaGVzCj5EbWl0cnkK
+On Wed Jun 18, 2025 at 8:45 PM CEST, Uwe Kleine-K=C3=B6nig wrote:
+> On Fri, May 30, 2025 at 12:00:12PM +0200, mathieu.dubois-briand@bootlin.c=
+om wrote:
+>> From: Kamel Bouhara <kamel.bouhara@bootlin.com>
+> ...
+>> --- /dev/null
+>> +++ b/drivers/pwm/pwm-max7360.c
+>> @@ -0,0 +1,180 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright 2025 Bootlin
+>> + *
+>> + * Author: Kamel BOUHARA <kamel.bouhara@bootlin.com>
+>> + * Author: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+>> + *
+>> + * Limitations:
+>> + * - Only supports normal polarity.
+>> + * - The period is fixed to 2 ms.
+>> + * - Only the duty cycle can be changed, new values are applied at the =
+beginning
+>> + *   of the next cycle.
+>> + * - When disabled, the output is put in Hi-Z.
+>> + */
+>> +#include <linux/bits.h>
+>> +#include <linux/dev_printk.h>
+>> +#include <linux/err.h>
+>> +#include <linux/math64.h>
+>> +#include <linux/mfd/max7360.h>
+>> +#include <linux/minmax.h>
+>> +#include <linux/mod_devicetable.h>
+>> +#include <linux/module.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/pwm.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/time.h>
+>> +#include <linux/types.h>
+>> +
+>> +#define MAX7360_NUM_PWMS			8
+>> +#define MAX7360_PWM_MAX_RES			255
+>> +#define MAX7360_PWM_PERIOD_NS			(2 * NSEC_PER_MSEC)
+>> +
+>> +struct max7360_pwm_waveform {
+>> +	u8 duty_steps;
+>> +	bool enabled;
+>> +};
+>> +
+>> +static int max7360_pwm_request(struct pwm_chip *chip, struct pwm_device=
+ *pwm)
+>> +{
+>> +	struct regmap *regmap =3D pwmchip_get_drvdata(chip);
+>> +
+>> +	return regmap_write_bits(regmap, MAX7360_REG_PWMCFG(pwm->hwpwm),
+>> +				 MAX7360_PORT_CFG_COMMON_PWM, 0);
+>> +}
+>
+> Do you need to undo that in .free()?
+>
+
+No, this is just to make sure we use the individual PWM configuration
+register and not the global one, so there is no need to revert it later.
+
+I'm adding a comment explaining that.
+
+> ...
+>
+>> +	wfhw->duty_steps =3D min(MAX7360_PWM_MAX_RES, duty_steps);
+>> +	wfhw->enabled =3D !!wf->duty_length_ns;
+>
+> How does the output behave if you clean the respective bit in
+> MAX7360_REG_GPIOCTRL? Unless it emits a constant low signal (and not
+> e.g. High-Z) you have to do
+>
+> 	wfhw->enabled =3D !!wf->period_length_ns;
+>
+> here. Please document the behaviour in a paragraph at the top of
+> the driver. Look at other drivers for the right format. The questions to
+> answer are:
+>
+>  - How does the driver behave on disable? (Typical is constant low or
+>    High-Z or freezing. Does it stop instantly or does it complete the
+>    currently running period?)
+>
+>  - How does the driver behave on a (non-disabling) reconfiguration? Can
+>    it happen that there are glitches? (Consider for example that
+>    duty_cycle changes from 0.5 ms to 1.5ms while the hardware is just in
+>    the middle of the 2ms period. Does the output go high immediately
+>    then producing two 0.5ms pulses during that period?)
+>
+
+Ok, I'm fixing the wfhw->enabled value.
+
+About the comment, I believe we already have everything, I'm just adding
+that on disable, the output is put in Hi-Z immediately.
+
+>> +	return 0;
+>> +}
+>> +
+>> +static int max7360_pwm_round_waveform_fromhw(struct pwm_chip *chip, str=
+uct pwm_device *pwm,
+>> +					     const void *_wfhw, struct pwm_waveform *wf)
+>> +{
+>> +	const struct max7360_pwm_waveform *wfhw =3D _wfhw;
+>> +
+>> +	wf->period_length_ns =3D wfhw->enabled ? MAX7360_PWM_PERIOD_NS : 0;
+>> +	wf->duty_offset_ns =3D 0;
+>> +	wf->duty_length_ns =3D DIV_ROUND_UP(wfhw->duty_steps * MAX7360_PWM_PER=
+IOD_NS,
+>> +					  MAX7360_PWM_MAX_RES);
+>
+> This should be 0 if !wfhw->enabled to make *wf a valid setting.
+>
+
+OK.
+
+> A check for that in the core (with CONFIG_PWM_DEBUG) would be great.
+>
+
+I can submit a patch, but I'm not sure what that check should be.
+
+So I believe the check would have to be made in __pwm_set_waveform(),
+making sure wf_rounded.duty_length_ns is 0 if the PWM is not enabled or
+in other words, if wf->period_length_ns is 0. I believe calling
+pwm_wf_valid() on wf_rounded would be enough. Maybe I should add that as
+a first check in pwm_check_rounding() to cover all call sites.
+
+We already call pwm_check_rounding() code, so me already make sure that
+if wf->period_length_ns is 0, wf_rounded->period_length_ns is 0. And
+adding pwm_wf_valid(), would make sure that if
+wf_rounded->period_length_ns is 0, wf_rounded->duty_length_ns is also 0.
+
+Any opinion?
+
+> ...
+>
+> Best regards
+> Uwe
+
+OK with all other comments.
+
+Thanks for your review!
+
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
