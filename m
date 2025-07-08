@@ -1,163 +1,94 @@
-Return-Path: <linux-kernel+bounces-722331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D3E2AFD835
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:20:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF06AFD837
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBF4A584561
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:20:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAB9A1C224A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD1323E33A;
-	Tue,  8 Jul 2025 20:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C201723D2B6;
+	Tue,  8 Jul 2025 20:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZq2ZSm5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKf8ST5b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA3F1D54E2;
-	Tue,  8 Jul 2025 20:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296021E5705;
+	Tue,  8 Jul 2025 20:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752005888; cv=none; b=MUZEzUbo4ibu47hqdrG1Mfd8x4Sp2PiE4ILafxNO67+m/VsJoJOKB7LzSZ2owizjigtLxoggn2RHdI0aT+BqoRiCNhZ91dYGLVKD6CFYLYkgvWfl8DsxzvarVa3r4HxdDiZnltDUosjaZUjJSKFPPJErWb3sqglaa1R60+bDRC0=
+	t=1752005983; cv=none; b=qBmtszD3C1m3ApOZ+y5bwpTUwT66N//kcEiLvN/Su6vm21ADlJ1T7y65dHDe87eRNhMud02M7vIESfzyvWvimgiQSdscBYEfWjfXVkxyygqEciYMySa6K3luy11ooT4Z66a7YbLj0UqoYDzwYmRjn8wcCUXOTL7ApNCrojkZ7zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752005888; c=relaxed/simple;
-	bh=zfkbjPg4tfTz4BD5E+6M+vCmZHxU3gsUQB6PvWPchNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tPiAnwL2T2sbOIAmtfd2jIJlx0AMdPWpV6sz9QIUUj8cpJAmIGyqwhtDDmbOGh0pTxgoCZsvf6qu2b6/5Jx8EdOscd/rni1+dfYXK8tCWUSt83Hrb7Ydqul/WrCwyO02dIsAOOJQuV3zV3jiJMX1ihXpbp97JFf+1GbYHynPlfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZq2ZSm5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6534C4CEF1;
-	Tue,  8 Jul 2025 20:18:07 +0000 (UTC)
+	s=arc-20240116; t=1752005983; c=relaxed/simple;
+	bh=hrDrvh31fh99izkGRHOTd6XJDuI3JXOTw5ugEGttONM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=WAs8kb2C0sFPEdp4YjJU8Xu9vtQ5HydJiZYH6yjpHMzgXMvmx7hvTiGlkVjof+9dfHfuuPVYCnVd33a25kB1PGEhC3zueH8BlT861stC/qIjDTedOEnD65Hg5Fh1JPMHLFOyEpstxPrJseC7kNSSQBejlJQZry4nIGvW+HzqMSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HKf8ST5b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A35CAC4CEED;
+	Tue,  8 Jul 2025 20:19:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752005888;
-	bh=zfkbjPg4tfTz4BD5E+6M+vCmZHxU3gsUQB6PvWPchNM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eZq2ZSm55e4ofOg+hNlkFpOxIV5V7eRne+d2kXkN110cHHYVQ8dYjm2LIrlDnQxCJ
-	 PhKK0uGqlbgRLeTJihMhwiMOS9emQvGv42QvUGg52nOyin7M4jlPraFnYPgaWp/UKg
-	 OvaPRBE5A2LQd5feBze+97YbboqOVJ5DaNQybooiYdcmwD0soFL4EPO60Qi34l6HVn
-	 7oCaMp0yxWDwxsJrJehhDmxEiIb7bBkQmYkRXXyxzokxkLsa1ojG4gw2Aq0VBosMFs
-	 +ajvyu23qepGhhAJtMJtLbJIGAVh2Tgrhdjpvi6eH09OJkc+fnwEJkxS0w1IoP8EDV
-	 z2YaCt8KTOgIQ==
-Date: Tue, 8 Jul 2025 15:18:06 -0500
-From: Rob Herring <robh@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 1/9] dt-bindings: watchdog: renesas,wdt: Add support for
- RZ/T2H and RZ/N2H
-Message-ID: <20250708201806.GA897559-robh@kernel.org>
-References: <20250707200111.329663-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250707200111.329663-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=k20201202; t=1752005982;
+	bh=hrDrvh31fh99izkGRHOTd6XJDuI3JXOTw5ugEGttONM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=HKf8ST5bN+gJDPk+B04fx88dqidtxQtsPGuLmCfsJ3TnjwyUs3WZ/soGD7DYUu2Vg
+	 QK+X9ugtTAZAf3wNLeY1HrKN+sA3WzCERiA1kSdcMQFJj8BdIzxHC8YSvfUdB+OEGN
+	 oni/+Ae6nPciOC/xDF65HJJgOczlYKgF5nKPWzRux6nsY/IRu7TCNgXeUdwXhusXUZ
+	 mSo6T45nrZTUP8pUnVlgA3tZNO6j2JNCgD+oK9bTB5Z7+FujNEdDh2R+J4XtZfDQeH
+	 D9fVNj1HDZml4zNxw3EFeZnQeggzx0OCCsDa6fCiNbnboiMInCAIM9se6n46SlQdkl
+	 6lz/DI4Q8XZVg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADFEC380DBEE;
+	Tue,  8 Jul 2025 20:20:06 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707200111.329663-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net 0/2] rxrpc: Miscellaneous fixes
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175200600561.1338.1628292736054563749.git-patchwork-notify@kernel.org>
+Date: Tue, 08 Jul 2025 20:20:05 +0000
+References: <20250707102435.2381045-1-dhowells@redhat.com>
+In-Reply-To: <20250707102435.2381045-1-dhowells@redhat.com>
+To: David Howells <dhowells@redhat.com>
+Cc: netdev@vger.kernel.org, marc.dionne@auristor.com, kuba@kernel.org,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Mon, Jul 07, 2025 at 09:01:03PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Extend the Renesas WDT device tree bindings to support the watchdog timer
-> found on the RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs.
-> 
-> The RZ/T2H WDT is mostly compatible with the one found on the RZ/V2H(P),
-> but includes an additional register and differs in the clock division
-> ratio settings for the WDTCR[CKS] field. To reflect these differences,
-> introduce a new compatible string, "renesas,r9a09g077-wdt".
-> 
-> The binding schema is updated accordingly. On RZ/T2H, the WDT does not
-> require the "resets" property. It also requires two register regions and
-> the presence of a "power-domains" property. The "clock-names" property is
-> limited to a single entry, "pclk", for this SoC.
-> 
-> The RZ/N2H SoC uses the same WDT IP as the RZ/T2H. It is supported by
-> using "renesas,r9a09g087-wdt" as the primary compatible string, with
-> "renesas,r9a09g077-wdt" listed as a fallback to describe the shared
-> hardware features.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  .../bindings/watchdog/renesas,wdt.yaml        | 37 +++++++++++++++++--
->  1 file changed, 34 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
-> index 78874b90c88c..ce439a401c12 100644
-> --- a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
-> +++ b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
-> @@ -81,10 +81,17 @@ properties:
->                - renesas,r9a09g056-wdt # RZ/V2N
->            - const: renesas,r9a09g057-wdt # RZ/V2H(P)
->  
-> -      - const: renesas,r9a09g057-wdt       # RZ/V2H(P)
-> +      - enum:
-> +          - renesas,r9a09g057-wdt    # RZ/V2H(P)
-> +          - renesas,r9a09g077-wdt    # RZ/T2H
-> +
-> +      - items:
-> +          - const: renesas,r9a09g087-wdt # RZ/N2H
-> +          - const: renesas,r9a09g077-wdt # RZ/T2H
->  
->    reg:
-> -    maxItems: 1
-> +    minItems: 1
-> +    maxItems: 2
->  
->    interrupts:
->      minItems: 1
-> @@ -132,6 +139,7 @@ allOf:
->            compatible:
->              contains:
->                enum:
-> +                - renesas,r9a09g077-wdt
->                  - renesas,rza-wdt
->                  - renesas,rzn1-wdt
->      then:
-> @@ -183,7 +191,9 @@ allOf:
->        properties:
->          compatible:
->            contains:
-> -            const: renesas,r9a09g057-wdt
-> +            enum:
-> +              - renesas,r9a09g057-wdt
-> +              - renesas,r9a09g077-wdt
->      then:
->        properties:
->          interrupts: false
-> @@ -192,6 +202,27 @@ allOf:
->        required:
->          - interrupts
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: renesas,r9a09g077-wdt
-> +    then:
-> +      properties:
-> +        resets: false
-> +        clock-names:
-> +          items:
-> +            - const: pclk
+Hello:
 
-Just 'maxItems: 1' as pclk is already the defined name.
+This series was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-With that,
+On Mon,  7 Jul 2025 11:24:32 +0100 you wrote:
+> Here are some miscellaneous fixes for rxrpc:
+> 
+>  (1) Fix a warning about over-large frame size in rxrpc_send_response().
+> 
+>  (2) Fix assertion failure due to preallocation collision.
+> 
+> David
+> 
+> [...]
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Here is the summary with links:
+  - [net,1/2] rxrpc: Fix over large frame size warning
+    https://git.kernel.org/netdev/net/c/31ec70afaaad
+  - [net,2/2] rxrpc: Fix bug due to prealloc collision
+    (no matching commit)
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
