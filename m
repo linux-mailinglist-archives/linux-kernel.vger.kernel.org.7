@@ -1,641 +1,225 @@
-Return-Path: <linux-kernel+bounces-722379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81E00AFD922
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:05:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 395F3AFD927
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:06:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 864963BD056
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:04:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79DEB584AA8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0970F24290E;
-	Tue,  8 Jul 2025 21:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A28241664;
+	Tue,  8 Jul 2025 21:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="t7nxULEq"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cm5fKkKB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79433D517;
-	Tue,  8 Jul 2025 21:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752008706; cv=none; b=YKCPRqoV4Uhy5tBQX/Xq4Fs5g98gbXgEgduWkILmYOZNJnT75RA8H1xscu1aqFCNY1NBi+FS0zmP+P+B15VJgMrOGwbpQ8rVe3RVV5+crf/t3rupQW5wEvYm9ceJovsuJ+kGY/UODu550kOpFZQtjhPP3jZ8xJWO+UClopjIGso=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752008706; c=relaxed/simple;
-	bh=mK4hDgW9GepE/omzaVnQSsVMec83d/n9EJu5Bc5VBlo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HwwFDGbTlJRg4czgDHS8LySzXiSSJAR2riUU1DCIyHoNnOLJQNQskMsprlNgX1SUIWTuZqEMuEHURCsAAMCtPKIYVDNs6Pq6FywFOFwfpSigts2NkAzZbuRE57ikQrhMQ2e2rmbvQ+86iYPWjpfviV+nujROjEqoVs+On9Nc4/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=t7nxULEq; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 568L4m4K997516;
-	Tue, 8 Jul 2025 16:04:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752008688;
-	bh=pDqs5z0T8DJczVbO2ETf80Xh3v/Wu5nwitrXj+vsLLk=;
-	h=From:To:CC:Subject:Date;
-	b=t7nxULEqjjXedf7OY9yfpQS2gcEQfh576/aTkaQmYxHarJIxN2pp0x4Gi4T/xXrl+
-	 Fqup7u5NKkkD/CrdGYDhGEE4YVbn7Oy87MO3dMuf0xtwSJOWBsaqhZ9PAIztOHUaEa
-	 KOxU4T9KJUHHNkTL9XC1yRhPBG5bOLMgo++Qms+A=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 568L4mQv2714000
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 8 Jul 2025 16:04:48 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 8
- Jul 2025 16:04:48 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 8 Jul 2025 16:04:48 -0500
-Received: from DMZ007XYY.dhcp.ti.com (dmz007xyy.dhcp.ti.com [128.247.29.251])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 568L4mWN2735823;
-	Tue, 8 Jul 2025 16:04:48 -0500
-From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
-To: <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <praneeth@ti.com>, <m-leonard@ti.com>, <rklein@nvidia.com>, <jm@ti.com>,
-        <khilman@baylibre.com>, <kory.maincent@bootlin.com>,
-        <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2] mfd: dt-bindings: Convert TPS65910 to DT schema
-Date: Tue, 8 Jul 2025 16:04:48 -0500
-Message-ID: <20250708210448.56384-1-s-ramamoorthy@ti.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E9DD517
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 21:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752008762; cv=fail; b=TswtpctAEV0OgDmwiGMiyRzIVTlnBkz6elLuICIbUGi3exu0T2cuNTrcr41LJjkBj6V1L+W8bWM0wnPc+TNjioe/9RrifPLZEBK9BbstH8wBNp6A0kYaIqdopywbkxKvMwz45EWCTTGrByurWzrSoAelW348XIIrYimFWldXs58=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752008762; c=relaxed/simple;
+	bh=WadI+ToaLzajkFXZSK41itEX+5qJ0ms3wahTUHORrNE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GhSmJvuw4gM2TmJYt7Pu9qv5hs60ZzBczi9qv4VOQn0o79k1o/wjojCpOjVjiTRh/jVoImK+n/369lt3+0uoT/Z4Cag72AC0RCktXJNdNQs2H/acOuMdt1x7UcSi8oTLU0AjGbi1OHJNIJkUMbtX7Lf5bcIvC9pRKCjE77huRRo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cm5fKkKB; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752008761; x=1783544761;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=WadI+ToaLzajkFXZSK41itEX+5qJ0ms3wahTUHORrNE=;
+  b=Cm5fKkKBcyVwd87uiRvHmXXdTucJasXReu8j44aREJCUzTZSIFI2Gkoh
+   dNDnKhct6SEqGnqDgEMXnYaXxEjnqtRMLKaDqhKdNmhUKaUjxe/HLosgk
+   8+WEkmfEcNJPPHEnF28D3FMt2Jg83JPfoFWSUYSK29i5/TAJJxxUkjzGp
+   7cjdLeOuwIb1ksZQvuW2JfnFOXmwVvVrHsMmhIXOxuLFlVqesnz7kgDlB
+   zb/lglOAJ3SGLS9yWSXk8lhy6eLUP9Bi3gbnMOOmREMozEOaSQzvir1P8
+   IPZVz88513nkA9txFqln4rzLQXIQqv3d+P8Szh9JZco9FMhzi332iOKQz
+   Q==;
+X-CSE-ConnectionGUID: 1qY7vvjPRN28fyNSxv1UnQ==
+X-CSE-MsgGUID: j92rZvZiTzybcnduwjQq3w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54144466"
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="54144466"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 14:06:01 -0700
+X-CSE-ConnectionGUID: xVKqmEi5SFOjZsKmDvCWxg==
+X-CSE-MsgGUID: sE3ajsk0T1+S5BoyQ4J2pw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="159861182"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 14:06:00 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 8 Jul 2025 14:05:59 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Tue, 8 Jul 2025 14:05:59 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.61)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 8 Jul 2025 14:05:59 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bfUFxz8zHSJvdvEJFUmSARJx0vb+nL31cs4vH3QKsYt4hxUZrHsOJoYuw8WD7EBbSb6ujK152kWKfkjNBu09lVVJ33BP+Lwcdy3yJ0tcgMrxRsYSGeofrSt82okcikIjjZEnIb0OqVC0KMNyzm4Qtuu3KrqyFJj5dKPhn1ODyY29JaXtpV3wXJH84UZ5pZmuG9LZbL6JWJstoWW9yGx08hp6xS6BX1WXDJ18S0CYuCZEyv0+yrCsRjyb56Gtz14tZwpcrbXTlfFHP88A1QlM9XC4Aw00wMG1wkMptao8H6gswVEFh9mKeQodC3yeScBTtVih0GHyIwDUQNL24Hxc4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Yl8Zo5t2Dk4gqftPoxDt3eJbAy3kRXSbj65bhWNVNEA=;
+ b=uOM+u+2ORm0844hjYdGTaFnKm+He55ntX2vuaDlLknXYrWTuOBmvzGiR9oPz4DBSGz7u+Vcau/gYs6evTat6qc5oODHurg9dCB6b1FmdPVtg5C4kPg4X5Bxa4/Zu7ryfs+2T/G1WIAUviZe1V7S4dvNs0N6OgXjJbbOSCvAyg7eGPp4Zr5X/1RJIJU5Qpnag3Gu5PEGgZA0f13M2wE57c96Q0sV3TMAsLNJMpebeGFbnbFhWzBzVOA1CPQ1n2jiURiOd5eKToZkv6NfEaEZHXA+DrAAqohVac9j9Z1ZqPdQVVbJNvcqYVVesfAA6ZmeMrPag7FJaASwY9A2c5Pyseg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CYYPR11MB8430.namprd11.prod.outlook.com (2603:10b6:930:c6::19)
+ by LV8PR11MB8534.namprd11.prod.outlook.com (2603:10b6:408:1f7::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Tue, 8 Jul
+ 2025 21:05:57 +0000
+Received: from CYYPR11MB8430.namprd11.prod.outlook.com
+ ([fe80::76d2:8036:2c6b:7563]) by CYYPR11MB8430.namprd11.prod.outlook.com
+ ([fe80::76d2:8036:2c6b:7563%5]) with mapi id 15.20.8901.024; Tue, 8 Jul 2025
+ 21:05:57 +0000
+Date: Tue, 8 Jul 2025 17:05:51 -0400
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: Werner Sembach <wse@tuxedocomputers.com>
+CC: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	<intel-gfx@lists.freedesktop.org>, <intel-xe@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/1] drm/i915/display: Avoid unsupported 300Hz output
+ mode on a TUXEDO device
+Message-ID: <aG2IL07UtZ4YICMn@intel.com>
+References: <20250704192007.526044-1-wse@tuxedocomputers.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250704192007.526044-1-wse@tuxedocomputers.com>
+X-ClientProxiedBy: SJ0PR13CA0092.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c5::7) To CYYPR11MB8430.namprd11.prod.outlook.com
+ (2603:10b6:930:c6::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CYYPR11MB8430:EE_|LV8PR11MB8534:EE_
+X-MS-Office365-Filtering-Correlation-Id: deb160e9-9819-479c-20c1-08ddbe633c1d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?UxuyBUkKAlp+28mC3lAwyBhc/wVQFytIbpC27nC9c+uHUnIf7Qbmo+izu9xM?=
+ =?us-ascii?Q?uYIDeNK8BCICk1B/MomQc6H54wziBgOTDCK2abYUe7Mpf7FZbRhFiWCPYT8i?=
+ =?us-ascii?Q?4pu1gfhekdVPGO1nsE/yN2dlej5kJ9Zg9RI+g1YEnlJTb7r02drFUZxq/Fh/?=
+ =?us-ascii?Q?jqXMPFWQgxH+8PnBbLvsBVK7RLf2FgoxvNHduEZeHZ5KnnNLipCSeYX15cJp?=
+ =?us-ascii?Q?jZ8/gLidFq/91AYOkyO7AfUhy02MQAOc8vLKZCs+n8Err/LVHTrNUXzll5Aj?=
+ =?us-ascii?Q?hlDk/32SFZNyA1mUQSZdOxwzwFD+80oVq6Wihw6xwVOGfp5MQmDgURmq+VkX?=
+ =?us-ascii?Q?kiqlEkgzj5kt41v65ur+vFG4uLs8dRlH+XMEPkrZYY9VqztesSyfA0Xul1Em?=
+ =?us-ascii?Q?k/h5tbdZcjigt0kyP+z92w5M3296bLFGzHGwMGD2exsle5fWzk7tltKBvrbE?=
+ =?us-ascii?Q?VY94OateHhn9R+oO95iIoCJQSIQkP2H8d1D/z3OPzsKm9yyAu7HdklW4arva?=
+ =?us-ascii?Q?Gn+wR0+b3mbsfv7p3ss1mN9T+FhHX1C86ksUcHGAWHG2nIYCAc4hoPt7nPaT?=
+ =?us-ascii?Q?SQd22yW2MqxzhFYQYp9RBnQSRcWwqrH4zpCPccuaRBZ1xShgK8RyG6lq+Iij?=
+ =?us-ascii?Q?vRuQN4y5y0qF+SQmQ70jidd6Wi6swU0Kr3KfgQ3e1cuFcKnoPTBjSgvH3Dkh?=
+ =?us-ascii?Q?FD0kDhKW1VIxNi2v6z/jUfa4JjaxUL+2vunU1/B2dxXtGkIhAWwQySQEJjyq?=
+ =?us-ascii?Q?kGjRUnSxSepNntmpEqBD/odE9L3Md0Z3SC4OfZMmQYV2nmaL2bgj1N8tE+1Z?=
+ =?us-ascii?Q?rZcs5ZE8pgiwn0yPj6xPtuUFE/VAikD3aHCfV4zKPkfnXLa3r+FgIF8jHUvI?=
+ =?us-ascii?Q?PvBCPColWPTcclPgqCLH7igHG80y6FssSOJTy06xGIUFVXjMC2Darao5684e?=
+ =?us-ascii?Q?CB0fCYGjIcEzsPOqPQfvkH2L+JB4kEhQy36iHaUZOHw1KRuVk5KTWv7rsMtq?=
+ =?us-ascii?Q?ElIF9H/mNW3F4GSqGZ7GtTYlhmunGOoSmcM0vXZobtMT5VpuaOObPvVwHSPI?=
+ =?us-ascii?Q?YEptGueqS74mGaAaNJn+VaxwLhqN5M2RXnEKcdnWddRivFSY66EeR5kX/TlZ?=
+ =?us-ascii?Q?ev2FNRvB3UMqhibovF+c0hn1XgQeFLGcEYqFVelgkL+MOsAnk/gR3NjrX+43?=
+ =?us-ascii?Q?PpvMtnD4PmRdLU8RyOcv0ldFdwuWdtA9HFH4uLqDS3v8dztLG+9qZpW3fNde?=
+ =?us-ascii?Q?7OH3h8g5SuZbyxfpDKrs18mra6oB1qEq3Cg0QQy/6OTITSWPMSf9xh0otb/l?=
+ =?us-ascii?Q?o4oEziNZ3DEu8RXtGDtavSCUDpxTAAiubldGbqb31C7hVccQjSu+LTqhtBGL?=
+ =?us-ascii?Q?WTW5q98=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR11MB8430.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?G2IIbH4BT/AHiHiCnodpvtPizxA66m7+tgAsXtuLazXKyc9SNDVJEolu2iFX?=
+ =?us-ascii?Q?TFv7kFOjEtXsmKJ/W4dX76jPopHqfk4eTumLrPbvBuO0qiZvfvnjLy0tG1Le?=
+ =?us-ascii?Q?277HntiPLjQhDiXEbg1xB2hmUs1Ix+NMRMZr0rzrNZmqYavjiQkvxWfAzDZx?=
+ =?us-ascii?Q?F0QU4CLdRYDHVKfGCc//VGEkcQOhksJLqO+WLcRmtGpqRwrfMaVt/bA92mXk?=
+ =?us-ascii?Q?JrNMODrCLD2fQ0dZgGglA9BOq/nB86TLswP7IzwjqrODm6x65YCqmcUvAVGG?=
+ =?us-ascii?Q?cVu1hMrRx/3E0pHnNHjSZZcpeiIcRm8Xg9hUVBYm5EvRK8D8cwLy6KyhJsEe?=
+ =?us-ascii?Q?gdj+Xa4RrIa9XGgWIk2KjiGh/9ow0+2z5En7r5otHLYy5rItRip5PFsVnr0Z?=
+ =?us-ascii?Q?qHPdadnwu+Jy71o5Ce85miig7ZgxwBFrrhLLUZgbTuOvoYukfZhyZRlOvT9f?=
+ =?us-ascii?Q?rlnbnE++KLU3lGTxW3BY5FjE2yLx5hBDs1n2C0+juiw5YiROAvCB6WT5GMDN?=
+ =?us-ascii?Q?vOicr7dmDhtoJnMZg521cFnxwJjeTqYLOpQXwmk/Au9K6p5n+szaduNyo3uM?=
+ =?us-ascii?Q?odCwS/FKxZpswMZzQBk5XBYdlQ8y3XZEbT6PRgaXriJdypqEAWTFGV3FA+lS?=
+ =?us-ascii?Q?1HxW090szrlJpTmCSLkyPbakEKW1XXo2/r1UO76XYLDMs7uejNpYO9d4Nq+Y?=
+ =?us-ascii?Q?Yk0dolUZEaab4jfWXJj5KRABSIl3deLZGpLvlYLjCe3z+/TUOTiqwhOZYKlh?=
+ =?us-ascii?Q?hVuUVKbJoOLHwJkvzDDuY8D2RdWvXxvgf2P/GapiuUCN7o7svL3m9LMpkgwH?=
+ =?us-ascii?Q?1RlTOcryN4Qmt3gAdYhDF13SfCCSSPef6U2rQUrJ2RkRFs+y/e4YF980BLku?=
+ =?us-ascii?Q?5eRXkDvDLMa5VLuxd5/wYZJSX2FszzDSWUy075olXhnEjAPIz0OJLzZdqyst?=
+ =?us-ascii?Q?jVq8yjaxuFXq1q2eQaQDFy2Y0ljRpWvldY0A4ozDmUmqWxw93Ssf1CgJSqTZ?=
+ =?us-ascii?Q?6YqAwfKKEkGRExQOipLod+eDoaMKHtCcBHmi/J3bZi3mk/v8Qh92yNWeup2p?=
+ =?us-ascii?Q?08R0ViLY8Z5eGPjiW/lXtFky/wJXCi2gBALPmE/HoiE2Vhc4izoz+VPPTlBC?=
+ =?us-ascii?Q?JhLEeO7gm04KIc64Ispq19Zu+R4YHb8P6q/VSLVUDDqAJYi4FqI5xyoOaVzV?=
+ =?us-ascii?Q?8gJJ/4JWcLAyv/Gij2Em5t+PnzQ/+vPaEEvXh4WIX1Bd3+ZSy7TlZL9Hau18?=
+ =?us-ascii?Q?5jFDIOYOJzqR1BT+8rZ/q7l/beKnNb4zlMwSlw1iCx91TDZwpsThHuVIGfXp?=
+ =?us-ascii?Q?8xM3M7ovuIGn0jnodcykU+0/MNouhxzEXFXK/P2BtLQBv45PPni5i7Ebq3oN?=
+ =?us-ascii?Q?KB/u9aeWc3BHsOschIcaxmZsVuR9tEt/3gPyN2+sgiORO137JtIFd1jTod9h?=
+ =?us-ascii?Q?X4cJrh64isb9YBGcXDpyxGBA1+UvXMMG0pdYwgC7xDS2FBurCaFBucyGXZv0?=
+ =?us-ascii?Q?mRNc8EjTDsK9V1ArVH4udltpQWhkoZ51qVVNNXDJY/PuQfYoWFkXbV6jDLc2?=
+ =?us-ascii?Q?6RptblOWZaOI/pv/mEl5orqEPKoMhmmU816yiU/rVvAKxXz5sX3D/hAt6R9Q?=
+ =?us-ascii?Q?Iw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: deb160e9-9819-479c-20c1-08ddbe633c1d
+X-MS-Exchange-CrossTenant-AuthSource: CYYPR11MB8430.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 21:05:57.8780
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: F3x0fwBDhqNSNI3OJTm++FH/mzirogwbKCzDK7gj0voRf1fnagdTQjkzjFCjKKaimgui9zbeZNLq8L5VKDgzPw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8534
+X-OriginatorOrg: intel.com
 
-Convert the TI TPS65910 documentation to DT schema format.
+On Fri, Jul 04, 2025 at 09:03:45PM +0200, Werner Sembach wrote:
+> RFC because I'm not sure if this is the right approach.
 
-Fix incorrect I2C address in example: should be 0x2d.
+Could you please file a gitlab issue for us so we can get someone from our
+display team to take a look and see if there's anything else that could be done
+before we take the quirk route?
 
-TPS65910 datasheet: https://www.ti.com/lit/gpn/tps65910
+https://drm.pages.freedesktop.org/intel-docs/how-to-file-i915-bugs.html
 
-Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
----
-v1 -> v2:
-- Remove references to old docs
-- Change ti,vmbch-threshold & ti,vmbch2-threshold to uint32
-- Remove constraints from description text
-- Change all unevaluatedProperties instances to false
-- additionalProperties set to false & moved to 'regulators' property
-- Shorten regex to ^vcc(io|[1-7])-supply$
-- Add blank line between vcc(io|[1-7])-supply description paragraphs
-- Change DTS example indentation to use 4 spaces
-- Drop unused labels (vrtc_reg node) from DTS example
----
- .../devicetree/bindings/mfd/ti,tps65910.yaml  | 318 ++++++++++++++++++
- .../devicetree/bindings/mfd/tps65910.txt      | 205 -----------
- 2 files changed, 318 insertions(+), 205 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/ti,tps65910.yaml
- delete mode 100644 Documentation/devicetree/bindings/mfd/tps65910.txt
+Thanks for the investigation and the quirk,
+Rodrigo.
 
-diff --git a/Documentation/devicetree/bindings/mfd/ti,tps65910.yaml b/Documentation/devicetree/bindings/mfd/ti,tps65910.yaml
-new file mode 100644
-index 000000000000..a2668fc30a7b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/ti,tps65910.yaml
-@@ -0,0 +1,318 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI TPS65910 Power Management Integrated Circuit
-+
-+maintainers:
-+  - Shree Ramamoorthy <s-ramamoorthy@ti.com>
-+
-+description:
-+  TPS65910 device is a Power Management IC that provides 3 step-down converters,
-+  1 stepup converter, and 8 LDOs. The device contains an embedded power controller (EPC),
-+  1 GPIO, and an RTC.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,tps65910
-+      - ti,tps65911
-+
-+  reg:
-+    description: I2C slave address
-+    maxItems: 1
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    const: 2
-+    description: |
-+      The first cell is the GPIO number.
-+      The second cell is used to specify additional options <unused>.
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  interrupt-controller: true
-+
-+  '#interrupt-cells':
-+    description: Specifies the IRQ number and flags
-+    const: 2
-+
-+  ti,vmbch-threshold:
-+    description: |
-+      (TPS65911) Main battery charged threshold comparator.
-+      See VMBCH_VSEL in TPS65910 datasheet.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2, 3]
-+
-+  ti,vmbch2-threshold:
-+    description: |
-+      (TPS65911) Main battery discharged threshold comparator.
-+      See VMBCH_VSEL in TPS65910 datasheet.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2, 3]
-+
-+  ti,en-ck32k-xtal:
-+    type: boolean
-+    description: Enable external 32-kHz crystal oscillator.
-+
-+  ti,en-gpio-sleep:
-+    description: |
-+      Enable sleep control for gpios.
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    minItems: 9
-+    maxItems: 9
-+    items:
-+      minimum: 0
-+      maximum: 1
-+
-+  ti,system-power-controller:
-+    type: boolean
-+    description: Identify whether or not this pmic controls the system power
-+
-+  ti,sleep-enable:
-+    type: boolean
-+    description: Enable SLEEP state.
-+
-+  ti,sleep-keep-therm:
-+    type: boolean
-+    description: Keep thermal monitoring on in sleep state.
-+
-+  ti,sleep-keep-ck32k:
-+    type: boolean
-+    description: Keep the 32KHz clock output on in sleep state.
-+
-+  ti,sleep-keep-hsclk:
-+    type: boolean
-+    description: Keep high speed internal clock on in sleep state.
-+
-+  regulators:
-+    type: object
-+    additionalProperties: false
-+    description: List of regulators provided by this controller.
-+
-+    patternProperties:
-+      "^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$":
-+        type: object
-+        $ref: /schemas/regulator/regulator.yaml#
-+        properties:
-+          ti,regulator-ext-sleep-control:
-+            description: |
-+              Enable external sleep control through external inputs:
-+              [0 (not enabled), 1 (EN1), 2 (EN2) or 4(EN3)].
-+              If this property is not defined, it defaults to 0 (not enabled).
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            enum: [0, 1, 2, 4, 8]
-+        unevaluatedProperties: false
-+
-+      "^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$":
-+        type: object
-+        $ref: /schemas/regulator/regulator.yaml#
-+        properties:
-+          ti,regulator-ext-sleep-control:
-+            description: |
-+              Enable external sleep control through external inputs:
-+              [0 (not enabled), 1 (EN1), 2 (EN2) or 4(EN3)].
-+              If this property is not defined, it defaults to 0 (not enabled).
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            enum: [0, 1, 2, 4, 8]
-+        unevaluatedProperties: false
-+
-+      "^ldo[1-8]$":
-+        type: object
-+        $ref: /schemas/regulator/regulator.yaml#
-+        properties:
-+          ti,regulator-ext-sleep-control:
-+            description: |
-+              Enable external sleep control through external inputs:
-+              [0 (not enabled), 1 (EN1), 2 (EN2) or 4(EN3)].
-+              If this property is not defined, it defaults to 0 (not enabled).
-+            $ref: /schemas/types.yaml#/definitions/uint32
-+            enum: [0, 1, 2, 4, 8]
-+        unevaluatedProperties: false
-+
-+patternProperties:
-+  "^(vcc(io|[1-7])-supply)$":
-+    description: |
-+      Input voltage supply phandle for regulators.
-+      These entries are required if PMIC regulators are enabled, or else it
-+      can cause the regulator registration to fail.
-+
-+      If some input supply is powered through battery or always-on supply, then
-+      it is also required to have these parameters with the proper node handle for always-on
-+      power supply.
-+      tps65910:
-+        vcc1-supply: VDD1 input.
-+        vcc2-supply: VDD2 input.
-+        vcc3-supply: VAUX33 and VMMC input.
-+        vcc4-supply: VAUX1 and VAUX2 input.
-+        vcc5-supply: VPLL and VDAC input.
-+        vcc6-supply: VDIG1 and VDIG2 input.
-+        vcc7-supply: VRTC and VBB input.
-+        vccio-supply: VIO input.
-+      tps65911:
-+        vcc1-supply: VDD1 input.
-+        vcc2-supply: VDD2 input.
-+        vcc3-supply: LDO6, LDO7 and LDO8 input.
-+        vcc4-supply: LDO5 input.
-+        vcc5-supply: LDO3 and LDO4 input.
-+        vcc6-supply: LDO1 and LDO2 input.
-+        vcc7-supply: VRTC input.
-+        vccio-supply: VIO input.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-controller
-+  - '#interrupt-cells'
-+  - gpio-controller
-+  - '#gpio-cells'
-+  - regulators
-+
-+additionalProperties: false
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - ti,tps65910
-+    then:
-+      properties:
-+        regulators:
-+          patternProperties:
-+            "^(ldo[1-8]|vddctrl)$": false
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - ti,tps65911
-+    then:
-+      properties:
-+        regulators:
-+          patternProperties:
-+            "^(vdd3|vaux([1-2]|33)|vdig[1-2])$": false
-+            "^(vpll|vdac|vmmc|vbb)$": false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        pmic: tps65910@2d {
-+            compatible = "ti,tps65910";
-+            reg = <0x2d>;
-+            interrupt-parent = <&intc>;
-+            interrupts = < 0 118 0x04 >;
-+
-+            #gpio-cells = <2>;
-+            gpio-controller;
-+
-+            #interrupt-cells = <2>;
-+            interrupt-controller;
-+
-+            ti,system-power-controller;
-+
-+            ti,vmbch-threshold = <0>;
-+            ti,vmbch2-threshold = <0>;
-+            ti,en-ck32k-xtal;
-+            ti,en-gpio-sleep = <0 0 1 0 0 0 0 0 0>;
-+
-+            vcc1-supply = <&reg_parent>;
-+            vcc2-supply = <&some_reg>;
-+            vcc3-supply = <&vbat>;
-+            vcc4-supply = <&vbat>;
-+            vcc5-supply = <&vbat>;
-+            vcc6-supply = <&vbat>;
-+            vcc7-supply = <&vbat>;
-+            vccio-supply = <&vbat>;
-+
-+            regulators {
-+                vio_reg: vio {
-+                    regulator-name = "vio";
-+                    regulator-min-microvolt = <1500000>;
-+                    regulator-max-microvolt = <3300000>;
-+                    regulator-always-on;
-+                    regulator-boot-on;
-+                };
-+                vdd1_reg: vdd1 {
-+                    regulator-name = "vdd1";
-+                    regulator-min-microvolt = < 600000>;
-+                    regulator-max-microvolt = <1500000>;
-+                    regulator-always-on;
-+                    regulator-boot-on;
-+                    ti,regulator-ext-sleep-control = <0>;
-+                };
-+                vdd2_reg: vdd2 {
-+                    regulator-name = "vdd2";
-+                    regulator-min-microvolt = < 600000>;
-+                    regulator-max-microvolt = <1500000>;
-+                    regulator-always-on;
-+                    regulator-boot-on;
-+                };
-+                vdd3_reg: vdd3 {
-+                    regulator-name = "vdd3";
-+                    regulator-min-microvolt = <5000000>;
-+                    regulator-max-microvolt = <5000000>;
-+                    regulator-always-on;
-+                };
-+                vdig1_reg: vdig1 {
-+                    regulator-name = "vdig1";
-+                    regulator-min-microvolt = <1200000>;
-+                    regulator-max-microvolt = <2700000>;
-+                    regulator-always-on;
-+                };
-+                vdig2_reg: vdig2 {
-+                    regulator-name = "vdig2";
-+                    regulator-min-microvolt = <1000000>;
-+                    regulator-max-microvolt = <1800000>;
-+                    regulator-always-on;
-+                };
-+                vpll_reg: vpll {
-+                    regulator-name = "vpll";
-+                    regulator-min-microvolt = <1000000>;
-+                    regulator-max-microvolt = <2500000>;
-+                    regulator-always-on;
-+                };
-+                vdac_reg: vdac {
-+                    regulator-name = "vdac";
-+                    regulator-min-microvolt = <1800000>;
-+                    regulator-max-microvolt = <2850000>;
-+                    regulator-always-on;
-+                };
-+                vaux1_reg: vaux1 {
-+                    regulator-name = "vaux1";
-+                    regulator-min-microvolt = <1800000>;
-+                    regulator-max-microvolt = <2850000>;
-+                    regulator-always-on;
-+                };
-+                vaux2_reg: vaux2 {
-+                    regulator-name = "vaux2";
-+                    regulator-min-microvolt = <1800000>;
-+                    regulator-max-microvolt = <3300000>;
-+                    regulator-always-on;
-+                };
-+                vaux33_reg: vaux33 {
-+                    regulator-name = "vaux33";
-+                    regulator-min-microvolt = <1800000>;
-+                    regulator-max-microvolt = <3300000>;
-+                    regulator-always-on;
-+                };
-+                vmmc_reg: vmmc {
-+                    regulator-name = "vmmc";
-+                    regulator-min-microvolt = <1800000>;
-+                    regulator-max-microvolt = <3300000>;
-+                    regulator-always-on;
-+                    regulator-boot-on;
-+                };
-+            };
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/mfd/tps65910.txt b/Documentation/devicetree/bindings/mfd/tps65910.txt
-deleted file mode 100644
-index a5ced46bbde9..000000000000
---- a/Documentation/devicetree/bindings/mfd/tps65910.txt
-+++ /dev/null
-@@ -1,205 +0,0 @@
--TPS65910 Power Management Integrated Circuit
--
--Required properties:
--- compatible: "ti,tps65910" or "ti,tps65911"
--- reg: I2C slave address
--- interrupts: the interrupt outputs of the controller
--- #gpio-cells: number of cells to describe a GPIO, this should be 2.
--  The first cell is the GPIO number.
--  The second cell is used to specify additional options <unused>.
--- gpio-controller: mark the device as a GPIO controller
--- #interrupt-cells: the number of cells to describe an IRQ, this should be 2.
--  The first cell is the IRQ number.
--  The second cell is the flags, encoded as the trigger masks from
--  Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
--- regulators: This is the list of child nodes that specify the regulator
--  initialization data for defined regulators. Not all regulators for the given
--  device need to be present. The definition for each of these nodes is defined
--  using the standard binding for regulators found at
--  Documentation/devicetree/bindings/regulator/regulator.txt.
--  The regulator is matched with the regulator-compatible.
--
--  The valid regulator-compatible values are:
--  tps65910: vrtc, vio, vdd1, vdd2, vdd3, vdig1, vdig2, vpll, vdac, vaux1,
--            vaux2, vaux33, vmmc, vbb
--  tps65911: vrtc, vio, vdd1, vdd2, vddctrl, ldo1, ldo2, ldo3, ldo4, ldo5,
--            ldo6, ldo7, ldo8
--
--- xxx-supply: Input voltage supply regulator.
--  These entries are required if regulators are enabled for a device. Missing these
--  properties can cause the regulator registration to fail.
--  If some of input supply is powered through battery or always-on supply then
--  also it is require to have these parameters with proper node handle of always
--  on power supply.
--  tps65910:
--	vcc1-supply: VDD1 input.
--	vcc2-supply: VDD2 input.
--	vcc3-supply: VAUX33 and VMMC input.
--	vcc4-supply: VAUX1 and VAUX2 input.
--	vcc5-supply: VPLL and VDAC input.
--	vcc6-supply: VDIG1 and VDIG2 input.
--	vcc7-supply: VRTC and VBB input.
--	vccio-supply: VIO input.
--  tps65911:
--	vcc1-supply: VDD1 input.
--	vcc2-supply: VDD2 input.
--	vcc3-supply: LDO6, LDO7 and LDO8 input.
--	vcc4-supply: LDO5 input.
--	vcc5-supply: LDO3 and LDO4 input.
--	vcc6-supply: LDO1 and LDO2 input.
--	vcc7-supply: VRTC input.
--	vccio-supply: VIO input.
--
--Optional properties:
--- ti,vmbch-threshold: (tps65911) main battery charged threshold
--  comparator. (see VMBCH_VSEL in TPS65910 datasheet)
--- ti,vmbch2-threshold: (tps65911) main battery discharged threshold
--  comparator. (see VMBCH_VSEL in TPS65910 datasheet)
--- ti,en-ck32k-xtal: enable external 32-kHz crystal oscillator (see CK32K_CTRL
--  in TPS6591X datasheet)
--- ti,en-gpio-sleep: enable sleep control for gpios
--  There should be 9 entries here, one for each gpio.
--- ti,system-power-controller: Telling whether or not this pmic is controlling
--  the system power.
--- ti,sleep-enable: Enable SLEEP state.
--- ti,sleep-keep-therm: Keep thermal monitoring on in sleep state.
--- ti,sleep-keep-ck32k: Keep the 32KHz clock output on in sleep state.
--- ti,sleep-keep-hsclk: Keep high speed internal clock on in sleep state.
--
--Regulator Optional properties:
--- ti,regulator-ext-sleep-control: enable external sleep
--  control through external inputs [0 (not enabled), 1 (EN1), 2 (EN2) or 4(EN3)]
--  If this property is not defined, it defaults to 0 (not enabled).
--
--Example:
--
--	pmu: tps65910@d2 {
--		compatible = "ti,tps65910";
--		reg = <0xd2>;
--		interrupt-parent = <&intc>;
--		interrupts = < 0 118 0x04 >;
--
--		#gpio-cells = <2>;
--		gpio-controller;
--
--		#interrupt-cells = <2>;
--		interrupt-controller;
--
--		ti,system-power-controller;
--
--		ti,vmbch-threshold = 0;
--		ti,vmbch2-threshold = 0;
--		ti,en-ck32k-xtal;
--		ti,en-gpio-sleep = <0 0 1 0 0 0 0 0 0>;
--
--		vcc1-supply = <&reg_parent>;
--		vcc2-supply = <&some_reg>;
--		vcc3-supply = <...>;
--		vcc4-supply = <...>;
--		vcc5-supply = <...>;
--		vcc6-supply = <...>;
--		vcc7-supply = <...>;
--		vccio-supply = <...>;
--
--		regulators {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			vdd1_reg: regulator@0 {
--				regulator-compatible = "vdd1";
--				reg = <0>;
--				regulator-min-microvolt = < 600000>;
--				regulator-max-microvolt = <1500000>;
--				regulator-always-on;
--				regulator-boot-on;
--				ti,regulator-ext-sleep-control = <0>;
--			};
--			vdd2_reg: regulator@1 {
--				regulator-compatible = "vdd2";
--				reg = <1>;
--				regulator-min-microvolt = < 600000>;
--				regulator-max-microvolt = <1500000>;
--				regulator-always-on;
--				regulator-boot-on;
--				ti,regulator-ext-sleep-control = <4>;
--			};
--			vddctrl_reg: regulator@2 {
--				regulator-compatible = "vddctrl";
--				reg = <2>;
--				regulator-min-microvolt = < 600000>;
--				regulator-max-microvolt = <1400000>;
--				regulator-always-on;
--				regulator-boot-on;
--				ti,regulator-ext-sleep-control = <0>;
--			};
--			vio_reg: regulator@3 {
--				regulator-compatible = "vio";
--				reg = <3>;
--				regulator-min-microvolt = <1500000>;
--				regulator-max-microvolt = <1800000>;
--				regulator-always-on;
--				regulator-boot-on;
--				ti,regulator-ext-sleep-control = <1>;
--			};
--			ldo1_reg: regulator@4 {
--				regulator-compatible = "ldo1";
--				reg = <4>;
--				regulator-min-microvolt = <1000000>;
--				regulator-max-microvolt = <3300000>;
--				ti,regulator-ext-sleep-control = <0>;
--			};
--			ldo2_reg: regulator@5 {
--				regulator-compatible = "ldo2";
--				reg = <5>;
--				regulator-min-microvolt = <1050000>;
--				regulator-max-microvolt = <1050000>;
--				ti,regulator-ext-sleep-control = <0>;
--			};
--			ldo3_reg: regulator@6 {
--				regulator-compatible = "ldo3";
--				reg = <6>;
--				regulator-min-microvolt = <1000000>;
--				regulator-max-microvolt = <3300000>;
--				ti,regulator-ext-sleep-control = <0>;
--			};
--			ldo4_reg: regulator@7 {
--				regulator-compatible = "ldo4";
--				reg = <7>;
--				regulator-min-microvolt = <1000000>;
--				regulator-max-microvolt = <3300000>;
--				regulator-always-on;
--				ti,regulator-ext-sleep-control = <0>;
--			};
--			ldo5_reg: regulator@8 {
--				regulator-compatible = "ldo5";
--				reg = <8>;
--				regulator-min-microvolt = <1000000>;
--				regulator-max-microvolt = <3300000>;
--				ti,regulator-ext-sleep-control = <0>;
--			};
--			ldo6_reg: regulator@9 {
--				regulator-compatible = "ldo6";
--				reg = <9>;
--				regulator-min-microvolt = <1200000>;
--				regulator-max-microvolt = <1200000>;
--				ti,regulator-ext-sleep-control = <0>;
--			};
--			ldo7_reg: regulator@10 {
--				regulator-compatible = "ldo7";
--				reg = <10>;
--				regulator-min-microvolt = <1200000>;
--				regulator-max-microvolt = <1200000>;
--				regulator-always-on;
--				regulator-boot-on;
--				ti,regulator-ext-sleep-control = <1>;
--			};
--			ldo8_reg: regulator@11 {
--				regulator-compatible = "ldo8";
--				reg = <11>;
--				regulator-min-microvolt = <1000000>;
--				regulator-max-microvolt = <3300000>;
--				regulator-always-on;
--				ti,regulator-ext-sleep-control = <1>;
--			};
--		};
--	};
--- 
-2.43.0
-
+> 
+> The flicker manifests ever few seconds 1-3 black frames in quick
+> succession.
+> 
+> On windows 300Hz can not be selected for the iGPU, but the panel advertises
+> it.
+> 
+> A cleaner solution would probably to go over the pixel clock, but for this
+> device there is only one 300Hz mode in the panels edid and that is at the
+> nativ resolution. Chroma subsampling was not tested as linux afaik offers
+> no way to easily enforce it for intel gpus.
+> 
+> Tim Guttzeit (1):
+>   drm/i915/display: Avoid unsupported output mode with 300Hz on TUXEDO
+>     device
+> 
+>  drivers/gpu/drm/i915/display/intel_dp.c     |  5 ++++
+>  drivers/gpu/drm/i915/display/intel_quirks.c | 30 +++++++++++++++++++++
+>  drivers/gpu/drm/i915/display/intel_quirks.h |  1 +
+>  3 files changed, 36 insertions(+)
+> 
+> -- 
+> 2.43.0
+> 
 
