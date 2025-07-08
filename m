@@ -1,112 +1,111 @@
-Return-Path: <linux-kernel+bounces-721319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA5A5AFC7AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:01:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B144AFC7B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A0B43A2E11
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:01:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5A133ABC58
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AE0267AF6;
-	Tue,  8 Jul 2025 10:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E0B269B08;
+	Tue,  8 Jul 2025 10:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AILA0yvy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iyK95EaP"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA661401B;
-	Tue,  8 Jul 2025 10:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348982080C4;
+	Tue,  8 Jul 2025 10:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751968882; cv=none; b=Oh/nBsURVLr8BS5/yzAAAj4iBYnNHDk/4Bn0GkWUFYPq69OGg580pv7by//NplQHgvy4rNO+ItEozDAmliV64ZvV10/+0O7cUnijpf7UfK3OsdSZ9hQ+YU0w+Ncw+c9TZMH0tVJuLOtrUok21WEg8qRoJw0Gyr71isFrjw3qVPM=
+	t=1751968890; cv=none; b=qYocDq9l/o7UGNLeLy8h8JXBKf+12M6xxEVOOtEohb97bf5VggUp+/geZTJHDkTB1DvOCVcs2ccwF61vQrSyvzN5GnvfzUnn7shhceRzlwWsZ8El68tAyyI6dg+V+VQM5pT2u/anGuDyl3wkh48YU1AcmZ/0xeDFjJAlsmzpaa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751968882; c=relaxed/simple;
-	bh=sQk61ZQ1hu+jGZJr0c68/AYxulChjc+cOl9+CHKTxGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rFUGkBsUUXUwbYkmVvVDXMhvkTI2OwD+YemHl0Raj13b6VphkApasLlxE1JjsEl/wAA1wOtOu4Y64OcF+y+/LmCbAXmXWOf+lAQe7SEc3Rk+lcEHu7m4wJ96YEvUxUfIx1Po8HtbCL84x7ZSUVeVoF0ZufR/9hLZoYoxFCoHcPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AILA0yvy; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751968881; x=1783504881;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sQk61ZQ1hu+jGZJr0c68/AYxulChjc+cOl9+CHKTxGE=;
-  b=AILA0yvyb8FLNjWodekSI9pOYjktcBW1hjHPVtKHuAevzvhikAC/B+15
-   0Iw0IFtqmo4pwvZswb6D4B4mxm2X4HeDK3ghrHF34myvrD7cDgj13gcf/
-   C6YwLUEjk1PH/L86BncQFpQkfch5I/ySal85uH0iPMHA/kGxOWc5g3sH1
-   0tYnIEcOqsf/6nmCa7f6EY7FMYNe/3xIGVnrPkaUYctQkXAI7tmhE+BlD
-   LYWxnQi5eCSjRjIcIIwu83qwIxmgHztsO15kPp67WWgUvTcUSt0r5nEhn
-   wIptayMZaVMPOCwMXzJVczP5E8W5Vh9FxynYsbynJBKDnu6H23uOQdwUq
-   w==;
-X-CSE-ConnectionGUID: DAmq3YfkTJ+1/byT8dBrkQ==
-X-CSE-MsgGUID: Sw7BejvsR22gMviINx19EQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54329588"
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="54329588"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 03:01:18 -0700
-X-CSE-ConnectionGUID: eg1cFD5tSbKwDbgeOkpS6w==
-X-CSE-MsgGUID: 1Vaw5xiATBeYWGutaRxLwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="159720161"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.230])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 03:01:11 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id D81B5120898;
-	Tue,  8 Jul 2025 13:01:08 +0300 (EEST)
-Date: Tue, 8 Jul 2025 10:01:08 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH 00/80] treewide: Remove redundant
- pm_runtime_mark_last_busy() calls
-Message-ID: <aGzsZLIL9L62dGTU@kekkonen.localdomain>
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
- <00203f87-f90d-4a19-998d-1a6b015ea515@sirena.org.uk>
+	s=arc-20240116; t=1751968890; c=relaxed/simple;
+	bh=2GpWp3s5PTqNIR37H3UM5Y9dp8BOP0M+MyctEuN/YIw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SFnIjDMMAUhVp51pBaTDZsKI0VgzUo0+ln0T4s547hDb5qevRoWFLxd+OL002KtB902mC3qm+NFu8spwjoOn2a579AbrivsOdx93b+eG41pV32mWfgwxe0AZFbDNCrOZUQ7sRVmaK3MullOfPtyFczQBw+fWEwm5SZAinydQ5xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iyK95EaP; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-3138e64b3fcso2941576a91.2;
+        Tue, 08 Jul 2025 03:01:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751968888; x=1752573688; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BYVWqBDuV8m7HidOYvo6oSjOV7wiCQCv03/6xvMA1E0=;
+        b=iyK95EaPlq+40s6uw5tcnXHBO8e9eCw3d/2Q9JG0ZCq0SFFTLNaI44v9h8c1527QCT
+         krK83BgIcxtYWrWfwQco89hkB0HyOfOeYfmsEGImlO2J7PWova4HzJzy7TEvUaOyLqE0
+         i7g3N76HY+MwqrSdg4pjxIlYvAop0CeR0ORq+nK6Nx+N0uG5/9kwylkCXnfAiCQ24tIW
+         tuasqThpdwyyUissnlL6zApN6zE+JIYAkKR1AHjh5Kvb3o9ZxahNvZ3fKeVwT9o51u0m
+         rRpMGeZMt6kGy5GJqw9+VLJoY1v8P8ZD9nEZxWWG3+/dqy9lDEPUYIfccwbkxsWQ3WVD
+         raGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751968888; x=1752573688;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BYVWqBDuV8m7HidOYvo6oSjOV7wiCQCv03/6xvMA1E0=;
+        b=f8HFLhTcHpv4DToxLh9JGURLWEktpAFJHnH0JIJfOEBoI1PzxG/Oi3zDZWtzrvTuKx
+         dY36yqiIi4eG4lB7j+gMmfg7elutt96KHLg1T1uHfvTT7kTI90wp/ewO06t4LphOCga7
+         U9yUAx4t+n3CQ7cY1A78RBZ2T/Zb8TvCDBVr+Xub97A3Mvcr9vSg60WjcxQg5Q9iHap8
+         amxZRXIWXUkDvZoZKLYujldYupsZthtOzQZ3fbuA61EPT4JPYniduMsERzhW/p9hcpEK
+         BYYnVZDC5Kf4VvYZtnHrznYjn3YwbLkID9jO8tqigO4+hdp7rme+dRvpYS/a/09Yo2zd
+         MyRg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+V5g/3uNcc/RVT3C/3lW6mAJXFiqqMXdzwBwZf+/qmRlLfQxx9MOJTDQHryjnse+TQQoRC5sUWU71@vger.kernel.org, AJvYcCVR4ZGiKp8RfzIVsD16oT+BFXzFk4fpbsnUjQ8sEBUTaLB7wJcGekOG5/JxrjUE3VSJagEQt/+HwN29V2pm@vger.kernel.org, AJvYcCWusLU5Syk+ejUNx4V87al6hwgHPPYpDZIk9R7KCW/RrUjEaUZhUosbmXt/zjDW41jGs2F9kVWMr6uE+Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YweudBRaQyIinHSsFsCqP+cjmolGxNXZgFSchQiZgLo7pENccUZ
+	QeUoB0+pEo5oZRC3ENZV5Q92t0YRoDiqHpGL3PeqVfOUegwaS/V8TcKQhzO4OkYokQhZHE1LyFU
+	q9FI8vLd9KK4JJnG8UkQn85s41eBUWNU=
+X-Gm-Gg: ASbGncvDhlOFEPNEQhDU6Pu6D9oMqGngEnyhG4kNjY2Lnhbs6jscuc+hpCiqem4cCN7
+	7V3IwUZ3ClKaZtaPckXjQ9fgA1B/4ifHwTOpYqUl4BGu6zk+iXoir7l2b/14mqWh2cbfAfx6RDL
+	DspF9gtijYrpb6SjAPnuslKTnLScFJ5BL8k4BxY2CF
+X-Google-Smtp-Source: AGHT+IGYKEJK2xo4dPc6y1F7cjXea1ETy9xhjndwr4Pdcn3GQxSSY8T38dioJ0DFG99A1R8cEUN75ggzKI5af6Tbcd4=
+X-Received: by 2002:a17:90b:3c8f:b0:313:1a8c:c2d3 with SMTP id
+ 98e67ed59e1d1-31aadd8535fmr18447334a91.22.1751968888351; Tue, 08 Jul 2025
+ 03:01:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00203f87-f90d-4a19-998d-1a6b015ea515@sirena.org.uk>
+References: <20250706214111.45687-1-rosenp@gmail.com> <20250706214111.45687-3-rosenp@gmail.com>
+In-Reply-To: <20250706214111.45687-3-rosenp@gmail.com>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Tue, 8 Jul 2025 12:01:17 +0200
+X-Gm-Features: Ac12FXypn69TyIfigXU2ITYLudOZytlc3g_sKOneE3FvF9rspGTP0tpBLxtSZas
+Message-ID: <CAMhs-H8Ts8nreYppvbXFuTkvcEUGCurjUtjMy1XrfVzv4q8k4g@mail.gmail.com>
+Subject: Re: [PATCH 2/6] wifi: rt2x00: remove mod_name from platform_driver
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-wireless@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, 
+	yangshiji66@qq.com, ansuelsmth@gmail.com, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Stanislaw Gruszka <stf_xl@wp.pl>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:MIPS" <linux-mips@vger.kernel.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+On Sun, Jul 6, 2025 at 11:41=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wrot=
+e:
+>
+> mod_name is a legacy debugging feature with no real modern use. An
+> analysis of the underlying MIPS setup code reveals it to also be unused.
+>
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  drivers/net/wireless/ralink/rt2x00/rt2800soc.c | 1 -
+>  1 file changed, 1 deletion(-)
 
-On Fri, Jul 04, 2025 at 01:04:51PM +0100, Mark Brown wrote:
-> On Fri, Jul 04, 2025 at 10:52:25AM +0300, Sakari Ailus wrote:
-> 
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
-> > 		pm-runtime-6.17-rc1
-> 
-> > So before merging these, please pull Rafael's tag. My thinking is indeed
-> > these would be best merged via the respective trees as there's some
-> > potential for conflicts (there are around 920 call sites modified here).
-> 
-> Please if you're doing things like this in future could you send
-> individual serieses to each subsystem - it just makes everything
-> clearer, for those of us with multiple subsystems it makes life easier
-> and a series this big causes scaling issues with the tooling (it took
-> several minutes for b4 to figure out a base...).
+Reviewed-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 
-Thanks for the feedback.
-
-I guess at this phase it's really just mechanical and the added benefit of
-having a single cover letter is minimal. Right now it looks like only a few
-subsystems need v2 of this (drm, media and iio).
-
--- 
-Kind regards,
-
-Sakari Ailus
+Best regards,
+    Sergio Paracuellos
 
