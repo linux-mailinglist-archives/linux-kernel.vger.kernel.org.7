@@ -1,145 +1,133 @@
-Return-Path: <linux-kernel+bounces-721609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 644D3AFCB99
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:14:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1293AFCB9E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40EB71BC7D07
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:13:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8B5C487626
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5F72E090B;
-	Tue,  8 Jul 2025 13:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36EB92E0906;
+	Tue,  8 Jul 2025 13:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JzrSavXG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nrtwo9sJ"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC142DC354;
-	Tue,  8 Jul 2025 13:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A8B1EBA19;
+	Tue,  8 Jul 2025 13:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751980227; cv=none; b=czieyC7iB4isTQtiobBdOFGBlowu2TY5nqCdr2CZACbxi3vxBYZ33HyIIcTJCJAPER1OAms2HbWP8LDQffKXOaSzEOzgv2SczXpiq2G7TpeWoH+bsQhZD7angNeOOVtsJCS9jk/87EOAaMuz1WdxdtPLxRU3uNJhS9q28zKgm2A=
+	t=1751980271; cv=none; b=VGHaUlxIDrcRKPae49nAoHWVTMotVBE49RT4//7XE0k60N5K2Isvy/ivDjwPUg5xdCGKnk5Tt0AOGlUh6Fy8CZNXid0Tt29KQkUyot/FOIIW8K/9pa6Mizyjz1+jmGMP9XW2ttL/ySFkzFmo8OXM9bq38Rl7AFfs7EZVFh7gnkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751980227; c=relaxed/simple;
-	bh=k6wspq8Q25N45G/hBM0B8XndkE7Bw3MPt6gWVRpsJ/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YR1nftCF8GUlBnRTNy7y3pcZbj5bUcJgPfAbYR4sLZPE1Z961rBFgOgeYgSnT+6okMDWeG/FtVrY/eowOW+e6Oei62D6s2kiEgHZJlKMgf0YrSCSZlY6OyZffaWmRj3f3gnu1EZYR67c1CsF0mgnqUvQGuJS10m1gnJH/LkFClo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JzrSavXG; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751980225; x=1783516225;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=k6wspq8Q25N45G/hBM0B8XndkE7Bw3MPt6gWVRpsJ/w=;
-  b=JzrSavXG/0FiTJIi0q4URD+HCmTPKdASqKmclO/lHJBxEJGrq9zuGZGp
-   7BN1gTbVrkPoVOyJeOAo0m2UYV8AmdLUC92B7Hd88n0C635JYWkUPm7pm
-   wxhv97dUg4fmIYYBOyrR7iQ1LsfV/f+3xoahDAtRZLXrjBZs4mhck/0fZ
-   Yz2I+jWS4gXRUhVRuv3a4YRccZ//rH51qyB3GOe18/Ge6LZqI0w/MnXVr
-   O+8QalrKL+eTocOzrAt++vnnP0j+dIbAEhR6qkCUMg2tdtFDOSXhmgAmL
-   rUkRCJOP9VcXnlQNM5Svvtq5qNdCbZwpa3pHOLGshDA39ASKy6hRO1nnx
-   A==;
-X-CSE-ConnectionGUID: zDnXJynJT7uBTtlNrwY8jg==
-X-CSE-MsgGUID: 0Y0oXFVLRLepau/PEmaOCw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="41840965"
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="41840965"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 06:10:25 -0700
-X-CSE-ConnectionGUID: IvMrp124R5G6d4G2PeTWrA==
-X-CSE-MsgGUID: M9cP3xDXTGCjrd7w8Yr2DA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="154903744"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 06:10:19 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uZ85P-0000000DZrj-2F8n;
-	Tue, 08 Jul 2025 16:10:15 +0300
-Date: Tue, 8 Jul 2025 16:10:15 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-Cc: "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Hans de Goede <hansg@kernel.org>,
-	Tarang Raval <tarang.raval@siliconsignals.io>,
-	Jingjing Xiong <jingjing.xiong@intel.com>,
-	Dongcheng Yan <dongcheng.yan@intel.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Matthias Fend <matthias.fend@emfend.at>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] media: i2c: add ov2735 image sensor driver
-Message-ID: <aG0Yt4bewAgqsYLd@smile.fi.intel.com>
-References: <20250707150118.20536-1-hardevsinh.palaniya@siliconsignals.io>
- <20250707150118.20536-3-hardevsinh.palaniya@siliconsignals.io>
- <aGwuRP42mtFZmLT8@smile.fi.intel.com>
- <PN3P287MB351968C7B57C3C97D799D1E1FF4EA@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1751980271; c=relaxed/simple;
+	bh=03g+MRQD6Xu7ZjYmMziTj+MjO3Y7yjNKx0GkHmEDe64=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cGuYROZbLK9G4b8rWalaYjytUGvntJv/0bdvl0QlJjvC3f0qAkfT7DolEtiOlauh5A/JrD1fh42aBUiuF6SnXKlYmD5gMcUBNT+JGBxqKreKjU7H5TWngqv9tjHcoRknMGEwx5xeP3hCHZTEDBolccZ29tFQQGwGqGxcBJOdVGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nrtwo9sJ; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4537edf2c3cso46814845e9.3;
+        Tue, 08 Jul 2025 06:11:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751980268; x=1752585068; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5CFLZ9hcT/AZXle1Nxn26WgUyX/jArf2iyT38bDQ0Js=;
+        b=nrtwo9sJWx+IFVwlX9XD+FhSYZqm1NPY/otzMo1eKH40wWod+lc+Ui6Dvhgk51CQwZ
+         KsFY8icO6MCa4n8AXQMlLZuyiFVa+xtbJXX4xbkwdSJ55eBCQe9PU2WUkUh2IG2UQ069
+         xnkYd2kVjP0xb5d485xYiByeELqFnDtbWlxdZIZeLh86GigA9p327JhOo/9Z1KdxkNBm
+         2zGnF4Hxj9JA/KYo+5uehRaH9+N8bJDpS4fRcCuSH/CpPg95BRxaZhDa1lILNARmxW7X
+         DyHCWB0GoYNS/QWoEoKU1xmXkHmgf6iXYhjCshp5p2YOgNS4XqvucQJZuQoOrFfFfTRp
+         O1HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751980268; x=1752585068;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5CFLZ9hcT/AZXle1Nxn26WgUyX/jArf2iyT38bDQ0Js=;
+        b=JrxjXchoFy9Fbxt88gs+tLBGG95zO4jFKFK1ji/L+X8Xfft4GWseywqQKCDKI9p7RN
+         /VlQHvDIoshTeAfTXVwtaIylKSA7EwXR3NQg3ACILLXdgNF7W370ND5uIX8q9xziNYx3
+         zDENnRhitcByn/dJoKrUuj73iRqnHBJgBGMfuibJW+KlJQzC865OWaBcdNBElneNLLmT
+         GbSvZab/S6NabdKg2s7XSc0AoTamcUwpCgT5Ns/O2VQ/5jRRNKPHUxOh5DO60+VYugWX
+         aEC/5qozoTvRDqUAPICb78AYFKnuNN9d9NILxId3tt7g9Nw0lMx5IicZ7XIbSZh7ZBqN
+         A+Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCVseiVz4Gg+hzGIHyXpQNc93rzNcvhacFHwjLDbw89OQitJycUqTIaAQcv2ab9/OTBAR3Ey4OZgy4HjO9s=@vger.kernel.org, AJvYcCWTMf9nZHOQjJSyYRkJQtRFMRLAb/eB6Y58EEBevpDVFrCAiv4YEbsOdBXcofU1u4hKOwbvqOD0@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBBJXiePUAbB/qdKxMxjyMQa4Vdm/OYgc8EzMRHzzlNWABz8l5
+	HHjThoze6ip9VqkKm72W26Z4Ev4ZwHp21wkUlNNGvHxOdq+Glhx/JHpTUfTCpg==
+X-Gm-Gg: ASbGncubdjc/jrqtCzdO+x0yJnjK80oZ/Op6LniAjQOeKz8HRHwfQgi8ogkpir0Qj0t
+	o+o0yTO1BCLLk6gA3xcy6p54hXaLxLRgrVXASOMaH7YXigTX2Q6S32Ot6NpSNG1L9vJ76PrrZ2U
+	REnE3NGqE/hAf3J1WToC8fW5g4zjGLTkbDrGD4cWpsAjmGsoezvpQCAs89eo/nnK2P5snkLwEBX
+	oJa1raEIrY1hB3GH2QdoNct7s3V6YWslJSG75lJDTeQf0UhD9VRNdm0zwhEWQBOIUGV8fVVCapg
+	adFTdoNs5b6e1NXRzmduEtjbC5LuBZKd80XhqVYgKuk7XZxAOxz+KaUSbptFbvI09c4T6z5w9Ih
+	/ZyqmA6gctkfJHgs=
+X-Google-Smtp-Source: AGHT+IEw8waJ1n6TchLNXUJJCQV+wy9/oOutx8uhq1vVBJiT8Q8NsUcWDS8GrB5YyK2e0IKXMjNFMQ==
+X-Received: by 2002:a05:6000:41f8:b0:3b3:a0f6:e8d0 with SMTP id ffacd0b85a97d-3b5ddecceb2mr2682773f8f.54.1751980267698;
+        Tue, 08 Jul 2025 06:11:07 -0700 (PDT)
+Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b471b97339sm13123119f8f.64.2025.07.08.06.11.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 06:11:07 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Date: Tue, 08 Jul 2025 15:11:00 +0200
+Subject: [PATCH] mtd: spinand: propagate spinand_wait() errors from
+ spinand_write_page()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PN3P287MB351968C7B57C3C97D799D1E1FF4EA@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250708-spinand-propagate-wait-timeout-v1-1-76f8c14ea2d7@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAOMYbWgC/x3NwQqDMAyA4VeRnBfIMqTiqwwPQaPLYW1p6xxI3
+ 93i8bv8/wlZk2mGsTsh6c+yBd/wfHQwf8RvirY0AxP35GjAHM2LXzCmEGWToniIFSz21bAXFGI
+ mFTe/mKFFYtLV/vfgPdV6AbziQeBwAAAA
+X-Change-ID: 20250708-spinand-propagate-wait-timeout-a0220ea7c322
+To: Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.14.2
 
-On Tue, Jul 08, 2025 at 07:04:48AM +0000, Hardevsinh Palaniya wrote:
-> > On Mon, Jul 07, 2025 at 08:31:06PM +0530, Hardevsinh Palaniya wrote:
+Since commit 3d1f08b032dc ("mtd: spinand: Use the external ECC engine
+logic") the spinand_write_page() function ignores the errors returned
+by spinand_wait(). Change the code to propagate those up to the stack
+as it was done before the offending change.
 
-...
+Cc: stable@vger.kernel.org
+Fixes: 3d1f08b032dc ("mtd: spinand: Use the external ECC engine logic")
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+---
+ drivers/mtd/nand/spi/core.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> > > +static int ov2735_disable_streams(struct v4l2_subdev *sd,
-> > > +                               struct v4l2_subdev_state *state, u32 pad,
-> > > +                               u64 streams_mask)
-> > > +{
-> > > +     struct ov2735 *ov2735 = to_ov2735(sd);
-> > > +     int ret = 0;
-> > > +
-> > > +     /* set stream off register */
-> > > +     ret = cci_write(ov2735->cci, OV2735_REG_PAGE_SELECT, 0x01, NULL);
-> > > +     ret |= cci_write(ov2735->cci, OV2735_REG_STREAM_CTRL, OV2735_STREAM_OFF, NULL);
-> > 
-> > Why not using the ret parameter? Same for other similar cases above and beyond.
-> 
-> I am not sure what you want to suggest here.
-> 
-> Do I need to check ret like this?
-> 
-> ret = cci_write(ov2735->cci, OV2735_REG_PAGE_SELECT, 0x01, NULL);
-> if (ret) {
->     // error message
-> }
-> 
-> ret = cci_write(ov2735->cci, OV2735_REG_STREAM_CTRL, OV2735_STREAM_OFF, NULL);
-> if (ret) {
->     // error message
-> }
+diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
+index 7099db7a62be61f563380b724ac849057a834211..8cce63aef1b5ad7cda2f6ab28d29565aa979498f 100644
+--- a/drivers/mtd/nand/spi/core.c
++++ b/drivers/mtd/nand/spi/core.c
+@@ -688,7 +688,10 @@ int spinand_write_page(struct spinand_device *spinand,
+ 			   SPINAND_WRITE_INITIAL_DELAY_US,
+ 			   SPINAND_WRITE_POLL_DELAY_US,
+ 			   &status);
+-	if (!ret && (status & STATUS_PROG_FAILED))
++	if (ret)
++		return ret;
++
++	if (status & STATUS_PROG_FAILED)
+ 		return -EIO;
+ 
+ 	return nand_ecc_finish_io_req(nand, (struct nand_page_io_req *)req);
 
-No, this is the idea behind it, you check only when you need it.
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250708-spinand-propagate-wait-timeout-a0220ea7c322
 
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Gabor Juhos <j4g8y7@gmail.com>
 
 
