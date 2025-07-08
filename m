@@ -1,157 +1,107 @@
-Return-Path: <linux-kernel+bounces-720723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 122F6AFBFB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:15:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72E11AFBFB4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F7963B8714
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:15:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57A6D1AA48FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB9D1DB54C;
-	Tue,  8 Jul 2025 01:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CavN9gYr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E600BE6C
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 01:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B981E5B60;
+	Tue,  8 Jul 2025 01:15:50 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04CE4BE6C;
+	Tue,  8 Jul 2025 01:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751937334; cv=none; b=fR1/FFmrpXKVSVbQF6/IckLzKYczVgO7Ftqf78NYMG2uoCU67Y+6A2hff/KcVD96uJqyo9GNl+myUU9lK0nhh9Y9CxjewcF+mCHCRMu1gk7EnY2N54gcHZodHXPLUxKnB2ro7gUHr/vQI7EBTAw2hotpgp51DLmHOt2cqv5HPOU=
+	t=1751937350; cv=none; b=gDXYTKCwS8+3zAcJeH7EOj7AOQUbjgoLTh9TmzZ3AeZQ7YbFHeLxGdqKeK352o4WTdOUaooRLzA99ZeVLzA4/jGOS4p2IqS6dBbLTweYp0AaKsAVa5M2qctOZ33HuxAhfSKFJ2Go4rBWOEyYL0BmYo7CJotZO6bLScU0ERiAGk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751937334; c=relaxed/simple;
-	bh=nXIPKaJktsk9ipOkzkf7tHPIClsUbhiaFhaLXrP2FU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uOHJGzvP3vmMka2gSdQY2gmjZI+QkhWWwKuaiVMa93Cc6fxARQlf5QOOYu2aG3GFu8NxSE3BBkO+8R2yrbb6naiOGcCVa93II+Sn2w3EC/WXsGe8bwWqtSlFEE3fk8kp6wxulc77Z9QJtgh9qpQ5bji9kc1eUZoErfaEkXAt6BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CavN9gYr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751937331;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NCq9jLpVcHtozxDNuvvVZy5vUfqexcgcFQQtBYQ6ojA=;
-	b=CavN9gYrjKcvox5l0ehgpsgixdzTeHxrIH9drsWWHq5MPkreXD4MRtYTvNAlYIX41J6ISa
-	4Uli/RVowqdW3j57NtH660kZjHbWTxJJAEC1xLNQ5xMJ+cpevUi1QMLfKXgj2xoPvGH0Qq
-	7p88c1BXcl7Xtf7sfzKwGNiF1IGu9ww=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-382-vA0kA_sQMECKoIEQHtN51Q-1; Mon,
- 07 Jul 2025 21:15:27 -0400
-X-MC-Unique: vA0kA_sQMECKoIEQHtN51Q-1
-X-Mimecast-MFC-AGG-ID: vA0kA_sQMECKoIEQHtN51Q_1751937326
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 34E7918DA5C0;
-	Tue,  8 Jul 2025 01:15:26 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.60])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D805A19560AD;
-	Tue,  8 Jul 2025 01:15:24 +0000 (UTC)
-Date: Tue, 8 Jul 2025 09:15:19 +0800
-From: Baoquan He <bhe@redhat.com>
-To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>
-Subject: Re: [RFC 4/7] mm/kasan, mm/vmalloc: Respect GFP flags in
- kasan_populate_vmalloc()
-Message-ID: <aGxxJ+rLipjBToM9@MiWiFi-R3L-srv>
-References: <20250704152537.55724-1-urezki@gmail.com>
- <20250704152537.55724-5-urezki@gmail.com>
- <aGsnOm4ImBjp5kMN@MiWiFi-R3L-srv>
+	s=arc-20240116; t=1751937350; c=relaxed/simple;
+	bh=XFc9VGY/pzjFV6Dzys3432VYQ+MxqJl1bQbN0BpIJwY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TfWCDHj8EHFA1U+Av+CXO0BpBqymheA1uK8fH5RlYi5HeH9oc8M6i4/eW0Pc8Mgjt8UPH6Z/pHdnLNnShffM2yogW1w8YiL5pZaKd57r9L3uIosjzPEuZGQVX1Ry4V1qo9EXPnrBCA6EonTt1Asw4d1Ovs5/aeAS0MrKv3S1bQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.69.51])
+	by gateway (Coremail) with SMTP id _____8AxSWo9cWxoXwgkAQ--.42337S3;
+	Tue, 08 Jul 2025 09:15:41 +0800 (CST)
+Received: from [10.161.0.102] (unknown [223.64.69.51])
+	by front1 (Coremail) with SMTP id qMiowJDxL8I6cWxodr0NAA--.1989S2;
+	Tue, 08 Jul 2025 09:15:39 +0800 (CST)
+Message-ID: <9c425d8c-65d4-4430-a45c-d185806b826d@loongson.cn>
+Date: Tue, 8 Jul 2025 09:15:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aGsnOm4ImBjp5kMN@MiWiFi-R3L-srv>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mmc: loongson2: prevent integer overflow in ret variable
+To: Sergio Perez Gonzalez <sperezglz@gmail.com>, ulf.hansson@linaro.org
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250707185545.46275-1-sperezglz@gmail.com>
+From: Binbin Zhou <zhoubinbin@loongson.cn>
+In-Reply-To: <20250707185545.46275-1-sperezglz@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJDxL8I6cWxodr0NAA--.1989S2
+X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Gr1UGw18tr4UJr4Uuw1ruFX_yoW8JF4UpF
+	W3C3yjkrWDGr45ZFy2g34UuF1UW3yagr9FqFWxGw18WF97Xw1j9r15CayFqrsxZrZ0kFyS
+	vFWkCFs8u3WDGabCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUyKb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
+	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
+	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxAIw28IcxkI7VAKI4
+	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
+	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjx
+	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20E
+	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
+	AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU25EfUUUUU
 
-On 07/07/25 at 09:47am, Baoquan He wrote:
-> On 07/04/25 at 05:25pm, Uladzislau Rezki (Sony) wrote:
-> ......snip.......
-> > diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
-> > index d2c70cd2afb1..5edfc1f6b53e 100644
-> > --- a/mm/kasan/shadow.c
-> > +++ b/mm/kasan/shadow.c
-> > @@ -335,13 +335,13 @@ static void ___free_pages_bulk(struct page **pages, int nr_pages)
-> >  	}
-> >  }
-> >  
-> > -static int ___alloc_pages_bulk(struct page **pages, int nr_pages)
-> > +static int ___alloc_pages_bulk(struct page **pages, int nr_pages, gfp_t gfp_mask)
-> >  {
-> >  	unsigned long nr_populated, nr_total = nr_pages;
-> >  	struct page **page_array = pages;
-> >  
-> >  	while (nr_pages) {
-> > -		nr_populated = alloc_pages_bulk(GFP_KERNEL, nr_pages, pages);
-> > +		nr_populated = alloc_pages_bulk(gfp_mask, nr_pages, pages);
-> >  		if (!nr_populated) {
-> >  			___free_pages_bulk(page_array, nr_total - nr_pages);
-> >  			return -ENOMEM;
-> > @@ -353,25 +353,33 @@ static int ___alloc_pages_bulk(struct page **pages, int nr_pages)
-> >  	return 0;
-> >  }
-> >  
-> > -static int __kasan_populate_vmalloc(unsigned long start, unsigned long end)
-> > +static int __kasan_populate_vmalloc(unsigned long start, unsigned long end, gfp_t gfp_mask)
-> >  {
-> >  	unsigned long nr_pages, nr_total = PFN_UP(end - start);
-> > +	bool noblock = !gfpflags_allow_blocking(gfp_mask);
-> >  	struct vmalloc_populate_data data;
-> > +	unsigned int flags;
-> >  	int ret = 0;
-> >  
-> > -	data.pages = (struct page **)__get_free_page(GFP_KERNEL | __GFP_ZERO);
-> > +	data.pages = (struct page **)__get_free_page(gfp_mask | __GFP_ZERO);
-> >  	if (!data.pages)
-> >  		return -ENOMEM;
-> >  
-> >  	while (nr_total) {
-> >  		nr_pages = min(nr_total, PAGE_SIZE / sizeof(data.pages[0]));
-> > -		ret = ___alloc_pages_bulk(data.pages, nr_pages);
-> > +		ret = ___alloc_pages_bulk(data.pages, nr_pages, gfp_mask);
-> >  		if (ret)
-> >  			break;
-> >  
-> >  		data.start = start;
-> > +		if (noblock)
-> > +			flags = memalloc_noreclaim_save();
-> > +
-> >  		ret = apply_to_page_range(&init_mm, start, nr_pages * PAGE_SIZE,
-> >  					  kasan_populate_vmalloc_pte, &data);
-> 
-> This series is a great enhancement, thanks.
-> 
-> When checking code, seems apply_to_page_range() will lead to page table
-> allocation which uses GFP_PGTABLE_KERNEL. Not sure if we need to handle
-> this either.
+Hi Sergio:
 
-I am fool, didn't see the obvious added scope between
-memalloc_noreclaim_save/srestore(). Please ignore this noise.
+Thanks for your patch.
 
-> 
-> > +		if (noblock)
-> > +			memalloc_noreclaim_restore(flags);
-> > +
-> >  		___free_pages_bulk(data.pages, nr_pages);
-> >  		if (ret)
-> >  			break;
-> ...snip...
-> 
+在 2025/7/8 02:55, Sergio Perez Gonzalez 写道:
+> In loongson2_mmc_dll_mode_init(), `ret` variable is declared
+> as u32 but it is expected to hold an int value.
+>
+> Fixes: d0f8e961deae ("mc: loongson2: Add Loongson-2K2000 SD/SDIO/eMMC controller driver")
+> Reported-by: https://scan7.scan.coverity.com/#/project-view/53936/11354?selectedIssue=1644958
+>
+> Signed-off-by: Sergio Perez Gonzalez <sperezglz@gmail.com>
+
+Reviewed-by: Binbin Zhou <zhoubinbin@loongson.cn>
+
+> ---
+>   drivers/mmc/host/loongson2-mmc.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/loongson2-mmc.c b/drivers/mmc/host/loongson2-mmc.c
+> index 515ccf834f0a..ba6bb8fd5535 100644
+> --- a/drivers/mmc/host/loongson2-mmc.c
+> +++ b/drivers/mmc/host/loongson2-mmc.c
+> @@ -485,7 +485,8 @@ static irqreturn_t loongson2_mmc_irq(int irq, void *devid)
+>   
+>   static void loongson2_mmc_dll_mode_init(struct loongson2_mmc_host *host)
+>   {
+> -	u32 val, pad_delay, delay, ret;
+> +	u32 val, pad_delay, delay;
+> +	int ret;
+>   
+>   	regmap_update_bits(host->regmap, LOONGSON2_MMC_REG_SEL,
+>   			   LOONGSON2_MMC_SEL_DATA, LOONGSON2_MMC_SEL_DATA);
+Thanks.
+Binbin
 
 
