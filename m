@@ -1,197 +1,191 @@
-Return-Path: <linux-kernel+bounces-721625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547EBAFCBBE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:21:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8620EAFCBC5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6DBE176403
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:21:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD613A209F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F4A2DCF69;
-	Tue,  8 Jul 2025 13:20:28 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5EC2C15BE;
+	Tue,  8 Jul 2025 13:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qvoF8QQi"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89942DE70F;
-	Tue,  8 Jul 2025 13:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A365044C63
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 13:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751980828; cv=none; b=mvJfNn+twedCX+IMdKvl+OWKrcoRUWqrsOOO0cxq9WMayXTTXGXJH+l51xPzbZ+wIRNetWSoo+4bFOlE7OogM3tci3K5dJIJY5gjDGcyOlZpeVIqerNAI3MEmfnG8dowuxo2O8TKLAJOkI72RvxH2uyaWFlOOcXeYdOyzKsbQSs=
+	t=1751980905; cv=none; b=ehmEohLU6OscvZKjoR7eK9Ah61x5h4aM7xabwFjeDjPHCsEpyWX6lfdYq6eDD3n37LUoLn/Z0SdLFJBp26IKEIkyp+Vc76Xva3SlnzWiRtjCDRcjM0GB1U1XtfA8vsKMvT9QC7r63fdHzMnYhcm3IeQG5kJMuQuOFlxkEb7zNP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751980828; c=relaxed/simple;
-	bh=UvgYD8yLXTCxrlf/fhUhHV8XKlTVg0GfV4EJFsMydgI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rTeNjStllp//BVQR+WmX5nMY6qSxr8GzWeY2SHoy2s1JBhRVXGS85FbPHiZSYNSKwaaIBMVZHN2OzN1tNePHYXoo111dsTSmZn6DcNsIiYB2GrOMawajZd2q6adQXA9bD8UlN1lcx7xhgTgeRL2yY9KXY3nuPiX0Lfrc7xFg2MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id 820731F00051;
-	Tue,  8 Jul 2025 13:20:18 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id 438CFACB30E; Tue,  8 Jul 2025 13:20:16 +0000 (UTC)
-X-Spam-Level: 
-Received: from collins (unknown [192.168.1.1])
-	by laika.paulk.fr (Postfix) with ESMTPSA id BDF2AACB19F;
-	Tue,  8 Jul 2025 13:20:14 +0000 (UTC)
-Date: Tue, 8 Jul 2025 15:20:12 +0200
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 4/4] arm64: dts: allwinner: a133-liontron-h-a133l: Add
- Ethernet support
-Message-ID: <aG0bDAEdFOGUejxn@collins>
-References: <20250707165155.581579-1-paulk@sys-base.io>
- <20250707165155.581579-5-paulk@sys-base.io>
- <20250708003348.58fe509f@minigeek.lan>
- <20250708004731.37fa5129@minigeek.lan>
+	s=arc-20240116; t=1751980905; c=relaxed/simple;
+	bh=2yab2vCXAQ7b0O98Jnl0MCXdfirx43553TtNR4iz3K8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KVlh7TmvXNdko5tkTG5+mqqNOwXJJkt0croPfCmcxKvNh8jCVQ0IT64vHceNkl8TxDOt7ZxsNpd4YKNYIlM3irc4o0/X4V53fmL4XuW7wmk1rbOfNZIMmhF2RuxXV5oZQaQ0ldhjEea+DfuECs1Re4LXcOUtoFvnjXwGFpPAQXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qvoF8QQi; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-450ddb35583so3850295e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 06:21:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751980902; x=1752585702; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=dvvfjjW3xAddEV4yoFwAXd+ZIVfjy4w3ByllVwazu2o=;
+        b=qvoF8QQiq/mu3mw8/dbofudhCJDjZ6IB4OsZJ+4bIR2QT9bxqe0R2fnDne6U0On7Ii
+         CdWuhI8ZQrLsj2ZrQME+Oxpdp8X53YDXbo56l92/ELNeq+GVDxCLAQ112K2sZmfo1+aE
+         hV8NMAZ5iye9TfZ+vpLXRormJ7/YQSn5cuKroxKF2hLVapJ5k0zHAKCduoT8Stqk2GW/
+         6yHtzLeG44Cr8xs3NfK6MN5SOs+DWfgJWxuOQqJx2sY54gCIb6PO0/qxCZGj/zMu5fcF
+         QK1vqWq9vFa2cRDuqY2t7X1toRRbWdEPCEa24+H95kMJzBp1rOHe2FA8UiwUz07czdC6
+         WCDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751980902; x=1752585702;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dvvfjjW3xAddEV4yoFwAXd+ZIVfjy4w3ByllVwazu2o=;
+        b=v2BXNoA3IpImKL2RqfhFq4HBrD1oafNPhgPB91FQw/gbb6huebPFq5yDcKN9Lk83xJ
+         +K3zeZM4225IwYKKgspapO3DOBojYt1X4Gk81MpCthpatPtUeRyg/4egBFRy388TYeLh
+         nhfbLduAQxFfVle8rCfrgor/bvnkJDsbbGsRql7dfP04P2Is7vcKKKbss8FNQph/pux9
+         NzQxG0TRZ5G0xWc6uqfKP5CHUSHxivUrYsxpNocG1dRA9vay2mHSfEoNuKC6O/BOr6dY
+         htFCqwsgGvrjX7cpYNJztKSqVYTjsA/jZXTxC4xEgbZvx1UlOj0S2dhsM4+NwTts7kQR
+         k4xw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9RlNqeLoXvvDIt2FbWC4NND/T0WQLBWS5Hz5FOEPM3xhzDz/1LM4pTofODRoC6jySHyoiLpGcrc+JIXs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwviXU4vFxJ8eqtbskfyJbx1BgR4RJRYhZ6JM1DxmqRVjwcT7ej
+	rBtm1FoZuiwBgALvNeT510Mgu/qvo16zbv2yr2mCgxylz3Q8OA6psmdKO+KraWenAC0=
+X-Gm-Gg: ASbGncsSFNaNRgJSE2zAnvHWcSko9EvdhW7pLwwNcRehu1hokKlwMxKZA4ay0AUaiug
+	H24PouuunrRkcxvi8qIKNXrzCFup/L6z4PwPfurIpNdk/a5Jl48eXqwR+v67uQWgdOwKtif6woA
+	/RVQFf4wgYSA53+EzUuStvJBy0ZlQW3TfSJ57pIMR+p0ZMUw6GVXk19f8bL84e4FDLPupJqi1Cl
+	dme1PKfCRIfru6pagEGvcmB2EmJYvKXTtpPy9CdvNLbKLRw3NqhOmyZnM8TrQ1MdSuLSeA7KwI5
+	+bSzaZabONhSGk6ANUoOLymBEEieDP2VffujSj7TZvdBMTwNWfSKIcT9+ZYMLSjQg8jMHnpl8mf
+	tW7tXxw==
+X-Google-Smtp-Source: AGHT+IGfH1hyCCuApZ/PbUkNkSLbp9c5bKTr/wL67Ccgc7rui+jruH2h0fyJtMX0xUmRb8nMe9Jqew==
+X-Received: by 2002:a05:600c:1552:b0:453:6332:a98c with SMTP id 5b1f17b1804b1-454b35ef640mr56819015e9.1.1751980901933;
+        Tue, 08 Jul 2025 06:21:41 -0700 (PDT)
+Received: from [192.168.1.110] ([178.197.222.89])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454cd49df05sm21614625e9.33.2025.07.08.06.21.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jul 2025 06:21:41 -0700 (PDT)
+Message-ID: <99ca93ef-ab26-4d6b-bc7b-fd2f98aecabe@linaro.org>
+Date: Tue, 8 Jul 2025 15:21:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UXoQYDNF1awfe9Lb"
-Content-Disposition: inline
-In-Reply-To: <20250708004731.37fa5129@minigeek.lan>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dmaengine: sh: Do not enable SH_DMAE_BASE by default
+ during compile testing
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+ dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Linux-sh list <linux-sh@vger.kernel.org>
+References: <20250404122114.359087-1-krzysztof.kozlowski@linaro.org>
+ <CAMuHMdUn=qOoKp+tNNCepb1eBXpnikJxg8w6aRR50QK562tE1w@mail.gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <CAMuHMdUn=qOoKp+tNNCepb1eBXpnikJxg8w6aRR50QK562tE1w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 08/07/2025 15:07, Geert Uytterhoeven wrote:
+> CC linux-sh
+> 
+> Hi Krzysztof,
+> 
+> On Fri, 4 Apr 2025 at 14:22, Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+>> Enabling the compile test should not cause automatic enabling of all
+>> drivers.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> Thanks for your patch, which is now commit 587dd30449fb1012
+> ("dmaengine: sh: Do not enable SH_DMAE_BASE by default during
+> compile testing") in dmaengine/next.
+> 
+>> --- a/drivers/dma/sh/Kconfig
+>> +++ b/drivers/dma/sh/Kconfig
+>> @@ -16,7 +16,7 @@ config SH_DMAE_BASE
+>>         depends on SUPERH || COMPILE_TEST
+>>         depends on !SUPERH || SH_DMA
+>>         depends on !SH_DMA_API
+>> -       default y
+>> +       default SUPERH || SH_DMA
+> 
+> I think the check for SUPERH is superfluous, due to the dependency on
+> "!SUPERH || SH_DMA" above.
+> 
 
---UXoQYDNF1awfe9Lb
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Indeed it might be, but I must admit I don't understand the dependencies
+here at all. I think commit 9f2c2bb31258 ("dmaengine: sh: Rework Kconfig
+and Makefile") from Laurent made it confusing and this later just grew
+to even more confusing.
 
-Hi Andre,
+What is the intention for "depends on"? This should be enabled when
+SUPERH AND SH_DMA are enabled?
 
-Le Tue 08 Jul 25, 00:48, Andre Przywara a =C3=A9crit :
-> On Tue, 8 Jul 2025 00:34:25 +0100
-> Andre Przywara <andre.przywara@arm.com> wrote:
->=20
-> Hi Paul,
->=20
-> forgot to mention: can you please add an ethernet0 alias, to make
-> U-Boot generate a MAC address, from the SID?
+SH_DMA cannot be enabled without SUPERH (no compile test), right? But
+this "depends on !SUPERH || SH_DMA" suggests it could be. This should be
+read for humans as "if not SUPERH, then require at least SH_DMA".
+Otherwise what is the meaning for humans? This driver will work fine
+without SUERPH?
 
-Ah yes, sorry I forgot to do that. Will respin the series then.
+My change for default could be rewritten but I don't understand the goal
+behind current depends, so not sure how should I rewrite it.
 
-Cheers,
-
-Paul
-
-> Cheers,
-> Andre
->=20
-> > On Mon,  7 Jul 2025 18:51:55 +0200
-> > Paul Kocialkowski <paulk@sys-base.io> wrote:
-> >=20
-> > Hi Paul,
-> >=20
-> > > The Liontron H-A133L board features an Ethernet controller with a
-> > > JLSemi JL1101 PHY. Its reset pin is tied to the PH12 GPIO.
-> > >=20
-> > > Note that the reset pin must be handled as a bus-wide reset GPIO in
-> > > order to let the MDIO core properly reset it before trying to read
-> > > its identification registers. There's no other device on the MDIO bus=
-=2E =20
-> >=20
-> > putting the PHY reset GPIO into the MDIO node is a clever solution, I
-> > was struggling with putting it either in the MAC or PHY node, though
-> > conceptually it would still belong in the latter, I think. But this
-> > might be a more generic problem: for most other devices we activate
-> > reset and clock gates *before* trying to access them, though this might
-> > be historically different for Ethernet PHYs.
-> > =20
-> > > The datasheet of the PHY mentions that the reset signal must be held
-> > > for 1 ms to take effect. Make it 2 ms (and the same for post-delay) to
-> > > be on the safe side without wasting too much time during boot.
-> > >=20
-> > > Signed-off-by: Paul Kocialkowski <paulk@sys-base.io> =20
-> >=20
-> > Despite the above, this looks fine, and works for me:
-> >=20
-> > Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-> > Tested-by: Andre Przywara <andre.przywara@arm.com>
-> >=20
-> > Cheers,
-> > Andre
-> >=20
-> > > ---
-> > >  .../sun50i-a133-liontron-h-a133l.dts          | 19 +++++++++++++++++=
-++
-> > >  1 file changed, 19 insertions(+)
-> > >=20
-> > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a133-liontron-h-a13=
-3l.dts b/arch/arm64/boot/dts/allwinner/sun50i-a133-liontron-h-a133l.dts
-> > > index fe77178d3e33..90a50910f07b 100644
-> > > --- a/arch/arm64/boot/dts/allwinner/sun50i-a133-liontron-h-a133l.dts
-> > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a133-liontron-h-a133l.dts
-> > > @@ -65,6 +65,25 @@ &ehci1 {
-> > >  	status =3D "okay";
-> > >  };
-> > > =20
-> > > +&emac0 {
-> > > +	pinctrl-names =3D "default";
-> > > +	pinctrl-0 =3D <&rmii0_pins>;
-> > > +	phy-handle =3D <&rmii_phy>;
-> > > +	phy-mode =3D "rmii";
-> > > +	status =3D "okay";
-> > > +};
-> > > +
-> > > +&mdio0 {
-> > > +	reset-gpios =3D <&pio 7 12 GPIO_ACTIVE_LOW>; /* PH12 */
-> > > +	reset-delay-us =3D <2000>;
-> > > +	reset-post-delay-us =3D <2000>;
-> > > +
-> > > +	rmii_phy: ethernet-phy@1 {
-> > > +		compatible =3D "ethernet-phy-ieee802.3-c22";
-> > > +		reg =3D <1>;
-> > > +	};
-> > > +};
-> > > +
-> > >  &mmc0 {
-> > >  	vmmc-supply =3D <&reg_dcdc1>;
-> > >  	cd-gpios =3D <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */ =20
-> >=20
->=20
-
---=20
-Paul Kocialkowski,
-
-Independent contractor - sys-base - https://www.sys-base.io/
-Free software developer - https://www.paulk.fr/
-
-Expert in multimedia, graphics and embedded hardware support with Linux.
-
---UXoQYDNF1awfe9Lb
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmhtGwwACgkQhP3B6o/u
-lQzLLQ/+Pw5wVE4z1rxkYQTcF2Mvg737ilRn/gazwASk3lyRmY36noqeBeDrizYW
-L8cUAwDU1ggWc0LG+6CYyD0V2jglITFzuHz+5qP1HPZv5unxWPqfl1c0IB6amFVq
-+CGP8zlXwMIELM6XhYAhr5QHZcKk/vj9qkJ4GFOJ8c9dKWaFhYBM3DqZeeCaGInG
-dSfrAERWYrUxGLnmRf/cYkV4I+VxsJOKAyh9W4BUDrcL/ip6k6KziCJpSx0FvJcy
-Dzt33+1trnN2gKW+WMeAFMs2/8ntNYZY8S8idW0SGQ9q6o6iWl/Ppox1h57W7TSi
-qzcD7mvoQutYxgNJeoVMT0RSnKnDkzjoxvK7xxLV1zVla7g2q3BtCg0mu8SqY0Fd
-VHdJ5CeemfeAQ1268f+P4TCStmNdphhJCiEx62ORkx2k3DbMXfwTkq+MdmNzWLEb
-vs1wc3avXcRPZg3ufBNMwkdufbWBJZ2R3qIoyM2rDfWYBo078oFoWmAgvupTly2a
-AVSI3stjZQjm4bed/HZR2ZZo5NgmH1AF16hoQo+WjjeS1y0QVjAlw/rxSel6juxx
-yPlHa2/5I0oeF9x0gHX0U8AI5nB27/7D0DY+yvtWtbCZIADlQpuMzU17HeDoYZ+K
-Ypy3saPmDsSCfvKCqkYveWZq1wRy79iVf4tTyiPQ+fi+Gkamhso=
-=2DGs
------END PGP SIGNATURE-----
-
---UXoQYDNF1awfe9Lb--
+Best regards,
+Krzysztof
 
