@@ -1,83 +1,175 @@
-Return-Path: <linux-kernel+bounces-721725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F8DAFCD1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:14:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD56CAFCD36
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74BFE7A382F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:12:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AA781669C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2062DFA34;
-	Tue,  8 Jul 2025 14:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4560C2DE715;
+	Tue,  8 Jul 2025 14:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lojKRo/V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZMpDTl6i"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C82EEA8;
-	Tue,  8 Jul 2025 14:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDC01DBB2E;
+	Tue,  8 Jul 2025 14:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751984030; cv=none; b=YlDqzn7/CXFiWfFHyvFQQ5zyEcSb78yvn3djD4nsRxwfW1gS43lw5+avKCD5o8GqTNO7aCCBHzliyhqkI7PQhyfa+DBKM2ZWiDnPt7jFXZb2yyQJc9HKAFGYa0qsflpYEXyzmBoEue5YSEWGEmopgOYcnA6x3kBwhqZ7uZtbabw=
+	t=1751984241; cv=none; b=jDWfE7BEhyo3Fsy0lRtmCjudsKzWQlsDbO6ws8L550V7LdvGU83GVvXV9kup7lFJrfSg5b3Mc0fj+dCg1zNIAVBPkDGz6oMRtSxus81Ga4zhiPpgEDxQsADZso+L4WzQQ/CtxtS7ThN2B0W4vWoEne6Y3C3At1wL8pfypJbLP2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751984030; c=relaxed/simple;
-	bh=+5Ex0bc4kM2Y/CIfAlVeOTCIm9lVuDgffnp4Jfhrpes=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rpvfVdRuxExuO43d7I7SELiwO5I9RByEab2rme0oV+0if/wS9qW3dnlxXdGqpglzB0NGW2XPPv8ipHCvKjc4gg0Rwxb4sJdsep7jlc+hM38yUAMvYa0oNfPNlGuX/dvezcfacm81qllJ6+3kJ9dVhWRQzK9Tu8lglDOTSQWBRyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lojKRo/V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24B75C4CEED;
-	Tue,  8 Jul 2025 14:13:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751984030;
-	bh=+5Ex0bc4kM2Y/CIfAlVeOTCIm9lVuDgffnp4Jfhrpes=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lojKRo/VmS3XGhlvEvM+YfHlzIRz9IBnARkuT04An6SkJnVkwZF3epS9pALryutBw
-	 5KOepelmEbNkZWX0q+1gNoRSVHSmnraFqAPsTvoQr14H5ZQ6R8Ql1Y2wjytW1X/uwJ
-	 ZpnKZkxsyEqDRWE9YvBLW2JnJYshNtGOmABNLvAbKaaCV+pCzY83qJGX1kpk6e2E/y
-	 8tcVlwPhf5hNBtq+NqKbZwbIgaIZvEuZnWnQuBmxIgqcmH5MW1To3RL1eyoM2mEyZH
-	 TXGLxCEcxkuxPzB5zOnRJeF7WLpMOM5bGFau5/ZCAu4Dee04B1kaR1BSD9fp49XBwI
-	 PS62ofuRHj6TQ==
-Date: Tue, 8 Jul 2025 07:13:48 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: <Tristram.Ha@microchip.com>
-Cc: Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
- Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Marek Vasut
- <marex@denx.de>, <UNGLinuxDriver@microchip.com>,
- <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 4/6 v2] net: dsa: microchip: Use different
- registers for KSZ8463
-Message-ID: <20250708071348.2af94608@kernel.org>
-In-Reply-To: <20250708031648.6703-5-Tristram.Ha@microchip.com>
-References: <20250708031648.6703-1-Tristram.Ha@microchip.com>
-	<20250708031648.6703-5-Tristram.Ha@microchip.com>
+	s=arc-20240116; t=1751984241; c=relaxed/simple;
+	bh=XxA2SQGODxfhsVlrJsj7y3Ianx1ZtElsv48sFWrV1XU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aVq7tV57ejc/gBNKMM7WTf7pee1s4vAz16VrvvJ94x6tfCroEuz14FSheOPsRhTPRWqbUVt7SrtUlQpGnkxyQHZcQMcw2dTTZcaXDRF+zvIjPaB2sSosFJhPHqDAeb2qJR786F8CpgfP0qCKGlnWQOLD79h3d4kkIBADJ2GjQTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZMpDTl6i; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-60707b740a6so6024857a12.0;
+        Tue, 08 Jul 2025 07:17:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751984238; x=1752589038; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YAe2u5Ry38FuECjcK//c2lbSxbhj0bQal/mPso8qrP0=;
+        b=ZMpDTl6ioleroz4CGpb1EgFW+rD1DiKGQPh/2mTyTIwCNHWrkUpYivZ0Nluyuh7Swo
+         06t74pdjpvJhkPpIne/8j4QbUz5rRSsHDNoCoObc4RJLj65ZWj1X5Sidy3uW9fLQRCnA
+         r3jynrBU1C4o7hdNugh0UJ796LYRQSASg4f26mFASSI6XV08lPgqM+sgOCQu/9R2Kmdv
+         OH1lH+wdpft0sP5j1Xgs8Mz/+dqKTsygEbBSpgBFM4iueldTIXbZckesW4kSGTfFJI0y
+         f1e/2maSA8ZzwT6FeDaLQ8I8wZJVmLH2fEh7LX5XlLRNuFnbYFNZbIZ1eHafyRdqnreM
+         gmfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751984238; x=1752589038;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YAe2u5Ry38FuECjcK//c2lbSxbhj0bQal/mPso8qrP0=;
+        b=JIzS5scnWtD+P0hrIidmdcZkGwRit9gPQbOPZTg61qoWWgY/6LXUmdko0WYAxi4ATZ
+         fK032pBMhmvbkz+4WKgJx1CmVaaEDY8UJfL6Gz6tivSxHlOXAPZXLszoWZyzObJVT7Ho
+         y0ztdLxnTa0+bK51hcUC5i0kkxIpmFMaH1KEaZkWUwLHkHVpR1GKC8OD1MsuDF3+w9M0
+         OPEx8kJU67p4VsjMtKgBC7nQBkO6+wlQ+XIK3wflqtNoGK3ztVyXwNTgYJ2+L8kwESeY
+         bwjK0PcRiPo690g3RmA/PeMtUnwarHHyajE3IBNkHmyBc9mMRDTOZ247PWktliZfqtXk
+         +0UA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDRrqzsvdkXiKLUiTcCiCrFh+tY/FG6k6D3qLDwElkx588jwBI0sZc0cwZgdMu16iJqBYVcdmcfAAX8oc8Uxw=@vger.kernel.org, AJvYcCWFr4rhsKj9g4pdh/E3v8CLKib9EsdSvS/p3JJIs6sb487KLgHDtMOfIb9z4SfL1NL6ViATPYgzdStT5EYy@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCh3QbblgTPViRsxhdiqOrwQYntM8TEschiGD18xQ6O9RJLtZO
+	oEzxe1UZTNuN2Oedo7BSQ/1mWo3Z45ocUMSHenI3qRH5EQp/akouDx4O
+X-Gm-Gg: ASbGncsaK6yzUNX3HdyvJh3Zx/7eAJnLOjTU/05APmSWTYxDplQIRK3tthZKa2lKKhO
+	5rrMUa8JmB2cfDBzH+5S1eOmuEroV0G+HoyMq+z0H7prtZzhBLnP/bBHEuOdVUxUVgwAuwMRAu+
+	qjNT2uaYl2tbGJ4otZXcFg794kEujEOkIzefS4Rh/sE2NxkcUKHbjnQTDO8Aj7mPlSBmP9cFipW
+	Tab0uAh6tTveoTrOfWs6HEqbTno74z6IEo8lc3+9yF7vSiYaDJoDYXqvWSZGCj0d4W2ItSAq5OD
+	LB4uQIrg6FnSuvxon5R02eFKzrm2wNhp2cTgZPOCRbp9tLQgnyhy8sX2rkEeBPwAPbFWSzc4tin
+	2
+X-Google-Smtp-Source: AGHT+IEKgFjK0svm+YInGP+RsM98sKNu7m+gNG2WMQOwlcmxj3AAtdKKcAIJ3pqCIjJNYAxZVCPxzQ==
+X-Received: by 2002:a05:6402:5191:b0:60b:9f77:e514 with SMTP id 4fb4d7f45d1cf-60fd6510ce0mr13951067a12.10.1751984237659;
+        Tue, 08 Jul 2025 07:17:17 -0700 (PDT)
+Received: from yavin ([2001:b07:6474:515f:faac:65ff:fe6a:e677])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fcb8c6c97sm7266600a12.74.2025.07.08.07.17.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 07:17:17 -0700 (PDT)
+From: Alessandro Gasbarroni <alex.gasbarroni@gmail.com>
+To: marcel@holtmann.org
+Cc: johan.hedberg@gmail.com,
+	luiz.dentz@gmail.com,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alessandro Gasbarroni <alex.gasbarroni@gmail.com>
+Subject: [PATCH] Bluetooth: hci_sync: fix connectable extended advertising when using static random address
+Date: Tue,  8 Jul 2025 16:14:12 +0200
+Message-ID: <20250708141617.3691-2-alex.gasbarroni@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 7 Jul 2025 20:16:46 -0700 Tristram.Ha@microchip.com wrote:
-> From: Tristram Ha <tristram.ha@microchip.com>
-> 
-> KSZ8463 does not use same set of registers as KSZ8863 so it is necessary
-> to change some registers when using KSZ8463.
+Currently, the connectable flag used by the setup of an extended
+advertising instance drives whether we require privacy when trying to pass
+a random address to the advertising parameters (Own Address).
+If privacy is not required, then it automatically falls back to using the
+controller's public address. This can cause problems when using controllers
+that do not have a public address set, but instead use a static random
+address.
 
-drivers/net/dsa/microchip/ksz_common.c:2987:28: warning: incorrect type in assignment (different base types)
-drivers/net/dsa/microchip/ksz_common.c:2987:28:    expected unsigned short [assigned] [usertype] storm_mask
-drivers/net/dsa/microchip/ksz_common.c:2987:28:    got restricted __be16 [usertype]
-drivers/net/dsa/microchip/ksz_common.c:2988:28: warning: incorrect type in assignment (different base types)
-drivers/net/dsa/microchip/ksz_common.c:2988:28:    expected unsigned short [assigned] [usertype] storm_rate
-drivers/net/dsa/microchip/ksz_common.c:2988:28:    got restricted __be16 [usertype]
+e.g. Assume a BLE controller that does not have a public address set.
+The controller upon powering is set with a random static address by default
+by the kernel.
+
+	< HCI Command: LE Set Random Address (0x08|0x0005) plen 6
+        	Address: E4:AF:26:D8:3E:3A (Static)
+	> HCI Event: Command Complete (0x0e) plen 4
+	      LE Set Random Address (0x08|0x0005) ncmd 1
+	        Status: Success (0x00)
+
+Setting non-connectable extended advertisement parameters in bluetoothctl
+mgmt
+
+	add-ext-adv-params -r 0x801 -x 0x802 -P 2M -g 1
+
+correctly sets Own address type as Random
+
+	< HCI Command: LE Set Extended Advertising Parameters (0x08|0x0036)
+	plen 25
+		...
+	    Own address type: Random (0x01)
+
+Setting connectable extended advertisement parameters in bluetoothctl mgmt
+
+	add-ext-adv-params -r 0x801 -x 0x802 -P 2M -g -c 1
+
+mistakenly sets Own address type to Public (which causes to use Public
+Address 00:00:00:00:00:00)
+
+	< HCI Command: LE Set Extended Advertising Parameters (0x08|0x0036)
+	plen 25
+		...
+	    Own address type: Public (0x00)
+
+This causes either the controller to emit an Invalid Parameters error or to
+mishandle the advertising.
+
+This patch makes sure that we use the already set static random address
+when requesting a connectable extended advertising when we don't require
+privacy and our public address is not set (00:00:00:00:00:00).
+
+Signed-off-by: Alessandro Gasbarroni <alex.gasbarroni@gmail.com>
+---
+ net/bluetooth/hci_sync.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+index 77b3691f3423..012a9e9a4f9b 100644
+--- a/net/bluetooth/hci_sync.c
++++ b/net/bluetooth/hci_sync.c
+@@ -6815,8 +6815,19 @@ int hci_get_random_address(struct hci_dev *hdev, bool require_privacy,
+ 		return 0;
+ 	}
+ 
+-	/* No privacy so use a public address. */
+-	*own_addr_type = ADDR_LE_DEV_PUBLIC;
++	/* No privacy
++	 *
++	 * Even though no privacy is requested, we have to use the assigned random static address
++	 * if we don't have a public address.
++	 */
++	if (bacmp(&hdev->bdaddr, BDADDR_ANY) == 0 && bacmp(&hdev->static_addr, BDADDR_ANY) != 0) {
++		/* Re-use the static address if one is set */
++		bacpy(rand_addr, &hdev->static_addr);
++		*own_addr_type = ADDR_LE_DEV_RANDOM;
++	} else {
++		/* Use a public address. */
++		*own_addr_type = ADDR_LE_DEV_PUBLIC;
++	}
+ 
+ 	return 0;
+ }
 -- 
-pw-bot: cr
+2.50.0
+
 
