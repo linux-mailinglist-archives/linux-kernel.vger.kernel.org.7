@@ -1,80 +1,116 @@
-Return-Path: <linux-kernel+bounces-721077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CCC5AFC470
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:45:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3787CAFC473
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F2773B9320
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:45:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58A793BCB41
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E074F510;
-	Tue,  8 Jul 2025 07:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9DB264FA9;
+	Tue,  8 Jul 2025 07:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="epHZKj6f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KmBIT9GV"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26C129A331;
-	Tue,  8 Jul 2025 07:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5C6D517;
+	Tue,  8 Jul 2025 07:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751960721; cv=none; b=D0qKtoGrTA7WBCHQrk6HfCPOPLsEEY5Dyzx9bUL4T2m3F3xZo09crUAQTTMiRnksehNImGRWd6QLuwJc29BRYTMYPZsn3lDaD63g4WAKJU163YJc8uJdXXx1SdUSFxno0cUtfJbxRhDS8jO3xBgDlIviya840dNkKdEQ5V70n/4=
+	t=1751960775; cv=none; b=nia5HpNR3li5dwQ4oebti4Y37FIW/W10o9TpZxhVlJOtiTfqcnP4uWze5L0PpVjF+tkpvMfUg/tSJhzKqF1BL1Cz5uWdsasgnQ9I7XVY4sllNLYhCtPdSSVH+MaXnrk0H+SYeDc8SfE7mcukaTjfssPqinPcCh1hbx2rDYcYBNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751960721; c=relaxed/simple;
-	bh=zZB0Wdl5LPnjvlMhwndr1kj1exZoIn1f7iY/aY14nBw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vBIgt5a8jOcqY122e0TLBCwS5RE6tXdaXUfg+OwTKgnlqPSH3EBgI4klr3tFa1bCg1rPE8LkfimLn7LQHcl4bqFTf7e+nFn1ApFDvwfo/nc/TaaSv8J1Z/wiYw8+dKH0MSR/f7gcTmFkkmiYvIXOpNK2TAYByyVXa6UyBcDnIUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=epHZKj6f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFCFBC4CEED;
-	Tue,  8 Jul 2025 07:45:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751960721;
-	bh=zZB0Wdl5LPnjvlMhwndr1kj1exZoIn1f7iY/aY14nBw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=epHZKj6fM2nyYfk3ynJ/En2wrEMoPQ25Wy05oYE7cDOw6+23NGXCug6msbNhY8k3U
-	 G5GS/2tZm9iADqW8aKFfIF9c2gmXBQn8uw1clmfXHBUg2lMs2/fIKhD6RGTN7pEWlj
-	 y9kFQjdB6tOoncPfJ8bAeWgxfO3rP7L4Kp4ndQlLMJKXzJU06QiVXtyH01sQ0rgPdw
-	 sh49LG5FGxrQwFfbhSigdnS9oTzlw3A7sxzNASe84zu2xypAZiSARIIX5CI/1aD2OK
-	 BHWTt6loZC5LZbUGIbMC1c4UMR3AMWgquH9iAQRforgn1UgL7w47ala6Qd+Yy8TmAW
-	 Y7BeglOel8oZg==
-Date: Tue, 8 Jul 2025 09:45:18 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: arm: qcom: Split HP Omnibook X14 AI
- in SoC variants
-Message-ID: <20250708-brawny-optimal-lynx-8aab31@krzk-bin>
-References: <20250705-hp-x14-x1p-v4-0-1c351dbeaf18@oldschoolsolutions.biz>
- <20250705-hp-x14-x1p-v4-1-1c351dbeaf18@oldschoolsolutions.biz>
+	s=arc-20240116; t=1751960775; c=relaxed/simple;
+	bh=SsJLEZUK5l4Kdov3Q7zzxDX+VX8QlmSpDy1dNsg5p6M=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=GDtqHczpn8FAjybdbhuphiIHMiLOjSzYLZ8Oab/2wGcLKWjLpCg2KcjT3v/W3/I+o+L8e2SsOILd7hA4tHyQgD49y7XKJ7/v06aDyhlT7w7MOFi24Ccq9AcXo0NfU9J1SMULUMjCnakoiYkbjCFY/Za25QTEbzXLXiEUMLoU9YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KmBIT9GV; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-32b7f41d3e6so48305471fa.1;
+        Tue, 08 Jul 2025 00:46:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751960772; x=1752565572; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SsJLEZUK5l4Kdov3Q7zzxDX+VX8QlmSpDy1dNsg5p6M=;
+        b=KmBIT9GVhFdUXXyFL61rKqQeACdV2q6OkH2STJK6Ih5mG8sGBEGDsasOEipu3AJvap
+         RK1xUwfuHnDXXLzTv6zAXeb6OPmTc2BxisRC3acKgLaQgZztb+sDIT+Vh867yaIYe1ER
+         8NhtINM7kuw2WrSNqkH2thWdKv625NGsraFk2xYBTJ6wXftPgkKfs9bpxzjYjiIpg+m4
+         HDujVPrs/bPfVnOrHoTjJEWyv92rTGZARB6Q6IUbwU6ajxIO48SWuxkbV7mVdnjpDHPh
+         GW/Q+IC4060+xFAmEOiTt56Cjm3hP5tykOl0TUYlDrOFDPjGtmlDTZVYwBExJP9g8zRZ
+         oH7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751960772; x=1752565572;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SsJLEZUK5l4Kdov3Q7zzxDX+VX8QlmSpDy1dNsg5p6M=;
+        b=gFdKj9lB8U9XjksItk5NjPIpLE//WAwTdVo7y3nN2vpR6pw2K8PWk+1u5vp/zN0lSo
+         pra080gYu7LbxtNmIu3Oj9qgU6jm0k3R0KzOzInEwvO2h4XZYx1usWXhtM0cFGkRHlwl
+         60q256WzvwYBIz5NG/x6VmlCL2tUCwK6yQzAmdnFCl355bSvSU5/7jTr7kwnmKKNBu0n
+         h4ezsz0dUITmM8SivSwlLXBaWFLUHq0zOrZS3BGwwOMUDi1NndUF9Np2tUzWpX+rcS+L
+         0KYe85i8jyLdrbPt+VqTChVlm4I7Y2GX5f31vlEWtWfGyZBR7CLPxVDhyE0Re+ONbFwt
+         s4eA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8sgtNVgx/pocCN5wUSqJdrWftSBt7du5NSQicFFDKnBg7yJRkySzukb1tVTNVxH+r8oqwIjJ7@vger.kernel.org, AJvYcCUccyEZTGZOAZ15EINBouJgcypJ/Rp9e6C4iwTBEqq7rPXnjTEOO18q3Bc3IWW8tKYTL4BZoJ6oOX6PU+Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvvXL0r/qHqnWl0GhCX0I/KMRRWPPB1aWM2ONEelLlCqYhD1MV
+	WHf4IbSodedU+CAkf0VVyjksBteX9VxN6F7J5g/9VmHWkHhekhd0VGJishben0lSFLT+74arSwV
+	ZwydkWu7XZCLOXE3amNnbKevqP9wmgRY=
+X-Gm-Gg: ASbGncsMixpfCur+Lg94V6tLhvaYDAZbFl+IodrtqZlIpS5oOV27ucHPJ5yDXr7tyOI
+	A7+j9A5mJcyVkz0iOACdfhWMdr7i31HjH0pX7KzguuPfrJjm8WJYyYfSTaBuGpxvwL0SSsZVY2N
+	QRLMjtHVNT6GATLydEfy+rS2CAQRV1tcbuIKCu+ZxHBK1D2mvwXZb6JXAKKkfyKNH8Lw==
+X-Google-Smtp-Source: AGHT+IGEd9Kz/5zhw01cj60Fqqv/m+I4Sm8jcaPps9mJ+ttQL5ZKCItccPpmMz/tXTWNQssl2xCYHuM/okPzQAf3cRs=
+X-Received: by 2002:a05:651c:2220:b0:32b:7614:5722 with SMTP id
+ 38308e7fff4ca-32f3a095ccbmr4741481fa.13.1751960771442; Tue, 08 Jul 2025
+ 00:46:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250705-hp-x14-x1p-v4-1-1c351dbeaf18@oldschoolsolutions.biz>
+From: Luka <luka.2016.cs@gmail.com>
+Date: Tue, 8 Jul 2025 15:45:59 +0800
+X-Gm-Features: Ac12FXyHNuVMuBc-KoksuHFizmYOY9_ntXLtiAiYsEQj7DrJSbrTPi-bbh2XYO0
+Message-ID: <CALm_T+2yh+PoxuCmSch8rgaZud6N4DBmA8OG9BdLvVu_F-EJ9A@mail.gmail.com>
+Subject: [Bug] soft lockup in packet_rcv in Linux kernel v6.15
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Jul 05, 2025 at 10:31:54PM +0200, Jens Glathe wrote:
-> The HP Omnibook X14 AI PC is available in fe0 (Hamoa, x1e80100) and
-> fe1 (Purwa, x1p42100) SKUs. Since they are not completely dtb-compatible,
-> split the model strings in 2 variants:
-> 
-> hp,omnibook-x14	compatible to qcom,x1e80100
-> hp,omnibook-x14-fe1 compatible to cqom,x1p42100
+Dear Linux Kernel Maintainers,
 
-I don't see split here. You are adding a new compatible for the fe1
-variant. It's fine to mention there is fe0 already, but main point of
-commit msg should express what you want to do and doing here.
+I hope this message finds you well.
+
+I am writing to report a potential vulnerability I encountered during
+testing of the Linux Kernel version v6.15.
+
+Git Commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca (tag: v6.15)
+
+Bug Location: packet_rcv+0x3d1/0x1590 net/packet/af_packet.c:2208
+
+Bug report: https://pastebin.com/vLWYxByZ
+
+Entire kernel config: https://pastebin.com/jQ30sdLk
+
+Root Cause Analysis:
+
+The packet_rcv() function causes a soft lockup due to prolonged
+execution of BPF filter evaluation in the packet receive path,
+potentially resulting in unbounded CPU consumption under specific
+traffic or filter configurations without yielding.
+
+At present, I have not yet obtained a minimal reproducer for this
+issue. However, I am actively working on reproducing it, and I will
+promptly share any additional findings or a working reproducer as soon
+as it becomes available.
+
+Thank you very much for your time and attention to this matter. I
+truly appreciate the efforts of the Linux kernel community.
 
 Best regards,
-Krzysztof
-
+Luka
 
