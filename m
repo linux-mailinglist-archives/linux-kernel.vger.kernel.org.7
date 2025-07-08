@@ -1,651 +1,267 @@
-Return-Path: <linux-kernel+bounces-720962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE336AFC29E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:24:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23D98AFC295
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:22:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E245516C888
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:24:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE4827B0EB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E66220F36;
-	Tue,  8 Jul 2025 06:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E972220F30;
+	Tue,  8 Jul 2025 06:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="l8Ad+qjC"
-Received: from proxy41132.mail.163.com (proxy25212.mail.163.com [103.129.252.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QVba+NoV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416C221767A;
-	Tue,  8 Jul 2025 06:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.129.252.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751955848; cv=none; b=F7fS2mMTOTCw4MFjICUPrP2jqnkgw2cU1kZZ1ovmY+8KxNFtTjiM+kXN+3btLfjXLKGziLGBmk6ts9GsRAOR58EENELe+MHOxPCN8oO/JfK6fWKx5asutHVLKtVPRXtiBQlvkl0xY55VfYJ7IoHWMP9ikQHkh2P+CPwspAFrz4s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751955848; c=relaxed/simple;
-	bh=/aKFYVrSUvb56OrqNRONfycO0dOcJVnNkjhGlPHQ+So=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ngxIusFWDPqdPrZeCvIYwNeKM5uW9gS5R1NNfDa5F8Zik9nlxx8kqPHK7oz7dm+y0H0T6YWd87tnvPJJ+TSYlIXuBi2AMlWdLMZXk7BACwog3hbhQgnw0wPTaxdD4Ke1agF9b3Zoo+3NLgXGioj/UiuGYzVTA/2+0wD6Y/Tz92g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=l8Ad+qjC; arc=none smtp.client-ip=103.129.252.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=1v2q7A3eUCisKbSPt1sKWtN3/8W/h2oe/q3Dw5q7DbA=;
-	b=l8Ad+qjCy82aky+IDRPtJ2/GWTwafOPkE7hBppz6+nzp9mKRqGXorBzUEdcxIU
-	54SKcYocFTfyq4eBsoWm/+XxaZJ7ZGKv6gS33AfNHKBctgpPYayhj3/WfMNMz3Hc
-	kDntGFtpwnVqgOBeqWRoEJ0Ow3hEYeR7tjkBkBCA7g3jk=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgDHpsSruGxoCRxMAA--.47451S3;
-	Tue, 08 Jul 2025 14:20:29 +0800 (CST)
-Date: Tue, 8 Jul 2025 14:20:27 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Wojciech Dubowik <Wojciech.Dubowik@mt.com>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Kees Cook <kees@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Marek Vasut <marex@denx.de>, Frank Li <Frank.Li@nxp.com>,
-	Markus Niebel <Markus.Niebel@tq-group.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Michael Walle <mwalle@kernel.org>, Heiko Schocher <hs@denx.de>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Max Merchel <Max.Merchel@ew.tq-group.com>,
-	Primoz Fiser <primoz.fiser@norik.com>,
-	Tim Harvey <tharvey@gateworks.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Caleb James DeLisle <cjd@cjdns.fr>,
-	Junhao Xie <bigfoot@classfun.cn>,
-	Andre Przywara <andre.przywara@arm.com>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Manivannan Sadhasivam <mani@kernel.org>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-hardening@vger.kernel.org,
-	Tobias Graemer <Tobias.Graemer@mt.com>
-Subject: Re: [PATCH v3 3/4] arm64: dts: freescale: Add Mettler-Toledo
- Snowflake V2 support
-Message-ID: <aGy4qy1kN3RZ6nas@dragon>
-References: <20250624110408.128283-1-Wojciech.Dubowik@mt.com>
- <20250624110408.128283-4-Wojciech.Dubowik@mt.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EDC203706;
+	Tue,  8 Jul 2025 06:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751955695; cv=fail; b=ALIaq/KwEOTCGF7CLmuV8DCYHjDg9LvZliCISTVutC0pe80zn05EnL7aEdMWkfgjnGRiD77zQlgHDEbufg+B/V1NMWrcROd84pAl5ivUsTvKAJ8jBQkbgkOrCGHGPf+H2kvaiGWbA6dh3VJpMMU+DRI5zpSikFKNTTuSTnMSNQI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751955695; c=relaxed/simple;
+	bh=yOZeFWV5EZZF/6ej+VJiQrOEmMVm2dVV9krqSo5KpQU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rjGSHBz6VSPurlD2MqaAVGAa+W4f2RBmBTYOS45dDaRVyzYp2mFbDKoJK31EDDfis7VZ/OF6s5IEpoogt2r8TQ3oVFzL/7qyDuIziRsC3r0LvDkkXKqWuQN6XOREkAjYzMOPpCvC1Y651m0Q7AOhG1AiKSk2OcFMOf2XQZSnj90=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QVba+NoV; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751955694; x=1783491694;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=yOZeFWV5EZZF/6ej+VJiQrOEmMVm2dVV9krqSo5KpQU=;
+  b=QVba+NoVDXl09qxohytLfRhlbuTfarPUJRPvaN6q8e6PynkKhO15LjTM
+   +u6a8EKrUEiZsemwhKiz29eol5ql6dILfGQnD7FV3NVMDwTNmfFa+MXkg
+   haRAFeegDS6cGprGpnIoBFCQU2dpmqWvAlvD6gZ8hpYSAKN7diVR6X+MW
+   5WkF/XTTY7miguDdXk2VrtyBzQ3t7+Ipsje4m3T+a3SvnDjXLXtIg/xn0
+   1tC8J+uNcE3Vmqbp5MWZv+4OnO4JtuOV9ykyp7mx9Phw6FVrkY42u5kCM
+   Xw1Eii3nfcIjUTUUrJkkbmcxp3LFRxieBgbGK61kcFtPd3VM73CvyiDFG
+   w==;
+X-CSE-ConnectionGUID: lWDTJSpQT8OIM/lb78z6ew==
+X-CSE-MsgGUID: NqLek/VSTICkzZFiy4cN+g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="71627479"
+X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
+   d="scan'208";a="71627479"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 23:21:33 -0700
+X-CSE-ConnectionGUID: PjW26qrSSyu+3ncdhG3aXg==
+X-CSE-MsgGUID: bRAPEaBrQnGoNH2r2GEjEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
+   d="scan'208";a="159683782"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 23:21:33 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Mon, 7 Jul 2025 23:21:31 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Mon, 7 Jul 2025 23:21:31 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.80)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Mon, 7 Jul 2025 23:21:29 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kb1a38YGWY+23pbSfTSKvj9DW31UJ8QDddpJJ4aqW/R7AhV6WRHnkOvs7FyRyU46cZvlFQfD2MxOoDf9wNnxq1pRuGo4NK4NFmGkMomhDNIotii8tUFOn3dCqqx1ukRM5lALEj8S8oRQ0bRLpv7HI6a6nbuRSt83UwgSu+KEPELas9986HwYUsb70znZFcIOM8kdwAEJNG5FnBqstGc+ksSxJQ7nJUKd8GeF1/uAFOpmxXFjNxqj3AxQWFPI2D2kwpCQvIlnMp385eNWF21IuHkWTA6ZSi23PBC4oxOn+1aMhM1ZfDBwrCGUe56aSA/t8wUd2dNAuBwx6QKHyDg2vw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yOZeFWV5EZZF/6ej+VJiQrOEmMVm2dVV9krqSo5KpQU=;
+ b=VDXLiYZRj93GcM4/PJNRVEwImt883VlDh/WNduwfWO9qjMXIuZGX0jfGF8SYD3qRBgJmFENJoOt80DCXpTiwdKP6/KPkAvWImOosJz8EV9TmX+zUuwCsADwqKIg9zqvIbTX1rnhGdX4KtZedUH/5/832lTUTIhWvSaRQc5Q7vmCOCZ2O/D9Y9h7i5jymOHi3G7b/PucTViWiq7hDNV0iXmUUR2AczdUy9vhEaH19c1PK1MXR2vr88n6S6gJdamq70boh6nrDCpiZzYKyETJqsIUOKL0Wk95t3MjW/NWOVQyawbSSGwFQQhV2rYYcjNAs1WI25GxPQsT75EP/XaMAng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from PH0PR11MB7522.namprd11.prod.outlook.com (2603:10b6:510:289::8)
+ by SA1PR11MB8523.namprd11.prod.outlook.com (2603:10b6:806:3b5::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Tue, 8 Jul
+ 2025 06:20:47 +0000
+Received: from PH0PR11MB7522.namprd11.prod.outlook.com
+ ([fe80::68cd:b021:a654:e42f]) by PH0PR11MB7522.namprd11.prod.outlook.com
+ ([fe80::68cd:b021:a654:e42f%4]) with mapi id 15.20.8901.024; Tue, 8 Jul 2025
+ 06:20:47 +0000
+From: "Mekala, SunithaX D" <sunithax.d.mekala@intel.com>
+To: Arnd Bergmann <arnd@kernel.org>, "Nguyen, Anthony L"
+	<anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
+	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+CC: Arnd Bergmann <arnd@arndb.de>, Simon Horman <horms@kernel.org>, "Dr. David
+ Alan Gilbert" <linux@treblig.org>, "Loktionov, Aleksandr"
+	<aleksandr.loktionov@intel.com>, Dawid Osuchowski
+	<dawid.osuchowski@linux.intel.com>, "Jagielski, Jedrzej"
+	<jedrzej.jagielski@intel.com>, "Polchlopek, Mateusz"
+	<mateusz.polchlopek@intel.com>, "Kwapulinski, Piotr"
+	<piotr.kwapulinski@intel.com>, "Mrozowicz, SlawomirX"
+	<slawomirx.mrozowicz@intel.com>, Martyna Szapar-Mudlaw
+	<martyna.szapar-mudlaw@linux.intel.com>, "intel-wired-lan@lists.osuosl.org"
+	<intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [Intel-wired-lan] [PATCH] [v2] ethernet: intel: fix building with
+ large NR_CPUS
+Thread-Topic: [Intel-wired-lan] [PATCH] [v2] ethernet: intel: fix building
+ with large NR_CPUS
+Thread-Index: AQHb4glOw7/HYrlOjEiU8havYJYre7Qn26tw
+Date: Tue, 8 Jul 2025 06:20:47 +0000
+Message-ID: <PH0PR11MB7522E19A5C157371EC184179A04EA@PH0PR11MB7522.namprd11.prod.outlook.com>
+References: <20250620173158.794034-1-arnd@kernel.org>
+In-Reply-To: <20250620173158.794034-1-arnd@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH0PR11MB7522:EE_|SA1PR11MB8523:EE_
+x-ms-office365-filtering-correlation-id: 63bc3b83-e25e-4458-80f2-08ddbde79423
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?WmFxdU5TdzlxQ1U1VzBsZWdzU0RCOTcvZjhzTzBwOVFLSHI3NHFqck9qcGg5?=
+ =?utf-8?B?UjVENEN0VzBmNnZmbVMxTmJCMUNTRjdrM0NFOTZPamY0VEZMdUpzU0RLb3l5?=
+ =?utf-8?B?TVowSndIUEcyQTkyY1RSWnBaNHBKMWtvbFRVdnZuWWtMRXZQcEFOdXNlNGE5?=
+ =?utf-8?B?WUgvVktJYk5lNXVjbXBzREhEVVB4M3NzMFpnOWNRdjA1SjFRMHc0a3dWbFJi?=
+ =?utf-8?B?Ry9Ja0Y1UXJLNEJ2TEhVd1NHS3Z6MHdOUUpzdmNsU3lzYndjbGJrSzJOQzN5?=
+ =?utf-8?B?TVVWbnhxK0k3ZEVRV212U01jUGlnYXRVVmhQbjdpRjB4UVZFa29JVjNjSis1?=
+ =?utf-8?B?YTVhdmV4YWJ6a2dIaEUxK3pFVXVmc3Q1OC9BZS96cGc1N1ZxVW5BdWxxM1Jl?=
+ =?utf-8?B?L2xURmR2dTREcS82c1N1SXNqYUtxaWtIaUxKd0hSWG9Gdk9TZlNwZTNoem9v?=
+ =?utf-8?B?WWlsZHVnbzUvckU2QzdWRDdBK0grWDUreHY1WnEvcUNna2F3RWlackVuSFIz?=
+ =?utf-8?B?dkhFb3BMT0QwcVNtczdIalFnTUhlS0RpRjlSSm1Kd0Exb1JWVFpZMTNraEdh?=
+ =?utf-8?B?cXF5Z2NHK3hjM1B1NW5XbFVDWTE3Y3JNSlBBcDZEYmNwcGNoMzlXN3M2WTds?=
+ =?utf-8?B?TjNOTkRacUt3QUtiSEpVNkxGczltQXFRdlVsenFnNE1BOFRTQXJVMGE0OFdC?=
+ =?utf-8?B?aFMyQ1FtaFRNWEFHZjdOTTROVkMrNkp3ajVzMHVHQ21peUFzZG9WdmNHWUZB?=
+ =?utf-8?B?NTVOZ2krR3U2Zkx5b3YraE9NakU3c2JRUHZBMzVKcXRhNTFuQ1ZqWFp0UXhT?=
+ =?utf-8?B?NlFsNlI1ZUl5SE9wUjFaNFAyR3pVejIxbkJ3VkNWS2xkTVZFa2gwd3ZjM25G?=
+ =?utf-8?B?YUJGK0Rsd1IvNXl0eGZEclRkb1FQN0ZYTUpPdU85MTc3T3BzQVIwMHRETFR0?=
+ =?utf-8?B?eHUySnNqYXM5bTZ3dzE0SThmaDdZRmtLZW5XYkgzejJjcnJZT25lZHgzRzZI?=
+ =?utf-8?B?YTRZMDFNRm9xUzRnMVNsMGlsdjFRYm5EdUNwQWd2K1drK0RqbkVzeEpKdlpB?=
+ =?utf-8?B?SDdLaWxFUzNWdWhvN01OZDF4TFUxVEtGbmNmcjJkL2tLMXZKZ1ZtcDh6ZXpk?=
+ =?utf-8?B?b0RKT2swaTRTaHdiNy8rV3VmalFMY01ZWnc0VDJIeDNnWTd5bTdNZllwZGIw?=
+ =?utf-8?B?d0I3T3dKUGJFUnh4a3pmS2ZaV1VtMkJyZ2pzTVR6MTIvbjk0dDM1QzJQSzU3?=
+ =?utf-8?B?c0RxVnZ2YS9qUVJsaWFLaWU3SVVPVXdoQnZ5M3Z1SHJTWjFQbytRRnkyVmlW?=
+ =?utf-8?B?bG9ZSlc0L1N6ZlRWRnQ5RFJWL2Fzb2gxVEIvb293VVJwb0lwTjd0dU8zLzJa?=
+ =?utf-8?B?VUhLaGh4bEt5K25YdXV3dEp2d29oeFRhQlFUd0tpZ1ZYYndvKzd5bjJxWmxt?=
+ =?utf-8?B?TzBCRDlvRXBtTUhlVEFsdHBBaGw3VENuTHhSMGNGSmJxM1VlQ3JaYlRITHg5?=
+ =?utf-8?B?R3Yrd2hyaHhybys4TmtPREpRaHU3TDdITUlxYjY1K21GTCtSOXVlN0QraW9a?=
+ =?utf-8?B?MmgweFlJUnVtcEZuN0V1azdHVW05bEMzc1Ixdm0zRzdWTTg2OHYwdTJ3ZGFv?=
+ =?utf-8?B?ZWlOS0wwN1NrQ3c4d29OMzYyYUdLU1RpamNJVEZldDJIWGNPd3hhVlBTaTND?=
+ =?utf-8?B?clV5b1BPNTBaODZEV3gzM29xTnlZN0lQQml4VFovYVVBK3hRNWREU0JSL0lw?=
+ =?utf-8?B?MnZRaitZUXM5U3Z2ckpBb1hpOWRYSitOT2xRbXorcUp1VVJyemFzOEJEbWU3?=
+ =?utf-8?B?YURCTC8wWmtSTURsVGdEREMzOHk3bTg4b0hsaVRiUEFFeG5JT2M3ODBlNUlz?=
+ =?utf-8?B?MloyelpMcjU5SVprTG1OMU1LcFhvNnNBRWdYMUZFdXQxOFdISTJJTmpVWEVn?=
+ =?utf-8?B?c0R6TEdkVkZpU3VkVjdTSUJHN2JnWHc1bjFMbm5RbHVPOFI5RHJxQTZ0NXQ2?=
+ =?utf-8?Q?fmG1hvCTsxtFZTNFYlXYRjsKqeNZk4=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB7522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?S1UxZSthaHZzZk11WDdOWVp3YnpCSDQ2RGlKbm9RT0ljYmNJMWVDZ2tRUzY5?=
+ =?utf-8?B?eWozQTRvWURVUERpOVQrN3l6YXV0WDdDUU5OTHBpNU85UnZBU3poMjhoY1FB?=
+ =?utf-8?B?bmRBaHJIYlBUQ1dUaC80a0luZjJzdm5RdVN3S1JKWkh1OXdXRjVlSEpmaUk0?=
+ =?utf-8?B?dGxMRnN2TWNhNTVDcE9UdW1rUVdSZno5TWw2dk1uVmVaYXl2ZGZzalg1ZzVh?=
+ =?utf-8?B?ZFNJVG8xa2RGRXNxem05VWY5ZThiN1JjdHVSK2FJc3RGWDg3OXJhdDF5T1pQ?=
+ =?utf-8?B?dU44Q3Q4WGxXRkpBS0M4MEp6QjVpc3NJbW1iT2ZaQVZpTFg1Q3I2bUVMN1hH?=
+ =?utf-8?B?a2pQejhYeFRMTDlPMENPWDNabnROTXk3U21GQXRpcEFUV3M0Sld3NnhTem4z?=
+ =?utf-8?B?eXFVZXBBSUJGMUROcW1UMEZxMUNDU29xcUFyR1lhUUl4NEduTEx1ZnNFL1Zo?=
+ =?utf-8?B?V28xQ3ZNRFRiTlJxWElxOTFvQkZGYUpZdzI5TkdyNlExLzMxdVBaTnVudDR4?=
+ =?utf-8?B?dTV0dmdXcVdlSURLZGF2YW9tOEFsaUY2QThpTExFcUpvWVpzT09XUkNiMmw1?=
+ =?utf-8?B?VTBrM2RXNVR5VVQ2Y1pTM0ZHckF4bWNodlo2UEUzMWVyWTFOWTRzdGxPQzNM?=
+ =?utf-8?B?dEhhWGZvZGg5ZXNZb3JtOFljd1JTUzRoKzlNSmhpcHBmc1ZLUTBOU2xMcjVD?=
+ =?utf-8?B?dkpwNTE1RHd5dkR5L0NyN2JwbkJSa0p5bUZPY0RyUEQzS3k2MXVnRzViNHBB?=
+ =?utf-8?B?UzdvL2lKTFFGMDhIdEYxMU0vaG93cm5BTVJ5REx3S1lmR2pvOHErSFRsdWZF?=
+ =?utf-8?B?T1djeVE1Z0h3cFVLcldrU2h0YTNTalJ1cGFZUHA1aUJET1V6eVNPY1UxRWVG?=
+ =?utf-8?B?NUF0Vk5JUXNrWmVmZ3VseVFpVUN6djZzTUFONm9sZHl2dkt5UTZFaDRPcmFh?=
+ =?utf-8?B?a0xIT2haSnptOVBuWlZuYlIwYTJBS3ExeGxoMTgySWM1NjBRRTduN1JDNnUr?=
+ =?utf-8?B?YWZON1psSXAxRmtIZVhlQzRXaVc2VUxGWk1jemJ1VE04YkNiUzR6U1U5eWJa?=
+ =?utf-8?B?NVN4WTRxcTFhZXZ5dWlSd2pySmRyd256UDhRTlNqckQwZkF0SkNLeUxhL0Fh?=
+ =?utf-8?B?WGFzTExMTGsrZzJ4R1BEZkVGN0o1UnBsazJrTmhYOW5NQThBZ2VLYWprL0lj?=
+ =?utf-8?B?WllReGlwUU01MkRqR1FUSkNrOE5XNkVIZDZ5NGlGRFU0cHpsU2V3S3Zxd1BP?=
+ =?utf-8?B?Y1RsUFYyMURhUHJYcjJTVS8xdWtOVTM1THU4M0xwOG5yZkFvdnMwNTNzQlVP?=
+ =?utf-8?B?bnJxVXcrWEJlUC8rRTJvNzNJUFhhOG8yS29CNkhSc1BGUEtlU1pCbzZ2R2pO?=
+ =?utf-8?B?SWVGNTd3N0hveEwrTC96S1g2S3psTXQ3WkVKQlFRMEJiWnBYc1FPVE0wcVVD?=
+ =?utf-8?B?Tm5Ib0lsVTRxWU40VElkZnMxVW5obGJtRVlTUXRIYTFDWVhPL294bnFvT2M3?=
+ =?utf-8?B?cWdVMzJ4V1J5eGZtalFLMkROd0phT2VvVDVkNmJTOGRIb1NPd1YxaGRtSGpv?=
+ =?utf-8?B?RTFnZlFJcG53Y0JaTnZKYnJLbnFSRWIyN0c1ZnNBKzlnTzd4ZW9KZUxlcGxT?=
+ =?utf-8?B?eEYyQmJ4b3RmdUdwNmlOdlc2dUVYcWVIVTVESHlDeXdXQ1JkUythWityUFR4?=
+ =?utf-8?B?OXc3MWw2dXF2NDBibnl1SDBmSjVFcXcya2VjSFdVR0E0QjM0YjV6R2pqSjdt?=
+ =?utf-8?B?Uys3bURtUngrNXFCN0N5ajNwMHIzaUx1MU5mWDRSYWdNak4xalhOVG5MUWIx?=
+ =?utf-8?B?aXpOWU1xUG9wWGlod0o0MTJTR1owN3A1WjJrSE5ON055QUJUYk5BLy9CZHZB?=
+ =?utf-8?B?enE2dEROR1hoZ1hFUHlVVzhpb0hsUEJyK2F5b3U1TE0veGVKY3hxYnQzM213?=
+ =?utf-8?B?ckFVMnZIdEpZcXZiMVlNVVhQYmNFY21NY2VMOGVaQzFGNytQNHBvKzVXdFlN?=
+ =?utf-8?B?VktLZk8yazZwQ0I4Wm9kV2RLSHFRVVJKZ0tzYVdOQUFGdlF0dmd6RVdaOHNW?=
+ =?utf-8?B?Y2ZCODVFYTQrS2Y2Zm1rTmNWZzhpWVJWcjdmZmpOcUJHRlh3dzdHbVZaM05B?=
+ =?utf-8?B?Yy9wbjVBeHBhMVdaaDZ5RjQ5SEhKQzd1Y3dZcVhrRkxQYXRucWRTVDB6SzRN?=
+ =?utf-8?B?QWc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250624110408.128283-4-Wojciech.Dubowik@mt.com>
-X-CM-TRANSID:Mc8vCgDHpsSruGxoCRxMAA--.47451S3
-X-Coremail-Antispam: 1Uf129KBjvAXoWfJr17JF1UKrWrXF4UJr4ktFb_yoW8JFWkKo
-	WY93WvkrW5K34UJ3WaqF12kr4UXFnYkrs7KayqyrW3Ja10yan8A3WfXw4qvF48t3W8tFyk
-	WrW7Xa4rAay2vws5n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUYlksUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIQ6O82hsuK4nRQAA3i
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB7522.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63bc3b83-e25e-4458-80f2-08ddbde79423
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2025 06:20:47.6715
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mZ9uL8Pay2N2ZifhsSolh+rg+l4qWjoMCOY/seEH3/pDaduJYR3TDCB6VVNY50WPlm4ILNYxBnPIsdbEzvjbdVX3YeD7eHneIKaDk03jXbI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8523
+X-OriginatorOrg: intel.com
 
-On Tue, Jun 24, 2025 at 01:04:01PM +0200, Wojciech Dubowik wrote:
-> Add initial support for Mettler-Toledo Snowflake V2 terminal.
-> The board is using Kontron SL i.MX 8M Mini SoM with 1GB RAM.
-> 
-> Supported board features:
-> * 7" Display with touchscreen
-> * RS-232
-> * I2S Audio
-> * SD-card/eMMC
-> * USB
-> 
-> Signed-off-by: Tobias Graemer <Tobias.Graemer@mt.com>
-> Signed-off-by: Wojciech Dubowik <Wojciech.Dubowik@mt.com>
-> ---
->  arch/arm64/boot/dts/freescale/Makefile        |   1 +
->  .../dts/freescale/imx8mm-mt-snowflake-v2.dts  | 482 ++++++++++++++++++
->  2 files changed, 483 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-mt-snowflake-v2.dts
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> index 0b473a23d120..86f2f1580696 100644
-> --- a/arch/arm64/boot/dts/freescale/Makefile
-> +++ b/arch/arm64/boot/dts/freescale/Makefile
-> @@ -128,6 +128,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mm-iot-gateway.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mm-innocomm-wb15-evk.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mm-kontron-bl.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mm-kontron-bl-osm-s.dtb
-> +dtb-$(CONFIG_ARCH_MXC) += imx8mm-mt-snowflake-v2.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mm-mx8menlo.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mm-nitrogen-r2.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mm-phg.dtb
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-mt-snowflake-v2.dts b/arch/arm64/boot/dts/freescale/imx8mm-mt-snowflake-v2.dts
-> new file mode 100644
-> index 000000000000..2bebf528ec37
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8mm-mt-snowflake-v2.dts
-> @@ -0,0 +1,482 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2023 Mettler-Toledo GmbH
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "imx8mm-kontron-sl.dtsi"
-> +
-> +/ {
-> +	model = "Mettler Toledo i.MX8MM Snowflake V2";
-> +	compatible = "mt,imx8mm-snowflake-v2", "kontron,imx8mm-sl",
-> +		     "fsl,imx8mm";
-> +
-> +	chosen {
-> +		stdout-path = &uart3;
-> +	};
-> +
-> +	aliases {
-> +		ethernet1 = &usbnet;
-> +	};
-> +
-> +	backlight: backlight {
-> +		compatible = "pwm-backlight";
-> +		pwms = <&pwm1 0 500000 0>;
-> +		power-supply = <&reg_5v>;
-> +		brightness-levels = <0 100>;
-> +		num-interpolated-steps = <100>;
-> +		default-brightness-level = <100>;
-> +		status = "okay";
-
-We usually use "okay" status to enable "disabled" devices.  It doesn't
-seem to be needed here.
-
-> +	};
-> +
-> +	panel {
-> +		compatible = "edt,etml0700y5dha";
-> +		backlight = <&backlight>;
-> +		power-supply = <&reg_vdd_3v3>;
-> +
-> +		port {
-> +			panel_in: endpoint {
-> +				remote-endpoint = <&bridge_out>;
-> +			};
-> +		};
-> +	};
-> +
-> +	max98357a: audio-codec {
-> +		compatible = "maxim,max98357a";
-> +		sdmode-gpios = <&gpio4 19 GPIO_ACTIVE_HIGH>;
-> +		#sound-dai-cells = <0>;
-> +		status = "okay";
-
-Ditto
-
-> +	};
-> +
-> +	reg_5v: regulator-5v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "fixed-5V";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +	};
-> +
-> +	reg_sn65dsi83_1v8: regulator-sn65dsi83-1v8 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "SN65DSI83_1V8";
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <1800000>;
-> +	};
-> +
-> +	sound-max98357a {
-> +		compatible = "simple-audio-card";
-> +		simple-audio-card,name = "max98357a-audio";
-> +
-
-Unneeded newline
-
-> +		simple-audio-card,format = "i2s";
-> +		simple-audio-card,frame-master = <&cpudai>;
-> +		simple-audio-card,bitclock-master = <&cpudai>;
-> +		simple-audio-card,widgets =
-> +			"Speaker", "Speakers";
-> +		simple-audio-card,routing =
-> +			"Speakers", "Speaker";
-> +		status = "okay";
-
-Unneeded "okay"
-
-> +
-> +		cpudai: simple-audio-card,cpu {
-> +			sound-dai = <&sai1>;
-> +			dai-tdm-slot-num = <2>;
-> +			dai-tdm-slot-width = <32>;
-> +		};
-> +
-> +		simple-audio-card,codec {
-> +			sound-dai = <&max98357a>;
-> +			clocks = <&clk IMX8MM_CLK_SAI1_ROOT>;
-> +		};
-> +	};
-> +};
-> +
-> +&sai1 {
-> +	#sound-dai-cells = <0>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_sai1>;
-> +	assigned-clocks = <&clk IMX8MM_CLK_SAI1>;
-> +	assigned-clock-parents = <&clk IMX8MM_AUDIO_PLL1_OUT>;
-> +	assigned-clock-rates = <24576000>;
-> +	fsl,sai-mclk-direction-output;
-> +	status = "okay";
-> +};
-> +
-> +&i2c1 {
-
-Can we sort the labeling nodes alphabetically?
-
-> +	bootph-all;
-
-Drop u-boot properties.
-
-> +	status = "okay";
-> +};
-> +
-> +&i2c2 {
-> +	bootph-all;
-> +	status = "okay";
-> +};
-> +
-> +&i2c4 {
-> +	clock-frequency = <400000>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_i2c4>;
-> +	status = "okay";
-> +
-> +	eeprom: eeprom@54 {
-> +		compatible = "atmel,24c08";
-> +		reg = <0x54>;
-> +		pagesize = <16>;
-> +	};
-> +
-> +	touchscreen: touchscreen@41 {
-
-Sort I2C devices in slave address.
-
-> +		compatible = "ilitek,ili251x";
-> +		reg = <0x41>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_touch>;
-> +		interrupt-parent = <&gpio1>;
-> +		interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
-> +		reset-gpios = <&gpio3 16 GPIO_ACTIVE_LOW>;
-> +	};
-> +
-> +	lvds: lvds@2c {
-> +		compatible = "ti,sn65dsi83";
-> +		reg = <0x2c>;
-> +		vcc-supply = <&reg_sn65dsi83_1v8>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_sn65dsi83>;
-
-Have a newline between properties and child node.
-
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-
-Ditto
-
-> +				bridge_in: endpoint {
-> +					remote-endpoint = <&mipi_dsi_out>;
-> +					data-lanes = <1 2>;
-> +				};
-> +			};
-> +
-> +			port@2 {
-> +				reg = <2>;
-> +				bridge_out: endpoint {
-> +					remote-endpoint = <&panel_in>;
-> +					data-lanes = <4 3 2 1>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +
-> +	usbc-cc-controller@61 {
-> +		compatible = "ti,tusb320";
-> +		reg = <0x61>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_usbc_controller>;
-> +		interrupts-extended = <&gpio1 6 IRQ_TYPE_LEVEL_LOW>;
-> +	};
-> +};
-> +
-> +&mipi_dsi {
-> +	status = "okay";
-
-Please end property list with 'status'.
-
-Shawn
-
-> +	vddio-supply = <&reg_sn65dsi83_1v8>;
-> +	assigned-clocks = <&clk IMX8MM_CLK_DSI_CORE>,
-> +			  <&clk IMX8MM_VIDEO_PLL1_OUT>,
-> +			  <&clk IMX8MM_CLK_DSI_PHY_REF>;
-> +	assigned-clock-parents = <&clk IMX8MM_SYS_PLL1_266M>,
-> +			  <&clk IMX8MM_VIDEO_PLL1_BYPASS>,
-> +			  <&clk IMX8MM_CLK_24M>;
-> +	assigned-clock-rates = <266000000>, <594000000>, <12000000>;
-> +	samsung,pll-clock-frequency = <12000000>;
-> +	samsung,burst-clock-frequency = <891000000>;
-> +	samsung,esc-clock-frequency = <54000000>;
-> +};
-> +
-> +&mipi_dsi_out {
-> +	remote-endpoint = <&bridge_in>;
-> +};
-> +
-> +&lcdif {
-> +	status = "okay";
-> +};
-> +
-> +&gpu_2d {
-> +	status = "okay";
-> +};
-> +
-> +&gpu_3d {
-> +	status = "okay";
-> +};
-> +
-> +&ecspi1 {
-> +	status = "disabled";
-> +};
-> +
-> +&gpio1 {
-> +	bootph-pre-ram;
-> +};
-> +
-> +&gpio2 {
-> +	bootph-pre-ram;
-> +};
-> +
-> +&gpio3 {
-> +	bootph-pre-ram;
-> +};
-> +
-> +&gpio4 {
-> +	bootph-pre-ram;
-> +};
-> +
-> +&gpio5 {
-> +	bootph-pre-ram;
-> +	status_led_controller_oe: status-led-controller-hog {
-> +		gpio-hog;
-> +		gpios = <4 GPIO_ACTIVE_HIGH>;
-> +		output-low;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_hog_status_led_controller>;
-> +	};
-> +};
-> +
-> +&pca9450 {
-> +	bootph-pre-ram;
-> +	regulators {
-> +		bootph-pre-ram;
-> +	};
-> +};
-> +
-> +&iomuxc {
-> +	pinctrl-0 = <&pinctrl_hog>;
-> +	pinctrl-names = "default";
-> +
-> +	pinctrl_hog: hoggrp {
-> +		fsl,pins = <
-> +			MX8MM_IOMUXC_GPIO1_IO03_GPIO1_IO3		0x19 /* \SOM_RTC_INT */
-> +			MX8MM_IOMUXC_GPIO1_IO09_GPIO1_IO9		0x184 /* SOM_DIS_ID0 */
-> +			MX8MM_IOMUXC_GPIO1_IO10_GPIO1_IO10		0x184 /* SOM_DIS_ID1 */
-> +			MX8MM_IOMUXC_GPIO1_IO11_GPIO1_IO11		0x184 /* SOM_DIS_ID2 */
-> +			MX8MM_IOMUXC_SAI2_TXC_GPIO4_IO25		0x19 /* SOM_PCB_ID0 */
-> +			MX8MM_IOMUXC_SAI2_TXD0_GPIO4_IO26		0x19 /* SOM_PCB_ID1 */
-> +			MX8MM_IOMUXC_SAI2_MCLK_GPIO4_IO27		0x19 /* SOM_PCBA_ID0 */
-> +			MX8MM_IOMUXC_SAI3_RXFS_GPIO4_IO28		0x19 /* SOM_PCBA_ID1 */
-> +			MX8MM_IOMUXC_SAI5_RXFS_GPIO3_IO19		0x19 /* \SOM_STATLED_RES */
-> +			MX8MM_IOMUXC_SAI5_RXC_GPIO3_IO20		0x19 /* \SOM_HUB_RES */
-> +			MX8MM_IOMUXC_SAI5_RXD0_GPIO3_IO21		0x19 /* \SOM_SUPPLY_EN */
-> +			MX8MM_IOMUXC_SAI5_RXD1_GPIO3_IO22		0x1c4 /* \SOM_COM_RES */
-> +			MX8MM_IOMUXC_SAI5_RXD2_GPIO3_IO23		0x184 /* SOM_DBG_GPIO0 */
-> +			MX8MM_IOMUXC_SAI5_RXD3_GPIO3_IO24		0x184 /* SOM_DBG_GPIO1 */
-> +			MX8MM_IOMUXC_SAI5_MCLK_GPIO3_IO25		0x184 /* SOM_DBG_GPIO2 */
-> +			MX8MM_IOMUXC_SAI3_TXD_GPIO5_IO1			0x184 /* SOM_DBG_GPIO3 */
-> +			MX8MM_IOMUXC_SAI1_TXD7_GPIO4_IO19		0x184 /* SOM_AUDIO_SD */
-> +		>;
-> +	};
-> +
-> +	pinctrl_i2c4: i2c4grp {
-> +		fsl,pins = <
-> +			MX8MM_IOMUXC_I2C4_SCL_I2C4_SCL			0x400001c3
-> +			MX8MM_IOMUXC_I2C4_SDA_I2C4_SDA			0x400001c3
-> +		>;
-> +	};
-> +
-> +	pinctrl_pwm1: pwm1grp {
-> +		fsl,pins = <
-> +			MX8MM_IOMUXC_SPDIF_EXT_CLK_PWM1_OUT		0x6
-> +		>;
-> +	};
-> +
-> +	pinctrl_pwm2: pwm2grp {
-> +		fsl,pins = <
-> +			MX8MM_IOMUXC_SPDIF_RX_PWM2_OUT			0x6
-> +		>;
-> +	};
-> +
-> +	pinctrl_pwm3: pwm3grp {
-> +		fsl,pins = <
-> +			MX8MM_IOMUXC_SPDIF_TX_PWM3_OUT			0x6
-> +		>;
-> +	};
-> +
-> +	pinctrl_sai1: sai1grp {
-> +		fsl,pins = <
-> +			MX8MM_IOMUXC_SAI1_TXFS_SAI1_TX_SYNC		0xd6
-> +			MX8MM_IOMUXC_SAI1_TXC_SAI1_TX_BCLK		0xd6
-> +			MX8MM_IOMUXC_SAI1_TXD0_SAI1_TX_DATA0		0xd6
-> +		>;
-> +	};
-> +
-> +	pinctrl_sn65dsi83: sn65dsi83grp {
-> +		fsl,pins = <
-> +			MX8MM_IOMUXC_GPIO1_IO05_GPIO1_IO5		0x19 /* \SOM_DSI_INT */
-> +		>;
-> +	};
-> +
-> +	pinctrl_hog_status_led_controller: statusledcontrollergrp {
-> +		fsl,pins = <
-> +			MX8MM_IOMUXC_SPDIF_RX_GPIO5_IO4			0x19
-> +		>;
-> +	};
-> +
-> +	pinctrl_touch: touchgrp {
-> +		fsl,pins = <
-> +			MX8MM_IOMUXC_GPIO1_IO01_GPIO1_IO1		0x19 /* \SOM_TOUCH_RES */
-> +			MX8MM_IOMUXC_NAND_READY_B_GPIO3_IO16		0x19 /* \SOM_TOUCH_INT */
-> +		>;
-> +	};
-> +
-> +	pinctrl_uart1: uart1grp {
-> +		bootph-pre-ram;
-> +		fsl,pins = <
-> +			MX8MM_IOMUXC_SAI2_RXC_UART1_DCE_RX		0x140
-> +			MX8MM_IOMUXC_SAI2_RXFS_UART1_DCE_TX		0x140
-> +			MX8MM_IOMUXC_SAI2_RXD0_UART1_DCE_RTS_B		0x140
-> +			MX8MM_IOMUXC_SAI2_TXFS_UART1_DCE_CTS_B		0x140
-> +		>;
-> +	};
-> +
-> +	pinctrl_usbc_controller: usbccontrollergrp {
-> +		fsl,pins = <
-> +			MX8MM_IOMUXC_GPIO1_IO06_GPIO1_IO6		0x19 /* \SOM_USBC_INT */
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc2: usdhc2grp {
-> +		bootph-pre-ram;
-> +		fsl,pins = <
-> +			MX8MM_IOMUXC_SD2_CLK_USDHC2_CLK			0x190
-> +			MX8MM_IOMUXC_SD2_CMD_USDHC2_CMD			0x1d0
-> +			MX8MM_IOMUXC_SD2_DATA0_USDHC2_DATA0		0x1d0
-> +			MX8MM_IOMUXC_SD2_DATA1_USDHC2_DATA1		0x1d0
-> +			MX8MM_IOMUXC_SD2_DATA2_USDHC2_DATA2		0x1d0
-> +			MX8MM_IOMUXC_SD2_DATA3_USDHC2_DATA3		0x1d0
-> +			MX8MM_IOMUXC_SD2_CD_B_GPIO2_IO12		0x41
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
-> +		bootph-pre-ram;
-> +		fsl,pins = <
-> +			MX8MM_IOMUXC_SD2_CLK_USDHC2_CLK			0x194
-> +			MX8MM_IOMUXC_SD2_CMD_USDHC2_CMD			0x1d4
-> +			MX8MM_IOMUXC_SD2_DATA0_USDHC2_DATA0		0x1d4
-> +			MX8MM_IOMUXC_SD2_DATA1_USDHC2_DATA1		0x1d4
-> +			MX8MM_IOMUXC_SD2_DATA2_USDHC2_DATA2		0x1d4
-> +			MX8MM_IOMUXC_SD2_DATA3_USDHC2_DATA3		0x1d4
-> +			MX8MM_IOMUXC_SD2_CD_B_GPIO2_IO12		0x41
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
-> +		bootph-pre-ram;
-> +		fsl,pins = <
-> +			MX8MM_IOMUXC_SD2_CLK_USDHC2_CLK			0x196
-> +			MX8MM_IOMUXC_SD2_CMD_USDHC2_CMD			0x1d6
-> +			MX8MM_IOMUXC_SD2_DATA0_USDHC2_DATA0		0x1d6
-> +			MX8MM_IOMUXC_SD2_DATA1_USDHC2_DATA1		0x1d6
-> +			MX8MM_IOMUXC_SD2_DATA2_USDHC2_DATA2		0x1d6
-> +			MX8MM_IOMUXC_SD2_DATA3_USDHC2_DATA3		0x1d6
-> +			MX8MM_IOMUXC_SD2_CD_B_GPIO2_IO12		0x41
-> +		>;
-> +	};
-> +};
-> +
-> +&pinctrl_ecspi1 {
-> +	bootph-pre-ram;
-> +};
-> +
-> +&pinctrl_i2c1 {
-> +	bootph-pre-ram;
-> +};
-> +
-> +&pinctrl_pmic {
-> +	bootph-pre-ram;
-> +};
-> +
-> +&pinctrl_uart3 {
-> +	bootph-all;
-> +};
-> +
-> +&pinctrl_usdhc1 {
-> +	bootph-pre-ram;
-> +};
-> +
-> +&pinctrl_usdhc1_100mhz {
-> +	bootph-pre-ram;
-> +};
-> +
-> +&pinctrl_usdhc1_200mhz {
-> +	bootph-pre-ram;
-> +};
-> +
-> +&pinctrl_wdog {
-> +	bootph-pre-ram;
-> +};
-> +
-> +&pwm1 {
-> +	pinctrl-0 = <&pinctrl_pwm1>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +};
-> +
-> +&pwm2 {
-> +	pinctrl-0 = <&pinctrl_pwm2>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +};
-> +
-> +&reg_nvcc_sd {
-> +	regulator-always-on;
-> +	regulator-boot-on;
-> +	regulator-min-microvolt = <3300000>;
-> +};
-> +
-> +&uart1 {
-> +	bootph-all;
-> +	pinctrl-0 = <&pinctrl_uart1>;
-> +	pinctrl-names = "default";
-> +	uart-has-rtscts;
-> +	status = "okay";
-> +};
-> +
-> +&uart3 {
-> +	bootph-all;
-> +};
-> +
-> +&usbotg1 {
-> +	bootph-pre-ram;
-> +	dr_mode = "peripheral";
-> +	status = "okay";
-> +};
-> +
-> +&usbotg2 {
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +	disable-over-current;
-> +	dr_mode = "host";
-> +	status = "okay";
-> +
-> +	usb@1 {
-> +		reg = <1>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		usbnet: ethernet@1 {
-> +			compatible = "usb424,9500";
-> +			reg = <1>;
-> +			mac-address = [ 00 00 00 00 00 00 ];
-> +		};
-> +	};
-> +};
-> +
-> +&usdhc1 {
-> +	bootph-pre-ram;
-> +};
-> +
-> +&usdhc2 {
-> +	bootph-pre-ram;
-> +	bus-width = <4>;
-> +	cd-gpios = <&gpio2 12 GPIO_ACTIVE_LOW>;
-> +	no-1-8-v;
-> +	pinctrl-0 = <&pinctrl_usdhc2>;
-> +	pinctrl-1 = <&pinctrl_usdhc2_100mhz>;
-> +	pinctrl-2 = <&pinctrl_usdhc2_200mhz>;
-> +	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-> +	vmmc-supply = <&reg_vdd_3v3>;
-> +	status = "okay";
-> +};
-> +
-> +&wdog1 {
-> +	bootph-pre-ram;
-> +};
-> -- 
-> 2.47.2
-> 
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBJbnRlbC13aXJlZC1sYW4gPGlu
+dGVsLXdpcmVkLWxhbi1ib3VuY2VzQG9zdW9zbC5vcmc+IE9uIEJlaGFsZiBPZiBBcm5kIEJlcmdt
+YW5uDQo+IFNlbnQ6IEZyaWRheSwgSnVuZSAyMCwgMjAyNSAxMDozMSBBTQ0KPiBUbzogTmd1eWVu
+LCBBbnRob255IEwgPGFudGhvbnkubC5uZ3V5ZW5AaW50ZWwuY29tPjsgS2l0c3plbCwgUHJ6ZW15
+c2xhdyA8cHJ6ZW15c2xhdy5raXRzemVsQGludGVsLmNvbT47IEFuZHJldyBMdW5uIDxhbmRyZXcr
+bmV0ZGV2QGx1bm4uY2g+OyBEYXZpZCBTLiBNaWxsZXIgPGRhdmVtQGRhdmVtbG9mdC5uZXQ+OyBF
+cmljIER1bWF6ZXQgPiAgPGVkdW1hemV0QGdvb2dsZS5jb20+OyBKYWt1YiBLaWNpbnNraSA8a3Vi
+YUBrZXJuZWwub3JnPjsgUGFvbG8gQWJlbmkgPHBhYmVuaUByZWRoYXQuY29tPg0KPiBDYzogQXJu
+ZCBCZXJnbWFubiA8YXJuZEBhcm5kYi5kZT47IFNpbW9uIEhvcm1hbiA8aG9ybXNAa2VybmVsLm9y
+Zz47IERyLiBEYXZpZCBBbGFuIEdpbGJlcnQgPGxpbnV4QHRyZWJsaWcub3JnPjsgTG9rdGlvbm92
+LCBBbGVrc2FuZHIgPGFsZWtzYW5kci5sb2t0aW9ub3ZAaW50ZWwuY29tPjsgRGF3aWQgT3N1Y2hv
+d3NraSA+ICA8ZGF3aWQub3N1Y2hvd3NraUBsaW51eC5pbnRlbC5jb20+OyBKYWdpZWxza2ksIEpl
+ZHJ6ZWogPGplZHJ6ZWouamFnaWVsc2tpQGludGVsLmNvbT47IFBvbGNobG9wZWssIE1hdGV1c3og
+PG1hdGV1c3oucG9sY2hsb3Bla0BpbnRlbC5jb20+OyBLd2FwdWxpbnNraSwgUGlvdHIgPHBpb3Ry
+Lmt3YXB1bGluc2tpQGludGVsLmNvbT47IE1yb3pvd2ljeiwgU2xhd29taXJYID4gIDxzbGF3b21p
+cngubXJvem93aWN6QGludGVsLmNvbT47IE1hcnR5bmEgU3phcGFyLU11ZGxhdyA8bWFydHluYS5z
+emFwYXItbXVkbGF3QGxpbnV4LmludGVsLmNvbT47IGludGVsLXdpcmVkLWxhbkBsaXN0cy5vc3Vv
+c2wub3JnOyBuZXRkZXZAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwu
+b3JnDQo+ICBTdWJqZWN0OiBbSW50ZWwtd2lyZWQtbGFuXSBbUEFUQ0hdIFt2Ml0gZXRoZXJuZXQ6
+IGludGVsOiBmaXggYnVpbGRpbmcgd2l0aCBsYXJnZSBOUl9DUFVTDQo+IA0KPiBGcm9tOiBBcm5k
+IEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPg0KPg0KPiBXaXRoIGxhcmdlIHZhbHVlcyBvZiBDT05G
+SUdfTlJfQ1BVUywgdGhyZWUgSW50ZWwgZXRoZXJuZXQgZHJpdmVycyBmYWlsIHRvDQo+IGNvbXBp
+bGUgbGlrZToNCj4NCj4gSW4gZnVuY3Rpb24g4oCYaTQwZV9mcmVlX3FfdmVjdG9y4oCZLA0KPiAg
+ICAgaW5saW5lZCBmcm9tIOKAmGk0MGVfdnNpX2FsbG9jX3FfdmVjdG9yc+KAmSBhdCBkcml2ZXJz
+L25ldC9ldGhlcm5ldC9pbnRlbC9pNDBlL2k0MGVfbWFpbi5jOjEyMTEyOjM6DQo+ICAgNTcxIHwg
+ICAgICAgICBfY29tcGlsZXRpbWVfYXNzZXJ0KGNvbmRpdGlvbiwgbXNnLCBfX2NvbXBpbGV0aW1l
+X2Fzc2VydF8sIF9fQ09VTlRFUl9fKQ0KPiBpbmNsdWRlL2xpbnV4L3JjdXBkYXRlLmg6MTA4NDox
+Nzogbm90ZTogaW4gZXhwYW5zaW9uIG9mIG1hY3JvIOKAmEJVSUxEX0JVR19PTuKAmQ0KPiAgMTA4
+NCB8ICAgICAgICAgICAgICAgICBCVUlMRF9CVUdfT04ob2Zmc2V0b2YodHlwZW9mKCoocHRyKSks
+IHJoZikgPj0gNDA5Nik7ICAgIFwNCj4gZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaTQwZS9p
+NDBlX21haW4uYzo1MTEzOjk6IG5vdGU6IGluIGV4cGFuc2lvbiBvZiBtYWNybyDigJhrZnJlZV9y
+Y3XigJkNCj4gIDUxMTMgfCAgICAgICAgIGtmcmVlX3JjdShxX3ZlY3RvciwgcmN1KTsNCj4gICAg
+ICAgfCAgICAgICAgIF5+fn5+fn5+fg0KPg0KPiBUaGUgcHJvYmxlbSBpcyB0aGF0IHRoZSAncmN1
+JyBtZW1iZXIgaW4gJ3FfdmVjdG9yJyBpcyB0b28gZmFyIGZyb20gdGhlIHN0YXJ0DQo+IG9mIHRo
+ZSBzdHJ1Y3R1cmUuIE1vdmUgdGhpcyBtZW1iZXIgYmVmb3JlIHRoZSBDUFUgbWFzayBpbnN0ZWFk
+LCBpbiBhbGwgdGhyZWUNCj4gZHJpdmVycy4NCj4NCj4gU2lnbmVkLW9mZi1ieTogQXJuZCBCZXJn
+bWFubiA8YXJuZEBhcm5kYi5kZT4NCj4gLS0tDQo+ICB2MjogbW92ZSByY3UgdG8ganVzdCBhZnRl
+ciB0aGUgbmFwaV9zdHJ1Y3QgW0FsZXhhbmRlciBMb2Jha2luXQ0KPiAtLS0NCj4gIGRyaXZlcnMv
+bmV0L2V0aGVybmV0L2ludGVsL2ZtMTBrL2ZtMTBrLmggfCAzICsrLQ0KPiAgZHJpdmVycy9uZXQv
+ZXRoZXJuZXQvaW50ZWwvaTQwZS9pNDBlLmggICB8IDIgKy0NCj4gIGRyaXZlcnMvbmV0L2V0aGVy
+bmV0L2ludGVsL2l4Z2JlL2l4Z2JlLmggfCAzICsrLQ0KPiAgMyBmaWxlcyBjaGFuZ2VkLCA1IGlu
+c2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQoNClRlc3RlZC1ieTogU3VuaXRoYSBNZWthbGEg
+PHN1bml0aGF4LmQubWVrYWxhQGludGVsLmNvbT4gKEEgQ29udGluZ2VudCB3b3JrZXIgYXQgSW50
+ZWwpDQo=
 
