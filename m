@@ -1,110 +1,202 @@
-Return-Path: <linux-kernel+bounces-722309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0AC6AFD7B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:57:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C18AFD7BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C184D425E7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:57:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6AEF567A91
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360AB23C4FF;
-	Tue,  8 Jul 2025 19:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E847323D290;
+	Tue,  8 Jul 2025 19:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LtqML/T0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SMGwHSev"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6C818E02A
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 19:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1C323A9AD
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 19:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752004667; cv=none; b=CT0V4XWJVziumbxJ6SNfu/KFaxyg57gm71SwFmTgv0PSrvc145uBSfrlxltFX8e3oTMqRXbnA/UBZKHu2wi1bEOTfPgj8mLmI6Jg8WS1nnn6ibBQ93PV0+aCHO4j1Pi1uVKzdIewgy1qAQpgzYns88X12ptSxw4n+kJkrgBWmnw=
+	t=1752004741; cv=none; b=O4yfCtGv9+Cvo9J23HK4sUwkQw86ZKJZDyVYvX2AyGuTF4ZzD8FcW2dZjENMhmTXvqQ9AKpK7SiNUHYbtzCiZWlT+QWln1gg176bwF/vCZHpHK/3AJpq2eRK4IWxJeMnJQkDwlxMvs2/2cjUqAiPphY4hUOcGRj3bBWk45JaTKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752004667; c=relaxed/simple;
-	bh=3W01dS28+sBmQz557shX2kn/QrQq3Ky2Im+D6oEOqn0=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=G1IWdTCjJckRzl4Gf3CRlKDFzLhxICYej5lwu/16nUkIfLxdPuF92UX42/F6axSeet1h0aS90Tfa6LYSyHqDlISeWJhOIeYtOjZeT6IZBge8M8hlvuSc2adBi60FH7HhvkmwnkTUEkJdxmH1XhQ84bZVQWIxibbpnEq3itXEuYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LtqML/T0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752004664;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6HGjclnOAXK9019FQJQ+HU3FhyBNdDo7cnQ/RXk00nA=;
-	b=LtqML/T0seG3HQWGUPi5fm+U7BW9Zg5oWbXLPPcXXB+18vGenLxILgoA3U2u5TXYymmXAm
-	/YVGnlrJWhNvRZFWVpqdiiQkknYpdjR1vrXbALQtuXih8y0a3MSQa9RBmjM6LrEDqCvYnN
-	6LfMDlS0XOC6FIKO0ASxgy3UgLPJhEQ=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-627-c2RbVfKTNfuw-4QkRLBgkA-1; Tue,
- 08 Jul 2025 15:57:39 -0400
-X-MC-Unique: c2RbVfKTNfuw-4QkRLBgkA-1
-X-Mimecast-MFC-AGG-ID: c2RbVfKTNfuw-4QkRLBgkA_1752004657
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 33F3219560AD;
-	Tue,  8 Jul 2025 19:57:35 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CCCB519560AB;
-	Tue,  8 Jul 2025 19:57:31 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250708120336.03383758@kernel.org>
-References: <20250708120336.03383758@kernel.org> <20250707102435.2381045-1-dhowells@redhat.com> <20250707102435.2381045-3-dhowells@redhat.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: dhowells@redhat.com, netdev@vger.kernel.org,
-    Marc Dionne <marc.dionne@auristor.com>,
-    "David S.
- Miller" <davem@davemloft.net>,
-    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-    linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-    "Junvyyang,
-                         Tencent Zhuque Lab" <zhuque@tencent.com>,
-    Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net 2/2] rxrpc: Fix bug due to prealloc collision
+	s=arc-20240116; t=1752004741; c=relaxed/simple;
+	bh=qeaevY/WBAqE5QxM+YJ+9KYZuYqdnkSGgPZgsl4/+24=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=VOwxp43V4KBAZKlHNNJ9+9RJ12SPVLATwcNdwXX2RJGnBYSm/bbdjFYmb6+OgSZ4l63SXc01BuE3fgmm63aLeMfZVXXSt1czGfkuUaO+fGUTs5bS7LNM67wT/0iIL9XujnC3J5dZtowP4RtuHSISx7z2ZOQglVP65ZIKYD480f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SMGwHSev; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3122368d82bso7266123a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 12:58:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752004739; x=1752609539; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bK9rO788tLxJ4WTQcJIR4xppsNUsK51AEUh9HOz+/ZU=;
+        b=SMGwHSevuBX8uNe7gV8O9YfcpuqqnWDeXaCNOcST83AMAhqcZ1XSHq9ViVw+uCImZu
+         y6jO2HTl0Q3Z5v0szokGSVipKrWbC02Jy+/cQzTNlop4v3dV6KApdRmVM8lkj9xVq9IH
+         yJapcaDc5QPvQZnRd4toVcrEK6LwzJXvoH0RYoyq7ii5rSFZQkeuwgrk7LTta2QTtRGa
+         pu488oT8uOBeYu15u/NzlvE8MUV/tetecR38brWhYV5VRsKMq3llnnu6Rd9/OFToySN5
+         cUnFC0w3wJEZ/0NBPMy9x52a6w4M0Updzosw1m0i92BS4XOAbW92bW1pfPEway0ml1bk
+         ao2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752004739; x=1752609539;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bK9rO788tLxJ4WTQcJIR4xppsNUsK51AEUh9HOz+/ZU=;
+        b=G8o29LVKgUdcUigRdbsVQg5ddosaTtJdjvmbP+mv+0LLqLUIRy7Ly29SmSQlewN9Fv
+         QwJTVGPU4PcVhYHiOIIHjXwYb5yXsGMlVivaX4Ku8GpgAhiVyz+XIyomVLx/nfnG2F8H
+         mM/9I11PFTMJc+3QB2o5IYVm+uljm87oDAnoyVeFqhBhM2cFhCEgJdY7h0m2IV/bcpCN
+         3obO5fTAt9s0/leGgFm46U3+KHx7kLLYc86Ys3b9Ns74C8IWNtu2sd0Ajw+e7sbI7qkJ
+         mFyvOT247xW01xFuj+iKbQDxOJvsSFdkkXt5JTjTvR93fEAQ2pSCvqE4Fs6DXaNn2Wgb
+         5nRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWATswpwl30JnNXLw4VXUsKU2Bgf4L2nzNMVnrm12ZBNj2i7LBqrfhklhxbMGRJndETiMmHGWsCuCbMuew=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyqcw+XhyNKrHNDZfYioJ+YRLNFzOykZzUS8s6idvSJrK7Jm0C5
+	ywt8YNHKSl6iGrygK9Cn5r3i0pqN5Nk40euDP8TwKnL8PuLiw7d/NE67G0LIEbe9oTuLWugwi6G
+	C4P4ISw==
+X-Google-Smtp-Source: AGHT+IFkETqYRl85TaDCY+mhRsKj3yh+DlVRrd5kJgA8yrUlr1VJNZkXzaK8N5MZ0Opd+f6mnf+G32B45Fc=
+X-Received: from pja6.prod.google.com ([2002:a17:90b:5486:b0:2ff:84e6:b2bd])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1f83:b0:311:df4b:4b94
+ with SMTP id 98e67ed59e1d1-31aac432a89mr24009325a91.4.1752004738302; Tue, 08
+ Jul 2025 12:58:58 -0700 (PDT)
+Date: Tue, 8 Jul 2025 12:58:56 -0700
+In-Reply-To: <CAGtprH-ESrdhCeHkuRtiDoaqxCS9JVKu_CC9fbDRo+k+3jKCcQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2687075.1752004650.1@warthog.procyon.org.uk>
-Date: Tue, 08 Jul 2025 20:57:30 +0100
-Message-ID: <2687076.1752004650@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Mime-Version: 1.0
+References: <CAGtprH_57HN4Psxr5MzAZ6k+mLEON2jVzrLH4Tk+Ws29JJuL4Q@mail.gmail.com>
+ <006899ccedf93f45082390460620753090c01914.camel@intel.com>
+ <aG0pNijVpl0czqXu@google.com> <a0129a912e21c5f3219b382f2f51571ab2709460.camel@intel.com>
+ <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com>
+ <eeb8f4b8308b5160f913294c4373290a64e736b8.camel@intel.com>
+ <CAGtprH8cg1HwuYG0mrkTbpnZfHoKJDd63CAQGEScCDA-9Qbsqw@mail.gmail.com>
+ <b1348c229c67e2bad24e273ec9a7fc29771e18c5.camel@intel.com>
+ <aG1dbD2Xnpi_Cqf_@google.com> <CAGtprH-ESrdhCeHkuRtiDoaqxCS9JVKu_CC9fbDRo+k+3jKCcQ@mail.gmail.com>
+Message-ID: <aG14gLz9C_601TJ3@google.com>
+Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
+From: Sean Christopherson <seanjc@google.com>
+To: Vishal Annapurve <vannapurve@google.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "pvorel@suse.cz" <pvorel@suse.cz>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
+	Jun Miao <jun.miao@intel.com>, "nsaenz@amazon.es" <nsaenz@amazon.es>, 
+	Kirill Shutemov <kirill.shutemov@intel.com>, "pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, 
+	"peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"tabba@google.com" <tabba@google.com>, "amoorthy@google.com" <amoorthy@google.com>, 
+	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "jack@suse.cz" <jack@suse.cz>, 
+	"vkuznets@redhat.com" <vkuznets@redhat.com>, "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, 
+	"keirf@google.com" <keirf@google.com>, 
+	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, 
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, Wei W Wang <wei.w.wang@intel.com>, 
+	"palmer@dabbelt.com" <palmer@dabbelt.com>, 
+	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, "willy@infradead.org" <willy@infradead.org>, 
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, Dave Hansen <dave.hansen@intel.com>, 
+	"aik@amd.com" <aik@amd.com>, "usama.arif@bytedance.com" <usama.arif@bytedance.com>, 
+	"quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "fvdl@google.com" <fvdl@google.com>, 
+	"rppt@kernel.org" <rppt@kernel.org>, "quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, 
+	"maz@kernel.org" <maz@kernel.org>, "vbabka@suse.cz" <vbabka@suse.cz>, 
+	"anup@brainfault.org" <anup@brainfault.org>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mic@digikod.net" <mic@digikod.net>, 
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, Fan Du <fan.du@intel.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "steven.price@arm.com" <steven.price@arm.com>, 
+	"muchun.song@linux.dev" <muchun.song@linux.dev>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, Zhiquan1 Li <zhiquan1.li@intel.com>, 
+	"rientjes@google.com" <rientjes@google.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>, 
+	Erdem Aktas <erdemaktas@google.com>, "david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
+	"hughd@google.com" <hughd@google.com>, "jhubbard@nvidia.com" <jhubbard@nvidia.com>, Haibo1 Xu <haibo1.xu@intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
+	"steven.sistare@oracle.com" <steven.sistare@oracle.com>, 
+	"quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, "jarkko@kernel.org" <jarkko@kernel.org>, 
+	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, Kai Huang <kai.huang@intel.com>, 
+	"shuah@kernel.org" <shuah@kernel.org>, "bfoster@redhat.com" <bfoster@redhat.com>, 
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, Chao P Peng <chao.p.peng@intel.com>, 
+	"pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, Alexander Graf <graf@amazon.com>, 
+	"nikunj@amd.com" <nikunj@amd.com>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "yuzenghui@huawei.com" <yuzenghui@huawei.com>, 
+	"jroedel@suse.de" <jroedel@suse.de>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
+	"jgowans@amazon.com" <jgowans@amazon.com>, Yilun Xu <yilun.xu@intel.com>, 
+	"liam.merwick@oracle.com" <liam.merwick@oracle.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
+	"quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Ira Weiny <ira.weiny@intel.com>, 
+	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
+	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "qperret@google.com" <qperret@google.com>, 
+	"dmatlack@google.com" <dmatlack@google.com>, "james.morse@arm.com" <james.morse@arm.com>, 
+	"brauner@kernel.org" <brauner@kernel.org>, "roypat@amazon.co.uk" <roypat@amazon.co.uk>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>, "pgonda@google.com" <pgonda@google.com>, 
+	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "hch@infradead.org" <hch@infradead.org>, 
+	"will@kernel.org" <will@kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Jakub Kicinski <kuba@kernel.org> wrote:
+On Tue, Jul 08, 2025, Vishal Annapurve wrote:
+> On Tue, Jul 8, 2025 at 11:03=E2=80=AFAM Sean Christopherson <seanjc@googl=
+e.com> wrote:
+> Few points that seem important here:
+> 1) Userspace can and should be able to only dictate if memory contents
+> need to be preserved on shared to private conversion.
 
-> On Mon,  7 Jul 2025 11:24:34 +0100 David Howells wrote:
-> > +	rxrpc_prefail_call(call, RXRPC_CALL_LOCAL_ERROR, -EBADSLT);
-> > +	__set_bit(RXRPC_CALL_RELEASED, &call->flags);
-> 
-> is the __set_bit() needed / intentional here?
-> Looks like rxrpc_prefail_call() does:
-> 
-> 	WARN_ON_ONCE(__test_and_set_bit(RXRPC_CALL_RELEASED, &call->flags));
+No, I was wrong, pKVM has use cases where it's desirable to preserve data o=
+n
+private =3D> shared conversions.
 
-Actually, it shouldn't be.  I added that first, then realised that wasn't
-sufficient.
+Side topic, if you're going to use fancy indentation, align the indentation=
+ so
+it's actually readable.
 
-I also realised there should be a third patch I failed to restack onto the git
-branch.
+>   -> For SNP/TDX VMs:
+>        * Only usecase for preserving contents is initial memory
+>          population, which can be achieved by:
+>               -  Userspace converting the ranges to shared, populating th=
+e contents,
+>                  converting them back to private and then calling SNP/TDX=
+ specific
+>                  existing ABI functions.
+>        * For runtime conversions, guest_memfd can't ensure memory content=
+s are
+>          preserved during shared to private conversions as the architectu=
+res
+>          don't support that behavior.
+>        * So IMO, this "preserve" flag doesn't make sense for SNP/TDX VMs,=
+ even
 
-Can you take the first patch and I'll alter this and repost this patch and add
-the lost one?  Or should I just repost all three?
+It makes sense, it's just not supported by the architecture *at runtime*.  =
+Case
+in point, *something* needs to allow preserving data prior to launching the=
+ VM.
+If we want to go with the PRIVATE =3D> SHARED =3D> FILL =3D> PRIVATE approa=
+ch for TDX
+and SNP, then we'll probably want to allow PRESERVE only until the VM image=
+ is
+finalized.
 
-David
+>          if we add this flag, today guest_memfd should effectively mark t=
+his
+>          unsupported based on the backing architecture support.
+>
+> 2) For pKVM, if userspace wants to specify a "preserve" flag then this
 
+There is no "For pKVM".  We are defining uAPI for guest_memfd.  I.e. this s=
+tatement
+holds true for all implementations: PRESERVE is allowed based on the capabi=
+lities
+of the architecture.
+
+> So this topic is still orthogonal to "zeroing on private to shared conver=
+sion".
+
+As above, no.  pKVM might not expose PRESERVE to _userspace_ since all curr=
+ent
+conversions are initiated by the guest, but for guest_memfd itself, this is=
+ all
+one and the same.
 
