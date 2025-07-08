@@ -1,131 +1,97 @@
-Return-Path: <linux-kernel+bounces-721218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C331CAFC63D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:54:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BCF7AFC641
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E36177AB8B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:53:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5299A188A419
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D50B2BEC3A;
-	Tue,  8 Jul 2025 08:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2812BE034;
+	Tue,  8 Jul 2025 08:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a4foV4xP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="H69aYtkG"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFC6221F26;
-	Tue,  8 Jul 2025 08:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2F82BF00E;
+	Tue,  8 Jul 2025 08:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751964858; cv=none; b=fIBRGYMhyLpsYefJwHFxo4vqviWLZe/1f6UbLlmoNXBdOnEtpuWFbbkm8lddcrtjBs9+euq/CzYFRyADZNd0zsTrPYWze6kkgxUXF1/+dAr0TExddr1WkNVi5gothWY83D1i4moWpfKjrH3XL7Ld4KvKiR4w99nNox1lLxKx1GI=
+	t=1751964864; cv=none; b=aZ1peGGbLo3YKtbts0vzbJEWs6MW9UT2Bx6q1kDPm59NdsDBEgGTwhNL5YRyqxw/tGhjrq8c2Tz2ph3spLz8B9GjAfM2l7uxDS3ZwyfLtXapkLWvAuHhdZlH7KmEHTMBu4qmEFqjrL//3wdndsz5VyaXp9ikw4t6+OoMG4+rvgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751964858; c=relaxed/simple;
-	bh=jUr1j2MoFMdCmHk62lJDW07c4GkMj87N3P6JUtOTzH0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cROZ/ozQk18slbALx6JVbkWTmA6C0dMbTKqp2i02/O6wKGK9NpoI3hIw97aBVmgkOgymEwWstJNmA24ESCIPaUWRfMwHraG2aRAaoxe9JYpnes/x7oPfEDNR6wPRZRaUY4K6GDkeTq+Ao+pAbHWSGGENjGWv+QM850PQiRKyDe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a4foV4xP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABF52C4CEED;
-	Tue,  8 Jul 2025 08:54:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751964856;
-	bh=jUr1j2MoFMdCmHk62lJDW07c4GkMj87N3P6JUtOTzH0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=a4foV4xPmD+5SN0dQSDTiYVwxxGLk+opkfK2zJnJYYMRwvTGOFwaxjeIMLFVpMgLt
-	 wnpkiD6GzrkPFdXap/DgJmbcb5/RBuJOgfv0ieEoZdbUO0CR/pv61W9V+DCQvXn28G
-	 C4vhGyNcSWh/mEoetMAYI7b31Jby7upl94JWikt2mDf4blJC+eWOHWUafMsj3157Os
-	 0MSvU2Ft5y93FIJEeO5B6lteajzuO/WOceGkKaE10qG+YV3bthZX7BOUd+XFOgl0rS
-	 eeF3cKh6ZsnzvheMUSXYAfgbXabODnNF4KUjARlt1Ng63YI2FcGlaaYZLUWjzSFI4h
-	 nMLB3XYJ9FcEg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-Cc: "Alice Ryhl" <aliceryhl@google.com>,  "Miguel Ojeda" <ojeda@kernel.org>,
-  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>,  "Masahiro
- Yamada"
- <masahiroy@kernel.org>,  "Nathan Chancellor" <nathan@kernel.org>,  "Luis
- Chamberlain" <mcgrof@kernel.org>,  "Danilo Krummrich" <dakr@kernel.org>,
-  "Benno Lossin" <lossin@kernel.org>,  "Nicolas Schier"
- <nicolas.schier@linux.dev>,  "Trevor Gross" <tmgross@umich.edu>,  "Adam
- Bratschi-Kaye" <ark.email@gmail.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <linux-kbuild@vger.kernel.org>,  "Petr
- Pavlu" <petr.pavlu@suse.com>,  "Sami Tolvanen" <samitolvanen@google.com>,
-  "Daniel Gomez" <da.gomez@samsung.com>,  "Simona Vetter"
- <simona.vetter@ffwll.ch>,  "Greg KH" <gregkh@linuxfoundation.org>,  "Fiona
- Behrens" <me@kloenk.dev>,  "Daniel Almeida"
- <daniel.almeida@collabora.com>,  <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v15 1/7] rust: sync: add `SetOnce`
-In-Reply-To: <aGvkFbs5caxLSQxa@Mac.home> (Boqun Feng's message of "Mon, 07 Jul
-	2025 08:13:25 -0700")
-References: <20250707-module-params-v3-v15-0-c1f4269a57b9@kernel.org>
-	<20250707-module-params-v3-v15-1-c1f4269a57b9@kernel.org>
-	<CAH5fLgiKo=jN_V5cAe_AJqxxp7mQWqhKx7knkEj6js3yiU9sqA@mail.gmail.com>
-	<KNYMPkLfLvLb8ocrLqSmk-5hRGhRaaPQ2sDHN5JoPAUxYJWlHNiOW4HRmtDDGkoMRfNwpziT8mkRzlPkdxDVaQ==@protonmail.internalid>
-	<aGvkFbs5caxLSQxa@Mac.home>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Tue, 08 Jul 2025 10:54:03 +0200
-Message-ID: <877c0joyfo.fsf@kernel.org>
+	s=arc-20240116; t=1751964864; c=relaxed/simple;
+	bh=Cit7jtjZ7BgxgEWZZabNmYmsunmqBhKq3Hi4kuV1TOk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BAdB4H4vHFmd1RnrJFta8L4xi/8g+OeQp2TqjPDsDnkGV0Psv7BEwPkqOPCus2zJdOHSFA6lexA8nS0kMGqcf8CIOQ15o6QuYyx976kRbUVurjqDji2++EOWzQUMmPd4r/5zQB6rOHx5NRL8QSQrCFKn0nnWWtRhT2aslgJbo3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=H69aYtkG; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5688sF9g1110727;
+	Tue, 8 Jul 2025 03:54:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1751964855;
+	bh=ZjDH14jcP9MHv2LGOPKKg6IHWhyCkH0qgOI83hfD9Yk=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=H69aYtkGV/ZwDd+97tcA0QtMVeEe9y13KnYRpe6QSvs+3069+mYhhydvhJB5cxzSJ
+	 Xp+OLvw4XHsLl4UkCF7Zvm229lhW0IvJ9RbXarKWYFmb9w7M53dGjz5rm6brQ90CLG
+	 oObdqPPpXBohHISilJTRtQ/Xv5M5swkttOQbVCzo=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5688sFBo2223115
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 8 Jul 2025 03:54:15 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 8
+ Jul 2025 03:54:14 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 8 Jul 2025 03:54:14 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.169])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5688sDVc1782143;
+	Tue, 8 Jul 2025 03:54:14 -0500
+Date: Tue, 8 Jul 2025 14:24:13 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Chintan Vankar <c-vankar@ti.com>
+CC: Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, Tero Kristo
+	<kristo@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon
+	<nm@ti.com>,
+        <s-vadapalli@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v5 4/4] arm64: dts: ti: k3-am69-sk: Add bootph-all
+ property to enable Ethernet boot
+Message-ID: <a1e0824e-1d84-4842-97ba-3ae4ec04a72a@ti.com>
+References: <20250708084252.1028191-1-c-vankar@ti.com>
+ <20250708084252.1028191-5-c-vankar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250708084252.1028191-5-c-vankar@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-"Boqun Feng" <boqun.feng@gmail.com> writes:
+On Tue, Jul 08, 2025 at 02:12:52PM +0530, Chintan Vankar wrote:
+> Ethernet boot requires CPSW nodes to be present starting from R5 SPL
+> stage. Add bootph-all property to required nodes to enable Ethernet boot
+> for SK-AM69.
+> 
+> Signed-off-by: Chintan Vankar <c-vankar@ti.com>
 
-> On Mon, Jul 07, 2025 at 03:38:58PM +0200, Alice Ryhl wrote:
->> On Mon, Jul 7, 2025 at 3:32=E2=80=AFPM Andreas Hindborg <a.hindborg@kern=
-el.org> wrote:
->> >
->> > Introduce the `SetOnce` type, a container that can only be written onc=
-e.
->> > The container uses an internal atomic to synchronize writes to the int=
-ernal
->> > value.
->> >
->> > Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->>
->> LGTM:
->> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->>
->> > +impl<T> Drop for SetOnce<T> {
->> > +    fn drop(&mut self) {
->> > +        if self.init.load(Acquire) =3D=3D 2 {
->> > +            // SAFETY: By the type invariants of `Self`, `self.init =
-=3D=3D 2` means that `self.value`
->> > +            // contains a valid value. We have exclusive access, as w=
-e hold a `mut` reference to
->> > +            // `self`.
->> > +            unsafe { drop_in_place(self.value.get()) };
->>
->> This load does not need to be Acquire. It can be a Relaxed load or
->> even an unsynchronized one since the access is exclusive.
->
-> Right, I think we can do the similar as Revocable here:
->
->         if *self.init.get_mut() =3D=3D 2 { }
->
-> Further, with my following Benno's suggestion and making `Atomic<T>` an
-> `UnsafeCell<T>:
->
-> 	https://lore.kernel.org/rust-for-linux/aGhh-TvNOWhkt0JG@Mac.home/
->
-> compiler can generate a noalias reference here, which allows further
-> optimization.
->
+Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 
-You would like to remove `PhantomPinned` to enable noalias? I guess that
-makes sense in this case. I'll fix that for next spin.
-
-
-Best regards,
-Andreas Hindborg
-
-
+Regards,
+Siddharth.
 
