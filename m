@@ -1,328 +1,140 @@
-Return-Path: <linux-kernel+bounces-722404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC254AFD9BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:24:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02321AFD9CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0482B7A674E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:23:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 166663B58A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D09245016;
-	Tue,  8 Jul 2025 21:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0528F247295;
+	Tue,  8 Jul 2025 21:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pPYcIkzP"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ng9LlbTf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8E524397A
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 21:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F411B2417F0;
+	Tue,  8 Jul 2025 21:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752009857; cv=none; b=gNVFI6g1dErScqsY2dqFNX5rR4+tuNk+HvClo8rERz4pC2IrCLl4lx/0JW0Y7h1lhy1CyDyz9JzpkgwDXrZvVB4ajjKBoyiNcXwsRUIoNzNPrCGm/lTq9CVdiNAwy+2HHTdlNTmLJPczADclt8AH7TXk6VVQ+Bx6yvGFZqkVug8=
+	t=1752009964; cv=none; b=B6zAFXr0MnwXaaYFD7Er/ogU2nTy4Qb4gEoIywQrXkSs2OghYAlcLc7XCKycCLYMiT1MJA2QNLE8oWuMayiJw8NZIiteKqWAaEZsxds2c47bcv12XaIWpyZb4rp/yU6GZJ+Re0yVVvENvNKU5z3G0LmCLuydedRFhtzRyLTux1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752009857; c=relaxed/simple;
-	bh=1peS5qCn54AczeLVDKVCi9E3GKez0ewn76aZqjgKESQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=creXN/1LP4G806WPMx8/s32TCjxywChqBowH+gDXu+NFGfG3iJwmUNHHpR8VdPMgkkk+SIKvs83R4zC5pCGs/tm93o7Ca689YanmDO72cfwdJ3EFYg/4bQWePXJIpHem2pwC8GSBfcvwNaD33Kjq7z/Cv8/WSZNIBQ5TQtewa80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pPYcIkzP; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-311ef4fb43dso3987015a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 14:24:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752009855; x=1752614655; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3TYk/LhDc5BmTUsXOQ3WfWFuFN2OL0SILOLf+2JGW+c=;
-        b=pPYcIkzPAl6MMsh3iItQ01YGbYygkQfMZAcj/bS856vFrxr8lu/icA6lr2dPT1yvbn
-         9EHDHYkeCtWzUKOs2xyErXQZB+ISaOADcIOX6j5Fa24mB2jlDxbBnuBwTAPCtTjVLQmN
-         862gqbnxTpd5O2MnAec4UUiQTeyxUYpUJVPPrLsG61VYxQx3GS5mmjO4vT90zBVfORLo
-         Iv5WZRj53trNxfwzCKwdLhE73h+HSsvE3S87By4+wr4TVSHR4qOCQUyki+82FM0/7MNx
-         k0e/QjExLUPCD6sD+kxb8cVh0ySQHTCNen7XACFQWRWm5t4IAqWA6M1fxZM3HvPrWWFK
-         HxAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752009855; x=1752614655;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3TYk/LhDc5BmTUsXOQ3WfWFuFN2OL0SILOLf+2JGW+c=;
-        b=CzepHi9qDwjvJUeL3B/IOAoBZPDL8vanfkssN4Npbvdb/QnwcbuJT7r+QYM6jjezfn
-         5Eud4ulB2U2gBEp9ezxjKGMt3+P97oXvGYZjRKMJQcNeQV8hhagNdMy8QUqeEcUCs6pZ
-         gxHlDng8vppkxxpdmVB9ZmolkE6YLXXHRMFYDRDrl3RZUxd2D3ZIVObzBVuuABQmiReI
-         3ahxbnHaTui43QTePOxnYbnlN9TCFFeBT8TlvWYO07zlYQdeUfPmvJYkAYu1X4IhX2as
-         J2ylp/pudLv+2Amdfx8qvJsV4lbTE+UPd82/8D0a+Bl5CjJWeUYv/1kum/EcxatOAEoH
-         ZaVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUGf+UMBtLFX56lw07udlmhuLUxBRhLQsiDHtTWR/ShgJ5Q+mzhIiJ7S3LlXpF5i62V6715hBweOrVyNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAWH9qXWsdas5ZCO8SYfq4I4axEtADSbjWGE85o794AXovKy/N
-	Os7hzNx9eIt6ZDn61HYQ7klN7DF+w55VbjBS9QSj/Ntl2UflfPLp1c2ahK1ctH4p5VeKaOXv7tZ
-	MwCpp7Exh0yMTzgunoY16jJaiXsU5YjWg3P0LgVNkMQ==
-X-Gm-Gg: ASbGncva83vnsKzp952KUr+yiVQSQTXfzvRAFVEQkUcEivFqPVmmUrJ3aghuoFTgxwm
-	QtFTc0qznGR86dtmFyYD+27UZEEs6eEgYEYHeVELp+DbbDL9Qd0Iqkt3qTtl9jVQ19x5yF5la0t
-	Sb2LRc6aen/FgmAGRCvOIM7csdtmEZaxfdXOvAKd0Wdq6WGSG72Yf10LwcEEO9nE0XlZM09jwQw
-	d9G
-X-Google-Smtp-Source: AGHT+IGC1zl17iwbzwdo6GEQjumT6Zw2i385vWCVOsSuiOe0iINH0VdYvfBVzIFnWmRAAWRU0qYVeo2uenzgVCAlgZI=
-X-Received: by 2002:a17:90b:1c0f:b0:31c:23f2:d2ad with SMTP id
- 98e67ed59e1d1-31c2fdad5efmr156423a91.16.1752009854650; Tue, 08 Jul 2025
- 14:24:14 -0700 (PDT)
+	s=arc-20240116; t=1752009964; c=relaxed/simple;
+	bh=Ge2/q0dY2x4bPaf9l9HQuZj2LoD3prRY/uplpE7MIX4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dy9XkO0wsyJvwHEHP/f+ZEDyZnxLBWAEyeW1L2Gw9Q2ljBDfvv2r84r9uMfT22nV4r+lndtGP6wDlWdB9T5h7jKRIOlFZhPlTi5YUomBQDRQN5v7oxDGVvhxf3nTVGRfrr1ljUUuIHecSUbYBBp3/55FBN8yD33XCs1ixs7RlJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ng9LlbTf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568JNOwK017086;
+	Tue, 8 Jul 2025 21:25:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=Dg1K7w85NKq6IPBnoHn24/Vpc8sc0yNmhEo
+	/wpC8AlY=; b=Ng9LlbTfMSu0B0ME53Ji7ryUuiY26Z3+cni3UAiuEuswQmh/20N
+	YN4Wa+GMyIbOts04IdKKKRsEsVOth3srzmf7SDC/5isrxRR54pRte5obHpgSDJXF
+	5eMZMCiDBkTSjlODFneHJLOvWQ6b2uyLwbAp3mZLST2tn+0QOKN7X7p+1C3C3Xm+
+	0BCn8y2RN8cp9h+xj63vr643E2Aj6WdDsYytbANcGS65sYgfV0E5p94w1tFKFr5U
+	egMZpiUUuvayJsDNltkc/I+Vn8mJjnvSwH37BTkKWXZ1z5tBuC540CX4VoQpnmAY
+	kPsQ4zJ3WZcRLws4mg9frJKbeRszUJU1MAw==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pvtksm2m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Jul 2025 21:25:40 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 568LPb9w000876;
+	Tue, 8 Jul 2025 21:25:37 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 47pw4kvamb-1;
+	Tue, 08 Jul 2025 21:25:37 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 568LPbvF000867;
+	Tue, 8 Jul 2025 21:25:37 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-nitirawa-hyd.qualcomm.com [10.213.109.152])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 568LPbha000866;
+	Tue, 08 Jul 2025 21:25:37 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2342877)
+	id 6575557186F; Wed,  9 Jul 2025 02:55:36 +0530 (+0530)
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+To: mani@kernel.org, James.Bottomley@HansenPartnership.com,
+        martin.petersen@oracle.com, bvanassche@acm.org, avri.altman@wdc.com,
+        ebiggers@google.com, neil.armstrong@linaro.org,
+        konrad.dybcio@oss.qualcomm.com
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Nitin Rawat <quic_nitirawa@quicinc.com>
+Subject: [PATCH V3 0/3] ufs: ufs-qcom: Align programming sequence as per HW spec
+Date: Wed,  9 Jul 2025 02:55:31 +0530
+Message-ID: <20250708212534.20910-1-quic_nitirawa@quicinc.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704125604.759558342@linuxfoundation.org> <CA+G9fYvidpyHTQ179dAJ4TSdhthC-Mtjuks5iQjMf+ovfPQbTg@mail.gmail.com>
- <CA+G9fYub_Ln=EPp2mgL4-2ewvorZ6O7btM97Ka6RrWhO1o0Liw@mail.gmail.com>
-In-Reply-To: <CA+G9fYub_Ln=EPp2mgL4-2ewvorZ6O7btM97Ka6RrWhO1o0Liw@mail.gmail.com>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 9 Jul 2025 02:54:03 +0530
-X-Gm-Features: Ac12FXw8KmXSOFloz8JHG_WxTb9KW7umiayEZP4yCzmazJVNmpe-skD5MqB7ysY
-Message-ID: <CA+G9fYtb3OW5+0Y+qYC-hbg2AV-UUff3orui0VuckDrrMYjrcw@mail.gmail.com>
-Subject: Re: [PATCH 6.15 000/263] 6.15.5-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux@roeck-us.net, 
-	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
-	pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, 
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Anders Roxell <anders.roxell@linaro.org>, jakub.lewalski@nokia.com, 
-	Elodie Decerle <elodie.decerle@nokia.com>, Aidan Stewart <astewart@tektelic.com>, 
-	Fabio Estevam <festevam@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDE4MyBTYWx0ZWRfX8QnN1fdPQZda
+ tHoFJVeRB/3W8vikz2FVzru+7hrG+fC+/Lz3JL+WSRyHOfYzm3r2ozfdNIYvtDEfP+0I2ilOpeK
+ a73ZDteQx+TQcgeqButVE+rE8ZeX2APhi00G6vG0JmOJvFrhWQFdVKVfSjmPLgkxQg/dJbs+vlt
+ 9YW8RrY2DmlN6koorvfdR8zFOBwM7wCanzsHLgA4y/4EtppHBrqy8bYbAUZ8PMmoyrfR/etfwV0
+ 5r6PYFpP3kgr2ibLDuOf8p7MfMWmeLsd3ffSVfWzy9RhY/PmOrevR0HhiqmKqtcGffDVylveDAj
+ 4aFYHcLcJtBZNs2bjB03HOwJzEqjmTabtWFcOXvGo5yUNyAKLwV7DW/bTxw7dp0D1Aw1tcckRDM
+ DlRaQmTIjdXOcCCioMEbSsclvMjfg0qnEyAWahO+I3HNl0ZSrkv8owfnQxz/FsqXJsjfP9xy
+X-Authority-Analysis: v=2.4 cv=Vq0jA/2n c=1 sm=1 tr=0 ts=686d8cd5 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=Wb1JkmetP80A:10 a=iRjbf9KB49bWgsSTYZMA:9
+X-Proofpoint-ORIG-GUID: N_wlCF2DApIGwNsBdYtPD9tWnYU_aiJw
+X-Proofpoint-GUID: N_wlCF2DApIGwNsBdYtPD9tWnYU_aiJw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-08_06,2025-07-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
+ clxscore=1015 mlxscore=0 malwarescore=0 mlxlogscore=759 impostorscore=0
+ suspectscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507080183
 
-On Tue, 8 Jul 2025 at 00:04, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
->
-> On Sun, 6 Jul 2025 at 15:50, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
-> >
-> > On Fri, 4 Jul 2025 at 20:14, Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > This is the start of the stable review cycle for the 6.15.5 release.
-> > > There are 263 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > >
-> > > Responses should be made by Sun, 06 Jul 2025 12:55:09 +0000.
-> > > Anything received after that time might be too late.
-> > >
-> > > The whole patch series can be found in one patch at:
-> > >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.5-rc2.gz
-> > > or in the git tree and branch at:
-> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
-> > > and the diffstat can be found below.
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> >
-> > Approximately 20% of devices are experiencing intermittent boot failures
-> > with this kernel version. The issue appears to be related to auto login
-> > failures, where an incorrect password is being detected on the serial
-> > console during the login process.
->
-> Reported issue is also noticed on Linux tree 6.16-rc5 build.
->
-> > We are investigating this problem.
+This patch series adds programming support for Qualcomm UFS
+to align with Hardware Specification.
 
-The following three patches were reverted and the system was re-tested.
-The previously reported issues are no longer observed after applying the
-reverts.
+In this patch series below changes are taken care.
 
-serial: imx: Restore original RXTL for console to fix data loss
-    commit f23c52aafb1675ab1d1f46914556d8e29cbbf7b3 upstream.
+1. Enable QUnipro Internal Clock Gating
+2. Update esi_vec_mask for HW major version >= 6
 
-serial: core: restore of_node information in sysfs
-    commit d36f0e9a0002f04f4d6dd9be908d58fe5bd3a279 upstream.
+Changes from v2:
+1. Addressed bart's and Mani's comment to move ufshcd_dme_rmw
+   to ufshcd.c
+2. Addressed Mani's and bart's comment to avoid initialisation
+   of cfg.
+3. Addressed Mani's comment to update commit text.
 
-tty: serial: uartlite: register uart driver in init
-    [ Upstream commit 6bd697b5fc39fd24e2aa418c7b7d14469f550a93 ]
+Changes from v1:
+1. Moved ufshcd_dme_rmw to ufshcd.h as per avri's comment.
 
-Reference bug report lore link,
- - https://lore.kernel.org/stable/CA+G9fYvidpyHTQ179dAJ4TSdhthC-Mtjuks5iQjMf+ovfPQbTg@mail.gmail.com/
+Bao D. Nguyen (1):
+  ufs: ufs-qcom: Update esi_vec_mask for HW major version >= 6
 
+Nitin Rawat (2):
+  scsi: ufs: core: Add ufshcd_dme_rmw to modify DME attributes
+  ufs: ufs-qcom: Enable QUnipro Internal Clock Gating
 
-> >
-> > Test environments:
-> >  - dragonboard-410c
-> >  - dragonboard-845c
-> >  - e850-96
-> >  - juno-r2
-> >  - rk3399-rock-pi-4b
-> >  - x86
-> >
-> > Regression Analysis:
-> > - New regression? Yes
-> > - Reproducibility? 20% only
-> >
-> > Test regression: 6.15.5-rc2 auto login failed Login incorrect
-> >
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> >
-> > ## log in problem
-> >
-> > runner-ns46nmmj-project-40964107-concurrent-0 login: #
-> > Password:
-> > Login incorrect
-> > runner-ns46nmmj-project-40964107-concurrent-0 login:
-> >
-> > * log 1: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.15.y/build/v6.15.4-264-gf6977c36decb/testrun/29021685/suite/boot/test/clang-20-lkftconfig/log
-> > * log 2: https://qa-reports.linaro.org/api/testruns/29021720/log_file/
-> > * Boot test: https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.15.y/v6.15.4-264-gf6977c36decb/boot/clang-20-lkftconfig/
-> > * LAVA jobs 1: https://lkft.validation.linaro.org/scheduler/job/8344153#L1186
-> > * LAVA jobs 2: https://lkft.validation.linaro.org/scheduler/job/8343870#L1266
-> >
-> > ## Build
-> > * kernel: 6.15.5-rc2
-> > * git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> > * git commit: f6977c36decb0875e78bdb8599749bce1e84c753
-> > * git describe: v6.15.4-264-gf6977c36decb
-> > * test details:
-> > https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.15.y/build/v6.15.4-264-gf6977c36decb
-> >
-> > ## Test Regressions (compared to v6.15.3-590-gd93bc5feded1)
-> > * dragonboard-410c, boot
-> >   - clang-20-lkftconfig
-> >   - clang-nightly-lkftconfig-kselftest
-> >   - gcc-13-lkftconfig-debug
-> >
-> > * dragonboard-845c, boot
-> >   - clang-20-lkftconfig
-> >   - korg-clang-20-lkftconfig-lto-thing
-> >
-> > * dragonboard-845c-compat, boot
-> >   - gcc-13-lkftconfig-compat
-> >
-> > * e850-96, boot
-> >   - gcc-13-lkftconfig-no-kselftest-frag
-> >
-> > * juno-r2, boot
-> >   - clang-20-lkftconfig
-> >   - gcc-13-lkftconfig-debug
-> >   - gcc-13-lkftconfig-kselftest
-> >
-> > * rk3399-rock-pi-4b, boot
-> >   - clang-20-lkftconfig
-> >
-> > * x86, boot
-> >   - clang-20-lkftconfig
-> >   - clang-20-lkftconfig-no-kselftest-frag
-> >   - clang-nightly-lkftconfig-kselftest
-> >   - clang-nightly-lkftconfig-lto-thing
-> >   - gcc-13-defconfig-preempt_rt
-> >   - gcc-13-lkftconfig-no-kselftest-frag
-> >
-> > ## Metric Regressions (compared to v6.15.3-590-gd93bc5feded1)
-> >
-> > ## Test Fixes (compared to v6.15.3-590-gd93bc5feded1)
-> >
-> > ## Metric Fixes (compared to v6.15.3-590-gd93bc5feded1)
-> >
-> > ## Test result summary
-> > total: 259237, pass: 235906, fail: 6376, skip: 16955, xfail: 0
-> >
-> > ## Build Summary
-> > * arc: 5 total, 5 passed, 0 failed
-> > * arm: 139 total, 138 passed, 1 failed
-> > * arm64: 57 total, 57 passed, 0 failed
-> > * i386: 18 total, 18 passed, 0 failed
-> > * mips: 34 total, 27 passed, 7 failed
-> > * parisc: 4 total, 4 passed, 0 failed
-> > * powerpc: 40 total, 39 passed, 1 failed
-> > * riscv: 25 total, 25 passed, 0 failed
-> > * s390: 22 total, 22 passed, 0 failed
-> > * sh: 5 total, 5 passed, 0 failed
-> > * sparc: 4 total, 3 passed, 1 failed
-> > * x86_64: 49 total, 49 passed, 0 failed
-> >
-> > ## Test suites summary
-> > * boot
-> > * commands
-> > * kselftest-arm64
-> > * kselftest-breakpoints
-> > * kselftest-capabilities
-> > * kselftest-cgroup
-> > * kselftest-clone3
-> > * kselftest-core
-> > * kselftest-cpu-hotplug
-> > * kselftest-cpufreq
-> > * kselftest-efivarfs
-> > * kselftest-exec
-> > * kselftest-fpu
-> > * kselftest-ftrace
-> > * kselftest-futex
-> > * kselftest-gpio
-> > * kselftest-intel_pstate
-> > * kselftest-ipc
-> > * kselftest-kcmp
-> > * kselftest-kvm
-> > * kselftest-livepatch
-> > * kselftest-membarrier
-> > * kselftest-memfd
-> > * kselftest-mincore
-> > * kselftest-mm
-> > * kselftest-mqueue
-> > * kselftest-net
-> > * kselftest-net-mptcp
-> > * kselftest-openat2
-> > * kselftest-ptrace
-> > * kselftest-rseq
-> > * kselftest-rtc
-> > * kselftest-rust
-> > * kselftest-seccomp
-> > * kselftest-sigaltstack
-> > * kselftest-size
-> > * kselftest-tc-testing
-> > * kselftest-timers
-> > * kselftest-tmpfs
-> > * kselftest-tpm2
-> > * kselftest-user_events
-> > * kselftest-vDSO
-> > * kselftest-x86
-> > * kunit
-> > * kvm-unit-tests
-> > * lava
-> > * libgpiod
-> > * libhugetlbfs
-> > * log-parser-boot
-> > * log-parser-build-clang
-> > * log-parser-build-gcc
-> > * log-parser-test
-> > * ltp-capability
-> > * ltp-commands
-> > * ltp-containers
-> > * ltp-controllers
-> > * ltp-cpuhotplug
-> > * ltp-crypto
-> > * ltp-cve
-> > * ltp-dio
-> > * ltp-fcntl-locktests
-> > * ltp-fs
-> > * ltp-fs_bind
-> > * ltp-fs_perms_simple
-> > * ltp-hugetlb
-> > * ltp-math
-> > * ltp-mm
-> > * ltp-nptl
-> > * ltp-pty
-> > * ltp-sched
-> > * ltp-smoke
-> > * ltp-syscalls
-> > * ltp-tracing
-> > * modules
-> > * perf
-> > * rcutorture
-> > * rt-tests-cyclicdeadline
-> > * rt-tests-pi-stress
-> > * rt-tests-pmqtest
-> > * rt-tests-rt-migrate-test
-> > * rt-tests-signaltest
-> >
-> > --
-> > Linaro LKFT
-> > https://lkft.linaro.org
+ drivers/ufs/core/ufshcd.c   | 24 ++++++++++++++++++++++++
+ drivers/ufs/host/ufs-qcom.c | 24 ++++++++++++++++++++++--
+ drivers/ufs/host/ufs-qcom.h |  9 +++++++++
+ include/ufs/ufshcd.h        |  1 +
+ 4 files changed, 56 insertions(+), 2 deletions(-)
+
+--
+2.48.1
+
 
