@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-720667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7959AFBF09
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:04:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 398F0AFBF10
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B5E2427E69
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:03:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBBBB1BC167E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA95A7DA9C;
-	Tue,  8 Jul 2025 00:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A149D1DE8B5;
+	Tue,  8 Jul 2025 00:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KhMqcWqb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nGRZuIXD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178AB7DA93;
-	Tue,  8 Jul 2025 00:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062D6625;
+	Tue,  8 Jul 2025 00:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751932984; cv=none; b=c5TXNkIT8X6jw9FZLkNLzmtDcjJyGymw8FmCSHq58mAAsv4kdZ19t3njoPCm+9SJ2t2vYEMz/TajApBIZeqHqruvHX41Exini1c60o5dpOo0qniD76RxZPSTQIzjkx/JnP/4emauCEwBdUYephqoBJJb+TgHKWG1pI+4B0Jdn0k=
+	t=1751932992; cv=none; b=SfUrv+mc5amPufsED78s9/bkjoUghdc/0KiByWlZxk+snWko6B6FjYfiSpQOq7XW4CpklBvqsLJpdQAOOFk2J3j6QyleYeIs5tL4Q1u5C3u82gYu9Co6iyRdTnTBWp+JaiI78invp3pajisel0CzHsiyadynt4588ToDBzqGUyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751932984; c=relaxed/simple;
-	bh=ZJ/n1M5kT54C6A1wFgihCVWK97DfePfv0+6hwxriPJc=;
+	s=arc-20240116; t=1751932992; c=relaxed/simple;
+	bh=RzdkN5AejmjB2MQUG24aRqjEsj394B4y1HkQ71kFhus=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MZBdSfXZMzczNIZ9uBVdjT/SM8a5ihbp5x1lgWNA0T3aRm3Bieo8aPXorvH5AtSiShFWajy1cAxzQf34cnd6DhB1Z3LNb54av6VZZPFpsc0rlTtBWx5ejWHOCF5u6vqaQhQ0mtkT4gMmrPLn4s3XxdJqw2mQvxUEWSuJ7c7owEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KhMqcWqb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E080FC4CEF1;
-	Tue,  8 Jul 2025 00:03:02 +0000 (UTC)
+	 MIME-Version; b=OQvCGHngIKHG1AEgcpO1NO60XCSUr6qCLZz2qPufzp7NmjLUJC7u/2S+di036AktvVIETEjsKua04FaxX/oYhZjTHNm+p6xSX17/AfErB1yZGav/FxKmiz7TfCnJ2ewlGacgu2EGxzbTM7umSZVCvKPS+LbjyjCzN5FDUWHbYDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nGRZuIXD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9A9CC4CEE3;
+	Tue,  8 Jul 2025 00:03:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751932983;
-	bh=ZJ/n1M5kT54C6A1wFgihCVWK97DfePfv0+6hwxriPJc=;
+	s=k20201202; t=1751932990;
+	bh=RzdkN5AejmjB2MQUG24aRqjEsj394B4y1HkQ71kFhus=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KhMqcWqbijeCUnYiuQwBzVAjzr+P6bSg1FAWgzy8R3cvTeNa5IzhhBJkJVTJfKcVh
-	 3PaLP+tRfGTT5M/jVyRkxjxbd3VM+IuV/HOfnbJXa/4KORh37G4mD7zvy1uwve1FES
-	 7rUx9VaKhoSWXy06fv6Gtw5NHCsbkAh16aaKawDmgOPNQxHE8c1DN4nmSu7Ir/WjWe
-	 lqNtpib5EDw3Ez82GwXVJo9cHCjJsh4Qf4vljlNogvi4kbAX+w8UzTnbn2IaQ1IDfd
-	 BbC0T1o7j6fQPp/y9JbTY81yH+aXYAPqsuoNBEcT1IzyyaB3NsITL5R8CzMB77Cu8d
-	 FhXshLf8ew7/g==
+	b=nGRZuIXDJiNZvr5TW6m1pRT7/r/eWHh8nJGkGKVpNak+z0xWa8EaLUZsXM18lbJA9
+	 VX+Aq/LhoU2n3+NpZUSz33yXxOXhKkfaOrpd4R1eVReM25QxpVqJnmiVD7Gn06cHG9
+	 ruTbWl+grZzsYY/sEaBhOyw/cFNiViVvODyOzs1eDjljpub5L9j45oDybBiikOQCtD
+	 0NpLWsQaoK8iSnU6zkGX7CgLh89e70ZnNckyrwIg6RjsYgsJHJ5t7DkbE/w9dUYTo1
+	 VTQYh+y3QUJdDI3i2BRwc+ZHz5iwDfORaQ2SJMA6StBmcRikjlsF1qwq1ETOlNKDZh
+	 kHQkTbhRWKFyQ==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -48,12 +48,12 @@ Cc: Alessandro Carminati <acarmina@redhat.com>,
 	Sasha Levin <sashal@kernel.org>,
 	lgirdwood@gmail.com,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 2/3] regulator: core: fix NULL dereference on unbind due to stale coupling data
-Date: Mon,  7 Jul 2025 20:02:59 -0400
-Message-Id: <20250708000300.793770-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 2/3] regulator: core: fix NULL dereference on unbind due to stale coupling data
+Date: Mon,  7 Jul 2025 20:03:04 -0400
+Message-Id: <20250708000306.793995-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250708000300.793770-1-sashal@kernel.org>
-References: <20250708000300.793770-1-sashal@kernel.org>
+In-Reply-To: <20250708000306.793995-1-sashal@kernel.org>
+References: <20250708000306.793995-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,7 +62,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.239
+X-stable-base: Linux 5.4.295
 Content-Transfer-Encoding: 8bit
 
 From: Alessandro Carminati <acarmina@redhat.com>
@@ -146,11 +146,11 @@ an important bug with minimal risk of regression.
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index a0cc907a76c18..b2d866d606512 100644
+index a01a769b2f2d1..e5ce97dc32158 100644
 --- a/drivers/regulator/core.c
 +++ b/drivers/regulator/core.c
-@@ -5198,6 +5198,7 @@ static void regulator_remove_coupling(struct regulator_dev *rdev)
- 				 ERR_PTR(err));
+@@ -5062,6 +5062,7 @@ static void regulator_remove_coupling(struct regulator_dev *rdev)
+ 				 err);
  	}
  
 +	rdev->coupling_desc.n_coupled = 0;
