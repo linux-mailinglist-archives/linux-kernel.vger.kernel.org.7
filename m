@@ -1,97 +1,87 @@
-Return-Path: <linux-kernel+bounces-721689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33D81AFCCAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:54:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A1F1AFCCBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E8E37A4CC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:52:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E906D1BC6D9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0260C2DECBF;
-	Tue,  8 Jul 2025 13:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4698F881E;
+	Tue,  8 Jul 2025 13:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8sBNIiO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzH0za+1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E13E2DEA81;
-	Tue,  8 Jul 2025 13:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14202DEA92;
+	Tue,  8 Jul 2025 13:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751982843; cv=none; b=cUhLUxs0OCNGIr2QICWrdDSYZVHT33ofkEuhlZeSPeNmkvJ6bFMzIzaYokp0rJRXtyPF22SZ5nhnd+zhjrIADFprZdm52VmZ2LJxNfvnBY0L4x96HPMBHcGVbwt/B3pijHfSPknMxUrhRfocXFhyya2K297XN3+K2oZ9yb4HRPA=
+	t=1751982865; cv=none; b=IV3g1Uk7rXwfv30pBjO1DKsCmuHo2RA+rDMKI9J0bjbhSxRKt75Z8nLoNyXZlMZvQLPwyDLNNFm+s3rVh/Qp0umnbHeZBHZl2+A3F1VFgTNcy+wXmS42xhNCLSjRCJKJOzUsxI+LtK92ehNo/kD8J5q/RKImE4EP2iOa9vhiPuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751982843; c=relaxed/simple;
-	bh=2U7WIwbZsGcHH5yL4JdEazTDUBXTpSpRvg0hBKcmjqE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=prABNDpOK6YuEDa46S8U20cXQInQSqaf7YaYKCD9uFyNs7Y3quOLZyjfSjVkzEvfvirmqaYSV9jBj3KQF95gWiC951HF8Yg3mMoLnlG5QIsNCcNVtSuMfWLaqCUwZK2YyLNmXQbskgjAJevgOfeK7rnVKDbpCaAGOE10f6zsmJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8sBNIiO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D550FC4CEED;
-	Tue,  8 Jul 2025 13:54:00 +0000 (UTC)
+	s=arc-20240116; t=1751982865; c=relaxed/simple;
+	bh=tfXtUJYz17eZYGV5TLj5X8FYA3fgxFhDxCkcMtg2T2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IeozKUUaY6tgAeJYi/L14ZTa5cCacIjyiaiudG+ysPwQlvJf5jEsQhCqZ+gVO+PS/VaJWluN/lOACN/6yEP2Xz5JAwu42vBosa7FjWUNITjkaR4LlctIZK8iBdOA6a2kn73yZXy24rdpw3ocdbTvobUkhqodsv7GObt+GnYGFH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzH0za+1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BC36C4CEED;
+	Tue,  8 Jul 2025 13:54:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751982842;
-	bh=2U7WIwbZsGcHH5yL4JdEazTDUBXTpSpRvg0hBKcmjqE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=X8sBNIiOd6uk+UYh8EL2eKZ2EgO+H/NE+Ja/5Z75Ov71NXKpDheZLnpjzAV69LDOw
-	 7NZ35yZQDcc5z0XnxDu8R9dSRmWkqR9YkS15CSEV/JC0LqrIsUpBa6xlUw+XhyOzr6
-	 rfFF9aHOorMmMkZrwXHgnWAgAQRLjJ+8TjjPpDPB6JADIj64/o19CadbyMCXy41X7v
-	 mjwSBXFRz7i0tYNsACayQVTGeR/I13lV7mzZ5JY4zTFFLljRobbxnUuimEKMjqS9W6
-	 4kMynfdmC0QoAKVLQdXrW+W25Y43vaLwecZQYz+mIHdx7SMe0OZGxiehHeliZrorDS
-	 qLFUDbqMdd1ZQ==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Jisheng Zhang <jszhang@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-In-Reply-To: <20250629095716.841-1-jszhang@kernel.org>
-References: <20250629095716.841-1-jszhang@kernel.org>
-Subject: Re: [PATCH] regulator: sy8827n: make enable gpio NONEXCLUSIVE
-Message-Id: <175198284045.435800.10793506955504985146.b4-ty@kernel.org>
-Date: Tue, 08 Jul 2025 14:54:00 +0100
+	s=k20201202; t=1751982865;
+	bh=tfXtUJYz17eZYGV5TLj5X8FYA3fgxFhDxCkcMtg2T2w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bzH0za+1547pYp5aFtE3zCWkdztB6nPSMarSqvJU2jCqsCGZtcHPmMH8MHYyOHqNn
+	 DcEFbE1tPKwBP8Rv6JUEGfMyFwLWT28SAZOCcmgkVxCXQRWQsFgFtWQ6p+sCtkcSgm
+	 dCz2Aw/N1MrbiFdt05kAqpXy+FKaYhKTkVztT6sZ5x/2PWJIqJbBKl4IiBP6cDEuqX
+	 v/ZG35Xb7zVL7L115p4CZ6mlv0LdHdx0GfGpitwe0VuNctGHrJka7+uQ7fLY+Jnqp1
+	 UB4GgjQ0Jeuxi4BRr6y0513XfwXjd45oD+R+I2NiumuZtXWk/gANeJ9y1MgxEEMPQ/
+	 Znw4+Vo1KrNeA==
+Date: Tue, 8 Jul 2025 15:54:22 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Zqiang <qiang.zhang1211@gmail.com>
+Cc: paulmck@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org,
+	urezki@gmail.com, boqun.feng@gmail.com, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rcu/nocb: Fix possible invalid rdp's->nocb_cb_kthread
+ pointer access
+Message-ID: <aG0jDkBqPGm9-Wia@localhost.localdomain>
+References: <20250507112605.20910-1-qiang.zhang1211@gmail.com>
+ <20250507112605.20910-3-qiang.zhang1211@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-07fe9
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250507112605.20910-3-qiang.zhang1211@gmail.com>
 
-On Sun, 29 Jun 2025 17:57:16 +0800, Jisheng Zhang wrote:
-> On some platforms, the sy8827n enable gpio may also be used for other
-> purpose, so make it NONEXCLUSIVE to support this case.
+Le Wed, May 07, 2025 at 07:26:05PM +0800, Zqiang a écrit :
+> In the preparation stage of CPU online, if the corresponding
+> the rdp's->nocb_cb_kthread does not exist, will be created,
+> there is a situation where the rdp's rcuop kthreads creation fails,
+> and then de-offload this CPU's rdp, does not assign this CPU's
+> rdp->nocb_cb_kthread pointer, but this rdp's->nocb_gp_rdp and
+> rdp's->rdp_gp->nocb_gp_kthread is still valid.
 > 
+> This will cause the subsequent re-offload operation of this offline
+> CPU, which will pass the conditional check and the kthread_unpark()
+> will access invalid rdp's->nocb_cb_kthread pointer.
 > 
+> This commit therefore use rdp's->nocb_gp_kthread instead of
+> rdp_gp's->nocb_gp_kthread for safety check.
+> 
+> Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
 
-Applied to
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[1/1] regulator: sy8827n: make enable gpio NONEXCLUSIVE
-      commit: 5054740e0092aac528c0589251f612b3b41c9e7b
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+-- 
+Frederic Weisbecker
+SUSE Labs
 
