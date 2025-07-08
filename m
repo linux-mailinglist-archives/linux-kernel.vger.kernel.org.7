@@ -1,235 +1,159 @@
-Return-Path: <linux-kernel+bounces-722215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC871AFD687
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:36:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DBE5AFD68E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 710B07B546D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:35:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A58387A5CB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E252E11B9;
-	Tue,  8 Jul 2025 18:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B8F2E62D5;
+	Tue,  8 Jul 2025 18:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nq6895W3"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OfiMmISP"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2901E21D018;
-	Tue,  8 Jul 2025 18:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39DAD2DC34A;
+	Tue,  8 Jul 2025 18:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751999806; cv=none; b=uzCHhRB6BYZJJiEraV1ywBWz/oNG6+91G4mm9F8QymTmW0woNrq86MpB4H73dB2RU6Dj1bRedxHLunEoGs1lYFbxDIdMp9W8LsWT7OKZtHhb8+laHb/hGzKNnpwmJCKdMNmyB1a+G0jrFQ69bRU6qWT83i7NvJ5UYy7IwrR4h1Q=
+	t=1751999854; cv=none; b=M6tFxh323ICxdm9WhKQ5mdoDhgPTa7Ep22ytAabJD/nHWhkkcunkj4X6xZ1GtRNP7fdCCy8T0tk7HuYpskxkKHvKp4UbPKmIOSRctQIJ3T5JzmWmE1R4NrAs/upbz6qR3iH5SXnnrX6cTBifaTfR7KFR7qz55FljupPY7LnDWVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751999806; c=relaxed/simple;
-	bh=+vaofl95bqvvnLYwDszC8RbyTM4tCMvnw5NvGQbXRrk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dalaGatPiVRx5ue8LqLU9EVCy8maGkwyj+FrhqJueHvLur5zFRWPouyVQLATINr1RWR1iUNWhgh7lU0EMXtlfHnwWzTXSJBmVngbQjM5FRoqiqom+86ZzLqGkbySgvZxEcmdrHCybnMzBqBMnWhvasGaqAYy/spgZyYQRllUc6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nq6895W3; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1751999854; c=relaxed/simple;
+	bh=un4jqr41VWnF4oK/40uHqoHyG+jR+1QJuARpkPxDymI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LdFTpBHuphWWWk+EjJnOGyrPxLezLV6PjxyDFU3H+Ewc6qMJ5kICSHLcgV3Jxd0BwUun8oe0gjPC1txht1aOduEbEtgSmnUE1IuXA2qA/td2cmzVoYpolwIPoyavPU8uKxJkOelu0W9C+fNxdEJHs2jK0s45f9VaQPiDl/uT4Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OfiMmISP; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-453066fad06so33829695e9.2;
-        Tue, 08 Jul 2025 11:36:43 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-234b9dfb842so43478985ad.1;
+        Tue, 08 Jul 2025 11:37:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751999802; x=1752604602; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8ZzB0X2FsBXzqI5HGqH1OR/QsRNZjrSGBBRmka+LrH0=;
-        b=Nq6895W3QLWM5yrVYsKgMWWdZXF/8Iw+BIrLbIfz9RJ9F8VSDBf/RCa53vB31qB4JR
-         7bmvX/aqb7fq4m6wUr3tSGpGluqIgqc8Y3/9PyvdnCdFZDiQy8Xopbf12+Gh4fXRatmB
-         sp/XEp8BBJ7d/r8LdOkQUZyZlCdsKQy2EQ7aAk4HWJombZHVKkiod8zuD/HyDVlBngmd
-         o+WkkpT2WZkHmKh5btvGXZz4ER5d9pNvRigBUjWeWbMvutIjR3zs5JGqv/JMxg1sKzWm
-         Nv8csb1ePynBy0GSHrBVU9YMKgUqgFeFc4L5+Gt4CWrP4enN7hZZm93CYicFEzvTAoTI
-         X+JQ==
+        d=gmail.com; s=20230601; t=1751999851; x=1752604651; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=yFq5U93lGfg6l2vT4qFW/REi+QnjIyuVbXAzMMJ9buE=;
+        b=OfiMmISPUmFujtiuy/ABK1FDgHEmzvlLhJhA26axsNcq1ATzvqUglSjXPVglR9hrys
+         95/JcSIwlQtd/uRoU7in0n/Z2egA2uAW9gh61OzxtKC/yfc0lDnEJwfjK5JGUCKmrHMK
+         tp5ROyqjRBEIjP7mY9INyFzhPgSlUm0gpTd4DZjKadI8LZ1LLpP0tkPdosDJdVj5eOpM
+         VKHawJ/JX32diJgoiUIAOLSpTjobpKew5vGfAZn+PCahxpEhYYkmPLAHAXMaTkjfLpyH
+         /TCIVlMf71a9xA+BA3bb5Dj9HA2XsU57e8eu7GxJ7yi9nghoxeR4/8JAGWiFXulNYMRu
+         ivgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751999802; x=1752604602;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8ZzB0X2FsBXzqI5HGqH1OR/QsRNZjrSGBBRmka+LrH0=;
-        b=WG5IEpdRqi/QNyaOe8Xth8CpHvOwxWQQtd4IfjHsFQznof4OE+/0AYngCyG4Uz0Vcm
-         vGP6QUgxr29ZaRcRnFEynRkObeRj+hJrUhuEPYnrOxGrEoiNwgAHuI3hCUDkY4CdbhGL
-         wtCAwWrns6qeTTblMhQepLC6n9cL3UgTvcWyuxrV0snXfuZgKRji41NRYDjwuVaOsERd
-         H8uGl+ZID8uo8TD0iP3ryUTSwN9AYM7y8r467TM1amu2RQj0w2gpdhqwpIGeNmBHax0L
-         wHn+DFHpYiOX6A7jmTZU3gA/LJImkP/ZnTildcc/MSB95O6lavNm/2ndoxE8Z5a4uszn
-         lxJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ652sL/Ly+kWtIVJM7rlibJbP/KnZBPO3s1RoHObAYQWHbnpb8oRIu0kCFB6G0vuaa4SbC3CbLCZMOBqE@vger.kernel.org, AJvYcCXrptCmNQdq3fagPkE86+UxRr7allkFbQkm3J6i39VE/vzjtyXeHh+G24u4SHDN9H2Wd0lsSGt+mfTaFwM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTC/DOqU6VnG0+wtxNONZAFeP5L8BtgPpAHba2pvDwi3kIJydH
-	11uQ9b4LUeeb7d08AaTeFstju1C8QrwwjKa0wxuTB9FzBbxQeVmSyTF9ryXoOA==
-X-Gm-Gg: ASbGncsguEyOfjcN3rl3SvreBLNy+k1Fxg8ApUtt5v37BX2D61+5yFHxdp+Oc6IMulo
-	+Tvs8CugbwNSbyziG4bWsHHfFzFDzqcipE4bd0OcRShty+DTVLuLShDWX2gmsWpBa2yqOQkyQvI
-	CBqTt5s7yWaI0lJ/VKOON5/OMRxp//XlTp9SrF+RmvNoUxXTf4sV0vrKhilrb4vl7/0d7PtKEoL
-	8TfpZXr0IUDJhBQHnQEMO9J69LvRJ0oEPo5eUXazH+VrEJOFD0CKMRBOyyiwSQ68A7Vcla5eKAm
-	QwicpAn22w5e6Jekxeo4Zgl8YrmT2xppg85W6oL7LU6XotSJL4WD/OAIqaCMJRDO1uwYGcmesQ=
-	=
-X-Google-Smtp-Source: AGHT+IGzirJ3lcOZbMfjaWTE+B8TfpMfBT54EdWIh7tTV0hajxIMDDBeGmh91j5QzxZyK7lYKyBaXw==
-X-Received: by 2002:a05:600c:4683:b0:43c:f1b8:16ad with SMTP id 5b1f17b1804b1-454cd5447a2mr53481945e9.30.1751999801979;
-        Tue, 08 Jul 2025 11:36:41 -0700 (PDT)
-Received: from Red ([2a01:cb1d:897:7800:4a02:2aff:fe07:1efc])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b5dfd4657dsm2083334f8f.17.2025.07.08.11.36.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 11:36:41 -0700 (PDT)
-Date: Tue, 8 Jul 2025 20:36:39 +0200
-From: Corentin Labbe <clabbe.montjoie@gmail.com>
-To: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-Cc: herbert@gondor.apana.org.au, davem@davemloft.net,
-	linux-crypto@vger.kernel.org, wens@csie.org,
-	jernej.skrabec@gmail.com, samuel@sholland.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 03/10] crypto: sun8i-ce - move bounce_iv and backup_iv
- to request context
-Message-ID: <aG1lN94feb4OJVsI@Red>
-References: <20250626095813.83963-1-ovidiu.panait.oss@gmail.com>
- <20250626095813.83963-4-ovidiu.panait.oss@gmail.com>
+        d=1e100.net; s=20230601; t=1751999851; x=1752604651;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yFq5U93lGfg6l2vT4qFW/REi+QnjIyuVbXAzMMJ9buE=;
+        b=cDA1gI8T3K4/kv/VMXDEl6wQeyZU/KstWSrae1c2MSxaHwceMK0uQzU894yrTH1Pas
+         EiJ/j82fVg2dkpwv0RBu7NpeTRdea5I7ZLi71gkKqzwEARz6LrVCGZyE8d0xb7NDyFX8
+         mXOFN1FVKF3ZH4Zo4TWWulwidhVUz29UAYi6XSrmADaqlQO8McasY3EigS3kiC0t6T0X
+         fxTIzEHhhxJ0N+St3P2hiUWtrcz9BV7q7mUiH9M59ieGH08ZPRdY7WIvOpXFwnO1SjBR
+         WCzrMs9W6ArrArzpgiE6PA8lotpd5DnN/F8DbIbSwL9dkb/OSDL5AzqmC2sgL4LKIowc
+         Mcig==
+X-Forwarded-Encrypted: i=1; AJvYcCVlmm/a8+HECWfcFDotlAUV6Ty6ejZu7SYv0MXcLYZXDsAYHKNlD0WDhF4iGmrK3gTWZSCEXRmRpg+rjLs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo+eMe8TfbpIcRGpHRWFVJ1XLKCLSAg/Ksz1RmkSTbVK3NsO7T
+	GKvXLv+UE3HHtV4cykxn68cVkwyx5jPEoFoZb6AU/vjj6TqukkYNQfAe
+X-Gm-Gg: ASbGnctZYfXKUdJAq+7dLhOUu4bvOM7ToVHgMWJVKbATAnJPQBGJdUvqWF6CSERN53X
+	H8t7PWoWUcCY+EHkrWe32ea0HBRo3O7SHT4+Jk/to2agy4Dx6eZoKtBUcdgLZcAOOOCpZz4aCNr
+	csrtEmagfU3GagtadxxFqFXq3jaIn+ZNpJcNBAIeQGxytw0EQfck5/iszFUwZEOpG1COJpS+Yn1
+	jOibGMDYRrNFf3uiZ/ZOM6WHuopVfIbEKn3PdqRPCkYBhKio2Kk1wmKYLHnyZOegEoXd+6LaZ2c
+	fjJWl9K6Hq0/M2ApWhb5LqZFP4RkUdl95ZBfMH6KRCZSl+Ut8z8PhXjC7JlzlQ03PqaEMU9yZZB
+	OB3UE0Q==
+X-Google-Smtp-Source: AGHT+IE6Tp1/WzRvpW55BQkqs3s7L2F6IMLeVntT2MgmwhleqyQv/9dSyJlzGlUXDuJ/0RxU1xMlgA==
+X-Received: by 2002:a17:903:950:b0:234:c5c1:9b5f with SMTP id d9443c01a7336-23c8747274fmr263138545ad.16.1751999851392;
+        Tue, 08 Jul 2025 11:37:31 -0700 (PDT)
+Received: from [10.230.3.249] ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c84581113sm114374185ad.183.2025.07.08.11.37.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jul 2025 11:37:30 -0700 (PDT)
+Message-ID: <7cdb1dd3-2993-4bb7-bebe-e9d9a2fa6dda@gmail.com>
+Date: Tue, 8 Jul 2025 11:37:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250626095813.83963-4-ovidiu.panait.oss@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15 000/160] 5.15.187-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Borislav Petkov <bp@alien8.de>
+Cc: stable@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250708162231.503362020@linuxfoundation.org>
+ <2438aa80-091d-4668-90e0-fb75f3e0b699@gmail.com>
+ <20250708172319.GEaG1UB5x3BffeL9VW@fat_crate.local>
+ <12b05333-69c2-42b7-89ea-d414ea14eca0@gmail.com>
+ <20250708174509.GGaG1ZJSHsChiURgHW@fat_crate.local>
+ <20250708180400.GIaG1dkGnKYAS1QOu0@fat_crate.local>
+ <2025070800-staff-expire-a6d9@gregkh>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <2025070800-staff-expire-a6d9@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Le Thu, Jun 26, 2025 at 12:58:06PM +0300, Ovidiu Panait a écrit :
-> Currently, the iv buffers are allocated once per flow during driver probe.
-> Having a single iv buffer for all requests works with the current setup
-> where requests are processed one by one, but it wouldn't work if multiple
-> requests are chained together and processed in one go.
+
+
+On 7/8/2025 11:09 AM, Greg Kroah-Hartman wrote:
+> On Tue, Jul 08, 2025 at 08:04:00PM +0200, Borislav Petkov wrote:
+>> On Tue, Jul 08, 2025 at 07:45:09PM +0200, Borislav Petkov wrote:
+>>> Right, it needs the __weak functions - this is solved differently on newer
+>>> kernels. Lemme send updated patches.
+>>
+>> ...and 6.1:
 > 
-> In preparation for introducing request batching, allocate iv buffers per
-> request, rather than per flow.
+> Now applied, thanks!
 > 
-> Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-> ---
->  .../allwinner/sun8i-ce/sun8i-ce-cipher.c       | 18 +++++++++---------
->  .../crypto/allwinner/sun8i-ce/sun8i-ce-core.c  | 12 ------------
->  drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h   |  8 ++++----
->  3 files changed, 13 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
-> index 113a1100f2ae..9963e5962551 100644
-> --- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
-> +++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
-> @@ -209,11 +209,11 @@ static int sun8i_ce_cipher_prepare(struct crypto_engine *engine, void *async_req
->  	if (areq->iv && ivsize > 0) {
->  		if (rctx->op_dir & CE_DECRYPTION) {
->  			offset = areq->cryptlen - ivsize;
-> -			scatterwalk_map_and_copy(chan->backup_iv, areq->src,
-> +			scatterwalk_map_and_copy(rctx->backup_iv, areq->src,
->  						 offset, ivsize, 0);
->  		}
-> -		memcpy(chan->bounce_iv, areq->iv, ivsize);
-> -		rctx->addr_iv = dma_map_single(ce->dev, chan->bounce_iv, ivsize,
-> +		memcpy(rctx->bounce_iv, areq->iv, ivsize);
-> +		rctx->addr_iv = dma_map_single(ce->dev, rctx->bounce_iv, ivsize,
->  					       DMA_TO_DEVICE);
->  		if (dma_mapping_error(ce->dev, rctx->addr_iv)) {
->  			dev_err(ce->dev, "Cannot DMA MAP IV\n");
-> @@ -299,13 +299,13 @@ static int sun8i_ce_cipher_prepare(struct crypto_engine *engine, void *async_req
->  
->  		offset = areq->cryptlen - ivsize;
->  		if (rctx->op_dir & CE_DECRYPTION) {
-> -			memcpy(areq->iv, chan->backup_iv, ivsize);
-> -			memzero_explicit(chan->backup_iv, ivsize);
-> +			memcpy(areq->iv, rctx->backup_iv, ivsize);
-> +			memzero_explicit(rctx->backup_iv, ivsize);
->  		} else {
->  			scatterwalk_map_and_copy(areq->iv, areq->dst, offset,
->  						 ivsize, 0);
->  		}
-> -		memzero_explicit(chan->bounce_iv, ivsize);
-> +		memzero_explicit(rctx->bounce_iv, ivsize);
->  	}
->  
->  	dma_unmap_single(ce->dev, rctx->addr_key, op->keylen, DMA_TO_DEVICE);
-> @@ -348,13 +348,13 @@ static void sun8i_ce_cipher_unprepare(struct crypto_engine *engine,
->  					 DMA_TO_DEVICE);
->  		offset = areq->cryptlen - ivsize;
->  		if (rctx->op_dir & CE_DECRYPTION) {
-> -			memcpy(areq->iv, chan->backup_iv, ivsize);
-> -			memzero_explicit(chan->backup_iv, ivsize);
-> +			memcpy(areq->iv, rctx->backup_iv, ivsize);
-> +			memzero_explicit(rctx->backup_iv, ivsize);
->  		} else {
->  			scatterwalk_map_and_copy(areq->iv, areq->dst, offset,
->  						 ivsize, 0);
->  		}
-> -		memzero_explicit(chan->bounce_iv, ivsize);
-> +		memzero_explicit(rctx->bounce_iv, ivsize);
->  	}
->  
->  	dma_unmap_single(ce->dev, rctx->addr_key, op->keylen, DMA_TO_DEVICE);
-> diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
-> index 79ec172e5c99..930a6579d853 100644
-> --- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
-> +++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
-> @@ -757,18 +757,6 @@ static int sun8i_ce_allocate_chanlist(struct sun8i_ce_dev *ce)
->  			err = -ENOMEM;
->  			goto error_engine;
->  		}
-> -		ce->chanlist[i].bounce_iv = devm_kmalloc(ce->dev, AES_BLOCK_SIZE,
-> -							 GFP_KERNEL | GFP_DMA);
-> -		if (!ce->chanlist[i].bounce_iv) {
-> -			err = -ENOMEM;
-> -			goto error_engine;
-> -		}
-> -		ce->chanlist[i].backup_iv = devm_kmalloc(ce->dev, AES_BLOCK_SIZE,
-> -							 GFP_KERNEL);
-> -		if (!ce->chanlist[i].backup_iv) {
-> -			err = -ENOMEM;
-> -			goto error_engine;
-> -		}
->  	}
->  	return 0;
->  error_engine:
-> diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
-> index f12c32d1843f..0d46531c475c 100644
-> --- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
-> +++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
-> @@ -188,8 +188,6 @@ struct ce_task {
->   * @status:	set to 1 by interrupt if task is done
->   * @t_phy:	Physical address of task
->   * @tl:		pointer to the current ce_task for this flow
-> - * @backup_iv:		buffer which contain the next IV to store
-> - * @bounce_iv:		buffer which contain the IV
->   * @stat_req:	number of request done by this flow
->   */
->  struct sun8i_ce_flow {
-> @@ -198,8 +196,6 @@ struct sun8i_ce_flow {
->  	int status;
->  	dma_addr_t t_phy;
->  	struct ce_task *tl;
-> -	void *backup_iv;
-> -	void *bounce_iv;
->  #ifdef CONFIG_CRYPTO_DEV_SUN8I_CE_DEBUG
->  	unsigned long stat_req;
->  #endif
-> @@ -264,6 +260,8 @@ static inline __le32 desc_addr_val_le32(struct sun8i_ce_dev *dev,
->   * @nr_sgd:		The number of destination SG (as given by dma_map_sg())
->   * @addr_iv:		The IV addr returned by dma_map_single, need to unmap later
->   * @addr_key:		The key addr returned by dma_map_single, need to unmap later
-> + * @bounce_iv:		Current IV buffer
-> + * @backup_iv:		Next IV buffer
->   * @fallback_req:	request struct for invoking the fallback skcipher TFM
->   */
->  struct sun8i_cipher_req_ctx {
-> @@ -273,6 +271,8 @@ struct sun8i_cipher_req_ctx {
->  	int nr_sgd;
->  	dma_addr_t addr_iv;
->  	dma_addr_t addr_key;
-> +	u8 bounce_iv[AES_BLOCK_SIZE] ____cacheline_aligned;
-> +	u8 backup_iv[AES_BLOCK_SIZE] ____cacheline_aligned;
->  	struct skcipher_request fallback_req;   // keep at the end
+> I'll push out -rc2 versions of both of these now.
 
-Hello
+Thank you both for the prompt reply!
+-- 
+Florian
 
-Are you sure you could do DMA on sun8i_cipher_req_ctx ?
-
-Regards
 
