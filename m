@@ -1,107 +1,119 @@
-Return-Path: <linux-kernel+bounces-722208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E8D7AFD671
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:27:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D32FEAFD64D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:20:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CF641C25D43
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:26:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B35E01BC22B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC352EBDE8;
-	Tue,  8 Jul 2025 18:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C12A21B9CD;
+	Tue,  8 Jul 2025 18:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NG63G2nE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZKiwvZi0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jOFHf+nU"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD8F2EBDCE;
-	Tue,  8 Jul 2025 18:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481401754B
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 18:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751998851; cv=none; b=R/PfCMkfuPadBSo6UtZ5/z+FsXLcco0JwXUA9TK6Dho6avl7VN2l44X9SKXS6w2djT+7mxqonYRBRbD6o3/zuZxjnqSo4O4AjigQB0R5RqIIz2isV+ZQ6qGN9XeirdsOsNhRTycKBsK1b5WIWEPyYatSbyGUgrrvt9wLnY+Tsio=
+	t=1751998822; cv=none; b=HC20BqQRcQ+VuPKaWVqj6JzWEnmKdhLOItbPsAzbb9F7sa/aR13dwS4nAAeKDf+libpPqvfELAUIBSf0iZaKNjdQ1Ln+MLVpbzuF7pjveo7nR4zCfmHE/7R+kfVnNSeSGIH48Fl1wFWB2V9t5UABQ9pmnIslHqNEYUw9o+4MXxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751998851; c=relaxed/simple;
-	bh=x43xMa/FOzE06hyOr7AC8Qnb2MUYOv7J4K+cekDKbDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qPNjTGM2jqiW2pian8E5jxpfXGS9YoH4KTWmgbZcRRE0/kEyVNcyzbf1HN0yysv46AeTd6kqQ4AeMyuwd57JuYHcwUjmhsRspm2lc51Hcoub4MQ/EcBXW/CV+5gzREv+Bg3Cf5+MFqgbZS3mV75lm7UmKYb4HYfNwi+2hBqDvsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NG63G2nE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0FA3C4CEED;
-	Tue,  8 Jul 2025 18:20:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751998851;
-	bh=x43xMa/FOzE06hyOr7AC8Qnb2MUYOv7J4K+cekDKbDU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NG63G2nEfveKE59nKPI9OwTLgYnn5Z+kYZojIYyBfF+2cZX5K+YOkNb0mB/1sQzOn
-	 IUd/X4rBGQHhHTCj/RA7Z0ocVTceNXWxnwM2xdiwzVAZ2ehc/ub3AE1rHs2nESfnGU
-	 kj8GcbpvLOsn8DtAab0NZ42ALnYW5VJJsoOd0xkn6g4SeJN52Kbz8PlbQC/nzMSGkD
-	 JwX1yoLyJLRFF7WBjuJA/VLYj+krAX9Q/1UvuwUwu45UpRrHOyRMKeJ9mOvN4yyszG
-	 +6UIaSj6ZoULZuYpJV6OngYTSzaA0afJGgpTAmY9mlHp97we6vqfbR7WP3TXXRwoWd
-	 JeJGwmGalpp/A==
-Date: Tue, 8 Jul 2025 11:20:07 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Yuwen Chen <ywen.chen@foxmail.com>
-Cc: davem@davemloft.net, herbert@gondor.apana.org.au, jaegeuk@kernel.org,
-	linux-crypto@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu
-Subject: Re: [PATCH v2] fscrypt: improve filename encryption and decryption
- performance
-Message-ID: <20250708182007.GB1255@sol>
-References: <20250704051441.GA4199@sol>
- <tencent_8F6BAFE88DDB6EFCC8D5E81C3BCFEAEBB105@qq.com>
+	s=arc-20240116; t=1751998822; c=relaxed/simple;
+	bh=cKSp24tAq+G+8TAbCCpsRG7TYkovQc/z2bFWehwzPrE=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=K+hzYq/zMzuRyKBDcUT5zo+9gMu1dFd4Usi27eSq6+Q7jUHRlwHFP6oDccL9rKgYgMuD3K4LqbLOeSbNU2izTbyexa9bp5wpvou39P4YS314Hc4J87tjK+oRD4JoO2j8O87Fk7fmesKZEWhJhl3TstfIXPmlM/FwCTjM58ssBy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZKiwvZi0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jOFHf+nU; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 08 Jul 2025 18:20:17 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751998819;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PNHS8e5MJciQgfMA0gZZS27B2XFNGeR5oJfowBRoomg=;
+	b=ZKiwvZi0rISlPyh8T9/LxLoW7D9RPVBqWZyghucrncJZW9MIRBoz9m2BKpvtODL4CMmLIe
+	UNoWSvwiMEqzjzKFflXIdWJ5+X/rkVzKO3kK4J7XvgtI/14Vx5eCoyjE3h4tPOKQ6Upt1m
+	oH01AvCs39Ks1Yja5MsF32tcR1eEsfXyIGNd2h57poiEbXdGlHt2a+fnxRt/XvCBL6Ge66
+	IaWUkWZcjto8mLhY7e15BWHIK+cRjSOPoBJ27xGiXq7AS15IqkWzTp+3QiJK+HaK9pG18T
+	nXISrLoSgzD0Tnys8oE7yCmRDbEJV5HTWVpdjwoQrPYqpTSmsDutHy3X8/2kTQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751998819;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PNHS8e5MJciQgfMA0gZZS27B2XFNGeR5oJfowBRoomg=;
+	b=jOFHf+nUeXY9m1zN5aWNeTKmOYJpSBaRCvsMitMpSnB6twrxnSLLERInpiRfVHJwtL6cBg
+	C3PnPQVfvV/bsmCQ==
+From: "irqchip-bot for Lorenzo Pieralisi" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Subject: [irqchip: irq/irqchip-next] arm64: Kconfig: Enable GICv5
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ tglx@linutronix.de
+In-Reply-To: <20250703-gicv5-host-v7-31-12e71f1b3528@kernel.org>
+References: <20250703-gicv5-host-v7-31-12e71f1b3528@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_8F6BAFE88DDB6EFCC8D5E81C3BCFEAEBB105@qq.com>
+Message-ID: <175199881775.406.17937840693522584038.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 08, 2025 at 03:33:34PM +0800, Yuwen Chen wrote:
-> On Thu, 3 Jul 2025 22:14:41 -0700, Eric Biggers wrote:
-> > I'm guessing you have some debugging options enabled in your kconfig.  Usually
-> > the allocations aren't quite *that* expensive.  That being said, it's always
-> > been really annoying that they have to be there.
-> 
-> Turn off most of the debugging options and merge these two patches
-> for memory allocation. The performance test results are as follows:
-> Before this submission was merged, when creating 10000 files,
-> the performance test results are as follows:
-> $ time /data/file_creater 10000
-> 0m10.90s real     0m00.00s user     0m10.69s system
-> 
-> After merge these two patches, the performance is as follows:
-> $ time /data/file_creater 10000
-> 0m05.32s real     0m00.00s user     0m05.28s system
-> 
-> > Unfortunately, as far as I know, you actually can't just allocate the
-> > skcipher_request on the stack like that, since the legacy crypto API assumes
-> > that the request memory is DMA-able.  On-stack requests also might not be
-> > properly aligned (see
-> > https://lore.kernel.org/all/CA+55aFxJOzMim_d-O2E2yip8JWo0NdYs_72sNwFKSkTjy8q0Sw@mail.gmail.com/
-> > -- may be outdated, but I haven't heard otherwise).
-> 
-> Thank you for the reminder. This should be a problem here.
-> Just, why can SYNC_SKCIPHER_REQUEST_ON_STACK be allocated on
-> the stack? Is it possible to use ALIGN to achieve alignment?
+The following commit has been merged into the irq/irqchip-next branch of irqchip:
 
-I suppose that in practice the request alignment only matters for the
-off-CPU offloads, and that's how SYNC_SKCIPHER_REQUEST_ON_STACK gets
-away with maybe not aligning the request reliably.  If you look at e.g.
-the software AES-XTS code, it doesn't even use the request context at
-all, which makes the entire exercise a bit pointless.
+Commit-ID:     53bb952a625fd3247647c7a28366ce990a579415
+Gitweb:        https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms/53bb952a625fd3247647c7a28366ce990a579415
+Author:        Lorenzo Pieralisi <lpieralisi@kernel.org>
+AuthorDate:    Thu, 03 Jul 2025 12:25:21 +02:00
+Committer:     Marc Zyngier <maz@kernel.org>
+CommitterDate: Tue, 08 Jul 2025 18:35:52 +01:00
 
-I'm thinking we should just go ahead and use sync_skcipher and
-SYNC_SKCIPHER_REQUEST_ON_STACK for now.  Previously this was impossible
-because the x86 accelerated AES-XTS algorithms had CRYPTO_ALG_ASYNC set,
-but now it is possible.
+arm64: Kconfig: Enable GICv5
 
-Can you review and test the following patchset:
-https://lore.kernel.org/linux-fscrypt/20250708181313.66961-1-ebiggers@kernel.org/ ?
+Enable GICv5 driver code for the ARM64 architecture.
 
-- Eric
+Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Reviewed-by: Marc Zyngier <maz@kernel.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Marc Zyngier <maz@kernel.org>
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Link: https://lore.kernel.org/r/20250703-gicv5-host-v7-31-12e71f1b3528@kernel.org
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+---
+ arch/arm64/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 55fc331..5ff757c 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -129,6 +129,7 @@ config ARM64
+ 	select ARM_GIC_V2M if PCI
+ 	select ARM_GIC_V3
+ 	select ARM_GIC_V3_ITS if PCI
++	select ARM_GIC_V5
+ 	select ARM_PSCI_FW
+ 	select BUILDTIME_TABLE_SORT
+ 	select CLONE_BACKWARDS
 
