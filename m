@@ -1,335 +1,238 @@
-Return-Path: <linux-kernel+bounces-721312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B600DAFC796
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:57:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B37D1AFC798
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 698831BC39E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:57:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 579347AD637
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0F0266EF1;
-	Tue,  8 Jul 2025 09:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51B1268688;
+	Tue,  8 Jul 2025 09:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUQsIItX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="QQLNDysn"
+Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90ADC3595C
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 09:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990AD267F4C
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 09:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751968625; cv=none; b=i5tNSAdKA/cqAsltYNKBBgGbXAFlutJ9HuwaWGVHpRg169RAWPe05PXLRxCuptjB5dt84480O3v95cuR3hkuk7bAqshE+7LGjwrldvQ+7ZuUDMDONwzl2M3Cvtz3mcrK1GuslkEqYPGdMNfzKEDvFGEKlW+C3+YP4dxbVuIV9PA=
+	t=1751968633; cv=none; b=EDEXcJGFOWr6tvJykAwTlgtgkTSHBpy0db23N6TMy56qruSBKzDSAcCzLtvh6Qm/nYeEJ2zmh5VV2fBkzVXMv1auodfNycdSKfNuuTGYD6qjc/+1BZilx0g2R9RjlcJuMMhw68CSkAY2YaXHQVolrJibnUGDcm2d5TpL9eODI1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751968625; c=relaxed/simple;
-	bh=dPbbq/0a1QsYvfp78zyWJ6pd+nnvbdm6sJfVED+Uid8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FJMCNOPKRSt7WI6wzcL92OchIltWFVNOrnsBDcHtYu5v1G5H3XgxU6449kqcGvyPG6xoNJTtO+emlj3tCehjtH2BSioXeRGJIzk4dnHnoVeTTvfronejfPqyJXrwCAh0ir2aQRkt9DARAYs8kaYF+RTbVdAwzIuHwzLXByr4NxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUQsIItX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02BE8C4CEED;
-	Tue,  8 Jul 2025 09:57:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751968625;
-	bh=dPbbq/0a1QsYvfp78zyWJ6pd+nnvbdm6sJfVED+Uid8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=hUQsIItXHkLymGMLPI9mOuRhS26P23g0eC2G/0dDGhtbOyeA2zebYNUQhiiJo+3t9
-	 J6d8OxBjjDTAKfc6eUOtMiDjewB8eCgJXN4h2Ighan2zu87Bl4EKGF022fBzhs6Opo
-	 jHoNp8nnmCuq+iP7nh5pRP235JUeP5HGQQE6kxViWuhLbIjOxfDtTaKdlaGFOjtuSr
-	 LPNshkjw01s6SsyrTeuivdp4QPsi/PZW+zID7DnsGJWIJiBl8SiyJxUYf1WIy8jVnb
-	 iz/nLD6pU6WYhabBPf9p9J48o2Fuaa4qzNQ/VAZOl2bFwMz7otUmygwK+P/4IgUOxX
-	 DRfeyZWtchBRQ==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH v2] f2fs: fix to avoid panic in f2fs_evict_inode
-Date: Tue,  8 Jul 2025 17:56:57 +0800
-Message-ID: <20250708095657.3081188-1-chao@kernel.org>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+	s=arc-20240116; t=1751968633; c=relaxed/simple;
+	bh=UARk+kQbFmDW+kvV8YFNkg+2xZuu+oxOEUbZAp5I8mA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V6UDuYcDAirBu6TX7+KvA1Lg7lSfmTcv/0PfUoPo3kEM99rZ/LscrdZMCl3KJ2MdTgcIPn8DWXQMZwp3o0FUapTqE+yajUhxl1TuJZ0CjlIUKPbIo0E3mNxs2+D0JVx3ZSMKsCQslKMQULAREVGMTXoMlhlSxMmfcVjbEn59HDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=QQLNDysn; arc=none smtp.client-ip=79.135.106.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1751968621; x=1752227821;
+	bh=2l3TkfjvjCWEDCpP4Te5SG1hFwqAhL+8OiIAkKRAXM4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=QQLNDysnjPtAe4YwLvngov1AJZUMLVT2hOYvLiAz/yIyJZQx9wBiKIncBkqFTEmPq
+	 6ofUkBqH9dsAdW1WV3OSWZ1MILYLXS/nuFMPCxnNmvZvMsPphwNy1iz+RQrYEa/h9k
+	 Pas3HX9XA6/uLQtQXHwhyIz3zM2cSwGooIscJnhut3wrj7Cjo4yffstWEY79mL2Cn2
+	 lLqD4I0EjP9fcarZFR/LJh8e4KChZWMLe269MeOHLftr1qi5u2YGlmkClP2BT1fc2W
+	 NM27xVVK1IPbrGOpij6kXoA6FQQO1VseUInQfLC5hxqiOsE06fJjyZeJfpoTsOP8bi
+	 qg+Zx/t9IrXIQ==
+Date: Tue, 08 Jul 2025 09:56:57 +0000
+To: Benno Lossin <lossin@kernel.org>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina+kernel@asahilina.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 1/4] rust: types: Add Ownable/Owned types
+Message-ID: <aGzrZqIrStGD_UBp@mango>
+In-Reply-To: <DB5PPGOWNW4K.2C5A4UE9V9IEF@kernel.org>
+References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me> <20250618-unique-ref-v11-1-49eadcdc0aa6@pm.me> <DB1IPFNLFDWV.2V5O73DOB2RV6@kernel.org> <aGtv9qs682gTyQWX@mango> <DB5PPGOWNW4K.2C5A4UE9V9IEF@kernel.org>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: 54e28f62d3ea56697116c9fa07669e83e4c37aad
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-As syzbot [1] reported as below:
+On 250707 1123, Benno Lossin wrote:
+> On Mon Jul 7, 2025 at 8:58 AM CEST, Oliver Mangold wrote:
+> > On 250702 1303, Benno Lossin wrote:
+> >> On Wed Jun 18, 2025 at 2:27 PM CEST, Oliver Mangold wrote:
+> >> > From: Asahi Lina <lina+kernel@asahilina.net>
+> >> >
+> >> > By analogy to `AlwaysRefCounted` and `ARef`, an `Ownable` type is a
+> >> > (typically C FFI) type that *may* be owned by Rust, but need not be.=
+ Unlike
+> >> > `AlwaysRefCounted`, this mechanism expects the reference to be uniqu=
+e
+> >> > within Rust, and does not allow cloning.
+> >> >
+> >> > Conceptually, this is similar to a `KBox<T>`, except that it delegat=
+es
+> >> > resource management to the `T` instead of using a generic allocator.
+> >> >
+> >> > Link: https://lore.kernel.org/all/20250202-rust-page-v1-1-e3170d7fe5=
+5e@asahilina.net/
+> >> > Signed-off-by: Asahi Lina <lina@asahilina.net>
+> >> > [ om:
+> >> >   - split code into separate file and `pub use` it from types.rs
+> >> >   - make from_raw() and into_raw() public
+> >> >   - fixes to documentation and commit message
+> >> > ]
+> >> > Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
+> >> > Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+> >> > ---
+> >> >  rust/kernel/types.rs         |   7 +++
+> >> >  rust/kernel/types/ownable.rs | 134 ++++++++++++++++++++++++++++++++=
++++++++++++
+> >>
+> >> I think we should name this file `owned.rs` instead. It's also what
+> >> we'll have for `ARef` when that is moved to `sync/`.
+> >>
+> >> Also, I do wonder does this really belong into the `types` module? I
+> >> feel like it's becoming our `utils` module and while it does fit, I
+> >> think we should just make this a top level module. So
+> >> `rust/kernel/owned.rs`. Thoughts?
+> >
+> > I don't have much of an opinion on on that. But maybe refactoring types=
+.rs
+> > should be an independent task?
+>=20
+> But you're adding the new file there? Just add it under
+> `rust/kernel/owned.rs` instead.
 
-R10: 0000000000000100 R11: 0000000000000206 R12: 00007ffe17473450
-R13: 00007f28b1c10854 R14: 000000000000dae5 R15: 00007ffe17474520
- </TASK>
----[ end trace 0000000000000000 ]---
-==================================================================
-BUG: KASAN: use-after-free in __list_del_entry_valid+0xa6/0x130 lib/list_debug.c:62
-Read of size 8 at addr ffff88812d962278 by task syz-executor/564
+To be honest, I don't really mind.
 
-CPU: 1 PID: 564 Comm: syz-executor Tainted: G        W          6.1.129-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Call Trace:
- <TASK>
- __dump_stack+0x21/0x24 lib/dump_stack.c:88
- dump_stack_lvl+0xee/0x158 lib/dump_stack.c:106
- print_address_description+0x71/0x210 mm/kasan/report.c:316
- print_report+0x4a/0x60 mm/kasan/report.c:427
- kasan_report+0x122/0x150 mm/kasan/report.c:531
- __asan_report_load8_noabort+0x14/0x20 mm/kasan/report_generic.c:351
- __list_del_entry_valid+0xa6/0x130 lib/list_debug.c:62
- __list_del_entry include/linux/list.h:134 [inline]
- list_del_init include/linux/list.h:206 [inline]
- f2fs_inode_synced+0xf7/0x2e0 fs/f2fs/super.c:1531
- f2fs_update_inode+0x74/0x1c40 fs/f2fs/inode.c:585
- f2fs_update_inode_page+0x137/0x170 fs/f2fs/inode.c:703
- f2fs_write_inode+0x4ec/0x770 fs/f2fs/inode.c:731
- write_inode fs/fs-writeback.c:1460 [inline]
- __writeback_single_inode+0x4a0/0xab0 fs/fs-writeback.c:1677
- writeback_single_inode+0x221/0x8b0 fs/fs-writeback.c:1733
- sync_inode_metadata+0xb6/0x110 fs/fs-writeback.c:2789
- f2fs_sync_inode_meta+0x16d/0x2a0 fs/f2fs/checkpoint.c:1159
- block_operations fs/f2fs/checkpoint.c:1269 [inline]
- f2fs_write_checkpoint+0xca3/0x2100 fs/f2fs/checkpoint.c:1658
- kill_f2fs_super+0x231/0x390 fs/f2fs/super.c:4668
- deactivate_locked_super+0x98/0x100 fs/super.c:332
- deactivate_super+0xaf/0xe0 fs/super.c:363
- cleanup_mnt+0x45f/0x4e0 fs/namespace.c:1186
- __cleanup_mnt+0x19/0x20 fs/namespace.c:1193
- task_work_run+0x1c6/0x230 kernel/task_work.c:203
- exit_task_work include/linux/task_work.h:39 [inline]
- do_exit+0x9fb/0x2410 kernel/exit.c:871
- do_group_exit+0x210/0x2d0 kernel/exit.c:1021
- __do_sys_exit_group kernel/exit.c:1032 [inline]
- __se_sys_exit_group kernel/exit.c:1030 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1030
- x64_sys_call+0x7b4/0x9a0 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:51 [inline]
- do_syscall_64+0x4c/0xa0 arch/x86/entry/common.c:81
- entry_SYSCALL_64_after_hwframe+0x68/0xd2
-RIP: 0033:0x7f28b1b8e169
-Code: Unable to access opcode bytes at 0x7f28b1b8e13f.
-RSP: 002b:00007ffe174710a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 00007f28b1c10879 RCX: 00007f28b1b8e169
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000001
-RBP: 0000000000000002 R08: 00007ffe1746ee47 R09: 00007ffe17472360
-R10: 0000000000000009 R11: 0000000000000246 R12: 00007ffe17472360
-R13: 00007f28b1c10854 R14: 000000000000dae5 R15: 00007ffe17474520
- </TASK>
+Note, though, that I already moved it from types.rs to types/ownable.rs on
+request. It seems to me different people here have different ideas where it
+should be placed. I feel now, that it would make sense to come to an
+agreement between the interested parties about where it should finally be
+placed, before I move it again. Could I ask that we settle that question
+once and for all before my next revision?
 
-Allocated by task 569:
- kasan_save_stack mm/kasan/common.c:45 [inline]
- kasan_set_track+0x4b/0x70 mm/kasan/common.c:52
- kasan_save_alloc_info+0x25/0x30 mm/kasan/generic.c:505
- __kasan_slab_alloc+0x72/0x80 mm/kasan/common.c:328
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook+0x4f/0x2c0 mm/slab.h:737
- slab_alloc_node mm/slub.c:3398 [inline]
- slab_alloc mm/slub.c:3406 [inline]
- __kmem_cache_alloc_lru mm/slub.c:3413 [inline]
- kmem_cache_alloc_lru+0x104/0x220 mm/slub.c:3429
- alloc_inode_sb include/linux/fs.h:3245 [inline]
- f2fs_alloc_inode+0x2d/0x340 fs/f2fs/super.c:1419
- alloc_inode fs/inode.c:261 [inline]
- iget_locked+0x186/0x880 fs/inode.c:1373
- f2fs_iget+0x55/0x4c60 fs/f2fs/inode.c:483
- f2fs_lookup+0x366/0xab0 fs/f2fs/namei.c:487
- __lookup_slow+0x2a3/0x3d0 fs/namei.c:1690
- lookup_slow+0x57/0x70 fs/namei.c:1707
- walk_component+0x2e6/0x410 fs/namei.c:1998
- lookup_last fs/namei.c:2455 [inline]
- path_lookupat+0x180/0x490 fs/namei.c:2479
- filename_lookup+0x1f0/0x500 fs/namei.c:2508
- vfs_statx+0x10b/0x660 fs/stat.c:229
- vfs_fstatat fs/stat.c:267 [inline]
- vfs_lstat include/linux/fs.h:3424 [inline]
- __do_sys_newlstat fs/stat.c:423 [inline]
- __se_sys_newlstat+0xd5/0x350 fs/stat.c:417
- __x64_sys_newlstat+0x5b/0x70 fs/stat.c:417
- x64_sys_call+0x393/0x9a0 arch/x86/include/generated/asm/syscalls_64.h:7
- do_syscall_x64 arch/x86/entry/common.c:51 [inline]
- do_syscall_64+0x4c/0xa0 arch/x86/entry/common.c:81
- entry_SYSCALL_64_after_hwframe+0x68/0xd2
+> >> > +/// - It is safe to call [`core::mem::swap`] on the [`Ownable`]. Th=
+is excludes pinned types
+> >> > +///   (i.e. most kernel types).
+> >>
+> >> Can't we implicitly pin `Owned`?
+> >
+> > I have been thinking about that. But this would mean that the blanket
+> > implementation for `Deref` would conflict with the one for `OwnableMut`=
+.
+>=20
+> Yeah we could not implement `DerefMut` in that case (or only for `T:
+> Unpin`).
+>=20
+> >> > +/// - The kernel will never access the underlying object (excluding=
+ internal mutability that follows
+> >> > +///   the usual rules) while Rust owns it.
+> >> > +pub unsafe trait OwnableMut: Ownable {}
+> >> > +
+> >> > +/// An owned reference to an ownable kernel object.
+> >>
+> >> How about
+> >>
+> >>     An owned `T`.
+> >
+> >     A wrapper around `T`.
+> >
+> > maybe?
+>=20
+> "wrapper" seems wrong, since a wrapper in my mind is a newtype. So it
+> would be `struct Owned(T)` which is wrong. The `T` is stored elsewhere.
+>=20
+> >> > +///
+> >> > +/// The object is automatically freed or released when an instance =
+of [`Owned`] is
+> >> > +/// dropped.
+> >>
+> >> I don't think we need to say this, I always assume this for all Rust
+> >> types except they document otherwise (eg `ManuallyDrop`, `MaybeUninit`
+> >> and thus also `Opaque`.)
+> >
+> > Hmm, it is an important feature of the wrapper that it turns the `*Owna=
+ble`
+> > into an object that is automatically dropped. So shouldn't that be
+> > mentioned here?
+>=20
+> I would expect that that happens, but sure we can leave it here.
+>=20
+> >> How about we provide some examples here?
+> >>
+> >> > +///
+> >> > +/// # Invariants
+> >> > +///
+> >> > +/// The pointer stored in `ptr` can be considered owned by the [`Ow=
+ned`] instance.
+> >>
+> >> What exactly is "owned" supposed to mean? It depends on the concrete `=
+T`
+> >> and that isn't well-defined (since it's a generic)...
+> >
+> > "owned" means that access to the `T` is exclusive through the `Owned<T>=
+`,
+> > so normal Rust semantics can be applied.
+>=20
+> Okay, in that case just say that `ptr` has exclusive access.
 
-Freed by task 13:
- kasan_save_stack mm/kasan/common.c:45 [inline]
- kasan_set_track+0x4b/0x70 mm/kasan/common.c:52
- kasan_save_free_info+0x31/0x50 mm/kasan/generic.c:516
- ____kasan_slab_free+0x132/0x180 mm/kasan/common.c:236
- __kasan_slab_free+0x11/0x20 mm/kasan/common.c:244
- kasan_slab_free include/linux/kasan.h:177 [inline]
- slab_free_hook mm/slub.c:1724 [inline]
- slab_free_freelist_hook+0xc2/0x190 mm/slub.c:1750
- slab_free mm/slub.c:3661 [inline]
- kmem_cache_free+0x12d/0x2a0 mm/slub.c:3683
- f2fs_free_inode+0x24/0x30 fs/f2fs/super.c:1562
- i_callback+0x4c/0x70 fs/inode.c:250
- rcu_do_batch+0x503/0xb80 kernel/rcu/tree.c:2297
- rcu_core+0x5a2/0xe70 kernel/rcu/tree.c:2557
- rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2574
- handle_softirqs+0x178/0x500 kernel/softirq.c:578
- run_ksoftirqd+0x28/0x30 kernel/softirq.c:945
- smpboot_thread_fn+0x45a/0x8c0 kernel/smpboot.c:164
- kthread+0x270/0x310 kernel/kthread.c:376
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+Or, ehm, sorry, I forgot, ownership also implies that the allocation of the
+underlying resource/object is now under the responsibility of the owner,
+i.e. the owner should free it at the appropriate time.
 
-Last potentially related work creation:
- kasan_save_stack+0x3a/0x60 mm/kasan/common.c:45
- __kasan_record_aux_stack+0xb6/0xc0 mm/kasan/generic.c:486
- kasan_record_aux_stack_noalloc+0xb/0x10 mm/kasan/generic.c:496
- call_rcu+0xd4/0xf70 kernel/rcu/tree.c:2845
- destroy_inode fs/inode.c:316 [inline]
- evict+0x7da/0x870 fs/inode.c:720
- iput_final fs/inode.c:1834 [inline]
- iput+0x62b/0x830 fs/inode.c:1860
- do_unlinkat+0x356/0x540 fs/namei.c:4397
- __do_sys_unlink fs/namei.c:4438 [inline]
- __se_sys_unlink fs/namei.c:4436 [inline]
- __x64_sys_unlink+0x49/0x50 fs/namei.c:4436
- x64_sys_call+0x958/0x9a0 arch/x86/include/generated/asm/syscalls_64.h:88
- do_syscall_x64 arch/x86/entry/common.c:51 [inline]
- do_syscall_64+0x4c/0xa0 arch/x86/entry/common.c:81
- entry_SYSCALL_64_after_hwframe+0x68/0xd2
+In short, just the standard meaning of ownership in Rust.
 
-The buggy address belongs to the object at ffff88812d961f20
- which belongs to the cache f2fs_inode_cache of size 1200
-The buggy address is located 856 bytes inside of
- 1200-byte region [ffff88812d961f20, ffff88812d9623d0)
+https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html
 
-The buggy address belongs to the physical page:
-page:ffffea0004b65800 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x12d960
-head:ffffea0004b65800 order:2 compound_mapcount:0 compound_pincount:0
-flags: 0x4000000000010200(slab|head|zone=1)
-raw: 4000000000010200 0000000000000000 dead000000000122 ffff88810a94c500
-raw: 0000000000000000 00000000800c000c 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 2, migratetype Reclaimable, gfp_mask 0x1d2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL|__GFP_RECLAIMABLE), pid 569, tgid 568 (syz.2.16), ts 55943246141, free_ts 0
- set_page_owner include/linux/page_owner.h:31 [inline]
- post_alloc_hook+0x1d0/0x1f0 mm/page_alloc.c:2532
- prep_new_page mm/page_alloc.c:2539 [inline]
- get_page_from_freelist+0x2e63/0x2ef0 mm/page_alloc.c:4328
- __alloc_pages+0x235/0x4b0 mm/page_alloc.c:5605
- alloc_slab_page include/linux/gfp.h:-1 [inline]
- allocate_slab mm/slub.c:1939 [inline]
- new_slab+0xec/0x4b0 mm/slub.c:1992
- ___slab_alloc+0x6f6/0xb50 mm/slub.c:3180
- __slab_alloc+0x5e/0xa0 mm/slub.c:3279
- slab_alloc_node mm/slub.c:3364 [inline]
- slab_alloc mm/slub.c:3406 [inline]
- __kmem_cache_alloc_lru mm/slub.c:3413 [inline]
- kmem_cache_alloc_lru+0x13f/0x220 mm/slub.c:3429
- alloc_inode_sb include/linux/fs.h:3245 [inline]
- f2fs_alloc_inode+0x2d/0x340 fs/f2fs/super.c:1419
- alloc_inode fs/inode.c:261 [inline]
- iget_locked+0x186/0x880 fs/inode.c:1373
- f2fs_iget+0x55/0x4c60 fs/f2fs/inode.c:483
- f2fs_fill_super+0x3ad7/0x6bb0 fs/f2fs/super.c:4293
- mount_bdev+0x2ae/0x3e0 fs/super.c:1443
- f2fs_mount+0x34/0x40 fs/f2fs/super.c:4642
- legacy_get_tree+0xea/0x190 fs/fs_context.c:632
- vfs_get_tree+0x89/0x260 fs/super.c:1573
- do_new_mount+0x25a/0xa20 fs/namespace.c:3056
-page_owner free stack trace missing
-
-Memory state around the buggy address:
- ffff88812d962100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88812d962180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff88812d962200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                                ^
- ffff88812d962280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88812d962300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-[1] https://syzkaller.appspot.com/x/report.txt?x=13448368580000
-
-This bug can be reproduced w/ the reproducer [2], once we enable
-CONFIG_F2FS_CHECK_FS config, the reproducer will trigger panic as below,
-so the direct reason of this bug is the same as the one below patch [3]
-fixed.
-
-kernel BUG at fs/f2fs/inode.c:857!
-RIP: 0010:f2fs_evict_inode+0x1204/0x1a20
-Call Trace:
- <TASK>
- evict+0x32a/0x7a0
- do_unlinkat+0x37b/0x5b0
- __x64_sys_unlink+0xad/0x100
- do_syscall_64+0x5a/0xb0
- entry_SYSCALL_64_after_hwframe+0x6e/0xd8
-RIP: 0010:f2fs_evict_inode+0x1204/0x1a20
-
-[2] https://syzkaller.appspot.com/x/repro.c?x=17495ccc580000
-[3] https://lore.kernel.org/linux-f2fs-devel/20250702120321.1080759-1-chao@kernel.org
-
-Tracepoints before panic:
-
-f2fs_unlink_enter: dev = (7,0), dir ino = 3, i_size = 4096, i_blocks = 8, name = file1
-f2fs_unlink_exit: dev = (7,0), ino = 7, ret = 0
-f2fs_evict_inode: dev = (7,0), ino = 7, pino = 3, i_mode = 0x81ed, i_size = 10, i_nlink = 0, i_blocks = 0, i_advise = 0x0
-f2fs_truncate_node: dev = (7,0), ino = 7, nid = 8, block_address = 0x3c05
-
-f2fs_unlink_enter: dev = (7,0), dir ino = 3, i_size = 4096, i_blocks = 8, name = file3
-f2fs_unlink_exit: dev = (7,0), ino = 8, ret = 0
-f2fs_evict_inode: dev = (7,0), ino = 8, pino = 3, i_mode = 0x81ed, i_size = 9000, i_nlink = 0, i_blocks = 24, i_advise = 0x4
-f2fs_truncate: dev = (7,0), ino = 8, pino = 3, i_mode = 0x81ed, i_size = 0, i_nlink = 0, i_blocks = 24, i_advise = 0x4
-f2fs_truncate_blocks_enter: dev = (7,0), ino = 8, i_size = 0, i_blocks = 24, start file offset = 0
-f2fs_truncate_blocks_exit: dev = (7,0), ino = 8, ret = -2
-
-The root cause is: in the fuzzed image, dnode #8 belongs to inode #7,
-after inode #7 eviction, dnode #8 was dropped.
-
-However there is dirent that has ino #8, so, once we unlink file3, in
-f2fs_evict_inode(), both f2fs_truncate() and f2fs_update_inode_page()
-will fail due to we can not load node #8, result in we missed to call
-f2fs_inode_synced() to clear inode dirty status.
-
-Let's fix this by calling f2fs_inode_synced() in error path of
-f2fs_evict_inode().
-
-PS: As I verified, the reproducer [2] can trigger this bug in v6.1.129,
-but it failed in v6.16-rc4, this is because the testcase will stop due to
-other corruption has been detected by f2fs:
-
-F2FS-fs (loop0): inconsistent node block, node_type:2, nid:8, node_footer[nid:8,ino:8,ofs:0,cpver:5013063228981249506,blkaddr:15366]
-F2FS-fs (loop0): f2fs_lookup: inode (ino=9) has zero i_nlink
-
-Fixes: 0f18b462b2e5 ("f2fs: flush inode metadata when checkpoint is doing")
-Closes: https://syzkaller.appspot.com/x/report.txt?x=13448368580000
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v2:
-- add fixes line, commit 0f18b462b2e5 ("f2fs: flush inode metadata when
-checkpoint is doing") missed to handle corner case when
-f2fs_update_inode_page() can not find node page, and failed to clear dirty
-flag in inode.
- fs/f2fs/inode.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index d3c6f3202b69..fc774de1c752 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -933,6 +933,19 @@ void f2fs_evict_inode(struct inode *inode)
- 		f2fs_update_inode_page(inode);
- 		if (dquot_initialize_needed(inode))
- 			set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
-+
-+		/*
-+		 * If both f2fs_truncate() and f2fs_update_inode_page() failed
-+		 * due to fuzzed corrupted inode, call f2fs_inode_synced() to
-+		 * avoid triggering later f2fs_bug_on().
-+		 */
-+		if (is_inode_flag_set(inode, FI_DIRTY_INODE)) {
-+			f2fs_warn(sbi,
-+				"f2fs_evict_inode: inode is dirty, ino:%lu",
-+				inode->i_ino);
-+			f2fs_inode_synced(inode);
-+			set_sbi_flag(sbi, SBI_NEED_FSCK);
-+		}
- 	}
- 	if (freeze_protected)
- 		sb_end_intwrite(inode->i_sb);
--- 
-2.49.0
+> >> Maybe we should give `Ownable` the task to document the exact ownershi=
+p
+> >> semantics of `T`?
+> >>
+> >> > +pub struct Owned<T: Ownable> {
+> >> > +    ptr: NonNull<T>,
+> >> > +    _p: PhantomData<T>,
+> >> > +}
+> >> > +
+> >> > +// SAFETY: It is safe to send `Owned<T>` to another thread when the=
+ underlying `T` is `Send` because
+> >> > +// it effectively means sending a `&mut T` (which is safe because `=
+T` is `Send`).
+> >>
+> >> How does this amount to sending a `&mut T`?
+> >
+> > Good point. That documentation hasn't been updated since `&mut T` acces=
+s
+> > has been split out into `OwnableMut`. Not sure how to phrase it now.
+>=20
+> I'm also unsure, also for the correct trait bounds on this impl.
+>=20
+> ---
+> Cheers,
+> Benno
+>=20
+> >> I guess this also needs to be guaranteed by `Owned::from_raw`... ah th=
+e
+> >> list grows...
+> >>
+> >> I'll try to come up with something to simplify this design a bit wrt t=
+he
+> >> safety docs.
+> >>
+> >> > +unsafe impl<T: Ownable + Send> Send for Owned<T> {}
+> >> > +
+> >> > +// SAFETY: It is safe to send `&Owned<T>` to another thread when th=
+e underlying `T` is `Sync`
+> >> > +// because it effectively means sharing `&T` (which is safe because=
+ `T` is `Sync`).
+> >>
+> >> Same here.
+> >>
+> >> > +unsafe impl<T: Ownable + Sync> Sync for Owned<T> {}
 
 
