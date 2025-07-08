@@ -1,244 +1,102 @@
-Return-Path: <linux-kernel+bounces-721009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B41CAFC352
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:53:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62941AFC345
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5467B1BC3C0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:51:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3959F7AC04B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B318122539E;
-	Tue,  8 Jul 2025 06:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1AB224B04;
+	Tue,  8 Jul 2025 06:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IF1m5ZAg"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PJRubHV3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IaMNtKzJ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C92F22F774;
-	Tue,  8 Jul 2025 06:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0235C221FDC
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 06:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751957417; cv=none; b=qix8p9yGx+xOnmLB2IiOWiV1RPQg2WyMaWZgx2d+z1saoqS3h9gtQK3VIFlZZLPdCc1i9SoF1trd2tvn0lRc+JBWxaWkueVf/uQ4NXl6bGbXnXrjQhmVjdL6/Ni7IeOoHiqeIUK7MxehxA178GhydvZddgY23/9uYV/gKhfDgEE=
+	t=1751957489; cv=none; b=Qq3qoSwLYOUAvMSsspTWpq3EUchuTRsPgc8rFnUS1ZOo8NIzidp/ZY6nTrZ65N0Jv2Ky99RVALM+WUE3Pki2CRKkK+eEhcfqZOYbYSBN7UgP5CtCJRSGGfnG2JIj8x3jk7p0gx7EAMMsPwhb0c3yhJPB0HPrxYHLoJpAk1z8x7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751957417; c=relaxed/simple;
-	bh=p7Vczb2qgKmJ1lCdlCQ9oB0YanB7KoIMpQZqJ3Ly4MY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mye0r70gS/rW6JX6xW7R3M8ziRjxmSpOR/q59GI3k/1jQpY2Ghnsor7ZNvvUgV3guOMglMZH9qNhAt9XXTUMGQEYbLvQrKRUEChF/YYyDUCTPwKnMkcixw67WbKqS+GRmUgxivjYrF6YgR1D7YmZ5YmSkmnt1EiAiM3cmpLcCr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IF1m5ZAg; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-74b50c71b0aso2106015b3a.0;
-        Mon, 07 Jul 2025 23:50:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751957414; x=1752562214; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aqugteN2eEIc2l2DBcvL/f8yXrIHgaMnuOSPwTtzdIk=;
-        b=IF1m5ZAgwOml8U4Ig3SGpSN3h5D5P8UiOTFHx0EG9o2asQLzYc3nK4/2uhlBpnP+RQ
-         dSRxudRpSiBqeS14q+TL359T1tZvjqAYyV6OQqTYHgkV2ArGTlKNbwafKDYM15A41yu3
-         YIO5njFp5MVxzT6rXUHCybt7gRmBemOGYlOd+jCcG5lNlsOIF5POLGCLdvluNi2RBGGp
-         oISjCq9VThXv1FlZv35ERIH/O+IKw9PTEJzv8B/kzQWuLxxTv2dHXznhcCijnp5/DiCu
-         EWtj6r95o3TznwxgqX1K/DUCJk4rrMsHFGqi263x/cKG8rg8O5l3FBuVFepUMmOa8oCj
-         LlXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751957414; x=1752562214;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aqugteN2eEIc2l2DBcvL/f8yXrIHgaMnuOSPwTtzdIk=;
-        b=p25wEzPtbKMdh2kyucXn7A4kS0eEmCy54SzY5bEq4Bm+lqmNu08OoyVAmWzikdexDZ
-         az+yWIrl7TfpKprlIqrZRG14c7tid7B/OfezRTEsBk9wpWISoGDE8Ck3Do0GU/dentSG
-         Da5Mje9NEnXBm8sAK8gFReyaD7WYGMnBP2I1hklh+bGPObkoYhbV/4yAJD/JWqFIj1Ud
-         dEpQTCi180vbvRENwlq2+l6MP7qv10W0bhrQwCi6jMJGteOLoO7UxHwEQbaIiR/RWSTw
-         E10zKf4c8ZbxGZvP8f4HFZbccRBHY1VwzSViMgoYWeB5YySu3yxd9vmNhatw8By56yrU
-         O8qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUedMkYxJt7M+6pV99RJ6qo5eRYPoEPEUu+7sMwTXAqIevw5CBEh1WRgVfA/tvfi3dRVy/xHas260E=@vger.kernel.org, AJvYcCV3ZRqu0KWvhhWGnRmHdGStS07ypBGdAcBAeIMKP69I+AVXYHDeUNFLJFExgMcmAvgIEwLZMJljrSt9v8bp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8y71TwZma5S5wA3iMKbO9F104GcZslKI6yJEeKHNLa3RGBk4L
-	fS8fIArLuBVgDtH49s3yjMGjDXhbA2HbwWAYTyHwKYYKxZ3eMLisiiM2
-X-Gm-Gg: ASbGncuz/dutxVFZ2ULw6fL9tDCbFFHysR8u05slOS4hqIgADhgqszSsSw3HFQJcjhQ
-	ELj5x1lAUVSGqmaGlZOE2ZSq6jVL1xeS738twTwRZZAwzqDEvaobwIP9IKp2IZWo0jnXpl9hbdV
-	bxnQdE+iSF3w2F59nKwZ3iSTUBh1ti9Bl5CAGr7jMUx1QYxb87LllUoprsqp+IjumuDIrUzpeis
-	mm/eI9hCfFcyanIyucq4el799Evvj75uCZmmb+0w0GtKAF4uv4I2Ec9Gc8P9zTT4SHgKWm3Ve5W
-	0a79WaAYBDwCmN++SMCBcMP+pI1/yLbwIH0Xf0gZCe0ula9yTIp3BAPDWMrW
-X-Google-Smtp-Source: AGHT+IEDnB13/b3LmDOwrFJZtQd45JvmCuztyCFmjCx6EDfkeVSU5wUDDdMIIH9GoBNpGm4oSRkvBg==
-X-Received: by 2002:a05:6a00:1c86:b0:74c:efae:fd8f with SMTP id d2e1a72fcca58-74cefaefdf8mr18459328b3a.15.1751957413474;
-        Mon, 07 Jul 2025 23:50:13 -0700 (PDT)
-Received: from mbox.localnet ([36.50.162.228])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce417dde0sm10402432b3a.73.2025.07.07.23.50.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 23:50:12 -0700 (PDT)
-From: akshay bansod <akbansd@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
- Lorenzo Bianconi <lorenzo@kernel.org>, David Lechner <dlechner@baylibre.com>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>,
- linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] iio: st_lsm6dsx: Replace scnprintf with sysfs_emit
-Date: Tue, 08 Jul 2025 12:20:04 +0530
-Message-ID: <22754870.EfDdHjke4D@mbox>
-In-Reply-To: <20250706115003.5752261c@jic23-huawei>
-References:
- <20250703053900.36530-1-akbansd@gmail.com> <2413481.ElGaqSPkdT@mbox>
- <20250706115003.5752261c@jic23-huawei>
+	s=arc-20240116; t=1751957489; c=relaxed/simple;
+	bh=PLfjNm3poT/pfKPoFgdKwOT2UOWmgK9Z01i+zwU6npI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r3ekqlvGcdvOV3aBI/lUq9EIltoAEJJf7FuORu8geHJrIlpUdQtTttfydmyjFaIx7A48GCqsjgvSyDUP5KDb9Q1dxpKWBiq2PKzfhiehvO5TRFpum815VtYP0IplIqdH6MkwMdt7vTkihgSiGqdMZVOuSYtWbNVGwqBJlLxlPoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PJRubHV3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IaMNtKzJ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 8 Jul 2025 08:51:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751957485;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mer2kyNEMt/0U4ldunFN9CzzxmGrd8ltq1fNYekIqfg=;
+	b=PJRubHV3zGPPmouIO5pnqMt+usLPL5bBszusoIOz4UrbftfhyxnMsEIXphKmAMBUKaDWg0
+	9MNJe+S2U5vY2hDvXJ8/CE3P75NUvOlwc/g0EklN1jyPqnUXg5xE8ObOO3qpLIrSA0jSSY
+	sEdPj0S3ke7EJziI0SYX+wXSlDkjNesIIfAHMmodXMArhoW9/6a7puaUmF4+yDO5c2JxKR
+	MiolFUcp4YLtsZENCb9QfbBpCER7+A9VJi/DozLp01YdDWM+OYH/UWzY5d0wQXSrajx0xs
+	3u42beW1dp8AG/IfjjN8KLkFaEmFGmIU4e7fM90xb+b4bN6ih2TkVkvU2gUkHQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751957485;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mer2kyNEMt/0U4ldunFN9CzzxmGrd8ltq1fNYekIqfg=;
+	b=IaMNtKzJt3PbQB9Sx1UfCay2FfWT19BX9Pre8Pn60/m/+B6a1RAaN5MoCyhBDB4l/+yUZ3
+	i202MzwIXi7GdbAA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-kernel@vger.kernel.org
+Cc: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH 2/3] futex: Use RCU-based per-CPU reference counting
+ instead of rcuref_t
+Message-ID: <20250708065124.DtoAH-O1@linutronix.de>
+References: <20250707143623.70325-1-bigeasy@linutronix.de>
+ <20250707143623.70325-3-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250707143623.70325-3-bigeasy@linutronix.de>
 
-On Sunday, 6 July 2025 10:00=E2=80=AFam +0530 Jonathan Cameron wrote:
-> On Thu, 03 Jul 2025 22:28:13 +0530
-> akshay bansod <akbansd@gmail.com> wrote:
->=20
-> > On Thursday, 3 July 2025 10:12=E2=80=AFpm +0530 Andy Shevchenko wrote:
-> > > On Thu, Jul 03, 2025 at 11:08:59AM +0530, Akshay Bansod wrote: =20
-> > > > Update the sysfs interface for sampling frequency and scale attribu=
-tes.
-> > > > Replace `scnprintf()` with `sysfs_emit_at()` which is PAGE_SIZE-awa=
-re
-> > > > and recommended for use in sysfs. =20
-> > >=20
-> > > 'must' is stronger than 'recommendation'.
-> > > Of has the documentation been changed lately?
-> > >=20
-> > > ...
-> > >  =20
-> > > > st_lsm6dsx_sysfs_sampling_frequency_avail(struct device *dev, =20
-> > >  =20
-> > > >  	odr_table =3D &sensor->hw->settings->odr_table[sensor->id];
-> > > >  	for (i =3D 0; i < odr_table->odr_len; i++)
-> > > > -		len +=3D scnprintf(buf + len, PAGE_SIZE - len, "%d.%03d ",
-> > > > -				 odr_table->odr_avl[i].milli_hz / 1000,
-> > > > -				 odr_table->odr_avl[i].milli_hz % 1000);
-> > > > +		len +=3D sysfs_emit_at(buf, len, "%d.%03d ",
-> > > > +				     odr_table->odr_avl[i].milli_hz / 1000,
-> > > > +				     odr_table->odr_avl[i].milli_hz % 1000);
-> > > >  	buf[len - 1] =3D '\n'; =20
-> > >=20
-> > > My gosh, this is error prone. I'm wondering when some CIs will start =
-to
-> > > complain on this line. But this was already before your change...
-> > >  =20
-> > I'm planning to drop It entirely or should I replace it with another `s=
-ysfs_emit_at()` ?
-> > I've seen other device driver returning space terminated buffers. Maybe=
- I'm overlooking
-> > something.
->=20
-> It is rather ugly currently but not a bug as such as we know we don't act=
-ually run
-> out of space in the page (it would just overwrite last byte in that case =
-so odd
-> output, but not a bug) and that we always print something so just as you =
-suggest
-> sysfs_emit_at(buf, len - 1, "\n"); is safe.  It also checks under and ove=
-rflow
-> so that safe + hopefully won't trip up static analysis tools.
->=20
-understood. I'll revise the patch.
+On 2025-07-07 16:36:22 [+0200], To linux-kernel@vger.kernel.org wrote:
+> From: Peter Zijlstra <peterz@infradead.org>
+> 
+> The use of rcuref_t for reference counting introduces a performance bottleneck
+> when accessed concurrently by multiple threads during futex operations.
 
-On a sidenode, I see a lot of repetitive code trying to write to a sysfs bu=
-ffer
-from a static array. for example
+just folded this bit after kernel test robot complained:
 
- drivers/iio/common/st_sensors/st_sensors_core.c:629
- drivers/iio/adc/vf610_adc.c:614
- drivers/iio/accel/adxl372.c:972
-
- ...
-
-What if we export a symbol from industrialio-core.c which does something=20
-similar to
-
- drivers/iio/industrialio-core.c:815
-
- 'iio_format_avail_list(char *buf, const int *vals,
-				     int type, int length)'
-
-
-but rather than taking integer array, it take `void* ptr` and `int stride` =
-as
-parameter. Then iterates from `vals` by `stride` for `count` times and type=
-cast
-the pointer and 'sysfs_emit` it.
-
-static ssize_t iio_format_avail_list(char *buf, void *vals,=20
-			      int stride, int type, int count) {
-
-	// iterate (void*) vals by stride and perform `sysfs_emit`
-=09
-	void* ref =3D vals;
-	for(int i =3D 0; i < count; i++){
-=09
-		ref +=3D stride;
-	=09
-		// typecast and write to buf using sysfs_emit
-		...
-
-	}
-};
-
-
-Thus, drivers can use this as follows.
-
-=2D-- a/drivers/iio/common/st_sensors/st_sensors_core.c
-+++ b/drivers/iio/common/st_sensors/st_sensors_core.c
-@@ -618,20 +618,11 @@ EXPORT_SYMBOL_NS(st_sensors_verify_id, "IIO_ST_SENSOR=
-S");
- ssize_t st_sensors_sysfs_sampling_frequency_avail(struct device *dev,
-                                struct device_attribute *attr, char *buf)
- {
-=2D       int i, len =3D 0;
-        struct iio_dev *indio_dev =3D dev_to_iio_dev(dev);
-        struct st_sensor_data *sdata =3D iio_priv(indio_dev);
-=20
-=2D       for (i =3D 0; i < ST_SENSORS_ODR_LIST_MAX; i++) {
-=2D               if (sdata->sensor_settings->odr.odr_avl[i].hz =3D=3D 0)
-=2D                       break;
-=2D
-=2D               len +=3D scnprintf(buf + len, PAGE_SIZE - len, "%d ",
-=2D                               sdata->sensor_settings->odr.odr_avl[i].hz=
-);
-=2D       }
-=2D       buf[len - 1] =3D '\n';
-=2D
-=2D       return len;
-+       return iio_format_avail_list(buf, &sdata->sensor_settings->odr.odr_=
-avl[0].hz,
-+               sizeof(st_sensor_odr_avl), IIO_VAL_INT, ST_SENSORS_ODR_LIST=
-_MAX);
+diff --git a/include/linux/futex.h b/include/linux/futex.h
+index cd773febd497b..9e9750f049805 100644
+--- a/include/linux/futex.h
++++ b/include/linux/futex.h
+@@ -113,7 +113,7 @@ static inline int futex_hash_allocate_default(void)
+ 	return 0;
  }
+ static inline int futex_hash_free(struct mm_struct *mm) { return 0; }
+-static inline void futex_mm_init(struct mm_struct *mm) { }
++static inline int futex_mm_init(struct mm_struct *mm) { return 0; }
+ 
+ #endif
+ 
 
-The details about the various types to cover is still unclear.=20
-But does this sounds feasible ?=20
-
-> >=20
-> > > >  	return len; =20
-> > >=20
-> > > ...
-> > >  =20
-
-=2E..
-
-> >=20
-> >=20
-> >=20
-> >=20
->=20
-
-Regards,=20
-Akshay Bansod
-
-
-
-
+Sebastian
 
