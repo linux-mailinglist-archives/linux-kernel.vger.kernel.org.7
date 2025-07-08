@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-721921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A69AFCF7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:41:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E14E3AFCF77
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD68F3AEE08
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:40:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D7F656669F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE452E4262;
-	Tue,  8 Jul 2025 15:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670F02E5412;
+	Tue,  8 Jul 2025 15:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o+uU7OHC"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WMw3HmME"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86AB2E3AE8;
-	Tue,  8 Jul 2025 15:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08B82E427A;
+	Tue,  8 Jul 2025 15:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751989193; cv=none; b=ARE7dFUVrpBUfwk6O9iWbkH8ZptYaTx9/eU+Tcmg3tySc1430CpP5hedJnXdBMdhq6JjCJ6B0AYL3JROv9gnOVAw4SCnaTygiRnY9UkRMDJJ7mBg7nTqKn1AzUlpceu5nLBLImwqtoPDDOzi6khcuvwnZLyXLqsQAsw5D9nwHmE=
+	t=1751989194; cv=none; b=n1TuG06FxtsJxPQqKtclqFxNs3Ty17sxKdAAd3tTxIrOr0LmlvApTw4mRxSHUNW64VdKtX9XOhTKNzTcAOKNJIWk6PmMNRPQ+rJONkArtVq7gEeN0sSpZgyc/56wzMPG367NJUnhsuTnD7xu9ngdnlt4wHyQ47JSrWb82TkdK9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751989193; c=relaxed/simple;
-	bh=B6kQ/kvW1FlzsCsJbUEB01K4BH5xVbKRi1mRZvTIHI8=;
+	s=arc-20240116; t=1751989194; c=relaxed/simple;
+	bh=WRj6h+msBgK9uzjAd03SXaKjgx/+5pdPCwswULem154=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Ty3k6x/ToB7NYb94iacyYbh0ErhV6bx2NGwK+nEaHKfnZKR64aDYN1nmiLoezO8pE+aM7sJZmfF0STkUwZj1kOh3QhDpdxWZNxQoyD5JUM7kUmaQjFs3vPlwtYGzL9ICK+JdZ5mPUfOnVX+IeQSSm0RpfKXfLwUAeM+omgS7qoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o+uU7OHC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28D28C4CEF0;
-	Tue,  8 Jul 2025 15:39:53 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=lPFl8bL5CHGbgQqbQrA95yNT7Bsuk93I7LBS9W7Ia6lsKArWw4egZgjAUiuatVQ3r0M8tt6gGoa4d0DBl1bb1VVCbwSYW1EPY6vujF0+/CMOU39BXOk0JGiUa0otfkXnPkiA4b/uUshBSxi5ebrUGsyMx9yS3Is2bJs1sZCwnlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WMw3HmME; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 613ECC4CEED;
+	Tue,  8 Jul 2025 15:39:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751989193;
-	bh=B6kQ/kvW1FlzsCsJbUEB01K4BH5xVbKRi1mRZvTIHI8=;
+	s=k20201202; t=1751989194;
+	bh=WRj6h+msBgK9uzjAd03SXaKjgx/+5pdPCwswULem154=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=o+uU7OHCze/cS8ZQ8WkAB9p1XbiudAafqzX/2WYvlOK0x0THQalc2CBvgC78w7KGE
-	 aUSCJzSthAjBAKnXjrfEse+PupQDlFLyF4/vP0zQrSJECbtNtFS91utiSDWYg7Is28
-	 jyCfpE7i/W3x/uTCgyXbEs95jbLZQMRTGJaLFvFcmVRn7FNbHS92OA0EaJOejzI4s8
-	 WKVr0rcI97HvLvkln1f+2HdF9pIksnhl30BWeJX2LXsb1EG8AMIz3DX24Uh8raVfy8
-	 ue3yp3BWS03KUDj7yWXzh6H8H4vLMcz3x+h5331fwP8J6A/yMjRcVjbqs7yghVEq1E
-	 DUJViXgUgJ2rw==
+	b=WMw3HmMEFGw6ZqFzrcEo1IWTAoZ+NZEqYI/kSnjTzlC9HbzLlVuYX1ITGMhy6Nti4
+	 fSH2xuR+P1u6XsA0L8sQQAfYjKsINVEMA3dKUcHXk1yiu5GoR0K0yZTSy8dNqiZTKI
+	 rVltRyg7r1SKaEKY4Eg5HpyBlXyjk35Y89yFMd9spDuwsnB9hNBucNho++AJ+fGIYb
+	 ojXvb5srRqhijLbxV+Z5zpfytB6yPhmtcKOzhZvbeSoKRHHfv3fdUAqFjCm1nJttC1
+	 L4rTm4RdwOOBPwcKz5squilXnHX7i3Ah2DokJ8tZMyIiiYLRtE12aDkM3Xy4cSkGSv
+	 EYSlKnSM4SZqg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DE3380DBEE;
-	Tue,  8 Jul 2025 15:40:17 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70CAB380DBEE;
+	Tue,  8 Jul 2025 15:40:18 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,37 +51,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] net/mlx5: Fix spelling mistake "disabliing" ->
- "disabling"
+Subject: Re: [PATCH v2] gve: global: fix "for a while" typo
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175198921600.4109948.12043108298445131464.git-patchwork-notify@kernel.org>
-Date: Tue, 08 Jul 2025 15:40:16 +0000
-References: <20250703102219.1248399-1-colin.i.king@gmail.com>
-In-Reply-To: <20250703102219.1248399-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, cratiu@nvidia.com, cjubran@nvidia.com,
- netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+ <175198921725.4109948.304921090988490119.git-patchwork-notify@kernel.org>
+Date: Tue, 08 Jul 2025 15:40:17 +0000
+References: 
+ <5zsbhtyox3cvbntuvhigsn42uooescbvdhrat6s3d6rczznzg5@tarta.nabijaczleweli.xyz>
+In-Reply-To: 
+ <5zsbhtyox3cvbntuvhigsn42uooescbvdhrat6s3d6rczznzg5@tarta.nabijaczleweli.xyz>
+To: =?utf-8?q?Ahelenia_Ziemia=C5=84ska_=3Cnabijaczleweli=40nabijaczleweli=2Exyz?=@codeaurora.org,
+	=?utf-8?q?=3E?=@codeaurora.org
+Cc: jeroendb@google.com, hramamurthy@google.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu,  3 Jul 2025 11:22:19 +0100 you wrote:
-> There is a spelling mistake in a NL_SET_ERR_MSG_MOD message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Thu, 3 Jul 2025 20:21:20 +0200 you wrote:
+> Signed-off-by: Ahelenia Ziemiańska <nabijaczleweli@nabijaczleweli.xyz>
 > ---
->  drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c | 2 +-
+> v1: https://lore.kernel.org/lkml/h2ieddqja5jfrnuh3mvlxt6njrvp352t5rfzp2cvnrufop6tch@tarta.nabijaczleweli.xyz/t/#u
+> 
+>  drivers/net/ethernet/google/gve/gve_rx_dqo.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Here is the summary with links:
-  - [next] net/mlx5: Fix spelling mistake "disabliing" -> "disabling"
-    https://git.kernel.org/netdev/net-next/c/0e86f3eb83c0
+  - [v2] gve: global: fix "for a while" typo
+    https://git.kernel.org/netdev/net-next/c/f142028e30ca
 
 You are awesome, thank you!
 -- 
