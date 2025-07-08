@@ -1,165 +1,206 @@
-Return-Path: <linux-kernel+bounces-721525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F4053AFCA65
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:28:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A21B4AFCA6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:29:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EF954833DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:27:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA73C565CE1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5872DBF43;
-	Tue,  8 Jul 2025 12:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BBy4rv0o"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5432DBF46;
+	Tue,  8 Jul 2025 12:28:40 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDDE220F4C
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 12:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E31B35959
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 12:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751977684; cv=none; b=vBInLQv0eeUvirV2+FSNjHLwXrqafin32rKcuEAU7QzMkFliOM4Hhk5TJin0XlwP63etIyavRosXluQn191Zj381/fbrEIXEjkWioc9xrB4Dy/oUZmBISCcrjfJ5z/j2sxKNGtWrvpU0warRjQZGaGiognAnogMOxup9NLPfatA=
+	t=1751977720; cv=none; b=tpN3u4VmLoF8aFsBlhQNGKjiijr26Jqtem05uCxXd2I6wli04+F2j6RtdGJSEIb1WUFhAYjlVbmSISiltBHUD5CVqPb1s8EyUqVpA+O7FnA2bEqQGppnXkNtJdxoUWQIHlQbefXbqX341EM8YKB2m1GwbYrgn5PGUpCT7cTNFLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751977684; c=relaxed/simple;
-	bh=v7wN7F5f7ddJ4DjtsXda1E0+fcbYY1SkIquo+5cA75g=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HtHwW8rVXQq5hugYKM4K8EcqlW5zuBDb0a8sbofcZcByk4r0DHIvRAQo/f9mjG20FHKaXtRfAJBrXC9AHlbLteQKWFXJhv4nQlavjt0mj1Wo0XtXYeo2tSgm5ijThc4F0Dv07i0XFzJibfeyalMJfp8xa+/PoeQdYLXKYD7lHRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BBy4rv0o; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-32f1df58f21so28035581fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 05:28:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751977681; x=1752582481; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0DPfjyuVlXXsi5ftQdkUNQRfIJjJbSSTbPWyxHVJT3s=;
-        b=BBy4rv0ollx2MRi1ED7jCJtK7DwNS8GzzF+2rdQFuB6mKLwsAaTy5l0PLse/NF9W2m
-         2vUiG1edVN1bvBYnARZ5pxAaqpORI71PA8enYYq0RVkrYx+2xQjglIob0jiEcVRFnfVw
-         INfoZiTyPrfYejFdDKwopTPr9eXkIRvzCoRyuercYWPQutHU/NxB14WWKh/iAOnSjJRV
-         Ih7LBJobjEksgfwlJAPfFOOL0iqeRwtmB5PT7/L3FVcI5seVXSp8LLMcLi+KhVrk5sNv
-         w3GrsKy0uiuDv93ChIK5VrcbwG8kZ6serzB+HAd7xssLhwAdgM4DUeff9M73S2qlC2Ww
-         6u3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751977681; x=1752582481;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0DPfjyuVlXXsi5ftQdkUNQRfIJjJbSSTbPWyxHVJT3s=;
-        b=m4e8QJtd+zgEbAVEPDM/d3chfxTf4xQlPf1pLhWUlGu5KjH8Pi27V2yYMejy0O+Gfe
-         SBhLxhNcJm0iD9Nd9mg5R25iAxjWUulY8kgJmDG9XKQtczfJWkuVHvvqdMZMs8DI6vBB
-         pzOVk8KFFhQYtvjmnPRngip0ofmcwO/kYMK2z39vQQuvbs1rfHSUYELnls4tiDZQFn/Y
-         e2+dt0LTBxVMZxkBsDjXqoeb8kz3nnLeRZwYCEnkExxHnFI0ND8Cv+s1ntkdt/zU/70U
-         K4yGPb3B6WMYyWfwfjUgGzHoyomF9kJM8w8e+avHsNSVA2udL0LOxJMnEomN2TMIbAAt
-         CMUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDEgnUI8OllDGZZTFdioZ86/sTzBR+svO1Q17r+7CgIi7s+ebDbbsDdzQeNLb89FYrBl/KHieIEt3Ly2E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/JP9qbxE7BX1Vyq4u1N3lTPrOf+Wxddgkx8SlfDJbiUe6OcXA
-	JJdcg70r02uBuzmNYaShZRHe580f2C+ojTtSn8Hv0yYGTIFGfN6pjoAr
-X-Gm-Gg: ASbGncsld5Hgp0OErTznjcWT2pTXwealFz2IbiscLHmBi5hfnikLtcEP0g81uAsX9s6
-	Dg2g5vZ/+kGJVPAwtv7D9gY4C8R2yIwlcovRMKsonj+7xjFMmzkXL4x0ant4kwarZuKekmrEX/+
-	gNoU6+rRvr3+NOfDeciEKdsbhXXGcjNmSsVfsh/xPiOmqkVbrrCqdC50oJv+3fSNYp6X7RNJfKT
-	d4uLnkkhpk3w2ziYB3lXQ8JQseMqT086ev+ecmy+w9NTDy00EOQ8YWuV/uq7HfsNDzwJDBfMgNr
-	0c6xs0r2ezT6qpdaP6tVdmQlDmDLnQJ2f3vGc+hASjqRKoymishBMEVrn8Y19ZhVosuubRhTGhr
-	KCktTzJpETC0=
-X-Google-Smtp-Source: AGHT+IGpc6z8fSUIrwMfew6wZtyxhbGdxLVk9CwZmf1Ma6HTtQ5CZu+hNcg6avruLSsKeeTuxQBKWA==
-X-Received: by 2002:a05:651c:10a1:b0:32b:387b:de0e with SMTP id 38308e7fff4ca-32e5f568d0fmr42522861fa.7.1751977680464;
-        Tue, 08 Jul 2025 05:28:00 -0700 (PDT)
-Received: from pc636 (host-95-203-1-180.mobileonline.telia.com. [95.203.1.180])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32e1b1216d0sm16097591fa.71.2025.07.08.05.27.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 05:27:59 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Tue, 8 Jul 2025 14:27:57 +0200
-To: Michal Hocko <mhocko@suse.com>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	LKML <linux-kernel@vger.kernel.org>, Baoquan He <bhe@redhat.com>
-Subject: Re: [RFC 6/7] mm/vmalloc: Support non-blocking GFP flags in
- __vmalloc_area_node()
-Message-ID: <aG0Ozc3Mro95djxn@pc636>
-References: <20250704152537.55724-1-urezki@gmail.com>
- <20250704152537.55724-7-urezki@gmail.com>
- <aGtzgOXdhAAOTBhs@tiehlicka>
+	s=arc-20240116; t=1751977720; c=relaxed/simple;
+	bh=0Dc6ME77VxrFnFyh/p5NyclSqi8pbwa9KKYdFyg20ns=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZIWtgTUxGnbIhBfB/P5wCJ0JvU0DgoCwW1m1NL2IGjmix09dlEVUM87vDnoXjoXXjIN5VAFLc5rIImejZQzlyVCsvsINZ81IhX/GwYMyaMhbjLpC91roLm56rYuV4lxuQXK4q9WGD56rtLZiTzvpBSAws0lrGy+n7OY+3CGLAig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uZ7Qx-0000qx-8L; Tue, 08 Jul 2025 14:28:27 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uZ7Qv-007Pe5-3C;
+	Tue, 08 Jul 2025 14:28:26 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uZ7Qv-00ADaj-2v;
+	Tue, 08 Jul 2025 14:28:25 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: [PATCH net-next v1 1/1] net: selftests: add PHY-loopback test for bad TCP checksums
+Date: Tue,  8 Jul 2025 14:28:23 +0200
+Message-Id: <20250708122823.2435505-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aGtzgOXdhAAOTBhs@tiehlicka>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, Jul 07, 2025 at 09:13:04AM +0200, Michal Hocko wrote:
-> On Fri 04-07-25 17:25:36, Uladzislau Rezki wrote:
-> > This patch makes __vmalloc_area_node() to correctly handle non-blocking
-> > allocation requests, such as GFP_ATOMIC and GFP_NOWAIT. Main changes:
-> > 
-> > - nested_gfp flag follows the same non-blocking constraints
-> >   as the primary gfp_mask, ensuring consistency and avoiding
-> >   sleeping allocations in atomic contexts.
-> > 
-> > - if blocking is not allowed, __GFP_NOFAIL is forcibly cleared
-> >   and warning is issued if it was set, since __GFP_NOFAIL is
-> >   incompatible with non-blocking contexts;
-> > 
-> > - Add a __GFP_HIGHMEM to gfp_mask only for blocking requests
-> >   if there are no DMA constraints.
-> > 
-> > - in non-blocking mode we use memalloc_noreclaim_save/restore()
-> >   to prevent reclaim related operations that may sleep while
-> >   setting up page tables or mapping pages.
-> > 
-> > This is particularly important for page table allocations that
-> > internally use GFP_PGTABLE_KERNEL, which may sleep unless such
-> > scope restrictions are applied. For example:
-> > 
-> > <snip>
-> >     #define GFP_PGTABLE_KERNEL (GFP_KERNEL | __GFP_ZERO)
-> > 
-> >     __pte_alloc_kernel()
-> >         pte_alloc_one_kernel(&init_mm);
-> >             pagetable_alloc_noprof(GFP_PGTABLE_KERNEL & ~__GFP_HIGHMEM, 0);
-> > <snip>
-> 
-> The changelog doesn't explain the actual implementation and that is
-> really crucial here. You rely on memalloc_noreclaim_save (i.e.
-> PF_MEMALLOC) to never trigger memory reclaim but you are not explaining
-> how do you prevent from the biggest caveat of this interface. Let me
-> quote the documentation
->  * Users of this scope have to be extremely careful to not deplete the reserves
->  * completely and implement a throttling mechanism which controls the
->  * consumption of the reserve based on the amount of freed memory. Usage of a
->  * pre-allocated pool (e.g. mempool) should be always considered before using
->  * this scope.
-> 
-I am aware about that comment. I had same concern about this, but it
-looks like i/you may overshot here. Yes, we have access to memory
-resrves but this only for page-table manipulations, i.e. to allocate
-a page for 5-level page table structure. We have PGD, P4D, PUD, PMD
-and PTE which is the lowest level and which needs pages the most.
+Detect NICs and drivers that either drop frames with a corrupted TCP
+checksum or, worse, pass them up as valid.  The test flips one bit in
+the checksum, transmits the packet in internal loopback, and fails when
+the driver reports CHECKSUM_UNNECESSARY.
 
-As i see we do not free pages at least on PTE level, it means that
-an address space is populated forward only and never shrink back.
-Most of the time you do not need to allocate, this mostly occurs
-initially after the boot.
+Discussed at:
+https://lore.kernel.org/all/20250625132117.1b3264e8@kernel.org/
 
->
-> Unless I am missing something _any_ vmalloc(GFP_NOWAIT|GFP_ATOMIC) user
-> would get practically unbound access to the whole available memory. This
-> is not really acceptable.
-> 
-See above comment. If there is a big concern about this, i can add
-memalloc_noblock_save() memalloc_noblock_restore() pair to eliminate
-that concern. The context will be converted in a way that it drops
-__GFP_DIRECT_RECLAIM flag.
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ net/core/selftests.c | 68 +++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 61 insertions(+), 7 deletions(-)
 
-Thank you for your comments and input i appreciate it.
+diff --git a/net/core/selftests.c b/net/core/selftests.c
+index 406faf8e5f3f..64be51f45fc0 100644
+--- a/net/core/selftests.c
++++ b/net/core/selftests.c
+@@ -27,6 +27,7 @@ struct net_packet_attrs {
+ 	int max_size;
+ 	u8 id;
+ 	u16 queue_mapping;
++	bool bad_csum;
+ };
+ 
+ struct net_test_priv {
+@@ -157,15 +158,46 @@ static struct sk_buff *net_test_get_skb(struct net_device *ndev,
+ 		memset(pad, 0, pad_len);
+ 	}
+ 
+-	skb->csum = 0;
+-	skb->ip_summed = CHECKSUM_PARTIAL;
+ 	if (attr->tcp) {
+ 		int l4len = skb->len - skb_transport_offset(skb);
+ 
+-		thdr->check = ~tcp_v4_check(l4len, ihdr->saddr, ihdr->daddr, 0);
+-		skb->csum_start = skb_transport_header(skb) - skb->head;
+-		skb->csum_offset = offsetof(struct tcphdr, check);
++		if (attr->bad_csum) {
++			__sum16 good_csum;
++			u16 bad_csum;
++
++			skb->ip_summed = CHECKSUM_NONE;
++			thdr->check = 0;
++			skb->csum = skb_checksum(skb, skb_transport_offset(skb),
++						 l4len, 0);
++			good_csum = csum_tcpudp_magic(ihdr->saddr, ihdr->daddr,
++						      l4len, IPPROTO_TCP,
++						      skb->csum);
++
++			/* Flip the least-significant bit.  This is fast,
++			 * deterministic, and cannot accidentally turn the
++			 * checksum back into a value the stack treats as valid
++			 * (0 or 0xFFFF).
++			 */
++			bad_csum = (__force u16)good_csum ^ 0x0001;
++			if (bad_csum == 0 || bad_csum == 0xFFFF) {
++				/* If the checksum is 0 or 0xFFFF, flip another
++				 * bit to ensure it is not valid.
++				 */
++				bad_csum ^= 0x0002;
++			}
++
++			thdr->check = (__force __sum16)bad_csum;
++		} else {
++			skb->csum = 0;
++			skb->ip_summed = CHECKSUM_PARTIAL;
++			thdr->check = ~tcp_v4_check(l4len, ihdr->saddr,
++						    ihdr->daddr, 0);
++			skb->csum_start = skb_transport_header(skb) - skb->head;
++			skb->csum_offset = offsetof(struct tcphdr, check);
++		}
+ 	} else {
++		skb->csum = 0;
++		skb->ip_summed = CHECKSUM_PARTIAL;
+ 		udp4_hwcsum(skb, ihdr->saddr, ihdr->daddr);
+ 	}
+ 
+@@ -239,7 +271,11 @@ static int net_test_loopback_validate(struct sk_buff *skb,
+ 	if (tpriv->packet->id != shdr->id)
+ 		goto out;
+ 
+-	tpriv->ok = true;
++	if (tpriv->packet->bad_csum && skb->ip_summed == CHECKSUM_UNNECESSARY)
++		tpriv->ok = -EIO;
++	else
++		tpriv->ok = true;
++
+ 	complete(&tpriv->comp);
+ out:
+ 	kfree_skb(skb);
+@@ -285,7 +321,12 @@ static int __net_test_loopback(struct net_device *ndev,
+ 		attr->timeout = NET_LB_TIMEOUT;
+ 
+ 	wait_for_completion_timeout(&tpriv->comp, attr->timeout);
+-	ret = tpriv->ok ? 0 : -ETIMEDOUT;
++	if (tpriv->ok < 0)
++		ret = tpriv->ok;
++	else if (!tpriv->ok)
++		ret = -ETIMEDOUT;
++	else
++		ret = 0;
+ 
+ cleanup:
+ 	dev_remove_pack(&tpriv->pt);
+@@ -345,6 +386,16 @@ static int net_test_phy_loopback_tcp(struct net_device *ndev)
+ 	return __net_test_loopback(ndev, &attr);
+ }
+ 
++static int net_test_phy_loopback_tcp_bad_csum(struct net_device *ndev)
++{
++	struct net_packet_attrs attr = { };
++
++	attr.dst = ndev->dev_addr;
++	attr.tcp = true;
++	attr.bad_csum = true;
++	return __net_test_loopback(ndev, &attr);
++}
++
+ static const struct net_test {
+ 	char name[ETH_GSTRING_LEN];
+ 	int (*fn)(struct net_device *ndev);
+@@ -368,6 +419,9 @@ static const struct net_test {
+ 	}, {
+ 		.name = "PHY internal loopback, TCP    ",
+ 		.fn = net_test_phy_loopback_tcp,
++	}, {
++		.name = "PHY loopback, bad TCP csum    ",
++		.fn = net_test_phy_loopback_tcp_bad_csum,
+ 	}, {
+ 		/* This test should be done after all PHY loopback test */
+ 		.name = "PHY internal loopback, disable",
+-- 
+2.39.5
 
---
-Uladzislau Rezki
 
