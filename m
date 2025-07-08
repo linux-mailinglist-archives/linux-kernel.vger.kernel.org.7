@@ -1,162 +1,85 @@
-Return-Path: <linux-kernel+bounces-721481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37662AFC9CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:44:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54849AFC9CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AD9F3B30F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:44:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 345CE1BC0AD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187762D9ED2;
-	Tue,  8 Jul 2025 11:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992752D9EF4;
+	Tue,  8 Jul 2025 11:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QTW/vkwS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="LE+38SLD"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905682550D2
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 11:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A728779DA;
+	Tue,  8 Jul 2025 11:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751975072; cv=none; b=lP6hNBwU6+4Sr29drJDoXTT1fKIkBTe1usIBpgkhuTQP6sFrQyzox+U9XcvT34awQphMlmqA8mcWkZt9Z1uekmTc0fZdSbRM94f+e4ZdGW+cnDqs67kSv0Mf70ZKQHaES9+E+n36Ic0nyDv8H4iOHPmbB62IcIDPpicsDwn4Lq4=
+	t=1751975108; cv=none; b=JywU/1WoKHZrjRxzdjsv1LO8fKpHdMehZkSjwXQiLRq5/TyHm1D8NRViMLozjzlMGH5z27gkTInB8hr1eMd06TW6rUBaK/PrJyeR7Yjul84k7/cFPv8xsC1KHX2IbIgNAZEQgml5JoHadefvBxRRFH6nVnBEfEJm97Io6T81U/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751975072; c=relaxed/simple;
-	bh=pL9rmfJsKvRYfQyNEOmEdzvoqUDgB7LsXNxd2rgrLfs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZGoOYW40BpGbUr4zy7NB3h40U+6SxlByTCbHKZeVzRCrMB2gOjRHbx/NlOXoSMLA8A3VH23nkCK8ugm5D/myQPK3qfRXeG07mEh23lHTiVmOMHu+PuFJw1jyB2MafmCGdfgdKo+2N8rjxCx+dUlLmSZWYygktxY/95qv6kmemg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QTW/vkwS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751975069;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fuuxA3sNaMM/TdNAzR4QDI0SymmoEq6hpQp3Rqw/59Q=;
-	b=QTW/vkwSbE+nuNtCbjsccNG41DFzOJ7SiwDIK3TUQvbkFChhSfetHr5S2L7YrxT5hzeBMp
-	m/+shooBSIh7kI+OwfVNhcxgeSUkbh/1RQ+Y4y7WstAbthT3IctwPCipS+I1SAbQ1ZkcJB
-	bUOOuqiAkRlC5DhHmzFwd4CrjbqQhGw=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-42-GQZNVHBuMCaNKj61Hi9JMw-1; Tue, 08 Jul 2025 07:44:28 -0400
-X-MC-Unique: GQZNVHBuMCaNKj61Hi9JMw-1
-X-Mimecast-MFC-AGG-ID: GQZNVHBuMCaNKj61Hi9JMw_1751975067
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b4a0013c0dso972635f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 04:44:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751975067; x=1752579867;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fuuxA3sNaMM/TdNAzR4QDI0SymmoEq6hpQp3Rqw/59Q=;
-        b=I1d1K0SyMfW0T/A8A9hdYznLsZuqg0XcKBYwjst0fEN7hTCchRSe4iYXFQWdn995IB
-         4YupM2cz1z4nBXQVmhOUsFpaV+svZF75MsGCZq/FXF0NUsjdN3Jh1GPNVZnndZLQ0znu
-         lo0f/wrmc6uxalUI1tf3GSon2hMnRabYrlXJvH8da+fTgtRGaVS7AIo15zo5G4kQXlVJ
-         B7HpzjfXhu76Qoeerpw3HefSN2d2NIF2aKt4juHMqVmNJJbLvN7OFtIW5Ytv1cHIi5PE
-         2m0YkupeaJkSvH9tVRFK9cpA/NA/2dD6jwatyRoISjr0jvaacwY5yFLNgEuU13bVlbQA
-         z7UA==
-X-Forwarded-Encrypted: i=1; AJvYcCUB4ovc5b1lf0varsx1JXk5vDPhvjOTe9GuKb/YNlprbxbthaJ2CgjpsVxrDWNmH7iLwrmA/V1oiFbZsJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHzSMMameZVDglIDMtSsDzUSKyc7Wy33DNKFLtG7wVL5Ly5UHA
-	FqSProK8uOyasY3d+xtXO1pda66XqFMqi8WJnJq7SgAY5vZUzgXculigjsN4i1aA/CoGD/kYwJc
-	jsvt3/leqIQiSGBz2zuwnTANN1XabuaW6/2kI49BXiL/2CvXd1rP81/VjPIq3N5C87A==
-X-Gm-Gg: ASbGnctaHnQ3d1tY03l3V5QCHZG+0pwEYKypwCRI1LhDFWld2dG+o0MpK6Ipx6dXzq9
-	o3o37repvDXtOkcTX6rlaRNvzaZ11715CHCejVajamPuIeJ98C3K9XZXCxpbRvQIdSDP8VM25g8
-	A0CQtNRAYE6F/rbWvYaHeda0POwEc2lUs90b6ljimIWqusqgwNvBZ/LD353cqubsZ+fX13Slp6h
-	Zb2qyN2R7SvET2UoKKpISTgkBNQOjUz0Dm5lsz/u6xilb55SqxiZN4FXTo2mKg1nZvPlc8V2Kz4
-	YzE/1HBTQnimP8eJ2AgdK71R8kqjvamX6Zr1+BKKUh6/u3buIaOE+pyPrBzhgatCteu365i44KN
-	p44OCYF4=
-X-Received: by 2002:a05:6000:3104:b0:3a5:3b93:be4b with SMTP id ffacd0b85a97d-3b4964c61d8mr12926271f8f.25.1751975066870;
-        Tue, 08 Jul 2025 04:44:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEiLo1zx5OxYNQKDz3UvJne72gLe4O73JBmF0OpEUs2KEiCASOUEfHCjYsExNWGMd9YCQY4cA==
-X-Received: by 2002:a05:6000:3104:b0:3a5:3b93:be4b with SMTP id ffacd0b85a97d-3b4964c61d8mr12926254f8f.25.1751975066374;
-        Tue, 08 Jul 2025 04:44:26 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454cd4943bdsm20055205e9.20.2025.07.08.04.44.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 04:44:25 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>, Ingo Molnar
- <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
- <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
- Leon
- Romanovsky <leon@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Steve Wahl <steve.wahl@hpe.com>, Borislav Petkov <bp@alien8.de>, Dietmar
- Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>,
- Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, K Prateek
- Nayak <kprateek.nayak@amd.com>
-Subject: Re: [PATCH v3] sched/fair: Use sched_domain_span() for
- topology_span_sane()
-In-Reply-To: <20250707105302.11029-1-kprateek.nayak@amd.com>
-References: <20250707105302.11029-1-kprateek.nayak@amd.com>
-Date: Tue, 08 Jul 2025 13:44:24 +0200
-Message-ID: <xhsmhldoyq547.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1751975108; c=relaxed/simple;
+	bh=OUWXUObAAT6qENhLF7SHRJS/utQKQSNP4cfbJShIvow=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WOlvCl43k9SJ65qQGWPvoY7Fju0EOvhGlXRd11O/jFw4cwaiOtXMKD1+xNpRTVDrNkXN4fwz+0zhBDsb/YWzsjGkOm+c9Y4hCeleYWTBqOM2766P+M/r8P7iBl2aN4M9MpdxX8XL64tN9oYLsjlYAPZLdmRVSRU7lT3lCnht0w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=LE+38SLD; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=OUWXUObAAT6qENhLF7SHRJS/utQKQSNP4cfbJShIvow=;
+	t=1751975106; x=1753184706; b=LE+38SLDThNgoSMq+G4aUaStvlaHHJzOMAmfmqcdlY9Og3+
+	zYPH4nV2YklKyv730kdWWgmwsWWO63jIBnxoEkimnebv7t3RrMc4MgunzXy6fRCtE3gGvITy2FILY
+	hzpo02ZyHZIDaYAL9TQarTa7Tb4OCwkE+k1qmWArsZAQatCQT4zHz/FK9UsH6TSiUJcHp1r3Yyu5a
+	7maai0gAamxsC1wEwkrYqmhrMAGSvztVw1EoUw2nGTBRA15HSt7AvGjw8gZ+2FY2qFboy2DYwvW4E
+	8KNgDlfIJPRFLcHIVSRLjAFknejtrDNUaBXTj26NdMgcRMLuJRB6BmJtB+T3AkGg==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uZ6kx-0000000Br7X-0iK0;
+	Tue, 08 Jul 2025 13:45:03 +0200
+Message-ID: <b71db1e03da50e161b898a763bd01f6a1c8ce3e2.camel@sipsolutions.net>
+Subject: Re: [PATCH v3] wifi: wilc1000: Add error handling for
+ wilc_sdio_cmd52()
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Wentao Liang <vulab@iscas.ac.cn>, ajay.kathat@microchip.com, 
+	claudiu.beznea@tuxon.dev, kvalo@kernel.org
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Date: Tue, 08 Jul 2025 13:45:02 +0200
+In-Reply-To: <20250519084211.1752-1-vulab@iscas.ac.cn>
+References: <20250519084211.1752-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-malware-bazaar: not-scanned
 
-On 07/07/25 10:53, K Prateek Nayak wrote:
-> Changelog v2..v3:
->
-> o Added a check to skip uninitialized sd that can cause dereference of
->   sdd->sd beyond the percpu boundary (reported by Boris).
->
->   Tested on the trivial case using the QEMU cmdline:
->
->     sudo qemu-system-x86_64 -enable-kvm -cpu host -m 20G \
->     -smp cpus=10,socket=1,thread=10 -machine q35 \
->     -object memory-backend-ram,size=20G,id=m0 \
->     -numa node,cpus=0-9,memdev=m0,nodeid=0 \
->     ...
->
+On Mon, 2025-05-19 at 16:42 +0800, Wentao Liang wrote:
+> The wilc_sdio_read_size() calls wilc_sdio_cmd52() but does not check the
+> return value. This could lead to execution with potentially invalid data
+> if wilc_sdio_cmd52() fails. A proper implementation can be found in
+> wilc_sdio_read_reg().
+>=20
+> Add error handling for wilc_sdio_cmd52(). If wilc_sdio_cmd52() fails,
+> log an error message via dev_err().
 
-Urgh, of course directly using @sdd is not like walking up the sd hierarchy
-where we end up getting a NULL sentinel... Sorry for suggesting that and
-not thinking about that "small" detail, and thanks for being on top of it.
+That's clearly hno longer true, please submit consistent patches.
 
-> ---
->  kernel/sched/topology.c | 25 +++++++++++++++++++------
->  1 file changed, 19 insertions(+), 6 deletions(-)
->
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index b958fe48e020..e682bf991ce6 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -2403,6 +2403,7 @@ static bool topology_span_sane(const struct cpumask *cpu_map)
->       id_seen = sched_domains_tmpmask2;
->
->       for_each_sd_topology(tl) {
-> +		struct sd_data *sdd = &tl->data;
->
->               /* NUMA levels are allowed to overlap */
->               if (tl->flags & SDTL_OVERLAP)
-> @@ -2418,22 +2419,34 @@ static bool topology_span_sane(const struct cpumask *cpu_map)
->                * breaks the linking done for an earlier span.
->                */
->               for_each_cpu(cpu, cpu_map) {
-> -			const struct cpumask *tl_cpu_mask = tl->mask(cpu);
-> +			struct sched_domain *sd = *per_cpu_ptr(sdd->sd, cpu);
-> +			struct cpumask *sd_span = sched_domain_span(sd);
->                       int id;
->
-> +			/*
-> +			 * If a child level for a CPU has already covered
-> +			 * the entire cpumap, build_sched_domain() for the
-> +			 * domains above is skipped. Use sd->private to detect
-> +			 * levels that have not been initialized in the CPU's
-> +			 * hierarchy and skip them.
-> +			 */
-> +			if (!sd->private)
-> +				continue;
-> +
+Also, this change (at best!) addresses half the problem, please fix it
+fully if you want to bother us with it at all.
 
-So this works, but how about using a cpumask_empty(sd_span) check instead?
-It's IMO a bit more future proof than relying on how sd->private is used.
-
+johannes
 
