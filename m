@@ -1,129 +1,170 @@
-Return-Path: <linux-kernel+bounces-721294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE615AFC738
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:40:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC65AFC735
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6EEF560558
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5EF91BC334E
 	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C00263C91;
-	Tue,  8 Jul 2025 09:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0FE262FF9;
+	Tue,  8 Jul 2025 09:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="hV4XSOhk"
-Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Xecoq2Er"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED491EE03D;
-	Tue,  8 Jul 2025 09:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0622236FC
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 09:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751967601; cv=none; b=cHrevwzKkEQx2/kXTwZ3/83PD5EGhp64yyLUo0w6nsNDzVMLo8U/jwmpj0ZehGC+0kKWRmXwRD8XDV5r7Gma0AoWFdnp3nD3fYu/0NRNJO/oOtFO7mzgNukNHiMkKN/wsYGX+T9YR+0GtIsmgUe7OFarIb78XgLTrVum2kQfWgU=
+	t=1751967586; cv=none; b=WdpA6ZZaAzf4pcEYzZaeLaNsmghWkOigwayh1jbvLWj/e99ycOdIlLrofxwAOtxiTr263lmHZwY6KX1sYSOQIfX2CDt1cql4FA7EypD9x/s7V0xeZHmM7DQqiiGuX/o9vSz/0IDWg8b2Q5ExaAbL9cVAibi/7K1R3yVGa0d5qaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751967601; c=relaxed/simple;
-	bh=u7PNFRRuvaAuZJ0NtolVdmZY+LpdxtuLVkks7HD2h0k=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=M4UhkP3/yHQCYXECxCeHRzTN5GLb0OEj/BYbqi+yR536YgBuLwd6PK3ZaBKYOKZyEG7gzKdSqmQuMhlc+rLajczhW7+cJoUdBvI0tWdpcZ9JXHNUn9zJvZzOc1eVryA4pczpm2NPJax64f55TbYZkM+HzMUscxD27YaA36RFsMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=hV4XSOhk; arc=none smtp.client-ip=203.205.221.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1751967591;
-	bh=80RfFNsolAspBs0pCfqwxJdnYiu//WE8+0E2G617K/I=;
-	h=From:To:Cc:Subject:Date;
-	b=hV4XSOhkH9uYYRCC4tOU+U/Y7phtWqiGlW5lBNvHg1hOTrzOeEN2HH80IjIk2IR7t
-	 OVE7r9cUKz/jNcm6cqFDWhzdsmVZ4zErhqbZu8HL7QaefPa23QZYtBELU8D6IrHzkn
-	 g0pseIiUdjLCX+ZDzrcZXaHkYJwig1p77+XFEaMs=
-Received: from dcitdc.dci.com ([61.220.30.51])
-	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
-	id 9F21FEAB; Tue, 08 Jul 2025 17:39:50 +0800
-X-QQ-mid: xmsmtpt1751967590txjr0nf9x
-Message-ID: <tencent_3A33B864BD5DC73CBBE10CB481E4C546E107@qq.com>
-X-QQ-XMAILINFO: MfXGqYrvPcUt3f//s55822JJOeXXUQkju/CQDVxpskk/1IwoAX0cTVjS8uOlGC
-	 bYgz/LOxJxSo4Y4Welot8fhXzvOT6jr7yKsrj/0JypFLpTmCvFtW9kqjlCkaEZH6rBSD/niXOOn1
-	 KPes1H9D382soorggQ07nGXuZJ65m9ih5aAOHoSnB0K8DqMVHhrMldt5m1oTRFJdPqF0DewDZSMO
-	 3Hfizprq8btxi31zeoGv1dVmo+kp+ek1R5SUDWUwxJVBo27Pjihrcq4EHUyKa+C+nH9WqeT+IeUf
-	 Hy44FZNduGClGX9gKlRzeI98L8Yw3wH1nj7Oxds9UIsb5mwMUF/tYuBt5WTSeZ5pIroyVn/dgPMK
-	 UKvCS9T0V/78hgYDTrgTwogAX4kQvRi4dg6j22mdwMECdic74yINl8YJ5VqwQ7W7HarcVOY3Xg2t
-	 SRJMoyvX1+5gS+WeMg09qZ/B4d93YqJDzKq7RL16K/moDBr4MhFpaiXPtM4do55LpTTYS3m6lKiO
-	 4E/UPA6OO92+NCX4LFo8bdlITJ1/U6wzrhU7SEyNFrNCNWu3ykwjTT/BltLZxZohCIVbOR7VlJsT
-	 dw4+XCNceFUJxbyiTU3Ic3s6n4n1W7E+btnAFg4Bh0QoRk06pyAd1A8X3Dhlmf45PpYfIFrrysRU
-	 c8zDbRyc6vrxMbXrF0dSfWvpzaZ77AXJcs2ELxrSyyxCRPAe2LCWweg9ZuOBdAx0O0iWnR2zX4O7
-	 /6wJGaSm/YfbtftzVzJiS9QupbDC40WA77+vpA9SRnfD0V/5w7J2QTBdyjHa9DSnmYJhaTBlk4lP
-	 OeyN8bBtm9lJK8sJx9/fQABBY9OpbuQsqontcTq08sgFyuNZFWPCIDPCecca4iOHBxZEcb5xixfj
-	 idFVVAY6h/7g38PlbXHHi0xSCLt4/JmKmR8g/6iOBJM7KthozAFw/zHQE30mu7Af+lpBZkPZfBE1
-	 aOhZp9veF5t2piIyFx3u1V4RnVV8jRcwRa+jfhOBvWO9y+iPumleEJ8UStyecbaqYlQ0XDGUWSud
-	 ecCIdARg==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: shangsong <shangsong2@foxmail.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>
-Cc: Len Brown <lenb@kernel.org>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Shang song <shangsong2@lenovo.com>
-Subject: [PATCH 1/1] ACPI: PRM: Update address check for NULL handler
-Date: Tue,  8 Jul 2025 05:39:21 -0400
-X-OQ-MSGID: <20250708093921.2630431-1-shangsong2@foxmail.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1751967586; c=relaxed/simple;
+	bh=w0YOPULSSxvyU5kdaBpMpPOCESPVNkbbxq18LHihViE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HJLGSpWS4FXsa2LhEiVPxQZ2ZooCFCyNxotWWZcinIs+pYKmcwquu2rkGpMHsYKCK5s00+V50kyc+sgx+oInWUVnsBIQcMK6pigD7mZt6vicY+Q3yQosHaMnM+4qSMQgfD/nSP6dO/0VFGIHvxWrwrthMki4GCZsY4hrKIWfaE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Xecoq2Er; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a6cdc27438so3407465f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 02:39:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1751967582; x=1752572382; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qVAMgZjiytlKTltSVRaWqREvVS7taIwAdxD4AMeAYLU=;
+        b=Xecoq2ErBjmAYAGXuu+q/W1cz/PJD2QVwP090PJI1V2MJ+3aoM78ovIruXcmVMmhTx
+         IXq5nahKH5S/qMlutsXt1hkuhfdoNiuXypDVlJ803whyQ6SrGqDDWVzkRe+9rsUbpakp
+         8n6q3lhePAuk/88CBsgFEOFKLzWwQqMo0ioiY7beYlb1PCfE8t6S2k3kGuGR6st7xo4+
+         vBaB91xI/lXWRDTutiomCLwhzdk0Y7/PCKDG3MwzWMikksiVeZZIXmnc4T4C6zfx66MP
+         omkpn4CzmRkjOnOxhgfj7ZgQYj8/HhDRKI6Tn0zuVVWkOEEe5/rkc3Na0gyUhjUvVbj7
+         ZMUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751967582; x=1752572382;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qVAMgZjiytlKTltSVRaWqREvVS7taIwAdxD4AMeAYLU=;
+        b=QqO4VejrFHhyJSX5M4eoBY8UDeyTMZ5GzXfwa7MEEHOpws50vTJCwiJt9ZPGkcfGwO
+         xx/2Ke0BjctNe5+dgFk5K4/0iVcPCFqFeaBr1uukmWkQgXau9YQzboSr36fSfkZgQJsJ
+         hBqc53+UANrg7Ep2aqpNVdVEWKoQvfYNQZjm1gm0kvvZOkQnlC6sF2pVbFHqxJeI6YJX
+         s4DBA/dXFc0MgoSNeE9iAzMxaoWL9Se2DEV1qbwkQGNvr8mRGcy6cDzBb6MTfvmWprhr
+         myHvmYanA0RdIuyhrcWgyiB+uDjIofQyTJP4UJbUmIjTBRLfgWJ4oXUNnT0rAmgNyBXW
+         RbeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXv2Alu4Zim+Nfuri34WQUkVTlRQn3H8J/vU2sahxsaJQK6j4GfqbM+gNk/PtMz1K1gKhdi0t61SOkNLSg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP4/MFlMGAweatqbYRuIjcqQgRdt9YwvgfdB9014RN+QoOyNbp
+	/zSEmpY9hEj1RShNEmKxHls1u8NvjUfMhviSYbLJco63Lc7SqPfPyV1qAm44Z1eZLOg=
+X-Gm-Gg: ASbGncuW8AZLK2CAZkX0LkMjGzII+H6jmEz1ZwOUiDUu885WR5j98ensV8tuRajUUOT
+	616JMs0LHKeUHuXguoJAonIiRq39edYyeP/9TSM5YmYtCn25zgbR+BAn+WtbK8tuE2emmE+5apR
+	hngfYU+H/ub9QEOGef2T/PPNDzJkElKyFao+27csy0L/R+4VPQzt+8g5iQG5I1YUlU1IN1IG2N/
+	9myYjaeFirBHHb810EJ5PNsiy0lDqa8IJ9gz5qvKGcWQETn6SOK3Ogp3moPXJnlgZFvfwpndkQ8
+	73lENhBDP2V0y5r8xbNFI2YtQylr9AwKI/itvZJx9d9GhjaY826nvv5PG7PGNnIOIA==
+X-Google-Smtp-Source: AGHT+IE8YM/OZ8CV631FC3za9fedEJqw2j98fUm8X6Ex7BoBBdzx8ToTsk4PmU9Yt2992ZZiuntlAg==
+X-Received: by 2002:a5d:5f90:0:b0:3aa:caea:aa7f with SMTP id ffacd0b85a97d-3b497042696mr11914245f8f.56.1751967582242;
+        Tue, 08 Jul 2025 02:39:42 -0700 (PDT)
+Received: from [10.100.51.209] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47285c919sm12569553f8f.92.2025.07.08.02.39.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jul 2025 02:39:42 -0700 (PDT)
+Message-ID: <9e5669e5-fc7e-4297-b12f-ceb9dcf36d91@suse.com>
+Date: Tue, 8 Jul 2025 11:39:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] module: make structure definitions always visible
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, Brendan Higgins <brendan.higgins@linux.dev>,
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+ linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+References: <20250612-kunit-ifdef-modules-v1-0-fdccd42dcff8@linutronix.de>
+ <20250612-kunit-ifdef-modules-v1-2-fdccd42dcff8@linutronix.de>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20250612-kunit-ifdef-modules-v1-2-fdccd42dcff8@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Shang song <shangsong2@lenovo.com>
+On 6/12/25 4:53 PM, Thomas Weißschuh wrote:
+> To write code that works with both CONFIG_MODULES=y and CONFIG_MODULES=n
+> it is convenient to use "if (IS_ENABLED(CONFIG_MODULES))" over raw #ifdef.
+> The code will still fully typechecked but the unreachable parts are
+> discarded by the compiler. This prevents accidental breakage when a certain
+> kconfig combination was not specifically tested by the developer.
+> This pattern is already supported to some extend by module.h defining
+> empty stub functions if CONFIG_MODULES=n.
+> However some users of module.h work on the structured defined by module.h.
+> 
+> Therefore these structure definitions need to be visible, too.
+> 
+> Many structure members are still gated by specific configuration settings.
+> The assumption for those is that the code using them will be gated behind
+> the same configuration setting anyways.
+> 
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> ---
+>  include/linux/module.h | 23 ++++++++++++-----------
+>  1 file changed, 12 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/linux/module.h b/include/linux/module.h
+> index 52f7b0487a2733c56e2531a434887e56e1bf45b2..7f783e71636542b99db3dd869a9387d14992df45 100644
+> --- a/include/linux/module.h
+> +++ b/include/linux/module.h
+> @@ -302,17 +302,6 @@ static typeof(name) __mod_device_table__##type##__##name		\
+>  
+>  struct notifier_block;
+>  
+> -#ifdef CONFIG_MODULES
+> -
+> -extern int modules_disabled; /* for sysctl */
+> -/* Get/put a kernel symbol (calls must be symmetric) */
+> -void *__symbol_get(const char *symbol);
+> -void *__symbol_get_gpl(const char *symbol);
+> -#define symbol_get(x)	({ \
+> -	static const char __notrim[] \
+> -		__used __section(".no_trim_symbol") = __stringify(x); \
+> -	(typeof(&x))(__symbol_get(__stringify(x))); })
+> -
+>  enum module_state {
+>  	MODULE_STATE_LIVE,	/* Normal state. */
+>  	MODULE_STATE_COMING,	/* Full formed, running module_init. */
+> @@ -598,6 +587,18 @@ struct module {
+>  	struct _ddebug_info dyndbg_info;
+>  #endif
+>  } ____cacheline_aligned __randomize_layout;
+> +
+> +#ifdef CONFIG_MODULES
+> +
+> +extern int modules_disabled; /* for sysctl */
+> +/* Get/put a kernel symbol (calls must be symmetric) */
+> +void *__symbol_get(const char *symbol);
+> +void *__symbol_get_gpl(const char *symbol);
+> +#define symbol_get(x)	({ \
+> +	static const char __notrim[] \
+> +		__used __section(".no_trim_symbol") = __stringify(x); \
+> +	(typeof(&x))(__symbol_get(__stringify(x))); })
+> +
+>  #ifndef MODULE_ARCH_INIT
+>  #define MODULE_ARCH_INIT {}
+>  #endif
+> 
 
-According to section "4.1.2 PRM Handler Information Structure" in the
-Platform Runtime Mechanism specification, the static data buffer and ACPI
-parameter buffer may be NULL if not required. Therefore, when either
-buffer is NULL, adding a check can prevent invalid virtual address
-conversion attempts.
+Nit: I suggest keeping MODULE_ARCH_INIT in its current position,
+immediately after the 'struct module' declaration, because the macro is
+directly tied to that structure.
 
-Without this patch, the following dmesg log could be misleading or
-confusing to users:
-
-  kernel: Failed to find VA for GUID: 7626C6AE-F973-429C-A91C-107D7BE298B0, PA: 0x0
-
-Signed-off-by: Shang song <shangsong2@lenovo.com>
----
- drivers/acpi/prmt.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
-index e549914a636c..a97f0f3a6590 100644
---- a/drivers/acpi/prmt.c
-+++ b/drivers/acpi/prmt.c
-@@ -155,11 +155,21 @@ acpi_parse_prmt(union acpi_subtable_headers *header, const unsigned long end)
- 		th->handler_addr =
- 			(void *)efi_pa_va_lookup(&th->guid, handler_info->handler_address);
-
--		th->static_data_buffer_addr =
--			efi_pa_va_lookup(&th->guid, handler_info->static_data_buffer_address);
-+		/*
-+		 * Per section "4.1.2 PRM Handler Information Structure" in
-+		 * spec "Platform Runtime Mechanism", the static data buffer
-+		 * and acpi parameter buffer may be NULL if they are not
-+		 * needed.
-+		 */
-+		if (handler_info->static_data_buffer_address) {
-+			th->static_data_buffer_addr =
-+				efi_pa_va_lookup(&th->guid, handler_info->static_data_buffer_address);
-+		}
-
--		th->acpi_param_buffer_addr =
--			efi_pa_va_lookup(&th->guid, handler_info->acpi_param_buffer_address);
-+		if (handler_info->acpi_param_buffer_address) {
-+			th->acpi_param_buffer_addr =
-+				efi_pa_va_lookup(&th->guid, handler_info->acpi_param_buffer_address);
-+		}
-
- 	} while (++cur_handler < tm->handler_count && (handler_info = get_next_handler(handler_info)));
-
---
-2.43.5
-
+-- 
+Thanks,
+Petr
 
