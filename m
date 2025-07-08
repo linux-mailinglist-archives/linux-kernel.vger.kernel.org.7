@@ -1,176 +1,170 @@
-Return-Path: <linux-kernel+bounces-720951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C271FAFC276
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:08:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 464F9AFC26D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D50A71AA7CF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:08:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF19A4A67EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC141CBA02;
-	Tue,  8 Jul 2025 06:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9CA21FF3E;
+	Tue,  8 Jul 2025 06:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rlY6YBG1"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="M6lAkofx"
+Received: from out28-124.mail.aliyun.com (out28-124.mail.aliyun.com [115.124.28.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94ED4A33
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 06:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617FC35962;
+	Tue,  8 Jul 2025 06:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751954905; cv=none; b=J63hu/IcRgFUMv+IQN0hZYp2ShoduuEtLDTyWdRwm2gwZxSvbw5ETCBXffL5eKvdqHOHALjmzYKG06YEs6xg284e7WcGPGkyDaoD8nqUyuXOkwAkm4zCRDpUcFb+glntDX6u9IZ4mWpqo7msCUr+hGQpy4f0jojXIG1DvUhIhgs=
+	t=1751954814; cv=none; b=ijiPlY31IXbzcJ1Imgk/6ZLjKc3X86O4tKAYRv+rabqlNACbLmNb8fZOp01X+86kBTmfI9QyRDwEWsuNNz+rZ78rSFL1gqLHlfMq2alpnqZFAmBYF9i+QZapDwbxgCIAOQcY6+UBWe/wMiGwMKXH757A92Wqgi+0R6CRYY1n/64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751954905; c=relaxed/simple;
-	bh=qh0LQGKnMRK4CzGRNhr6t4MVK5FA4WdHxOenKD3FU+s=;
-	h=From:To:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Yq/HF86VrZAutJYEBUpRKBGn7VHk0MKxrHijM3cCmSBzmSm15j9XHYJpl57O+IX7T/XkRexk3Flns3ChAQXyNlrFCaqp1qRnvO5d/JxEltzDAoQ9MneUQNPXWPDZerVLOIx0eJ0O7ewv0fj0XUiCDSk8t8rjspAvozvM+Bm0GrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rlY6YBG1; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250708060822epoutp020e8d750738da46a00748847f4c99be66~QMbOBLUsm2209222092epoutp020
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 06:08:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250708060822epoutp020e8d750738da46a00748847f4c99be66~QMbOBLUsm2209222092epoutp020
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1751954902;
-	bh=CWjK5YY/+oGGvbV4dhbaNLNw3/sTYEhT3dkxtPh3BIg=;
-	h=From:To:In-Reply-To:Subject:Date:References:From;
-	b=rlY6YBG1wplQLj25miS/iECwY8pdFRdjNArjkgifIeQpP1lHSunZb72iC48VKNPq8
-	 DAlXEHuNDXJzoLG8/ApjwGsjc97znkoR++flezclJErdEV4tO4n0tFvsAeBaGc+s6g
-	 pcSUBtz67sNJc7OZkfMZLFCAUlQD0TPwOm0eWBCs=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250708060821epcas5p1b132e8764cc5fe624961f8dee63f32f7~QMbNlkntH0730507305epcas5p1w;
-	Tue,  8 Jul 2025 06:08:21 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4bbrJN1qPSz2SSKr; Tue,  8 Jul
-	2025 06:08:20 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250708050327epcas5p3fe6bf00544af5113930cb1fe0378823a~QLiikwolj0276902769epcas5p3e;
-	Tue,  8 Jul 2025 05:03:27 +0000 (GMT)
-Received: from INBRO002520 (unknown [107.122.1.191]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250708050325epsmtip267559c66a281bbfb08c77301e139e7c5~QLihDHsRT1722717227epsmtip2o;
-	Tue,  8 Jul 2025 05:03:25 +0000 (GMT)
-From: "Devang Tailor" <dev.tailor@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>,
-	<alexandre.belloni@bootlin.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <inux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <faraz.ata@samsung.com>
-In-Reply-To: <3c794a74-30d6-4a16-8bdb-4345b3b5e453@kernel.org>
-Subject: RE: [PATCH 2/3] rtc: s3c: support for exynosautov9 on-chip RTC
-Date: Tue, 8 Jul 2025 10:33:24 +0530
-Message-ID: <156b01dbefc5$a3a29aa0$eae7cfe0$@samsung.com>
+	s=arc-20240116; t=1751954814; c=relaxed/simple;
+	bh=mIOs9ZQv+Dge62egFi7/FYpUbNceMjDUj5FMhCzPzvQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rr+C8zL4WcXLk7Qws22RlWoXt5OEYDNz252AZx4M5mEkWPY0xbUho9dG1gw8kb6M8I9lg3VLew0z4yaTnqsxbf1YdCKuyrIqr3FWEzYSnTh3Erir0iZ8az5PjmvmUypuBVqceada2d8laOd7/icr+dkpMJ6yC77J8NzSqV9oBzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=M6lAkofx; arc=none smtp.client-ip=115.124.28.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1751954799; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=5JEqIO5uBY95Voa4tTrXdXEV+OOCe7hAnim8ZON5228=;
+	b=M6lAkofxCxoUdow3haGpU5j92GzWIdnZOogE2sEe7d24vi3UFMnJkN60DHVhPprGYUdTDEZE6yllLquZBsduar4YCuqqkb0n+gU6sYAKitfsEjQhZjEPv9G2V9ZYr4kcNsOFA+lwOMOsAuJ0h7z2bA8pTjKvNMYvPxIfODwWdOo=
+Received: from 30.172.244.77(mailfrom:niuxuewei.nxw@antgroup.com fp:SMTPD_---.dhEfNgk_1751951111 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Tue, 08 Jul 2025 13:05:12 +0800
+Message-ID: <0a969517-ba41-4aa9-8f1b-471422cc2593@antgroup.com>
+Date: Tue, 8 Jul 2025 13:05:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHhFGtl4NDuGuGnv9eMR4cSGFTkLQJ+nj8RASbVNToBv3LqZbPyOoLA
-Content-Language: en-in
-X-CMS-MailID: 20250708050327epcas5p3fe6bf00544af5113930cb1fe0378823a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250702051532epcas5p381e97531e4df64f556e8aba86c5532d9
-References: <20250702052426.2404256-1-dev.tailor@samsung.com>
-	<CGME20250702051532epcas5p381e97531e4df64f556e8aba86c5532d9@epcas5p3.samsung.com>
-	<20250702052426.2404256-3-dev.tailor@samsung.com>
-	<3c794a74-30d6-4a16-8bdb-4345b3b5e453@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 1/4] hv_sock: Return the readable bytes in
+ hvs_stream_has_data()
+To: Stefano Garzarella <sgarzare@redhat.com>,
+ Xuewei Niu <niuxuewei97@gmail.com>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, fupan.lfp@antgroup.com
+References: <20250706-siocinq-v5-0-8d0b96a87465@antgroup.com>
+ <20250706-siocinq-v5-1-8d0b96a87465@antgroup.com>
+ <xhzslzuxrhdoixffmzwprn254ctolimj7giuxj4nfrfg23eesy@ycpe6kma5vih>
+Content-Language: en-US
+From: Xuewei Niu <niuxuewei.nxw@antgroup.com>
+In-Reply-To: <xhzslzuxrhdoixffmzwprn254ctolimj7giuxj4nfrfg23eesy@ycpe6kma5vih>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
 
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: 07 July 2025 14:54
-> To: Devang Tailor <dev.tailor=40samsung.com>;
-> alexandre.belloni=40bootlin.com; robh=40kernel.org; krzk+dt=40kernel.org;
-> conor+dt=40kernel.org; alim.akhtar=40samsung.com; linux-rtc=40vger.kernel=
-.org;
-> devicetree=40vger.kernel.org; linux-kernel=40vger.kernel.org; inux-arm-
-> kernel=40lists.infradead.org; linux-samsung-soc=40vger.kernel.org;
-> faraz.ata=40samsung.com
-> Subject: Re: =5BPATCH 2/3=5D rtc: s3c: support for exynosautov9 on-chip R=
-TC
->=20
-> On 02/07/2025 07:24, Devang Tailor wrote:
-> > The on-chip RTC of this SoC is almost similar to the previous versions
-> > of SoC. Hence re-use the existing driver with platform specific change
-> > to enable RTC.
-> >
-> > This has been tested with 'hwclock' & 'date' utilities
-> >
-> > Signed-off-by: Devang Tailor <dev.tailor=40samsung.com>
-> > ---
-> >  drivers/rtc/rtc-s3c.c =7C 26 ++++++++++++++++++++++++++
-> > drivers/rtc/rtc-s3c.h =7C  4 ++++
-> >  2 files changed, 30 insertions(+)
-> >
-> > diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c index
-> > 5dd575865adf..00686aa805f2 100644
-> > --- a/drivers/rtc/rtc-s3c.c
-> > +++ b/drivers/rtc/rtc-s3c.c
-> > =40=40 -384,6 +384,23 =40=40 static void s3c6410_rtc_disable(struct s3c=
-_rtc
-> *info)
-> >  	writew(con, info->base + S3C2410_RTCCON);  =7D
-> >
-> > +static void exynosautov9_rtc_disable(struct s3c_rtc *info) =7B
-> > +	unsigned int con;
-> > +
-> > +	con =3D readb(info->base + S3C2410_RTCCON);
-> > +	con &=3D =7ES3C2410_RTCCON_RTCEN;
-> > +	writeb(con, info->base + S3C2410_RTCCON);
-> > +
-> > +	con =3D readb(info->base + EXYNOSAUTOV9_TICCON0);
-> > +	con &=3D =7EEXYNOSAUTOV9_TICCON_TICEN;
-> > +	writeb(con, info->base + EXYNOSAUTOV9_TICCON0);
-> > +
-> > +	con =3D readb(info->base + EXYNOSAUTOV9_TICCON1);
-> > +	con &=3D =7EEXYNOSAUTOV9_TICCON_TICEN;
-> > +	writeb(con, info->base + EXYNOSAUTOV9_TICCON1);
->=20
-> You clear these bits during disable, but why aren't they set during enabl=
-e?
-> Why is this asymmetric? This should be clearly explained, but both commit
-> msg and code is completely silent.
+On 2025/7/7 21:40, Stefano Garzarella wrote:
+> On Sun, Jul 06, 2025 at 12:36:29PM +0800, Xuewei Niu wrote:
+> 
+> Again, this patch should have `From: Dexuan Cui <decui@microsoft.com>` on first line, and this is done automatically by `git format-patch` (or others tools) if the author is the right one in your branch.
+> I'm not sure what is going on on your side, but you should avoid to reset the original author.
+> Applying this patch we will have:
+> 
+>     commit ed36075e04ecbb1dd02a3d8eba5bfac6469d73e4
+>     Author: Xuewei Niu <niuxuewei97@gmail.com>
+>     Date:   Sun Jul 6 12:36:29 2025 +0800
+> 
+>         hv_sock: Return the readable bytes in hvs_stream_has_data()
+> 
+> This is not what we want, right?
+> 
+>> When hv_sock was originally added, __vsock_stream_recvmsg() and
+>> vsock_stream_has_data() actually only needed to know whether there
+>> is any readable data or not, so hvs_stream_has_data() was written to
+>> return 1 or 0 for simplicity.
+>>
+>> However, now hvs_stream_has_data() should return the readable bytes
+>> because vsock_data_ready() -> vsock_stream_has_data() needs to know the
+>> actual bytes rather than a boolean value of 1 or 0.
+>>
+>> The SIOCINQ ioctl support also needs hvs_stream_has_data() to return
+>> the readable bytes.
+>>
+>> Let hvs_stream_has_data() return the readable bytes of the payload in
+>> the next host-to-guest VMBus hv_sock packet.
+>>
+>> Note: there may be multpile incoming hv_sock packets pending in the
+>> VMBus channel's ringbuffer, but so far there is not a VMBus API that
+>> allows us to know all the readable bytes in total without reading and
+>> caching the payload of the multiple packets, so let's just return the
+>> readable bytes of the next single packet. In the future, we'll either
+>> add a VMBus API that allows us to know the total readable bytes without
+>> touching the data in the ringbuffer, or the hv_sock driver needs to
+>> understand the VMBus packet format and parse the packets directly.
+>>
+>> Signed-off-by: Dexuan Cui <decui@microsoft.com>
+> 
+> Your S-o-b was fine here, I was talking about the author.
 
-OK. I will correct in V2 patch
+I misunderstood the meaning of author. Sorry about that.
 
->=20
-> > +=7D
-> > +
-> >  static void s3c_rtc_remove(struct platform_device *pdev)  =7B
-> >  	struct s3c_rtc *info =3D platform_get_drvdata(pdev); =40=40 -574,6 +5=
-91,12
-> > =40=40 static struct s3c_rtc_data const s3c6410_rtc_data =3D =7B
-> >  	.disable		=3D s3c6410_rtc_disable,
-> >  =7D;
-> >
-> > +static struct s3c_rtc_data const exynosautov9_rtc_data =3D =7B
->=20
-> Please put const after static.
+Will update this in v6.
 
-I tried to keep it similar to the existing format, I will correct it in V2 =
-patch.
+Thanks,
+Xuewei 
+> Thanks,
+> Stefano
+> 
+>> ---
+>> net/vmw_vsock/hyperv_transport.c | 17 ++++++++++++++---
+>> 1 file changed, 14 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/net/vmw_vsock/hyperv_transport.c b/net/vmw_vsock/hyperv_transport.c
+>> index 31342ab502b4fc35feb812d2c94e0e35ded73771..432fcbbd14d4f44bd2550be8376e42ce65122758 100644
+>> --- a/net/vmw_vsock/hyperv_transport.c
+>> +++ b/net/vmw_vsock/hyperv_transport.c
+>> @@ -694,15 +694,26 @@ static ssize_t hvs_stream_enqueue(struct vsock_sock *vsk, struct msghdr *msg,
+>> static s64 hvs_stream_has_data(struct vsock_sock *vsk)
+>> {
+>>     struct hvsock *hvs = vsk->trans;
+>> +    bool need_refill;
+>>     s64 ret;
+>>
+>>     if (hvs->recv_data_len > 0)
+>> -        return 1;
+>> +        return hvs->recv_data_len;
+>>
+>>     switch (hvs_channel_readable_payload(hvs->chan)) {
+>>     case 1:
+>> -        ret = 1;
+>> -        break;
+>> +        need_refill = !hvs->recv_desc;
+>> +        if (!need_refill)
+>> +            return -EIO;
+>> +
+>> +        hvs->recv_desc = hv_pkt_iter_first(hvs->chan);
+>> +        if (!hvs->recv_desc)
+>> +            return -ENOBUFS;
+>> +
+>> +        ret = hvs_update_recv_data(hvs);
+>> +        if (ret)
+>> +            return ret;
+>> +        return hvs->recv_data_len;
+>>     case 0:
+>>         vsk->peer_shutdown |= SEND_SHUTDOWN;
+>>         ret = 0;
+>>
+>> -- 
+>> 2.34.1
+>>
 
->=20
->=20
->=20
-> Best regards,
-> Krzysztof
+
+
 
 
