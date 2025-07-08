@@ -1,171 +1,138 @@
-Return-Path: <linux-kernel+bounces-721816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82834AFCE28
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:49:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38BE6AFCE22
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53AD94258D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:48:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 360393B29E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00E82E03F8;
-	Tue,  8 Jul 2025 14:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56423226CFC;
+	Tue,  8 Jul 2025 14:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eXxzEz84"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PuT9IRQc"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2162A1BA;
-	Tue,  8 Jul 2025 14:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6853D226D0A
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 14:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751986108; cv=none; b=jdSko6jkYbUXF3kKY5eLo/6rVBYCQwaRUQWwMynyMrC4Pwp3y72GhRY+t+4Pu7qxDVohi+1JafYs/MHG55AJ0B7m+lxc9ZXdyar6T0USEjQOLK/z4pgznTGIGHAthsFoqkNmDBJLbebjNJm4fnUGFGMWJ2y6EpkEeVKh8gjHHPs=
+	t=1751986045; cv=none; b=JXtuzbSq+1oQiCZIdrZ13Wn8yWjNJ0YXEOb6SC/i8jHQ8wero7EKGwf/SsdBhAo1CkBAPNkxHM1bz/32bWlkaKUl5YuG8ydCqc2tdp3YnKswZF74T7hJMuH1eHlLQ55UK1WOhFMOvTsp1YGVzUtS4qb/y/kqErRJaFmNA+5C9Ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751986108; c=relaxed/simple;
-	bh=fKviyD22F+hVHHHW5cTd5fatxKS2bwf0e1y33GhF/uQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZRIeUSepO2csstPIrIBtcExS8oAT6Wl55hfUjqhPqdtDlpFLWyIo7xoSt2aUl6bY4jWIIWdyScyVNaYC1R+qFikdgxEWtf3zxQVS0siRdrjUIG3YY2phZpNyB+LGpVECnmGi8hqX0RIgMSWdBWT5r+OpxeS4EO3A4+kbZhjdhfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eXxzEz84; arc=none smtp.client-ip=209.85.208.48
+	s=arc-20240116; t=1751986045; c=relaxed/simple;
+	bh=KbOLzaxfYU2kFB3wUmgV6u+hVS1/ouY0QwUF2nAPo1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=owS49AMb5K70jS3wm8SpeuwPpVWp+ZJXB2fEZF9q1Un4BGrLI/kEisL5JLVqa5jdK1IidW7aZUT0n5/mEvQBEWwrpflP1hOeYq4Lfuw+hrvzIik0oGJV8d+EALM6EGCjvsl3RhoZykZysyOcyUZ+6E6PmSZ6mqxEftFRLMiiOV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PuT9IRQc; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60c6fea6742so9282158a12.1;
-        Tue, 08 Jul 2025 07:48:26 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-315cd33fa79so3518862a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 07:47:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751986105; x=1752590905; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cZemC5M/f+XMzPt6vXwq1Cy6fTiGZG5DlF15jcMv3ts=;
-        b=eXxzEz847+c5gBBUpocOJn60voaJ11FmdDklBLkHWufydPuinwqw0pqeA/PXPBQJ2q
-         jX9mZHX7ly4DGukhlCac4Ek3w7/vTYhu8EIQxE4SvUmwM/helFiGjlLDtpXPbpcnDGD7
-         kB/KufsZbKmP7SK3rBX9IR5J7B/NnsR/+atHvTeUcki0udzgchIB7xnVFNAsUVNYikXs
-         2CHNZz8Wk3oaMXoHBS3VyJkb9AAIwklFNHKsg83uDjD4rGV1eW9GT6lmemSotx9RA5Ps
-         bjPzCCXJlJRRA3cRXqRvWVVW0RwFuPP13PMbqdA8rarPNppdDN/aShQLjy3ikmWbjEOn
-         DeGw==
+        d=gmail.com; s=20230601; t=1751986044; x=1752590844; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=y5SVtgnZVBeR70c6EytxkBI1iAYXKzgR8FCojArq+RY=;
+        b=PuT9IRQcNIY8K8HhYBUzjHcN/KtMqMUMK45Bkic4JzhQLAbGIiqqW6upAbQ81yB0Lt
+         mhBXrHQMqgPP6bwVkV7T59eNrccHwDzqtwGJ1+xdxh74FQwK+OLayDvjEUQ543Hftk9A
+         8G+zZ4x0aF3TUqQxservlKlD235XwxdU4AFue43sE5hKS8VCslunEF9Ed09ccBIzutav
+         1AT08ehEHMIKBFCloItmFfTTrwWRNiqsFk7ON4ByDvwFnNAH3FxYGlNhYU6ZAiFpjGsa
+         gFbt4KdRcpG8oU3ssTWHvGF+w5Wgh6nDkNmtKiNEZfjXbwyAK7ng+dHE2NTOkRAfY9G5
+         Pcag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751986105; x=1752590905;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cZemC5M/f+XMzPt6vXwq1Cy6fTiGZG5DlF15jcMv3ts=;
-        b=r7sdx+xw+Ni6/X9XFMoHu4WH2CXvCVFAA4Vc47j6K3qRBAn9ZFSh13uUuz3aL0uoHk
-         Tlf/ru2vWqk/iOoGUHz0uwzfH34mqs3jPi++Ir1QVKwIaBjAy48CLp+pUhEui2ugKeGr
-         lEkhKMgMrTaWy4+TzKmfdDs12RQg67iITsKygDhPLOu5BP4b3goqFvcOKFolyr/0zosp
-         cGfK8+oHm2mrjC1a53gu6rmweNwZ0MF47FDc6IlLtyWJVlVOrxYyvs9zjXjH0trV0B0l
-         yw6bkXxXvfJt2qfdZ/a7AgycQnZYAyCHViJWZ2CCxy0KY6w8mmmwC8PmtaANQJ/ZAJz8
-         eB1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUy0qUYYgR+0JJf+m2qzilpMPi/PI7jxfnBtAP8UOHmutau/Ojhy+4oTb95JvghuRzygo1IdrdEBiQYCA==@vger.kernel.org, AJvYcCW2LYSaYctN24HhSfYcKIqzYod+Rcr2GCnrNmC/Z3c+r1uqfSl8Q4wJBjOkltvRiFDEc21hsxEFKpN91ZwO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4HJDr+Mba2gcjqCOU5LC7NwcbkoSFbzZ9yCgd38Ozx5eG8tnL
-	ORx6sUM2D/2s79ryC0g+428QygBXPI/J9hPoBa9M4ee61b6ZDWsWXJaS
-X-Gm-Gg: ASbGncvnipcapeGIUiLJknDrVTPiybhTN81bj3GTYzlnbyr97YL85VNHOniVFWSvRJ3
-	m6/aWKPlMZN+nPGGfW/iJGklrlHCTZFulPRF5jfMZqDLLZ9WvzseENMq/Y9DTx5wsv917ANMMJQ
-	IdXzKBW8f1pMd3gHtWzrcpg8RRerzQh5DO0bygkY3K45oj97ff+A/2t4DYjGbixHx+JGPPBDOaB
-	6aIKKUroKUkHFO1CVPfktj7UQCPGFibeMevyskn2Iwg/CR55kGXE5OtzQs0G0wFln3osIml8gz7
-	PhhnGuOBfvNTouNRaZsQsUxYAL2MalFBaRkh4sf0NX5jw4/bmDa/kEx7QFUsnk0mS1HmVT7RkEV
-	EqSs1beQvYJIoTICmXQgHwjMCbyf+j0YD0n9Z9ANFJ3xtY0qvgzOX8zgbk8TZOh4wAHkQzB3/4+
-	wGkg==
-X-Google-Smtp-Source: AGHT+IFsuIaKI0izTH3oNbXTJfvb1BnkMXqq0i8PV+xLu7L0gkffGVaywqrJjFHAjd9/+hN5OUwLZQ==
-X-Received: by 2002:a17:906:af89:b0:ae3:635c:53c1 with SMTP id a640c23a62f3a-ae6b025962fmr330465066b.54.1751986104383;
-        Tue, 08 Jul 2025 07:48:24 -0700 (PDT)
-Received: from kubuntu-e14.homenet.telecomitalia.it (host-87-21-242-88.retail.telecomitalia.it. [87.21.242.88])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fcb0c892csm7367056a12.38.2025.07.08.07.48.23
+        d=1e100.net; s=20230601; t=1751986044; x=1752590844;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y5SVtgnZVBeR70c6EytxkBI1iAYXKzgR8FCojArq+RY=;
+        b=nwkBXkQtwIMUFkXh7QDlYi50cylQHPBDyD3wQe6fJtLClmXW5xR8sm4qXvy+KmH2cc
+         wsUFldIZ7SGLcRqkoBOJy8j4FcU0f2owL+3t7EAQ7uQaUF079ZljYlVbQbctSSlOYUtJ
+         J8OrcQMunpiJwBD2rfed5t/9kmY3QaU2DuQa9uvCxRMw/7YE9GeVYj+pnKXYNmpxHVmc
+         nZCPWh2ijueNCpTm5JDWqEUe79r+ZKpTfKqFsCZw6edx/w6My35rDbVJbHiB9OHktmhw
+         OzdDqmZQSkd1wMci0m+N6REJSRmMXkOm2g4INY/oR/YM44s3+P28e3VSjNcCCTq3ADyj
+         4f5g==
+X-Forwarded-Encrypted: i=1; AJvYcCXKMQErrPcUtqQFkuSwvzD4Xz2SIOmUCJkitopb4MQlE1D1sNCRZIAjtYgV29DBJ1DLSDxjG4ZC/Roosb0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yysd9hnVyNi7cBvcOFdmthN/5rLTS19gA43DS3W0CCdRf2+6oFw
+	Ll4fg09MI6kyhx7+WUkpQW1pgBcTb6f1rPKjWHGU8hpBRoL+dGfmEyPk
+X-Gm-Gg: ASbGncv87L+rLmjk6lhIXVUlfwoaJhysyPl7vAtZb3ZKk714sbS6MUDHhxxqqi+LsPt
+	X65wh8d7y5skR1AGl8JAVCSmd1v757ZoLwGGODhqsKJ/6EputuLCL0fbrZvE2yBwelGm3gvQ1Lm
+	1GKvBzJBYEMma6xjBxyARzV7Jktttu4AIdavka2uOL35y4gCRfZxPAU1YZC18Tp8uQxIgJYXfhQ
+	sUiW++z2tpxxEetHCC7T5Ls0uJuAIRQVFSDt+DJBOzcBSGx3Ak7ctBnRvLm5mekhoDlHZwNKlyj
+	z4iGRE8wm5KaGSCt1v/PHBGE5Q9EcsC/FGM38O0JyI8+cJithVQ1tZ1DRlbcyg==
+X-Google-Smtp-Source: AGHT+IEJ1BfY7zxvAUbxeGiWYv/u3Q/SVkJwGyRqmieMltP5Tku2McKDxI5dKtyzmNvNC1b06duO7A==
+X-Received: by 2002:a17:90b:48c8:b0:311:c5d9:2c7c with SMTP id 98e67ed59e1d1-31c21de8312mr3991032a91.23.1751986043555;
+        Tue, 08 Jul 2025 07:47:23 -0700 (PDT)
+Received: from localhost ([216.228.127.130])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c22fa7db3sm1642877a91.1.2025.07.08.07.47.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 07:48:24 -0700 (PDT)
-From: Giovanni Di Santi <giovanni.disanti.lkl@gmail.com>
-To: deller@gmx.de
-Cc: tzimmermann@suse.de,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Giovanni Di Santi <giovanni.disanti.lkl@gmail.com>
-Subject: [PATCH] fbdev: kyro: Add missing PCI memory region request
-Date: Tue,  8 Jul 2025 16:46:59 +0200
-Message-ID: <20250708144659.787676-1-giovanni.disanti.lkl@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Tue, 08 Jul 2025 07:47:23 -0700 (PDT)
+Date: Tue, 8 Jul 2025 10:47:20 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] uapi: bitops: use UAPI-safe variant of BITS_PER_LONG
+ again (2)
+Message-ID: <aG0veDJWGHVIO6Cc@yury>
+References: <20250630-uapi-genmask-v1-1-eb0ad956a83e@linutronix.de>
+ <aGKkw6b1QPTf9yii@yury>
+ <aGRVJHZF36KGVs4c@yury>
+ <20250708082027-acf3e21a-8627-4cbe-9ccb-6d872eec2918@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250708082027-acf3e21a-8627-4cbe-9ccb-6d872eec2918@linutronix.de>
 
-The kyro framebuffer driver did not request its PCI memory regions,
-which could lead to conflicts with other drivers.  This change
-addresses the task "Request memory regions in all fbdev drivers"
-from the file Documentation/gpu/todo.rst.
+On Tue, Jul 08, 2025 at 08:26:49AM +0200, Thomas Weiﬂschuh wrote:
+> On Tue, Jul 01, 2025 at 05:37:40PM -0400, Yury Norov wrote:
+> > On Mon, Jun 30, 2025 at 10:52:54AM -0400, Yury Norov wrote:
+> > > On Mon, Jun 30, 2025 at 03:02:18PM +0200, Thomas Weiﬂschuh wrote:
+> > > > BITS_PER_LONG does not exist in UAPI headers, so can't be used by the UAPI
+> > > > __GENMASK(). Instead __BITS_PER_LONG needs to be used.
+> > > > 
+> > > > When __GENMASK() was introduced in commit 3c7a8e190bc5 ("uapi: introduce uapi-friendly macros for GENMASK"),
+> > > > the code was fine. A broken revert in 1e7933a575ed ("uapi: Revert "bitops: avoid integer overflow in GENMASK(_ULL)"")
+> > > > introduced the incorrect usage of BITS_PER_LONG.
+> > > > That was fixed in commit 11fcf368506d ("uapi: bitops: use UAPI-safe variant of BITS_PER_LONG again").
+> > > > But a broken sync of the kernel headers with the tools/ headers in
+> > > > commit fc92099902fb ("tools headers: Synchronize linux/bits.h with the kernel sources")
+> > > > undid the fix.
+> > > > 
+> > > > Reapply the fix and while at it also fix the tools header.
+> > > > 
+> > > > Fixes: fc92099902fb ("tools headers: Synchronize linux/bits.h with the kernel sources")
+> > > > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> > > 
+> > > Acked-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+> > > 
+> > > Arnaldo, do you want to move it yourself or with my branch?
+> > 
+> > OK, added this in bitmap-for-next together with the MAINTAINERS patch.
+> 
+> Thanks!
+> 
+> Any chance to get the fix into v6.16 again?
 
-pci_request_regions() is now called during probe. To ensure proper
-cleanup, the corresponding pci_release_regions() and a missing
-pci_disable_device() call are added to both the driver's remove
-function and the probe's error handling path.
+Yes, just sent a pull request.
 
-Signed-off-by: Giovanni Di Santi <giovanni.disanti.lkl@gmail.com>
----
- drivers/video/fbdev/kyro/fbdev.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/video/fbdev/kyro/fbdev.c b/drivers/video/fbdev/kyro/fbdev.c
-index 08ee8baa79f8..80ac17337c1b 100644
---- a/drivers/video/fbdev/kyro/fbdev.c
-+++ b/drivers/video/fbdev/kyro/fbdev.c
-@@ -685,8 +685,14 @@ static int kyrofb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	}
- 
- 	info = framebuffer_alloc(sizeof(struct kyrofb_info), &pdev->dev);
--	if (!info)
--		return -ENOMEM;
-+	if (!info) {
-+		err = -ENOMEM;
-+		goto out_disable;
-+	}
-+
-+	err = pci_request_regions(pdev, "kyrofb");
-+	if (err)
-+		goto out_free_fb;
- 
- 	currentpar = info->par;
- 
-@@ -695,10 +701,11 @@ static int kyrofb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	kyro_fix.mmio_start = pci_resource_start(pdev, 1);
- 	kyro_fix.mmio_len   = pci_resource_len(pdev, 1);
- 
-+	err = -EINVAL;
- 	currentpar->regbase = deviceInfo.pSTGReg =
- 		ioremap(kyro_fix.mmio_start, kyro_fix.mmio_len);
- 	if (!currentpar->regbase)
--		goto out_free_fb;
-+		goto out_release;
- 
- 	info->screen_base = pci_ioremap_wc_bar(pdev, 0);
- 	if (!info->screen_base)
-@@ -752,10 +759,13 @@ static int kyrofb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	iounmap(info->screen_base);
- out_unmap_regs:
- 	iounmap(currentpar->regbase);
-+out_release:
-+	pci_release_regions(pdev);
- out_free_fb:
- 	framebuffer_release(info);
--
--	return -EINVAL;
-+out_disable:
-+	pci_disable_device(pdev);
-+	return err;
- }
- 
- static void kyrofb_remove(struct pci_dev *pdev)
-@@ -780,6 +790,9 @@ static void kyrofb_remove(struct pci_dev *pdev)
- 
- 	unregister_framebuffer(info);
- 	framebuffer_release(info);
-+
-+	pci_release_regions(pdev);
-+	pci_disable_device(pdev);
- }
- 
- static int __init kyrofb_init(void)
--- 
-2.43.0
-
+> This currently triggers warnings in my code in -next [0], which is intended
+> to go into v6.17.
+> 
+> [0] https://lore.kernel.org/all/20250708160830.36ddf20f@canb.auug.org.au/
+> 
+> 
+> Thomas
 
