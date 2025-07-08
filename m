@@ -1,132 +1,166 @@
-Return-Path: <linux-kernel+bounces-721155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A018FAFC563
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:23:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E6BAFC58F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3FE9420790
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:23:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D579C563E59
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549112BDC2D;
-	Tue,  8 Jul 2025 08:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HKeLe21O"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3943F2BD5A3;
+	Tue,  8 Jul 2025 08:26:27 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE9B2BE637;
-	Tue,  8 Jul 2025 08:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E2C21C179;
+	Tue,  8 Jul 2025 08:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751962974; cv=none; b=pEAa7/0M2xyUJ4wUg1bJ7M+LW7jU1Zvfe/7o84wDvJ1EwqfpfQmXZs2PNxJoxBnIQk1OTZMzk+ufZFItJ3LlnLSLY4u0ZsPEGGRrlPPNTuWkycj5ZV1MIVkUYLSuq01g5LF2rJgA9tVKs534dv3ux13NwYnK5E+0XQ2eUlAbEBw=
+	t=1751963186; cv=none; b=sMMDEYEHzE506eWsb/JPww7CraCl3p8UT6rn2rxmZOTSZQ7j3Sl7DUf0vd0KxqxTA9OM3MIxzijcehgVexTbktEZnYdkomVOwgheEVT6h5primeW/LD1o16MpdeC5Ub8J73+hUncJ8BNKIhrYqy/Z73pVFBgRJrnt8Re+9lDir0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751962974; c=relaxed/simple;
-	bh=jualjBCwRjVeX+QgNMtQhdaM5v4JwMGLvjZ44KhUcy4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=B6+te/Mz0azKfQp/hdVUDWrPtRXUuDTDFybJGLuh6FpFJulqDKnoWH0+YoVk1bS9ND5VdjARTdqHPr5lQTVPdLbQfOeeSDDsnDInlu4kqUk/kAhbSmfC5rWbZpYKHANlmxU7zQKho8b1D/cfmLPuq+T3N0eSxnwv5XXqRw7sqQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HKeLe21O; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ae0e0271d82so826948666b.3;
-        Tue, 08 Jul 2025 01:22:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751962971; x=1752567771; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=924t1oAYx0L0AbJARjwxcHPMhukyHGVh1zX2+tHv7tg=;
-        b=HKeLe21OVJRBTWnZKK7TvGTZE+8YqAqqKcjchc7wXY4LrR2CRJlC2kkM3W0cAsJgfg
-         ZqgLMa62zi81XdDppCE+i9jYkLXB0WR/r4rm4VkZGTAFeOAWKwy1OAIfuu1XLQJ5NQhn
-         ZtvPj/WZ25xcRjH1/t7R+dJSO6KPVJSXRtPC10ho0fxiYCj/xo6Tzzk3j+Da3LzJb3NK
-         CmYeTaeRtrnX+fci7TdyqOJTCW6/m/74pgappP4N+htpQB3SjMof4kBodjKTHvNimW42
-         VnEK/RnRFhFapSiNNEs77EJNwaQvJkAVoo9/9KQcBQJweuJ+Ibf2CYLYNUlL1Cqdkde7
-         I+cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751962971; x=1752567771;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=924t1oAYx0L0AbJARjwxcHPMhukyHGVh1zX2+tHv7tg=;
-        b=WPq7wxIDrSyzBKwGWwc4FtoFiFGkp+II1e/fW3WMyLvWIgPWU43PBGC8xlzD6V9Eo7
-         +VbSsEMmcehbwXQaBItKR5YrKmMILcKI8icnMOQzsWRuT4lUYa4RQxho4zBwJ8Ia3yPZ
-         L2YFsbbqV12ufr3h5b36wIvQfcF3//szPzM3MsSXx5dnxNqWF5qJrBa6eRCTn1vkicVX
-         DsmXHVxvap5SIwymfiefrvEdg5Rce2g4TLmtbaxCi33ZpFnFEeOd02neb6J1Pbv1exg+
-         S4EhU+n4J4RzZWx+dgu0GuSHYSvjQtJ93yr4GE8Rvj+ODoZhZ4wmVYYdAthvtA7Uw1tX
-         2Jsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUurj4a7Sl9FroXhPOZ4zc2mZYcBiGv/rf6kkDuJBCACsSTfVRA+7bitoRGiC81bFj0UUcC/bmkmg==@vger.kernel.org, AJvYcCWi5K0W8TulPoKGSy/npnJ1Rs63VYNmoHdBBqyGMSK854UGvZjnE6tfgbQdyh9E0cDUWHfBeKlkiYWkapLu@vger.kernel.org, AJvYcCXvtyhHHKtUm04NWcTqZ1PXCTpEtp9A7CaagjdF9dsyOxPLOlCOOcVscr+9WgGmOZa/XXetXNEaHuHby4QpdQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUhI1B+6ymj+yGXIS1yo2/TucZfUX5MYIQ13GgB/OMsHjEXZ23
-	BCo2Sa989vWcKxTfYV1wzK8w3iujOR+lS2FqEhTqjmfJfCHvH7wDbx9+
-X-Gm-Gg: ASbGncvw+5ne3L+1xp7lwJRmbBrmRgP/PnGUH9EDUBYDLhusi0YVvz0cq72ULePjLbX
-	Gz9jYxsRgJAw3XZmAOy7KKylQCH5PKR/T6DHVPocApTZhvUubRHJbb2abCP5FhKHkVDLRPCiYTp
-	pJZIPlvkXfKvf2qZgDwrBf6e28vxNliC1gk62njhSiUcmpf6k77PTo2SN/iHFafVu0DbwFKElr+
-	J8ftrbkX83DnlTWVPn2RBgNEfJO/uXV8uJC/NiYpNCZe/IGeNUCsrg45SKJfDfuBqxTf8cHOB6d
-	dKS/El6JDQdNQVx6L5eLWNznrlUplhxMdWZFHOlEDse+nFJ63Qmh5sOqg56L5vwS/VJKhwgdN8o
-	=
-X-Google-Smtp-Source: AGHT+IGMRQ61VwYQ2vN+Uf4NWX9g1lKr9RmLW1NnlHUktgMRBPQgnpFd7IvsAZfTjj5Azpyp5TXuCQ==
-X-Received: by 2002:a17:906:d54c:b0:ae3:a3f7:ad8e with SMTP id a640c23a62f3a-ae6b061b38bmr206333866b.25.1751962971375;
-        Tue, 08 Jul 2025 01:22:51 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:4dfd])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6ac679esm854716966b.104.2025.07.08.01.22.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 01:22:50 -0700 (PDT)
-Message-ID: <9bfb10a9-0400-461f-af4d-54946455e74c@gmail.com>
-Date: Tue, 8 Jul 2025 09:24:18 +0100
+	s=arc-20240116; t=1751963186; c=relaxed/simple;
+	bh=VzmkmgYoccWvFe3DcIW5WbhC0zuD/mh7N9zUr7ihIas=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=unfCBOyZ/Tiza8jVruG54+0fXpa9lVOgPapLBAcoySgChmLRZieKnxwnrw/XQBXl9SsURlrExRrDrX2PD6oUTi8Vr9q+iTSjR9l0Ac6deY573j4CFLjntocX9RqQ/OB4irFLTvttwZ2USdh/jTLx8s+nfEHBq/LBVkVBU1puZZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bbvLQ4KxZz6DB82;
+	Tue,  8 Jul 2025 16:25:18 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4DA4B1404A9;
+	Tue,  8 Jul 2025 16:26:22 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 8 Jul
+ 2025 10:26:19 +0200
+Date: Tue, 8 Jul 2025 09:26:18 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Alireza Sanaee <alireza.sanaee@huawei.com>
+CC: <mark.rutland@arm.com>, <robh@kernel.org>, <coresight@lists.linaro.org>,
+	<devicetree@vger.kernel.org>, <dianders@chromium.org>,
+	<james.clark@linaro.org>, <krzk@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <linuxarm@huawei.com>,
+	<mike.leach@linaro.org>, <ruanjinjie@huawei.com>, <saravanak@google.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <suzuki.poulose@arm.com>
+Subject: Re: [PATCH 1/5] of: add infra for finding CPU id from phandle
+Message-ID: <20250708092618.000067d2@huawei.com>
+In-Reply-To: <20250707150414.620-2-alireza.sanaee@huawei.com>
+References: <20250707150414.620-1-alireza.sanaee@huawei.com>
+	<20250707150414.620-2-alireza.sanaee@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [fs?] INFO: task hung in do_coredump (3)
-To: syzbot <syzbot+a8cdfe2d8ad35db3a7fd@syzkaller.appspotmail.com>,
- anna-maria@linutronix.de, axboe@kernel.dk, brauner@kernel.org,
- frederic@kernel.org, gregkh@linuxfoundation.org, hdanton@sina.com,
- io-uring@vger.kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, luto@kernel.org, peterz@infradead.org,
- syzkaller-bugs@googlegroups.com, tglx@linutronix.de, tj@kernel.org,
- viro@zeniv.linux.org.uk
-References: <686bf556.a70a0220.29fe6c.0b0e.GAE@google.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <686bf556.a70a0220.29fe6c.0b0e.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 7/7/25 17:27, syzbot wrote:
-> syzbot has bisected this issue to:
+On Mon, 7 Jul 2025 16:04:10 +0100
+Alireza Sanaee <alireza.sanaee@huawei.com> wrote:
+
+> Get CPU id from phandle. Many drivers get do this by getting hold of CPU
+> node first through a phandle and then find the CPU ID using the relevant
+> function. This commit encapsulates cpu node finding and improves
+> readability.
 > 
-> commit 2af89abda7d9c2aeb573677e2c498ddb09f8058a
-> Author: Pavel Begunkov <asml.silence@gmail.com>
-> Date:   Thu Aug 24 22:53:32 2023 +0000
+> The API interface requires two parameters, 1) node, 2) pointer to CPU
+> node. API sets the pointer to the CPU node and allows the driver to play
+> with the CPU itself, for logging purposes for instance.
 > 
->      io_uring: add option to remove SQ indirection
-
-Doesn't look like the cause, the previous repro from 28 Oct 2024 didn't
-even have any io_uring, and the patch only reduces sizes of some
-allocations. The common part b/w programs is
-prctl(PR_SET_SYSCALL_USER_DISPATCH_ON), might be related to that.
-
-
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14ec9582580000
-> start commit:   05df91921da6 Merge tag 'v6.16-rc4-smb3-client-fixes' of gi..
-> git tree:       upstream
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=16ec9582580000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12ec9582580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=45bd916a213c79bb
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a8cdfe2d8ad35db3a7fd
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a2228c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d48bd4580000
+> Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
+> ---
+>  drivers/of/cpu.c   | 29 +++++++++++++++++++++++++++++
+>  include/linux/of.h |  9 +++++++++
+>  2 files changed, 38 insertions(+)
 > 
-> Reported-by: syzbot+a8cdfe2d8ad35db3a7fd@syzkaller.appspotmail.com
-> Fixes: 2af89abda7d9 ("io_uring: add option to remove SQ indirection")
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> diff --git a/drivers/of/cpu.c b/drivers/of/cpu.c
+> index 5214dc3d05ae..fba17994fc20 100644
+> --- a/drivers/of/cpu.c
+> +++ b/drivers/of/cpu.c
+> @@ -173,6 +173,35 @@ int of_cpu_node_to_id(struct device_node *cpu_node)
+>  }
+>  EXPORT_SYMBOL(of_cpu_node_to_id);
+>  
+> +/**
+> + * of_cpu_phandle_to_id: Get the logical CPU number for a given device_node
+> + *
+> + * @node: Pointer to the device_node containing CPU phandle.
+> + * @cpu_np: Pointer to the device_node for CPU.
+> + * @cpu_idx: The index of the CPU in the list of CPUs.
+> + *
+> + * Return: The logical CPU number of the given CPU device_node or -ENODEV if
+> + * the CPU is not found, or if the node is NULL, it returns -1. On success,
+> + * cpu_np will always point to the retrieved CPU device_node with refcount
+> + * incremented, use of_node_put() on it when done.
+> + */
+> +int of_cpu_phandle_to_id(const struct device_node *node,
+> +			 struct device_node **cpu_np,
+> +			 uint8_t cpu_idx)
+> +{
+> +	if (!node)
+> +		return -1;
+> +
+> +	*cpu_np = of_parse_phandle(node, "cpu", 0);
 
--- 
-Pavel Begunkov
+Gut feeling is that it would be useful to allow a NULL cpu_np
+for case where they don't want the cpu device_node, just the ID.
+
+For that you'll need a local variable to hold the device_node
+then assign it or put it depending on whether cpu_np != NULL.
+
+
+Maybe there are no users for that pattern though.  If that's the case
+then check !node || !cpu_np for that first check. 
+
+
+> +	if (!*cpu_np)
+> +		*cpu_np = of_parse_phandle(node, "cpus", cpu_idx);
+> +			if (!*cpu_np)
+> +				return -ENODEV;
+> +
+> +	return of_cpu_node_to_id(*cpu_np);
+> +}
+> +EXPORT_SYMBOL(of_cpu_phandle_to_id);
+> +
+>  /**
+>   * of_get_cpu_state_node - Get CPU's idle state node at the given index
+>   *
+> diff --git a/include/linux/of.h b/include/linux/of.h
+> index eaf0e2a2b75c..194f1cb0f6c6 100644
+> --- a/include/linux/of.h
+> +++ b/include/linux/of.h
+> @@ -360,6 +360,8 @@ extern const void *of_get_property(const struct device_node *node,
+>  extern struct device_node *of_get_cpu_node(int cpu, unsigned int *thread);
+>  extern struct device_node *of_cpu_device_node_get(int cpu);
+>  extern int of_cpu_node_to_id(struct device_node *np);
+> +extern int of_cpu_phandle_to_id(const struct device_node *np,
+> +				struct device_node **cpu_np, uint8_t cpu_idx);
+>  extern struct device_node *of_get_next_cpu_node(struct device_node *prev);
+>  extern struct device_node *of_get_cpu_state_node(const struct device_node *cpu_node,
+>  						 int index);
+> @@ -662,6 +664,13 @@ static inline int of_cpu_node_to_id(struct device_node *np)
+>  	return -ENODEV;
+>  }
+>  
+> +static inline int of_cpu_phandle_to_id(const struct device_node *np,
+> +				       struct device_node **cpu_np,
+> +				       uint8_t cpu_idx)
+> +{
+> +	return -ENODEV;
+> +}
+> +
+>  static inline struct device_node *of_get_next_cpu_node(struct device_node *prev)
+>  {
+>  	return NULL;
 
 
