@@ -1,206 +1,316 @@
-Return-Path: <linux-kernel+bounces-722437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20001AFDAC6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:17:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B50BAFDAE9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF0621AA5167
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:17:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84B8C561DB5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9CF259C92;
-	Tue,  8 Jul 2025 22:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1774825A33E;
+	Tue,  8 Jul 2025 22:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b="KvvL/TIi"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IcE1d3Mb"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2043.outbound.protection.outlook.com [40.107.237.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402321E7C27
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 22:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752013049; cv=none; b=V9TN0yUNS+T+vRTcPR8QeeDaqa8HZFTCH7hyyGbBwgFKxeQWe2F4KM49Rpvbl15AT9dry6GVCTQ4eeG1dbAB/meKLxLLVL4Wvxf4I6qgKPlv3uLtjjNU49AJmIFfQ30GhJR/VoBGumMjoH6JLYTGRgDON/MxH36ZATdgYPB/UNE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752013049; c=relaxed/simple;
-	bh=FEsHHCXguomOaO5bik3AeXk7CTSFcx8L09BKO1O368Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hfGO2k9VLYvNIzTT3UiM7wPWdx0uv+uSI+kN1QYyR/zJPLCUAJNRqQVekZyjuXioakqxolXEndSDP+7Srgti3jZkcKA9FlOyAnjkkZQzD4z3fTCUcvypr/t5f3Imn6f4JYgqANPnBkBPuZsiQyOHNXKjltRQzWs+oV+XThihmbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=kerneltoast.com; dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b=KvvL/TIi; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kerneltoast.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-748feca4a61so2661185b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 15:17:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kerneltoast.com; s=google; t=1752013047; x=1752617847; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qKXk1db6biREjlZvqs5QtrQaNwXkFG+6GDi1WibA3ro=;
-        b=KvvL/TIioCYVd8ec6u1u7e4VvwMdsL5s4CjMvmrmcnCQwVaVdadUEERmx2LswxOmMz
-         L59/rp7g9rA0t34TXCthdNXkzai/LQ3iEiCbq8AgYI5qzRCNvOviuSEVcDZ4m7xyAlOV
-         SNB/PMRH0+nJ8ON7Su1q+hApFLyr2mWXeTxht40EZvJPOvDn+SzBIfpt+Ni+HOW7pP9G
-         gwTbCQjAYiSuzuNnd3LhsOI6CCgqhkOQQay5jHuGJl339LSy92XenQvGecHTDCWJ322F
-         9KbE5KMDqNN+PevXAWgWUJxU7LBaSvNVvphLutBeTVo4eoKXciiE7Bun1r7rCyvquUgm
-         D7Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752013047; x=1752617847;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qKXk1db6biREjlZvqs5QtrQaNwXkFG+6GDi1WibA3ro=;
-        b=Vyte3eypwyFNi4TOYIVdQAibiaYCbrIinN/p98dC87GgWP2SuqF0ND7kW4uxjXIYfa
-         VIDTwZAh4ZD/TCq2XvMC8wUTtpnqM3H8//v0Ilk5T5Zn3xSw+OvIz3Crs2sTCd0rII0M
-         W9rP+GUlU9UE8ldSdqNWB+fHVIkbAc+OjgjT8e3fObCVuvwwaB3RyU8ohWXOk33bIoSl
-         dQJ1vjn7pmIZ7N4Emo/1KP85pKCRzT4+6Knycmyq/O+GSLV1yCqzOc+hYtBax/T4ARAM
-         BAx7jKeu33rttEcQLuuAMtZxQxS3vnLeaJd/R9mGv/yIysSt9BknYmjQWxkMFwXI3vy4
-         gd4A==
-X-Gm-Message-State: AOJu0YxB/0vDze10CCaCD2nSs7bcjyhGYmOBvcLzgEq/fGku9syLcDUe
-	oOJymnZGn3f7pf5bYBJtr+3rGaviEvRD+dSLggNVB65nTfooyGADHHX1MR87T9zg76N+
-X-Gm-Gg: ASbGncvhEgmVC6eGMmm1aiqDq+B3OEWuwbn1iTjIeibbCRTRp8pBH+31vrlsHlgCMtH
-	Ch5NjpYehwJkmiHIWG6tY3nG1Wf1EcW/gBQ9DKqO1oowrvsr74Eb+63VbdiS6y+Fx6STaKknQSD
-	uzWO8O6J293vs36i2YTsMP0D1DQbafnF994HPuzcqQsPOdh94b6EWpqgPLTpXPKdrwpuPPBdSlY
-	rtS+3NwsQlNweHV2YmjOflbOf0WQiMjR3kIi/4fpLfiIS5pxCjFffGwp3gB0AlLH8q/5EqqprzS
-	I+Ef2+BtXq5AEDk77idCUGBLR+eaFW32UagcPSw739o/PQZOTzoJbHp0P13Xo1b0
-X-Google-Smtp-Source: AGHT+IFrdLI7zE62JzRTcm8R+nfJf9KUyF1VAbRhM4J+cUdpeivJAHC78io6XrTAM4cJnrpP4SgnAg==
-X-Received: by 2002:a05:6a00:2d0c:b0:74c:efae:ffae with SMTP id d2e1a72fcca58-74ea63e3dbfmr342284b3a.5.1752013047402;
-        Tue, 08 Jul 2025 15:17:27 -0700 (PDT)
-Received: from sultan-box ([142.147.89.207])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce35cc13csm11567452b3a.47.2025.07.08.15.17.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 15:17:26 -0700 (PDT)
-Date: Tue, 8 Jul 2025 15:17:23 -0700
-From: Sultan Alsawaf <sultan@kerneltoast.com>
-To: Stuart Hayes <stuart.w.hayes@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Martin Belanger <Martin.Belanger@dell.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Daniel Wagner <dwagner@suse.de>, Keith Busch <kbusch@kernel.org>,
-	Lukas Wunner <lukas@wunner.de>, David Jeffery <djeffery@redhat.com>,
-	Jeremy Allison <jallison@ciq.com>, Jens Axboe <axboe@fb.com>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	linux-nvme@lists.infradead.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Bert Karwatzki <spasswolf@web.de>
-Subject: Re: [PATCH v10 1/5] kernel/async: streamline cookie synchronization
-Message-ID: <aG2Y8795VSeT75hH@sultan-box>
-References: <20250625201853.84062-1-stuart.w.hayes@gmail.com>
- <20250625201853.84062-2-stuart.w.hayes@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9EB525A337;
+	Tue,  8 Jul 2025 22:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752013217; cv=fail; b=X23p4lb16zwM+Q9uHYcqO9fkKi0u0OXUmTKpPQUegmVlKOtxZLQK8LFuQsYtBzAa652B0NrtrWkbgGj3EGWPyZzYetjHXL7u/5DFLTeYbswAE5f23rqqGdI1Tl5YXNExzH3hf/EoeXf44sa2xMXghpFwJjaau9v0+bcWtmPxxxo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752013217; c=relaxed/simple;
+	bh=KMGINIUF9JdO9OOP3qREMqyptU/KtyZODm1dwNAd/7A=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lODGGozVYMqBmox0UH2ChmAr0/w/r0pFXH4eLdzKok0wD783tPR1unugPLJ7bTf6FA2IeVgDCg1hRRYKlbnepZsshW+20xqK3B6lZ8ghoDv5uTcV3FvaH4YsF7arZ3prj6QK8R/hkO87fRIn/xO/YBtf9RS1td0NvbnTOMq2XJo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IcE1d3Mb; arc=fail smtp.client-ip=40.107.237.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HxCInQstBBB2TK4/ArpHYTh28uOUuBeHh+LsI3fYRuT8l3F2XLLqjiZW0Hg7l/8tcJC0bwjpVhawA4He26JB0ZamaL+NoB78s/KvvzztcRUIpq0Of6+umn7przil1yZdXxqPeQOfLChO0Fp3/gE5lsiQ1XhNFZ+a/9/RWdzGinGFlpJ/TQUTw4ipYbeHXbtMN8/ynxr6XKWTM1s93xi+dDV56e0Z9/IibDUQ4RWgM61NNap7bcx3II5Q0UFrhzGvqwA1o4bNbU0eBIdZow+ij/O0Oij4IewCYca6du5pwYKQeV8cx/OM/7PuUmSty6c2C2bcGu3BBgFsAx5rt1EFzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lDAMcx/RGQJ3ZorxR2ZiSTQV/G4jzowUx9dSXdG/91Y=;
+ b=EEbh9teiLvD1KTwjY29D3raE1uieV2jpjR+yv4BpWFm16rUCaxfgYEKX3seDfD6yPSgNDM88lkbSR7oyB8mukvposhJMIRjYpS14AEv0aNtNHDkSQwFY4JbXnEapVgvX7j8iqtA7uP+LfWpu0q2D3MNf/lQFOPcR38gN0H0EkMmJ4wHAQUsDS8ktOZHEvua4OaVfxBViOHG8wIDynuzdayOfArX5V96O5P8Lfyv5luB+UJ4TmCpzPyajrZRpwGPwYBrnkZjx2EH+YYP5bbtCXOv6gFtqbAOha7tgZmFNQmHG38U2J2EjQka3+FjTvzJyWhfSegNndjtB41uquHU5Fw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lwn.net smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lDAMcx/RGQJ3ZorxR2ZiSTQV/G4jzowUx9dSXdG/91Y=;
+ b=IcE1d3Mb06dbVBcgBIChL0wI4Jtj3bigVND6k0atkarrpkPOgPyOLVH9Fde8j3FScUOjs4pT4RCn/PcXHho4zTw8p6joJJjMrWciNgU0PiPD0FHe9cgX8rQSPBc2TaqFwGqqlcWjuUtM2EjPdM6HgaBzuUlQuxMGak+BsYNeh9s=
+Received: from SJ0PR13CA0035.namprd13.prod.outlook.com (2603:10b6:a03:2c2::10)
+ by IA1PR12MB8288.namprd12.prod.outlook.com (2603:10b6:208:3fe::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Tue, 8 Jul
+ 2025 22:20:06 +0000
+Received: from SJ1PEPF00001CE9.namprd03.prod.outlook.com
+ (2603:10b6:a03:2c2:cafe::aa) by SJ0PR13CA0035.outlook.office365.com
+ (2603:10b6:a03:2c2::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.19 via Frontend Transport; Tue,
+ 8 Jul 2025 22:20:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF00001CE9.mail.protection.outlook.com (10.167.242.25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8901.15 via Frontend Transport; Tue, 8 Jul 2025 22:20:06 +0000
+Received: from bmoger-ubuntu.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 8 Jul
+ 2025 17:19:59 -0500
+From: Babu Moger <babu.moger@amd.com>
+To: <corbet@lwn.net>, <tony.luck@intel.com>, <reinette.chatre@intel.com>,
+	<james.morse@arm.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>
+CC: <Dave.Martin@arm.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<akpm@linux-foundation.org>, <paulmck@kernel.org>, <rostedt@goodmis.org>,
+	<Neeraj.Upadhyay@amd.com>, <david@redhat.com>, <arnd@arndb.de>,
+	<fvdl@google.com>, <seanjc@google.com>, <jpoimboe@kernel.org>,
+	<pawan.kumar.gupta@linux.intel.com>, <xin@zytor.com>,
+	<manali.shukla@amd.com>, <babu.moger@amd.com>, <tao1.su@linux.intel.com>,
+	<sohil.mehta@intel.com>, <kai.huang@intel.com>, <xiaoyao.li@intel.com>,
+	<peterz@infradead.org>, <xin3.li@intel.com>, <kan.liang@linux.intel.com>,
+	<mario.limonciello@amd.com>, <thomas.lendacky@amd.com>, <perry.yuan@amd.com>,
+	<gautham.shenoy@amd.com>, <chang.seok.bae@intel.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<peternewman@google.com>, <eranian@google.com>
+Subject: [PATCH v15 14/34] x86/resctrl: Add data structures and definitions for ABMC assignment
+Date: Tue, 8 Jul 2025 17:17:23 -0500
+Message-ID: <994417126eae21f7ceb7994a875b9ec9bc553784.1752013061.git.babu.moger@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1752013061.git.babu.moger@amd.com>
+References: <cover.1752013061.git.babu.moger@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625201853.84062-2-stuart.w.hayes@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE9:EE_|IA1PR12MB8288:EE_
+X-MS-Office365-Filtering-Correlation-Id: 291dd652-6ad0-4901-3b23-08ddbe6d97d4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|7416014|82310400026|376014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WEZBd3MwUElERnNiWmY3Z0FUWm5tdXFaSlp1YjdOTjhUbmtjNStna251VWxn?=
+ =?utf-8?B?MndGSnBGbXcrVTdCeXVQUDNpd3BPclVRRkwvUjlKbkUvZlZyRFZhU1NIUTlV?=
+ =?utf-8?B?UFkvRjhlZDloQmF5ci9XMWRBQzRHQWFieUl4Y1EyNkJwRXQ1MTc3TGdjMkZ1?=
+ =?utf-8?B?UGhOemtHdisxS0NydHhzWERncnQ0cWQ3cFZwWEpPdURNNE1qOGNHR0hoSGQx?=
+ =?utf-8?B?dGNvSVZ0a0VNMDhUdUg4djA2c1d4MjVKbG5HeXVtWFRpdjd3ZjFoWlNUdEhT?=
+ =?utf-8?B?cU0xZDRFcDhLRW9ta0sweHFKN1NPTVpzRUVrU0FOLzR5SzFxVHZXbXpUSUVy?=
+ =?utf-8?B?aEs1ZU9JVWtUMFNLblYwUFdCdXNiSG1vdzc1NGwxR3FvSHNjUjh3Q1RPWkVv?=
+ =?utf-8?B?bXVDbGh5cjFvL0VqeVR3QmljN21kRWd3RVpOMWJQaFR4NnFWTjB1TktQK3U3?=
+ =?utf-8?B?OXFLYUJCZXg0TXRCaHoyTjkySWVvcHFodkkzQUlTTkkyU1pWN0g0c3JaaUIv?=
+ =?utf-8?B?SXVSd3MzSktZRTliMUhnWW1BNm5YakYzSGcrSkVBZzhUaENCRkhFcE83cWxu?=
+ =?utf-8?B?UDlMWW9VSkpMRGFtd2tSTHVJK1BiNDlVdjV6WnVGSjdmQTBIM0UyYVJ1UFhs?=
+ =?utf-8?B?NXMrUWNqbVJyTmhjcmE2Uk5LMno2WVB1R01PMU9LZjlyNElTNGpKcEVQRkw5?=
+ =?utf-8?B?amJza3d1UDU0bXZFN1VidXBrSFdRWEZrMTAvZzQ5MVRHZTdEZDlLeXNHMWVZ?=
+ =?utf-8?B?VlRqenkyZk8zT2FFMERMTzFRTjI0SkxzWmRZTytQQ1lNelhESSs4ZkNWNU91?=
+ =?utf-8?B?d3o1VlliNC9ETmkrTjFQck90V0pOMmxjWndNbk1jeW94ZUc0d0EyMEpuVFpX?=
+ =?utf-8?B?Z0kvNG8zcUd1cDZteWdxUmNOV3BRanVjalhKNW53UWt5NlVtbmdKSElib0Ro?=
+ =?utf-8?B?dVZCRkVIK3FZSTl6dk5JTHVzY2tyRDlmZG8zU3VVNjlJL2dXUkpqbTlmdDVn?=
+ =?utf-8?B?LzNxd1FjNUFOaHNpajJDSm5ySk5tamtUNWJ5UEYyZnpObEJXdURWZjdjUlZS?=
+ =?utf-8?B?T09yUkk4a0JmN01CWTJiOEVoWUFtRzRnb0xWaTdnT1hWK09IQTFwN2pIV2hi?=
+ =?utf-8?B?aC9BOStoTU5iNXR1cGRsM1dmYkZKNFFpVVpuVzZlcFl2bzlkamsxOVd1bzBL?=
+ =?utf-8?B?MlRSa3JPUWo3WFVSc2hoRk1qL3d2VjVnNXY5QjJueGdOelZGaFBGdHh2TWN3?=
+ =?utf-8?B?RjhGbmNmdWpXdzNEbUROdUhhbHVzeGRCMFVmeXJ4ZXdWaUpXYnhZQTV4bnd0?=
+ =?utf-8?B?QVB2Q011NFp2UjY0a0cvSE53VFNHWkI1RnB2Zk9LZlNWenNrN3ozRFhXaXVv?=
+ =?utf-8?B?aXpRZGJ6bFQ3aXJKTThaY1h5SlhIa3ZiblRtcGN1SHNwY2kzM3hoeHlUTFRo?=
+ =?utf-8?B?czBiMmlTdWtERCtkY2x3alRFUm90dytyZkFMdlY2MVJuZGlQRVhnNmNxKzZq?=
+ =?utf-8?B?WHVWREt6RVFGMFlNSG1BQkdZQ2lhdkNicUVZWDZmaHVURk5hYnoxZGtDZ3FO?=
+ =?utf-8?B?UVQ5ZGp5dkNxZjRzdStNM1JFc0RhU0ROR2JJUndmOVk1Y3k4RHd6ckhlNFRv?=
+ =?utf-8?B?NmdRSFE4VTlwcTV3M2V0c2pIK2cxNnJTS0NrSit0K3BBaDUxM2tqeUlqWmhE?=
+ =?utf-8?B?K2R4eU9uazd5d1RJZ2JETTF0MTRBQ3Z2VzZyd2lEcFlmRitVaEVFK2hhc1Zo?=
+ =?utf-8?B?ZGYxcXN3bnF2NCsyZDBFL0daL05kQlhNZkxlK0wwL1JTNlU2NWZuKzczZnNa?=
+ =?utf-8?B?U0trV0NXVml1cmNxd3l2eGlQeUlxOFBKSlhLc0U0TnR3WFBkY3RaTldBaUZV?=
+ =?utf-8?B?V2JhcW9kU3F5UXpYOXdSK3hSSmc3UEg3djU1QURWL0ZiYzJUV3BtM1grVmcz?=
+ =?utf-8?B?SzYwRFBrYjlQeFgzenA4ZjVoYWxDZXFiRC96Y2ZHWWZsVUNQbWREZDBqSnJO?=
+ =?utf-8?B?c3FBTmVianE5SVBjbTRpdkd6Ykl2d21GdjI2Zk9OSVBjYTRFMkNUM3p2YU5a?=
+ =?utf-8?B?L0hVNHVidUQzV2ordWRxUVdYTTNuczQ5Y0dHdz09?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(82310400026)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 22:20:06.3106
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 291dd652-6ad0-4901-3b23-08ddbe6d97d4
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CE9.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8288
 
-On Wed, Jun 25, 2025 at 03:18:49PM -0500, Stuart Hayes wrote:
-> From: David Jeffery <djeffery@redhat.com>
-> 
-> To prevent a thundering herd effect, implement a custom wake function for
-> the async shubsystem which will only wake waiters which have all their
-> dependencies completed.
-> 
-> The async subsystem currently wakes all waiters on async_done when an async
-> task completes. When there are many tasks trying to synchronize on differnt
-> async values, this can create a thundering herd problem when an async task
-> wakes up all waiters, most of whom go back to waiting after causing
-> lock contention and wasting CPU.
-> 
-> Signed-off-by: David Jeffery <djeffery@redhat.com>
-> Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
-> ---
->  kernel/async.c | 42 +++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 41 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/async.c b/kernel/async.c
-> index 4c3e6a44595f..ae327f29bac9 100644
-> --- a/kernel/async.c
-> +++ b/kernel/async.c
-> @@ -76,6 +76,12 @@ struct async_entry {
->  	struct async_domain	*domain;
->  };
->  
-> +struct async_wait_entry {
-> +	wait_queue_entry_t wait;
-> +	async_cookie_t cookie;
-> +	struct async_domain *domain;
-> +};
-> +
->  static DECLARE_WAIT_QUEUE_HEAD(async_done);
->  
->  static atomic_t entry_count;
-> @@ -298,6 +304,24 @@ void async_synchronize_full_domain(struct async_domain *domain)
->  }
->  EXPORT_SYMBOL_GPL(async_synchronize_full_domain);
->  
-> +/**
-> + * async_domain_wake_function - wait function for cooking synchronization
-> + *
-> + * Custom wait function for async_synchronize_cookie_domain to check cookie
-> + * value.  This prevents waking up waiting threads unnecessarily.
-> + */
-> +static int async_domain_wake_function(struct wait_queue_entry *wait,
-> +				      unsigned int mode, int sync, void *key)
-> +{
-> +	struct async_wait_entry *await =
-> +		container_of(wait, struct async_wait_entry, wait);
-> +
-> +	if (lowest_in_progress(await->domain) < await->cookie)
-> +		return 0;
-> +
-> +	return autoremove_wake_function(wait, mode, sync, key);
-> +}
-> +
->  /**
->   * async_synchronize_cookie_domain - synchronize asynchronous function calls within a certain domain with cookie checkpointing
->   * @cookie: async_cookie_t to use as checkpoint
-> @@ -310,11 +334,27 @@ EXPORT_SYMBOL_GPL(async_synchronize_full_domain);
->  void async_synchronize_cookie_domain(async_cookie_t cookie, struct async_domain *domain)
->  {
->  	ktime_t starttime;
-> +	struct async_wait_entry await = {
-> +		.cookie = cookie,
-> +		.domain = domain,
-> +		.wait = {
-> +			.func = async_domain_wake_function,
-> +			.private = current,
-> +			.flags = 0,
-> +			.entry = LIST_HEAD_INIT(await.wait.entry),
-> +		}};
->  
->  	pr_debug("async_waiting @ %i\n", task_pid_nr(current));
->  	starttime = ktime_get();
->  
-> -	wait_event(async_done, lowest_in_progress(domain) >= cookie);
-> +	for (;;) {
-> +		prepare_to_wait(&async_done, &await.wait, TASK_UNINTERRUPTIBLE);
-> +
-> +		if (lowest_in_progress(domain) >= cookie)
+The ABMC feature allows users to assign a hardware counter to an RMID,
+event pair and monitor bandwidth usage as long as it is assigned. The
+hardware continues to track the assigned counter until it is explicitly
+unassigned by the user.
 
-This line introduces a bug on PREEMPT_RT because lowest_in_progress() may sleep
-on PREEMPT_RT. If it does sleep, it'll corrupt the current task's state by
-setting it to TASK_RUNNING after the sleep is over. IOW, the current task's
-state might be TASK_RUNNING after lowest_in_progress() returns.
+The ABMC feature implements an MSR L3_QOS_ABMC_CFG (C000_03FDh).
+ABMC counter assignment is done by setting the counter id, bandwidth
+source (RMID) and bandwidth configuration.
 
-lowest_in_progress() may sleep on PREEMPT_RT because it locks a non-raw spin
-lock (async_lock).
+Attempts to read or write the MSR when ABMC is not enabled will result
+in a #GP(0) exception.
 
-> +			break;
-> +		schedule();
-> +	}
-> +	finish_wait(&async_done, &await.wait);
->  
->  	pr_debug("async_continuing @ %i after %lli usec\n", task_pid_nr(current),
->  		 microseconds_since(starttime));
-> -- 
-> 2.39.3
-> 
+Introduce the data structures and definitions for MSR L3_QOS_ABMC_CFG
+(0xC000_03FDh):
+=========================================================================
+Bits 	Mnemonic	Description			Access Reset
+							Type   Value
+=========================================================================
+63 	CfgEn 		Configuration Enable 		R/W 	0
 
-Sultan
+62 	CtrEn 		Enable/disable counting		R/W 	0
+
+61:53 	– 		Reserved 			MBZ 	0
+
+52:48 	CtrID 		Counter Identifier		R/W	0
+
+47 	IsCOS		BwSrc field is a CLOSID		R/W	0
+			(not an RMID)
+
+46:44 	–		Reserved			MBZ	0
+
+43:32	BwSrc		Bandwidth Source		R/W	0
+			(RMID or CLOSID)
+
+31:0	BwType		Bandwidth configuration		R/W	0
+			tracked by the CtrID
+==========================================================================
+
+The feature details are documented in the APM listed below [1].
+[1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
+Publication # 24593 Revision 3.41 section 19.3.3.3 Assignable Bandwidth
+Monitoring (ABMC).
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
+Signed-off-by: Babu Moger <babu.moger@amd.com>
+---
+v15: Minor changelog update.
+
+v14: Removed BMEC reference internal.h.
+     Updated the changelog and code documentation.
+
+v13: Removed the Reviewed-by tag as there is commit log change to remove
+     BMEC reference.
+
+v12: No changes.
+
+v11: No changes.
+
+v10: No changes.
+
+v9: Removed the references of L3_QOS_ABMC_DSC.
+    Text changes about configuration in kernel doc.
+
+v8: Update the configuration notes in kernel_doc.
+    Few commit message update.
+
+v7: Removed the reference of L3_QOS_ABMC_DSC as it is not used anymore.
+    Moved the configuration notes to kernel_doc.
+    Adjusted the tabs for l3_qos_abmc_cfg and checkpatch seems happy.
+
+v6: Removed all the fs related changes.
+    Added note on CfgEn,CtrEn.
+    Removed the definitions which are not used.
+    Removed cntr_id initialization.
+
+v5: Moved assignment flags here (path 10/19 of v4).
+    Added MON_CNTR_UNSET definition to initialize cntr_id's.
+    More details in commit log.
+    Renamed few fields in l3_qos_abmc_cfg for readability.
+
+v4: Added more descriptions.
+    Changed the name abmc_ctr_id to ctr_id.
+    Added L3_QOS_ABMC_DSC. Used for reading the configuration.
+
+v3: No changes.
+
+v2: No changes.
+---
+ arch/x86/include/asm/msr-index.h       |  1 +
+ arch/x86/kernel/cpu/resctrl/internal.h | 36 ++++++++++++++++++++++++++
+ 2 files changed, 37 insertions(+)
+
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index a98367a353a5..0f513f186fc6 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -1216,6 +1216,7 @@
+ /* - AMD: */
+ #define MSR_IA32_MBA_BW_BASE		0xc0000200
+ #define MSR_IA32_SMBA_BW_BASE		0xc0000280
++#define MSR_IA32_L3_QOS_ABMC_CFG	0xc00003fd
+ #define MSR_IA32_L3_QOS_EXT_CFG		0xc00003ff
+ #define MSR_IA32_EVT_CFG_BASE		0xc0000400
+ 
+diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+index a79a487e639c..6bf6042f11b6 100644
+--- a/arch/x86/kernel/cpu/resctrl/internal.h
++++ b/arch/x86/kernel/cpu/resctrl/internal.h
+@@ -164,6 +164,42 @@ union cpuid_0x10_x_edx {
+ 	unsigned int full;
+ };
+ 
++/*
++ * ABMC counters are configured by writing to L3_QOS_ABMC_CFG.
++ *
++ * @bw_type		: Event configuration that represent the memory
++ *			  transactions being tracked by the @cntr_id.
++ * @bw_src		: Bandwidth source (RMID or CLOSID).
++ * @reserved1		: Reserved.
++ * @is_clos		: @bw_src field is a CLOSID (not an RMID).
++ * @cntr_id		: Counter identifier.
++ * @reserved		: Reserved.
++ * @cntr_en		: Counting enable bit.
++ * @cfg_en		: Configuration enable bit.
++ *
++ * Configuration and counting:
++ * Counter can be configured across multiple writes to MSR. Configuration
++ * is applied only when @cfg_en = 1. Counter @cntr_id is reset when the
++ * configuration is applied.
++ * @cfg_en = 1, @cntr_en = 0 : Apply @cntr_id configuration but do not
++ *                             count events.
++ * @cfg_en = 1, @cntr_en = 1 : Apply @cntr_id configuration and start
++ *                             counting events.
++ */
++union l3_qos_abmc_cfg {
++	struct {
++		unsigned long bw_type  :32,
++			      bw_src   :12,
++			      reserved1: 3,
++			      is_clos  : 1,
++			      cntr_id  : 5,
++			      reserved : 9,
++			      cntr_en  : 1,
++			      cfg_en   : 1;
++	} split;
++	unsigned long full;
++};
++
+ void rdt_ctrl_update(void *arg);
+ 
+ int rdt_get_mon_l3_config(struct rdt_resource *r);
+-- 
+2.34.1
+
 
