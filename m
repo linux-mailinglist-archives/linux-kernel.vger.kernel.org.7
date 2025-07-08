@@ -1,109 +1,208 @@
-Return-Path: <linux-kernel+bounces-721841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83610AFCE81
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:04:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDC7FAFCE86
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADDF37A4ED0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:03:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62C303A64BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C892DAFC1;
-	Tue,  8 Jul 2025 15:04:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878A72E0935;
+	Tue,  8 Jul 2025 15:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dddBhdbu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mCxeE7iV"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E661526563B
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CAF1A288
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751987073; cv=none; b=XQ9FgOu5Wd5FT14wq9uMqstJPgP3CwvK4OBVXcuFNQ4NdKDBRIsSej0+H+DbMphb5e4JltztA5L4VF+MAGSdQSfXJ9QmmIaFu6AF9ttUrXnUjEhs7jeFIvUmLVp5KbURwuSBUKaKIpK28o3KhYKVLYjF3BtM/yfSUmw/DCTuEgg=
+	t=1751987129; cv=none; b=P0m39g/NItDiywghtVkD5VRDJOwNoVFEkMQ8nbrlF/0ewb2YUL/s0dDqaXZkHyRKe+C1G75EjinOgv3fYNtcigOEgCBzazcppgQ3SiJcFLTp1HsfZGjvcejxAY+jl0fxcC1p3aYeVtIucmPgi9hKh1HLOym5M7Zd33QFx9+4IxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751987073; c=relaxed/simple;
-	bh=pDH2XFHl/iv3yIYHUvYceoo2XrEbUJyxj+Z370eNWa0=;
+	s=arc-20240116; t=1751987129; c=relaxed/simple;
+	bh=BKAEA2rbTjauN4CZf10Bop3hBmw+E3yiNiTQp2bPJVo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BxbPhWa2TyfD584+XwC3FpygnkV5wzWEtDAL3mp1KFgCxw8hFmuuAPxRlRmGhXrgNq3JR+PgUwTU1ADYUgrn3iqOKSpA+H9b0Hev5VEge1zEeNXGR/X+2q2uPjTVznBdl65Bt2fNuPGWUK5KTozAO4s64ksd1uZU98u9W6bSeJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dddBhdbu; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751987071;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tl43DWhHwsKq17d5JHNS8cD2rQiVgiSwSkjGnb/5syA=;
-	b=dddBhdbuTZ3tA14rRW0EMyCW6D3HR98cnCvZiRfodl/bWc76W/z4HbSlBHPe25D9TKZiNO
-	g0zqDxAX7862TEnew+2PFRtOwsZBmiSGD5Z3jD0P/ao/Qmf3Wv36VjFllapgwRKSMHodfX
-	Umh+TXSNn5w7OaUqMq5K24surMSz4TI=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-599-VrINqQlHPd2kDqyAFy-zAQ-1; Tue, 08 Jul 2025 11:04:29 -0400
-X-MC-Unique: VrINqQlHPd2kDqyAFy-zAQ-1
-X-Mimecast-MFC-AGG-ID: VrINqQlHPd2kDqyAFy-zAQ_1751987068
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-748cf01de06so6973747b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 08:04:29 -0700 (PDT)
+	 To:Cc:Content-Type; b=UMzXOFrFTF7namznmHCIVL3o+c+vSR2ICppfUV94B8NCHekGcO7fCRZPoVnIQkGS9p/hdZImYgSLyiEO2k5WpDKcSr3YFK9NvSn0lCI1baLHtXLR/EVSHtas+om/Em7njTb31/b+Bblaj49lcS5aV8pSqwPxy+tU2HnryK4vRYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mCxeE7iV; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-70e302191a3so37971867b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 08:05:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751987127; x=1752591927; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=AbN9vJsY/mkHEsGghFEQy2rviLOqFLUvl0p6J+/2RvA=;
+        b=mCxeE7iVDSfoki+w5FHCuE8wu6pBkGzuNH/NDEu7FVD8wIBtqNJ8zRL1Ar8lE0ZYMA
+         wAWiex2OwHfSAVdFXlDELaG/7hDfHO39ycc0CHMn/hDxrf1s1oiFiefsSEJh5LgPzhiT
+         srYAavrZuGRVnv1I8n0F0QtlAY9VKqmCKpUoNxjWvxBsmd+QuLI90LMWSw4sxubJWTLA
+         OtsvqU7koBYxI9ZA7GHi7w8VnqrM8675x/U5O6/lN82eApWgfEqFJz+pFd0lQv1KZT94
+         ajNuXZVHSD0AtEG9aC2QshNor0E0JkXCE7VPvLq+osjtL7uf22mu7hKc6phLmuF7grHt
+         1Cug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751987068; x=1752591868;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tl43DWhHwsKq17d5JHNS8cD2rQiVgiSwSkjGnb/5syA=;
-        b=XxHNVm9TDkmNSk6MHo7scKiXMN74rBimPbLUv/I17z/IFFs78sf39AVcCETD6JeH/e
-         NXZrezCf5wDh2Nhiyyu82v97e+c4Q9mwrtequd5+eF400+uKHni37WBvdDb+bYJds3Hn
-         KMsLZRgDXQ+v+N7wqaAeC/aFSCgR+TxN0KyCmxys8LjrDOxpSaoX47ZUuObMDy3nINWs
-         Car5CFxCM2IjLglAHiP0ibKehSpSbhpcsxyC1G9g+BJGePn6W98aKCNT4K33xxxmjFPG
-         b3d5sXzNyQvjXoIi9cI1jEySFiBt/nmAwIBoWLFxbC2y6YwMPPMOzAQ3g428lI25JvRh
-         A0qA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhRPOvcvfOltZUE1PNM8MAnsv0wE+JMkPN770zG0QNzGo12bDy/0cz/FAF2nqdPU1ePPYNkcI/9+661fE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW0GmiKOj3+aLDAdQaFaZxnAdoH0+pJ4U3w0zeFokE9u46HS82
-	HYQNvHwk4TEAA9LmA/na65x4beoyHEy0UhM1kJITQF3OqK6cN3WL8OBj6eEucOO6rpVgYu5QaIy
-	axLF0MOCEiZWnRrGRXZkj4jc/3J9dbHbEp+yDUcbXscnUlhQlgeORvUhmjWRVKUJE8PnbMcdwZ6
-	m20+gbwO+CwZVVZCZ6uX1iCYy0mUEExXkJLL1aTHIA
-X-Gm-Gg: ASbGnctX3C429ouSvYbts4/2aMm0SyZL3VRsZbiPQT8R3W7veihIltBmpHCLw2+3sR7
-	pN7mtJE2Vdk3HFVdexLU/QgsYZEPl8pvMIwsa7YK9CMYdFBH30Nk8KpZ/6rNagbuYJLGmsU3CN0
-	3jZg==
-X-Received: by 2002:a05:6a00:1ac7:b0:736:3d7c:236c with SMTP id d2e1a72fcca58-74ce6669a73mr22213602b3a.14.1751987068066;
-        Tue, 08 Jul 2025 08:04:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG2ejvW3YmvccpHRprgPMxap6Mer3Z8N0cp8nCP+Ldw5z9vAhxZz6fSn4zsrkaqz4eR37sKS5kCEKtiNL+HIT4=
-X-Received: by 2002:a05:6a00:1ac7:b0:736:3d7c:236c with SMTP id
- d2e1a72fcca58-74ce6669a73mr22213546b3a.14.1751987067575; Tue, 08 Jul 2025
- 08:04:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751987127; x=1752591927;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AbN9vJsY/mkHEsGghFEQy2rviLOqFLUvl0p6J+/2RvA=;
+        b=v1jUY5OfJcfPmlSLmj02bBH/LO+ZcR9Ur73pB3ofIuPPYJ18DeFwcB42Bs5yJ8NY3X
+         1JJ33MKxZU+DU2uWasad1vWEkm19hf1s52fUpe66wHXs1kPPA84hBopcCVTQi9IICmIC
+         YEbccpTqMn7X8wIzFikQLNLFhMUqj1UUqEX7jcno0IwdplKBupNIkgyqXB2rsU5YISVi
+         rVwEaSlXKWj0YUykjiDMAnrnKRnZExCKefncTNu0WOHsZ0OpOjuZneSnfByHVNKw9Ev5
+         m7PqQqvMKaZKresmpnCKDXK+3SJ7OW/2O8biQmtUIgbuiEoDzAUOg+P1rJ9XPYnz006j
+         upXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFDWJN9nZvQ5ghoBUNvMAszIvVpRUkNd2EpF2FvMrJqcZJPJH7lkUp4MH+Fo2BraeQFsqGXSxVYMVR6K0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzcn6F7yZ7gh+oXvIiAyQksMFi6YLOzJs9+rHm0IX+IJtJf/vah
+	vS5gYD9IzyTb3JMtZwwhEnq8sHuqkjj7Ny0YVtoRJlp+7scYiEC6Uswf8jsYb2SyxX3LiflINJj
+	IErGq9VqpsM3yf0gMJ5yXiimJbwFPjW3qxm/JDsWeWg==
+X-Gm-Gg: ASbGncvu6vQSEbaV6VE8+1jTDKiTmd9GSZpAnyhD9gxlXTyuUgWiOgFFZUS2YKipaJf
+	4ml7JEF5FD6lL2T2Bt/F4VPH+Yi/lFwkJaBBXST9rJo5aXCA0ZnjcvkCqPN9nGEQqO1ZjGbKSfV
+	CTsArOM45mNk3WtLBVHLIClK35YESkVTojrx+DzUUYWfSs
+X-Google-Smtp-Source: AGHT+IHBtCLoH5+e5H6LltUDB7e8LY/seAM2AxugJI15zrEUc8YzJfSv/mbx//NgSFS3ANi+4dqcSKaKRPubRavB9Bw=
+X-Received: by 2002:a05:690c:45c9:b0:708:16b0:59c3 with SMTP id
+ 00721157ae682-717a046193fmr41621337b3.33.1751987126648; Tue, 08 Jul 2025
+ 08:05:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250626224336.867412-1-seanjc@google.com>
-In-Reply-To: <20250626224336.867412-1-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Tue, 8 Jul 2025 17:04:07 +0200
-X-Gm-Features: Ac12FXyJCla8Zq0EueybAUCeQZdUT7OiUHbkPJGhCeECDpLsEK99IMU2xCp9p5Q
-Message-ID: <CABgObfbpf58Nhc75TfmFCK+jLbTZ_DkuEZCHFjDAwKabieFugg@mail.gmail.com>
-Subject: Re: [kvm-unit-tests GIT PULL] x86: Fixes, cleanups, and new testcases
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250707105605.98248-1-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20250707105605.98248-1-angelogioacchino.delregno@collabora.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 8 Jul 2025 17:04:50 +0200
+X-Gm-Features: Ac12FXwX-NP6E6P2Q56_QdBCypnbJ4xWnF08vZN6p09NHmwLlHzcTOT7bmz8Wbg
+Message-ID: <CAPDyKFrDytmrkd6SsJc6W=k7Ayijfadu5jTOyTGn9rJS1osQBg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/10] pmdomain: Partial refactor, support modem and RTFF
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-mediatek@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, matthias.bgg@gmail.com, y.oudjana@protonmail.com, 
+	fshao@chromium.org, wenst@chromium.org, lihongbo22@huawei.com, 
+	mandyjh.liu@mediatek.com, mbrugger@suse.com, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-pm@vger.kernel.org, kernel@collabora.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 27, 2025 at 12:43=E2=80=AFAM Sean Christopherson <seanjc@google=
-.com> wrote:
->  - Play nice with QEMU builds that disable VNX support.
+On Mon, 7 Jul 2025 at 12:56, AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Changes in v2:
+>  - Added #access-controller-cells allowance for MT8188/95 infracfg_ao
+>
+> This series is a subset of [1], leaving out the Hardware Voter specific
+> bits for MT8196 until the discussion around it reaches a conclusion.
+>
+> Even though the proposed code was born as a preparation to support the
+> MT8196/MT6991 SoCs power domain controllers, it is a necessary cleanup
+> for all power domain controllers of all of the currently supported SoCs
+> from MediaTek.
+>
+> You may also notice the addition of support for modem power sequences:
+> this was brought up 6 months ago (or more) by community contributors
+> (mainly Yassine Oudjana) that were trying to upstream the MediaTek
+> MT6735 Smartphone SoC and needed support to provide power to the MD
+> subsystem - so, even though in this specific series the code for the
+> modem power sequence is not yet triggered by any SoC, please please
+> please, let it in.
+> Besides, "a bunch" of upstream supported SoCs do have the MD power
+> domain even though it wasn't added to their drivers (because if there
+> was no support in the driver, it would just crash the system); the
+> addition is something that I plan to do at some point, but definitely
+> not now as I have no bandwidth for that (bar MT8196, which will have
+> this domain).
+>
+> Compared to v1 in [1]:
+>  - Changed mediatek,bus-protection to access-controllers
+>    as suggested by Rob (thanks!)
+>  - Added commits to document #access-controller-cells on all of
+>    the access control providers
 
-This mysterious VNX caught my attention. :)
+The series looks good to me! I can pick patch 1->9, but I am awaiting
+an ack from some of the DT maintainers for patch 1->3 first.
 
-This could be fixed in QEMU to accept "-vnc none", or could be changed
-to "-display none" (-display being the newer and nicer option that
-sums up -vnc, -sdl, -gtk and so on).
+Kind regards
+Uffe
 
-I'll send the patch and have pushed the rest in the meanwhile.
 
-Paolo
 
+>
+> In the meanwhile.... relevant excerpt from the old series:
+>
+> This series refactors the bus protection regmaps retrieval to avoid
+> searching in all power domain devicetree subnodes for vendor properties
+> to get syscons for different busses, and adds a new property which is
+> located in the power controller root node containing handles to the same.
+>
+> Retrocompatibility is retained and was tested on multiple SoCs in the
+> Collabora lab - specifically, on Genio 350/510/700/1200, and manually
+> on MT6795 Helio (Xperia M5 Smartphone), MT8186, MT8192 and MT8195
+> Chromebooks.
+>
+> This was tested *three times*:
+>  - Before the per-SoC conversion in drivers/pmdomain/mediatek
+>  - With per-SoC conversion code but with *legacy* devicetree
+>  - With per-SoC conversion code and with *new* devicetree conversion
+>
+> All of those tests were successful on all of the aforementioned SoCs.
+>
+> This also adds support for:
+>  - Modem power domain for both old and new MediaTek SoCs, useful for
+>    bringing up the GSM/3G/4G/5G modem for both laptop and smartphone use
+>  - RTFF MCU HW, as found in MT8196 Chromebooks and MT6991 Dimensity 9400
+>
+> ...and prepares the pmdomain code to accomodate only the directly
+> controlled power domains for MT8196 (HW Voter support was left out).
+>
+> [1] https://lore.kernel.org/all/20250623120154.109429-1-angelogioacchino.delregno@collabora.com
+>
+> AngeloGioacchino Del Regno (10):
+>   dt-bindings: memory: mtk-smi: Document #access-controller-cells
+>   dt-bindings: clock: mediatek: Document #access-controller-cells
+>   dt-bindings: power: mediatek: Document access-controllers property
+>   pmdomain: mediatek: Refactor bus protection regmaps retrieval
+>   pmdomain: mediatek: Handle SoCs with inverted SRAM power-down bits
+>   pmdomain: mediatek: Move ctl sequences out of power_on/off functions
+>   pmdomain: mediatek: Add support for modem power sequences
+>   pmdomain: mediatek: Add support for RTFF Hardware in MT8196/MT6991
+>   pmdomain: mediatek: Convert all SoCs to new style regmap retrieval
+>   arm64: dts: mediatek: Convert all SoCs to use access-controllers
+>
+>  .../bindings/clock/mediatek,infracfg.yaml     |   3 +
+>  .../clock/mediatek,mt8186-sys-clock.yaml      |  15 +
+>  .../clock/mediatek,mt8188-sys-clock.yaml      |  15 +
+>  .../clock/mediatek,mt8192-sys-clock.yaml      |  15 +
+>  .../clock/mediatek,mt8195-sys-clock.yaml      |  15 +
+>  .../clock/mediatek,mt8365-sys-clock.yaml      |  15 +
+>  .../mediatek,smi-common.yaml                  |  16 +
+>  .../power/mediatek,power-controller.yaml      |  39 ++
+>  arch/arm64/boot/dts/mediatek/mt6795.dtsi      |   5 +-
+>  arch/arm64/boot/dts/mediatek/mt8167.dtsi      |   6 +-
+>  arch/arm64/boot/dts/mediatek/mt8173.dtsi      |   4 +-
+>  arch/arm64/boot/dts/mediatek/mt8183.dtsi      |  17 +-
+>  arch/arm64/boot/dts/mediatek/mt8186.dtsi      |  12 +-
+>  arch/arm64/boot/dts/mediatek/mt8188.dtsi      |  23 +-
+>  arch/arm64/boot/dts/mediatek/mt8192.dtsi      |  13 +-
+>  arch/arm64/boot/dts/mediatek/mt8195.dtsi      |  20 +-
+>  arch/arm64/boot/dts/mediatek/mt8365.dtsi      |  16 +-
+>  drivers/pmdomain/mediatek/mt6795-pm-domains.h |   5 +
+>  drivers/pmdomain/mediatek/mt8167-pm-domains.h |   5 +
+>  drivers/pmdomain/mediatek/mt8173-pm-domains.h |   5 +
+>  drivers/pmdomain/mediatek/mt8183-pm-domains.h |   5 +
+>  drivers/pmdomain/mediatek/mt8186-pm-domains.h |   5 +
+>  drivers/pmdomain/mediatek/mt8188-pm-domains.h |   6 +
+>  drivers/pmdomain/mediatek/mt8192-pm-domains.h |   5 +
+>  drivers/pmdomain/mediatek/mt8195-pm-domains.h |   5 +
+>  drivers/pmdomain/mediatek/mt8365-pm-domains.h |  14 +-
+>  drivers/pmdomain/mediatek/mtk-pm-domains.c    | 399 +++++++++++++++---
+>  drivers/pmdomain/mediatek/mtk-pm-domains.h    |  74 +++-
+>  28 files changed, 596 insertions(+), 181 deletions(-)
+>
+> --
+> 2.49.0
+>
 
