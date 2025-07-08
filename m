@@ -1,170 +1,110 @@
-Return-Path: <linux-kernel+bounces-721369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1033AFC845
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:23:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04F17AFC849
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:24:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE6CA3BF98E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:22:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5EEE7A5F07
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26308269CE1;
-	Tue,  8 Jul 2025 10:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CDC269885;
+	Tue,  8 Jul 2025 10:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EtfpzEtq"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dR7J9s/H"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9624B20C000;
-	Tue,  8 Jul 2025 10:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FA521767A;
+	Tue,  8 Jul 2025 10:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751970171; cv=none; b=WUTlhUnQPuft9S5xurXUbWnQ3yTwE6iGNs7TsXNFEKz2Uf1NJ+gfyGzMUjcpCUOlcJbER03L0ittdR6s6qAUE3IdYH7x0xAS7e7wLovJg4sGhDNCOH8HngcGk1vd69AsEkeVHyNOU6eBb0Pqww45hVQO1xRozHKd7tPMbvWrrUU=
+	t=1751970280; cv=none; b=ZtHd1+XpteFc/jfys07uJ0fxIxCZibS7vEYXm6UMf6jfRjR9xW/baw5ldi7Y5PN6LuYN9cmChHLT2RIktFkUw0eU8rPfo3l1Iu9C9urmvRVkldflmC66Qd2QzgA83KxntOIU4xKjq268NGhcUFDTw19lHiXH6K7cV7Dl9v971so=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751970171; c=relaxed/simple;
-	bh=YtEADF3lFuj3Z5pMye6Y/M18yeKy3rho+TrgFJuM+SI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hmlSRhb6kygx0y97caWWiB7BNw5zSwHvcxd0d0LpANqUyi/51wYk0I/AvVApr5KHNGd6yYiMw4q36Kfw7QDa1yuf9qIvP2PWWeFp4RguCZ9h5gmp3DeWbIh94slF0gx67OGIoOf/ADiViUjYl8ckPxUPuNbg1VDnBN/B4nNpRrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EtfpzEtq; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8C81C1FCF0;
-	Tue,  8 Jul 2025 10:22:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1751970160;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zMltJK2jiEp2y6nrc3nJjItX/hovb2my2FZRg2UaWog=;
-	b=EtfpzEtq3AGL3tizdCjYquOunIRzmjz3c7QDmxkwzOBGVHg2jMrfMyjGPb0vdiCLdY7g1Y
-	4pgA9frjRF3i7RrO0o5C5UAtDjfSn3o8DnF97M6CatLSY3uDMcwSnPOP1z+rQxLbcGS6FU
-	/JLTyYRCYTC9eD2u4lkZC5KEqNZNTwvcrUASdvKiY4xx0fsiDIKmolnT5CJXaJW7EThper
-	9imBCfUN9FskkaMR2SMycsJQfFBRvIbEOfsNLwKaf+KHDQ2UwKuAEzMnQTz9iD9Hyx7gUA
-	nZHXOF+QWRVt/T9JrnG6hKrdclB042Zp21JGECQBpFVYNSeeS0aH36dIJLyPQg==
-Date: Tue, 8 Jul 2025 12:22:37 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: <Tristram.Ha@microchip.com>
-Cc: Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
- Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Marek Vasut <marex@denx.de>,
- <UNGLinuxDriver@microchip.com>, <devicetree@vger.kernel.org>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 6/6 v2] net: dsa: microchip: Setup fiber ports
- for KSZ8463
-Message-ID: <20250708122237.08f4dd7c@device-24.home>
-In-Reply-To: <20250708031648.6703-7-Tristram.Ha@microchip.com>
-References: <20250708031648.6703-1-Tristram.Ha@microchip.com>
-	<20250708031648.6703-7-Tristram.Ha@microchip.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1751970280; c=relaxed/simple;
+	bh=fPSbu8vL5+Dw3tHz+Tecc1OC52fP/N4M5CX40o9kUxM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=crwT1MGqzGdyIM4dAjt8KHECZY9l6Kjybs6D9PETzjWo78FyMp+YMUAfsoLrsBBjxkh5NQh1kQstl7vnm0SHw2YdbujwFsmqqgvWzot/R+nvrSqUb9euD6JukVmRY4dbyaJ2S+xPO2XHM9quqQOKGSA2tpR5/XjTkyHgt3NwRoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dR7J9s/H; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751970279; x=1783506279;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=fPSbu8vL5+Dw3tHz+Tecc1OC52fP/N4M5CX40o9kUxM=;
+  b=dR7J9s/H3rcFlnaSWb7Iy7icuFbXR1MjY2sy/3Nne/8jS44RNXCjuUUH
+   wrO49oh6xVLe65L8MtJAneEQsJPWeVt9Jnq68ZmA+BWV0FxabWICel/nn
+   4lWuthMaioSLTAEUM3THJ6FxVF1w1S7EWfXKXRj3rWND5Qm68bQBKyZ/1
+   wqEbYQuNoou8ENjEh2yqtaYetagxIEKysgUmwZSlPOpBTyCE+3ZiH+LQg
+   mGGBfwlMgZTyQVof/9Pmzx4xYubJ8JJrNhoFb4lWwbGCNRtA6eAa25BC5
+   iMpMWPAFCanYARjyqOK6CEcDUMfG9+u0OZZSStyi2CgWeFA/Fzj9DSIuS
+   A==;
+X-CSE-ConnectionGUID: jzyL8AQzSe2mMpwPWTqx/A==
+X-CSE-MsgGUID: yH5XcGWoTAaY0lzgs1/C7g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="56814764"
+X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
+   d="scan'208";a="56814764"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 03:24:35 -0700
+X-CSE-ConnectionGUID: 7d7wOVTzRFyA2tJKQhaOIA==
+X-CSE-MsgGUID: 5EJskkxSR7m30vWQLU1baQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
+   d="scan'208";a="159791390"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.247])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 03:24:31 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Ike Panhc <ikepanhc@gmail.com>, Hans de Goede <hansg@kernel.org>, 
+ Rong Zhang <i@rong.moe>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Gergo Koteles <soyer@irl.hu>, 
+ =?utf-8?q?Barnab=C3=A1s_P=C5=91cze?= <pobrn@protonmail.com>
+In-Reply-To: <20250707163808.155876-1-i@rong.moe>
+References: <20250707163808.155876-1-i@rong.moe>
+Subject: Re: [PATCH 0/2] platform/x86: ideapad-laptop: Fix FnLock & kbd
+ backlight not remembered among boots
+Message-Id: <175197026643.1629.1219841831747579403.b4-ty@linux.intel.com>
+Date: Tue, 08 Jul 2025 13:24:26 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefgeegvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejpdhhvghlohepuggvvhhitggvqddvgedrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudeipdhrtghpthhtohepvfhrihhsthhrrghmrdfjrgesmhhitghrohgthhhiphdrtghomhdprhgtphhtthhopeifohhojhhunhhgrdhhuhhhsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheprghnughrvgifs
- ehluhhnnhdrtghhpdhrtghpthhtohepohhlthgvrghnvhesghhmrghilhdrtghomhdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvght
-X-GND-Sasl: maxime.chevallier@bootlin.com
+X-Mailer: b4 0.13.0
 
-Hi Tristram,
+On Tue, 08 Jul 2025 00:38:05 +0800, Rong Zhang wrote:
 
-On Mon, 7 Jul 2025 20:16:48 -0700
-<Tristram.Ha@microchip.com> wrote:
-
-> From: Tristram Ha <tristram.ha@microchip.com>
+> I had disabled ideapad-laptop for a long time until a critical bug was
+> fixed[1], and I soon noticed some behavior changes after reenabling
+> ideapad-laptop.
 > 
-> The fiber ports in KSZ8463 cannot be detected internally, so it requires
-> specifying that condition in the device tree.  Like the one used in
-> Micrel PHY the port link can only be read and there is no write to the
-> PHY.  The driver programs registers to operate fiber ports correctly.
+> The behavior changes are about FnLock and keyboard backlight. The HW/FW
+> can remember their states among boots[2]. After enabling ideapad-laptop,
+> I noticed that their states were always reset to off after a reboot or a
+> power cycle.
 > 
-> The PTP function of the switch is also turned off as it may interfere the
-> normal operation of the MAC.
-> 
-> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
-> ---
->  drivers/net/dsa/microchip/ksz8.c       | 26 ++++++++++++++++++++++++++
->  drivers/net/dsa/microchip/ksz_common.c |  3 +++
->  2 files changed, 29 insertions(+)
-> 
-> diff --git a/drivers/net/dsa/microchip/ksz8.c b/drivers/net/dsa/microchip/ksz8.c
-> index 904db68e11f3..1207879ef80c 100644
-> --- a/drivers/net/dsa/microchip/ksz8.c
-> +++ b/drivers/net/dsa/microchip/ksz8.c
-> @@ -1715,6 +1715,7 @@ void ksz8_config_cpu_port(struct dsa_switch *ds)
->  	const u32 *masks;
->  	const u16 *regs;
->  	u8 remote;
-> +	u8 fiber_ports = 0;
->  	int i;
->  
->  	masks = dev->info->masks;
-> @@ -1745,6 +1746,31 @@ void ksz8_config_cpu_port(struct dsa_switch *ds)
->  		else
->  			ksz_port_cfg(dev, i, regs[P_STP_CTRL],
->  				     PORT_FORCE_FLOW_CTRL, false);
-> +		if (p->fiber)
-> +			fiber_ports |= (1 << i);
-> +	}
-> +	if (ksz_is_ksz8463(dev)) {
-> +		/* Setup fiber ports. */
+> [...]
 
-What does fiber port mean ? Is it 100BaseFX ? As this configuration is
-done only for the CPU port (it seems), looks like this mode is planned
-to be used as the MAC to MAC mode on the DSA conduit. So, instead of
-using this property maybe you should implement that as handling the
-"100base-x" phy-mode ?
 
-> +		if (fiber_ports) {
-> +			regmap_update_bits(ksz_regmap_16(dev),
-> +					   reg16(dev, KSZ8463_REG_CFG_CTRL),
-> +					   fiber_ports << PORT_COPPER_MODE_S,
-> +					   0);
-> +			regmap_update_bits(ksz_regmap_16(dev),
-> +					   reg16(dev, KSZ8463_REG_DSP_CTRL_6),
-> +					   COPPER_RECEIVE_ADJUSTMENT, 0);
-> +		}
-> +
-> +		/* Turn off PTP function as the switch's proprietary way of
-> +		 * handling timestamp is not supported in current Linux PTP
-> +		 * stack implementation.
-> +		 */
-> +		regmap_update_bits(ksz_regmap_16(dev),
-> +				   reg16(dev, KSZ8463_PTP_MSG_CONF1),
-> +				   PTP_ENABLE, 0);
-> +		regmap_update_bits(ksz_regmap_16(dev),
-> +				   reg16(dev, KSZ8463_PTP_CLK_CTRL),
-> +				   PTP_CLK_ENABLE, 0);
->  	}
->  }
->  
-> diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-> index c08e6578a0df..b3153b45ced9 100644
-> --- a/drivers/net/dsa/microchip/ksz_common.c
-> +++ b/drivers/net/dsa/microchip/ksz_common.c
-> @@ -5441,6 +5441,9 @@ int ksz_switch_register(struct ksz_device *dev)
->  						&dev->ports[port_num].interface);
->  
->  				ksz_parse_rgmii_delay(dev, port_num, port);
-> +				dev->ports[port_num].fiber =
-> +					of_property_read_bool(port,
-> +							      "micrel,fiber-mode");
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
 
-Shouldn't this be described in the binding ?
+The list of commits applied:
+[1/2] platform/x86: ideapad-laptop: Fix FnLock not remembered among boots
+      commit: 9533b789df7e8d273543a5991aec92447be043d7
+[2/2] platform/x86: ideapad-laptop: Fix kbd backlight not remembered among boots
+      commit: e10981075adce203eac0be866389309eeb8ef11e
 
->  			}
->  			of_node_put(ports);
->  		}
-Maxime
+--
+ i.
+
 
