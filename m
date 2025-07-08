@@ -1,112 +1,148 @@
-Return-Path: <linux-kernel+bounces-721098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8B58AFC4B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:53:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4225EAFC4B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5B4E1AA5FC4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:53:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F12AD4A7F99
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C2929AB18;
-	Tue,  8 Jul 2025 07:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976BC1FFC41;
+	Tue,  8 Jul 2025 07:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tANrVRMG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mNy2f5P5"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211681FFC41;
-	Tue,  8 Jul 2025 07:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B50203706
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 07:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751961208; cv=none; b=niuAl5nKuC+Iw0TZKsBqIGQkpisUb4/1E7yUA+88UfLUrrEjlK9tlo5/SgU1dDuyODla+8iVWcQSa0FuVPWPz+p9RsUvdsZ0/n0Sj0SL9WTDGr9ZzsEKsWL7kU9W3iMF10SRS1RbSVwQ7YFHv/NOTNAgueTPAP9NTihFnQLcw/c=
+	t=1751961245; cv=none; b=Zsste9PJUT1COZ7XyUANM18FagdGgpBlZCLgg/cRL3FP1zY0dU9n+55BkxP/X//ZTn/M/ohoW4VognAX6XG07nIm47iRINfMNVxToYs9gvo7GOV2lh9YaMHvUTgBl9CfBrJwE7bcknk7T2w4Dmcb+GC4O6B4xnA9meNV3JYNGaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751961208; c=relaxed/simple;
-	bh=Jyzx+XMevh7S3B6VJiH6+KPsG7GZ+sm10yapzQzysBg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gp2AMVkFYIMRqaWP4P0xv5iZFIvBEj7GMvqZusqyNznAdRGuuLTQW40Km/0c3kA1OY7jA79RMqvtGCsZK9kHpTb5C52EHrLZJJ9IElpb00B/5ZGxQNRt7c81Dk41HOVI8FsFlYOYPObD+eS7sh4WEBXoTEcA6ApzPI/KJ1C5TYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tANrVRMG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BCADC4CEED;
-	Tue,  8 Jul 2025 07:53:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751961207;
-	bh=Jyzx+XMevh7S3B6VJiH6+KPsG7GZ+sm10yapzQzysBg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tANrVRMGWZakoww+ki6oQPT67oklBbOTQYOVRSEhHvcFXpQtoYSBiUUUGlR210S73
-	 Yf0vRPO9VHmPhkjYEQhe4mQBnAk5hUliukPBLOZfM6sO0+7md1NP5KvHsWJqpQvxM/
-	 ab2f+iLZSShHbwscouIlEYrozeHwjpJaPDOFniRv4hU6l8NB354Ac/LN7P3m3jek0z
-	 9emLC7xdnfYNwzz90YTgk0Djs4eUcWgmnrVuDxe8tTqxfKjPJzXeAMtGIp1xJjHnRK
-	 ptkoZ8+LGBxF4sn/kR58blbnQWhnREpO6cfcnnHlokZH0qaBmegCjXJJy8VGAF8Gh5
-	 jc3Q79LNc/vKQ==
-Date: Tue, 8 Jul 2025 13:23:19 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Nitin Rawat <quic_nitirawa@quicinc.com>
-Cc: James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, 
-	bvanassche@acm.org, avri.altman@wdc.com, ebiggers@google.com, 
-	neil.armstrong@linaro.org, konrad.dybcio@oss.qualcomm.com, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	"Bao D. Nguyen" <quic_nguyenb@quicinc.com>
-Subject: Re: [PATCH V2 1/3] scsi: ufs: ufs-qcom: Update esi_vec_mask for HW
- major version >= 6
-Message-ID: <ldid3ptehto2kmzyixih73vc7tszwdiitr74rnwklxeeekwxrn@mm7zmyfickda>
-References: <20250707210300.561-1-quic_nitirawa@quicinc.com>
- <20250707210300.561-2-quic_nitirawa@quicinc.com>
+	s=arc-20240116; t=1751961245; c=relaxed/simple;
+	bh=Y0uxjOZKAIehwxOwZRu+r+eyUc2ebvQ/3q0wvD36E0Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z8fAokGBZL8BC8hJc2ltDz0mLc/JjrrW1lppwux2DzLT//XC/CgrgVfXnTspgjAxDYILqHlvF8ocAZwqjjAusQjT8+WyWSxuqJT/ON86kVN3IIqhN6S3tLBV0E+fuBspNFc2pvqFun/RZu3QRIm064OvGyorimgylM+jeGcfc/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mNy2f5P5; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1751961239; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=DNfi3XvvaPQFWN6RIuvca87fevIPOyq+CtUUka0qa+g=;
+	b=mNy2f5P5NEUV540Ng+TQkuzQdtWSBcfol28wgWsfSADKf6T3629medG5kJhQIS5da+aBv3UQs6LrC7zFMz1bCPn+qSkhusiPcAju07BK+apr3ftVCHxwR+XJEtcB5hYw5WXOv3ZVLzJU+OB/Pf8Dw0CkzNGI3Z8oKG1D4WPJX60=
+Received: from 30.74.144.119(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WiLpkEF_1751961236 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 08 Jul 2025 15:53:57 +0800
+Message-ID: <23f1c3ab-16ca-41db-b008-22448d9e08f2@linux.alibaba.com>
+Date: Tue, 8 Jul 2025 15:53:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250707210300.561-2-quic_nitirawa@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: fault in complete folios instead of individual
+ pages for tmpfs
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, hughd@google.com,
+ david@redhat.com, ziy@nvidia.com, Liam.Howlett@oracle.com,
+ npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+ baohua@kernel.org, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
+ mhocko@suse.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <440940e78aeb7430c5cc8b6d2088ae98265b9809.1751599072.git.baolin.wang@linux.alibaba.com>
+ <20250704151858.73d35a24b4c2f53bdb0c1b85@linux-foundation.org>
+ <4c055849-d7dd-4b9f-9666-fcb0bccf8681@linux.alibaba.com>
+ <007c4a94-c94a-418e-9907-7510422f8ca4@lucifer.local>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <007c4a94-c94a-418e-9907-7510422f8ca4@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 08, 2025 at 02:32:58AM GMT, Nitin Rawat wrote:
-> From: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
 
-Nit: Please use consistent subject prefix:
 
-scsi: ufs: qcom:
-
-Maybe we should get rid of 'scsi' prefix since the ufs code is now moved
-outside of drivers/scsi/. Bart?
-
-- Mani
-
+On 2025/7/7 21:33, Lorenzo Stoakes wrote:
+> On Sun, Jul 06, 2025 at 10:02:35AM +0800, Baolin Wang wrote:
+>>
+>>
+>> On 2025/7/5 06:18, Andrew Morton wrote:
+>>> On Fri,  4 Jul 2025 11:19:26 +0800 Baolin Wang <baolin.wang@linux.alibaba.com> wrote:
+>>>
+>>>> After commit acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs"),
+>>>> tmpfs can also support large folio allocation (not just PMD-sized large
+>>>> folios).
+>>>>
+>>>> However, when accessing tmpfs via mmap(), although tmpfs supports large folios,
+>>>> we still establish mappings at the base page granularity, which is unreasonable.
+>>>>
+>>>> We can map multiple consecutive pages of a tmpfs folios at once according to
+>>>> the size of the large folio. On one hand, this can reduce the overhead of page
+>>>> faults; on the other hand, it can leverage hardware architecture optimizations
+>>>> to reduce TLB misses, such as contiguous PTEs on the ARM architecture.
+>>>>
+>>>> Moreover, tmpfs mount will use the 'huge=' option to control large folio
+>>>> allocation explicitly. So it can be understood that the process's RSS statistics
+>>>> might increase, and I think this will not cause any obvious effects for users.
+>>>>
+>>>> Performance test:
+>>>> I created a 1G tmpfs file, populated with 64K large folios, and write-accessed it
+>>>> sequentially via mmap(). I observed a significant performance improvement:
+>>>
+>>> That doesn't sound like a crazy thing to do.
+>>>
+>>>> Before the patch:
+>>>> real	0m0.158s
+>>>> user	0m0.008s
+>>>> sys	0m0.150s
+>>>>
+>>>> After the patch:
+>>>> real	0m0.021s
+>>>> user	0m0.004s
+>>>> sys	0m0.017s
+>>>
+>>> And look at that.
+>>>
+>>>> diff --git a/mm/memory.c b/mm/memory.c
+>>>> index 0f9b32a20e5b..9944380e947d 100644
+>>>> --- a/mm/memory.c
+>>>> +++ b/mm/memory.c
+>>>> @@ -5383,10 +5383,10 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+>>>>    	/*
+>>>>    	 * Using per-page fault to maintain the uffd semantics, and same
+>>>> -	 * approach also applies to non-anonymous-shmem faults to avoid
+>>>> +	 * approach also applies to non shmem/tmpfs faults to avoid
+>>>>    	 * inflating the RSS of the process.
+>>>>    	 */
+>>>> -	if (!vma_is_anon_shmem(vma) || unlikely(userfaultfd_armed(vma)) ||
+>>>> +	if (!vma_is_shmem(vma) || unlikely(userfaultfd_armed(vma)) ||
+>>>>    	    unlikely(needs_fallback)) {
+>>>>    		nr_pages = 1;
+>>>>    	} else if (nr_pages > 1) {
+>>>
+>>> and that's it?
+>>>
+>>> I'm itching to get this into -stable, really.  What LTS user wouldn't
+>>> want this?
+>>
+>> This is an improvement rather than a bugfix, so I don't think it needs to go
+>> into LTS.
+>>
+>> Could it be viewed as correcting an oversight in
+>>> acd7ccb284b8?
+>>
+>> Yes, I should have added this optimization in the series of the commit
+>> acd7ccb284b8. But obviously, I missed this :(.
 > 
-> The MCQ feature and ESI are supported by all Qualcomm UFS controller
-> versions 6 and above.
-> 
-> Therefore, update the ESI vector mask in the UFS_MEM_CFG3 register
-> for platforms with major version number of 6 or higher.
-> 
-> Signed-off-by: Bao D. Nguyen <quic_nguyenb@quicinc.com>
-> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-> ---
->  drivers/ufs/host/ufs-qcom.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> index 318dca7fe3d7..dfdc52333a96 100644
-> --- a/drivers/ufs/host/ufs-qcom.c
-> +++ b/drivers/ufs/host/ufs-qcom.c
-> @@ -2113,8 +2113,7 @@ static int ufs_qcom_config_esi(struct ufs_hba *hba)
->  
->  	retain_and_null_ptr(qi);
->  
-> -	if (host->hw_ver.major == 6 && host->hw_ver.minor == 0 &&
-> -	    host->hw_ver.step == 0) {
-> +	if (host->hw_ver.major >= 6) {
->  		ufshcd_rmwl(hba, ESI_VEC_MASK, FIELD_PREP(ESI_VEC_MASK, MAX_ESI_VEC - 1),
->  			    REG_UFS_CFG3);
->  	}
-> -- 
-> 2.48.1
-> 
+> Buuut if this was an oversight for that patch that causes an unnecessary
+> perf degradation, surely this should have fixes tag + cc stable no?
 
--- 
-மணிவண்ணன் சதாசிவம்
+IMO, this commit acd7ccb284b8 won't cause perf degradation, instead it 
+is used to introduce a new feature, while the current patch is a further 
+reasonable optimization. As I mentioned, this is an improvement, not a 
+bugfix or a patch to address performance regression.
 
