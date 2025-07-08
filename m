@@ -1,108 +1,136 @@
-Return-Path: <linux-kernel+bounces-721382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90749AFC87D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:35:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D07AFC87E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F5CA7A3019
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:33:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 648D74A5CE1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F632D839A;
-	Tue,  8 Jul 2025 10:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7413E2D838D;
+	Tue,  8 Jul 2025 10:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dT8CQC2X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d54DaXHT"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FBE2D8375;
-	Tue,  8 Jul 2025 10:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DF1220F34
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 10:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751970898; cv=none; b=NtB54UI7qhW594snvP//Lpblu9HL7boJc0SZ3KpeTVvD7v6qYg/UP5U6zuiXsavtKMRwAJqVpzxS7cY+GFsiTAHm5TVddmb6MyVlWMSYCzZaTMea98NVSTdHAMSRlX68x+FOPE9evSnoR4BVFYmeNJi3bleztoCLxt6onoHz+B8=
+	t=1751970908; cv=none; b=Pnwn/kM4NPwNM+woEeJMb4lxJIVxZ4ilJ6fxsMsPZMM5nVEQil741dkapiiHFzJoVGWWImHTpGsJmRtdEI/lXTjwmsKZU+QuzvKuAdyNjtU40VWCtrDgP7Ij+YWj0FhLdzYiEZ6edjra7M25fhefiLj+sUQ+O8sFHsgp4MKS1NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751970898; c=relaxed/simple;
-	bh=n53/sygAidGPo7i+HNjWOm5XrXac9IDR0kWLzplqD+M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PneaObchTBD6oICnKvVJAMAUXletiLeEulw+9KmMPgN5hK4qSNrRPrdKDFo5KNNBESgsQTEZ2wEwOSR0s0p+M0wHPtby+gMKH6w48NYCaX9K2/TSGx63zOgbZNw0TB65pfvddgyZKpNCkot/d6kga14S2GImQxxjmj0sMyueWVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dT8CQC2X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F2FAC4CEED;
-	Tue,  8 Jul 2025 10:34:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751970897;
-	bh=n53/sygAidGPo7i+HNjWOm5XrXac9IDR0kWLzplqD+M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dT8CQC2XI4A7csvIr84Ke3pH+0dXSRXP9DkQe6ljbnyiTcmnUPooF4CMWfMTN1rfe
-	 Smdaku3iNQNuZR+3YrP8n6SbZnft8KYyZIkD1ZG7tF60OiQkM4ShwzcgTxwsSw5HTB
-	 d9uCrd6qUk3WnSmVeUviQbqd7joWpgr2G6Ueudy40B/TcLBwLT6wCszI/PGMWlcrK8
-	 uZvFZHIK/HpQc0L6Dktvl+WP0S7ECOfPx8elfBxwnZrKm95HyMrpRcnQJQ1S/j3vWs
-	 v11gtTk8bIqX7Bo4kwW+gpIrxiFnxjdnMJZ6DuXLtq2Zgjho5Om2l4YPcVN5+lY4Va
-	 mqVhFAms/3RJg==
-Date: Tue, 8 Jul 2025 16:04:47 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Asutosh Das <quic_asutoshd@quicinc.com>, 
-	Bart Van Assche <bvanassche@acm.org>, Stanley Chu <stanley.chu@mediatek.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Can Guo <quic_cang@quicinc.com>, 
-	Nitin Rawat <quic_nitirawa@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH RFC/RFT 1/5] ufs: ufs-qcom: Fix UFS base region name in
- MCQ case
-Message-ID: <xujhcaw2nj7mzb4cspjsxem75lqfwa7ivnfpzccor7npdu5d7c@xad5hx4b2m4e>
-References: <20250704-topic-qcom_ufs_mcq_cleanup-v1-0-c70d01b3d334@oss.qualcomm.com>
- <20250704-topic-qcom_ufs_mcq_cleanup-v1-1-c70d01b3d334@oss.qualcomm.com>
+	s=arc-20240116; t=1751970908; c=relaxed/simple;
+	bh=7IXc7qy1Bw7RI+SYkAYx0fei8hDB6WkKYe6qaSLeOpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fs0kSqHKSA8ojX7svXaoCL80qMHtVRSQ1WpKq560DJiLzLs8EMDu2jvu7P2neZYhh48Osu8mX2RR4SkJ6SKlk7tSNRiPV99N+2rfQKdXP88K38i2LwhK3KgxLuKIdITA+xQEMytkCA0/wkOmUlJ4N0j+Whp2m66NWkvrRMilQ/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d54DaXHT; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-451e2f0d9c2so29991785e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 03:35:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751970905; x=1752575705; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xv1xsOFh+dbVCfKzJOvR436AlgILovMDLylRoCE6V0U=;
+        b=d54DaXHTCg0WsXit7s4zivc9hV3ZmjR8VqW1xBigSK4uXOhjjXBQd4rcwKcXtw19I/
+         dkHlgdJ0sJPauTtzko4eEUxnw3DW6Zhhnz/G5Mnhw+RlTWmXZEqZAH+If3LgIj1OXONt
+         PpHAS69sYoYDVDM6EIE1e3kUJIV0y+LRC/i3LJKaw+9RVO7EUGJ6ujso363ob+LW23Lu
+         +RVkXaIQrcxazeFLzo7jjzB0VtiE91hHyOGq6pO+CkmWbduND0G9D+JUEUy0xuf3Copa
+         O4OqBpEQGoBZhJ1CzyQ25WBRkVsn1sT2kZ2B38cMNBeTPwBLcaxyO9ciqsXrq0yHDnfG
+         JxHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751970905; x=1752575705;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xv1xsOFh+dbVCfKzJOvR436AlgILovMDLylRoCE6V0U=;
+        b=m0zYdMENgNhfxfUIuS8kI2/xfUerIHUyDRqfPdgl1RkLaVqoosW7rRUXUKS1X7aC2r
+         OWfhL28nh7TU4LnjBhwaOD9SH3c4F3Z4ZLADqKrhjSN5hLv1L6lR8jU3/efkb4GPHN5h
+         VhGhgmwq9HXKbSVYGLI1A1b7EZj9AMSYHMFp5nO2Wo21PCIE4NwFKYj2bga3Gqh6ITM1
+         S9p871ZL2Rr3iFqPe4blLDZJb+/UI6cTtSP5SzZmUkL1kVNniOuxRS3Muz2F4rl92hJd
+         I2ej64sNnSYDxiZdLfysMFDEyeZ1T4kOQ4qHW2XT+AmhgbxWH8i8xS3Mm1slW5q3u+tF
+         4vxw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1WUFj7KgzTcmwfC0yOoCO6EZFHyz4wwb/qzSYwlBB6aooCwOhRyKWWzleAfLO36veeMqtgPUgma896Oo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzj7PWhi+vgGVDP2jhG/xJiyuCgBedEqVeKwnTyYnNGd9P2Rujf
+	0BMVrrOCEkE4kJ0aKbkPOIZvUmU1cW1j7R20/xxNIi4mLWjlqXF5tPdH
+X-Gm-Gg: ASbGncve/BSuMAGeVa39dbIFIN/FNlNHFGWYMh1ti3QcKQrWFIAC1RCPycHBmk3cNIY
+	IoGCAFHhAJAW8LM/rZd1fre3Ny0Fs0DHajWNQqGQgfQwYMX46wIJY6mgM8nSvKJ8u3aqnHymmQi
+	fT3EucYM4EeeqgpQJz7Y4P2rrWN3M58+QDenBeqjHhqQpVfO6xc7344sOaIlS6TYz8U/qjtQczO
+	TrrGpzOdRejATJUhdJ89+LgIYRbYpFWDmVxzf9/UU/EnMJvMKh/Lf77tzUb1gLKDvrJh0BOefCy
+	p3H2hyMaSLGpj+75TbwQLr954D/BpHa7uLOwUDYMnKEpz0ID/HLg6vmon8ARzBIvIEamoCmHSfM
+	u2i69cU0fBh5hB3KIeSvj6rX1VnbL
+X-Google-Smtp-Source: AGHT+IFgCqRsjEn/S+TNQAljzXjge0wvm7w93QHtGJoWlmQh0T0gXPXcOtlHI+1p4PZ0x6kq90ZQKw==
+X-Received: by 2002:a05:600c:6285:b0:453:45f1:9c96 with SMTP id 5b1f17b1804b1-454cd691a7bmr22519145e9.14.1751970905315;
+        Tue, 08 Jul 2025 03:35:05 -0700 (PDT)
+Received: from pumpkin (host-92-21-58-28.as13285.net. [92.21.58.28])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454cd3d263bsm18262795e9.23.2025.07.08.03.35.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 03:35:04 -0700 (PDT)
+Date: Tue, 8 Jul 2025 11:35:03 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: "Li,Rongqing" <lirongqing@baidu.com>, Oleg Nesterov <oleg@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "vschneid@redhat.com"
+ <vschneid@redhat.com>, "mgorman@suse.de" <mgorman@suse.de>,
+ "bsegall@google.com" <bsegall@google.com>, "dietmar.eggemann@arm.com"
+ <dietmar.eggemann@arm.com>, "vincent.guittot@linaro.org"
+ <vincent.guittot@linaro.org>, "juri.lelli@redhat.com"
+ <juri.lelli@redhat.com>, "mingo@redhat.com" <mingo@redhat.com>
+Subject: Re: [????] Re: [????] Re: divide error in x86 and cputime
+Message-ID: <20250708113503.147336d0@pumpkin>
+In-Reply-To: <20250707203057.1b2af73d@gandalf.local.home>
+References: <78a0d7bb20504c0884d474868eccd858@baidu.com>
+	<20250707220937.GA15787@redhat.com>
+	<20250707223038.GB15787@redhat.com>
+	<2ef88def90634827bac1874d90e0e329@baidu.com>
+	<20250707195318.0c7f401d@gandalf.local.home>
+	<92674f89641f466b9ebbdf7681614ed3@baidu.com>
+	<20250707203057.1b2af73d@gandalf.local.home>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250704-topic-qcom_ufs_mcq_cleanup-v1-1-c70d01b3d334@oss.qualcomm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 04, 2025 at 07:36:09PM GMT, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> There is no need to reinvent the wheel. There are no users yet, and the
-> dt-bindings were never updated to accommodate for this, so fix it while
-> we still easily can.
-> 
+On Mon, 7 Jul 2025 20:30:57 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-What are you fixing here? Please be explicit. "std" region is not at all in the
-device memory map? Or it was present in some earlier ones and removed in the
-final tape out version?
-
-- Mani
-
-> Fixes: c263b4ef737e ("scsi: ufs: core: mcq: Configure resource regions")
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  drivers/ufs/host/ufs-qcom.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> On Tue, 8 Jul 2025 00:10:54 +0000
+> "Li,Rongqing" <lirongqing@baidu.com> wrote:
 > 
-> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> index 318dca7fe3d735431e252e8a2a699ec1b7a36618..8dd9709cbdeef6ede5faa434fcb853e11950721f 100644
-> --- a/drivers/ufs/host/ufs-qcom.c
-> +++ b/drivers/ufs/host/ufs-qcom.c
-> @@ -1899,7 +1899,7 @@ static void ufs_qcom_config_scaling_param(struct ufs_hba *hba,
->  
->  /* Resources */
->  static const struct ufshcd_res_info ufs_res_info[RES_MAX] = {
-> -	{.name = "ufs_mem",},
-> +	{.name = "std",},
->  	{.name = "mcq",},
->  	/* Submission Queue DAO */
->  	{.name = "mcq_sqd",},
+> > >         stime = mul_u64_u64_div_u64(stime, rtime, stime + utime);
+> > > +       /*
+> > > +        * Because mul_u64_u64_div_u64() can approximate on some
+> > > +        * achitectures; enforce the constraint that: a*b/(b+c) <= a.
+> > > +        */
+> > > +       if (unlikely(stime > rtime))
+> > > +               stime = rtime;    
+> > 
+> > 
+> > My 5.10 has not this patch " sched/cputime: Fix mul_u64_u64_div_u64() precision for cputime ",
+> > but I am sure this patch can not fix this overflow issue, Since division error happened in mul_u64_u64_div_u64()  
 > 
-> -- 
-> 2.50.0
+> Have you tried it? Or are you just making an assumption?
 > 
+> How can you be so sure? Did you even *look* at the commit?
 
--- 
-மணிவண்ணன் சதாசிவம்
+It can't be relevant.
+That change is after the mul_u64_u64_div_u64() call that trapped.
+It is also not relevant for x86-64 because it uses the asm version.
+
+At some point mul_u64_u64_div_u64() got changed to be accurate (and slow)
+so that check isn't needed any more.
+
+	David
 
