@@ -1,131 +1,145 @@
-Return-Path: <linux-kernel+bounces-722129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73162AFD5A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:45:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A30AFD5AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FAA91C20D21
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:46:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 856411C23369
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275A02E62C4;
-	Tue,  8 Jul 2025 17:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8254E2E7637;
+	Tue,  8 Jul 2025 17:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="J2Px3hV4"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/1V9Yvy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E84A19D8A8;
-	Tue,  8 Jul 2025 17:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11CE2E11A5;
+	Tue,  8 Jul 2025 17:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751996744; cv=none; b=apy/PD+PyTgkgEdtdN4WKltmTfDpg8q9zKRuxPueyUaubKRGHcv6B26hq+lYOuLKEUtwWb9YIvPb4C9k5EgiKBkFK+qcrZ6QEHl/Lrng085gemKF2OgXU5ZQIjHrCXqrQx3ipAIYSACHGXp1+tAoRYed/3fL4aeZSTMnlwIPmus=
+	t=1751996967; cv=none; b=clCItwxGSBLuhp1RfLnpsv4XQWOU+ur7fT1+53oXYNXDXPNN7eS+jJDsDmecwbGisGLytmYQE0lYm8cVJH+lV5URxoco1f9iPnZMLkhqV+uVDVElK9flDMfLxGurQK0defDB/62SDj+MrZYvCzIAnEtyyZZid0QBoL0Vd7OtPwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751996744; c=relaxed/simple;
-	bh=ITeoYUUoWtvVZM0zk10CwzY4y1MQvJIazCo3oHdGdL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xz2c2E9KgstKmMeIud99Ur4TlxDsHzfanuBQUrAuQPMeZL/3fxP7J++j0aAZfzk9sN6KBS6K/Qb7Q9cB4lLoYUpUGf3DoHFSxtaHXSkaZl/K5ibgmY3ytFf7yHqd/eDkyX49q2a9VCqit+RS6odPqfS+cPD6OQdaUPMzUddKDYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=J2Px3hV4; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id ED63340E0213;
-	Tue,  8 Jul 2025 17:45:39 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id zKPvNUUkjC3s; Tue,  8 Jul 2025 17:45:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1751996736; bh=iUaCpOtckmpEcP+qmeD5+mnA5zpSuY1P8qu24w8soo0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J2Px3hV4FoPJiMME3Keu0WsUOJwar7h+LbUJjlJFJiBI0Hv9thRKg5jSzuEZwBpQJ
-	 STqAs74K97aq986MhYDryVIfXigj8vlX2ZebXc019D7jR7I1XsJKTmgcqd5XlGZu/j
-	 tFOgLsCNWO8fkvYxRstva16aP9bxj3VrBomoFa14D0qB/5tqUZss/jIqFWkGE/JMV+
-	 Ildcb5PXg25uQ0Z5lI8ywryBWh9Tx7xtZrZo9Po0D++0P+pU9izNBr0ReunG0xzyOm
-	 sPKJCs/zne8P1c638PV6o5XYA2pTH3bN3ndzWNRrqOVGx48DboWeatTUOg9/U6TeBE
-	 K83j8G7IKSqHdROB3xGlTBEsmkK1x3N3ZpHPvop5aeeTHVF5a20rupqzIwBk+nkVNt
-	 b7OzMQL7h6UhmuhYXrbB/Oozkkbb52LUM1mYSDvc/h9Qu/dY47FDst/iA/46Iz0xLh
-	 cT35/plf00Yaqccufrr8bZJ/fOohuXeX/f1Q1z5ofnHL+kQzIkFIzJk814MrsTix3z
-	 i7yb2di+DVVZiT1rVxB2wEvtSYzftoBHqHs1C1idL0t8u9o7qp36C8f8RYyZ+bY5RD
-	 QhxUIAJRh/IruuDpQk1ucTYuBWYnsa7JzLsG466JN1RVT326RzVH6c5F6M8b2Ik9Ch
-	 zatt7BMPL1M6I4QGj6sUvq84=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6FBA540E021A;
-	Tue,  8 Jul 2025 17:45:15 +0000 (UTC)
-Date: Tue, 8 Jul 2025 19:45:09 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
-	Kim Phillips <kim.phillips@amd.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 5.15 000/160] 5.15.187-rc1 review
-Message-ID: <20250708174509.GGaG1ZJSHsChiURgHW@fat_crate.local>
-References: <20250708162231.503362020@linuxfoundation.org>
- <2438aa80-091d-4668-90e0-fb75f3e0b699@gmail.com>
- <20250708172319.GEaG1UB5x3BffeL9VW@fat_crate.local>
- <12b05333-69c2-42b7-89ea-d414ea14eca0@gmail.com>
+	s=arc-20240116; t=1751996967; c=relaxed/simple;
+	bh=vyzr1Cp3VW/MJrLr8Vd9Cd8+qdk5yXeJaAIf72BHAvA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SlfwxOP8K19qeb+E8qp3/QiIVnbBoY92qn0SZNTOZ3BZq3s9UdIcOYYp4guqh/bskDiC1rTOTECYT6hys3FnCiUWGyfk+Bfr/waT0zQST31Rrha57BzhAqo6jOuz0eyDI+jQb76jrnjFOkXiSMVME+gVNI/q/NKWP8v+A3E2YGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/1V9Yvy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 52F70C4CEED;
+	Tue,  8 Jul 2025 17:49:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751996967;
+	bh=vyzr1Cp3VW/MJrLr8Vd9Cd8+qdk5yXeJaAIf72BHAvA=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=f/1V9YvyC2EW+L6Mxc4M0MhXUJTqttVoenXw/ArXE3Kvo9+N7vEslLPkiq7XFTDBx
+	 UWbULbPDC2z3qG0H3fLf7RrA5c1XU8s5JXA9X5AVAGyC3WI2mdktw0C7+PXLxoT2wr
+	 6EyynAep1E0W0j3v7n/R9jdW02zVjfqYDsN1r7YrUMhjCSF8/V+rc9qxjVo+P9Unk0
+	 8QmiB80uE5culX+3OKtXs5WcEApJVrLKeXfexl6UlR/HWD7WHoXckfaiwCwmwsGBEt
+	 Ls9mkN9SHyCzwHaRwKPt8pS1YTIKkFkTd2iQFWSVR5oU8bOAAqPW8p2pZlK42CIo3m
+	 8kayPyDrYoLcQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D19FC8303C;
+	Tue,  8 Jul 2025 17:49:27 +0000 (UTC)
+From: Frank Li via B4 Relay <devnull+Frank.Li.nxp.com@kernel.org>
+Subject: [PATCH v3 0/4] media: imx8qxp: add parallel camera support
+Date: Tue, 08 Jul 2025 13:48:41 -0400
+Message-Id: <20250708-imx8qxp_pcam-v3-0-c8533e405df1@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <12b05333-69c2-42b7-89ea-d414ea14eca0@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPpZbWgC/13MSw7CIBSF4a00jMUA11bqyH0YYyrc2jtoi2AIp
+ unepY2Jj+E5yf9NLKAnDOxQTMxjpEDjkAdsCma6ZrghJ5s3U0KVolIVpz7pe3IXZ5qeW11KBRp
+ 2YIDlxHlsKa3c6Zx3R+Ex+ueqR7m8bwjELxQlFxyNsaBtXSshj0NyWzP2bGGi+qR7AX+pyqnU+
+ oq6bEXVfqXzPL8A8gzFXuEAAAA=
+X-Change-ID: 20250626-imx8qxp_pcam-d851238343c3
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Rui Miguel Silva <rmfrfs@gmail.com>, 
+ Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-media@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Frank Li <Frank.Li@nxp.com>, 
+ Alice Yuan <alice.yuan@nxp.com>, Robert Chiras <robert.chiras@nxp.com>, 
+ Zhipeng Wang <zhipeng.wang_1@nxp.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751996966; l=2236;
+ i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
+ bh=vyzr1Cp3VW/MJrLr8Vd9Cd8+qdk5yXeJaAIf72BHAvA=;
+ b=pLkoCOPxcG5H2BqKndFzFcZrU81lbL29lhmoCGOa3QjiD2Tf8/6ldvTR9I4iEwUT7ta5zz1ZQ
+ ecsvl/wP0NWAkHAFqjn2k/TZRc4T3nFIINrcvgp3Okk/Elz+pyPwJk0
+X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
+ pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
+X-Endpoint-Received: by B4 Relay for Frank.Li@nxp.com/20240130 with
+ auth_id=121
+X-Original-From: Frank Li <Frank.Li@nxp.com>
+Reply-To: Frank.Li@nxp.com
 
-On Tue, Jul 08, 2025 at 10:26:56AM -0700, Florian Fainelli wrote:
-> On 7/8/25 10:23, Borislav Petkov wrote:
-> > On Tue, Jul 08, 2025 at 10:20:01AM -0700, Florian Fainelli wrote:
-> > > The ARM 32-bit kernel fails to build with:
-> > 
-> > Can you give .config pls?
-> > 
-> 
-> Sure, here it is:
-> 
-> https://gist.github.com/ffainelli/2319e6857247796f0a9bd99c5fe6e211
-> 
-> FWIW, I also have the same build failure on 6.1.
+Add parallel camera support for i.MX8 chips.
 
-Right, it needs the __weak functions - this is solved differently on newer
-kernels. Lemme send updated patches.
+The below patch to add new format support to test ov5640 sensor
+   media: nxp: isi: add support for UYVY8_2X8 and YUYV8_2X8 bus codes
+
+The bindings and driver for parallel CSI
+   dt-bindings: media: add i.MX parallel csi support
+   media: nxp: add V4L2 subdev driver for parallel CSI
+
+DTS part need depend on previous MIPI CSI patches.
+  https://lore.kernel.org/imx/20250522-8qxp_camera-v5-13-d4be869fdb7e@nxp.com/
+
+  arm64: dts: imx8: add parellel csi nodes
+  arm64: dts: imx8qxp-mek: add parallel ov5640 camera support
+
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Changes in v3:
+- replace CSI with CPI.
+- detail change see each patch's change logs
+- Link to v2: https://lore.kernel.org/r/20250703-imx8qxp_pcam-v2-0-188be85f06f1@nxp.com
+
+Changes in v2:
+- remove patch media: nxp: isi: add support for UYVY8_2X8 and YUYV8_2X8 bus codes
+  because pcif controller convert 2x8 to 1x16 to match isi's input
+- rename comaptible string to fsl,imx8qxp-pcif
+- See each patches's change log for detail
+- Link to v1: https://lore.kernel.org/r/20250630-imx8qxp_pcam-v1-0-eccd38d99201@nxp.com
 
 ---
+Alice Yuan (2):
+      dt-bindings: media: add i.MX parallel CPI support
+      media: nxp: add V4L2 subdev driver for camera parallel interface (CPI)
 
-diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-index 2c8e98532310..0e7f7f54665d 100644
---- a/drivers/base/cpu.c
-+++ b/drivers/base/cpu.c
-@@ -601,6 +601,11 @@ ssize_t __weak cpu_show_indirect_target_selection(struct device *dev,
- 	return sysfs_emit(buf, "Not affected\n");
- }
- 
-+ssize_t __weak cpu_show_tsa(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	return sysfs_emit(buf, "Not affected\n");
-+}
-+
- static DEVICE_ATTR(meltdown, 0444, cpu_show_meltdown, NULL);
- static DEVICE_ATTR(spectre_v1, 0444, cpu_show_spectre_v1, NULL);
- static DEVICE_ATTR(spectre_v2, 0444, cpu_show_spectre_v2, NULL);
+Frank Li (2):
+      arm64: dts: imx8: add camera parallel interface (CPI) node
+      arm64: dts: imx8qxp-mek: add parallel ov5640 camera support
 
--- 
-Regards/Gruss,
-    Boris.
+ .../devicetree/bindings/media/fsl,imx93-pcif.yaml  | 126 +++
+ MAINTAINERS                                        |   2 +
+ arch/arm64/boot/dts/freescale/Makefile             |   3 +
+ arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi     |  13 +
+ .../boot/dts/freescale/imx8qxp-mek-ov5640-cpi.dtso |  82 ++
+ arch/arm64/boot/dts/freescale/imx8qxp-ss-img.dtsi  |  27 +
+ drivers/media/platform/nxp/Kconfig                 |  11 +
+ drivers/media/platform/nxp/Makefile                |   1 +
+ drivers/media/platform/nxp/imx-parallel-cpi.c      | 920 +++++++++++++++++++++
+ 9 files changed, 1185 insertions(+)
+---
+base-commit: 93355cfe8aec9e47fc93fbc940f1bbeedd62e249
+change-id: 20250626-imx8qxp_pcam-d851238343c3
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Best regards,
+--
+Frank Li <Frank.Li@nxp.com>
+
+
 
