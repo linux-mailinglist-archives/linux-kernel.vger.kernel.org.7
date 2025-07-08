@@ -1,89 +1,73 @@
-Return-Path: <linux-kernel+bounces-722249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0F00AFD6E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:10:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 619F5AFD6D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3EA33AF9B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:10:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F8153A6136
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5E52E5B2C;
-	Tue,  8 Jul 2025 19:10:52 +0000 (UTC)
-Received: from sxb1plsmtpa01-10.prod.sxb1.secureserver.net (sxb1plsmtpa01-10.prod.sxb1.secureserver.net [92.204.81.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F472E5B10;
+	Tue,  8 Jul 2025 19:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZaZWLDH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11862E371A
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 19:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.204.81.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E334801;
+	Tue,  8 Jul 2025 19:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752001851; cv=none; b=AQaC+bUmvBGfv0fB58K6c0vCeAeImTFzqvzXDlsd+qWT9Urdx+qdX4Eu+ojoGOUqNQHP8N0jx9BGldFzhuAr9kpe0QBvSkYwGt81ky1HT8TUBOjoU1tQKxvHUEeIzZxdgYrXH03y0fesh6kbljrQTHS+hokXOQyT8nCVRmyX+Xw=
+	t=1752001418; cv=none; b=XbOnS03CkTi6vyE4TH8Mx8lg6HgVdjeil2IH0DRYkQ+rfwNZ8U+4vzyRSNX2sbkDEevvfawHZ/0msuaH5Jb6/mFw+2ld3tiAi9Llq0x+7tmf+t7ojmtiyk5PR/nm5j4G+JQ2CixXvX11HUlzgusP7yO8fz5VsCeA5giRAoymu+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752001851; c=relaxed/simple;
-	bh=yAQ+3eNyKoSsXuMWuDS1zpl1TkhsHSIpKJWm9VfR+Ro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PfkgHl87XSoG5FeBLdv5kxeXcBsNMD6TvL0z5ncZvoaFIg+YpCcKtdGXTm9N47K1J3ltlzHYP3EdvUAvbpP+0V0qTk8dRPd+/kvJbztNPZuPp2aXEc4v5kMDRKUcfQWRKN3ic4l39RwsUQYyPFGpFRcDUP27ZoF/ywByzBA3HbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=92.204.81.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
-Received: from [192.168.178.95] ([82.69.79.175])
-	by :SMTPAUTH: with ESMTPSA
-	id ZDasuBU9C1qPIZDauuWlgP; Tue, 08 Jul 2025 12:03:09 -0700
-X-CMAE-Analysis: v=2.4 cv=WeEMa1hX c=1 sm=1 tr=0 ts=686d6b6d
- a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
- a=IkcTkHD0fZMA:10 a=pGLkceISAAAA:8 a=FXvPX3liAAAA:8 a=D4SgTZjGj28YDSeKNS4A:9
- a=QEXdDO2ut3YA:10 a=UObqyxdv-6Yh2QiB9mM_:22
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk
-Message-ID: <d19d4a84-00b0-4c39-8b11-b3cda95967e5@squashfs.org.uk>
-Date: Tue, 8 Jul 2025 20:02:47 +0100
+	s=arc-20240116; t=1752001418; c=relaxed/simple;
+	bh=GHcZnk2bIg2LnEuxbdd9Nbxx/LOWDNPMl+Rh13K5rGs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qZ5oX151xLJmW9W7EDnAt01NKb+1pUqAbR7V2i2u2dbF4GAOShxRg7XLXHPWfOIw0XumBg7VIcWCZKphNHgXG8R7xew9ngHtZ2HSZIHN9El1dPj3RqpAywgg0zi4tm5eleSQfsmwK6hCsM8C+V7bW1Ro/rnlXOJPsh/nFHZ+0H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZaZWLDH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81176C4CEED;
+	Tue,  8 Jul 2025 19:03:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752001418;
+	bh=GHcZnk2bIg2LnEuxbdd9Nbxx/LOWDNPMl+Rh13K5rGs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EZaZWLDHIls3zFiL6RkrOHXTN2RdqBsCrNWrk1rq2edSY9SYL2XUWZM/xK6qTXakv
+	 BbxzRJOTtCmGRBYPbdPAZV3NYxWBvxRJ8b1bDkbY7rIwWeAVd3WfMK1LwSYs1Mjyfw
+	 haUHBdpZuSVlJTMs63KMC8CsowiLEUYoK07+0GF72EHqgz9ACvM3w2HcQYr3BQsDAi
+	 WaFi3h3QogaK82PqX24TrW7L0lvV3j7EegCmADT+ZjfOKpdO47G+VVkARdIKM045oN
+	 G0aQVo7EBPJ5/xpNlHcox2tTFk6szhMwelkdjqz9uTUcgJV8ll9GWLC8WdKWhMdKA0
+	 vhbXCKoU2BNNw==
+Date: Tue, 8 Jul 2025 12:03:36 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: netdev@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, linux-afs@lists.infradead.org,
+ linux-kernel@vger.kernel.org, "Junvyyang, Tencent Zhuque Lab"
+ <zhuque@tencent.com>, Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH net 2/2] rxrpc: Fix bug due to prealloc collision
+Message-ID: <20250708120336.03383758@kernel.org>
+In-Reply-To: <20250707102435.2381045-3-dhowells@redhat.com>
+References: <20250707102435.2381045-1-dhowells@redhat.com>
+	<20250707102435.2381045-3-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] squashfs: replace ;; with ; and end of fi
- declaration
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>
-References: <20250708114900.1883130-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Phillip Lougher <phillip@squashfs.org.uk>
-In-Reply-To: <20250708114900.1883130-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfCjnCkpuKzHpHY3/IEPSIilfvGECGK8NsCVxOFcWsYJjv1NFFn2cj2PyKSzQGEEqCrFIW/CXv1OLqpiprEPp+jycBHdsa7LW9Bmuzfzvm7XPPe6dKwYC
- fGDm/T3LzKUZlO+ZdQrB4Tld6A/GVF3OLmixBRAMiEPhL3t4vlZpA7JKgLwVkI83nb/BH+XmAYi4vVjcAkWI81d0WbgFcoQ9/asvXlo4as8v0ZR0gPe2KzF6
- 1/ppehi5G6XfthwKaXGHcWxTgN+hzrBJ0f+wy60iB/Ls2pyLfVPw30oGMsx+fiZzx35Aw6wFFS2ab0Dh7dxjRkUQHwwyNHCqdwP+D/Prr1U=
 
-On 08/07/2025 12:49, Colin Ian King wrote:
-> There is an extraneous ; after a declaration, remove it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
+On Mon,  7 Jul 2025 11:24:34 +0100 David Howells wrote:
+> +	rxrpc_prefail_call(call, RXRPC_CALL_LOCAL_ERROR, -EBADSLT);
+> +	__set_bit(RXRPC_CALL_RELEASED, &call->flags);
 
-Thanks
+is the __set_bit() needed / intentional here?
+Looks like rxrpc_prefail_call() does:
 
-Reviewed-by: Phillip Lougher <phillip@squashfs.org.uk>
-
->   fs/squashfs/block.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/squashfs/block.c b/fs/squashfs/block.c
-> index 296c5a0fcc40..b3ae3b1cc0e5 100644
-> --- a/fs/squashfs/block.c
-> +++ b/fs/squashfs/block.c
-> @@ -83,7 +83,7 @@ static int squashfs_bio_read_cached(struct bio *fullbio,
->   	struct folio *head_to_cache = NULL, *tail_to_cache = NULL;
->   	struct block_device *bdev = fullbio->bi_bdev;
->   	int start_idx = 0, end_idx = 0;
-> -	struct folio_iter fi;;
-> +	struct folio_iter fi;
->   	struct bio *bio = NULL;
->   	int idx = 0;
->   	int err = 0;
+	WARN_ON_ONCE(__test_and_set_bit(RXRPC_CALL_RELEASED, &call->flags));
 
