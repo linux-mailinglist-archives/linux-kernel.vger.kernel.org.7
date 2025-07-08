@@ -1,183 +1,240 @@
-Return-Path: <linux-kernel+bounces-722506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0420AFDB69
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:53:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F0E5AFDB6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 141DC7B7ABA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:51:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3647A4E6312
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E6522A4E5;
-	Tue,  8 Jul 2025 22:52:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592702367BF;
-	Tue,  8 Jul 2025 22:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6461E47A3;
+	Tue,  8 Jul 2025 22:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p3vTVBhs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F366E1B4257;
+	Tue,  8 Jul 2025 22:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752015150; cv=none; b=l7NH3e0TFlS5ZNuFEVzz5HeMaqXOV9PeGSLN9/IJSEarHu95Ls2tifx02q//hDM1Pr2+M82tmiu0n4vO1GJLZWtmNqWLys7/2UMHYnbKlclo72RpmcGRIm8myc814L7Lol1FX7zLX2YtZikH9W63nWIOkJskKlqqd2D/VT5S8UA=
+	t=1752015165; cv=none; b=d7IDRJq6R8ICKv7Y3HWaG6QQimUBOrtqRCUNPYLsBL3oEzx1144F+h6Eripgk2XaudAkxLx6gd2jS6bLJs83hYdFQwylzhW1ss2uv4oJy7IIxv3wTz2pZqcaRBf2MXgwQYN30Xdw9STro2efoOq47tk/Ydj5/7CTilkzTWg3Wjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752015150; c=relaxed/simple;
-	bh=yfifoK1lCQIBGtO4PIoaGuKMpw1ve2V3EflpM9EmCY0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FX9LRQvZMrdOcmzAn7eAwFePxK2djuvs2W+k0O39P/kljOhsUwF9S7DjW6oUMugqayVZkH8gCNelzb+NbuzJCWBTO8lzsFQatm/vY/ZO3kwHJJ5CvtJ2CM2tW3N1+ucy/KAGzkTNdwyBZD8uuj8wpn4pIPo1cvjIIOaOx1iJq6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4FA41764;
-	Tue,  8 Jul 2025 15:52:15 -0700 (PDT)
-Received: from u103485.austin.arm.com (u103485.arm.com [10.118.30.35])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F9EE3F66E;
-	Tue,  8 Jul 2025 15:52:27 -0700 (PDT)
-From: Prachotan Bathi <prachotan.bathi@arm.com>
-To: Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Stuart Yoder <stuart.yoder@arm.com>
-Cc: linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prachotan Bathi <prachotan.bathi@arm.com>
-Subject: [PATCH v9 3/3] tpm_crb_ffa: handle tpm busy return code
-Date: Tue,  8 Jul 2025 17:51:51 -0500
-Message-ID: <20250708225151.2473657-4-prachotan.bathi@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250708225151.2473657-1-prachotan.bathi@arm.com>
-References: <20250708225151.2473657-1-prachotan.bathi@arm.com>
+	s=arc-20240116; t=1752015165; c=relaxed/simple;
+	bh=NaC5zGoR8jqqoE705l0M5US7aCl0s2A/PDxAiwt+UpQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iLKByrqrmXE7MyTZwgjHjoLoZdIg6Vs8CmE0CXtSJGIp4/LlEZMncG1MXmIwetnlk7/Ia5muYiYt3uetzBffPXeBBMEwsnENB9vLu7vQ1Bd3tp7ZjA9nsj8/8n6qdvhZIHOINtyWvLTIgT3oCtaYr5+eLz8ut7cdCPFcztA0vIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p3vTVBhs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A663C4CEED;
+	Tue,  8 Jul 2025 22:52:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752015164;
+	bh=NaC5zGoR8jqqoE705l0M5US7aCl0s2A/PDxAiwt+UpQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=p3vTVBhsB4w8lYkOWlmyvzGWDXwaQBr0O78lw2bR04wPHKwJ/NZexy/8RG4YMHnc4
+	 44swHXTwySOd45hLHvwBELlel4PZ9cfdNxT7T1o9qupuaShPaVAdP0JzuDC+nbQK3e
+	 Kh92vX1Rmaj9mfUU8gzaf3ZrFCZjCVY/D1C72jcX37JCB8YZLDmWWQGq/glZABYoyX
+	 jHt+5dju6ELgxTP/NtAvUoGSmz1oz8LxiUkxRgDNbwOXnLi+ARp9EmfqgCiwjen9R6
+	 fWoITtvKLxDNBsThwueSdIhkYbnu1PNnFq4j3zeGVcDKYp6Zi+C0Br3Tt1rdEjlcyZ
+	 NhuSi5Zh4AnRA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 0FEA9CE08A1; Tue,  8 Jul 2025 15:52:44 -0700 (PDT)
+Date: Tue, 8 Jul 2025 15:52:44 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrea Righi <arighi@nvidia.com>,
+	Frederic Weisbecker <frederic@kernel.org>, rcu@vger.kernel.org
+Subject: Re: [PATCH v2] smp: Document preemption and stop_machine() mutual
+ exclusion
+Message-ID: <e763a7d5-5a11-47f7-a1c2-cf909e5d2a3a@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250705172328.4114289-1-joelagnelf@nvidia.com>
+ <20250707075050.GB1613200@noisy.programming.kicks-ass.net>
+ <298d86df-65bc-4f7a-a361-a8382cdee296@paulmck-laptop>
+ <20250708072321.GB1613376@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708072321.GB1613376@noisy.programming.kicks-ass.net>
 
-Platforms supporting direct message request v2 [1] can support secure
-partitions that support multiple services. For CRB over FF-A interface,
-if the firmware TPM or TPM service [1] shares its Secure Partition (SP)
-with another service, message requests may fail with a -EBUSY error.
+On Tue, Jul 08, 2025 at 09:23:21AM +0200, Peter Zijlstra wrote:
+> On Mon, Jul 07, 2025 at 08:56:04AM -0700, Paul E. McKenney wrote:
+> > On Mon, Jul 07, 2025 at 09:50:50AM +0200, Peter Zijlstra wrote:
+> > > On Sat, Jul 05, 2025 at 01:23:27PM -0400, Joel Fernandes wrote:
+> > > > Recently while revising RCU's cpu online checks, there was some discussion
+> > > > around how IPIs synchronize with hotplug.
+> > > > 
+> > > > Add comments explaining how preemption disable creates mutual exclusion with
+> > > > CPU hotplug's stop_machine mechanism. The key insight is that stop_machine()
+> > > > atomically updates CPU masks and flushes IPIs with interrupts disabled, and
+> > > > cannot proceed while any CPU (including the IPI sender) has preemption
+> > > > disabled.
+> > > 
+> > > I'm very conflicted on this. While the added comments aren't wrong,
+> > > they're not quite accurate either. Stop_machine doesn't wait for people
+> > > to enable preemption as such.
+> > > 
+> > > Fundamentally there seems to be a misconception around what stop machine
+> > > is and how it works, and I don't feel these comments make things better.
+> > > 
+> > > Basically, stop-machine (and stop_one_cpu(), stop_two_cpus()) use the
+> > > stopper task, a task running at the ultimate priority; if it is
+> > > runnable, it will run.
+> > > 
+> > > Stop-machine simply wakes all the stopper tasks and co-ordinates them to
+> > > literally stop the machine. All CPUs have the stopper task scheduled and
+> > > then they go sit in a spin-loop driven state machine with IRQs disabled.
+> > > 
+> > > There really isn't anything magical about any of this.
+> > 
+> > There is the mechanism (which you have described above), and then there
+> > are the use cases.  Those of us maintaining a given mechanism might
+> > argue that a detailed description of the mechanism suffices, but that
+> > argument does not always win the day.
+> > 
+> > I do like the description in the stop_machine() kernel-doc header:
+> > 
+> >  * This can be thought of as a very heavy write lock, equivalent to
+> >  * grabbing every spinlock in the kernel.
+> > 
+> > Though doesn't this need to upgrace "spinlock" to "raw spinlock"
+> > now that PREEMPT_RT is in mainline?
+> > 
+> > Also, this function is more powerful than grabbing every write lock
+> > in the kernel because it also excludes all regions of code that have
+> > preemption disabled, which is one thing that CPU hotplug is relying on.
+> > Any objection to calling out that additional semantic?
+> 
+> Best to just re-formulate the entire comment I think. State it provides
+> exclusion vs all non-preemptible regions in the kernel -- at insane cost
+> and should not be used when humanly possible :-)
 
-To handle this, replace the single check and call with a retry loop
-that attempts the TPM message send operation until it succeeds or a
-configurable timeout is reached. Implement a _try_send_receive function
-to do a single send/receive and modify the existing send_receive to
-add this retry loop.
-The retry mechanism introduces a module parameter (`busy_timeout_ms`,
-default: 2000ms) to control how long to keep retrying on -EBUSY
-responses. Between retries, the code waits briefly (50-100 microseconds)
-to avoid busy-waiting and handling TPM BUSY conditions more gracefully.
+How about like this?
 
-The parameter can be modified at run-time as such:
-echo 3000 | tee /sys/module/tpm_crb_ffa/parameters/busy_timeout_ms
-This changes the timeout from the default 2000ms to 3000ms.
+							Thanx, Paul
 
-[1] TPM Service Command Response Buffer Interface Over FF-A
-https://developer.arm.com/documentation/den0138/latest/
+------------------------------------------------------------------------
 
-Signed-off-by: Prachotan Bathi <prachotan.bathi@arm.com>
----
- .../admin-guide/kernel-parameters.txt         |  8 ++++
- drivers/char/tpm/tpm_crb_ffa.c                | 45 ++++++++++++++++---
- 2 files changed, 46 insertions(+), 7 deletions(-)
+commit 3f0626b0514ccda56d15995e5bd1d1552f828705
+Author: Paul E. McKenney <paulmck@kernel.org>
+Date:   Tue Jul 8 15:47:29 2025 -0700
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 07e22ba5bfe3..343377538fe9 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -7214,6 +7214,14 @@
- 			causing a major performance hit, and the space where
- 			machines are deployed is by other means guarded.
- 
-+	tpm_crb_ffa.busy_timeout_ms= [ARM64,TPM]
-+			Maximum time in milliseconds to retry sending a message
-+			to the TPM service before giving up. This parameter controls
-+			how long the system will continue retrying when the TPM
-+			service is busy.
-+			Format: <unsigned int>
-+			Default: 2000 (2 seconds)
-+
- 	tpm_suspend_pcr=[HW,TPM]
- 			Format: integer pcr id
- 			Specify that at suspend time, the tpm driver
-diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
-index 7faed6f3bf66..06599c07b746 100644
---- a/drivers/char/tpm/tpm_crb_ffa.c
-+++ b/drivers/char/tpm/tpm_crb_ffa.c
-@@ -10,8 +10,16 @@
- #define pr_fmt(fmt) "CRB_FFA: " fmt
- 
- #include <linux/arm_ffa.h>
-+#include <linux/delay.h>
-+#include <linux/moduleparam.h>
- #include "tpm_crb_ffa.h"
- 
-+static unsigned int busy_timeout_ms = 2000;
-+
-+module_param(busy_timeout_ms, uint, 0644);
-+MODULE_PARM_DESC(busy_timeout_ms,
-+		 "Maximum time in ms to retry before giving up on busy");
-+
- /* TPM service function status codes */
- #define CRB_FFA_OK			0x05000001
- #define CRB_FFA_OK_RESULTS_RETURNED	0x05000002
-@@ -178,17 +186,13 @@ int tpm_crb_ffa_init(void)
- }
- EXPORT_SYMBOL_GPL(tpm_crb_ffa_init);
- 
--static int __tpm_crb_ffa_send_receive(unsigned long func_id,
--				      unsigned long a0,
--				      unsigned long a1,
--				      unsigned long a2)
-+static int __tpm_crb_ffa_try_send_receive(unsigned long func_id,
-+					  unsigned long a0, unsigned long a1,
-+					  unsigned long a2)
- {
- 	const struct ffa_msg_ops *msg_ops;
- 	int ret;
- 
--	if (!tpm_crb_ffa)
--		return -ENOENT;
--
- 	msg_ops = tpm_crb_ffa->ffa_dev->ops->msg_ops;
- 
- 	if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
-@@ -214,6 +218,33 @@ static int __tpm_crb_ffa_send_receive(unsigned long func_id,
- 			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data.data1);
- 	}
- 
-+	return ret;
-+}
-+
-+static int __tpm_crb_ffa_send_receive(unsigned long func_id, unsigned long a0,
-+				      unsigned long a1, unsigned long a2)
-+{
-+	ktime_t start, stop;
-+	int ret;
-+
-+	if (!tpm_crb_ffa)
-+		return -ENOENT;
-+
-+	start = ktime_get();
-+	stop = ktime_add(start, ms_to_ktime(busy_timeout_ms));
-+
-+	for (;;) {
-+		ret = __tpm_crb_ffa_try_send_receive(func_id, a0, a1, a2);
-+		if (ret != -EBUSY)
-+			break;
-+
-+		usleep_range(50, 100);
-+		if (ktime_after(ktime_get(), stop)) {
-+			dev_warn(&tpm_crb_ffa->ffa_dev->dev,
-+				 "Busy retry timed out\n");
-+			break;
-+		}
-+	}
- 
- 	return ret;
- }
--- 
-2.43.0
+    stop_machine: Improve kernel-doc function-header comments
+    
+    Add more detail to the kernel-doc function-header comments for
+    stop_machine(), stop_machine_cpuslocked(), and stop_core_cpuslocked().
+    
+    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 
+diff --git a/include/linux/stop_machine.h b/include/linux/stop_machine.h
+index 3132262a404dc..72820503514cc 100644
+--- a/include/linux/stop_machine.h
++++ b/include/linux/stop_machine.h
+@@ -88,55 +88,73 @@ static inline void print_stop_info(const char *log_lvl, struct task_struct *task
+ #endif	/* CONFIG_SMP */
+ 
+ /*
+- * stop_machine "Bogolock": stop the entire machine, disable
+- * interrupts.  This is a very heavy lock, which is equivalent to
+- * grabbing every spinlock (and more).  So the "read" side to such a
+- * lock is anything which disables preemption.
++ * stop_machine "Bogolock": stop the entire machine, disable interrupts.
++ * This is a very heavy lock, which is equivalent to grabbing every raw
++ * spinlock (and more).  So the "read" side to such a lock is anything
++ * which disables preemption.
+  */
+ #if defined(CONFIG_SMP) || defined(CONFIG_HOTPLUG_CPU)
+ 
+ /**
+  * stop_machine: freeze the machine on all CPUs and run this function
+  * @fn: the function to run
+- * @data: the data ptr for the @fn()
+- * @cpus: the cpus to run the @fn() on (NULL = any online cpu)
++ * @data: the data ptr to pass to @fn()
++ * @cpus: the cpus to run @fn() on (NULL = run on each online CPU)
+  *
+- * Description: This causes a thread to be scheduled on every cpu,
+- * each of which disables interrupts.  The result is that no one is
+- * holding a spinlock or inside any other preempt-disabled region when
+- * @fn() runs.
++ * Description: This causes a thread to be scheduled on every CPU, which
++ * will run with interrupts disabled.  Each CPU specified by @cpus will
++ * run @fn.  While @fn is executing, there will no other CPUs holding
++ * a raw spinlock or running within any other type of preempt-disabled
++ * region of code.
+  *
+- * This can be thought of as a very heavy write lock, equivalent to
+- * grabbing every spinlock in the kernel.
++ * When @cpus specifies only a single CPU, this can be thought of as
++ * a reader-writer lock where readers disable preemption (for example,
++ * by holding a raw spinlock) and where the insanely heavy writers run
++ * @fn while also preventing any other CPU from doing any useful work.
++ * These writers can also be thought of as having implicitly grabbed every
++ * raw spinlock in the kernel.
+  *
+- * Protects against CPU hotplug.
++ * When @fn is a no-op, this can be thought of as an RCU implementation
++ * where readers again disable preemption and writers use stop_machine()
++ * in place of synchronize_rcu(), albeit with orders of magnitude more
++ * disruption than even that of synchronize_rcu_expedited().
++ *
++ * Although only one stop_machine() operation can proceed at a time,
++ * the possibility of blocking in cpus_read_lock() means that the caller
++ * cannot usefully rely on this serialization.
++ *
++ * Return: 0 if all invocations of @fn return zero.  Otherwise, the
++ * value returned by an arbitrarily chosen member of the set of calls to
++ * @fn that returned non-zero.
+  */
+ int stop_machine(cpu_stop_fn_t fn, void *data, const struct cpumask *cpus);
+ 
+ /**
+  * stop_machine_cpuslocked: freeze the machine on all CPUs and run this function
+  * @fn: the function to run
+- * @data: the data ptr for the @fn()
+- * @cpus: the cpus to run the @fn() on (NULL = any online cpu)
++ * @data: the data ptr to pass to @fn()
++ * @cpus: the cpus to run @fn() on (NULL = run on each online CPU)
++ *
++ * Same as above.  Avoids nested calls to cpus_read_lock().
+  *
+- * Same as above. Must be called from with in a cpus_read_lock() protected
+- * region. Avoids nested calls to cpus_read_lock().
++ * Context: Must be called from within a cpus_read_lock() protected region.
+  */
+ int stop_machine_cpuslocked(cpu_stop_fn_t fn, void *data, const struct cpumask *cpus);
+ 
+ /**
+  * stop_core_cpuslocked: - stop all threads on just one core
+  * @cpu: any cpu in the targeted core
+- * @fn: the function to run
+- * @data: the data ptr for @fn()
++ * @fn: the function to run on each CPU in the core containing @cpu
++ * @data: the data ptr to pass to @fn()
+  *
+- * Same as above, but instead of every CPU, only the logical CPUs of a
+- * single core are affected.
++ * Same as above, but instead of every CPU, only the logical CPUs of the
++ * single core containing @cpu are affected.
+  *
+  * Context: Must be called from within a cpus_read_lock() protected region.
+  *
+- * Return: 0 if all executions of @fn returned 0, any non zero return
+- * value if any returned non zero.
++ * Return: 0 if all invocations of @fn return zero.  Otherwise, the
++ * value returned by an arbitrarily chosen member of the set of calls to
++ * @fn that returned non-zero.
+  */
+ int stop_core_cpuslocked(unsigned int cpu, cpu_stop_fn_t fn, void *data);
+ 
 
