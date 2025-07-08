@@ -1,250 +1,107 @@
-Return-Path: <linux-kernel+bounces-722099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9163BAFD559
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:30:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59791AFD55E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DC537A9AC5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:29:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0470C7A5BD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B212E5B34;
-	Tue,  8 Jul 2025 17:30:32 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6F52E5418;
+	Tue,  8 Jul 2025 17:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwdjdZ5h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80B11FC109
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 17:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5FDC23DE;
+	Tue,  8 Jul 2025 17:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751995831; cv=none; b=lB/Ab21u/MXrgn7WqIFM++lPmDroGM0Wzdc916yw1+zDJj88GVNZfZ3zeMN/WYbVwDg4CxcaELcoNm36qeDrmNB39EGhoPp0LAvjpp3zwBImvvvU/dEpoWopjRAIoqkf44d/O1QQHEaQYiziUOGTTWFEyYWXzn3PwvxHvVVzbL0=
+	t=1751995976; cv=none; b=pq/KB5hYJ95EWYro1514MxKeGx+JDlilxt8x9ko2jCW99wOThDIVND0iMtlXH1u7V9FnIenKGBkTquVir9LOvKdwy7VjjQweFHquusUOMewQEcvrwk9MwyxOjsvPNFQHsLUk0sA4wjnAPKpS3by7b+ipefcfW/SzBsuuNz5sO9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751995831; c=relaxed/simple;
-	bh=Ft+juv58VLMvhRWzX4+AKCs9fl31lVonbN0VUF9WHSw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nQB3TsQUOf7sEo4ulmQTd/8W+b9NqEQPbjvWvRImymz18xOhfw+JdX4kcRXQWgEusVwQUdMNOTdV8lb3lVy84qaynPI9t2T2eb3AKFecTeXKJvP7YaMVU/08OM9YHnuRuEZ6TxsdfqeZx2hybQ/EG3+anauDrnW77kPBix8J8Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-87632a0275dso375988439f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 10:30:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751995829; x=1752600629;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=D0QuI5r6lOBDwHqNaBIJpOmCjV4Gimqib0l4a1lugcA=;
-        b=Fpz0ZjofUzS3eG3Hut6UgctL+vKGLcAI5UGDIP2u6+IMcXPExnSkqrzfdwnhJSdil/
-         GG6Gvo55EdUzxAfnROuPhxlm3Cns81Nr6tgG50CRf8wfC6NXlN87gTYNblk4P2e3izkl
-         R+vkCPFlDjOr02nQDIzIWPaBNb4zuSOvCcVbiK+orAxp7zRUau21e45ENu6MwOTIg1GT
-         zD2lC0XlhWcVDCCzdjWkXTMe096YnYXRy69NEP7zGLrQXcIAsJ0OS5bB66txRdPIALqv
-         tEI1qRfJ6jORajV5GRzEGfzYgugVcE/2Q42pNLFaf2mzNJILWKSD9yQ5kD5aA5Vk+7LW
-         P4jw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3NfpSNKrJVngFVFGH3d6KuAiWaPksTiEpnfGTQtGSTMiPqvwRW8wK5bGseC6r2hvc4wcQrGyXWO3NxRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1TNueNTfNT6joxhDpaANQNw+jOLDe7ifAoNs6ISJ0IJstLS1Z
-	8hQ2Z4aAYY8WPEVvMHygro2qFhq7q3U67V0rZtss/ANPd8xqL0skgRZ2HkmBGNbpk1BPhww29EX
-	2xVEJvwhpVST87RDd6gtO6uqkx+HmGx97QHl6l7QhLsDgQK5g0grE5SP03jM=
-X-Google-Smtp-Source: AGHT+IHwWtsSgL0GJcdWkOdN5/BrkJoD0QCrKgk/qkbW9WoCKBcWpzNKkGoRDqWXxtAxauH6Qcy66WxBabaA1VjuDdxZQeAIRh5t
+	s=arc-20240116; t=1751995976; c=relaxed/simple;
+	bh=Tj30AVgOZeLyHZLoCU9zwuYJtDxwx0/hpeoIjbFkhOs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=npYsF2EIIDNAMRd/AdC0RPywWKHZc9fz3Q7btXhOnRisZiPcgdZoTFlhic0KMEhu1VLMZHKzU1kveXqQ78KVKoEXGBdSSLrpQio0/9zG33AhlPZMFJvGp/Bp2KJF69pGRWxg4njluQqLNzdsoppcCFeoxlIAGEiLbaWOl/SRi5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZwdjdZ5h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3D81C4CEED;
+	Tue,  8 Jul 2025 17:32:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751995976;
+	bh=Tj30AVgOZeLyHZLoCU9zwuYJtDxwx0/hpeoIjbFkhOs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZwdjdZ5hSUdg4Xp5SziCZU45+i/ZBxR3cN7skTWzxY9ZFI/mBX/gdw618OkLEcwp+
+	 e1pzEaUfXBhYMdL9KAQUfFK1HTeKmwg2pmQ65lh68LKSDXC0BCywVzpODJhQYeiPcG
+	 bTWrA6zRJFVmwURla2p8tTRjlKSbOQPdGVFiEHlKkFBv5J0MFEau/Vtc772pOGysRQ
+	 JjCkLowuyBbjim2cmBfZpYOp3w6Fe3ow5MqtCD6b97HEoZsIC1RdcpIYqON7pPYJMf
+	 jGwEkwJJQ8M7948fmvrCQmaBHU0XDBblhqwInuGBkAKuEutcOFQzT5TPOjObK8iBpi
+	 COAjsGtQrT7lA==
+From: SeongJae Park <sj@kernel.org>
+To: Bijan Tabatabai <bijan311@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	akpm@linux-foundation.org,
+	corbet@lwn.net,
+	joshua.hahnjy@gmail.com,
+	bijantabatab@micron.com,
+	venkataravis@micron.com,
+	emirakhur@micron.com,
+	ajayjoshi@micron.com,
+	vtavarespetr@micron.com
+Subject: Re: [RFC PATCH v3 07/13] mm/damon/core: Commit damos->target_nid/migrate_dests
+Date: Tue,  8 Jul 2025 10:32:53 -0700
+Message-Id: <20250708173253.54732-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <CAMvvPS6imiPU-v527rCu=Yw6JA1Nc-Ezkc5_uXOSxf8oDjX2Qg@mail.gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b2d:b0:3df:34b4:1db8 with SMTP id
- e9e14a558f8ab-3e1637eaaf1mr6875425ab.4.1751995828881; Tue, 08 Jul 2025
- 10:30:28 -0700 (PDT)
-Date: Tue, 08 Jul 2025 10:30:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686d55b4.050a0220.1ffab7.0014.GAE@google.com>
-Subject: [syzbot] [net?] BUG: sleeping function called from invalid context in
- dev_set_promiscuity (2)
-From: syzbot <syzbot+6e619ff6dd4c8618a635@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi Bijan,
 
-syzbot found the following issue on:
+On Tue, 8 Jul 2025 09:04:02 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
 
-HEAD commit:    1e3b66e32601 vsock: fix `vsock_proto` declaration
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=16cbf28c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b29b1a0d7330d4a8
-dashboard link: https://syzkaller.appspot.com/bug?extid=6e619ff6dd4c8618a635
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> On Wed, Jul 2, 2025 at 4:03 PM SeongJae Park <sj@kernel.org> wrote:
+> >
+> > On Wed,  2 Jul 2025 15:13:30 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
+> >
+> > > From: Bijan Tabatabai <bijantabatab@micron.com>
+> > >
+> > > When committing new scheme parameters from the sysfs, copy the
+> > > target_nid and migrate_dests of the source schemes into the destination
+> > > schemes.
+> >
+> > Fixing the missed update of target_nid deserves Fixes: and Cc: stable@ in my
+> > opinion.  Could you please split and post the part as another patch?  For the
+> > Fixes, I think 83dc7bbaecae ("mm/damon/sysfs: use damon_commit_ctx()") should
+> > be appripriate.
+> 
+> Hi SJ,
+> 
+> To clarify, would you prefer it to be a seperate patch within the next
+> version of this patchset? Or would you prefer it to be sent separately
+> from the next version of the patchset?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I'd prefer latter (separate one).
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/11faaf1afe22/disk-1e3b66e3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ba355ce28c50/vmlinux-1e3b66e3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/018f94fd1327/bzImage-1e3b66e3.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6e619ff6dd4c8618a635@syzkaller.appspotmail.com
-
-netlink: 8 bytes leftover after parsing attributes in process `syz.3.2844'.
-macsec0: entered promiscuous mode
-BUG: sleeping function called from invalid context at kernel/locking/mutex.c:579
-in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 15744, name: syz.3.2844
-preempt_count: 201, expected: 0
-RCU nest depth: 0, expected: 0
-3 locks held by syz.3.2844/15744:
- #0: ffffffff8fa219b8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8fa219b8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8fa219b8 (&ops->srcu#2){.+.+}-{0:0}, at: rtnl_link_ops_get+0x23/0x250 net/core/rtnetlink.c:570
- #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
- #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
- #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8db/0x1c70 net/core/rtnetlink.c:4054
- #2: ffff88802cb3a368 (&macsec_netdev_addr_lock_key/1){+...}-{3:3}, at: netif_addr_lock_bh include/linux/netdevice.h:4805 [inline]
- #2: ffff88802cb3a368 (&macsec_netdev_addr_lock_key/1){+...}-{3:3}, at: dev_uc_add+0x67/0x120 net/core/dev_addr_lists.c:689
-Preemption disabled at:
-[<ffffffff895a79e6>] local_bh_disable include/linux/bottom_half.h:20 [inline]
-[<ffffffff895a79e6>] netif_addr_lock_bh include/linux/netdevice.h:4804 [inline]
-[<ffffffff895a79e6>] dev_uc_add+0x56/0x120 net/core/dev_addr_lists.c:689
-CPU: 1 UID: 0 PID: 15744 Comm: syz.3.2844 Not tainted 6.16.0-rc4-syzkaller-00114-g1e3b66e32601 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- __might_resched+0x495/0x610 kernel/sched/core.c:8800
- __mutex_lock_common kernel/locking/mutex.c:579 [inline]
- __mutex_lock+0x106/0xe80 kernel/locking/mutex.c:747
- netdev_lock include/linux/netdevice.h:2756 [inline]
- netdev_lock_ops include/net/netdev_lock.h:42 [inline]
- dev_set_promiscuity+0x10e/0x260 net/core/dev_api.c:286
- dev_change_rx_flags net/core/dev.c:9241 [inline]
- __dev_set_promiscuity+0x534/0x740 net/core/dev.c:9285
- __dev_set_rx_mode+0x17c/0x260 net/core/dev.c:-1
- dev_uc_add+0xc8/0x120 net/core/dev_addr_lists.c:693
- macsec_dev_open+0xd9/0x530 drivers/net/macsec.c:3634
- __dev_open+0x470/0x880 net/core/dev.c:1683
- __dev_change_flags+0x1ea/0x6d0 net/core/dev.c:9458
- rtnl_configure_link net/core/rtnetlink.c:3577 [inline]
- rtnl_newlink_create+0x555/0xb00 net/core/rtnetlink.c:3833
- __rtnl_newlink net/core/rtnetlink.c:3940 [inline]
- rtnl_newlink+0x16d6/0x1c70 net/core/rtnetlink.c:4055
- rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6944
- netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2551
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x759/0x8e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x219/0x270 net/socket.c:727
- ____sys_sendmsg+0x505/0x830 net/socket.c:2566
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
- __sys_sendmsg net/socket.c:2652 [inline]
- __do_sys_sendmsg net/socket.c:2657 [inline]
- __se_sys_sendmsg net/socket.c:2655 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f64fc18e929
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f64fd052038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f64fc3b5fa0 RCX: 00007f64fc18e929
-RDX: 0000000000000800 RSI: 0000200000000280 RDI: 0000000000000004
-RBP: 00007f64fc210b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f64fc3b5fa0 R15: 00007ffd8fec8448
- </TASK>
-
-=============================
-[ BUG: Invalid wait context ]
-6.16.0-rc4-syzkaller-00114-g1e3b66e32601 #0 Tainted: G        W          
------------------------------
-syz.3.2844/15744 is trying to lock:
-ffff888077de0d30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2756 [inline]
-ffff888077de0d30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: netdev_lock_ops include/net/netdev_lock.h:42 [inline]
-ffff888077de0d30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: dev_set_promiscuity+0x10e/0x260 net/core/dev_api.c:286
-other info that might help us debug this:
-context-{5:5}
-3 locks held by syz.3.2844/15744:
- #0: ffffffff8fa219b8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8fa219b8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8fa219b8 (&ops->srcu#2){.+.+}-{0:0}, at: rtnl_link_ops_get+0x23/0x250 net/core/rtnetlink.c:570
- #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
- #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
- #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8db/0x1c70 net/core/rtnetlink.c:4054
- #2: ffff88802cb3a368 (&macsec_netdev_addr_lock_key/1){+...}-{3:3}, at: netif_addr_lock_bh include/linux/netdevice.h:4805 [inline]
- #2: ffff88802cb3a368 (&macsec_netdev_addr_lock_key/1){+...}-{3:3}, at: dev_uc_add+0x67/0x120 net/core/dev_addr_lists.c:689
-stack backtrace:
-CPU: 1 UID: 0 PID: 15744 Comm: syz.3.2844 Tainted: G        W           6.16.0-rc4-syzkaller-00114-g1e3b66e32601 #0 PREEMPT(full) 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_lock_invalid_wait_context kernel/locking/lockdep.c:4833 [inline]
- check_wait_context kernel/locking/lockdep.c:4905 [inline]
- __lock_acquire+0xbcb/0xd20 kernel/locking/lockdep.c:5190
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
- __mutex_lock_common kernel/locking/mutex.c:602 [inline]
- __mutex_lock+0x182/0xe80 kernel/locking/mutex.c:747
- netdev_lock include/linux/netdevice.h:2756 [inline]
- netdev_lock_ops include/net/netdev_lock.h:42 [inline]
- dev_set_promiscuity+0x10e/0x260 net/core/dev_api.c:286
- dev_change_rx_flags net/core/dev.c:9241 [inline]
- __dev_set_promiscuity+0x534/0x740 net/core/dev.c:9285
- __dev_set_rx_mode+0x17c/0x260 net/core/dev.c:-1
- dev_uc_add+0xc8/0x120 net/core/dev_addr_lists.c:693
- macsec_dev_open+0xd9/0x530 drivers/net/macsec.c:3634
- __dev_open+0x470/0x880 net/core/dev.c:1683
- __dev_change_flags+0x1ea/0x6d0 net/core/dev.c:9458
- rtnl_configure_link net/core/rtnetlink.c:3577 [inline]
- rtnl_newlink_create+0x555/0xb00 net/core/rtnetlink.c:3833
- __rtnl_newlink net/core/rtnetlink.c:3940 [inline]
- rtnl_newlink+0x16d6/0x1c70 net/core/rtnetlink.c:4055
- rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6944
- netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2551
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x759/0x8e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x219/0x270 net/socket.c:727
- ____sys_sendmsg+0x505/0x830 net/socket.c:2566
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
- __sys_sendmsg net/socket.c:2652 [inline]
- __do_sys_sendmsg net/socket.c:2657 [inline]
- __se_sys_sendmsg net/socket.c:2655 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f64fc18e929
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f64fd052038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f64fc3b5fa0 RCX: 00007f64fc18e929
-RDX: 0000000000000800 RSI: 0000200000000280 RDI: 0000000000000004
-RBP: 00007f64fc210b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f64fc3b5fa0 R15: 00007ffd8fec8448
- </TASK>
+Sorry for making the point ambiguous, and giving me this chance to clarify :)
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Thanks,
+SJ
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+[...]
 
