@@ -1,179 +1,171 @@
-Return-Path: <linux-kernel+bounces-720844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B676DAFC117
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:58:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A1AEAFC119
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B0F71AA6DE1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:58:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D1331AA57EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C27228C9D;
-	Tue,  8 Jul 2025 02:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268891E8328;
+	Tue,  8 Jul 2025 03:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lzUmdFXk"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="UsudPzGE"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7338199E94
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 02:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D37CF9E8
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 03:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751943491; cv=none; b=qjGx+ggyIVPgi11wBxmYOolCc0ANVzVrw8nTD8Z04eY2ATO3QK5UbwS8/lQq0AKaR/5AbzDY0JYdHWovpwlc25wz8q50QzzT6xesogOdTHFbmm4UFkrMsBEdwnCjmg9Avq/ODq3we9g/f5a5aMPhJLQ3NyKvgVBVQHItMpv5djM=
+	t=1751943627; cv=none; b=ljMTH88akVlgA1HOUFAq4rZS7o6t2jjUbw6oteMZ/wm9p4/1T2VbQT1M8MiSjwKeyJKKPjzvad7QhzkDkgvr5yoh92mBknyp0Ioorf4XWoMdVVcADWU/+TsY3u6mThC78HnnYhMRsWXsJZ+FDqfNhANzsrKHBIG7pLquaJ+tQMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751943491; c=relaxed/simple;
-	bh=kCffdQKYAa0eeS/Fo5NqJK/zqawTmRmlInuXwDV/e8w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sEOXUl9l9sv96Vh7CsVyoagAeAnve5uavMKt1GRpXia4QgooqUDLx6PB9y43VxzYZNJv1k08kEUclXjzuq+TjVifSQNuhqRcuug6QLMEsd/r538efIuzHQYB0zvHLONyowfqiX+Nr9l8gmKBCCTlV0LJKspWKTubll2BtXMxtKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lzUmdFXk; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1751943486; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=D/SQkQyiBiqr7Hn8p76kER8Q8ghEeOvxX581xJ16oHI=;
-	b=lzUmdFXkGbSW54cHDHy7PdNmyGuSogBqv4AabCE2ZXtgLqfj54kwtxAGhrteNEn7e+claO1EOkvHNx8hhgLBpK4gWdYTlnJlsdTvD5NCrt1BiU8WhHp1Wv0iw6WdHu8tOK+I1zufx5r0ELLE3N5z7N+n276NaKXlYl7qItmB0Hw=
-Received: from 30.221.131.215(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WiJ79iY_1751943484 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 08 Jul 2025 10:58:05 +0800
-Message-ID: <e367f45a-b511-4f64-a528-807317004a2e@linux.alibaba.com>
-Date: Tue, 8 Jul 2025 10:58:04 +0800
+	s=arc-20240116; t=1751943627; c=relaxed/simple;
+	bh=WMhgcSeohrqilWlbvY9PZXYZsd0ZvU6eqOQQdw7z46Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HidV2iv1sIMWmiQ8T6zTPGlxFa7ChWiJsMmIQIX0sS7ZqWQp+L2XxgvSTZcG+jl7LVpzpVG0PbWHNovixPQTU4lbaiHeqrfkS/SItSGoVxGv87BZVRlewOwXotkeIdIA+YhRuA92Dx4JEcerXhPatH8+Au1psK7QlKV2graQP4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=UsudPzGE; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-311ef4fb43dso3085947a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 20:00:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1751943625; x=1752548425; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bMrKKC1vkb61pVbzzmeJOBgVccrTmC1tTEZe+RTgQIY=;
+        b=UsudPzGEV9JgH/FxBaWxFPXHu0RDglfD79L+wa7zEUiXF4H9zF8Y2lhcEDkML6Ykx+
+         TX/8DkT+/ikqLG28YNNMqgDZEbPEUo/3/fV718IiWLxnAdmGrAjaKpzNFwuzMgKoQso0
+         HFXtIA6SHuj5kWSd2/f4/WGFctmCQGoVPDbAkWd4xALch0BmE8u7NaPvmXw2IsKnxCRf
+         Elkh0So8GdrKjfX+Cid+INx/1nNhGzbIYDr7YxBLBDYQRcJalyzdCc7qLuguf/OXQwxR
+         FZvS/UHqce2j/k8yAfFEZnkVqhTmLtTBzNoR76HGceAwrtMWMlfGfveNXqKmP8mqx/4Y
+         lchQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751943625; x=1752548425;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bMrKKC1vkb61pVbzzmeJOBgVccrTmC1tTEZe+RTgQIY=;
+        b=BQ51Ej3eg0nRQCkE4t7cxucPfwhbUy69IrP/3XYFIGMOe7Isx+vv7qs+wGJJmTeeXA
+         5dsL0rE8vkSOhx52O1hwkCaPKAbhoJ5wvUSXs3n8JySjLNh/tpbAbZBKwFdipgjR2jdW
+         o2bjLIB/wVaL33P5DYJs6tFrj/VwcyObK/oas/v7x8GHW3CBkk3Ee9UAvJjEQZDrtZ1L
+         Ac60eoq5UO9E6hcM/jPWFUoi/64esr/5qDUBZltdA3YhwqqyLb+NP/eQjQyP5DgaWw/n
+         MhPUU8scoxkVJ0Ccw3d5Bm8cwSExqVPOUxHCRVhGlJn5m3uGbMp3L921ZoZmaT8gUR90
+         gOvw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4USLpznHxBfujhqeGZ+cA6bEjw/2FffJ3x00z9ueubvgnk2NjoMpFUeN6Mt1WFROs99Ea4CZnuoDl7yY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjNVLuPYDa54epX4fd2RzeA8sw2PxoiZaOVlNYumKYXWH7ZPsA
+	/B1/C48bz9zRT2vsp8JD6pfJshlfrYMgP3Bujl3Bg28XQkVyd7SxcBlInN3B8XAsXaM=
+X-Gm-Gg: ASbGnctblXGL6DqibywPZ6fVp16AdoH+E/4Yx4CtP8q6yy/AMne7/MBwvulfktZgYwk
+	HnBhEcMbiXU4fInScvqWCWsPEAsD7ybLL0a8irCafj1J82ATl2YsaZmWPzoweQMjVtgBqT8OCG9
+	Fb0Dm+6cN/Hz89Okv9cOnZo+LrMIVdXqQo1owXrWiJUJzEYNvStNI7tPeHcDh0mWl24WM/91MdS
+	XF1sW4/R9RH6Rajt6kgwzG+uc7mdY37a/ZTKmgtsBDOtvqohpMGBznNwZ5gxcPIv6K8iAo3E/HC
+	cI+Np1IK5s8vsw8RkCHrgkVxhGhMZPbt9LeADpyj/j0VS39WkKcfzYt3ns8Tb8PDH4kS8Szl0BM
+	PG0dLWiPabvu1VA==
+X-Google-Smtp-Source: AGHT+IGONuKHAlHSkdF9dYjKJobYsaQXINAC8otRUB02iJ7r7RxJpmX1c4M/LkCrqml5u544gUG41g==
+X-Received: by 2002:a17:90b:2ed0:b0:311:f30b:c21 with SMTP id 98e67ed59e1d1-31aadd9fd46mr17327109a91.26.1751943624853;
+        Mon, 07 Jul 2025 20:00:24 -0700 (PDT)
+Received: from localhost.localdomain ([203.208.189.10])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b38ee450fcbsm10029952a12.12.2025.07.07.20.00.21
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 07 Jul 2025 20:00:24 -0700 (PDT)
+From: lizhe.67@bytedance.com
+To: david@redhat.com
+Cc: akpm@linux-foundation.org,
+	alex.williamson@redhat.com,
+	jgg@ziepe.ca,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lizhe.67@bytedance.com,
+	peterx@redhat.com
+Subject: Re: [PATCH v3 2/5] vfio/type1: optimize vfio_pin_pages_remote()
+Date: Tue,  8 Jul 2025 11:00:17 +0800
+Message-ID: <20250708030017.46848-1-lizhe.67@bytedance.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <9d74e93d-5a5f-4ffa-91fa-eb2061080f94@redhat.com>
+References: <9d74e93d-5a5f-4ffa-91fa-eb2061080f94@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] erofs: do sanity check on m->type in
- z_erofs_load_compact_lcluster()
-To: Chao Yu <chao@kernel.org>, xiang@kernel.org
-Cc: linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
- Sandeep Dhavale <dhavale@google.com>, Hongbo Li <lihongbo22@huawei.com>
-References: <20250707084723.2725437-1-chao@kernel.org>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20250707084723.2725437-1-chao@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Chao,
-
-On 2025/7/7 16:47, Chao Yu wrote:
-> All below functions will do sanity check on m->type, let's move sanity
-> check to z_erofs_load_compact_lcluster() for cleanup.
-> - z_erofs_map_blocks_fo
-> - z_erofs_get_extent_compressedlen
-> - z_erofs_get_extent_decompressedlen
-> - z_erofs_extent_lookback
+On Mon, 7 Jul 2025 09:29:30 +0200, david@redhat.com wrote:
+ 
+> > @@ -680,32 +724,47 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+> >   		 * and rsvd here, and therefore continues to use the batch.
+> >   		 */
+> >   		while (true) {
+> > +			long nr_pages, acct_pages = 0;
+> > +
+> >   			if (pfn != *pfn_base + pinned ||
+> >   			    rsvd != is_invalid_reserved_pfn(pfn))
+> >   				goto out;
+> >   
+> > +			/*
+> > +			 * Using GUP with the FOLL_LONGTERM in
+> > +			 * vaddr_get_pfns() will not return invalid
+> > +			 * or reserved pages.
+> > +			 */
+> > +			nr_pages = num_pages_contiguous(
+> > +					&batch->pages[batch->offset],
+> > +					batch->size);
+> > +			if (!rsvd) {
+> > +				acct_pages = nr_pages;
+> > +				acct_pages -= vpfn_pages(dma, iova, nr_pages);
+> > +			}
+> > +
+> >   			/*
+> >   			 * Reserved pages aren't counted against the user,
+> >   			 * externally pinned pages are already counted against
+> >   			 * the user.
+> >   			 */
+> > -			if (!rsvd && !vfio_find_vpfn(dma, iova)) {
+> > +			if (acct_pages) {
+> >   				if (!dma->lock_cap &&
+> > -				    mm->locked_vm + lock_acct + 1 > limit) {
+> > +						mm->locked_vm + lock_acct + acct_pages > limit) {
 > 
-> Signed-off-by: Chao Yu <chao@kernel.org>
-How about appending the following diff to tidy up the code
-a bit further (avoid `goto map_block` and `goto out`)?
+> Weird indentation change.
+> 
+> It should be
+> 
+> if (!dma->lock_cap &&
+>      mm->locked_vm + lock_acct + acct_pages > limit) {
+> 
+>      ^ aligned here
+
+Thank you! We need the following fixup code.
+
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 03fce54e1372..6909275e46c2 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -750,7 +750,7 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+ 			 */
+ 			if (acct_pages) {
+ 				if (!dma->lock_cap &&
+-						mm->locked_vm + lock_acct + acct_pages > limit) {
++				     mm->locked_vm + lock_acct + acct_pages > limit) {
+ 					pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n",
+ 						__func__, limit << PAGE_SHIFT);
+ 					ret = -ENOMEM;
 
 
-  fs/erofs/zmap.c | 67 +++++++++++++++++++++++--------------------------
-  1 file changed, 31 insertions(+), 36 deletions(-)
+> Please don't drop acks/rbs already given in previous submissions.
 
-diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
-index e530b152e14e..431199452542 100644
---- a/fs/erofs/zmap.c
-+++ b/fs/erofs/zmap.c
-@@ -327,21 +327,18 @@ static int z_erofs_get_extent_compressedlen(struct z_erofs_maprecorder *m,
-  	DBG_BUGON(lcn == initial_lcn &&
-  		  m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD);
-  
--	if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD) {
--		if (m->delta[0] != 1) {
--			erofs_err(sb, "bogus CBLKCNT @ lcn %lu of nid %llu", lcn, vi->nid);
--			DBG_BUGON(1);
--			return -EFSCORRUPTED;
--		}
--		if (m->compressedblks)
--			goto out;
-+	if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD && m->delta[0] != 1) {
-+		erofs_err(sb, "bogus CBLKCNT @ lcn %lu of nid %llu", lcn, vi->nid);
-+		DBG_BUGON(1);
-+		return -EFSCORRUPTED;
-  	}
-  
-  	/*
-  	 * if the 1st NONHEAD lcluster is actually PLAIN or HEAD type rather
-  	 * than CBLKCNT, it's a 1 block-sized pcluster.
-  	 */
--	m->compressedblks = 1;
-+	if (m->type != Z_EROFS_LCLUSTER_TYPE_NONHEAD || !m->compressedblks)
-+		m->compressedblks = 1;
-  out:
-  	m->map->m_plen = erofs_pos(sb, m->compressedblks);
-  	return 0;
-@@ -422,36 +419,34 @@ static int z_erofs_map_blocks_fo(struct inode *inode,
-  	map->m_flags = EROFS_MAP_MAPPED | EROFS_MAP_ENCODED;
-  	end = (m.lcn + 1ULL) << lclusterbits;
-  
--	if (m.type != Z_EROFS_LCLUSTER_TYPE_NONHEAD) {
--		if (endoff >= m.clusterofs) {
--			m.headtype = m.type;
--			map->m_la = (m.lcn << lclusterbits) | m.clusterofs;
--			/*
--			 * For ztailpacking files, in order to inline data more
--			 * effectively, special EOF lclusters are now supported
--			 * which can have three parts at most.
--			 */
--			if (ztailpacking && end > inode->i_size)
--				end = inode->i_size;
--			goto map_block;
-+	if (m.type != Z_EROFS_LCLUSTER_TYPE_NONHEAD && endoff >= m.clusterofs) {
-+		m.headtype = m.type;
-+		map->m_la = (m.lcn << lclusterbits) | m.clusterofs;
-+		/*
-+		 * For ztailpacking files, in order to inline data more
-+		 * effectively, special EOF lclusters are now supported
-+		 * which can have three parts at most.
-+		 */
-+		if (ztailpacking && end > inode->i_size)
-+			end = inode->i_size;
-+	} else {
-+		if (m.type != Z_EROFS_LCLUSTER_TYPE_NONHEAD) {
-+			/* m.lcn should be >= 1 if endoff < m.clusterofs */
-+			if (!m.lcn) {
-+				erofs_err(sb, "invalid logical cluster 0 at nid %llu",
-+					  vi->nid);
-+				err = -EFSCORRUPTED;
-+				goto unmap_out;
-+			}
-+			end = (m.lcn << lclusterbits) | m.clusterofs;
-+			map->m_flags |= EROFS_MAP_FULL_MAPPED;
-+			m.delta[0] = 1;
-  		}
--		/* m.lcn should be >= 1 if endoff < m.clusterofs */
--		if (!m.lcn) {
--			erofs_err(sb, "invalid logical cluster 0 at nid %llu",
--				  vi->nid);
--			err = -EFSCORRUPTED;
-+		/* get the corresponding first chunk */
-+		err = z_erofs_extent_lookback(&m, m.delta[0]);
-+		if (err)
-  			goto unmap_out;
--		}
--		end = (m.lcn << lclusterbits) | m.clusterofs;
--		map->m_flags |= EROFS_MAP_FULL_MAPPED;
--		m.delta[0] = 1;
-  	}
--
--	/* get the corresponding first chunk */
--	err = z_erofs_extent_lookback(&m, m.delta[0]);
--	if (err)
--		goto unmap_out;
--map_block:
-  	if (m.partialref)
-  		map->m_flags |= EROFS_MAP_PARTIAL_REF;
-  	map->m_llen = end - map->m_la;
--- 
-2.43.5
+Sorry for the inconvenience it may have caused.
 
+> Acked-by: David Hildenbrand <david@redhat.com>
 
+Thank you once again for your review.
 
+Thanks,
+Zhe
 
