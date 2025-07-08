@@ -1,268 +1,246 @@
-Return-Path: <linux-kernel+bounces-721700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C629CAFCCD8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:00:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCA4AFCCDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77B9A1AA1A48
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:01:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F52F166E07
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE1A2DE6F1;
-	Tue,  8 Jul 2025 14:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KPZKfOd7"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2040.outbound.protection.outlook.com [40.107.237.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159602DEA86;
+	Tue,  8 Jul 2025 14:00:53 +0000 (UTC)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268382D613;
-	Tue,  8 Jul 2025 14:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751983238; cv=fail; b=QWMeoQVDDciADUNZid71wLDeoX2H+m6gx7BoFSz4eHhHNEVvZM4Hp8HpnOr54r3VeUAn9MfDZk5mf25TGk/hJctaFSyORZkDprNi3MFfiKIIeTTfF/9zi4PIX/5AiPgUpguyOxwaliO/RHJxDzW6r3UHRtrvRcJsTTtcRMvqXiM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751983238; c=relaxed/simple;
-	bh=ArIiZ3KkohNT2dXuwAGHcUloi+tQ9X8ty+trXiyOJ8M=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=rO/6M4WMsbgYzfE1F8GkcYJ7e5CI+0gmlFfZUq7xrcN1VlaKt3TMmNVHYKmIh452NV9P9ppa4eieEQF8BzmbSwII2Cj+qp9s1+T3Uu4vs17QdiGlOfiHi0WhFDztqwFSe4UIZKDEhheZ3lH+vgDoSHb46ySKqyXDzQha3EMFvXY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KPZKfOd7; arc=fail smtp.client-ip=40.107.237.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XsaNSzg5n+JgtVQoXAZ9nGwVXdMKLrdIIlvtdZrkDgonFu/rB3iAUvzVlB/HMSQOjTFe19jA179Y3bm6FK+BVQ/CYIMlZbvBqUZwPygFOpiR2i7mJBICaWKycBNw6bEQm98z3os7gBjW1uZOSowToPsCEl3UXzD6tA/2OV2U0yFm0akA/kS5G+Ur4NI6E4yL08NY+hZ7Ce75MrCuGvMLOEEUu2O/RYwANlxzwsoGWcz0UPfKbsx+aZt3tRmJVZuKzBGDCRPHlTVisFKrEf/a1SgibUdPUffpsuaKiA7P1TDdDuaC0tTlWat8cGZr/WEUir4ILL56BDBRezt5TWeMZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D1oa6OSdJp7dQh+Yn//WwiIYU6mU+CVe2xWeP8zFZjw=;
- b=E+hCMe9V74QeyJujOolzB/BWx8YL/+1VpItNUwAgqH5EmNuno1KyTPtx2mxyCVsij5rVgUd8eA58mN7u7I694gQ28B6koRXfDGf4GSoYmTv3HUOw54jznkfhUd5gnknY1+tnRgR2JgZDv5ryUhIBPpHA5oS8Fb+R4h9bZf5odwLsXKispwVHRrCyadsOWv48RdcpTrLWZhyi1ID/4iWqKuVvoBBRzkZpgrqqD2L4QxgQqPJh14+yDIIUDiEbgPD/ARWLGyFiHSEMX1g4urOoUWdK8GTxU3CYtx2tpWFXCwFYe1+YI+RQppgQoC8LCb/yRQexWJEVvZg3Htx6jlD7yw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D1oa6OSdJp7dQh+Yn//WwiIYU6mU+CVe2xWeP8zFZjw=;
- b=KPZKfOd7mZwrM2r4xQ422dpQ29yID5wwVDv+9hXft4TrXfy+GjmSOQifKpUp89Bkf3AAxu1J7wWO0FA5YGpZNWw/OM40FjDcFeD30/978tEsXBxHuj+pg5xo0ozGqF7IBhQC54hEVU1OW++SDc/iG1ITKe1qpAkSGJqugLc04XcJWnJerH2Qau/XeJ7TraO2k5Q3Xzm/4p0dA15+tj0xY8cCv5Tdru+SXhBSFzGq+adtwGiosUQHtfgdoZdO/ykSqLyjtjH/lo8CLiC4mdMkJX31RrRlSlabSLaC/VxdaeXMd4kton6eudlpQpwgCVDGhpjmANdDY1M6WizJeG0ABw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by DS5PPFE52C859EE.namprd12.prod.outlook.com (2603:10b6:f:fc00::666) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Tue, 8 Jul
- 2025 14:00:34 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%7]) with mapi id 15.20.8901.018; Tue, 8 Jul 2025
- 14:00:33 +0000
-Message-ID: <664c73de-4ad5-4d39-b7aa-9d1a14559535@nvidia.com>
-Date: Tue, 8 Jul 2025 10:00:31 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] smp: Document preemption and stop_machine() mutual
- exclusion
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Andrea Righi <arighi@nvidia.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>, rcu@vger.kernel.org
-References: <20250705172328.4114289-1-joelagnelf@nvidia.com>
- <20250707075050.GB1613200@noisy.programming.kicks-ass.net>
- <20250707141952.GA3640857@joelbox2>
- <20250708072112.GA1613376@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <20250708072112.GA1613376@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL0PR02CA0055.namprd02.prod.outlook.com
- (2603:10b6:207:3d::32) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEE02D613;
+	Tue,  8 Jul 2025 14:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751983252; cv=none; b=N7n3Afe48+aKPeD2y/APBX08byNl6b5kXRJVl7MvUZdPGP1drWqoxqN+C39/t20Em/gHiL/I1ZM3CKRTPMXDcGUPxuTsSoYEgKx9eQ5Yd1zwvmlOhmnh2pSwaRf6o3yK+F63gSW1MczE9V6sPZsWLgJ7TWON2uu29OofBp7PUXE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751983252; c=relaxed/simple;
+	bh=XReFg8lzS1pkGZT0P1YIXIvT032iwGoONRTTI9SRBRk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BQXi3aGcQaUVcqGR9WDNRo1/qU++oa4+g2AgL33HGgkeYDQDUH/HvEE9w7wvhEUYY1h0Db7vOugodsdbr64iikHqkCdQps29Nh1+ay+LWcWgExVUKDxy9/xACVnBwoQk30I9BUh5QgkeyeME0j4B0kAg3scBYd6Z3gPIwW/vERA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ad56cbc7b07so737356566b.0;
+        Tue, 08 Jul 2025 07:00:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751983249; x=1752588049;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7YURTXCptCSZEmhbUYCBqxZVrD3kYao1LSH9kzVWrsc=;
+        b=nO/arqi3XkVWVHQXtMVnReZ7wL2c5aZx/sNPU1VwhoWpkfBAEVItJZFoJAuMMaLbS2
+         0BNXAr9ndPxLEQgiF8wE0DPdS8sYQyx4ms3C0UkGxL5eclHI5MHy1JFEjSF27SZEHsgT
+         nplinuN/blhUSueM3CBCW+1sCxwig7FaVY+YB3SGhXjaqKXnPJjWecdiFj6dsvZnTBQA
+         aCtT0OjSNE8CouoTwQLxDzR3puqayhH47VEbjrpBbFiRnSMRFNFrAJ3w46WfbmV/LBpH
+         h1k0v2fkToUD737FYy7HOpHBXFGmtSwjoNq/OIYEUtcuUY01/faW/EDA71o2qSiAQ0xn
+         qiWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGPOGrcFINZD3Fqb6Kymo6wKGzOW7VlU88P++vpsPr6wg66UkdsZhyZXdVT+EGDQ/MEVUVZnLiqmhDx/o=@vger.kernel.org, AJvYcCXHb5j3gEC/hsKI6EmMJXsTceA+H21yhG+eO56bbNlWOzg3/tTzG7rUfmKf4yN+y/8B/nQaDKSgWbSHI6Es@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/wXJHoDQVvdFsGBLsH6sAO3xn/8eP/CgcB80rg6H47en+501P
+	zm1m9Ssu19YeOOrYTrubvY3VIBmKE4QO5+B61vFvKrLfhs7YiBBoTenH
+X-Gm-Gg: ASbGncufcBSPy4nWeN/6WgeKnH4+X4lWVh4JC+a70YedTS6mImOg/kFEPibnDGjFaX8
+	dZ+E/G/rTwrKGek/iqwv0Kx3eU8sbaYxCaVxHf/YlBLieWA722aTAZ3k7TF1Sd2hGJADFX4rCvn
+	idBxMrTXlgA5sBJkKl9au2aH8NMTOIfqSGDUcu8HHzq4N5oDh2kVpc6+pEDjMDzx2MQo38P8Z0d
+	nXrpsRepsvcYXp5mBZq6QMyP0fBKUEhVxgXZkmfvRGKR5OhRCAwes0+7djDvY8+5rfaqCnu0PaU
+	tRrtFLNggEAMMUBAaubJDt0KzlxizFVny56ij92iPvRj0whE7S2t+954FXZY2Y0=
+X-Google-Smtp-Source: AGHT+IGXOKNS8CCiY5x6OJiBuZ2ATOTUIIt4Qq9+KAF8vaEWWbhlFc9sESTRoxEkjQhwxHSfc/uYLg==
+X-Received: by 2002:a17:907:d86:b0:ade:484d:1518 with SMTP id a640c23a62f3a-ae3fe6be48bmr1664163466b.26.1751983248358;
+        Tue, 08 Jul 2025 07:00:48 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:9::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6ac5f80sm911998166b.97.2025.07.08.07.00.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 07:00:47 -0700 (PDT)
+Date: Tue, 8 Jul 2025 07:00:45 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Mark Rutland <mark.rutland@arm.com>, ankita@nvidia.com,
+	bwicaksono@nvidia.com
+Cc: rmk+kernel@armlinux.org.uk, catalin.marinas@arm.com,
+	linux-serial@vger.kernel.org, rmikey@meta.com,
+	linux-arm-kernel@lists.infradead.org, usamaarif642@gmail.com,
+	leo.yan@arm.com, linux-kernel@vger.kernel.org, paulmck@kernel.org,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Besar Wicaksono <bwicaksono@nvidia.com>
+Subject: Re: arm64: csdlock at early boot due to slow serial (?)
+Message-ID: <aG0kYjl/sphGqd4r@gmail.com>
+References: <aGVn/SnOvwWewkOW@gmail.com>
+ <aGZbYmV26kUKJwu_@J2N7QTR9R3>
+ <aGaQBghdAl8VGWmV@gmail.com>
+ <aGawTd8N2i8MDCmL@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|DS5PPFE52C859EE:EE_
-X-MS-Office365-Filtering-Correlation-Id: c37af25c-4559-482c-8c70-08ddbe27cea2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eEZ5ZUZsaTlDN3gxTHBoUU5tY3NVYTM4dExsbGxKeHhDeEduZ0tGUUpjWEJU?=
- =?utf-8?B?WHcrT1VDUjZodXExMG1SdzBUQk5mSkEyYzR3cVdQOGE4ZXROY1FBLzRUU2xT?=
- =?utf-8?B?MXdOclgvLzNPdTM0dGwwanpsQXNxWlJ0MDJxYmNhSW9tMEJPM0lsay9ENmpE?=
- =?utf-8?B?d2FjbEt4TEwvbnZMRmtBZ0RReTBVV1NiVE1pdlVZY0xLSVdrb2UxaUJJNStY?=
- =?utf-8?B?L1NvOUN1YTk2Z0g2VnE0UjIwMmdiOW5yMXF4bWh0T0c2WjBQWnlmZXZyZDdC?=
- =?utf-8?B?dTc5ZVZ6dElkV2VBRncxZ3RXUUNpK0t5eUZpWXI2MnhJeGNVYXpSVXhoVmtU?=
- =?utf-8?B?SEUrWmNqMjl2ckgrS09LcnhWbXNPV3Evb0hucElSNnpEWllqYkJMZHJ3eVFl?=
- =?utf-8?B?QXV4OWFvaERIbDd1M3ZkLzg2ZFJEeTBzc09ITUZvWXB6cEpLNXlRQkExdXpT?=
- =?utf-8?B?ekFnWFVMRE1SSlVoZFdlMDVJWnVpUGxLZkxzUXprTGZHMHp2Y0o3bGMxWFhS?=
- =?utf-8?B?c3REWnFGQXgrL0NRSk9pLzBNcWN4cjRJL2FIKzVCcVdCcGdwcVFHZ2dJM3Nt?=
- =?utf-8?B?RjF6QW80aU5aVHNlUHhvci9ueUZiZkZISVAzb3FrYzcxbi9yZXMySk1MeXI2?=
- =?utf-8?B?TEVYWDJoYTlWb1RxR2FoYi9hMVRIRzFtM1NuSkJlYVFhT0VrVFliTmwwUkF2?=
- =?utf-8?B?SGxkNGRlaW5wdS9mT2JubTlFN3RtM2dBN3RRTHNkeTN0ZFM3OUhDOS8xbVVH?=
- =?utf-8?B?MTl3ZTlqcVhzSFVqZ0NRaVp3VC9kTmJEejE1bDk4RHFCWWRpalpTZ3FsVmI5?=
- =?utf-8?B?eE9zekFjbXB5cFZzbm9CdTZXbjQ1QUg2Q0RHK2pQRXJPbkdJQXEwN01JNkZD?=
- =?utf-8?B?bm83MDZRZWxKSnB6NDhWdHpQVlVlZlhWWW1GVWN2aUhOSFBML1N5SXI3aEV3?=
- =?utf-8?B?OTlnYTV5SC9DbmozaWhUT3pLMzRndnVXdk0zbUNHaXRwMXRMamszaUMwTnNF?=
- =?utf-8?B?WDVpRjZsNEVNRzB6SjVOWE5YYnBJM0JBeXJtVWhiOXFKSm5IWTVqem5JdWtq?=
- =?utf-8?B?MHVVNHpyTUxwcCtLMkRaVHp5akdrM3R1MTViQVQ1Y1pIdFNSRjAxTUpLWVNi?=
- =?utf-8?B?dnFOMDFLRTMyODIvcWV5MnpiUG42WlAzVTJ5cldUd0JjK3FJRXkxcmg5ZGJM?=
- =?utf-8?B?RWlMUWFlTVZnVXRGZXkzOE94bjJhb0kxTVJ4eE91L2NsZlhVTkwyV0twVkJl?=
- =?utf-8?B?TVRqRDNlaytUNCtFU3VGWHVXTUN2S1d6MzJKT01Ka2ZURlk1N0NQZ1YwNXZa?=
- =?utf-8?B?MHdmWTJNRG5Ic2luYWwycDh3b0ZTeE4yMXkvWnc1NmZEc25qWEV0WVcyWHh2?=
- =?utf-8?B?NzRHVFI2QUkwY2lISVBRR1Z1TmJnbFJCdDZLcUJLL1cyNTd6bk1ERzRqYVY3?=
- =?utf-8?B?SlRBS3NScFRISTFYTUV0R1RtemxvdUVqTnRUejhhYXBQclVJdUsvTmVDTzF1?=
- =?utf-8?B?eDF0eUNES0ZHSkFNM2I3TDRTNGphN3FLVHNQZnRObURqNEVvaXQyeGJhbEhM?=
- =?utf-8?B?eW1RQjg4V0pESVBJa2JwZ3JJb0pSeUdFMzZJclVQdFRPSGY2clZ2bXpEdUx6?=
- =?utf-8?B?czF5QmE5bjM4RERqeTdFUzlSYXl2Q2dKVFR2Um5HdVdydWMwYWt0NEtjR0kx?=
- =?utf-8?B?UFB5S2NpNmpSY3NCendwRzNPb0hETlpBcktBdnR1YmcwVUJwVmNGZkJKWk85?=
- =?utf-8?B?KzgvN2xkbGdQWUxQSktlYkl1OERFSGErd01yTzhUQzlCSkpyUEx2b0VqR05C?=
- =?utf-8?B?UFFJUE5YS2lQeUdndXVZNkFleis2dDJQY0V5UTJjcWRsRG8ybHB1ckcyenk2?=
- =?utf-8?B?Tkw5bnpCdVVJT0lrb2hHeStZUTJWd2tkS3ZwODc5WDYvVG5KNUNBOUtiRUFZ?=
- =?utf-8?Q?8BZZAc5Bdtg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UllDVzc2TlJmdE1pME9vSXhGdzZwS0ZISkEvSWM3NFZiUERCZ3p0bXRhVU8w?=
- =?utf-8?B?SlZDY3hITlI1MVNHVjd2QmFkT1psOUE4R3IvdmNyMVVzZjNEaE4wZGYzVFRQ?=
- =?utf-8?B?T2JZOURFZUYxYXhCVFpQQzg4T1VtNzNacWZxM0tVaW93UmhQV25EV2ZTV3Qy?=
- =?utf-8?B?RW83d0Z1UTVHWFhIaW8zWGJlcXh0VVM2Ulo4NkF3M3pQWFhidjNaWk4vc3Mx?=
- =?utf-8?B?VDJaR21jR0tsYVM3OFVnZm1PbUZDMXdYZFRtMzcrbXZIMmNmQVZGWGcvR1Jy?=
- =?utf-8?B?UEt1U1dhZUlSalEvSFo4b2N6OGdBOUQxVGpGZjE2Ujl0Q0lzZHpXUlFndUJ1?=
- =?utf-8?B?TWtFbTgvd0lodExnQWRpQkpsMERCT0crUzB0WjNUdFpzTXAvckpxcHl6VlVN?=
- =?utf-8?B?WWJ4V1RBRVFISkYwS0luWEtrTDhDaW5TNFpRTXk3MEZnSlVjRG1TZEpNN21K?=
- =?utf-8?B?c3F3TXJKVEV6Wlk5TWFmRFBJWGkzcmlMSTlCK2F0amdzWEcrMnZ1SGdHRmNP?=
- =?utf-8?B?dWZPUU9VdUg1MGc0Yk9kdGhQRng0K29NbzI2aU1BVENXczVsbGZXSmJjQVFC?=
- =?utf-8?B?T3JWM1g2S3BORU41eUtlL21zY0xMMU9wUUx0Zjhtb0tBTDRHbkFYc0hCNW1z?=
- =?utf-8?B?WEdsVnB5ejRPVU9NVHdYclp6NHppb3hRZHcxMTMvQTRIYVBTRTBLOERhV3dD?=
- =?utf-8?B?L0lOeE9TWnJLN0JpdWI3VThabUlZZGhlWTNtNndDWHljUXJ1SUtnMFk1cXlJ?=
- =?utf-8?B?Qm9pMk0vYVorYzhxdVVaTEczN2lTZGR0YzR1YzVLYmpQSnRwN2tXT01WMEhp?=
- =?utf-8?B?R2FubzNMOGhWL0Z1VThaSzJkR1JvekZqSUZmNWdEMTBQZ1dPbXc4citHU3lL?=
- =?utf-8?B?ZGhMTFFTYlloWUZWbWhTNE9XQmxWa282VFpQQ2Rhd1phOVFKUTFKb2d0UDBW?=
- =?utf-8?B?WXpvbHQ4SDVjTExVNDNKck5VaTJnRjBNOEJFK05PdHFFcE51V3RhN29YOGo0?=
- =?utf-8?B?V1dnU1dkd0I0cGRvUlpwRlBLRyt5T2hhc25tb1NRNjN3MFMva21UZmUvWFEy?=
- =?utf-8?B?cmFUNEVzUXh5NmZOVW8xUzFvUGhLdmRRdWdma0JTeXhCc3Y3SmxpalNkbzF6?=
- =?utf-8?B?eFdGSXZhMFR3OVE2NjI1cUFqSEVQNXdUc0hwSGlzdmpSZVpHd2RXSVNqQW5U?=
- =?utf-8?B?WWpwUC92eW95TFduVHJ6Viswcm9CVFRRNWlpVXdSb3hkKzdybmdNL3VzVEZP?=
- =?utf-8?B?Uk5BRXAxdGxnTjJqTjg3b3R1ZzIxdTdVRVB5VEdlTWJyT0RQUHVCMnJGWXZi?=
- =?utf-8?B?YlJzYU5zRithanF4ZXVMTWdZcUpJK1Vrbzd6QnVreWJtaHJReG5aNWlXMHR0?=
- =?utf-8?B?c2x6Vk43TFJNSmJLbFNjT0JCTTUyMzNyOVdCeUZ2MjE5eVIyekxhVE9lZ2JX?=
- =?utf-8?B?dzVxbk53UjI2Z2RaR21RNkVIVU9Ed3ZFK3Z6MmNlZGIrY1R1TW5FK1I5czRr?=
- =?utf-8?B?cE4zZi9xWjhiR0UrUi83RkUvcmFra1VXVEVrbEJYR1UzVFpaaEljOEdqOUc5?=
- =?utf-8?B?cFJ2K0k4ZEhPcC92UFdycHFaeXdheWo5S3o5cVIvUFdnVFhBeVMwbzRFaGlG?=
- =?utf-8?B?aHczc2pMWUdGMmovbVlMb1p1aWdiUFUvSFNaaEtZK1YrN1JIWjBOVjU5dHdi?=
- =?utf-8?B?K2JYQ2hRSTgrZmE4S0pVbXp2c2JOeGhwdjFwN1VzYUc2OER2dWx4c3hHMHRn?=
- =?utf-8?B?ZXl1cGRDNytUSkF1bmxGSncvckR6UFJxUnlNTUpJNUczTjArWlBTMTVNeUlZ?=
- =?utf-8?B?Zzk4NnN4eWQzWk04cTAzK3NhUFBmcTZ2Z3VoMmcrY0dGN3Z3ZDFoSFFyeWND?=
- =?utf-8?B?WXRXYTdsa1RCTlhyWVFsV25LbXZES3BvWlRaQXZGaThLekRFY3FuNjNuSWVY?=
- =?utf-8?B?S0h5UU9WcVNWY1FLVlNFOFNXMWhSYW4rSFlPcEY3RUFIV3FYUGxZeFUwdWdX?=
- =?utf-8?B?RVZKNTlPRWZlZzNORE5xNW9RVXhHZHMvUFJNYmtQZmgzREtpRWt6NTgzcnNX?=
- =?utf-8?B?Y0oxbHlob3dtVUR1WkxVYlBQazZsdW1mQ0F2dlV4bUNrR1FKeFJJdnFTbFJy?=
- =?utf-8?Q?tPOTE5+Gd+Q2sqvJ4DdCjtyIa?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c37af25c-4559-482c-8c70-08ddbe27cea2
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 14:00:33.8134
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7ea0fH7W3r0RTVdFRL3BWcKGusdyHSHrBiuLXYLeybcgsDwuxqprnS5kVxonb2LFFgh4+RQbcBaW2dXWJooBDw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPFE52C859EE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aGawTd8N2i8MDCmL@J2N7QTR9R3>
 
+On Thu, Jul 03, 2025 at 05:31:09PM +0100, Mark Rutland wrote:
 
-
-On 7/8/2025 3:21 AM, Peter Zijlstra wrote:
-> On Mon, Jul 07, 2025 at 10:19:52AM -0400, Joel Fernandes wrote:
+> > How do I find the SoC exactly?
 > 
->> From: Joel Fernandes <joelagnelf@nvidia.com>
->> Subject: [PATCH] smp: Document preemption and stop_machine() mutual exclusion
->>
->> Recently while revising RCU's cpu online checks, there was some discussion
->> around how IPIs synchronize with hotplug.
->>
->> Add comments explaining how preemption disable creates mutual exclusion with
->> CPU hotplug's stop_machine mechanism. The key insight is that stop_machine()
->> atomically updates CPU masks and flushes IPIs with interrupts disabled, and
->> cannot proceed while any CPU (including the IPI sender) has preemption
->> disabled.
->>
->> Cc: Andrea Righi <arighi@nvidia.com>
->> Cc: Paul E. McKenney <paulmck@kernel.org>
->> Cc: Frederic Weisbecker <frederic@kernel.org>
->> Cc: rcu@vger.kernel.org
->> Acked-by: Paul E. McKenney <paulmck@kernel.org>
->> Co-developed-by: Frederic Weisbecker <frederic@kernel.org>
->> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
->> ---
->> I am leaving in Paul's Ack but Paul please let me know if there is a concern!
->>
->>  kernel/smp.c | 13 +++++++++++--
->>  1 file changed, 11 insertions(+), 2 deletions(-)
->>
->> diff --git a/kernel/smp.c b/kernel/smp.c
->> index 974f3a3962e8..957959031063 100644
->> --- a/kernel/smp.c
->> +++ b/kernel/smp.c
->> @@ -93,6 +93,9 @@ int smpcfd_dying_cpu(unsigned int cpu)
->>  	 * explicitly (without waiting for the IPIs to arrive), to
->>  	 * ensure that the outgoing CPU doesn't go offline with work
->>  	 * still pending.
->> +	 *
->> +	 * This runs with interrupts disabled inside the stopper task invoked
->> +	 * by stop_machine(), ensuring CPU offlining and IPI flushing are atomic.
+> >From what you've told me above, the SoC is Nvidia Grace; what they call
+> the CPU is the whole SoC.
 > 
-> So below you use 'mutual exclusion', which I prefer over 'atomic' as
-> used here.
-
-Sure, will fix.
-
+> > > Likewise that might imply more folk to add to Cc.
 > 
->>  	 */
->>  	__flush_smp_call_function_queue(false);
->>  	irq_work_run();
->> @@ -418,6 +421,10 @@ void __smp_call_single_queue(int cpu, struct llist_node *node)
->>   */
->>  static int generic_exec_single(int cpu, call_single_data_t *csd)
->>  {
->> +	/*
->> +	 * Preemption already disabled here so stopper cannot run on this CPU,
->> +	 * ensuring mutual exclusion with CPU offlining and last IPI flush.
->> +	 */
->>  	if (cpu == smp_processor_id()) {
->>  		smp_call_func_t func = csd->func;
->>  		void *info = csd->info;
->> @@ -638,8 +645,10 @@ int smp_call_function_single(int cpu, smp_call_func_t func, void *info,
->>  	int err;
->>  
->>  	/*
->> -	 * prevent preemption and reschedule on another processor,
->> -	 * as well as CPU removal
->> +	 * Prevent preemption and reschedule on another processor, as well as
->> +	 * CPU removal.
+> I've added Ankit and Besar, since they've both worked on some system
+> level bits on Grace, and might have an idea.
 > 
->>          Also preempt_disable() prevents stopper from running on
->> +	 * this CPU, thus providing atomicity between the cpu_online() check
->> +	 * and IPI sending ensuring IPI is not missed by CPU going offline.
-> 
-> That first sentence already covers this, no? 'prevents preemption' ->
-> stopper task cannot run, 'CPU removal' -> no CPU_DYING (because no
-> stopper).
+> Ankit, Besar, are you aware of any UART issues on Grace (as described in
+> Breno's messages below), or do you know of anyone who might have an
+> idea?
 
-Yeah I understand that's "implied" but I'd like to specifically call that out if
-that's Ok :)
+Here is more information I got about this problem. TL;DR: While the
+machine is booting, it is throttled by the UART speed, while having IRQ
+disabled.
 
-> Also that 'atomicy' vs 'mutual exclusion' thing.
+Here is my line of investigation:
 
-Sure, will fix :)
+1) when the kernel start to flush the messages, there are ~700 messages
+   in the buffer that will be flushed using
+   pl011_console_write_atomic()
 
-Thanks!
+	[    0.653673] printk: console [ttyAMA0] enabled
+	[    9.239225] ACPI: PCI Root Bridge [PCI2] (domain 0002 [bus 00-ff])
 
- - Joel
+ a) pl011_console_write_atomic() is called  ~700 times. Each message
+ have around 50 chars.
+
+ b) For each char, it needs to wait for it to be sent before proceeding.
+
+3) pl011_console_write_atomic() have two big while()/cpu_relax() blocks.
+   One per character and one per message.
+
+    a) the first one is in pl011_console_putchar(), where it checks if the
+    FIFO is full before writing a single character. This is done one per
+    character.
+
+          while (pl011_read(uap, REG_FR) & UART01x_FR_TXFF)
+                  cpu_relax();
+	 
+    b) After the line is written, then it hits the second one, in
+    pl011_console_write_atomic(), where it waits until the controller is
+    not busy anymore:
+
+              while ((pl011_read(uap, REG_FR) ^ uap->vendor->inv_fr) & uap->vendor->fr_busy)
+                  cpu_relax();
+	
+
+4) The controller has FIFO enabled, but, it doesn't help much, because
+   the CPU is waiting for the 700 * 50 chars to be transmitted.
+
+5) At this time we just have one single CPU online (?)
+
+6) This is done with IRQ disabled, which causes a CSD lock to trigger,
+   given that the CPU has IRQ disabled
+
+
+   a) Following Paul's suggestion, I added
+   a `lockdep_assert_irqs_enabled()` at the entrance of
+   pl011_console_write_atomic(), and that is what I see.
+
+	hardirqs last  enabled at (256267): [<ffff800080364980>] vprintk_store+0x6f8/0x820
+	hardirqs last disabled at (256268): [<ffff80008036e1c4>] __nbcon_atomic_flush_pending+0x2c4/0x3e8
+	softirqs last  enabled at (255640): [<ffff8000801bb020>] handle_softirqs+0x910/0xe78
+	softirqs last disabled at (255635): [<ffff800080010938>] __do_softirq+0x18/0x20
+
+  b) This is the full stack in how we are calling cpu_relax() with irq
+  disabled million times:
+
+	WARNING: CPU: 0 PID: 1 at drivers/tty/serial/amba-pl011.c:2545 pl011_console_write_atomic (drivers/tty/serial/amba-pl011.c:2545)
+	Modules linked in:
+	pstate: 234003c9 (nzCv DAIF +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+	pc : pl011_console_write_atomic (drivers/tty/serial/amba-pl011.c:2545)
+	lr : pl011_console_write_atomic (drivers/tty/serial/amba-pl011.c:2545)
+	sp : ffff80008980dca0
+	pmr: 000000f0
+	x29: ffff80008980dca0 x28: ffff0000aebcc080 x27: dfff800000000000
+	x26: 1fffe00015d7985a x25: 0000000000000000 x24: 0000000000000000
+	x23: ffff0000a1800000 x22: ffff800087e6d7f8 x21: 1fffe00015d7985b
+	x20: ffff80008980dee0 x19: 0000000000000003 x18: 00000000ffffffff
+	x17: 30313478305b2030 x16: 3030303230303030 x15: 3078302055504320
+	x14: 6c61636973796870 x13: 0a2a2a2065676173 x12: ffff700011301b8b
+	x11: 1ffff00011301b8a x10: ffff700011301b8a x9 : ffff800081eafdb4
+	x8 : 0000000000000004 x7 : 0000000000000003 x6 : 0000000000000000
+	x5 : 1ffff00011301be2 x4 : 0000000000000018 x3 : 0000000000000000
+	x2 : 1ffff00010fcdb57 x1 : 0000000000000000 x0 : 0000000000000001
+	Call trace:
+	pl011_console_write_atomic (drivers/tty/serial/amba-pl011.c:2545) (P)
+	nbcon_emit_next_record (kernel/printk/nbcon.c:1026)
+	__nbcon_atomic_flush_pending_con (kernel/printk/nbcon.c:1498)
+	__nbcon_atomic_flush_pending (kernel/printk/nbcon.c:1541 kernel/printk/nbcon.c:1593)
+	nbcon_atomic_flush_pending (kernel/printk/nbcon.c:1610)
+	vprintk_emit (kernel/printk/printk.c:2429)
+	vprintk_default (kernel/printk/printk.c:2466)
+	vprintk (kernel/printk/printk_safe.c:83)
+	_printk (kernel/printk/printk.c:2470)
+	__warn (kernel/panic.c:768)
+	report_bug (lib/bug.c:197 lib/bug.c:215)
+	bug_handler (arch/arm64/kernel/traps.c:1002)
+	call_break_hook (arch/arm64/kernel/debug-monitors.c:319)
+	brk_handler (arch/arm64/kernel/debug-monitors.c:325)
+	do_debug_exception (arch/arm64/mm/fault.c:1002)
+	el1_dbg (arch/arm64/kernel/entry-common.c:514)
+	el1h_64_sync_handler (arch/arm64/kernel/entry-common.c:567)
+	el1h_64_sync (arch/arm64/kernel/entry.S:595)
+	pl011_console_write_atomic (drivers/tty/serial/amba-pl011.c:2524) (P)
+	nbcon_emit_next_record (kernel/printk/nbcon.c:1026)
+	__nbcon_atomic_flush_pending_con (kernel/printk/nbcon.c:1498)
+	__nbcon_atomic_flush_pending (kernel/printk/nbcon.c:1541 kernel/printk/nbcon.c:1593)
+	nbcon_atomic_flush_pending (kernel/printk/nbcon.c:1610)
+	vprintk_emit (kernel/printk/printk.c:2429)
+	vprintk_default (kernel/printk/printk.c:2466)
+	vprintk (kernel/printk/printk_safe.c:83)
+	_printk (kernel/printk/printk.c:2470)
+	register_console (kernel/printk/printk.c:4126 (discriminator 9))
+	serial_core_register_port (drivers/tty/serial/serial_core.c:2637 drivers/tty/serial/serial_core.c:3157 drivers/tty/serial/serial_core.c:3388)
+	serial_ctrl_register_port (drivers/tty/serial/serial_ctrl.c:42)
+	uart_add_one_port (drivers/tty/serial/serial_port.c:144)
+	pl011_register_port (drivers/tty/serial/amba-pl011.c:2867)
+	sbsa_uart_probe (drivers/tty/serial/amba-pl011.c:3041)
+	platform_probe (drivers/base/platform.c:1405)
+	really_probe (drivers/base/dd.c:579 drivers/base/dd.c:657)
+	__driver_probe_device (drivers/base/dd.c:799)
+	driver_probe_device (drivers/base/dd.c:829)
+	__device_attach_driver (drivers/base/dd.c:958)
+	bus_for_each_drv (drivers/base/bus.c:462)
+	__device_attach (drivers/base/dd.c:1031)
+	device_initial_probe (drivers/base/dd.c:1079)
+	bus_probe_device (drivers/base/bus.c:537)
+	device_add (drivers/base/core.c:3699)
+	platform_device_add (drivers/base/platform.c:716)
+	platform_device_register_full (drivers/base/platform.c:845)
+	acpi_create_platform_device (./include/linux/err.h:70 drivers/acpi/acpi_platform.c:178)
+	acpi_bus_attach (./include/linux/acpi.h:738 drivers/acpi/scan.c:2206 drivers/acpi/scan.c:2198 drivers/acpi/scan.c:2316)
+	acpi_dev_for_one_check (drivers/acpi/bus.c:1146)
+	device_for_each_child (drivers/base/core.c:4021)
+	acpi_dev_for_each_child (drivers/acpi/bus.c:1151)
+	acpi_bus_attach (drivers/acpi/scan.c:2323)
+	acpi_dev_for_one_check (drivers/acpi/bus.c:1146)
+	device_for_each_child (drivers/base/core.c:4021)
+	acpi_dev_for_each_child (drivers/acpi/bus.c:1151)
+	acpi_bus_attach (drivers/acpi/scan.c:2323)
+	acpi_bus_scan (drivers/acpi/scan.c:2533 drivers/acpi/scan.c:2606)
+	acpi_scan_init (drivers/acpi/scan.c:2739)
+	acpi_init (drivers/acpi/bus.c:1470)
+	do_one_initcall (init/main.c:1274)
+	kernel_init_freeable (init/main.c:1335 init/main.c:1352 init/main.c:1371 init/main.c:1584)
+	kernel_init (init/main.c:1476)
+	ret_from_fork (arch/arm64/kernel/entry.S:863)
+	irq event stamp: 256268
+	hardirqs last enabled at (256267): vprintk_store (kernel/printk/printk.c:2356 (discriminator 1))
+	hardirqs last disabled at (256268): __nbcon_atomic_flush_pending (kernel/printk/nbcon.c:1539 kernel/printk/nbcon.c:1593)
+	softirqs last enabled at (255640): handle_softirqs (./arch/arm64/include/asm/current.h:19 ./arch/arm64/include/asm/preempt.h:13 kernel/softirq.c:426 kernel/softirq.c:607)
+	softirqs last disabled at (255635): __do_softirq (kernel/softirq.c:614)
+	---[ end trace 0000000000000000 ]---
 
 
