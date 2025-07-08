@@ -1,95 +1,180 @@
-Return-Path: <linux-kernel+bounces-721728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AEFAAFCD24
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:15:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3C18AFCD31
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:16:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E7003AE760
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:14:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD4D17B3EBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158812DF3F9;
-	Tue,  8 Jul 2025 14:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BFE2E06D4;
+	Tue,  8 Jul 2025 14:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="LqyXc/Ga"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/uXl8TL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75CBEEC3;
-	Tue,  8 Jul 2025 14:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C7E2E03ED;
+	Tue,  8 Jul 2025 14:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751984081; cv=none; b=a1Ya2wZQm48JUYcXZEY6OKhbp1Y7tJjJcXiZabRx5HttKFtQ1eSh69x5Hz/wN11Z5ZpO+UMmJHV0AySEwRHnUaPPAksZ8YzznG9fpOgsVPLAcM1gnvCWeFmiL2GhS2oDrq/o2XAHgTaoUtsqLG2eFulPrVUzYLj3stC4T+xoofY=
+	t=1751984133; cv=none; b=iVrDywq3004CCNh59IrBGX6kXK4msg3QpiyTebWai425QbEwBrC37/v5bbbvmxybxZgNnvwa2hnGsxJAXB3c8Yh+1ec6uNhx/CqgwzuAGHJ0vRT6hTvPaC0UQi6bJ9t8NLpZJVDcIMbyTAoksr4f0/ncFOzidD8dZUWSU5yj4Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751984081; c=relaxed/simple;
-	bh=FsDNbo8SKNA8IQp/RjKi16+L2G7xR/1hLOFC3Hn3rGw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=D8tofRAAR+z+qQm8ugGUgC/fhWyeQwxulMRkCaHObcCeYgjy+Isn/rr4ipqPrtAzD57A18BfWb5HgSV1y3OjlDt18eun0tSx38Rrvfu5I0RaQ/aM8XuYqjxJwr+XRSmk6edtk6NAOjAveKaRmYRNWhp+Pf5B0EAKWgX0mjhaMKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=LqyXc/Ga; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 00211406FC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1751984079; bh=DSJWbXFtHo5/zCD3cnB4EtER01TweueSmrBH2UgT2aE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=LqyXc/GaPT2G4IUBSZPnQpuOT4qrVsl8e5GH+sOdhPzvRGz3gJ//mpQgNZiqZ0oq/
-	 4FwZJpSe6T5jk64jp06xChTC9P+XlaKn8VoQXUXnStaUxQ04oZCWe4fF+1tEtAY1OM
-	 VgFh8RuZGI3ac2Vp1DofqIDNBlaQr6GeVl9xn9qW3rFznPtFEV+UNN9CJvkkzBJ7Vh
-	 7iRrLljr0HcDaQZG99JnMc+Nc/UUA3kGo2Hm2ADyEQF1s2glnvzFmxPmF1uJp9l+Qx
-	 4+uuEkS7ZxkZ++qK58rCcAbGgTtukW1FFbc+EndU3FQvZIzsGWv+RA5nsQq7LRmh9B
-	 4QXrq1Xhrv3ew==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 00211406FC;
-	Tue,  8 Jul 2025 14:14:38 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2] tracing: doc: fix "for a while" typo
-In-Reply-To: <xygdnynf7m55p7d27ovzqtdjaa7pua3bxuk5c22cnmoovaji5e@tarta.nabijaczleweli.xyz>
-References: <xygdnynf7m55p7d27ovzqtdjaa7pua3bxuk5c22cnmoovaji5e@tarta.nabijaczleweli.xyz>
-Date: Tue, 08 Jul 2025 08:14:38 -0600
-Message-ID: <87ikk26a7l.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1751984133; c=relaxed/simple;
+	bh=LjqQwO6EMtttFZ01h5W9YCZvdVVY5sFtNrc3+SiL3PE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fhCvUJmrJ5vk7S6jcLIsAUVB1GLCzygxd13bqKP7CaQDS9O1XOK5DAVvK/pBUVRTWOVH9I4RTYd/W1mCYxLrn2YCyoXPQKeM83AQlnqLgGn1nOBG8A/HbYNY/hwyRGqcPbM/++OJucn57jvmojf52ch8V0pu9JyhHbvjUb/vMIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n/uXl8TL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DA5FC4CEEF;
+	Tue,  8 Jul 2025 14:15:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751984132;
+	bh=LjqQwO6EMtttFZ01h5W9YCZvdVVY5sFtNrc3+SiL3PE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=n/uXl8TL3y1ZZeqXjJeC/DFx54bM8uo97Gb5kJgnhGiRwjvzZVZt02O88xA3/+FPF
+	 NpNz6c1fDvZwbXzihXHrJP0Yela7u0nw8z/AJMDRalCkzIuTIovyyeI9V25mh/4PlT
+	 6Ex/LEwF/inveVBRPNZZmojL0uwhQVaSmycE/pieH1hhOIue56P+zYS6/icCDB+MDq
+	 asOtj5QweyI2Bdm32SmQCK4HA89Z01mh4ccYsWMdbYpE0JdOeXaJe5ScZmizhlcTZV
+	 OlEyQxLwL6jvi/klcUPu1wb81X5trd1hapBzwMriOjwC26J8qL9W4mWr9HHTQuyJlt
+	 9R3rcp1Gnr63Q==
+From: Benno Lossin <lossin@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Breno Leitao <leitao@debian.org>,
+	Fiona Behrens <me@kloenk.dev>,
+	Christian Schrefl <chrisi.schrefl@gmail.com>,
+	Alban Kurti <kurti@invicto.ai>,
+	Michael Vetter <jubalh@iodoru.org>
+Cc: linux-block@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Rust pin-init for v6.17
+Date: Tue,  8 Jul 2025 16:14:40 +0200
+Message-ID: <20250708141442.1339091-1-lossin@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xyz> writes:
+Hi Miguel,
 
-> Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xy=
-z>
-> ---
-> v1: https://lore.kernel.org/lkml/h2ieddqja5jfrnuh3mvlxt6njrvp352t5rfzp2cv=
-nrufop6tch@tarta.nabijaczleweli.xyz/t/#u
->
->  Documentation/trace/histogram.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/hist=
-ogram.rst
-> index 0aada18c38c6..2b98c1720a54 100644
-> --- a/Documentation/trace/histogram.rst
-> +++ b/Documentation/trace/histogram.rst
-> @@ -249,7 +249,7 @@ Extended error information
->    table, it should keep a running total of the number of bytes
->    requested by that call_site.
->=20=20
-> -  We'll let it run for awhile and then dump the contents of the 'hist'
-> +  We'll let it run for a while and then dump the contents of the 'hist'
->    file in the kmalloc event's subdirectory (for readability, a number
+This time there are a couple of interesting changes, see below. Most
+importantly, we can now use `Result` as an initializer. And implement
+`Zeroable` via the `MaybeZeroable` derive macro. When the second part of
+[1] is merged, this will make all types in bindings that can be zeroed
+implement `Zeroable`.
 
-Applied, thanks.
+There is one small mistake in the second commit e832374ccadf ("rust:
+pin-init: change blanket impls for `[Pin]Init` and add one for
+`Result<T, E>`") I forgot to ping Andreas about the changes in Rust
+block and thus don't have his Acked-by. We discussed this privately
+and he his okay with the changes. I didn't rebase due to the fact that
+the commit already is pretty old and that Danilo already merged that
+commit into driver-core-next, see below. Sorry about this!
 
-jon
+All commits have been in linux-next for over three weeks.
+
+No conflicts expected.
+
+Note that driver-core-next is also merging the tag
+`pin-init-v6.17-result-blanket` that includes the first two commits.
+
+Please pull for v6.17 -- thanks!
+
+[1]: https://lore.kernel.org/all/20250523145125.523275-1-lossin@kernel.org
+
+---
+Cheers,
+Benno
+
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+
+are available in the Git repository at:
+
+  https://github.com/Rust-for-Linux/linux.git tags/pin-init-v6.17
+
+for you to fetch changes up to fc3870dc5cadb701b4122e4a8daa85f9fa2f57b9:
+
+  rust: pin-init: examples, tests: use `ignore` instead of conditionally compiling tests (2025-06-11 21:13:57 +0200)
+
+----------------------------------------------------------------
+pin-init changes for v6.17
+
+Added:
+
+- 'impl<T, E> [Pin]Init<T, E> for Result<T, E>', so results are now
+  (pin-)initializers.
+
+- 'Zeroable::init_zeroed()' delegating to 'init_zeroed()'.
+
+- New 'zeroed()', a safe version of 'mem::zeroed()' and also provide
+  it via 'Zeroable::zeroed()'.
+
+- Implement 'Zeroable' for 'Option<&T>' and 'Option<&mut T>'.
+
+- Implement 'Zeroable' for 'Option<[unsafe] [extern "abi"]
+  fn(...args...) -> ret>' for '"Rust"' and '"C"' ABIs and up to 20
+  arguments.
+
+Changed:
+
+- Blanket impls of 'Init' and 'PinInit' from 'impl<T, E> [Pin]Init<T, E>
+  for T' to 'impl<T> [Pin]Init<T> for T'.
+
+- Renamed 'zeroed()' to 'init_zeroed()'.
+
+Upstream dev news:
+
+- More CI improvements to deny warnings, use '--all-targets'. Also check
+  the synchronization status of the two '-next' branches in upstream and
+  the kernel.
+
+----------------------------------------------------------------
+Benno Lossin (12):
+      rust: pin-init: improve safety documentation for `impl<T> [Pin]Init<T> for T`
+      rust: pin-init: change blanket impls for `[Pin]Init` and add one for `Result<T, E>`
+      rust: pin-init: examples, tests: add conditional compilation in order to compile under any feature combination
+      rust: pin-init: examples: pthread_mutex: disable the main test for miri
+      rust: pin-init: feature-gate the `stack_init_reuse` test on the `std` feature
+      rust: pin-init: rename `zeroed` to `init_zeroed`
+      rust: pin-init: add `Zeroable::init_zeroed`
+      rust: pin-init: add `zeroed()` & `Zeroable::zeroed()` functions
+      rust: pin-init: implement `ZeroableOption` for `&T` and `&mut T`
+      rust: pin-init: change `impl Zeroable for Option<NonNull<T>>` to `ZeroableOption for NonNull<T>`
+      rust: pin-init: implement `ZeroableOption` for function pointers with up to 20 arguments
+      rust: pin-init: examples, tests: use `ignore` instead of conditionally compiling tests
+
+Miguel Ojeda (2):
+      rust: init: re-enable doctests
+      rust: init: remove doctest's `Error::from_errno` workaround
+
+ rust/kernel/block/mq/tag_set.rs               |  12 +-
+ rust/kernel/configfs.rs                       |   4 +-
+ rust/kernel/init.rs                           |  28 ++---
+ rust/pin-init/README.md                       |   2 +-
+ rust/pin-init/examples/big_struct_in_place.rs |  28 +++--
+ rust/pin-init/examples/linked_list.rs         |  10 +-
+ rust/pin-init/examples/mutex.rs               |  97 +++++++++-------
+ rust/pin-init/examples/pthread_mutex.rs       |   4 +
+ rust/pin-init/examples/static_init.rs         |  75 ++++++------
+ rust/pin-init/src/__internal.rs               |   1 +
+ rust/pin-init/src/lib.rs                      | 158 ++++++++++++++++++++++----
+ rust/pin-init/src/macros.rs                   |  16 +--
+ 12 files changed, 287 insertions(+), 148 deletions(-)
 
