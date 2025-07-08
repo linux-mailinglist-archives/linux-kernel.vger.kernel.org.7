@@ -1,101 +1,124 @@
-Return-Path: <linux-kernel+bounces-720762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A27AFC028
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:42:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE2C8AFC025
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 931427AC366
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:41:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1B171AA72EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FEC4218ABD;
-	Tue,  8 Jul 2025 01:41:52 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AB920766E;
+	Tue,  8 Jul 2025 01:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VN81oSiA"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2FF1EA7E9
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 01:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F051EFFB7;
+	Tue,  8 Jul 2025 01:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751938911; cv=none; b=iBbQRr6pgRbwkU7jLZ3CDyEOPh8eoYZNluWrdF8tHgzXem/2u/T9T47iOTHSkVXoLYvv6BqA13BNr7DxDezId7KHkmnaIldr21VqMoqn12XuXFSEGp/YZbmzH7kXvmFvCUXR6XSfUaA4p2hBkcMyb6eyvrXCbkTVh7+zej9ZVrg=
+	t=1751938910; cv=none; b=q/1hZYZCPCS/IhDV3N6ALmBnX+VRgsWxqgti/scoje/6KVSuq5tZujOmJYCvIdkSno+qwaC/O/e+pS63fN0WlcmeWoFm9TuazL5jDqa+Ta+2l1lcj5UFqmSBr4as/X2rPJN30w/0O0WeqGmc6csa0rtuBkKFhOHvxyTijxPtiwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751938911; c=relaxed/simple;
-	bh=JTYBR0cRdd+qGPbhlZBgIFsHHzvCLiingGYHaSBTq+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VGxEut1AeqRO1dF6cxgqz8ISP19luwNMA8DGs3tWf1Sl9neY+iKuSIJHFVHmcfJQBwMRp18nwAYT3xMI3izrluCs4O8j6NhTbkX/7eiarov0ywX20vN2iKgqJfhxQFTsA8auYX4hb8mr06eDaSiosPcpB3DhhCg+DLDD4m0obxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay10.hostedemail.com (Postfix) with ESMTP id A90D7C0410;
-	Tue,  8 Jul 2025 01:41:46 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 3DC4220026;
-	Tue,  8 Jul 2025 01:41:44 +0000 (UTC)
-Date: Mon, 7 Jul 2025 21:41:43 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Li,Rongqing" <lirongqing@baidu.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- David Laight <david.laight.linux@gmail.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "vschneid@redhat.com"
- <vschneid@redhat.com>, "mgorman@suse.de" <mgorman@suse.de>,
- "bsegall@google.com" <bsegall@google.com>, "dietmar.eggemann@arm.com"
- <dietmar.eggemann@arm.com>, "vincent.guittot@linaro.org"
- <vincent.guittot@linaro.org>, "juri.lelli@redhat.com"
- <juri.lelli@redhat.com>, "mingo@redhat.com" <mingo@redhat.com>
-Subject: Re: divide error in x86 and cputime
-Message-ID: <20250707214143.59ce744e@gandalf.local.home>
-In-Reply-To: <c22ff02d1af74ccca59e3a2927da8e67@baidu.com>
-References: <78a0d7bb20504c0884d474868eccd858@baidu.com>
-	<20250707220937.GA15787@redhat.com>
-	<20250707223038.GB15787@redhat.com>
-	<2ef88def90634827bac1874d90e0e329@baidu.com>
-	<20250707195318.0c7f401d@gandalf.local.home>
-	<92674f89641f466b9ebbdf7681614ed3@baidu.com>
-	<20250707203057.1b2af73d@gandalf.local.home>
-	<c22ff02d1af74ccca59e3a2927da8e67@baidu.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1751938910; c=relaxed/simple;
+	bh=AZKgNNvTwt7Xw+xAUuarAFrwGMlkh2VJ7AbCs4Hr2tw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=uj0nVPtUhu0kWiS/LVj+3IbchKJ4VfCAGXNSRkiUKh25DXp6U6I2g4Wy3t5u6MN/ZAHbQ2tA2Ndn0bCEWDfxg9IC1iMsNNYXE2IeqRG1yg5IfakJOV4gSO3QD3HoMYIBHnnryBOhaRykGtcKC0nJ8CMKjdtYn7N5TyaeuUiJM3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VN81oSiA; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-236470b2dceso32520235ad.0;
+        Mon, 07 Jul 2025 18:41:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751938908; x=1752543708; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sZ6VlsEE9a5DvCtJjOojbs4UeMQt+94V6SRQW6HMJuU=;
+        b=VN81oSiADX4u0O5gHQRM3NWKv5rj80L9F4wzynOjpqozkstRf329Ra4jXr97fVhkS7
+         H9eVVKzTQTsc+CTidM/IWgbdR/fQ5RSX1wFnvXZqXxjMVpXc+c3AzPVvsK/zSKPIwxqo
+         H5cVBkg2n3lgmbQ8de+Yti8UmgmweAsJ35ynf/fBzHO7nJm5phOXCI4kfHX+dy67RZth
+         caQKEEXZFQ08kl9rhZkYLzRYc72Dou6aKfIW3lL50g8HqI68i/lIR003ZQPfhEp8Oj2I
+         +FyxPHCSJw4PEojvyGCqkaSndQUSUvgwkWBYs8JTD75RGMixiwMeBtVUGPSfipU3+P6L
+         hlBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751938908; x=1752543708;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sZ6VlsEE9a5DvCtJjOojbs4UeMQt+94V6SRQW6HMJuU=;
+        b=tsrgZmieEiHajgjxnWGldKle+N1YXOaL27bNfLEDu7UtPgRJfuBSZxdeWAxbGk2Oyc
+         n52Z0WYGsPw8JcE0fMMlP9eRxZQGdvuZI4k/NKBXHnvuLYA8PT1uneEC49Ii0oNpb0S6
+         Ygr9T52e10N3S6m+bTsTG2T5lKe8wTf6/Lcwp6DD+yXPK1j56+78EtOUvTwfln01F3d8
+         dO1zRrDG1G0V+12O6UarHcqbuTFYG9S3dRJcZ9DNGSQTXuLkXDdrGhcWCrwhTORfpoBv
+         fItNf2ZLv53zo8CgBYKAY8U3T/4VTmgVtF23pUWJX/EYGXPL2CQcrW37nG/9kMwi+RvU
+         7zWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIE3GZePwB/OgtB0bbClX6iQxLLgumQo1e6K/mTpMVXijPlMNKqijoY4PpHTkNoFOIZweG17Zs3S5SyOw=@vger.kernel.org, AJvYcCVbJG6F3EMd9vGRDOvuzETRnF5xTm9RY9ArKuaXLq1HInyKgeO/P/qC4Zl+fdCLR+XwXt09Gi4h0zuyTmv6lDjnNBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzqa7+1JrU+rcHBJruI8Hh8WjqaWCCfHulRxCf/+ORwTShb1oPB
+	5uxeOgp8ZmiynQnLAijLW+s96i4YpZJITLbLeWq3m8LVBmGj08j01VxZL/9kVWxN5J4=
+X-Gm-Gg: ASbGncvB/u2pgxQOL0g6UZ2BHt0qYGfT6MEGNbROvV35w0EEMnukXv7YpVkvNZtCjxj
+	AdAYIY/tFVDYDig3KpXWc0uLiuS/LogJuY2JrM3U5YaEMU8ayXYNuxs27DncYq4D216mOhA1aoE
+	GF10ppEBkSBN0/Hq9Xar8L6B2fgjU4OSUFZRtzW677Xo988p+xExpq+OQWtVdzcRPGz0OPGd9eO
+	0L6x+p9D4hwqYzDxVvP7aI3PbYQu9gvuvYbpf153nW+tcFBpCPKxuatILhdVmvVbklQPtE1QQCD
+	hNN+7SuXGUrZUKCFqaLZ4lfypOiq/1YH5T/yM25Gn3E=
+X-Google-Smtp-Source: AGHT+IEBcZNTKQVolmne4rUIbc6Y0d+4ghCrRIMT4V/dXSu6mzMNp9GBUAAKLqksgjLh+/PfagPNyQ==
+X-Received: by 2002:a17:903:2c5:b0:235:efbb:9539 with SMTP id d9443c01a7336-23c87475fa5mr177348945ad.17.1751938908489;
+        Mon, 07 Jul 2025 18:41:48 -0700 (PDT)
+Received: from archlinux.lan ([2601:644:8200:dab8::1f6])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c845922b5sm95773395ad.199.2025.07.07.18.41.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 18:41:48 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
+	linux-kernel@vger.kernel.org (open list),
+	linux-renesas-soc@vger.kernel.org (open list:RENESAS RZ/N1 A5PSW SWITCH DRIVER)
+Subject: [PATCHv2 1/2] net: dsa: rzn1_a5psw: add COMPILE_TEST
+Date: Mon,  7 Jul 2025 18:41:43 -0700
+Message-ID: <20250708014144.2514-2-rosenp@gmail.com>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250708014144.2514-1-rosenp@gmail.com>
+References: <20250708014144.2514-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 444qc56z1491naqsyogsgxturqww7paz
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: 3DC4220026
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18uCKJJ7wWvTQ+V0S+5tNXINWBcGXFdU+0=
-X-HE-Tag: 1751938904-234604
-X-HE-Meta: U2FsdGVkX1+JDmreEanZ4el4v8Fp2MUdrqxSj64xBjL9LelcdmDpOmO0s1b4bi158sE8L46BuOs0vfxboqQvrBslgsEvk4uqFsmYKiYbQSSX9eNPRh7sDBjXaz2Z2idnK+9FexW9VtusMzhZt44vbvp4LyIyAz4xmJh9/VRYOxi5aaWVbKCFWe0xUFa62/FL5QUxN3Ji4HaDzEyFtTz+6D9scm1dYJGz42wKPzDzYv3/3k7VnZJ5G5r0nID8UcCw6tiOIk4HEX9TfvMSQIJrAsRKzhRShQzyUfLN+VL5EFnkAurDJHeRA+CSqO+LFQY8jpMQ1ks/tN2yQYnQxPNwjYCkdDPxQTdK
+Content-Transfer-Encoding: 8bit
 
-On Tue, 8 Jul 2025 01:17:50 +0000
-"Li,Rongqing" <lirongqing@baidu.com> wrote:
+There's no architecture specific requirement for it to compile. Allows
+the bots to test compilation properly.
 
-> Stime is not greater than rtime in my case, (stime= 0x69f98da9ba980c00,
-> rtime= 0xfffd213aabd74626, stime+utime= 0x9e00900. So utime should be
-> 0x960672564f47fd00 ), and this overflow process with 236 busy poll
-> threads running about 904 day, so I think these times are correct
-> 
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+---
+ drivers/net/dsa/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-But look at rtime, it is *negative*. So maybe that fix isn't going to fix
-this bug, but rtime is most definitely screwed up. That value is:
+diff --git a/drivers/net/dsa/Kconfig b/drivers/net/dsa/Kconfig
+index bb9812b3b0e8..ec759f8cb0e2 100644
+--- a/drivers/net/dsa/Kconfig
++++ b/drivers/net/dsa/Kconfig
+@@ -92,7 +92,7 @@ source "drivers/net/dsa/realtek/Kconfig"
+ 
+ config NET_DSA_RZN1_A5PSW
+ 	tristate "Renesas RZ/N1 A5PSW Ethernet switch support"
+-	depends on OF && ARCH_RZN1
++	depends on OF && (ARCH_RZN1 || COMPILE_TEST)
+ 	select NET_DSA_TAG_RZN1_A5PSW
+ 	select PCS_RZN1_MIIC
+ 	help
+-- 
+2.50.0
 
-  0xfffd213aabd74626 = (u64)18445936184654251558 = (s64)-807889055300058
-
-There's no way run time should be 584 years in nanoseconds.
-
-So if it's not fixed by that commit, it's a bug that happened before you even
-got to the mul_u64_u64_div_u64() function. Touching that is only putting a
-band-aid on the symptom, you haven't touched the real bug.
-
-I bet there's likely another fix between what you are using and 5.10.238.
-There's 31,101 commits between those two. You are using a way old kernel
-without any fixes to it. It is known to be buggy. You will hit bugs with
-it. No need to tell us about it.
-
--- Steve
 
