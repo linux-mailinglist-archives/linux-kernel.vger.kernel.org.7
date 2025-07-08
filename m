@@ -1,118 +1,86 @@
-Return-Path: <linux-kernel+bounces-722077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA3EAFD4F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:15:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 894E1AFD508
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73681168E98
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:15:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A50942583F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7232E62C8;
-	Tue,  8 Jul 2025 17:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EBB2E6133;
+	Tue,  8 Jul 2025 17:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="opKIuaAO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HltkWToj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9D62E54D6;
-	Tue,  8 Jul 2025 17:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6115F9E8;
+	Tue,  8 Jul 2025 17:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751994938; cv=none; b=AFr2XJ0jzD034LLJmukfF7wVnyjC7Kz4gn8vDDG7EB3jvNuihaBYpu1LdBo/ByVO5FP+QJ+YbYo6Yk19yviqp8a2yjpji7A8ffXDrlvJrgKHBpeuab1rm69En5AZt/XLRY5oE6KfIcvcpx2aRvJC6zTXoi0WNPMUkeVZ6q5+SkA=
+	t=1751994964; cv=none; b=tIxu5iD8HaVKh/fRbXXoGvp62HrqMgR6WPH9FJT0fTiomgrFFJAxxiVFJh3M8AfY7Az47EiKy5Y2kHeGeH8ph54CKa/5Djku8ip8ghRbaeyGf7UwAXsP8xx53EWfbXcFcEuJtRYhVFZ1Xlnzb+UF1DOpm5IzQEBUxiKEOqYMB+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751994938; c=relaxed/simple;
-	bh=G4hnyLkgMkEeeDP4WcFeZOCQ5C1IlFKdxpJ/+mu5LgM=;
+	s=arc-20240116; t=1751994964; c=relaxed/simple;
+	bh=oPxuCNoSxUQ+b8uXTmL/LOlmEoU1tSZIe+IvYpZDa8M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qNs5Dh8MLn/SU7d9knpuO4xWQglmLlJcdryjpfaQ8NDYebWaTAXuLH8TMSu5fGzv1JrgYKGXt2s1rm2QtOOmgSmGe1x7eBpVBLpcvC0w+b4/1ZZXdIXhhkuliVrJMXOBDJqIgrRMexA6rwg82CHOfwqHIO3VctrMZ85588Rnups=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=opKIuaAO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1992BC4CEED;
-	Tue,  8 Jul 2025 17:15:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=jCcHtEuevFK25EfkxhXCwgd+yl79ioF6WSzF/DvPmxRtktJVLm/+uFb8KP+KTyL08Hwi9sTIEwvNK7fvnhJQdmzorVw+DfyxLjzs3hdz5msqDlGqs+x7lYYCwnijpbhpsEbnIOXrhkHayqnRPJcgMVD9wBmPleHp0RbHWAC3g3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HltkWToj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B2C6C4CEED;
+	Tue,  8 Jul 2025 17:16:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751994938;
-	bh=G4hnyLkgMkEeeDP4WcFeZOCQ5C1IlFKdxpJ/+mu5LgM=;
+	s=k20201202; t=1751994964;
+	bh=oPxuCNoSxUQ+b8uXTmL/LOlmEoU1tSZIe+IvYpZDa8M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=opKIuaAO3BlnWsujF70bvZupBRhBGMdopxt6dvx4EIpWv7+JtK1FiOG9bC2ms/5Dl
-	 UtIFxU6eIZzcBfCQzHG9wCpg2RD1/ncADtxx5593QMZ7KWs0ZQ2zuCOC10BiG9e3dl
-	 4fIlE40BK7oDwyZTsFR+1fGDdBNxxBUz3J4njjPFEgsT5EKZlGCZQykEGXQqIM3pfd
-	 rkoV+6TKYCXt7epwhNGfWO1vmQxkX8kKF7vU0cojOXBVLCL8A4hV+eRACYuwCRPhVR
-	 ZexmNG3rUFetp196JBhzhjo5Lazi87u5HkzaW0+v/1gCZ1UcYnpLh3OvkDB74i11nZ
-	 RR2kyMm0/AK0A==
-Date: Tue, 8 Jul 2025 22:45:26 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Jingoo Han <jingoohan1@gmail.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Jeff Johnson <jjohnson@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev, linux-wireless@vger.kernel.org, 
-	ath11k@lists.infradead.org, qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com, 
-	quic_vpernami@quicinc.com, quic_mrana@quicinc.com, 
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Subject: Re: [PATCH v4 06/11] PCI/ASPM: Clear aspm_disable as part of
- __pci_enable_link_state()
-Message-ID: <qo6mb3qlt3xpuvhepwcv6be4wd53neee2t6buzk4tdiy22xsub@vu7lykp3rnu2>
-References: <20250609-mhi_bw_up-v4-0-3faa8fe92b05@qti.qualcomm.com>
- <20250609-mhi_bw_up-v4-6-3faa8fe92b05@qti.qualcomm.com>
+	b=HltkWTojIJI9h36Gf8tmykgdvHzadVkH/W2wil4AP7Tg6oLn0kxNchvTP8ynmfm10
+	 yFFbxmO8M0CeUhkZgpGmRfceEHFh0cfFieOD70WMc5fLtdINn+yzjjRhevqeS7t7mA
+	 r+Lep6bpA2SlfBCTmQRUK+xJNEJ/1+Lw4Ot662uD725X59CLU4guzi/IIqfIH4LFab
+	 lWSLQ/f/2UshcN/NX8LDA3L/gNpkw4d3qQvWXExG+CfgPbfRnv03IL8GSAZEkCD0rx
+	 QNgfzhhfJCEXWJO3Fe4ngxSAjPSrgfdSBfsXOkf9aT1FQ3nS4D9gWOi2FwZXJqJt11
+	 +eTZGPfg2RFUg==
+Date: Tue, 8 Jul 2025 12:16:02 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Paul Kocialkowski <paulk@sys-base.io>
+Cc: linux-sunxi@lists.linux.dev, Stephen Boyd <sboyd@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Yong Deng <yong.deng@magewell.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v8 1/9] dt-bindings: media: sun6i-a31-csi: Add optional
+ interconnect properties
+Message-ID: <175199495940.648604.8324168473122471061.robh@kernel.org>
+References: <20250704154628.3468793-1-paulk@sys-base.io>
+ <20250704154628.3468793-2-paulk@sys-base.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250609-mhi_bw_up-v4-6-3faa8fe92b05@qti.qualcomm.com>
+In-Reply-To: <20250704154628.3468793-2-paulk@sys-base.io>
 
-On Mon, Jun 09, 2025 at 04:21:27PM GMT, Krishna Chaitanya Chundru wrote:
-> ASPM states are not being enabled back with pci_enable_link_state() when
-> they are disabled by pci_disable_link_state(). This is because of the
-> aspm_disable flag is not getting cleared in pci_enable_link_state(), this
-> flag is being properly cleared when ASPM is controlled by sysfs.
+
+On Fri, 04 Jul 2025 17:46:18 +0200, Paul Kocialkowski wrote:
+> An interconnect can be attached to the sun6i-a31-csi device, which is
+> useful to attach the dma memory offset. Add related properties.
 > 
-
-A comment in pcie_config_aspm_link() says:
-
- /* Enable only the states that were not explicitly disabled */
-
-But the function is called from both aspm_attr_store_common() and
-__pci_enable_link_state(). So I don't know if this is behavior is intentional
-or wrong. 
-
-> Clear the aspm_disable flag with the requested ASPM states requested by
-> pci_enable_link_state().
-> 
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-
-Fixes tag?
-
-- Mani
-
+> Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
 > ---
->  drivers/pci/pcie/aspm.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> index 94324fc0d3e650cd3ca2c0bb8c1895ca7e647b9d..0f858ef86111b43328bc7db01e6493ce67178458 100644
-> --- a/drivers/pci/pcie/aspm.c
-> +++ b/drivers/pci/pcie/aspm.c
-> @@ -1453,6 +1453,7 @@ static int __pci_enable_link_state(struct pci_dev *pdev, int state, bool locked)
->  		down_read(&pci_bus_sem);
->  	mutex_lock(&aspm_lock);
->  	link->aspm_default = pci_calc_aspm_enable_mask(state);
-> +	link->aspm_disable &= ~state;
->  	pcie_config_aspm_link(link, policy_to_aspm_state(link));
->  
->  	link->clkpm_default = (state & PCIE_LINK_STATE_CLKPM) ? 1 : 0;
-> 
-> -- 
-> 2.34.1
+>  .../devicetree/bindings/media/allwinner,sun6i-a31-csi.yaml  | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
 
--- 
-மணிவண்ணன் சதாசிவம்
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+
 
