@@ -1,349 +1,203 @@
-Return-Path: <linux-kernel+bounces-721000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D0CAFC32B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:50:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D703AFC319
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 248403B8F34
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:49:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 544F91889125
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4281622D786;
-	Tue,  8 Jul 2025 06:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFB22236F8;
+	Tue,  8 Jul 2025 06:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yf51D7xu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UqoooT+T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F1922A7F9
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 06:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0056221FCB
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 06:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751957325; cv=none; b=o3fFLuxo+mtzXvECnO2u0UM1TaA1Fs5+QzBIswO3XSzZDjtLDRaFA4K29xeWI1znegth5v3+2Ml0HlwO4x3s3JvCTEkhxqNaMVhR27o6vHw0082gsGPhi1xQnlMxJrKIr9NlhgwPwbqRkEbGV9emppuSO5k4Uo/fdSXbWUtNfjk=
+	t=1751957305; cv=none; b=iUUH3amacFeuTAcLYSVy0XyQV6aJ8VpQmZ2HNhlg9SEuHCVnPjQeTc2V3LytboMG1t0EwR6B49rTBr8F4yP3HJi06XjucaLIt9ARG26gl9jrPLNS9Ek7gUX2+Yb0LMoWNorTiCrP9KWkNF3tycfjywHxdLY+zS1eVnRMDJ3qqY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751957325; c=relaxed/simple;
-	bh=MY8vMj70pEwa4XHTdydkUlnbuShmK/xDyh6QSW3qoUA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZxffQf2A5GIH4PNrt9tO9+rw13MRPMjKycnvJ8K4TJQykBJQJZgF5Dp5sa82Afj8cSDXWHoVnlNhljz4V3xN+jiUCrgGEZmcQge9TmwSR2V+X+A1mYpGpDITeipji5PsYDJlPuqLJWX4OOTOfdT4A5J9A/h0Tdi65TtF+T8fKE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yf51D7xu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751957322;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=teTwZIaIdHF2W5KWCPjBDcr/Vz6B+2AKBnkMWIsMlmo=;
-	b=Yf51D7xu7VLBH2TBz4OxqS55H43N1mCN9gD1xel99SpSmxn0dGcKozanlZrTJDlnU1YjLR
-	o77bK2RkbGBOHG40AdNZPV6Yp6vPRX9BsSgAZMF7066X9TN9p3Vc356OM7rNlUK8ui0fqH
-	0uNvggcURz+BBL31AyAL6rGIVJH5bs4=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-462-3UxcNv81M0GM_cSvbteMdw-1; Tue,
- 08 Jul 2025 02:48:39 -0400
-X-MC-Unique: 3UxcNv81M0GM_cSvbteMdw-1
-X-Mimecast-MFC-AGG-ID: 3UxcNv81M0GM_cSvbteMdw_1751957318
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 303C3180029F;
-	Tue,  8 Jul 2025 06:48:38 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.72.112.173])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2E0B419560B2;
-	Tue,  8 Jul 2025 06:48:33 +0000 (UTC)
-From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com,
-	jasowang@redhat.com,
-	eperezma@redhat.com
-Cc: kvm@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jonah.palmer@oracle.com
-Subject: [PATCH net-next 2/2] vhost_net: basic in_order support
-Date: Tue,  8 Jul 2025 14:48:19 +0800
-Message-ID: <20250708064819.35282-3-jasowang@redhat.com>
-In-Reply-To: <20250708064819.35282-1-jasowang@redhat.com>
-References: <20250708064819.35282-1-jasowang@redhat.com>
+	s=arc-20240116; t=1751957305; c=relaxed/simple;
+	bh=qeUqGxOe277ByVR6+gi2MS/jwDGY/IOUFs6oeGGJMkk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XT6JVfSeaIHhG1Gzl2ZrB6UjrkPC97cXGMq16iy69PiehiedmGdFKehgZzboxGX1WvMXtyOY3R3Xeb2qfWo5W3fEIRScCSzzqBFtEFdUnskOmaqzvrB5p6U/qQnmCpOEzIDZoFBTSK5WS+RePUUczWY7V4ij8YQG3NvBm3CW4yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UqoooT+T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10A7AC4CEED;
+	Tue,  8 Jul 2025 06:48:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751957303;
+	bh=qeUqGxOe277ByVR6+gi2MS/jwDGY/IOUFs6oeGGJMkk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UqoooT+TOip1ZQZfIu8N0OzsgPh0wmRxD0ZTBC7JPaikJ9ugqZRUGQdhQZmxmoUdW
+	 7IQD3jHnmXupUmvAw1JBRC+ub0pCnQksjdUuzwk6aIWretji0C0ofAighK5DI7gTOx
+	 wbDbDZMHgsnbCmgvca6e1ecXnyVloqkS9L29dg6Q=
+Date: Tue, 8 Jul 2025 08:48:20 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Badal Nilawar <badal.nilawar@intel.com>
+Cc: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, anshuman.gupta@intel.com,
+	rodrigo.vivi@intel.com, alexander.usyskin@intel.com,
+	daniele.ceraolospurio@intel.com
+Subject: Re: [PATCH v7 2/9] mei: late_bind: add late binding component driver
+Message-ID: <2025070810-clinic-decode-57e6@gregkh>
+References: <20250707191237.1782824-1-badal.nilawar@intel.com>
+ <20250707191237.1782824-3-badal.nilawar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707191237.1782824-3-badal.nilawar@intel.com>
 
-This patch introduces basic in-order support for vhost-net. By
-recording the number of batched buffers in an array when calling
-`vhost_add_used_and_signal_n()`, we can reduce the number of userspace
-accesses. Note that the vhost-net batching logic is kept as we still
-count the number of buffers there.
+On Tue, Jul 08, 2025 at 12:42:30AM +0530, Badal Nilawar wrote:
+> From: Alexander Usyskin <alexander.usyskin@intel.com>
+> 
+> Add late binding component driver.
 
-Testing Results:
+That says what this does, but not why, or even what "late binding"
+means.
 
-With testpmd:
+> It allows pushing the late binding configuration from, for example,
+> the Xe graphics driver to the Intel discrete graphics card's CSE device.
+> 
+> Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+> Signed-off-by: Badal Nilawar <badal.nilawar@intel.com>
+> Reviewed-by: Anshuman Gupta <anshuman.gupta@intel.com>
+> ---
+>  drivers/misc/mei/Kconfig                    |  11 +
+>  drivers/misc/mei/Makefile                   |   1 +
+>  drivers/misc/mei/mei_late_bind.c            | 271 ++++++++++++++++++++
+>  include/drm/intel/i915_component.h          |   1 +
+>  include/drm/intel/late_bind_mei_interface.h |  62 +++++
+>  5 files changed, 346 insertions(+)
+>  create mode 100644 drivers/misc/mei/mei_late_bind.c
+>  create mode 100644 include/drm/intel/late_bind_mei_interface.h
+> 
+> diff --git a/drivers/misc/mei/Kconfig b/drivers/misc/mei/Kconfig
+> index 7575fee96cc6..36569604038c 100644
+> --- a/drivers/misc/mei/Kconfig
+> +++ b/drivers/misc/mei/Kconfig
+> @@ -81,6 +81,17 @@ config INTEL_MEI_VSC
+>  	  This driver can also be built as a module. If so, the module
+>  	  will be called mei-vsc.
+>  
+> +config INTEL_MEI_LATE_BIND
+> +	tristate "Intel late binding support on ME Interface"
+> +	depends on INTEL_MEI_ME
+> +	depends on DRM_XE
+> +	help
+> +	  MEI Support for Late Binding for Intel graphics card.
+> +
+> +	  Enables the ME FW interfaces for Late Binding feature,
+> +	  allowing loading of firmware for the devices like Fan
+> +	  Controller by Intel Xe driver.
 
-- TX: txonly mode + vhost_net with XDP_DROP on TAP shows a 17.5%
-  improvement, from 4.75 Mpps to 5.35 Mpps.
-- RX: No obvious improvements were observed.
+Where is "Late Binding feature" documented so we know what that is?  Why
+wouldn't it just always be enabled and why must it be a config option?
 
-With virtio-ring in-order experimental code in the guest:
+> --- /dev/null
+> +++ b/include/drm/intel/late_bind_mei_interface.h
+> @@ -0,0 +1,62 @@
+> +/* SPDX-License-Identifier: MIT */
+> +/*
+> + * Copyright (c) 2025 Intel Corporation
+> + */
+> +
+> +#ifndef _LATE_BIND_MEI_INTERFACE_H_
+> +#define _LATE_BIND_MEI_INTERFACE_H_
+> +
+> +#include <linux/types.h>
+> +
+> +struct device;
+> +struct module;
 
-- TX: pktgen in the guest + XDP_DROP on  TAP shows a 19% improvement,
-  from 5.2 Mpps to 6.2 Mpps.
-- RX: pktgen on TAP with vhost_net + XDP_DROP in the guest achieves a
-  6.1% improvement, from 3.47 Mpps to 3.61 Mpps.
+Not needed.
 
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/vhost/net.c | 86 ++++++++++++++++++++++++++++++++-------------
- 1 file changed, 61 insertions(+), 25 deletions(-)
+> +
+> +/**
+> + * Late Binding flags
+> + * Persistent across warm reset
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 4f9c67f17b49..8ac994b3228a 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -74,7 +74,8 @@ enum {
- 			 (1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
- 			 (1ULL << VIRTIO_NET_F_MRG_RXBUF) |
- 			 (1ULL << VIRTIO_F_ACCESS_PLATFORM) |
--			 (1ULL << VIRTIO_F_RING_RESET)
-+			 (1ULL << VIRTIO_F_RING_RESET) |
-+			 (1ULL << VIRTIO_F_IN_ORDER)
- };
- 
- enum {
-@@ -450,7 +451,8 @@ static int vhost_net_enable_vq(struct vhost_net *n,
- 	return vhost_poll_start(poll, sock->file);
- }
- 
--static void vhost_net_signal_used(struct vhost_net_virtqueue *nvq)
-+static void vhost_net_signal_used(struct vhost_net_virtqueue *nvq,
-+				  unsigned int count)
- {
- 	struct vhost_virtqueue *vq = &nvq->vq;
- 	struct vhost_dev *dev = vq->dev;
-@@ -458,8 +460,8 @@ static void vhost_net_signal_used(struct vhost_net_virtqueue *nvq)
- 	if (!nvq->done_idx)
- 		return;
- 
--	vhost_add_used_and_signal_n(dev, vq, vq->heads, NULL,
--				    nvq->done_idx);
-+	vhost_add_used_and_signal_n(dev, vq, vq->heads,
-+				    vq->nheads, count);
- 	nvq->done_idx = 0;
- }
- 
-@@ -468,6 +470,8 @@ static void vhost_tx_batch(struct vhost_net *net,
- 			   struct socket *sock,
- 			   struct msghdr *msghdr)
- {
-+	struct vhost_virtqueue *vq = &nvq->vq;
-+	bool in_order = vhost_has_feature(vq, VIRTIO_F_IN_ORDER);
- 	struct tun_msg_ctl ctl = {
- 		.type = TUN_MSG_PTR,
- 		.num = nvq->batched_xdp,
-@@ -475,6 +479,11 @@ static void vhost_tx_batch(struct vhost_net *net,
- 	};
- 	int i, err;
- 
-+	if (in_order) {
-+		vq->heads[0].len = 0;
-+		vq->nheads[0] = nvq->done_idx;
-+	}
-+
- 	if (nvq->batched_xdp == 0)
- 		goto signal_used;
- 
-@@ -496,7 +505,7 @@ static void vhost_tx_batch(struct vhost_net *net,
- 	}
- 
- signal_used:
--	vhost_net_signal_used(nvq);
-+	vhost_net_signal_used(nvq, in_order ? 1 : nvq->done_idx);
- 	nvq->batched_xdp = 0;
- }
- 
-@@ -758,6 +767,7 @@ static void handle_tx_copy(struct vhost_net *net, struct socket *sock)
- 	int sent_pkts = 0;
- 	bool sock_can_batch = (sock->sk->sk_sndbuf == INT_MAX);
- 	bool busyloop_intr;
-+	bool in_order = vhost_has_feature(vq, VIRTIO_F_IN_ORDER);
- 
- 	do {
- 		busyloop_intr = false;
-@@ -794,11 +804,13 @@ static void handle_tx_copy(struct vhost_net *net, struct socket *sock)
- 				break;
- 			}
- 
--			/* We can't build XDP buff, go for single
--			 * packet path but let's flush batched
--			 * packets.
--			 */
--			vhost_tx_batch(net, nvq, sock, &msg);
-+			if (nvq->batched_xdp) {
-+				/* We can't build XDP buff, go for single
-+				 * packet path but let's flush batched
-+				 * packets.
-+				 */
-+				vhost_tx_batch(net, nvq, sock, &msg);
-+			}
- 			msg.msg_control = NULL;
- 		} else {
- 			if (tx_can_batch(vq, total_len))
-@@ -819,8 +831,12 @@ static void handle_tx_copy(struct vhost_net *net, struct socket *sock)
- 			pr_debug("Truncated TX packet: len %d != %zd\n",
- 				 err, len);
- done:
--		vq->heads[nvq->done_idx].id = cpu_to_vhost32(vq, head);
--		vq->heads[nvq->done_idx].len = 0;
-+		if (in_order) {
-+			vq->heads[0].id = cpu_to_vhost32(vq, head);
-+		} else {
-+			vq->heads[nvq->done_idx].id = cpu_to_vhost32(vq, head);
-+			vq->heads[nvq->done_idx].len = 0;
-+		}
- 		++nvq->done_idx;
- 	} while (likely(!vhost_exceeds_weight(vq, ++sent_pkts, total_len)));
- 
-@@ -999,7 +1015,7 @@ static int peek_head_len(struct vhost_net_virtqueue *rvq, struct sock *sk)
- }
- 
- static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk,
--				      bool *busyloop_intr)
-+				      bool *busyloop_intr, unsigned int count)
- {
- 	struct vhost_net_virtqueue *rnvq = &net->vqs[VHOST_NET_VQ_RX];
- 	struct vhost_net_virtqueue *tnvq = &net->vqs[VHOST_NET_VQ_TX];
-@@ -1009,7 +1025,7 @@ static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk,
- 
- 	if (!len && rvq->busyloop_timeout) {
- 		/* Flush batched heads first */
--		vhost_net_signal_used(rnvq);
-+		vhost_net_signal_used(rnvq, count);
- 		/* Both tx vq and rx socket were polled here */
- 		vhost_net_busy_poll(net, rvq, tvq, busyloop_intr, true);
- 
-@@ -1021,7 +1037,7 @@ static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk,
- 
- /* This is a multi-buffer version of vhost_get_desc, that works if
-  *	vq has read descriptors only.
-- * @vq		- the relevant virtqueue
-+ * @nvq		- the relevant vhost_net virtqueue
-  * @datalen	- data length we'll be reading
-  * @iovcount	- returned count of io vectors we fill
-  * @log		- vhost log
-@@ -1029,14 +1045,17 @@ static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk,
-  * @quota       - headcount quota, 1 for big buffer
-  *	returns number of buffer heads allocated, negative on error
-  */
--static int get_rx_bufs(struct vhost_virtqueue *vq,
-+static int get_rx_bufs(struct vhost_net_virtqueue *nvq,
- 		       struct vring_used_elem *heads,
-+		       u16 *nheads,
- 		       int datalen,
- 		       unsigned *iovcount,
- 		       struct vhost_log *log,
- 		       unsigned *log_num,
- 		       unsigned int quota)
- {
-+	struct vhost_virtqueue *vq = &nvq->vq;
-+	bool in_order = vhost_has_feature(vq, VIRTIO_F_IN_ORDER);
- 	unsigned int out, in;
- 	int seg = 0;
- 	int headcount = 0;
-@@ -1073,14 +1092,16 @@ static int get_rx_bufs(struct vhost_virtqueue *vq,
- 			nlogs += *log_num;
- 			log += *log_num;
- 		}
--		heads[headcount].id = cpu_to_vhost32(vq, d);
- 		len = iov_length(vq->iov + seg, in);
--		heads[headcount].len = cpu_to_vhost32(vq, len);
--		datalen -= len;
-+		if (!in_order) {
-+			heads[headcount].id = cpu_to_vhost32(vq, d);
-+			heads[headcount].len = cpu_to_vhost32(vq, len);
-+		}
- 		++headcount;
-+		datalen -= len;
- 		seg += in;
- 	}
--	heads[headcount - 1].len = cpu_to_vhost32(vq, len + datalen);
-+
- 	*iovcount = seg;
- 	if (unlikely(log))
- 		*log_num = nlogs;
-@@ -1090,6 +1111,15 @@ static int get_rx_bufs(struct vhost_virtqueue *vq,
- 		r = UIO_MAXIOV + 1;
- 		goto err;
- 	}
-+
-+	if (!in_order)
-+		heads[headcount - 1].len = cpu_to_vhost32(vq, len + datalen);
-+	else {
-+		heads[0].len = cpu_to_vhost32(vq, len + datalen);
-+		heads[0].id = cpu_to_vhost32(vq, d);
-+		nheads[0] = headcount;
-+	}
-+
- 	return headcount;
- err:
- 	vhost_discard_vq_desc(vq, headcount);
-@@ -1102,6 +1132,8 @@ static void handle_rx(struct vhost_net *net)
- {
- 	struct vhost_net_virtqueue *nvq = &net->vqs[VHOST_NET_VQ_RX];
- 	struct vhost_virtqueue *vq = &nvq->vq;
-+	bool in_order = vhost_has_feature(vq, VIRTIO_F_IN_ORDER);
-+	unsigned int count = 0;
- 	unsigned in, log;
- 	struct vhost_log *vq_log;
- 	struct msghdr msg = {
-@@ -1149,12 +1181,13 @@ static void handle_rx(struct vhost_net *net)
- 
- 	do {
- 		sock_len = vhost_net_rx_peek_head_len(net, sock->sk,
--						      &busyloop_intr);
-+						      &busyloop_intr, count);
- 		if (!sock_len)
- 			break;
- 		sock_len += sock_hlen;
- 		vhost_len = sock_len + vhost_hlen;
--		headcount = get_rx_bufs(vq, vq->heads + nvq->done_idx,
-+		headcount = get_rx_bufs(nvq, vq->heads + count,
-+					vq->nheads + count,
- 					vhost_len, &in, vq_log, &log,
- 					likely(mergeable) ? UIO_MAXIOV : 1);
- 		/* On error, stop handling until the next kick. */
-@@ -1230,8 +1263,11 @@ static void handle_rx(struct vhost_net *net)
- 			goto out;
- 		}
- 		nvq->done_idx += headcount;
--		if (nvq->done_idx > VHOST_NET_BATCH)
--			vhost_net_signal_used(nvq);
-+		count += in_order ? 1 : headcount;
-+		if (nvq->done_idx > VHOST_NET_BATCH) {
-+			vhost_net_signal_used(nvq, count);
-+			count = 0;
-+		}
- 		if (unlikely(vq_log))
- 			vhost_log_write(vq, vq_log, log, vhost_len,
- 					vq->iov, in);
-@@ -1243,7 +1279,7 @@ static void handle_rx(struct vhost_net *net)
- 	else if (!sock_len)
- 		vhost_net_enable_vq(net, vq);
- out:
--	vhost_net_signal_used(nvq);
-+	vhost_net_signal_used(nvq, count);
- 	mutex_unlock(&vq->mutex);
- }
- 
--- 
-2.31.1
+persistent where?
 
+> + */
+> +#define CSC_LATE_BINDING_FLAGS_IS_PERSISTENT	BIT(0)
+> +
+> +/**
+> + * xe_late_bind_fw_type - enum to determine late binding fw type
+> + */
+> +enum late_bind_type {
+> +	CSC_LATE_BINDING_TYPE_FAN_CONTROL = 1,
+> +};
+
+shouldn't you have mei_ as a prefix for the enum type and the values?
+
+> +
+> +/**
+> + * Late Binding payload status
+> + */
+> +enum csc_late_binding_status {
+
+Same here, what is "CSC"?
+
+> +	CSC_LATE_BINDING_STATUS_SUCCESS           = 0,
+> +	CSC_LATE_BINDING_STATUS_4ID_MISMATCH      = 1,
+> +	CSC_LATE_BINDING_STATUS_ARB_FAILURE       = 2,
+> +	CSC_LATE_BINDING_STATUS_GENERAL_ERROR     = 3,
+> +	CSC_LATE_BINDING_STATUS_INVALID_PARAMS    = 4,
+> +	CSC_LATE_BINDING_STATUS_INVALID_SIGNATURE = 5,
+> +	CSC_LATE_BINDING_STATUS_INVALID_PAYLOAD   = 6,
+> +	CSC_LATE_BINDING_STATUS_TIMEOUT           = 7,
+> +};
+
+This enum type is never used.
+
+> +
+> +/**
+> + * struct late_bind_component_ops - ops for Late Binding services.
+> + * @owner: Module providing the ops
+> + * @push_config: Sends a config to FW.
+> + */
+> +struct late_bind_component_ops {
+> +	/**
+> +	 * @push_config: Sends a config to FW.
+
+What is "FW"?
+
+> +	 * @dev: device struct corresponding to the mei device
+
+Why not pass in the mei device structure, not a 'struct device' so that
+we know this is correct?
+
+> +	 * @type: payload type
+> +	 * @flags: payload flags
+> +	 * @payload: payload buffer
+
+Where are these defined?  Why are they not enums?
+
+> +	 * @payload_size: payload buffer size
+
+Size in what?
+
+> +	 *
+> +	 * Return: 0 success, negative errno value on transport failure,
+> +	 *         positive status returned by FW
+> +	 */
+> +	int (*push_config)(struct device *dev, u32 type, u32 flags,
+> +			   const void *payload, size_t payload_size);
+> +};
+> +
+> +#endif /* _LATE_BIND_MEI_INTERFACE_H_ */
+> -- 
+> 2.34.1
+> 
 
