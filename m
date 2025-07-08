@@ -1,105 +1,84 @@
-Return-Path: <linux-kernel+bounces-721735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 250C1AFCD3C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:18:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA8D7AFCD40
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2916F172199
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:18:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48E394A0E5A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5013217B402;
-	Tue,  8 Jul 2025 14:18:14 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453AA2DD5F3;
+	Tue,  8 Jul 2025 14:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="u/8Qchhg"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87FF32BEC28;
-	Tue,  8 Jul 2025 14:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE47E2BEC28;
+	Tue,  8 Jul 2025 14:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751984293; cv=none; b=shTZ13k+LsQo/d6D37o1oC3KEQxgZnUeI3a+W8LAxvnTmtt73zkPgBJ7a+agxNWY6nBn1Ya8GRnQp4QVhr3MdCLnrm4pDGBZk6KJJRqI8ibhFT51lDVh5DynKU3JO/usEpxCq14eKLJ/FiJ+/3nJI53yT63+s7cXhz0yHXOss3s=
+	t=1751984298; cv=none; b=d53zpMfaTaTF5LMAFgufur4/UfvBXHj4o9HZ5r8B0EHTvJ1yFYd8+ZLESBL8v13lFw5sHfT/rA0KzZMkjsJ1Kelb6WIeR7PIi7l9wOQiqBkIh6HQoYSfBp2TA+wI8z0p56L2OI74hGqYRBJAdYkzIXX626YxYSYJlOTlIf/j8qA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751984293; c=relaxed/simple;
-	bh=mBmRhIHUhdY6n86n8Ks5H5tBcLO3k6zSAihKEwFoLDY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FY/qNvyqDLslRPiWhV+fStygklODfje6dsqM53nWD8OiRSTXHAvFNO9cqxN7NnFmA1I1gwqk9HwD9kAGCViBjmxbSY8rR7MNM6i8SA9t2uQmyqJ+USBFMAZhyiWL4o+guV91s6AOnfAXwN6jtIo+E+wDmiYi/x/x5v8aBagH4/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from ofsar (unknown [116.232.48.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 624E1340ED3;
-	Tue, 08 Jul 2025 14:18:04 +0000 (UTC)
-From: Yixun Lan <dlan@gentoo.org>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	Alex Elder <elder@riscstar.com>
-Cc: Yixun Lan <dlan@gentoo.org>,
-	heylenay@4d2.org,
-	inochiama@outlook.com,
-	guodong@riscstar.com,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
+	s=arc-20240116; t=1751984298; c=relaxed/simple;
+	bh=Z0fAqGkGmDO+vyOmPt5ruF7E1P3LEBpkCoCU6bS4HxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MZn3ZtJKlHWMPzEOGejBXlcQJQ/tm1+eUjMd5wA4pkQGmjVxgWZj8Q6UhUKGsuch9wRD7cm8HMQgsDb8H36v17Bec3w37oRfB1HHmjj4/piEax6m1Tz9puB8n53qxr7AtkofZXVtPhyyhzU+nGhu/a9G7MyZEgPEgnBUyZDv9i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=u/8Qchhg; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=ZieroGSgsV5Uoy51xSzBoB38R1YH6XLakVRbQbz5U+A=; b=u/8Qchhgg1rLZdTCTQ9QkrViPF
+	OCRCO+tChhLWv3aQvPI+UK6VgnJY6ct03w/ag1GIbW22sIwObu9lJa+RwEYFH+08HIniCDa2EnEzF
+	I2Idne5GDzfgjFC6pO4kPHt0QV+a6EWUmvEPyzDiyux/dhHTPagG7Mdd409ZnKp/s2Xg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uZ991-000pND-M5; Tue, 08 Jul 2025 16:18:03 +0200
+Date: Tue, 8 Jul 2025 16:18:03 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Tristram.Ha@microchip.com
+Cc: Woojung Huh <woojung.huh@microchip.com>,
+	Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Marek Vasut <marex@denx.de>, UNGLinuxDriver@microchip.com,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v12 0/6] reset: spacemit: add K1 reset support
-Date: Tue,  8 Jul 2025 22:17:56 +0800
-Message-ID: <175198407740.45243.8546777031638869570.b4-ty@gentoo.org>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250702113709.291748-1-elder@riscstar.com>
-References: <20250702113709.291748-1-elder@riscstar.com>
+Subject: Re: [PATCH net-next 1/6 v2] dt-bindings: net: dsa: microchip: Add
+ KSZ8463 switch support
+Message-ID: <46ea903b-71c9-4469-ba29-884b3cda0467@lunn.ch>
+References: <20250708031648.6703-1-Tristram.Ha@microchip.com>
+ <20250708031648.6703-2-Tristram.Ha@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708031648.6703-2-Tristram.Ha@microchip.com>
 
-
-On Wed, 02 Jul 2025 06:37:02 -0500, Alex Elder wrote:
-> This series adds reset controller support for the SpacemiT K1 SoC.
-> A SpacemiT reset controller is implemented as an auxiliary device
-> associated with a clock controller (CCU).  A new header file
-> holds definitions used by both the clock and reset drivers.
+On Mon, Jul 07, 2025 at 08:16:43PM -0700, Tristram.Ha@microchip.com wrote:
+> From: Tristram Ha <tristram.ha@microchip.com>
 > 
-> The only change in this version is that three of the the four resets
-> associated with each PCIe port have been renamed, to align better
-> with their corresponding clocks.  This affects patches 1 and 5.
-> For example, for PCIe port 0:
+> KSZ8463 switch is a 3-port switch based from KSZ8863.  Its register
+> access is significantly different from the other KSZ SPI switches.
 > 
-> [...]
+> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
 
-Applied, thanks!
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-[1/6] dt-bindings: soc: spacemit: define spacemit,k1-ccu resets
-      https://github.com/spacemit-com/linux/commit/25a59e813cd2ca728047f657d64f9b29480be393
-[2/6] soc: spacemit: create a header for clock/reset registers
-      https://github.com/spacemit-com/linux/commit/bf6239ddaa6a73a44cd8ea3afec5fc82ed900038
-[3/6] clk: spacemit: set up reset auxiliary devices
-      https://github.com/spacemit-com/linux/commit/988543522ebd6a9af53c288833503f0501e401b0
-[4/6] clk: spacemit: define three reset-only CCUs
-      https://github.com/spacemit-com/linux/commit/024b84f661674dcfa1341c90ce654c485c4ab756
-[5/6] reset: spacemit: add support for SpacemiT CCU resets
-      https://github.com/spacemit-com/linux/commit/c479d7cf06c3d65532442fa368b058e05dbba1a2
-
-Best regards,
--- 
-Yixun Lan
+    Andrew
 
 
