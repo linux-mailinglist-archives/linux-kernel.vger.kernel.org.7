@@ -1,122 +1,163 @@
-Return-Path: <linux-kernel+bounces-721325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EABF9AFC7C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:04:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE3A8AFC7BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7AB21694E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:04:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D689C1884097
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3C4268C63;
-	Tue,  8 Jul 2025 10:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3CB22D4DD;
+	Tue,  8 Jul 2025 10:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F6TnXjE7"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z4WrzYO2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q/U/yrLo"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E02D2080C4;
-	Tue,  8 Jul 2025 10:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775D42222CC;
+	Tue,  8 Jul 2025 10:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751969037; cv=none; b=N2PMPzvvQJPiF4q5gd/sSQu93qstCdlobVULWBpalrViv1B3qCgyUy0VUc5Q5BUs0hzFcYCpFocDUqBduxotHI/DTbaUi6ORurOSD7k/UVJz7cOcfL1f+2yafS8G1RAYFMN6t6b73jjLgiLywofDhggyAYOt6coOXVhX/bpovJ4=
+	t=1751969037; cv=none; b=RfTMJFT+Z+3dT9IPE5g/osTuua9RDS6rXY2HEMkvHXuuLWOU9AHmZgDHYsP5bOG06slLQC4nF4jNIEmDffuRwJv9CV7/23Ki7iQ09wy5Rf+qBtjS8yAO1I49iMBOmfk1rpG0Zup2cA/sOUvQhnAY0XnCuDAX153c+tfAWJrNihc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751969037; c=relaxed/simple;
-	bh=Y1X9PBX7qcUQ3VQhQVIFAiKTntxUOEwd/Za4bXmASfc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L5p2Mp11XTK49bO/NsVv4A5I73xZ0oela+6qzjGOBIs2Dnh5c646d4GbTceQppUQJp9Qk8pP3ygI3nbOgui/ayvz4K12vT8dwCchXna8pmrhJz4NOg2sxDd5tbHQ4cvUDebdLOLhYPL/lLSlX5LGzUB/6lsDA6ST9t07bFAeAtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F6TnXjE7; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-237311f5a54so38477955ad.2;
-        Tue, 08 Jul 2025 03:03:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751969035; x=1752573835; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lpGeu0fct+3VmHlRdU5eb8NMKV/Ar7w1D2lbejumdKs=;
-        b=F6TnXjE7EibE1OiAWTl7V7TBoP4cvVVOCpXapuOdS+mgL/0QljvhYyCaXmss5XX0uB
-         /dk1aiPi4aPixrMj/xcX9hZc7vPyuF+Ci9Rz3lNpuQuLXOgM3YKrtl2d/N8ke114krZ3
-         0Pg3LWnMPGq8AEUnorLg/O1rOtZ78JkErm8vUiCRdkJg+l/kNl5WpH2kiQ0BS35+O2m5
-         fNVtUsRlwOI2bz8sKxj+kiSKL6HhyCaaPjl0zBEWnx2y4eYbP/3sBvEQVgb0sxy6JdG4
-         H98PFh+LNNmsdSVd5dUZzeth5afVo20nhSSJhr16YkO9pfWWtbVgT24kboi6ctaObaYo
-         Yoxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751969035; x=1752573835;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lpGeu0fct+3VmHlRdU5eb8NMKV/Ar7w1D2lbejumdKs=;
-        b=HJz2GoRTJ4PY299JvQAJ8VCZbikVcG7Q1OujWmmhWUO/aFJWASwDak6fcaR+XoWc+w
-         5vOE9R9mG6l8lki0ts3aonH4GiIo4fTcDlUKsAwTU6QOsneOcKT0viDGMVtM2AZSvVhF
-         vapqkRuETFcssOg7Hr16zvIFP2OsjZGkmZ22Ik5z35/vNaKNrSUsYFyg1PRi+bixewov
-         9hfr/4B+KaRbGuDRgKCwzOSNitMiSHDGjWlE6zy3fUg8gQBKGx2EDGCviLio9eV1wh9i
-         hWvrqXIzzEB8PF9EPBK6TTcUDBmbkCXZq3axKYEn/7AhPzoh1lW4cBlVfqK7ooHdwd3p
-         QJcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUSenDKRug8w8zOp9ZgtDrgCIwORlAGUz5b5fnHEJQxlWyDK6dLGbjdqAr40CRTmji2hZl/J5k0qaxurCI@vger.kernel.org, AJvYcCVteU8/E5ZnoZqUNN729eLogzcVATqGUtW5NnJhqXXFgZzjeOrKlxWeoqw/qADEOerd5dZiKHoGk7mEag==@vger.kernel.org, AJvYcCW2ccPGMbAm9/v82GrQanvQMadGTfmw5irW7koZuhJ8OuIQbSIqrUGw+68PWwE+9cZduMkR/rdqgjgl@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBWtz+lQ7GDkv/o8yJfK6suRZbGITWtX54LUVtaPv1L5E9DHAd
-	2xpWKv0saKCmw1615+cFf32f8wlZK4jj8DatQ+fFVEOguLhLu/CAMGOhhWYOb0Pqr7j2t9p8xos
-	e4Rvcfm78cKDYYgTe1rPY0U14w6xvdgk=
-X-Gm-Gg: ASbGnct87ZJWpEfWAOUFKrR5UTBcn35zq91iZ15Ecx11RpXav8Bd0hzWrKpw8nOz0Rn
-	158fVRS0Ys5PB2grHftD84D9uaA/5yHsCKXrLgzjy+Nvci5TOyGb/9hYhFkmqNMc6lumXFW8z4l
-	fNkBZ77lOhdasvd7tFzsOIQYfMNTD1KVtV/ouYCqIN
-X-Google-Smtp-Source: AGHT+IHCEfcIS2hUnEdB9PbPmt5ZD9T64WlU2Ot8WUjUZqgiMJ9d2john/gI6sTWhRffzI0DT19R2HBQAqTyVFgmv0M=
-X-Received: by 2002:a17:903:a47:b0:23c:8f21:ac59 with SMTP id
- d9443c01a7336-23c8f21addemr149130485ad.29.1751969035426; Tue, 08 Jul 2025
- 03:03:55 -0700 (PDT)
+	bh=fekYyiiG2tyN0Nh153ANuYAriA1/pCEFi0bOtubPJVc=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=nVAjG6zHtjcxlBlAnc8OdwkxAItC3swdq++sjRiFjXrIzRzGQvRwBCViWD05xe8f2xVA08mhE0EKGS+r8ETpQQ08pl+RMjNLcC4wOpnXcrH11bnDMiFoPzonB1fBaBj6xkNN+MIycr5xT4SLV3kffbyD6C+CgILwb4tcplBNh/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z4WrzYO2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q/U/yrLo; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 08 Jul 2025 10:03:52 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751969033;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rnh204Mbsn1V/g1azt8nha6aqff0Sh1XbE2qtAMa814=;
+	b=z4WrzYO2/rq4TfCmlbfZ7EyxN5NrjqDfMNBZhpuD3DGW8dIXgJULwmJA9iFdIZMVoIQdqL
+	js6OaSbvfYVslqeKyWUtn4ueRKQ3VXp/4Hj/XvzdaG7BMd95WbU7ZeEQuAsoA/xzmM0geM
+	PteaYPFwm1IVSHOwe3SNaUrv5Jtx8pHOh02bQyaCgjyshqouPwPXyfgo4jxu+S+tX8L43N
+	Qods/nFZw9z9fOAfF2RngR1DBzR/0XCkYV09ecFwkrfdfL/Ag/HyLws3cEwU+Fw/xLLNDu
+	XgG+NYtnQcyfbzsINFuBcKZNnozQHXvqQ4hB4ysGj8U2+716Q2abp7WWWaiPXQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751969033;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rnh204Mbsn1V/g1azt8nha6aqff0Sh1XbE2qtAMa814=;
+	b=q/U/yrLo/wyIRsBeMEfLBa5VoV5ClpqnFtvNadt9ClBgx1arw4ksCqlMubckMVLCY6JE9F
+	gVtuKxtO0rdjCOBw==
+From: "tip-bot2 for Mario Limonciello" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/platform] x86/itmt: Add debugfs file to show core priorities
+Cc: Mario Limonciello <mario.limonciello@amd.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, ilpo.jarvinen@linux.intel.com,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250609200518.3616080-14-superm1@kernel.org>
+References: <20250609200518.3616080-14-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250706214111.45687-1-rosenp@gmail.com> <20250706214111.45687-4-rosenp@gmail.com>
-In-Reply-To: <20250706214111.45687-4-rosenp@gmail.com>
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date: Tue, 8 Jul 2025 12:03:44 +0200
-X-Gm-Features: Ac12FXwhjylZMsoY4rDqa01BVMXMM5PiGD4HvSivpj3vJ2MwrtIBDDKsIP82h3Y
-Message-ID: <CAMhs-H9PcmyNsZsU_JujV0PkRmJX5HSc0TBMR05OWmhUP0ByYA@mail.gmail.com>
-Subject: Re: [PATCH 3/6] wifi: rt2800soc: allow loading from OF
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-wireless@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, 
-	yangshiji66@qq.com, ansuelsmth@gmail.com, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Stanislaw Gruszka <stf_xl@wp.pl>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:MIPS" <linux-mips@vger.kernel.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <175196903228.406.9434351357968352011.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 6, 2025 at 11:41=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wrot=
-e:
->
-> Add a single bindng to help the already present dts files load the
-> driver. More are possible but there doesn't seem to be a significant
-> difference between them to justify this.
+The following commit has been merged into the x86/platform branch of tip:
 
-typo: s/bindng/binding
+Commit-ID:     f12682148262aa6deed32c0593c67658573d0600
+Gitweb:        https://git.kernel.org/tip/f12682148262aa6deed32c0593c67658573=
+d0600
+Author:        Mario Limonciello <mario.limonciello@amd.com>
+AuthorDate:    Mon, 09 Jun 2025 15:05:18 -05:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 07 Jul 2025 22:35:51 +02:00
 
->
-> Use wifi name per dtschema requirements.
->
-> The data field will be used to remove the custom non static probe
-> function and use of_device_get_match_data.
->
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  drivers/net/wireless/ralink/rt2x00/rt2800soc.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+x86/itmt: Add debugfs file to show core priorities
 
-With the typo fixed:
+Multiple drivers can report priorities to ITMT. To aid in debugging
+any issues with the values reported by drivers introduce a debugfs
+file to read out the values.
 
-Reviewed-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Acked-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+Link: https://lore.kernel.org/20250609200518.3616080-14-superm1@kernel.org
+---
+ arch/x86/kernel/itmt.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-Best regards,
-    Sergio Paracuellos
+diff --git a/arch/x86/kernel/itmt.c b/arch/x86/kernel/itmt.c
+index 9cea1fc..243a769 100644
+--- a/arch/x86/kernel/itmt.c
++++ b/arch/x86/kernel/itmt.c
+@@ -59,6 +59,18 @@ static ssize_t sched_itmt_enabled_write(struct file *filp,
+ 	return result;
+ }
+=20
++static int sched_core_priority_show(struct seq_file *s, void *unused)
++{
++	int cpu;
++
++	seq_puts(s, "CPU #\tPriority\n");
++	for_each_possible_cpu(cpu)
++		seq_printf(s, "%d\t%d\n", cpu, arch_asym_cpu_priority(cpu));
++
++	return 0;
++}
++DEFINE_SHOW_ATTRIBUTE(sched_core_priority);
++
+ static const struct file_operations dfs_sched_itmt_fops =3D {
+ 	.read =3D         debugfs_read_file_bool,
+ 	.write =3D        sched_itmt_enabled_write,
+@@ -67,6 +79,7 @@ static const struct file_operations dfs_sched_itmt_fops =3D=
+ {
+ };
+=20
+ static struct dentry *dfs_sched_itmt;
++static struct dentry *dfs_sched_core_prio;
+=20
+ /**
+  * sched_set_itmt_support() - Indicate platform supports ITMT
+@@ -102,6 +115,14 @@ int sched_set_itmt_support(void)
+ 		return -ENOMEM;
+ 	}
+=20
++	dfs_sched_core_prio =3D debugfs_create_file("sched_core_priority", 0644,
++						  arch_debugfs_dir, NULL,
++						  &sched_core_priority_fops);
++	if (IS_ERR_OR_NULL(dfs_sched_core_prio)) {
++		dfs_sched_core_prio =3D NULL;
++		return -ENOMEM;
++	}
++
+ 	sched_itmt_capable =3D true;
+=20
+ 	sysctl_sched_itmt_enabled =3D 1;
+@@ -133,6 +154,8 @@ void sched_clear_itmt_support(void)
+=20
+ 	debugfs_remove(dfs_sched_itmt);
+ 	dfs_sched_itmt =3D NULL;
++	debugfs_remove(dfs_sched_core_prio);
++	dfs_sched_core_prio =3D NULL;
+=20
+ 	if (sysctl_sched_itmt_enabled) {
+ 		/* disable sched_itmt if we are no longer ITMT capable */
 
