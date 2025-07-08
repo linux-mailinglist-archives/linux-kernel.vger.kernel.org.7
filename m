@@ -1,107 +1,129 @@
-Return-Path: <linux-kernel+bounces-722100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59791AFD55E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:33:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72298AFD568
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:34:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0470C7A5BD2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:31:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E54E3B5D10
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6F52E5418;
-	Tue,  8 Jul 2025 17:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014AE2E6D3D;
+	Tue,  8 Jul 2025 17:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwdjdZ5h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pjvNesQF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5FDC23DE;
-	Tue,  8 Jul 2025 17:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3631F91C8;
+	Tue,  8 Jul 2025 17:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751995976; cv=none; b=pq/KB5hYJ95EWYro1514MxKeGx+JDlilxt8x9ko2jCW99wOThDIVND0iMtlXH1u7V9FnIenKGBkTquVir9LOvKdwy7VjjQweFHquusUOMewQEcvrwk9MwyxOjsvPNFQHsLUk0sA4wjnAPKpS3by7b+ipefcfW/SzBsuuNz5sO9c=
+	t=1751996051; cv=none; b=FpBi6vyRkjcbECYPIUhY+I+QP+0MePepLF/OuS4ltPRqWfgD8TrozW+dGX/90OvYQ7H8n+nOguQ/YstLmaFaZQj5H1eqedczBDdrsRLBhICo9UAXzlqbtxiO6pbp/wT607JGlJdDrkw2YlVXOiHoV8NXHAQw079CpOVkpRfGsdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751995976; c=relaxed/simple;
-	bh=Tj30AVgOZeLyHZLoCU9zwuYJtDxwx0/hpeoIjbFkhOs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=npYsF2EIIDNAMRd/AdC0RPywWKHZc9fz3Q7btXhOnRisZiPcgdZoTFlhic0KMEhu1VLMZHKzU1kveXqQ78KVKoEXGBdSSLrpQio0/9zG33AhlPZMFJvGp/Bp2KJF69pGRWxg4njluQqLNzdsoppcCFeoxlIAGEiLbaWOl/SRi5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZwdjdZ5h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3D81C4CEED;
-	Tue,  8 Jul 2025 17:32:55 +0000 (UTC)
+	s=arc-20240116; t=1751996051; c=relaxed/simple;
+	bh=m7DhdVicmrqrIoSMYirW5qjPjKd3MmBXE15EmI0rxmU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jPmKUo0dXe4/+gCa+oztWd3TvMHdeeIaTryzcD+OPAS+O//pYPk1uySl+jNfvR7yIrQVEM9lk9bQQEkVnyXTC2HAQZr0i1ZQDj38jkH+lWoU4WIRhf4m3bVQ6Pc5mkIZlnysOeyqybknjhuo3F8ZebtIMLT5mNRfe+OAjFeDIlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pjvNesQF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0444C4CEF8;
+	Tue,  8 Jul 2025 17:34:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751995976;
-	bh=Tj30AVgOZeLyHZLoCU9zwuYJtDxwx0/hpeoIjbFkhOs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZwdjdZ5hSUdg4Xp5SziCZU45+i/ZBxR3cN7skTWzxY9ZFI/mBX/gdw618OkLEcwp+
-	 e1pzEaUfXBhYMdL9KAQUfFK1HTeKmwg2pmQ65lh68LKSDXC0BCywVzpODJhQYeiPcG
-	 bTWrA6zRJFVmwURla2p8tTRjlKSbOQPdGVFiEHlKkFBv5J0MFEau/Vtc772pOGysRQ
-	 JjCkLowuyBbjim2cmBfZpYOp3w6Fe3ow5MqtCD6b97HEoZsIC1RdcpIYqON7pPYJMf
-	 jGwEkwJJQ8M7948fmvrCQmaBHU0XDBblhqwInuGBkAKuEutcOFQzT5TPOjObK8iBpi
-	 COAjsGtQrT7lA==
-From: SeongJae Park <sj@kernel.org>
-To: Bijan Tabatabai <bijan311@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	akpm@linux-foundation.org,
-	corbet@lwn.net,
-	joshua.hahnjy@gmail.com,
-	bijantabatab@micron.com,
-	venkataravis@micron.com,
-	emirakhur@micron.com,
-	ajayjoshi@micron.com,
-	vtavarespetr@micron.com
-Subject: Re: [RFC PATCH v3 07/13] mm/damon/core: Commit damos->target_nid/migrate_dests
-Date: Tue,  8 Jul 2025 10:32:53 -0700
-Message-Id: <20250708173253.54732-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CAMvvPS6imiPU-v527rCu=Yw6JA1Nc-Ezkc5_uXOSxf8oDjX2Qg@mail.gmail.com>
-References: 
+	s=k20201202; t=1751996050;
+	bh=m7DhdVicmrqrIoSMYirW5qjPjKd3MmBXE15EmI0rxmU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pjvNesQFtUHsoqucRDlqkQJRe9QTRvdPe/0GzwFpDrHWUeeAJldyp7guUKnYbBv4j
+	 YbdSNrmLEyn+lqDYGiqkV1b5yIt5QO0mvNhdTTYW5lor/4CGhuaAyXrqZ4/74tNZei
+	 K+yLy1O4jYCoQoSGKSgVZYLf3ribvJei7Nyh93OjdonsDlIKSWiefv8VR5Wxv5m6Xc
+	 uehp3ZdrsA66pa7OYqBM3vaasBApR2Bp8jk6jjNton4+Tsk9bIuk4DAG4PIeztUu/y
+	 br1KRAJ4y5KtVO7EdCTcCt249R2QyRBPgyRsXhhz48NRdRchAfwQEM/e95ViOcprg2
+	 SzZbM+eCdxgaA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uZCCm-00Dqhw-Id;
+	Tue, 08 Jul 2025 18:34:08 +0100
+From: Marc Zyngier <maz@kernel.org>
+To: linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Toan Le <toan@os.amperecomputing.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v2 00/13] PCI: xgene: Fix and simplify the MSI driver
+Date: Tue,  8 Jul 2025 18:33:51 +0100
+Message-Id: <20250708173404.1278635-1-maz@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, toan@os.amperecomputing.com, lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, bhelgaas@google.com, tglx@linutronix.de
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Bijan,
+Having recently dipped into the xgene-msi driver to bring it to use
+the MSI-parent concept, I have realised that some of it was slightly
+sub-par (read: downright broken).
 
-On Tue, 8 Jul 2025 09:04:02 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
+The driver is playing horrible tricks behind the core code, missing
+proper affinity management, is terribly over-designed for no good
+reason, and despite what MAINTAINERS says, completely unmaintained.
 
-> On Wed, Jul 2, 2025 at 4:03 PM SeongJae Park <sj@kernel.org> wrote:
-> >
-> > On Wed,  2 Jul 2025 15:13:30 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
-> >
-> > > From: Bijan Tabatabai <bijantabatab@micron.com>
-> > >
-> > > When committing new scheme parameters from the sysfs, copy the
-> > > target_nid and migrate_dests of the source schemes into the destination
-> > > schemes.
-> >
-> > Fixing the missed update of target_nid deserves Fixes: and Cc: stable@ in my
-> > opinion.  Could you please split and post the part as another patch?  For the
-> > Fixes, I think 83dc7bbaecae ("mm/damon/sysfs: use damon_commit_ctx()") should
-> > be appripriate.
-> 
-> Hi SJ,
-> 
-> To clarify, would you prefer it to be a seperate patch within the next
-> version of this patchset? Or would you prefer it to be sent separately
-> from the next version of the patchset?
+This series is an attempt to fix most of the issues, and effectively
+results more or less in a full rewrite of the driver, removing a lot
+of cruft and fixing the interactions with the PCI host driver in the
+process (there really isn't any reason to rely on initcall ordering
+anymore).
 
-I'd prefer latter (separate one).
+I've stopped short of repainting the MAINTAINERS file, but given how
+reactive Toan Le has been, maybe that's on the cards. Patches on top
+of -rc3, tested on a Mustang board. I'd really like this to hit 6.17!
 
-Sorry for making the point ambiguous, and giving me this chance to clarify :)
+* From v1:
 
+  - Killed CPUHP_PCI_XGENE_DEAD altogether
 
-Thanks,
-SJ
+  - Added a couple of definitions and helpers to make the hwirq/frame/group
+    mapping a bit less awkward
 
-[...]
+  - More comments about the weird and wonderful behaviour of MSInIRx
+    registerse
+
+  - Collected RB from tglx, with thanks
+
+Marc Zyngier (13):
+  genirq: Teach handle_simple_irq() to resend an in-progress interrupt
+  PCI: xgene: Defer probing if the MSI widget driver hasn't probed yet
+  PCI: xgene: Drop useless conditional compilation
+  PCI: xgene: Drop XGENE_PCIE_IP_VER_UNKN
+  PCI: xgene-msi: Make per-CPU interrupt setup robust
+  PCI: xgene-msi: Drop superfluous fields from xgene_msi structure
+  PCI: xgene-msi: Use device-managed memory allocations
+  PCI: xgene-msi: Get rid of intermediate tracking structure
+  PCI: xgene-msi: Sanitise MSI allocation and affinity setting
+  PCI: xgene-msi: Resend an MSI racing with itself on a different CPU
+  PCI: xgene-msi: Probe as a standard platform driver
+  PCI: xgene-msi: Restructure handler setup/teardown
+  cpu/hotplug: Remove unused cpuhp_state CPUHP_PCI_XGENE_DEAD
+
+ drivers/pci/controller/pci-xgene-msi.c | 428 +++++++++----------------
+ drivers/pci/controller/pci-xgene.c     |  33 +-
+ include/linux/cpuhotplug.h             |   1 -
+ kernel/irq/chip.c                      |   8 +-
+ 4 files changed, 187 insertions(+), 283 deletions(-)
+
+-- 
+2.39.2
+
 
