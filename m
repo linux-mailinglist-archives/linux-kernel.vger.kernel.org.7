@@ -1,143 +1,176 @@
-Return-Path: <linux-kernel+bounces-721439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB84AFC932
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:11:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D91E0AFC941
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E89321AA72A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:11:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 904474A6082
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7393D2D8DAE;
-	Tue,  8 Jul 2025 11:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E62E2D8DBE;
+	Tue,  8 Jul 2025 11:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Kvsk5ygc"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uMvJNSSX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630782D8768
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 11:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22BD1E9B2D;
+	Tue,  8 Jul 2025 11:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751973070; cv=none; b=uafCFCyU070nUiS2dAJonS8q4nTmxAfwrI2mBraVZ+1AA7j7eAsWX6qZ/hzWwjn49r80oRtXuLvBfoA0ZWqR7/0Y/TSzuLg7X9aqYtdHUBCJSwFMovWBi+rhEEQYg8CAmY+Idorx8ylWGYPzrD/244Rz4lhs9Tn2wVdw0Hh8MDM=
+	t=1751973131; cv=none; b=iCOE6GgJUueYc6UV6SmhgAsh93ABHI04CdjO0t6ln+ZV8yHjwdxTkaOAlp1ugB7veROSA5LUbna2dY9oVh00Pb7HQvzRda+c5/tdeLfHdCX0xvskW0Rw48ksohTL/CY3Eh2pQrebpu7q6t6o6q5McgIZ88dN3F1/ILjDTixnFCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751973070; c=relaxed/simple;
-	bh=uBITef0LLUWU1/Zarh1ggIbbNfjwqfPSV4C8QCz3YwA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mBsf43n/0rjAz8qqzBb150McBAy1FdPXUzhAixuTEGx4KDZwMW6ps3V1ea0yhrcCPlc8Bi2INTpPGIrC3K5jr/+IgG5cEzPRAo1wM54ZiYdSJSRt5pOpgT5R/hA6TEIexSY30mpI+zvajGdF4VQXN05yellVYiYFv/c0lTrel6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Kvsk5ygc; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568AAPWa001219
-	for <linux-kernel@vger.kernel.org>; Tue, 8 Jul 2025 11:11:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5lROYxN8HV9QfliUbHs8x/x9pgDZeMnRqOSq4a3lsV4=; b=Kvsk5ygcnt9/akyu
-	FMofRbZVBpsZkckiqXO+c5N+mDYmwMDXAUXXppIRld+q9cuk+Y78ZnQQ1ifUzFfB
-	nx5m2n0Jw/nSFah1+9GEP5nbJGwSOLA6BQ+DTgySr89IYmde81sxZKPilGVsbCGF
-	VYXT8xraDsASOfmasSqJQnva3bHCnU71rSbQ/LCUU8X/CGr7C1kPDoqAj4Y6QjrU
-	uWom8eFBD+CJTJZyOi0NQ43paTQs/kJgwciafNjwCbEAYfxhzudXpbrFHtt6Q6YH
-	fzMiUcjuRZ9TxCKRY78uPYdu1MiJzXmyj5U9cPM60cfMKF0F5DdGA0MBIIUqZHb1
-	vlGdyw==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47psdqw7rg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 11:11:08 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d3ea727700so25759985a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 04:11:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751973067; x=1752577867;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5lROYxN8HV9QfliUbHs8x/x9pgDZeMnRqOSq4a3lsV4=;
-        b=MWmdSsY6ZEd6QSg00UADpi9W0Moz+rkPGheTgHRqybl2JX60eN7qURmmGU8S6UfjW5
-         HPHAdiueVa8oQhEvTBkha/zH51OWK8SaLJWjNG1A5TDt4CXc+sGIJBYfVCIgeeUHAAow
-         Zyv5JCZ78clcJMT7zdA5t9uaoVJ3TG+RgJxY0I6cOUMV+OxyE5y7pomI+JQzW6dCjUEG
-         ACw8uZYicqebDeuVC4ZczpYjzw3rj8x7f+7oXwL0q58Qq5+oNPjO2H3pcjafkH+VROJi
-         h2BoA302OQpSHb5lfrUP7WCyIiko8vq5DS5tRXMY+Hx9zADH5cyVNeU6wcrAkMzydYEr
-         RnDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU58qFn49JOeTUZg4/pBMiHT1tqkkobh7zX1mvFdO6cFfQPWkVvz+2DgR2ALaPzFQzbGOn6WtUsa6sX1Ec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTFqZFMjqKuekCNxZv1Hk/TAU/XTbcQY/vwMLVOobDlXebJ529
-	GLMJZf9Jtu7n7vduXwc3VjdWkRbaXT3R2oHDC4BulH7Kiztd7M1uwpgigbyYjnO6McwiPvfiCgU
-	9Mbr/ZuuGiXksiCaWATAYYKOftVIhM4D1bUfxSwh7Z+wJRXlkmw0NtzaDSDBP9TXYW6M=
-X-Gm-Gg: ASbGncuuegZ3Gko9/ZyLfLODUdqyePqR8obWKtVYWHZoSXRDjztPW8O9+y0q5wAIh59
-	nTVeg5EAeXKffh29NUHq4/oscD4Zat6rVo3ampUE6oos5akPdjlLOGf52xmy+AJJO/yXaxJcub5
-	7ix3AcO393KzqqpFeOnocGzdHkEFOaTTKMkttUoI97DFtvSih6acdpWMqmvR3MEDaFYPLVSzEI5
-	My6nDxM6hdFeKJuLTXZMiW2laYzsHBBm8192yYNGJTeGCZ7QPjW7rzNObvJcDTuc3sWQUiYyaKa
-	WPCXJQuOAQIriY2IQ6oncS/NAxzsYoRxiNjTtCTuaQoh7RGPoQkyHSjWJkHJSn3rmQ910DZ4jSo
-	r7Fs=
-X-Received: by 2002:a05:620a:2901:b0:7d0:a01f:fb88 with SMTP id af79cd13be357-7d5ddb60e8dmr794914885a.3.1751973067335;
-        Tue, 08 Jul 2025 04:11:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGuD4l7AycjpL00d8RxKHZehgSiLvdJXlcj5pe/WMgV1DkSD/H3bFiAzsi8MVn+uWHE7oP1KQ==
-X-Received: by 2002:a05:620a:2901:b0:7d0:a01f:fb88 with SMTP id af79cd13be357-7d5ddb60e8dmr794913385a.3.1751973066933;
-        Tue, 08 Jul 2025 04:11:06 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fcb1fa9b8sm6943484a12.54.2025.07.08.04.11.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 04:11:06 -0700 (PDT)
-Message-ID: <c0694c1f-570e-4cf3-adee-86bddf684f53@oss.qualcomm.com>
-Date: Tue, 8 Jul 2025 13:11:04 +0200
+	s=arc-20240116; t=1751973131; c=relaxed/simple;
+	bh=qYlJIQBZZw0QX7Jkhi3+cl9CFM1ZAaSQYY9DTNGZLoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W3iP7VsSLRl8AidoIXyh1foWJdurSU4UomGIQXYMhJkgOQPJ9FaLxm6Zzm4E4i0BZi72WqUPuTpTOR8uo2mCrUJ4Ihh+wNSGR9I+Gc1Qjk18Xd+sc9LFjeJ3F8Yl6zh/WSjIJ961cmumboEvdN+/PjeOzO4BfFaBoIOzirRrUsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uMvJNSSX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A4C9C4CEED;
+	Tue,  8 Jul 2025 11:12:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751973131;
+	bh=qYlJIQBZZw0QX7Jkhi3+cl9CFM1ZAaSQYY9DTNGZLoI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uMvJNSSXJZOQ97hxkJGqHTHq1gJrmB7LR5lJL3TkMi189Qmdm08zr3t2Efa3Koyby
+	 T5l+dbsvTuMBgRM79wxfqrpEvk5iZzWMRbEJ7xFmzqRjGouYk1x9GJUs5kfagP7f8m
+	 2I1d4YhhcJCJSOdXpuytA/B2zMnsucdBmWpUav9YjZRP2+i1GhJDB2pmTjQcQ/+7Bd
+	 owIDZ1wQWEviozdtHSW9OAsqYaYzL79b6dozKfFJu4y3aIrJnNJaYXn6nnI7lc3WCX
+	 +ISVSm3kghRa12AMF9Oz6wolGPTad+/YAOKXw34JI+rfaFhl+zXampKZ3etHS30PcP
+	 Vv7jEdahtlRvg==
+Date: Tue, 8 Jul 2025 13:12:02 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Frank Li <Frank.Li@nxp.com>, Kishon Vijay Abraham I <kishon@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Anup Patel <apatel@ventanamicro.com>, Marc Zyngier <maz@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Shuah Khan <shuah@kernel.org>, Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	dlemoal@kernel.org, jdmason@kudzu.us, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v19 00/10] PCI: EP: Add RC-to-EP doorbell with platform
+ MSI controller
+Message-ID: <aGz9ApsBD-gQ50pf@ryzen>
+References: <20250609-ep-msi-v19-0-77362eaa48fa@nxp.com>
+ <roskp2zsjohrgll464u4jtbulzjid523u3yvgciifwiuoygv5t@7f7cj4wfy2y7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: qcom: pmic_glink: fix OF node leak
-To: Johan Hovold <johan@kernel.org>, Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-References: <20250708085717.15922-1-johan@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250708085717.15922-1-johan@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=ffSty1QF c=1 sm=1 tr=0 ts=686cfccc cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8
- a=KS6flrhD15DKHPIahM0A:9 a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-ORIG-GUID: VH1CkFTIkYb_gValiQlLLQi44ghsUNrG
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDA5MiBTYWx0ZWRfX5gBN+iIycrwS
- iF2UMCHMdbXESxyNmcjJexwuyUvaNnD7JDy3mM9BF8+i7k6+UxK7zHHOLjqvGBmDfr05ItH0KpP
- DVfU9wD0tSb8qX5GMwR9elUKjYfmB7j4HjdRcsF4zfTgIzboVnHgEz/5tPPeuRQm1Kmblty4sJc
- LdCyh7c0xXWodMygftk9z2KQ8VJpxnRuqfnAZOKH3WbOnaYqzf0zyD7EdEGK0qc5sm8VFRcf38C
- obb18BXf9fb/voTlFtMtKBT32f3WGaHYjrWy1RuzeV8NDPKtf6P0EZj8GIfGwKoZchk1M9xK+iH
- joedVJsY0n3xJdaJ8Tp3lnaAs31PaBcNW7ZHcVFyl0uva5abLYkDP8LQdH/i/47iMOAKMgLpNY1
- uctIzOnbPuk066yrUzik03CaYAf82lNbUgE/TG5+JCe0LXE7j/ClYzHTdY0AYqsd+lvggFp3
-X-Proofpoint-GUID: VH1CkFTIkYb_gValiQlLLQi44ghsUNrG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-08_03,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 mlxlogscore=999 mlxscore=0 bulkscore=0 priorityscore=1501
- phishscore=0 clxscore=1015 suspectscore=0 impostorscore=0 lowpriorityscore=0
- spamscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507080092
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <roskp2zsjohrgll464u4jtbulzjid523u3yvgciifwiuoygv5t@7f7cj4wfy2y7>
 
-On 7/8/25 10:57 AM, Johan Hovold wrote:
-> Make sure to drop the OF node reference taken when registering the
-> auxiliary devices when the devices are later released.
+On Wed, Jul 02, 2025 at 06:57:23PM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Jun 09, 2025 at 12:34:12PM GMT, Frank Li wrote:
 > 
-> Fixes: 58ef4ece1e41 ("soc: qcom: pmic_glink: Introduce base PMIC GLINK driver")
-> Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
-> ---
+> Frank, thanks for your persistence in pushing this series, really appreciated!
+> I've left some comments, but no real blocker.
+> 
+> Unfortunately, I don't have access to my endpoint setup right now. So I'll go
+> ahead with the Tested-by tag from Niklas once my comments are addressed.
 
-Hmm.. maybe the auxdev APIs could one day do this internally
+(snip)
 
-in any case
+> > Changes in v6:
+> > - add Niklas's test by tag
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+My Tested-by tag was added on v6, now it is v19 :)
 
-Konrad
+To be comfortable of still having my Tested-by tag here,
+I decided to test v19.
+
+However I got this:
+
+[ 3255.257047] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000040
+[ 3255.257824] Mem abort info:
+[ 3255.258069]   ESR = 0x0000000096000004
+[ 3255.258398]   EC = 0x25: DABT (current EL), IL = 32 bits
+[ 3255.258862]   SET = 0, FnV = 0
+[ 3255.259147]   EA = 0, S1PTW = 0
+[ 3255.259423]   FSC = 0x04: level 0 translation fault
+[ 3255.259849] Data abort info:
+[ 3255.260102]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+[ 3255.260580]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[ 3255.261020]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[ 3255.261483] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000100a03000
+[ 3255.262045] [0000000000000040] pgd=0000000000000000, p4d=0000000000000000
+[ 3255.262639] Internal error: Oops: 0000000096000004 [#1]  SMP
+[ 3255.263132] Modules linked in: rk805_pwrkey hantro_vpu v4l2_jpeg v4l2_vp9 v4l2_h264 v4l2_mem2mem videobuf2_v4l2 videobuf2_dma_contig videobuf2_memops videobuf2_common vidf
+[ 3255.265357] CPU: 5 UID: 0 PID: 213 Comm: ln Not tainted 6.16.0-rc1+ #233 PREEMPT 
+[ 3255.266009] Hardware name: Radxa ROCK 5B (DT)
+[ 3255.266388] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[ 3255.266995] pc : pci_epf_bind+0x160/0x240
+[ 3255.267350] lr : pci_epf_bind+0x40/0x240
+[ 3255.267694] sp : ffff800081593c30
+[ 3255.267983] x29: ffff800081593c30 x28: ffff0001024b2300 x27: ffff000102fc2800
+[ 3255.268606] x26: ffff00010191e000 x25: ffff000100504098 x24: ffff000107b8ec80
+[ 3255.269228] x23: ffff000104cf3578 x22: 0000000000000000 x21: 0000000000000000
+[ 3255.269850] x20: ffff000104cf3000 x19: ffff000104cf3578 x18: 0000000000000000
+[ 3255.270472] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+[ 3255.271093] x14: 0000000000000000 x13: ffff00010245c037 x12: ffff800081593b94
+[ 3255.271715] x11: 0000000528aa6179 x10: 0000000000000002 x9 : ffffa2593ce92b30
+[ 3255.272336] x8 : 00000031636e7566 x7 : 00000000ffffbe12 x6 : 0000000000000003
+[ 3255.272958] x5 : ffff000102413f78 x4 : ffff000102413f08 x3 : 0000000000000000
+[ 3255.273580] x2 : ffff0001024b2300 x1 : 0000000000000000 x0 : ffff000104cf3000
+[ 3255.274201] Call trace:
+[ 3255.274416]  pci_epf_bind+0x160/0x240 (P)
+[ 3255.274767]  pci_epc_epf_link+0x54/0xb0
+[ 3255.275104]  configfs_symlink+0x208/0x540
+[ 3255.275457]  vfs_symlink+0x158/0x1e0
+[ 3255.275770]  do_symlinkat+0x8c/0x138
+[ 3255.276083]  __arm64_sys_symlinkat+0x7c/0xc8
+[ 3255.276455]  invoke_syscall.constprop.0+0x48/0x100
+[ 3255.276874]  el0_svc_common.constprop.0+0x40/0xe8
+[ 3255.277285]  do_el0_svc+0x24/0x38
+[ 3255.277575]  el0_svc+0x34/0x100
+[ 3255.277852]  el0t_64_sync_handler+0x10c/0x140
+[ 3255.278233]  el0t_64_sync+0x198/0x1a0
+[ 3255.278554] Code: a9446bf9 394ff280 b902aa80 aa1403e0 (f94022a1) 
+[ 3255.279085] ---[ end trace 0000000000000000 ]---
+
+
+Seems to be from patch 1/10:
+
+(gdb) l *(pci_epf_bind+0x160)
+0xffff800080892c50 is in pci_epf_bind (drivers/pci/endpoint/pci-epf-core.c:132).
+127                             goto ret;
+128                     epf_vf->is_bound = true;
+129             }
+130
+131             epf->dev.id = PCI_EPF_DEVID(epf->func_no, 0);
+132             device_set_of_node_from_dev(&epf->dev, epc->dev.parent);
+133             ret = epf->driver->ops->bind(epf);
+134             if (ret)
+135                     goto ret;
+136             epf->is_bound = true;
+
+
+I can see that there is a lot of discussion on patch 1/10 already,
+but please drop my Tested-by tag until this has been fixed.
+
+Feel free to CC me on v20 of this series, if the problem is fixed,
+I will provide my Tested-by tag once again.
+
+
+Kind regards,
+Niklas
 
