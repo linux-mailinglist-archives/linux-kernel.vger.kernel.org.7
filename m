@@ -1,100 +1,111 @@
-Return-Path: <linux-kernel+bounces-721202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22356AFC60D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:45:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 400A7AFC639
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFFA9188D0E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:45:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D4753B1938
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF76E2BEC5A;
-	Tue,  8 Jul 2025 08:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6D12BE7B1;
+	Tue,  8 Jul 2025 08:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CwuNKy9w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AosVdAOP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2CB2BE626;
-	Tue,  8 Jul 2025 08:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C45210A1F
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 08:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751964285; cv=none; b=b1LaFYgJtdhQaRVdWZZE4WkIv4DQgNIi3vXdGuxQlyjmMxciwsBwWAI4HInNQrLusgJ9hW3auGKbGxum/GR+WWFO4E/rMMntI+W3kG50olwKLZhuQhBK0CIDZGsh258tfCiQFrr5/8IOvDeIISe8i5tpQmKfRrT3EP/aU/rhI0U=
+	t=1751964843; cv=none; b=VnSJNZIo4rE7QhMrcM3QGoXTbakDkQc/Jc97BSgOB/WzwNgqFShpP9MliWzrb760oX/NioOtWJ8JelEuR2XOw55vtdjTIy4QIOBNgZA8cmpSM80BFh9xsTwk+7y2l6KKLA/6xzHpS4vdHYDFLx9ySyPtrpCi0tCXmeyzthU69lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751964285; c=relaxed/simple;
-	bh=k1SPmXB5+lk94ERCX0iCOSE7q/kATspEm3dKYBqOT3c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pPMaG9Vj7pTVOTRdlGELJri08z7QYUhBe/YZd3oOeB8qoE7DNqGxbbU2mDGyxyBEIQrRjM0EsPKJQEbqbA1qpxVTZiUzeevXXcAxHz/Hs0NIzqMI5An2CiSiMcSYSey6WTSIJBXKfAcshr4Ah01fZxwN1f2TUbM7xkw3ebqW484=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CwuNKy9w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C339AC4CEF0;
-	Tue,  8 Jul 2025 08:44:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751964284;
-	bh=k1SPmXB5+lk94ERCX0iCOSE7q/kATspEm3dKYBqOT3c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=CwuNKy9w+yk8nmAAK2eZGO8yOFr2E7OFXXQz2IrSGDV4+SngkFxQKvFAVQ9xdw6jG
-	 Ji85XMm1KGhiHWh8AM/L3X0GZWI1mgfSZBNJLyPdUq5RnRAA+L02rMOwv7NwQW65lE
-	 us7eb7vZ+7jo/56ZFyAzovCNk1oKq1NwLHG8NDX/eWjWgosgANEeYROsZAEqutWPeT
-	 dJ/IPcpu98i/Xhj4ybYLB4bp1UaCchOsPbzacB0wAdW2cYKC30NHRh4i/OuJykwuaW
-	 sAvkh/5T1IyMrNQDmTwkE3FnGgRVMVGQq9mg2R8FTdj6jh5ivxBhyvuU3aQQGITEUr
-	 GKocRuoYmSImA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
-Cc: "Boqun Feng" <boqun.feng@gmail.com>,  "Miguel Ojeda" <ojeda@kernel.org>,
-  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>,  "Benno
- Lossin"
- <lossin@kernel.org>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross"
- <tmgross@umich.edu>,  "Danilo Krummrich" <dakr@kernel.org>,  "Jens Axboe"
- <axboe@kernel.dk>,  <linux-block@vger.kernel.org>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/9] rust: block,core: rename `RawWriter` to `BufferWriter`
-In-Reply-To: <CANiq72kcR2Mct=uTzDQrWzAFOePsxG8Y=pS_6aGocbAe+Xaimw@mail.gmail.com>
- (Miguel
-	Ojeda's message of "Mon, 07 Jul 2025 20:25:27 +0200")
-References: <20250616-rnull-up-v6-16-v1-0-a4168b8e76b2@kernel.org>
-	<20250616-rnull-up-v6-16-v1-3-a4168b8e76b2@kernel.org>
-	<bpbFNIoKHyMEJSNSRBaq96hzfyrWNtFJIotbYdqEAcPhLhPf_sg-1kNlty_Uj-1tPs0ZQHcGrT-wlVRHYbANqg==@protonmail.internalid>
-	<CANiq72nfeGwm17kp8OsmpgO-U6xMsuL9KBNwX34Rt1xz-Nxa1Q@mail.gmail.com>
-	<87o6twoxoc.fsf@kernel.org>
-	<snLGzUjHdzR0CIkyYFQU_2xo43YPtNEaZkf26_cO9O82_NKvYEg2upJVhQbuea50Rnunu5Yd-uEA43fwfHbsWA==@protonmail.internalid>
-	<CANiq72kcR2Mct=uTzDQrWzAFOePsxG8Y=pS_6aGocbAe+Xaimw@mail.gmail.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Tue, 08 Jul 2025 10:44:34 +0200
-Message-ID: <87ikk3oyvh.fsf@kernel.org>
+	s=arc-20240116; t=1751964843; c=relaxed/simple;
+	bh=31Lvx9M9j2Auiw/nFmkxArXsvuv+eb01+ksHvsbjmvY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dsUJ6U2pOXU/lYw3iDSdAf3gTbNH6lfjrPFqPgthKsTqkUSGO9zQrIXG6DgyxcwtXciCcFwoF1YgNei25FIYcWY86TTevrGTHkTqIaMaz5L2SLMrr/zZXR+SYexkB7hCt5JMrZPjQLB2rEzRSH/OGZ2mZITaYypZNnmPn1u37gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AosVdAOP; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751964842; x=1783500842;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=31Lvx9M9j2Auiw/nFmkxArXsvuv+eb01+ksHvsbjmvY=;
+  b=AosVdAOPIJtmXZy8eSg+e7EyiWndxBZF7zeugKk5pcjcJMDdwxDe3vT7
+   XGpYOKA0SJHXseb2Th8vKx9CXqClB3IXTpjqNtS3iK2RJY1LxFLB9WXx0
+   DCB01XMDVv7ZM1oru3N4PyMFQuubD2iPZaz3vNNkpobF6xb8VUOIRNQOb
+   Cil2+T3m+dMk8GSJ/N8MgnqOATKYKUfto2bUS9ARALGP4WX+hmBxbC9kw
+   xDvVFW0k4Z8fExzOBieJHffmsnuBjaIDiR5gjr4zL+qzZ5MNF18ZMK8hU
+   LfIEKWPGQOSGjlgfsLrL37AO+BcoYdggG3FulzQLJ8cOthb90XKMyxWC3
+   Q==;
+X-CSE-ConnectionGUID: NeaHcJ7UR1eaGrcudw8GKQ==
+X-CSE-MsgGUID: 9/J0MoUNS6uB0Fp5zlRfWA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="76744471"
+X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
+   d="scan'208";a="76744471"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 01:54:01 -0700
+X-CSE-ConnectionGUID: uJ35AiNaRfqZ6XKihSRZhA==
+X-CSE-MsgGUID: e3baX2QWTdeGTg5pEYgKWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
+   d="scan'208";a="160997170"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa004.fm.intel.com with ESMTP; 08 Jul 2025 01:53:58 -0700
+Date: Tue, 8 Jul 2025 16:45:44 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, jgg@ziepe.ca, kevin.tian@intel.com, will@kernel.org,
+	aneesh.kumar@kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, joro@8bytes.org, robin.murphy@arm.com,
+	shuah@kernel.org, aik@amd.com, dan.j.williams@intel.com,
+	baolu.lu@linux.intel.com, yilun.xu@intel.com
+Subject: Re: [PATCH v3 1/5] iommufd: Add iommufd_object_tombstone_user()
+ helper
+Message-ID: <aGzauAtJrUXS1Q/a@yilunxu-OptiPlex-7050>
+References: <20250627033809.1730752-1-yilun.xu@linux.intel.com>
+ <20250627033809.1730752-2-yilun.xu@linux.intel.com>
+ <aGLqoSTOfppG1MbB@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aGLqoSTOfppG1MbB@Asurada-Nvidia>
 
-"Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
+On Mon, Jun 30, 2025 at 12:50:57PM -0700, Nicolin Chen wrote:
+> On Fri, Jun 27, 2025 at 11:38:05AM +0800, Xu Yilun wrote:
+> > Add the iommufd_object_tombstone_user() helper, which allows the caller
+> > to destroy an iommufd object created by userspace.
+> 
+> Should we describe it "partially destroy"?
 
-> On Mon, Jul 7, 2025 at 4:58=E2=80=AFPM Andreas Hindborg <a.hindborg@kerne=
-l.org> wrote:
->>
->> The null insertion at the call site should be removed, it's a leftover
->> from before `BufferWriter` handled that.
->
-> Just in case -- I think that if you do that then you would only get
-> the null terminator at the end of the buffer.
->
-> i.e. the one your formatter (`RawWriter`) places is really at the end
-> of the buffer, rather than immediately after your formatted text, so
-> if you don't have the one at the call site, you would end with garbage
-> in the middle unless the disk name fits perfectly into the buffer.
+I don't prefer "partially destroy", it gives the impression the object
+is still in memory, in fact with the helper it is totally destroyed and
+freed. Only the ID is reserved, but the ID actually has nothing to do
+with the object anymore.
 
-I'll be sure to thoroughly check everything. Thanks for taking a look.
+> 
+> > This is useful on some destroy paths when the kernel caller finds the
+> > object should have been removed by userspace but is still alive. With
+> > this helper, the caller destroys the object but leave the object ID
+> > reserved (so called tombstone). The tombstone prevents repurposing the
+> > object ID without awareness of the original user.
+> > 
+> > Since this happens for abnomal userspace behavior, for simplicity, the
+> 
+> s/abnomal/abnormal
 
+Applied, thanks for catching.
 
-Best regards,
-Andreas Hindborg
-
-
-
+> 
+> Nicolin
 
