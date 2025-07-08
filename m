@@ -1,178 +1,246 @@
-Return-Path: <linux-kernel+bounces-721772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6331CAFCDA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:31:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B593BAFCDB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:33:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 095AF7B066A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:29:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E664A1BC1D67
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7322DC357;
-	Tue,  8 Jul 2025 14:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05CC2DFF3E;
+	Tue,  8 Jul 2025 14:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iwow6gqS"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KoQMuPz3"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2072.outbound.protection.outlook.com [40.107.223.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6E22B2D7;
-	Tue,  8 Jul 2025 14:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751985067; cv=none; b=biA7pUTSyzyRj0QlmB086Sf2/oRbtCaRHIRmKVRXqH+tQ6HxW4vb3htOiNdR+3YrbB7fXabqw5sGyPs1dvZHsrTJV8aDUL4zi1PVu2hT4umG+xvOgt3x2bs+lqt5epcADj+YLPdPwSO+m4H2ELgc1m6LPVqUPmG0lpjZzQRzmPc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751985067; c=relaxed/simple;
-	bh=OuHY8n2Odq3N7kvzxCgurj7dAhMVYiooBCIgediBTMY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=eycjUB298YkZxWWqznLgMoVuL+1iLUysvRhiQM4B3kYAFkYStTODj3CFfVInH80mvFAKRMoWp6PJfSDCF9sAt0ZBV+JvZfT9EUwTOERX+X+x2yu0BLY/s69NeQZdSUVNwCf7LceVBgyvaMxBpnv9CuMFsy9hacw+3MmtzoBuN+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iwow6gqS; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-74b54cead6cso2875289b3a.1;
-        Tue, 08 Jul 2025 07:31:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751985066; x=1752589866; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=BeYXPTb5LA7yVu+YZrMTInys/k5EZTTHl3niU3gqITo=;
-        b=iwow6gqSRKJI12DHuBHBinkd9P5iviK2PxohJhTaE6nYz77NkTIOIV6MAJ5DlOKsXu
-         ZmduLgcUVz7L+u0okgZfG4dSP1Ztgn03VApcixu8vS4j/eb36U9by30WUcpzb0RXfGmP
-         GzXR3PrcXAGbjdhMU23A/rf/ybcKTsQmfON/6fY5Kj0bH0+uiG5U9wVX51npbyavzKBA
-         /R+C99/EvaNDR04s1iseLtZL/Vg23+vuEZwpyz5NoeeJ3LHeuvNTrs/J8YL3R6t9lWdi
-         5RBeBeVYJZnclwbf/X/i0DctgFGGZsiAT55UZ8aPo5TXdgaZlw5z/WJuNstfmbHZIZrd
-         Lhfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751985066; x=1752589866;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BeYXPTb5LA7yVu+YZrMTInys/k5EZTTHl3niU3gqITo=;
-        b=qYntzS31bFg2ypfbb+GQ8OwSVs7ahSiGClycyYu4hCoZsfteSgjLHNS1AgkycDk8ap
-         OCvg9t4i/1h9aAteC3ArjXzYx+ETNNoszAmGe9kS4XiUNUIrd7g7Ig4864oxrboyG7il
-         tVywsMQ0wSogL5jbyY/VlGqjWIDsVK1S9BIRIA7BLAvxEs1IgTgcj8AMdDYH55/q0HbA
-         G4bBwh660n5DyTGpMnYPM6fr/cEC4TeE599mmkcryDolWAIxyFrAhykgf16TFDqoZMmd
-         r4W6ZpsXWoLNZ3ZQ8jtLL8f5WTG3D46pZvypQwOtS0xqZFIj1OX26Ds8odWOjPO0+yq5
-         TQyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBl0MPOIYWAvYY9iRbcT2SMSCejdkavARMN12WBY/07oS4OuDXVBjqEMsUjS8TG4HgbBOEgbqd7ImSVzA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5lz6WtXG0R5XsUA4aR6DLicPXLqgzzqeDcz5I/jAU91DplKqK
-	g0ymui86wL7qK1A8ibwNZ3/GkmeNN1woY9Qfxoq/ubjUQpw3zsAJJ3bT
-X-Gm-Gg: ASbGnctQoAprC8qqDnOfKiM9k57nL1SbuuGs5pzWAB14ycUEdhoZMpTzzIducsYoQsc
-	40YzWrzQQ2/cXdarToYaVbqreoCCWyWMvEqcsoe2AwIbGyw2po9umsqc95asLziuSJy1WZt+R/3
-	6xtg29hvc+Aq2+dErqebDlsLNJCsf5zFMN2/l8lDelrw9cMuMpcs+Aty6wPH7E4XBRZeAygR+61
-	ipW+Fw8H+WOSHzt6wYB9xlk7I5L3UrsmMrsQKUc2BtQP0RG8TcM4XY72+lF3bzxFOiAJRmWIwHJ
-	Sh2pNO98HS8eA25GBruPTeI6fLQN+G6cy/OkgDNzSIl1gKzRpxzYhyX9QxG2mTCfIWqPtF3RMDx
-	slFgho9++HqeBmKuQMsXqhVi38yB5kCLfhnlmWQU=
-X-Google-Smtp-Source: AGHT+IGi9NKWi8E6Z/7yPngDFJ9kYl1XknUux47tkMEMvUexqOhrnZdk0a18FdQITKgVztDsHDC/LA==
-X-Received: by 2002:a05:6a00:b89:b0:748:1bac:ad5f with SMTP id d2e1a72fcca58-74ce65a909fmr21643923b3a.12.1751985065387;
-        Tue, 08 Jul 2025 07:31:05 -0700 (PDT)
-Received: from ?IPV6:2001:ee0:4f0e:fb30:37c0:6356:b7b4:119a? ([2001:ee0:4f0e:fb30:37c0:6356:b7b4:119a])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce35d0014sm11883826b3a.67.2025.07.08.07.30.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 07:31:04 -0700 (PDT)
-Message-ID: <a9e0138f-3d8a-4178-b765-869de8ab13b6@gmail.com>
-Date: Tue, 8 Jul 2025 21:30:58 +0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43AD014883F;
+	Tue,  8 Jul 2025 14:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751985068; cv=fail; b=i5Ttj2riMYMiF92EFGk2NIFOPT1ti8F0LIURS0JTnKsVXT6Jw0bZN2h2ti9lyMbjekFPB06Rs5ghUKCtGD0acmtPS8iyL8k3oVC3LFcOFkFiEpmg6FIixy1vSgvXZ9K6tK5JtH9Okp7BUz+SwAuzT0dEn3EbZ095zLRfVnweZM4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751985068; c=relaxed/simple;
+	bh=3iMREBQOxAKeFWEnAlvVdyTI/aMZEZQ4+MnRxoedKe4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=CvB5writpHPPtE+SipwCPtmq2DG6d48nUkWFUPqw37DW6L+IhC8hNZdKqP1To9bJGCAKxZOKuqOiqV9emm4sMUkiim/2naPfAPV3pS5oQvz3FJ+NE8m+WgpD0yJDqu8Q8nFHynWMFLwIwBCpNopLEQdhULyFpi4R1fY/+w7jkbY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KoQMuPz3; arc=fail smtp.client-ip=40.107.223.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FkTtCjvMhCJ8LLEVVz4dOluKuhDgd1a6N2E8UuJNuEgBdVKFJqKiPsIM5bKcsVYNh0jGWcm5dyHV/s47SqZW711kIIWMDzgNRKJ6g2aJXn6+LcE3Ukh59RrJ1oqv5PrSPX5/vWrzcyzKlAvdZCpb07LnzRD6nYK4paj88D5fJV5k+L2VoGpcPc0c6mDeWNNBeZ6MeP+MAawHMYAH2+UgqtxWZq4wWBtjjF25q3uRO3/Jk9zWalXSuQU/ZjbD1VIcpLDpBdPw9sJt6j1Dla2dAslVUlJ1OM65J3ttDVFddjfAPQF+nDj7xvUhyI43BrYyrfKl6YifyppbQbFxbXBWCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5ao7EqSujX1oXnKB8CL8ma1yl8coxNIywgCv8+xmxQ4=;
+ b=pIDPGc1FUByp4okjT+KLR2uHuTgjbV1zs9MpaaYQiie/x3epfy/C9/t/V+FernUOlkRWbWTGQmhNKW/yjS29bMqmGNEas0fyrNVPsooYO7X24Jl0aatHBBT6o0Hb71Ad+S480P3LH+Io5dRllFhLxanZNWe4nTTTrkJpCqEExNjqirpbR7y8V5TNefavNMETX5P0c6wuE9RGEF6GaJVwQWz1zBmqtYf0LBhjm4UFD6hu0t0CgAcjSK3SXU4wseH5tkHX6E4a9RRX4K5SRVmLwILzncRtZ9kCS/inrvoz4qAOtwm1A4NKrDpALO8OKmHgATC3AN3xcsCUNn47Lpldyw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5ao7EqSujX1oXnKB8CL8ma1yl8coxNIywgCv8+xmxQ4=;
+ b=KoQMuPz3CumZUL8Fl+inwvDGgCYcZooVswQYdQeZ+o7iRESMsntAdLwosh36dMzP8HSKEALCSaW0BZoxtOB02RVIJGBfksjV8BFQ0hMullPsZiHBjNbP5aVUUVmj9HzubP3rqWA2IwJ0nmZRkl7ipfLu39u6F7vHnBRaoc7OWoI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by DS7PR12MB8417.namprd12.prod.outlook.com (2603:10b6:8:eb::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Tue, 8 Jul
+ 2025 14:31:03 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%3]) with mapi id 15.20.8901.024; Tue, 8 Jul 2025
+ 14:31:03 +0000
+Message-ID: <6758cecc-d324-4ed5-b38e-2a4384a34d60@amd.com>
+Date: Tue, 8 Jul 2025 10:31:01 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/5] reduce system memory requirement for hibernation
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: lijo.lazar@amd.com, victor.zhao@amd.com, haijun.chang@amd.com,
+ Qing.Ma@amd.com, Owen.Zhang2@amd.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Samuel Zhang <guoqing.zhang@amd.com>,
+ alexander.deucher@amd.com, christian.koenig@amd.com, len.brown@intel.com,
+ pavel@kernel.org, gregkh@linuxfoundation.org, dakr@kernel.org,
+ airlied@gmail.com, simona@ffwll.ch, ray.huang@amd.com,
+ matthew.auld@intel.com, matthew.brost@intel.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de
+References: <20250708074248.1674924-1-guoqing.zhang@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20250708074248.1674924-1-guoqing.zhang@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YT1PR01CA0134.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:2f::13) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] virtio-net: fix received length check in big packets
-From: Bui Quang Minh <minhquangbui99@gmail.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: netdev@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Gavin Li <gavinl@nvidia.com>, Gavi Teitz <gavi@nvidia.com>,
- Parav Pandit <parav@nvidia.com>, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250706141150.25344-1-minhquangbui99@gmail.com>
- <CACGkMEvCZ1D7k+=V-Ta9hXpdW4ofnbXfQ4JcADXabC13CA884A@mail.gmail.com>
- <9fa577cf-0999-431c-bfc9-e7911601543c@gmail.com>
-Content-Language: en-US
-In-Reply-To: <9fa577cf-0999-431c-bfc9-e7911601543c@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|DS7PR12MB8417:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6f03d260-aef6-448a-2976-08ddbe2c1119
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ditQanNBMS8wbDdwNUlHbmNuaWhEZ3RkeUk4UHlsOXUzNWN5bmFTUlIzakJD?=
+ =?utf-8?B?RXF3UTEvQmFNNFNiT0wvWjJGaUN6eG1FMG1KYWc3YWdIcTl1V0gwUTdiTnVO?=
+ =?utf-8?B?T09Ddk5iMk1hMHZpRkJFOWVwTm9xNXBhUmxuOUtjSEdvZ0dDRFNhd205QTR2?=
+ =?utf-8?B?TitiYnNlWEUxVlBBK0VUZHJaK09wejJSMVFiMVR5NnpjS2t0dWRlK1U1dDh0?=
+ =?utf-8?B?QnFxcmtVOVdpL3JXUFRGMmlRWDFFSEpnYndWVXZ4UVhvSEU4UFZ6Q2krZ3lG?=
+ =?utf-8?B?cTZrZllCelJIUis2VzVzT0JNaG9EenRXU2NlM2ZSSE9Pd3lkWC91Rjh4WlZR?=
+ =?utf-8?B?UjNxWEcwWGYzL1psNStFVWRwQ1FGY0tydjg5MzdTLzk4TTlHUjV1a3U0aURv?=
+ =?utf-8?B?S3FSRDdKUTBWNW5KVHVRYkdkaW4weStTMFFGUzY0ZmxQQ0l4cHE5WVdHb2JN?=
+ =?utf-8?B?MlZzMlUxS0wrWkg0SFJLTnhmYVpkRWR2RUZPcXNHT1I2NVJ5UGdQVWpzOXZZ?=
+ =?utf-8?B?ZGRGNTB2dnhzVVBsYTNPazFUTE9GcldEZW82OCsyVW5GNG1xanhkWDdoTEF4?=
+ =?utf-8?B?bGtCTWhzaFVONWFPUzFpam8vbDRqY2hlVGJLQXozaWVEdGx6eWVmVG9BeEk1?=
+ =?utf-8?B?MWxNTkdDdFIzaldUa1pxc1RQSE1lZlErOHM4dWQxQ2s4WkxsUGlQM25HSHA5?=
+ =?utf-8?B?TG5BMG5EUGtmTVQ3OHNydDdKdndGV0c4Sy92UnlSdS9qck9OWXB3ZVRjMnR6?=
+ =?utf-8?B?cWIydEFKbXlrMWJiRHh1QXNVUTVUZVNzNTFtN3dnWi9kQzY1WnRrTDByWDQz?=
+ =?utf-8?B?K3huQkFxL0hyeUlra0dnRkthM3RjaVpiSmJvelhBNDlsRHZiUUZrVDdWNnRh?=
+ =?utf-8?B?ejdPb2lpVnhxNHBKYU1vR092bE91NTFWaDV0L2xoUkpsd05XWDFhdUFXN1Zy?=
+ =?utf-8?B?RXJ1cnNqWTBid1d3NFU2bVJDem9OSEFsc1E0NnNzZU12L3VXWk9SWnJCUjhi?=
+ =?utf-8?B?TDZCOFpaRVlodlJoUXA5bTJRdzBaN2ErSmRyYmRZNmZUZWFuMzZqUUpreERS?=
+ =?utf-8?B?dmxXQ0g4VnRUTHZPZ284OFNyR3c2L2Jod2ZraEdmNzNCUzBZMFJsKzhuUGZY?=
+ =?utf-8?B?YmlYSWIvbXI0TzlOR0hHRkJ2cmc5RTNMRldmaXpqeDdFNTE2Q01SRkhkbzFp?=
+ =?utf-8?B?bmVTdk9hTzYrbi9EZWFzQk9OcW11UXUrelgvL2hvZk4zM1hHOVhXd2xiTGVB?=
+ =?utf-8?B?UUdJTUVXZUlQS3F6ZmlPeTFtMENZUGlUVEhhUnU0RHRTNDJhaGphVTI2VE5y?=
+ =?utf-8?B?YkFCVkk0TFM5SmxCTEpYenZidzRNWGhaUDEyOXlMQ3NHUWRhclVpOWwvRG4w?=
+ =?utf-8?B?eklvSGtvdkJBMFoxRHJxWk1KYkFoUHFhSTVIeGFzZFVLR2ltbTZFaER5TlZ3?=
+ =?utf-8?B?NkFNUU94M3UzYnlSSzJyRmZzSVQyUmppN3ozdWRDZUgrdXFKNGdqQ1N1VmJv?=
+ =?utf-8?B?TFFtd1IwWks0Ny9UNFcvQ3FiRkZ2dS9BSUN3UVFCL3I2b1FiK3RFVXBkVFhw?=
+ =?utf-8?B?N1FHeWpXVzB0cDN0VWlSa0tZQytVMEVqZU1HT2hPSHVSZGxtWjdPYklUUDky?=
+ =?utf-8?B?N1lMbnRWTVRZb0pPQ0NwZlF1czRFWWM1MkdYQ3UvTjNZTSsxSHdua1ZBelVv?=
+ =?utf-8?B?MW5kd1JSN0xMRXpNcDFJc0EwVWtmMFVQb29CWmlOVmFXUzEyZHdmSGYvUTlo?=
+ =?utf-8?B?d2IvR1QzK2Vsc2pzS1ZlQ3pxVkVFVkUxTFdNaTlQTmxtK0FsSzl6Vk9yVzJI?=
+ =?utf-8?B?Z0w3ZzM5emlrY3UxN3VnejZ6ZDlkVW9hcFJCaHB6RThrK3FxaTFVTnlBRGxq?=
+ =?utf-8?B?ZjJuLzN0bGhXZkJlTVhWS292cnpyL2txTDZvOVhwNEVpaDYyVlVYcDQvQUNk?=
+ =?utf-8?Q?3w8SAVVI85w=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?b3JjZ091T2hna0VzZExPSGxBYjBDb0FLUTZvM3hEMjE4STNsYmZJNG85ZEVP?=
+ =?utf-8?B?VDh3ZldwUGZWWC9OaFEwdjF3ZFdZdmRXcldzRXlYYlRNM0VOSWQzNVIyS25q?=
+ =?utf-8?B?djFWVTN3dXdFWnVnWkVMTEp3WUdXUitUVjBjWlA0WEhQWTByWVpzVWZmaHhs?=
+ =?utf-8?B?bE40VEpxUUE1VXV0VVdxK3NlU1AzbzY3T1pBZHVTSXYzNmZHYjloeXVLVEF2?=
+ =?utf-8?B?SVN3bGUrWEhMV0NmTHg2a0RIbVVwZG5KNlpNTWZ2a1g4Y3ArKy9KUjRQdVVR?=
+ =?utf-8?B?ZzV5WS8zaEIxL3g2NEJnUG9wbTY4K214V2lrZUtRa3JDeUpyaFhKa0tnY1Zi?=
+ =?utf-8?B?ejdNQjJZUlhHaGZrejVaUHdTQkdXcFVkelBYcHpxaG9ieXBhcGpLM05hbS9S?=
+ =?utf-8?B?ZGt2bDVURlNUbUpNbzA3ekZxSE1jbEMrQWRRL0RDUUFEYllRN1FpWTdDSHpN?=
+ =?utf-8?B?QkFBZ09OejV0cTQ3T0krVndmT1pkazkyd1ZSS0tvdXNSVE5hTWl3ek52cFJv?=
+ =?utf-8?B?Q1ZDcnNPcDdUbUM0d2huMkNXSGtieEJaQ1J3TDIxajBFZE85TDFMZ21uQlZk?=
+ =?utf-8?B?VDRzZ01tWVUyNFBtcHBoMWxISTJCWnR6MVF0VGdSQ1VCSjhablZvRmRXRXlh?=
+ =?utf-8?B?dzk2YUtEa1Q1VHFvMUIxL0s0TlFhT2lsV21QeGlmcmhkSEEybW90WGJnM2Qy?=
+ =?utf-8?B?R1Q4RW9zd2c4VU1MNWdaQS8yTW01TnJoNG40bVhCaFBNcEhBSFpnMU54WXNm?=
+ =?utf-8?B?L3FXbFpTQVBSNFpCUTVWdFo4TzRsd3ZYUUM2RVhnMkVoS292d2RocDFaenZt?=
+ =?utf-8?B?aHhtaUpBTmtTWkpIVVhRZlhLVVlLYzVsNzE2bVA4L3N4K1RzT2pxcVU4OHFQ?=
+ =?utf-8?B?RnVlNkwvS3BWSFNLQU5lMnR3d2J4MFZYOG05ZXpEVzBPNVpwZlRUVm9RUXFv?=
+ =?utf-8?B?aHloV1FidkhXQ1p0bGFCYVN3WStQVTZ0NGd1dUZqM09GMVRIbmdKRmNrcVVn?=
+ =?utf-8?B?bUhSeHVhNklHbWFSWTcxdEJYRkRYMkYxZ2s2QzV6d1oyTzdPb25xVDVBQTlX?=
+ =?utf-8?B?N2JmeVdDUHNnS25aTXB5di8vMkVyVE0yb1hTdWVsYTRSclVSZkJnZXlTeXJU?=
+ =?utf-8?B?YXZNS01NUmxBa0VubENXVElKckhvcWFjNHNvYWJHUUc4cFNwaXNJdGNWczZL?=
+ =?utf-8?B?SmpLTStFd20yR3MrRFFyUk5sNmFacVRkU0NkNWYzWHNiM3NSVEk1cXJGbi9i?=
+ =?utf-8?B?bStGY3E3QlNtNVZkL0Q3bnJLcm4vN3VzdU1BNEJjV21qMENRZlg3aG5ibmJL?=
+ =?utf-8?B?clp2SkVIclVmdWJINlZqZ3ZvR2JZU093WEtIbVlVcnVES0EyOTk1UWFHZUxR?=
+ =?utf-8?B?Q0kyY0JIbFhSVVhrQUsvN2tsOHZiL1dMTUhHOUZhdm1TWWhhY2V5QlQzamlY?=
+ =?utf-8?B?TXdrNFNQYXl6U1VLVWs0dVg1aDgzTHR0VXNRVGRMK3RGQTEyZmZRM1N5RVdC?=
+ =?utf-8?B?cjJMMm1xT0UyeFd3c3JZdDJTQ3RJUzRqOFFmRFpsQmp5M1dTbVhseTVmdVRQ?=
+ =?utf-8?B?UDZGcDJXd3k2RWNzZ3RyUDVMa1VncUxqNElvSEhaOU1sWEJzY2Z1eVBsTFp3?=
+ =?utf-8?B?UHhYQ08ySEJUbEJydU9HNHdnYVRzRWhMcjNLNXFiVGRKZnNhQU4zQzlIYXNy?=
+ =?utf-8?B?b1ZrNXhtLy8zeHp4aDY2cVpsM3ZXc2I0ci9oaGRtQkpxMk5sclJibFVCSGI2?=
+ =?utf-8?B?ZVdSWkY4aUVCOGNMS2cxT1Urc1A2MFRubnIwREt1dkM2MlNxaWU5dTdMb1A1?=
+ =?utf-8?B?UnFIQnlmQ1FDQjNDZGtOb2RVd3lkeVRQRG5IQWJ6aXZiZkNhVkxMVU8wRm51?=
+ =?utf-8?B?dDIwK2RVOXBQejlSNlNGbitSVHhXWkRyV0pCakViNkdxSVd3MVhOTmo1SzhR?=
+ =?utf-8?B?MFJpczlQVEtCVDk1QnlkZFFIbGlYZlgrMk5GaGZRSTVVbFUvZ0ZpK2p1THgw?=
+ =?utf-8?B?NXp3TW9vVnJabkZua3pVamlwRW1zS2QvazVUNXJETXYvU1V1cTJ4ZEYrdTRU?=
+ =?utf-8?B?WHhhOU1ZT1NaY0dLSlNNSnZJR0lOcm9NVTJUZWpmWWsxWWRCczZsdEhhM0dO?=
+ =?utf-8?Q?XFlQgzvccwQwTtGkk1ylbDJ64?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f03d260-aef6-448a-2976-08ddbe2c1119
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 14:31:03.3037
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: njPzWpc239Qy05+NG898nMOlCVCeVS/0lPZK26IjSRnC4UqGzTJkvNFGjarQrXDMgX+eOiBk+dLdR3emNHM9Vg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8417
 
-On 7/8/25 21:26, Bui Quang Minh wrote:
-> On 7/7/25 10:48, Jason Wang wrote:
->> On Sun, Jul 6, 2025 at 10:12 PM Bui Quang Minh 
->> <minhquangbui99@gmail.com> wrote:
->>> Since commit 4959aebba8c0 ("virtio-net: use mtu size as buffer length
->>> for big packets"), the allocated size for big packets is not
->>> MAX_SKB_FRAGS * PAGE_SIZE anymore but depends on negotiated MTU. The
->>> number of allocated frags for big packets is stored in
->>> vi->big_packets_num_skbfrags. This commit fixes the received length
->>> check corresponding to that change. The current incorrect check can 
->>> lead
->>> to NULL page pointer dereference in the below while loop when erroneous
->>> length is received.
->>>
->>> Fixes: 4959aebba8c0 ("virtio-net: use mtu size as buffer length for 
->>> big packets")
->>> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
->>> ---
->>>   drivers/net/virtio_net.c | 10 +++++++---
->>>   1 file changed, 7 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
->>> index 5d674eb9a0f2..ead1cd2fb8af 100644
->>> --- a/drivers/net/virtio_net.c
->>> +++ b/drivers/net/virtio_net.c
->>> @@ -823,7 +823,7 @@ static struct sk_buff *page_to_skb(struct 
->>> virtnet_info *vi,
->>>   {
->>>          struct sk_buff *skb;
->>>          struct virtio_net_common_hdr *hdr;
->>> -       unsigned int copy, hdr_len, hdr_padded_len;
->>> +       unsigned int copy, hdr_len, hdr_padded_len, max_remaining_len;
->>>          struct page *page_to_free = NULL;
->>>          int tailroom, shinfo_size;
->>>          char *p, *hdr_p, *buf;
->>> @@ -887,12 +887,16 @@ static struct sk_buff *page_to_skb(struct 
->>> virtnet_info *vi,
->>>           * tries to receive more than is possible. This is usually
->>>           * the case of a broken device.
->>>           */
->>> -       if (unlikely(len > MAX_SKB_FRAGS * PAGE_SIZE)) {
->>> +       BUG_ON(offset >= PAGE_SIZE);
->>> +       max_remaining_len = (unsigned int)PAGE_SIZE - offset;
->>> +       max_remaining_len += vi->big_packets_num_skbfrags * PAGE_SIZE;
->>> +       if (unlikely(len > max_remaining_len)) {
->>>                  net_dbg_ratelimited("%s: too much data\n", 
->>> skb->dev->name);
->>>                  dev_kfree_skb(skb);
->>> +               give_pages(rq, page);
->> Should this be an independent fix?
->
-> I've realized this is not needed. In receive_big(), if page_to_skb() 
-> returns NULL then give_pages() is called. I'll remove this in next 
-> version.
+On 7/8/2025 3:42 AM, Samuel Zhang wrote:
+> Modern data center dGPUs are usually equipped with very large VRAM. On
+> server with such dGPUs(192GB VRAM * 8) and 2TB system memory, hibernate
+> will fail due to no enough free memory.
+> 
+> The root cause is that during hibernation all VRAM memory get evicted to
+> GTT or shmem. In both case, it is in system memory and kernel will try to
+> copy the pages to hibernation image. In the worst case, this causes 2
+> copies of VRAM memory in system memory, 2TB is not enough for the
+> hibernation image. 192GB * 8 * 2 = 3TB > 2TB.
+> 
+> The fix includes following changes. With these changes, there's much less
+> pages needed to be copied to hibernate image and hibernation can succeed.
+> * patch 1 and 2: move GTT to shmem after evicting VRAM. so that the GTT
+>    pages can be freed.
+> * patch 3: force write shmem pages to swap disk and free shmem pages.
+> 
+> After swapout GTT to shmem in hibernation prepare stage, the GPU will be
+> resumed again in thaw stage. The swapin and restore BOs of resume takes
+> lots of time (50 mintues observed for 8 dGPUs). And it's unnecessary since
+> writing hibernation image do not need GPU for hibernate successful case.
+> * patch 4 and 5: skip resume of device in thaw stage for successful
+>    hibernation case to reduce the hibernation time.
+> 
+> v2:
+> * split first patch to 2 patches, 1 for ttm, 1 for amdgpu
+> * refined the new ttm api
+> * add more comments for shrink_shmem_memory() and its callsite
+> * export variable pm_transition in kernel
+> * skip resume in thaw() for successful hibernation case
+> v3:
+> * refined ttm_device_prepare_hibernation() to accept device argument
+> * use guard(mutex) to replace mutex_lock and mutex_unlock
+> * move ttm_device_prepare_hibernation call to amdgpu_device_evict_resources()
+> * add pm_transition_event(), instead of exporting pm_transition variable
+> * refined amdgpu_pmops_thaw(), use switch-case for more clarity
+> 
+> Samuel Zhang (5):
+> 1. drm/ttm: add ttm_device_prepare_hibernation() api
+> 2. drm/amdgpu: move GTT to shmem after eviction for hibernation
+> 3. PM: hibernate: shrink shmem pages after dev_pm_ops.prepare()
+> 4. PM: hibernate: add new api pm_transition_event()
+> 5. drm/amdgpu: do not resume device in thaw for normal hibernation
+> 
+>   drivers/base/power/main.c                  |  5 +++++
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 10 ++++++++-
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c    | 15 ++++++++++++-
+>   drivers/gpu/drm/ttm/ttm_device.c           | 23 +++++++++++++++++++
+>   include/drm/ttm/ttm_device.h               |  1 +
+>   include/linux/pm.h                         | 16 +++++++++++++
+>   kernel/power/hibernate.c                   | 26 ++++++++++++++++++++++
+>   7 files changed, 94 insertions(+), 2 deletions(-)
+> 
 
-It's a wrong fix actually. Calling give_pages twice will create bug.
+As there isn't a mention of intent on how to merge when this is fully 
+reviewed, I wanted to ask Rafael what he thinks.
 
->
->>
->>>                  return NULL;
->>>          }
->>> -       BUG_ON(offset >= PAGE_SIZE);
->>> +
->>>          while (len) {
->>>                  unsigned int frag_size = min((unsigned)PAGE_SIZE - 
->>> offset, len);
->>>                  skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags, 
->>> page, offset,
->>> -- 
->>> 2.43.0
->>>
->> Thanks
->>
->
+The options are either:
+* the linux-pm changes go to linux-pm and an immutable branch for drm to 
+merge
+* everything goes through amd-staging-drm-next (and an amdgpu PR to drm 
+later)
+* everything goes through drm-misc-next
+
+I think everything through drm-misc-next makes most sense if everyone is 
+amenable.
 
 
