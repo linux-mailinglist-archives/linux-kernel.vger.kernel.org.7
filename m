@@ -1,192 +1,81 @@
-Return-Path: <linux-kernel+bounces-721798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C5B1AFCE0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:44:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13406AFCE02
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4235C1888356
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:42:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 645484865EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158412E0900;
-	Tue,  8 Jul 2025 14:41:41 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40CBB2E093C;
+	Tue,  8 Jul 2025 14:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BE/fnwd1"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092C62DF3DA;
-	Tue,  8 Jul 2025 14:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355452DF3C6;
+	Tue,  8 Jul 2025 14:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751985700; cv=none; b=EQjq8jJh7jm4TLiurivvT/QdIcVo87I5fZwMgP51UNYgp06YQJgdwLY/P2JZFQ/B5aPke0AGyEogyc9aDMaFvX/nUWrxIOJ0M4/TIqJ/N1XXAXefsmWT7mgVNgPMtsTjHaI5OzwxDcU9CSDBvSyOQMotHFu08FDN/fn7cApQ/IU=
+	t=1751985701; cv=none; b=ROy8FIQGPKmhtPxYxm4PAabQYUMGYcbkThIMsTwigAKi+ZkUc8vG4dVfn6sx3HjP/pSXwTtx3+uOY87OUHXnCcq2SUEUyXbBKX7tHhIAcjZuHZlKJOGliBrSWsW+LdXkR20lUz1VZmdtb4kLReE9IJMoB8NyfK0XgC/nmGgcLz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751985700; c=relaxed/simple;
-	bh=hufHe4IE8eZf/XDENzkZEIR+zscCdMt60qnkA9EsX1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Emr5MJtLVLmWJmKJB14N1+6wuTCtPLukUdmMYroyCAUtiNxFrJ0wS7e2Chye8UIoETL00Usp0sr+l/m0SJM8x2uDvxym9EoEOCysFB0JD0GM7GYNJW6SWSSZRNk7eyNZjopwiSBX/mSMZ//uNuj+NLuWFgypQQuHIyW7ASpZxoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id CEE7C5A3E2;
-	Tue,  8 Jul 2025 14:41:34 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id 145452002D;
-	Tue,  8 Jul 2025 14:41:29 +0000 (UTC)
-Date: Tue, 8 Jul 2025 10:41:30 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Steven Rostedt
- <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
- <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
- Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
- E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
- Jens Remus <jremus@linux.ibm.com>, Andrew Morton
- <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
- <fweimer@redhat.com>, Sam James <sam@gentoo.org>
-Subject: Re: [PATCH v8 10/12] unwind_user/sframe: Enable debugging in
- uaccess regions
-Message-ID: <20250708104130.25b76df9@gandalf.local.home>
-In-Reply-To: <orpxec72lzxzkwhcu3gateqbcw6cdlojxvxmvopa2jxr67d4az@rvgfflvrbzk5>
-References: <20250708021115.894007410@kernel.org>
-	<20250708021200.058879671@kernel.org>
-	<CAHk-=widGT2M=kJJr6TwWsMjfYSghL9k3LgxJvRard0wtiP62A@mail.gmail.com>
-	<20250708092351.4548c613@gandalf.local.home>
-	<orpxec72lzxzkwhcu3gateqbcw6cdlojxvxmvopa2jxr67d4az@rvgfflvrbzk5>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1751985701; c=relaxed/simple;
+	bh=BZe8i4Wn0uwiHg4WBD4WjYTDW0sV8WCHivpedO9JF1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T7vns+HfmSovS1OZvd9K8W+cETC0V3UNi6+KcLs74+gwq8BD2JX7YdgfqUmyQ9LkMgHKUq0y6PNV0kaJpIPgrIpRAdTXJ8dJ2YgliB86sUa28Immdqyur/48sOeBkO6k+NUHA4DsOiXuiFHN1hzctExi9jDrVkIT1cOZCtk2G6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BE/fnwd1; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Ju/M13OYd3sN5W8yq1NDJZMrTP3DoIOefKkhdnuNzQU=; b=BE/fnwd1b7wHWqtzCvn+UIny7I
+	YHzYZ2ymA+rdoxkBb+0xOFe5FjVAOWuVDHZabKPYjDznhiXDfXQRDHvUTK651rwuJnqKCDvXBZJLZ
+	fhxNkitlyYbKzcrOrM4XokQb73ukxhl8Ego4UWkf8VIR07HWxGc0OwSkdACssAiZHg68=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uZ9Vj-000pbY-JT; Tue, 08 Jul 2025 16:41:31 +0200
+Date: Tue, 8 Jul 2025 16:41:31 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
+	shenjian15@huawei.com, liuyonglong@huawei.com,
+	chenhao418@huawei.com, jonathan.cameron@huawei.com,
+	shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
+	arnd@kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 10/11] net: hns3: use seq_file for files in
+ tx_bd_info/ and rx_bd_info/ in debugfs
+Message-ID: <18e9168b-71b1-46dd-9aea-6dd4116a87d7@lunn.ch>
+References: <20250708130029.1310872-1-shaojijie@huawei.com>
+ <20250708130029.1310872-11-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 145452002D
-X-Rspamd-Server: rspamout02
-X-Stat-Signature: qpmhrsiy8stxuor77jefwkrzwh6kjp34
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/Up2M/qA+CuKfyyqu6ZaHMccmLpLI3lTs=
-X-HE-Tag: 1751985689-715856
-X-HE-Meta: U2FsdGVkX1+W/NjgdaM3xA6WW1mpG1cw95ojVNGIy/a1YyTiN/lHqC/84cg0ilhSRJ/XcjCXtGVbAovK/Nl7PBxfAfmL6/yVth+cwODZL0AoIuiu6RMpEz6hHQdxPf+1wDoG7GTBzpcL/emRP2Uam06WhqId7C+vFKfzh9A5wXe8UWatqkzXGvmqYtuMRmrxtumxVE994G2T1YhwU0bDqpvFCbmOWnpFOUAXIWeWGNnP7XAh6gkYMY396ONf2EB0lW+mSc1Ifr9CCxM7cEKVIhE/LDBbfR4Qp3dKCLBd4XS5tUUQ4CNvvlRiN2uJ2c4XB9RbUlBlYFjyOltqZCoOQAY9EtY6dst0D5q53b+bt4LL69LvQrM0ZICc5OWSwbE8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708130029.1310872-11-shaojijie@huawei.com>
 
-On Tue, 8 Jul 2025 07:34:36 -0700
-Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-
-> I had found those debug printks really useful for debugging
-> corrupt/missing .sframe data, but yeah, this patch is ridiculously bad.
-> Sorry for putting that out into the world ;-)
+On Tue, Jul 08, 2025 at 09:00:28PM +0800, Jijie Shao wrote:
+> From: Jian Shen <shenjian15@huawei.com>
 > 
-> And those are all error paths, so it's rather pointless to do that whole
-> uaccess disable/enable/disable dance.
+> This patch use seq_file for the following nodes:
+> tx_bd_queue_*/rx_bd_queue_*
 > 
-> So yeah, drop it for now and I can replace it with something better
-> later on.
+> Signed-off-by: Jian Shen <shenjian15@huawei.com>
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
 
-Would something like this work? If someone enables the config to enable the
-validation, I don't think we need dynamic printk to do it (as that requires
-passing in the format directly and not via a pointer).
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
--- Steve
-
-diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c
-index 0060cc576776..524738e2b823 100644
---- a/kernel/unwind/sframe.c
-+++ b/kernel/unwind/sframe.c
-@@ -321,11 +321,24 @@ int sframe_find(unsigned long ip, struct unwind_user_frame *frame)
- 
- #ifdef CONFIG_SFRAME_VALIDATION
- 
--static __always_inline int __sframe_validate_section(struct sframe_section *sec)
-+/* Used to save error messages in uaccess sections */
-+struct err_msg {
-+	const char		*fmt;
-+	int			param1;
-+	int			param2;
-+	long			param3;
-+	long			param4;
-+};
-+
-+static __always_inline
-+int __sframe_validate_section(struct sframe_section *sec, struct err_msg *err)
- {
- 	unsigned long prev_ip = 0;
- 	unsigned int i;
- 
-+/* current->comm, current->pid, sec->filename */
-+#define ERR_HDR KERN_WARNING "%s (%d) %s: "
-+
- 	for (i = 0; i < sec->num_fdes; i++) {
- 		struct sframe_fre *fre, *prev_fre = NULL;
- 		unsigned long ip, fre_addr;
-@@ -341,7 +354,8 @@ static __always_inline int __sframe_validate_section(struct sframe_section *sec)
- 
- 		ip = sec->sframe_start + fde.start_addr;
- 		if (ip <= prev_ip) {
--			dbg_sec_uaccess("fde %u not sorted\n", i);
-+			err->fmt = ERR_HDR "fde %u not sorted\n";
-+			err->param1 = i;
- 			return -EFAULT;
- 		}
- 		prev_ip = ip;
-@@ -355,15 +369,23 @@ static __always_inline int __sframe_validate_section(struct sframe_section *sec)
- 
- 			ret = __read_fre(sec, &fde, fre_addr, fre);
- 			if (ret) {
--				dbg_sec_uaccess("fde %u: __read_fre(%u) failed\n", i, j);
--				dbg_print_fde_uaccess(sec, &fde);
-+				err->fmt = ERR_HDR
-+					"fde %u: __read_fre(%u) failed\n"
-+					"  frame_start=%lx frame_end=%lx\n";
-+				err->param1 = i;
-+				err->param2 = j;
-+				err->param3 = (long)sec->sframe_start;
-+				err->param4 = (long)sec->sframe_end;
- 				return ret;
- 			}
- 
- 			fre_addr += fre->size;
- 
- 			if (prev_fre && fre->ip_off <= prev_fre->ip_off) {
--				dbg_sec_uaccess("fde %u: fre %u not sorted\n", i, j);
-+				err->fmt = ERR_HDR
-+					"fde %u: fre %u not sorted\n";
-+				err->param1 = i;
-+				err->param2 = j;
- 				return -EFAULT;
- 			}
- 
-@@ -376,16 +398,26 @@ static __always_inline int __sframe_validate_section(struct sframe_section *sec)
- 
- static int sframe_validate_section(struct sframe_section *sec)
- {
-+	struct err_msg err;
- 	int ret;
- 
-+	memset(&err, 0, sizeof(err));
-+
- 	if (!user_read_access_begin((void __user *)sec->sframe_start,
- 				    sec->sframe_end - sec->sframe_start)) {
--		dbg_sec("section usercopy failed\n");
-+		pr_warn("%s (%d): section usercopy failed\n",
-+			current->comm, current->pid);
- 		return -EFAULT;
- 	}
- 
--	ret = __sframe_validate_section(sec);
-+	ret = __sframe_validate_section(sec, &err);
- 	user_read_access_end();
-+
-+	if (ret) {
-+		printk(err.fmt, current->comm, current->pid,
-+		       sec->filename, err.param1, err.param2,
-+		       err.param3, err.param4);
-+	}
- 	return ret;
- }
- 
+    Andrew
 
