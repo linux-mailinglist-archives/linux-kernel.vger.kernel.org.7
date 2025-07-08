@@ -1,333 +1,198 @@
-Return-Path: <linux-kernel+bounces-722490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF183AFDB40
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:41:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE83AFDB47
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 629DC1BC4636
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:42:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECBB71BC7B78
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A07264612;
-	Tue,  8 Jul 2025 22:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBBA264FA9;
+	Tue,  8 Jul 2025 22:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w7t8zKGV"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bcb/DXT7"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2084.outbound.protection.outlook.com [40.107.220.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016C0219A97
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 22:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752014494; cv=none; b=EhNPhwniTLTK9SY++Z6xDXRvI3RXZaKn+lzJWgmKGqlXnxZmhWvAx6+JCuUopFwq4uRXO/8wtc8IPcJjTwKYCuuV5CMs17AGv6SvL4IqFdKIPd0D6HznAgoj5HsUEkVW6izfaLIoplp8FdRqEJdUL0npByu7aphb9BvZe9EMyEw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752014494; c=relaxed/simple;
-	bh=1kXyuLy/QYOBhxUnBWPyeTMfwhlJVYUe/3BjrWh6vqg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=rdwYQSZuk1eg0w8KBRVh/SFZUgC9FoHPu2qQoawvByOQtVgFFfvEQaUqVmAz+2pf4IQzwYnjNev0mXKVGv4RFfOy+LDezJTgBVjLXy1CJFecxDZeWok8S5a5dJXCoQGGLKbhpINqWbEkh9YvBjhJA3gCqbPeIjltzKqdedjdPgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w7t8zKGV; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31215090074so7784270a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 15:41:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752014492; x=1752619292; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I0u1qoGnj9LN4tkr9GhaEhuZNf3o17sK4iKKs+684Xc=;
-        b=w7t8zKGVMRdk+Cpw0B9J+yqHWgtPn1u/KRQp1fyQFsBoq/YcxOxtvtqz5pdW3JBZNX
-         C2eDlXWHt+1vFVEpEhgZep22Aw3vA0xyOkp3aXKH+9v+B5dRCtVfXjfCQDjnR8giL8Fy
-         BFC+kff7H1aAhUUkrs0c5oC0HkR7+LTHojkA2tqtFL95C2Za7jf5bul3CqssEiwIW2CC
-         C+BqSVknUJvsjVU6r7JGDPCEpCuKqf9PUnTbTiiCAiXbD2tmi+p1opDRrP+tGj3JNyZs
-         n3K+Lr8MpKpbK0W96KUgmPcKT+WeR1Cb7VKMsPH/ggPPVwzbdD4sdl+QWYs2sOl11fdg
-         x6KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752014492; x=1752619292;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I0u1qoGnj9LN4tkr9GhaEhuZNf3o17sK4iKKs+684Xc=;
-        b=E2pTynLA/vc7mhHIsIOpX3yOhwSE5dZsETjP1bnLWYVZj4Xpq1+rjB4fM27n221QTe
-         st0YNYHm/rzXtRzyExJQGDtlWfXt9G1oHHh0bQM18SoRUObw/weKs+C/eTX05zJBFkwB
-         z2VPAKM7dUKN7AzawigAg/uVzR4ujb4Vaa8XZ3sNd8c/MbA8GlSg2Wj/DSmRqpNVlf5n
-         SsX7H9IVAGUWMVN3yN+1B6dCxPFzKZMWanOj7yTO7r3ExtqUBn/PUjo81dD/VR1Vma7x
-         OBRkRrc2M7KRUJ73FusOCN0BRwU5rwpoqXt/RUbfIOlnu/LpQogW6Z+C8lFHDRTR94F5
-         vsJA==
-X-Forwarded-Encrypted: i=1; AJvYcCXkYXGz2zHFKnK0XZCL8x5HNFk1Z9uN6ircfz69FracSdposF6XarwLwIAtHU9eft8hBudAIbMjqK0LYu4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynIbULAgA6yhyPh0xvriClRycSFSzen9apHkprPf+bvzlXWWdA
-	bZPOBUEk9pez+rwZrOjR8rVpdpzIZcyZZTIVqAut8mhjYN5lU1a8QdrosYARLf4Z9QR64SlXINK
-	cXef31A==
-X-Google-Smtp-Source: AGHT+IG35KopV0M6d/4mwwsrY1Z3Ock3I2TXgcjdcnhokqIHnAIu8j11vQ/lLNQRyARVssNNUj+GFLTnJmU=
-X-Received: from pjbru11.prod.google.com ([2002:a17:90b:2bcb:b0:31c:2fe4:33bc])
- (user=kuniyu job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3ec3:b0:311:e605:f60e
- with SMTP id 98e67ed59e1d1-31c2fdacf1dmr424271a91.20.1752014492333; Tue, 08
- Jul 2025 15:41:32 -0700 (PDT)
-Date: Tue,  8 Jul 2025 22:41:26 +0000
-In-Reply-To: <686d9b50.050a0220.1ffab7.0020.GAE@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76513262FFE
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 22:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752014610; cv=fail; b=WzG7wNL8GOvQzSnpLpmZw0qk+BxbcKsYwOY7dEKgDWcpSzxItvyBXNygYZpF1/dFK2URe00ScqEWbYhC51E9kd/cQSHLcDYUtSeWnqyOxbdFxvfRzE8dg+Uxm7Ec39UYcCWvATHi8jTGXBkrrO8xgf2NKhpN8mPw3w57FlQkFuo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752014610; c=relaxed/simple;
+	bh=WkfZzQ/kzP6wt771/lXdw2JEoEo6H160CUZqU/3xWFM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=TesSb+GN5uE1GKlChMfzRSTmnsgzNGZcFT3/SMCWDg528W1nvRMqiiokaD6gBq0tbfwW6LYMXl7+OVvBNfdclKxXkzAKsjb2VHBTlVoJaIu7PhI2sLJrlaVY8HTicoWZ9rgSs8Wk8+1gx7bnlESvFd8M2ZYwi9q2Y0sYHHVU2k0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bcb/DXT7; arc=fail smtp.client-ip=40.107.220.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eC46EkAXSICnW6pVHHB9qPnO5dDzqRMJoHrqbpBwotEbVWqnBmSRsDhxaPJr2mTrFlwm0IEHwooMk0lYnqUXDDfu4Lne2zqsJZesn7aoj5j7VhlZVj2qIM42ir/Oi/4nwWYGj+YO8AifyyC0ioxQYl5tCYgFqKcE/SuCeu+6zeYbAHhXuJO6dHZraNzz2ZCsg8PF62ILctJ43LioRRq1MM2j7JHuJTg5JZ1APx7WxDQB4c+jRTfEBkZPrBwt/BGcu1omuqtz8XnEFRuTBlvLBGdCavFPtZVV/jZ5O0aUC/yBNJ0Y+5kaHU4mbp5XzKWoVAt/ZxhbbDVnJWhyKRq5Cw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DJkeHE0g0IR8OQ0SGSOP9PTCQ3jpRnSMsTTRZz/+veI=;
+ b=Skv8Wsae0Rrcg7iDUq0ejjUehlhUvesT3WfJSsPxDC1FOTV3fMrOrBZzcWDKASk+lc6GXwPCp+AYDKryQUILGbgIfFtsTu4GKNo4UZfqj4kSwUVAHkgAZKlkAPeMrR+14KYXMO/qLiiGBof6p3sy8qa9hcoXyn3QKsUTYJPQQ+pXqvwxJAN6nf8rb/CPn7nmcaeV1K013lGzhwRnl/BeTohlCooOmQWPzltAkAhfFcm5pfCcVvEwaVoyFrUxEw3sKJJriFMJiovGve/uDqQWXGdokYBpoMbWHcBavu37QZgIxme+LZrY+wKe64V5av2gqDECbDE3IQphU4bn7S43Xw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DJkeHE0g0IR8OQ0SGSOP9PTCQ3jpRnSMsTTRZz/+veI=;
+ b=bcb/DXT7F2cIgeiqymHVVUgKLj8ISJT5757A8JIJmMfvJl48WSOjd4m1Fz9y/t/aemVm+/WaO7UXw3myOSkP7aDChGQyHxSVrsKXbfjnLjKp+j+TIvn16i+IEWvO5dzeHnn8m4qlpDyEDSu16Nh/9EEFMvb4kD6bylMkQ47LNADc2RTYLVCJXG/ylqHp6GS8LZX4HqM6k4v6KexQ0tzS6i7lF96XWIz54Sb8MHbSdDV0dywGdpjiuYZTeaX1SF/GR5tX98YbDdX6qeM/tjYskbY/UxyWRhTMPu+7MJXVALC25MFvm1J+R/5FQVondJuoNFASDfEN68+uVnAmDiMPDg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
+ by CH3PR12MB8484.namprd12.prod.outlook.com (2603:10b6:610:158::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.24; Tue, 8 Jul
+ 2025 22:43:25 +0000
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251%4]) with mapi id 15.20.8901.021; Tue, 8 Jul 2025
+ 22:43:25 +0000
+Message-ID: <537ab2a5-b95f-435d-a4f2-3de16c535b41@nvidia.com>
+Date: Wed, 9 Jul 2025 08:43:17 +1000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v1 resend 00/12] THP support for zone device page migration
+To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?=
+ <jglisse@redhat.com>, Shuah Khan <shuah@kernel.org>,
+ Barry Song <baohua@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Matthew Wilcox <willy@infradead.org>,
+ Peter Xu <peterx@redhat.com>, Zi Yan <ziy@nvidia.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Jane Chu <jane.chu@oracle.com>,
+ Alistair Popple <apopple@nvidia.com>, Donet Tom <donettom@linux.ibm.com>
+References: <20250703233511.2028395-1-balbirs@nvidia.com>
+ <6ac61b0b-980a-487e-8b88-8ff1bc3f9f17@redhat.com>
+Content-Language: en-US
+From: Balbir Singh <balbirs@nvidia.com>
+In-Reply-To: <6ac61b0b-980a-487e-8b88-8ff1bc3f9f17@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR03CA0373.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a1::18) To PH8PR12MB7277.namprd12.prod.outlook.com
+ (2603:10b6:510:223::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <686d9b50.050a0220.1ffab7.0020.GAE@google.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250708224131.332014-1-kuniyu@google.com>
-Subject: [syzbot] [lsm?] [net?] WARNING in kvfree_call_rcu
-From: Kuniyuki Iwashima <kuniyu@google.com>
-To: syzbot+40bf00346c3fe40f90f2@syzkaller.appspotmail.com
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, paul@paul-moore.com, syzkaller-bugs@googlegroups.com, 
-	kuniyu@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|CH3PR12MB8484:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0ba2a86e-29ff-4747-a941-08ddbe70d949
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MWVjYVk3QjErdG4wSXJkQnMrcHphMWUzRlJ5ZzlGcjVRMHUwN1BxbTFzTWhW?=
+ =?utf-8?B?U2RCUFlYdGNRVWFpU2M4OG4xV3k2dTRBVXdEanhVaHppMlFRQTRmcDE3OGlD?=
+ =?utf-8?B?UUM3MXl0ZTAzK2lXcjZkZ2FES0pFbTN2MWZ4T0tTZzlSTVlqT1hGUVpFdjVs?=
+ =?utf-8?B?aUdaV3AvRDlLRFgvbVZ1SVgwd0pmY1BpbXZGSGsxdURLbDhXeXI2STVhbS8v?=
+ =?utf-8?B?NXI0U2pyUVlpeEg5ZFVOWjFiRTFHYTRHRzRKVDFyUkF6Sm9iR1FkR2c0dktB?=
+ =?utf-8?B?cXVBR1N2NEVYd1pJYTdkRTh3Vng3NE5OUVRvSzJMaGxwcGhMK3V0NiswV3Zs?=
+ =?utf-8?B?Mm5hdHRTVFIxcEVrMy82ZS9HMmF1U2o1Q0Mwdm13dm5vSzJrTWJ4RldIOVFr?=
+ =?utf-8?B?YVkwNjdMRzYvM3h6U0J0a0N6S3dHVVpIbmJOaVZ2b0NXQlpSOHdCYi9McUV4?=
+ =?utf-8?B?ZnF3anVBTDE4NjErYkZDb1ZZQVhWRGlBZndhZjErVmdGT1dEYytTb2VuZFM4?=
+ =?utf-8?B?emx6cHdneWJTMTZ3Tkc3NmllRXNld1o1TDNINlNMRnhEcHJvVnRzLzV2UjI2?=
+ =?utf-8?B?UFJjTWd0V2Z3VWtOSWFPUDEwaUQ2NFIyYVdGK3pwRGdLdmd2c3g0VjBYaVlD?=
+ =?utf-8?B?RXJJT1lGaVBFVGRJa2dTR1F3c1ZqZmpCVmJZekl1ajBMNlFucmFSWDVYLzli?=
+ =?utf-8?B?YnlmNUxJNitsQ2dMZksxN0RBR1pCbVJZbVFaczVkUm5PSnZUUWhlcEJOVkhO?=
+ =?utf-8?B?eElWZTJNMzBUdG1iMkFESjl6TjBDNWlLd3ptMktBNmJOZENPMWowa2hVTHpp?=
+ =?utf-8?B?NG5ITUlSZTBqWjM5ZHh1b1dBMnczRmdKQThZVG11eDN5QWg5M3pDTkYxQXkw?=
+ =?utf-8?B?TXQzSGRyUjRZZEpleFNrZXFDaUIxYW9wbGlWTnNJVUNGVTk5Qy9PRkhNUTIr?=
+ =?utf-8?B?b25HVldLSlRnSmU4QjN2ZU4ydkFJZlB4L0pNQVFxVnVXNnhaRkQwSTNUSW1E?=
+ =?utf-8?B?eTVZbXhPM1BTcWxBcFlZcGl3Q2RnZWVLMnZPT1VNcFArRFZZUnNZNzh5WGt4?=
+ =?utf-8?B?UUlTQ0ZlTStYUWNDSFlSV0c2TFlpSnFzcHlGNG5md051VFBzd1UxSmVLQ0w3?=
+ =?utf-8?B?Q0M1UmptYWNzbXdvMzNub2pFa21mMzZFanBWM29aMTduNXRBeTd1aTV2cE9Y?=
+ =?utf-8?B?bE5XaGlWNXhDYnNiS0s3RXhua2NzZ3FqOVYxQjVVSVdwdUtvMVlLV1BZMFhs?=
+ =?utf-8?B?a0E5RjlUQys0RWMveVNtWWpSZDNhYnNJY0N4Y0tqK2pjdGx0WmFxNUw4V0l3?=
+ =?utf-8?B?eHdreVRkQWt6VTlGTUd1Uk9ENk5BT3B0QzJkeVg5Rm5ObGJUZTZGNHZQSTB2?=
+ =?utf-8?B?Q25kS2tQNDhUN2ZjM0FmNkRNSXgvNGxsWnNNTGxiR1RBdW1jbHhvZTEvcHdS?=
+ =?utf-8?B?dG5VMW03YXV6ZW5uRnJpcDBrWWlqQWZrNGNMS1VxVU9kVURrbU1ISFJpcC82?=
+ =?utf-8?B?Sm40Sk8rYUE2ekF4aDZNOVNYOFFtNDBsK2FEOHZUV0l4OXVIcEFHU2NkRThI?=
+ =?utf-8?B?Q0c3R3ZadHc4U3YzUUFUYklyNjk5UnB1VDdQdU45NXRncm1RYlQ4ZFZPaVZX?=
+ =?utf-8?B?akJDRTN0QmpoR1d2NGIyQnFZTnJVbmIxcXAvK2I5ak1IM2lHU3k3THM2Zzlj?=
+ =?utf-8?B?MlZXVGNqNGUzMUt2NDAvc1dFV1cwUUxyVkVoeTVTbS9YWURCaStIekh0MFpH?=
+ =?utf-8?B?cW41bUdUL1JSbmFzTW9vNUFFclg4OEdHUEtzTkgzU1hEeGxFN29JcTlHbE90?=
+ =?utf-8?B?VEdXMmNmRW9pd3VPa2pIRHdvT1NZWDZEeWRXd1A5cUFvZ3lGenNpZU1NdU5v?=
+ =?utf-8?B?TUpvTEhERXp4SnBLeHJhcWlLUkorNk9DcjRyRWFLcFdzVTU3N1NZVDN4OThu?=
+ =?utf-8?Q?BVMeHmx1F4Q=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dXl0cHAwWGk0ckNzZVQyZElWeVNpZWVCY3E4eFQrQ21BYzV4N1N3czJUK3BF?=
+ =?utf-8?B?TDdEMEVZRlY0TXhxSFROMWp1NXN2dVNMYnZxT0lLVU13WnloMHdrdHVTbkJ5?=
+ =?utf-8?B?cytjRytGTTcweWZCWW9JMHd4am1DL2hLNkVHYzZvbmp2T0lTYm5JTDhLMm11?=
+ =?utf-8?B?YmZ4VDAzTlNINk5Ya3k5cTY2Q214UkZ3MDlRWDVEaWdLNWVENjBUMlF3U1g5?=
+ =?utf-8?B?Sy85Y09DZmVLaEgvemJIUVUreFhlTjMrS3MvRmNzdkwwaUpkQlNPb0NJaGNn?=
+ =?utf-8?B?YXRqUlprazJJTWFGYmJab2pwenR4MDFNa0pkMlVyTnlYUE1UWlRnNjhIR3BD?=
+ =?utf-8?B?b292ZlBCb0lCdUZGaVltUldDZmtOejVjMmZNSzZVMXM3V0Nzckh3VGtES2RG?=
+ =?utf-8?B?STdKUHc0cnlYWUdpTnJJaUlYT3UyM1ZyUkFvd1l4RmFjUStVTWVHdnFLVm0z?=
+ =?utf-8?B?TjNJZmp1N2Z6R09aR1ZaS3liNjg3SW1QYWExTFo0WXNRQlpUOFZzbjNFbTY0?=
+ =?utf-8?B?MDl3WDB0NXFsTU9MQm1SaXBZQ1BPMjJqNnlyNkRkTTBTbnNwaVAvdVhoWklV?=
+ =?utf-8?B?S1c0UmIzMFVIcFRDeEFZM21MbjZVZGJXZ09Xd1U3NWh2dmdRSHg0VDlpNUdq?=
+ =?utf-8?B?c1REZnovSit5c0owRzhpY1ZNVTJaL004dndGT3ZsTnVkTVAzcFpnUktRYlQ3?=
+ =?utf-8?B?RnFRUjFVYzlHK1poSlVwcVpxSDFyYWJ6bmlqbTJuWUNvRFV0SDIreFEvNm4v?=
+ =?utf-8?B?M3dpN0dlRFduWmhHbDlpdStMS2hjUDl4NmhBSTdyamw3eksrMC9JM2gwbTd0?=
+ =?utf-8?B?ZXZUdlZnait2UTk3V25PK2lBWERDTVRybjVtZ3piejBTLy91c1dXVFlwd3U4?=
+ =?utf-8?B?K29XenZja1RVdDcxK2pmazBrMFhHVk85YXVUQWJrOWxiUWhHYk1Jd2c2U09t?=
+ =?utf-8?B?MGxncXRoeDdhL1J1bXJDcEU0UlZlWEJRWnRoRFFRbDVtTGJhOXJpazY2QXNm?=
+ =?utf-8?B?Y2JPcTVQR3NFTDlLM2MrdG96cEo3RG5NSmNaa2djdno5MTlzRXMzSUZXdlN1?=
+ =?utf-8?B?eC85UlY3eG1xRzFLVERXQlNyRGVqa2RzTzRzWTdmL1gvd3E4MGoyNmdWeWUz?=
+ =?utf-8?B?TGhZbGNIWTNuN0w2SE40WE9lQ2ZyOVBWbHA3SU45TmZvUlBramY3eVJRM0E0?=
+ =?utf-8?B?YXBvQUFhVGRUc202RUlGUDFHS0NWbllaaE82S1A4OGRTUDVBSzh1NFM4ckpl?=
+ =?utf-8?B?NFY3dGI1ZjlmeEluYXNDK2hLd2tWcWlSOS8vNFFEbGl0NGh4bjFhb2dVUFRh?=
+ =?utf-8?B?S083Mi9LYzRTWnlZeFNQdlVzeEo0ZzliRnVJeHdCNU9vY2EyRTdlTFVCUkNx?=
+ =?utf-8?B?aUV6U1FDNExqcDJlZnBsL3lBcXRRN0s4VnB4Yy85d29xK0FaL3FDL2t6aUhy?=
+ =?utf-8?B?SE5xUTJzY1BqZkNJUlBVMk81dkFyenZQNVlrNW5LblJZZzFyN3dnMEN0VDVN?=
+ =?utf-8?B?ajR4VDVzeE1kZldPOGVqSkdqaGJkZ3JVb2lzNy9BOW9RbW90V2U4bmgyWUFU?=
+ =?utf-8?B?aFJLN0o1dkJMdWtRMWw2V1dRZ1phQzJtR2U3SVFqTk5Rdy9tTmdaYVE2Tmph?=
+ =?utf-8?B?WC9DVG1xZkluMW1kMVFzQ2RrcEc0YW1wWlFUNXBOSUUxR0NHbjZCaXBhemp5?=
+ =?utf-8?B?Y0NIRHNkbXVxMmNXN0kxcHRlSFl6Skx2OU9meko4OTBzazBMK0tITTRoTFE4?=
+ =?utf-8?B?YWhFb2ZSN3BaSS9RNlZFb2txR3Zwei9pUHJzU20wVVpGV3FKZ0p6cUtPTWVQ?=
+ =?utf-8?B?SENQZWZ5RmJXb01sRS9NSi9HSlNNQVVPM2N5R0tzS0l3eVc1Y0gzVXdaOVRH?=
+ =?utf-8?B?T2ZZQ0RiWFdjY0tCVlFhZDNoZ1FyZ0pQYzdCWFRyQ2srbGhpTUxFNDhIb0Y5?=
+ =?utf-8?B?eE9HNzRoRE0wclZ4Q2dQTVpoMG9FdUNudnJXbHFPSVZIaWxNZUdBSm9wUDNy?=
+ =?utf-8?B?dFU0L0hKMldpSkZ4TCtGYlM5S0lqVFlpdk1tNzQydkZuWVlDSmFKc0wzcmlw?=
+ =?utf-8?B?eUdoVDJJNEIzei9FYzY2TzY3UmxsL09ieGtPSkZqZS9vTXFYYzZMRHBZc2xm?=
+ =?utf-8?Q?KZCcUhUq0qxtQYWNnSTB9oc8X?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0ba2a86e-29ff-4747-a941-08ddbe70d949
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 22:43:24.9270
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: l1L+rUGpZx28CVPDCOUvm58O/zgV1pV6qE8vaIlaOJmmCdBygzGit51X2MaN7jcefOLMVT/Rwavj/XcneYlkRg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8484
 
-From: syzbot <syzbot+40bf00346c3fe40f90f2@syzkaller.appspotmail.com>
-Date: Tue, 08 Jul 2025 15:27:28 -0700
-> Hello,
+On 7/9/25 00:53, David Hildenbrand wrote:
+> On 04.07.25 01:34, Balbir Singh wrote:
 > 
-> syzbot found the following issue on:
+> So, I shared some feedback as reply to "[RFC 00/11] THP support for zone device pages".
 > 
-> HEAD commit:    7482bb149b9f Merge branch 'for-next/core' into for-kernelci
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=130c528c580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3c06e3e2454512b3
-> dashboard link: https://syzkaller.appspot.com/bug?extid=40bf00346c3fe40f90f2
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1257428c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15fe9582580000
+> It popped up in my mail box again after there apparently was a discussion a couple of days ago.
 > 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/f623d741d651/disk-7482bb14.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/483e23ae71b1/vmlinux-7482bb14.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/79b5baaa1b50/Image-7482bb14.gz.xz
+> ... and now I realize that this is apparently the same series with renamed subject. Gah.
 > 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+40bf00346c3fe40f90f2@syzkaller.appspotmail.com
+> So please, find my feedback there -- most of that should still apply, scanning your changelog ...
 > 
-> ------------[ cut here ]------------
-> ODEBUG: activate active (active state 1) object: 000000006921da73 object type: rcu_head hint: 0x0
-> WARNING: CPU: 0 PID: 6718 at lib/debugobjects.c:615 debug_print_object lib/debugobjects.c:612 [inline]
-> WARNING: CPU: 0 PID: 6718 at lib/debugobjects.c:615 debug_object_activate+0x344/0x460 lib/debugobjects.c:842
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 6718 Comm: syz.0.17 Not tainted 6.16.0-rc4-syzkaller-g7482bb149b9f #0 PREEMPT 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-> pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : debug_print_object lib/debugobjects.c:612 [inline]
-> pc : debug_object_activate+0x344/0x460 lib/debugobjects.c:842
-> lr : debug_print_object lib/debugobjects.c:612 [inline]
-> lr : debug_object_activate+0x344/0x460 lib/debugobjects.c:842
-> sp : ffff8000a03a76d0
-> x29: ffff8000a03a76d0 x28: ffff8000976d7000 x27: dfff800000000000
-> x26: ffff80008afc2480 x25: 0000000000000001 x24: ffff8000891ac9a0
-> x23: 0000000000000003 x22: ffff80008b539420 x21: 0000000000000000
-> x20: ffff80008afc2480 x19: ffff8000891ac9a0 x18: 00000000ffffffff
-> x17: 3761643132393630 x16: ffff80008ae642c8 x15: ffff700011ede14c
-> x14: 1ffff00011ede14c x13: 0000000000000004 x12: ffffffffffffffff
-> x11: ffff700011ede14c x10: 0000000000ff0100 x9 : 5fa3c1ffaf0ff000
-> x8 : 5fa3c1ffaf0ff000 x7 : 0000000000000001 x6 : 0000000000000001
-> x5 : ffff8000a03a7018 x4 : ffff80008f766c20 x3 : ffff80008054d360
-> x2 : 0000000000000000 x1 : 0000000000000201 x0 : 0000000000000000
-> Call trace:
->  debug_print_object lib/debugobjects.c:612 [inline] (P)
->  debug_object_activate+0x344/0x460 lib/debugobjects.c:842 (P)
->  debug_rcu_head_queue kernel/rcu/rcu.h:236 [inline]
->  kvfree_call_rcu+0x4c/0x3f0 mm/slab_common.c:1953
->  cipso_v4_sock_setattr+0x2f0/0x3f4 net/ipv4/cipso_ipv4.c:1914
->  netlbl_sock_setattr+0x240/0x334 net/netlabel/netlabel_kapi.c:1000
->  smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
->  smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
->  security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
->  __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
->  __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
->  vfs_setxattr+0x158/0x2ac fs/xattr.c:321
->  do_setxattr fs/xattr.c:636 [inline]
->  file_setxattr+0x1b8/0x294 fs/xattr.c:646
->  path_setxattrat+0x2ac/0x320 fs/xattr.c:711
->  __do_sys_fsetxattr fs/xattr.c:761 [inline]
->  __se_sys_fsetxattr fs/xattr.c:758 [inline]
->  __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
->  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->  el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
->  el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
->  el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-> irq event stamp: 739
-> hardirqs last  enabled at (738): [<ffff80008055484c>] __up_console_sem kernel/printk/printk.c:344 [inline]
-> hardirqs last  enabled at (738): [<ffff80008055484c>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
-> hardirqs last disabled at (739): [<ffff80008aef73d4>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
-> softirqs last  enabled at (668): [<ffff8000891992e0>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
-> softirqs last  enabled at (668): [<ffff8000891992e0>] release_sock+0x14c/0x1ac net/core/sock.c:3776
-> softirqs last disabled at (712): [<ffff800082c8970c>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
-> ---[ end trace 0000000000000000 ]---
-> ------------[ cut here ]------------
-> ODEBUG: active_state active (active state 1) object: 000000006921da73 object type: rcu_head hint: 0x0
-> WARNING: CPU: 0 PID: 6718 at lib/debugobjects.c:615 debug_print_object lib/debugobjects.c:612 [inline]
-> WARNING: CPU: 0 PID: 6718 at lib/debugobjects.c:615 debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 6718 Comm: syz.0.17 Tainted: G        W           6.16.0-rc4-syzkaller-g7482bb149b9f #0 PREEMPT 
-> Tainted: [W]=WARN
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-> pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : debug_print_object lib/debugobjects.c:612 [inline]
-> pc : debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
-> lr : debug_print_object lib/debugobjects.c:612 [inline]
-> lr : debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
-> sp : ffff8000a03a76c0
-> x29: ffff8000a03a76d0 x28: ffff80008f671000 x27: dfff800000000000
-> x26: 0000000000000003 x25: 0000000000000000 x24: ffff0000cb6fd7a8
-> x23: 0000000000000001 x22: ffff80008afc2480 x21: ffff80008b539420
-> x20: 0000000000000000 x19: ffff8000891ac9a0 x18: 00000000ffffffff
-> x17: 3239363030303030 x16: ffff80008ae642c8 x15: ffff700011ede14c
-> x14: 1ffff00011ede14c x13: 0000000000000004 x12: ffffffffffffffff
-> x11: ffff700011ede14c x10: 0000000000ff0100 x9 : 5fa3c1ffaf0ff000
-> x8 : 5fa3c1ffaf0ff000 x7 : 0000000000000001 x6 : 0000000000000001
-> x5 : ffff8000a03a7018 x4 : ffff80008f766c20 x3 : ffff80008054d360
-> x2 : 0000000000000000 x1 : 0000000000000201 x0 : 0000000000000000
-> Call trace:
->  debug_print_object lib/debugobjects.c:612 [inline] (P)
->  debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064 (P)
->  debug_rcu_head_queue kernel/rcu/rcu.h:237 [inline]
->  kvfree_call_rcu+0x64/0x3f0 mm/slab_common.c:1953
->  cipso_v4_sock_setattr+0x2f0/0x3f4 net/ipv4/cipso_ipv4.c:1914
->  netlbl_sock_setattr+0x240/0x334 net/netlabel/netlabel_kapi.c:1000
->  smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
->  smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
->  security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
->  __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
->  __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
->  vfs_setxattr+0x158/0x2ac fs/xattr.c:321
->  do_setxattr fs/xattr.c:636 [inline]
->  file_setxattr+0x1b8/0x294 fs/xattr.c:646
->  path_setxattrat+0x2ac/0x320 fs/xattr.c:711
->  __do_sys_fsetxattr fs/xattr.c:761 [inline]
->  __se_sys_fsetxattr fs/xattr.c:758 [inline]
->  __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
->  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->  el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
->  el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
->  el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-> irq event stamp: 765
-> hardirqs last  enabled at (764): [<ffff80008055484c>] __up_console_sem kernel/printk/printk.c:344 [inline]
-> hardirqs last  enabled at (764): [<ffff80008055484c>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
-> hardirqs last disabled at (765): [<ffff80008aef73d4>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
-> softirqs last  enabled at (668): [<ffff8000891992e0>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
-> softirqs last  enabled at (668): [<ffff8000891992e0>] release_sock+0x14c/0x1ac net/core/sock.c:3776
-> softirqs last disabled at (712): [<ffff800082c8970c>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
-> ---[ end trace 0000000000000000 ]---
-> ------------[ cut here ]------------
-> kvfree_call_rcu(): Double-freed call. rcu_head 000000006921da73
-> WARNING: CPU: 0 PID: 6718 at mm/slab_common.c:1956 kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 6718 Comm: syz.0.17 Tainted: G        W           6.16.0-rc4-syzkaller-g7482bb149b9f #0 PREEMPT 
-> Tainted: [W]=WARN
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-> pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
-> lr : kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
-> sp : ffff8000a03a7730
-> x29: ffff8000a03a7730 x28: 00000000fffffff5 x27: 1fffe000184823d3
-> x26: dfff800000000000 x25: ffff0000c2411e9e x24: ffff0000dd88da00
-> x23: ffff8000891ac9a0 x22: 00000000ffffffea x21: ffff8000891ac9a0
-> x20: ffff8000891ac9a0 x19: ffff80008afc2480 x18: 00000000ffffffff
-> x17: 0000000000000000 x16: ffff80008ae642c8 x15: ffff700011ede14c
-> x14: 1ffff00011ede14c x13: 0000000000000004 x12: ffffffffffffffff
-> x11: ffff700011ede14c x10: 0000000000ff0100 x9 : 5fa3c1ffaf0ff000
-> x8 : 5fa3c1ffaf0ff000 x7 : 0000000000000001 x6 : 0000000000000001
-> x5 : ffff8000a03a7078 x4 : ffff80008f766c20 x3 : ffff80008054d360
-> x2 : 0000000000000000 x1 : 0000000000000201 x0 : 0000000000000000
-> Call trace:
->  kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955 (P)
->  cipso_v4_sock_setattr+0x2f0/0x3f4 net/ipv4/cipso_ipv4.c:1914
->  netlbl_sock_setattr+0x240/0x334 net/netlabel/netlabel_kapi.c:1000
->  smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
->  smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
->  security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
->  __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
->  __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
->  vfs_setxattr+0x158/0x2ac fs/xattr.c:321
->  do_setxattr fs/xattr.c:636 [inline]
->  file_setxattr+0x1b8/0x294 fs/xattr.c:646
->  path_setxattrat+0x2ac/0x320 fs/xattr.c:711
->  __do_sys_fsetxattr fs/xattr.c:761 [inline]
->  __se_sys_fsetxattr fs/xattr.c:758 [inline]
->  __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
->  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->  el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
->  el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
->  el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-> irq event stamp: 789
-> hardirqs last  enabled at (788): [<ffff80008055484c>] __up_console_sem kernel/printk/printk.c:344 [inline]
-> hardirqs last  enabled at (788): [<ffff80008055484c>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
-> hardirqs last disabled at (789): [<ffff80008aef73d4>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
-> softirqs last  enabled at (668): [<ffff8000891992e0>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
-> softirqs last  enabled at (668): [<ffff8000891992e0>] release_sock+0x14c/0x1ac net/core/sock.c:3776
-> softirqs last disabled at (712): [<ffff800082c8970c>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
-> ---[ end trace 0000000000000000 ]---
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
+Will do
 
-#syz test
+Thanks for letting me know
 
-diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
-index 3760131f14845..1fa519c597196 100644
---- a/net/smc/af_smc.c
-+++ b/net/smc/af_smc.c
-@@ -360,6 +360,16 @@ static void smc_destruct(struct sock *sk)
- 		return;
- 	if (!sock_flag(sk, SOCK_DEAD))
- 		return;
-+	switch (sk->sk_family) {
-+	case AF_INET:
-+		inet_sock_destruct(sk);
-+		break;
-+#if IS_ENABLED(CONFIG_IPV6)
-+	case AF_INET6:
-+		inet6_sock_destruct(sk);
-+		break;
-+#endif
-+	}
- }
- 
- static struct lock_class_key smc_key;
-diff --git a/net/smc/smc.h b/net/smc/smc.h
-index 78ae10d06ed2e..cc59d0f03e261 100644
---- a/net/smc/smc.h
-+++ b/net/smc/smc.h
-@@ -283,7 +283,10 @@ struct smc_connection {
- };
- 
- struct smc_sock {				/* smc sock container */
--	struct sock		sk;
-+	union {
-+		struct sock		sk;
-+		struct inet_sock	icsk_inet;
-+	};
- #if IS_ENABLED(CONFIG_IPV6)
- 	struct ipv6_pinfo	*pinet6;
- #endif
+Balbir Singh
 
