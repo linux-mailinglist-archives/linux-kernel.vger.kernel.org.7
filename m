@@ -1,225 +1,152 @@
-Return-Path: <linux-kernel+bounces-721539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38F71AFCA97
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:40:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B8BAFCA98
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8167416D265
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:40:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E27EC1887EC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6782DC340;
-	Tue,  8 Jul 2025 12:40:29 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F382DC34E;
+	Tue,  8 Jul 2025 12:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qokGK1NV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7B228935C
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 12:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE9D28935C
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 12:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751978428; cv=none; b=IJxsoslp7JA9Ex2jstL2kI5cnGqQzAJmOM+W3qZQ+ESPPJ6IPCGJQQtY2z2Tg2cn+8vzWi9vTIBCoFFHg9fTRp6MmQF0qmIiemYw9VS314FYeN9ZEgxTBRUIWCSjyu9+H4aMBo579ErngTF8ZrHKABWJ2VynO/qCtLbGx2f0/kQ=
+	t=1751978439; cv=none; b=KZFZUTz2vOe7KwR5rvB762t3UrJmKdwi/uHluWS08r90LGKwkY/Qxg9WCtR/mWIGH59oo8POYr+pFWBzZWkWbNfvaxGHw7xOCDfRfzJ1UMJZ54ct59zxbfzXFJd5KorHz7MXdODzEfQphbmb3tSMPDyHjKkfMHJJc6P459zHe+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751978428; c=relaxed/simple;
-	bh=O/mt5Laig4YvyGxBOM7n5YBR4Qhf37DNVb8KTwe0N+4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=R9hz+EgnWchjh463gedxTxWg0w0vA3Gs6/uyqiUEzf01R1bKCBf/NuvElaOrrBbGkqSux6ZMqTuwD3bDZE1ua+wCLxG4wEYeWZamyKzVnwDvhJ3qTsaUeR2XlmK8kl6XFcEV7X/O5XfiAp9eTviLDBlCFgh7pOxJXgNUtzC0Isw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3df4022687eso40922595ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 05:40:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751978426; x=1752583226;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zNeagxp53Cib7FyDAeK/ti1QQrnWh7OkocmUSUE0k20=;
-        b=kdpAxv0dO/w9Z29tt382SQDHM3xZU/Rmj5slCTynVio2/eYdVCQVrSdAgfkAo9VneB
-         OYPTJby3kvx5Ei6KBYVPaSxpLAiobZfbkpKvwz9LSfvMdBTYjhvsjU7ykDOg0ao3B3Oy
-         ezB+6JocNuZE3WND72V2Td8L1aC1Gm1LkrOmZ+qa4+WkTzrD9wFoYqPtsd4oFL4zw3EU
-         4GtkqqWR6xiwDyexEod4m+wFyS5xjsWS524By0E5c6+ZJ/bwj1RdWKEGsaIkVBwX9W9Z
-         GPOFonJ693b0dE8k6K4zJbk6C/ZzKWAdvmRkjy3+g2weDqZGW89Icpq9+9RqeIOFM6uH
-         zTQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEXKdN4mFC5J3WtKvR0t7HaDPOyqmcJ4678aTR/CjPPdmJbXLmf3zGPAHPuS4YojC4g13SXqgxUZIvLXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOILWgoPz9bpwcL6NbFBs8ffeE9sUtgcVSEbgmc5Y7AJs1XMRC
-	DZ3DDRXYjbFINkQI6MGT0MvsmEnF0Xwz/qcrhli+eGNTmkF0RbcLn8Yu81Rpx0wlIWtyrSENrtR
-	mdykfan5Xs79kmZdl0EZzV9/Abp0GzlXnCxjZNFywqswLkqnDl3l0CKi+uO4=
-X-Google-Smtp-Source: AGHT+IHW29YJ0mMkJYKj8RbFg2PDoBHxN7Fim5IsU3FV9f0fYeHOL+oENDpilrPghcgkrhRME5kY/BWHO2MReuuphrGQjynxh0a5
+	s=arc-20240116; t=1751978439; c=relaxed/simple;
+	bh=jHbuF3dfK5BzD3MYHKV7hRBsqJHQvER1aMUv48TCEjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uOjqb71caoizM+fakbrZ2kqVpUQfJY+wzcvmSTYVOwoP01QgBcTVAUXQYRVgNB8jFPu+H8JikSsT8g56oz0Fckq+ovPXMDsaiwOh69yG+QsuUWvjvN3RRGrr5O52XNYSbMsiDV6I/HnNx7HM5BlI7VPWWXaE0QiHpiGPAHMHhx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qokGK1NV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84170C4CEED;
+	Tue,  8 Jul 2025 12:40:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751978438;
+	bh=jHbuF3dfK5BzD3MYHKV7hRBsqJHQvER1aMUv48TCEjs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qokGK1NVHVFp7xdwlYW7ZoDzXfTABLLplE3Cqyp0h59Bv4+Ft/ybT1AOAkVnGQ1Eo
+	 jvMRg7cRWoW7RabyODme4Pv0AswnQa858yCp0Fq5azUNoQCpYamJgpnF4sPVenweOX
+	 3m71A2wIf24we0PZyrufYrAPygaytO1odpWDs8zbNF9CcpPcHyYhLxW/v4rcS3CvOA
+	 6Eer1D6dPrGi3NTxKzoiTvMBHTbAIXiaOW1v7lPa4xdBT9uC5KuM9RLLT19UbHug8e
+	 9q1q+IGpBrvh+SFg1oQoxfkp4lABMOXdthkK6MTY8XzMluPKD6IBEcYXTAG0hzOA8R
+	 dZ5L2Dc3qX0uw==
+Date: Tue, 8 Jul 2025 14:40:36 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+Cc: anna-maria@linutronix.de, tglx@linutronix.de,
+	linux-kernel@vger.kernel.org, xiexiuqi@huawei.com,
+	bobo.shaobowang@huawei.com
+Subject: Re: [PATCH] hrtimers: Update new CPU's next event in
+ hrtimers_cpu_dying()
+Message-ID: <aG0RxASJqknbaUkM@localhost.localdomain>
+References: <20250708101727.166892-1-wangxiongfeng2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:112:b0:3dd:bf91:23f7 with SMTP id
- e9e14a558f8ab-3e154e51b43mr20192605ab.7.1751978425899; Tue, 08 Jul 2025
- 05:40:25 -0700 (PDT)
-Date: Tue, 08 Jul 2025 05:40:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686d11b9.050a0220.1ffab7.0009.GAE@google.com>
-Subject: [syzbot] [net?] possible deadlock in ptp_clock_adjtime
-From: syzbot <syzbot+28ddd7a3988eea351eb3@syzkaller.appspotmail.com>
-To: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, richardcochran@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250708101727.166892-1-wangxiongfeng2@huawei.com>
 
-Hello,
+Le Tue, Jul 08, 2025 at 06:17:27PM +0800, Xiongfeng Wang a écrit :
+> When testing softirq based hrtimers on an ARM32 board, with high
+> resolution mode and nohz are both inactive, softirq based hrtimers
+> failed to trigger when moved away from an offline CPU. The flowpath
+> is as follows.
+> 
+> CPU0				CPU1
+> 				softirq based hrtimers are queued
+> 				offline CPU1
+> 				move hrtimers to CPU0 in hrtimers_cpu_dying()
+> 				send IPI to CPU0 to retrigger next event
+> 'softirq_expires_next' is KTIME_MAX
+> call retrigger_next_event()
+> highres and nohz is inactive,just return
+> 'softirq_expires_next' is not updated
+> hrtimer softirq is never triggered
+> 
+> Some softirq based hrtimers are queued on CPU1. Then we offline CPU1.
+> hrtimers_cpu_dying() moves hrtimers from CPU1 to CPU0, and then it send
+> a IPI to CPU0 to let CPU0 call retrigger_next_event(). But high
+> resolution mode and nohz are both inactive. So retrigger_next_event()
+> just returned. 'softirq_expires_next' is never updated and remains
+> KTIME_MAX. So hrtimer softirq is never raised.
+> 
+> To fix this issue, we call hrtimer_update_next_event() in
+> hrtimers_cpu_dying() to update 'softirq_expires_next' for the new CPU.
+> It also update hardirq hrtimer's next event, but it should have no bad
+> effect.
+> 
+> Fixes: 5c0930ccaad5 ("hrtimers: Push pending hrtimers away from outgoing CPU earlier")
+> Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+> ---
+>  kernel/time/hrtimer.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+> index 30899a8cc52c..ff97eb36c116 100644
+> --- a/kernel/time/hrtimer.c
+> +++ b/kernel/time/hrtimer.c
+> @@ -2298,8 +2298,11 @@ int hrtimers_cpu_dying(unsigned int dying_cpu)
+>  	/*
+>  	 * The migration might have changed the first expiring softirq
+>  	 * timer on this CPU. Update it.
+> +	 * We also need to update 'softirq_expires_next' here, because it will
+> +	 * not be updated in retrigger_next_event() if high resolution mode
+> +	 * and nohz are both inactive.
+>  	 */
+> -	__hrtimer_get_next_event(new_base, HRTIMER_ACTIVE_SOFT);
+> +	hrtimer_update_next_event(new_base);
+>  	/* Tell the other CPU to retrigger the next event */
+>  	smp_call_function_single(ncpu, retrigger_next_event, NULL, 0);
 
-syzbot found the following issue on:
+It seems that a similar problem can happen while enqueueing a timer
+from an offline CPU (see the call to smp_call_function_single_async()).
 
-HEAD commit:    d7b8f8e20813 Linux 6.16-rc5
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12b3728c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c963f5de3d9eab7d
-dashboard link: https://syzkaller.appspot.com/bug?extid=28ddd7a3988eea351eb3
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+How about this (untested) instead? retrigger_next_event, is not a fast
+path so we don't care about rare extra cost:
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b35e485ae779/disk-d7b8f8e2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8478fc45f5f6/vmlinux-d7b8f8e2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/86a991e3c539/bzImage-d7b8f8e2.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+28ddd7a3988eea351eb3@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.16.0-rc5-syzkaller #0 Tainted: G     U             
-------------------------------------------------------
-syz.0.4267/20512 is trying to acquire lock:
-ffff88802ffba868 (&ptp->n_vclocks_mux){+.+.}-{4:4}, at: ptp_vclock_in_use drivers/ptp/ptp_private.h:113 [inline]
-ffff88802ffba868 (&ptp->n_vclocks_mux){+.+.}-{4:4}, at: ptp_vclock_in_use drivers/ptp/ptp_private.h:99 [inline]
-ffff88802ffba868 (&ptp->n_vclocks_mux){+.+.}-{4:4}, at: ptp_clock_freerun drivers/ptp/ptp_private.h:130 [inline]
-ffff88802ffba868 (&ptp->n_vclocks_mux){+.+.}-{4:4}, at: ptp_clock_freerun drivers/ptp/ptp_private.h:125 [inline]
-ffff88802ffba868 (&ptp->n_vclocks_mux){+.+.}-{4:4}, at: ptp_clock_adjtime+0x527/0x760 drivers/ptp/ptp_clock.c:125
-
-but task is already holding lock:
-ffff88802ffba130 (&clk->rwsem){++++}-{4:4}, at: get_posix_clock kernel/time/posix-clock.c:25 [inline]
-ffff88802ffba130 (&clk->rwsem){++++}-{4:4}, at: get_clock_desc+0x125/0x240 kernel/time/posix-clock.c:209
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&clk->rwsem){++++}-{4:4}:
-       down_write+0x92/0x200 kernel/locking/rwsem.c:1577
-       posix_clock_unregister+0x4d/0xd0 kernel/time/posix-clock.c:184
-       ptp_clock_unregister+0x14f/0x250 drivers/ptp/ptp_clock.c:432
-       ptp_vclock_unregister+0x11a/0x160 drivers/ptp/ptp_vclock.c:228
-       unregister_vclock+0x108/0x1a0 drivers/ptp/ptp_sysfs.c:177
-       device_for_each_child_reverse+0x133/0x1a0 drivers/base/core.c:4051
-       n_vclocks_store+0x4b6/0x6d0 drivers/ptp/ptp_sysfs.c:241
-       dev_attr_store+0x58/0x80 drivers/base/core.c:2440
-       sysfs_kf_write+0xf2/0x150 fs/sysfs/file.c:145
-       kernfs_fop_write_iter+0x354/0x510 fs/kernfs/file.c:334
-       new_sync_write fs/read_write.c:593 [inline]
-       vfs_write+0x6c4/0x1150 fs/read_write.c:686
-       ksys_write+0x12a/0x250 fs/read_write.c:738
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&ptp->n_vclocks_mux){+.+.}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3168 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3287 [inline]
-       validate_chain kernel/locking/lockdep.c:3911 [inline]
-       __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5240
-       lock_acquire kernel/locking/lockdep.c:5871 [inline]
-       lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5828
-       __mutex_lock_common kernel/locking/mutex.c:602 [inline]
-       __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:747
-       ptp_vclock_in_use drivers/ptp/ptp_private.h:113 [inline]
-       ptp_vclock_in_use drivers/ptp/ptp_private.h:99 [inline]
-       ptp_clock_freerun drivers/ptp/ptp_private.h:130 [inline]
-       ptp_clock_freerun drivers/ptp/ptp_private.h:125 [inline]
-       ptp_clock_adjtime+0x527/0x760 drivers/ptp/ptp_clock.c:125
-       pc_clock_adjtime+0x115/0x1e0 kernel/time/posix-clock.c:239
-       do_clock_adjtime kernel/time/posix-timers.c:1162 [inline]
-       __do_sys_clock_adjtime+0x172/0x290 kernel/time/posix-timers.c:1174
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(&clk->rwsem);
-                               lock(&ptp->n_vclocks_mux);
-                               lock(&clk->rwsem);
-  lock(&ptp->n_vclocks_mux);
-
- *** DEADLOCK ***
-
-1 lock held by syz.0.4267/20512:
- #0: ffff88802ffba130 (&clk->rwsem){++++}-{4:4}, at: get_posix_clock kernel/time/posix-clock.c:25 [inline]
- #0: ffff88802ffba130 (&clk->rwsem){++++}-{4:4}, at: get_clock_desc+0x125/0x240 kernel/time/posix-clock.c:209
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 20512 Comm: syz.0.4267 Tainted: G     U              6.16.0-rc5-syzkaller #0 PREEMPT(full) 
-Tainted: [U]=USER
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_circular_bug+0x275/0x350 kernel/locking/lockdep.c:2046
- check_noncircular+0x14c/0x170 kernel/locking/lockdep.c:2178
- check_prev_add kernel/locking/lockdep.c:3168 [inline]
- check_prevs_add kernel/locking/lockdep.c:3287 [inline]
- validate_chain kernel/locking/lockdep.c:3911 [inline]
- __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5240
- lock_acquire kernel/locking/lockdep.c:5871 [inline]
- lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5828
- __mutex_lock_common kernel/locking/mutex.c:602 [inline]
- __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:747
- ptp_vclock_in_use drivers/ptp/ptp_private.h:113 [inline]
- ptp_vclock_in_use drivers/ptp/ptp_private.h:99 [inline]
- ptp_clock_freerun drivers/ptp/ptp_private.h:130 [inline]
- ptp_clock_freerun drivers/ptp/ptp_private.h:125 [inline]
- ptp_clock_adjtime+0x527/0x760 drivers/ptp/ptp_clock.c:125
- pc_clock_adjtime+0x115/0x1e0 kernel/time/posix-clock.c:239
- do_clock_adjtime kernel/time/posix-timers.c:1162 [inline]
- __do_sys_clock_adjtime+0x172/0x290 kernel/time/posix-timers.c:1174
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ffbd478e929
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffbd5676038 EFLAGS: 00000246 ORIG_RAX: 0000000000000131
-RAX: ffffffffffffffda RBX: 00007ffbd49b6080 RCX: 00007ffbd478e929
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: fffffffffffffffb
-RBP: 00007ffbd4810b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007ffbd49b6080 R15: 00007fff4cf8c228
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index 30899a8cc52c..e8c479329282 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -787,10 +787,10 @@ static void retrigger_next_event(void *arg)
+ 	 * of the next expiring timer is enough. The return from the SMP
+ 	 * function call will take care of the reprogramming in case the
+ 	 * CPU was in a NOHZ idle sleep.
++	 *
++	 * In periodic low resolution mode, the next softirq expiration
++	 * must also be updated.
+ 	 */
+-	if (!hrtimer_hres_active(base) && !tick_nohz_active)
+-		return;
+-
+ 	raw_spin_lock(&base->lock);
+ 	hrtimer_update_base(base);
+ 	if (hrtimer_hres_active(base))
+@@ -2295,11 +2295,6 @@ int hrtimers_cpu_dying(unsigned int dying_cpu)
+ 				     &new_base->clock_base[i]);
+ 	}
+ 
+-	/*
+-	 * The migration might have changed the first expiring softirq
+-	 * timer on this CPU. Update it.
+-	 */
+-	__hrtimer_get_next_event(new_base, HRTIMER_ACTIVE_SOFT);
+ 	/* Tell the other CPU to retrigger the next event */
+ 	smp_call_function_single(ncpu, retrigger_next_event, NULL, 0);
+ 
 
