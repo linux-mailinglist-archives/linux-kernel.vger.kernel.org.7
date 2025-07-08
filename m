@@ -1,146 +1,131 @@
-Return-Path: <linux-kernel+bounces-722544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF3A2AFDBE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:41:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83E51AFDBEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D68631C23FBA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:41:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 740B33A5207
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC5723770D;
-	Tue,  8 Jul 2025 23:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334D2238C10;
+	Tue,  8 Jul 2025 23:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iety5ptW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hNEwkhfO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E74E223DF5;
-	Tue,  8 Jul 2025 23:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A86221287;
+	Tue,  8 Jul 2025 23:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752018084; cv=none; b=iIw1c0y3kpRhGee+cUyCY9OUid7ROokFCwVLGBhAu2JZkwSaVAS2QIGFssLJENziHNJhP0UWyToFnxFHuQB0M4aK18B6Rhmdj6Jh2bh/Wd7+1Epms5bcVmLY1kd+Njn42z1jDTZJABs8whjAWkI4+dkcRFA/2Q/ZJSuJGjYWEKM=
+	t=1752018202; cv=none; b=DMeMCSW5APUYKzK31YQk5zU9ftP81lX20JHi2nm5r1QLvmoaaNg2i8OHx697/XMERvuRiXIajTj5CWNjaa2L+y9T7tiDVsNbNuCCc/RZJV6oH54Niho+7a94bqLTecKMihLmP6geluyeThUaJT6rgyA6IQrPY4Xj2Si6VuMIjPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752018084; c=relaxed/simple;
-	bh=gjvuPMDAEGBM+MgPjQyQtXwPygyNMFei5YKp9m4Oods=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=I9dDaVuJ+YwSRiRYghSNA07Zbpri+di+XOHomXLHazsmcgTFIK38kirG7P7VI6u/hY8SrOKY3UnzwWgB43yLLQFv1ni3A4oQIKFOC5yAFZLQIEFUkt+Cn+j8oxU5q5D3thgf4esldB2PRWBw6yJiUlqPC2JQTWk+0NZKVhFUO4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iety5ptW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6DF1C4CEED;
-	Tue,  8 Jul 2025 23:41:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752018084;
-	bh=gjvuPMDAEGBM+MgPjQyQtXwPygyNMFei5YKp9m4Oods=;
-	h=From:Date:Subject:To:Cc:From;
-	b=Iety5ptWAkzSP9haKVL8gXlgGrEQfau84nIpIRVrwXjR+ICCl28xTs4gdikrc6lTT
-	 vr+ANlzZjf+E2wKLlXi2jWkgjyadYOHEbRMhWcM342cxZ4AlY0mr6XIbvmtde5WRti
-	 WuMAfMyah8rmWfA9eQlZXeVc3Zsz6H7pMMnxNY/uij52R9WoXqSEjbFM9VRnFU4aAh
-	 JNkx+sK31wMBmfQNuVFJjCKrGYOjgCJ484iDi9mXfJ5XVQTemTIxxlun/sE4U4azZd
-	 ktHGUzSkY1NotVUvLjOufKbd9Fy9zalrhg1E4iXhEjzI8M1qH48FeObRk5ioT9Ei/w
-	 LUsx9MuAOOMhg==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Tue, 08 Jul 2025 16:41:01 -0700
-Subject: [PATCH] platform/x86/intel/pmt/discovery: Fix size_t specifiers
- for 32-bit
+	s=arc-20240116; t=1752018202; c=relaxed/simple;
+	bh=Kq5ijTYz747uA6zYNY77sRKx7BtVxap2T4sA5mPV2qQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tFfIqlUdtU1/bsjJBHjejRtFPUvpe/2Lv/wsDA4eV3Ew5bTtEdmzcptbTfBruyYRGr3YLB5927p2nKUGDxoO1SMQw/F9tkhrYPAbbywFAOzR8qtavdwCNp61yywB1e3e0JNkobugeAWWkbz9suv4sLpTLWRFe9a5VX6LkfZm0jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hNEwkhfO; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752018202; x=1783554202;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=Kq5ijTYz747uA6zYNY77sRKx7BtVxap2T4sA5mPV2qQ=;
+  b=hNEwkhfOUkgP4GBvQ5uDdNP1snKmZiwfKClU47xzwnnl/NZ+qzy02wX+
+   8+qBPbCzSy85SpaceAbNCvkpejs6x1tuRLb0bYkU0Nq5LelLQ/SP66eHJ
+   V+cXC27ix4Gd4XYOv6oDKnR4rdi5M6hKAU/4bXKQwNgGMMny9B5B7Ya8r
+   UcUEfneZG7Nrlh7+p63U31be8gJdEIMeiz6ecz6eRgnZuD3ldTtGcTM3m
+   ZNdr6qfI6c0ND++gdugPkgNVRbTDYnKo4BVcZTFKnNL84waJ9PPDA7BNU
+   lRM9TipPp4Q0YgtIM27vFe//3BAf5+LVyUEkZDJPXDYAia3tVfl/aHoGD
+   w==;
+X-CSE-ConnectionGUID: KyWt2BgZSyywYVcR0lFe7w==
+X-CSE-MsgGUID: 1H7yiry+TFSBfymZkZ+SSw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54242152"
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="54242152"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 16:43:21 -0700
+X-CSE-ConnectionGUID: gy+0sCqNSRWvODfH+QWvHg==
+X-CSE-MsgGUID: DHQVWidmQaC9j4fXcFDnew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="156202497"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.102])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 16:43:14 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id 26E4F11F8A6;
+	Wed,  9 Jul 2025 02:43:12 +0300 (EEST)
+Date: Tue, 8 Jul 2025 23:43:12 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Mirela Rabulea <mirela.rabulea@nxp.com>
+Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+	laurent.pinchart+renesas@ideasonboard.com, robh@kernel.org,
+	krzk+dt@kernel.org, bryan.odonoghue@linaro.org,
+	laurentiu.palcu@nxp.com, robert.chiras@nxp.com,
+	jai.luthra@ideasonboard.com, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, LnxRevLi@nxp.com,
+	kieran.bingham@ideasonboard.com, hdegoede@redhat.com,
+	dave.stevenson@raspberrypi.com, mike.rudenko@gmail.com,
+	alain.volmat@foss.st.com, devicetree@vger.kernel.org,
+	conor+dt@kernel.org, alexander.stein@ew.tq-group.com,
+	umang.jain@ideasonboard.com, zhi.mao@mediatek.com, festevam@denx.de,
+	julien.vuillaumier@nxp.com
+Subject: Re: [EXT] Re: [PATCH v4 2/4] media: ox05b1s: Add omnivision OX05B1S
+ raw sensor driver
+Message-ID: <aG2tECZaT3IsOV0z@kekkonen.localdomain>
+References: <20250305094359.299895-1-mirela.rabulea@nxp.com>
+ <20250305094359.299895-3-mirela.rabulea@nxp.com>
+ <7c4379dd-e004-4e0d-85db-139c3f671edc@linux.intel.com>
+ <3df6d174-ce7d-40ff-a7e0-fb9e8a9ab435@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250708-discovery-pmt-fix-32-bit-formats-v1-1-296a5fc9c3d4@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAIysbWgC/x2NQQqDQAxFryJZG0hntHa8SunCaqpZ6Egi0iLev
- cHde/D4/wBjFTZoiwOUdzHJi8utLKCfumVklMEdAoWaGnrgINbnnfWH67zhR74YA77FMevcbYb
- xnmJDVZ0iJfCZVdmr6+L5Os8/L1R7VXIAAAA=
-X-Change-ID: 20250708-discovery-pmt-fix-32-bit-formats-369370459309
-To: "David E. Box" <david.e.box@linux.intel.com>, 
- Hans de Goede <hansg@kernel.org>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4000; i=nathan@kernel.org;
- h=from:subject:message-id; bh=gjvuPMDAEGBM+MgPjQyQtXwPygyNMFei5YKp9m4Oods=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDBm5axZVyjvZHXi7/7Rk+SpJLZ2qh3ohG+zMdKS3c+gp7
- rsnInOmo5SFQYyLQVZMkaX6sepxQ8M5ZxlvnJoEM4eVCWQIAxenAExk5gaG/5l7ZknGqRYtXVZ9
- Mdnpz7Lar+YKgapLpb93PFC83r/M2Ynhf0al+NVWo9bKGcsaJr28WvtHLm2HglbsLo27r5ZYdIo
- +4QEA
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3df6d174-ce7d-40ff-a7e0-fb9e8a9ab435@nxp.com>
 
-When building i386 allmodconfig, there are two warnings in the newly
-added discovery code:
+Hi Mirela,
 
-  drivers/platform/x86/intel/pmt/discovery.c: In function 'pmt_feature_get_feature_table':
-  drivers/platform/x86/intel/pmt/discovery.c:427:35: error: format '%ld' expects argument of type 'long int', but argument 2 has type 'size_t' {aka 'unsigned int'} [-Werror=format=]
-    427 |         if (WARN(size > res_size, "Bad table size %ld > %pa", size, &res_size))
-        |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~  ~~~~
-        |                                                               |
-        |                                                               size_t {aka unsigned int}
-  ...
-  drivers/platform/x86/intel/pmt/discovery.c:427:53: note: format string is defined here
-    427 |         if (WARN(size > res_size, "Bad table size %ld > %pa", size, &res_size))
-        |                                                   ~~^
-        |                                                     |
-        |                                                     long int
-        |                                                   %d
+On Tue, Jul 08, 2025 at 08:09:25PM +0300, Mirela Rabulea wrote:
+> Hi Sakari & all,
+> 
+> On 6/29/25 11:30, Sakari Ailus wrote:
+> > Caution: This is an external email. Please take care when clicking links
+> > or opening attachments. When in doubt, report the message using the
+> > 'Report this email' button
+> > 
+> > 
+> > Hi Mirela,
+> > 
+> > On 3/5/25 11:43, Mirela Rabulea wrote:
+> > > +struct ox05b1s_reg {
+> > > +     u32 addr;
+> > > +     u32 data;
+> > > +};
+> > 
+> > Could you use struct reg_sequence instead, please?
+> 
+> Yes, sure, thanks for the hint.
+> 
+> Any other suggestions, anyone, before I send the next version?
 
-  drivers/platform/x86/intel/pmt/discovery-kunit.c: In function 'validate_pmt_regions':
-  include/linux/kern_levels.h:5:25: error: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'size_t' {aka 'unsigned int'} [-Werror=format=]
-  ...
-  drivers/platform/x86/intel/pmt/discovery-kunit.c:35:17: note: in expansion of macro 'kunit_info'
-     35 |                 kunit_info(test, "\t\taddr=%p, size=%lu, num_rmids=%u", region->addr, region->size,
-        |                 ^~~~~~~~~~
+Do you intend to align this with the common raw sensor model? It may still
+take a while until we get those patches merged though, but the upside would
+be there's on concern of backwards compatibility. We should discuss how to
+implement HDR with that actually (Laurent is cc'd).
 
-size_t is 'unsigned long' for 64-bit platforms but 'unsigned int' for
-32-bit platforms, so '%ld' is not correct. Use the proper size_t
-specifier, '%zu', to resolve the warnings on 32-bit platforms while not
-affecting 64-bit platforms.
+-- 
+Regards,
 
-Fixes: d9a078809356 ("platform/x86/intel/pmt: Add PMT Discovery driver")
-Fixes: b9707d46a959 ("platform/x86/intel/pmt: KUNIT test for PMT Enhanced Discovery API")
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
- drivers/platform/x86/intel/pmt/discovery-kunit.c | 2 +-
- drivers/platform/x86/intel/pmt/discovery.c       | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/platform/x86/intel/pmt/discovery-kunit.c b/drivers/platform/x86/intel/pmt/discovery-kunit.c
-index b4493fb96738..f44eb41d58f6 100644
---- a/drivers/platform/x86/intel/pmt/discovery-kunit.c
-+++ b/drivers/platform/x86/intel/pmt/discovery-kunit.c
-@@ -32,7 +32,7 @@ validate_pmt_regions(struct kunit *test, struct pmt_feature_group *feature_group
- 		kunit_info(test, "\t\tbus=%u, device=%u, function=%u, guid=0x%x,",
- 			   region->plat_info.bus_number, region->plat_info.device_number,
- 			   region->plat_info.function_number, region->guid);
--		kunit_info(test, "\t\taddr=%p, size=%lu, num_rmids=%u", region->addr, region->size,
-+		kunit_info(test, "\t\taddr=%p, size=%zu, num_rmids=%u", region->addr, region->size,
- 			   region->num_rmids);
- 
- 
-diff --git a/drivers/platform/x86/intel/pmt/discovery.c b/drivers/platform/x86/intel/pmt/discovery.c
-index e72d43b675b4..1a680a042a98 100644
---- a/drivers/platform/x86/intel/pmt/discovery.c
-+++ b/drivers/platform/x86/intel/pmt/discovery.c
-@@ -424,7 +424,7 @@ pmt_feature_get_feature_table(struct pmt_features_priv *priv,
- 	size = sizeof(*header) + FEAT_ATTR_SIZE(header->attr_size) +
- 	       PMT_GUID_SIZE(header->num_guids);
- 	res_size = resource_size(&res);
--	if (WARN(size > res_size, "Bad table size %ld > %pa", size, &res_size))
-+	if (WARN(size > res_size, "Bad table size %zu > %pa", size, &res_size))
- 		return -EINVAL;
- 
- 	/* Get the feature attributes, including capability fields */
-
----
-base-commit: 56036d6af41a473a8129fc960a5ab3673eda13d5
-change-id: 20250708-discovery-pmt-fix-32-bit-formats-369370459309
-
-Best regards,
---  
-Nathan Chancellor <nathan@kernel.org>
-
+Sakari Ailus
 
