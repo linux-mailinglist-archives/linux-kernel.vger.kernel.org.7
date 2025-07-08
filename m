@@ -1,175 +1,797 @@
-Return-Path: <linux-kernel+bounces-722221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5854AFD698
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:39:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 301ACAFD69C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 619CB5431EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:38:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6867016989D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B702E7161;
-	Tue,  8 Jul 2025 18:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B25B2DD5EF;
+	Tue,  8 Jul 2025 18:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yC39OMey"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MwbTjmpJ"
 Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27E52DFA22
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 18:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6132E36FE
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 18:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751999919; cv=none; b=UoYAo87F0nFM/otMTxOPwsWM0OAcawNC5B6DL/ll5wJ1FZLAJ1h9kx4zkySeT3jxBt0O1JdsLB/hMnw0vjyTn4xK/9VBJEwUyZRYWsIr5o67ZyUxMIgqXaPUoNQ2mBmkH2l0GT2zQnoF9Gs01SCMNazN3qFupCI3EcGs1Vv6n7I=
+	t=1752000001; cv=none; b=VXMgQqaX1TuaLyar+hrfNVRocd7gNwmF4/+wl0x4+zPoMiH7ZQYRhWg8wvA508ah4e4CS0DQrWoTYK6lrfZsPFJlBOQ8brj3+rg7s9m03pHYn2iCFM7zKQ08YS/jsGq8mhjrd+oFLgA1ZPBHSt7c/t0M1edF9zYkVhTn+tzIWlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751999919; c=relaxed/simple;
-	bh=2+com1G9ZklhZ2ukEIDRDdsjQqkHF0dZ5BYb3p3/qWE=;
+	s=arc-20240116; t=1752000001; c=relaxed/simple;
+	bh=lsgUVk8/O1AfYbBrqWmTmok2H2TVFlLycKB7XxEweac=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MCWgCXJyKMGx/GV/aD8TyZ8M4Ky5pN21mxCZzxvre5tSy03SFsFqj9wm0A3HwAbxLQADx02NoaXtr8Spync9kdQOBai4t/z1kF1EUfSr1ESZ8Wb0KbmDq1z3xfhoeO0jwiFbAsDlN+cN0FRFABM9ePW6mKAT9bywNcgm5te/XB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yC39OMey; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4a5ac8fae12so80531cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 11:38:37 -0700 (PDT)
+	 To:Content-Type; b=IIc9Zd3I9dsV8gy2XdE50nwmcmvFyIHhD4VtvLeZUqSr8wVbNaLe6JLEF21OnhzMi3OcTei5xWuNxWwmA8+tZ9PTJUoAtjJHgOcs8E8UnbHNelL/VdO6dsUA5JtFtDAO0eweKQpaG+PzpZREb8UGVa5I+B0QMvAcJ5L8BA+2tkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MwbTjmpJ; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4a52d82adcaso71670351cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 11:39:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751999916; x=1752604716; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SK7lrk7xIi5tD0jrlmCDVWKn5xeGvg9C1giWU24k6Z8=;
-        b=yC39OMeyIme6C4XODHCpRbKE447Yhf8dA/sj/xmnfDyxg9nebtQhlFnp5BcMhNZR47
-         OmT2BPBeEu+9l16Ue+NOdprRoU9/r8thwQhCKZxQ+alDBERQXK00t5hp0xL1qfeW5G6J
-         +2PkHexZAHy1kBGvgW6GfK17QOcgF+YSSLc0AOmrZZfZgxMAb+obR0COFkLd7iPhTrTs
-         h/2puUpxqJYIMwn+WJ9ZMV0O95i4YbdAYSDu5YA3JQysH36gPGov87qj1adPzi2yXbEH
-         wOct00xozj5Yy3vOTG6tpMQ653DsIe028S3+a01Sw09ydDG3WjIIHAlxO1K4SYceNtWG
-         hEcA==
+        d=gmail.com; s=20230601; t=1751999998; x=1752604798; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uqtK9un7i6X0EW/zRQJ5XY0US4ARlHlSsXmtQnJfS9A=;
+        b=MwbTjmpJ0v7oboORgJr6uNnmEvUfUq8d4Ra4t+ggEfKpr/Tmzm/I7kVaWn9icth+lG
+         J/z4EYGilFZjlHMonsO7gnvn+3uCoSWfBI1YZNAFflzsqHoo9bma3pqUFUvVICO+1TdG
+         hgaMu45i9YnFfFslpjCbVLVnbYJN9J4WLd/YO4IxSbILepFJcHD8qPFolbA5IgDlYDXN
+         OI5mwgwJosSgtd9rehMjNhL/Zt9hdhBQLNyeRqYiTaTM40OkWCZNYMbbJ80Z+ziHeFOb
+         iHNiX90NSqySAO9gP8rA5mK7KY3t6fhepYWjFTYRJaDgaoXGKKzrhuRF4cbHPMGPtXYz
+         IyAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751999916; x=1752604716;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SK7lrk7xIi5tD0jrlmCDVWKn5xeGvg9C1giWU24k6Z8=;
-        b=gqAoD6ivrUSQgn7szwVRVSarSODhgTRhudvcofEh1GHXzKWPfPAWdXK53QBcFquP6Q
-         46b/axMe4y5at4gY0sqFhiFcFdk8LSTpMNFZMe/3QKb48RUaeHbc+HVd/1z8JUf8aj/z
-         cshkEZlrOucIaNVcHI0uGbQRo8zyq1K2yYMu5cLYcbpcWAwT5yf9SOnIEf1cvpzAtCla
-         RIyLCZJijfhyGlrNhCnn2+n3LWqL94Ki4nFIKzD7XJmr1H55yLYu4av6htIhQeAeE/cP
-         k294dj8de8I/D+K97KWM+8qBxI1HT9MOitVlSLroZYbWmgCHS/ONcCHuMWNejV8gjCPF
-         8Ipg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSTnZFhIQBUJKnsqO5paO3BJpJjuL+xpExYrDRFE2Da0HLTG4jI6K11dq9DBlpDvqLSQUTPt3s8s5w0Zo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5+Ku1buaWJQNkT5owX8ZV3vHlxkeveQBf0MiZL0v0o6tJacvO
-	fwrac69lC+dn8XN8UtXdnBzaMRQTyO0B0rDmNVy7bzGb4C2r48kDhnfaj0FZ6DD5UzGYugmK/pf
-	jvCbcE1qGOmD3Uv67zX5ljjQoj5YXedt/9nC/aEzi
-X-Gm-Gg: ASbGncsc0P5iMw9feOT+ogn+VO1hAHeush9wUj7KfmdQgWQ+ys2okg7P7IKKNb07oq3
-	NjERPvmOQ501Ar6wojjGh/eBceWvdhlP+wUw8e6QTS1Ix9B5ZwnEjPr6zV75nywKQB11HKsG+6U
-	rc3wa+Nx/wciWrYdviXDScEaI5uRF9TJWx+U2QUQSYkXs=
-X-Google-Smtp-Source: AGHT+IF41f/hEDuNuA09VXbvGPxQNXbKGxA34LGVDDyoOV/7cGhIV3x5DLuwYtaeSPBxKEM3yRLjJM9SZjLNovd7gB4=
-X-Received: by 2002:a05:622a:5514:b0:4a9:d263:dbc5 with SMTP id
- d75a77b69052e-4a9dcd2238fmr290521cf.20.1751999916086; Tue, 08 Jul 2025
- 11:38:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751999998; x=1752604798;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uqtK9un7i6X0EW/zRQJ5XY0US4ARlHlSsXmtQnJfS9A=;
+        b=T84jimJ9YUzBzIgwQHHYBOxi5KzrrgH8Esz1Q4re3xS/EemGnQ8q7Q9bp4uNHemYUm
+         8VxrRNYeiDpR4dAx99DAiYynUkoechSz5KZkikHx7fg6sZqmMxlBLYzaJczw2TOBF7GW
+         Xnp7nCEXvNwzge8Yytw3rVnHidSsC5/WHvY2x1fGCGoLRKT2MrFgWlSHKz97VINqHSlU
+         jzuXYmAof9hoRM96z7+cXAHCbAZXU/AE6RdTB1SA6f4+034jaBeEo/GldN9w9HoRctNL
+         u3rNhvkTcGy0+nxSRpsOhlYKJ9Uj0j9rxDdDvWdHjUMq8dmeFVDiiZ74IDD2RPVKUrKQ
+         5TFg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8C8vduXMyYQvHDMlFkihUiiS7EigQLERpq5S7cuPJ1eRcuJcnvpdTdJqVenuXSgmqB6oC6DP0j+jURsk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdPdtmDMYnLSR9duBhpoTW87qq/c6jJFVOXmrusHF0WgEoTK3e
+	bF+q7G/va80+ENqCTOh/lUy1VihdzDSMCF0WrXaybTlzZ4MKvZ23sFkogAlf8yxl8oj4U8Gb+Gz
+	IhXRoSMmLv0utBCWVA8U6qmRnDS87TSM=
+X-Gm-Gg: ASbGncsC39RnV9IdjSPahUrBevdw+RTuXoJBlKPJKxpbTwXU4BBWQKhSrsChvnUfIIZ
+	w/Tc0io3PP4OOkLmF7wfn5KxcLJABXsC6qFGEC75AfzUdAELFeTDyOK8G66jQdIdgIwdjQb1ux9
+	7cpi2k0ko9cp/ywd5ypFc92dqAesXVpNGkQLH6yP19R/SjycGvplZLnOQa6o34uGVO87IkKg9XS
+	+d7
+X-Google-Smtp-Source: AGHT+IGzLDn0O6540NCjj85nZCQCneSohnM0++1PeD3csEw1evMK9iFngqzngSQ/r+CNtkVIDP/yG5LEevNClnFk3vY=
+X-Received: by 2002:a05:6214:4485:b0:6fa:c6e6:11f9 with SMTP id
+ 6a1803df08f44-702c8b722a9mr218920566d6.11.1751999997541; Tue, 08 Jul 2025
+ 11:39:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aGNw4ZJwlClvqezR@yzhao56-desk.sh.intel.com> <CAGtprH-Je5OL-djtsZ9nLbruuOqAJb0RCPAnPipC1CXr2XeTzQ@mail.gmail.com>
- <aGxXWvZCfhNaWISY@google.com> <CAGtprH_57HN4Psxr5MzAZ6k+mLEON2jVzrLH4Tk+Ws29JJuL4Q@mail.gmail.com>
- <006899ccedf93f45082390460620753090c01914.camel@intel.com>
- <aG0pNijVpl0czqXu@google.com> <a0129a912e21c5f3219b382f2f51571ab2709460.camel@intel.com>
- <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com>
- <aG07j4Pfkd5EEobQ@google.com> <CA+EHjTx0UkYSduDxe13dFi4+J5L28H+wB4FBXLsMRC5HaHaaFg@mail.gmail.com>
- <aG1UenipkaGyVUz-@google.com>
-In-Reply-To: <aG1UenipkaGyVUz-@google.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Tue, 8 Jul 2025 19:37:58 +0100
-X-Gm-Features: Ac12FXz2ea5j5gW9dhHxsUTG3z5TMtb4pNBOQU8cekFqn3Ye8zgo2zFcr57HDR8
-Message-ID: <CA+EHjTzQwt4Xux7AtB_eiuerKXeCmann2PFBoJTDZ8+qvFuX+w@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
-To: Sean Christopherson <seanjc@google.com>
-Cc: Vishal Annapurve <vannapurve@google.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
-	"pvorel@suse.cz" <pvorel@suse.cz>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, Jun Miao <jun.miao@intel.com>, 
-	Kirill Shutemov <kirill.shutemov@intel.com>, "pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, 
-	"vbabka@suse.cz" <vbabka@suse.cz>, "peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"amoorthy@google.com" <amoorthy@google.com>, "jack@suse.cz" <jack@suse.cz>, 
-	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "keirf@google.com" <keirf@google.com>, 
-	"palmer@dabbelt.com" <palmer@dabbelt.com>, "vkuznets@redhat.com" <vkuznets@redhat.com>, 
-	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, 
-	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, Wei W Wang <wei.w.wang@intel.com>, 
-	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, "willy@infradead.org" <willy@infradead.org>, 
-	"rppt@kernel.org" <rppt@kernel.org>, "quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "aik@amd.com" <aik@amd.com>, 
-	"usama.arif@bytedance.com" <usama.arif@bytedance.com>, Dave Hansen <dave.hansen@intel.com>, 
-	"fvdl@google.com" <fvdl@google.com>, "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, 
-	"bfoster@redhat.com" <bfoster@redhat.com>, "nsaenz@amazon.es" <nsaenz@amazon.es>, 
-	"anup@brainfault.org" <anup@brainfault.org>, "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "mic@digikod.net" <mic@digikod.net>, 
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, "steven.price@arm.com" <steven.price@arm.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "hughd@google.com" <hughd@google.com>, 
-	Zhiquan1 Li <zhiquan1.li@intel.com>, "rientjes@google.com" <rientjes@google.com>, 
-	"mpe@ellerman.id.au" <mpe@ellerman.id.au>, Erdem Aktas <erdemaktas@google.com>, 
-	"david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
-	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, Haibo1 Xu <haibo1.xu@intel.com>, Fan Du <fan.du@intel.com>, 
-	"maz@kernel.org" <maz@kernel.org>, "muchun.song@linux.dev" <muchun.song@linux.dev>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
-	"steven.sistare@oracle.com" <steven.sistare@oracle.com>, 
-	"quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, "jarkko@kernel.org" <jarkko@kernel.org>, 
-	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, Kai Huang <kai.huang@intel.com>, 
-	"shuah@kernel.org" <shuah@kernel.org>, "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, 
-	Chao P Peng <chao.p.peng@intel.com>, "pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, 
-	Alexander Graf <graf@amazon.com>, "nikunj@amd.com" <nikunj@amd.com>, 
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "jroedel@suse.de" <jroedel@suse.de>, 
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "jgowans@amazon.com" <jgowans@amazon.com>, 
-	Yilun Xu <yilun.xu@intel.com>, "liam.merwick@oracle.com" <liam.merwick@oracle.com>, 
-	"michael.roth@amd.com" <michael.roth@amd.com>, "quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, 
-	Xiaoyao Li <xiaoyao.li@intel.com>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, 
-	Ira Weiny <ira.weiny@intel.com>, 
-	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
-	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "qperret@google.com" <qperret@google.com>, 
-	"dmatlack@google.com" <dmatlack@google.com>, "james.morse@arm.com" <james.morse@arm.com>, 
-	"brauner@kernel.org" <brauner@kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>, "pgonda@google.com" <pgonda@google.com>, 
-	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "hch@infradead.org" <hch@infradead.org>, 
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "will@kernel.org" <will@kernel.org>, 
-	"roypat@amazon.co.uk" <roypat@amazon.co.uk>
+References: <CAH2r5msTzHGf5YhYra+_5yFFGkc=1o2z_-QmtsA=5rNdy35j0g@mail.gmail.com>
+ <CAH2r5mtuSD659modFsaj+hNQqK9+tMyZQ1zGHOjfEvXVz_fWMA@mail.gmail.com> <aGzJaX1elvYzQPa-@phenom.ffwll.local>
+In-Reply-To: <aGzJaX1elvYzQPa-@phenom.ffwll.local>
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 8 Jul 2025 13:39:45 -0500
+X-Gm-Features: Ac12FXxKJEJgDUaKflCQOrRsnNxHDzYK6WkLtJbixVSCQPdTJP8EcrQc4_1Z6O8
+Message-ID: <CAH2r5msRuE91Udov3eaFB=7x-8petRYY2wM_PRD2LSmBMhVCqA@mail.gmail.com>
+Subject: Re: Flood of RIPs in DRM driver starting with 6.16-rc5
+To: Steve French <smfrench@gmail.com>, David Airlie <airlied@redhat.com>, 
+	"simona@ffwll.ch" <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 8 Jul 2025 at 18:25, Sean Christopherson <seanjc@google.com> wrote:
+just tried the fix.  Don't see the warnings in dmesg anymore. thx
+
+On Tue, Jul 8, 2025 at 2:31=E2=80=AFAM Simona Vetter <simona.vetter@ffwll.c=
+h> wrote:
 >
-> On Tue, Jul 08, 2025, Fuad Tabba wrote:
-> > > > I don't think we need a flag to preserve memory as I mentioned in [2]. IIUC,
-> > > > 1) Conversions are always content-preserving for pKVM.
+> On Mon, Jul 07, 2025 at 05:21:00PM -0500, Steve French wrote:
+> > I also see it manually building 6.16-rc4 from Saturday (not just
+> > seeing it with Ubuntu's daily build and mainline rc5 build), and are
+> > happening multiple times a second.
+>
+> Should get addressed by this one here I think:
+>
+> https://lore.kernel.org/dri-devel/20250707131224.249496-1-tzimmermann@sus=
+e.de/
+>
+> Thanks for the report!
+> -Sima
+>
+> >
+> >  6.16.0-rc4+ #64 PREEMPT(voluntary)
+> > [  519.392263] Tainted: [W]=3DWARN
+> > [  519.392286] Hardware name: LENOVO 20MAS08500/20MAS08500, BIOS
+> > N2CET70W (1.53 ) 03/11/2024
+> > [  519.392313] RIP: 0010:drm_gem_object_handle_put_unlocked+0x135/0x1a0
+> > [  519.392363] Code: 48 8b 43 08 48 63 f5 48 8d b8 f8 0c 00 00 e8 c2
+> > 8b 99 00 4c 89 f7 e8 6a d2 50 ff c7 83 18 01 00 00 00 00 00 00 e9 4e
+> > ff ff ff <0f> 0b 5b 5d 41 5c 41 5d 41 5e 31 c0 31 f6 31 ff c3 cc cc cc
+> > cc 48
+> > [  519.392401] RSP: 0018:ffff8881a542fa88 EFLAGS: 00010246
+> > [  519.392443] RAX: 0000000000000000 RBX: ffff888196ee4000 RCX: 0000000=
+000000000
+> > [  519.392536] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000=
+000000000
+> > [  519.392566] RBP: ffff888196ee4004 R08: 0000000000000000 R09: 0000000=
+000000000
+> > [  519.392595] R10: 0000000000000000 R11: 0000000000000000 R12: ffff888=
+1017b4000
+> > [  519.392624] R13: ffff888196ee4008 R14: ffff8881602bfc48 R15: ffff888=
+1af771080
+> > [  519.392657] FS:  00007a43b692b6c0(0000) GS:ffff8888713bc000(0000)
+> > knlGS:0000000000000000
+> > [  519.392692] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [  519.392722] CR2: 00007a4349384000 CR3: 000000010ba80005 CR4: 0000000=
+0003726f0
+> > [  519.392754] Call Trace:
+> > [  519.392779]  <TASK>
+> > [  519.392821]  drm_gem_fb_destroy+0x5c/0xb0
+> > [  519.392884]  drm_mode_closefb_ioctl+0xba/0x100
+> > [  519.392936]  ? __pfx_drm_mode_closefb_ioctl+0x10/0x10
+> > [  519.392976]  drm_ioctl_kernel+0x132/0x1e0
+> > [  519.393037]  ? __pfx_drm_ioctl_kernel+0x10/0x10
+> > [  519.393083]  ? lock_release+0xcf/0x2b0
+> > [  519.393176]  drm_ioctl+0x3d4/0x710
+> > [  519.393245]  ? __pfx_drm_mode_closefb_ioctl+0x10/0x10
+> > [  519.393299]  ? __pfx_drm_ioctl+0x10/0x10
+> > [  519.393415]  ? rcu_is_watching+0x1c/0x50
+> > [  519.393454]  ? trace_irq_enable.constprop.0+0xb4/0xf0
+> > [  519.393557]  ? _raw_spin_unlock_irqrestore+0x4a/0x70
+> > [  519.393627]  nouveau_drm_ioctl+0x89/0x110 [nouveau]
+> > [  519.397112]  __x64_sys_ioctl+0xc8/0x130
+> > [  519.397158]  ? rcu_is_watching+0x1c/0x50
+> > [  519.397212]  do_syscall_64+0x91/0x550
+> > [  519.397252]  ? ksys_read+0x158/0x170
+> > [  519.397303]  ? __pfx_ksys_read+0x10/0x10
+> > [  519.397357]  ? trace_irq_enable.constprop.0+0xb4/0xf0
+> > [  519.397408]  ? do_syscall_64+0x1c2/0x550
+> > [  519.397449]  ? rcu_is_watching+0x1c/0x50
+> > [  519.397535]  ? trace_irq_enable.constprop.0+0xb4/0xf0
+> > [  519.397588]  ? do_syscall_64+0x1c2/0x550
+> > [  519.397626]  ? handle_softirqs+0x4d5/0x640
+> > [  519.397699]  ? __pfx_handle_softirqs+0x10/0x10
+> > [  519.397759]  ? sched_core_idle_cpu+0x6d/0x160
+> > [  519.397806]  ? rcu_is_watching+0x1c/0x50
+> > [  519.397846]  ? trace_irq_enable.constprop.0+0xb4/0xf0
+> > [  519.397889]  ? lockdep_hardirqs_on_prepare+0xfe/0x210
+> > [  519.397953]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [  519.397995] RIP: 0033:0x7a43c4d24ded
+> > [  519.398032] Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10
+> > c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00
+> > 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00
+> > 00 00
+> > [  519.398072] RSP: 002b:00007fff1befc240 EFLAGS: 00000246 ORIG_RAX:
+> > 0000000000000010
+> > [  519.398118] RAX: ffffffffffffffda RBX: 00005f07243655a0 RCX: 00007a4=
+3c4d24ded
+> > [  519.398151] RDX: 00007fff1befc2d0 RSI: 00000000c00864d0 RDI: 0000000=
+00000000c
+> > [  519.398181] RBP: 00007fff1befc290 R08: 0000000000000000 R09: 0000000=
+000000220
+> > [  519.398211] R10: 0000000000000008 R11: 0000000000000246 R12: 00007ff=
+f1befc2d0
+> > [  519.398241] R13: 00000000c00864d0 R14: 000000000000000c R15: 0000000=
+01ef049c5
+> > [  519.398350]  </TASK>
+> > [  519.398373] irq event stamp: 10107687
+> > [  519.398396] hardirqs last  enabled at (10107693):
+> > [<ffffffff9f728462>] __up_console_sem+0x62/0x80
+> > [  519.398441] hardirqs last disabled at (10107698):
+> > [<ffffffff9f728447>] __up_console_sem+0x47/0x80
+> > [  519.398530] softirqs last  enabled at (10105846):
+> > [<ffffffff9f6093d8>] __irq_exit_rcu+0x158/0x180
+> > [  519.398579] softirqs last disabled at (10105841):
+> > [<ffffffff9f6093d8>] __irq_exit_rcu+0x158/0x180
+> > [  519.398626] ---[ end trace 0000000000000000 ]---
+> > [  519.987964] ------------[ cut here ]------------
+> > [  519.987996] WARNING: CPU: 1 PID: 2513 at
+> > drivers/gpu/drm/drm_gem.c:286
+> > drm_gem_object_handle_put_unlocked+0x135/0x1a0
+> > [  519.988067] Modules linked in: snd_seq_dummy snd_hrtimer
+> > snd_seq_midi snd_seq_midi_event snd_rawmidi snd_seq snd_seq_device
+> > rfcomm xt_conntrack nft_chain_nat xt_MASQUERADE nf_nat nf_conntrack
+> > nf_defrag_ipv6 nf_defrag_ipv4 bridge stp llc xfrm_user xfrm_algo
+> > cachefiles xt_addrtype nft_compat nls_utf8 nf_tables cifs cifs_arc4
+> > nls_ucs2_utils cifs_md4 netfs ccm overlay qrtr cmac algif_hash
+> > algif_skcipher af_alg bnep snd_sof_pci_intel_cnl
+> > snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt
+> > snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink
+> > snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp
+> > snd_sof snd_sof_utils snd_soc_acpi_intel_match
+> > snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation
+> > snd_soc_acpi soundwire_bus snd_soc_sdca crc8 snd_soc_avs
+> > snd_soc_hda_codec snd_hda_ext_core snd_soc_core snd_hda_codec_hdmi
+> > snd_compress ac97_bus snd_pcm_dmaengine intel_uncore_frequency
+> > intel_uncore_frequency_common snd_hda_codec_realtek
+> > snd_hda_codec_generic snd_hda_scodec_component
+> > [  519.989387]  intel_tcc_cooling x86_pkg_temp_thermal
+> > intel_powerclamp coretemp kvm_intel snd_hda_intel iwlmvm
+> > snd_intel_dspcfg binfmt_misc snd_intel_sdw_acpi cmdlinepart kvm
+> > uvcvideo spi_nor ee1004 snd_hda_codec mac80211
+> > processor_thermal_device_pci_legacy irqbypass elan_i2c btusb
+> > videobuf2_vmalloc processor_thermal_device polyval_clmulni uvc mtd
+> > mei_hdcp snd_hda_core processor_thermal_wt_hint mei_pxp
+> > videobuf2_memops ghash_clmulni_intel btrtl sha1_ssse3
+> > platform_temperature_control snd_hwdep videobuf2_v4l2 btintel
+> > processor_thermal_rfim videobuf2_common aesni_intel nvidiafb
+> > processor_thermal_rapl btbcm snd_ctl_led nls_iso8859_1 intel_rapl_msr
+> > libarc4 sch_fq_codel iwlwifi snd_pcm btmtk i2c_i801 videodev think_lmi
+> > vgastate intel_rapl_common spi_intel_pci rapl i2c_mux mei_me
+> > processor_thermal_wt_req bluetooth intel_cstate intel_wmi_thunderbolt
+> > firmware_attributes_class mc wmi_bmof snd_timer fb_ddc i2c_smbus
+> > spi_intel cfg80211 processor_thermal_power_floor
+> > processor_thermal_mbox mei intel_soc_dts_iosf intel_pch_thermal
+> > [  519.991069]  thinkpad_acpi nvram int3403_thermal
+> > int340x_thermal_zone intel_pmc_core pmt_telemetry pmt_class
+> > intel_pmc_ssram_telemetry int3400_thermal acpi_pad intel_vsec
+> > acpi_thermal_rel input_leds joydev mac_hid serio_raw nouveau mxm_wmi
+> > drm_gpuvm gpu_sched drm_ttm_helper ttm drm_exec drm_display_helper cec
+> > rc_core i2c_algo_bit msr parport_pc nfsd ppdev lp parport auth_rpcgss
+> > nfs_acl nvme_fabrics lockd efi_pstore grace sunrpc nfnetlink dmi_sysfs
+> > ip_tables x_tables autofs4 xfs btrfs blake2b_generic raid10 raid456
+> > async_raid6_recov async_memcpy async_pq async_xor async_tx xor
+> > raid6_pq raid1 raid0 8250_dw snd soundcore wacom video nvme
+> > hid_generic ucsi_acpi typec_ucsi rtsx_pci_sdmmc nvme_core
+> > intel_lpss_pci typec usbhid intel_lpss nvme_keyring psmouse e1000e hid
+> > nvme_auth rtsx_pci thunderbolt idma64 sparse_keymap platform_profile
+> > wmi pinctrl_cannonlake
+> > [  519.993135] CPU: 1 UID: 1000 PID: 2513 Comm: gnome-shell Tainted: G
+> >        W           6.16.0-rc4+ #64 PREEMPT(voluntary)
+> > [  519.993193] Tainted: [W]=3DWARN
+> > [  519.993217] Hardware name: LENOVO 20MAS08500/20MAS08500, BIOS
+> > N2CET70W (1.53 ) 03/11/2024
+> > [  519.993245] RIP: 0010:drm_gem_object_handle_put_unlocked+0x135/0x1a0
+> > [  519.993298] Code: 48 8b 43 08 48 63 f5 48 8d b8 f8 0c 00 00 e8 c2
+> > 8b 99 00 4c 89 f7 e8 6a d2 50 ff c7 83 18 01 00 00 00 00 00 00 e9 4e
+> > ff ff ff <0f> 0b 5b 5d 41 5c 41 5d 41 5e 31 c0 31 f6 31 ff c3 cc cc cc
+> > cc 48
+> > [  519.993338] RSP: 0018:ffff8881a542f958 EFLAGS: 00010246
+> > [  519.993381] RAX: 0000000000000000 RBX: ffff888128788000 RCX: 0000000=
+000000000
+> > [  519.993413] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000=
+000000000
+> > [  519.993441] RBP: ffff888128788004 R08: 0000000000000000 R09: 0000000=
+000000000
+> > [  519.993472] R10: 0000000000000000 R11: 0000000000000000 R12: ffff888=
+1017b4000
+> > [  519.993501] R13: ffff888128788008 R14: ffff8881602be848 R15: ffff888=
+1af771080
+> > [  519.993535] FS:  00007a43b692b6c0(0000) GS:ffff888870ebc000(0000)
+> > knlGS:0000000000000000
+> > [  519.993661] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [  519.993707] CR2: 000031ac05bee400 CR3: 000000010ba80001 CR4: 0000000=
+0003726f0
+> > [  519.993752] Call Trace:
+> > [  519.993788]  <TASK>
+> > [  519.993847]  drm_gem_fb_destroy+0x5c/0xb0
+> > [  519.993938]  drm_mode_closefb_ioctl+0xba/0x100
+> > [  519.994014]  ? __pfx_drm_mode_closefb_ioctl+0x10/0x10
+> > [  519.994071]  drm_ioctl_kernel+0x132/0x1e0
+> > [  519.994159]  ? __pfx_drm_ioctl_kernel+0x10/0x10
+> > [  519.994226]  ? lock_release+0xcf/0x2b0
+> > [  519.994359]  drm_ioctl+0x3d4/0x710
+> > [  519.994462]  ? __pfx_drm_mode_closefb_ioctl+0x10/0x10
+> > [  519.994542]  ? __pfx_drm_ioctl+0x10/0x10
+> > [  519.994774]  ? rcu_is_watching+0x1c/0x50
+> > [  519.994838]  ? trace_irq_enable.constprop.0+0xb4/0xf0
+> > [  519.994913]  ? _raw_spin_unlock_irqrestore+0x4a/0x70
+> > [  519.995012]  nouveau_drm_ioctl+0x89/0x110 [nouveau]
+> > [  519.999658]  __x64_sys_ioctl+0xc8/0x130
+> > [  519.999724]  ? rcu_is_watching+0x1c/0x50
+> > [  519.999802]  do_syscall_64+0x91/0x550
+> > [  519.999900]  ? __lock_acquire+0x466/0x28c0
+> > [  520.000001]  ? do_raw_spin_lock+0x116/0x1c0
+> > [  520.000072]  ? __pfx_do_raw_spin_lock+0x10/0x10
+> > [  520.000129]  ? rb_insert_color+0x2a/0x2a0
+> > [  520.000229]  ? lock_acquire+0x16e/0x300
+> > [  520.000300]  ? ktime_get+0x24/0x140
+> > [  520.000360]  ? find_held_lock+0x2b/0x90
+> > [  520.000427]  ? ktime_get+0x24/0x140
+> > [  520.000487]  ? lock_release+0xcf/0x2b0
+> > [  520.000658]  ? ktime_get+0x7b/0x140
+> > [  520.000737]  ? lapic_next_deadline+0x22/0x40
+> > [  520.000790]  ? clockevents_program_event+0xf8/0x190
+> > [  520.000873]  ? hrtimer_interrupt+0x371/0x3c0
+> > [  520.000987]  ? sched_core_idle_cpu+0x6d/0x160
+> > [  520.001056]  ? rcu_is_watching+0x1c/0x50
+> > [  520.001113]  ? trace_irq_enable.constprop.0+0xb4/0xf0
+> > [  520.001176]  ? lockdep_hardirqs_on_prepare+0xfe/0x210
+> > [  520.001269]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [  520.001329] RIP: 0033:0x7a43c4d24ded
+> > [  520.001382] Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10
+> > c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00
+> > 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00
+> > 00 00
+> > [  520.001435] RSP: 002b:00007fff1befc240 EFLAGS: 00000246 ORIG_RAX:
+> > 0000000000000010
+> > [  520.001500] RAX: ffffffffffffffda RBX: 00005f0721ae1400 RCX: 00007a4=
+3c4d24ded
+> > [  520.001545] RDX: 00007fff1befc2d0 RSI: 00000000c00864d0 RDI: 0000000=
+00000000c
+> > [  520.001668] RBP: 00007fff1befc290 R08: 0000000000000000 R09: 0000000=
+000001168
+> > [  520.001713] R10: 0000000000000008 R11: 0000000000000246 R12: 00007ff=
+f1befc2d0
+> > [  520.001755] R13: 00000000c00864d0 R14: 000000000000000c R15: 0000000=
+01ef9711b
+> > [  520.001912]  </TASK>
+> > [  520.001946] irq event stamp: 10111849
+> > [  520.001978] hardirqs last  enabled at (10111855):
+> > [<ffffffff9f728462>] __up_console_sem+0x62/0x80
+> > [  520.002044] hardirqs last disabled at (10111860):
+> > [<ffffffff9f728447>] __up_console_sem+0x47/0x80
+> > [  520.002104] softirqs last  enabled at (10111652):
+> > [<ffffffff9f6093d8>] __irq_exit_rcu+0x158/0x180
+> > [  520.002171] softirqs last disabled at (10111641):
+> > [<ffffffff9f6093d8>] __irq_exit_rcu+0x158/0x180
+> > [  520.002238] ---[ end trace 0000000000000000 ]---
+> > [  520.154640] ------------[ cut here ]------------
+> > [  520.154675] WARNING: CPU: 4 PID: 2513 at
+> > drivers/gpu/drm/drm_gem.c:286
+> > drm_gem_object_handle_put_unlocked+0x135/0x1a0
+> > [  520.154743] Modules linked in: snd_seq_dummy snd_hrtimer
+> > snd_seq_midi snd_seq_midi_event snd_rawmidi snd_seq snd_seq_device
+> > rfcomm xt_conntrack nft_chain_nat xt_MASQUERADE nf_nat nf_conntrack
+> > nf_defrag_ipv6 nf_defrag_ipv4 bridge stp llc xfrm_user xfrm_algo
+> > cachefiles xt_addrtype nft_compat nls_utf8 nf_tables cifs cifs_arc4
+> > nls_ucs2_utils cifs_md4 netfs ccm overlay qrtr cmac algif_hash
+> > algif_skcipher af_alg bnep snd_sof_pci_intel_cnl
+> > snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt
+> > snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink
+> > snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp
+> > snd_sof snd_sof_utils snd_soc_acpi_intel_match
+> > snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation
+> > snd_soc_acpi soundwire_bus snd_soc_sdca crc8 snd_soc_avs
+> > snd_soc_hda_codec snd_hda_ext_core snd_soc_core snd_hda_codec_hdmi
+> > snd_compress ac97_bus snd_pcm_dmaengine intel_uncore_frequency
+> > intel_uncore_frequency_common snd_hda_codec_realtek
+> > snd_hda_codec_generic snd_hda_scodec_component
+> > [  520.156018]  intel_tcc_cooling x86_pkg_temp_thermal
+> > intel_powerclamp coretemp kvm_intel snd_hda_intel iwlmvm
+> > snd_intel_dspcfg binfmt_misc snd_intel_sdw_acpi cmdlinepart kvm
+> > uvcvideo spi_nor ee1004 snd_hda_codec mac80211
+> > processor_thermal_device_pci_legacy irqbypass elan_i2c btusb
+> > videobuf2_vmalloc processor_thermal_device polyval_clmulni uvc mtd
+> > mei_hdcp snd_hda_core processor_thermal_wt_hint mei_pxp
+> > videobuf2_memops ghash_clmulni_intel btrtl sha1_ssse3
+> > platform_temperature_control snd_hwdep videobuf2_v4l2 btintel
+> > processor_thermal_rfim videobuf2_common aesni_intel nvidiafb
+> > processor_thermal_rapl btbcm snd_ctl_led nls_iso8859_1 intel_rapl_msr
+> > libarc4 sch_fq_codel iwlwifi snd_pcm btmtk i2c_i801 videodev think_lmi
+> > vgastate intel_rapl_common spi_intel_pci rapl i2c_mux mei_me
+> > processor_thermal_wt_req bluetooth intel_cstate intel_wmi_thunderbolt
+> > firmware_attributes_class mc wmi_bmof snd_timer fb_ddc i2c_smbus
+> > spi_intel cfg80211 processor_thermal_power_floor
+> > processor_thermal_mbox mei intel_soc_dts_iosf intel_pch_thermal
+> > [  520.157367]  thinkpad_acpi nvram int3403_thermal
+> > int340x_thermal_zone intel_pmc_core pmt_telemetry pmt_class
+> > intel_pmc_ssram_telemetry int3400_thermal acpi_pad intel_vsec
+> > acpi_thermal_rel input_leds joydev mac_hid serio_raw nouveau mxm_wmi
+> > drm_gpuvm gpu_sched drm_ttm_helper ttm drm_exec drm_display_helper cec
+> > rc_core i2c_algo_bit msr parport_pc nfsd ppdev lp parport auth_rpcgss
+> > nfs_acl nvme_fabrics lockd efi_pstore grace sunrpc nfnetlink dmi_sysfs
+> > ip_tables x_tables autofs4 xfs btrfs blake2b_generic raid10 raid456
+> > async_raid6_recov async_memcpy async_pq async_xor async_tx xor
+> > raid6_pq raid1 raid0 8250_dw snd soundcore wacom video nvme
+> > hid_generic ucsi_acpi typec_ucsi rtsx_pci_sdmmc nvme_core
+> > intel_lpss_pci typec usbhid intel_lpss nvme_keyring psmouse e1000e hid
+> > nvme_auth rtsx_pci thunderbolt idma64 sparse_keymap platform_profile
+> > wmi pinctrl_cannonlake
+> > [  520.158953] CPU: 4 UID: 1000 PID: 2513 Comm: gnome-shell Tainted: G
+> >        W           6.16.0-rc4+ #64 PREEMPT(voluntary)
+> > [  520.159011] Tainted: [W]=3DWARN
+> > [  520.159033] Hardware name: LENOVO 20MAS08500/20MAS08500, BIOS
+> > N2CET70W (1.53 ) 03/11/2024
+> > [  520.159062] RIP: 0010:drm_gem_object_handle_put_unlocked+0x135/0x1a0
+> > [  520.159115] Code: 48 8b 43 08 48 63 f5 48 8d b8 f8 0c 00 00 e8 c2
+> > 8b 99 00 4c 89 f7 e8 6a d2 50 ff c7 83 18 01 00 00 00 00 00 00 e9 4e
+> > ff ff ff <0f> 0b 5b 5d 41 5c 41 5d 41 5e 31 c0 31 f6 31 ff c3 cc cc cc
+> > cc 48
+> > [  520.159155] RSP: 0018:ffff8881a542fa18 EFLAGS: 00010246
+> > [  520.159198] RAX: 0000000000000000 RBX: ffff8888777e2000 RCX: 0000000=
+000000000
+> > [  520.159230] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000=
+000000000
+> > [  520.159258] RBP: ffff8888777e2004 R08: 0000000000000000 R09: 0000000=
+000000000
+> > [  520.159289] R10: 0000000000000000 R11: 0000000000000000 R12: ffff888=
+1017b4000
+> > [  520.159319] R13: ffff8888777e2008 R14: ffff8881602bed48 R15: ffff888=
+1af771080
+> > [  520.159352] FS:  00007a43b692b6c0(0000) GS:ffff88887103c000(0000)
+> > knlGS:0000000000000000
+> > [  520.159388] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [  520.159419] CR2: 00007a433f99f000 CR3: 000000010ba80003 CR4: 0000000=
+0003726f0
+> > [  520.159451] Call Trace:
+> > [  520.159477]  <TASK>
+> > [  520.159519]  drm_gem_fb_destroy+0x5c/0xb0
+> > [  520.159644]  drm_mode_closefb_ioctl+0xba/0x100
+> > [  520.159701]  ? __pfx_drm_mode_closefb_ioctl+0x10/0x10
+> > [  520.159741]  drm_ioctl_kernel+0x132/0x1e0
+> > [  520.159803]  ? __pfx_drm_ioctl_kernel+0x10/0x10
+> > [  520.159849]  ? lock_release+0xcf/0x2b0
+> > [  520.159943]  drm_ioctl+0x3d4/0x710
+> > [  520.160013]  ? __pfx_drm_mode_closefb_ioctl+0x10/0x10
+> > [  520.160067]  ? __pfx_drm_ioctl+0x10/0x10
+> > [  520.160184]  ? rcu_is_watching+0x1c/0x50
+> > [  520.160224]  ? trace_irq_enable.constprop.0+0xb4/0xf0
+> > [  520.160276]  ? _raw_spin_unlock_irqrestore+0x4a/0x70
+> > [  520.160346]  nouveau_drm_ioctl+0x89/0x110 [nouveau]
+> > [  520.164171]  __x64_sys_ioctl+0xc8/0x130
+> > [  520.164216]  ? rcu_is_watching+0x1c/0x50
+> > [  520.164271]  do_syscall_64+0x91/0x550
+> > [  520.164317]  ? __pfx_vfs_read+0x10/0x10
+> > [  520.164384]  ? lock_release+0xcf/0x2b0
+> > [  520.164459]  ? __fget_files+0x12d/0x230
+> > [  520.164534]  ? fput+0x25/0x80
+> > [  520.164573]  ? ksys_read+0x158/0x170
+> > [  520.164686]  ? __pfx_ksys_read+0x10/0x10
+> > [  520.164743]  ? rcu_is_watching+0x1c/0x50
+> > [  520.164782]  ? trace_irq_enable.constprop.0+0xb4/0xf0
+> > [  520.164834]  ? rcu_is_watching+0x1c/0x50
+> > [  520.164873]  ? trace_irq_enable.constprop.0+0xb4/0xf0
+> > [  520.164924]  ? do_syscall_64+0x1c2/0x550
+> > [  520.164964]  ? trace_irq_enable.constprop.0+0xb4/0xf0
+> > [  520.165008]  ? lockdep_hardirqs_on_prepare+0xfe/0x210
+> > [  520.165074]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [  520.165116] RIP: 0033:0x7a43c4d24ded
+> > [  520.165152] Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10
+> > c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00
+> > 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00
+> > 00 00
+> > [  520.165192] RSP: 002b:00007fff1befc240 EFLAGS: 00000246 ORIG_RAX:
+> > 0000000000000010
+> > [  520.165239] RAX: ffffffffffffffda RBX: 00005f0723185370 RCX: 00007a4=
+3c4d24ded
+> > [  520.165272] RDX: 00007fff1befc2d0 RSI: 00000000c00864d0 RDI: 0000000=
+00000000c
+> > [  520.165302] RBP: 00007fff1befc290 R08: 0000000000000000 R09: 00007a4=
+3c4e03ac0
+> > [  520.165332] R10: 0000000000000008 R11: 0000000000000246 R12: 00007ff=
+f1befc2d0
+> > [  520.165362] R13: 00000000c00864d0 R14: 000000000000000c R15: 0000000=
+01efbfc09
+> > [  520.165472]  </TASK>
+> > [  520.165495] irq event stamp: 10117535
+> > [  520.165517] hardirqs last  enabled at (10117541):
+> > [<ffffffff9f728462>] __up_console_sem+0x62/0x80
+> > [  520.165562] hardirqs last disabled at (10117546):
+> > [<ffffffff9f728447>] __up_console_sem+0x47/0x80
+> > [  520.165656] softirqs last  enabled at (10117366):
+> > [<ffffffff9f6093d8>] __irq_exit_rcu+0x158/0x180
+> > [  520.165704] softirqs last disabled at (10117339):
+> > [<ffffffff9f6093d8>] __irq_exit_rcu+0x158/0x180
+> > [  520.165749] ---[ end trace 0000000000000000 ]---
+> > [  520.377686] ------------[ cut here ]------------
+> > [  520.377728] WARNING: CPU: 10 PID: 2513 at
+> > drivers/gpu/drm/drm_gem.c:286
+> > drm_gem_object_handle_put_unlocked+0x135/0x1a0
+> > [  520.377818] Modules linked in: snd_seq_dummy snd_hrtimer
+> > snd_seq_midi snd_seq_midi_event snd_rawmidi snd_seq snd_seq_device
+> > rfcomm xt_conntrack nft_chain_nat xt_MASQUERADE nf_nat nf_conntrack
+> > nf_defrag_ipv6 nf_defrag_ipv4 bridge stp llc xfrm_user xfrm_algo
+> > cachefiles xt_addrtype nft_compat nls_utf8 nf_tables cifs cifs_arc4
+> > nls_ucs2_utils cifs_md4 netfs ccm overlay qrtr cmac algif_hash
+> > algif_skcipher af_alg bnep snd_sof_pci_intel_cnl
+> > snd_sof_intel_hda_generic soundwire_intel snd_sof_intel_hda_sdw_bpt
+> > snd_sof_intel_hda_common snd_soc_hdac_hda snd_sof_intel_hda_mlink
+> > snd_sof_intel_hda soundwire_cadence snd_sof_pci snd_sof_xtensa_dsp
+> > snd_sof snd_sof_utils snd_soc_acpi_intel_match
+> > snd_soc_acpi_intel_sdca_quirks soundwire_generic_allocation
+> > snd_soc_acpi soundwire_bus snd_soc_sdca crc8 snd_soc_avs
+> > snd_soc_hda_codec snd_hda_ext_core snd_soc_core snd_hda_codec_hdmi
+> > snd_compress ac97_bus snd_pcm_dmaengine intel_uncore_frequency
+> > intel_uncore_frequency_common snd_hda_codec_realtek
+> > snd_hda_codec_generic snd_hda_scodec_component
+> > [  520.379442]  intel_tcc_cooling x86_pkg_temp_thermal
+> > intel_powerclamp coretemp kvm_intel snd_hda_intel iwlmvm
+> > snd_intel_dspcfg binfmt_misc snd_intel_sdw_acpi cmdlinepart kvm
+> > uvcvideo spi_nor ee1004 snd_hda_codec mac80211
+> > processor_thermal_device_pci_legacy irqbypass elan_i2c btusb
+> > videobuf2_vmalloc processor_thermal_device polyval_clmulni uvc mtd
+> > mei_hdcp snd_hda_core processor_thermal_wt_hint mei_pxp
+> > videobuf2_memops ghash_clmulni_intel btrtl sha1_ssse3
+> > platform_temperature_control snd_hwdep videobuf2_v4l2 btintel
+> > processor_thermal_rfim videobuf2_common aesni_intel nvidiafb
+> > processor_thermal_rapl btbcm snd_ctl_led nls_iso8859_1 intel_rapl_msr
+> > libarc4 sch_fq_codel iwlwifi snd_pcm btmtk i2c_i801 videodev think_lmi
+> > vgastate intel_rapl_common spi_intel_pci rapl i2c_mux mei_me
+> > processor_thermal_wt_req bluetooth intel_cstate intel_wmi_thunderbolt
+> > firmware_attributes_class mc wmi_bmof snd_timer fb_ddc i2c_smbus
+> > spi_intel cfg80211 processor_thermal_power_floor
+> > processor_thermal_mbox mei intel_soc_dts_iosf intel_pch_thermal
+> > [  520.381326]  thinkpad_acpi nvram int3403_thermal
+> > int340x_thermal_zone intel_pmc_core pmt_telemetry pmt_class
+> > intel_pmc_ssram_telemetry int3400_thermal acpi_pad intel_vsec
+> > acpi_thermal_rel input_leds joydev mac_hid serio_raw nouveau mxm_wmi
+> > drm_gpuvm gpu_sched drm_ttm_helper ttm drm_exec drm_display_helper cec
+> > rc_core i2c_algo_bit msr parport_pc nfsd ppdev lp parport auth_rpcgss
+> > nfs_acl nvme_fabrics lockd efi_pstore grace sunrpc nfnetlink dmi_sysfs
+> > ip_tables x_tables autofs4 xfs btrfs blake2b_generic raid10 raid456
+> > async_raid6_recov async_memcpy async_pq async_xor async_tx xor
+> > raid6_pq raid1 raid0 8250_dw snd soundcore wacom video nvme
+> > hid_generic ucsi_acpi typec_ucsi rtsx_pci_sdmmc nvme_core
+> > intel_lpss_pci typec usbhid intel_lpss nvme_keyring psmouse e1000e hid
+> > nvme_auth rtsx_pci thunderbolt idma64 sparse_keymap platform_profile
+> > wmi pinctrl_cannonlake
+> > [  520.383461] CPU: 10 UID: 1000 PID: 2513 Comm: gnome-shell Tainted:
+> > G        W           6.16.0-rc4+ #64 PREEMPT(voluntary)
+> > [  520.383540] Tainted: [W]=3DWARN
+> > [  520.383570] Hardware name: LENOVO 20MAS08500/20MAS08500, BIOS
+> > N2CET70W (1.53 ) 03/11/2024
+> > [  520.383606] RIP: 0010:drm_gem_object_handle_put_unlocked+0x135/0x1a0
+> > [  520.383768] Code: 48 8b 43 08 48 63 f5 48 8d b8 f8 0c 00 00 e8 c2
+> > 8b 99 00 4c 89 f7 e8 6a d2 50 ff c7 83 18 01 00 00 00 00 00 00 e9 4e
+> > ff ff ff <0f> 0b 5b 5d 41 5c 41 5d 41 5e 31 c0 31 f6 31 ff c3 cc cc cc
+> > cc 48
+> > [  520.383827] RSP: 0018:ffff8881a542fbe8 EFLAGS: 00010246
+> > [  520.383885] RAX: 0000000000000000 RBX: ffff888196ee4000 RCX: 0000000=
+000000000
+> > [  520.383921] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000=
+000000000
+> > [  520.383963] RBP: ffff888196ee4004 R08: 0000000000000000 R09: 0000000=
+000000000
+> > [  520.384005] R10: 0000000000000000 R11: 0000000000000000 R12: ffff888=
+1017b4000
+> > [  520.384048] R13: ffff888196ee4008 R14: ffff8881b9f37948 R15: ffff888=
+1af771080
+> > [  520.384097] FS:  00007a43b692b6c0(0000) GS:ffff88887133c000(0000)
+> > knlGS:0000000000000000
+> > [  520.384149] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [  520.384188] CR2: 000005e99866c000 CR3: 000000010ba80001 CR4: 0000000=
+0003726f0
+> > [  520.384235] Call Trace:
+> > [  520.384265]  <TASK>
+> > [  520.384324]  drm_gem_fb_destroy+0x5c/0xb0
+> > [  520.384417]  drm_mode_closefb_ioctl+0xba/0x100
+> > [  520.384494]  ? __pfx_drm_mode_closefb_ioctl+0x10/0x10
+> > [  520.384555]  drm_ioctl_kernel+0x132/0x1e0
+> > [  520.384720]  ? __pfx_drm_ioctl_kernel+0x10/0x10
+> > [  520.384788]  ? lock_release+0xcf/0x2b0
+> > [  520.384923]  drm_ioctl+0x3d4/0x710
+> > [  520.384999]  ? __pfx_drm_mode_closefb_ioctl+0x10/0x10
+> > [  520.385055]  ? __pfx_drm_ioctl+0x10/0x10
+> > [  520.385193]  ? rcu_is_watching+0x1c/0x50
+> > [  520.385253]  ? trace_irq_enable.constprop.0+0xb4/0xf0
+> > [  520.385328]  ? _raw_spin_unlock_irqrestore+0x4a/0x70
+> > [  520.385429]  nouveau_drm_ioctl+0x89/0x110 [nouveau]
+> > [  520.389425]  __x64_sys_ioctl+0xc8/0x130
+> > [  520.389471]  ? rcu_is_watching+0x1c/0x50
+> > [  520.389524]  do_syscall_64+0x91/0x550
+> > [  520.389584]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [  520.389680] RIP: 0033:0x7a43c4d24ded
+> > [  520.389720] Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10
+> > c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00
+> > 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00
+> > 00 00
+> > [  520.389759] RSP: 002b:00007fff1befc240 EFLAGS: 00000246 ORIG_RAX:
+> > 0000000000000010
+> > [  520.389794] RAX: ffffffffffffffda RBX: 00005f0722ae66c0 RCX: 00007a4=
+3c4d24ded
+> > [  520.389817] RDX: 00007fff1befc2d0 RSI: 00000000c00864d0 RDI: 0000000=
+00000000c
+> > [  520.389838] RBP: 00007fff1befc290 R08: 0000000000000000 R09: 00007a4=
+3c4e03ac0
+> > [  520.389859] R10: 0000000000000008 R11: 0000000000000246 R12: 00007ff=
+f1befc2d0
+> > [  520.389879] R13: 00000000c00864d0 R14: 000000000000000c R15: 0000000=
+01efec80e
+> > [  520.389954]  </TASK>
+> > [  520.389970] irq event stamp: 10123147
+> > [  520.389985] hardirqs last  enabled at (10123153):
+> > [<ffffffff9f728462>] __up_console_sem+0x62/0x80
+> > [  520.390018] hardirqs last disabled at (10123158):
+> > [<ffffffff9f728447>] __up_console_sem+0x47/0x80
+> > [  520.390048] softirqs last  enabled at (10121286):
+> > [<ffffffff9f6093d8>] __irq_exit_rcu+0x158/0x180
+> > [  520.390090] softirqs last disabled at (10121281):
+> > [<ffffffff9f6093d8>] __irq_exit_rcu+0x158/0x180
+> > [  520.390136] ---[ end trace 0000000000000000 ]---
+> >
+> > On Mon, Jul 7, 2025 at 4:51=E2=80=AFPM Steve French <smfrench@gmail.com=
+> wrote:
 > > >
-> > > No?  Perserving contents on private => shared is a security vulnerability waiting
-> > > to happen.
+> > > I see these RIP logged every second or two with 6.16-rc5 on boot, and
+> > > they continue indefinitely.  I don't remember seeing these on rc4.
+> > > This happens when booting up, even when doing nothing on laptop
+> > > (Lenovo P52, Ubuntu 24 running normal build of mainline 6.16-rc5) and
+> > > they keep occurring.
+> > >
+> > > 6.16.0-061600rc5-generic #202507062141 PREEMPT(voluntary)
+> > > [  642.019544] Tainted: [W]=3DWARN
+> > > [  642.019549] Hardware name: LENOVO 20MAS08500/20MAS08500, BIOS
+> > > N2CET70W (1.53 ) 03/11/2024
+> > > [  642.019556] RIP: 0010:drm_gem_object_handle_put_unlocked+0xc5/0x10=
+0
+> > > [  642.019570] Code: ca ff eb 9c 4c 89 e7 e8 09 cf 64 00 eb d0 48 8b
+> > > 43 08 48 8d b8 e8 05 00 00 e8 47 8b 60 00 c7 83 e0 00 00 00 00 00 00
+> > > 00 eb 90 <0f> 0b 5b 41 5c 5d 31 c0 31 f6 31 ff c3 cc cc cc cc 48 8b 8=
+3
+> > > 40 01
+> > > [  642.019579] RSP: 0018:ffffd003454f38c8 EFLAGS: 00010246
+> > > [  642.019590] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 00000=
+00000000000
+> > > [  642.019596] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8=
+ced0e693000
+> > > [  642.019602] RBP: ffffd003454f38d8 R08: 0000000000000000 R09: 00000=
+00000000000
+> > > [  642.019609] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8=
+ced06634000
+> > > [  642.019615] R13: 0000000000000000 R14: ffffd003454f3a30 R15: ffff8=
+ced06634000
+> > > [  642.019622] FS:  00007f0b743986c0(0000) GS:ffff8cf4cbd88000(0000)
+> > > knlGS:0000000000000000
+> > > [  642.019630] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > [  642.019637] CR2: 00007f0af0384000 CR3: 000000016c6a0006 CR4: 00000=
+000003726f0
+> > > [  642.019645] Call Trace:
+> > > [  642.019651]  <TASK>
+> > > [  642.019658]  drm_gem_fb_destroy+0x35/0x80
+> > > [  642.019673]  drm_framebuffer_free+0x40/0xa0
+> > > [  642.019706]  drm_mode_object_put.part.0+0x5d/0xa0
+> > > [  642.019718]  drm_mode_object_put+0x15/0x30
+> > > [  642.019727]  drm_mode_closefb_ioctl+0x76/0xa0
+> > > [  642.019738]  ? __pfx_drm_mode_closefb_ioctl+0x10/0x10
+> > > [  642.019748]  drm_ioctl_kernel+0xb2/0x110
+> > > [  642.019760]  drm_ioctl+0x2ea/0x5b0
+> > > [  642.019767]  ? __pfx_drm_mode_closefb_ioctl+0x10/0x10
+> > > [  642.019788]  nouveau_drm_ioctl+0x5e/0xc0 [nouveau]
+> > > [  642.020378]  __x64_sys_ioctl+0xa2/0x100
+> > > [  642.020392]  x64_sys_call+0x106b/0x2320
+> > > [  642.020403]  do_syscall_64+0x80/0xe80
+> > > [  642.020416]  ? do_syscall_64+0xb6/0xe80
+> > > [  642.020429]  ? __rseq_handle_notify_resume+0x36/0x70
+> > > [  642.020444]  ? arch_exit_to_user_mode_prepare.isra.0+0xa0/0xc0
+> > > [  642.020455]  ? do_syscall_64+0xb6/0xe80
+> > > [  642.020474]  ? kick_ilb+0x52/0x180
+> > > [  642.020488]  ? update_load_avg+0x8b/0x410
+> > > [  642.020502]  ? __update_blocked_fair+0xac/0x550
+> > > [  642.020515]  ? __note_gp_changes+0x1ca/0x220
+> > > [  642.020529]  ? note_gp_changes+0x8f/0xa0
+> > > [  642.020541]  ? rcu_core+0x1b6/0x370
+> > > [  642.020553]  ? rcu_core_si+0xe/0x20
+> > > [  642.020564]  ? handle_softirqs+0xe4/0x340
+> > > [  642.020576]  ? arch_exit_to_user_mode_prepare.isra.0+0xd/0xc0
+> > > [  642.020588]  ? irqentry_exit_to_user_mode+0x2d/0x1d0
+> > > [  642.020599]  ? irqentry_exit+0x43/0x50
+> > > [  642.020609]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > > [  642.020618] RIP: 0033:0x7f0b7ad24ded
+> > > [  642.020627] Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10
+> > > c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00
+> > > 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 0=
+0
+> > > 00 00
+> > > [  642.020635] RSP: 002b:00007ffca5eb8f50 EFLAGS: 00000246 ORIG_RAX:
+> > > 0000000000000010
+> > > [  642.020647] RAX: ffffffffffffffda RBX: 000055b1a5e17cc0 RCX: 00007=
+f0b7ad24ded
+> > > [  642.020654] RDX: 00007ffca5eb8fe0 RSI: 00000000c00864d0 RDI: 00000=
+0000000000c
+> > > [  642.020661] RBP: 00007ffca5eb8fa0 R08: 0000000000000000 R09: 00007=
+f0b7ae03ac0
+> > > [  642.020667] R10: 0000000000000008 R11: 0000000000000246 R12: 00007=
+ffca5eb8fe0
+> > > [  642.020673] R13: 00000000c00864d0 R14: 000000000000000c R15: 00000=
+0002640746b
+> > > [  642.020702]  </TASK>
+> > > [  642.020707] ---[ end trace 0000000000000000 ]---
+> > >
+> > > ...
+> > >
+> > > 6.16.0-061600rc5-generic #202507062141 PREEMPT(voluntary)
+> > > [  795.464458] Tainted: [W]=3DWARN
+> > > [  795.464460] Hardware name: LENOVO 20MAS08500/20MAS08500, BIOS
+> > > N2CET70W (1.53 ) 03/11/2024
+> > > [  795.464462] RIP: 0010:drm_gem_object_handle_put_unlocked+0xc5/0x10=
+0
+> > > [  795.464468] Code: ca ff eb 9c 4c 89 e7 e8 09 cf 64 00 eb d0 48 8b
+> > > 43 08 48 8d b8 e8 05 00 00 e8 47 8b 60 00 c7 83 e0 00 00 00 00 00 00
+> > > 00 eb 90 <0f> 0b 5b 41 5c 5d 31 c0 31 f6 31 ff c3 cc cc cc cc 48 8b 8=
+3
+> > > 40 01
+> > > [  795.464471] RSP: 0018:ffffd003454f3898 EFLAGS: 00010246
+> > > [  795.464476] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 00000=
+00000000000
+> > > [  795.464479] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8=
+ced0e693000
+> > > [  795.464481] RBP: ffffd003454f38a8 R08: 0000000000000000 R09: 00000=
+00000000000
+> > > [  795.464484] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8=
+ced06634000
+> > > [  795.464486] R13: 0000000000000000 R14: ffffd003454f3a00 R15: ffff8=
+ced06634000
+> > > [  795.464489] FS:  00007f0b743986c0(0000) GS:ffff8cf4cb988000(0000)
+> > > knlGS:0000000000000000
+> > > [  795.464492] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > [  795.464495] CR2: 00007f0b6c6a9020 CR3: 000000016c6a0006 CR4: 00000=
+000003726f0
+> > > [  795.464498] Call Trace:
+> > > [  795.464500]  <TASK>
+> > > [  795.464504]  drm_gem_fb_destroy+0x35/0x80
+> > > [  795.464510]  drm_framebuffer_free+0x40/0xa0
+> > > [  795.464515]  drm_mode_object_put.part.0+0x5d/0xa0
+> > > [  795.464520]  drm_mode_object_put+0x15/0x30
+> > > [  795.464524]  drm_mode_closefb_ioctl+0x76/0xa0
+> > > [  795.464528]  ? __pfx_drm_mode_closefb_ioctl+0x10/0x10
+> > > [  795.464533]  drm_ioctl_kernel+0xb2/0x110
+> > > [  795.464537]  drm_ioctl+0x2ea/0x5b0
+> > > [  795.464541]  ? __pfx_drm_mode_closefb_ioctl+0x10/0x10
+> > > [  795.464550]  nouveau_drm_ioctl+0x5e/0xc0 [nouveau]
+> > > [  795.464783]  __x64_sys_ioctl+0xa2/0x100
+> > > [  795.464790]  x64_sys_call+0x106b/0x2320
+> > > [  795.464794]  do_syscall_64+0x80/0xe80
+> > > [  795.464802]  ? __x64_sys_poll+0xd2/0x180
+> > > [  795.464808]  ? arch_exit_to_user_mode_prepare.isra.0+0xd/0xc0
+> > > [  795.464813]  ? do_syscall_64+0xb6/0xe80
+> > > [  795.464819]  ? futex_hash+0xe/0x20
+> > > [  795.464823]  ? futex_wake+0x89/0x1b0
+> > > [  795.464830]  ? do_futex+0x18e/0x260
+> > > [  795.464835]  ? __x64_sys_futex+0x127/0x200
+> > > [  795.464839]  ? eventfd_write+0xdc/0x200
+> > > [  795.464844]  ? security_file_permission+0x5b/0x170
+> > > [  795.464850]  ? arch_exit_to_user_mode_prepare.isra.0+0xd/0xc0
+> > > [  795.464854]  ? do_syscall_64+0xb6/0xe80
+> > > [  795.464862]  ? ksys_write+0xd9/0xf0
+> > > [  795.464869]  ? arch_exit_to_user_mode_prepare.isra.0+0xd/0xc0
+> > > [  795.464873]  ? do_syscall_64+0xb6/0xe80
+> > > [  795.464878]  ? do_syscall_64+0xb6/0xe80
+> > > [  795.464883]  ? arch_exit_to_user_mode_prepare.isra.0+0xd/0xc0
+> > > [  795.464888]  ? irqentry_exit_to_user_mode+0x2d/0x1d0
+> > > [  795.464893]  ? irqentry_exit+0x43/0x50
+> > > [  795.464897]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > > [  795.464901] RIP: 0033:0x7f0b7ad24ded
+> > > [  795.464904] Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10
+> > > c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00
+> > > 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 0=
+0
+> > > 00 00
+> > > [  795.464907] RSP: 002b:00007ffca5eb8f50 EFLAGS: 00000246 ORIG_RAX:
+> > > 0000000000000010
+> > > [  795.464912] RAX: ffffffffffffffda RBX: 000055b1a8710050 RCX: 00007=
+f0b7ad24ded
+> > > [  795.464915] RDX: 00007ffca5eb8fe0 RSI: 00000000c00864d0 RDI: 00000=
+0000000000c
+> > > [  795.464917] RBP: 00007ffca5eb8fa0 R08: 0000000000000000 R09: 00007=
+f0b7ae03ac0
+> > > [  795.464920] R10: 0000000000000008 R11: 0000000000000246 R12: 00007=
+ffca5eb8fe0
+> > > [  795.464922] R13: 00000000c00864d0 R14: 000000000000000c R15: 00000=
+0002f66b7a8
+> > > [  795.464929]  </TASK>
+> > > [  795.464931] ---[ end trace 0000000000000000 ]---
+> > >
+> > >
+> > > --
+> > > Thanks,
+> > >
+> > > Steve
 > >
-> > Actually it is one of the requirements for pKVM as well as its current
-> > behavior. We would like to preserve contents both ways, private <=>
-> > shared, since it is required by some of the potential use cases (e.g.,
-> > guest handling video encoding/decoding).
 > >
-> > To make it clear, I'm talking about explicit sharing from the guest,
-> > not relinquishing memory back to the host. In the case of
-> > relinquishing (and guest teardown), relinquished memory is poisoned
-> > (zeroed) in pKVM.
+> >
+> > --
+> > Thanks,
+> >
+> > Steve
 >
-> I forget, what's the "explicit sharing" flow look like?  E.g. how/when does pKVM
-> know it's ok to convert memory from private to shared?  I think we'd still want
-> to make data preservation optional, e.g. to avoid potential leakage with setups
-> where memory is private by default, but a flag in KVM's uAPI might not be a good
-> fit since whether or not to preserve data is more of a guest decision (or at least
-> needs to be ok'd by the guest).
+> --
+> Simona Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
 
-In pKVM all sharing and unsharing is triggered by the guest via
-hypercalls. The host cannot unshare. That said, making data
-preservation optional works for pKVM and is a good idea, for the
-reasons that you've mentioned.
 
-Cheers,
-/fuad
+
+--=20
+Thanks,
+
+Steve
 
