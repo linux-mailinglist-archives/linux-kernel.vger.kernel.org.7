@@ -1,235 +1,227 @@
-Return-Path: <linux-kernel+bounces-721809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D88CAFCE20
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:47:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C57E9AFCE17
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A899580674
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:45:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF86D3BBF80
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6776C2E0937;
-	Tue,  8 Jul 2025 14:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UutgnWHg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBBC258CE5;
-	Tue,  8 Jul 2025 14:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397BC2E0927;
+	Tue,  8 Jul 2025 14:45:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD20B2E091F;
+	Tue,  8 Jul 2025 14:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751985923; cv=none; b=Tk1DFmFK8Y5/rG9iBqC08znvnU7jqm+tox9qYuDWoQKNqj2CdXnpMT6lbNJ1WxX0gRdNOUSXIJrrAd0YaJa02IhjRGJDQcP7nmisUNPRf57htv6ChSXKL4GlfIWLKNAshCWv2wWAJhGQN7g7hLlgEO6DY6d1jsmh+RD05IBzaa8=
+	t=1751985929; cv=none; b=huO+bu5kXwHTcW+Bj4FuMO8p0ANHcmaTGoo0izFIzgvIRIfygDu8nXPZNTezRmVtYevOWuVXtxjFGDvILP5gwfHghBDA0yNl2vhwWXmv5zC4dHfn3nCGCzY4JSoQlDbW7Tvfnmbr6vQYZ3H2N1vuTKaS5qvuRJYPAdcg+AXwqvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751985923; c=relaxed/simple;
-	bh=7jjkHURGk/065PgIsLEFdU7q9C06GLDiDvsLEbi8k2c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fPFV+GPt/OWj3JHwYVkmwf0RITrma+H3p95ZUTTWf7p7Zb9u+7ETwVzNUgvenSlY4fiFlKq3pASiaO+K/ZszywGmB+L1OocBDr3T4xkSvEnPTh5e2S03zBeU6e2makIBwMYcNFvy75oWfuYzW9xv/oE9CVAmBncET7CT1Jh4JQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UutgnWHg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16503C4CEEF;
-	Tue,  8 Jul 2025 14:45:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751985923;
-	bh=7jjkHURGk/065PgIsLEFdU7q9C06GLDiDvsLEbi8k2c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=UutgnWHg3QVONCzVearw6Brv2lUVM1xl6Ze3mBmrkoVjgerWPlN7KmPfk+khJb5xz
-	 9J8Yg8gJUleH7DO+hvNvz3uYnIfCOZU+WKug5h6EDUkfGj0KKhrWUq6oihYUdObChr
-	 ITN+HSJJ/49i0A00hy1ZcKwymSOCMZWo7+gNHAoSLMzW7e3+aub01vFVLCLsWrJirP
-	 elgD8vdZWlG1JevFPkt0SoLdLCOoaOJ88siVXjNcEDKLkIGbyIxlehHo07jaGo2UT/
-	 elW0CKpkOf0zBg4boPuUp5SjpyCdydJwrQ5pNve7KegBkNdcQCdqMWnD/f5/7WDEo7
-	 JTx3BVxJCbFXw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,  "Alexander Viro"
- <viro@zeniv.linux.org.uk>,  "Arnd Bergmann" <arnd@arndb.de>,  "Miguel
- Ojeda" <ojeda@kernel.org>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary
- Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Matthew Maurer" <mmaurer@google.com>,  "Lee Jones"
- <lee@kernel.org>,  <linux-kernel@vger.kernel.org>,
-  <rust-for-linux@vger.kernel.org>,  "Benno Lossin" <lossin@kernel.org>
-Subject: Re: [PATCH v2 1/4] rust: iov: add iov_iter abstractions for
- ITER_SOURCE
-In-Reply-To: <20250704-iov-iter-v2-1-e69aa7c1f40e@google.com> (Alice Ryhl's
-	message of "Fri, 04 Jul 2025 09:26:00 +0000")
-References: <20250704-iov-iter-v2-0-e69aa7c1f40e@google.com>
-	<U16UjMBBh1b7dLeO-Nhqw__nw_JwypctB1ze_G44BtsX0l_eVK6Sp-efbobmnuF44J0wQNgnK7b8nCmBX0KS_Q==@protonmail.internalid>
-	<20250704-iov-iter-v2-1-e69aa7c1f40e@google.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Tue, 08 Jul 2025 16:45:14 +0200
-Message-ID: <878qkyoi6d.fsf@kernel.org>
+	s=arc-20240116; t=1751985929; c=relaxed/simple;
+	bh=olC1oLQOvA27mEpuop2Yy64S0KFtbdFzefxPyCa9xl4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tmHYzs1ZaTjphlCQ6lk1f/IhZX5SCf5MEAliJE4ft4sDtg+cgTfiCDHla1TxMDxOJwrDsk9zAiRXw//4X4raD7eg5ldUMu4qs3PvkdyKVGG5wgLYCboEP2Xk74s8PG8QQ5LYRdMhrGnZTABv85vnLSAT6aiqR6yhZ/FyHOmjg1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0E830153B;
+	Tue,  8 Jul 2025 07:45:15 -0700 (PDT)
+Received: from raptor (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DBFA03F694;
+	Tue,  8 Jul 2025 07:45:24 -0700 (PDT)
+Date: Tue, 8 Jul 2025 15:45:22 +0100
+From: Alexandru Elisei <alexandru.elisei@arm.com>
+To: Leo Yan <leo.yan@arm.com>
+Cc: James Clark <james.clark@linaro.org>, Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Anshuman Khandual <Anshuman.Khandual@arm.com>,
+	Rob Herring <Rob.Herring@arm.com>,
+	Suzuki Poulose <Suzuki.Poulose@arm.com>,
+	Robin Murphy <Robin.Murphy@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] perf: arm_spe: Disable buffer before writing to
+ PMBPTR_EL1 or PMBSR_EL1
+Message-ID: <aG0u57dpLnK2WnIT@raptor>
+References: <20250701-james-spe-vm-interface-v1-0-52a2cd223d00@linaro.org>
+ <20250701-james-spe-vm-interface-v1-2-52a2cd223d00@linaro.org>
+ <20250704155016.GI1039028@e132581.arm.com>
+ <b77f12e7-ea3f-4c57-9706-ff8e32721cc8@linaro.org>
+ <20250707153710.GB2182465@e132581.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707153710.GB2182465@e132581.arm.com>
 
-"Alice Ryhl" <aliceryhl@google.com> writes:
+Hi Leo,
 
-> This adds abstractions for the iov_iter type in the case where
-> data_source is ITER_SOURCE. This will make Rust implementations of
-> fops->write_iter possible.
->
-> This series only has support for using existing IO vectors created by C
-> code. Additional abstractions will be needed to support the creation of
-> IO vectors in Rust code.
->
-> These abstractions make the assumption that `struct iov_iter` does not
-> have internal self-references, which implies that it is valid to move it
-> between different local variables.
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  rust/kernel/iov.rs | 152 +++++++++++++++++++++++++++++++++++++++++++++++++++++
->  rust/kernel/lib.rs |   1 +
->  2 files changed, 153 insertions(+)
->
-> diff --git a/rust/kernel/iov.rs b/rust/kernel/iov.rs
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..b4d7ec14c57a561a01cd65b6bdf0f94b1b373b84
-> --- /dev/null
-> +++ b/rust/kernel/iov.rs
-> @@ -0,0 +1,152 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +// Copyright (C) 2025 Google LLC.
-> +
-> +//! IO vectors.
-> +//!
-> +//! C headers: [`include/linux/iov_iter.h`](srctree/include/linux/iov_iter.h),
-> +//! [`include/linux/uio.h`](srctree/include/linux/uio.h)
-> +
-> +use crate::{
-> +    alloc::{Allocator, Flags},
-> +    bindings,
-> +    prelude::*,
-> +    types::Opaque,
-> +};
-> +use core::{marker::PhantomData, mem::MaybeUninit, slice};
-> +
-> +const ITER_SOURCE: bool = bindings::ITER_SOURCE != 0;
-> +
-> +/// An IO vector that acts as a source of data.
-> +///
-> +/// The data may come from many different sources. This includes both things in kernel-space and
-> +/// reading from userspace. It's not necessarily the case that the data source is immutable, so
-> +/// rewinding the IO vector to read the same data twice is not guaranteed to result in the same
-> +/// bytes. It's also possible that the data source is mapped in a thread-local manner using e.g.
-> +/// `kmap_local_page()`, so this type is not `Send` to ensure that the mapping is read from the
-> +/// right context in that scenario.
-> +///
-> +/// # Invariants
-> +///
-> +/// Must hold a valid `struct iov_iter` with `data_source` set to `ITER_SOURCE`. For the duration
-> +/// of `'data`, it must be safe to read the data in this IO vector.
+On Mon, Jul 07, 2025 at 04:37:10PM +0100, Leo Yan wrote:
+> On Mon, Jul 07, 2025 at 12:39:57PM +0100, James Clark wrote:
+> 
+> [...]
+> 
+> > > > @@ -661,16 +666,24 @@ static irqreturn_t arm_spe_pmu_irq_handler(int irq, void *dev)
+> > > >   	 */
+> > > >   	irq_work_run();
+> > > > +	/*
+> > > > +	 * arm_spe_pmu_buf_get_fault_act() already drained, and PMBSR_EL1.S == 1
+> > > > +	 * means that StatisticalProfilingEnabled() == false. So now we can
+> > > > +	 * safely disable the buffer.
+> > > > +	 */
+> > > > +	write_sysreg_s(0, SYS_PMBLIMITR_EL1);
+> > > > +	isb();
+> > > > +
+> > > > +	/* Status can be cleared now that PMBLIMITR_EL1.E == 0 */
+> > > > +	write_sysreg_s(0, SYS_PMBSR_EL1);
+> > > > +
+> > > 
+> > > An important thing is about sequence:
+> > > As described in arm_spe_pmu_disable_and_drain_local(), should we always
+> > > clear ELs bits in PMSCR_EL1 before clear PMBLIMITR_EL1.E bit? As a
+> > > reference, we could see TRBE always clear ELx bits before disable trace
+> > > buffer.
+> > > 
+> > > And a trivial flaw:
+> > > 
+> > > If the TRUNCATED flag has been set, the irq_work_run() above runs the
+> > > IRQ work to invoke the arm_spe_pmu_stop() to disable trace buffer, which
+> > > clear SYS_PMBLIMITR_EL1.E bit. This is why the current code does not
+> > > explictly clear SYS_PMBLIMITR_EL1.E bit.
+> > > 
+> > > With this patch, the interrupt handler will clear SYS_PMBLIMITR_EL1.E
+> > > bit twice for a trunacated case.
+> > 
+> > I suppose that's a rarer case that we don't necessarily have to optimize
+> > for. I don't think it will do any harm, but is it even possible to avoid?
+> > 
+> > There are already some other duplications in the driver, for example in
+> > arm_spe_pmu_stop() we call arm_spe_pmu_disable_and_drain_local() which
+> > drains, and then arm_spe_pmu_buf_get_fault_act() which also drains again.
+> 
+> If we don't need to worry about duplicated operations in the truncated
+> case, then for easier maintenance and better readability, I'm wondering
+> if we could simplify the interrupt handler as follows:
+> 
+>     arm_spe_pmu_irq_handler()
+>     {
+>         ...
+> 
+>         act = arm_spe_pmu_buf_get_fault_act(handle);
+>         if (act == SPE_PMU_BUF_FAULT_ACT_SPURIOUS)
+>                 return IRQ_NONE;
+> 
+>         arm_spe_pmu_disable_and_drain_local();
+> 
+>         /* Status can be cleared now that PMBLIMITR_EL1.E == 0 */
+>         write_sysreg_s(0, SYS_PMBSR_EL1);
+>         isb();
+> 
+>         switch (act) {
+>             ...
+>         }
+>     }
+> 
+> This approach complies with DEN0154 - we must clear PMBLIMITR_EL1.E
+> before writing to other SPE system registers (e.g., PMBSR).
+> 
+> The reason for using arm_spe_pmu_disable_and_drain_local() is that we
+> first need to disable profiling instructions by clearing PMSCR_EL1/EL2,
+> and then is it safe to disable the profiling buffer.
 
-In my opinion, the phrasing you had in v1 was better:
+Sampling is disabled when ProfilingBufferEnabled() = false (look at the
+pseudocode for SPEPreExecution() in the Arm ARM).  ProfilingBufferEnabled() =
+false if PMBLIMITR_EL1.E = 0 *or* PMBSR_EL1.S = 1.
 
-  The buffers referenced by the IO vector must be valid for reading for
-  the duration of `'data`.
+One way to think about it is: if PMBLIMITR_EL1.E = 0, then there's no point in
+sampling instructions and creating records because the profiling unit cannot
+write them to memory; and if PMBSR_EL1.S = 1, something went wrong with the
+buffer, or the buffer is full, and similarly there's no point in sampling
+instructions and creating records because, again, the profiling unit cannot
+write them to memory.
 
-That is, I would prefer "must be valid for reading" over "it must be
-safe to read ...".
+> 
+> [...]
+> 
+> > > >   	case SPE_PMU_BUF_FAULT_ACT_OK:
+> > > >   		/*
+> > > > @@ -679,18 +692,14 @@ static irqreturn_t arm_spe_pmu_irq_handler(int irq, void *dev)
+> > > >   		 * PMBPTR might be misaligned, but we'll burn that bridge
+> > > >   		 * when we get to it.
+> > > >   		 */
+> > > > -		if (!(handle->aux_flags & PERF_AUX_FLAG_TRUNCATED)) {
+> > > > +		if (!(handle->aux_flags & PERF_AUX_FLAG_TRUNCATED))
+> > > >   			arm_spe_perf_aux_output_begin(handle, event);
+> > > > -			isb();
+> > > 
+> > > I am a bit suspecious we can remove this isb().
+> > > 
+> > > As a reference to the software usage PKLXF in Arm ARM (DDI 0487 L.a),
+> > > after enable TRBE trace unit, an ISB is mandatory. Maybe check a bit
+> > > for this?
+> >
+> > Wasn't this isb() to separate the programming of the registers with the
+> > status register clear at the end of this function to enable profiling?
+> 
+> Enabling profiling buffer followed an isb() is not only for separating
+> other register programming.
+> 
+> As described in section D17.9, Synchronization and Statistical Profiling
+> in Arm ARM:
+> 
+>   "A Context Synchronization event guarantees that a direct write to a
+>   System register made by the PE in program order before the Context
+>   synchronization event are observable by indirect reads and indirect
+>   writes of the same System register made by a profiling operation
+>   relating to a sampled operation in program order after the Context
+>   synchronization event."
+> 
+> My understanding is: after the ARM SPE profiling is enabled, the
+> followed ISB is a Synchronization to make sure the system register
+> values are observed by SPE. And we cannot rely on ERET, especially if
+> we are tracing the kernel mode.
 
-> +#[repr(transparent)]
-> +pub struct IovIterSource<'data> {
-> +    iov: Opaque<bindings::iov_iter>,
-> +    /// Represent to the type system that this value contains a pointer to readable data it does
-> +    /// not own.
-> +    _source: PhantomData<&'data [u8]>,
-> +}
-> +
-> +impl<'data> IovIterSource<'data> {
-> +    /// Obtain an `IovIterSource` from a raw pointer.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// * For the duration of `'iov`, the `struct iov_iter` must remain valid and must not be
-> +    ///   accessed except through the returned reference.
-> +    /// * For the duration of `'data`, the buffers backing this IO vector must be valid for
-> +    ///   reading.
-> +    #[track_caller]
-> +    #[inline]
-> +    pub unsafe fn from_raw<'iov>(ptr: *mut bindings::iov_iter) -> &'iov mut IovIterSource<'data> {
-> +        // SAFETY: The caller ensures that `ptr` is valid.
-> +        let data_source = unsafe { (*ptr).data_source };
-> +        assert_eq!(data_source, ITER_SOURCE);
-> +
-> +        // SAFETY: The caller ensures the struct invariants for the right durations.
-> +        unsafe { &mut *ptr.cast::<IovIterSource<'data>>() }
-> +    }
-> +
-> +    /// Access this as a raw `struct iov_iter`.
-> +    #[inline]
-> +    pub fn as_raw(&mut self) -> *mut bindings::iov_iter {
-> +        self.iov.get()
-> +    }
-> +
-> +    /// Returns the number of bytes available in this IO vector.
-> +    ///
-> +    /// Note that this may overestimate the number of bytes. For example, reading from userspace
-> +    /// memory could fail with `EFAULT`, which will be treated as the end of the IO vector.
-> +    #[inline]
-> +    pub fn len(&self) -> usize {
-> +        // SAFETY: It is safe to access the `count` field.
+DDI 0487L.a, rule R_BWCFK: If the Effective value of SCTLR_ELx.EOS is 1, the
+exception return is a Context synchronization event.
 
-Reiterating my comment from v1: Why?
+Linux always sets EOS.
 
-> +        unsafe {
-> +            (*self.iov.get())
-> +                .__bindgen_anon_1
-> +                .__bindgen_anon_1
-> +                .as_ref()
-> +                .count
-> +        }
-> +    }
-> +
-> +    /// Returns whether there are any bytes left in this IO vector.
-> +    ///
-> +    /// This may return `true` even if there are no more bytes available. For example, reading from
-> +    /// userspace memory could fail with `EFAULT`, which will be treated as the end of the IO vector.
-> +    #[inline]
-> +    pub fn is_empty(&self) -> bool {
-> +        self.len() == 0
-> +    }
-> +
-> +    /// Advance this IO vector by `bytes` bytes.
-> +    ///
-> +    /// If `bytes` is larger than the size of this IO vector, it is advanced to the end.
-> +    #[inline]
-> +    pub fn advance(&mut self, bytes: usize) {
-> +        // SAFETY: `self.iov` is a valid IO vector.
-> +        unsafe { bindings::iov_iter_advance(self.as_raw(), bytes) };
-> +    }
-> +
-> +    /// Advance this IO vector backwards by `bytes` bytes.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The IO vector must not be reverted to before its beginning.
-> +    #[inline]
-> +    pub unsafe fn revert(&mut self, bytes: usize) {
-> +        // SAFETY: `self.iov` is a valid IO vector, and `bytes` is in bounds.
-> +        unsafe { bindings::iov_iter_revert(self.as_raw(), bytes) };
-> +    }
-> +
-> +    /// Read data from this IO vector.
-> +    ///
-> +    /// Returns the number of bytes that have been copied.
-> +    #[inline]
-> +    pub fn copy_from_iter(&mut self, out: &mut [u8]) -> usize {
-> +        // SAFETY: We will not write uninitialized bytes to `out`.
+Thanks,
+Alex
 
-Can you provide something to back this claim?
-
-
-Best regards,
-Andreas Hindborg
-
-
+> 
+> Thanks,
+> Leo
+> 
+> > But now we enable profiling with the write to PMBLIMITR_EL1 in
+> > arm_spe_perf_aux_output_begin() and the last thing here is the ERET. That's
+> > specifically mentioned as enough synchronization in PKLXF:
+> > 
+> >   In the common case, this is an ERET instruction that returns to a
+> >   different Exception level where tracing is allowed.
+> > 
+> > > > -		}
+> > > >   		break;
+> > > >   	case SPE_PMU_BUF_FAULT_ACT_SPURIOUS:
+> > > >   		/* We've seen you before, but GCC has the memory of a sieve. */
+> > > >   		break;
+> > > >   	}
+> > > > -	/* The buffer pointers are now sane, so resume profiling. */
+> > > > -	write_sysreg_s(0, SYS_PMBSR_EL1);
+> > > >   	return IRQ_HANDLED;
+> > > >   }
+> > > > 
+> > > > -- 
+> > > > 2.34.1
+> > > > 
+> > > > 
+> > 
 
