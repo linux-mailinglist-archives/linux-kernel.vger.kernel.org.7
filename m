@@ -1,53 +1,61 @@
-Return-Path: <linux-kernel+bounces-721793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5554DAFCDF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:41:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAF48AFCDF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CE5B3BEF5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:40:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9000C4A0789
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA602DFF3E;
-	Tue,  8 Jul 2025 14:40:20 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B602E0915;
-	Tue,  8 Jul 2025 14:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BDA2E0412;
+	Tue,  8 Jul 2025 14:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gdj9+Tuu"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191822DFF3F;
+	Tue,  8 Jul 2025 14:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751985620; cv=none; b=Bx+TPYOzShFcFIrIBdxjwnwiE+OJuWTBIRQbeke+OAmC22CIf9S6psLPuTIAAK7MY1+WJr/TQ6DtUfRm7AOhPVU/yZ0HtyJYWFkzNC/m4plkSPkPOgMUo9ddzkdnQGJUmNtcZOSbguOIg4ZBcKq/mmXFW/quvmVDsaAebJU+/Fo=
+	t=1751985639; cv=none; b=JEhmjaw0x1j47wPjXnWs8eoX7JMMjdda1Bmm8mfDWaBGqeLiGzUtHqFEMwYs7WHE+HLOlx/jTJ14hmmFKPU6zi34q4eQ7jfblkUGVQMph3gd4ZTU1vf1Lhn6v8UteHGPtJRQC5JdQ2oYue2vdsZpjiDbuMgkPJht51AlMXUyOA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751985620; c=relaxed/simple;
-	bh=8Igoh3V3PfPDr1kU9omdjXEh0HyBrDWV6yhaeXoqTfU=;
+	s=arc-20240116; t=1751985639; c=relaxed/simple;
+	bh=ici+d7X96ldZgmo8gOK9/ovem9QEybTlAcmkuCV3VRU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kEUKmkDeF5Na71zWjqjN8NAwJOGoqabQqL0Z+NJA1DjWBcNURWr6RclmxNLpy9s3ANGcbENGKCXa8dzCDMNNQmnJIy7Zt14bBfZHf0RPup8/ZdR8+ZjxhBnfCt2knvUUv7lYuywUxmofp9j08197IyE9jBKTg9FH6T1kd+pf3Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 85F2B153B;
-	Tue,  8 Jul 2025 07:40:04 -0700 (PDT)
-Received: from raptor (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D20E23F694;
-	Tue,  8 Jul 2025 07:40:14 -0700 (PDT)
-Date: Tue, 8 Jul 2025 15:40:04 +0100
-From: Alexandru Elisei <alexandru.elisei@arm.com>
-To: James Clark <james.clark@linaro.org>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Anshuman Khandual <Anshuman.Khandual@arm.com>,
-	Rob Herring <Rob.Herring@arm.com>,
-	Suzuki Poulose <Suzuki.Poulose@arm.com>,
-	Robin Murphy <Robin.Murphy@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] perf: arm_spe: Add barrier before enabling profiling
- buffer
-Message-ID: <aG0tsz1EPbrDFTia@raptor>
-References: <20250701-james-spe-vm-interface-v1-0-52a2cd223d00@linaro.org>
- <20250701-james-spe-vm-interface-v1-1-52a2cd223d00@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KWSnwjImyWjRZEBgEfEJLYRpTFtGX4DlGjPAlarCKJ5gTzNgqshf+qN6zqxSi06C9ijCFUA7Ln61lFLbtbRIU/wnwOzEJGcvuRtCKkARF4tSt/usm4Ralt/CNrPKAG8YyHTwdPm0TqySB0TFjrtNfSCZFRaUjEnma1UqrS1DUq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=gdj9+Tuu; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=dgT+lxY1s69iozAyvWoICFQiXCuSbWbkU6hDrPGJuVI=; b=gdj9+TuuZ5gxf9tmpGmrK5TU/d
+	cktB/cltikxtVzYmfGkHdWsepGnd3j9d/DFZ/QQDunamYK4H8pca06RnOAOKLWj1B6hq+zrYIZxm8
+	NKyo/kIUHfuqxOZcalR6RWPFWf34R0GNbpTGRFdrfVDr06rYkz9b3wmsHL7B2HCTCmjA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uZ9Uj-000paE-Mg; Tue, 08 Jul 2025 16:40:29 +0200
+Date: Tue, 8 Jul 2025 16:40:29 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
+	shenjian15@huawei.com, liuyonglong@huawei.com,
+	chenhao418@huawei.com, jonathan.cameron@huawei.com,
+	shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
+	arnd@kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 08/11] net: hns3: use seq_file for files in fd/
+ in debugfs
+Message-ID: <7826b514-823c-4211-863a-8bed402f51ef@lunn.ch>
+References: <20250708130029.1310872-1-shaojijie@huawei.com>
+ <20250708130029.1310872-9-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,63 +64,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250701-james-spe-vm-interface-v1-1-52a2cd223d00@linaro.org>
+In-Reply-To: <20250708130029.1310872-9-shaojijie@huawei.com>
 
-Hi James,
-
-On Tue, Jul 01, 2025 at 04:31:57PM +0100, James Clark wrote:
-> DEN0154 states that PMBPTR_EL1 must not be modified while the profiling
-> buffer is enabled. Ensure that enabling the buffer comes after setting
-> PMBPTR_EL1 by inserting an isb().
+On Tue, Jul 08, 2025 at 09:00:26PM +0800, Jijie Shao wrote:
+> This patch use seq_file for the following nodes:
+> fd_tcam/fd_counter
 > 
-> This only applies to guests for now, but in future versions of the
-> architecture the PE will be allowed to behave in the same way.
-> 
-> Fixes: d5d9696b0380 ("drivers/perf: Add support for ARMv8.2 Statistical Profiling Extension")
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
 
-A note on why I think this is a fix.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-The write to PMBLIMITR_EL1 serves two purposes: to enable the buffer and to set
-the limit for the new buffer. The statistical profiling unit (I'm calling it
-SPU) performs indirect reads of the registers. Without the ISB between the
-buffer pointer write and the write that enables + sets limit for the buffer, I
-think it's possible for the SPU to observe the PMBLIMITR_EL1 write before the
-PMBPTR_EL1 write. During this time, from the point of view of the SPU, the
-buffer is incorrectly programmed, and potentially the old PMBPTR_EL1.PTR > new
-PMBLIMITR_EL1.Limit.
-
-arm_spe_perf_aux_output_begin() can be called after sampling has been enabled
-(PMSCR_EL1.E1SPE = 1).
-
-Putting it all together, this means that we have all the conditions to break the
-restrictions on the current write pointer and the behaviour is UNPREDICTABLE, as
-per section D17.7.1, ARM DDI 0487L. I think it's worth pointing out that the SPU
-can do any of the folling in this situation: writing to any writable virtual
-address in the current owning translation regime (!), generate a profiling
-management event, discard all data or don't enable profiling.
-
-Thanks,
-Alex
-
-> Signed-off-by: James Clark <james.clark@linaro.org>
-> ---
->  drivers/perf/arm_spe_pmu.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
-> index 3efed8839a4e..6235ca7ecd48 100644
-> --- a/drivers/perf/arm_spe_pmu.c
-> +++ b/drivers/perf/arm_spe_pmu.c
-> @@ -537,6 +537,7 @@ static void arm_spe_perf_aux_output_begin(struct perf_output_handle *handle,
->  	limit += (u64)buf->base;
->  	base = (u64)buf->base + PERF_IDX2OFF(handle->head, buf);
->  	write_sysreg_s(base, SYS_PMBPTR_EL1);
-> +	isb();
->  
->  out_write_limit:
->  	write_sysreg_s(limit, SYS_PMBLIMITR_EL1);
-> 
-> -- 
-> 2.34.1
-> 
+    Andrew
 
