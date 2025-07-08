@@ -1,203 +1,198 @@
-Return-Path: <linux-kernel+bounces-720910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73323AFC1FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:23:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECD33AFC1FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0B23423C51
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:23:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91A654A4577
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D0B205E25;
-	Tue,  8 Jul 2025 05:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="icyvUmFA"
-Received: from out198-22.us.a.mail.aliyun.com (out198-22.us.a.mail.aliyun.com [47.90.198.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C60215F7D;
+	Tue,  8 Jul 2025 05:29:26 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D714185955;
-	Tue,  8 Jul 2025 05:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0229019005E;
+	Tue,  8 Jul 2025 05:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751952217; cv=none; b=t38OQTVfJJlJWBHMCPxLD8D5MJtUFzK8Pc4ntvkyMazA3vTJKIdvn107CQ6PB/HQDNJ8incc7K8vHeVAoGr/m5M01GW6v9tkERLER3yRXuW0Y5ap1/e2J0PoZggeZ0NQnARAZ0q1MVtFd1KOf2q105JG0LnBeXiW8NlsBWJAjPg=
+	t=1751952565; cv=none; b=tvLhMaZAkDaeuEJJKTS2ntLH99NxAd8av5Kce5ewpF2xxopeMbVKR3QSL3EABACchK1jofh+76spO50GXpriHBCOQL3eMjrZ+cvgIUSKPQzjmMT2wSGCRaD+UKm8pLrdJWgGunooT5qNKPk8/rdi8sRydBL9bKj+ciGw8mARXCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751952217; c=relaxed/simple;
-	bh=thPndo6dlWTfZeTyIzp/4+EhMFDLJTB+q35Ha5618eE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pPDZBVAIxX9GDvG8HKOCb/9uGyhhLw0NVuH+6dRJ5K9CZXMY4qffSI/QmjjTEDFb407Zdi24v7ReQUF/mJtll1ofmhlPajhH8nEH1b2YMz4BIIYAUCwE+AfQapuVwf89LpjpBfGuAVnzjvsLMtgpuqEWzUCFvGNbGXXcdJ/8o9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=icyvUmFA; arc=none smtp.client-ip=47.90.198.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1751952195; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=cMZqnaTHDwkxEpl+JaYOXi3Kcl7BjC2nVgGg3nctPaY=;
-	b=icyvUmFAJ53Rt7JLVDbPMDBDooYQrgbDcoO0GKOTu7dS6jRp0g2648PjOL3+IfMbgtgNgXo0WTlCUcEJ+qPcVDT6llLGbnKS7AuER5N5QdnWAlAL4Ta0G5FVnRRnhjukaRWAvSj3uHILl8/Y3hNfXuKVNj7UIs92tah94uEc4aA=
-Received: from 30.172.244.77(mailfrom:niuxuewei.nxw@antgroup.com fp:SMTPD_---.dhHy2Tm_1751952194 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Tue, 08 Jul 2025 13:23:15 +0800
-Message-ID: <9d9adafc-71d8-4e24-b5a0-7acd1b538ae7@antgroup.com>
-Date: Tue, 8 Jul 2025 13:23:13 +0800
+	s=arc-20240116; t=1751952565; c=relaxed/simple;
+	bh=0rsn2uNMnl7vfWMCrOeKinbuO0IGrhc32D7A+bp2UiE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B9wmu6XaPzijnCjwBu7Pd7A0wDixccywNyVJXqqheoDKnO0vobcPYsbEfe9tEaKbET4SFN8sMMFOgkT9aSU7B1tOsIaPev9XzMuKli1VA7hcGnSm/5tr5IdqDz7U2QR4uR3I9BsNpSXqjZvB8F2gd8wMibR/S0kSid46L1EJNZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 8 Jul
+ 2025 13:29:09 +0800
+Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Tue, 8 Jul 2025 13:29:09 +0800
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: ryan_chen <ryan_chen@aspeedtech.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+	<andrew@codeconstruct.com.au>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Mo Elbadry <elbadrym@google.com>, "Rom
+ Lemarchand" <romlem@google.com>, William Kennington <wak@google.com>, "Yuxiao
+ Zhang" <yuxiaozhang@google.com>, <wthai@nvidia.com>, <leohu@nvidia.com>,
+	<dkodihalli@nvidia.com>, <spuranik@nvidia.com>
+Subject: [PATCH v12 0/3] Add support for AST2700 clk driver
+Date: Tue, 8 Jul 2025 13:29:06 +0800
+Message-ID: <20250708052909.4145983-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v5 0/4] vsock: Introduce SIOCINQ ioctl support
-To: Stefano Garzarella <sgarzare@redhat.com>,
- Xuewei Niu <niuxuewei97@gmail.com>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, fupan.lfp@antgroup.com
-References: <20250706-siocinq-v5-0-8d0b96a87465@antgroup.com>
- <yx44jpqxyi5yujwgdvyzajsjyf6rjqht5ypvp7q72imc6cfs2e@7yzhohzyilpq>
-Content-Language: en-US
-From: Xuewei Niu <niuxuewei.nxw@antgroup.com>
-In-Reply-To: <yx44jpqxyi5yujwgdvyzajsjyf6rjqht5ypvp7q72imc6cfs2e@7yzhohzyilpq>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+This patch series is add clk driver for AST2700.
 
+AST2700 is the 8th generation of Integrated Remote Management Processor
+introduced by ASPEED Technology Inc. Which is Board Management controller
+(BMC) SoC family. AST2700 have two SoC connected, one is SoC0, another
+is SoC1, it has it's own scu, this driver inlcude SCU0 and SCU1 driver.
 
-On 2025/7/7 21:44, Stefano Garzarella wrote:
-> On Sun, Jul 06, 2025 at 12:36:28PM +0800, Xuewei Niu wrote:
->> Introduce SIOCINQ ioctl support for vsock, indicating the length of unread
->> bytes.
->>
->> Similar with SIOCOUTQ ioctl, the information is transport-dependent.
->>
->> The first patch adds SIOCINQ ioctl support in AF_VSOCK.
->>
->> Thanks to @dexuan, the second patch is to fix the issue where hyper-v
->> `hvs_stream_has_data()` doesn't return the readable bytes.
->>
->> The third patch wraps the ioctl into `ioctl_int()`, which implements a
->> retry mechanism to prevent immediate failure.
->>
->> The last one adds two test cases to check the functionality. The changes
->> have been tested, and the results are as expected.
->>
->> Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
->>
->> -- 
->>
->> v1->v2:
->> https://lore.kernel.org/lkml/20250519070649.3063874-1-niuxuewei.nxw@antgroup.com/
->> - Use net-next tree.
->> - Reuse `rx_bytes` to count unread bytes.
->> - Wrap ioctl syscall with an int pointer argument to implement a retry
->>  mechanism.
->>
->> v2->v3:
->> https://lore.kernel.org/netdev/20250613031152.1076725-1-niuxuewei.nxw@antgroup.com/
->> - Update commit messages following the guidelines
->> - Remove `unread_bytes` callback and reuse `vsock_stream_has_data()`
->> - Move the tests to the end of array
->> - Split the refactoring patch
->> - Include <sys/ioctl.h> in the util.c
->>
->> v3->v4:
->> https://lore.kernel.org/netdev/20250617045347.1233128-1-niuxuewei.nxw@antgroup.com/
->> - Hyper-v `hvs_stream_has_data()` returns the readable bytes
->> - Skip testing the null value for `actual` (int pointer)
->> - Rename `ioctl_int()` to `vsock_ioctl_int()`
->> - Fix a typo and a format issue in comments
->> - Remove the `RECEIVED` barrier.
->> - The return type of `vsock_ioctl_int()` has been changed to bool
->>
->> v4->v5:
->> https://lore.kernel.org/netdev/20250630075727.210462-1-niuxuewei.nxw@antgroup.com/
->> - Put the hyper-v fix before the SIOCINQ ioctl implementation.
->> - Remove my SOB from the hyper-v fix patch.
-> 
-> Has I mentioned, that was not the issue, but the wrong Author.
+v12:
+-fix mistakes commit message Acked-by:Krzysztof Kozlowski
+<krzysztof.kozloski@linaro.org> to Acked-by: Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org>
 
-I see it now. I'll update the author in v6. 
-> There are also other issue, not sure how you're sending them, but I guess there are some issues with you `git format-patch` configuration:
+v11:
+-update patch(1/3) commit message subject prefix dt-binding: to dt-bindings:
 
-I was using my personal email. I have changed to the right email now.
+v10:
+-aspeed,ast2700-scu.h:
+-add SOC0_CLK_AHBMUX, SOC0_CLK_MPHYSRC, SOC0_CLK_U2PHY_REFCLKSRC,
+ SOC1_CLK_I3C.
+-clk-ast2700.c
+-add #include <linux/auxiliary_bus.h>
+-remove #include <soc/aspeed/reset-aspeed.h>
+-use devm_auxiliary_device_create replace aspeed_reset_controller_register
+-reset-aspeed.c:
+-remove aspeed_reset_unregister_adev, aspeed_reset_adev_release,
+ aspeed_reset_controller_register.
+-compatible name change reset_aspeed.reset0/1 -> clk_ast2700.reset0/1
+-remove reset-aspeed.h
 
-Hope everything goes fine with the next version.
+v9:
+-aspeed,ast2700-scu.h: no change.
+add more clear commit description.
+-clk-ast2700.c:
+add inlcude bitfield.h
+remove redundant clk_parent_data soc0_mpll_div8/soc0_ahb/uart13clk/
+uart14clk/uart15clk/uart16clk/soc1_ahb/d_clk_sels
 
-Thanks,
-Xuewei
+v8:
+-aspeed,ast2700-scu.h: remove no use soc0 clock, add new clock
+-clk-ast2700.c: remove include <linux/auxiliary_bus.h>,
+include <linux/clk-provider.h>, include <linux/of_address.h>
+-clk-ast2700.c: add include <linux/mod_devicetable.h>
+-clk-ast2700.c: modify include <soc/aspeed/reset-aspeed.h> order before
+dt-bindings
+-clk-ast2700.c: modify define to be tabbed out space
+-clk-ast2700.c: add union struct for each clk type
+	union {
+		struct ast2700_clk_fixed_factor_data factor;
+		struct ast2700_clk_fixed_rate_data rate;
+		struct ast2700_clk_gate_data gate;
+		struct ast2700_clk_div_data div;
+		struct ast2700_clk_pll_data pll;
+		struct ast2700_clk_mux_data mux;
+	} data;
+-clk-ast2700.c: modify clk_data = device_get_match_data(dev);
+-clk-ast2700.c: modify builtin_platform_driver_probe to 
+arch_initcall(clk_ast2700_init)
+-clk-ast2700.c: ast2700_clk_hw_register_hpll explain: scu010[4:2],
+scu010[4:2] = 010, hpll force 1.8Ghz
+scu010[4:2] = 011, hpll force 1.7Ghz
+scu010[4:2] = 110, hpll force 1.2Ghz
+scu010[4:2] = 111, hpll force 800Mhz
+others depend on hpll parameter register setting.
 
-> 
-> $ ./scripts/checkpatch.pl -g net-next..HEAD --codespell
-> -----------------------------------------------------------------------------------
-> Commit ed36075e04ec ("hv_sock: Return the readable bytes in hvs_stream_has_data()")
-> -----------------------------------------------------------------------------------
-> WARNING: 'multpile' may be misspelled - perhaps 'multiple'?
-> #23:
-> Note: there may be multpile incoming hv_sock packets pending in the
->                    ^^^^^^^^
-> 
-> ERROR: Missing Signed-off-by: line by nominal patch author 'Xuewei Niu <niuxuewei97@gmail.com>'
-> 
-> total: 1 errors, 1 warnings, 0 checks, 29 lines checked
-> 
-> NOTE: For some of the reported defects, checkpatch may be able to
->       mechanically convert to the typical style using --fix or --fix-inplace.
-> 
-> Commit ed36075e04ec ("hv_sock: Return the readable bytes in hvs_stream_has_data()") has style problems, please review.
-> ------------------------------------------------------------
-> Commit 4e5c39e373fa ("vsock: Add support for SIOCINQ ioctl")
-> ------------------------------------------------------------
-> WARNING: From:/Signed-off-by: email address mismatch: 'From: Xuewei Niu <niuxuewei97@gmail.com>' != 'Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>'
-> 
-> total: 0 errors, 1 warnings, 0 checks, 28 lines checked
-> 
-> NOTE: For some of the reported defects, checkpatch may be able to
->       mechanically convert to the typical style using --fix or --fix-inplace.
-> 
-> Commit 4e5c39e373fa ("vsock: Add support for SIOCINQ ioctl") has style problems, please review.
-> ------------------------------------------------------------------------
-> Commit 3eb323b2d9f4 ("test/vsock: Add retry mechanism to ioctl wrapper")
-> ------------------------------------------------------------------------
-> WARNING: From:/Signed-off-by: email address mismatch: 'From: Xuewei Niu <niuxuewei97@gmail.com>' != 'Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>'
-> 
-> total: 0 errors, 1 warnings, 62 lines checked
-> 
-> NOTE: For some of the reported defects, checkpatch may be able to
->       mechanically convert to the typical style using --fix or --fix-inplace.
-> 
-> Commit 3eb323b2d9f4 ("test/vsock: Add retry mechanism to ioctl wrapper") has style problems, please review.
-> 
-> NOTE: If any of the errors are false positives, please report
->       them to the maintainer, see CHECKPATCH in MAINTAINERS.
-> 
->> - Move the `need_refill` initialization into the `case 1` block.
->> - Remove the `actual` argument from `vsock_ioctl_int()`.
->> - Replace `TIOCINQ` with `SIOCINQ`.
->>
->> ---
->> Xuewei Niu (4):
->>      hv_sock: Return the readable bytes in hvs_stream_has_data()
->>      vsock: Add support for SIOCINQ ioctl
->>      test/vsock: Add retry mechanism to ioctl wrapper
->>      test/vsock: Add ioctl SIOCINQ tests
->>
->> net/vmw_vsock/af_vsock.c         | 22 +++++++++++
->> net/vmw_vsock/hyperv_transport.c | 17 +++++++--
->> tools/testing/vsock/util.c       | 30 ++++++++++-----
->> tools/testing/vsock/util.h       |  1 +
->> tools/testing/vsock/vsock_test.c | 79 ++++++++++++++++++++++++++++++++++++++++
->> 5 files changed, 137 insertions(+), 12 deletions(-)
->> ---
->> base-commit: 5f712c3877f99d5b5e4d011955c6467ae0e535a6
->> change-id: 20250703-siocinq-9e2907939806
->>
->> Best regards,
->> -- 
->> Xuewei Niu <niuxuewei.nxw@antgroup.com>
->>
+v7:
+-reset-aspeed.h: fix declare static inline aspeed_reset_controller_register
+if the function is not used.
+
+v6:
+-patch-2: add reset-aspeed.h
+-reset-aspeed: add include cleanup.h for guard()
+-reset-aspeed: change ids name clk_aspeed to reset_aspeed
+-reset-aspeed: move aspeed_reset_controller_register,
+aspeed_reset_adev_release, aspeed_reset_unregister_adev from clk-ast2700.c
+-reset-aspeed: drop base check, since it check in clk-ast2700.c
+-clk-ast2700: sync each gate name from *clk to *clk-gate name.
+-clk-ast2700: add CLK_GATE_ASPEED to diff clk_hw_register_gate and
+ast2700_clk_hw_register_gate.
+
+v5:
+-patch-2 Kconfig: add select AUXILIARY_BUS
+-reset-aspeed: #define to_aspeed_reset(p) turn into static inline function.
+-reset-aspeed: modify spin_lock_irqsave to guard(spinlock_irqsave)
+-reset-aspeed: remove unnecessary parentheses.
+-clk-ast2700: use <linux/units.h> and refrain from define clk
+
+v4:
+-yaml: keep size-cells=<1>.
+-merge clk,reset dt binding header with yaml the same patch.
+-rename clk,reset dt binding header to aspeed,ast2700-scu.h
+-reset-aspeed: update tables tabs sapces to consistent spaces.
+-reset-aspeed: remove no use dev_set_drvdata.
+-clk-ast2700: modify reset_name to const int scu in struct clk_data.
+-clk-ast2700: use scu number in clk_data generate reset_name for reset
+ driver register.
+-clk-ast2700: fix pll number mix up scu0,scu1.
+-clk-ast2700: update dt-binding clock include file.
+
+v3:
+-yaml: v2 missing send yaml patch, v3 add.
+-yaml: drop 64bits address example.
+-yaml: add discription about soc0 and soc1
+-dt-bindings: remove (), *_NUMS, reserved.
+-dt-bindings: remove dulipated define number.
+-dt-bindings: merge clk and reset to be one patch.
+-reset-aspeed: add auxiliary device for reset driver.
+-clk-ast2700: modify reset to be auxiliary add.
+-clk-ast2700: modify to be platform driver.
+-clk-ast2700: modify each clk to const clk array.
+
+v2:
+-yaml: drop 64bits address example.
+-yaml: add discription about soc0 and soc1
+-dt-bindings: remove (), *_NUMS, reserved.
+-dt-bindings: remove dulipated define number
+-clk-ast2700: drop WARN_ON, weird comment.
+
+Ryan Chen (3):
+  dt-bindings: clock: ast2700: modify soc0/1 clock define
+  reset: aspeed: register AST2700 reset auxiliary bus device
+  clk: aspeed: add AST2700 clock driver
+
+ drivers/clk/Kconfig                           |    8 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-ast2700.c                     | 1138 +++++++++++++++++
+ drivers/reset/Kconfig                         |    7 +
+ drivers/reset/Makefile                        |    1 +
+ drivers/reset/reset-aspeed.c                  |  253 ++++
+ .../dt-bindings/clock/aspeed,ast2700-scu.h    |    4 +
+ 7 files changed, 1412 insertions(+)
+ create mode 100644 drivers/clk/clk-ast2700.c
+ create mode 100644 drivers/reset/reset-aspeed.c
+
+-- 
+2.34.1
 
 
