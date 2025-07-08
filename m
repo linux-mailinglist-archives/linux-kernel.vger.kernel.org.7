@@ -1,493 +1,278 @@
-Return-Path: <linux-kernel+bounces-721384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEE9BAFC881
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:35:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E53AFC886
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DF894A5DF0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:35:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9A1E7A3AFC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71AEE2D8764;
-	Tue,  8 Jul 2025 10:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494C32D8764;
+	Tue,  8 Jul 2025 10:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fwgq6mfL"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Gbgvtn8U"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0590B2D6404;
-	Tue,  8 Jul 2025 10:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC3E269808
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 10:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751970936; cv=none; b=Gw94czT5vF86cnHz8O69uwU6uHBbwZTHuF7EoqnBmnj52gS17FeRyyG4R1SM2lzRb0xQRt20FD+noHnAUzMVXFSLH0wOyynMZTlAGUm+K843DHeEvz2wKogeouU3DhGKbA8ePmME5g9ZPOSh2sazcDJPqUo6HzOn4dtMKELkAmg=
+	t=1751971146; cv=none; b=Tg18B2KV+6j+uPUH/5fTZF57E65vxI3dcwHPIR43UyIFT+ig+ztp3nRk2zfRPtVNfAb108FJZ5s/3TzshXln9kKxgXg+5gMcuZwulfMiz7L/jc2DWLDzdY93qjimFK+zQmf0VzP7vveOJWRnA5BM1qUpGZsTyCnSVUJ0Nwjws6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751970936; c=relaxed/simple;
-	bh=jZKGVQUcc9WCbkWkXrCZxx5fdpxjAlmnnOed/zSS7LI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JrgcP8tiJV4CfAD6j+/f/jQCMD8F4RkkZlbga+c7/uiWSC2Pti4DU31rmBVaIVsJcMdEYWkZDXanDSkyDvGg+7F5jFdQXqePdwUEnqBSBOuIWiCwyKv4me01JndOTX43GoB628Tt7ffXCbzcKDUnxrcDQtf1/xsbYWcShW7YYlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fwgq6mfL; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 568AZIGc1145761;
-	Tue, 8 Jul 2025 05:35:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1751970918;
-	bh=G5IpErDkbr9ApeCh6EWnviXlGifQ81eSVsUEoXpxLTY=;
-	h=From:To:CC:Subject:Date;
-	b=fwgq6mfLSatlxjGc0Lqh49QR+N+zDf4122ZZWfcrFDoBD6K640pAqD5mSJpDVhEEd
-	 hyVQoPl8NDe72dKlL1KfXEwiHcUMs0IgOWwRYS9O4mXuzx/pTPw13RnU6Cm4wWGtU+
-	 U4eZOM5HZrnF2pcMYi7LRHRejwaa7e+LQ7Mx8Rfs=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 568AZINi928923
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 8 Jul 2025 05:35:18 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 8
- Jul 2025 05:35:18 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 8 Jul 2025 05:35:17 -0500
-Received: from localhost (akira.dhcp.ti.com [10.24.69.4])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 568AZGcS1624100;
-	Tue, 8 Jul 2025 05:35:17 -0500
-From: Himanshu Mittal <h-mittal1@ti.com>
-To: <horms@kernel.org>, <h-mittal1@ti.com>, <pabeni@redhat.com>,
-        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
-        <andrew+netdev@lunn.ch>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>,
-        <m-malladi@ti.com>, <pratheesh@ti.com>, <prajith@ti.com>
-Subject: [PATCH net] net: ti: icssg-prueth: Fix buffer allocation for ICSSG
-Date: Tue, 8 Jul 2025 16:05:16 +0530
-Message-ID: <20250708103516.1268876-1-h-mittal1@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1751971146; c=relaxed/simple;
+	bh=1+K2vStuMbWEvbxNn4v5jMkIEs47um7WuK/tPjoaTZE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ngOXPac8lSb2EIgH5RaeSLTqs2PKe3hmg+eVqJfxUK7B9ubOrP5IlY3/Z/9vhKsAd3pCXWu6PsrkhbnUmD9UPzJg4MPphUiUpNUMiQmHvYemoa7C3INeBbDa7BaVeVjmlycHNDAyGf2ylsC3t8cnFbwObo5/8h/eCGw4pIetedo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Gbgvtn8U; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568AAGLa008288
+	for <linux-kernel@vger.kernel.org>; Tue, 8 Jul 2025 10:39:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MBWTgG1nt7QgnG2L1PdtfNApAGuuPN/fOFc0QPePaMA=; b=Gbgvtn8UMww41wns
+	B5/R2pshzbfIbdd3D4bOEe4XGEu0os7l3mMaoJjdWOzdBFsGtF/CMQZAqlv5OqSW
+	m6gyEdjx3Z5t8UblYJImazagnYYGrZY9hWnwpyvHQ6aNDXZa4gmcn1cPIZa2faxX
+	wDckYvzBUiFW0iEBI8L7+EWtY36HgsRe8LF10RAG38CqqwmlpTCCqPwUZcivdaYI
+	NQ7a2LgV4d1uFbITP+rWDruwf/jFM8fEbiMFcLWApIOmX2stZNz5B5vWIZwxf9wY
+	NnovWdEcBGEAzkLi2yKZNWwXzj/wdoTusg5QRyeTqY7jI5uH3N9Om7FLUmOVlQj9
+	KfuVVw==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pucmvrjc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 10:39:03 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-235e1d66fa6so35666365ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 03:39:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751971142; x=1752575942;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MBWTgG1nt7QgnG2L1PdtfNApAGuuPN/fOFc0QPePaMA=;
+        b=mcKXtk8xO/nXK+jrrJlgZ+qA5ycHGcYmDniYJmjGhpcPkXXCu9AGvroFm8d4GcAywc
+         pAOSZ113DsM45x8KFIW+WVGCegKeMOlpMIdQH4mtZejc6EoNX1kIGCAYXj7sOtZz62Uo
+         G4zC6qePWgl46hfdpPwgMao5n2ku9S1UIy8+0ZxzErrFJkXKN8Wq2C8sAA/7HtiY0Qb4
+         IV7u4WrZsLrCRRe3ULrOAziIfw5wwR4Il7ij3ze38sT6D3akOzxOnPBXf4ZyUU2s5ulm
+         umPYKLWC5ARD3+JDcQWedzdWKHjtVJy4lyIFpLYVXeo4cIMvWsk9RRVXRsjwbh3INpvw
+         Hlkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVktpjX+K4hubby2b5XGv2n8LELmJ+KBTmi9Rg5dddnLIHvYLqbY4uLEj2bawp5i07g5CeXUCVstyYhlUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkwTZWXgqL5Xhfpl83yfj2zdHbaRq12cSsSJ36JbM8GBvgjcvx
+	4tkngbGogbAcEkmAqGVE1c0vBX02A74hVjBzY9qeS9c38gHYYEJewnv054/+uco+kFvNMbfg1RX
+	D9/hnd+Sr4Ee2jQrn2U51HF8tq0G72ZXgHzDzHen4RRc3YU5UZ/Jw4uvtQ3TFUCYBrRI=
+X-Gm-Gg: ASbGnct8QQRkB0+IIisqCyYxv+nX0lAmDLmZda91tonV6n2ZMnVp2o6lir860sLaVM0
+	IiU31CPcE60q0rBvsHN/DZgOas+vhKlbG0jc6IX1FApuuokWVaZaE6rm0HuD8dWo9vE07s9ZIXx
+	lFegGzuWaPEwmwNONur1tETIMgjRtSdn1n5y5bowb/J8d8sSsLLKr90IexyxIpSbmeUIAfAWiCJ
+	hUq5FC+17sc+7SQeMzuaUfl3u9BLiC8onUg3N8l0Hd3HjDi9SPicA8PU0vJjQ/bD328Eztg8Zf1
+	4X3vQjIxC8SrWWSBxqzewz6aPeh7uzs+Z12LtZJhJLLzCVK0QM6qJQkJfAGaEj49g03FqssDL9k
+	Dxvl0sIiqonbdefY=
+X-Received: by 2002:a17:902:e788:b0:234:1163:ff99 with SMTP id d9443c01a7336-23dd1d7ef95mr32972085ad.43.1751971142360;
+        Tue, 08 Jul 2025 03:39:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGC/n1Wv16I6oi8TfKFbGm9RVJSuG7cMjQtpyIJkVs3+lkD6ynLF8cQTccR4h0hqlT00wE5zA==
+X-Received: by 2002:a17:902:e788:b0:234:1163:ff99 with SMTP id d9443c01a7336-23dd1d7ef95mr32971795ad.43.1751971141853;
+        Tue, 08 Jul 2025 03:39:01 -0700 (PDT)
+Received: from [10.133.33.177] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8435022dsm114182915ad.86.2025.07.08.03.38.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jul 2025 03:39:01 -0700 (PDT)
+Message-ID: <7aa0ac35-068f-4738-abbd-f1073294365b@oss.qualcomm.com>
+Date: Tue, 8 Jul 2025 18:38:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] bus: mhi: don't deinitialize and re-initialize again
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
+        Youssef Samir <quic_yabdulra@quicinc.com>,
+        Matthew Leung <quic_mattleun@quicinc.com>, Yan Zhen <yanzhen@vivo.com>,
+        Alexander Wilhelm <alexander.wilhelm@westermo.com>,
+        Alex Elder <elder@kernel.org>, Kunwu Chan <chentao@kylinos.cn>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Siddartha Mohanadoss <smohanad@codeaurora.org>,
+        Sujeev Dias <sdias@codeaurora.org>,
+        Julia Lawall <julia.lawall@lip6.fr>, John Crispin <john@phrozen.org>,
+        Muna Sinada <quic_msinada@quicinc.com>,
+        Venkateswara Naralasetty <quic_vnaralas@quicinc.com>,
+        Maharaja Kennadyrajan <quic_mkenna@quicinc.com>, mhi@lists.linux.dev,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org
+Cc: kernel@collabora.com
+References: <20250630074330.253867-1-usama.anjum@collabora.com>
+ <20250630074330.253867-3-usama.anjum@collabora.com>
+ <5f2a900a-3c8e-4b16-bd91-500af7d0315e@oss.qualcomm.com>
+ <29ba0afa-9a1b-40f9-a174-d03902ea5d3f@collabora.com>
+ <8b9eb6f4-6f0c-458d-b1e6-a1893c35b81d@oss.qualcomm.com>
+ <a92b3d96-0c19-49c2-ad8b-ad31dec973c3@collabora.com>
+ <7b8ea9ba-02ef-4676-a4d3-d088920283c3@oss.qualcomm.com>
+ <9eba0149-290d-4010-8791-d4d8d8be3786@collabora.com>
+ <fdb9f1e7-bf8f-4018-b0ac-ac8a70d9b8ec@oss.qualcomm.com>
+ <5c9843b5-d756-4a99-b93f-d32ed8f16e32@collabora.com>
+Content-Language: en-US
+From: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+In-Reply-To: <5c9843b5-d756-4a99-b93f-d32ed8f16e32@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=GdQXnRXL c=1 sm=1 tr=0 ts=686cf547 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=n4c7CGo1Dgpf3paWKKAA:9
+ a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-GUID: GGjaKVY6BRB-q6SGGJ_JjRxFa_2ZpTOC
+X-Proofpoint-ORIG-GUID: GGjaKVY6BRB-q6SGGJ_JjRxFa_2ZpTOC
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDA4NyBTYWx0ZWRfXynpDQgpcNSb4
+ 57rjfxcHPZQIyuduBp1inUBfW35kok37A+nMUkb/5L7d27jyclppSk+RyQDrWR9dEDPkssmnFtR
+ nA+OGQowkjU8yVwj3usvAa+k+AcJXUyQj9syMa0EXsAfkIL+f1SfXMJqIjuIDxqe2ghszduY+Gl
+ C+2Iz3h+9Ro00FA8ABGn5plRUkyrdBYUdxuBjNSmHsZm9LVD3AG4K5TrWNsQR9W7Y3JREMIB7og
+ HgkYvzhwB38JarGsZtRd5Etzm4ipuHJrZo+iRYzy9XPGjqGnI5Fuv+r0ASfnNoeREd7naxwGPgZ
+ luy4DI01bQb/EvPtQFxftWYBXhstf+DzarQHki6lUnZTpe0M2QUWRAehl8nN4q+DQBQgRdyyVm3
+ z+TQUvAFbAU4B0Wv7q0OWgN4eOCIJE42io4iF+3IxFibjXG2ooX8/f2OeQnIw7A5pcpBc7zp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-08_03,2025-07-07_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 clxscore=1015
+ spamscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
+ malwarescore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507080087
 
-Fixes overlapping buffer allocation for ICSSG peripheral
-used for storing packets to be received/transmitted.
-There are 3 buffers:
-1. Buffer for Locally Injected Packets
-2. Buffer for Forwarding Packets
-3. Buffer for Host Egress Packets
 
-In existing allocation buffers for 2. and 3. are overlapping
-causing packet corruption.
 
-Packet corruption observations:
-During tcp iperf testing, due to overlapping buffers the received ack packet
-overwrites the packet to be transmitted. So, we see packets on wire with the
-ack packet content inside the content of next TCP packet from sender device.
+On 7/8/2025 5:12 PM, Muhammad Usama Anjum wrote:
+> On 7/8/25 6:43 AM, Baochen Qiang wrote:
+>>
+>>
+>> On 7/7/2025 9:11 PM, Muhammad Usama Anjum wrote:
+>>>>>>>>> diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
+>>>>>>>>> index 4488e4cdc5e9e..bc4930fe6a367 100644
+>>>>>>>>> --- a/drivers/net/wireless/ath/ath11k/core.c
+>>>>>>>>> +++ b/drivers/net/wireless/ath/ath11k/core.c
+>>>>>>>>> @@ -2213,14 +2213,9 @@ static int ath11k_core_reconfigure_on_crash(struct ath11k_base *ab)
+>>>>>>>>>  	mutex_unlock(&ab->core_lock);
+>>>>>>>>>  
+>>>>>>>>>  	ath11k_dp_free(ab);
+>>>>>>>>> -	ath11k_hal_srng_deinit(ab);
+>>>>>>>>>  
+>>>>>>>>>  	ab->free_vdev_map = (1LL << (ab->num_radios * TARGET_NUM_VDEVS(ab))) - 1;
+>>>>>>>>>  
+>>>>>>>>> -	ret = ath11k_hal_srng_init(ab);
+>>>>>>>>> -	if (ret)
+>>>>>>>>> -		return ret;
+>>>>>>>>> -
+>>>>>>>> while I agree there is no need of a dealloc/realloc, we can not simply remove calling the
+>>>>>>>> _deinit()/_init() pair. At least the memset() cleanup to hal parameters (e.g.
+>>>>>>> Why do is it being done in the resume handler? Shouldn't those parameters be cleaned up
+>>>>>>> in resume handler? So when device wakes up, its state is already correct.
+>>>>>>>
+>>>>>> Hmm... not quite understand your question. Can you elaborate?
+>>>>> I'm trying to understand the possibility of cleanup of hal in suspend handler. For example:
+>>>>> * The driver has been loaded and has been working fine.
+>>>>> * The user called suspend. So all devices would be suspended.
+>>>>> * In suspend handler of the ath11k, we should do the necessary cleanups of the states
+>>>>>   like hal.
+>>>>> * When the device would resume after long time, the hal would have the correct state
+>>>>>   already. So we'll not need to deinit and init again.
+>>>> The hal cleanup is not only needed by suspend/resume, but also a step of reset/recover
+>>>> process. So If we are moving the cleanup to suspend handler, similar stuff needs to be
+>>>> done for reset/recover as well.
+>>> It makes sense.
+>>>
+>>> So clearing the hal structure completely other than ab->hal.srn_config doesn't seem
+>>> right. I've also tested it and it crashes the whole system.
+>>>
+>>> On contrary, with only the current patch applied, there is no abnormality.
+>>>
+>>> num_shadow_reg_configured and avail_blk_resource are non-zero. If I make them 0,
+>>> driver still keeps on working.
+>>>
+>>> 	ab->hal.num_shadow_reg_configured = 0;
+>>> 	ab->hal.avail_blk_resource = 0;
+>>> 	ab->hal.current_blk_index = 0;
+>>>
+>>> As you have suggested setting these 3 to zero, is there any other variable in hal
+>>> structure which should be set to zero?
+>>
+>> IMO srng_config, rdp, wrp and srng_key may keep unchanged through suspend/reset, all other
+>> fields should be cleared/reinitialized.
+> 
+> memseting srng_list and shadow_reg_addr causes crashes. Please can you confirm why do you
+> think those should be memset. Here is WIP patch:
 
-Fixes: abd5576b9c57 ("net: ti: icssg-prueth: Add support for ICSSG switch firmware")
-Signed-off-by: Himanshu Mittal <h-mittal1@ti.com>
----
- drivers/net/ethernet/ti/icssg/icssg_config.c  | 148 ++++++++++++------
- drivers/net/ethernet/ti/icssg/icssg_config.h  |  77 +++++++--
- drivers/net/ethernet/ti/icssg/icssg_prueth.c  |  18 ++-
- drivers/net/ethernet/ti/icssg/icssg_prueth.h  |   2 +
- .../net/ethernet/ti/icssg/icssg_switch_map.h  |   3 +
- 5 files changed, 176 insertions(+), 72 deletions(-)
+We need to make sure they have a clean state while resume/recover.
 
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
-index ddfd1c02a885..f06494c33e9f 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_config.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
-@@ -288,8 +288,12 @@ static int prueth_fw_offload_buffer_setup(struct prueth_emac *emac)
- 	int i;
- 
- 	addr = lower_32_bits(prueth->msmcram.pa);
--	if (slice)
--		addr += PRUETH_NUM_BUF_POOLS * PRUETH_EMAC_BUF_POOL_SIZE;
-+	if (slice) {
-+		if (prueth->pdata.banked_ms_ram)
-+			addr += MSMC_RAM_BANK_SIZE;
-+		else
-+			addr += PRUETH_SW_TOTAL_BUF_SIZE_PER_SLICE;
-+	}
- 
- 	if (addr % SZ_64K) {
- 		dev_warn(prueth->dev, "buffer pool needs to be 64KB aligned\n");
-@@ -297,43 +301,60 @@ static int prueth_fw_offload_buffer_setup(struct prueth_emac *emac)
- 	}
- 
- 	bpool_cfg = emac->dram.va + BUFFER_POOL_0_ADDR_OFFSET;
--	/* workaround for f/w bug. bpool 0 needs to be initialized */
--	for (i = 0; i <  PRUETH_NUM_BUF_POOLS; i++) {
-+
-+	/* Configure buffer pools for forwarding buffers
-+	 * - used by firmware to store packets to be forwarded to other port
-+	 * - 8 total pools per slice
-+	 */
-+	for (i = 0; i <  PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE; i++) {
- 		writel(addr, &bpool_cfg[i].addr);
--		writel(PRUETH_EMAC_BUF_POOL_SIZE, &bpool_cfg[i].len);
--		addr += PRUETH_EMAC_BUF_POOL_SIZE;
-+		writel(PRUETH_SW_FWD_BUF_POOL_SIZE, &bpool_cfg[i].len);
-+		addr += PRUETH_SW_FWD_BUF_POOL_SIZE;
- 	}
- 
--	if (!slice)
--		addr += PRUETH_NUM_BUF_POOLS * PRUETH_EMAC_BUF_POOL_SIZE;
--	else
--		addr += PRUETH_SW_NUM_BUF_POOLS_HOST * PRUETH_SW_BUF_POOL_SIZE_HOST;
--
--	for (i = PRUETH_NUM_BUF_POOLS;
--	     i < 2 * PRUETH_SW_NUM_BUF_POOLS_HOST + PRUETH_NUM_BUF_POOLS;
--	     i++) {
--		/* The driver only uses first 4 queues per PRU so only initialize them */
--		if (i % PRUETH_SW_NUM_BUF_POOLS_HOST < PRUETH_SW_NUM_BUF_POOLS_PER_PRU) {
--			writel(addr, &bpool_cfg[i].addr);
--			writel(PRUETH_SW_BUF_POOL_SIZE_HOST, &bpool_cfg[i].len);
--			addr += PRUETH_SW_BUF_POOL_SIZE_HOST;
-+	/* Configure buffer pools for Local Injection buffers
-+	 *  - used by firmware to store packets received from host core
-+	 *  - 16 total pools per slice
-+	 */
-+	for (i = 0; i < PRUETH_NUM_LI_BUF_POOLS_PER_SLICE; i++) {
-+		/* The driver only uses first 4 queues per PRU so only initialize buffer for them */
-+		if ((i % PRUETH_NUM_LI_BUF_POOLS_PER_PORT_PER_SLICE)
-+			 < PRUETH_SW_USED_LI_BUF_POOLS_PER_PORT_PER_SLICE) {
-+			writel(addr, &bpool_cfg[i + PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE].addr);
-+			writel(PRUETH_SW_LI_BUF_POOL_SIZE,
-+			       &bpool_cfg[i + PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE].len);
-+			addr += PRUETH_SW_LI_BUF_POOL_SIZE;
- 		} else {
--			writel(0, &bpool_cfg[i].addr);
--			writel(0, &bpool_cfg[i].len);
-+			writel(0, &bpool_cfg[i + PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE].addr);
-+			writel(0, &bpool_cfg[i + PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE].len);
- 		}
- 	}
- 
--	if (!slice)
--		addr += PRUETH_SW_NUM_BUF_POOLS_HOST * PRUETH_SW_BUF_POOL_SIZE_HOST;
--	else
--		addr += PRUETH_EMAC_RX_CTX_BUF_SIZE;
-+	/* Express RX buffer queue
-+	 *  - used by firmware to store express packets to be transmitted to host core
-+	 */
-+	rxq_ctx = emac->dram.va + HOST_RX_Q_EXP_CONTEXT_OFFSET;
-+	for (i = 0; i < 3; i++)
-+		writel(addr, &rxq_ctx->start[i]);
-+
-+	addr += PRUETH_SW_HOST_EXP_BUF_POOL_SIZE;
-+	writel(addr, &rxq_ctx->end);
- 
-+	/* Pre-emptible RX buffer queue
-+	 *  - used by firmware to store preemptible packets to be transmitted to host core
-+	 */
- 	rxq_ctx = emac->dram.va + HOST_RX_Q_PRE_CONTEXT_OFFSET;
- 	for (i = 0; i < 3; i++)
- 		writel(addr, &rxq_ctx->start[i]);
- 
--	addr += PRUETH_EMAC_RX_CTX_BUF_SIZE;
--	writel(addr - SZ_2K, &rxq_ctx->end);
-+	addr += PRUETH_SW_HOST_PRE_BUF_POOL_SIZE;
-+	writel(addr, &rxq_ctx->end);
-+
-+	/* Set pointer for default dropped packet write
-+	 *  - used by firmware to temporarily store packet to be dropped
-+	 */
-+	rxq_ctx = emac->dram.va + DEFAULT_MSMC_Q_OFFSET;
-+	writel(addr, &rxq_ctx->start[0]);
- 
- 	return 0;
- }
-@@ -347,13 +368,13 @@ static int prueth_emac_buffer_setup(struct prueth_emac *emac)
- 	u32 addr;
- 	int i;
- 
--	/* Layout to have 64KB aligned buffer pool
--	 * |BPOOL0|BPOOL1|RX_CTX0|RX_CTX1|
--	 */
--
- 	addr = lower_32_bits(prueth->msmcram.pa);
--	if (slice)
--		addr += PRUETH_NUM_BUF_POOLS * PRUETH_EMAC_BUF_POOL_SIZE;
-+	if (slice) {
-+		if (prueth->pdata.banked_ms_ram)
-+			addr += MSMC_RAM_BANK_SIZE;
-+		else
-+			addr += PRUETH_EMAC_TOTAL_BUF_SIZE_PER_SLICE;
-+	}
- 
- 	if (addr % SZ_64K) {
- 		dev_warn(prueth->dev, "buffer pool needs to be 64KB aligned\n");
-@@ -361,39 +382,62 @@ static int prueth_emac_buffer_setup(struct prueth_emac *emac)
- 	}
- 
- 	bpool_cfg = emac->dram.va + BUFFER_POOL_0_ADDR_OFFSET;
--	/* workaround for f/w bug. bpool 0 needs to be initilalized */
--	writel(addr, &bpool_cfg[0].addr);
--	writel(0, &bpool_cfg[0].len);
- 
--	for (i = PRUETH_EMAC_BUF_POOL_START;
--	     i < PRUETH_EMAC_BUF_POOL_START + PRUETH_NUM_BUF_POOLS;
--	     i++) {
--		writel(addr, &bpool_cfg[i].addr);
--		writel(PRUETH_EMAC_BUF_POOL_SIZE, &bpool_cfg[i].len);
--		addr += PRUETH_EMAC_BUF_POOL_SIZE;
-+	/* Configure buffer pools for forwarding buffers
-+	 *  - in mac mode - no forwarding by firmware so initialize all pools to 0
-+	 *  - 8 total pools per slice
-+	 */
-+	for (i = 0; i <  PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE; i++) {
-+		writel(0, &bpool_cfg[i].addr);
-+		writel(0, &bpool_cfg[i].len);
- 	}
- 
--	if (!slice)
--		addr += PRUETH_NUM_BUF_POOLS * PRUETH_EMAC_BUF_POOL_SIZE;
--	else
--		addr += PRUETH_EMAC_RX_CTX_BUF_SIZE * 2;
-+	/* Configure buffer pools for Local Injection buffers
-+	 *  - used by firmware to store packets received from host core
-+	 *  - 16 total pools per slice
-+	 */
-+	bpool_cfg = emac->dram.va + BUFFER_POOL_0_ADDR_OFFSET;
-+	for (i = 0; i < PRUETH_NUM_LI_BUF_POOLS_PER_SLICE; i++) {
-+		/* In EMAC mode, only first 4 buffers are used,
-+		 * as 1 slice needs to handle only 1 port
-+		 */
-+		if (i < PRUETH_EMAC_USED_LI_BUF_POOLS_PER_PORT_PER_SLICE) {
-+			writel(addr, &bpool_cfg[i + PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE].addr);
-+			writel(PRUETH_EMAC_LI_BUF_POOL_SIZE,
-+			       &bpool_cfg[i + PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE].len);
-+			addr += PRUETH_EMAC_LI_BUF_POOL_SIZE;
-+		} else {
-+			writel(0, &bpool_cfg[i + PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE].addr);
-+			writel(0, &bpool_cfg[i + PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE].len);
-+		}
-+	}
- 
--	/* Pre-emptible RX buffer queue */
--	rxq_ctx = emac->dram.va + HOST_RX_Q_PRE_CONTEXT_OFFSET;
-+	/* Express RX buffer queue
-+	 *  - used by firmware to store express packets to be transmitted to host core
-+	 */
-+	rxq_ctx = emac->dram.va + HOST_RX_Q_EXP_CONTEXT_OFFSET;
- 	for (i = 0; i < 3; i++)
- 		writel(addr, &rxq_ctx->start[i]);
- 
--	addr += PRUETH_EMAC_RX_CTX_BUF_SIZE;
-+	addr += PRUETH_EMAC_HOST_EXP_BUF_POOL_SIZE;
- 	writel(addr, &rxq_ctx->end);
- 
--	/* Express RX buffer queue */
--	rxq_ctx = emac->dram.va + HOST_RX_Q_EXP_CONTEXT_OFFSET;
-+	/* Pre-emptible RX buffer queue
-+	 *  - used by firmware to store preemptible packets to be transmitted to host core
-+	 */
-+	rxq_ctx = emac->dram.va + HOST_RX_Q_PRE_CONTEXT_OFFSET;
- 	for (i = 0; i < 3; i++)
- 		writel(addr, &rxq_ctx->start[i]);
- 
--	addr += PRUETH_EMAC_RX_CTX_BUF_SIZE;
-+	addr += PRUETH_EMAC_HOST_PRE_BUF_POOL_SIZE;
- 	writel(addr, &rxq_ctx->end);
- 
-+	/* Set pointer for default dropped packet write
-+	 *  - used by firmware to temporarily store packet to be dropped
-+	 */
-+	rxq_ctx = emac->dram.va + DEFAULT_MSMC_Q_OFFSET;
-+	writel(addr, &rxq_ctx->start[0]);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.h b/drivers/net/ethernet/ti/icssg/icssg_config.h
-index c884e9fa099e..361cc9f5b24d 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_config.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_config.h
-@@ -26,21 +26,68 @@ struct icssg_flow_cfg {
- #define PRUETH_MAX_RX_FLOWS	1	/* excluding default flow */
- #define PRUETH_RX_FLOW_DATA	0
- 
--#define PRUETH_EMAC_BUF_POOL_SIZE	SZ_8K
--#define PRUETH_EMAC_POOLS_PER_SLICE	24
--#define PRUETH_EMAC_BUF_POOL_START	8
--#define PRUETH_NUM_BUF_POOLS	8
--#define PRUETH_EMAC_RX_CTX_BUF_SIZE	SZ_16K	/* per slice */
--#define MSMC_RAM_SIZE	\
--	(2 * (PRUETH_EMAC_BUF_POOL_SIZE * PRUETH_NUM_BUF_POOLS + \
--	 PRUETH_EMAC_RX_CTX_BUF_SIZE * 2))
--
--#define PRUETH_SW_BUF_POOL_SIZE_HOST	SZ_4K
--#define PRUETH_SW_NUM_BUF_POOLS_HOST	8
--#define PRUETH_SW_NUM_BUF_POOLS_PER_PRU 4
--#define MSMC_RAM_SIZE_SWITCH_MODE \
--	(MSMC_RAM_SIZE + \
--	(2 * PRUETH_SW_BUF_POOL_SIZE_HOST * PRUETH_SW_NUM_BUF_POOLS_HOST))
-+/* Defines for forwarding path buffer pools:
-+ *   - used by firmware to store packets to be forwarded to other port
-+ *   - 8 total pools per slice
-+ *   - only used in switch mode (as no forwarding in mac mode)
-+ */
-+#define PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE			8
-+#define PRUETH_SW_FWD_BUF_POOL_SIZE				(SZ_8K)
-+
-+/* Defines for local injection path buffer pools:
-+ *   - used by firmware to store packets received from host core
-+ *   - 16 total pools per slice
-+ *   - 8 pools per port per slice and each slice handles both ports
-+ *   - only 4 out of 8 pools used per port (as only 4 real QoS levels in ICSSG)
-+ *   - switch mode: 8 total pools used
-+ *   - mac mode:    4 total pools used
-+ */
-+#define PRUETH_NUM_LI_BUF_POOLS_PER_SLICE			16
-+#define PRUETH_NUM_LI_BUF_POOLS_PER_PORT_PER_SLICE		8
-+#define PRUETH_SW_LI_BUF_POOL_SIZE				SZ_4K
-+#define PRUETH_SW_USED_LI_BUF_POOLS_PER_SLICE			8
-+#define PRUETH_SW_USED_LI_BUF_POOLS_PER_PORT_PER_SLICE		4
-+#define PRUETH_EMAC_LI_BUF_POOL_SIZE				SZ_8K
-+#define PRUETH_EMAC_USED_LI_BUF_POOLS_PER_SLICE			4
-+#define PRUETH_EMAC_USED_LI_BUF_POOLS_PER_PORT_PER_SLICE	4
-+
-+/* Defines for host egress path - express and preemptible buffers
-+ *   - used by firmware to store express and preemptible packets
-+ *     to be transmitted to host core
-+ *   - used by both mac/switch modes
-+ */
-+#define PRUETH_SW_HOST_EXP_BUF_POOL_SIZE	SZ_16K
-+#define PRUETH_SW_HOST_PRE_BUF_POOL_SIZE	(SZ_16K - SZ_2K)
-+#define PRUETH_EMAC_HOST_EXP_BUF_POOL_SIZE	PRUETH_SW_HOST_EXP_BUF_POOL_SIZE
-+#define PRUETH_EMAC_HOST_PRE_BUF_POOL_SIZE	PRUETH_SW_HOST_PRE_BUF_POOL_SIZE
-+
-+/* Buffer used by firmware to temporarily store packet to be dropped */
-+#define PRUETH_SW_DROP_PKT_BUF_SIZE		SZ_2K
-+#define PRUETH_EMAC_DROP_PKT_BUF_SIZE		PRUETH_SW_DROP_PKT_BUF_SIZE
-+
-+/* Total switch mode memory usage for buffers per slice */
-+#define PRUETH_SW_TOTAL_BUF_SIZE_PER_SLICE \
-+	(PRUETH_SW_FWD_BUF_POOL_SIZE * PRUETH_NUM_FWD_BUF_POOLS_PER_SLICE + \
-+	 PRUETH_SW_LI_BUF_POOL_SIZE * PRUETH_SW_USED_LI_BUF_POOLS_PER_SLICE + \
-+	 PRUETH_SW_HOST_EXP_BUF_POOL_SIZE + \
-+	 PRUETH_SW_HOST_PRE_BUF_POOL_SIZE + \
-+	 PRUETH_SW_DROP_PKT_BUF_SIZE)
-+
-+/* Total switch mode memory usage for all buffers */
-+#define PRUETH_SW_TOTAL_BUF_SIZE		(2 * PRUETH_SW_TOTAL_BUF_SIZE_PER_SLICE)
-+
-+/* Total mac mode memory usage for buffers per slice */
-+#define PRUETH_EMAC_TOTAL_BUF_SIZE_PER_SLICE \
-+	(PRUETH_EMAC_LI_BUF_POOL_SIZE * PRUETH_EMAC_USED_LI_BUF_POOLS_PER_SLICE + \
-+	 PRUETH_EMAC_HOST_EXP_BUF_POOL_SIZE + \
-+	 PRUETH_EMAC_HOST_PRE_BUF_POOL_SIZE + \
-+	 PRUETH_EMAC_DROP_PKT_BUF_SIZE)
-+
-+/* Total mac mode memory usage for all buffers */
-+#define PRUETH_EMAC_TOTAL_BUF_SIZE		(2 * PRUETH_EMAC_TOTAL_BUF_SIZE_PER_SLICE)
-+
-+/* Size of 1 bank of MSMC/OC_SRAM memory */
-+#define MSMC_RAM_BANK_SIZE			SZ_256K
- 
- #define PRUETH_SWITCH_FDB_MASK ((SIZE_OF_FDB / NUMBER_OF_FDB_BUCKET_ENTRIES) - 1)
- 
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 86fc1278127c..18c370c252aa 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -1764,10 +1764,15 @@ static int prueth_probe(struct platform_device *pdev)
- 		goto put_mem;
- 	}
- 
--	msmc_ram_size = MSMC_RAM_SIZE;
- 	prueth->is_switchmode_supported = prueth->pdata.switch_mode;
--	if (prueth->is_switchmode_supported)
--		msmc_ram_size = MSMC_RAM_SIZE_SWITCH_MODE;
-+	if (prueth->pdata.banked_ms_ram) {
-+		/* Reserve 2 banks of MSMC RAM for buffers to avoid arbitration */
-+		msmc_ram_size = (2 * MSMC_RAM_BANK_SIZE);
-+	} else {
-+		msmc_ram_size = PRUETH_EMAC_TOTAL_BUF_SIZE;
-+		if (prueth->is_switchmode_supported)
-+			msmc_ram_size = PRUETH_SW_TOTAL_BUF_SIZE;
-+	}
- 
- 	/* NOTE: FW bug needs buffer base to be 64KB aligned */
- 	prueth->msmcram.va =
-@@ -1924,7 +1929,8 @@ static int prueth_probe(struct platform_device *pdev)
- 
- free_pool:
- 	gen_pool_free(prueth->sram_pool,
--		      (unsigned long)prueth->msmcram.va, msmc_ram_size);
-+		      (unsigned long)prueth->msmcram.va,
-+		      prueth->msmcram.size);
- 
- put_mem:
- 	pruss_release_mem_region(prueth->pruss, &prueth->shram);
-@@ -1977,7 +1983,7 @@ static void prueth_remove(struct platform_device *pdev)
- 
- 	gen_pool_free(prueth->sram_pool,
- 		      (unsigned long)prueth->msmcram.va,
--		      MSMC_RAM_SIZE);
-+		      prueth->msmcram.size);
- 
- 	pruss_release_mem_region(prueth->pruss, &prueth->shram);
- 
-@@ -1994,12 +2000,14 @@ static const struct prueth_pdata am654_icssg_pdata = {
- 	.fdqring_mode = K3_RINGACC_RING_MODE_MESSAGE,
- 	.quirk_10m_link_issue = 1,
- 	.switch_mode = 1,
-+	.banked_ms_ram = 0,
- };
- 
- static const struct prueth_pdata am64x_icssg_pdata = {
- 	.fdqring_mode = K3_RINGACC_RING_MODE_RING,
- 	.quirk_10m_link_issue = 1,
- 	.switch_mode = 1,
-+	.banked_ms_ram = 1,
- };
- 
- static const struct of_device_id prueth_dt_match[] = {
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-index 23c465f1ce7f..3bb9fd8c3804 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-@@ -251,11 +251,13 @@ struct prueth_emac {
-  * @fdqring_mode: Free desc queue mode
-  * @quirk_10m_link_issue: 10M link detect errata
-  * @switch_mode: switch firmware support
-+ * @banked_ms_ram: banked memory support
-  */
- struct prueth_pdata {
- 	enum k3_ring_mode fdqring_mode;
- 	u32	quirk_10m_link_issue:1;
- 	u32	switch_mode:1;
-+	u32	banked_ms_ram:1;
- };
- 
- struct icssg_firmwares {
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_switch_map.h b/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
-index 490a9cc06fb0..7e053b8af3ec 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
-@@ -180,6 +180,9 @@
- /* Used to notify the FW of the current link speed */
- #define PORT_LINK_SPEED_OFFSET                             0x00A8
- 
-+/* 2k memory pointer reserved for default writes by PRU0*/
-+#define DEFAULT_MSMC_Q_OFFSET                              0x00AC
-+
- /* TAS gate mask for windows list0 */
- #define TAS_GATE_MASK_LIST0                                0x0100
- 
--- 
-2.34.1
+> 
+> 
+> --- a/drivers/net/wireless/ath/ath11k/core.c
+> +++ b/drivers/net/wireless/ath/ath11k/core.c
+> @@ -2213,14 +2213,10 @@ static int ath11k_core_reconfigure_on_crash(struct ath11k_base *ab)
+>  	mutex_unlock(&ab->core_lock);
+>  
+>  	ath11k_dp_free(ab);
+> -	ath11k_hal_srng_deinit(ab);
+> +	ath11k_hal_srng_clear(ab);
+>  
+>  	ab->free_vdev_map = (1LL << (ab->num_radios * TARGET_NUM_VDEVS(ab))) - 1;
+>  
+> -	ret = ath11k_hal_srng_init(ab);
+> -	if (ret)
+> -		return ret;
+> -
+>  	clear_bit(ATH11K_FLAG_CRASH_FLUSH, &ab->dev_flags);
+>  
+>  	ret = ath11k_core_qmi_firmware_ready(ab);
+> diff --git a/drivers/net/wireless/ath/ath11k/hal.c b/drivers/net/wireless/ath/ath11k/hal.c
+> index b32de563d453a..d4be040acf2c8 100644
+> --- a/drivers/net/wireless/ath/ath11k/hal.c
+> +++ b/drivers/net/wireless/ath/ath11k/hal.c
+> @@ -1359,6 +1359,19 @@ void ath11k_hal_srng_deinit(struct ath11k_base *ab)
+>  }
+>  EXPORT_SYMBOL(ath11k_hal_srng_deinit);
+>  
+> +void ath11k_hal_srng_clear(struct ath11k_base *ab)
+> +{
+> +// --> both of these memset causes crashes
+> +//	memset(ab->hal.srng_list, 0,
+> +//	       sizeof(ab->hal.srng_list) * HAL_SRNG_RING_ID_MAX);
+
+You are memset too much, just sizeof(ab->hal.srng_list) is OK.
+
+> +//	memset(ab->hal.shadow_reg_addr, 0,
+> +//	       sizeof(ab->hal.shadow_reg_addr) * HAL_SHADOW_NUM_REGS);
+
+same here
+
+> +	ab->hal.avail_blk_resource = 0;
+> +	ab->hal.current_blk_index = 0;
+> +	ab->hal.num_shadow_reg_configured = 0;
+> +}
+> +EXPORT_SYMBOL(ath11k_hal_srng_clear);
+> +
+>  void ath11k_hal_dump_srng_stats(struct ath11k_base *ab)
+>  {
+>  	struct hal_srng *srng;
+> diff --git a/drivers/net/wireless/ath/ath11k/hal.h b/drivers/net/wireless/ath/ath11k/hal.h
+> index 601542410c752..839095af9267e 100644
+> --- a/drivers/net/wireless/ath/ath11k/hal.h
+> +++ b/drivers/net/wireless/ath/ath11k/hal.h
+> @@ -965,6 +965,7 @@ int ath11k_hal_srng_setup(struct ath11k_base *ab, enum hal_ring_type type,
+>  			  struct hal_srng_params *params);
+>  int ath11k_hal_srng_init(struct ath11k_base *ath11k);
+>  void ath11k_hal_srng_deinit(struct ath11k_base *ath11k);
+> +void ath11k_hal_srng_clear(struct ath11k_base *ab);
+>  void ath11k_hal_dump_srng_stats(struct ath11k_base *ab);
+>  void ath11k_hal_srng_get_shadow_config(struct ath11k_base *ab,
+>  				       u32 **cfg, u32 *len);
+> 
+> 
 
 
