@@ -1,199 +1,129 @@
-Return-Path: <linux-kernel+bounces-721118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB252AFC4F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:03:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEAC8AFC4F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:03:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4B253AAB88
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:02:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0070F7AEB1C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2859B29DB79;
-	Tue,  8 Jul 2025 08:02:37 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C2519E992;
+	Tue,  8 Jul 2025 08:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cFEcL9Qh"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F0119E992;
-	Tue,  8 Jul 2025 08:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB6828724C
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 08:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751961756; cv=none; b=Ykt2kC81zy/B64qn2Td+p6ReOp8dn4tPY7ACQYp7Rd3wWlSV733q89KDaaa/NoHHTWzcDDm41qgVkc2Orr61RpFO2CxfjiYPHcHH9VCUOH7to9qwdH+izQzLq5+IXxeAvZORccwsc428y1A82pKT+SjwZaW54rw8wnPEGUyJ6/Q=
+	t=1751961782; cv=none; b=cDysCYnQbsBiRaUBZUpHqsxhAkKW+x+H/bRRoGD7mIF+pstn5u8vn3cpHr7giANPHvgtkK8E6rsjUv6u7MrbaElitOiLKulzI7Eu1eSizqWZKAhuSbNK6mI27dMHXLes8JLUskZI2nG9iNM7QbxHQVpJgnlTL2EdLOeHxmhXbPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751961756; c=relaxed/simple;
-	bh=Ip/ceLRcmHB11jnSHSgNcmXyNQAOXLOnMhj4htH0Xdg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=GJBcVpce3IGlHbKYOdRZ5sO9gXnM6khvB/1K8No3OK80SBSd4Cvx+1bOR3AcFzgxaYn/y0Ccos62p/mqDLxXOtV/W5NH6k/u3iRYKzbyQtv+xB2ZaC9/JP1gai3DVsymKKNri3HR2RhtdDaoBMt7a14Kfk/2iGGjjsPNpFT28N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bbtpt6bVJz6DB3Z;
-	Tue,  8 Jul 2025 16:01:26 +0800 (CST)
-Received: from frapeml100005.china.huawei.com (unknown [7.182.85.132])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8B8E414037D;
-	Tue,  8 Jul 2025 16:02:30 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (7.182.85.71) by
- frapeml100005.china.huawei.com (7.182.85.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 8 Jul 2025 10:02:30 +0200
-Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
- frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
- Tue, 8 Jul 2025 10:02:30 +0200
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: liulongfang <liulongfang@huawei.com>, "alex.williamson@redhat.com"
-	<alex.williamson@redhat.com>, "jgg@nvidia.com" <jgg@nvidia.com>, "Jonathan
- Cameron" <jonathan.cameron@huawei.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
-Subject: RE: [PATCH v5 1/3] migration: update BAR space size
-Thread-Topic: [PATCH v5 1/3] migration: update BAR space size
-Thread-Index: AQHb6ZyiIbxhA+WcnUGIDd/3hhMH97Qn6S1w
-Date: Tue, 8 Jul 2025 08:02:30 +0000
-Message-ID: <b9579c5738f64e9c8e6488cc0492ee17@huawei.com>
-References: <20250630085402.7491-1-liulongfang@huawei.com>
- <20250630085402.7491-2-liulongfang@huawei.com>
-In-Reply-To: <20250630085402.7491-2-liulongfang@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1751961782; c=relaxed/simple;
+	bh=BYX2nKw8V8H9vqiU/XTUcWHzYRV0LYBrsdNAvHDZ+P8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eEOpJfEf8/lKPBjOCzdsYjGNEfhM0iw2EdlrnNCBRetkNEwvVb4wmh4KoJeECvUejcGlvUtV/IF3VoS9fQTePO61tOaMHh75camsMHk8r602dnyo1bAZC831y1ll17lg+IIya6d3oDAe2tZDwXbpZjRJjQUokJBpNFBiu29N/WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cFEcL9Qh; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4a818ed5b51so31065881cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 01:03:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751961780; x=1752566580; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BYX2nKw8V8H9vqiU/XTUcWHzYRV0LYBrsdNAvHDZ+P8=;
+        b=cFEcL9QhPreK03FJp85LGP36od+UoZlqG5lI/nP0gB2lGwAWFnBm++xYmG7gxUUYcr
+         vbhvY4RwxkRTDOzWuWq/enwZGw0ykAE4MBrz5kGKHW4YzoEwZRt3kRzdV4a7nUCzbYEd
+         p+P192OLWib1/j+J4GiSjmEwOsAm/1AatC1h0GDkm6WtTh/QcpDbTcTQ7Dq2mqi0wYka
+         4d7y3c+uVP02f7U7f6H4H5Xph6Y9aSck9kSuSdV6KTkRdpRLV3hbMEgcZQ8NmsApk5LP
+         hnhwn1BzEuGCOKc8rmmetsQGIHj7xwzj1mG4pxwTksF1SqNCJNW7rg5Dog1ZHjuoB5Vh
+         Z0bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751961780; x=1752566580;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BYX2nKw8V8H9vqiU/XTUcWHzYRV0LYBrsdNAvHDZ+P8=;
+        b=DWtLSYutmT6mS4P+XcvdeGyWlqUc+7kzEXNhHtIpnRZumUvU1Un0x45JtVaCE2tbbY
+         01SaZiK7W/UvpQ6ganaB6u65eVZUhsvTgYisw8cJtz5lULYTF1gQLI2NLrFFmd1lTYX0
+         7B/0B2ZZRZeJEjdYbIQHYIUdHxyMK0fU3s+2zHNiCQHHEuE1U78GgyC2H10i9ddhONQa
+         OmvZ0V4aiKX/1abEnq4eAsinz4QD3SlIbkm11K6fQT8fmFjfj+yAngsd+dRUqz4micpZ
+         IUUi5FZgLOsg/bH7msN2X1D2TKl3qGxylIYyaXDEdN077M1Sh1g0mC2VWFkJ5wlvVmQa
+         iaWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWgkOpeJ/cJiqvbJ4YTqqE0qy4zo9agJschJqKXzYo5daFeIbsEuIV9r1+MkyPBD7Gl6Z+uB2vOukO7Gi4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEZfBk33UVF7ZJz/R9NQFQ3UUxKqV1MJ5ov04unDaXA9drvTwN
+	bMjCAaGjiQa5+bsxQWmK0jysaRYWMTIYOMFRnGQ4l1NNOvrfrkkUCx7tFdCdrOX5pPcujz00hXd
+	RPK45ZsUAw6KWC3UnCckx52btmTMcoSR6c7KtfRnuf8OCr6DIYzy8Dz92
+X-Gm-Gg: ASbGncsx4gsxb4quxghhFWKvqizGA6Db5DuS0bJ8Wy6y+gTU3fIk/S2dR/Rr9eQnbO/
+	MudiGGZXh0agapkAmMFF/SioldezOC499w22rP1YtPoZtn7paeoS0euXWi6fJYM+dZnHR/2t7S3
+	auRqgO1uzXZMPZP95EXsa39BJeNldFeqyst4KVhXykxPc=
+X-Google-Smtp-Source: AGHT+IFOm/hoK8xA+2yvFbXSCCAzHPZ+sPNLb33EdBRk3X7TrVVP1viWYkerVhornPqbNaQVP3obbbaW2qn/ZYkLjsY=
+X-Received: by 2002:a05:622a:11ca:b0:4a7:62da:d0fc with SMTP id
+ d75a77b69052e-4a998692482mr204480061cf.12.1751961779405; Tue, 08 Jul 2025
+ 01:02:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <CALm_T+2rdmwCYLZVw=gALPDufXB5R8=pX8P2jhgYE=_0PCJJ_Q@mail.gmail.com>
+In-Reply-To: <CALm_T+2rdmwCYLZVw=gALPDufXB5R8=pX8P2jhgYE=_0PCJJ_Q@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 8 Jul 2025 01:02:48 -0700
+X-Gm-Features: Ac12FXymQQhYAGhjIWe-pEhGq4VdaeDatIELFoZWKE-dIJxatFkR6SO2JgRZscw
+Message-ID: <CANn89i+7m8koanZk=47FEhmTHUmOmu-yfViRPayjUct+voQiEQ@mail.gmail.com>
+Subject: Re: [Bug] soft lockup in neigh_timer_handler in Linux kernel v6.12
+To: Luka <luka.2016.cs@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jul 8, 2025 at 12:54=E2=80=AFAM Luka <luka.2016.cs@gmail.com> wrote=
+:
+>
+> Dear Linux Kernel Maintainers,
+>
+> I hope this message finds you well.
+>
+> I am writing to report a potential vulnerability I encountered during
+> testing of the Linux Kernel version v6.12.
+>
+> Git Commit: adc218676eef25575469234709c2d87185ca223a (tag: v6.12)
+>
+> Bug Location: neigh_timer_handler+0xc17/0xfe0 net/core/neighbour.c:1148
+>
+> Bug report: https://pastebin.com/06NiBtXm
+>
+> Entire kernel config: https://pastebin.com/MRWGr3nv
+>
+> Root Cause Analysis:
+>
+> A soft lockup occurs in the neighbor subsystem due to prolonged
+> execution within neigh_timer_handler(), where repeated neighbor entry
+> invalidation and associated routing operations (e.g.,
+> ipv4_link_failure() and arp_error_report()) lead to excessive CPU
+> occupation without yielding, triggering the kernel watchdog.
+>
+> At present, I have not yet obtained a minimal reproducer for this
+> issue. However, I am actively working on reproducing it, and I will
+> promptly share any additional findings or a working reproducer as soon
+> as it becomes available.
+>
+> Thank you very much for your time and attention to this matter. I
+> truly appreciate the efforts of the Linux kernel community.
 
+Please stop sending duplicates, and 'analysis' AI generated.
 
-> -----Original Message-----
-> From: liulongfang <liulongfang@huawei.com>
-> Sent: Monday, June 30, 2025 9:54 AM
-> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
-> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
-> <jonathan.cameron@huawei.com>
-> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
-> Subject: [PATCH v5 1/3] migration: update BAR space size
->=20
-> On new platforms greater than QM_HW_V3, the live migration
-> configuration
-> region is moved from VF to PF. The VF's own configuration space is
-> restored to the complete 64KB, and there is no need to divide the
-> size of the BAR configuration space equally.
->=20
-> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
-> ---
+If you really want to help, please provide a patch.
 
-See one minor comment below.
-
-LGTM:
-Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-
->  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 36 ++++++++++++++-----
->  1 file changed, 27 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> index 2149f49aeec7..1ddc9dbadb70 100644
-> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> @@ -1250,6 +1250,28 @@ static struct hisi_qm *hisi_acc_get_pf_qm(struct
-> pci_dev *pdev)
->  	return !IS_ERR(pf_qm) ? pf_qm : NULL;
->  }
->=20
-> +static size_t hisi_acc_get_resource_len(struct vfio_pci_core_device *vde=
-v,
-> +					unsigned int index)
-> +{
-> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> +			hisi_acc_drvdata(vdev->pdev);
-> +
-> +	/*
-> +	 * On the old QM_HW_V3 device, the ACC VF device BAR2
-> +	 * region encompasses both functional register space
-> +	 * and migration control register space.
-> +	 * only the functional region should be report to Guest.
-> +	 *
-> +	 * On the new HW device, the migration control register
-> +	 * has been moved to the PF device BAR2 region.
-> +	 * The VF device BAR2 is entirely functional register space.
-> +	 */
-
-Nit: May be move the above comment about new HW to the below
-check  is better.
-
-> +	if (hisi_acc_vdev->pf_qm->ver =3D=3D QM_HW_V3)
-> +		return (pci_resource_len(vdev->pdev, index) >> 1);
-> +
-> +	return pci_resource_len(vdev->pdev, index);
-> +}
-> +
->  static int hisi_acc_pci_rw_access_check(struct vfio_device *core_vdev,
->  					size_t count, loff_t *ppos,
->  					size_t *new_count)
-> @@ -1260,8 +1282,9 @@ static int hisi_acc_pci_rw_access_check(struct
-> vfio_device *core_vdev,
->=20
->  	if (index =3D=3D VFIO_PCI_BAR2_REGION_INDEX) {
->  		loff_t pos =3D *ppos & VFIO_PCI_OFFSET_MASK;
-> -		resource_size_t end =3D pci_resource_len(vdev->pdev, index) /
-> 2;
-> +		resource_size_t end;
->=20
-> +		end =3D hisi_acc_get_resource_len(vdev, index);
->  		/* Check if access is for migration control region */
->  		if (pos >=3D end)
->  			return -EINVAL;
-> @@ -1282,8 +1305,9 @@ static int hisi_acc_vfio_pci_mmap(struct
-> vfio_device *core_vdev,
->  	index =3D vma->vm_pgoff >> (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT);
->  	if (index =3D=3D VFIO_PCI_BAR2_REGION_INDEX) {
->  		u64 req_len, pgoff, req_start;
-> -		resource_size_t end =3D pci_resource_len(vdev->pdev, index) /
-> 2;
-> +		resource_size_t end;
->=20
-> +		end =3D hisi_acc_get_resource_len(vdev, index);
->  		req_len =3D vma->vm_end - vma->vm_start;
->  		pgoff =3D vma->vm_pgoff &
->  			((1U << (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT)) - 1);
-> @@ -1330,7 +1354,6 @@ static long hisi_acc_vfio_pci_ioctl(struct
-> vfio_device *core_vdev, unsigned int
->  	if (cmd =3D=3D VFIO_DEVICE_GET_REGION_INFO) {
->  		struct vfio_pci_core_device *vdev =3D
->  			container_of(core_vdev, struct vfio_pci_core_device,
-> vdev);
-> -		struct pci_dev *pdev =3D vdev->pdev;
->  		struct vfio_region_info info;
->  		unsigned long minsz;
->=20
-> @@ -1345,12 +1368,7 @@ static long hisi_acc_vfio_pci_ioctl(struct
-> vfio_device *core_vdev, unsigned int
->  		if (info.index =3D=3D VFIO_PCI_BAR2_REGION_INDEX) {
->  			info.offset =3D
-> VFIO_PCI_INDEX_TO_OFFSET(info.index);
->=20
-> -			/*
-> -			 * ACC VF dev BAR2 region consists of both
-> functional
-> -			 * register space and migration control register
-> space.
-> -			 * Report only the functional region to Guest.
-> -			 */
-> -			info.size =3D pci_resource_len(pdev, info.index) / 2;
-> +			info.size =3D hisi_acc_get_resource_len(vdev,
-> info.index);
->=20
->  			info.flags =3D VFIO_REGION_INFO_FLAG_READ |
->  					VFIO_REGION_INFO_FLAG_WRITE |
-> --
-> 2.24.0
-
+Thank you.
 
