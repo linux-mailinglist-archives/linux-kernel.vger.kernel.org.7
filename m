@@ -1,93 +1,106 @@
-Return-Path: <linux-kernel+bounces-720819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89672AFC0BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:18:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0976AFC0C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:20:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FE0F18915B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:18:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCA913BBAF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9746A21B184;
-	Tue,  8 Jul 2025 02:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ClKxGCTR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D71120B7ED;
+	Tue,  8 Jul 2025 02:20:02 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3DE4A33;
-	Tue,  8 Jul 2025 02:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F33189905
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 02:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751941075; cv=none; b=V/Lq1TcArwVIBi4UrIL9VMZJ2yW38F0EFcb+UgR2H6IpqLHob+OwxzzgZEtF2md+2Li5NiHEv1tGKh53bw1Ijk62WZZlcxNYkPVF5AT/nS7xPkrAeaJ3uxRGmq828u1qMfluqPfAu9hAV2azGcaSLRdvR6k5PDBn8UEZ+koA2qs=
+	t=1751941202; cv=none; b=oIO9xk8QfOyDeIGrY1ky8XiPd3FZK3o9TQqWvBoe92UIjEOZitdO1f3gBCOI6gsCiZ5vjjoMRU6Rd3z9HkfYYGUHEPMgN+Q3GhRldEHpmHHco8Rw3B6OxUE9iweK1jXYuhOFWDBFPJ9Cn10IgWneQUPAzqsb9IufyZjngCPY++k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751941075; c=relaxed/simple;
-	bh=CRpOrfSwGL9/Z96Cxl6WO3Wqwa/IZSORWC6BncTNWLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZliQqqeU3Dn/ii+e+naHAE9r3cMLm9hDMLGdCT20MV96G5fBBXMBe556W2DTaUfYjxzw4xE27+xVve/Mf3Ghg6fkQJ4QrY6Db4OmXcoLo4sIPeZESqvnWxB6N5qeRbf8cpdB7vCIFWCFGxct0N1EfXSeE0wmv5NPYhxZ4/3GTEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ClKxGCTR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E027C4CEE3;
-	Tue,  8 Jul 2025 02:17:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751941074;
-	bh=CRpOrfSwGL9/Z96Cxl6WO3Wqwa/IZSORWC6BncTNWLM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ClKxGCTRQ7lrIwmIJldjcqO0LFxXnM+M41V5VV5+C695sMWXCPA5+fxbGz230hwTm
-	 OX8dvC0EcDBoWDZ73dhI0BuxJt6YKp+Sbw2sK97BrLrdJXSLhhYfYXkLBd4cLILq3Z
-	 TPLudXfnf2zyQICkPlS87UqK4MTwYDAnK/abydWuGdy4CwL4geYX1+6BKWPkEitIhV
-	 +NqCk7xVp58FPBk6Yh0WPK8RXx98u7KYtoOWQc32fj1bqb9lVu/m3TnlATGGYBgIlj
-	 hlQk672zb4SMRJZmlZNUNz4rnVya93azZB2nWr7s8U/BSoVJQhWodfp7RAwcpsD2OY
-	 QjPtzx5hUlo4w==
-Date: Mon, 7 Jul 2025 19:17:42 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "Song, Yoong Siang" <yoong.siang.song@intel.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "Jesper Dangaard
- Brouer" <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- Stanislav Fomichev <sdf@fomichev.me>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
- <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko
- <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, "netdev@vger.kernel.org"
- <netdev@vger.kernel.org>, "linux-doc@vger.kernel.org"
- <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "bpf@vger.kernel.org"
- <bpf@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
- <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH bpf-next 0/2] Clarify and Enhance XDP Rx Metadata
- Handling
-Message-ID: <20250707191742.662aeffb@kernel.org>
-In-Reply-To: <IA3PR11MB92545C3B2CD5778EE24244C1D84EA@IA3PR11MB9254.namprd11.prod.outlook.com>
-References: <20250701042940.3272325-1-yoong.siang.song@intel.com>
-	<20250707135507.29cb55be@kernel.org>
-	<IA3PR11MB9254DC4B7984E014206A1FBFD84EA@IA3PR11MB9254.namprd11.prod.outlook.com>
-	<20250707184449.42736a0a@kernel.org>
-	<IA3PR11MB92545C3B2CD5778EE24244C1D84EA@IA3PR11MB9254.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1751941202; c=relaxed/simple;
+	bh=ekax5Fkx9rdon1V8yh03rP61qKT/NyxAxE1FJbTtIbk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mRrM2VCdqCOfkC+WSUtvkD1k5uDUUPpVDe8jbt4l+SmCXK+TdvfSB6Wc3ktJLwVdt6Y+MtN37kgVvsrmfSmu3PP2bI0I9pXK9p56T/aMlugKT46BWGd7WbMi8AyAZnU6XCwQ2sINm3/7jB1zJqdNI+0uzwPGgmV1I1pzMjIIsTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 5682JS3a080667;
+	Tue, 8 Jul 2025 11:19:28 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 5682JSpQ080661
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 8 Jul 2025 11:19:28 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <aebcb155-d161-46a1-b120-f247a3eaf5a2@I-love.SAKURA.ne.jp>
+Date: Tue, 8 Jul 2025 11:19:28 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [nbd?] possible deadlock in nbd_queue_rq
+To: Hillf Danton <hdanton@sina.com>
+Cc: Bart Van Assche <bvanassche@acm.org>, axboe@kernel.dk,
+        josef@toxicpanda.com, linux-block@vger.kernel.org,
+        syzbot <syzbot+3dbc6142c85cc77eaf04@syzkaller.appspotmail.com>,
+        Ming Lei <ming.lei@redhat.com>, linux-kernel@vger.kernel.org,
+        nbd@other.debian.org, syzkaller-bugs@googlegroups.com
+References: <20250707005946.2669-1-hdanton@sina.com>
+ <20250708001848.2775-1-hdanton@sina.com>
+ <20250708012450.2858-1-hdanton@sina.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20250708012450.2858-1-hdanton@sina.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav105.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Tue, 8 Jul 2025 02:06:11 +0000 Song, Yoong Siang wrote:
->> Why would the driver need to move it back?
->> On XDP_PASS an skb is constructed, so the metadata should
->> be transferred to the skb. There is no need to copy it back
->> as a prepend.  
+On 2025/07/08 10:24, Hillf Danton wrote:
+> On Tue, 8 Jul 2025 09:52:18 +0900 Tetsuo Handa wrote:
+>> On 2025/07/08 9:18, Hillf Danton wrote:
+>>> On Mon, 7 Jul 2025 10:39:44 -0700 Bart Van Assche wrote:
+>>>> On 7/6/25 5:59 PM, Hillf Danton wrote:
+>>>>> and given the second one, the report is false positive.
+>>>>
+>>>> Whether or not this report is a false positive, the root cause should be
+>>>> fixed because lockdep disables itself after the first circular locking
+>>>> complaint. From print_usage_bug() in kernel/locking/lockdep.c:
+>>>>
+>>>> 	if (!debug_locks_off() || debug_locks_silent)
+>>>> 		return;
+>>>>
+>>> The root cause could be walked around for example by trying not to init
+>>> nbd more than once.
+>>
+>> How did you come to think so?
+>>
+> Based on that nbd_init appears twice in the lock chain syzbot reported.
 > 
-> I said so because I thought need to put back the timestamp
-> as prepend and then point skb_shared_hwtstamps.netdev_data to it
-> to support the ndo_get_tstamp().
 
-No need, the timestamps are set in shared info directly.
-There are multiple drivers which use the metadata prepend
-method, so I'm pretty sure it should work.
+You might be misunderstanding what the lock chain is reporting.
+
+The stack backtrace of a lock is taken only when that lock is taken
+for the first time. That is, two stack backtraces from two locks might
+share one or more functions. Also, the stack backtrace of a lock which
+is printed when lockdep fired might not be a backtrace of that lock
+when actual deadlock happens.
+
+You need to understand all possible locking patterns (because lockdep
+can associate only one backtrace with one lock) before you conclude
+that the report is a false positive.
+
+>> nbd_init() is already called only once because of module_init(nbd_init).
+>>
+> Ok Bart is misguiding.
+
 
