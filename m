@@ -1,90 +1,106 @@
-Return-Path: <linux-kernel+bounces-721886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FE74AFCF1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:26:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56BCBAFCF1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53BD1581B35
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:24:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E1C9189110A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209C32E2F0E;
-	Tue,  8 Jul 2025 15:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82E92E0B7A;
+	Tue,  8 Jul 2025 15:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBuHu5GN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VWgjcXuR"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786D62E11B5;
-	Tue,  8 Jul 2025 15:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E93217722
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751988226; cv=none; b=iVm8HbvqT1EW8KHF8AotmXLLHF7Xw0ZvHEHtAyNjvj43Je8j4we8IIsCSueF5k2TgcK7A6Q/1QFocgKjMVb2rTPexM4Yh8EsNHRTAecqLIEEwAXE14NhqtwpWGFdDkMxzLMEQngsb0/eNNbFAaTOs23pLZ21vf+W2Y99+qC+h5I=
+	t=1751988346; cv=none; b=baMGIMTWUC/wmBynpP04MZZEXxtU46Qr5mpuFfSbOj2izWWq02ec5hu2fSgACwsorBPG3kNx+Xt4YVP7hwOCHzzu0g3ffMNqVQQ24Cg7X5htlCpsidNxRHBclML5Xvo9pueLntNE3+3UzyZZsZwX19MeS0NW5ZEFEDFnP+wiatc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751988226; c=relaxed/simple;
-	bh=DHMgSvr3ucJqg5KG0Cd+fOSL+dhmKBGGzPCyEsmap0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JBaG/XNnERuEJedR2gNh2HXvlw9HiLl47Pe/8LvRchSuOVKG+q65tVHDnuOpU7OctDv3D9SfgaE1ETPzncg/2+ZyY7xKCkhRpE6nvXK4JjRnd+ATKLWOI2biWlN7ss+ycOUYexZGC/FkgFIeFAAvrHOqmi/01BF5q4dWYp4oXkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LBuHu5GN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05CEBC4CEED;
-	Tue,  8 Jul 2025 15:23:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751988226;
-	bh=DHMgSvr3ucJqg5KG0Cd+fOSL+dhmKBGGzPCyEsmap0s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LBuHu5GN42W7PpnRNBi0Wk4s/xbiwoAuPovbqjpyzSFV0SfxpjTaE5M2GktALUaFm
-	 hB2Q15WlUsA1Mfx6fHJbr98nTdGqrJ+nKe2v0VbgIotoAOjp4Rr/EfB7z61TgW4ntF
-	 +Wv7mH9jd78TEOGh6yuRaQXg+1VzvSTLnNiYor9zV2d1xiYBppCV2zMSF076P4LUPR
-	 xsIQt9I36MyylUrYM9lhUsD7Vbai2hm5ixEfmSQZY8+VbEVFMnrXa1WZFQ4+m58D3g
-	 O27yHpWfjjLiwKBl4ZWreG7E53IMERLbWJFTRthg88g1LbaCCxuhmDCeNXZPq+Olwm
-	 bUQX6sBdAfC9w==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uZAAU-000000002Ft-26Xc;
-	Tue, 08 Jul 2025 17:23:38 +0200
-Date: Tue, 8 Jul 2025 17:23:38 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Aidan Stewart <astewart@tektelic.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] serial: core: fix OF node leak
-Message-ID: <aG03-g3gVMgErPIA@hovoldconsulting.com>
-References: <20250708085817.16070-1-johan@kernel.org>
- <2bd769b7f66bca4e97dba57276f5a29acdabb655.camel@tektelic.com>
+	s=arc-20240116; t=1751988346; c=relaxed/simple;
+	bh=nXTQFnvKUQItPlB5dvvKLQqhlM53CgN31QOEKsG8ze4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jfR35DusG5jgkFlC4MTnmtBjgG4WecCFXBvY319CBQSk9gz4O8YRp5H9kfrECzxuLJEJA+JP1PAtoWkkMvXxG4Eiqo76b7s49PgRKXD0hFzUbta0oL+aC1xMbn8rOBOGxZhVhdBlhPa6UgoPV0pBONpy32UBQli3Dvvr+4AKRE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VWgjcXuR; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8248D443F7;
+	Tue,  8 Jul 2025 15:25:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1751988337;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bl2mZLAmfC38rN0LPamsmSOKGf0UkHN/P7hgt6AZZ44=;
+	b=VWgjcXuR1zJPygqIoVLzx57coaQ92mwk10H7tZzTBL+39Kcba0tsAWA3MNAbuCRK3YfYWo
+	73uRwFXpZEr7CyhIBhsAPWlkBoGg9mxz4bOcGe0zlwOraDLJ7Z/mFvTgfs0p1o+Z0bcEdr
+	ffbrx56bFhW3C+Sb4bqHBsRAqIuEBt05j6DJ0dbf5immeG4u9EgY/rVXBXuKMNwCz3C1LK
+	/N1fa0+YUmpsHb/noNdryaohjCoS/0nP4L4QHHzN/icsxvxP3zwc0krypMs73i6XnDG1+S
+	IvRyAgTYb5icDwlKIvSdbihRhYsghBqcacgxsgstCEOAUQ7eAv5CY/HWKyibSw==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH 0/2] drm: fix missing conversions of bridge drivers to
+ devm_drm_bridge_alloc()
+Date: Tue, 08 Jul 2025 17:24:41 +0200
+Message-Id: <20250708-drm-bridge-convert-to-alloc-api-leftovers-v1-0-6285de8c3759@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2bd769b7f66bca4e97dba57276f5a29acdabb655.camel@tektelic.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADk4bWgC/x2N0QrCMAxFf2Xk2UCtzk1/ZfjQtZkGajPSMoSxf
+ zf4eO6Be3aopEwVHt0OShtXlmJwPnUQ36G8CDkZg3e+d4MbMekHZ+VkJkrZSBs2wZCzRAwrY6a
+ lic0Vb3EkP1yuc093sL9VaeHvvzU9j+MH6OFzm3sAAAA=
+X-Change-ID: 20250708-drm-bridge-convert-to-alloc-api-leftovers-6c8e2734b5e9
+To: Alain Volmat <alain.volmat@foss.st.com>, 
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefhedtfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtjeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfeiteekkefgtdduveeuffeuffevkeehieduhfefvdfhueekuefhhfdttddvkeefnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepkeejrdduvddtrddvudekrddvtdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepkeejrdduvddtrddvudekrddvtdejpdhhvghloheplgduledvrdduieekrddurddufegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopefjuhhirdfruhesghgvhhgvrghlthhhtggrrhgvrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiii
+ ihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehrghgrlhhlrghishhpohhusehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhdrshiihihprhhofihskhhisehsrghmshhunhhgrdgtohhmpdhrtghpthhtoheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Tue, Jul 08, 2025 at 01:37:45PM +0000, Aidan Stewart wrote:
-> On Tue, 2025-07-08 at 10:58 +0200, Johan Hovold wrote:
+Most DRM bridge drivers have been converted to devm_drm_bridge_alloc() by
+[0], but a few drivers were missed. One got converted by [1], this series
+converts all the (known) remaining ones.
 
-> > Make sure to drop the OF node reference taken when initialising the
-> > control and port devices when the devices are later released.
-> > 
-> > Fixes: d36f0e9a0002 ("serial: core: restore of_node information in
-> > sysfs")
-> > Cc: Aidan Stewart <astewart@tektelic.com>
-> > Signed-off-by: Johan Hovold <johan@kernel.org>
+Thanks Marek for having found and reported them!
 
-> Thanks for the fix. I think this also needs to go into -stable, as the
-> previous changes have already landed there (6.12.36 and 6.15.5).
+[0] https://lore.kernel.org/all/20250528-drm-bridge-convert-to-alloc-api-v4-1-f04e698c9a77@bootlin.com/
+[1] https://lore.kernel.org/all/20250627165652.580798-1-m.szyprowski@samsung.com/
 
-I left out the stable tag on purpose since this leak should not cause
-trouble as, for example, these devices are typically registered at boot
-and never deregistered.
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+Luca Ceresoli (2):
+      drm/sti: hdmi: convert to devm_drm_bridge_alloc() API
+      drm/sti: hda: convert to devm_drm_bridge_alloc() API
 
-It fixes an issue introduced in rc4 so it should preferably still go
-into 6.16-final, though.
+ drivers/gpu/drm/sti/sti_hda.c  | 27 +++++++++++++--------------
+ drivers/gpu/drm/sti/sti_hdmi.c | 26 ++++++++++++--------------
+ drivers/gpu/drm/sti/sti_hdmi.h |  2 ++
+ 3 files changed, 27 insertions(+), 28 deletions(-)
+---
+base-commit: 482c7e296edc0f594e8869a789a40be53c49bd6a
+change-id: 20250708-drm-bridge-convert-to-alloc-api-leftovers-6c8e2734b5e9
 
-Johan
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
+
 
