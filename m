@@ -1,81 +1,88 @@
-Return-Path: <linux-kernel+bounces-721113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5658AFC4EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:01:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8A71AFC4EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCD451881412
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:01:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 788407AA4FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD22A29B8EA;
-	Tue,  8 Jul 2025 08:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E819B29B79A;
+	Tue,  8 Jul 2025 08:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oH6QrbS0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129DA10A1F;
-	Tue,  8 Jul 2025 08:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Ce1AwGmR"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD4C29B23E;
+	Tue,  8 Jul 2025 08:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751961658; cv=none; b=sgSgWDecpfxSZ5dCY9E9xLLDN3AS/0LR0O9HSo2v2UFESn5mWwVZbjbCQzBabDIXUCSOXr64/LwTJGodsWqo6xVZRHb7H9Qv1ixW+0gQ5LvSXe1TsNgdi+nXULZSaebXzIjtReXmfN61W7SmGQfcJ/XHXuJfuQsx13vFr9zcZsg=
+	t=1751961700; cv=none; b=W1sLGHxu6DRhlTKVwbCLWusEtmxgtpUN3E6l19I461vd1XYQbHLgqa+JRFVzty3vOWLoUWgp6Lvpm/PY8e21UB6g0bTqEZ+5G3RaK4q/F2TYOkTvt2JAe5rQI/+9lAr1mYboKXzGBWniIlrUiarQ29gZC1QUieWHoVL0sId2jyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751961658; c=relaxed/simple;
-	bh=jdS3BEKP95D3Rrf9pnCS5mK68sq8SKb7VurqMKU0HCo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=om+FJ5wjTzQL3mavAF2sYxZH0MFqfKUv42PjqGaDw9+yMwRKxJHr+mY34H2HTaUJ8OLmiif+NEZop3Bao6edMqfn4BKQ/Q0gV+BJ6zKANaopVfcqXsHjLgApzd7dlTiOtOqFLpI6+RLagCVqiT7IAK7b1hMpyHvGRdKTUhf8AUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oH6QrbS0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0BEDC4CEF0;
-	Tue,  8 Jul 2025 08:00:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751961657;
-	bh=jdS3BEKP95D3Rrf9pnCS5mK68sq8SKb7VurqMKU0HCo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oH6QrbS0wvPdemLePIKRnzt7juvhMVuJNd23Dfrk2JaiMQvv06TjcD/rBKAqsg2VZ
-	 MFT4W9KIJD2RvWB9trBGxN+vMuFgZncAi/65cOoDrAWx5dE7RAZjpR9eejeq7Yit2O
-	 4Zq2WDNb2WCCOgnn8yUknYUyCImONw99yrTY7gpJcDi8hcXSJHQ2RnL7+ORA6sgJD+
-	 iO967RVsMxEzL6O3Y6laYkTNDE8Ts3HXUWFExdNB3dTAZsu5nFSJZWCMMhZalfwxo2
-	 gFc35rJIw9zW7IB8lsUaGxMULpV8pAoZeI5kJmSZ2RUoZVSENMf8fQ333F8pdahXgQ
-	 rWqCbfa1HRQ5A==
-Date: Tue, 8 Jul 2025 10:00:53 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, ~postmarketos/upstreaming@lists.sr.ht, 
-	phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] dt-bindings: clock: qcom: document the Milos TCSR
- Clock Controller
-Message-ID: <20250708-swinging-sly-pegasus-c31dbd@krzk-bin>
-References: <20250707-sm7635-clocks-misc-v2-0-b49f19055768@fairphone.com>
- <20250707-sm7635-clocks-misc-v2-3-b49f19055768@fairphone.com>
+	s=arc-20240116; t=1751961700; c=relaxed/simple;
+	bh=5JmUo5wzYdhjJxAOdK8joBgBIJLjs1DAmnWDAuzwHGg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BjxssyFwapkXX8TyBUDCETNegsqoDyTzX6enCIzbRqUJHi+tVFEFiFLWcNTjKCS0PamW2dMaKFaZFSMUhzwTxB77cU6UFio4Xb/Kzvh+6qKR3rOx8107Y+D1eX7rXaR4KnTjGMS6RItWSQf94M5Xb9rdMBigt+0jEWcBgdtxIiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Ce1AwGmR; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=u8
+	qA80TU+qvZWZGpZXUYmlo1JufyjuXgNsy8o8OtuNQ=; b=Ce1AwGmRbvmVr5RitY
+	0klvgv6YfNyQu7CSZM+c/cr8lc74x1gZa9BC70zSS3p8JCLc4H6JkFG4clyC8VC6
+	kS5WSms0MFqE6gYyZDtNXb/oNVFBa9mvHCgs7aioHeRY40rUyFWXb8yyJBdFkPTy
+	lF/dQWt5XineJqOfM2ynNMge0=
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgCXcYxL0Gxot6ERAg--.61762S4;
+	Tue, 08 Jul 2025 16:01:16 +0800 (CST)
+From: Haoxiang Li <haoxiang_li2024@163.com>
+To: almaz.alexandrovich@paragon-software.com
+Cc: ntfs3@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Haoxiang Li <haoxiang_li2024@163.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] fs/ntfs3: Fix a resource leak bug in wnd_extend()
+Date: Tue,  8 Jul 2025 16:01:13 +0800
+Message-Id: <20250708080113.2870200-1-haoxiang_li2024@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250707-sm7635-clocks-misc-v2-3-b49f19055768@fairphone.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PSgvCgCXcYxL0Gxot6ERAg--.61762S4
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XF4kXw15XrW8Kr1fKr1kGrg_yoWxAFX_Ga
+	s7Ca48X3y5JFn8K3WkWr90vws7Xw4rK3WkGrZFvFyDta4DXa90qrsYyrs3twsYgay7uFWr
+	Jr9aqrZak34fWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRC38eUUUUUU==
+X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbBkBmEbmhszu8vkAAAs5
 
-On Mon, Jul 07, 2025 at 11:56:39AM +0200, Luca Weiss wrote:
-> Add bindings documentation for the Milos (e.g. SM7635) TCSR Clock
-> Controller.
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml | 1 +
->  1 file changed, 1 insertion(+)
+Add put_bh() to decrease the refcount of 'bh' after the job
+is finished, preventing a resource leak.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Fixes: 3f3b442b5ad2 ("fs/ntfs3: Add bitmap")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+---
+ fs/ntfs3/bitmap.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Best regards,
-Krzysztof
+diff --git a/fs/ntfs3/bitmap.c b/fs/ntfs3/bitmap.c
+index 04107b950717..65d05e6a0566 100644
+--- a/fs/ntfs3/bitmap.c
++++ b/fs/ntfs3/bitmap.c
+@@ -1371,6 +1371,7 @@ int wnd_extend(struct wnd_bitmap *wnd, size_t new_bits)
+ 		mark_buffer_dirty(bh);
+ 		unlock_buffer(bh);
+ 		/* err = sync_dirty_buffer(bh); */
++		put_bh(bh);
+ 
+ 		b0 = 0;
+ 		bits -= op;
+-- 
+2.25.1
 
 
