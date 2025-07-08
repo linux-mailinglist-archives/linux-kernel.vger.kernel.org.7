@@ -1,172 +1,142 @@
-Return-Path: <linux-kernel+bounces-721745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50E71AFCD5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:22:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 025EFAFCD2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 313AD1BC6C81
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:22:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C648D3AA162
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A722E03E5;
-	Tue,  8 Jul 2025 14:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1076E2DE715;
+	Tue,  8 Jul 2025 14:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U7vnmTb4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QiG9r98x"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E5A2DAFCC
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 14:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C0E1F09AC
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 14:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751984463; cv=none; b=tcP68YtpR/FYh5COvwQH6OGSoCBzxha+SvmO0QqrLrcVDzuRdAYvzv5DdWsG+6AN6quVP8QArSWtcd5GRdtl8BjJfxNBtfNY6IG/fLYGazyJxPMlsJRjpImKZqexZoSlRrQAKUJJzJ0+/ubNW8LFpPMP1BHCXZXLN5J4YLElVgE=
+	t=1751984167; cv=none; b=NGLhmPKwcZ2QElv0OK5dDoSU1VBwfGSHSNflaIe3PbsQZ8AFrn2gRNrrrKVV5ndyyOuLBm/1oJNnZ7RX6SPVdWG6+ggHJ1D3gvWBtHinVndACf16LxCoWEJQKj3cfyocXz9rL/QfXgQKXCa9n+2nb5g0D0ncyaanupeZbcSatfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751984463; c=relaxed/simple;
-	bh=UdrZJoGx1gbvV746qi6yFw9n+td+bMzxcJXiUXY2RSQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UOT5ICrZNAb5C0+WLOyY+MXY5jT+QFWaC9F19ViMNGi7D4OF1cTDG/+an+z9rAnrST4qgAwb/5hFeyO77+m4A1avET4f4JN+9Vw+ILcasOJqNH07JyMcWaK1bYGm3TgeiGA8ow4nkctdqLlzuO8JJYlVllcxUJM+4OISaWsDwHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U7vnmTb4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751984459;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=/QonvgsOMvDknFcD7XS1RQRFmAoKmHpzQki8o2rHkaE=;
-	b=U7vnmTb4znBSk0ugdiPWm6aS5mlOFXRYp5ESKmQFjM4B3GBde+VqNwOepOpxGLjoehzl5F
-	ZfAw0zgYrinSSosfxl+RCH8YjUw/4+oXPGwaYRxZ7TMpuRjlb111k97wgDvRFFpRd60KQB
-	qAmy/LbHx/Xb+XCUNVw3Q2Y5+Wvi+wQ=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-321-V0XmifWvOW-iakW3i94eDQ-1; Tue,
- 08 Jul 2025 10:20:57 -0400
-X-MC-Unique: V0XmifWvOW-iakW3i94eDQ-1
-X-Mimecast-MFC-AGG-ID: V0XmifWvOW-iakW3i94eDQ_1751984456
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DD091193F060;
-	Tue,  8 Jul 2025 14:20:55 +0000 (UTC)
-Received: from fedora-work.redhat.com (unknown [10.22.64.21])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D2CEC19560AB;
-	Tue,  8 Jul 2025 14:20:53 +0000 (UTC)
-From: David Jeffery <djeffery@redhat.com>
-To: Tejun Heo <tj@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	David Jeffery <djeffery@redhat.com>,
-	Stuart Hayes <stuart.w.hayes@gmail.com>
-Subject: [PATCH] kernel/async: streamline cookie synchronization
-Date: Tue,  8 Jul 2025 10:15:35 -0400
-Message-ID: <20250708141947.5932-1-djeffery@redhat.com>
+	s=arc-20240116; t=1751984167; c=relaxed/simple;
+	bh=E3lfaH1esoHl+ru8dt/bh3KVLlHTXxish5JJputhM/A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d4crkY/uP1HrF1X6P+fh8VkH2cOcuturCswQ4h49JS/SJwN0uRwTYOWsw7f2qEilPm0yScQGntthPg/27lzEuihr7QuDvRZLwAeTjtn8R0lC/+LDu73HARq4d/Esxlg2teFyySXdawfkPkCVp6pG7MeRGS8u1f8UpPooKFAJR0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QiG9r98x; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568AAFNV000345
+	for <linux-kernel@vger.kernel.org>; Tue, 8 Jul 2025 14:16:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DZQVHr6h2vbACH/HxbUVPyBgPPfJWbpb9xJOT/3ejgk=; b=QiG9r98xOc7yxMot
+	4Pyj/5ng2VQ1vd/ThuyA/rlbm1NoQ+H8jlXCA79GkKYltN7+HzFEpAk4lLCKZpkb
+	HgYsUW6I7qS4xnWzV+F95qUKIGBc7Gjkpp7FT1B3XgrhIWeSCrdodkaSN1nqrnJm
+	8Mt3uEi5H1I6zW1xlKpC/WbNtMo2HQldVjR39HDMHYKHt253f8rsIOz3SDZVkgXm
+	wLb7KHy4jQcW82z8Uloe0ofDSodFHrlEoHOUVkQ7w8wGgzivv8t8R9jZQ1nBHsCU
+	YY25cDA7AUiwpckwupN32lKA023RqQK3bPd7OsWP+UlA5AwYjbBHW1iBkY+NCJTz
+	SKqL8A==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47psrkp32s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 14:16:05 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7d440beeb17so48221585a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 07:16:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751984164; x=1752588964;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DZQVHr6h2vbACH/HxbUVPyBgPPfJWbpb9xJOT/3ejgk=;
+        b=btYDMjaRUZdTqSLPFYpbTEvyAdybp53qxPyf28PhyFJuj9ax2+qw6kCDEO1/6a3unm
+         NGWDXE3qdMBejwUs6VQO0VJ6BeH303902Mh56TrkRS02yxSrO+hj4Jfd6O/CumUId7Lq
+         rRtqauhEfBsxrFYf9/8JlSiauXKyc3rM8dMNGS9KMESKZC2oculiRIHwVXpZpYLgF5nV
+         KrDTMmde3r0XI1VlxJcy1U60W9WX6FNpYbgABG4coySygXVJMesjIiiT4SE83eBKTqjt
+         pE2THTgSrr3+fbGmxn/a5paLVnf9qEfrUB/11oe5oyEy3TNZoQIElTzM1mQR7XV7vLC/
+         HSDw==
+X-Forwarded-Encrypted: i=1; AJvYcCXyJpiC6X4EPusljbFqatIyUt4k1yhs4ZafWIARfPGmSEhMATr3Q3ceXHJY0WPAz6+lVcM8GUAQPiTm2fo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwObZZYy/ymHttSx3mFwdtNzVudyqzZdbJEDOFUDP5RJGZsc44b
+	t+q7PVIyjMI8GxBrsD0vmTJZfQPPIPevrZps+Jd24RBnTOWTIkLSSm0NfM10F/1QJ3FPWGYCmzL
+	WPczLbl2xGGrhveW7lXQ+h0MRAT091qBtGICFDaWSBeZSY4jzjRGQNimvK+ko77kiV40=
+X-Gm-Gg: ASbGnctRl0A5tcbfZaWoA62tYCMuMGHDoZfju8d7ufHQBIrOPFMFczDSnpVSwmDwBzx
+	jzH+c0InXc5OuAgb0VBGorMYsbvzbxnzISXLRDNjmCF1gr6Zwo9WgxseTvY/a2A5Zcf3C7knr9j
+	3B1olhN6+dNQXDWvE+5rwZ/n+UuFxBcaVKc+p4bYGqKB5GfBfqx41I1fBxvcDpWcD5rsUQSJCKG
+	TrUc4Mja3e+/qUEACU38mEjjBsWxuYfxgtIgVrzlchAaYwmaM68Mbw+FrDlWqruXvLGemxxeIek
+	yuQZ8Uq3iSdKfPBjc0dxBGcMqEbGRTlN0GEdvaXZHOblO0gpfGeExR+HwPFR1aldMnkyHx8Wzsj
+	zfmw=
+X-Received: by 2002:a05:620a:170a:b0:7d3:e9b7:7121 with SMTP id af79cd13be357-7d5dcd42af1mr823710485a.12.1751984162979;
+        Tue, 08 Jul 2025 07:16:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHoRxKnbbwSsxFhWpE2/NEaVUl1RaxHp0HVlyQd5O1NsiVnVWQKCituQF6abehsg1sXoy3qKA==
+X-Received: by 2002:a05:620a:170a:b0:7d3:e9b7:7121 with SMTP id af79cd13be357-7d5dcd42af1mr823708285a.12.1751984162353;
+        Tue, 08 Jul 2025 07:16:02 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-556383bae7fsm1700290e87.50.2025.07.08.07.16.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jul 2025 07:16:01 -0700 (PDT)
+Message-ID: <2ada89b4-adc7-4462-a9fc-ebe692623fff@oss.qualcomm.com>
+Date: Tue, 8 Jul 2025 16:15:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: dts: qcom: msm8226-samsung-ms013g: Add touch keys
+To: Raymond Hackley <raymondhackley@protonmail.com>,
+        linux-kernel@vger.kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+References: <20250708122118.157791-1-raymondhackley@protonmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250708122118.157791-1-raymondhackley@protonmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: bnUEBlph6oJtJZSQbc47taUP3KbFoGu1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDExOCBTYWx0ZWRfX0I1ssE/Vq+Mf
+ EWt9ei5gVsZCOsPrAgGm/3W4N9EzDqGTX1G0PoaLraOLnYF6tfICzQfhAy3gmwwXegC7PsklrHJ
+ CsTycQMO5aNe2yEKYsZ+41KFoDSap83OHaKV/imr1sA6g/37FYRglxpkg/X7KG3oAPFvXhiARPq
+ 7NqC/HL5/MJZ9jQ1BiVrZcgpJHhm2X3nd4ul9KW3sY78RXPrLJW5JD1IBIw/G7BTOXgonq3f+8Q
+ E15MHJmAxlvsCD0pjtiCVG+y9yXrEU4n5wK9XH9sJnYKUuVX29iJl7mjzi/Y0NzKfcYT3z+VCh4
+ sxXtu6WhPlDSMgUwAYPEPuQ7d5s9FmLAiVn7qJn68CbFrjaa691RWD8ZTFdlm3/evly8o0n+Xpf
+ jP+QCt10X3h3w9b253Tbmw0k22Q7rOc8IESKramnhfmI1gWgXzHtcNHGMXIEHUkeaSGPojQi
+X-Proofpoint-GUID: bnUEBlph6oJtJZSQbc47taUP3KbFoGu1
+X-Authority-Analysis: v=2.4 cv=GtBC+l1C c=1 sm=1 tr=0 ts=686d2825 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=sfOm8-O8AAAA:8 a=EUspDBNiAAAA:8
+ a=DCnaCfRbCLLe1x2JEeAA:9 a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
+ a=TvTJqdcANYtsRzA46cdi:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-08_03,2025-07-07_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 clxscore=1015 spamscore=0 adultscore=0 phishscore=0 malwarescore=0
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 suspectscore=0
+ impostorscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507080118
 
-To prevent a thundering herd effect, implement a custom wake function for
-the async subsystem which will only wake waiters which have all their
-dependencies completed.
+On 7/8/25 2:21 PM, Raymond Hackley wrote:
+> Touch keys feature on Galaxy Grand 2 is provided by Zinitix touchscreen.
+> Add property linux,keycodes to enable touch keys.
+> 
+> Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
+> ---
 
-The async subsystem currently wakes all waiters on async_done when an async
-task completes. When there are many tasks trying to synchronize on differnt
-async values, this can create a thundering herd problem when an async task
-wakes up all waiters, most of whom go back to waiting after causing
-lock contention and wasting CPU.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Signed-off-by: David Jeffery <djeffery@redhat.com>
-Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
----
-
-This was originally submitted with a patch series for async shutdown as
-the async shutdown patches could cause enough waiters to make the thundering
-herd effect noticeable. The patch is being resubmitted separately as it
-is its own issue and not part of the device shutdown code.
-
- kernel/async.c | 42 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 41 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/async.c b/kernel/async.c
-index 4c3e6a44595f..ae327f29bac9 100644
---- a/kernel/async.c
-+++ b/kernel/async.c
-@@ -76,6 +76,12 @@ struct async_entry {
- 	struct async_domain	*domain;
- };
- 
-+struct async_wait_entry {
-+	wait_queue_entry_t wait;
-+	async_cookie_t cookie;
-+	struct async_domain *domain;
-+};
-+
- static DECLARE_WAIT_QUEUE_HEAD(async_done);
- 
- static atomic_t entry_count;
-@@ -298,6 +304,24 @@ void async_synchronize_full_domain(struct async_domain *domain)
- }
- EXPORT_SYMBOL_GPL(async_synchronize_full_domain);
- 
-+/**
-+ * async_domain_wake_function - wait function for cooking synchronization
-+ *
-+ * Custom wait function for async_synchronize_cookie_domain to check cookie
-+ * value.  This prevents waking up waiting threads unnecessarily.
-+ */
-+static int async_domain_wake_function(struct wait_queue_entry *wait,
-+				      unsigned int mode, int sync, void *key)
-+{
-+	struct async_wait_entry *await =
-+		container_of(wait, struct async_wait_entry, wait);
-+
-+	if (lowest_in_progress(await->domain) < await->cookie)
-+		return 0;
-+
-+	return autoremove_wake_function(wait, mode, sync, key);
-+}
-+
- /**
-  * async_synchronize_cookie_domain - synchronize asynchronous function calls within a certain domain with cookie checkpointing
-  * @cookie: async_cookie_t to use as checkpoint
-@@ -310,11 +334,27 @@ EXPORT_SYMBOL_GPL(async_synchronize_full_domain);
- void async_synchronize_cookie_domain(async_cookie_t cookie, struct async_domain *domain)
- {
- 	ktime_t starttime;
-+	struct async_wait_entry await = {
-+		.cookie = cookie,
-+		.domain = domain,
-+		.wait = {
-+			.func = async_domain_wake_function,
-+			.private = current,
-+			.flags = 0,
-+			.entry = LIST_HEAD_INIT(await.wait.entry),
-+		}};
- 
- 	pr_debug("async_waiting @ %i\n", task_pid_nr(current));
- 	starttime = ktime_get();
- 
--	wait_event(async_done, lowest_in_progress(domain) >= cookie);
-+	for (;;) {
-+		prepare_to_wait(&async_done, &await.wait, TASK_UNINTERRUPTIBLE);
-+
-+		if (lowest_in_progress(domain) >= cookie)
-+			break;
-+		schedule();
-+	}
-+	finish_wait(&async_done, &await.wait);
- 
- 	pr_debug("async_continuing @ %i after %lli usec\n", task_pid_nr(current),
- 		 microseconds_since(starttime));
--- 
-2.39.3
-
+Konrad
 
