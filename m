@@ -1,132 +1,111 @@
-Return-Path: <linux-kernel+bounces-721908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 967D9AFCF5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:36:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8AE9AFCF63
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92DD93AC531
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:35:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BD893AA5B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B842E1741;
-	Tue,  8 Jul 2025 15:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F2E2E0B44;
+	Tue,  8 Jul 2025 15:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1MB8nSP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+aURvg+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53985283FCD;
-	Tue,  8 Jul 2025 15:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B851D5150;
+	Tue,  8 Jul 2025 15:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751988963; cv=none; b=PjBXd8VEerGU7EpNfBUEwd4dJZH/jbFGNyJx7AK2TUwuce8f6IDHHS1GOp64jAmxQ6LYM6UKdTJhH13QFuPLU9oszliX8XSOZD0vTc3h95xis8q5LJGwDD6FQR4NYOnm/8biMyEZ2Cmey8NzgJi0z5FQf84jHYENsObOBjEe3fM=
+	t=1751989002; cv=none; b=VL0LKrQDT62t28H0oyZzhn0p8UMA5t0RJ+L0JviUKZShM4xVXn429hDeVr89+k9QZzM2+7hchIYkeVjQ61bwkuICH62CYipNcQRMvSoqp81Bl7QyfMPXE0R34wPemmdUdM3mHx1eHeLe/NkuR3kQ9YNCyTgLGT5uCcndKvaM3ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751988963; c=relaxed/simple;
-	bh=I7QL9rgNS99bH4s1/92a15NX0cgi1YBaLnyOoeaECcI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oY8lUkqaPkS6Fx/2Y6tnd08LoSlrfy0KQX3CNpcNnTffIC7TAlJK0Y/PQUd9EcwDIikb84rKieKFwVv9ZFXyS2BVqowRJ+YWDZ9UVpNgLRkGhM1EXvctVDEfY7HQ1V5ZB1z58eUot/HFlhx1tdz1eUR3U1Z9BK+RyKli9zF+jMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W1MB8nSP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2C0EC4CEED;
-	Tue,  8 Jul 2025 15:36:02 +0000 (UTC)
+	s=arc-20240116; t=1751989002; c=relaxed/simple;
+	bh=Iwf1w4LMrMCn4ONtXi63g2Muwr/nfqefgVJp8vV/llo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AETpVbCtnDUIKC10kG1bqso11+YYbWk95w3wD4xtgFMPPCa8lcGpYdBakvRwYVRz56Lk5ql75w2NqQdmtsUTJaOY0LbBQZ9O/R96TI4eyMv8cCzMIuVXvR3nvJOMgq6Cptptvds2qyxBMUf9Co1XiSGniyw0eTmNZhx4PApVpY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+aURvg+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06DCDC4CEED;
+	Tue,  8 Jul 2025 15:36:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751988962;
-	bh=I7QL9rgNS99bH4s1/92a15NX0cgi1YBaLnyOoeaECcI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=W1MB8nSPYEUZl5bcX47DF6gUX86qgHNuQ+y9I6vRsODULep4AXPYrW0y5fjp7oUdF
-	 xxeFXEtCkwX22xdekjuuR+Ut+KUsHTFa3pzOBB+H+wx0nTA/YeiVCN7DMGR0rbG1vg
-	 g8qj5HSYBzP/iK5vpLn1eFW7byDP1D9H/hckUMhb9CEYA6XSJSejQ8Gx63L+9Ea+mH
-	 HUeBVNRSPOevp4Va8d2THy5fY7BckYZ55BFztXh0765XLOjpD4UWZPtWHco+EKsmKB
-	 5+Q2+Ham1Ayu8N/7bOr13l+B1FifyyqRvtHa3ZKT084LyXr4tO6kPh6WfwRG9GmDpZ
-	 EGfngc11eBIUw==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553d771435fso3755720e87.3;
-        Tue, 08 Jul 2025 08:36:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUHCTQ6JHU9nxZ7Qku4892NrtZ45P+nQvutuzpqIePGAPJUSeWo6dQlpkh37nsnDubVcWy6E7AXGncE52ty@vger.kernel.org, AJvYcCUS8cWUEQVzSRdu7IsVeUACpobdrETcjPQZJBSzQy6/Vs+uFTJOwdIkbIXITILxhJ30wX9Dat83JMAy3Ffe7w==@vger.kernel.org, AJvYcCX0VBQh7hTnNLTDplcTvF0GLV/Yzvrg/jglHF5PZSC1pP08CCc4d/B6S9m4+vy7ZAjCkmsMd8ic99eSOYKwFg==@vger.kernel.org, AJvYcCXK0wt784YCl8Ij5ayUTcr/+XqHaBQY7SNhYxDruYfxiswx0ec4bErb0fos/A5OUBnDqNgHD4WnvXM=@vger.kernel.org, AJvYcCXfWyV0We4RKRQ47IZ2PU2QAROlmew2yR0hewIten0Zv8hnXJJOv+qL5Nb/v3amoXSOHIIHe+Q9dOO3gTXM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTTUNxcIB3a7FxVcue9n9GVSJrg6XBMhQ6k8CCcwRYflzZ1YJn
-	tOci3Vl0LzeELz4YUPFP7ZpTi5d/ybeyt1Hryd3Bpu1ofUXG6faTmKU3lJ/aq91xMdQDa8Rt+gB
-	7WDtVZkt4jxrcC3ojz3S+RmWSX0uc+g8=
-X-Google-Smtp-Source: AGHT+IFRtLjaJasKpwEwyQ5+WW04Mv6p+1ysxEiZNM3+T5xfDfVpapMUU0ZvsSkmP7MRTMvglMUJAp47OpXNlDRGL1w=
-X-Received: by 2002:a05:6512:238e:b0:553:2e4a:bb58 with SMTP id
- 2adb3069b0e04-557f82f578amr1243072e87.9.1751988961465; Tue, 08 Jul 2025
- 08:36:01 -0700 (PDT)
+	s=k20201202; t=1751989001;
+	bh=Iwf1w4LMrMCn4ONtXi63g2Muwr/nfqefgVJp8vV/llo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Z+aURvg+kvTxybVdl8IG4R6b5AFm4L3j0CeEEX9TbdbIT+8NC8DlOzedvhCe6kCV2
+	 rFJL1UAYhrwGg3Ofo0YSYGP+9xNRv2JAO+fkqyzjJ8us8klDRX7ujUXfgmSe2FA+J5
+	 QAnKc4rjYbEtmPMHgab2EgWznTe2RBVphVN1kWvOycOnqq0R/T2QtV11kUwJTTU6bz
+	 uCH3QkjR3sxxErVCAjbedfWeod5zqmNO/0eN3T8qANUqlJAw1xsIFRretV/7RMFlin
+	 qfvKixT2uNctM8qsbU9MpqIdb0hCXP+4nFBXB9EN3RZfB8TZO1oN2yo07DbroxBGiz
+	 fqmW5O7ksOf/g==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <lossin@kernel.org>
+Cc: "Oliver Mangold" <oliver.mangold@pm.me>,  "Miguel Ojeda"
+ <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
+ Gross" <tmgross@umich.edu>,  "Asahi Lina" <lina+kernel@asahilina.net>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v11 4/4] rust: Add `OwnableRefCounted`
+In-Reply-To: <DB6R9YNA7TD5.FR3PSOX7SPI1@kernel.org> (Benno Lossin's message of
+	"Tue, 08 Jul 2025 16:50:03 +0200")
+References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me>
+	<20250618-unique-ref-v11-4-49eadcdc0aa6@pm.me>
+	<DB1LPFAX66WG.1QL5JDCWI7RN4@kernel.org> <aGuAR7JCrlmzQrx4@mango>
+	<gFz7glX0UIHGffQdm4_vD_XkT5GZEKB0Lx0cd8-TCR8glMzIIY7VBIvppFVr2RURNBnGx9lKJqrE5av7xSUcbA==@protonmail.internalid>
+	<DB5PX74OB3DX.1UNT8MIBWNC2G@kernel.org> <87bjpwqmo5.fsf@kernel.org>
+	<gUxXEpuPZ0HXQ-cptykcSOV4dVbZNFvDq4Ey5YR1GT8exNFK0qhYAg4HFgWTvTpDk8HXMGl5XThvR7f4m-T6Sg==@protonmail.internalid>
+	<DB5SRE5S7AR3.QUF369W9JYGJ@kernel.org> <87zfdgp253.fsf@kernel.org>
+	<Kl9_mnIVP7OY9TWELXIwOVkotanEt7IsdpMx-IbaRfjHf6EF0tC06PzcC8-Z9pDiw1FQHulknmgbS9eQU28kQw==@protonmail.internalid>
+	<DB5XPFYBATZZ.5EH3TWGPHTDB@kernel.org> <87jz4iomc9.fsf@kernel.org>
+	<xaP6FPSFhtUHNzEYAO1m2moDGQzRTxovUTHDnyFml8d9W25dcUcu7LV5QehRZc4b91GUcXtUlMZ9iKtOgbVOpQ==@protonmail.internalid>
+	<DB6R9YNA7TD5.FR3PSOX7SPI1@kernel.org>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Tue, 08 Jul 2025 17:35:26 +0200
+Message-ID: <87ldoyn1a9.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250708-export_modules-v1-0-fbf7a282d23f@suse.cz>
- <20250708-export_modules-v1-1-fbf7a282d23f@suse.cz> <CAK7LNATpQrHX_8x4WvhDN7cODCCLr8kihydtfM-6wxhY17xtQw@mail.gmail.com>
- <39bed180-e21c-4801-8ac4-ba40b57f6df2@suse.cz>
-In-Reply-To: <39bed180-e21c-4801-8ac4-ba40b57f6df2@suse.cz>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 9 Jul 2025 00:35:25 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATRkZHwJGpojCnvdiaoDnP+aeUXgdey5sb_8muzdWTMkA@mail.gmail.com>
-X-Gm-Features: Ac12FXx_7nF2f-9gneX_4uOIrJSstDjyWshpyZ4rVtF2jAmgOIH61VW1BIqcAYY
-Message-ID: <CAK7LNATRkZHwJGpojCnvdiaoDnP+aeUXgdey5sb_8muzdWTMkA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] module: Restrict module namespace access to in-tree modules
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Matthias Maennich <maennich@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Christoph Hellwig <hch@infradead.org>, Peter Zijlstra <peterz@infradead.org>, 
-	David Hildenbrand <david@redhat.com>, Shivank Garg <shivankg@amd.com>, 
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 9, 2025 at 12:08=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
+"Benno Lossin" <lossin@kernel.org> writes:
+
+> On Tue Jul 8, 2025 at 3:15 PM CEST, Andreas Hindborg wrote:
+>> "Benno Lossin" <lossin@kernel.org> writes:
+>>> On Mon Jul 7, 2025 at 3:21 PM CEST, Andreas Hindborg wrote:
+>>>> When a completion comes back from hardware, it carries the ID. We use
+>>>> the C block layer `tag_to_rq` machinery to turn this ID back into an
+>>>> `Owned<Request<_>>`. In that process, we check that `refcount =3D=3D 1=
+` and
+>>>> if so, we set refcount to 0 and invent an `Owned<Request<_>>`.
+>>>
+>>> (because if not, this would be wrong)
+>>
+>> I hope it is not wrong =F0=9F=98=86 You can see the latest and greatest =
+here [1].
 >
-> On 7/8/25 14:41, Masahiro Yamada wrote:
-> > On Tue, Jul 8, 2025 at 4:29=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz>=
- wrote:
-> >>
-> >> The module namespace support has been introduced to allow restricting
-> >> exports to specific modules only, and intended for in-tree modules suc=
-h
-> >> as kvm. Make this intention explicit by disallowing out of tree module=
-s
-> >> both for the module loader and modpost.
-> >>
-> >> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> >
-> >
-> >
-> > In my understanding, an external module with the same name
-> > can override the internal one.
-> >
-> > This change disallows such a use-case.
+> Thanks for the pointer, the "implementation details" in the docs on
+> `Request` were very helpful! This is another argument for not having the
+> blanket impl for `Ownable` when `T: Refcount` I mentioned in the other
+> thread.
 >
-> Hmm I'm not familiar with this, but for such cases to be legitimate we ca=
-n
-> assume the external module has to be derived from the internal one and no=
-t
-> something completely unrelated impersonating the internal one? So in that
-> case just patch 2 alone would be sufficient and not break any legitimate =
-use
-> cases?
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/a.hindborg/linux.git=
+/tree/rust/kernel/block/mq/request.rs?h=3Drnull-v6.15#n398
 >
+> The comment in line 424 looks wrong?
 
-IIRC, nvdimm uses this feature for testing.
-
-
-In-tree drivers:
-  drivers/nvdimm/Makefile
-
-Out-of-tree drivers:
-  tools/testing/nvdimm/Makefile
-  tools/testing/nvdimm/Kbuild
+Yes, nice catch. The assert is correct though.
 
 
+Best regards,
+Andreas Hindborg
 
 
---=20
-Best Regards
-Masahiro Yamada
 
