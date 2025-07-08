@@ -1,336 +1,335 @@
-Return-Path: <linux-kernel+bounces-721311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E73D7AFC793
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:55:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B600DAFC796
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 364FB4A3A19
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:55:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 698831BC39E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2E126772D;
-	Tue,  8 Jul 2025 09:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0F0266EF1;
+	Tue,  8 Jul 2025 09:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jwi1LOFh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUQsIItX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3992264A1;
-	Tue,  8 Jul 2025 09:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90ADC3595C
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 09:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751968522; cv=none; b=ATy77HSv3F+ejH3ElF5AV1gOy0WtpJF37pNVmyFoR1EmkBS62//ge1lU1Cv5tlRjBmxtMGdSJFDZTPqObdcstp7sBcDZ4T6oR0VIcpEs1OhMShdZUuBxlci5lIm7brx8DdQ8LoBP8AMmnmYvmzSSALIg/2462rW72uDr342Gx1g=
+	t=1751968625; cv=none; b=i5tNSAdKA/cqAsltYNKBBgGbXAFlutJ9HuwaWGVHpRg169RAWPe05PXLRxCuptjB5dt84480O3v95cuR3hkuk7bAqshE+7LGjwrldvQ+7ZuUDMDONwzl2M3Cvtz3mcrK1GuslkEqYPGdMNfzKEDvFGEKlW+C3+YP4dxbVuIV9PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751968522; c=relaxed/simple;
-	bh=TnuXVt8sQH4n2YkcEcjhrZpj0P2l3YZxxcugvdMkiHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XE9b+dmfUYztYLiHle0N2SKuOrT+UOOTfy9qxQSWw64FNtfFE+Y4edjrdJB/4vUo5nJ+jQHBT9bsp/vvEgQa/E+C49DYFX+5EaqmiwErUxyFR2yI24o+Hlw2NArYOpUrG/8AiBddcqXBQxaE1PIUlGWcr5cVv4Juub9Spe9L9hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jwi1LOFh; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751968521; x=1783504521;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=TnuXVt8sQH4n2YkcEcjhrZpj0P2l3YZxxcugvdMkiHQ=;
-  b=Jwi1LOFhGrl8xfRC/plIeIM2XAhWorclau6RcJpH1tPtwiElINnyoSWq
-   M82SRVKuEx+kpDuQn7V6gCKa8gH+iDUP8N1dlYdgGOScgnMLuRSJQx0fo
-   cgM4drZbszNjUOJjI5aHm2Pbg2nVoNTnD5c0y2H+VhfNe+sm+ja9YorPF
-   gu6nqiADm2d/3q2DsO4dBM93r/vamdjkXTKLr4DqxvUTpV1VZQdj9koJD
-   aA7Yj1ZOMrM8SXEu6BkzYn2vf4cmyQHwczq3ZYXV9n0UKoKQETNNRVYgY
-   wf3N5qwc5aU9DbLP9uXxN0qtctbPAIqsjQAwYa3FZbDk8t7JDACpT3qSV
-   Q==;
-X-CSE-ConnectionGUID: zHz7BPuBTUiOLunFhaYstQ==
-X-CSE-MsgGUID: JnhEpVoSQVusMLMNYCnlaA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54329063"
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="54329063"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 02:55:18 -0700
-X-CSE-ConnectionGUID: GzIoR7VbRxSGcOABFQq/PA==
-X-CSE-MsgGUID: DJ8igr/FQiavFgX8/pMZOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="159719222"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.37]) ([10.124.240.37])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 02:55:15 -0700
-Message-ID: <25132107-09d6-45f2-9e09-1ebeaa1d3637@linux.intel.com>
-Date: Tue, 8 Jul 2025 17:54:59 +0800
+	s=arc-20240116; t=1751968625; c=relaxed/simple;
+	bh=dPbbq/0a1QsYvfp78zyWJ6pd+nnvbdm6sJfVED+Uid8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FJMCNOPKRSt7WI6wzcL92OchIltWFVNOrnsBDcHtYu5v1G5H3XgxU6449kqcGvyPG6xoNJTtO+emlj3tCehjtH2BSioXeRGJIzk4dnHnoVeTTvfronejfPqyJXrwCAh0ir2aQRkt9DARAYs8kaYF+RTbVdAwzIuHwzLXByr4NxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUQsIItX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02BE8C4CEED;
+	Tue,  8 Jul 2025 09:57:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751968625;
+	bh=dPbbq/0a1QsYvfp78zyWJ6pd+nnvbdm6sJfVED+Uid8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hUQsIItXHkLymGMLPI9mOuRhS26P23g0eC2G/0dDGhtbOyeA2zebYNUQhiiJo+3t9
+	 J6d8OxBjjDTAKfc6eUOtMiDjewB8eCgJXN4h2Ighan2zu87Bl4EKGF022fBzhs6Opo
+	 jHoNp8nnmCuq+iP7nh5pRP235JUeP5HGQQE6kxViWuhLbIjOxfDtTaKdlaGFOjtuSr
+	 LPNshkjw01s6SsyrTeuivdp4QPsi/PZW+zID7DnsGJWIJiBl8SiyJxUYf1WIy8jVnb
+	 iz/nLD6pU6WYhabBPf9p9J48o2Fuaa4qzNQ/VAZOl2bFwMz7otUmygwK+P/4IgUOxX
+	 DRfeyZWtchBRQ==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH v2] f2fs: fix to avoid panic in f2fs_evict_inode
+Date: Tue,  8 Jul 2025 17:56:57 +0800
+Message-ID: <20250708095657.3081188-1-chao@kernel.org>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linus:master] [perf] 9734e25fbf:
- BUG:kernel_NULL_pointer_dereference,address
-To: kernel test robot <oliver.sang@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Namhyung Kim <namhyung@kernel.org>, linux-perf-users@vger.kernel.org,
- dapeng1.mi@linux.intel.com
-References: <202507042103.a15d2923-lkp@intel.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <202507042103.a15d2923-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Base on the call trace, it looks the bug is directly caused by the below
-code in setup_pebs_adaptive_sample_data().
+As syzbot [1] reported as below:
 
-sample_type = event->attr.sample_type;
+R10: 0000000000000100 R11: 0000000000000206 R12: 00007ffe17473450
+R13: 00007f28b1c10854 R14: 000000000000dae5 R15: 00007ffe17474520
+ </TASK>
+---[ end trace 0000000000000000 ]---
+==================================================================
+BUG: KASAN: use-after-free in __list_del_entry_valid+0xa6/0x130 lib/list_debug.c:62
+Read of size 8 at addr ffff88812d962278 by task syz-executor/564
 
-the "event" pointer becomes NULL accidentally when running this code and
-trigger an invalid memory access.
+CPU: 1 PID: 564 Comm: syz-executor Tainted: G        W          6.1.129-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack+0x21/0x24 lib/dump_stack.c:88
+ dump_stack_lvl+0xee/0x158 lib/dump_stack.c:106
+ print_address_description+0x71/0x210 mm/kasan/report.c:316
+ print_report+0x4a/0x60 mm/kasan/report.c:427
+ kasan_report+0x122/0x150 mm/kasan/report.c:531
+ __asan_report_load8_noabort+0x14/0x20 mm/kasan/report_generic.c:351
+ __list_del_entry_valid+0xa6/0x130 lib/list_debug.c:62
+ __list_del_entry include/linux/list.h:134 [inline]
+ list_del_init include/linux/list.h:206 [inline]
+ f2fs_inode_synced+0xf7/0x2e0 fs/f2fs/super.c:1531
+ f2fs_update_inode+0x74/0x1c40 fs/f2fs/inode.c:585
+ f2fs_update_inode_page+0x137/0x170 fs/f2fs/inode.c:703
+ f2fs_write_inode+0x4ec/0x770 fs/f2fs/inode.c:731
+ write_inode fs/fs-writeback.c:1460 [inline]
+ __writeback_single_inode+0x4a0/0xab0 fs/fs-writeback.c:1677
+ writeback_single_inode+0x221/0x8b0 fs/fs-writeback.c:1733
+ sync_inode_metadata+0xb6/0x110 fs/fs-writeback.c:2789
+ f2fs_sync_inode_meta+0x16d/0x2a0 fs/f2fs/checkpoint.c:1159
+ block_operations fs/f2fs/checkpoint.c:1269 [inline]
+ f2fs_write_checkpoint+0xca3/0x2100 fs/f2fs/checkpoint.c:1658
+ kill_f2fs_super+0x231/0x390 fs/f2fs/super.c:4668
+ deactivate_locked_super+0x98/0x100 fs/super.c:332
+ deactivate_super+0xaf/0xe0 fs/super.c:363
+ cleanup_mnt+0x45f/0x4e0 fs/namespace.c:1186
+ __cleanup_mnt+0x19/0x20 fs/namespace.c:1193
+ task_work_run+0x1c6/0x230 kernel/task_work.c:203
+ exit_task_work include/linux/task_work.h:39 [inline]
+ do_exit+0x9fb/0x2410 kernel/exit.c:871
+ do_group_exit+0x210/0x2d0 kernel/exit.c:1021
+ __do_sys_exit_group kernel/exit.c:1032 [inline]
+ __se_sys_exit_group kernel/exit.c:1030 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1030
+ x64_sys_call+0x7b4/0x9a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x4c/0xa0 arch/x86/entry/common.c:81
+ entry_SYSCALL_64_after_hwframe+0x68/0xd2
+RIP: 0033:0x7f28b1b8e169
+Code: Unable to access opcode bytes at 0x7f28b1b8e13f.
+RSP: 002b:00007ffe174710a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f28b1c10879 RCX: 00007f28b1b8e169
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000001
+RBP: 0000000000000002 R08: 00007ffe1746ee47 R09: 00007ffe17472360
+R10: 0000000000000009 R11: 0000000000000246 R12: 00007ffe17472360
+R13: 00007f28b1c10854 R14: 000000000000dae5 R15: 00007ffe17474520
+ </TASK>
 
-The helper setup_pebs_adaptive_sample_data() is only called by helper
-intel_pmu_drain_pebs_icl(), the "event" pointer comes from the below
-assignment.
+Allocated by task 569:
+ kasan_save_stack mm/kasan/common.c:45 [inline]
+ kasan_set_track+0x4b/0x70 mm/kasan/common.c:52
+ kasan_save_alloc_info+0x25/0x30 mm/kasan/generic.c:505
+ __kasan_slab_alloc+0x72/0x80 mm/kasan/common.c:328
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook+0x4f/0x2c0 mm/slab.h:737
+ slab_alloc_node mm/slub.c:3398 [inline]
+ slab_alloc mm/slub.c:3406 [inline]
+ __kmem_cache_alloc_lru mm/slub.c:3413 [inline]
+ kmem_cache_alloc_lru+0x104/0x220 mm/slub.c:3429
+ alloc_inode_sb include/linux/fs.h:3245 [inline]
+ f2fs_alloc_inode+0x2d/0x340 fs/f2fs/super.c:1419
+ alloc_inode fs/inode.c:261 [inline]
+ iget_locked+0x186/0x880 fs/inode.c:1373
+ f2fs_iget+0x55/0x4c60 fs/f2fs/inode.c:483
+ f2fs_lookup+0x366/0xab0 fs/f2fs/namei.c:487
+ __lookup_slow+0x2a3/0x3d0 fs/namei.c:1690
+ lookup_slow+0x57/0x70 fs/namei.c:1707
+ walk_component+0x2e6/0x410 fs/namei.c:1998
+ lookup_last fs/namei.c:2455 [inline]
+ path_lookupat+0x180/0x490 fs/namei.c:2479
+ filename_lookup+0x1f0/0x500 fs/namei.c:2508
+ vfs_statx+0x10b/0x660 fs/stat.c:229
+ vfs_fstatat fs/stat.c:267 [inline]
+ vfs_lstat include/linux/fs.h:3424 [inline]
+ __do_sys_newlstat fs/stat.c:423 [inline]
+ __se_sys_newlstat+0xd5/0x350 fs/stat.c:417
+ __x64_sys_newlstat+0x5b/0x70 fs/stat.c:417
+ x64_sys_call+0x393/0x9a0 arch/x86/include/generated/asm/syscalls_64.h:7
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x4c/0xa0 arch/x86/entry/common.c:81
+ entry_SYSCALL_64_after_hwframe+0x68/0xd2
 
-event = cpuc->events[bit];
+Freed by task 13:
+ kasan_save_stack mm/kasan/common.c:45 [inline]
+ kasan_set_track+0x4b/0x70 mm/kasan/common.c:52
+ kasan_save_free_info+0x31/0x50 mm/kasan/generic.c:516
+ ____kasan_slab_free+0x132/0x180 mm/kasan/common.c:236
+ __kasan_slab_free+0x11/0x20 mm/kasan/common.c:244
+ kasan_slab_free include/linux/kasan.h:177 [inline]
+ slab_free_hook mm/slub.c:1724 [inline]
+ slab_free_freelist_hook+0xc2/0x190 mm/slub.c:1750
+ slab_free mm/slub.c:3661 [inline]
+ kmem_cache_free+0x12d/0x2a0 mm/slub.c:3683
+ f2fs_free_inode+0x24/0x30 fs/f2fs/super.c:1562
+ i_callback+0x4c/0x70 fs/inode.c:250
+ rcu_do_batch+0x503/0xb80 kernel/rcu/tree.c:2297
+ rcu_core+0x5a2/0xe70 kernel/rcu/tree.c:2557
+ rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2574
+ handle_softirqs+0x178/0x500 kernel/softirq.c:578
+ run_ksoftirqd+0x28/0x30 kernel/softirq.c:945
+ smpboot_thread_fn+0x45a/0x8c0 kernel/smpboot.c:164
+ kthread+0x270/0x310 kernel/kthread.c:376
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
 
-It looks the "cpuc->events[bit]" is assigned to NULL as some reason when
-the issue happens.
+Last potentially related work creation:
+ kasan_save_stack+0x3a/0x60 mm/kasan/common.c:45
+ __kasan_record_aux_stack+0xb6/0xc0 mm/kasan/generic.c:486
+ kasan_record_aux_stack_noalloc+0xb/0x10 mm/kasan/generic.c:496
+ call_rcu+0xd4/0xf70 kernel/rcu/tree.c:2845
+ destroy_inode fs/inode.c:316 [inline]
+ evict+0x7da/0x870 fs/inode.c:720
+ iput_final fs/inode.c:1834 [inline]
+ iput+0x62b/0x830 fs/inode.c:1860
+ do_unlinkat+0x356/0x540 fs/namei.c:4397
+ __do_sys_unlink fs/namei.c:4438 [inline]
+ __se_sys_unlink fs/namei.c:4436 [inline]
+ __x64_sys_unlink+0x49/0x50 fs/namei.c:4436
+ x64_sys_call+0x958/0x9a0 arch/x86/include/generated/asm/syscalls_64.h:88
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x4c/0xa0 arch/x86/entry/common.c:81
+ entry_SYSCALL_64_after_hwframe+0x68/0xd2
 
-Since I can't reproduce this issue locally, so I can't certainly say what
-caused the issue, but 0day figures out the issue should be introduced by
-the commit '9734e25fbf5a ("perf: Fix the throttle logic for a group")'.
-Just go through this commit, the most probably place causing this issue is
-the below code.
+The buggy address belongs to the object at ffff88812d961f20
+ which belongs to the cache f2fs_inode_cache of size 1200
+The buggy address is located 856 bytes inside of
+ 1200-byte region [ffff88812d961f20, ffff88812d9623d0)
 
-@@ -10084,8 +10111,7 @@ __perf_event_account_interrupt(struct perf_event
-*event, int throttle)
-        if (unlikely(throttle && hwc->interrupts >= max_samples_per_tick)) {
-                __this_cpu_inc(perf_throttled_count);
-                tick_dep_set_cpu(smp_processor_id(), TICK_DEP_BIT_PERF_EVENTS);
--               hwc->interrupts = MAX_INTERRUPTS;
--               perf_log_throttle(event, 0);
-+               perf_event_throttle_group(event);
-                ret = 1;
-        }
+The buggy address belongs to the physical page:
+page:ffffea0004b65800 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x12d960
+head:ffffea0004b65800 order:2 compound_mapcount:0 compound_pincount:0
+flags: 0x4000000000010200(slab|head|zone=1)
+raw: 4000000000010200 0000000000000000 dead000000000122 ffff88810a94c500
+raw: 0000000000000000 00000000800c000c 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 2, migratetype Reclaimable, gfp_mask 0x1d2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL|__GFP_RECLAIMABLE), pid 569, tgid 568 (syz.2.16), ts 55943246141, free_ts 0
+ set_page_owner include/linux/page_owner.h:31 [inline]
+ post_alloc_hook+0x1d0/0x1f0 mm/page_alloc.c:2532
+ prep_new_page mm/page_alloc.c:2539 [inline]
+ get_page_from_freelist+0x2e63/0x2ef0 mm/page_alloc.c:4328
+ __alloc_pages+0x235/0x4b0 mm/page_alloc.c:5605
+ alloc_slab_page include/linux/gfp.h:-1 [inline]
+ allocate_slab mm/slub.c:1939 [inline]
+ new_slab+0xec/0x4b0 mm/slub.c:1992
+ ___slab_alloc+0x6f6/0xb50 mm/slub.c:3180
+ __slab_alloc+0x5e/0xa0 mm/slub.c:3279
+ slab_alloc_node mm/slub.c:3364 [inline]
+ slab_alloc mm/slub.c:3406 [inline]
+ __kmem_cache_alloc_lru mm/slub.c:3413 [inline]
+ kmem_cache_alloc_lru+0x13f/0x220 mm/slub.c:3429
+ alloc_inode_sb include/linux/fs.h:3245 [inline]
+ f2fs_alloc_inode+0x2d/0x340 fs/f2fs/super.c:1419
+ alloc_inode fs/inode.c:261 [inline]
+ iget_locked+0x186/0x880 fs/inode.c:1373
+ f2fs_iget+0x55/0x4c60 fs/f2fs/inode.c:483
+ f2fs_fill_super+0x3ad7/0x6bb0 fs/f2fs/super.c:4293
+ mount_bdev+0x2ae/0x3e0 fs/super.c:1443
+ f2fs_mount+0x34/0x40 fs/f2fs/super.c:4642
+ legacy_get_tree+0xea/0x190 fs/fs_context.c:632
+ vfs_get_tree+0x89/0x260 fs/super.c:1573
+ do_new_mount+0x25a/0xa20 fs/namespace.c:3056
+page_owner free stack trace missing
 
-With this change, all events in the group could be possible to be stopped.
-The call chain is perf_event_throttle_group() -> perf_event_throttle() ->
-event->pmu->stop() -> x86_pmu_stop(). In x86_pmu_stop() , the event would
-be disabled and corresponding item in cpuc->events[] array is cleared to NULL.
+Memory state around the buggy address:
+ ffff88812d962100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88812d962180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88812d962200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                                ^
+ ffff88812d962280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88812d962300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
-    if (test_bit(hwc->idx, cpuc->active_mask)) {
-        static_call(x86_pmu_disable)(event);
-        __clear_bit(hwc->idx, cpuc->active_mask);
-        cpuc->events[hwc->idx] = NULL;
-        WARN_ON_ONCE(hwc->state & PERF_HES_STOPPED);
-        hwc->state |= PERF_HES_STOPPED;
-    }
+[1] https://syzkaller.appspot.com/x/report.txt?x=13448368580000
 
-The __perf_event_account_interrupt() helper could be called in PMI handler
-(perf_event_overflow() -> __perf_event_overflow() ->
-__perf_event_account_interrupt()) and PMI is a NMI on x86 platform. So PMI
-handler could interrupt perf code (like setup_pebs_adaptive_sample_data())
-and clear the cpuc->events[hwc->idx] and
-then setup_pebs_adaptive_sample_data() finds the cpuc->events[bit] is NULL
-and crashes.
+This bug can be reproduced w/ the reproducer [2], once we enable
+CONFIG_F2FS_CHECK_FS config, the reproducer will trigger panic as below,
+so the direct reason of this bug is the same as the one below patch [3]
+fixed.
 
-@Oliver, I would cook a patch to add NULL check for cpuc->events[*] pointer
-before accessing it. Could you please help to verify it? Thanks.
+kernel BUG at fs/f2fs/inode.c:857!
+RIP: 0010:f2fs_evict_inode+0x1204/0x1a20
+Call Trace:
+ <TASK>
+ evict+0x32a/0x7a0
+ do_unlinkat+0x37b/0x5b0
+ __x64_sys_unlink+0xad/0x100
+ do_syscall_64+0x5a/0xb0
+ entry_SYSCALL_64_after_hwframe+0x6e/0xd8
+RIP: 0010:f2fs_evict_inode+0x1204/0x1a20
 
+[2] https://syzkaller.appspot.com/x/repro.c?x=17495ccc580000
+[3] https://lore.kernel.org/linux-f2fs-devel/20250702120321.1080759-1-chao@kernel.org
 
-On 7/4/2025 9:52 PM, kernel test robot wrote:
-> Hello,
->
-> kernel test robot noticed "BUG:kernel_NULL_pointer_dereference,address" on:
->
-> commit: 9734e25fbf5ae68eb04234b2cd14a4b36ab89141 ("perf: Fix the throttle logic for a group")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
->
-> [test failed on linus/master      66701750d5565c574af42bef0b789ce0203e3071]
-> [test failed on linux-next/master 3f804361f3b9af33e00b90ec9cb5afcc96831e60]
-> [test failed on fix commit        bc4394e5e79cdda1b0997e0be1d65e242f523f02]
->
->
-> in testcase: stress-ng
-> version: stress-ng-x86_64-f76f86ffb-1_20250412
-> with following parameters:
->
-> 	nr_threads: 100%
-> 	testtime: 60s
-> 	test: memthrash
-> 	cpufreq_governor: performance
->
->
->
-> config: x86_64-rhel-9.4
-> compiler: gcc-12
-> test machine: 192 threads 2 sockets Intel(R) Xeon(R) Platinum 8468V  CPU @ 2.4GHz (Sapphire Rapids) with 384G memory
->
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
->
->
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202507042103.a15d2923-lkp@intel.com
->
->
-> [   93.379225][  C143] BUG: kernel NULL pointer dereference, address: 00000000000000f0
-> [   93.379247][  C143] #PF: supervisor read access in kernel mode
-> [   93.379253][  C143] #PF: error_code(0x0000) - not-present page
-> [   93.379259][  C143] PGD 161558067 P4D 0
-> [   93.379263][  C143] Oops: Oops: 0000 [#1] SMP NOPTI
-> [   93.379274][  C143] CPU: 143 UID: 0 PID: 3944 Comm: perf Not tainted 6.15.0-rc3-00069-g9734e25fbf5a #1 VOLUNTARY
-> [   93.379281][  C143] Hardware name: KAYTUS NF5280-M7-A0-R0-00/NF5280-M7-A0-R0-00, BIOS 06.08.01 12/24/2024
-> [ 93.379286][ C143] RIP: 0010:setup_pebs_adaptive_sample_data (kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/events/intel/ds.c:2083) 
-> [ 93.379325][ C143] Code: 04 24 48 85 d2 0f 84 81 02 00 00 49 89 d5 49 89 fe 49 89 f4 48 89 ce 49 c7 80 a8 00 00 00 00 00 00 00 8b 02 4c 89 c5 48 89 cb <4c> 8b bf f0 00 00 00 89 44 24 0c 48 89 44 24 10 48 8b 87 08 02 00
-> All code
-> ========
->    0:	04 24                	add    $0x24,%al
->    2:	48 85 d2             	test   %rdx,%rdx
->    5:	0f 84 81 02 00 00    	je     0x28c
->    b:	49 89 d5             	mov    %rdx,%r13
->    e:	49 89 fe             	mov    %rdi,%r14
->   11:	49 89 f4             	mov    %rsi,%r12
->   14:	48 89 ce             	mov    %rcx,%rsi
->   17:	49 c7 80 a8 00 00 00 	movq   $0x0,0xa8(%r8)
->   1e:	00 00 00 00 
->   22:	8b 02                	mov    (%rdx),%eax
->   24:	4c 89 c5             	mov    %r8,%rbp
->   27:	48 89 cb             	mov    %rcx,%rbx
->   2a:*	4c 8b bf f0 00 00 00 	mov    0xf0(%rdi),%r15		<-- trapping instruction
->   31:	89 44 24 0c          	mov    %eax,0xc(%rsp)
->   35:	48 89 44 24 10       	mov    %rax,0x10(%rsp)
->   3a:	48                   	rex.W
->   3b:	8b                   	.byte 0x8b
->   3c:	87 08                	xchg   %ecx,(%rax)
->   3e:	02 00                	add    (%rax),%al
->
-> Code starting with the faulting instruction
-> ===========================================
->    0:	4c 8b bf f0 00 00 00 	mov    0xf0(%rdi),%r15
->    7:	89 44 24 0c          	mov    %eax,0xc(%rsp)
->    b:	48 89 44 24 10       	mov    %rax,0x10(%rsp)
->   10:	48                   	rex.W
->   11:	8b                   	.byte 0x8b
->   12:	87 08                	xchg   %ecx,(%rax)
->   14:	02 00                	add    (%rax),%al
-> [   93.379327][  C143] RSP: 0018:fffffe00021028f0 EFLAGS: 00010082
-> [   93.379332][  C143] RAX: 0000000000000001 RBX: fffffe0002102c80 RCX: fffffe0002102c80
-> [   93.379338][  C143] RDX: fffffe0002121040 RSI: fffffe0002102c80 RDI: 0000000000000000
-> [   93.379340][  C143] RBP: fffffe0002102970 R08: fffffe0002102970 R09: 0000000000000001
-> [   93.379345][  C143] R10: 0000000000000013 R11: 0000000000000008 R12: fffffe0002102ef8
-> [   93.379349][  C143] R13: fffffe0002121040 R14: 0000000000000000 R15: ff110001a0a69500
-> [   93.379356][  C143] FS:  00007f539e726840(0000) GS:ff1100303c39f000(0000) knlGS:0000000000000000
-> [   93.379359][  C143] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   93.379362][  C143] CR2: 00000000000000f0 CR3: 0000000180052002 CR4: 0000000000f73ff0
-> [   93.379363][  C143] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [   93.379364][  C143] DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
-> [   93.379365][  C143] PKRU: 55555554
-> [   93.379366][  C143] Call Trace:
-> [   93.379377][  C143]  <NMI>
-> [ 93.379380][ C143] ? x86_perf_event_set_period (kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/events/core.c:1442) 
-> [ 93.379410][ C143] intel_pmu_drain_pebs_icl (kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/events/intel/ds.c:2356 kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/events/intel/ds.c:2666) 
-> [ 93.379424][ C143] ? shmem_write_end (kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/include/asm/bitops.h:55 kbuild/obj/consumer/x86_64-rhel-9.4/include/asm-generic/bitops/instrumented-atomic.h:29 kbuild/obj/consumer/x86_64-rhel-9.4/include/linux/page-flags.h:835 kbuild/obj/consumer/x86_64-rhel-9.4/mm/shmem.c:3319) 
-> [ 93.379436][ C143] handle_pmi_common (kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/events/intel/core.c:3206) 
-> [ 93.379440][ C143] ? shmem_write_end (kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/include/asm/bitops.h:55 kbuild/obj/consumer/x86_64-rhel-9.4/include/asm-generic/bitops/instrumented-atomic.h:29 kbuild/obj/consumer/x86_64-rhel-9.4/include/linux/page-flags.h:835 kbuild/obj/consumer/x86_64-rhel-9.4/mm/shmem.c:3319) 
-> [ 93.379443][ C143] ? set_pte_vaddr_p4d (kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/mm/init_64.c:307 kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/mm/init_64.c:315) 
-> [ 93.379462][ C143] ? flush_tlb_one_kernel (kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/include/asm/paravirt.h:85 kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/mm/tlb.c:1544 kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/mm/tlb.c:1499) 
-> [ 93.379489][ C143] ? native_set_fixmap (kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/mm/pgtable.c:652 kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/mm/pgtable.c:661) 
-> [ 93.379492][ C143] ? ghes_copy_tofrom_phys (kbuild/obj/consumer/x86_64-rhel-9.4/drivers/acpi/apei/ghes.c:345) 
-> [ 93.379500][ C143] ? __ghes_peek_estatus+0x49/0xb0 
-> [ 93.379503][ C143] intel_pmu_handle_irq (kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/include/asm/msr.h:86 kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/include/asm/msr.h:120 kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/events/intel/core.c:2504 kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/events/intel/core.c:3351) 
-> [ 93.379507][ C143] perf_event_nmi_handler (kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/events/core.c:1767 kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/events/core.c:1753) 
-> [ 93.379518][ C143] nmi_handle (kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/kernel/nmi.c:184) 
-> [ 93.379529][ C143] default_do_nmi (kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/kernel/nmi.c:152 kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/kernel/nmi.c:393) 
-> [ 93.379541][ C143] exc_nmi (kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/kernel/nmi.c:588) 
-> [ 93.379545][ C143] end_repeat_nmi (kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/entry/entry_64.S:1409) 
-> [ 93.379558][ C143] RIP: 0010:shmem_write_end (kbuild/obj/consumer/x86_64-rhel-9.4/mm/shmem.c:3321) 
-> [ 93.379564][ C143] Code: 48 8b 13 83 e2 08 75 41 48 8b 13 83 e2 40 ba 00 10 00 00 74 0c 0f b6 4b 40 ba 00 10 00 00 48 d3 e2 48 39 d0 72 25 f0 80 0b 08 <48> 89 df e8 23 fd fd ff 48 89 df e8 db 1e fd ff f0 ff 4b 34 74 54
-> All code
-> ========
->    0:	48 8b 13             	mov    (%rbx),%rdx
->    3:	83 e2 08             	and    $0x8,%edx
->    6:	75 41                	jne    0x49
->    8:	48 8b 13             	mov    (%rbx),%rdx
->    b:	83 e2 40             	and    $0x40,%edx
->    e:	ba 00 10 00 00       	mov    $0x1000,%edx
->   13:	74 0c                	je     0x21
->   15:	0f b6 4b 40          	movzbl 0x40(%rbx),%ecx
->   19:	ba 00 10 00 00       	mov    $0x1000,%edx
->   1e:	48 d3 e2             	shl    %cl,%rdx
->   21:	48 39 d0             	cmp    %rdx,%rax
->   24:	72 25                	jb     0x4b
->   26:	f0 80 0b 08          	lock orb $0x8,(%rbx)
->   2a:*	48 89 df             	mov    %rbx,%rdi		<-- trapping instruction
->   2d:	e8 23 fd fd ff       	call   0xfffffffffffdfd55
->   32:	48 89 df             	mov    %rbx,%rdi
->   35:	e8 db 1e fd ff       	call   0xfffffffffffd1f15
->   3a:	f0 ff 4b 34          	lock decl 0x34(%rbx)
->   3e:	74 54                	je     0x94
->
-> Code starting with the faulting instruction
-> ===========================================
->    0:	48 89 df             	mov    %rbx,%rdi
->    3:	e8 23 fd fd ff       	call   0xfffffffffffdfd2b
->    8:	48 89 df             	mov    %rbx,%rdi
->    b:	e8 db 1e fd ff       	call   0xfffffffffffd1eeb
->   10:	f0 ff 4b 34          	lock decl 0x34(%rbx)
->   14:	74 54                	je     0x6a
-> [   93.379572][  C143] RSP: 0018:ffa00000187bfd48 EFLAGS: 00000206
-> [   93.379575][  C143] RAX: 0000000000001000 RBX: ffd4000005435680 RCX: 0000000001128000
-> [   93.379580][  C143] RDX: 0000000000001000 RSI: 0000000001127000 RDI: ff1100011221d8c0
-> [   93.379580][  C143] RBP: 0000000000001000 R08: 0000000000001000 R09: ffd4000005435680
-> [   93.379581][  C143] R10: 0000000000000001 R11: 0000000000000003 R12: ff1100014115e5d0
-> [   93.379588][  C143] R13: 0000000000001000 R14: 0000000000000000 R15: 0000000000001000
-> [ 93.379592][ C143] ? shmem_write_end (kbuild/obj/consumer/x86_64-rhel-9.4/mm/shmem.c:3321) 
-> [ 93.379600][ C143] ? shmem_write_end (kbuild/obj/consumer/x86_64-rhel-9.4/mm/shmem.c:3321) 
-> [   93.379604][  C143]  </NMI>
-> [   93.379605][  C143]  <TASK>
-> [ 93.379607][ C143] generic_perform_write (kbuild/obj/consumer/x86_64-rhel-9.4/mm/filemap.c:4124) 
-> [ 93.379633][ C143] shmem_file_write_iter (kbuild/obj/consumer/x86_64-rhel-9.4/mm/shmem.c:3464) 
-> [ 93.379636][ C143] vfs_write (kbuild/obj/consumer/x86_64-rhel-9.4/fs/read_write.c:591 kbuild/obj/consumer/x86_64-rhel-9.4/fs/read_write.c:684) 
-> [ 93.379644][ C143] ksys_write (kbuild/obj/consumer/x86_64-rhel-9.4/fs/read_write.c:736) 
-> [ 93.379651][ C143] do_syscall_64 (kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/entry/syscall_64.c:63 kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/entry/syscall_64.c:94) 
-> [ 93.379656][ C143] ? exc_page_fault (kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/include/asm/irqflags.h:37 kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/include/asm/irqflags.h:114 kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/mm/fault.c:1488 kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/mm/fault.c:1538) 
-> [ 93.379659][ C143] entry_SYSCALL_64_after_hwframe (kbuild/obj/consumer/x86_64-rhel-9.4/arch/x86/entry/entry_64.S:130) 
-> [   93.379662][  C143] RIP: 0033:0x7f53aa05f27f
-> [ 93.379672][ C143] Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 39 d5 f8 ff 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 8c d5 f8 ff 48
-> All code
-> ========
->    0:	89 54 24 18          	mov    %edx,0x18(%rsp)
->    4:	48 89 74 24 10       	mov    %rsi,0x10(%rsp)
->    9:	89 7c 24 08          	mov    %edi,0x8(%rsp)
->    d:	e8 39 d5 f8 ff       	call   0xfffffffffff8d54b
->   12:	48 8b 54 24 18       	mov    0x18(%rsp),%rdx
->   17:	48 8b 74 24 10       	mov    0x10(%rsp),%rsi
->   1c:	41 89 c0             	mov    %eax,%r8d
->   1f:	8b 7c 24 08          	mov    0x8(%rsp),%edi
->   23:	b8 01 00 00 00       	mov    $0x1,%eax
->   28:	0f 05                	syscall
->   2a:*	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax		<-- trapping instruction
->   30:	77 31                	ja     0x63
->   32:	44 89 c7             	mov    %r8d,%edi
->   35:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
->   3a:	e8 8c d5 f8 ff       	call   0xfffffffffff8d5cb
->   3f:	48                   	rex.W
->
-> Code starting with the faulting instruction
-> ===========================================
->    0:	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax
->    6:	77 31                	ja     0x39
->    8:	44 89 c7             	mov    %r8d,%edi
->    b:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
->   10:	e8 8c d5 f8 ff       	call   0xfffffffffff8d5a1
->   15:	48                   	rex.W
->
->
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20250704/202507042103.a15d2923-lkp@intel.com
->
->
->
+Tracepoints before panic:
+
+f2fs_unlink_enter: dev = (7,0), dir ino = 3, i_size = 4096, i_blocks = 8, name = file1
+f2fs_unlink_exit: dev = (7,0), ino = 7, ret = 0
+f2fs_evict_inode: dev = (7,0), ino = 7, pino = 3, i_mode = 0x81ed, i_size = 10, i_nlink = 0, i_blocks = 0, i_advise = 0x0
+f2fs_truncate_node: dev = (7,0), ino = 7, nid = 8, block_address = 0x3c05
+
+f2fs_unlink_enter: dev = (7,0), dir ino = 3, i_size = 4096, i_blocks = 8, name = file3
+f2fs_unlink_exit: dev = (7,0), ino = 8, ret = 0
+f2fs_evict_inode: dev = (7,0), ino = 8, pino = 3, i_mode = 0x81ed, i_size = 9000, i_nlink = 0, i_blocks = 24, i_advise = 0x4
+f2fs_truncate: dev = (7,0), ino = 8, pino = 3, i_mode = 0x81ed, i_size = 0, i_nlink = 0, i_blocks = 24, i_advise = 0x4
+f2fs_truncate_blocks_enter: dev = (7,0), ino = 8, i_size = 0, i_blocks = 24, start file offset = 0
+f2fs_truncate_blocks_exit: dev = (7,0), ino = 8, ret = -2
+
+The root cause is: in the fuzzed image, dnode #8 belongs to inode #7,
+after inode #7 eviction, dnode #8 was dropped.
+
+However there is dirent that has ino #8, so, once we unlink file3, in
+f2fs_evict_inode(), both f2fs_truncate() and f2fs_update_inode_page()
+will fail due to we can not load node #8, result in we missed to call
+f2fs_inode_synced() to clear inode dirty status.
+
+Let's fix this by calling f2fs_inode_synced() in error path of
+f2fs_evict_inode().
+
+PS: As I verified, the reproducer [2] can trigger this bug in v6.1.129,
+but it failed in v6.16-rc4, this is because the testcase will stop due to
+other corruption has been detected by f2fs:
+
+F2FS-fs (loop0): inconsistent node block, node_type:2, nid:8, node_footer[nid:8,ino:8,ofs:0,cpver:5013063228981249506,blkaddr:15366]
+F2FS-fs (loop0): f2fs_lookup: inode (ino=9) has zero i_nlink
+
+Fixes: 0f18b462b2e5 ("f2fs: flush inode metadata when checkpoint is doing")
+Closes: https://syzkaller.appspot.com/x/report.txt?x=13448368580000
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v2:
+- add fixes line, commit 0f18b462b2e5 ("f2fs: flush inode metadata when
+checkpoint is doing") missed to handle corner case when
+f2fs_update_inode_page() can not find node page, and failed to clear dirty
+flag in inode.
+ fs/f2fs/inode.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index d3c6f3202b69..fc774de1c752 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -933,6 +933,19 @@ void f2fs_evict_inode(struct inode *inode)
+ 		f2fs_update_inode_page(inode);
+ 		if (dquot_initialize_needed(inode))
+ 			set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
++
++		/*
++		 * If both f2fs_truncate() and f2fs_update_inode_page() failed
++		 * due to fuzzed corrupted inode, call f2fs_inode_synced() to
++		 * avoid triggering later f2fs_bug_on().
++		 */
++		if (is_inode_flag_set(inode, FI_DIRTY_INODE)) {
++			f2fs_warn(sbi,
++				"f2fs_evict_inode: inode is dirty, ino:%lu",
++				inode->i_ino);
++			f2fs_inode_synced(inode);
++			set_sbi_flag(sbi, SBI_NEED_FSCK);
++		}
+ 	}
+ 	if (freeze_protected)
+ 		sb_end_intwrite(inode->i_sb);
+-- 
+2.49.0
+
 
