@@ -1,111 +1,226 @@
-Return-Path: <linux-kernel+bounces-721916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F317AFCF68
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:38:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C45BAFCF6F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 244FA5669D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:38:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6BAC3AD936
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2B62E1C7E;
-	Tue,  8 Jul 2025 15:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8DDF2E11C3;
+	Tue,  8 Jul 2025 15:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9PbLbQ9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lLFm8dNI"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE892E11C3;
-	Tue,  8 Jul 2025 15:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9530C2DFA3E
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751989109; cv=none; b=lv5Juoufd5tSAGXpT646DF/9c9ujnrM11/IQUS7KCQmjBswhRJov3BoNNFqAq5zQl7Hne8iLyXCwOFTJE6CRqAQNDQQWjlX9vMqkJMRvDB089HTo0dDpmjRtMiu20f/fYLkyYybU5OaweZnxOi+/qqiiN0ODXNmzs5sBPBEe8KM=
+	t=1751989145; cv=none; b=TPrmF9Po6QBKG3blELwGTYw/SPTgkY4EuzAsrwLx7RiKksrxqMJhynz7CbE4o58ebswPHzeKJrFqf2hIGVcyWVXWTQAuqo9Iha3W61hc5mFgsL6zFPgdnfifudHaqQwhaqUXJmYw1la9tGA17lBcPGP+SoD3k6KxIt4DyY57x8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751989109; c=relaxed/simple;
-	bh=oDEtOf0DaTfsiKg+dTzSTHuTGeQPH+ZbPyfhdxIehAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eW08wBY+XfVNgVtn349kE7r9sfIzH7/ZuudxD0cvllf9PWIdSR7boJG0XmwudHt9cP57g0D5pihnB4rb4cqrtFVjEm/Z25ZCqYveItltAW4H3ltr/rTyI01NJDDIBUiXMJqVoiR1ofdAru4bXgbTJTayJv9P48+Ly/KNWo/ka8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9PbLbQ9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D598C4CEED;
-	Tue,  8 Jul 2025 15:38:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751989108;
-	bh=oDEtOf0DaTfsiKg+dTzSTHuTGeQPH+ZbPyfhdxIehAo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n9PbLbQ9DxyvF2ZYdhO1L4fP9gUwKnXhGM1vEeabzvph5jN6AV4yyjNFpoTbw47f8
-	 S+Q8aAyfjkbCC4pqyV/qXa6M7F1y3K4Bp4CO5nSq/brqJz1Zci6a2rEyTsrvDzMyNY
-	 nHwAL0wmnYEM6YQF+Ij9iWqGjwWDaozG7oiav3//lv4qzSibydlDld+Ll1w8wng+m3
-	 bwVM80Xtw47Kh394C0tlvIXGvzgHgG6G/pcy+Rulh9/EueQA+imWyC32h9wvtz78ay
-	 U1Dh1lp4MfCN4dJ04q+S0S8YVRp1xsdKJP5ajdH4exlxyhPglxhKdE/gq20mPJuB2g
-	 Wc7OXHmbYDqOA==
-Date: Tue, 8 Jul 2025 16:38:24 +0100
-From: Simon Horman <horms@kernel.org>
-To: Yuto Ohnuki <ytohnuki@amazon.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Kohei Enju <enjuk@amazon.com>
-Subject: Re: [PATCH iwl-next v1] igbvf: remove unused fields from struct
- igbvf_adapter
-Message-ID: <20250708153824.GM452973@horms.kernel.org>
-References: <20250707180116.44657-2-ytohnuki@amazon.com>
+	s=arc-20240116; t=1751989145; c=relaxed/simple;
+	bh=ay6a3q8ckTPpxsDcQsPqS7Qt5vS8hnlo8TH9PCcpMBY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=R6CSLFYloRhUMezxZthU4vGT5N+NkIIP8xRwSeZO9zEf22tELsI519FI7zsKtxy/VFpE3Rt1copq0pR3epwPX8ZdQuFVO+xOOHT0MN/imCcqvMKAOO6GluyMODJowHrNQPsgT6WF5RoO19PfrPbMQjA+UdW54qc2Zr+I2zXkkxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lLFm8dNI; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-747ddba7c90so3364227b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 08:39:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751989143; x=1752593943; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fJ6Trmj44z6pMJddwVQzuI+dtUG3teA4UW/36PaybfA=;
+        b=lLFm8dNIcn48xcNpxryCk91Jy3hZfBJzgSa7rk8Smy8St1K8OA/IsITwtlaZ8mpHA8
+         WCMJuu52xBApDHikBm92hsuwspGJScGqBSTjAYbI5mVrZeTKFeJNRWNN2KNIZsrFobQa
+         9pF4camFheCB5hcaByl31PeH5j8DcPXiBsF0NtSBvA1jVDPIz4hi3MmrIC0pPeqMOKOe
+         U225Zje90EfSqyy9avi7s+GPtRkSDMhXEJjJ837v8sD7+5S+sWtvt62NR9bHX/zyXgJ4
+         JaEbixW+RwO81UpvIL1Kk2e3ngZyOpO6AF1VImxgkQNYTQ7NsK8MKd2rHxUGFU6uELiR
+         WrYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751989143; x=1752593943;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fJ6Trmj44z6pMJddwVQzuI+dtUG3teA4UW/36PaybfA=;
+        b=w1mC9b1laD6GocN0AOEcTZTCXcIjoqVSH3GPITb8iRkX+ttYtRnAMmq5Ed57jBynJE
+         O+gJ5PdRYOitZOb/zjC1LjB+hGlZo1RVPzNE8EOf6ithTOLxzsHgvvJpo6aAcic20O7s
+         7tkd5igDH28yUqxfuGCsdlvIzrUr4G0ol71+R5gzh6rbkXEO2sBCMK5kB7Qe/P2nip4m
+         4X7yMHCP43bRvaJRCkX4X3nhO3zPlEG96OxY1hRVyUGl4B9O4OhZIe34usC5+dJTjb/T
+         Dn67GPEM/KIkqCXqkdFC3A95brB6Oopz6xHE6RzkTaVMaSBZ4XjHPMdY56FTYFGAJBeM
+         oTjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpASnQJem150HbqJmAyZA7wcw9fcmngGPJhwgzQiosgSexmGmN55Tz9b3zsi1Z/eMgbrwBBvYlG2QFLgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbDjuStB1hHeJUZ+BMQFyy1MmrkWtYbb7iik3/hKvgPlXG1TH+
+	ABtKEA5qWVWGiw6IQGlMlK72RG8jSSpt4oPuEMjA4kHJ089yeV3g51Htv5/wqc1OnPoEVCw2AbE
+	dOyCyCw==
+X-Google-Smtp-Source: AGHT+IEVTH1cDHrDrkBM9ANruotfYiflC/Rn/GMmhs6k3Qn6zxl4FY9ZL04L/ybWIyiK/dNj58MjPa3dDVo=
+X-Received: from pfbfi39.prod.google.com ([2002:a05:6a00:39a7:b0:747:b682:5cc0])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:929e:b0:742:8d52:62f1
+ with SMTP id d2e1a72fcca58-74ce6419a9emr28472954b3a.8.1751989142330; Tue, 08
+ Jul 2025 08:39:02 -0700 (PDT)
+Date: Tue, 8 Jul 2025 08:38:55 -0700
+In-Reply-To: <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707180116.44657-2-ytohnuki@amazon.com>
+Mime-Version: 1.0
+References: <aGIBGR8tLNYtbeWC@yzhao56-desk.sh.intel.com> <CAGtprH-83EOz8rrUjE+O8m7nUDjt=THyXx=kfft1xQry65mtQg@mail.gmail.com>
+ <aGNw4ZJwlClvqezR@yzhao56-desk.sh.intel.com> <CAGtprH-Je5OL-djtsZ9nLbruuOqAJb0RCPAnPipC1CXr2XeTzQ@mail.gmail.com>
+ <aGxXWvZCfhNaWISY@google.com> <CAGtprH_57HN4Psxr5MzAZ6k+mLEON2jVzrLH4Tk+Ws29JJuL4Q@mail.gmail.com>
+ <006899ccedf93f45082390460620753090c01914.camel@intel.com>
+ <aG0pNijVpl0czqXu@google.com> <a0129a912e21c5f3219b382f2f51571ab2709460.camel@intel.com>
+ <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com>
+Message-ID: <aG07j4Pfkd5EEobQ@google.com>
+Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
+From: Sean Christopherson <seanjc@google.com>
+To: Vishal Annapurve <vannapurve@google.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "pvorel@suse.cz" <pvorel@suse.cz>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
+	Jun Miao <jun.miao@intel.com>, Kirill Shutemov <kirill.shutemov@intel.com>, 
+	"pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, "vbabka@suse.cz" <vbabka@suse.cz>, 
+	"peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"amoorthy@google.com" <amoorthy@google.com>, "jack@suse.cz" <jack@suse.cz>, 
+	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "keirf@google.com" <keirf@google.com>, 
+	"palmer@dabbelt.com" <palmer@dabbelt.com>, "vkuznets@redhat.com" <vkuznets@redhat.com>, 
+	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, 
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, Wei W Wang <wei.w.wang@intel.com>, 
+	"tabba@google.com" <tabba@google.com>, 
+	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, "willy@infradead.org" <willy@infradead.org>, 
+	"rppt@kernel.org" <rppt@kernel.org>, "quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "aik@amd.com" <aik@amd.com>, 
+	"usama.arif@bytedance.com" <usama.arif@bytedance.com>, Dave Hansen <dave.hansen@intel.com>, 
+	"fvdl@google.com" <fvdl@google.com>, "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, 
+	"bfoster@redhat.com" <bfoster@redhat.com>, "nsaenz@amazon.es" <nsaenz@amazon.es>, 
+	"anup@brainfault.org" <anup@brainfault.org>, "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "mic@digikod.net" <mic@digikod.net>, 
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, "steven.price@arm.com" <steven.price@arm.com>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "hughd@google.com" <hughd@google.com>, 
+	Zhiquan1 Li <zhiquan1.li@intel.com>, "rientjes@google.com" <rientjes@google.com>, 
+	"mpe@ellerman.id.au" <mpe@ellerman.id.au>, Erdem Aktas <erdemaktas@google.com>, 
+	"david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
+	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, Haibo1 Xu <haibo1.xu@intel.com>, Fan Du <fan.du@intel.com>, 
+	"maz@kernel.org" <maz@kernel.org>, "muchun.song@linux.dev" <muchun.song@linux.dev>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
+	"steven.sistare@oracle.com" <steven.sistare@oracle.com>, 
+	"quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, "jarkko@kernel.org" <jarkko@kernel.org>, 
+	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, Kai Huang <kai.huang@intel.com>, 
+	"shuah@kernel.org" <shuah@kernel.org>, "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, 
+	Chao P Peng <chao.p.peng@intel.com>, "pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, 
+	Alexander Graf <graf@amazon.com>, "nikunj@amd.com" <nikunj@amd.com>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "jroedel@suse.de" <jroedel@suse.de>, 
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "jgowans@amazon.com" <jgowans@amazon.com>, 
+	Yilun Xu <yilun.xu@intel.com>, "liam.merwick@oracle.com" <liam.merwick@oracle.com>, 
+	"michael.roth@amd.com" <michael.roth@amd.com>, "quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, 
+	Xiaoyao Li <xiaoyao.li@intel.com>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, 
+	Ira Weiny <ira.weiny@intel.com>, 
+	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
+	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "qperret@google.com" <qperret@google.com>, 
+	"dmatlack@google.com" <dmatlack@google.com>, "james.morse@arm.com" <james.morse@arm.com>, 
+	"brauner@kernel.org" <brauner@kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>, "pgonda@google.com" <pgonda@google.com>, 
+	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "hch@infradead.org" <hch@infradead.org>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "will@kernel.org" <will@kernel.org>, 
+	"roypat@amazon.co.uk" <roypat@amazon.co.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 07, 2025 at 07:01:17PM +0100, Yuto Ohnuki wrote:
-> Remove following unused fields from struct igbvf_adapter that are never
-> referenced in the driver.
-> 
-> - blink_timer
-> - eeprom_wol
-> - fc_autoneg
-> - int_mode
-> - led_status
-> - mng_vlan_id
-> - polling_interval
-> - rx_dma_failed
-> - test_icr
-> - test_rx_ring
-> - test_tx_ring
-> - tx_dma_failed
-> - tx_fifo_head
-> - tx_fifo_size
-> - tx_head_addr
-> 
-> Also removed the following fields from struct igbvf_adapter since they
-> are never read or used after initialization by igbvf_probe() and igbvf_sw_init().
-> 
-> - bd_number
-> - rx_abs_int_delay
-> - tx_abs_int_delay
-> - rx_int_delay
-> - tx_int_delay
-> 
-> This changes simplify the igbvf driver by removing unused fields, which
-> improves maintenability.
-> 
-> Tested-by: Kohei Enju <enjuk@amazon.com>
-> Signed-off-by: Yuto Ohnuki <ytohnuki@amazon.com>
-> ---
->  drivers/net/ethernet/intel/igbvf/igbvf.h  | 25 -----------------------
->  drivers/net/ethernet/intel/igbvf/netdev.c |  7 -------
->  2 files changed, 32 deletions(-)
+On Tue, Jul 08, 2025, Vishal Annapurve wrote:
+> On Tue, Jul 8, 2025 at 7:52=E2=80=AFAM Edgecombe, Rick P
+> <rick.p.edgecombe@intel.com> wrote:
+> >
+> > On Tue, 2025-07-08 at 07:20 -0700, Sean Christopherson wrote:
+> > > > For TDX if we don't zero on conversion from private->shared we will=
+ be
+> > > > dependent
+> > > > on behavior of the CPU when reading memory with keyid 0, which was
+> > > > previously
+> > > > encrypted and has some protection bits set. I don't *think* the beh=
+avior is
+> > > > architectural. So it might be prudent to either make it so, or zero=
+ it in
+> > > > the
+> > > > kernel in order to not make non-architectual behavior into userspac=
+e ABI.
+> > >
+> > > Ya, by "vendor specific", I was also lumping in cases where the kerne=
+l would
+> > > need to zero memory in order to not end up with effectively undefined
+> > > behavior.
+> >
+> > Yea, more of an answer to Vishal's question about if CC VMs need zeroin=
+g. And
+> > the answer is sort of yes, even though TDX doesn't require it. But we a=
+ctually
+> > don't want to zero memory when reclaiming memory. So TDX KVM code needs=
+ to know
+> > that the operation is a to-shared conversion and not another type of pr=
+ivate
+> > zap. Like a callback from gmem, or maybe more simply a kernel internal =
+flag to
+> > set in gmem such that it knows it should zero it.
+>=20
+> If the answer is that "always zero on private to shared conversions"
+> for all CC VMs,
 
-Less is more :)
+pKVM VMs *are* CoCo VMs.  Just because pKVM doesn't rely on third party fir=
+mware
+to provide confidentiality and integrity doesn't make it any less of a CoCo=
+ VM.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+> > >  : And maybe a new flag for KVM_GMEM_CONVERT_PRIVATE for user space t=
+o
+> > >  : explicitly request that the page range is converted to private and=
+ the
+> > >  : content needs to be retained. So that TDX can identify which case =
+needs
+> > >  : to call in-place TDH.PAGE.ADD.
+> > >
+> > > If so, I agree with that idea, e.g. add a PRESERVE flag or whatever. =
+ That way
+> > > userspace has explicit control over what happens to the data during
+> > > conversion,
+> > > and KVM can reject unsupported conversions, e.g. PRESERVE is only all=
+owed for
+> > > shared =3D> private and only for select VM types.
+> >
+> > Ok, we should POC how it works with TDX.
+>=20
+> I don't think we need a flag to preserve memory as I mentioned in [2]. II=
+UC,
+> 1) Conversions are always content-preserving for pKVM.
 
+No?  Perserving contents on private =3D> shared is a security vulnerability=
+ waiting
+to happen.
+
+> 2) Shared to private conversions are always content-preserving for all
+> VMs as far as guest_memfd is concerned.
+
+There is no "as far as guest_memfd is concerned".  Userspace doesn't care w=
+hether
+code lives in guest_memfd.c versus arch/xxx/kvm, the only thing that matter=
+s is
+the behavior that userspace sees.  I don't want to end up with userspace AB=
+I that
+is vendor/VM specific.
+
+> 3) Private to shared conversions are not content-preserving for CC VMs
+> as far as guest_memfd is concerned, subject to more discussions.
+>=20
+> [2] https://lore.kernel.org/lkml/CAGtprH-Kzn2kOGZ4JuNtUT53Hugw64M-_XMmhz_=
+gCiDS6BAFtQ@mail.gmail.com/
 
