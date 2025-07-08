@@ -1,184 +1,287 @@
-Return-Path: <linux-kernel+bounces-721463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61916AFC986
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:24:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB787AFC98A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:25:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C4C57A29C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:23:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FE437A320F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55732D9786;
-	Tue,  8 Jul 2025 11:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871032D9480;
+	Tue,  8 Jul 2025 11:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HhJMpraE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="DdVqEzC8"
+Received: from mail.kapsi.fi (mail-auth.kapsi.fi [91.232.154.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32672F9E8;
-	Tue,  8 Jul 2025 11:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FBE800;
+	Tue,  8 Jul 2025 11:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.232.154.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751973884; cv=none; b=DYkeBzGW1yH4nybYbCHVTE72l5iV9E6sahYgilFMUTznIyvTFs9CaDnXaur9dWceyKWzz8pPb+8l4+zYBItDO5861OzlfDSu7w2y5wzDjxeWZJ70hd7qXLQyCrQNPE3KL4pHeUt/29ulRdKzIIhImSjx+b6zIMhPlymmLC0xndQ=
+	t=1751973933; cv=none; b=VXeRvu4mIddhbntlwtHpMy1dF7ArgdLPmuZLytPtSN33s1dMRMpgthdxOfi6TXVStLYOnHxch1NvTiHCd9rMhC9LosRXF6B5p03DHSXl19tS592AtnJSk/1tD0jwKTGmzqetfxBcfkDd5QtdkOE0z1+BTQ1aAJzVVpt7WaTpW+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751973884; c=relaxed/simple;
-	bh=ub0XD/BUBPwpna9WJBPqCPyFaCbrf6wCSkIYxQtFAjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t0/rJsF05vJujdg24GXzIC63iyDBfn8A3+4rCjWZUDsXxDkqzQdXjJe7PvXU0lzWqyzWtSQN6IhRlCfk2cdx0FxAQEz6HiZ+hevpf5lKsGBEbNfTUzP4EM20RP0hJHHHIZVPu8zMRQDNZ/XWbWBONexScJbRp/dZ70u7GtLGNuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HhJMpraE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C832CC4CEED;
-	Tue,  8 Jul 2025 11:24:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751973883;
-	bh=ub0XD/BUBPwpna9WJBPqCPyFaCbrf6wCSkIYxQtFAjo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HhJMpraEN5xRRR79r142B/FvOOIOBlLbSNwH6giqHZ3J3f8bOotU33EcQt1gjLLLU
-	 nv6uYBx1SNPIq8PZAiywCaiXl4+dz30aJwpye0mNKSwOigAkeGnpM23Gdn2oLCqzJ1
-	 yt7MrgppQQn0ztN49pUA5dlShazE1yxuklUZVPI5HZDz3mTaVnasWNtRW5N4+xdwb6
-	 OD3PsxNWM1XG3mk8go4uqt0JDgnPePhSOg4gsJDea9o1rQBuH4nRsBPbq2FcA3VCqs
-	 UK4TbpQVhSbZnqhywVzM4SON3rjUF7rc5VFmC89amKqxvAXtLi3c3YqO8O/3Non4xT
-	 cMyYvp59zib3Q==
-Date: Tue, 8 Jul 2025 16:54:05 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Frank Li <Frank.Li@nxp.com>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Anup Patel <apatel@ventanamicro.com>, 
-	Marc Zyngier <maz@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>, 
-	Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	dlemoal@kernel.org, jdmason@kudzu.us, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	imx@lists.linux.dev, devicetree@vger.kernel.org
-Subject: Re: [PATCH v19 00/10] PCI: EP: Add RC-to-EP doorbell with platform
- MSI controller
-Message-ID: <p46vymcn76xpz64z66bwxjnbkbdbhqhtwycff2xyb3damnf2se@yo6puygfwxjq>
-References: <20250609-ep-msi-v19-0-77362eaa48fa@nxp.com>
- <roskp2zsjohrgll464u4jtbulzjid523u3yvgciifwiuoygv5t@7f7cj4wfy2y7>
- <aGz9ApsBD-gQ50pf@ryzen>
+	s=arc-20240116; t=1751973933; c=relaxed/simple;
+	bh=JUiD3OHZkvFwNBueuTYrgglfm2/gTh23euoM5GCZMQs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jeSS2vBq7CiS3EyxFzmccT1+p5lNcJHgqyZblBWHxxk/b2RhdTxiM3OuhE2RJwuOL1k/e4FUZ9WvppJpFjKFp/PNZjol/ZwiI4Fm4YAw4ExOonbbvZ3coJlKuFLJeyhFDaRS9L+z1VJKsUYUBK+RcfIxl2lzia7pUc8KzEpzO0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi; spf=pass smtp.mailfrom=kapsi.fi; dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b=DdVqEzC8; arc=none smtp.client-ip=91.232.154.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kapsi.fi
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+	s=20161220; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
+	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=1qKAiQmGAGw50txF2hzoeWU/sY/Iea/ABnxsW0p3u8M=; b=DdVqEzC8Eo9m+09q75CC1iVUz7
+	iesSJpSvIG+tGOo4nvPLg3DFbHzBdZfe7q3ykcBXSJPLQZmFfwKnWY1zOW3/u4L3fLu7iaOjhH8vj
+	Gis6rH2wMJf9yVUx36sbBLOVX8iiq42AF01XvqZPfiwpPiYOaq6OXbC9deP8Ulzx59h9/NrluP0HH
+	sHiqTBAT3h60U3fB044e69LnyRZL3z9RR+g+LaJIOmLH32r6FofxhFvJVCra5eu2YN7nqj7IfNWFJ
+	mlXhAbeE9Tkqutte3SC+IkjIo1FcOG9aQ8O48gX5Z0UmJC80uJ0CkhDWyoGgOP2jgseDczNj9na+a
+	ETkRpeYA==;
+Received: from [2404:7a80:b960:1a00:5eaa:b33c:a197:a90f] (helo=senjougahara.localdomain)
+	by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <cyndis@kapsi.fi>)
+	id 1uZ6Rr-008J9k-2C;
+	Tue, 08 Jul 2025 14:25:20 +0300
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Date: Tue, 08 Jul 2025 20:25:08 +0900
+Subject: [PATCH] gpu: host1x: Wait prefences outside MLOCK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aGz9ApsBD-gQ50pf@ryzen>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250708-host1x-wait-prefences-outside-mlock-v1-1-13e98044e35a@nvidia.com>
+X-B4-Tracking: v=1; b=H4sIABMAbWgC/x2NywqDMBAAf0X27EJc6MP+SvEQk7Uu1aRkYyuI/
+ 27qcWCY2UA5CSs8qg0Sf0UlhgJNXYEbbXgxii8MZOhibuaOY9TcrPizkvGTeODgWDEuWcUzzlN
+ 0b+wHfzVEfetbglL6e7Kel2e37wcNxEtHdQAAAA==
+X-Change-ID: 20250708-host1x-wait-prefences-outside-mlock-bfd6022b9d92
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2404:7a80:b960:1a00:5eaa:b33c:a197:a90f
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 
-On Tue, Jul 08, 2025 at 01:12:02PM GMT, Niklas Cassel wrote:
-> On Wed, Jul 02, 2025 at 06:57:23PM +0530, Manivannan Sadhasivam wrote:
-> > On Mon, Jun 09, 2025 at 12:34:12PM GMT, Frank Li wrote:
-> > 
-> > Frank, thanks for your persistence in pushing this series, really appreciated!
-> > I've left some comments, but no real blocker.
-> > 
-> > Unfortunately, I don't have access to my endpoint setup right now. So I'll go
-> > ahead with the Tested-by tag from Niklas once my comments are addressed.
-> 
-> (snip)
-> 
-> > > Changes in v6:
-> > > - add Niklas's test by tag
-> 
-> My Tested-by tag was added on v6, now it is v19 :)
-> 
+From: Mikko Perttunen <mperttunen@nvidia.com>
 
-Ouch!
+The current submission opcode sequence first takes the engine MLOCK,
+and then switches to HOST1X class to wait prefences. This is fine
+while we only use a single channel per engine and there is no
+virtualization, since jobs are serialized on that one channel anyway.
+However, when that assumption doesn't hold, we are keeping the
+engine locked while not running anything on it while waiting for
+prefences to complete.
 
-> To be comfortable of still having my Tested-by tag here,
-> I decided to test v19.
-> 
-> However I got this:
-> 
-> [ 3255.257047] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000040
+To resolve this, execute wait commands in the beginning of the job
+outside the engine MLOCK. We still take the HOST1X MLOCK because
+recent hardware requires register opcodes to be executed within some
+MLOCK, but the hardware also allows unlimited channels to take the
+HOST1X MLOCK at the same time.
 
-Very well... thanks for testing it. I will also try to get hold of the device in
-the meantime.
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/gpu/host1x/hw/channel_hw.c | 106 +++++++++++++++++++++++--------------
+ 1 file changed, 66 insertions(+), 40 deletions(-)
 
-- Mani
+diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
+index d44b8de890be05b697a7c4b5be697b708cf41cbb..2df6a16d484e046c9aed6bdf6b59f22de573c9d7 100644
+--- a/drivers/gpu/host1x/hw/channel_hw.c
++++ b/drivers/gpu/host1x/hw/channel_hw.c
+@@ -47,24 +47,11 @@ static void trace_write_gather(struct host1x_cdma *cdma, struct host1x_bo *bo,
+ 	}
+ }
+ 
+-static void submit_wait(struct host1x_job *job, u32 id, u32 threshold,
+-			u32 next_class)
++static void submit_wait(struct host1x_job *job, u32 id, u32 threshold)
+ {
+ 	struct host1x_cdma *cdma = &job->channel->cdma;
+ 
+-#if HOST1X_HW >= 6
+-	u32 stream_id;
+-
+-	/*
+-	 * If a memory context has been set, use it. Otherwise
+-	 * (if context isolation is disabled) use the engine's
+-	 * firmware stream ID.
+-	 */
+-	if (job->memory_context)
+-		stream_id = job->memory_context->stream_id;
+-	else
+-		stream_id = job->engine_fallback_streamid;
+-
++#if HOST1X_HW >= 2
+ 	host1x_cdma_push_wide(cdma,
+ 		host1x_opcode_setclass(
+ 			HOST1X_CLASS_HOST1X,
+@@ -76,23 +63,6 @@ static void submit_wait(struct host1x_job *job, u32 id, u32 threshold,
+ 		id,
+ 		HOST1X_OPCODE_NOP
+ 	);
+-	host1x_cdma_push_wide(&job->channel->cdma,
+-		host1x_opcode_setclass(job->class, 0, 0),
+-		host1x_opcode_setpayload(stream_id),
+-		host1x_opcode_setstreamid(job->engine_streamid_offset / 4),
+-		HOST1X_OPCODE_NOP);
+-#elif HOST1X_HW >= 2
+-	host1x_cdma_push_wide(cdma,
+-		host1x_opcode_setclass(
+-			HOST1X_CLASS_HOST1X,
+-			HOST1X_UCLASS_LOAD_SYNCPT_PAYLOAD_32,
+-			/* WAIT_SYNCPT_32 is at SYNCPT_PAYLOAD_32+2 */
+-			BIT(0) | BIT(2)
+-		),
+-		threshold,
+-		id,
+-		host1x_opcode_setclass(next_class, 0, 0)
+-	);
+ #else
+ 	/* TODO add waitchk or use waitbases or other mitigation */
+ 	host1x_cdma_push(cdma,
+@@ -103,6 +73,32 @@ static void submit_wait(struct host1x_job *job, u32 id, u32 threshold,
+ 		),
+ 		host1x_class_host_wait_syncpt(id, threshold)
+ 	);
++#endif
++}
++
++static void submit_setclass(struct host1x_job *job, u32 next_class)
++{
++	struct host1x_cdma *cdma = &job->channel->cdma;
++
++#if HOST1X_HW >= 6
++	u32 stream_id;
++
++	/*
++	 * If a memory context has been set, use it. Otherwise
++	 * (if context isolation is disabled) use the engine's
++	 * firmware stream ID.
++	 */
++	if (job->memory_context)
++		stream_id = job->memory_context->stream_id;
++	else
++		stream_id = job->engine_fallback_streamid;
++
++	host1x_cdma_push_wide(cdma,
++		host1x_opcode_setclass(next_class, 0, 0),
++		host1x_opcode_setpayload(stream_id),
++		host1x_opcode_setstreamid(job->engine_streamid_offset / 4),
++		HOST1X_OPCODE_NOP);
++#else
+ 	host1x_cdma_push(cdma,
+ 		host1x_opcode_setclass(next_class, 0, 0),
+ 		HOST1X_OPCODE_NOP
+@@ -110,7 +106,8 @@ static void submit_wait(struct host1x_job *job, u32 id, u32 threshold,
+ #endif
+ }
+ 
+-static void submit_gathers(struct host1x_job *job, u32 job_syncpt_base)
++static void submit_gathers(struct host1x_job *job, struct host1x_job_cmd *cmds, u32 num_cmds,
++			   u32 job_syncpt_base)
+ {
+ 	struct host1x_cdma *cdma = &job->channel->cdma;
+ #if HOST1X_HW < 6
+@@ -119,8 +116,8 @@ static void submit_gathers(struct host1x_job *job, u32 job_syncpt_base)
+ 	unsigned int i;
+ 	u32 threshold;
+ 
+-	for (i = 0; i < job->num_cmds; i++) {
+-		struct host1x_job_cmd *cmd = &job->cmds[i];
++	for (i = 0; i < num_cmds; i++) {
++		struct host1x_job_cmd *cmd = &cmds[i];
+ 
+ 		if (cmd->is_wait) {
+ 			if (cmd->wait.relative)
+@@ -128,7 +125,8 @@ static void submit_gathers(struct host1x_job *job, u32 job_syncpt_base)
+ 			else
+ 				threshold = cmd->wait.threshold;
+ 
+-			submit_wait(job, cmd->wait.id, threshold, cmd->wait.next_class);
++			submit_wait(job, cmd->wait.id, threshold);
++			submit_setclass(job, cmd->wait.next_class);
+ 		} else {
+ 			struct host1x_job_gather *g = &cmd->gather;
+ 
+@@ -216,7 +214,34 @@ static void channel_program_cdma(struct host1x_job *job)
+ 
+ #if HOST1X_HW >= 6
+ 	u32 fence;
++	int i = 0;
++
++	if (job->num_cmds == 0)
++		goto prefences_done;
++	if (!job->cmds[0].is_wait || job->cmds[0].wait.relative)
++		goto prefences_done;
++
++	/* Enter host1x class with invalid stream ID for prefence waits. */
++	host1x_cdma_push_wide(cdma,
++		host1x_opcode_acquire_mlock(1),
++		host1x_opcode_setclass(1, 0, 0),
++		host1x_opcode_setpayload(0),
++		host1x_opcode_setstreamid(0x1fffff));
++
++	for (i = 0; i < job->num_cmds; i++) {
++		struct host1x_job_cmd *cmd = &job->cmds[i];
++
++		if (!cmd->is_wait || cmd->wait.relative)
++			break;
++
++		submit_wait(job, cmd->wait.id, cmd->wait.threshold);
++	}
++
++	host1x_cdma_push(cdma,
++		HOST1X_OPCODE_NOP,
++		host1x_opcode_release_mlock(1));
+ 
++prefences_done:
+ 	/* Enter engine class with invalid stream ID. */
+ 	host1x_cdma_push_wide(cdma,
+ 		host1x_opcode_acquire_mlock(job->class),
+@@ -230,11 +255,12 @@ static void channel_program_cdma(struct host1x_job *job)
+ 		host1x_opcode_nonincr(HOST1X_UCLASS_INCR_SYNCPT, 1),
+ 		HOST1X_UCLASS_INCR_SYNCPT_INDX_F(job->syncpt->id) |
+ 			HOST1X_UCLASS_INCR_SYNCPT_COND_F(4));
+-	submit_wait(job, job->syncpt->id, fence, job->class);
++	submit_wait(job, job->syncpt->id, fence);
++	submit_setclass(job, job->class);
+ 
+ 	/* Submit work. */
+ 	job->syncpt_end = host1x_syncpt_incr_max(sp, job->syncpt_incrs);
+-	submit_gathers(job, job->syncpt_end - job->syncpt_incrs);
++	submit_gathers(job, job->cmds + i, job->num_cmds - i, job->syncpt_end - job->syncpt_incrs);
+ 
+ 	/* Before releasing MLOCK, ensure engine is idle again. */
+ 	fence = host1x_syncpt_incr_max(sp, 1);
+@@ -242,7 +268,7 @@ static void channel_program_cdma(struct host1x_job *job)
+ 		host1x_opcode_nonincr(HOST1X_UCLASS_INCR_SYNCPT, 1),
+ 		HOST1X_UCLASS_INCR_SYNCPT_INDX_F(job->syncpt->id) |
+ 			HOST1X_UCLASS_INCR_SYNCPT_COND_F(4));
+-	submit_wait(job, job->syncpt->id, fence, job->class);
++	submit_wait(job, job->syncpt->id, fence);
+ 
+ 	/* Release MLOCK. */
+ 	host1x_cdma_push(cdma,
+@@ -272,7 +298,7 @@ static void channel_program_cdma(struct host1x_job *job)
+ 
+ 	job->syncpt_end = host1x_syncpt_incr_max(sp, job->syncpt_incrs);
+ 
+-	submit_gathers(job, job->syncpt_end - job->syncpt_incrs);
++	submit_gathers(job, job->cmds, job->num_cmds, job->syncpt_end - job->syncpt_incrs);
+ #endif
+ }
+ 
 
-> [ 3255.257824] Mem abort info:
-> [ 3255.258069]   ESR = 0x0000000096000004
-> [ 3255.258398]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [ 3255.258862]   SET = 0, FnV = 0
-> [ 3255.259147]   EA = 0, S1PTW = 0
-> [ 3255.259423]   FSC = 0x04: level 0 translation fault
-> [ 3255.259849] Data abort info:
-> [ 3255.260102]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> [ 3255.260580]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> [ 3255.261020]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [ 3255.261483] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000100a03000
-> [ 3255.262045] [0000000000000040] pgd=0000000000000000, p4d=0000000000000000
-> [ 3255.262639] Internal error: Oops: 0000000096000004 [#1]  SMP
-> [ 3255.263132] Modules linked in: rk805_pwrkey hantro_vpu v4l2_jpeg v4l2_vp9 v4l2_h264 v4l2_mem2mem videobuf2_v4l2 videobuf2_dma_contig videobuf2_memops videobuf2_common vidf
-> [ 3255.265357] CPU: 5 UID: 0 PID: 213 Comm: ln Not tainted 6.16.0-rc1+ #233 PREEMPT 
-> [ 3255.266009] Hardware name: Radxa ROCK 5B (DT)
-> [ 3255.266388] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [ 3255.266995] pc : pci_epf_bind+0x160/0x240
-> [ 3255.267350] lr : pci_epf_bind+0x40/0x240
-> [ 3255.267694] sp : ffff800081593c30
-> [ 3255.267983] x29: ffff800081593c30 x28: ffff0001024b2300 x27: ffff000102fc2800
-> [ 3255.268606] x26: ffff00010191e000 x25: ffff000100504098 x24: ffff000107b8ec80
-> [ 3255.269228] x23: ffff000104cf3578 x22: 0000000000000000 x21: 0000000000000000
-> [ 3255.269850] x20: ffff000104cf3000 x19: ffff000104cf3578 x18: 0000000000000000
-> [ 3255.270472] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-> [ 3255.271093] x14: 0000000000000000 x13: ffff00010245c037 x12: ffff800081593b94
-> [ 3255.271715] x11: 0000000528aa6179 x10: 0000000000000002 x9 : ffffa2593ce92b30
-> [ 3255.272336] x8 : 00000031636e7566 x7 : 00000000ffffbe12 x6 : 0000000000000003
-> [ 3255.272958] x5 : ffff000102413f78 x4 : ffff000102413f08 x3 : 0000000000000000
-> [ 3255.273580] x2 : ffff0001024b2300 x1 : 0000000000000000 x0 : ffff000104cf3000
-> [ 3255.274201] Call trace:
-> [ 3255.274416]  pci_epf_bind+0x160/0x240 (P)
-> [ 3255.274767]  pci_epc_epf_link+0x54/0xb0
-> [ 3255.275104]  configfs_symlink+0x208/0x540
-> [ 3255.275457]  vfs_symlink+0x158/0x1e0
-> [ 3255.275770]  do_symlinkat+0x8c/0x138
-> [ 3255.276083]  __arm64_sys_symlinkat+0x7c/0xc8
-> [ 3255.276455]  invoke_syscall.constprop.0+0x48/0x100
-> [ 3255.276874]  el0_svc_common.constprop.0+0x40/0xe8
-> [ 3255.277285]  do_el0_svc+0x24/0x38
-> [ 3255.277575]  el0_svc+0x34/0x100
-> [ 3255.277852]  el0t_64_sync_handler+0x10c/0x140
-> [ 3255.278233]  el0t_64_sync+0x198/0x1a0
-> [ 3255.278554] Code: a9446bf9 394ff280 b902aa80 aa1403e0 (f94022a1) 
-> [ 3255.279085] ---[ end trace 0000000000000000 ]---
-> 
-> 
-> Seems to be from patch 1/10:
-> 
-> (gdb) l *(pci_epf_bind+0x160)
-> 0xffff800080892c50 is in pci_epf_bind (drivers/pci/endpoint/pci-epf-core.c:132).
-> 127                             goto ret;
-> 128                     epf_vf->is_bound = true;
-> 129             }
-> 130
-> 131             epf->dev.id = PCI_EPF_DEVID(epf->func_no, 0);
-> 132             device_set_of_node_from_dev(&epf->dev, epc->dev.parent);
-> 133             ret = epf->driver->ops->bind(epf);
-> 134             if (ret)
-> 135                     goto ret;
-> 136             epf->is_bound = true;
-> 
-> 
-> I can see that there is a lot of discussion on patch 1/10 already,
-> but please drop my Tested-by tag until this has been fixed.
-> 
-> Feel free to CC me on v20 of this series, if the problem is fixed,
-> I will provide my Tested-by tag once again.
-> 
-> 
-> Kind regards,
-> Niklas
+---
+base-commit: 2aeda9592360c200085898a258c4754bfe879921
+change-id: 20250708-host1x-wait-prefences-outside-mlock-bfd6022b9d92
 
--- 
-மணிவண்ணன் சதாசிவம்
 
