@@ -1,418 +1,152 @@
-Return-Path: <linux-kernel+bounces-721220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FBE7AFC642
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:54:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC9CAFC651
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E63113BFE11
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:54:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDB134250D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018A92BF3EB;
-	Tue,  8 Jul 2025 08:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700282BF3F9;
+	Tue,  8 Jul 2025 08:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="w7DaIhBw";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hXmytn9B";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="w7DaIhBw";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hXmytn9B"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bs06Ann6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D592BEFE8
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 08:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B00E1A5BB7;
+	Tue,  8 Jul 2025 08:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751964865; cv=none; b=NDEsB3YTuxcBQfB63uiL0EJFWBpoy2XjsyZZg8VnW+n5WUG+0BTRP1UHnS5fz5+nZCjsjU2RuK30E0TxhDv09K6PKqTntMcZSvBusBfhgN+/FiwpiziwyH1ECt6vHwNJ9tS7X69X2MAEvt0pp3v/Q0KUv7Dk82zUfmTiUiXn/Ro=
+	t=1751964926; cv=none; b=tXzscDR2JX8JwSAp10HtCRgsk9pwd33G05sTFrPhLs1JWj0cDouHWEImvcTrUkdVU+gsZ97CCT+irh75xeLFMscBadk6AjlvkIhN750OCMpvcWqnGnKtaDcJs4aa8Me/iT+qiRXuHzW/TM9/2Pmkv7c2I1d5GItM2BGujGgk7Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751964865; c=relaxed/simple;
-	bh=O1J5164GRZX3C3L3/oZcPhL2fxdhGXIDUGXzkOzE9/8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QUdXMqBBhkOfsE91s4EYf0ZyvprgbZERhILVbFaWdg/n5CWokJhEzQHksErQosdiCt1N0cSaYRcPERBMiLuBv2UEZQCqnMYCEyVgkHBSEMLvtHe8GmQLmejikWaP1oRfF5ZrQZOtWWqjoZml5jE/czY+kLnMMhzoFplv5CyOVHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=w7DaIhBw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hXmytn9B; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=w7DaIhBw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hXmytn9B; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 248822117C;
-	Tue,  8 Jul 2025 08:54:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751964860; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3DQLyyno1Vtj5Qcrm9Ui7niuTGMfPg+TxwX22SQW9X0=;
-	b=w7DaIhBwQXlUPZ8D3yVdvNGhU+bA8SdiyzjTyXV08JqTQPfZRJw8qahIzFCa4Ms0EyuP4r
-	r/hEw0AeVPdX8SYyNBOQCXYn8OIosb5QvZnTsWwDKBmD4lljD0KnTh6AqlZ3vvbbJcSKHw
-	AbdBjWPocpECMYAVFE+w+6D+YfTft7o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751964860;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3DQLyyno1Vtj5Qcrm9Ui7niuTGMfPg+TxwX22SQW9X0=;
-	b=hXmytn9BcZeOntHu4uAtezPOLx5ZTdq96m0ap/CsOK+zxVM+ON+fGgGhX4mAYtccbTxaBD
-	9DusXAUPz8YMGfDQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=w7DaIhBw;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=hXmytn9B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751964860; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3DQLyyno1Vtj5Qcrm9Ui7niuTGMfPg+TxwX22SQW9X0=;
-	b=w7DaIhBwQXlUPZ8D3yVdvNGhU+bA8SdiyzjTyXV08JqTQPfZRJw8qahIzFCa4Ms0EyuP4r
-	r/hEw0AeVPdX8SYyNBOQCXYn8OIosb5QvZnTsWwDKBmD4lljD0KnTh6AqlZ3vvbbJcSKHw
-	AbdBjWPocpECMYAVFE+w+6D+YfTft7o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751964860;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3DQLyyno1Vtj5Qcrm9Ui7niuTGMfPg+TxwX22SQW9X0=;
-	b=hXmytn9BcZeOntHu4uAtezPOLx5ZTdq96m0ap/CsOK+zxVM+ON+fGgGhX4mAYtccbTxaBD
-	9DusXAUPz8YMGfDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DD0C913A68;
-	Tue,  8 Jul 2025 08:54:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LRMzNbvcbGhOXwAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 08 Jul 2025 08:54:19 +0000
-Message-ID: <42943746-771e-432e-b5e0-98267987ed65@suse.de>
-Date: Tue, 8 Jul 2025 10:54:19 +0200
+	s=arc-20240116; t=1751964926; c=relaxed/simple;
+	bh=kpstOjw4lLF9eP2jFzFpACQzhk54uwH0eGlIjnY6txU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RSqeC8pp65sK2lZrMUfyEKWK6db3p2KIGTeIusVXN/97NDwhDXqhmyYPJuzlIIKT4vApHu/sJ989l4VVZPibljC7gM6KqjByVk9YeQs/jrThzDgjvQE+ufuNe0NrLd0Y9EXopO/pqGafxP7vz9USNek3L1FD7Kre09BcYo+PgvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bs06Ann6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30A20C4CEF8;
+	Tue,  8 Jul 2025 08:55:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751964926;
+	bh=kpstOjw4lLF9eP2jFzFpACQzhk54uwH0eGlIjnY6txU=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=Bs06Ann6YziWgddfpvw/M9gC3KlX127POufp+uJpfiasKEYtMoUHWfuj0RYCH1ger
+	 XYNiGAd6ndxVo0yNppVjsM3dwAJsJ4F1wYEzYCG75X11ynyFpM/P9KES8funbIjNwY
+	 nKUPw5xR3Q+Vo90JEk6M9KmVIGyZkm46/+iQOaWnMXbZ9qLv7SQMoXQo2ZBWlZUB60
+	 B2KBA82o/0JqdSSjzasdUI41EMFDMzzp+41sl3i5IXUocdQS9S1uPORoZYD7hyfrd2
+	 st/BVBgi+/HfF9hkEc814aDmhbAFCqfn3K9v+XhoLDuWeXS2jZHcpIWmwDZWlnDvs2
+	 nnaPCYzZWU4nQ==
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-879502274cfso6807639f.0;
+        Tue, 08 Jul 2025 01:55:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUxMh3zQlCg3AcOf3hNM1ZaDBNiPeXG/5wETTdhqjJcJHUKRkdmN4CA4hH/Gc6bJvgVfbVkw/SUnIAz@vger.kernel.org, AJvYcCVfrwCJcxM81syVWYSJcbuk+SKTz6bAczW0+ataKgh5MxcQdE/uF3yTnVqNPbTQb/MaOMks/4z6Oa1NzFBR@vger.kernel.org, AJvYcCVuNqkTw8UL65tsEEFhYKifcn5BTHfzi1O5fAjc8n24YylvtYE0Tczehlr7G6bjzG68sYpLzVS1JMg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzakw+4V0HmtBtpN2FCzmGIvhYOwlc7RnhVQM4gJdrNeUl/NKX4
+	5aMO3BpJcS3DQEDPbwU4zu6XI7EfFwqICo4S7j81wr1keEa2RwvdnxBHSg5G0+Hx7/ytUeRXuSP
+	pJqBixF5Hu1qhOffVmJ7Kfz+K14Q8OYo=
+X-Google-Smtp-Source: AGHT+IF8+rXljY0T3bGeUJ9XXKLa71g9blAF0Fp8stGo0h3DgAP8zTEF2uLbmLy1XQvXT3W/Bs/Wr47ANAVaNz9utYc=
+X-Received: by 2002:a05:6602:148c:b0:864:a2e4:5fff with SMTP id
+ ca18e2360f4ac-876e158bb24mr1892894139f.4.1751964925465; Tue, 08 Jul 2025
+ 01:55:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] scsi: fnic: Fix crash in fnic_wq_cmpl_handler when
- FDMI times out
-To: Karan Tilak Kumar <kartilak@cisco.com>, sebaddel@cisco.com
-Cc: arulponn@cisco.com, djhawar@cisco.com, gcboffa@cisco.com,
- mkai2@cisco.com, satishkh@cisco.com, aeasi@cisco.com, jejb@linux.ibm.com,
- martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, jmeneghi@redhat.com, revers@redhat.com,
- dan.carpenter@linaro.org, stable@vger.kernel.org
-References: <20250616162632.4835-1-kartilak@cisco.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250616162632.4835-1-kartilak@cisco.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 248822117C
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.51
+References: <20250627152918.2606728-1-wens@kernel.org> <20250627152918.2606728-2-wens@kernel.org>
+ <20250708-capable-caiman-of-feminism-9dfef2@krzk-bin>
+In-Reply-To: <20250708-capable-caiman-of-feminism-9dfef2@krzk-bin>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Tue, 8 Jul 2025 16:55:03 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66SvNmWGYSfVdDfBdRjSz0mQ=f0HHFnQ9eSXSe7fVMEVg@mail.gmail.com>
+X-Gm-Features: Ac12FXzLrfMehixQaVjm6pOEjtJAPHoo0j9_l4de3O9Fupbjy73Y0-TvdN1ohlY
+Message-ID: <CAGb2v66SvNmWGYSfVdDfBdRjSz0mQ=f0HHFnQ9eSXSe7fVMEVg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: power: Add A523 PPU and PCK600 power controllers
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Andre Przywara <andre.przywara@arm.com>, linux-sunxi@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/16/25 18:26, Karan Tilak Kumar wrote:
-> When both the RHBA and RPA FDMI requests time out, fnic reuses a frame
-> to send ABTS for each of them. On send completion, this causes an
-> attempt to free the same frame twice that leads to a crash.
-> 
-> Fix crash by allocating separate frames for RHBA and RPA,
-> and modify ABTS logic accordingly.
-> 
-> Tested by checking MDS for FDMI information.
-> Tested by using instrumented driver to:
-> Drop PLOGI response
-> Drop RHBA response
-> Drop RPA response
-> Drop RHBA and RPA response
-> Drop PLOGI response + ABTS response
-> Drop RHBA response + ABTS response
-> Drop RPA response + ABTS response
-> Drop RHBA and RPA response + ABTS response for both of them
-> 
-> Fixes: 09c1e6ab4ab2 ("scsi: fnic: Add and integrate support for FDMI")
-> Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
-> Reviewed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
-> Reviewed-by: Gian Carlo Boffa <gcboffa@cisco.com>
-> Tested-by: Arun Easi <aeasi@cisco.com>
-> Co-developed-by: Arun Easi <aeasi@cisco.com>
-> Signed-off-by: Arun Easi <aeasi@cisco.com>
-> Tested-by: Karan Tilak Kumar <kartilak@cisco.com>
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
-> ---
-> Changes between v4 and v5:
->      - Incorporate review comments from John:
-> 	- Refactor patches
-> 
-> Changes between v3 and v4:
->      - Incorporate review comments from Dan:
-> 	- Remove comments from Cc tag
-> 
-> Changes between v2 and v3:
->      - Incorporate review comments from Dan:
-> 	- Add Cc to stable
-> 
-> Changes between v1 and v2:
->      - Incorporate review comments from Dan:
->          - Add Fixes tag
-> ---
->   drivers/scsi/fnic/fdls_disc.c | 113 +++++++++++++++++++++++++---------
->   drivers/scsi/fnic/fnic.h      |   2 +-
->   drivers/scsi/fnic/fnic_fdls.h |   1 +
->   3 files changed, 87 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/scsi/fnic/fdls_disc.c b/drivers/scsi/fnic/fdls_disc.c
-> index c2b6f4eb338e..0ee1b74967b9 100644
-> --- a/drivers/scsi/fnic/fdls_disc.c
-> +++ b/drivers/scsi/fnic/fdls_disc.c
-> @@ -763,47 +763,69 @@ static void fdls_send_fabric_abts(struct fnic_iport_s *iport)
->   	iport->fabric.timer_pending = 1;
->   }
->   
-> -static void fdls_send_fdmi_abts(struct fnic_iport_s *iport)
-> +static uint8_t *fdls_alloc_init_fdmi_abts_frame(struct fnic_iport_s *iport,
-> +		uint16_t oxid)
->   {
-> -	uint8_t *frame;
-> +	struct fc_frame_header *pfdmi_abts;
->   	uint8_t d_id[3];
-> +	uint8_t *frame;
->   	struct fnic *fnic = iport->fnic;
-> -	struct fc_frame_header *pfabric_abts;
-> -	unsigned long fdmi_tov;
-> -	uint16_t oxid;
-> -	uint16_t frame_size = FNIC_ETH_FCOE_HDRS_OFFSET +
-> -			sizeof(struct fc_frame_header);
->   
->   	frame = fdls_alloc_frame(iport);
->   	if (frame == NULL) {
->   		FNIC_FCS_DBG(KERN_ERR, fnic->host, fnic->fnic_num,
->   				"Failed to allocate frame to send FDMI ABTS");
-> -		return;
-> +		return NULL;
->   	}
->   
-> -	pfabric_abts = (struct fc_frame_header *) (frame + FNIC_ETH_FCOE_HDRS_OFFSET);
-> +	pfdmi_abts = (struct fc_frame_header *) (frame + FNIC_ETH_FCOE_HDRS_OFFSET);
->   	fdls_init_fabric_abts_frame(frame, iport);
->   
->   	hton24(d_id, FC_FID_MGMT_SERV);
-> -	FNIC_STD_SET_D_ID(*pfabric_abts, d_id);
-> +	FNIC_STD_SET_D_ID(*pfdmi_abts, d_id);
-> +	FNIC_STD_SET_OX_ID(*pfdmi_abts, oxid);
-> +
-> +	return frame;
-> +}
-> +
-> +static void fdls_send_fdmi_abts(struct fnic_iport_s *iport)
-> +{
-> +	uint8_t *frame;
-> +	unsigned long fdmi_tov;
-> +	uint16_t frame_size = FNIC_ETH_FCOE_HDRS_OFFSET +
-> +			sizeof(struct fc_frame_header);
->   
->   	if (iport->fabric.fdmi_pending & FDLS_FDMI_PLOGI_PENDING) {
-> -		oxid = iport->active_oxid_fdmi_plogi;
-> -		FNIC_STD_SET_OX_ID(*pfabric_abts, oxid);
-> +		frame = fdls_alloc_init_fdmi_abts_frame(iport,
-> +						iport->active_oxid_fdmi_plogi);
-> +		if (frame == NULL)
-> +			return;
-> +
->   		fnic_send_fcoe_frame(iport, frame, frame_size);
->   	} else {
->   		if (iport->fabric.fdmi_pending & FDLS_FDMI_REG_HBA_PENDING) {
-> -			oxid = iport->active_oxid_fdmi_rhba;
-> -			FNIC_STD_SET_OX_ID(*pfabric_abts, oxid);
-> +			frame = fdls_alloc_init_fdmi_abts_frame(iport,
-> +						iport->active_oxid_fdmi_rhba);
-> +			if (frame == NULL)
-> +				return;
-> +
->   			fnic_send_fcoe_frame(iport, frame, frame_size);
->   		}
->   		if (iport->fabric.fdmi_pending & FDLS_FDMI_RPA_PENDING) {
-> -			oxid = iport->active_oxid_fdmi_rpa;
-> -			FNIC_STD_SET_OX_ID(*pfabric_abts, oxid);
-> +			frame = fdls_alloc_init_fdmi_abts_frame(iport,
-> +						iport->active_oxid_fdmi_rpa);
-> +			if (frame == NULL) {
-> +				if (iport->fabric.fdmi_pending & FDLS_FDMI_REG_HBA_PENDING)
-> +					goto arm_timer;
-> +				else
-> +					return;
-> +			}
-> +
->   			fnic_send_fcoe_frame(iport, frame, frame_size);
->   		}
->   	}
->   
-> +arm_timer:
->   	fdmi_tov = jiffies + msecs_to_jiffies(2 * iport->e_d_tov);
->   	mod_timer(&iport->fabric.fdmi_timer, round_jiffies(fdmi_tov));
->   	iport->fabric.fdmi_pending |= FDLS_FDMI_ABORT_PENDING;
-> @@ -2244,6 +2266,21 @@ void fdls_fabric_timer_callback(struct timer_list *t)
->   	spin_unlock_irqrestore(&fnic->fnic_lock, flags);
->   }
->   
-> +void fdls_fdmi_retry_plogi(struct fnic_iport_s *iport)
-> +{
-> +	struct fnic *fnic = iport->fnic;
-> +
-> +	iport->fabric.fdmi_pending = 0;
-> +	/* If max retries not exhausted, start over from fdmi plogi */
-> +	if (iport->fabric.fdmi_retry < FDLS_FDMI_MAX_RETRY) {
-> +		iport->fabric.fdmi_retry++;
-> +		FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
-> +					 "Retry FDMI PLOGI. FDMI retry: %d",
-> +					 iport->fabric.fdmi_retry);
-> +		fdls_send_fdmi_plogi(iport);
-> +	}
-> +}
-> +
->   void fdls_fdmi_timer_callback(struct timer_list *t)
->   {
->   	struct fnic_fdls_fabric_s *fabric = from_timer(fabric, t, fdmi_timer);
-> @@ -2289,14 +2326,7 @@ void fdls_fdmi_timer_callback(struct timer_list *t)
->   	FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
->   		"fdmi timer callback : 0x%x\n", iport->fabric.fdmi_pending);
->   
-> -	iport->fabric.fdmi_pending = 0;
-> -	/* If max retries not exhaused, start over from fdmi plogi */
-> -	if (iport->fabric.fdmi_retry < FDLS_FDMI_MAX_RETRY) {
-> -		iport->fabric.fdmi_retry++;
-> -		FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
-> -					 "retry fdmi timer %d", iport->fabric.fdmi_retry);
-> -		fdls_send_fdmi_plogi(iport);
-> -	}
-> +	fdls_fdmi_retry_plogi(iport);
->   	FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
->   		"fdmi timer callback : 0x%x\n", iport->fabric.fdmi_pending);
->   	spin_unlock_irqrestore(&fnic->fnic_lock, flags);
-> @@ -3714,11 +3744,32 @@ static void fdls_process_fdmi_abts_rsp(struct fnic_iport_s *iport,
->   	switch (FNIC_FRAME_TYPE(oxid)) {
->   	case FNIC_FRAME_TYPE_FDMI_PLOGI:
->   		fdls_free_oxid(iport, oxid, &iport->active_oxid_fdmi_plogi);
-> +
-> +		iport->fabric.fdmi_pending &= ~FDLS_FDMI_PLOGI_PENDING;
-> +		iport->fabric.fdmi_pending &= ~FDLS_FDMI_ABORT_PENDING;
->   		break;
->   	case FNIC_FRAME_TYPE_FDMI_RHBA:
-> +		iport->fabric.fdmi_pending &= ~FDLS_FDMI_REG_HBA_PENDING;
-> +
-> +		/* If RPA is still pending, don't turn off ABORT PENDING.
-> +		 * We count on the timer to detect the ABTS timeout and take
-> +		 * corrective action.
-> +		 */
-> +		if (!(iport->fabric.fdmi_pending & FDLS_FDMI_RPA_PENDING))
-> +			iport->fabric.fdmi_pending &= ~FDLS_FDMI_ABORT_PENDING;
-> +
->   		fdls_free_oxid(iport, oxid, &iport->active_oxid_fdmi_rhba);
->   		break;
->   	case FNIC_FRAME_TYPE_FDMI_RPA:
-> +		iport->fabric.fdmi_pending &= ~FDLS_FDMI_RPA_PENDING;
-> +
-> +		/* If RHBA is still pending, don't turn off ABORT PENDING.
-> +		 * We count on the timer to detect the ABTS timeout and take
-> +		 * corrective action.
-> +		 */
-> +		if (!(iport->fabric.fdmi_pending & FDLS_FDMI_REG_HBA_PENDING))
-> +			iport->fabric.fdmi_pending &= ~FDLS_FDMI_ABORT_PENDING;
-> +
->   		fdls_free_oxid(iport, oxid, &iport->active_oxid_fdmi_rpa);
->   		break;
->   	default:
-> @@ -3728,10 +3779,16 @@ static void fdls_process_fdmi_abts_rsp(struct fnic_iport_s *iport,
->   		break;
->   	}
->   
-> -	timer_delete_sync(&iport->fabric.fdmi_timer);
-> -	iport->fabric.fdmi_pending &= ~FDLS_FDMI_ABORT_PENDING;
-> -
-> -	fdls_send_fdmi_plogi(iport);
-> +	/*
-> +	 * Only if ABORT PENDING is off, delete the timer, and if no other
-> +	 * operations are pending, retry FDMI.
-> +	 * Otherwise, let the timer pop and take the appropriate action.
-> +	 */
-> +	if (!(iport->fabric.fdmi_pending & FDLS_FDMI_ABORT_PENDING)) {
-> +		timer_delete_sync(&iport->fabric.fdmi_timer);
-> +		if (!iport->fabric.fdmi_pending)
-> +			fdls_fdmi_retry_plogi(iport);
-> +	}
->   }
->   
->   static void
-> diff --git a/drivers/scsi/fnic/fnic.h b/drivers/scsi/fnic/fnic.h
-> index 6c5f6046b1f5..86e293ce530d 100644
-> --- a/drivers/scsi/fnic/fnic.h
-> +++ b/drivers/scsi/fnic/fnic.h
-> @@ -30,7 +30,7 @@
->   
->   #define DRV_NAME		"fnic"
->   #define DRV_DESCRIPTION		"Cisco FCoE HBA Driver"
-> -#define DRV_VERSION		"1.8.0.0"
-> +#define DRV_VERSION		"1.8.0.1"
->   #define PFX			DRV_NAME ": "
->   #define DFX                     DRV_NAME "%d: "
->   
-> diff --git a/drivers/scsi/fnic/fnic_fdls.h b/drivers/scsi/fnic/fnic_fdls.h
-> index 8e610b65ad57..531d0b37e450 100644
-> --- a/drivers/scsi/fnic/fnic_fdls.h
-> +++ b/drivers/scsi/fnic/fnic_fdls.h
-> @@ -394,6 +394,7 @@ void fdls_send_tport_abts(struct fnic_iport_s *iport,
->   bool fdls_delete_tport(struct fnic_iport_s *iport,
->   		       struct fnic_tport_s *tport);
->   void fdls_fdmi_timer_callback(struct timer_list *t);
-> +void fdls_fdmi_retry_plogi(struct fnic_iport_s *iport);
->   
->   /* fnic_fcs.c */
->   void fnic_fdls_init(struct fnic *fnic, int usefip);
+On Tue, Jul 8, 2025 at 4:47=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On Fri, Jun 27, 2025 at 11:29:15PM +0800, Chen-Yu Tsai wrote:
+> > From: Chen-Yu Tsai <wens@csie.org>
+> >
+> > The A523 PPU is likely the same kind of hardware seen on previous SoCs.
+> >
+> > The A523 PCK600, as the name suggests, is likely a customized version
+> > of ARM's PCK-600 power controller. Comparing the BSP driver against
+> > ARM's PPU datasheet shows that the basic registers line up, but
+> > Allwinner's hardware has some additional delay controls in the reserved
+> > register range. As such it is likely not fully compatible with the
+> > standard ARM version.
+> >
+> > Document A523 PPU and PCK600 compatibles.
+> >
+> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> > ---
+> >  .../bindings/power/allwinner,sun20i-d1-ppu.yaml   |  2 ++
+> >  .../power/allwinner,sun55i-a523-pck600.h          | 15 +++++++++++++++
+> >  .../dt-bindings/power/allwinner,sun55i-a523-ppu.h | 12 ++++++++++++
+> >  3 files changed, 29 insertions(+)
+> >  create mode 100644 include/dt-bindings/power/allwinner,sun55i-a523-pck=
+600.h
+> >  create mode 100644 include/dt-bindings/power/allwinner,sun55i-a523-ppu=
+.h
+> >
+> > diff --git a/Documentation/devicetree/bindings/power/allwinner,sun20i-d=
+1-ppu.yaml b/Documentation/devicetree/bindings/power/allwinner,sun20i-d1-pp=
+u.yaml
+> > index f578be6a3bc8..b9f550994512 100644
+> > --- a/Documentation/devicetree/bindings/power/allwinner,sun20i-d1-ppu.y=
+aml
+> > +++ b/Documentation/devicetree/bindings/power/allwinner,sun20i-d1-ppu.y=
+aml
+> > @@ -18,6 +18,8 @@ properties:
+> >      enum:
+> >        - allwinner,sun20i-d1-ppu
+> >        - allwinner,sun8i-v853-ppu
+> > +      - allwinner,sun55i-a523-ppu
+> > +      - allwinner,sun55i-a523-pck-600
+>
+> Don't add items at the end, but placed in alphabetical order. Could be
+> natural sort if you insist, but binding does not use it.
 
-Please make the version change a separate patch and add it as the last 
-patch in the series. That way you'll have better tracking if all patches
-from that series are applied.
+In our other bindings [1][2] we have them sorted by family (sunXYi)
+then by SoC name. I can move sun20i-d1-ppu after sun8i-v853-ppu to get
+that ordering. Obviously "-pck-600" would come before "-ppu".
 
-Cheers,
+Would that work for you?
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+[1] Documentation/devicetree/bindings/sram/allwinner,sun4i-a10-system-contr=
+ol.yaml
+[2] Documentation/devicetree/bindings/mmc/allwinner,sun4i-a10-mmc.yaml
+
+(There are some out of order entries regardless.)
+
+> >    reg:
+> >      maxItems: 1
+> > diff --git a/include/dt-bindings/power/allwinner,sun55i-a523-pck600.h b=
+/include/dt-bindings/power/allwinner,sun55i-a523-pck600.h
+> > new file mode 100644
+> > index 000000000000..6b3d8ea7bb69
+> > --- /dev/null
+> > +++ b/include/dt-bindings/power/allwinner,sun55i-a523-pck600.h
+>
+> Filename matching compatible (which ever one is correct).
+
+Ack. Will change to "allwinner,sun55i-a523-pck-600.h".
+
+Thanks
+ChenYu
 
