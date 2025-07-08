@@ -1,48 +1,82 @@
-Return-Path: <linux-kernel+bounces-721034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8E2AFC3D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:16:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7B8FAFC3F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:25:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 029BF3A5605
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:15:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D78F07A6931
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F26298241;
-	Tue,  8 Jul 2025 07:16:15 +0000 (UTC)
-Received: from n169-111.mail.139.com (n169-111.mail.139.com [120.232.169.111])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6EB2951BA;
-	Tue,  8 Jul 2025 07:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=120.232.169.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B00298991;
+	Tue,  8 Jul 2025 07:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="pDaru0nC"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8053B188006;
+	Tue,  8 Jul 2025 07:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751958975; cv=none; b=PhKuRTz/t37eWnzcAOTSQBaZR9Ci0w05H4VtUbpEh5/bcje+t4xYB85k2hwjPoDMRX6RMdHSh4fuCv4ssjd3dFXx4TUpktPt+4DMSEzBvn7ZfqpsiB+gq+u5zjX0iiUtrK0W7VYytFy67ux3yAeCtrvQO7F1Tcf4up/djQT5COU=
+	t=1751959539; cv=none; b=PlbmWwpsibhzKrWhgYhuaATkGLCwoT59CN2TbWHDe1elxI5B2V4HviGzds5fC6VX2DVNlqQL7DxcV+1CjRyKmLkxtbNp+Qt3ld5b9SIeqjjIybR2xJO6huk6v6qo1fzBcPLiPSt3GQ18bZqqzByB8a6bdopJaEIHsuQHuf375XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751958975; c=relaxed/simple;
-	bh=WiOjYZ4uaICssgxF1b4ANmuRajVsuaenIVMaQGHeABo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kcoObqrY75mWv7kygXN42DLfSPkbacz4NG6GpBuoe1qBudVBWD0p7jX7iK0AeRYxG9w7LpXP3MGzhY5utSjaV5hLkDHIM4GTxC157eTVOgYRV2eSQEqHdcUewB4bIZ6Wb5dCEUVU+P5xQF/DV895AJavaUePXG1cN1vAl2ypEXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com; spf=pass smtp.mailfrom=139.com; arc=none smtp.client-ip=120.232.169.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=139.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM:                                                                                        
-X-RM-SPAM-FLAG:00000000
-Received:from yoga-Lenovo-Slim-Pro-7-14APH8.lenovo.com (unknown[106.38.209.7])
-	by rmsmtp-lg-appmail-17-12016 (RichMail) with SMTP id 2ef0686cc4edc54-bf959;
-	Tue, 08 Jul 2025 15:12:57 +0800 (CST)
-X-RM-TRANSID:2ef0686cc4edc54-bf959
-From: Jackie Dong <xy-jackie@139.com>
-To: hansg@kernel.org,
-	ilpo.jarvinen@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org,
+	s=arc-20240116; t=1751959539; c=relaxed/simple;
+	bh=hTsxhYYXUNl6kQHXHKWGlxUMQwI6ZkobTMVeUv0I7ts=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=A0IYEFUet+2SmoDYncQKInVIhHtLUMBa2hrDLaI9MsTqkbW8beyn3wysPw9JRI6ShWgZMrKCipw3M27zVO9lbeOOygXSte9BXtPsqM7Hgxd5OfwyWJRqqQoEMYuEfUMkFfzVRKsD7p/7Hp8EqurLiE7MEKjuy6b0djYQG0Qi3JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=pDaru0nC; arc=none smtp.client-ip=43.163.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1751959525;
+	bh=rgW1EbDqX+O9wPlMcm457ujwjBjyq0KCUjbW0ywG0Dg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=pDaru0nC1KxIf9pkQH+aM7Vs806suMvDW37K8eJfLGZM0AQuEhqmjw8pUGYI8c23i
+	 kD90a8o/QWIApQHp6lcwRjVqHSCyHUXMoVg8ntc2DvHIZm5GTqrsMTRHfvVtdkZrcF
+	 +2ByYUcLJbEgVxqWqOG0Qf0uxTXXBtU3DdKpFdnk=
+Received: from meizu-Precision-3660.meizu.com ([112.91.84.73])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 2E92B483; Tue, 08 Jul 2025 15:11:41 +0800
+X-QQ-mid: xmsmtpt1751958701tlp273eg5
+Message-ID: <tencent_19ABF292BF48BBA08B98B8C3C7BD5D19CE09@qq.com>
+X-QQ-XMAILINFO: NDgMZBR9sMmawRpms6Ue/39BQQ1SRHowQpkx27lg4qRnEyrDKufpEe6JoiwE0s
+	 X4bUjYFCuqPdCbfYYIFhf9vrdN+PzxNOI/ByibxMc60LKkq1AUMsXP/6AcJrxdtQqAq5Q0a0IJkx
+	 NaTDDt2HEJ8CiHe9EOdkaQg5CO1oeqX3d919iGGttuQi7kXVNaq9YNMNQ8QXTsnTq7WOsCx3sF/Y
+	 2iqJm8SS8Hw7wbvdprC6vq2zA/oLeCyS0WpPYfjqEHYSRnrARSXp4ou+eQ+RdvvXG7BuYMHpA/d/
+	 vOYjXICj+D7IVgOL2xnAhpj4gc+zyJPFU8DK7Y4ULYekU378T+x9eye4cRdZrdZ8R86F4PC0Yxf0
+	 GUHK845Y8M/BURpKI/ERfIIxgcHgmceJwZSGud2LahiyT+1kKHg4Lixl0QTrxsZYYssTUi+1olqt
+	 TFm1jgsn0Kq+08J3hM1y2wIYvC0KGnmxG+fbtZ8bbmKCNATl4haAHgSQO8gpVNZnyBCe18tCQqW4
+	 AQf1teH5Q+FQ5osKuP4hCzjXCFSXNcnv+VUcQMZMwryTkz9N7dq3vb4cguh3Kf8L0WVzuuay3BTL
+	 5M/oIIOhYTSwSg2nOISpNaW04R+vvzqb+Ht59wY01WZdkI4uOjdLYcTc61uNs5j+gvURqYiwdFpU
+	 /gip+yblaxFsKwc1I6S9xMpA9YDONR0wB9yAFCFSh1IjwqRALZHRgp/67oasvkvNY8PzV6ilcdwO
+	 idNafDhJ2l94tg95QKmw0SSpxxWfeAZmXyEbhepumU3g6W+POnW59tFGNo2fkyMHwWaA9PVedHsq
+	 ZDO3wxqRQA+Mfb29a3P8Qjx35mO1lMoXbvFcBrTblRVvDdWgKxRL36jD+zJFx4jmD0PP9+hJvspG
+	 U+0K2myUpjwLv6S8iJrwTgWC2l+sW6WIhM4U5ihg4jY4U6VfB9UAURSuVgZxOXgSZ0VZYncVzH8b
+	 wcAj7s5h0lyB4CG3vj/gVRCxQHgaDqtXJYBN9aF1cN0+6fngS+YeK9VhrVR//z5HlizyVog2WO80
+	 fJOz+hfQ==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Yuwen Chen <ywen.chen@foxmail.com>
+To: hch@infradead.org
+Cc: adilger.kernel@dilger.ca,
+	brauner@kernel.org,
+	ebiggers@kernel.org,
+	jaegeuk@kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	dongeg1@lenovo.com,
-	Jackie Dong <xy-jackie@139.com>
-Subject: [PATCH v2] lenovo-wmi-hotkey: Fixed a kernel error report for
-Date: Tue,  8 Jul 2025 15:11:38 +0800
-Message-ID: <20250708071138.15602-1-xy-jackie@139.com>
-X-Mailer: git-send-email 2.43.0
+	tytso@mit.edu,
+	viro@zeniv.linux.org.uk,
+	ywen.chen@foxmail.com
+Subject: Re: [PATCH v3 1/2] libfs: reduce the number of memory allocations in generic_ci_match
+Date: Tue,  8 Jul 2025 15:11:41 +0800
+X-OQ-MSGID: <20250708071141.847557-1-ywen.chen@foxmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <aGtatW8g2fV6bFkm@infradead.org>
+References: <aGtatW8g2fV6bFkm@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,86 +85,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Not all of Lenovo non-ThinkPad devices support both mic mute LED(on F4)
-and audio mute LED(on F1). Some of them only support one mute LED, some
-of them don't have any mute LED. Add a decision to judge this device
-support mute LED or not. Without this decision, not support both of mic
-mute LED and audio mute LED Lenovo non-ThinkPad brand devices (including
-Ideapad/Yoga/Xiaoxin/Gaming/ThinkBook, etc.) will report a failed message
-with error -5.
+On Sun, 6 Jul 2025 22:27:17 -0700 Christoph Hellwig wrote:
+> But I wonder why generic_ci_match is even called that often.  Both ext4
+> and f2fs support hashed lookups, so you should usually only see it called
+> for the main match, plus the occasional hash false positive, which should
+> be rate if the hash works.
 
-Signed-off-by: Jackie Dong <xy-jackie@139.com>
-Suggested-by: Hans de Goede <hansg@kernel.org>
+At present, in the latest version of Linux, in some scenarios,
+f2fs still uses linear search.
 
----
-Changes in v2:
- - Add warning message and then return 0 if the device support mute LED 
-   abnormaly, based on Hans suggestion and Armin previous patch. 
+The logic of linear search was introduced by Commit 91b587ba79e1
+(f2fs: Introduce linear search for dentries). Commit 91b587ba79e1
+was designed to solve the problem of inconsistent hashes before
+and after the rollback of Commit 5c26d2f1d3f5
+("unicode: Don't special case ignorable code points"),
+which led to files being inaccessible.
 
- .../x86/lenovo-wmi-hotkey-utilities.c         | 30 +++++++++++++------
- 1 file changed, 21 insertions(+), 9 deletions(-)
+In order to reduce the impact of linear search, in relatively new
+versions, the logic of turning off linear search has also been
+introduced. However, the triggering conditions for this
+turn - off logic on f2fs are rather strict:
 
-diff --git a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-index 89153afd7015..334c12f2896d 100644
---- a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-+++ b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-@@ -122,26 +122,35 @@ static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type led_type, struct
- 		return -EIO;
- 
- 	union acpi_object *obj __free(kfree) = output.pointer;
--	if (obj && obj->type == ACPI_TYPE_INTEGER)
-+	if (obj && obj->type == ACPI_TYPE_INTEGER) {
- 		led_version = obj->integer.value;
--	else
--		return -EIO;
- 
--	wpriv->cdev[led_type].max_brightness = LED_ON;
--	wpriv->cdev[led_type].flags = LED_CORE_SUSPENDRESUME;
-+		/*
-+		 * Output parameters define: 0 means mute LED is not supported, Non-zero means
-+		 * mute LED can be supported.
-+		 */
-+		if (led_version == 0)
-+			return 0;
-+	} else {
-+		return -EIO;
-+	}
- 
- 	switch (led_type) {
- 	case MIC_MUTE:
--		if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER)
--			return -EIO;
-+		if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER) {
-+			pr_warn("This device MIC_MUTE LED doesn't support now.\n");
-+			return 0;
-+		}
- 
- 		wpriv->cdev[led_type].name = "platform::micmute";
- 		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_micmute_led_set;
- 		wpriv->cdev[led_type].default_trigger = "audio-micmute";
- 		break;
- 	case AUDIO_MUTE:
--		if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER)
--			return -EIO;
-+		if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER) {
-+			pr_warn("This device AUDIO_MUTE LED doesn't support now.\n");
-+			return 0;
-+		}
- 
- 		wpriv->cdev[led_type].name = "platform::mute";
- 		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_audiomute_led_set;
-@@ -152,6 +161,9 @@ static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type led_type, struct
- 		return -EINVAL;
- 	}
- 
-+	wpriv->cdev[led_type].max_brightness = LED_ON;
-+	wpriv->cdev[led_type].flags = LED_CORE_SUSPENDRESUME;
-+
- 	err = devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
- 	if (err < 0) {
- 		dev_err(dev, "Could not register mute LED %d : %d\n", led_type, err);
--- 
-2.43.0
+1. Use the latest version of the fsck.f2fs tool to correct
+the file system.
+2. Use a relatively new version of the kernel. (For example,
+linear search cannot be turned off in v6.6)
 
+The performance gain of this commit is very obvious in scenarios
+where linear search is not turned off. In scenarios where linear
+search is turned off, no performance problems will be introduced
+either.
 
 
