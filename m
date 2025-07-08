@@ -1,209 +1,95 @@
-Return-Path: <linux-kernel+bounces-721236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDA17AFC672
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:00:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DF72AFC673
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C5395632F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:00:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 002711AA2554
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9506A2BEFE9;
-	Tue,  8 Jul 2025 09:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4CC2BF001;
+	Tue,  8 Jul 2025 09:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="N4YvSng7"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="ch3f1i1o"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3684298CC4;
-	Tue,  8 Jul 2025 09:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6318B29AB10;
+	Tue,  8 Jul 2025 09:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751965211; cv=none; b=sLEN4GdEWQyFSE0ECsfOUsqQvamWVmhGryvG+6yOhpfjE5+fpGqrL4OudiupzSN9ayWaoOIsJnzxJcSsoQE877hERXKmFjHsi0yrO69OeQa2fEUWg0eqaDIzN1471txP6odA5i1vRzbsU3SEcmEs09Eh+he6157Zyfpz4TDHOpU=
+	t=1751965244; cv=none; b=jtnuDV6LI5nLxbuBpl8EAgknPOihLaq2WUNVGlV78Q32uIwIIWab/3u9BjpchCQY5392DH/7OwUuB4prGbJOukUjDCoNsmpoGmZFeYKHO32SpVCgesh20dcS/kF59YLD6tusfezRzAoV7Jr8ssd/TTCwFfwCDfpesZJmP4mte+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751965211; c=relaxed/simple;
-	bh=0pGAUAdFjfpTgmLq5KGpx6SMyldQ56FfBSiIfnDjz3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=i6kS1VKKK/dvxLg+VfhfPcHUSHn3YHW7oysfIAwdlNTzemZSQiw4tq0VgxwYVNGc47ZSKmJv0VxKpFJxO9n1oDpVMXvbqSNOTGTjaQhlNrtYd+YpD25RefYFqUiirhyAefKTGdjXSWPhhfcuHiH/xz/wmOKeWMfM57vyOA6LoO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=N4YvSng7; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1751965146;
-	bh=3H+fGCXlSNoWhEpeSYgjHT8uyRrS2/8FltBMpJgNVTM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=N4YvSng7Y1M9AHGxbYNEIUnWz1OMkn6TVZWsWakYrZqJYibGF/D3ou+PjnmY8FA5H
-	 cmFWPDOhscE8qM6C75EtGBYKoiKiknoPM4YpCJWdwfArRb8y+TBSn9TEybNE1zOoAA
-	 O7SDFxa4WdL/tRhR7/D06BPXJLu1C7BuQMJtrphW2oZYvkcyBbVh7zh4SGXiUkSPX3
-	 dU5HhwknEhmVdFrlQHoqHFUo1z3TazoRM2noRpxpurlOVt/QrBywSk80GTmOpuHRkB
-	 5iWpYVwPObhtxtH5jnbrB+HdQK9Tne2T+jcXVf7PQxA7/4pu5v7JYlhjx9CwOHxf4G
-	 SJBE/LwCSDdZQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bbw5Q3Dc5z4w2J;
-	Tue,  8 Jul 2025 18:59:06 +1000 (AEST)
-Date: Tue, 8 Jul 2025 19:00:03 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, Joel
- Granados <joel.granados@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Feng Tang <feng.tang@linux.alibaba.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the sysctl tree with the
- mm-nonmm-unstable tree
-Message-ID: <20250708190003.4eabc8ab@canb.auug.org.au>
+	s=arc-20240116; t=1751965244; c=relaxed/simple;
+	bh=AO8MKYY8Dg76ox7YAhRwEp6Y+8e9fQtwlhcBD+6wZH0=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BNZkgvf+HL+sEpjUtyPb/+AQiRRBscMUXmcK3lM2dL0vMMr+wfIOC3rMGfLo7VCGawidbPl/PYulTimSNG+Lwhi+7Tk4xMKLIOajWUr0SX0VQCQPM2Aecqvl0UPMurz8mhH8Kjj9VH2RZRKtirkLIBlsa3yC0JYpq0uF7im8ckI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=ch3f1i1o; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:To:From:Subject:Message-ID:Sender:
+	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=AO8MKYY8Dg76ox7YAhRwEp6Y+8e9fQtwlhcBD+6wZH0=;
+	t=1751965243; x=1753174843; b=ch3f1i1oeQFOqcXX6E3ssTyV2ZdPJGrQzTqNsY82fHH0qJY
+	angIUz93Uq7CVKc4K9lDlDsyLBIXCWUYmVe2Q+tJuttAUrltyfh9ZTWtclMYP+258AK/TKa9mLoYy
+	tkBlV2nQ3Fdebzr55gy96k/ptmkZN1n8gfUO6XdUw7CUK/Peg7QtCB+T/81+WIaSfXwUb+fguSaOM
+	YOqhgNkYgZ/pzuzHlABt4jfE12ic6hHcxxrWHnZUOFaqQ2wVefSV4JiWpi2OFqmSyTfCzTsDnD8ey
+	Y7C5IBsy2Vza1Ct83dLExuNeMCp/4wXcJEsjL8GDY86HdmZvC6/H+ajXLXvDajyw==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uZ4Bg-0000000BlDQ-46Co;
+	Tue, 08 Jul 2025 11:00:29 +0200
+Message-ID: <4d50e8de5750cd6b915f209b9d3ab26f34efda99.camel@sipsolutions.net>
+Subject: Re: [PATCH wireless-next 0/3] Allow non-MLD sta to roam between MLD
+ AP links
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Remi Pommarel <repk@triplefau.lt>, linux-wireless@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 08 Jul 2025 11:00:26 +0200
+In-Reply-To: <cover.1751057146.git.repk@triplefau.lt>
+References: <cover.1751057146.git.repk@triplefau.lt>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/JvQd4r+SuOKb07YPaY/WIvZ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-malware-bazaar: not-scanned
 
---Sig_/JvQd4r+SuOKb07YPaY/WIvZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, 2025-06-27 at 22:46 +0200, Remi Pommarel wrote:
+>=20
+> To fix that, the first patch of this serie does not report management
+> frames with a link id (link id =3D=3D -1) and let hostapd do the freq to
+> link conversion to respond. This relies on the fact that hostapd knows
+> how to do this freq to link conversion which is needed anyway for the
+> first pre-association scan. We can also do this conversion in mac80211
+> instead if it is deem preferrable.
 
-Hi all,
+You should probably send patches as RFC if you have things like that.
 
-Today's linux-next merge of the sysctl tree got a conflict in:
+> This serie along with the mentionned hostapd patch allowes a non-MLD
+> STA to successfully roam between several MLD AP links with hwsim.
 
-  kernel/panic.c
+Maybe so, but does anything _else_ MLO related still work? Surely it
+cannot, given you just unconditionally made it no longer have a link ID
+... And indeed most of the EHT hwsim tests no longer pass, and even
+crash the kernel.
 
-between commits:
+Since you clearly were running hwsim tests, please run the existing ones
+too :)
 
-  f8dbd6138e05 ("panic: add 'panic_sys_info' sysctl to take human readable =
-string parameter")
-  3699d83ae18b ("panic: add note that panic_print sysctl interface is depre=
-cated")
+Also, I suspect that https://lore.kernel.org/linux-
+wireless/20250630084119.3583593-1-quic_sarishar@quicinc.com/ might go
+some way towards fixing this as well?
 
-from the mm-nonmm-unstable tree and commits:
-
-  48f1dc94d25e ("sysctl: Move tainted ctl_table into kernel/panic.c")
-  9aa4e27ef60c ("sysctl: Move sysctl_panic_on_stackoverflow to kernel/panic=
-.c")
-
-from the sysctl tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc kernel/panic.c
-index df92b763f857,64e58835086d..000000000000
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@@ -78,13 -84,50 +78,56 @@@ ATOMIC_NOTIFIER_HEAD(panic_notifier_lis
-  EXPORT_SYMBOL(panic_notifier_list);
- =20
-  #ifdef CONFIG_SYSCTL
- +static int sysctl_panic_print_handler(const struct ctl_table *table, int =
-write,
- +			   void *buffer, size_t *lenp, loff_t *ppos)
- +{
- +	pr_info_once("Kernel: 'panic_print' sysctl interface will be obsoleted b=
-y both 'panic_sys_info' and 'panic_console_replay'\n");
- +	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
- +}
- =20
-+ /*
-+  * Taint values can only be increased
-+  * This means we can safely use a temporary.
-+  */
-+ static int proc_taint(const struct ctl_table *table, int write,
-+ 			       void *buffer, size_t *lenp, loff_t *ppos)
-+ {
-+ 	struct ctl_table t;
-+ 	unsigned long tmptaint =3D get_taint();
-+ 	int err;
-+=20
-+ 	if (write && !capable(CAP_SYS_ADMIN))
-+ 		return -EPERM;
-+=20
-+ 	t =3D *table;
-+ 	t.data =3D &tmptaint;
-+ 	err =3D proc_doulongvec_minmax(&t, write, buffer, lenp, ppos);
-+ 	if (err < 0)
-+ 		return err;
-+=20
-+ 	if (write) {
-+ 		int i;
-+=20
-+ 		/*
-+ 		 * If we are relying on panic_on_taint not producing
-+ 		 * false positives due to userspace input, bail out
-+ 		 * before setting the requested taint flags.
-+ 		 */
-+ 		if (panic_on_taint_nousertaint && (tmptaint & panic_on_taint))
-+ 			return -EINVAL;
-+=20
-+ 		/*
-+ 		 * Poor man's atomic or. Not worth adding a primitive
-+ 		 * to everyone's atomic.h for this
-+ 		 */
-+ 		for (i =3D 0; i < TAINT_FLAGS_COUNT; i++)
-+ 			if ((1UL << i) & tmptaint)
-+ 				add_taint(i, LOCKDEP_STILL_OK);
-+ 	}
-+=20
-+ 	return err;
-+ }
-+=20
-  static const struct ctl_table kern_panic_table[] =3D {
-  #ifdef CONFIG_SMP
-  	{
-@@@ -134,13 -183,16 +183,23 @@@
-  		.mode           =3D 0644,
-  		.proc_handler   =3D proc_douintvec,
-  	},
- +	{
- +		.procname	=3D "panic_sys_info",
- +		.data		=3D &panic_print,
- +		.maxlen         =3D sizeof(panic_print),
- +		.mode		=3D 0644,
- +		.proc_handler	=3D sysctl_sys_info_handler,
- +	},
-+ #if (defined(CONFIG_X86_32) || defined(CONFIG_PARISC)) && \
-+ 	defined(CONFIG_DEBUG_STACKOVERFLOW)
-+ 	{
-+ 		.procname	=3D "panic_on_stackoverflow",
-+ 		.data		=3D &sysctl_panic_on_stackoverflow,
-+ 		.maxlen		=3D sizeof(int),
-+ 		.mode		=3D 0644,
-+ 		.proc_handler	=3D proc_dointvec,
-+ 	},
-+ #endif
-  };
- =20
-  static __init int kernel_panic_sysctls_init(void)
-
---Sig_/JvQd4r+SuOKb07YPaY/WIvZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhs3hMACgkQAVBC80lX
-0Gyxxwf+OMF210iKzwJ3rqOHjyigvuTf4b/ilOn6VoUhiVEUJzRvdSZfooMV44lQ
-zXcuZYxqBc72FXlkztxi33nQCsjb94N1atVJRBgjcSApwDFGneTOgAGz/1JyOmEX
-giFRH8uzW9C4TeZqaGsMms/dNO1C+voOkycNuetG2b1ge/3ypdR/oo5k1px7B0f+
-Xfsc2kGVs/cnXrJdGIJHAdTdiaZs7iCB19FJStnSUN6AEsVsRW4bYjhGfjGTszqu
-p4KiTCkN7pdWQRRoRlpbIT9ixUd54WZb/BC+4mkXqehQlAuwfe+AiqDWeytwmWQX
-13dfwPC/2KvMA0AKYH4gU8lmlOBrDA==
-=GPha
------END PGP SIGNATURE-----
-
---Sig_/JvQd4r+SuOKb07YPaY/WIvZ--
+johannes
 
