@@ -1,202 +1,119 @@
-Return-Path: <linux-kernel+bounces-720766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1097AFC02E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:44:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA1FDAFC038
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:46:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5B263AC4E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:43:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E910B3BCA69
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2861F0E55;
-	Tue,  8 Jul 2025 01:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kgFVotnK"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92951F9EC0;
+	Tue,  8 Jul 2025 01:46:07 +0000 (UTC)
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E841EA7E9
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 01:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358E140BF5;
+	Tue,  8 Jul 2025 01:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751939046; cv=none; b=tS+15BHBeC5yNjegyhbMeip7U9Ty81Q4Pakfj/P5WfDTHeVtTh4H8SWzNQSj6QH55cBUjJPM5DDOsExgwywl4EawFisboaDJTSVcEX1l383ZDgIL+irQ5b5E38K1Oo+1CySxKy/1+waNBEPkvTHoU7lGp72d3JU6sMcTQbp+n74=
+	t=1751939167; cv=none; b=kvus6iedgtqU8iNDUpweUku8Wt8yNifV4f26xQFY31+ZS3uZ+rm322jhhIXWtuUEjczSYxs3EKDiSMj9rgu7XXhkldRSDXSR+PY2hwOlu2Tmyp27vUWjBmcOChEG1F9wxsFVoRnbjXtJfRBvZY8Xfn87gvrgn6BzzDDk275sCh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751939046; c=relaxed/simple;
-	bh=ITnGl44Ugo75QxOk/V8xMNfq2AqSpn/y/RhZTD6rxqE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mu1fbgHxs2siQPer7P4/0fxSllaZX2U2BaaK+DXMlC0WwMdUOWXcX5XYnvZ8Uey9dMh2j/JJl2Jvym0rY+/2oIVnPLAglEeUZi+iZbfGR8Wk3JbRnewnt+sQWYJVL0u5Zy7P5pYT+joazTPbxh52dgVNWfuiHh3PbzKRZZ8x5Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kgFVotnK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 567KAMZ0011930
-	for <linux-kernel@vger.kernel.org>; Tue, 8 Jul 2025 01:43:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yl777uk8TYoa7yrfsLRZl56fRfsxTMHbE+ZHD3LEddY=; b=kgFVotnK2ssORDpg
-	gLmjlCNYd4OFkuzOzbKRe8qqIBJLkn0j1WXGhNafywS1pWNGb5KE7DBoxfB1wnFW
-	qjJByEcVos5+h05YWtLnduwG3JTKiOt6iJd/KYDNiER5Cce2+vgMhbuEFHUAPmYH
-	Ix/kilkpPjssem6CaACpmD22o4+1ipsjZe9tjF9m61Ml7cBl2qzNsvYSu99HC6Tv
-	eHuQ40rqmsVnD8PlvlvNKircE5KhWBjsJJbgEFJsxzGracJK5JihALuIkN2XTpgm
-	69UmRXZceNIpswksCsWYk0veDSaTs8SFlouKfjgcs4yGQqXZTC8Ji1c+2y54G0UM
-	HB9MkQ==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pucmt2hg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 01:43:57 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-31218e2d5b0so6390054a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 18:43:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751939037; x=1752543837;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yl777uk8TYoa7yrfsLRZl56fRfsxTMHbE+ZHD3LEddY=;
-        b=uHDI9R4oUiWTiNK0YJCrM8mo/Ux6apRx531EYTd9V+uCZgWlQCIbdHxBRP4lhVTF3I
-         nGG1/2Su6ZR+ELMm+1KS93XoOmR6z8peg79ZOouZo90dONCHfK/BzcQLkwFIL4g6gdVg
-         wBtYSmHEbQB+bL8MbSNDfJMhuQQjHBtilpw3LEZGY/hXy8SIVFQGNT9g9wptlP1R1LqX
-         ARAhCfTznOcc/EkbBSZIPR1k4CVGmNIk22hXKNF03q/d0u6iVaNtzisbkbcZJw67ojIf
-         06Vcue903RAKKZhgBROtVAWzIfAl/rWCd+hduAS1QiehKrPIssC8CxgW0Plouz7VPr6P
-         aioA==
-X-Forwarded-Encrypted: i=1; AJvYcCVenYhSR+sy/yNLmJ080Q9Uu53tRC/S8Vh4hjqYiCfIFyRyoS4QicosmwrO9zZBg8oYLnWekm0XEeVg5Uc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXIx6TxGv5YMe0DhQezaisbFBCWadvnXwYw/zF9jTcVgqZ2J50
-	uNbif1pcvPQapYnjWi6P1iDsRewVtuR1n72KlAqt3z+rdXD4bJBaTYVCvDXG4ji2BT1JdxSpDtQ
-	DHxMfao1o992P6reFK9q1wyzeU0PJDlkOs7eRV53/Y224iSg7S9OFqY5ILQznso6OR8c=
-X-Gm-Gg: ASbGnctC2DWnoTyltvxTWx9ROnEc6KYzzy05Sd+ww6Bdk4s0+dYCk0JV3O7Em9HWCLx
-	YzpSFVB5kEREeBq98QMxunbWBxLq8NUd+fld5F8GtaBANkk5NqgjWwafeXmdmSaXwgH8P4zO7Cm
-	661KbHTdLbV/f1JNOqmzpQWMuzRlANHEIKqSCmo65XfCOf46DZEv1IADMRljXq7FJi0rXkfVc2/
-	bMY4OKLj5sT45WLwqGQ3uI11AmcSaK8yuYGmt0wARX/sv7C0MseYyK4pM+6gCBzBc0LqbyJh4pM
-	+g8HTBn2/j99RHdSYkImW1pQR9iDvwjNUYWLIeL34EDm4RfzXJ1KwSbhmWiy4eV1MEreUYyj7dI
-	53Ln78eedKtXvU3Q=
-X-Received: by 2002:a17:90b:1f83:b0:311:df4b:4b94 with SMTP id 98e67ed59e1d1-31aac432a89mr19916296a91.4.1751939036600;
-        Mon, 07 Jul 2025 18:43:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHhKVpmGrrRXQtES7O9YfBq82/o7OuEhVZMyofryc6rLrPXsT448ckzR8EZfAtTqPI4xY9GZg==
-X-Received: by 2002:a17:90b:1f83:b0:311:df4b:4b94 with SMTP id 98e67ed59e1d1-31aac432a89mr19916248a91.4.1751939036125;
-        Mon, 07 Jul 2025 18:43:56 -0700 (PDT)
-Received: from [10.133.33.177] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c220bc5basm642199a91.42.2025.07.07.18.43.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jul 2025 18:43:55 -0700 (PDT)
-Message-ID: <fdb9f1e7-bf8f-4018-b0ac-ac8a70d9b8ec@oss.qualcomm.com>
-Date: Tue, 8 Jul 2025 09:43:49 +0800
+	s=arc-20240116; t=1751939167; c=relaxed/simple;
+	bh=nh1nOo+b5eqCWDB++x2DN24D8FPhCx0Ss2EJiOM+OlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZsAFPE8pONPZfx7uCFU9YfllYLtCjbTJQ2Hsa3EcGyhNbzeTIZLfiYBE150euUQRCxjhvvV6QMcC2D10xA1icIJvflJ1ej0OnOdy7XsgIm1mM7kvxJVXHM6mOkpWWHL04T+OxRmzpb2RqdA3SitwszjsGe7Ah/bTujbrIl5lajA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: zesmtpsz3t1751939082t7078b810
+X-QQ-Originating-IP: twOakQHm7qDk0ySEKf/UEQ4ZvX2xLJPYK2kg6T+4SrI=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 08 Jul 2025 09:44:40 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 6188477510607775095
+Date: Tue, 8 Jul 2025 09:44:40 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+	andrew+netdev@lunn.ch, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/15] net: rnpgbe: Add basic mbx ops support
+Message-ID: <6677D57C5FDDCB92+20250708014440.GA216877@nic-Precision-5820-Tower>
+References: <20250703014859.210110-1-dong100@mucse.com>
+ <20250703014859.210110-4-dong100@mucse.com>
+ <80644ec1-a313-403a-82dd-62eb551442d3@lunn.ch>
+ <9C6FCA38E28D6768+20250707063955.GA162739@nic-Precision-5820-Tower>
+ <f8a69fa5-cc3d-4968-8b19-0bdb27e1e917@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] bus: mhi: don't deinitialize and re-initialize again
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
-        Youssef Samir <quic_yabdulra@quicinc.com>,
-        Matthew Leung <quic_mattleun@quicinc.com>, Yan Zhen <yanzhen@vivo.com>,
-        Alexander Wilhelm <alexander.wilhelm@westermo.com>,
-        Alex Elder <elder@kernel.org>, Kunwu Chan <chentao@kylinos.cn>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Siddartha Mohanadoss <smohanad@codeaurora.org>,
-        Sujeev Dias <sdias@codeaurora.org>,
-        Julia Lawall <julia.lawall@lip6.fr>, John Crispin <john@phrozen.org>,
-        Muna Sinada <quic_msinada@quicinc.com>,
-        Venkateswara Naralasetty <quic_vnaralas@quicinc.com>,
-        Maharaja Kennadyrajan <quic_mkenna@quicinc.com>, mhi@lists.linux.dev,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org
-Cc: kernel@collabora.com
-References: <20250630074330.253867-1-usama.anjum@collabora.com>
- <20250630074330.253867-3-usama.anjum@collabora.com>
- <5f2a900a-3c8e-4b16-bd91-500af7d0315e@oss.qualcomm.com>
- <29ba0afa-9a1b-40f9-a174-d03902ea5d3f@collabora.com>
- <8b9eb6f4-6f0c-458d-b1e6-a1893c35b81d@oss.qualcomm.com>
- <a92b3d96-0c19-49c2-ad8b-ad31dec973c3@collabora.com>
- <7b8ea9ba-02ef-4676-a4d3-d088920283c3@oss.qualcomm.com>
- <9eba0149-290d-4010-8791-d4d8d8be3786@collabora.com>
-Content-Language: en-US
-From: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-In-Reply-To: <9eba0149-290d-4010-8791-d4d8d8be3786@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=GdQXnRXL c=1 sm=1 tr=0 ts=686c77dd cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=7V90euPs39zsmW6lzs8A:9
- a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-GUID: sTXfPP_jMExOo-fCkpvjvG0S0WexUnQb
-X-Proofpoint-ORIG-GUID: sTXfPP_jMExOo-fCkpvjvG0S0WexUnQb
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDAxMiBTYWx0ZWRfXxGpyENJBhKWl
- lddGBmylT7L6j8AvTEcAh35IxNRk35DrX31NAfrf1F84oklatIm9Saqudatbyb3FYZSq64JFNpR
- 0OkNn3G29JtbpSVd67zoXB7qmsGH1Q9ra3iVV6/GggQ7D3P7V3m4TXN7hbe2gB1ma48mRiNiqVk
- 0+UXDeSIPBBsfDqeL+toGUHL7JnGP0Y51u2wWP71RdfSLMFMEHsxOgI00QQ3ZvP21Dt35gPR7vk
- 2KSnkrbtxOSlyw6U02gg7peCuQpgmXgjWcEyiTp9CkLedsZU6XIHxnFHzkUpkNE2uwUXLO0w34j
- 3GD2pNitoyrH43ncbJLE24NXFGx91MOevHqbFsb9N5Orn53F7t5jl9PctsdOuEbCMacMSbtctq6
- xtu6FyOeKjsuOfqapozrxsiqcnUcS9Xq4l/TdNpL3OkL9lbEjp0JdaH7AxVYMuDulBkovvfG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-08_01,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 clxscore=1015
- spamscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
- malwarescore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507080012
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f8a69fa5-cc3d-4968-8b19-0bdb27e1e917@lunn.ch>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: Ma+A2HZKKIKoltb8mRtc7YBDUt2RuMk8scYsQwnrzBMUUTeUfSuqJ8Bq
+	2sNdc1Ifj13id1WQeQZ4afdzt5fcDDEDeeHsv069JFfQyjbFoPcJSE3D4ccLZXjXFQQwbdr
+	0Pmnvvbloqw/3PMu9wTuQKu1pmVooxb0C5GSXk9FCaxjz6aHyqvHFZhbxkil6sAk158QHtl
+	CLZ3Br+A5bmjRch06Jzk0oJjnEtAb68Szl4eidB0jtba3PqN2rOvPOZMzcHgaCkbkY0sX37
+	xYCiCI4OUuI5o3UPtP7lTaHDoIxX7icoaRz9onehLf2YXw8zMc12dLroDo1wszmRHucHFYK
+	9z7veoJVVv26MRc59hUPXcL82B3ov/+JF5QasLKGjdA4rZP/flTaerSM91aG0rJZDtqsAcM
+	EbKyfUbv8qcIOdZA1D0LECoQKVT2guTI9Tl90VyqvZCtEJBJuQWZ1EoGbrY8G9SaAFqDTFy
+	F9kqBJCpOEkQdHYq9AN3KObaK/PpaLU8eWjXo+B5aeu1M2zOWjoFIdMvO48Pzi8KJXvEpin
+	8p6YIDwl4Ru4YOtPNzeWHqbZYUConTcG9uUYt8m6gGpm4Eb8QNdgEL9GrTwMW26xro9j800
+	iWjFHnVOsIVXvuseo5nKTZ07SyawM8LAMf7rReVKA1zYKBxBS9Lmui0FFk2RYH6OnP5Z1no
+	JrnJ3G9hyNlUM+HTVW1LO3F5iCkIfCy0ihQlq6Ov2GrVyCJNGYEOL0acbp9m2qvLvhCtaHU
+	lzXx1PFzMSy9ndfC94uY5OW3nh32SnWZnf5j3MFnpESwz2aui3i4HUuyXSk+mK3ktbWWH1Q
+	BSfoaOx/6yMkBUTsUppK58kZ4im03sPiQT2FQkuXR2pizvXt3gInFTfRGopAkFBrLuvMR4O
+	icL0NInPVfR+4BJyJ4ZydRZh47lI2yUodCf8RHq4YBq7rYg5EsjMR5hYoDVzKnUEYUTRosH
+	N5Hz304DwCNZuqqZDCGR5wLHkKpQ2H0mKS3Q=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
+On Mon, Jul 07, 2025 at 02:00:16PM +0200, Andrew Lunn wrote:
+> On Mon, Jul 07, 2025 at 02:39:55PM +0800, Yibo Dong wrote:
+> > On Fri, Jul 04, 2025 at 08:13:19PM +0200, Andrew Lunn wrote:
+> > > >  #define MBX_FEATURE_WRITE_DELAY BIT(1)
+> > > >  	u32 mbx_feature;
+> > > >  	/* cm3 <-> pf mbx */
+> > > > -	u32 cpu_pf_shm_base;
+> > > > -	u32 pf2cpu_mbox_ctrl;
+> > > > -	u32 pf2cpu_mbox_mask;
+> > > > -	u32 cpu_pf_mbox_mask;
+> > > > -	u32 cpu2pf_mbox_vec;
+> > > > +	u32 fw_pf_shm_base;
+> > > > +	u32 pf2fw_mbox_ctrl;
+> > > > +	u32 pf2fw_mbox_mask;
+> > > > +	u32 fw_pf_mbox_mask;
+> > > > +	u32 fw2pf_mbox_vec;
+> > > 
+> > > Why is a patch adding a new feature deleting code?
+> > > 
+> > Not delete code, 'cpu' here means controller in the chip, not host.
+> > So, I just rename 'cpu' to 'fw' to avoid confusion.
+> 
+> So, so let me rephrase my point. Why was it not called fw_foo right
+> from the beginning? You are making the code harder to review by doing
+> stuff like this. And your code is going to need a lot of review and
+> revisions because its quality if low if you ask me.
+> 
+> 	Andrew
+> 
 
-
-On 7/7/2025 9:11 PM, Muhammad Usama Anjum wrote:
->>>>>>> diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
->>>>>>> index 4488e4cdc5e9e..bc4930fe6a367 100644
->>>>>>> --- a/drivers/net/wireless/ath/ath11k/core.c
->>>>>>> +++ b/drivers/net/wireless/ath/ath11k/core.c
->>>>>>> @@ -2213,14 +2213,9 @@ static int ath11k_core_reconfigure_on_crash(struct ath11k_base *ab)
->>>>>>>  	mutex_unlock(&ab->core_lock);
->>>>>>>  
->>>>>>>  	ath11k_dp_free(ab);
->>>>>>> -	ath11k_hal_srng_deinit(ab);
->>>>>>>  
->>>>>>>  	ab->free_vdev_map = (1LL << (ab->num_radios * TARGET_NUM_VDEVS(ab))) - 1;
->>>>>>>  
->>>>>>> -	ret = ath11k_hal_srng_init(ab);
->>>>>>> -	if (ret)
->>>>>>> -		return ret;
->>>>>>> -
->>>>>> while I agree there is no need of a dealloc/realloc, we can not simply remove calling the
->>>>>> _deinit()/_init() pair. At least the memset() cleanup to hal parameters (e.g.
->>>>> Why do is it being done in the resume handler? Shouldn't those parameters be cleaned up
->>>>> in resume handler? So when device wakes up, its state is already correct.
->>>>>
->>>> Hmm... not quite understand your question. Can you elaborate?
->>> I'm trying to understand the possibility of cleanup of hal in suspend handler. For example:
->>> * The driver has been loaded and has been working fine.
->>> * The user called suspend. So all devices would be suspended.
->>> * In suspend handler of the ath11k, we should do the necessary cleanups of the states
->>>   like hal.
->>> * When the device would resume after long time, the hal would have the correct state
->>>   already. So we'll not need to deinit and init again.
->> The hal cleanup is not only needed by suspend/resume, but also a step of reset/recover
->> process. So If we are moving the cleanup to suspend handler, similar stuff needs to be
->> done for reset/recover as well.
-> It makes sense.
-> 
-> So clearing the hal structure completely other than ab->hal.srn_config doesn't seem
-> right. I've also tested it and it crashes the whole system.
-> 
-> On contrary, with only the current patch applied, there is no abnormality.
-> 
-> num_shadow_reg_configured and avail_blk_resource are non-zero. If I make them 0,
-> driver still keeps on working.
-> 
-> 	ab->hal.num_shadow_reg_configured = 0;
-> 	ab->hal.avail_blk_resource = 0;
-> 	ab->hal.current_blk_index = 0;
-> 
-> As you have suggested setting these 3 to zero, is there any other variable in hal
-> structure which should be set to zero?
-
-IMO srng_config, rdp, wrp and srng_key may keep unchanged through suspend/reset, all other
-fields should be cleared/reinitialized.
+Ok, you are right. It should be the right name at the beginning. I will
+try to avoid this in the future.
 
 
