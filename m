@@ -1,164 +1,173 @@
-Return-Path: <linux-kernel+bounces-721901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 709A0AFCF43
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:32:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C374AFCF4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B82151645C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:32:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ACB15645BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B6D21B908;
-	Tue,  8 Jul 2025 15:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EA426FA56;
+	Tue,  8 Jul 2025 15:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="tBmnK4KD"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X5ibg2Nd"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB5D233713
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322C1283FCD
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751988732; cv=none; b=fPOsj3L+uml4eDCECg5zOsvvj14K2Jiau5kq6HzRFi27ETTzz0ylS8dGLCD6XbYcsETFEDhE9NZfNjSVGd1lf3ua0UJDloRIZ1w2YGDwhYedxqwR7rK/dh5XpY++TvVfMtE5m+1PD92rHCTDyumuLWHx1eleaYfPaC+2Z/+MVKw=
+	t=1751988782; cv=none; b=aPZ0IQNd79mPC8UlFT3gOo6t3KkpSnK1R197vZLLmS9DOYkQqZil+jVzfAHercKuKKfh9QQvVLiIwH8NgfYot9w1/ye2IJr2O2xi/saju9vjl4vPWkssyWSSd1sUB6m5Hh0DlMPtGD+CGk7FFAce6jLFJRKK1WuGVoGDOeKyuf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751988732; c=relaxed/simple;
-	bh=/wv1ujVVYsKxfD9Gx4YbkGRQTRO9miJk819wGwlJTuQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cx6wcsnX/XEmwR6pdcQBQvOQZHcBYlbCNFBETZXGRHDzXOLRJLIv3HcpYl/xnAisXVM9Dn6iRgbrelkyYLtRM/ZEN8Dse/M3e+e0N8pdlZr0LnB9znNXSY9CxgDUqerlJlmtVjY9jAR+K00KFMU/AeW8LrSdtiahJwy3K7isah0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=tBmnK4KD; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1751988726; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=EeG7VhJ+3VL+xoKGwYSETtPL5tcP8qm4ksM/Bn5qQkg=;
-	b=tBmnK4KDH636pBRDuHr9aNhj5NP9hTS7VRSodi/5kFhl0Ik5tH0xLK4R1+x7N7Ux+oxPq414uVHqE8DzkXtmTxeY/TxsZNRAomPO+Xqpwn4So1HSu7KA/x87SL1W+SYXPU/0VQtipJxmtILVDWtRcf8ZV31nLJ7O84oUysMlpmU=
-Received: from 30.170.233.0(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WiPlTZ4_1751988724 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 08 Jul 2025 23:32:05 +0800
-Message-ID: <6216008a-dc0c-4f90-a67c-36bead99d7f2@linux.alibaba.com>
-Date: Tue, 8 Jul 2025 23:32:03 +0800
+	s=arc-20240116; t=1751988782; c=relaxed/simple;
+	bh=UW7FNSgtzmx4PeXPEOkeqEcyq3nkgBjKwAlwHPL8Lmg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BV/IwcI5CtudFyaluW/QP2QFUEffuue/QaQYD2KBsOdNLFGLb9VwQLMKrfPSgYcOVCMSKOvwvR0wkpqLl6Jc9vcFYlLmbVuMaVAC4I1ucffWUL3hMF9B2zXRdIyrT8mJF0NZaWiN5Bfz7pOQCnrVfkvZQySe0B3MXimxxJkh7Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X5ibg2Nd; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4a5ac8fae12so530231cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 08:33:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751988780; x=1752593580; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g9tZiU5eIxoOobBKXVYQ5QlOi0wUutX8iQEeH++Ok0M=;
+        b=X5ibg2NdYqrSyz0xXesZHALBVkG+nQ2ZN2kTAbqRkbZGRlIjgbW0v+3l3X18gqNrhp
+         gu4XA44BVy1UDhU94kE1jrTdUPi03XRiedxlBV04hGISew3FLnCubmTQuVtbX7f3PDon
+         UJyib/5ZdNailwf7JozzTbd/z8vNEh2MRHP6Y+XzNQZL6URAgU+9q5ZNfoJiuZzdqMth
+         va3qtamObHTrUrTXFnXjwktwtKE8Hc8SZVzE3UQdq4ef07/VYeVuh9lyz4OBRi3DUFxU
+         uouLSopF75mErdqlWnKMhzmus2KHuSgI6630tjxYuFC7fJbzq6x4OEGXLPtmvyuMqWH7
+         Vk2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751988780; x=1752593580;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g9tZiU5eIxoOobBKXVYQ5QlOi0wUutX8iQEeH++Ok0M=;
+        b=Mj2Q1vjci2/nGdt6HU3kVnnI23YXgZxxJKoMY1KQc8qVToYwA3wvcmrX0NpCNhCPWK
+         8T8Kc34spnJzQv1ZehQuAR0qv7cztL9oMjqWSoZ0yfUJAQhep1gzr3wz6SIJMHsfK6HH
+         gC2shJb7JgSXiGtwhZnzWgrlfFB6eItv214LYF+xTuw6jIHUnaMV/+NHyUtkREef0MHR
+         v2Y9P9nQw2ZvycirG/10WrkEs692+tXnmFK4Pm7XKS5+9NRx9oChOxh2hL09s85bU01f
+         kBiuihhwQG6U3A1AJfQIzM85Jjr14F/UmNvLsx8HJKU1UGCDwUj4NkdHZAHEN/k4leHL
+         sQWA==
+X-Forwarded-Encrypted: i=1; AJvYcCXke43tW/VqaQ70G+rNeEu3VUTbn367FdaKleZVfUd6kUK96n5kn2VroEbI4G/CiBj1nKa3un96Wp6lJ+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdT0fAn2K+1+p+7Ue3eIkOIEWMb1zozUh36yBoIdy9X9uRFjmV
+	PW+tY9XPO/ZERc2Bt0btowwZVAJubgmFxg7mI/b757iED5yDFHbuuvMiUZXHnaq8vZKmUkimWCN
+	k54r3TzQRKvlwVl9F3eKn6NJmmaWCRYGnvSe0Nr6PoGJyZvU5QC7byW+mVN4=
+X-Gm-Gg: ASbGncufe1jb591GUJvZP9SGYI9dfRbi1Zmu8Pr9uajbQuxr6yjpV9GvTHGdIiZ8TY1
+	4u+7xznVOY58PB5/zIAF5sYygLmMxnBZs2zlLMZX2oOmhLiNcOPWzPOhTfSVL4UPOFTOw40moYe
+	arjB4ULPKvU6J9sRC5uFQn/FdUR44Lh/lCYqkw5MjqcEX8ZWGhYxMun5QK2+v50zfKXtYbGQe21
+	w==
+X-Google-Smtp-Source: AGHT+IG7fz++CeO2vs2J17V+ScGy3kEvPCUHnRVl6BVmyw4ZsfTyk9kTInu9aaiKvmmFZvE1OA0cyA+m/0vknmyY/rE=
+X-Received: by 2002:a05:622a:d10:b0:4a9:7c7e:f2f9 with SMTP id
+ d75a77b69052e-4a9d4818812mr2838841cf.17.1751988779418; Tue, 08 Jul 2025
+ 08:32:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Executable loading issues with erofs on arm?
-To: Jan Kiszka <jan.kiszka@siemens.com>, Gao Xiang <xiang@kernel.org>,
- Chao Yu <chao@kernel.org>, linux-erofs@lists.ozlabs.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <38d43fae-1182-4155-9c5b-ffc7382d9917@siemens.com>
- <452a2155-ab3b-43d1-8783-0f1db13a675f@siemens.com>
- <bab2d726-5c2f-4fe0-83d4-f83a0c248add@linux.alibaba.com>
- <81a3d28b-4570-4d44-8ed6-51158353c0ff@siemens.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <81a3d28b-4570-4d44-8ed6-51158353c0ff@siemens.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250630031958.1225651-1-sashal@kernel.org> <20250630175746.e52af129fd2d88deecc25169@linux-foundation.org>
+ <a4d8b292-154a-4d14-90e4-6c822acf1cfb@redhat.com>
+In-Reply-To: <a4d8b292-154a-4d14-90e4-6c822acf1cfb@redhat.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 8 Jul 2025 08:32:48 -0700
+X-Gm-Features: Ac12FXzacz7_GNV6Umyb4v4clDu6vWsu0ttd-4YoNOndub-L61ooXKLtNoloNTs
+Message-ID: <CAJuCfpEfkw5_FGOqz3PwN0PyC5u1RbKVAXWZDWGbhS=t3OsRzw@mail.gmail.com>
+Subject: Re: [PATCH] mm/userfaultfd: fix missing PTE unmap for non-migration entries
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Sasha Levin <sashal@kernel.org>, peterx@redhat.com, 
+	aarcange@redhat.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jul 8, 2025 at 8:10=E2=80=AFAM David Hildenbrand <david@redhat.com>=
+ wrote:
+>
+> On 01.07.25 02:57, Andrew Morton wrote:
+> > On Sun, 29 Jun 2025 23:19:58 -0400 Sasha Levin <sashal@kernel.org> wrot=
+e:
+> >
+> >> When handling non-swap entries in move_pages_pte(), the error handling
+> >> for entries that are NOT migration entries fails to unmap the page tab=
+le
+> >> entries before jumping to the error handling label.
+> >>
+> >> This results in a kmap/kunmap imbalance which on CONFIG_HIGHPTE system=
+s
+> >> triggers a WARNING in kunmap_local_indexed() because the kmap stack is
+> >> corrupted.
+> >>
+> >> Example call trace on ARM32 (CONFIG_HIGHPTE enabled):
+> >>    WARNING: CPU: 1 PID: 633 at mm/highmem.c:622 kunmap_local_indexed+0=
+x178/0x17c
+> >>    Call trace:
+> >>      kunmap_local_indexed from move_pages+0x964/0x19f4
+> >>      move_pages from userfaultfd_ioctl+0x129c/0x2144
+> >>      userfaultfd_ioctl from sys_ioctl+0x558/0xd24
+> >>
+> >> The issue was introduced with the UFFDIO_MOVE feature but became more
+> >> frequent with the addition of guard pages (commit 7c53dfbdb024 ("mm: a=
+dd
+> >> PTE_MARKER_GUARD PTE marker")) which made the non-migration entry code
+> >> path more commonly executed during userfaultfd operations.
+> >>
+> >> Fix this by ensuring PTEs are properly unmapped in all non-swap entry
+> >> paths before jumping to the error handling label, not just for migrati=
+on
+> >> entries.
+> >
+> > I don't get it.
+> >
+> >> --- a/mm/userfaultfd.c
+> >> +++ b/mm/userfaultfd.c
+> >> @@ -1384,14 +1384,15 @@ static int move_pages_pte(struct mm_struct *mm=
+, pmd_t *dst_pmd, pmd_t *src_pmd,
+> >>
+> >>              entry =3D pte_to_swp_entry(orig_src_pte);
+> >>              if (non_swap_entry(entry)) {
+> >> +                    pte_unmap(src_pte);
+> >> +                    pte_unmap(dst_pte);
+> >> +                    src_pte =3D dst_pte =3D NULL;
+> >>                      if (is_migration_entry(entry)) {
+> >> -                            pte_unmap(src_pte);
+> >> -                            pte_unmap(dst_pte);
+> >> -                            src_pte =3D dst_pte =3D NULL;
+> >>                              migration_entry_wait(mm, src_pmd, src_add=
+r);
+> >>                              err =3D -EAGAIN;
+> >> -                    } else
+> >> +                    } else {
+> >>                              err =3D -EFAULT;
+> >> +                    }
+> >>                      goto out;
+> >
+> > where we have
+> >
+> > out:
+> >       ...
+> >       if (dst_pte)
+> >               pte_unmap(dst_pte);
+> >       if (src_pte)
+> >               pte_unmap(src_pte);
+>
+> AI slop?
 
+Hmm, but there is even a Call trace in the report. I wonder if the
+issue is somewhere else?
 
-On 2025/7/8 23:22, Jan Kiszka wrote:
-> On 08.07.25 17:12, Gao Xiang wrote:
->> Hi Jan,
->>
->> On 2025/7/8 20:43, Jan Kiszka wrote:
->>> On 08.07.25 14:41, Jan Kiszka wrote:
->>>> Hi all,
->>>>
->>>> for some days, I'm trying to understand if we have an integration issue
->>>> with erofs or rather some upstream bug. After playing with various
->>>> parameters, it rather looks like the latter:
->>>>
->>>> $ ls -l erofs-dir/
->>>> total 132
->>>> -rwxr-xr-x 1 1000 users 132868 Jul  8 10:50 dash
->>>> (from Debian bookworm)
->>>> $ mkfs.erofs -z lz4hc erofs.img erofs-dir/
->>>> mkfs.erofs 1.8.6 (trixie version, but same happens with bookworm 1.5)
->>>> Build completed.
->>>> ------
->>>> Filesystem UUID: aae0b2f0-4ee4-4850-af49-3c1aad7fa30c
->>>> Filesystem total blocks: 17 (of 4096-byte blocks)
->>>> Filesystem total inodes: 2
->>>> Filesystem total metadata blocks: 1
->>>> Filesystem total deduplicated bytes (of source files): 0
->>>>
->>>> Now I have 6.15-rc5 and a defconfig-close setting for the 32-bit ARM
->>>> target BeagleBone Black. When booting into init=/bin/sh, then running
->>>>
->>>> # mount -t erofs /dev/mmcblk0p1 /mnt
->>>> erofs (device mmcblk0p1): mounted with root inode @ nid 36.
->>>> # /mnt/dash
->>>> Segmentation fault
->>>>
->>>> I once also got this:
->>>>
->>>> Alignment trap: not handling instruction 2b00 at [<004debc0>]
->>>> 8<--- cut here ---
->>>> Unhandled fault: alignment exception (0x001) at 0x000004d9
->>>> [000004d9] *pgd=00000000
->>>> Bus error
->>>>
->>>> All is fine if I
->>>>    - run the command once more
->>>>    - dump the file first (cat /mnt/dash > /dev/null; /mnt/dash)
->>>
->>> Forgot to mention: That first dump when done via md5sum or so actually
->>> gives the right checksum. So pure reading of the binary is also ok, just
->>> trying to load it for execution fails on the first attempt.
->>
->> Thanks for your report.  I rarely take care arm32 platform
->> because I don't have such setup.
->>
->> but could you share a reproducible rootfs image and
->> I wonder if qemu could reproduce this?
-> 
-> The image can be generated from isar-cip-core
-> (https://gitlab.com/cip-project/cip-core/isar-cip-core), bbb image with
-> swupdate extension and erofs as immutable rootfs. As I wrote, those will
-> be 6.12 or 6.1 based, but I also injected a mainline kernel into that
-> with the same result. But all that only helps if you have some
-> beaglebone black in reach right now.
-
-Could you check 5.4 lts, 5.15 lts, 5.10 lts if possible?
-
-I wonder if it's a regression or it does not work from
-the beginning. Anyway, I have no chance to look after arm32
-due to lack of use cases and hardware resource.
-
-> 
-> The same configuration, just for qemuarm as target, unfortunately does
-> not reproduce the issue.
-
-That is too bad for me honestly because I do think it's much
-easier for me to quickly shooting down with a reproducable
-environment on my side...
-
-> 
->>
->> Otherwise it's hard for me to debug this issue...
-> 
-> If you tell me how I could do that, I'm happy to instrument and analyze.
-> I just have no understanding of erofs yet, specifically how reading
-> files might be different from loading executables.
-
-I have no idea too.  But it seems this issue is quite similar to
-https://lore.kernel.org/r/76f0ea6f-d4c2-434a-8ca5-4bd93921209f@linux.alibaba.com/T/#t
-
-I've given several ways to help finding the cause, but it
-seems that data checksum is all good, and that issue is
-still not resolved now either.
-
-Thanks,
-Gao Xiang
-
-> 
-> Jan
-> 
-
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
