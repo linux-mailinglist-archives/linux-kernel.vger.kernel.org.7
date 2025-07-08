@@ -1,234 +1,191 @@
-Return-Path: <linux-kernel+bounces-722216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DB3EAFD68B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:37:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D09BBAFD691
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 850B0560C49
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:37:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 152CF16AEBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7305C2E542E;
-	Tue,  8 Jul 2025 18:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7B62E7629;
+	Tue,  8 Jul 2025 18:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JzJzAK+h"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nKiuRx3A"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1AB21CC74
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 18:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865E82E6D1A
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 18:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751999852; cv=none; b=BWHaXl7eDzgHS5RjkoOgW12hmnZxEp7drwGw/qoUKZ8eMxMuPrzMp8xGrpLRgBXAxihgCKbDJgttnvisi92l/TkEGNkGjiY53/O9rF3kwbsV6bWxcELETHialpbcJBWd2F2iTO/+wOsEdzB8nhHHqO2E9iTcaaX5YpcsuKEWZj4=
+	t=1751999857; cv=none; b=RdY7tFnwEREQvKzRNKZ4hmvKhzVXrq9Rw5yPi8P0Bm503ploUjrbcF6Z4bCeSrxZxiHormw5uyrrv0iFUJt4L2yDFRmJZEd+rkNP87MWxBDjhZdMozAP2TkVaNpZJW4zBINXiGxsZiAdEabYP9zEPE7F0vorR3Zj/C4NvQxe47U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751999852; c=relaxed/simple;
-	bh=vg+uQCJ+lSN99jIomcmUQZbwXNmXTfe07jNsopO6k20=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=alGu/OQa8AWKyXIRwlAAZYqvsnUEQ/qJEisoUCWRit/wqGUG3fni4uWViidGSVRVWPDRSH9AiFkjzY2/dNy3a9PqvSBfI+sKpDDI3wR1EkpNJdLUzseE0N7AC0PY57Xgxc9Vg11+f9388QOwfepVG7byp9s6UsvWyZA6LCx7EmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JzJzAK+h; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-748f3d4c7e7so3450152b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 11:37:30 -0700 (PDT)
+	s=arc-20240116; t=1751999857; c=relaxed/simple;
+	bh=P4m28JgcIHcb3RfuA5FHxRC9SfiH1YZ53dw4Tti4Mv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pCZConPx+nRpn0LwQXv8PckcOqVs2QpaP3BvqU0P80DioEAIsiA5O04B6ei/kfVIHnEqiGd5ebCzte6zBU5UpB6cr5gNWjwRzAdX+bmVRNrI+Wor1LWvGcIaCIJl5vwRCnWrBq/YTbOFdD0Ner/6j8ueNLF77iBF2FspMQkGr7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nKiuRx3A; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b2c4331c50eso4959102a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 11:37:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751999850; x=1752604650; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yuihDo1m5FyoRrxBA7eIdTW1eQsHNBGooJAzPvs8+c8=;
-        b=JzJzAK+hOjajiXZF2foPPNeEcg8NgJEqFaw4SXnoVwtt0Ow0MQ0Yym5Si4xM5OxKJ7
-         uJAn0hwGne/geNeEqPkBj8iyu7wdQddTjdOiqm79OrNacRCk8suq3s5gig9hTqmcqMOc
-         JEjtcThza8JjMKihIp/QgskQYRuRS+266BXwFjU0u7FTHV67aDkBD85TrQVM2t+I5sZl
-         sVifKdzVCNtabPIkbY01vab2YCX0NXVp0XiaFs4CYylp4LJPzl0TryWQ9VI/bLeGw2ul
-         Yv/M/3kpBi2Wlc6bwQ7Alo+wFYYNO0FloWHprl5ARmoob82Jhhr9xUfuA6/rSGG58VhF
-         qCkQ==
+        d=chromium.org; s=google; t=1751999855; x=1752604655; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9Qf6OoUd6t9+5P1mzZep4RXSNUTyvyaP3uN0U0SlC0k=;
+        b=nKiuRx3AtW+N/gQUMNSbdat/IGNyn+u0YA3d+WB3hsnyJvXPdKCYD2Ji8MdqvniPpQ
+         DD7WXaNkqhq5wLerj1MjU+fPm/+PnorGdNYR6v5kxqmDObsbELSgQmuehEwTmOJaQ0bQ
+         MMVOeyBNBPhLdSN99VXKDEUjjkWqRM1ck9avY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751999850; x=1752604650;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yuihDo1m5FyoRrxBA7eIdTW1eQsHNBGooJAzPvs8+c8=;
-        b=ZbA86cEsMCn+SxoSilQr1znJsw7VNLpYglymm904rwn1cymf4bpCTnF657CvHZbMzw
-         uN5Nq1P6uaz4j0z2xgt+V9IVqc0rXQ43ygd8dFbo9gV6+5nEYVxchnz153mAOiloGh1u
-         SF7xzU037vs8dq9ZeDMq/LpLgNqSzZnBVzSR3m8nbBAXikck9frYdbJeTAioHkd906vK
-         vdiclGcyuXfUG8An/DM+NmPtp1T+UPC0LVXOMPvmjaAS8ry5vgxtEBRy80WFqHaaju5X
-         quYKsOhgaY1htIpl4mY120wTBSpLZ6Qh8Q/XDR2KrTi65y+7qrT72SDf0welLLk6dvEk
-         HYhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXzBCfWa2IeyramnfkM6skxtovGjlZwt/8Xk8kL34aXSn/76ypsb3+h8CulaJOuS8u5FTVxWsVuT606Aqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZO1vHEs/o7/wE2CJ3l4lJnTHbLOVd1vLT4cnSumao4+cnXkiW
-	Wld5Et5rJZOAJ5KdXXlg5plMfvn4wNPDbiKiiQs0+WSINXrl/PqvrBlphjr3mKwS2trWwVYVG30
-	psbzL9Q==
-X-Google-Smtp-Source: AGHT+IE0jOeDJGjqyFwQLwFs8IMKVlBUzhMwAfpeufc6A4eZa0THyR4cN5PjdVCjvg8e5KCGp+se29EjQ+4=
-X-Received: from pfbjw38.prod.google.com ([2002:a05:6a00:92a6:b0:74c:ee73:4859])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:856:b0:748:e1e4:71e7
- with SMTP id d2e1a72fcca58-74ea498dc91mr157508b3a.23.1751999850363; Tue, 08
- Jul 2025 11:37:30 -0700 (PDT)
-Date: Tue, 8 Jul 2025 11:37:28 -0700
-In-Reply-To: <20250612214849.3950094-9-sohil.mehta@intel.com>
+        d=1e100.net; s=20230601; t=1751999855; x=1752604655;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9Qf6OoUd6t9+5P1mzZep4RXSNUTyvyaP3uN0U0SlC0k=;
+        b=ttmQUdug0RWWacdm+ErSPq99bdOACOmT70EJTLKgvXFcX0wQnG8kh1v2Aidqcx+ibH
+         izf3gHX9XJYTmFrG7HER99dROVYafL0XzswmodUcHl7ZtkhEgc5qgLCQLVAvoX9SWuk8
+         vHuLVi4xe33XECAap7IQk+LnCsrX0VG2IiKWooWm777tM4cPicP4c/7DGDCjg3XhgePk
+         N2zEtm86xXJQHKaYJY8FX0uI1HDVzkTJWMzQJyfh2Pd6pPIg6v4auqQob5MksLGvrysA
+         kgzHC+/ZOl9qMhuA/ggJMzrGzkcy7m0rVAfgpYUD3bG6xT80Wz41eKcJMljP12WPwOAC
+         +Wbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWRxCAhrqzLXwLiD0xain1YtX5Knq6Pptnw0KSkgVOAFr8hRVOr2kNXeNCc9vf5m6huHlKMNj339/LDv/I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTVvXeYYsZAab1k+f7PyQHszNRendDxCQkPNVtSV1UBepnUKug
+	jY8LNzbys6QMXs0erEFN4eRGkdLjDjLYc+XbOfUBT8pxvQDkY9oz6v/LVfvP5ohnLLj8O6zq/Kf
+	QO5A=
+X-Gm-Gg: ASbGncuifw74WwASsntpEs6XCOLss0RLKcgzM8iR472uitAM2nE/ZpqQJoq/QwMSmbR
+	fyYID3qbnNifWGOzCfeT1fZDiy0odEBYsYCzv1L8qGzYAN/muNtPZdvtx2hd/D0CPBjDh6MiAIo
+	Qer1u42GjCIdFI5cvrGKuk66koqKVFDWUFZr6Zg7kT6Xakg2eg7BtxFiKJYbThoeK6+DLgynr4D
+	Z+ah+TDj+WQfHpnoVeTX+SOAWDWmF+9kQSLV8zaEnRbP22t0aCyedZWz59rTqsC6vK05v1wwzf4
+	tlpgDa5l1GyN/dm4Mn+bEIkezS2LY9MJ7KiXNFYV8oW+BZKuEmDTLp9Jlw3pdJEMzGVVTSpUJk8
+	Ccn4bY3MKOXb3xw0o4ZlyJCBzFTODcDM/J50=
+X-Google-Smtp-Source: AGHT+IECRmB2ficBX+Y4W2qALMbEbYmKFGHf8YDow88MlFUlVsgHhubDrdqKig06lIkFEiP/MGe7zg==
+X-Received: by 2002:a05:6a20:7fa6:b0:222:d191:5bbd with SMTP id adf61e73a8af0-22c7f544ef9mr708165637.39.1751999854754;
+        Tue, 08 Jul 2025 11:37:34 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:9b88:4872:11ac:8ccb])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-74cfad75020sm9321070b3a.109.2025.07.08.11.37.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jul 2025 11:37:33 -0700 (PDT)
+Date: Tue, 8 Jul 2025 11:37:32 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Vitor Soares <ivitro@gmail.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Vitor Soares <vitor.soares@toradex.com>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	David Lin <yu-hao.lin@nxp.com>, stable@vger.kernel.org
+Subject: Re: [PATCH wireless v1] wifi: mwifiex: discard erroneous disassoc
+ frames on STA interface
+Message-ID: <aG1lbC4LJDKzMuco@google.com>
+References: <20250701142643.658990-1-ivitro@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250612214849.3950094-1-sohil.mehta@intel.com> <20250612214849.3950094-9-sohil.mehta@intel.com>
-Message-ID: <aG1laKXYu7Uc4Tsb@google.com>
-Subject: Re: [PATCH v7 08/10] x86/nmi: Enable NMI-source for IPIs delivered as NMIs
-From: Sean Christopherson <seanjc@google.com>
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, Xin Li <xin@zytor.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Tony Luck <tony.luck@intel.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Andrew Cooper <andrew.cooper3@citrix.com>, 
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Jacob Pan <jacob.pan@linux.microsoft.com>, 
-	Andi Kleen <ak@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Sandipan Das <sandipan.das@amd.com>, linux-perf-users@vger.kernel.org, 
-	linux-edac@vger.kernel.org, kvm@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250701142643.658990-1-ivitro@gmail.com>
 
-On Thu, Jun 12, 2025, Sohil Mehta wrote:
-> With the IPI handling APIs ready to support the new NMI encoding, encode
-> the NMI delivery mode directly with the NMI-source vectors to trigger
-> NMIs.
+Hi Vitor,
+
+On Tue, Jul 01, 2025 at 03:26:43PM +0100, Vitor Soares wrote:
+> From: Vitor Soares <vitor.soares@toradex.com>
 > 
-> Move most of the existing NMI-based IPIs to use the new NMI-source
-> vectors, except for the microcode rendezvous NMI and the crash reboot
-> NMI. NMI handling for them is special-cased in exc_nmi() and does not
-> need NMI-source reporting.
+> When operating in concurrent STA/AP mode with host MLME enabled,
+> the firmware incorrectly sends disassociation frames to the STA
+> interface when clients disconnect from the AP interface.
+> This causes kernel warnings as the STA interface processes
+> disconnect events that don't apply to it:
 > 
-> However, in the future, it might be useful to assign a source vector to
-> all NMI sources to improve isolation and debuggability.
+> [ 1303.240540] WARNING: CPU: 0 PID: 513 at net/wireless/mlme.c:141 cfg80211_process_disassoc+0x78/0xec [cfg80211]
+> [ 1303.250861] Modules linked in: 8021q garp stp mrp llc rfcomm bnep btnxpuart nls_iso8859_1 nls_cp437 onboard_us
+> [ 1303.327651] CPU: 0 UID: 0 PID: 513 Comm: kworker/u9:2 Not tainted 6.16.0-rc1+ #3 PREEMPT
+> [ 1303.335937] Hardware name: Toradex Verdin AM62 WB on Verdin Development Board (DT)
+> [ 1303.343588] Workqueue: MWIFIEX_RX_WORK_QUEUE mwifiex_rx_work_queue [mwifiex]
+> [ 1303.350856] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [ 1303.357904] pc : cfg80211_process_disassoc+0x78/0xec [cfg80211]
+> [ 1303.364065] lr : cfg80211_process_disassoc+0x70/0xec [cfg80211]
+> [ 1303.370221] sp : ffff800083053be0
+> [ 1303.373590] x29: ffff800083053be0 x28: 0000000000000000 x27: 0000000000000000
+> [ 1303.380855] x26: 0000000000000000 x25: 00000000ffffffff x24: ffff000002c5b8ae
+> [ 1303.388120] x23: ffff000002c5b884 x22: 0000000000000001 x21: 0000000000000008
+> [ 1303.395382] x20: ffff000002c5b8ae x19: ffff0000064dd408 x18: 0000000000000006
+> [ 1303.402646] x17: 3a36333a61623a30 x16: 32206d6f72662063 x15: ffff800080bfe048
+> [ 1303.409910] x14: ffff000003625300 x13: 0000000000000001 x12: 0000000000000000
+> [ 1303.417173] x11: 0000000000000002 x10: ffff000003958600 x9 : ffff000003625300
+> [ 1303.424434] x8 : ffff00003fd9ef40 x7 : ffff0000039fc280 x6 : 0000000000000002
+> [ 1303.431695] x5 : ffff0000038976d4 x4 : 0000000000000000 x3 : 0000000000003186
+> [ 1303.438956] x2 : 000000004836ba20 x1 : 0000000000006986 x0 : 00000000d00479de
+> [ 1303.446221] Call trace:
+> [ 1303.448722]  cfg80211_process_disassoc+0x78/0xec [cfg80211] (P)
+> [ 1303.454894]  cfg80211_rx_mlme_mgmt+0x64/0xf8 [cfg80211]
+> [ 1303.460362]  mwifiex_process_mgmt_packet+0x1ec/0x460 [mwifiex]
+> [ 1303.466380]  mwifiex_process_sta_rx_packet+0x1bc/0x2a0 [mwifiex]
+> [ 1303.472573]  mwifiex_handle_rx_packet+0xb4/0x13c [mwifiex]
+> [ 1303.478243]  mwifiex_rx_work_queue+0x158/0x198 [mwifiex]
+> [ 1303.483734]  process_one_work+0x14c/0x28c
+> [ 1303.487845]  worker_thread+0x2cc/0x3d4
+> [ 1303.491680]  kthread+0x12c/0x208
+> [ 1303.495014]  ret_from_fork+0x10/0x20
 > 
-> Originally-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Co-developed-by: Xin Li (Intel) <xin@zytor.com>
-> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-> Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+> Add validation in the STA receive path to verify that disassoc/deauth
+> frames originate from the connected AP. Frames that fail this check
+> are discarded early, preventing them from reaching the MLME layer and
+> triggering WARN_ON().
+> 
+> This filtering logic is similar with that used in the
+> ieee80211_rx_mgmt_disassoc() function in mac80211, which drops
+> disassoc frames that don't match the current BSSID
+> (!ether_addr_equal(mgmt->bssid, sdata->vif.cfg.ap_addr)), ensuring
+> only relevant frames are processed.
+> 
+> Tested on:
+> - 8997 with FW 16.68.1.p197
+> 
+> Fixes: 36995892c271 ("wifi: mwifiex: add host mlme for client mode")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
 > ---
-> v7: No change.
+>  drivers/net/wireless/marvell/mwifiex/util.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> v6: Include asm/nmi.h to avoid compile errors. (LKP)
-> 
-> v5: Encode APIC_DM_NMI directly with the NMI-source vector.
-> ---
->  arch/x86/include/asm/apic.h      | 8 ++++++++
->  arch/x86/kernel/apic/hw_nmi.c    | 2 +-
->  arch/x86/kernel/cpu/mce/inject.c | 2 +-
->  arch/x86/kernel/kgdb.c           | 2 +-
->  arch/x86/kernel/nmi_selftest.c   | 2 +-
->  arch/x86/kernel/smp.c            | 2 +-
->  6 files changed, 13 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
-> index 32cdd81e5e45..5789df1708bd 100644
-> --- a/arch/x86/include/asm/apic.h
-> +++ b/arch/x86/include/asm/apic.h
-> @@ -14,6 +14,7 @@
->  #include <asm/msr.h>
->  #include <asm/hardirq.h>
->  #include <asm/io.h>
-> +#include <asm/nmi.h>
->  #include <asm/posted_intr.h>
+> diff --git a/drivers/net/wireless/marvell/mwifiex/util.c b/drivers/net/wireless/marvell/mwifiex/util.c
+> index 4c5b1de0e936..6882e90e90b2 100644
+> --- a/drivers/net/wireless/marvell/mwifiex/util.c
+> +++ b/drivers/net/wireless/marvell/mwifiex/util.c
+> @@ -459,7 +459,9 @@ mwifiex_process_mgmt_packet(struct mwifiex_private *priv,
+>  				    "auth: receive authentication from %pM\n",
+>  				    ieee_hdr->addr3);
+>  		} else {
+
+How about the other leg of this 'else' (ieee80211_is_auth())? Is it
+possible for these spurious frames to accidentally look like our AUTH
+frames?
+
+> -			if (!priv->wdev.connected)
+> +			if (!priv->wdev.connected ||
+> +			    !ether_addr_equal(ieee_hdr->addr3,
+
+"addr3" doesn't make it totally obvious to me what this actually means,
+nor that it's correct. Would ieee80211_get_SA(ieee_hdr) be equivalent?
+That seems a bit more descriptive. Or else maybe a short comment (e.g.,
+"ignore spurious management frames from other BSSIDs").
+
+It seems like it's correct, because this block already filters for
+specific frame types (auth, deauth, disassoc), but in isolation, it's
+not the most readable.
+
+Brian
+
+> +					      priv->curr_bss_params.bss_descriptor.mac_address))
+>  				return 0;
 >  
->  #define ARCH_APICTIMER_STOPS_ON_C3	1
-> @@ -23,6 +24,13 @@
->  #define APIC_EXTNMI_ALL		1
->  #define APIC_EXTNMI_NONE	2
->  
-> +/* Trigger NMIs with source information */
-> +#define TEST_NMI		(APIC_DM_NMI | NMIS_VECTOR_TEST)
-> +#define SMP_STOP_NMI		(APIC_DM_NMI | NMIS_VECTOR_SMP_STOP)
-> +#define BT_NMI			(APIC_DM_NMI | NMIS_VECTOR_BT)
-
-s/BT/BACKTRACE?
-
-> +#define KGDB_NMI		(APIC_DM_NMI | NMIS_VECTOR_KGDB)
-> +#define MCE_NMI			(APIC_DM_NMI | NMIS_VECTOR_MCE)
-
-IMO, NMI_xxx reads better, e.g. it's easier to see that code is sending an NMI
-at the call sites.
-
-> +
->  /*
->   * Debugging macros
->   */
-> diff --git a/arch/x86/kernel/apic/hw_nmi.c b/arch/x86/kernel/apic/hw_nmi.c
-> index 4e04f13d2de9..586f4b25feae 100644
-> --- a/arch/x86/kernel/apic/hw_nmi.c
-> +++ b/arch/x86/kernel/apic/hw_nmi.c
-> @@ -33,7 +33,7 @@ u64 hw_nmi_get_sample_period(int watchdog_thresh)
->  #ifdef arch_trigger_cpumask_backtrace
->  static void nmi_raise_cpu_backtrace(cpumask_t *mask)
->  {
-> -	__apic_send_IPI_mask(mask, NMI_VECTOR);
-> +	__apic_send_IPI_mask(mask, BT_NMI);
-
-This patch is buggy.  There are at least two implementations of ->send_IPI_mask()
-that this breaks:
-
-  uv_send_IPI_mask() = > uv_send_IPI_one():
-
-	if (vector == NMI_VECTOR)
-		dmode = APIC_DELIVERY_MODE_NMI;
-	else
-		dmode = APIC_DELIVERY_MODE_FIXED;
-
-
-and xen_send_IPI_mask() => xen_map_vector():
-
-	switch (vector) {
-	case RESCHEDULE_VECTOR:
-		xen_vector = XEN_RESCHEDULE_VECTOR;
-		break;
-	case CALL_FUNCTION_VECTOR:
-		xen_vector = XEN_CALL_FUNCTION_VECTOR;
-		break;
-	case CALL_FUNCTION_SINGLE_VECTOR:
-		xen_vector = XEN_CALL_FUNCTION_SINGLE_VECTOR;
-		break;
-	case IRQ_WORK_VECTOR:
-		xen_vector = XEN_IRQ_WORK_VECTOR;
-		break;
-#ifdef CONFIG_X86_64
-	case NMI_VECTOR:
-	case APIC_DM_NMI: /* Some use that instead of NMI_VECTOR */
-		xen_vector = XEN_NMI_VECTOR;
-		break;
-#endif
-	default:
-		xen_vector = -1;
-		printk(KERN_ERR "xen: vector 0x%x is not implemented\n",
-			vector);
-	}
-
-	return xen_vector;
-
-Looking at all of this again, shoving the NMI source information into the @vector
-is quite brittle.  Nothing forces implementations to handle embedded delivery
-mode information.
-
-One thought would be to pass a small struct (by value), and then provide macros
-to generate the structure for a specific vector.  That provides some amount of
-type safety and should make it a bit harder to pass in garbage, without making
-the callers any less readable.
-
-struct apic_ipi {
-	u8 vector;
-	u8 type;
-};
-
-#define APIC_IPI(v, t) ({ struct apic_ipi i = { .vector = v, .type = t }; i; })
-#define APIC_IPI_IRQ(vector) APIC_IPI(vector, APIC_DELIVERY_MODE_FIXED)
-#define APIC_IPI_NMI(vector) APIC_IPI(vector, APIC_DELIVERY_MODE_NMI)
-
-#define IPI_IRQ_WORK		APIC_IPI_IRQ(IRQ_WORK_VECTOR)
-#define IPI_POSTED_INTR_WAKEUP	APIC_IPI_IRQ(POSTED_INTR_WAKEUP_VECTOR)
-
-#define IPI_NMI_BACKTRACE	APIC_IPI_NMI(NMI_BACKTRACE_VECTOR)
-
-static __always_inline void __apic_send_IPI_self(struct apic_ipi ipi)
+>  			if (ieee80211_is_deauth(ieee_hdr->frame_control)) {
+> -- 
+> 2.34.1
+> 
 
