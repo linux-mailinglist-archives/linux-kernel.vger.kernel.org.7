@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-722084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61626AFD516
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:17:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5972AAFD521
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:18:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAE1B1AA5970
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:18:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B38994A0B66
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6142E6D27;
-	Tue,  8 Jul 2025 17:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32AB2E613A;
+	Tue,  8 Jul 2025 17:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vHK9ixeB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bNPqVxOO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3252BD590;
-	Tue,  8 Jul 2025 17:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D36F9E8;
+	Tue,  8 Jul 2025 17:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751995043; cv=none; b=cQAB/wuOA+y7mz11rhlDr03Pynfl6Rvq88ql2JOxpyBnj+gc4IE3DBSde2KPCyKSjLcNhG+eCzUnG9G2Q8YmJccFg1Crck6cPrvN/35/t3cfEu4jVlrMYI5qMPDH7C2YjaB6P3KIJQwhidNhStKWcq3x5QmaIQ+OddSVNk5PTWM=
+	t=1751995116; cv=none; b=nHFRByHeWvVnhLQZaSLiqESJEfxCmy8RwCnssofQKuhs4t3/y+vPikJr6ZmlyNM2YzISDMyVvTIS+NmnKkDrHjYK4WccO3v9zEDReBYpBrOP9+9afuwobXLND52oDcNv6j+VNUJxdfZFD+1cbaKACNKVn97PjMf9p3hOxwMxk5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751995043; c=relaxed/simple;
-	bh=dSu5wIS6tm9QkrChGU5NIlGU7yzj01Kywd286nRJenE=;
+	s=arc-20240116; t=1751995116; c=relaxed/simple;
+	bh=KKG1AAQueVdFPM/vfsxIw0NhkEpOgwE0gYOAigJgiP4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WCd2MlEJobGb2yXkhj4QPPZZGEPrVDKy/ogBxfo1L0NcGWzQyT74+cA3eFfGUqOX4N2de87D76rx/NXYzsYTAmOKQ/V/KfE1fm4k0AzEpqAk2Hf2FMCl1lACI+i64TSqPleD7lYcwxlEObDW1r6qlYmDZruJVtWtHcD2tSdfchk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vHK9ixeB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73C9CC4CEED;
-	Tue,  8 Jul 2025 17:17:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=owHSpQi5Yw27J8WpMECyVrFxNZ2zMerKDQontsVQqKr7g7TVnQmA9klGgymHsUbhU4nZaYr3Joc078wRIain0eZMGXMTlNI2M+NELHm35W9Ett39au5Ffj17wYkvKCmXnvHyXvH2u+X+E2gk1bocQaHjQWdlgj9h65CX3Co0Jrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bNPqVxOO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A547CC4CEED;
+	Tue,  8 Jul 2025 17:18:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751995042;
-	bh=dSu5wIS6tm9QkrChGU5NIlGU7yzj01Kywd286nRJenE=;
+	s=k20201202; t=1751995115;
+	bh=KKG1AAQueVdFPM/vfsxIw0NhkEpOgwE0gYOAigJgiP4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vHK9ixeBKJBgnlRJB3/c8/1g049h9diOfGHLh/knNOQHY/jzGTT9v5eXHYdVa1wBw
-	 Y+Ymw35IdCF+bZ+9TX2yUf3yOmBNzvQ4tp8zXbMD2OFRocpQJ84sNvzEyjlYmvMfIz
-	 nfEbJLzqHyoW5DCaX9kXQSQUOLZGLVElFh5jGnlPcd+LzfKotIRtxOv8k2WmUl4mNG
-	 rfMECk1PhXLw6D9tpj3ogWcKLzdLiKDEvOg63MbGdf4oRh9YlduHwcuPJ+JASYjSQ+
-	 FJVDOHH6ZBp0WdiG9QVLDj/tusMaVbmSLUMKTXhh3irxJ+IIbRg635wTYXOdFH8YIi
-	 ZHw1ZqSJu2T8g==
-Date: Tue, 8 Jul 2025 12:17:21 -0500
+	b=bNPqVxOOTnStBW+zjuA89urtUqIvJs8KzORFdcYAZ5XQsmhnt+Dfp3DgmWlgq6qJi
+	 pVNJt1TUDCCgh2YhLT9zcdN+FNYJSfBX296/jmWi803oZBzy8OzpLAumKK46q5+d2Q
+	 cW7JYzboS0kT41hSpFo8D5gQReBQZBbO0TCB3dniOZS1RN5poS1ZmSUkZ4F9BrfH7q
+	 iMOKzGW4sn5vuMD/0oY+gdkCEXXIL/shNJpuqY51YO6NQcwlAEhypCDFbOTliXgy9D
+	 sNZwWbEw2nxNM07UTJRmUS3LFLuGQ7RVUv+l30Dor/ICSlL/V7cXszqMEnyQfCMTdz
+	 GF5e1cJwzlVgA==
+Date: Tue, 8 Jul 2025 12:18:34 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konradybcio@kernel.org>,
 	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	David Airlie <airlied@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Krishna Manikandan <quic_mkrishn@quicinc.com>,
-	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
 	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	David Airlie <airlied@gmail.com>,
+	Krishna Manikandan <quic_mkrishn@quicinc.com>,
+	devicetree@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
 	Dmitry Baryshkov <lumag@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>, Sean Paul <sean@poorly.run>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	freedreno@lists.freedesktop.org,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
 	Bjorn Andersson <andersson@kernel.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	Thomas Zimmermann <tzimmermann@suse.de>,
 	Simona Vetter <simona@ffwll.ch>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH 2/4] dt-bindings: display/msm: describe DPU on SC8180X
-Message-ID: <175199504085.650526.5518508910045730007.robh@kernel.org>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+	Sean Paul <sean@poorly.run>, dri-devel@lists.freedesktop.org,
+	Marijn Suijten <marijn.suijten@somainline.org>
+Subject: Re: [PATCH 3/4] dt-bindings: display/msm: describe MDSS on SC8180X
+Message-ID: <175199511415.652005.7265579408818540562.robh@kernel.org>
 References: <20250704-mdss-schema-v1-0-e978e4e73e14@oss.qualcomm.com>
- <20250704-mdss-schema-v1-2-e978e4e73e14@oss.qualcomm.com>
+ <20250704-mdss-schema-v1-3-e978e4e73e14@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,18 +74,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250704-mdss-schema-v1-2-e978e4e73e14@oss.qualcomm.com>
+In-Reply-To: <20250704-mdss-schema-v1-3-e978e4e73e14@oss.qualcomm.com>
 
 
-On Fri, 04 Jul 2025 19:31:54 +0300, Dmitry Baryshkov wrote:
-> Describe the Display Processing Unit (DPU) as present on the SC8180X
-> platform.
+On Fri, 04 Jul 2025 19:31:55 +0300, Dmitry Baryshkov wrote:
+> Describe the Mobile Display SubSystem (MDSS) unit as present on the
+> SC8180X platform.
 > 
 > Reported-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > ---
->  .../bindings/display/msm/qcom,sc8180x-dpu.yaml     | 103 +++++++++++++++++++++
->  1 file changed, 103 insertions(+)
+>  .../bindings/display/msm/qcom,sc8180x-mdss.yaml    | 359 +++++++++++++++++++++
+>  1 file changed, 359 insertions(+)
 > 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
