@@ -1,284 +1,191 @@
-Return-Path: <linux-kernel+bounces-722480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2BC8AFDB21
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:27:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78ACDAFDB27
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6010F7B61C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:26:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F22557A65BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE22A25A357;
-	Tue,  8 Jul 2025 22:27:31 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5311C262FD3;
+	Tue,  8 Jul 2025 22:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q61I2oqU"
+Received: from mail-il1-f202.google.com (mail-il1-f202.google.com [209.85.166.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46826219A97
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 22:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26A525A2C7
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 22:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752013651; cv=none; b=Z5pigzItfp45J9prNkGQVtXNgxO2JLlzf8MqnRnsxNaPuNXgi2Hg2U/8ecSxfUCafc0100ko9xbYEEW74Jy32RrJ1r71OVulZcmyFqaHhhxirrSy80YJT4dRbylVoCckEutf9/+w9JIXqGWMuen+9yF02ykhDl3y+V9yVCX10HY=
+	t=1752014080; cv=none; b=Mxz0MuleGA3ZsgVTyZ4ldguoqZQwaF8wQrT9Yf9o4d8RG21Y8FDtYyJr3h2FskYjB6VYLrtE3cDaEap0+KtAuoiv31ZZp1cf6r0wUBlnF6EXeoi8zkibsO6LVDzTXOVtaMFA6xX1Z7AflPHhf2ldUyN2iq2OT2TtZwQ4lYSTNFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752013651; c=relaxed/simple;
-	bh=sayrtEG6guArnwkZuIBE5coX1Qj2xO25GUYAvkcYqu4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nX7rNjUCqbfWZBCBjlGBG+ZWNj0aKjfFn8c+XTAMpKDgqFBc3/6CIzC0/PZLzTWLsYQ2ozK6ij7qo0wDHPmrQJMRagXwJWqNYhw9hDsC8dZRiAs0OHclVbJR210FeOKYUOdnYCbpTKxjkAYL/3rxMwB4MBN31/M5NivpnOBjCOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-86d126265baso461702939f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 15:27:29 -0700 (PDT)
+	s=arc-20240116; t=1752014080; c=relaxed/simple;
+	bh=02xDzJQPlhBq0RU8lcHj/2RG+qyIWz4nKYd1naozQns=;
+	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=JS/iXSOVbV8Wo3Gf/CEY10ekIe/OUEojRMeMKv0qXOmYqEjk+wjj+6TgtzUrtk1roN9dnnC2Fdd2sjjWYYEU1e8ENEvjaqixO+hjZSxQrYxev2xeHdUIA6iFSZAqWtx31HbGC/oH/wRdvBkAeSC1WcvDHJ713EqHoZHgJtGc8qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q61I2oqU; arc=none smtp.client-ip=209.85.166.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
+Received: by mail-il1-f202.google.com with SMTP id e9e14a558f8ab-3ddba1b53e8so60843465ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 15:34:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752014077; x=1752618877; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=j/9FFTs3Hz/7yNjDy98C2EAojjbwb0TEz5q962JZJd0=;
+        b=q61I2oqU6t7TlFUuejfBAlRXMpmAZ7Y88nYyFUVvwWgUfS3spZQ2M3X/95is9uC3+z
+         LMVKgQMD+NWwSknrYWq3Rb4UkPk/AVRK7pobaKLfJTAd6nsi0fsG/u5BNhNmAbKPv8+V
+         z4zz+OjLynPwAnrqvFrbctC2wLfX0R1HhIr8reyxMY6Xouf15IZbHSrGQAIVZGHnyBwh
+         VyOnDUis/7wVtVVBA03qPFwrv9jK8ie/ji/brym+HWEu1LcZqz/ZJ1J4CtdPqujSRKO1
+         s/CzBthoM+bGlLDFUxJMKHqNfGH11HITo55nDTazdXlhPkJxBAn+iWWriAd/rvl/dSsz
+         ZQ8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752013648; x=1752618448;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d1xR6ooTAkYxfNV5IzQoDoKyH/Bd84tfDPZiEZOdJDM=;
-        b=N5KNs4wioXCE/FHsKXHxRSl/3ezNsWjc8pIdzcfWmiYCWYWXToP64gDoymkyxD5Wzc
-         +nfkSgz/47uLMwkDrjt0qxV1wyrJu03vLvJ5guBBnyH2YKCfmzuYr5zcf3KbYtEQ8OD+
-         XyAMH1oYY+dZ6fWAKCnstdvS8NHDJOH3TEI7p1yFNoNoRxaOfMgRhx/t8QcfubXzsIS7
-         0vOgWJBYMuEVqEJzMozHDeaS0o8TImo9PKHRbbl+yiMAIk1SuO4VIwq/qVz61TC6htHm
-         BQS+ODkc50x94xTg4KDaHnDxSE/o7ZGRq7vqAy8Rh104kO8SFfSECP9J6HbTioP5dnxM
-         fx5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWCIXQKO4XXoGX1gg1FoxCNvuHDL06sQ2T0ZVDAu8CbpCoNUR5SHwCl5Jjtk7ADKBVVvYrp+9F5uLhunzg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBW559ZYVCW3skqzTTqAloGudS2PviyZuFbwc3Vk5aInzkwnQW
-	Jjp4Y37kE1JD7vcoJFTdxFjez4/S0UKnBpxOYHYrq5HketUcCcue9yiBgoI6Uy1onacpA/w7S8g
-	WNXQZhxwgRtlmO8nOGd5lEXIlss/214goK0LT/SZe7uSpORtZR+XuuHeMuQ8=
-X-Google-Smtp-Source: AGHT+IGphRgLQSuvfExX3Per8u8Emz46SEksZLHuClAGnJGJe1jNRHv0GDjO4mtS4u6HbSTYgVJhfq6i3M51lYoxkUNn/mmzUh+k
+        d=1e100.net; s=20230601; t=1752014077; x=1752618877;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j/9FFTs3Hz/7yNjDy98C2EAojjbwb0TEz5q962JZJd0=;
+        b=avl8JD5nL7Be+jwZOIR8S4ZFyWDWJHVivUIcQ8ESXSnHfhM7Iej0J1Q7KHy+0pwkLv
+         3iyEgbu5LEFXAhoR5smWKQyp7DXufqhFiKCD7Bzz5OuJuUoRLU59ANnGfD4bABnKp2XJ
+         ZV1Nrs82hkR3zboKEV0g9fzgxxGwaBrST3DUdSV5hl8jqK00jwQ5L6ME4FfliaTYAFWl
+         BHOw+fcemT1vbCHCCzmo8eqNcCdvbH5TcZIaHThmNPJDtI50mdoaz764aax6dYwD93ut
+         JHYoe1tLrGGrLLJitVckdt2HyTXSuPVb7M0czpnvzndqr4AadZ97uQmlU+MGSwwvlm8Q
+         ZjiA==
+X-Forwarded-Encrypted: i=1; AJvYcCWuHWkQ0MvxY7D1gNrbg/Tpf1SWY1EefFTYJehC05UjpCYCobGueA7hwEqbUwYoOvxboAUQKDg5Oe70WTo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDF6QFcwgLk5Gwv3l0miXV6FoQQJBlMr5T97QyWSJCMLHW63az
+	fft5I14r38w+2aJIjxx+xg2uSLe+49Bqdrl8nP0ZpeRaaCLe+PciBqi6053UReWOFb5Oe0JVWBU
+	U7FzngMCnS2vT6XBdPJl9qMWsAw==
+X-Google-Smtp-Source: AGHT+IHW+RfduRT7VliGk050iQEqjU318xPGArkYZW5dZzAyyRBuwQAaT6oV8zuk0wkHYQ4WnuckwA/hmtfDS9hyaw==
+X-Received: from ilfg10.prod.google.com ([2002:a05:6e02:198a:b0:3df:30df:d2c4])
+ (user=coltonlewis job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6e02:339f:b0:3e0:4564:4ef9 with SMTP id e9e14a558f8ab-3e166ffbeb5mr5390855ab.4.1752014077049;
+ Tue, 08 Jul 2025 15:34:37 -0700 (PDT)
+Date: Tue, 08 Jul 2025 22:34:35 +0000
+In-Reply-To: <aGvwLIAN8rhxtA_V@J2N7QTR9R3> (message from Mark Rutland on Mon,
+ 7 Jul 2025 17:05:00 +0100)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2c8e:b0:879:26b0:1cca with SMTP id
- ca18e2360f4ac-8795b4d8c99mr46794639f.13.1752013648377; Tue, 08 Jul 2025
- 15:27:28 -0700 (PDT)
-Date: Tue, 08 Jul 2025 15:27:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686d9b50.050a0220.1ffab7.0020.GAE@google.com>
-Subject: [syzbot] [lsm?] [net?] WARNING in kvfree_call_rcu
-From: syzbot <syzbot+40bf00346c3fe40f90f2@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, paul@paul-moore.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Message-ID: <gsnt34b61fd0.fsf@coltonlewis-kvm.c.googlers.com>
+Subject: Re: [PATCH v3 01/22] arm64: cpufeature: Add cpucap for HPMN0
+From: Colton Lewis <coltonlewis@google.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: kvm@vger.kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
+	linux@armlinux.org.uk, catalin.marinas@arm.com, will@kernel.org, 
+	maz@kernel.org, oliver.upton@linux.dev, mizhang@google.com, 
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, 
+	shuah@kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 
-Hello,
+Mark Rutland <mark.rutland@arm.com> writes:
 
-syzbot found the following issue on:
+> On Thu, Jun 26, 2025 at 08:04:37PM +0000, Colton Lewis wrote:
+>> Add a capability for FEAT_HPMN0, whether MDCR_EL2.HPMN can specify 0
+>> counters reserved for the guest.
 
-HEAD commit:    7482bb149b9f Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=130c528c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3c06e3e2454512b3
-dashboard link: https://syzkaller.appspot.com/bug?extid=40bf00346c3fe40f90f2
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1257428c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15fe9582580000
+>> This required changing HPMN0 to an UnsignedEnum in tools/sysreg
+>> because otherwise not all the appropriate macros are generated to add
+>> it to arm64_cpu_capabilities_arm64_features.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f623d741d651/disk-7482bb14.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/483e23ae71b1/vmlinux-7482bb14.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/79b5baaa1b50/Image-7482bb14.gz.xz
+> I agree it's appropriate to mark ID_AA64DFR0_EL1.HPMN0 as an
+> UnsignedEnum. It follows the usual ID scheme per ARM DDI 0487 L.a
+> section D24.1.3, and zero means not present, so it must be unsigned.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+40bf00346c3fe40f90f2@syzkaller.appspotmail.com
+> Likewise, the value renames (UNPREDICTABLE => NI and DEF => IMP) look
+> fine to me.
 
-------------[ cut here ]------------
-ODEBUG: activate active (active state 1) object: 000000006921da73 object type: rcu_head hint: 0x0
-WARNING: CPU: 0 PID: 6718 at lib/debugobjects.c:615 debug_print_object lib/debugobjects.c:612 [inline]
-WARNING: CPU: 0 PID: 6718 at lib/debugobjects.c:615 debug_object_activate+0x344/0x460 lib/debugobjects.c:842
-Modules linked in:
-CPU: 0 UID: 0 PID: 6718 Comm: syz.0.17 Not tainted 6.16.0-rc4-syzkaller-g7482bb149b9f #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : debug_print_object lib/debugobjects.c:612 [inline]
-pc : debug_object_activate+0x344/0x460 lib/debugobjects.c:842
-lr : debug_print_object lib/debugobjects.c:612 [inline]
-lr : debug_object_activate+0x344/0x460 lib/debugobjects.c:842
-sp : ffff8000a03a76d0
-x29: ffff8000a03a76d0 x28: ffff8000976d7000 x27: dfff800000000000
-x26: ffff80008afc2480 x25: 0000000000000001 x24: ffff8000891ac9a0
-x23: 0000000000000003 x22: ffff80008b539420 x21: 0000000000000000
-x20: ffff80008afc2480 x19: ffff8000891ac9a0 x18: 00000000ffffffff
-x17: 3761643132393630 x16: ffff80008ae642c8 x15: ffff700011ede14c
-x14: 1ffff00011ede14c x13: 0000000000000004 x12: ffffffffffffffff
-x11: ffff700011ede14c x10: 0000000000ff0100 x9 : 5fa3c1ffaf0ff000
-x8 : 5fa3c1ffaf0ff000 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff8000a03a7018 x4 : ffff80008f766c20 x3 : ffff80008054d360
-x2 : 0000000000000000 x1 : 0000000000000201 x0 : 0000000000000000
-Call trace:
- debug_print_object lib/debugobjects.c:612 [inline] (P)
- debug_object_activate+0x344/0x460 lib/debugobjects.c:842 (P)
- debug_rcu_head_queue kernel/rcu/rcu.h:236 [inline]
- kvfree_call_rcu+0x4c/0x3f0 mm/slab_common.c:1953
- cipso_v4_sock_setattr+0x2f0/0x3f4 net/ipv4/cipso_ipv4.c:1914
- netlbl_sock_setattr+0x240/0x334 net/netlabel/netlabel_kapi.c:1000
- smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
- smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
- security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
- __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
- __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
- vfs_setxattr+0x158/0x2ac fs/xattr.c:321
- do_setxattr fs/xattr.c:636 [inline]
- file_setxattr+0x1b8/0x294 fs/xattr.c:646
- path_setxattrat+0x2ac/0x320 fs/xattr.c:711
- __do_sys_fsetxattr fs/xattr.c:761 [inline]
- __se_sys_fsetxattr fs/xattr.c:758 [inline]
- __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 739
-hardirqs last  enabled at (738): [<ffff80008055484c>] __up_console_sem kernel/printk/printk.c:344 [inline]
-hardirqs last  enabled at (738): [<ffff80008055484c>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
-hardirqs last disabled at (739): [<ffff80008aef73d4>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
-softirqs last  enabled at (668): [<ffff8000891992e0>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
-softirqs last  enabled at (668): [<ffff8000891992e0>] release_sock+0x14c/0x1ac net/core/sock.c:3776
-softirqs last disabled at (712): [<ffff800082c8970c>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-ODEBUG: active_state active (active state 1) object: 000000006921da73 object type: rcu_head hint: 0x0
-WARNING: CPU: 0 PID: 6718 at lib/debugobjects.c:615 debug_print_object lib/debugobjects.c:612 [inline]
-WARNING: CPU: 0 PID: 6718 at lib/debugobjects.c:615 debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
-Modules linked in:
-CPU: 0 UID: 0 PID: 6718 Comm: syz.0.17 Tainted: G        W           6.16.0-rc4-syzkaller-g7482bb149b9f #0 PREEMPT 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : debug_print_object lib/debugobjects.c:612 [inline]
-pc : debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
-lr : debug_print_object lib/debugobjects.c:612 [inline]
-lr : debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064
-sp : ffff8000a03a76c0
-x29: ffff8000a03a76d0 x28: ffff80008f671000 x27: dfff800000000000
-x26: 0000000000000003 x25: 0000000000000000 x24: ffff0000cb6fd7a8
-x23: 0000000000000001 x22: ffff80008afc2480 x21: ffff80008b539420
-x20: 0000000000000000 x19: ffff8000891ac9a0 x18: 00000000ffffffff
-x17: 3239363030303030 x16: ffff80008ae642c8 x15: ffff700011ede14c
-x14: 1ffff00011ede14c x13: 0000000000000004 x12: ffffffffffffffff
-x11: ffff700011ede14c x10: 0000000000ff0100 x9 : 5fa3c1ffaf0ff000
-x8 : 5fa3c1ffaf0ff000 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff8000a03a7018 x4 : ffff80008f766c20 x3 : ffff80008054d360
-x2 : 0000000000000000 x1 : 0000000000000201 x0 : 0000000000000000
-Call trace:
- debug_print_object lib/debugobjects.c:612 [inline] (P)
- debug_object_active_state+0x28c/0x350 lib/debugobjects.c:1064 (P)
- debug_rcu_head_queue kernel/rcu/rcu.h:237 [inline]
- kvfree_call_rcu+0x64/0x3f0 mm/slab_common.c:1953
- cipso_v4_sock_setattr+0x2f0/0x3f4 net/ipv4/cipso_ipv4.c:1914
- netlbl_sock_setattr+0x240/0x334 net/netlabel/netlabel_kapi.c:1000
- smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
- smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
- security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
- __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
- __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
- vfs_setxattr+0x158/0x2ac fs/xattr.c:321
- do_setxattr fs/xattr.c:636 [inline]
- file_setxattr+0x1b8/0x294 fs/xattr.c:646
- path_setxattrat+0x2ac/0x320 fs/xattr.c:711
- __do_sys_fsetxattr fs/xattr.c:761 [inline]
- __se_sys_fsetxattr fs/xattr.c:758 [inline]
- __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 765
-hardirqs last  enabled at (764): [<ffff80008055484c>] __up_console_sem kernel/printk/printk.c:344 [inline]
-hardirqs last  enabled at (764): [<ffff80008055484c>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
-hardirqs last disabled at (765): [<ffff80008aef73d4>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
-softirqs last  enabled at (668): [<ffff8000891992e0>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
-softirqs last  enabled at (668): [<ffff8000891992e0>] release_sock+0x14c/0x1ac net/core/sock.c:3776
-softirqs last disabled at (712): [<ffff800082c8970c>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-kvfree_call_rcu(): Double-freed call. rcu_head 000000006921da73
-WARNING: CPU: 0 PID: 6718 at mm/slab_common.c:1956 kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
-Modules linked in:
-CPU: 0 UID: 0 PID: 6718 Comm: syz.0.17 Tainted: G        W           6.16.0-rc4-syzkaller-g7482bb149b9f #0 PREEMPT 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
-lr : kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955
-sp : ffff8000a03a7730
-x29: ffff8000a03a7730 x28: 00000000fffffff5 x27: 1fffe000184823d3
-x26: dfff800000000000 x25: ffff0000c2411e9e x24: ffff0000dd88da00
-x23: ffff8000891ac9a0 x22: 00000000ffffffea x21: ffff8000891ac9a0
-x20: ffff8000891ac9a0 x19: ffff80008afc2480 x18: 00000000ffffffff
-x17: 0000000000000000 x16: ffff80008ae642c8 x15: ffff700011ede14c
-x14: 1ffff00011ede14c x13: 0000000000000004 x12: ffffffffffffffff
-x11: ffff700011ede14c x10: 0000000000ff0100 x9 : 5fa3c1ffaf0ff000
-x8 : 5fa3c1ffaf0ff000 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff8000a03a7078 x4 : ffff80008f766c20 x3 : ffff80008054d360
-x2 : 0000000000000000 x1 : 0000000000000201 x0 : 0000000000000000
-Call trace:
- kvfree_call_rcu+0x94/0x3f0 mm/slab_common.c:1955 (P)
- cipso_v4_sock_setattr+0x2f0/0x3f4 net/ipv4/cipso_ipv4.c:1914
- netlbl_sock_setattr+0x240/0x334 net/netlabel/netlabel_kapi.c:1000
- smack_netlbl_add+0xa8/0x158 security/smack/smack_lsm.c:2581
- smack_inode_setsecurity+0x378/0x430 security/smack/smack_lsm.c:2912
- security_inode_setsecurity+0x118/0x3c0 security/security.c:2706
- __vfs_setxattr_noperm+0x174/0x5c4 fs/xattr.c:251
- __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
- vfs_setxattr+0x158/0x2ac fs/xattr.c:321
- do_setxattr fs/xattr.c:636 [inline]
- file_setxattr+0x1b8/0x294 fs/xattr.c:646
- path_setxattrat+0x2ac/0x320 fs/xattr.c:711
- __do_sys_fsetxattr fs/xattr.c:761 [inline]
- __se_sys_fsetxattr fs/xattr.c:758 [inline]
- __arm64_sys_fsetxattr+0xc0/0xdc fs/xattr.c:758
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 789
-hardirqs last  enabled at (788): [<ffff80008055484c>] __up_console_sem kernel/printk/printk.c:344 [inline]
-hardirqs last  enabled at (788): [<ffff80008055484c>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2885
-hardirqs last disabled at (789): [<ffff80008aef73d4>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
-softirqs last  enabled at (668): [<ffff8000891992e0>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
-softirqs last  enabled at (668): [<ffff8000891992e0>] release_sock+0x14c/0x1ac net/core/sock.c:3776
-softirqs last disabled at (712): [<ffff800082c8970c>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
+>> Signed-off-by: Colton Lewis <coltonlewis@google.com>
 
+> I have one minor nit below, but either way:
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Thank you Mark
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+>> ---
+>>   arch/arm64/kernel/cpufeature.c | 8 ++++++++
+>>   arch/arm64/tools/cpucaps       | 1 +
+>>   arch/arm64/tools/sysreg        | 6 +++---
+>>   3 files changed, 12 insertions(+), 3 deletions(-)
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+>> diff --git a/arch/arm64/kernel/cpufeature.c  
+>> b/arch/arm64/kernel/cpufeature.c
+>> index b34044e20128..73a7dac4b6f6 100644
+>> --- a/arch/arm64/kernel/cpufeature.c
+>> +++ b/arch/arm64/kernel/cpufeature.c
+>> @@ -548,6 +548,7 @@ static const struct arm64_ftr_bits ftr_id_mmfr0[] = {
+>>   };
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+>>   static const struct arm64_ftr_bits ftr_id_aa64dfr0[] = {
+>> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE,  
+>> ID_AA64DFR0_EL1_HPMN0_SHIFT, 4, 0),
+>>   	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE,  
+>> ID_AA64DFR0_EL1_DoubleLock_SHIFT, 4, 0),
+>>   	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE,  
+>> ID_AA64DFR0_EL1_PMSVer_SHIFT, 4, 0),
+>>   	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE,  
+>> ID_AA64DFR0_EL1_CTX_CMPs_SHIFT, 4, 0),
+>> @@ -2896,6 +2897,13 @@ static const struct arm64_cpu_capabilities  
+>> arm64_features[] = {
+>>   		.matches = has_cpuid_feature,
+>>   		ARM64_CPUID_FIELDS(ID_AA64MMFR0_EL1, FGT, FGT2)
+>>   	},
+>> +	{
+>> +		.desc = "FEAT_HPMN0",
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+> Minor nit, but we can drop the "FEAT_" prefix here, for consistency with
+> other features (e.g. E0PD, FPMR).
 
-If you want to undo deduplication, reply with:
-#syz undup
+> Mark.
+
+Will do.
+
+>> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+>> +		.capability = ARM64_HAS_HPMN0,
+>> +		.matches = has_cpuid_feature,
+>> +		ARM64_CPUID_FIELDS(ID_AA64DFR0_EL1, HPMN0, IMP)
+>> +	},
+>>   #ifdef CONFIG_ARM64_SME
+>>   	{
+>>   		.desc = "Scalable Matrix Extension",
+>> diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
+>> index 10effd4cff6b..5b196ba21629 100644
+>> --- a/arch/arm64/tools/cpucaps
+>> +++ b/arch/arm64/tools/cpucaps
+>> @@ -39,6 +39,7 @@ HAS_GIC_CPUIF_SYSREGS
+>>   HAS_GIC_PRIO_MASKING
+>>   HAS_GIC_PRIO_RELAXED_SYNC
+>>   HAS_HCR_NV1
+>> +HAS_HPMN0
+>>   HAS_HCX
+>>   HAS_LDAPR
+>>   HAS_LPA2
+>> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
+>> index 8a8cf6874298..d29742481754 100644
+>> --- a/arch/arm64/tools/sysreg
+>> +++ b/arch/arm64/tools/sysreg
+>> @@ -1531,9 +1531,9 @@ EndEnum
+>>   EndSysreg
+
+>>   Sysreg	ID_AA64DFR0_EL1	3	0	0	5	0
+>> -Enum	63:60	HPMN0
+>> -	0b0000	UNPREDICTABLE
+>> -	0b0001	DEF
+>> +UnsignedEnum	63:60	HPMN0
+>> +	0b0000	NI
+>> +	0b0001	IMP
+>>   EndEnum
+>>   UnsignedEnum	59:56	ExtTrcBuff
+>>   	0b0000	NI
+>> --
+>> 2.50.0.727.gbf7dc18ff4-goog
+
 
