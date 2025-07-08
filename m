@@ -1,176 +1,106 @@
-Return-Path: <linux-kernel+bounces-721130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18544AFC516
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:09:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 996CFAFC510
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:08:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B1417A3421
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:07:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85C4B165CE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D6B10A1F;
-	Tue,  8 Jul 2025 08:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD6129B8E8;
+	Tue,  8 Jul 2025 08:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HH9b9zyS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD3B25771;
-	Tue,  8 Jul 2025 08:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="iGiE3/mt"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F63298241;
+	Tue,  8 Jul 2025 08:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751962132; cv=none; b=U7Akr0wFj1PLfJDjGk4TTvZm9fZyIhDJtCJp7lE2Bu6mKlNQ8JeIGv0rs88+b71nOr2r8cYaF60pf5dPpyaz2FUngnQThCCz5bSIWuatUigmJ8HP8MVUyyolYsiHaA2mpHOCfrmVKoXSbcJmQ+jK/fIVIK93J+nIi3syFpNiIJY=
+	t=1751962082; cv=none; b=gy8IKFV8L8wHnDpg3KtfExZBWfHpfbRw5I5Z5QkI7wWK2GQlTTuDO1L8HuMiMecnkxVA4/SNQKhdOGnBQL/fMadCpQQyFdGRy5HA/hE5iXn3BAkrqBiuQFtVYZGaHDF8c6/3GLPGQNvVTA14j74/35nidtgCT3nLu3B7UNiVIiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751962132; c=relaxed/simple;
-	bh=CxGaPumrMjC0oxYrMzbOrzWMuM5aNk0eA0CKtbvHsR0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=UHQUz6CITbyd72oqi8tcUlNSRIsuJqmQZHDry03qM5MGniaorLtKEk1WC2SiZTBVGXX0Prt4ZUliHWG6aMBTGBYHqiv1T1fCGEacDmguPXLFlegN6z8JTeJefqRF2ojSh3GyiOTbuFaJ8c2XtXTHnBAU3KvWlPBW7aS26WilCOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HH9b9zyS; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751962131; x=1783498131;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=CxGaPumrMjC0oxYrMzbOrzWMuM5aNk0eA0CKtbvHsR0=;
-  b=HH9b9zySsyo97zbDqr4jsNRm9EGXF3G6d5jJIjpuz0k6CDBg9LD+/Tva
-   64w0oM56hmXV7/4IvQZiUISb6dNfCW7ceZQEMiaR+wPYxTcsyxp1kL3m5
-   NcTW/sBujOd8ntCitoJe44F0TvVsIkFsq6CkTQEmpzn+F0Je5TUJD0H6O
-   LxVhP9sF5x3uXJVaeUqrE8ZNnSBsrmse90oNdVDAuV7s43tj39exgwuMO
-   /aW/MimqhiknakQPucxh2uo+qqas/L4QM5wPvMreRZmnEXXSXh0C6yOOV
-   x9ztI9cGngbicSVkBrv4SWx1HQiHoQxRB9mUTPUn2bnPYfflGE0NkKhkJ
-   w==;
-X-CSE-ConnectionGUID: GmfaoKFkTCuYzCt8fmDJjA==
-X-CSE-MsgGUID: /jmBWe8LT6GhwhDPQjGXLQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54120051"
-X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
-   d="scan'208";a="54120051"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 01:08:49 -0700
-X-CSE-ConnectionGUID: 10ZksXfBSMC0VrpGeFtokA==
-X-CSE-MsgGUID: /xYcWmRXSF6ZZfXblFSdew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
-   d="scan'208";a="159703122"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.247])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 01:08:48 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 8 Jul 2025 11:07:31 +0300 (EEST)
-To: Jackie Dong <xy-jackie@139.com>
-cc: hansg@kernel.org, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, dongeg1@lenovo.com
-Subject: Re: [PATCH v2] lenovo-wmi-hotkey: Fixed a kernel error report for
-In-Reply-To: <20250708071138.15602-1-xy-jackie@139.com>
-Message-ID: <78394a09-6ca2-afc4-3b35-de4ea8e998cd@linux.intel.com>
-References: <20250708071138.15602-1-xy-jackie@139.com>
+	s=arc-20240116; t=1751962082; c=relaxed/simple;
+	bh=NlrG7QqGm7wR/wrY8wo7HgU04SaVXKz4MABIdQZOs2I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qIlNn0OsqWm2sZfXV93LKrFqvfBhwbnWGq3Rz0u2g+K9vPK+O+3k0n+2KWcYb1g2qi+LXp/lWc+BI89h3IIExFyLzYQ9jR22mDHMQuLlnfrujksINxvN11iDbbo/SJWAsvp/oHUZGXneQ0Z3ygr9y0FmbTB36LLK7ttU0wEbNU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=iGiE3/mt; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.95.67.184] (unknown [167.220.238.152])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 4CF43201B1DC;
+	Tue,  8 Jul 2025 01:07:58 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4CF43201B1DC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1751962080;
+	bh=KwkfFs2vLJ8vSoG8oq34D65UXBTEOk2Om+KZvcayo+I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iGiE3/mtEVhW3AFScY6fDEBv0IRp6XXlxd0c8Jn9xF2S9xwANoLrOQbYVGNioZj8O
+	 qn/6cjI/4GphafuPC5dddM7nmXZMVP2TOAy2bLdt7RXImlQ9pE0hBefQkZ//sYH/5p
+	 Eiuyew2Qh6jApsJfSc6q5Oj04J1j2bxhywwfMnP4=
+Message-ID: <1e48ca0d-8e59-4a92-889d-c4c48b4bb02b@linux.microsoft.com>
+Date: Tue, 8 Jul 2025 13:37:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] tools/hv: fcopy: Fix irregularities with size of ring
+ buffer
+To: "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, Long Li <longli@microsoft.com>,
+ Michael Kelley <mhklinux@outlook.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Olaf Hering <olaf@aepfle.de>, Saurabh Sengar <ssengar@linux.microsoft.com>
+References: <20250708080319.3904-1-namjain@linux.microsoft.com>
+Content-Language: en-US
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <20250708080319.3904-1-namjain@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 8 Jul 2025, Jackie Dong wrote:
 
-Hi,
 
-Shortlog in Subject seems incomplete
-
-> Not all of Lenovo non-ThinkPad devices support both mic mute LED(on F4)
-> and audio mute LED(on F1). Some of them only support one mute LED, some
-
-Add spaces after (
-
-> of them don't have any mute LED. Add a decision to judge this device
-> support mute LED or not. Without this decision, not support both of mic
-> mute LED and audio mute LED Lenovo non-ThinkPad brand devices (including
-> Ideapad/Yoga/Xiaoxin/Gaming/ThinkBook, etc.) will report a failed message
-> with error -5.
+On 7/8/2025 1:33 PM, Naman Jain wrote:
+> Size of ring buffer, as defined in uio_hv_generic driver, is no longer
+> fixed to 16 KB. This creates a problem in fcopy, since this size was
+> hardcoded. With the change in place to make ring sysfs node actually
+> reflect the size of underlying ring buffer, it is safe to get the size
+> of ring sysfs file and use it for ring buffer size in fcopy daemon.
+> Fix the issue of disparity in ring buffer size, by making it dynamic
+> in fcopy uio daemon.
 > 
-> Signed-off-by: Jackie Dong <xy-jackie@139.com>
-> Suggested-by: Hans de Goede <hansg@kernel.org>
-> 
+> Cc: stable@vger.kernel.org
+> Fixes: 0315fef2aff9 ("uio_hv_generic: Align ring size to system page")
+> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
 > ---
-> Changes in v2:
->  - Add warning message and then return 0 if the device support mute LED 
->    abnormaly, based on Hans suggestion and Armin previous patch. 
-> 
->  .../x86/lenovo-wmi-hotkey-utilities.c         | 30 +++++++++++++------
->  1 file changed, 21 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-> index 89153afd7015..334c12f2896d 100644
-> --- a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-> +++ b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-> @@ -122,26 +122,35 @@ static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type led_type, struct
->  		return -EIO;
->  
->  	union acpi_object *obj __free(kfree) = output.pointer;
-> -	if (obj && obj->type == ACPI_TYPE_INTEGER)
-> +	if (obj && obj->type == ACPI_TYPE_INTEGER) {
 
-Could you please reverse this logic and handle errors first.
+Noticed that I missed adding change logs. Adding them now.
 
->  		led_version = obj->integer.value;
-> -	else
-> -		return -EIO;
->  
-> -	wpriv->cdev[led_type].max_brightness = LED_ON;
-> -	wpriv->cdev[led_type].flags = LED_CORE_SUSPENDRESUME;
-> +		/*
-> +		 * Output parameters define: 0 means mute LED is not supported, Non-zero means
-> +		 * mute LED can be supported.
-> +		 */
-> +		if (led_version == 0)
-> +			return 0;
-> +	} else {
-> +		return -EIO;
-> +	}
->  
->  	switch (led_type) {
->  	case MIC_MUTE:
-> -		if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER)
-> -			return -EIO;
-> +		if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER) {
-> +			pr_warn("This device MIC_MUTE LED doesn't support now.\n");
-> +			return 0;
-> +		}
->  
->  		wpriv->cdev[led_type].name = "platform::micmute";
->  		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_micmute_led_set;
->  		wpriv->cdev[led_type].default_trigger = "audio-micmute";
->  		break;
->  	case AUDIO_MUTE:
-> -		if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER)
-> -			return -EIO;
-> +		if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER) {
-> +			pr_warn("This device AUDIO_MUTE LED doesn't support now.\n");
+Changes since v2:
+https://lore.kernel.org/all/20250701104837.3006-1-namjain@linux.microsoft.com/
+* Removed fallback mechanism to default size, to keep fcopy behavior
+consistent (Long's suggestion). If ring sysfs file is not present for
+some reason, things are already bad and its the right thing for fcopy to
+abort.
 
-Both of these warnings have the same grammar flaws and need to be 
-rephrased.
+Changes since v1:
+https://lore.kernel.org/all/20250620070618.3097-1-namjain@linux.microsoft.com/
 
-> +			return 0;
-> +		}
->  
->  		wpriv->cdev[led_type].name = "platform::mute";
->  		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_audiomute_led_set;
-> @@ -152,6 +161,9 @@ static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type led_type, struct
->  		return -EINVAL;
->  	}
->  
-> +	wpriv->cdev[led_type].max_brightness = LED_ON;
-> +	wpriv->cdev[led_type].flags = LED_CORE_SUSPENDRESUME;
-> +
->  	err = devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
->  	if (err < 0) {
->  		dev_err(dev, "Could not register mute LED %d : %d\n", led_type, err);
+* Removed unnecessary type casting in malloc for desc variable (Olaf)
+* Added retry mechanisms to avoid potential race conditions (Michael)
+* Moved the logic to fetch ring size to a later part in main (Michael)
+
+
+>   tools/hv/hv_fcopy_uio_daemon.c | 82 +++++++++++++++++++++++++++++++---
+>   1 file changed, 75 insertions(+), 7 deletions(-)
 > 
 
--- 
- i.
 
+Regards,
+Naman
 
