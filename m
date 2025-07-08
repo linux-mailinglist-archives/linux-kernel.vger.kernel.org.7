@@ -1,163 +1,117 @@
-Return-Path: <linux-kernel+bounces-720858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB47BAFC141
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:18:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA573AFC149
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C55D7420F7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:17:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 205B24272B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3C223C4FF;
-	Tue,  8 Jul 2025 03:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5A823535F;
+	Tue,  8 Jul 2025 03:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="DIYryuX7"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AqUFzjF3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34F32343C9;
-	Tue,  8 Jul 2025 03:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCA022FE15;
+	Tue,  8 Jul 2025 03:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751944641; cv=none; b=Xc6KoWkCnR57xnAvIRTgoRFags6CmNt7A/czPI1hU3p9q5/g4Q39S3UcnITu2u0gh1KkhTS7Jx6ixmsLK6iFUctK5Yy8qJJ4mzo13k9G2p0ftHQ7y94U8y3NtlLScIETu9x4h7zmxS3okjKlKyox6CnLyZxxvGCB5XxzA65eYfE=
+	t=1751944746; cv=none; b=hudP3TFTfUqnea5J7RTN20IJYwa5GLpeSVrH+RNWqWavUOzxe1YNmfEsOgXPJBF34unYY5T4oVq17L1KQvFM7EDdR5r/3IdYH2Vex9vgjFtUUc87UEGDLUhcpnd1DnzrJdjlL9RjnMSbn7vpsErjivHn4bKTq11mcrJl9MaIToU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751944641; c=relaxed/simple;
-	bh=yaM4TO7Trs1zxekdm1BdALVDkOi1WzDqa6qkyV8slns=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MJqUMST+j1TTSdNSdIVrJdWHnD51vU8AOv/7JKgQkuSLBzvY+G++z6i+JWWdzsEZ0ZpNUC0f35voVhN+k0XxsXJgObYH6E34fXZB4Ttgi/amFNxOWnOEtAoDbp5M9SyWkyglnutQvAzH8cEALb69Ys/ncbLNGfKzRwy0TZgnvBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=DIYryuX7; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1751944639; x=1783480639;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=yaM4TO7Trs1zxekdm1BdALVDkOi1WzDqa6qkyV8slns=;
-  b=DIYryuX7D/RIUHaWi7Ha+6aOic+z1uo1FSmk9DPPNFq7PCRYA/0Bm89O
-   AHXqEZ8inbWToAeyf/GH734MIrZxbuinCYyvYCKT46LVsoSUjgNZgVBm8
-   rZB/sLkWDu2bwAUgHBEGS/orIqq6/o1wF12yH9LYWNDMYTlGGlZoP4x7M
-   2nG68e+lswKRHfGzby81Z8MKHMlB3Mo8vyKlnkP6Em1ru9Vivwsd6ZuBd
-   KE+g8lFQXWZi70ccyFRyP0J2jt0t8jlhqE1WIpU+1Q+1FoyrP1JLhpHrs
-   tjyPFPipMs8g4wzyUZkUGxNiDSKso2WVQ2CVFv+c2Idyhe4w4aKIQ6dzD
-   Q==;
-X-CSE-ConnectionGUID: cVEISvaDRiehsZPvdpmZNg==
-X-CSE-MsgGUID: +EB7KnAmQT2nOQYvsqhkOQ==
-X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
-   d="scan'208";a="43198304"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 Jul 2025 20:17:17 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 7 Jul 2025 20:16:47 -0700
-Received: from pop-os.microchip.com (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Mon, 7 Jul 2025 20:16:47 -0700
-From: <Tristram.Ha@microchip.com>
-To: Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>,
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>
-CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Marek Vasut <marex@denx.de>,
-	<UNGLinuxDriver@microchip.com>, <devicetree@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tristram Ha
-	<tristram.ha@microchip.com>
-Subject: [PATCH net-next 6/6 v2] net: dsa: microchip: Setup fiber ports for KSZ8463
-Date: Mon, 7 Jul 2025 20:16:48 -0700
-Message-ID: <20250708031648.6703-7-Tristram.Ha@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250708031648.6703-1-Tristram.Ha@microchip.com>
-References: <20250708031648.6703-1-Tristram.Ha@microchip.com>
+	s=arc-20240116; t=1751944746; c=relaxed/simple;
+	bh=8NDk+I1a3VSOWF9fO8M5RCaQI/zdXTl7PcjpnESkpb8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gFYVqbD2HL/DmVlVtIS4/4itYQMyXMwgjMtF5legk2C0um/btX9zkxVozscvhCRiKA7qOEUCfyrCA5NDWKRjPLvMx35EyMCFFPGoK890LzmupfKT72agnXxarCXK2gKHJYW3jRSdmbTfLudFH0LNq3uXFxj478J9MkFgOWY/mZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AqUFzjF3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96A22C4CEF6;
+	Tue,  8 Jul 2025 03:19:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751944745;
+	bh=8NDk+I1a3VSOWF9fO8M5RCaQI/zdXTl7PcjpnESkpb8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AqUFzjF3QVPJa7tu1iHs5me2odWP4ZHAcJtJvMqPM7yvkDGrXK38MEyy3JjLVe96k
+	 LrBFi1QWR4kDD4SbQ+9tHDSbHAM6tcwfTx8OYtBOL/f9llh1pUyafoiDZVAqwP66E3
+	 v5Yh7OcJfgbZtX1NjDmpMJ7M43AsjVakLrszfQsvm59nHPjnlDiNBR5mc3g/ql53T0
+	 VptQ02EKvm4fyn42hhR4WxwFwj3EP7eW7X2TfYB00t7N8PSggE91xUeBybziE+MMSh
+	 dKKMgBtqKdFxvv7Tbrcqu9eUvzcl2k4DVVPwGkMUnPerV4D4ibDPn+SeVUD61Jy81A
+	 11U1lnb4vAnLg==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55516abe02cso3853916e87.0;
+        Mon, 07 Jul 2025 20:19:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6DQYns/IKP7yAxyS2J+dgYksSTduDV+AGX3kOOjskw1Ba2W5o+mZK5QR6bXOOjaNQxkmggOf4RpsubwnZYA==@vger.kernel.org, AJvYcCVJp9j/mFHV2MTMBk6Qbqoxmlt4V2miy7AqYR5lpurvOaDvwfRG7mG2vQOxT9VAjlPEBp0LezlE6DAklOMA@vger.kernel.org, AJvYcCVMWDSjDGjV1CBCAgBlsn5Ry475aRi5SUpdxf/uc/CSX0MWvCMrdI8xEK0pkU5OsCptVJ/Hr37gaVV+@vger.kernel.org, AJvYcCW3xKwyxXCpt9MdFiTMmhKogoO7XQwD1TKACtPkl9HztXS9uDoVp++/VukaJMMYz0B95dYjK0MXBJRr@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX5OCZY+xJp7api+0pePPY2jRMdzLN63nTWgkPrXTelK9LLmEu
+	cZ/OgejeSPkZp6ttpJnKxIcdsH0eaEjDPLuNw5ODEPmIWOFguqyAlCNOp+WEevyE1846S5KRrcm
+	2D1kjS4iN7ha+iEFGZFpMLPuSonJUmxs=
+X-Google-Smtp-Source: AGHT+IGvbXSHFQEmu9KySW2VKjlzReLbWNXccH/jW/03YsyONy30/49vibN95ETPJPHoofk70uksd2LDdhA+mi6mm3c=
+X-Received: by 2002:a05:6512:340d:b0:553:2969:1d54 with SMTP id
+ 2adb3069b0e04-557f89b1acbmr355730e87.8.1751944743972; Mon, 07 Jul 2025
+ 20:19:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20250624-more-qseecom-v3-0-95205cd88cc2@oss.qualcomm.com> <20250624-more-qseecom-v3-1-95205cd88cc2@oss.qualcomm.com>
+In-Reply-To: <20250624-more-qseecom-v3-1-95205cd88cc2@oss.qualcomm.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 8 Jul 2025 13:18:52 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXGi55_bRD_Q4n6hKO6-fCUHrWfpKD29Rc+r+gv1odHm9w@mail.gmail.com>
+X-Gm-Features: Ac12FXxCeYfV_TiBR5zCeFARm-H3LC_AZIXbKqNHVztOBDcfNmRsAK5SDEfPa-I
+Message-ID: <CAMj1kXGi55_bRD_Q4n6hKO6-fCUHrWfpKD29Rc+r+gv1odHm9w@mail.gmail.com>
+Subject: Re: [PATCH v3 1/8] efi: efivars: don't crash in efivar_set_variable{,_locked}
+ in r/o case
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Maximilian Luz <luzmaximilian@gmail.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Johan Hovold <johan@kernel.org>, Steev Klimaszewski <steev@kali.org>, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-efi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Tristram Ha <tristram.ha@microchip.com>
+On Tue, 24 Jun 2025 at 12:14, Dmitry Baryshkov
+<dmitry.baryshkov@oss.qualcomm.com> wrote:
+>
+> If efivar implementation doesn't provide write support, then calling
+> efivar_set_variable() (e.g. when PM8xxx RTC driver tries to update the
+> RTC offset) will crash the system. Prevent that by checking that
+> set_variable callback is actually provided and fail with an
+> EFI_WRITE_PROTECTED if it is not.
+>
+> Fixes: 472831d4c4b2 ("efi: vars: Add thin wrapper around EFI get/set variable interface")
+> Reported-by: Johan Hovold <johan@kernel.org>
+> Closes: https://lore.kernel.org/r/aFlps9iUcD42vN4w@hovoldconsulting.com
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>  drivers/firmware/efi/vars.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
 
-The fiber ports in KSZ8463 cannot be detected internally, so it requires
-specifying that condition in the device tree.  Like the one used in
-Micrel PHY the port link can only be read and there is no write to the
-PHY.  The driver programs registers to operate fiber ports correctly.
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
 
-The PTP function of the switch is also turned off as it may interfere the
-normal operation of the MAC.
+Feel free to merge this along with the rest of the series.
 
-Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
----
- drivers/net/dsa/microchip/ksz8.c       | 26 ++++++++++++++++++++++++++
- drivers/net/dsa/microchip/ksz_common.c |  3 +++
- 2 files changed, 29 insertions(+)
-
-diff --git a/drivers/net/dsa/microchip/ksz8.c b/drivers/net/dsa/microchip/ksz8.c
-index 904db68e11f3..1207879ef80c 100644
---- a/drivers/net/dsa/microchip/ksz8.c
-+++ b/drivers/net/dsa/microchip/ksz8.c
-@@ -1715,6 +1715,7 @@ void ksz8_config_cpu_port(struct dsa_switch *ds)
- 	const u32 *masks;
- 	const u16 *regs;
- 	u8 remote;
-+	u8 fiber_ports = 0;
- 	int i;
- 
- 	masks = dev->info->masks;
-@@ -1745,6 +1746,31 @@ void ksz8_config_cpu_port(struct dsa_switch *ds)
- 		else
- 			ksz_port_cfg(dev, i, regs[P_STP_CTRL],
- 				     PORT_FORCE_FLOW_CTRL, false);
-+		if (p->fiber)
-+			fiber_ports |= (1 << i);
-+	}
-+	if (ksz_is_ksz8463(dev)) {
-+		/* Setup fiber ports. */
-+		if (fiber_ports) {
-+			regmap_update_bits(ksz_regmap_16(dev),
-+					   reg16(dev, KSZ8463_REG_CFG_CTRL),
-+					   fiber_ports << PORT_COPPER_MODE_S,
-+					   0);
-+			regmap_update_bits(ksz_regmap_16(dev),
-+					   reg16(dev, KSZ8463_REG_DSP_CTRL_6),
-+					   COPPER_RECEIVE_ADJUSTMENT, 0);
-+		}
-+
-+		/* Turn off PTP function as the switch's proprietary way of
-+		 * handling timestamp is not supported in current Linux PTP
-+		 * stack implementation.
-+		 */
-+		regmap_update_bits(ksz_regmap_16(dev),
-+				   reg16(dev, KSZ8463_PTP_MSG_CONF1),
-+				   PTP_ENABLE, 0);
-+		regmap_update_bits(ksz_regmap_16(dev),
-+				   reg16(dev, KSZ8463_PTP_CLK_CTRL),
-+				   PTP_CLK_ENABLE, 0);
- 	}
- }
- 
-diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-index c08e6578a0df..b3153b45ced9 100644
---- a/drivers/net/dsa/microchip/ksz_common.c
-+++ b/drivers/net/dsa/microchip/ksz_common.c
-@@ -5441,6 +5441,9 @@ int ksz_switch_register(struct ksz_device *dev)
- 						&dev->ports[port_num].interface);
- 
- 				ksz_parse_rgmii_delay(dev, port_num, port);
-+				dev->ports[port_num].fiber =
-+					of_property_read_bool(port,
-+							      "micrel,fiber-mode");
- 			}
- 			of_node_put(ports);
- 		}
--- 
-2.34.1
-
+> diff --git a/drivers/firmware/efi/vars.c b/drivers/firmware/efi/vars.c
+> index 3700e98697676d8e6f04f061f447391503f9abba..11c5f785c09364f61642d82416822cb2e1a027fd 100644
+> --- a/drivers/firmware/efi/vars.c
+> +++ b/drivers/firmware/efi/vars.c
+> @@ -227,6 +227,8 @@ efi_status_t efivar_set_variable_locked(efi_char16_t *name, efi_guid_t *vendor,
+>         setvar = __efivars->ops->set_variable_nonblocking;
+>         if (!setvar || !nonblocking)
+>                  setvar = __efivars->ops->set_variable;
+> +       if (!setvar)
+> +               return EFI_WRITE_PROTECTED;
+>
+>         return setvar(name, vendor, attr, data_size, data);
+>  }
+>
+> --
+> 2.39.5
+>
+>
 
