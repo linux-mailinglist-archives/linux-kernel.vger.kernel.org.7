@@ -1,115 +1,97 @@
-Return-Path: <linux-kernel+bounces-721748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C88EAAFCD63
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:22:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E021AFCD6C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B87A564AA7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:22:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4822D485E00
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DE42E0405;
-	Tue,  8 Jul 2025 14:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="Sd6+l4ET"
-Received: from forward502d.mail.yandex.net (forward502d.mail.yandex.net [178.154.239.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1841A2E06F8;
+	Tue,  8 Jul 2025 14:22:25 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC552E03F1;
-	Tue,  8 Jul 2025 14:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CC82DAFD8;
+	Tue,  8 Jul 2025 14:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751984525; cv=none; b=Jz8gGb2ftybKWt3Jz5tvcfuVW56RqhGZW6hONDpokApcHUdkdaE73yy98/iXHUaX9cyKE4nX0P/TcUCW8HGDvPvl87R4cviH6svQRzvUOFEquZSOZBPYWSTeXEK8+Ml7ERWS3oscnmfis7axZFdnJHKIjmiY7IBzzUIuaKNIpKs=
+	t=1751984544; cv=none; b=ZVhYoI6N5qqUhSfbgTXMBPvQTkPapQmJr8Yv+y22iYoGJV/3uoU7mtzFjJFPK+1DaBa0JbWdig/1JRAMF5uPJvHGdFWqCqox/EqeopSSoaan/+WJnLAgwCMQKhaknNGKV4d3z4IFgQ+5sos6ctbqrGzKGTzA6XTs99C3oAmdxEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751984525; c=relaxed/simple;
-	bh=DH6dfVAww/N3ud1HbrtA6oaDaN+wQqsJ2R2Jm6z9coY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b89pah88nhGj10sdY/chvLCI2QIY+4lkYJ95sdLhtQrX0vELIYwAkge+1xRCVIOorjXYCwOFHZid8GeBtwVeKVfGIoSe/nOdh3hs2kBOjhTx2Rso9MzVVhRYqVKaFIxs9GCh51t0qzuCCh29XVp0KxIbK3GY6PyQZtDIv5Uuxow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=Sd6+l4ET; arc=none smtp.client-ip=178.154.239.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-88.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-88.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:e0cb:0:640:3e34:0])
-	by forward502d.mail.yandex.net (Yandex) with ESMTPS id 6A82061208;
-	Tue,  8 Jul 2025 17:21:54 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-88.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id nLidoEgMOKo0-Z2M3B1ca;
-	Tue, 08 Jul 2025 17:21:53 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1751984513;
-	bh=oLyaLZbxnfJRaG45+ieXAi9qVb5FUUkzxh78rrfH43E=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=Sd6+l4ETRk2kbA4Ht8CpdvvJAu78Qc9M6TGMzsN3mciY3M8o5YOGdHLRI+xgDoi31
-	 qijbMtWq5vzjm22/pxf0uCOjOxxEgXfotVbylobrCJwRgfo4d2CFH+98WSpwTi5eEc
-	 FbkiWHAu9P5/+UiCz+TkfiRtLvf9SOxAWtzyFIFA=
-Authentication-Results: mail-nwsmtp-smtp-production-main-88.klg.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Tue, 8 Jul 2025 17:21:47 +0300
-From: Onur <work@onurozkan.dev>
-To: "Benno Lossin" <lossin@kernel.org>
-Cc: "Boqun Feng" <boqun.feng@gmail.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <gary@garyguo.net>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>, <dakr@kernel.org>,
- <peterz@infradead.org>, <mingo@redhat.com>, <will@kernel.org>,
- <longman@redhat.com>, <felipe_life@live.com>, <daniel@sedlak.dev>,
- <bjorn3_gh@protonmail.com>
-Subject: Re: [PATCH v5 2/3] implement ww_mutex abstraction for the Rust tree
-Message-ID: <20250708172147.1d694eb1@nimda.home>
-In-Reply-To: <DB62ZN1LTO31.1HVWDLAWJWVM8@kernel.org>
-References: <20250621184454.8354-1-work@onurozkan.dev>
-	<20250621184454.8354-3-work@onurozkan.dev>
-	<DASY7BECFRCT.332X5ZHZMV2W@kernel.org>
-	<aFlQ7K_mYYbrG8Cl@Mac.home>
-	<DATYHYJVPL3L.3NLMH7PPHYU9@kernel.org>
-	<aFlpFQ4ivKw81d-y@Mac.home>
-	<DAU0ELV91E2Q.35FZOII18W44J@kernel.org>
-	<20250707163913.5ffc046d@nimda.home>
-	<DB5XIWGZ8U36.1VB58YBJFL7OT@kernel.org>
-	<20250707210613.2fd5bb55@nimda.home>
-	<DB62ZN1LTO31.1HVWDLAWJWVM8@kernel.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-unknown-linux-gnu)
+	s=arc-20240116; t=1751984544; c=relaxed/simple;
+	bh=aYV11MEcb7GflSp3VMmGl1ZdpHTzcEkEZNG0Yj98xnw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aVhX0Ed73zou6M0+JPXiBmX7Wu4QpqVJ1E6QSYSvBIs2uQ3An48f5N702SYFtEMuw3Lg0jiEkvocc517KsTj2eWUge0uMi0LoDZtH/FJNaRhL/wJV5/XN/GbZpsiYLN4FA9VGUdQE6CCODA4qPeq9Mp8qq8U83z943QJtt5GHgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from ofsar (unknown [116.232.48.207])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 1397F340F90;
+	Tue, 08 Jul 2025 14:22:15 +0000 (UTC)
+From: Yixun Lan <dlan@gentoo.org>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	p.zabel@pengutronix.de,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	Alex Elder <elder@riscstar.com>
+Cc: Yixun Lan <dlan@gentoo.org>,
+	heylenay@4d2.org,
+	inochiama@outlook.com,
+	guodong@riscstar.com,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v12 0/6] reset: spacemit: add K1 reset support
+Date: Tue,  8 Jul 2025 22:22:05 +0800
+Message-ID: <175159801109.1876819.10159207553931838865.b4-ty@gentoo.org>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250702113709.291748-1-elder@riscstar.com>
+References: <20250702113709.291748-1-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 07 Jul 2025 21:48:07 +0200
-"Benno Lossin" <lossin@kernel.org> wrote:
 
-> >> > Instead of `begin` and `custom`, why not something like this:
-> >> >
-> >> > 	let (a, c, d) = ctx.init()
-> >> > 	    .lock(a)
-> >> >             .lock(b)
-> >> >             .lock(c)
-> >> >             .unlock(b)
-> >> >             .lock(d)
-> >> >             .finish();
-> >> >
-> >> > Instead of `begin`, `init` would be better naming to imply `fini`
-> >> > on the C side, and `unlock` instead of `custom` would make the
-> >> > intent clearer when dropping locks mid chain.
+On Wed, 02 Jul 2025 06:37:02 -0500, Alex Elder wrote:
+> This series adds reset controller support for the SpacemiT K1 SoC.
+> A SpacemiT reset controller is implemented as an auxiliary device
+> associated with a clock controller (CCU).  A new header file
+> holds definitions used by both the clock and reset drivers.
 > 
-> Also, I'm not really fond of the name `init`, how about `enter`?
-
-I don't have a strong feeling on any of them, they are all the same
-at some point. The reason why I suggested `init` was to keep it as
-close/same as possible to the C implementation so people with C
-knowledge would adapt to Rust implementation easier and quicker.
-
-> Oh yeah the name was just a placeholder.
+> The only change in this version is that three of the the four resets
+> associated with each PCIe port have been renamed, to align better
+> with their corresponding clocks.  This affects patches 1 and 5.
+> For example, for PCIe port 0:
 > 
-> The advantage of custom is that the user can do anything in the
-> closure.
+> [...]
 
-Right, that is a good plus compared to alternatives. :)
+Applied, thanks!
 
-Regards,
-Onur
+[6/6] riscv: dts: spacemit: add reset support for the K1 SoC
+      https://github.com/spacemit-com/linux/commit/2c0cf4fed0f440200833ddfc24ea02de2cdc217c
+
+Best regards,
+-- 
+Yixun Lan
 
 
