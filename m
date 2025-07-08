@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-720797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B50AFC079
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:07:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02AABAFC07B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AFA37AEE9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:05:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8646F1884BFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246972116E0;
-	Tue,  8 Jul 2025 02:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D18120F062;
+	Tue,  8 Jul 2025 02:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="HrxfvQZM"
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="ha7WJgDe"
 Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E891B4236
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 02:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D5E20A5E5
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 02:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751940424; cv=none; b=ftClIrj80z766bOqPUZ0o/4pFN8v8R2KON0WKkTSyJWWJ06x4qjuUgYTQbVRh7r86aZqbyXN3NEO4RoHy5r0lFvw9NYJIfYs/pCIFQ2Zay363vowa3sZAhS/fLC9aYydGX6xsMECcRSE1oOAkEp93HhK3L1E9NcKSfnlnpF7spo=
+	t=1751940458; cv=none; b=GQcMB4vTzrF1uPe0GgOHt9CrLu41f1y+SEpTpGPz70GkTLIpJV0K7+YQZSviVz5+1hRFwXH6jD3Rcj0TN+LgQMXSjJ4yLzvlBXQDitUId+t+qSAoKa59ZAnRtVhT4ecPfx5dry0JMdkHBJUOnsS/BXXy6K7x3lewhsqDHdTW9TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751940424; c=relaxed/simple;
-	bh=22aHBNm2PspGv0EtsJjFnQgJ+VWdLmQz4v9JsyG/8T0=;
+	s=arc-20240116; t=1751940458; c=relaxed/simple;
+	bh=kN2rGg2gNBfzoLzarmFrc1jj2Kw72Baij/wc1vu6ems=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uOMKFsikWj59wu5OVF04cDr2flL05R73sIn43qw4XShBPFdb/KZ95jzXXr2/UfNjyu9NTvj7rj4vAkk5HoLI5I3+Epvm39myRKbfmYxGzQaWspo00kH9w1Em6cIX3Pbcgv1TmfvHpw11W3aoMr/tKZDjNXSvw2tB0JhPzxbfLDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=HrxfvQZM; arc=none smtp.client-ip=203.29.241.158
+	 Content-Type:MIME-Version; b=nvfy550S8OL7iJd6f6BnWtd9WpRjLBaBXtdfe/ndpWLukTcMrktLIHi0/QOheNrlM62ERa4uownc+um+QCpro44eVB5Z61APbcSB1ITg9EbuTxPjoL0cmiNHFnt9wO+lTMEUkpR2U0yMmP2HCh6grwovRA+cR7FANy1GpmqAtWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=ha7WJgDe; arc=none smtp.client-ip=203.29.241.158
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1751940420;
-	bh=22aHBNm2PspGv0EtsJjFnQgJ+VWdLmQz4v9JsyG/8T0=;
+	d=codeconstruct.com.au; s=2022a; t=1751940454;
+	bh=kN2rGg2gNBfzoLzarmFrc1jj2Kw72Baij/wc1vu6ems=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=HrxfvQZMQqxlV3pXxRhc8vFKhJqUddUqywz7ltue+x0o9avwg4/C/7Tyu2+x8F4+Y
-	 uLSwX3Soo59Ol+gx+Sl2/YWPD0VqA1iXFh89OzNL3I1wZd2G6Iyza4EkoQDnZNhw71
-	 CPF4OhNGGJJno0BrvTmasL+ExIxwNKGS1rNFAV459k2bOlMBvkBQZbUEV/Em19/nnr
-	 2IBpFcdfreG7UHRahfoXaFWMAYJ8NcTW97QpghRjVsMZuaC3X54FL6q70XNGsMZJuc
-	 ksk8J/tDPelZVLBHwgMdHzanvSFHN7eikJMJP5P3DqigxlvntjJbs0Q3YgJGoCDOuL
-	 RGiqDY0xEqS3A==
+	b=ha7WJgDe74gsOm+qeUSIHRg1ZoYq42zJfJfEFAdPLWCIehOh1LgUHY3Lu7ki+g3VL
+	 ooAPifuT5592xzW4KaZw5xgMa4XxL+qNaTjlis5u+x1SQvCv4DDgpqdWMbB8KtLLGK
+	 jnio7lHVl0gMqGHN9PhT+nK3TN9DTvVaTuzhQLh/TZCHrD66aSYjhqQ0vG5fLY0Q8E
+	 YvldycIztxQPZQU5Ai8h/1FqPz4xXhaL8KMHFLLk7NMQdUPh82hUvV1Ggv3/9CauXB
+	 05e+Rd10x9SxSsqfmnvkBTmJ111HvMq9x3VTctmTsiKdLUqq6+fjTFHyVQMqwl79va
+	 luKLA74fgVsnQ==
 Received: from [192.168.68.112] (unknown [180.150.112.153])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 08D9A6ADE6;
-	Tue,  8 Jul 2025 10:06:59 +0800 (AWST)
-Message-ID: <6ae95d064de0c1b6333c234e461eae3e8da80168.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v2 09/10] soc: aspeed: lpc-snoop: Consolidate channel
- initialisation
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 148376ADE6;
+	Tue,  8 Jul 2025 10:07:34 +0800 (AWST)
+Message-ID: <24c957d3e63bf6dcd58b0807df79350d4b111926.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v2 10/10] soc: aspeed: lpc-snoop: Lift channel config to
+ const structs
 From: Andrew Jeffery <andrew@codeconstruct.com.au>
 To: Jean Delvare <jdelvare@suse.de>
 Cc: linux-aspeed@lists.ozlabs.org, Joel Stanley <joel@jms.id.au>, Henry
@@ -54,12 +54,12 @@ Cc: linux-aspeed@lists.ozlabs.org, Joel Stanley <joel@jms.id.au>, Henry
  Ninad Palsule <ninad@linux.ibm.com>, Patrick Venture <venture@google.com>, 
  Robert Lippert <roblip@gmail.com>, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
-Date: Tue, 08 Jul 2025 11:36:59 +0930
-In-Reply-To: <20250704171315.30300f59@endymion>
+Date: Tue, 08 Jul 2025 11:37:33 +0930
+In-Reply-To: <20250704182348.53808e0f@endymion>
 References: 
 	<20250616-aspeed-lpc-snoop-fixes-v2-0-3cdd59c934d3@codeconstruct.com.au>
-	 <20250616-aspeed-lpc-snoop-fixes-v2-9-3cdd59c934d3@codeconstruct.com.au>
-	 <20250704171315.30300f59@endymion>
+	 <20250616-aspeed-lpc-snoop-fixes-v2-10-3cdd59c934d3@codeconstruct.com.au>
+	 <20250704182348.53808e0f@endymion>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.46.4-2 
@@ -72,56 +72,120 @@ MIME-Version: 1.0
 
 Hi Jean,
 
-On Fri, 2025-07-04 at 17:13 +0200, Jean Delvare wrote:
-
+On Fri, 2025-07-04 at 18:23 +0200, Jean Delvare wrote:
 >=20
-> > Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
-> > ---
-> > =C2=A0drivers/soc/aspeed/aspeed-lpc-snoop.c | 51 +++++++++++++++++-----=
--------------
-> > =C2=A01 file changed, 24 insertions(+), 27 deletions(-)
-> >=20
-> > diff --git a/drivers/soc/aspeed/aspeed-lpc-snoop.c b/drivers/soc/aspeed=
-/aspeed-lpc-snoop.c
-> > index 8dbc9d4158b89f23bda340f060d205a29bbb43c3..9f88c5471b1b6d85f6d9e19=
-70240f3d1904d166c 100644
-> > --- a/drivers/soc/aspeed/aspeed-lpc-snoop.c
-> > +++ b/drivers/soc/aspeed/aspeed-lpc-snoop.c
-> > @@ -294,12 +294,21 @@ static void aspeed_lpc_disable_snoop(struct aspee=
-d_lpc_snoop *lpc_snoop,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0kfifo_free(&channel->fi=
-fo);
+> > @@ -189,28 +215,27 @@ static int aspeed_lpc_snoop_config_irq(struct asp=
+eed_lpc_snoop *lpc_snoop,
 > > =C2=A0}
 > > =C2=A0
-> > +static void aspeed_lpc_snoop_remove(struct platform_device *pdev)
-> > +{
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct aspeed_lpc_snoop *lpc=
-_snoop =3D dev_get_drvdata(&pdev->dev);
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Disable both snoop channe=
-ls */
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0aspeed_lpc_disable_snoop(lpc=
-_snoop, ASPEED_LPC_SNOOP_INDEX_0);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0aspeed_lpc_disable_snoop(lpc=
-_snoop, ASPEED_LPC_SNOOP_INDEX_1);
+> > =C2=A0__attribute__((nonnull))
+> > -static int aspeed_lpc_enable_snoop(struct aspeed_lpc_snoop *lpc_snoop,
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device *dev,
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum aspeed_lpc_snoo=
+p_index index, u16 lpc_port)
+> > +static int aspeed_lpc_enable_snoop(struct device *dev,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct aspeed_=
+lpc_snoop *lpc_snoop,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct aspeed_=
+lpc_snoop_channel *channel,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct a=
+speed_lpc_snoop_channel_cfg *cfg,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u16 lpc_port)
+> > =C2=A0{
 >=20
-> For consistency with the probe function, I think it would make sense to
-> use a for loop here as well, instead of hard-coding the channel number
-> to 2. That way, no change will be needed if a future device supports
-> more than 2 channels.
+> I'm confused by this new calling convention. With lpc_snoop and index,
+> you could already retrieve the aspeed_lpc_snoop_channel struct and the
+> aspeed_lpc_snoop_channel_cfg struct. I can't see the benefit of the
+> change.=C2=A0
+>=20
 
-You're right, but for now I'm not bothered by it. I'm going to leave it
-as is, as the motivation for the loop in the probe() path was to
-consolidate the logic required for both channels. This one is an easy
-thing to fix down the track.
+My motivation for this choice was to isolate the association between
+indexes into the arrays to the call-site of aspeed_lpc_enable_snoop(),
+rather than have that information spread through the implementation.
+
+I considered the approaches you outline next before posting v2, so
+while they have their merits as well, I'm going to chalk this one up to
+personal preference on my part.
+
+> It even forces you to add an index field to struct
+> aspeed_lpc_snoop_channel_cfg, which would otherwise not be needed.
+>=20
+> If you prefer to pass cfg instead of index as a parameter, that does
+> not imply passing channel too. You can get the index from the cfg (if
+> you decide to keep it in that struct), and then the channel from index.
+>=20
+> Or you could even pass only the channel (to be consistent with
+> aspeed_lpc_disable_snoop), if you set channel->cfg before calling this
+> function. Again this implies keeping index in struct
+> aspeed_lpc_snoop_channel_cfg.
+
+*snip*
 
 >=20
-> None if this is blocking though, so:
+> > -
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Enable LPC snoop channel =
+at requested port */
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0regmap_update_bits(lpc_snoop=
+->regmap, HICR5, hicr5_en, hicr5_en);
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0regmap_update_bits(lpc_snoop=
+->regmap, SNPWADR, snpwadr_mask,
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 lpc_port << snpwadr_shift);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0regmap_set_bits(lpc_snoop->r=
+egmap, HICR5, cfg->hicr5_en);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0regmap_update_bits(lpc_snoop=
+->regmap, SNPWADR, cfg->snpwadr_mask,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0lpc_port << cfg->snpwadr_shift);
 >=20
-> Acked-by: Jean Delvare <jdelvare@suse.de>
->=20
+> It is a good practice to align the second line on the opening
+> parenthesis of the first line (as was done originally).
 
-Thanks.
+Thanks, I've fixed this up.
+
+*snip*
+
+> > =C2=A0
+> > =C2=A0static int aspeed_lpc_snoop_probe(struct platform_device *pdev)
+> > @@ -339,6 +326,8 @@ static int aspeed_lpc_snoop_probe(struct platform_d=
+evice *pdev)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rc)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0return rc;
+> > =C2=A0
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0static_assert(ARRAY_SIZE(cha=
+nnel_cfgs) =3D=3D ARRAY_SIZE(lpc_snoop->chan),
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0"Broken implementation assumption regarding cfg count"=
+);
+>=20
+> Both also need to be equal to ASPEED_LPC_SNOOP_INDEX_MAX + 1, right?
+> Otherwise the loop below would break. But it turns out that both arrays
+> are now declared that way, so it just has to be true. This makes me
+> believe that this static assert is no longer needed.
+
+My intent was to convey that we require the arrays to be the same
+length, as opposed to being declared such that they happen to have the
+same length. It's a property of the design rather than the
+implementation. All static_assert()s should be obviously true; IMO
+their purpose is to communicate requirements and constrain change.
+
+With the view to getting these patches applied I intend to keep it.
+
+Thanks,
 
 Andrew
 
