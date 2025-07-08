@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-720802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71FE5AFC089
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:10:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED2E0AFC08C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FE364A3899
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:10:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C47BC189F281
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D974224AFA;
-	Tue,  8 Jul 2025 02:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C6922D9E9;
+	Tue,  8 Jul 2025 02:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pPo9N8pX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fPnh51Sg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95D121883F;
-	Tue,  8 Jul 2025 02:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E1D21883F;
+	Tue,  8 Jul 2025 02:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751940622; cv=none; b=Lcpuj26v0YFzwoqS6hJVrfl8oEnMtNpkju0kndpQREfKrSUpb2UI+X59Z3l56g4Z2D1dNV6ygKGCSWXevQdHFADLHPU+xhgLEYC0K2UKCh3B558NWU2ay01lZhy4wELxnLvnrxOhIsmrkkf8iaqZvqibCInl/U33bIZHf2pDg70=
+	t=1751940625; cv=none; b=F1EWTVjhy8jzvoPFf01303hOipir9QZvH79pKiQFneom3oZPw+iVpn06zr+Y63W/EJqaEk/AK0CH7YZw51mK5x8BRhUW0rCfqxwXYMRqGfi9r1UNMM9Bfw8H1tEV/nssMnFD/Ns8dNARzVdmiS4JXrqN/Z9YRV6TdKIyKilVP58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751940622; c=relaxed/simple;
-	bh=D1XosDQD7NQ3cebl06yz9aWaBYeGK4bi2jdbXCc0FqM=;
+	s=arc-20240116; t=1751940625; c=relaxed/simple;
+	bh=MruwqvZc5LP3jAJGI/pDLVRJ8Xn8JFxY+XCfzAUT7eQ=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ioKfb2/oqv7pPdakJTbzwEB9NTEEgc+9SLk4Dtc9eMsWO5I9ZdlpRIiqImfTiANEwXMMidrFWYuk5tNAG1OmKzTXpmuziHuLuMZJ8NOM81ffxih+31uvES/X0b6mTDcereQA98z5qjgag4Igy675SCkvI8spmSETVY/+yB4wWY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pPo9N8pX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DD7CC4CEF4;
-	Tue,  8 Jul 2025 02:10:21 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=JoQBPowH0RI55qOkkkxS5f/xa1uKXlqL3TYGUITq6M+xdI+jQlpY1ih2tAo68+IDD8zICv5LVP6/7Cn52XHE6YaWjCDOWhXV84re4lGPngYbs4X8vQVaScMLi1CNNrGSgZQgeuYG9OKrmAyLL6YuS6xURJXW/fTAl0Si0hFNKZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fPnh51Sg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DA8CC4CEE3;
+	Tue,  8 Jul 2025 02:10:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751940621;
-	bh=D1XosDQD7NQ3cebl06yz9aWaBYeGK4bi2jdbXCc0FqM=;
+	s=k20201202; t=1751940625;
+	bh=MruwqvZc5LP3jAJGI/pDLVRJ8Xn8JFxY+XCfzAUT7eQ=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=pPo9N8pXtB+a2Xfyj3rgjziQvPp2gmVwHKHmYOg9C98XteSVjkrwdHuejFMRTTgQH
-	 KV2Va8Prx0VsRg0oAqdExnXE+zCPvT775rRLgQTWJQT4nSpNI1NHxLZ2RA2T/Nkxuh
-	 /sDtGmKcCZjQWCplbgkxTHJc0Ii3mVY8GZbtg/cxUHNuhlz6CQtSupYJq7fOIov+Mz
-	 XDqvw75pTqHCyrzPxZwVRHZrMWSyn5TX0/tvC7VUsYdMGOKWU6Fet/oGamTNXvR2xJ
-	 Vp6KHva4lYR5z1Z8Du6dH71CJW/jnpr4w5GcIKlDJTvAxpudjT20xry+9tE87xmO6q
-	 LMP1mFYeL3S9g==
+	b=fPnh51SgGgorkAiOWQC+Ez/dG7yG5Z9hX/BuTC9sJInmjiW4BYoAeG4ki7+vk2RMi
+	 AiySCwBMg0r3nITCBDOfxcMt+1G5x1qfOIUv7QVkSvrZMGwPh76XBJOYtFWE7z5uOI
+	 X9o1LM2P1rK1IuxQW4TYFXQ4Gj8kUlk/o4s3/Q2PI/ghO18gVIcuCp3FvB2PN0cxSw
+	 Pcjq17ppoJNrFTG6rh2SxZ0HmCOpTWuiHFI2jJ7NYBVJOAlSoitb32ebpfpRd8Hg89
+	 +ds9kkI48/pja3SvFmippX37+3uHNSopqw+w6rVA2No4Ti/IsWmsUszmLJos8nnJ6J
+	 zwOPbI9LkwgFg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD9238111DD;
-	Tue,  8 Jul 2025 02:10:45 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D6F38111DD;
+	Tue,  8 Jul 2025 02:10:48 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,63 +51,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [net-next, v3 00/10] Introducing Broadcom BNGE Ethernet Driver
+Subject: Re: [PATCH net-next v2 0/7] netpoll: Factor out functions from
+ netpoll_send_udp() and add ipv6 selftest
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175194064425.3543842.3986154137074104629.git-patchwork-notify@kernel.org>
-Date: Tue, 08 Jul 2025 02:10:44 +0000
-References: <20250701143511.280702-1-vikas.gupta@broadcom.com>
-In-Reply-To: <20250701143511.280702-1-vikas.gupta@broadcom.com>
-To: Vikas Gupta <vikas.gupta@broadcom.com>
+ <175194064702.3543842.10191674038121919735.git-patchwork-notify@kernel.org>
+Date: Tue, 08 Jul 2025 02:10:47 +0000
+References: <20250702-netpoll_untagle_ip-v2-0-13cf3db24e2b@debian.org>
+In-Reply-To: <20250702-netpoll_untagle_ip-v2-0-13cf3db24e2b@debian.org>
+To: Breno Leitao <leitao@debian.org>
 Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, andrew+netdev@lunn.ch, shuah@kernel.org,
  netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- michael.chan@broadcom.com, pavan.chebbi@broadcom.com,
- vsrama-krishna.nemani@broadcom.com
+ linux-kselftest@vger.kernel.org, kernel-team@meta.com
 
 Hello:
 
 This series was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue,  1 Jul 2025 14:34:58 +0000 you wrote:
-> Hi,
+On Wed, 02 Jul 2025 03:06:32 -0700 you wrote:
+> Refactors the netpoll UDP transmit path to improve code clarity,
+> maintainability, and protocol-layer encapsulation.
 > 
-> This patch series introduces the Ethernet driver for Broadcom’s
-> BCM5770X chip family, which supports 50/100/200/400/800 Gbps
-> link speeds. The driver is built as the bng_en.ko kernel module.
-> 
-> To keep the series within a reviewable size (~5K lines of code), this initial
-> submission focuses on the core infrastructure and initialization, including:
-> 1) PCIe support (device IDs, probe/remove)
-> 2) Devlink support
-> 3) Firmware communication mechanism
-> 4) Creation of network device
-> 5) PF Resource management (rings, IRQs, etc. for netdev & aux dev)
+> Function netpoll_send_udp() has more than 100 LoC, which is hard to
+> understand and review. After this patchset, it has only 32 LoC, which is
+> more manageable.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next,v3,01/10] bng_en: Add PCI interface
-    https://git.kernel.org/netdev/net-next/c/74715c4ab0fa
-  - [net-next,v3,02/10] bng_en: Add devlink interface
-    https://git.kernel.org/netdev/net-next/c/9099bfa1158a
-  - [net-next,v3,03/10] bng_en: Add firmware communication mechanism
-    https://git.kernel.org/netdev/net-next/c/7037d1d89796
-  - [net-next,v3,04/10] bng_en: Add initial interaction with firmware
-    https://git.kernel.org/netdev/net-next/c/fb7d8b61c1f7
-  - [net-next,v3,05/10] bng_en: Add ring memory allocation support
-    https://git.kernel.org/netdev/net-next/c/27544c0ecb4c
-  - [net-next,v3,06/10] bng_en: Add backing store support
-    https://git.kernel.org/netdev/net-next/c/29c5b358f385
-  - [net-next,v3,07/10] bng_en: Add resource management support
-    https://git.kernel.org/netdev/net-next/c/627c67f038d2
-  - [net-next,v3,08/10] bng_en: Add irq allocation support
-    https://git.kernel.org/netdev/net-next/c/18a975389fcc
-  - [net-next,v3,09/10] bng_en: Initialize default configuration
-    https://git.kernel.org/netdev/net-next/c/3fa9e977a0cd
-  - [net-next,v3,10/10] bng_en: Add a network device
-    https://git.kernel.org/netdev/net-next/c/13a68c1ed754
+  - [net-next,v2,1/7] netpoll: Improve code clarity with explicit struct size calculations
+    https://git.kernel.org/netdev/net-next/c/4b52cdfcce21
+  - [net-next,v2,2/7] netpoll: factor out UDP checksum calculation into helper
+    https://git.kernel.org/netdev/net-next/c/01dae7a61c1a
+  - [net-next,v2,3/7] netpoll: factor out IPv6 header setup into push_ipv6() helper
+    https://git.kernel.org/netdev/net-next/c/839388f39aee
+  - [net-next,v2,4/7] netpoll: factor out IPv4 header setup into push_ipv4() helper
+    https://git.kernel.org/netdev/net-next/c/8c27639dbe54
+  - [net-next,v2,5/7] netpoll: factor out UDP header setup into push_udp() helper
+    https://git.kernel.org/netdev/net-next/c/cacfb1f4e9f6
+  - [net-next,v2,6/7] netpoll: move Ethernet setup to push_eth() helper
+    https://git.kernel.org/netdev/net-next/c/eb4e773f13fb
+  - [net-next,v2,7/7] selftests: net: Add IPv6 support to netconsole basic tests
+    https://git.kernel.org/netdev/net-next/c/3dc6c76391cb
 
 You are awesome, thank you!
 -- 
