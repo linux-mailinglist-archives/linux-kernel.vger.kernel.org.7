@@ -1,103 +1,84 @@
-Return-Path: <linux-kernel+bounces-722114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15826AFD581
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:35:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 991D9AFD584
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F5A53B57F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:35:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97031567263
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A74A2E92D4;
-	Tue,  8 Jul 2025 17:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8A02E6D0B;
+	Tue,  8 Jul 2025 17:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IV4bEwXA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="kGJYjVWq"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28AB02E7F07;
-	Tue,  8 Jul 2025 17:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8E82E5B2F;
+	Tue,  8 Jul 2025 17:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751996053; cv=none; b=DRxJ0+7xmUejBe6CXJcwCadYkqSHjZhoBzxilnL/gaB6Ee8etxTw/2f8anQXQKbRkS5TUa1ot/4r2T7fBLVtja9PQxu8UiR7nlTxkxNjp6jNLi5d64F5rS9pqtFNopseXpac9XmmAKeaFY4IgU6UpQ/OnkGPqVGH5n5z2P6C8UM=
+	t=1751996073; cv=none; b=i0X4OIm3gdt8vp0rAPml7BdIruFNqKKmpjIpOJIWKnYB+1KSkIea2cEYz1SdwoOp0EHZzZIpqpUezad5DsHfXSZTdiEnZfVjAFXv/ehu2ejPiQPSEdFC2T2jFSEdu91EKI4AVIaJl4xVSzCPt/BMcHjuesJTCBxPcYH4lpr9lg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751996053; c=relaxed/simple;
-	bh=k98cYHJAeNwc/m55APAuSnpJZEiaO0Z2w/xQyAaUaQw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Oc7DQpcIWPBH/qbIWR0n/iBqrbPCnMeRNJfALBP9HmsTOv6gc63HwXtQthuGhF7AoXx7rratdZeL3eiApmROa1VaAIavrmDjg+OvD3BCEHHRS4FsXLjO9HjV2SMhnWA2mru/l8QXf7Eya74zw7sG3PwKfmNoAnPFRcIN6HpJqXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IV4bEwXA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07334C4CEF9;
-	Tue,  8 Jul 2025 17:34:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751996053;
-	bh=k98cYHJAeNwc/m55APAuSnpJZEiaO0Z2w/xQyAaUaQw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IV4bEwXAd6QJ9CTtBJgb/ii1pxuW6HZTrwYYMCijBt7Ysj8qoqFDRF7YUlNqZdeqb
-	 S392K0a3iUUf0fjSdZ4eZJQxRgbHt86LJLl8rKCBDKRXkD5osgbROfDZRT+BCjBC6M
-	 iBlOzcV9lZ8WwcRZyAfmagRmaN1Z/VkIt02dIHdEvZSREfD5tCIvCokY1nOtbD5gVI
-	 jFGuFL6NRzHtu8wXDlAPfowCBGj7TB1ph5mq0DYeMeQtVVHvg4CZmD5bxK5pInLC7h
-	 U3v0uIC0JfRoQReLHaoUA4ktriybfCEv3ZXOYYfQ9jsfVZzzt4lurEizyt26Aeotz9
-	 QzxyLMZxNLSdw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uZCCp-00Dqhw-6n;
-	Tue, 08 Jul 2025 18:34:11 +0100
-From: Marc Zyngier <maz@kernel.org>
-To: linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Toan Le <toan@os.amperecomputing.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v2 13/13] cpu/hotplug: Remove unused cpuhp_state CPUHP_PCI_XGENE_DEAD
-Date: Tue,  8 Jul 2025 18:34:04 +0100
-Message-Id: <20250708173404.1278635-14-maz@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250708173404.1278635-1-maz@kernel.org>
-References: <20250708173404.1278635-1-maz@kernel.org>
+	s=arc-20240116; t=1751996073; c=relaxed/simple;
+	bh=jAMQSvjI09pdeyUUa7Sm7Sk4KAidq+tSxk/w2vOpEv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gpddXR8lWT3tWB043sbDGiTS2jrqrVkwNcJoAvgRs29QJLZw5v1NRYvrk6BtN/snAl1wlc5L3nP+MV8iSPVUr03Vf+s+nEZqLlrd/LLP4zMU3zLIIWrqwx4EAFT0tj/LDj/U9lRJXIOj4ZI7qPz3SaYIz7tEz93gWuGBJjfJ4VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=kGJYjVWq; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=HeTiWPyX1Uk+AB/SKOARIcNngzgui6r0hgRLKTkBHIA=; b=kGJYjVWq21LQqgydAHfeMNK8dp
+	J+6sYTxzXjuLubKC7Msz6ENWEUhgmhPn7m7sPTbPabrY4Fba/Z4b1v/jshyrMB+sTdxoUK4iuh2/a
+	w0SYNPthAl6FLk/Q0LS0blYMeW0hPMDJTZMy5Qe79sgTlbuRBhf8Er9jUGmxf6OxTVlY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uZCCl-000qlv-FD; Tue, 08 Jul 2025 19:34:07 +0200
+Date: Tue, 8 Jul 2025 19:34:07 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Lizhe <sensor1010@163.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, rmk+kernel@armlinux.org.uk,
+	vladimir.oltean@nxp.com, maxime.chevallier@bootlin.com,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: stmmac: Support gpio high-level reset for devices
+ requiring it
+Message-ID: <52b71fe7-d10a-4680-9549-ca55fd2e2864@lunn.ch>
+References: <20250708165044.3923-1-sensor1010@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, toan@os.amperecomputing.com, lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, bhelgaas@google.com, tglx@linutronix.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708165044.3923-1-sensor1010@163.com>
 
-Now that the XGene MSI driver has been mostly rewritten and doesn't
-use the CPU hotplug infrastructure, CPUHP_PCI_XGENE_DEAD is unused.
+On Tue, Jul 08, 2025 at 09:50:44AM -0700, Lizhe wrote:
+> some devices only reset when the GPIO is at a high level, but the
+> current function lacks support for such devices. add high-level
+> reset functionality to the function to support devices that require
+> high-level triggering for reset
 
-Remove it to reduce the size of cpuhp_hp_states[].
+You can probably specify this in DT:
 
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- include/linux/cpuhotplug.h | 1 -
- 1 file changed, 1 deletion(-)
+reset-gpios = <&qe_pio_e 18 GPIO_ACTIVE_LOW>;
 
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index df366ee15456b..eaca70eb6136b 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -90,7 +90,6 @@ enum cpuhp_state {
- 	CPUHP_RADIX_DEAD,
- 	CPUHP_PAGE_ALLOC,
- 	CPUHP_NET_DEV_DEAD,
--	CPUHP_PCI_XGENE_DEAD,
- 	CPUHP_IOMMU_IOVA_DEAD,
- 	CPUHP_AP_ARM_CACHE_B15_RAC_DEAD,
- 	CPUHP_PADATA_DEAD,
--- 
-2.39.2
+The gpio core will then flip the meaning of
 
+gpiod_set_value_cansleep(reset_gpio, 1);
+
+such that a value of 1 will become low, 0 will become high.
+
+     Andrew
 
