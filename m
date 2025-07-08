@@ -1,88 +1,225 @@
-Return-Path: <linux-kernel+bounces-721538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F99AFCA95
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:40:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F71AFCA97
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61C813AFCEA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:39:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8167416D265
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276832DC346;
-	Tue,  8 Jul 2025 12:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J8/viqs2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6782DC340;
+	Tue,  8 Jul 2025 12:40:29 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8099418A6C4;
-	Tue,  8 Jul 2025 12:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7B228935C
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 12:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751978413; cv=none; b=ORhYNrLj+H5TQIwYtkHGvhzGnSbMOmhc10k4CihMgDakH9pXjmYiOCR+RmVnM2VYdMSVOI7YAs5qW++MklWZ7EzCcW7RdCa8gmJxSEWVOfDsgllYKG0QoMLmk/f1hqH2vEoSh92CS1mcZPoJ5mSdG/7R7tWIL+KcoWUPCD0LZ2U=
+	t=1751978428; cv=none; b=IJxsoslp7JA9Ex2jstL2kI5cnGqQzAJmOM+W3qZQ+ESPPJ6IPCGJQQtY2z2Tg2cn+8vzWi9vTIBCoFFHg9fTRp6MmQF0qmIiemYw9VS314FYeN9ZEgxTBRUIWCSjyu9+H4aMBo579ErngTF8ZrHKABWJ2VynO/qCtLbGx2f0/kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751978413; c=relaxed/simple;
-	bh=AtLFdAeVACJNl2ke3aWgXmohwufWhuQO0Od69sJQtwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=da0yVd7rEeaU6go4QBjhY3geKXOZdirLGvgVTNhfI4YY2EAwN6NNaq6hvgQx1FoigMwMI2OjciXFhLFoYZ062yWuXsGmRTj4Kf+u3IQCfsiclDBItSVE5viKNDGBwNfbNV+wsbhNcitbJUKR76Nn4YtSWVpbMqi9VvuoVpUDJWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J8/viqs2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D82F9C4CEED;
-	Tue,  8 Jul 2025 12:40:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751978413;
-	bh=AtLFdAeVACJNl2ke3aWgXmohwufWhuQO0Od69sJQtwE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J8/viqs2t+fnwxNyMUVBOrwddW9CBf3GI5noe8EWgn7uaX5Mr+SmmZYterIA4MZQa
-	 UY3K8lizVuaAdp9eF5665g9mZKHovDY8n18LhDurLifW5GAwneXFgIscrN61hh7Zr1
-	 tX9T2q6uF5d1RYl4+IAyLs1ihbDafUL7kemVXzGYHtvztkQ9ZW6LnphjsihVYfsWjh
-	 rNE6WdOIJSROEcTP2vszbrZWZtqj9hOT+xTCVMNz1j+n6e02mWHAWiOryWlRNTvUpF
-	 DA5a8YNX7dJSGFZ1vdz9ydOas7aH40Xbj/3OpBTlmP08OP45ZsmAQk2to9PfzSQXeP
-	 V08ikd/+3nO8g==
-Date: Tue, 8 Jul 2025 07:40:11 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Simona Vetter <simona@ffwll.ch>, Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org, David Airlie <airlied@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Dmitry Baryshkov <lumag@kernel.org>, devicetree@vger.kernel.org,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Maxime Ripard <mripard@kernel.org>, freedreno@lists.freedesktop.org,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: Re: [PATCH 3/3] dt-bindings: display/msm/gpu: describe clocks for
- each Adreno GPU type
-Message-ID: <175197841127.384639.1538751354808329630.robh@kernel.org>
-References: <20250628-rework-msm-gpu-schema-v1-0-89f818c51b6a@oss.qualcomm.com>
- <20250628-rework-msm-gpu-schema-v1-3-89f818c51b6a@oss.qualcomm.com>
+	s=arc-20240116; t=1751978428; c=relaxed/simple;
+	bh=O/mt5Laig4YvyGxBOM7n5YBR4Qhf37DNVb8KTwe0N+4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=R9hz+EgnWchjh463gedxTxWg0w0vA3Gs6/uyqiUEzf01R1bKCBf/NuvElaOrrBbGkqSux6ZMqTuwD3bDZE1ua+wCLxG4wEYeWZamyKzVnwDvhJ3qTsaUeR2XlmK8kl6XFcEV7X/O5XfiAp9eTviLDBlCFgh7pOxJXgNUtzC0Isw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3df4022687eso40922595ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 05:40:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751978426; x=1752583226;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zNeagxp53Cib7FyDAeK/ti1QQrnWh7OkocmUSUE0k20=;
+        b=kdpAxv0dO/w9Z29tt382SQDHM3xZU/Rmj5slCTynVio2/eYdVCQVrSdAgfkAo9VneB
+         OYPTJby3kvx5Ei6KBYVPaSxpLAiobZfbkpKvwz9LSfvMdBTYjhvsjU7ykDOg0ao3B3Oy
+         ezB+6JocNuZE3WND72V2Td8L1aC1Gm1LkrOmZ+qa4+WkTzrD9wFoYqPtsd4oFL4zw3EU
+         4GtkqqWR6xiwDyexEod4m+wFyS5xjsWS524By0E5c6+ZJ/bwj1RdWKEGsaIkVBwX9W9Z
+         GPOFonJ693b0dE8k6K4zJbk6C/ZzKWAdvmRkjy3+g2weDqZGW89Icpq9+9RqeIOFM6uH
+         zTQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEXKdN4mFC5J3WtKvR0t7HaDPOyqmcJ4678aTR/CjPPdmJbXLmf3zGPAHPuS4YojC4g13SXqgxUZIvLXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOILWgoPz9bpwcL6NbFBs8ffeE9sUtgcVSEbgmc5Y7AJs1XMRC
+	DZ3DDRXYjbFINkQI6MGT0MvsmEnF0Xwz/qcrhli+eGNTmkF0RbcLn8Yu81Rpx0wlIWtyrSENrtR
+	mdykfan5Xs79kmZdl0EZzV9/Abp0GzlXnCxjZNFywqswLkqnDl3l0CKi+uO4=
+X-Google-Smtp-Source: AGHT+IHW29YJ0mMkJYKj8RbFg2PDoBHxN7Fim5IsU3FV9f0fYeHOL+oENDpilrPghcgkrhRME5kY/BWHO2MReuuphrGQjynxh0a5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250628-rework-msm-gpu-schema-v1-3-89f818c51b6a@oss.qualcomm.com>
+X-Received: by 2002:a05:6e02:112:b0:3dd:bf91:23f7 with SMTP id
+ e9e14a558f8ab-3e154e51b43mr20192605ab.7.1751978425899; Tue, 08 Jul 2025
+ 05:40:25 -0700 (PDT)
+Date: Tue, 08 Jul 2025 05:40:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <686d11b9.050a0220.1ffab7.0009.GAE@google.com>
+Subject: [syzbot] [net?] possible deadlock in ptp_clock_adjtime
+From: syzbot <syzbot+28ddd7a3988eea351eb3@syzkaller.appspotmail.com>
+To: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, richardcochran@gmail.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    d7b8f8e20813 Linux 6.16-rc5
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12b3728c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c963f5de3d9eab7d
+dashboard link: https://syzkaller.appspot.com/bug?extid=28ddd7a3988eea351eb3
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b35e485ae779/disk-d7b8f8e2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8478fc45f5f6/vmlinux-d7b8f8e2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/86a991e3c539/bzImage-d7b8f8e2.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+28ddd7a3988eea351eb3@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.16.0-rc5-syzkaller #0 Tainted: G     U             
+------------------------------------------------------
+syz.0.4267/20512 is trying to acquire lock:
+ffff88802ffba868 (&ptp->n_vclocks_mux){+.+.}-{4:4}, at: ptp_vclock_in_use drivers/ptp/ptp_private.h:113 [inline]
+ffff88802ffba868 (&ptp->n_vclocks_mux){+.+.}-{4:4}, at: ptp_vclock_in_use drivers/ptp/ptp_private.h:99 [inline]
+ffff88802ffba868 (&ptp->n_vclocks_mux){+.+.}-{4:4}, at: ptp_clock_freerun drivers/ptp/ptp_private.h:130 [inline]
+ffff88802ffba868 (&ptp->n_vclocks_mux){+.+.}-{4:4}, at: ptp_clock_freerun drivers/ptp/ptp_private.h:125 [inline]
+ffff88802ffba868 (&ptp->n_vclocks_mux){+.+.}-{4:4}, at: ptp_clock_adjtime+0x527/0x760 drivers/ptp/ptp_clock.c:125
+
+but task is already holding lock:
+ffff88802ffba130 (&clk->rwsem){++++}-{4:4}, at: get_posix_clock kernel/time/posix-clock.c:25 [inline]
+ffff88802ffba130 (&clk->rwsem){++++}-{4:4}, at: get_clock_desc+0x125/0x240 kernel/time/posix-clock.c:209
+
+which lock already depends on the new lock.
 
 
-On Sat, 28 Jun 2025 06:02:37 +0300, Dmitry Baryshkov wrote:
-> Rather than having a single list with all possible clocks for A3xx-A5xx
-> define individual Adreno GPU types and corresponding clock lists.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->  .../devicetree/bindings/display/msm/gpu.yaml       | 220 ++++++++++++++++++---
->  1 file changed, 194 insertions(+), 26 deletions(-)
-> 
+the existing dependency chain (in reverse order) is:
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+-> #1 (&clk->rwsem){++++}-{4:4}:
+       down_write+0x92/0x200 kernel/locking/rwsem.c:1577
+       posix_clock_unregister+0x4d/0xd0 kernel/time/posix-clock.c:184
+       ptp_clock_unregister+0x14f/0x250 drivers/ptp/ptp_clock.c:432
+       ptp_vclock_unregister+0x11a/0x160 drivers/ptp/ptp_vclock.c:228
+       unregister_vclock+0x108/0x1a0 drivers/ptp/ptp_sysfs.c:177
+       device_for_each_child_reverse+0x133/0x1a0 drivers/base/core.c:4051
+       n_vclocks_store+0x4b6/0x6d0 drivers/ptp/ptp_sysfs.c:241
+       dev_attr_store+0x58/0x80 drivers/base/core.c:2440
+       sysfs_kf_write+0xf2/0x150 fs/sysfs/file.c:145
+       kernfs_fop_write_iter+0x354/0x510 fs/kernfs/file.c:334
+       new_sync_write fs/read_write.c:593 [inline]
+       vfs_write+0x6c4/0x1150 fs/read_write.c:686
+       ksys_write+0x12a/0x250 fs/read_write.c:738
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
+-> #0 (&ptp->n_vclocks_mux){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3168 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3287 [inline]
+       validate_chain kernel/locking/lockdep.c:3911 [inline]
+       __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5240
+       lock_acquire kernel/locking/lockdep.c:5871 [inline]
+       lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5828
+       __mutex_lock_common kernel/locking/mutex.c:602 [inline]
+       __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:747
+       ptp_vclock_in_use drivers/ptp/ptp_private.h:113 [inline]
+       ptp_vclock_in_use drivers/ptp/ptp_private.h:99 [inline]
+       ptp_clock_freerun drivers/ptp/ptp_private.h:130 [inline]
+       ptp_clock_freerun drivers/ptp/ptp_private.h:125 [inline]
+       ptp_clock_adjtime+0x527/0x760 drivers/ptp/ptp_clock.c:125
+       pc_clock_adjtime+0x115/0x1e0 kernel/time/posix-clock.c:239
+       do_clock_adjtime kernel/time/posix-timers.c:1162 [inline]
+       __do_sys_clock_adjtime+0x172/0x290 kernel/time/posix-timers.c:1174
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  rlock(&clk->rwsem);
+                               lock(&ptp->n_vclocks_mux);
+                               lock(&clk->rwsem);
+  lock(&ptp->n_vclocks_mux);
+
+ *** DEADLOCK ***
+
+1 lock held by syz.0.4267/20512:
+ #0: ffff88802ffba130 (&clk->rwsem){++++}-{4:4}, at: get_posix_clock kernel/time/posix-clock.c:25 [inline]
+ #0: ffff88802ffba130 (&clk->rwsem){++++}-{4:4}, at: get_clock_desc+0x125/0x240 kernel/time/posix-clock.c:209
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 20512 Comm: syz.0.4267 Tainted: G     U              6.16.0-rc5-syzkaller #0 PREEMPT(full) 
+Tainted: [U]=USER
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_circular_bug+0x275/0x350 kernel/locking/lockdep.c:2046
+ check_noncircular+0x14c/0x170 kernel/locking/lockdep.c:2178
+ check_prev_add kernel/locking/lockdep.c:3168 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3287 [inline]
+ validate_chain kernel/locking/lockdep.c:3911 [inline]
+ __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5240
+ lock_acquire kernel/locking/lockdep.c:5871 [inline]
+ lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5828
+ __mutex_lock_common kernel/locking/mutex.c:602 [inline]
+ __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:747
+ ptp_vclock_in_use drivers/ptp/ptp_private.h:113 [inline]
+ ptp_vclock_in_use drivers/ptp/ptp_private.h:99 [inline]
+ ptp_clock_freerun drivers/ptp/ptp_private.h:130 [inline]
+ ptp_clock_freerun drivers/ptp/ptp_private.h:125 [inline]
+ ptp_clock_adjtime+0x527/0x760 drivers/ptp/ptp_clock.c:125
+ pc_clock_adjtime+0x115/0x1e0 kernel/time/posix-clock.c:239
+ do_clock_adjtime kernel/time/posix-timers.c:1162 [inline]
+ __do_sys_clock_adjtime+0x172/0x290 kernel/time/posix-timers.c:1174
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ffbd478e929
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffbd5676038 EFLAGS: 00000246 ORIG_RAX: 0000000000000131
+RAX: ffffffffffffffda RBX: 00007ffbd49b6080 RCX: 00007ffbd478e929
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: fffffffffffffffb
+RBP: 00007ffbd4810b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007ffbd49b6080 R15: 00007fff4cf8c228
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
