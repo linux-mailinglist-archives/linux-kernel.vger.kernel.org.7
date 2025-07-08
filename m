@@ -1,141 +1,268 @@
-Return-Path: <linux-kernel+bounces-721542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1D27AFCA9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:41:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E923AFCAA5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:42:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 566B77ACFDD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:40:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCAE1188C5EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BC02DC35A;
-	Tue,  8 Jul 2025 12:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580FA29827E;
+	Tue,  8 Jul 2025 12:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nYR1MVp2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="njOe15xF"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013038.outbound.protection.outlook.com [40.107.162.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF412DBF46;
-	Tue,  8 Jul 2025 12:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751978494; cv=none; b=XzFsqmgHwbO1G8ubcwxe04XbwUxqSrSuVZjJ1nEXfHJpenW2ipKT+qOh44Z7908qv+r0/w1it7eIk1IqUPmOTwWCogrYB811g7OCanU+3P/i3yRHJmkgtoItmswDEi6YOkLDTLqJEOF5A2c6bQqACbICQ81RddcDt4cGHfEuDbo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751978494; c=relaxed/simple;
-	bh=ig4Ya6yOKltTKYiC8Pv2VErte3GbJVlzc3MNaT1fhaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g8KsBytmAkSo2yIga7soDEgCbTUnBeVLXmXSRY+kNxdzkhBr/HSr3jQZjlrl1VFKwwPbMwVTihZ2ruxCxFyrDpcq3pTfFkXVd2axE4+bKXTRHcY4rr9zYGu3Nz/coY6x1HZVvtxBB15/OJnQL56V2hqrdgjAoErcqTEXCSPMRc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nYR1MVp2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F57DC4CEED;
-	Tue,  8 Jul 2025 12:41:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751978494;
-	bh=ig4Ya6yOKltTKYiC8Pv2VErte3GbJVlzc3MNaT1fhaA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nYR1MVp2kV0BanibXcBlMRcZPSI01/2KxgjrggqCJG7VRBMgqL+FqUCr4X6+bY/6K
-	 pO626tYlLC25NdxTP4Gx+eetdxsV/SNki4HbjceBHVpvUmVS1qEZO5203RZ/4rUedk
-	 2y6NbD0kz/ceA277YHLIB3Q/B8CP6YTvLScJrqOOguZTEPDNBR+6Zthl8l7fMYrM/F
-	 WhwIuyGh9+eIa6zGysAf2n9fvyzTOoJ0KIBfsyhjcX9bDBpfWclzgPXum67e63NlaO
-	 2sNhVnHruWnifWmQ4w6JquQX3tiFWEvi5Y3W9o7KOfch+gpSdOtrKvKTIalL1mNlo6
-	 2oPiuC0iMylpw==
-Date: Tue, 8 Jul 2025 07:41:33 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>,
-	Yunhong Jiang <yunhong.jiang@linux.intel.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Chris Oo <cho@microsoft.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	Ricardo Neri <ricardo.neri@intel.com>,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-hyperv@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v5 03/10] dt-bindings: reserved-memory: Wakeup Mailbox
- for Intel processors
-Message-ID: <175197849289.389672.9119321529069936382.robh@kernel.org>
-References: <20250627-rneri-wakeup-mailbox-v5-0-df547b1d196e@linux.intel.com>
- <20250627-rneri-wakeup-mailbox-v5-3-df547b1d196e@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B292C08AF
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 12:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751978520; cv=fail; b=nzCL8wO1Y/QVpAn7vyo/sTln5Otzp6sa0XDnlZDxyTNTBB8V8Ay4cZiUXxtHxLV8Yb1B9o6kKuypUNEWZoj9UzaketQCUsj/Cqycv1VCllE17evFkD2i17ybdWez2fTzlZxnG1XjOKrjOK9kD/DHyzYlXWwWn7s/zFX87nhvqus=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751978520; c=relaxed/simple;
+	bh=4l3/aSAqAiGZ4N6AghQnhQ36UfzvzKX3OonOJZb78P0=;
+	h=Message-ID:Date:From:To:Cc:Subject:Content-Type:MIME-Version; b=OpbJQJPjtsnYw3wc3MNTZIzorwNDutCsSshKx4uuDedowJQn6F9uI4B7kYdSa+TPQK4E+HNLLo1hgzYp6HJGdPVcogRfFG91ZL17YoXj0+CRzpURp8uT5quvUERDtr+gcoP+SLQVcPVfM33R/81L1NEiEvsnjIdEzPdrea6HDSs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=njOe15xF; arc=fail smtp.client-ip=40.107.162.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HULofmQBJppw7sMJgXZm4UmJf6jRJCaw0mzjaBonJiOmpEwYV9TjaWncYSZRklDgKyGA4zjfNbU3uAS34L4ra2/hT2LBOvz4HMCR+zJthGF8WzhqH9y8dIiDtWZ9H/VqeQSe/muVxZxfmVGgu+OXji1DGIhpAVyEAQJ8ZT8/al/WqB5a+aU3rtmFLi3ivNHAalbQyb6j5DfnO2mRiBdIQu3l4XaZ/h9+8s/RaJ8nswmdKGK6UMB9258/qdyqPqVp46X5pFy0a2MvvcyWjmyscOF9x2Qx5czD0LkR/i3q/V6F3kyi4k+FozoFbJL/l1aT8Ti82aCqTnHqgT+1Lpw3Eg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XaVkRVEsAed25zjCjiGBplH/4nMg41uW+t70/8AS4vg=;
+ b=G2N3rNSXpGQEtnjfIl0YMGe0xQxb3evxMeS2/VdMGSkqSuylaKnvbu5xqPlG9uwaIfs/dbPu10NqOHF5NxnrgdYUZme3fxjuQCop/6OAN9l3d0mVvvTlxmnAfCcAxvSUQ5C/AKgSoZcdDLaBugd1uhhjrNBG1fLIW0b9ZoSj3etcY3LX+nV4ObWNM1vSxd6IDeNzldQs4upkJKg4oRj8VWrKnFXvJ/M6UFHNAKGLw7sgfRwhHmTpc+A6aTAMOd9o4zIH94c/F3gnEBj9FRvjHheiPLeFz/ipJIUBZCy+idoErLsFZrt3osHvD5Qio4XNqvuacMXZs9On7gADr1lKAw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XaVkRVEsAed25zjCjiGBplH/4nMg41uW+t70/8AS4vg=;
+ b=njOe15xFdqknAS1mXJN+Dtiiqs124R8VALf7UfI1BhgHGlTqEyY5z4dGZ4RLSXUxUtXw4USu4GTzYTkA7SDbdCcDkYYr82oIVdUIKY2GIvOP2P85c28KYBPSnb2prCAo36EtZ5rHT8F4aBpMaXK4TXGfYTlLqwUEPfBqANUYA06gumACtwYV05bS3A0MYRG6qI7K6hgFRct2RnicS42byjW4lEvhl+n9Amr2T7QI7uQT4yojyYDA0jtOFyjnyUjt+td9ecrzKrF97m1b2S/6bBwVMvbpM4GIsj+D3HbZ/U/6U0lLIy9pEaxriWtc4VV+Y73cJT8H/jgEi41zCYh++Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by AS2PR10MB7155.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:60d::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Tue, 8 Jul
+ 2025 12:41:55 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%7]) with mapi id 15.20.8901.024; Tue, 8 Jul 2025
+ 12:41:55 +0000
+Message-ID: <38d43fae-1182-4155-9c5b-ffc7382d9917@siemens.com>
+Date: Tue, 8 Jul 2025 14:41:54 +0200
+User-Agent: Mozilla Thunderbird
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Content-Language: en-US
+To: Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+ linux-erofs@lists.ozlabs.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Executable loading issues with erofs on arm?
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FRYP281CA0005.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10::15)
+ To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250627-rneri-wakeup-mailbox-v5-3-df547b1d196e@linux.intel.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS2PR10MB7155:EE_
+X-MS-Office365-Filtering-Correlation-Id: d5049439-1259-4eba-fac5-08ddbe1cd271
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?U0dJVS94VFFYeGQ1QTBGWFIvU0dHd0FkcUZnRGdLWTBDZTFsTW0vclQ3aGs2?=
+ =?utf-8?B?UGpyRTNlMCtFdXIzcG0yNzJVb01EVGNyR21yNnVCSXVVRGxpZmJ3RTRKaENY?=
+ =?utf-8?B?TWtoRDRtRi9YbmsvRE1nZXlJSkhsejhheUpuT1d0ajBEOEI3Tkw4WXdoZ01x?=
+ =?utf-8?B?cUc3aE5hTzB5VkFGZVdqSm1wNXlOc1pSV1o5d0pJYm4vTGFXS0RkeHN3YTE2?=
+ =?utf-8?B?bXA3YjFOa3BvWUlwL29kV010dFd6K0RMK2tuemczWUhOZ21KeDlBSkVRUlZD?=
+ =?utf-8?B?WkdFRXppc2hGT3VaZHJka2t5cGtWaHFhVUpsYlFHTTBmbzhpLzRiZkVEbitx?=
+ =?utf-8?B?QTJCRXExUEczWGVwMThHUU5vTW15eWlaNnhGeFVUelBTNzVWV0ZSbU5hVEc5?=
+ =?utf-8?B?RFhmYmlreTN4RVNRQzVCaFo4cGNzUWNOQ0o5Q3oraitnK3dPUGlvMHFMSm16?=
+ =?utf-8?B?amtWNnFuM1RSUXJoYlJ5YW9uRkdVaGFFTTc4UElEMWVyVXRDdzBpSWhkTXlQ?=
+ =?utf-8?B?Z25yYWVTcTZtR0tpWXdrY3NlV1JONDlQbVcxaVcxMnNQdFBwM0I1VXY0YlI1?=
+ =?utf-8?B?cURoWGNhNUpxTEd5T0tMdTVEWVlWWU1iOTh6dkZGY1B1eGN5TmV4c0E5M2FO?=
+ =?utf-8?B?ZzV5M2xWdEFUeTBFN1N6Mkg3TU0xM1ROYWduN2l4cm0rUzQwTFBTWmVwWlE4?=
+ =?utf-8?B?dVk0aFFzdDZZWXNhdWtLeU9SV015eThSb0MzbmRyL3crYzJuZUtpREhhamVi?=
+ =?utf-8?B?VEpBeHhDU0IrNWFqT2R0MHZVZjZoZVBuVlZwSU04WVlNWlJCa09aTEx3bThT?=
+ =?utf-8?B?elFzN1BWRmpUSzIvSk1iUmxoMlZ3aThPWGhYNWpZMHFQUmFVQnAwMjluUmlS?=
+ =?utf-8?B?a0IvMzNoOUFNcm5mQStFc0F3Z0pjTnIrdlN1L0o4NUFIRlpqOHVjUTgxTWpE?=
+ =?utf-8?B?YjM3VzRtZURMOU4xU1hMSGU4QU5hUm1NYkxUVnphUnlSSXZTWEZXdi9oQmE1?=
+ =?utf-8?B?WmtHaTVCbXk0TXRROWRDTWd1WnljemV1Sys4c0Ntd3Q2Z3lrdnpXb1BaaEU0?=
+ =?utf-8?B?SjZ2eGZyWFhCdzlHSXZhMHRPQVd6VkR5eXlKeGpYaWttRXNIRVp1dklpWG1C?=
+ =?utf-8?B?bjR3bzJhbS9uMFFrcC9nVHBScnZKNXRzbWJURHZ0THM0b3M4ekNIenI5Q3Fy?=
+ =?utf-8?B?RGNselRyQzQ5c2prMEg0bUl1bGlDWVE0dnBNRXo3WWo2MVZQU1RKeEpKWk95?=
+ =?utf-8?B?VHBCaEtYWTZnenJROERzbHc3UXdWOUcrR0dSVWhmL0VkRTlzUGpvQW1KeWtm?=
+ =?utf-8?B?eEI5VHNCK1NrZCtiMmUrWjQzbHZ0WkVNV1RTYmJRbWlzYnFlRERIKzVIczh2?=
+ =?utf-8?B?NVV0OWxlaU0wdlBQWkR4Ny96eHpOWkxKMzN1aWN2Y1h2VEN1MUNkdlc0dDZW?=
+ =?utf-8?B?ZUVxSmZoKzU3Myt3dEVhYzE0R1Z1OVpnU3JRR2xYNXdIRHp2Y2orWW8vNFdz?=
+ =?utf-8?B?SlNpbU91T2dRK2kyK2NoYy9PVkNCeFpQbEpIT09YMGE2TnNkSk04VElxaUNy?=
+ =?utf-8?B?YUdvUU9EQ1p2bGZ4WnNsMWdQM3hiMGNTNllWMFRjbkRqY3RwVnNBcXNEbCtQ?=
+ =?utf-8?B?RUY5YUVERWlNZzZORE43czRkKzJFZGFRZXdwbVBhVEZaY3hMK1hVSUpySllv?=
+ =?utf-8?B?UnBZcXl5L2xnOEt5OGJvOFU3R21BWnhocGV0ZEtLemR5N2Q0cUNLTzU1TytH?=
+ =?utf-8?B?Z1VzY1ZEZXVDSmZSRUZxRHB1KytXSWMvRWE5aEU3ZnlJak9UMG9qSTlhYTJh?=
+ =?utf-8?B?VTQrRGloTGpKZFpNd0VTNFZseFpFNk9GZ0NMYXVCOFlKa3grcm5UQmx4bjE2?=
+ =?utf-8?B?ZjR3UDBueTRUQjZYOEZTSGUraDV0cWwxMUIySUVrR0loN3I1eUpkeUdMTGh1?=
+ =?utf-8?Q?UMQfUU89nWw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NlhQa2dnVHcwWDF4UWZYNkllUUsvWHBnVmkzWkpTUm1PNFo2cVVyY3dUQmtY?=
+ =?utf-8?B?SEd0RXFZa3VIbHVxeWR5QjN6eVpELzkwWGxEazR3Yy9ycDlBR0Q2QmhEWUJ4?=
+ =?utf-8?B?UEZDM29SVFNNWGZSRnZPbFV1SHlnZWxmZFNVTkdJbXhBNlp4U0d3VmVoQ1pJ?=
+ =?utf-8?B?MFhCYzhnN1JSZEpUakhQMmo2eFZhaXZOWU9jemlHUGdwbFF2dFNvZ0J2ZlRI?=
+ =?utf-8?B?R2ZYRUI4b3FvMVp5c3REUU1QTFVkSW9rMnp6UERtMUFkZFRFNW1tMCtCK3Bl?=
+ =?utf-8?B?RjRodmVQQUFoekNsYy8xeHc1NFE2WnM4Lzk3Q2RyUEtxNkx0eVFNR3J0YlNi?=
+ =?utf-8?B?Z0pDTStGV2VxbkRtcmVVQ3NTRGlJYy81djJaaWxYcUhXRE0vcFBZR01iNEJk?=
+ =?utf-8?B?a3cyZWMralNFUHkxaEhHa04ydDlad01aVyt2TXlCTGRtc1F6d2tWOWtnbzNV?=
+ =?utf-8?B?YlV2dktNWHhIdjRGTW1jSkkrb0JiVy9hK2pIOVhWUEdkK1dUekQ0UER4NDJC?=
+ =?utf-8?B?bVkyazJPd3pabTB1WGVubEVsd2laY2xkK2EzOXpDVS9YVzRtOHArZ3JGbDFh?=
+ =?utf-8?B?Q1FQUUZaZ1BqcUFyNjJrSnNpczBTaUpnZlM1MmF4NFR2cnFuMlo3VmoxTVhT?=
+ =?utf-8?B?MStsVnQzVGN0dnF3NERNQllmOU4vQjRGbHpXQXlmcVhWM05zVkltRGZQYnVV?=
+ =?utf-8?B?dXNQRmlhVW9aS2N0bVBXdElaMHpQTzBJck1zeWRqN2lxdHcrK2tsYm5pWXNM?=
+ =?utf-8?B?VE9UQWx0M0F3d2RKcTY0cC83Ui9RcEVMYVhqV1gwRW9ZUE5Pb0kyNFdHVkZG?=
+ =?utf-8?B?Um50MDlYR2Nsb2htL2xuZmtDM0M1bGJUYmlmTWJpN1VFUnR6TUVvQTBKQU5Z?=
+ =?utf-8?B?QzZtVXZTbnd6cDVManNvc0RnQXJ6RTVVVXQzbWxWeUNSSUdhK1lLQ1lEWXYv?=
+ =?utf-8?B?bzEwOGlEQzg0QVlJTE5wQXExQ2kyKzQxejJPZTJZcTFCR2NTVkRLTU9kYzdu?=
+ =?utf-8?B?a3JheW1qamJJWStPYWNQZUUyNTJpNFRyTW5tUC9hSGRmNnJ6bklBclQ1dStO?=
+ =?utf-8?B?MzNjeEErQXdTdjFERThkQWJXK0VqQkRvSHZmcWJ3TlBnbXZIWmRIbGx6dkhZ?=
+ =?utf-8?B?VHZRMHJvUTZTcktmdFgzdmo3dEc3SU5XQ3BmVGl1NWp3ZElIRDFKNzFwSWc4?=
+ =?utf-8?B?UGIwN2R5dlR2UTAvMmlDbmdiNTlEa0xQaGxVYnloZkY4OVhDekxMMnFmSkZI?=
+ =?utf-8?B?QzVSYisyY2NwcXdqM2F6R3RKL2NsVG0zVCt4YTBKZzN3RkpvcHdyMUF5Uzdq?=
+ =?utf-8?B?aHk5dzVSKy9tWEJGZkhjZ29DTXZsTFF4YVdwdjgza1dyOWh5eVI1bkZoY0lP?=
+ =?utf-8?B?RnhRQTgrTkNBL3ppT2NTc01WM0s1UzF3TmpJOEFmK0RzZXFMdGE1T1ZqWXo2?=
+ =?utf-8?B?OFpWT0J1KzhtcG05d0ZDZWtYaUdlQjVMSWdVVi83azRNakxtSTIxR1JrVFRU?=
+ =?utf-8?B?enNhaW9lUml2VThlZC9BSEoydy94NkJJY1dBdEJLZ0ZUNmpHT0hiRTk0VERQ?=
+ =?utf-8?B?dFFuUGFUYmFuRDlhazJ1eXpVZFVESU5FcEFMVnQ5MG1VVXZZZXJ4RnM2R0xV?=
+ =?utf-8?B?OUdzRlBDaDYrMmt0bCtLQWtDRG9ZUkdML2tXeUprV1VqVFYrSUUzNlh4VGNv?=
+ =?utf-8?B?Q3BwemZ5dU95bUVOTUNuZUxIb25NWWN5bEJ4VGpJZmhqWkwrOVVFUHVEMGdM?=
+ =?utf-8?B?NXJNVDRSR1FxbHFlRVR2S3doeU1vMnhaR3V1L2VTak5Vem9yazZ5RXhqYXZa?=
+ =?utf-8?B?UUhVa0hYeWhJOUJ6ZGlURmVITlFiUno4aGF2L1RQSGlhbjc2a0dpNXN0cjYx?=
+ =?utf-8?B?U0NvTTR1L1V3S25PN0ZBQlRmblRJeEZKZUJxQ1BEeE5nTGJ2QjYwQUEzTE5p?=
+ =?utf-8?B?cUJMR2dUV1ZtUkpRd0l6bWQzcklpYzBva0pSNk9aTUFSc1gyelhLa0N6cHFF?=
+ =?utf-8?B?c0lhbzhCUnN4YkZqZ1orT0N0c2REQXpJN2lFLzlqQnRPcFQwdzljMHhPYlhM?=
+ =?utf-8?B?RVl4akJISE5Tcm81Z2dHeTUvOWdzMmR3YUZtTGlrK25zcmhUenU2L2RWUFVh?=
+ =?utf-8?Q?qHGk88B/jBIcaR5x0KwLT2iAX?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d5049439-1259-4eba-fac5-08ddbe1cd271
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 12:41:55.7339
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0VpO+/w246T6yDB32Pzt/+tlQRnko3TSoAmLD3M/u5EI9CflezYzKAkQ5XZ3dGLT9f5f9rYkN3znaIjrt7KsjQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR10MB7155
 
+Hi all,
 
-On Fri, 27 Jun 2025 20:35:09 -0700, Ricardo Neri wrote:
-> Add DeviceTree bindings to enumerate the wakeup mailbox used in platform
-> firmware for Intel processors.
-> 
-> x86 platforms commonly boot secondary CPUs using an INIT assert, de-assert
-> followed by Start-Up IPI messages. The wakeup mailbox can be used when this
-> mechanism is unavailable.
-> 
-> The wakeup mailbox offers more control to the operating system to boot
-> secondary CPUs than a spin-table. It allows the reuse of same wakeup vector
-> for all CPUs while maintaining control over which CPUs to boot and when.
-> While it is possible to achieve the same level of control using a spin-
-> table, it would require to specify a separate `cpu-release-addr` for each
-> secondary CPU.
-> 
-> The operation and structure of the mailbox is described in the
-> Multiprocessor Wakeup Structure defined in the ACPI specification. Note
-> that this structure does not specify how to publish the mailbox to the
-> operating system (ACPI-based platform firmware uses a separate table). No
-> ACPI table is needed in DeviceTree-based firmware to enumerate the mailbox.
-> 
-> Add a `compatible` property that the operating system can use to discover
-> the mailbox. Nodes wanting to refer to the reserved memory usually define a
-> `memory-region` property. /cpus/cpu* nodes would want to refer to the
-> mailbox, but they do not have such property defined in the DeviceTree
-> specification. Moreover, it would imply that there is a memory region per
-> CPU.
-> 
-> Co-developed-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
-> Signed-off-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
-> Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-> ---
-> Changes since v4:
->  - Specified the version and section of the ACPI spec in which the
->    wakeup mailbox is defined. (Rafael)
->  - Fixed a warning from yamllint about line lengths of URLs.
-> 
-> Changes since v3:
->  - Removed redefinitions of the mailbox and instead referred to ACPI
->    specification as per discussion on LKML.
->  - Clarified that DeviceTree-based firmware do not require the use of
->    ACPI tables to enumerate the mailbox. (Rob)
->  - Described the need of using a `compatible` property.
->  - Dropped the `alignment` property. (Krzysztof, Rafael)
->  - Used a real address for the mailbox node. (Krzysztof)
-> 
-> Changes since v2:
->  - Implemented the mailbox as a reserved-memory node. Add to it a
->    `compatible` property. (Krzysztof)
->  - Explained the relationship between the mailbox and the `enable-mehod`
->    property of the CPU nodes.
->  - Expanded the documentation of the binding.
-> 
-> Changes since v1:
->  - Added more details to the description of the binding.
->  - Added requirement a new requirement for cpu@N nodes to add an
->    `enable-method`.
-> ---
->  .../reserved-memory/intel,wakeup-mailbox.yaml      | 50 ++++++++++++++++++++++
->  1 file changed, 50 insertions(+)
-> 
+for some days, I'm trying to understand if we have an integration issue
+with erofs or rather some upstream bug. After playing with various
+parameters, it rather looks like the latter:
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+$ ls -l erofs-dir/
+total 132
+-rwxr-xr-x 1 1000 users 132868 Jul  8 10:50 dash
+(from Debian bookworm)
+$ mkfs.erofs -z lz4hc erofs.img erofs-dir/
+mkfs.erofs 1.8.6 (trixie version, but same happens with bookworm 1.5)
+Build completed.
+------
+Filesystem UUID: aae0b2f0-4ee4-4850-af49-3c1aad7fa30c
+Filesystem total blocks: 17 (of 4096-byte blocks)
+Filesystem total inodes: 2
+Filesystem total metadata blocks: 1
+Filesystem total deduplicated bytes (of source files): 0
+
+Now I have 6.15-rc5 and a defconfig-close setting for the 32-bit ARM
+target BeagleBone Black. When booting into init=/bin/sh, then running
+
+# mount -t erofs /dev/mmcblk0p1 /mnt
+erofs (device mmcblk0p1): mounted with root inode @ nid 36.
+# /mnt/dash
+Segmentation fault
+
+I once also got this:
+
+Alignment trap: not handling instruction 2b00 at [<004debc0>]
+8<--- cut here ---
+Unhandled fault: alignment exception (0x001) at 0x000004d9
+[000004d9] *pgd=00000000
+Bus error
+
+All is fine if I
+ - run the command once more
+ - dump the file first (cat /mnt/dash > /dev/null; /mnt/dash)
+ - boot a full Debian system and then mount & run the command
+ - do not compress erofs
+
+Also broken is -z zstd, so the decompression algorithm itself should not
+be the reason. I furthermore tested older kernels as well, namely
+stable-derived 6.1-cip and 6.12-cip, and those are equally affected.
+
+Any ideas? I have CONFIG_EROFS_FS_DEBUG=y, but that does not trigger
+anything. Is there anything I could instrument?
+
+Jan
+
+-- 
+Siemens AG, Foundational Technologies
+Linux Expert Center
 
 
