@@ -1,140 +1,180 @@
-Return-Path: <linux-kernel+bounces-721245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D77AFC692
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:04:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5538BAFC69F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30BAA1BC3EC7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:04:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB9244A77FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198762BF006;
-	Tue,  8 Jul 2025 09:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97062298CCD;
+	Tue,  8 Jul 2025 09:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzn7e3yX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CpsOn8Ep";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+URHbj4J";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CpsOn8Ep";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+URHbj4J"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C6CAD21;
-	Tue,  8 Jul 2025 09:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FDA72BEC2D
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 09:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751965343; cv=none; b=eygvw311KIGO4zQM+INj1uIr5r9EWL2EccCWHrHZCiZbOwf6XA6LeGW0PAopuMoAU1LF+5iU2Fi6OzM5FSSwp6qDk3ovHiy7GU3+5VT2+MKdoRR0tvNRkUeJGeLRjfUjPHKrtShFSwox1JwRaFh7cjpdZeEWLtskDlhvpDzXsUs=
+	t=1751965393; cv=none; b=MqjTFJTr1JDKYlSvL/i4I7Ci8Rr+gS7waloHbgdOeiYyVO/KwPGNwZIw3CUo7GZhA8/bUdX9us9uad8SbTYr4K3AOZj/7evI1V42XT8PO+BpHaMWdGZUBKagNhtD7OrMq7flS91mw5N8Qh3NBdHF//LwVhnjG0CRuvb465Q/9Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751965343; c=relaxed/simple;
-	bh=fxQd2+OWUan7qyi7wSVssPmsqSKltN1CKBdFtlAHRTs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=EUT9qhz3NZqkpw+bb4X1HbYlj/lMtHsaf0aOHNy38aMf54Rn70Rh+wh7NnVZsfoQRPEY2kladeydtCQ7PY/mJWNyYH+EJ1uHXWbkd5P85kkDGhTXDtIux6FbEnXuVzLERZQIeoKAJVZN98erNod9ac9uBvDdsAxAw8uTdV1vZ8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzn7e3yX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE750C4CEF1;
-	Tue,  8 Jul 2025 09:02:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751965343;
-	bh=fxQd2+OWUan7qyi7wSVssPmsqSKltN1CKBdFtlAHRTs=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=lzn7e3yX1ntJVvV2/OEHqBTG5Ao/rTm9/O9KiaQ5MJH/bFBhaOwV7WK4VCuLlU9gO
-	 G21NHbTLptGsy8vmBnSlQRAowsnv/K1kIhdaK0/B3xibvXWgQLYWJnbN4Bc0S0+Xi7
-	 87dwC3IvK+HQZP6erpMkmHZCmQNKS9PSOKJUv/GkIiXwnznBvh+TjlyOabO+La9cmp
-	 HStx2pkQOib2FVHJmm0y7vy3qGVtXl5+LIZq7NxQjg775QrewHjhz2fLpRnHpCf9O3
-	 iIVlezGaesCsaEl3sczvvdr7Jzc7UETXoQlA+rS6pu2gGwECPwWlWH3PX5oAIG3ppg
-	 IwasUefNPkntw==
+	s=arc-20240116; t=1751965393; c=relaxed/simple;
+	bh=4b+ZShGglIvw85XLnJQ79ec6jYuRVqoURM67v/XIrxU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qAic3qv1/DNvMt0MyD/UkiHwJUpDd/OCslHIIZWY/E6LXu92DsUk07qNNj+xbKjlfVY9Z7BDCG6hU6PRhLz7lSIjJbn1J+wsmGw/1VQ9w4w8n/H5Z9US9gqKbzELHJ69p9LJ1gnhikUlUcrwuJ1DKV+zvMcmbFW1/FfAGCuRDEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CpsOn8Ep; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+URHbj4J; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CpsOn8Ep; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+URHbj4J; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5D6B51F798;
+	Tue,  8 Jul 2025 09:03:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751965384; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8LoIjE0YohSQS/m/DeEM40Wt2aoGgwC03+iN87AqEfw=;
+	b=CpsOn8EpvXt8WGkCazO8YmhFZ1u3xu7iDCctROs0+56nkbv1EomzjHgFXfUDG5JohO19Zr
+	e3CIZTZi3h0gP6EDmkEZ5lBNw84dky4ULgBfdLLUC7UgujlA7fqFuFjuaETV+89UdwHH8s
+	W82l5X+5zMgZXUQ3HQPms54HdwMKYdw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751965384;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8LoIjE0YohSQS/m/DeEM40Wt2aoGgwC03+iN87AqEfw=;
+	b=+URHbj4JwqjW6/77p+LOglr50mzgUSGFjeekE19Tp+A1BjqD3aQurnTwmoCMe77I5fTMb2
+	BCnuCkieJIojPVDA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751965384; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8LoIjE0YohSQS/m/DeEM40Wt2aoGgwC03+iN87AqEfw=;
+	b=CpsOn8EpvXt8WGkCazO8YmhFZ1u3xu7iDCctROs0+56nkbv1EomzjHgFXfUDG5JohO19Zr
+	e3CIZTZi3h0gP6EDmkEZ5lBNw84dky4ULgBfdLLUC7UgujlA7fqFuFjuaETV+89UdwHH8s
+	W82l5X+5zMgZXUQ3HQPms54HdwMKYdw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751965384;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8LoIjE0YohSQS/m/DeEM40Wt2aoGgwC03+iN87AqEfw=;
+	b=+URHbj4JwqjW6/77p+LOglr50mzgUSGFjeekE19Tp+A1BjqD3aQurnTwmoCMe77I5fTMb2
+	BCnuCkieJIojPVDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0998113A70;
+	Tue,  8 Jul 2025 09:03:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3tL4AMjebGjmYQAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 08 Jul 2025 09:03:04 +0000
+Message-ID: <f4ec4c04-6f41-4886-a7c0-da8334bd4745@suse.de>
+Date: Tue, 8 Jul 2025 11:03:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 08 Jul 2025 11:02:17 +0200
-Message-Id: <DB6JVOZLCMBL.3EZQJP50UUB86@kernel.org>
-Subject: Re: [PATCH v15 1/7] rust: sync: add `SetOnce`
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Andreas Hindborg" <a.hindborg@kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Alice Ryhl"
- <aliceryhl@google.com>, "Masahiro Yamada" <masahiroy@kernel.org>, "Nathan
- Chancellor" <nathan@kernel.org>, "Luis Chamberlain" <mcgrof@kernel.org>,
- "Danilo Krummrich" <dakr@kernel.org>, "Nicolas Schier"
- <nicolas.schier@linux.dev>
-Cc: "Trevor Gross" <tmgross@umich.edu>, "Adam Bratschi-Kaye"
- <ark.email@gmail.com>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-kbuild@vger.kernel.org>, "Petr
- Pavlu" <petr.pavlu@suse.com>, "Sami Tolvanen" <samitolvanen@google.com>,
- "Daniel Gomez" <da.gomez@samsung.com>, "Simona Vetter"
- <simona.vetter@ffwll.ch>, "Greg KH" <gregkh@linuxfoundation.org>, "Fiona
- Behrens" <me@kloenk.dev>, "Daniel Almeida" <daniel.almeida@collabora.com>,
- <linux-modules@vger.kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250707-module-params-v3-v15-0-c1f4269a57b9@kernel.org>
- <20250707-module-params-v3-v15-1-c1f4269a57b9@kernel.org>
-In-Reply-To: <20250707-module-params-v3-v15-1-c1f4269a57b9@kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] scsi: fnic: Fix crash in fnic_wq_cmpl_handler when
+ FDMI times out
+To: Karan Tilak Kumar <kartilak@cisco.com>, sebaddel@cisco.com
+Cc: arulponn@cisco.com, djhawar@cisco.com, gcboffa@cisco.com,
+ mkai2@cisco.com, satishkh@cisco.com, aeasi@cisco.com, jejb@linux.ibm.com,
+ martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jmeneghi@redhat.com, revers@redhat.com,
+ dan.carpenter@linaro.org, stable@vger.kernel.org
+References: <20250612002212.4144-1-kartilak@cisco.com>
+ <20250612002212.4144-2-kartilak@cisco.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250612002212.4144-2-kartilak@cisco.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email,cisco.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-On Mon Jul 7, 2025 at 3:29 PM CEST, Andreas Hindborg wrote:
-> Introduce the `SetOnce` type, a container that can only be written once.
-> The container uses an internal atomic to synchronize writes to the intern=
-al
-> value.
->
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-
-One nit and a safety comment fix below. (feel free to ignore the nit)
-With the safety comment fixed:
-
-Reviewed-by: Benno Lossin <lossin@kernel.org>
-
+On 6/12/25 02:22, Karan Tilak Kumar wrote:
+> When both the RHBA and RPA FDMI requests time out, fnic reuses a frame
+> to send ABTS for each of them. On send completion, this causes an
+> attempt to free the same frame twice that leads to a crash.
+> 
+> Fix crash by allocating separate frames for RHBA and RPA,
+> and modify ABTS logic accordingly.
+> 
+> Tested by checking MDS for FDMI information.
+> Tested by using instrumented driver to:
+> Drop PLOGI response
+> Drop RHBA response
+> Drop RPA response
+> Drop RHBA and RPA response
+> Drop PLOGI response + ABTS response
+> Drop RHBA response + ABTS response
+> Drop RPA response + ABTS response
+> Drop RHBA and RPA response + ABTS response for both of them
+> 
+> Fixes: 09c1e6ab4ab2 ("scsi: fnic: Add and integrate support for FDMI")
+> Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
+> Reviewed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
+> Reviewed-by: Gian Carlo Boffa <gcboffa@cisco.com>
+> Tested-by: Arun Easi <aeasi@cisco.com>
+> Co-developed-by: Arun Easi <aeasi@cisco.com>
+> Signed-off-by: Arun Easi <aeasi@cisco.com>
+> Tested-by: Karan Tilak Kumar <kartilak@cisco.com>
+> Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
 > ---
->  rust/kernel/sync.rs          |   2 +
->  rust/kernel/sync/set_once.rs | 125 +++++++++++++++++++++++++++++++++++++=
-++++++
->  2 files changed, 127 insertions(+)
->
-> diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
-> index 81e3a806e57e2..13e6bc7fa87ac 100644
-> --- a/rust/kernel/sync.rs
-> +++ b/rust/kernel/sync.rs
-> @@ -18,6 +18,7 @@
->  mod locked_by;
->  pub mod poll;
->  pub mod rcu;
-> +mod set_once;
+>   drivers/scsi/fnic/fdls_disc.c | 113 +++++++++++++++++++++++++---------
+>   drivers/scsi/fnic/fnic_fdls.h |   1 +
+>   2 files changed, 86 insertions(+), 28 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-I would have named this `once`.
-
->  pub use arc::{Arc, ArcBorrow, UniqueArc};
->  pub use completion::Completion;
-
-> +    /// Get a reference to the contained object.
-> +    ///
-> +    /// Returns [`None`] if this [`SetOnce`] is empty.
-> +    pub fn as_ref(&self) -> Option<&T> {
-> +        if self.init.load(Acquire) =3D=3D 2 {
-> +            // SAFETY: By the type invariants of `Self`, `self.init =3D=
-=3D 2` means that `self.value`
-> +            // contains a valid value.
-
-And the type invariants also ensure that the value of `self.init`
-doesn't change.
-
-So probably
-
-    // SAFETY: By the type invariants of `Self`, `self.init =3D=3D 2` means=
- that `self.value`
-    // contains a valid value. They also guarantee that `self.init` doesn't=
- change.
-
-If you come up with something better, feel free to use it.
-
----
 Cheers,
-Benno
 
-> +            Some(unsafe { &*self.value.get() })
-> +        } else {
-> +            None
-> +        }
-> +    }
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
