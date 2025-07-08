@@ -1,149 +1,135 @@
-Return-Path: <linux-kernel+bounces-721808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F08AFCE1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:47:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5428AFCE0F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F41F565DA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:45:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32C727A2382
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECDD22156A;
-	Tue,  8 Jul 2025 14:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322482E0915;
+	Tue,  8 Jul 2025 14:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="R6vTkFSn"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GRCWCtUh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1192DFF3F;
-	Tue,  8 Jul 2025 14:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBFB92DFF3E
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 14:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751985917; cv=none; b=XEKYaL0S4EYQVMqxKYGjcqHN1bmFhNjEkN0y0K5SRnS6+jQc6nITkEpr2NeYZl7tGAsqVr32HhtmxuVhhzEq+nTYpzjFDwq7QD1+h0F2CSzcGQkWhKeqmlXdPl2teufyHa+496E8+pDkL9GmbAxjwbb5XD0X9CqpVmALSfPz2HI=
+	t=1751985899; cv=none; b=s+l0C8c8dauRBGgLVEKoEIV7Q4w1Vt0LutPcZqsKiiPpequ5vlCmorVmnQ0DLvV7tDSHgu7B5zAHV4oJ3ETc5OZN2zyng6rXz61y5D7cVIIUVYHToMNBNOfhm5Pvnf+YwURKDTnRfq1Sc+dhjBP3dcROT/z+z7fO4wtEJDoxxdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751985917; c=relaxed/simple;
-	bh=u25jV0reS/3tEx0F0x715/FxyR/a64F4CgdnsSo65OI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bcym/OWGPOAcfpyogdyB2kCkQDeCAo93P5wrbzZ68p3uUAhGAAR/h+8UtVMKJWr0RkBkQt27izasRldaQeS675roh30dYeSqrWfYSk/n/eBsHGptaX4HidbgdC23NwaEaaea8O33KIK55YymO7chStFXdlkfzs7ETpDItb1GciM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=R6vTkFSn reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7D52940E0221;
-	Tue,  8 Jul 2025 14:45:05 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id yxsqRW0PZ2Xo; Tue,  8 Jul 2025 14:45:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1751985901; bh=OR5nb2I3t4IhUMz0U4gpskt/BrUAd7by/O20+56zPxY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R6vTkFSnqHn4S/r87nkVBIuHSxbjT9AtIAYneVu+aRg6ioPlgfIQaOohTmqcuwcWr
-	 WDl+X14pxsE7phpxXY5HWBSGxN43MeTdqAy3sw6e0tztHrGwKlOUPIaW4qibXsDhaD
-	 tDOnv4o3ZDkkUTTzRyzDAEb6J4lvJn7sAyvwQ+796UhGXHYp5HSSjkePHPe8CeCRiw
-	 LtQZdFvCnRmS3HtVF8Wssrgz84tEsZr6BNUyhElrrZUqKz4SI/UoNqrxYUD8nLTqDs
-	 bHUpG1HZH7Xi5EhSNJHBv4m2YoHFkz3jgfxJeGin2C5oLPZUSgNKcu/5QntZq6/Cbf
-	 GVYYrVEao2qKqsIJaRTypNtZZb3XFPaMUX2OH3PHrS1dcHN7/+HQdgQF7n7QO1/OHt
-	 Ye4qM+VkPpEihIzs1tAzYKVimUVfmVDMZjJTnHj8SvqTYiu7d5SIOnvzsGI2ReOGA8
-	 oakzG3+EOl9/C7ARyXMmUZJkDy/Jqsex8IK6PL/N204f5rByTTjjFjsxHFbIdYOL5s
-	 AO0ucYuE6LFHoMHZgii8n1RNtqEZgNCN6/+mNCLxVGcSNWyTQq5N9qd0Lx3DHPEH9m
-	 V6HhYVuPgaSOG/UMNbYKEYyhq4bglwr4P3sKbvB1qyiSH+UdavQi/3eRBoLIuwS94O
-	 ddvveiogLkKBNuID8cudfdLw=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	s=arc-20240116; t=1751985899; c=relaxed/simple;
+	bh=TcDPvUHToLQm+qE1E4pCpm9KbQqVDU7Yt4W9UJNjcH8=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=ftqtLw64OLqZE/y7BtBg6jNlecdwhTVj9wGNdOb91ekTbgFEwJ2XJCjYPbUywr15BTLGlDQp0uycDuyAiXkD2fvPTJ8RVDL/YEwglirDmS9xpCeA6Z4RkeQTVditGAxBF6j1L/Zonch7AdJFVCYq11B6e7yS6o4xdFznafw9Kok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GRCWCtUh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751985896;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xcTQlaxZHiwdLJ2cMTpNwOinGOe77WY04pTSRjm/G0I=;
+	b=GRCWCtUhbqIqRiDkhwlkRk0VE3wyRzCNRByuu30ik74dQXFm9Iec5gQJYPjFKhjKJiN28r
+	PgSGk8ocNBWvre8HAu+DYpxkZtD0iyg4s8t+KWBo13H7GZzSUv4d+LnFbCnq8VM6ScxvSO
+	/d65wLQOZ59KSdOgOtqofisXothRVIU=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-613-gcqhxnjcOCGariLGAkYUAQ-1; Tue,
+ 08 Jul 2025 10:44:53 -0400
+X-MC-Unique: gcqhxnjcOCGariLGAkYUAQ-1
+X-Mimecast-MFC-AGG-ID: gcqhxnjcOCGariLGAkYUAQ_1751985891
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1A1A540E0218;
-	Tue,  8 Jul 2025 14:44:44 +0000 (UTC)
-Date: Tue, 8 Jul 2025 16:44:37 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: christian.koenig@amd.com, asrivats@redhat.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	airlied@gmail.com, simona@ffwll.ch, jean-christophe@guillain.net,
-	superm1@kernel.org, satadru@gmail.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Bert Karwatzki <spasswolf@web.de>,
-	Sumit Semwal <sumit.semwal@linaro.org>, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3] drm/framebuffer: Acquire internal references on GEM
- handles
-Message-ID: <20250708144437.GBaG0u1c4E6aV5ekTH@fat_crate.local>
-References: <20250707131224.249496-1-tzimmermann@suse.de>
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6138A1808985;
+	Tue,  8 Jul 2025 14:44:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9C07118002B6;
+	Tue,  8 Jul 2025 14:44:47 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20250707054112.101081-1-jiayuan.chen@linux.dev>
+References: <20250707054112.101081-1-jiayuan.chen@linux.dev>
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: dhowells@redhat.com, netdev@vger.kernel.org, mrpre@163.com,
+    syzbot+de6565462ab540f50e47@syzkaller.appspotmail.com,
+    Eric Dumazet <edumazet@google.com>,
+    Neal Cardwell <ncardwell@google.com>,
+    Kuniyuki Iwashima <kuniyu@google.com>,
+    "David S. Miller" <davem@davemloft.net>,
+    David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+    Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v4] tcp: Correct signedness in skb remaining space calculation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250707131224.249496-1-tzimmermann@suse.de>
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2627956.1751985886.1@warthog.procyon.org.uk>
+Date: Tue, 08 Jul 2025 15:44:46 +0100
+Message-ID: <2627957.1751985886@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Mon, Jul 07, 2025 at 03:11:55PM +0200, Thomas Zimmermann wrote:
-> Acquire GEM handles in drm_framebuffer_init() and release them in
-> the corresponding drm_framebuffer_cleanup(). Ties the handle's
-> lifetime to the framebuffer. Not all GEM buffer objects have GEM
-> handles. If not set, no refcounting takes place. This is the case
-> for some fbdev emulation. This is not a problem as these GEM objects
-> do not use dma-bufs and drivers will not release them while fbdev
-> emulation is running. Framebuffer flags keep a bit per color plane
-> of which the framebuffer holds a GEM handle reference.
->=20
-> As all drivers use drm_framebuffer_init(), they will now all hold
-> dma-buf references as fixed in commit 5307dce878d4 ("drm/gem: Acquire
-> references on GEM handles for framebuffers").
->=20
-> In the GEM framebuffer helpers, restore the original ref counting
-> on buffer objects. As the helpers for handle refcounting are now
-> no longer called from outside the DRM core, unexport the symbols.
->=20
-> v3:
-> - don't mix internal flags with mode flags (Christian)
-> v2:
-> - track framebuffer handle refs by flag
-> - drop gma500 cleanup (Christian)
->=20
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Fixes: 5307dce878d4 ("drm/gem: Acquire references on GEM handles for fr=
-amebuffers")
-> Reported-by: Bert Karwatzki <spasswolf@web.de>
-> Closes: https://lore.kernel.org/dri-devel/20250703115915.3096-1-spasswo=
-lf@web.de/
-> Tested-by: Bert Karwatzki <spasswolf@web.de>
-> Tested-by: Mario Limonciello <superm1@kernel.org>
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Anusha Srivatsa <asrivats@redhat.com>
-> Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Sumit Semwal <sumit.semwal@linaro.org>
-> Cc: "Christian K=C3=B6nig" <christian.koenig@amd.com>
-> Cc: linux-media@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linaro-mm-sig@lists.linaro.org
-> Cc: <stable@vger.kernel.org>
-> ---
->  drivers/gpu/drm/drm_framebuffer.c            | 31 ++++++++++++++--
->  drivers/gpu/drm/drm_gem.c                    | 38 ++++++++++++--------
->  drivers/gpu/drm/drm_gem_framebuffer_helper.c | 16 ++++-----
->  drivers/gpu/drm/drm_internal.h               |  2 +-
->  include/drm/drm_framebuffer.h                |  7 ++++
->  5 files changed, 68 insertions(+), 26 deletions(-)
+Jiayuan Chen <jiayuan.chen@linux.dev> wrote:
 
-Thanks, that fixes it:
+> Syzkaller reported a bug [1] where sk->sk_forward_alloc can overflow.
+> 
+> When we send data, if an skb exists at the tail of the write queue, the
+> kernel will attempt to append the new data to that skb. However, the code
+> that checks for available space in the skb is flawed:
+> '''
+> copy = size_goal - skb->len
+> '''
+> 
+> The types of the variables involved are:
+> '''
+> copy: ssize_t (s64 on 64-bit systems)
+> size_goal: int
+> skb->len: unsigned int
+> '''
+> 
+> Due to C's type promotion rules, the signed size_goal is converted to an
+> unsigned int to match skb->len before the subtraction. The result is an
+> unsigned int.
+> 
+> When this unsigned int result is then assigned to the s64 copy variable,
+> it is zero-extended, preserving its non-negative value. Consequently, copy
+> is always >= 0.
+> 
+> Assume we are sending 2GB of data and size_goal has been adjusted to a
+> value smaller than skb->len. The subtraction will result in copy holding a
+> very large positive integer. In the subsequent logic, this large value is
+> used to update sk->sk_forward_alloc, which can easily cause it to overflow.
+> 
+> The syzkaller reproducer uses TCP_REPAIR to reliably create this
+> condition. However, this can also occur in real-world scenarios. The
+> tcp_bound_to_half_wnd() function can also reduce size_goal to a small
+> value. This would cause the subsequent tcp_wmem_schedule() to set
+> sk->sk_forward_alloc to a value close to INT_MAX. Further memory
+> allocation requests would then cause sk_forward_alloc to wrap around and
+> become negative.
+> 
+> [1]: https://syzkaller.appspot.com/bug?extid=de6565462ab540f50e47
+> 
+> Reported-by: syzbot+de6565462ab540f50e47@syzkaller.appspotmail.com
+> Fixes: 270a1c3de47e ("tcp: Support MSG_SPLICE_PAGES")
+> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
 
-Reported-by: Borislav Petkov (AMD) <bp@alien8.de>
-Tested-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: David Howells <dhowells@redhat.com>
 
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
