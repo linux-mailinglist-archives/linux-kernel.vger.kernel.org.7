@@ -1,229 +1,99 @@
-Return-Path: <linux-kernel+bounces-721224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD76AAFC653
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:56:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 802A6AFC645
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 006153B8226
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:55:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3298174372
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EFD2BE03D;
-	Tue,  8 Jul 2025 08:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F338E2C08AB;
+	Tue,  8 Jul 2025 08:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="U8bnUSgB"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012070.outbound.protection.outlook.com [52.101.66.70])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNmt8Y22"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD691A3164;
-	Tue,  8 Jul 2025 08:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751964941; cv=fail; b=q+VVJfQ7nLzX+6No6XBRE45HEhEr+3o2bvUL8UOvByb9OwinscqHkD9T/xYMidkX2gnG+kjmbDokEzKZR/NT4vQyf42cIcBB7VcQ0bWwc4dV6YAw28xBPPKL5VmUzSZ6SMATkDMjfOQ1gXUu0wpHNG516VN5Jt9A0VP+71uakgQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751964941; c=relaxed/simple;
-	bh=wLw9e8WFw3jm+T+bDbgiTUQdEl9hMUi4zwJvTHmAEeo=;
-	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=JObLGtdEvTaSZnZZml8mVwbbhTKWZ5u9dz0aFKGZIGppYgzUrGgKAyHben1b34Kz3Lzr6ELtTsy+BJIP3K7gIebK9fUYGPTgapfLy2Ii/6uNSxcznHOr0HjY3mmKe7Kb9QZDaANPNgBj+szkXXqtVgfIhaVOp28cGcQe/9/+SMA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=U8bnUSgB; arc=fail smtp.client-ip=52.101.66.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=swPuhavhaVwk2ypFq4Xg2OU1OYAggXgt5XuZNQtK4eI/HsP/q/GmilbkF+4d5d6jTmHoGY32vrUFR4NGLW8llVVhpbJ9n2PKTAksBIa9Bwye0CuaqeGXnZHjNme3BY1mMb2LxeIPcQnjMgmchb+ExJRiqKoFaDtpuHzj+HnDK25CMBpWnt1PUrONs6Nm1n7CQy85BPx26d+J8eQww7c/cI5VmuY4JGbgFt/ObZBFgT6VS+EpXSMS2NNvCBpIllMMTupWwUYgeTNKhkNYCUI+Q9HG17KQCiOdc6nKuM5+vsHHVncA2aG8wkHHaSZJrNp+XczbMPOqdXpu2aIp6M632w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LmX9i/Fnt3TZmUX/Z4Fu80SBTdnUh4l+RNdNk93IN28=;
- b=qxJa1KZG2qseKM2Ol/1nBXdbpGEuPQuRewETW9QokTEx/KyEb0RXWYgC6+4U4jwnFFlU3PxXrsUp3rLumNJ1xbDM+k/A604TFy26bYYYnSPrNyYIm2zn6d6kJTQkj4h5K6ZaDDCLtbHQqUbR+ndqeAnwcJHuL+SJcMIPefRX94E8z6ODSGGYAhZnrPqCI204DxmZGR8P64PoU0QVtQxh/LyxiEzmschOBmztYEluPZDXeCdle1sfz5l5P8xMps9bVEc+Kq6bEQdUsmLlQH7C+vUtQ/t3wjtxFWI9fm+3iZDRiR24HBeLveD/ZWsBeS4qnZpFp4hZ93+DicFIRl+UNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LmX9i/Fnt3TZmUX/Z4Fu80SBTdnUh4l+RNdNk93IN28=;
- b=U8bnUSgBFLXNmG1s/1RessgNTmvmgJYpuVK5/HH4x0wQ+5+X9h2F1u7qQg6p1SJ5qCe6d4mNqn+5PtErM0MfbL8eCZaCoPLNQ6iJi9q6smQXicFgZUU+tK8uzFfDtpEyRU9XV3hWU5GSXH8b+xv8Y7DbO7A9WMo79baYPT8Xlm3llqq77P+37GinqsbFMlUwSVao4KIC7IFThwslCLhokDG+RRDY/lDbuuKVrlp06YCGZZByq+Bxi3wExuyZxra4pX37YpV7Ov07WWDHE7pwIS+oS5mM30ITGCrcUVjQDrnlU2gj8MBluD8b8B6qeQEvYrVPuhzsdcyjo4j3+DQ+XQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
- by PA4PR04MB7758.eurprd04.prod.outlook.com (2603:10a6:102:c4::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Tue, 8 Jul
- 2025 08:55:31 +0000
-Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
- ([fe80::7be0:296:768c:e891]) by AM0PR04MB7044.eurprd04.prod.outlook.com
- ([fe80::7be0:296:768c:e891%5]) with mapi id 15.20.8901.024; Tue, 8 Jul 2025
- 08:55:31 +0000
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: shengjiu.wang@gmail.com,
-	Xiubo.Lee@gmail.com,
-	festevam@gmail.com,
-	nicoleotsuka@gmail.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linux-sound@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: fsl-asoc-card: add sysclk_ratio for calculate sysclk frequency
-Date: Tue,  8 Jul 2025 16:53:17 +0800
-Message-Id: <20250708085318.2563521-1-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MA0P287CA0005.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:d9::17) To AM0PR04MB7044.eurprd04.prod.outlook.com
- (2603:10a6:208:191::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3992BEFE8;
+	Tue,  8 Jul 2025 08:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751964870; cv=none; b=byexNOozPRwydFD1yowCQF+TLxaFiwFKEt5eUib3nIn+zrZeWnCzpezag51HDClWjQK8L9A28GwSFen+cVHotRa8whqaW/Jcq4MpLbz2wnErpQEelcGiETlANN+fBjYhblDveTaQic0wFN6u9n7NI9BnmA5gPMmHCtbttRT7xFI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751964870; c=relaxed/simple;
+	bh=XbuRMxQszhiv3xuk8dB4cUp9wbNNFGyDjDesNag3FoY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zcx+j6/RpUboNabaDPMhMuKrOwA4mKXd3Te+NZq90GMRNsqcAjsb4xmPnsGVFcvj7OXwUyPuvjb0PnEtTmG+O1vU4CiNlsVZReRQjyOi4YugSEI09COAwkehLr6gqgP2113rYC2dSTbVwsdIIgBqqeCVb8yNvDXoAFzmHZVpFrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sNmt8Y22; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED399C4CEF7;
+	Tue,  8 Jul 2025 08:54:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751964870;
+	bh=XbuRMxQszhiv3xuk8dB4cUp9wbNNFGyDjDesNag3FoY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sNmt8Y22MalcTjvlEaToG2T/BpQHFr6NsiTdBSEZilde6BMezpEMF4M1iEEo3A7fS
+	 GDeQRi/btho+rh2I7wxKc6UJyNJ76tVfrZIAWdHIFmXg0Rc0uWFyLpE+QN8HYenzvf
+	 mBhsZ2knKgH/YFqc9X2Qxq2InoqvmqxarAcrvlasweTaPHxaOyrv26TD129KSkrSgE
+	 wXQ/QgqSEliAIYY1gNqx5kd+V2XWnMR4iUl2TM2uND1PqI2t1Ptdp94Stify3fEyHL
+	 YtDv65wNGrQLwXJnXYbt82rawXGi8UiS6Gv6atnafbPxnI1MDK5hGU1Qbp+2uosqRc
+	 YtAL+s45z7x8A==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1uZ45m-00000000450-0a1f;
+	Tue, 08 Jul 2025 10:54:22 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Pengyu Luo <mitltlatltl@gmail.com>,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Bryan ODonoghue" <bryan.odonoghue@linaro.org>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH] platform: arm64: huawei-gaokun-ec: fix OF node leak
+Date: Tue,  8 Jul 2025 10:53:58 +0200
+Message-ID: <20250708085358.15657-1-johan@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|PA4PR04MB7758:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8c19fe87-e264-463f-c9a5-08ddbdfd318e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|19092799006|7416014|52116014|376014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+iXYfL+MZvoNjG1Nao9sk6wgWPjo/S8wlh9LZ8L3G9UiegV9gC4JN4RN5I/4?=
- =?us-ascii?Q?sSi31Q0OyZV4CmEYIyZfEauZWQh7H3AEGD+M3NrXHYWvs+ybhPBUbWJ3khFI?=
- =?us-ascii?Q?Tlz5CyGAnd6Gy03e4x3OTaiPkiN6O0hfu3hm5Jt13o2jE+9g3V985ppZ/ZD+?=
- =?us-ascii?Q?QglOV2InJz+b93YWP/3BKJK38qBeejzSvWHR5lBI0g98kt2Fq9KQljvbYkIw?=
- =?us-ascii?Q?OdYc8VZBeyRjTSzT8d5TGgm991U3XSeMHyfdL6tWA44B8RST7BRQzs31EcdG?=
- =?us-ascii?Q?6l8bB8gBdSjjrERw4DFqfzBTYJ6eGcZ4ZRPxY+FI6UUlvdtU8QIFE6fUfW4b?=
- =?us-ascii?Q?V1G9FjTw55SRhAfIMBP2J9kfHgFiilJj4M5hWQT0W6awa3HOfr4glRVfRzVs?=
- =?us-ascii?Q?aNb378qZ0qK7zMQhNB4paS0AJVAN2Gg9Y3YNUB+Xfr+eihW/QCJdzCGXNxTk?=
- =?us-ascii?Q?URgVbsbkyHfOl8AurU4T0Go2CimNWhqeDg5MurmEh7/C4bnILV0zzGEJm7Ot?=
- =?us-ascii?Q?n0+jxBeeoAf0m/K7nqeaJYDa7jvhW7SSpkr4Am7xau5O0wecx67u73irtinT?=
- =?us-ascii?Q?knlbUsq/zN1/AUXINKq8SDdlSbwiGRST4y424rzM3r3KcrcTHYHKSLfArBI5?=
- =?us-ascii?Q?PIVOkqzO2KvSLVluUPQeT2J/TF7PCeZz6b0fb/n951U3jHUFXz9th03zVaH2?=
- =?us-ascii?Q?ZQeprductPVs1cCfTlkUXQk4eEuLkpcHvQ/Mrfhr/udcKvdMU9YyhZgKyO+c?=
- =?us-ascii?Q?8H1D5GOm6q3XC7B6ItsCtTfedZgheoZ2ToMlZxzd0/PKliW6jmhPEVpGNDpf?=
- =?us-ascii?Q?H+m77u2v4so5gle5UFfD9GJz+QUbW7hQ800l8CtZqyUSM5tkyIvsH7nsaA2q?=
- =?us-ascii?Q?UlzDRUVZR0JhxQgJLL8yCOQQU8xlFgc0sJa3RKzTDWKy8WUoHlUdbbZuV9Ru?=
- =?us-ascii?Q?a7SyzEGFbXO4DHRPuCKsKh2EloBqA5s9WuxkfG2dhd6h7nLVasPJZFgLgz2T?=
- =?us-ascii?Q?jrs36bAoTfu1yUJlaQPLlQeV6ISLSWHsxJCv4xj+HcpwWqjERE1nuWmwnSWK?=
- =?us-ascii?Q?pahpZZA1FdxQp2Ghj5+0XfMiWCJSM4EuQYSJuUtFLecAyPcPWWykl4PIUHrn?=
- =?us-ascii?Q?ACWGckz0kMI661uA7vHyAWE4wIbbRsS9oNy7c77eH688Xre/Ome+JeMTfiMH?=
- =?us-ascii?Q?ltFh3KOVpbJ+l03PbPaJALFESBSH81q78J9iHTaKIcQpEjiTY4nLpSfEIl4b?=
- =?us-ascii?Q?pUojM4BCML5dGM7A7ou6mniNP70B9ovUDQJ4KpIFX/RJJ2I0em3UV+cHiwrC?=
- =?us-ascii?Q?hcD5uAB5WJYBJUFrAPkRLSybWRgr5j/rCYENgNt61tp3NIjfWMgo2AptBhLQ?=
- =?us-ascii?Q?yzxXtZ+j8YBwjGY5EpN/YfBKgv41qKmqMjK9Q5c0WoFPRYCpRHEvvbRGVJCk?=
- =?us-ascii?Q?9URfdcll22IyLvzf6SwaUVWvgWy2J+SMj5j1ijZy7QeV2Bi8LJYusrwe2Hqa?=
- =?us-ascii?Q?wpF2ZxJP031dg9w=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(7416014)(52116014)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?f//q6kWwVUGxbt5D5k7SK7bC+tI9Zvc4QUB6SrnDHwUqW83ebVsS3F8I2q3G?=
- =?us-ascii?Q?wj+LCHUwJwVltamnRcKCKa4CJiVCalBVUwklJJ/uebatU5OSecQMhkCfXJgx?=
- =?us-ascii?Q?YT21rXylKHtdb35BScjBOCRxfOJP2AnAnDeNvnXuar40xbePO61T6pLPEFT1?=
- =?us-ascii?Q?a3bngA9Z92yEVKXchTTZAo6108QhXh7yizi5Lk7J/rQxpWbWxtZkDyl4GfX3?=
- =?us-ascii?Q?CL/JjpmUBhnM6qiAXEDdi7B2+rNgAknfH892NYlHuQ4dS8Hu7nKeETO7JhXD?=
- =?us-ascii?Q?Fdaw6mNnaK34MKW3XPGtMGGnGGnqUXSeiu6Cas7+hywjcX9LOFTewH6Uy9KK?=
- =?us-ascii?Q?xXZ1oXd35OJqZflx0c0N2P99fJgQoNWL7UIVZCXPhuo4rJvoPQxU/9fZP24I?=
- =?us-ascii?Q?KKjzFqGDyVZMCqKbP7ojEWXew2L+SCbEnmeuvSgBfyZWVtAF1FKn2zg8doVu?=
- =?us-ascii?Q?5k8CDgzahCq8SVXAWSv1z/G2MFlUR7xnuMBi0hN9gCeVrrlzVUCoQM8N+H1V?=
- =?us-ascii?Q?rHPIp5xyumLRGfZwPgcLHDmzTDtCeHovFocu6ReuMIlZ3bN3lIbhNqJ17hG+?=
- =?us-ascii?Q?FUjjLNjzOUioySW/OSADBhotmPcL6QLXimQG2/cweUPe3uaIiaJRC+stEwUK?=
- =?us-ascii?Q?diehn+Iv19Dl1xWWXx67SGCMX8eErHZsHKaZltXfgfxs58cI7ZIdnP98TvNB?=
- =?us-ascii?Q?PYWYt+QjMTtDAe+X2oUTOVUXiAL39Ogx9MkAMy6z7RJa+X1WzKJAZoAC2BBS?=
- =?us-ascii?Q?luT0N7i1V3C67LWYNi5S2wQvbCCs3r9mYrNSSqbX4aVJvqUrbMZkrGGA3pK0?=
- =?us-ascii?Q?kgEmTrftTBJBHN+seJ8tfEL4PlyIc3OxqqGeAg9JPB2jHFSQYspL4oo9T6SL?=
- =?us-ascii?Q?0XthDZvHkUBI3q3DeG7U0JucJTV2JRufS1aBKKi+9Wv2NIqrJYhLVPK4KOti?=
- =?us-ascii?Q?f+K8j2ufMFaQqCRJaPAG8r5sqQZyZoeSyr7DcGk80+0ggPrVEzsWtHZQQeix?=
- =?us-ascii?Q?tjYZT4VaFyPlQsADCG0eD1zZcLcDpqJBZ0frVAtzWznrrIlS+eDw47iIjub6?=
- =?us-ascii?Q?1sIyE8jnV19ThkMrSJUiz1F18GHVx998zfool4s1IR1HtLL+DjfugAtVTzdm?=
- =?us-ascii?Q?ripDYtLo47xtoibHGDXf5iFyy2Q3zsuuoh6iwHwUakauUhEJW8L2jNAsOK1p?=
- =?us-ascii?Q?eQ2DjqRHj6gEF23zMjc8Ze4rrMQfTJmzk69HJy9qhWY2fKJWabVea+WfhmN+?=
- =?us-ascii?Q?1oLu446ueuF5MAahW6iU8uAT9SyelUS3urVgd6KknD2eQY3p37kPUbE24uwV?=
- =?us-ascii?Q?+qyo8yHdIYnjqf8WSDPbThedWbEl6n4RMIIDOlNgcnYgwV2psb0mPQqoFWAU?=
- =?us-ascii?Q?S2DOawUqv0IujfPDLoQvxFk6mjTpsC55c2mswIKnwPOPhjT3O0O4/bM4yjnk?=
- =?us-ascii?Q?LLG5NxTvJvBa+NKjGIM5sGtBYhXn6Jsy+cWVO3d6CtbvGCTsbUCOeAp6zFoy?=
- =?us-ascii?Q?ptU5h4mQZFD05q0YanGCX8fzddodvErs822X7LrvqLxjBPyePRBjDpOqeSJ5?=
- =?us-ascii?Q?ebdw9iSlTBqnXakU9VXWC5W4+dbFSdk5A9e/aXIh?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c19fe87-e264-463f-c9a5-08ddbdfd318e
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 08:55:31.4973
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KSE77NNHNxW6hFm+tjQ3EVfE5BFt5mVJguhOM097XUCG8FIC7DFN9MrInMq8fXjiVRCqnGPgvk+BmbU162TOTQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7758
+Content-Transfer-Encoding: 8bit
 
-The sysclk frequency can be calculated from sample rate multiply ratio.
-When sysclk_freq is not configured, but sysclk_ratio is configured, then
-calculate sysclk frequency according to sysclk_ratio.
+Make sure to drop the OF node reference taken when creating the Gaokun
+auxiliary devices when the devices are later released.
 
-Apply this change for wm8524 codec.
-
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Fixes: 7636f090d02e ("platform: arm64: add Huawei Matebook E Go EC driver")
+Cc: Pengyu Luo <mitltlatltl@gmail.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- sound/soc/fsl/fsl-asoc-card.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/platform/arm64/huawei-gaokun-ec.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/sound/soc/fsl/fsl-asoc-card.c b/sound/soc/fsl/fsl-asoc-card.c
-index ab583b432c60..71113886e494 100644
---- a/sound/soc/fsl/fsl-asoc-card.c
-+++ b/sound/soc/fsl/fsl-asoc-card.c
-@@ -63,6 +63,7 @@ struct codec_priv {
-  * @sysclk_freq: SYSCLK rates for set_sysclk()
-  * @sysclk_dir: SYSCLK directions for set_sysclk()
-  * @sysclk_id: SYSCLK ids for set_sysclk()
-+ * @sysclk_ratio: SYSCLK ratio on sample rate
-  * @slot_width: Slot width of each frame
-  * @slot_num: Number of slots of each frame
-  *
-@@ -72,6 +73,7 @@ struct cpu_priv {
- 	unsigned long sysclk_freq[2];
- 	u32 sysclk_dir[2];
- 	u32 sysclk_id[2];
-+	u32 sysclk_ratio[2];
- 	u32 slot_width;
- 	u32 slot_num;
- };
-@@ -176,7 +178,7 @@ static int fsl_asoc_card_hw_params(struct snd_pcm_substream *substream,
- 	struct snd_soc_dai *codec_dai;
- 	struct cpu_priv *cpu_priv = &priv->cpu_priv;
- 	struct device *dev = rtd->card->dev;
--	unsigned int pll_out;
-+	unsigned int pll_out, sysclk_freq;
- 	int codec_idx;
- 	int ret;
+diff --git a/drivers/platform/arm64/huawei-gaokun-ec.c b/drivers/platform/arm64/huawei-gaokun-ec.c
+index 7e5aa7ca2403..7170f8eb76f7 100644
+--- a/drivers/platform/arm64/huawei-gaokun-ec.c
++++ b/drivers/platform/arm64/huawei-gaokun-ec.c
+@@ -662,6 +662,7 @@ static void gaokun_aux_release(struct device *dev)
+ {
+ 	struct auxiliary_device *adev = to_auxiliary_dev(dev);
  
-@@ -187,9 +189,14 @@ static int fsl_asoc_card_hw_params(struct snd_pcm_substream *substream,
- 	if (fsl_asoc_card_is_ac97(priv))
- 		return 0;
++	of_node_put(dev->of_node);
+ 	kfree(adev);
+ }
  
-+	if (!cpu_priv->sysclk_freq[tx] && cpu_priv->sysclk_ratio[tx])
-+		sysclk_freq = priv->sample_rate * cpu_priv->sysclk_ratio[tx];
-+	else
-+		sysclk_freq = cpu_priv->sysclk_freq[tx];
-+
- 	/* Specific configurations of DAIs starts from here */
- 	ret = snd_soc_dai_set_sysclk(snd_soc_rtd_to_cpu(rtd, 0), cpu_priv->sysclk_id[tx],
--				     cpu_priv->sysclk_freq[tx],
-+				     sysclk_freq,
- 				     cpu_priv->sysclk_dir[tx]);
- 	if (ret && ret != -ENOTSUPP) {
- 		dev_err(dev, "failed to set sysclk for cpu dai\n");
-@@ -799,6 +806,8 @@ static int fsl_asoc_card_probe(struct platform_device *pdev)
- 		priv->cpu_priv.slot_width = 32;
- 		priv->card.dapm_routes = audio_map_tx;
- 		priv->card.num_dapm_routes = ARRAY_SIZE(audio_map_tx);
-+		priv->cpu_priv.sysclk_dir[TX] = SND_SOC_CLOCK_OUT;
-+		priv->cpu_priv.sysclk_ratio[TX] = 256;
- 	} else if (of_device_is_compatible(np, "fsl,imx-audio-si476x")) {
- 		codec_dai_name[0] = "si476x-codec";
- 		priv->dai_fmt |= SND_SOC_DAIFMT_CBC_CFC;
+@@ -693,6 +694,7 @@ static int gaokun_aux_init(struct device *parent, const char *name,
+ 
+ 	ret = auxiliary_device_init(adev);
+ 	if (ret) {
++		of_node_put(adev->dev.of_node);
+ 		kfree(adev);
+ 		return ret;
+ 	}
 -- 
-2.34.1
+2.49.0
 
 
