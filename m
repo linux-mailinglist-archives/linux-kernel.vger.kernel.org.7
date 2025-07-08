@@ -1,53 +1,78 @@
-Return-Path: <linux-kernel+bounces-721580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E1B4AFCB49
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:03:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C22B3AFCB48
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:03:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5008F3A4A45
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:02:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCAF73A54E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5E02DC342;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273F228137E;
 	Tue,  8 Jul 2025 13:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="JdFEu7PE"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QXTJyVzd"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C029A14AA9;
-	Tue,  8 Jul 2025 13:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91ED0214A9E
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 13:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751979787; cv=none; b=qIe6dR5t5bOfNZGMAZHUi7D9tyvPjmkjg76tO/kvrwNvfIul0a17m5Tk5ONZwlWGQWQjgP721b7QPMZ+E3/+CArdrUjN86bAh+bgkjI5lGW3RcwNNAmz5Q61OVv4RubyjE4M01OdW7IQX3Ru2DvYA1LZQQsOe0Lxoz31obQsxWo=
+	t=1751979787; cv=none; b=nSTHXK1R3nvdLRzAiAVRqZoBBAW1drRFAmUWAc3GTqRT1FZkUi5T5G1iOkd/71tW67YrGwYLMZ8nmgMaLLoZ+iwRjAXHmzA2mdNMFrDsPb3u/zDcGPmR1ORJNSwgpRVo+n2p+8ntszAkI9AnAb/am3ByM2bHems/VQV4Roxhkdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751979787; c=relaxed/simple;
-	bh=ereuj6AlJpzu5i16+yC4jvV+PusLP+iYehDXGVRum1w=;
+	bh=Y3ssvtVdT6GjWAm8mQjmaHBVjpYwMBCiiVf9vi3pxuY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oOa6Tvfhn7Gf2VSmfMmTIqBqxs3sKRQdeZM8yFOfjGEi0Vb/IHy2w1bpPeKiVnR6A44RvFcZcPY6z7y/mpDqei2L5jHfmk7IGb0lYN9giGmg7OKXw9CLU0mu3cUwoYkyO/8YpSbezMv/3EanXtjkxT/85uoo0ymshbEBf8uYCTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=JdFEu7PE; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=CyMyoOzxPeWjgAxgKPF6kohtSbJRtTIW2hnbquSOXqk=; b=JdFEu7PEjSL5zluijTDqwm7bFA
-	KDlzpRB62hDf7FTri4sgFMFKZ9IAbPwIbYxurQtIBHxzwiWvg5jpYcdIw5ZV6JcMx18tCRGq54vWL
-	K8zJscgwk4rVzcCcRm85O7NyKIaWwzFgKqUUD09LpuHl8Kw5Vc2NFrjxyc4gUZnr8kkxmIhhJFAzi
-	WJdR3Rqn1sgRx4mr0s0c/UH5926jQuHMDLbdyLOnd/A/M7EZNEgwT9GQk9TkS5fSAvboLI2hv7Jv1
-	nNXvHxy60BlEKNAApOnC74HQN94woOay2aU4owCh1Ue/GWN7kAGbHNIRnUnwCZRuHk+y1l+jvswqS
-	DYPnZUTw==;
-Received: from [84.65.48.237] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uZ7xn-00E173-9x; Tue, 08 Jul 2025 15:02:23 +0200
-Message-ID: <b5d0921c-7cbf-4d55-aa47-c35cd7861c02@igalia.com>
-Date: Tue, 8 Jul 2025 14:02:20 +0100
+	 In-Reply-To:Content-Type; b=D4gRPj3WK4gjVdNVqB7Fi7twwI0u/MicKZsAiMf7ZqJNWbeJDi2OV2x74UGhQsUBkRcqKLiqeJftgdDvOUWq5Am3MXL1LjhE9sU1f1QAe5crjj8Y6LixmLKE4f2uH7aQWL3cb1wij8+zFRcXiYVpgaoyI0rwhbzCBjRH9c2IWq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QXTJyVzd; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4535fbe0299so25711205e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 06:03:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1751979784; x=1752584584; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pBNKDiLRChysupmqvHKYT2mfcl/4n2UVzs+2m0NT2FQ=;
+        b=QXTJyVzdueIRU0o9g/i9oqv+5txIZIlJkNbHBbgkqmzy/thsWqAT3kwYEnLTrHM1oi
+         D7V4x4KjWXmC8YUTfzCUZOfpruFp0y3SKADlUrcD9ymfZ/xz6NqQmmp14+SON2LpaZ9Q
+         S7NEmfS4u6wVRBgo+IhsPrYbN67Czj6gfJLhFpW9i3s1rb0KdCGdEoMO1eLjNbXCAHOo
+         GbIiipQVjtdpv+ysL72zUvD5UtsR5Rvyp4phzAgc+VX7Bg8UfuI9NyVxEpBWf4wuojWz
+         H4PP4EMfFhHxXNLvFUGaoIIWmAB2AlTpcl+SOx4fRfC2d39zO1fvTrBaFvrAiM/I48uo
+         EhMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751979784; x=1752584584;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pBNKDiLRChysupmqvHKYT2mfcl/4n2UVzs+2m0NT2FQ=;
+        b=wEseXRBFGkmcjZC45BVUXkNJ3e/mCgosPpifzkgGCUd2ILCFkkMkZuFYfvVR8UvYsw
+         gGQ5eYrLGi97c+D0y3DSDPFgoHf+YzpoaYMCdyKIvSuK7+owS8t52A5RNrJhBEA2Npc2
+         hSlLwy9lrZiqigx6BdplAFBlizVyOpWObC+2fxKgxFwOgiFmqnYR8rBkqRpQ5a3lLRE8
+         Ibe8lpPdVJJiUjpuHgJppE68/BBlxbqa1vwoDiFvVLXPp5ydUvm1j9++c1AkekzhFN1z
+         p5cJ6bJ5WEv2eRy4V3iHrZYbW1wMYuCfYRIE9jxk+PBA2rfR5oSuRJiFCdJ1Hwl/KfNt
+         gjsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXR50AGHo8YThA0OMvQfbLnQbNhUONbxx9xT4YCNp1BI9Hhp7kE7clXFVs/YHNT2V5/DuIlb994xwLgoW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4mwwRdQjK8hjG0gRFMBy9OqkptIyZHK41ZZzEQPfKPcScmoqE
+	3qOp/3QeFcgOJVkOkkfflg28TsHubMaxSLgCVnd/9I9tbm55hX8Hhd5OvWxd1mYkC7E=
+X-Gm-Gg: ASbGncsKh127QauRWcNPPc+sfgdxQqG+zmzuHH1Osm8GwtlHu609W/qpQj3PoJGwCfl
+	auZok+pQvp3pNM07ZIvprOJD98DyzPiHTTf9M+udE9mtxs59LX9jWpl1OWy9JgbqaFCuilNvS3J
+	XWNtxPs14pO9vSdTz6U59Opz9qVyiuwrIKB+7jZ5+fIIXwgCRChzeOt9xEPYHBmHljDiJA464j2
+	qGwcysyVWSFmzFNCVeDXvhrQSYi8RjTNaZJX927L45RI8QGKghINQl1w9EDXzqpNGfbgKQfh65m
+	xC+JNY+mM589gBGowE49a5rTpCtx+fKt4aDAPLvmXDPZ7HY0//oYV4eX7kFEyuck6g==
+X-Google-Smtp-Source: AGHT+IHMi4WXnVkZEVqB8NLtkDRu4v1G03GHPDZ2k6n5a8/P6IJD/eLFHdZsgcA96vMaGQOq9oe5XQ==
+X-Received: by 2002:a05:6000:386:b0:3a4:f024:6717 with SMTP id ffacd0b85a97d-3b4964ebe27mr14567959f8f.53.1751979783397;
+        Tue, 08 Jul 2025 06:03:03 -0700 (PDT)
+Received: from [10.100.51.209] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b4708d0941sm12821553f8f.26.2025.07.08.06.03.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jul 2025 06:03:03 -0700 (PDT)
+Message-ID: <20c5feae-25c0-4c8a-a40a-b35cece6c166@suse.com>
+Date: Tue, 8 Jul 2025 15:03:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,158 +80,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] drm/sched: Use struct for drm_sched_init() params
-To: Philipp Stanner <phasta@kernel.org>, Min Ma <min.ma@amd.com>,
- Lizhi Hou <lizhi.hou@amd.com>, Oded Gabbay <ogabbay@kernel.org>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Lucas Stach <l.stach@pengutronix.de>,
- Russell King <linux+etnaviv@armlinux.org.uk>,
- Christian Gmeiner <christian.gmeiner@gmail.com>,
- Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Qiang Yu <yuq825@gmail.com>, Rob Clark <robdclark@gmail.com>,
- Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@redhat.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
- Liviu Dudau <liviu.dudau@arm.com>, Matthew Brost <matthew.brost@intel.com>,
- Melissa Wen <mwen@igalia.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
- <mcanal@igalia.com>, Lucas De Marchi <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Sunil Khatri <sunil.khatri@amd.com>,
- Lijo Lazar <lijo.lazar@amd.com>, Hawking Zhang <Hawking.Zhang@amd.com>,
- Mario Limonciello <mario.limonciello@amd.com>, Ma Jun <Jun.Ma2@amd.com>,
- Yunxiang Li <Yunxiang.Li@amd.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- amd-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
- lima@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, Christian Gmeiner <cgmeiner@igalia.com>
-References: <20250211111422.21235-2-phasta@kernel.org>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <20250211111422.21235-2-phasta@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 1/2] module: Restrict module namespace access to in-tree
+ modules
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Matthias Maennich <maennich@google.com>, Jonathan Corbet
+ <corbet@lwn.net>, Luis Chamberlain <mcgrof@kernel.org>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas.schier@linux.dev>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Christoph Hellwig <hch@infradead.org>, Peter Zijlstra
+ <peterz@infradead.org>, David Hildenbrand <david@redhat.com>,
+ Shivank Garg <shivankg@amd.com>, "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20250708-export_modules-v1-0-fbf7a282d23f@suse.cz>
+ <20250708-export_modules-v1-1-fbf7a282d23f@suse.cz>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20250708-export_modules-v1-1-fbf7a282d23f@suse.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 11/02/2025 11:14, Philipp Stanner wrote:
-> drm_sched_init() has a great many parameters and upcoming new
-> functionality for the scheduler might add even more. Generally, the
-> great number of parameters reduces readability and has already caused
-> one missnaming, addressed in:
+On 7/8/25 9:28 AM, Vlastimil Babka wrote:
+> The module namespace support has been introduced to allow restricting
+> exports to specific modules only, and intended for in-tree modules such
+> as kvm. Make this intention explicit by disallowing out of tree modules
+> both for the module loader and modpost.
 > 
-> commit 6f1cacf4eba7 ("drm/nouveau: Improve variable name in
-> nouveau_sched_init()").
-> 
-> Introduce a new struct for the scheduler init parameters and port all
-> users.
-> 
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-> Acked-by: Matthew Brost <matthew.brost@intel.com> # for Xe
-> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com> # for Panfrost and Panthor
-> Reviewed-by: Christian Gmeiner <cgmeiner@igalia.com> # for Etnaviv
-> Reviewed-by: Frank Binns <frank.binns@imgtec.com> # for Imagination
-> Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com> # for Sched
-> Reviewed-by: Maíra Canal <mcanal@igalia.com> # for v3d
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 > ---
-> Changes in v4:
->    - Add forgotten driver accel/amdxdna. (Me)
->    - Rephrase the "init to NULL" comments. (Tvrtko)
->    - Apply RBs by Tvrtko and Maira.
->    - Terminate the last struct members with a comma, so that future
->      fields can be added with a minimal patch diff. (Me)
-> 
-> Changes in v3:
->    - Various formatting requirements.
-> 
-> Changes in v2:
->    - Point out that the hang-limit is deprecated. (Christian)
->    - Initialize the structs to 0 at declaration. (Planet Earth)
->    - Don't set stuff explicitly to 0 / NULL. (Tvrtko)
->    - Make the structs const where possible. (Boris)
->    - v3d: Use just 1, universal, function for sched-init. (Maíra)
-> ---
+> [...]
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index 413ac6ea37021bc8ae260f624ca2745ed85333fc..ec7d8daa0347e3b65713396d6b6d14c2cb0270d3 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -1157,7 +1157,8 @@ static int verify_namespace_is_imported(const struct load_info *info,
+>  	namespace = kernel_symbol_namespace(sym);
+>  	if (namespace && namespace[0]) {
+>  
+> -		if (verify_module_namespace(namespace, mod->name))
+> +		if (get_modinfo(info, "intree") &&
+> +		    verify_module_namespace(namespace, mod->name))
+>  			return 0;
+>  
+>  		for_each_modinfo_entry(imported_namespace, info, "import_ns") {
 
-8><
+I'd rather avoid another walk of the modinfo data in
+verify_namespace_is_imported(). I suggest checking whether mod->taints
+has TAINT_OOT_MODULE set instead, which should provide the same
+information. The symbol resolution already relies on the taint flags, so
+this is consistent with the rest of the code.
 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
-> index 9b8e82fb8bc4..5657106c2f7d 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
-> @@ -836,8 +836,16 @@ static irqreturn_t panfrost_job_irq_handler(int irq, void *data)
->   
->   int panfrost_job_init(struct panfrost_device *pfdev)
->   {
-> +	struct drm_sched_init_args args = {
-> +		.ops = &panfrost_sched_ops,
-> +		.num_rqs = DRM_SCHED_PRIORITY_COUNT,
-> +		.credit_limit = 2,
-> +		.timeout = msecs_to_jiffies(JOB_TIMEOUT_MS),
-> +		.timeout_wq = pfdev->reset.wq,
-
-^^^
-
-> +		.name = "pan_js",
-> +		.dev = pfdev->dev,
-> +	};
->   	struct panfrost_job_slot *js;
-> -	unsigned int nentries = 2;
->   	int ret, j;
->   
->   	/* All GPUs have two entries per queue, but without jobchain
-> @@ -845,7 +853,7 @@ int panfrost_job_init(struct panfrost_device *pfdev)
->   	 * so let's just advertise one entry in that case.
->   	 */
->   	if (!panfrost_has_hw_feature(pfdev, HW_FEATURE_JOBCHAIN_DISAMBIGUATION))
-> -		nentries = 1;
-> +		args.credit_limit = 1;
->   
->   	pfdev->js = js = devm_kzalloc(pfdev->dev, sizeof(*js), GFP_KERNEL);
->   	if (!js)
-
-Stumbled on this while looking at drm_sched_init() workqueue usage.
-
-I think this patch might need a fixup. Because somewhere around here in 
-the code there is this:
-
-	pfdev->reset.wq = alloc_ordered_workqueue("panfrost-reset", 0);
-	if (!pfdev->reset.wq)
-		return -ENOMEM;
-
-Which means that after the patch panfrost is using system_wq for the 
-timeout handler instead the one it creates.
-
-> @@ -875,13 +883,7 @@ int panfrost_job_init(struct panfrost_device *pfdev)
->   	for (j = 0; j < NUM_JOB_SLOTS; j++) {
->   		js->queue[j].fence_context = dma_fence_context_alloc(1);
->   
-> -		ret = drm_sched_init(&js->queue[j].sched,
-> -				     &panfrost_sched_ops, NULL,
-> -				     DRM_SCHED_PRIORITY_COUNT,
-> -				     nentries, 0,
-> -				     msecs_to_jiffies(JOB_TIMEOUT_MS),
-> -				     pfdev->reset.wq,
-> -				     NULL, "pan_js", pfdev->dev);
-> +		ret = drm_sched_init(&js->queue[j].sched, &args);
-
-^^^
-
->   		if (ret) {
->   			dev_err(pfdev->dev, "Failed to create scheduler: %d.", ret);
->   			goto err_sched;
-
-Regards,
-
-Tvrtko
-
+-- 
+Thanks,
+Petr
 
