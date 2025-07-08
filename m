@@ -1,163 +1,150 @@
-Return-Path: <linux-kernel+bounces-720906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D58BFAFC1ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:17:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCDDFAFC1F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8C094A50F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:17:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6A0F1AA7799
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1177A1419A9;
-	Tue,  8 Jul 2025 05:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB03C1FCFF1;
+	Tue,  8 Jul 2025 05:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="CvEaQ9t2"
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="fQ1NQV0g"
+Received: from out28-145.mail.aliyun.com (out28-145.mail.aliyun.com [115.124.28.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AEC23CB;
-	Tue,  8 Jul 2025 05:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751951834; cv=pass; b=lHjEg69u4olH6IYzeEWtvxQ2GB444dZlwJX8cqkQBEQdF/AqTBLnWRrUpLLqKqpmMGwFCnrew8P28XDp1db3rxHCeMPvrvzG1JwRcCYDIQOp9rm54uYNgevxsTOqdbS0WjWx5xoX3S4yu/FdzebdSuY/ZrxCvdUULjx1ZozsjY4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751951834; c=relaxed/simple;
-	bh=yqQBLnCWIwzmelNjOqBsAdm2CxKpCnetfezc6JNWm2A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lUa9Ixei0Akwhi/PmE+AF7pVdGEWVbGiELO6gyHQ8UAn2DbGTzEm2+ZpuPQQ1oY0uw305vudHaZJYMmpgv3iiJLZ1Zh5f6EfLKTHn7zdztfUf2IHNKabJwSRGMoJOtBfdWYlXhFan53Jyc4C/n6pYpKcUfEvhzk/wOOonyX+/vQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=CvEaQ9t2; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1751951801; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=K/gKclbw5EaUYrNOWJglHQN4v+q5KlFxhp3bWXx728qXSvCSYJEJMksoAxd2aOBQnHL7aoWUTUcro0UdaVHdArfIxPOZ6PnCFlRMvkn2T1zJHTuhBQMbzr3FMQeRjMl/QTTJNb0972pyE/MFPluGiAcgPd2p0SQ8gB4oOq5rZBI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1751951801; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=0Pmojcacwl6r3Ued+iszIAObwj+kmlNOSKi/S7iYpwc=; 
-	b=mJYAQHhCb/W2AevEdd0pgiqgGdvEH74M0wOGrxOXkX6AojriXPJipKEdgb1pT1eNOw0NapNWTcxounhbpY5/PK0YRy7YfTG6HAi0X3I2dsvEz/EoRnkFtljOUO/CLfnsbn7QJBuFbP41EKbcVcrv0f5Ny8kxVauPyGB1Ff92J6Y=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751951801;
-	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
-	bh=0Pmojcacwl6r3Ued+iszIAObwj+kmlNOSKi/S7iYpwc=;
-	b=CvEaQ9t27uOQ2Qp0hnBrm4sphlA+go/AxvHFPHvwnysmb0xwYaKsbL2QwoY4qP6R
-	aCeRMQGXPzS9kgwHM5uTIw1yG/9GhgwZ+nL8Vk3Td2XmGJxweHgShjXciBkXtIJWZ6N
-	gPoQM6EcJY5rPrcPcDQaNX87MauVJGKrZu/VY7PA=
-Received: by mx.zohomail.com with SMTPS id 1751951799043184.00928419554668;
-	Mon, 7 Jul 2025 22:16:39 -0700 (PDT)
-From: Li Ming <ming.li@zohomail.com>
-To: dave@stgolabs.net,
-	jonathan.cameron@huawei.com,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	dan.j.williams@intel.com,
-	shiju.jose@huawei.com
-Cc: andriy.shevchenko@linux.intel.com,
-	linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Li Ming <ming.li@zohomail.com>
-Subject: [PATCH v3 3/3] cxl/core: Using resource_contains_addr() to check address availability
-Date: Tue,  8 Jul 2025 13:15:36 +0800
-Message-Id: <20250708051536.92119-4-ming.li@zohomail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250708051536.92119-1-ming.li@zohomail.com>
-References: <20250708051536.92119-1-ming.li@zohomail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867821401B;
+	Tue,  8 Jul 2025 05:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.145
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751951866; cv=none; b=cHoPnBmQv4ev3KqYCTzHDT0va59aBxoqurdMIQ9WtYPL9xpjjYbKvoZ+ZkAzsKej7VCLfL6os5Vm3H/jZX6EAoNQO0QuCF7LRwVqbfqkVF6ikt12NtEx2eX4jA9veAPWBaEf2HGbiyC4wSKMz+wak3ESeRxvEjcjKR40PthqG84=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751951866; c=relaxed/simple;
+	bh=59y7qEw4GpHqR9V5yVAvN9k1VJ4Mks0dolgkvU2v08Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rCRm/Rkgg5wrFE9ZxItkp2FJmz0nL2940YocabN84cBJ7P8a3CuByNyPShm2gTZFYRwcoaPtX76E4UUvPjHHKbRBS8GLVdGZ4vG7f6YpE682VhzI8MaSLfur+P6MYy8nDuN36toTKbSiPXO0ZZKgkO1gIJX6OJFBD8LiqwQExvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=fQ1NQV0g; arc=none smtp.client-ip=115.124.28.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1751951858; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=ll42IxvjGlWNCvhre5iXoxCnMkwXG5zTYn4NRTnJbTc=;
+	b=fQ1NQV0gOfvv4zK1Fip/DQ6VhcY4HG/Ffc7BrIqkhhSwsKjLJYY6fZcYqlreNmaHfXJkDFcgX9ObKGKTvUEavXPWhAwCmG584LtKL3TKw1RjNujiKSfha9uCLN3xzxnqthJ3cFIa2mPhTMdJ/IOuzTpAoKzy3ROm/ukwZKgEzbw=
+Received: from 30.172.244.77(mailfrom:niuxuewei.nxw@antgroup.com fp:SMTPD_---.dhG9apK_1751951856 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Tue, 08 Jul 2025 13:17:37 +0800
+Message-ID: <aaac1fda-7365-4643-b8df-df6412a42891@antgroup.com>
+Date: Tue, 8 Jul 2025 13:17:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 1/4] hv_sock: Return the readable bytes in
+ hvs_stream_has_data()
+To: Stefano Garzarella <sgarzare@redhat.com>,
+ Xuewei Niu <niuxuewei97@gmail.com>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, fupan.lfp@antgroup.com
+References: <20250706-siocinq-v5-0-8d0b96a87465@antgroup.com>
+ <20250706-siocinq-v5-1-8d0b96a87465@antgroup.com>
+ <xphwpqqi42w5b3jug3vfooybrlft3z5ewravl7jvzci7ogs3nh@5i7yi66dg7fa>
+Content-Language: en-US
+From: Xuewei Niu <niuxuewei.nxw@antgroup.com>
+In-Reply-To: <xphwpqqi42w5b3jug3vfooybrlft3z5ewravl7jvzci7ogs3nh@5i7yi66dg7fa>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Feedback-ID: rr08011227a6db064b8cd5835b60263f700000b1d374ed54791f2176c5f9dc75bc932213985b9a52f0b2cc2a:zu0801122756545e54832287663b65581b0000b1653817906c84f1d37255a88cce93717998c7dbab2d9b6354:rf0801122d5fce4a1cbbd4e26e642d5b4700007fad9d880d9f9ffc492842a97256ec9761e19cd7861a1b8d4197e4070c127d:ZohoMail
-X-ZohoMailClient: External
 
-Helper function resource_contains_addr() can be used to check if a
-resource range contains an input address. Use it to replace all
-code that checks whether a resource range contains the input
-DPA/HPA/SPA.
 
-Signed-off-by: Li Ming <ming.li@zohomail.com>
----
- drivers/cxl/core/edac.c   | 4 ++--
- drivers/cxl/core/memdev.c | 2 +-
- drivers/cxl/core/region.c | 6 +++---
- 3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/cxl/core/edac.c b/drivers/cxl/core/edac.c
-index 1cf65b1538b9..a3c19ec8033f 100644
---- a/drivers/cxl/core/edac.c
-+++ b/drivers/cxl/core/edac.c
-@@ -1523,7 +1523,7 @@ static int cxl_mem_sparing_set_dpa(struct device *dev, void *drv_data, u64 dpa)
- 	struct cxl_memdev *cxlmd = ctx->cxlmd;
- 	struct cxl_dev_state *cxlds = cxlmd->cxlds;
- 
--	if (dpa < cxlds->dpa_res.start || dpa > cxlds->dpa_res.end)
-+	if (!resource_contains_addr(&cxlds->dpa_res, dpa))
- 		return -EINVAL;
- 
- 	ctx->dpa = dpa;
-@@ -1892,7 +1892,7 @@ static int cxl_ppr_set_dpa(struct device *dev, void *drv_data, u64 dpa)
- 	struct cxl_memdev *cxlmd = cxl_ppr_ctx->cxlmd;
- 	struct cxl_dev_state *cxlds = cxlmd->cxlds;
- 
--	if (dpa < cxlds->dpa_res.start || dpa > cxlds->dpa_res.end)
-+	if (!resource_contains_addr(&cxlds->dpa_res, dpa))
- 		return -EINVAL;
- 
- 	cxl_ppr_ctx->dpa = dpa;
-diff --git a/drivers/cxl/core/memdev.c b/drivers/cxl/core/memdev.c
-index f88a13adf7fa..4a5dc1d93af1 100644
---- a/drivers/cxl/core/memdev.c
-+++ b/drivers/cxl/core/memdev.c
-@@ -267,7 +267,7 @@ static int cxl_validate_poison_dpa(struct cxl_memdev *cxlmd, u64 dpa)
- 		dev_dbg(cxlds->dev, "device has no dpa resource\n");
- 		return -EINVAL;
- 	}
--	if (dpa < cxlds->dpa_res.start || dpa > cxlds->dpa_res.end) {
-+	if (!resource_contains_addr(&cxlds->dpa_res, dpa)) {
- 		dev_dbg(cxlds->dev, "dpa:0x%llx not in resource:%pR\n",
- 			dpa, &cxlds->dpa_res);
- 		return -EINVAL;
-diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-index 6e5e1460068d..79d8211f8ed0 100644
---- a/drivers/cxl/core/region.c
-+++ b/drivers/cxl/core/region.c
-@@ -2847,7 +2847,7 @@ static int __cxl_dpa_to_region(struct device *dev, void *arg)
- 	if (!cxled || !cxled->dpa_res || !resource_size(cxled->dpa_res))
- 		return 0;
- 
--	if (dpa > cxled->dpa_res->end || dpa < cxled->dpa_res->start)
-+	if (!resource_contains_addr(cxled->dpa_res, dpa))
- 		return 0;
- 
- 	/*
-@@ -2959,7 +2959,7 @@ u64 cxl_dpa_to_hpa(struct cxl_region *cxlr, const struct cxl_memdev *cxlmd,
- 	if (cxlrd->hpa_to_spa)
- 		hpa = cxlrd->hpa_to_spa(cxlrd, hpa);
- 
--	if (hpa < p->res->start || hpa > p->res->end) {
-+	if (!resource_contains_addr(p->res, hpa)) {
- 		dev_dbg(&cxlr->dev,
- 			"Addr trans fail: hpa 0x%llx not in region\n", hpa);
- 		return ULLONG_MAX;
-@@ -3499,7 +3499,7 @@ u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint, u64 spa)
- 	xa_for_each(&endpoint->regions, index, iter) {
- 		struct cxl_region_params *p = &iter->region->params;
- 
--		if (p->res->start <= spa && spa <= p->res->end) {
-+		if (resource_contains_addr(p->res, spa)) {
- 			if (!p->cache_size)
- 				return ~0ULL;
- 
--- 
-2.34.1
+On 2025/7/7 21:42, Stefano Garzarella wrote:
+> On Sun, Jul 06, 2025 at 12:36:29PM +0800, Xuewei Niu wrote:
+>> When hv_sock was originally added, __vsock_stream_recvmsg() and
+>> vsock_stream_has_data() actually only needed to know whether there
+>> is any readable data or not, so hvs_stream_has_data() was written to
+>> return 1 or 0 for simplicity.
+>>
+>> However, now hvs_stream_has_data() should return the readable bytes
+>> because vsock_data_ready() -> vsock_stream_has_data() needs to know the
+>> actual bytes rather than a boolean value of 1 or 0.
+>>
+>> The SIOCINQ ioctl support also needs hvs_stream_has_data() to return
+>> the readable bytes.
+>>
+>> Let hvs_stream_has_data() return the readable bytes of the payload in
+>> the next host-to-guest VMBus hv_sock packet.
+>>
+>> Note: there may be multpile incoming hv_sock packets pending in the
+> 
+> s/multpile/multiple
+
+Will do.
+
+Thanks,
+Xuewei
+
+>> VMBus channel's ringbuffer, but so far there is not a VMBus API that
+>> allows us to know all the readable bytes in total without reading and
+>> caching the payload of the multiple packets, so let's just return the
+>> readable bytes of the next single packet. In the future, we'll either
+>> add a VMBus API that allows us to know the total readable bytes without
+>> touching the data in the ringbuffer, or the hv_sock driver needs to
+>> understand the VMBus packet format and parse the packets directly.
+>>
+>> Signed-off-by: Dexuan Cui <decui@microsoft.com>
+>> ---
+>> net/vmw_vsock/hyperv_transport.c | 17 ++++++++++++++---
+>> 1 file changed, 14 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/net/vmw_vsock/hyperv_transport.c b/net/vmw_vsock/hyperv_transport.c
+>> index 31342ab502b4fc35feb812d2c94e0e35ded73771..432fcbbd14d4f44bd2550be8376e42ce65122758 100644
+>> --- a/net/vmw_vsock/hyperv_transport.c
+>> +++ b/net/vmw_vsock/hyperv_transport.c
+>> @@ -694,15 +694,26 @@ static ssize_t hvs_stream_enqueue(struct vsock_sock *vsk, struct msghdr *msg,
+>> static s64 hvs_stream_has_data(struct vsock_sock *vsk)
+>> {
+>>     struct hvsock *hvs = vsk->trans;
+>> +    bool need_refill;
+>>     s64 ret;
+>>
+>>     if (hvs->recv_data_len > 0)
+>> -        return 1;
+>> +        return hvs->recv_data_len;
+>>
+>>     switch (hvs_channel_readable_payload(hvs->chan)) {
+>>     case 1:
+>> -        ret = 1;
+>> -        break;
+>> +        need_refill = !hvs->recv_desc;
+>> +        if (!need_refill)
+>> +            return -EIO;
+>> +
+>> +        hvs->recv_desc = hv_pkt_iter_first(hvs->chan);
+>> +        if (!hvs->recv_desc)
+>> +            return -ENOBUFS;
+>> +
+>> +        ret = hvs_update_recv_data(hvs);
+>> +        if (ret)
+>> +            return ret;
+>> +        return hvs->recv_data_len;
+>>     case 0:
+>>         vsk->peer_shutdown |= SEND_SHUTDOWN;
+>>         ret = 0;
+>>
+>> -- 
+>> 2.34.1
+>>
 
 
