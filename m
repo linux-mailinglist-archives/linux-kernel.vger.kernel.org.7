@@ -1,146 +1,364 @@
-Return-Path: <linux-kernel+bounces-722248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EEA4AFD6E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:10:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02C9CAFD6F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5622C582FFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:10:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD2071C24433
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F272E6122;
-	Tue,  8 Jul 2025 19:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAD62E6D0A;
+	Tue,  8 Jul 2025 19:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jI+t2zQw"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IgkXyHE8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242958488
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 19:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABBA23D2AB
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 19:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752001797; cv=none; b=fVA4xrsM+bSZ9tAuKFeJStZmrRdwWRGcNXIxzNVZVuY1ovKQLhonF/hb9F8h6TKF4RiHy+JABBUf7pNIwEb+ybOmppc+hC1NKbxzS8E154CSjMTGpCfd77X6aSIzwY9MLl1OGFqnMB10NvXveQ8nFokVbZjUWB5CKq9nVrvPtUk=
+	t=1752002087; cv=none; b=c9XvnFH8V5Ni2OoYuQb5WQsschdhO/nIxhKmZHJeTDU5crU+tB6fMhaL2B5JA7KiQOjHIlKIhJ82bi+V8LuM54HZuCjit4SBqix5/C+xP2bpccQr8rUiRwEwicXJxDJTNcLoq6jwBYFDDfcrBLuWl8qAovqj4h/OAkQnkfVpkJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752001797; c=relaxed/simple;
-	bh=rYVTpZKN3pXmydkDpLtXQzpbF3ivuXWhDthP0ZCgqvA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=afQMjlwaSfrlWRoT8PvobtVIo1JBwnvm9CDE3iWqxgIW8oUm8798QR4FeXreQ3I0Zse3+RSF8nqQtecW2/LeawFMLHChIhfES/+kdqaVmgF/szYJZZFKzTZekd8h+MfC8wSvy1ZnlXJX9anlebV+msKiYvVBG75FQ1dhttGExNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jI+t2zQw; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55622414cf4so4426313e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 12:09:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752001792; x=1752606592; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BBmIZ/72TeWIcKTjEO97sep+39k5b0ipJBxEHB576K0=;
-        b=jI+t2zQwA4IbAgmGYp/GpyPxnWiqoWGFxcm7Nvt3MQJHipv/dxa1tCgLxsO9UrWNve
-         Ee69t/cdKu+Jy5NQ4/GBGZCTubN8sfIVwFuaaxZsT1wkbR4WJaAVCu18C6gVN01dezxb
-         MHhJlIwXnVVQ73vhxLU/94IOIG5f9hpqdnhlnAkUYziCnPDTtSRGBBLHwarQtmkxzSlM
-         5Tkptjba1t2uYOmNzJWMnMYyOPWjDEh0tNfqFMigRS+Ot8+u8Ot9j3Og78+6glvS6Ygl
-         p35pyRdLFUmNcJGPmmjkzFiqMY4OciKS7f2AhHcBFMjgIgHx7s5G9x6DZIbc7L0sYXFy
-         MIrg==
+	s=arc-20240116; t=1752002087; c=relaxed/simple;
+	bh=yTOZAPMsoe5+fKbdKjOJ2dVMNlBbRsFkumzf5eTtik4=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U734O61k1jwdOmh8msWnyijIwc+1GStgLA12d5lG2+mHhJpe4LdQo/BGha+OqrwJtJxeMK7rDp5LG3OULR2tVgWfxpWdZgQ8tq6z8+3QqP5vm4a4sAjO7FeuFSAvdyhqP1ABs3B16kuTup+9auMmymY3i8l9BkATladafjU2ceM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IgkXyHE8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568IBx5c012122
+	for <linux-kernel@vger.kernel.org>; Tue, 8 Jul 2025 19:14:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=s6sweIibZzuLyvT7LgYCKqa8
+	QknohbGZn8LFyjJmRHo=; b=IgkXyHE8bpD6wo8L986OyPyuh/veJE6qipX9ghlq
+	F12Q11vqh35MnGL1tnAdyuQmuZ8aBfA1zUveUIoVrRGm+LwiXQLxahKuU7XtHlBU
+	SGtu8UOyTxi14MNr9RC5oF/BwDVa911qUQsmEGIusw9tfMYeEgnHd3O2C1ss/gdg
+	Nzye02ZZzhRdtE9xxiNwe8/MPIkYvwAgZnIhPFJ6UDhnSf+dBgwx9R2Y2JBNC/8V
+	Ilath0S7BC2FeiTaEz3+gPk3WKz9zvDyagY33r3bYyAhR6Dl3IfylVD8OCQ59Egd
+	e9Fa491z63FMikiacijdekuKJ8uwBeAA0htQ9rU1yE4LWQ==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pv97s233-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 19:14:44 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7ceb5b5140eso665145685a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 12:14:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752001792; x=1752606592;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BBmIZ/72TeWIcKTjEO97sep+39k5b0ipJBxEHB576K0=;
-        b=bCB6NNwJc9KW/cDfHPAge1DtRuLo+ChCHT8iBnjPcUsvc1zCl1Jikh6RlfYv/ZqlsR
-         lt/PPIoQZBguweYbeA/T1gSE0HSZhVyFttNXR24b1/O2qzDDjgRFTInvc2VWN29mC54u
-         n6UhQctUmSKElSOPqAzeh/W0q36yDBYlk5sqBcq8hU2yCp9G8dZRHDI2wANOrY1dCNaI
-         OqKj3fsT8/8vzC1ten1YdxxHufcLSmFW4nE7Db5ICac9wjep+RUUcIRb463HuZBfb2ZD
-         vrG7DaZHLOBh8kVVC63LIkECJIRSP31xalyBjKXB3T6KDr6QRckBsRyQAgbCTPlLBmWn
-         2yaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2wrjfykF26RamaT8z0aduG+YwP1ysOWn5iB/W1ueC7jvsdAyyw2ty+qmBk13LA2sw9L4IeYRvKg+RGCQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLLEICsvb7zsVbam5GtKV5e6MKawba2IyCIl3lmbdHnfMqOJQF
-	GERfYaKl2MKAdZGRnYQp71sroIS3wHmQiKD6xZxKOj8FuWl7OKgAy8/v7MK9m7cTGf3GWSkSgYr
-	AaXiKHb7a4tc4zYCuHAvhOZLBXBELf44ZVEWawJw=
-X-Gm-Gg: ASbGncvN7uHq9vM72jb3GXx2H5a3scdoO0uNyv1PpgWwJbOoF+PFDiAjl2Aq1OoGdUp
-	vB+f2E91dnGMyOp69oAdzMK72eNzCbT592wbwB9O3X6ckR4rbQeEU+b0bNkiEb/Bbb2lrY1oK65
-	gUAxxdDORrZa4cLSdkQawe1IeKRisBII2q8n0aVXQtVk2mqWDsW+C+o/SuvKhWBqVQoUKIWSn9
-X-Google-Smtp-Source: AGHT+IFWF7LZHx3nXpiJoB0IW90/W+d3LJqVwJy96jOg+MappwCC4jcuM87nAo8P7b8tVdwLPFqEZDpFBPyfPll5MKU=
-X-Received: by 2002:a05:6512:b25:b0:553:2c01:ff44 with SMTP id
- 2adb3069b0e04-558f9a193d9mr84537e87.2.1752001792002; Tue, 08 Jul 2025
- 12:09:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752002083; x=1752606883;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s6sweIibZzuLyvT7LgYCKqa8QknohbGZn8LFyjJmRHo=;
+        b=lQup7Yz5peUmuU6U77ccP1gZyJTQTphKIzcAIF3AJWoC+3oDOh15Q+93rgaN2mmtl7
+         mbLNtEPG9vu7mVnxfmEJ5GDzkcB18Jav2F1OsoBuluX/cd61khJKcsc1Iqev9K16RCXO
+         e4ETuMTeYHjq4mdFQf7c1c6APg84m4IYiFsBOQslwrQ+j2wiW2n/SLE1/5XJKPGE0gJM
+         3TnZ1uhCs7uQWK8fLlMbjX4DWhNjSMkxSS+l7+K69ed39nUpL7iaMriAXNinUa7UtNK7
+         Ah8wp0zr4JjiNkrusgdhYum3Y1KC1o/dIkbDu19uDc7dv670XHVfNZJ26QrpMIsYRdle
+         lk/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXZLuhVdWTmfztcz/bip0sc46mxspE5b9kxSh3zfki3HPO71++b11+WTGri6KS2TxfZ+Y8BFyG2wpQ1LME=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywop3kaK+jUNGEn+fQeT6IQ26om1UJAr6JD5aCP+tlxzrbk4hqO
+	s9eZJSqXCaALALH/gfTmRjMgng8lNkIIuHAyiH+MMee+bzNreBG91axTEpotraofw2w2aI0W9Jx
+	vGKVXdzPoPKhMnm60uXhyKXqNcdek5o5NjltQzkmssEaDlrSjHEY10vYK8f7jGxXQoP4=
+X-Gm-Gg: ASbGncvYnmEmjGd70N+M4Skoje41ePNBzkvpuXgo+tDmYtbDy8uGzgliVVcMiNax5W0
+	kkIx9hwtKO75pXMW5AWnLWNkU87wPaQW/3JJzw4Q8Nrw8LxawIc4Y6dSoAyE5W+vwDxPrDlZaaM
+	SRzzVBlpRbtH0njybu3HVXYkerdTmJFufn2ihJ4/8UUOnH054HJc3/C2QxzGhRE5Cc4dWIz834w
+	YAcCETym3kDvSqOTUJm/AXYxX2x76FyAUnIiN0hke24APzvmVQ1Jxr8jMNg7CPI2SzoojbBvfgB
+	o0wk1jJdXodQSsiS38hFEi+VaID0MMbJn5neEeC5+LeoxpCGDZb2wlY=
+X-Received: by 2002:a05:620a:17a8:b0:7d4:4123:6609 with SMTP id af79cd13be357-7db48495343mr85709485a.39.1752002083426;
+        Tue, 08 Jul 2025 12:14:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHkrbyx6qD2iCJJQ7I74J3FC4AKUVc3hV41rPej6LTPGifAKMpwCEuISsqpaoLYMX2IZohJRw==
+X-Received: by 2002:a05:620a:17a8:b0:7d4:4123:6609 with SMTP id af79cd13be357-7db48495343mr85705185a.39.1752002082914;
+        Tue, 08 Jul 2025 12:14:42 -0700 (PDT)
+Received: from trex (97.red-79-144-186.dynamicip.rima-tde.net. [79.144.186.97])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b470f871casm13738302f8f.45.2025.07.08.12.14.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 12:14:42 -0700 (PDT)
+From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
+X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
+Date: Tue, 8 Jul 2025 21:14:40 +0200
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Cc: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>, krzk+dt@kernel.org,
+        bryan.odonoghue@linaro.org, quic_vgarodia@quicinc.com,
+        mchehab@kernel.org, robh@kernel.org, conor+dt@kernel.org,
+        konradybcio@kernel.org, andersson@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] media: venus: vdec: AR50_LITE video core support
+Message-ID: <aG1uINWPwvl505zG@trex>
+References: <20250626135931.700937-1-jorge.ramirez@oss.qualcomm.com>
+ <20250626135931.700937-3-jorge.ramirez@oss.qualcomm.com>
+ <c0e8460d-1c94-d398-38a0-f63395256f27@quicinc.com>
+ <aF62Msej5LvY51D6@trex>
+ <8c7232a3-8c49-d77e-e8e4-6d86a33e2b42@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <txyrr26hxe3xpq3ebqb5ewkgvhvp7xalotaouwludjtjifnah2@7tmgczln4aoo>
-In-Reply-To: <txyrr26hxe3xpq3ebqb5ewkgvhvp7xalotaouwludjtjifnah2@7tmgczln4aoo>
-From: John Stultz <jstultz@google.com>
-Date: Tue, 8 Jul 2025 12:09:40 -0700
-X-Gm-Features: Ac12FXwbkgvr1g6ENIgsAuAAMqXYkYu3gUgSioftbW8cqYw2DNqf3oIGuNaWM0g
-Message-ID: <CANDhNCoRZOs0qNdJqUF=5RBWP0MCCC_4zbvvftzNWwvuX087xA@mail.gmail.com>
-Subject: Re: [PATCH] timekeeping: Always initialize use_nsecs when querying
- time from phc drivers
-To: =?UTF-8?Q?Markus_Bl=C3=B6chl?= <markus.bloechl@ipetronik.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, 
-	"Christopher S. Hall" <christopher.s.hall@intel.com>, 
-	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8c7232a3-8c49-d77e-e8e4-6d86a33e2b42@quicinc.com>
+X-Authority-Analysis: v=2.4 cv=FrUF/3rq c=1 sm=1 tr=0 ts=686d6e24 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=oX6B8lV6/A+qF9mARCc04Q==:17
+ a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
+ a=Ewo0kaykH6HURsZHw64A:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDE2MSBTYWx0ZWRfX3KLD0AF92jSb
+ Gb+2dvlqOHdAstZ7PF6Jtb1wpJhUy8D3VohZwN0ha2KrghUGARDew0CEMhdpsEqp3IP0KpEs+Fx
+ worzKFrcG3zjPoYTPfauI+JaumJpxfm/x/KfL31gbwQQpIUDcpBTYyVPGjlrD8q+vOL/bJX8t5i
+ qEUB/fPdvEI3QP6UvzJsg28eQb+os4ZAWg6odVXJmMdYDnspNnhRRkt32lZ1MdI4csg+XlmERj0
+ ZNgaD+KIczz6TcPbk5jv5aiLQhjo9jcMkXd2f5xx76sHF69pi5J8EiBf5voGJbKy+zJZtEiekwf
+ WR37B2Qt16zt8xc0HToySmZQoR5++CzeKTwU5hAocozS8WNDgb+YbcqCJSklAXSOQSQtTPPnNji
+ 4WyfdIxjfTeF0mV3en+++kn+Id6m/a36R92Bi4V7pPua06s6b/KIJCrI7GPWQoCfxiGrO3z5
+X-Proofpoint-GUID: qwk_MEsoWn-VQZ88NnmExU0164FCw1ni
+X-Proofpoint-ORIG-GUID: qwk_MEsoWn-VQZ88NnmExU0164FCw1ni
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-08_05,2025-07-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 clxscore=1015 mlxscore=0 spamscore=0
+ priorityscore=1501 bulkscore=0 lowpriorityscore=0 phishscore=0 malwarescore=0
+ adultscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507080161
 
-On Tue, Jul 8, 2025 at 9:46=E2=80=AFAM Markus Bl=C3=B6chl
-<markus.bloechl@ipetronik.com> wrote:
->
-> Most drivers only populate the fields cycles and cs_id in their
-> get_time_fn() callback for get_device_system_crosststamp() unless
-> they explicitly provide nanosecond values.
-> When this new use_nsecs field was added and used most drivers did not
-> care.
-> Clock sources other than CSID_GENERIC could then get converted in
-> convert_base_to_cs() based on an uninitialized use_nsecs which usually
-> results in -EINVAL during the following range check.
->
-> Fixes: 6b2e29977518 ("timekeeping: Provide infrastructure for converting =
-to/from a base clock")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Markus Bl=C3=B6chl <markus.bloechl@ipetronik.com>
-> ---
->
-> Notes:
->     We observed this in the e1000e driver but at least stmmac and
->     ptp_kvm also seem affected by this.
->     ice was recently fixed by a5a441ae283d ("ice/ptp: fix crosstimestamp =
-reporting").
->
->
->  kernel/time/timekeeping.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-> index a009c91f7b05..be0da807329f 100644
-> --- a/kernel/time/timekeeping.c
-> +++ b/kernel/time/timekeeping.c
-> @@ -1269,6 +1269,8 @@ int get_device_system_crosststamp(int (*get_time_fn=
-)
->
->         do {
->                 seq =3D read_seqcount_begin(&tk_core.seq);
-> +               system_counterval.use_nsecs =3D false;
-> +
+On 30/06/25 12:17:32, Dikshita Agarwal wrote:
+> 
+> 
+> On 6/27/2025 8:48 PM, Jorge Ramirez wrote:
+> > On 27/06/25 18:17:27, Dikshita Agarwal wrote:
+> >>
+> >>
+> >> On 6/26/2025 7:29 PM, Jorge Ramirez-Ortiz wrote:
+> >>> The AR50_LITE is a streamlined variant of the AR50 video core, designed
+> >>> for power and cost-efficient platforms.
+> >>>
+> >>> It supports hardware-accelerated decoding of H.264, HEVC, and VP9
+> >>> formats.
+> >>>
+> >>> Co-developed-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
+> >>> Signed-off-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
+> >>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
+> >>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> >>> ---
+> >>>  drivers/media/platform/qcom/venus/core.c      | 11 ++-
+> >>>  drivers/media/platform/qcom/venus/core.h      | 11 ++-
+> >>>  drivers/media/platform/qcom/venus/firmware.c  |  8 +-
+> >>>  drivers/media/platform/qcom/venus/helpers.c   | 80 +++++++++++++++++++
+> >>>  drivers/media/platform/qcom/venus/helpers.h   |  2 +
+> >>>  .../media/platform/qcom/venus/hfi_helper.h    | 10 ++-
+> >>>  drivers/media/platform/qcom/venus/hfi_venus.c | 14 ++--
+> >>>  .../media/platform/qcom/venus/pm_helpers.c    |  1 +
+> >>>  drivers/media/platform/qcom/venus/vdec.c      | 15 ++--
+> >>>  9 files changed, 128 insertions(+), 24 deletions(-)
+> >>>
+> >>> diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+> >>> index d305d74bb152..736ef53d988d 100644
+> >>> --- a/drivers/media/platform/qcom/venus/core.c
+> >>> +++ b/drivers/media/platform/qcom/venus/core.c
+> >>> @@ -254,14 +254,19 @@ static int venus_enumerate_codecs(struct venus_core *core, u32 type)
+> >>>  
+> >>>  static void venus_assign_register_offsets(struct venus_core *core)
+> >>>  {
+> >>> -	if (IS_IRIS2(core) || IS_IRIS2_1(core)) {
+> >>> -		core->vbif_base = core->base + VBIF_BASE;
+> >>> +	if (IS_IRIS2(core) || IS_IRIS2_1(core) || IS_AR50_LITE(core)) {
+> >>>  		core->cpu_base = core->base + CPU_BASE_V6;
+> >>>  		core->cpu_cs_base = core->base + CPU_CS_BASE_V6;
+> >>>  		core->cpu_ic_base = core->base + CPU_IC_BASE_V6;
+> >>>  		core->wrapper_base = core->base + WRAPPER_BASE_V6;
+> >>>  		core->wrapper_tz_base = core->base + WRAPPER_TZ_BASE_V6;
+> >>> -		core->aon_base = core->base + AON_BASE_V6;
+> >>> +		if (IS_AR50_LITE(core)) {
+> >>> +			core->vbif_base = NULL;
+> >>> +			core->aon_base = NULL;
+> >>> +		} else {
+> >>> +			core->vbif_base = core->base + VBIF_BASE;
+> >>> +			core->aon_base = core->base + AON_BASE_V6;
+> >>> +		}
+> >>>  	} else {
+> >>>  		core->vbif_base = core->base + VBIF_BASE;
+> >>>  		core->cpu_base = core->base + CPU_BASE;
+> >>> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+> >>> index b412e0c5515a..e755a28e919b 100644
+> >>> --- a/drivers/media/platform/qcom/venus/core.h
+> >>> +++ b/drivers/media/platform/qcom/venus/core.h
+> >>> @@ -382,6 +382,7 @@ enum venus_inst_modes {
+> >>>   * @lock:	instance lock
+> >>>   * @core:	a reference to the core struct
+> >>>   * @clk_data:	clock data per core ID
+> >>> + * @eosbufs:	a lit of EOS buffers
+> >>>   * @dpbbufs:	a list of decoded picture buffers
+> >>>   * @internalbufs:	a list of internal bufferes
+> >>>   * @registeredbufs:	a list of registered capture bufferes
+> >>> @@ -450,6 +451,7 @@ struct venus_inst {
+> >>>  	struct mutex lock;
+> >>>  	struct venus_core *core;
+> >>>  	struct clock_data clk_data;
+> >>> +	struct list_head eosbufs;
+> >>>  	struct list_head dpbbufs;
+> >>>  	struct list_head internalbufs;
+> >>>  	struct list_head registeredbufs;
+> >>> @@ -520,7 +522,14 @@ struct venus_inst {
+> >>>  #define IS_V1(core)	((core)->res->hfi_version == HFI_VERSION_1XX)
+> >>>  #define IS_V3(core)	((core)->res->hfi_version == HFI_VERSION_3XX)
+> >>>  #define IS_V4(core)	((core)->res->hfi_version == HFI_VERSION_4XX)
+> >>> -#define IS_V6(core)	((core)->res->hfi_version == HFI_VERSION_6XX)
+> >>> +static inline bool IS_V6(struct venus_core *core)
+> >>> +{
+> >>> +	if (WARN_ON_ONCE(!core))
+> >>> +		return false;
+> >>> +
+> >>> +	return core->res->hfi_version == HFI_VERSION_6XX ||
+> >>> +	       core->res->hfi_version == HFI_VERSION_6XX_LITE;
+> >>> +}
+> >> It should be HFI_VERSION_4XX_LITE for AR50_LITE. 4XX represents SC7280 and
+> >> SDM845 which are AR50.
+> > 
+> > ah good information - where is this documented? I never found this
+> > information... I'd appreciate if you could confirm with some document
+> > for future reference.
+> > 
+> >>>  
+> >>>  #define IS_AR50(core)		((core)->res->vpu_version == VPU_VERSION_AR50)
+> >>>  #define IS_AR50_LITE(core)	((core)->res->vpu_version == VPU_VERSION_AR50_LITE)
+> >>> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
+> >>> index 66a18830e66d..f8dcef0426ac 100644
+> >>> --- a/drivers/media/platform/qcom/venus/firmware.c
+> >>> +++ b/drivers/media/platform/qcom/venus/firmware.c
+> >>> @@ -30,7 +30,7 @@ static void venus_reset_cpu(struct venus_core *core)
+> >>>  	u32 fw_size = core->fw.mapped_mem_size;
+> >>>  	void __iomem *wrapper_base;
+> >>>  
+> >>> -	if (IS_IRIS2_1(core))
+> >>> +	if (IS_IRIS2_1(core) || IS_AR50_LITE(core))
+> >>>  		wrapper_base = core->wrapper_tz_base;
+> >>>  	else
+> >>>  		wrapper_base = core->wrapper_base;
+> >>> @@ -42,7 +42,7 @@ static void venus_reset_cpu(struct venus_core *core)
+> >>>  	writel(fw_size, wrapper_base + WRAPPER_NONPIX_START_ADDR);
+> >>>  	writel(fw_size, wrapper_base + WRAPPER_NONPIX_END_ADDR);
+> >>>  
+> >>> -	if (IS_IRIS2_1(core)) {
+> >>> +	if (IS_IRIS2_1(core) || IS_AR50_LITE(core)) {
+> >>>  		/* Bring XTSS out of reset */
+> >>>  		writel(0, wrapper_base + WRAPPER_TZ_XTSS_SW_RESET);
+> >>>  	} else {
+> >>> @@ -68,7 +68,7 @@ int venus_set_hw_state(struct venus_core *core, bool resume)
+> >>>  	if (resume) {
+> >>>  		venus_reset_cpu(core);
+> >>>  	} else {
+> >>> -		if (IS_IRIS2_1(core))
+> >>> +		if (IS_IRIS2_1(core) || IS_AR50_LITE(core))
+> >>>  			writel(WRAPPER_XTSS_SW_RESET_BIT,
+> >>>  			       core->wrapper_tz_base + WRAPPER_TZ_XTSS_SW_RESET);
+> >>>  		else
+> >>> @@ -181,7 +181,7 @@ static int venus_shutdown_no_tz(struct venus_core *core)
+> >>>  	void __iomem *wrapper_base = core->wrapper_base;
+> >>>  	void __iomem *wrapper_tz_base = core->wrapper_tz_base;
+> >>>  
+> >>> -	if (IS_IRIS2_1(core)) {
+> >>> +	if (IS_IRIS2_1(core) || IS_AR50_LITE(core)) {
+> >>>  		/* Assert the reset to XTSS */
+> >>>  		reg = readl(wrapper_tz_base + WRAPPER_TZ_XTSS_SW_RESET);
+> >> No need to handle no-tz case. Pls drop.
+> > 
+> > ok
+> > 
+> >>>  		reg |= WRAPPER_XTSS_SW_RESET_BIT;
+> >>> diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
+> >>> index 8295542e1a7c..812bec9a05be 100644
+> >>> --- a/drivers/media/platform/qcom/venus/helpers.c
+> >>> +++ b/drivers/media/platform/qcom/venus/helpers.c
+> >>> @@ -230,6 +230,79 @@ int venus_helper_alloc_dpb_bufs(struct venus_inst *inst)
+> >>>  }
+> >>>  EXPORT_SYMBOL_GPL(venus_helper_alloc_dpb_bufs);
+> >>>  
+> >>> +static void free_eos_buf(struct venus_inst *inst, struct intbuf *buf)
+> >>> +{
+> >>> +	list_del_init(&buf->list);
+> >>> +	dma_free_attrs(inst->core->dev, buf->size, buf->va, buf->da,
+> >>> +		       buf->attrs);
+> >>> +	kfree(buf);
+> >>> +}
+> >>> +
+> >>> +int venus_helper_free_eos_bufs(struct venus_inst *inst)
+> >>> +{
+> >>> +	struct intbuf *buf, *n;
+> >>> +
+> >>> +	list_for_each_entry_safe(buf, n, &inst->eosbufs, list) {
+> >>> +		free_eos_buf(inst, buf);
+> >>> +	}
+> >>> +
+> >>> +	if (list_empty(&inst->eosbufs))
+> >>> +		INIT_LIST_HEAD(&inst->eosbufs);
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>> +EXPORT_SYMBOL_GPL(venus_helper_free_eos_bufs);
+> >>> +
+> >>> +int venus_helper_alloc_eos_buf(struct venus_inst *inst,
+> >>> +			       struct hfi_frame_data *data)
+> >>> +{
+> >>> +	struct venus_core *core = inst->core;
+> >>> +	struct device *dev = core->dev;
+> >>> +	struct intbuf *buf;
+> >>> +	int ret = 0;
+> >>> +
+> >>> +	memset(data, 0, sizeof(*data));
+> >>> +
+> >>> +	data->buffer_type = HFI_BUFFER_INPUT;
+> >>> +	data->flags = HFI_BUFFERFLAG_EOS;
+> >>> +
+> >>> +	if (IS_AR50_LITE(inst->core)) {
+> >>> +		/* We must send valid sizes and addresses */
+> >>> +		buf = kzalloc(sizeof(*buf), GFP_KERNEL);
+> >>> +		if (!buf) {
+> >>> +			ret = -ENOMEM;
+> >>> +			goto fail;
+> >>> +		}
+> >>> +
+> >>> +		buf->type = HFI_BUFFER_INPUT;
+> >>> +		buf->size = SZ_4K;
+> >>> +		buf->attrs = DMA_ATTR_NO_KERNEL_MAPPING;
+> >>> +		buf->va = dma_alloc_attrs(dev, buf->size, &buf->da, GFP_KERNEL,
+> >>> +					  buf->attrs);
+> >>> +		if (!buf->va) {
+> >>> +			ret = -ENOMEM;
+> >>> +			goto fail;
+> >>> +		}
+> >>> +
+> >>> +		list_add_tail(&buf->list, &inst->eosbufs);
+> >>> +
+> >>> +		data->alloc_len = buf->size;
+> >>> +		data->device_addr = buf->da;
+> >>> +
+> >> why this special handling for eos buffer is needed for AR50_LITE?
+> > 
+> > this _fix_ was develope through testing: without it there is no EOS and
+> > errors are reporting upon killing the player
+> > 
+> Would be better to see why there is no EOS from firmware,
+> there shouldn't be the need to have a dma allocation for this dummy
+> buffers, as there is no useful info in the buffer. Having the device
+> address as 0 or 0xdeadb000 should be enough.
+> 
 
-So if the argument is the local system_counterval structure isn't
-being fully initialized by the get_time_fn() functions it is passed
-to, it seems like it would be better to do so at the top of
-get_device_system_crosststamp(), and not inside the seqloop.
+hi dikshita,
 
-But having the responsibility to initialize/fill in the structure
-being split across the core and the implementation logic (leaving some
-of the fields as optional) feels prone to mistakes, so it makes me
-wonder if those drivers implementing the get_time_fn() really ought to
-fully fill out the structure, and thus the fix would be better done in
-those drivers.
+I am still keeping this on v6 as per our internal discussions and
+because v6 is quite different from v5 so wanted to provide early access
+to users.
 
-thanks
--john
+if the firwmare is fixed to address this issue on time, I might revert
+the EOS page buffer. 
+
+TIA
+jorge
 
