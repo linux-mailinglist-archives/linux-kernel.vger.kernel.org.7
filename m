@@ -1,111 +1,155 @@
-Return-Path: <linux-kernel+bounces-721815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9521DAFCE2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:50:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BF7CAFCE29
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCCE21668AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:48:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 402B71895F75
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8102DEA78;
-	Tue,  8 Jul 2025 14:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C5B226CFC;
+	Tue,  8 Jul 2025 14:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fvFET4ZK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z+hXCrdU"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9192DE1FA
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 14:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A992621ADA2
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 14:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751986101; cv=none; b=pKm4zcQHyGs5OlxuWLVRBq6+HxzkGsv4ENMGG3AG3zx+B1CYbPV+KgluKDTePKHWiIVLTMsZPc0de9+x814wM+/P8+3I32JMaVJprbGrF19p+ysVbZJqwFzitOeO29w7wf7k8JBZOLu/MEG/x6HJV7Ula99EEn5pXdmCHvZ9ufE=
+	t=1751986001; cv=none; b=PMwD69Nfc7oZmWjQfGc2/TzaOCYuYd78JtWxFTmGuhs5LVRjN+v3xwaX7r3CAg9sBb8U75Jb2OKGh64nPJDxkZu+p/hNRO1fwTNmp+70bDhEFibT9uY6qSH+q8zQgSj20c1hteXeNc5LiMKJahcVNCmDOSduxhncpeb8UFatbq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751986101; c=relaxed/simple;
-	bh=Lu+dqbRssdLelEhUsOnvzmIzrzsEQZ2lVBnlTcuy/7s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rJp0PI7mAPsCpMUQ9Q8CGSXamBdSzZ8xv2Kf9KNB+UV5R1w4MFFTr1kfHxLqlPV2fOYkR+zSDcTVnEVhKCvjNgJcJainR5ZwfUjpevwG/HarqhMNDXGjxlAgODVdq6PHVsATe8VsDZQeFtkIBwCbnukI1I2f4Zp3suKStneQXqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fvFET4ZK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751986098;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=CD0Blo9hsBo+ShaKGEv8DmxldgP6HPhrWHWO7//oza4=;
-	b=fvFET4ZKI3wtp06R4RdglMeDnz5t7a6qBCDmxKhoP13f6p4DmfKt4PUJKVxX8ykb3ufCOr
-	P2sDHG06bhxBR8dtEpcsDpu/VVd/kcUCmN9uvUN5xT6bqcQqeC3NHElkGYui/mPVefbRBd
-	d5V7c+CxGEBWekDsQNxldp/jEsWjuGo=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-300-u1ldjB6jMzijgRaZkf9dug-1; Tue,
- 08 Jul 2025 10:48:15 -0400
-X-MC-Unique: u1ldjB6jMzijgRaZkf9dug-1
-X-Mimecast-MFC-AGG-ID: u1ldjB6jMzijgRaZkf9dug_1751986094
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3E6611800289;
-	Tue,  8 Jul 2025 14:48:14 +0000 (UTC)
-Received: from desnesn-thinkpadp16vgen1.rmtbr.csb (unknown [10.96.134.60])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3E11219560AB;
-	Tue,  8 Jul 2025 14:48:11 +0000 (UTC)
-From: Desnes Nunes <desnesn@redhat.com>
-To: laurent.pinchart@ideasonboard.com,
-	hansg@kernel.org
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Desnes Nunes <desnesn@redhat.com>,
-	stable@kernel.org
-Subject: [PATCH v3] media: uvcvideo: avoid variable shadowing in uvc_ctrl_cleanup_fh
-Date: Tue,  8 Jul 2025 11:46:28 -0300
-Message-ID: <20250708144628.273384-1-desnesn@redhat.com>
+	s=arc-20240116; t=1751986001; c=relaxed/simple;
+	bh=rdaHkwEgySzssWJnGXU8iu178barphVuPjFKEHZYUfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R3ohEG2mI6i4CUZgS9gzkwXxT2nnNLhweGmWW4wHjlrs+7qiUjZa5wFTtKJEvR8IvGxB4ymZrEtP544HMe0Xhj135L02nU63BLUGEvrHvVVOVel9hhSHOfBl5KfQ+tuhpdIO99kvmxey+ohSIYidHBEGUpt4N3+W/09VdBx/8A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z+hXCrdU; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-af6a315b491so3943831a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 07:46:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751985997; x=1752590797; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0P5JXJKoQne0+91AzBGnZ+7c0bfri6L6epqykQQTaN0=;
+        b=Z+hXCrdUIOk3EEQBEyUlUrSkqfzdnkkQE3oElAiB2VRH3BQ9h/cdYLwNMvZRl1G7dt
+         ei915ZDeD0zbjFGR9Hz4RTrzJOtZcacW7VARBVVhKuuo769Nl9Iy3pCPJWKewnK8aB7Q
+         gKiYvXkz8S90zElrpS1qdia1M8V0Mb8p+0+RDHJLOS5vfoqQ85zojYJl4zPVUnwXglOY
+         nyCIdC1FXdiI8l0S0AMSGWyO26TWdfjZuAZqKUKfDbWZOxhe5ui4l94dhAWxNiJ1O/+2
+         m57lsyaibGIvafUHrC6EicYy6SsLg2Dddg34CzvYWOAlfyvQ0oSvU3EHgHIV3QR0xDOT
+         Fk4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751985997; x=1752590797;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0P5JXJKoQne0+91AzBGnZ+7c0bfri6L6epqykQQTaN0=;
+        b=U3chnq+m+Rd+00nI6sdiUNYcOKzJx6NIZsggnQUrUvOVIoujwQzgZewOXrbWHWFpgM
+         6k9ukABUKONHWfBmSjxTb3PeDKbqg9ZTA5WbF5fhgs7XxIZucocVZ0t1ZLPTXer3TWCi
+         MeWoMEhTIr+bsnOc9HCxdQgv3XdWEshIxt2w4EcreKDFIT1tESjMGbXnue6aNzS7vH6i
+         SwyjY8vYV/IktSfIkPoAiV6EjjQNdWHUGrOJVPGQFC4rfkEb+hMPEhCDHAqT4ykLPHTL
+         p1h9McYl3y+RXqR1qkKiLXaYgmtNofKt0VxJ0/9GK74KAimdKmWi59j9rNeftc8X5EuR
+         oC5w==
+X-Forwarded-Encrypted: i=1; AJvYcCW/uawsi5xr4uXqIGI2YlS6ZgPPkoWCLqh9wQF/6asGAagZmc/PzAbtQDYcCfzjEkSH3HVJXZCRK/OyhgY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWEn7vXOIoh/m9/Y0CpPsVnkp3Zv0ylZ9tvaKBvcBPhvzn53sW
+	YIxIv1X+3YQXLCmsRlJpomKPYuyK5E1txB2eEgnvz7zBJLq48+daFnRuqMKmrg==
+X-Gm-Gg: ASbGncuncpBu02sNt9mbI5uXgeJQ14Xef/jwcavV9svRq4V0gU/WOdqnziHl6WJIYOL
+	vzO7Cem4dbQWh2a5CfQdxxMlDkb5FmFg1N67t6Zviagsp/nBPJgQHy0XrbgiScvUy5wrDCbUNOg
+	t7+vea/R+E0Mn3udDTHKcIpas9Twnu/au6PVIQ6wrIxdXqm/naZoHe9gsA3k45sK3/pjSR3KES6
+	e0MgsejJJKMnbLDa5eOy2zD7dRamE0iGeQJMVY8EF1ZVpZ+Ph6pPSuuofHXQ8FHAOJ1hD/6L4DB
+	3TFuuAV2CwJb6BJqDOtZP8plIbyEsi+XLpB2uP+5jKFoSRPsOQ5rduaZ/QpraQ==
+X-Google-Smtp-Source: AGHT+IFiqdSlCbU4zD//x0lPXI7pA7rphxHL2l3rMZn1TfraBPWBfii1gmAYrhU1Zmp/y07HuF1+6g==
+X-Received: by 2002:a05:6a20:258e:b0:1f5:8a1d:3904 with SMTP id adf61e73a8af0-225b7f19802mr30657387637.7.1751985996536;
+        Tue, 08 Jul 2025 07:46:36 -0700 (PDT)
+Received: from localhost ([216.228.127.130])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b38ee476152sm11695895a12.24.2025.07.08.07.46.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 07:46:36 -0700 (PDT)
+Date: Tue, 8 Jul 2025 10:46:33 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Ben Horgan <ben.horgan@arm.com>, catalin.marinas@arm.com,
+	will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux@rasmusvillemoes.dk, linux-kernel@vger.kernel.org,
+	james.morse@arm.com
+Subject: Re: [PATCH 2/2] bitfield: Ensure the return value of
+ type##_replace_bits() is checked
+Message-ID: <aG0vScXkDROkdASW@yury>
+References: <20250703135729.1807517-1-ben.horgan@arm.com>
+ <20250703135729.1807517-3-ben.horgan@arm.com>
+ <aGv2WoAtxnEgqV4y@yury>
+ <03a76e9a-86ac-4791-9f0a-494b28c07fcc@arm.com>
+ <86tt3n9fsh.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86tt3n9fsh.wl-maz@kernel.org>
 
-This avoids a variable loop shadowing occurring between the local loop
-iterating through the uvc_entity's controls and the global one going
-through the pending async controls of the file handle
+On Tue, Jul 08, 2025 at 10:45:50AM +0100, Marc Zyngier wrote:
+> On Tue, 08 Jul 2025 10:42:06 +0100,
+> Ben Horgan <ben.horgan@arm.com> wrote:
+> > 
+> > Hi Yury,
+> > 
+> > On 7/7/25 17:31, Yury Norov wrote:
+> > > Hi Ben,
+> > > 
+> > > On Thu, Jul 03, 2025 at 02:57:29PM +0100, Ben Horgan wrote:
+> > >> As type##_replace_bits() has no side effects it is only useful if its
+> > >> return value is checked. Add __must_check to enforce this usage. To have
+> > >> the bits replaced in-place typep##_replace_bits() can be used instead.
+> > >> 
+> > >> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+> > >> ---
+> > >>   include/linux/bitfield.h | 4 ++--
+> > >>   1 file changed, 2 insertions(+), 2 deletions(-)
+> > >> 
+> > >> diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+> > >> index 6d9a53db54b6..39333b80d22b 100644
+> > >> --- a/include/linux/bitfield.h
+> > >> +++ b/include/linux/bitfield.h
+> > >> @@ -195,8 +195,8 @@ static __always_inline __##type type##_encode_bits(base v, base field)	\
+> > >>   		__field_overflow();					\
+> > >>   	return to((v & field_mask(field)) * field_multiplier(field));	\
+> > >>   }									\
+> > >> -static __always_inline __##type type##_replace_bits(__##type old,	\
+> > >> -					base val, base field)		\
+> > >> +static __always_inline __##type __must_check type##_replace_bits(__##type old,	\
+> > >> +							base val, base field)	\
+> > >>   {									\
+> > >>   	return (old & ~to(field)) | type##_encode_bits(val, field);	\
+> > >>   }									\
+> > > 
+> > > So, would it make sense to mark _encode_bits() and _get_bits() as
+> > > __must_check as well? At least from the point of unification, it
+> > > would.
+> > Could do. It seems less important as there are no obvious foot-guns
+> > that these would guards against. Would you like me to add this in a
+> > v2?
 
-Cc: stable@kernel.org
-Fixes: 10acb9101355 ("media: uvcvideo: Increase/decrease the PM counter per IOCTL")
-Signed-off-by: Desnes Nunes <desnesn@redhat.com>
----
- drivers/media/usb/uvc/uvc_ctrl.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Yes please.
+ 
+> > > How would we move this - with my bitmap-for next or with arm branch?
+> > 
+> > I'm not familiar with the branch machinery so can't comment on this.
+> 
+> The first patch will definitely go in via the KVM/arm64 tree, probably
+> as a fix for 6.16.
 
-diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index 303b7509ec47..6b9486749c3f 100644
---- a/drivers/media/usb/uvc/uvc_ctrl.c
-+++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -3299,7 +3299,6 @@ int uvc_ctrl_init_device(struct uvc_device *dev)
- void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
- {
- 	struct uvc_entity *entity;
--	int i;
- 
- 	guard(mutex)(&handle->chain->ctrl_mutex);
- 
-@@ -3317,7 +3316,7 @@ void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
- 	if (!WARN_ON(handle->pending_async_ctrls))
- 		return;
- 
--	for (i = 0; i < handle->pending_async_ctrls; i++)
-+	for (unsigned int i = 0; i < handle->pending_async_ctrls; i++)
- 		uvc_pm_put(handle->stream->dev);
- }
- 
--- 
-2.50.0
+OK. Then I'll take patch #2 v2 by myself.
 
+Thanks,
+Yury
 
