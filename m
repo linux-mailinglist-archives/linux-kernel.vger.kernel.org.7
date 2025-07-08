@@ -1,45 +1,59 @@
-Return-Path: <linux-kernel+bounces-720711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF67AFBF8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:56:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F52CAFBF8E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ACEB4A1CD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:56:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 417CE188E363
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295281D90AD;
-	Tue,  8 Jul 2025 00:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="eZD4+EdT"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FB01DB54C;
+	Tue,  8 Jul 2025 00:56:42 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251D615C15F
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 00:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1BA1C8611;
+	Tue,  8 Jul 2025 00:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751936180; cv=none; b=m6NQVBAXF1/trKAheNRCxk2LZjeyaOjus5K4Ib/UW925lyc+R0sZdMmqIqpGqvkafDAa8sgyObAOzW5NUNTyuw++zHMLJSI2gGk7iy2jwpeLAD5ok/4L3qzXPhc9iT5VwSF7oS4SqpC4LgQcmXwxWD1aoCwpDrznwBl1ZZU0bic=
+	t=1751936201; cv=none; b=POBhHtpX/bzAz4SHMiS0vjsh2WsEqImqmRMuBGpoS4JASAh2xEnjNYu7Z4LHtypd6auskShHfmOrlgL0TYHQZjNUTfHAP1Ol33551xOIH+9I1SJ+4ZgbgOIn6WvAtT7kRJv9PJRXkNrGGnsFRGou+dFU4C9CrpITXJ91J/mVHGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751936180; c=relaxed/simple;
-	bh=gKzYZKEM18iJ8wliO5ywfTKA/wRjzfDEXO1rWz0ze/Y=;
+	s=arc-20240116; t=1751936201; c=relaxed/simple;
+	bh=+/F1bGbjjKvu1Uo6Wdq5/ZVs3WqOf6ln3yLQ6I089zE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KNnlH9tkZ1IAvpFAyRtohiyNwU4FyU+91UfIvfsQytu+WLS7tWuQMRxT0dGhHYJ5YpcPkF9FZIDAAg6y/ddmur6DDrWW7H34RZwBC9KUNWMHLyMNwuWrE+MXXAFcrY000ZiJ0LbsbvEp31V8kMXwRYGY++JxGNON61L0cgxdnSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=eZD4+EdT; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1751936169; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=tQWA0OJ15gb+o59aK8rJt+7RU1yraqUvbj8vhnlJAq4=;
-	b=eZD4+EdT/tGpU0AzCRLKV5mCB9bLQA+COgKkYkVz1j0IpjqgFdPMn57eyZ11BHRcqO4fQb4GkIQIyN61boHBlUwRCXEqqrl/2mRs5QFLlnGUVWKvHnMTlGm8i3z0azvgJMryOVDXkmg/XOVXlg+csEhM2TKWDLz5AZ681daPVP0=
-Received: from 30.221.128.116(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WiI9BZO_1751936168 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 08 Jul 2025 08:56:08 +0800
-Message-ID: <44eb7510-2096-416d-b1b8-cbdc62313502@linux.alibaba.com>
-Date: Tue, 8 Jul 2025 08:56:06 +0800
+	 In-Reply-To:Content-Type; b=ufXxKOEgcR0lHPVOmr+pY1mEnsOIDtKAnG7qeUkK89uBUvqoKXPmqAjWVXrkz7E7tGvrpjZaC+BdG8sJgVeLxsXKhf3x1rJV6WQH6beKBzjIdqtI5ZOBFVDSyU4NEXt0i19TH5RVhu06sAJb3DMKDS6eYfDpijKXhSLgl+ngUEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 63057f3e5b9611f0b29709d653e92f7d-20250708
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:54a55555-2426-4274-a88c-e24e906d6a63,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:339e88bba938cd16ff2c540091de5e7f,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 63057f3e5b9611f0b29709d653e92f7d-20250708
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 451992315; Tue, 08 Jul 2025 08:56:31 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 17B48E008FA2;
+	Tue,  8 Jul 2025 08:56:31 +0800 (CST)
+X-ns-mid: postfix-686C6CBE-6398994
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id A62AFE008FA1;
+	Tue,  8 Jul 2025 08:56:28 +0800 (CST)
+Message-ID: <6b28003b-58ee-4870-ade6-c488148a7b4f@kylinos.cn>
+Date: Tue, 8 Jul 2025 08:56:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,109 +61,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] ocfs2: avoid potential ABBA deadlock by reordering
- tl_inode lock
-To: Ivan Pravdin <ipravdin.official@gmail.com>, mark@fasheh.com,
- jlbec@evilplan.org, ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-Cc: syzbot+6bf948e47f9bac7aacfa@syzkaller.appspotmail.com
-References: <20250708003519.379597-1-ipravdin.official@gmail.com>
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20250708003519.379597-1-ipravdin.official@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v3 1/1] PM / Freezer: Skip zombie/dead processes to
+To: Peter Zijlstra <peterz@infradead.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, pavel@kernel.org,
+ len.brown@intel.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Oleg Nesterov <oleg@redhat.com>
+References: <20250611101247.15522-1-zhangzihuan@kylinos.cn>
+ <20250611101247.15522-2-zhangzihuan@kylinos.cn>
+ <CAJZ5v0jpuUVM73M=Gzq36je=K_7zEkvVd8bxohi6N5OYgxgUug@mail.gmail.com>
+ <20250703164021.GY1613200@noisy.programming.kicks-ass.net>
+ <CAJZ5v0j29Nu2nitmj6tPhOQYuSaHBtXQVR21ikDtrxpejPdW8A@mail.gmail.com>
+ <20250704081941.GC2001818@noisy.programming.kicks-ass.net>
+ <67997bdd-d00a-413a-a565-188c4b06f385@kylinos.cn>
+ <20250704092144.GH2001818@noisy.programming.kicks-ass.net>
+ <de7e327a-202c-4b28-b372-2d648c680dbe@kylinos.cn>
+ <20250707084214.GD1613200@noisy.programming.kicks-ass.net>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <20250707084214.GD1613200@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
 
+=E5=9C=A8 2025/7/7 16:42, Peter Zijlstra =E5=86=99=E9=81=93:
+> A quick browse through the code seems to suggest that for user tasks,
+> PF_NOFREEZE is set just like exit_state, once at death.
+>
+I couldn=E2=80=99t agree more =E2=80=94 for user tasks, PF_NOFREEZE is in=
+deed set at the=20
+same time as exit_state, right at death.
+> For kernel threads the situation is a little more complex; but typicall=
+y
+> a kthread is spawned with PF_NOFREEZE set, and then some will clear it
+> again, but always before then calling a TASK_FREEZABLE wait.=E3=80=80=E3=
+=80=80 =E3=80=80 =E3=80=80
 
-On 2025/7/8 08:35, Ivan Pravdin wrote:
-> In ocfs2_move_extent(), tl_inode is currently locked after the global
-> bitmap inode. However, in ocfs2_flush_truncate_log(), the lock order
-> is reversed: tl_inode is locked first, followed by the global bitmap
-> inode.
-> 
-> This creates a classic ABBA deadlock scenario if two threads attempt
-> these operations concurrently and acquire the locks in different orders.
-> 
-> To prevent this, move the tl_inode locking earlier in
-> ocfs2_move_extent(), so that it always precedes the global bitmap
-> inode lock.
-> 
-> No functional changes beyond lock ordering.
-> 
-> Reported-by: syzbot+6bf948e47f9bac7aacfa@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/67d5645c.050a0220.1dc86f.0004.GAE@google.com/
-> Signed-off-by: Ivan Pravdin <ipravdin.official@gmail.com>
-> ---
-> v1 -> v2: Fixed unlocking order in ocfs2_move_extent.
-> v2 -> v3: Added missing out_unlock_tl_inode and renamed out_unlock_gb_mutex to
-> 		  out_unlock_gb_inode and out_unlock_gb_inode to out_unlock.
-> 
->  fs/ocfs2/move_extents.c | 19 +++++++++----------
->  1 file changed, 9 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
-> index 369c7d27befd..9d1fa8ecd97e 100644
-> --- a/fs/ocfs2/move_extents.c
-> +++ b/fs/ocfs2/move_extents.c
-> @@ -617,6 +617,8 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
->  	 */
->  	credits += OCFS2_INODE_UPDATE_CREDITS + 1;
->  
-> +	inode_lock(tl_inode);
-> +
->  	/*
->  	 * ocfs2_move_extent() didn't reserve any clusters in lock_allocators()
->  	 * logic, while we still need to lock the global_bitmap.
-> @@ -626,7 +628,7 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
->  	if (!gb_inode) {
->  		mlog(ML_ERROR, "unable to get global_bitmap inode\n");
->  		ret = -EIO;
-> -		goto out;
-> +		goto out_unlock_tl_inode;
->  	}
->  
->  	inode_lock(gb_inode);
-> @@ -634,16 +636,14 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
->  	ret = ocfs2_inode_lock(gb_inode, &gb_bh, 1);
->  	if (ret) {
->  		mlog_errno(ret);
-> -		goto out_unlock_gb_mutex;
-> +		goto out_unlock_gb_inode;
->  	}
->  
-> -	inode_lock(tl_inode);
-> -
->  	handle = ocfs2_start_trans(osb, credits);
->  	if (IS_ERR(handle)) {
->  		ret = PTR_ERR(handle);
->  		mlog_errno(ret);
-> -		goto out_unlock_tl_inode;
-> +		goto out_unlock;
->  	}
->  
->  	new_phys_blkno = ocfs2_clusters_to_blocks(inode->i_sb, *new_phys_cpos);
-> @@ -703,13 +703,12 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
->  out_commit:
->  	ocfs2_commit_trans(osb, handle);
->  	brelse(gd_bh);
-> -
-> -out_unlock_tl_inode:
-> -	inode_unlock(tl_inode);
-> -
-> +out_unlock:
->  	ocfs2_inode_unlock(gb_inode, 1);
-> -out_unlock_gb_mutex:
-> +out_unlock_gb_inode:
->  	inode_unlock(gb_inode);
-> +out_unlock_tl_inode:
-> +	inode_unlock(tl_inode);
+While that=E2=80=99s generally the expected pattern, it depends on each k=
+thread=20
+correctly managing the PF_NOFREEZE flag before entering a TASK_FREEZABLE=20
+wait.
 
-Ummm... I'd rather keep gb_inode cleanup together.
+This assumption can be fragile in practice =E2=80=94 a missed update or=20
+unconventional usage could lead to inconsistent freezing behavior.
 
-Thanks,
-Joseph
+> The only thing I didn't fully investigate is this
+> {,un}lock_system_sleep() thing. But that would appear to need at least
+> the below fixlet.
+>
+> diff --git a/kernel/power/main.c b/kernel/power/main.c index=20
+> 3d484630505a..a415e7d30a2c 100644 --- a/kernel/power/main.c +++=20
+> b/kernel/power/main.c @@ -52,8 +52,8 @@ void pm_restrict_gfp_mask(void)=
+  unsigned int lock_system_sleep(void)
+>   {
+>   	unsigned int flags =3D current->flags;
+> - current->flags |=3D PF_NOFREEZE;  	mutex_lock(&system_transition_mute=
+x);
+> + current->flags |=3D PF_NOFREEZE;  	return flags;
+>   }
+>   EXPORT_SYMBOL_GPL(lock_system_sleep); =E3=80=80 =E3=80=80 =E3=80=80
+It seems to me that setting PF_NOFREEZE before acquiring=20
+system_transition_mutex might be intentional =E2=80=94 possibly to preven=
+t=20
+deadlocks.
 
->  	brelse(gb_bh);
->  	iput(gb_inode);
->  
+If the task were to be frozen while holding or waiting for the mutex, it=20
+could block suspend or resume paths. So changing the order may risk=20
+breaking that protection.
+
+So, although PF_NOFREEZE could be the better long-term solution, right=20
+now depending exclusively on it might cause issues.
+
+It would require further standardization and guarantees about the flag=E2=
+=80=99s=20
+stability during the freezing process before we can fully rely on it.
+
+I=E2=80=99m looking forward to your thoughts on this.
+
+>   =E3=80=80 =E3=80=80 =E3=80=80 =E3=80=80 =E3=80=80=E3=80=80
+> Anyway, this seems to suggest something relatively simple like this her=
+e
+> should do:
+>
+> diff --git a/kernel/freezer.c b/kernel/freezer.c index=20
+> 8d530d0949ff..8b7cecd17564 100644 --- a/kernel/freezer.c +++=20
+> b/kernel/freezer.c @@ -162,20 +162,22 @@ static bool=20
+> __freeze_task(struct task_struct *p)   */
+>   bool freeze_task(struct task_struct *p)
+>   {
+> - unsigned long flags; - - spin_lock_irqsave(&freezer_lock, flags); -=20
+> if (!freezing(p) || frozen(p) || __freeze_task(p)) { -=20
+> spin_unlock_irqrestore(&freezer_lock, flags); + /* + * User tasks get=20
+> NOFREEZE in do_task_dead(). + */ + if ((p->flags & (PF_NOFREEZE |=20
+> PF_KTHREAD)) =3D=3D PF_NOFREEZE)  		return false;
+> - } =20
+> - if (!(p->flags & PF_KTHREAD)) - fake_signal_wake_up(p); - else -=20
+> wake_up_state(p, TASK_NORMAL); + scoped_guard (spinlock_irqsave,=20
+> &freezer_lock) { + if (!freezing(p) || frozen(p) || __freeze_task(p))=20
+> + return false; + + if (!(p->flags & PF_KTHREAD)) +=20
+> fake_signal_wake_up(p); + else + wake_up_state(p, TASK_NORMAL); + } =20
+> - spin_unlock_irqrestore(&freezer_lock, flags);  	return true;
+>   }
+
+Thanks for the suggestion =E2=80=94 this looks really clean and simplifie=
+s the=20
+logic nicely! The use of a scoped spinlock and the early return based on=20
+PF_NOFREEZE | PF_KTHREAD makes the flow easier to follow.
+
+By the way, in the code above, since for user tasks the PF_NOFREEZE flag=20
+is only set once at death (similar to how exit_state is handled), would=20
+it make sense to check p->exit_state directly here instead?
+
+It seems semantically equivalent for user tasks, and exit_state might be=20
+more explicit in conveying the task's lifecycle state. I'm curious if=20
+there's a specific reason to prefer PF_NOFREEZE over exit_state in this=20
+case.
+
+Best regards,
+Zihuan Zhang
+
 
 
