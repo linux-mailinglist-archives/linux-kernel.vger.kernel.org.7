@@ -1,258 +1,411 @@
-Return-Path: <linux-kernel+bounces-721104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CED9AFC4CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:56:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6992DAFC4D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ED5D1777C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:56:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15AF37B3255
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1675D29ACE0;
-	Tue,  8 Jul 2025 07:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C4A29A9ED;
+	Tue,  8 Jul 2025 07:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fy1ezfnY"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2065.outbound.protection.outlook.com [40.107.95.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EcyDu80X"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FE838385;
-	Tue,  8 Jul 2025 07:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751961361; cv=fail; b=IVuVfHx8XnDKyLMLkGirAt6NX43xbX61VNWAPkEMqoZMZ/DXRyJIl1tFikLT5pxjGCUdbnBR3+4FEsOBh6aVi3kyaw5lz+zdh7uIRCNc2p0EBUKxvj/g1UV9Cst7eMrc2mvB9qqvl6U2WofvYnmh2FeUZcE7NnIYyD97qrZgbh4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751961361; c=relaxed/simple;
-	bh=Zu0x4XMFJrCOIBGR9v6FmQyFkshPx8E+jmhazg0C1Gs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=TJUN4wpuNrH9G05oaVzntXGNcD3MzQ0orwkD4Y3FHq6dwTqoSYPgAlK6KRfX+YLcCeG9vDKf/NIlQEDe/7b8WLLfadBOPOw84H6ubuZuqrs+FLrsDaVzSJNOrJFyYhNmUrfEN1GrmtGnv96GHJ90rRje6+gLA7V54n41RlIruGY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fy1ezfnY; arc=fail smtp.client-ip=40.107.95.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JggFBgDb8Q38/qUDzt7CYGW2MfnmvIgqohdZqKATtEfWpgN0I4B9qUfXB9ZLH4Gmcj+lCILRpG/WupvPXEunhyyBcH1IzJ4c3SunLyenT4MwreAy+RniNaVXd+Zs93icdDvi7u1zHMLEtgS+xIlbe5Z9oR7SwwJlnJxqthbsEU3EB5Du1p3gqsxUu3EYRQZ+69krdwjjQx2G28KppeJXHg2q9f2rmmfgzllH0q5G4sW4Nvh3kCrVtlai0+Hf5KZbWM21iHnHy1IhHQy9UacfDlUCC7I9+6z5sHnPLsccvgzEfPM/JG28R21hThwEF9U1UXR6sORMW39cfl5A8jl1jg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=St7Jrf2bI6I1B+jLP26dsT8M20yF6Fcn8ZegrVetC8s=;
- b=FPUh5zGefZWyZ7LFbjt35wUb0TFOE9JdzY8nZX209gZfM8CIe//YFDqa/rrX7o3YIw/AtRcTjjWU2GsiBKMJjU1HgdCyuDjfyqYS9kX7B6821rTgoWwAKgKM6hsQnl7STVpiyt3oKLiHdD717oe5xOCgNUxX7SWnwfk4oFysHYO5BEu7hGffIg7H9CyxsY51aufDsmEGYFXAMate4T9qgWKnkprRg/R+0r7ahmkcBvHR1hgbrmPx6VEPGMjaDkmxjldIFwvu8bhrGXaXJPCJnQM6cLnDZDI/l7neFiBa+f2KBPXHF7mipoRUFqKhPcBpTRJfr0oVs0A3IEnbHLQG4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=St7Jrf2bI6I1B+jLP26dsT8M20yF6Fcn8ZegrVetC8s=;
- b=fy1ezfnYz6pHP6tGI8E5aCZPsWoQbSjHqUsnglojpdRYLLGImH6aOC7bGl57fY8hfkERmB65fYAjCxj/9BuE3f5udNL1ku9+Q6J4WF4xEfe6Zd3wbDtRf9cTNPodd840fKWgDtyo9Oblookc2cE794CKjCfZTAGjZuaZXjdffEw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- (2603:10b6:a0f:fc02::9aa) by CYXPR12MB9279.namprd12.prod.outlook.com
- (2603:10b6:930:d5::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Tue, 8 Jul
- 2025 07:55:57 +0000
-Received: from SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- ([fe80::40bb:ae48:4c30:c3bf]) by SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- ([fe80::40bb:ae48:4c30:c3bf%8]) with mapi id 15.20.8722.031; Tue, 8 Jul 2025
- 07:55:57 +0000
-Message-ID: <7e59a27d-8393-48b4-9c44-800499498afb@amd.com>
-Date: Tue, 8 Jul 2025 13:25:47 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to
- EXPORT_SYMBOL_FOR_MODULES
-To: Vlastimil Babka <vbabka@suse.cz>, Matthias Maennich
- <maennich@google.com>, Jonathan Corbet <corbet@lwn.net>,
- Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, Masahiro Yamada <masahiroy@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nicolas.schier@linux.dev>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Christoph Hellwig <hch@infradead.org>,
- Peter Zijlstra <peterz@infradead.org>, David Hildenbrand <david@redhat.com>,
- "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20250708-export_modules-v1-0-fbf7a282d23f@suse.cz>
- <20250708-export_modules-v1-2-fbf7a282d23f@suse.cz>
-Content-Language: en-US
-From: Shivank Garg <shivankg@amd.com>
-In-Reply-To: <20250708-export_modules-v1-2-fbf7a282d23f@suse.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0148.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:6::33) To SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
- (2603:10b6:a0f:fc02::9aa)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25EB38385;
+	Tue,  8 Jul 2025 07:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751961429; cv=none; b=SNaFKJUq69Vz7mhO5m2JkuK6OsW1jY/J9t93bJ56WFiz/gkNG6JnjVcd/4h4tlVsJholNtGBMJQTLrQpNaVhFv8op2Yo+879FK29El0gDN1Gn9dO5yAtfuWTStaMeyYob8UNHCsgbIHTBygl2Ek9rSsW5DBEmseBXLpw22IC04o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751961429; c=relaxed/simple;
+	bh=8sXEIOHXfp/nTSLz/U9NcRfjN1jWLKVhUh0J40iDc04=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V89Q6AXYno4TuyX3xiHggc/zb6fSx3o8MNAq+lz3YlzaLXhXC5yjhv860SgBp7RB/MAeUInxl097i1S9gSgjQmgJ1dH3iMWkuTHQxbOD9XF2txHZmCtwho5Uku3JeIrqKocO7N2AleBGWcVWPphM2T1bXJVaek6co0km8eenZSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EcyDu80X; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a52878d37aso521702f8f.2;
+        Tue, 08 Jul 2025 00:57:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751961425; x=1752566225; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=osbcHSqXKEogRbBXBNixGDu9ctqy+6YbT6eV0sEJp4g=;
+        b=EcyDu80Xbr5FTmDAqew4PcXrIzJ9hfwMkwbj0RzUvrwbsy6KN8n0o6xsQjvsYlmPXl
+         hIgEZOL0w6C64mGw6GRkTcMNtobreZeqqjrFYArlfMIrlMHmBUM0G/rbp++ZoHBwKH3g
+         0d3j3gtCpcdsdR31jiSqutDshSM8ps9bE6aJDffid4oagkafOdiWARaF156oL+PV8TEp
+         grwoG8rhZJ3AWIN2leGaqVJ+jSu7Iguax1FNOIlXyydG6vXQjYdUer4SiArznCH0zXCc
+         DTH0EikItpNJ4FNVcwVYwXTykuCblEWg0JqdJ6n0lStxzsuSlQJbGsVhWtiW3zdUTUf5
+         R8Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751961425; x=1752566225;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=osbcHSqXKEogRbBXBNixGDu9ctqy+6YbT6eV0sEJp4g=;
+        b=m3DjTTgx5rlbTiFWKstS6wxIw9atpAM/MIOrSuJodfQolaXDyC2seFY82KL9v2Func
+         7QotM6W5O9YwVIusSC49U65JVOr/frnmHqpNNuJ83fwRO7juSRqi+mM9nWZQeWRV/gte
+         CLZ4sHy7va9srtorobCDuGkjCa0AVLycTvkbSU40+DmP2gj4mrdzeR630PlBh9WdWlHN
+         Qk3sUpyDfNKipr+vaq8Sfgwn+IGJvGLlWjUGkjcy96bNYJcsVkrmjQOybClD+hmKHzJN
+         4RoayymMshkfQeYFPCW9idIwfrBi1TS1fjhUm7VsjI5IRcZYYOzWFOpQsMjCj5LoMspB
+         PUZg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4SFOzGQekpQEO61E4itBaB95rCOdzqW8vfg8BTl2YZtnZqCdNdqUqUGHmG//3jNU24w/HuvqB6fyBlS66@vger.kernel.org, AJvYcCVWdwF2YCoJ9GEc9c8vNo4DtP5pScjjS7vIzqtEJdKnJs4acTDuXgzLiaJby6V8NHPTVzTSWMDzmpa4eV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw31wCMSFh0sf6pSecsJFttLil0qc6WIVeMLug5GcIPoRihhuCe
+	88fz3yk6a9kWaISXf6ocyjBGHGQ2z6eLnBgBeWxO6kbCIMsbjAifQkYJD2ZGFR0g
+X-Gm-Gg: ASbGncvVEIeHcOAT4eCWtNC+tjIVEcFJ0Vi2K2f94D+QyJUe8v8zY8fyma5so3PoSjM
+	cgYymgBhhakaaZ+KcdOk9d8pN2Od70aBl/hK52zr2XAjpNZmhv0zRRx5VY918XaUhjE67rciM3s
+	8/pmQRLq2O4FVplSzbuZ23ckcBwI3HYyRiPNGbQWxHSfl+qJfyjhRcM3/6v2DiD27Odip4R5k3E
+	/3wluaW3O02BGyjZoegS6R7DkpvSh4DzJvyX0YAwNvyfXqcuoIQ68AIQb/IQIwtrChyy+q7Fk4t
+	r1mWlwCDMo01tDYh/DNhqeXa/UlC1QkNHL1hNulvHIOv0LKUhp/wo92LXSs+KyFU1Cscz188OVN
+	GHNxkqn0=
+X-Google-Smtp-Source: AGHT+IHxgxJS35i+PLDmIDRAq2unSxrOYtCTvCxRmXyuFrInXJWZz0VWtgGicfL1f/f+fSvMKzrVnw==
+X-Received: by 2002:a05:6000:2912:b0:3a4:d0dc:184b with SMTP id ffacd0b85a97d-3b4964f8ab6mr4748206f8f.6.1751961424843;
+        Tue, 08 Jul 2025 00:57:04 -0700 (PDT)
+Received: from DESKTOP-LCRLR8G.localdomain ([196.130.55.70])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47030b9desm12399979f8f.19.2025.07.08.00.57.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 00:57:04 -0700 (PDT)
+From: Marwan Seliem <marwanmhks@gmail.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: [PATCH v2] tty: sysrq: Introduce compile-time crash-only mode
+Date: Tue,  8 Jul 2025 10:57:01 +0300
+Message-Id: <20250708075701.22988-1-marwanmhks@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PPFF6E64BC2C:EE_|CYXPR12MB9279:EE_
-X-MS-Office365-Filtering-Correlation-Id: 37ef2444-480f-40d5-6376-08ddbdf4df1f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ejJXUmg3QjVCeFZwc3MrdmhUL1JRNzB2VW1pUFg2anpvRnliQ3NIR1dkdWhu?=
- =?utf-8?B?WFloSlBVZjBIOVZlelB4SC9JY2tXMGk1cXQwbnRpOU05N0hRNHZydkdueksw?=
- =?utf-8?B?NGwvUnNsQldZQ2NPTnpsZWlVZ2gvS1liMVRoSnBhSDJLR2NLR01WbE5rQzJY?=
- =?utf-8?B?VlVaSEREVlIrbjRGWHZVTFVpMzdwWXdpaXJodkxVVXVyaHptcFc4OFJ4K1pI?=
- =?utf-8?B?aEFMUDRGaitnTlRYVkV6bFVwdmU4QlRRb1l0ajhtUlc4elVQU3cvU0xtUkgx?=
- =?utf-8?B?WStrQTNNMVZXUnlQeXIyWlM0eVdtWnFjTFpFbmN4Vk9MNnprUlUyRVZNOVFR?=
- =?utf-8?B?cFprL0FGV2FNTnorc0dJVGZiMnZaTDFjRm80L1lTdEpqL0hNRWZ2cnE4UEhp?=
- =?utf-8?B?bWE3S1BXUlNUbXpKOGVOUzRUdE1YaTljNk90aVhLd2d2SUo1SnRiOXIxM2NB?=
- =?utf-8?B?V3U5TVQ0ZnV0TnJDSjA1TklEcDFtVmQ4NFEyODRlaXRHVmdQQTkrclloWjM4?=
- =?utf-8?B?THZ1d2UzdWhKS1hkZGJjdXdaOU1rUzRMLzdJT2NUZDlQeGx5enRPQzY1dnlx?=
- =?utf-8?B?VndHVU54Z3B3YUI3TStibTdkZzZiTXVpRjFiQTFzUGR5QU1CbU0wY0RQTXd2?=
- =?utf-8?B?dkRxa3cwT2hxOWZ6MjVkTm8zZ2o3Y05hT05vall5TGRMd1h6SS9zTWRPL0g1?=
- =?utf-8?B?VDQrOGx5ZUFrR1ZYRUZSMHo2Yml0RlRYMnZScHVkT2krMkVDTkFzUkY3Z0RV?=
- =?utf-8?B?cVdpYll1V01kc2ZHWE9wUExKdUoybXAwZDZBVjZVT3NsRTlFNFJ0b3BXL09m?=
- =?utf-8?B?SFByTFhROW5CZlRweVUzMS9TOGJBOHlhRVhOTFBqeTZxSjM4TXZQWTMzUy96?=
- =?utf-8?B?QUw3UXFpYXNFYkk1Vk9qSmZSNmJmaEx5b1Y5MnJjYUJyVjRTZTA0bjdBUW9z?=
- =?utf-8?B?a2VyLzhIc3lVK0dPK3hiUVFsalFZa3ZxSC9ZcmUyMzhsbW4rSVV6VTgrMG80?=
- =?utf-8?B?enBHZFA4QWpIUUxXWG5ZcGxpdWpCSWRudGJveFZ1cnlWOHFFSEhzNEtGeVU5?=
- =?utf-8?B?OGkxL213UkRLVndkZS92Wk44cnpiWEo2YUJzZWlCMWlSR082a2Z4Nkd0MWFj?=
- =?utf-8?B?MFZUY0Z5anRSVGVSVFZ1cEFJK2p2Y2VhTlJtUS9GNFRQZGV4OXpvTThBNzFN?=
- =?utf-8?B?MzYwNlpweWtsekpBeGhNRFQwK2hudVZ5b29CZi9aN1dPbDB6UWU1czdtWm5t?=
- =?utf-8?B?ZzlLT0UwSmExandZOFNPQk52MlBFb25qY2hVMTJ5VjFMNGY1NkJOK05OQVJx?=
- =?utf-8?B?WjMwZ1pQUjFuMjc3cHY3MmE5YVFaU09RZS9NVUNFdkN6OFpVNXNTcHFBK1FT?=
- =?utf-8?B?M3pndndwbUk2K3V1NFZkdTBRb1VYTE84cEppZTcrbFVNMXFDSHZGQ1N2ZExD?=
- =?utf-8?B?bTVhalFTY283emZmSXY2N3M1eVduZmplaXpIS1Q1ZHNzR0haT2pHRGhMM2xl?=
- =?utf-8?B?UHgvWE1PYzBEZ09kSG5BUjFpU3RCUitFMVE5U2FieXQ4SVA4WlUxS0xmUWNj?=
- =?utf-8?B?YVlYenNJVUVucXMxZ1c1RzNFK01iWXE1Ym9QSFZUMGxwNWJqZzE3MjNVR1lp?=
- =?utf-8?B?cmtiZ3JPWHZwRDN2T3Bxc0YwS0ZEMklUYUJOYWRUMUlDc3RLekR5TVB4OFE3?=
- =?utf-8?B?MU5tZW5TSU1YYWRPT04wcGhOcStSdkFldll1NUlydkNiZXJWWG82MVJuWnVS?=
- =?utf-8?B?aWRJeEhodTFsb3JweEkyeWVlN1lsemwxcEJxQVNPWm5BSytoYXRUclQweGor?=
- =?utf-8?B?WTZvMDZpZ1NONkhSV0ViMjMzcXd3eERDRTZkMEgxRmlETFR4Y1NDVmdSaW55?=
- =?utf-8?B?TVBpNFlBYnhJU0RhK1JTVC9yWDlGWFpxVmEyVXdBTmpKY0Z3dmhBU0FOK1BX?=
- =?utf-8?B?ZERJSWZtNkRUajVvRDkyQ3pGQXVLSThnTWJtdTBaR2xtazEyVGJTZFBGRVNI?=
- =?utf-8?B?bUJtdGtkR2F3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ5PPFF6E64BC2C.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bHVTUU5haDg5K01pQ1RuWTlNMytpalVqY3ZHNmdpZit0MXZUVTJHSXBMcVFV?=
- =?utf-8?B?cm53S3VtK3ozZzYyTmE2TUVxWExLeWF5WkpLM2FpTkhOVDVTVkVFNFNYakZE?=
- =?utf-8?B?Q3A3TXlTVUdGaDhZc0U1MzErUXlkbXI0OFpReHV4Ykx2WUJDUHFkWTBhNkZB?=
- =?utf-8?B?S0w1NUl4WWFIdGR5RkFGQitLcEp3Mm8wMSs1MTVxNldpYjFyRk56SXJaVjNG?=
- =?utf-8?B?eVVnajZLMXg2SG9vYmhmUUJSblRHTHBaR2ROS21IL0RnL3QzQWxFY1dvR3Jm?=
- =?utf-8?B?R1gvUHQ4OUdGTFpCRGsyWDlWdzhHdUJoUFViU1RVTUxROHMzQzkvNDgza3FI?=
- =?utf-8?B?dWdnZkd4dHhOdHlSQVd5TUVzNlltZWNWdG9HZmpBUUpmMHQvaU0rNEVPYWNC?=
- =?utf-8?B?T2R4Y0NHWUpKQ1hKUWRBRno2NEgwckhadkhja1ozNkx1OFRhaGtha1N6bnVn?=
- =?utf-8?B?dk1XbWhZQUpuYTZEUXNVRVA1eE9sWEJndEFZd0g4SlNQYm9WMUVJMjJITlJS?=
- =?utf-8?B?c3cvdEdlTzFYQlRmMnpLS09uNk5mbXoxeEhXOGhOMXFsY0M3Y0ZYNGpDWUQ5?=
- =?utf-8?B?WTdYQzBlNFYwMVBYMEE3MmU4bzVYNTRNOWxDWmlHbUpOcTBDRGRlSjd6QXlN?=
- =?utf-8?B?MlQ1SXovOExBTmpUbUFyblZtZm5qTW5Mb3R3Q3hKSzFVSWp4RDlIeUhwVDNO?=
- =?utf-8?B?YnE0TWp4QU45bUdsYTEyWlNYNzk1TlMvRjZJTHAwb3lGaWY4d3o0WWpCWGRS?=
- =?utf-8?B?Q2lPQk41V2FDZVV2YTBmUkVlYUoycFdVVE8wOTNIMnhwNEhxNmRJVGc5MzZn?=
- =?utf-8?B?d21VUGlVbGdTQTNBUW43QUhWZWZNeTVSRGRtRUhqOWRiUXkvdmVYNjRudWJY?=
- =?utf-8?B?OEdtRjE3SGROUFhaejQ1aWt4ZUJyZTM2cnVLQlM3VEEvRDdQR0tFeXZFc0Fq?=
- =?utf-8?B?T0wxMEtuQkVrMWd1S3NLai9VSkdBS2lOckh0aVRVVVc5OUN5ZjkvMjFua3dT?=
- =?utf-8?B?NEtSREZ2cnB1ZkJ5elo5UnRjeGdKSUZRUlpCUUtQdDUxVFRJaFB1ekVmQkxo?=
- =?utf-8?B?SkVNUFBjaTF0N0RCak1KRTQxSjFvNDVOalRNenpsZ0JlVTlaellCYm9yMld2?=
- =?utf-8?B?RXozSVprZGZTVHp3OFJkWG1qZXZTV3hwS2xxQVpRYklKTi9adU9RY1VnekpV?=
- =?utf-8?B?Z290dDZUQi9jQ0VtRmozYVh6dzl1OEdYelE3WVBuMEhmam9Ha0pPYjZjbmhx?=
- =?utf-8?B?c0N1R3Y5cEtSLzY4Qkp1WVhiclA1NHIycDhNbXNHUGJGc2V6OThUbFZOMm1R?=
- =?utf-8?B?eDJIZ0lhY0p4VmEzcm9YSjNQYUJCVnk3azE4aCtkVjh3NHUwWXhieEdabEY0?=
- =?utf-8?B?bHk1SXBJOW5BazBhSGVJSEhBVjgvQWVyZ3VtcDV6WUZyOEhDMzZiMUdDSlJI?=
- =?utf-8?B?SndiZXl6TW5pTzRyN3RsT2wrMVRQdTBVeWxDQVlvYjk2dW85UDZTUXYzUGh6?=
- =?utf-8?B?bmt1RnpqSFF1NW04MWJnV1RwYlI3RCt6SDFIREFTSVkxWVZndFE3VzBIRFBo?=
- =?utf-8?B?M3l3R2FnUzhMVkNOVUZWM3djQmNFVXVPd1h6V0d6Y1RJU1BRUFJjZDFJQUZw?=
- =?utf-8?B?WG5WSU1PYytja3ByanZXK3ZrcE14NXFuZ0RRNVp3eDZadUcxMWlHZUJtWllJ?=
- =?utf-8?B?ZE5lV2pjT2Y5UmR6YzVYMVZvYUt4MnVHN0o5ajN1cS8rRlY1M1hWNWJNYVpt?=
- =?utf-8?B?YUd6ZE1kaVhEUnQvVkI0c0RQYVQrTWd2VFFQYWdVNHZqdnB1Ujc0c0VkQUUw?=
- =?utf-8?B?WEJibUUzNy9CRmZRTTJjWjFYbXFBSUNjSnFoS2NxUCtoQkF5VUlORFlCL045?=
- =?utf-8?B?T3BqQlhVZmVNa1JMVmljb2NFL3dZcUZiUUk1bk5jQmkrdDZTQzZ2RmJtN2t3?=
- =?utf-8?B?eW9kTVBnNUhpOXcyc2hCNDdUS0hjeFlUaURNS0dFZnV3Ti8xdnlJcWVJTTR3?=
- =?utf-8?B?ZTVJOXpnZTJ5WllNcDNVQi9td2VvZlgwUEdFYzZ5VzJzQ1hRMXpMUjA1WE1Z?=
- =?utf-8?B?SFJFTWkvUk45c3RzUFpjcE53dzY3K2t4RDlyNzBNMkUyNTlpamNPN2NGM3N3?=
- =?utf-8?Q?8jRM8QoylVEWderfVHpLVaaOx?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37ef2444-480f-40d5-6376-08ddbdf4df1f
-X-MS-Exchange-CrossTenant-AuthSource: SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 07:55:57.2929
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +LD/GN60/CB0kDWSMvOKqy1Q8qkK01Cuutrz7X0Y92ZTl5UeNKoSIWpEwRZiwaAU9e/DMQRrUkEPxr+nAlciNw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9279
+Content-Transfer-Encoding: 8bit
 
+The Magic SysRq facility, while a powerful tool for debugging, presents a
+significant attack surface. A user with console access or sufficient
+privileges can use SysRq commands to reboot the system ('b'), terminate
+all processes ('i'), or perform other disruptive actions. These actions
+can lead to denial-of-service or be used to hide traces of an intrusion.
 
+While SysRq can be disabled via a sysctl, a privileged user can often
+re-enable it at runtime. For hardened systems where the only required
+SysRq functionality is generating a kdump for post-mortem analysis, a
+stronger, permanent restriction is necessary.
 
-On 7/8/2025 12:58 PM, Vlastimil Babka wrote:
-> With module namespace access restricted to in-tree modules, the GPL
-> requirement becomes implied. Drop it from the name of the export helper.
-> 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
->  Documentation/core-api/symbol-namespaces.rst | 6 +++---
->  fs/anon_inodes.c                             | 2 +-
->  include/linux/export.h                       | 2 +-
->  3 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/core-api/symbol-namespaces.rst b/Documentation/core-api/symbol-namespaces.rst
-> index dc228ac738a5cdc49cc736c29170ca96df6a28dc..aafbc0469cd6a4b76225e0e96a86025de512008e 100644
-> --- a/Documentation/core-api/symbol-namespaces.rst
-> +++ b/Documentation/core-api/symbol-namespaces.rst
-> @@ -76,8 +76,8 @@ A second option to define the default namespace is directly in the compilation
->  within the corresponding compilation unit before the #include for
->  <linux/export.h>. Typically it's placed before the first #include statement.
->  
-> -Using the EXPORT_SYMBOL_GPL_FOR_MODULES() macro
-> ------------------------------------------------
-> +Using the EXPORT_SYMBOL_FOR_MODULES() macro
-> +-------------------------------------------
->  
->  Symbols exported using this macro are put into a module namespace. This
->  namespace cannot be imported.
-> @@ -88,7 +88,7 @@ Simple tail-globs are supported.
->  
->  For example::
->  
-> -  EXPORT_SYMBOL_GPL_FOR_MODULES(preempt_notifier_inc, "kvm,kvm-*")
-> +  EXPORT_SYMBOL_FOR_MODULES(preempt_notifier_inc, "kvm,kvm-*")
->  
->  will limit usage of this symbol to in-tree modules whoes name matches the given
->  patterns.
-> diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-> index 1d847a939f29a41356af3f12e5f61372ec2fb550..180a458fc4f74249d674ec3c6e01277df1d9e743 100644
-> --- a/fs/anon_inodes.c
-> +++ b/fs/anon_inodes.c
-> @@ -129,7 +129,7 @@ struct inode *anon_inode_make_secure_inode(struct super_block *sb, const char *n
->  	}
->  	return inode;
->  }
-> -EXPORT_SYMBOL_GPL_FOR_MODULES(anon_inode_make_secure_inode, "kvm");
-> +EXPORT_SYMBOL_FOR_MODULES(anon_inode_make_secure_inode, "kvm");
->  
->  static struct file *__anon_inode_getfile(const char *name,
->  					 const struct file_operations *fops,
-> diff --git a/include/linux/export.h b/include/linux/export.h
-> index f35d03b4113b19798036d2993d67eb932ad8ce6f..a686fd0ba406509da5f397e3a415d05c5a051c0d 100644
-> --- a/include/linux/export.h
-> +++ b/include/linux/export.h
-> @@ -91,6 +91,6 @@
->  #define EXPORT_SYMBOL_NS(sym, ns)	__EXPORT_SYMBOL(sym, "", ns)
->  #define EXPORT_SYMBOL_NS_GPL(sym, ns)	__EXPORT_SYMBOL(sym, "GPL", ns)
->  
-> -#define EXPORT_SYMBOL_GPL_FOR_MODULES(sym, mods) __EXPORT_SYMBOL(sym, "GPL", "module:" mods)
-> +#define EXPORT_SYMBOL_FOR_MODULES(sym, mods) __EXPORT_SYMBOL(sym, "GPL", "module:" mods)
->  
->  #endif /* _LINUX_EXPORT_H */
-> 
+This commit introduces the Kconfig option `CONFIG_MAGIC_SYSRQ_CRASH_ONLY`
+to provide a compile-time guarantee that only the 'c' (crash) command
+is available. This allows system administrators to build a kernel that
+supports critical crash dump generation while completely removing the
+attack surface presented by all other SysRq commands.
 
-LGTM!
+When `CONFIG_MAGIC_SYSRQ_CRASH_ONLY` is enabled, the kernel is hardened
+in the following ways:
 
-Reviewed-by: Shivank Garg <shivankg@amd.com>
+1.  Restricted Commands: Only the 'c' (trigger a system crash/dump)
+    SysRq command is operational. All other built-in SysRq commands are
+    disabled at compile time.
 
-Thanks,
-Shivank
+2.  Runtime Registration Disabled: The kernel rejects any attempt to
+    register new SysRq key operations at runtime via `register_sysrq_key()`,
+    returning -EPERM.
+
+3.  Crash Command Unregistration Prevented: The 'c' (crash) command
+    cannot be unregistered.
+
+4.  Sysctl Hardening: The `/proc/sys/kernel/sysrq` interface is neutered.
+    Any write to this interface is rejected with -EPERM, preventing
+    runtime attempts to alter the SysRq mask. The kernel will only
+    permit the crash operation, regardless of the `sysrq_always_enabled`
+    kernel command line parameter.
+
+5.  Trigger Hardening: Writing any character other than 'c' to
+    `/proc/sysrq-trigger` is rejected with -EPERM.
+
+6.  Restricted Help Output: The help message, triggered by an invalid
+    SysRq key, will only list the 'c' (crash) command.
+
+This feature provides a robust, compile-time mechanism to lock down
+SysRq functionality, ensuring that even a privileged user cannot bypass
+the intended security policy.
+
+---
+v2:
+- Adjust #ifdef style to align with existing patterns in sysrq.c.
+- Block writes to the /proc/sys/kernel/sysrq sysctl with -EPERM when
+  in crash-only mode, with a rate-limited warning.
+- Return -EPERM from the /proc/sysrq-trigger write handler if the
+  requested command is not 'c'.
+- Rate-limit warning messages generated from userspace-triggered events
+  to prevent log-flooding.
+
+Affected files:
+- lib/Kconfig.debug: Added `CONFIG_MAGIC_SYSRQ_CRASH_ONLY`.
+- drivers/tty/sysrq.c: Implemented the conditional logic for
+  restricted mode.
+- kernel/sysctl.c: Use the sysrq_toggle_support return to deny illegal toggle
+
+Signed-off-by: Marwan Seliem <marwanmhks@gmail.com>
+---
+ drivers/tty/sysrq.c | 87 +++++++++++++++++++++++++++++++++++++++++++--
+ kernel/sysctl.c     |  4 +--
+ lib/Kconfig.debug   | 27 ++++++++++++++
+ 3 files changed, 113 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
+index 6853c4660e7c..cccfdb0ed6d4 100644
+--- a/drivers/tty/sysrq.c
++++ b/drivers/tty/sysrq.c
+@@ -59,11 +59,25 @@
+ static int __read_mostly sysrq_enabled = CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE;
+ static bool __read_mostly sysrq_always_enabled;
+ 
++#ifdef CONFIG_MAGIC_SYSRQ_CRASH_ONLY
++	/*
++	* In CRASH_ONLY mode, sysrq is considered "on" only for the purpose
++	* of allowing the crash command. The actual check for individual
++	* commands happens in sysrq_on_mask().
++	* For general "is sysrq on?" queries (like for input handler reg),
++	* it should reflect that at least something (crash) is possible.
++	*/
++static bool sysrq_on(void)
++{
++	return true;
++}
++#else
+ static bool sysrq_on(void)
+ {
+ 	return sysrq_enabled || sysrq_always_enabled;
+ }
+ 
++#endif
+ /**
+  * sysrq_mask - Getter for sysrq_enabled mask.
+  *
+@@ -80,12 +94,25 @@ EXPORT_SYMBOL_GPL(sysrq_mask);
+ /*
+  * A value of 1 means 'all', other nonzero values are an op mask:
+  */
++#ifdef CONFIG_MAGIC_SYSRQ_CRASH_ONLY
++	/*
++	* If CRASH_ONLY is set, only allow operations that have the
++	* SYSRQ_ENABLE_DUMP mask (which sysrq_crash_op uses).
++	* This makes sysrq_enabled and sysrq_always_enabled irrelevant
++	* for other operations.
++	*/
++static bool sysrq_on_mask(int mask)
++{
++	return mask == SYSRQ_ENABLE_DUMP;
++}
++#else
+ static bool sysrq_on_mask(int mask)
+ {
+ 	return sysrq_always_enabled ||
+ 	       sysrq_enabled == 1 ||
+ 	       (sysrq_enabled & mask);
+ }
++#endif
+ 
+ static int __init sysrq_always_enabled_setup(char *str)
+ {
+@@ -462,7 +489,9 @@ static struct sysrq_key_op sysrq_replay_logs_op = {
+ };
+ 
+ /* Key Operations table and lock */
++#ifndef CONFIG_MAGIC_SYSRQ_CRASH_ONLY
+ static DEFINE_SPINLOCK(sysrq_key_table_lock);
++#endif
+ 
+ static const struct sysrq_key_op *sysrq_key_table[62] = {
+ 	&sysrq_loglevel_op,		/* 0 */
+@@ -542,6 +571,28 @@ static const struct sysrq_key_op *sysrq_key_table[62] = {
+ 	NULL,				/* Z */
+ };
+ 
++
++#ifdef CONFIG_MAGIC_SYSRQ_CRASH_ONLY
++/* key2index calculation, -1 on anything except 'c' */
++static int sysrq_key_table_key2index(u8 key)
++{
++	if (key == 'c')
++		return key - 'a' + 10;
++	return -1;
++}
++/*
++ * Initialize the sysrq_key_table at boot time if CRASH_ONLY is set.
++ * This ensures only the crash handler is active.
++ */
++static void __init sysrq_init_crash_only_table(void)
++{
++	int i;
++	const struct sysrq_key_op *crash_op = &sysrq_crash_op;
++	for (i = 0; i < ARRAY_SIZE(sysrq_key_table); i++)
++		sysrq_key_table[i] = NULL;
++	sysrq_key_table[sysrq_key_table_key2index('c')] = crash_op;
++}
++#else
+ /* key2index calculation, -1 on invalid index */
+ static int sysrq_key_table_key2index(u8 key)
+ {
+@@ -556,6 +607,10 @@ static int sysrq_key_table_key2index(u8 key)
+ 		return -1;
+ 	}
+ }
++static void __init sysrq_init_crash_only_table(void)
++{
++}
++#endif
+ 
+ /*
+  * get and put functions for the table, exposed to modules.
+@@ -572,6 +627,7 @@ static const struct sysrq_key_op *__sysrq_get_key_op(u8 key)
+ 	return op_p;
+ }
+ 
++#ifndef CONFIG_MAGIC_SYSRQ_CRASH_ONLY
+ static void __sysrq_put_key_op(u8 key, const struct sysrq_key_op *op_p)
+ {
+ 	int i = sysrq_key_table_key2index(key);
+@@ -579,6 +635,7 @@ static void __sysrq_put_key_op(u8 key, const struct sysrq_key_op *op_p)
+ 	if (i != -1)
+ 		sysrq_key_table[i] = op_p;
+ }
++#endif
+ 
+ void __handle_sysrq(u8 key, bool check_mask)
+ {
+@@ -1102,6 +1159,24 @@ static inline void sysrq_unregister_handler(void)
+ 
+ #endif /* CONFIG_INPUT */
+ 
++#ifdef CONFIG_MAGIC_SYSRQ_CRASH_ONLY
++int sysrq_toggle_support(int enable_mask)
++{
++	pr_warn_ratelimited("SysRq: CONFIG_MAGIC_SYSRQ_CRASH_ONLY is set. Runtime toggle is not allowed.\n");
++	return -EPERM;
++}
++
++int register_sysrq_key(u8 key, const struct sysrq_key_op *op_p)
++{
++	pr_warn_ratelimited("SysRq: CONFIG_MAGIC_SYSRQ_CRASH_ONLY is set. Cannot register new SysRq key '%c'.\n", key);
++	return -EPERM;
++}
++int unregister_sysrq_key(u8 key, const struct sysrq_key_op *op_p)
++{
++	pr_warn_ratelimited("SysRq: CONFIG_MAGIC_SYSRQ_CRASH_ONLY is set. Cannot unregister the crash SysRq key '%c'.\n", key);
++	return -EPERM;
++}
++#else
+ int sysrq_toggle_support(int enable_mask)
+ {
+ 	bool was_enabled = sysrq_on();
+@@ -1117,7 +1192,6 @@ int sysrq_toggle_support(int enable_mask)
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(sysrq_toggle_support);
+ 
+ static int __sysrq_swap_key_ops(u8 key, const struct sysrq_key_op *insert_op_p,
+ 				const struct sysrq_key_op *remove_op_p)
+@@ -1147,12 +1221,14 @@ int register_sysrq_key(u8 key, const struct sysrq_key_op *op_p)
+ {
+ 	return __sysrq_swap_key_ops(key, op_p, NULL);
+ }
+-EXPORT_SYMBOL(register_sysrq_key);
+ 
+ int unregister_sysrq_key(u8 key, const struct sysrq_key_op *op_p)
+ {
+ 	return __sysrq_swap_key_ops(key, NULL, op_p);
+ }
++#endif
++EXPORT_SYMBOL_GPL(sysrq_toggle_support);
++EXPORT_SYMBOL(register_sysrq_key);
+ EXPORT_SYMBOL(unregister_sysrq_key);
+ 
+ #ifdef CONFIG_PROC_FS
+@@ -1174,6 +1250,9 @@ static ssize_t write_sysrq_trigger(struct file *file, const char __user *buf,
+ 		if (get_user(c, buf + i))
+ 			return -EFAULT;
+ 
++		if (c != 'c')
++			return -EPERM;
++
+ 		if (c == '_')
+ 			bulk = true;
+ 		else
+@@ -1210,8 +1289,10 @@ static int __init sysrq_init(void)
+ {
+ 	sysrq_init_procfs();
+ 
+-	if (sysrq_on())
++	if (sysrq_on()) {
+ 		sysrq_register_handler();
++		sysrq_init_crash_only_table();
++	}
+ 
+ 	return 0;
+ }
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 9b4f0cff76ea..097a19948926 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -982,9 +982,9 @@ static int sysrq_sysctl_handler(const struct ctl_table *table, int write,
+ 		return ret;
+ 
+ 	if (write)
+-		sysrq_toggle_support(tmp);
++		ret = sysrq_toggle_support(tmp);
+ 
+-	return 0;
++	return ret;
+ }
+ #endif
+ 
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index ebe33181b6e6..02bc19241711 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -640,6 +640,33 @@ config MAGIC_SYSRQ_DEFAULT_ENABLE
+ 	  This may be set to 1 or 0 to enable or disable them all, or
+ 	  to a bitmask as described in Documentation/admin-guide/sysrq.rst.
+ 
++config MAGIC_SYSRQ_CRASH_ONLY
++	bool "Only allow the crash command for Magic SysRq"
++	depends on MAGIC_SYSRQ
++	default n
++	help
++	  This option provides a significant security hardening for the Magic
++	  SysRq facility by restricting its functionality at compile time to
++	  only the 'c' (crash) command.
++
++	  If you say Y here, the kernel will be built with the following
++	  restrictions:
++	  - Only the 'c' command to trigger a system crash/kdump will be
++	    operational. All other built-in commands (reboot, sync, SAK,
++	    show-memory, etc.) are completely disabled.
++	  - Registration of new SysRq commands at runtime will be blocked.
++	  - The /proc/sys/kernel/sysrq interface will be hardened,
++	    preventing any runtime changes to the SysRq mask.
++	  - Writing any character other than 'c' to /proc/sysrq-trigger
++	    will be rejected.
++
++	  This is useful for production or hardened systems where generating
++	  a kernel crash dump for post-mortem analysis is essential, but
++	  the other SysRq commands (which can cause denial-of-service or
++	  hide intrusion) are considered an unacceptable security risk.
++
++	  If you need the full suite of SysRq commands for debugging, say N.
++
+ config MAGIC_SYSRQ_SERIAL
+ 	bool "Enable magic SysRq key over serial"
+ 	depends on MAGIC_SYSRQ
+-- 
+2.33.0.windows.2
+
 
