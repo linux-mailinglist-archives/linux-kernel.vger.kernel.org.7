@@ -1,114 +1,173 @@
-Return-Path: <linux-kernel+bounces-721230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF61AFC65F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:58:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21059AFC663
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:59:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99A981AA45ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:59:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 373A24A747B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B808E298261;
-	Tue,  8 Jul 2025 08:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98752BEFE4;
+	Tue,  8 Jul 2025 08:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="vTdbQHaT"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BEWU3Wx3"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B21220F36;
-	Tue,  8 Jul 2025 08:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8633F220F36;
+	Tue,  8 Jul 2025 08:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751965128; cv=none; b=mu8PkkvkeBuSUQkfQ32XY9Q4YFPim+l7GZSDa5tCSEmswHiVd1p6YmYbakxUsMFTAF3U12aZ184f4c2JN0xwzzUJzN9e6NS3fCDzsOj1/Er9vs6zqjzDmk1Nux9dAuzU5r47nNo8MNj7bJPYBb+jHA654iK/PWB5+Aopakd3m7M=
+	t=1751965155; cv=none; b=Iq+337ju6y/3nPU9KP0JTVsL/N58s/F7y5jNgeNvXxqdBBqfoQuluvBowlBVhH0BvqZPNhd7F6wsZqHrhOM6TyebajL7Wu3D3hLu2VMzapHm13pyyKEUSvAkCUO17zMUIoUtOWuRla7sT7Zxq4fdKvQUPsDx+3TEgfyicMFujfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751965128; c=relaxed/simple;
-	bh=u3lqUz04bP9xeEjrrJCzmY29EtIjVknuse3jww8xv80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p7P6NJhlnEcftwI7bEeVMQLNcPGUo5a01WK0U+4JrT2MjtwivFxL4rBsCtlIhkxiSsTgIl+jGso1uuetlXhTugDWpZt32Uq7BPzNFwDhnbQJS7tbG8AbExyJegJH8FjClr2x0pf+tHTh4VU8UU9aTsDow/wR9nqpFzDcIsnX0OA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=vTdbQHaT; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=jo4aOPG5cIjFCy/hgtix7MTqkYd2DiMfnnoaHWQr8tk=; b=vTdbQHaT02wpYGcV+yyGS99BlO
-	3Dx+HxtUC5czBelbqY4pmms2xpURX/ciYiegflCU8q0hnihZuvgvKAvXTC22FsAE28RIK9zlq3A77
-	Vya9jlGuxn4Ho0yl64s9ucEnu0clqjuI2VjegLXbomtDJaZJDtVvNQziFLwvWaxzaTlJG/wUTYZoL
-	hnnUysxgQmy6igwDA4tU9WhgAfi/G8qilBrRRF5vRYKj7x1qm9ANBADrKCnuO06nT6HzmEnyNRiMy
-	AZugnwqlcaU3EzZfJ0PF9NHh3k4otpoY1jvN7NCMkaC1inWI5NEwZsmlUA1+/5oDjQqb7TbjZlbhH
-	nxpxFpMQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50426)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uZ49t-0006JL-1u;
-	Tue, 08 Jul 2025 09:58:37 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uZ49p-0001UP-0m;
-	Tue, 08 Jul 2025 09:58:33 +0100
-Date: Tue, 8 Jul 2025 09:58:33 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	"David S . Miller" <davem@davemloft.net>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Christian Marangi <ansuelsmth@gmail.com>
-Subject: Re: [PATCH net] net: phy: Don't register LEDs for genphy
-Message-ID: <aGzduaQp3hWA5V-i@shell.armlinux.org.uk>
-References: <20250707195803.666097-1-sean.anderson@linux.dev>
+	s=arc-20240116; t=1751965155; c=relaxed/simple;
+	bh=IUQ/IoZbgiF/ZH+Px9cA0W240LEAFAownvCPS2NhN8g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B8X9EF/jz1nPfK/B+vJhQUtAaOtV9Cs8JypNDrIUc36sc6wkiCuK/m9a7pdzW2F1bE3EVajlBeVcrh1ABoCrwM5lecr8DhTQVA74XMM9M3p18A0VzLRMKnlZFwuJjSccofXg6DHdKhOGh5ayJlAWAfSspvSznVEJ2vUk68jNr7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BEWU3Wx3; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5688x6tr1130369;
+	Tue, 8 Jul 2025 03:59:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1751965146;
+	bh=05bzV+7pVgK0xkuS4bOv5lonEtNXKdCiWXnC9OjSmQY=;
+	h=From:To:CC:Subject:Date;
+	b=BEWU3Wx39ZBKdWnLEGuajRdQBMCUeH5upuTDCTvTja7v4NPzwm2mJh2WvH7Fio/n2
+	 94xKCeUiQi4jG1wejXdgKwC9DgbBzgwOUI+vR6osWy39Q3BelQSutDUEFX3HlECe79
+	 bU3aJ4qQkfgp19OcAt/Ndr4+kK8cnuFFoK6Ly20o=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5688x53j3112944
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 8 Jul 2025 03:59:06 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 8
+ Jul 2025 03:59:05 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 8 Jul 2025 03:59:05 -0500
+Received: from localhost (ula0502350.dhcp.ti.com [172.24.227.38])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5688x4Pl1787457;
+	Tue, 8 Jul 2025 03:59:05 -0500
+From: Paresh Bhagat <p-bhagat@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <khasim@ti.com>, <v-singh1@ti.com>, <afd@ti.com>, <bb@ti.com>,
+        <devarsht@ti.com>, <s-vadapalli@ti.com>, <andrew@lunn.ch>
+Subject: [PATCH v7 0/4] Add support for AM62D2 SoC and EVM
+Date: Tue, 8 Jul 2025 14:28:35 +0530
+Message-ID: <20250708085839.1498505-1-p-bhagat@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707195803.666097-1-sean.anderson@linux.dev>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Jul 07, 2025 at 03:58:03PM -0400, Sean Anderson wrote:
-> If a PHY has no driver, the genphy driver is probed/removed directly in
-> phy_attach/detach. If the PHY's ofnode has an "leds" subnode, then the
-> LEDs will be (un)registered when probing/removing the genphy driver.
+This patch series adds support for the AM62D SoC and its evaluation
+module (EVM) board, enable eMMC and firmware-name update for
+AM62D2-EVM board.
 
-Maybe checking whether the PHY driver supports LEDs would be more
-sensible than checking whether it's one of the genphy drivers?
+The AM62D SoC is a high-performance Digital Signal Processing (DSP)
+device with a quad-core Cortex-A53 cluster, dual Cortex-R5F cores,
+and a Cx7 DSP core with Matrix Multiplication Accelerator (MMA).
+It features a range of peripherals, including multichannel audio
+serial ports, Ethernet, UARTs, SPI, I2C, USB, and more.
 
-> This could occur if the leds are for a non-generic driver that isn't
-> loaded for whatever reason. Synchronously removing the PHY device in
-> phy_detach leads to the following deadlock:
-> 
-> rtnl_lock()
-> ndo_close()
->     ...
->     phy_detach()
->         phy_remove()
->             phy_leds_unregister()
->                 led_classdev_unregister()
->                     led_trigger_set()
->                         netdev_trigger_deactivate()
->                             unregister_netdevice_notifier()
->                                 rtnl_lock()
-> 
-> There is a corresponding deadlock on the open/register side of things
-> (and that one is reported by lockdep), but it requires a race while this
-> one is deterministic.
+The EVM board is a low-cost, expandable platform designed for the AM62D2
+SoC, having 4GB LPDDR4 RAM, Gigabit Ethernet expansion connectors, audio
+jacks, USB ports, and more.
 
-Doesn't this deadlock exist irrespective of whether the genphy driver(s)
-are being used, and whether or not the PHY driver supports LEDs?
+This SoC is part K3 AM62x family, which includes the AM62A and AM62P
+variants. While the AM62A and AM62D are largely similar, the AM62D is
+specifically targeted for general-purpose DSP applications, whereas the
+AM62A focuses on edge AI workloads. A key distinction is that the AM62D
+does not include multimedia components such as the video encoder/decoder,
+MJPEG encoder, Vision Processing Accelerator (VPAC) for image signal
+processing, or the display subsystem. Additionally, the AM62D has a
+different pin configuration compared to the AM62A, which impacts embedded
+software development.
+
+This patch series includes updates to the dts and dtsi files, device tree
+bindings, and pin control header files to support the AM62D SoC and EVM
+board.
+
+Bootlog-
+
+SD Card
+https://gist.github.com/paresh-bhagat12/1757cc54a39f1baf883341af2a383db6
+
+eMMC
+https://gist.github.com/paresh-bhagat12/36c756422ff71fa9568c45e9b44332f0
+
+Tech Ref Manual-https://www.ti.com/lit/pdf/sprujd4
+Schematics Link-https://www.ti.com/lit/zip/sprcal5
+
+Change Log:
+V6 -> V7:
+	- Remove alignment property from reserved memory nodes which are
+	  no-map.
+	- Updated comments regarding deletion of nodes(vpu and e5010).
+
+V5 -> V6:
+	- Deleted vpu and codec node instead of disable.
+	- Enabled heartbeat LED.
+	- Removed bootph-all property from parent nodes.
+	- Misc dts changes/correction as suggested.
+
+V4 -> V5:
+	- Added bootph-all property only in leaf node.
+	- Added a new dtsi file for am62d2 SOC.
+	- Updated commit msg and description for dt bindings patch.
+	- Updated cpsw_port node for rx internal delays. This change also
+	  depends on this series for functionality (networking)
+	  https://lore.kernel.org/r/cover.1750756583.git.matthias.schiffer@ew.tq-group.com/
+	- Updated device tree to follow ordering of properties and
+	  schematic.
+	  https://www.kernel.org/doc/html/latest/devicetree/bindings/dts-coding-style.html#order-of-properties-in-device-node
+
+V3 -> V4:
+	- Added bootph-all property at source nodes.
+	- Reuse dtsi files of am62a (instead of common files).
+	- Added eMMC support.
+	- Updated firmware name for am62d.
+
+V2 -> V3:
+	- Added bootph-all property to essential device nodes.
+	- Updated reserved memory for ATF.
+	- Introduce common dtsi files for AM62A and AM62D.
+
+V1 -> V2: Fixed indentation and build errors.
+
+Paresh Bhagat (4):
+  arm64: dts: ti: Add bootph property to nodes at source for am62a
+  dt-bindings: arm: ti: Add AM62D2 SoC and Boards
+  arm64: dts: ti: Add pinctrl entries for AM62D2 family of SoCs
+  arm64: dts: ti: Add support for AM62D2-EVM
+
+ .../devicetree/bindings/arm/ti/k3.yaml        |   6 +
+ arch/arm64/boot/dts/ti/Makefile               |   3 +
+ arch/arm64/boot/dts/ti/k3-am62a-main.dtsi     |  13 +
+ arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi   |   2 +
+ arch/arm64/boot/dts/ti/k3-am62d2-evm.dts      | 615 ++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62d2.dtsi         |  20 +
+ arch/arm64/boot/dts/ti/k3-pinctrl.h           |   3 +
+ 7 files changed, 662 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am62d2.dtsi
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.34.1
+
 
