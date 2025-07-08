@@ -1,206 +1,139 @@
-Return-Path: <linux-kernel+bounces-722514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F60AFDB81
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:05:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0EDEAFDB80
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C7163AD6A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:05:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8128A1AA1452
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0730230D08;
-	Tue,  8 Jul 2025 23:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961F022DFA6;
+	Tue,  8 Jul 2025 23:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L9EzF66t"
-Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ingK5OZ1"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EF535962
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 23:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DEEB227B95
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 23:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752015937; cv=none; b=lpL1UZH9tua7ge73EwHJlfh6l/3gL/IPtv71cyZVwV/atXI3aD/iACyRO7UL/G3S3W+GUmduL0PDzC54PQVBn4Ic+W0MhlB9FmqWqIlMjBmHPYuo2vg25xpAGTOcn+4/0rqyZBDZ7PfKl+VptWk3zIdtH1l6VnNSpAp+S4mqh74=
+	t=1752015922; cv=none; b=imr4x6JgXlBNWW6s9vQyimQHVVcPpCk5Ep9Qpij8pv2JC5E/c1EZnW2qjtDRV2cYo85SIrjbutdc3fIEMsQB6/lOXpCIu2Q3AJ0m12S0+MoI8g2tlLhmSh8dhCbXGtVAF7jIepJveUYYQYKh/+s+xwbtNbBvKbPAxoZlK6ApBcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752015937; c=relaxed/simple;
-	bh=/yEtR6tPjS9oFbGTfKU1cpH828rgcHmpMYBRKSU4+pQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=e03BEvjhQ3AtH+izpSHGLx2uQ0Eplg7eVtLiL+qCShGcATlP/4s2yt0lCtZPAgPQVT2nTYC9M67/C3OHwz7ExrupktVDMKo29LFb3nlOkvAc6E49C5B/h978UzNJSjYrhLKm6oG8/Wx0oUVOgQiNyny7/cJSYjUgKAtzcl3bALk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--nkapron.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L9EzF66t; arc=none smtp.client-ip=209.85.166.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--nkapron.bounces.google.com
-Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-876a88d14baso938359939f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 16:05:35 -0700 (PDT)
+	s=arc-20240116; t=1752015922; c=relaxed/simple;
+	bh=WovQaQ9PikrY5uLmVbsHl3tpSSKbTT19zMVimO8nhF8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sw5gcSS9+66dBAPHGOqC5wVIh5dksRW/M0rAm+LG34WNiqEjskVsYm06PRXMVaBn38XmB14Q+QMnkjnuM0KEyhqdQC6I5T2sMmldnUZqf4Qe0n4SwFvHMSWtAGC+oZdHs6ZSqy43Y+uGdpg5MyG5FWgdScuzBaap1xAHiTf3Q54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ingK5OZ1; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-234b440afa7so48541635ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 16:05:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752015934; x=1752620734; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ydReU0QIJZT7YXo3bwAQ6It4JXE9+5xG1ICd6gZCsIQ=;
-        b=L9EzF66twArOsNDvnYARF5UFhAapu5lZRPKcRazj2Y+eZgZtnOEzYhMrPUZATL0t0H
-         EvtczJb7WvPbuEy2ROLwa0u21D9gc7G0xcAdiSrpqse28f3uExjOjbsHdZ6O5aAE5lxL
-         VJlg8Q2cNEjZCEMr0QO8IeS+Q7/RsELaLmCDKHh+cg7RELb5CV7ycq56KFS3d86B5SLo
-         2Sq4x0XmoN62ktQQtkbPr5oF92RW5fYtI1TGXoaoe565ugsA6bjxMJIRHWelwxXHzBoz
-         tQlDF6kqYd/d+bXzrZEudF4KE89z2MqQxNcV1h1RjASRcBWa32+KZ3FnJezxTdaIQQpb
-         1tMQ==
+        d=gmail.com; s=20230601; t=1752015920; x=1752620720; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3nTeLrKufhqWMbv8ZxgNZNY3CTIL94aICMXLX0urdhU=;
+        b=ingK5OZ15H8n1DKqWNN4yVu6rO8pZ1M7KqxlMvJNtlek6n68bYH0stV+Trjt23K6LS
+         YVjJziYNgh7WZNc+gWgu+iQEFRFuHABxqWxozcY/z97Cv3SY7zeyRKx9COmSelGt15um
+         Kr8pRWA25lYKFOzAGtStqwHwac3QnIIYEnPioKIBb5TOlUQt8PubNCCwxf2X+tgEG3UQ
+         HlHeizPBz/BMsHuLGOrBUKIP6w5EX64bZJAkoVzCW8nf3aRqMwGhmBExglAW/29XtFUW
+         qx4atcksQgcnSW/zpAIc+bOcBQmaPCvfT4rVRx5SrQ72lIhsV1xMp6ym0tWLzMgnYpW9
+         PAAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752015934; x=1752620734;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ydReU0QIJZT7YXo3bwAQ6It4JXE9+5xG1ICd6gZCsIQ=;
-        b=QfbDxVHCKzI+1oO6s1uVltvmhBPIrwKLtEw0nvcL9GF/BQQAt8FzrvpsSvfmot5ZHZ
-         VYtt16MGYprqxW7bqHQDoqpybIsbV2jyhHJjbKfIZ8QVkB9cjzEA12vzFSGYLlwyxz7L
-         4Jv3Do2siKKHO94/DncI2jiAHuy2oXScyM1/d50CbRqpZmOkmppfyU9E5DyLhKB72PBX
-         mxQ5bg1VTHIeN3ITmFYnsX0cCeYk6anjy2okBwDGP7R2rH2ALPTISWIfEUGs7x28njgM
-         y+06M8Tr519IcRspmwLwjvcH0e3HfGdmBs5A898gANlPiaBArtqPl+ztXAIvGNteRKTR
-         w7zA==
-X-Forwarded-Encrypted: i=1; AJvYcCWn0FPMf5/NGYjsqa7yBmdN0k1QyIfAvz2WZqLIOpnQ4oJ0VunxbZE1+DJcypfq+rbsiJm5nS7S5XpQTsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRsLOY/QVCnjRfPhr/xroE5D7EqKZTEPjoGoOi6kIgsWcg07ir
-	3DiyLnHpY7FE7RFofmekkkiiB6w6ddpjwMLoCMAEc9qAkWOaaP+jO32uKJKH9HO/SlMvx2DeYGf
-	wuabMaoafMw==
-X-Google-Smtp-Source: AGHT+IGyIq2qx/+G1KUwARfX2EySC1OKrUiPgvbCwRThuDgP8H3kEf8YP25QyN81JTLH+4TPmrI1v+fJTndk
-X-Received: from iov19.prod.google.com ([2002:a05:6602:7513:b0:876:41f5:7fcc])
- (user=nkapron job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6602:b83:b0:86c:fe66:4d6a
- with SMTP id ca18e2360f4ac-8795b18051dmr57754439f.13.1752015934614; Tue, 08
- Jul 2025 16:05:34 -0700 (PDT)
-Date: Tue,  8 Jul 2025 23:04:52 +0000
+        d=1e100.net; s=20230601; t=1752015920; x=1752620720;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3nTeLrKufhqWMbv8ZxgNZNY3CTIL94aICMXLX0urdhU=;
+        b=UnhPLbDlXmk3/ro8/mcnFFUAfmXJOLcGo0K3awAazblSz6cIlLe4IyiWrkkW0avyIH
+         jzNU7uLFbo7UTmb91VSYFpBDXEStbwgWjCo4Z2ztIDzjIW2E1AnqtV/G0KPVpCVHi7eN
+         TpEbwB1dAm1Nz4SkEdav5LM8XOlu4xpJIH8hiuXMQCOFGOdH5n/Of0NqjyAGj3nmBpyI
+         jXszT7JEJO2KHkE/9tgf3efiXME9tg5oVWFDayBWq4BkaN64Moss+37QXpaGwYDnOJY5
+         K0bG6SR8vGuBlQjBysL+z8AX4b5Wab5HVls6g/J909iYAJXFJ7CXLqB57nceKevNJ6rf
+         JfXw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9yEmPGoPagSls9watqc+ZRAy6J0TB3FW2i+eAwq8ItO15gMqt7P3ch9sfKgAsAR7CsMl98WzeKl73DBA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFE+jSwvANcNi8XhQn7RJvNTMRkJMpOQgTob9pS1mXjAXwdAw7
+	SGNNYWOzE0lYQ/bVf8CbWCnYm4MukGzS8Ctk/iz5LV7GWD9Q3MCY96Hf
+X-Gm-Gg: ASbGnctOyzy9x/7bgv+tcvQyW+B+VmahhEi2xtJWYOgIZTuwiKNc2hBKzEeiICVb+1k
+	s85VBpqyLebewzx986PzxgKCFzq7/sf98cmaCXIZ0b/9m11S05qFGzrCA1517aZjBS5/R8s/FVA
+	agS4YZfghsWwHUZ0RXZxDTanzR8mXLx4b30zuyHKneFF2dYx3h1Wmh/12H21Jv98oAs9JL61u8p
+	2+H/EkvaavwHujU5QUQe/6zndC+kdmg1tjCundOBoUh9ewTlUUZN6JN+lCIaALHdNp/tf5xbHau
+	9duEk3mXQbLsdIoeE1RpUX6dyNnPZLFNvYXUlkaXWxkvCqQoSWN31pjLN5itCyT3
+X-Google-Smtp-Source: AGHT+IEKFLgqtEP19+48DpnOvxj3AeRJtQt+1/a9IT4AzzhP5p8Oq+cBQQrGaVgjDHWgXi4OBaDXaA==
+X-Received: by 2002:a17:903:2888:b0:236:363e:55d with SMTP id d9443c01a7336-23ddb2f2e2emr3240005ad.28.1752015919744;
+        Tue, 08 Jul 2025 16:05:19 -0700 (PDT)
+Received: from p920.. ([2001:569:799a:1600:edd4:8189:b111:bc2a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8434ee13sm118879925ad.70.2025.07.08.16.05.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 16:05:19 -0700 (PDT)
+From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
+To: almaz.alexandrovich@paragon-software.com
+Cc: ntfs3@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	syzbot+b0373017f711c06ada64@syzkaller.appspotmail.com,
+	Moon Hee Lee <moonhee.lee.ca@gmail.com>
+Subject: [PATCH] fs/ntfs3: reject index allocation if $BITMAP is empty but blocks exist
+Date: Tue,  8 Jul 2025 16:04:55 -0700
+Message-ID: <20250708230454.156971-2-moonhee.lee.ca@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250708230513.42922-1-nkapron@google.com>
-Subject: [RFC net] netlink: lock nl_cb_mutex in netlink_release
-From: Neill Kapron <nkapron@google.com>
-To: netdev@vger.kernel.org
-Cc: nkapron@google.com, kernel-team@android.com, cmllamas@google.com, 
-	jstultz@google.com, Nick Hawkins <nick.hawkins@hpe.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Dmitry Safonov <0x7f454c46@gmail.com>, Anastasia Kovaleva <a.kovaleva@yadro.com>, 
-	Jinjie Ruan <ruanjinjie@huawei.com>, Siddh Raman Pant <siddh.raman.pant@oracle.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-While investigating the following bug report on a 6.6 kernel (similar to
-[1]), I believe I have identified a race condition between
-__netlink_dump_start(), netlink_release(), and netlink_recvmsg() (which
-calls netlink_dump()).
+Index allocation requires at least one bit in the $BITMAP attribute to
+track usage of index entries. If the bitmap is empty while index blocks
+are already present, this reflects on-disk corruption.
 
-My understanding is that __netlink_dump_start() locks nl_cb_mutex, sets
-cb_running and calls netlink_dump(), but this call into netlink_dump()
-unlocks nl_cb_mutex and returns before clearing cb_running. Then,
-netlink_recvmsg() is called, which calls back into netlink_dump(), which
-then locks nl_cb_mutex, checks to make sure cb_running is set, then
-proceeds with the dump.
+syzbot triggered this condition using a malformed NTFS image. During a
+rename() operation involving a long filename (which spans multiple
+index entries), the empty bitmap allowed the name to be added without
+valid tracking. Subsequent deletion of the original entry failed with
+-ENOENT, due to unexpected index state.
 
-It is at this point after the netlink_dump() checks for cb_running that
-netlink_release() is called, which tears everything down. While the change
-in [2] clears cb_running, it does so without holding the lock. This causes
-the NULL pointer dereference in netlink_dump().
+Reject such cases by verifying that the bitmap is not empty when index
+blocks exist.
 
-I think this should be resolved by locking the
-nl_cb_mutex in netlink_release() as seen in the change below.
-
-By locking this mutex early in netlink_release(), then performing the
-cleanup and setting nlk->cb_running to false prior to releasing the
-lock, netlink_dump() should be blocked waiting for the lock. Once
-netlink_dump() acquires the lock, it will fail the check for
-nlk->cb_running, and therefore jump to the errout_skb label. Since *skb
-is NULL at this point, the call to kfree_skb() should be harmless.
-
-Additionally, I believe [2] should be backported to stable trees, as it
-does not exist on 6.6 where this bug was seen. It should be noted that
-the fixes tag was removed for this patch per the request in [3], as it
-was considered cleanup since 'code can't be run once we're in release',
-however in both [1] and the trace collected below, the USB NCM gadget is
-running, and I am suspicious that a cable unplug event asyncronously
-causes netlink_release to be called during the netlink_dump(). I will send
-a separate request to stable for this to be backported.
-
-Note, I was unable to reproduce this bug, and therefore don't have a
-good way to test this patch, but it seems to be a likely solution. That
-being said, I do not have extensive background with netlink, and may
-have overlooked something. Thanks for the thorough review.
-
-Abbreviated trace below:
-_______________________________________________________________________
-
-Unable to handle kernel NULL pointer dereference at virtual address 00
-...
- pstate: 63400005 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
- pc : __pi_strlen (arch/arm64/lib/strlen.S:87)
- lr : nla_put_string (include/net/netlink.h:1523)
- sp : ffffffc09e59b7d0
- x29: ffffffc09e59b7d0 x28: 0000000000000043 x27: ffffff8976deb000
- x26: 00000000c71085df x25: 0000000000000010 x24: 00000000ffffffff
- x23: 0000000000000000 x22: 0000000000000000 x21: ffffff89dfb97300
- x20: 0000000000000038 x19: 0000000000000000 x18: ffffffd1032dc5c0
- x17: 00000000d6618229 x16: 0000000000000018 x15: 0000000000000000
- x14: 0000000000000000 x13: 0000000000000000 x12: 00000000000029b8
- x11: 0000000000003e80 x10: 0000000000000b38 x9 : 000000000a370000
- x8 : 0101010101010101 x7 : 0000000000000000 x6 : 0000000000000000
- x5 : ffffff800a3729b8 x4 : 0000000000000000 x3 : 0000000000000000
- x2 : 0000000000000000 x1 : 0000000000000038 x0 : 0000000000000000
-Call trace:
- __pi_strlen (arch/arm64/lib/strlen.S:87)
- rtnl_fill_ifinfo (net/core/rtnetlink.c:1935)
- rtnl_dump_ifinfo (net/core/rtnetlink.c:2276)
- netlink_dump (net/netlink/af_netlink.c:2257)
- netlink_recvmsg (net/netlink/af_netlink.c:1978)
- __sys_recvfrom (net/socket.c:1047 net/socket.c:1069 net/socket.c:2256)
- __arm64_sys_recvfrom (net/socket.c:2274 net/socket.c:2270 net/socket.c:2270)
- invoke_syscall (arch/arm64/kernel/syscall.c:0 arch/arm64/kernel/syscall.c:51)
- el0_svc_common (arch/arm64/kernel/syscall.c:0)
- do_el0_svc (arch/arm64/kernel/syscall.c:154)
- el0_svc (arch/arm64/kernel/entry-common.c:136
-  arch/arm64/kernel/entry-common.c:147 arch/arm64/kernel/entry-common.c:684)
- el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:0)
- el0t_64_sync (arch/arm64/kernel/entry.S:599)
- Code: 92400c04 b200c3e8 f100009f 5400088c (a9400c02)
-_______________________________________________________________________
-
-[1] https://lore.kernel.org/all/bug-219826-208809@https.bugzilla.kernel.org%2F/
-[2] https://lore.kernel.org/all/aff028e3eb2b768b9895fa6349fa1981ae22f098.camel@oracle.com/
-[3] https://lore.kernel.org/all/20250214170631.6badcc24@kernel.org/
-
-Reported-by: Nick Hawkins <nick.hawkins@hpe.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219826
-Fixes: 438989137acd ("netlink: Unset cb_running when terminating dump on release")
-Fixes: 1904fb9ebf91 ("netlink: terminate outstanding dump on socket close")
-Signed-off-by: Neill Kapron <nkapron@google.com>
+Reported-by: syzbot+b0373017f711c06ada64@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=b0373017f711c06ada64
+Fixes: d99208b91933 ("fs/ntfs3: cancle set bad inode after removing name fails")
+Tested-by: syzbot+b0373017f711c06ada64@syzkaller.appspotmail.com
+Signed-off-by: Moon Hee Lee <moonhee.lee.ca@gmail.com>
 ---
- net/netlink/af_netlink.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/ntfs3/index.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-index 79fbaf7333ce..142529c08300 100644
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -724,9 +724,11 @@ static int netlink_release(struct socket *sock)
- 	if (!sk)
- 		return 0;
+diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
+index 1bf2a6593dec..6d1bf890929d 100644
+--- a/fs/ntfs3/index.c
++++ b/fs/ntfs3/index.c
+@@ -1508,6 +1508,16 @@ static int indx_add_allocate(struct ntfs_index *indx, struct ntfs_inode *ni,
+ 			bmp_size = bmp_size_v = le32_to_cpu(bmp->res.data_size);
+ 		}
  
-+	nlk = nlk_sk(sk);
-+	mutex_lock(&nlk->nl_cb_mutex);
++		/*
++		 * Index blocks exist, but $BITMAP has zero valid bits.
++		 * This implies an on-disk corruption and must be rejected.
++		 */
++		if (in->name == I30_NAME &&
++		    unlikely(bmp_size_v == 0 && indx->alloc_run.count)) {
++			err = -EINVAL;
++			goto out1;
++		}
 +
- 	netlink_remove(sk);
- 	sock_orphan(sk);
--	nlk = nlk_sk(sk);
- 
- 	/*
- 	 * OK. Socket is unlinked, any packets that arrive now
-@@ -773,6 +775,7 @@ static int netlink_release(struct socket *sock)
- 		WRITE_ONCE(nlk->cb_running, false);
+ 		bit = bmp_size << 3;
  	}
  
-+	mutex_unlock(&nlk->nl_cb_mutex);
- 	module_put(nlk->module);
- 
- 	if (netlink_is_kernel(sk)) {
 -- 
-2.50.0.727.gbf7dc18ff4-goog
+2.43.0
 
 
