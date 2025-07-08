@@ -1,120 +1,110 @@
-Return-Path: <linux-kernel+bounces-722039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDB38AFD349
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:55:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 855D8AFD397
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:58:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23C6F587FEC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:52:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C244F3B44F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD352E5B03;
-	Tue,  8 Jul 2025 16:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3362DAFAE;
+	Tue,  8 Jul 2025 16:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Yl9rFPHB"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320008F5E;
-	Tue,  8 Jul 2025 16:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EHpaHR0f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D1F1DB127;
+	Tue,  8 Jul 2025 16:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751993539; cv=none; b=ONfpxd+mde+PtRz7tKLEywvZsk8YPrq1aTjbXXxMlAJ6ikb9PM8rTXuNuTCFmFVeZRPNHB216woeli6J8lM6ZVzyB2p6QXZRczzDlwmO732rInlc8EIO6T56cGK8ye+WhX3keGaDIUDivmmoCggh+KZbGYxU0i249EIBCdW+c7U=
+	t=1751993742; cv=none; b=XLHh0/bOcl3mGj8rU5bbe1nvB7Xdb+PorOy5gjEbhmS+FYk/TvtAkUzFPpLui1V9m59ytX/HN63MeW0DxO1U915lCA86aRtqJfPjaIVGfVQB1x74q2zqC4Fv84V77Yd8DFsRDbDmVbzoQ/idMv96SnEybD7Ow2yWHDoZ41PwCOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751993539; c=relaxed/simple;
-	bh=x0s4vKXtQGcRzZcSyjECLh5CtsGE03bks9gI82RuAII=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=H45L58jq9RNi6tJMsVmTu+op0MVIUcLaMuHzzRqogB86tReuLAEwpXcvH3c17onVctbOygSvQUTE0v1hs9hHNArtoAna4uu07Y3AS7BLh7vTgvmXqkGhXDi9ducPLyLLHuOLKEMmq+qWDH69iNIPyJi1kp0TB+woRb5uz/DuOUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Yl9rFPHB; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id; bh=qWsk8ZwHDgxqYRw
-	HFFMeZK+uhE/KHO9DpLNrBBEM2ik=; b=Yl9rFPHB+UQOpXdume2OML+tQvwGWaA
-	WxqYuy2HVfemmvq97tBl0ud9qt7mfqnwyWoxUALB2pP8142yvWtnwG/gHwRWhQaa
-	WdX84sR4eO8l5KUOyXc2hmYwCiOpgKeXNXC2zdKuGgH+JHG/eJKkIPPf3+VAvS5i
-	rmok7Iri9uMM=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wC3YqRnTG1oypwxDg--.1262S2;
-	Wed, 09 Jul 2025 00:51:01 +0800 (CST)
-From: Lizhe <sensor1010@163.com>
-To: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	rmk+kernel@armlinux.org.uk,
-	vladimir.oltean@nxp.com,
-	maxime.chevallier@bootlin.com,
-	sensor1010@163.com
-Cc: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net: stmmac: Support gpio high-level reset for devices requiring it
-Date: Tue,  8 Jul 2025 09:50:44 -0700
-Message-Id: <20250708165044.3923-1-sensor1010@163.com>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:_____wC3YqRnTG1oypwxDg--.1262S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7WF15Aw17Zr48JF1kKr1kuFg_yoW8Ar48p3
-	yrua4UZr97Jr13tw4kXw48Zr95Ka93tr40k3Wfu3yS9rWDWFZIqr1a9rW3XFy3KrZ5uFya
-	vw1UCF13Zan0yaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piL0ePUUUUU=
-X-CM-SenderInfo: 5vhq20jurqiii6rwjhhfrp/1tbiKBKEq2htS5kM0AAAse
+	s=arc-20240116; t=1751993742; c=relaxed/simple;
+	bh=9SPb1rRg+3+y0YQTrg9m/lWRcSKvEJxMR3VbM/EFUUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Prx+5ljX6Nsuim3epN7Jz/2bfr7TQFefNlr1/KqSbaS/pGoAxzyUSdgyOlOhbGkHBw3vqghTCdoBPizpxynNY5ZvA6nJ25e6u8aU8d9KmWhL+L7O4KP5ph/hEUOwHjZrt7uZKkdUSq5jTqeyssyeyxD7f7kkIbti4oYcDLD5+x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EHpaHR0f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB01BC4CEF0;
+	Tue,  8 Jul 2025 16:55:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751993741;
+	bh=9SPb1rRg+3+y0YQTrg9m/lWRcSKvEJxMR3VbM/EFUUA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=EHpaHR0ffbOEJLvutnq6EJZxTb4B+wsgE0ku2vZ6OGZue52AHZyXy4ClSNQErDb1A
+	 e7wui51WfrOD1y6A/38rkoxGDfxsj3KGtcUIrWFw4rT54xVXMd0v6lBBxslKek1GyN
+	 erhDuARC7u3/perdrZ31s7mVo0aRRtDORWHdjZlz0WzMWQdzaGGBoEORy61nJZxM15
+	 H/hdHI+IikZEqweykpUhM393xWfSLHwKd/fLxdCxfEu6onms3cKXezc0x4pChK3OT0
+	 iPaMKXcN0jjSwn+w/lhOPOEWidhO26xgsz6AzqZ2pfBY8BYZrkjJMyOYQzbCrw2n4u
+	 36fkHlc7ThUQg==
+Date: Tue, 8 Jul 2025 11:55:40 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+	catalin.marinas@arm.com, will@kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, p.zabel@pengutronix.de, lizhi.hou@amd.com,
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v3 7/9] arm64: dts: renesas: rzg3s-smarc-som: Update
+ dma-ranges for PCIe
+Message-ID: <20250708165540.GA2148533@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250704161410.3931884-8-claudiu.beznea.uj@bp.renesas.com>
 
-some devices only reset when the GPIO is at a high level, but the
-current function lacks support for such devices. add high-level
-reset functionality to the function to support devices that require
-high-level triggering for reset
+On Fri, Jul 04, 2025 at 07:14:07PM +0300, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> The first 128MB of memory is reserved on this board for secure area.
+> Update the PCIe dma-ranges property to reflect this.
 
-Signed-off-by: Lizhe <sensor1010@163.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Can we include a sentence or two about what the "secure area" means?
+I don't know how to connect this with anything in the driver.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-index 836f2848dfeb..cb989e6d7eac 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-@@ -458,6 +458,7 @@ int stmmac_mdio_reset(struct mii_bus *bus)
- 
- #ifdef CONFIG_OF
- 	if (priv->device->of_node) {
-+		int active_low = 0;
- 		struct gpio_desc *reset_gpio;
- 		u32 delays[3] = { 0, 0, 0 };
- 
-@@ -467,6 +468,9 @@ int stmmac_mdio_reset(struct mii_bus *bus)
- 		if (IS_ERR(reset_gpio))
- 			return PTR_ERR(reset_gpio);
- 
-+		if (reset_gpio)
-+			active_low = gpiod_is_active_low(reset_gpio);
-+
- 		device_property_read_u32_array(priv->device,
- 					       "snps,reset-delays-us",
- 					       delays, ARRAY_SIZE(delays));
-@@ -474,11 +478,11 @@ int stmmac_mdio_reset(struct mii_bus *bus)
- 		if (delays[0])
- 			msleep(DIV_ROUND_UP(delays[0], 1000));
- 
--		gpiod_set_value_cansleep(reset_gpio, 1);
-+		gpiod_set_value_cansleep(reset_gpio, active_low ? 1 : 0);
- 		if (delays[1])
- 			msleep(DIV_ROUND_UP(delays[1], 1000));
- 
--		gpiod_set_value_cansleep(reset_gpio, 0);
-+		gpiod_set_value_cansleep(reset_gpio, active_low ? 0 : 1);
- 		if (delays[2])
- 			msleep(DIV_ROUND_UP(delays[2], 1000));
- 	}
--- 
-2.17.1
-
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+> 
+> Changes in v3:
+> - collected tags
+> 
+> Changes in v2:
+> - none, this patch is new
+> 
+>  arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+> index 39845faec894..1b03820a6f02 100644
+> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+> @@ -214,6 +214,11 @@ &sdhi2 {
+>  };
+>  #endif
+>  
+> +&pcie {
+> +	/* First 128MB is reserved for secure area. */
+> +	dma-ranges = <0x42000000 0 0x48000000 0 0x48000000 0x0 0x38000000>;
+> +};
+> +
+>  &pinctrl {
+>  #if SW_CONFIG3 == SW_ON
+>  	eth0-phy-irq-hog {
+> -- 
+> 2.43.0
+> 
 
