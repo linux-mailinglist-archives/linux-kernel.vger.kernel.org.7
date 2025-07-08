@@ -1,204 +1,143 @@
-Return-Path: <linux-kernel+bounces-720992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55ED4AFC30E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:47:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93397AFC311
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9471F1882FE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:47:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 602F01885CBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6772222C4;
-	Tue,  8 Jul 2025 06:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEA12222C3;
+	Tue,  8 Jul 2025 06:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YRrpjKOb"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NVr3fbcC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA12321B9D6;
-	Tue,  8 Jul 2025 06:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8B3220F36;
+	Tue,  8 Jul 2025 06:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751957210; cv=none; b=dV1Fpw8pKwfppeS7pDHwsNr8DUPrx3m8+O8MBU2wV6FVOevvmvNY3VFRHjJyIE6iGqnO8adbyc3eGekKxUsTQ/ntjrMEpyPBiWwzv9OcQsyOro8/GpqXykhtkKhPxWn2mAFtRW5hNsSLbznejtj/8GFjeJIHGcGWG2wKiDmp/Ws=
+	t=1751957233; cv=none; b=mguUVw5yyOxb5UdA4WJYTlYQA6ipdTCr43sQjxh3JemHVzxR0yILun+k24HQpKI8EExpHfFEH4HyeHkvUoJUxf5Z7m6Wdhckdf2+5Y/Xjkl6mvqOzolQoGhq4t7LszIwGrfJHHXPm5jezAPZfnSoND6GJ9jIi4i5L9q8xE7gzcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751957210; c=relaxed/simple;
-	bh=/cApN7+nPLX4ympFWe9LXoIFG9iaQZgbTZy3sGnfWz8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g73Yp2anRWAUiq6p46hFzNigW8H7RQyZ1WGp7eMVTJveCKTdwnICxuP1VB2AdmirJ7cqBwbC3sUaB28P6r/yj53g9dsWAKxygfgwThy9Cfjxq5h1i+OPUIeXWNJu+md+qzsB7Mtw05ilWpO61t4L9rg2m4ImOv2X6iUhgpUb+Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YRrpjKOb; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b39011e5f8eso2147857a12.0;
-        Mon, 07 Jul 2025 23:46:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751957208; x=1752562008; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=awAK1sQvEZGu9RSuFaWauBkV5Ie3EeA43euQnu2ZDvY=;
-        b=YRrpjKOb6dDO0XrqmoXzWmMru2cNfTll5TbikfPAa4daiAlYnmhLVHMI8BSsetlO/k
-         0PT1TTlV0BczkwkJGpHbJ6mGpSA5AXbeeIHUEa2xqh3lbH9MGu0r+A7onZt82r6lfyI1
-         499ibqv+KJTodkt9KdbfZaq8k5SqyovKJlnWR35+FhEsxkqUvKg1TgOlEBAUZHiCRDmW
-         eEMt/NorLCFs2I2C371xiJj1BwQKMAFGMqDnrg5B/FPbq//yb6a2SP5Yri23Va4AvRox
-         TP6JzqP8howobYorMuvXULNv1gG0tzinMLoLc5M2Db+LhRmEx88sBbTppBvgsEU+2Jzb
-         IkYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751957208; x=1752562008;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=awAK1sQvEZGu9RSuFaWauBkV5Ie3EeA43euQnu2ZDvY=;
-        b=cvcrBucPjg7aRHqOMWSNkp9QX6N3PaQKCXQcY80GVKiCiwo9G/F+ZU2gJxfB9K78Oz
-         fKlgt90mUW5hXkm/o9Y3Lm10sneQPDqsCx7rCduiSX2rYm5M6Iu5RgS+wZPDaKc2+6Cz
-         pwrW3HC3KEVQWsJ7JmKLNgqvkpSLrKSSPFkdLi0Qspmjfe/dAvUw9AUk4azsY/sirlr7
-         RYiYC+dJ0D35K4odIkM3LUlSLKVxEuZecPjO/iSsBU1UM4V2XI3SGJXXef5bi7pq0z05
-         HA7sh859IEw7ir8rgHAM1z6ndYXVzTVIOgOtz2dSIRIdIf1DG2OQhCkXXxJ3pTfMpeUP
-         mZhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVMvT2BrrWdfjk68RS5J6aL+8kBPKx6GKiaYVu2su6a8A4dX3MrV6zutk+jPyzmIgEBLKiY5xZ@vger.kernel.org, AJvYcCX3tmORRA/5GxhFzisetUrTxFz98MmOZBd+nvCpyCcCvlPAewc2YJSNp8Ydn8fbgQ4cGIqMMcHweg0YeCg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw66h5foPkZE7sC+EkJq78Md98mkCxJH3YXKMwFYx6LGWm3WEEZ
-	wB69Uu4nSD/13I2ik2SwnuhL63PpH2xfWB1RI04WTK3/idyHhmuVK+4N
-X-Gm-Gg: ASbGncvY/RQfrHYaOqaGxNXfwYyUkYD+kjQPzebZ9XI6IgMfcFJBkI9HEVUOUxQ7LgJ
-	30IOwfo+Gux5fYEmRKq+v0U4/PW6GrxUuC7rXjqzzLbI+xQxNEmOjA1XGoxZX/5g8KXa1T4QPLo
-	7rObmIjSrkmAzoMrFK1IgzuAHx+F78Hn0g0VG3xliRB5CAQgCkACpEf5nRAs/O0E71PmZ5bv8hA
-	LWdbxdBXKEhxdIi8h9RRPpJ4QKqHiHmMLF5wr+PnzeIKyfxVaTu7Sy4WJwu2n1yK1nBRardVoSD
-	82DE3eISrJoWaq/PwEck9UfAFvsnU1IkujgG+qaUlV1sbccDo14eAuB3fbZ9Sw==
-X-Google-Smtp-Source: AGHT+IHNx4OiWoCq7M9t3p40CvKjBGEYTQs9/RQVmrqVzX0hKDNozKjkB+NwYNXyY7dlbQecei9Awg==
-X-Received: by 2002:a17:90b:2ed0:b0:311:f30b:c21 with SMTP id 98e67ed59e1d1-31aadd9fd46mr18022165a91.26.1751957208011;
-        Mon, 07 Jul 2025 23:46:48 -0700 (PDT)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23c8457e15fsm103684335ad.154.2025.07.07.23.46.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 23:46:47 -0700 (PDT)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Richard Cochran <richardcochran@gmail.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Zixian Zeng <sycamoremoon376@gmail.com>,
-	Guo Ren <guoren@kernel.org>
-Cc: devicetree@vger.kernel.org,
-	sophgo@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>,
-	Han Gao <rabenda.cn@gmail.com>
-Subject: [PATCH v2] riscv: dts: sophgo: add ethernet GMAC device for sg2042
-Date: Tue,  8 Jul 2025 14:46:25 +0800
-Message-ID: <20250708064627.509363-1-inochiama@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1751957233; c=relaxed/simple;
+	bh=7jAELWZaWdbBCClZcvuiW0BepxaHc38GJqNXNAVZdnw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BI6PMkaNFRaNWBuGQMpXN1drIIgE7Lh/ZikyOpPvC+phoARxXPYM8ckM9bTYzllrDJ9l/CHUxqSD83wdYB0rJJwk9fl5NDGRGvPExsxLkKGQrtWQqnYuW8cw88FLVQardbCpm73i7scTrWH8KA0IzlMeHy9KqMAm4VBdoZRiNNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NVr3fbcC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CCB4C4CEED;
+	Tue,  8 Jul 2025 06:47:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751957232;
+	bh=7jAELWZaWdbBCClZcvuiW0BepxaHc38GJqNXNAVZdnw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NVr3fbcCnd2UenjwNrMSNeZkWQsItnkq2HacXLhyJ9Bw5WHFJcNu55Dr9yFb37TxI
+	 0ZvVDG6k2Fw6kmLqHBGU4U7H5+04FfzPFGNZlgIkPH3qCK5BwPpQNG6vlkBG+K+r8A
+	 tXUNxdEwPzNROc8gXv9phwmXxJcZCMSXYs/iAxwqLR0JRoihgG9eXGwcyf+kBgrE5D
+	 1HID1FHS8/q1xC/tOuS0QLzgIYFZOXfGK0r9m+asjKr4+c26UfroFN3HSOduMkldoS
+	 SytEDYqEPdW7gWhhYAQpC0iMG47j/PfuNv+lxuvmILgmLCr2huqSapcDwZRl2yHwCD
+	 sA6IkBgw49gSw==
+Message-ID: <e7ad63b7-523d-4193-97b8-d33601de78f6@kernel.org>
+Date: Tue, 8 Jul 2025 08:47:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/6] arm64: dts: qcom: ipq8074: Add the IMEM node
+To: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250708-imem-v2-0-692eb92b228e@oss.qualcomm.com>
+ <20250708-imem-v2-2-692eb92b228e@oss.qualcomm.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250708-imem-v2-2-692eb92b228e@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add ethernet GMAC device node for the sg2042.
+On 08/07/2025 07:39, Kathiravan Thirumoorthy wrote:
+> Add the IMEM node to the device tree to extract debugging information
+> like system restart reason, which is populated via IMEM. Define the
+> IMEM region to enable this functionality.
+> 
+> As described, overall IMEM region is 24KB but only initial 4KB is
+> accessible by all masters in the SoC.
+> 
+> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+> ---
+> Changes in v2:
+> - Rounded off the size to 0x6000 (Konrad)
+> ---
+>  arch/arm64/boot/dts/qcom/ipq8074.dtsi | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+> index fffb47ec244899cf45984adbe8c4f9820bef5c5f..2ba07a02c222958b924c5bc178ac67f955088f7a 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+> @@ -625,6 +625,15 @@ qpic_nand: nand-controller@79b0000 {
+>  			status = "disabled";
+>  		};
+>  
+> +		sram@8600000 {
+> +			compatible = "qcom,ipq8074-imem", "syscon", "simple-mfd";
 
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-Tested-by: Han Gao <rabenda.cn@gmail.com>
----
-Require the ethernet patch series for functional device:
-https://lore.kernel.org/all/20250708064052.507094-1-inochiama@gmail.com/
 
-Real board dts patch:
-https://lore.kernel.org/linux-riscv/cover.1751700954.git.rabenda.cn@gmail.com/
+It is still not simple-mfd. You should post complete node with children
+or do not make it a simple-mfd.
 
-Change from v1:
-- https://lore.kernel.org/all/20250506093256.1107770-1-inochiama@gmail.com
-1. separate from the original series and add dependency id
----
- arch/riscv/boot/dts/sophgo/sg2042.dtsi | 61 ++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
-
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042.dtsi b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-index 85636d1798f1..b3e4d3c18fdc 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-@@ -569,6 +569,67 @@ spi1: spi@7040005000 {
- 			status = "disabled";
- 		};
-
-+		gmac0: ethernet@7040026000 {
-+			compatible = "sophgo,sg2042-dwmac", "snps,dwmac-5.00a";
-+			reg = <0x70 0x40026000 0x0 0x4000>;
-+			clocks = <&clkgen GATE_CLK_AXI_ETH0>,
-+				 <&clkgen GATE_CLK_PTP_REF_I_ETH0>,
-+				 <&clkgen GATE_CLK_TX_ETH0>;
-+			clock-names = "stmmaceth", "ptp_ref", "tx";
-+			dma-noncoherent;
-+			interrupt-parent = <&intc>;
-+			interrupts = <132 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "macirq";
-+			resets = <&rstgen RST_ETH0>;
-+			reset-names = "stmmaceth";
-+			snps,multicast-filter-bins = <0>;
-+			snps,perfect-filter-entries = <1>;
-+			snps,aal;
-+			snps,tso;
-+			snps,txpbl = <32>;
-+			snps,rxpbl = <32>;
-+			snps,mtl-rx-config = <&gmac0_mtl_rx_setup>;
-+			snps,mtl-tx-config = <&gmac0_mtl_tx_setup>;
-+			snps,axi-config = <&gmac0_stmmac_axi_setup>;
-+			status = "disabled";
-+
-+			mdio {
-+				compatible = "snps,dwmac-mdio";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
-+
-+			gmac0_mtl_rx_setup: rx-queues-config {
-+				snps,rx-queues-to-use = <8>;
-+				queue0 {};
-+				queue1 {};
-+				queue2 {};
-+				queue3 {};
-+				queue4 {};
-+				queue5 {};
-+				queue6 {};
-+				queue7 {};
-+			};
-+
-+			gmac0_mtl_tx_setup: tx-queues-config {
-+				snps,tx-queues-to-use = <8>;
-+				queue0 {};
-+				queue1 {};
-+				queue2 {};
-+				queue3 {};
-+				queue4 {};
-+				queue5 {};
-+				queue6 {};
-+				queue7 {};
-+			};
-+
-+			gmac0_stmmac_axi_setup: stmmac-axi-config {
-+				snps,blen = <16 8 4 0 0 0 0>;
-+				snps,wr_osr_lmt = <1>;
-+				snps,rd_osr_lmt = <2>;
-+			};
-+		};
-+
- 		emmc: mmc@704002a000 {
- 			compatible = "sophgo,sg2042-dwcmshc";
- 			reg = <0x70 0x4002a000 0x0 0x1000>;
-
-base-commit: cc6a9fb055e446e76a23867e42f12c4eff44eb00
-prerequisite-patch-id: 7a82e319b011e5d0486a6ef4216d931d671c9f53
-prerequisite-patch-id: 5a30fb99ec483c1f5a8dca97df862c3a042c9027
-prerequisite-patch-id: e0da79790a934916d9fc39c18e8e98c9596d27ab
---
-2.50.0
-
+Best regards,
+Krzysztof
 
