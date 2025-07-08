@@ -1,111 +1,116 @@
-Return-Path: <linux-kernel+bounces-721107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71E6BAFC4D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:58:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 078EDAFC4D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:59:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F8F14A3274
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:58:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFC841BC0BCC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C823629C34E;
-	Tue,  8 Jul 2025 07:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852D02BCF45;
+	Tue,  8 Jul 2025 07:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="qthWr76Q"
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g9jL9lcG"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3AB29B797;
-	Tue,  8 Jul 2025 07:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB4429ACE0;
+	Tue,  8 Jul 2025 07:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751961486; cv=none; b=dZOwhsKXjH1npExA2Ds7GVkc+sDBmp0QbKSc49EEf/1fY9mwhHGNrrVV2QN+jAsMvxlc9x5iOQ2CypklCT3vtl8U2fYTF71NfOTrqYOZUl8XRIBm69FI9DTPpFuwDGC0dHZT9IA4CX5gXjpLZcbm2ghi+Bts6X785OSgKXTA1M8=
+	t=1751961503; cv=none; b=WIKaXGAYYaYWAGqDCKw1euHc4p0yWoIEPwEerdjCcK4hrMXcVYn/BDF2/PmBTvWVXCvUIV7rfI12kzxGN0Qad2k7SBohNnDMVnjPpfaPhcq66qL6LVHVEIwlTMU+aR8TaDmwI0Dzxj/XSMLyHfAk09C7B8GD5sFKjSqxlVEt8hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751961486; c=relaxed/simple;
-	bh=U1Ihyv6JEYMY+/2H63MoHcvRpy0YoqMTrtio+QfjEO4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GJp4blUmR3gSbE0mcVaLeCRQ31wmdn6Do3PbZ7bjn9H2pJDXu/i14tcly1qhUa3DuZXXUDbAqwxlvEIwWmXQj6tGxtQF3otCwIqE4hwEi2PyG7RP7iLY/Wz2LXm4tHy6Aput0gw1JmQACAoGNoe/DGsVl5MPU/PBZr/QZS7f6Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=qthWr76Q; arc=none smtp.client-ip=35.157.23.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
-Received: from relayfre-01.paragon-software.com (unknown [176.12.100.13])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 447401CC;
-	Tue,  8 Jul 2025 07:56:56 +0000 (UTC)
-Authentication-Results: relayaws-01.paragon-software.com;
-	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=qthWr76Q;
-	dkim-atps=neutral
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 796F321ED;
-	Tue,  8 Jul 2025 07:58:01 +0000 (UTC)
+	s=arc-20240116; t=1751961503; c=relaxed/simple;
+	bh=h1iuGjv3UbXMjMFgoLLbVZ5QxGKoSLsQtRcriFFqXJg=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Gkk6LDd4tvInWUV1UT7i5zqr64sJEnGCK8USxRi1upf31JieG1s3KM1MPLiaT7NN0WISZ1E86zK2ASU7HHitmn3DQPU/Nyj/3qRpg93PPFGGmTX4hgPEa3qKyaHMhE8ssNPv8JFKHq9kwqwCbMSLAe/F+7tuPjpkTsDq1XDT7QI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g9jL9lcG; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32b7f41d3e6so48421881fa.1;
+        Tue, 08 Jul 2025 00:58:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1751961481;
-	bh=8EzE0KyPCRoabRtPC3XYbwuX1/3nOaJPo5gc1Ts2SJc=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=qthWr76QLibDRqGBdIM5JPOQcl47xXm44r0fL7nj8fR5Q+zwVe3Ei4kKRy1XUR2G9
-	 4oOWw8VC72YhC93L8rsDd3d8JngmPK9S89A6GNNkD/CARH+ukDYhqOr9xuXCi9j8um
-	 ZILPAGPEO+0DVtdV6ePVqURD/BX48iPI6P4BpvxQ=
-Received: from localhost.localdomain (172.30.20.199) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Tue, 8 Jul 2025 10:57:59 +0300
-From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To: <ntfs3@lists.linux.dev>
-CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	<syzbot+a91fcdbd2698f99db8f4@syzkaller.appspotmail.com>, Lorenzo Stoakes
-	<lorenzo.stoakes@oracle.com>
-Subject: [PATCH v2] Revert "fs/ntfs3: Replace inode_trylock with inode_lock"
-Date: Tue, 8 Jul 2025 09:57:09 +0200
-Message-ID: <20250708075709.5688-1-almaz.alexandrovich@paragon-software.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <d18a4aa3-bd7d-4c4b-a34c-48ba7f907ecf@lucifer.local>
-References: <d18a4aa3-bd7d-4c4b-a34c-48ba7f907ecf@lucifer.local>
+        d=gmail.com; s=20230601; t=1751961499; x=1752566299; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=h1iuGjv3UbXMjMFgoLLbVZ5QxGKoSLsQtRcriFFqXJg=;
+        b=g9jL9lcGo2fkST1d3t1weg26RfcJyN5YvSFPKAqwkeot1mqtpeZGMBU50e6fA4Irap
+         /epfdmgg4m+T3aw9ytcm5h3EYuvntOYPZ7c4cLRbpV3y9lThFItqMAjfJqeUU11vYkYk
+         4j7nmFmN4UCB+BZDR1g4KEhSVRDDtNqM1yrT2rTliDB9ION5MZyh2beMd55jboN0ilNu
+         MhU3a6xDYNzcbX22WrtNMtLOVCIqL4J//Bl0z8l7kgfdaNtY3ChMINbUKiTZwUcgylNc
+         FMB91pxJt0JE1gbnojpPttnmrbu/PAt00Zqac3e12qYFgqJsnUeguZ+VH6rutLOyjK/l
+         B5Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751961499; x=1752566299;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h1iuGjv3UbXMjMFgoLLbVZ5QxGKoSLsQtRcriFFqXJg=;
+        b=Yx7yylEK7AYhIcD46ZxYTgL4bvlklKKytFGclHC6SEyElYhsiXBP75crOQxRwKOak6
+         K+s2jo4lvhm4TJVLJaAGiPBVcyEYI/mkGOwo6b3hXtEtkXeTvMLTZ8BcCbDJdnasVfti
+         PAA1SlWYAhXSksNiZxDNzmuY7JJHvbahXUra3OYJQ9/2ZoIj8RgY4O3k4bHk2usWPYyQ
+         B9BSv8+WVRsd1ODbU6KntHZaT/xeKGYxJ96OtF02ZzKUKrGPIFrCPfWbpYKjRkwWzRZz
+         erbeZWJw4wgOwSxwaartv21V/NttZHpF7caB34vNleoF5OEqof78jkUcJVP1CMtGQDvB
+         aNLw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+HcILIr1XJVJj3IrnFo788nz0PRAHr87UmrpxwiABxKkDwyaK8yNTGaEpqnpHem7CROepyA0r@vger.kernel.org, AJvYcCWfIZtUJe8vjG2UBQrkXDUVRkjnffGnYFalmT2AQOv2Ut6tmVzWy+Q+EyPApksxP9/qpqTLcymBywHOwg4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeaurpRG+wJO8+5B9L1uHhKTiV7gTaEFGreEwk40ghRUZ0kRlh
+	L3huJEc9G5cVhnu/DI4DP7+4/3KT8FzJYalZNX38vrRRnENP0K27W+nNKGJog7mECF2NwXp01v/
+	I4y2Ch1kptWj24twE3IKg2aIoyPxKJrA=
+X-Gm-Gg: ASbGnctauk+sBwe1GsKNcrgKpM9lqth6dlBfSj2g5JOM6g5pishGDQmxQdULcbUD2rE
+	Qds53GLspIIPvnk73w7nQkYQXIbcNXSt1OYwO2VayMP7/exRCFaycTIvxWHCe3If/XYeoNvEZPO
+	V7JavWGmtWPtTJVjZ0t3XXp1MiBJxjZuXK1qroxFuci1VkKWjEQFukHhEsOdVoDEoltQ==
+X-Google-Smtp-Source: AGHT+IEtoXpmkf9iZQV6tBXZF6qwYD72aKqyosImMmeqKEpeK7e3jy4rDmc1wEWR+39tq6mOBnnUMFzjMgK6cIVDagY=
+X-Received: by 2002:a05:651c:3254:20b0:32a:82d7:6d63 with SMTP id
+ 38308e7fff4ca-32f3a083069mr3643871fa.12.1751961499296; Tue, 08 Jul 2025
+ 00:58:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+From: Luka <luka.2016.cs@gmail.com>
+Date: Tue, 8 Jul 2025 15:58:06 +0800
+X-Gm-Features: Ac12FXxFWdc0-K4TzKRh2bgjw4KDhDQdm_dKlQ0d-dr_d101Ozv0Jva16llqQic
+Message-ID: <CALm_T+3Fxe4tiKiV9RpWyOpchgb6588d4qvgHn6qmDE5aMwKjg@mail.gmail.com>
+Subject: [Bug] soft lockup in __sk_free in Linux kernel v6.13
+To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-This reverts commit 69505fe98f198ee813898cbcaf6770949636430b.
+Dear Linux Kernel Maintainers,
 
-Initially, conditional lock acquisition was removed to fix an xfstest bug
-that was observed during internal testing. The deadlock reported by syzbot
-is resolved by reintroducing conditional acquisition. The xfstest bug no
-longer occurs on kernel version 6.16-rc1 during internal testing. I
-assume that changes in other modules may have contributed to this.
+I hope this message finds you well.
 
-Fixes: 69505fe98f19 ("fs/ntfs3: Replace inode_trylock with inode_lock")
-Reported-by: syzbot+a91fcdbd2698f99db8f4@syzkaller.appspotmail.com
-Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
----
- fs/ntfs3/file.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+I am writing to report a potential vulnerability I encountered during
+testing of the Linux Kernel version v6.13.
 
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index 65fb27d1e17c..2e321b84a1ed 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -322,7 +322,10 @@ static int ntfs_file_mmap(struct file *file, struct vm_area_struct *vma)
- 		}
- 
- 		if (ni->i_valid < to) {
--			inode_lock(inode);
-+			if (!inode_trylock(inode)) {
-+				err = -EAGAIN;
-+				goto out;
-+			}
- 			err = ntfs_extend_initialized_size(file, ni,
- 							   ni->i_valid, to);
- 			inode_unlock(inode);
--- 
-2.43.0
+Git Commit: ffd294d346d185b70e28b1a28abe367bbfe53c04 (tag: v6.13)
 
+Bug Location: __sk_free+0x1a9/0x4b0 net/core/sock.c:2322
+
+Bug report: https://pastebin.com/0T4EFSse
+
+Entire kernel config: https://pastebin.com/LepsHYGb
+
+Root Cause Analysis:
+
+A soft lockup is triggered during socket deallocation due to prolonged
+execution in __sk_free(), where the destruction of socket-related
+resources under heavy task context and scheduler pressure leads to
+excessive CPU time consumption without preemption, ultimately stalling
+the CPU and activating the watchdog.
+
+At present, I have not yet obtained a minimal reproducer for this
+issue. However, I am actively working on reproducing it, and I will
+promptly share any additional findings or a working reproducer as soon
+as it becomes available.
+
+Thank you very much for your time and attention to this matter. I
+truly appreciate the efforts of the Linux kernel community.
+
+Best regards,
+Luka
 
