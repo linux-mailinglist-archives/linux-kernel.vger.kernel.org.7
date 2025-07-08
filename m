@@ -1,81 +1,75 @@
-Return-Path: <linux-kernel+bounces-721788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6445DAFCDEA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:40:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E4FDAFCDE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:39:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74D434A5F43
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:39:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A857C4A406B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CBE2E0902;
-	Tue,  8 Jul 2025 14:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5426C2E03E2;
+	Tue,  8 Jul 2025 14:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xnZHsn3W"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2dFHSd3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEDE2E040C;
-	Tue,  8 Jul 2025 14:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8B42DFA37
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 14:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751985558; cv=none; b=PokDtBj/gfcn06Ld47nUgvbijrELtpGyASiMvQ1PHxep6FNISDd4lVX+1ideTjIW/SalZQ/6zQixKSSpWVS5vwIpRx17ZKIMQjq7Erupy8jORLjq7UdSKmXWdCJBHRubiDN7G2Jmjm2ey31aEIQ3k/VdeOUCHHGhejVjQIvANF8=
+	t=1751985554; cv=none; b=eHzZiq7h3jmICE+JF39cya2VnG9QX1HVewMdNGuhTy+hsvKZLhVGEJdhibVujHcUlwXhB4BrjoVd4DEhqrY0emmtAr3ydwhXIMnJeqC8rPLrEhS5e3wW+gyvEuSMkGs9tHvHimIW+jMOcwflOZxUvEkvxge9ZgGvoOjGwdcL2Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751985558; c=relaxed/simple;
-	bh=Egewiecz/9kmTylxPGHTv0VQRFfvgQTMIWv4uq6xXCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r7hKfL1dZcfa6pLKU3Q6Hjd5aunTBkvvhKgmIg0rkyThAvefhz+YA5bXB8s1ZuHzgMgUNfvbXRIOvae8SOsex3OrbZwvjarJGmgVGvzqYZjTy7l4uL1rH0Bms3CUbzXoWIDbQyuZD5DMRqQvP8xOeN1qtYOk9uQOYuJcVR1yEO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xnZHsn3W; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=MOiNOhtlgUECPeQvEPSaDitXENWF2TV47RkqCSNKJuM=; b=xnZHsn3WSrD/YbO/HIdabolYFR
-	KcL+KSXPuQiiCyTgD2GAGk48Dyfkcj8AmzdEVGqzeAqu3jgK84mdxliiXIJQd29Pr4jm1lJzB0pzY
-	dnEyb8h9z7X+3NPgzksmBpIlbjvb8zeqIBFSFuAPhaWntZhGglV0AGTv8T+HyRH8MORw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uZ9TQ-000pYa-38; Tue, 08 Jul 2025 16:39:08 +0200
-Date: Tue, 8 Jul 2025 16:39:08 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
-	shenjian15@huawei.com, liuyonglong@huawei.com,
-	chenhao418@huawei.com, jonathan.cameron@huawei.com,
-	shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
-	arnd@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 06/11] net: hns3: use seq_file for files in
- mac_list/ in debugfs
-Message-ID: <84380acc-31c8-4bda-8b1e-8cba8b0eb7b4@lunn.ch>
-References: <20250708130029.1310872-1-shaojijie@huawei.com>
- <20250708130029.1310872-7-shaojijie@huawei.com>
+	s=arc-20240116; t=1751985554; c=relaxed/simple;
+	bh=RT2LFTG/i/RD4wN8+3d1ANXBznpTPUnp0qt/I+XLpTs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XiOairNAw7gV5Qh4wOppjqyrczfgBkV1HzYZhDDq+Y49qRFsPpUtkVfuL5rQzPfSCiOGLSfl3sB2hohK5CPmeMC6XRq6wjq1+KL7piZnL7TNqtjQOmjrqSnoLP+K5mSlh7RQ54EU5DOyc4slEhCw3ea/bKYftfQ+lijbMRpGQ+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S2dFHSd3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0091C4CEED;
+	Tue,  8 Jul 2025 14:39:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751985554;
+	bh=RT2LFTG/i/RD4wN8+3d1ANXBznpTPUnp0qt/I+XLpTs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=S2dFHSd35gc9JPBf0Pk+WxxSndBWCVhdKKm/pWsTSYtvJw2kmIP05PiNUsuBPdSk4
+	 hALCN9GokuTKh5RCwPmuacZOKCIpkUUEOcJpVr/6TJaTgbbZsJlGmhoI5btRPGdj/N
+	 uTjGovxNMn2xGDswsKHbKosEFum0/4jCVlOu+VdIj+MbRHWO38/l1WN4I/pQVA0tFf
+	 r7p92x3aF79lj8tcRle+9I6OV6ohazpv2BqHjzgTkvy4InvWKWPv0yX8eUD7fpvHk7
+	 yx73IOoSqiVdPZCa2KtXJ7aUH7x8w5Sn0RHItj04AXpw1RUjA63W+OjAbMyzeWUO/v
+	 4Lnw22iNbjUhw==
+Message-ID: <243cd364-e1c3-4d4d-9ef4-32d5ddb58a03@kernel.org>
+Date: Tue, 8 Jul 2025 16:39:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250708130029.1310872-7-shaojijie@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] driver core: auxiliary bus: fix OF node leak
+To: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Leon Romanovsky <leon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Jerome Brunet <jbrunet@baylibre.com>, linux-kernel@vger.kernel.org
+References: <20250708084654.15145-1-johan@kernel.org>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250708084654.15145-1-johan@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 08, 2025 at 09:00:24PM +0800, Jijie Shao wrote:
-> From: Yonglong Liu <liuyonglong@huawei.com>
+On 7/8/25 10:46 AM, Johan Hovold wrote:
+> Make sure to drop the OF node reference taken when creating an auxiliary
+> device using auxiliary_device_create() when the device is later
+> released.
 > 
-> This patch use seq_file for the following nodes:
-> uc/mc
-> 
-> Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
-> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> Fixes: eaa0d30216c1 ("driver core: auxiliary bus: add device creation helpers")
+> Cc: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+Reviewed-by: Danilo Krummrich <dakr@kernel.org>
 
