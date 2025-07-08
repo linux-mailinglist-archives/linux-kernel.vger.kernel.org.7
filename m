@@ -1,145 +1,106 @@
-Return-Path: <linux-kernel+bounces-721164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 391C7AFC581
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:26:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15ED1AFC55B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:22:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED5E43A6E36
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:26:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E04257A3267
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42942286D7D;
-	Tue,  8 Jul 2025 08:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="knWrRcv7"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86AF62BCF47;
+	Tue,  8 Jul 2025 08:22:42 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB3D2BD025
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 08:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C61223DC6;
+	Tue,  8 Jul 2025 08:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751963116; cv=none; b=jpfZfqoWzjAnmC6/uAM64GpO0zqoUHvwir5OweXEcS4he76ybUT24k288bXvyM3cdY3DicZ6+5OYMMAR+0mCud4TCl2AWm1wq1eB4BQZPvRYykdZW2jg0NB1oedwgLMiwvi/tzHluSNSfXWH5kzoblBjtwUiajAAR1ULZwas3Fs=
+	t=1751962962; cv=none; b=hLcu4XRUrePxnhNK624E8gtc5YISERZukPG/vgZqNkRFQxNiKFk2UgKs+ASi6kNqyEUbedn4Z/fixEdBfiHrEPjj/k5jMoQ4+dLin6iYohyxbq7xruSVMQksLZTuRzdaeuGdlmc2NVNEQ9YtieuqT7XwwnpM5yTpoi/lhqDRIYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751963116; c=relaxed/simple;
-	bh=36z0UV8fxJObKtRYSJiLD5FflrpuclUu7P1ftcfJG7w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p3xOSRPJ5AQiwi/kuN97B9Zrr/bt2sN6FE2yJu22Wpx7WqyFTZ11u/7gC+mPEs4pH2+mIlklC228FqnT3PXtQr0a38l7sRSU9Dgzp2e9FIraFpJ1hKyQTMbmpKJmRQFXHyKKd3O/MiOQRnSAydD4Wr3D6yndmWgQBjlFdyf3F20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=knWrRcv7; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1751963111;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ip1HWxxpZVZ+acPGUerAZmLvMn8cqD2ZX+zb9hEbz8s=;
-	b=knWrRcv7Z7+L5As1/5NxH5ItPaZ+LRdPXOKO/dwrpe5PJ4vUBaDrx2UxZ1fxJl1tf0V7J1
-	FjEUePFz7wmdUD+x1sYOgDRO0mKLwo+7zP9kKw5tIC5WvizHEKAQ4k6a/Le5SmWQ7s+IZO
-	0ty+PKg4IQchW8b+zmUrFy0zoAi9OJM=
-From: Tao Chen <chen.dylane@linux.dev>
-To: daniel@iogearbox.net,
-	razor@blackwall.org,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	ast@kernel.org,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mattbobrowski@google.com,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	horms@kernel.org,
-	willemb@google.com,
-	jakub@cloudflare.com,
-	pablo@netfilter.org,
-	kadlec@netfilter.org,
-	hawk@kernel.org
-Cc: bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	Tao Chen <chen.dylane@linux.dev>
-Subject: [PATCH bpf-next v2 7/7] netkit: Remove location field in netkit_link
-Date: Tue,  8 Jul 2025 16:22:28 +0800
-Message-ID: <20250708082228.824766-8-chen.dylane@linux.dev>
-In-Reply-To: <20250708082228.824766-1-chen.dylane@linux.dev>
-References: <20250708082228.824766-1-chen.dylane@linux.dev>
+	s=arc-20240116; t=1751962962; c=relaxed/simple;
+	bh=K45xL/e5RcHsYP2b7YztImc3yubWmYwPqOvKCVSyuxk=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M3wDHmFFhJqsNAXcLMAq0nDADrwSidcxE2iSrW5NkhnbTThEK3Ezjwi/CNgadkuMfxLHmE4LNm2WsR+OCzrCoWldnOAe/PWRTOYDCM2ninL78DBDCweVgqVlaWg0bIeM4cfjH5+L7xE75u8Utq0AvEaYbWMD8VUJpwzxXSlS7yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bbvGR4w7yz6GCk0;
+	Tue,  8 Jul 2025 16:21:51 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 762A41404C5;
+	Tue,  8 Jul 2025 16:22:36 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 8 Jul
+ 2025 10:22:35 +0200
+Date: Tue, 8 Jul 2025 09:22:34 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Alireza Sanaee <alireza.sanaee@huawei.com>, <mark.rutland@arm.com>,
+	<robh@kernel.org>, <coresight@lists.linaro.org>,
+	<devicetree@vger.kernel.org>, <dianders@chromium.org>,
+	<james.clark@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
+	<linuxarm@huawei.com>, <mike.leach@linaro.org>, <ruanjinjie@huawei.com>,
+	<saravanak@google.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<suzuki.poulose@arm.com>
+Subject: Re: [PATCH 2/5] arch_topology: update CPU map to use the new API
+Message-ID: <20250708092234.00006fd5@huawei.com>
+In-Reply-To: <ca58608c-c147-45a7-910f-41a7c312fd5a@kernel.org>
+References: <20250707150414.620-1-alireza.sanaee@huawei.com>
+	<20250707150414.620-3-alireza.sanaee@huawei.com>
+	<ca58608c-c147-45a7-910f-41a7c312fd5a@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Use attach_type in bpf_link to replace the location field, and
-remove location field in netkit_link.
+On Tue, 8 Jul 2025 08:29:43 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
----
- drivers/net/netkit.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+> On 07/07/2025 17:04, Alireza Sanaee wrote:
+> > Cleans up the cpu-map generation using the created API.
+> > 
+> > Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
+> > ---
+> >  drivers/base/arch_topology.c | 12 ++++++------
+> >  1 file changed, 6 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+> > index 3ebe77566788..88970f13f684 100644
+> > --- a/drivers/base/arch_topology.c
+> > +++ b/drivers/base/arch_topology.c
+> > @@ -518,23 +518,23 @@ core_initcall(free_raw_capacity);
+> >   */
+> >  static int __init get_cpu_for_node(struct device_node *node)
+> >  {
+> > +	struct device_node *cpu_node __free(device_node) = NULL;  
+> 
+> 
+> That's not a correct style anymore. What's more it is not really
+> explained anywhere. Follow standard cleanup.h rules (constructor).
 
-diff --git a/drivers/net/netkit.c b/drivers/net/netkit.c
-index 5928c99eac7..492be60f2e7 100644
---- a/drivers/net/netkit.c
-+++ b/drivers/net/netkit.c
-@@ -32,7 +32,6 @@ struct netkit {
- struct netkit_link {
- 	struct bpf_link link;
- 	struct net_device *dev;
--	u32 location;
- };
- 
- static __always_inline int
-@@ -733,8 +732,8 @@ static void netkit_link_fdinfo(const struct bpf_link *link, struct seq_file *seq
- 
- 	seq_printf(seq, "ifindex:\t%u\n", ifindex);
- 	seq_printf(seq, "attach_type:\t%u (%s)\n",
--		   nkl->location,
--		   nkl->location == BPF_NETKIT_PRIMARY ? "primary" : "peer");
-+		   link->attach_type,
-+		   link->attach_type == BPF_NETKIT_PRIMARY ? "primary" : "peer");
- }
- 
- static int netkit_link_fill_info(const struct bpf_link *link,
-@@ -749,7 +748,7 @@ static int netkit_link_fill_info(const struct bpf_link *link,
- 	rtnl_unlock();
- 
- 	info->netkit.ifindex = ifindex;
--	info->netkit.attach_type = nkl->location;
-+	info->netkit.attach_type = link->attach_type;
- 	return 0;
- }
- 
-@@ -776,7 +775,6 @@ static int netkit_link_init(struct netkit_link *nkl,
- {
- 	bpf_link_init(&nkl->link, BPF_LINK_TYPE_NETKIT,
- 		      &netkit_link_lops, prog, attr->link_create.attach_type);
--	nkl->location = attr->link_create.attach_type;
- 	nkl->dev = dev;
- 	return bpf_link_prime(&nkl->link, link_primer);
- }
--- 
-2.48.1
+There isn't a good solution in this case as the constructor is via
+a pointer passed as an argument. I'd just fall back to not using
+__free here and instead doing a manual put of the node in the
+paths where it is set.   That might just be the final successful
+return path - I've not checked closely.
+
+> 
+> 
+> Best regards,
+> Krzysztof
 
 
