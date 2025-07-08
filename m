@@ -1,90 +1,85 @@
-Return-Path: <linux-kernel+bounces-722389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 226F3AFD971
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:16:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1976FAFD97F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62DE67B07A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:14:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 221A33BD5B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:16:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C6424501C;
-	Tue,  8 Jul 2025 21:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50E4246764;
+	Tue,  8 Jul 2025 21:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jXLgx+Nc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZamDFZxo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55062459C6;
-	Tue,  8 Jul 2025 21:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F014E23D298;
+	Tue,  8 Jul 2025 21:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752009340; cv=none; b=VVRvNSWUCp3OKkw7w+K/zw4kpiJWi/vJG39WQC1NWevhABtIO54LIoewntB5vbKyoMb3gPiuyC2nVK20GavClQdhbm8A51DDp115dm4dUTNERXtb8j7FQJxbJmlk+F+x7d16ovT/TIMJCqsq988EikG1018Nj6QESYMhQJHW3+I=
+	t=1752009381; cv=none; b=g5JmwYOT2GacqArvu0mJF4F6bG8L5Fnlp7rGO2tf5p2zi9RTudpBPyfY4Q3dfcG7dIVLUkykgbOU6//yq1i/nhBltXl1HVC8dwSC63XUl/X/FnAJNeK7cg171eDHdHquL6AipOZ6XwVb6H3m66V8nxWexjoFSVqEndcWA3VhaOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752009340; c=relaxed/simple;
-	bh=EsNrzNjV1ejegXwRqHZoNtXa4eBCU0UHv2etOg/t2Cs=;
+	s=arc-20240116; t=1752009381; c=relaxed/simple;
+	bh=ltXtFs+FCm7kdZYRy8gh9v9vkGeWsCBaQ7k3C/UgmI8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=evyU04f1mVZLSf09j3VxH05WAqFXm8N9xu5pcLdD2+pBChlIn88MKlW3WlgFZ3/LaTytrin0EcCYwSazNhOgF1h3avgDHpz+iIkDbrgqTEAdMsmCl/lpyupiw4IvcYTmfYXhNhFFnhVXN4L8Mv+UxCnr6fn79oEf9PEoqjLBVDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jXLgx+Nc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1168CC4CEED;
-	Tue,  8 Jul 2025 21:15:39 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XTQN4ghiuRDdVjr7UYRh3hVRWBO9pJd7Yjq1anH4ff93Yc9+ENgZksmLwxsCusvJob3wFjN8x87Se6YMrmF99Y5LVdqblVAT+BtEIsOUcIi9nfvGpb3gHIPjGHmDf7NrppORsUaiZRLxxZbyhV5MqIUEfuFV5/qU3WOcjAMrf8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZamDFZxo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BDE2C4CEED;
+	Tue,  8 Jul 2025 21:16:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752009340;
-	bh=EsNrzNjV1ejegXwRqHZoNtXa4eBCU0UHv2etOg/t2Cs=;
+	s=k20201202; t=1752009380;
+	bh=ltXtFs+FCm7kdZYRy8gh9v9vkGeWsCBaQ7k3C/UgmI8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jXLgx+Nc/Il0M8mnaWaTErBAJYW6UH/b3ChhI1LjEWZ1ml5fkzHdaCaYOl99XYH/f
-	 g1fyCkze9zHQfvieSG51xhB6PFC2OrGkDq77mm8FzJaQOQGL28nTAU6Im5pWJPQfNr
-	 xgqKcDlEBibsvEy1PMprvnPeFxlxa+i/MW9vQ5YjpWVQINxY8D89YrmlgshJrTMUJP
-	 Qn3QU3pn1T8APdplhYULYG5GDoEyHqAAUw8EvUfsB631uCVtnUbOzHcQD4jAKlGI+k
-	 uK0BTZzRanm6MTE1WDXUn9iqYvh9qBBbOzzGpGcMDpVWAee9dsresSCF62LDyVSqpa
-	 kjbm7xmjPgNnQ==
-Date: Tue, 8 Jul 2025 16:15:39 -0500
+	b=ZamDFZxoUKnJ50jqbuzf+mtCNimN+KnRAHw02TOqvhnP7JYLwu3iAIRak9q6CbuPh
+	 Tm9NOOK+IZHdF5YxaVfKzqX1iIO2C1Z7g0G3jF9kByA5pHxPC6eYvpOghY9g2l38Uc
+	 w6Rks0L2Jkv3BPhcEOCglupnmTsLWTlO1Y5VQRlohfL1xXRb9d7Z48jJg4wI2cEhaj
+	 tZkl0Qtt9tBtM0J/DL3tFlV8Z+VMViPe8aGypq9UF4oa4fwtZmWITcuJURdpQNICfo
+	 pZ7ioh1TlUXff8RrD64B5n074XRUvpNFkKeXaHqy/Ck1GNwRpcScus2WLD9/yDMR0l
+	 pNMVwtdwZuRyg==
+Date: Tue, 8 Jul 2025 16:16:19 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Kamil =?iso-8859-1?Q?Hor=E1k?= - 2N <kamilh@axis.com>
-Cc: linux@armlinux.org.uk, corbet@lwn.net, linux-doc@vger.kernel.org,
-	krzk+dt@kernel.org, bcm-kernel-feedback-list@broadcom.com,
-	florian.fainelli@broadcom.com, hkallweit1@gmail.com,
-	pabeni@redhat.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, conor+dt@kernel.org,
-	netdev@vger.kernel.org, andrew+netdev@lunn.ch, horms@kernel.org,
-	davem@davemloft.net, edumazet@google.com,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>, andrew@lunn.ch
-Subject: Re: [PATCH net-next v7 2/4] dt-bindings: ethernet-phy: add MII-Lite
- phy interface type
-Message-ID: <175200933841.1032309.15245293992929519207.robh@kernel.org>
-References: <20250708090140.61355-1-kamilh@axis.com>
- <20250708090140.61355-3-kamilh@axis.com>
+To: LiangCheng Wang <zaq14760@gmail.com>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>,
+	Maxime Ripard <mripard@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	David Airlie <airlied@gmail.com>, Wig Cheng <onlywig@gmail.com>,
+	devicetree@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	dri-devel@lists.freedesktop.org,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: vendor-prefixes: Add Mayqueen name
+Message-ID: <175200937878.1039013.16279385818262913331.robh@kernel.org>
+References: <20250708-drm-v1-0-45055fdadc8a@gmail.com>
+ <20250708-drm-v1-1-45055fdadc8a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250708090140.61355-3-kamilh@axis.com>
+In-Reply-To: <20250708-drm-v1-1-45055fdadc8a@gmail.com>
 
 
-On Tue, 08 Jul 2025 11:01:38 +0200, Kamil Horák - 2N wrote:
-> Some Broadcom PHYs are capable to operate in simplified MII mode,
-> without TXER, RXER, CRS and COL signals as defined for the MII.
-> The MII-Lite mode can be used on most Ethernet controllers with full
-> MII interface by just leaving the input signals (RXER, CRS, COL)
-> inactive. The absence of COL signal makes half-duplex link modes
-> impossible but does not interfere with BroadR-Reach link modes on
-> Broadcom PHYs, because they are all full-duplex only.
+On Tue, 08 Jul 2025 18:06:44 +0800, LiangCheng Wang wrote:
+> From: Wig Cheng <onlywig@gmail.com>
 > 
-> Add new interface type "mii-lite" to phy-connection-type enum.
+> Mayqueen is a Taiwan-based company primarily focused on the development
+> of arm64 development boards and e-paper displays.
 > 
-> Signed-off-by: Kamil Horák - 2N <kamilh@axis.com>
-> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> Signed-off-by: Wig Cheng <onlywig@gmail.com>
 > ---
->  Documentation/devicetree/bindings/net/ethernet-controller.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
