@@ -1,234 +1,105 @@
-Return-Path: <linux-kernel+bounces-722226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD6DAFD6A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:47:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8137AFD6A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F2D04A7B80
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:47:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 227D7481E0E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC762E03F8;
-	Tue,  8 Jul 2025 18:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0993E221FA0;
+	Tue,  8 Jul 2025 18:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Do33M+Zs"
-Received: from smtp.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hdDt39ro"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31BE215075;
-	Tue,  8 Jul 2025 18:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC274204096;
+	Tue,  8 Jul 2025 18:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752000422; cv=none; b=rmqtzgswenDBMjMM4xt5tjGmxpIUi0OVwOiZTEfpWcB7QS1shn5OzkxaLeZgtKmXO9LoR+JB3WAvXrfphy0IWS+D6G0mxup5BFYhh/NPmpT8xOCSYRw+7VDnH3KN7trGP3tUmfNvkpg87F4fmRHrWea82MkLQ4QnZWEU/n9iCH8=
+	t=1752000432; cv=none; b=TOgxkElCNMkRFYOC8p1mJ941h6pO0QEgLTdxm99RANNbTxwkqnbM5Iwk/bU3xKmLdjpVUnF2qvQO3Qq9vyc33DXTwvPwimxg46cNIhKAs8l/D37/r/8Ko3XdvgtMGu99hA9PRr2I505T35D75QJnvV+SQrHyF2xYfSls0PnHbzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752000422; c=relaxed/simple;
-	bh=6Gn+yRNl1JrOAlZoap5OkCRx3E5efJLTHxU979QWAl4=;
-	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
-	 In-Reply-To:Content-Type; b=mDUB2HABWqqUnh5/VsAZdPr9+wrnxbfVXsxVaI/OGlVIaaV9FvZe8+EF9mIu7Vxx8Ssw6vWARXQLtEcX3Ro4xEIo+Q8ro3bMk5UDNkvLkypzRLVseuAoN2eDAYz6USciW5XyerNsnBt/8OPPzC0fXENnbsXhK/DH4NZ26tJaRUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Do33M+Zs; arc=none smtp.client-ip=80.12.242.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id ZDL6uHsjEt5czZDL7uZYyq; Tue, 08 Jul 2025 20:46:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1752000410;
-	bh=1KMq9z5swwEqfJUujLxgmIpabvJfx13yCUzkaCHJsSs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To;
-	b=Do33M+ZskTXvpQmj5Ot7c3HkmJooV8IxNLxtavB3Soz8wkUWEkxkKc2D+2h8k621h
-	 iqouVHpcMleRuXDEVdruV73DATz+EaTk3MLbTmsri+6r8hxvn31OXheuVqnU3mfG3M
-	 OeZw/r7bU2X7yFDkLwDY8uiDgJG6U9lmIFHeu962ITaJ7nAG4VpjuENbgNFjwdf04t
-	 ukZxHDhK9oSPgIbGFD7mn4DIOt8Ip/GpwVwJoWC3YCl1vTdEF4xerpeXHZtkQc1Wuk
-	 wTe/GoiQpfZ34APi/VWCV+dUxRnYeXna9qb076SObnrTkm77krCb2ZJ2OmD0SpaRRY
-	 DMjYmOu7G4dAw==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 08 Jul 2025 20:46:50 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <0406698c-6534-4aca-8994-e8a69ecee2b2@wanadoo.fr>
-Date: Tue, 8 Jul 2025 20:46:48 +0200
+	s=arc-20240116; t=1752000432; c=relaxed/simple;
+	bh=4+18+jchT43E/3fu8il7fe0GWHCQbDcpPrVhJA7oKtg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aKPaL2lMAhhgl1dBDirpVpLeYuPgQsUbS2sZ5dY/3NgUphTxZNWszQXvgXUsdm0rWej8PFF7/iyRzOvTTJNLwWw8fRSk5Ei3f++JVz/7yugVB00dWMNCBUsXsdbJzj+wQPqIPCE0oqGib1GEGhsZkgg+UUdm4WkQtPBauK2WJf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hdDt39ro; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ZQneKyvkXDsqYAiLGke2KZOCslgy/Tt7BsquQZrhyG4=; b=hdDt39roxDX2oEb+qSiSIGnL0G
+	WSGfjWKxmYVVy4gH05igS98k0uNlhPbx1a3fb+JPGM65aUnmoi7ZyjKehLPvz5z4wKxP5bfEBOFam
+	6HFrx50yefbNRJ4sCe0+HvDfOPFuDzgYq4Hz1wshAyoxnfSdw22r7wktbOPB3kd9rIILh7ifPO6zG
+	XDh5D9p/r74hJOBy3MLxQWjLl3eApAN0yEfIlB0Tt+GLhAH56yBnxp9k64GAE6erCaybHPz+T77+3
+	Qo2Htt1ooFB92IzwufPAfor3OYTCGYZew49VhbeUzvwlpMr0fkzlzVPjLC7I9hVSzkxl8B3Yg1oSZ
+	YTFIiNpg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uZDLG-00000008mJf-1OYp;
+	Tue, 08 Jul 2025 18:46:58 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 24DCB300125; Tue, 08 Jul 2025 20:46:57 +0200 (CEST)
+Date: Tue, 8 Jul 2025 20:46:56 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Wander Lairson Costa <wander@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:TRACING" <linux-trace-kernel@vger.kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Clark Williams <williams@redhat.com>,
+	Gabriele Monaco <gmonaco@redhat.com>
+Subject: Re: [PATCH v3 2/2] tracing/preemptirq: Optimize
+ preempt_disable/enable() tracepoint overhead
+Message-ID: <20250708184656.GB477119@noisy.programming.kicks-ass.net>
+References: <20250704170748.97632-1-wander@redhat.com>
+ <20250704170748.97632-3-wander@redhat.com>
+ <20250707112622.GZ1613376@noisy.programming.kicks-ass.net>
+ <ppdduzdqnd3kwourcmocfi35i7wcbuagmzqgtgmyr55aps774t@37wucnoii7o3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/6] mfd: pf1550: add core driver
-References: <20250707-pf1550-v8-0-6b6eb67c03a0@savoirfairelinux.com>
- <20250707-pf1550-v8-2-6b6eb67c03a0@savoirfairelinux.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: devnull+samuel.kayode.savoirfairelinux.com@kernel.org
-Cc: Frank.li@nxp.com, abelvesa@kernel.org, abelvesa@linux.com,
- b38343@freescale.com, broonie@kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, dmitry.torokhov@gmail.com, eballetbo@gmail.com,
- imx@lists.linux.dev, krzk+dt@kernel.org, lee@kernel.org,
- lgirdwood@gmail.com, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, robh@kernel.org,
- samuel.kayode@savoirfairelinux.com, sre@kernel.org, yibin.gong@nxp.com
-In-Reply-To: <20250707-pf1550-v8-2-6b6eb67c03a0@savoirfairelinux.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ppdduzdqnd3kwourcmocfi35i7wcbuagmzqgtgmyr55aps774t@37wucnoii7o3>
 
-Le 07/07/2025 à 23:37, Samuel Kayode via B4 Relay a écrit :
-> From: Samuel Kayode <samuel.kayode-4ysUXcep3aM1wj+D4I0NRVaTQe2KTcn/@public.gmane.org>
+On Tue, Jul 08, 2025 at 10:09:45AM -0300, Wander Lairson Costa wrote:
+> On Mon, Jul 07, 2025 at 01:26:22PM +0200, Peter Zijlstra wrote:
+> > On Fri, Jul 04, 2025 at 02:07:43PM -0300, Wander Lairson Costa wrote:
+> > > +#if defined(CONFIG_DEBUG_PREEMPT) || defined(CONFIG_TRACE_PREEMPT_TOGGLE)
+> > > +#define preempt_count_dec_and_test() \
+> > > +	({ preempt_count_sub(1); should_resched(0); })
+> > > +#endif
+> > 
+> > Also this is terrible. Surely you can do better.
+> > 
 > 
-> Add the core driver for pf1550 PMIC. There are 3 subdevices for which the
-> drivers will be added in subsequent patches.
+> Thank you for pointing this out. I'm not sure I've fully understood the
+> concern here. My understanding was that this logic was pre-existing and
+> my patch only reorganized it.
 > 
-> Reviewed-by: Frank Li <Frank.Li-3arQi8VN3Tc@public.gmane.org>
-> Signed-off-by: Samuel Kayode <samuel.kayode-4ysUXcep3aM1wj+D4I0NRVaTQe2KTcn/@public.gmane.org>
+> I'm clearly missing something. Could you please elaborate a bit on the
+> issue you've spotted?
 
-Hi,
-
-some nitpicks and a few real questions.
-
-CJ
-
-...
-
-> +	/* Add top level interrupts */
-> +	ret = devm_regmap_add_irq_chip(pf1550->dev, pf1550->regmap, pf1550->irq,
-> +				       IRQF_ONESHOT | IRQF_SHARED |
-> +				       IRQF_TRIGGER_FALLING,
-> +				       0, &pf1550_irq_chip,
-> +				       &pf1550->irq_data);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Add regulator */
-> +	irq = regmap_irq_get_virq(pf1550->irq_data, PF1550_IRQ_REGULATOR);
-
-Same as above.
-
-> +	if (irq < 0)
-> +		return dev_err_probe(pf1550->dev, irq,
-> +				     "Failed to get parent vIRQ(%d) for chip %s\n",
-> +				     PF1550_IRQ_REGULATOR, pf1550_irq_chip.name);
-> +
-> +	ret = devm_regmap_add_irq_chip(pf1550->dev, pf1550->regmap, irq,
-> +				       IRQF_ONESHOT | IRQF_SHARED |
-> +				       IRQF_TRIGGER_FALLING, 0,
-> +				       &pf1550_regulator_irq_chip,
-> +				       &pf1550->irq_data_regulator);
-> +	if (ret)
-> +		return dev_err_probe(pf1550->dev, ret,
-> +				     "Failed to add %s IRQ chip\n",
-> +				     pf1550_regulator_irq_chip.name);
-> +
-> +	domain = regmap_irq_get_domain(pf1550->irq_data_regulator);
-> +
-> +	ret =  devm_mfd_add_devices(pf1550->dev, PLATFORM_DEVID_NONE, regulator,
-
-2 spaces after =
-
-> +				    1, NULL, 0, domain);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Add onkey */
-> +	irq = regmap_irq_get_virq(pf1550->irq_data, PF1550_IRQ_ONKEY);
-
-Same
-
-> +	if (irq < 0)
-> +		return dev_err_probe(pf1550->dev, irq,
-> +				     "Failed to get parent vIRQ(%d) for chip %s\n",
-> +				     PF1550_IRQ_ONKEY, pf1550_irq_chip.name);
-> +
-> +	ret = devm_regmap_add_irq_chip(pf1550->dev, pf1550->regmap, irq,
-> +				       IRQF_ONESHOT | IRQF_SHARED |
-> +				       IRQF_TRIGGER_FALLING, 0,
-> +				       &pf1550_onkey_irq_chip,
-> +				       &pf1550->irq_data_onkey);
-> +	if (ret)
-> +		return dev_err_probe(pf1550->dev, ret,
-> +				     "Failed to add %s IRQ chip\n",
-> +				     pf1550_onkey_irq_chip.name);
-> +
-> +	domain = regmap_irq_get_domain(pf1550->irq_data_onkey);
-> +
-> +	ret =  devm_mfd_add_devices(pf1550->dev, PLATFORM_DEVID_NONE, onkey, 1,
-
-2 spaces after =
-
-> +				    NULL, 0, domain);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Add battery charger */
-> +	irq = regmap_irq_get_virq(pf1550->irq_data, PF1550_IRQ_CHG);
-
-This calls irq_create_mapping().
-Should irq_dispose_mapping() or another helper be called in the error 
-handling path and in the remove function, or is it already handled by a 
-devm_ function?
-
-> +	if (irq < 0)
-> +		return dev_err_probe(pf1550->dev, irq,
-> +				     "Failed to get parent vIRQ(%d) for chip %s\n",
-> +				     PF1550_IRQ_CHG, pf1550_irq_chip.name);
-> +
-> +	ret = devm_regmap_add_irq_chip(pf1550->dev, pf1550->regmap, irq,
-> +				       IRQF_ONESHOT | IRQF_SHARED |
-> +				       IRQF_TRIGGER_FALLING, 0,
-> +				       &pf1550_charger_irq_chip,
-> +				       &pf1550->irq_data_charger);
-> +	if (ret)
-> +		return dev_err_probe(pf1550->dev, ret,
-> +				     "Failed to add %s IRQ chip\n",
-> +				     pf1550_charger_irq_chip.name);
-> +
-> +	domain = regmap_irq_get_domain(pf1550->irq_data_charger);
-> +
-> +	return devm_mfd_add_devices(pf1550->dev, PLATFORM_DEVID_NONE, charger,
-> +				    1, NULL, 0, domain);
-> +}
-> +
-> +static int pf1550_suspend(struct device *dev)
-> +{
-> +	struct pf1550_ddata *pf1550 = dev_get_drvdata(dev);
-> +
-> +	if (device_may_wakeup(dev)) {
-> +		enable_irq_wake(pf1550->irq);
-> +		disable_irq(pf1550->irq);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int pf1550_resume(struct device *dev)
-> +{
-> +	struct pf1550_ddata *pf1550 = dev_get_drvdata(dev);
-> +
-> +	if (device_may_wakeup(dev)) {
-> +		disable_irq_wake(pf1550->irq);
-> +		enable_irq(pf1550->irq);
-
-Should this 2 lines be inverted?
-
-> +	}
-> +
-> +	return 0;
-> +}
-
-...
-
-> +#define PF1550_CHG_LINEAR_ONLY		12
-> +#define PF1550_CHG_SNS_MASK		0xf
-> +#define PF1550_CHG_INT_MASK             0x51
-
-Space vs tab
-
-> +
-> +#define PF1550_BAT_NO_VBUS		0
-> +#define PF1550_BAT_LOW_THAN_PRECHARG	1
-
-...
-
-CJ
+The normal (!DEBUG) case uses __preempt_count_dec_and_test(), which is
+significantly better.
 
