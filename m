@@ -1,122 +1,205 @@
-Return-Path: <linux-kernel+bounces-721372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F21A0AFC84C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:25:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55254AFC850
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:26:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6A597AF334
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:24:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D5315614E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EAED241CBA;
-	Tue,  8 Jul 2025 10:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="arZRCAeW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qU4A+HRM"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A2026A0A0;
+	Tue,  8 Jul 2025 10:26:41 +0000 (UTC)
+Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazon11020129.outbound.protection.outlook.com [52.101.225.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F31268683
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 10:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751970342; cv=none; b=uj690YJZUOf3dFKwpusVFBc4SeuexIsYuUDK/GTBzm2RZ//cDXALMABlRbvuz25J8XaV+S4N5MI/euZWlm2c9dW/pL17HRimJRqsJtvpNTi7lxuaHrVIB32/DN7xlDlBO8RAu9XJPFp4ZE8y7hzymCx3fpzgr9uWF7swd4rpZAM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751970342; c=relaxed/simple;
-	bh=uI87pg5WcASFWD0K32gMteBkyUzucAaePK9YFfv8YtU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KtwMt43M99L4B6OlFhfKdXMFk83XGrhIF89vu+M5hBecmjgYfP7EGvgb2ydXK4B8dFJT3ZvJsi7wEHQdFXDrYBIbf5oxB5PhsKSBFwsnzY7ntLIR6ZtB7NJ4myJ71W2S71Nr9r/AD6MlBpoT2/aZYCu6Ncv3v1oYW5Oh4mUfV/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=arZRCAeW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qU4A+HRM; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 8 Jul 2025 12:25:37 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751970338;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mrZZuWaHaXVZ4tU14vD0jFwEhA7UyuVBekyaX6/jSvQ=;
-	b=arZRCAeWw4M0tWg+Jv2ndJMHzY8loL+3L+xj7PSSU9OdKuA6ViYhAw/7UlQAs+TH2mOWwZ
-	fUCMdcrQkSKXtCY5zMIL+gadeIxglMe7LfXqm9GN+gSRvJGqjIS0PBETAGMRVMghQbBiaB
-	uZLxR3cOAngVQbQY0Lf+cL0EBnL5qcZeiI8mj6tSBzkhPMgZVZz0+2O0sl1WbzCNoWOlE0
-	A1ZOPrxO1Nna+DAbKMw0OdV+I8sZANeetQqIJokP/DlJlrw0mlyLDQuQk8d4BjQ8Kej3Ee
-	gK0BsdO/FSWo5hjqmxunZvuCQnmIVLdVsZR69JG28BsONGkEobGnQu0Lqelm1Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751970338;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mrZZuWaHaXVZ4tU14vD0jFwEhA7UyuVBekyaX6/jSvQ=;
-	b=qU4A+HRMxnXbegaEoeOrkeKk7TR725nLMk8ItxqFSKNkBPROlWCShUsoKrjWvD64mui6Se
-	EJwnKQR3YnQdZKCA==
-From: Nam Cao <namcao@linutronix.de>
-To: patchwork-bot+linux-riscv@kernel.org
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE3021767A;
+	Tue,  8 Jul 2025 10:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.225.129
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751970401; cv=fail; b=T0ghOohybi7eODcsEKKtqRTUtWPcPkwI+1C9e5PLBwSa/DstoKMFsGxErS55HAq5K6WcQ3bfBhQ8RvpfmPQEb6l3ExdmkZU/Xu/3fRspAnN+eU7jf51lFw7PONjMLuNhpbaLi8Dyt+zt17nI1QwRuUlgpeS3uHripX2vH4LE81Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751970401; c=relaxed/simple;
+	bh=o7v88BklTWNb2GFVrXyl62OXpJtFMy7YifgJxM2z2n0=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=XOJVU4OXF7F0xNZRnkuBAkknx85QGKOk+Tokp05cPIr2itFjwtcd63oSUTNnmHrh9oxsliDnEuNl+vXyhsV19ETiEbUOjusl4kADeZq/p88Bh6gGNPK3PXbs94zt0vXg1Z+xx5pa8sOXMAKLbYmioOovb3yE86yw8oYCsaYRBek=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=fail smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=52.101.225.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=siliconsignals.io
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DD/pPNjQY4mFJSI+BeOvslm+fCwXMA4kqaeYGO0mZdwBU0AscKtzD6YMRsmpO0mblx3By2HrEhyCH+IiICRJgRqaXD3lbywjVLsNhoKvse0kMNQVXP/+otaEqQgcIa6G1vGoSvxxkq9/u/Rnayhdt9uKIDy98Nhdx131z//yo/lSDTKjzmCU6pN09sUb4jb4He4Gsj7HosoSmvWpmZ4keHL9fyqyVKV4D+16tLto4fzZayEfuRALpxbxc76DtUJvAFsNkXo6KmlAsKWBcXsgirl1W6RXrIebnC4HmArXg03u0yrQ7tIGlhGvacajzAhuHt49Pw6O8y3IotYkeuqmsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=C+shTCWlG24OjLv6R6PxTZm5o0fMIO4MrUtP200/YPo=;
+ b=qgEafU6K4otrSwFtqtVWWiU7OKWc794ID1uKEPbEjMpvLdJBNVG3yutONd4ZtMveN8G4U03NBtylptPLw3eupNWYW1CsIak4YpUnInFBzKZRAGufwftR6y/Id56zjeS58QEW/lY8IlPbXHO+LXVifgP+oOlExjA3KK8HIDbeJiOT8HKtwpEbzds/kUW9qF+LoY2CIaaRGsLczJPP/fir/9QS+x3m2JsGCXZw2pMo129VsTHCRdOTLH7WoRPfeNRnOzfcFVywFI1YhSLMi1Swex2TyHRM+bMmHzyBeqkae/N3CLOgWed91EOoYu4sPoCa2R+6njbnYIi6SAfG57NBnw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
+ header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siliconsignals.io;
+Received: from PN3P287MB3519.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:229::21)
+ by MAYP287MB3738.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:14d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Tue, 8 Jul
+ 2025 10:26:33 +0000
+Received: from PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
+ ([fe80::5c9a:906e:318b:c418]) by PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
+ ([fe80::5c9a:906e:318b:c418%6]) with mapi id 15.20.8901.024; Tue, 8 Jul 2025
+ 10:26:33 +0000
+From: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+To: sakari.ailus@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	krzk+dt@kernel.org
+Cc: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
+	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	=?UTF-8?q?Andr=C3=A9=20Apitzsch?= <git@apitzsch.eu>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Hans de Goede <hansg@kernel.org>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Tarang Raval <tarang.raval@siliconsignals.io>,
+	Jingjing Xiong <jingjing.xiong@intel.com>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Matthias Fend <matthias.fend@emfend.at>,
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/11] riscv: kprobes: Clean up instruction simulation
-Message-ID: <20250708102537.VovauOQC@linutronix.de>
-References: <cover.1747215274.git.namcao@linutronix.de>
- <174904758698.2309006.9940004806769596353.git-patchwork-notify@kernel.org>
+Subject: [PATCH v2 0/2] media: i2c: Add ov2735 camera sensor driver
+Date: Tue,  8 Jul 2025 15:55:54 +0530
+Message-Id: <20250708102604.29261-1-hardevsinh.palaniya@siliconsignals.io>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BM1P287CA0023.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:b00:40::28) To PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:229::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <174904758698.2309006.9940004806769596353.git-patchwork-notify@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PN3P287MB3519:EE_|MAYP287MB3738:EE_
+X-MS-Office365-Filtering-Correlation-Id: 40b43521-4aed-4e99-28bc-08ddbe09e90a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rFMXZoG42/YrZoMb6TILnf8Aq1LCjQ+Eyv0mdupmUtRx6XzldCWKry+a+Mj/?=
+ =?us-ascii?Q?gwswLZ5hndaU0g3dZ2mSE4SzdhiEaRRk3OSoDlervlDzcbI6GvEDiXjPLv/w?=
+ =?us-ascii?Q?NwtdZJNle7viHhRalZGKRD4ntw6BTzAAa2bvL80Av9vmxfFDDHVw/31g3Mmn?=
+ =?us-ascii?Q?c9iPZM3jQ9RDeO7Neex/hwFI822tOG6sRTulepfTDocMhUnyC+1XdYihuh4x?=
+ =?us-ascii?Q?1ZArTyJbudJxo2l7/MFgkc0h6yZXvM5SrDITWcqMDC+QoPAhR1Uc2tr2dp4h?=
+ =?us-ascii?Q?iSeNK0GVe6stTHKSj7kmdhUCHy5OT+GB04ht8zV2VBxtVVLQm8rcWmt7KW/V?=
+ =?us-ascii?Q?f4m+w8MHKQgt519TUPqY3ygharuphEAqM5fsAfkzRjSWmFjiQYTuqtGMzMlb?=
+ =?us-ascii?Q?gcXsdW47oMdawhHExGDynr87xiECIg/cgJD6NVuathJhylS9CnwUmh5SMCm7?=
+ =?us-ascii?Q?dBXM4GDfaQfaD5IPPjT5dLSzSVH21wLzdJ6PI0crvq+tNWxcAjPtf+qUXm97?=
+ =?us-ascii?Q?elJYFFmMf6NEUfTExt1KCBRzOW3XvUmWpLy19eJtUvBfy8TCdv1c+05VH8vW?=
+ =?us-ascii?Q?wPLXjj34Nl7qwm90iQquUCoYjenr0TDv7goFnFvWnXig8d1KlF869WiJHG15?=
+ =?us-ascii?Q?cLDx8mAdQNZvTtpFqI+JYkEL6Smeb2ym/VG2sKe1Sqyc/YgrwZ76RSoVpG9S?=
+ =?us-ascii?Q?3v6jlvfKJ+XX1blAiag/OxyCRQhss1xIPGWZHXSdMM5L6EPKYybXkXc7EfWV?=
+ =?us-ascii?Q?BLQ2r3NoadcBky7Lol5GvVpsl6KZr+lNZ0yvHLKWE72Y3i6t3XxEHwa8QuKj?=
+ =?us-ascii?Q?IkkTk93sTP6JkPjG7TCpTmvrkJdfXnFZbBivlfWabuOv4OZ1Pqdz0+z5uo3H?=
+ =?us-ascii?Q?3ciYQnRkaXg7HGj1m8Ceaz6E/GeWW38Ysets2uD7BUbPM2Puls+0Fhud7oZc?=
+ =?us-ascii?Q?QFC5ZrIvCnegAU2kN24k4cN42x9BVtVCalJln+y8pKuXGN1qwCvg5h3mZT0t?=
+ =?us-ascii?Q?G9s9S66elgX7mJoAovYpiPR91b7ThAK1FRf/UqNjCsmyBMa+FPaIt7ZIvBSn?=
+ =?us-ascii?Q?oXrD5x5lIhWyr2ozD75pK22wXlFjZLCe61Jr6NZ6yq/1fVhj425s5a1Uia00?=
+ =?us-ascii?Q?yhLi8SuJWxcbc9E4WAHfSiu3AzaXGCcZJOxP2c5KE6WO1N2HmeVaM4y/eOwD?=
+ =?us-ascii?Q?TDBzdVmbQvq9vymaIiRE13uuN402PJIMQrRMEOFjiv/QahVHBkLFJS1QU9zI?=
+ =?us-ascii?Q?MmaAA2k1zww/VBncojaNoDa6SZ/8Oai+UViEfUcZy7rc3nL/cjQMXaSiOL0k?=
+ =?us-ascii?Q?jaHNwexCA/gPSDKXmByAN5C+m4buzD4mBM3MWrF1EyWzh2JGgNkLN1WYxYKe?=
+ =?us-ascii?Q?HtxpQH+yMCygsFzzGyL2W6ipjmB585fg3+DMfSM9Lka5a/YGuF6ufbCmnwea?=
+ =?us-ascii?Q?W6Sj6gUHMmCgXcxPKydoDP1XpPiDku2oIx5+TfJdlTyKlhzBWRBP8A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB3519.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?V2cb/YIy0mgn2Gn9RgfGJVxwvOHbjw1RQnTK6jmO6lAf/t/IgaCBdncftLG8?=
+ =?us-ascii?Q?DfSu+l1kRprmqT0fV53PZCdD1UZsnHzgu31j9nSlHAEINM/0AS8DDzfTH43U?=
+ =?us-ascii?Q?ifDXcA5L6yfc1Jy7sO/U1+fRHSf7p8vi+9W89GbCG5hsqZyPisiiHKK/PVyY?=
+ =?us-ascii?Q?YwE0qZojzxR2+ug1pIioE+mxXcqC4aoI6toH4ShKxTFxre6g8QqIlVZCqxYt?=
+ =?us-ascii?Q?gGDQ9iBwrnSri+fD/Ge0dk83OvNDFFGdcfFJYSbtoKqaLp2BNLj3RNieUdsd?=
+ =?us-ascii?Q?sEJ138ilnhwNmXxi/1GtlqdVyRV55LOpwqmQux27EcX3Zzz14Vy7g4zQSSmX?=
+ =?us-ascii?Q?2bjiUdbJaM4KhS5dosMKK/zcWuOCqQ4F/RfGQDC/38fk3fehyaHbZD6VihCi?=
+ =?us-ascii?Q?W5AhHDTuUp8o+XairWE6w5UFvutZq38nI9JATQoZRVMQOKmcMgoKrNA9TMkS?=
+ =?us-ascii?Q?KoWZyTw3jiyG4p0hFLahg8r+yUGHqqVxHg4fcFqxZvBAqzXkl965wIwnFxgF?=
+ =?us-ascii?Q?y9MGzaumBxuGqTYMuLn7c4koNK21jQ9Mxu5VQCtHeQrneOIoW28IhdVALVAc?=
+ =?us-ascii?Q?Lhu2QcPNgULj7wnZg1bJxjGhlaEnWF9zjMiYHx5h1CUWZ/iebS3HH15N2ajA?=
+ =?us-ascii?Q?Hy05KVGNKK/2SX5IPg99wU6AVwYe9ttdvt5fKjLeQSp0EhGyT5M2UVNz8b52?=
+ =?us-ascii?Q?5YV4VZZm3dYOxO6oCliJJfob4BfYBfGg+kbJ4E2wHFwQmdmyPfmhGzIv9R+D?=
+ =?us-ascii?Q?OFd88hHVlX24O9U2AXPK1O0lGo6gbXeLKZSFl8MHkuXTUHDIjuMpmx+s8Gxd?=
+ =?us-ascii?Q?Svt74GyYuLsKGYeOA9+eX7C1diTiIOzioyM8IygUiGYPeqLw+08Aa4aBGY8y?=
+ =?us-ascii?Q?tLsY/EKt/v+1hzjRLauhnPOTUuttuRHcT2G9/IRhytBwnroqmU31TmB9ex9h?=
+ =?us-ascii?Q?xulJbN4lGvanLBlJzP+glDVJHU0JIOqI1FXnmW4emODlo7C5YTXsvdTQ0qen?=
+ =?us-ascii?Q?lhR7VqspH3u/Xdnx38W//xPbD/G/SKmKFHmL9frebyrVZ+vi2qQtVkNHLWqu?=
+ =?us-ascii?Q?L2ZjDCvi8aoelDCTpUb0qCyFytSrzH2O3RcHwDgydgw80YnO4TryIBuHhuPL?=
+ =?us-ascii?Q?mkf0OcczunQKLB4HIB240LUUc1YsQTQXBtsJMi/mL/onAFEzcNgZKhJdtDOO?=
+ =?us-ascii?Q?CgOnTUM9UEIXjnT3OK2Mvy7caEpLqmOzqBmUQ74EAERyjpfeR49s5ock7l7M?=
+ =?us-ascii?Q?+exTvzcO4re6n0OqZF32Ldd/IgNqbGC72uQL3Qgq798aZ8JqPLJ5mkEVkUFo?=
+ =?us-ascii?Q?EDqBV8XPv+FztK0JIvOTv1GEONRjPtgvlj9s4w1Rfjaz5TdYqwTkUHrUS3iZ?=
+ =?us-ascii?Q?b42Wbt77G2tjXE7lTETA/9aNvP8b3rhKWzysZB4EnfQ/V11OBE/kFI/BdBMj?=
+ =?us-ascii?Q?ZwKSm2vZQm70Brg34zCTQQyysSNwMhDL6K3w9Z2HmYCGhzJhm/rwI8V8lMyP?=
+ =?us-ascii?Q?UXgbAR9vrYCcYCYtmwypDU+iyW3+UCPLLEXNK5DjJtL6MDaZU8mSOrph6C9i?=
+ =?us-ascii?Q?3hL3MAnzWHMV9SGLJra3rtksfSq9lO71ObI5dRQpVujKzRE5W466e+JKLKCR?=
+ =?us-ascii?Q?Z7N4ccQi2abaeGgb2LEW8Ps=3D?=
+X-OriginatorOrg: siliconsignals.io
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40b43521-4aed-4e99-28bc-08ddbe09e90a
+X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 10:26:33.4470
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qaiN4h84jN2OqkpvJtzs6hJzjyR2BA33lCjsWuTeEA0FFin+qrqgxCMbaxTJPzp72T9ViEjG7SGTUKjlAqKjrktMvZkRHejc1vjk6Rbzx+htbEvOcbfE4Lbfi9bfQjOS
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAYP287MB3738
 
-On Wed, Jun 04, 2025 at 02:33:06PM +0000, patchwork-bot+linux-riscv@kernel.org wrote:
-> Hello:
-> 
-> This series was applied to riscv/linux.git (for-next)
-> by Alexandre Ghiti <alexghiti@rivosinc.com>:
-> 
-> On Wed, 14 May 2025 11:38:39 +0200 you wrote:
-> > Hi,
-> > 
-> > There is some instruction-processing code in kprobes simulate code. These
-> > code should be insn.h. In fact, most of them is duplicating insn.h.
-> > 
-> > This series remove the duplicated bits and make use of macros already
-> > defined in insn.h. The non-duplicated bits are moved into insn.h.
-> > 
-> > [...]
-> 
-> Here is the summary with links:
->   - [v2,01/11] riscv: kprobes: Move branch_rs2_idx to insn.h
->     https://git.kernel.org/riscv/c/d29656bab74c
->   - [v2,02/11] riscv: kprobes: Move branch_funct3 to insn.h
->     https://git.kernel.org/riscv/c/da6de46c2eed
->   - [v2,03/11] riscv: kprobes: Remove duplication of RV_EXTRACT_JTYPE_IMM
->     https://git.kernel.org/riscv/c/6d47d903b18f
->   - [v2,04/11] riscv: kprobes: Remove duplication of RV_EXTRACT_RS1_REG
->     https://git.kernel.org/riscv/c/5cefc323f32a
->   - [v2,05/11] riscv: kprobes: Remove duplication of RV_EXTRACT_BTYPE_IMM
->     https://git.kernel.org/riscv/c/a285674909ae
->   - [v2,06/11] riscv: kproves: Remove duplication of RVC_EXTRACT_JTYPE_IMM
->     https://git.kernel.org/riscv/c/c7196c136e29
->   - [v2,07/11] riscv: kprobes: Remove duplication of RVC_EXTRACT_C2_RS1_REG
->     https://git.kernel.org/riscv/c/768007ca3fe8
->   - [v2,08/11] riscv: kprobes: Remove duplication of RVC_EXTRACT_BTYPE_IMM
->     https://git.kernel.org/riscv/c/f2c715fff676
->   - [v2,09/11] riscv: kprobes: Remove duplication of RV_EXTRACT_RD_REG
->     https://git.kernel.org/riscv/c/284ca2a100de
->   - [v2,10/11] riscv: kprobes: Remove duplication of RV_EXTRACT_UTYPE_IMM
->     https://git.kernel.org/riscv/c/a60c2933ec74
->   - [v2,11/11] riscv: kprobes: Remove duplication of RV_EXTRACT_ITYPE_IMM
->     https://git.kernel.org/riscv/c/ee4c45f5cbeb
+Add a v4l2 subdevice driver for the Omnivision OV2735 sensor.
 
-This series was dropped from 6.16 due to conflict. Can it be re-applied? It
-applies cleanly to riscv/for-next.
+The Omnivision OV2735 is a 1/2.7-Inch CMOS image sensor with an
+active array size of 1920 x 1080.
 
-The same story for:
-https://lore.kernel.org/linux-riscv/174904758974.2309006.8809303189389627595.git-patchwork-notify@kernel.org/
+The following features are supported:
+- Manual exposure an gain control support
+- vblank/hblank control support
+- Test pattern support control
+- Supported resolution: 1920 x 1080 @ 30fps (SGRBG10)
 
-Best regards,
-Nam
+The driver is tested on mainline branch v6.14-rc6 on IMX8MP Debix Model a.
+
+v1 -> v2
+
+- Added necessary header files
+- Corrected indentation
+- Used the ret parameter in cci_write and cci_read functions
+
+Hardevsinh Palaniya (1):
+  media: i2c: add ov2735 image sensor driver
+
+Himanshu Bhavani (1):
+  dt-bindings: media: i2c: Add ov2735 sensor
+
+ .../bindings/media/i2c/ovti,ov2735.yaml       | 104 ++
+ MAINTAINERS                                   |   9 +
+ drivers/media/i2c/Kconfig                     |  10 +
+ drivers/media/i2c/Makefile                    |   1 +
+ drivers/media/i2c/ov2735.c                    | 908 ++++++++++++++++++
+ 5 files changed, 1032 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/ovti,ov2735.yaml
+ create mode 100644 drivers/media/i2c/ov2735.c
+
+-- 
+2.34.1
+
 
