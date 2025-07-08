@@ -1,100 +1,77 @@
-Return-Path: <linux-kernel+bounces-720998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95484AFC31E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:49:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08936AFC318
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57DA61890D57
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:49:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1DAF17C847
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7C02236F0;
-	Tue,  8 Jul 2025 06:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299F42222D4;
+	Tue,  8 Jul 2025 06:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GbZWQ/j+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="prya40Bw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAABE222575
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 06:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D0E22126C;
+	Tue,  8 Jul 2025 06:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751957315; cv=none; b=uDd0/U+krAWW6nMpHv/WHi6OHe6NS4VTfOtjisEnPgX+uo6r3ixH9NOx+EWl9VC+yhnloDEskOrL/YEvQLx9L4uXDJj/JunxldTDcuUUFBN6F4VHPOYqtIYEHXvbsnSfZqbiwdwxv/Tk20aeHvqeagBCyRn/sSmHX4lWYIl1OTc=
+	t=1751957298; cv=none; b=QxHIxJxiAuJi6vZVOPfeuioSxKTXC/kA3inNun1ZjmL2fYJNAOnokENzo7X6TAbscXTux43Rv3vO8BaejzOSJ+zBVUurNxwvf6aJ1O/YQN+a4soBU+/VuCsdDBWPSY803RYQazgOx83nC6TWogkAFgZlddpXZPHV061+V9ItePY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751957315; c=relaxed/simple;
-	bh=yGVJxfUZE1KtHEBfNS5jt0mdIntrUHouPZnqSr2FpaU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MIbMQ0xD3gAQhWdnBV0hHkgogLWKJjeJ9P0H8bviQNqo7gQbMDvLshqCuSNcFHY9QM5BFubu+rkhEKFRfbu/BM8x39xRzrp0IUlOBo6dG8oxTXO9AJopkt4ECq2iQRt6X441jdvOTn700vMHBylfG2ocsXL3hhSo+x0nokrpB+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GbZWQ/j+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751957312;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=tsum3ML/FjoVgbok+3MjXVB4I8gHTKKd+8yAm4t36GE=;
-	b=GbZWQ/j+qtjWqx4TGhT1XfjFWrT+0TL+M2/pqWJcfAjNju1patKbvKqH2OY4V2kF6P5k0A
-	BHmNaYXnYY8aXvE8Q8nShK9Ux6WZ8NAhBY2OWfolwk06z3xogv6ibA5a56yetiT6bKs2Nk
-	rk7DPtuVbohxhcsXqXRZOTasIkYYbFI=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-539-4pB-6n1FMB-tQg3X6MkRvw-1; Tue,
- 08 Jul 2025 02:48:29 -0400
-X-MC-Unique: 4pB-6n1FMB-tQg3X6MkRvw-1
-X-Mimecast-MFC-AGG-ID: 4pB-6n1FMB-tQg3X6MkRvw_1751957308
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 740891944AAD;
-	Tue,  8 Jul 2025 06:48:28 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.72.112.173])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F218219560AB;
-	Tue,  8 Jul 2025 06:48:23 +0000 (UTC)
-From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com,
-	jasowang@redhat.com,
-	eperezma@redhat.com
-Cc: kvm@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jonah.palmer@oracle.com
-Subject: [PATCH net-next 0/2] in order support for vhost-net
-Date: Tue,  8 Jul 2025 14:48:17 +0800
-Message-ID: <20250708064819.35282-1-jasowang@redhat.com>
+	s=arc-20240116; t=1751957298; c=relaxed/simple;
+	bh=TwK4ez6PMflB9E7lXtEdFSHg6cUKSCDZMRTm/vR9zUE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=JNFlzsFaWqyhqU93T9gxSYoVsTbZGv+0NSZn7FkmESjI3670ISUq2K3Mfjzc06AguWwub2TLL32HhS21C7kLeNq8sODSYMw2N74Nx7BT5p3iXgpDcnFkhzCBEx6wYsCBkvAmn6VKw0q09O3JqFSWGzOtFn8nj1L+UMdu1H/FEFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=prya40Bw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B932CC4CEED;
+	Tue,  8 Jul 2025 06:48:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1751957298;
+	bh=TwK4ez6PMflB9E7lXtEdFSHg6cUKSCDZMRTm/vR9zUE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=prya40Bwp+x+Dwt/bNcu104F9fEpjOq7wMzRp9aPMsvU3XMo4m6dNgq1r/3osxaXz
+	 6gYpFtO03008NIyDR7d1gHSMtZrpz43ts6ubHwpt/ccpZDBgPVbfpu3tVuzhsyu5K2
+	 7zyAn5PWKRtgsEXf08Z4YJ0kgzQA/q86AQgY2Hok=
+Date: Mon, 7 Jul 2025 23:48:17 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the tip tree
+Message-Id: <20250707234817.d09fc28a3510b23c31c461b4@linux-foundation.org>
+In-Reply-To: <20250708160037.2ac0b55e@canb.auug.org.au>
+References: <20250708160037.2ac0b55e@canb.auug.org.au>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On Tue, 8 Jul 2025 16:00:37 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-This series implements VIRTIO_F_IN_ORDER support for vhost-net. This
-feature is designed to improve the performance of the virtio ring by
-optimizing descriptor processing.
+> Hi all,
+> 
+> The following commit is also in the mm-hotfixes tree as a different commit
+> (but the same patch):
+> 
+>   f339770f60d9 ("Revert "sched/numa: add statistics of numa balance task"")
+> 
+> This is commit
+> 
+>   63afea878dc4 ("Revert "sched/numa: add statistics of numa balance task"")
+> 
+> in the mm-hotfixes tree.
 
-Benchmarks show a notable improvement. Please see patch 2 for details.
-
-Thanks
-
-Jason Wang (2):
-  vhost: basic in order support
-  vhost_net: basic in_order support
-
- drivers/vhost/net.c   |  88 +++++++++++++++++++++---------
- drivers/vhost/vhost.c | 121 +++++++++++++++++++++++++++++++++++-------
- drivers/vhost/vhost.h |   8 ++-
- 3 files changed, 170 insertions(+), 47 deletions(-)
-
--- 
-2.31.1
-
+Thanks, I'll drop the mm.git copy.
 
