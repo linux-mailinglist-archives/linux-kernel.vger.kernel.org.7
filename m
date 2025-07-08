@@ -1,191 +1,96 @@
-Return-Path: <linux-kernel+bounces-722481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78ACDAFDB27
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:34:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AEDDAFDB28
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F22557A65BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:33:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF6F7582A7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5311C262FD3;
-	Tue,  8 Jul 2025 22:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0724A25A337;
+	Tue,  8 Jul 2025 22:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q61I2oqU"
-Received: from mail-il1-f202.google.com (mail-il1-f202.google.com [209.85.166.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="eD+CN7dy"
+Received: from r3-22.sinamail.sina.com.cn (r3-22.sinamail.sina.com.cn [202.108.3.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26A525A2C7
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 22:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B82721B9F1
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 22:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752014080; cv=none; b=Mxz0MuleGA3ZsgVTyZ4ldguoqZQwaF8wQrT9Yf9o4d8RG21Y8FDtYyJr3h2FskYjB6VYLrtE3cDaEap0+KtAuoiv31ZZp1cf6r0wUBlnF6EXeoi8zkibsO6LVDzTXOVtaMFA6xX1Z7AflPHhf2ldUyN2iq2OT2TtZwQ4lYSTNFg=
+	t=1752014145; cv=none; b=fh+2Kj9zEDUxaxKHQSz6wVlTSLMwaOe7j0y3PBtsBUthwXR/PuXbMWGKntiH2PsTYNrwyFeGPukeBQWZdN9V86sTr9U9W5BLMIONWSOVJstO7rC1MW5RdJU7vQUyLitbT/y1tgDYcXlDphgLD8OwsrviQZrYFHorEsDcfO0QzlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752014080; c=relaxed/simple;
-	bh=02xDzJQPlhBq0RU8lcHj/2RG+qyIWz4nKYd1naozQns=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=JS/iXSOVbV8Wo3Gf/CEY10ekIe/OUEojRMeMKv0qXOmYqEjk+wjj+6TgtzUrtk1roN9dnnC2Fdd2sjjWYYEU1e8ENEvjaqixO+hjZSxQrYxev2xeHdUIA6iFSZAqWtx31HbGC/oH/wRdvBkAeSC1WcvDHJ713EqHoZHgJtGc8qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q61I2oqU; arc=none smtp.client-ip=209.85.166.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
-Received: by mail-il1-f202.google.com with SMTP id e9e14a558f8ab-3ddba1b53e8so60843465ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 15:34:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752014077; x=1752618877; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=j/9FFTs3Hz/7yNjDy98C2EAojjbwb0TEz5q962JZJd0=;
-        b=q61I2oqU6t7TlFUuejfBAlRXMpmAZ7Y88nYyFUVvwWgUfS3spZQ2M3X/95is9uC3+z
-         LMVKgQMD+NWwSknrYWq3Rb4UkPk/AVRK7pobaKLfJTAd6nsi0fsG/u5BNhNmAbKPv8+V
-         z4zz+OjLynPwAnrqvFrbctC2wLfX0R1HhIr8reyxMY6Xouf15IZbHSrGQAIVZGHnyBwh
-         VyOnDUis/7wVtVVBA03qPFwrv9jK8ie/ji/brym+HWEu1LcZqz/ZJ1J4CtdPqujSRKO1
-         s/CzBthoM+bGlLDFUxJMKHqNfGH11HITo55nDTazdXlhPkJxBAn+iWWriAd/rvl/dSsz
-         ZQ8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752014077; x=1752618877;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j/9FFTs3Hz/7yNjDy98C2EAojjbwb0TEz5q962JZJd0=;
-        b=avl8JD5nL7Be+jwZOIR8S4ZFyWDWJHVivUIcQ8ESXSnHfhM7Iej0J1Q7KHy+0pwkLv
-         3iyEgbu5LEFXAhoR5smWKQyp7DXufqhFiKCD7Bzz5OuJuUoRLU59ANnGfD4bABnKp2XJ
-         ZV1Nrs82hkR3zboKEV0g9fzgxxGwaBrST3DUdSV5hl8jqK00jwQ5L6ME4FfliaTYAFWl
-         BHOw+fcemT1vbCHCCzmo8eqNcCdvbH5TcZIaHThmNPJDtI50mdoaz764aax6dYwD93ut
-         JHYoe1tLrGGrLLJitVckdt2HyTXSuPVb7M0czpnvzndqr4AadZ97uQmlU+MGSwwvlm8Q
-         ZjiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuHWkQ0MvxY7D1gNrbg/Tpf1SWY1EefFTYJehC05UjpCYCobGueA7hwEqbUwYoOvxboAUQKDg5Oe70WTo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDF6QFcwgLk5Gwv3l0miXV6FoQQJBlMr5T97QyWSJCMLHW63az
-	fft5I14r38w+2aJIjxx+xg2uSLe+49Bqdrl8nP0ZpeRaaCLe+PciBqi6053UReWOFb5Oe0JVWBU
-	U7FzngMCnS2vT6XBdPJl9qMWsAw==
-X-Google-Smtp-Source: AGHT+IHW+RfduRT7VliGk050iQEqjU318xPGArkYZW5dZzAyyRBuwQAaT6oV8zuk0wkHYQ4WnuckwA/hmtfDS9hyaw==
-X-Received: from ilfg10.prod.google.com ([2002:a05:6e02:198a:b0:3df:30df:d2c4])
- (user=coltonlewis job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6e02:339f:b0:3e0:4564:4ef9 with SMTP id e9e14a558f8ab-3e166ffbeb5mr5390855ab.4.1752014077049;
- Tue, 08 Jul 2025 15:34:37 -0700 (PDT)
-Date: Tue, 08 Jul 2025 22:34:35 +0000
-In-Reply-To: <aGvwLIAN8rhxtA_V@J2N7QTR9R3> (message from Mark Rutland on Mon,
- 7 Jul 2025 17:05:00 +0100)
+	s=arc-20240116; t=1752014145; c=relaxed/simple;
+	bh=Uw3P5pATGG2sohnbKTzV4ZbHbZx4Vj5bZe0g4ojHees=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Qbjo2fL6QyfQh4aF6yIXeJq6ZTgnKAaY9wCGrdpNJ+rTr781u6u7ke9PufCjnQ+v5LT9NanbDVWFlEMmPs/2miWPvaKzZQ7xYQBGcVOnAXJ4XdZlRcIqq9iENE0eCVQWbXqNcxyJSLXmSk+lvbDahDBGPamk5jXghQbGrjd73FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=eD+CN7dy; arc=none smtp.client-ip=202.108.3.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752014140;
+	bh=xESfFpWV/xhoQJW1X3B88U4/8BWKHV+N80jTCVVZS9o=;
+	h=From:Subject:Date:Message-ID;
+	b=eD+CN7dyn2L5+deY/M7tvNhNVpyjhiUTU98GVtzT8KiDeVjcVh4thMnBrWQnLakKP
+	 JRFlo6r02JjzNWY3logc3pchnHzejadAEOFveuFogKVi09oJPPgs6CVQcSTKJ02WPa
+	 B9CGpvc2RcwDFzRq9c9MAV6fIE84vRTf4M9cRSUs=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.33) with ESMTP
+	id 686D9D3800004A74; Tue, 9 Jul 2025 06:35:37 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 5128396685252
+X-SMAIL-UIID: 15AC2DCC886B41B4ABF580884E0EFA08-20250709-063537-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+3f89ec3d1d0842e95d50@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [usb?] WARNING in usbnet_status_start
+Date: Wed,  9 Jul 2025 06:35:24 +0800
+Message-ID: <20250708223525.3029-1-hdanton@sina.com>
+In-Reply-To: <686d5a9f.050a0220.1ffab7.0017.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <gsnt34b61fd0.fsf@coltonlewis-kvm.c.googlers.com>
-Subject: Re: [PATCH v3 01/22] arm64: cpufeature: Add cpucap for HPMN0
-From: Colton Lewis <coltonlewis@google.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: kvm@vger.kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
-	linux@armlinux.org.uk, catalin.marinas@arm.com, will@kernel.org, 
-	maz@kernel.org, oliver.upton@linux.dev, mizhang@google.com, 
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, 
-	shuah@kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Mark Rutland <mark.rutland@arm.com> writes:
+> Date: Tue, 08 Jul 2025 10:51:27 -0700
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    d1b07cc0868f arm64: dts: s32g: Add USB device tree informa..
+> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1554d582580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=28729dff5d03ad1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3f89ec3d1d0842e95d50
+> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11680a8c580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14c9abd4580000
 
-> On Thu, Jun 26, 2025 at 08:04:37PM +0000, Colton Lewis wrote:
->> Add a capability for FEAT_HPMN0, whether MDCR_EL2.HPMN can specify 0
->> counters reserved for the guest.
+#syz test
 
->> This required changing HPMN0 to an UnsignedEnum in tools/sysreg
->> because otherwise not all the appropriate macros are generated to add
->> it to arm64_cpu_capabilities_arm64_features.
-
-> I agree it's appropriate to mark ID_AA64DFR0_EL1.HPMN0 as an
-> UnsignedEnum. It follows the usual ID scheme per ARM DDI 0487 L.a
-> section D24.1.3, and zero means not present, so it must be unsigned.
-
-> Likewise, the value renames (UNPREDICTABLE => NI and DEF => IMP) look
-> fine to me.
-
->> Signed-off-by: Colton Lewis <coltonlewis@google.com>
-
-> I have one minor nit below, but either way:
-
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-Thank you Mark
-
->> ---
->>   arch/arm64/kernel/cpufeature.c | 8 ++++++++
->>   arch/arm64/tools/cpucaps       | 1 +
->>   arch/arm64/tools/sysreg        | 6 +++---
->>   3 files changed, 12 insertions(+), 3 deletions(-)
-
->> diff --git a/arch/arm64/kernel/cpufeature.c  
->> b/arch/arm64/kernel/cpufeature.c
->> index b34044e20128..73a7dac4b6f6 100644
->> --- a/arch/arm64/kernel/cpufeature.c
->> +++ b/arch/arm64/kernel/cpufeature.c
->> @@ -548,6 +548,7 @@ static const struct arm64_ftr_bits ftr_id_mmfr0[] = {
->>   };
-
->>   static const struct arm64_ftr_bits ftr_id_aa64dfr0[] = {
->> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE,  
->> ID_AA64DFR0_EL1_HPMN0_SHIFT, 4, 0),
->>   	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE,  
->> ID_AA64DFR0_EL1_DoubleLock_SHIFT, 4, 0),
->>   	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE,  
->> ID_AA64DFR0_EL1_PMSVer_SHIFT, 4, 0),
->>   	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE,  
->> ID_AA64DFR0_EL1_CTX_CMPs_SHIFT, 4, 0),
->> @@ -2896,6 +2897,13 @@ static const struct arm64_cpu_capabilities  
->> arm64_features[] = {
->>   		.matches = has_cpuid_feature,
->>   		ARM64_CPUID_FIELDS(ID_AA64MMFR0_EL1, FGT, FGT2)
->>   	},
->> +	{
->> +		.desc = "FEAT_HPMN0",
-
-> Minor nit, but we can drop the "FEAT_" prefix here, for consistency with
-> other features (e.g. E0PD, FPMR).
-
-> Mark.
-
-Will do.
-
->> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
->> +		.capability = ARM64_HAS_HPMN0,
->> +		.matches = has_cpuid_feature,
->> +		ARM64_CPUID_FIELDS(ID_AA64DFR0_EL1, HPMN0, IMP)
->> +	},
->>   #ifdef CONFIG_ARM64_SME
->>   	{
->>   		.desc = "Scalable Matrix Extension",
->> diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
->> index 10effd4cff6b..5b196ba21629 100644
->> --- a/arch/arm64/tools/cpucaps
->> +++ b/arch/arm64/tools/cpucaps
->> @@ -39,6 +39,7 @@ HAS_GIC_CPUIF_SYSREGS
->>   HAS_GIC_PRIO_MASKING
->>   HAS_GIC_PRIO_RELAXED_SYNC
->>   HAS_HCR_NV1
->> +HAS_HPMN0
->>   HAS_HCX
->>   HAS_LDAPR
->>   HAS_LPA2
->> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
->> index 8a8cf6874298..d29742481754 100644
->> --- a/arch/arm64/tools/sysreg
->> +++ b/arch/arm64/tools/sysreg
->> @@ -1531,9 +1531,9 @@ EndEnum
->>   EndSysreg
-
->>   Sysreg	ID_AA64DFR0_EL1	3	0	0	5	0
->> -Enum	63:60	HPMN0
->> -	0b0000	UNPREDICTABLE
->> -	0b0001	DEF
->> +UnsignedEnum	63:60	HPMN0
->> +	0b0000	NI
->> +	0b0001	IMP
->>   EndEnum
->>   UnsignedEnum	59:56	ExtTrcBuff
->>   	0b0000	NI
->> --
->> 2.50.0.727.gbf7dc18ff4-goog
-
+--- x/drivers/net/usb/usbnet.c
++++ y/drivers/net/usb/usbnet.c
+@@ -254,6 +254,8 @@ static int init_status (struct usbnet *d
+ 				"status ep%din, %d bytes period %d\n",
+ 				usb_pipeendpoint(pipe), maxp, period);
+ 		}
++	} else {
++		return -ENOMEM;
+ 	}
+ 	return 0;
+ }
+--
 
