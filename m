@@ -1,144 +1,143 @@
-Return-Path: <linux-kernel+bounces-722066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 191A4AFD4CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:10:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66C32AFD4E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:12:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93D5E166050
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:08:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7601F3B8E04
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA94A2E5B09;
-	Tue,  8 Jul 2025 17:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5702DAFAE;
+	Tue,  8 Jul 2025 17:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XHzQc6mj"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IS7GnLSg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E5A2DCF7B
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 17:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6282BE46
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 17:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751994526; cv=none; b=LUKnuHUIUvj9oZTQrFQlws97Nn5fTlbAxjB/e0Rk4uV3SXz6Y0KoUcc8EM2kO0koL5R0CLNVrWRlf0V6tIw8g/18MTTv7tH50bm4rLBcdRFwjJ5imjHgn4LqAoDJdZ4glXcHpv6psGd8H4VNxVlwQfkRFWkbaBTfvFmsc8VomMA=
+	t=1751994553; cv=none; b=duYZ0++gBes5sQ8aS17+dOEvQHQLJ3kQzVno5tQ/M0MOORuy0TWKLm+cKmafST7iyMVm2lPFu7C1vEPXFK/mjFkZcJOpjwV0nJx706cQR96bJ8gAkyBtH9BGFSj6lnO2Kx8TezurKUvybXBSstUPaq4RsQ2024ls9s2G1MOt8cE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751994526; c=relaxed/simple;
-	bh=GHglzFE+Ixz0smICAMlxbuuSv/s54zBE6ok15ILfLDI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hJk8Lz6k0IOEmuCM6aoyfF76TuNVFvSLmfXbADVa0gsERoOu1V8kBxn5AU8ATXDDO/ftYMf9DRjlWvl25RUzdb2rlyDYRnMwfmlRPtxdeJXjaFjCrAJDPSFq9sre+7v/X0cgo1tRbDsSGrqO7BJ5UlYAbIUfEICvuSXyL5kLH9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XHzQc6mj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568AAFxc008265
-	for <linux-kernel@vger.kernel.org>; Tue, 8 Jul 2025 17:08:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mEXFn1f7VxEWXKlywCXNbVNhNpXfn1kydvwqsDgBq34=; b=XHzQc6mjJOMn4raw
-	kilbJTRZcvdtnowryALQXdGWloE5cDEA3tAd5F3Th/SFXV7ZCOyhvEQWHz7F4vWV
-	4XGKr5EGrsiaBu0ZhEUJXDen8SRR9U0KWINBlMe7HBNlDbLJ/A1/9pbZsPVp2OVp
-	3iDaFcdFWk0wr0MXHJncwbCoN/jN2bl4tPP+JJDZemuFpt5Ti8zbFIt2VP0qRPTP
-	e6zN3lVkpC2WrdPpwBvwrz5dB+oZnCmgZ7i2+bFuPnsxQpFaDFadrXFanPD7JlBg
-	BXuGr/h3XdqgPB8KD0d0wU0EtOCTKWXrZ4ZlImHmg4t4T3QQ4Lje1pAOuNApcDTJ
-	kb1G5g==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pucn0kvs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 17:08:43 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7d09b74dc4bso48063885a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 10:08:43 -0700 (PDT)
+	s=arc-20240116; t=1751994553; c=relaxed/simple;
+	bh=H6GKyy+LkHt9Ts0KAJJZWvPhz44BXO0Yp7vqgaoYxEg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=R8KOMdcP5BDRQ8trnGJmoH6+LFvZoOD0D0gqv++KOR2kh0q/eci+6OcYOHPARY78IhfDHYSbvnkEu6siGw9Y9T2QKZY+Po9XCTh1Y3L8VFGcQEMkIX8e3ADK7ZQbdgeUQ8kyJ/TCO1Xilmu8keBQgYD8uvY2zhc0uRMgskIxdCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IS7GnLSg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751994550;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H6GKyy+LkHt9Ts0KAJJZWvPhz44BXO0Yp7vqgaoYxEg=;
+	b=IS7GnLSgybCE2CbcmwRz7tmpanBpUU57f76vJSM5ghzxRqRlO7Qz2BhJ3ChWUopUhfmC/b
+	oSLRgD8q3Z+CT2+Kg/Y7XZj0oTpXZAW3oBquEp15xmAerov/MWFmRIGka1gGdHqJtJRtEJ
+	gMbErpjvGcOUMXVyqXatQEmyA4RbOM0=
+Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
+ [209.85.219.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-90-vqwXD5GLN3mRb26WPeVKnQ-1; Tue, 08 Jul 2025 13:09:09 -0400
+X-MC-Unique: vqwXD5GLN3mRb26WPeVKnQ-1
+X-Mimecast-MFC-AGG-ID: vqwXD5GLN3mRb26WPeVKnQ_1751994549
+Received: by mail-yb1-f200.google.com with SMTP id 3f1490d57ef6-e81d151012cso4999478276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 10:09:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751994523; x=1752599323;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mEXFn1f7VxEWXKlywCXNbVNhNpXfn1kydvwqsDgBq34=;
-        b=Of9VWJPzmwgp451W+uYXXI0U2+vDvLz1AVfF7Ie9UIEYYgXH65QGa/NF1zo/59mNem
-         HaV+bakC+yX2ieo+8rl6M0ihluBB2jJl5pbURe0yhZaYqs9k6RRLgMFRP0kwpETHLvG+
-         LLnojUiqIg2Yf8/VbF7QGz+1ry8bELqzTKM2q/+vjn4UmbBu/uD7icgw03Q+/CwfeAxO
-         5YhjZ7T0ZjVPLv8F3W73wTqEeBH7rbEVeaU76iSiaAw86sD+PnQjVXBl81zRL4Q1g5I8
-         BiMF5xC0tRiXwVmS4S8X4udwspOzKOzEBAwgjShm0rL1tqvT9A6cYybgp8MsjDd0qaDc
-         aNLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOPrKgVr5cSGhcJsGx2K/pP6FB5w1csz0Kwhuwo+mGgd2o8MHBsiBuPPN5OQPm15hWokuboEJbOx2saXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRPxuixgKvZI+7AsJ+H994+EEWFO3JaxMkE1HmdzxLxjXKkRXI
-	BqSvuCt8qbn6J27q2dEP5ERFcWvRZs0NmgH3Bq1dpSB0xwrBY/FJkUrYHI5NCWTrdyv0rOCjUlh
-	Hop/i0mP84MMAufqJntwOlX+eL6S84m/++Q6Dpn9dYE49QtUb14jbqaxtZlyjWu3gRnY=
-X-Gm-Gg: ASbGncsN5JfDjiaunxzrw3+oBk+g/z2aUGyh0ps3LFVhd4gXvWX/TCou7kOELntPOSg
-	+62+mweeTEgIthn6YspXABjvn7/zDdIQMdmKzBKjqN0ZEbpkuQi/8yLxRw8vPxWcxi42za3CyrI
-	QBazBlyj2F5fN4exPY6cWZud9K1Zmh27DOfVHEAVW+iOPMhkRHvfX5yBBlXt1Eaf2zW3WBS5/j3
-	Kr7LuNMNLk+6eE2TzSepUGI/lclaj9Mch5xGRBpza8piol/vC/9xZluotRUValJqYe/PKEFBZEr
-	Uy2g2V/9ky1O4UrGAX94Vl9B4XA/J3qo6JWpAP6yhYxk7WjaBDu3u6esWEsw8dPH71/jJIoipLF
-	lt5o=
-X-Received: by 2002:a05:620a:440b:b0:7d4:5cdc:81e2 with SMTP id af79cd13be357-7d5ddc9bdd4mr870235585a.13.1751994522848;
-        Tue, 08 Jul 2025 10:08:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFcNZy9pWSVwJg7fRmgzuM3id/0/CdApeVMj/tklF5yeHuIPH6i7ffymVFB2QsY1SEGTt8uiA==
-X-Received: by 2002:a05:620a:440b:b0:7d4:5cdc:81e2 with SMTP id af79cd13be357-7d5ddc9bdd4mr870211885a.13.1751994516343;
-        Tue, 08 Jul 2025 10:08:36 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f66d1c37sm928144366b.35.2025.07.08.10.08.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 10:08:35 -0700 (PDT)
-Message-ID: <e50c332c-eabf-4615-87ac-2d371f8ea640@oss.qualcomm.com>
-Date: Tue, 8 Jul 2025 19:08:33 +0200
+        d=1e100.net; s=20230601; t=1751994549; x=1752599349;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H6GKyy+LkHt9Ts0KAJJZWvPhz44BXO0Yp7vqgaoYxEg=;
+        b=PSu9jm+QGDcJLc83Bl6KHoZydZMXaxCsufvghh4CeoaM59c/TYon/jdIPU0APuNVVq
+         9w3mKtlYWI5vFXuRTnKd9Vv6LqO+HHZeZSpEbwuRHQmN3dEIF/+sL7DQNeJCvTNDNCLp
+         BkG9dTtrYTm9+NQGlFwjlQU30p/cj4Kvj6jFtTZevb4ZnWtwZM2CV1MOCrHJSFMXxVdi
+         cWPXRXoWJeV6EJOfSt++bvbOtraXmEEuhWhxzHxwlUKL4HQsellKIR9rPySlkEWYrX3i
+         Lyyq8tRRuQAjCVDY6ur9jArJU9H9mCioiPUq5SiJEaf2A1sCXKoExo4HoQx28//z1wYO
+         bomg==
+X-Forwarded-Encrypted: i=1; AJvYcCVw4JpYhj8ZmyoUfc26qEy2Pq9jdOhciqA1+gqyrdlFjv+Vv+g1BRUvjnTfilyvHVA+6jYfkWosIcwyE1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5GXJYZQox02ioU5ICs3j+7fHrHR+F5p0Z3VxxibF8om3GckG3
+	yZxXD5OBbHS7jdJ0XwchEX1boPQJpSqZQ0lFzabWkUJnEh1y6eVDjas3Qa+gm0Pk3uxOGn5wz4h
+	qMrON/Ha9Dipc38DEvF+rUyWcrJmBTSZci7BunXh4d+2oH3vr1qma48+DzopPwNHEeQ==
+X-Gm-Gg: ASbGnctXeS1FuhguugT37uhYCLUDPq+Gw1xHMkSTXttWE/wEdUusxD1dzbwDWUlaH69
+	8Op43pifdtm0Dd8WT/ZAOeawYqPDCodOhfEFf1kTL/iEvUN/FW5to6SoyZip4wwTbDhnOaieLQ7
+	9N5jgXHnqqiWDoKn8YptlnHWiTvjZpXcllyg++xj3A6EJxUZQbtYtt/o2FCPo7FeRfsRyZOaD2s
+	7nfzpa2hWWASZ5XuNyfOV37qfjweiYPQOSnKXbQO5jwwRq+QewuU7dpwK4erOHLRwTkR0leXLi5
+	SvV4C/AnCICmDdNsMFshNcW1Oq9mbDObXynu/kLKx8vUXjNgNqZTSIe20Ia4bXAp1Fmvq3P5
+X-Received: by 2002:a05:6902:18c2:b0:e87:a1fa:3247 with SMTP id 3f1490d57ef6-e899e19ce85mr18420309276.36.1751994548652;
+        Tue, 08 Jul 2025 10:09:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHs2nIqlA/XjsJ9BBEjIAiIfZc6drHzP66CbQlGWFLPD0PMyd3cSjQCFW3gOdhgAzsRrexePw==
+X-Received: by 2002:a05:6902:18c2:b0:e87:a1fa:3247 with SMTP id 3f1490d57ef6-e899e19ce85mr18420256276.36.1751994548235;
+        Tue, 08 Jul 2025 10:09:08 -0700 (PDT)
+Received: from ?IPv6:2600:6c64:4e7f:603b:fc4d:8b7c:e90c:601a? ([2600:6c64:4e7f:603b:fc4d:8b7c:e90c:601a])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e899c44066asm3408792276.28.2025.07.08.10.09.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 10:09:07 -0700 (PDT)
+Message-ID: <e5afbff5d8a0bb6448305a3f85a51e3772852ef8.camel@redhat.com>
+Subject: Re: [PATCH 2/2] NFS: Improve nfsiod workqueue detection for
+ allocation flags
+From: Laurence Oberman <loberman@redhat.com>
+To: Benjamin Coddington <bcodding@redhat.com>
+Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+ Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+ linux-nfs@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ djeffery@redhat.com
+Date: Tue, 08 Jul 2025 13:09:06 -0400
+In-Reply-To: <E38B4D1E-C7C4-4694-94E7-5318AD47EE1C@redhat.com>
+References: <cover.1751913604.git.bcodding@redhat.com>
+	 <a4548815532fb7ad71a4e7c45b3783651c86c51f.1751913604.git.bcodding@redhat.com>
+	 <a7621e726227260396291e82363d2b82e5f2ad73.camel@kernel.org>
+	 <59530cbe001f5d02fa007ce642a860a7bade4422.camel@redhat.com>
+	 <a93e72cfc812a117166c0b20e9cca4e5f8d43393.camel@redhat.com>
+	 <E38B4D1E-C7C4-4694-94E7-5318AD47EE1C@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 2/3] arm64: dts: qcom: Add eMMC support for qcs8300
-To: Sayali Lokhande <quic_sayalil@quicinc.com>, andersson@kernel.org,
-        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc-owner@vger.kernel.org
-References: <20250702085927.10370-1-quic_sayalil@quicinc.com>
- <20250702085927.10370-3-quic_sayalil@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250702085927.10370-3-quic_sayalil@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=GdQXnRXL c=1 sm=1 tr=0 ts=686d509b cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=sXtFBv1i6a_ckmA1iBkA:9
- a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: dHf8gaUZ1bBk6CN9RsgVUQ4H9cDAZqZq
-X-Proofpoint-ORIG-GUID: dHf8gaUZ1bBk6CN9RsgVUQ4H9cDAZqZq
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDE0NSBTYWx0ZWRfXxyB3RuOeaU5n
- uNCyJon2UqqZU4co1vIUXA2QAYtNBbWv4Ep/BUDrYhvdHXXXxdSm9RODkQTRkbDcpcBDATHHM/L
- N/cjvTCPIXNF2Iab1Jo8xQNSDoSJ/Mz9ubWFLx5VcmNR6wMrDz0ZJBjq5c5bLnfZlFqaUsM/JRu
- vmGOybDm9gR7LeGbsv1wJjaS6wM9e74zwy9Sl3IrUrjVlpoaXzJJFZzukyDobuj1g/JqptAPOMp
- SEvNK/cdkWkFCbzxe10RpWlfGcipyYfupJCDdhuQRzzba8VLtwPL0G0LPnsmkeqAAdgdy3pQ4dH
- nc9O3rV3GN7eDluyuw7cDtkcVkYo6zPWBwr5AySlmhGTCWJbRIoRx5u4rWEIZGGolnhQJ3XChQp
- h2/4Iek1Gkg3QcFpM0tTI2Svm8XYS5+h+cw+4232JbZyJ3brC3gDtxxvk7FsIXzbcULcGNz9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-08_04,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 clxscore=1015
- spamscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
- malwarescore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507080145
 
-On 7/2/25 10:59 AM, Sayali Lokhande wrote:
-> Add eMMC support for qcs8300 board.
-> 
-> Signed-off-by: Sayali Lokhande <quic_sayalil@quicinc.com>
-> ---
+On Tue, 2025-07-08 at 13:03 -0400, Benjamin Coddington wrote:
+> On 8 Jul 2025, at 12:50, Laurence Oberman wrote:
+>=20
+> > Both Ben's patch and Trond's fix the failing write issue so I guess
+> > we
+> > need to decide what the final fix will be.
+> >=20
+> > For both solutions
+> > Tested-by: Laurence Oberman <loberman@redhat.com>
+>=20
+> Thanks Laurence! I think we'll leave these two patches behind.
+>=20
+> I'm persuaded by Trond's arguments, and along with not needing to add
+> the
+> workqueue helper, I've properly posted that approach here after some
+> minimal
+> testing:
+>=20
+> https://lore.kernel.org/linux-nfs/6892807b15cb401f3015e2acdaf1c2ba2bcae13=
+0.1751975813.git.bcodding@redhat.com/T/#u
+>=20
+> There's only a difference of a comment, so it should be safe to reply
+> with
+> your Tested-by there.
+>=20
+> Ben
+>=20
 
-[...]
+Thank you Ben and Trond.
+Confirming that this patch works to correct this issue.
+Looks good.
 
-> +			interconnects = <&aggre1_noc MASTER_SDC QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-> +					 &config_noc SLAVE_SDCC_1 QCOM_ICC_TAG_ACTIVE_ONLY>;
+Reviewed-by: Laurence Oberman <loberman@redhat.com>
+Tested-by: Laurence Oberman <loberman@redhat.com>
 
-SLAVE_SDC1, see include/dt-bindings/interconnect/qcom,qcs8300-rpmh.h
-
-Konrad
 
