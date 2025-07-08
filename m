@@ -1,223 +1,283 @@
-Return-Path: <linux-kernel+bounces-721978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F8CAFD04E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:12:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F5D6AFD058
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA54E4A41DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:12:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9B2B4280DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB6B2E5402;
-	Tue,  8 Jul 2025 16:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4149A2E4262;
+	Tue,  8 Jul 2025 16:11:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="H6/bnwit";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="d+YFsz4K"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2VF67Tjl"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2051.outbound.protection.outlook.com [40.107.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA4B22FDE8;
-	Tue,  8 Jul 2025 16:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751991056; cv=none; b=Iz+frlCFFCa34ZXMZemY/DBbk3M6nUJ0lRURQgh+mRbXFPulCYxZ5Vebk5BgAOtlTObmlWpiBMMTGC7az8J1ZzCW6jDwjRvOsx2THzhQ0f62bF9ZIPUfB9ywud8QOhXxsO3Mt4j428I3Wc8XznGOQDZwpFvwjj7eSeeQrpCIGXc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751991056; c=relaxed/simple;
-	bh=YDlJRj8Eioq/1zrSvVxYfVdlOp9tOKFbvFgfSG2MT20=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=C6RNpBGArv07JsWFpqwuLVfI7y92kAZBhjW2QbLOTXkYE4J7r2aY5lIGoF4mgAcetVk5UlGFH2GvAAvSmP3k1muTg2C/SCBmO73Ge17Fxs5bsqWSo0w93HjU3aVk7mkEHkOeJjP2wi2U//uN1Rm7RikjHw432EV8cqKx4ZSYE8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=H6/bnwit; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=d+YFsz4K; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 2DB7D14001FC;
-	Tue,  8 Jul 2025 12:10:53 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Tue, 08 Jul 2025 12:10:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1751991053;
-	 x=1752077453; bh=I+gwg1nh8AA6RawodcdsYVFpushDVY0A4ZD+VOA3xZA=; b=
-	H6/bnwitxgpJEBIr68frASiwuqoIWFZC+05hVkP8+svrOco6RVdtpM7RdM6DRS45
-	RHal+IKA+Px4f8X/K6mX+d9srrfxY9zJ5z19UnI6gwhm0WVz5afw9m6wdtw8R8Ky
-	WzlFKmzsuopN+HBiPZVVNpXYX55oNelsjiIWUJm0dL16BTzjEkSFpu+rGD57ugVv
-	CMCJ3pSzyeVr8+7uB4E1WbeNU0HxjfYKwgN58cSD4ofywYI79j54ebKMsEk03/qj
-	OUJJY0+ZSwLn24P4SNR3zZCnh0FuuDWkC5yyVfQNQjbSwH+54Q0GHWswFrjSKP4o
-	wMr6Ii99BQEsnHVBYr769g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751991053; x=
-	1752077453; bh=I+gwg1nh8AA6RawodcdsYVFpushDVY0A4ZD+VOA3xZA=; b=d
-	+YFsz4K3gR6nDCHzxDEMnrZTYqBv84cXyWjEyw4xtIhOifcaNEV/tHBhh0h7DTYD
-	DN5R/P9WJV7PVSKQdm1BbrPwA5Em2km5NzT6EpvcpxxB7ibFl8IarctLKFseGHP3
-	0T53dOpwFz1B5CuP4V5xkS3zkqyDBUrHwN6wc7/ahNUAU/uESNE0KbI164LhMGGz
-	8Q50OhqLdHkYWGhxRI0Ch22D5kP0EZEo2K43aCAX+nb1TyhG3WVrjICZl/pT8pOH
-	pmeaWxeUa8vXQlpZznXv0+mEfGY4WV3Wl9sZuHBNDpE9Si7CVvhFADduh6DMLXkp
-	asUHJOVGcZ4oe230qlcpg==
-X-ME-Sender: <xms:DENtaE0rF-rwTepm92dAlS0geD4nB3aCpcz426g5FlFMX_K5uEsynQ>
-    <xme:DENtaPG5tnW6vYi1u1WOXucDH0DzsyLCedqlC34uJaIq8qd1GoJNhC7zcrDzvsCB_
-    _HJAfp9xAtuMlqkmno>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefheduvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepjhhsthhulhhtiiesghhoohhglhgvrdgtohhmpdhrtghpthhtohepsh
-    grrhgrvhgrnhgrkhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlmhgtvhhi
-    tghkvghrsehgohhoghhlvgdrtghomhdprhgtphhtthhopehhrghnshhgsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    shgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrhigrnhdrohguohhnoh
-    hghhhuvgeslhhinhgrrhhordhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggr
-    nhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehlohhrvghniihordhpihgvrhgrlh
-    hishhisehlihhnrghrohdrohhrgh
-X-ME-Proxy: <xmx:DENtaP-74YN1bE9Ic220HsZi_eECeqj9Hn-9mhr3P5Wt9A0AN4SfGQ>
-    <xmx:DENtaDkww4FicqYSpcv0wLv59DHm2TXacR9qdq3jZu3LetXY1BPh-Q>
-    <xmx:DENtaMYdrjOG5-wGSA6anArF0Q92ydnc8ljwCqpn7zjv8ltwyYPwVg>
-    <xmx:DENtaDMZvKq52HpndEM9SeHjiilo9_gxHodtlhnrHNBNvO79JJgUpQ>
-    <xmx:DUNtaJ_0v2Nbp76kpIefnmKD7qdkhAf6mWRLqWHaTUGcjsp5rE0TYoJq>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id B034F700069; Tue,  8 Jul 2025 12:10:52 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52C02E4264;
+	Tue,  8 Jul 2025 16:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751991076; cv=fail; b=RbWQa6rI7u5WLAkL1pSS8CKy87Ms+Tr6WamNvIQogR0xB2iJeZ/6/s4FXAyvLccxiLFO2QewVlDJtfc94QQXUlTn07Fd8TlfITRTJjo1fo4OkcfavjKwHuzePnNh45ReFX/eX/l9sJ2znNvH4jsjhzFPyb+Gxzaq1bTKEGusDMs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751991076; c=relaxed/simple;
+	bh=nlVXvr/JmQGdDftRfSAkoQccwrDb5KRO5ZjPHwVoBcA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=KPDZEBKVVOEODXA36wquyzovHVvVYQW4VIhAj2yNkfaGgRYyhQNnSFNMwHeQHuyamW2uN6+Q+CX/UD/aay0ievJmJG68wGxBxDcYlTr/49l/JE7RjidAvtod4O/rq10OmNGrYRXWfdEu4n43ahhYrs35+22T5VXSYtzW9OexZ5E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2VF67Tjl; arc=fail smtp.client-ip=40.107.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=S3dAOqWKCBkvGLxnbLAeimtW7f8dc6vkBb3i3/HUtSNdpWHR6DJ5jqBNpusOH76ze6E2uYbjeuR5aBwmv3C8y9SII1uIqFEtNgIavP23uHfihniPhMBPSZunfl1Zu0yFajtWpew4wmw8eoYEwgdQF34OI+6qKr6drOlu10WfFc+jkX8usfd+KENMNYDiE/9jMZaKk50GxkX5ePX5qJkg81XIyxac4rG65KrFrgahixRctz+oL+SjWCHDgXgi5EDOSVJkxAk2MKgOj5K6YnDGgmG2XLRB3dqXBNNGT2bmMGrJrWJA1Zb/ClhWclFgsfPIuZifnXLvqhwMEMg03qo6+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uotbA1FDMGM9qgV9D+FuBTiVn3fCyZij47tsJob/G5o=;
+ b=UUzusWp+igBmruy6hovDTKcHqf8X3v+SWk/VNhCAzhqGnzFz7OPWS5/BMpZ/d21JwgfWsqQLFiAs5ebkOkOIDeIuz/iTkgLIFheYo0SRyhBOVTwrgrTBKt0BsxPNJjCPpvRmav7gvMbsDt0TJ2E2pbco13+f2li3YRrh0t8A3rlkIlmfvUOxXmTvapqqHRggFox1rgSdyj/IrCSm6K8NPVVPbssemGyPzFnMoiHgAywenKDJCeVn/1SBSsBuf75tC8SBn3ntpJDCKur659uF2sgjoGjAD9c2yT3O37lhZg3/d060tc1YVWYq2NV/0WYpb+HuuOeIb0x5HKAKBQithg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uotbA1FDMGM9qgV9D+FuBTiVn3fCyZij47tsJob/G5o=;
+ b=2VF67Tjl+yqhDGMmVqflQRXMrgzC/vOWcu7XiItvQuc86Ty5JWTEDdJqQWLB+yF9odr2QWHiOvqP2AysD8Zxp1NWfIQuZCeaXV+RZFiI95iAXwrH7AI/tX0WpX8nk0ToU6mjTfAG8wSI3q4wwl4a4RSlEeue9jIdW1SmGrlYidM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by MW6PR12MB8960.namprd12.prod.outlook.com (2603:10b6:303:23e::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.36; Tue, 8 Jul
+ 2025 16:11:09 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%3]) with mapi id 15.20.8901.024; Tue, 8 Jul 2025
+ 16:11:09 +0000
+Message-ID: <fe24f8ab-39f7-4471-beb5-e623ea3fb75a@amd.com>
+Date: Tue, 8 Jul 2025 12:11:07 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/5] PM: hibernate: add new api pm_transition_event()
+To: "Zhang, GuoQing (Sam)" <guoqzhan@amd.com>,
+ Samuel Zhang <guoqing.zhang@amd.com>, alexander.deucher@amd.com,
+ christian.koenig@amd.com, rafael@kernel.org, len.brown@intel.com,
+ pavel@kernel.org, gregkh@linuxfoundation.org, dakr@kernel.org,
+ airlied@gmail.com, simona@ffwll.ch, ray.huang@amd.com,
+ matthew.auld@intel.com, matthew.brost@intel.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de
+Cc: lijo.lazar@amd.com, victor.zhao@amd.com, haijun.chang@amd.com,
+ Qing.Ma@amd.com, Owen.Zhang2@amd.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+References: <20250708074248.1674924-1-guoqing.zhang@amd.com>
+ <20250708074248.1674924-5-guoqing.zhang@amd.com>
+ <1fa50a8e-9942-45c4-bef0-f31c23ef9923@amd.com>
+ <41a78619-d9c6-4e2a-9684-056e91d09e64@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <41a78619-d9c6-4e2a-9684-056e91d09e64@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: YT4P288CA0052.CANP288.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d2::7) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T1067a3d3a42d0b8a
-Date: Tue, 08 Jul 2025 18:10:22 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Daniel Lezcano" <daniel.lezcano@linaro.org>
-Cc: "William McVicker" <willmcvicker@google.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org,
- "Lorenzo Pieralisi" <lorenzo.pieralisi@linaro.org>,
- "Hans de Goede" <hansg@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
- "Rob Herring" <robh@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "John Stultz" <jstultz@google.com>, "Stephen Boyd" <sboyd@kernel.org>,
- "Saravana Kannan" <saravanak@google.com>,
- Linux-Arch <linux-arch@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE" <devicetree@vger.kernel.org>
-Message-Id: <746ab617-4db9-414b-a250-06adeb618b8b@app.fastmail.com>
-In-Reply-To: <aGzp5esx1SpR9aL5@mai.linaro.org>
-References: <20250625085715.889837-1-daniel.lezcano@linaro.org>
- <aGMjfxIvbCkyR5rw@google.com>
- <27644998-b089-44ae-ae5f-95f4d7cbe756@app.fastmail.com>
- <aGzp5esx1SpR9aL5@mai.linaro.org>
-Subject: Re: [PATCH RFC] timer: of: Create a platform_device before the framework is
- initialized
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|MW6PR12MB8960:EE_
+X-MS-Office365-Filtering-Correlation-Id: 948796cb-04bf-4fb9-9380-08ddbe3a0d1e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TjNTUUw3VXY3SmFCN3hTVkkxNVd2ZkRXdm9hVm9qYXppcTQyYzZEamtLYStZ?=
+ =?utf-8?B?a2RIR3Z4RXZNNlF3bHdaWGNzRXRtWHROV0dsTDBGQ2lPQ1RWcDlSb1k5WmJi?=
+ =?utf-8?B?MHJCUk1SR0VzdWhIWmI5SWh0d2RVSXpkUlhmMXJEV0UwZVRLOTdNbmIvTE0x?=
+ =?utf-8?B?L25QdHRITlNtNEpSSjZGMlc5dUp6a0t3SnBuS1hVWjR0VENHZnpGcmFiUEFH?=
+ =?utf-8?B?MWtNYmE2TzF3bGt4cVN6UG5mVVh2RERnc1Rvcm1FanpwVUwxU1dhblFCREw1?=
+ =?utf-8?B?djBQOEZDbDRBSHpUQ3pNTWF2REl6UjQwek9WSTlMUE1BaWZkN2FvNjIzR2Z4?=
+ =?utf-8?B?Wk8ra2JXWVhUSDNyNWg0V25vZTB0S1lwTzBkZkdtZDBOVklrS01RamhWaUFR?=
+ =?utf-8?B?MjZpK0ZKcWRQMTI3UDlvVTNNYVFZS0JyQ0hZVTVGamRRdi9xdVpDaC9LKzBJ?=
+ =?utf-8?B?RFZ3ZThEOTBHNEo5Qjh6ZldiMUJIYXBpNm1WbGdlbUlEM0swYnc1a01JMyt2?=
+ =?utf-8?B?MXNHbUx6UEJTSzBxQjNsYWltRWE1dE1qV1J6S2s5T2lXSG8rb0FjUmhBUUJW?=
+ =?utf-8?B?eGtCTmNsKy9la2o5ZEVuN1Rvc0dCRmxwRUZCWTFEbnUzUitreTJMZXA3SzYx?=
+ =?utf-8?B?M2NiYjJwN1ZndHdiMlNPZmkzeG5KY1lyYjhGS01jMitpS1p2blA5WVI1eFBG?=
+ =?utf-8?B?NHg3UE1YUzJLcnB3U000OXMrZDFoaWsvMXFOL2ZhNUdzWWZDdHVMZWc1NWJW?=
+ =?utf-8?B?aXN1bWZIcUkrVHpTME4wTGFRV2dYWWdSYkJNV0JCdld0UFBTeDJkT0FhOTlS?=
+ =?utf-8?B?MG5WYW8yNkx0L04rUVpNRHdWRmVIeldyck9HZkd5QkZHNzA1U0k2OENiYndZ?=
+ =?utf-8?B?NHlCVDZEVXdsSkxWVlR6eFFrclNZUnJleGRqL0lqQ0JmMXowc1IwRFhHeFN4?=
+ =?utf-8?B?Vms4L3R1RHh0eTI3V00yTEFTeEpsMmhBcFdiM0NiUEtzTU1MdE5tZUJnMlpO?=
+ =?utf-8?B?NEswRDF1N0FVeW80SVlGNUxQZnJ4VGVBS1FjcTlBR1Y0MVpwbW5DeVNTK0w2?=
+ =?utf-8?B?dVZ4eGoyNnozWU5VWVU3ejRYanJxU3EvQ1k0UTN1OURkdUdlaVNaVFZyMHZs?=
+ =?utf-8?B?cWRGTG9mVkV1WDQrVXQzREQrNisrRlFDckdZQ091QnF2dkFjR2RJbnVreFU0?=
+ =?utf-8?B?YjRySjZ5YjgrNDFxVVRjaC9QZTRPRUhSUjdERlZmT05XRkhiWDJxb1JkeE9U?=
+ =?utf-8?B?NTNQYnl5dW0vdHVQcE96UXNJV0tWaTl3akEwTGp1NVZid2s0cVRqWkxEeUNT?=
+ =?utf-8?B?ZlVlaUFkUTVKcnFLNFFiM2dubkZ6dXJndlJ3NlFQd1BGYzBNbXJOblVrd2ly?=
+ =?utf-8?B?ZmpQS3E5VllDL2xxSHRFSkQ2UFhBVGxneTFxMWprcStlSEZTQUEvWGVRb1Bk?=
+ =?utf-8?B?QXM2WmtFU0R5NHlSNSt3dUEwRWZENDhWem82ZWR5Um42Z0JFdWlRZVkwaGtY?=
+ =?utf-8?B?R1pKVm10NUgzTGJ3V0VGczZVS0FqbG13RlRmQ3FXUERWWnJwRCtUT1JFQnNY?=
+ =?utf-8?B?ZVNrV2ZyOWVxNzYxUnJTUXdtRUYzOFQxZTdyUm5hYzZyT2lKVXZMeldsblZL?=
+ =?utf-8?B?RWpVMVVyWndna3BJNDNwM2xCRjBaU0tXV0ZLMzVsZ3Y1MEh4V3ZYY3h5SGtu?=
+ =?utf-8?B?TVNNMEFGV2w3aVE5TzYzMTlhMU1aeE9WeEJDV3FNN1lRc0s0VGh5aTdZNWhQ?=
+ =?utf-8?B?ZnkrUFFTSFQzYWtGb2ZabTNuTXZPY3JzZGRJSHlWYUNpVHVQc3FsVkd3em9N?=
+ =?utf-8?B?ZkV0djZVMU1OQ3ZZSnkrMVJDSzZoMm9CTWFHTnlLL0FuWXJZUXhkaUsxRXU2?=
+ =?utf-8?B?RE1uOWdESUVPcEsvKzRwZlJiNlQwZ04rbDg4dXZEQW92STVvMnJueXppTFQz?=
+ =?utf-8?Q?k5Vfrxr0Zhk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QUZiZUhrN0VCcWJDV09MQnpOVmRkL3lGOHdJcWdnbEtZT25ZSTJKTkdQamh2?=
+ =?utf-8?B?c0Y2Rko3a0tVdXlKQU8vdzVDNWRaZmIxbXdNcUsxZk1wNWx0ZGc5OFM1cDl4?=
+ =?utf-8?B?blBOOFpvbWtSUXRIL0k5N2tCUmZPTFhKQ3FTSTFqOFRsUnpQaGp5TWwzM1dC?=
+ =?utf-8?B?cWxHSjBkcnErY0FpM210dnF2MjNjOWJ3TXhTZG0rbnlwYUZBb1NyY2Ivc2tT?=
+ =?utf-8?B?L1FUb0tVdW0xRU5FSmdBcnJwdGpxWnhEMVFobm5nNnZpc0ptWFFhczZ0MXIz?=
+ =?utf-8?B?eWZMTWoyZXJud0kyeCs1V0MrRjI1VE5VYTV1T1NHWko5cnVoZkp0dXExNTdK?=
+ =?utf-8?B?ZldkcnJwRmZIUElSVTFmbTVBK043bStZaHZTS0FtQ2xHVW5tM0RUU2pyQnFX?=
+ =?utf-8?B?TCtpTVBsaHlVMUZtSHdQWlhFOGNsYkZ2RDR0RjlXTlUvRlNwMTA2TXp6eU1l?=
+ =?utf-8?B?VEVvQ205RGlUSnlFczlFeGMwM0dqckxhdzJUdUlkVkxkUGlTdHBlSlZya05T?=
+ =?utf-8?B?c1VYcnNGVGpXU3Y0MFNuK2lLclJSeWVyeWFCdjIyTFFNaSs2QTJSTitLRzMr?=
+ =?utf-8?B?ZFB6YnpNbVgybE5VNk1TdllIUWNLaHZHWmpxUElqMUNFcXltOFpDaE5UOG5P?=
+ =?utf-8?B?MFdaNzZLRDl2WWY5TVl6WHg2eGFzcjVLdEMxNDR6c3kvaVM4TTFBY0Iyc0Zk?=
+ =?utf-8?B?cER3eGxqSEpNenpBSTVIQkJXZ29XcHNFb0k0bWF3VFo4N09seTFwaVYvOXRh?=
+ =?utf-8?B?ZFN2S3RIZXl3cEhDaXJ1QUZHWFRPWnkrWlkwQlZxSEpQVk9hNDFldXNTN0FE?=
+ =?utf-8?B?U015aVBBYTJCZEE2S0FEY1JqOHVEUSt3YUtjZ3hQV0R2a2RwQzJudFpoSkxJ?=
+ =?utf-8?B?Y1NsVXhEY2hLY0RpN2pDbmhnTVVBclpQdDFqbFowUEhROVNpK25vQms2UEMy?=
+ =?utf-8?B?TXl3OWZXRmJVbHRDV3JjSmxJWXVhbDJWQW1tY2xnL24vU3NGS2N4bHRORStY?=
+ =?utf-8?B?WFhwaEoxUnpvWld3VTNtQjlsdkpmT1UvM284K1EzUkJiYXdtaFFJcjhydElP?=
+ =?utf-8?B?RGJDcHFMSkxOSTh0dmJ0SG5wRUdUM0I4MW43SzZkL293L3ZiRDd6ZzhtZU9Z?=
+ =?utf-8?B?TjMyejBiNDZOVndha2srOWQxaXlNSFJkd2VORTFSaFQwQndOSFh5Vys0RWFw?=
+ =?utf-8?B?bjI5V0IxUFg4aXpFY0tUQWxsVTdrcTdHNTRtdVRhR0ZSdUZhQ1A5b3puR3Jw?=
+ =?utf-8?B?UTJYK3B3eEpwdExQMTF6aHFnVWRxWWZPekMrMGR4TWtBR0RmQXR1SXQ3QnBm?=
+ =?utf-8?B?ZnBVaC91ay80ZlR1c2RwUktqeHE3RFdHbXJkTnY4ZmlDVDVmMk01YkJDNTU5?=
+ =?utf-8?B?Mm9WR1NoVGVwNmg2WnVuaVJqdTdFdklsdi9nZ1Y5WFV0Vml0WENXckJjdGpN?=
+ =?utf-8?B?YVVsWUdjY0ZMa1hzcm1SZDhpaUNjRzhaeFhrUFcyWHBRazEyUlRpTUNtbFJH?=
+ =?utf-8?B?SW1IMFdoS0VwV0hPTUlMWWZic2VuUjY5dWpkRFdsOXozMEU1M1Z2d0tzdnY3?=
+ =?utf-8?B?YnFER05iZWFNV2lQSVhSK0krbWdXOGdsSkMzOG9rVW5ValNZWStZRlpZd2tm?=
+ =?utf-8?B?SytiNEVSbEFSbHlSKzNGdXAvN0NmTVdDMlpJdXI0TlJ2Z1ozc0x6ZHlJYnpG?=
+ =?utf-8?B?U3VyKzF6VHlMUFQyejJMb3VldEpLam9qN2ViR3czeTFyd3pMZHJCYUJKeTlD?=
+ =?utf-8?B?UkxuUFI4SFJTbGRNZEs0WHl2UTVHT3JsZ2NENWtNT1c3Ykx5U2JqdkU0OHpB?=
+ =?utf-8?B?OFJEcFdYaXVyandIWUlLTzVSRjB0U0tpYlFQQlE1VVc2WEY4MURSVFZTRjNP?=
+ =?utf-8?B?ZkRZRzQ5TmFnNTBFSjRIblVrUnkwelVzU0hqc2F2MFRreHNCRld0UDNBZXBM?=
+ =?utf-8?B?OUVYaWQ4VzgxN3U5eTVmN2s1OEJtY1hnZXlRTXZxTE1lamFVdmUvZjBNVHpz?=
+ =?utf-8?B?R1k0RHRlWDRnaFZMdEVUSno2TWxFUUhkY0NZVUg5SFM5NVVVTXNCUG5FeXpv?=
+ =?utf-8?B?LytPem9BaFBHN1NkMldnZlVIeW9LQmhRS3pmbE9sTFN4RCtWL1BJRFc4YXlh?=
+ =?utf-8?Q?AgFyPt082yGFeA93kbiMQawDu?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 948796cb-04bf-4fb9-9380-08ddbe3a0d1e
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 16:11:09.5797
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ozGWGK/so4m1/F5RrYGkUfsqtGh6EQDrZwlfeG8YM/hXB2lZ4Nkx2b1zEDNxHBhI2k5c5zrbHU9vHbUNaMwXVA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8960
 
-On Tue, Jul 8, 2025, at 11:50, Daniel Lezcano wrote:
-> On Tue, Jul 01, 2025 at 09:52:45AM +0200, Arnd Bergmann wrote:
->> On Tue, Jul 1, 2025, at 01:53, William McVicker wrote:
->> >> @@ -1550,6 +1553,8 @@ typedef void (*of_init_fn_1)(struct device_node *);
->> >>  		_OF_DECLARE(table, name, compat, fn, of_init_fn_1_ret)
->> >>  #define OF_DECLARE_2(table, name, compat, fn) \
->> >>  		_OF_DECLARE(table, name, compat, fn, of_init_fn_2)
->> >> +#define OF_DECLARE_PDEV(table, name, compat, fn) \
->> >> +		_OF_DECLARE(table, name, compat, fn, of_init_fn_pdev)
->> >
->> > To support auto-module loading you'll need to also define the
->> > MODULE_DEVICE_TABLE() as part of TIMER_OF_DECLARE_PDEV().
->> >
->> > I haven't tested the patch yet, but aside from my comment above it LGTM.
->> 
->> The patch doesn't actually have a module_platform_driver_probe()
->> yet either, so loading the module wouldn't actually do anything.
->> 
->> I feel that this RFC by itself a good step in the direction we want, 
->> so Daniel should go ahead with prototyping the next two steps:
->> adding the platform_driver registration into OF_DECLARE_PDEV,
->> and converting a driver so it can be used either with the _OF_DECLARE()
->> or the platform_driver case.
->
-> I'm questioning the relevance of adding the macro when the driver is
-> not compiled as a module.
->
-> The first step of this macro is to allow the existing init functions
-> to be converted to the same signature as the module probe functions in
-> order to share the same code and take benefit of the devm_ variants
-> function which will considerably reduce the code size of the drivers.
->
-> Then we have the following situations:
->
->  1. The driver has to be loaded very early TIMER_OF_DECLARE_PDEV
->  (MODULE=no) the function timer-probe() is used
->
->  2. The driver is a module_platform_driver() and MODULE=no, then it is
->  built as a builtin_platform_driver(), we do not care about having it
->  loaded by timer-probe()
->
->  3. The driver is a module_platform_driver() and MODULE=yes
->
-> If we do the change to have the TIMER_OF_DECLARE_PDEV() adding the
-> platform_driver registration when MODULE=yes but using timer-probe
-> when MODULE=no, we change the initialization and we will have issues
-> with timers needing resources like SCMI clocks and where the
-> mechanisms rely on EPROBE_DEFER.
->
-> IMO, module_platform_driver and timer_probe must be separated.
+On 7/8/2025 12:07 PM, Zhang, GuoQing (Sam) wrote:
+> 
+> On 2025/7/8 22:36, Mario Limonciello wrote:
+>> On 7/8/2025 3:42 AM, Samuel Zhang wrote:
+>>> dev_pm_ops.thaw() is called in following cases:
+>>> * normal case: after hibernation image has been created.
+>>> * error case 1: creation of a hibernation image has failed.
+>>> * error case 2: restoration from a hibernation image has failed.
+>>>
+>>> For normal case, it is called mainly for resume storage devices for
+>>> saving the hibernation image. Other devices that are not involved
+>>> in the image saving do not need to resume the device. But since there's
+>>> no api to know which case thaw() is called, device drivers can't
+>>> conditionally resume device in thaw().
+>>>
+>>> The new pm_transition_event() is such a api to query if thaw() is called
+>>> in normal case. The returned value in thaw() is:
+>>> * PM_EVENT_THAW: normal case, no need to resume non-storage devices.
+>>> * PM_EVENT_RECOVER: error case, need to resume devices.
+>>>
+>>> Signed-off-by: Samuel Zhang <guoqing.zhang@amd.com>
+>>> ---
+>>>   drivers/base/power/main.c |  5 +++++
+>>>   include/linux/pm.h        | 16 ++++++++++++++++
+>>>   2 files changed, 21 insertions(+)
+>>>
+>>> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+>>> index 40e1d8d8a589..7e0982caa4d4 100644
+>>> --- a/drivers/base/power/main.c
+>>> +++ b/drivers/base/power/main.c
+>>> @@ -62,6 +62,11 @@ static LIST_HEAD(dpm_noirq_list);
+>>>     static DEFINE_MUTEX(dpm_list_mtx);
+>>>   static pm_message_t pm_transition;
+>>> +int pm_transition_event(void)
+>>> +{
+>>> +    return pm_transition.event;
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(pm_transition_event);
+>>>     static int async_error;
+>>>   diff --git a/include/linux/pm.h b/include/linux/pm.h
+>>> index 78855d794342..d1cb77ede1a2 100644
+>>> --- a/include/linux/pm.h
+>>> +++ b/include/linux/pm.h
+>>> @@ -657,6 +657,22 @@ struct pm_subsys_data {
+>>>   #define DPM_FLAG_SMART_SUSPEND        BIT(2)
+>>>   #define DPM_FLAG_MAY_SKIP_RESUME    BIT(3)
+>>>   +/**
+>>> + * pm_transition_event() - Query the current pm transition event value.
+>>> + *
+>>> + * Used to query the reason why thaw() is called. It will be one of 
+>>> 2 values:
+>>> + *
+>>> + * PM_EVENT_THAW: normal case.
+>>> + *        hibernation image has been created.
+>>> + *
+>>> + * PM_EVENT_RECOVER: error case.
+>>> + *        creation of a hibernation image or restoration of the main 
+>>> memory
+>>> + *        contents from a hibernation image has failed.
+>>
+>> I don't believe this documentation is complete.  In the use in this 
+>> series those are two events used, but as this is now exported this 
+>> might be used by other callers later which could use it for other 
+>> PM_EVENT_*.
+>>
+>> So because of this I think it's best to convert the comment in 
+>> include/linux/pm.h to kdoc and then reference that from this kdoc.
+> 
+> 
+> Hi Mario, thank you for the feedback. I don't have experience on kdoc. 
+> do you mean generate new `Documentation/power/pm.rst` from `include/ 
+> linux/pm.h` using the `scripts/kernel-doc` tool? Could you give some 
+> guidance on this? Thank you!
 
-I assumed that the entire point of your work was to simplify
-the code when you have both a early and platform_driver based
-probing in a single driver.
+If the comment starts with /* it's a regular comment.  If it starts with 
+/** it's a kernel doc.
 
-> Let's assume the one possible future use case with the VF PIT. This
-> timer is only used on ARM but now it is also supported for the ARM64
-> s32g2. For the first platform we need it very early and in the second
-> case, we need it later because the architected timers are there.
->
-> We should endup with:
->
-> static const struct of_device_id pit_timer_of_match[] = {
-> 	{ .compatible = "nxp,s32g2-pit", .data = &s32g2_data },
-> 	{ .compatible = "nxp,s32g3-pit", .data = &s32g3_data },
-> 	{ }
-> };
-> MODULE_DEVICE_TABLE(of, pit_timer_of_match);
->
-> static struct platform_driver nxp_pit_driver = {
-> 	.driver = {
-> 		.name = "nxp-pit",
-> 		.of_match_table = pit_timer_of_match,
-> 	},
-> 	.probe = pit_timer_probe,
-> };
-> module_platform_driver(nxp_pit_driver);
->
-> TIMER_OF_DECLARE_PDEV(vf610, "fsl,vf610-pit", pit_timer_probe);
+You should just need to convert it to a kdoc by changing it to /**.
 
-If you think we still need a module_platform_driver(), I would
-not bother adding TIMER_OF_DECLARE_PDEV() either, as the
-probe functions can easily be shared as well, the way that
-drivers/clocksource/renesas-ostm.c does.
+Then you can reference it using a link (IIRC)
 
-The only thing that would lose is the ability to call devm_
-functions because the device pointer is unavailable here.
+https://sublime-and-sphinx-guide.readthedocs.io/en/latest/references.html
 
-> If we change the TIMER_OF_DECLARE_PDEV to a macro which relies on
-> timer_probe when MODULE=no, then the "nxp-pit" on the s32gX will fail
-> to initialize because of the SCMI clocks not ready and the routine
-> won't reprobe the function. This issue won't happen with
-> builtin_platform_driver
+> 
+> Regards
+> Sam
+> 
+> 
+>>
+>>> + *
+>>> + * Return: PM_EVENT_ messages
+>>> + */
+>>> +int pm_transition_event(void);
+>>> +
+>>>   struct dev_pm_info {
+>>>       pm_message_t        power_state;
+>>>       bool            can_wakeup:1;
+>>
 
-The way I had expected this to work was that TIMER_OF_DECLARE_PDEV()
-always registers the platform_driver and just skips the
-section magic when it's in a loadable module.
-
-    Arnd
 
