@@ -1,154 +1,252 @@
-Return-Path: <linux-kernel+bounces-721971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 958C9AFD033
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:09:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1547AFD027
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 474A87A8515
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:08:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C401169649
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45AC2E5B07;
-	Tue,  8 Jul 2025 16:09:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D2D2E4242;
+	Tue,  8 Jul 2025 16:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lZuDGWr7"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Vh/4ThnA"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DDB22FDE8;
-	Tue,  8 Jul 2025 16:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751990941; cv=none; b=U6jAMZC+M3SmjRZ4zvuG8lNz3eU74gyjBTEOxvthyqbxoHxFxvuA2FnNruOBH/YpwC/0EqA8pYS00GiW7z1Z7SuVgzoFbIVajyf4s6yAbeHkCdXjKkxckQuJ5R1piGBNcDpyW/wbLFKG/+So8nLnOfrXvUBktkpkDGGlhyyrRLI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751990941; c=relaxed/simple;
-	bh=E1XNJwW3BrTwevuvMGtePENPxfdIEg4WnI7LQeUBvm4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=tvW5TaEyN85SjgPVw8dctcuPTjls4K2IuWtIpKvk0T67f2EP8aMJ/N0VXwJqpACy31FR977hgLE0z7gHVDho7Bv7SKwtZx3NGFZKhQz8kV5gzBNH1heM85sE4rYvrVDv9f63xuf5SRd84P9U/gNfVytUnZx0PNbLkvQrxFZT3iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lZuDGWr7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568EbfuO006230;
-	Tue, 8 Jul 2025 16:08:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DC1D6igSqBK1ID/1bd8ZrzQBsN/iFbBWMyoa4ABgCLc=; b=lZuDGWr731X/3msk
-	Y7Fp9WilTMto/9T+kDQPeA/ZG4ya/nUsG7GTvrW5QPkHjpMCitFTO2rzjwdsWThb
-	kbZ56sW9tXCC4rbVZG6g7NBzs1NZP+AljjzYDcl4Ie+nESNefXNHideKX5K7el2Y
-	Ffxel2I5kXa3mUn0kHFoU+hLy5LJKrbv31AI8WK2umw73XXmg8k4idsSL19y7xWC
-	6Pb4MEC+HbZlx9j9us417jWgh5FzvzQET4gZg4peOxvTvcnYOxVp3PZZQEMFxDjN
-	942g+D4JL8LZTNIpJDWzn/hU7KinYMaDHZOB9IUaKTg0+J9xkM0cYj1WtvxG7yyV
-	WhX2jg==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pu2b7r71-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Jul 2025 16:08:48 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 568G8lUF010182
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 8 Jul 2025 16:08:47 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Tue, 8 Jul 2025 09:08:45 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15BE82E4264;
+	Tue,  8 Jul 2025 16:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751990894; cv=fail; b=AThg+wPBn/W9fupqPCQ10DKdAQ1h+kT3sjmhnxUxVI24wKMJstPv3QWMWco8oqtCF44y9cCTnWGbyPafUqNB4sBGAFOcO5YLqEChwssjUY7OmO9mqZpSa06IlY4EHifJ9HjjOTbPNSPUxnNhFbrvl5lUaQEi8oOOL+PUok1C9Cg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751990894; c=relaxed/simple;
+	bh=kgMXvfBipcQusM1GiHHp49ADzVSwBnrdciDUsY3gQic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=W5QH1UJmZpq5GCXhhUhzzjmysY8cDRo1zp89PQkRvIYI0MFNQcVoQhKiYyCIEyYlg0V/KBDcYiatkwJsXZn+rFSHyoXD9rh93b0cL0yM4Sqas0JdWko5yZQ+pI61hQHWG2+yYgMIdcfdThcnJsrWhQsPNRzfvTS3EDLQm70Gy64=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Vh/4ThnA; arc=fail smtp.client-ip=40.107.236.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cvI6bkb36rVQyxKJ86fs2vkAIa8hoVqySxLV8yV7Bzrig8uc5nbZBUkKKxafgDFrzARbNL/CzrEca8/Is6Ld2ogDFJ/Q1cO16hJxxDPWmYr92YtTKQplNZfBInKiYj3NHym4uPWIjYy7sINKWlcGIBrVsznE7/tY97MSjoT0DLMZJnLYO8WqrPBguLcW9VjYAXE/DwHE7WCCr6CrJyC3gTkPVbEFNqBVgWbf4P0vZ/0ZYmo9uoinZ0kbk5dEstBem+sqMcKGJ4X963Rxdngjh1/3xQFQ3WpOzTvTvjjTdczQSwnbuN+UMBDAZs26lF9WWX7D/Hx+rfBaJIweE+xHrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IUv+fy2qxYjCK8Nuc9rtN67IMYT9vW1uDnf8dznPTaE=;
+ b=wC/Rq8yVQ4QU5Hqn5TMK8u3m0igIesgDS5OT06YbNkARpdYhd7uO8RmeDjmgoNZsk8CI1sglqH4UxAR6/vhfMKi8x9p58693u0PiPX8wyowoMvz45EIStgfy7z5LIVY9Jb/eAHIEn5FaeS3bgvDvwwKjWWHTr/oR+YjQtci16BugjzA3lT7+DMcG+PLI9auRsN7ljMwsiNrR7Wsyu6fFl13O4lP7L+Jn3k1yS1ePAucZnMrlcMG+uaGn4DEpo42zkX2/40Q6xyRIOIBTjkOXz5cY+AdUwJ9msVSQixOcRBlFxuDtrq2h+T27j58caCM8W9/IbitgoHvuhZPlIC0qHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IUv+fy2qxYjCK8Nuc9rtN67IMYT9vW1uDnf8dznPTaE=;
+ b=Vh/4ThnAm8wkqrxm7ImAXGBWSlPujKF8q9nASuchDn8dhVRXX6uxleXPc0qwjxn7yNm9y1hz6kggiinTSnFloL4n+KSQzc8p4mYqS8uXn2MuwJg/g0ReSnfVUK0ZdHRsiZgw83Xe/Kx64MQN46G3iW5FBhh7RBsn1FIy6ytlK2Y=
+Received: from SJ0PR13CA0006.namprd13.prod.outlook.com (2603:10b6:a03:2c0::11)
+ by SA3PR12MB8810.namprd12.prod.outlook.com (2603:10b6:806:31f::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Tue, 8 Jul
+ 2025 16:08:10 +0000
+Received: from SJ5PEPF000001EB.namprd05.prod.outlook.com
+ (2603:10b6:a03:2c0:cafe::98) by SJ0PR13CA0006.outlook.office365.com
+ (2603:10b6:a03:2c0::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.21 via Frontend Transport; Tue,
+ 8 Jul 2025 16:08:09 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF000001EB.mail.protection.outlook.com (10.167.242.199) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8901.15 via Frontend Transport; Tue, 8 Jul 2025 16:08:09 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 8 Jul
+ 2025 11:08:03 -0500
+Received: from [172.31.125.8] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Tue, 8 Jul 2025 11:07:58 -0500
+Message-ID: <41a78619-d9c6-4e2a-9684-056e91d09e64@amd.com>
 Date: Wed, 9 Jul 2025 00:07:57 +0800
-Subject: [PATCH net-next 2/3] net: phy: qcom: qca808x: Support PHY counter
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250709-qcom_phy_counter-v1-2-93a54a029c46@quicinc.com>
-References: <20250709-qcom_phy_counter-v1-0-93a54a029c46@quicinc.com>
-In-Reply-To: <20250709-qcom_phy_counter-v1-0-93a54a029c46@quicinc.com>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Luo Jie <quic_luoj@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751990919; l=1285;
- i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
- bh=E1XNJwW3BrTwevuvMGtePENPxfdIEg4WnI7LQeUBvm4=;
- b=wvOMJML3Fr+Tmx5TZbM8XRMZ+9eBeLFqRNhZa29hgCKPH0FGhWjeffTsZzEoxTLmYrY3Hm79j
- NqZD4uKL9yTAKI2RjaxpiPY4v3ND1cu5LeGAe5WJYP/j32ej3+BCPiA
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDEzNiBTYWx0ZWRfX4dxhcu+4lGwW
- 5jfQV8i6eUBiEczA8JMoOlwtkC6kv2x1mRgwAPZ7NzUCQUYJ5AaVXBJWQHRhhxBn/+LLwrvIYDp
- +cJyjFjm+Old3Fr5D2K0H88hlHfVajrfujd6lJxZ6DSLxmiGAFWPbjEfn3R988UV9BRtV1fDPaS
- j9kQx5Fd1FPmk5df93MSOl6U+vpFYlSApXFTaKhfzdmCSu2uYJTR0qBdOSqVtj6lRmq/z0kFFsC
- ckYwSFU+lSj/XUkQaXn8SD7mD3S9k05JAJD5yo/4AfMFo/i9alDiBCw0QLwyrhMcHBcs28bwYq4
- D0MUEwTnUWpKz3W5uJlHc5owtbrr5+VDfxDrmTEKsxwJBGcdhMm3U6KGRkjvntpEL3XN8Re42Jj
- n+ilFe5rvHZKX3uCnqyzFXtP3qEsLXVWox5DVMSoG+qOYgLHzMmhW54SAuOAsPnK8gLd/jsJ
-X-Proofpoint-ORIG-GUID: czHBwM4UwTvMFz6NRKw_YCk7OHY1_kQr
-X-Proofpoint-GUID: czHBwM4UwTvMFz6NRKw_YCk7OHY1_kQr
-X-Authority-Analysis: v=2.4 cv=erTfzppX c=1 sm=1 tr=0 ts=686d4290 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=VwXRJrvAj_jGHEK00D4A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-08_04,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 clxscore=1015 impostorscore=0 spamscore=0 priorityscore=1501
- mlxlogscore=999 bulkscore=0 adultscore=0 malwarescore=0 phishscore=0
- lowpriorityscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507080136
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/5] PM: hibernate: add new api pm_transition_event()
+To: Mario Limonciello <mario.limonciello@amd.com>, Samuel Zhang
+	<guoqing.zhang@amd.com>, <alexander.deucher@amd.com>,
+	<christian.koenig@amd.com>, <rafael@kernel.org>, <len.brown@intel.com>,
+	<pavel@kernel.org>, <gregkh@linuxfoundation.org>, <dakr@kernel.org>,
+	<airlied@gmail.com>, <simona@ffwll.ch>, <ray.huang@amd.com>,
+	<matthew.auld@intel.com>, <matthew.brost@intel.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>
+CC: <lijo.lazar@amd.com>, <victor.zhao@amd.com>, <haijun.chang@amd.com>,
+	<Qing.Ma@amd.com>, <Owen.Zhang2@amd.com>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>
+References: <20250708074248.1674924-1-guoqing.zhang@amd.com>
+ <20250708074248.1674924-5-guoqing.zhang@amd.com>
+ <1fa50a8e-9942-45c4-bef0-f31c23ef9923@amd.com>
+Content-Language: en-US
+From: "Zhang, GuoQing (Sam)" <guoqzhan@amd.com>
+In-Reply-To: <1fa50a8e-9942-45c4-bef0-f31c23ef9923@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB04.amd.com: guoqzhan@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001EB:EE_|SA3PR12MB8810:EE_
+X-MS-Office365-Filtering-Correlation-Id: a66047fa-e720-47eb-bd21-08ddbe39a1fb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|7416014|82310400026|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cVVNLy9iSW9hUmVNR1Z1ZVV0ZE5rVnVMNk5BNmpiSGxjMFdWM1diM201K0Fq?=
+ =?utf-8?B?Y21XY1lvRHNubzdHS1FUQTlyYWREZDEvTzJDc1VLOERwYTFXQjRYazBFRG1B?=
+ =?utf-8?B?bFZsZVFWcVAyNjRJR3F6UlZyV0JNTkFuMjNwUGVsZFVhSmZZVlVUSTJLVG41?=
+ =?utf-8?B?NEQ2WC9POEdVUmtHWlQ4SFRCRi82aXpOcU10RHhDVTF0eU1jaEV1WUlHWG9j?=
+ =?utf-8?B?MWRoWEJxY2VLYlNVYkhwQk4vc2dKcUhnTEswQWVhZWNDUHFhQjR6NVBYYkJn?=
+ =?utf-8?B?TURXSHQ5MDZNZ0xxR0k0RXJKbVczR0MzZkUyVUhyZ2R6d0JscUlHWGJUWGxK?=
+ =?utf-8?B?dHZ5b01MamE4c1krOS94d0E4V2lUMzFiUFpCRzMwVVd5b1VlL0VsWTVNOURD?=
+ =?utf-8?B?Z1NKalRWTzBYQjJUd3JyYldLY2l6UjBjNE1xK2RaTFFzRkxyY3RmaXB6eVdV?=
+ =?utf-8?B?TWJBU1pnYjBtYlRJMjh2Mm9jNUFlNEFnY3NIRE9QYVlEQkUvZjZEejZqZjB5?=
+ =?utf-8?B?L256WlY1L3FKUktodDFKNXRoVEpuWlRvR1hYVEJvd090WkVkM2JGdEVoUzhn?=
+ =?utf-8?B?T2QrTVFwY2h6NUtlL2IwcGVGbmJaeTFNU3pNVTlvOWlCOFQyR2txOERwVVFa?=
+ =?utf-8?B?WlBLRUR2WGQ5OHFNQUpyNVZrMTRxUU50Yms1MERHUENKSEhuQVpMVGZGR3NT?=
+ =?utf-8?B?NTRNMTI1d253c1BkNnVhUHY2OHd3MWxhSTl4NzNGQ1paTktOK2E1K3VkWkJZ?=
+ =?utf-8?B?b0xta2R4T242K2N2SVhNaWFrSU45aVFRVEQxVXNLK1ltcElHWHlvQU42Vjlr?=
+ =?utf-8?B?eHM4WERCS3ptbTVWbXdUZmhqc282UHdLN3J3cVB6S2lYaWZYdHhud1hkZFNI?=
+ =?utf-8?B?WngwbXMzYmtkVGpHYXQvNCt5czhueDM0eFNDejBWVURpRW9BbWlDOFlYMXgx?=
+ =?utf-8?B?bXhjMkd5VXI0R08ydjk1djRDckdqNGZxOFhMQUxvenFrNDZWdnh6REI2d3lx?=
+ =?utf-8?B?OTVmOUVCaHRUcC9FRGdzYkJGc3VFc1ZqekdQLy9BcVFsNGNBRnB5RFRUdWFz?=
+ =?utf-8?B?YXIrTE0zUk5BaUwzdTBSSVJ0ZlVwVUVvekd6cmp2cEVOcXhRMnpuQWpZa0ho?=
+ =?utf-8?B?R1ZzZkpodlJQOCtlN2RPdFlBbUZES1VYZU1iRCtpeUJYNWY5K0IzeFNlQ1po?=
+ =?utf-8?B?SUYrSDBydGdZalo0Wk5GVzkyMTJlNk9lbmFpczBHSkFSZm1MTkRrOGM4RVhL?=
+ =?utf-8?B?YjdNNXlqOWRNUGVhdGJtUmtNWXBYR0p4WGh6aWhsZ1pGZHdBNzRSaXhzb3lD?=
+ =?utf-8?B?Y3NWRWFCNUpDKzMraVg1NDdqaHZnK2xlWVZzamdnL2JkaGJZeW9jVUVzNjQ1?=
+ =?utf-8?B?aDIxcE5lMUxTVzZvanRURStQcm5pT0RsVWhqV0xJVnJnZ2Q1U0lGUVBYb2p4?=
+ =?utf-8?B?b0hRTk1PM2t0aUpSSjcvOVdrV1h3RWJrZWg4d2l0RTRPSXpRUzEwQS9HeTFR?=
+ =?utf-8?B?YWNUODF6OWFrTE1URWFhRk5KY0c3N1ozSXJBVnYxdjhuMEdPajJ3amtJTHk5?=
+ =?utf-8?B?eDJ0SGl4ZDRydk1LYU1nc1ZuQWxBbzlJS2JFK3pqUHlOdE5KQ25teDF3NFVy?=
+ =?utf-8?B?a1k0Q3RnalR1ZXhCVHNqdlU0M3B0d1RiYVliUnZTZndYTzMrK0V4d2lsWW9o?=
+ =?utf-8?B?NnZjY1NCSWNiYkJUWTFETzNRMi9pRXlPS0pENkJ5NnZ3Q2VWeVhERXVuMXdC?=
+ =?utf-8?B?RzZSVmY1MHB4RHNwUXVHdmNSM08vMVA4Vy9vUXVqVUt3a1NCRU5JZUc1U05U?=
+ =?utf-8?B?TmVnYmMrZytqVFlqMytlNnVycFlXR3ZadWl2d0VtanY0MWdFTnlqVEs5c0pE?=
+ =?utf-8?B?WnBDaS9lS1RxK2JLNGxXQnlUY1NxbDVoUVh5WDNBaktPS1NUMTRKeE1DMkVC?=
+ =?utf-8?B?RVRBYUdmTm9UNWNSU0xqS0Y4OUhZQ2J4ajdhd0pzQkhKbnBSWWlZTW1ZeGNI?=
+ =?utf-8?B?a3pPcjhkbHhVSTJVU3ZTalJicWNRVXZubmkrdzNoYUU2U2Npa0pIbjlXYWRN?=
+ =?utf-8?B?ZFhWbkJ3L2w4eHdwcEhMOWp2MllJd2tRTDdCdz09?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(82310400026)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 16:08:09.5186
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a66047fa-e720-47eb-bd21-08ddbe39a1fb
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001EB.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8810
 
-Enable CRC checking for received and transmitted frames within the
-config_init() function to support counter recording, and incorporate
-PHY counter operations.
 
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
----
- drivers/net/phy/qcom/qca808x.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+On 2025/7/8 22:36, Mario Limonciello wrote:
+> On 7/8/2025 3:42 AM, Samuel Zhang wrote:
+>> dev_pm_ops.thaw() is called in following cases:
+>> * normal case: after hibernation image has been created.
+>> * error case 1: creation of a hibernation image has failed.
+>> * error case 2: restoration from a hibernation image has failed.
+>>
+>> For normal case, it is called mainly for resume storage devices for
+>> saving the hibernation image. Other devices that are not involved
+>> in the image saving do not need to resume the device. But since there's
+>> no api to know which case thaw() is called, device drivers can't
+>> conditionally resume device in thaw().
+>>
+>> The new pm_transition_event() is such a api to query if thaw() is called
+>> in normal case. The returned value in thaw() is:
+>> * PM_EVENT_THAW: normal case, no need to resume non-storage devices.
+>> * PM_EVENT_RECOVER: error case, need to resume devices.
+>>
+>> Signed-off-by: Samuel Zhang <guoqing.zhang@amd.com>
+>> ---
+>>   drivers/base/power/main.c |  5 +++++
+>>   include/linux/pm.h        | 16 ++++++++++++++++
+>>   2 files changed, 21 insertions(+)
+>>
+>> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+>> index 40e1d8d8a589..7e0982caa4d4 100644
+>> --- a/drivers/base/power/main.c
+>> +++ b/drivers/base/power/main.c
+>> @@ -62,6 +62,11 @@ static LIST_HEAD(dpm_noirq_list);
+>>     static DEFINE_MUTEX(dpm_list_mtx);
+>>   static pm_message_t pm_transition;
+>> +int pm_transition_event(void)
+>> +{
+>> +    return pm_transition.event;
+>> +}
+>> +EXPORT_SYMBOL_GPL(pm_transition_event);
+>>     static int async_error;
+>>   diff --git a/include/linux/pm.h b/include/linux/pm.h
+>> index 78855d794342..d1cb77ede1a2 100644
+>> --- a/include/linux/pm.h
+>> +++ b/include/linux/pm.h
+>> @@ -657,6 +657,22 @@ struct pm_subsys_data {
+>>   #define DPM_FLAG_SMART_SUSPEND        BIT(2)
+>>   #define DPM_FLAG_MAY_SKIP_RESUME    BIT(3)
+>>   +/**
+>> + * pm_transition_event() - Query the current pm transition event value.
+>> + *
+>> + * Used to query the reason why thaw() is called. It will be one of 
+>> 2 values:
+>> + *
+>> + * PM_EVENT_THAW: normal case.
+>> + *        hibernation image has been created.
+>> + *
+>> + * PM_EVENT_RECOVER: error case.
+>> + *        creation of a hibernation image or restoration of the main 
+>> memory
+>> + *        contents from a hibernation image has failed.
+>
+> I don't believe this documentation is complete.  In the use in this 
+> series those are two events used, but as this is now exported this 
+> might be used by other callers later which could use it for other 
+> PM_EVENT_*.
+>
+> So because of this I think it's best to convert the comment in 
+> include/linux/pm.h to kdoc and then reference that from this kdoc.
 
-diff --git a/drivers/net/phy/qcom/qca808x.c b/drivers/net/phy/qcom/qca808x.c
-index 71498c518f0f..06967ce54036 100644
---- a/drivers/net/phy/qcom/qca808x.c
-+++ b/drivers/net/phy/qcom/qca808x.c
-@@ -243,6 +243,10 @@ static int qca808x_config_init(struct phy_device *phydev)
- 
- 	qca808x_fill_possible_interfaces(phydev);
- 
-+	ret = qcom_phy_counter_crc_check_en(phydev);
-+	if (ret)
-+		return ret;
-+
- 	/* Configure adc threshold as 100mv for the link 10M */
- 	return at803x_debug_reg_mask(phydev, QCA808X_PHY_DEBUG_ADC_THRESHOLD,
- 				     QCA808X_ADC_THRESHOLD_MASK,
-@@ -651,6 +655,9 @@ static struct phy_driver qca808x_driver[] = {
- 	.led_hw_control_set	= qca808x_led_hw_control_set,
- 	.led_hw_control_get	= qca808x_led_hw_control_get,
- 	.led_polarity_set	= qca808x_led_polarity_set,
-+	.get_sset_count		= qcom_phy_get_sset_count,
-+	.get_strings		= qcom_phy_get_strings,
-+	.get_stats		= qcom_phy_get_stats,
- }, };
- 
- module_phy_driver(qca808x_driver);
 
--- 
-2.34.1
+Hi Mario, thank you for the feedback. I don't have experience on kdoc. 
+do you mean generate new `Documentation/power/pm.rst` from 
+`include/linux/pm.h` using the `scripts/kernel-doc` tool? Could you give 
+some guidance on this? Thank you!
 
+Regards
+Sam
+
+
+>
+>> + *
+>> + * Return: PM_EVENT_ messages
+>> + */
+>> +int pm_transition_event(void);
+>> +
+>>   struct dev_pm_info {
+>>       pm_message_t        power_state;
+>>       bool            can_wakeup:1;
+>
 
