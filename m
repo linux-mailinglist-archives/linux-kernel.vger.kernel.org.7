@@ -1,359 +1,223 @@
-Return-Path: <linux-kernel+bounces-721924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DFD4AFCF83
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:42:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E54ABAFCF87
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 774663A25AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:41:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A4471BC82BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CEE2E265D;
-	Tue,  8 Jul 2025 15:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205232DECB1;
+	Tue,  8 Jul 2025 15:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="dCqk1r7f"
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UL+jT6t0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B4B2E36E2;
-	Tue,  8 Jul 2025 15:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751989265; cv=pass; b=UukvZYroySYYfnf3RyX3FBCHDaAervnLFlS+3+JRgfWBVx4A6Y1Ad3pzrm/az9Z66++F3Zgm3j6yys3wraXDVk41IGnH25lmKQXkpYTd+iYwapTzjipNMzBbe5ybdwN25s7c0QISYstJvRcdkgJi3tzBjovMPP7oQcvQTXjU02A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751989265; c=relaxed/simple;
-	bh=J3epfexzx6lyet5FPTwIn1Ue7WclKV1N9J8ER2k0uSU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=b2JMB7AGMUIYL9tNnL/CuClSxxg+RSYFfthKoyVnmXB/yjMpOVzvDjpo85V+cull9+EFjmOsLuF8H5Zj88fqy4yUP5WZyDEhL0piMlGIvsUAEX457CIzQdkXGPrFFpO6vg6GB3hV0OVFYFczj2tLkA20mOmISaZk+Q2ylCoocww=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=dCqk1r7f; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from [192.168.1.195] (unknown [IPv6:2a02:ed04:3581:4::d001])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pav@iki.fi)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4bc50t0rm0z49PwW;
-	Tue,  8 Jul 2025 18:40:45 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1751989248;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6492E0919
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751989343; cv=none; b=logIgDEM9nwtzvpJSGS7L/MoaIWcwTwV5wUe3CE5C+Hguc2lmPHv8ETUvbPGG1QxrgTipNEmRu/7ALk+U7ZUmlRjUznRSkdn+cosPQeHUmCtM/EVBCeWupQKEMJbf7oLIQu3iauuaUCo3VbFz2RSzJqy9DdbiVt+9XyzFbZ8Msk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751989343; c=relaxed/simple;
+	bh=4PG6A4qdPDJaDK9rSecXFeyWQlvQfmN3rmHwoACWPPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WeciW33Q0AAcArReMFwYjm9KllzHAD8vumSzRXPmZlh3LKVjt+8QsqYATWZ+6NwY0dzyQWsYkAW9ZIfKUVDjGoDGmMrU+niwDmc4nXGokqIrOxqr8OQAhRH7fl/ubsQfLpXI1Rlj7NCjLP0PpkjjCHThB56vLbrPwTYZv8ycWSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UL+jT6t0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751989340;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RcKP6Lz3/0XF15YRsRTE2y+bqfAAH0YGtQUqApJQBF8=;
-	b=dCqk1r7fJv5ZQGUCAnklzxwZ/lzRAKuQ/5iATD6CToFGgqGVKUOxnxMB6jXI+hmZYNxfnb
-	8so1xLOjZGv3ec7K3+ZmE6iV+XP8y/fPsGit0HdC4Ud9US5wm7/srtLpyoVgfh8h/3xitd
-	YKzCEZeSNQ5RpT4+xvXBykLvzzmnFEs1ZE7Kx2iL6eLmg9aDQR9/i20jRieOGVi8sboXHz
-	nsoxPeRJ08kfLGGnNwLGAHG2O/DCN8SibGvdDcOExdAH8F2Ddd9wF2mFPbXdYX3fHcmKCn
-	0hEnwU0EMLU/spBWXI7eKuZPK4Wx8nnEkAr7Xacsd3W3Id5tBLKBJWeQvBme/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=lahtoruutu; t=1751989248;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RcKP6Lz3/0XF15YRsRTE2y+bqfAAH0YGtQUqApJQBF8=;
-	b=uXjsrxMDQLDRr/HccMkVrJP/bkArZwCthWJIsbrZI9QXWmpicx0IWmtNGNmCo+vSXEFthw
-	KcB5xMbAJsUAaJkAsJ8sds5/W5jSehWgmohikbz5lgjPQ9MyfcQ186iMjOcvS0wy7Hf0Kv
-	nq/YQnYeW3XReI4g4i/zOVTgoL5WxJJNv81fhLQKZgw7h6iD4UCXcmco1otic3W1t5Biv6
-	m9VdnOm94SyrLIIT6fOkdgE5pTn+2aElPeTSxDmGmzA4YUc3L9LyNekzlT06UgrPMGNxS3
-	/263c0n9T3TDDj0uSqfLWZFt5dbg9N55EC2/2D0tbbxxdfKQPfEp52t67qYj6w==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pav@iki.fi smtp.mailfrom=pav@iki.fi
-ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1751989248; a=rsa-sha256;
-	cv=none;
-	b=BS88rs1JfJqv9u6/jt2O3jSeHuoey8TpG1vF2eb8QxQJsrkKhaDvLXYxyqnKc7BsCr1MpF
-	kchaQOHzuk91aqlfsqv1czm80kCXK5u9uDc2oceRq5sPFPN/TPh8NeBeLjywGhrK5ak34+
-	J2B0VH1fDu44ATv69xXuMQqi9m/W27Ipd9jC4Qhn46ckNgOEl/R4tWhrlxzBeUG52g2lGU
-	vt0vNhFX33VglQNkev7irRTP7bqpbIWInA3MbGI4pZPci1Li5elPSetOu4zR6hNLfivrkw
-	gxN9XJmrWBCpuHrSCUUcmOzYaJwTIPlLtESGetzUpxlcEpBWZt43P3kQEP+zmA==
-Message-ID: <786703eec0ff7160b2991c393f766b7584fb8433.camel@iki.fi>
-Subject: Re: [PATCH v3] Bluetooth: ISO: Support SCM_TIMESTAMPING for ISO TS
-From: Pauli Virtanen <pav@iki.fi>
-To: Yang Li <yang.li@amlogic.com>, Marcel Holtmann <marcel@holtmann.org>, 
- Johan Hedberg <johan.hedberg@gmail.com>, Luiz Augusto von Dentz
- <luiz.dentz@gmail.com>, "David S. Miller"	 <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski	 <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Simon Horman	 <horms@kernel.org>
-Cc: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 08 Jul 2025 18:40:44 +0300
-In-Reply-To: <8f4f0d1d-aff1-42e3-9ab0-a5eb6ca1523c@amlogic.com>
-References: <20250704-iso_ts-v3-1-2328bc602961@amlogic.com>
-	 <bebb44579ed8379a0d69a2f2793a70471b08ea91.camel@iki.fi>
-	 <df9f6977-0d63-41b3-8d9b-c3a293ed78ec@amlogic.com>
-	 <3586e2f53a1a4c0772515846cf5ec91044e2cfec.camel@iki.fi>
-	 <8f4f0d1d-aff1-42e3-9ab0-a5eb6ca1523c@amlogic.com>
-Autocrypt: addr=pav@iki.fi; prefer-encrypt=mutual;
- keydata=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
- bzyGkKh2h8XdrYhtDjw9LmrprPQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	bh=O1MbuMS/xAVXqVQl4KdN8hBfeBeFym/jGvqVlzXbTwQ=;
+	b=UL+jT6t0+WgFzdzSVGg1N9RPvIIgc2B49rvK3Ww+JOxh10a8o1zYMAusU/OVviYBEIHnlo
+	VoSG5ydNyZCoLO95it6nd1cX5oMo91tVd92jVbqUZ+FWnUxTc3kAPIsSbv0WovzAxPvkH6
+	A7TODHEkR1i6e+Qr+QlO9vUgJKPH0pI=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-475-fpfQOwxzPESzxe1jpVIAlQ-1; Tue, 08 Jul 2025 11:42:19 -0400
+X-MC-Unique: fpfQOwxzPESzxe1jpVIAlQ-1
+X-Mimecast-MFC-AGG-ID: fpfQOwxzPESzxe1jpVIAlQ_1751989338
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-451d7de4ae3so27162885e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 08:42:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751989338; x=1752594138;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=O1MbuMS/xAVXqVQl4KdN8hBfeBeFym/jGvqVlzXbTwQ=;
+        b=bc75KRHXCksRLMJ2xg7PhYR34GLkP02vY4cZNGBV4HpJmvD96QcY/XeqRnKKHd/jY0
+         1tl7MNdsL+zquSW9Kwpr4IIxptOSpSfgrcsSt/MMtIWTFPQXIqZCuoiXiaQPVNxQzuAP
+         h7y5HsfFDNImyo3kJRVMkIgJJXRJUvvZRd4kO2cUfWSMG6PeMEaW644IM/IBCxcZ57VJ
+         wOv/J+AzslgCsCeK455gnKgjVfqJ6pirFKpHBmeayz7Fp7RBVA7AantGBdUe5hCNqY18
+         R/Ogy1TPcLc7gZFtfmDFUKVQ9TchD3unBzOSz46brNo4bM25iFw4etskImKfIVWJjvoU
+         tH1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUlAkfLvUz2rJpQsZuelGkUUV3JADvRCC5Er4lEI8/Fo41KtnlcvDn/RHhmk76v6b4W64tpeZSVv1SFvq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSSJm9cP4guI/SdmIuH4RrFnmYJtgef6LoKyaqNJ7TXdJCJ2y/
+	Cd8S41VqwzIvEsO4O7TIt9PX36V+YIkUQnh+sENaSD4aE+MbCsQUco8/sHs+z6H2iioW5KuME/v
+	t7pg6oE9SeMQ15WjwWq79AkeT9QF6ulL2kLQntB83sNMOGVPAQk1k+tyak0eMVuY1jA==
+X-Gm-Gg: ASbGncv23Id0VmQ2oOerpt8eHgc7lSUZOO1F3ZtLaCRn+qfy3MZI64Ua3ZsiLtMF3fO
+	sWwmh8XYSf/cQ/xmW78VJLsJwfl1++lgRPSCLzU8FWQAlwQ61mtuSc/gcuNG3o4zS1Qt9SNqvIA
+	9rBjgBhMzccE6MzcYWox6ZbdjdNquq2yEJ0LS/0SJmd39uhKz59hfvfxh7EkDr0Wi3eMKHAFC9a
+	8tQAx5FlrO8rS0fttOD2mkUkFiaXslR+PCcejnI8lPHz0kK6kERugbzyU3LE1Yhza0HXi/8lHcU
+	clS/tV2EcGPlp93g1cwamtiOTnjfHhzoZmZxUpEMgdwmimFhgYBFFfISJU3LP42Az5spZJnTEQd
+	cKjjpvnpi4YGOvutyj2BjKkKz+cXvKqo9QKUFv0q8f1LR4HCqww==
+X-Received: by 2002:a05:600c:4f16:b0:450:d37d:7c with SMTP id 5b1f17b1804b1-454d31e6959mr2743025e9.21.1751989338082;
+        Tue, 08 Jul 2025 08:42:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF8HZ/ySqJpRlxvKJLl+IGmRqojZ/l2Gp1cwjot7XvUeM+y9qFyp52qh/IPBupG3LXayXcx5Q==
+X-Received: by 2002:a05:600c:4f16:b0:450:d37d:7c with SMTP id 5b1f17b1804b1-454d31e6959mr2742615e9.21.1751989337562;
+        Tue, 08 Jul 2025 08:42:17 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f1a:f500:4346:f17c:2bde:808c? (p200300d82f1af5004346f17c2bde808c.dip0.t-ipconnect.de. [2003:d8:2f1a:f500:4346:f17c:2bde:808c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454cd3d2754sm25689455e9.24.2025.07.08.08.42.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jul 2025 08:42:17 -0700 (PDT)
+Message-ID: <a8f863b1-ea06-4396-b4da-4dca41e3d9a5@redhat.com>
+Date: Tue, 8 Jul 2025 17:42:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/userfaultfd: fix missing PTE unmap for non-migration
+ entries
+To: Sasha Levin <sashal@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, peterx@redhat.com,
+ aarcange@redhat.com, surenb@google.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250630031958.1225651-1-sashal@kernel.org>
+ <20250630175746.e52af129fd2d88deecc25169@linux-foundation.org>
+ <a4d8b292-154a-4d14-90e4-6c822acf1cfb@redhat.com> <aG06QBVeBJgluSqP@lappy>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <aG06QBVeBJgluSqP@lappy>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 08.07.25 17:33, Sasha Levin wrote:
+> On Tue, Jul 08, 2025 at 05:10:44PM +0200, David Hildenbrand wrote:
+>> On 01.07.25 02:57, Andrew Morton wrote:
+>>> On Sun, 29 Jun 2025 23:19:58 -0400 Sasha Levin <sashal@kernel.org> wrote:
+>>>
+>>>> When handling non-swap entries in move_pages_pte(), the error handling
+>>>> for entries that are NOT migration entries fails to unmap the page table
+>>>> entries before jumping to the error handling label.
+>>>>
+>>>> This results in a kmap/kunmap imbalance which on CONFIG_HIGHPTE systems
+>>>> triggers a WARNING in kunmap_local_indexed() because the kmap stack is
+>>>> corrupted.
+>>>>
+>>>> Example call trace on ARM32 (CONFIG_HIGHPTE enabled):
+>>>>    WARNING: CPU: 1 PID: 633 at mm/highmem.c:622 kunmap_local_indexed+0x178/0x17c
+>>>>    Call trace:
+>>>>      kunmap_local_indexed from move_pages+0x964/0x19f4
+>>>>      move_pages from userfaultfd_ioctl+0x129c/0x2144
+>>>>      userfaultfd_ioctl from sys_ioctl+0x558/0xd24
+>>>>
+>>>> The issue was introduced with the UFFDIO_MOVE feature but became more
+>>>> frequent with the addition of guard pages (commit 7c53dfbdb024 ("mm: add
+>>>> PTE_MARKER_GUARD PTE marker")) which made the non-migration entry code
+>>>> path more commonly executed during userfaultfd operations.
+>>>>
+>>>> Fix this by ensuring PTEs are properly unmapped in all non-swap entry
+>>>> paths before jumping to the error handling label, not just for migration
+>>>> entries.
+>>>
+>>> I don't get it.
+>>>
+>>>> --- a/mm/userfaultfd.c
+>>>> +++ b/mm/userfaultfd.c
+>>>> @@ -1384,14 +1384,15 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
+>>>>   		entry = pte_to_swp_entry(orig_src_pte);
+>>>>   		if (non_swap_entry(entry)) {
+>>>> +			pte_unmap(src_pte);
+>>>> +			pte_unmap(dst_pte);
+>>>> +			src_pte = dst_pte = NULL;
+>>>>   			if (is_migration_entry(entry)) {
+>>>> -				pte_unmap(src_pte);
+>>>> -				pte_unmap(dst_pte);
+>>>> -				src_pte = dst_pte = NULL;
+>>>>   				migration_entry_wait(mm, src_pmd, src_addr);
+>>>>   				err = -EAGAIN;
+>>>> -			} else
+>>>> +			} else {
+>>>>   				err = -EFAULT;
+>>>> +			}
+>>>>   			goto out;
+>>>
+>>> where we have
+>>>
+>>> out:
+>>> 	...
+>>> 	if (dst_pte)
+>>> 		pte_unmap(dst_pte);
+>>> 	if (src_pte)
+>>> 		pte_unmap(src_pte);
+>>
+>> AI slop?
+> 
+> Nah, this one is sadly all me :(
 
-ma, 2025-07-07 kello 16:18 +0800, Yang Li kirjoitti:
-> Hi Pauli,
-> > [ EXTERNAL EMAIL ]
-> >=20
-> > Hi,
-> >=20
-> > ma, 2025-07-07 kello 09:48 +0800, Yang Li kirjoitti:
-> > > Hi,
-> > > > [ EXTERNAL EMAIL ]
-> > > >=20
-> > > > Hi,
-> > > >=20
-> > > > pe, 2025-07-04 kello 13:36 +0800, Yang Li via B4 Relay kirjoitti:
-> > > > > From: Yang Li <yang.li@amlogic.com>
-> > > > >=20
-> > > > > User-space applications (e.g., PipeWire) depend on
-> > > > > ISO-formatted timestamps for precise audio sync.
-> > > > >=20
-> > > > > Signed-off-by: Yang Li <yang.li@amlogic.com>
-> > > > > ---
-> > > > > Changes in v3:
-> > > > > - Change to use hwtimestamp
-> > > > > - Link to v2: https://lore.kernel.org/r/20250702-iso_ts-v2-1-723d=
-199c8068@amlogic.com
-> > > > >=20
-> > > > > Changes in v2:
-> > > > > - Support SOCK_RCVTSTAMPNS via CMSG for ISO sockets
-> > > > > - Link to v1: https://lore.kernel.org/r/20250429-iso_ts-v1-1-e586=
-f30de6cb@amlogic.com
-> > > > > ---
-> > > > >    net/bluetooth/iso.c | 10 +++++++++-
-> > > > >    1 file changed, 9 insertions(+), 1 deletion(-)
-> > > > >=20
-> > > > > diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
-> > > > > index fc22782cbeeb..67ff355167d8 100644
-> > > > > --- a/net/bluetooth/iso.c
-> > > > > +++ b/net/bluetooth/iso.c
-> > > > > @@ -2301,13 +2301,21 @@ void iso_recv(struct hci_conn *hcon, stru=
-ct sk_buff *skb, u16 flags)
-> > > > >                 if (ts) {
-> > > > >                         struct hci_iso_ts_data_hdr *hdr;
-> > > > >=20
-> > > > > -                     /* TODO: add timestamp to the packet? */
-> > > > >                         hdr =3D skb_pull_data(skb, HCI_ISO_TS_DAT=
-A_HDR_SIZE);
-> > > > >                         if (!hdr) {
-> > > > >                                 BT_ERR("Frame is too short (len %=
-d)", skb->len);
-> > > > >                                 goto drop;
-> > > > >                         }
-> > > > >=20
-> > > > > +                     /* The ISO ts is based on the controller=E2=
-=80=99s clock domain,
-> > > > > +                      * so hardware timestamping (hwtimestamp) m=
-ust be used.
-> > > > > +                      * Ref: Documentation/networking/timestampi=
-ng.rst,
-> > > > > +                      * chapter 3.1 Hardware Timestamping.
-> > > > > +                      */
-> > > > > +                     struct skb_shared_hwtstamps *hwts =3D skb_h=
-wtstamps(skb);
-> > > > > +                     if (hwts)
-> > > > In addition to the moving variable on top, the null check is spurio=
-us
-> > > > as skb_hwtstamps is never NULL (driver/net/* do not check it either=
-).
-> > > >=20
-> > > > Did you test this with SOF_TIMESTAMPING_RX_HARDWARE in userspace?
-> > > > Pipewire does not try to get HW timestamps right now.
-> > > >=20
-> > > > Would be good to also add some tests in bluez/tools/iso-tester.c
-> > > > although this needs some extension to the emulator/* to support
-> > > > timestamps properly.
-> > >=20
-> > > Yes, here is the patch and log based on testing with Pipewire:
-> > >=20
-> > > diff --git a/spa/plugins/bluez5/media-source.c
-> > > b/spa/plugins/bluez5/media-source.c
-> > > index 2fe08b8..10e9378 100644
-> > > --- a/spa/plugins/bluez5/media-source.c
-> > > +++ b/spa/plugins/bluez5/media-source.c
-> > > @@ -407,7 +413,7 @@ static int32_t read_data(struct impl *this) {
-> > >           struct msghdr msg =3D {0};
-> > >           struct iovec iov;
-> > >           char control[128];
-> > > -       struct timespec *ts =3D NULL;
-> > > +       struct scm_timestamping *ts =3D NULL;
-> > >=20
-> > >           iov.iov_base =3D this->buffer_read;
-> > >           iov.iov_len =3D b_size;
-> > > @@ -439,12 +445,14 @@ again:
-> > >           struct cmsghdr *cmsg;
-> > >           for (cmsg =3D CMSG_FIRSTHDR(&msg); cmsg !=3D NULL; cmsg =3D
-> > > CMSG_NXTHDR(&msg, cmsg)) {
-> > >    #ifdef SCM_TIMESTAMPING
-> > >                   /* Check for timestamp */
-> > > +               if (cmsg->cmsg_level =3D=3D SOL_SOCKET && cmsg->cmsg_=
-type =3D=3D
-> > > SCM_TIMESTAMPING) {
-> > > +                       ts =3D (struct scm_timestamping *)CMSG_DATA(c=
-msg);
-> > > +                       spa_log_error(this->log, "%p: received timest=
-amp
-> > > %ld.%09ld",
-> > > +                                       this, ts->ts[2].tv_sec,
-> > > ts->ts[2].tv_nsec);
-> > >                           break;
-> > >                   }
-> > >    #endif
-> > >=20
-> > >    @@ -726,9 +734,9 @@ static int transport_start(struct impl *this)
-> > >           if (setsockopt(this->fd, SOL_SOCKET, SO_PRIORITY, &val,
-> > > sizeof(val)) < 0)
-> > >                   spa_log_warn(this->log, "SO_PRIORITY failed: %m");
-> > >=20
-> > > +       val =3D SOF_TIMESTAMPING_RX_HARDWARE | SOF_TIMESTAMPING_RAW_H=
-ARDWARE;
-> > > +       if (setsockopt(this->fd, SOL_SOCKET, SO_TIMESTAMPING, &val,
-> > > sizeof(val)) < 0) {
-> > > +               spa_log_warn(this->log, "SO_TIMESTAMPING failed: %m")=
-;
-> > >                   /* don't fail if timestamping is not supported */
-> > >           }
-> > >=20
-> > > trace log=EF=BC=9A
-> > >=20
-> > > read_data: 0x1e78d68: received timestamp 7681.972000000
-> > > read_data: 0x1e95000: received timestamp 7681.972000000
-> > > read_data: 0x1e78d68: received timestamp 7691.972000000
-> > > read_data: 0x1e95000: received timestamp 7691.972000000
-> > The counter increases by 10 *seconds* on each step. Is there some
-> > scaling problem here, or is the hardware producing bogus values?
-> >=20
-> > Isn't it supposed to increase by ISO interval (10 *milliseconds*)?
->=20
->=20
-> Yes, you are right. The interval should be the ISO interval (10=E2=80=AFm=
-s).
-> The 10=E2=80=AFs interval in the log happened because the kernel version =
-I=20
-> tested (6.6) doesn=E2=80=99t have us_to_ktime(), so I wrote a custom vers=
-ion,=20
-> but the conversion factor was wrong.
+Haha, sorry :P
 
-Ok, then there's no problem.
+-- 
+Cheers,
 
-Regarding the tests, it's probably fairly straightforward to add. Only
-thing that would need doing is to add new testcase similar to ""ISO
-Receive - RX Timestamping"" in bluez/tools/iso-tester.c with HW
-timestamping enabled, and edit bluez/tools/tester.h:rx_timestamp_check
-to also check HW timestamps if enabled.
+David / dhildenb
 
-> kernel patch as below:
->=20
-> diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
-> index 070de5588c74..de05587393fa 100644
-> --- a/net/bluetooth/iso.c
-> +++ b/net/bluetooth/iso.c
-> @@ -2251,6 +2251,10 @@ static void iso_disconn_cfm(struct hci_conn=20
-> *hcon, __u8 reason)
->=20
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iso_conn_del(hcon, bt_to_errn=
-o(reason));
->  =C2=A0}
-> +static=C2=A0 ktime_t us_to_ktime(u64 us)
-> +{
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return us * 1000000L;
-> +}
->=20
->  =C2=A0void iso_recv(struct hci_conn *hcon, struct sk_buff *skb, u16 flag=
-s)
->  =C2=A0{
-> @@ -2285,6 +2289,11 @@ void iso_recv(struct hci_conn *hcon, struct=20
-> sk_buff *skb, u16 flags)
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto drop;
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->=20
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Record the =
-timestamp to skb*/
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct skb_sha=
-red_hwtstamps *hwts =3D=20
-> skb_hwtstamps(skb);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (hwts)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hwts->hwtstamp =3D=20
-> us_to_ktime(le32_to_cpu(hdr->ts));
-> +
->=20
-> >=20
-> > > read_data: 0x1e78d68: received timestamp 7701.972000000
-> > > read_data: 0x1e95000: received timestamp 7701.972000000
-> > > read_data: 0x1e78d68: received timestamp 7711.972000000
-> > > read_data: 0x1e95000: received timestamp 7711.972000000
-> > > read_data: 0x1e78d68: received timestamp 7721.972000000
-> > > read_data: 0x1e95000: received timestamp 7721.972000000
-> > > read_data: 0x1e78d68: received timestamp 7731.972000000
-> > >=20
-> > > > > +                             hwts->hwtstamp =3D us_to_ktime(le32=
-_to_cpu(hdr->ts));
-> > > > > +
-> > > > >                         len =3D __le16_to_cpu(hdr->slen);
-> > > > >                 } else {
-> > > > >                         struct hci_iso_data_hdr *hdr;
-> > > > >=20
-> > > > > ---
-> > > > > base-commit: 3bc46213b81278f3a9df0324768e152de71eb9fe
-> > > > > change-id: 20250421-iso_ts-c82a300ae784
-> > > > >=20
-> > > > > Best regards,
-> > > > --
-> > > > Pauli Virtanen
-> > --
-> > Pauli Virtanen
-
---=20
-Pauli Virtanen
 
