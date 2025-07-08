@@ -1,183 +1,231 @@
-Return-Path: <linux-kernel+bounces-720712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F52CAFBF8E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:56:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEFC5AFBF91
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 417CE188E363
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:57:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14D904A2386
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FB01DB54C;
-	Tue,  8 Jul 2025 00:56:42 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3EF1DEFF5;
+	Tue,  8 Jul 2025 00:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HHFnL/dB"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1BA1C8611;
-	Tue,  8 Jul 2025 00:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94C18633F;
+	Tue,  8 Jul 2025 00:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751936201; cv=none; b=POBhHtpX/bzAz4SHMiS0vjsh2WsEqImqmRMuBGpoS4JASAh2xEnjNYu7Z4LHtypd6auskShHfmOrlgL0TYHQZjNUTfHAP1Ol33551xOIH+9I1SJ+4ZgbgOIn6WvAtT7kRJv9PJRXkNrGGnsFRGou+dFU4C9CrpITXJ91J/mVHGI=
+	t=1751936257; cv=none; b=SVNYN24vIoDOurkCygaMgoHOs+zrCUYH5IJ4fc4MhAqsUpemyWxkKsLrmmRGjPkxIWue/x3EE4yHTlTTPeJGSe96qfHdJ0aMwTiSm8hgSU548qGL2yTdAIhG+pISKHoWOQS/Vo4ff8t0/zTuWgFegjfIDi1rG+niXY1P+puY18M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751936201; c=relaxed/simple;
-	bh=+/F1bGbjjKvu1Uo6Wdq5/ZVs3WqOf6ln3yLQ6I089zE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ufXxKOEgcR0lHPVOmr+pY1mEnsOIDtKAnG7qeUkK89uBUvqoKXPmqAjWVXrkz7E7tGvrpjZaC+BdG8sJgVeLxsXKhf3x1rJV6WQH6beKBzjIdqtI5ZOBFVDSyU4NEXt0i19TH5RVhu06sAJb3DMKDS6eYfDpijKXhSLgl+ngUEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 63057f3e5b9611f0b29709d653e92f7d-20250708
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:54a55555-2426-4274-a88c-e24e906d6a63,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:339e88bba938cd16ff2c540091de5e7f,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 63057f3e5b9611f0b29709d653e92f7d-20250708
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 451992315; Tue, 08 Jul 2025 08:56:31 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 17B48E008FA2;
-	Tue,  8 Jul 2025 08:56:31 +0800 (CST)
-X-ns-mid: postfix-686C6CBE-6398994
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id A62AFE008FA1;
-	Tue,  8 Jul 2025 08:56:28 +0800 (CST)
-Message-ID: <6b28003b-58ee-4870-ade6-c488148a7b4f@kylinos.cn>
-Date: Tue, 8 Jul 2025 08:56:27 +0800
+	s=arc-20240116; t=1751936257; c=relaxed/simple;
+	bh=pEWuuzO75FdHQuUBjLHBDVKQP3TK9GJfR6oXQ/qgI+A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EmSxFZZ4zdWeY2XIEN6lsYHgBtl8uUgEQjvxZ+kfoKhnpNFeYBxJm2jw0A2j9csUqXIeRhLmi1hbWMVE2kqeM39ul39/U7+aaICDvZdvdUt6niDuEmZ0N9qwE7r22QmXSLrfIrKyI2dfbuIKBkOmPbhprfk0n1wBuyFjutjFYX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HHFnL/dB; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-74ad4533ac5so3841059b3a.0;
+        Mon, 07 Jul 2025 17:57:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751936255; x=1752541055; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wNUCviKwg+4KT+O9PcdqMmr4jCZBknZpXaowI9v0jKI=;
+        b=HHFnL/dBn8NkQuos5sjCMWqs/lbrbUfjIB8uF8+vpKp/48xpMG0K9t3xVSeUL70mmD
+         LNn/87O66Krr17yknBP+0Bm4ZFb9Z53HeRaH5jtSOk5Z64ECcEdaGfDp1f0N9VQRQsTd
+         bGI2MoQDluaHpLeqfJMxTRVhZSVEs5BJqYYvCoqA7jjWrXzJV8vxVEAhVgAP9qkOB8z5
+         YTZH7uOrKcSsl6n+wS1IcxiquzJtmeDHWTu2Zww+YlNFOUlKm3o2yzqFgejn7xHtgnvH
+         OO4fKIjgonyLzMWSZTLSUMkKMox7eUFF/19LbnlKmRqxTj+a6n+VfQCCRZQPkWocM1KV
+         tyBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751936255; x=1752541055;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wNUCviKwg+4KT+O9PcdqMmr4jCZBknZpXaowI9v0jKI=;
+        b=EUneObfZUNacIVF1XDYBInzfm0USxo0X8NLfpZPrMMAJXcLFlCFfAv93iI+6Sv9kcb
+         KM4VxLQ3/sDgxLKznHqJR4RNXInIXrmjGpyl74TT4kO+nnHQmgL58YqXkVfDBS9EoTRY
+         87YLzosimPhpwrJK3qjODmJxyqoNPW2DMyORJg2BmQLUCpAqFCsCJ9UGm78MDT9G2J7N
+         XMYxNPcfYNqRXKYV9zAPlv0hRwjA+jj/aOLENbtUGezqw3kcIkLrcUciP9qdb+6z27lo
+         CouhhkfL2xdPBjujr7Wat6YFwDV8eMilxfvPt0Dj7ezQzRDDMeTmLatNwgwlhplAEGEt
+         Vl0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU8d6K9DJe1obY7IVQqR5EESsRkqwK4n5rTTuU9gZvVbKpXG/oH0TWvCXXsJBL0zTXWe17pgd00@vger.kernel.org, AJvYcCW6PNVQvmFxdaCZJLT8bgUghAZoA0t75fLuBcrvT8s0xlBSZPrPCVXr092G/p8TAY9Kbehdfnr5e0X04jAa@vger.kernel.org, AJvYcCWqS0+JOQNftyldBmjNXtqhwTg0zO2P+s2DrdCcxY7c8cJMk9JuGdc2l3VcgFwArev3Pco=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnAXaHXHuJhLJSiT2PCXMrAMc1OC1JwPHKRL08f0EcsMwFj0Qk
+	JP3vruG2esia6zHICAnjad43mCagiAW0/2ZHnIWex4fdWk2YM2K6GImk
+X-Gm-Gg: ASbGncsA/nwrThXU1aTDm+YChCRWEczUVcr+xnszeNaE0NbqivuLo1GepatArZOALli
+	P+InF9ZgW/e5hZCmnfsLT8bgMj0OdEEjMNgfoMMswP4EQdseIwycVB3874FEcIkR5cCugd1Jg1L
+	7lfPJQ42bCx4MqJldwQeJbzL45vga2N/T2x/uBeGb25qn6t7KPEhGL4eYlLsxf/SFyIGCeowHmh
+	a7CCuwUc0Kq0im/hFsdaxqh8dTAUSmcyk9KEL58SwNTlglrETIFKqq2y6EL4W44H3ajcX9Yqyr3
+	MBbmw+4LvbLzvsCcdMNZtdujQ3jC0TKgiutC0Tulx3e0TUTMtF6gOgIrRjHh9tdWXQk=
+X-Google-Smtp-Source: AGHT+IHXo366oRwc1N3ei11TOtbJeTTLtiBEy4xfBpN/11epTl7eJGrY2mvCVQ9NRC2R0trSH8Z85A==
+X-Received: by 2002:a05:6a20:c79a:b0:218:17a2:4421 with SMTP id adf61e73a8af0-22b60db4dc6mr1098705637.10.1751936255061;
+        Mon, 07 Jul 2025 17:57:35 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c096:14a::647? ([2620:10d:c090:600::1:6ad])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b38ee62c615sm9889836a12.60.2025.07.07.17.57.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 17:57:34 -0700 (PDT)
+Message-ID: <4ae6fd0d54ff2650d0f6724fb44b33723e26ea49.camel@gmail.com>
+Subject: Re: [syzbot] [bpf?] WARNING in reg_bounds_sanity_check
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Paul Chaignon <paul.chaignon@gmail.com>, syzbot	
+ <syzbot+c711ce17dd78e5d4fdcf@syzkaller.appspotmail.com>, Andrii Nakryiko	
+ <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, bpf	
+ <bpf@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Hao Luo	
+ <haoluo@google.com>, John Fastabend <john.fastabend@gmail.com>, Jiri Olsa	
+ <jolsa@kernel.org>, KP Singh <kpsingh@kernel.org>, LKML	
+ <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+ Network Development <netdev@vger.kernel.org>, Stanislav Fomichev
+ <sdf@fomichev.me>, Song Liu <song@kernel.org>,  syzkaller-bugs
+ <syzkaller-bugs@googlegroups.com>, Yonghong Song <yonghong.song@linux.dev>
+Date: Mon, 07 Jul 2025 17:57:32 -0700
+In-Reply-To: <CAADnVQKKdpj-0wXKoKJC4uGhMivdr9FMYvMxZ6jLdPMdva0Vvw@mail.gmail.com>
+References: <68649190.a70a0220.3b7e22.20e8.GAE@google.com>
+	 <aGa3iOI1IgGuPDYV@Tunnel>
+	 <865f2345eaa61afbd26d9de0917e3b1d887c647d.camel@gmail.com>
+	 <aGgL_g3wA2w3yRrG@mail.gmail.com>
+	 <df2cdc5f4fa16a4e3e08e6a997af3722f3673d38.camel@gmail.com>
+	 <e43c25b451395edff0886201ad3358acd9670eda.camel@gmail.com>
+	 <aGxKcF2Ceany8q7W@mail.gmail.com>
+	 <2fb0a354ec117d36a24fe37a3184c1d40849ef1a.camel@gmail.com>
+	 <c35d5392b961a4d5b54bdb4b92c4e104bd7857cc.camel@gmail.com>
+	 <CAADnVQKKdpj-0wXKoKJC4uGhMivdr9FMYvMxZ6jLdPMdva0Vvw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] PM / Freezer: Skip zombie/dead processes to
-To: Peter Zijlstra <peterz@infradead.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, pavel@kernel.org,
- len.brown@intel.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Oleg Nesterov <oleg@redhat.com>
-References: <20250611101247.15522-1-zhangzihuan@kylinos.cn>
- <20250611101247.15522-2-zhangzihuan@kylinos.cn>
- <CAJZ5v0jpuUVM73M=Gzq36je=K_7zEkvVd8bxohi6N5OYgxgUug@mail.gmail.com>
- <20250703164021.GY1613200@noisy.programming.kicks-ass.net>
- <CAJZ5v0j29Nu2nitmj6tPhOQYuSaHBtXQVR21ikDtrxpejPdW8A@mail.gmail.com>
- <20250704081941.GC2001818@noisy.programming.kicks-ass.net>
- <67997bdd-d00a-413a-a565-188c4b06f385@kylinos.cn>
- <20250704092144.GH2001818@noisy.programming.kicks-ass.net>
- <de7e327a-202c-4b28-b372-2d648c680dbe@kylinos.cn>
- <20250707084214.GD1613200@noisy.programming.kicks-ass.net>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <20250707084214.GD1613200@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
 
-
-=E5=9C=A8 2025/7/7 16:42, Peter Zijlstra =E5=86=99=E9=81=93:
-> A quick browse through the code seems to suggest that for user tasks,
-> PF_NOFREEZE is set just like exit_state, once at death.
+On Mon, 2025-07-07 at 17:51 -0700, Alexei Starovoitov wrote:
+> On Mon, Jul 7, 2025 at 5:37=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.co=
+m> wrote:
+> >
+> > On Mon, 2025-07-07 at 16:29 -0700, Eduard Zingerman wrote:
+> > > On Tue, 2025-07-08 at 00:30 +0200, Paul Chaignon wrote:
+> > >
+> > > [...]
+> > >
+> > > > This is really nice! I think we can extend it to detect some
+> > > > always-true branches as well, and thus handle the initial case repo=
+rted
+> > > > by syzbot.
+> > > >
+> > > > - if a_min =3D=3D 0: we don't deduce anything
+> > > > - bits that may be set in 'a' are: possible_a =3D or_range(a_min, a=
+_max)
+> > > > - bits that are always set in 'b' are: always_b =3D b_value & ~b_ma=
+sk
+> > > > - if possible_a & always_b =3D=3D possible_a: only true branch is p=
+ossible
+> > > > - otherwise, we can't deduce anything
+> > > >
+> > > > For BPF_X case, we probably want to also check the reverse with
+> > > > possible_b & always_a.
+> > >
+> > > So, this would extend existing predictions:
+> > > - [old] always_a & always_b -> infer always true
+> > > - [old] !(possible_a & possible_b) -> infer always false
+> > > - [new] if possible_a & always_b =3D=3D possible_a -> infer true
+> > >         (but make sure 0 is not in possible_a)
+> > >
+> > > And it so happens, that it covers example at hand.
+> > > Note that or_range(1, (u64)-1) =3D=3D (u64)-1, so maybe tnum would be
+> > > sufficient, w/o the need for or_range().
+> > >
+> > > The part of the verifier that narrows the range after prediction:
+> > >
+> > >   regs_refine_cond_op:
+> > >
+> > >          case BPF_JSET | BPF_X: /* reverse of BPF_JSET, see rev_opcod=
+e() */
+> > >                  if (!is_reg_const(reg: reg2, subreg32: is_jmp32))
+> > >                          swap(reg1, reg2);
+> > >                  if (!is_reg_const(reg: reg2, subreg32: is_jmp32))
+> > >                          break;
+> > >                  val =3D reg_const_value(reg: reg2, subreg32: is_jmp3=
+2);
+> > >                ...
+> > >                          reg1->var_off =3D tnum_and(a: reg1->var_off,=
+ b: tnum_const(value: ~val));
+> > >                ...
+> > >                  break;
+> > >
+> > > And after suggested change this part would be executed only if tnum
+> > > bounds can be changed by jset. So, this eliminates at-least a
+> > > sub-class of a problem.
+> >
+> > But I think the program below would still be problematic:
+> >
+> > SEC("socket")
+> > __success
+> > __retval(0)
+> > __naked void jset_bug1(void)
+> > {
+> >         asm volatile ("                                 \
+> >         call %[bpf_get_prandom_u32];                    \
+> >         if r0 < 2 goto 1f;                              \
+> >         r0 |=3D 1;                                        \
+> >         if r0 & -2 goto 1f;                             \
+> > 1:      r0 =3D 0;                                         \
+> >         exit;                                           \
+> > "       :
+> >         : __imm(bpf_get_prandom_u32)
+> >         : __clobber_all);
+> > }
+> >
+> > The possible_r0 would be changed by `if r0 & -2`, so new rule will not =
+hit.
+> > And the problem remains unsolved. I think we need to reset min/max
+> > bounds in regs_refine_cond_op for JSET:
+> > - in some cases range is more precise than tnum
+> > - in these cases range cannot be compressed to a tnum
+> > - predictions in jset are done for a tnum
+> > - to avoid issues when narrowing tnum after prediction, forget the
+> >   range.
 >
-I couldn=E2=80=99t agree more =E2=80=94 for user tasks, PF_NOFREEZE is in=
-deed set at the=20
-same time as exit_state, right at death.
-> For kernel threads the situation is a little more complex; but typicall=
-y
-> a kthread is spawned with PF_NOFREEZE set, and then some will clear it
-> again, but always before then calling a TASK_FREEZABLE wait.=E3=80=80=E3=
-=80=80 =E3=80=80 =E3=80=80
+> You're digging too deep. llvm doesn't generate JSET insn,
+> so this is syzbot only issue. Let's address it with minimal changes.
+> Do not introduce fancy branch taken analysis.
+> I would be fine with reverting this particular verifier_bug() hunk.
 
-While that=E2=80=99s generally the expected pattern, it depends on each k=
-thread=20
-correctly managing the PF_NOFREEZE flag before entering a TASK_FREEZABLE=20
-wait.
+My point is that the fix should look as below (but extract it as a
+utility function):
 
-This assumption can be fragile in practice =E2=80=94 a missed update or=20
-unconventional usage could lead to inconsistent freezing behavior.
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 53007182b46b..b2fe665901b7 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -16207,6 +16207,14 @@ static void regs_refine_cond_op(struct bpf_reg_sta=
+te *reg1, struct bpf_reg_state
+                        swap(reg1, reg2);
+                if (!is_reg_const(reg2, is_jmp32))
+                        break;
++               reg1->u32_max_value =3D U32_MAX;
++               reg1->u32_min_value =3D 0;
++               reg1->s32_max_value =3D S32_MAX;
++               reg1->s32_min_value =3D S32_MIN;
++               reg1->umax_value =3D U64_MAX;
++               reg1->umin_value =3D 0;
++               reg1->smax_value =3D S64_MAX;
++               reg1->smin_value =3D S32_MIN;
+                val =3D reg_const_value(reg2, is_jmp32);
+                if (is_jmp32) {
+                        t =3D tnum_and(tnum_subreg(reg1->var_off), tnum_con=
+st(~val));
 
-> The only thing I didn't fully investigate is this
-> {,un}lock_system_sleep() thing. But that would appear to need at least
-> the below fixlet.
->
-> diff --git a/kernel/power/main.c b/kernel/power/main.c index=20
-> 3d484630505a..a415e7d30a2c 100644 --- a/kernel/power/main.c +++=20
-> b/kernel/power/main.c @@ -52,8 +52,8 @@ void pm_restrict_gfp_mask(void)=
-  unsigned int lock_system_sleep(void)
->   {
->   	unsigned int flags =3D current->flags;
-> - current->flags |=3D PF_NOFREEZE;  	mutex_lock(&system_transition_mute=
-x);
-> + current->flags |=3D PF_NOFREEZE;  	return flags;
->   }
->   EXPORT_SYMBOL_GPL(lock_system_sleep); =E3=80=80 =E3=80=80 =E3=80=80
-It seems to me that setting PF_NOFREEZE before acquiring=20
-system_transition_mutex might be intentional =E2=80=94 possibly to preven=
-t=20
-deadlocks.
+----
 
-If the task were to be frozen while holding or waiting for the mutex, it=20
-could block suspend or resume paths. So changing the order may risk=20
-breaking that protection.
-
-So, although PF_NOFREEZE could be the better long-term solution, right=20
-now depending exclusively on it might cause issues.
-
-It would require further standardization and guarantees about the flag=E2=
-=80=99s=20
-stability during the freezing process before we can fully rely on it.
-
-I=E2=80=99m looking forward to your thoughts on this.
-
->   =E3=80=80 =E3=80=80 =E3=80=80 =E3=80=80 =E3=80=80=E3=80=80
-> Anyway, this seems to suggest something relatively simple like this her=
-e
-> should do:
->
-> diff --git a/kernel/freezer.c b/kernel/freezer.c index=20
-> 8d530d0949ff..8b7cecd17564 100644 --- a/kernel/freezer.c +++=20
-> b/kernel/freezer.c @@ -162,20 +162,22 @@ static bool=20
-> __freeze_task(struct task_struct *p)   */
->   bool freeze_task(struct task_struct *p)
->   {
-> - unsigned long flags; - - spin_lock_irqsave(&freezer_lock, flags); -=20
-> if (!freezing(p) || frozen(p) || __freeze_task(p)) { -=20
-> spin_unlock_irqrestore(&freezer_lock, flags); + /* + * User tasks get=20
-> NOFREEZE in do_task_dead(). + */ + if ((p->flags & (PF_NOFREEZE |=20
-> PF_KTHREAD)) =3D=3D PF_NOFREEZE)  		return false;
-> - } =20
-> - if (!(p->flags & PF_KTHREAD)) - fake_signal_wake_up(p); - else -=20
-> wake_up_state(p, TASK_NORMAL); + scoped_guard (spinlock_irqsave,=20
-> &freezer_lock) { + if (!freezing(p) || frozen(p) || __freeze_task(p))=20
-> + return false; + + if (!(p->flags & PF_KTHREAD)) +=20
-> fake_signal_wake_up(p); + else + wake_up_state(p, TASK_NORMAL); + } =20
-> - spin_unlock_irqrestore(&freezer_lock, flags);  	return true;
->   }
-
-Thanks for the suggestion =E2=80=94 this looks really clean and simplifie=
-s the=20
-logic nicely! The use of a scoped spinlock and the early return based on=20
-PF_NOFREEZE | PF_KTHREAD makes the flow easier to follow.
-
-By the way, in the code above, since for user tasks the PF_NOFREEZE flag=20
-is only set once at death (similar to how exit_state is handled), would=20
-it make sense to check p->exit_state directly here instead?
-
-It seems semantically equivalent for user tasks, and exit_state might be=20
-more explicit in conveying the task's lifecycle state. I'm curious if=20
-there's a specific reason to prefer PF_NOFREEZE over exit_state in this=20
-case.
-
-Best regards,
-Zihuan Zhang
-
-
+Because of irreconcilable differences in what can be represented as a
+tnum and what can be represented as a range.
 
