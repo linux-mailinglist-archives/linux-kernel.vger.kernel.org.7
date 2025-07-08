@@ -1,194 +1,82 @@
-Return-Path: <linux-kernel+bounces-720791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8203AFC092
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:11:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C98AFC06C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA4B34A81BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:11:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ACBC3A7586
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D860D2264B2;
-	Tue,  8 Jul 2025 02:03:14 +0000 (UTC)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369DC20B7F4;
+	Tue,  8 Jul 2025 02:05:37 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65754BA45;
-	Tue,  8 Jul 2025 02:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E7DAD24
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 02:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751940194; cv=none; b=VyP3vUZZpgLSFsbDgYrPdFD74m++0gy5VDS4hq0NeRMSMYC1wuVTN+tSMLO6V2LUsoynvPlbxuet7w8QlzppiQmQN9MB8/hUPWw2h5vKx9nmkZRDdzpgOCY+6Q7zwS+okfAiG1rnqNk/ibCLVfryHbkuPm/MvaPyAGXvTPlA+WM=
+	t=1751940336; cv=none; b=SA7ToDrI/YIKnUNGhJHjJxNfTVVLUDt8ktVcBsgkytCJW7Ve2SOFoSrUTeoQYdwsdYHdw3G8FRn35u8u8BSeeWtZf0S6QH0lFJGmX8VI1a+LdI7Vwcvsr6tCJlYELzL63nimsBro3xKuqS1wSYc80N8WAi69+Jy38eQVvjTN4Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751940194; c=relaxed/simple;
-	bh=r0EMgNVX/z4zYUNMe5TgvPCak9pLBC1m6P6hzEd8k4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GpUmrLAZmRBPTBUIRl/SecvQ5mmCoStmZkZNXRu215GyKgQtsuEUlEr1AX5bKxahEqYHUUGTFqw+dwYGUXUoDYs0LeriI37XuJV57Umc+Zi8TU4OTS5tX3NVOQ4z4GUYyzaf/lelzZ4Ap8mbK2gBtGkEmzuwE94k4oXgh1KExyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpsz2t1751940112t5c4f092b
-X-QQ-Originating-IP: 4LFULpdcet4DuWtuH/L0yUVh01li1CK9FUyGaDibKB4=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 08 Jul 2025 10:01:50 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 16836911135302735176
-Date: Tue, 8 Jul 2025 10:01:50 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
-	andrew+netdev@lunn.ch, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/15] net: rnpgbe: Add get_capability mbx_fw ops support
-Message-ID: <60002AD49B3F6BD5+20250708020150.GB216877@nic-Precision-5820-Tower>
-References: <20250703014859.210110-1-dong100@mucse.com>
- <20250703014859.210110-5-dong100@mucse.com>
- <57497e14-3f9a-4da8-9892-ed794aadbf47@lunn.ch>
- <CB185D75E8EDC84A+20250707073743.GA164527@nic-Precision-5820-Tower>
- <e0610a11-18fa-42f6-9925-f15dac20643c@lunn.ch>
+	s=arc-20240116; t=1751940336; c=relaxed/simple;
+	bh=Ukf1beu7Z3UgIce3RxpuEdhnGAGC4GPRQ4/as7Tr5n8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KOTTcSwfe+dI9AOOTUeaHRjQjrzRHJPVnabtSHMn5tkE+jXJ8lx9zcvC1s7WD6e7limmBlMr7T3S+7SQn/nBSB1bn0mQnSZJmSneKCg5RLP9FIsl5slIyro6i7wi6TlEvmwmCuZoHYHhIJsjKWbg0kQHz9xz3fsermobaqWKxgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id E15F2140432;
+	Tue,  8 Jul 2025 02:05:32 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 1C7896000E;
+	Tue,  8 Jul 2025 02:05:30 +0000 (UTC)
+Date: Mon, 7 Jul 2025 22:05:29 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Li,Rongqing" <lirongqing@baidu.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ David Laight <david.laight.linux@gmail.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "vschneid@redhat.com"
+ <vschneid@redhat.com>, "mgorman@suse.de" <mgorman@suse.de>,
+ "bsegall@google.com" <bsegall@google.com>, "dietmar.eggemann@arm.com"
+ <dietmar.eggemann@arm.com>, "vincent.guittot@linaro.org"
+ <vincent.guittot@linaro.org>, "juri.lelli@redhat.com"
+ <juri.lelli@redhat.com>, "mingo@redhat.com" <mingo@redhat.com>
+Subject: Re: [????] Re: [????] Re: divide error in x86 and cputime
+Message-ID: <20250707220529.19eb2a74@gandalf.local.home>
+In-Reply-To: <8f68278c4a454fd79b39cf21d4c0974f@baidu.com>
+References: <78a0d7bb20504c0884d474868eccd858@baidu.com>
+	<20250707220937.GA15787@redhat.com>
+	<20250707182056.66a8468a@gandalf.local.home>
+	<20250707183331.029570bf@gandalf.local.home>
+	<42f5344b80e244278aaf49f112498e02@baidu.com>
+	<20250707215322.0e4ec431@gandalf.local.home>
+	<8f68278c4a454fd79b39cf21d4c0974f@baidu.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e0610a11-18fa-42f6-9925-f15dac20643c@lunn.ch>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: N7WV2vBY6Wtphb9XuLP7+3+zApZBH6zKOpSypbxywONFcdLATU9Lwtk0
-	ybxSgIymt7lTOVNozas7HfajECDtpWCUhUDmoKhrTaYpl2HZArImGhcZFrlNJbj7qBM5ztD
-	qpYP+ux27xbs7jzbt87bOMaAuqadmOKsoLDXDEBrrQwianiCpenPQHbdKTXgGy6+BPcz0C/
-	/DUBb2+cIV0BqT1CCHqb49Q4BdoV9EYAkWBR6TisxiRUU02MFcEl2rsg32aZVKmoQ4gg5Vj
-	u92naVYNi5B02xJT1qG0pO6lw2FOhmYJZqcHikKFSxi8COM8xcPSHIxIIZxTG4BOcq0xVnY
-	DGFwH3eilzhM9KHsdGkgOrvZnlPDy8gpgSsYLJCXQAl/knrCjjy50d8XKEXuKyaHRjyDBQr
-	4pVAs/YoEAIfBoqECuXTJZpY7fpCME8ANV+XwPzaCxRbWgRyJqURzL+MI379HsBo3MpcBLj
-	FR2Jv7cqQWULfmFED6Fn6swGwr6dSZveZcLX6rUM5MLXdcu4x30hLoVjhYdk0b6TmaJE4EQ
-	bw+X//rM6+Qb8G1eRemBdGCk4appvaog3hgLaz3eIH2i9ivqvSGhY/uNRHcUCwA10QrMw1h
-	6k46pmBsEwp8NSGPmZyPgArU/YMzlVYVYfGXsK+q88sDL0wVw93RS6ceu6QiKnJDBVwMRQG
-	74abC6gM3dSNU2GmVYPWsC+qIUhrVjm1Kbwyi6x+8hRK5pVWblKYhYbPy85HQajaIYs9ps5
-	g3hMYIUP0v6QHJO/UaKFpL4VwobXEOk1TxjCltghUSs7WFJ8Ex3CJJ49cV5jQnd9UDo5yJg
-	WLhTMG51A5ZU7izHVtTS1M/gIfcTVPcU9nn31RsmFOjj6Eecq3rrJo/pbuC11+oaNwqLiqI
-	EFM1oXWy1toPqhwOed6WGyOtKV/eve0wDSE6TmxHksJBYL9n0ZVuy+m7xOQQCSe3r4ggIVe
-	d61QgSnMYGhRLqgT6qCaFA6r/mAGTQZeuSCaB3oJXRWfqL983gWydhLQ/AmVUiIkxtQ+MlZ
-	v95HyL3w==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: s5by4ubu7duxsdjpudwz18qfq1m5syxi
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: 1C7896000E
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/7fN3hVUYdnIa3GgXFj31T9pP/1uCYdaQ=
+X-HE-Tag: 1751940330-595184
+X-HE-Meta: U2FsdGVkX18BPjX5oYCZjuhPZiAZYUoSEBP5S89BGjs8qpH4s2P97XTYXWCUPThWZqtYwav53thOeZPA6seUqcb8ByEpbhsHVbJCcDqRqPCEDjCdWsRYOpBtA5s8i2Pk1Hil52lHKjZMeui75HMBUBzGfSwuvn66IlJavWt8pRaA2JC75BL0mj3c9A/qbqB/lKlqqpiCaThA5+pugELaVBngJz4WAnfjTqF5EA37kPeNKJTWT4B/PuRCM3F6i8wwb15+cfM1iq1xLYIIOObs26bSYlKH5Sh+27Q/5wgsnCduKyTDoaVzuvrErfDNVXyUPaLvOtkl59YanEfLy05MAaeBZl7lEN4d9Od8+zl58SKbn3qBOS+VFg==
 
-On Mon, Jul 07, 2025 at 02:09:23PM +0200, Andrew Lunn wrote:
-> On Mon, Jul 07, 2025 at 03:37:43PM +0800, Yibo Dong wrote:
-> > On Fri, Jul 04, 2025 at 08:25:12PM +0200, Andrew Lunn wrote:
-> > > > +/**
-> > > > + * mucse_fw_send_cmd_wait - Send cmd req and wait for response
-> > > > + * @hw: Pointer to the HW structure
-> > > > + * @req: Pointer to the cmd req structure
-> > > > + * @reply: Pointer to the fw reply structure
-> > > > + *
-> > > > + * mucse_fw_send_cmd_wait sends req to pf-cm3 mailbox and wait
-> > > > + * reply from fw.
-> > > > + *
-> > > > + * Returns 0 on success, negative on failure
-> > > > + **/
-> > > > +static int mucse_fw_send_cmd_wait(struct mucse_hw *hw,
-> > > > +				  struct mbx_fw_cmd_req *req,
-> > > > +				  struct mbx_fw_cmd_reply *reply)
-> > > > +{
-> > > > +	int err;
-> > > > +	int retry_cnt = 3;
-> > > > +
-> > > > +	if (!hw || !req || !reply || !hw->mbx.ops.read_posted)
-> > > 
-> > > Can this happen?
-> > > 
-> > > If this is not supposed to happen, it is better the driver opps, so
-> > > you get a stack trace and find where the driver is broken.
-> > > 
-> > Yes, it is not supposed to happen. So, you means I should remove this
-> > check in order to get opps when this condition happen?
-> 
-> You should remove all defensive code. Let is explode with an Opps, so
-> you can find your bugs.
-> 
+On Tue, 8 Jul 2025 01:58:00 +0000
+"Li,Rongqing" <lirongqing@baidu.com> wrote:
 
-Got it.
+> But mul_u64_u64_div_u64() for x86 should not trigger a division error panic, maybe should return a ULLONG_MAX on #DE (like non-x86 mul_u64_u64_div_u64(),)
 
-> > > > +		return -EINVAL;
-> > > > +
-> > > > +	/* if pcie off, nothing todo */
-> > > > +	if (pci_channel_offline(hw->pdev))
-> > > > +		return -EIO;
-> > > 
-> > > What can cause it to go offline? Is this to do with PCIe hotplug?
-> > > 
-> > Yes, I try to get a PCIe hotplug condition by 'pci_channel_offline'.
-> > If that happens, driver should never do bar-read/bar-write, so return
-> > here.
-> 
-> I don't know PCI hotplug too well, but i assume the driver core will
-> call the .release function. Can this function be called as part of
-> release? What actually happens on the PCI bus when you try to access a
-> device which no longer exists?
-> 
+Perhaps. But it is still producing garbage.
 
-This function maybe called as part of release:
-->release
--->unregister_netdev
---->ndo_stop
----->this function
-Based on what I have come across, some devices return 0xffffffff, while 
-others maybe hang when try to access a device which no longer
-exists.
-
-> How have you tested this? Do you have the ability to do a hot{un}plug?
-> 
-
-I tested hot{un}plug with an ocp-card before.
-But I think all the codes related to pcie hot{un}plug should be in a
-separate patch, I should move it to that patch.
-
-> > > > +	if (mutex_lock_interruptible(&hw->mbx.lock))
-> > > > +		return -EAGAIN;
-> > > 
-> > > mutex_lock_interruptable() returns -EINTR, which is what you should
-> > > return, not -EAGAIN.
-> > > 
-> > Got it, I should return '-EINTR' here.
-> 
-> No, you should return whatever mutex_lock_interruptable()
-> returns. Whenever you call a function which returns an error code, you
-> should pass that error code up the call stack. Never replace one error
-> code with another.
-> 
-
-Ok, I see.
-
-> > > > +	if (reply->error_code)
-> > > > +		return -reply->error_code;
-> > > 
-> > > The mbox is using linux error codes? 
-> > > 
-> > It is used only between driver and fw, yay be just samply like this: 
-> > 0     -- no error
-> > not 0 -- error
-> > So, it is not using linux error codes.
-> 
-> Your functions should always use linux/POSIX error codes. So if your
-> firmware says an error has happened, turn it into a linux/POSIX error
-> code. EINVAL, TIMEDOUT, EIO, whatever makes the most sense.
-> 
-> 	Andrew
-> 
-
-Got it, I will turn it into a linux/POSIX error code.
-
-Thanks for your feedback.
+-- Steve
 
