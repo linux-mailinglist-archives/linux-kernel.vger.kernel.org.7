@@ -1,99 +1,145 @@
-Return-Path: <linux-kernel+bounces-721151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA2BAFC556
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:22:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCADAAFC562
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88C4517D63C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:22:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A55931BC2B38
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D127C2BD588;
-	Tue,  8 Jul 2025 08:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7302BE048;
+	Tue,  8 Jul 2025 08:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NFvC7GU2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JeNs8qPk"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEAB1B0F1E;
-	Tue,  8 Jul 2025 08:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861162BDC2D
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 08:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751962922; cv=none; b=HVa8Zbz9ZYW7DXS+igzTRwiFfaAAdUkaxgYJ2d2eq3ghQGOjSKuWl7stm/QvoFCUP1nMB5E2bvbl1b9qUrpjMaQ5OjEBXXU6wGU4sdB64i3Qzm/ooWQ1oYWK7BNLPCWY89RFoiAAU3jXhnwIm9fTSvTnyBSIRb2HqE+80Z5j/sk=
+	t=1751962970; cv=none; b=dLYHlnzYdO9O8ZQbaqWZv/fIMjbHGafmiSdyPfSL/VaHLzXM4XUHJKl5FY7NDLYFd5HU69rj4VpueqQt6DwaBBFfELdCuuJQNNNrlvGM1JnLysoTDu+qPxUpuvJsZsU4Z1FLl7wphnbPJmLv93gKECxh28b+PNwBGlsFR4lgRlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751962922; c=relaxed/simple;
-	bh=Xy3Qimr/6H1RzjOUBUNoF0Q63KzUY/WreVnonIIwPoU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iZEEp3rpSdpOnDy9NlLs0/VAe0qNd5JvexOXvqc3mVuxOsHUkfpEfALt8q+aIWuXb8t1I9KLNdUvCeVruGDgb6vpk3OfzYzC+jsalgXQNy/cU1bj/gcKCJXscJakTmewncegfagc8r2GY5w42wL4lhn1OlXjHFPAHiSkvDuT/xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NFvC7GU2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7FAAC4CEED;
-	Tue,  8 Jul 2025 08:22:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751962921;
-	bh=Xy3Qimr/6H1RzjOUBUNoF0Q63KzUY/WreVnonIIwPoU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NFvC7GU2ensgRjBqo4FLbNOfSIRi9ngQPU6c0RA0ieXxRDYMQhU32wnNLPBBhCyC7
-	 Xnc7s9Hp5E/rqUoFRrXi/h5mSvcqUVnoPa0OZV4Lxgd9qJETZCe758O0fXXKxsHtPm
-	 R3cjHn/1J/UQLMZijZucqd1RctntJ/0XYnPAiGEiPky3LoGnYUuOco2ZItX1x1i1DA
-	 uknMc+LM9c+HdumaSEA9FGudaOgw1qltE3sk6rktnwgX6xPvVSPAqtJu0lQ2nbQ3Me
-	 oMuDOeKXT6EGBN4S9fmK+FTijWC5kXfrrvdmpK4P9oVWu3zA9PZ3WCSasrRSq9zuRq
-	 XnVUR/9vRomEQ==
-Date: Tue, 8 Jul 2025 10:21:57 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, ~postmarketos/upstreaming@lists.sr.ht, 
-	phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: phy: qcom,snps-eusb2-repeater: Document
- qcom,tune-res-fsdif
-Message-ID: <20250708-stoic-slim-bison-ac55ee@krzk-bin>
-References: <20250625-sm7635-eusb-repeater-v1-0-19d85541eb4c@fairphone.com>
- <20250625-sm7635-eusb-repeater-v1-1-19d85541eb4c@fairphone.com>
- <20250708-unicorn-of-ancient-excellence-e8945c@krzk-bin>
+	s=arc-20240116; t=1751962970; c=relaxed/simple;
+	bh=abjnC28Mrs3GsGHX9NrX0/+v9JPLL4pKD09y2k5j8IU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hctZQUzXS8Xhi3yKLsfh0MM2Qu7YK+aIqbYskm9rctlMmwYJEK2qIi7uAS8g1OCaWz8FNFWKraQCqpe1/JmCzoASoS5QPiwE824ZnQwBgqLIygMYlafAi1TVYmq64DtgvyiOW+u+nGg41QX01WNQzLj+uygNT8rMFxzyfm6SyYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JeNs8qPk; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751962966;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iTNZ/i4moGzLGIe/UqvymX/6+68E5BvHMomq+0Srzw0=;
+	b=JeNs8qPkz4XIzt/Z7DXnZiG26U6QAHe4RBnkj7cgwhROcgGijvdciufe+eSLk4zWw6a0f0
+	VS4JzHg9CPQIIvsXzEWxt2ZqrjgPqicN0qT0TuZhBeO3nGVwrPxGH+9Iq023C//BvkQNR6
+	yUbvg1kbv9+s3BWuvWKO9S3hENhxYrY=
+From: Tao Chen <chen.dylane@linux.dev>
+To: daniel@iogearbox.net,
+	razor@blackwall.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	ast@kernel.org,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	mattbobrowski@google.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	horms@kernel.org,
+	willemb@google.com,
+	jakub@cloudflare.com,
+	pablo@netfilter.org,
+	kadlec@netfilter.org,
+	hawk@kernel.org
+Cc: bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	Tao Chen <chen.dylane@linux.dev>
+Subject: [PATCH bpf-next v2 0/7] Add attach_type in bpf_link
+Date: Tue,  8 Jul 2025 16:22:21 +0800
+Message-ID: <20250708082228.824766-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250708-unicorn-of-ancient-excellence-e8945c@krzk-bin>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 08, 2025 at 10:13:24AM +0200, Krzysztof Kozlowski wrote:
-> On Wed, Jun 25, 2025 at 11:14:56AM +0200, Luca Weiss wrote:
-> > Document the FS Differential TX Output Resistance Tuning value found on
-> > the eUSB2 repeater on Qualcomm PMICs.
-> > 
-> > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> > ---
-> >  Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml b/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml
-> > index 27f064a71c9fb8cb60e8333fb285f0510a4af94f..6bfd11657e2992735998063b3ca390e04a03930d 100644
-> > --- a/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml
-> > +++ b/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml
-> > @@ -52,6 +52,12 @@ properties:
-> >      minimum: 0
-> >      maximum: 7
-> >  
-> > +  qcom,tune-res-fsdif:
-> > +    $ref: /schemas/types.yaml#/definitions/uint8
-> > +    description: FS Differential TX Output Resistance Tuning
-> 
-> Resistance is in Ohms, tuning could be in dB, so I wonder what are the
-> actual units here. Neither commit msg nor this description helps me to
-> understand that.
+Andrii suggested moving the attach_type into bpf_link, the previous discussion
+is as follows:
+https://lore.kernel.org/bpf/CAEf4BzY7TZRjxpCJM-+LYgEqe23YFj5Uv3isb7gat2-HU4OSng@mail.gmail.com
 
-I checked and the values are in Ohms.
+patch1 add attach_type in bpf_link, and pass it to bpf_link_init, which
+will init the attach_type field.
 
-Best regards,
-Krzysztof
+patch2-7 remove the attach_type in struct bpf_xx_link, update the info
+with bpf_link attach_type.
+
+There are some functions finally call bpf_link_init but do not have bpf_attr
+from user or do not need to init attach_type from user like bpf_raw_tracepoint_open,
+now use prog->expected_attach_type to init attach_type.
+
+bpf_struct_ops_map_update_elem
+bpf_raw_tracepoint_open
+bpf_struct_ops_test_run
+
+Feedback of any kind is welcome, thanks.
+
+Tao Chen (7):
+  bpf: Add attach_type in bpf_link
+  bpf: Remove attach_type in bpf_cgroup_link
+  bpf: Remove attach_type in sockmap_link
+  bpf: Remove location field in tcx_link
+  bpf: Remove attach_type in bpf_netns_link
+  bpf: Remove attach_type in bpf_tracing_link
+  netkit: Remove location field in netkit_link
+
+ drivers/net/netkit.c           | 10 ++++-----
+ include/linux/bpf-cgroup.h     |  1 -
+ include/linux/bpf.h            | 18 +++++++++------
+ include/net/tcx.h              |  1 -
+ kernel/bpf/bpf_iter.c          |  3 ++-
+ kernel/bpf/bpf_struct_ops.c    |  5 +++--
+ kernel/bpf/cgroup.c            | 17 +++++++--------
+ kernel/bpf/net_namespace.c     |  8 +++----
+ kernel/bpf/syscall.c           | 40 ++++++++++++++++++++--------------
+ kernel/bpf/tcx.c               | 16 +++++++-------
+ kernel/bpf/trampoline.c        | 10 +++++----
+ kernel/trace/bpf_trace.c       |  4 ++--
+ net/bpf/bpf_dummy_struct_ops.c |  3 ++-
+ net/core/dev.c                 |  3 ++-
+ net/core/sock_map.c            | 13 +++++------
+ net/netfilter/nf_bpf_link.c    |  3 ++-
+ 16 files changed, 83 insertions(+), 72 deletions(-)
+
+Change list:
+ v1 -> v2:
+  - fix build error.(Jiri)
+ v1:
+  - https://lore.kernel.org/bpf/20250707153916.802802-1-chen.dylane@linux.dev
+-- 
+2.48.1
 
 
