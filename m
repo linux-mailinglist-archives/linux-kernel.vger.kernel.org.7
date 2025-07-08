@@ -1,45 +1,56 @@
-Return-Path: <linux-kernel+bounces-721947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3413AFCFD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:57:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0FCAFCFE1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D0983B20B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:57:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37FC53B7140
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658962E264D;
-	Tue,  8 Jul 2025 15:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7492E4267;
+	Tue,  8 Jul 2025 15:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Ft6OHUXF"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PAX9aPjm"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656EC2E2656
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42A12E1C74
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751990244; cv=none; b=LnT+akacvGq8mcTeeS5pLLzohEW4RFN3acMzoa59r/KuTAhP+lWCyRc9q7WWjr16JH4m6q3R5jsXnida2hnmI8yVlh7rLYE7dHWi49Ym8BYunGnjQOj8+v/yiGPvambKqDbY5Bf/3wIkSB/FG0T+KuYhtdcZOOqy4gDaMunReZQ=
+	t=1751990259; cv=none; b=urfiCQhs9ug3EHuB1+e2eTc7J2uaF9vl+BTaDcSF5qo5hc6W1F1LTeg0eKzcCSz5QNEtle6hO5cZOYx+4m9GH1XtIrw3dYY1UVtp4o4mjjt/ZLIz7BqqRPF7hIA9ls/5xuW3Nx2DhnLBYRGhxlfziLkl7DTECeJKCAtCUymxQBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751990244; c=relaxed/simple;
-	bh=Ff1n3JaeAGK+iU5QmC4+7YAHf5VO1pkIrlZRGnSKG20=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LGj8WEkDsd8BIJOpZ01+8zOcJBPS3Uw4Wnv/okUbLRm8IhSK/o+UhZf6G8OC56KSJQ10l42yi+v1NvwPrsdPavmNhcs0Ehe3Srh5fue/o+6fHH6ULG70mJjSQVD+kagbvRhI3l/fZOMmUn3LKJH3WAWB2DoyvWKy2YH+E/uuFYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Ft6OHUXF; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1751990237; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=TqIPF46/tpQFzsQ2Mt6/LXt3YG4aD7B79RZab20n59U=;
-	b=Ft6OHUXF5ASR5PEMdkjiUIXEUcQysE+qA6jmnd7pU9IPea9uHdOkcIthUsc76BftZWSqPW94ZH6V6NCbG/xZWRB87PJZBZaPWGNgwLauheXZ3Z0yj6pL/PVWBUMNG1In5tRkuF8WSGNJxAN4NTCN5rcYoHuH06eydRjs0g41StI=
-Received: from 30.170.233.0(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WiPxJSa_1751990235 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 08 Jul 2025 23:57:16 +0800
-Message-ID: <edcffe3e-95f3-46ba-b281-33631a7653e5@linux.alibaba.com>
-Date: Tue, 8 Jul 2025 23:57:15 +0800
+	s=arc-20240116; t=1751990259; c=relaxed/simple;
+	bh=CkzfE94IorgBBRqnMAAmMmq24EJdqyfxe6lmBjXxP6U=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:In-Reply-To:
+	 Content-Type:References; b=WArnoqqiATX6rfs/1pmBdLw90bS1Ft1OR/ImjBksq3FhEUzz88N9O/nZlaiwrztve5oCTZpdR8QpDfbgKqNq/wNTpnchNulhcpvLLqoyZGqcEtwuNGkAoxS6DxztvZYkPh52dj3iO10jiOvaf+NUvd+x7QOQfpAadLi58XBHJmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PAX9aPjm; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250708155734euoutp02bbf9b89e623487a5f5bf25279c99b84f~QUdqy8zkP1580815808euoutp028
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:57:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250708155734euoutp02bbf9b89e623487a5f5bf25279c99b84f~QUdqy8zkP1580815808euoutp028
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1751990254;
+	bh=uyab8dr49wEubYW85hrXKyGCcYl1OC56FE0kAT8DEIc=;
+	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
+	b=PAX9aPjmQKMw6GLmeGQtiXElLQtSpy3YzZ/VZyQdgAMom5kiPE/FjvCg3WC/1+nPy
+	 10u5WabCCNOfLJhq7QAU3B1PpRxFQR3S//A+2qstDRiCAC24ehoVJf28O8MpDNi/Zp
+	 1CxnqxNQY3PzCfWVombnnMFfy4sDHCYVZ/YIErc0=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250708155734eucas1p1407185657d9833058c6b35d11e1d0b01~QUdqUADk60849108491eucas1p1v;
+	Tue,  8 Jul 2025 15:57:34 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250708155731eusmtip2162f9813a1cd05daa31b4d62d2bead82~QUdnRS2nc2073620736eusmtip2d;
+	Tue,  8 Jul 2025 15:57:30 +0000 (GMT)
+Message-ID: <b542bfa3-d680-4952-98fe-0a44ae3bddd7@samsung.com>
+Date: Tue, 8 Jul 2025 17:57:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,87 +58,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Executable loading issues with erofs on arm?
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: Jan Kiszka <jan.kiszka@siemens.com>, Gao Xiang <xiang@kernel.org>,
- Chao Yu <chao@kernel.org>, linux-erofs@lists.ozlabs.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <38d43fae-1182-4155-9c5b-ffc7382d9917@siemens.com>
- <452a2155-ab3b-43d1-8783-0f1db13a675f@siemens.com>
- <bab2d726-5c2f-4fe0-83d4-f83a0c248add@linux.alibaba.com>
- <81a3d28b-4570-4d44-8ed6-51158353c0ff@siemens.com>
- <6216008a-dc0c-4f90-a67c-36bead99d7f2@linux.alibaba.com>
- <2bfd263e-d6f7-4dcd-adf5-2518ba34c36b@linux.alibaba.com>
-In-Reply-To: <2bfd263e-d6f7-4dcd-adf5-2518ba34c36b@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 0/8] dma-mapping: migrate to physical address-based API
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Jonathan Corbet <corbet@lwn.net>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman
+	<mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
+	<christophe.leroy@csgroup.eu>, Robin Murphy <robin.murphy@arm.com>, Joerg
+	Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, "Michael S.
+	Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Alexander Potapenko <glider@google.com>, Marco Elver
+ <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>, Andrew Morton
+ <akpm@linux-foundation.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ iommu@lists.linux.dev, virtualization@lists.linux.dev,
+ kasan-dev@googlegroups.com, linux-trace-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>
+Content-Language: en-US
+In-Reply-To: <39d43309-9f34-48bc-a9ad-108c607ba175@samsung.com>
 Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250708155734eucas1p1407185657d9833058c6b35d11e1d0b01
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250625131920eucas1p271b196cde042bd39ac08fb12beff5baf
+X-EPHeader: CA
+X-CMS-RootMailID: 20250625131920eucas1p271b196cde042bd39ac08fb12beff5baf
+References: <CGME20250625131920eucas1p271b196cde042bd39ac08fb12beff5baf@eucas1p2.samsung.com>
+	<cover.1750854543.git.leon@kernel.org>
+	<35df6f2a-0010-41fe-b490-f52693fe4778@samsung.com>
+	<20250627170213.GL17401@unreal> <20250630133839.GA26981@lst.de>
+	<69b177dc-c149-40d3-bbde-3f6bad0efd0e@samsung.com>
+	<20250708110007.GF592765@unreal>
+	<261f2417-78a9-45b8-bcec-7e36421a243c@samsung.com>
+	<20250708120647.GG592765@unreal>
+	<39d43309-9f34-48bc-a9ad-108c607ba175@samsung.com>
 
-
-
-On 2025/7/8 23:36, Gao Xiang wrote:
-> 
-> 
-> On 2025/7/8 23:32, Gao Xiang wrote:
->>
->>
->> On 2025/7/8 23:22, Jan Kiszka wrote:
->>> On 08.07.25 17:12, Gao Xiang wrote:
->>>> Hi Jan,
+On 08.07.2025 14:56, Marek Szyprowski wrote:
+> On 08.07.2025 14:06, Leon Romanovsky wrote:
+>> On Tue, Jul 08, 2025 at 01:45:20PM +0200, Marek Szyprowski wrote:
+>>> On 08.07.2025 13:00, Leon Romanovsky wrote:
+>>>> On Tue, Jul 08, 2025 at 12:27:09PM +0200, Marek Szyprowski wrote:
+>>>>> On 30.06.2025 15:38, Christoph Hellwig wrote:
+>>>>>> On Fri, Jun 27, 2025 at 08:02:13PM +0300, Leon Romanovsky wrote:
+>>>>>>>> Thanks for this rework! I assume that the next step is to add 
+>>>>>>>> map_phys
+>>>>>>>> callback also to the dma_map_ops and teach various dma-mapping 
+>>>>>>>> providers
+>>>>>>>> to use it to avoid more phys-to-page-to-phys conversions.
+>>>>>>> Probably Christoph will say yes, however I personally don't see any
+>>>>>>> benefit in this. Maybe I wrong here, but all existing .map_page()
+>>>>>>> implementation platforms don't support p2p anyway. They won't 
+>>>>>>> benefit
+>>>>>>> from this such conversion.
+>>>>>> I think that conversion should eventually happen, and rather 
+>>>>>> sooner than
+>>>>>> later.
+>>>>> Agreed.
+>>>>>
+>>>>> Applied patches 1-7 to my dma-mapping-next branch. Let me know if one
+>>>>> needs a stable branch with it.
+>>>> Thanks a lot, I don't think that stable branch is needed. 
+>>>> Realistically
+>>>> speaking, my VFIO DMA work won't be merged this cycle, We are in -rc5,
+>>>> it is complete rewrite from RFC version and touches pci-p2p code (to
+>>>> remove dependency on struct page) in addition to VFIO, so it will take
+>>>> time.
 >>>>
->>>> On 2025/7/8 20:43, Jan Kiszka wrote:
->>>>> On 08.07.25 14:41, Jan Kiszka wrote:
->>>>>> Hi all,
->>>>>>
->>>>>> for some days, I'm trying to understand if we have an integration issue
->>>>>> with erofs or rather some upstream bug. After playing with various
->>>>>> parameters, it rather looks like the latter:
->>>>>>
->>>>>> $ ls -l erofs-dir/
->>>>>> total 132
->>>>>> -rwxr-xr-x 1 1000 users 132868 Jul  8 10:50 dash
->>>>>> (from Debian bookworm)
->>>>>> $ mkfs.erofs -z lz4hc erofs.img erofs-dir/
->>>>>> mkfs.erofs 1.8.6 (trixie version, but same happens with bookworm 1.5)
->>>>>> Build completed.
->>>>>> ------
->>>>>> Filesystem UUID: aae0b2f0-4ee4-4850-af49-3c1aad7fa30c
->>>>>> Filesystem total blocks: 17 (of 4096-byte blocks)
->>>>>> Filesystem total inodes: 2
->>>>>> Filesystem total metadata blocks: 1
->>>>>> Filesystem total deduplicated bytes (of source files): 0
->>>>>>
->>>>>> Now I have 6.15-rc5 and a defconfig-close setting for the 32-bit ARM
->>>>>> target BeagleBone Black. When booting into init=/bin/sh, then running
->>>>>>
->>>>>> # mount -t erofs /dev/mmcblk0p1 /mnt
->>>>>> erofs (device mmcblk0p1): mounted with root inode @ nid 36.
->>>>>> # /mnt/dash
->>>>>> Segmentation fault
-> 
-> Two extra quick questions:
->   - If the segfault happens, then if you run /mnt/dash again, does
->     segfault still happen?
-> 
->   - If the /mnt/dash segfault happens, then if you run
->       cat /mnt/dash > /dev/null
->       /mnt/dash
->     does segfault still happen?
+>>>> Regarding, last patch (hmm), it will be great if you can take it.
+>>>> We didn't touch anything in hmm.c this cycle and have no plans to 
+>>>> send PR.
+>>>> It can safely go through your tree.
+>>> Okay, then I would like to get an explicit ack from Jérôme for this.
+>> Jerome is not active in HMM world for a long time already.
+>> HMM tree is managed by us (RDMA) 
+>> https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/log/?h=hmm
+>> ➜  kernel git:(m/dmabuf-vfio) git log --merges mm/hmm.c
+>> ...
+>> Pull HMM updates from Jason Gunthorpe:
+>> ...
+>>
+>> https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=58ba80c4740212c29a1cf9b48f588e60a7612209 
+>>
+>> +hmm        git 
+>> git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git#hmm
+>>
+>> We just never bothered to reflect current situation in MAINTAINERS file.
+>
+> Maybe this is the time to update it :)
+>
+> I was just a bit confused that no-one commented the HMM patch, but if 
+> You maintain it, then this is okay.
 
-Oh, sorry I didn't read the full hints, could you check if
-the following patch resolve the issue (space-damaged)?
 
-diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index 6a329c329f43..701490b3ef7d 100644
---- a/fs/erofs/data.c
-+++ b/fs/erofs/data.c
-@@ -245,6 +245,7 @@ void erofs_onlinefolio_end(struct folio *folio, int err)
-         if (v & ~EROFS_ONLINEFOLIO_EIO)
-                 return;
-         folio->private = 0;
-+       flush_dcache_folio(folio);
-         folio_end_read(folio, !(v & EROFS_ONLINEFOLIO_EIO));
-  }
+I've applied the last patch to dma-mapping-for-next branch.
 
-Thanks,
-Gao Xiang
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
