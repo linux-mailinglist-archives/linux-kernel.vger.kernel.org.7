@@ -1,197 +1,116 @@
-Return-Path: <linux-kernel+bounces-721032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1B9AFC3CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:13:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 051BBAFC3D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA770189DFB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:13:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1131425D6D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBFF256C88;
-	Tue,  8 Jul 2025 07:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77F9256C8D;
+	Tue,  8 Jul 2025 07:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ynZIxnA3"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vnVaxxj9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yM00VvVq"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BF52566D3
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 07:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFE22222AB;
+	Tue,  8 Jul 2025 07:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751958773; cv=none; b=UtYaGFaPGFZh6TMBz+0pjve1YRHVwps/sg/4dQjOnvuQHx7PPJUcrn/6HZ2ZVanA/BTm0VcsaF+J6EIbqlCMRFA3pS2/VcyG6Y67du4IfKpjIpKxWps61ruaijqeEgPDQI/7rr4a4iMXJP9ijuVY3IxiSUEj4Yn8xXoX8frcM5U=
+	t=1751958816; cv=none; b=nKvPXPOKplyJdMcF8IXxp+ntknpmPVNyr7bdT+hRooo0jowiGVx9vn8EQ4e8VE2zVqfo6OceIIwg0eAPP+92wIzNB03vGyzfcfCoNsQDPOlvG6PNHgdDevzRYj62n+9cjKqnHimQlwg0e1HUlfgfpSUAg5jKgq+0+z5iW4mlTEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751958773; c=relaxed/simple;
-	bh=XscmS3TYLZWbaJ1v/tB8VxNbRqDYd7mpJ2kmhToD68c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LC6eF4XMfGjasMgM3sYqdgwyhrktDLSYDcRkW12deWE/xfj7pWbQpcsPdodi4MULVoSD7Phz/kbv+pALMU2TNq+joS94SQTgHjawPRB+y08b6Vdyjehn2W/m3kPLazHHRHbhCKKnnCqhnDcdO7eM0aCwdwYTUSa/rxc3LM0s9HQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ynZIxnA3; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4a44e94f0b0so52114501cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 00:12:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751958770; x=1752563570; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9Zp/fM2/qnk7Yqx0xtmAfSu2PC7PxlBF+F3QEFTY3nY=;
-        b=ynZIxnA31CHvFvzE6+Dl8VtP8/54vI4TpFuzpuxK7MD+BQsie4DkVODR0QTYGM9EAH
-         fz2UHha+agv7DZQzgZKgOMmH9ITrxMlz2KaqXWOn7clNn5SkGlG3fggk1hbOUmGtBBki
-         xBnKbD6vhVmjtmfTmqL3jDcWP5MSQ0AOTmCTyIR77lE3Vd80yslW9Rsn5NiRVNwesWB8
-         K70C1TGnX3kh+ZLwP5kSCQ5jFhNiciHwwI6TYHa0oV6UbnXJbZvL9/SNXINRoI7zR5qT
-         itSC9QJLdlwTUwF6qFSFAmVnr5j4XNC7AjApuwotgeWgUkDZ3c24dnczAmQ858rSi1Z4
-         LgIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751958770; x=1752563570;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9Zp/fM2/qnk7Yqx0xtmAfSu2PC7PxlBF+F3QEFTY3nY=;
-        b=iQVE8BwmmpQA3zUJ8hAGc6CxDxt5ENs1kDjdv2CFWtdZDcPXHSJ/FEQ/QkDaiNm4Lz
-         GOyCvu/8h1BsP53O7iuoM2c5JoL4bVJb+lBGC1VfNAYEaF++jxJpbY+e1jUUCdl3OGZI
-         JBU4LaFqNzFJDi+UQJ31mCOuL/Ir0fRX22dZ4g3PMd9Fg84/eqCFYSLGllvKpXR1ozas
-         kALhi8ArPJyffgQDyGNJ4ncAeCyyZHjtAX3cIOBuhudQ1p4B3hI43vVw36jzy4iBlZZf
-         /yYErgXu7VrGZUkErf+1cJ8TkkSTw4DnvFAhoS0C24p7z2fAQocJAzUWQ/ZuFLVUsmNJ
-         oZng==
-X-Forwarded-Encrypted: i=1; AJvYcCV+WogU8v9PJxcJxE7Ru01u6+DFY4CvlHmVMDjt9MkHNbIVaU/r6SwanfSEt3QVl+lSnS/D/5Hmp25YI9g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5uc10WhurCrdxZmgKWKkAyPjUOKivnqUXo/A81tc9V564zjYl
-	31PmFWxhNAT+bhNL/RGqGLzqE+mc5JCVZ0gAWXo7UPEp0Jb4ajBThS83tWfRPwBBPLtB4jMUBxP
-	ykk0YgZhNozHSgMzKlfwQcg/OUUKWMkGzLOX0a5ys
-X-Gm-Gg: ASbGncvm6GUVznFs4ndU7GhI54bhz4yqBjEg/byBjLTWjI5k/C3jBsqnOmN2o1s12uR
-	d1Y6L+iyfCaTqBcpmeZHF+v0LV0fzszE1FLOf2IR8rW/pCJjEeMIr7hUDGiunSMY65MiPcf9ErZ
-	ZIbZPnJI4nWK0Qq0z67gm55D+lgWPandowaQrPM/9KheQMcZzOj2Qjtg==
-X-Google-Smtp-Source: AGHT+IHhkMvmsDCUL3FUDuybpzrVJI1QMQzt44jXPwSlTwonG6zNEdeu6TlRuVYBnI0XFwUmj/OxQMuqYSOP0qRONk0=
-X-Received: by 2002:ac8:7d41:0:b0:4a6:ef6b:af17 with SMTP id
- d75a77b69052e-4a9ccddc5a0mr34918981cf.35.1751958770074; Tue, 08 Jul 2025
- 00:12:50 -0700 (PDT)
+	s=arc-20240116; t=1751958816; c=relaxed/simple;
+	bh=NFG7tc8UTm9bOEQ3JtgVmTw8KnluhgyUo5dQrIKFNgg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tHs1F0T8v82pSeO7qnLfQZ1Z4XBr1/Vd+hlTZ3Sm61qbrCkfQd/RoUkeUJ5JdIQIgSFdfdAHcoG6maSDdiv1iDVqGVzriqJ83uEDgQvXQ9OFkMSBWz7YN2i0fULIeu9uRLiyF/mlvZ33ddIx1ajEyhEOSmuZbxTftMEhsqc8uwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vnVaxxj9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yM00VvVq; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 8 Jul 2025 09:13:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751958811;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ympaAWm94nimBbLSB44cFlzL0ReHl4pqgXPNgXg0fJE=;
+	b=vnVaxxj9vBakEJd2VUPbt070U636JKrtQ48/ngadwJhLuaCZHleGPmVE/QmBIBhnbiqj1z
+	jub0dmIdKwpuPC2z11BoZlKZrLFEQzjTyqJmtU5mIHSchmy658mh+pjnukN+uIL9uuIe1S
+	sZKxmbmfO/03wXK6JWey5NWUd67S6SNYpqk6F6WIYu/3VQMvciJKdYdABnt1lEFMoTPmZM
+	qxjSOkUopE0yLPN2f/ibYvA4u0m83KcE6doLkJRzBhPsvy+9jj5m9vevHC4yhK0Xhmqozd
+	Yo6B7WvC0b090vgDf3Q5o3brAoYOvtiDZl0bmOBU5HH5ghmkj54bkRiEjOAomA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751958811;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ympaAWm94nimBbLSB44cFlzL0ReHl4pqgXPNgXg0fJE=;
+	b=yM00VvVqopMj29HkLSAW2Nw4uUtpOkDyM4cme3wQhV+FjWQa1r0jz+APTnzidApFbiv/bZ
+	8KsEp6vRsBnK+xCg==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	"David S . Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Andy Lutomirski <luto@kernel.org>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	shuah <shuah@kernel.org>, Anna-Maria Gleixner <anna-maria@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, John Stultz <jstultz@google.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Eric Biggers <ebiggers@google.com>, sparclinux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Helge Deller <deller@gmx.de>
+Subject: Re: [PATCH 1/2] vdso: sparc: stub out custom vdso implementation
+Message-ID: <20250708085740-dc559080-2551-427c-9134-41fa7f9898d1@linutronix.de>
+References: <20250707144726.4008707-1-arnd@kernel.org>
+ <20250708073204-b67226e4-b140-4a1a-ae98-47769c1b2f98@linutronix.de>
+ <59e6bb77-1f11-4e30-9bbd-51bf077d9840@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250708020642.27838-1-luyun_611@163.com>
-In-Reply-To: <20250708020642.27838-1-luyun_611@163.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 8 Jul 2025 00:12:39 -0700
-X-Gm-Features: Ac12FXx7GzBAIyyAYSTsp8BsxlHWfg8I5emuM-v4Qk5cHT_Bn-LbE-CFfIHZD1I
-Message-ID: <CANn89i+6g+VwByu-xeJ-PVuaw8X_yQdC2buB7q=YO5S3MzMTUw@mail.gmail.com>
-Subject: Re: [PATCH v2] af_packet: fix soft lockup issue caused by tpacket_snd()
-To: Yun Lu <luyun_611@163.com>
-Cc: willemdebruijn.kernel@gmail.com, davem@davemloft.net, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <59e6bb77-1f11-4e30-9bbd-51bf077d9840@app.fastmail.com>
 
-On Mon, Jul 7, 2025 at 7:06=E2=80=AFPM Yun Lu <luyun_611@163.com> wrote:
->
-> From: Yun Lu <luyun@kylinos.cn>
->
-> When MSG_DONTWAIT is not set, the tpacket_snd operation will wait for
-> pending_refcnt to decrement to zero before returning. The pending_refcnt
-> is decremented by 1 when the skb->destructor function is called,
-> indicating that the skb has been successfully sent and needs to be
-> destroyed.
->
-> If an error occurs during this process, the tpacket_snd() function will
-> exit and return error, but pending_refcnt may not yet have decremented to
-> zero. Assuming the next send operation is executed immediately, but there
-> are no available frames to be sent in tx_ring (i.e., packet_current_frame
-> returns NULL), and skb is also NULL, the function will not execute
-> wait_for_completion_interruptible_timeout() to yield the CPU. Instead, it
-> will enter a do-while loop, waiting for pending_refcnt to be zero. Even
-> if the previous skb has completed transmission, the skb->destructor
-> function can only be invoked in the ksoftirqd thread (assuming NAPI
-> threading is enabled). When both the ksoftirqd thread and the tpacket_snd
-> operation happen to run on the same CPU, and the CPU trapped in the
-> do-while loop without yielding, the ksoftirqd thread will not get
-> scheduled to run. As a result, pending_refcnt will never be reduced to
-> zero, and the do-while loop cannot exit, eventually leading to a CPU soft
-> lockup issue.
->
-> In fact, as long as pending_refcnt is not zero, even if skb is NULL,
-> wait_for_completion_interruptible_timeout() should be executed to yield
-> the CPU, allowing the ksoftirqd thread to be scheduled. Therefore, the
-> execution condition of this function should be modified to check if
-> pending_refcnt is not zero.
->
-> Fixes: 89ed5b519004 ("af_packet: Block execution of tasks waiting for tra=
-nsmit to complete in AF_PACKET")
-> Suggested-by: LongJun Tang <tanglongjun@kylinos.cn>
-> Signed-off-by: Yun Lu <luyun@kylinos.cn>
->
-> ---
-> Changes in v2:
-> - Add a Fixes tag.
-> - Link to v1: https://lore.kernel.org/all/20250707081629.10344-1-luyun_61=
-1@163.com/
-> ---
->  net/packet/af_packet.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-> index 3d43f3eae759..7df96311adb8 100644
-> --- a/net/packet/af_packet.c
-> +++ b/net/packet/af_packet.c
-> @@ -2845,7 +2845,7 @@ static int tpacket_snd(struct packet_sock *po, stru=
-ct msghdr *msg)
->                 ph =3D packet_current_frame(po, &po->tx_ring,
->                                           TP_STATUS_SEND_REQUEST);
->                 if (unlikely(ph =3D=3D NULL)) {
-> -                       if (need_wait && skb) {
-> +                       if (need_wait && packet_read_pending(&po->tx_ring=
-)) {
->                                 timeo =3D sock_sndtimeo(&po->sk, msg->msg=
-_flags & MSG_DONTWAIT);
->                                 timeo =3D wait_for_completion_interruptib=
-le_timeout(&po->skb_completion, timeo);
->                                 if (timeo <=3D 0) {
+On Tue, Jul 08, 2025 at 08:40:27AM +0200, Arnd Bergmann wrote:
+> On Tue, Jul 8, 2025, at 07:39, Thomas Weißschuh wrote:
 
-packet_read_pending() is super expensive on hosts with 256 cpus (or more)
+(...)
 
-We are going to call it a second time at the end of the block:
+> > But why do we even need the stubs? Removing the time functions from the
+> > vDSO completely should also work, no?
+> > For parisc there was no reasoning why stubs were used. On uml the stubs are
+> > necessary to prevent the libc from calling into the host vsyscall [0], but
+> > that looks irrelevant for SPARC.
+> >
+> > [0] f1c2bb8b9964 ("um: implement a x86_64 vDSO")
+> 
+> I was wondering about this myself, I thought this might have been
+> for runtime environments that just assume the vDSO is there, possibly
+> some non-C libraries, or future glibc versions that may error
+> out when the vdso is absent instead of falling back to the syscall.
 
-do { ...
-} while (ph !=3D NULL || (need_wait && packet_read_pending(&po->tx_ring)...
+libc erroring out if the vdso is missing sounds unlikely to me.
 
-Perhaps we can remove the second one ?
+(...)
 
-Also I think there is another problem with the code.
+> The arch/x86/um/vdso/um_vdso.c version for 32-bit seems to still
+> be missing the clock_gettime64() entry, any idea what the
+> resulting behavior is for time64 userspace?
 
-We should call sock_sndtimeo() only once, otherwise SO_SNDTIMEO
-constraint could be way off.
+The vsyscall page is for 64-bit userspace only, and I think always ways.
 
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index f6b1ff883c9318facdcb9c3112b94f0b6e40d504..486ade64bddfddb1af91968dbdf=
-70015cfb93eb5
-100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2785,8 +2785,9 @@ static int tpacket_snd(struct packet_sock *po,
-struct msghdr *msg)
-        int len_sum =3D 0;
-        int status =3D TP_STATUS_AVAILABLE;
-        int hlen, tlen, copylen =3D 0;
--       long timeo =3D 0;
-+       long timeo;
+In any case, modern distro kernels don't provide the vsyscall page at all or
+emulate it through syscall stubs, which are affected by the uml host access issue.
+Also glibc dropped vsyscall page support in 2020.
 
-+       timeo =3D sock_sndtimeo(&po->sk, msg->msg_flags & MSG_DONTWAIT);
-        mutex_lock(&po->pg_vec_lock);
 
-        /* packet_sendmsg() check on tx_ring.pg_vec was lockless,
-@@ -2846,7 +2847,6 @@ static int tpacket_snd(struct packet_sock *po,
-struct msghdr *msg)
-                                          TP_STATUS_SEND_REQUEST);
-                if (unlikely(ph =3D=3D NULL)) {
-                        if (need_wait && skb) {
--                               timeo =3D sock_sndtimeo(&po->sk,
-msg->msg_flags & MSG_DONTWAIT);
-                                timeo =3D
-wait_for_completion_interruptible_timeout(&po->skb_completion, timeo);
-                                if (timeo <=3D 0) {
-                                        err =3D !timeo ? -ETIMEDOUT :
--ERESTARTSYS;
+Thomas
 
