@@ -1,133 +1,107 @@
-Return-Path: <linux-kernel+bounces-722176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46FEAAFD64A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:18:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E8D7AFD671
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3448D1C221BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:18:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CF641C25D43
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5FA21C9ED;
-	Tue,  8 Jul 2025 18:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC352EBDE8;
+	Tue,  8 Jul 2025 18:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZgBt4z/G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NG63G2nE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA0621ABD4;
-	Tue,  8 Jul 2025 18:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD8F2EBDCE;
+	Tue,  8 Jul 2025 18:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751998690; cv=none; b=AUq3AHR4woo56eLktv4zIvHkIEaHAPDpEadiuOg7J7yxKtARdmDWyEwQAZIEGthLsytJ8vP27c3GHktpQaEOcL3DF19gRn/0g4YF8Ylrv4EDmE/AjP138q3QDwF3Slo7YR7n1hLBAb8kFlvwl+TE0RDaU4ahjbv9dwwdr1ePPZk=
+	t=1751998851; cv=none; b=R/PfCMkfuPadBSo6UtZ5/z+FsXLcco0JwXUA9TK6Dho6avl7VN2l44X9SKXS6w2djT+7mxqonYRBRbD6o3/zuZxjnqSo4O4AjigQB0R5RqIIz2isV+ZQ6qGN9XeirdsOsNhRTycKBsK1b5WIWEPyYatSbyGUgrrvt9wLnY+Tsio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751998690; c=relaxed/simple;
-	bh=PKu6/ThVozLLn7QVgY0cNBC72u37vzczW0XG6NNicpg=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YuPQ3KsdoIvkc2IIGLPGUcIqf1n5coIRVD5Z4MVyAydrRfVWaYcnh8/qChWrRz2Au3Ssk3IaQqd5dTda0EoFbIas+LS+QcPh9vriaoB9ztB2Qbf8cUbzNSXFfhe06oLsnxQQYee6fJIepZgdZbF1fvGISxYx5Et8NZfwM1YWMVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZgBt4z/G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E936C4CEED;
-	Tue,  8 Jul 2025 18:18:09 +0000 (UTC)
+	s=arc-20240116; t=1751998851; c=relaxed/simple;
+	bh=x43xMa/FOzE06hyOr7AC8Qnb2MUYOv7J4K+cekDKbDU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qPNjTGM2jqiW2pian8E5jxpfXGS9YoH4KTWmgbZcRRE0/kEyVNcyzbf1HN0yysv46AeTd6kqQ4AeMyuwd57JuYHcwUjmhsRspm2lc51Hcoub4MQ/EcBXW/CV+5gzREv+Bg3Cf5+MFqgbZS3mV75lm7UmKYb4HYfNwi+2hBqDvsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NG63G2nE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0FA3C4CEED;
+	Tue,  8 Jul 2025 18:20:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751998689;
-	bh=PKu6/ThVozLLn7QVgY0cNBC72u37vzczW0XG6NNicpg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZgBt4z/GsgkccT31iLNkliSi4hbeCcwskRE2LCNvIscD0JNwyrcnPqREmog8m8eoZ
-	 9H/qk0MrBkhHBfgc86BKsWc9qzFeoHG0Apx1vExK2mJlewaBFFvh1zexoB+kVRL/bd
-	 cBQzlpKNXa/ao9V+3iWi7CT0uPVf657ze14JhIr0DYg8pJDeVMTpoVSn8SX6KCb8Et
-	 a5HuvvD2iWSBYVjA1UMWo8jB4oRhv7u5graujTyoR+kZXwtuciBUykYw9737QJpXcO
-	 jsQa93xKez07Z73M8PFvAkI2tP6tc1h6BBcHd3xOYKk+u+hPc609EtLd0UllqPbFBg
-	 zp67BrGbMkOnw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uZCtK-00DrVr-N7;
-	Tue, 08 Jul 2025 19:18:07 +0100
-Date: Tue, 08 Jul 2025 19:18:06 +0100
-Message-ID: <86ms9ea6n5.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>, Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Timothy Hayes <timothy.hayes@arm.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Peter Maydell <peter.maydell@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v7 00/31] Arm GICv5: Host driver implementation
-In-Reply-To: <20250703-gicv5-host-v7-0-12e71f1b3528@kernel.org>
-References: <20250703-gicv5-host-v7-0-12e71f1b3528@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1751998851;
+	bh=x43xMa/FOzE06hyOr7AC8Qnb2MUYOv7J4K+cekDKbDU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NG63G2nEfveKE59nKPI9OwTLgYnn5Z+kYZojIYyBfF+2cZX5K+YOkNb0mB/1sQzOn
+	 IUd/X4rBGQHhHTCj/RA7Z0ocVTceNXWxnwM2xdiwzVAZ2ehc/ub3AE1rHs2nESfnGU
+	 kj8GcbpvLOsn8DtAab0NZ42ALnYW5VJJsoOd0xkn6g4SeJN52Kbz8PlbQC/nzMSGkD
+	 JwX1yoLyJLRFF7WBjuJA/VLYj+krAX9Q/1UvuwUwu45UpRrHOyRMKeJ9mOvN4yyszG
+	 +6UIaSj6ZoULZuYpJV6OngYTSzaA0afJGgpTAmY9mlHp97we6vqfbR7WP3TXXRwoWd
+	 JeJGwmGalpp/A==
+Date: Tue, 8 Jul 2025 11:20:07 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Yuwen Chen <ywen.chen@foxmail.com>
+Cc: davem@davemloft.net, herbert@gondor.apana.org.au, jaegeuk@kernel.org,
+	linux-crypto@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu
+Subject: Re: [PATCH v2] fscrypt: improve filename encryption and decryption
+ performance
+Message-ID: <20250708182007.GB1255@sol>
+References: <20250704051441.GA4199@sol>
+ <tencent_8F6BAFE88DDB6EFCC8D5E81C3BCFEAEBB105@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, lpieralisi@kernel.org, tglx@linutronix.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, sascha.bischoff@arm.com, Jonathan.Cameron@huawei.com, timothy.hayes@arm.com, bhelgaas@google.com, Liam.Howlett@oracle.com, peter.maydell@linaro.org, mark.rutland@arm.com, jirislaby@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-pci@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_8F6BAFE88DDB6EFCC8D5E81C3BCFEAEBB105@qq.com>
 
-On Thu, 03 Jul 2025 11:24:50 +0100,
-Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
+On Tue, Jul 08, 2025 at 03:33:34PM +0800, Yuwen Chen wrote:
+> On Thu, 3 Jul 2025 22:14:41 -0700, Eric Biggers wrote:
+> > I'm guessing you have some debugging options enabled in your kconfig.  Usually
+> > the allocations aren't quite *that* expensive.  That being said, it's always
+> > been really annoying that they have to be there.
 > 
-> Implement the irqchip kernel driver for the Arm GICv5 architecture,
-> as described in the GICv5 beta0 specification, available at:
+> Turn off most of the debugging options and merge these two patches
+> for memory allocation. The performance test results are as follows:
+> Before this submission was merged, when creating 10000 files,
+> the performance test results are as follows:
+> $ time /data/file_creater 10000
+> 0m10.90s real     0m00.00s user     0m10.69s system
 > 
-> https://developer.arm.com/documentation/aes0070
+> After merge these two patches, the performance is as follows:
+> $ time /data/file_creater 10000
+> 0m05.32s real     0m00.00s user     0m05.28s system
 > 
-> The GICv5 architecture is composed of multiple components:
+> > Unfortunately, as far as I know, you actually can't just allocate the
+> > skcipher_request on the stack like that, since the legacy crypto API assumes
+> > that the request memory is DMA-able.  On-stack requests also might not be
+> > properly aligned (see
+> > https://lore.kernel.org/all/CA+55aFxJOzMim_d-O2E2yip8JWo0NdYs_72sNwFKSkTjy8q0Sw@mail.gmail.com/
+> > -- may be outdated, but I haven't heard otherwise).
 > 
-> - one or more IRS (Interrupt Routing Service)
-> - zero or more ITS (Interrupt Translation Service)
-> - zero or more IWB (Interrupt Wire Bridge)
-> 
-> The GICv5 host kernel driver is organized into units corresponding
-> to GICv5 components.
-> 
-> The GICv5 architecture defines the following interrupt types:
-> 
-> - PPI (PE-Private Peripheral Interrupt)
-> - SPI (Shared Peripheral Interrupt)
-> - LPI (Logical Peripheral Interrupt)
-> 
-> This series adds sysreg entries required to automatically generate
-> GICv5 registers handling code, one patch per-register.
-> 
-> This patch series is split into patches matching *logical* entities,
-> to make the review easier.
+> Thank you for the reminder. This should be a problem here.
+> Just, why can SYNC_SKCIPHER_REQUEST_ON_STACK be allocated on
+> the stack? Is it possible to use ALIGN to achieve alignment?
 
-[...]
+I suppose that in practice the request alignment only matters for the
+off-CPU offloads, and that's how SYNC_SKCIPHER_REQUEST_ON_STACK gets
+away with maybe not aligning the request reliably.  If you look at e.g.
+the software AES-XTS code, it doesn't even use the request context at
+all, which makes the entire exercise a bit pointless.
 
-Oliver, I've pushed out a branch with these patches at [1]. Could you
-please stash it in kvmarm/next and add the KVM bits to it so that it
-can all simmer in -next for a bit?
+I'm thinking we should just go ahead and use sync_skcipher and
+SYNC_SKCIPHER_REQUEST_ON_STACK for now.  Previously this was impossible
+because the x86 accelerated AES-XTS algorithms had CRYPTO_ALG_ASYNC set,
+but now it is possible.
 
-Thanks,
+Can you review and test the following patchset:
+https://lore.kernel.org/linux-fscrypt/20250708181313.66961-1-ebiggers@kernel.org/ ?
 
-	M.
-
-[1] git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git gic-v5-host
-
--- 
-Without deviation from the norm, progress is not possible.
+- Eric
 
