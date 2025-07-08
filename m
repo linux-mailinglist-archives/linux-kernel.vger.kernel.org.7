@@ -1,193 +1,147 @@
-Return-Path: <linux-kernel+bounces-722547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0BF0AFDBF6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:47:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BE3DAFDBF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 648233B7137
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:46:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6689E1BC7DC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B68A23CEFF;
-	Tue,  8 Jul 2025 23:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEB123770D;
+	Tue,  8 Jul 2025 23:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ePNnI1Rk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vbzlRsi7"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B9818E3F;
-	Tue,  8 Jul 2025 23:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B4318E3F
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 23:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752018410; cv=none; b=imX2ALCHwkJNxbmopHhOmcc0UO6knc+B6wSla3znsV3/xkLgG4qAAfavoAQmfcQrFNhLcc1YJOcnXbKKSGYi6hTVneJU2ME+U5W2DQsGHPIHJGBsipzhwocyaBJTpiaZ0jbAZEP7OkLRs+8OyS+BWGax8ViGp1liy9hUsqWKHqQ=
+	t=1752018704; cv=none; b=B7ENuG5ampS4kKH7VTSgS/TsRgYwpOnvRUZYxVpxTpf/0QVvDAFeILeLgaS6xoYIvfZIew5ziqRtQyXpdoIJBjPLKA8IED7qvxUHUibiJu0+wu8qxZeqNbqZ583DE5XzHxhR+jPgLyoA/CVrboGBc9FWkrZpTK+Jc8Vznppv1Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752018410; c=relaxed/simple;
-	bh=MlpSgduVRBJdk395iMJ6yLimjvXQpIqGCCEMgZlsg6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YirD9FG8efdxxGgfRop/ua55RsH0NLfUeRiERaiB4zn4GOQRC0ZSoW0RSTZOJD/ClrBorbpM1Hy1lVNfodRGjeQHKNnR9Xty1tXU+hvsXI2nxxzJd4T9r76Ql2GOw8WoNmjzIF8ycMeAj5jWJ2ONRPUaOmyw4Bgg01meFrfP5Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ePNnI1Rk; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752018408; x=1783554408;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=MlpSgduVRBJdk395iMJ6yLimjvXQpIqGCCEMgZlsg6M=;
-  b=ePNnI1Rklo/1c2CII06FDMTNPFxv5YffmQbqisch/9WWMn35i+LhjeB0
-   JaxFqVmki9COX8GuMa5qaIta9S3tGP18/v4L6PcdfIHXwS2yqhA+28BP1
-   F2T84YjhWXKsh+ydKTWNK5VF0aUiBGosWL/H6liiHAoZhCb9mm6c5yZCE
-   yNnRyexqtIqGVX91SlABMJbPGLXyUDjLifoRaO88jHw3xafxH8fLk5N5O
-   81iFyste7mneSFlAgw1FdZkkR6908EV7sWpB7xu5c1G6kPWckSDY/QPwX
-   LcjU9Zicw1R4GWSFkWG4IIGM4sEYUW3kCNV+VWSwUgFolloVkpn9OGATB
-   A==;
-X-CSE-ConnectionGUID: 28bilIjgSmSguQIamSAKww==
-X-CSE-MsgGUID: yNVnkYAaSVqHo/4g1PqZUw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54412895"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="54412895"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 16:46:47 -0700
-X-CSE-ConnectionGUID: q7oi4U30RgSdrHZGPh6ycA==
-X-CSE-MsgGUID: 7IJhBtTFS2G52EautX/oBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="179305651"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.102])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 16:46:43 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 5D9BD11F8A6;
-	Wed,  9 Jul 2025 02:46:41 +0300 (EEST)
-Date: Tue, 8 Jul 2025 23:46:41 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v2 05/12] media: ipu-bridge: Use v4l2_fwnode for unknown
- rotations
-Message-ID: <aG2t4cxwXKJ9MSQX@kekkonen.localdomain>
-References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
- <20250605-uvc-orientation-v2-5-5710f9d030aa@chromium.org>
- <aGw_1T_Edm8--gXW@kekkonen.localdomain>
- <CANiDSCup2iRx+0RcaijSmbn04nBY4Ui9=esCPFsQzOKe=up9Gg@mail.gmail.com>
- <aGzjTRSco39mKJcf@kekkonen.localdomain>
- <CANiDSCsqEHTnbvzLMoe_yxi8JRzp+2PQe3ksXhD=Y3+AqC_9hw@mail.gmail.com>
- <aG0NI2V0Tfh2HZ6O@kekkonen.localdomain>
- <CANiDSCu=wU_Oi7CLPcYTC3Xf_pGbDroaVitPAiAj7ND5pXy-6g@mail.gmail.com>
+	s=arc-20240116; t=1752018704; c=relaxed/simple;
+	bh=SZ8iJbDhneSUywETW4QZU6SNd1bynvnX+q6yB5H83Y0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=OwHKiF97xOdZp8UoTcZn1TworlXAUPZgnfLHAIGmQMeTmUJM0xudu4o9TkBzAfdHocrniAHkAOC6VCtvgISBCROddLZMntf8S661BAP4kLHY7EaT/LK9syFpfa6T3KYXP9FREsPbjrJnuG43SDXk/ktjR+BpHXo5PFXnFfM/hfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vbzlRsi7; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4a5ac8fae12so200661cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 16:51:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752018701; x=1752623501; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fcogKvWsheYKoq8ewdiLtu7cwyh48ck6nDeYdrXjpcU=;
+        b=vbzlRsi7lDK7jgb4Bf2nmXAQ1DK615XGyiVmc2KsJXASFr/31pYGg8sj1CSGwnlmm+
+         Mv9TWL4Ya/siJ7SWJa6++bRW+HT4iVHhmxVKqoUBwjDqpNwCkmTsCBiYY+65Dxr17tXn
+         NU99OlDib5wS0DKeOr5ogCq7DQBIGJ5/0AJqyDgRhLDqzrnYoly0zZ1BLzZDq5dwPSO8
+         3TyVphutiVdiuV6z4nSMuhDVciFCdO6IxbVrtRm/BmLc14JJw29kOeq8OzaCQkQTWxjY
+         OdZwmq7GipV9xvUMHmWasrMRDiNWKjnEhi9LRBpe+6ERaEJbuOBQT626wyW6/2Y2ve1C
+         BwUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752018701; x=1752623501;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fcogKvWsheYKoq8ewdiLtu7cwyh48ck6nDeYdrXjpcU=;
+        b=w3418fGqQpRRJWm6I9gV5BSApjkX27jC/vZxaOSYbhLjVTZG1JVkDxzOG3QJLmeyVH
+         uwho43p59pZt4XNiSpSy2B3x7kJksuX02nHVdZuClscJxTOiqjDAyYbqbyJguSvMwQFH
+         LnNL9ukv/hOmmlFGRQUdzp9VaIRErJo9NGzCcIpezn9NSTUCntNm5unapfKvSF6o4frf
+         AScqYYVm/F9+LFi2vDM0P/dpz+Uh+mHJrj7z2FRC11sOkI1fUnr3qzWPtAgMGMfLbwJB
+         1KPqwcroOjN+APaYVlkCuQ0MjD8/SUCMT4tWsTeoXBHIGuv95AIWLPIyZa9djHqJ92NI
+         flBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKA/b4M2IZgXaLpUFqrVbrfmLEjFHJU+SAeW9dTmqr91/QCFkfWYWgYaxeQQHknS9tZ1bZ/TSrV/PByJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVdsQJZcGShGnCKcxp4Vt17lL0qrtCK7tNWTwLkiL8FwuaadOv
+	8ohDaoZX+ze88nE71TbwuwlY7U85SsWJz9ycCs5Auv8IqH75efH5k/VKB7BjCKVQSCn0/LMp266
+	J3Qme8Ja1UHUUHXtzyp6xDVG2cVzo2UPPnXTW5Tjy
+X-Gm-Gg: ASbGncu9EF3SoxjKJU0tqCfvbjlGtV76xUm+AJYrEvhF8YqlBMCVfHDPRoIviCnFdXf
+	UhBOqsJgx5Lx48qHyt4fALhKZVVGp9hoTYEnuULpeFQotjoIpjJI+3xhy1UZWd/06OV8vnpZ3Hc
+	G3UmdiTc2ovIsgr2j91YKed3NkUeg4mm3JDNAQSXEhXLcwNh2j9GfD
+X-Google-Smtp-Source: AGHT+IH5ZRX1UHL+BsFfEl3cPQK5B93EBscOPBUjTsG2NUTxvohxsio1Dc1gBo7FZrOdHKGC/6m/6HBSMMbKQeOXcMI=
+X-Received: by 2002:a05:622a:8389:b0:4a9:a4ef:35d3 with SMTP id
+ d75a77b69052e-4a9de1106c0mr633231cf.7.1752018700978; Tue, 08 Jul 2025
+ 16:51:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiDSCu=wU_Oi7CLPcYTC3Xf_pGbDroaVitPAiAj7ND5pXy-6g@mail.gmail.com>
+References: <686d5adb.050a0220.1ffab7.0019.GAE@google.com> <CAJuCfpFjLmDRE=3E91279A+diisTgz24+a5D6c+sH8Oh7PzP6g@mail.gmail.com>
+ <6mw4p4shg6myw5a677hkvhzytsnfa2e5zb7zpe6kcqlfjglmol@pzwcbowwy2v5>
+In-Reply-To: <6mw4p4shg6myw5a677hkvhzytsnfa2e5zb7zpe6kcqlfjglmol@pzwcbowwy2v5>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 8 Jul 2025 16:51:29 -0700
+X-Gm-Features: Ac12FXxa9sXsu1ybpB3tJFLXtDRK1pfBrBFB5o1ZkKawju9k2T2yCdL4OdDSm_A
+Message-ID: <CAJuCfpGba=tJ=0Zeqz-znHzhxajkjH98RxN4M5Jr6SBbq8YPmw@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] WARNING: lock held when returning to user space in lock_next_vma
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
+	syzbot <syzbot+80011ad33eec39e6ce42@syzkaller.appspotmail.com>, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	lorenzo.stoakes@oracle.com, shakeel.butt@linux.dev, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 08, 2025 at 04:58:25PM +0200, Ricardo Ribalda wrote:
-> On Tue, 8 Jul 2025 at 14:21, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
-> >
-> > Hi Ricardo,
-> >
-> > On Tue, Jul 08, 2025 at 02:09:28PM +0200, Ricardo Ribalda wrote:
-> > > On Tue, 8 Jul 2025 at 11:22, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
-> > > >
-> > > > Hi Ricardo,
-> > > >
-> > > > On Tue, Jul 08, 2025 at 11:16:25AM +0200, Ricardo Ribalda wrote:
-> > > > > Hi Sakari
-> > > > >
-> > > > > Thanks for your review
-> > > > >
-> > > > > On Mon, 7 Jul 2025 at 23:45, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
-> > > > > >
-> > > > > > Hi Ricardo,
-> > > > > >
-> > > > > > On Thu, Jun 05, 2025 at 05:52:58PM +0000, Ricardo Ribalda wrote:
-> > > > > > > The v4l2_fwnode_device_properties contains information about the
-> > > > > > > rotation. Use it if the ssdb data is inconclusive.
-> > > > > >
-> > > > > > As SSDB and _PLD provide the same information, are they always aligned? Do
-> > > > > > you have any experience on how is this actually in firmware?
-> > > > >
-> > > > > Not really, in ChromeOS we are pretty lucky to control the firmware.
-> > > > >
-> > > > > @HdG Do you have some experience/opinion here?
-> > > > >
-> > > > > >
-> > > > > > _PLD is standardised so it would seem reasonable to stick to that -- if it
-> > > > > > exists. Another approach could be to pick the one that doesn't translate to
-> > > > > > a sane default (0°).
-> > > > >
-> > > > > I'd rather stick to the current prioritization unless there is a
-> > > > > strong argument against it. Otherwise there is a chance that we will
-> > > > > have regressions (outside CrOS)
-> > > >
-> > > > My point was rather there are no such rules currently for rotation: only
-> > > > SSDB was being used by the IPU bridge to obtain the rotation value,
-> > > > similarly only _PLD is consulted when it comes to orientation.
+On Tue, Jul 8, 2025 at 4:15=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracle=
+.com> wrote:
+>
+> * Suren Baghdasaryan <surenb@google.com> [250708 18:19]:
+> > On Tue, Jul 8, 2025 at 10:52=E2=80=AFAM syzbot
+> > <syzbot+80011ad33eec39e6ce42@syzkaller.appspotmail.com> wrote:
 > > >
-> > > So something like this:?
+> > > Hello,
 > > >
-> > > static u32 ipu_bridge_parse_rotation(struct acpi_device *adev,
-> > >                                      struct ipu_sensor_ssdb *ssdb,
-> > >                                      struct
-> > > v4l2_fwnode_device_properties *props)
-> > > {
-> > >         if (props->rotation != V4L2_FWNODE_PROPERTY_UNSET)
-> > >                 return props->rotation;
+> > > syzbot found the following issue on:
 > > >
-> > >         switch (ssdb->degree) {
-> > >         case IPU_SENSOR_ROTATION_NORMAL:
-> > >                 return 0;
-> > >         case IPU_SENSOR_ROTATION_INVERTED:
-> > >                 return 180;
-> > >         }
+> > > HEAD commit:    26ffb3d6f02c Add linux-next specific files for 202507=
+04
+> > > git tree:       linux-next
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1719df705=
+80000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D1e4f88512=
+ae53408
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D80011ad33ee=
+c39e6ce42
+> > > compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88=
+f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1124abd=
+4580000
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1099df705=
+80000
 > > >
-> > >         dev_warn(ADEV_DEV(adev),
-> > >                  "Unknown rotation %d. Assume 0 degree rotation\n",
-> > >                  ssdb->degree);
+> > > Downloadable assets:
+> > > disk image: https://storage.googleapis.com/syzbot-assets/fd5569903143=
+/disk-26ffb3d6.raw.xz
+> > > vmlinux: https://storage.googleapis.com/syzbot-assets/1b0c9505c543/vm=
+linux-26ffb3d6.xz
+> > > kernel image: https://storage.googleapis.com/syzbot-assets/9d864c72be=
+d1/bzImage-26ffb3d6.xz
+> > >
+> > > IMPORTANT: if you fix the issue, please add the following tag to the =
+commit:
+> > > Reported-by: syzbot+80011ad33eec39e6ce42@syzkaller.appspotmail.com
+> > >
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > WARNING: lock held when returning to user space!
+> > > 6.16.0-rc4-next-20250704-syzkaller #0 Not tainted
+> > > ------------------------------------------------
+> > > syz.0.22/6068 is leaving the kernel with locks still held!
+> > > 1 lock held by syz.0.22/6068:
+> > >  #0: ffff8880792a3588 (vm_lock){++++}-{0:0}, at: lock_next_vma+0x146/=
+0xdc0 mm/mmap_lock.c:220
 > >
-> > Maybe:
-> >
-> >         acpi_handle_warn(acpi_device_handle(adev), ...);
-> >
-> > ?
-> >
-> > >         return 0;
-> > > }
-> >
-> > Looks good to me. Maybe something similar for orientation?
-> 
-> Do you mean using ssdb also for orientation or using acpi_handle_warn?
-> 
-> 
-> I cannot find anything related to orientation for SSDB
-> https://github.com/coreboot/coreboot/blob/main/src/drivers/intel/mipi_camera/chip.h#L150
-> 
-> Am I looking in the right place?
+> > Hmm. I must be missing an unlock_vma() somewhere but I don't see it
+> > yet. Will try the reproducer.
+>
+> The last one was against v5 patches, is this v6?
 
-Ah, maybe SSDB has only rotation? At least it's less duplicated information
-in different format, so that's a good thing. So this just applies to
-rotation, it seems.
-
--- 
-Sakari Ailus
+Oh, good point. Let me check that. Thanks!
 
