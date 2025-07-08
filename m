@@ -1,113 +1,103 @@
-Return-Path: <linux-kernel+bounces-721854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78247AFCEC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:15:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC89AFCEC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1A0E1899345
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:14:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3EB15607EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A19E2E0B47;
-	Tue,  8 Jul 2025 15:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jgbu+3uI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7742E0B5E;
+	Tue,  8 Jul 2025 15:15:10 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54992E041F;
-	Tue,  8 Jul 2025 15:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B342E091A;
+	Tue,  8 Jul 2025 15:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751987645; cv=none; b=StyxZmEkmG7iNwGbwOw8GLdlAlJg04iM0uWlZ7cmn7037p0gx+OxqNIyXPbwRSM8nOlSScb1dmxzuZh2/lJrVt4apES+abxdMvQ1VoED2jVaddDWD7SU3xUnWDtCwsKWpUpXTM3//KFX+GjfLH0uTk2LxFO8aX+lGad2bO0Z5cA=
+	t=1751987710; cv=none; b=PTIQsGc3MLtqlch8Wu4m07NABre3+ttlFZaumH77o6u0DN1VZ/khl1KZByeAgYT184MGfBrujI0WF48M/QloV9AAv7cXRrFVsWHfHGSUcCrzgkz09o58iNoZropyQpy68j0gMUBx4XORU7RTBQXFRKNVS+9VAZ3nwYut81B7XSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751987645; c=relaxed/simple;
-	bh=HLwJX5QT3UNWX3z8LqzLY6nx+EIVfmL3uCZ2H723Z0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y7oTKvACXW7iDlm9LmuCDL1I0fH3gf9iNGMcWathBmSNr6mx/DqRtnKGTcjyQyyDdjoy27MwRa149IyO9NuURX8Qxe0X7DoxFElZREMaELJ6yVscia7pL14m8wIGKPSOJU0nyOr9YbqlkDV8OjlhIjmNVKIECxjieyXeE2nZXyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jgbu+3uI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15A0FC4CEED;
-	Tue,  8 Jul 2025 15:13:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751987645;
-	bh=HLwJX5QT3UNWX3z8LqzLY6nx+EIVfmL3uCZ2H723Z0k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jgbu+3uICnilzU7yt4gSm3YEVbHVhirbcQsISXRWu4gqnqi9Wa2emvrvgygt1EpFE
-	 32I7u1RHIwC29A5oaKIMevVrhZ20ST2jMpVPoTGIwYotmQiPzNAIH5JdYxd5SkKYcO
-	 PXE+xIggAcD1T/W7iXoXXkmiXuwar32bLf4jdlPoMxeIIYOqiAi6l0xxD4s0513u9N
-	 j9yh75kAPe/6fqdPoY/4UUx9KCuaApckykXEIYugO5TnYZap60X2XZJy3weg2y3K5K
-	 4WZWHlNYn0sob0oiI+smCF9Y2kLPR+E/YXFe+Cg6YhsuhgzxiGZUtScKeI9djQpCyL
-	 GRlSdW5d7vgwQ==
-Date: Tue, 8 Jul 2025 20:43:52 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Jingoo Han <jingoohan1@gmail.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Jeff Johnson <jjohnson@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev, linux-wireless@vger.kernel.org, 
-	ath11k@lists.infradead.org, qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com, 
-	quic_vpernami@quicinc.com, quic_mrana@quicinc.com, 
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Subject: Re: [PATCH v4 01/11] PCI: Update current bus speed as part of
- pci_pwrctrl_notify()
-Message-ID: <g4aynbh4kve3kdbnxhwgogxdvylynpdfu47lq3m3ngj6abuk7b@ross7a2ilqtz>
-References: <20250609-mhi_bw_up-v4-0-3faa8fe92b05@qti.qualcomm.com>
- <20250609-mhi_bw_up-v4-1-3faa8fe92b05@qti.qualcomm.com>
+	s=arc-20240116; t=1751987710; c=relaxed/simple;
+	bh=e/YehiYj+F1LkrXlpvP4oq7tcRL/IGEdsI/vueJDe70=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XSONyQlrKm8rraWElQf+wT/AanhS3XDAXPW4I1+iqgyCydSa8TKR97Iag1qjxKhJMQezUTQn2dnOqCI4HSqxaWBjSg/7vX6PrtIlHyUMcLo6MUguQM+N5DNxyKPBhy7SWpYO5CKeDcbFT1xpfEHFFNja+bTf1DRnNYY9pWZORp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bc4Mb0qw1z6D8hV;
+	Tue,  8 Jul 2025 23:11:55 +0800 (CST)
+Received: from frapeml500003.china.huawei.com (unknown [7.182.85.28])
+	by mail.maildlp.com (Postfix) with ESMTPS id ED09714025A;
+	Tue,  8 Jul 2025 23:15:04 +0800 (CST)
+Received: from a2303103017.china.huawei.com (10.203.177.99) by
+ frapeml500003.china.huawei.com (7.182.85.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 8 Jul 2025 17:15:04 +0200
+From: Alireza Sanaee <alireza.sanaee@huawei.com>
+To: <krzk@kernel.org>, <robh@kernel.org>
+CC: <coresight@lists.linaro.org>, <devicetree@vger.kernel.org>,
+	<dianders@chromium.org>, <james.clark@linaro.org>,
+	<jonathan.cameron@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
+	<linuxarm@huawei.com>, <mark.rutland@arm.com>, <mike.leach@linaro.org>,
+	<ruanjinjie@huawei.com>, <saravanak@google.com>,
+	<shameerali.kolothum.thodi@huawei.com>
+Subject: [PATCH v2 0/5] Refactoring finding CPU phandles in DT
+Date: Tue, 8 Jul 2025 16:14:57 +0100
+Message-ID: <20250708151502.561-1-alireza.sanaee@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250609-mhi_bw_up-v4-1-3faa8fe92b05@qti.qualcomm.com>
+Content-Type: text/plain
+X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
+ frapeml500003.china.huawei.com (7.182.85.28)
 
-On Mon, Jun 09, 2025 at 04:21:22PM GMT, Krishna Chaitanya Chundru wrote:
-> If the link is not up till the pwrctl drivers enable power to endpoints
-> then cur_bus_speed will not be updated with correct speed.
-> 
-> As part of rescan, pci_pwrctrl_notify() will be called when new devices
-> are added and as part of it update the link bus speed.
-> 
-> Suggested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> ---
->  drivers/pci/pwrctrl/core.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/pci/pwrctrl/core.c b/drivers/pci/pwrctrl/core.c
-> index 6bdbfed584d6d79ce28ba9e384a596b065ca69a4..4c1d3832c43503a7e434a3fe5e0bf15a148434dc 100644
-> --- a/drivers/pci/pwrctrl/core.c
-> +++ b/drivers/pci/pwrctrl/core.c
-> @@ -10,16 +10,21 @@
->  #include <linux/pci-pwrctrl.h>
->  #include <linux/property.h>
->  #include <linux/slab.h>
-> +#include "../pci.h"
->  
->  static int pci_pwrctrl_notify(struct notifier_block *nb, unsigned long action,
->  			      void *data)
->  {
->  	struct pci_pwrctrl *pwrctrl = container_of(nb, struct pci_pwrctrl, nb);
->  	struct device *dev = data;
-> +	struct pci_bus *bus = to_pci_dev(dev)->bus;
->  
->  	if (dev_fwnode(dev) != dev_fwnode(pwrctrl->dev))
->  		return NOTIFY_DONE;
->  
-> +	if (bus->self)
-> +		pcie_update_link_speed(bus);
+This series refactors the way CPU IDs are retrieved from the device
+tree.
 
-I'm wondering why this should be in pwrctrl driver and not in pci_device_add()?
+Usually, there is a for loop that goes over every single CPU that can be
+avoided. This also reduces the amount of NULL pointer checks in drivers.
+I have abstracted away that loop and introduced a new function
+(of_cpu_node_to_id) for this.
 
-- Mani
+This patchset is a subset of [1], where I removed content and patches
+relevant to hyper-threaded cores for DT. Based on the discussion, the
+code refactor is still useful, hence this patchset.
+
+Changes since v1 [2]:
+    - Rebased on top of the latest mainline.
+    - Addressed Krzysztof Kozlowski's comments -- Hopefully :-)
+    - Addressed Jonathan Cameron's comments.
+
+[1] https://lore.kernel.org/all/20250512080715.82-1-alireza.sanaee@huawei.com/
+[2] https://lore.kernel.org/all/20250707150414.620-1-alireza.sanaee@huawei.com/
+
+Alireza Sanaee (5):
+  of: add infra for finding CPU id from phandle
+  arch_topology: update CPU map to use the new API
+  coresight: cti: Use of_cpu_phandle_to_id for grabbing CPU id
+  coresight: Use of_cpu_phandle_to_id for grabbing CPU id
+  perf/arm-dsu: refactor cpu id retrieval via new API
+    of_cpu_phandle_to_id
+
+ drivers/base/arch_topology.c                  | 16 ++++----
+ .../coresight/coresight-cti-platform.c        | 14 +------
+ .../hwtracing/coresight/coresight-platform.c  | 15 +------
+ drivers/of/cpu.c                              | 40 +++++++++++++++++++
+ drivers/perf/arm_dsu_pmu.c                    |  8 +---
+ include/linux/of.h                            |  9 +++++
+ 6 files changed, 61 insertions(+), 41 deletions(-)
 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.43.0
+
 
