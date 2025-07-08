@@ -1,229 +1,149 @@
-Return-Path: <linux-kernel+bounces-720874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91207AFC18E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:44:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B320AFC193
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 810AE17E7E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:44:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A509D4A1286
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1F7242D62;
-	Tue,  8 Jul 2025 03:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E694202F9F;
+	Tue,  8 Jul 2025 03:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uqskT7Ku"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2056.outbound.protection.outlook.com [40.107.244.56])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RhITuDGx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D390262FFE
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 03:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751946233; cv=fail; b=TSDJ9eyiUO4ZMH+XY3CQ1YiV1eonPK1v3vPuj4bRNXTty+uttOGans9eCuRHVBOv5h6KgrOE8hJlwI/gxdjklUX03kcOj54vXY9K3xzK6JVWDb77P72pMkUYtjPIpAZa7L0I3aaujrje6WdLdEtLBaowC/M01r2/2tlB4XAcBvA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751946233; c=relaxed/simple;
-	bh=loHZrsZyC+VBdCxngKhGivCqKgEGKbUM/03QtLKEK4Y=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Tlv8Qok9AUlbsuWHfWDp1sYccX4IIBNDftvcNPwxKpJIYWLKoR4bi1Yih9NdbDgSkppcR1RMpembAU0Cmio0FiBop/PQuvmqIjGmuDGKEdUje60gIRK207/70MQK+heGHT3V2hLz8fgB2G91D0jTPIJvXhevRacRtchczsDP3+E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uqskT7Ku; arc=fail smtp.client-ip=40.107.244.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zJVtPGLvqNHOllaGaVegx2yEmDt2O8rWDXmrNni4bZi583tFldvYiP8Op7pyhICBFsRCRtLYsRZjiDEMmttNpXqYSURCU1BtouaJXMHAMupzLTcsWBABo6HGZEfPNZp/A75nq/5PkjDddZxu8r8OmYku6D0AOkIncGPReZhWvGfFZpYRtqSEmP0tIbmyKZUdiyWWiRgFM9iLYU934YRv3mfsY4VImlEaVaFZkOeudlULofY5XrXqwRVXl2Srdv/DzIj6JQDgxbb5Apoif+tD6/BD+8Hm1WXdmBRmPvEcVUT3bJnAryjE+tduu5p+ox0VnyxCYwTBZU7kY5RZQ6XE5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HlvLJEsi6VZvbueT/YvmvMhFBcO8RdRBFPhkVD1V1YI=;
- b=aIiiiXXxanKyPr7hyaxjgcJ9lDcfcF4Ly0hJuJxkd776WGmX9exn05iLrgM76ffV57VCxqIKmvLxxqx0W2AfqVUM1uasDnDGw30XonblqqKRu40UB/GEfdG8QO9e9GXJsIXoTbiVedgkbnGZMb0vF1C1Al2MfbFw08falim63nEORnIVKBqxgVuaGlTpE58yGuv5fL4mu9GcHSSEEwk54AM2xi+vIyOvp8RZwDAb1ugfMsBAyI6PlIat0knTd5dx9IiG5H7LSOAOez+E5g14kSeoeAkvB1q/DI6Bo31WuucG+EL936tB8e30X22zKuRhDsmr5ES6UIzR6DXFUl0LMw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HlvLJEsi6VZvbueT/YvmvMhFBcO8RdRBFPhkVD1V1YI=;
- b=uqskT7Kue8MHQMK3pvTLrWjQyx4r5wS9ytPK5vz0HXKFibMz/ZTG/ghcmdWv5MmhQwD6SFJT7XT9ASd+UD39Ukq7B3H6kam2dmY3xjU5n20LjOVGOYB+L9aZ5NWUdKhVa0mOkJacVwvxv8n4VEyrJHqLxkdZV0alfmQ9tAJ4pko=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from IA1PR12MB6434.namprd12.prod.outlook.com (2603:10b6:208:3ae::10)
- by MN0PR12MB6175.namprd12.prod.outlook.com (2603:10b6:208:3c4::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Tue, 8 Jul
- 2025 03:43:49 +0000
-Received: from IA1PR12MB6434.namprd12.prod.outlook.com
- ([fe80::dbf7:e40c:4ae9:8134]) by IA1PR12MB6434.namprd12.prod.outlook.com
- ([fe80::dbf7:e40c:4ae9:8134%3]) with mapi id 15.20.8901.024; Tue, 8 Jul 2025
- 03:43:49 +0000
-Message-ID: <9afdbe8c-759b-48e4-9c64-099cf5b2d3cd@amd.com>
-Date: Tue, 8 Jul 2025 09:13:39 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 3/4] mm: kmigrated - Async kernel migration thread
-To: Byungchul Park <byungchul@sk.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Jonathan.Cameron@huawei.com, dave.hansen@intel.com, gourry@gourry.net,
- hannes@cmpxchg.org, mgorman@techsingularity.net, mingo@redhat.com,
- peterz@infradead.org, raghavendra.kt@amd.com, riel@surriel.com,
- rientjes@google.com, sj@kernel.org, weixugc@google.com, willy@infradead.org,
- ying.huang@linux.alibaba.com, ziy@nvidia.com, dave@stgolabs.net,
- nifan.cxl@gmail.com, xuezhengchu@huawei.com, yiannis@zptcorp.com,
- akpm@linux-foundation.org, david@redhat.com, kernel_team@skhynix.com
-References: <20250616133931.206626-1-bharata@amd.com>
- <20250616133931.206626-4-bharata@amd.com>
- <20250707093631.GA18924@system.software.com>
-Content-Language: en-US
-From: Bharata B Rao <bharata@amd.com>
-In-Reply-To: <20250707093631.GA18924@system.software.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0046.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:98::22) To IA1PR12MB6434.namprd12.prod.outlook.com
- (2603:10b6:208:3ae::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD9A12B94
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 03:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751947129; cv=none; b=MvhkLJcdqhNZ7rKh6/I/EGOIpRkkKCrAmBv8GIO+Cp9yWf8wCz58aU1/BeVww7QSxS7UxVvUz3sFE0zJz9fVWhbQ42BgGWHj7TxKzcOSTwExBJ/7Ociu3F2Rg5NErCJ9CY8HVG0/lq0VIhSLCbNMbqT8VRcuvZeXYDIf/paAb1Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751947129; c=relaxed/simple;
+	bh=3AKkxcfvUlMu5TUYKLPTuhhBUALR+VAT3BG3ruqNIDo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e1jbBhlO+7r5+q1kcf8Fo9O/8zURtvjftKQIoXUd2suMMK5UHjo89z4/6sSdgVIqGAWYYUF0GoUGIbfpbsRrDHMlxhtntJDSPv44zQdCI2PL5MufeDgLcjFc+iUs0IJsi5YWYdobmv65OijsJ/Yp6j1mmJ1UOhpw4mrlRcqhbgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RhITuDGx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 567JbYAR003120
+	for <linux-kernel@vger.kernel.org>; Tue, 8 Jul 2025 03:58:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yVmdwoyRmqDc17tvesd0pZRhto/8N/zF0tcxD1+SpSA=; b=RhITuDGxVaX2nn3X
+	I3OQEFd2qRV3Kz5NsAafp+ON6RCsUZKC4B2/PEnO/FrGl0an5Ym41eu1adpgG07X
+	Wl+bq49fI/gfgZ+YQuHMFYbbDMrV/8I2pUVIEgYvBgb/gv4ewG8VusvkqiNVnk2N
+	oj9qT7nKfu0peyx/Plqz32GFtLrZYN1k0/y2GjefjVfIbh83ouCrxJRtHIY67yIf
+	3kc3rSjoBdD4Ya1dygCCSzaHHM/V7XySI7Ir8YzB8WZkRA1xdHmwzSr9gbl7MtQ/
+	8ktNx9ptWCZXYRwfJi4js8DvJpTXmxLPS1itVWAKOu/iDPhCq//859dNnBIhcy5x
+	FtVnLg==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pu0wac6d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 03:58:47 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-235196dfc50so36899585ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 20:58:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751947126; x=1752551926;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yVmdwoyRmqDc17tvesd0pZRhto/8N/zF0tcxD1+SpSA=;
+        b=L1x2haRWdkp6cONuTksXL0nISdQo+Z9AS/RkBiA7O9RLnsvXEX7n1CpXmdmIb/kNUH
+         U/hYDBR0MDPeFXULCrh49rYPUEyYz3ihdn5la3+TffU+VFg56vsoRr5qoTFCybpNNIop
+         A8PN2RvimfvIZYw3xkCsYedjae/w3hXwqJUrcQL6eo66VxJwAvpdpGgM/qflUMZHyrfE
+         J9Zgk77uUexbq9rNnr3VM+yhGGOo7PC5x/szN4Kj95QO+RqT2/PSDI39n0SEh0NEsFxB
+         VXZfgZ+zTR1HL0PE34JdFr70gKH7+36plDmLvCRxMLJlPpIadDW3TQOXOCr4emQZv2X8
+         t8mQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5YyAON1NmWHke9Vx4ioIz9CZpHBrK9kiqH9eCPADkrEb16BMhQS0UZCfrCv+lIB8Zdy9Amo1gNbpdsF8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBBxJ1ac1Y0PFVnxKBbmq7vtztSDpIqrbuPCZHxOLHmaPKITY6
+	aO8lxbBR/c1/7cWAVrrW8cjJpp9GW+t5pD3ckmTqDyBPg28WvEhPYL6+7dDAt14gavhCUlJsAlo
+	hS7S+1gNN+B0NBwCUyWfz72au6e2x+ByMmwtYoiKLTzPftrS2gT6HG2QEjMWbztK7WVc=
+X-Gm-Gg: ASbGncv3Yd7c9w9bltsVhcEBPZPV0PjoolVI1Mo0xhqh4lmCd8cp1iKJ5t0Zk/V28Es
+	uUwsMhaBXN16scza8sPyE/Hg7h7iR0yaKDJ4Yuxt/Ee10XDJ25OYZOvaHM+h2qoVzFKVy0eeoLD
+	bawbqLJBdo/j9GLX63qUnBW+bxPeF3IQRgn5cNlNl5qgI5EfismkhO4dkmy5dlNPrqUugAMNjld
+	5LSjdaCeUxg4Oo4aYcFppjUGznnJpfqHYrGHLPBGFFon1xOKOyA+oYG1lynbbkvTBlc0usPapne
+	T42b/8AqevSjIhjQ7KDQYkvkY+sAnclQ9RcvG8zWdld89ErTnL3g0/ILwE/QSRbD
+X-Received: by 2002:a17:902:e88c:b0:237:e753:1808 with SMTP id d9443c01a7336-23dd1b43dc5mr16754305ad.20.1751947126576;
+        Mon, 07 Jul 2025 20:58:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEso3ju5zhTdAEFrj8mTebhXy+yfUOAHYYTDpHBwzag4yfTDCfvyRpYY+6PtKpu5KUVV20vmg==
+X-Received: by 2002:a17:902:e88c:b0:237:e753:1808 with SMTP id d9443c01a7336-23dd1b43dc5mr16754025ad.20.1751947126139;
+        Mon, 07 Jul 2025 20:58:46 -0700 (PDT)
+Received: from [10.152.204.0] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c21edfe37sm824324a91.47.2025.07.07.20.58.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Jul 2025 20:58:45 -0700 (PDT)
+Message-ID: <074969cf-676a-34eb-c2e3-219cab3658d4@oss.qualcomm.com>
+Date: Tue, 8 Jul 2025 09:28:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR12MB6434:EE_|MN0PR12MB6175:EE_
-X-MS-Office365-Filtering-Correlation-Id: af07efc0-165d-4753-fd70-08ddbdd1a628
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bitJRTBGU2djQ21xWUxQSlhaWUlJVG5xK0I3K1Q0VnZjcXBmaldJWG1tQWtV?=
- =?utf-8?B?NFhPbVRnTnZKWEt4eU9uTFJablhWTkZrV0hNTU1nWWF2Mnc0TlEzekRmVFdR?=
- =?utf-8?B?eUZXODRyMFdkL2c4N3Rnc1Vrek9HMUV5c1J1dTZZUUdyR2F0SEo0RzNkQnBz?=
- =?utf-8?B?dEZkSU9GTVJWbkhtVU51K3RtOWhYbyt2UVhQdGVpZjhvWWp4ZlJIZVFZNkJo?=
- =?utf-8?B?K3BDY2dLZ0xqc0tZem1zRWhWOXlwMGszN2J0WGhmaFkwT3FqOEEwSmwwTno3?=
- =?utf-8?B?SmR0STMxUlJMV2hQNm9sZ0xDVzkrMUxnOHAzcnBvQTNCMWN2SlkvRi9Sczgr?=
- =?utf-8?B?TmFWaXFqOWN5clRIRFBIMThhOUxkMWN4TjlqcXIrMllsRnMrVmNFYUM5emcw?=
- =?utf-8?B?RVM2cktDZE5ndVAxeVozdGNiOEY5b0FJZy9wc2dWSEZqNmkxTlpNZTF3STJC?=
- =?utf-8?B?ZVhvTlg1VEZRdkZleFZtMTNBVzk2VllpQkdNUFp3ZU1uREVQYzd6SHAyZUlX?=
- =?utf-8?B?d0hLS1IyaEwxZVQ5SnhkTmp1aGVnMXhqWngzQ3lwR2xjanprcUh6d3dlU0c4?=
- =?utf-8?B?THozM2hTSWJ3QjQ3VW5nakxEbFJwOE9hSmx0ZDQ2UHlvSFM1VmRaOHVCRGF4?=
- =?utf-8?B?RVM0SnBiQTNtc0FWMlpZcTNRSTFtOW9BK3VrWTlJdnByZ3Qrd2xJd3htOEtp?=
- =?utf-8?B?TDk5YnJKcWhwdS9tQWhsbk1iRFl3dU90OHo3SHl2QUZqNmtVNG9LbS9RQVNx?=
- =?utf-8?B?K1RKd2hJQVN0ZERKZEVNeDJJbjJGR1QySFNJaitkR2pYRnlraUlBSXFlT1pu?=
- =?utf-8?B?VG9RdnJPOUM2UWk0QzB2ZEYrWlZZaTJidnQyUDFuQzlWM3RMY0RpTXJsdmFH?=
- =?utf-8?B?dmZNeFg0U2VHelZrY25oK29SMk9LZTlJR01tdGhGOHVlODdkci83OFByYTVH?=
- =?utf-8?B?bHZjQ2ZyN2c5S3BuQkF0M3NwTk5PU2xWTzA2cDc4NjdXeFltNzZISHVibFNo?=
- =?utf-8?B?SFZBMTVGem5QMEpoZ3ZLVmQxL1J0YXB6bW4vZlZlbE51bW1GVWp1QXJLZGZv?=
- =?utf-8?B?VFYzTHpUNjRCcm1HTGpydUVBZG9hWm11U2Z0RXlNTE41MUp3ZDNyV0RKSnJZ?=
- =?utf-8?B?QlNaKyt2TFNsbUM1RFUwNk1HRDZwK2dhZ0RKN2VybkYxazJtN0w1cTZzWXV3?=
- =?utf-8?B?RXBLUm1vNS9GdEd4N3BhbHNDSHc2K29XZ1kwNG1GTnBHSnlSTG1EL1E0NG8z?=
- =?utf-8?B?Mi9uMW8zNWtmT1N1WmpoZGZLTGtGT1ROSGRyQ2c3U25xSllNVWJQMkhXTDVq?=
- =?utf-8?B?TWQwNmhWMnpvTGRwWEI0ZHc0Qi8rQUVkck9LS2E0U20xMUxRcFo1QnVLcFlZ?=
- =?utf-8?B?WDNNYVBjaVhiM1huL04zblZZbGlZZXJKV1pQdlpCb3czVkQ1WkJRVS8zNm9W?=
- =?utf-8?B?ZTFPbXY0alZsZmE0L0JBdndsU1BxWWw2NDBRNFRPZkxldmdSUG9xYmtaYjd3?=
- =?utf-8?B?SFQzYlNDMDhGUGRDdXU2dkNsU3FTZkxXVDI4bDI1R1V6dFpkTGppNjZnYVhy?=
- =?utf-8?B?WHZrajJzYjhVRFYzb1NsUTk0bUYvZkMvWi96S0gwRUpSTVZScjV3a0x5M3B5?=
- =?utf-8?B?UUt3eUgwQ014aWxmZDJCU0MrcVVpWkpBdlpJb1ZOR3dWVVhIODFXZjlqaE9h?=
- =?utf-8?B?OG8zT3REWTZ2NmhYdkR4b1pGWVovYm14VnRLaysreEdwa3Z0bng0QkVkek8y?=
- =?utf-8?B?QWkyc2NRSEdXeUQzbno3NFZaN3kyODZWYXFkRld0MjNiZVRQMjAvNUxqcFZp?=
- =?utf-8?B?dFpISWlhaTk4NWNxaldqbThJRCs2ZTF2U09aYUh2Mm9kNFRGWkcxUE9rbGdn?=
- =?utf-8?B?MXpRZFVnN2loNWUrMS81MnVXcmRsNy9FdmFEeUlaSGNiZ1ZOSkppdW9GOGVF?=
- =?utf-8?Q?XNSjIEAkDfE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6434.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YUlGYVkzamlUZzQ4bjlaMDZGbS9UQ0NYSGV5d0tUaStTcEdiN3FnbjUweFRO?=
- =?utf-8?B?cXB0K2d5dUZQQUVTNWY5WitXSGw1TElnK3FkSDNYaXdHYmJHV0YzTG9jSW1L?=
- =?utf-8?B?RFhVNzJqM1FtTENRbnhvU1JBSzNuOERHWVFxQzUyWmk4WHZINXJqRFZ1eTdQ?=
- =?utf-8?B?TFRnOXBQdmduamVDT2RzblVwZzJSQ2lPQ2VobTE1Szd1dmFDakRvUTNIN01a?=
- =?utf-8?B?eGwrVE5HWE5ta1pocmhZblVtd1d3WXRpYnpSWUFHNkhHVjlzbkcwSllaMWlk?=
- =?utf-8?B?M2hPYW9TOWRqSWQvVFBmY1BZTHRtZVo0SFdHbDRrRm95T3JXNFJORVd6R2Uy?=
- =?utf-8?B?NG5odG5LVEVBTXhPc2VPUTkzVk5Kd216dmp6S3dlQnRXQlRPcjQ4U2JLeEdv?=
- =?utf-8?B?RWdHT0JGVE03dTd0MnZaUVM1M0YwWi9heU9mSHVRWXF2QVF5YlMwL08rSFhQ?=
- =?utf-8?B?U3dLWVZFVUl4SHhLZUVBMFpiMlYyQnBZM2htMkdyUEFuMlhzUlFMV2RDYlps?=
- =?utf-8?B?dWptd29LMjhZVWh5ckovc3NkS1FJWGo2YjErbVRkZ1A0NWpRK0VFZ20vdVJ0?=
- =?utf-8?B?OFRhUTBDeEhuWUZCSDNOdFRHOUQvUEhtbW1WYmp3TWo4cm1naE1rOWtSbGVo?=
- =?utf-8?B?SFB0aFpCRGd1NzNyWU9ROUlZRnBHQWZzVStOc3lCaXlyM1JtcDhoMG83NGlr?=
- =?utf-8?B?VjNxSWdsSkFQQzQzS25WQVlDNzFFMWZERXdjZng5bnZyc3NGYnNVZWFQeWtj?=
- =?utf-8?B?SjNEa29zbmdnNjhxelozUXp0cm9LaERyQWY5bE1td1ZXVFpXRkxOV1pHYkhK?=
- =?utf-8?B?K3B3RThiWFlTSDByaHlYK2FzNzJxYm5qeCs0ZmRDemJyT2hXLy8ybkpsTCtC?=
- =?utf-8?B?UlVDd1Y4L1ZrRTUvZTlUenRTT3JqMzhweVZod0o1UFhrSStFNHBTU1JuNm9P?=
- =?utf-8?B?UlZZN1B0SmhmLzlXN1NhdmEvdTY4ZjlGSldkQnYyeVJjMDRod0FpVENlblRu?=
- =?utf-8?B?SExMZVFubzd5SWNtYk84Tk9Cc0JubXNndEtmZ2FsejljdmtFNDQrYmdSUWxs?=
- =?utf-8?B?MnNOeUxNazVZSGR1aGhwVUk1aXdvTzJ4REFyM3Y4M1c5OXJ6T3RRWFRQMFQv?=
- =?utf-8?B?eUswbkpZOHpIckszc1l0bldiYzNoTzFnL3Z6bzdpeGRIb2wrZDNEU08xMmdy?=
- =?utf-8?B?SHVXYW9JUzU0MGdMeWgyNE83ZkFSTnFVcWdJdUxsWEI4MFpHZnJKUHI2d0xh?=
- =?utf-8?B?K1d3dUVzZmkxWTAySlF1TXdkWmpJRHhKUmhaVDNIU3k5VG1WTTRrRU9hTlZZ?=
- =?utf-8?B?ak9OSHBYQnAxay9qV2dIT2NqMEtnOHNYUHJ6SGlYcHVabU0rWFRDZlU2aFpK?=
- =?utf-8?B?R2VvS0djTHVuQk1GVzR3OENpNlM1SXVGbW5ldC9WN0pyRVJKb1NvOFQvN1l0?=
- =?utf-8?B?TlA1TFVROXpqaTVraUcxR0xISlR0VXkyc0w5Q3lINUpNR1UvbUo5RTJOc3JG?=
- =?utf-8?B?WGhkaStJeXR1SzkwQklCd1MzRkw4ODJKTjdmcWRIVVJCcktaZUZRTTg2b2Nw?=
- =?utf-8?B?aURucXhGcFdxeHNkTktSNE90WXNLVENqZTlEY25Rc2R6aGVBWUFEeUF6Z3lU?=
- =?utf-8?B?anNqNjc1aThrOUl5a3lnM3pldk1rWkF2ZWlWKysrRW5TcDQrRDdROTRFWkpZ?=
- =?utf-8?B?SzA3Qjh5S1ZMYWZYRGtpMzhBcEROMkJENGJVVEZHYjF3U2RuaHRncUlVSlc1?=
- =?utf-8?B?Uk12Ylo1SC8xMENuWGFHQ1BmcCtDN3RmOE5ucURaS3pzbnJrVURVQndHUXhS?=
- =?utf-8?B?dzk5d3dtYmZZTjBZOWtueWZvaHFBQ0VTaTRyNEkzMDhKUyt3a3ZUNU9vQm5K?=
- =?utf-8?B?ZDVyNmUvT2cxMU4xaXpRbE9MSG9hdXhrU1hmSGJEYW4zalIzbzB5eW1PSW9E?=
- =?utf-8?B?L1p5ODFsbUxmdmt4Ti9tOG50L1l1M2ZiTHlHOGE0OG5RTGRSVlJOVGtHelUw?=
- =?utf-8?B?ZU9YQmZRQ2t0K0x5Ulg4S0l4ZGNqWXdxdUZuZktDbU1ZNFVhdGdZMkVDQnN0?=
- =?utf-8?B?dkR4djI3aXg0UGxvcVE5emRtY0xpSHhTWGRKVndkWVdmelZiYXIxaUVKTXgx?=
- =?utf-8?Q?0DGG7ZgDJrkIIJ/GyaaUDPSAW?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: af07efc0-165d-4753-fd70-08ddbdd1a628
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6434.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 03:43:49.3326
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UvrpVGEZEXo3Srqfrmvtz7Dz3JgBeeQXFSnF0AmhqWO+cN+yTffKtSVWpSYKwOSAs4m+siON4KZ8/VvAchIV6Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6175
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH ath-next] wifi: ath12k: pack HTT pdev rate stats structs
+Content-Language: en-US
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>,
+        Lingbo Kong <quic_lingbok@quicinc.com>
+Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20250702-debugfs_htt_packed-v1-1-07bd18b31e79@oss.qualcomm.com>
+From: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+In-Reply-To: <20250702-debugfs_htt_packed-v1-1-07bd18b31e79@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: eVHsU_miQ_hwgLJXVtR5N14Uv2ZgTYS8
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDAyOCBTYWx0ZWRfXxRayx+0mTJE3
+ xIiY7Haoc2pKfrFLNnCQBC7VeDOE4HpzcsY7g4O9KTSgU9KrDyfJLj4nkz4Hej6tJ5eriDUedgj
+ qgXJpHs5Krd+8GJonLWXQ4OdBqXYwcy919q/DM+n3+mM941yXLJLwTc7NO9bE+bOPIUIEfMIkQe
+ hi+VpybUfxGaIBo6kf+MsBJyc5g0Q+ybrV6cmVpzgBnZp94JazvXMplEj8Rf7yhQ8wdjKsIcUmZ
+ JIyglcdjJfbhGMc/yO+mImgu1+ejWj8WrwhAe3bcfEiC4UlUzBsmmM4YoTiArEeqWFmgV2Avps0
+ xMvoupwRrVMYokMGMfSQGdTX7D5yXdKF3Gl3fl1K47Dk6n5hug97mu81MJUa0cP5XCYFP4vS0IK
+ Oe47lv22N7iyYc9jBR9t2FGhCs4Esp+nrJ0QGeNkPeKEpXb7jYqFEBmfrTom//kAli6YnmPB
+X-Authority-Analysis: v=2.4 cv=Rd2QC0tv c=1 sm=1 tr=0 ts=686c9777 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=D7ADwRd3ifBYD-KlsV0A:9
+ a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-GUID: eVHsU_miQ_hwgLJXVtR5N14Uv2ZgTYS8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-08_01,2025-07-07_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 suspectscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0
+ mlxlogscore=879 impostorscore=0 spamscore=0 phishscore=0 priorityscore=1501
+ adultscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507080028
 
-On 07-Jul-25 3:06 PM, Byungchul Park wrote:
-> On Mon, Jun 16, 2025 at 07:09:30PM +0530, Bharata B Rao wrote:
->> +
->> +/*
->> + * Walks the PFNs of the zone, isolates and migrates them in batches.
->> + */
->> +static void kmigrated_walk_zone(unsigned long start_pfn, unsigned long end_pfn,
->> +                               int src_nid)
->> +{
->> +       int nid, cur_nid = NUMA_NO_NODE;
->> +       LIST_HEAD(migrate_list);
->> +       int batch_count = 0;
->> +       struct folio *folio;
->> +       struct page *page;
->> +       unsigned long pfn;
->> +
->> +       for (pfn = start_pfn; pfn < end_pfn; pfn++) {
+
+
+On 7/3/2025 2:59 AM, Jeff Johnson wrote:
+> In order to ensure the HTT DebugFS structs shared with firmware have
+> matching alignment, the structs should be packed. Most of the structs
+> are correctly packed, however the following are not:
 > 
-> Hi,
+> ath12k_htt_tx_pdev_rate_stats_tlv
+> ath12k_htt_rx_pdev_rate_stats_tlv
+> ath12k_htt_rx_pdev_rate_ext_stats_tlv
 > 
-> Is it feasible to scan all the pages in each zone?  I think we should
-> figure out a better way so as to reduce CPU time for this purpose.
-
-I incorporated a per-zone indicator to inform kmigrated if it needs to
-skip the whole zone when scanning and look at only those zones which
-have migrate-ready pages.
-
-CPU time spent is one aspect, but the other aspect I have observed is
-the delay in identifying migrate-ready pages depending on where they
-exist in the zone. I have been seeing both best case and worst case
-behaviors due to which the number of pages migrated for a given workload
-can vary based on the given run.
-
-Hence scanning all pages without additional smarts to quickly arrive
-the pages of interest may not be ideal. I am working on approaches
-to improve this situation.
-
+> So pack those structs.
 > 
-> Besides the opinion above, I was thinking to design and implement a
-> kthread for memory placement between different tiers - I already named
-> it e.g. kmplaced, rather than relying on kswapd and hinting fault, lol ;)
+> Tested-on: WCN7850 hw2.0 PCI WLAN.HMT.1.1.c5-00284-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
 > 
-> Now that you've started, I'd like to think about it together and improve
-> it so that it works better.  Please cc me from the next spin.
+> Fixes: ba42b22aa336 ("wifi: ath12k: Dump PDEV transmit rate HTT stats")
+> Fixes: a24cd7583003 ("wifi: ath12k: Dump PDEV receive rate HTT stats")
+> Fixes: 7a3e8eec8d18 ("wifi: ath12k: Dump additional PDEV receive rate HTT stats")
+> Signed-off-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
 
-Sure, will do from next post.
-
-Regards,
-Bharata.
+Reviewed-by: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
 
