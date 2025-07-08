@@ -1,152 +1,119 @@
-Return-Path: <linux-kernel+bounces-721540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84B8BAFCA98
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:40:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6971AFCA99
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:41:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E27EC1887EC1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:41:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C725D1888EC8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F382DC34E;
-	Tue,  8 Jul 2025 12:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFE52DC353;
+	Tue,  8 Jul 2025 12:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qokGK1NV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FXXuokV/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE9D28935C
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 12:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303C42DC340
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 12:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751978439; cv=none; b=KZFZUTz2vOe7KwR5rvB762t3UrJmKdwi/uHluWS08r90LGKwkY/Qxg9WCtR/mWIGH59oo8POYr+pFWBzZWkWbNfvaxGHw7xOCDfRfzJ1UMJZ54ct59zxbfzXFJd5KorHz7MXdODzEfQphbmb3tSMPDyHjKkfMHJJc6P459zHe+s=
+	t=1751978459; cv=none; b=PU2UP6Lzp5kzE6QaW1b7I45+KxXDedf+oFHL7ftb9QQRnZpd6owmx6aa8oU62o8fW11j1xqeQy9aSNRKdCLhBROsJRBxWC24RCIy2TUI9VAzP36Yzn1s3fTgU/lUD0HRwHVJXauDZNCILLT5V12HqU2SMlDXheaNyCUNruI5fK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751978439; c=relaxed/simple;
-	bh=jHbuF3dfK5BzD3MYHKV7hRBsqJHQvER1aMUv48TCEjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uOjqb71caoizM+fakbrZ2kqVpUQfJY+wzcvmSTYVOwoP01QgBcTVAUXQYRVgNB8jFPu+H8JikSsT8g56oz0Fckq+ovPXMDsaiwOh69yG+QsuUWvjvN3RRGrr5O52XNYSbMsiDV6I/HnNx7HM5BlI7VPWWXaE0QiHpiGPAHMHhx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qokGK1NV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84170C4CEED;
-	Tue,  8 Jul 2025 12:40:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751978438;
-	bh=jHbuF3dfK5BzD3MYHKV7hRBsqJHQvER1aMUv48TCEjs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qokGK1NVHVFp7xdwlYW7ZoDzXfTABLLplE3Cqyp0h59Bv4+Ft/ybT1AOAkVnGQ1Eo
-	 jvMRg7cRWoW7RabyODme4Pv0AswnQa858yCp0Fq5azUNoQCpYamJgpnF4sPVenweOX
-	 3m71A2wIf24we0PZyrufYrAPygaytO1odpWDs8zbNF9CcpPcHyYhLxW/v4rcS3CvOA
-	 6Eer1D6dPrGi3NTxKzoiTvMBHTbAIXiaOW1v7lPa4xdBT9uC5KuM9RLLT19UbHug8e
-	 9q1q+IGpBrvh+SFg1oQoxfkp4lABMOXdthkK6MTY8XzMluPKD6IBEcYXTAG0hzOA8R
-	 dZ5L2Dc3qX0uw==
-Date: Tue, 8 Jul 2025 14:40:36 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Cc: anna-maria@linutronix.de, tglx@linutronix.de,
-	linux-kernel@vger.kernel.org, xiexiuqi@huawei.com,
-	bobo.shaobowang@huawei.com
-Subject: Re: [PATCH] hrtimers: Update new CPU's next event in
- hrtimers_cpu_dying()
-Message-ID: <aG0RxASJqknbaUkM@localhost.localdomain>
-References: <20250708101727.166892-1-wangxiongfeng2@huawei.com>
+	s=arc-20240116; t=1751978459; c=relaxed/simple;
+	bh=sZgy+2j2K3WzsQyJuAZKTI3O3KoIlloG7CaYncgcPSQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uFHM17ADTIBZUn4CoAC6a33ygH2qunWRIol/slb2HXxAeqC0J2Y9EQtYsCKwsKRrv3k6rbMIpyO8hMvFz6KeBXtUAXzYvlzo2RQKtuJ1lR8B6B5p12PBq+YxqOFki/XttVNDNDNO+aZ1b3DwGjxpznY56pitKbZ52xB14IA6ClA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FXXuokV/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751978456;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sZgy+2j2K3WzsQyJuAZKTI3O3KoIlloG7CaYncgcPSQ=;
+	b=FXXuokV/63GDlZbrQY7oaJXV18aR5/n+XuO/nuLHG/JYszyw8+83Rf6VCkeP/41Y0sk8ck
+	sg77rmDfpbM2Aurx/lHkyWMwp2NpyUd4NfNDzRJAMJZtxOcYD5I2Gl1pFgdT4OV2DUViRt
+	/aqypbP4P+JAIPsR2hu+OmbWbGcIajk=
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
+ [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-394-kh-dS3BiMeW_e_g3CiLEjQ-1; Tue, 08 Jul 2025 08:40:49 -0400
+X-MC-Unique: kh-dS3BiMeW_e_g3CiLEjQ-1
+X-Mimecast-MFC-AGG-ID: kh-dS3BiMeW_e_g3CiLEjQ_1751978449
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-86d07944f29so900844339f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 05:40:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751978449; x=1752583249;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sZgy+2j2K3WzsQyJuAZKTI3O3KoIlloG7CaYncgcPSQ=;
+        b=QexD4VHjcPKddBjZEH/rZqSv47O5KDOFZUrrqt9T2K5/ci4vqs2h31gB+0oEPAzNRm
+         trnnVuyrn71I8fbriTkROp39VAUQBGXElvvh9Nga6/k4COY6fQA0YX31Vh68jzxHq7hC
+         Rt+1xa04GM6WtOhF5iN90sqJ4llH7rzjJvHzCFyw6V/+WZF2qnNYN/o2MMhlSKlilLcJ
+         eKIjaT6QaNKSZCHLVcAkJSbIHtjZbIpX1B96vuu6hBRge+Ez+9X9/WlnCDYpcgKQzbaf
+         sFsXYhMDvj4oaUEDAv3iWVl0rTBqDOwkiD8lqowbg7oEDPRlLwpZHRhf/aXwy+3nYQ6u
+         Z6vw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2H2bDeSkRhf/NMB4Iww/74kZFi548WfHhtfvkqXTUlVBkcCkQKu1E8PfSHwk4rDDn6jbZbk4FINpJTRU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6+SWiYuLesxqJUnz2/DxUETYTs1iggm8reZjloYG3tB3lnxO7
+	D7O2FxvvHSLlqWfi/pw39pJmVxpfHWPxN1aUORjNSbfx/VPBZEYpUnpJ9gs0U164L2WRHmJAPUw
+	S6ZHvUbk53Kdsabcn4hfSXYHbeSSTjZo9tA8PpC9aUFXV2NLl1I/mpLmyq9L+gb0M4oM0pzMfLd
+	9USgqREEmt3WmMtxVZGK4VY798pBtstceRKq4NrHKw
+X-Gm-Gg: ASbGncuPM9AguVj9s3seWUbTlCeYgXXDry+0V/hfaAyUsqqSILTA+g1e7UDcEyPusBC
+	tk5jvWx/3K26vAVrl0MmMb1TgXyGlc0juJXz6EFVQej7m+YKWZJ1BgPukVSYysSJKXkwMUCMleT
+	hmoIiCtJb4gjHN4AOfPCoaBV6VxTLDD12ZJiIp
+X-Received: by 2002:a05:6e02:378b:b0:3df:399d:39c9 with SMTP id e9e14a558f8ab-3e136ee4883mr168223475ab.2.1751978448973;
+        Tue, 08 Jul 2025 05:40:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHbYQNxogXNb0gyjlqPtcxhl5oMTYJhToH8zjakQAU6t9/EvkvuHsM0HVhMBlaDZoS8YMJX5m2laPyTVKhbMaI=
+X-Received: by 2002:a05:6e02:378b:b0:3df:399d:39c9 with SMTP id
+ e9e14a558f8ab-3e136ee4883mr168223185ab.2.1751978448642; Tue, 08 Jul 2025
+ 05:40:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250708101727.166892-1-wangxiongfeng2@huawei.com>
+References: <20250701172556.117872-1-desnesn@redhat.com> <45b69c6c-e8d5-4b71-9759-cd76eb1a7258@kernel.org>
+ <20250707125028.GB12247@pendragon.ideasonboard.com> <5fb10c0d-eb85-40d1-97f2-9e36d4d1f62c@kernel.org>
+In-Reply-To: <5fb10c0d-eb85-40d1-97f2-9e36d4d1f62c@kernel.org>
+From: Desnes Nunes <desnesn@redhat.com>
+Date: Tue, 8 Jul 2025 09:40:37 -0300
+X-Gm-Features: Ac12FXxVXj_P9emHoRCBl0bPdB7pJ-2pym-GcvgypQJga1tlAgn2bTryvQbEYR4
+Message-ID: <CACaw+ezKVQQcRBgmL+UD937aXqRXUfu8v5ycbOi0o-9p+Ky0RA@mail.gmail.com>
+Subject: Re: [PATCH v2] media: uvcvideo: avoid variable shadowing in uvc_ctrl_cleanup_fh
+To: Hans de Goede <hansg@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le Tue, Jul 08, 2025 at 06:17:27PM +0800, Xiongfeng Wang a écrit :
-> When testing softirq based hrtimers on an ARM32 board, with high
-> resolution mode and nohz are both inactive, softirq based hrtimers
-> failed to trigger when moved away from an offline CPU. The flowpath
-> is as follows.
-> 
-> CPU0				CPU1
-> 				softirq based hrtimers are queued
-> 				offline CPU1
-> 				move hrtimers to CPU0 in hrtimers_cpu_dying()
-> 				send IPI to CPU0 to retrigger next event
-> 'softirq_expires_next' is KTIME_MAX
-> call retrigger_next_event()
-> highres and nohz is inactive,just return
-> 'softirq_expires_next' is not updated
-> hrtimer softirq is never triggered
-> 
-> Some softirq based hrtimers are queued on CPU1. Then we offline CPU1.
-> hrtimers_cpu_dying() moves hrtimers from CPU1 to CPU0, and then it send
-> a IPI to CPU0 to let CPU0 call retrigger_next_event(). But high
-> resolution mode and nohz are both inactive. So retrigger_next_event()
-> just returned. 'softirq_expires_next' is never updated and remains
-> KTIME_MAX. So hrtimer softirq is never raised.
-> 
-> To fix this issue, we call hrtimer_update_next_event() in
-> hrtimers_cpu_dying() to update 'softirq_expires_next' for the new CPU.
-> It also update hardirq hrtimer's next event, but it should have no bad
-> effect.
-> 
-> Fixes: 5c0930ccaad5 ("hrtimers: Push pending hrtimers away from outgoing CPU earlier")
-> Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
-> ---
->  kernel/time/hrtimer.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-> index 30899a8cc52c..ff97eb36c116 100644
-> --- a/kernel/time/hrtimer.c
-> +++ b/kernel/time/hrtimer.c
-> @@ -2298,8 +2298,11 @@ int hrtimers_cpu_dying(unsigned int dying_cpu)
->  	/*
->  	 * The migration might have changed the first expiring softirq
->  	 * timer on this CPU. Update it.
-> +	 * We also need to update 'softirq_expires_next' here, because it will
-> +	 * not be updated in retrigger_next_event() if high resolution mode
-> +	 * and nohz are both inactive.
->  	 */
-> -	__hrtimer_get_next_event(new_base, HRTIMER_ACTIVE_SOFT);
-> +	hrtimer_update_next_event(new_base);
->  	/* Tell the other CPU to retrigger the next event */
->  	smp_call_function_single(ncpu, retrigger_next_event, NULL, 0);
+Hello Hans,
 
-It seems that a similar problem can happen while enqueueing a timer
-from an offline CPU (see the call to smp_call_function_single_async()).
+On Mon, Jul 7, 2025 at 10:01=E2=80=AFAM Hans de Goede <hansg@kernel.org> wr=
+ote:
+...
+> > As mentioned during the review (see
+> > 20250701192928.GB16835@pendragon.ideasonboard.com), I still prefer loca=
+l
+> > loop variables. Can we use that please ?
+>
+> Ok, I'll drop this from for-next.
+>
+> Desnes, can you prepare a v3 moving the toplevel declation
+> inside the other loop please ?
 
-How about this (untested) instead? retrigger_next_event, is not a fast
-path so we don't care about rare extra cost:
+Sure, I will send a v3 with the requested changes today.
 
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 30899a8cc52c..e8c479329282 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -787,10 +787,10 @@ static void retrigger_next_event(void *arg)
- 	 * of the next expiring timer is enough. The return from the SMP
- 	 * function call will take care of the reprogramming in case the
- 	 * CPU was in a NOHZ idle sleep.
-+	 *
-+	 * In periodic low resolution mode, the next softirq expiration
-+	 * must also be updated.
- 	 */
--	if (!hrtimer_hres_active(base) && !tick_nohz_active)
--		return;
--
- 	raw_spin_lock(&base->lock);
- 	hrtimer_update_base(base);
- 	if (hrtimer_hres_active(base))
-@@ -2295,11 +2295,6 @@ int hrtimers_cpu_dying(unsigned int dying_cpu)
- 				     &new_base->clock_base[i]);
- 	}
- 
--	/*
--	 * The migration might have changed the first expiring softirq
--	 * timer on this CPU. Update it.
--	 */
--	__hrtimer_get_next_event(new_base, HRTIMER_ACTIVE_SOFT);
- 	/* Tell the other CPU to retrigger the next event */
- 	smp_call_function_single(ncpu, retrigger_next_event, NULL, 0);
- 
+Best Regards,
+
+--=20
+Desnes Nunes
+
 
