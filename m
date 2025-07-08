@@ -1,87 +1,126 @@
-Return-Path: <linux-kernel+bounces-721993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5878DAFD086
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:22:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 972AFAFD326
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6191B5602B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:22:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E1B33A80EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1692E540C;
-	Tue,  8 Jul 2025 16:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADB72E5411;
+	Tue,  8 Jul 2025 16:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NA65KBJG"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EzDuLg8C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56C7269CE1;
-	Tue,  8 Jul 2025 16:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4232C14A60D;
+	Tue,  8 Jul 2025 16:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751991716; cv=none; b=eVJM16r6tovo3cLIygCjOUZQNSW84+gHjt3RphuSWQklMh2vUzuepg8HWS40FEt91pp6QCjAlKriu4rUIustgAIq7erBpOzaUPTCEV46T8YuVpkOmm7srJysoyKwQPiiov0bgSua7szhyDezTRTPozThJst51fndMdiNXG/z5Jc=
+	t=1751993484; cv=none; b=r/XQkWcBPAKX+/6ZCglkrIZdB+CklNfNVaedwbn1wN2vKFebYbaS09kX3mMEGJwiG8EYG2JEL6gR7vzTrp8+/u7fAbyLc8ZMiW5z+j0mE6lafMuPBg9KfA8qWlucAqLumBiHk51a2lnipP7I8dtY+8MJi7/IrIyPB5QI5wPhHt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751991716; c=relaxed/simple;
-	bh=TLvocITXJ+jGWEc+GbjQZJFvOjFTeZesBcRy+xMkzLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n0gopaUzuPDIEXWxZA5NoyjAcUD+y2ej0Vj0r4An5zRuKZ2CRrI6GD+di/tRLytkJGYB84nj3ZZbImvMkJ3CyM9OM0LFetnVJOvpVAY9IL66NOinJWSbz9i0u8aOrUAgU3FRYFPLlQRH77hGfeaHdEa8iSFgwcIXyVOPUsppTxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NA65KBJG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 671F0C4CEED;
-	Tue,  8 Jul 2025 16:21:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751991715;
-	bh=TLvocITXJ+jGWEc+GbjQZJFvOjFTeZesBcRy+xMkzLQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NA65KBJGSYJYKU3lzvXmQ0NFxdXb5lepEg7SeBf67E/fMjpYOu2z7L5CfqJCT9uTi
-	 zRmKSTIq4F/JojJcii5MFuS3xwUp7pJhmj6v8+nrhWJM/t9QOB8DvKQ5Msdvl9DKcZ
-	 T3lXsuGu0YJ/y989qbcWwO3yAFEJE8/bmsgV8LFoUkCkDywwtGQCVe/s5sH9EwM+Fg
-	 ylbgVtb6AJwtdN+YNBUzoBZfBvrPN4Z0kSOAKqyQ+hfDc90m4+sY7cw/JkwzY/ibGl
-	 BwMG71qA25IConRQhwsNDyqh9KEKC69gQoPOgvHGBk7vT1cIBqRUprTqEufh53cxho
-	 tcBNEXu4wgFmw==
-Date: Tue, 8 Jul 2025 11:21:54 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	s=arc-20240116; t=1751993484; c=relaxed/simple;
+	bh=Xlshf4eh0oyeLBG7AF06sAzwceONPKp9PoD1423Vfqg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=C2Az2MzxMDm6e7yjvxQElcS36muMDr/Jyka8a/bvQaVEa/bT9KeKP1E42prqUHUhLhVwQI41gJmKfrlIGWdb3YgGf8MVXxCJzK+WOIq7e63facLp+mUGfKhi6EwrQRs+jLBLthVF1HBAyuOei36cXnZz+xriY7OddXhNfdJ/5Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EzDuLg8C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EF55C4CEED;
+	Tue,  8 Jul 2025 16:51:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751993484;
+	bh=Xlshf4eh0oyeLBG7AF06sAzwceONPKp9PoD1423Vfqg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=EzDuLg8CqSwInGO91+TGnAnk9NzuSH5BPtq4mxEUaaJf6C/vGQMS2Lq5RQaGXIg6m
+	 0WQliyh28h+82e4DCrdIFAPmoVB/8pViHzvMQx40dmtsSqfhTTsuj0WP4zD5vIlp/d
+	 HIVKA6dL8+5aH7lu7XYEc5U0Meb/NuGhumWWhQAU=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Marko Kiiskila <marko.kiiskila@broadcom.com>,
+	Zack Rusin <zack.rusin@broadcom.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	Stefan Schmidt <stefan.schmidt@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Johan Hovold <johan@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH 4/6] dt-bindings: clock: qcom,x1e80100-gcc: Add missing
- video resets
-Message-ID: <175199171363.537918.5935203140901577075.robh@kernel.org>
-References: <20250701-x1e-videocc-v1-0-785d393be502@linaro.org>
- <20250701-x1e-videocc-v1-4-785d393be502@linaro.org>
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.15 089/178] drm/vmwgfx: Fix guests running with TDX/SEV
+Date: Tue,  8 Jul 2025 18:22:06 +0200
+Message-ID: <20250708162238.995085588@linuxfoundation.org>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250708162236.549307806@linuxfoundation.org>
+References: <20250708162236.549307806@linuxfoundation.org>
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250701-x1e-videocc-v1-4-785d393be502@linaro.org>
+Content-Transfer-Encoding: 8bit
+
+6.15-stable review patch.  If anyone has any objections, please let me know.
+
+------------------
+
+From: Marko Kiiskila <marko.kiiskila@broadcom.com>
+
+[ Upstream commit 7dfede7d7edd18c0c91ca854cde8eaaf4ccf97ea ]
+
+Commit 81256a50aa0f ("x86/mm: Make memremap(MEMREMAP_WB) map memory as
+encrypted by default") changed the default behavior of
+memremap(MEMREMAP_WB) and started mapping memory as encrypted.
+The driver requires the fifo memory to be decrypted to communicate with
+the host but was relaying on the old default behavior of
+memremap(MEMREMAP_WB) and thus broke.
+
+Fix it by explicitly specifying the desired behavior and passing
+MEMREMAP_DEC to memremap.
+
+Fixes: 81256a50aa0f ("x86/mm: Make memremap(MEMREMAP_WB) map memory as encrypted by default")
+Signed-off-by: Marko Kiiskila <marko.kiiskila@broadcom.com>
+Signed-off-by: Zack Rusin <zack.rusin@broadcom.com>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Link: https://lore.kernel.org/r/20250618192926.1092450-1-zack.rusin@broadcom.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+index 0f32471c85332..55c822a61b9ad 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+@@ -769,7 +769,7 @@ static int vmw_setup_pci_resources(struct vmw_private *dev,
+ 		dev->fifo_mem = devm_memremap(dev->drm.dev,
+ 					      fifo_start,
+ 					      fifo_size,
+-					      MEMREMAP_WB);
++					      MEMREMAP_WB | MEMREMAP_DEC);
+ 
+ 		if (IS_ERR(dev->fifo_mem)) {
+ 			drm_err(&dev->drm,
+-- 
+2.39.5
 
 
-On Tue, 01 Jul 2025 19:28:36 +0200, Stephan Gerhold wrote:
-> Add the missing video resets that are needed for the iris video codec.
-> 
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> ---
->  include/dt-bindings/clock/qcom,x1e80100-gcc.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
