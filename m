@@ -1,269 +1,109 @@
-Return-Path: <linux-kernel+bounces-721507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 883F7AFCA20
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:12:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9365AFCA24
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F5CC3B6C89
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:12:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D3161AA0BEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F55C2DAFB4;
-	Tue,  8 Jul 2025 12:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136222D781C;
+	Tue,  8 Jul 2025 12:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qpswLP0u";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sJlQRrkd";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ng1zuW7r";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7fDkh8ds"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9gs4jnv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C085C238D53
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 12:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4C42DAFC3;
+	Tue,  8 Jul 2025 12:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751976744; cv=none; b=HRHmy85FDqIIcRMY18/CupN2eO83FW+Li+z0bL2O0O8/lJ7h+g7cKfP1dZSBm6oW/XVeV2f1BTit4FHi7+YtE0XFfv5X8z0NeOOLOjfLC8JUOHz96Wq6w36CxEP5K/8v5zgpg7ZjScWQBHRZoYKI9qtL9aiu26E5kZ6cIuEXfFM=
+	t=1751976876; cv=none; b=gMafN4yBEeL3srVg/3401uvcmo1yV8nfY5V2MrNp1nYxpjnyct8gED+tIyVON+mt0r9+SNQ7uVTt95uVEXd1kA1mOB8JqytWiJgqqfEtJqbPUPKslN0Bor8ZSrilO/7JLvAx96YAZeMBoC2hQJvHdqAWgPpT/JcyXoCio1IeWwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751976744; c=relaxed/simple;
-	bh=c04L3iUAIPiI15KxDDXZC5Zg2kHOcVtpq+1i1QbUISU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LdcdmAFRajQydbeo0eFYBjFZ87xpY1ryJuQYkEVgayHSJzLFz4Xj7BgX+TniXJmOd7UG1SR4AKSJQz7evoKT9tpMG10c1FklTmkjSg9fsgAvRIYgdz/6NP2WZJbzGGCpOIepD5X9uUoNYEsF7Pbyp2Phqwm1KLFSR2ANTB5KTMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qpswLP0u; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sJlQRrkd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ng1zuW7r; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7fDkh8ds; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C0B131F38D;
-	Tue,  8 Jul 2025 12:12:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751976741; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jvXwVBSd1AJJG+tu7OkjqSWOH8Ox3gBNgCJ8ii7IyfU=;
-	b=qpswLP0uPO9lmq5Apj4Tp5+Qcs4bOnbnVZ/y8iM3w5CaGnwImRZZseMjkWnvTsEpJ6qW9F
-	83e8W11gE+5ynBU82by9/yuIy6BRr/Bat9mVNhydxgRIZUAFkopS8zIy65PcK5CXOOi8+2
-	TwCZXC07pI/UxJ+fEPjlRmDFUggJOhk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751976741;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jvXwVBSd1AJJG+tu7OkjqSWOH8Ox3gBNgCJ8ii7IyfU=;
-	b=sJlQRrkd4R8MHahyl9fZIYW+xI8BzxFkM1ckmQKnSKm5oe+v12h+txVWYJCYKzQc9alKvN
-	UG/ZP2ZlHoUdJlAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ng1zuW7r;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=7fDkh8ds
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751976740; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jvXwVBSd1AJJG+tu7OkjqSWOH8Ox3gBNgCJ8ii7IyfU=;
-	b=ng1zuW7r8ZN8xfc+Ui9FfbhVFudowpVdH4oCh8j7pjkcmWyP2qoPC8aCe+IjfGsIMnx/3n
-	bYmVc6xkQjHDH4uyB2NpuhEK19UugyHEi5VLtFfjph39mz7v3kPDSUuCgU2OUjURrerNWf
-	7EUyNHW7UfsyBw2jQAt0K+PSeHc90cc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751976740;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jvXwVBSd1AJJG+tu7OkjqSWOH8Ox3gBNgCJ8ii7IyfU=;
-	b=7fDkh8dsVx+H4tqX1VEo7wG7ehiAClNUQHNDY+o/uV/ZbXZMdJiqqXzZVtZF5WxmbQPDws
-	eRaEuojlI/8NsBCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A73C713A54;
-	Tue,  8 Jul 2025 12:12:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id W2LSJyQLbWhfHgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 08 Jul 2025 12:12:20 +0000
-Message-ID: <628e8c0d-2bc5-4cc8-893a-0b8388ba98f9@suse.cz>
-Date: Tue, 8 Jul 2025 14:12:20 +0200
+	s=arc-20240116; t=1751976876; c=relaxed/simple;
+	bh=kEi/z0SApD4McCBJYfg8E/oqKRETuGz5mVH55FI4E9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QIU3HdAEBhRp1mTS1sNOgRO93sfQj+4Yx8oJeIU82/Jwa7AZ8OqhMkgyxv6TsyAEw9ykSu/Cev+fogGl8SksONet2mla+s4cOh9xXbxjtbOEXZMQRfp/i4n8dwTYrBMrnAAdvuW6V4T3rjQhTUz2eIfIMtxO1lbzT0UjbcZh+8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9gs4jnv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F884C4CEED;
+	Tue,  8 Jul 2025 12:14:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751976876;
+	bh=kEi/z0SApD4McCBJYfg8E/oqKRETuGz5mVH55FI4E9E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A9gs4jnvcQMxjniKthzF3T8B3QVKkcsrdRfyYJF4BGni/JN22pFgMB8IbtBOz6n3K
+	 xNGQHd1htHQ+dG2IRx+Qie9IBQgtvcUNUOgOz/P+oXe6IpiWHMPBitQlBvTJQJIM/h
+	 JOOkfwv3qAunprvbL5qDiP4Ij81eqOPJcAVq6V1CcSjfyLPj68UCmGZ2JQBKAkk8jJ
+	 knu0fVXaBTkCOGuitbI3jvSyqG4SSSg+sScLbJFsGNatOxuu53pznGGyIGmPq40Pr3
+	 LI0zOG87BaGPM58U4xCr/YjhUwcwwYbac3MsVj9s19Gb98s8WqnypFJ6+ICYkPcCaT
+	 yDUMJPB0CU+uQ==
+Date: Tue, 8 Jul 2025 13:14:31 +0100
+From: Will Deacon <will@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org, leo.yan@arm.com, kernel-team@meta.com
+Subject: Re: [PATCH 1/8] arm64: Enable VMAP_STACK support
+Message-ID: <aG0Lpy1c2LuSPdj2@willie-the-truck>
+References: <20250707-arm64_vmap-v1-0-8de98ca0f91c@debian.org>
+ <20250707-arm64_vmap-v1-1-8de98ca0f91c@debian.org>
+ <aGwCfRkYqcYBvxZK@J2N7QTR9R3>
+ <aGznbObwbaZlnD17@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 1/4] mm/vmalloc: allow to set node and align in
- vrealloc
-Content-Language: en-US
-To: Vitaly Wool <vitaly.wool@konsulko.se>, linux-mm@kvack.org
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- Uladzislau Rezki <urezki@gmail.com>, Danilo Krummrich <dakr@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org
-References: <20250707164755.631374-1-vitaly.wool@konsulko.se>
- <20250707164843.631434-1-vitaly.wool@konsulko.se>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20250707164843.631434-1-vitaly.wool@konsulko.se>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,vger.kernel.org,gmail.com,kernel.org,google.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: C0B131F38D
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aGznbObwbaZlnD17@gmail.com>
 
-On 7/7/25 18:48, Vitaly Wool wrote:
-> Reimplement vrealloc() to be able to set node and alignment should
-> a user need to do so. Rename the function to vrealloc_node_align()
-> to better match what it actually does now and introduce macros for
-> vrealloc() and friends for backward compatibility.
+Hey Breno,
+
+Thanks for doing this.
+
+On Tue, Jul 08, 2025 at 02:39:56AM -0700, Breno Leitao wrote:
+> On Mon, Jul 07, 2025 at 06:23:09PM +0100, Mark Rutland wrote:
+> > On Mon, Jul 07, 2025 at 09:01:01AM -0700, Breno Leitao wrote:
+> > > Enable virtually mapped kernel stacks for ARM64. This provides better
+> > > stack overflow detection and improved security by mapping kernel stacks
+> > > in vmalloc space rather than using direct mapping.
+> > > 
+> > > VMAP_STACK helps catch stack overflows early by placing guard pages
+> > > around kernel stacks, and also provides better isolation between
+> > > kernel stacks and other kernel data structures.
+> > > 
+> > > All dependencies are satisfied for arm64: HAVE_ARCH_VMAP_STACK is
+> > > already selected above, and KASAN_VMALLOC is selected when KASAN is
+> > > enabled, meeting the KASAN dependency requirements.
+> > 
+> > I reckon it might be better to say something like:
+> > 
+> > | arm64: Mandate VMAP_STACK
+> > |
+> > | On arm64, VMAP_STACK has been enabled by default for a while now, and
+> > | the only reason to disable it was a historical lack of support for
+> > | KASAN_VMALLOC. Today there's no good reason to disable VMAP_STACK.
+> > |
+> > | Mandate VMAP_STACK, which will allow code to be simplified in
+> > | subsequent patches.
+> > 
+> > ... to make it clear that we're not changing the default, and we are
+> > removing the ability to deselect VMAP_STACK.
+> > 
+> > Either way, the patch itself looks good to me.
 > 
-> With that change we also provide the ability for the Rust part of
-> the kernel to set node and alignment in its allocations.
-> 
-> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
-> Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> Thanks for the suggestion. I will update and respin.
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+No need to respin just for that; I can fold the above when I apply.
 
-Nit:
+Cheers,
 
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -4089,13 +4089,22 @@ void *vzalloc_node_noprof(unsigned long size, int node)
->  EXPORT_SYMBOL(vzalloc_node_noprof);
->  
->  /**
-> - * vrealloc - reallocate virtually contiguous memory; contents remain unchanged
-> + * vrealloc_node_align_noprof - reallocate virtually contiguous memory; contents
-> + * remain unchanged
->   * @p: object to reallocate memory for
->   * @size: the size to reallocate
-> + * @align: requested alignment
->   * @flags: the flags for the page level allocator
-> + * @nid: node number of the target node
-> + *
-> + * If @p is %NULL, vrealloc_XXX() behaves exactly like vmalloc(). If @size is
-> + * 0 and @p is not a %NULL pointer, the object pointed to is freed.
->   *
-> - * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If @size is 0 and
-> - * @p is not a %NULL pointer, the object pointed to is freed.
-> + * if @nid is not NUMA_NO_NODE, this function will try to allocate memory on
-> + * the given node. If reallocation is not necessary (e. g. the new size is less
-> + * than the current allocated size), the current allocation will be preserved
-> + * unless __GFP_THISNODE is set. In the latter case a new allocation on the
-> + * requested node will be attempted.
->   *
->   * If __GFP_ZERO logic is requested, callers must ensure that, starting with the
->   * initial memory allocation, every subsequent call to this API for the same
-> @@ -4111,7 +4120,8 @@ EXPORT_SYMBOL(vzalloc_node_noprof);
->   * Return: pointer to the allocated memory; %NULL if @size is zero or in case of
->   *         failure
->   */
-> -void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
-> +void *vrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
-> +				 gfp_t flags, int nid)
->  {
->  	struct vm_struct *vm = NULL;
->  	size_t alloced_size = 0;
-> @@ -4135,6 +4145,12 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
->  		if (WARN(alloced_size < old_size,
->  			 "vrealloc() has mismatched area vs requested sizes (%p)\n", p))
->  			return NULL;
-> +		if (WARN(!IS_ALIGNED((unsigned long)p, align),
-> +			 "will not reallocate with a bigger alignment (0x%lx)\n", align))
-> +			return NULL;
-
-Maybe this should be mentioned in the doc comment above?
-
-> +		if (unlikely(flags & __GFP_THISNODE) && nid != NUMA_NO_NODE &&
-> +			     nid != page_to_nid(vmalloc_to_page(p)))
-> +			goto need_realloc;
->  	}
->  
->  	/*
-> @@ -4165,8 +4181,10 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
->  		return (void *)p;
->  	}
->  
-> +need_realloc:
->  	/* TODO: Grow the vm_area, i.e. allocate and map additional pages. */
-> -	n = __vmalloc_noprof(size, flags);
-> +	n = __vmalloc_node_noprof(size, align, flags, nid, __builtin_return_address(0));
-> +
->  	if (!n)
->  		return NULL;
->  
-
+Will
 
