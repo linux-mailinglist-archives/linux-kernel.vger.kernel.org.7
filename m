@@ -1,488 +1,117 @@
-Return-Path: <linux-kernel+bounces-720895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C2B6AFC1D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:50:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 393E5AFC1D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAE804A3AA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:50:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6950178382
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5805C21B9E7;
-	Tue,  8 Jul 2025 04:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61172192EB;
+	Tue,  8 Jul 2025 04:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UfniWL+P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Bm/FtHsO"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EB12192EB;
-	Tue,  8 Jul 2025 04:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC361F4C85;
+	Tue,  8 Jul 2025 04:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751950196; cv=none; b=ECSjaOGiE+sHHfpPX8wrvpPDqTsbbHOXtqklXclNZhKV7uVj6gDsvX8ve1RXWKmuobs6jLllCGk3m3VGcOKQSrEHQAeJ2vVr8/tKxRmWhNCCGw4tIjXVd46pI3hDlz/S3s/SA+qatmL8rq0Yy3CVoIBctbqZV0Zs0TwZygWG7Y4=
+	t=1751950399; cv=none; b=e7iec5S4gTxj2hGHOuO+xWYzyTrhbFipPbyX7vTzpbJ2UvfJvpSaRtnXnyrtLpPJG3/K2YxSrEJ7DoTPSXjFUsI779Dhuj21WYJ27huT97zidXTdBywOR7AY+r97ESQLsTBUbtx1GIQ4HL6fpxOizoAIfkg6e6yn1C3eEZH52hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751950196; c=relaxed/simple;
-	bh=Mg5I9GQaPwUd+79TO7AVQNChtWaRs7LbsN5ONrDkgus=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PdzUndBQPqM42k3S/rOgQ2YW8ejrcMQYi4cLBwvCsGnCEOaOLadDrcasQSB5UhCh/GnMIEq91pI5K+6+qpdhSnGYOJCfOmRnsRSoNMcGpUXrCi6D70FyHAU/MipiZ0lskOTKC7HTmQcVMiTLE8fStzAC4DApMPgfyVBHnzOlGRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UfniWL+P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E255CC4CEFF;
-	Tue,  8 Jul 2025 04:49:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751950195;
-	bh=Mg5I9GQaPwUd+79TO7AVQNChtWaRs7LbsN5ONrDkgus=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=UfniWL+Paqj5XH3tGIdVC4ib3QP09x0oldGrm5p5sn1PFKrHio1H47jmHmPRYt0dR
-	 lkBgDv4wxq/4xK6a/+n6LKj1mcZf5FgVh9zJuozYyodqpRigCpxwCyYHlT28DB6k/K
-	 XgckI7ciuj+Dh2YfXPOeaXDDawDP/L+Kq0kBxE2hZYDR0oW/RYYpketvJ93rZ638rm
-	 ZWJsWI9uuNyNOXcYiFjaoYOhhaksQ9uMK6KpqYgx22cp0Ft3MR4RV19HS+ufkQiW4s
-	 mtuLYOeY0DlcUsE2ZXUu0LNWIc6Mxq8ZoHYkZ+rIFQOHYWRCOGh0VdIjkkpkmnr3c9
-	 nucsEV6h1yWpg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C42C83F09;
-	Tue,  8 Jul 2025 04:49:55 +0000 (UTC)
-From: Mahesh Rao via B4 Relay <devnull+mahesh.rao.altera.com@kernel.org>
-Date: Tue, 08 Jul 2025 12:49:10 +0800
-Subject: [PATCH RESEND v5 5/5] firmware: stratix10-rsu: Migrate RSU driver
- to use stratix10 asynchronous framework.
+	s=arc-20240116; t=1751950399; c=relaxed/simple;
+	bh=fniMWbf0qaFoz0eZk+Yk5fA7gGLw16gqH3dsZmSkppc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p85h5nz/i8sVbTimfcAR8cyU8EMeWzBYnGQRGbQB58TDxfFj0Bygf4SSxdhxZLP5fruxN2TSQgTC2np3XD39PQG1m1QeyXgCbAnMZEHq4baeRWfyQ10zWn+dc3gdIegs1JUNcGP4RPSmXWZ7qmBfCCIa4RKXaMNJC0JWPdwW4hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Bm/FtHsO; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1751950336;
+	bh=7pw5+O6mjAMwf4cs6nEfnvw9RhDSfJtGBTteaXRfWao=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Bm/FtHsOzj1sWrplQQMOz6U8Xy5IolsG8HP8kTkZNsZZaMKt8TJrB2DOb3+D9XVNw
+	 0NHSTVqgztiNAPgHNBA0dmqoA+63I3NVFDAdiNjF8oesd/SvS0lJPaLdUah2BrQU2i
+	 II6VzpEud+nmwJYA5ApEOyVnqK7Eo0bn7prC53YSmhTkePlJDVZaVVyhyl1dCsXsNR
+	 otjjP8JoLxYDZ2R5OjEnEa1COkEvuVrcqlOEh8yVAxFES4K2INq5UVjp9dX6ouEiVZ
+	 DTwWfiuZizUmxz5DAlL+qtRx+ikZmJS4FE8Qwv4ZFWGayKRD20e9s1zZ+KtqkZdX+d
+	 HdpLzzz/aeFiA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bbpcb3jmrz4w2Q;
+	Tue,  8 Jul 2025 14:52:15 +1000 (AEST)
+Date: Tue, 8 Jul 2025 14:53:12 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Lee Jones <lee@kernel.org>
+Cc: "Dr. David Alan Gilbert" <linux@treblig.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Message-ID: <20250708145312.56f44a23@canb.auug.org.au>
+In-Reply-To: <20250703142348.45bb8d28@canb.auug.org.au>
+References: <20250703142348.45bb8d28@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250708-sip_svc_upstream-v5-5-9c4289256d54@altera.com>
-References: <20250708-sip_svc_upstream-v5-0-9c4289256d54@altera.com>
-In-Reply-To: <20250708-sip_svc_upstream-v5-0-9c4289256d54@altera.com>
-To: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Mahesh Rao <mahesh.rao@altera.com>
-Cc: Matthew Gerlach <matthew.gerlach@altera.com>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751950193; l=13278;
- i=mahesh.rao@altera.com; s=20250107; h=from:subject:message-id;
- bh=kI23gIa6PngF5SYH1gAyhV6qX0hobd+0qY9aPOd8c7U=;
- b=MfN761QNAFwiOfhDZz+i5iqVjtUyfAFw05Hs1SmtqpJMK+UQmEwpgF9309+lPQERF0j/0koxy
- x5AtmpcQLx1BzRHYOiuCGajtcNPPoy8OnCDq2cpsbgAIninLzzo9vVg
-X-Developer-Key: i=mahesh.rao@altera.com; a=ed25519;
- pk=tQiFUzoKxHrQLDtWeEeaeTeJTl/UfclUHWZy1fjSiyg=
-X-Endpoint-Received: by B4 Relay for mahesh.rao@altera.com/20250107 with
- auth_id=337
-X-Original-From: Mahesh Rao <mahesh.rao@altera.com>
-Reply-To: mahesh.rao@altera.com
+Content-Type: multipart/signed; boundary="Sig_/mJPyZs8wOg2hOWN+DD3yFlZ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Mahesh Rao <mahesh.rao@altera.com>
+--Sig_/mJPyZs8wOg2hOWN+DD3yFlZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-* Add support for asynchronous communication to the
-  RSU client channel.
-* Migrate functions that communicate with the SDM
-  to use the asynchronous framework.
+Hi all,
 
-Signed-off-by: Mahesh Rao <mahesh.rao@altera.com>
----
- drivers/firmware/stratix10-rsu.c | 272 ++++++++++++++++++++-------------------
- 1 file changed, 142 insertions(+), 130 deletions(-)
+On Thu, 3 Jul 2025 14:23:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+>=20
+> drivers/media/radio/radio-wl1273.c:12:10: fatal error: linux/mfd/wl1273-c=
+ore.h: No such file or directory
+>    12 | #include <linux/mfd/wl1273-core.h>
+>       |          ^~~~~~~~~~~~~~~~~~~~~~~~~
+> sound/soc/codecs/wl1273.c:10:10: fatal error: linux/mfd/wl1273-core.h: No=
+ such file or directory
+>    10 | #include <linux/mfd/wl1273-core.h>
+>       |          ^~~~~~~~~~~~~~~~~~~~~~~~~
+>=20
+> Caused by commit
+>=20
+>   17f5c6fa85e5 ("mfd: wl1273-core: Remove the header")
+>=20
+> I have used the mfd tree from next-20250702 for today.
 
-diff --git a/drivers/firmware/stratix10-rsu.c b/drivers/firmware/stratix10-rsu.c
-index 1ea39a0a76c787c6396300734b636b4b3a0ae04d..53b67b242cf0afa4102340aa099cef66b642effa 100644
---- a/drivers/firmware/stratix10-rsu.c
-+++ b/drivers/firmware/stratix10-rsu.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2018-2019, Intel Corporation
-+ * Copyright (C) 2025, Altera Corporation
-  */
- 
- #include <linux/arm-smccc.h>
-@@ -14,11 +15,9 @@
- #include <linux/firmware/intel/stratix10-svc-client.h>
- #include <linux/string.h>
- #include <linux/sysfs.h>
-+#include <linux/delay.h>
- 
--#define RSU_STATE_MASK			GENMASK_ULL(31, 0)
--#define RSU_VERSION_MASK		GENMASK_ULL(63, 32)
--#define RSU_ERROR_LOCATION_MASK		GENMASK_ULL(31, 0)
--#define RSU_ERROR_DETAIL_MASK		GENMASK_ULL(63, 32)
-+#define RSU_ERASE_SIZE_MASK		GENMASK_ULL(63, 32)
- #define RSU_DCMF0_MASK			GENMASK_ULL(31, 0)
- #define RSU_DCMF1_MASK			GENMASK_ULL(63, 32)
- #define RSU_DCMF2_MASK			GENMASK_ULL(31, 0)
-@@ -35,7 +34,8 @@
- #define INVALID_DCMF_STATUS		0xFFFFFFFF
- #define INVALID_SPT_ADDRESS		0x0
- 
--#define RSU_GET_SPT_CMD			0x5A
-+#define RSU_RETRY_SLEEP_MS		(1U)
-+#define RSU_ASYNC_MSG_RETRY		(3U)
- #define RSU_GET_SPT_RESP_LEN		(4 * sizeof(unsigned int))
- 
- typedef void (*rsu_callback)(struct stratix10_svc_client *client,
-@@ -64,7 +64,6 @@ typedef void (*rsu_callback)(struct stratix10_svc_client *client,
-  * @max_retry: the preset max retry value
-  * @spt0_address: address of spt0
-  * @spt1_address: address of spt1
-- * @get_spt_response_buf: response from sdm for get_spt command
-  */
- struct stratix10_rsu_priv {
- 	struct stratix10_svc_chan *chan;
-@@ -99,47 +98,32 @@ struct stratix10_rsu_priv {
- 
- 	unsigned long spt0_address;
- 	unsigned long spt1_address;
--
--	unsigned int *get_spt_response_buf;
- };
- 
-+typedef void (*rsu_async_callback)(struct device *dev,
-+	struct stratix10_rsu_priv *priv, struct stratix10_svc_cb_data *data);
-+
- /**
-- * rsu_status_callback() - Status callback from Intel Service Layer
-- * @client: pointer to service client
-+ * rsu_async_status_callback() - Status callback from rsu_async_send()
-+ * @dev: pointer to device object
-+ * @priv: pointer to priv object
-  * @data: pointer to callback data structure
-  *
-- * Callback from Intel service layer for RSU status request. Status is
-- * only updated after a system reboot, so a get updated status call is
-- * made during driver probe.
-+ * Callback from rsu_async_send() to get the system rsu error status.
-  */
--static void rsu_status_callback(struct stratix10_svc_client *client,
--				struct stratix10_svc_cb_data *data)
-+static void rsu_async_status_callback(struct device *dev,
-+				      struct stratix10_rsu_priv *priv,
-+				      struct stratix10_svc_cb_data *data)
- {
--	struct stratix10_rsu_priv *priv = client->priv;
--	struct arm_smccc_res *res = (struct arm_smccc_res *)data->kaddr1;
--
--	if (data->status == BIT(SVC_STATUS_OK)) {
--		priv->status.version = FIELD_GET(RSU_VERSION_MASK,
--						 res->a2);
--		priv->status.state = FIELD_GET(RSU_STATE_MASK, res->a2);
--		priv->status.fail_image = res->a1;
--		priv->status.current_image = res->a0;
--		priv->status.error_location =
--			FIELD_GET(RSU_ERROR_LOCATION_MASK, res->a3);
--		priv->status.error_details =
--			FIELD_GET(RSU_ERROR_DETAIL_MASK, res->a3);
--	} else {
--		dev_err(client->dev, "COMMAND_RSU_STATUS returned 0x%lX\n",
--			res->a0);
--		priv->status.version = 0;
--		priv->status.state = 0;
--		priv->status.fail_image = 0;
--		priv->status.current_image = 0;
--		priv->status.error_location = 0;
--		priv->status.error_details = 0;
--	}
--
--	complete(&priv->completion);
-+	struct arm_smccc_1_2_regs *res = (struct arm_smccc_1_2_regs *)data->kaddr1;
-+
-+	priv->status.current_image = res->a2;
-+	priv->status.fail_image = res->a3;
-+	priv->status.state = res->a4;
-+	priv->status.version = res->a5;
-+	priv->status.error_location = res->a7;
-+	priv->status.error_details = res->a8;
-+	priv->retry_counter = res->a9;
- }
- 
- /**
-@@ -163,32 +147,6 @@ static void rsu_command_callback(struct stratix10_svc_client *client,
- 	complete(&priv->completion);
- }
- 
--/**
-- * rsu_retry_callback() - Callback from Intel service layer for getting
-- * the current image's retry counter from the firmware
-- * @client: pointer to client
-- * @data: pointer to callback data structure
-- *
-- * Callback from Intel service layer for retry counter, which is used by
-- * user to know how many times the images is still allowed to reload
-- * itself before giving up and starting RSU fail-over flow.
-- */
--static void rsu_retry_callback(struct stratix10_svc_client *client,
--			       struct stratix10_svc_cb_data *data)
--{
--	struct stratix10_rsu_priv *priv = client->priv;
--	unsigned int *counter = (unsigned int *)data->kaddr1;
--
--	if (data->status == BIT(SVC_STATUS_OK))
--		priv->retry_counter = *counter;
--	else if (data->status == BIT(SVC_STATUS_NO_SUPPORT))
--		dev_warn(client->dev, "Secure FW doesn't support retry\n");
--	else
--		dev_err(client->dev, "Failed to get retry counter %lu\n",
--			BIT(data->status));
--
--	complete(&priv->completion);
--}
- 
- /**
-  * rsu_max_retry_callback() - Callback from Intel service layer for getting
-@@ -270,34 +228,19 @@ static void rsu_dcmf_status_callback(struct stratix10_svc_client *client,
- 	complete(&priv->completion);
- }
- 
--static void rsu_get_spt_callback(struct stratix10_svc_client *client,
--				 struct stratix10_svc_cb_data *data)
-+/**
-+ * rsu_async_get_spt_table_callback() - Callback to be used by the rsu_async_send()
-+ * to retrieve the SPT table information.
-+ * @dev: pointer to device object
-+ * @priv: pointer to priv object
-+ * @data: pointer to callback data structure
-+ */
-+static void rsu_async_get_spt_table_callback(struct device *dev,
-+					     struct stratix10_rsu_priv *priv,
-+					     struct stratix10_svc_cb_data *data)
- {
--	struct stratix10_rsu_priv *priv = client->priv;
--	unsigned long *mbox_err = (unsigned long *)data->kaddr1;
--	unsigned long *resp_len = (unsigned long *)data->kaddr2;
--
--	if (data->status != BIT(SVC_STATUS_OK) || (*mbox_err) ||
--	    (*resp_len != RSU_GET_SPT_RESP_LEN))
--		goto error;
--
--	priv->spt0_address = priv->get_spt_response_buf[0];
--	priv->spt0_address <<= 32;
--	priv->spt0_address |= priv->get_spt_response_buf[1];
--
--	priv->spt1_address = priv->get_spt_response_buf[2];
--	priv->spt1_address <<= 32;
--	priv->spt1_address |= priv->get_spt_response_buf[3];
--
--	goto complete;
--
--error:
--	dev_err(client->dev, "failed to get SPTs\n");
--
--complete:
--	stratix10_svc_free_memory(priv->chan, priv->get_spt_response_buf);
--	priv->get_spt_response_buf = NULL;
--	complete(&priv->completion);
-+	priv->spt0_address = *((unsigned long *)data->kaddr1);
-+	priv->spt1_address = *((unsigned long *)data->kaddr2);
- }
- 
- /**
-@@ -329,14 +272,6 @@ static int rsu_send_msg(struct stratix10_rsu_priv *priv,
- 	if (arg)
- 		msg.arg[0] = arg;
- 
--	if (command == COMMAND_MBOX_SEND_CMD) {
--		msg.arg[1] = 0;
--		msg.payload = NULL;
--		msg.payload_length = 0;
--		msg.payload_output = priv->get_spt_response_buf;
--		msg.payload_length_output = RSU_GET_SPT_RESP_LEN;
--	}
--
- 	ret = stratix10_svc_send(priv->chan, &msg);
- 	if (ret < 0)
- 		goto status_done;
-@@ -362,6 +297,95 @@ static int rsu_send_msg(struct stratix10_rsu_priv *priv,
- 	return ret;
- }
- 
-+/**
-+ * soc64_async_callback() - Callback from Intel service layer for async requests
-+ * @ptr: pointer to the completion object
-+ */
-+static void soc64_async_callback(void *ptr)
-+{
-+	if (ptr)
-+		complete(ptr);
-+}
-+
-+/**
-+ * rsu_send_async_msg() - send an async message to Intel service layer
-+ * @dev: pointer to device object
-+ * @priv: pointer to rsu private data
-+ * @command: RSU status or update command
-+ * @arg: the request argument, notify status
-+ * @callback: function pointer for the callback (status or update)
-+ */
-+static int rsu_send_async_msg(struct device *dev, struct stratix10_rsu_priv *priv,
-+			      enum stratix10_svc_command_code command,
-+			      unsigned long arg,
-+			      rsu_async_callback callback)
-+{
-+	struct stratix10_svc_client_msg msg = {0};
-+	struct stratix10_svc_cb_data data = {0};
-+	struct completion completion;
-+	int status, index, ret;
-+	void *handle = NULL;
-+
-+	msg.command = command;
-+	msg.arg[0] = arg;
-+
-+	init_completion(&completion);
-+
-+	for (index = 0; index < RSU_ASYNC_MSG_RETRY; index++) {
-+		status = stratix10_svc_async_send(priv->chan, &msg,
-+						  &handle, soc64_async_callback,
-+						  &completion);
-+		if (status == 0)
-+			break;
-+		dev_warn(dev, "Failed to send async message\n");
-+		msleep(RSU_RETRY_SLEEP_MS);
-+	}
-+
-+	if (status && !handle) {
-+		dev_err(dev, "Failed to send async message\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	ret = wait_for_completion_io_timeout(&completion, RSU_TIMEOUT);
-+	if (ret > 0)
-+		dev_dbg(dev, "Received async interrupt\n");
-+	else if (ret == 0)
-+		dev_dbg(dev, "Timeout occurred. Trying to poll the response\n");
-+
-+	for (index = 0; index < RSU_ASYNC_MSG_RETRY; index++) {
-+		status = stratix10_svc_async_poll(priv->chan, handle, &data);
-+		if (status == -EAGAIN) {
-+			dev_dbg(dev, "Async message is still in progress\n");
-+		} else if (status < 0) {
-+			dev_alert(dev, "Failed to poll async message\n");
-+			ret = -ETIMEDOUT;
-+		} else if (status == 0) {
-+			ret = 0;
-+			break;
-+		}
-+		msleep(RSU_RETRY_SLEEP_MS);
-+	}
-+
-+	if (ret) {
-+		dev_err(dev, "Failed to get async response\n");
-+		goto status_done;
-+	}
-+
-+	if (data.status == 0) {
-+		ret = 0;
-+		if (callback)
-+			callback(dev, priv, &data);
-+	} else {
-+		dev_err(dev, "%s returned 0x%x from SDM\n", __func__,
-+			data.status);
-+		ret = -EFAULT;
-+	}
-+
-+status_done:
-+	stratix10_svc_async_done(priv->chan, handle);
-+	return ret;
-+}
-+
- /*
-  * This driver exposes some optional features of the Intel Stratix 10 SoC FPGA.
-  * The sysfs interfaces exposed here are FPGA Remote System Update (RSU)
-@@ -597,27 +621,20 @@ static ssize_t notify_store(struct device *dev,
- 	if (ret)
- 		return ret;
- 
--	ret = rsu_send_msg(priv, COMMAND_RSU_NOTIFY,
--			   status, rsu_command_callback);
-+	ret = rsu_send_async_msg(dev, priv, COMMAND_RSU_NOTIFY, status, NULL);
- 	if (ret) {
- 		dev_err(dev, "Error, RSU notify returned %i\n", ret);
- 		return ret;
- 	}
- 
- 	/* to get the updated state */
--	ret = rsu_send_msg(priv, COMMAND_RSU_STATUS,
--			   0, rsu_status_callback);
-+	ret = rsu_send_async_msg(dev, priv, COMMAND_RSU_STATUS, 0,
-+				 rsu_async_status_callback);
- 	if (ret) {
- 		dev_err(dev, "Error, getting RSU status %i\n", ret);
- 		return ret;
- 	}
- 
--	ret = rsu_send_msg(priv, COMMAND_RSU_RETRY, 0, rsu_retry_callback);
--	if (ret) {
--		dev_err(dev, "Error, getting RSU retry %i\n", ret);
--		return ret;
--	}
--
- 	return count;
- }
- 
-@@ -737,12 +754,19 @@ static int stratix10_rsu_probe(struct platform_device *pdev)
- 		return PTR_ERR(priv->chan);
- 	}
- 
-+	ret = stratix10_svc_add_async_client(priv->chan, false);
-+	if (ret) {
-+		dev_err(dev, "failed to add async client\n");
-+		stratix10_svc_free_channel(priv->chan);
-+		return ret;
-+	}
-+
- 	init_completion(&priv->completion);
- 	platform_set_drvdata(pdev, priv);
- 
- 	/* get the initial state from firmware */
--	ret = rsu_send_msg(priv, COMMAND_RSU_STATUS,
--			   0, rsu_status_callback);
-+	ret = rsu_send_async_msg(dev, priv, COMMAND_RSU_STATUS, 0,
-+				 rsu_async_status_callback);
- 	if (ret) {
- 		dev_err(dev, "Error, getting RSU status %i\n", ret);
- 		stratix10_svc_free_channel(priv->chan);
-@@ -763,12 +787,6 @@ static int stratix10_rsu_probe(struct platform_device *pdev)
- 		stratix10_svc_free_channel(priv->chan);
- 	}
- 
--	ret = rsu_send_msg(priv, COMMAND_RSU_RETRY, 0, rsu_retry_callback);
--	if (ret) {
--		dev_err(dev, "Error, getting RSU retry %i\n", ret);
--		stratix10_svc_free_channel(priv->chan);
--	}
--
- 	ret = rsu_send_msg(priv, COMMAND_RSU_MAX_RETRY, 0,
- 			   rsu_max_retry_callback);
- 	if (ret) {
-@@ -776,18 +794,12 @@ static int stratix10_rsu_probe(struct platform_device *pdev)
- 		stratix10_svc_free_channel(priv->chan);
- 	}
- 
--	priv->get_spt_response_buf =
--		stratix10_svc_allocate_memory(priv->chan, RSU_GET_SPT_RESP_LEN);
- 
--	if (IS_ERR(priv->get_spt_response_buf)) {
--		dev_err(dev, "failed to allocate get spt buffer\n");
--	} else {
--		ret = rsu_send_msg(priv, COMMAND_MBOX_SEND_CMD,
--				   RSU_GET_SPT_CMD, rsu_get_spt_callback);
--		if (ret) {
--			dev_err(dev, "Error, getting SPT table %i\n", ret);
--			stratix10_svc_free_channel(priv->chan);
--		}
-+	ret = rsu_send_async_msg(dev, priv, COMMAND_RSU_GET_SPT_TABLE, 0,
-+				 rsu_async_get_spt_table_callback);
-+	if (ret) {
-+		dev_err(dev, "Error, getting SPT table %i\n", ret);
-+		stratix10_svc_free_channel(priv->chan);
- 	}
- 
- 	return ret;
+I am still seeing this build failure.
+--=20
+Cheers,
+Stephen Rothwell
 
--- 
-2.35.3
+--Sig_/mJPyZs8wOg2hOWN+DD3yFlZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhspDgACgkQAVBC80lX
+0Gz3zQgAhphaEi2EtMzkDHZOVGmmFBRmhVk1l/wPWYFKVv5QFZk2duWl/DbwYwC+
+p9Gwbeup4/6o/TVLjxS/lyLA7ftmuacvF3987BWs4ZZrF84qlPH0rxFHAJmPim0s
+OP37bDCYhKrLV/xsbBKmwbX69PMHTKiX7WXkwQW7LqjYPApXJiuQndWyjtGVuknJ
+shr/akr05Din0vHoieD+XXr0A0XcXRlb/UG4lgg4gvaNc0byvIkHikMfsmhc20aj
+Aerjt8VgFKX9MicWH+Kk8dlc49Tkqq8/YveNz5NMYi2nIXfN0RIDKJAfugXxz3aV
+b4qGf8jT2kXWR9v845svRUnnGRG0Bw==
+=zfP+
+-----END PGP SIGNATURE-----
+
+--Sig_/mJPyZs8wOg2hOWN+DD3yFlZ--
 
