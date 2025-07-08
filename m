@@ -1,106 +1,121 @@
-Return-Path: <linux-kernel+bounces-722517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DD9AFDB94
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:09:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40470AFDB96
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FEB44E80EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:08:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C0A73A65A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E3723182B;
-	Tue,  8 Jul 2025 23:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F288230D35;
+	Tue,  8 Jul 2025 23:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rHYDp8Dv"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iw7CF3Lc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFCA22C35D;
-	Tue,  8 Jul 2025 23:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE8533993;
+	Tue,  8 Jul 2025 23:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752016139; cv=none; b=Aw1WLGDM/q5rNIbAHDD3BFHXi+kozoYwfiajUfkgIcoevfcTGpF3PaD6rjCtef8QmLhVCgApIxM71s/6Zq82oYOpOVW0ph/WCUYESb1Mg3lvtM0Px6Pps1thKNJrVSWv/K8zqtL8gJxZdNu5jAA5eCX8I9a77ulugs7vOB+N5MY=
+	t=1752016291; cv=none; b=jbRYjxyBwpXTmSQJ8AlvrAODL8BW8gczMQPNdp7o6QbmbZFAseraiurm8Yaiopcgi+zYL4vd/cu5qYFLFvzHPgo4Fmlaes4B8lR6J2/cJOYLDN1bWVaUg8CFOy/W8eTyC2s2Z22sTNVzsWWgAgOvAk90tsD0mAf7EjFzZWFzwM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752016139; c=relaxed/simple;
-	bh=p1X7O3b0ML7w/9EzI1qu4eqF3Y9atMsv8WPbJ1SYU/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=NOzJkikTbMSuVRjfiKx9AVoyVBUxrr1hvpcvIKWv4yZNEl/EiFWJz4M9KbCCsaUt176bq2TbRZ5Bpyng1sE4lW17f4CTNhwmBCzGnJgtgWsXapk8nsqC0R+L3A4Nu5J9T2jmMHtu+JY3awHQ3TGG5DbXDUuhHnspGvU5j2IrzTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=rHYDp8Dv; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752016061;
-	bh=yMjFJ78UCJA3K2osKSdm4VdluTkaEWzZpEU7BpAcmjo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=rHYDp8DvGHX5TxMCQWApqZXYdLppJucXDS7icPLuYPQB5itgE1jnsZ4emzfSFQ0Ge
-	 IbIxKn4Fb7x9VWEU1RoQniZ3CDTFOxtSpBNcROLscRL9suwuXfj20POFWGXC3hrPCZ
-	 GzvvBzlGE6RCLLsJB5q7o2zs+V46BnVwDb8jy8023dbIpgNlBvwVGTN+S4Gmcdp2Lc
-	 bm22aOGWF3+WkPgnXtgHwmgbfm/e24u/1/yG7ZG9J/yGsv/bXTJxk9mZyD+5q7sYLG
-	 MBdiRJQp5hQ9dtovx/ueZyJm2yTZkB54j9K1fG2b3sSYwFPPsp9lw8eKkCaQYF38Cf
-	 G6NT9XKwKFTBA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bcGwY3QXdz4w2D;
-	Wed,  9 Jul 2025 09:07:41 +1000 (AEST)
-Date: Wed, 9 Jul 2025 09:08:42 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the bitmap tree
-Message-ID: <20250709090842.467cfcfb@canb.auug.org.au>
+	s=arc-20240116; t=1752016291; c=relaxed/simple;
+	bh=lL6Erx1uLhCLGcLhPz8cJ2N77um6OQ3TVPp34qGw1DA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u5ePN7dADgHtVHW3/V7hMttr7JydxfIxy6FQB06PuL+cHm5lPJjKqmp+L54wGJI9ToiYybZSCSaEsGBzj3HkK1bJwvflFOs+vw0tssjJEIJN7cA96nV9krY5foi/CBohmbNUw8emjIZgqukhz15oS1jKc0poTFXB8XeuKSnCwuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iw7CF3Lc; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752016290; x=1783552290;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=lL6Erx1uLhCLGcLhPz8cJ2N77um6OQ3TVPp34qGw1DA=;
+  b=iw7CF3LcWHT/WrjWlAkd+yC9eyzH4nhpBe4ZeBQeyPnih+glC/1bokkC
+   hW0elcSzuyvVEjr8c5POh/wW38uOTe+uGpilRA9Isvuu/wistv0jYh72r
+   bSWDWfEWEstVRiyk74xUty1MsgCbpvNvEw+nDbXAG0njVOGzWMQccyLsW
+   ALP0/KfdQYQVDbRN0CeIwK1a05UETrCoY765zvz0zq/J1ozoNNMhsWI61
+   mFbA/R3COB6X42gZiQSTB/iUmjWDvNOwRZJ6Aaxl0+6vbeTRDpXyThg/E
+   OU4dPTPft4IUPMcXu7z4R+abcxCH+nRjACuzi92L/H9NhyTJIwXIft1vH
+   g==;
+X-CSE-ConnectionGUID: 9mXu8L0sR1CAoxLl9p8i/w==
+X-CSE-MsgGUID: tqnN58WGQhGdbug+msFBIw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="65329699"
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="65329699"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 16:11:29 -0700
+X-CSE-ConnectionGUID: z5+e5fOvQ8WBmbQ4OoptIA==
+X-CSE-MsgGUID: tU0AV1tLTfKl79OWjQ4zEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="155244021"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.152]) ([10.125.110.152])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 16:11:26 -0700
+Message-ID: <094e7862-d981-4c37-8941-57b4513caf2d@intel.com>
+Date: Tue, 8 Jul 2025 16:11:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/klxkVCnjqeLrP3TZLGZU2kV";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] cxl/edac: Fix wrong dpa checking for PPR operation
+To: Li Ming <ming.li@zohomail.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
+ shiju.jose@huawei.com
+Cc: andriy.shevchenko@linux.intel.com, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250708051536.92119-1-ming.li@zohomail.com>
+ <20250708051536.92119-3-ming.li@zohomail.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250708051536.92119-3-ming.li@zohomail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_/klxkVCnjqeLrP3TZLGZU2kV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-The following commits are also in Linus Torvalds' tree as different
-commits (but the same patches):
+On 7/7/25 10:15 PM, Li Ming wrote:
+> DPA 0 is considered invalid in cxl_do_ppr(), but per Table 8-143. "Get
+> Partition Info Output Payload" in CXL r3.2 section 8.2.10.9.2.1 "Get
+> Partition Info(Opcode 4100h)", it mentions that DPA 0 is a valid address
+> of a CXL device. So the correct implementation should be checking if the
+> DPA is in the DPA range of the CXL device rather than checking if the
+> DPA is equal to 0.
+> 
+> Fixes: be9b359e056a ("cxl/edac: Add CXL memory device soft PPR control feature")
+> Signed-off-by: Li Ming <ming.li@zohomail.com>
+> Tested-by: Shiju Jose <shiju.jose@huawei.com>
+> Reviewed-by: Shiju Jose <shiju.jose@huawei.com>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/cxl/core/edac.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cxl/core/edac.c b/drivers/cxl/core/edac.c
+> index 623aaa4439c4..1cf65b1538b9 100644
+> --- a/drivers/cxl/core/edac.c
+> +++ b/drivers/cxl/core/edac.c
+> @@ -1923,8 +1923,11 @@ static int cxl_ppr_set_nibble_mask(struct device *dev, void *drv_data,
+>  static int cxl_do_ppr(struct device *dev, void *drv_data, u32 val)
+>  {
+>  	struct cxl_ppr_context *cxl_ppr_ctx = drv_data;
+> +	struct cxl_memdev *cxlmd = cxl_ppr_ctx->cxlmd;
+> +	struct cxl_dev_state *cxlds = cxlmd->cxlds;
+>  
+> -	if (!cxl_ppr_ctx->dpa || val != EDAC_DO_MEM_REPAIR)
+> +	if (!resource_contains_addr(&cxlds->dpa_res, cxl_ppr_ctx->dpa) ||
+> +	    val != EDAC_DO_MEM_REPAIR)
+>  		return -EINVAL;
+>  
+>  	return cxl_mem_perform_ppr(cxl_ppr_ctx);
 
-  d702b0ed6329 ("MAINTAINERS: bitmap: add UAPI headers")
-  adb5c828d022 ("uapi: bitops: use UAPI-safe variant of BITS_PER_LONG again=
- (2)")
-
-These are commits
-
-  1afc85deecd3 ("MAINTAINERS: bitmap: add UAPI headers")
-  70b9c0c11e55 ("uapi: bitops: use UAPI-safe variant of BITS_PER_LONG again=
- (2)")
-
-in Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/klxkVCnjqeLrP3TZLGZU2kV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhtpPoACgkQAVBC80lX
-0GxVlwf+JbTfNm4zGkOOHiKJ2Ihm8tcXUMIEopXc6y6v0gtFAedkdb/inw+Jka1l
-7A9suY3CKQ68X5FXfR9ojSFNKgG9E2kv4S3hhCPDcRyoDM+pclA9IVWggdWdzTiT
-dxsLrzfeYxmDpgftM3CAOQ53nrSxb1wHCDJ16vyhhETMKISpPCzSvVskR8RRMGsl
-VtKcBjRk/g+Imtn7VEHl2uGKNQGzW7wGfqUNih1UrR/KCeU+PCQKZWG31RCtsvMe
-wH4CJXPWzfx6wWHQ6LbTxgB+eZ1cKlOPjQrLZuNLFUMYnj4MBk9knl1YPXcTgN8f
-5aYIxPKlf4rQtuQzO7cX8zZsIZuQDA==
-=gRYo
------END PGP SIGNATURE-----
-
---Sig_/klxkVCnjqeLrP3TZLGZU2kV--
 
