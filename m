@@ -1,161 +1,150 @@
-Return-Path: <linux-kernel+bounces-721817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED137AFCE32
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:51:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 251AAAFCE3F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB35217B703
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:49:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D3241884E93
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B792DFF0D;
-	Tue,  8 Jul 2025 14:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19B22DECB0;
+	Tue,  8 Jul 2025 14:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="JEkuu8Zd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jtX4vtSx"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="uG6qN1IC"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B7C2DEA9C;
-	Tue,  8 Jul 2025 14:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C675C2DAFD9
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 14:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751986151; cv=none; b=Z1LifgGRkExWghvDq7vN/1NRIkjtcs1v9MQh5e8oytMYIY7j3SGsQVMGHkg+uZMYlI2R3mjgD9Zmf4RLkAgcX8MQFSio7n7Alroh8ehIYSyBWr+OQZoOTJUz5qs5NsNV1h3DBO3/HyDb24vIbwzdzslrgRe/tMd91ObT8zd345k=
+	t=1751986215; cv=none; b=VT0LoyJgsB/s8/O0qpIxgemqCR+GBhMNmeVXOxYNJmfSN3+PbrPE6U1HY5lMSo7tryyscrn7EVP88doY+FyZy/IZlt8MsiD9TX1Sf0KUftwH9mgtDhdv3eiD9vjXgQRB2GjnhBhIWa/vOajdqu5Pbzmb0FF2SIiuZ8W2XYxjwL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751986151; c=relaxed/simple;
-	bh=s6+ijH8T2ivYj6DmS7Raj2ccV8f0pTktqIvZlSEBCcU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=rzmUJQGxFcvcAiBIRzrY3Yf1MvRHh7OkuxUf4lcGLAgnOvoJ5STqmlj+RTArEoZg8x0Xqcv7Fhq9NW28bqxEY9r35rHtmeK9fgR39H8kNt94IS6eKcApLULVsJtlC+wWw03TAReXtpEM0zSCScbZ7s5Ep38uUcIjpe/5UWrmzKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=JEkuu8Zd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jtX4vtSx; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 39375EC02B4;
-	Tue,  8 Jul 2025 10:49:08 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Tue, 08 Jul 2025 10:49:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1751986148;
-	 x=1752072548; bh=/WBSkyzsjblPqMc6jAKsnf4HWuKydEDDpsElennMUhQ=; b=
-	JEkuu8ZdBG7Jp8AslcSD8Pax+tCLla1vuxj8EmVQaqmUDsQaQmqY7u63R/hwU08Q
-	G9Bk2A+youfDFKYDUE0++68bdcZHUkOEToNxqyPaBuR6sW006PPoYDmIIz9YOYKo
-	mUBmAdi0ZK/oVFmoa6k9M/nBxe40cDYJdBbAhdJhBCeJ+LaLJfEOd8M1WecPUqVv
-	1+f0iTyZFbdhUgn3Yl4xHzEMgSuWBbU9BBajMteSGZRfEjEoya4HtrIdb5YekINH
-	+MsuaTEkD2HUEIRX/LEwMwDAaue4tn7hBBWClQUCJXTp8ihkYtaKE9BjBr9VjEtf
-	hyp3Ad8LwjnH5iydhz60Fg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751986148; x=
-	1752072548; bh=/WBSkyzsjblPqMc6jAKsnf4HWuKydEDDpsElennMUhQ=; b=j
-	tX4vtSxGTGz3DxtJMP7QsUE+ZMLvd4u08ZOBQ0TuadUBliq68pzEPWwOSCkVg8ZS
-	SOaquOPySFEQV+2gDetrGsAXE3yqqKp9Xwp4PXJg0+vlgVmbEdJb4XVbFOb8q8NZ
-	CtMHKpssgIsWuLMn17ukK/8F2A3WsaA5y11V9/uekcEc69Yh4ZNRkDTun+ytksI2
-	ogWjxwj+5JU/7XcZ4T5Mzzw4AXdfTzJLLvHy0XGhTvxKvKxdDBamUuq+ZDPsVurL
-	j83u40/71gw3jCYCjw9tmYUFM9msmz4gc3mYoi1j86NlJfnMo8Ji4R6288IODsc6
-	PDgo2+XHgNJUJWK9bgO8w==
-X-ME-Sender: <xms:4y9taMOcZovW-v17QXEj06NfpHripHLbbKZ44XoK4qz6OhiPT22gUA>
-    <xme:4y9taC8NQnGZWda2-ZxLxsbzYn02L5AcArHoijNRePdNhPsOnMgjIHuF_z2rCqkC6
-    T5LVpHiY1rCyckF4S0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefgeeliecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepshgvnhhoiihhrghtshhkhiestghhrhhomhhiuhhmrdhorhhgpdhrtg
-    hpthhtoheprhhoshhtvgguthesghhoohgumhhishdrohhrghdprhgtphhtthhopegurghv
-    ihgughhofiesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprghrnhgusehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehguhhsthgrvhhorghrsheskhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnrghthhgrnh
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhdrtggrrhhpvghnthgvrheslhhi
-    nhgrrhhordhorhhgpdhrtghpthhtohepjhhohhhnrdhoghhnvghssheslhhinhhuthhroh
-    hnihigrdguvg
-X-ME-Proxy: <xmx:4y9taMoo_EbKL_GGNdG6DIiu0Oq7xNSY8SwzuVT6QkaYAvF4xMHimw>
-    <xmx:5C9taAK9KAZBuFJrbnGsav3lNIYKsRyluUdJ1URmuB8fcXejJj_bAA>
-    <xmx:5C9taD05xtCLM5vPGnxci6gUKRzCmLQKvV2TiTkzEvnUREKo-TMPnQ>
-    <xmx:5C9taJV6hm0iymefq4vfY263mDLR-OFDCItiy9E7upk2hqODCYJdiw>
-    <xmx:5C9taKMUAeuc7XRbN7wUZVxeLDZhF-zDHUlo6xC9l51Vvm8wvL_VWAak>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id D9CE5700065; Tue,  8 Jul 2025 10:49:07 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1751986215; c=relaxed/simple;
+	bh=HEgvTY7DvqUTASXbAkoz2Cq2W+UACAG7D0XiharOkiI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LfvI57Un3dDPgnN3Scm60NLGA1Q9pYxBnUeCySS38WqE7g6vXuxuRrGHJBFFQfxO2q+4Klqo3Ji5aNocIvQI6lmxK6hy9vgPuplgGVUc3BQ58oMkSf5gP43ILG5JYjmZ8hf6RX90HCPE3H0M4SCLuiBw8LYEDDGwBMMcYAi1Ixo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=uG6qN1IC; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4530921461aso31893165e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 07:50:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751986211; x=1752591011; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=p+mcJ7ZL40yfdI/6L1U2sq8kmJCRggUCq7uPF858vik=;
+        b=uG6qN1ICF86hD6jJf/IrYo8dfj0Xt4vgNY58oRn4PewJeOXeatbjqdV7DnwUG1mxYU
+         gzC5LHXiAIaLVa8BVMNkvcY0vgxlSdEFOcbdAWlnaik44fe0nb28Tvy6KGsm4I+Gic6E
+         xRWspBvLZJH8+LYvJsgtlxzf1OOlwQHm5U9BqOwqZN3p5fENhvLrW1yRh3y4ilGU7rd4
+         Akr9z4CtMra9c98BRGY4wA2hHH26boKR/ZCbEgxs60d02Qf4iEc71RWjuHmjX3E50Y/g
+         wpGqsNvQhaJOfxkik/dDniIdpGjICFALBnudhynF8xdTQtkcE2abBqEkqx5QSnYqYXym
+         rgZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751986211; x=1752591011;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p+mcJ7ZL40yfdI/6L1U2sq8kmJCRggUCq7uPF858vik=;
+        b=BXwl2xowB7tt2oya9VaCZEPYp3285KY06EcQMoUzHhrcLj/sUnWh/FeOMc5yOUbyV5
+         Ku51EQLgMKb212z4irqvGMgPAA07k0RNVs1lNZcsJw42FhnF9Ay+kpfCpMBxKONUaX/9
+         k+uMG+ZEzG3JUg+PHpzuDxiEGccC7Q0rZXEcomxxBSXw6HHb0cgeZpNY2D7SqGsiyEXK
+         6yPWYyDF8TFsurRsxZf1iWJ5vzKZTgDNQ4KZCW7M8iwt6hOzfwk7x2DkwEbrU7CKFAAf
+         Rb6l6lfEEG9fFrOHxRl2pbv6QaB1gy0OaNh+aWMrddxtUzmNTBnKSB5D9dJ5yFw/FvxF
+         nnCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGMMFg4tWx+0Rcco3774pPbwHfkc+pBq08zuyODkY0xq4J0SdRycYLan0KFJ5Yeap0CU91CanC0PZCyvk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqrfZJAfSZ8l7dT8AsXqwWZhb/TQb+V6vIvYe9Thvs8oA3o6R2
+	s22Zl0ymcHOAljqUuKtGmW/H5fdFJMC6fyFlP6vbuxt2lczfmj9kTUEjx+H8+g3mh50=
+X-Gm-Gg: ASbGnctt5R6pvVW6JuORtYbKqAvRHPPTyCEZoQDm7kIInHXPfn3ZIndSlhF5sDZQJCD
+	lMT0RkN+Ipw/70s5HUORbbTq1xhQ1GGmHuw5lva6FZexxulw3i1B0p487gSFNYCYIO5x/WbFRY9
+	1eCk92FVoCXOOIfxk+FI9iEyK6FHtAYVfy2/eUnJ18rq7M3xucOX1++19XaTCzu4z5UGSuPsp9g
+	/yMkoq1SB98sreHiNseQSadzJNFMhaSeBMpc5MOWXUkfHg3iAYI0WnnBsWrX6Fr+nEBOjghNpCT
+	w+WNlDqsdq2wxDj79GVGVB2hqttvdeqo5eFggmc+EE3TIKtDGhlh54ud+fZiyPgL4obegSnm3VZ
+	Q
+X-Google-Smtp-Source: AGHT+IH2G2zx5csQczqgTBlBit9l6rKgdpM4AL2R7/oW/cCxn22xdVAIxyhu7QXZ0RNJGTHll7v0Sw==
+X-Received: by 2002:a05:600c:8b0d:b0:43c:fe5e:f040 with SMTP id 5b1f17b1804b1-454cd5234b7mr32681735e9.23.1751986211084;
+        Tue, 08 Jul 2025 07:50:11 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:dfdf:dfe3:8269:12e7])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b47030cdf5sm12988879f8f.1.2025.07.08.07.50.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 07:50:10 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Tue, 08 Jul 2025 16:49:57 +0200
+Subject: [PATCH] PCI: endpoint: pci-epf-vntb: fix MW2 configfs id
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T3edb9637e006aa12
-Date: Tue, 08 Jul 2025 16:48:47 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Petr Mladek" <pmladek@suse.com>, "Nathan Chancellor" <nathan@kernel.org>
-Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- "John Ogness" <john.ogness@linutronix.de>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Steven Rostedt" <rostedt@goodmis.org>,
- "Sergey Senozhatsky" <senozhatsky@chromium.org>,
- "Kees Cook" <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- "David Gow" <davidgow@google.com>, "Arnd Bergmann" <arnd@kernel.org>,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Message-Id: <1217f48f-a12a-4ba1-8de5-bda4b2ad6107@app.fastmail.com>
-In-Reply-To: <aG0qLaeAoTGaRs0n@pathway.suse.cz>
-References: <20250702095157.110916-1-pmladek@suse.com>
- <20250702095157.110916-3-pmladek@suse.com> <20250702202835.GA593751@ax162>
- <aG0qLaeAoTGaRs0n@pathway.suse.cz>
-Subject: Re: [PATCH 2/3] printk: kunit: support offstack cpumask
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250708-vntb-mw-fixup-v1-1-22da511247ed@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIABQwbWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDcwML3bK8kiTd3HLdtMyK0gLdpGRjg0TjVCNLAzNDJaCegqJUoATYvOj
+ Y2loA1x0n8F8AAAA=
+X-Change-ID: 20250708-vntb-mw-fixup-bc30a3e29061
+To: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, 
+ Allen Hubbe <allenbh@gmail.com>, Manivannan Sadhasivam <mani@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>
+Cc: ntb@lists.linux.dev, linux-pci@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1285; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=HEgvTY7DvqUTASXbAkoz2Cq2W+UACAG7D0XiharOkiI=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBobTAdm1+n8PQLlMWBQtM3sujQ9VlXuPytqjO/b
+ RX4fjO7geCJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaG0wHQAKCRDm/A8cN/La
+ hbW9EACZxPPbx9A9N7wzBBwK+X69FdGNxhFWZa4r0v2iig7LecShid9JdCCgxxpoMTiJ4Y7h/WD
+ iepvHs56AKjPYLS3TQ1QSc0bhbHJco0KzUCQn+zJq153Oz9QNAYjSAYTXDblnUxvBHUE2TIT0nP
+ UKcKt1RKzVpbMNSoNEuONomEejyFT35evSOKpyVwRiBENRx/IJipuJu3unfu6AzvVPsTRFsVaL0
+ Lmc8lU+DFtm9eeA91jTOsStJBhdrz6ROjci+1WTlq6zdhJox60lw0FndiXEGAEI59CYsqSttzCL
+ V7e8bZcPiJ4jeqt/FhpTO9dLn6gN42Xs6u/sOBxIKp1YHhME+zTphrFXptfSJUl3qa3PJRcW0Id
+ Rz/y6L+YqCuAj3I12VWuJPloVzQZ30Iv/nQxk+zMICLF5ktrtpKQt7w7DPRbFnqR7NYF4xlIeox
+ qFgBgTF5DPamsFhI2Rb0tYLY8LnmyYK6NYOri3ZUnibpXG6D0Q7s9rteRkbyT7ZyNZWZpQSN4nV
+ 3EnS5022AvlTmNfq3FqWqmGJphqMc+udewNL1w7PZbhlCpqF+zzQ4zE2og0wHhz+HNRyaNGDC3t
+ IWg3bFShM8KgULCpQXVoiodbPpMix9DlvXjZiRvCme3UokWoxG1wc3WmNDxkNv909JVLYjrhDEi
+ oG1fcYX8ebohO8g==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-On Tue, Jul 8, 2025, at 16:24, Petr Mladek wrote:
-> On Wed 2025-07-02 13:28:35, Nathan Chancellor wrote:
->> On Wed, Jul 02, 2025 at 11:51:56AM +0200, Petr Mladek wrote:
->
-> Thanks a lot for the nice report.
->
-> The problem is how cpumask_var_t is defined in include/linux/cpumask_types.h:
->
-> #ifdef CONFIG_CPUMASK_OFFSTACK
-> typedef struct cpumask *cpumask_var_t;
-> #else
-> typedef struct cpumask cpumask_var_t[1];
-> #endif /* CONFIG_CPUMASK_OFFSTACK */
->
-> And KUNIT_DEFINE_ACTION_WRAPPER() expect that the 3rd parameter
-> is a pointer.
->
-> I am going to solve this by adding a wrapper over free_cpumask_var()
-> which would work with a pointer to cpumask_var_t.
+The id associated with MW2 configfs entry is wrong.
+Trying to use MW2 will overwrite the existing BAR setup associated with
+MW1.
 
-I'm not familiar enough with the cleanup mechanism of kunit,
-but can't you just move the mask allocation outside of
-test_readerwriter()?
+Just put the correct id for MW2 to fix the situation
 
-> + */
-> +static void prbtest_free_cpumask_var(cpumask_var_t *mask)
-> +{
-> +	free_cpumask_var(*mask);
-> +}
+Fixes: 4eacb24f6fa3 ("PCI: endpoint: pci-epf-vntb: Allow BAR assignment via configfs")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/pci/endpoint/functions/pci-epf-vntb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Or you could pass this as a cpumask_t pointer instead,
-which should do the right thing without the indirection.
-> 
->  	KUNIT_ASSERT_TRUE(test, alloc_cpumask_var(&test_cpus, GFP_KERNEL));
-> -	err = kunit_add_action_or_reset(test, prbtest_cpumask_cleanup, test_cpus);
-> +	err = kunit_add_action_or_reset(test, prbtest_cpumask_cleanup, &test_cpus);
+diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+index 41b297b16574558e7ab99fb047204ac29f6f3391..ac83a6dc6116be190f955adc46a30d065d3724fd 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
++++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+@@ -993,8 +993,8 @@ EPF_NTB_BAR_R(db_bar, BAR_DB)
+ EPF_NTB_BAR_W(db_bar, BAR_DB)
+ EPF_NTB_BAR_R(mw1_bar, BAR_MW1)
+ EPF_NTB_BAR_W(mw1_bar, BAR_MW1)
+-EPF_NTB_BAR_R(mw2_bar, BAR_MW1)
+-EPF_NTB_BAR_W(mw2_bar, BAR_MW1)
++EPF_NTB_BAR_R(mw2_bar, BAR_MW2)
++EPF_NTB_BAR_W(mw2_bar, BAR_MW2)
+ EPF_NTB_BAR_R(mw3_bar, BAR_MW3)
+ EPF_NTB_BAR_W(mw3_bar, BAR_MW3)
+ EPF_NTB_BAR_R(mw4_bar, BAR_MW4)
 
-In my original version, I did not have the
-KUNIT_ASSERT_TRUE() here, which seems sufficient since this
-is not what you are testing at all, and in normal systems
-this would just be a stack variable.
+---
+base-commit: 38be2ac97d2df0c248b57e19b9a35b30d1388852
+change-id: 20250708-vntb-mw-fixup-bc30a3e29061
 
-    Arnd
+Best regards,
+-- 
+Jerome
+
 
