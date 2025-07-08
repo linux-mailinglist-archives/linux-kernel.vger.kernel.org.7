@@ -1,139 +1,172 @@
-Return-Path: <linux-kernel+bounces-720823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52D06AFC0C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:20:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4564CAFC0CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 306517A5033
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:19:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 900F31AA64F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FD821FF40;
-	Tue,  8 Jul 2025 02:20:24 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0110C221277;
+	Tue,  8 Jul 2025 02:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfVuVxjD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE5F70825;
-	Tue,  8 Jul 2025 02:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D30770825;
+	Tue,  8 Jul 2025 02:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751941224; cv=none; b=qYb45mk9bB83Ex8trBUWA5mq7wWvcjNK3bwwR75znmFjoUHxG3NCEppaB4SjUSKQ6Hs1wjsADB8C5UQdKG05Z2SlFwhTKqkAQ/JnWNvTYBKhJWCkFIfiotOboR+VZsQ8aM9SrhwGHtPFClDYijk6p8rO/gra3wQ4de2GQMp0/TE=
+	t=1751941246; cv=none; b=Pklll3q27NCw/GqzSIQfn0PVNXogeiC70XsvVVrD90jTke3kCHl3OZtCW8pm2fRl5ZZgBTmk+/svKosIvjFTLMqbNuUAFXITX+sM/o/mttbLPDsxJbLLnl+OWtotMJwFADM7TAQZuAwjOkEcjmQ7O7zQuXbq3bIxJ72PBpomk/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751941224; c=relaxed/simple;
-	bh=sn6rljpu0rRcMnoOSCho0NKqgniXWyhTWQpWa6PH9uQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hpsfzsln7qNB0ZPnWc51C9LOFkjnE9tOB+wUEY1oeNQHJ2e62jLJ4GbSEE6oNokbTa4X4cia9l2w+tzc9nuhYA/pQGkAUekfpeoalf4lNylM45w3+89tbkIxBOkDyVaCCHbJsOv1EXeExs17fuKObtb9nFkTXIceBSgN9k/ymvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.33.69] (unknown [210.73.43.2])
-	by APP-05 (Coremail) with SMTP id zQCowAA3y1s7gGxoHwLzAQ--.7093S2;
-	Tue, 08 Jul 2025 10:19:40 +0800 (CST)
-Message-ID: <8c917152-0260-4442-a944-3cc0b3356e04@iscas.ac.cn>
-Date: Tue, 8 Jul 2025 10:19:38 +0800
+	s=arc-20240116; t=1751941246; c=relaxed/simple;
+	bh=FdNfW5qOTMVaMNJhf3d4aC3Y6ZkzpECAp4ZXPawuD1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tbpBQrpdgiPOKmNMd6sZXS3sBKYgG1NKgXI3CF3quvmKSJN6GmM6EiLISzvxwYkiqgOGfaJCYFMqnFmbnj/kaVCJrQ/QU+6oy7SkV792fXw/JuT0iiNngebYq3XFKukg4bT7WlKypEKJBTMQnWAMKvIgV0k89EAO/y3FunbBwFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SfVuVxjD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A883DC4CEE3;
+	Tue,  8 Jul 2025 02:20:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751941246;
+	bh=FdNfW5qOTMVaMNJhf3d4aC3Y6ZkzpECAp4ZXPawuD1w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SfVuVxjDeHku7nPebEN4INSCvz6v89PVacBhg+NKah3iNBJs03PDRf+a+L4WHDLFf
+	 WN3uU2ocnUZAC5bIH/o0S8/qEpkJ/0I+oKfWaSmTOwD8jiiXyfoIkJXkQyLlarsQSQ
+	 zx5vCDH039tT51IGeUK1eV8qgTLEEaLvHGDEcsRTv15018+op0ewQehONP+7NB7AIk
+	 PMcGcXIbzs7t9S+Q/P+reRNeDudJ9WAON7SZsyFFHPtF7yUTGkVKtj4u9lOkFmRg9D
+	 JWu2J4YLfmN1MlhW31UUPbUqdaFfpPY7OGzYgaxgmRjVsjvtkEKxWvcRgXnTEOcE0M
+	 DhpVpRTUWCpMw==
+Date: Tue, 8 Jul 2025 04:20:43 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
+	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+	Andrew Clayton <andrew@digital-domain.net>, Sven Schnelle <svens@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, Lee Schermerhorn <lee.schermerhorn@hp.com>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, Chao Yu <chao.yu@oppo.com>
+Subject: Re: [RFC v3 3/7] mm: Use seprintf() instead of less ergonomic APIs
+Message-ID: <gnds5llds2bfqynijuaxafwsbb4ukafxfgggzuvhrqsi2rc6nb@dyf3qgdsmnti>
+References: <cover.1751862634.git.alx@kernel.org>
+ <033bf00f1fcf808245ae150346019aa7b997ea11.1751862634.git.alx@kernel.org>
+ <CAHk-=wh9Pqz07ne9iSt1_v0c14rkOGvF9AbEkaq1KnFhQD1SSA@mail.gmail.com>
+ <ugf4pu7qrojegz7arkcpa4cyde6hoyh73h66oc4f6ncc7jg23t@bklkbbotyzvp>
+ <CAHk-=whQ_0qFvg3cugt84+iKXi_eebNGY4so+PSnyyVNGVde1A@mail.gmail.com>
+ <gjxc2cxjlsnccopdghektco2oulmhyhonigy7lwsaqqcbn62wj@wa3tidbvpyvk>
+ <r43lulact3247k23clhbqnp3ms75vykf7yxa526agenq2b4osk@q6qp7hk7efo2>
+ <CAHk-=wj6gEmYih1VfYZu9FiYtOJYSFQ0f45CQZtDLrJpzF47Bg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v4 1/2] dt-bindings: net: Add support for
- SpacemiT K1
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
- Eric Dumazet <edumazet@google.com>, Junhui Liu <junhui.liu@pigmoral.tech>,
- Conor Dooley <conor.dooley@microchip.com>, netdev@vger.kernel.org,
- Philipp Zabel <p.zabel@pengutronix.de>, Jakub Kicinski <kuba@kernel.org>,
- linux-riscv@lists.infradead.org, Simon Horman <horms@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, devicetree@vger.kernel.org,
- Vivian Wang <uwu@dram.page>, Yixun Lan <dlan@gentoo.org>,
- spacemit@lists.linux.dev, Maxime Chevallier <maxime.chevallier@bootlin.com>,
- Paolo Abeni <pabeni@redhat.com>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Vadim Fedorenko <vadim.fedorenko@linux.dev>
-References: <20250703-net-k1-emac-v4-0-686d09c4cfa8@iscas.ac.cn>
- <20250703-net-k1-emac-v4-1-686d09c4cfa8@iscas.ac.cn>
- <175153978342.612698.13197728053938266111.robh@kernel.org>
- <17733827-8038-4c85-9bb1-0148a50ca10f@iscas.ac.cn>
-Content-Language: en-US
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-In-Reply-To: <17733827-8038-4c85-9bb1-0148a50ca10f@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-CM-TRANSID:zQCowAA3y1s7gGxoHwLzAQ--.7093S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zr1DCrWfKrWfJF4kAryxXwb_yoW8AF47pa
-	yak3ZIkF1qyr47Aw4avwn29a4F9r1rKFyUXF9Iqw1vqan8X3WftryS9r15u3W8ZrWxAFyY
-	vr15W3W5CFyDAF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9qb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
-	8E87Iv6xkF7I0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Cr0_Gr
-	1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xK
-	xwCY1x0262kKe7AKxVW8ZVWrXwCY02Avz4vE14v_Gr1l42xK82IYc2Ij64vIr41l4I8I3I
-	0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWU
-	GVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI
-	0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0
-	rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r
-	4UJbIYCTnIWIevJa73UjIFyTuYvjxUkWSrDUUUU
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wj6gEmYih1VfYZu9FiYtOJYSFQ0f45CQZtDLrJpzF47Bg@mail.gmail.com>
 
-On 7/3/25 20:31, Vivian Wang wrote:
->
-> On 7/3/25 18:49, Rob Herring (Arm) wrote:
->> On Thu, 03 Jul 2025 17:42:02 +0800, Vivian Wang wrote:
->>> The Ethernet MACs on SpacemiT K1 appears to be a custom design.
->>> SpacemiT
->>> refers to them as "EMAC", so let's just call them "spacemit,k1-emac".=
+Hi Linus,
 
->>>
->>> Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
->>> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
->>> ---
->>> =C2=A0 .../devicetree/bindings/net/spacemit,k1-emac.yaml=C2=A0 | 81
->>> ++++++++++++++++++++++
->>> =C2=A0 1 file changed, 81 insertions(+)
->>>
->> My bot found errors running 'make dt_binding_check' on your patch:
->>
->> yamllint warnings/errors:
->>
->> dtschema/dtc warnings/errors:
->> Error:
->> Documentation/devicetree/bindings/net/spacemit,k1-emac.example.dts:36.=
-36-37
->> syntax error
->> FATAL ERROR: Unable to parse input tree
->
-> My bad. The example still depends on the reset bindings for the
-> constant RESET_EMAC0. I just tried with reset v12 [1] and that fixes it=
-=2E
->
-> [1]:
-> https://lore.kernel.org/spacemit/20250702113709.291748-2-elder@riscstar=
-=2Ecom/
->
-> Vivian "dramforever" Wang=C2=A0
->
-Just for the record for anyone watching this thread, I'm most likely
-going to be holding off sending the next version of this until reset v12
-(probably?) gets at least taken up by a maintainer.
+On Mon, Jul 07, 2025 at 03:17:50PM -0700, Linus Torvalds wrote:
+> On Mon, 7 Jul 2025 at 14:27, Alejandro Colomar <alx@kernel.org> wrote:
+> >
+> > If the name is your main concern, we can discuss a more explicit name in
+> > the kernel.
+> 
+> So as they say: "There are only two hard problems in computer science:
+> cache invalidation, naming and off-by-one errors".
 
-It's a bit of a weird situation over there since they're sending the
-reset controller stuff through the clk tree, but then it's also a
-mega-syscon situation for the K1 and that's how they decided they want
-it, so it is what it is.
+Indeed.  And we have two of these classes here.  :)
 
-(The DMA bus dependency that was in v3 is all DTS changes with no
-bindings and no driver, so that could be easily handled entirely in the
-SpacemiT SoC tree, which is nice.)
+> And the *worst* model for naming is the "add random characters" (ok, I
+> still remember when people believed the insane "Hungarian Notation"
+> BS, *that* particular braindamage seems to thankfully have faded away
+> and was probably even worse, because it was both pointless, unreadable
+> _and_ caused long identifiers).
 
-Vivian
+To be fair, one letter is enough if you're used to the name.  Everything
+of the form s*printf() people know that the differentiating part is that
+single letter between 's' and 'p', and a quick look at the function
+prototype usually explains the rest.
 
->> [...]
+More than that, and it's unnecessarily noisy to my taste.  But not
+everyone does string work all the time, so I get why you'd be less prone
+to liking the name.
 
+I won't press for the name.  Unless you say anything, my next revision
+of the series will call it sprintf_end().
+
+> Now, we obviously tend to have the usual bike-shedding discussions
+> that come from naming, but my *personal* preference is to avoid the
+> myriad of random "does almost the same thing with different
+> parameters" by using generics.
+> 
+> This is actually something that the kernel has done for decades, with
+> various odd macro games - things like "get_user()" just automatically
+> doing the RightThing(tm) based on the size of the argument, rather
+> than having N different versions for different types.
+
+In this case, I wouldn't want to go that way and reuse the name
+snprintf(3), because the kernel implementation of snprintf(3) is
+non-conforming, and both the standard and the kernel snprintf() have
+semantics that are importantly different than this API in terms of
+handling errors.
+
+I think reusing the name with slightly different semantics would be
+prone to bugs.
+
+Anyway, sprintf_end() should be clear enough that I don't expect much
+bikeshedding for the name.  Feel free to revisit this in the future and
+merge names if you don't like it; I won't complain.  :)
+
+
+Have a lovely night!
+Alex
+
+P.S.:  I'm not able to sign this email.
+
+> So we actually have a fair number of "generics" in the kernel, and
+> while admittedly the header file contortions to implement them can
+> often be horrendous - the *use* cases tend to be fairly readable.
+> 
+> It's not just get_user() and friends, it's things like our
+> type-checking min/max macros etc. Lots of small helpers that
+> 
+> And while the traditional C model for this is indeed macro games with
+> sizeof() and other oddities, these days at least we have _Generic() to
+> help.
+> 
+> So my personal preference would actually be to not make up new names
+> at all, but just have the normal names DoTheRightThing(tm)
+> automatically.
+> 
+> But honestly, that works best when you have good data structure
+> abstraction - *not* when you pass just random "char *" pointers
+> around.  It tends to help those kinds of _Generic() users, but even
+> without the use of _Generic() and friends, it helps static type
+> checking and makes things much less ambiguous even in general.
+> 
+> IOW, there's never any question about "is this string the source or
+> the destination?" or "is this the start or the end of the buffer", if
+> you just have a struct with clear naming that contains the arguments.
+> 
+> And while C doesn't have named arguments, it *does* have named
+> structure initializers, and we use them pretty religiously in the
+> kernel. Exactly because it helps so much both for readability and for
+> stability (ie it catches things when you intentionally rename members
+> because the semantics changed).
+> 
+>                 Linus
+
+-- 
+<https://www.alejandro-colomar.es/>
 
