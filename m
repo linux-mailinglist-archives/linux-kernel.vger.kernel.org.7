@@ -1,174 +1,152 @@
-Return-Path: <linux-kernel+bounces-721557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C63AFCAD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:48:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17225AFCAD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:48:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAB4D7B5228
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:47:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6049D7B537A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB302DE1FE;
-	Tue,  8 Jul 2025 12:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57D12DCBE0;
+	Tue,  8 Jul 2025 12:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="semBo5/H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IAMlhLI7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340832DD5F3;
-	Tue,  8 Jul 2025 12:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C6F2DC327;
+	Tue,  8 Jul 2025 12:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751978860; cv=none; b=Jp9UwJm3vMunGrGnzwzEhKl4QE4TV3rvCtSpNygvXoCrJcJiwJE9w/vaAb7GlaH+ARK62vKI10Yilnf9upf6Ihn69Atv1XTYyM5g+i0iuZFqHP3rO1KVkZgESqAzzaN4h95eDoM6ugbxMzbGhphHTvjmAEvS/lKWvkNfCM91UWY=
+	t=1751978871; cv=none; b=HAjDL30hBvyV3PdjSgO8B5HjSm7oa7lxNoMs9rzro2MC54Dcm3FGPGJj2oqk2gmARq6gnjqqINea/sP4RSSx0JVPxvEgBHtIL5cK4dq6Nrshuahwvk9vZXnRWvzkCIcMN8li7618Rmp+qoI03lv5pdSxUu2wUST5QGaykl/p0Yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751978860; c=relaxed/simple;
-	bh=nVcGMtqovNhYLTO5f7VRPEzyfGwo4DPtY/nMhcKEtMw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Yx49RasJt5eASClHKVx+MvYYwUUtqx/pPysVXKe8TIFTNU9jbJ825Er3tM1zrvF+PVMRQ9FU8MaWfjFw+1SMS345AX0BcDBtD1WpNZVSWlqEvkC/n8KhV5P2nfg9a5cJJ36p0QcKUn9xqykZzyPbYPoV1/l2pvSKWfrR5eozJXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=semBo5/H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A242C4CEED;
-	Tue,  8 Jul 2025 12:47:36 +0000 (UTC)
+	s=arc-20240116; t=1751978871; c=relaxed/simple;
+	bh=osuOgrPS2qSqQveywb0omF1aib+vgM1aAsa1ykg2SH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tNQ35tXkdXvOd7PWZ+JMayYHEvbswfK4rI5FAiT/oz7INqZoT9xiCxIy0mUboQP65tSW1aTS7+JY6ydBVu/rvNTt/g8cwE6574v+Rr2GYuu1Ar+0R7p09f8lrBftSLdRV7yI4W33iWVr9bEiIt5Gkx2lUhqXJ+JfUfFrV5jUyH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IAMlhLI7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEA48C4CEED;
+	Tue,  8 Jul 2025 12:47:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751978859;
-	bh=nVcGMtqovNhYLTO5f7VRPEzyfGwo4DPtY/nMhcKEtMw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=semBo5/HZQ3/yrkkXABfj8viKzKZDYYs4/ZA76H6cChJjHFqHQTp/oIdyCXUkkg+h
-	 B7am+Njnnl5+y+yOSAetXE6eFt+gZqwhYcsdadO2YSzlVv2mhT575cl/4RdtnqEGoV
-	 2bP5KmArXca7CCsOfJrWcV0TuPDOCDQ1xHi2+WqysPLwVE5j3KRrXkZg+CEYAogfjF
-	 1EqB5H9B3bgKbPx3e/TGj/orxodMDJlril6lJfMD6LcwlYHvkakJaRBh+NdjYwRVak
-	 V4OZgJEJsEPrveahrCPvhRckc+3UHP7ib5WsF2UMre8rZ7/jO7XOF1W6BzAmzSI6OV
-	 AyRQ60aYqmQ2Q==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Tue, 08 Jul 2025 14:47:22 +0200
-Subject: [PATCH 3/3] arm64: dts: qcom: sm8750: Add GPU clock & IOMMU nodes
+	s=k20201202; t=1751978870;
+	bh=osuOgrPS2qSqQveywb0omF1aib+vgM1aAsa1ykg2SH4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IAMlhLI7cory+R2Bv4G4I7BkDERGpi3VYc+VJGMY+ZmNiGrhtDEs5lgtn+8wiu4u6
+	 EZFwzSY16+e5Ji4D7Z6CjUvZ/aXOfk0tPqg+X7zkamPyn+7COaeDs9tzZNxW6e1Bde
+	 RDRJRPH4YlXqHDgCmiM5y9tWAtKbqTUdHFW/6cSunfJLTNzYsSBxUUuFjipdJmxqcw
+	 K7hhKc+761noYebQwzzUpbXXXpHiwdELTf7fK7AeLVsfnlClHKizMH3s0RzYNTa7lh
+	 cOMY4Vu2GYsVOri9ahMntePMKOUl0lTQF5na6epLFdZ7pqzS6A+Z0ZkjhA69R2BzK6
+	 PfXrRaTRRXXBg==
+Date: Tue, 8 Jul 2025 13:47:38 +0100
+From: Will Deacon <will@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: David Hildenbrand <david@redhat.com>, Ankit Agrawal <ankita@nvidia.com>,
+	"maz@kernel.org" <maz@kernel.org>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	"joey.gouly@arm.com" <joey.gouly@arm.com>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"shahuang@redhat.com" <shahuang@redhat.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"ddutile@redhat.com" <ddutile@redhat.com>,
+	"seanjc@google.com" <seanjc@google.com>,
+	Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>,
+	Kirti Wankhede <kwankhede@nvidia.com>,
+	Krishnakant Jaju <kjaju@nvidia.com>,
+	"Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
+	Vikram Sethi <vsethi@nvidia.com>, Andy Currid <acurrid@nvidia.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>, Dan Williams <danw@nvidia.com>,
+	Zhi Wang <zhiw@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
+	Uday Dhoke <udhoke@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>,
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+	"sebastianene@google.com" <sebastianene@google.com>,
+	"coltonlewis@google.com" <coltonlewis@google.com>,
+	"kevin.tian@intel.com" <kevin.tian@intel.com>,
+	"yi.l.liu@intel.com" <yi.l.liu@intel.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"gshan@redhat.com" <gshan@redhat.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"tabba@google.com" <tabba@google.com>,
+	"qperret@google.com" <qperret@google.com>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"maobibo@loongson.cn" <maobibo@loongson.cn>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>
+Subject: Re: [PATCH v9 3/6] KVM: arm64: Block cacheable PFNMAP mapping
+Message-ID: <aG0TaqOgKInyopW0@willie-the-truck>
+References: <20250621042111.3992-1-ankita@nvidia.com>
+ <20250621042111.3992-4-ankita@nvidia.com>
+ <aF6hamOI7YVDP1Cp@willie-the-truck>
+ <SA1PR12MB7199144BBDA23C9A06DA12F9B046A@SA1PR12MB7199.namprd12.prod.outlook.com>
+ <20250630122501.GQ167785@nvidia.com>
+ <4b06b163-e1ce-4c20-b878-4593bc86bf53@redhat.com>
+ <aGf7gfMjLhrqU5Kv@willie-the-truck>
+ <20250704164750.GO1410929@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250708-topic-8750_gpucc-v1-3-86c86a504d47@oss.qualcomm.com>
-References: <20250708-topic-8750_gpucc-v1-0-86c86a504d47@oss.qualcomm.com>
-In-Reply-To: <20250708-topic-8750_gpucc-v1-0-86c86a504d47@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751978844; l=3538;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=7WkfONM1t9IOjJmIQnSYmNaGuqdmIeuahhgix3BR1tk=;
- b=Lbh77eD9/3OfcUSBIlsUsj8sjPlqjng4E/ZDYqC6/ERJib2Dqjgs/wCNIbDc26wkLNV+QjxCo
- glrzhhAnd8wCTNkI0vVa0OSvSx574/1tuiiI4WLV7kyepodxQbQo3Sb
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250704164750.GO1410929@nvidia.com>
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Fri, Jul 04, 2025 at 01:47:50PM -0300, Jason Gunthorpe wrote:
+> On Fri, Jul 04, 2025 at 05:04:17PM +0100, Will Deacon wrote:
+> > On Fri, Jul 04, 2025 at 02:21:32PM +0200, David Hildenbrand wrote:
+> > > On 30.06.25 14:25, Jason Gunthorpe wrote:
+> > > > On Mon, Jun 30, 2025 at 01:56:43AM +0000, Ankit Agrawal wrote:
+> > > > > > Sorry for the drive-by comment, but I was looking at this old series from
+> > > > > > Paolo (look at the cover letter and patch 5):
+> > > > > > 
+> > > > > > https://lore.kernel.org/r/20250109133817.314401-1-pbonzini@redhat.com
+> > > > > > 
+> > > > > > in which he points out that the arm64 get_vma_page_shift() function
+> > > > > > incorrectly assumes that a VM_PFNMAP VMA is physically contiguous, which
+> > > > > > may not be the case if a driver calls remap_pfn_range() to mess around
+> > > > > > with mappings within the VMA. I think that implies that the optimisation
+> > > > > > in 2aa53d68cee6 ("KVM: arm64: Try stage2 block mapping for host device
+> > > > > > MMIO") is unsound.
+> > > > > 
+> > > > > Hm yeah, that does seem problematic. Perhaps we need a new
+> > > > > vma flag that could help the driver communicate to the KVM that the
+> > > > > mapping is contiguous and it can go ahead with the optimization?
+> > > > > E.g. something similar to VM_ALLOW_ANY_UNCACHED.
+> > > > 
+> > > > I think Paolo has the right direction - remove any attempts by KVM to
+> > > > expand contiguity, it should only copy the primary's PTEs and rely on
+> > > > the primary to discover contiguity. No new flags.
+> > > 
+> > > 100%
+> > 
+> > The part I don't understand, however, is that I can't see an MMU notifier
+> > anywhere on the successful remap_pfn_range() path. So if a driver is
+> > using that interface to change the mapping properties of a VM_PFNMAP VMA,
+> > how do we ensure that the guest doesn't use whatever stale mappings it's
+> > faulted in previously? Did I just miss something?
+> 
+> Generally mmu notifiers are for invalidation, not used when
+> establishing new mappings.
+> 
+> It is not legal to use remap_pfn_range() to replace already mapped
+> PTEs. It can only be used during a fop mmap callback to establish the
+> first mapping during VMA creation. Thus there can be no present
+> mapping cached in a secondary and no need to invalidate.
 
-Add the GPU_CC and GX_CC (brand new! as far as we're concerned, this
-is simply a separate block housing the GX GDSC) nodes, required to
-power up the graphics-related hardware.
+Aha, thanks, I had completely missed that. I thought remap_pfn_range()
+was quietly unmapping any existing mapping it ran into, but that's not
+the case at all.
 
-Make use of it by enabling the associated IOMMU as well. The GPU itself
-needs some more work and will be enabled later.
+Cheers,
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/sm8750.dtsi | 63 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-index 4643705021c6ca095a16d8d7cc3adac920b21e82..ca0770a34bed64183185aedde04f1bb96eebfa91 100644
---- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-@@ -5,6 +5,7 @@
- 
- #include <dt-bindings/clock/qcom,rpmh.h>
- #include <dt-bindings/clock/qcom,sm8750-gcc.h>
-+#include <dt-bindings/clock/qcom,sm8750-gpucc.h>
- #include <dt-bindings/clock/qcom,sm8750-tcsr.h>
- #include <dt-bindings/dma/qcom-gpi.h>
- #include <dt-bindings/gpio/gpio.h>
-@@ -3154,6 +3155,68 @@ tcsrcc: clock-controller@f204008 {
- 			#reset-cells = <1>;
- 		};
- 
-+		gxcc: clock-controller@3d64000 {
-+			compatible = "qcom,sm8750-gxcc";
-+			reg = <0x0 0x03d64000 0x0 0x6000>;
-+			power-domains = <&rpmhpd RPMHPD_GFX>,
-+					<&rpmhpd RPMHPD_MXC>,
-+					<&gpucc GPU_CC_CX_GDSC>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		gpucc: clock-controller@3d90000 {
-+			compatible = "qcom,sm8750-gpucc";
-+			reg = <0x0 0x03d90000 0x0 0x9800>;
-+
-+			clocks = <&bi_tcxo_div2>,
-+				 <&gcc GCC_GPU_GPLL0_CLK_SRC>,
-+				 <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
-+
-+			power-domains = <&rpmhpd RPMHPD_CX>;
-+
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		adreno_smmu: iommu@3da0000 {
-+			compatible = "qcom,sm8750-smmu-500", "qcom,adreno-smmu",
-+				     "qcom,smmu-500", "arm,mmu-500";
-+			reg = <0x0 0x03da0000 0x0 0x40000>;
-+			#iommu-cells = <2>;
-+			#global-interrupts = <1>;
-+			interrupts = <GIC_SPI 674 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 678 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 679 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 680 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 681 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 682 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 683 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 684 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 685 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 686 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 687 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 688 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 476 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 574 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 575 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 576 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 577 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 660 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 662 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 665 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 666 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 667 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 669 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 670 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 700 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>;
-+			clock-names = "hlos";
-+			power-domains = <&gpucc GPU_CC_CX_GDSC>;
-+			dma-coherent;
-+		};
-+
- 		apps_smmu: iommu@15000000 {
- 			compatible = "qcom,sm8750-smmu-500", "qcom,smmu-500", "arm,mmu-500";
- 			reg = <0x0 0x15000000 0x0 0x100000>;
-
--- 
-2.50.0
-
+Will
 
