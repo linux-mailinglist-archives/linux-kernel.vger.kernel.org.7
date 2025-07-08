@@ -1,106 +1,114 @@
-Return-Path: <linux-kernel+bounces-721229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04DDDAFC65E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:58:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF61AFC65F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 295C73AA556
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:58:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99A981AA45ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6A92BEC31;
-	Tue,  8 Jul 2025 08:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B808E298261;
+	Tue,  8 Jul 2025 08:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LUoRiKt3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="vTdbQHaT"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B39A220F36;
-	Tue,  8 Jul 2025 08:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B21220F36;
+	Tue,  8 Jul 2025 08:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751965117; cv=none; b=W+2OMc3/+UDycJLEz3Oe7m6NLFYJ5uIEZv3DQHYc5OKL9I+WxhdmfEh/1ej19WiJKIWyyTpOOGuaYM+Ma+sK5jnXzhXUaj5z9P9xMBLPJcMFtjUeuV/lBWRnUsIypNH1fKfAPgnDUNVBvC/wtcJ+9mAJbFw5DdzL9PGr2EoVvwk=
+	t=1751965128; cv=none; b=mu8PkkvkeBuSUQkfQ32XY9Q4YFPim+l7GZSDa5tCSEmswHiVd1p6YmYbakxUsMFTAF3U12aZ184f4c2JN0xwzzUJzN9e6NS3fCDzsOj1/Er9vs6zqjzDmk1Nux9dAuzU5r47nNo8MNj7bJPYBb+jHA654iK/PWB5+Aopakd3m7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751965117; c=relaxed/simple;
-	bh=3crF5tiVWA7WIsu4HOqTW/k1OSqDf0be25nX2X8tHXg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p1CvWx7yjiB2jrW0ycgBW+/aglpJcoPJtE2fvkTlaP4uRA45tu3qpjLArte68wmVuesWyn6ogzUQkq274n5Xm80hd+KHj4v3AX6ySotVytWU7bHnxd4/j051sIlx6K8CCESKNyNv5y67NRt9C6DhnV78xhtAX7XeC126q5aaFGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LUoRiKt3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7C51C4CEED;
-	Tue,  8 Jul 2025 08:58:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751965116;
-	bh=3crF5tiVWA7WIsu4HOqTW/k1OSqDf0be25nX2X8tHXg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=LUoRiKt3/DE+6BT0WMVG+BUBrtVWISV6s4GbKb1K5WycDFgbbEPwaqN5ZibPSnNjP
-	 y8khM9ihZ3VDg6OjMRr9VGLlXwAEJToQFbSmfX/NzaxuPa/QWpzjLC8i3ljbubx70Y
-	 WDY5ZVYVZ3oYepfTC5z1g5n/kfKO/N32hPCPtUPIDh/EhSM9Nip/q56b08Zswswr9K
-	 0LOjk3cU4ikBVtpKsNolIfmnbih8T+mRI9i3nS/N2oW9JQBunESiRdrs31in4WtXts
-	 oe9jh3qhfhYjD6z1nPRr+OrG8+mtuaT7qF2hSTLqLlPm94/MjGLBHdnGyAtS0gGut8
-	 /n9aI6xR/zvnQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uZ49k-000000004BW-3nsJ;
-	Tue, 08 Jul 2025 10:58:28 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jirislaby@kernel.org>,
-	Aidan Stewart <astewart@tektelic.com>,
-	linux-serial@vger.kernel.org,
+	s=arc-20240116; t=1751965128; c=relaxed/simple;
+	bh=u3lqUz04bP9xeEjrrJCzmY29EtIjVknuse3jww8xv80=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p7P6NJhlnEcftwI7bEeVMQLNcPGUo5a01WK0U+4JrT2MjtwivFxL4rBsCtlIhkxiSsTgIl+jGso1uuetlXhTugDWpZt32Uq7BPzNFwDhnbQJS7tbG8AbExyJegJH8FjClr2x0pf+tHTh4VU8UU9aTsDow/wR9nqpFzDcIsnX0OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=vTdbQHaT; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=jo4aOPG5cIjFCy/hgtix7MTqkYd2DiMfnnoaHWQr8tk=; b=vTdbQHaT02wpYGcV+yyGS99BlO
+	3Dx+HxtUC5czBelbqY4pmms2xpURX/ciYiegflCU8q0hnihZuvgvKAvXTC22FsAE28RIK9zlq3A77
+	Vya9jlGuxn4Ho0yl64s9ucEnu0clqjuI2VjegLXbomtDJaZJDtVvNQziFLwvWaxzaTlJG/wUTYZoL
+	hnnUysxgQmy6igwDA4tU9WhgAfi/G8qilBrRRF5vRYKj7x1qm9ANBADrKCnuO06nT6HzmEnyNRiMy
+	AZugnwqlcaU3EzZfJ0PF9NHh3k4otpoY1jvN7NCMkaC1inWI5NEwZsmlUA1+/5oDjQqb7TbjZlbhH
+	nxpxFpMQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50426)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uZ49t-0006JL-1u;
+	Tue, 08 Jul 2025 09:58:37 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uZ49p-0001UP-0m;
+	Tue, 08 Jul 2025 09:58:33 +0100
+Date: Tue, 8 Jul 2025 09:58:33 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
 	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH] serial: core: fix OF node leak
-Date: Tue,  8 Jul 2025 10:58:17 +0200
-Message-ID: <20250708085817.16070-1-johan@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	"David S . Miller" <davem@davemloft.net>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Christian Marangi <ansuelsmth@gmail.com>
+Subject: Re: [PATCH net] net: phy: Don't register LEDs for genphy
+Message-ID: <aGzduaQp3hWA5V-i@shell.armlinux.org.uk>
+References: <20250707195803.666097-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707195803.666097-1-sean.anderson@linux.dev>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Make sure to drop the OF node reference taken when initialising the
-control and port devices when the devices are later released.
+On Mon, Jul 07, 2025 at 03:58:03PM -0400, Sean Anderson wrote:
+> If a PHY has no driver, the genphy driver is probed/removed directly in
+> phy_attach/detach. If the PHY's ofnode has an "leds" subnode, then the
+> LEDs will be (un)registered when probing/removing the genphy driver.
 
-Fixes: d36f0e9a0002 ("serial: core: restore of_node information in sysfs")
-Cc: Aidan Stewart <astewart@tektelic.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/tty/serial/serial_base_bus.c | 3 +++
- 1 file changed, 3 insertions(+)
+Maybe checking whether the PHY driver supports LEDs would be more
+sensible than checking whether it's one of the genphy drivers?
 
-diff --git a/drivers/tty/serial/serial_base_bus.c b/drivers/tty/serial/serial_base_bus.c
-index cb3b127b06b6..22749ab0428a 100644
---- a/drivers/tty/serial/serial_base_bus.c
-+++ b/drivers/tty/serial/serial_base_bus.c
-@@ -13,6 +13,7 @@
- #include <linux/device.h>
- #include <linux/idr.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/serial_core.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
-@@ -93,6 +94,7 @@ static void serial_base_ctrl_release(struct device *dev)
- {
- 	struct serial_ctrl_device *ctrl_dev = to_serial_base_ctrl_device(dev);
- 
-+	of_node_put(dev->of_node);
- 	kfree(ctrl_dev);
- }
- 
-@@ -140,6 +142,7 @@ static void serial_base_port_release(struct device *dev)
- {
- 	struct serial_port_device *port_dev = to_serial_base_port_device(dev);
- 
-+	of_node_put(dev->of_node);
- 	kfree(port_dev);
- }
- 
+> This could occur if the leds are for a non-generic driver that isn't
+> loaded for whatever reason. Synchronously removing the PHY device in
+> phy_detach leads to the following deadlock:
+> 
+> rtnl_lock()
+> ndo_close()
+>     ...
+>     phy_detach()
+>         phy_remove()
+>             phy_leds_unregister()
+>                 led_classdev_unregister()
+>                     led_trigger_set()
+>                         netdev_trigger_deactivate()
+>                             unregister_netdevice_notifier()
+>                                 rtnl_lock()
+> 
+> There is a corresponding deadlock on the open/register side of things
+> (and that one is reported by lockdep), but it requires a race while this
+> one is deterministic.
+
+Doesn't this deadlock exist irrespective of whether the genphy driver(s)
+are being used, and whether or not the PHY driver supports LEDs?
+
 -- 
-2.49.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
