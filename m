@@ -1,213 +1,181 @@
-Return-Path: <linux-kernel+bounces-721351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A0E6AFC806
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:12:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F99AAFC80C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29C98166A6B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:12:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80E6956391F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA9A269808;
-	Tue,  8 Jul 2025 10:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7A826A1CF;
+	Tue,  8 Jul 2025 10:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MXrXyGo7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="phhqAlQb"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C69267B9B;
-	Tue,  8 Jul 2025 10:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF77B26A1AF;
+	Tue,  8 Jul 2025 10:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751969531; cv=none; b=GTPvmHveyRVvgmar/m0lH+EgZ5wDhU17LuBvBPfJ1hllDfk/rUgP/4noX92iZ5+CVhXIfbuxACkntpsxNLH3muWr4TlhHMtd1Ve9itR4lPCJ8An3L1/bcSXvvJR1FYAGHxvCxA9aHLb04gMHeA0cwz8Lzm6bFsUQqJGkPfk9QI0=
+	t=1751969715; cv=none; b=Kvbw6GP3ipFiLI838qllqxyDP6plkXX2JhUgJxpyLESO4BdN6cAeziRGEbfK0wvyFyFWYc3ktwM4nmivzmzPam+RafFUiRomoX2yVPQRbylCnabiupDnH1jnEltJIVDJIVQSPNV8/AW8TsmESLDyzDmByPJLh60Pgf1IOXsO3EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751969531; c=relaxed/simple;
-	bh=PJWJM3Ehu/5bBd9Wws7VR7DlxE3r9PIldJZ3RoWsnZU=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=gE5xy3UUPSbi+F25J6o56B+gWK/lMlBX0tTPM5N6ErGX4ttbVgRQjM/elCqJfdIFMIKk+VpbzQh252tyxaReF4ws4FbRSP7jxwIR4lwj6r1TINM3NFWOyQCcJap7xGF/sGI7w+OMNjIkXwQU/EUYAkzeunGNo9N7GuqZrfISYyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MXrXyGo7; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751969530; x=1783505530;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=PJWJM3Ehu/5bBd9Wws7VR7DlxE3r9PIldJZ3RoWsnZU=;
-  b=MXrXyGo7Sr5boc/LZWm6E70lmt0m7FCnIaGpUk+F6raJPltE10l6V3nx
-   35WVIgDxPinRgBw40jAMXuo+kBsyq9VR9LOSCfueuxCnHiq+ALuff0qAX
-   2pztaqVieRV9vAxCbZJs1nltDgKxCgCIieIuiE+kk0bPx5iZmQmsGBlp/
-   3TcakLMikUSm7fmQGh2SZE1JyRpPsdCFymPwOdzdR9nhitOy6L3Dj2221
-   Lmvyw72lflFDrWfQnI9a+6keUoZbqxAk2SUvvfr3zOGHWzw2H3BMxm7W+
-   /ndqLLvy9FPoCvXn5LnLouRHoiKLdc/QtPy/Ru9JjPu/6LVCAbH5C7tCg
-   w==;
-X-CSE-ConnectionGUID: QHwpdv0uSpG/uCyTyKXDww==
-X-CSE-MsgGUID: mGyWhbOJT6KC6WLcL5m79Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54174189"
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="54174189"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 03:12:09 -0700
-X-CSE-ConnectionGUID: HzfF7RAoQQ67Akk/Zj3SiQ==
-X-CSE-MsgGUID: eNOwVlo4Sae1wf6PEnR5eg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="154870023"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.247])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 03:12:06 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 8 Jul 2025 13:12:03 +0300 (EEST)
-To: Jackie Dong <xy-jackie@139.com>
-cc: hansg@kernel.org, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, dongeg1@lenovo.com
-Subject: Re: [PATCH v3] lenovo-wmi-hotkey: Fixed a kernel error report for
- some Lenovo non-ThinkPad devices
-In-Reply-To: <e45af10b-fa26-d7e4-8051-093a6f9ce552@linux.intel.com>
-Message-ID: <d0eeb808-a57b-584d-1e92-c9ba7b0661fb@linux.intel.com>
-References: <20250708094352.26850-1-xy-jackie@139.com> <e45af10b-fa26-d7e4-8051-093a6f9ce552@linux.intel.com>
+	s=arc-20240116; t=1751969715; c=relaxed/simple;
+	bh=pVC7GxX7t70O6nV2vsIuzXnuZ90xj4rHSPK+8DUoSsM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YGIoqrAw1SoMzdmWpQbOIKgO4f1OEkFTRucrkp656fX99Hajt14wscgmqCZNdRZujZCYkBmmimUKRgA6J3wqtVWy+vZozm1U8Kq/hYqI/onwxgPIhsdGj2yRJH9cwsDoES8S5k31oq2gm4oM3YXOLCT5y7cUY1t2e52VoOUDCgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=phhqAlQb; arc=none smtp.client-ip=212.227.126.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1751969683; x=1752574483; i=christian@heusel.eu;
+	bh=pVC7GxX7t70O6nV2vsIuzXnuZ90xj4rHSPK+8DUoSsM=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=phhqAlQbPd9dDE+4Z/IvYh7fgfGT9H4/ezDogouElhqVfWe1B0dEaUSIgRs8uQwo
+	 eDYLPo0JRouEgAuUi7atEVyGHgP1h0v0bKZE2KUrVGaEXvhLX1GoRe7B8625q6MHC
+	 N+TAWTjAMf9GScJ9QI/ihVHtFeM+4N0qT6qAxz/8WDRuHzNVOv66auQexUpciwSRk
+	 ItyKo5kMnR9hhM2MLnim39MGXm3+NxHUXPb/UPjt4c2gL5vF/tJAcDZtjmdB+Z5//
+	 YpGwDOF2+X6rAn1cMY3+OlomEcLek34/9AO8qlRatN/W7Nyuct+jH6tYQ0ux1kYV+
+	 y2MXsz4Yeqo6OmqWow==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([94.31.75.247]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MyK9U-1ura8N2VIK-0117h4; Tue, 08 Jul 2025 12:14:43 +0200
+Date: Tue, 8 Jul 2025 12:14:41 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: tzimmermann@suse.de, asrivats@redhat.com, 
+	Christian =?utf-8?B?S8O2bmln?= <Christian.Koenig@amd.com>, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	sumit.semwal@linaro.org, linux-media@vger.kernel.org, 
+	dri-devel <dri-devel@lists.freedesktop.org>, linaro-mm-sig@lists.linaro.org, 
+	amd-gfx list <amd-gfx@lists.freedesktop.org>, Linux regressions mailing list <regressions@lists.linux.dev>, 
+	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: 6.16-rc5/regression/bisected - WARNING in
+ drm_gem_object_handle_put_unlocked after commit 5307dce878d4
+Message-ID: <a028ff08-8478-4cab-8bf6-3c9ea4b21ccc@heusel.eu>
+References: <CABXGCsNxhEu+win6h1Zwi-0e4NeURzOt2KA=BXakRz08moG4uA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1166893436-1751969523=:947"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fya22ekfcjwoyp6c"
+Content-Disposition: inline
+In-Reply-To: <CABXGCsNxhEu+win6h1Zwi-0e4NeURzOt2KA=BXakRz08moG4uA@mail.gmail.com>
+X-Provags-ID: V03:K1:kP9F2Oeo9EM+WR1is69hCSu10i0wMrSM8tP03uSWtSAgZa+h4UW
+ /G52w2AJzg55Fj+GRg/neWqrxYh9CW8AS8/zNoToIatTcTUCofxizj0i+EuI644J3i14PRS
+ nPVy8+aQCMw8Qi157G29tt0Eo+sS3nF9qzWOoYWASCyjrEXjvh1hP7sbDNG4kKbf8g7+hfr
+ vPPPR8g3XexELk3WeaDjg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Il5a69wpHRQ=;tXMGCjBoUFpNgIw+/QVJAYQyWdy
+ NEmoP3T61ygnivtqIUnRtLSM8P95LRfltSoY4EcAuVKb6ZhJsiTvCMBwU5v0DnuujMt80ImiF
+ ShmKJz8t8JawVw53/YHfo3bsCobz2BGzG43m4tfvRR8l8NTs5ArXgJWl+5z/7C77QZ+WOQ0AT
+ kRAIocgkcrnrbLiGJoLFxjYqqGLmMmpvC7/lhln+L5vT4l8iGVtcUkoXgoz6E8DDut2pBDnoh
+ MxBRzssivhDe6cUpR4aPqFe4WyvezSsfX3lEj5IOyOFjRrhihr8fFuJTYdh3ShjJu3RlKtbo5
+ evrLXH4dU1nSeRfI82yCxjUG2UHBZVICovu2IJAk9N2qa9IIoCmzJs/HQA32+F1JYW1BTCjpS
+ 11Rhjk28rTKQF2kl2lUwEDjWbAWFjNJjRpB9FPpFP/YGYoqgIb54lWtyY7eS73GKWXXIAegoK
+ mRQpZIDsXc3IJIzS5iS+hNW4YZaFQzEyp3vlBl8OY3+RH7S405lPTtddgG5J8jVgZ4EwpV99E
+ 4tCMrFKEbV1+21KNFVghB94CqO3cyud4LeZc0P/6EJPvsD6QkaRcZ1U64ogvXDeCxDrV/PD/S
+ INDdeAfh2tcPICXNMr2HgrdIlEOeHpdhSPVhS82Y1xPgpjxW5AbmWijEeNadzv8MR29twkLtZ
+ fQA/B3cmUts9y9aBXOM5oBrrsAoCHxTtivi1iY6Yu77LHZs+PwCTHoD27U46nhNyLX1hl13Hf
+ YuFy9FN/c7/TnXNin4c/gPDhWw8Emagt8c8EVJkkQnBgMyJCjuZlDrI9bm3bfIDkssJA0zHMs
+ 3Lo0RkMYqHRuDuNp3eZhwVEv2EkjBq7vUqILpGSVr3yx/0bb2KiXacfvcZp85DtadRMTvDshl
+ Di7JyU8cyomWrWP9FZRc3liocGKmF+Z43/yw/mRHePkb41HOE7ztA8OinIUvYW7uWhLpPuGrk
+ wJsxPF8OgSWBrLeywbybKSEqDqwdY0otYMV5RF+dUm5QryJUqS6MT6EisMaYnjEiVMDJDmm9y
+ nCeuruUOKJdRaFPHT+K7EgdArSQXQ6khFYDQZmxGgcbaltHeW5Y8u6vm05LzL7XOiuu0BMf4U
+ Oz9v+d821PhdBOw0Wtz0VyAsT2DeQwrbi/dUYvaGymzGZ554fzykSUP6eRyzo7+LP9Am1gG34
+ PzEezJqMw1Lf2tZOIOWtz5bbYeGBjuLhZDx7NH0GilYftKv3nwiIemEBCgrPXlzvMOJbY+oCs
+ K9eO5tQt8+wGDrSgj95XyFgNrPwHwYy8MeK4f/XAhn+i59SHu7JzEOEr7hAHGlFH3Mx+hPEyY
+ Y9ywk/bZsL5Lql6yAjlHthWLPUpuQKou4yXQTNmF2krFY4w5o749dfZv+yXmqWU4WPApaTeLu
+ QterSEC31/YaxbJccQKl2Kand4EE11YR1P14QhTu8HILSd84JtHhGCBMDUS5nY+bfbX10YQMS
+ 7mMi+h+e9Z8MEwFPhGhNd8pZOcmzCK4PPsDb4Dd1QUo5O3nIo9mN2KiGxCTmNA8sUbd5hwMg8
+ WcsUFiXIsY1FHThI0tPa6UVAOqms/3r9tIdfaMVtLZKA1KtgKtQPMcdizFnAqCXD77XgwxMUG
+ w4MjoUy5p/9BgYrMDEQuIIcBnkhkwThy7JUwZ72qHtRWyGredv4gI4EcAQFCb9/AEy+a8NOe9
+ c=
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323328-1166893436-1751969523=:947
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+--fya22ekfcjwoyp6c
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: 6.16-rc5/regression/bisected - WARNING in
+ drm_gem_object_handle_put_unlocked after commit 5307dce878d4
+MIME-Version: 1.0
 
-In addition, the shortlog should mention the error relates to not=20
-supported mute LEDs.
+On 25/07/08 02:26PM, Mikhail Gavrilov wrote:
+> Hi Thomas,
 
-I'd also drop "some Lenovo" from to make it shorter, I think the=20
-explanation that is already in the changelog covers that (we cannot=20
-put everything to the shortlog to keep it relatively short).
+Hey Mike,
 
---=20
- i.
+> After commit 5307dce878d4 ("drm/gem: Acquire references on GEM handles
+> for framebuffers"), my kernel log becomes flooded with the following
+> warning:
+> WARNING: CPU: 5 PID: 1812 at drivers/gpu/drm/drm_gem.c:286
+> drm_gem_object_handle_put_unlocked+0x207/0x330
+>=20
+> This occurs during normal GNOME Shell usage, and the trace appears
+> repeatedly. A full stack trace is included below.
+>=20
+> I bisected the issue to this commit:
+> 5307dce878d4 drm/gem: Acquire references on GEM handles for framebuffers
 
-On Tue, 8 Jul 2025, Ilpo J=E4rvinen wrote:
+I think this is the same issue as the already fixed
+https://gitlab.freedesktop.org/drm/amd/-/issues/4393
 
-> On Tue, 8 Jul 2025, Jackie Dong wrote:
+Also this is the fix linked in the issue:
+https://lore.kernel.org/dri-devel/663110e1-3aa0-4f6f-8727-3a240bc96075@kern=
+el.org/T/#me2a0f3254a57cdd157ba79344ab8d51476ba18e5
+
+> Reverting this commit on top of current mainline kernel (6.16-rc5)
+> fixes the issue =E2=80=94 the warnings disappear completely.
 >=20
-> > Not all of Lenovo non-ThinkPad devices support both mic mute LED (on F4=
-)
-> > and audio mute LED (on F1). Some of them only support one mute LED, som=
-e
-> > of them don't have any mute LED. Add a decision to judge this device
-> > support mute LED or not. Without this decision, not support both of mic
-> > mute LED and audio mute LED Lenovo non-ThinkPad brand devices (includin=
-g
-> > Ideapad/Yoga/Xiaoxin/Gaming/ThinkBook, etc.) will report a failed messa=
-ge
-> > with error -5.
-> >=20
-> > Signed-off-by: Jackie Dong <xy-jackie@139.com>
-> > Suggested-by: Hans de Goede <hansg@kernel.org>
-> > Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+> My hardware config: https://linux-hardware.org/?probe=3Dce4c44c524
 >=20
-> Hi Jackie,
+> Kernel config, full bisect logs, and kernel logs from each bisect step
+> are attached.
+> Please take a look as soon as possible =E2=80=94 this regression could af=
+fect
+> any user relying on fbdev or shadow planes, and the commit is already
+> CC'ed to stable@vger.kernel.org.
+> It would be unfortunate if this made it into a stable release without
+> being addressed.
 >=20
-> Please don't add Reviewed-by nor Tested-by tags unless they were=20
-> explicitly given to you.
-> =20
-> > ---
-> > Changes in v3:
-> >  - Reverse orignal logic  (obj && obj->type =3D=3D ACPI_TYPE_INTEGER)=
-=20
-> >    and add new decision for led_version =3D=3D 0.
-> >  - Optimize the descriptions based on reviewer comments.
-> >=20
-> > Changes in v2:
-> >  - Add warning message and then return 0 if the device support mute LED
-> >    abnormaly, based on Hans suggestion and Armin previous patch.
-> >=20
-> >=20
-> >  .../x86/lenovo-wmi-hotkey-utilities.c         | 24 ++++++++++++++-----
-> >  1 file changed, 18 insertions(+), 6 deletions(-)
-> >=20
-> > diff --git a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c b/drive=
-rs/platform/x86/lenovo-wmi-hotkey-utilities.c
-> > index 89153afd7015..1850992f2ea8 100644
-> > --- a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-> > +++ b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-> > @@ -127,21 +127,30 @@ static int lenovo_super_hotkey_wmi_led_init(enum =
-mute_led_type led_type, struct
-> >  =09else
-> >  =09=09return -EIO;
+> Thanks in advance!
 >=20
-> The logic was not reversed as requested. Please change this code to:
->=20
-> =09union acpi_object *obj __free(kfree) =3D output.pointer;
-> =09if (!obj || obj->type !=3D ACPI_TYPE_INTEGER)
-> =09=09return -EIO;
->=20
-> =09led_version =3D obj->integer.value;
->=20
-> > -=09wpriv->cdev[led_type].max_brightness =3D LED_ON;
-> > -=09wpriv->cdev[led_type].flags =3D LED_CORE_SUSPENDRESUME;
-> > +=09/*
-> > +=09 * Output parameters define: 0 means mute LED is not supported, Non=
--zero means
-> > +=09 * mute LED can be supported.
-> > +=09 */
-> > +=09if (led_version =3D=3D 0)
-> > +=09=09return 0;
-> > +
-> > =20
-> >  =09switch (led_type) {
-> >  =09case MIC_MUTE:
-> > -=09=09if (led_version !=3D WMI_LUD_SUPPORT_MICMUTE_LED_VER)
-> > -=09=09=09return -EIO;
-> > +=09=09if (led_version !=3D WMI_LUD_SUPPORT_MICMUTE_LED_VER) {
-> > +=09=09=09pr_warn("The MIC_MUTE LED of this device isn't supported now.=
-\n");
->=20
-> Drop "now" (or change it to more precise explanation why).
->=20
-> > +=09=09=09return 0;
-> > +=09=09}
-> > =20
-> >  =09=09wpriv->cdev[led_type].name =3D "platform::micmute";
-> >  =09=09wpriv->cdev[led_type].brightness_set_blocking =3D &lsh_wmi_micmu=
-te_led_set;
-> >  =09=09wpriv->cdev[led_type].default_trigger =3D "audio-micmute";
-> >  =09=09break;
-> >  =09case AUDIO_MUTE:
-> > -=09=09if (led_version !=3D WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER)
-> > -=09=09=09return -EIO;
-> > +=09=09if (led_version !=3D WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER) {
-> > +=09=09=09pr_warn("The AUDIO_MUTE LED of this device isn't supported no=
-w.\n");
->=20
-> Ditto.
->=20
-> > +=09=09=09return 0;
-> > +=09=09}
-> > =20
-> >  =09=09wpriv->cdev[led_type].name =3D "platform::mute";
-> >  =09=09wpriv->cdev[led_type].brightness_set_blocking =3D &lsh_wmi_audio=
-mute_led_set;
-> > @@ -152,6 +161,9 @@ static int lenovo_super_hotkey_wmi_led_init(enum mu=
-te_led_type led_type, struct
-> >  =09=09return -EINVAL;
-> >  =09}
-> > =20
-> > +=09wpriv->cdev[led_type].max_brightness =3D LED_ON;
-> > +=09wpriv->cdev[led_type].flags =3D LED_CORE_SUSPENDRESUME;
-> > +
-> >  =09err =3D devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
-> >  =09if (err < 0) {
-> >  =09=09dev_err(dev, "Could not register mute LED %d : %d\n", led_type, =
-err);
-> >=20
->=20
->=20
---8323328-1166893436-1751969523=:947--
+> --
+> Best Regards,
+> Mike Gavrilov.
+
+Cheers,
+Chris
+
+--fya22ekfcjwoyp6c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmhs75EACgkQwEfU8yi1
+JYXsLg/+ObOtHgsihU/489f7Y2qWKv5s/4scLsWukSapGhIEIxW0sWySxqzC1Zg9
+JKzfWpnsBe3LbXbTo2/CxhdMaQ8kZWODBig7q0mHJJ72Ag3sBMfhcPkqHaGi2LDV
+AJTcfdb2hnRwbeDAfIFeHBZUws9fVNaNBQw4/n4HuZNSBjI+VC4uAIKk2USnzmPT
+2SEZTXsZw7zKx1lYs/pmOqMguNpbyYstcgqXjH1nxJxLC0X7p5pQTNlqYaKx4lZX
+yj7Eusoff/Va4x4nVv+5FlErKVbAXyRgCH16X99hzdSeda28JbZUqoI1HLZ8D+TY
+PdAlknCqzmKMd7T3DTdMzc0r8K2t1BCpcvJTa8Tl/imo9OV6sdzFLHW9Zrd3ek7x
+e/aV45/7HCDpLpIVDA6t2OUDf9ydeKlIs7koSGBO8nmKBRjmj+XZDIQY4WK1uAw/
+JOSJL/sWF2lqh3GXTPLgy8EXi6GpHuuUnqVjjX1DA+9Pq9Wyl9gNbqmnt7yL7Ry2
+Z6ZkTnlmeKRkOeLmIC3gtnAn37cFm+QNqkRuTFwZPMTVdoxSJMoO/7QNyEWuz5ei
+tLsVAYCHuPKaRzD+IJn9mORKEeY0XLqV0sVrTQLVEf/jx6FB2IvM1BmanMc9Oh4b
+UCqFH2z6b/SyLnqPsTujbWRKpP7gNNfxGkySHlkPcYRiA2EUbR0=
+=iEvw
+-----END PGP SIGNATURE-----
+
+--fya22ekfcjwoyp6c--
 
