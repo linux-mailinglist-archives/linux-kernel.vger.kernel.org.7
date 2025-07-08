@@ -1,202 +1,307 @@
-Return-Path: <linux-kernel+bounces-722310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C18AFD7BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:59:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83D53AFD7C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:59:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6AEF567A91
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:59:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 620833A75B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E847323D290;
-	Tue,  8 Jul 2025 19:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4867623F422;
+	Tue,  8 Jul 2025 19:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SMGwHSev"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="bOrvsVLb"
+Received: from CAN01-YT3-obe.outbound.protection.outlook.com (mail-yt3can01on2095.outbound.protection.outlook.com [40.107.115.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1C323A9AD
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 19:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752004741; cv=none; b=O4yfCtGv9+Cvo9J23HK4sUwkQw86ZKJZDyVYvX2AyGuTF4ZzD8FcW2dZjENMhmTXvqQ9AKpK7SiNUHYbtzCiZWlT+QWln1gg176bwF/vCZHpHK/3AJpq2eRK4IWxJeMnJQkDwlxMvs2/2cjUqAiPphY4hUOcGRj3bBWk45JaTKk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752004741; c=relaxed/simple;
-	bh=qeaevY/WBAqE5QxM+YJ+9KYZuYqdnkSGgPZgsl4/+24=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VOwxp43V4KBAZKlHNNJ9+9RJ12SPVLATwcNdwXX2RJGnBYSm/bbdjFYmb6+OgSZ4l63SXc01BuE3fgmm63aLeMfZVXXSt1czGfkuUaO+fGUTs5bS7LNM67wT/0iIL9XujnC3J5dZtowP4RtuHSISx7z2ZOQglVP65ZIKYD480f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SMGwHSev; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3122368d82bso7266123a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 12:58:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752004739; x=1752609539; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bK9rO788tLxJ4WTQcJIR4xppsNUsK51AEUh9HOz+/ZU=;
-        b=SMGwHSevuBX8uNe7gV8O9YfcpuqqnWDeXaCNOcST83AMAhqcZ1XSHq9ViVw+uCImZu
-         y6jO2HTl0Q3Z5v0szokGSVipKrWbC02Jy+/cQzTNlop4v3dV6KApdRmVM8lkj9xVq9IH
-         yJapcaDc5QPvQZnRd4toVcrEK6LwzJXvoH0RYoyq7ii5rSFZQkeuwgrk7LTta2QTtRGa
-         pu488oT8uOBeYu15u/NzlvE8MUV/tetecR38brWhYV5VRsKMq3llnnu6Rd9/OFToySN5
-         cUnFC0w3wJEZ/0NBPMy9x52a6w4M0Updzosw1m0i92BS4XOAbW92bW1pfPEway0ml1bk
-         ao2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752004739; x=1752609539;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bK9rO788tLxJ4WTQcJIR4xppsNUsK51AEUh9HOz+/ZU=;
-        b=G8o29LVKgUdcUigRdbsVQg5ddosaTtJdjvmbP+mv+0LLqLUIRy7Ly29SmSQlewN9Fv
-         QwJTVGPU4PcVhYHiOIIHjXwYb5yXsGMlVivaX4Ku8GpgAhiVyz+XIyomVLx/nfnG2F8H
-         mM/9I11PFTMJc+3QB2o5IYVm+uljm87oDAnoyVeFqhBhM2cFhCEgJdY7h0m2IV/bcpCN
-         3obO5fTAt9s0/leGgFm46U3+KHx7kLLYc86Ys3b9Ns74C8IWNtu2sd0Ajw+e7sbI7qkJ
-         mFyvOT247xW01xFuj+iKbQDxOJvsSFdkkXt5JTjTvR93fEAQ2pSCvqE4Fs6DXaNn2Wgb
-         5nRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWATswpwl30JnNXLw4VXUsKU2Bgf4L2nzNMVnrm12ZBNj2i7LBqrfhklhxbMGRJndETiMmHGWsCuCbMuew=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqcw+XhyNKrHNDZfYioJ+YRLNFzOykZzUS8s6idvSJrK7Jm0C5
-	ywt8YNHKSl6iGrygK9Cn5r3i0pqN5Nk40euDP8TwKnL8PuLiw7d/NE67G0LIEbe9oTuLWugwi6G
-	C4P4ISw==
-X-Google-Smtp-Source: AGHT+IFkETqYRl85TaDCY+mhRsKj3yh+DlVRrd5kJgA8yrUlr1VJNZkXzaK8N5MZ0Opd+f6mnf+G32B45Fc=
-X-Received: from pja6.prod.google.com ([2002:a17:90b:5486:b0:2ff:84e6:b2bd])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1f83:b0:311:df4b:4b94
- with SMTP id 98e67ed59e1d1-31aac432a89mr24009325a91.4.1752004738302; Tue, 08
- Jul 2025 12:58:58 -0700 (PDT)
-Date: Tue, 8 Jul 2025 12:58:56 -0700
-In-Reply-To: <CAGtprH-ESrdhCeHkuRtiDoaqxCS9JVKu_CC9fbDRo+k+3jKCcQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC4E23E33A;
+	Tue,  8 Jul 2025 19:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.115.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752004746; cv=fail; b=pIzKwlCrxG25jo7ccsSetIf2pNEEeLsjRUkbaJMyiibbQnoRyiNEIXbhXF1k8TvFg4fLhFEzsJlFEdCT19cSnmrARksfT8Jw7NQdfo0+3sZ1Xy12/bp49p3cAqt2AcxHQBDp8c+HfgVZBl5+JT5PIMW3+ifYJlF8q5bvz8m21iE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752004746; c=relaxed/simple;
+	bh=IfgaIQjEk+qVoZ1gmE47LO4tYfne8UG3yUkBb5wc5Ko=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=iJd6nR/9tyHLzlBhULE3uSD0Ev/142rwBZhdygAkaVFhYt7hDMnDaQL9NcpXRQXlpgkBkF/tlk/QivKaN1yWE8KfnBzcUn33QSJC5RqC+Gi2EVn3oEVuH/T58ateF//4e3f/JMVYCk9JOxElia6kxdNAsZeAMAwDjZBfQCMapNY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=bOrvsVLb; arc=fail smtp.client-ip=40.107.115.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=F0yWNj197IK9p+Mjd5Pnq2NO9TeCDpo2YwSOlvSQLXl6tg/hAWExjqMIQSeM1isD5kwhT2g2xw7vvkUoa672sWTKzxZSk8Ce5YYCUXjgPIOLCddZXpN3wwvvaZaI35NpgfSVrxjedhK8pL/itSrqvsJCRTiWjbTDW/xiTbt8jCWMMQdWIIoOyjwooYJxe7RgY7ZZHDHa0vFS2kJtqBH8+YMrzioiXmBbSJ/vnU6Amcj5p7Vcft2M/VhwY9C0dv1L9Q5cKFze2eYemeO3YF+3gY2ClK7bWgJAfFFfzMOrgX0oRewkCh5DKlb+luqur22wpxnUquMwczHXcX5EtcltiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iyuc108M/slhYxHP0f0PI1q+H35A8blhn+0Wns0pyis=;
+ b=L32LVVpMOdVBr145oa9eHySn264SK/dhp4eVLf6RUzVhRM5Bl3om5M/a67Wvgh8Q4yWsxc9JgsacQRTK3hcLxnsEI6sNrG0xokfkKkYiAmD750mTjp53eRoo2s7O141gecbMn1ad50koKPi713g831JkZ1KPA25WUwXOLpzd2CHmUSAMj/A62w9LarSKnpFuHvALtEAaDyGlYAFBsKCnGw5AfWF7qY/ObYtJGmsF7vUBZlJgYt+r+rrA6UfAIzcCK8BV5B9FvObPTyy9jgvqAekjei4bZLrp2wepxQfixfDlQiIRW2g+dHtajlCcCVff4iK8y8gu78IDU0VRXojAfQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iyuc108M/slhYxHP0f0PI1q+H35A8blhn+0Wns0pyis=;
+ b=bOrvsVLb69x4lotJHlsdOS8Y82wlu1udqdAJmjdiZUeE86oRRWtz27LPIK0JeYq76gG94fwgfPMZId30xYjujBOXDCGv8dxIiPYGxLNtRRLCa0KZjnogl5oVpHg3/lp6owfH4YSWUGUW71Y8r6HtAYG/eLP1XobzrvY6kulohMoh1IVRsD9wPkngH7yd+mslhj9kJJdOsFWhKe/tL2QNn8dWshXjQOASpf7CiQyNZKEHQikP3YbuvSYXRrPigGn7J4V5317+1Iodrn/Rbx5R4hJiNsk+W1EkrGNj6r2ZSYvs+c6qztqX/zL+XdZCW9tSaXA0KnCz5mpJ0zJ6RPX43A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YQBPR0101MB8895.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:5a::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Tue, 8 Jul
+ 2025 19:58:59 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.8901.024; Tue, 8 Jul 2025
+ 19:58:59 +0000
+Message-ID: <d7d840f6-dc79-471e-9390-a58da20b6721@efficios.com>
+Date: Tue, 8 Jul 2025 15:58:56 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 06/12] unwind_user/sframe: Wire up unwind_user to
+ sframe
+To: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus
+ <jremus@linux.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
+ Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>
+References: <20250708021115.894007410@kernel.org>
+ <20250708021159.386608979@kernel.org>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20250708021159.386608979@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQZPR01CA0067.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:88::14) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CAGtprH_57HN4Psxr5MzAZ6k+mLEON2jVzrLH4Tk+Ws29JJuL4Q@mail.gmail.com>
- <006899ccedf93f45082390460620753090c01914.camel@intel.com>
- <aG0pNijVpl0czqXu@google.com> <a0129a912e21c5f3219b382f2f51571ab2709460.camel@intel.com>
- <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com>
- <eeb8f4b8308b5160f913294c4373290a64e736b8.camel@intel.com>
- <CAGtprH8cg1HwuYG0mrkTbpnZfHoKJDd63CAQGEScCDA-9Qbsqw@mail.gmail.com>
- <b1348c229c67e2bad24e273ec9a7fc29771e18c5.camel@intel.com>
- <aG1dbD2Xnpi_Cqf_@google.com> <CAGtprH-ESrdhCeHkuRtiDoaqxCS9JVKu_CC9fbDRo+k+3jKCcQ@mail.gmail.com>
-Message-ID: <aG14gLz9C_601TJ3@google.com>
-Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
-From: Sean Christopherson <seanjc@google.com>
-To: Vishal Annapurve <vannapurve@google.com>
-Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "pvorel@suse.cz" <pvorel@suse.cz>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
-	Jun Miao <jun.miao@intel.com>, "nsaenz@amazon.es" <nsaenz@amazon.es>, 
-	Kirill Shutemov <kirill.shutemov@intel.com>, "pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, 
-	"peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"tabba@google.com" <tabba@google.com>, "amoorthy@google.com" <amoorthy@google.com>, 
-	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "jack@suse.cz" <jack@suse.cz>, 
-	"vkuznets@redhat.com" <vkuznets@redhat.com>, "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, 
-	"keirf@google.com" <keirf@google.com>, 
-	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, 
-	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, Wei W Wang <wei.w.wang@intel.com>, 
-	"palmer@dabbelt.com" <palmer@dabbelt.com>, 
-	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, "willy@infradead.org" <willy@infradead.org>, 
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, Dave Hansen <dave.hansen@intel.com>, 
-	"aik@amd.com" <aik@amd.com>, "usama.arif@bytedance.com" <usama.arif@bytedance.com>, 
-	"quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "fvdl@google.com" <fvdl@google.com>, 
-	"rppt@kernel.org" <rppt@kernel.org>, "quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, 
-	"maz@kernel.org" <maz@kernel.org>, "vbabka@suse.cz" <vbabka@suse.cz>, 
-	"anup@brainfault.org" <anup@brainfault.org>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mic@digikod.net" <mic@digikod.net>, 
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, Fan Du <fan.du@intel.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "steven.price@arm.com" <steven.price@arm.com>, 
-	"muchun.song@linux.dev" <muchun.song@linux.dev>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, Zhiquan1 Li <zhiquan1.li@intel.com>, 
-	"rientjes@google.com" <rientjes@google.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>, 
-	Erdem Aktas <erdemaktas@google.com>, "david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
-	"hughd@google.com" <hughd@google.com>, "jhubbard@nvidia.com" <jhubbard@nvidia.com>, Haibo1 Xu <haibo1.xu@intel.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
-	"steven.sistare@oracle.com" <steven.sistare@oracle.com>, 
-	"quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, "jarkko@kernel.org" <jarkko@kernel.org>, 
-	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, Kai Huang <kai.huang@intel.com>, 
-	"shuah@kernel.org" <shuah@kernel.org>, "bfoster@redhat.com" <bfoster@redhat.com>, 
-	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, Chao P Peng <chao.p.peng@intel.com>, 
-	"pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, Alexander Graf <graf@amazon.com>, 
-	"nikunj@amd.com" <nikunj@amd.com>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "yuzenghui@huawei.com" <yuzenghui@huawei.com>, 
-	"jroedel@suse.de" <jroedel@suse.de>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
-	"jgowans@amazon.com" <jgowans@amazon.com>, Yilun Xu <yilun.xu@intel.com>, 
-	"liam.merwick@oracle.com" <liam.merwick@oracle.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
-	"quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Ira Weiny <ira.weiny@intel.com>, 
-	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
-	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "qperret@google.com" <qperret@google.com>, 
-	"dmatlack@google.com" <dmatlack@google.com>, "james.morse@arm.com" <james.morse@arm.com>, 
-	"brauner@kernel.org" <brauner@kernel.org>, "roypat@amazon.co.uk" <roypat@amazon.co.uk>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>, "pgonda@google.com" <pgonda@google.com>, 
-	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "hch@infradead.org" <hch@infradead.org>, 
-	"will@kernel.org" <will@kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YQBPR0101MB8895:EE_
+X-MS-Office365-Filtering-Correlation-Id: 54bcb31d-2138-44d0-36da-08ddbe59e0b7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?U1ZOeCtCMUJINEJPNlgxbjlhdVFwT2YwUTB0OE9oRGFzVy92cXozYWo5OXk4?=
+ =?utf-8?B?dTIvbUQ5T2dMN0lpRGp3MzVBTmljckpSblpJYy9MOHZYczZaTk9HdlcrR0F3?=
+ =?utf-8?B?bDlMelBSYXdhc1VLSXEvVms2bzNaUXNWUnUwNnJqYnhQaStvcnJGY0VQWFhl?=
+ =?utf-8?B?dnFXWmZJQW1WOEYyUnpFU3BzZVl4ZHpOL0ZTTjZ5elhCQmdkWmxncURUTC9q?=
+ =?utf-8?B?cmp6Ukh0M3JRSG9CSHE3Si9SeXRRelNXYkZYTWU3Z21lbGhydFQwUVdkVGpM?=
+ =?utf-8?B?T25CTkRvQjBSSGt1UFd1WGFqTWhGVSs2SkorQTgzT0h5TjVuSUEvY3RIQnZs?=
+ =?utf-8?B?LzJCZ1dENzV5N0dNTDVlckR2S2dkOW9tbGZyKzNtRVduNDExdlIxUlJIcElm?=
+ =?utf-8?B?V1kzRTkwSmxXVVNmOVFaRU9EQjY1ZUhFeWR4aWE0UU5EVzNOUkt3UVlrSUVu?=
+ =?utf-8?B?eGRRRDFLQTRqMDA1YzMyYzBGcEt4c1E0MUk4c0xLeVV4b213UTNZQ0ZuNHdP?=
+ =?utf-8?B?QjVNY2drUThvUjI1bFdjekwrcW1lSDVCU04yUjY2dTA3M2UyMHZUalBqRFBl?=
+ =?utf-8?B?OU5yYmtyRnd2d2dmUlNRK0F6ZEplaHBLNW1saHV4Q0MyY24wZisxcW5HTVpK?=
+ =?utf-8?B?U3F0VGJBY1Zyd2J3WUdkYWtmbDNSbHJiV1FPOS9haXRTMFM2VjBHa1d4WFdK?=
+ =?utf-8?B?K3I5Tzd5Yzg3UTV6TDU3ZXhuOVQwVVdqZnFIZ3lxM255ZUlLOGVRdEVCSm9Y?=
+ =?utf-8?B?R1JmdkZVdERUbVo0MDBYNVFrVUtwOHBnejlTQVYwYk9BWjdPZVZrckdlWkI1?=
+ =?utf-8?B?c05TTSt1eTZ3cHlHbG5mak1DRkEvOHhFb3JwMWdaYnBFMDRIUjMrekkwMmpU?=
+ =?utf-8?B?TkE5em1QQ0U1VExPQnFtU2pmanl4OGR2RldSUjB6blNKR2p1amZqWWl1U1pV?=
+ =?utf-8?B?UG02WTVWaEIyM0RncExvU0JmcmJJVXZvM1dnRTZ3YTRUVW42bjNqT0JxdTFx?=
+ =?utf-8?B?ajJrdVVoZndWZEVoUVVrK21FV1BaclZURkJqdTl2aU4rMFVYMVlnL2U3VTBs?=
+ =?utf-8?B?c01md1B4VDByQ3VNT25mMzY1MEhUUWg0OCtLRGpiZWdralIwQWxVQzU4SEpU?=
+ =?utf-8?B?UjhYdElHVlRML0M5T3FZdEE0TlB2c3p1NlU1b09JVkdtdndXRXRVaVNtbUF6?=
+ =?utf-8?B?VDRMWXNzRExyUlVkNnhlN3YvYzZ3YVg5K3BGdFN4UEl0MkNUUXRWTitCQ0pj?=
+ =?utf-8?B?VERxVmNyU09xNjJxK1hVQTBVUVJQeTRnSkNBZkVldDZlZVp6bG41R2hVSmVN?=
+ =?utf-8?B?N0d5cmVDVEpqT0FsZ1o1RHF5V1lBNWtVa0IyWkw4SXZ2QXNqSHc1UTFKZlpz?=
+ =?utf-8?B?ZGNVVTRPRk9ZQU1nTk5IWUFzNy8vTkFYcFVEeVFFYmtzcHNVbmxXZFhWZ1Rm?=
+ =?utf-8?B?MEtPbklxb3hPV0lRNVhiQmRDaG01Smdza2phMzYrUWM1MXFmM3Btc2Jpckhq?=
+ =?utf-8?B?NUhVTkVsOC9PRjNjamkwV0RIamdGbnRkd2hnazZ6T1R4ZTJGSDlpWlRpR1ZX?=
+ =?utf-8?B?NWFSTzR4Y3NDSHd1MDhnNXBJT1BDWi9WVHZOcTJOZVFCVXdqN0J5WUtKMndk?=
+ =?utf-8?B?NTdtQmF4VFJFVFVWWUZKRVFYVDlpeko5L3IxVXBLcUlsYUl1OVkvMnY4RWRt?=
+ =?utf-8?B?eUZUTFJHVmY3QjArSW9rY2FpR2syWGJVdVk0WUowUU8vcGVvWG13Q3R5Z0ZI?=
+ =?utf-8?B?VFBrdlJwSmdtUTdVZjdTOG5XKytRYzFlYWVyL29hcVQzS3I5OTE5b3ZCK2NS?=
+ =?utf-8?Q?ZdjFfdAwFubndErAFRwnlKqrx2I+vdR+hYQ34=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UWtPSWRNQW5yTGNvc05PSFNveFMyaXRYUThRQUptQ0hlVFFadm1rMEp6UzBl?=
+ =?utf-8?B?eGNlSTlJSHB2bTkxN1ZUK2QvcXYvdlc0KzRlMWlMTzZDcWhSbVhLNEwrcU5i?=
+ =?utf-8?B?YzdLM0cvVDA1aDNpZFZRWVNsTUEzcEw3cHBaN1dnU0UwRDYwMTJ4RXNjRUtr?=
+ =?utf-8?B?djBLMlFmMk9BdzlqNnFFbE5JSC93V3RBZWUrTHQ4UGd2RWNxZmRtNGwxa20v?=
+ =?utf-8?B?L2ZSekRsWXRURjhVdUJ2UUdtTlcyT2ZReUtxQ1BoM09KdzF5dW1ndXpGY0ZD?=
+ =?utf-8?B?aUFLZGtHcGlBZERqWVBuTmRHZzNKOUdHUDZBcHY3aGJKNXZ2YXByNEdjOE81?=
+ =?utf-8?B?VjN0Z2o0K1Ywbkp1S0NtcjBSMmhVZlMyQTdNb05QOXhUN29BVHRaZjVCa0hy?=
+ =?utf-8?B?MWxmU21maTY1VEIrRnZ3YmtObkJKaFYvOEV5VkZ0ZURKT1hrVGRFQ21YdUZO?=
+ =?utf-8?B?M0JRcGJaTUJmTzNPbEdqU1Zrc2FVdTM3TFp0L3ZPL3lKY2tEWVdlYzh6WmJL?=
+ =?utf-8?B?ak5jY2hFMVpVa3lyUld3dGxsNzAxVUI5ZUZYeXhXcENHS2xiejRtTGVBMFYy?=
+ =?utf-8?B?N08zMTVDN3dOTEI5ZVV1Z2dmeFRNYWhETDJXUG5MUlpjRlgzOTczelRnZG1a?=
+ =?utf-8?B?RWhZN3R3bE56QVhFbzA1bUMvT1lTdUEvQzRjN2lPZUpvUE1JZnhla2VaaExQ?=
+ =?utf-8?B?ZUgweU9mWk90WDBKcC9uVFZwTFZITEIxUEd1eUpFS1pCZTJBdDFNVDExSHEw?=
+ =?utf-8?B?YzJYVjUvZnJyTkVzTjZXbkR2NCszZTkxRzNyRmlEYjc4T1c4VTJzOVVjL2th?=
+ =?utf-8?B?MGorbWlJek5DWVg4R0lyeUkvQWVkRlZITHlFYXF0RXE5VlpzelJhRmo2SndO?=
+ =?utf-8?B?akNwV3k0VG43RUppTTV3V25tUmdabFJKQnpHRlJTaGNzSG1QcWdpQTNGZEk2?=
+ =?utf-8?B?T09hcysxVzlGZFNybllVT04wMjBMUG9mMnlkKzRCdFQ5STgvNHAwMU5FcDNo?=
+ =?utf-8?B?V0xkV1dRU2MzRGJxaFA2VWZmYVRXaWpIb2ViTVUwMFpNRUhnbklKSUI2TzZn?=
+ =?utf-8?B?YkdvTysvWWJubzJMVkU5L0xlNkdmaS9maFcvbS80Qm4yS0xOVktWWUliSjl3?=
+ =?utf-8?B?SFJuY3VmRlV6Q3BlQ3I4YW1iU2xlRWFJSzM2U3Y4VjZqaVkyNk9nQk56UlVo?=
+ =?utf-8?B?TWRoU3BNcWxjdlZ4TU1yTTRHQ2ZUbC82ZkoySnhsckdCR1E2OVJPOWxqaGJT?=
+ =?utf-8?B?Rk9BQWNuai9TaGpYM0MvWlBUOUxUYUFDZU4zRjJkY1phOHhyWC80TjluUnI2?=
+ =?utf-8?B?bVVIcnVlV2NDRmZTQWlVTkJhZlJKSml6SGpYR1ZublNXY0R6dHJQUy9GL2gw?=
+ =?utf-8?B?MGhSbG1aWm85T2VaYTFJUzlWeldyVDV2UThmZENJcjNXR3N6dzgwdWR1Yi9w?=
+ =?utf-8?B?c0wwVm5zcWUxR09lQUpyVzNHUXdEZmE1d0tvS2lrSEFHSS9GMXJZTVczL1lR?=
+ =?utf-8?B?TkJRdyttV3FqWnppSk1qNzFFRGl3bXk1cForUWZVb245a0pudTlQeWFlK2pi?=
+ =?utf-8?B?dDRhZjlJUzdsQndud3IxckpUVkFra0hVRHlCaC9xOGdOMm1nOVdDOEp3OU12?=
+ =?utf-8?B?OS9OdkRqaHowOVkwclZaM1IzMCtCMHE4RVArR3lnOUMycHRZWjBTejI3dlV2?=
+ =?utf-8?B?c2hXTEVDMkVYYzBESCt5eUhzRXFvY29rNEswYlREQld6a0R3MjRlWVYzekdK?=
+ =?utf-8?B?WWVXUFgvK3lIUkxTZXlURitPWnVmakpHZW5xMVNFVjRWZlNpQ3pFMXhHT2RS?=
+ =?utf-8?B?M20vZ3N2MER4aE84WHdEOE1Kc2ppRTBObmhFTFBOQXVjSWo3VDRxRklYb1Jx?=
+ =?utf-8?B?WnRaTzlqYk1sbzcvL2Z2V1VnZXVlZVBGdHd1aUNtYU0rQVZQbzU2RlRpTFZP?=
+ =?utf-8?B?Ly9tcUtqeW9lSklseVVsV2tTTm1qaXlQdzJqOFJFOE9QS0phZ2dodmM5Nmkw?=
+ =?utf-8?B?NFlIbVpVRUhoQitXM3lySW9HOUtaWWordU54bTg0RGVDakV3dW9QV0FZbytE?=
+ =?utf-8?B?bFNqTTRKVllJTFdNSXJGMjJ0cHAvV2RxOTBaR0xGazA3NkxzUVFacUR5TzZE?=
+ =?utf-8?B?VmRwQ2d0ejlldHorWXYwRDJ3bTlrdmc0MW1xb0NlTlpBNmliZGg3VjJPWndt?=
+ =?utf-8?B?b3F0T2FqRTVzUVVJM2VqWkdxQ3VGeEx5T2hOZk5wZXRZc3NLNXBMOThuakV3?=
+ =?utf-8?Q?Lk4IMq+I5v9UkMvR6Sdcl7FUshcBYyj9z161X8ZNiA=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54bcb31d-2138-44d0-36da-08ddbe59e0b7
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 19:58:58.9412
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: s4bwUDV20YlehFH9X/pPAlhu/K9q+GZallgseWdxTtnDA+NDI9w2dSw9RVxRMvKg6pZFFR3elHVd9WdUz4ShbBmvqpBXtqJsOtbCMu9FRC0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQBPR0101MB8895
 
-On Tue, Jul 08, 2025, Vishal Annapurve wrote:
-> On Tue, Jul 8, 2025 at 11:03=E2=80=AFAM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> Few points that seem important here:
-> 1) Userspace can and should be able to only dictate if memory contents
-> need to be preserved on shared to private conversion.
+On 2025-07-07 22:11, Steven Rostedt wrote:
+> From: Josh Poimboeuf <jpoimboe@kernel.org>
+> 
+> Now that the sframe infrastructure is fully in place, make it work by
+> hooking it up to the unwind_user interface.
+> 
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>   arch/Kconfig                      |  1 +
+>   include/linux/unwind_user_types.h |  1 +
+>   kernel/unwind/user.c              | 25 ++++++++++++++++++++++---
+>   3 files changed, 24 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/Kconfig b/arch/Kconfig
+> index c54d35e2f860..0c6056ef13de 100644
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@ -448,6 +448,7 @@ config HAVE_UNWIND_USER_COMPAT_FP
+>   
+>   config HAVE_UNWIND_USER_SFRAME
+>   	bool
+> +	select UNWIND_USER
+>   
+>   config HAVE_PERF_REGS
+>   	bool
+> diff --git a/include/linux/unwind_user_types.h b/include/linux/unwind_user_types.h
+> index 0b6563951ca4..4d50476e950e 100644
+> --- a/include/linux/unwind_user_types.h
+> +++ b/include/linux/unwind_user_types.h
+> @@ -13,6 +13,7 @@ enum unwind_user_type {
+>   	UNWIND_USER_TYPE_NONE,
+>   	UNWIND_USER_TYPE_FP,
+>   	UNWIND_USER_TYPE_COMPAT_FP,
+> +	UNWIND_USER_TYPE_SFRAME,
+>   };
+>   
+>   struct unwind_stacktrace {
+> diff --git a/kernel/unwind/user.c b/kernel/unwind/user.c
+> index 249d9e32fad7..6e7ca9f1293a 100644
+> --- a/kernel/unwind/user.c
+> +++ b/kernel/unwind/user.c
+> @@ -7,6 +7,7 @@
+>   #include <linux/sched/task_stack.h>
+>   #include <linux/unwind_user.h>
+>   #include <linux/uaccess.h>
+> +#include <linux/sframe.h>
+>   
+>   static struct unwind_user_frame fp_frame = {
+>   	ARCH_INIT_USER_FP_FRAME
+> @@ -31,6 +32,12 @@ static inline bool compat_fp_state(struct unwind_user_state *state)
+>   	       state->type == UNWIND_USER_TYPE_COMPAT_FP;
+>   }
+>   
+> +static inline bool sframe_state(struct unwind_user_state *state)
+> +{
+> +	return IS_ENABLED(CONFIG_HAVE_UNWIND_USER_SFRAME) &&
+> +	       state->type == UNWIND_USER_TYPE_SFRAME;
+> +}
+> +
+>   #define unwind_get_user_long(to, from, state)				\
+>   ({									\
+>   	int __ret;							\
+> @@ -44,18 +51,28 @@ static inline bool compat_fp_state(struct unwind_user_state *state)
+>   static int unwind_user_next(struct unwind_user_state *state)
+>   {
+>   	struct unwind_user_frame *frame;
+> +	struct unwind_user_frame _frame;
+>   	unsigned long cfa = 0, fp, ra = 0;
+>   	unsigned int shift;
+>   
+>   	if (state->done)
+>   		return -EINVAL;
+>   
+> -	if (compat_fp_state(state))
+> +	if (compat_fp_state(state)) {
+>   		frame = &compat_fp_frame;
+> -	else if (fp_state(state))
+> +	} else if (sframe_state(state)) {
+> +		/* sframe expects the frame to be local storage */
+> +		frame = &_frame;
+> +		if (sframe_find(state->ip, frame)) {
+> +			if (!IS_ENABLED(CONFIG_HAVE_UNWIND_USER_FP))
+> +				goto done;
+> +			frame = &fp_frame;
+> +		}
+> +	} else if (fp_state(state)) {
+>   		frame = &fp_frame;
+> -	else
+> +	} else {
+>   		goto done;
+> +	}
+>   
+>   	if (frame->use_fp) {
+>   		if (state->fp < state->sp)
+> @@ -111,6 +128,8 @@ static int unwind_user_start(struct unwind_user_state *state)
+>   
+>   	if (IS_ENABLED(CONFIG_HAVE_UNWIND_USER_COMPAT_FP) && in_compat_mode(regs))
+>   		state->type = UNWIND_USER_TYPE_COMPAT_FP;
+> +	else if (current_has_sframe())
+> +		state->type = UNWIND_USER_TYPE_SFRAME;
 
-No, I was wrong, pKVM has use cases where it's desirable to preserve data o=
-n
-private =3D> shared conversions.
+I think you'll want to update the state->type during the
+traversal (in next()), because depending on whether
+sframe is available for a given memory area of code
+or not, the next() function can use either frame pointers
+or sframe during the same traversal. It would be good
+to know which is used after each specific call to next().
 
-Side topic, if you're going to use fancy indentation, align the indentation=
- so
-it's actually readable.
+Thanks,
 
->   -> For SNP/TDX VMs:
->        * Only usecase for preserving contents is initial memory
->          population, which can be achieved by:
->               -  Userspace converting the ranges to shared, populating th=
-e contents,
->                  converting them back to private and then calling SNP/TDX=
- specific
->                  existing ABI functions.
->        * For runtime conversions, guest_memfd can't ensure memory content=
-s are
->          preserved during shared to private conversions as the architectu=
-res
->          don't support that behavior.
->        * So IMO, this "preserve" flag doesn't make sense for SNP/TDX VMs,=
- even
+Mathieu
 
-It makes sense, it's just not supported by the architecture *at runtime*.  =
-Case
-in point, *something* needs to allow preserving data prior to launching the=
- VM.
-If we want to go with the PRIVATE =3D> SHARED =3D> FILL =3D> PRIVATE approa=
-ch for TDX
-and SNP, then we'll probably want to allow PRESERVE only until the VM image=
- is
-finalized.
+>   	else if (IS_ENABLED(CONFIG_HAVE_UNWIND_USER_FP))
+>   		state->type = UNWIND_USER_TYPE_FP;
+>   	else
 
->          if we add this flag, today guest_memfd should effectively mark t=
-his
->          unsupported based on the backing architecture support.
->
-> 2) For pKVM, if userspace wants to specify a "preserve" flag then this
 
-There is no "For pKVM".  We are defining uAPI for guest_memfd.  I.e. this s=
-tatement
-holds true for all implementations: PRESERVE is allowed based on the capabi=
-lities
-of the architecture.
-
-> So this topic is still orthogonal to "zeroing on private to shared conver=
-sion".
-
-As above, no.  pKVM might not expose PRESERVE to _userspace_ since all curr=
-ent
-conversions are initiated by the guest, but for guest_memfd itself, this is=
- all
-one and the same.
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
