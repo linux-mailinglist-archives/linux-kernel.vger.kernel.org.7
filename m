@@ -1,152 +1,268 @@
-Return-Path: <linux-kernel+bounces-722303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A711DAFD791
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:51:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84F9DAFD7B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E7BC486341
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:50:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 939773A193D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096C023C8B3;
-	Tue,  8 Jul 2025 19:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C615923C51F;
+	Tue,  8 Jul 2025 19:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FO8f0sDS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8BwOhHNf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ez6qp2MK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8CB238152;
-	Tue,  8 Jul 2025 19:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09893204096;
+	Tue,  8 Jul 2025 19:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752004229; cv=none; b=bWe/83N/4n/AjMRL6GsVNNAcpNrhPVLa61lQHmT57e+uKabzzEFQVHMu2r0HiOkf+4ay8GAcvCDyZZFE6ayebTXY4eyOrF2EcpK2JVLOswgIShnxGPWncm4HOO4EMjwqerxI4/wYodj601NV2DALYhv8Fzu6zT+sdKgaRIY/EM4=
+	t=1752004527; cv=none; b=BCkHEbDRFtYXA8kHfuswobyFW4G471Gt1zSF5NSWD9FjavATr1433wHNnkutdi7FF8/TSnZ1C+YY1VQE5cOxWvwBbCwV39i7Vuw8htcVQLi1qY8y9rdaa6Le39Qq56NQpSoTOsCwsVvZC/anGE/XpBOIzuRbsw0Mr/7UkwWWsac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752004229; c=relaxed/simple;
-	bh=UwmKIRI3/rXQWWCZog6ZM2WoDdWMjM6xEJp7EJpfwfE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=QUkaQBJpS9+EoqtBRXTxRcuCaIwPzay/PMWtFimrdVZ1bOd4KZ/0br+h05gACowa1Lb4cn4AZckrIsxKGduPvypsSZRS1VerbyabsWwHrl+3St+yZjoV6v05TUYb2jUTTbMATX+7oGBWPfx0+L+URArNuggGiGhUZje6LvopoqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FO8f0sDS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8BwOhHNf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 08 Jul 2025 19:50:24 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752004225;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CKyrGkB9Kx7hAdWcZnkKHFjAk3ax69GJ1bgJ1HGzYVs=;
-	b=FO8f0sDSJRKuWVpmYNmBv/feKlKZc5oAhVxAdU5oRzITY6M4aThOdLg2hJcyQCq3SlRHpH
-	cqUJurzhqgm9Ys/ZDg6jodzCAfwSm34pC0Br/z6DTQiOnrklFsots00qGoLRw87GRHn8E6
-	Wo2spVuXeIFWrhoeLvOnBm/aVK9H19HghFRNU4B/qK9MOx7CEHTpZkl0PBKFrhiFUN3txN
-	Q7JUb663d77a3gIahlUdb7GjerAf7sKRVEUHKgTzzwX2AimGuzd85lSlvHGm1Luqrx37Hy
-	oCrDiGRsqSe5RgOgPEx7e3b60ceFKowtbeHvu9wqaYVd3G0Wcgft5nNFPzyh8A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752004225;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CKyrGkB9Kx7hAdWcZnkKHFjAk3ax69GJ1bgJ1HGzYVs=;
-	b=8BwOhHNfYFltZd0RbfKsNN1icNm78H895KjfriiBnwIkyyTEovvekFsHwxK6g7RwJF7bPx
-	/2od+39rJmnn26AQ==
-From: "tip-bot2 for Mikhail Paulyshka" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/rdrand: Disable RDSEED on AMD Cyan Skillfish
-Cc: Mikhail Paulyshka <me@mixaill.net>, "Borislav Petkov (AMD)" <bp@alien8.de>,
-  <stable@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250524145319.209075-1-me@mixaill.net>
-References: <20250524145319.209075-1-me@mixaill.net>
+	s=arc-20240116; t=1752004527; c=relaxed/simple;
+	bh=THklj9+DZKasC/I7ZV05zBVQQT7G6vPIipQ3X2d3as4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q2hFneQss9wk5RplpJ3vq0Saj3+85q5WMy0uqzYyKIrZiHrNJ2FZcYVu7aJg2iP9gkFrff2Ut/4MY/g4oGIPldm1SB5EU3AT9e4Q8Mn40ltlKewWo7k7Xl1I8ldwo2TboNq04OXp4aD81gn6qiQN2rhbEmjOxrm5WeCijRC+KIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ez6qp2MK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 545BFC4CEED;
+	Tue,  8 Jul 2025 19:55:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752004526;
+	bh=THklj9+DZKasC/I7ZV05zBVQQT7G6vPIipQ3X2d3as4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ez6qp2MKiHw0jYLyulx5FcTB2KGMIkMOc+KyNt7zGek54/NNNY9XcQ/Mwy5ZkbwYh
+	 ab4XJErcOSeGzYy4hISXxqRGqm9gk4V58pm6WNv5N9BVhOR35WrMfmjp4/r0UeRRxu
+	 mIT9z60lYc5qAcdliYfKtOg87mXryl5QTqhypXdK4WkWpoBrBTJS1EshmKwGDo8ZF0
+	 obxCyvvCbIJZWhfK2rYSSLHtUyQN6lNt6K5F2GtNpFc1XICGbiPdcF7MhXvgnVRU5Y
+	 UQwmjZUkf5IWwozadjr2j/syFxtGjOQEP6Fd5PXBQ6Ocr9ulQHobU3vhlRJrqBKpve
+	 B702aNdAMfLKA==
+Date: Tue, 8 Jul 2025 14:55:25 -0500
+From: Rob Herring <robh@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: pinctrl: renesas: document RZ/T2H
+ and RZ/N2H SoCs
+Message-ID: <20250708195525.GA837365-robh@kernel.org>
+References: <20250707141848.279528-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250707141848.279528-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175200422447.406.16824702825580478461.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707141848.279528-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Mon, Jul 07, 2025 at 03:18:46PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Document the pin and GPIO controller IP for the Renesas RZ/T2H
+> (R9A09G077) and RZ/N2H (R9A09G087) SoCs, and add the shared DTSI
+> header file used by both the bindings and the driver.
+> 
+> The RZ/T2H SoC supports 729 pins, while the RZ/N2H supports 576 pins.
+> Both share the same controller architecture; separate compatible
+> strings are added for each SoC to distinguish them.
+> 
+> Co-developed-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v2->v3:
+> - Dropped refference to gpio.txt instead pointed to
+>   in include/dt-bindings/gpio/gpio.h.
+> 
+> v1->v2:
+> - Added a new DT binding file
+> ---
+>  .../pinctrl/renesas,rzt2h-pinctrl.yaml        | 132 ++++++++++++++++++
+>  .../pinctrl/renesas,r9a09g077-pinctrl.h       |  22 +++
+>  2 files changed, 154 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzt2h-pinctrl.yaml
+>  create mode 100644 include/dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzt2h-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rzt2h-pinctrl.yaml
+> new file mode 100644
+> index 000000000000..ead5ab7e7ebb
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzt2h-pinctrl.yaml
+> @@ -0,0 +1,132 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/renesas,rzt2h-pinctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Renesas RZ/T2H Pin and GPIO controller
+> +
+> +maintainers:
+> +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> +
+> +description:
+> +  The Renesas RZ/T2H SoC features a combined Pin and GPIO controller.
+> +  Pin multiplexing and GPIO configuration is performed on a per-pin basis.
+> +  Each port features up to 8 pins, each of them configurable for GPIO function
+> +  (port mode) or in alternate function mode.
+> +  Up to 8 different alternate function modes exist for each single pin.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - renesas,r9a09g077-pinctrl # RZ/T2H
+> +      - renesas,r9a09g087-pinctrl # RZ/N2H
+> +
+> +  reg:
+> +    minItems: 1
+> +    items:
+> +      - description: Non-safety I/O Port base
+> +      - description: Safety I/O Port safety region base
+> +      - description: Safety I/O Port Non-safety region base
+> +
+> +  reg-names:
+> +    minItems: 1
+> +    items:
+> +      - const: nsr
+> +      - const: srs
+> +      - const: srn
+> +
+> +  gpio-controller: true
+> +
+> +  '#gpio-cells':
+> +    const: 2
+> +    description:
+> +      The first cell contains the global GPIO port index, constructed using the
+> +      RZT2H_GPIO() helper macro from <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>
+> +      (e.g. "RZT2H_GPIO(3, 0)" for P03_0). The second cell represents the consumer
+> +      flag. Use the macros defined in include/dt-bindings/gpio/gpio.h.
+> +
+> +  gpio-ranges:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +additionalProperties:
+> +  anyOf:
+> +    - type: object
+> +      additionalProperties: false
+> +      allOf:
+> +        - $ref: pincfg-node.yaml#
+> +        - $ref: pinmux-node.yaml#
+> +
+> +      description:
+> +        Pin controller client devices use pin configuration subnodes (children
+> +        and grandchildren) for desired pin configuration.
+> +        Client device subnodes use the below standard properties.
+> +
+> +      properties:
+> +        pinmux:
+> +          description:
+> +            Values are constructed from GPIO port number, pin number, and
+> +            alternate function configuration number using the RZT2H_PORT_PINMUX()
+> +            helper macro from <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>.
+> +        pins: true
+> +        gpio-hog: true
+> +        gpios: true
+> +        input: true
+> +        input-enable: true
+> +        output-enable: true
+> +        output-high: true
+> +        output-low: true
+> +        line-name: true
+> +
+> +    - type: object
+> +      additionalProperties:
+> +        $ref: "#/additionalProperties/anyOf/0"
 
-Commit-ID:     5b937a1ed64ebeba8876e398110a5790ad77407c
-Gitweb:        https://git.kernel.org/tip/5b937a1ed64ebeba8876e398110a5790ad77407c
-Author:        Mikhail Paulyshka <me@mixaill.net>
-AuthorDate:    Sat, 24 May 2025 17:53:19 +03:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Tue, 08 Jul 2025 21:33:26 +02:00
+Again, please define some common suffix or prefix for the node names. 
+Any name is for existing bindings *only*.
 
-x86/rdrand: Disable RDSEED on AMD Cyan Skillfish
+patternProperties:
+  '-pins$':
+     type: object
+     ...
 
-AMD Cyan Skillfish (Family 17h, Model 47h, Stepping 0h) has an error that
-causes RDSEED to always return 0xffffffff, while RDRAND works correctly.
+  '-state$':
+     type: object
+     additionalProperties:
+       $ref: '#/patternProperties/-pins$'
 
-Mask the RDSEED cap for this CPU so that both /proc/cpuinfo and direct CPUID
-read report RDSEED as unavailable.
+I don't care what prefixes you use here...
 
-  [ bp: Move to amd.c, massage. ]
+(Note some regex's don't work as JSON pointers and then you would have 
+to use a $defs section.)
 
-Signed-off-by: Mikhail Paulyshka <me@mixaill.net>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Cc: <stable@kernel.org>
-Link: https://lore.kernel.org/20250524145319.209075-1-me@mixaill.net
----
- arch/x86/include/asm/msr-index.h       | 1 +
- arch/x86/kernel/cpu/amd.c              | 7 +++++++
- tools/arch/x86/include/asm/msr-index.h | 1 +
- 3 files changed, 9 insertions(+)
+> +
+> +allOf:
+> +  - $ref: pinctrl.yaml#
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - gpio-controller
+> +  - '#gpio-cells'
+> +  - gpio-ranges
+> +  - clocks
+> +  - power-domains
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h>
+> +    #include <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>
+> +
+> +    pinctrl@802c0000 {
+> +        compatible = "renesas,r9a09g077-pinctrl";
+> +        reg = <0x802c0000 0x2000>,
+> +              <0x812c0000 0x2000>,
+> +              <0x802b0000 0x2000>;
+> +        reg-names = "nsr", "srs", "srn";
+> +        clocks = <&cpg CPG_CORE R9A09G077_CLK_PCLKM>;
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +        gpio-ranges = <&pinctrl 0 0 288>;
+> +        power-domains = <&cpg>;
+> +
+> +        sci_pins: serial0 {
+> +            pinmux = <RZT2H_PORT_PINMUX(38, 0, 1)>, /* Tx */
+> +                     <RZT2H_PORT_PINMUX(38, 1, 1)>; /* Rx */
+> +        };
+> +
+> +        sd1-pwr-en-hog {
 
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index b7dded3..5cfb5d7 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -628,6 +628,7 @@
- #define MSR_AMD64_OSVW_STATUS		0xc0010141
- #define MSR_AMD_PPIN_CTL		0xc00102f0
- #define MSR_AMD_PPIN			0xc00102f1
-+#define MSR_AMD64_CPUID_FN_7		0xc0011002
- #define MSR_AMD64_CPUID_FN_1		0xc0011004
- #define MSR_AMD64_LS_CFG		0xc0011020
- #define MSR_AMD64_DC_CFG		0xc0011022
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 655f44f..e1c4661 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -930,6 +930,13 @@ static void init_amd_zen2(struct cpuinfo_x86 *c)
- 	init_spectral_chicken(c);
- 	fix_erratum_1386(c);
- 	zen2_zenbleed_check(c);
-+
-+	/* Disable RDSEED on AMD Cyan Skillfish because of an error. */
-+	if (c->x86_model == 0x47 && c->x86_stepping == 0x0) {
-+		clear_cpu_cap(c, X86_FEATURE_RDSEED);
-+		msr_clear_bit(MSR_AMD64_CPUID_FN_7, 18);
-+		pr_emerg("RDSEED is not reliable on this platform; disabling.\n");
-+	}
- }
- 
- static void init_amd_zen3(struct cpuinfo_x86 *c)
-diff --git a/tools/arch/x86/include/asm/msr-index.h b/tools/arch/x86/include/asm/msr-index.h
-index b7dded3..5cfb5d7 100644
---- a/tools/arch/x86/include/asm/msr-index.h
-+++ b/tools/arch/x86/include/asm/msr-index.h
-@@ -628,6 +628,7 @@
- #define MSR_AMD64_OSVW_STATUS		0xc0010141
- #define MSR_AMD_PPIN_CTL		0xc00102f0
- #define MSR_AMD_PPIN			0xc00102f1
-+#define MSR_AMD64_CPUID_FN_7		0xc0011002
- #define MSR_AMD64_CPUID_FN_1		0xc0011004
- #define MSR_AMD64_LS_CFG		0xc0011020
- #define MSR_AMD64_DC_CFG		0xc0011022
+This is exactly why no name pattern is a problem. Nothing in the schema 
+says you even have hog nodes which are a totally different kind of node. 
+It only passes because you have 0 required properties (probably an 
+error because an empty node shouldn't be valid).
+
+This node does happen to get validated only because we match on nodes 
+with 'gpio-hog' property which is an unusual pattern and may likely change.
+
+Rob
+
+> +            gpio-hog;
+> +            gpios = <RZT2H_GPIO(39, 2) 0>;
+> +            output-high;
+> +            line-name = "sd1_pwr_en";
+> +         };
+> +    };
 
