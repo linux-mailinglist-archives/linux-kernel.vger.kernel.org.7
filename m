@@ -1,159 +1,279 @@
-Return-Path: <linux-kernel+bounces-722052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18011AFD455
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:04:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB97AFD45B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6F505472BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:59:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06EDB1895CDB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE6D2E62D4;
-	Tue,  8 Jul 2025 16:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1AEE2E6D3C;
+	Tue,  8 Jul 2025 16:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AiNucZvT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b="mxFEV1+5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MNSuDRzd"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7F52DD5EF
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 16:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186752E6D0A;
+	Tue,  8 Jul 2025 16:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751993979; cv=none; b=inL75Xa+1e+gi9Gb5frrEOFdRVJG+H7vdhwZQ+C4Oa+/vI4K22LCOsyKCDEKG4Om/uZdCMsZBksGCWRKVZCyLeSyocmnHunnirlNcjxrxbYoVlerhnHfWoL0dNYnhnsYeChhPnlAQ87vm7yfH7nGRKEE6JxYJ7eJIpi7Fg7kb+4=
+	t=1751993983; cv=none; b=iU7Hl8Xh77pYDBp/2PNuDmtZ5zxhlLlYuEgHeQD8i2OKSEllTwBAgqF/H7z6m+Ur3LDR1fRqi99NWJdaXIg+wR5lKr23WjNdvMuMrAY6/19wQwbJ0pA4bnUc6Fx2U+cw6iQzqzrdITl4996OtsBmNzY1q3Pcsjl79MHb2/HNHzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751993979; c=relaxed/simple;
-	bh=E8SMxKBRB9kxzDAXjp9QuVVcwFm86lamgTddZeM3ZM4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ktb6gTZOFjzb7QqlfMFJROGazYCwkDmQW1YjCHULMe9nPpS8s4lYm1XfYBxQJzwk7m0DjptMYBdNle7OVujWUNotYpk8x8+dDKn+A9M7IVaLmihSh4IMGvhiV07kZUwx3QsXDR8p2WhwVqvtfPIcbu1r308uryIX0O8W8m7OY7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AiNucZvT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751993976;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5eadIydjygmdVrAvV3gcaJXEaiXTDN8BupiuAPwYI2k=;
-	b=AiNucZvT223LH7P9nRui9GSni0J5peKXHuCvgnbaP2H11k6bns5B2PAJArPvydzI9x8z1N
-	wHwQ2AhN5BVfuqIGqtVn3RoVn8ycz/ub8weXOYG/3+5qi8NO4Nn1ObGx4FRD0n7OsYmB4M
-	lxqgcPwmy3ePVzqs+pmIlR0Sh/CQQPA=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-488-Q7OICD-UN4GQCVEfevW_mA-1; Tue,
- 08 Jul 2025 12:59:31 -0400
-X-MC-Unique: Q7OICD-UN4GQCVEfevW_mA-1
-X-Mimecast-MFC-AGG-ID: Q7OICD-UN4GQCVEfevW_mA_1751993969
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 61BDB1955EC3;
-	Tue,  8 Jul 2025 16:59:28 +0000 (UTC)
-Received: from [10.22.80.10] (unknown [10.22.80.10])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0E26230001B1;
-	Tue,  8 Jul 2025 16:59:21 +0000 (UTC)
-Date: Tue, 8 Jul 2025 18:59:17 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Nilay Shroff <nilay@linux.ibm.com>
-cc: John Garry <john.g.garry@oracle.com>, agk@redhat.com, snitzer@kernel.org, 
-    song@kernel.org, yukuai3@huawei.com, hch@lst.de, axboe@kernel.dk, 
-    cem@kernel.org, dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-    linux-raid@vger.kernel.org, linux-block@vger.kernel.org, 
-    ojaswin@linux.ibm.com, martin.petersen@oracle.com, 
-    akpm@linux-foundation.org, linux-xfs@vger.kernel.org, djwong@kernel.org
-Subject: Re: [PATCH v4 6/6] block: use chunk_sectors when evaluating stacked
- atomic write limits
-In-Reply-To: <51e56dcf-6a64-42d1-b488-7043f880026e@linux.ibm.com>
-Message-ID: <f5ddc161-5683-f008-4794-32eccf88af65@redhat.com>
-References: <20250707131135.1572830-1-john.g.garry@oracle.com> <20250707131135.1572830-7-john.g.garry@oracle.com> <51e56dcf-6a64-42d1-b488-7043f880026e@linux.ibm.com>
+	s=arc-20240116; t=1751993983; c=relaxed/simple;
+	bh=WL9qbGGHqFwSq7nIOklWqRuuQeb8h3O8JSKvPf4DkXI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H9mtL9OPmSmiC2hjpQp11t3GnYkAestCzN09v9HPh9FNNGMRUxllZaX4r/Swqlx2sm0hYTS73Uicq+TBICdlZ/53Qg7/X/rp7ytBpqgP+JAwmuothJk8vpFjOoR/tmh9PNvI35miCcvO9G4msJGEu6AR15YLp2wytf+obwrn6Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pobox.com; spf=pass smtp.mailfrom=pobox.com; dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b=mxFEV1+5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MNSuDRzd; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pobox.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pobox.com
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfout.stl.internal (Postfix) with ESMTP id 2A7D31D002C5;
+	Tue,  8 Jul 2025 12:59:40 -0400 (EDT)
+Received: from phl-frontend-01 ([10.202.2.160])
+  by phl-compute-12.internal (MEProxy); Tue, 08 Jul 2025 12:59:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pobox.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm1;
+	 t=1751993980; x=1752080380; bh=cFcOEE0CyG9AGdCAyEWEe+70bjeiG3r+
+	X4smHoiZEEY=; b=mxFEV1+51GTLTSo9nhsSa97FVvRElfrb6ChlqUF1y7XGPJcp
+	RPf9DAJIQoq4JincDmyuqmJkC5uE0KMViFAEnbWL9EmlUUzNl81UmEr4zt3PS9yD
+	WqcJN1wuA56tcdGSSopaYnmMBFhSA9iDmPbDeL0Ko9GmgV7c02SruRT4E0o0cHec
+	sp1igZD+0zTMYj2UTeqX332rnpTd/iXvNGVURDiv7fJjbtUTarnbb4OgtcMWkYjJ
+	v+LHhTqfQ4pGMIaLwgd46LEBMpbJNhAr7YeoVU4cR4SbKfcAXIho0iFOMsnhYzBn
+	tUJ3E1qGSZFrjnRE7SxhqExT1Dzlvynrb1k9Ag==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:message-id
+	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751993980; x=
+	1752080380; bh=cFcOEE0CyG9AGdCAyEWEe+70bjeiG3r+X4smHoiZEEY=; b=M
+	NSuDRzdKqJSpteFrg3GPy6JsiEsgugbuQJtozyYN5lHs4IbzZoRdZEyYTMlmq7uA
+	wMj4bGW+qnZ7KMt4oJi1Pgul3vZYDwZ5SDx4T1G79J+veKXFBYBd/crtD88/CULP
+	ED5LSQMpWkP5F7jETIXuabiKNm83dioAJrP5EF8CQOaURfBLu2gewnSY/sAki1ZO
+	5cmW5QzlUS3HAzJZ2iBvBtx7oHePGf2nCn5JUQ9+XtUPCNjrCqwXFaKQqPkSh6V6
+	P10qGt0TKvvRJhib/we8IH0szNCeLlwHl2fucBM4+Fa+LhukUqxi9qHEDygIe0hI
+	b+LPqLiylKc710U8Zn2qw==
+X-ME-Sender: <xms:e05taFnup0KidEZpOUh91ccOEuQ8_wvH3GYmvapxqeSvMmMpmcQCvw>
+    <xme:e05taLyQ4LgmYalFv_bqtz5wK_RKaXfORNXFZUJUmIKQc-5BeMJFrNFAiLj8_kBlh
+    PoehjFEx9dEWPqM2Q>
+X-ME-Received: <xmr:e05taKr-_vx9YXrI3v8udlAwy0Jd4jtGkyuzXDKW0arTVIwjqgCqGoOoWwijjsqcwlH_JNkD9sRv3ShdXQnJHXp6VXtRDxQ_JLWxqG4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefhedvvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufffkfgfgggtsehttdertddtredtnecuhfhrohhmpefluhhnihhoucevucfj
+    rghmrghnohcuoehjuhhnihhosehpohgsohigrdgtohhmqeenucggtffrrghtthgvrhhnpe
+    euueeivdfhvdefudehteehueegjeeiudfggefhfeefffefhfefhefhjeekfeeufeenucff
+    ohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgohhoghhlvghsohhurhgtvgdrtghomhdpoh
+    hrrdgtiidpghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghr
+    rghmpehmrghilhhfrhhomhepghhithhsthgvrhesphhosghogidrtghomhdpnhgspghrtg
+    hpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepghhithesvhhgvghr
+    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehgihhtqdhprggtkhgrghgvrhhssehg
+    ohhoghhlvghgrhhouhhpshdrtghomhdprhgtphhtthhopehlfihnsehlfihnrdhnvghtpd
+    hrtghpthhtohepghhithhsthgvrhesphhosghogidrtghomhdprhgtphhtthhopehjuhhn
+    ihhosehpohgsohigrdgtohhm
+X-ME-Proxy: <xmx:e05taK4u5QCO12RJeP4ZncNiDrcp1Crp6W-48eZg7TNcFDJ3DTRCBg>
+    <xmx:e05taBcQMSE1VHnUiB-FH4Y0mN9WRJUKel2YEHfEW5uYAdI7Dt1veA>
+    <xmx:e05taP7xO4w_qa08C7n1JBKihzvYsnwXghJiIVxJB_SP8bj3SLFJEQ>
+    <xmx:e05taIsRzTLIp8i6a4qSDeHiO-BqXGgN9h1Yv038eP8baO7fV_SqvA>
+    <xmx:e05taHSFZau2bAD7qFb8cYhY7sik6i_o7TRr-uk_FgmKB2D4UEIfpqvj>
+Feedback-ID: i1ffb436d:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 8 Jul 2025 12:59:39 -0400 (EDT)
+From: Junio C Hamano <junio@pobox.com>
+To: git@vger.kernel.org
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
+    git-packagers@googlegroups.com
+Subject: [ANNOUNCE] Git v2.50.1 and friends
+Date: Tue, 08 Jul 2025 09:59:38 -0700
+Message-ID: <xmqq5xg2wrd1.fsf@gitster.g>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain
 
+A maintenance release Git v2.50.1 and others for older maintenance
+tracks down to maint-2.43 are now available at the usual places.
 
+This is a set of coordinated security fix releases.  Please update
+at your earliest convenience.
 
-On Tue, 8 Jul 2025, Nilay Shroff wrote:
+The tarballs are found at:
 
-> 
-> 
-> On 7/7/25 6:41 PM, John Garry wrote:
-> > The atomic write unit max value is limited by any stacked device stripe
-> > size.
-> > 
-> > It is required that the atomic write unit is a power-of-2 factor of the
-> > stripe size.
-> > 
-> > Currently we use io_min limit to hold the stripe size, and check for a
-> > io_min <= SECTOR_SIZE when deciding if we have a striped stacked device.
-> > 
-> > Nilay reports that this causes a problem when the physical block size is
-> > greater than SECTOR_SIZE [0].
-> > 
-> > Furthermore, io_min may be mutated when stacking devices, and this makes
-> > it a poor candidate to hold the stripe size. Such an example (of when
-> > io_min may change) would be when the io_min is less than the physical
-> > block size.
-> > 
-> > Use chunk_sectors to hold the stripe size, which is more appropriate.
-> > 
-> > [0] https://lore.kernel.org/linux-block/888f3b1d-7817-4007-b3b3-1a2ea04df771@linux.ibm.com/T/#mecca17129f72811137d3c2f1e477634e77f06781
-> > 
-> > Signed-off-by: John Garry <john.g.garry@oracle.com>
-> > ---
-> >  block/blk-settings.c | 58 ++++++++++++++++++++++++++------------------
-> >  1 file changed, 35 insertions(+), 23 deletions(-)
-> > 
-> > diff --git a/block/blk-settings.c b/block/blk-settings.c
-> > index 761c6ccf5af7..3259cfac5d0d 100644
-> > --- a/block/blk-settings.c
-> > +++ b/block/blk-settings.c
-> > @@ -597,41 +597,52 @@ static bool blk_stack_atomic_writes_boundary_head(struct queue_limits *t,
-> >  	return true;
-> >  }
-> >  
-> > -
-> > -/* Check stacking of first bottom device */
-> > -static bool blk_stack_atomic_writes_head(struct queue_limits *t,
-> > -				struct queue_limits *b)
-> > +static void blk_stack_atomic_writes_chunk_sectors(struct queue_limits *t)
-> >  {
-> > -	if (b->atomic_write_hw_boundary &&
-> > -	    !blk_stack_atomic_writes_boundary_head(t, b))
-> > -		return false;
-> > +	unsigned int chunk_sectors = t->chunk_sectors, chunk_bytes;
-> >  
-> > -	if (t->io_min <= SECTOR_SIZE) {
-> > -		/* No chunk sectors, so use bottom device values directly */
-> > -		t->atomic_write_hw_unit_max = b->atomic_write_hw_unit_max;
-> > -		t->atomic_write_hw_unit_min = b->atomic_write_hw_unit_min;
-> > -		t->atomic_write_hw_max = b->atomic_write_hw_max;
-> > -		return true;
-> > -	}
-> > +	if (!chunk_sectors)
-> > +		return;
-> > +
-> > +	/*
-> > +	 * If chunk sectors is so large that its value in bytes overflows
-> > +	 * UINT_MAX, then just shift it down so it definitely will fit.
-> > +	 * We don't support atomic writes of such a large size anyway.
-> > +	 */
-> > +	if ((unsigned long)chunk_sectors << SECTOR_SHIFT > UINT_MAX)
-> > +		chunk_bytes = chunk_sectors;
-> > +	else
-> > +		chunk_bytes = chunk_sectors << SECTOR_SHIFT;
+    https://www.kernel.org/pub/software/scm/git/
 
-Why do we cast it to unsigned long? unsigned long is 32-bit on 32-bit 
-machines, so the code will not detect the overflow in that case. We should 
-cast it to unsigned long long (or uint64_t).
+The following public repositories all have a copy of the v2.43.7,
+v2.44.4, v2.45.4, v2.46.4, v2.47.3, v2.48.2, v2.49.1 and v2.50.1
+tags:
 
-Mikulas
+  url = https://git.kernel.org/pub/scm/git/git
+  url = https://kernel.googlesource.com/pub/scm/git/git
+  url = git://repo.or.cz/alt-git.git
+  url = https://github.com/gitster/git
+
+----------------------------------------------------------------
+
+Git v2.50.1 Release Notes
+=========================
+
+This release merges up the fixes that appear in v2.43.7, v2.44.4,
+v2.45.4, v2.46.4, v2.47.3, v2.48.2, and v2.49.1 to address the
+following CVEs: CVE-2025-27613, CVE-2025-27614, CVE-2025-46334,
+CVE-2025-46835, CVE-2025-48384, CVE-2025-48385, and
+CVE-2025-48386. See the release notes for v2.43.7 for details.
+
+----------------------------------------------------------------
+
+Git v2.43.7 Release Notes
+=========================
+
+This release includes fixes for CVE-2025-27613, CVE-2025-27614,
+CVE-2025-46334, CVE-2025-46835, CVE-2025-48384, CVE-2025-48385, and
+CVE-2025-48386.
+
+Fixes since v2.43.6
+-------------------
+
+ * CVE-2025-27613, Gitk:
+
+   When a user clones an untrusted repository and runs Gitk without
+   additional command arguments, any writable file can be created and
+   truncated. The option "Support per-file encoding" must have been
+   enabled. The operation "Show origin of this line" is affected as
+   well, regardless of the option being enabled or not.
+
+ * CVE-2025-27614, Gitk:
+
+   A Git repository can be crafted in such a way that a user who has
+   cloned the repository can be tricked into running any script
+   supplied by the attacker by invoking `gitk filename`, where
+   `filename` has a particular structure.
+
+ * CVE-2025-46334, Git GUI (Windows only):
+
+   A malicious repository can ship versions of sh.exe or typical
+   textconv filter programs such as astextplain. On Windows, path
+   lookup can find such executables in the worktree. These programs
+   are invoked when the user selects "Git Bash" or "Browse Files" from
+   the menu.
+
+ * CVE-2025-46835, Git GUI:
+
+   When a user clones an untrusted repository and is tricked into
+   editing a file located in a maliciously named directory in the
+   repository, then Git GUI can create and overwrite any writable
+   file.
+
+ * CVE-2025-48384, Git:
+
+   When reading a config value, Git strips any trailing carriage
+   return and line feed (CRLF). When writing a config entry, values
+   with a trailing CR are not quoted, causing the CR to be lost when
+   the config is later read.  When initializing a submodule, if the
+   submodule path contains a trailing CR, the altered path is read
+   resulting in the submodule being checked out to an incorrect
+   location. If a symlink exists that points the altered path to the
+   submodule hooks directory, and the submodule contains an executable
+   post-checkout hook, the script may be unintentionally executed
+   after checkout.
+
+ * CVE-2025-48385, Git:
+
+   When cloning a repository Git knows to optionally fetch a bundle
+   advertised by the remote server, which allows the server-side to
+   offload parts of the clone to a CDN. The Git client does not
+   perform sufficient validation of the advertised bundles, which
+   allows the remote side to perform protocol injection.
+
+   This protocol injection can cause the client to write the fetched
+   bundle to a location controlled by the adversary. The fetched
+   content is fully controlled by the server, which can in the worst
+   case lead to arbitrary code execution.
+
+ * CVE-2025-48386, Git:
+
+   The wincred credential helper uses a static buffer (`target`) as a
+   unique key for storing and comparing against internal storage. This
+   credential helper does not properly bounds check the available
+   space remaining in the buffer before appending to it with
+   `wcsncat()`, leading to potential buffer overflows.
+
+----------------------------------------------------------------
+
+Changes since v2.50.0 are as follows:
+
+Avi Halachmi (:avih) (1):
+      gitk: encode arguments correctly with "open"
+
+Johannes Sixt (27):
+      gitk: treat file names beginning with "|" as relative paths
+      gitk: have callers of diffcmd supply pipe symbol when necessary
+      gitk: sanitize 'exec' arguments: simple cases
+      gitk: sanitize 'exec' arguments: 'eval exec'
+      gitk: sanitize 'exec' arguments: redirections
+      gitk: sanitize 'exec' arguments: redirections and background
+      gitk: sanitize 'exec' arguments: redirect to process
+      gitk: sanitize 'open' arguments: simple commands
+      gitk: sanitize 'open' arguments: simple commands with redirections
+      gitk: sanitize 'open' arguments: simple commands, readable and writable
+      gitk: collect construction of blameargs into a single conditional
+      gitk: sanitize 'open' arguments: command pipeline
+      git-gui: remove special treatment of Windows from open_cmd_pipe
+      git-gui: remove git config --list handling for git < 1.5.3
+      git-gui: treat file names beginning with "|" as relative paths
+      git-gui: sanitize 'exec' arguments: simple cases
+      git-gui: sanitize 'exec' arguments: background
+      git-gui: remove option --stderr from git_read
+      git-gui: break out a separate function git_read_nice
+      git-gui: use git_read in githook_read
+      gitk: sanitize 'open' arguments: revisit recently updated 'open' calls
+      git-gui: convert git_read*, git_write to be non-variadic
+      git-gui: pass redirections as separate argument to _open_stdout_stderr
+      git-gui: pass redirections as separate argument to git_read
+      git-gui: introduce function git_redir for git calls with redirections
+      git-gui: do not mistake command arguments as redirection operators
+      git-gui: sanitize 'exec' arguments: convert new 'cygpath' calls
+
+Junio C Hamano (2):
+      Git 2.49.1
+      Git 2.50.1
+
+Justin Tobler (1):
+      config: quote values containing CR character
+
+Mark Levedahl (13):
+      git-gui: _which, only add .exe suffix if not present
+      git-gui: use [is_Windows], not bad _shellpath
+      git-gui: make _shellpath usable on startup
+      git-gui: remove Tcl 8.4 workaround on 2>@1 redirection
+      git-gui: use only the configured shell
+      git-gui: remove HEAD detachment implementation for git < 1.5.3
+      git-gui: remove unused proc is_shellscript
+      git-gui: avoid auto_execok for git-bash menu item
+      git-gui: avoid auto_execok in do_windows_shortcut
+      git-gui: cleanup git-bash menu item
+      git-gui: assure PATH has only absolute elements.
+      git-gui: sanitize $PATH on all platforms
+      git-gui: override exec and open only on Windows
+
+Patrick Steinhardt' via Git Security (1):
+      bundle-uri: fix arbitrary file writes via parameter injection
+
+Taylor Blau (7):
+      wincred: avoid buffer overflow in wcsncat()
+      Git 2.43.7
+      Git 2.44.4
+      Git 2.45.4
+      Git 2.46.4
+      Git 2.47.3
+      Git 2.48.2
 
 
