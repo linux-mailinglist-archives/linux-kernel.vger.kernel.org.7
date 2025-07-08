@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-721892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4562AFCF3A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:30:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDC0EAFCF2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:28:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 472583A6896
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:26:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89110165A16
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F2A2E11D7;
-	Tue,  8 Jul 2025 15:26:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524B92E0B7C;
-	Tue,  8 Jul 2025 15:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E42C2E4262;
+	Tue,  8 Jul 2025 15:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ipk0OTa4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F8F2E264F;
+	Tue,  8 Jul 2025 15:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751988370; cv=none; b=uPzNCmaHSacTOTM4MvROe2dcrrfIDaKauTKCjuRJqHsu0CpMH3hU40HpeVihcAa33lX9iipaaLMBOqGZZDMZu6CSHA3/wobGy4BWZW0ZdEjr/cJu410nv6LCbUwFSv4j3jY8ClTqXDlew2AS0rcgXQhGys5qGTchnHotqkKu+98=
+	t=1751988373; cv=none; b=qwUmYOjBeMbQ2rvRTrCuJ+CLbQKPhS9ZAWi1BrDbsFDpAnUse075P1mBszLnXqya9d/PjhvDbxWhFY6km1JVLiYt5TXSf2qqo0zmsEIc08SszWocj+Q5Z3UvPBVXuczLHPyMAGLOW2dDtQNJVvYGduxBBU76Z994M27zB0pyEXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751988370; c=relaxed/simple;
-	bh=vGnNBHokt2cN4ticDDpECNitDllhZ3Cs910v4LNMOHI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SYMdIh633f06lXeIw52vVg9tiqNLtOmg1jU3OLYHQf94Wo/GeRxokACYzVVhIIzrLooGu4sx0RLxKR/L2gn9+qO5P1JkaxB6USzFU89eKV9QL+xQs01/g2dCLRQvDEkho3Udwayt3O1fMlXvoNZ8wfmaFescyyibLF+DZ/tmHCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A77DA1595;
-	Tue,  8 Jul 2025 08:25:55 -0700 (PDT)
-Received: from usa.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 167B83F738;
-	Tue,  8 Jul 2025 08:26:05 -0700 (PDT)
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Cristian Marussi <cristian.marussi@arm.com>,
-	Peng Fan <peng.fan@nxp.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>,
-	Chuck Cannon <chuck.cannon@nxp.com>
-Subject: Re: [PATCH v2 0/2] firmware: arm_scmi: add pm ops for scmi_power_control
-Date: Tue,  8 Jul 2025 16:26:03 +0100
-Message-Id: <175198830381.785998.16571714646012056824.b4-ty@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250704-scmi-pm-v2-0-9316cec2f9cc@nxp.com>
-References: <20250704-scmi-pm-v2-0-9316cec2f9cc@nxp.com>
+	s=arc-20240116; t=1751988373; c=relaxed/simple;
+	bh=lgrXqSqbxoeGeRvWuWlQVmxP6BCslEUZzm+rZzF6qPg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fSBL89rPH+RF3obOIfouMJhHuUYTkzPvDLgOWMiRMhRhKIYT64j6wITYmgbRWjGCJXr1VS8jP9xq3TJytTE6KcXatI6NakNaaaeDZh+UsYUBfxszEsrSTr4cB+MIsA4WUGxRxMwfN6SuGWXeVz5fNq+5MxKHSDhcqFS2uWZ0OMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ipk0OTa4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47DC3C4CEED;
+	Tue,  8 Jul 2025 15:26:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751988373;
+	bh=lgrXqSqbxoeGeRvWuWlQVmxP6BCslEUZzm+rZzF6qPg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ipk0OTa4Kn27YHreY87gI6/ifFpt6kzq6a0Se2YxDli10ay9myMV6ezEIJDkznmVM
+	 hzRcpkUxqwRR3pcY+23Jhw5b+Q1tXh0hGr07nDcmQ51HTMJB++Aw8Smm85ttFQHYq6
+	 4iD07Z8CKYzSu1XBujxoWt94K6G/FtKHwdDEgzAI=
+Date: Tue, 8 Jul 2025 17:26:10 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Aidan Stewart <astewart@tektelic.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] serial: core: fix OF node leak
+Message-ID: <2025070801-jelly-lyrically-0f65@gregkh>
+References: <20250708085817.16070-1-johan@kernel.org>
+ <2bd769b7f66bca4e97dba57276f5a29acdabb655.camel@tektelic.com>
+ <aG03-g3gVMgErPIA@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aG03-g3gVMgErPIA@hovoldconsulting.com>
 
-On Fri, 04 Jul 2025 11:09:34 +0800, Peng Fan wrote:
-> Move information could be found in patch 2 commit log, hope it is clear
+On Tue, Jul 08, 2025 at 05:23:38PM +0200, Johan Hovold wrote:
+> On Tue, Jul 08, 2025 at 01:37:45PM +0000, Aidan Stewart wrote:
+> > On Tue, 2025-07-08 at 10:58 +0200, Johan Hovold wrote:
 > 
-> When testing on i.MX95, two consecutive suspend message send to the Linux
-> agent, Linux will suspend(by the 1st suspend message) and wake up(by the
-> 2nd suspend message).
+> > > Make sure to drop the OF node reference taken when initialising the
+> > > control and port devices when the devices are later released.
+> > > 
+> > > Fixes: d36f0e9a0002 ("serial: core: restore of_node information in
+> > > sysfs")
+> > > Cc: Aidan Stewart <astewart@tektelic.com>
+> > > Signed-off-by: Johan Hovold <johan@kernel.org>
 > 
-> The ARM SCMI spec does not allow for filtering of which messages an agent
-> wants to get on the system power protocol. To i.MX95, as we use mailbox
-> to receive message, and the mailbox supports wake up(interrupt is always
-> enabled), so linux will also get a repeated suspend message. This will
-> cause Linux to wake (and should then go back into suspend).
+> > Thanks for the fix. I think this also needs to go into -stable, as the
+> > previous changes have already landed there (6.12.36 and 6.15.5).
 > 
-> [...]
+> I left out the stable tag on purpose since this leak should not cause
+> trouble as, for example, these devices are typically registered at boot
+> and never deregistered.
+> 
+> It fixes an issue introduced in rc4 so it should preferably still go
+> into 6.16-final, though.
 
-Applied to sudeep.holla/linux (for-linux-next), thanks!
-(with some commit message changes and removal of #ifdef)
+Ok, will get this merged, thanks!
 
-[1/2] firmware: arm_scmi: bus: Add pm ops
-      https://git.kernel.org/sudeep.holla/c/76e65f7a0e0f
-[2/2] firmware: arm_scmi: power_control: Set SCMI_SYSPOWER_IDLE in PM resume
-      https://git.kernel.org/sudeep.holla/c/9a0658d3991e
-
---
-Regards,
-Sudeep
-
+greg k-h
 
