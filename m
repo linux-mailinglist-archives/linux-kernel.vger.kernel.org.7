@@ -1,116 +1,180 @@
-Return-Path: <linux-kernel+bounces-721078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3787CAFC473
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:46:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1D4EAFC476
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58A793BCB41
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:45:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5920D1AA350F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9DB264FA9;
-	Tue,  8 Jul 2025 07:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27E8298CA7;
+	Tue,  8 Jul 2025 07:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KmBIT9GV"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVkRS8VB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5C6D517;
-	Tue,  8 Jul 2025 07:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B4C3FC2;
+	Tue,  8 Jul 2025 07:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751960775; cv=none; b=nia5HpNR3li5dwQ4oebti4Y37FIW/W10o9TpZxhVlJOtiTfqcnP4uWze5L0PpVjF+tkpvMfUg/tSJhzKqF1BL1Cz5uWdsasgnQ9I7XVY4sllNLYhCtPdSSVH+MaXnrk0H+SYeDc8SfE7mcukaTjfssPqinPcCh1hbx2rDYcYBNo=
+	t=1751960846; cv=none; b=HVxV8R0Kq0dqsDQF/lVkxqC3qr8vvCFvv0A+9QnAk6dnfOf6UycYY3IvKHHavXQxI4NroSfppdeuy25iJogzzk9U/QGdubdv3Azdj0FPlwEYdBWfq86IUQ4AH68bAPrX0WKlrx8py4rHYQ8i4RJ98zGQci3360BChGYPNsaUeaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751960775; c=relaxed/simple;
-	bh=SsJLEZUK5l4Kdov3Q7zzxDX+VX8QlmSpDy1dNsg5p6M=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=GDtqHczpn8FAjybdbhuphiIHMiLOjSzYLZ8Oab/2wGcLKWjLpCg2KcjT3v/W3/I+o+L8e2SsOILd7hA4tHyQgD49y7XKJ7/v06aDyhlT7w7MOFi24Ccq9AcXo0NfU9J1SMULUMjCnakoiYkbjCFY/Za25QTEbzXLXiEUMLoU9YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KmBIT9GV; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-32b7f41d3e6so48305471fa.1;
-        Tue, 08 Jul 2025 00:46:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751960772; x=1752565572; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=SsJLEZUK5l4Kdov3Q7zzxDX+VX8QlmSpDy1dNsg5p6M=;
-        b=KmBIT9GVhFdUXXyFL61rKqQeACdV2q6OkH2STJK6Ih5mG8sGBEGDsasOEipu3AJvap
-         RK1xUwfuHnDXXLzTv6zAXeb6OPmTc2BxisRC3acKgLaQgZztb+sDIT+Vh867yaIYe1ER
-         8NhtINM7kuw2WrSNqkH2thWdKv625NGsraFk2xYBTJ6wXftPgkKfs9bpxzjYjiIpg+m4
-         HDujVPrs/bPfVnOrHoTjJEWyv92rTGZARB6Q6IUbwU6ajxIO48SWuxkbV7mVdnjpDHPh
-         GW/Q+IC4060+xFAmEOiTt56Cjm3hP5tykOl0TUYlDrOFDPjGtmlDTZVYwBExJP9g8zRZ
-         oH7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751960772; x=1752565572;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SsJLEZUK5l4Kdov3Q7zzxDX+VX8QlmSpDy1dNsg5p6M=;
-        b=gFdKj9lB8U9XjksItk5NjPIpLE//WAwTdVo7y3nN2vpR6pw2K8PWk+1u5vp/zN0lSo
-         pra080gYu7LbxtNmIu3Oj9qgU6jm0k3R0KzOzInEwvO2h4XZYx1usWXhtM0cFGkRHlwl
-         60q256WzvwYBIz5NG/x6VmlCL2tUCwK6yQzAmdnFCl355bSvSU5/7jTr7kwnmKKNBu0n
-         h4ezsz0dUITmM8SivSwlLXBaWFLUHq0zOrZS3BGwwOMUDi1NndUF9Np2tUzWpX+rcS+L
-         0KYe85i8jyLdrbPt+VqTChVlm4I7Y2GX5f31vlEWtWfGyZBR7CLPxVDhyE0Re+ONbFwt
-         s4eA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8sgtNVgx/pocCN5wUSqJdrWftSBt7du5NSQicFFDKnBg7yJRkySzukb1tVTNVxH+r8oqwIjJ7@vger.kernel.org, AJvYcCUccyEZTGZOAZ15EINBouJgcypJ/Rp9e6C4iwTBEqq7rPXnjTEOO18q3Bc3IWW8tKYTL4BZoJ6oOX6PU+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvvXL0r/qHqnWl0GhCX0I/KMRRWPPB1aWM2ONEelLlCqYhD1MV
-	WHf4IbSodedU+CAkf0VVyjksBteX9VxN6F7J5g/9VmHWkHhekhd0VGJishben0lSFLT+74arSwV
-	ZwydkWu7XZCLOXE3amNnbKevqP9wmgRY=
-X-Gm-Gg: ASbGncsMixpfCur+Lg94V6tLhvaYDAZbFl+IodrtqZlIpS5oOV27ucHPJ5yDXr7tyOI
-	A7+j9A5mJcyVkz0iOACdfhWMdr7i31HjH0pX7KzguuPfrJjm8WJYyYfSTaBuGpxvwL0SSsZVY2N
-	QRLMjtHVNT6GATLydEfy+rS2CAQRV1tcbuIKCu+ZxHBK1D2mvwXZb6JXAKKkfyKNH8Lw==
-X-Google-Smtp-Source: AGHT+IGEd9Kz/5zhw01cj60Fqqv/m+I4Sm8jcaPps9mJ+ttQL5ZKCItccPpmMz/tXTWNQssl2xCYHuM/okPzQAf3cRs=
-X-Received: by 2002:a05:651c:2220:b0:32b:7614:5722 with SMTP id
- 38308e7fff4ca-32f3a095ccbmr4741481fa.13.1751960771442; Tue, 08 Jul 2025
- 00:46:11 -0700 (PDT)
+	s=arc-20240116; t=1751960846; c=relaxed/simple;
+	bh=jVUpAdZABGByW3BC0gUxQ8Gy88WyihYZ+pUcIVfwLQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UULiciRN8UZfaJDFOZDvsEwN8RODy9XE4AZNROrBts34eeQLGYob8mPBaKf0eByZ0MxHQIuljrd8ZlXnHWwE3RH9tFQmxq/leoEYiuwujr3USTRvom1hB8j3hjP7sfdZlAFda14fvumIH4o2Lh1Gon1FdsSfhVwGyFI1ECnZCB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVkRS8VB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10CE8C4CEED;
+	Tue,  8 Jul 2025 07:47:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751960845;
+	bh=jVUpAdZABGByW3BC0gUxQ8Gy88WyihYZ+pUcIVfwLQo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jVkRS8VBYxowV5hhTK7yaNDVcqGnPinoVsHNURk3RmxUwNbHyp5BrW+BP9sYAuRfM
+	 U87i2zE9OjaSrS6jIE0MwdRGAwx3cwEJsL4DPsbb9ktRm96Hliys51kEQO1ECd6CHk
+	 mn9FMbDOM7XDGntSbRc89ePBIznvU8T8Aln7rehpe5HPbgqM+06k13Ex3T/a1CxNj5
+	 wBPm5PnQNSA0CL0wtzF8uMW4xFwpLMCBlIfGhW5mF1h/oIWBBcj1ALT6H0Qz07JnLN
+	 ikBoMMUfSyYXHSPM7gUXrqirNShQdBGp7a2vDwvdwd7WtV4bYGZqLRUpqw68Shj0qX
+	 xHCfg52YvR/KQ==
+Date: Tue, 8 Jul 2025 13:17:15 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Hongxing Zhu <hongxing.zhu@nxp.com>
+Cc: "tharvey@gateworks.com" <tharvey@gateworks.com>, 
+	Frank Li <frank.li@nxp.com>, "l.stach@pengutronix.de" <l.stach@pengutronix.de>, 
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kwilczynski@kernel.org" <kwilczynski@kernel.org>, 
+	"robh@kernel.org" <robh@kernel.org>, "bhelgaas@google.com" <bhelgaas@google.com>, 
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] PCI: imx6: Remove apps_reset toggle in
+ _core_reset functions
+Message-ID: <lavz3wv5vysmb7gle5s57tc2tj4a6euh2e4fdwdrezvsejxiip@2fa4sblpau6a>
+References: <20250616085742.2684742-1-hongxing.zhu@nxp.com>
+ <20250616085742.2684742-2-hongxing.zhu@nxp.com>
+ <kjsaipr2xq777dmiv2ac7qzrxw47nevc75j7ryma32vsnyr2le@mrwurn6rgnac>
+ <CAJ+vNU3mKiEE86SYFS0aEabkqRKADFDJN0giX73E0cA=GOyhjA@mail.gmail.com>
+ <AS8PR04MB867638BDCA5F47D478F597808C4EA@AS8PR04MB8676.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Luka <luka.2016.cs@gmail.com>
-Date: Tue, 8 Jul 2025 15:45:59 +0800
-X-Gm-Features: Ac12FXyHNuVMuBc-KoksuHFizmYOY9_ntXLtiAiYsEQj7DrJSbrTPi-bbh2XYO0
-Message-ID: <CALm_T+2yh+PoxuCmSch8rgaZud6N4DBmA8OG9BdLvVu_F-EJ9A@mail.gmail.com>
-Subject: [Bug] soft lockup in packet_rcv in Linux kernel v6.15
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <AS8PR04MB867638BDCA5F47D478F597808C4EA@AS8PR04MB8676.eurprd04.prod.outlook.com>
 
-Dear Linux Kernel Maintainers,
+On Tue, Jul 08, 2025 at 02:37:00AM GMT, Hongxing Zhu wrote:
+> > -----Original Message-----
+> > From: Tim Harvey <tharvey@gateworks.com>
+> > Sent: 2025年6月24日 1:33
+> > To: Manivannan Sadhasivam <mani@kernel.org>
+> > Cc: Hongxing Zhu <hongxing.zhu@nxp.com>; Frank Li <frank.li@nxp.com>;
+> > l.stach@pengutronix.de; lpieralisi@kernel.org; kwilczynski@kernel.org;
+> > robh@kernel.org; bhelgaas@google.com; shawnguo@kernel.org;
+> > s.hauer@pengutronix.de; kernel@pengutronix.de; festevam@gmail.com;
+> > linux-pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> > imx@lists.linux.dev; linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH v3 1/2] PCI: imx6: Remove apps_reset toggle in
+> > _core_reset functions
+> > 
+> > On Mon, Jun 23, 2025 at 4:42 AM Manivannan Sadhasivam <mani@kernel.org>
+> > wrote:
+> > >
+> > > On Mon, Jun 16, 2025 at 04:57:41PM +0800, Richard Zhu wrote:
+> > > > apps_reset is LTSSM_EN on i.MX7, i.MX8MQ, i.MX8MM and i.MX8MP
+> > platforms.
+> > > > Since the assertion/de-assertion of apps_reset(LTSSM_EN bit) had
+> > > > been wrappered in imx_pcie_ltssm_enable() and
+> > > > imx_pcie_ltssm_disable();
+> > > >
+> > >
+> > > What about other i.MX chipsets like 6Q and its cousins? Wouldn't this
+> > > change affect them since they treat 'apps_reset' differently?
+> > >
+> > > - Mani
+> 
+> Hi Mani:
+> Sorry to reply late.
+> Only i.MX7D, i.MX8MQ, i.MX8MM, and i.MX8MP have the apps_reset. No problems
+> are found with this change in my local tests on these four platforms.
+> With this change, the assertion/deassertion of ltssm_en bit are unified into
+>  imx_pcie_ltssm_enable() and imx_pcie_ltssm_disable() functions, aligned with
+> other i.MX platforms.
+> 
 
-I hope this message finds you well.
+Okay, thanks for clarifying. Please include this information in the commit
+message as well and also CC stable list for backporting since it fixes a bug.
 
-I am writing to report a potential vulnerability I encountered during
-testing of the Linux Kernel version v6.15.
+- Mani
 
-Git Commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca (tag: v6.15)
+> Best Regards
+> Richard Zhu
+> > 
+> > Hi Main,
+> > 
+> > This patch effectively brings back the behavior prior to commit
+> > ef61c7d8d032 ("PCI: imx6: Deassert apps_reset in
+> > imx_pcie_deassert_core_reset()") which caused the original regressions.
+> > 
+> > To ease your concerns I've tested this patch on top of v6.16-rc3 with the
+> > following IMX6 boards I have here with and without a PCI device
+> > attached:
+> > imx6q-gw51xx - no switch
+> > imx6q-gw54xx - switch
+> > 
+> > I only have imx6qdl/imx8mm/imx8mp boards to test with.
+> > 
+> > From what I can tell it doesn't look like the original patch that added the
+> > 'symmetric' apps_reset de-assert was necessarily well tested. It started out
+> > being added because as far as I can tell it 'looked' like the right thing to do [1].
+> > You requested changes to the commit log for wording [2],[3] but I'm unclear
+> > that anyone tested this.
+> >
+> Hi Tim: 
+> Thanks for your explains and tests.
+> 
+> Best Regards
+> Richard Zhu
+> 
+> > Best Regards,
+> > 
+> > Tim
+> > [1]
+> > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatch
+> > work.kernel.org%2Fproject%2Flinux-pci%2Fpatch%2F1727148464-14341-6-gi
+> > t-send-email-hongxing.zhu%40nxp.com%2F&data=05%7C02%7Chongxing.zhu
+> > %40nxp.com%7Cdac60212c1c94cb24d7508ddb27c0f92%7C686ea1d3bc2b4c
+> > 6fa92cd99c5c301635%7C0%7C0%7C638862968081967795%7CUnknown%7
+> > CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJ
+> > XaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=8I
+> > 7qGI92BfsbAERknsVjZO6cI527Enxgiiw%2FVatI7h4%3D&reserved=0
+> > [2]
+> > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatch
+> > work.kernel.org%2Fproject%2Flinux-pci%2Fpatch%2F1728981213-8771-6-git
+> > -send-email-hongxing.zhu%40nxp.com%2F&data=05%7C02%7Chongxing.zhu
+> > %40nxp.com%7Cdac60212c1c94cb24d7508ddb27c0f92%7C686ea1d3bc2b4c
+> > 6fa92cd99c5c301635%7C0%7C0%7C638862968081993466%7CUnknown%7
+> > CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJ
+> > XaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=lh
+> > ER8F9ApfpgQcVCyMOBYho%2BXvlp79re4jX5C5gj1XY%3D&reserved=0
+> > [3]
+> > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatch
+> > work.kernel.org%2Fproject%2Flinux-pci%2Fpatch%2F20241101070610.1267
+> > 391-6-hongxing.zhu%40nxp.com%2F&data=05%7C02%7Chongxing.zhu%40nx
+> > p.com%7Cdac60212c1c94cb24d7508ddb27c0f92%7C686ea1d3bc2b4c6fa92c
+> > d99c5c301635%7C0%7C0%7C638862968082007982%7CUnknown%7CTWFp
+> > bGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4z
+> > MiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=kp4EqnV
+> > lfUsVq4k9UV33LSpiwn%2F2OJlPzu2PApAttNs%3D&reserved=0
 
-Bug Location: packet_rcv+0x3d1/0x1590 net/packet/af_packet.c:2208
-
-Bug report: https://pastebin.com/vLWYxByZ
-
-Entire kernel config: https://pastebin.com/jQ30sdLk
-
-Root Cause Analysis:
-
-The packet_rcv() function causes a soft lockup due to prolonged
-execution of BPF filter evaluation in the packet receive path,
-potentially resulting in unbounded CPU consumption under specific
-traffic or filter configurations without yielding.
-
-At present, I have not yet obtained a minimal reproducer for this
-issue. However, I am actively working on reproducing it, and I will
-promptly share any additional findings or a working reproducer as soon
-as it becomes available.
-
-Thank you very much for your time and attention to this matter. I
-truly appreciate the efforts of the Linux kernel community.
-
-Best regards,
-Luka
+-- 
+மணிவண்ணன் சதாசிவம்
 
