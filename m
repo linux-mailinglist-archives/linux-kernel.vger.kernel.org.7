@@ -1,128 +1,168 @@
-Return-Path: <linux-kernel+bounces-720952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E83D8AFC277
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:08:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 932DBAFC27D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E5953BD15E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:08:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97BE4179613
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8B521FF36;
-	Tue,  8 Jul 2025 06:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A9721FF49;
+	Tue,  8 Jul 2025 06:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ED5bkynO"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="WgtQwHLl"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CD335962;
-	Tue,  8 Jul 2025 06:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444B321FF3E;
+	Tue,  8 Jul 2025 06:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751954915; cv=none; b=cpPilmaEIW+2FJ6PI0jfw2Dh3fTPs8PRdHbyHQoYiQK29YIUF2AE1ldQCl1pryocsHs96XB20GXPddY2oRBr4u5+YF80lFFhQ3Ox1jRtVgEPBAsmeiyRSW7HsCV/zGZUza9rssPAYqUzKzotzqE+d/6QW8Jf2aVnWrMNka/zWJo=
+	t=1751954964; cv=none; b=MY9ek3bE5uqmPvcgQ57ogyb9qwr4HSvrlbxEtbKVB1NNTqTEGFT51cv27XzRR+9GJ0XYor0tOocvZ1GLejU+hyojYBU6vKXCPK7+M7bxWZhE3109ft1clwOo1pso/SsqOxWFnWzEoo/4XdphEh6zXB1q0rMmPVYstz22zVsOIeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751954915; c=relaxed/simple;
-	bh=RdElbirAdUkbyuH4kSxePtJFQ38Rx1k+Lfl+klu0PzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MFoIcv+m9/lOpNwvDSpe9zXcMEb836oIlwEeVUs2jWNVdS+sG8XxC4QWa89LYdt+JiYiWZwMUlO8E81fRP3LChufWJDzJ/L6Hw8mqSfcvByDZdgebsFlDfocAh60PzOaSpmVWmPkU2a4g8uTcT3Fg52SpFL9zncTc2j5q1nEO9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ED5bkynO; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1751954853;
-	bh=xnY6mnsrMkl2iu8PUzjgXYH+N9jdi2WR/fl5vaAs4ko=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ED5bkynOagLM50YQGQVXsof/4W/PU0WQOt1QgfxbRhOG8gT6UJq8YQn8nILKyfbHr
-	 OFH8fKM53kt92MU3QwZMf8qAkX8PQDYvdd8Zq+vucmfHeAWJrwdARL064qnUhrRU50
-	 rQ63zwWFiIolKXicxWV9bkkvLeg/TD8fVEhUKr/O4AC2RkC3T0fLAinjEn+b8Lp9YW
-	 0skPMalaECKQ6k+H03h/dCUMQkkpGUD/Pri7lsll8RL4h7V4Ot5jjZ49h16e+lKPUL
-	 j2WjibYIHJ8whElavN2n0Q3OTFyDL4RZGh1VXM4INGf9h1+4+ww2l+1zJ/Hk6j0yZx
-	 gLsw/FZMpxeqw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bbrHT4Lkqz4wb0;
-	Tue,  8 Jul 2025 16:07:33 +1000 (AEST)
-Date: Tue, 8 Jul 2025 16:08:30 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?= <thomas.weissschuh@linutronix.de>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the tip tree
-Message-ID: <20250708160830.36ddf20f@canb.auug.org.au>
+	s=arc-20240116; t=1751954964; c=relaxed/simple;
+	bh=pPOo+ktL9Tfotnr6ffVPd/vkVlhcENzcynw9OZkpRdY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gZVQoHWFNAuN51sU9qSrCVVUe+79TrK9KzsG1S50/LD4tov9c2181xO4Cw3lm1ff0+LkdLzPIQIwG13fgJPcRutPVaFBuhdlc+BozruQmnLjEzgc8WXvDoU2xFQqvJvXDVqvF67nw3BhRzsYReCqBEu2AxMuqstp5N2wQY8ZBbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=WgtQwHLl; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1751954952; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=zh0GZgGllEOdHJ4JfcnZXS605Yci87SIRFoTaKVIHL0=;
+	b=WgtQwHLlxa1M42TBYI2ooP+5blNjMNxRxKxO/rzsAKwzRNXLL0wgQWfy0BinSS22T84tqW925Z5dR+ww8BbOLhpaCXZ7CIPfKZ9n9yR8UHYcRaeVHS0O8E8aAyKwCV8llTrVr/V63XG3a6KVM/PLPZQEkDPmAbVpystHaQzOq3s=
+Received: from 30.74.144.119(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WiL4DJh_1751954947 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 08 Jul 2025 14:09:08 +0800
+Message-ID: <342d5fe1-cd39-462c-b2a4-b5d6979a8a21@linux.alibaba.com>
+Date: Tue, 8 Jul 2025 14:09:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/+83BFuWqt52WjS+LUCotkJq";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 14/15] khugepaged: add per-order mTHP khugepaged stats
+To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: david@redhat.com, ziy@nvidia.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com,
+ corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
+ baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
+ wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com,
+ vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
+ yang@os.amperecomputing.com, kirill.shutemov@linux.intel.com,
+ aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
+ catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
+ dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+ jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org
+References: <20250702055742.102808-1-npache@redhat.com>
+ <20250702055742.102808-15-npache@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250702055742.102808-15-npache@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/+83BFuWqt52WjS+LUCotkJq
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-After merging the tip tree, today's linux-next build (powerpc
-ppc64_allmodconfig) produced this warning:
+On 2025/7/2 13:57, Nico Pache wrote:
+> With mTHP support inplace, let add the per-order mTHP stats for
+> exceeding NONE, SWAP, and SHARED.
+> 
+> Signed-off-by: Nico Pache <npache@redhat.com>
+> ---
+>   include/linux/huge_mm.h |  3 +++
+>   mm/huge_memory.c        |  7 +++++++
+>   mm/khugepaged.c         | 15 ++++++++++++---
+>   3 files changed, 22 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index a6ea89fdaee6..6034b4c9dae5 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -141,6 +141,9 @@ enum mthp_stat_item {
+>   	MTHP_STAT_SPLIT_DEFERRED,
+>   	MTHP_STAT_NR_ANON,
+>   	MTHP_STAT_NR_ANON_PARTIALLY_MAPPED,
+> +	MTHP_STAT_COLLAPSE_EXCEED_SWAP,
 
-In file included from include/vdso/datapage.h:8,
-                 from lib/vdso/gettimeofday.c:6,
-                 from <command-line>:
-lib/vdso/gettimeofday.c: In function '__cvdso_clock_gettime_common':
-include/uapi/linux/bits.h:7:56: warning: right shift count >=3D width of ty=
-pe [-Wshift-count-overflow]
-    7 | #define __GENMASK(h, l) (((~_UL(0)) << (l)) & (~_UL(0) >> (BITS_PER=
-_LONG - 1 - (h))))
-      |                                                        ^~
-include/vdso/datapage.h:50:25: note: in expansion of macro '__GENMASK'
-   50 | #define VDSO_AUX        __GENMASK(CLOCK_AUX_LAST, CLOCK_AUX)
-      |                         ^~~~~~~~~
-lib/vdso/gettimeofday.c:335:24: note: in expansion of macro 'VDSO_AUX'
-  335 |         else if (msk & VDSO_AUX)
-      |                        ^~~~~~~~
-lib/vdso/gettimeofday.c: In function '__cvdso_clock_getres_common':
-include/uapi/linux/bits.h:7:56: warning: right shift count >=3D width of ty=
-pe [-Wshift-count-overflow]
-    7 | #define __GENMASK(h, l) (((~_UL(0)) << (l)) & (~_UL(0) >> (BITS_PER=
-_LONG - 1 - (h))))
-      |                                                        ^~
-include/vdso/datapage.h:50:25: note: in expansion of macro '__GENMASK'
-   50 | #define VDSO_AUX        __GENMASK(CLOCK_AUX_LAST, CLOCK_AUX)
-      |                         ^~~~~~~~~
-lib/vdso/gettimeofday.c:481:26: note: in expansion of macro 'VDSO_AUX'
-  481 |         } else if (msk & VDSO_AUX) {
-      |                          ^~~~~~~~
+This stat seems never used.
 
-Introduced by commit
+> +	MTHP_STAT_COLLAPSE_EXCEED_NONE,
+> +	MTHP_STAT_COLLAPSE_EXCEED_SHARED,
+>   	__MTHP_STAT_COUNT
+>   };
 
-  7893ea1006fc ("vdso/gettimeofday: Add support for auxiliary clocks")
+Please also update the 'Documentation/admin-guide/mm/transhuge.rst' for 
+these new statistics.
 
---=20
-Cheers,
-Stephen Rothwell
+>   
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 69777a35e722..3eb1c34be601 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -632,6 +632,10 @@ DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
+>   DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
+>   DEFINE_MTHP_STAT_ATTR(nr_anon, MTHP_STAT_NR_ANON);
+>   DEFINE_MTHP_STAT_ATTR(nr_anon_partially_mapped, MTHP_STAT_NR_ANON_PARTIALLY_MAPPED);
+> +DEFINE_MTHP_STAT_ATTR(collapse_exceed_swap_pte, MTHP_STAT_COLLAPSE_EXCEED_SWAP);
+> +DEFINE_MTHP_STAT_ATTR(collapse_exceed_none_pte, MTHP_STAT_COLLAPSE_EXCEED_NONE);
+> +DEFINE_MTHP_STAT_ATTR(collapse_exceed_shared_pte, MTHP_STAT_COLLAPSE_EXCEED_SHARED);
+> +
+>   
+>   static struct attribute *anon_stats_attrs[] = {
+>   	&anon_fault_alloc_attr.attr,
+> @@ -648,6 +652,9 @@ static struct attribute *anon_stats_attrs[] = {
+>   	&split_deferred_attr.attr,
+>   	&nr_anon_attr.attr,
+>   	&nr_anon_partially_mapped_attr.attr,
+> +	&collapse_exceed_swap_pte_attr.attr,
+> +	&collapse_exceed_none_pte_attr.attr,
+> +	&collapse_exceed_shared_pte_attr.attr,
+>   	NULL,
+>   };
+>   
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index 2c0962637c34..636b84bf1ca1 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -594,7 +594,10 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+>   				continue;
+>   			} else {
+>   				result = SCAN_EXCEED_NONE_PTE;
+> -				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+> +				if (order == HPAGE_PMD_ORDER)
+> +					count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+> +				else
+> +					count_mthp_stat(order, MTHP_STAT_COLLAPSE_EXCEED_NONE);
+>   				goto out;
+>   			}
+>   		}
+> @@ -623,8 +626,14 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+>   		/* See khugepaged_scan_pmd(). */
+>   		if (folio_maybe_mapped_shared(folio)) {
+>   			++shared;
+> -			if (order != HPAGE_PMD_ORDER || (cc->is_khugepaged &&
+> -			    shared > khugepaged_max_ptes_shared)) {
+> +			if (order != HPAGE_PMD_ORDER) {
+> +				result = SCAN_EXCEED_SHARED_PTE;
+> +				count_mthp_stat(order, MTHP_STAT_COLLAPSE_EXCEED_SHARED);
+> +				goto out;
+> +			}
+> +
+> +			if (cc->is_khugepaged &&
+> +				shared > khugepaged_max_ptes_shared) {
+>   				result = SCAN_EXCEED_SHARED_PTE;
+>   				count_vm_event(THP_SCAN_EXCEED_SHARED_PTE);
+>   				goto out;
 
---Sig_/+83BFuWqt52WjS+LUCotkJq
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhstd4ACgkQAVBC80lX
-0GwvsAf/a3vjDjh2/HG9J9hZyarDYQrVsHoRhD38GfZWl3pYwTvGDVNAGIYTwW4J
-H77qNEL34viaF1lOhIKj+yL+kvEU8pS5i9QpX/HAxNgp9fQpSqfmg6cTNkf05tm5
-fMHv59Hw615DGR1Ld9FzS2JAXjqxGqJC0LNq8TgXM7bj+utfROkPxAy9T87+M2+/
-+2a/LyJRwZSU/D6t6H7s8M1Rb9LppPLykJhbNjRqWFBrmRY+QSDNXkOg2o8KW5nt
-KbyDS5D31bJWyG3Rz/GUujruNuY0JhM92smNmrjT6wNM3IdlhXUvblnzoXUVzw+J
-Z5WFsmiO+S026pNRi09oks1YEJOhaA==
-=OsNm
------END PGP SIGNATURE-----
-
---Sig_/+83BFuWqt52WjS+LUCotkJq--
 
