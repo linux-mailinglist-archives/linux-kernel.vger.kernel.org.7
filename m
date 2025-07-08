@@ -1,89 +1,128 @@
-Return-Path: <linux-kernel+bounces-721144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AD63AFC537
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:16:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB20AFC532
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:15:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0ADB3BC1AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:15:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5B0C3A97DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDEC52BD004;
-	Tue,  8 Jul 2025 08:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2F229E11B;
+	Tue,  8 Jul 2025 08:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oCxjOoTT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QcsvsQnN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D71729E0FD;
-	Tue,  8 Jul 2025 08:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E79184540;
+	Tue,  8 Jul 2025 08:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751962550; cv=none; b=jzDxgCrspEm+zO4i5P0GA9DduLP1Zh/POzEitO2G0So9NJxcGvHF3VnPt/x2lKfQvLQYaJrm299IqlP5VTlhQh017Ere1CnA0j9z2T09wrTxAOcnVAnREIYNc7nhLcc/dk/tP8tcx1l0E2+r0nKpmpcqPZhQkE2m9/lhPecQQpE=
+	t=1751962533; cv=none; b=Hv5KmJEej2x7r8l24CFpm0SJ9+A6zlUCW93se89/KcMNeZNbUu61rHJ2Eq9dLlL8RCXBvqDw3+09wgJFPANJlVmMwSX0RXHLvjXtto4qCq0Jtx3CVcuvr3f5bEWYikttr0ErWZ6GvpUpiDyPcPyUIlWGrVLxxnrV1xA0GG5plF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751962550; c=relaxed/simple;
-	bh=4IXCxN8x8dRMEj0XOpaisABRJ9TwS7xrANdPltngbXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IfuARI6KSaS2VVjVqw0q0qGYkv+SbXjwc1xztSq6NFSXInRLjF9t05avXEUpQegwfpDFLIPW7du42XUsYU4RE/gckJR/G1tH8LgJFQdhrwtrlQkeMIDEbnfGntY/cYkOsRlXwjWbi7kEN6umHBIg9q4m4OQrprDzYbNnJ87ZSI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oCxjOoTT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93906C4CEED;
-	Tue,  8 Jul 2025 08:15:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751962549;
-	bh=4IXCxN8x8dRMEj0XOpaisABRJ9TwS7xrANdPltngbXg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oCxjOoTTNd7Er+9A0ERmiDxRTufY7b1KP8XLKf6mZ1DoKVMDWJfZBIOzenjH5yMao
-	 GzKEzy1/p+HT2YqxfOgSCoKBzUi+LNbTrQaRA9w4NXBPKJ2Xkz0hJ2z1SDTZohnZ4R
-	 OVqaibSkMPL88qqUJJ9+db1VP8aIe+rhjphpT19gINNLilduYiKQLU69D2oeLggesB
-	 cwu7ViA4q/LTzK0mYjJmyNSjiYA6+Vg7MNLB8gjBf9m9x9UesOkLdVaePGQ/SQrsgJ
-	 tCA+/70Opl+yi8ZqMf8TVblFdrn01heK5vQ3Um7h3Er4RvBdo1DA1Rjc/PqUZHisbo
-	 8+IIjf0TGNcLw==
-Date: Tue, 8 Jul 2025 10:15:45 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the vfs tree with the vfs-brauner
- tree
-Message-ID: <20250708-podest-waldbestand-1d2bcbabad8c@brauner>
-References: <20250708093837.52e3a89d@canb.auug.org.au>
- <20250708002509.GR1880847@ZenIV>
- <20250708004550.GS1880847@ZenIV>
+	s=arc-20240116; t=1751962533; c=relaxed/simple;
+	bh=rYlFHlvjj1QePapukAiI/tzY5PooIzqMJ0D/NC0iFMI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t5netZntwyWdSfwyqtEr1Pg1+uoCHKHwVLEcjqGwHxMHj2ObIK5Ywlnk46BuaTOlywB8y44rd+SJoltjTtRlbAzJcggJ8H2tSEfrp9zIVZewX9Zfy7loYF9dAbFygSSgEDS7zzq5ig8PlmFSPh0LEXTz0LQBlTUQjJDyBxU+ou8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QcsvsQnN; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751962532; x=1783498532;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rYlFHlvjj1QePapukAiI/tzY5PooIzqMJ0D/NC0iFMI=;
+  b=QcsvsQnNf2BGJ8TgQURxzXaQfvtYosUeOA9ONdWHw1gQxhCDjOnzC3N6
+   wEnjU9G3k4xQYnOxKyqtRhTWQuO0OdkBZ0s+fjOP8eK9d9Fj5Zv/KSRnq
+   uIDBhFKCFJ+jTcH1376Ux7AhO1fAM9Pg2aZnq1xKam7bV+uQGu1IIC8/e
+   62fuCI/tK3Ums1riVOnwEj8ULQ2LukWkD4liOs47G10NDiJ7aHGzIoiuH
+   n0ewgfMPnrjgqG7pW3VmyUim3KNek5sw+KxZm1IwNRutBmXcuKHZYjjQ1
+   mxSD3Hcs7g7wrDUICeT17mbULMXwcTklarCS28b7OzjGb94qkWWtW0ChO
+   A==;
+X-CSE-ConnectionGUID: xWLD/eb7TNeh8qr2dSYUGw==
+X-CSE-MsgGUID: UJv/0a2PT726jDOW2FrdzQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="64440584"
+X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
+   d="scan'208";a="64440584"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 01:15:32 -0700
+X-CSE-ConnectionGUID: VVE8yAZxRRiXIaLhf4YU3A==
+X-CSE-MsgGUID: NygHuXbBR32HQw2wSj3eeQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
+   d="scan'208";a="179106015"
+Received: from ubuntu.bj.intel.com ([10.238.156.109])
+  by fmviesa002.fm.intel.com with ESMTP; 08 Jul 2025 01:15:29 -0700
+From: Jun Miao <jun.miao@intel.com>
+To: o.rempel@pengutronix.de,
+	kuba@kernel.org,
+	oneukum@suse.com,
+	qiang.zhang@linux.dev
+Cc: netdev@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] net: usb: enable the work after stop usbnet by ip down/up
+Date: Tue,  8 Jul 2025 16:16:53 +0800
+Message-Id: <20250708081653.307815-1-jun.miao@intel.com>
+X-Mailer: git-send-email 2.32.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250708004550.GS1880847@ZenIV>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 08, 2025 at 01:45:50AM +0100, Al Viro wrote:
-> On Tue, Jul 08, 2025 at 01:25:09AM +0100, Al Viro wrote:
-> 
-> > Umm...  Let's do it that way - fs/fhandle.c chunk of that commit is
-> > trivially split off and the rest should not conflict at all.
-> > 
-> > Christian, would you mind throwing this on top of your vfs.pidfs?  I'm dropping
-> > that part from my #work.misc commit...
-> 
-> Argh...  Sorry, no go - that chunk needs to go before the rest of conversion
-> commit.  Hmm...
-> 
-> See vfs/vfs.git #vfs-6.17.fs_struct; that branches off your "reflow" commit
-> and it merges clean with #vfs.all, AFAICS.
-> 
-> Are you OK with that variant?  I've no strong preferences re branchpoints,
-> but some folks do - no idea if you have any policies in that respect.
+From: Zqiang <qiang.zhang@linux.dev>
 
-Whatever makes collaboration here easier I'm happy to go with! Thanks
-for jumping on this so quicly?
+Oleksij reported that:
+The smsc95xx driver fails after one down/up cycle, like this:
+ $ nmcli device set enu1u1 managed no
+ $ p a a 10.10.10.1/24 dev enu1u1
+ $ ping -c 4 10.10.10.3
+ $ ip l s dev enu1u1 down
+ $ ip l s dev enu1u1 up
+ $ ping -c 4 10.10.10.3
+The second ping does not reach the host. Networking also fails on other interfaces.
 
-> If you don't have any problems with it, just merge it into #vfs.all
-> and I'll drop that commit from #work.misc
+Enable the work by replacing the disable_work_sync() with cancel_work_sync().
 
-Sure! Let me grab it.
+[Jun Miao: completely write the commit changelog]
+
+Fixes: 2c04d279e857 ("net: usb: Convert tasklet API to new bottom half workqueue mechanism")
+Reported-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Tested-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Signed-off-by: Zqiang <qiang.zhang@linux.dev>
+Signed-off-by: Jun Miao <jun.miao@intel.com>
+---
+ drivers/net/usb/usbnet.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+index 9564478a79cc..6a3cca104af9 100644
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -861,14 +861,14 @@ int usbnet_stop (struct net_device *net)
+ 	/* deferred work (timer, softirq, task) must also stop */
+ 	dev->flags = 0;
+ 	timer_delete_sync(&dev->delay);
+-	disable_work_sync(&dev->bh_work);
++	cancel_work_sync(&dev->bh_work);
+ 	cancel_work_sync(&dev->kevent);
+ 
+ 	/* We have cyclic dependencies. Those calls are needed
+ 	 * to break a cycle. We cannot fall into the gaps because
+ 	 * we have a flag
+ 	 */
+-	disable_work_sync(&dev->bh_work);
++	cancel_work_sync(&dev->bh_work);
+ 	timer_delete_sync(&dev->delay);
+ 	cancel_work_sync(&dev->kevent);
+ 
+-- 
+2.32.0
+
 
