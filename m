@@ -1,129 +1,108 @@
-Return-Path: <linux-kernel+bounces-721190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68AB2AFC5EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:40:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D76D4AFC5F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A6863A824D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:39:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A60417D345
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D58F2BE03D;
-	Tue,  8 Jul 2025 08:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41092BE057;
+	Tue,  8 Jul 2025 08:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RbAJxTN8"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dB7jWleD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AE22BD016
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 08:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B5A286D7D;
+	Tue,  8 Jul 2025 08:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751964009; cv=none; b=a2Dk8zoe+gqVoyfM1SdUWeu089rU6WGQ6xVqFbi3zD2AHuCMr2cXB4/ZKBb9Yh2ribyQ0J2zueBZWUSVJq5ujJP2jEmd12Ru1991OnulPQaixMTbHzkU7kz8rqi7681H7e0nKzU7fKzrfRp3mjWvw/GgzFGfSRmAwkh+D2/agr4=
+	t=1751964040; cv=none; b=YZ4uPLUDmIOkcqENNV6dV8xJoHMRL77T6iphvhOYWGdJmOiVLMJXzJ+YbLcG+3+9UXs0V4cd49fQk0RDGkmAS6CIczvRP10Y2FLIg5VOjQNS/5dO262JC4yJeRp4edG91YInAfKlALxhL/0xzV961+5B5XOTBc6ZUBzxRQjFZIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751964009; c=relaxed/simple;
-	bh=oaSnugCEdeQcBT4v6FEIbhEgdiJTD1Msrq8MfPMc5iU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=mmTIOHu2+c46EGFq9ivQw2xbUyk8XGHf2R5XsowFivP6eR8H/ftUZiymxPYuarvtl5TkS87wriZRY/VC3Pi5AOkI8K//n6Ivvgs0w5XPHUUXcfmbwg1AU6DWG4t7HIvv+phMj3upJqXtbVAf9QyzDA8i2N4TDL9fuKlYT89s2ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RbAJxTN8; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-716ee8947cdso29784127b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 01:40:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751964007; x=1752568807; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gl0QAD/tbVzDvZuawsafKO1HsSUYi+swaKefHPvsCQM=;
-        b=RbAJxTN8gBlzBf1fz+cmn1hLmFTtiOf2kz/KgisDZ8Dp1yDyRLXialPr2w/U/HR0hH
-         aA58jewsDljlwBRVz6L3EjzqoWhQy83SGtesCBgbKoRBCRWIgcHoDbJyxmtjJyuk9b1k
-         rTYsdxet+roIIDIwxE8tbZ4Y5FlnU3HWF1Q650WARoR0sNceu6G2WYz9ah3ZNneSK266
-         fLrMVaKUO+0fNn/4X6HKpVhCbprfv0TVzgax2dE8JT8HgqmTzRPyGeVSQ5tTaSghxRVw
-         ljfx1KkhEPAvMuIeYrWlPKLYc9omaE59N2rRQOIQoCTHzBHcHp/Q5ah+YZJUf8HRB0Jr
-         /wJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751964007; x=1752568807;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gl0QAD/tbVzDvZuawsafKO1HsSUYi+swaKefHPvsCQM=;
-        b=t6FxNdATGPsNuYWqdtQOhVyNpXqgJRi8qA1OnS18B7dujXS4UPw0E3/oHUacyibj+a
-         ZHtkrUb6kd7x36vXeIqW8uQlzXYLHMmBCTo5V7PfPYYkYlJ9umn96BJ3aqZbPxJMhxax
-         XSW3drLjybexkOS9pXYwRvPodMsN7VfLYoaoEUg3W8GWJywXgokWri+l5VEZV00iwlDA
-         51yFl2A9vzdcIqKbDkdsTuiYWUUdyUoKDwR2F6xQrPE04jA8v5ud1fED9MQd1wob4ImO
-         SGLlO4c6ebL79FyaM6X/TyqKYirBRnf60vAMNkKpKY+yEGu5aZqNrrGtxDXq5tyAVmE5
-         d1hg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoxofiOZFmyMEycnJ5WiyRPlNtDezjWwbaPoNONSaFfbVnFyzq7WcZ8/Lnpx9Zg6oxGtVqy+GPfmnGW3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkRaaZz8peQG6VkKMn1hr1Fwcvj4rKg+8HTQWIDDe4osjlBr97
-	+TJL9vJN8SVkXZEbSd3O+4xRHfpTxW6p/3ct1VZNjWgWNbaMS9J23WJHHvu9AEnoa0W5plvNdzb
-	ROgfiMeDTtBciFX8xDbGK8jxd3pSIKRk=
-X-Gm-Gg: ASbGncvc5A1nWbnbAchbqFxx/J8NA3nCrb1d7jcQfA9dO5xI2cCvNVXNQ7z3UPul2gW
-	2F/dKTvJrHEiVSXWPePhsqjWA2XL99Wq8V+7dLJBiNgdZv0UTnuQcsv2wuUWwXxKEinCWi8d0MR
-	IqXJox9mSNV99tFS3LQz5k4+SK/8nY91ez4RC5ialc6W4nDAC73/Waz1l9wDuPQXjNaMhnfGm3U
-	f8k
-X-Google-Smtp-Source: AGHT+IFVSqFV+JHejEaMrQ/AcobiDs3n3dnlQorVuoAZYAXAjM1srOc9PMjjID6k+C5uO2bRlqNjtZJkfHvqbDsFdLk=
-X-Received: by 2002:a05:690c:60c1:b0:70f:83ef:ddff with SMTP id
- 00721157ae682-71668d47390mr217482997b3.30.1751964007285; Tue, 08 Jul 2025
- 01:40:07 -0700 (PDT)
+	s=arc-20240116; t=1751964040; c=relaxed/simple;
+	bh=isJPiXKLK8ij/L1W0olww0VEgqaDb+I2fExhbAsSBig=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=iBk+hhaXKZ/Oq4xR0xX2FgxSTtXgyJszOd7RMP4aW7hbZUy3Xv/Krw2JhfnESQvX4NdQ00SQIFWQ0RGw69NoMu+iv3DBwSQbHU6xc+d/SuHeB9DqvP3YVUn8PypFckwY/8mYt1fpURTYn25qfPA3jNuwl2nFqiV5Yztg/u+hPjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dB7jWleD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BE37C4CEED;
+	Tue,  8 Jul 2025 08:40:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751964039;
+	bh=isJPiXKLK8ij/L1W0olww0VEgqaDb+I2fExhbAsSBig=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=dB7jWleDGo5v9F5/q/5qSI7Bic5FAWJWnNU6szBin/XwqNhE4Lxicq5zZO9KStgvV
+	 xJzpzG0kcvIPlfLFr7m4iUECFV16aHBUQIjpF5j/K1mFkKXCk7op/huAkVV3OjRe2d
+	 2LEJpyNIQrLB0zsq7yfuVh9YZDJ+PltHCM4oyKB2Ktv72PVn7eEFwC5M34bszjPmf1
+	 zrUzRniQRIdICX5HurttGX/+PD2KUjRQBkyiGOm6x5ItglS+2aJk7hSBS+KW9miCBv
+	 YrWfGOBXQq8RS48nmjaRqh6/yX1iXXG6miJoE+lbjz/uw+unnMgVtQ8m/idVJBq5ul
+	 JyLI5hr44CY9g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
-Date: Tue, 8 Jul 2025 01:39:55 -0700
-X-Gm-Features: Ac12FXzBCT5EBKeLYS0vb_uaT7F7BBoWv3Jo27oObiDeVLb3zges4wxI2j_RbzA
-Message-ID: <CAF3JpA5UK1iRiHTbPZNej5izQZNVwi3phN5f0pzCzadqn7K0+Q@mail.gmail.com>
-Subject: [syzbot] [ntfs3?] WARNING in ni_rename
-To: syzbot+b0373017f711c06ada64@syzkaller.appspotmail.com
-Cc: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: multipart/mixed; boundary="000000000000507a1d063966e8b7"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 08 Jul 2025 10:40:34 +0200
+Message-Id: <DB6JF2JLZEO8.4HZPDC26F3G8@kernel.org>
+Subject: Re: [PATCH 1/2] rust: Add dma_set_mask() and
+ dma_set_coherent_mask() bindings
+Cc: <rust-for-linux@vger.kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "John Hubbard" <jhubbard@nvidia.com>, "Alexandre
+ Courbot" <acourbot@nvidia.com>, <linux-pci@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Alistair Popple" <apopple@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250708060451.398323-1-apopple@nvidia.com>
+In-Reply-To: <20250708060451.398323-1-apopple@nvidia.com>
 
---000000000000507a1d063966e8b7
-Content-Type: text/plain; charset="UTF-8"
+On Tue Jul 8, 2025 at 8:04 AM CEST, Alistair Popple wrote:
+> Add bindings to allow setting the DMA masks for both a generic device
+> and a PCI device.
 
-#syz test
+Nice coincidence, I was about to get back to this. I already implemented th=
+is in
+a previous patch [1], but didn't apply it yet.
 
---000000000000507a1d063966e8b7
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-ntfs3-reject-zero-length-BITMAP-when-index-blocks-ar.patch"
-Content-Disposition: attachment; 
-	filename="0001-ntfs3-reject-zero-length-BITMAP-when-index-blocks-ar.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_mcu9wgkq0>
-X-Attachment-Id: f_mcu9wgkq0
+I think the approach below is thought a bit too simple:
 
-RnJvbSBhN2U5NGFkNDk1OWU0NmFjZjM4NjFmYTBjNzI1YTJkMGMzMzczZWJiIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBNb29uIEhlZSBMZWUgPG1vb25oZWUubGVlLmNhQGdtYWlsLmNv
-bT4KRGF0ZTogVHVlLCA4IEp1bCAyMDI1IDAxOjE3OjEzIC0wNzAwClN1YmplY3Q6IFtQQVRDSF0g
-bnRmczM6IHJlamVjdCB6ZXJvLWxlbmd0aCAkQklUTUFQIHdoZW4gaW5kZXggYmxvY2tzIGFyZQog
-YWxsb2NhdGVkCgpBIG5vbi1lbXB0eSBpbmRleCBhbGxvY2F0aW9uIHJlcXVpcmVzIGF0IGxlYXN0
-IG9uZSBiaXQgaW4gJEJJVE1BUAp0byB0cmFjayB1c2FnZS4gUmVqZWN0IG1hbGZvcm1lZCBvbi1k
-aXNrIHN0cnVjdHVyZXMgd2l0aCB6ZXJvLWxlbmd0aApiaXRtYXBzIGFuZCBhbGxvY2F0ZWQgaW5k
-ZXggYmxvY2tzLgoKU2lnbmVkLW9mZi1ieTogTW9vbiBIZWUgTGVlIDxtb29uaGVlLmxlZS5jYUBn
-bWFpbC5jb20+Ci0tLQogZnMvbnRmczMvaW5kZXguYyB8IDEyICsrKysrKysrKysrKwogMSBmaWxl
-IGNoYW5nZWQsIDEyIGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9mcy9udGZzMy9pbmRleC5j
-IGIvZnMvbnRmczMvaW5kZXguYwppbmRleCAxYmYyYTY1OTNkZWMuLjE1ZjNhNzExZWEwYSAxMDA2
-NDQKLS0tIGEvZnMvbnRmczMvaW5kZXguYworKysgYi9mcy9udGZzMy9pbmRleC5jCkBAIC00Nzgs
-NiArNDc4LDcgQEAgc3RhdGljIGludCBpbmR4X2ZpbmRfZnJlZShzdHJ1Y3QgbnRmc19pbmRleCAq
-aW5keCwgc3RydWN0IG50ZnNfaW5vZGUgKm5pLAogCXN0cnVjdCBBVFRSX0xJU1RfRU5UUlkgKmxl
-ID0gTlVMTDsKIAljb25zdCBzdHJ1Y3QgSU5ERVhfTkFNRVMgKmluID0gJnNfaW5kZXhfbmFtZXNb
-aW5keC0+dHlwZV07CiAJaW50IGVycjsKKwl1NjQgYm1fc2l6ZTsKIAogCWIgPSBuaV9maW5kX2F0
-dHIobmksIE5VTEwsICZsZSwgQVRUUl9CSVRNQVAsIGluLT5uYW1lLCBpbi0+bmFtZV9sZW4sCiAJ
-CQkgTlVMTCwgTlVMTCk7CkBAIC00ODgsNiArNDg5LDE3IEBAIHN0YXRpYyBpbnQgaW5keF9maW5k
-X2ZyZWUoc3RydWN0IG50ZnNfaW5kZXggKmluZHgsIHN0cnVjdCBudGZzX2lub2RlICpuaSwKIAkq
-Yml0bWFwID0gYjsKIAkqYml0ID0gTUlOVVNfT05FX1Q7CiAKKwlibV9zaXplID0gYi0+bm9uX3Jl
-cyA/IGxlNjRfdG9fY3B1KGItPm5yZXMudmFsaWRfc2l6ZSkgOgorCQkJICAgICAgIGxlMzJfdG9f
-Y3B1KGItPnJlcy5kYXRhX3NpemUpOworCisJLyoKKwkgKiBBbGxvY2F0ZWQgaW5kZXggYmxvY2tz
-IHJlcXVpcmUgJEJJVE1BUCB0byBjb250YWluIGF0IGxlYXN0CisJICogb25lIGJpdCBmb3IgdXNh
-Z2UgdHJhY2tpbmcuIEEgemVyby1sZW5ndGggYml0bWFwIGluIHRoaXMKKwkgKiBjYXNlIGluZGlj
-YXRlcyBhIG1hbGZvcm1lZCBvbi1kaXNrIHN0cnVjdHVyZSBhbmQgY2Fubm90IGJlIHVzZWQuCisJ
-ICovCisJaWYgKHVubGlrZWx5KGJtX3NpemUgPT0gMCAmJiBpbmR4LT5hbGxvY19ydW4uY291bnQp
-KQorCQlyZXR1cm4gLUVJTlZBTDsKKwogCWlmICghYi0+bm9uX3JlcykgewogCQl1MzIgbmJpdHMg
-PSA4ICogbGUzMl90b19jcHUoYi0+cmVzLmRhdGFfc2l6ZSk7CiAJCXNpemVfdCBwb3MgPSBmaW5k
-X25leHRfemVyb19iaXRfbGUocmVzaWRlbnRfZGF0YShiKSwgbmJpdHMsIDApOwotLSAKMi40My4w
-Cgo=
---000000000000507a1d063966e8b7--
+  (1) We want the DMA mask methods to be implemented by a trait in dma.rs.
+      Subsequently, the trait should only be implemented by bus devices whe=
+re
+      the bus actually supports DMA. Allowing to set the DMA mask on any de=
+vice
+      doesn't make sense.
+
+  (2) We need to consider that with this we do no prevent
+      dma_set_coherent_mask() to concurrently with dma_alloc_coherent() (no=
+t
+      even if we'd add a new `Probe` device context).
+
+(2) is the main reason why I didn't follow up yet. So far I haven't found a=
+ nice
+    solution for a sound API that doesn't need unsafe.
+
+One thing I did consider was to have some kind of per device table (similar=
+ to
+the device ID table) for drivers to specify the DMA mask already at compile
+time. However, I'm pretty sure there are cases where the DMA mask has to de=
+rived
+dynamically from probe().
+
+I think I have to think a bit more about it.
+
+[1] https://lore.kernel.org/all/20250317185345.2608976-7-abdiel.janulgue@gm=
+ail.com/
 
