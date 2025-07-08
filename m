@@ -1,95 +1,102 @@
-Return-Path: <linux-kernel+bounces-721256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69A0AFC6B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:08:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9762BAFC6C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DAED188ECE2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:07:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7534918966DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FC52BEC31;
-	Tue,  8 Jul 2025 09:07:34 +0000 (UTC)
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72A32153ED
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 09:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D062BF3F8;
+	Tue,  8 Jul 2025 09:10:02 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (l-sdnproxy.icoremail.net [20.188.111.126])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341DB23BD09;
+	Tue,  8 Jul 2025 09:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=20.188.111.126
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751965653; cv=none; b=a5kmofduu6CjCbrWLM1TAJwhebFi3cCY13sqLW+mpE2pVZdb4WJZOi4gIPCEGX6ITvUTMCx9Z4IWIYCq0gblyJzijrmZwi9tv0YPtvH/odgTjIoqGGaQZlFL26UaPYZatz9iLTsp7YZACNK5hcskHF6AQQ9bJbZQ1Mph0lwaZhE=
+	t=1751965802; cv=none; b=F8cAP0F6AGjg6iHYmOrcOt8PvLgZbL0Y3vW6uQ/jhXF/hyr1D18qC1x+KyIE5tlFbu55QFTkHUz1u1jzmYfitmh87IO6ZAPwBKYMri9/KXiuAp2ALkwZzASiG9hGkOECus15y7OpaimzonYgIsOjqaUtkripoSjLif0dIbaf/cM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751965653; c=relaxed/simple;
-	bh=EnzK60yhKAfZWWzHVu38i8WNczrl81z1SJICTHds6Po=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=adzdV2s5AyEAW8dGzL7r2x2g4psbyYCXd7IjGEgZYEzEpWEz6k7ODbMTRB6qTqc0vh3a8wO5twevvHIGiGmoNjzF5/L4Sx6wIMpnkaR0T8NKQODKPwohsQqVrgoLJscURCOuah+STxwqA5S76+NAmrYyI8w8OU4E3bBtnkAfo9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B0430432D6;
-	Tue,  8 Jul 2025 09:07:17 +0000 (UTC)
-Message-ID: <44501b6d-12de-49dc-8d81-443500031d4a@ghiti.fr>
-Date: Tue, 8 Jul 2025 11:07:16 +0200
+	s=arc-20240116; t=1751965802; c=relaxed/simple;
+	bh=x8I+A7hb/9qw+eXlNU73nIGg8C5waMAV+rHPrmEgpko=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=UO+hUtFXgOfeapw0lpbinpNT63Va4WUndn992q3Ffai4/UHIt/a10chSfibI/0VVG1ppHlxT654FxipXcYD0OyJyPNCFxT6iFSsFH6dnj+QdGl6Y41i0ixVRFknWv+/TiVCDL82PqPpeJ5mbKvIdRT94EhanpvnhUwiHv6Ioojg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=20.188.111.126
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
+ ajax-webmail-app2 (Coremail) ; Tue, 8 Jul 2025 17:09:46 +0800 (GMT+08:00)
+Date: Tue, 8 Jul 2025 17:09:46 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
+To: "Bo Gan" <ganboing@gmail.com>, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Subject: Re: Re: [PATCH v3 2/2] clock: eswin: Add eic7700 clock driver
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
+ 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
+ mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
+In-Reply-To: <0f3aff5b-ff54-48a2-ae95-b344d311c3a1@gmail.com>
+References: <20250624103212.287-1-dongxuyang@eswincomputing.com>
+ <20250624103314.400-1-dongxuyang@eswincomputing.com>
+ <0f3aff5b-ff54-48a2-ae95-b344d311c3a1@gmail.com>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: mmap(): use unsigned offset type in riscv_sys_mmap
-To: liu.xuemei1@zte.com.cn, paul.walmsley@sifive.com
-Cc: palmer@dabbelt.com, aou@eecs.berkeley.edu,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250707193411886Kc-TWknP0PER2_sEg-byb@zte.com.cn>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250707193411886Kc-TWknP0PER2_sEg-byb@zte.com.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: 0
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefgedvkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpedthfelfeejgeehveegleejleelgfevhfekieffkeeujeetfedvvefhledvgeegieenucfkphepudekhedrvddufedrudehgedrudegfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedukeehrddvudefrdduheegrddugeefpdhhvghloheplgdutddrudegrddtrdduudgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhurdiguhgvmhgvihduseiithgvrdgtohhmrdgtnhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrn
- hgvlhdrohhrgh
-X-GND-Sasl: alex@ghiti.fr
+Message-ID: <7a325b0b.2de1.197e94c605b.Coremail.dongxuyang@eswincomputing.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:TQJkCgA31pRa4GxorO6qAA--.18310W
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAQERAmhr9m4gF
+	AAAs8
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-Hi Jessica,
-
-On 7/7/25 13:34, liu.xuemei1@zte.com.cn wrote:
-> From: Jessica Liu <liu.xuemei1@zte.com.cn>
->
-> The variable type of offset should be consistent with the relevant
-> interfaces of mmap which described in commit 295f10061af0 ("syscalls:
-> mmap(): use unsigned offset type consistently). Otherwise, a user input
-> with the top bit set would result in a negative page offset rather than a
-> large one.
->
-> Signed-off-by: Jessica Liu <liu.xuemei1@zte.com.cn>
-> ---
->   arch/riscv/kernel/sys_riscv.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/kernel/sys_riscv.c b/arch/riscv/kernel/sys_riscv.c
-> index d77afe05578f..795b2e815ac9 100644
-> --- a/arch/riscv/kernel/sys_riscv.c
-> +++ b/arch/riscv/kernel/sys_riscv.c
-> @@ -10,7 +10,7 @@
->
->   static long riscv_sys_mmap(unsigned long addr, unsigned long len,
->   			   unsigned long prot, unsigned long flags,
-> -			   unsigned long fd, off_t offset,
-> +			   unsigned long fd, unsigned long offset,
->   			   unsigned long page_shift_offset)
->   {
->   	if (unlikely(offset & (~PAGE_MASK >> page_shift_offset)))
-
-
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Thanks,
-
-Alex
-
+SGkgQm8sCgpUaGFuayB5b3UgZm9yIHlvdXIgc3VnZ2VzdGlvbiwgaXQgaW1wcm92ZXMgb3VyIGRy
+aXZlciBkZXZlbG9wbWVudCBlZmZvcnRzLgpQZXIgeW91ciByZWNvbW1lbmRhdGlvbnMsIHdlIHdp
+bGwgb3B0aW1pemUgdGhlIGRyaXZlciBwcm9ncmFtLgoKPiBPbiA2LzI0LzI1IDAzOjMzLCBkb25n
+eHV5YW5nQGVzd2luY29tcHV0aW5nLmNvbSB3cm90ZToKPiBUaGlzIGlzIHRvdGFsbHkgd3Jvbmcg
+SSB0aGluay4gV2h5IGRvZXMgdGhlIGNsb2NrIGRyaXZlciBoYXZlIHRvIGNhcmUgYWJvdXQKPiBD
+UFUgdm9sdGFnZT8gVGhpcyBmdW5jdGlvbmFsaXR5IGJlbG9uZ3MgdG8gY3B1ZnJlcS4gWW91IGNh
+biB0YWtlIEpINzExMCBhcwo+IHJlZmVyZW5jZSBhbmQgc2VlIGhvdyBpdCdzIGRvbmU6IGh0dHBz
+Oi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDIzMDYwNjEwNTY1Ni4xMjQzNTUtNC1tYXNvbi5odW9A
+c3RhcmZpdmV0ZWNoLmNvbS8KPiBMb29raW5nIGF0IGVzd2luIHZlbmRvciB1LWJvb3QsIGl0IHNl
+ZW1zIHlvdSBoYXZlIHNvbWUgU29DIHRoYXQgY2FuIG9wZXJhdGUKPiBhdCAxLjZHaHogd2l0aG91
+dCBidW1waW5nIHRoZSB2b2x0YWdlLiBXaHkgbm90IGRvIGl0IHZpYSBvcGVyYXRpbmctcG9pbnRz
+LXYyLAo+IGxpa2UgdGhlIG90aGVyIFNvQ3M/IEl0IGNhbiB0aGVuIGJlIG92ZXJyaWRkZW4gYnkg
+Ym9hcmQgZGV2aWNlLXRyZWUgYW5kIHUtYm9vdAo+IEFsc28gdGhlIGxvZ2ljIG9mIHN3aXRjaGlu
+ZyBjbG9jayBiZWZvcmUgY2hhbmdpbmcgUExMIHNob3VsZCBiZSBkb25lIHVzaW5nCj4gbm90aWZp
+ZXI6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3IvMjAyNDA4MjYwODA0MzAuMTc5Nzg4LTIteGlu
+Z3l1Lnd1QHN0YXJmaXZldGVjaC5jb20KPiBSZW1vdmUgdW5kb2N1bWVudGVkIHBhcmFtZXRlcnMg
+c3VjaCBhcyAiY3B1X25vX2Jvb3N0XzFfNmdoeiIgYW5kCj4gImNwdS1kZWZhdWx0LWZyZXF1ZW5j
+eSIuCgpXaGVuIGhpZ2hlciBjcHUgZnJlcXVlbmN5IGlzIGFwcGxpZWQsIHRoZSBoaWdoZXIgdm9s
+dGFnZSBtdXN0IGJlwqAKY29uZmlndXJlZCBhY2NvcmRpbmdseS4gU28sIGZyb20gbXkgcGVyc3Bl
+Y3RpdmUsIGl0J3MgYmV0dGVyIHRvCmltcGxlbWVudCB0aGUgY2xrLCByZWd1bGF0b3IgYW5kIGNw
+dSBmcmVxdWVuY3kgc2VwYXJhdGVseS4KY2xrLmMgYW5kIGNsay1laWM3NzAwLmMgYXJlIHJlc3Bv
+bnNpYmxlIGZvciBzZXR0aW5nIGNsayBvbmx5LgpyZWd1bGF0b3ItZWljNzcwMC5jIGlzIGZvciB2
+b2x0YWdlIGNvbmZpZ3VyYXRpb24uCmNwdWZyZXEtZWljNzcwMC5jIGlzIGZvciBjcHUgZnJlcXVl
+bmN5IGNvbmZpZ3VyYXRpb24sIGFuZCBpdCB3aWxsIGNhbGwKdGhlIEFQSXMgb2YgY2xrIGFuZCBy
+ZWd1bGF0b3IuCgpJcyB0aGlzIHRoZSByaWdodCBhcHByb2FjaD8KCj4gT3ZlcmFsbCBJIHRoaW5r
+IHlvdSBiZXR0ZXIgZG8gc29tZSByZWFsIGNsZWFudXAgYW5kIHJlZmFjdG9yIG9mIHRoaXMgcGF0
+Y2gKPiBiZWZvcmUgc2VuZGluZyBpdCBvdXQgYWdhaW4uIFRoZSBkcml2ZXIgaXMgcXVpdGUgbG9u
+ZywgYW5kIEkgc3VnZ2VzdCB5b3Ugc2hvdWxkCj4gY29uc2lkZXIgb3B0aW1pemluZy9jb25kZW5z
+aW5nIHRoZSBsb2dpYy4gSSBndWVzcyB5b3UgcHJvYmFibHkgY2FycmllZCBvdmVyIHRoZQo+IHNh
+bWUgY29kZSBhbmQgaGFja3MgeW91IG1hZGUgZm9yIHRoZSB2ZW5kb3IgdHJlZSAoZXN3aW5jb21w
+dXRpbmcvbGludXgtc3RhYmxlKQo+IFRoZXJlJ3Mgbm8gd2F5IHRoZXkgY2FuIGJlIGFjY2VwdGVk
+IGJ5IHVwc3RyZWFtLiBUYWtlIGEgbG9vayBhdCBvdGhlciBjbGsgdHJlZQo+IGltcGxlbWVudGF0
+aW9ucyBhbmQgc3BlbmQgc29tZSByZWFsIGVmZm9ydCBmaXhpbmcgdGhlIGNvZGUuIERvbid0IGxl
+dCB0aGUKPiByZXZpZXdlcnMgZ3JvdyBpbXBhdGllbnQgYnkgb25seSBjaGFuZ2luZyBzb21ldGhp
+bmcgc3VwZXJmaWNpYWxseS4KCldlJ2xsIGltcHJvdmUgdGhlIHF1YWxpdHkgb2Ygb3VyIHJlc3Bv
+bnNlcy4KCkJlc3QgcmVnYXJkcywKWHV5YW5nCg==
 
