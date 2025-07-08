@@ -1,152 +1,98 @@
-Return-Path: <linux-kernel+bounces-721223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC9CAFC651
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:55:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FFB5AFC64D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:55:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDB134250D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:55:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A07142309B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700282BF3F9;
-	Tue,  8 Jul 2025 08:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E792BEC57;
+	Tue,  8 Jul 2025 08:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bs06Ann6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UXo5qQ0h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B00E1A5BB7;
-	Tue,  8 Jul 2025 08:55:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B0C1A5BB7;
+	Tue,  8 Jul 2025 08:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751964926; cv=none; b=tXzscDR2JX8JwSAp10HtCRgsk9pwd33G05sTFrPhLs1JWj0cDouHWEImvcTrUkdVU+gsZ97CCT+irh75xeLFMscBadk6AjlvkIhN750OCMpvcWqnGnKtaDcJs4aa8Me/iT+qiRXuHzW/TM9/2Pmkv7c2I1d5GItM2BGujGgk7Zk=
+	t=1751964923; cv=none; b=YdRvQTKgB4iR/VQpOYVm2LClUr0nVo4WfGIDkdoVrO01RfceHfkBnHE9WVreieNgaxPqZ+opr1hrc23wufGZ83q5+p88AVmUadutnmJy1wFovi8oRr8kyxBc5X6Xg1oTyZrU7kf+hWmqz60tkQouYYnOiuHxFfkg+Fig/9vM71s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751964926; c=relaxed/simple;
-	bh=kpstOjw4lLF9eP2jFzFpACQzhk54uwH0eGlIjnY6txU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RSqeC8pp65sK2lZrMUfyEKWK6db3p2KIGTeIusVXN/97NDwhDXqhmyYPJuzlIIKT4vApHu/sJ989l4VVZPibljC7gM6KqjByVk9YeQs/jrThzDgjvQE+ufuNe0NrLd0Y9EXopO/pqGafxP7vz9USNek3L1FD7Kre09BcYo+PgvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bs06Ann6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30A20C4CEF8;
-	Tue,  8 Jul 2025 08:55:26 +0000 (UTC)
+	s=arc-20240116; t=1751964923; c=relaxed/simple;
+	bh=iHOMGm/QJSF1F7OpYnhZk9VaTNli6N2XPKdp7QttwHk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=m0Bu4jX6FzTQGhI+nBvE8L4cQTK+EVB/QBPcV47ksADbrLkGo6VHoGDXhwAohzrHFsXER4vcM+24oaQoEbFnAYYY+k+wsuAAUSw9+3rputdI6d8a04XXE7eRNLVrqm0QQzcywzsGEmeHmMP/G/uhYrACDecIKY7KGhG3imQnn2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UXo5qQ0h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4278AC4CEED;
+	Tue,  8 Jul 2025 08:55:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751964926;
-	bh=kpstOjw4lLF9eP2jFzFpACQzhk54uwH0eGlIjnY6txU=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=Bs06Ann6YziWgddfpvw/M9gC3KlX127POufp+uJpfiasKEYtMoUHWfuj0RYCH1ger
-	 XYNiGAd6ndxVo0yNppVjsM3dwAJsJ4F1wYEzYCG75X11ynyFpM/P9KES8funbIjNwY
-	 nKUPw5xR3Q+Vo90JEk6M9KmVIGyZkm46/+iQOaWnMXbZ9qLv7SQMoXQo2ZBWlZUB60
-	 B2KBA82o/0JqdSSjzasdUI41EMFDMzzp+41sl3i5IXUocdQS9S1uPORoZYD7hyfrd2
-	 st/BVBgi+/HfF9hkEc814aDmhbAFCqfn3K9v+XhoLDuWeXS2jZHcpIWmwDZWlnDvs2
-	 nnaPCYzZWU4nQ==
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-879502274cfso6807639f.0;
-        Tue, 08 Jul 2025 01:55:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUxMh3zQlCg3AcOf3hNM1ZaDBNiPeXG/5wETTdhqjJcJHUKRkdmN4CA4hH/Gc6bJvgVfbVkw/SUnIAz@vger.kernel.org, AJvYcCVfrwCJcxM81syVWYSJcbuk+SKTz6bAczW0+ataKgh5MxcQdE/uF3yTnVqNPbTQb/MaOMks/4z6Oa1NzFBR@vger.kernel.org, AJvYcCVuNqkTw8UL65tsEEFhYKifcn5BTHfzi1O5fAjc8n24YylvtYE0Tczehlr7G6bjzG68sYpLzVS1JMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzakw+4V0HmtBtpN2FCzmGIvhYOwlc7RnhVQM4gJdrNeUl/NKX4
-	5aMO3BpJcS3DQEDPbwU4zu6XI7EfFwqICo4S7j81wr1keEa2RwvdnxBHSg5G0+Hx7/ytUeRXuSP
-	pJqBixF5Hu1qhOffVmJ7Kfz+K14Q8OYo=
-X-Google-Smtp-Source: AGHT+IF8+rXljY0T3bGeUJ9XXKLa71g9blAF0Fp8stGo0h3DgAP8zTEF2uLbmLy1XQvXT3W/Bs/Wr47ANAVaNz9utYc=
-X-Received: by 2002:a05:6602:148c:b0:864:a2e4:5fff with SMTP id
- ca18e2360f4ac-876e158bb24mr1892894139f.4.1751964925465; Tue, 08 Jul 2025
- 01:55:25 -0700 (PDT)
+	s=k20201202; t=1751964922;
+	bh=iHOMGm/QJSF1F7OpYnhZk9VaTNli6N2XPKdp7QttwHk=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=UXo5qQ0hmiWbVmlCGWV+MA2xroo8/O9bPvgaZn4RyfgdmOeBAcKUo9WDewY6QmnH7
+	 kZ+KnSJe8VCH6Y7C5t2w3wICMu1pz4tfaY4fzwFI8nOFtzUOd2+XFFk9Frhi4YWQDN
+	 yVX589pNLvwTpqTjbtJWXIINSGa3dsxxrsxaQ7maX/AwfEnRniUxE3j1pPQiDNQvLw
+	 Rz/pTxubNbDU/RG3alYtyldw1yZv9djBG2NuTCYWq6H5qOH+ChOHdpUt29v9rs+Fih
+	 cGPI5AVqpTUauwbMKYSR2VOab8gmVc6zE65EXcgIrHTDSeAYIkjLPpkaaB1WfWfxcb
+	 sPgfhhOfO4J+g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250627152918.2606728-1-wens@kernel.org> <20250627152918.2606728-2-wens@kernel.org>
- <20250708-capable-caiman-of-feminism-9dfef2@krzk-bin>
-In-Reply-To: <20250708-capable-caiman-of-feminism-9dfef2@krzk-bin>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Tue, 8 Jul 2025 16:55:03 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66SvNmWGYSfVdDfBdRjSz0mQ=f0HHFnQ9eSXSe7fVMEVg@mail.gmail.com>
-X-Gm-Features: Ac12FXzLrfMehixQaVjm6pOEjtJAPHoo0j9_l4de3O9Fupbjy73Y0-TvdN1ohlY
-Message-ID: <CAGb2v66SvNmWGYSfVdDfBdRjSz0mQ=f0HHFnQ9eSXSe7fVMEVg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] dt-bindings: power: Add A523 PPU and PCK600 power controllers
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andre Przywara <andre.przywara@arm.com>, linux-sunxi@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 08 Jul 2025 10:55:16 +0200
+Message-Id: <DB6JQBNDFOFC.2XNUIMTFVE2XT@kernel.org>
+Subject: Re: [PATCH v15 2/7] rust: str: add radix prefixed integer parsing
+ functions
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Andreas Hindborg" <a.hindborg@kernel.org>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Masahiro Yamada" <masahiroy@kernel.org>, "Nathan
+ Chancellor" <nathan@kernel.org>, "Luis Chamberlain" <mcgrof@kernel.org>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Nicolas Schier"
+ <nicolas.schier@linux.dev>
+Cc: "Trevor Gross" <tmgross@umich.edu>, "Adam Bratschi-Kaye"
+ <ark.email@gmail.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-kbuild@vger.kernel.org>, "Petr
+ Pavlu" <petr.pavlu@suse.com>, "Sami Tolvanen" <samitolvanen@google.com>,
+ "Daniel Gomez" <da.gomez@samsung.com>, "Simona Vetter"
+ <simona.vetter@ffwll.ch>, "Greg KH" <gregkh@linuxfoundation.org>, "Fiona
+ Behrens" <me@kloenk.dev>, "Daniel Almeida" <daniel.almeida@collabora.com>,
+ <linux-modules@vger.kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250707-module-params-v3-v15-0-c1f4269a57b9@kernel.org>
+ <20250707-module-params-v3-v15-2-c1f4269a57b9@kernel.org>
+In-Reply-To: <20250707-module-params-v3-v15-2-c1f4269a57b9@kernel.org>
 
-On Tue, Jul 8, 2025 at 4:47=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
+On Mon Jul 7, 2025 at 3:29 PM CEST, Andreas Hindborg wrote:
+> Add the trait `ParseInt` for parsing string representations of integers
+> where the string representations are optionally prefixed by a radix
+> specifier. Implement the trait for the primitive integer types.
 >
-> On Fri, Jun 27, 2025 at 11:29:15PM +0800, Chen-Yu Tsai wrote:
-> > From: Chen-Yu Tsai <wens@csie.org>
-> >
-> > The A523 PPU is likely the same kind of hardware seen on previous SoCs.
-> >
-> > The A523 PCK600, as the name suggests, is likely a customized version
-> > of ARM's PCK-600 power controller. Comparing the BSP driver against
-> > ARM's PPU datasheet shows that the basic registers line up, but
-> > Allwinner's hardware has some additional delay controls in the reserved
-> > register range. As such it is likely not fully compatible with the
-> > standard ARM version.
-> >
-> > Document A523 PPU and PCK600 compatibles.
-> >
-> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> > ---
-> >  .../bindings/power/allwinner,sun20i-d1-ppu.yaml   |  2 ++
-> >  .../power/allwinner,sun55i-a523-pck600.h          | 15 +++++++++++++++
-> >  .../dt-bindings/power/allwinner,sun55i-a523-ppu.h | 12 ++++++++++++
-> >  3 files changed, 29 insertions(+)
-> >  create mode 100644 include/dt-bindings/power/allwinner,sun55i-a523-pck=
-600.h
-> >  create mode 100644 include/dt-bindings/power/allwinner,sun55i-a523-ppu=
-.h
-> >
-> > diff --git a/Documentation/devicetree/bindings/power/allwinner,sun20i-d=
-1-ppu.yaml b/Documentation/devicetree/bindings/power/allwinner,sun20i-d1-pp=
-u.yaml
-> > index f578be6a3bc8..b9f550994512 100644
-> > --- a/Documentation/devicetree/bindings/power/allwinner,sun20i-d1-ppu.y=
-aml
-> > +++ b/Documentation/devicetree/bindings/power/allwinner,sun20i-d1-ppu.y=
-aml
-> > @@ -18,6 +18,8 @@ properties:
-> >      enum:
-> >        - allwinner,sun20i-d1-ppu
-> >        - allwinner,sun8i-v853-ppu
-> > +      - allwinner,sun55i-a523-ppu
-> > +      - allwinner,sun55i-a523-pck-600
->
-> Don't add items at the end, but placed in alphabetical order. Could be
-> natural sort if you insist, but binding does not use it.
+> Tested-by: Daniel Gomez <da.gomez@samsung.com>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Suggested-by: Benno Lossin <benno.lossin@proton.me>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-In our other bindings [1][2] we have them sorted by family (sunXYi)
-then by SoC name. I can move sun20i-d1-ppu after sun8i-v853-ppu to get
-that ordering. Obviously "-pck-600" would come before "-ppu".
+Reviewed-by: Benno Lossin <lossin@kernel.org>
 
-Would that work for you?
+---
+Cheers,
+Benno
 
-[1] Documentation/devicetree/bindings/sram/allwinner,sun4i-a10-system-contr=
-ol.yaml
-[2] Documentation/devicetree/bindings/mmc/allwinner,sun4i-a10-mmc.yaml
-
-(There are some out of order entries regardless.)
-
-> >    reg:
-> >      maxItems: 1
-> > diff --git a/include/dt-bindings/power/allwinner,sun55i-a523-pck600.h b=
-/include/dt-bindings/power/allwinner,sun55i-a523-pck600.h
-> > new file mode 100644
-> > index 000000000000..6b3d8ea7bb69
-> > --- /dev/null
-> > +++ b/include/dt-bindings/power/allwinner,sun55i-a523-pck600.h
->
-> Filename matching compatible (which ever one is correct).
-
-Ack. Will change to "allwinner,sun55i-a523-pck-600.h".
-
-Thanks
-ChenYu
+> ---
+>  rust/kernel/str.rs           |   2 +
+>  rust/kernel/str/parse_int.rs | 148 +++++++++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 150 insertions(+)
 
