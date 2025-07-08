@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-721125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DE04AFC509
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:07:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C889AFC50E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 488483B395E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:06:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09ABF4A1347
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB32329CB5A;
-	Tue,  8 Jul 2025 08:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3332819E992;
+	Tue,  8 Jul 2025 08:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ojphUlrm"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rUnGXuTp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F23B19E992;
-	Tue,  8 Jul 2025 08:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7830F2BCF4D;
+	Tue,  8 Jul 2025 08:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751962033; cv=none; b=Z75fTIZ2gqr+wr/8SWa/BoZpXGnyHMlKkm2vQrWteXdz5F1yoOEG4l1sfvgfEnBbwGu4pyWaOZ+HBmBNabZpUfZOHXmFSGrM5c91U0PC1H09X1fBaprhaWa7p7DIpwqzlAdR3zvafZT/l0OMvh8ChVKW4ZYjFbnUHTu6WdDYRxw=
+	t=1751962035; cv=none; b=MVaan2i52fF18XRVvpKvVk7q0CBw3OjPLRPLPkEumC/FfpMEKEN2LniPT+b+t7cH2MWzwRWF/arwiDrXrKxGXtdwrzpDfBIEED8L9H5BXbI+aVNuFrcML99OCQrHuf6BR7M0uWIYt3KGkLMLFXoo3kqHhay/UBLqrPB204RlXIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751962033; c=relaxed/simple;
-	bh=Y8Gvvfv+exKnqgTnsgCD3HEpXy6Nv9JBt5z6zPldElY=;
+	s=arc-20240116; t=1751962035; c=relaxed/simple;
+	bh=HrHtM7sJE2xFVo6cAcEdVsvAypCb0Ki8ifZxZVG9Dz8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fxCAaAh78pjcXhZhqxVev97c6Va6k7u0FdWmLNtcPm39mP4fgdyD17gu+Ng6enZ0M8bQ6nGZAKJnwngST6RXN9WuggZhXwJWOSO9zEnbcQvJxJfTzsXYEPJiEUK+9mSS6Ve/ZjYb5EbXX7baAuk6HblDIoGj26+8LXLdeIKFjM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ojphUlrm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 114FAC4CEF0;
-	Tue,  8 Jul 2025 08:07:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751962032;
-	bh=Y8Gvvfv+exKnqgTnsgCD3HEpXy6Nv9JBt5z6zPldElY=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=nMDG1GR131PrCNqrKxXwWD1OY5RTQ995bJD2UffVUmNOrWHT1gpVBcorG+CTfXV6r0EX/v11efg2/Jc3lUMcI7EGrKQFoxGA/EfnjHH36rWnD49gOoWTvaKCt/FyLySIreReRH23igMKCXKup4+qZwZ65pjLq9Xcni9kzS0qDC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rUnGXuTp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79B95C4CEFD;
+	Tue,  8 Jul 2025 08:07:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751962034;
+	bh=HrHtM7sJE2xFVo6cAcEdVsvAypCb0Ki8ifZxZVG9Dz8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ojphUlrmCYL+ylHhwJQLmTpIAWlu/m/SvoBx5cJ0himdrhJoKefEMSson6tINBWv4
-	 NmbgfunAqDCQ1eBnTQfFKZPvHHSSDGHORVyxcP4dm0rF8zEwIGFpH8kZIbTpRisPnv
-	 h7xYFEy6xXc1nyQFYfEH12rKWmxODiklFmk/GnKZ4HVaj3M+YHuEHpzZF01lVkHGSN
-	 iwHDyEhfIuWotgGAGvC+o2MkN/QdntFk7svAn5rMUmG9EGza70mu6V0jJIqBRJEJih
-	 EptMSl4+BmUflRkpgZCIG0XKC8MUMG/aVPgq9+X3KFVKgeYYadVKPAd/gWIVxtfHhF
-	 FuXUWTRmGwmEA==
-Date: Tue, 8 Jul 2025 10:07:10 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: power: qcom,rpmpd: document the
- Milos RPMh Power Domains
-Message-ID: <20250708-scrupulous-chubby-bustard-4ccbdb@krzk-bin>
-References: <20250707-sm7635-rpmhpd-v2-0-b4aa37acb065@fairphone.com>
- <20250707-sm7635-rpmhpd-v2-1-b4aa37acb065@fairphone.com>
+	b=rUnGXuTpHs7ek6SLsQsaJetj0As6wqY7XnKJZwC4f0nVRfLT/ZD7lUHs7T2zsQGzz
+	 o2Ogq3GA4MkpdE78ml73cZFa4xmXDt7V6Nb6USxt3MI7A+fJmpPVXNJ+kIRfvpBMpH
+	 yFWQl4Fb2r+5Y5vifwQwlrxJqqkUNlHRAIUZ0Fvs=
+Date: Tue, 8 Jul 2025 10:07:11 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Alexandre Courbot <acourbot@nvidia.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] rust: Add several miscellaneous PCI helpers
+Message-ID: <2025070856-ferris-enjoyable-f2de@gregkh>
+References: <20250708060451.398323-1-apopple@nvidia.com>
+ <20250708060451.398323-2-apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250707-sm7635-rpmhpd-v2-1-b4aa37acb065@fairphone.com>
+In-Reply-To: <20250708060451.398323-2-apopple@nvidia.com>
 
-On Mon, Jul 07, 2025 at 12:18:10PM +0200, Luca Weiss wrote:
-> Document the RPMh Power Domains on the Milos (e.g. SM7635) Platform.
+On Tue, Jul 08, 2025 at 04:04:51PM +1000, Alistair Popple wrote:
+> Add bindings to obtain a PCI device's resource start address, bus/
+> device function, revision ID and subsystem device and vendor IDs.
 
-s/Platform/SoC/
 
-otherwise it is ambiguous - platform as a board, platform
-as a family or platform as a SoC sub arch (which usually we call
-platform in kernel docs, see maintainers soc profile).
+Do we have a user for these new helpers already?
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+thanks,
 
-Best regards,
-Krzysztof
-
+greg k-h
 
