@@ -1,89 +1,215 @@
-Return-Path: <linux-kernel+bounces-722508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10752AFDB6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:54:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C113CAFDB70
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45E181BC53C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:54:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DDBD172835
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88C7229B2A;
-	Tue,  8 Jul 2025 22:54:04 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA3B22A4E5;
+	Tue,  8 Jul 2025 22:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PqNP7R7d"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53681B4257
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 22:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256BE1B4257
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 22:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752015244; cv=none; b=osbYjkAWVzrf+2EScRAzf2Zwhl0loa2GCPvFsHi0n/6KzDPChnlmWh2uEvIkf+lHa7b+YCfTo3Rm7zkeOAIZ7xAg+NTktp0DG2EUl6sOdlKpKtIRBj1CI5BftlDiigvflz4BxXo81Qb94G8OxcXHOOLzOVZee6gizjRKtWjI5r0=
+	t=1752015305; cv=none; b=q/Jo0cBl4n5x6UGOozLpHC4tYqBSMxyoSsFHBHKI6az7fjKJEotHliiZspZgJpv75Gj+lHMvDtEiKpthPDiQ6Y4iWnVJNkj8K25XEdDYeWL5L14Vel6eBgCrcLXvc5MbASQUxXWKSwB7OGUtfTxQD3sMtL48jR3yiOJCp0cev94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752015244; c=relaxed/simple;
-	bh=BWGrnPzdM29YZ+XEjVdxFQICGfUneK/3oyhUW49b96o=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kd71HswKy4F8ZdymD6MPf52lM1RJiogRGT8GEYTZzmkoozogGXXI6GBzHZeKDOIR4A7PWaF170up0JCfNWu9YOROxUikTwrfdzknBeqxb3NvxFIAqS62QNoYHzNlD5QgdiOjpfrtW2MelFJUOJnd0sFe3+AjzlEdbfjqUZPHDjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-86f4e2434b6so570493939f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 15:54:02 -0700 (PDT)
+	s=arc-20240116; t=1752015305; c=relaxed/simple;
+	bh=azscrZ4AZfsZtzg45YIlsj3hKxFzj165H2cs57Ej3pw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EmxZ34nSasbbVwq1waCL4wYQXHOh52aw0DiJu2JQXXE56VbqDNdE96AF6Aaci8ql3oNBsOsBJh+IHPgY5xJB0kTfzOBKJSxBSchsi723KKJfVd5PgInAoWfbg0xjazhmVHlb2vXH75TBjrLcM1R1NNOf3sCA7nmpmF+igUm48rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PqNP7R7d; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2357c61cda7so33605ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 15:55:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752015303; x=1752620103; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sVRWLCIynL9morDWnQADm8WuJ5jAoeJ4mXqExkRmYFA=;
+        b=PqNP7R7dxPjb8OCYDA3Ekph+4+7+ocyZYbekhDyYGSnFQMHSLBo/RHje24oc6svjxm
+         6bGn1GgntwhkbD9opJevUa/CQNiBueEuQSUoScwmUWnEUKA6tclaPjmzGzgdcuXUnJcf
+         T3QGMUCDZD+EesMN5CPGUVaG3epP47+PDCACI6JP/4eUAzdWUBr3khQsX9NXWXVpgbPA
+         5JhgXGek9NmUl7Npv0hStagVTtXCY0vtYco2YavO9/EWbu6Ob/tTAdsBB/aAesCo0Zry
+         hOg9Tb3f0Nj25yQU1USZIzGiAvMhuYbtJMEFAuT28qjLRqLO020c4+AkxHWKBHXPOTzM
+         Lbkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752015242; x=1752620042;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xB6rIu45qgH+ua/fJIcg/GQ4LbflrQoSaYRE7j9ojes=;
-        b=arwPfNyX2cqszLHO1Nb87DGMt4G62q4LcLkq+q2HhtsZnIhBd3M/ObVY6dDfDlHC/Y
-         ioWzrXizZRaL27kNCqRWxoTkTZZaUj3WUc+ND7CaiuSHqUuoOhVNl36iTz9iFT09o/SF
-         3Bx88i2a8Pq/ItgwVG+S7PE7TFMAXaUca8XToAEc6ngoomCWVwtvlNsCzjt/R6hIBh7W
-         rYt+iW4jIH4MSuJJTrip7EnfbFQIXwaSROhLjZ4gs1Vn1yDnZK68UQm/jCS39pRK1gzE
-         e2ydvbZmHKFQSm/qqsHc6PWZr6QJI5y9qkf6x+5cRk/gJgpl3Abc+MU1LMSF10Y39iPg
-         ubog==
-X-Forwarded-Encrypted: i=1; AJvYcCW7nmNzWBRaSdGq58i+ratGh3c9hlR9RlL+t/w1YJvczihtRn0wNFbAR6suTzI3MndbrvjQWUoKugaaYRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl7yT2m3X/HbkJxO9UqhYfkmhJosXItSrFn4h3+sbUv06qV0sA
-	OPQVtTsym5P6waS9X/iXAqHNdr1L+US4S8caDIvOB+WSh6aMdg7/pDpJlTjD0g1UhMGPVH61dfR
-	2ab4cx9G0xjsaqWBjfDbS+oH60BPURLbF10LT1tsXAUqrVMvd+demscUAdNU=
-X-Google-Smtp-Source: AGHT+IHhl5K1IBm4w3Ha62Q3bSWZNOD6HNSa90AYPP6wynNDvSk/jc3dzaTrHiG+iN1WvOSrqpb+n7vuyOQBxSRasTloLdUsenQH
+        d=1e100.net; s=20230601; t=1752015303; x=1752620103;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sVRWLCIynL9morDWnQADm8WuJ5jAoeJ4mXqExkRmYFA=;
+        b=gaW2B4JVYQ2M+ob0KRxQ/8/iMCl/yaTvXWTbxHaVTrwLVZJNzPlwxTZapRv2wcMUmk
+         ZAZgVqPUo4EY+eJ1H7wmxdyeN7IxkfMBbqPIY5FnHXCGU7BpijXL0NhImVBrZ+7GZk2S
+         u5Owb/y3fx+jyX7wYrKAF2JduI/w+0GKNEjmlYoTSHTBa3t2eOZ006ldGjCw+3AX09JE
+         nphlNRE2hlewmalc8kegqkv+Bv0ZqHejXpVRgTGBirpUAlOdCrI4wRgC+9WFO3m7GPcy
+         UuN1QRTZACLSJhDoFmOkllCMwPc9V9H0vdyP4S0e841vbllira/BAM2Bm9q0rBDA9mtA
+         iY6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXQbg/4a7Qe4iXxSj2rVk4Hq1Vio7uQJ1h+Q2/atS4NJ6q9XD6zLjmFyVzFMUBL8s3yjJ7y1wr+QJW64jY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjaLHmlaCoQDJBJS4m1UOaMHON8uWS2yiSP5kqFLma98F/WysC
+	3DbOPai5A10lgUnA8miq2/aEqTf6kcUWa/KN0Aw2Prn40TEsmtb95432EDMrzGdDJ/tkTKde4v9
+	/LQAEBsa5SXRD/TlimvIptiiM8R+7x4ZQJFBO1uEf
+X-Gm-Gg: ASbGncuao+zWjDF9gTLDEPayJcn99HUZPhaUFI2PNkKupwnUjWQddKs50kn3Mc96D5y
+	GFHHpw0K0H7xeZkAT6O9Eyyjec5hG0PkPgmFrVVCjA9lms2XEoHWNLN7WgZ7/woVssbCGqUcFeb
+	RZz3aqYS8fx67e1XHpoK5j39T3avoQSjpD7uw63o3MO0UeNCOz3Sn2mgzs23yGRpvWe2yWnjGns
+	QuO3CPUheVW
+X-Google-Smtp-Source: AGHT+IFppI8EWFIKjUXPtViP+KrA09dQbTHMiXzo/hVpg329+fXbE9z6q1NN0DYucfeQOt83ReE7/FOzhTi0IjwwLl4=
+X-Received: by 2002:a17:903:320d:b0:216:48d4:b3a8 with SMTP id
+ d9443c01a7336-23dda3cf61dmr1101735ad.16.1752015303037; Tue, 08 Jul 2025
+ 15:55:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:388a:b0:86d:60:702f with SMTP id
- ca18e2360f4ac-8795af33198mr62688239f.0.1752015242081; Tue, 08 Jul 2025
- 15:54:02 -0700 (PDT)
-Date: Tue, 08 Jul 2025 15:54:02 -0700
-In-Reply-To: <20250708224131.332014-1-kuniyu@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686da18a.050a0220.1ffab7.0023.GAE@google.com>
-Subject: Re: [syzbot] [lsm?] [net?] WARNING in kvfree_call_rcu
-From: syzbot <syzbot+40bf00346c3fe40f90f2@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, kuniyu@google.com, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, paul@paul-moore.com, 
-	syzkaller-bugs@googlegroups.com
+References: <CAGtprH_57HN4Psxr5MzAZ6k+mLEON2jVzrLH4Tk+Ws29JJuL4Q@mail.gmail.com>
+ <006899ccedf93f45082390460620753090c01914.camel@intel.com>
+ <aG0pNijVpl0czqXu@google.com> <a0129a912e21c5f3219b382f2f51571ab2709460.camel@intel.com>
+ <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com>
+ <eeb8f4b8308b5160f913294c4373290a64e736b8.camel@intel.com>
+ <CAGtprH8cg1HwuYG0mrkTbpnZfHoKJDd63CAQGEScCDA-9Qbsqw@mail.gmail.com>
+ <b1348c229c67e2bad24e273ec9a7fc29771e18c5.camel@intel.com>
+ <aG1dbD2Xnpi_Cqf_@google.com> <CAGtprH-ESrdhCeHkuRtiDoaqxCS9JVKu_CC9fbDRo+k+3jKCcQ@mail.gmail.com>
+ <aG14gLz9C_601TJ3@google.com>
+In-Reply-To: <aG14gLz9C_601TJ3@google.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Tue, 8 Jul 2025 15:54:49 -0700
+X-Gm-Features: Ac12FXyERUa_xOAJgG7dIrmMf4kvAAP-pOIx0wDj5UJ0uC1eIt2Bz0JJ6_rlubA
+Message-ID: <CAGtprH-+gPN8J_RaEit=M_ErHWTmFHeCipC6viT6PHhG3ELg6A@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
+To: Sean Christopherson <seanjc@google.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "pvorel@suse.cz" <pvorel@suse.cz>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
+	Jun Miao <jun.miao@intel.com>, "nsaenz@amazon.es" <nsaenz@amazon.es>, 
+	Kirill Shutemov <kirill.shutemov@intel.com>, "pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, 
+	"peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"tabba@google.com" <tabba@google.com>, "amoorthy@google.com" <amoorthy@google.com>, 
+	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "jack@suse.cz" <jack@suse.cz>, 
+	"vkuznets@redhat.com" <vkuznets@redhat.com>, "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, 
+	"keirf@google.com" <keirf@google.com>, 
+	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, 
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, Wei W Wang <wei.w.wang@intel.com>, 
+	"palmer@dabbelt.com" <palmer@dabbelt.com>, 
+	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, "willy@infradead.org" <willy@infradead.org>, 
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, Dave Hansen <dave.hansen@intel.com>, 
+	"aik@amd.com" <aik@amd.com>, "usama.arif@bytedance.com" <usama.arif@bytedance.com>, 
+	"quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "fvdl@google.com" <fvdl@google.com>, 
+	"rppt@kernel.org" <rppt@kernel.org>, "quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, 
+	"maz@kernel.org" <maz@kernel.org>, "vbabka@suse.cz" <vbabka@suse.cz>, 
+	"anup@brainfault.org" <anup@brainfault.org>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mic@digikod.net" <mic@digikod.net>, 
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, Fan Du <fan.du@intel.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "steven.price@arm.com" <steven.price@arm.com>, 
+	"muchun.song@linux.dev" <muchun.song@linux.dev>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, Zhiquan1 Li <zhiquan1.li@intel.com>, 
+	"rientjes@google.com" <rientjes@google.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>, 
+	Erdem Aktas <erdemaktas@google.com>, "david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
+	"hughd@google.com" <hughd@google.com>, "jhubbard@nvidia.com" <jhubbard@nvidia.com>, Haibo1 Xu <haibo1.xu@intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
+	"steven.sistare@oracle.com" <steven.sistare@oracle.com>, 
+	"quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, "jarkko@kernel.org" <jarkko@kernel.org>, 
+	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, Kai Huang <kai.huang@intel.com>, 
+	"shuah@kernel.org" <shuah@kernel.org>, "bfoster@redhat.com" <bfoster@redhat.com>, 
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, Chao P Peng <chao.p.peng@intel.com>, 
+	"pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, Alexander Graf <graf@amazon.com>, 
+	"nikunj@amd.com" <nikunj@amd.com>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "yuzenghui@huawei.com" <yuzenghui@huawei.com>, 
+	"jroedel@suse.de" <jroedel@suse.de>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
+	"jgowans@amazon.com" <jgowans@amazon.com>, Yilun Xu <yilun.xu@intel.com>, 
+	"liam.merwick@oracle.com" <liam.merwick@oracle.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
+	"quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Ira Weiny <ira.weiny@intel.com>, 
+	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
+	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "qperret@google.com" <qperret@google.com>, 
+	"dmatlack@google.com" <dmatlack@google.com>, "james.morse@arm.com" <james.morse@arm.com>, 
+	"brauner@kernel.org" <brauner@kernel.org>, "roypat@amazon.co.uk" <roypat@amazon.co.uk>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>, "pgonda@google.com" <pgonda@google.com>, 
+	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "hch@infradead.org" <hch@infradead.org>, 
+	"will@kernel.org" <will@kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Jul 8, 2025 at 12:59=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> On Tue, Jul 08, 2025, Vishal Annapurve wrote:
+> > On Tue, Jul 8, 2025 at 11:03=E2=80=AFAM Sean Christopherson <seanjc@goo=
+gle.com> wrote:
+> > Few points that seem important here:
+> > 1) Userspace can and should be able to only dictate if memory contents
+> > need to be preserved on shared to private conversion.
+>
+> No, I was wrong, pKVM has use cases where it's desirable to preserve data=
+ on
+> private =3D> shared conversions.
+>
+> Side topic, if you're going to use fancy indentation, align the indentati=
+on so
+> it's actually readable.
+>
+> >   -> For SNP/TDX VMs:
+> >        * Only usecase for preserving contents is initial memory
+> >          population, which can be achieved by:
+> >               -  Userspace converting the ranges to shared, populating =
+the contents,
+> >                  converting them back to private and then calling SNP/T=
+DX specific
+> >                  existing ABI functions.
+> >        * For runtime conversions, guest_memfd can't ensure memory conte=
+nts are
+> >          preserved during shared to private conversions as the architec=
+tures
+> >          don't support that behavior.
+> >        * So IMO, this "preserve" flag doesn't make sense for SNP/TDX VM=
+s, even
+>
+> It makes sense, it's just not supported by the architecture *at runtime*.=
+  Case
+> in point, *something* needs to allow preserving data prior to launching t=
+he VM.
+> If we want to go with the PRIVATE =3D> SHARED =3D> FILL =3D> PRIVATE appr=
+oach for TDX
+> and SNP, then we'll probably want to allow PRESERVE only until the VM ima=
+ge is
+> finalized.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Maybe we can simplify the story a bit here for today, how about:
+1) For shared to private conversions:
+       * Is it safe to say that the conversion itself is always
+content preserving, it's upto the
+           architecture what it does with memory contents on the private fa=
+ults?
+                 - During initial memory setup, userspace can control
+how private memory would
+                   be faulted in by architecture supported ABI operations.
+                 - After initial memory setup, userspace can't control
+how private memory would
+                   be faulted in.
+2) For private to shared conversions:
+       * Architecture decides what should be done with the memory on
+shared faults.
+                 - guest_memfd can query architecture whether to zero
+memory or not.
 
-net/smc/af_smc.c:365:3: error: call to undeclared function 'inet_sock_destruct'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+-> guest_memfd will only take on the responsibility of zeroing if
+needed by the architecture on shared faults.
+-> Architecture is responsible for the behavior on private faults.
 
-
-Tested on:
-
-commit:         ec480130 Merge branches 'for-next/core' and 'for-next/..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3c06e3e2454512b3
-dashboard link: https://syzkaller.appspot.com/bug?extid=40bf00346c3fe40f90f2
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=130a6bd4580000
-
+In future, if there is a usecase for controlling runtime behavior of
+private faults, architecture can expose additional ABI that userspace
+can use after initiating guest_memfd conversion.
 
