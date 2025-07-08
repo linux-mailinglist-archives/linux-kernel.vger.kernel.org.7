@@ -1,96 +1,77 @@
-Return-Path: <linux-kernel+bounces-722482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AEDDAFDB28
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:35:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB91AFDB2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF6F7582A7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:35:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7D343A84FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0724A25A337;
-	Tue,  8 Jul 2025 22:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6A025D917;
+	Tue,  8 Jul 2025 22:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="eD+CN7dy"
-Received: from r3-22.sinamail.sina.com.cn (r3-22.sinamail.sina.com.cn [202.108.3.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HUkfwIrK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B82721B9F1
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 22:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24821E47A3;
+	Tue,  8 Jul 2025 22:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752014145; cv=none; b=fh+2Kj9zEDUxaxKHQSz6wVlTSLMwaOe7j0y3PBtsBUthwXR/PuXbMWGKntiH2PsTYNrwyFeGPukeBQWZdN9V86sTr9U9W5BLMIONWSOVJstO7rC1MW5RdJU7vQUyLitbT/y1tgDYcXlDphgLD8OwsrviQZrYFHorEsDcfO0QzlE=
+	t=1752014202; cv=none; b=iVG2NybFQW4zzrtoSj52xa7fR+GTosnY2mly4yaKZ7zoZYnTbbS4x6qr9+Wd01uoe81Zu7BTvaRN7kK4ERYuyPlyLeuGh4IgxUCdYnLsq9GBFhhsKGMROLeTFy6H6ZlY8GWOxQ2QFDhErgewqQYJpEmgXbSWw1/gPPaKGaBqsoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752014145; c=relaxed/simple;
-	bh=Uw3P5pATGG2sohnbKTzV4ZbHbZx4Vj5bZe0g4ojHees=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Qbjo2fL6QyfQh4aF6yIXeJq6ZTgnKAaY9wCGrdpNJ+rTr781u6u7ke9PufCjnQ+v5LT9NanbDVWFlEMmPs/2miWPvaKzZQ7xYQBGcVOnAXJ4XdZlRcIqq9iENE0eCVQWbXqNcxyJSLXmSk+lvbDahDBGPamk5jXghQbGrjd73FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=eD+CN7dy; arc=none smtp.client-ip=202.108.3.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752014140;
-	bh=xESfFpWV/xhoQJW1X3B88U4/8BWKHV+N80jTCVVZS9o=;
-	h=From:Subject:Date:Message-ID;
-	b=eD+CN7dyn2L5+deY/M7tvNhNVpyjhiUTU98GVtzT8KiDeVjcVh4thMnBrWQnLakKP
-	 JRFlo6r02JjzNWY3logc3pchnHzejadAEOFveuFogKVi09oJPPgs6CVQcSTKJ02WPa
-	 B9CGpvc2RcwDFzRq9c9MAV6fIE84vRTf4M9cRSUs=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 686D9D3800004A74; Tue, 9 Jul 2025 06:35:37 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 5128396685252
-X-SMAIL-UIID: 15AC2DCC886B41B4ABF580884E0EFA08-20250709-063537-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+3f89ec3d1d0842e95d50@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] WARNING in usbnet_status_start
-Date: Wed,  9 Jul 2025 06:35:24 +0800
-Message-ID: <20250708223525.3029-1-hdanton@sina.com>
-In-Reply-To: <686d5a9f.050a0220.1ffab7.0017.GAE@google.com>
-References: 
+	s=arc-20240116; t=1752014202; c=relaxed/simple;
+	bh=5eoOYGA9ThdPasjjaFLkqUooNYXBJMphrUYEZiQOngU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oHD8LF+/ur0BxXIwwv+NeacXc8KbnC3YN2ubceBpJ6gvnXpm4NuMQ7xHm7DEYY+Ubr3DioPqotEUiu/Qi9/2PghR4wRN/4LUJhVFGV1gC9USaCToZZ1uKTg7Eiypu7vAKE7KyVVu0UsHTY8MnQeSfNxoHSWfxJo6gJSQJSDu9LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HUkfwIrK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A123C4CEED;
+	Tue,  8 Jul 2025 22:36:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752014201;
+	bh=5eoOYGA9ThdPasjjaFLkqUooNYXBJMphrUYEZiQOngU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HUkfwIrKYe4yXb5NBG1KoccZhUKQPBdFlNK62U9rIYDAPMr06PhwM7Q3Q6s52yQfy
+	 4IXqJh+w/vzYbPNAPc6V4QuLlSf1K1BJj6aV6E7ZFR1Vua/BgXPLarQox7ArKkTEXn
+	 ve5dDmBDoJKRiIGq+hxUrLIHHbFR9dmBUG28Fqf9ZhgHspjWSsh+rGns19+aFnTfSt
+	 kRxC9dbPMkibdZ8UUWaxKHnaVbth3nM6YNzjWLIv8MSdmdf/PGfvWHjm4n5XXM6PzI
+	 aosWu7wwL8AOyi/YVcg2OqnLxYEKiv+YnM+eELOHW4f+nZD5aTqAGxpJahDN5hNsal
+	 n14J5lPQiWGJA==
+Date: Wed, 9 Jul 2025 00:36:35 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Jonathan Corbet <corbet@lwn.net>, nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: Re: [PATCH v4 0/8] Documentation for nova-core
+Message-ID: <aG2dcwDOVlh3ePGa@cassiopeiae>
+References: <20250708-nova-docs-v4-0-9d188772c4c7@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708-nova-docs-v4-0-9d188772c4c7@nvidia.com>
 
-> Date: Tue, 08 Jul 2025 10:51:27 -0700
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    d1b07cc0868f arm64: dts: s32g: Add USB device tree informa..
-> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1554d582580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=28729dff5d03ad1
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3f89ec3d1d0842e95d50
-> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11680a8c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14c9abd4580000
+On Tue, Jul 08, 2025 at 03:49:40PM +0900, Alexandre Courbot wrote:
+> This series adds some documentation that was relevant to the FWSEC-FRTS
+> [1] series, but wasn't sent alongside it as it was worked on in
+> parallel.
 
-#syz test
+Joel, thanks a lot for this series. It's great to have this documentation --
+very much appreciated.
 
---- x/drivers/net/usb/usbnet.c
-+++ y/drivers/net/usb/usbnet.c
-@@ -254,6 +254,8 @@ static int init_status (struct usbnet *d
- 				"status ep%din, %d bytes period %d\n",
- 				usb_pipeendpoint(pipe), maxp, period);
- 		}
-+	} else {
-+		return -ENOMEM;
- 	}
- 	return 0;
- }
---
+Applied to nova-next, thanks!
 
