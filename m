@@ -1,90 +1,96 @@
-Return-Path: <linux-kernel+bounces-721718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF4EAFCD08
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:11:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3505AFCD19
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BF605604F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:11:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AD783B8670
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C6C2DF3F9;
-	Tue,  8 Jul 2025 14:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2262E0928;
+	Tue,  8 Jul 2025 14:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="pAnsSXmm"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BzSPBN3t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981077E0FF;
-	Tue,  8 Jul 2025 14:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4F52E06F8;
+	Tue,  8 Jul 2025 14:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751983901; cv=none; b=Lb0eCCK2M5vtyT64us0AP+1hntaPafovhMKLcqpy8IMlbQvvqL6h+r49U81U6tXKoWNTmTPT16E+RxCjBIzNC0II59PaAPD85z07OurTG89eepNhzD7id/n8eKTE+j2Q4kmcvCtS5rVPJ5sUWjBhqZhDQvrc5cK/XZQK4TgZtWA=
+	t=1751983926; cv=none; b=CZSswSNUhV+ieUITZYkZqtAYt34DvPUtbF1TLGTp8096IbrraBsQ+vc28496NlyGMGNJORDR1TFWEh3MizLsUHpkmrBfdaqoS/YaN7WqPiPUIjctqJsarTkKyiForApiv+fTevWwWxnzWoMkESvrV7pHgmmao5mAamAH5rZDGFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751983901; c=relaxed/simple;
-	bh=ncJd4EDBBSL8qMQIUUUAcpGhgKhm7PcDr/e2HNmk7+4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=d2u+QXRJ/wJ8ZHeX+9IhfQ6NJcLSkqBkZn35sH9Q5JnEmbXd5h0pycmctIFHXuGIqDjr0Cmur7xDR5cVPzQoZlrFaSWuitSJm7at9HBdixsfStOI0ESbIFNc74xMFZZwDlr4bs2e7G7HWZWcp4g3y2WxEyS9ErBKBV2kY33Vyek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=pAnsSXmm; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net CF2ED406FC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1751983899; bh=WJXN44J7kYFvMhCD5DKoWk928JEbhJXb5fnHph51JeY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=pAnsSXmmugaxJJGP0eS4fDTGDP/7Lz4nITe05Qpnyr6zJL7uzrCbKfyHTxcKeltlQ
-	 37dSxPv05+h/r57YHMlt/8hhbcgE1SsJlZ2ZJgdWzUKGKlW8PKkNI9YDcoECB7yaNn
-	 fE6BtFTvnXPBxsinFH3/pfUjZsQIArfjdC5GeIxVZ0c8xnURHYke4lNRA81/X+Fg70
-	 AJbRDWUt+Qv1wS+m3fGM2FFZ0GP3fYolctq1PnREAnF8OjDQDW84PGZ57RehKayag4
-	 9MD4d5m78IeQdneZJcIG+fb4kxJHDBmf7yIrxXCp4fAx2A1HNHnd5kVSCx2ueGkhn6
-	 K1cihwqGWNhbg==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id CF2ED406FC;
-	Tue,  8 Jul 2025 14:11:38 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Sumeet Pawnikar <sumeet4linux@gmail.com>, mhiramat@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, sumeet4linux@gmail.com
-Subject: Re: [PATCH] Documentation: Remove duplicate word size in bootconfig
-In-Reply-To: <20250705151618.4806-1-sumeet4linux@gmail.com>
-References: <20250705151618.4806-1-sumeet4linux@gmail.com>
-Date: Tue, 08 Jul 2025 08:11:38 -0600
-Message-ID: <87ms9e6acl.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1751983926; c=relaxed/simple;
+	bh=69kRkm6EgMW7idav5pc9DCpei/xJJlkEyeGgKUwRGE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gBOjhm7JhcA9IOh0/KbKhOjBLRjRfb8gjAQLOI62sIscYmfqDNAKZNUnXjWrqJoJTQMlt02nfUkVFMepEj19YCAO/glw2VcXTspGSQgYjnsCNa5TQ/3XRuXrZU9gueKqkvQLooD02Sfjv0cTD+omleO0o2qGE1QAqySQ4PrVUMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BzSPBN3t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E42AC4CEEF;
+	Tue,  8 Jul 2025 14:12:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751983925;
+	bh=69kRkm6EgMW7idav5pc9DCpei/xJJlkEyeGgKUwRGE8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BzSPBN3tj97lE4r31NyH+0wfxQ6tXnjWLA9zhcUYkFb5a8nO8Z6Y0w9k/43WAyB8I
+	 hlWEjyFgE6A6q152X2lw5pCqK0v6945Xp8+F3PRouG1g25vyXQxC3ysOgQUMJigSvH
+	 JrHaz3XxysnrgqrABvIqUnFIScqYLjbuDkB7vIM7CbJN6dow+pYAFD1p4WOk3uMt/x
+	 NjAW9ngMbmaGzph6BP/zEngwyYdBAFGe2NP8DETzlsIi3BO1Z16oF1nsdlGSa1zSGw
+	 LnSSvFJFchRzSyuTu2ApCpCKAoLUqWZaJzghkleeRObbhNRtIjbrPdTHGqTGa7dicX
+	 u3sDXugikt5IQ==
+Date: Tue, 8 Jul 2025 07:12:02 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Potnuri Bharat Teja <bharat@chelsio.com>,
+ Veerasenareddy Burru <vburru@marvell.com>, Sathesh Edara
+ <sedara@marvell.com>, Louis Peens <louis.peens@corigine.com>, Shahed Shaikh
+ <shshaikh@marvell.com>, Manish Chopra <manishc@marvell.com>,
+ GR-Linux-NIC-Dev@marvell.com, Jiri Slaby <jirislaby@kernel.org>, Nick
+ Kossifidis <mickflemm@gmail.com>, Luis Chamberlain <mcgrof@kernel.org>,
+ Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdlbnNlbg==?= <toke@toke.dk>, Arend van
+ Spriel <arend.vanspriel@broadcom.com>, Brian Norris
+ <briannorris@chromium.org>, Francesco Dolcini <francesco@dolcini.it>, Ajay
+ Singh <ajay.kathat@microchip.com>, Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>, Ping-Ke Shih <pkshih@realtek.com>, Kees Cook
+ <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Benjamin
+ =?UTF-8?B?R3Jvw59l?= <ste3ls@gmail.com>, Hayes Wang
+ <hayeswang@realtek.com>, Lucas Sanchez Sagrado <lucsansag@gmail.com>,
+ Philipp Hahn <phahn-oss@avm.de>, Aleksander Jan Bajkowski <olek2@wp.pl>,
+ Eric Biggers <ebiggers@google.com>, Wentao Liang <vulab@iscas.ac.cn>,
+ Johannes Berg <johannes.berg@intel.com>, Sebastian Reichel
+ <sebastian.reichel@collabora.com>, Ondrej Jirman <megi@xff.cz>, Jacobe Zang
+ <jacobe.zang@wesion.com>, Dmitry Antipov <dmantipov@yandex.ru>, Kalle Valo
+ <kvalo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Aditya Kumar
+ Singh <quic_adisi@quicinc.com>, David Lin <yu-hao.lin@nxp.com>, Roopni
+ Devanathan <quic_rdevanat@quicinc.com>, Rameshkumar Sundaram
+ <quic_ramess@quicinc.com>, Marek Vasut <marex@denx.de>, Alexis
+ =?UTF-8?B?TG90aG9yw6k=?= <alexis.lothore@bootlin.com>, Arnd Bergmann
+ <arnd@arndb.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ oss-drivers@corigine.com, linux-usb@vger.kernel.org,
+ linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+ brcm80211-dev-list.pdl@broadcom.com, opensource.kernel@vivo.com
+Subject: Re: [PATCH 00/12] net: Use min()/max() to improve code
+Message-ID: <20250708071202.6b65bc30@kernel.org>
+In-Reply-To: <20250708135632.152673-1-rongqianfeng@vivo.com>
+References: <20250708135632.152673-1-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Sumeet Pawnikar <sumeet4linux@gmail.com> writes:
+On Tue,  8 Jul 2025 21:55:50 +0800 Qianfeng Rong wrote:
+> Use min() to reduce the code and improve its readability.
+> 
+> No functional changes.
 
-> Remove duplicate word size in bootconfig.rst
->
-> Signed-off-by: Sumeet Pawnikar <sumeet4linux@gmail.com>
-> ---
->  Documentation/admin-guide/bootconfig.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/admin-guide/bootconfig.rst b/Documentation/admin-guide/bootconfig.rst
-> index 91339efdcb54..7a86042c9b6d 100644
-> --- a/Documentation/admin-guide/bootconfig.rst
-> +++ b/Documentation/admin-guide/bootconfig.rst
-> @@ -265,7 +265,7 @@ The final kernel cmdline will be the following::
->  Config File Limitation
->  ======================
->  
-> -Currently the maximum config size size is 32KB and the total key-words (not
-> +Currently the maximum config size is 32KB and the total key-words (not
->  key-value entries) must be under 1024 nodes.
-
-Applied, thanks.
-
-jon
+I don't see any patches on the list, 15 min after receiving this cover
+letter. But either way, this sort of changes are not worth the churn.
 
