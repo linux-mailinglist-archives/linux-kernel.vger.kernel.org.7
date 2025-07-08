@@ -1,228 +1,123 @@
-Return-Path: <linux-kernel+bounces-721044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72EB2AFC402
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:29:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB72FAFC40D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECA30424CF9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:29:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86A9B7A2A2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E42B298CCD;
-	Tue,  8 Jul 2025 07:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D804298CB5;
+	Tue,  8 Jul 2025 07:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bx1qnh5C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iVUaXGVB";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bx1qnh5C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iVUaXGVB"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cF2pzRg4"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4FB298999
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 07:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28FF219EB;
+	Tue,  8 Jul 2025 07:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751959765; cv=none; b=YVDH+Vs/TxmGMxUkSlWphSgy4iSt6g8ceehGBiRRuFAeJxyvlFcNiN60OM9yxIGrok9iky7QZxroeHvWPux+aOje3MroiSERAzaFKpSbcsJ1boB147MgQtdJshaCBnL3KAUK6Ug5C9ZTnCo49xFZJZGLrLoXL6JJNoOTK4Xj8CI=
+	t=1751959816; cv=none; b=PU9rMzebMUNlqI44dVfE9280PbQtFV2hKf+kleqbV8RVRohdgO6bnvtt1KhRLaAYnbWL2dMDfOxDYlTX69d51+31tSw2tDN7XVHHIQcG67lflz9U5+OOyPwoo45ZdH/ufwNzeFJ4ouEH2IKHEsqMN7aHPb4B2EneaWZy8XZf3i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751959765; c=relaxed/simple;
-	bh=Yy5s3tOFMC/rTCLld/EgSCsz8DvydWujL2hwXFKTktU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Q7yCdLvJkBBKhIm35hhHgvkn8CL4EOt5rmdYvQAdiM8u/StA/rVPiyNLWl/y8839xMCHuhSGIIhac+JxCwDtYT1XMH5owAsJxCgK2KxUqouX3LW3YkAv3D90MV6agw2H51pII/au447pIkWN0pAExjy58cyPA7ZLm5Hnei3Wx0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bx1qnh5C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iVUaXGVB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bx1qnh5C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iVUaXGVB; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0C98F1F395;
-	Tue,  8 Jul 2025 07:29:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751959761; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oEPibuz/UmeneAYugM2MEEKg37oU+6TRLDHisiab2fw=;
-	b=bx1qnh5CUl5nUrjwr7MFOuFpXrUR1UFemEt6r/AnHAnBqHT8ZNjbRfaTW+4E4oPh1wFT5g
-	LGFIr1GkXeMU4xG0tiq8HGQt/BnNbH7g9EZogaJVAq/oW5DRXmwFnlOP8uhigZA0UaWUGV
-	Sy5LO/8NTGosx0yQl3acENkhpkqn62E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751959761;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oEPibuz/UmeneAYugM2MEEKg37oU+6TRLDHisiab2fw=;
-	b=iVUaXGVBWmLqcyHQlS7AnDQTecIiydAxk6aig3YXtqA42SGZxZRIWWBdsUnpXo+PdiNb2S
-	LQyiepNmcZF8rvDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=bx1qnh5C;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=iVUaXGVB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751959761; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oEPibuz/UmeneAYugM2MEEKg37oU+6TRLDHisiab2fw=;
-	b=bx1qnh5CUl5nUrjwr7MFOuFpXrUR1UFemEt6r/AnHAnBqHT8ZNjbRfaTW+4E4oPh1wFT5g
-	LGFIr1GkXeMU4xG0tiq8HGQt/BnNbH7g9EZogaJVAq/oW5DRXmwFnlOP8uhigZA0UaWUGV
-	Sy5LO/8NTGosx0yQl3acENkhpkqn62E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751959761;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oEPibuz/UmeneAYugM2MEEKg37oU+6TRLDHisiab2fw=;
-	b=iVUaXGVBWmLqcyHQlS7AnDQTecIiydAxk6aig3YXtqA42SGZxZRIWWBdsUnpXo+PdiNb2S
-	LQyiepNmcZF8rvDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A976A13A8E;
-	Tue,  8 Jul 2025 07:29:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6AgYKdDIbGhMRAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 08 Jul 2025 07:29:20 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Tue, 08 Jul 2025 09:28:58 +0200
-Subject: [PATCH 2/2] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to
- EXPORT_SYMBOL_FOR_MODULES
+	s=arc-20240116; t=1751959816; c=relaxed/simple;
+	bh=cKMs56fyVZ6L7AKJr+/shd8+cZbwH4talnYosOwBTK8=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=mnzLehquautyLzUpCPzX0MgBLrUIe2/IErSNDqLc13s79gaUBkAFR6evJZLeKpnBRv23cdoQEf/TthZmIUPTXGM1zy4oIKzYorDmGLhUDOfkeZ+/uQtZbeCFwmQoOJ7UgbwdSv5ghSx58KLlbNUmBFqy7Tu43hPSyux5ckNA0A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cF2pzRg4; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-32cdc9544ceso34630321fa.0;
+        Tue, 08 Jul 2025 00:30:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751959813; x=1752564613; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cKMs56fyVZ6L7AKJr+/shd8+cZbwH4talnYosOwBTK8=;
+        b=cF2pzRg4Ozqeu34DkRUg5+IiSEv8+afQ/DWLbPwuY/JVSN2KzTYp6SFidi1veU9+5T
+         cOOX5SPW3iqHkAv520eSvC8AxjZRjwOo0m6pn67yL380mQvHRbbM5qYQqdzGlgGKAjBa
+         oe58ShZkzSWzWToANOseN6dORUiM47gV3ZqpbS7IrqzivqLeBuT85vgBX25a1ANWJ2z9
+         IHfjKiLFhheAgX13lQeEgE3AnNHoDcwxjibAzYW6kGdPdwz/960gOfMNfJ7lQ/j4qDhn
+         4HLW8EiUQrHqN2iGEuxiTbkMpTH9oH7IsWpNxjrv97GrF7lgSN/TTwh3uc7wmfAw4jzf
+         bw2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751959813; x=1752564613;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cKMs56fyVZ6L7AKJr+/shd8+cZbwH4talnYosOwBTK8=;
+        b=dqjskbSoy9xuB8CQW+tEQRwjrt1FAEPj4EwCsgG8cwQe+9maIsQE/OYtrb04sEgrUJ
+         7Kkz2DuLcvLWf5RBqsE8h3+hb/4r3C4GKVbGzQyBZn7t+6QNrjnmXWycJxv+xO2fBSW+
+         8ExR8D5TIHLwgJR69dhfTu7ImWpIM0oAEAMlurR8HFhcgJRlCp8Wg4GtTMqMzUVd7U1z
+         9jMK/5AAHBPNFGOxLynHoh/u2EymOEf+XpYtCLJ1jUUZuc2L1/NCjg8DPRSc95d1+E1Y
+         1PikDTZ2/rPYZQwrHnPvPhFj4c0/SRbSOKhpFUJAAfYceBhZrYXv/HNan2ZxC8N/c09L
+         t/ow==
+X-Forwarded-Encrypted: i=1; AJvYcCUU2VeJPLOTwkEbmnLZWc5shn+b14U3Bmaixud0iKtZsk1ygcnG7yUNL1qBUx6XUg3rStXDNETV@vger.kernel.org, AJvYcCVdq9UdPA1k8XhXaJrU+jYSoQlHTVMlrdRm4V9Lsuo6HXjvJ1/gN2JhUj502e3MqGzxeCl5Mx88nRecoKg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWrRvGaEzK9WVbmNuzC4IxTU8A2g/V/T7uPWkiVyGc3MDd2oEP
+	O9TpE3IMoogj5abNxk1KWk3UnsSVkXFz+bIijuibAeYjDo+gMwP7lrDrVB8C+Wj04EsLAP0q+vH
+	TwqOdRtv8nbqIm1gJouKbriV8fuGJMG4=
+X-Gm-Gg: ASbGnctznUHGKzs3jwUhjRkMQcnX/rkXebSv0qVOTFJwD3fXWVzXsOGXP/Jfw5kaN50
+	8v+I0UYYpm4Hfm9xcQcMgqmuTf9GhyL5s0Mrr7tVjIJ0VaYtN99/ZcWIrBQ9X73w0y5gsyMl9Vy
+	qJJe1o/3KTx6hIawK8z7Fw72BFtX1JVGB1LD3dpI25mc9KQQnRWCJWwknJIl5CM8LYyg==
+X-Google-Smtp-Source: AGHT+IG9u7HevHo7AiuQj+pH88OB49lCJ5p4tfyJqAiwxXcSLRq1HfyoYecHFlcEolIQ+cfZ+WvRz0YimD4HCl+Udag=
+X-Received: by 2002:a05:651c:408b:b0:32a:749a:14d4 with SMTP id
+ 38308e7fff4ca-32e5f57cd56mr30715501fa.12.1751959812512; Tue, 08 Jul 2025
+ 00:30:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250708-export_modules-v1-2-fbf7a282d23f@suse.cz>
-References: <20250708-export_modules-v1-0-fbf7a282d23f@suse.cz>
-In-Reply-To: <20250708-export_modules-v1-0-fbf7a282d23f@suse.cz>
-To: Matthias Maennich <maennich@google.com>, 
- Jonathan Corbet <corbet@lwn.net>, Luis Chamberlain <mcgrof@kernel.org>, 
- Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
- Daniel Gomez <da.gomez@samsung.com>, Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nicolas Schier <nicolas.schier@linux.dev>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Christoph Hellwig <hch@infradead.org>, 
- Peter Zijlstra <peterz@infradead.org>, David Hildenbrand <david@redhat.com>, 
- Shivank Garg <shivankg@amd.com>, "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, 
- Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
- linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- Vlastimil Babka <vbabka@suse.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2759; i=vbabka@suse.cz;
- h=from:subject:message-id; bh=Yy5s3tOFMC/rTCLld/EgSCsz8DvydWujL2hwXFKTktU=;
- b=owEBbQGS/pANAwAIAbvgsHXSRYiaAcsmYgBobMjGRVhqSav0/nkuPb3JRt274Je0nu6HWMSZJ
- zHxfngk2jWJATMEAAEIAB0WIQR7u8hBFZkjSJZITfG74LB10kWImgUCaGzIxgAKCRC74LB10kWI
- mopRB/9sjmWSAjMZpnsWt1S+YnTErm/WorHGKp6h7blRs2pSRHzEQDfNodA44cnIgPuQWu0bOIp
- ydNSlgcMYURSrQa6CnqtIHMNybz55YaZLLXMXRm+2VqKCB1nrfdkf/AFv8Pxp9M6kPA5OhzPKgC
- EEsJ/BAhH0ZFPqpqIP+QGjDO/vZ9KA+H/rg1bMYfSqIDOI6jrokkAkkiF0oWfAY3YGAWa871CqT
- RtL4651dKlMxxAoT/kCPP++3ad9LD/2w55BkFguNxbSekaCvIOy/QH+Tn08h0A5GEo8o2WaZDqN
- MWdErQDrTIeK/Q5FJRr9wrah0kCGkFygmy0nsfGO5a9fFT4d
-X-Developer-Key: i=vbabka@suse.cz; a=openpgp;
- fpr=A940D434992C2E8E99103D50224FA7E7CC82A664
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[24];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLizo86y7np4cjncz9mwtfc8qs)];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,suse.cz:email];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 0C98F1F395
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+From: Luka <luka.2016.cs@gmail.com>
+Date: Tue, 8 Jul 2025 15:30:00 +0800
+X-Gm-Features: Ac12FXyraQ03idfOwzLtCSZFyJPKxJ_-bjxd743jjyA-XCOHtPya6EBPHGprq54
+Message-ID: <CALm_T+1s19Kr0=v94oUJEbN5ciGcumZDZp-hbn5=z_wPefqG1Q@mail.gmail.com>
+Subject: [Bug] soft lockup in ipv6_list_rcv in Linux kernel v6.15
+To: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-With module namespace access restricted to in-tree modules, the GPL
-requirement becomes implied. Drop it from the name of the export helper.
+Dear Linux Kernel Maintainers,
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- Documentation/core-api/symbol-namespaces.rst | 6 +++---
- fs/anon_inodes.c                             | 2 +-
- include/linux/export.h                       | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+I hope this message finds you well.
 
-diff --git a/Documentation/core-api/symbol-namespaces.rst b/Documentation/core-api/symbol-namespaces.rst
-index dc228ac738a5cdc49cc736c29170ca96df6a28dc..aafbc0469cd6a4b76225e0e96a86025de512008e 100644
---- a/Documentation/core-api/symbol-namespaces.rst
-+++ b/Documentation/core-api/symbol-namespaces.rst
-@@ -76,8 +76,8 @@ A second option to define the default namespace is directly in the compilation
- within the corresponding compilation unit before the #include for
- <linux/export.h>. Typically it's placed before the first #include statement.
- 
--Using the EXPORT_SYMBOL_GPL_FOR_MODULES() macro
-------------------------------------------------
-+Using the EXPORT_SYMBOL_FOR_MODULES() macro
-+-------------------------------------------
- 
- Symbols exported using this macro are put into a module namespace. This
- namespace cannot be imported.
-@@ -88,7 +88,7 @@ Simple tail-globs are supported.
- 
- For example::
- 
--  EXPORT_SYMBOL_GPL_FOR_MODULES(preempt_notifier_inc, "kvm,kvm-*")
-+  EXPORT_SYMBOL_FOR_MODULES(preempt_notifier_inc, "kvm,kvm-*")
- 
- will limit usage of this symbol to in-tree modules whoes name matches the given
- patterns.
-diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-index 1d847a939f29a41356af3f12e5f61372ec2fb550..180a458fc4f74249d674ec3c6e01277df1d9e743 100644
---- a/fs/anon_inodes.c
-+++ b/fs/anon_inodes.c
-@@ -129,7 +129,7 @@ struct inode *anon_inode_make_secure_inode(struct super_block *sb, const char *n
- 	}
- 	return inode;
- }
--EXPORT_SYMBOL_GPL_FOR_MODULES(anon_inode_make_secure_inode, "kvm");
-+EXPORT_SYMBOL_FOR_MODULES(anon_inode_make_secure_inode, "kvm");
- 
- static struct file *__anon_inode_getfile(const char *name,
- 					 const struct file_operations *fops,
-diff --git a/include/linux/export.h b/include/linux/export.h
-index f35d03b4113b19798036d2993d67eb932ad8ce6f..a686fd0ba406509da5f397e3a415d05c5a051c0d 100644
---- a/include/linux/export.h
-+++ b/include/linux/export.h
-@@ -91,6 +91,6 @@
- #define EXPORT_SYMBOL_NS(sym, ns)	__EXPORT_SYMBOL(sym, "", ns)
- #define EXPORT_SYMBOL_NS_GPL(sym, ns)	__EXPORT_SYMBOL(sym, "GPL", ns)
- 
--#define EXPORT_SYMBOL_GPL_FOR_MODULES(sym, mods) __EXPORT_SYMBOL(sym, "GPL", "module:" mods)
-+#define EXPORT_SYMBOL_FOR_MODULES(sym, mods) __EXPORT_SYMBOL(sym, "GPL", "module:" mods)
- 
- #endif /* _LINUX_EXPORT_H */
+I am writing to report a potential vulnerability I encountered during
+testing of the Linux Kernel version v6.15.
 
--- 
-2.50.0
+Git Commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca (tag: v6.15)
 
+Bug Location: net/ipv6/ip6_input.c
+
+Bug report: https://pastebin.com/vw0Vrd2m
+
+Complete log: https://pastebin.com/HsUKHEpJ
+
+Entire kernel config: https://pastebin.com/jQ30sdLk
+
+Root Cause Analysis:
+
+This bug is caused by a logic error in the ipv6_list_rcv() function
+within the IPv6 input processing pipeline. During the handling of
+multicast packets, specifically in the ip6_mc_input() and subsequent
+calls, improper synchronization and premature release of socket
+buffers (skb) through kfree_skb() lead to corrupted memory access.
+This results in the triggering of a soft lockup condition where the
+CPU becomes unresponsive due to prolonged execution in
+skb_release_data() without yielding control. The issue is likely
+rooted in incorrect reference management or double-free conditions on
+shared skb structures under concurrent processing scenarios.
+
+At present, I have not yet obtained a minimal reproducer for this
+issue. However, I am actively working on reproducing it, and I will
+promptly share any additional findings or a working reproducer as soon
+as it becomes available.
+
+Thank you very much for your time and attention to this matter. I
+truly appreciate the efforts of the Linux kernel community.
+
+Best regards,
+Luka
 
