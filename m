@@ -1,107 +1,96 @@
-Return-Path: <linux-kernel+bounces-720715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73597AFBF9D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:59:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6399BAFBF9E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FEDD3B2192
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:59:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6AAB173756
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2491DB54C;
-	Tue,  8 Jul 2025 00:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C331DBB2E;
+	Tue,  8 Jul 2025 00:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="JvzZx2Mp"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="0I08XUG4"
+Received: from r3-20.sinamail.sina.com.cn (r3-20.sinamail.sina.com.cn [202.108.3.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B386D81ACA
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 00:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2D281ACA
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 00:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751936364; cv=none; b=A5Aa9tpwisKSQapP6pRHBfDwcffLTEOs8brpliKc0iFa/1A5AIrjJ2PBr1Fr5suvES99AUjWRuo9ik2ji/xwXzUnJiR9jjwu5m7oskjAFtfhP6HqGw1SvPxGi42bvPkw1/ZsQhbEwXFoQTOmzBv83VHny5dp/dWmClTvoKOllSk=
+	t=1751936396; cv=none; b=mQxaM4jidoVi9AfhU+RzU8fSxcOsglC94n/i6HtqTH9KqDuISiarzEfzgLGtIXqhcOWli5fWXpam9nTm4SfCW/snCyYONyd2wvYTXCcTr58a0kmqMZdW/6bL4GiKDd3VyRhp/rT6uNNmfnvBs9Jf+s/xgGUFrwXQVpL3Nrs5/Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751936364; c=relaxed/simple;
-	bh=pM9dYLWatSwaxucX+LnqjPG6C6W/esF84y9eDra37d0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LY5y3762iKcZYkMO4UgIVI9lTAc2HZbl8JW+nrsIdzxv6M6vlVq23Ev5Thmtls0gf2az3uYI/OBlDFVpalNS81MBGXUJIAf6rpD7QWAKSha1SOAMn1RNgcVsam71wKi6bqsHQXs2dNmmIuJd8A07OQG8w69QOXG5FkRHJVZXXdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=JvzZx2Mp; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1751936353; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=PbspvFHHJE7N1XKNWATpHnYf3TkWrZp08xKIarGIekI=;
-	b=JvzZx2MpuKgAmyXKxeZg1JxIsGWhXPtiU8lEX1LQdVCGwnSoK2cNXvXqHEEQsUL6S5dK0z4WahfPfnG/Awb6ykVKRssBRsHyBs28KE1dOCSs23OJvp66346WDCb+7u+SdfwIQXNUxQYfz5cPllBtYHbuJG9IyrXC8HPB3AXLdx4=
-Received: from 30.221.128.116(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WiI9CPa_1751936352 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 08 Jul 2025 08:59:12 +0800
-Message-ID: <3ac6bcb9-ac73-492c-a9f6-fbfb827c5967@linux.alibaba.com>
-Date: Tue, 8 Jul 2025 08:59:12 +0800
+	s=arc-20240116; t=1751936396; c=relaxed/simple;
+	bh=bJWdH9gxeG/byqjB241KwUfed22zlhN9HeqJUzblv2c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kBQ8u7/C3fMGQDjoPv4MuFSqND94FHpR0qWlVBEIwcCThj/EOOenrH1ILdt5FDV1iTicgFSydM+8vuaUz9zBGHOsD96vQhs8talZg5Nb4BrpD5kIiD0RTkM2xV2eZbAJslp0PfMsLx4lY+1glZ8lyx97nV19BjAcXq6lJv4ZYlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=0I08XUG4; arc=none smtp.client-ip=202.108.3.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1751936390;
+	bh=TAxl3qt/+THsmGheBOTvDAcCaj89BV92E3P5dRrHewo=;
+	h=From:Subject:Date:Message-ID;
+	b=0I08XUG4ULNBh7cByDnc+eFGum7wFxIyJvSQkApOrspagEC3AqJpTkPM+OoJJBoY2
+	 VJ1DhWF2w09nziHqkhpJOPsorO/rAKLTyjJSgopIpXoji40sOzuLz9B8qvy9SBc/tN
+	 v0eC5jZ7gAfAucIpdiHyu70ZC6HJBNawbu0PP1Is=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 686C6D7C000057D8; Tue, 8 Jul 2025 08:59:41 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 9178284456975
+X-SMAIL-UIID: 7DC7C4062E8947D2AD82C76B66ADD331-20250708-085941-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+e2df3a66f7d16fa6ec55@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bluetooth?] KASAN: null-ptr-deref Write in l2cap_sock_resume_cb (4)
+Date: Tue,  8 Jul 2025 08:59:29 +0800
+Message-ID: <20250708005930.2818-1-hdanton@sina.com>
+In-Reply-To: <686c12bd.a70a0220.29fe6c.0b13.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] ocfs2: Avoid NULL pointer dereference in
- dx_dir_lookup_rec()
-To: Ivan Pravdin <ipravdin.official@gmail.com>, mark@fasheh.com,
- jlbec@evilplan.org, ocfs2-devel@lists.linux.dev,
- linux-kernel@vger.kernel.org, akpm <akpm@linux-foundation.org>
-Cc: syzbot+20282c1b2184a857ac4c@syzkaller.appspotmail.com
-References: <20250708001009.372263-1-ipravdin.official@gmail.com>
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20250708001009.372263-1-ipravdin.official@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-
-
-On 2025/7/8 08:10, Ivan Pravdin wrote:
-> When a directory entry is not found, ocfs2_dx_dir_lookup_rec() prints an
-> error message that unconditionally dereferences the 'rec' pointer.
-> However, if 'rec' is NULL, this leads to a NULL pointer dereference and
-> a kernel panic.
+> Date: Mon, 07 Jul 2025 11:32:29 -0700
+> Hello,
 > 
-> Add an explicit check empty extent list to avoid dereferencing NULL
-> 'rec' pointer.
+> syzbot found the following issue on:
 > 
-> Reported-by: syzbot+20282c1b2184a857ac4c@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/67cd7e29.050a0220.e1a89.0007.GAE@google.com/
-> Signed-off-by: Ivan Pravdin <ipravdin.official@gmail.com>
+> HEAD commit:    7482bb149b9f Merge branch 'for-next/core' into for-kernelci
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1597828c580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3c06e3e2454512b3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e2df3a66f7d16fa6ec55
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17c4cbd4580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13d11f70580000
 
-Looks fine.
+#syz test
 
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-> ---
-> v1 -> v2: Changed 'Closes:' tag to point to the correct bug report.
-> v2 -> v3: Added an explicit check for empty extent list before dereferencing 'rec'.
-> 
->  fs/ocfs2/dir.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
-> index 7799f4d16ce9..acbae902ae3a 100644
-> --- a/fs/ocfs2/dir.c
-> +++ b/fs/ocfs2/dir.c
-> @@ -798,6 +798,14 @@ static int ocfs2_dx_dir_lookup_rec(struct inode *inode,
->  		}
->  	}
->  
-> +	if (le16_to_cpu(el->l_next_free_rec) == 0) {
-> +		ret = ocfs2_error(inode->i_sb,
-> +				  "Inode %lu has empty extent list at depth %u\n",
-> +				  inode->i_ino, 
-> +				  le16_to_cpu(el->l_tree_depth));
-> +		goto out;
-> +	}
-> +
->  	found = 0;
->  	for (i = le16_to_cpu(el->l_next_free_rec) - 1; i >= 0; i--) {
->  		rec = &el->l_recs[i];
-
+--- x/net/bluetooth/l2cap_sock.c
++++ y/net/bluetooth/l2cap_sock.c
+@@ -1703,6 +1703,9 @@ static void l2cap_sock_resume_cb(struct
+ {
+ 	struct sock *sk = chan->data;
+ 
++	/* sock dead? */
++	if (!sk)
++		return;
+ 	if (test_and_clear_bit(FLAG_PENDING_SECURITY, &chan->flags)) {
+ 		sk->sk_state = BT_CONNECTED;
+ 		chan->state = BT_CONNECTED;
+--
 
