@@ -1,84 +1,145 @@
-Return-Path: <linux-kernel+bounces-721134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B0E6AFC51F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:12:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33758AFC54C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69D4216D8C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:12:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86DE7177DC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD6529DB77;
-	Tue,  8 Jul 2025 08:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0DD29E0F4;
+	Tue,  8 Jul 2025 08:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uXafSZxA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eOjT9l8u"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53CA29B8EA;
-	Tue,  8 Jul 2025 08:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35E41B0F1E
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 08:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751962324; cv=none; b=pbgtakI1Bl1hEG9wNnOi/+EJlOcOMnU41swy8D2jSGJqtcqW9a7xQfPuZYlELXCdqYqSuWmlPvvgtJjnGNiH3Oamsp7vKVzvI8C96a9LHrolfqsfK8VbPFlSDvocU7n/WwUfEKh6PWLgCShhLqiNEsRJ78extSFDUkUUd24bCPI=
+	t=1751962842; cv=none; b=L3JEsMe/mtzgAyZyACja/SWtdRW9gDrpI9F7w+h0pQblSbJs1STfAJelrh5bQlxJ0sG7T1//2u136qoBJqvWenkq1dlqCfXgOlM9V42zRx81LZ7/SkSzURGLcaV7+Zi7SszLo9pQQ6ppqgJCqVkXhr0Z91s5ivnG+Y+mtRo4Cp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751962324; c=relaxed/simple;
-	bh=HAW1EPTiRkCXvNP7fS3zulptyhBHluAlgq8T1LKiR2k=;
+	s=arc-20240116; t=1751962842; c=relaxed/simple;
+	bh=nlwrLtl03wZynLrI5W8nM8lCn/KPdVjQrbS6ywj+uns=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ND70ZhiM4yDewzMfOIkgzDVEE7IEL3RjNCL/QgN1BB9zo5xYbDll7/DVKDnaWr6pwBQR2nidNr+wkGmovg86/amU2G1nvW6zd5QsSRmZI3gSQ7n16XMMhftw6oB5zmR14fLL4NxEjrBH5IBOgTyGdYBRwrvW+TOi5g/9pZqCsBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uXafSZxA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6E4AC4CEED;
-	Tue,  8 Jul 2025 08:12:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751962324;
-	bh=HAW1EPTiRkCXvNP7fS3zulptyhBHluAlgq8T1LKiR2k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uXafSZxAUIrSUo6LKjiMqbvEBlYfwJHOm8x3y6HVWlBKsuYSnVgr/7JM2sKBy8t8I
-	 m0md2htj+rMyqJKJz5w5SjO4IeSyLvjrB7wKAJYmYtJA+Lp2oKFkYaWeErNXCVpg6x
-	 3DKL2Cr1DZ8qFuNu8PnGy6AkmOVYUuTYtrvmYNOHFSs2c6LU7Pyo/oJ9GhRh0EsQxP
-	 J8wjRVePa8hRa48Xlq4pTmxwYOdDKWOuY8j62l+wGKmfnedt5OWX67AxMv641I7Tig
-	 61aGfz9Ply61fD0H95T017MwNIRfpFdjGwwoN40WXwbX+y9fd87y9K4fSsF/cCdEK+
-	 k6nK3/c/p9dBw==
-Date: Tue, 8 Jul 2025 10:12:01 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Tristram.Ha@microchip.com
-Cc: Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Marek Vasut <marex@denx.de>, 
-	UNGLinuxDriver@microchip.com, devicetree@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/6 v2] dt-bindings: net: dsa: microchip: Add
- KSZ8463 switch support
-Message-ID: <20250708-fractal-silver-mushroom-9b4fc7@krzk-bin>
-References: <20250708031648.6703-1-Tristram.Ha@microchip.com>
- <20250708031648.6703-2-Tristram.Ha@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hJiCgtqEz69FX95swg1Em2MYw4xdgSkYp/nrQx9WP8It7dVbeEg4v2i3z82BTl6b78fEXs3OnjFqXMph7tX5FNacCewzIrWfGT4uCix3pS+CZzPKmmkiKaUk9HEqP1h9/HZ/ju8uk7difUnccseflY4eqZbg5sVcmmTjp/EVROs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eOjT9l8u; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751962841; x=1783498841;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nlwrLtl03wZynLrI5W8nM8lCn/KPdVjQrbS6ywj+uns=;
+  b=eOjT9l8uHGGBlzAl126R3npX4xMzZ3DBUNt7zEhl/pq0+SaSz1JKVHS/
+   lFiz6qETEOMNM//muzuTYDfpiUQiBeavQ0CJU/JJnw6NHr+HMDAvuf76F
+   Y3XVJ/1fV3WJ3IG99tGa5MHWH9HA51tVP57D0egwYHzWggOT8zjo0uSJX
+   aFkfhPKe2f1RnqpbgtbUpnNrOoQ1Am9uXnSwkzOSr4m5BnSxvxDJQrx51
+   aEw5DauZgwsH5oeLLRjmqi0Uj4qiCW0tzmM01uM4jpnjbtyFa7bjnHWNO
+   eE0uEo20W1XV3uPad0mk/BJIJZ0jcQlAZcgfnwMxHRhnYO07kb7bjyjIZ
+   Q==;
+X-CSE-ConnectionGUID: riCa1alvQAWDbFHgrDHaDw==
+X-CSE-MsgGUID: Vm7hA3wyQCiDtCMhh3i9rA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="56804499"
+X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
+   d="scan'208";a="56804499"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 01:20:40 -0700
+X-CSE-ConnectionGUID: rfOLo3+WQk6TEMPo1o8iAw==
+X-CSE-MsgGUID: 4ZhITdttTuSc2poDAMha4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
+   d="scan'208";a="186392208"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa001.fm.intel.com with ESMTP; 08 Jul 2025 01:20:36 -0700
+Date: Tue, 8 Jul 2025 16:12:23 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, jgg@ziepe.ca, kevin.tian@intel.com, will@kernel.org,
+	aneesh.kumar@kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, joro@8bytes.org, robin.murphy@arm.com,
+	shuah@kernel.org, aik@amd.com, dan.j.williams@intel.com,
+	baolu.lu@linux.intel.com, yilun.xu@intel.com
+Subject: Re: [PATCH v3 2/5] iommufd: Destroy vdevice on idevice destroy
+Message-ID: <aGzS57bGWtg8BpEU@yilunxu-OptiPlex-7050>
+References: <20250627033809.1730752-1-yilun.xu@linux.intel.com>
+ <20250627033809.1730752-3-yilun.xu@linux.intel.com>
+ <aGLmq8D88mN5lkmN@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250708031648.6703-2-Tristram.Ha@microchip.com>
+In-Reply-To: <aGLmq8D88mN5lkmN@Asurada-Nvidia>
 
-On Mon, Jul 07, 2025 at 08:16:43PM -0700, Tristram.Ha@microchip.com wrote:
-> From: Tristram Ha <tristram.ha@microchip.com>
+On Mon, Jun 30, 2025 at 12:34:03PM -0700, Nicolin Chen wrote:
+> On Fri, Jun 27, 2025 at 11:38:06AM +0800, Xu Yilun wrote:
+> > +static void iommufd_device_remove_vdev(struct iommufd_device *idev)
+> > +{
+> > +	struct iommufd_vdevice *vdev;
+> > +
+> > +	mutex_lock(&idev->igroup->lock);
+> > +	/* vdev has been completely destroyed by userspace */
+> > +	if (!idev->vdev)
+> > +		goto out_unlock;
+> > +
+> > +	vdev = iommufd_get_vdevice(idev->ictx, idev->vdev->obj.id);
+> > +	if (IS_ERR(vdev)) {
+> > +		/*
+> > +		 * vdev is removed from xarray by userspace, but is not
+> > +		 * destroyed/freed. Since iommufd_vdevice_abort() is reentrant,
+> > +		 * safe to destroy vdev here.
+> > +		 */
+> > +		iommufd_vdevice_abort(&idev->vdev->obj);
+> > +		goto out_unlock;
 > 
-> KSZ8463 switch is a 3-port switch based from KSZ8863.  Its register
-> access is significantly different from the other KSZ SPI switches.
+> This is the case #3, i.e. a racing vdev destory, in the commit log?
 > 
-> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
-> ---
->  Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> I think it is worth clarifying that there is a concurrent destroy:
+> 		/*
+> 		 * An ongoing vdev destroy ioctl has removed the vdev from the
+> 		 * object xarray but has not finished iommufd_vdevice_destroy()
+> 		 * yet, as it is holding the same mutex.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Applied this part.
 
-Best regards,
-Krzysztof
+>		 * Destroy the vdev here,
+> 		 * i.e. the iommufd_vdevice_destroy() will be a NOP once it is
+> 		 * unlocked.
+> 		 */
+> 
+> > @@ -147,10 +183,12 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
+> >  	if (rc)
+> >  		goto out_abort;
+> >  	iommufd_object_finalize(ucmd->ictx, &vdev->obj);
+> > -	goto out_put_idev;
+> > +	goto out_unlock_igroup;
+> >  
+> >  out_abort:
+> >  	iommufd_object_abort_and_destroy(ucmd->ictx, &vdev->obj);
+> > +out_unlock_igroup:
+> > +	mutex_unlock(&idev->igroup->lock);
+> 
+> Looks like we will have to partially revert the _ucmd allocator,
+> in this function:
+> https://lore.kernel.org/all/107b24a3b791091bb09c92ffb0081c56c413b26d.1749882255.git.nicolinc@nvidia.com/
+> 
+> Please try fixing the conflicts on top of Jason's for-next tree.
 
+Yes, will rebase for next version.
+
+Thanks,
+Yilun
+
+> 
+> Thanks
+> Nicolin
 
