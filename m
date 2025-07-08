@@ -1,303 +1,506 @@
-Return-Path: <linux-kernel+bounces-720827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E587AFC0D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:28:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7642AFC0CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45EFA421457
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:27:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79EB64A409D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A0C21FF2A;
-	Tue,  8 Jul 2025 02:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890E92222DD;
+	Tue,  8 Jul 2025 02:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="QLKdJOqO"
-Received: from esa19.fujitsucc.c3s2.iphmx.com (esa19.fujitsucc.c3s2.iphmx.com [216.71.158.62])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kMYK9yyQ"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB1C21A95D
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 02:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=216.71.158.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751941693; cv=fail; b=pAcx8ahNP4dANO8O+Lr7aI9oJoU7RCUBCbWHPumiMZ6DkJ6yrVZ3pMc8diErJgMy9+fPENwohczQLx293RrV3Kyw8KMAu2p9QUXPKbJPpi80ohWHbF9pdrIBvskKDgPW55UbHJ4owKzaxBZyBxH85HiwvfIfS4pRXyvI9uZvtgA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751941693; c=relaxed/simple;
-	bh=zGHqzGTH8xetMHloo/12dKt+peJQ2TEE/9uDcx8CFEQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=GksXvRwmltbxb5WzG3+YU8e2wt5Kwx6HOlIMFQ2GcBMqVtgXk5sYShjR5zp27bCaHw5RenUAvq5VP+XefgQR0Xv/8OELxFBR6zkEBqNQb6EnRmsH1oe62PBuZq+PaSDGZGyIVhGPAI/mRJ1sZWyeVYx03lKCX8uRpU6iU+m1VEQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=QLKdJOqO; arc=fail smtp.client-ip=216.71.158.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
-  t=1751941692; x=1783477692;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=zGHqzGTH8xetMHloo/12dKt+peJQ2TEE/9uDcx8CFEQ=;
-  b=QLKdJOqOGdoFZSWpRrWdwg6QqhHO72omKfHcaRVfP0MlSiBbZFvAL6AP
-   kxPoRHIWNhqt1IS6jDRMn8u27rrZKl3H14YgB31y4385L81clVvjD275M
-   HII5fwYuHp52bAYhkP3dBqU0RcUsm3AZC0Xfhxo4fJ9qi1i0JlMKOJ7lO
-   b9T2lLnuk5VBZVCP8FR9vM+wPP8+hdWj1+22MClGJ68wyI1X9z+0h1LJl
-   1tCjfbfPAAHC4qNTHg8aD1Jso4Y+q2Q/dJv6G+bIlp9gZFZcFBFrbbVtt
-   xxcOTjHN6l+5mNfC41wiw5sj+kBj5ykIDRqB+EFG57VZZ8AjWIC7ba/AH
-   A==;
-X-CSE-ConnectionGUID: Izu9Bso1S0+jJKKbJCqU4w==
-X-CSE-MsgGUID: URTs9/IsQtmjcHbkpng3Hg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="160336169"
-X-IronPort-AV: E=Sophos;i="6.16,296,1744038000"; 
-   d="scan'208";a="160336169"
-Received: from mail-japaneastazon11011022.outbound.protection.outlook.com (HELO TYVP286CU001.outbound.protection.outlook.com) ([52.101.125.22])
-  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 11:26:58 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZKiG4FTYMIyC2CINBlvjkR4qD2GP5OFT7o4wss/XomvYsxqsW493+oWLiJz9HrbaLox5J4vd4l9l+Xhigs+ypEDK+aDMEa1bKOzdgy3qT9y7w3KI2/aN3KEb+x8gqGHuT6tJ8XU+JbO+6Ub0J5oa85SenuEF6cwhntZhju9L/Y2n7oOHAVnJYKMv3djTAVaahLYXp4OWY4F2BCZF6iypNuAdnYlwAheyJmToGrLexVUK1JcQDUekgAfCRhPKCqlJ4UCeoKp2/NexRWO/MosCvMlcJ8js5B8PDcV4k9p8IunL5pfxAN0BTWCizjPxnHwg89ty1LVZLkxsypFYotkKDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zGHqzGTH8xetMHloo/12dKt+peJQ2TEE/9uDcx8CFEQ=;
- b=h0ssQDT8zyX1hh48V539ZwGnzU4cwLaS9MvnnELLcd50g/SqqtmQ/fi3onuAKo2pQTNRl5+Eb8YYV5fvcdkkACWTqJrKWYrFrLvbYTzp4b7/FAUVF3o80WkWeSvD5PYD+gh5/DVJe7aRAz6ccjuOW21SlXkLpzqz/fvqrFUo+mo/VCiUqvge3bsEy9g7M0N+y0B8I4Im/kn4EpmdQubjwGzzfT99nEVFwn3WWXyyox5INZt/izYzqIKEF8cPX1NY9I0cbp4fB4ukYgmf7TQ+1UrahjssMN+RfqXy/vuRUAxej/c/fYV3irZesgmdD0I1Yrc/F5dlG5VY9dDmlxKNCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
- dkim=pass header.d=fujitsu.com; arc=none
-Received: from OSCPR01MB14468.jpnprd01.prod.outlook.com (2603:1096:604:3a3::6)
- by TYYPR01MB6959.jpnprd01.prod.outlook.com (2603:1096:400:d6::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Tue, 8 Jul
- 2025 02:26:54 +0000
-Received: from OSCPR01MB14468.jpnprd01.prod.outlook.com
- ([fe80::5078:96dc:305b:80e0]) by OSCPR01MB14468.jpnprd01.prod.outlook.com
- ([fe80::5078:96dc:305b:80e0%5]) with mapi id 15.20.8901.024; Tue, 8 Jul 2025
- 02:26:54 +0000
-From: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>
-To: "Huang, Ying" <ying.huang@linux.alibaba.com>
-CC: "linux-mm@kvack.org" <linux-mm@kvack.org>, "Huang, Ying"
-	<ying.huang@intel.com>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Yasunori Gotou (Fujitsu)"
-	<y-goto@fujitsu.com>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
-	<peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-	"lkp@intel.com" <lkp@intel.com>
-Subject: Re: [PATCH RFC v2] mm: memory-tiering: Fix PGPROMOTE_CANDIDATE
- accounting
-Thread-Topic: [PATCH RFC v2] mm: memory-tiering: Fix PGPROMOTE_CANDIDATE
- accounting
-Thread-Index: AQHb5XbVZg4Ev2RiYUGAscIFS7XkjbQa/WiAgAyC+G6AABQ7gA==
-Date: Tue, 8 Jul 2025 02:26:54 +0000
-Message-ID: <ef637fe1-436e-4003-86fb-47f651433f7b@fujitsu.com>
-References: <20250625021352.2291544-1-lizhijian@fujitsu.com>
- <e71873b6-78ac-4555-a6a5-e9b5fb3f9112@fujitsu.com>
- <87tt3nxz4x.fsf@DESKTOP-5N7EMDA>
-In-Reply-To: <87tt3nxz4x.fsf@DESKTOP-5N7EMDA>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=fujitsu.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OSCPR01MB14468:EE_|TYYPR01MB6959:EE_
-x-ms-office365-filtering-correlation-id: ec8c2f9c-d655-4eb2-c9fb-08ddbdc6e7a0
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|1800799024|7416014|38070700018|1580799027;
-x-microsoft-antispam-message-info:
- =?utf-8?B?NXBMU1lVaDZmbllNTFN6enQ0M3hBZ0g5OVBzek9Zb0t6V0I1Q1A5K2VJYnNx?=
- =?utf-8?B?YWpFWk9hV3poY1RQMmY1c0hVQzRiMkUzRzZnNG1vMHJPZjBUTnJyemtPMDhH?=
- =?utf-8?B?Mi9hdzg4d2wybmpRNHpqZWZQeHoxaWUyMzNVN0haeXhIKzJlZ3h0VllWSTZ3?=
- =?utf-8?B?YTVreTFOZitRUHNOQnU0SFlUNlVSaXl1VnIzWERPbDUwWHc4UU5rWmhCZU1O?=
- =?utf-8?B?TkxFRTJQVk9ST2M0bDk4YjArMWJWSXJlV0ZjQzJZakEvRmZNZUZhTlY5S0d6?=
- =?utf-8?B?ODlSdkxsUHFmMGRlWTBjQVJ2WUYvT2dqdGx4dlR4UjZ6TTdLWXF0bklQemZh?=
- =?utf-8?B?KzhDN0lsYnZ6cytQVTNldnRMUXRXWm5qbVRKTWhxdTFna21INGxRZXFBU3Zq?=
- =?utf-8?B?K1phWlk4Yk11MzZYTkZnejF0cmJ1T3pyM2RjMHAvaUVITmw5L3IraWNpVFEw?=
- =?utf-8?B?anNOcHU3OHZ1TTBPNUFDUXpFVjQ5TFhkY2FLUUJpTmo0eDNLZ05NdmtJeUJ4?=
- =?utf-8?B?NjlrRHJONHNnVVIyVmRwV0l1ejFwblgyVjRXYUZxNE1BNm96NEc4dDBNb04v?=
- =?utf-8?B?aFl6QkxLZlo4U1F1bHQyMTdPZnFvYjBXMlQxQXpiMng4VE5OT0ZpeWMzSFJv?=
- =?utf-8?B?Nm00SEl5ZHRhNE85aTArbzl2WTdsTk9iSUc3SkxRTERyZjhsSVUrQ1puQ3do?=
- =?utf-8?B?VGtKcW5BbU9QL1ArV0JJNmZPV2N5SWovcEt4VlpXSUJNYy9adFBPWUlkMzFN?=
- =?utf-8?B?aEpYR3o1NGNjNWVKRUo3QVJUczUwQyszcFJLT0x6UFZCVldpQWIyODl6VmFQ?=
- =?utf-8?B?WnNnZCtZd3VnQm9CWWswWEpJd1JVOGZxbEticGpsYXRsV2o1bDV5L3Nka0NT?=
- =?utf-8?B?ejZkaHFUU3ZpYlBtL1k1cmpVcXQwbXVlUnFQYStWRDBnQXRxck9KRnVCZ0lj?=
- =?utf-8?B?cEZnRUpLWHdUU05CaUNwbEdicW5mMUNHQXhmYmJkQ2N5d09jVzF2T1pOM0tC?=
- =?utf-8?B?cVNld3NYS21wNzJyeVJMZzNwOUJJenpMSllhelN0VzZ4Wm1rODV4eE9MUDNI?=
- =?utf-8?B?UE0zandRdmFOTGRTaVhuaytId00vT0gzeHdPU0FYOUFYd3l3Z0dYWjBuV1J4?=
- =?utf-8?B?SVQ5bkRrYWtPNmFIbUVET2EvVXFQV3pQeERPS2Vqb2tOZlk1R3YvWUVNUFJw?=
- =?utf-8?B?Sk42SHlRdE4wUzYzd1pKS1FMUXZ6OWJwSUlzZkx3TG9IWSttbndJY0Y3aGJp?=
- =?utf-8?B?cVc0OHMyaTIzODZ6M0dRRStiWG0rOTEyNk1ESUdDUkYxVFZpcVlubFpwNlAx?=
- =?utf-8?B?aEJiaVA4a0I4WXNvNm1nRDRrb1NYMHNSRFArWUZsTVNqWkdzYVExZVhqT1Zi?=
- =?utf-8?B?cDVXamprZHpTK3c3RmtJZWtWNVVmVWc5TVcvV3oxK2tnMmV5SjZtQUpReWZW?=
- =?utf-8?B?WVRJSUpoOGNmYzZOcFRwYURCdkl5VWRBMXdWeTNWM2QzRzBmd3hLcFhWckE3?=
- =?utf-8?B?Ny9kRUE0anhUNEhmTTZNK2hrK3BTam5sRXUvYjFmdDZrR1phdkFWMk1GY1FK?=
- =?utf-8?B?Z0dkUTJHWVBNSXBVWUNrWHA3NlE2K3d1eloxdmg0dWxPb040Qll5MUtmdkUy?=
- =?utf-8?B?ZWpZemZNb0dLS1JIVzBpMFVSeU1jeE9mUTdtd3QxL3dSUS9tbnhIYWJOK2FW?=
- =?utf-8?B?eTVRdWZYWk1pekpaTWM3ZWVtV2x0SkE5SDFHYmpLLzBZWGRRcWJoNXg3a1l1?=
- =?utf-8?B?d3RFOHpmUVl1N2tDNFJqc3lYdVRqUXBCNG5oSFRHVTJHZ2FUVE4yUTYyUXRy?=
- =?utf-8?B?akxya3luTW5vVkVYWmNzWHhLWmxPYUxIWUFtSjcvVHhuNmxtMTdmR2RhR1h5?=
- =?utf-8?B?SzhFeU8yTG9FWFh2RVRXVDFGYk81eEVFQ3FxRTdwcjJIdXJuZk9PdkVIeXls?=
- =?utf-8?B?QWpzVzdoVldQS1Q3djR3Z1RsRmczUG5UNmxyZWwvbE9kRmJmU3I0NFBCL1N5?=
- =?utf-8?B?M0JaQ2s5VzZONzRVenVValZMTmhMVGdBcGZ2TCtqRVRBLzRwL2FzZVVMc25h?=
- =?utf-8?B?a1dsVnZ2OFoxL3N5cDg2MXZWa3psWkQyNWY2Zz09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSCPR01MB14468.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014)(38070700018)(1580799027);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?OUJZcFJvdUU1ZURxSTlBV2E1SkhGemNuclVmTW05UzBEMUY4Uyt2RmtzM2pY?=
- =?utf-8?B?Tm5mQ0JUUlVtbkR5SkVlbW5yd3Z5TDZQMXlOdWYySDJJZXltU0wzdUExMzJG?=
- =?utf-8?B?MitUdGpEeXFRWTV6eWs0RTJmUVZ4bGpDRmhjL0l2c2ppRVJGK0ZRclRLeE83?=
- =?utf-8?B?ZVZDL01wemF2bTlkR0QwWVp0RXh3Ty9VT3IwS0hoTmh2VDlnN29xclJ1Y3F1?=
- =?utf-8?B?SFI5UGhMVlB2bkx2c2hYaUYrd2J0TVFEdFp1c0UydUc2SHA4UERQd2hOYy9a?=
- =?utf-8?B?eHVhaVArenI3MFU2Zzlucm9kRzMvaW4xSVhnQkRSNTFXaDlBSWwycWJnQ2ZR?=
- =?utf-8?B?c0wyRXBWaDBIbjZHWThjRGd1QXFxNlRFdmRNTEJSUWlBNHdXL2dkbUlya3FT?=
- =?utf-8?B?KzdDTUdrY2lFaGNIb0xkYVZid1lDOW05OWVuREpyVFFzK3pYMFg1NlYyQ2JW?=
- =?utf-8?B?QStTdjlmM3ppaFVZNnBCQVpNOWZWVk1tMzhGNStGQ1ZNUHkrL0lMK0JSU2ZZ?=
- =?utf-8?B?bStSZCtIZDlSWjk4a2ViT3kyRE5BcWNFN3hKRjNVWnp4a3pFRUZFcE9LT3d6?=
- =?utf-8?B?YlNWSG9NWkowNy8rd1lUMk0zVkZwZjZCS3l2Y21CSmluMWFHSS9wcCtEa0hm?=
- =?utf-8?B?eVBJUjBtMEFEdzZxcmcvK3crYm14bFNvSk1TNG5uYzI0NVNRcDJ5TVUvTXdm?=
- =?utf-8?B?Y0NDeDVpSXNqZGs4a3dCZ1JaZWFMcnZSL2RtRWl2UzRlVEpsZWJYR3BrMlBL?=
- =?utf-8?B?cGhiaEpvUjlHYWJBTGNGSjlDb0lpbkw4ckx6UVNEUWJOUzlHbnVQUVY5ckE2?=
- =?utf-8?B?eHlESlhZR1FGWm94VzRSMFR4RnNBVk84L2dtNFltUEUwV3hCVnhneGNtNlBa?=
- =?utf-8?B?RDF5N3pGeHd0MGdkMS8wRlFJUWFKTzNoNUd1RC9MeENyaTBLTU1LNDcrck5i?=
- =?utf-8?B?TWhHUXM4SkttM2dyWlNUd3lDWmtTQ3JMMjhRdFNzTGE5YlhxMGNGOVIyV3FJ?=
- =?utf-8?B?b3pYYkQrV1JBWlp1bFI1UmdET0h3cE1QcnR3Y1JGL0ROaDJpMWpRWTg1SEhG?=
- =?utf-8?B?QmFDZG9pemNrUHRMelpZRkExUUNBV0dhcStrU1RsMnphSTNQY3pTWHZQcmVI?=
- =?utf-8?B?QStmTzBoMVZSejcrM1BUd010TDcyRy81cy9TNUd3d05hVDZ1REJkYzFLS3JF?=
- =?utf-8?B?MDhRNXE1b3NHR3AvRDk4cmEwdzliQVQ2T0RsZG1uNHFCYWFkMXEwNlo2dDlU?=
- =?utf-8?B?M2Y3NFBibUlydDNId0hxQVVxd1NoR0lzMi9nZFV6REZkeXl3b0dpK3U5c29r?=
- =?utf-8?B?b2x0dWdESHJKd2FiSlFkeVFzRVlsdVJLNXNDd01YcERFYkxYTkp1am9qY0tn?=
- =?utf-8?B?TGlndGNZdUthb3BzSHBWWmNvdUUrS0NKZVdzbzFUU1MwaWdKSVdrQWFLdXdx?=
- =?utf-8?B?MWRTRVpTSmhoZTdIMkI0UmNSWUtyMURTMFBsVFNpZVRTSUVRRis5a2tKajdM?=
- =?utf-8?B?eExHVnRNVFM4OVA2azBhODJiWWoxdlo2RkFXdC85R21kVlRNUXNJWkxFOElK?=
- =?utf-8?B?aGF6SEU3c0tDb0RBWXdvVWlLalJIRDAxcmg3aTNqN1g1OGxSeVZqZ2RBUDVG?=
- =?utf-8?B?N1RVMGtIRmtrMVpGVlV6VloxMnJrczZVK1E3WnBzVGZ5OXM2dTVldWFZWWto?=
- =?utf-8?B?NG5OSng1TUVXOVFoeGltS09MVnFtTWNWWk1vYXBIYlRDd3g1LzVWYVhPYWdL?=
- =?utf-8?B?NUhnZkE5OU5aNnBqeEhqRjZESm5EaEJUVGhXTlROOVM5VHptbHFVL0FsZ2hN?=
- =?utf-8?B?am9Ya2FlTDUwdkJXN25LREl2QWNGKzFEdUZWNnVlamNRajFDclgrQUxMcUMv?=
- =?utf-8?B?TWlCVzVNc0d2dTl6NjZmOE05UDNNZ241QmVIZXRJbDNZVktqV1F5NFBQbVZM?=
- =?utf-8?B?eDVpODI2bTlyUGZ0eWx4MjIyTlVLMnllR1ZNWXEwYzZKL0tnNEJXWCt0MVhM?=
- =?utf-8?B?d1hOZWtXYkxIM2xaU0xYcnpaTUVOckxIVTBWaDNZSWNqdlp6ejFpMzVVQ3F2?=
- =?utf-8?B?dC96d2lNS1ZTRUZwL0hxLys2ckJ4Mm03T1RpMUpFQk1QWmFJRFFWbFNOOEhY?=
- =?utf-8?B?Skd0OGVFOEFTbm9mZkEzSnhYOUZNVU11VEpTcDRMTXRUNjloWjdISUNRZjdI?=
- =?utf-8?B?YkE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <CFFB9BCE8BAD744C9D4A30B724F87C5B@jpnprd01.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE4F1401B;
+	Tue,  8 Jul 2025 02:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751941650; cv=none; b=mKQTs0J7M3q0MxrSZhNfosO0hBR1zJm0CY6Ape+j+ojcvn47XcCa+6fiuaz1Y6WCIgR3z3AIaHOqhi9j63KIrbcuUCWRfaFU/34LhqRlDBjojZEjqjZYkeWhSJYQon8t3vEs24e3S08kJkvDql9BdKw9GdpLNm76TAEbjY+HQwY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751941650; c=relaxed/simple;
+	bh=j9UvsaaHxmtYaGTO38L32nn09P+CtwXrZ8CVThXcLi4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YmoWMo2dks+9VP/C11jw0+Qxwa9nbItMuOeKt5rQxSOHN6SzgfmxwhvOmLX6Hb8Aq3lIZWpM0vgUg/jQy48vwB3kaGO1dARsMQ5Ct4/yySBFWdZlN03vjLtrv+ZMmQfcDH2xIzBr+m8KfT0k+sZefJet9qBMXBB198phIJisDaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kMYK9yyQ; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <9da29bd6-228a-4047-afbe-2072d795243b@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751941635;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/Ng24SlWO6YjCJBDcOp6gZ3iPyXRTJHPHyTRS4V7beI=;
+	b=kMYK9yyQboknX8Z+aBCqCPDEo0tfyidUuVU1oVTctQxETFTE1M/qi07D2Sc3O8BKOfaEby
+	CDurZqHZ6YeyDHfv/nL/Y9ZDcfKtz1fTzGtf/Q+pmNBh7miNOKAscQ8qS/jxRn7uA6vZZ1
+	Ux1O/8FsrZDJ7/E7z6NQvVWt3XQzigQ=
+Date: Tue, 8 Jul 2025 10:26:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	+mIGSKYLEbdTFv/y9YBL5TxZmKHc3HygDirnsfdsliwrJoiTGjMrLmJOl/u0iS2yOQz2ODtANA5ePvRqbs1BFXScFRWVk/q2I45FZsKsxDx6zOhDq7g7TPi+VHdiafin8mQCHQqxIQHCRObRLGvPR2e1SOJVib9b2Oko/rgQLipuY3EbUqsE8NrMwfRYCfesu8IxnkQJIw9YsBuJmb2DOsaAn1VBtmbQAhz1Kmyn75l7+RTNxr3TNUosYhVkYyB2G36804/ildkY4p6ApLJRfvVzbP4mDVdFHeInE00YxTkEhDzLy2uqvKfH6EbKgLzBkR3O9GO6dZQW/es/+E5LArUqb+YA6aeDCx8fhg8Y9uFRab4Ruegea9OOPlpH4vPss7fM04ifDXcO7tf+/PrU78Guei0UPA0i2t59flvrYBX2CYEL87L0lwKj70ZNcYfC4ylgCjRkAs6aVdsuLMShX5TqQ875nRUwq8iQKvVD/1jhqsrcX3vaPp2f3fWtNB+6nKPnpigy51Yg/At4qm8xfbeEmSL6qJILtTFEkf9YVppR4exB5OOrUHc0KMsfB03wcSe2jVTQmyKEBqkT6uxmKGrt+kNa02EQfx6MGjZgcGAQq05LVXGd11MiypfQD9UQ
-X-OriginatorOrg: fujitsu.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSCPR01MB14468.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec8c2f9c-d655-4eb2-c9fb-08ddbdc6e7a0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2025 02:26:54.3330
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OAOTX8g6+EA2hKvaanzW25hRpActwE9l9Q24tORUyv2GarZkQ0ttOAKG4xO8fnJNbe8zYvU4edrm43KiXEjuMQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB6959
+Subject: Re: [PATCH bpf-next 1/6] bpf: Add attach_type in bpf_link
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, mattbobrowski@google.com, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ kuniyu@amazon.com, willemb@google.com, jakub@cloudflare.com,
+ pablo@netfilter.org, kadlec@netfilter.org, hawk@kernel.org,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+ coreteam@netfilter.org
+References: <20250707153916.802802-1-chen.dylane@linux.dev>
+ <20250707153916.802802-2-chen.dylane@linux.dev> <aGw4iGLkKkUE-qxG@krava>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <aGw4iGLkKkUE-qxG@krava>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-DQoNCk9uIDA4LzA3LzIwMjUgMDk6MTQsIEh1YW5nLCBZaW5nIHdyb3RlOg0KPiAiWmhpamlhbiBM
-aSAoRnVqaXRzdSkiIDxsaXpoaWppYW5AZnVqaXRzdS5jb20+IHdyaXRlczoNCj4gDQo+PiBIaSwN
-Cj4+DQo+Pg0KPj4gT24gMjUvMDYvMjAyNSAxMDoxMywgTGkgWmhpamlhbiB3cm90ZToNCj4+PiBW
-MjoNCj4+PiBGaXggY29tcGlsaW5nIGVycm9yICMgUmVwb3J0ZWQgYnkgTEtQDQo+Pj4NCj4+PiBB
-cyBZaW5nIHN1Z2dlc3RlZCwgd2UgbmVlZCB0byBhc3Nlc3Mgd2hldGhlciB0aGlzIGNoYW5nZSBj
-YXVzZXMgcmVncmVzc2lvbi4NCj4+PiBIb3dldmVyLCBjb25zaWRlcmluZyB0aGUgc3RyaW5nZW50
-IGNvbmRpdGlvbnMgdGhpcyBwYXRjaCBpbnZvbHZlcywNCj4+PiBwcm9wZXJseSBldmFsdWF0aW5n
-IGl0IG1heSBiZSBjaGFsbGVuZ2luZywgYXMgdGhlIG91dGNvbWVzIGRlcGVuZCBvbiB5b3VyDQo+
-Pj4gcGVyc3BlY3RpdmUuIE11Y2ggbGlrZSBpbiBhIHplcm8tc3VtIGdhbWUsIGlmIHNvbWVvbmUg
-YmVuZWZpdHMsIGFub3RoZXINCj4+PiBtaWdodCBsb3NlLg0KPj4+DQo+Pj4gSWYgdGhlcmUgYXJl
-IHN1YnNlcXVlbnQgcmVzdWx0cywgSSB3aWxsIHVwZGF0ZSB0aGVtIGhlcmUuDQo+Pg0KPj4gSSBy
-YW4gbWVtaG9nICsgcG1iZW5jaCB0byBldmFsdWF0ZSB0aGUgaW1wYWN0IG9mIHRoZSBwYXRjaCgz
-IHJ1bnMgWzFdIGZvciBlYWNoIGtlcm5lbCkuDQo+Pg0KPj4gVGhlIHJlc3VsdHMgc2hvdyBhbiBh
-cHByb3hpbWF0ZSA0JSBwZXJmb3JtYW5jZSBpbmNyZWFzZSBpbiBwbWJlbmNoIGFmdGVyIGFwcGx5
-aW5nIHRoaXMgcGF0Y2guDQo+Pg0KPj4gQXZlcmFnZSAgICAgcG1iZW5jaC1hY2Nlc3MgICAgICAg
-ICAgICBtYXgtcHJvbW90aW9uLXJhdGUNCj4+IEJlZm9yZTogICAgIDc5NTY4MDUgcGFnZXMvc2Vj
-ICAgICAgICAgICAgICAgIDE2ODMwMSBwYWdlcy9zZWMNCj4+IEFmdGVyOiAgICAgIDgzMTM2NjYg
-cGFnZXMvc2VjICgrNC40JSkgICAgICAgIDIwNzE0OSBwYWdlcy9zZWMNCj4gDQo+IEl0J3MgaGFy
-ZCBmb3IgbWUgdG8gdW5kZXJzdGFuZCB3aHkgcGVyZm9ybWFuY2UgaW5jcmVhc2VzIGJlY2F1c2Ug
-b2YNCj4gaGlnaGVyIHByb21vdGlvbiByYXRlLCB3aGlsZSB0aGUgZXhwZWN0ZWQgYmVoYXZpb3Ig
-aXMgbW9yZSBwcm9tb3Rpb24NCj4gcmF0ZSBsaW1pdGluZy4NCg0KR29vZCBxdWVzdGlvbi4NCg0K
-QWJvdmUgbWF4LXByb21vdGlvbi1yYXRlIG1lYW5zIHRoZSBtYXhpbXVtIHJhdGUgZHVyaW5nIHRo
-ZSBXSE9MRSBwbWJlbmNoIHBlcmlvZCB3aGljaA0KY2FuIG5vdCBpbmRpY2F0ZSB0aGUgdG90YWwg
-cHJvbW90ZWQgcGFnZXMuDQoNCkFsbG93IG1lIHRvIHByZXNlbnQgZWFjaCBzYW1wbGUgWzBdIHJl
-Y29yZGVkIHBlciBzZWNvbmQgZHVyaW5nIHRoZSBwbWJlbmNoIGR1cmF0aW9uLCBhcyBleGVtcGxp
-ZmllZCBiZWxvdzoNCg0KDQogICAgICAgICAgICAgfCAgICAgICBBRlRFUiAgICAgICAgICAgICB8
-VlMgfCAgICAgICAgICAgQkVGT1JFICAgICAgIHwNCi0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS18DQp8IFRpbWVzdGFtcCB8
-ICBwZ3Byb20vcyAgIHwgIHBnZGVtL3MgIHwgICB8ICBwZ3Byb20vcyAgfCAgcGdkZW0vcyAgfA0K
-fC0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS18LS0tLS0tLS0tLS18LS0tfC0tLS0tLS0tLS0tLXwt
-LS0tLS0tLS0tLXwNCnwgICAgIDEgICAgIHwgICAxMjI5NzcgICAgfCAgICAgMCAgICAgfCAgIHwg
-ICAxMjMwNTEgICB8ICAgICAwICAgICB8DQp8ICAgICAyICAgICB8ICAgNTAxNzEgICAgIHwgICAg
-IDAgICAgIHwgICB8ICAgNTAxNTkgICAgfCAgICAgMCAgICAgfA0KfCAgICAgMyAgICAgfCAgICAg
-MTggICAgICB8ICAgICAwICAgICB8ICAgfCAgICAgMjggICAgIHwgICAgIDAgICAgIHwNCnwgICAg
-IDQgICAgIHwgICAxNjY0NyAgICAgfCAgICAgMCAgICAgfCAgIHwgICAgIDAgICAgICB8ICAgICAw
-ICAgICB8DQp8ICAgICA1ICAgICB8IDIwNzE0OS41ICAgIHwgICAgIDAgICAgIHwgICB8ICAgNzg4
-OTUgICAgfCAgICAgMCAgICAgfA0KfCAgICAgNiAgICAgfCAxOTM0MTEgICAgICB8IDE2MTUyMSAg
-ICB8ICAgfCAgMTY4MzAxICAgIHwgICA4NzAyICAgIHwNCnwgICAgIDcgICAgIHwgIDUyNDY0ICAg
-ICAgfCAgNTM5ODkgICAgfCAgIHwgICA0MjI5NCAgICB8ICAzOTEwOCAgICB8DQp8ICAgICA4ICAg
-ICB8ICAgNTEzMyAgICAgIHwgICAyNjI3ICAgIHwgICB8ICAgICAwICAgICAgfCAgICAgMCAgICAg
-fA0KfCAgICAgOSAgICAgfCAgICAgMjQgICAgICB8ICAgICA4ICAgICB8ICAgfCAgIDM4NzUgICAg
-IHwgICA2MjEzICAgIHwNCnwgICAgMTAgICAgIHwgICAgIDAgICAgICAgfCAgICAgMCAgICAgfCAg
-IHwgIDQ1NTEzICAgICB8ICA0MzI2MCAgICB8DQp8ICAgIDExICAgICB8ICAgICAwICAgICAgIHwg
-ICAgIDAgICAgIHwgICB8ICAzNjYwMCAgICAgfCAgNDQ5ODIgICAgfA0KfCAgICAxMiAgICAgfCAg
-ICAgMCAgICAgICB8ICAgICAwICAgICB8ICAgfCAgMjEwOTEgICAgIHwgIDExNjMxICAgIHwNCnwg
-ICAgMTMgICAgIHwgICAgIDAgICAgICAgfCAgICAgMCAgICAgfCAgIHwgIDEyMjc2ICAgICB8ICAx
-MDcxOSAgICB8DQp8ICAgIDE0ICAgICB8ICAgICAwICAgICAgIHwgICAgIDAgICAgIHwgICB8IDE0
-OTY5OSAgICAgfCAxNDk0MDAgICAgfA0KfCAgICAxNSAgICAgfCAgICAgMCAgICAgICB8ICAgICAw
-ICAgICB8ICAgfCAgIDQwMjYgICAgIHwgICA0OTMzICAgIHwNCnwgICAgMTYgICAgIHwgICAgIDAg
-ICAgICAgfCAgICAgMCAgICAgfCAgIHwgICAzNzgwICAgICB8ICAgICAwICAgICB8DQp8ICAgIDE3
-ICAgICB8ICAgICAwICAgICAgIHwgICAgIDAgICAgIHwgICB8ICAgICAyICAgICAgfCAgICAgMCAg
-ICAgfA0KfCAgICAxOCAgICAgfCAgICAgMCAgICAgICB8ICAgICAwICAgICB8ICAgfCAgICAgMCAg
-ICAgIHwgICAgIDAgICAgIHwNCnwgICAgMTkgICAgIHwgICAgIDAgICAgICAgfCAgICAgMCAgICAg
-fCAgIHwgICAgIDAgICAgICB8ICAgICAwICAgICB8DQp8ICAgIDIwICAgICB8ICAgICAwICAgICAg
-IHwgICAgIDAgICAgIHwgICB8ICAgICAwICAgICAgfCAgICAgMCAgICAgfA0KfCAgICAyMSAgICAg
-fCAgICAgMCAgICAgICB8ICAgICAwICAgICB8ICAgfCAgICA2MiAgICAgIHwgICAgIDAgICAgIHwN
-CnwgICAgMjIgICAgIHwgICAgIDAgICAgICAgfCAgICAgMCAgICAgfCAgIHwgICAyMDE2ICAgICB8
-ICAgICAwICAgICB8DQp8ICAgIDIzICAgICB8ICAgICAwICAgICAgIHwgICAgIDAgICAgIHwgICB8
-ICAgICAwICAgICAgfCAgICAgMCAgICAgfA0KfCAgICAyNCAgICAgfCAgICAgMCAgICAgICB8ICAg
-ICAwICAgICB8ICAgfCAgICA2MiAgICAgIHwgICAgIDAgICAgIHwNCnwgICAgMjUgICAgIHwgICA4
-MzA4ICAgICAgfCAgICAgMCAgICAgfCAgIHwgICAgIDEgICAgICB8ICAgICAwICAgICB8DQp8ICAg
-IDI2ICAgICB8ICAgMjIwICAgICAgIHwgICAgIDAgICAgIHwgICB8ICAgICAwICAgICAgfCAgICAg
-MCAgICAgfA0KfCAgICAyNyAgICAgfCAgICAgMCAgICAgICB8ICAgICAwICAgICB8ICAgfCAgMTk5
-NS4wNSAgIHwgICAgIDAgICAgIHwNCnwgICAgMjggICAgIHwgICAgIDAgICAgICAgfCAgICAgMCAg
-ICAgfCAgIHwgICAgIDEgICAgICB8ICAgICAwICAgICB8DQp8ICAgIDI5ICAgICB8ICAgNTc5MSAg
-ICAgIHwgICAgIDAgICAgIHwgICB8ICAgICAwICAgICAgfCAgICAgMCAgICAgfA0KfCAgICAzMCAg
-ICAgfCAgICAgMCAgICAgICB8ICAgICAwICAgICB8ICAgfCAgICA2MiAgICAgIHwgICAgIDAgICAg
-IHwNCi0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKysrKystLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS18DQp8ICAgdG90YWwgICB8IDY2MjMxMy41ICAgIHwgMjE4MTQ1ICAgIHwg
-ICB8IDc0Mzc4OS4wNSAgfCAzMTg5NDggICAgfA0KfCAgICBtYXggICAgfCAyMDcxNDkuNSAgICB8
-IDE2MTUyMSAgICB8ICAgfCAgMTY4MzAxICAgIHwgMTQ5NDAwICAgIHwNCi0tLS0tLS0tLS0tLSst
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS18DQp8
-ICAgcG1iZW5jaCB8ICAgICAgICA4NDE2MjUwICAgICAgICAgIHxWUyB8ICAgICAgICA4MDc5NTAw
-ICAgICAgICAgfA0KDQoNCkFzIGZhciBhcyBJIGNhbiB0ZWxsLCB0aGUgaGlnaGVyIHBtYmVuY2gg
-c2NvcmVzIGFwcGxpZWQtcGF0Y2ggbWF5IGJlIGF0dHJpYnV0ZWQgdG8NCmEgcmVkdWN0aW9uIGlu
-IHRoZSB0b3RhbCBudW1iZXIgb2YgcHJvbW90ZWQgcGFnZXMgaW4gdGhlIGVudGlyZSBwbWJlbmNo
-IGV4ZWN1dGlvbiBwZXJpb2QuDQooU2ltaWxhciBjaXJjdW1zdGFuY2VzIHdlcmUgb2JzZXJ2ZWQg
-aW4gdGhlIHJlc3VsdHMgb2Ygb3RoZXIgdGVzdHMgY29uZHVjdGVkKQ0KDQoNCg0KWzBdDQpiZWZv
-cmU6DQpodHRwczovL2dpdGh1Yi5jb20vemhpamlhbmxpODgvbWlzYy9ibG9iL21haW4vMjAyNTA2
-MjcvcHJvbW90aW9uLWV2YWx1YXRpb24vd2l0aG91dC1wYXRjaC9wbWJlbmNoLTE3NTA5ODg4NjIu
-bG9nDQpodHRwczovL2dpdGh1Yi5jb20vemhpamlhbmxpODgvbWlzYy9ibG9iL21haW4vMjAyNTA2
-MjcvcHJvbW90aW9uLWV2YWx1YXRpb24vd2l0aG91dC1wYXRjaC9zYXItMTc1MDk4ODg2Mi5sb2cN
-CmFmdGVyOg0KaHR0cHM6Ly9naXRodWIuY29tL3poaWppYW5saTg4L21pc2MvYmxvYi9tYWluLzIw
-MjUwNjI3L3Byb21vdGlvbi1ldmFsdWF0aW9uL3dpdGgtcGF0Y2gvcG1iZW5jaC0xNzUwOTg4Mjkx
-LmxvZw0KaHR0cHM6Ly9naXRodWIuY29tL3poaWppYW5saTg4L21pc2MvYmxvYi9tYWluLzIwMjUw
-NjI3L3Byb21vdGlvbi1ldmFsdWF0aW9uL3dpdGgtcGF0Y2gvc2FyLTE3NTA5ODgyOTEubG9nDQoN
-Cg0KVGhhbmtzDQpaaGlqaWFuDQoNCj4gDQo+PiBUaGUgZGV0YWlsZWQgbG9ncyBhcmUgYXZhaWxh
-YmxlIGF0IFsyXS4NCj4+DQo+PiBbMV0gaHR0cHM6Ly9naXRodWIuY29tL3poaWppYW5saTg4L21p
-c2MvYmxvYi9tYWluLzIwMjUwNjI3L3Byb21vdGlvbi1ldmFsdWF0aW9uL3JlcHJvZHVjZS5zaA0K
-Pj4gWzJdIGh0dHBzOi8vZ2l0aHViLmNvbS96aGlqaWFubGk4OC9taXNjL3RyZWUvbWFpbi8yMDI1
-MDYyNy9wcm9tb3Rpb24tZXZhbHVhdGlvbg0KPiANCj4gW3NuaXBdDQo+IA0KPiAtLS0NCj4gQmVz
-dCBSZWdhcmRzLA0KPiBIdWFuZywgWWluZw==
+在 2025/7/8 05:13, Jiri Olsa 写道:
+> On Mon, Jul 07, 2025 at 11:39:11PM +0800, Tao Chen wrote:
+>> Attach_type will be set when link created from user, it is better
+>> to record attach_type in bpf_link directly suggested by Andrii.
+>>
+>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+>> ---
+>>   include/linux/bpf.h            | 17 +++++++++++------
+>>   kernel/bpf/bpf_iter.c          |  3 ++-
+>>   kernel/bpf/bpf_struct_ops.c    |  5 +++--
+>>   kernel/bpf/cgroup.c            |  4 ++--
+>>   kernel/bpf/net_namespace.c     |  2 +-
+>>   kernel/bpf/syscall.c           | 35 +++++++++++++++++++++-------------
+>>   kernel/bpf/tcx.c               |  3 ++-
+>>   kernel/bpf/trampoline.c        | 10 ++++++----
+>>   kernel/trace/bpf_trace.c       |  4 ++--
+>>   net/bpf/bpf_dummy_struct_ops.c |  3 ++-
+>>   net/core/dev.c                 |  3 ++-
+>>   net/core/sock_map.c            |  3 ++-
+>>   net/netfilter/nf_bpf_link.c    |  3 ++-
+> 
+> there's one more caller from drivers/net/netkit.c, check CI
+> https://github.com/kernel-patches/bpf/actions/runs/16121901562/job/45489558386#annotation:11:4597
+> 
+
+my fault, there are some configs not opened in my develop enviroment, i 
+will fix it, thanks.
+
+> jirka
+> 
+> 
+>>   13 files changed, 59 insertions(+), 36 deletions(-)
+>>
+>> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+>> index 34dd90ec7fa..12a965362de 100644
+>> --- a/include/linux/bpf.h
+>> +++ b/include/linux/bpf.h
+>> @@ -1735,6 +1735,8 @@ struct bpf_link {
+>>   	 */
+>>   	bool sleepable;
+>>   	u32 flags;
+>> +	enum bpf_attach_type attach_type;
+>> +
+>>   	/* rcu is used before freeing, work can be used to schedule that
+>>   	 * RCU-based freeing before that, so they never overlap
+>>   	 */
+>> @@ -2034,11 +2036,13 @@ int bpf_prog_ctx_arg_info_init(struct bpf_prog *prog,
+>>   
+>>   #if defined(CONFIG_CGROUP_BPF) && defined(CONFIG_BPF_LSM)
+>>   int bpf_trampoline_link_cgroup_shim(struct bpf_prog *prog,
+>> -				    int cgroup_atype);
+>> +				    int cgroup_atype,
+>> +				    enum bpf_attach_type attach_type);
+>>   void bpf_trampoline_unlink_cgroup_shim(struct bpf_prog *prog);
+>>   #else
+>>   static inline int bpf_trampoline_link_cgroup_shim(struct bpf_prog *prog,
+>> -						  int cgroup_atype)
+>> +						  int cgroup_atype,
+>> +						  enum bpf_attach_type attach_type)
+>>   {
+>>   	return -EOPNOTSUPP;
+>>   }
+>> @@ -2528,10 +2532,11 @@ int bpf_map_new_fd(struct bpf_map *map, int flags);
+>>   int bpf_prog_new_fd(struct bpf_prog *prog);
+>>   
+>>   void bpf_link_init(struct bpf_link *link, enum bpf_link_type type,
+>> -		   const struct bpf_link_ops *ops, struct bpf_prog *prog);
+>> +		   const struct bpf_link_ops *ops, struct bpf_prog *prog,
+>> +		   enum bpf_attach_type attach_type);
+>>   void bpf_link_init_sleepable(struct bpf_link *link, enum bpf_link_type type,
+>>   			     const struct bpf_link_ops *ops, struct bpf_prog *prog,
+>> -			     bool sleepable);
+>> +			     bool sleepable, enum bpf_attach_type attach_type);
+>>   int bpf_link_prime(struct bpf_link *link, struct bpf_link_primer *primer);
+>>   int bpf_link_settle(struct bpf_link_primer *primer);
+>>   void bpf_link_cleanup(struct bpf_link_primer *primer);
+>> @@ -2883,13 +2888,13 @@ bpf_prog_inc_not_zero(struct bpf_prog *prog)
+>>   
+>>   static inline void bpf_link_init(struct bpf_link *link, enum bpf_link_type type,
+>>   				 const struct bpf_link_ops *ops,
+>> -				 struct bpf_prog *prog)
+>> +				 struct bpf_prog *prog, enum bpf_attach_type attach_type)
+>>   {
+>>   }
+>>   
+>>   static inline void bpf_link_init_sleepable(struct bpf_link *link, enum bpf_link_type type,
+>>   					   const struct bpf_link_ops *ops, struct bpf_prog *prog,
+>> -					   bool sleepable)
+>> +					   bool sleepable, enum bpf_attach_type attach_type)
+>>   {
+>>   }
+>>   
+>> diff --git a/kernel/bpf/bpf_iter.c b/kernel/bpf/bpf_iter.c
+>> index 303ab1f42d3..0cbcae72707 100644
+>> --- a/kernel/bpf/bpf_iter.c
+>> +++ b/kernel/bpf/bpf_iter.c
+>> @@ -552,7 +552,8 @@ int bpf_iter_link_attach(const union bpf_attr *attr, bpfptr_t uattr,
+>>   	if (!link)
+>>   		return -ENOMEM;
+>>   
+>> -	bpf_link_init(&link->link, BPF_LINK_TYPE_ITER, &bpf_iter_link_lops, prog);
+>> +	bpf_link_init(&link->link, BPF_LINK_TYPE_ITER, &bpf_iter_link_lops, prog,
+>> +		      attr->link_create.attach_type);
+>>   	link->tinfo = tinfo;
+>>   
+>>   	err = bpf_link_prime(&link->link, &link_primer);
+>> diff --git a/kernel/bpf/bpf_struct_ops.c b/kernel/bpf/bpf_struct_ops.c
+>> index 96113633e39..687a3e9c76f 100644
+>> --- a/kernel/bpf/bpf_struct_ops.c
+>> +++ b/kernel/bpf/bpf_struct_ops.c
+>> @@ -808,7 +808,7 @@ static long bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
+>>   			goto reset_unlock;
+>>   		}
+>>   		bpf_link_init(&link->link, BPF_LINK_TYPE_STRUCT_OPS,
+>> -			      &bpf_struct_ops_link_lops, prog);
+>> +			      &bpf_struct_ops_link_lops, prog, prog->expected_attach_type);
+>>   		*plink++ = &link->link;
+>>   
+>>   		ksym = kzalloc(sizeof(*ksym), GFP_USER);
+>> @@ -1351,7 +1351,8 @@ int bpf_struct_ops_link_create(union bpf_attr *attr)
+>>   		err = -ENOMEM;
+>>   		goto err_out;
+>>   	}
+>> -	bpf_link_init(&link->link, BPF_LINK_TYPE_STRUCT_OPS, &bpf_struct_ops_map_lops, NULL);
+>> +	bpf_link_init(&link->link, BPF_LINK_TYPE_STRUCT_OPS, &bpf_struct_ops_map_lops, NULL,
+>> +		      attr->link_create.attach_type);
+>>   
+>>   	err = bpf_link_prime(&link->link, &link_primer);
+>>   	if (err)
+>> diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+>> index cd220e861d6..bacdd0ca741 100644
+>> --- a/kernel/bpf/cgroup.c
+>> +++ b/kernel/bpf/cgroup.c
+>> @@ -867,7 +867,7 @@ static int __cgroup_bpf_attach(struct cgroup *cgrp,
+>>   	cgrp->bpf.flags[atype] = saved_flags;
+>>   
+>>   	if (type == BPF_LSM_CGROUP) {
+>> -		err = bpf_trampoline_link_cgroup_shim(new_prog, atype);
+>> +		err = bpf_trampoline_link_cgroup_shim(new_prog, atype, type);
+>>   		if (err)
+>>   			goto cleanup;
+>>   	}
+>> @@ -1495,7 +1495,7 @@ int cgroup_bpf_link_attach(const union bpf_attr *attr, struct bpf_prog *prog)
+>>   		goto out_put_cgroup;
+>>   	}
+>>   	bpf_link_init(&link->link, BPF_LINK_TYPE_CGROUP, &bpf_cgroup_link_lops,
+>> -		      prog);
+>> +		      prog, attr->link_create.attach_type);
+>>   	link->cgroup = cgrp;
+>>   	link->type = attr->link_create.attach_type;
+>>   
+>> diff --git a/kernel/bpf/net_namespace.c b/kernel/bpf/net_namespace.c
+>> index 868cc2c4389..63702c86275 100644
+>> --- a/kernel/bpf/net_namespace.c
+>> +++ b/kernel/bpf/net_namespace.c
+>> @@ -501,7 +501,7 @@ int netns_bpf_link_create(const union bpf_attr *attr, struct bpf_prog *prog)
+>>   		goto out_put_net;
+>>   	}
+>>   	bpf_link_init(&net_link->link, BPF_LINK_TYPE_NETNS,
+>> -		      &bpf_netns_link_ops, prog);
+>> +		      &bpf_netns_link_ops, prog, type);
+>>   	net_link->net = net;
+>>   	net_link->type = type;
+>>   	net_link->netns_type = netns_type;
+>> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+>> index 7db7182a305..14883b3040a 100644
+>> --- a/kernel/bpf/syscall.c
+>> +++ b/kernel/bpf/syscall.c
+>> @@ -3069,7 +3069,7 @@ static int bpf_obj_get(const union bpf_attr *attr)
+>>    */
+>>   void bpf_link_init_sleepable(struct bpf_link *link, enum bpf_link_type type,
+>>   			     const struct bpf_link_ops *ops, struct bpf_prog *prog,
+>> -			     bool sleepable)
+>> +			     bool sleepable, enum bpf_attach_type attach_type)
+>>   {
+>>   	WARN_ON(ops->dealloc && ops->dealloc_deferred);
+>>   	atomic64_set(&link->refcnt, 1);
+>> @@ -3078,12 +3078,14 @@ void bpf_link_init_sleepable(struct bpf_link *link, enum bpf_link_type type,
+>>   	link->id = 0;
+>>   	link->ops = ops;
+>>   	link->prog = prog;
+>> +	link->attach_type = attach_type;
+>>   }
+>>   
+>>   void bpf_link_init(struct bpf_link *link, enum bpf_link_type type,
+>> -		   const struct bpf_link_ops *ops, struct bpf_prog *prog)
+>> +		   const struct bpf_link_ops *ops, struct bpf_prog *prog,
+>> +		   enum bpf_attach_type attach_type)
+>>   {
+>> -	bpf_link_init_sleepable(link, type, ops, prog, false);
+>> +	bpf_link_init_sleepable(link, type, ops, prog, false, attach_type);
+>>   }
+>>   
+>>   static void bpf_link_free_id(int id)
+>> @@ -3443,7 +3445,8 @@ static const struct bpf_link_ops bpf_tracing_link_lops = {
+>>   static int bpf_tracing_prog_attach(struct bpf_prog *prog,
+>>   				   int tgt_prog_fd,
+>>   				   u32 btf_id,
+>> -				   u64 bpf_cookie)
+>> +				   u64 bpf_cookie,
+>> +				   enum bpf_attach_type attach_type)
+>>   {
+>>   	struct bpf_link_primer link_primer;
+>>   	struct bpf_prog *tgt_prog = NULL;
+>> @@ -3511,7 +3514,8 @@ static int bpf_tracing_prog_attach(struct bpf_prog *prog,
+>>   		goto out_put_prog;
+>>   	}
+>>   	bpf_link_init(&link->link.link, BPF_LINK_TYPE_TRACING,
+>> -		      &bpf_tracing_link_lops, prog);
+>> +		      &bpf_tracing_link_lops, prog, attach_type);
+>> +
+>>   	link->attach_type = prog->expected_attach_type;
+>>   	link->link.cookie = bpf_cookie;
+>>   
+>> @@ -4049,7 +4053,8 @@ static int bpf_perf_link_attach(const union bpf_attr *attr, struct bpf_prog *pro
+>>   		err = -ENOMEM;
+>>   		goto out_put_file;
+>>   	}
+>> -	bpf_link_init(&link->link, BPF_LINK_TYPE_PERF_EVENT, &bpf_perf_link_lops, prog);
+>> +	bpf_link_init(&link->link, BPF_LINK_TYPE_PERF_EVENT, &bpf_perf_link_lops, prog,
+>> +		      attr->link_create.attach_type);
+>>   	link->perf_file = perf_file;
+>>   
+>>   	err = bpf_link_prime(&link->link, &link_primer);
+>> @@ -4081,7 +4086,8 @@ static int bpf_perf_link_attach(const union bpf_attr *attr, struct bpf_prog *pro
+>>   #endif /* CONFIG_PERF_EVENTS */
+>>   
+>>   static int bpf_raw_tp_link_attach(struct bpf_prog *prog,
+>> -				  const char __user *user_tp_name, u64 cookie)
+>> +				  const char __user *user_tp_name, u64 cookie,
+>> +				  enum bpf_attach_type attach_type)
+>>   {
+>>   	struct bpf_link_primer link_primer;
+>>   	struct bpf_raw_tp_link *link;
+>> @@ -4104,7 +4110,7 @@ static int bpf_raw_tp_link_attach(struct bpf_prog *prog,
+>>   			tp_name = prog->aux->attach_func_name;
+>>   			break;
+>>   		}
+>> -		return bpf_tracing_prog_attach(prog, 0, 0, 0);
+>> +		return bpf_tracing_prog_attach(prog, 0, 0, 0, attach_type);
+>>   	case BPF_PROG_TYPE_RAW_TRACEPOINT:
+>>   	case BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE:
+>>   		if (strncpy_from_user(buf, user_tp_name, sizeof(buf) - 1) < 0)
+>> @@ -4127,7 +4133,7 @@ static int bpf_raw_tp_link_attach(struct bpf_prog *prog,
+>>   	}
+>>   	bpf_link_init_sleepable(&link->link, BPF_LINK_TYPE_RAW_TRACEPOINT,
+>>   				&bpf_raw_tp_link_lops, prog,
+>> -				tracepoint_is_faultable(btp->tp));
+>> +				tracepoint_is_faultable(btp->tp), attach_type);
+>>   	link->btp = btp;
+>>   	link->cookie = cookie;
+>>   
+>> @@ -4168,7 +4174,7 @@ static int bpf_raw_tracepoint_open(const union bpf_attr *attr)
+>>   
+>>   	tp_name = u64_to_user_ptr(attr->raw_tracepoint.name);
+>>   	cookie = attr->raw_tracepoint.cookie;
+>> -	fd = bpf_raw_tp_link_attach(prog, tp_name, cookie);
+>> +	fd = bpf_raw_tp_link_attach(prog, tp_name, cookie, prog->expected_attach_type);
+>>   	if (fd < 0)
+>>   		bpf_prog_put(prog);
+>>   	return fd;
+>> @@ -5536,7 +5542,8 @@ static int link_create(union bpf_attr *attr, bpfptr_t uattr)
+>>   		ret = bpf_tracing_prog_attach(prog,
+>>   					      attr->link_create.target_fd,
+>>   					      attr->link_create.target_btf_id,
+>> -					      attr->link_create.tracing.cookie);
+>> +					      attr->link_create.tracing.cookie,
+>> +					      attr->link_create.attach_type);
+>>   		break;
+>>   	case BPF_PROG_TYPE_LSM:
+>>   	case BPF_PROG_TYPE_TRACING:
+>> @@ -5545,7 +5552,8 @@ static int link_create(union bpf_attr *attr, bpfptr_t uattr)
+>>   			goto out;
+>>   		}
+>>   		if (prog->expected_attach_type == BPF_TRACE_RAW_TP)
+>> -			ret = bpf_raw_tp_link_attach(prog, NULL, attr->link_create.tracing.cookie);
+>> +			ret = bpf_raw_tp_link_attach(prog, NULL, attr->link_create.tracing.cookie,
+>> +						     attr->link_create.attach_type);
+>>   		else if (prog->expected_attach_type == BPF_TRACE_ITER)
+>>   			ret = bpf_iter_link_attach(attr, uattr, prog);
+>>   		else if (prog->expected_attach_type == BPF_LSM_CGROUP)
+>> @@ -5554,7 +5562,8 @@ static int link_create(union bpf_attr *attr, bpfptr_t uattr)
+>>   			ret = bpf_tracing_prog_attach(prog,
+>>   						      attr->link_create.target_fd,
+>>   						      attr->link_create.target_btf_id,
+>> -						      attr->link_create.tracing.cookie);
+>> +						      attr->link_create.tracing.cookie,
+>> +						      attr->link_create.attach_type);
+>>   		break;
+>>   	case BPF_PROG_TYPE_FLOW_DISSECTOR:
+>>   	case BPF_PROG_TYPE_SK_LOOKUP:
+>> diff --git a/kernel/bpf/tcx.c b/kernel/bpf/tcx.c
+>> index 2e4885e7781..e6a14f408d9 100644
+>> --- a/kernel/bpf/tcx.c
+>> +++ b/kernel/bpf/tcx.c
+>> @@ -301,7 +301,8 @@ static int tcx_link_init(struct tcx_link *tcx,
+>>   			 struct net_device *dev,
+>>   			 struct bpf_prog *prog)
+>>   {
+>> -	bpf_link_init(&tcx->link, BPF_LINK_TYPE_TCX, &tcx_link_lops, prog);
+>> +	bpf_link_init(&tcx->link, BPF_LINK_TYPE_TCX, &tcx_link_lops, prog,
+>> +		      attr->link_create.attach_type);
+>>   	tcx->location = attr->link_create.attach_type;
+>>   	tcx->dev = dev;
+>>   	return bpf_link_prime(&tcx->link, link_primer);
+>> diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
+>> index b1e358c16ee..0e364614c3a 100644
+>> --- a/kernel/bpf/trampoline.c
+>> +++ b/kernel/bpf/trampoline.c
+>> @@ -674,7 +674,8 @@ static const struct bpf_link_ops bpf_shim_tramp_link_lops = {
+>>   
+>>   static struct bpf_shim_tramp_link *cgroup_shim_alloc(const struct bpf_prog *prog,
+>>   						     bpf_func_t bpf_func,
+>> -						     int cgroup_atype)
+>> +						     int cgroup_atype,
+>> +						     enum bpf_attach_type attach_type)
+>>   {
+>>   	struct bpf_shim_tramp_link *shim_link = NULL;
+>>   	struct bpf_prog *p;
+>> @@ -701,7 +702,7 @@ static struct bpf_shim_tramp_link *cgroup_shim_alloc(const struct bpf_prog *prog
+>>   	p->expected_attach_type = BPF_LSM_MAC;
+>>   	bpf_prog_inc(p);
+>>   	bpf_link_init(&shim_link->link.link, BPF_LINK_TYPE_UNSPEC,
+>> -		      &bpf_shim_tramp_link_lops, p);
+>> +		      &bpf_shim_tramp_link_lops, p, attach_type);
+>>   	bpf_cgroup_atype_get(p->aux->attach_btf_id, cgroup_atype);
+>>   
+>>   	return shim_link;
+>> @@ -726,7 +727,8 @@ static struct bpf_shim_tramp_link *cgroup_shim_find(struct bpf_trampoline *tr,
+>>   }
+>>   
+>>   int bpf_trampoline_link_cgroup_shim(struct bpf_prog *prog,
+>> -				    int cgroup_atype)
+>> +				    int cgroup_atype,
+>> +				    enum bpf_attach_type attach_type)
+>>   {
+>>   	struct bpf_shim_tramp_link *shim_link = NULL;
+>>   	struct bpf_attach_target_info tgt_info = {};
+>> @@ -763,7 +765,7 @@ int bpf_trampoline_link_cgroup_shim(struct bpf_prog *prog,
+>>   
+>>   	/* Allocate and install new shim. */
+>>   
+>> -	shim_link = cgroup_shim_alloc(prog, bpf_func, cgroup_atype);
+>> +	shim_link = cgroup_shim_alloc(prog, bpf_func, cgroup_atype, attach_type);
+>>   	if (!shim_link) {
+>>   		err = -ENOMEM;
+>>   		goto err;
+>> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+>> index e7f97a9a8bb..ffdde840abb 100644
+>> --- a/kernel/trace/bpf_trace.c
+>> +++ b/kernel/trace/bpf_trace.c
+>> @@ -2986,7 +2986,7 @@ int bpf_kprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
+>>   	}
+>>   
+>>   	bpf_link_init(&link->link, BPF_LINK_TYPE_KPROBE_MULTI,
+>> -		      &bpf_kprobe_multi_link_lops, prog);
+>> +		      &bpf_kprobe_multi_link_lops, prog, attr->link_create.attach_type);
+>>   
+>>   	err = bpf_link_prime(&link->link, &link_primer);
+>>   	if (err)
+>> @@ -3441,7 +3441,7 @@ int bpf_uprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
+>>   	link->link.flags = flags;
+>>   
+>>   	bpf_link_init(&link->link, BPF_LINK_TYPE_UPROBE_MULTI,
+>> -		      &bpf_uprobe_multi_link_lops, prog);
+>> +		      &bpf_uprobe_multi_link_lops, prog, attr->link_create.attach_type);
+>>   
+>>   	for (i = 0; i < cnt; i++) {
+>>   		uprobes[i].uprobe = uprobe_register(d_real_inode(link->path.dentry),
+>> diff --git a/net/bpf/bpf_dummy_struct_ops.c b/net/bpf/bpf_dummy_struct_ops.c
+>> index f71f67c6896..812457819b5 100644
+>> --- a/net/bpf/bpf_dummy_struct_ops.c
+>> +++ b/net/bpf/bpf_dummy_struct_ops.c
+>> @@ -171,7 +171,8 @@ int bpf_struct_ops_test_run(struct bpf_prog *prog, const union bpf_attr *kattr,
+>>   	}
+>>   	/* prog doesn't take the ownership of the reference from caller */
+>>   	bpf_prog_inc(prog);
+>> -	bpf_link_init(&link->link, BPF_LINK_TYPE_STRUCT_OPS, &bpf_struct_ops_link_lops, prog);
+>> +	bpf_link_init(&link->link, BPF_LINK_TYPE_STRUCT_OPS, &bpf_struct_ops_link_lops, prog,
+>> +		      prog->expected_attach_type);
+>>   
+>>   	op_idx = prog->expected_attach_type;
+>>   	err = bpf_struct_ops_prepare_trampoline(tlinks, link,
+>> diff --git a/net/core/dev.c b/net/core/dev.c
+>> index be97c440ecd..7969fddc94e 100644
+>> --- a/net/core/dev.c
+>> +++ b/net/core/dev.c
+>> @@ -10364,7 +10364,8 @@ int bpf_xdp_link_attach(const union bpf_attr *attr, struct bpf_prog *prog)
+>>   		goto unlock;
+>>   	}
+>>   
+>> -	bpf_link_init(&link->link, BPF_LINK_TYPE_XDP, &bpf_xdp_link_lops, prog);
+>> +	bpf_link_init(&link->link, BPF_LINK_TYPE_XDP, &bpf_xdp_link_lops, prog,
+>> +		      attr->link_create.attach_type);
+>>   	link->dev = dev;
+>>   	link->flags = attr->link_create.flags;
+>>   
+>> diff --git a/net/core/sock_map.c b/net/core/sock_map.c
+>> index 82a14f131d0..fbe9a33ddf1 100644
+>> --- a/net/core/sock_map.c
+>> +++ b/net/core/sock_map.c
+>> @@ -1866,7 +1866,8 @@ int sock_map_link_create(const union bpf_attr *attr, struct bpf_prog *prog)
+>>   	}
+>>   
+>>   	attach_type = attr->link_create.attach_type;
+>> -	bpf_link_init(&sockmap_link->link, BPF_LINK_TYPE_SOCKMAP, &sock_map_link_ops, prog);
+>> +	bpf_link_init(&sockmap_link->link, BPF_LINK_TYPE_SOCKMAP, &sock_map_link_ops, prog,
+>> +		      attach_type);
+>>   	sockmap_link->map = map;
+>>   	sockmap_link->attach_type = attach_type;
+>>   
+>> diff --git a/net/netfilter/nf_bpf_link.c b/net/netfilter/nf_bpf_link.c
+>> index 06b08484470..a054d3b216d 100644
+>> --- a/net/netfilter/nf_bpf_link.c
+>> +++ b/net/netfilter/nf_bpf_link.c
+>> @@ -225,7 +225,8 @@ int bpf_nf_link_attach(const union bpf_attr *attr, struct bpf_prog *prog)
+>>   	if (!link)
+>>   		return -ENOMEM;
+>>   
+>> -	bpf_link_init(&link->link, BPF_LINK_TYPE_NETFILTER, &bpf_nf_link_lops, prog);
+>> +	bpf_link_init(&link->link, BPF_LINK_TYPE_NETFILTER, &bpf_nf_link_lops, prog,
+>> +		      attr->link_create.attach_type);
+>>   
+>>   	link->hook_ops.hook = nf_hook_run_bpf;
+>>   	link->hook_ops.hook_ops_type = NF_HOOK_OP_BPF;
+>> -- 
+>> 2.48.1
+>>
+
+
+-- 
+Best Regards
+Tao Chen
 
