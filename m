@@ -1,186 +1,82 @@
-Return-Path: <linux-kernel+bounces-720759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD142AFC01E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:40:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D9E7AFC02A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59F141AA7175
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:40:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0A7E4A70E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F2F204583;
-	Tue,  8 Jul 2025 01:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngl1yuNj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0681F9EC0;
+	Tue,  8 Jul 2025 01:42:34 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666F91EA7E9;
-	Tue,  8 Jul 2025 01:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7E142AB0
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 01:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751938807; cv=none; b=jQSHb2/ydI89sGrVevTpbg/rS98fMNNpQojShDb7MKu0QSfTC2UnXFjyy98wDkcNawBuxQ87prKsIwPtH/nnhhl5QQRDz6Df+tM/cv/dyumGvTf9JiC07fsPQQqOOPLxqTT9OGb5sMS9rvJ0umloHvbMO+Hginidr45qKjRVDY4=
+	t=1751938954; cv=none; b=Yt8D72YPmyNEf2QWGg+zENvX2l+h0SHSJgFO8i3oeRq5U5PqtZgvq3iwohcR4N8ntZJUR4aK/EcF94VHaqW9TJWXQGbER7DTNFxHAnr07F4x88qAjReb9YPV8fa1r3SPY/F2LKY1binu6pYdlma5G3hFDFO2F3Xf/tWkY8cDvf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751938807; c=relaxed/simple;
-	bh=oUYRwPP56CvNkgwPRZNPluMS1mnfgi5LqiiX2TixEzE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ooxDnYEU4tcwlOB2NXGG57E3YbRCHWKJsRGnTWXxzn3VkrDPavR0htSdc072kDq/HLoHVan5zXjmst4QKyQw9IaYwvHNpxOtO5jILyJc/HrVTU/jtjqTJW3CBR0GMOvvTrbnCOf5BRvwWM6VHnRT3Mz8NTFCtwgZM44yv0d4bDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngl1yuNj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7D56C4CEF7;
-	Tue,  8 Jul 2025 01:40:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751938806;
-	bh=oUYRwPP56CvNkgwPRZNPluMS1mnfgi5LqiiX2TixEzE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ngl1yuNjSNtPOklZg9q3phAX2h0AfpMjUSOgsTwbXEUS98rhzFOR5p3kOF7m/kGT5
-	 Iy7Qd5l2F6rVncFLzpZLz6wsr0yOhEvAujLnva6OPjWyXn2ioUHI7oxsV/5OjYWArF
-	 6Tmv7uEBVtnXntZpX4TpZ2YKakLpIKmayuG06aidYotp4cpPqWMElK0OHJES6F842F
-	 MeZmlHVRp8BE1z6oAfFGBpRumE5l1G2tr4iNlFrs9shGHODzkqxOBP+A96GZmW1qq/
-	 zdodQZZWAN6s3VJowwBrhi0ePbYH8YJs5t4Jx1LJJe/uCdC5opMszsyagXFgX2as2h
-	 wNJYavLXOd6lQ==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-32b78b5aa39so36077771fa.1;
-        Mon, 07 Jul 2025 18:40:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU0GUcqjDWRnlk+Y4AS5wDznLRjiTv1LMGSS/lJqih6fqnhBOqch1TjrSy8h8UKmz9ejIcb+PO8CGzoU6E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/NE4C2xG7pvM/OTQBvb3wx4wxaHDk0yUI8gS/6wig8vYyAuAu
-	sTAtEGLAl6roggQtlS2gB5RPB0/87SxhvbYb1UqWk8d5169bkqh8mJXJ26pqgygYSrT+zHdJLdE
-	hXn3ZEjK6vcgYFxnHCPmTuo0AtRVVZV4=
-X-Google-Smtp-Source: AGHT+IEkFzCoH95ZJ8XDGNbeH0xUiIr1Yr5j1RBL5YvtAA4SnqvN/JgsfrnFFPs0kCVwKZk0KLIP2pzbGmtDQyl2w0E=
-X-Received: by 2002:a05:651c:b0c:b0:32a:de39:eb4c with SMTP id
- 38308e7fff4ca-32f00cc27d3mr52307231fa.18.1751938805280; Mon, 07 Jul 2025
- 18:40:05 -0700 (PDT)
+	s=arc-20240116; t=1751938954; c=relaxed/simple;
+	bh=2BSYKr7kSQko0CWJMRNlwpfMOg9o3FHtNDXqN4FkLro=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=r4XSPPMIyr8uZYga57g436GyJA+CUuLOVde8ZAxaqGiV+SWyYf4Euf6jWY336hW3wPrYKbBJof7sYqTuB+NuRrN12V0JPdmw1leTkqAU6XLzNVCVJJ12kYVgngw16ANLlP5gLl22GCA92Y4BuLkQ/x73VmoPdcain+ot4o05JX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: Steven Rostedt <rostedt@goodmis.org>, Oleg Nesterov <oleg@redhat.com>
+CC: Peter Zijlstra <peterz@infradead.org>, David Laight
+	<david.laight.linux@gmail.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "vschneid@redhat.com" <vschneid@redhat.com>,
+	"mgorman@suse.de" <mgorman@suse.de>, "bsegall@google.com"
+	<bsegall@google.com>, "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
+	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+	"juri.lelli@redhat.com" <juri.lelli@redhat.com>, "mingo@redhat.com"
+	<mingo@redhat.com>
+Subject: =?gb2312?B?tPC4tDogWz8/Pz9dIFJlOiBkaXZpZGUgZXJyb3IgaW4geDg2IGFuZCBjcHV0?=
+ =?gb2312?Q?ime?=
+Thread-Topic: [????] Re: divide error in x86 and cputime
+Thread-Index: AdvvFOeRwP1XMiJ8Sh6ojy4vzov+4AAM96oAAABlCAAAAHCBgAAXFAAA
+Date: Tue, 8 Jul 2025 01:40:27 +0000
+Message-ID: <42f5344b80e244278aaf49f112498e02@baidu.com>
+References: <78a0d7bb20504c0884d474868eccd858@baidu.com>
+	<20250707220937.GA15787@redhat.com>
+	<20250707182056.66a8468a@gandalf.local.home>
+ <20250707183331.029570bf@gandalf.local.home>
+In-Reply-To: <20250707183331.029570bf@gandalf.local.home>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250627190940.66756-1-ebiggers@kernel.org>
-In-Reply-To: <20250627190940.66756-1-ebiggers@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 8 Jul 2025 11:39:53 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXGBs_rRTOw+Ejh78LU4d9NXeSs6a_HajmxmM-hxLsNuJw@mail.gmail.com>
-X-Gm-Features: Ac12FXxtm4vI_kiSzQSFQ_cYaQMIubot1PAWTZOwQ-pV3TC5UgrCExFTreKs8oc
-Message-ID: <CAMj1kXGBs_rRTOw+Ejh78LU4d9NXeSs6a_HajmxmM-hxLsNuJw@mail.gmail.com>
-Subject: Re: [PATCH] lib/crypto: x86/sha512: Drop unnecessary ANNOTATE_NOENDBR
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	"Jason A . Donenfeld" <Jason@zx2c4.com>
-Content-Type: text/plain; charset="UTF-8"
+X-FEAS-Client-IP: 172.31.50.44
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On Sat, 28 Jun 2025 at 05:11, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> When migrating the x86 SHA-512 assembly code to lib/crypto/, I replaced
-> SYM_TYPED_FUNC_START with ANNOTATE_NOENDBR.  This was intended to match
-> a change in the caller from an indirect call to a static call, like what
-> I did for SHA-256.  However, for SHA-512 I actually decided to bring the
-> static call up a level; see DEFINE_X86_SHA512_FN in
-> lib/crypto/x86/sha512.h.  Therefore, now the assembly functions are just
-> called via normal direct calls.  At least for SHA this seems to be the
-> better way to do it, and it means using ANNOTATE_NOENDBR is unnecessary.
->
-> Fixes: b82535bf96da ("lib/crypto: x86/sha512: Migrate optimized SHA-512 code to library")
-> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> ---
->
-> This patch is targeting libcrypto-next.
->
->  lib/crypto/x86/sha512-avx-asm.S   | 2 --
->  lib/crypto/x86/sha512-avx2-asm.S  | 2 --
->  lib/crypto/x86/sha512-ssse3-asm.S | 2 --
->  3 files changed, 6 deletions(-)
->
-
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
-
-> diff --git a/lib/crypto/x86/sha512-avx-asm.S b/lib/crypto/x86/sha512-avx-asm.S
-> index af7ea311cc945..7732aa8fd8506 100644
-> --- a/lib/crypto/x86/sha512-avx-asm.S
-> +++ b/lib/crypto/x86/sha512-avx-asm.S
-> @@ -46,11 +46,10 @@
->  # and search for that title.
->  #
->  ########################################################################
->
->  #include <linux/linkage.h>
-> -#include <linux/objtool.h>
->
->  .text
->
->  # Virtual Registers
->  # ARG1
-> @@ -274,11 +273,10 @@ frame_size = frame_WK + WK_SIZE
->  # The size of the message pointed to by "data" must be an integer multiple
->  # of SHA512 message blocks.
->  # "nblocks" is the message length in SHA512 blocks.  Must be >= 1.
->  ########################################################################
->  SYM_FUNC_START(sha512_transform_avx)
-> -       ANNOTATE_NOENDBR        # since this is called only via static_call
->
->         # Save GPRs
->         push    %rbx
->         push    %r12
->         push    %r13
-> diff --git a/lib/crypto/x86/sha512-avx2-asm.S b/lib/crypto/x86/sha512-avx2-asm.S
-> index 1302ddb5ec8cc..22bdbfd899d0f 100644
-> --- a/lib/crypto/x86/sha512-avx2-asm.S
-> +++ b/lib/crypto/x86/sha512-avx2-asm.S
-> @@ -48,11 +48,10 @@
->  ########################################################################
->  # This code schedules 1 blocks at a time, with 4 lanes per block
->  ########################################################################
->
->  #include <linux/linkage.h>
-> -#include <linux/objtool.h>
->
->  .text
->
->  # Virtual Registers
->  Y_0 = %ymm4
-> @@ -566,11 +565,10 @@ frame_size = frame_CTX + CTX_SIZE
->  # The size of the message pointed to by "data" must be an integer multiple
->  # of SHA512 message blocks.
->  # "nblocks" is the message length in SHA512 blocks.  Must be >= 1.
->  ########################################################################
->  SYM_FUNC_START(sha512_transform_rorx)
-> -       ANNOTATE_NOENDBR        # since this is called only via static_call
->
->         # Save GPRs
->         push    %rbx
->         push    %r12
->         push    %r13
-> diff --git a/lib/crypto/x86/sha512-ssse3-asm.S b/lib/crypto/x86/sha512-ssse3-asm.S
-> index 108f1accc6bc7..4cae7445b2a86 100644
-> --- a/lib/crypto/x86/sha512-ssse3-asm.S
-> +++ b/lib/crypto/x86/sha512-ssse3-asm.S
-> @@ -46,11 +46,10 @@
->  # and search for that title.
->  #
->  ########################################################################
->
->  #include <linux/linkage.h>
-> -#include <linux/objtool.h>
->
->  .text
->
->  # Virtual Registers
->  # ARG1
-> @@ -273,11 +272,10 @@ frame_size = frame_WK + WK_SIZE
->  # The size of the message pointed to by "data" must be an integer multiple
->  # of SHA512 message blocks.
->  # "nblocks" is the message length in SHA512 blocks.  Must be >= 1.
->  ########################################################################
->  SYM_FUNC_START(sha512_transform_ssse3)
-> -       ANNOTATE_NOENDBR        # since this is called only via static_call
->
->         # Save GPRs
->         push    %rbx
->         push    %r12
->         push    %r13
->
-> base-commit: d74152ec2b5106263c2a502380acfaf5954f9898
-> --
-> 2.50.0
->
+PiBUaGF0IHdvdWxkIGJlOg0KPiANCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBtaW51dGVzICAgIGRheXMNCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICB2ICAgICAgICB2DQo+ICAgOTIyMzM3MjAzNjg1NDc3NTgwOCAvIDEwMDAwMDAwMDAgLyA2MCAv
+IDYwIC8gMjQgLyAzNjUuMjUgPSAyOTIuMjcNCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAg
+XiAgICAgICAgICAgICAgIF4gICAgICAgICBeDQo+ICAgICAgICAgICAgICAgICAgICAgICAgIG5z
+IC0+IHNlYyAgICAgICBob3VycyAgICAgICB5ZWFycw0KPiANCj4gU28gdGhlIHJlcG9ydCBzYXlz
+IHRoZXkgaGF2ZSB0aHJlYWRzIHJ1bm5pbmcgZm9yIGEgdmVyeSBsb25nIHRpbWUsIGl0IHdvdWxk
+IHN0aWxsDQo+IGJlIDI5MiB5ZWFycyBvZiBydW4gdGltZSENCg0KVXRpbWUvcnRpbWUgaXMgdTY0
+LCBpdCBtZWFucyBvdmVyZmxvdyBuZWVkcyAyOTIuMjcqMj01ODQgeWVhciwNCg0KQnV0IHdpdGgg
+bXVsdGlwbGUgdGhyZWFkLCBsaWtlIDI5MiB0aHJlYWRzLCBpdCBvbmx5IG5lZWQgdHdvIHllYXJz
+LCBpdCBpcyBhIHRocmVhZCBncm91cCB0b3RhbCBydW5uaW5nIHRpbWUNCg0KDQp2b2lkIHRocmVh
+ZF9ncm91cF9jcHV0aW1lX2FkanVzdGVkKHN0cnVjdCB0YXNrX3N0cnVjdCAqcCwgdTY0ICp1dCwg
+dTY0ICpzdCkNCnsNCiAgICBzdHJ1Y3QgdGFza19jcHV0aW1lIGNwdXRpbWU7DQoNCiAgICB0aHJl
+YWRfZ3JvdXBfY3B1dGltZShwLCAmY3B1dGltZSk7DQogICAgY3B1dGltZV9hZGp1c3QoJmNwdXRp
+bWUsICZwLT5zaWduYWwtPnByZXZfY3B1dGltZSwgdXQsIHN0KTsNCn0NCg0KLUxpDQoNCg0KDQo=
 
