@@ -1,240 +1,171 @@
-Return-Path: <linux-kernel+bounces-721812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0603AFCE24
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:48:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82834AFCE28
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:49:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18C044A5F43
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:47:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53AD94258D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86F02DC35C;
-	Tue,  8 Jul 2025 14:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00E82E03F8;
+	Tue,  8 Jul 2025 14:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eBexEpwp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eXxzEz84"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B50E21C190;
-	Tue,  8 Jul 2025 14:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2162A1BA;
+	Tue,  8 Jul 2025 14:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751986014; cv=none; b=WgifF9RnASWV8iRBJRRjtVCF/LfzrcAyOsDwbz+DGkvDFLzFW4lbOstHQb1kG4IX3unyGOuuoAN5CHqouBf4+kpOoDdckV84kZoXcilo/brvuA7em7NgFcMnl9djYB+NX4hhmw7NDyJ+QN3HeHCaXUMfuTkZCd8eJeu1cDEqx1w=
+	t=1751986108; cv=none; b=jdSko6jkYbUXF3kKY5eLo/6rVBYCQwaRUQWwMynyMrC4Pwp3y72GhRY+t+4Pu7qxDVohi+1JafYs/MHG55AJ0B7m+lxc9ZXdyar6T0USEjQOLK/z4pgznTGIGHAthsFoqkNmDBJLbebjNJm4fnUGFGMWJ2y6EpkEeVKh8gjHHPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751986014; c=relaxed/simple;
-	bh=8VDA1hhdNP0DvXhtKa1xQX/6//M/u2gJCpKHUwbE8rE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M2wUy/H2hV/kPM+KDM0AX1pLy5D6iQo3HKFkSmuYnnlxTo/ODaBV05bEDHhQeLbTid2vmd5vJd05RWnWYYbrPBVjVtYhU26DRTZ1TV84rzV4Hh/xwIn1p6OwyM4lgBRt4AN5Y0L9Z/upOE54SM9h2Q2iRN8bXHBio/ZrQz+6lfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eBexEpwp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 998FCC4CEED;
-	Tue,  8 Jul 2025 14:46:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751986013;
-	bh=8VDA1hhdNP0DvXhtKa1xQX/6//M/u2gJCpKHUwbE8rE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eBexEpwpcZoo15tmiOa+fHLZtIIup6t7ZstZvno914Fm8b9WDRcTOHfgVLTOGNhaY
-	 Cd03QHHSu0iJ+WkK1uJee2fjYr03DqRjwsWIfSXe3uziHv0jZ/0B18ide3lfYj8pHQ
-	 rrTryzT15LP86d1TUMZh0TABx4DOIX5Z6EwfO2ASIyQEXHAG4ai4RsRU9AUNQBMHoI
-	 2NHcanp3vnarWx3HczXOS6YsLDBlcPPXfApYQ22yfcM7F2ROyyre91pVMbP0f1HigR
-	 Mz8/S8XBctflYVDxlkKvbLR95p3ijVopVHdiXt0Jo+UFh/cPfyoHillOgJON6/9vQm
-	 clHZl90jdsaQA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uZ9at-00DnQF-D8;
-	Tue, 08 Jul 2025 15:46:51 +0100
-Date: Tue, 08 Jul 2025 15:46:51 +0100
-Message-ID: <86pleaagf8.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: linux-pci@vger.kernel.org,	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,	Toan Le <toan@os.amperecomputing.com>,
-	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,	Manivannan
- Sadhasivam <mani@kernel.org>,	Rob Herring <robh@kernel.org>,	Bjorn Helgaas
- <bhelgaas@google.com>,	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 08/12] PCI: xgene-msi: Get rid of intermediate tracking structure
-In-Reply-To: <aGvmQ0fjM6HWq6Qv@lpieralisi>
-References: <20250628173005.445013-1-maz@kernel.org>
-	<20250628173005.445013-9-maz@kernel.org>
-	<aGvmQ0fjM6HWq6Qv@lpieralisi>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1751986108; c=relaxed/simple;
+	bh=fKviyD22F+hVHHHW5cTd5fatxKS2bwf0e1y33GhF/uQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZRIeUSepO2csstPIrIBtcExS8oAT6Wl55hfUjqhPqdtDlpFLWyIo7xoSt2aUl6bY4jWIIWdyScyVNaYC1R+qFikdgxEWtf3zxQVS0siRdrjUIG3YY2phZpNyB+LGpVECnmGi8hqX0RIgMSWdBWT5r+OpxeS4EO3A4+kbZhjdhfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eXxzEz84; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60c6fea6742so9282158a12.1;
+        Tue, 08 Jul 2025 07:48:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751986105; x=1752590905; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cZemC5M/f+XMzPt6vXwq1Cy6fTiGZG5DlF15jcMv3ts=;
+        b=eXxzEz847+c5gBBUpocOJn60voaJ11FmdDklBLkHWufydPuinwqw0pqeA/PXPBQJ2q
+         jX9mZHX7ly4DGukhlCac4Ek3w7/vTYhu8EIQxE4SvUmwM/helFiGjlLDtpXPbpcnDGD7
+         kB/KufsZbKmP7SK3rBX9IR5J7B/NnsR/+atHvTeUcki0udzgchIB7xnVFNAsUVNYikXs
+         2CHNZz8Wk3oaMXoHBS3VyJkb9AAIwklFNHKsg83uDjD4rGV1eW9GT6lmemSotx9RA5Ps
+         bjPzCCXJlJRRA3cRXqRvWVVW0RwFuPP13PMbqdA8rarPNppdDN/aShQLjy3ikmWbjEOn
+         DeGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751986105; x=1752590905;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cZemC5M/f+XMzPt6vXwq1Cy6fTiGZG5DlF15jcMv3ts=;
+        b=r7sdx+xw+Ni6/X9XFMoHu4WH2CXvCVFAA4Vc47j6K3qRBAn9ZFSh13uUuz3aL0uoHk
+         Tlf/ru2vWqk/iOoGUHz0uwzfH34mqs3jPi++Ir1QVKwIaBjAy48CLp+pUhEui2ugKeGr
+         lEkhKMgMrTaWy4+TzKmfdDs12RQg67iITsKygDhPLOu5BP4b3goqFvcOKFolyr/0zosp
+         cGfK8+oHm2mrjC1a53gu6rmweNwZ0MF47FDc6IlLtyWJVlVOrxYyvs9zjXjH0trV0B0l
+         yw6bkXxXvfJt2qfdZ/a7AgycQnZYAyCHViJWZ2CCxy0KY6w8mmmwC8PmtaANQJ/ZAJz8
+         eB1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUy0qUYYgR+0JJf+m2qzilpMPi/PI7jxfnBtAP8UOHmutau/Ojhy+4oTb95JvghuRzygo1IdrdEBiQYCA==@vger.kernel.org, AJvYcCW2LYSaYctN24HhSfYcKIqzYod+Rcr2GCnrNmC/Z3c+r1uqfSl8Q4wJBjOkltvRiFDEc21hsxEFKpN91ZwO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4HJDr+Mba2gcjqCOU5LC7NwcbkoSFbzZ9yCgd38Ozx5eG8tnL
+	ORx6sUM2D/2s79ryC0g+428QygBXPI/J9hPoBa9M4ee61b6ZDWsWXJaS
+X-Gm-Gg: ASbGncvnipcapeGIUiLJknDrVTPiybhTN81bj3GTYzlnbyr97YL85VNHOniVFWSvRJ3
+	m6/aWKPlMZN+nPGGfW/iJGklrlHCTZFulPRF5jfMZqDLLZ9WvzseENMq/Y9DTx5wsv917ANMMJQ
+	IdXzKBW8f1pMd3gHtWzrcpg8RRerzQh5DO0bygkY3K45oj97ff+A/2t4DYjGbixHx+JGPPBDOaB
+	6aIKKUroKUkHFO1CVPfktj7UQCPGFibeMevyskn2Iwg/CR55kGXE5OtzQs0G0wFln3osIml8gz7
+	PhhnGuOBfvNTouNRaZsQsUxYAL2MalFBaRkh4sf0NX5jw4/bmDa/kEx7QFUsnk0mS1HmVT7RkEV
+	EqSs1beQvYJIoTICmXQgHwjMCbyf+j0YD0n9Z9ANFJ3xtY0qvgzOX8zgbk8TZOh4wAHkQzB3/4+
+	wGkg==
+X-Google-Smtp-Source: AGHT+IFsuIaKI0izTH3oNbXTJfvb1BnkMXqq0i8PV+xLu7L0gkffGVaywqrJjFHAjd9/+hN5OUwLZQ==
+X-Received: by 2002:a17:906:af89:b0:ae3:635c:53c1 with SMTP id a640c23a62f3a-ae6b025962fmr330465066b.54.1751986104383;
+        Tue, 08 Jul 2025 07:48:24 -0700 (PDT)
+Received: from kubuntu-e14.homenet.telecomitalia.it (host-87-21-242-88.retail.telecomitalia.it. [87.21.242.88])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fcb0c892csm7367056a12.38.2025.07.08.07.48.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 07:48:24 -0700 (PDT)
+From: Giovanni Di Santi <giovanni.disanti.lkl@gmail.com>
+To: deller@gmx.de
+Cc: tzimmermann@suse.de,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Giovanni Di Santi <giovanni.disanti.lkl@gmail.com>
+Subject: [PATCH] fbdev: kyro: Add missing PCI memory region request
+Date: Tue,  8 Jul 2025 16:46:59 +0200
+Message-ID: <20250708144659.787676-1-giovanni.disanti.lkl@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: lpieralisi@kernel.org, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, toan@os.amperecomputing.com, kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, bhelgaas@google.com, tglx@linutronix.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 07 Jul 2025 16:22:43 +0100,
-Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
-> 
-> On Sat, Jun 28, 2025 at 06:30:01PM +0100, Marc Zyngier wrote:
-> > The xgene-msi driver uses an odd construct in the form of an
-> > intermediate tracking structure, evidently designed to deal with
-> > multiple instances of the MSI widget. However, the existing HW
-> > only has one set, and it is obvious that there won't be new HW
-> > coming down that particular line.
-> > 
-> > Simplify the driver by using a bit of pointer arithmetic instead,
-> > directly tracking the interrupt and avoiding extra memory allocation.
-> 
-> A couple of nits, nothing else.
-> 
-> > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> > ---
-> >  drivers/pci/controller/pci-xgene-msi.c | 58 ++++++++------------------
-> >  1 file changed, 17 insertions(+), 41 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/pci-xgene-msi.c b/drivers/pci/controller/pci-xgene-msi.c
-> > index b3ac0125b3b40..4be79b9ff80df 100644
-> > --- a/drivers/pci/controller/pci-xgene-msi.c
-> > +++ b/drivers/pci/controller/pci-xgene-msi.c
-> > @@ -24,19 +24,13 @@
-> >  #define NR_HW_IRQS		16
-> >  #define NR_MSI_VEC		(IDX_PER_GROUP * IRQS_PER_IDX * NR_HW_IRQS)
-> >  
-> > -struct xgene_msi_group {
-> > -	struct xgene_msi	*msi;
-> > -	int			gic_irq;
-> > -	u32			msi_grp;
-> > -};
-> > -
-> >  struct xgene_msi {
-> >  	struct irq_domain	*inner_domain;
-> >  	u64			msi_addr;
-> >  	void __iomem		*msi_regs;
-> >  	unsigned long		*bitmap;
-> >  	struct mutex		bitmap_lock;
-> > -	struct xgene_msi_group	*msi_groups;
-> > +	unsigned int		gic_irq[NR_HW_IRQS];
-> >  };
-> >  
-> >  /* Global data */
-> > @@ -261,27 +255,20 @@ static int xgene_msi_init_allocator(struct device *dev)
-> >  
-> >  	mutex_init(&xgene_msi_ctrl->bitmap_lock);
-> >  
-> > -	xgene_msi_ctrl->msi_groups = devm_kcalloc(dev, NR_HW_IRQS,
-> > -						  sizeof(struct xgene_msi_group),
-> > -						  GFP_KERNEL);
-> > -	if (!xgene_msi_ctrl->msi_groups)
-> > -		return -ENOMEM;
-> > -
-> >  	return 0;
-> >  }
-> >  
-> >  static void xgene_msi_isr(struct irq_desc *desc)
-> >  {
-> > +	unsigned int *irqp = irq_desc_get_handler_data(desc);
-> >  	struct irq_chip *chip = irq_desc_get_chip(desc);
-> >  	struct xgene_msi *xgene_msi = xgene_msi_ctrl;
-> > -	struct xgene_msi_group *msi_groups;
-> >  	int msir_index, msir_val, hw_irq, ret;
-> >  	u32 intr_index, grp_select, msi_grp;
-> >  
-> >  	chained_irq_enter(chip, desc);
-> >  
-> > -	msi_groups = irq_desc_get_handler_data(desc);
-> > -	msi_grp = msi_groups->msi_grp;
-> > +	msi_grp = irqp - xgene_msi->gic_irq;
-> >  
-> >  	/*
-> >  	 * MSIINTn (n is 0..F) indicates if there is a pending MSI interrupt
-> > @@ -341,35 +328,31 @@ static void xgene_msi_remove(struct platform_device *pdev)
-> >  		cpuhp_remove_state(pci_xgene_online);
-> >  	cpuhp_remove_state(CPUHP_PCI_XGENE_DEAD);
-> >  
-> > -	kfree(msi->msi_groups);
-> > -
-> >  	xgene_free_domains(msi);
-> >  }
-> >  
-> >  static int xgene_msi_hwirq_alloc(unsigned int cpu)
-> >  {
-> > -	struct xgene_msi *msi = xgene_msi_ctrl;
-> > -	struct xgene_msi_group *msi_group;
-> >  	int i;
-> >  	int err;
-> >  
-> >  	for (i = cpu; i < NR_HW_IRQS; i += num_possible_cpus()) {
-> > -		msi_group = &msi->msi_groups[i];
-> > +		unsigned int irq = xgene_msi_ctrl->gic_irq[i];
-> >  
-> >  		/*
-> >  		 * Statically allocate MSI GIC IRQs to each CPU core.
-> >  		 * With 8-core X-Gene v1, 2 MSI GIC IRQs are allocated
-> >  		 * to each core.
-> >  		 */
-> > -		irq_set_status_flags(msi_group->gic_irq, IRQ_NO_BALANCING);
-> > -		err = irq_set_affinity(msi_group->gic_irq, cpumask_of(cpu));
-> > +		irq_set_status_flags(irq, IRQ_NO_BALANCING);
-> > +		err = irq_set_affinity(irq, cpumask_of(cpu));
-> >  		if (err) {
-> >  			pr_err("failed to set affinity for GIC IRQ");
-> >  			return err;
-> >  		}
-> >  
-> > -		irq_set_chained_handler_and_data(msi_group->gic_irq,
-> > -			xgene_msi_isr, msi_group);
-> > +		irq_set_chained_handler_and_data(irq, xgene_msi_isr,
-> > +						 &xgene_msi_ctrl->gic_irq[i]);
-> >  	}
-> >  
-> >  	return 0;
-> > @@ -378,15 +361,12 @@ static int xgene_msi_hwirq_alloc(unsigned int cpu)
-> >  static int xgene_msi_hwirq_free(unsigned int cpu)
-> >  {
-> >  	struct xgene_msi *msi = xgene_msi_ctrl;
-> > -	struct xgene_msi_group *msi_group;
-> >  	int i;
-> >  
-> >  	for (i = cpu; i < NR_HW_IRQS; i += num_possible_cpus()) {
-> > -		msi_group = &msi->msi_groups[i];
-> > -		if (!msi_group->gic_irq)
-> > +		if (!msi->gic_irq[i])
-> 
-> In patch 5 we removed this check in xgene_msi_hwirq_alloc(), if it
-> superfluous there it should be here too.
+The kyro framebuffer driver did not request its PCI memory regions,
+which could lead to conflicts with other drivers.  This change
+addresses the task "Request memory regions in all fbdev drivers"
+from the file Documentation/gpu/todo.rst.
 
-Hmmm, good point. I'll get rid of that one too.
+pci_request_regions() is now called during probe. To ensure proper
+cleanup, the corresponding pci_release_regions() and a missing
+pci_disable_device() call are added to both the driver's remove
+function and the probe's error handling path.
 
-> 
-> >  			continue;
-> > -		irq_set_chained_handler_and_data(msi_group->gic_irq, NULL,
-> > -						 NULL);
-> > +		irq_set_chained_handler_and_data(msi->gic_irq[i], NULL, NULL);
-> >  	}
-> >  	return 0;
-> >  }
-> > @@ -399,10 +379,9 @@ static const struct of_device_id xgene_msi_match_table[] = {
-> >  static int xgene_msi_probe(struct platform_device *pdev)
-> >  {
-> >  	struct resource *res;
-> > -	int rc, irq_index;
-> 
-> Just noticed, insignificant nit: don't see why moving irq_index to a
-> local loop variable is required in this patch - fine to leave the
-> code in the patch as-is - reporting it to make sure I have not
-> missed anything.
+Signed-off-by: Giovanni Di Santi <giovanni.disanti.lkl@gmail.com>
+---
+ drivers/video/fbdev/kyro/fbdev.c | 23 ++++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
 
-Not required, just my own obsession with scope reduction of local
-variables. I thought that given the magnitude of the changes, I might
-as well give myself some artistic license! ;-)
-
-Thanks,
-
-	M.
-
+diff --git a/drivers/video/fbdev/kyro/fbdev.c b/drivers/video/fbdev/kyro/fbdev.c
+index 08ee8baa79f8..80ac17337c1b 100644
+--- a/drivers/video/fbdev/kyro/fbdev.c
++++ b/drivers/video/fbdev/kyro/fbdev.c
+@@ -685,8 +685,14 @@ static int kyrofb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	}
+ 
+ 	info = framebuffer_alloc(sizeof(struct kyrofb_info), &pdev->dev);
+-	if (!info)
+-		return -ENOMEM;
++	if (!info) {
++		err = -ENOMEM;
++		goto out_disable;
++	}
++
++	err = pci_request_regions(pdev, "kyrofb");
++	if (err)
++		goto out_free_fb;
+ 
+ 	currentpar = info->par;
+ 
+@@ -695,10 +701,11 @@ static int kyrofb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	kyro_fix.mmio_start = pci_resource_start(pdev, 1);
+ 	kyro_fix.mmio_len   = pci_resource_len(pdev, 1);
+ 
++	err = -EINVAL;
+ 	currentpar->regbase = deviceInfo.pSTGReg =
+ 		ioremap(kyro_fix.mmio_start, kyro_fix.mmio_len);
+ 	if (!currentpar->regbase)
+-		goto out_free_fb;
++		goto out_release;
+ 
+ 	info->screen_base = pci_ioremap_wc_bar(pdev, 0);
+ 	if (!info->screen_base)
+@@ -752,10 +759,13 @@ static int kyrofb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	iounmap(info->screen_base);
+ out_unmap_regs:
+ 	iounmap(currentpar->regbase);
++out_release:
++	pci_release_regions(pdev);
+ out_free_fb:
+ 	framebuffer_release(info);
+-
+-	return -EINVAL;
++out_disable:
++	pci_disable_device(pdev);
++	return err;
+ }
+ 
+ static void kyrofb_remove(struct pci_dev *pdev)
+@@ -780,6 +790,9 @@ static void kyrofb_remove(struct pci_dev *pdev)
+ 
+ 	unregister_framebuffer(info);
+ 	framebuffer_release(info);
++
++	pci_release_regions(pdev);
++	pci_disable_device(pdev);
+ }
+ 
+ static int __init kyrofb_init(void)
 -- 
-Without deviation from the norm, progress is not possible.
+2.43.0
+
 
