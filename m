@@ -1,138 +1,140 @@
-Return-Path: <linux-kernel+bounces-721299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB3F4AFC74A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:45:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C79E1AFC753
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D1143A928F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:44:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7AF33ABCA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6642641C8;
-	Tue,  8 Jul 2025 09:44:57 +0000 (UTC)
-Received: from n169-114.mail.139.com (n169-114.mail.139.com [120.232.169.114])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E400A265CAA;
+	Tue,  8 Jul 2025 09:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DToQVbtf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC2179CF;
-	Tue,  8 Jul 2025 09:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=120.232.169.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5F82135D7;
+	Tue,  8 Jul 2025 09:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751967897; cv=none; b=jYY0aOhasaI02w4tngkekY3tG5TA2TofcRdMCVwD8PkAKgYEl09U9g5G2NvgPH4OMk1hYkzyDwhF/1eFmJTxHbL1tFwxnwJRuimyE9fB4PJPnv8HYlbsa9myDmC2tjxkIjfSBKGlZjYKoU/UrQ4guMsAxbPN3RcTx3Utpn8AmKY=
+	t=1751967955; cv=none; b=Arc8TL475NNN4eMD1QDE8pMUNSuJrry5RYS4JmWFvRC7SIEVjSr3D0qSM1BkMmXX420rqu3pZkk7ukjM3Z6um7mktDNHLpgErUGcOfPEtjY6SwRMf7MD+dMG7YhihI6zNDlMhtGTbYxOGf+vXZ8B68WpzQz0lAHp5lUNoVqxdog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751967897; c=relaxed/simple;
-	bh=rjoGb4QYUa8g4YTR1lLJbpA0zCVoViTj52sglYfLdYo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IJEkue5xySAkSCYY8t7f5h08hw/NcGraLxG05dy28ewGDQItL9jFWFzseMk5LTHYBa2ukylinchqyv7abEFJxIJXDnp+8b4wIUfY8meLJL803xji+iQQjyfvUTCItL70fjgp1xVDTEWHmHJdCjsPswgXY/YU+BgujxhJy5VX/00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com; spf=pass smtp.mailfrom=139.com; arc=none smtp.client-ip=120.232.169.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=139.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM:                                                                                        
-X-RM-SPAM-FLAG:00000000
-Received:from yoga-Lenovo-Slim-Pro-7-14APH8.lenovo.com (unknown[106.38.209.7])
-	by rmsmtp-lg-appmail-42-12056 (RichMail) with SMTP id 2f18686ce88523b-b9f71;
-	Tue, 08 Jul 2025 17:44:48 +0800 (CST)
-X-RM-TRANSID:2f18686ce88523b-b9f71
-From: Jackie Dong <xy-jackie@139.com>
-To: hansg@kernel.org,
-	ilpo.jarvinen@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org,
+	s=arc-20240116; t=1751967955; c=relaxed/simple;
+	bh=AZAx/SltGk9pKwFXcrvSdtkd/H9XzQsZMgsKKBr+qU8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=avOeCIowJZ/v++qT1hkky1Y3NmWMAQlJlE5sVCIPTUEpbHEucDSj+WDap/WZwoxA+c++532Rs9P5UiQGheAF7jTPBThcXenLC2LthkC7He0JJNGJCY6H3gYuJefba3+9UDHwYNeCF2e3JrFmRQpACN9yIZ/7AlRJf3H3krTpuZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DToQVbtf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B543BC4CEED;
+	Tue,  8 Jul 2025 09:45:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751967953;
+	bh=AZAx/SltGk9pKwFXcrvSdtkd/H9XzQsZMgsKKBr+qU8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DToQVbtfXKIHDKSnMySm5mj5DSPOv20/rvy9ocynafpbCBVOSW8wTh1Q+/9uXB45k
+	 3nhxcpaZ/O0inn06UmnecYO8WSW2mQM9ktiwCDOwIdRLXjCW9vM/w8H5m0KXPy9jPH
+	 zCRZQSfNMqE2xlMoXjncy9M0ruUukipp8ofy2RpdzZekcmFHm41BqRvdYPx/kTB47A
+	 3E1V8j3f6WL15nfmGsX4IMNeP5lP7P+0/wKcJehoKST6lxczACq9KKdbgxY+VatMNQ
+	 Nr0TkTidFMY/q33YVGPU1rzA9FUca83CSAx/67LuKrE9z9iygYLWi1UenAfBTKMGGi
+	 cjeEHiZw4oaqw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uZ4tb-00DhrB-0W;
+	Tue, 08 Jul 2025 10:45:51 +0100
+Date: Tue, 08 Jul 2025 10:45:50 +0100
+Message-ID: <86tt3n9fsh.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Ben Horgan <ben.horgan@arm.com>
+Cc: Yury Norov <yury.norov@gmail.com>,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	oliver.upton@linux.dev,
+	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux@rasmusvillemoes.dk,
 	linux-kernel@vger.kernel.org,
-	dongeg1@lenovo.com,
-	Jackie Dong <xy-jackie@139.com>
-Subject: [PATCH v3] lenovo-wmi-hotkey: Fixed a kernel error report for some Lenovo non-ThinkPad devices
-Date: Tue,  8 Jul 2025 17:43:05 +0800
-Message-ID: <20250708094352.26850-1-xy-jackie@139.com>
-X-Mailer: git-send-email 2.43.0
+	james.morse@arm.com
+Subject: Re: [PATCH 2/2] bitfield: Ensure the return value of type##_replace_bits() is checked
+In-Reply-To: <03a76e9a-86ac-4791-9f0a-494b28c07fcc@arm.com>
+References: <20250703135729.1807517-1-ben.horgan@arm.com>
+	<20250703135729.1807517-3-ben.horgan@arm.com>
+	<aGv2WoAtxnEgqV4y@yury>
+	<03a76e9a-86ac-4791-9f0a-494b28c07fcc@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: ben.horgan@arm.com, yury.norov@gmail.com, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux@rasmusvillemoes.dk, linux-kernel@vger.kernel.org, james.morse@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Not all of Lenovo non-ThinkPad devices support both mic mute LED (on F4)
-and audio mute LED (on F1). Some of them only support one mute LED, some
-of them don't have any mute LED. Add a decision to judge this device
-support mute LED or not. Without this decision, not support both of mic
-mute LED and audio mute LED Lenovo non-ThinkPad brand devices (including
-Ideapad/Yoga/Xiaoxin/Gaming/ThinkBook, etc.) will report a failed message
-with error -5.
+On Tue, 08 Jul 2025 10:42:06 +0100,
+Ben Horgan <ben.horgan@arm.com> wrote:
+> 
+> Hi Yury,
+> 
+> On 7/7/25 17:31, Yury Norov wrote:
+> > Hi Ben,
+> > 
+> > On Thu, Jul 03, 2025 at 02:57:29PM +0100, Ben Horgan wrote:
+> >> As type##_replace_bits() has no side effects it is only useful if its
+> >> return value is checked. Add __must_check to enforce this usage. To have
+> >> the bits replaced in-place typep##_replace_bits() can be used instead.
+> >> 
+> >> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+> >> ---
+> >>   include/linux/bitfield.h | 4 ++--
+> >>   1 file changed, 2 insertions(+), 2 deletions(-)
+> >> 
+> >> diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+> >> index 6d9a53db54b6..39333b80d22b 100644
+> >> --- a/include/linux/bitfield.h
+> >> +++ b/include/linux/bitfield.h
+> >> @@ -195,8 +195,8 @@ static __always_inline __##type type##_encode_bits(base v, base field)	\
+> >>   		__field_overflow();					\
+> >>   	return to((v & field_mask(field)) * field_multiplier(field));	\
+> >>   }									\
+> >> -static __always_inline __##type type##_replace_bits(__##type old,	\
+> >> -					base val, base field)		\
+> >> +static __always_inline __##type __must_check type##_replace_bits(__##type old,	\
+> >> +							base val, base field)	\
+> >>   {									\
+> >>   	return (old & ~to(field)) | type##_encode_bits(val, field);	\
+> >>   }									\
+> > 
+> > So, would it make sense to mark _encode_bits() and _get_bits() as
+> > __must_check as well? At least from the point of unification, it
+> > would.
+> Could do. It seems less important as there are no obvious foot-guns
+> that these would guards against. Would you like me to add this in a
+> v2?
+> > 
+> > How would we move this - with my bitmap-for next or with arm branch?
+> 
+> I'm not familiar with the branch machinery so can't comment on this.
 
-Signed-off-by: Jackie Dong <xy-jackie@139.com>
-Suggested-by: Hans de Goede <hansg@kernel.org>
-Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+The first patch will definitely go in via the KVM/arm64 tree, probably
+as a fix for 6.16.
 
----
-Changes in v3:
- - Reverse orignal logic  (obj && obj->type == ACPI_TYPE_INTEGER) 
-   and add new decision for led_version == 0.
- - Optimize the descriptions based on reviewer comments.
+Thanks,
 
-Changes in v2:
- - Add warning message and then return 0 if the device support mute LED
-   abnormaly, based on Hans suggestion and Armin previous patch.
+	M.
 
-
- .../x86/lenovo-wmi-hotkey-utilities.c         | 24 ++++++++++++++-----
- 1 file changed, 18 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-index 89153afd7015..1850992f2ea8 100644
---- a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-+++ b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-@@ -127,21 +127,30 @@ static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type led_type, struct
- 	else
- 		return -EIO;
- 
--	wpriv->cdev[led_type].max_brightness = LED_ON;
--	wpriv->cdev[led_type].flags = LED_CORE_SUSPENDRESUME;
-+	/*
-+	 * Output parameters define: 0 means mute LED is not supported, Non-zero means
-+	 * mute LED can be supported.
-+	 */
-+	if (led_version == 0)
-+		return 0;
-+
- 
- 	switch (led_type) {
- 	case MIC_MUTE:
--		if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER)
--			return -EIO;
-+		if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER) {
-+			pr_warn("The MIC_MUTE LED of this device isn't supported now.\n");
-+			return 0;
-+		}
- 
- 		wpriv->cdev[led_type].name = "platform::micmute";
- 		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_micmute_led_set;
- 		wpriv->cdev[led_type].default_trigger = "audio-micmute";
- 		break;
- 	case AUDIO_MUTE:
--		if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER)
--			return -EIO;
-+		if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER) {
-+			pr_warn("The AUDIO_MUTE LED of this device isn't supported now.\n");
-+			return 0;
-+		}
- 
- 		wpriv->cdev[led_type].name = "platform::mute";
- 		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_audiomute_led_set;
-@@ -152,6 +161,9 @@ static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type led_type, struct
- 		return -EINVAL;
- 	}
- 
-+	wpriv->cdev[led_type].max_brightness = LED_ON;
-+	wpriv->cdev[led_type].flags = LED_CORE_SUSPENDRESUME;
-+
- 	err = devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
- 	if (err < 0) {
- 		dev_err(dev, "Could not register mute LED %d : %d\n", led_type, err);
 -- 
-2.43.0
-
-
+Without deviation from the norm, progress is not possible.
 
