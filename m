@@ -1,129 +1,88 @@
-Return-Path: <linux-kernel+bounces-722435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9754EAFDAAD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:09:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ACEFAFDAB1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4279D1C2396C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:10:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 974643B40E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95B725392A;
-	Tue,  8 Jul 2025 22:09:39 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DD2253350;
+	Tue,  8 Jul 2025 22:11:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA19AD21;
-	Tue,  8 Jul 2025 22:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2748AD21
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 22:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752012579; cv=none; b=oHbofOykhfUDyUiDkheSPKBEcMn8JclfYFuRtMq59H4nt94Lrl0BdFf/oV6q56DezAm+MSlJShp0QOfdYz5RTQvYpH3qsuPejyEtif1YywPnERa2ce+VQf7HsGiZJQ3SeUljd2hPSbDd1srzoYr6oITb0fSoV1ryHIYS5PmzsDA=
+	t=1752012666; cv=none; b=lI3luEyqpZ4NS4Gsef9C2VP2lbie8RR3Z8XgnzhNvyV3QUGcVtdk1R43Ua6eADqhgev6UbEDxoL85s2XZusO7HLvl1o4bjDGfKPJjq6EZN5SkItuABRNNoB5LL4DNSn+/ppgfxMUTOnhr978OMOO38dh3/Yqadxn10sEr2AOza0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752012579; c=relaxed/simple;
-	bh=Zrcf/4rib4V7MmaFntVQOz4YMBCbvsWPfjhkWyYeAB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eWrXlVQnZJKUOySoW4W6V3oPKQhPPdIyU0QgBY2TRp3ag4b58btqNPcyFS3JRkISevp2FlOhdxugz2s6zot7Kbhnrd+pI1sth/pqM0bWtbJvVjvYeZEOSeIySv6MIE3OV4gt2f9ADlckGQ20o1lYAHzFElaCwl6DHId4vmltQEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id 3DA511D853C;
-	Tue,  8 Jul 2025 22:09:33 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id 29B7A20024;
-	Tue,  8 Jul 2025 22:09:31 +0000 (UTC)
-Date: Tue, 8 Jul 2025 18:09:32 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-xfs@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>, Carlos  Maiolino
- <cem@kernel.org>, Christoph Hellwig <hch@lst.de>, "Darrick J. Wong"
- <djwong@kernel.org>
-Subject: Re: [PATCH v2 00/13] xfs: tracing: remove unused event
- xfs_reflink_cow_found
-Message-ID: <20250708180932.1ffdca63@gandalf.local.home>
-In-Reply-To: <20250616175146.813055227@goodmis.org>
-References: <20250616175146.813055227@goodmis.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752012666; c=relaxed/simple;
+	bh=KXDA83ZiDXISN4tZBtQNbfUmGJROqq3LQYJ87Wpz870=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=jSkf6aVb756InPqpE95kP5QjXrSD6MByyP5nRyGHfnpnm53YBgHSdUUZA8b+Glp+sfUxxpVe5zuteETvqXZEn8rpCRexo3/LEX0NAl8guMkeJkIIemF1gC4pgHAt1XEU9i/dyuoAE4INglYlx0S9xVtddomZr07MDVGkhf4a2Ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3df33d97436so4377095ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 15:11:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752012664; x=1752617464;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IbxIKRYiLLlWIozFDG0FU1H875efsEVNFgyk7i+C5sc=;
+        b=tm9nSDmeNRMksVx+s88rezYIE2VHMMzuPbse5DtsCHJHlkzvbkrrph6ByFiPI1DBF6
+         Rvao2jm0RN9mUYv292Auq9vM/GcnGR8p5C1bV/BVKTC4safBfrs6mh34QLUWbpT0rkVm
+         SC1mw71rQ3WmSxl2kjvXz9nzyrCvKUyKjljkK/d80lDBJuv4UVr01k7ZvGhCC2pEmG8O
+         J5fS7SeTX+90ZFpQ/CoGCeBdYWqVwT0GkU4bNbQxJL6Z14yTNE6hpESwxUdGfEvsibca
+         YJgNWRBa3y4+exshh4gANybAreEXyeqWFd7MIrv4Di9LZFTJHSVq/pwjQUdjoyyHKbmz
+         0wTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOQjAzHa2mYObimXNCP1o+pKjT5LCD0Wgilj5aEuEUDDATQhQq5yJKC3xi68+4ERswJNlD0fTfd2iIVHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrmjWRZ3RuuUh/qQPorhpmr5MxHFPDsQ7x/Cxfbf19vqR+Ye6f
+	j1hjnnFjeNf47sALe47kkwAfdpooXFI3aGMeMVO/IZ+MDRmdwZTIUrimFAFEGfmjdLkuyRYZb/F
+	qryxnSxvtIBFUIQgM0h1/sLHsxRfR1lEdFybOdFdx3El18LeQbhv7JoMrWpI=
+X-Google-Smtp-Source: AGHT+IGBSDEPV7Qs0MTDCe42aw07FiTwokLQKCj/RmSQ+xcnhy82G/Dqlo3GGGcVJk7at4VE7sVJSLcP4Raz5WJB2Bm6SpubsqGI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: pm7k4g8qysdsrm1wtfihrks9f6pniye1
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: 29B7A20024
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18zyU2k3dO5Lc1tmm0xtU6mAOSFP+U3xjI=
-X-HE-Tag: 1752012571-580348
-X-HE-Meta: U2FsdGVkX1+gP+LMV0n4w+CJAzKr0PBeKS4qefE50YlXdw1XPxWzeym1Bh3VLuVFAn4/FIg5fDtpfxLOW3Dm54FNszDfCfK/YXjtbutpwS0MBUlqZMCSNgNdyzu9LdbroZP/VGbmSQTeMtmjb51as0xW+ddFSstyTyS0TeGhamawP03ylTeaVvGYKTp38cTX6EwPoNjsu3Bz5V0V8/sqwBehtAwC7DfmkxY4GOqvZLLJkEKA1D7/zeOLK65uLaJ9cLDqYaVrdAUASwGjFhZVqfRaF+l6+rjRxxrHA+7vSmI0qwjmZPUwi3kYxr0M6fo/TrozhbEoFLwqsB8UEzhMvh7QwgHjxaEDOLR+lkVUcwascAoZpVEc+buFuccm41fGkTrF/87DR3h6N9HzsYzyJw==
+X-Received: by 2002:a05:6e02:1747:b0:3dd:bb7e:ca89 with SMTP id
+ e9e14a558f8ab-3e154ff233fmr49433975ab.10.1752012664123; Tue, 08 Jul 2025
+ 15:11:04 -0700 (PDT)
+Date: Tue, 08 Jul 2025 15:11:04 -0700
+In-Reply-To: <CAF3JpA7yXEB_Fj3AMtFG1OYLX2g9P3LFQ5f3qSSEcheB4axVKg@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <686d9778.050a0220.1ffab7.001f.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] WARNING in ni_rename
+From: syzbot <syzbot+b0373017f711c06ada64@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	moonhee.lee.ca@gmail.com, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
-Should this go through the XFS tree, or should I take it?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
--- Steve
+Reported-by: syzbot+b0373017f711c06ada64@syzkaller.appspotmail.com
+Tested-by: syzbot+b0373017f711c06ada64@syzkaller.appspotmail.com
 
+Tested on:
 
-On Mon, 16 Jun 2025 13:51:46 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+commit:         58ba80c4 Add linux-next specific files for 20250708
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=122fd582580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bac86b8500d50c98
+dashboard link: https://syzkaller.appspot.com/bug?extid=b0373017f711c06ada64
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10dc6bd4580000
 
-> Trace events take up to 5K in memory for text and meta data. I have code that
-> will trigger a warning when it detects unused tracepoints[1]. The XFS file
-> system contains many events that are not called. Most of them used to be called
-> but due to code refactoring the calls were removed but the trace events stayed
-> behind.
-> 
-> Some events were added but never used. If they were recent, I just reported
-> them, but if they were older, this series simply removes them.
-> 
-> One is called only when CONFIG_COMPACT is defined, so an #ifdef was placed
-> around it.
-> 
-> Finally, one event is supposed to be a trace event class, but was created with
-> the TRACE_EVENT() macro and not the DECLARE_EVENT_CLASS() macro. This works
-> because a TRACE_EVENT() is simply a DECLARE_EVENT_CLASS() and DEFINE_EVENT()
-> where the class and event have the same name. But as this was a mistake, the
-> event created should not exist.
-> 
-> [1] https://patchwork.kernel.org/project/linux-trace-kernel/cover/20250612235827.011358765@goodmis.org/
-> 
-> Changes since v1: https://lore.kernel.org/linux-trace-kernel/20250612212405.877692069@goodmis.org/
-> 
-> - Removed the first patch that mistakenly removed xfs_reflink_cow_found
-> 
-> - Change subjects to start with lowercase
-> 
-> - Removed xfs_attr events that are used in an #if 0 section instead of
->   adding #if 0 around them
-> 
-> - I added: Reviewed-by: Christoph Hellwig <hch@lst.de>
->   to all patches but the one with the modified #if 0 as Christoph
->   said he looked at them all.
-> 
-> Steven Rostedt (13):
->       xfs: remove unused trace event xfs_attr_remove_iter_return
->       xfs: remove unused event xlog_iclog_want_sync
->       xfs: remove unused event xfs_ioctl_clone
->       xfs: remove unused xfs_reflink_compare_extents events
->       xfs: remove unused trace event xfs_attr_rmtval_set
->       xfs: remove unused xfs_attr events
->       xfs: remove unused event xfs_attr_node_removename
->       xfs: remove unused event xfs_alloc_near_error
->       xfs: remove unused event xfs_alloc_near_nominleft
->       xfs: remove unused event xfs_pagecache_inval
->       xfs: remove usused xfs_end_io_direct events
->       xfs: only create event xfs_file_compat_ioctl when CONFIG_COMPAT is configure
->       xfs: change xfs_xattr_class from a TRACE_EVENT() to DECLARE_EVENT_CLASS()
-> 
-> ----
->  fs/xfs/scrub/trace.h |  2 +-
->  fs/xfs/xfs_trace.h   | 68 ++--------------------------------------------------
->  2 files changed, 3 insertions(+), 67 deletions(-)
-
+Note: testing is done by a robot and is best-effort only.
 
