@@ -1,174 +1,77 @@
-Return-Path: <linux-kernel+bounces-721984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A8CAFD061
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:14:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E645AFD062
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08F78168237
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:14:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A83E188676A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABFF2E427E;
-	Tue,  8 Jul 2025 16:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q48En5Xx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9470A2E3708;
-	Tue,  8 Jul 2025 16:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584642E3708;
+	Tue,  8 Jul 2025 16:14:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7211D21C9E4
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 16:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751991266; cv=none; b=qDiQHfUaW4VT4CsjD4xIaYdIMPuNTnrYFQ0ANhCPC0/mZ1ihP9hQfqHdJ9Zif8HPezahTYLIzeA50Ez3nY9OL5DUU8bBDTlZIAIMBWFItmirfiDQGhQV/jISeT6IOrSHUjz6WJzB4uULLWfxArAdZhK8ImkFAmPw2OY8g3Mf6cA=
+	t=1751991295; cv=none; b=phnzEaGQQvj74iY60o4W5Jf3WR1D+stlx0qe2MAcE4eFZdktVLLgpTi7HX/nnKR42MMbGnZuve3qhR6xfyMHwaPGcl3VWs2jjhB7emXUgaoDwM4zgAx/dQSvgzZRvI1UtHkiL36pXLpox8Ks2MLL3pbvB2aaQnIoiTXe4Gh3XJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751991266; c=relaxed/simple;
-	bh=9VJ1nAIku89khtvQrVlc23Y/ORI9Fv5eKjw3C6IpwGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L0/omBgFoRuRkwbahtTfGV9KFgJl2bu0ns6IZCRoPg5JlSRig7HG0r3erw3GGZO0MRpNtggmvtryQyY29Oi4p0p1OGOPUMbvdMIQ0rTzULMTjUEIES9FrNsTu0XcUZHSzv3eV+E41GWjzIBrGALLNCgbyL8FEEymWJseD8fKHCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q48En5Xx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4ED1C4CEED;
-	Tue,  8 Jul 2025 16:14:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751991266;
-	bh=9VJ1nAIku89khtvQrVlc23Y/ORI9Fv5eKjw3C6IpwGc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q48En5XxhxAXTUKM8v+dgVwYZ7UEEkh8gDOJHzjAw07He9s6U4Gy1G8wyS2VeF5IL
-	 e6Pc0kVolCufQz4buTOCAwcdkRLWrKVhrAOlnAlrRjh1Ao9KLuLBiio1hgTEygHetO
-	 TdRKVlHU6j6DeTWcXlJPKj8KzMPHCxLULlYL+DJDWjkKWGlhAgu3OlLmOBJGyXMe/S
-	 Khou6QGPq/vKenLJI0vPZ84XFLx53flf4NGBBtHolBEa9drGlbvycXU0gmHgV9Bz1F
-	 NljBr7BpiKC2xqt7WideBwOprEhtQ1p/PbwGrG6hC42BzKGb6mnrCHg0p+jUcS11OZ
-	 TAJY3gUZDPtzg==
-Date: Tue, 8 Jul 2025 18:14:19 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>
-Subject: Re: [RFC v1 0/3] Add and use seprintf() instead of less ergonomic
- APIs
-Message-ID: <xmrrnnvhipkhfs6xk743nczeuze6hegjihtdhdcougkuzsnv73@qgmtmjntsd7r>
-References: <cover.1751747518.git.alx@kernel.org>
- <87a55fw5aq.fsf@prevas.dk>
- <ez7yty6w7pe5pfzd64mhr3yfitvcurzsivjibeabnkg457xu7x@tkompzcytwcj>
- <871pqqx035.fsf@prevas.dk>
+	s=arc-20240116; t=1751991295; c=relaxed/simple;
+	bh=3kHplAdP0zVGF3P1aTKWa5BEPMasRXMF2rRY5rrDwuQ=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=T4Qsu3EsDVKUbPt9FWvDP/wFmKHui99Tnhq9FFbQPOutj8TdTXzujjoW0CKTWnncD6mafcwqIZvq68thxiftqLAzoIBMz1WSIxO9DTTH2A96+s24rhnq5FamAIHophGYLEI+uPXZcwNk/7l8wHiVI+6hK805VhE4cmu4yanqjqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 73F9E153B;
+	Tue,  8 Jul 2025 09:14:40 -0700 (PDT)
+Received: from [10.1.35.36] (unknown [10.1.35.36])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 74CCE3F694;
+	Tue,  8 Jul 2025 09:14:51 -0700 (PDT)
+Message-ID: <8413b873-d4db-4772-80b4-35c03370bdcc@arm.com>
+Date: Tue, 8 Jul 2025 17:14:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uc53hol6uccylkwy"
-Content-Disposition: inline
-In-Reply-To: <871pqqx035.fsf@prevas.dk>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Tejun Heo <tj@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, arighi@nvidia.com,
+ Changwoo Min <changwoo@igalia.com>, David Vernet <dvernet@meta.com>
+From: Christian Loehle <christian.loehle@arm.com>
+Subject: [RESEND][PATCH] sched_ext: Fix scx_bpf_reenqueue_local() reference
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+The comment mentions bpf_scx_reenqueue_local(), but the function
+is provided for the BPF program implementing scx, as such the
+naming convention is scx_bpf_reenqueue_local(), fix the comment.
 
---uc53hol6uccylkwy
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>
-Subject: Re: [RFC v1 0/3] Add and use seprintf() instead of less ergonomic
- APIs
-References: <cover.1751747518.git.alx@kernel.org>
- <87a55fw5aq.fsf@prevas.dk>
- <ez7yty6w7pe5pfzd64mhr3yfitvcurzsivjibeabnkg457xu7x@tkompzcytwcj>
- <871pqqx035.fsf@prevas.dk>
-MIME-Version: 1.0
-In-Reply-To: <871pqqx035.fsf@prevas.dk>
+Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+---
+ kernel/sched/ext.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hi Rasmus,
-
-On Tue, Jul 08, 2025 at 03:51:10PM +0200, Rasmus Villemoes wrote:
-> > However, there's the early return due to size>INT_MAX || size=3D=3D0,
-> > which
->=20
-> First of all, there's no early return for size=3D=3D0, that's absolutely
-> supported and the standard way for the caller to figure out how much to
-> allocate before redoing the formatting - as userspace asprintf() and
-> kernel kasprintf() does. And one of the primary reasons for me to write
-> the kernel's printf test suite in the first place, as a number of the %p
-> extensions weren't conforming to that requirement.
-
-Yup, sorry, I was talking from memory, and forgot about the size=3D=3D0.
-I've introduced the check of size=3D=3D0 for seprintf(), but snprintf(3) is
-okay with it.  My bad.  The issue with INT_MAX holds.
-
-> > results in no string at all, and there's not an error code for this.
-> > A user might think that the string is reliable after a vsprintf(3) call,
-> > as it returned 0 --as if it had written ""--, but it didn't write
-> > anything.
->=20
-> No, because when passed invalid/bogus input we cannot trust that we can
-> write anything at all to the buffer. We don't return a negative value,
-> true, but it's not exactly silent - there's a WARN_ON to help find such
-> bogus callers.
-
-Yup, I know.  It's silent to the caller, I meant.
-
-> So no, there's "no string at all", but nothing vsnprint() could do in
-> that situation could help - there's a bug in the caller, we point it out
-> loudly. Returning -Ewhatever would not remove that bug and would only
-> make a difference if the caller checked for that.
->=20
-> We don't want to force everybody to check the return value of snprintf()
-> for errors, and having an interface that says "you have to check for
-> errors if your code might be buggy", well...
->=20
-> In fact, returning -Ewhatever is more likely to make the problem worse;
-> the caller mismanages buffer/size computations, so probably he's likely
-> to just be adding the return value to some size_t or char* variable,
-> making a subsequent use of that variable point to some completely
-> out-of-bounds memory.
-
-That's why seprintf() controls that addition, and gives a pointer
-directly to the user, which doesn't need to add anything.  I think this
-is easier to handle.  There, I can report NULL for bad input, instead of
-adding 0.
-
-
-Have a lovely day!
-Alex
-
->=20
-> Rasmus
-
---=20
-<https://www.alejandro-colomar.es/>
-
---uc53hol6uccylkwy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhtQ9UACgkQ64mZXMKQ
-wqmXexAAoMKhj1wyGjvhsWQvcONm/dFCQQmigbvdvZel7D+KJfQQSiN8AHuDL0WI
-+NP0JRsmbOqvnvrc8RW6w4rtmWyoRpsyJjCOCneNiw35EWmUcBbJTCXfD/A8TF9B
-Idf453FE2u5B4QWJ+7X2s9ee4rxKiL3MzF4iEpZ/afDa7DA4FSYBuK7bv16YfTn5
-KssCG9JEH91cMLqjOuv7YgnVrHfYburjuKt9GzK5QyLinlzNvBDYl+OHRPG4OOWb
-1arsLTPccpfnM0CCu2iLaCWfTDEz5W8n4ml2kwmctACzzEFUOXVm8CjC4CiRLzBu
-STVoHGKKn8S5KdjUxx7VdkgJmO+2a3L+J4Yq6/xP3ywlMEfXeZi3iEP/7AcBaqSo
-5PR/LMx113ftA9M4/KMesyL4aB7U0EME2a0lLspvtSU64puOLa9eAcq71FcuxdQH
-DWRLjkLrck7s39Kwrzk/JsQO0OuAmwTqs0zV2M6aBRUCBnjfyRDrqY+PDQ1C+47z
-F+g8xt57alY6tN/tJFWAymozBl+6UMmI+4O8z4gL0Urso2juh1YWuH4XD5sN69iT
-V5ft+sw2G9VPd5T1OZYIrB8ySSgZLl3mKs0AfZr99XJsU/onPVL27ZLDfSTkEFKm
-NEDOPx1Ojv8NIDyKXUYid1NaofXjKbWfKF7lKsGtLanOdGYLJbU=
-=sxYf
------END PGP SIGNATURE-----
-
---uc53hol6uccylkwy--
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index b498d867ba21..702fa31459fe 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -884,7 +884,7 @@ enum scx_enq_flags {
+ 	/*
+ 	 * The task being enqueued was previously enqueued on the current CPU's
+ 	 * %SCX_DSQ_LOCAL, but was removed from it in a call to the
+-	 * bpf_scx_reenqueue_local() kfunc. If bpf_scx_reenqueue_local() was
++	 * scx_bpf_reenqueue_local() kfunc. If scx_bpf_reenqueue_local() was
+ 	 * invoked in a ->cpu_release() callback, and the task is again
+ 	 * dispatched back to %SCX_LOCAL_DSQ by this current ->enqueue(), the
+ 	 * task will not be scheduled on the CPU until at least the next invocation
+-- 
+2.34.1
 
