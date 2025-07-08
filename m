@@ -1,163 +1,164 @@
-Return-Path: <linux-kernel+bounces-721716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B418EAFCD00
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:10:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A96EAFCD03
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0E983A5709
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:10:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C82D01BC43B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C902DF3C6;
-	Tue,  8 Jul 2025 14:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31732DF3C6;
+	Tue,  8 Jul 2025 14:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RI/W+5OD"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GeXY37Wh"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049142DC342
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 14:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748042DECD8
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 14:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751983846; cv=none; b=cTBwxz5OCBc34yKADX3QyLdMHUhMI5U85y5NhRiFxrP6J8IceWDpZ+/cLY4sdwmKSNP+lZpfnUR2F6s9A/uO0X1yhAJejipgUsbsjgtWOJJe8lbWHKQQojtn0CaWcnndKbWmI7Uh81Ub3b2EhZFcQovTwnfIONShxoAQxjb3XBs=
+	t=1751983861; cv=none; b=INfhPQ6jqhs6omrR6jaQ3xVW9BPt8vHtfQwEf7IrvVhLKqf9oVAgTeGxZbUcBG0MbN3XXyH1MNtHRojrrFUil/kR3cnbqw2RbjvJiGfVQr/kcNIpptV06WSjzzrElqfRJbzxTwHQv4h76UnPn+5FY2RL4xsbB++43VrujB0hK+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751983846; c=relaxed/simple;
-	bh=6qVC/81iUn3tvRiNiz2aMOEHOZyxb34pDt1UwQ+S4AQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EFJZs2n2YzhekuIEUYOB3w9IfFikhvN0qHkj9U8bdc0xnYdOuU8VD2IYGtsG7r59wBkZMCKQqrup+BII2npa9ADMIms1Ij1r/MD3PQYU1ju86ADRRUxp2DZWvteGbpr9qNE/0AaqhcSWqO50F4H8q2KkvwY/tSRrRTzaZK3CMr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RI/W+5OD; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a50956e5d3so3339187f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 07:10:44 -0700 (PDT)
+	s=arc-20240116; t=1751983861; c=relaxed/simple;
+	bh=NVjqdhu5MdSRKBGNek4XlylKWFxybxxXICy1cl8riNM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m6j0gvWrbBGGyD9wYJkwQ5LfmO25hcbluvkPZM/HTPsBpsBIMNM3jo0sSfbrrOjyxQG2o90owAydot6mc7YGIwK3rrCPfIQgWk/tJ1E+cELbzZNoig195gn7zYWG1fvf7qqbBrhLmEgz2oJHvxweguFzaEliRBDLXM17PljQCTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GeXY37Wh; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-237f270513bso153775ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 07:10:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751983843; x=1752588643; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JbFRXo7PvgTjLeuBlkvvrU8m32Gx42ivaN7h1EVraoQ=;
-        b=RI/W+5OD4JGeOgco/m1iHxKano6L3aZTkvGscBqbRU6u2aAWnSsA6M4x5I7eTWe2W+
-         ulPBIn13053KUvO9Iq9JJdsLmHPKWT8vEGJagC2nxthe+KEwN4eaaNFI+B7jOp3KX8BZ
-         1MrqpyPxyo6EOTwkWM1DlIUdVxo0Kh3nFQSdZuRUmJ1bImXPHDYgpNN4K6UhlebVAVkw
-         H5y6aDF8+/6M0CztG/SWhyEUBx3O+axohvGaIKs5L94UB2D0olhVyn6VS4dvs6qtxVNJ
-         hw9tkfOCkiPRdxmf/BZsppC69/D4661OoIYeaHtfAcmErUtt+WZjMsdX7yl/KmpzOHc8
-         6PpQ==
+        d=google.com; s=20230601; t=1751983859; x=1752588659; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6R+ttIE6jMf85AIcqVLpVvfjGMpffrgdz2K6zZMM6tY=;
+        b=GeXY37WhAG3dHBiITnLnvOl2cbofgIzW4PXB8596IGPmGf195owCsBjyP/dRJXvIF1
+         JrdDt3Mh8poWQLD9lGw6ePoZij4yNkcWYGpZwonzyfQ96sDoimRuw1THfx42pYsznnuS
+         KTR2gVj3dyIv/GjyHgF60lhF6sLADEKUI7PqcoaZqMPANUbyB9Qr1mnVh23Hk8/dHw5d
+         icWkpfzOSuIBqjBuui9nK+tktIdtLE6ArdInrBRAHmCUcfcyO17KBEgSC9gpQesCGXdV
+         vQAwokPhrYg7a4Y1U/mf+1abtD/dagQPxR6c2T63kD0E7DxDI0pr6Rv+MJMFY7G1HPX8
+         ++mQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751983843; x=1752588643;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JbFRXo7PvgTjLeuBlkvvrU8m32Gx42ivaN7h1EVraoQ=;
-        b=JUmo86b1o0eOHQRaZNSPHRAHCrl4TK2HhBTjBKizosl960+7EWsvXjZVP/kS08LXD9
-         B8vMtB79QYzDfj7THXZoGdYv4K4l8+/sSOG7kKCHRu9mrD5V49V317nA+KpXQkJboBYL
-         SGrhULykE+O90VUGXKBJyZ3u5Fe8c+BvPQ3JngTE0OV2QcqXIjfjZ94sHChZ7sv3vKNM
-         csHKrQfvNfaVjE+1xhYaTKsKKsr9fC3hMIbVoq4NLteLhCbLeRpxc5G8x1UbevdIfhgC
-         k0l8nW+S8GQzr6Ibdrz6vhLAOAjTdeZ3eBHzsMIe62QqN1Ywnq2gH9i+r5z4g3TFUv9D
-         yE3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWrR166Bl4YMfT/Bl+Os2e86OfkY6Xp0IvrbWR1w34SvMLJjzOAJfYgTcO5bbMzRFJWL4YrM6L1qYH7mro=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzzf3opaAp1ngRyscilfP8GX9K3lcmE5xaLKzfbmi+YreEIOoFN
-	XM324CYGeIBdWISZcophVf419/s/W6BJVNwzAvAyd8kl/TwGX2LvajvwGNd+jJLWsx8=
-X-Gm-Gg: ASbGnctFw9mm4C16972lFUe+DI75CftvZCVB3bxgaKq0gilmNRgEKcMAj7vw9Gzt2da
-	9EMNyb3MTHy1uBjjRaUFmEhZVZTIF3vBYGKwCKK1KW0vfLZG83BB3cdSaJJc9tAGI9fpLpVEKJe
-	fI4QfRGr8gGPGfLgqNoeda7BBTxLE5pbQgcuvc3iXXpI+zCbaZ1Wf/FVXkjqB9UGnpCthT/RSd7
-	S167mLUB0WXUv1xHnGARqvXirD4LFDyR8NQL47nUMfu9516C3UGeOQq+u6ehcbctQplgo6jYxwH
-	5hRN4fir+hZCulg4jsid4Qer2tghHOvq5CX0hURwsP/9HsqiBcc9WHNhDFAhZfiAjAKBtqCfQAZ
-	iJmacnOpjvgx8Dn6lVLhXmimhNg==
-X-Google-Smtp-Source: AGHT+IGpLRnIy1Pa7Ys8993jpdk99/IfEELNXoxq2vTwNBbSHflnXa/ydsmKxydaHxoVrMXZjys/ew==
-X-Received: by 2002:a5d:64c4:0:b0:3b3:9c56:49bf with SMTP id ffacd0b85a97d-3b5ddeccdf1mr3118796f8f.56.1751983842948;
-        Tue, 08 Jul 2025 07:10:42 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b47285c6c9sm12946983f8f.89.2025.07.08.07.10.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 07:10:42 -0700 (PDT)
-Message-ID: <fc2956c4-4b09-4573-abcc-df5258488e6d@linaro.org>
-Date: Tue, 8 Jul 2025 16:10:41 +0200
+        d=1e100.net; s=20230601; t=1751983859; x=1752588659;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6R+ttIE6jMf85AIcqVLpVvfjGMpffrgdz2K6zZMM6tY=;
+        b=FSBnG0yZ+vIKiaIbPh4gNZ3d6pLzTv05EfPAY5atEo/VtW/eMvD/o7laP3KqOBCJ3T
+         pcwsKPl43/d8trBmVqXm8EYJE2125i9I9Dht8tfUuBzHZU0VR1zQptyZwOMGURO/80qj
+         1nqobonVyb9saMNBA+ZFto6GrNYVrcp2b4jQlS+W2P31l32+SYu3wJM+aXLe1MmUQwm2
+         QsSJrYLwum593nxy1XP5OeObS8UzzLJ7AmTsA9Vy+0k1Vep2np/Vu+Ec5Q/gQMti7tBe
+         4EcEDTJLnUEcMJpAxX30Id59ZYKBdAdE2cwrI0lWAfdB3zicTCM7bMCg/q1WYUsIicZ5
+         IONw==
+X-Forwarded-Encrypted: i=1; AJvYcCWd1rmRVDUFhiQhRWu9GNAFfN+4nCpEAjoBinLlPtEtkjSM1ojCnQv2Jc1+MHxQqnIuW7zN/yfvCuDfqPQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR42nR6Lq/N1SqO4RVOk9n/IQLSADV3rWRdLoqK3OEZmEJ6aVQ
+	9WqUU8DWPoCuhvRhOOj82zMr/meomiXn3eOT7DYR046gIe5C1JETDHUnYPbDx4sds/KU5vwNUPf
+	WLtoCaOeuCX5uGDaVYpAx5ig40VPB93FkG+SfRfxy
+X-Gm-Gg: ASbGncvtUVH9y8obgfBKVr0EIsQG4yQzzHnsoy0ogrf8owjsSTssqDeftmkBYXd6tak
+	OwJZDQwSrfVmOCcqlZ7/pUNzcVDNkRIEN821IHQS4jndfPuyKC1Z0m4/HQrBwhCOgs7AKnqKgvq
+	MsVwCTUBz/oGjI8lF8ud3pp8qBsO0VwPm267rHGrpSUPQi
+X-Google-Smtp-Source: AGHT+IGgR3YJL4Cv9d91nITpzqfLlvlKCqkAxqZa6HzK8G9frbE1twuSpJ0F3xPbZVEu+sQavu/vmiArmEM2cu+TwIU=
+X-Received: by 2002:a17:903:124d:b0:235:e1d6:5343 with SMTP id
+ d9443c01a7336-23dd44dd4f0mr1488785ad.20.1751983858310; Tue, 08 Jul 2025
+ 07:10:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clocksource: timer-tegra186: Enable WDT at probe
-To: Jon Hunter <jonathanh@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>
-Cc: Kartik Rajput <kkartik@nvidia.com>, tglx@linutronix.de,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20250703110415.232741-1-kkartik@nvidia.com>
- <aGuYuHx5qlKCur8P@mai.linaro.org>
- <58d948d3-bbc9-4fca-9393-ce995a4e2567@nvidia.com>
- <5e8714a9-cd2c-4dfb-a624-8a1adba91da1@linaro.org>
- <rq2mdqmg5hnyg6tqluw6vsk4iecgvcm7muhwzr2bhwoi4y7bvi@3cvxzduzw5og>
- <031fd310-f484-488e-a6e3-88802f42d821@nvidia.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <031fd310-f484-488e-a6e3-88802f42d821@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250702172433.1738947-1-dtatulea@nvidia.com> <20250702172433.1738947-2-dtatulea@nvidia.com>
+ <32cb77d8-a4a5-4fc7-a427-d723e60efc59@gmail.com>
+In-Reply-To: <32cb77d8-a4a5-4fc7-a427-d723e60efc59@gmail.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Tue, 8 Jul 2025 07:10:45 -0700
+X-Gm-Features: Ac12FXwxO67LrfeF7nw7Zs98ROVPk3-KRGG03IeOj2L4OXF0Bem8veXcTjOIapU
+Message-ID: <CAHS8izP5rLBYq-cdbEVmuaHBhFAd2ayRmvoiE-fqxr48zMp-qQ@mail.gmail.com>
+Subject: Re: [RFC net-next 1/4] net: Allow non parent devices to be used for
+ ZC DMA
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Dragos Tatulea <dtatulea@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Saeed Mahameed <saeedm@nvidia.com>, tariqt@nvidia.com, cratiu@nvidia.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/07/2025 13:42, Jon Hunter wrote:
-> 
-> On 08/07/2025 12:22, Thierry Reding wrote:
->> On Tue, Jul 08, 2025 at 12:03:52AM +0200, Daniel Lezcano wrote:
->>> On 07/07/2025 23:19, Jon Hunter wrote:
->>>>
->>>> On 07/07/2025 10:51, Daniel Lezcano wrote:
->>>>> On Thu, Jul 03, 2025 at 04:34:15PM +0530, Kartik Rajput wrote:
->>>>>> Currently, if the system crashes or hangs during kernel boot before
->>>>>> userspace initializes and configures the watchdog timer, then the
->>>>>> watchdog won’t be able to recover the system as it’s not running. 
->>>>>> This
->>>>>> becomes crucial during an over-the-air update, where if the newly
->>>>>> updated kernel crashes on boot, the watchdog is needed to reset the
->>>>>> device and boot into an alternative system partition. If the watchdog
->>>>>> is disabled in such scenarios, it can lead to the system getting
->>>>>> bricked.
->>>>>>
->>>>>> Enable the WDT during driver probe to allow recovery from any 
->>>>>> crash/hang
->>>>>> seen during early kernel boot. Also, disable interrupts once 
->>>>>> userspace
->>>>>> starts pinging the watchdog.
->>>>>
->>>>> Please resend with proper recipients (linux-watchdog@, Wim Van
->>>>> Sebroeck, Guenter Roeck) and the changelog.
->>>>
->>>> ACK.
->>>>
->>>>> Can someone take the opportunity to split this watchdog code and move
->>>>> it in the proper watchdog drivers directory ?
->>>>
->>>> I understand that this was mentioned before, but Thierry previously
->>>> objected to this for this particular driver [0].
->>>
->>> Yes but meanwhile we found that the auxiliary device is designed for 
->>> this
->>> situation.
->>
->> Honestly, adding auxiliary bus into the mix is total overkill here. I
->> always thought with all the tools we have today it'd be easy enough to
->> have drivers spread across subsystems if that's what's best.
->>
->> But if y'all think this is the way, then sure, we'll do that.
-> 
-> 
-> Yes we are happy to conform to whatever is preferred. However, this is 
-> really a fix and IMO outside the scope of any refactoring work. I have 
-> been pushing the necessary people at NVIDIA to get fixes upstream so 
-> that any known issues are fixed. Hence, I would prefer to handle the 
-> refactoring separately.
+On Tue, Jul 8, 2025 at 4:05=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.c=
+om> wrote:
+>
+> On 7/2/25 18:24, Dragos Tatulea wrote:
+> > For zerocopy (io_uring, devmem), there is an assumption that the
+> > parent device can do DMA. However that is not always the case:
+> > for example mlx5 SF devices have an auxiliary device as a parent.
+> >
+> > This patch introduces the possibility for the driver to specify
+> > another DMA device to be used via the new dma_dev field. The field
+> > should be set before register_netdev().
+> >
+> > A new helper function is added to get the DMA device or return NULL.
+> > The callers can check for NULL and fail early if the device is
+> > not capable of DMA.
+> >
+> > Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> > ---
+> >   include/linux/netdevice.h | 13 +++++++++++++
+> >   1 file changed, 13 insertions(+)
+> >
+> > diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> > index 5847c20994d3..83faa2314c30 100644
+> > --- a/include/linux/netdevice.h
+> > +++ b/include/linux/netdevice.h
+> > @@ -2550,6 +2550,9 @@ struct net_device {
+> >
+> >       struct hwtstamp_provider __rcu  *hwprov;
+> >
+> > +     /* To be set by devices that can do DMA but not via parent. */
+> > +     struct device           *dma_dev;
+> > +
+> >       u8                      priv[] ____cacheline_aligned
+> >                                      __counted_by(priv_len);
+> >   } ____cacheline_aligned;
+> > @@ -5560,4 +5563,14 @@ extern struct net_device *blackhole_netdev;
+> >               atomic_long_add((VAL), &(DEV)->stats.__##FIELD)
+> >   #define DEV_STATS_READ(DEV, FIELD) atomic_long_read(&(DEV)->stats.__#=
+#FIELD)
+> >
+> > +static inline struct device *netdev_get_dma_dev(const struct net_devic=
+e *dev)
+> > +{
+> > +     struct device *dma_dev =3D dev->dma_dev ? dev->dma_dev : dev->dev=
+.parent;
+> > +
+> > +     if (!dma_dev->dma_mask)
+>
+> dev->dev.parent is NULL for veth and I assume other virtual devices as we=
+ll.
+>
+> Mina, can you verify that devmem checks that? Seems like veth is rejected
+> by netdev_need_ops_lock() in netdev_nl_bind_rx_doit(), but IIRC per netde=
+v
+> locking came after devmem got merged, and there are other virt devices th=
+at
+> might already be converted.
+>
 
+We never attempt devmem binding on any devices that don't support the
+queue API, even before the per netdev locking was merged (there was an
+explicit ops check).
 
-Yes, absolutely
+even then, dev->dev.parent =3D=3D NULL isn't disasterous, as far as I
+could surmise from a quick look. Seems to be only used with
+dma_buf_attach which NULL checks it.
 
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--=20
+Thanks,
+Mina
 
