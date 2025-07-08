@@ -1,161 +1,147 @@
-Return-Path: <linux-kernel+bounces-722286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA3D8AFD75B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:45:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBAF4AFD780
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B08031BC4621
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:45:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDD6516BDD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201EC2367DC;
-	Tue,  8 Jul 2025 19:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702AE2571DD;
+	Tue,  8 Jul 2025 19:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wetterwald-eu.20230601.gappssmtp.com header.i=@wetterwald-eu.20230601.gappssmtp.com header.b="GMirxosY"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IINgpaq2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96CC223DCE
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 19:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A7123ED69;
+	Tue,  8 Jul 2025 19:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752003900; cv=none; b=SAKF25maKAaefbYGXyFw27WfAWRzfHYGCS+RKh1HKNEOuZ2vDsjddEcCl7diXdHaedbz0VkzltQrTSHhi1Wk9KT1QxGj1XrU2ZmnPsQPxKmtok3Nmvs8TsK7n+XKYw/0J1WLkk7ljFLX9JBf8BapkfT9CpTPxG4YlD1j3ZNH3gM=
+	t=1752003976; cv=none; b=IWB2jFnPYFn2tOQlQK5p9fAs6aJGj6az7XEXhB6uOugjmIaVhhHbXbbBpjiM8LN9Ywwb570Mz7n7Io7ndD8TBqHuXuSKPOh2FwsQYSYTJ1ABZ3VILdrMeP1CTjr3Bhv5qA4zHHd8bIbuWlupjYJiYSEbcqqmlnsdWa9BXaJWcu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752003900; c=relaxed/simple;
-	bh=mqQvmbpVSpwd4BJxpTbMnhfC49JhmthGVhf3kBQWduA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=XzpQsQel+naVqdoel4fEk3foWItnniogK2p1jsI+VC1g81448rtwc2e2dnNS3AIo/sV2Yx/0GErddtX03bQ7WbGVSoSASLKWVuPV/TP9EZJOJ20ZYO/tmAnV2cqAtJFprSIf2PwGBmcXxWn18ROv7QK9XJuzclkoS7XMP7devgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wetterwald.eu; spf=pass smtp.mailfrom=wetterwald.eu; dkim=pass (2048-bit key) header.d=wetterwald-eu.20230601.gappssmtp.com header.i=@wetterwald-eu.20230601.gappssmtp.com header.b=GMirxosY; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wetterwald.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wetterwald.eu
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553b3316160so5620180e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 12:44:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wetterwald-eu.20230601.gappssmtp.com; s=20230601; t=1752003895; x=1752608695; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WIAuhguJbjbIbOUTc3BpFRhCievia3W8jmk4iJLHgNI=;
-        b=GMirxosYFGN3allPlLzWfdPYPc07Q3kQlw5gexgWPnJA4XQrMnfgG+4KvzFJYbykI6
-         NqAet9CjmVOZ8DF5kq/68ebeQAXxhj2P79Ey7LpcmVYho5J0g2Piv0Z9l0UJ2iPUI6Wj
-         M0Lag/N+1cN065dMPzcZZRbzOP7YVRUTQVuxmRTmS/1MDeronRwd1dqj2yteOht1ypXs
-         lFS43Y/bF3XKWrzCjiGHvmaW1x5K8bzvDVvYxhXGz24Mtz5V3D4xPbibF0he7QCJTKux
-         gtqm9Je6/zvOHGxJ/e7GMxZawZVBdmOf6Yi+JBntBT+yVNzd/nr2gz2COnP1E2mxhLuN
-         jBFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752003895; x=1752608695;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WIAuhguJbjbIbOUTc3BpFRhCievia3W8jmk4iJLHgNI=;
-        b=G7teawpbOhdbMVo3SP+F/SNrrFfa/aFyQCeAtEFx0H1LW66cRpy32WJxgyTe+RhfYI
-         lyM5FwgvutZdvTBylIp3UlptrQJccPxbFvku/kjcetbWXazlk5shJKoM5t/Uzf1vszZA
-         8Ev6VY81cc91r2Kz0X9z4N2lRrh6oahZa7XD+araLcKeeF8UnsmtQKV/mtu2e/jw0WF3
-         4bMOknFgAMv+4afi5Xw0hsYYV+rDqThEeh6oRomGaKonq78uMFxi4SDj6IoNwOb2cljZ
-         dvUkPxaMIvAj89SnIguuAaNEexDVPrZlRj2bacXZcRmTPg5idLRKxoTqQMfB6U9xzl1H
-         RJzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUnMBa6KOMh9Weqf7+c9HbB6frqCmYRPtJWLIpzyXpcDyi7zU0AuvnGuij8Ta754q7No6VGvIh/3/OB1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygSnUnzfSdkZzqMVLoucTdFYVZXiXlE4caqCp0LKTQWe4uuBXV
-	BWoDj2U0yhG1LLU4r+Sh+SpcbgOSeocAYxd3mptXeKfLX9xIqD8o6tKTImKi2Tb2Z8PVP2Mg/SI
-	VLypS+tDY/nnSXuaBt8ZEptueOjxi6wkq4OZgsB5sgA==
-X-Gm-Gg: ASbGncuiVtgz1QTOXHNfTzcVWeRjU23uk3zYmo7tTAjnvS/viobwR0RaFw+qzqYI6Lk
-	Re3LokNsy8TD8RoCHpZchZKQ8nX6mHEjs7eWosOxjMXACw3wV//7EsP0XWIBWLsO/nmaBqdTp/2
-	ZZRHciPMbqvPKrPTLNjNMncP+GTxx/2UkSaxtiIZ5oJEbjnBYLGu37b/7dwju4Af8Lmmb6W6wrF
-	fo=
-X-Google-Smtp-Source: AGHT+IH/OYi1zhVRzbLWoXiGDXL/pwIwshawu+yWzAP5+4Np+28rT/YVvWgXf9ePBLccE4OypTRTipSLI44R0xQmhvU=
-X-Received: by 2002:a05:6512:31cf:b0:553:246f:d5cb with SMTP id
- 2adb3069b0e04-557aa964099mr5151783e87.40.1752003895281; Tue, 08 Jul 2025
- 12:44:55 -0700 (PDT)
+	s=arc-20240116; t=1752003976; c=relaxed/simple;
+	bh=L2wr4k193kbQ+EZ3WJsPLRyFUtGJsDx6XOUn90oep28=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bJMAdQ/AM/MZnMsvksL720fiarsrdgrOZ9PHCdWM8jLOkuItR24kTzUHGmnZulNLvBEtd8tFpRayYSF6r7+xxsIkzBMg1DwWO7q0Zdp9BixGdVBdXgmT7CaRqPbNwF2eCt6Ra821EcsGzchg14s+8Ud/wZVlNRexQB5139qvBsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IINgpaq2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B76A5C4CEF0;
+	Tue,  8 Jul 2025 19:46:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752003976;
+	bh=L2wr4k193kbQ+EZ3WJsPLRyFUtGJsDx6XOUn90oep28=;
+	h=From:Subject:Date:To:Cc:From;
+	b=IINgpaq2NU0WgBcGKQh3AeTqaD2sgzbEkLKkHJhQliL5//fomYZ2fu1Tl5Crt1CRq
+	 OBo/pRHVe3SSiYPUzEC9g2NOJ/ooFYs89NmcpE1vNTvaXM3zIAXoJsGPpk+35rf4+N
+	 7jhM5dkr905KnY9ENKPVuFKlpX+cGebM4bK6c3aEs1nOfk8c7dQ9F8Tj5b02t4EW3d
+	 0N7+PREs6kKUD1hmFoq11wuiy2zLTX8+gi9mm1lE+XfHu9JeB7RhU7cWhHEIf/xvFb
+	 CyvLVhBo/1zehIRvFKHLzW31PLc/7hJHgKvXh4VAJUhjLl0AwRYWIYEqHagdYe+I66
+	 Urqmah4x2Q9yQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+Subject: [PATCH v2 00/14] rnull: add configfs, remote completion to rnull
+Date: Tue, 08 Jul 2025 21:44:55 +0200
+Message-Id: <20250708-rnull-up-v6-16-v2-0-ab93c0ff429b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Martin Wetterwald <martin@wetterwald.eu>
-Date: Tue, 8 Jul 2025 21:44:44 +0200
-X-Gm-Features: Ac12FXwxStEw7-ASRfno3Jq6d5Qa6fuSc5X61ioxY7IDp_eLCz6XHk1FLyE_E4I
-Message-ID: <CAFERDQ0zPoya5ZQfpbeuKVZEo_fKsonLf6tJbp32QnSGAtbi+Q@mail.gmail.com>
-Subject: Linux linking stage broken on ARM with binutils 2.33.1 (BFD)
-To: linus.walleij@linaro.org, Nathan Chancellor <nathan@kernel.org>, linux@armlinux.org.uk
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADd1bWgC/3XMQQ7CIBCF4as0s3YMkJYSV97DdFF02hIJNIMlm
+ oa7i927/F7y/h0SsaMEl2YHpuySi6FCnRq4L2OYCd2jGpRQndBSI4fNe9xWzBorbdv1kpSZiAj
+ qaWWa3PsI3obqxaVX5M/Rz/K3/k1liQLHVmpjDfXaquuTOJA/R55hKKV8AdKcQuutAAAA
+X-Change-ID: 20250616-rnull-up-v6-16-b4571e28feee
+To: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+ Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2701; i=a.hindborg@kernel.org;
+ h=from:subject:message-id; bh=L2wr4k193kbQ+EZ3WJsPLRyFUtGJsDx6XOUn90oep28=;
+ b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBobXU86luDbFJMpkovjftupsWMSVtlFMMO0pq1j
+ wl0F1ddBH6JAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaG11PAAKCRDhuBo+eShj
+ d+KVD/4rrYsswPHTUb+mf+9/hZqJ9kGBFjLiyTUSmJwGh0VGDadEQiuX6LEk/I2WFLvKHGhpHDD
+ PwAFRnL7knX+lM0exs5WC7gl3W1qTGbswzWyN76xO4Xgt+DkduDE7k/SpkvqBiH1h/ceR5mzXvo
+ gOFMUQEGKpgRXtke9nMPpEkdoj+I1U9scuItlsPGyICXntH9Z0+bLSUgCyXEJvrMe+loCdd/maV
+ lznt0p/HFCMk2bVkQQZsmk00yyq5BfuFi6dHXAUPMaMoRrowrPxNRNcBWYx5Ddjt31WTJ8Yknm8
+ OtOcEOHPLWNxLcFymigc62Kr8ibyVs/e7vDsnz1cS5nj1eBZ+X19Nl5tRaeDO/38niw0A1xfToL
+ wSeQngMDL54p+K/OlgPn4PBmWHHbiBYH2qFfVsOUUiBRZPnA1J4x8vEB3LUR+y2ogp8gxL9VsZj
+ 6chermwh1JmwV4RhfQcewP9W9X8gCZsLmR6H3PQztX52PGkivnNwTZAud078t5+x0T6eZSF3dYX
+ /1u9CZz+hOTWfh6Y62SsDngtNFiQsiFTrBsoqFU6vYF72sQsdgjHqdZ4TxQ1xczbr7sg+CUKrqK
+ O90OcQmpCvK16ne5o0v5aAwuj1ukLb7YKeQDOJ8mpaiCN0nPjvzu8No4B9yGOwBAkfTMhQLXoE7
+ a4K09vkmmvgy1OA==
+X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
+ fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-Hello,
+This series adds configuration via configfs and remote completion to
+the rnull driver. The series also includes a set of changes to the
+rust block device driver API: a few cleanup patches, and a few features
+supporting the rnull changes.
 
-When I upgraded from 6.12.22 to 6.12.23 (without changing anything else), t=
-he
-linking stage of vmlinux broke (arch ARM).
+The series moves the raw buffer formatting logic from `kernel::block`
+to `kernel::string` and also improves that logic a bit.
 
-> /home/.../linux-6.12.23/scripts/link-vmlinux.sh: line 49: 136961 Segmenta=
-tion fault      (core dumped) ${ld} ${ldflags} -o ${output} ${wl}--whole-ar=
-chive ${objs} ${wl}--no-whole-archive ${wl}--start-group ${libs} ${wl}--end=
--group ${kallsymso} ${btf_vmlinux_bin_o} ${ldlibs}
-> make[2]: *** [/home/.../linux-6.12.23/scripts/Makefile.vmlinux:34: vmlinu=
-x] Error 139
-> make[1]: *** [/home/.../linux-6.12.23/Makefile:1179: vmlinux] Error 2
-> make: *** [/home/.../linux-6.12.23/Makefile:224: __sub-make] Error 2
+This series is a smaller subset of the patches available in the
+downstream rnull tree. I hope to minimize the delta between upstream
+and downstream over the next few kernel releases.
 
-This patch seems related:
+Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+---
+Changes in v2:
+- Rework formatter logic. Add two new formatters that write to slices,
+  one of which adds a trailing null byte.
+- Reorder and split patches so that changes are more clear.
+- Fix a typo in soft-irq patch summary.
+- Link to v1: https://lore.kernel.org/r/20250616-rnull-up-v6-16-v1-0-a4168b8e76b2@kernel.org
 
-> commit 59fc42318305cb38efb4f5565408150419be8451
-> Author: Nathan Chancellor <nathan@kernel.org>
-> Date:   Thu Mar 20 22:33:49 2025 +0100
->
->     ARM: 9443/1: Require linker to support KEEP within OVERLAY for DCE
->
->     commit e7607f7d6d81af71dcc5171278aadccc94d277cd upstream.
->
->     ld.lld prior to 21.0.0 does not support using the KEEP keyword within=
- an
->     overlay description, which may be needed to avoid discarding necessar=
-y
->     sections within an overlay with '--gc-sections', which can be enabled
->     for the kernel via CONFIG_LD_DEAD_CODE_DATA_ELIMINATION.
->
->     Disallow CONFIG_LD_DEAD_CODE_DATA_ELIMINATION without support for KEE=
-P
->     within OVERLAY and introduce a macro, OVERLAY_KEEP, that can be used =
-to
->     conditionally add KEEP when it is properly supported to avoid breakin=
-g
->     old versions of ld.lld.
->
->     Cc: stable@vger.kernel.org
->     Link: https://github.com/llvm/llvm-project/commit/381599f1fe973afad30=
-94e55ec99b1620dba7d8c
->     Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->     Signed-off-by: Nathan Chancellor <nathan@kernel.org>
->     Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
->     [nathan: Fix conflict in init/Kconfig due to lack of RUSTC symbols]
->     Signed-off-by: Nathan Chancellor <nathan@kernel.org>
->     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+Andreas Hindborg (14):
+      rust: str: normalize imports in `str.rs`
+      rust: str: introduce `BorrowFormatter`
+      rust: str: introduce `NullBorrowFormatter`
+      rust: block: normalize imports for `gen_disk.rs`
+      rust: block: use `NullBorrowFormatter`
+      rust: block: remove `RawWriter`
+      rust: block: remove trait bound from `mq::Request` definition
+      rust: block: add block related constants
+      rnull: move driver to separate directory
+      rnull: enable configuration via `configfs`
+      rust: block: add `GenDisk` private data support
+      rust: block: mq: fix spelling in a safety comment
+      rust: block: add remote completion to `Request`
+      rnull: add soft-irq completion support
 
-I'm using BFD linker from GNU binutils 2.33.1 (built using musl-cross-make =
-with
-musl 1.2.5 and GCC 14).
+ MAINTAINERS                        |   2 +-
+ drivers/block/Kconfig              |  10 +-
+ drivers/block/Makefile             |   4 +-
+ drivers/block/rnull.rs             |  80 -----------
+ drivers/block/rnull/Kconfig        |  13 ++
+ drivers/block/rnull/Makefile       |   3 +
+ drivers/block/rnull/configfs.rs    | 277 +++++++++++++++++++++++++++++++++++++
+ drivers/block/rnull/rnull.rs       | 105 ++++++++++++++
+ rust/kernel/block.rs               |  12 ++
+ rust/kernel/block/mq.rs            |  14 +-
+ rust/kernel/block/mq/gen_disk.rs   |  50 +++++--
+ rust/kernel/block/mq/operations.rs |  65 +++++++--
+ rust/kernel/block/mq/raw_writer.rs |  55 --------
+ rust/kernel/block/mq/request.rs    |  21 ++-
+ rust/kernel/str.rs                 |  95 ++++++++++++-
+ 15 files changed, 622 insertions(+), 184 deletions(-)
+---
+base-commit: e04c78d86a9699d136910cfc0bdcf01087e3267e
+change-id: 20250616-rnull-up-v6-16-b4571e28feee
 
-> scripts/ld-version.sh /tmp/arm-linux-musleabihf-ld
-> BFD 23301
+Best regards,
+-- 
+Andreas Hindborg <a.hindborg@kernel.org>
 
-I don't know if it was the intention of the patch, but it is not only chang=
-ing
-a behavior for LLD, but also for BFD:
-- Before the patch, ld BFD 2.33.1 was not selecting
-  HAVE_LD_DEAD_CODE_DATA_ELIMINATION, and my build worked.
-- After the patch, ld BFD 2.33.1 is activating
-  HAVE_LD_DEAD_CODE_DATA_ELIMINATION, and it is segfaulting.
-Shouldn't we keep the previous behavior and only select this option when BF=
-D is
->=3D 2.36.0 (and not just when we have a BFD linker) ?
 
-The issue is the interaction between LD_CAN_USE_KEEP_IN_OVERLAY and
-HAVE_LD_DEAD_CODE_DATA_ELIMINATION.
-
-Nathan, I've seen your proposal here: https://lkml.org/lkml/2025/7/5/431.
-I confirm it also fixes the issue on my side. Should I propose the patch?
-
-Thanks!
-Martin
 
