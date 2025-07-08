@@ -1,85 +1,131 @@
-Return-Path: <linux-kernel+bounces-722319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9607AFD7EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:10:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9AD0AFD7F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9C911895F25
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:10:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7B3D1C231F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A8423D289;
-	Tue,  8 Jul 2025 20:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IfgBvxJr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13EDD23D2A0;
+	Tue,  8 Jul 2025 20:11:34 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0397464;
-	Tue,  8 Jul 2025 20:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089267464;
+	Tue,  8 Jul 2025 20:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752005404; cv=none; b=sBGKxG+jO+88HuOTvvd7qcZifnyhWx2Lr0fk/KawSMtwPVUbve/C13tPsiYpS4EtfFMa5YvLt89eYE18I5s82d+1JrSMNuNAGLeWdxH/DEVC5L3D7fFY1KzrEEH8OikSoNYFb5KtDsA8Or4OlztEOM8YrPPVyBS3WjyJNRKdf7k=
+	t=1752005493; cv=none; b=A2OcLUjfz74BCyLcqRTbY2CDD60keINI3+6PtjUw6FOTti6a3rUNTW/oHHnlJSAD0jqzOuBzwZEbFgv4NpJAUCCcNKfrPLPM1Jp8TGf9iiZ03gG0D+1xLY4c+SlomnQPgVN8mVjYdbSuv7IB0IK/0q4AbV+8Z0D2BqPLFFd2oHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752005404; c=relaxed/simple;
-	bh=ku8L98emvYfIz4KPutlqA+m9OYjVsmlwLx2UjJrAYKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r7zfUckx4exau6eBBCclwcZLXhH+IoHBiuwqihGRJU0GXAcY25PRqbf8N/XFXv7ftqnf3sxT5KzNz6dXba3scw0/AIrPRJ60jGOH7pz0MH20aGVp4/tt48N8LowXoxkTIrdTV/tSELKR/oHm2harqqry2TnozAyELSTz8t8uXio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IfgBvxJr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36164C4CEED;
-	Tue,  8 Jul 2025 20:10:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752005404;
-	bh=ku8L98emvYfIz4KPutlqA+m9OYjVsmlwLx2UjJrAYKk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IfgBvxJrGxsZR5xYwilNvEoJfRN3Bh0FtmvTXJ3vipPzA7HmlrqkVHD8Wdyf8pyer
-	 YqLQlLGQwahwyhNPrFb2a7ku9wh+7fvUUjSEwlyq5rlZdDoaqFJW8LAsf7nzEsY8GO
-	 4uKVJqrc9MM16llgqXaNZy3Iz6hpTMma8ykcHTIMnshnweFeoQyW5cB9tFrMhNLXd9
-	 NYs4j8xWouuv5h0+weX7gwkS9hU1poagWDZB631nCit1Hpyk6PACUPoh6Qtvb2FRSJ
-	 53cNnOotNo/Q8dUqEuTBhZ8yeqe5orammUyInVm6dt5363qKvFh8cN2hEz4VOk84NR
-	 ZyhB9kzoKR2LQ==
-Date: Tue, 8 Jul 2025 15:10:02 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: tzimmermann@suse.de, nicolas.frattaroli@collabora.com,
-	hjc@rock-chips.com, maarten.lankhorst@linux.intel.com,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, andyshrk@163.com,
-	quic_jesszhan@quicinc.com, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, neil.armstrong@linaro.org,
-	andy.yan@rock-chips.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	mripard@kernel.org
-Subject: Re: [PATCH 08/13] dt-bindings: display: rockchip: Add rk3576 to
- RK3588 DW DSI2 controller schema
-Message-ID: <175200540168.891369.12402940753218880108.robh@kernel.org>
-References: <20250707164906.1445288-1-heiko@sntech.de>
- <20250707164906.1445288-9-heiko@sntech.de>
+	s=arc-20240116; t=1752005493; c=relaxed/simple;
+	bh=fNYmNdrfWDR3qFw2aIqlP4mKYgW1cvAJ6DWnTm12UHs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q4lKjyYzmzv3P9ApAIDYy0cG1Lb0xkXe3BMaLzNRGw9sK0oOuvCXwND4h6t2gfVIB1Zw74y7dlsrsPxZHA0pxg+srpNGBAIcuvZbZj+DjE5v9640E+c0SilhJ8TnYKZWYR0NGrfxqcHitX1IO8JKaneuyZ1pi2pW9xY15OO8p4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id 2C98D1601EA;
+	Tue,  8 Jul 2025 20:11:28 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf19.hostedemail.com (Postfix) with ESMTPA id 8A1A52002B;
+	Tue,  8 Jul 2025 20:11:23 +0000 (UTC)
+Date: Tue, 8 Jul 2025 16:11:24 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Josh Poimboeuf
+ <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
+ <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
+ <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
+ Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
+ E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
+ Jens Remus <jremus@linux.ibm.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>, Sam
+ James <sam@gentoo.org>
+Subject: Re: [PATCH v8 06/12] unwind_user/sframe: Wire up unwind_user to
+ sframe
+Message-ID: <20250708161124.23d775f4@gandalf.local.home>
+In-Reply-To: <d7d840f6-dc79-471e-9390-a58da20b6721@efficios.com>
+References: <20250708021115.894007410@kernel.org>
+	<20250708021159.386608979@kernel.org>
+	<d7d840f6-dc79-471e-9390-a58da20b6721@efficios.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707164906.1445288-9-heiko@sntech.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: 8A1A52002B
+X-Rspamd-Server: rspamout02
+X-Stat-Signature: z4kuexq43jkzca874nwfhqjexqg3uoar
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/gb7+/LpuJYeY9wyOM0qcEfMTETAnu92c=
+X-HE-Tag: 1752005483-521339
+X-HE-Meta: U2FsdGVkX1/CaGf+4/87+CJDDzOW33IhrAh44BHrQ9odA+n+1NU9Aq2JW1nGD8UDn1xb0J9caWhhiNMUc54C5prtVOQs5ksx0o/lP/iXZkOyOPSTrn80fFHXAqFYbxlMoeqiKXuNjCySP2juh9VW2xDJAxcaHZjvbM4VzYtOtw3MyCDuCUiJqZ1sn2QibW45ylzb1FWmje4HfCuSIFHsHU71UE6Sr7IuHy13m6p2QEgL/4c7rhMA50dhJoWL/RjKgDML0lqcywuJd0R/15O/eh35eBwJPQ6iSNv6mfefY86dVpXrfl+sMA7ySOzch7yowVP5n4+Fj04blLvukX7+uN4j3k5X2xlYO7S3DK4BywfSsBa7r9qyu66S277HPhaA
 
+On Tue, 8 Jul 2025 15:58:56 -0400
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-On Mon, 07 Jul 2025 18:49:01 +0200, Heiko Stuebner wrote:
-> The rk3576 controller is based on the same newer Synopsis IP as the one
-> found in the rk3588.
-> 
-> Its external setting bits in the GRF are different though, so it needs
-> its own distinct compatible.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  .../bindings/display/rockchip/rockchip,rk3588-mipi-dsi2.yaml     | 1 +
->  1 file changed, 1 insertion(+)
-> 
+> > @@ -111,6 +128,8 @@ static int unwind_user_start(struct unwind_user_sta=
+te *state)
+> >  =20
+> >   	if (IS_ENABLED(CONFIG_HAVE_UNWIND_USER_COMPAT_FP) && in_compat_mode(=
+regs))
+> >   		state->type =3D UNWIND_USER_TYPE_COMPAT_FP;
+> > +	else if (current_has_sframe())
+> > +		state->type =3D UNWIND_USER_TYPE_SFRAME; =20
+>=20
+> I think you'll want to update the state->type during the
+> traversal (in next()), because depending on whether
+> sframe is available for a given memory area of code
+> or not, the next() function can use either frame pointers
+> or sframe during the same traversal. It would be good
+> to know which is used after each specific call to next().
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+=46rom my understanding this sets up what is available for the task at the
+beginning.
 
+So once we say "this task has sframes" it will try to use it every time. In
+next we have:
+
+	if (compat_fp_state(state)) {
+		frame =3D &compat_fp_frame;
+	} else if (sframe_state(state)) {
+		/* sframe expects the frame to be local storage */
+		frame =3D &_frame;
+		if (sframe_find(state->ip, frame)) {
+			if (!IS_ENABLED(CONFIG_HAVE_UNWIND_USER_FP))
+				goto done;
+			frame =3D &fp_frame;
+		}
+	} else if (fp_state(state)) {
+		frame =3D &fp_frame;
+	} else {
+		goto done;
+	}
+
+Where if sframe_find() fails and we switch over to frame pointers, if frame
+pointers works, we can continue. But the next iteration, where the frame
+pointer finds the previous ip, that ip may be in the sframe section again.
+
+I've seen this work with my trace_printk()s. A function from code that is
+running sframes calls into a library function that has frame pointers. The
+walk walks through the frame pointers in the library, and when it hits the
+code that has sframes, it starts using that again.
+
+If we switched the state to just FP, it will never try to use sframes.
+
+So this state is more about "what does this task have" than what was used
+per iteration.
+
+-- Steve
 
