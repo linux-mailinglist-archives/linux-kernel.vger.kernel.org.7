@@ -1,87 +1,101 @@
-Return-Path: <linux-kernel+bounces-721082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6632AAFC47A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:48:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BC3EAFC47D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 862783A38F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:47:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C6DB165A91
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E0329AB18;
-	Tue,  8 Jul 2025 07:48:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9994C298CA7;
+	Tue,  8 Jul 2025 07:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IWgpQkOJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E66D3FC2
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 07:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A931E520A;
+	Tue,  8 Jul 2025 07:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751960885; cv=none; b=PPv7EaqOH8NZUpUsy04j/QscFkpjz5Y8ZilmMAll2fLrrD0qo58U7cDdvEEHHxDnyy0XXgDfkyC1YKK779KwsuFSh4GVRHJbiWLSRsYQcPulxn9TGKVAoiKd9JW6SkOO8ryxGbZXLrIJz5bnfeTsXg0lCI/RTc6+Z2fcQQAYEzU=
+	t=1751960945; cv=none; b=WxLpJhrceJjnkJp46Ut2t6iciaeBa14IpJkTTkKx8GuQetcjPW/FW5FHmeBJl1ccWDvXdI8AgAVbJWZjQEf/jCI9rJuyDFZXPsJKlg7wch9aIHdWtulSBdZXjYOxTfKh/UuyOXDoYzSBM8j+aB44d8HWa1SyPhH8GTAW7dSR8Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751960885; c=relaxed/simple;
-	bh=HzCRKcFQx6oR5088e0ZIRcDaq9eGE82mOpTpDFPQaZs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QOn5f7GtL9LTY/8jdW6Z+004SsgAMvWNUx59G8LtxtlzgM030lVVaoHmaLE88KIgsXvK3X+DVVvPYyK3kE2Quopt58Vb47QlS8cDnWr5BiV0paTuFy1hBH8AO4W3r61MOqKPhGX+eALx4ORn5+/qBV0n8qYmlTSFhXYdGDkzyng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3e05997f731so97026475ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 00:48:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751960882; x=1752565682;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nD/7TqyzkagqIEfOA4HXNRdHLXMo2VPME/ykCcyzyjA=;
-        b=vNOBiOkEZQKJzeGkimMTbJ8u+lDfbGVpvXtgXyAYfM+zunQDvwUpu0br+cuWEhkHoe
-         qK9KBeE1zOhjBbzvHZK7zd6jVyyiD3OytNUNOrPYjBWtMlD9y92t/vamA73mu8smp6w1
-         +lBp1nIPsZsC+QCx5aRxYU6izbCsw60wSOnmk8c8gKEP7CMVDX5Q7scE80lwalgy2tzu
-         BGBibVXkH6ThR15LI3LUxcVGglfuhiZhfJV+4D7Dll5qoWkNSDND1kjUDNBpMi+fcA6l
-         wiD9Y5c0vSIIVuZy+XezPnEvm+2IhiYE3HUMqG6sPxkYxVllXwDj8SBTtGDWmquPAmFy
-         IKow==
-X-Forwarded-Encrypted: i=1; AJvYcCVFUYF5aFsvwyxvzspW2LmZAyBrOVz1/EVCCq7v0iti2CO3AkDsbWLj1yhRjqhkKBLjtqR6Hxt7E/625IM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy32lmGbhcySQkkEFqa2Ht7xZwgmquP52DfYjmgBZSi0mf+iB1+
-	yhYuAv3T6Kmz7RAsuyx2WQeEsgTLErGEv0JHtf9YaLACvcyxVozvzSBH3PvnY0/v9SowSh6UFni
-	mB16ZGa5QWle/Pg9rZJpMFDdebk2g5AJb0RKg5z3L+xIxBFMFZcJYiyi1TQw=
-X-Google-Smtp-Source: AGHT+IGH7oN2MebqNqGXD51wCgPBQ679eYQ0vdI4h4gNkEf7kobsOf7nd3Fg63Jxbnyfavce5qjWtX08SEfj0Eh4lCd8jrWbRSXr
+	s=arc-20240116; t=1751960945; c=relaxed/simple;
+	bh=hnYWVpaIxR3sAcv6lDEqJ3ovOnWIDMaeUr3G/UxM0J0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J74B5FMc5a7UX4A/JuPqE8bgvHfmfBnLCNKurNZwHr1tNOszLoxJHSN7lSyK/Iy1DzJTNtsnvdIZb3NKI6qhOwBGrR3PEBSszJSuf6cBY8o6K4SOngBGhdqfjoLPiJfHNimfFj2Thzk6nN1VfIGluc/9xTLWQD/i0xsIfOV9pAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IWgpQkOJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CA6DC4CEED;
+	Tue,  8 Jul 2025 07:49:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751960944;
+	bh=hnYWVpaIxR3sAcv6lDEqJ3ovOnWIDMaeUr3G/UxM0J0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IWgpQkOJ0J4uiRmj8LXN0qq+iQ221p/K3SwaGwY9oIA+H8byYHLZV7taNZ1yp7Stj
+	 RuqQL/kek6XkGoQDVo+BxkYrqoCEIpMaMBs9vKU0KVAodcH08QrEM3jjAaNhl/3f4B
+	 fI3oogjsEDNRgOFxafYiV5TQsvkRH7jiMKV+6omA=
+Date: Tue, 8 Jul 2025 09:49:01 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Luka <luka.2016.cs@gmail.com>
+Cc: Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [Bug] WARNING in vt_do_diacrit in Linux Kernel v6.14
+Message-ID: <2025070805-stoning-overeager-39f1@gregkh>
+References: <CALm_T+2AUcGgb+ukfGg5a3=ibQzRe93gHAzjh6XUubCePk=Mig@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca47:0:b0:3df:347f:ff3e with SMTP id
- e9e14a558f8ab-3e136f1fd9fmr144209375ab.7.1751960882617; Tue, 08 Jul 2025
- 00:48:02 -0700 (PDT)
-Date: Tue, 08 Jul 2025 00:48:02 -0700
-In-Reply-To: <18b04472-4443-43eb-8452-56b9a31df378@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686ccd32.a00a0220.338033.0006.GAE@google.com>
-Subject: Re: [syzbot] [usb?] KMSAN: kernel-usb-infoleak-after-free in usb_start_wait_urb
-From: syzbot <syzbot+27fe438b6370f95de4a5@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALm_T+2AUcGgb+ukfGg5a3=ibQzRe93gHAzjh6XUubCePk=Mig@mail.gmail.com>
 
-Hello,
+On Tue, Jul 08, 2025 at 03:21:36PM +0800, Luka wrote:
+> Dear Linux Kernel Maintainers,
+> 
+> I hope this message finds you well.
+> 
+> I am writing to report a potential vulnerability I encountered during
+> testing of the Linux Kernel version v6.14.
+> 
+> Git Commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557 (tag: v6.14)
+> 
+> Bug Location: drivers/tty/vt/keyboard.c
+> 
+> Bug report: https://pastebin.com/yuVJpati
+> 
+> Complete log: https://pastebin.com/qKnipvvK
+> 
+> Entire kernel config: https://pastebin.com/MRWGr3nv
+> 
+> Root Cause Analysis:
+> The vt_do_diacrit() function in the virtual terminal subsystem
+> performs a write to a user-space pointer via __put_user_4() without
+> ensuring that the destination address is mapped and accessible.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Where?  I see calls to put_user() happening in that function, and the
+return value is properly checked.  What lines exactly show the issue?
 
-Reported-by: syzbot+27fe438b6370f95de4a5@syzkaller.appspotmail.com
-Tested-by: syzbot+27fe438b6370f95de4a5@syzkaller.appspotmail.com
+> Under conditions such as memory allocation failure or page table
+> unavailability, this leads to a fault during execution of the mov
+> %eax, (%rcx) instruction.
 
-Tested on:
+Again, a normal call to put_user() should be catching this.  Are you
+sure you are looking at the latest kernel tree?
 
-commit:         d7b8f8e2 Linux 6.16-rc5
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=13a15582580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8fe1009b62db3e6e
-dashboard link: https://syzkaller.appspot.com/bug?extid=27fe438b6370f95de4a5
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1090f28c580000
+> At present, I have not yet obtained a minimal reproducer for this
+> issue. However, I am actively working on reproducing it, and I will
+> promptly share any additional findings or a working reproducer as soon
+> as it becomes available.
 
-Note: testing is done by a robot and is best-effort only.
+Please do.
+
+thanks,
+
+greg k-h
 
