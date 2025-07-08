@@ -1,150 +1,122 @@
-Return-Path: <linux-kernel+bounces-720704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA1DAFBF73
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:47:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B99FDAFBF74
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E35C1883F9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:47:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8841F1883DC8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DF41C5486;
-	Tue,  8 Jul 2025 00:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DF71C5486;
+	Tue,  8 Jul 2025 00:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gDXxF6FV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ww5PToOV"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E026F19B5B1
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 00:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34A235963
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 00:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751935620; cv=none; b=cZphc6YLAtQCMqRAFKun1PxuSP49WKepUdhGzvykRYYOZLP6Y5W3Eg0hRwZCkCQ0CrjQNS5/oaCcMThwF4b1/vtkP1AL+7f2K8RESu8nl5LlZt7Qj3T93Zk3wzXL35nBujAy1+nPkD3rZl82lARB0+mLYLIMHTiNMyiW19W6cBs=
+	t=1751935685; cv=none; b=O8L9oTcdYKbKRtl7SeBkx5jEiLq0mCEnSv9JXt0MCjc7qF+kEeU153tOh0Jfd1VHJLvYbYm01gaJx6Rswdtn+D2tzNfpszKNQuUsPJIEfe2mj6ucjf4BptaST993As28a6kgkt1YCK2bQQk9VFn625OXQ0D8yzWe9ECqdc5yJQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751935620; c=relaxed/simple;
-	bh=dynho3MjU+Lfg82gPV9A0pKf6UWGwgkxG/o6TH7zVkk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lw5kfRzkRqAA6x9E7JQqXeWNSgfYv9A8gtxMVOVoEfl59KVGkoXcrumD95L7sPKrXGpoETRwJfT5S1Q6MnPs/owod0lRfY8hnoBvawWWTnWQhpzk/PZa9JuI+RfhXXgqc7fvDF2oRo3PaqfIDq1dLqcJUvCJ77ItTkHEsc6cgOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gDXxF6FV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751935617;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kOBIRP+/LiXLTVoen5Vy3qBR5qXn49Dm5lfqM2y2250=;
-	b=gDXxF6FV1SFkIO9XMowl3uYIqAOkCYrkmsU/Lfv65e5+ATGHY57IUDmxpo9Nvea+Sp/rI2
-	KbmAxi5uNGBQbwEjocILzFMiOuqzONDQV7ZgbjDgXHCucXCUZVdcjnD1/rEShvUgmLE3dm
-	56LwCO5PoiLr4jmKnWmDDfOHy+anEug=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-226-ofF5hbcqMJelU6ysiP5aJA-1; Mon, 07 Jul 2025 20:46:56 -0400
-X-MC-Unique: ofF5hbcqMJelU6ysiP5aJA-1
-X-Mimecast-MFC-AGG-ID: ofF5hbcqMJelU6ysiP5aJA_1751935616
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-478f78ff9beso111436931cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 17:46:56 -0700 (PDT)
+	s=arc-20240116; t=1751935685; c=relaxed/simple;
+	bh=EIOFw1JpPec+M8E90FwZPh1tRqGI4xNcNqzDJ3XD0Mg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qn1OWMAHaPgDxpFbHc7uOjqDGb4EJUuKP4k0g8KUdpcG4LKXN7ItCHYJaAT5u6jiNMFSWL5Bf0Hd5ld3sMPj3WmUKEtgSgts+KPAjFKbDYnbnMP2CbF6ZBmR4w008HoFZ20iHpNPueRv6yjq8n+QzlAhtEWGmW+emmXwmj8kfR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ww5PToOV; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-453647147c6so35326035e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 17:48:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751935682; x=1752540482; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YSn52M56yjzHQIR5J828LB8d9xrk3LfotYJtBZIJgRI=;
+        b=Ww5PToOVxaI0A3F/MZvqupZISfEXvc4eKpfGV+ZOOTomGThmZbbE/UbP3Ko9UN3VDb
+         wmA3I9soyN2jHwAnI9D7ljxhdrTDIgcMMxCMOYzLGBMTUSaAa9EZzE2izQmSnt8TmstE
+         25CUnUhUZxc4SdzFV/G77inVwDf4+6TL+oGCJfYDDPVuu77pUB0yc4dFuEBQ1ZtLJUV7
+         HktyPCaYwxpFjxpXuVN4wg5qIlJ3hbipt0WHrSfRhFoIZlUlivL9a1I6ahCy9uNJCJjs
+         g/xY8dnFBspsFAT68nwDWsyiQlH5yE2khUdDkzfxweSQLBTQQtXob/FUgW+TZXhqX8Wn
+         L+2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751935615; x=1752540415;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kOBIRP+/LiXLTVoen5Vy3qBR5qXn49Dm5lfqM2y2250=;
-        b=q7zYzFmrq54K5mCjGUzEqskbUq6UAwlkYS6ZiPa9eGPgD4hchpHyEduyXbaAKLMYQ8
-         mkopyc0EOMJ1geeGPWtLGp/lOOKeWC1wtLxXi7DRVKzFmAtJe/YizaHS3OhbyMZSPNj1
-         V+ODmpkKvhDG/o3c0yFivxaLOp8rsVUElSCRAEmZa4T/4x3pV6IynzPjyWJNUDhceDRU
-         3Z602U7/DQpp+W3jkaGq+jEAsVEP/72AOuJiZi1gQsmiZ3L2/W2p7n4aM7CTBlA6MCtM
-         TJTBUvO2Eo/MC75AGqPBi6LIzsAMsEjynsRhrIE2Kq34mNZK78cqx3KH05elB5v8J2MM
-         +Aug==
-X-Forwarded-Encrypted: i=1; AJvYcCXAweVqZIyWEdgWMTvKDJj+V838p43dUhlwS8T9KuFkmfMGBzZFxDkFsPJMU3wBFH7oD01cZRC4vH8guCM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+anNh3TMwL3e7eUhWJWRbucVWZILauNNMkA2aYCLhOvehItHH
-	Sije7P1DaW2tqXRTV6dHjnSCq46thZprF6UkHlAqWdoUchGf6Flnc/HYtV6zmnrteH1ridj7lHY
-	r9kCjmeQvuinsY9vLm6VicKVQTM9eMvXJ+IqfWdw41d30c3aPJ/uEWaJdrLiA2VjZNKTqxq+Wte
-	JO
-X-Gm-Gg: ASbGncuTovu/A1eMy/oWO6k72FIXxvJGHfxHyhttqfvcJrBx4qItsZdQE5Jvmv2OofG
-	7T3rYxmLHPxOD0QmLDxMzhqZcszxq+DtlA+5/ajWfX+A2VulTjcyHvJV56d3cw1WMFqr4Z+6M6e
-	9tR4MjFDrzNQf9iY2mxfX89jQzHN0giN67r2uyT5EwaeC0cOoO+F7/AY23GGCgg62J+uV/4PFji
-	U7KwCnGpaDBclusd29rL2odoVitKDmJw2aZlDCNwlGYyM39hJOQuND+8Omq6qNtCvyeBit20S+O
-	z9RnyC5jnKo0RDeqNHyuFls/
-X-Received: by 2002:ac8:5981:0:b0:478:f4bd:8b8e with SMTP id d75a77b69052e-4a9cc7f08f3mr23997691cf.39.1751935615625;
-        Mon, 07 Jul 2025 17:46:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGJRi9lQ2OScTRkO8NGH0fJYlVeqWQWqEnwuhhe/9mrxR32FDBi0ML52Uqu++S9pNNpt6gs9g==
-X-Received: by 2002:ac8:5981:0:b0:478:f4bd:8b8e with SMTP id d75a77b69052e-4a9cc7f08f3mr23997511cf.39.1751935615280;
-        Mon, 07 Jul 2025 17:46:55 -0700 (PDT)
-Received: from [192.168.2.110] ([69.156.206.24])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a994a0bfc5sm72400121cf.34.2025.07.07.17.46.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jul 2025 17:46:55 -0700 (PDT)
-Message-ID: <b9b407a5-d83a-4aa2-8cbc-15077f47c797@redhat.com>
-Date: Mon, 7 Jul 2025 20:46:44 -0400
+        d=1e100.net; s=20230601; t=1751935682; x=1752540482;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YSn52M56yjzHQIR5J828LB8d9xrk3LfotYJtBZIJgRI=;
+        b=luEaGF06ZSW4gRvNvu0FWeEpcnFz562MV7EGTRmWIKHU/bapbXmhpctWkAST1dfuE2
+         h8yvLFxWRREU1mjlyJYE9bMs1eC8irT29YKucqRk8pvB2LeoXx4WT6vhhP4MDoppP+F/
+         LVjmzEmeoB87LEOOyfBNSgtANQGUXWJbHJ8hYH0l8BCcZ1Hc1NxYI7XuLrXN0PndwSoe
+         P2Vwn6vgN0Eool5bcpDYbNSweL54gO0bAzvYBrXmGoHzAmhp6cJzpT78ikuZ7E04edVC
+         OpVLphgkkwHVRTIEvAUwM22JTZH49rUFn3zwnEbAQPy/aB6SKmEOBFiiTjFORwv2ZaFi
+         AHBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYBYqeSqP8QYEc7ScxC1h2qpyvjYshkp1oS5E1BejGLstou+aJsM0phzqHBpNC57ix/BTguxbRLGySL/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0d/L8JnPRZEwBJewNqPBlpv2iikl8WhqHjWgkaVDAmyL0MyTI
+	HEIQQM/oH771jQJTu1vZywBJs63/NrgyS8ZTB6UvL8KzXubzLBFL1+1B
+X-Gm-Gg: ASbGncsAd8kKY4y0KgXlwBma67L4Sl73+zBDE2E40Mo1LDNesoKwH1R7RSsRBdCjKuL
+	ZtLaq0XMZNsS386WeqxsMZBNlEzas1i4yZgiiTjMsAj+J7XDedd14k5rM3qNSknQxb+5mAQFSGZ
+	FC+h+4KvVBry7OR4tfb9vTW6dC3bGLuR0TE/ITWeLdswcj0BScE2q3Utz4guCF0kqJGZsTkEQ4a
+	TGqNgGz9iIrYwhQFw5VFOoh80hOSElVszuMxKcF6SYW7C8ltqjeS+r7hAI/Y87O1EhFHu5y/etc
+	8ozze6uSAFRJAadXdXwDRYkOn545/E30C98WdMYfoAGCOwDjjxYEOn1Ndx2xiNHN/aEPNu24CTh
+	rVF8=
+X-Google-Smtp-Source: AGHT+IGJ4dP8w5g6hpev8HIQOasgA+wtMF5Q7BTmSBjCSF661zBqxSTmgFB03VmUSIC5zOxHBrEonw==
+X-Received: by 2002:a05:600c:3b26:b0:453:2433:1c5b with SMTP id 5b1f17b1804b1-454cd4baf8dmr6686095e9.5.1751935681656;
+        Mon, 07 Jul 2025 17:48:01 -0700 (PDT)
+Received: from burak-MiniBook-X.. ([2a00:8a60:e00e:10f7:92ef:ff1c:488e:a26e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b471b966cbsm11354484f8f.49.2025.07.07.17.48.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 17:48:01 -0700 (PDT)
+From: Ibrahim Burak Yorulmaz <iburaky.dev@gmail.com>
+To: maarten.lankhorst@linux.intel.com
+Cc: mripard@kernel.org,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Ibrahim Burak Yorulmaz <iburaky.dev@gmail.com>
+Subject: [PATCH] platform/x86: Add panel orientation quirk for Chuwi MiniBook X
+Date: Tue,  8 Jul 2025 02:47:39 +0200
+Message-ID: <20250708004739.9792-1-iburaky.dev@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] efi: Drop preprocessor directives from zboot.lds
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>, linux-efi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250606154112.311565-1-vkuznets@redhat.com>
- <256ad7fc-c6d4-470d-a434-7b5556c3b8f6@redhat.com>
- <e1644469-77ca-4770-bc79-5243a46b8a9e@redhat.com>
- <CAMj1kXFg7wnfn=ipd86XNxeoXa=LtWviAgiVoTL1Y76q0yWA9g@mail.gmail.com>
-Content-Language: en-US, en-CA
-From: Luiz Capitulino <luizcap@redhat.com>
-In-Reply-To: <CAMj1kXFg7wnfn=ipd86XNxeoXa=LtWviAgiVoTL1Y76q0yWA9g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2025-07-07 19:51, Ard Biesheuvel wrote:
-> On Tue, 8 Jul 2025 at 07:36, Luiz Capitulino <luizcap@redhat.com> wrote:
->>
->> On 2025-06-06 11:55, Luiz Capitulino wrote:
->>> On 2025-06-06 11:41, Vitaly Kuznetsov wrote:
->>>> Older versions of `ld` don't seem to support preprocessor directives in
->>>> linker scripts, e.g. on RHEL9's ld-2.35.2-63.el9 the build fails with:
->>>>
->>>>    ld:./drivers/firmware/efi/libstub/zboot.lds:32: ignoring invalid character `#' in expression
->>>>    ld:./drivers/firmware/efi/libstub/zboot.lds:33: syntax error
->>>>
->>>> We don't seem to need these '#ifdef', no empty .sbat section is created
->>>> when CONFIG_EFI_SBAT_FILE="":
->>>>
->>>>    # objdump -h arch/arm64/boot/vmlinuz.efi
->>>>
->>>>    arch/arm64/boot/vmlinuz.efi:     file format pei-aarch64-little
->>>>
->>>>    Sections:
->>>>    Idx Name          Size      VMA               LMA               File off  Algn
->>>>      0 .text         00b94000  0000000000001000  0000000000001000  00001000  2**2
->>>>                      CONTENTS, ALLOC, LOAD, READONLY, CODE
->>>>      1 .data         00000200  0000000000b95000  0000000000b95000  00b95000  2**2
->>>>                      CONTENTS, ALLOC, LOAD, DATA
->>>>
->>>> Fixes: 0f9a1739dd0e ("efi: zboot specific mechanism for embedding SBAT section")
->>>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->>>
->>> Thanks for fixing Vitaly:
->>>
->>> Tested-by: Luiz Capitulino <luizcap@redhat.com>
->>>
->>> (this is for the build test, not SBAT testing).
->>
->> Vitaly, Ard,
->>
->> Are we planning to include this fix for 6.16? I'm afraid we'll introduce a
->> regression if we don't include it.
->>
-> 
-> Apologies, I let this sit for a bit longer than I intended. I'll send
-> out the PR today.
+The Chuwi MiniBook X (CWI558) uses a tablet screen which is oriented
+incorrectly by default. This adds a DMI quirk to rotate the panel into
+the correct orientation.
 
-Thanks a lot, Ard!
+Signed-off-by: Ibrahim Burak Yorulmaz <iburaky.dev@gmail.com>
+---
+ drivers/gpu/drm/drm_panel_orientation_quirks.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+index c554ad8f246b..c85f63c42bbe 100644
+--- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
++++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+@@ -282,6 +282,12 @@ static const struct dmi_system_id orientation_data[] = {
+ 		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Hi10 pro tablet"),
+ 		},
+ 		.driver_data = (void *)&lcd1200x1920_rightside_up,
++	}, {	/* Chuwi MiniBook X (CWI558) */
++		.matches = {
++		  DMI_MATCH(DMI_SYS_VENDOR, "CHUWI"),
++		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "MiniBook X"),
++		},
++		.driver_data = (void *)&lcd1200x1920_rightside_up,
+ 	}, {	/* Dynabook K50 */
+ 		.matches = {
+ 		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Dynabook Inc."),
+-- 
+2.43.0
 
 
