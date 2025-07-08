@@ -1,86 +1,129 @@
-Return-Path: <linux-kernel+bounces-720686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2E17AFBF3A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:32:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 963D9AFBF36
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:31:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BB151AA4F16
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:32:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 722A71AA15BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABEA14A4E0;
-	Tue,  8 Jul 2025 00:32:12 +0000 (UTC)
-Received: from mx.socionext.com (mx.socionext.com [202.248.49.38])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B1239FF3;
-	Tue,  8 Jul 2025 00:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.248.49.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC3445C14;
+	Tue,  8 Jul 2025 00:31:05 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A5A7464
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 00:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751934731; cv=none; b=HkcVVlwq7GlgzdeBKMVW+HX0/iazDBRD4lPOWm5CP8ddcPOjdPqiGnt3/wDw51Q593Wu1eSYfZFqTH8GiND7AucqkoN8G8G7G+6Qjj0Acu5tX3bsikoS8lRlB2ydP9LNFG31W4VZ6rtTD3toT5+wJxJkiUKPlBTmE8NeKHN+fKg=
+	t=1751934665; cv=none; b=nupOm/8clrsd/b3sjRXL8EcPM0lyGqEl3GOBcC9xEft1ZQHJHQJEqJ0kxL4kOTC06HY/Weo9IcHsq+JqXZwiJjM3fKiO+FzPzbV/V13Ug82EGRLBUR1jv41gg2R74cbJZYT20ipRU4De5Og3dfOmmFIJU9fSSG37ygP7EX6d7WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751934731; c=relaxed/simple;
-	bh=lpBAjx+9OIWwohLyRF71S4GHKzadfqw3ME6fZ9/uARg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AtJgp05yBNPIsVrYSVV00ZQ5UPRarqSN+ytdqEKkOzucQRVmdDZFq9Dvy/otmucARoSjyB7suL1Z1lSQP6A2Cqfe06OUcOrp09TxsDvYyJlCB9tktYUPzvu9ggRYQB4h3mf/mhezjJ5TelzuZFKOXITnGH+qL7EnDEPkdov/XfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com; spf=pass smtp.mailfrom=socionext.com; arc=none smtp.client-ip=202.248.49.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=socionext.com
-Received: from unknown (HELO kinkan3-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 08 Jul 2025 09:31:00 +0900
-Received: from mail.mfilter.local (mail-arc02.css.socionext.com [10.213.46.40])
-	by kinkan3-ex.css.socionext.com (Postfix) with ESMTP id 34C662069FF1;
-	Tue,  8 Jul 2025 09:31:00 +0900 (JST)
-Received: from iyokan3.css.socionext.com ([172.31.9.53]) by m-FILTER with ESMTP; Tue, 8 Jul 2025 09:31:00 +0900
-Received: from [10.212.247.77] (unknown [10.212.247.77])
-	by iyokan3.css.socionext.com (Postfix) with ESMTP id 3CC7B10D84B;
-	Tue,  8 Jul 2025 09:30:59 +0900 (JST)
-Message-ID: <c300d168-797e-4812-b957-1b761e40ea44@socionext.com>
-Date: Tue, 8 Jul 2025 09:30:57 +0900
+	s=arc-20240116; t=1751934665; c=relaxed/simple;
+	bh=K0sJvhgBni0qpDPlyYY31bsz0DezBvm3KWMurIZHMo8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n4vJcJlhpmNrAFvneiVuiD4LXBx0Zi8V19HZ8Q8+lE6TiGxsxldL/QCQ1q5ESlNxaID+NOq4Ee0ITovaHV90OuCWOQff9NvAk4LeRwxJHlnUJnIuY6ZlcxcdSbLVUBXLoenbT/96smRz87CwaktX0up1qxZ4E58aPj6HiQBvAng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id 390911403F2;
+	Tue,  8 Jul 2025 00:31:00 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id C40FE20025;
+	Tue,  8 Jul 2025 00:30:57 +0000 (UTC)
+Date: Mon, 7 Jul 2025 20:30:57 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Li,Rongqing" <lirongqing@baidu.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ David Laight <david.laight.linux@gmail.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "vschneid@redhat.com"
+ <vschneid@redhat.com>, "mgorman@suse.de" <mgorman@suse.de>,
+ "bsegall@google.com" <bsegall@google.com>, "dietmar.eggemann@arm.com"
+ <dietmar.eggemann@arm.com>, "vincent.guittot@linaro.org"
+ <vincent.guittot@linaro.org>, "juri.lelli@redhat.com"
+ <juri.lelli@redhat.com>, "mingo@redhat.com" <mingo@redhat.com>
+Subject: Re: [????] Re: [????] Re: divide error in x86 and cputime
+Message-ID: <20250707203057.1b2af73d@gandalf.local.home>
+In-Reply-To: <92674f89641f466b9ebbdf7681614ed3@baidu.com>
+References: <78a0d7bb20504c0884d474868eccd858@baidu.com>
+	<20250707220937.GA15787@redhat.com>
+	<20250707223038.GB15787@redhat.com>
+	<2ef88def90634827bac1874d90e0e329@baidu.com>
+	<20250707195318.0c7f401d@gandalf.local.home>
+	<92674f89641f466b9ebbdf7681614ed3@baidu.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/12] gpio: uniphier: use new GPIO line value setter
- callbacks
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Viresh Kumar <vireshk@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux@ew.tq-group.com, linux-arm-kernel@lists.infradead.org,
- virtualization@lists.linux.dev
-References: <20250707-gpiochip-set-rv-gpio-round4-v1-0-35668aaaf6d2@linaro.org>
- <20250707-gpiochip-set-rv-gpio-round4-v1-10-35668aaaf6d2@linaro.org>
-Content-Language: en-US
-From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-In-Reply-To: <20250707-gpiochip-set-rv-gpio-round4-v1-10-35668aaaf6d2@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: C40FE20025
+X-Stat-Signature: 6xwmoezwzqecxawrhstfi5g3by4h9p1t
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18wBa9r7q/YrFmBm/Xar4TtHkEkohqJ52o=
+X-HE-Tag: 1751934657-499278
+X-HE-Meta: U2FsdGVkX18Ro957qeYRqTSwbZhR6As9dr4VgOcDJHZeal93lkbxQEtjUYIxvyKfsn9HIf3kQveGxVb6vDKOUdyIhW/6JH9G7Dm54Qi3CmypT363uB1s1nKcviSvNcOgRpfOSryqf5+y38lQIspdnVL3xtzvLjvV/AHL2GQmH+77SY3yiRRafbVPDztRfCsyBCJAUib5zL6Vk52c/4r7L/pSyCArx8IfQgsWtTCR/wzuO9zQI7Qqp5dHbQexr0HxNtlpLn7Pq6KCc8Vb2Lq91oDwAz0SB8KpYfp6SyIF9I7e7r5DaDx0aF0/VirYBmf6PbZAl9Hsin5VfgQwp3xx163xJ5KZ8LhC
 
-Hi Bartosz,
+On Tue, 8 Jul 2025 00:10:54 +0000
+"Li,Rongqing" <lirongqing@baidu.com> wrote:
 
-On 2025/07/07 16:50, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >         stime = mul_u64_u64_div_u64(stime, rtime, stime + utime);
+> > +       /*
+> > +        * Because mul_u64_u64_div_u64() can approximate on some
+> > +        * achitectures; enforce the constraint that: a*b/(b+c) <= a.
+> > +        */
+> > +       if (unlikely(stime > rtime))
+> > +               stime = rtime;  
 > 
-> struct gpio_chip now has callbacks for setting line values that return
-> an integer, allowing to indicate failures. Convert the driver to using
-> them.
 > 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->   drivers/gpio/gpio-uniphier.c | 16 ++++++++++------
->   1 file changed, 10 insertions(+), 6 deletions(-)
+> My 5.10 has not this patch " sched/cputime: Fix mul_u64_u64_div_u64() precision for cputime ",
+> but I am sure this patch can not fix this overflow issue, Since division error happened in mul_u64_u64_div_u64()
 
-Looks good to me.
+Have you tried it? Or are you just making an assumption?
 
-Acked-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+How can you be so sure? Did you even *look* at the commit?
 
-Thank you,
+    sched/cputime: Fix mul_u64_u64_div_u64() precision for cputime
+    
+    In extreme test scenarios:
+    the 14th field utime in /proc/xx/stat is greater than sum_exec_runtime,
+    utime = 18446744073709518790 ns, rtime = 135989749728000 ns
+    
+    In cputime_adjust() process, stime is greater than rtime due to
+    mul_u64_u64_div_u64() precision problem.
+    before call mul_u64_u64_div_u64(),
+    stime = 175136586720000, rtime = 135989749728000, utime = 1416780000.
+    after call mul_u64_u64_div_u64(),
+    stime = 135989949653530
+    
+    unsigned reversion occurs because rtime is less than stime.
+    utime = rtime - stime = 135989749728000 - 135989949653530
+                          = -199925530
+                          = (u64)18446744073709518790
+    
+    Trigger condition:
+      1). User task run in kernel mode most of time
+      2). ARM64 architecture
+      3). TICK_CPU_ACCOUNTING=y
+          CONFIG_VIRT_CPU_ACCOUNTING_NATIVE is not set
+    
+    Fix mul_u64_u64_div_u64() conversion precision by reset stime to rtime
 
----
-Best Regards
-Kunihiko Hayashi
+
+When stime ends up greater than rtime, it causes utime to go NEGATIVE!
+
+That means *YES* it can overflow a u64 number. That's your bug.
+
+Next time, look to see if there's fixes in the code that is triggering
+issues for you and test them out, before bothering upstream.
+
+Goodbye.
+
+-- Steve
 
