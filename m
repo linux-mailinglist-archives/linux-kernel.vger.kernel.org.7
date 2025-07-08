@@ -1,152 +1,117 @@
-Return-Path: <linux-kernel+bounces-721035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBEA2AFC3E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:21:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2450CAFC3E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 444944A2615
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:21:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B0F24A276C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166E2298261;
-	Tue,  8 Jul 2025 07:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524EB298275;
+	Tue,  8 Jul 2025 07:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ex2GEMu2"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GIlF+J5g"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74B62980DA;
-	Tue,  8 Jul 2025 07:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180AA29824E;
+	Tue,  8 Jul 2025 07:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751959277; cv=none; b=ECMInt1QqyDSoTwsiKgLvLOSJYsxG/JLxXHThrtKkT8iRb5XVF3AjNIe1B8erJR0GTFrbrR9FfaWxUVW1oW7sjOHShBcjfSL5HWRQRJPLvy4yVXaua2T+g6CD9f/xlqqnFpb9ZR4Uju/NViw++se2N4gh2w8sUVsAluNq0r1EXs=
+	t=1751959312; cv=none; b=dLLf9C3MoD0y4h1sj9A1WUyQxqT6lzqQeqi/yPYl3BHrzoyO7YPosQc6j/GfdndXX4VBtLQGuWv31k+fqOhrBcFoK50GFBHxfuH8GNWiCBncn3p1y8VSxFPyy4jEuUqDG4rbjqD5FpYHrmCIP5k+loIc2NnQVE1AY0eKPHinRk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751959277; c=relaxed/simple;
-	bh=UHCOYHNPoZf25UtXIMPCDpCcmsRruYyj8nmPoMUh2BI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aoA5pLdMHsz96/kwaju3ZhPpZ4IwJDO4wx2VUUvKt0Y2rpgNpr18wybv8u13LOigHYX8yjCFg8otaX98PeeocK2LCVxj2dO9DLeKzFRtmx2Ex6t+k4vMCorpfBhNqrAI/c6NqasTmd45aKEbSqVm3BhemojU65OtCentAl9s04g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ex2GEMu2; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=hyNk8T+NIRKoZL/bKe0KxXnT09IJXMM64RdILDI3WnI=; b=Ex2GEMu28ml8x7dI24mLBD9ZHb
-	QYqiRwz9MtfI62Fx23jOi9ZcjkVNrT0IICPW2qVC27kzzUr1cp4Zz/wJQPVuR/BNxEyjaa1uMhxmp
-	jLrGYj+XXrhFW0a/Q6ZYoBDYuRmNAIIrvI6zP5zGIXTYgd0TE93niK/iBNXwHtM5Rkc1Mh/8unQNl
-	8U1d6KvJt98R4Eis448MmOftdGgCUKxc8bI/GuA9RPmBlsoTWMGRFGxe4xHpHNFUNl6m5FOYcjYE8
-	Nw1Gp1NXIHJEaXaz5qtr3TQHG0NRwiPxuZJoqzB8f+mRYRTf55YfDMEwZgrIhw7Wvetha/+qByxy4
-	DZzjpI7A==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uZ2dd-00000008hhn-2Tc5;
-	Tue, 08 Jul 2025 07:21:13 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 153BC30065D; Tue, 08 Jul 2025 09:21:12 +0200 (CEST)
-Date: Tue, 8 Jul 2025 09:21:12 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Andrea Righi <arighi@nvidia.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>, rcu@vger.kernel.org
-Subject: Re: [PATCH v2] smp: Document preemption and stop_machine() mutual
- exclusion
-Message-ID: <20250708072112.GA1613376@noisy.programming.kicks-ass.net>
-References: <20250705172328.4114289-1-joelagnelf@nvidia.com>
- <20250707075050.GB1613200@noisy.programming.kicks-ass.net>
- <20250707141952.GA3640857@joelbox2>
+	s=arc-20240116; t=1751959312; c=relaxed/simple;
+	bh=fqGNOP8FBJPLy1RK0X+MHfKS0hKOfDFe7Hn4OMwdWtE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=jSvSi+UMY6FsmpMKo1app81tXjUj9asIOpl74FGBJxFL9+pz35uLQVKsMeoRKYH6z/Usu6UvDyt4iYmuYlgk0SXJmaVPMYUUOQhYZO5Ex4UvhIcjS8+SFRKoIiOc/O69WloBzB031WW1omJSjOBZn7P/BWTRmqJe3GSiGy5KtNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GIlF+J5g; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553b165c80cso3962798e87.2;
+        Tue, 08 Jul 2025 00:21:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751959309; x=1752564109; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fqGNOP8FBJPLy1RK0X+MHfKS0hKOfDFe7Hn4OMwdWtE=;
+        b=GIlF+J5gxXDvie7ZI4folaN4tQS5Fl704k5bwyXi57J2UoK3glaJJmX4kPjaQSXGt4
+         zprWXj3F1nCFIkMUcF18c3hiDJ1qiRvdEM2SpFKpt4FZmNDkL24fU2rxFzO5ezuwy4fb
+         pESLfikPNIfCCUwPTaW7gPNHSTRg/TkCrNM+MV4mTGsP9z3TRrudoh6/FIl+VLrZoZQU
+         Hw/DCiLfahQuqntGSWcgLbMO1lC6ONgXwCKLfMxWp93Aap3qbxdjNchEvtgJzoGsFhqW
+         PQPNFhEjFvqBK2vldGoIxAzOgE51lkjYvAd6CyVPzu/zJC6fi3d+Tn6DMGlj/wXBUq/M
+         V3Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751959309; x=1752564109;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fqGNOP8FBJPLy1RK0X+MHfKS0hKOfDFe7Hn4OMwdWtE=;
+        b=BCpfosn+yMpw8MmloSqWpjP3OqrCK0EbcxYpY2jIY0rOCmLJ1RFdtV7h8yBmK+Ot33
+         DqfVSjPnaiz/wAakt+uh0CXK/sGOg1rj+3/AuXajzxlu7gWKNAgh8xJS/3QH16f6lWjP
+         VJp+dQNYAUn3jiZ663cljzI8sl4thpx5kUQGmDSDwIciZJ6kIkiU3kKiO+whjCA/iiEU
+         mmXjHxbc5EsYbhWK2GPMo540CwOcMRRm6kAQz/RgOEWi2NPXUs81u8f/dlphaB7TV6uT
+         4Jfd+ZVfuXB0PSNUew0i+PIbHslm3poQQLkhHB/Cr6QMxvMNMiAK+tCwqh9c9eCS9bE3
+         A5JA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLO+Hidz6PlrmihDHVq5hM9bJRC0f9/v47OGsjhx4WszkAdocfESkDGIe3nCOjuQpvtjjWYn6E6ciMMrc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqMOvfobehx4evh58v94hGIoL+NPmXsbRUs/iQ+lPKUlkCLQrK
+	NrIkMuAf7+nJb8Rj53TmchewnIoZi0P65lfkdFqqzJ056BnEjhNlR+Bhed04wfAj3CVnhH4l7Z5
+	Rf8HcgAzPTZFS1U8L/m02c//ZJcRwYWc=
+X-Gm-Gg: ASbGncs+FmdKLsXHAMZ/obnclRnF2D1m3dIk/GgLAUIhkQcrNUPSmc8xiaF6YN7et4M
+	7FIarjvNLl0GMWVU46o/dI7i/IURKwDshg7ctgkNZZTGG/i67nWwWkZYLvNkg6UOZBmvCZj7TtO
+	GWWy6HaqJ8il2YTOXEIq3gP13BD9M1N3PUD0B4BC+u4fZawOiVZj5qXtW6EgaveDP2OA==
+X-Google-Smtp-Source: AGHT+IH+aAgWpAukCcmftBbkyq4OJ0H0gADAY9FjTzUG8UlxvQf98BIs2Ic+2Qwqzp7BIC2pDD49QzqGbVEcyvMRq9Q=
+X-Received: by 2002:a05:6512:1314:b0:549:8f10:ec25 with SMTP id
+ 2adb3069b0e04-557f8353368mr619030e87.31.1751959308810; Tue, 08 Jul 2025
+ 00:21:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707141952.GA3640857@joelbox2>
+From: Luka <luka.2016.cs@gmail.com>
+Date: Tue, 8 Jul 2025 15:21:36 +0800
+X-Gm-Features: Ac12FXzd4DMBrD9OuCc4Pv4dRViMZHCfjGnBhuXQCUAEp3a_lF2ko6fZ2IO8Q84
+Message-ID: <CALm_T+2AUcGgb+ukfGg5a3=ibQzRe93gHAzjh6XUubCePk=Mig@mail.gmail.com>
+Subject: [Bug] WARNING in vt_do_diacrit in Linux Kernel v6.14
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 07, 2025 at 10:19:52AM -0400, Joel Fernandes wrote:
+Dear Linux Kernel Maintainers,
 
-> From: Joel Fernandes <joelagnelf@nvidia.com>
-> Subject: [PATCH] smp: Document preemption and stop_machine() mutual exclusion
-> 
-> Recently while revising RCU's cpu online checks, there was some discussion
-> around how IPIs synchronize with hotplug.
-> 
-> Add comments explaining how preemption disable creates mutual exclusion with
-> CPU hotplug's stop_machine mechanism. The key insight is that stop_machine()
-> atomically updates CPU masks and flushes IPIs with interrupts disabled, and
-> cannot proceed while any CPU (including the IPI sender) has preemption
-> disabled.
-> 
-> Cc: Andrea Righi <arighi@nvidia.com>
-> Cc: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Frederic Weisbecker <frederic@kernel.org>
-> Cc: rcu@vger.kernel.org
-> Acked-by: Paul E. McKenney <paulmck@kernel.org>
-> Co-developed-by: Frederic Weisbecker <frederic@kernel.org>
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> ---
-> I am leaving in Paul's Ack but Paul please let me know if there is a concern!
-> 
->  kernel/smp.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/smp.c b/kernel/smp.c
-> index 974f3a3962e8..957959031063 100644
-> --- a/kernel/smp.c
-> +++ b/kernel/smp.c
-> @@ -93,6 +93,9 @@ int smpcfd_dying_cpu(unsigned int cpu)
->  	 * explicitly (without waiting for the IPIs to arrive), to
->  	 * ensure that the outgoing CPU doesn't go offline with work
->  	 * still pending.
-> +	 *
-> +	 * This runs with interrupts disabled inside the stopper task invoked
-> +	 * by stop_machine(), ensuring CPU offlining and IPI flushing are atomic.
+I hope this message finds you well.
 
-So below you use 'mutual exclusion', which I prefer over 'atomic' as
-used here.
+I am writing to report a potential vulnerability I encountered during
+testing of the Linux Kernel version v6.14.
 
->  	 */
->  	__flush_smp_call_function_queue(false);
->  	irq_work_run();
-> @@ -418,6 +421,10 @@ void __smp_call_single_queue(int cpu, struct llist_node *node)
->   */
->  static int generic_exec_single(int cpu, call_single_data_t *csd)
->  {
-> +	/*
-> +	 * Preemption already disabled here so stopper cannot run on this CPU,
-> +	 * ensuring mutual exclusion with CPU offlining and last IPI flush.
-> +	 */
->  	if (cpu == smp_processor_id()) {
->  		smp_call_func_t func = csd->func;
->  		void *info = csd->info;
-> @@ -638,8 +645,10 @@ int smp_call_function_single(int cpu, smp_call_func_t func, void *info,
->  	int err;
->  
->  	/*
-> -	 * prevent preemption and reschedule on another processor,
-> -	 * as well as CPU removal
-> +	 * Prevent preemption and reschedule on another processor, as well as
-> +	 * CPU removal.
+Git Commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557 (tag: v6.14)
 
->          Also preempt_disable() prevents stopper from running on
-> +	 * this CPU, thus providing atomicity between the cpu_online() check
-> +	 * and IPI sending ensuring IPI is not missed by CPU going offline.
+Bug Location: drivers/tty/vt/keyboard.c
 
-That first sentence already covers this, no? 'prevents preemption' ->
-stopper task cannot run, 'CPU removal' -> no CPU_DYING (because no
-stopper). Also that 'atomicy' vs 'mutual exclusion' thing.
+Bug report: https://pastebin.com/yuVJpati
 
+Complete log: https://pastebin.com/qKnipvvK
 
->  	 */
->  	this_cpu = get_cpu();
->  
-> -- 
-> 2.34.1
-> 
+Entire kernel config: https://pastebin.com/MRWGr3nv
+
+Root Cause Analysis:
+The vt_do_diacrit() function in the virtual terminal subsystem
+performs a write to a user-space pointer via __put_user_4() without
+ensuring that the destination address is mapped and accessible.
+Under conditions such as memory allocation failure or page table
+unavailability, this leads to a fault during execution of the mov
+%eax, (%rcx) instruction.
+
+At present, I have not yet obtained a minimal reproducer for this
+issue. However, I am actively working on reproducing it, and I will
+promptly share any additional findings or a working reproducer as soon
+as it becomes available.
+
+Thank you very much for your time and attention to this matter. I
+truly appreciate the efforts of the Linux kernel community.
+
+Best regards,
+Luka
 
