@@ -1,237 +1,258 @@
-Return-Path: <linux-kernel+bounces-721424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22EF0AFC908
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:58:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F11DAFC90B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A08007AA61B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:56:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B408E189085D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5712D876B;
-	Tue,  8 Jul 2025 10:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F39267B94;
+	Tue,  8 Jul 2025 10:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WZiyAORT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NQD1GUbZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1A12C3769
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 10:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751972271; cv=none; b=U9CRDcNCz/gsWnwrrFibRWRPo5mODqfhDi/F/W9zW0NXJ5iz5lxTZvyRp9h4NkbCo9MxOhW+vQO7Jy6OxYIQrjkVoZBCYWV3l9DagNftiTQpcAJsQKNLtmDIxymRHZYOjSyI73pAus0tluAruUNqKxUYxiHWlL9fAG0vpHUkcP0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751972271; c=relaxed/simple;
-	bh=0P756gIlMCljTwX29Aq9/86jpCbNsX2kUDsw0YsiQvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BLYJGsUkyWyYt/zCCBwg8vfp7n6fvL92dY+Pf75yOTJduW4MhEHD44z3NkeMWH2TSvcOEUnbYFUyhpxLqs26NwEvpYhBVAVyglAvwfhOhVrI4DZZNPa/6Vy7rmeuEoYmOkC1tKhM6JDwy8YnOEls0paF3W0TirMTp1UwLlB3Raw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WZiyAORT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751972268;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2DQ/E/9WOO/fmQutLMz6YjEgOHHLMdYMOPe5H/Qd8q0=;
-	b=WZiyAORTA0elSs+D1QS6CAaRW00IEeLNlcVONMX2yALuBLlEGAsrr5FuWreBVbWH4tieqi
-	RrK8nfmufy7NPH9pM1Dl0/ZVhjjIcNi3wlHsVqG1EFmEFsmWkt7RdW4ny0yuqvBLyXDhlx
-	rH2w03SLI3G19oGBRt5sE+vbk4dHke0=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-538-t9HRhokpNgunvS_SsuvNAQ-1; Tue, 08 Jul 2025 06:57:47 -0400
-X-MC-Unique: t9HRhokpNgunvS_SsuvNAQ-1
-X-Mimecast-MFC-AGG-ID: t9HRhokpNgunvS_SsuvNAQ_1751972267
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7d3cbf784acso1171208585a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 03:57:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751972267; x=1752577067;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2DQ/E/9WOO/fmQutLMz6YjEgOHHLMdYMOPe5H/Qd8q0=;
-        b=ZfXF6ZR+KZxbfsr4T4i8+1vWdD0MsvxmV9mOKkjWEe+vIQtKCor+hJoW9jNvuQaFY/
-         rIPPaQmp2Jjmln4ppY1UiblYgWcBGhnGBcyOdxvhLsHTgNocQFJaaCuB1r6PnmGpPYYn
-         FtXjBkZtDDznqtKLvRGhju6TAxcIe9cmQ/4OejSmFTe4+OZEeMOKVTbXjGxzNuTyhG7P
-         /UD0+By0ghVr2cRfX784F/80CuSnSrVcE2h4MA7wXC2T56/yhYzWrFZV/xOVL86QFyBb
-         lfcQsALCuLyOzse7UylWrISGXm/Yp75EH6t1FtYYPvZpKY5nbnlYIxxXx/UeMP/9GWlS
-         O5oA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9tJohDIW595NRNRqQ3s5O9Z7gmr5MuK4DPzNCY5Gq3lwLKhoONhX54ZwNa0A/TrDrFbk2+D3mla0cQn8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwipWCcYIW4UrDamLqTzaYNpMXQetTpT5legKRNwHwG8z3/dECX
-	A9OXg+tlIOMY4oEo/X+dg3xs+i3WxinHXaqivRZ3Fucg83zRSpUqzF8LHkoZ24GTprL17uvejWJ
-	w7S78SX7pwC/mT8mdpz5DOZo21RJnEopnF19ZLmo1K2Pu50SamNV1E4Fg2sxHMrfw7Q==
-X-Gm-Gg: ASbGncu8rswBmdV22/c5dZZuMhEQOpylp2d3v2z7Fcq/yevjseTmwEJ5KvWVsaXEMyz
-	hrQSSBEE/80QMw3aQWIcs5pcgyr1gLlp3sgBTESqxrvSd93LmBE+nMqFGqMWdlP0Wok62qhL2+g
-	7nK7i2Aouei9fcHJF6hBZiCYlRW6MCras18NTtvMMd6wrCRYI4G5fYKFTZVs4ihaiIrQP2aVjcp
-	ym4faTDF6F6dTEPhwzQ8Tx99yWONYsJGVyODjaMHMATVtUJS0w3viSL7skw4fI/YQM4g5OpCYni
-	EqvEKIdZV3RW7TjW5dcn363CHxeg
-X-Received: by 2002:a05:620a:ab04:b0:7d4:5361:bb7e with SMTP id af79cd13be357-7d9e98ce5damr393764685a.8.1751972267023;
-        Tue, 08 Jul 2025 03:57:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHjTh5AgM/mq1omdv2dUvDUu+a8oWKonU9fOdeKahIeI71KEtsWGSzhCFti0y7wkoZ1vg/4dA==
-X-Received: by 2002:a05:620a:ab04:b0:7d4:5361:bb7e with SMTP id af79cd13be357-7d9e98ce5damr393760385a.8.1751972266509;
-        Tue, 08 Jul 2025 03:57:46 -0700 (PDT)
-Received: from sgarzare-redhat ([193.207.147.103])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-702c4d5ad73sm73432866d6.92.2025.07.08.03.57.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 03:57:46 -0700 (PDT)
-Date: Tue, 8 Jul 2025 12:57:35 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Xuewei Niu <niuxuewei.nxw@antgroup.com>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, niuxuewei97@gmail.com
-Subject: Re: [PATCH net-next v6 4/4] test/vsock: Add ioctl SIOCINQ tests
-Message-ID: <uvoupm7je52ak5hwtumeyhrpou7xj6hhipktodun2xsq3t5ktb@w5iv4jsacxl6>
-References: <20250708-siocinq-v6-0-3775f9a9e359@antgroup.com>
- <20250708-siocinq-v6-4-3775f9a9e359@antgroup.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130BF2D8383
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 10:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751972283; cv=fail; b=sOH7MTTNfvR0ePOzhu4AezLRYx7yQ31v3CTfNq2I0OIRoFzyE8qlgdw+UPnfbsLAvUtzbE5p6W0QSmLO6z50djoffBDatJ9qy58ukQCmv7P6jhfE4FKlSJtsD9cTy3E/04NYOoEID1y/9mzN/i6aK6ALyYlUdbOFTpAnfqax/UE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751972283; c=relaxed/simple;
+	bh=BvJEJzaXXBbzUrixFxoM5/qXCa46QiUF7pwWm0ISUHc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=CoXFI5MPnLyKxl+IpLoMkjVJczwgUj0H7cHh8nOn+NTCyD/WiaBctE3oJkfJ1t8klDQYf2Iyto9o+AzGz8Niv8ClHX7026gK1IGHqTc7y6tKy7X1Me3p7Za4Owv3eAqQarOvc3ML8NcivWxUywUHPbn8R21thxVO3p587fRnqBQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NQD1GUbZ; arc=fail smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751972282; x=1783508282;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=BvJEJzaXXBbzUrixFxoM5/qXCa46QiUF7pwWm0ISUHc=;
+  b=NQD1GUbZBKcFpTX5FRyI6rlJ/d3I1yb6157ub3SlBvk7JVbmT2EmMFcT
+   tsjY5MCw3AIk8nRgwUroplXyQD4UoQP6afYqPdhxcbpl/R2SxWwIm4k/0
+   l2zDEidJpgqEw+VLNoXxWwVDDUOudhCxiFN2KRE0qB5PO8wdpI+rxctYH
+   nOgjudOlL0s6+JyRvxj2t+qMCR7odSH31SJAuS4GimyJ0q/ekU6Cd3HVL
+   tYVTtODI70wXC8edSIAiYlWyrOBeCCxXoGBqvegXb3fWl8qzDV0/6jotG
+   y8eWy/QElARK8qHr8lR+nxvbSOWdWKin3mGp0+0hZCTSGXPQppGWIVXuL
+   w==;
+X-CSE-ConnectionGUID: 17T387INSFCiRdRQoLf63Q==
+X-CSE-MsgGUID: jrDV4fYuTWCqgjWu9vBc5w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54135618"
+X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
+   d="scan'208";a="54135618"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 03:58:01 -0700
+X-CSE-ConnectionGUID: dd2GO06vRR+AtGvXwKet+w==
+X-CSE-MsgGUID: 0KnhksIzQim0oBoUP8PyvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
+   d="scan'208";a="186489874"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 03:58:01 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 8 Jul 2025 03:58:00 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Tue, 8 Jul 2025 03:58:00 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (40.107.96.79) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 8 Jul 2025 03:57:59 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=x4T+TGA4uXUQS4uRjwMo88cz7bevzUAAB6pibyfHQLfRGoR6K/KOKIk66+objnD7fP39cCPcBvLjNhdrxg4p/xXfMPDv2VlZqIJYpARX0NZqFWVXkW43IZBH90t+PaktOMR83v0s41HDOiNB283ap5rwIvM7PzpQa6S8xG4IhskbXTiwzK6gKXd+Dor++72yAYeBboY07RCW6XYq6/WVf67UsgqUUFI6VbjyaGCoGANgECLSynuYgyF8AYMS7gEOTTLZ13rUnkmqkRj/8baXSMbf0gs7Q78FYmDXLQgyuu9rx9/Fud0lQUgWDIo5JcUUjWJ+3eCO9x0BXhoH0VnQrg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fULGPQ/NBXZt3cPXhZKH3IlKQHlANmcLkdTEP1a/xLs=;
+ b=JWlmDo0n8xcRoRndq9QhF4HcrlOz3xKIFWTgnHGQc3Jz5XKFYkiwL4ZkcIkA48GrZdDbklJEzNdLpzm/aH5gJou/LMR1C2eYTnlG2eVQx5lOE4M227fBiYbk04yZva+DGKFaQ1oQkITFbzit1WeI2KK3+NAeIv+t0zGnHm0Ucw2TyYDBGOyhVVQzr4tklgQFPfmqJx30b2ooPdUBP+jNBIqMj+QWXIcdvurr9o3kVcusItPI+hKPwm2I6Od/+RFpedZk0diFAZcHrmsf5ymWyYIzEyn01lreIpQzxcKClFtD9uxyB7AEQDb1BNEcUFokZumlD10TNaedToG/q8+H6A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CY5PR11MB6211.namprd11.prod.outlook.com (2603:10b6:930:25::6)
+ by DS0PR11MB8051.namprd11.prod.outlook.com (2603:10b6:8:121::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.24; Tue, 8 Jul
+ 2025 10:57:58 +0000
+Received: from CY5PR11MB6211.namprd11.prod.outlook.com
+ ([fe80::df5a:a32c:8904:15f1]) by CY5PR11MB6211.namprd11.prod.outlook.com
+ ([fe80::df5a:a32c:8904:15f1%4]) with mapi id 15.20.8901.024; Tue, 8 Jul 2025
+ 10:57:57 +0000
+From: "Gupta, Anshuman" <anshuman.gupta@intel.com>
+To: Greg KH <gregkh@linuxfoundation.org>, "Nilawar, Badal"
+	<badal.nilawar@intel.com>
+CC: "intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Vivi,
+ Rodrigo" <rodrigo.vivi@intel.com>, "Usyskin, Alexander"
+	<alexander.usyskin@intel.com>, "Ceraolo Spurio, Daniele"
+	<daniele.ceraolospurio@intel.com>
+Subject: RE: [PATCH v7 0/9] Introducing firmware late binding
+Thread-Topic: [PATCH v7 0/9] Introducing firmware late binding
+Thread-Index: AQHb73KDAOJhKgF/nUe6yTSAPJzRWrQnyekAgABD5rA=
+Date: Tue, 8 Jul 2025 10:57:57 +0000
+Message-ID: <CY5PR11MB6211D6829C6B3A39D2F48013954EA@CY5PR11MB6211.namprd11.prod.outlook.com>
+References: <20250707191237.1782824-1-badal.nilawar@intel.com>
+ <2025070824-uncertain-exit-eaf9@gregkh>
+In-Reply-To: <2025070824-uncertain-exit-eaf9@gregkh>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY5PR11MB6211:EE_|DS0PR11MB8051:EE_
+x-ms-office365-filtering-correlation-id: 434d692f-c4b6-4c2c-042d-08ddbe0e4c72
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?H7vki+yBA2YzOs3aiV1bISlZEEs94Kkwz4575AiqMJkiJFG8ieEYwy8PwF1q?=
+ =?us-ascii?Q?BIBroRCw1jgAbqQRLqjhpDe0r540OWHSLLYLGJjGi5ZgQkupFVUSVKA83WeS?=
+ =?us-ascii?Q?HcuVUCX2cLtkglmKCyf6N9T3frLXPqa2J8yHTX+rNlDqBbOhEmbemDH2txW0?=
+ =?us-ascii?Q?xF5srj1kB81hCM8w/TNhb4hI4g7vwjZ+dvLj1IEpmMjKpmu5GPm+Gz1Ft8In?=
+ =?us-ascii?Q?s8Xf27c8o/JcfQsrWSsUzZp4sTK5Y8QuKXZwpInUBWumuFtq4k21xKsxCy69?=
+ =?us-ascii?Q?NN5JPb3km9jmXkaTC8g8XjURPYwFPPTHFN1B1HQ9sWyLVuO9oi/9X+Sfax1l?=
+ =?us-ascii?Q?cD3ysUOD7EtuTYTRIdeK3hX4nz21kiopQpEDem19gqwx4F6qkKStL7W/96YV?=
+ =?us-ascii?Q?Fd8ztlWqiEGA6cGriL+6hJalOQT5qXm5KlvZppthf7TiA+NbFzXjD55hS7O/?=
+ =?us-ascii?Q?PRuCKeAOfjvEcvqeedwEAft/s5LAIAuxVh6yQxsMgXUiau5cqCscdoz63UJw?=
+ =?us-ascii?Q?kW8vOZerUYhO7Rnw6JrH7GZCSzMaMWojU9gO+g7djO4aoRSYq21Zq7IY2NPh?=
+ =?us-ascii?Q?cDD9pkKThz0MPnqFdRLAnX6ICDD2u2+zMcf+vDELFUa1f+N0DEmfC6AR8LLe?=
+ =?us-ascii?Q?Kt8N8/JQl+OmgtQs+awbmJANfgiGkH0H46FNn6TD7G8TE+2EZGggmh2BLaMN?=
+ =?us-ascii?Q?r68w3TlnBBQgEDssZTcF6tjJR/IZ4kNcRyvzvRds2lvVVhI0hMOxtMmdZBC/?=
+ =?us-ascii?Q?E7Mvwdqhg6kcyrhYckF6v4UrjCs4iJi1YaUqh2t9Lu8ssIhZDOUmaQqc2ZRj?=
+ =?us-ascii?Q?7QBF+zTcLPoa4Fmc50Y0vP1tXpLBetmIfGqBER2Fg5IvPiqjDDwYtVh0iKw2?=
+ =?us-ascii?Q?3pDFc4SVtkpLsNk+w44uy0rPn9gMSDLJ5ltY6gDD4xZ8E+Lx5DupXENbXs9t?=
+ =?us-ascii?Q?lSujCHU0hsomyrzFdyBpKLSEYPWtiHo/aDWGJjrv7n/xffwcLCj7yv+5SUpk?=
+ =?us-ascii?Q?vMG/6Hw4W7ZnG0Qdgv5hHbVmxSHY4/Zkaf5H5q1Q0h+J6TVFb0uWTaLftOi0?=
+ =?us-ascii?Q?1nyZowcwvD8CVq/pHBSh2yBrrhXdcEokq5Ub7HCzBoFOrsai2FiJye5Nz9WX?=
+ =?us-ascii?Q?rcVS2X4lefg6qdWYsr7gGBvfptQ5xJ4Aw7pTRdq9ccTeKWxKMJXjo8U+l5bc?=
+ =?us-ascii?Q?SHehZcra9DVhDcCgTgCeBtM1DP2Og2tqHAyxKb3jVwfk2SBlzhp3NZCPlrMa?=
+ =?us-ascii?Q?/HcozP6uy8y2j0CHo/S+aZNa8SbAHxDYn2tHa7IfFMKT3y+aHubqHf3lgy5t?=
+ =?us-ascii?Q?tVQlT/Ml+t1L6Mc8nvKqKY5vGZBybgxl+37SRsAFoxdr+ensvFAKlUtkabh9?=
+ =?us-ascii?Q?U6pkLhu7aNTWUZ1N9JBrxASuQ1Dl8RMu+LVPV6E+l5wL1TAJhiUJxEPsLlH+?=
+ =?us-ascii?Q?ERKZfvnqhYQ=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6211.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?mecGxiad5YRourrprCbfnhyhKNhPh1umo6cq+Aux9hJkpMvWBZe1C8CvugKh?=
+ =?us-ascii?Q?WOAGeaN2sWVkOcXyNNI/ZBQ0Q+1ozj97oZNIxT2zM4sTPeTfObhHB4xQ9CHO?=
+ =?us-ascii?Q?dWGeVQmjJ+4k8X2FzkkEpeSUEyR5VRUeINmurRo2kkh1v4rn97AitI2bE1zt?=
+ =?us-ascii?Q?g3xYhTIduiT0bp1IQwoKyV8RqiLZ08acCTiNmw9dUE+DhWceZg7XS1wbhNHi?=
+ =?us-ascii?Q?FAHai6Pev+nTBc8xcmKuPhgrcMtTRaRQmIlLkoEolPKICgU47EywCCs6v72d?=
+ =?us-ascii?Q?Io6WrJv43wSV7/t8A7cYfnwmktV2JnQZwmGB1+1KYhCed1C+vuP1JDwqzpbl?=
+ =?us-ascii?Q?F3JYdXye1WtWvCM2s7B8l3zJfQRrtvf7ybANiFcDtwERKcWOoIe9uwTmIcdC?=
+ =?us-ascii?Q?gNlIZak6ThgnnPQZWKfOVHaywkIg2JcziuszzQU5hGV3apVUcUAClfgF6cTE?=
+ =?us-ascii?Q?/8uR1pDvJH8m3CEKIEbHs3NYeI9/Nhx7dJJ709FDh3FQMx/FQsKWgHppPk8T?=
+ =?us-ascii?Q?r4rgSCrBRS/VzNvFZC4pjVrGsfWa73kA673GzAR+qOT6cZi4TRxOctWrwxWO?=
+ =?us-ascii?Q?Ah5xyjv5W8XNCFI6/hPZ1qY2CeiMsdi7n+hBGUztTMH7lhkxiioh3a2BOg82?=
+ =?us-ascii?Q?TBcuEKX9uuHnQZxSj756S6LUYz9ajcio7L4stnMLYPmW6YRoUZtc5QH2HP2Y?=
+ =?us-ascii?Q?Wa4xHMZIB3RQkn9Vp36N/k/B8x/dbmUpoN4a6Pp04GxPqhzLHFmb+9WTP927?=
+ =?us-ascii?Q?xpvvvYmm6wV0mM2JfxNzvxPJwtN/f9lmDFReu4I0p5DzGsdYxud4m0aE1yf/?=
+ =?us-ascii?Q?7HAUKEDO4ay4HvoUKJHcHYSS49keHskx4jPkqrnR6wjb0QduGOm48z+Ccy+3?=
+ =?us-ascii?Q?MDD2vm1TxiQ8payuJubvo3Vw68lJW37Dw/w7sVpoOp29BPmRVfMUa/HbiKnx?=
+ =?us-ascii?Q?4g5UMbOg9kn6yaTuJ8RQQgyjmis3i3Txk3VBvxCchemQZ+VG0i5iwCxyT/lg?=
+ =?us-ascii?Q?ujddXNRG669cm8kF6Z92lDsfLdUKvdeIwU0pj+bXsXAEolCtR67aRsbmGS/L?=
+ =?us-ascii?Q?VOfb0P09YZvk/Lf6k7cDd3afyC729lev9EIazr87kADjQM3wiOb4woacAg11?=
+ =?us-ascii?Q?mAw9Mv/8Dq3Ixj/+iYUJBMcYm/Odtv17q3tOEplV3waUlMGcTWqXNQX6dyA/?=
+ =?us-ascii?Q?QW6fJJunkc0x1hOafeDH6+pZN3/OZhIi8nFq8uTYs+xZQcGWkXPBeS6/EFEO?=
+ =?us-ascii?Q?p090ZucqW97qxgX+9sM1fwPin+PpfNrbd/l1i8gEE3VSWX7hXJR7yoX+Yt3N?=
+ =?us-ascii?Q?AcLuaxTINtQGUG7JKjaRPMqbmMi56RHF93R1Iyccoo5Vv8ss6q7cwXDqLBc+?=
+ =?us-ascii?Q?+rzJYeyNraNQWGtlszFDMZy5V+GsOr0H9dkPUM8hG1jj8UWE6ph5RoVQOkid?=
+ =?us-ascii?Q?s2WELfVO6A1HKYT3J2X69vA/s/ED+rLfCwDXiIdPNB9Qk4zpP7x9Y9PWA+Xi?=
+ =?us-ascii?Q?Jcvh+w5nmvknU3+mJjgaOrDtilvVE7vRmVijid+HptmZFlXJsLj/4udITIlx?=
+ =?us-ascii?Q?uNU4e9Ggxjz6l5WNOOYTUjmr5aN/hRq0H44KOdKX?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250708-siocinq-v6-4-3775f9a9e359@antgroup.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6211.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 434d692f-c4b6-4c2c-042d-08ddbe0e4c72
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2025 10:57:57.7321
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: uky0187SE/tOx1r+sBNspYLwrUypULxK926MJtyF3ongjznRtHSuv/34HClhbnFImtNtYF0RfpgjADE6Xpsb4rOd+zJZP0Nvwb9dimMLpr8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB8051
+X-OriginatorOrg: intel.com
 
-On Tue, Jul 08, 2025 at 02:36:14PM +0800, Xuewei Niu wrote:
->Add SIOCINQ ioctl tests for both SOCK_STREAM and SOCK_SEQPACKET.
->
->The client waits for the server to send data, and checks if the SIOCINQ
->ioctl value matches the data size. After consuming the data, the client
->checks if the SIOCINQ value is 0.
->
->Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
->---
-> tools/testing/vsock/vsock_test.c | 79 ++++++++++++++++++++++++++++++++++++++++
-> 1 file changed, 79 insertions(+)
 
-While testing this, I found an issue with the previous test.
-I'll send a patch to fix that, but skipping that test, this run well:
 
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+> -----Original Message-----
+> From: Greg KH <gregkh@linuxfoundation.org>
+> Sent: Tuesday, July 8, 2025 12:19 PM
+> To: Nilawar, Badal <badal.nilawar@intel.com>
+> Cc: intel-xe@lists.freedesktop.org; dri-devel@lists.freedesktop.org; linu=
+x-
+> kernel@vger.kernel.org; Gupta, Anshuman <anshuman.gupta@intel.com>;
+> Vivi, Rodrigo <rodrigo.vivi@intel.com>; Usyskin, Alexander
+> <alexander.usyskin@intel.com>; Ceraolo Spurio, Daniele
+> <daniele.ceraolospurio@intel.com>
+> Subject: Re: [PATCH v7 0/9] Introducing firmware late binding
+>=20
+> On Tue, Jul 08, 2025 at 12:42:28AM +0530, Badal Nilawar wrote:
+> > v7:
+> >  xe_kmd:
+> >  - resolved kernel doc warnings
+> >  mei:
+> >  - Address v6 review comments (greg kh)
+>=20
+> I don't know what comments you addressed, please be specific, as in the p=
+ast
+> other ones have not been addressed (i.e. the .owner stuff) and I had to f=
+ind
+> that review again...
+V7 series patch changelog has the details of addressed review comment.
+https://patchwork.freedesktop.org/patch/662505/?series=3D151202&rev=3D3
+---
+v2:
+ - Use generic naming (Jani)
+ - Drop xe_late_bind_component struct to move to xe code (Daniele/Sasha)
+v3:
+ - Updated kconfig description
+ - Move CSC late binding specific flags/defines to late_bind_mei_interface.=
+h (Daniele)
+ - Add match for PCI_CLASS_DISPLAY_OTHER to support headless cards (Anshuma=
+n)
+v4:
+ - Add fixes in push_config (Sasha)
+ - Use INTEL_ prefix for component, refine doc,
+   add status enum to headerlate_bind_mei_interface.h (Anshuman)
+v5:
+ - Addressed review comments
+v7(greh kh):
+ - dropped sub directory
+ - dropped .owner from late_bind_component_ops
+ - In csc_heci_late_bind_req/rsp headers
+   - used __le32
+   - updated doc for reserved fields
+ - used conversion macros le32_to_cpu, cpu_to_le32
+ - fixed duplicate print in dev_dbg
+---
 
->
->diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
->index be6ce764f69480c0f9c3e2288fc19cd2e74be148..a66d2360133dd0e36940a5907679aeacc8af7714 100644
->--- a/tools/testing/vsock/vsock_test.c
->+++ b/tools/testing/vsock/vsock_test.c
->@@ -24,6 +24,7 @@
-> #include <linux/time64.h>
-> #include <pthread.h>
-> #include <fcntl.h>
->+#include <linux/sockios.h>
->
-> #include "vsock_test_zerocopy.h"
-> #include "timeout.h"
->@@ -1307,6 +1308,54 @@ static void test_unsent_bytes_client(const struct test_opts *opts, int type)
-> 	close(fd);
-> }
->
->+static void test_unread_bytes_server(const struct test_opts *opts, int type)
->+{
->+	unsigned char buf[MSG_BUF_IOCTL_LEN];
->+	int client_fd;
->+
->+	client_fd = vsock_accept(VMADDR_CID_ANY, opts->peer_port, NULL, type);
->+	if (client_fd < 0) {
->+		perror("accept");
->+		exit(EXIT_FAILURE);
->+	}
->+
->+	for (int i = 0; i < sizeof(buf); i++)
->+		buf[i] = rand() & 0xFF;
->+
->+	send_buf(client_fd, buf, sizeof(buf), 0, sizeof(buf));
->+	control_writeln("SENT");
->+
->+	close(client_fd);
->+}
->+
->+static void test_unread_bytes_client(const struct test_opts *opts, int type)
->+{
->+	unsigned char buf[MSG_BUF_IOCTL_LEN];
->+	int fd;
->+
->+	fd = vsock_connect(opts->peer_cid, opts->peer_port, type);
->+	if (fd < 0) {
->+		perror("connect");
->+		exit(EXIT_FAILURE);
->+	}
->+
->+	control_expectln("SENT");
->+	/* The data has arrived but has not been read. The expected is
->+	 * MSG_BUF_IOCTL_LEN.
->+	 */
->+	if (!vsock_ioctl_int(fd, SIOCINQ, MSG_BUF_IOCTL_LEN)) {
->+		fprintf(stderr, "Test skipped, SIOCINQ not supported.\n");
->+		goto out;
->+	}
->+
->+	recv_buf(fd, buf, sizeof(buf), 0, sizeof(buf));
->+	/* All data has been consumed, so the expected is 0. */
->+	vsock_ioctl_int(fd, SIOCINQ, 0);
->+
->+out:
->+	close(fd);
->+}
->+
-> static void test_stream_unsent_bytes_client(const struct test_opts *opts)
-> {
-> 	test_unsent_bytes_client(opts, SOCK_STREAM);
->@@ -1327,6 +1376,26 @@ static void test_seqpacket_unsent_bytes_server(const struct test_opts *opts)
-> 	test_unsent_bytes_server(opts, SOCK_SEQPACKET);
-> }
->
->+static void test_stream_unread_bytes_client(const struct test_opts *opts)
->+{
->+	test_unread_bytes_client(opts, SOCK_STREAM);
->+}
->+
->+static void test_stream_unread_bytes_server(const struct test_opts *opts)
->+{
->+	test_unread_bytes_server(opts, SOCK_STREAM);
->+}
->+
->+static void test_seqpacket_unread_bytes_client(const struct test_opts *opts)
->+{
->+	test_unread_bytes_client(opts, SOCK_SEQPACKET);
->+}
->+
->+static void test_seqpacket_unread_bytes_server(const struct test_opts *opts)
->+{
->+	test_unread_bytes_server(opts, SOCK_SEQPACKET);
->+}
->+
-> #define RCVLOWAT_CREDIT_UPD_BUF_SIZE	(1024 * 128)
-> /* This define is the same as in 'include/linux/virtio_vsock.h':
->  * it is used to decide when to send credit update message during
->@@ -2276,6 +2345,16 @@ static struct test_case test_cases[] = {
-> 		.run_client = test_stream_transport_change_client,
-> 		.run_server = test_stream_transport_change_server,
-> 	},
->+	{
->+		.name = "SOCK_STREAM ioctl(SIOCINQ) functionality",
->+		.run_client = test_stream_unread_bytes_client,
->+		.run_server = test_stream_unread_bytes_server,
->+	},
->+	{
->+		.name = "SOCK_SEQPACKET ioctl(SIOCINQ) functionality",
->+		.run_client = test_seqpacket_unread_bytes_client,
->+		.run_server = test_seqpacket_unread_bytes_server,
->+	},
-> 	{},
-> };
->
->
->-- 
->2.34.1
->
+It seems Latest series[*] after dropping patch 10 does not have details of =
+addressed review comment.
+* https://patchwork.freedesktop.org/series/151290/=20
 
+Thanks,
+Anshuman
+>=20
+> thanks,
+>=20
+> greg k-h
 
