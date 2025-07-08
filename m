@@ -1,125 +1,197 @@
-Return-Path: <linux-kernel+bounces-721624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9FA6AFCBC1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:21:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 547EBAFCBBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A213D3B811C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:20:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6DBE176403
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25B92DCF4F;
-	Tue,  8 Jul 2025 13:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UtBZFjQz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F4A2DCF69;
+	Tue,  8 Jul 2025 13:20:28 +0000 (UTC)
+Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F262DCBF8;
-	Tue,  8 Jul 2025 13:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89942DE70F;
+	Tue,  8 Jul 2025 13:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751980815; cv=none; b=MnPSjzn8xarELq8A8ff6QzoiXpxP0oxnCSZJ+7Nto/XTC++skRCWCXPMpP5q8yG3PKdAFrXet3qFjX1eIXNGemoo/1R7PzU0SW9neeLUkd3wkY54qGfW9ub7DMyV6ZNtupg6ATyG6GhKwW1bihqmtiAou3vtBPZ9sjVgsNHQN4s=
+	t=1751980828; cv=none; b=mvJfNn+twedCX+IMdKvl+OWKrcoRUWqrsOOO0cxq9WMayXTTXGXJH+l51xPzbZ+wIRNetWSoo+4bFOlE7OogM3tci3K5dJIJY5gjDGcyOlZpeVIqerNAI3MEmfnG8dowuxo2O8TKLAJOkI72RvxH2uyaWFlOOcXeYdOyzKsbQSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751980815; c=relaxed/simple;
-	bh=vQqEALJz1ALwrLeBT9fr9YvvNd5OHwds3iUxLwPNThc=;
+	s=arc-20240116; t=1751980828; c=relaxed/simple;
+	bh=UvgYD8yLXTCxrlf/fhUhHV8XKlTVg0GfV4EJFsMydgI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LzIXn8asK/yHL2CSE+hPFxEqcoFSB7hr7Nlc84N8xGGrUhmczMC2hwyxspVBk2bHTZCY9M9UX01nYVZaCSolfg7KzRp36cLo0nXEABaw3QL/mgJKu94sWPYFPQae8NFT6h38zsy+G1MkWZEgGPBb76T10k+WTdmh97LEZRGbx0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UtBZFjQz; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751980813; x=1783516813;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vQqEALJz1ALwrLeBT9fr9YvvNd5OHwds3iUxLwPNThc=;
-  b=UtBZFjQzH01e6VyN3kot2R1BhL9oQxI52Km5ImLL2NQybphSD1lNN0Al
-   l+KhPSJuNnsXfYRstkLctOebyiiD9Ezalmmc7mxRG2vWCLXFJZE9xm2s2
-   DQ3th4Dx0UENIIFmmDrf1LYH2YQ0OT22eggzkYMPVKhXFRp//vyJFOUZg
-   jp+U5RXvvXufSpPkIaZYIO0o/yOPpNC6pJBxu/mwcMlZi8O91QIhtLJS2
-   B4PLeto7nf27+eQ1XP0EntZR+gytEcOLoMcPODiUkoBYmY/qhJ1h5DeT1
-   Vc5IlEdFsZVXk3cZOrR+W9rhGWgYPpBPJeNdT0u0RP881dPAaCTQHkCTQ
-   Q==;
-X-CSE-ConnectionGUID: dAa17gRCQE++pfhwnHIHXA==
-X-CSE-MsgGUID: M9Pz/3StTL65Vss+LgKdiQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="71664658"
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="71664658"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 06:20:13 -0700
-X-CSE-ConnectionGUID: w92AbOAaRGK0YPLQCWr24w==
-X-CSE-MsgGUID: q+MfXUyGR2CgRutqV6vVyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="161047985"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 06:20:10 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uZ8Ex-0000000DZyy-1V46;
-	Tue, 08 Jul 2025 16:20:07 +0300
-Date: Tue, 8 Jul 2025 16:20:07 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Li Ming <ming.li@zohomail.com>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, dan.j.williams@intel.com,
-	shiju.jose@huawei.com, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] cxl/core: Introduce a new helper
- resource_contains_addr()
-Message-ID: <aG0bB2hrIZkq3Uv1@smile.fi.intel.com>
-References: <20250708051536.92119-1-ming.li@zohomail.com>
- <20250708051536.92119-2-ming.li@zohomail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rTeNjStllp//BVQR+WmX5nMY6qSxr8GzWeY2SHoy2s1JBhRVXGS85FbPHiZSYNSKwaaIBMVZHN2OzN1tNePHYXoo111dsTSmZn6DcNsIiYB2GrOMawajZd2q6adQXA9bD8UlN1lcx7xhgTgeRL2yY9KXY3nuPiX0Lfrc7xFg2MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
+Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
+	by leonov.paulk.fr (Postfix) with ESMTPS id 820731F00051;
+	Tue,  8 Jul 2025 13:20:18 +0000 (UTC)
+Received: by laika.paulk.fr (Postfix, from userid 65534)
+	id 438CFACB30E; Tue,  8 Jul 2025 13:20:16 +0000 (UTC)
+X-Spam-Level: 
+Received: from collins (unknown [192.168.1.1])
+	by laika.paulk.fr (Postfix) with ESMTPSA id BDF2AACB19F;
+	Tue,  8 Jul 2025 13:20:14 +0000 (UTC)
+Date: Tue, 8 Jul 2025 15:20:12 +0200
+From: Paul Kocialkowski <paulk@sys-base.io>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 4/4] arm64: dts: allwinner: a133-liontron-h-a133l: Add
+ Ethernet support
+Message-ID: <aG0bDAEdFOGUejxn@collins>
+References: <20250707165155.581579-1-paulk@sys-base.io>
+ <20250707165155.581579-5-paulk@sys-base.io>
+ <20250708003348.58fe509f@minigeek.lan>
+ <20250708004731.37fa5129@minigeek.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UXoQYDNF1awfe9Lb"
 Content-Disposition: inline
-In-Reply-To: <20250708051536.92119-2-ming.li@zohomail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
-
-On Tue, Jul 08, 2025 at 01:15:34PM +0800, Li Ming wrote:
-> In CXL subsystem, many functions need to check an address availability
-> by checking if the resource range contains the address. Providing a new
-> helper function resource_contains_addr() to check if the resource range
-> contains the input address.
-
-...
-
-> +bool resource_contains_addr(const struct resource *res, const resource_size_t addr);
-
-Right, the problem is that it collides with the resource namespace. Please, add a prefix.
-
-bool cxl_resource_contains_addr(const struct resource *res, const resource_size_t addr);
-
-...
-
-> +bool resource_contains_addr(const struct resource *res, const resource_size_t addr)
-> +{
-> +	if (res->flags & IORESOURCE_MEM)
-
-resource_type() ?
-
-> +		return res->start <= addr && addr <= res->end;
-> +
-> +	return false;
-
-I still think using DEFINE_RES_MEM() with resource_contains() is a better
-approach.
-
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
+In-Reply-To: <20250708004731.37fa5129@minigeek.lan>
 
 
+--UXoQYDNF1awfe9Lb
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Andre,
+
+Le Tue 08 Jul 25, 00:48, Andre Przywara a =C3=A9crit :
+> On Tue, 8 Jul 2025 00:34:25 +0100
+> Andre Przywara <andre.przywara@arm.com> wrote:
+>=20
+> Hi Paul,
+>=20
+> forgot to mention: can you please add an ethernet0 alias, to make
+> U-Boot generate a MAC address, from the SID?
+
+Ah yes, sorry I forgot to do that. Will respin the series then.
+
+Cheers,
+
+Paul
+
+> Cheers,
+> Andre
+>=20
+> > On Mon,  7 Jul 2025 18:51:55 +0200
+> > Paul Kocialkowski <paulk@sys-base.io> wrote:
+> >=20
+> > Hi Paul,
+> >=20
+> > > The Liontron H-A133L board features an Ethernet controller with a
+> > > JLSemi JL1101 PHY. Its reset pin is tied to the PH12 GPIO.
+> > >=20
+> > > Note that the reset pin must be handled as a bus-wide reset GPIO in
+> > > order to let the MDIO core properly reset it before trying to read
+> > > its identification registers. There's no other device on the MDIO bus=
+=2E =20
+> >=20
+> > putting the PHY reset GPIO into the MDIO node is a clever solution, I
+> > was struggling with putting it either in the MAC or PHY node, though
+> > conceptually it would still belong in the latter, I think. But this
+> > might be a more generic problem: for most other devices we activate
+> > reset and clock gates *before* trying to access them, though this might
+> > be historically different for Ethernet PHYs.
+> > =20
+> > > The datasheet of the PHY mentions that the reset signal must be held
+> > > for 1 ms to take effect. Make it 2 ms (and the same for post-delay) to
+> > > be on the safe side without wasting too much time during boot.
+> > >=20
+> > > Signed-off-by: Paul Kocialkowski <paulk@sys-base.io> =20
+> >=20
+> > Despite the above, this looks fine, and works for me:
+> >=20
+> > Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+> > Tested-by: Andre Przywara <andre.przywara@arm.com>
+> >=20
+> > Cheers,
+> > Andre
+> >=20
+> > > ---
+> > >  .../sun50i-a133-liontron-h-a133l.dts          | 19 +++++++++++++++++=
+++
+> > >  1 file changed, 19 insertions(+)
+> > >=20
+> > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a133-liontron-h-a13=
+3l.dts b/arch/arm64/boot/dts/allwinner/sun50i-a133-liontron-h-a133l.dts
+> > > index fe77178d3e33..90a50910f07b 100644
+> > > --- a/arch/arm64/boot/dts/allwinner/sun50i-a133-liontron-h-a133l.dts
+> > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a133-liontron-h-a133l.dts
+> > > @@ -65,6 +65,25 @@ &ehci1 {
+> > >  	status =3D "okay";
+> > >  };
+> > > =20
+> > > +&emac0 {
+> > > +	pinctrl-names =3D "default";
+> > > +	pinctrl-0 =3D <&rmii0_pins>;
+> > > +	phy-handle =3D <&rmii_phy>;
+> > > +	phy-mode =3D "rmii";
+> > > +	status =3D "okay";
+> > > +};
+> > > +
+> > > +&mdio0 {
+> > > +	reset-gpios =3D <&pio 7 12 GPIO_ACTIVE_LOW>; /* PH12 */
+> > > +	reset-delay-us =3D <2000>;
+> > > +	reset-post-delay-us =3D <2000>;
+> > > +
+> > > +	rmii_phy: ethernet-phy@1 {
+> > > +		compatible =3D "ethernet-phy-ieee802.3-c22";
+> > > +		reg =3D <1>;
+> > > +	};
+> > > +};
+> > > +
+> > >  &mmc0 {
+> > >  	vmmc-supply =3D <&reg_dcdc1>;
+> > >  	cd-gpios =3D <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */ =20
+> >=20
+>=20
+
+--=20
+Paul Kocialkowski,
+
+Independent contractor - sys-base - https://www.sys-base.io/
+Free software developer - https://www.paulk.fr/
+
+Expert in multimedia, graphics and embedded hardware support with Linux.
+
+--UXoQYDNF1awfe9Lb
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmhtGwwACgkQhP3B6o/u
+lQzLLQ/+Pw5wVE4z1rxkYQTcF2Mvg737ilRn/gazwASk3lyRmY36noqeBeDrizYW
+L8cUAwDU1ggWc0LG+6CYyD0V2jglITFzuHz+5qP1HPZv5unxWPqfl1c0IB6amFVq
++CGP8zlXwMIELM6XhYAhr5QHZcKk/vj9qkJ4GFOJ8c9dKWaFhYBM3DqZeeCaGInG
+dSfrAERWYrUxGLnmRf/cYkV4I+VxsJOKAyh9W4BUDrcL/ip6k6KziCJpSx0FvJcy
+Dzt33+1trnN2gKW+WMeAFMs2/8ntNYZY8S8idW0SGQ9q6o6iWl/Ppox1h57W7TSi
+qzcD7mvoQutYxgNJeoVMT0RSnKnDkzjoxvK7xxLV1zVla7g2q3BtCg0mu8SqY0Fd
+VHdJ5CeemfeAQ1268f+P4TCStmNdphhJCiEx62ORkx2k3DbMXfwTkq+MdmNzWLEb
+vs1wc3avXcRPZg3ufBNMwkdufbWBJZ2R3qIoyM2rDfWYBo078oFoWmAgvupTly2a
+AVSI3stjZQjm4bed/HZR2ZZo5NgmH1AF16hoQo+WjjeS1y0QVjAlw/rxSel6juxx
+yPlHa2/5I0oeF9x0gHX0U8AI5nB27/7D0DY+yvtWtbCZIADlQpuMzU17HeDoYZ+K
+Ypy3saPmDsSCfvKCqkYveWZq1wRy79iVf4tTyiPQ+fi+Gkamhso=
+=2DGs
+-----END PGP SIGNATURE-----
+
+--UXoQYDNF1awfe9Lb--
 
