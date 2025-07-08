@@ -1,84 +1,106 @@
-Return-Path: <linux-kernel+bounces-721777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49339AFCDC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:35:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7344AFCDC7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27F651897ED9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:34:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34C081885DA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901D02E0402;
-	Tue,  8 Jul 2025 14:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="u6eO9xcf"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953222DC354;
+	Tue,  8 Jul 2025 14:34:16 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6852D2DAFCC;
-	Tue,  8 Jul 2025 14:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F039F21B184;
+	Tue,  8 Jul 2025 14:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751985221; cv=none; b=SAwB7aRPVDj5TO4pMO0LxSWSBIxf5dTGC0HYp+fK2XNRiFn3A/9uOJYYWW+m3jA2kikCgbyS0XWLspsPVdD5+zgcT1UmlB3zj4eZU9ccx5NHRU8BMGKcowWd0mdMQEySTvWQfz/IjHJLDhtL7V7ZhMSmLuZtcLRXr1ba0Q+BOQM=
+	t=1751985256; cv=none; b=bQk+8V1cAjppOm5I/HvHAa1Iq8TCZqtLpJnZaaFjuZzFamCKO9kVVxKsJo+jmEsuBFgCxSW1qO8vxbovugri/yJuccWOCaG1o5qau278tKl67LA0sn7wmB4s46FgCTHJoBXTsVhJ16UUv77GtOMYFxTgEuom4fffJtUGS+opAHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751985221; c=relaxed/simple;
-	bh=3XrEcxV9R9YR0M0lRSTBHME+sP4TmaTv2G0TNp4On1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WfEm9ukitUEB378N8/BLt0jJGjP+UfDMyhme1YQY88gSJhiCB7+VZkUY+4v6b0xEtccnAblX0YRQ2DFmquuaxIpNm8S+AxJAg534Pl43/Y8kHGgBxvhQT7ly4Wvj6M9JIBvGZdlr2awxzhRiR0lBEzoRzNZ1GrJL4MUDXPf+FzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=u6eO9xcf; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=qt1Dm8hg4+cw50oWqi6P/j/pVrWP76gL+389q1zKEUU=; b=u6eO9xcfoR44wPODuVnEoYieT0
-	bDjS4u8R883wqyvoMQS+55McSgo4HVBObJERb0b4TBsGKInZFzuQBNGEgC+l1xMmgA3JpVpcxDxlk
-	E0U96Y8eatK3qtYsdFTmChtEPdd/43tPoMkQbN8NTotXCf8pSWfjbMrgw8Z/M47d4Hxg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uZ9Ny-000pU8-Du; Tue, 08 Jul 2025 16:33:30 +0200
-Date: Tue, 8 Jul 2025 16:33:30 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
-	shenjian15@huawei.com, liuyonglong@huawei.com,
-	chenhao418@huawei.com, jonathan.cameron@huawei.com,
-	shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
-	arnd@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 02/11] net: hns3: clean up the build warning in
- debugfs by use seq file
-Message-ID: <0531ff61-c88a-4029-92f1-fe463e973cb7@lunn.ch>
-References: <20250708130029.1310872-1-shaojijie@huawei.com>
- <20250708130029.1310872-3-shaojijie@huawei.com>
+	s=arc-20240116; t=1751985256; c=relaxed/simple;
+	bh=OP8Xe7kdCGxwZTk0/Uhbn9t7nQoxeuX/Abg2txz/bH0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p1qKvGFaeZI5cD3e9GtStlUzmu3usMO8shU+jyU++4VqA13OqAIAHbFc12jj4RJGU5kbgYlt+weBATevjBm90/OtPfUhbvli8w218nHc7myOsXYFgjsUUAbibFDnKVLMSJqJ+T0R93uODI/7Vt4Y4qH0SdblHYSxphW1Gpd/r0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from ofsar (unknown [116.232.48.207])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 3A6FC340FFC;
+	Tue, 08 Jul 2025 14:34:03 +0000 (UTC)
+From: Yixun Lan <dlan@gentoo.org>
+To: ukleinek@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	p.zabel@pengutronix.de,
+	drew@pdp7.com,
+	inochiama@gmail.com,
+	geert+renesas@glider.be,
+	heylenay@4d2.org,
+	tglx@linutronix.de,
+	hal.feng@starfivetech.com,
+	unicorn_wang@outlook.com,
+	duje.mihanovic@skole.hr,
+	heikki.krogerus@linux.intel.com,
+	Guodong Xu <guodong@riscstar.com>
+Cc: Yixun Lan <dlan@gentoo.org>,
+	elder@riscstar.com,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev
+Subject: Re: (subset) [PATCH v3 0/6] pwm: Update PWM_PXA driver for SpacemiT K1
+Date: Tue,  8 Jul 2025 22:33:55 +0800
+Message-ID: <175198458423.86859.5882458274157023095.b4-ty@gentoo.org>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250429085048.1310409-1-guodong@riscstar.com>
+References: <20250429085048.1310409-1-guodong@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250708130029.1310872-3-shaojijie@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 08, 2025 at 09:00:20PM +0800, Jijie Shao wrote:
-> From: Jian Shen <shenjian15@huawei.com>
+
+On Tue, 29 Apr 2025 16:50:42 +0800, Guodong Xu wrote:
+> This patchset adds support for the SpacemiT K1 SoC in the PWM_PXA driver
+> and updates related device tree bindings. The changes enable PWM
+> functionality on the K1 platform through driver enhancements,
+> configuration updates, and device tree additions.
 > 
-> Arnd reported that there are two build warning for on-stasck
-> buffer oversize. As Arnd's suggestion, using seq file way
-> to avoid the stack buffer or kmalloc buffer allocating.
+> Functionality has been verified on the Banana Pi BPI-F3 board using PWM14,
+> configured as a pwm-backlight. Per community feedback, the actual
+> pwm-backlight node is not included in this patchset but can be found in
+> patch 7 of the v1 series, with modification of pwms property to 4-cell
+> format to match updated binding (#pwm-cells = <3>) since v3.
 > 
-> Reported-by: Arnd Bergmann <arnd@kernel.org>
-> Closes: https://lore.kernel.org/all/20250610092113.2639248-1-arnd@kernel.org/
-> Signed-off-by: Jian Shen <shenjian15@huawei.com>
-> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> [...]
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Applied, thanks!
 
-    Andrew
+[3/6] riscv: dts: spacemit: add PWM support for K1 SoC
+      https://github.com/spacemit-com/linux/commit/9aebdfc21f755e0d2766683aa251435fb656ea47
+[4/6] riscv: dts: spacemit: add pwm14_1 pinctrl setting
+      https://github.com/spacemit-com/linux/commit/8709d51024068d4c81dc785d63169d283d147cf3
+
+Best regards,
+-- 
+Yixun Lan
+
 
