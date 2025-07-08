@@ -1,138 +1,146 @@
-Return-Path: <linux-kernel+bounces-721193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A46AAFC5F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:43:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F2C8AFC5CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B92F43B058A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:42:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71120167246
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF5E2BE04C;
-	Tue,  8 Jul 2025 08:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A602BE057;
+	Tue,  8 Jul 2025 08:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mx7zYsnL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TNZazJ7S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2AC1220F3F
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 08:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3831E231E;
+	Tue,  8 Jul 2025 08:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751964177; cv=none; b=N20QOqau+Pwjv8Why3I8WbRv1reFwsL31rKLh6FyuJuBHXH0pgt+RxxafdwK1Q2+GzpTlG2NfTgnN3f7KCa0JPNiOaEklhkM42D3PQg/6mc5ljkVLgc/DIMfuSeRUHy2naMKRiBgLzFitb8smihcW/jqn0TzPP3fMI/sUO7bx0Y=
+	t=1751963698; cv=none; b=Ak9qd6adUw4fpXJt/rZzkCIQivgVmdC8lSUXQFwAbfOqJUybr1VcSHqvobKybjK2oUa2Y70B+lRzR5dsivHdltf0rxluSFi5SzwlGzDsTnoIalgu3qxmK9XeL44l0pjcvykyEY3GeK548TNcb0S5unMCg/+Qe12bq32J5/lcLbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751964177; c=relaxed/simple;
-	bh=3W2W/I5PQ0k88njtcDlNpRAxY+PQLpS+bhmOD8piEcc=;
+	s=arc-20240116; t=1751963698; c=relaxed/simple;
+	bh=2Jz1qIaKUbxfjh+EnpAbS6pNmd5Pwbb3QUeKA2lWqes=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SLHmxW68En+Eqx32X8cH4qbLU312g1ytpGyZuAFxqdNZUEOJdq/Daclqy6oH1mbKbwawASWVufZI9XD0q7fExWSv8KtUz7Rg3w1254lSU7q6ZQ2abvGC0kgcMP/FADnGctIDv5vjV6/x1jD8wFgBBnTNJDFC3a3nlkeS3KPiw0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mx7zYsnL; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751964176; x=1783500176;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3W2W/I5PQ0k88njtcDlNpRAxY+PQLpS+bhmOD8piEcc=;
-  b=mx7zYsnLnA87j8LLqsayhx7qq+FXYTaqsol4dW9muA+8i46LV8WdU4U7
-   XlrQqt53BPQDdbwitqYzMC9nXy8qBL9+t9eaW0bIu2DKWahlqeOwtTWOM
-   esLZsqSuOwURZNEBIdKuxiNUEkUyhcgAUAF5QODUnps5V58RR+o+1tDWO
-   +XIUiiLDvddCHm+Ag0TbdeL7FiIPjXj+vD32HA207uC9LMXCL1P5z+y4Z
-   6D4OIsz5TRSyHMziduoTmtSFa/aAAzR/S1X/vMUoY2m72SIEKH3hSoc2F
-   KMRM7O7CeM1B7lbljT2lYsWdB9PVijmtii8/HP2jasi053XAhqnxLTA4/
-   g==;
-X-CSE-ConnectionGUID: +9GyfippS5aCnJbeCPvpEg==
-X-CSE-MsgGUID: 0tI0uOb6SFec/5GQayuG2A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="53911985"
-X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
-   d="scan'208";a="53911985"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 01:42:56 -0700
-X-CSE-ConnectionGUID: 856l2fiJR0yNJyojHfaWLA==
-X-CSE-MsgGUID: K3I5cnZkSmGB5o9/Etfl8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
-   d="scan'208";a="159974860"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa004.jf.intel.com with ESMTP; 08 Jul 2025 01:42:52 -0700
-Date: Tue, 8 Jul 2025 16:34:37 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: jgg@nvidia.com, jgg@ziepe.ca, kevin.tian@intel.com, will@kernel.org,
-	aneesh.kumar@kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, joro@8bytes.org, robin.murphy@arm.com,
-	shuah@kernel.org, nicolinc@nvidia.com, aik@amd.com,
-	dan.j.williams@intel.com, yilun.xu@intel.com
-Subject: Re: [PATCH v3 2/5] iommufd: Destroy vdevice on idevice destroy
-Message-ID: <aGzYHR0+/mjufmUQ@yilunxu-OptiPlex-7050>
-References: <20250627033809.1730752-1-yilun.xu@linux.intel.com>
- <20250627033809.1730752-3-yilun.xu@linux.intel.com>
- <b5b84208-e43c-483e-838b-c42375d3bada@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ld0uoR36Sfqd0uT0gl7sBc+rqOHa10QGZMTyvFXTv/MqdbX1tW2cTXic/Of0gFrEew0mFcTdE1I5gfxD5PRwzyB4+jX/bgMuca8tova/rviBrTU1NY7+/+iweeFXG5lviriGMHDx8G+f5WDuYYGXkHM+0lVyw4A7T4/T6pGhZec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TNZazJ7S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABCD4C4CEED;
+	Tue,  8 Jul 2025 08:34:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751963698;
+	bh=2Jz1qIaKUbxfjh+EnpAbS6pNmd5Pwbb3QUeKA2lWqes=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TNZazJ7SNy74UDkThqwB6ngXolMFPE4YQIak1LVtjrjLOQqhZb2lyIL1zDfvKyss5
+	 8zZaVhRWqqvYx6+BZRknWfKOrFiHmj4bG/6KptMbcaVq9xYFQdYnBKHaNmi6ZGqq8T
+	 hNuoO5w5SgW+IA3hmVWLxWWIcAJ9DUGHwE7K0omaO5srh0oo2XRu97/L6QAtTR3O2k
+	 se5093I87pD3BnlIR+HKXRXOGs+/QOvjwyrtT5BEdokep7OAgEfxgIWtCgDhWnozKK
+	 6Zv97ge9pV/StWeXK6qM3J0Y8B5x1c4SSaXHCiqcmli1VOmcen9XVrKtgzKpSYTcqr
+	 AVghupSINM7Zw==
+Date: Tue, 8 Jul 2025 10:34:55 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Taishi Shimizu <s.taishi14142@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Hauke Mehrtens <hauke@hauke-m.de>, Rafal Milecki <zajec5@gmail.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 2/2] ARM: dts: BCM5301X: Add support for Buffalo
+ WXR-1750DHP
+Message-ID: <20250708-elite-indigo-wombat-faa74f@krzk-bin>
+References: <20250625154315.114139-1-s.taishi14142@gmail.com>
+ <20250625154315.114139-2-s.taishi14142@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <b5b84208-e43c-483e-838b-c42375d3bada@linux.intel.com>
+In-Reply-To: <20250625154315.114139-2-s.taishi14142@gmail.com>
 
-> > -void iommufd_vdevice_destroy(struct iommufd_object *obj)
-> > +void iommufd_vdevice_abort(struct iommufd_object *obj)
-> >   {
-> >   	struct iommufd_vdevice *vdev =
-> >   		container_of(obj, struct iommufd_vdevice, obj);
-> >   	struct iommufd_viommu *viommu = vdev->viommu;
-> > +	struct iommufd_device *idev = vdev->idev;
-> > +
-> > +	lockdep_assert_held(&idev->igroup->lock);
-> > +
-> > +	/*
-> > +	 * iommufd_vdevice_abort() could be reentrant, by
-> > +	 * iommufd_device_unbind() or by iommufd_destroy(). Cleanup only once.
-> > +	 */
-> > +	if (!viommu)
-> > +		return;
-> >   	/* xa_cmpxchg is okay to fail if alloc failed xa_cmpxchg previously */
-> >   	xa_cmpxchg(&viommu->vdevs, vdev->id, vdev, NULL, GFP_KERNEL);
-> >   	refcount_dec(&viommu->obj.users);
-> >   	put_device(vdev->dev);
-> > +	vdev->viommu = NULL;
-> > +	idev->vdev = NULL;
-> 
-> I feel it makes more sense to reorder the operations like this:
-> 
-> 	vdev->viommu = NULL;
-> 	vdev->idev = NULL;
-> 	idev->vdev = NULL;
-> 	put_device(vdev->dev);
-> 
-> put_device(vdev->dev) could potentially trigger other code paths that
-> might attempt to reference vdev or its associated pointers. Therefore,
-> it's safer to null all the relevant reference pointers before calling
-> put_device().
+On Thu, Jun 26, 2025 at 12:43:15AM +0900, Taishi Shimizu wrote:
+> +
+> +#include "bcm4708.dtsi"
+> +#include "bcm5301x-nand-cs0-bch8.dtsi"
+> +
+> +/ {
+> +	compatible = "buffalo,wxr-1750dhp", "brcm,bcm4708";
+> +	model = "Buffalo WXR-1750DHP";
+> +
+> +	chosen {
+> +		bootargs = "console=ttyS0,115200";
 
-Yep. due to other changes, now I keep:
+Please use stdout path property.
 
-        xa_cmpxchg(&viommu->vdevs, vdev->id, vdev, NULL, GFP_KERNEL);
-        refcount_dec(&viommu->obj.users);
-+       idev->vdev = NULL;
-        put_device(vdev->dev);
+> +	};
+> +
+> +	memory@0 {
+> +		reg = <0x00000000 0x08000000>,
+> +		      <0x88000000 0x08000000>;
+> +		device_type = "memory";
+> +	};
+> +
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +
+> +		button-aoss {
+> +			label = "AOSS";
+> +			linux,code = <KEY_WPS_BUTTON>;
+> +			gpios = <&chipcommon 2 GPIO_ACTIVE_LOW>;
+> +		};
+> +
+> +		/* GPIO 8 and 9 are a tri-state switch button with
+> +		 * ROUTER / AP / WB.
+> +		 */
+> +		button-bridge {
+> +			label = "WB";
+> +			linux,code = <BTN_2>;
+> +			linux,input-type = <EV_SW>;
+> +			gpios = <&chipcommon 8 GPIO_ACTIVE_HIGH>;
+> +		};
+> +
+> +		/* GPIO 3 is a switch button with AUTO / MANUAL. */
+> +		button-manual {
+> +			label = "MANUAL";
+> +			linux,code = <BTN_0>;
+> +			linux,input-type = <EV_SW>;
+> +			gpios = <&chipcommon 3 GPIO_ACTIVE_HIGH>;
+> +		};
+> +
+> +		button-restart {
+> +			label = "Reset";
+> +			linux,code = <KEY_RESTART>;
+> +			gpios = <&chipcommon 11 GPIO_ACTIVE_LOW>;
+> +		};
+> +
+> +		button-router {
+> +			label = "ROUTER";
+> +			linux,code = <BTN_1>;
+> +			linux,input-type = <EV_SW>;
+> +			gpios = <&chipcommon 9 GPIO_ACTIVE_HIGH>;
+> +		};
+> +	};
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +
+> +		led-power0 {
+> +			label = "bcm53xx:white:power";
 
-Anyway, vdev->dev would be completely dropped in next patch, so it
-doesn't matter much.
+You should use rather color and function properties.
 
-Thanks,
-Yilun
+> +			linux,default-trigger = "default-on";
+> +			gpios = <&chipcommon 5 GPIO_ACTIVE_HIGH>;
+> +		};
 
-> 
-> Others look good to me,
-> 
-> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-> 
-> Thanks,
-> baolu
+Best regards,
+Krzysztof
+
 
