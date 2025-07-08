@@ -1,153 +1,126 @@
-Return-Path: <linux-kernel+bounces-721419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54874AFC8F5
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E10CCAFC8F6
 	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76D433A220D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:53:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B0443AF10E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4635A2D9EC9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD902D8765;
 	Tue,  8 Jul 2025 10:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XGyi8GX/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FwZ/5rka"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5992D9ECF
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 10:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1552D8397;
+	Tue,  8 Jul 2025 10:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751971985; cv=none; b=fdlPjge8ax5dV/YPGwzeG8IuIEpNhYbyA6tiXSGTOWEheqos6vy4/v/BxNEsNa/ffY+ehxWUX3PXRrWZB0v9+VTuKDSo7+yXMsFRSJ5jpegJUoS58nywMfOnvlDvVzELlVwpDob6RqYl1NZCmjTGEmCiQZ/HkGcH2qOCWl+Guso=
+	t=1751971985; cv=none; b=e7GnzzwI2wy1CGo4bjrM13B5qTBNpcW+vqQ3CWyqa/BXfkqBc/Dmf429wHDJpLN2mRKCuzWoj6VJZxlz9jFGUrRC/NIPm0O+lf06P/U0MG5+gPHRxpSmBngOO/u41buEo7NmaBu9GJQpknmkxVxmYHOLp43Xbb+bDni6zne41zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751971985; c=relaxed/simple;
-	bh=1un7ouFwyBTSYIMY4zpatIXNYHrEz24iVPhqyQXJbbc=;
+	bh=O+3HEWQa9m+oJ5zzQvZwOjr1f4UKgVaCi0+vnwA0Qf0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dnsPjOxQPN/fFsM0X6EV5Qs9m+j5ZG6rktIE/wKFpgtB0dZjW5gvZgx3H+DdBverhVmmRB4DVTBhjnPNnORw3m2AENAyHdhFwt2nhsyPRV9atIVdsh5AqRlfrfDSkCLwWtCrM8Xt1wJ6LaiCiUweKoHu5ZW87WfuKop8OmiW/NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XGyi8GX/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751971981;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=315fIenJWHN1D0z1wGXcALO7wPGrPSPVrNC7//PcDEU=;
-	b=XGyi8GX/BAF+tOmfHqd+RUxlCdsxzRVbD05HGxZ4kjHqn77OVe3cH1oDFRK3iEp19O6miC
-	2iYcWQ5gEJbkXmhZcZg5rxFWU3tGzHXpC+KHzOz5S7HI46bCAzBuyNEOWIDBOcmME0ehI0
-	4hpTPjKK1AOxhEM86Axbj1IeOsakvVs=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-562-MwWP6XeiOK2gDkoLEBegIw-1; Tue, 08 Jul 2025 06:53:00 -0400
-X-MC-Unique: MwWP6XeiOK2gDkoLEBegIw-1
-X-Mimecast-MFC-AGG-ID: MwWP6XeiOK2gDkoLEBegIw_1751971980
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4a42d650185so55372561cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 03:53:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751971980; x=1752576780;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=315fIenJWHN1D0z1wGXcALO7wPGrPSPVrNC7//PcDEU=;
-        b=BfWf9q/dXGMroVv4VRG2R9NaQY79xRRWxVzUKraqL245qdDz6JgiP6itd0REtHS1S9
-         CGF0PTLhI1pz32PTnoweLUQDY7R5N9CBXJKUmX7z6sBwYg34C9oDeGt4y5jjzrp+WPbY
-         OxXewyQ5RwLeHwZeSrUKc2iloThnMpjkRdwubUEmm/cVEC4a+varNwt8cfuoqLQlWL82
-         yGwWJJV1a4TUMZFSiaPrKQfphLZeSccdsvpZV2d5iU8PUTTwuQt63If5kBwOfUk9GQAM
-         /NuCsOATTxZtyJJpLntT5vTTlLLKrmDrrS+XO/oOuE9HllLBf7BknFYkbdpSeNwqitmK
-         m4KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKPAz+QjhU8p/IH/EUga4c4nJGRUtCJS+3P5NTrwU5Srzc50TLx5gQfJzVc34465UUIv8/HfqnN6H2rlw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKnNYN/CXhiMC8I3WbaOih1ehX7mILSwzQnXec70VRc+mrA7xK
-	+Y1CG98ThH2BnBOLUBXqWeO/mDU/BFMn9jt/fyHSYQc9eyHxmGP97q1KTRtlSygeDwcJ8eGkH9/
-	I+2v/PregFHZAqwJd7H/vaiSv7JzM7hqZvzJY1zVrhyxMVXT2E9revIeCo6ODusZBvw==
-X-Gm-Gg: ASbGnct2W1JdgkEm2Yo3Glx6CGj2kiEluxdWEAUj5hlxoyj4iSlhE4h7S5XETF+8lDb
-	pBZNDr9G48YpKVkhvFsdB5Pq11sePClNarxQppjPx3RNsBekMMz3dzWdgwi0x2hXcWcFbvqT33c
-	ExVM8gxGqwLchv6ClvQKYQFE3E8SCszVzYK2oo9pqUmPnHCyA3RDoxiC/+DDtz/nrHYmhoRqN04
-	GLLczASFxi4aQyPgH99QIPLdMzdg9rrMH4+yO/tv85TAse6IIje7cDJKcmSxMQVQXCxHxx6zbPa
-	4XOuJ/wSkcdXGU8WXA2TzBJbGBPH
-X-Received: by 2002:ac8:7f95:0:b0:4a9:ae5a:e8a6 with SMTP id d75a77b69052e-4a9ae5afc23mr175966911cf.47.1751971979584;
-        Tue, 08 Jul 2025 03:52:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFzvc7u8j+WEd/fQJxoq873TigcJMGy49ozcWVyaqRVCjfg4qBqi9tMZtBOChGJAAMzAMDFrQ==
-X-Received: by 2002:ac8:7f95:0:b0:4a9:ae5a:e8a6 with SMTP id d75a77b69052e-4a9ae5afc23mr175966551cf.47.1751971979134;
-        Tue, 08 Jul 2025 03:52:59 -0700 (PDT)
-Received: from sgarzare-redhat ([193.207.147.103])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a994aa85edsm77449631cf.74.2025.07.08.03.52.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 03:52:58 -0700 (PDT)
-Date: Tue, 8 Jul 2025 12:52:51 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Xuewei Niu <niuxuewei.nxw@antgroup.com>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, niuxuewei97@gmail.com
-Subject: Re: [PATCH net-next v6 2/4] vsock: Add support for SIOCINQ ioctl
-Message-ID: <lh5vti5lmcxddhnfsz5pjhu7oepcbxcflqkyhlpwnwqzbe7tku@yw7bwfgafcby>
-References: <20250708-siocinq-v6-0-3775f9a9e359@antgroup.com>
- <20250708-siocinq-v6-2-3775f9a9e359@antgroup.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kwORxRwB87iNr7o3bRoTCT73fXYOSomI+kJr0MI7yp5ykoFPBC3hjLWIdUgXEN5M3+9eVE78MmI0gWMPkcGnpVc/tnbYwGZQUDNtleqOmqMFmWgSgUGybMFsK+61FhoUIrUeiiaf2QKB9dh0DYsgCcYMuCNdmsKdsEScy/HuoPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FwZ/5rka; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751971984; x=1783507984;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=O+3HEWQa9m+oJ5zzQvZwOjr1f4UKgVaCi0+vnwA0Qf0=;
+  b=FwZ/5rkaJRN6qGhZqVzobX4N6dXuyIoQ34O/KuCsGAbiOPFFimjKY5tX
+   i1uND+lz3a6Zvl453h6I8P/O9HfRHqZ5L+1xu8//oTQZQoPLXJ/g4w+xF
+   +c5qtyEywhovVxV1ard/0bi4riXPdVc/b1vFuRISA85v61Tt/TOU6aVU3
+   5t19FjbX7c1FkjpDX8AVt1xuA+IVMpPlMJXf0lr78FiGkQoIaKeYzRW6G
+   NF+GSTEDrcl+Ng7maKP5ZAXkKHeDJz7SugnhIftAJ0cmW8D5CMUn6hkmE
+   2oUj3a8QoKOWQLYZEEowVQW3Fryin9K+SpsMp4BVXvwCCILFYs/QgSta9
+   Q==;
+X-CSE-ConnectionGUID: /V+/YtlJStWKhOggov6RZQ==
+X-CSE-MsgGUID: MKBmul4fSQGb+jN9lKKhLw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="65558075"
+X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
+   d="scan'208";a="65558075"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 03:53:03 -0700
+X-CSE-ConnectionGUID: C9rRNF7FRmWDZ78R4vbJGA==
+X-CSE-MsgGUID: 9husKVlrTXy4SJLvTtJwwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
+   d="scan'208";a="156211127"
+Received: from cpetruta-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.230])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 03:53:01 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id B20131208E5;
+	Tue,  8 Jul 2025 13:52:58 +0300 (EEST)
+Date: Tue, 8 Jul 2025 10:52:58 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Crt Mori <cmo@melexis.com>, David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 38/80] iio: temperature: Remove redundant
+ pm_runtime_mark_last_busy() calls
+Message-ID: <aGz4ikEwFAstpIvG@kekkonen.localdomain>
+References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+ <20250704075428.3219924-1-sakari.ailus@linux.intel.com>
+ <CAKv63utwwwQVMrAZAGy9rkk5fFPncQ=TzggZf6K0s-+GB-oi6g@mail.gmail.com>
+ <20250706112502.72441d9e@jic23-huawei>
+ <20250706112631.33bd5a4d@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250708-siocinq-v6-2-3775f9a9e359@antgroup.com>
+In-Reply-To: <20250706112631.33bd5a4d@jic23-huawei>
 
-On Tue, Jul 08, 2025 at 02:36:12PM +0800, Xuewei Niu wrote:
->Add support for SIOCINQ ioctl, indicating the length of bytes unread in the
->socket. The value is obtained from `vsock_stream_has_data()`.
->
->Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
->---
-> net/vmw_vsock/af_vsock.c | 22 ++++++++++++++++++++++
-> 1 file changed, 22 insertions(+)
+Hi Jonathan,
 
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+On Sun, Jul 06, 2025 at 11:26:31AM +0100, Jonathan Cameron wrote:
+> On Sun, 6 Jul 2025 11:25:02 +0100
+> Jonathan Cameron <jic23@kernel.org> wrote:
+> 
+> > On Fri, 4 Jul 2025 18:00:02 +0200
+> > Crt Mori <cmo@melexis.com> wrote:
+> > 
+> > > If that is the case then:
+> > > Acked-by: Crt Mori<cmo@melexis.com>
+> > > 
+> > > 
+> > > 
+> > > On Fri, 4 Jul 2025 at 09:54, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:  
+> > > >
+> > > > pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> > > > pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> > > > to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+> > > > pm_runtime_mark_last_busy().
+> > > >
+> > > > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>  
+> > No {} issues in here so applied to the testing branch of iio.git.
+> > I'll push it out as togreg later in the week at which point linux-next
+> > will see it.
+> > 
+> Actually - change of plan.  I'll wait on your set with the others fixed
+> up as I don't want to pull in the pm-runtime change if I'm only going
+> to have a few of these ready by the end of the cycle. I don't mind merging
+> that with the whole lot if they are ready though.
 
->
->diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
->index 2e7a3034e965db30b6ee295370d866e6d8b1c341..bae6b89bb5fb7dd7a3a378f92097561a98a0c814 100644
->--- a/net/vmw_vsock/af_vsock.c
->+++ b/net/vmw_vsock/af_vsock.c
->@@ -1389,6 +1389,28 @@ static int vsock_do_ioctl(struct socket *sock, unsigned int cmd,
-> 	vsk = vsock_sk(sk);
->
-> 	switch (cmd) {
->+	case SIOCINQ: {
->+		ssize_t n_bytes;
->+
->+		if (!vsk->transport) {
->+			ret = -EOPNOTSUPP;
->+			break;
->+		}
->+
->+		if (sock_type_connectible(sk->sk_type) &&
->+		    sk->sk_state == TCP_LISTEN) {
->+			ret = -EINVAL;
->+			break;
->+		}
->+
->+		n_bytes = vsock_stream_has_data(vsk);
->+		if (n_bytes < 0) {
->+			ret = n_bytes;
->+			break;
->+		}
->+		ret = put_user(n_bytes, arg);
->+		break;
->+	}
-> 	case SIOCOUTQ: {
-> 		ssize_t n_bytes;
->
->
->-- 
->2.34.1
->
+Thanks for the review. I'll send v2 of the iio-related patches soonish.
 
+-- 
+Kind regards,
+
+Sakari Ailus
 
