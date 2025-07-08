@@ -1,132 +1,111 @@
-Return-Path: <linux-kernel+bounces-721503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B09BAAFCA16
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:07:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64514AFCA18
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BBF8189838C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:07:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C7F11BC56E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA722DAFAE;
-	Tue,  8 Jul 2025 12:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74DD2DA76D;
+	Tue,  8 Jul 2025 12:09:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s4Ol3iwJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="pBMNc9/v"
+Received: from mail-106112.protonmail.ch (mail-106112.protonmail.ch [79.135.106.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4856801;
-	Tue,  8 Jul 2025 12:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7391238D53
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 12:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751976414; cv=none; b=JcDMSwa2X93EMu/uX4v49TWSRaqzzHWtvX4MG+AefqrssbC7r6OCfqRgL6d9ZnNeWwcf/02szdnBBxRws7Ip4W/mmdDXmwtNLewTfh15ON9p4heF65TM37X0xw45HUDh7WEbwCNdV4z545bYxe5LzjdOuNcXSDOxygrEOrxgtK4=
+	t=1751976576; cv=none; b=NMtINCHRcZbOoG061as4ZmmnYa8Wcra9YMJxptEIKGc+BfXIYCVvYenMqKdhXokAtzkzDUy64VKcYIy1eBRDFWYjOBSaFMpGXDGdooWnAAJWJZ3As0eMUdICaW4Nb/wFHIPbW9txCAyr5LnItzFX1t5foXmgCIEPUq8wxGVyWog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751976414; c=relaxed/simple;
-	bh=Kp+7+tPAvccy71FanvJSzbOLd0z4kN89DqWYezw1OYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L+Pklfw6CURlFJVa0qebXMuEKLNZCq7/6j2mYp+H2XGX4kTCdXCEyNy2eyDK2HswW5B6i14m0dQNKBhfFy77/qXrsvpPzZTv7gAuK02Y9lWjCbSGVnsz1lnoSP5pirzJcdn7yLGtmwY8PasmiRxeaSJsB5Un6TsXo2/UBcaA+QA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s4Ol3iwJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BD93C4CEED;
-	Tue,  8 Jul 2025 12:06:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751976413;
-	bh=Kp+7+tPAvccy71FanvJSzbOLd0z4kN89DqWYezw1OYU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s4Ol3iwJuZ3bPifC90ngIr53J9DwqfI6SbJ5ng6mhsvmmhKJUSP01KISqF+xudx5r
-	 OwNqQVnrJ4kgc1lmi+fQdvA0puZRnmrNIscNKhk5x+qQ848zPKeKACjmQZlA8St0fV
-	 Wh5vNh7wUnm4qxPx7+pAli1/51YHFmtJSZMusuSZuTl+gmd4JhiDkCdnWCI/H5I1ks
-	 daIfLQQN7QeyVcgmSHDG4twzeXB/Ep5gXJRK1YtdaaDN50mReflr3MzMrYthKL7TRa
-	 VEK8qO2fuRa1AUaPB9bVOUF38SjH0Q+6EnxeFRNWiQ3OyIyapOpfsk4PRDL5JY2WCt
-	 ethkWrczJo/aQ==
-Date: Tue, 8 Jul 2025 15:06:47 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Christoph Hellwig <hch@lst.de>, Jonathan Corbet <corbet@lwn.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Alexander Potapenko <glider@google.com>,
-	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, iommu@lists.linux.dev,
-	virtualization@lists.linux.dev, kasan-dev@googlegroups.com,
-	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH 0/8] dma-mapping: migrate to physical address-based API
-Message-ID: <20250708120647.GG592765@unreal>
-References: <CGME20250625131920eucas1p271b196cde042bd39ac08fb12beff5baf@eucas1p2.samsung.com>
- <cover.1750854543.git.leon@kernel.org>
- <35df6f2a-0010-41fe-b490-f52693fe4778@samsung.com>
- <20250627170213.GL17401@unreal>
- <20250630133839.GA26981@lst.de>
- <69b177dc-c149-40d3-bbde-3f6bad0efd0e@samsung.com>
- <20250708110007.GF592765@unreal>
- <261f2417-78a9-45b8-bcec-7e36421a243c@samsung.com>
+	s=arc-20240116; t=1751976576; c=relaxed/simple;
+	bh=YThqgd8Hr0iqLD8U3Uf8SX7+JGexDAHHky/5vfYBvrw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=A/n3KsmdKh1on7HJvvSOsmxhugFshm+4Wz8iOSWSCUUaNSa0CUzLRDGnnWpQnVUMJm3NiIU9SbQpvY9IS2H00iQ6UarnRZfX4EykfPwct42XsdUjKcLnGOfWwFPEuri83j0OsDT8T8pxrho10gNfLN35NZ5eWfBO+dSIv9aEvIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=pBMNc9/v; arc=none smtp.client-ip=79.135.106.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
+	s=protonmail; t=1751976564; x=1752235764;
+	bh=rm8J5seC925zvsKJXNFZQeFgzMxHj8uQznDHJ7BLLrk=;
+	h=From:Date:Subject:Message-Id:To:Cc:From:To:Cc:Date:Subject:
+	 Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=pBMNc9/vKEzixlbA8SA2sYNlwrgCt1zuAZvhACSn3v8oEGgBiAG7LojdlYvMYAfu/
+	 Ywko6ShcV9KO4MmG3TSbaqm3QFp7ZAtRiodYG/inDYxI6SoDDDsK48QCH6ZvCKvD7f
+	 tGFp+ymELZHm1lGGmpaB7wyiRyjaQMx3sM+yTYZKWoc2FfNPm+nWS9y0HLNfG016s+
+	 gKjGadGYXPd8FQWkpGdK0o+JW4Ybovs/T5dFn8w3+pro/xIzAKJoyxk1b8sArWEAQ7
+	 6Ix/Z9bi9M2t01eFVsWZ42OG/LcSR/3SYRG1dPR+6nNmuEvZpRM0dCH8I39om3RSsK
+	 XfcpEFOdIMByA==
+X-Pm-Submission-Id: 4bc0Jt5sNqzB57
+From: Sean Nyekjaer <sean@geanix.com>
+Date: Tue, 08 Jul 2025 14:09:17 +0200
+Subject: [PATCH] iio: imu: inv_icm42600: fix temperature reading if
+ accel/gyro is off
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <261f2417-78a9-45b8-bcec-7e36421a243c@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250708-icm42temp-v1-1-81af60aab82a@geanix.com>
+X-B4-Tracking: v=1; b=H4sIAGwKbWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDcwML3czkXBOjktTcAl0zI0ujxKSUlCSzVDMloPqCotS0zAqwWdGxtbU
+ ArqD1MVsAAAA=
+X-Change-ID: 20250708-icm42temp-6292abddb6e6
+To: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, 
+ Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Sean Nyekjaer <sean@geanix.com>
+X-Mailer: b4 0.14.2
 
-On Tue, Jul 08, 2025 at 01:45:20PM +0200, Marek Szyprowski wrote:
-> On 08.07.2025 13:00, Leon Romanovsky wrote:
-> > On Tue, Jul 08, 2025 at 12:27:09PM +0200, Marek Szyprowski wrote:
-> >> On 30.06.2025 15:38, Christoph Hellwig wrote:
-> >>> On Fri, Jun 27, 2025 at 08:02:13PM +0300, Leon Romanovsky wrote:
-> >>>>> Thanks for this rework! I assume that the next step is to add map_phys
-> >>>>> callback also to the dma_map_ops and teach various dma-mapping providers
-> >>>>> to use it to avoid more phys-to-page-to-phys conversions.
-> >>>> Probably Christoph will say yes, however I personally don't see any
-> >>>> benefit in this. Maybe I wrong here, but all existing .map_page()
-> >>>> implementation platforms don't support p2p anyway. They won't benefit
-> >>>> from this such conversion.
-> >>> I think that conversion should eventually happen, and rather sooner than
-> >>> later.
-> >> Agreed.
-> >>
-> >> Applied patches 1-7 to my dma-mapping-next branch. Let me know if one
-> >> needs a stable branch with it.
-> > Thanks a lot, I don't think that stable branch is needed. Realistically
-> > speaking, my VFIO DMA work won't be merged this cycle, We are in -rc5,
-> > it is complete rewrite from RFC version and touches pci-p2p code (to
-> > remove dependency on struct page) in addition to VFIO, so it will take
-> > time.
-> >
-> > Regarding, last patch (hmm), it will be great if you can take it.
-> > We didn't touch anything in hmm.c this cycle and have no plans to send PR.
-> > It can safely go through your tree.
-> 
-> Okay, then I would like to get an explicit ack from Jérôme for this.
+Avoid return invalid argument if one tries to read the temperature,.
+if both the accelerometer and gyro are off. Power the accelerometer on
+before reading the temperature.
+The original state will be restored by runtine_suspend() or the next
+reading of the accelerometer.
 
-Jerome is not active in HMM world for a long time already.
-HMM tree is managed by us (RDMA) https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/log/?h=hmm
-➜  kernel git:(m/dmabuf-vfio) git log --merges mm/hmm.c
-...
-Pull HMM updates from Jason Gunthorpe:
-...
+Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+---
+ drivers/iio/imu/inv_icm42600/inv_icm42600_core.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=58ba80c4740212c29a1cf9b48f588e60a7612209
-+hmm		git	git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git#hmm
+diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+index a4d42e7e21807f7954def431e9cf03dffaa5bd5e..f97376bc8bb3dd225236e3f5036fd58af4af35ac 100644
+--- a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
++++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+@@ -399,9 +399,14 @@ int inv_icm42600_set_gyro_conf(struct inv_icm42600_state *st,
+ int inv_icm42600_set_temp_conf(struct inv_icm42600_state *st, bool enable,
+ 			       unsigned int *sleep_ms)
+ {
+-	return inv_icm42600_set_pwr_mgmt0(st, st->conf.gyro.mode,
+-					  st->conf.accel.mode, enable,
+-					  sleep_ms);
++	enum inv_icm42600_sensor_mode accel = st->conf.accel.mode;
++
++	if (st->conf.gyro.mode == INV_ICM42600_SENSOR_MODE_OFF &&
++	    st->conf.accel.mode == INV_ICM42600_SENSOR_MODE_OFF)
++		accel = INV_ICM42600_SENSOR_MODE_LOW_POWER;
++
++	return inv_icm42600_set_pwr_mgmt0(st, st->conf.gyro.mode, accel,
++					  enable, sleep_ms);
+ }
+ 
+ int inv_icm42600_enable_wom(struct inv_icm42600_state *st)
 
-We just never bothered to reflect current situation in MAINTAINERS file.
+---
+base-commit: 3e28fa06444e7031aba0b3552cce332b776fe267
+change-id: 20250708-icm42temp-6292abddb6e6
 
-Thanks
+Best regards,
+-- 
+Sean Nyekjaer <sean@geanix.com>
+
 
