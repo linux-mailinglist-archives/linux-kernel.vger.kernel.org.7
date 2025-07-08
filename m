@@ -1,126 +1,197 @@
-Return-Path: <linux-kernel+bounces-721420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E10CCAFC8F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:54:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BCA8AFC8FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B0443AF10E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:53:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D69D1711CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD902D8765;
-	Tue,  8 Jul 2025 10:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1D02D8764;
+	Tue,  8 Jul 2025 10:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FwZ/5rka"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GI92zCoM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1552D8397;
-	Tue,  8 Jul 2025 10:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3558E267B9B
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 10:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751971985; cv=none; b=e7GnzzwI2wy1CGo4bjrM13B5qTBNpcW+vqQ3CWyqa/BXfkqBc/Dmf429wHDJpLN2mRKCuzWoj6VJZxlz9jFGUrRC/NIPm0O+lf06P/U0MG5+gPHRxpSmBngOO/u41buEo7NmaBu9GJQpknmkxVxmYHOLp43Xbb+bDni6zne41zY=
+	t=1751972091; cv=none; b=iqJqNihWzAMMY166hjDDwMCXr9a9F/t5PsdI6bYSNqDnE5ZBm8ZPQb0m/fmIMr+WvkO6lysjOD93YmXCgHgY3I+22AUO9zwrxxhAmuUyZV2BNCKbspVxWrcwFa4li8EqjjhDb3MlDHqdENbIdkcbXlC6nJwcTXew7sDZH+1RU8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751971985; c=relaxed/simple;
-	bh=O+3HEWQa9m+oJ5zzQvZwOjr1f4UKgVaCi0+vnwA0Qf0=;
+	s=arc-20240116; t=1751972091; c=relaxed/simple;
+	bh=pt6duYiMCIehtx4IxrjJmNZ1YzZaoG3aJy7HoAatvQw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kwORxRwB87iNr7o3bRoTCT73fXYOSomI+kJr0MI7yp5ykoFPBC3hjLWIdUgXEN5M3+9eVE78MmI0gWMPkcGnpVc/tnbYwGZQUDNtleqOmqMFmWgSgUGybMFsK+61FhoUIrUeiiaf2QKB9dh0DYsgCcYMuCNdmsKdsEScy/HuoPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FwZ/5rka; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751971984; x=1783507984;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=O+3HEWQa9m+oJ5zzQvZwOjr1f4UKgVaCi0+vnwA0Qf0=;
-  b=FwZ/5rkaJRN6qGhZqVzobX4N6dXuyIoQ34O/KuCsGAbiOPFFimjKY5tX
-   i1uND+lz3a6Zvl453h6I8P/O9HfRHqZ5L+1xu8//oTQZQoPLXJ/g4w+xF
-   +c5qtyEywhovVxV1ard/0bi4riXPdVc/b1vFuRISA85v61Tt/TOU6aVU3
-   5t19FjbX7c1FkjpDX8AVt1xuA+IVMpPlMJXf0lr78FiGkQoIaKeYzRW6G
-   NF+GSTEDrcl+Ng7maKP5ZAXkKHeDJz7SugnhIftAJ0cmW8D5CMUn6hkmE
-   2oUj3a8QoKOWQLYZEEowVQW3Fryin9K+SpsMp4BVXvwCCILFYs/QgSta9
-   Q==;
-X-CSE-ConnectionGUID: /V+/YtlJStWKhOggov6RZQ==
-X-CSE-MsgGUID: MKBmul4fSQGb+jN9lKKhLw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="65558075"
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="65558075"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 03:53:03 -0700
-X-CSE-ConnectionGUID: C9rRNF7FRmWDZ78R4vbJGA==
-X-CSE-MsgGUID: 9husKVlrTXy4SJLvTtJwwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="156211127"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.230])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 03:53:01 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id B20131208E5;
-	Tue,  8 Jul 2025 13:52:58 +0300 (EEST)
-Date: Tue, 8 Jul 2025 10:52:58 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Crt Mori <cmo@melexis.com>, David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 38/80] iio: temperature: Remove redundant
- pm_runtime_mark_last_busy() calls
-Message-ID: <aGz4ikEwFAstpIvG@kekkonen.localdomain>
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
- <20250704075428.3219924-1-sakari.ailus@linux.intel.com>
- <CAKv63utwwwQVMrAZAGy9rkk5fFPncQ=TzggZf6K0s-+GB-oi6g@mail.gmail.com>
- <20250706112502.72441d9e@jic23-huawei>
- <20250706112631.33bd5a4d@jic23-huawei>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QeAXVZdw5QKbmY4WPJCwmELQU5YNVztNH2lvHrMTkWQshWsgon6fPqHx6rUlD4PxIwzEe8dsaBDc4iv4sHO4y6hYKoa4j/pWmOWh17f932dkbflooK1pcAhDES7LJsaaGh63xQMazjRzHQU5ATnoNgC6QQBowmJYwtzCCvmGkBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GI92zCoM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751972089;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6zVRF5eqOqy+l/yn1UXOkezwlr4g/SUUPIur6RAL+Y0=;
+	b=GI92zCoMp0TWkjJDZyJ47jPze8MoOLG5s3GmikRFb4Sab1HJSBOR4Vq2/kVyfMG+Wk/NVn
+	P1zzu8YmukUBG0AYFw4xHgCajFlolVF2QUXx2zuGVVnAeyIYAcgl3Aij9cnHAhgprd2qme
+	/4PRv3PBdQICFcH0VWPbTP+Y6xsSwak=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-633-0Se5acErMLq9SH7JfPZC5g-1; Tue, 08 Jul 2025 06:54:47 -0400
+X-MC-Unique: 0Se5acErMLq9SH7JfPZC5g-1
+X-Mimecast-MFC-AGG-ID: 0Se5acErMLq9SH7JfPZC5g_1751972087
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7d444d21b24so682016685a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 03:54:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751972087; x=1752576887;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6zVRF5eqOqy+l/yn1UXOkezwlr4g/SUUPIur6RAL+Y0=;
+        b=mGy6CvUTqPfUdJnmXr1uIN78JlpLr/IDEvVudxkTV/+yVRfgHx+miPwRJRm6kLmnlP
+         MnpLm3hkN+nCcqJeF1dp1ci3Hfsz7oC80IQK4uzVrNuHjtUj/0NzK+U7Pdyz/KtGoh8G
+         dIlW3YnFXtmuwtr9e2q6KRTsBvg1jz9pUo1Klxn6qQyNtG95t4TbRS23l5nSe208ZBvx
+         1Vo3MFi0ClA8QAjnRhF7zHm2XcKCFj+eKFbngZ5PV+dwy43ychItUFaOCUAZpNH6L1wp
+         tyOCPCPYnYGCSaKSMN2tXx8x2NPB1n9Mpt9bOVaE9B1tZ3j0Yxtu0wYU7BXE8uIh55BM
+         cOVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrfNCAQ95zi+1+z8ltfZNRoQr6NYIBefzt9nFtrofu9B5Qiz0dB0URZbC8LJ5MFpX7gsLfV0+w/gUuqrw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdXUAfgudQH7PoDAFkCQ7zB5NZ9X6OAaTAKuNDI/c3ha08bE7v
+	tbOGzAyWXn5BwyS1UA4O6prypcDScpXVlmZ5+nMNnkZC6Vjl6gZ0GixE2k06d+UL2GBSpdQlx1N
+	iQFUwVIw7RviFa16jzi+2vwLYW4yWI+2YJg+BOaEdu8nWGgyXJiJJKAEMB6XSdWaUKw==
+X-Gm-Gg: ASbGnctpUnadXLsRAUABqzCcHEIWkq1u214xoyx1O8k9VYezb/bfE1HNC65K43DSq15
+	ujkvYvAq65EF3SSnbg9ZwvvYVIlJEAIRjr2g8nTD0GO3POJ1DT6uEa3Mn5CfhbNGdM/abkz7Sin
+	26BWB8NLtXXONDF05GWu+XEsbBd2AO2NJfeZOwyV1/nZsD85y0pw7T/iQSHSFMZQk3jjAThx1Xg
+	ejCL/hOuMiO3gAo3j5rJNWgu5bs6Geq1Cn4qd/6jmQAEP0dgX2KO9TsAIsHk8iOoXTXZy/d7DUL
+	dGd4m17bE2tM2sNIIEweni0rCLuP
+X-Received: by 2002:a05:620a:4089:b0:7d3:8f51:a5a5 with SMTP id af79cd13be357-7da04137a83mr344298185a.51.1751972087279;
+        Tue, 08 Jul 2025 03:54:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGODJ+k5iQwpBD8zrN9hRkPcNeibB7riAG/EN8ncnQ9dHTW0DTOP7oRQy4VBda/jQ7Oc5xqfg==
+X-Received: by 2002:a05:620a:4089:b0:7d3:8f51:a5a5 with SMTP id af79cd13be357-7da04137a83mr344292285a.51.1751972086595;
+        Tue, 08 Jul 2025 03:54:46 -0700 (PDT)
+Received: from sgarzare-redhat ([193.207.147.103])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d5dbe8f861sm757715685a.86.2025.07.08.03.54.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 03:54:46 -0700 (PDT)
+Date: Tue, 8 Jul 2025 12:54:37 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Xuewei Niu <niuxuewei.nxw@antgroup.com>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, niuxuewei97@gmail.com
+Subject: Re: [PATCH net-next v6 3/4] test/vsock: Add retry mechanism to ioctl
+ wrapper
+Message-ID: <xvteph5sh4wkvfaa754xxakufgwkjzjawzfttnfqcvmei2zcpf@ig6fawckff2h>
+References: <20250708-siocinq-v6-0-3775f9a9e359@antgroup.com>
+ <20250708-siocinq-v6-3-3775f9a9e359@antgroup.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20250706112631.33bd5a4d@jic23-huawei>
+In-Reply-To: <20250708-siocinq-v6-3-3775f9a9e359@antgroup.com>
 
-Hi Jonathan,
+On Tue, Jul 08, 2025 at 02:36:13PM +0800, Xuewei Niu wrote:
+>Wrap the ioctl in `ioctl_int()`, which takes a pointer to the actual
+>int value and an expected int value. The function will not return until
+>either the ioctl returns the expected value or a timeout occurs, thus
+>avoiding immediate failure.
+>
+>Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
+>---
+> tools/testing/vsock/util.c | 30 +++++++++++++++++++++---------
+> tools/testing/vsock/util.h |  1 +
+> 2 files changed, 22 insertions(+), 9 deletions(-)
 
-On Sun, Jul 06, 2025 at 11:26:31AM +0100, Jonathan Cameron wrote:
-> On Sun, 6 Jul 2025 11:25:02 +0100
-> Jonathan Cameron <jic23@kernel.org> wrote:
-> 
-> > On Fri, 4 Jul 2025 18:00:02 +0200
-> > Crt Mori <cmo@melexis.com> wrote:
-> > 
-> > > If that is the case then:
-> > > Acked-by: Crt Mori<cmo@melexis.com>
-> > > 
-> > > 
-> > > 
-> > > On Fri, 4 Jul 2025 at 09:54, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:  
-> > > >
-> > > > pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> > > > pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> > > > to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> > > > pm_runtime_mark_last_busy().
-> > > >
-> > > > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>  
-> > No {} issues in here so applied to the testing branch of iio.git.
-> > I'll push it out as togreg later in the week at which point linux-next
-> > will see it.
-> > 
-> Actually - change of plan.  I'll wait on your set with the others fixed
-> up as I don't want to pull in the pm-runtime change if I'm only going
-> to have a few of these ready by the end of the cycle. I don't mind merging
-> that with the whole lot if they are ready though.
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
-Thanks for the review. I'll send v2 of the iio-related patches soonish.
+>
+>diff --git a/tools/testing/vsock/util.c b/tools/testing/vsock/util.c
+>index 803f1e075b62228c25f9dffa1eff131b8072a06a..1e65c5abd85b8bcf5886272de15437d7be13eb89 100644
+>--- a/tools/testing/vsock/util.c
+>+++ b/tools/testing/vsock/util.c
+>@@ -17,6 +17,7 @@
+> #include <unistd.h>
+> #include <assert.h>
+> #include <sys/epoll.h>
+>+#include <sys/ioctl.h>
+> #include <sys/mman.h>
+> #include <linux/sockios.h>
+>
+>@@ -101,28 +102,39 @@ void vsock_wait_remote_close(int fd)
+> 	close(epollfd);
+> }
+>
+>-/* Wait until transport reports no data left to be sent.
+>- * Return false if transport does not implement the unsent_bytes() callback.
+>+/* Wait until ioctl gives an expected int value.
+>+ * Return false if the op is not supported.
+>  */
+>-bool vsock_wait_sent(int fd)
+>+bool vsock_ioctl_int(int fd, unsigned long op, int expected)
+> {
+>-	int ret, sock_bytes_unsent;
+>+	int actual, ret;
+>+	char name[32];
+>+
+>+	snprintf(name, sizeof(name), "ioctl(%lu)", op);
+>
+> 	timeout_begin(TIMEOUT);
+> 	do {
+>-		ret = ioctl(fd, SIOCOUTQ, &sock_bytes_unsent);
+>+		ret = ioctl(fd, op, &actual);
+> 		if (ret < 0) {
+> 			if (errno == EOPNOTSUPP)
+> 				break;
+>
+>-			perror("ioctl(SIOCOUTQ)");
+>+			perror(name);
+> 			exit(EXIT_FAILURE);
+> 		}
+>-		timeout_check("SIOCOUTQ");
+>-	} while (sock_bytes_unsent != 0);
+>+		timeout_check(name);
+>+	} while (actual != expected);
+> 	timeout_end();
+>
+>-	return !ret;
+>+	return ret >= 0;
+>+}
+>+
+>+/* Wait until transport reports no data left to be sent.
+>+ * Return false if transport does not implement the unsent_bytes() callback.
+>+ */
+>+bool vsock_wait_sent(int fd)
+>+{
+>+	return vsock_ioctl_int(fd, SIOCOUTQ, 0);
+> }
+>
+> /* Create socket <type>, bind to <cid, port>.
+>diff --git a/tools/testing/vsock/util.h b/tools/testing/vsock/util.h
+>index fdd4649fe2d49f57c93c4aa5dfbb37b710c65918..142c02a6834acb7117aca485b661332b73754b63 100644
+>--- a/tools/testing/vsock/util.h
+>+++ b/tools/testing/vsock/util.h
+>@@ -87,6 +87,7 @@ int vsock_stream_listen(unsigned int cid, unsigned int port);
+> int vsock_seqpacket_accept(unsigned int cid, unsigned int port,
+> 			   struct sockaddr_vm *clientaddrp);
+> void vsock_wait_remote_close(int fd);
+>+bool vsock_ioctl_int(int fd, unsigned long op, int expected);
+> bool vsock_wait_sent(int fd);
+> void send_buf(int fd, const void *buf, size_t len, int flags,
+> 	      ssize_t expected_ret);
+>
+>-- 
+>2.34.1
+>
 
--- 
-Kind regards,
-
-Sakari Ailus
 
