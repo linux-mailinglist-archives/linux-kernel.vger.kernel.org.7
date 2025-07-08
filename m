@@ -1,137 +1,221 @@
-Return-Path: <linux-kernel+bounces-722233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC336AFD6B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:54:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B8B1AFD6BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB0D4484297
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:54:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D14B4A7632
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE462E424A;
-	Tue,  8 Jul 2025 18:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23D72E6126;
+	Tue,  8 Jul 2025 18:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PNW8ZYDS"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NO16XS0f"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD8018A6AE;
-	Tue,  8 Jul 2025 18:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8788321ABCB
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 18:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752000864; cv=none; b=gJ7Wyw/jobB94YYfNu2urvaPG93O3PxD/PlBscus5+8XpVJWvEon+19i+V20HguqAd+IcFlChfbQZriRw3IFDg2Xz3HT3pjOh6S8nsoLVjqWa/tR2blVd5CchawlOYW9Gl3K12av2MKMLYLhEj24iIxWD6zKNVH4uwsk+iQU4pE=
+	t=1752000952; cv=none; b=cnLc3sk/Iv/6g0mUUPZYmErJWTCzYO9cMWQg+BYJbdhZ0cFFdrZB4tl03pAHkcS/r8P93VyZnwmsvnqUkrWoFU9XKcMtC8TUBAEuML53f4G5biGrIlVbYq12m+KfkFHI7IHo1zZ4VW/dszPbao4UNGJNceYA+TyQpL1BZr3xsZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752000864; c=relaxed/simple;
-	bh=iHrprSWM7/6hpdqzqQ6gGLaagDMcN5uqUot4NgPKRyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mW4RqA8LgO0Fx/WHtt4pSM+gIurjIrH3XTL0ST/PcmKyWdcX7AhUnHWF+FJuzmY6Qb5nTNHXCu2OdNwRBaoX9fWl8icbtWb2GWPnWA3oHkb7B5oNqOx4mcauu49PMWH/fS/7e/4pWu/hEcXbmH4gVbfNDJwqxEUPnLQTFbrvSUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PNW8ZYDS; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=C1NkiKgWNE5ywbtL7S/nXgXmek8pvm/xPwVgZdNL1Fg=; b=PNW8ZYDS/YHlg9K8YLXO6sjcT9
-	IwZ3aYoqzCRceXxjQS3miT7itxTCyZi8Fwcd3DyiqQtuFIwGMlZLnuFPI01WX3baZNezontr3kHSe
-	sl4IEajWnIucTZ7l+8mdr3N39NOqRa7Z3rOgeh0hIzlac3fS1omvaFb29SQshYCNz+T42nN2/jV4H
-	fou+3oG+0dcq0i0L1wXZ0y7qCW/OCBp7oNWWyidxFDDioZBIvT8PVdrhCwNJwMFgfKSEMrWU9+moz
-	eaNeZ9zMYOeBi5vpLxgMN6402aRASF+nrM4bOV13iq22AjYhGNuJjMmpJfZVvMqnGs5L0YWc42kCV
-	CaB+/9Gg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uZDSH-00000008mM4-1U8K;
-	Tue, 08 Jul 2025 18:54:13 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id DF086300125; Tue, 08 Jul 2025 20:54:12 +0200 (CEST)
-Date: Tue, 8 Jul 2025 20:54:12 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Wander Lairson Costa <wander@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:TRACING" <linux-trace-kernel@vger.kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Clark Williams <williams@redhat.com>,
-	Gabriele Monaco <gmonaco@redhat.com>
-Subject: Re: [PATCH v3 2/2] tracing/preemptirq: Optimize
- preempt_disable/enable() tracepoint overhead
-Message-ID: <20250708185412.GC477119@noisy.programming.kicks-ass.net>
-References: <20250704170748.97632-1-wander@redhat.com>
- <20250704170748.97632-3-wander@redhat.com>
- <20250707112003.GY1613376@noisy.programming.kicks-ass.net>
- <33jax5mmu7mdt6ph5t5bb7fvprbypxhefrvgrc2ru4p2dpqldg@d6af6oc6442r>
+	s=arc-20240116; t=1752000952; c=relaxed/simple;
+	bh=xTGNfOSJzth56pNWxhRD7XWCKofNAfL+zE0LKJHwAuo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=R28mpwC3Qjou0eS9sCf0RcatdXLDM5DjvlwCF9rjyts3zJyuR+9aV76kaaPGSsT8x5k+eaMdXQ9+PlqQJXvxL3lnH4c1g/E2Hu4pyTudalyJ1nRWQfvozOM9xA1SDHbCll6kqVHU7LO1gAxG3ZU/ZbqBtvamuYSA/U1lmhEiLO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NO16XS0f; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-235f6b829cfso32553405ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 11:55:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752000950; x=1752605750; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fi49isHjUbTCoTuN9wAATX2asE3D5qC38lugMILs33w=;
+        b=NO16XS0fALieVZluKdWnyv2SEPSWuDlWxvyZnDRrGzIpRnRoI8Y1FX6ohHPYUwGy3E
+         +moVkwULXPLg9Sb13LFQFHI/z3jN8Bi/TegB0HdkBFYHMnkI8Op5tmLZyPr7CzXxyeRf
+         qH0QvrtwXcjZrOkpclmN0Y6oBB2YQfDvlqF9hlk49Q41VY1Ja0ovQ9y45IGoGFhmUuT7
+         BxLZnhXXWbk8mLph1bq4OIgcKQhkxp5tJKh8br92Hnt9CZOWOex8KuUIvZ6bMXSwNVUA
+         WiA2DnpzPJQnTFAIPm6+er6XrJJLHb+wFL5qqa2cAc8y7dGtK0pFn0uIvNF23/Um1Rsl
+         597Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752000950; x=1752605750;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fi49isHjUbTCoTuN9wAATX2asE3D5qC38lugMILs33w=;
+        b=Uoz7XLgokIylK8xnA+/TACQyzIBgOlozWTivmfCxKQhCdUnGpUVaE0hdT/brU3VfYU
+         rN5F6FsfkgWXjax7JT8NdjBXpq6UcCzmuLlr8uzMqvL3XhHhPCMxuJGv4jPAFCVHqdA3
+         +rxXHVqqERon96OIH3wevvuKw49PIWuXsBZOQO99HrwKJ0H7L/s1cYaeiKjrsTM1BKcL
+         sgrehNGnvkHI4LWzalu+FHDE0xBjl8N8e6+EYbwErX2cYTzWc0Ets11v6rqJ/CNkLmWe
+         qNmZz0ulDxFxDuvjaTiEntOT+f856uZGzK4hPgUvXGf7nfAsCGYKTCubkCx+Tqt0qtSt
+         N1Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCXADgNussPzXuGVSsAAG42cu4ksRzAnpEZ0oEMgSgAvG7On9qjS0GpHvdKmbwUvL884wR9tbWIBJxXLnYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5gDKjbTg8VvbX4rD0ucNU8Sv15jE77ASe2AsVod44wniYPDmd
+	XYF8t8Y/gJsNY+dH6v5knn/RKKFNKcjVg9CCwnBJb6kleNDGFtsd/8Jmjoom6uwJCUAJQFAq1+L
+	mHmogcg==
+X-Google-Smtp-Source: AGHT+IEFMwD1SUZ6NWjUN/Oq62lH5zXOf8LQ57ZZYUcKAc0E0p/gulNYcvCDjCJG+mP3axWJpVjPcEFNH7M=
+X-Received: from pjtd3.prod.google.com ([2002:a17:90b:43:b0:312:18d4:6d5e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:c88e:b0:31a:bc78:7fe1
+ with SMTP id 98e67ed59e1d1-31c2ee7d9dbmr289595a91.18.1752000948847; Tue, 08
+ Jul 2025 11:55:48 -0700 (PDT)
+Date: Tue, 8 Jul 2025 11:55:47 -0700
+In-Reply-To: <5decd42b3239d665d5e6c5c23e58c16c86488ca8.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <33jax5mmu7mdt6ph5t5bb7fvprbypxhefrvgrc2ru4p2dpqldg@d6af6oc6442r>
+Mime-Version: 1.0
+References: <CAGtprH_57HN4Psxr5MzAZ6k+mLEON2jVzrLH4Tk+Ws29JJuL4Q@mail.gmail.com>
+ <006899ccedf93f45082390460620753090c01914.camel@intel.com>
+ <aG0pNijVpl0czqXu@google.com> <a0129a912e21c5f3219b382f2f51571ab2709460.camel@intel.com>
+ <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com>
+ <eeb8f4b8308b5160f913294c4373290a64e736b8.camel@intel.com>
+ <CAGtprH8cg1HwuYG0mrkTbpnZfHoKJDd63CAQGEScCDA-9Qbsqw@mail.gmail.com>
+ <b1348c229c67e2bad24e273ec9a7fc29771e18c5.camel@intel.com>
+ <aG1dbD2Xnpi_Cqf_@google.com> <5decd42b3239d665d5e6c5c23e58c16c86488ca8.camel@intel.com>
+Message-ID: <aG1ps4uC4jyr8ED1@google.com>
+Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
+From: Sean Christopherson <seanjc@google.com>
+To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
+Cc: "pvorel@suse.cz" <pvorel@suse.cz>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, Jun Miao <jun.miao@intel.com>, 
+	"palmer@dabbelt.com" <palmer@dabbelt.com>, "pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, 
+	"vbabka@suse.cz" <vbabka@suse.cz>, "peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"amoorthy@google.com" <amoorthy@google.com>, "tabba@google.com" <tabba@google.com>, 
+	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "maz@kernel.org" <maz@kernel.org>, 
+	"vkuznets@redhat.com" <vkuznets@redhat.com>, 
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, 
+	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, Vishal Annapurve <vannapurve@google.com>, 
+	"quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, Wei W Wang <wei.w.wang@intel.com>, 
+	Fan Du <fan.du@intel.com>, 
+	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, Dave Hansen <dave.hansen@intel.com>, 
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, 
+	"quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "aik@amd.com" <aik@amd.com>, 
+	"usama.arif@bytedance.com" <usama.arif@bytedance.com>, "fvdl@google.com" <fvdl@google.com>, 
+	"jack@suse.cz" <jack@suse.cz>, "quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, 
+	Kirill Shutemov <kirill.shutemov@intel.com>, "willy@infradead.org" <willy@infradead.org>, 
+	"steven.price@arm.com" <steven.price@arm.com>, "anup@brainfault.org" <anup@brainfault.org>, 
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "keirf@google.com" <keirf@google.com>, 
+	"mic@digikod.net" <mic@digikod.net>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "nsaenz@amazon.es" <nsaenz@amazon.es>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "muchun.song@linux.dev" <muchun.song@linux.dev>, 
+	Zhiquan1 Li <zhiquan1.li@intel.com>, "rientjes@google.com" <rientjes@google.com>, 
+	Erdem Aktas <erdemaktas@google.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>, 
+	"david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, "hughd@google.com" <hughd@google.com>, 
+	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, Haibo1 Xu <haibo1.xu@intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
+	"rppt@kernel.org" <rppt@kernel.org>, "steven.sistare@oracle.com" <steven.sistare@oracle.com>, 
+	"jarkko@kernel.org" <jarkko@kernel.org>, "quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, 
+	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, Kai Huang <kai.huang@intel.com>, 
+	"shuah@kernel.org" <shuah@kernel.org>, "bfoster@redhat.com" <bfoster@redhat.com>, 
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, Chao P Peng <chao.p.peng@intel.com>, 
+	"pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, Alexander Graf <graf@amazon.com>, 
+	"nikunj@amd.com" <nikunj@amd.com>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "yuzenghui@huawei.com" <yuzenghui@huawei.com>, 
+	"jroedel@suse.de" <jroedel@suse.de>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
+	"jgowans@amazon.com" <jgowans@amazon.com>, Yilun Xu <yilun.xu@intel.com>, 
+	"liam.merwick@oracle.com" <liam.merwick@oracle.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
+	"quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Ira Weiny <ira.weiny@intel.com>, 
+	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
+	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "qperret@google.com" <qperret@google.com>, 
+	"dmatlack@google.com" <dmatlack@google.com>, "james.morse@arm.com" <james.morse@arm.com>, 
+	"brauner@kernel.org" <brauner@kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>, "pgonda@google.com" <pgonda@google.com>, 
+	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "roypat@amazon.co.uk" <roypat@amazon.co.uk>, 
+	"hch@infradead.org" <hch@infradead.org>, "will@kernel.org" <will@kernel.org>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 08, 2025 at 09:54:06AM -0300, Wander Lairson Costa wrote:
-> O Mon, Jul 07, 2025 at 01:20:03PM +0200, Peter Zijlstra wrote:
-> > On Fri, Jul 04, 2025 at 02:07:43PM -0300, Wander Lairson Costa wrote:
-> > > Similar to the IRQ tracepoint, the preempt tracepoints are typically
-> > > disabled in production systems due to the significant overhead they
-> > > introduce even when not in use.
-> > > 
-> > > The overhead primarily comes from two sources: First, when tracepoints
-> > > are compiled into the kernel, preempt_count_add() and preempt_count_sub()
-> > > become external function calls rather than inlined operations. Second,
-> > > these functions perform unnecessary preempt_count() checks even when the
-> > > tracepoint itself is disabled.
-> > > 
-> > > This optimization introduces an early check of the tracepoint static key,
-> > > which allows us to skip both the function call overhead and the redundant
-> > > preempt_count() checks when tracing is disabled. The change maintains all
-> > > existing functionality when tracing is active while significantly
-> > > reducing overhead for the common case where tracing is inactive.
-> > > 
-> > 
-> > This one in particular I worry about the code gen impact. There are a
-> > *LOT* of preempt_{dis,en}able() sites in the kernel and now they all get
-> > this static branch and call crud on.
-> > 
-> > We spend significant effort to make preempt_{dis,en}able() as small as
-> > possible.
-> > 
-> 
-> Thank you for the feedback, it's much appreciated. I just want to make sure
-> I'm on the right track. If I understand your concern correctly, it revolves
-> around the overhead this patch might introduce???specifically to the binary
-> size and its effect on the iCache???when the kernel is built with preempt
-> tracepoints enabled. Is that an accurate summary?
+On Tue, Jul 08, 2025, Rick P Edgecombe wrote:
+> On Tue, 2025-07-08 at 11:03 -0700, Sean Christopherson wrote:
+> > > I think there is interest in de-coupling it?
+> >=20
+> > No?
+>=20
+> I'm talking about the intra-host migration/reboot optimization stuff. And=
+ not
+> doing a good job, sorry.
+>=20
+> > =C2=A0 Even if we get to a point where multiple distinct VMs can bind t=
+o a single
+> > guest_memfd, e.g. for inter-VM shared memory, there will still need to =
+be a
+> > sole
+> > owner of the memory.=C2=A0 AFAICT, fully decoupling guest_memfd from a =
+VM would add
+> > non-trivial complexity for zero practical benefit.
+>=20
+> I'm talking about moving a gmem fd between different VMs or something usi=
+ng
+> KVM_LINK_GUEST_MEMFD [0]. Not advocating to try to support it. But trying=
+ to
+> feel out where the concepts are headed. It kind of allows gmem fds (or ju=
+st
+> their source memory?) to live beyond a VM lifecycle.
 
-Yes, specifically:
+I think the answer is that we want to let guest_memfd live beyond the "stru=
+ct kvm"
+instance, but not beyond the Virtual Machine.  From a past discussion on th=
+is topic[*].
 
-preempt_disable()
-	incl	%gs:__preempt_count
+ : No go.  Because again, the inode (physical memory) is coupled to the vir=
+tual machine
+ : as a thing, not to a "struct kvm".  Or more concretely, the inode is cou=
+pled to an
+ : ASID or an HKID, and there can be multiple "struct kvm" objects associat=
+ed with a
+ : single ASID.  And at some point in the future, I suspect we'll have mult=
+iple KVM
+ : objects per HKID too.
+ :=20
+ : The current SEV use case is for the migration helper, where two KVM obje=
+cts share
+ : a single ASID (the "real" VM and the helper).  I suspect TDX will end up=
+ with
+ : similar behavior where helper "VMs" can use the HKID of the "real" VM.  =
+For KVM,
+ : that means multiple struct kvm objects being associated with a single HK=
+ID.
+ :=20
+ : To prevent use-after-free, KVM "just" needs to ensure the helper instanc=
+es can't
+ : outlive the real instance, i.e. can't use the HKID/ASID after the owning=
+ virtual
+ : machine has been destroyed.
+ :=20
+ : To put it differently, "struct kvm" is a KVM software construct that _us=
+ually_,
+ : but not always, is associated 1:1 with a virtual machine.
+ :=20
+ : And FWIW, stashing the pointer without holding a reference would not be =
+a complete
+ : solution, because it couldn't guard against KVM reusing a pointer.  E.g.=
+ if a
+ : struct kvm was unbound and then freed, KVM could reuse the same memory f=
+or a new
+ : struct kvm, with a different ASID/HKID, and get a false negative on the =
+rebinding
+ : check.
 
+Exactly what that will look like in code is TBD, but the concept/logic hold=
+s up.
 
+[*] https://lore.kernel.org/all/ZOO782YGRY0YMuPu@google.com
 
-preempt_enable()
-	decl	%gs:__preempt_count
-	jz	do_schedule
-1:	...
-
-do_schedule:
-	call	__SCT__preemptible_schedule
-	jmp	1
-
-
-your proposal adds significantly to this.
+> [0] https://lore.kernel.org/all/cover.1747368092.git.afranji@google.com/
+> https://lore.kernel.org/kvm/cover.1749672978.git.afranji@google.com/
 
