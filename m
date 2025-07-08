@@ -1,170 +1,156 @@
-Return-Path: <linux-kernel+bounces-722068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2C8EAFD4E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:12:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4AA4AFD4FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A41B3A46F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:09:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC8B83BA925
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600BE2E54DC;
-	Tue,  8 Jul 2025 17:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614B32E6122;
+	Tue,  8 Jul 2025 17:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cHqCTJgc"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnPxz3QT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEAD2E49A8
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 17:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9BA1DC9B5;
+	Tue,  8 Jul 2025 17:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751994598; cv=none; b=lTwo9gUZjhp9J27fOoTHwh2CkmaH+58USnq13QgYQ0umBdCwDwvgmtun58h6xRSqZ10bSk9psj0HjSKxq3iHiHG31igGPhKEsE/FqFnD2y7YDMz1BoCkkhuISZ2nQSaqIvJ+swwPWdC/n6iklerAjUIRswVKApSqj2jHRNbbcWE=
+	t=1751994917; cv=none; b=f8YvEPg6vti1urf2yg0mrloE1p+gg2zHDissathVDP8sEoLU5R9ST1Ixwlbsi5WuJ2Z9B+pDTHR7cslIOl5JpiB8dWFD9Nnb43/DWZ+NNtznASgmB1g0ArdeFPYGZQEMJQEb2JtASocKAWvtbWrR4V4m7qe0VIVnuIf9rPg/1Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751994598; c=relaxed/simple;
-	bh=RJ8lKK34jtZAsxlEvSZTzCYjrP0R66bVRllGawGdVKo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bu7kNz6XRXzwoIMY4Yf4PPlPBYQaw0AixZvO4YZDVcgQNdcSis7TN821A5HtuovPTOQJFYZxFJ6lF/KgTAc2XQh7UeBiRhvCUH4MgnriPO3M6VnhcvUFxab0CS5kl4xKb2SAO4uGp5HNyzhZa7SCUAj+Pjhsm/FT9YNTL6LhZfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cHqCTJgc; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1751994592; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=XX/LTMe6pPkmdt3MpUQdcGQ1iSxrolB5ZnpeGne6jZ0=;
-	b=cHqCTJgcGwmanPjqEeAkDDGRKF+h89OKV3lULfddU+/yy0wDC7zRIkDVQuWbE8BjtqxfLw0rd13pPR8YSqaasD8+XLaCjbpx2CfABW4nRiB/5v1bQPVsEtZpJx32LQONBRf4y3NAu260u4vAq5ZRzRZiXQTiT948xw4hGNWGOB8=
-Received: from 30.170.233.0(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WiQuW0K_1751994590 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 09 Jul 2025 01:09:51 +0800
-Message-ID: <17432623-6d5d-4a8d-b4ae-8099c589b5e4@linux.alibaba.com>
-Date: Wed, 9 Jul 2025 01:09:50 +0800
+	s=arc-20240116; t=1751994917; c=relaxed/simple;
+	bh=zN56Kcanmm2CK6PlyASbW3cQE6ADHzafSCUuBxwC2dY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B6pewuxpc1+tpALTGiUyjVatU7k8iCrMFwvHn86eToBkohMkKLGk/z8pVmo3PKuEzcXQp98SwxIoiwDBqfx2RJbx9Gj4dEAzt7eIQcyrBjNRaIvCoyCI4Pqm9ps8MwbtJEKr8ch1V5lQbX2K4VFg9s72RUyPVaN/uLJnM17529Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnPxz3QT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF322C4CEED;
+	Tue,  8 Jul 2025 17:15:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751994917;
+	bh=zN56Kcanmm2CK6PlyASbW3cQE6ADHzafSCUuBxwC2dY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fnPxz3QTmKrnPuKFneFht/NRDKDsD+03YX3V7I+FRPaggTCn1DWx+XA0g34uivyTV
+	 odRko5WyDqDPAUIRXHjw5k6wNeY7CEXWhxwczwutDGalGgsX5ipQ5PH/rWiPlyC+pn
+	 WtfWqtRxtJTLG1yWk5r2E5KfgJHNiy/YGBx+ljwsfSRsECeKZwMIdqUzUy+XD6llCm
+	 q4g2HlwDbaaBhN30eh3JOBY4Tng6F5sbeDuPZ8ydx7SZgvtm+cInudZbCWPK5YiHGl
+	 EINgcElxaLfa/KeT4B8WuGzNWiPz/+GjJjHsEHSmVUSm8PVxJps20YraFSW96YAe9M
+	 /fqFxIcYeyzjg==
+Date: Tue, 8 Jul 2025 12:15:15 -0500
+From: Rob Herring <robh@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Luca Weiss <luca.weiss@fairphone.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: document the Milos Top
+ Level Mode Multiplexer
+Message-ID: <20250708171515.GA640511-robh@kernel.org>
+References: <20250702-sm7635-pinctrl-v2-0-c138624b9924@fairphone.com>
+ <20250702-sm7635-pinctrl-v2-1-c138624b9924@fairphone.com>
+ <20250703-daring-burgundy-limpet-a1c97e@krzk-bin>
+ <DB293G0PC5P8.13IW22M6DDESM@fairphone.com>
+ <a453bd90-b7c7-42eb-b769-b4c87b6dac12@oss.qualcomm.com>
+ <424285fb-14a0-452b-8d18-6165d2a78497@kernel.org>
+ <3d3g2sq4r7pruu4c2sl2itclx7xuja6inasaicm67t4sx6u5fl@xq5g7h4rabno>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Executable loading issues with erofs on arm?
-To: Jan Kiszka <jan.kiszka@siemens.com>, Gao Xiang <xiang@kernel.org>,
- Chao Yu <chao@kernel.org>, linux-erofs@lists.ozlabs.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <38d43fae-1182-4155-9c5b-ffc7382d9917@siemens.com>
- <452a2155-ab3b-43d1-8783-0f1db13a675f@siemens.com>
- <bab2d726-5c2f-4fe0-83d4-f83a0c248add@linux.alibaba.com>
- <81a3d28b-4570-4d44-8ed6-51158353c0ff@siemens.com>
- <6216008a-dc0c-4f90-a67c-36bead99d7f2@linux.alibaba.com>
- <2bfd263e-d6f7-4dcd-adf5-2518ba34c36b@linux.alibaba.com>
- <edcffe3e-95f3-46ba-b281-33631a7653e5@linux.alibaba.com>
- <7f9d35af-d71b-46c5-b0ea-216bbf68dfe7@siemens.com>
- <eb879ced-600a-4dd3-a9d6-3c391b4460c2@siemens.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <eb879ced-600a-4dd3-a9d6-3c391b4460c2@siemens.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3d3g2sq4r7pruu4c2sl2itclx7xuja6inasaicm67t4sx6u5fl@xq5g7h4rabno>
 
-
-
-On 2025/7/9 01:01, Jan Kiszka wrote:
-> On 08.07.25 18:39, Jan Kiszka wrote:
->> On 08.07.25 17:57, Gao Xiang wrote:
->>>
->>>
->>> On 2025/7/8 23:36, Gao Xiang wrote:
->>>>
->>>>
->>>> On 2025/7/8 23:32, Gao Xiang wrote:
->>>>>
->>>>>
->>>>> On 2025/7/8 23:22, Jan Kiszka wrote:
->>>>>> On 08.07.25 17:12, Gao Xiang wrote:
->>>>>>> Hi Jan,
->>>>>>>
->>>>>>> On 2025/7/8 20:43, Jan Kiszka wrote:
->>>>>>>> On 08.07.25 14:41, Jan Kiszka wrote:
->>>>>>>>> Hi all,
->>>>>>>>>
->>>>>>>>> for some days, I'm trying to understand if we have an integration
->>>>>>>>> issue
->>>>>>>>> with erofs or rather some upstream bug. After playing with various
->>>>>>>>> parameters, it rather looks like the latter:
->>>>>>>>>
->>>>>>>>> $ ls -l erofs-dir/
->>>>>>>>> total 132
->>>>>>>>> -rwxr-xr-x 1 1000 users 132868 Jul  8 10:50 dash
->>>>>>>>> (from Debian bookworm)
->>>>>>>>> $ mkfs.erofs -z lz4hc erofs.img erofs-dir/
->>>>>>>>> mkfs.erofs 1.8.6 (trixie version, but same happens with bookworm
->>>>>>>>> 1.5)
->>>>>>>>> Build completed.
->>>>>>>>> ------
->>>>>>>>> Filesystem UUID: aae0b2f0-4ee4-4850-af49-3c1aad7fa30c
->>>>>>>>> Filesystem total blocks: 17 (of 4096-byte blocks)
->>>>>>>>> Filesystem total inodes: 2
->>>>>>>>> Filesystem total metadata blocks: 1
->>>>>>>>> Filesystem total deduplicated bytes (of source files): 0
->>>>>>>>>
->>>>>>>>> Now I have 6.15-rc5 and a defconfig-close setting for the 32-bit ARM
->>>>>>>>> target BeagleBone Black. When booting into init=/bin/sh, then
->>>>>>>>> running
->>>>>>>>>
->>>>>>>>> # mount -t erofs /dev/mmcblk0p1 /mnt
->>>>>>>>> erofs (device mmcblk0p1): mounted with root inode @ nid 36.
->>>>>>>>> # /mnt/dash
->>>>>>>>> Segmentation fault
->>>>
->>>> Two extra quick questions:
->>>>    - If the segfault happens, then if you run /mnt/dash again, does
->>>>      segfault still happen?
->>>>
->>>>    - If the /mnt/dash segfault happens, then if you run
->>>>        cat /mnt/dash > /dev/null
->>>>        /mnt/dash
->>>>      does segfault still happen?
->>>
->>> Oh, sorry I didn't read the full hints, could you check if
->>> the following patch resolve the issue (space-damaged)?
->>>
->>> diff --git a/fs/erofs/data.c b/fs/erofs/data.c
->>> index 6a329c329f43..701490b3ef7d 100644
->>> --- a/fs/erofs/data.c
->>> +++ b/fs/erofs/data.c
->>> @@ -245,6 +245,7 @@ void erofs_onlinefolio_end(struct folio *folio, int
->>> err)
->>>          if (v & ~EROFS_ONLINEFOLIO_EIO)
->>>                  return;
->>>          folio->private = 0;
->>> +       flush_dcache_folio(folio);
->>>          folio_end_read(folio, !(v & EROFS_ONLINEFOLIO_EIO));
->>>   }
->>>
->>
->> Yeah, indeed that seem to have helped with the minimal test. Will do the
->> full scenario test (complete rootfs) next.
->>
+On Thu, Jul 03, 2025 at 12:31:46PM -0500, Bjorn Andersson wrote:
+> On Thu, Jul 03, 2025 at 01:26:11PM +0200, Krzysztof Kozlowski wrote:
+> > On 03/07/2025 12:04, Konrad Dybcio wrote:
+> > > 
+> > > 
+> > > On 03-Jul-25 09:44, Luca Weiss wrote:
+> > >> On Thu Jul 3, 2025 at 9:41 AM CEST, Krzysztof Kozlowski wrote:
+> > >>> On Wed, Jul 02, 2025 at 05:56:16PM +0200, Luca Weiss wrote:
+> > >>>> Document the Top Level Mode Multiplexer on the Milos Platform.
+> > >>>
+> > >>> What is Milos platform? Does it have some sort of model number how we
+> > >>> usually expect? Wasn't this SM7325 or similar?
+> > >>>
 > 
-> And that looks good as! Thanks a lot for that quick fix - hoping that is
-> the real solution already.
+> Milos is the actual name of the SoC.
 > 
-> BTW, that change does not look very specific to the armhf arch, rather
-> like we were lucky that it didn't hit elsewhere, right?
-
-I may submit a formal patch tomorrow.
-
-This issue doesn't impact x86 and arm64. For example on arm64,
-PG_dcache_clean is clear when it's a new page cache folio.
-
-But it seems on arm platform flush_dcache_folio() does more
-to handle D-cache aliasing so some caching setup may be
-impacted.
-
-Thanks,
-Gao Xiang
-
+> > >>> The problem with such new naming that it awfully sounds like family
+> > >>> names, so just expand the name and explain it.
+> > >>
+> > >> Please go argue with Bjorn/Konrad about this, wasn't my idea.
+> > >>
+> > >> https://lore.kernel.org/linux-arm-msm/aGMI1Zv6D+K+vWZL@hu-bjorande-lv.qualcomm.com/
+> > >> https://lore.kernel.org/linux-arm-msm/b98d305b-247f-415b-8675-50d073452feb@oss.qualcomm.com/
+> > > 
+> > > Milos is the "real-est" name of this silicon. All the associated
+> > > S[AM]|QC[MS]s are just variations of it, with different fusing.
+> > > 
+> > > You'll stumble upon it across e.g. firmware build strings, as
+> > > well as in any documentation pieces.
+> > > 
+> > > There are various internal reasons for the switch, but the most
+> > > obvious external-facing one is not to have the user buy a devkit
+> > > and wonder whether they should use QCS9100 or QCS9075 DTB, and
+> > > why there's zero drivers code for these magic numbers (they
+> > > include SA8775P). We can simply point them to "codename" and
+> > > all C code will refer to it as well.
+> > 
+> > These are different SoCs, optionally with different firmware, so they
+> > cannot use the same top-level compatible chain. I hope you did not
+> > propose that.
+> > 
 > 
-> Jan
+> No they are not different SoCs, and that's the problem with the current
+> naming scheme.
 > 
+> > For me list like "qcs9100, sa8775p" is clear enough, but if you want
+> > "qcs9100, koala-bear" or "brown-bear, koala-bear" it is fine as well.
+> > You just cannot use koala-bear for all of them.
+> > 
+> 
+> It looks "clear enough", but it's wrong. The problem is that sa8775p,
+> qca9100, and qcs9075 are the "same" hardware and firmware.
+> 
+> The difference between sa8775p and qcs9100 is the reserved-memory map,
+> the difference between qcs9100 and qcs9075 is one IP block being status
+> = "okay" vs "disabled", due to fuses.
+> 
+> It's exactly the same problem we first saw in QRB5165, but we let the
+> problem explode. Now we use the names sc7280, sm7325, qcm6490, and
+> qcs6490 for the same SoC.
+> 
+> Using the SoC's actual name here will remove the need for playing games
+> with DT includes etc to try to map things to the current naming scheme.
+> 
+> 
+> The one case that isn't being taking care of such naming is when there
+> are differences in the firmware. But as can be seen in the "sc7280"
+> familiy, those software differences doesn't align with the chosen names.
+> And even within a given SoC, with a (overall) given firmware, the
+> reserved-memory map ends up differing.
+> 
+> 
+> So, the name of the SoC in this patch is "Milos". We already have ways
+> of dealing with firmware and/or hardware variations within one SoC, we
+> should use them (and refine them as necessary), rather than pretending
+> that something like SM7325 will define those properties.
 
+I for one prefer 1 compatible per die. We often don't know if that's 
+the case, but in this case we do so let's take advantage of it. 
+
+Rob
 
