@@ -1,199 +1,87 @@
-Return-Path: <linux-kernel+bounces-720751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED0D2AFC006
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:32:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D47A2AFC007
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CDE21AA5960
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:32:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28B6F16A6D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C4B1F37DA;
-	Tue,  8 Jul 2025 01:31:50 +0000 (UTC)
-Received: from CWXP265CU008.outbound.protection.outlook.com (mail-ukwestazon11020081.outbound.protection.outlook.com [52.101.195.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C445C1E521D;
+	Tue,  8 Jul 2025 01:32:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B512BAF9;
-	Tue,  8 Jul 2025 01:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.195.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751938310; cv=fail; b=dfrt43730AnD0tseaWQV+jzk1h9DFevUWszpKeoF2AEl+WYhwawa89kmP3ob+oyYxSfNpjpeKmgqCBIHWi/80EwRO2uMZLrSwp1lkdWy5inQKWc3YwWtMwBxNhGznqEzT91fQeVkTTXPPNrmpglOFrBslJa4FjWK/ZOACiv9cT4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751938310; c=relaxed/simple;
-	bh=v4/hmSlXkMOoNLwcz66bbiXrP6m+WQU+j1jqhdQivmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=M+3tpKF+afJ/PixeMr7velQBu3BeA1cpY7eqhZy4j7LH+pKH51JAfYJxI4Xes6zY88P18U1fOINJuNAYOfvcksHSaOuorBwtwgz+5XssbjHBGhmTQhhwdEry6ul5DLTl9IgdVz1GhcYuT5DWl7f5yB2s/OJvicm/nb7/5m2MG6c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com; spf=pass smtp.mailfrom=atomlin.com; arc=fail smtp.client-ip=52.101.195.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atomlin.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xV+id6fWEuAAbvUUPkAIxHiVEMk41DyWrAucg5XAO9Ab73lqKVJS1Nesb3gdaM4y2las9AZe1qA7wAM9ZCf9wSx8hf7BPm/gYaK208/yARRBy7+wAjRKKZ2WejfVXmzt+jQyaTfgRcuP+yJotCbmkAXon5QpFzb2mju+supEYIo6KM6tURxRoXUqmYFrLN0mL636XhcmKH0b72hvBtVWaQ+MK9MQ5LBxapvcLiyc9XEwb2AJx4LWZ2qQYUqMyqam+InXZcXusdcZjLJSgyZS4TX8bKimT82tB2LVch4gPzkMjdckWs8sByGva0hZ1hvzsuDE7z6pkiZhCjcXnyPkog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cYNZj6oXkBZDOQW+PabzG6DIhltUZWupu7joh/ZMpnc=;
- b=cceuQF/76fmDHDFKRLN0iJYE6/U/IjcvJi8jE/7nrsK1KnnDyDwglgJX3gwfGKHZNOldGATUbRJFLLcObLKm3t75ohSa6sadZ34WWwDe00fo5rvKrfy04QVq3TYglO6zl5mGlg0ey1AIQ7iC7JIbzvlwXgunfcxVLdI5v4uksj0EvepGpIrOGOHP9kvr9FiWArHcQBc1P7COtlsuOsL/1a0OP+3u1ZxyCRiPJlcbDz330nCfPZwG4HuXscdRiYL8WMsusRSHtMxLgbaq5THqtcXVOtx/WiqTSNr/Ohwko2vDhERXM6GWNBX/tNPpgXDbRkWfXBVdUEdZVQSmjpFZcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=atomlin.com; dmarc=pass action=none header.from=atomlin.com;
- dkim=pass header.d=atomlin.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=atomlin.com;
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:70::10)
- by CWLP123MB5770.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:1b5::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Tue, 8 Jul
- 2025 01:31:44 +0000
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::5352:7866:8b0f:21f6]) by CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::5352:7866:8b0f:21f6%4]) with mapi id 15.20.8901.024; Tue, 8 Jul 2025
- 01:31:44 +0000
-Date: Mon, 7 Jul 2025 21:31:40 -0400
-From: Aaron Tomlin <atomlin@atomlin.com>
-To: Daniel Wagner <wagi@kernel.org>, Ming Lei <ming.lei@redhat.com>
-Cc: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Costa Shulyupin <costa.shul@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Waiman Long <llong@redhat.com>, Frederic Weisbecker <frederic@kernel.org>, 
-	Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, 
-	storagedev@microchip.com, virtualization@lists.linux.dev, 
-	GR-QLogic-Storage-Upstream@marvell.com
-Subject: Re: [PATCH v7 09/10] blk-mq: prevent offlining hk CPUs with
- associated online isolated CPUs
-Message-ID: <w5rxrdtvk7n473stsjqhq4dvtdqearnsuu7yw63e6lhc5tzszg@dnrl22hyr7br>
-References: <20250702-isolcpus-io-queues-v7-0-557aa7eacce4@kernel.org>
- <20250702-isolcpus-io-queues-v7-9-557aa7eacce4@kernel.org>
- <aGt63lJr2JY8VAqc@fedora>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aGt63lJr2JY8VAqc@fedora>
-X-ClientProxiedBy: BN9PR03CA0410.namprd03.prod.outlook.com
- (2603:10b6:408:111::25) To CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:400:70::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75942BAF9
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 01:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751938326; cv=none; b=SJrsccrlfaycMY9G9/matPywQNyPEO1ah2IU3THnI7JMlZ/uewvQXyeptiEdVNcGtSvOAwR/AtEl67hh2AE4O5DJpWey8ljUnYA95+mMxGYaFqzK7qIxhRHzEGuzR0t1R7TrJs+HfDlnDoMNIHxJsB7HF6uGiSDBq2QP/lT8k0k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751938326; c=relaxed/simple;
+	bh=frVDOwOWJdwlqoK8B2tKFj0Uv2xMhu5gYIpwjOFWYMo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=N95jnpmSq8+rS+izIaFhasRZsh65BDBI6pjKvTXA0BRbZoliuDw9bSGTC0m8hP2yHXI1Q5zUs3efD5WZ1FsdGNNqnoDhWiEmqXdWaKTX50VknAh4HNvmCucPMpKglF8sGVaVFdXnuSNRbGdb4Kb95QcsmgzG+fddBwosBd2t6Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3de3b5b7703so20536495ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 18:32:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751938324; x=1752543124;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=toF6CS4S1Ahy0FKTOByu+Nh8IeE3r7A5Ves4DOihvzg=;
+        b=BYGQLIKBckbPY/PUMpw7lDIFdYpVc8j3YkQ3oMuL+aG6CmVZQlap2R/2RhuB9sOOgR
+         cEt5saiSEVzh6XGRbtdKLBPKQj3/eNoTAa1Hy5edJFSHlblZINeNN3SKQxuHTypYvICh
+         JfNAgDl2q4trIqTOpPlNhcY31cpGzxWhNrvnBxqoPzZma4gkCSHaDeM8WRbNAMOW1QlY
+         j0f/B+Ha2S8AMFBWR5Uk7EYvBqCzlm/Hf5lSflVUYWrrj4Uog4hPjtTCV8qxEe2kl93O
+         AW4NP+eJR493vWvcqhlO9Ymm2+jEBYep3k7yhqZaf+gzPBz+1tvN2PwDVLCuXLgZ5MHJ
+         6toQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJZ4Zg3bwETfBxlw1RZlWM0KJpX95l6CiB7PIugSMtd0aYAA01PHXxsFmEQ3NDHDu2qj2fpdxljZlTQ/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT+n4f4zY4DOUt6aR53Qx959aho/65IgubJlXDg7+s8QRVBJNM
+	i1xHjKkiNkSBs5iz7gQtSBn/n1QR7eSQrk6lJ5PyoTK5UkpCXiBCJO1pXvN+/y2tlQVL6wkjBFw
+	8SN2k3PTi++EujmdYX1TTtBFmQ4U2DUgYujog6eaoanjtztP4tWOzMsr/7YE=
+X-Google-Smtp-Source: AGHT+IHGmBGsEfEqsZhYHpIYYj2m6cpIuKxktIX4M73rwPcOp+y0CF6goYvbhwmz8WD9ngcCSqY8lz1hA4zC4rQnOnaHFAwQtK53
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CWLP123MB3523:EE_|CWLP123MB5770:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3624b45d-a3c2-410b-66e0-08ddbdbf32a3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T3RSR0RpSUhoTXBQUC9kK2krYkJDVHA3UENPT1piZkxNN2FFNmtVbm5ZSHg5?=
- =?utf-8?B?ZlBmR2dveDF0VWtXV0llRERySU1VaW9NaDEvQ21QV2cySjFUeWRzNGNJTGtt?=
- =?utf-8?B?cUx1cTgzNDZTWXdzMVNrak8xQ3Q5b0RNa09IRDFlczBVc2dxK2Z4bGpnQmZh?=
- =?utf-8?B?V2JRaFFzdEpHQmt5Tklqc05oV0piMVoyNG5hMjgrQUdBaVdEZDdLRGgzT1c4?=
- =?utf-8?B?b0tXc0xmZDRLdkVBYURTQkVML25UUUlUWHk2L0lQbG9lbWFnQ0wzaE9PZXE3?=
- =?utf-8?B?UmdFNFZEcURHK2ZIUzJtOWpENDVQVWVESGE2VE83dWZ3YlVxSnJlM0pTQVVL?=
- =?utf-8?B?M2F0TnpMVnNwYXUvenZ3eG9NU05FdmFSYjdRZHhVdkFERlpsanZ5Z3dLTEFV?=
- =?utf-8?B?WjVKWHZjNXNrS3htUDZKSXBKWTR6TDdDQ0JLNVVTWXpxdGY3YjQ4MWlkSXZ2?=
- =?utf-8?B?MVVFQlBBYUFNNk1lZU9zRGNNQ0VEVHQ3Sk1JZkdiOVVtS0paQUQ3cklJdmNt?=
- =?utf-8?B?REpOREhmTXdEKzYwUzVqYmRmSTFReUFFUnVhcjVNUHZKMktiTXlWQW8yQjhq?=
- =?utf-8?B?SEpCVSswR1AxVlJSclpYc0R6ckdVcXJqQTRFK1hpdVRkNHl4cVVvYW1mdUxx?=
- =?utf-8?B?aFRPajh4VTcrYXJJNnl5N3FKT0ViZ1ZRajk0aXNHNTQ5K3FvWVhhWFRubStL?=
- =?utf-8?B?Unl0Mk9WckFqVEJnam9TWVVPZmowV2NqNlplTjJ1a09QTUg0eE5wS3FoUG13?=
- =?utf-8?B?clVHc1hIcThIOEFyV0pQRm1lZ0tsK21YZjRPQ2RybHFSakNoUU5oRGt4NVhi?=
- =?utf-8?B?ZXJLNzBvK0J5UE4xNS9JcjdiOXpFRkZYVzhMeEd0dHBwZVZUc1N3bEFUWGFH?=
- =?utf-8?B?bVgwZyt4ckplUUdVTVJUV2VnUmc3aHczU09EUk92Y042V3VTUmhuZzIyR1Z3?=
- =?utf-8?B?VmR1OGVQRkN0NytVOU9Gc0RzNDdpMWFJc0U1aTQ1TXNzZHhFYmx3TGRGQlRr?=
- =?utf-8?B?SktDT2FQZHJGUkgxZUtBeEJKYU1jdnViVkNiVnZWS2FvZDJpUGdwd1hDNzFQ?=
- =?utf-8?B?NjZjR2Y3d0E2OFp4UHBLKzIveHVRbm5qUVNsdGJUMDBmdkNqcFVlTjVzQmdU?=
- =?utf-8?B?cnVhaWtkVUV4V0Z1R28vemprcS9PWTI5cGtFS2p5RWNyNzh2S0JWeFVSMW5o?=
- =?utf-8?B?aXcwbWJRdk5JZ1RpMGZnZkdnbjM5WGpqOG1oU0ZTcG9DRnNWbXM1UDcvYkor?=
- =?utf-8?B?YTNTUDJNY1hSR0FvZ29xQSsyc21ZVGc4YXBQMlI4QXpZOXcvVkJPK2hxWHR1?=
- =?utf-8?B?VXZibzIwNkhWbkFLemxiMGNRR3FEME1NL1d2eFREVENKWXJhQUJSMVA4SmNC?=
- =?utf-8?B?bm94bXlzSkFzT1hQWVNDR1dDTUJWQ05BRnNBdDBEUk1TQzVoQmhuV0FWWlRT?=
- =?utf-8?B?Smw2Mmt2d1NrNE5PVFYxbnk4ZVFEd1dORGVDcGtnRUQ0U1BTaDM1Q2FQYmFl?=
- =?utf-8?B?bVBtc1E2d1l3U1h3ZVVPYkl2YlpyWmVxUDU3NjM0VDlQbkVYVDFQa2piVnI0?=
- =?utf-8?B?RXoyRlFlelBBMUROdFMzdXpXRFhiTUFUK3B5cnZrTkN0SzJPSHBPejMzZEQx?=
- =?utf-8?B?MUN4VG1sczhEc2NXSW1Uc1NHajd0d0hBWFlNQzVKUUFmcWFGSU1aV0lyYVJs?=
- =?utf-8?B?NTFtbjVtdHJMWW9ZQTc1WkNoa3pSRE0rNjQ4QUpvT0Z1V3NmZnpJVVJUSDZS?=
- =?utf-8?B?WFFQMkpodkYyai9wNlJRL1RXRjRLQUZlSEx0VmQwTjl6SkQ0UWhrazNFMW80?=
- =?utf-8?B?NThwaHpGOGFRRjB4REtsaFFIQlYwYlc2RDZmc1A0c1hUdDRlNHQ3eE16Q1kr?=
- =?utf-8?B?aUoybTBpY2VLMTV5ckd4WlpCc0J2eVhWcDBWYWFremtFZkF0VHRCcWdoVmNO?=
- =?utf-8?Q?LfiGgkdk57k=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aW1ybkk3eW9BN0svNTcyeXVSbnVNUW1BNmJyUExXMkFGL0g4MHJoZTlNcmI1?=
- =?utf-8?B?cXhLSW5zMEpwK3BBcWtCVzZ2UjBvSkg3d3lOYkREYjRJbkttQ0VJdWhVV0Uz?=
- =?utf-8?B?MDBleUJLT0FFOEI2cW1NVTY2RitlVEpZYUYrbHpMNHE3TENnMkpNN1E5VjZr?=
- =?utf-8?B?b1BGNDdXV05ncmJ2N2NJMFcrQ0VPV2EvRXk4U3ZEUGRyVDZoRzlQODduNjdm?=
- =?utf-8?B?VDl4dXlRZ0oycEI1eGgxODdlQTJFaXRuR09sajVhSmVsaHBMdjQrdUsvUEVa?=
- =?utf-8?B?TjBUVTE2cjFhbGxSMkcvczRwMmdOejdZb1RlbXYzaXd4bFEzRGhJano5djBP?=
- =?utf-8?B?alFobjc3bTNFZ1FpcndXZ2pEc0tueGtXVFZvU0lKQWE2ZVdGU2ZMc0JVbXo4?=
- =?utf-8?B?cmJHM0hDNzgvemZUMkNpVVdKVU1DUVFNQWV6ZEZYNllIckFVLzBRRDljaS9j?=
- =?utf-8?B?Smo2VnVIZ3ZsU3czUWpkTnA2dEpReU5qREtmcUp3KzcrSmo1Zmtzelp6SkVp?=
- =?utf-8?B?UHZHOTNLbS9ZUGluSzNTN0dIS0xnOVdWeE9ra3Y4OFNacFFLRkdhbXdsN3I4?=
- =?utf-8?B?Slk3a3BqYnN0NXJFQ1FESlViK29OUE52Uk15aS96VHlDeGgvNEYwSzdQYmQw?=
- =?utf-8?B?SXZ5VFJOU29wQ2U1WTRrdXNjVWdDRE8zMm5wWCt0b1k4Mk1zRDUxMlVDSFB1?=
- =?utf-8?B?M1hGWm1LejJydTBGeTAxOVpTT2VPT1hENmJ4YXEvenJiZGdkZDIyWWVKSDdC?=
- =?utf-8?B?NXJHSm5pTjl3R0RaTlhIWlEvenJybXU0QkQ4dkZ0Uld1V1lxVGs2UWFQbkN3?=
- =?utf-8?B?RThmVnM1bHo3dWwzUGFYR0lqY3habHFLNDU2aDUrb0hwdXlsS0FwK2pNa0sx?=
- =?utf-8?B?Tk55YTBnT1c2ZUpZVUU1UzNhWDhxNDF2UWxrV2pIWURBSythTG1oOE9wS1JI?=
- =?utf-8?B?RXh3YmtDaHhlbDJMSllLRnFOSllEaTJxSzlFNTRvcEhYRUJqd1JnZURwSFNx?=
- =?utf-8?B?NnlIWWozV0s0TXlkTXNxY1FMdTVkTUpOUHFWdk85bnV4dzhGSXpTOVRENmwr?=
- =?utf-8?B?WjJOVnZqV1dJWHMxa1ExSGxoZHVrZ0VtYVlyRFdLU1NPamY4NjVtaDU2SmxY?=
- =?utf-8?B?cEpMcTBObXE0bGg2alovOFRvVDNORnpuR25yaFdSS21iVW1VVDRCaHAvMm1M?=
- =?utf-8?B?NTl3azVHUFYxbHlhMVA1REFCVFRlakZ3akYzWk81RWFXd2I0eWxja0VEV2g0?=
- =?utf-8?B?Z3krYytobklZUUlRN0hUbUM0Y2NLTVBRL3pxYzhRazNXNTVRNC9zdFNRclA4?=
- =?utf-8?B?b3EvbTM0L3NvVU5tT2VjYiswdXRHV0hOLzcwOC9YTC84L21BRlBWRUhQNjR2?=
- =?utf-8?B?djUyUERrT1YvcGRhLzA0Z3lkTlFpYytDR2prLzRFelNjQzZUSmRNUXFSVWFk?=
- =?utf-8?B?VGF4aHJLWkw3c2hNa0tWODhiT0FBZ3YyeWlPSzR0ZkNtNXBBOElLb1NFc2lN?=
- =?utf-8?B?Vml2Wlh6RFdmeDhENzRQWFhVZkxZdmhZdENvNFJENDVXRFRMVHNRb3YwR2dY?=
- =?utf-8?B?bTFNTUN0TDJUamZ6Q29lQk5HWlNXQVNJTjZReU1oTGFIc0hFNGNoaDdpaGJq?=
- =?utf-8?B?dnVyZXlTdmhhajFmWVVCWS9JUDVGSFdoVkhaU1J3emV4Mk0zcmFPZXhFZG01?=
- =?utf-8?B?WlYzVWRqb2VvUzQ2UHdKcmdUNUVwVlJiL05JcUZESUh3bWlteDhSeTE4SUpJ?=
- =?utf-8?B?N013M2tmVEJYRHFjdU9zR3djS1lEb3R3Q2QyTXBZdk1zTDZNUzl5cHlISkxO?=
- =?utf-8?B?dk43VkVOdlZsZnIrNE9jVko1MnR0a1M1QXBacWVGM2IrYkdzR091ZlVGNFY1?=
- =?utf-8?B?b2NFeHZVYnM4ZTdDREZ1ZWhBVVlQdFkyQkZRcCtBbTVYbVFoLzU0VXlkWEU5?=
- =?utf-8?B?TWhrQmQvVld2S0pka3Z2YlBrcm5hQU5BNkNNVnE4RWRlRDk1WnBXeVNhNklC?=
- =?utf-8?B?NFZnSnczRTBqSW1sVUl6cFhyZnhuQlBSWTkrN29DK1o1VVFhV2lHbkVQMWNr?=
- =?utf-8?B?UXVZMGxoYXNvZllLVGNkdlN2cTh2VUtWNFlyUk5PRUsyeDJZRXFvR3VlenlS?=
- =?utf-8?Q?6ixbd8RMauoU/F6rkqsJU85+g?=
-X-OriginatorOrg: atomlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3624b45d-a3c2-410b-66e0-08ddbdbf32a3
-X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 01:31:44.4458
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: e6a32402-7d7b-4830-9a2b-76945bbbcb57
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zBH+nTIXPSbaa3l7/Sc7KxRoG+flJC6z26mRNf5PkecmA+8HNqPDzMJoxeIbJU7WGx51H8PhcQBlokJSU+R26g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP123MB5770
+X-Received: by 2002:a05:6e02:1949:b0:3df:2cd5:80c1 with SMTP id
+ e9e14a558f8ab-3e136ea27b2mr138368055ab.4.1751938323851; Mon, 07 Jul 2025
+ 18:32:03 -0700 (PDT)
+Date: Mon, 07 Jul 2025 18:32:03 -0700
+In-Reply-To: <20250708011144.2840-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <686c7513.050a0220.20334d.0001.GAE@google.com>
+Subject: Re: [syzbot] [kernel?] INFO: trying to register non-static key in waveform_detach
+From: syzbot <syzbot+eec47f88bae8951c6afd@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 07, 2025 at 03:44:30PM +0800, Ming Lei wrote:
-> On Wed, Jul 02, 2025 at 06:33:59PM +0200, Daniel Wagner wrote:
-> > When isolcpus=io_queue is enabled, and the last housekeeping CPU for a
-> > given hctx goes offline, there would be no CPU left to handle I/O. To
-> > prevent I/O stalls, prevent offlining housekeeping CPUs that are still
-> > serving isolated CPUs.
-> > 
-> > When isolcpus=io_queue is enabled and the last housekeeping CPU
-> > for a given hctx goes offline, no CPU would be left to handle I/O.
-> > To prevent I/O stalls, disallow offlining housekeeping CPUs that are
-> > still serving isolated CPUs.
-> 
-> If you do so, cpu offline is failed, and this change is user visible, please
-> document the cpu offline failure limit on Documentation/admin-guide/kernel-parameters.txt.
-> in the next patch.
-> 
-> Thanks,
-> Ming
+Hello,
 
-+1
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
--- 
-Aaron Tomlin
+Reported-by: syzbot+eec47f88bae8951c6afd@syzkaller.appspotmail.com
+Tested-by: syzbot+eec47f88bae8951c6afd@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         d7b8f8e2 Linux 6.16-rc5
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14292bd4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f6cfc97245100778
+dashboard link: https://syzkaller.appspot.com/bug?extid=eec47f88bae8951c6afd
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13279582580000
+
+Note: testing is done by a robot and is best-effort only.
 
