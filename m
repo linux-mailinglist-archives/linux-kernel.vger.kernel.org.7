@@ -1,116 +1,131 @@
-Return-Path: <linux-kernel+bounces-721033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 051BBAFC3D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:13:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E471FAFC3F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1131425D6D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:13:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B47D3AD188
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77F9256C8D;
-	Tue,  8 Jul 2025 07:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vnVaxxj9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yM00VvVq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFE22222AB;
-	Tue,  8 Jul 2025 07:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6733D29898B;
+	Tue,  8 Jul 2025 07:26:13 +0000 (UTC)
+Received: from mx-b.polytechnique.fr (mx-b.polytechnique.fr [129.104.30.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE56621D3D4;
+	Tue,  8 Jul 2025 07:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.104.30.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751958816; cv=none; b=nKvPXPOKplyJdMcF8IXxp+ntknpmPVNyr7bdT+hRooo0jowiGVx9vn8EQ4e8VE2zVqfo6OceIIwg0eAPP+92wIzNB03vGyzfcfCoNsQDPOlvG6PNHgdDevzRYj62n+9cjKqnHimQlwg0e1HUlfgfpSUAg5jKgq+0+z5iW4mlTEE=
+	t=1751959573; cv=none; b=c3nSvqWwqkzvPxZhqBDbVLd+Qs3MrLuSWn9j5coVKk8P1YrLQGU7xDnXFlqMZIlygmQbKbXEycRSQM6GwUJU3XDfuiv/3UrKjY7VayHZhort/42Me5Qw65kMEa10QdqILl3cS05QkJxFWvkXWHs+pw1ZE/pwD09m+CDKd3IpRGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751958816; c=relaxed/simple;
-	bh=NFG7tc8UTm9bOEQ3JtgVmTw8KnluhgyUo5dQrIKFNgg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tHs1F0T8v82pSeO7qnLfQZ1Z4XBr1/Vd+hlTZ3Sm61qbrCkfQd/RoUkeUJ5JdIQIgSFdfdAHcoG6maSDdiv1iDVqGVzriqJ83uEDgQvXQ9OFkMSBWz7YN2i0fULIeu9uRLiyF/mlvZ33ddIx1ajEyhEOSmuZbxTftMEhsqc8uwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vnVaxxj9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yM00VvVq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 8 Jul 2025 09:13:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751958811;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ympaAWm94nimBbLSB44cFlzL0ReHl4pqgXPNgXg0fJE=;
-	b=vnVaxxj9vBakEJd2VUPbt070U636JKrtQ48/ngadwJhLuaCZHleGPmVE/QmBIBhnbiqj1z
-	jub0dmIdKwpuPC2z11BoZlKZrLFEQzjTyqJmtU5mIHSchmy658mh+pjnukN+uIL9uuIe1S
-	sZKxmbmfO/03wXK6JWey5NWUd67S6SNYpqk6F6WIYu/3VQMvciJKdYdABnt1lEFMoTPmZM
-	qxjSOkUopE0yLPN2f/ibYvA4u0m83KcE6doLkJRzBhPsvy+9jj5m9vevHC4yhK0Xhmqozd
-	Yo6B7WvC0b090vgDf3Q5o3brAoYOvtiDZl0bmOBU5HH5ghmkj54bkRiEjOAomA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751958811;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ympaAWm94nimBbLSB44cFlzL0ReHl4pqgXPNgXg0fJE=;
-	b=yM00VvVqopMj29HkLSAW2Nw4uUtpOkDyM4cme3wQhV+FjWQa1r0jz+APTnzidApFbiv/bZ
-	8KsEp6vRsBnK+xCg==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Arnd Bergmann <arnd@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	"David S . Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Andy Lutomirski <luto@kernel.org>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	shuah <shuah@kernel.org>, Anna-Maria Gleixner <anna-maria@linutronix.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, John Stultz <jstultz@google.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Eric Biggers <ebiggers@google.com>, sparclinux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Helge Deller <deller@gmx.de>
-Subject: Re: [PATCH 1/2] vdso: sparc: stub out custom vdso implementation
-Message-ID: <20250708085740-dc559080-2551-427c-9134-41fa7f9898d1@linutronix.de>
-References: <20250707144726.4008707-1-arnd@kernel.org>
- <20250708073204-b67226e4-b140-4a1a-ae98-47769c1b2f98@linutronix.de>
- <59e6bb77-1f11-4e30-9bbd-51bf077d9840@app.fastmail.com>
+	s=arc-20240116; t=1751959573; c=relaxed/simple;
+	bh=tHxi7kgTAtCsOXorU7xcD7RTd0CJWtbq1kW7cCL8oAI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VMUpmdGIvY6/pWwrsH+ZVp3l/DFB18BK174Q7ayJX5mCwpG+uWiPF1IKIwisW6sHXDemInE+Yy4OpXMhEkMfI/mMpN0gB2XXyVWRL9wjnZ5dIXpf/Eh0aTh0PUwp7rb1HgjmCcT+q0FJ2IdUsdsMIxMoYBL6ffKAXy2oqPEgIAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=129.104.30.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from zimbra.polytechnique.fr (zimbra.polytechnique.fr [129.104.69.30])
+	by mx-b.polytechnique.fr (tbp 25.10.18/2.0.8) with ESMTP id 5687DxNk024482;
+	Tue, 8 Jul 2025 09:14:00 +0200
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.polytechnique.fr (Postfix) with ESMTP id B189C762EA2;
+	Tue,  8 Jul 2025 09:13:59 +0200 (CEST)
+X-Virus-Scanned: amavis at zimbra.polytechnique.fr
+Received: from zimbra.polytechnique.fr ([127.0.0.1])
+ by localhost (zimbra.polytechnique.fr [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id sLiiPZPqUxi1; Tue,  8 Jul 2025 09:13:59 +0200 (CEST)
+Received: from [129.88.52.32] (webmail-69.polytechnique.fr [129.104.69.39])
+	by zimbra.polytechnique.fr (Postfix) with ESMTPSA id 5A7347610E9;
+	Tue,  8 Jul 2025 09:13:59 +0200 (CEST)
+Message-ID: <5bc75927-398d-4b8c-98d9-7f321ed70ca4@gmail.com>
+Date: Tue, 8 Jul 2025 09:13:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] ethernet: et131x: Add missing check after DMA map
+To: Simon Horman <horms@kernel.org>
+Cc: Mark Einon <mark.einon@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250707090955.69915-1-fourier.thomas@gmail.com>
+ <20250707200143.GD452973@horms.kernel.org>
+Content-Language: en-US, fr
+From: Thomas Fourier <fourier.thomas@gmail.com>
+In-Reply-To: <20250707200143.GD452973@horms.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <59e6bb77-1f11-4e30-9bbd-51bf077d9840@app.fastmail.com>
 
-On Tue, Jul 08, 2025 at 08:40:27AM +0200, Arnd Bergmann wrote:
-> On Tue, Jul 8, 2025, at 07:39, Thomas Wei�schuh wrote:
+On 07/07/2025 22:01, Simon Horman wrote:
 
-(...)
+> On Mon, Jul 07, 2025 at 11:09:49AM +0200, Thomas Fourier wrote:
+>> The DMA map functions can fail and should be tested for errors.
+>> If the mapping fails, unmap and return an error.
+>>
+>> Fixes: 38df6492eb51 ("et131x: Add PCIe gigabit ethernet driver et131x to drivers/net")
+>> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+> nits:
+>
+> 1) There are two spaces after "et131x:" in the subject.
+>     One is enough.
+>
+> 2) I think you can drop "ethernet: " from the subject.
+>     "et131x: " seems to be an appropriate prefix based on git history.
+>
+> ...
+Ok, I'll make sure to fix that.
+>
+>> @@ -2578,6 +2593,28 @@ static int nic_send_packet(struct et131x_adapter *adapter, struct tcb *tcb)
+>>   		       &adapter->regs->global.watchdog_timer);
+>>   	}
+>>   	return 0;
+>> +
+>> +unmap_out:
+>> +	// Unmap everything from i-1 to 1
+>> +	while (--i) {
+>> +		frag--;
+>> +		dma_addr = desc[frag].addr_lo;
+>> +		dma_addr |= (u64)desc[frag].addr_hi << 32;
+>> +		dma_unmap_page(&adapter->pdev->dev, dma_addr,
+>> +			       desc[frag].len_vlan, DMA_TO_DEVICE);
+>> +	}
+> I'm probably missing something obvious. But it seems to me that frag is
+> incremented iff a mapping is successful. So I think only the loop below is
+> needed.
+Yes, frag is incremented only after a successful mapping.
 
-> > But why do we even need the stubs? Removing the time functions from the
-> > vDSO completely should also work, no?
-> > For parisc there was no reasoning why stubs were used. On uml the stubs are
-> > necessary to prevent the libc from calling into the host vsyscall [0], but
-> > that looks irrelevant for SPARC.
-> >
-> > [0] f1c2bb8b9964 ("um: implement a x86_64 vDSO")
-> 
-> I was wondering about this myself, I thought this might have been
-> for runtime environments that just assume the vDSO is there, possibly
-> some non-C libraries, or future glibc versions that may error
-> out when the vdso is absent instead of falling back to the syscall.
+The first loop is to unmap the body of the packet (i >= 1) which is mapped
 
-libc erroring out if the vdso is missing sounds unlikely to me.
+with skb_frag_dma_map() (and unmapped with dma_unmap_page).  The
 
-(...)
+second is to unmap the header which is either one or two mappings of
 
-> The arch/x86/um/vdso/um_vdso.c version for 32-bit seems to still
-> be missing the clock_gettime64() entry, any idea what the
-> resulting behavior is for time64 userspace?
+map_single.  Should I make the comments more explicit?
 
-The vsyscall page is for 64-bit userspace only, and I think always ways.
-
-In any case, modern distro kernels don't provide the vsyscall page at all or
-emulate it through syscall stubs, which are affected by the uml host access issue.
-Also glibc dropped vsyscall page support in 2020.
-
-
-Thomas
+>
+>> +
+>> +unmap_first_out:
+>> +	// unmap header
+>> +	while (frag--) {
+>> +		frag--;
+> I don't think you want to decrement frag twice here.
+>
+>> +		dma_addr = desc[frag].addr_lo;
+>> +		dma_addr |= (u64)desc[frag].addr_hi << 32;
+>> +		dma_unmap_single(&adapter->pdev->dev, dma_addr,
+>> +				 desc[frag].len_vlan, DMA_TO_DEVICE);
+>> +	}
+>> +
+>> +	return -ENOMEM;
+>>   }
+>>   
+>>   static int send_packet(struct sk_buff *skb, struct et131x_adapter *adapter)
 
