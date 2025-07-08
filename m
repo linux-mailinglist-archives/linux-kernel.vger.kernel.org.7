@@ -1,106 +1,118 @@
-Return-Path: <linux-kernel+bounces-721128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 996CFAFC510
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:08:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5A25AFC518
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85C4B165CE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:08:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F2B01BC1291
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD6129B8E8;
-	Tue,  8 Jul 2025 08:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A20229CB32;
+	Tue,  8 Jul 2025 08:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="iGiE3/mt"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F63298241;
-	Tue,  8 Jul 2025 08:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O3xOroDH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E1110A1F;
+	Tue,  8 Jul 2025 08:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751962082; cv=none; b=gy8IKFV8L8wHnDpg3KtfExZBWfHpfbRw5I5Z5QkI7wWK2GQlTTuDO1L8HuMiMecnkxVA4/SNQKhdOGnBQL/fMadCpQQyFdGRy5HA/hE5iXn3BAkrqBiuQFtVYZGaHDF8c6/3GLPGQNvVTA14j74/35nidtgCT3nLu3B7UNiVIiw=
+	t=1751962270; cv=none; b=Pf7BCyZncKXtavN8BGIzkZH9xRiZ7v/uLwuGxaMjQA9diUEoC7/vrYREHQkKm5q0o26zSZYH5zdluSI0trCVqCtmKfUTzLjze+IVM5icH9X8a/3o4+lWwjI67QxdVZbfLfvrYNmq5QJTpswb/LhDOTBQwZMj2H92x/EC4Gz/C9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751962082; c=relaxed/simple;
-	bh=NlrG7QqGm7wR/wrY8wo7HgU04SaVXKz4MABIdQZOs2I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qIlNn0OsqWm2sZfXV93LKrFqvfBhwbnWGq3Rz0u2g+K9vPK+O+3k0n+2KWcYb1g2qi+LXp/lWc+BI89h3IIExFyLzYQ9jR22mDHMQuLlnfrujksINxvN11iDbbo/SJWAsvp/oHUZGXneQ0Z3ygr9y0FmbTB36LLK7ttU0wEbNU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=iGiE3/mt; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.95.67.184] (unknown [167.220.238.152])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 4CF43201B1DC;
-	Tue,  8 Jul 2025 01:07:58 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4CF43201B1DC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1751962080;
-	bh=KwkfFs2vLJ8vSoG8oq34D65UXBTEOk2Om+KZvcayo+I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iGiE3/mtEVhW3AFScY6fDEBv0IRp6XXlxd0c8Jn9xF2S9xwANoLrOQbYVGNioZj8O
-	 qn/6cjI/4GphafuPC5dddM7nmXZMVP2TOAy2bLdt7RXImlQ9pE0hBefQkZ//sYH/5p
-	 Eiuyew2Qh6jApsJfSc6q5Oj04J1j2bxhywwfMnP4=
-Message-ID: <1e48ca0d-8e59-4a92-889d-c4c48b4bb02b@linux.microsoft.com>
-Date: Tue, 8 Jul 2025 13:37:56 +0530
+	s=arc-20240116; t=1751962270; c=relaxed/simple;
+	bh=fZoP5zMj3j/v9KP+VNVxGNKnEy+y31RjORQyvc7IUsI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ce3lULR9WJ6nosuRoxeO59nSrn7kYOS81mk2JSp4KivWgjH2yIs5u+hILFQdvH7pyVyxIEJ7Bx3NCIbPYa4+gRAosgqkWjR/FUdjXtibb2Tqv44iaNWPBU6W8LF0qP9l1YNFHeAgYMioO49Y4N1Jbk+phN7ihP/dtT/b9+Htt7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O3xOroDH; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751962268; x=1783498268;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=fZoP5zMj3j/v9KP+VNVxGNKnEy+y31RjORQyvc7IUsI=;
+  b=O3xOroDH75/habTPQ/MujzmduxwYGvEzhSi1pu0v5/Pe3YhOS+3nWll3
+   Eitxo0zdjZm7oCVdelXkbXGhmRDVu0ZPM03OTgx5tvDBoMqZpZae1UbRm
+   ERm9d5VDkFHmYxAmBOXVsk86L0VOWRzJwsjs4hQy3tDet1dJdwt4qkeHS
+   2OtgWtIv848aba2fEoZ+CgaA3xQfB+NKuLho1fXhTPBZnUdsa0W2MVKa4
+   LMxLKZAzdRHr7QOfdESw+1dbxu72Tq0K3LS5L4aOaa21HNWRfHlZHIkkb
+   nyhlqZ0VLD44BcWfE+D8LLZNQzE/4km4y7hVVyB1KypUNzN58EFFsCVsw
+   A==;
+X-CSE-ConnectionGUID: CLb7KMLXRwiPn+la5pIa0Q==
+X-CSE-MsgGUID: /IsV/wJJQoCbFvoJsDTi0g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="65543209"
+X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
+   d="scan'208";a="65543209"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 01:11:07 -0700
+X-CSE-ConnectionGUID: bjbSTcpkTH+sfJsGSftv3Q==
+X-CSE-MsgGUID: UBDC8q1RSiKsAvdOyDoKaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
+   d="scan'208";a="161076584"
+Received: from lxy-clx-4s.sh.intel.com ([10.239.48.52])
+  by orviesa005.jf.intel.com with ESMTP; 08 Jul 2025 01:11:02 -0700
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+To: Dave Hansen <dave.hansen@linux.intel.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-coco@lists.linux.dev,
+	kvm@vger.kernel.org,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Xiaoyao Li <xiaoyao.li@intel.com>,
+	rick.p.edgecombe@intel.com,
+	Kai Huang <kai.huang@intel.com>,
+	binbin.wu@linux.intel.com,
+	yan.y.zhao@intel.com,
+	reinette.chatre@intel.com,
+	isaku.yamahata@intel.com,
+	adrian.hunter@intel.com,
+	tony.lindgren@intel.com
+Subject: [PATCH 0/2] TDX: Clean up the definitions of TDX ATTRIBUTES
+Date: Tue,  8 Jul 2025 16:03:12 +0800
+Message-ID: <20250708080314.43081-1-xiaoyao.li@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] tools/hv: fcopy: Fix irregularities with size of ring
- buffer
-To: "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, Long Li <longli@microsoft.com>,
- Michael Kelley <mhklinux@outlook.com>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- Olaf Hering <olaf@aepfle.de>, Saurabh Sengar <ssengar@linux.microsoft.com>
-References: <20250708080319.3904-1-namjain@linux.microsoft.com>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <20250708080319.3904-1-namjain@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+
+It's a simple series. Patch 1 fixes the typo and Patch 2 removes the
+redundant definitions of TD ATTRIBUTES bits.
+
+Although some duplications were identified during the community review
+of TDX KVM base support[1][2], a few slipped through unnoticed due to
+the simultaneous evolution of the TD guest part.
+
+[1] https://lore.kernel.org/all/e5387c7c-9df8-4e39-bbe9-23e8bb09e527@intel.com/
+[2] https://lore.kernel.org/all/25bf543723a176bf910f27ede288f3d20f20aed1.camel@intel.com/
+
+Xiaoyao Li (2):
+  x86/tdx: Fix the typo of TDX_ATTR_MIGRTABLE
+  KVM: TDX: Remove redundant definitions of TDX_TD_ATTR_*
+
+ arch/x86/coco/tdx/debug.c         | 2 +-
+ arch/x86/include/asm/shared/tdx.h | 4 ++--
+ arch/x86/kvm/vmx/tdx.c            | 4 ++--
+ arch/x86/kvm/vmx/tdx_arch.h       | 6 ------
+ 4 files changed, 5 insertions(+), 11 deletions(-)
 
 
+base-commit: e4775f57ad51a5a7f1646ac058a3d00c8eec1e98
+-- 
+2.43.0
 
-On 7/8/2025 1:33 PM, Naman Jain wrote:
-> Size of ring buffer, as defined in uio_hv_generic driver, is no longer
-> fixed to 16 KB. This creates a problem in fcopy, since this size was
-> hardcoded. With the change in place to make ring sysfs node actually
-> reflect the size of underlying ring buffer, it is safe to get the size
-> of ring sysfs file and use it for ring buffer size in fcopy daemon.
-> Fix the issue of disparity in ring buffer size, by making it dynamic
-> in fcopy uio daemon.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 0315fef2aff9 ("uio_hv_generic: Align ring size to system page")
-> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
-> ---
-
-Noticed that I missed adding change logs. Adding them now.
-
-Changes since v2:
-https://lore.kernel.org/all/20250701104837.3006-1-namjain@linux.microsoft.com/
-* Removed fallback mechanism to default size, to keep fcopy behavior
-consistent (Long's suggestion). If ring sysfs file is not present for
-some reason, things are already bad and its the right thing for fcopy to
-abort.
-
-Changes since v1:
-https://lore.kernel.org/all/20250620070618.3097-1-namjain@linux.microsoft.com/
-
-* Removed unnecessary type casting in malloc for desc variable (Olaf)
-* Added retry mechanisms to avoid potential race conditions (Michael)
-* Moved the logic to fetch ring size to a later part in main (Michael)
-
-
->   tools/hv/hv_fcopy_uio_daemon.c | 82 +++++++++++++++++++++++++++++++---
->   1 file changed, 75 insertions(+), 7 deletions(-)
-> 
-
-
-Regards,
-Naman
 
