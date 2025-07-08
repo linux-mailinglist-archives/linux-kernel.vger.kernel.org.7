@@ -1,134 +1,217 @@
-Return-Path: <linux-kernel+bounces-722005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF919AFD124
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:31:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE4FEAFD131
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B18675802C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:31:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 856A9427088
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDA92DECC4;
-	Tue,  8 Jul 2025 16:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lzA7tdJk"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF762E5B0B;
+	Tue,  8 Jul 2025 16:31:36 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B093B2E3701;
-	Tue,  8 Jul 2025 16:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21701CD1E4;
+	Tue,  8 Jul 2025 16:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751992285; cv=none; b=rRUpF3cntcMdhYfT0C1akFP3N6Bc1+itOF7kNzMEebgPHfjQXzEribTSdPb0eAJAO82aVDCTK5Z+1YIBn50Qi1fRUOvNoxq7Ec0ijDMMVREFfkFMQhS2Q3hkyj9ufS5ljYazgDhSEDEUvEkWWpBh8QzTS8QMvhmIm4iHmzhQDSc=
+	t=1751992296; cv=none; b=dXlhShIv+hiMD0TPA+LiCiSCqxZsVO6jPwnjDLGpOF/BsY5KWRniBOGEMHlEVzcarTnF+wGZTN174uNRIWkEzWSlPk/C5eidOLPpomiXR0ROaeb6Jy/YxTzhQyQFKh7/huClugqi4nOF2ZFx3ivsLkjYjdc8H62yq9CYhDrNHps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751992285; c=relaxed/simple;
-	bh=qpwh2epvYMa/vP9RS2AG1z0uRbcPXLoNOGq6aDBDMbo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VT3rIuKlsPRXrAlXNn3GvjcD8tfw1GhgNRMte2ARCmmfEbIyyN37FPiTqYEshv9++OO+dy+mlKiBaYAZcx0VWaOfbZ1h4p1HgUqDshMW6b3iyNy7Ap1VMYVzaFtsqYAhO2JLAunkDa+KfJndwH25NJlv05NYRnFKpZucwsxAJOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lzA7tdJk; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=kOk7XbwChRWqxUdyqJOIG4vdU1iZr66s7LOpGxHw2Z8=; b=lzA7tdJkNNQY45J8AEw2iCoXM7
-	o8ijnMS3Rec59Ajg9zr/ZZ3/TECxlEHWzrZTBu9eWZQuQq3NKw7om8WUI8WPrddcoi1vOWOn2Cs/o
-	sboxJPwdulBED+GrbJnknPmlswZHjFYK4DD2rF1/o/aERs9ZjIanK70E2gP5BH0AAKwLAfhs4AenD
-	yZPs53AZaSjS8JQj+YKzcu6QelROmSx5DkS41BVJBhcy4UmV/FBfIaA7GXfI09/nKoVrWRZGwyXaC
-	frOBszBN4cBdc2Famdt0hr92XPFwU3EDdoU/+Q8KDsO+Z342L/k8qNXjN9QV5xIMHk+M45m4fImkI
-	r4jAyeLw==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uZBDy-00000000MKz-3qil;
-	Tue, 08 Jul 2025 16:31:19 +0000
-Message-ID: <d3d1e2be-6b9b-40d4-bd9a-49ff38c451f0@infradead.org>
-Date: Tue, 8 Jul 2025 09:31:14 -0700
+	s=arc-20240116; t=1751992296; c=relaxed/simple;
+	bh=kKFfVsjjQy3Sye5RAKQyCnZiAtZH86+HYBvB16fyzoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H7EV2fRc8eTNdHX7uHJurqFeJ16oRd4nu0DVDhD746bQhz3p/0EyYMUmoT58IYPIUPeEWcnu9M2oi6263KwYpHShOnTNjdyuKVy8U0lri5nnrNOaFy8cT+bi0iHJe/6d4/c1qpbYCJXkIGAciBr4TuSxO5woQ32yBB5Kuv6/MbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id A04AB10B198;
+	Tue,  8 Jul 2025 16:31:24 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 04DFD2000E;
+	Tue,  8 Jul 2025 16:31:19 +0000 (UTC)
+Date: Tue, 8 Jul 2025 12:31:20 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Steven Rostedt
+ <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
+ <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
+ Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
+ E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
+ Jens Remus <jremus@linux.ibm.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
+ <fweimer@redhat.com>, Sam James <sam@gentoo.org>
+Subject: Re: [PATCH v8 10/12] unwind_user/sframe: Enable debugging in
+ uaccess regions
+Message-ID: <20250708123120.7862c458@gandalf.local.home>
+In-Reply-To: <CAHk-=wgXcc99EXKfK++FEQzMQc8S16WOwvn=1DcP_ns1jCCYeA@mail.gmail.com>
+References: <20250708021115.894007410@kernel.org>
+	<20250708021200.058879671@kernel.org>
+	<CAHk-=widGT2M=kJJr6TwWsMjfYSghL9k3LgxJvRard0wtiP62A@mail.gmail.com>
+	<20250708092351.4548c613@gandalf.local.home>
+	<orpxec72lzxzkwhcu3gateqbcw6cdlojxvxmvopa2jxr67d4az@rvgfflvrbzk5>
+	<20250708104130.25b76df9@gandalf.local.home>
+	<CAHk-=wgXcc99EXKfK++FEQzMQc8S16WOwvn=1DcP_ns1jCCYeA@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] PM: add kernel parameter to disable asynchronous
- suspend/resume
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Jonathan Corbet
- <corbet@lwn.net>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, peter.griffin@linaro.org,
- andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com
-References: <20250708-pm-async-off-v2-1-7fada54f01c0@linaro.org>
- <18c12f92-2194-4244-8793-5d916edfd4e8@infradead.org>
- <cabab318-95a4-4e81-a931-458ee6023f3a@linaro.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <cabab318-95a4-4e81-a931-458ee6023f3a@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Stat-Signature: bb3hnktb3dp9a9m7owwr4xcq4fdujnkx
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: 04DFD2000E
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19Y0fUepPxaRcfNYrcIABvux8APfNuf2IY=
+X-HE-Tag: 1751992279-762972
+X-HE-Meta: U2FsdGVkX1+CMuUGypXL1y73IoeNSQJkVrDtzFJSFsYtnPyrjYDQzSR06KYhMnOrpl4Lx/0EQbc7AAqZnPhyKPxXa7LC4/yAbqexMWif3OPVCK16R9a1OF/BJDHp0yNzqkR8J8DPHFolf0Ub7avQHNpfq8NVp/hVZARN9i+lMO5yBn/X9x+BagzI2sp3C87zrNi9XCZJHUnWsWtsDJ6B3QVOWlh37MD62LAKuZsLe+Ck6jECrDxvCgyCblw1LaFpP7K24I8tFo1/AAq6oaPG46VTqMrzxVFQE8FT65YIBX6+eiwFfvI7ATf4iDMYLufw+MzgQMCOmpwB6TXuakm++cl/zFjtNfl5wr1pSUOG3pNkYhO1PYEQ7MeM8lVQfWc8VxLfR/zTkKJarEaTvB9r/YLpcs38622Ue65Z1gzXqcRUBGhJBkPvDqDRO0SV95s21xe+dPHNSs1dQVAwDyuigYcncWln1OuGlkYTjNGR7iaO+8sNYSHqvA==
 
+On Tue, 8 Jul 2025 08:53:56 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
+> On Tue, 8 Jul 2025 at 07:41, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > Would something like this work? If someone enables the config to enable the
+> > validation, I don't think we need dynamic printk to do it (as that requires
+> > passing in the format directly and not via a pointer).  
+> 
+> I really think you should just not use 'user_access_begin()" AT ALL if
+> you need to play these kinds of games.
+> 
 
-On 7/8/25 8:58 AM, Tudor Ambarus wrote:
-> 
-> 
-> On 7/8/25 4:36 PM, Randy Dunlap wrote:
->> Hi,
->>
-> 
-> Hi, Randy!
-> 
->> On 7/8/25 8:16 AM, Tudor Ambarus wrote:
->>
->>> ---
->>>  Documentation/admin-guide/kernel-parameters.txt | 11 +++++++++++
->>>  kernel/power/main.c                             |  9 +++++++++
->>>  2 files changed, 20 insertions(+)
->>>
->>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->>> index f1f2c0874da9ddfc95058c464fdf5dabaf0de713..33ca6b881b1d77bdeea765b19291a90b2a82e8a3 100644
->>> --- a/Documentation/admin-guide/kernel-parameters.txt
->>> +++ b/Documentation/admin-guide/kernel-parameters.txt
->>> @@ -5000,6 +5000,17 @@
->>>  			that number, otherwise (e.g., 'pmu_override=on'), MMCR1
->>>  			remains 0.
->>>  
->>
->> This should be more like:
->>
->>
->> 	pm_async=off	[PM]
->>
->> or
->>
->>> +	pm_async	[PM]
->>
->> 	pm_async=	[PM]
->> 			Format: off
-> 
-> Indeed. I see this second description, "kernel_param=", largely used in
-> the existing kernel parameters, so maybe that's what I shall follow.
-> However, I don't really know which format to choose, I see:
-> 
-> Format: <string>
-> Format: { off }
-> Format: {off}
-> Format: { "off" }
-> Format: {"off"}
-> Format: off
-> 
-> Any idea if there's an already agreed string format?
+Looking at the code a bit deeper, I don't think we need to play these games
+and still keep the user_read_access_begin().
 
-Hi,
-AFAIK there isn't one. Just choose one. :)
+The places that are more performance critical (where it reads the sframe
+during normal stack walking during profiling) has no debug output, and
+there's nothing there that needs to take it out of the user_read_access
+area.
 
-I would go with the first choice that I listed
-but it's up to you.
+It's the validator that adds these hacks. I don't think it needs to. It can
+just wrap the calls to the code that requires user_read_access and then
+check the return value. The validator is just a debugging feature and
+performance should not be an issue.
 
--- 
-~Randy
+But I do think performance is something to care about during normal
+operations where the one big user_read_access_begin() can help.
 
+What about something like this? It adds "safe" versions of the user space
+access functions and uses them only in the slow (we don't care about
+performance) validator:
+
+-- Steve
+
+diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c
+index 0060cc576776..79ff3c0fc11f 100644
+--- a/kernel/unwind/sframe.c
++++ b/kernel/unwind/sframe.c
+@@ -321,7 +321,34 @@ int sframe_find(unsigned long ip, struct unwind_user_frame *frame)
+ 
+ #ifdef CONFIG_SFRAME_VALIDATION
+ 
+-static __always_inline int __sframe_validate_section(struct sframe_section *sec)
++static int safe_read_fde(struct sframe_section *sec,
++			 unsigned int fde_num, struct sframe_fde *fde)
++{
++	int ret;
++
++	if (!user_read_access_begin((void __user *)sec->sframe_start,
++				    sec->sframe_end - sec->sframe_start))
++		return -EFAULT;
++	ret = __read_fde(sec, fde_num, fde);
++	user_read_access_end();
++	return ret;
++}
++
++static int safe_read_fre(struct sframe_section *sec,
++			 struct sframe_fde *fde, unsigned long fre_addr,
++			 struct sframe_fre *fre)
++{
++	int ret;
++
++	if (!user_read_access_begin((void __user *)sec->sframe_start,
++				    sec->sframe_end - sec->sframe_start))
++		return -EFAULT;
++	ret = __read_fre(sec, fde, fre_addr, fre);
++	user_read_access_end();
++	return ret;
++}
++
++static int sframe_validate_section(struct sframe_section *sec)
+ {
+ 	unsigned long prev_ip = 0;
+ 	unsigned int i;
+@@ -335,13 +362,13 @@ static __always_inline int __sframe_validate_section(struct sframe_section *sec)
+ 		unsigned int j;
+ 		int ret;
+ 
+-		ret = __read_fde(sec, i, &fde);
++		ret = safe_read_fde(sec, i, &fde);
+ 		if (ret)
+ 			return ret;
+ 
+ 		ip = sec->sframe_start + fde.start_addr;
+ 		if (ip <= prev_ip) {
+-			dbg_sec_uaccess("fde %u not sorted\n", i);
++			dbg_sec("fde %u not sorted\n", i);
+ 			return -EFAULT;
+ 		}
+ 		prev_ip = ip;
+@@ -353,17 +380,20 @@ static __always_inline int __sframe_validate_section(struct sframe_section *sec)
+ 			fre = which ? fres : fres + 1;
+ 			which = !which;
+ 
+-			ret = __read_fre(sec, &fde, fre_addr, fre);
++			ret = safe_read_fre(sec, &fde, fre_addr, fre);
+ 			if (ret) {
+-				dbg_sec_uaccess("fde %u: __read_fre(%u) failed\n", i, j);
+-				dbg_print_fde_uaccess(sec, &fde);
++				dbg_sec("fde %u: __read_fre(%u) failed\n", i, j);
++				dbg_sec("FDE: start_addr:0x%x func_size:0x%x fres_off:0x%x fres_num:%d info:%u rep_size:%u\n",
++					fde.start_addr, fde.func_size,
++					fde.fres_off, fde.fres_num,
++					fde.info, fde.rep_size);
+ 				return ret;
+ 			}
+ 
+ 			fre_addr += fre->size;
+ 
+ 			if (prev_fre && fre->ip_off <= prev_fre->ip_off) {
+-				dbg_sec_uaccess("fde %u: fre %u not sorted\n", i, j);
++				dbg_sec("fde %u: fre %u not sorted\n", i, j);
+ 				return -EFAULT;
+ 			}
+ 
+@@ -374,21 +404,6 @@ static __always_inline int __sframe_validate_section(struct sframe_section *sec)
+ 	return 0;
+ }
+ 
+-static int sframe_validate_section(struct sframe_section *sec)
+-{
+-	int ret;
+-
+-	if (!user_read_access_begin((void __user *)sec->sframe_start,
+-				    sec->sframe_end - sec->sframe_start)) {
+-		dbg_sec("section usercopy failed\n");
+-		return -EFAULT;
+-	}
+-
+-	ret = __sframe_validate_section(sec);
+-	user_read_access_end();
+-	return ret;
+-}
+-
+ #else /*  !CONFIG_SFRAME_VALIDATION */
+ 
+ static int sframe_validate_section(struct sframe_section *sec) { return 0; }
 
