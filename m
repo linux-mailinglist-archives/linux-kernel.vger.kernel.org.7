@@ -1,461 +1,306 @@
-Return-Path: <linux-kernel+bounces-722166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031D2AFD627
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:10:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD839AFD630
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1295E3B4E30
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:10:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3D9517FE02
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A912E21C9E1;
-	Tue,  8 Jul 2025 18:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4362DAFA3;
+	Tue,  8 Jul 2025 18:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lhUwqk33"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b="Xyl956T9";
+	dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b="aM3vrtjf"
+Received: from mx0a-000eb902.pphosted.com (mx0a-000eb902.pphosted.com [205.220.165.212])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3EC92E54BD;
-	Tue,  8 Jul 2025 18:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751998220; cv=none; b=JylRlNxb/ykdpgLvrh9IrjrkqsElGYlY9gVjUMhmju7qKZYrdHDQHm/BXXCGYQv1SvnZVQl25XPpP2HgFWFjXRjMQiYkVZFWXnyJ+MAlRj9CAxr7GuVysd+t/2hF86BrMKwrMATJyaHH67SPjUXShp84uhTrVk2ASa8qcQdbfLk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751998220; c=relaxed/simple;
-	bh=3Af2JX6e7MjlMt/qLHkM2Uew0I5FJG0CU7BwTM5dbNI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WzotFBSyK8kFeZcbia786Vha6v29m0sn0I9ahubojZZJi8D/QMp4MBBo/9aLVlJeiluce4dmXE21M7BVxVsxcXZRDkeOwVJnj+3gHRr2nLarH97XZMFYAB/zP1XnVuUfKAp2czzgwepHvxaQVs2tc/to05lkkj6O/Y8txv4Bjp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lhUwqk33; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F334C4CEED;
-	Tue,  8 Jul 2025 18:10:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751998220;
-	bh=3Af2JX6e7MjlMt/qLHkM2Uew0I5FJG0CU7BwTM5dbNI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lhUwqk330AVVuloTQdTXi96pYG+McC0eMKCG0oOK1kmGCuavrmM77Ox+yKdmHH6j7
-	 gD+Js3F0hBQ+H99FKNsdQTFTcfz9DimwvlE8FADLGXeTHfsu/4c8bshFjlhIqaDghq
-	 MxCuTDbou3CSDemMaFWllLbRVbxOIMOe8WDHPXQA=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org
-Subject: [PATCH 6.1 00/81] 6.1.144-rc2 review
-Date: Tue,  8 Jul 2025 20:10:16 +0200
-Message-ID: <20250708180901.558453595@linuxfoundation.org>
-X-Mailer: git-send-email 2.50.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B6614A60D;
+	Tue,  8 Jul 2025 18:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.212
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751998350; cv=fail; b=aY4xNCGwz7iSMXwnQH/onO/h6+MRRfCTPLKSxh+73SnGvub2GvcBg/nBDu9wKQ4oSJAxucARGvL+iG+RBadtnPStqSecbRGX2GyG6hyBG3ZmeOXQJyH2sSRv2NBGcxLVVMma/CWsFyhSCqh19YimnC/yGJTDBjOacgFQuPPMHG8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751998350; c=relaxed/simple;
+	bh=GL9qHGCG4sThqVD6IprE+pvwDhNHuYCFrn+VTkznd7Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RFhfDdnmKW9/eZJosbLtzZpoQQeqlxTyLHBfOO8GfTJvZy8XnWwaMCAo1asbgprx0WFDYNKYoPQ0TZGKm7NznkUEbsxSYazbmK7rnXJdoRHjp5lNpAA+q4rJnaKuHL0rkVTvRnInptpGT+Wj+f7E3w4tUjSvXv4F7j1DZz/32I8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=garmin.com; spf=pass smtp.mailfrom=garmin.com; dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b=Xyl956T9; dkim=pass (2048-bit key) header.d=garmin.com header.i=@garmin.com header.b=aM3vrtjf; arc=fail smtp.client-ip=205.220.165.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=garmin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garmin.com
+Received: from pps.filterd (m0220295.ppops.net [127.0.0.1])
+	by mx0a-000eb902.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568H3g52004832;
+	Tue, 8 Jul 2025 13:12:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garmin.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pps1; bh=YfbGVIGk3rAepAewQmqXj8PHwFA
+	3Er+uj2vFPM3xx8g=; b=Xyl956T9dcTnkW8sL+hdLsbR8YrPVVunpXOrUQwOzz3
+	nA0+Yak2FrPKgFjGRAAUDh2R+xwFvSiCxfCpyiU/bsHIsg9LUF+7CxRseBc8F76Y
+	UjgCJMZLdwrEVChz6us8+Dl5ah0pli2QCiKchgyNZktP2FbrTjnqPUBLPEfdGx1P
+	BetfSH27tMN85ENW2G5fHvPcW48NPYnC9WC63JXMjnWaLfvcZEmVpauJ3blBhjc8
+	qOVHB+YmZJxvAsUCfBKGPhJb+W1KEOD9srE3W7zdYRwEzQJrTHV3iCgUyeziXfoZ
+	2YyhGaM9UcEAOagqFZ7bplFHHIA/0bryRUc6nGZbDHA==
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2122.outbound.protection.outlook.com [40.107.243.122])
+	by mx0a-000eb902.pphosted.com (PPS) with ESMTPS id 47s7d183yp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Jul 2025 13:12:16 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SBo4ODk7sDJcf1TZ0tUlO/niLQMK3Rtjb9XoTHtUnTWhUmN3Pn7Oobkghjr5Hdsf4likZBxE21Y9AYxkCWyhStNrSNBGbRAnbH0kS/ICDA3mbgF21a0MDprd1LzkIMzev1oueyepvfbOvS4wNGdDwC54/GJbT5M4EnNbF9r28Btjp8Od3GJy+duOYyQOjqeUiULxiP4C7bONCm84mGf+2J01s08KG3L4jVZHRrK28p8EG9SsNFHz0S8Ks9XOG9HDk1K4Ee5hWlzcu4aM8eUA4UHVERfYHTKZgtApxNf3aTDy/5iAMN8KVM7dGlCKEfy5JIuaixE5JQhvi0uXTtF4VQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YfbGVIGk3rAepAewQmqXj8PHwFA3Er+uj2vFPM3xx8g=;
+ b=K1X03No3cOGyo0q0k+HsddkjnBKLHXoc7EkzHNOZRGdFGr+XvxAV+oWjVk7AVlRNuWxXgQAYzXuGu5PaSbS9WNucjOKfPQ4PJaOQusVI8wfhDhlaNaaIAOQw/Xr2T9mtKnLbHNb5zQKiRwWQsVk46YoLyXEAgXDVNabrxU5h/eRU5ufeR+7FrdBxTZu3W/FNsrKJnyN77+UN18KNjAHiSRtOACHGNYJmE7xaNuJf1NfgSKKULQquSc5x3NVb/0KZ7dGmB01n/aiuIkkyyXY5R8RhlWQ5vtTlSN8o/r1kUVdrt8J0jbEKTNL6WeF8nE6AoCu01HCvjr80MtCWVOkuWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 204.77.163.244) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=garmin.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=garmin.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garmin.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YfbGVIGk3rAepAewQmqXj8PHwFA3Er+uj2vFPM3xx8g=;
+ b=aM3vrtjfHmQLUE4LBs6liSiuhQUriBuDkDahvbrBM8bTbsM6HBI+sb62c9UH9N7Zhjvfg45RwbjhhVVE0kYmB6HA+xYWTe02EnsU2ptSYXYDNYwaGvRoLCwy015ciRiimuD3TR0psEfZskfY3fyyWdw3OUsbYxP/h/DPz6w0ox4HE6LRtxM8JqJycBopN6isg9kN6dRjnxNV6VVpu+FeTXV++C9O+X6/SJCRYYBSd1LuIthiq0K8mzkroSqYvCzR4x+pQFAfhN8ZrjUY/JrnaICYkmyWv1wKuSZ8X7QwZ7zCvkgwIlSKInt8ZDBUItX++O9cEkGnQGaWWQ6vziaLbg==
+Received: from MW3PR06CA0006.namprd06.prod.outlook.com (2603:10b6:303:2a::11)
+ by DM6PR04MB6987.namprd04.prod.outlook.com (2603:10b6:5:240::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Tue, 8 Jul
+ 2025 18:12:13 +0000
+Received: from SJ1PEPF0000231D.namprd03.prod.outlook.com
+ (2603:10b6:303:2a:cafe::e8) by MW3PR06CA0006.outlook.office365.com
+ (2603:10b6:303:2a::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.27 via Frontend Transport; Tue,
+ 8 Jul 2025 18:12:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 204.77.163.244)
+ smtp.mailfrom=garmin.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=garmin.com;
+Received-SPF: Pass (protection.outlook.com: domain of garmin.com designates
+ 204.77.163.244 as permitted sender) receiver=protection.outlook.com;
+ client-ip=204.77.163.244; helo=edgetransport.garmin.com; pr=C
+Received: from edgetransport.garmin.com (204.77.163.244) by
+ SJ1PEPF0000231D.mail.protection.outlook.com (10.167.242.234) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8901.15 via Frontend Transport; Tue, 8 Jul 2025 18:12:13 +0000
+Received: from kc3wpa-exmb3.ad.garmin.com (10.65.32.83) by cv1wpa-edge1
+ (10.60.4.251) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 8 Jul 2025
+ 13:12:00 -0500
+Received: from cv1wpa-exmb3.ad.garmin.com (10.5.144.73) by
+ kc3wpa-exmb3.ad.garmin.com (10.65.32.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 8 Jul 2025 13:12:01 -0500
+Received: from cv1wpa-exmb2.ad.garmin.com (10.5.144.72) by
+ cv1wpa-exmb3.ad.garmin.com (10.5.144.73) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 8 Jul 2025 13:12:00 -0500
+Received: from OLA-JW4GN34.ad.garmin.com (10.5.209.17) by smtp.garmin.com
+ (10.5.144.72) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Tue, 8 Jul 2025 13:12:00 -0500
+From: Brett Werling <brett.werling@garmin.com>
+To: <linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Marc Kleine-Budde <mkl@pengutronix.de>,
+        Vincent Mailhol
+	<mailhol.vincent@wanadoo.fr>,
+        <brett.werling@garmin.com>, <bwerl.dev@gmail.com>
+Subject: [PATCH] can: tcan4x5x: fix reset gpio usage during probe
+Date: Tue, 8 Jul 2025 13:11:53 -0500
+Message-ID: <20250708181154.2987123-1-brett.werling@garmin.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.144-rc2.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.1.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.1.144-rc2
-X-KernelTest-Deadline: 2025-07-10T18:09+00:00
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-
-This is the start of the stable review cycle for the 6.1.144 release.
-There are 81 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Thu, 10 Jul 2025 18:08:50 +0000.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.144-rc2.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.1.144-rc2
-
-Borislav Petkov (AMD) <bp@alien8.de>
-    x86/process: Move the buffer clearing before MONITOR
-
-Borislav Petkov (AMD) <bp@alien8.de>
-    KVM: SVM: Advertise TSA CPUID bits to guests
-
-Borislav Petkov (AMD) <bp@alien8.de>
-    x86/bugs: Add a Transient Scheduler Attacks mitigation
-
-Borislav Petkov (AMD) <bp@alien8.de>
-    x86/bugs: Rename MDS machinery to something more generic
-
-Andrei Kuchynski <akuchynski@chromium.org>
-    usb: typec: displayport: Fix potential deadlock
-
-Kurt Borja <kuurtb@gmail.com>
-    platform/x86: think-lmi: Fix kobject cleanup
-
-Kurt Borja <kuurtb@gmail.com>
-    platform/x86: think-lmi: Create ksets consecutively
-
-Oliver Neukum <oneukum@suse.com>
-    Logitech C-270 even more broken
-
-Michael J. Ruhl <michael.j.ruhl@intel.com>
-    i2c/designware: Fix an initialization issue
-
-Christian König <christian.koenig@amd.com>
-    dma-buf: fix timeout handling in dma_resv_wait_timeout v2
-
-Peter Chen <peter.chen@cixtech.com>
-    usb: cdnsp: do not disable slot for disabled slot
-
-Hongyu Xie <xiehongyu1@kylinos.cn>
-    xhci: Disable stream for xHC controller with XHCI_BROKEN_STREAMS
-
-Mathias Nyman <mathias.nyman@linux.intel.com>
-    xhci: dbc: Flush queued requests before stopping dbc
-
-Łukasz Bartosik <ukaszb@chromium.org>
-    xhci: dbctty: disable ECHO flag by default
-
-Oleksij Rempel <linux@rempel-privat.de>
-    net: usb: lan78xx: fix WARN in __netif_napi_del_locked on disconnect
-
-Kurt Borja <kuurtb@gmail.com>
-    platform/x86: dell-wmi-sysman: Fix class device unregistration
-
-Kurt Borja <kuurtb@gmail.com>
-    platform/x86: think-lmi: Fix class device unregistration
-
-Fushuai Wang <wangfushuai@baidu.com>
-    dpaa2-eth: fix xdp_rxq_info leak
-
-Filipe Manana <fdmanana@suse.com>
-    btrfs: use btrfs_record_snapshot_destroy() during rmdir
-
-Trond Myklebust <trond.myklebust@hammerspace.com>
-    NFSv4/flexfiles: Fix handling of NFS level errors in I/O
-
-Maíra Canal <mcanal@igalia.com>
-    drm/v3d: Disable interrupts before resetting the GPU
-
-Niklas Schnelle <schnelle@linux.ibm.com>
-    s390/pci: Fix stale function handles in error handling
-
-Bui Quang Minh <minhquangbui99@gmail.com>
-    virtio-net: ensure the received length does not exceed allocated size
-
-Uladzislau Rezki (Sony) <urezki@gmail.com>
-    rcu: Return early if callback is not specified
-
-Pablo Martin-Gomez <pmartin-gomez@freebox.fr>
-    mtd: spinand: fix memory leak of ECC engine conf
-
-Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-    ACPICA: Refuse to evaluate a method if arguments are missing
-
-Johannes Berg <johannes.berg@intel.com>
-    wifi: ath6kl: remove WARN on bad firmware input
-
-Johannes Berg <johannes.berg@intel.com>
-    wifi: mac80211: drop invalid source address OCB frames
-
-Justin Sanders <jsanders.devel@gmail.com>
-    aoe: defer rexmit timer downdev work to workqueue
-
-Maurizio Lombardi <mlombard@redhat.com>
-    scsi: target: Fix NULL pointer dereference in core_scsi3_decode_spec_i_port()
-
-Raven Black <ravenblack@gmail.com>
-    ASoC: amd: yc: update quirk data for HP Victus
-
-Madhavan Srinivasan <maddy@linux.ibm.com>
-    powerpc: Fix struct termio related ioctl macros
-
-Johannes Berg <johannes.berg@intel.com>
-    ata: pata_cs5536: fix build on 32-bit UML
-
-Tasos Sahanidis <tasos@tasossah.com>
-    ata: libata-acpi: Do not assume 40 wire cable if no devices are enabled
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: sb: Force to disable DMAs once when DMA mode is changed
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: sb: Don't allow changing the DMA mode during operations
-
-Rob Clark <robdclark@chromium.org>
-    drm/msm: Fix another leak in the submit error path
-
-Rob Clark <robdclark@chromium.org>
-    drm/msm: Fix a fence leak in submit error path
-
-Wang Zhaolong <wangzhaolong@huaweicloud.com>
-    smb: client: fix race condition in negotiate timeout by using more precise timing
-
-Lion Ackermann <nnamrec@gmail.com>
-    net/sched: Always pass notifications when child class becomes empty
-
-Thomas Fourier <fourier.thomas@gmail.com>
-    nui: Fix dma_mapping_error() check
-
-Kohei Enju <enjuk@amazon.com>
-    rose: fix dangling neighbour pointers in rose_rt_device_down()
-
-Alok Tiwari <alok.a.tiwari@oracle.com>
-    enic: fix incorrect MTU comparison in enic_change_mtu()
-
-Raju Rangoju <Raju.Rangoju@amd.com>
-    amd-xgbe: align CL37 AN sequence as per databook
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    lib: test_objagg: Set error message in check_expect_hints_stats()
-
-Vitaly Lifshits <vitaly.lifshits@intel.com>
-    igc: disable L1.2 PCI-E link substate to avoid performance issue
-
-Junxiao Chang <junxiao.chang@intel.com>
-    drm/i915/gsc: mei interrupt top half should be in irq disabled context
-
-Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
-    drm/i915/gt: Fix timeline left held on VMA alloc error
-
-Alok Tiwari <alok.a.tiwari@oracle.com>
-    platform/mellanox: mlxreg-lc: Fix logic error in power state check
-
-Kurt Borja <kuurtb@gmail.com>
-    platform/x86: dell-wmi-sysman: Fix WMI data block retrieval in sysfs callbacks
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    drm/i915/selftests: Change mock_request() to return error pointers
-
-James Clark <james.clark@linaro.org>
-    spi: spi-fsl-dspi: Clear completion counter before initiating transfer
-
-Marek Szyprowski <m.szyprowski@samsung.com>
-    drm/exynos: fimd: Guard display clock control with runtime PM calls
-
-Thomas Fourier <fourier.thomas@gmail.com>
-    ethernet: atl1: Add missing DMA mapping error checks and count errors
-
-Filipe Manana <fdmanana@suse.com>
-    btrfs: fix iteration of extrefs during log replay
-
-Filipe Manana <fdmanana@suse.com>
-    btrfs: fix missing error handling when searching for inode refs during log replay
-
-Yang Li <yang.li@amlogic.com>
-    Bluetooth: Prevent unintended pause by checking if advertising is active
-
-Alok Tiwari <alok.a.tiwari@oracle.com>
-    platform/mellanox: nvsw-sn2201: Fix bus number in adapter error message
-
-Patrisious Haddad <phaddad@nvidia.com>
-    RDMA/mlx5: Fix CC counters query for MPV
-
-Bart Van Assche <bvanassche@acm.org>
-    scsi: ufs: core: Fix spelling of a sysfs attribute name
-
-Thomas Fourier <fourier.thomas@gmail.com>
-    scsi: qla4xxx: Fix missing DMA mapping error in qla4xxx_alloc_pdu()
-
-Thomas Fourier <fourier.thomas@gmail.com>
-    scsi: qla2xxx: Fix DMA mapping test in qla24xx_get_port_database()
-
-Benjamin Coddington <bcodding@redhat.com>
-    NFSv4/pNFS: Fix a race to wake on NFS_LAYOUT_DRAIN
-
-Kuniyuki Iwashima <kuniyu@google.com>
-    nfs: Clean up /proc/net/rpc/nfs when nfs_fs_proc_net_init() fails.
-
-Mark Zhang <markzhang@nvidia.com>
-    RDMA/mlx5: Initialize obj_event->obj_sub_list before xa_insert
-
-David Thompson <davthompson@nvidia.com>
-    platform/mellanox: mlxbf-tmfifo: fix vring_desc.len assignment
-
-Janne Grunau <j@jannau.net>
-    arm64: dts: apple: t8103: Fix PCIe BCM4377 nodename
-
-Sergey Senozhatsky <senozhatsky@chromium.org>
-    mtk-sd: reset host->mrq on prepare_data() error
-
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
-    mtk-sd: Prevent memory corruption from DMA map failure
-
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
-    mtk-sd: Fix a pagefault in dma_unmap_sg() for not prepared data
-
-RD Babiera <rdbabiera@google.com>
-    usb: typec: altmodes/displayport: do not index invalid pin_assignments
-
-Manivannan Sadhasivam <mani@kernel.org>
-    regulator: gpio: Fix the out-of-bounds access to drvdata::gpiods
-
-Christian Eggers <ceggers@arri.de>
-    Bluetooth: MGMT: mesh_send: check instances prior disabling advertising
-
-Christian Eggers <ceggers@arri.de>
-    Bluetooth: MGMT: set_mesh: update LE scan interval and window
-
-Christian Eggers <ceggers@arri.de>
-    Bluetooth: hci_sync: revert some mesh modifications
-
-Avri Altman <avri.altman@sandisk.com>
-    mmc: core: sd: Apply BROKEN_SD_DISCARD quirk earlier
-
-Ulf Hansson <ulf.hansson@linaro.org>
-    Revert "mmc: sdhci: Disable SD card clock before changing parameters"
-
-Victor Shih <victor.shih@genesyslogic.com.tw>
-    mmc: sdhci: Add a helper function for dump register in dynamic debug mode
-
-HarshaVardhana S A <harshavardhana.sa@broadcom.com>
-    vsock/vmci: Clear the vmci transport packet properly when initializing it
-
-Niklas Schnelle <schnelle@linux.ibm.com>
-    s390/pci: Do not try re-enabling load/store if device is disabled
-
-Mateusz Jończyk <mat.jonczyk@o2.pl>
-    rtc: cmos: use spin_lock_irqsave in cmos_interrupt
-
-
--------------
-
-Diffstat:
-
- Documentation/ABI/testing/sysfs-devices-system-cpu |   1 +
- Documentation/ABI/testing/sysfs-driver-ufs         |   2 +-
- .../hw-vuln/processor_mmio_stale_data.rst          |   4 +-
- Documentation/admin-guide/kernel-parameters.txt    |  13 ++
- Makefile                                           |   4 +-
- arch/arm64/boot/dts/apple/t8103-jxxx.dtsi          |   2 +-
- arch/powerpc/include/uapi/asm/ioctls.h             |   8 +-
- arch/s390/pci/pci_event.c                          |  20 ++++
- arch/x86/Kconfig                                   |   9 ++
- arch/x86/entry/entry.S                             |   8 +-
- arch/x86/include/asm/cpu.h                         |  12 ++
- arch/x86/include/asm/cpufeatures.h                 |   6 +
- arch/x86/include/asm/irqflags.h                    |   4 +-
- arch/x86/include/asm/mwait.h                       |  19 ++-
- arch/x86/include/asm/nospec-branch.h               |  39 +++---
- arch/x86/kernel/cpu/amd.c                          |  58 +++++++++
- arch/x86/kernel/cpu/bugs.c                         | 133 ++++++++++++++++++++-
- arch/x86/kernel/cpu/common.c                       |  14 ++-
- arch/x86/kernel/cpu/scattered.c                    |   2 +
- arch/x86/kernel/process.c                          |  15 ++-
- arch/x86/kvm/cpuid.c                               |   9 +-
- arch/x86/kvm/reverse_cpuid.h                       |   8 ++
- arch/x86/kvm/svm/vmenter.S                         |   6 +
- arch/x86/kvm/vmx/vmx.c                             |   2 +-
- drivers/acpi/acpica/dsmethod.c                     |   7 ++
- drivers/ata/libata-acpi.c                          |  24 ++--
- drivers/ata/pata_cs5536.c                          |   2 +-
- drivers/ata/pata_via.c                             |   6 +-
- drivers/base/cpu.c                                 |   7 ++
- drivers/block/aoe/aoe.h                            |   1 +
- drivers/block/aoe/aoecmd.c                         |   8 +-
- drivers/block/aoe/aoedev.c                         |   5 +-
- drivers/dma-buf/dma-resv.c                         |  12 +-
- drivers/gpu/drm/exynos/exynos_drm_fimd.c           |  12 ++
- drivers/gpu/drm/i915/gt/intel_gsc.c                |   2 +-
- drivers/gpu/drm/i915/gt/intel_ring_submission.c    |   3 +-
- drivers/gpu/drm/i915/selftests/i915_request.c      |  20 ++--
- drivers/gpu/drm/i915/selftests/mock_request.c      |   2 +-
- drivers/gpu/drm/msm/msm_gem_submit.c               |  17 ++-
- drivers/gpu/drm/v3d/v3d_drv.h                      |   8 ++
- drivers/gpu/drm/v3d/v3d_gem.c                      |   2 +
- drivers/gpu/drm/v3d/v3d_irq.c                      |  37 ++++--
- drivers/i2c/busses/i2c-designware-master.c         |   1 +
- drivers/infiniband/hw/mlx5/counters.c              |   2 +-
- drivers/infiniband/hw/mlx5/devx.c                  |   2 +-
- drivers/mmc/core/quirks.h                          |  12 +-
- drivers/mmc/host/mtk-sd.c                          |  21 +++-
- drivers/mmc/host/sdhci.c                           |   9 +-
- drivers/mmc/host/sdhci.h                           |  16 +++
- drivers/mtd/nand/spi/core.c                        |   1 +
- drivers/net/ethernet/amd/xgbe/xgbe-common.h        |   2 +
- drivers/net/ethernet/amd/xgbe/xgbe-mdio.c          |   9 ++
- drivers/net/ethernet/amd/xgbe/xgbe.h               |   4 +-
- drivers/net/ethernet/atheros/atlx/atl1.c           |  79 ++++++++----
- drivers/net/ethernet/cisco/enic/enic_main.c        |   4 +-
- drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c   |  26 +++-
- drivers/net/ethernet/intel/igc/igc_main.c          |  10 ++
- drivers/net/ethernet/sun/niu.c                     |  31 ++++-
- drivers/net/ethernet/sun/niu.h                     |   4 +
- drivers/net/usb/lan78xx.c                          |   2 -
- drivers/net/virtio_net.c                           |  38 +++++-
- drivers/net/wireless/ath/ath6kl/bmi.c              |   4 +-
- drivers/platform/mellanox/mlxbf-tmfifo.c           |   3 +-
- drivers/platform/mellanox/mlxreg-lc.c              |   2 +-
- drivers/platform/mellanox/nvsw-sn2201.c            |   2 +-
- .../x86/dell/dell-wmi-sysman/dell-wmi-sysman.h     |   5 +
- .../x86/dell/dell-wmi-sysman/enum-attributes.c     |   5 +-
- .../x86/dell/dell-wmi-sysman/int-attributes.c      |   5 +-
- .../x86/dell/dell-wmi-sysman/passobj-attributes.c  |   5 +-
- .../x86/dell/dell-wmi-sysman/string-attributes.c   |   5 +-
- drivers/platform/x86/dell/dell-wmi-sysman/sysman.c |  12 +-
- drivers/platform/x86/think-lmi.c                   |  53 ++++----
- drivers/regulator/gpio-regulator.c                 |   8 +-
- drivers/rtc/rtc-cmos.c                             |  10 +-
- drivers/scsi/qla2xxx/qla_mbx.c                     |   2 +-
- drivers/scsi/qla4xxx/ql4_os.c                      |   2 +
- drivers/spi/spi-fsl-dspi.c                         |  11 +-
- drivers/target/target_core_pr.c                    |   4 +-
- drivers/ufs/core/ufs-sysfs.c                       |   4 +-
- drivers/usb/cdns3/cdnsp-ring.c                     |   4 +-
- drivers/usb/core/quirks.c                          |   3 +-
- drivers/usb/host/xhci-dbgcap.c                     |   4 +
- drivers/usb/host/xhci-dbgtty.c                     |   1 +
- drivers/usb/host/xhci-plat.c                       |   3 +-
- drivers/usb/typec/altmodes/displayport.c           |   5 +-
- fs/btrfs/inode.c                                   |   7 +-
- fs/btrfs/tree-log.c                                |   8 +-
- fs/nfs/flexfilelayout/flexfilelayout.c             | 121 +++++++++++++------
- fs/nfs/inode.c                                     |  17 ++-
- fs/nfs/pnfs.c                                      |   4 +-
- fs/smb/client/cifsglob.h                           |   1 +
- fs/smb/client/connect.c                            |   7 +-
- include/linux/cpu.h                                |   1 +
- include/linux/libata.h                             |   7 +-
- include/linux/usb/typec_dp.h                       |   1 +
- kernel/rcu/tree.c                                  |   4 +
- lib/test_objagg.c                                  |   4 +-
- net/bluetooth/hci_sync.c                           |  20 ++--
- net/bluetooth/mgmt.c                               |  25 +++-
- net/mac80211/rx.c                                  |   4 +
- net/rose/rose_route.c                              |  15 +--
- net/sched/sch_api.c                                |  19 +--
- net/vmw_vsock/vmci_transport.c                     |   4 +-
- sound/isa/sb/sb16_main.c                           |   7 ++
- sound/soc/amd/yc/acp6x-mach.c                      |   7 ++
- 105 files changed, 987 insertions(+), 304 deletions(-)
-
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF0000231D:EE_|DM6PR04MB6987:EE_
+X-MS-Office365-Filtering-Correlation-Id: e8f44ddc-1bfa-4df6-77e9-08ddbe4af6c1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?qimjZKXR3z6kK0fHcJ442k0hjMXKTV8BJxGPamYMX8/RsXbBE1gKBgINRG/N?=
+ =?us-ascii?Q?5mfXNXMSXWK9Y3pDbWpvSMuBSlSOtjsAFZuIROQ/u5qxcHqqsdpT8+ewEmYX?=
+ =?us-ascii?Q?OR9DvFM/IUyZDwbc0lORw3BzE+vsB1c9n8WfPQg4n9FFWeQMJCNY5UqczWi1?=
+ =?us-ascii?Q?AMgaMjUTEM+FN7dlgcYfXcZRABGH9IoVpkKRHIsO7puila4jMOFLVQX1oE7H?=
+ =?us-ascii?Q?NIkZcumB4xG3fguzR9eA6plh9arnFPGFVPgUUHK8Uya/TO9a5qKfVllCe1zU?=
+ =?us-ascii?Q?egRYjR4VNvEVURAq7nRTUMA7rSwg5Xk4aMZ42TrjCWuDi3ZT2Tbg6RmepmaT?=
+ =?us-ascii?Q?J0EcvhnhJiDzpAnun54ZNHuQBayTNK93wZOVUxDJ3fHqeCUs6W4aaZ46WgyF?=
+ =?us-ascii?Q?ecNs6y2hMjo+y0uAWx+gNLRUaB+lpoDQDDUD9FGai4l/Xd5xq3/vGCgRjteD?=
+ =?us-ascii?Q?1MZZWV3oDY2mngbdET6MikJf0lWrYOWwT4e47RKL6Nrr3zYqRQvbnK3VwvZu?=
+ =?us-ascii?Q?gWk7jRJfcnQD/t4uQC28GAIaW1gDWVCbyE3i3y3vFJKozcqXTfwvWEjhAFAu?=
+ =?us-ascii?Q?S8/8RqD3UB6Kyb5z9mnMaSX5CwDOpWHTkA/pafB6kDGUTU9jjwDi/WYnWX5H?=
+ =?us-ascii?Q?q5kbng+hdPCOnR/KpXvA2p9tr1wOoy8ueiQy14iI5saiAQt4hW1bv767vJL5?=
+ =?us-ascii?Q?LQkhN5SvZ/q2gWwv8/0kuSDUVI9Rvxd96tUWc9FoMBphO4INllPvwNr0HWtx?=
+ =?us-ascii?Q?p0F+cRKpPLKmdn6Jc/XFVr+rjZ7MUjtHQmMdW5hmlTSVph8DiKbKJ/ehQr+H?=
+ =?us-ascii?Q?SnGdEo+yh4i+hfb205OzYhNdncfFvn2DegPIv02vvegCPf14htY+1iqyfg2J?=
+ =?us-ascii?Q?YZzXSYMOr3CXxyOaoJnlbh09eAc+mnGOO6an642ZT42vEqqtO8Eiq9KMqinv?=
+ =?us-ascii?Q?UxCRVV9mgja7yMNpwSaqcEdXwA+89jL/kU5YXhDg3nNsRQytE4euqaGYw5Lw?=
+ =?us-ascii?Q?uJZ/tCgtTemgRzuwt+dUSlElw6Ww9Q9J+wG+UzWcaOfhAewpFt1242Hb8yC1?=
+ =?us-ascii?Q?JypmQG07mPelwV00Kn83vOgl9v02Yw7qJ+l764r8U8dGY4GV5PWoxHZ0+AFJ?=
+ =?us-ascii?Q?OHr2YETKK5GbAjJcApV87AkJFykqI42M94SXDbMhJ6OdzH9LgJ2I+rEvPlQU?=
+ =?us-ascii?Q?LcZ+U5HAHPK34f1ifW0JJv87Nqok9KL2WD+5wyJmLIO8ZR77/SEcUyBmeJld?=
+ =?us-ascii?Q?YTHHXnNxV+bZE/cFHxdltZ25l7AmDJ1T8FaFaK/m5H4O6TZ7hNBHrhflWA9L?=
+ =?us-ascii?Q?zjQs5Xx4vKYc6WMZnNZl1FgEBjgIlcN7Dcz3sMeSeJ5CIYe7KHQB5vS3JUd3?=
+ =?us-ascii?Q?StH9Ql9MNgBp0ReUbG/tD97MlbgWyevXBd5TQxZckS8wECd0wPOa1zcrcBjr?=
+ =?us-ascii?Q?+44eXQkXBFdalJrwtjY5XevH4nfZ3P5f9wBy2eJmuN6QzWDGbuAeV1/48cBz?=
+ =?us-ascii?Q?sEwLYzIno3vlNSI1VwuGbBGValb5RpfmP5w+?=
+X-Forefront-Antispam-Report:
+	CIP:204.77.163.244;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:edgetransport.garmin.com;PTR:extedge.garmin.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1102;
+X-OriginatorOrg: garmin.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 18:12:13.1436
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8f44ddc-1bfa-4df6-77e9-08ddbe4af6c1
+X-MS-Exchange-CrossTenant-Id: 38d0d425-ba52-4c0a-a03e-2a65c8e82e2d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38d0d425-ba52-4c0a-a03e-2a65c8e82e2d;Ip=[204.77.163.244];Helo=[edgetransport.garmin.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF0000231D.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR04MB6987
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDE1MiBTYWx0ZWRfX/GsgGSRuwR2X 8qfKKIUleOsjCUBvhOMtvkhc3O4e0YNRKQpI019CiWtVBpfUwUW/kTf6zXB2Jg6gdbaAhGGkqxg Gwxg65X4DIEfQiCO1r7LTYJdxQyMp4Qb8fGvt20kVa3v2ZYVy4BMA9N2nS86OcS96kCz4RQZ3zz
+ finA6aJnHxEWO/g0A+cAqbLJYk0FOIY8hTM7ra5YLJP1vHvsROMvi/Kb2Ht3a8Q6oIhzH2pvOOh 7s09vfp0/Ips/ggSomHeZTvoEWS89ouLKIYLE/3yvoNXvO5CnfqjMBb2Coe540TXBITBrn47TDv megcY7K46GkAnMsDtS7TVjNfiLLj9KvaekrpQDGDNnZwfzBkwuSP+k4I1U4M+WfhxxrwssPrCb+
+ GIFW+8SM4DKfVkTNWkw4o2Ay5TfXuTjlK0OSSVoQfzHEdR4nmGwnHU1HeP59K5p2cZ2xLvkG
+X-Authority-Analysis: v=2.4 cv=eLATjGp1 c=1 sm=1 tr=0 ts=686d5f80 cx=c_pps a=skVBa3wrE/bKtdGVm523gw==:117 a=YA0UzX50FYCGjWi3QxTvkg==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=h8e1o3o8w34MuCiiGQrqVE4VwXA=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=Wb1JkmetP80A:10 a=qm69fr9Wx_0A:10 a=NbHB2C0EAAAA:8 a=A8m-6ulFSmVBG3JXLxQA:9 cc=ntf
+X-Proofpoint-ORIG-GUID: FNbqmpU5QxfAo0o9pgIVOqKGnfZl7XWK
+X-Proofpoint-GUID: FNbqmpU5QxfAo0o9pgIVOqKGnfZl7XWK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-08_05,2025-07-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ phishscore=0 lowpriorityscore=0 mlxscore=0 bulkscore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 mlxlogscore=999 clxscore=1015 impostorscore=0
+ classifier=spam authscore=0 authtc=n/a authcc=notification route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.21.0-2505280000
+ definitions=main-2507080152
+
+Fixes reset GPIO usage during probe by ensuring we retrieve the GPIO and
+take the device out of reset (if it defaults to being in reset) before
+we attempt to communicate with the device. This is achieved by moving
+the call to tcan4x5x_get_gpios() before tcan4x5x_find_version() and
+avoiding any device communication while getting the GPIOs. Once we
+determine the version, we can then take the knowledge of which GPIOs we
+obtained and use it to decide whether we need to disable the wake or
+state pin functions within the device.
+
+This change is necessary in a situation where the reset GPIO is pulled
+high externally before the CPU takes control of it, meaning we need to
+explicitly bring the device out of reset before we can start
+communicating with it at all.
+
+This also has the effect of fixing an issue where a reset of the device
+would occur after having called tcan4x5x_disable_wake(), making the
+original behavior not actually disable the wake. This patch should now
+disable wake or state pin functions well after the reset occurs.
+
+Signed-off-by: Brett Werling <brett.werling@garmin.com>
+---
+ drivers/net/can/m_can/tcan4x5x-core.c | 56 +++++++++++++++------------
+ 1 file changed, 32 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/net/can/m_can/tcan4x5x-core.c b/drivers/net/can/m_can/tcan4x5x-core.c
+index 8edaa339d590..c37733bf124e 100644
+--- a/drivers/net/can/m_can/tcan4x5x-core.c
++++ b/drivers/net/can/m_can/tcan4x5x-core.c
+@@ -343,21 +343,19 @@ static void tcan4x5x_get_dt_data(struct m_can_classdev *cdev)
+ 		of_property_read_bool(cdev->dev->of_node, "ti,nwkrq-voltage-vio");
+ }
+ 
+-static int tcan4x5x_get_gpios(struct m_can_classdev *cdev,
+-			      const struct tcan4x5x_version_info *version_info)
++static int tcan4x5x_get_gpios(struct m_can_classdev *cdev)
+ {
+ 	struct tcan4x5x_priv *tcan4x5x = cdev_to_priv(cdev);
+ 	int ret;
+ 
+-	if (version_info->has_wake_pin) {
+-		tcan4x5x->device_wake_gpio = devm_gpiod_get(cdev->dev, "device-wake",
+-							    GPIOD_OUT_HIGH);
+-		if (IS_ERR(tcan4x5x->device_wake_gpio)) {
+-			if (PTR_ERR(tcan4x5x->device_wake_gpio) == -EPROBE_DEFER)
+-				return -EPROBE_DEFER;
++	tcan4x5x->device_wake_gpio = devm_gpiod_get_optional(cdev->dev,
++							     "device-wake",
++							     GPIOD_OUT_HIGH);
++	if (IS_ERR(tcan4x5x->device_wake_gpio)) {
++		if (PTR_ERR(tcan4x5x->device_wake_gpio) == -EPROBE_DEFER)
++			return -EPROBE_DEFER;
+ 
+-			tcan4x5x_disable_wake(cdev);
+-		}
++		tcan4x5x->device_wake_gpio = NULL;
+ 	}
+ 
+ 	tcan4x5x->reset_gpio = devm_gpiod_get_optional(cdev->dev, "reset",
+@@ -369,19 +367,27 @@ static int tcan4x5x_get_gpios(struct m_can_classdev *cdev,
+ 	if (ret)
+ 		return ret;
+ 
+-	if (version_info->has_state_pin) {
+-		tcan4x5x->device_state_gpio = devm_gpiod_get_optional(cdev->dev,
+-								      "device-state",
+-								      GPIOD_IN);
+-		if (IS_ERR(tcan4x5x->device_state_gpio)) {
+-			tcan4x5x->device_state_gpio = NULL;
+-			tcan4x5x_disable_state(cdev);
+-		}
+-	}
++	tcan4x5x->device_state_gpio = devm_gpiod_get_optional(cdev->dev,
++							      "device-state",
++							      GPIOD_IN);
++	if (IS_ERR(tcan4x5x->device_state_gpio))
++		tcan4x5x->device_state_gpio = NULL;
+ 
+ 	return 0;
+ }
+ 
++static void tcan4x5x_check_gpios(struct m_can_classdev *cdev,
++				 const struct tcan4x5x_version_info *version_info)
++{
++	struct tcan4x5x_priv *tcan4x5x = cdev_to_priv(cdev);
++
++	if (version_info->has_wake_pin && !tcan4x5x->device_wake_gpio)
++		tcan4x5x_disable_wake(cdev);
++
++	if (version_info->has_state_pin && !tcan4x5x->device_state_gpio)
++		tcan4x5x_disable_state(cdev);
++}
++
+ static const struct m_can_ops tcan4x5x_ops = {
+ 	.init = tcan4x5x_init,
+ 	.deinit = tcan4x5x_deinit,
+@@ -468,17 +474,19 @@ static int tcan4x5x_can_probe(struct spi_device *spi)
+ 		goto out_m_can_class_free_dev;
+ 	}
+ 
++	ret = tcan4x5x_get_gpios(mcan_class);
++	if (ret) {
++		dev_err(&spi->dev, "Getting gpios failed %pe\n", ERR_PTR(ret));
++		goto out_power;
++	}
++
+ 	version_info = tcan4x5x_find_version(priv);
+ 	if (IS_ERR(version_info)) {
+ 		ret = PTR_ERR(version_info);
+ 		goto out_power;
+ 	}
+ 
+-	ret = tcan4x5x_get_gpios(mcan_class, version_info);
+-	if (ret) {
+-		dev_err(&spi->dev, "Getting gpios failed %pe\n", ERR_PTR(ret));
+-		goto out_power;
+-	}
++	tcan4x5x_check_gpios(mcan_class, version_info);
+ 
+ 	tcan4x5x_get_dt_data(mcan_class);
+ 
+-- 
+2.49.0
 
 
