@@ -1,191 +1,168 @@
-Return-Path: <linux-kernel+bounces-721626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8620EAFCBC5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:22:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC099AFCBC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD613A209F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:21:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F4080165D65
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5EC2C15BE;
-	Tue,  8 Jul 2025 13:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509CC2DC34F;
+	Tue,  8 Jul 2025 13:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qvoF8QQi"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="JRsgXRez"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A365044C63
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 13:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8008215F6C;
+	Tue,  8 Jul 2025 13:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751980905; cv=none; b=ehmEohLU6OscvZKjoR7eK9Ah61x5h4aM7xabwFjeDjPHCsEpyWX6lfdYq6eDD3n37LUoLn/Z0SdLFJBp26IKEIkyp+Vc76Xva3SlnzWiRtjCDRcjM0GB1U1XtfA8vsKMvT9QC7r63fdHzMnYhcm3IeQG5kJMuQuOFlxkEb7zNP0=
+	t=1751980938; cv=none; b=t3591crjQY2wWVstvToiLGrrEYy+q5F5HJ9Udmhgigs5yhXybRk2p2nY+YvQ5hPZTLa34H067ULHpvsuA8cvyvPQ9voMVu7yIcV8DfKnyLUKHzhdZslsL4v+Se9Oth0y3iiSyW/c5VY2R9s+fkKRwz4MeCZn1R9kPt9H3/n8yX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751980905; c=relaxed/simple;
-	bh=2yab2vCXAQ7b0O98Jnl0MCXdfirx43553TtNR4iz3K8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KVlh7TmvXNdko5tkTG5+mqqNOwXJJkt0croPfCmcxKvNh8jCVQ0IT64vHceNkl8TxDOt7ZxsNpd4YKNYIlM3irc4o0/X4V53fmL4XuW7wmk1rbOfNZIMmhF2RuxXV5oZQaQ0ldhjEea+DfuECs1Re4LXcOUtoFvnjXwGFpPAQXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qvoF8QQi; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-450ddb35583so3850295e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 06:21:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751980902; x=1752585702; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=dvvfjjW3xAddEV4yoFwAXd+ZIVfjy4w3ByllVwazu2o=;
-        b=qvoF8QQiq/mu3mw8/dbofudhCJDjZ6IB4OsZJ+4bIR2QT9bxqe0R2fnDne6U0On7Ii
-         CdWuhI8ZQrLsj2ZrQME+Oxpdp8X53YDXbo56l92/ELNeq+GVDxCLAQ112K2sZmfo1+aE
-         hV8NMAZ5iye9TfZ+vpLXRormJ7/YQSn5cuKroxKF2hLVapJ5k0zHAKCduoT8Stqk2GW/
-         6yHtzLeG44Cr8xs3NfK6MN5SOs+DWfgJWxuOQqJx2sY54gCIb6PO0/qxCZGj/zMu5fcF
-         QK1vqWq9vFa2cRDuqY2t7X1toRRbWdEPCEa24+H95kMJzBp1rOHe2FA8UiwUz07czdC6
-         WCDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751980902; x=1752585702;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dvvfjjW3xAddEV4yoFwAXd+ZIVfjy4w3ByllVwazu2o=;
-        b=v2BXNoA3IpImKL2RqfhFq4HBrD1oafNPhgPB91FQw/gbb6huebPFq5yDcKN9Lk83xJ
-         +K3zeZM4225IwYKKgspapO3DOBojYt1X4Gk81MpCthpatPtUeRyg/4egBFRy388TYeLh
-         nhfbLduAQxFfVle8rCfrgor/bvnkJDsbbGsRql7dfP04P2Is7vcKKKbss8FNQph/pux9
-         NzQxG0TRZ5G0xWc6uqfKP5CHUSHxivUrYsxpNocG1dRA9vay2mHSfEoNuKC6O/BOr6dY
-         htFCqwsgGvrjX7cpYNJztKSqVYTjsA/jZXTxC4xEgbZvx1UlOj0S2dhsM4+NwTts7kQR
-         k4xw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9RlNqeLoXvvDIt2FbWC4NND/T0WQLBWS5Hz5FOEPM3xhzDz/1LM4pTofODRoC6jySHyoiLpGcrc+JIXs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwviXU4vFxJ8eqtbskfyJbx1BgR4RJRYhZ6JM1DxmqRVjwcT7ej
-	rBtm1FoZuiwBgALvNeT510Mgu/qvo16zbv2yr2mCgxylz3Q8OA6psmdKO+KraWenAC0=
-X-Gm-Gg: ASbGncsSFNaNRgJSE2zAnvHWcSko9EvdhW7pLwwNcRehu1hokKlwMxKZA4ay0AUaiug
-	H24PouuunrRkcxvi8qIKNXrzCFup/L6z4PwPfurIpNdk/a5Jl48eXqwR+v67uQWgdOwKtif6woA
-	/RVQFf4wgYSA53+EzUuStvJBy0ZlQW3TfSJ57pIMR+p0ZMUw6GVXk19f8bL84e4FDLPupJqi1Cl
-	dme1PKfCRIfru6pagEGvcmB2EmJYvKXTtpPy9CdvNLbKLRw3NqhOmyZnM8TrQ1MdSuLSeA7KwI5
-	+bSzaZabONhSGk6ANUoOLymBEEieDP2VffujSj7TZvdBMTwNWfSKIcT9+ZYMLSjQg8jMHnpl8mf
-	tW7tXxw==
-X-Google-Smtp-Source: AGHT+IGfH1hyCCuApZ/PbUkNkSLbp9c5bKTr/wL67Ccgc7rui+jruH2h0fyJtMX0xUmRb8nMe9Jqew==
-X-Received: by 2002:a05:600c:1552:b0:453:6332:a98c with SMTP id 5b1f17b1804b1-454b35ef640mr56819015e9.1.1751980901933;
-        Tue, 08 Jul 2025 06:21:41 -0700 (PDT)
-Received: from [192.168.1.110] ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454cd49df05sm21614625e9.33.2025.07.08.06.21.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 06:21:41 -0700 (PDT)
-Message-ID: <99ca93ef-ab26-4d6b-bc7b-fd2f98aecabe@linaro.org>
-Date: Tue, 8 Jul 2025 15:21:40 +0200
+	s=arc-20240116; t=1751980938; c=relaxed/simple;
+	bh=Et+QSwwJrfokDLvMmKeuMgFeMSBuywiC/GR3rgxX5eY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JUBBJZy5neCmbnjbUMG970MLW13MGJ4w6wmJ0APkYICg/2TRv2iUpLPNRUwISjNsrl4Fh0TRVskv5EwnKSEB1RuYvubnN+4MoZaOQ7VKJzPxycMGbOcWTm1ePDJGZx6uxMF1hdjT4qyfzmMtlq/nxo6/N/WPcVQkzTsi/4RGnMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=JRsgXRez; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bc1x04WFXz9tDq;
+	Tue,  8 Jul 2025 15:22:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1751980932;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5wp1NxkC5MDj7tCsOv6NJvGRhBxexqsejX9b5t8bGnI=;
+	b=JRsgXRezT3rCzZETwYUseY95mRP0oxo8RM7AZGxGq1e5xCG7cHWtzAGozRdQEjbDEzL8W8
+	oX2qm0AfuzaFszCNThfoX6TEmIfoy6ofQboDn1KXpEVpEi/Lsc+QxKJNiwL+3ysP+mnG8r
+	qdrY18OTlPrJIrUl5t0QJNIYduzBEEvEVZNEJ9A2DCOg4ss67+cQgFfVztPwldJJATDG7q
+	rgAw7rdJ1nMv9XjGfFYYYOkKeCYHe1V3dLKfKGZZMWLWJT73IIrinoxGPXGsoiFF11Jki+
+	F8p4bVdaK/lH90c/jgoR0bcXIsnWPDgaJR3KqtzMqXmXaOeU8hZbk/DTlPI6GA==
+From: Aleksa Sarai <cyphar@cyphar.com>
+Date: Tue, 08 Jul 2025 23:21:51 +1000
+Subject: [PATCH] uapi: export PROCFS_ROOT_INO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dmaengine: sh: Do not enable SH_DMAE_BASE by default
- during compile testing
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Peter Ujfalusi <peter.ujfalusi@gmail.com>,
- dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
- Linux-sh list <linux-sh@vger.kernel.org>
-References: <20250404122114.359087-1-krzysztof.kozlowski@linaro.org>
- <CAMuHMdUn=qOoKp+tNNCepb1eBXpnikJxg8w6aRR50QK562tE1w@mail.gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <CAMuHMdUn=qOoKp+tNNCepb1eBXpnikJxg8w6aRR50QK562tE1w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250708-uapi-procfs-root-ino-v1-1-6ae61e97c79b@cyphar.com>
+X-B4-Tracking: v=1; b=H4sIAG4bbWgC/x3MPQqAMAxA4atIZgNV8Pcq4hBs1CxNSVUE8e4Wx
+ 29474HEJpxgLB4wviSJhoyqLGDZKWyM4rOhdnXjOtfjSVEwmi5rQlM9UIIiVb3zzUADtR5yGo1
+ Xuf/tNL/vB29v9fFmAAAA
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ Aleksa Sarai <cyphar@cyphar.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3296; i=cyphar@cyphar.com;
+ h=from:subject:message-id; bh=Et+QSwwJrfokDLvMmKeuMgFeMSBuywiC/GR3rgxX5eY=;
+ b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWTkStdZT/t0U59d5kJHbGtKNsv9xcIr3d+9YE+OqjMxq
+ xaRedPVUcrCIMbFICumyLLNzzN00/zFV5I/rWSDmcPKBDKEgYtTACay7Ssjw1XZD3Pfbl9yc0VM
+ 2v1Z/hMlAjpfVLPey7pQ2Cvmc/H811pGhg1Lot8wbNZ8sqPIaTkv3y0/FYOP9U3f5uY33Q787rb
+ AiB8A
+X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
+ fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
 
-On 08/07/2025 15:07, Geert Uytterhoeven wrote:
-> CC linux-sh
-> 
-> Hi Krzysztof,
-> 
-> On Fri, 4 Apr 2025 at 14:22, Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->> Enabling the compile test should not cause automatic enabling of all
->> drivers.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Thanks for your patch, which is now commit 587dd30449fb1012
-> ("dmaengine: sh: Do not enable SH_DMAE_BASE by default during
-> compile testing") in dmaengine/next.
-> 
->> --- a/drivers/dma/sh/Kconfig
->> +++ b/drivers/dma/sh/Kconfig
->> @@ -16,7 +16,7 @@ config SH_DMAE_BASE
->>         depends on SUPERH || COMPILE_TEST
->>         depends on !SUPERH || SH_DMA
->>         depends on !SH_DMA_API
->> -       default y
->> +       default SUPERH || SH_DMA
-> 
-> I think the check for SUPERH is superfluous, due to the dependency on
-> "!SUPERH || SH_DMA" above.
-> 
+The root inode of /proc having a fixed inode number has been part of the
+core kernel ABI since its inception, and recently some userspace
+programs (mainly container runtimes) have started to explicitly depend
+on this behaviour.
 
-Indeed it might be, but I must admit I don't understand the dependencies
-here at all. I think commit 9f2c2bb31258 ("dmaengine: sh: Rework Kconfig
-and Makefile") from Laurent made it confusing and this later just grew
-to even more confusing.
+The main reason this is useful to userspace is that by checking that a
+suspect /proc handle has fstype PROC_SUPER_MAGIC and is PROCFS_ROOT_INO,
+they can then use openat2(RESOLVE_{NO_{XDEV,MAGICLINK},BENEATH}) to
+ensure that there isn't a bind-mount that replaces some procfs file with
+a different one. This kind of attack has lead to security issues in
+container runtimes in the past (such as CVE-2019-19921) and libraries
+like libpathrs[1] use this feature of procfs to provide safe procfs
+handling functions.
 
-What is the intention for "depends on"? This should be enabled when
-SUPERH AND SH_DMA are enabled?
+There was also some trailing whitespace in the "struct proc_dir_entry"
+initialiser, so fix that up as well.
 
-SH_DMA cannot be enabled without SUPERH (no compile test), right? But
-this "depends on !SUPERH || SH_DMA" suggests it could be. This should be
-read for humans as "if not SUPERH, then require at least SH_DMA".
-Otherwise what is the meaning for humans? This driver will work fine
-without SUERPH?
+[1]: https://github.com/openSUSE/libpathrs
 
-My change for default could be rewritten but I don't understand the goal
-behind current depends, so not sure how should I rewrite it.
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+---
+ fs/proc/root.c          | 10 +++++-----
+ include/linux/proc_ns.h |  1 -
+ include/uapi/linux/fs.h | 11 +++++++++++
+ 3 files changed, 16 insertions(+), 6 deletions(-)
+
+diff --git a/fs/proc/root.c b/fs/proc/root.c
+index 06a297a27ba3..ed86ac710384 100644
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -363,12 +363,12 @@ static const struct inode_operations proc_root_inode_operations = {
+  * This is the root "inode" in the /proc tree..
+  */
+ struct proc_dir_entry proc_root = {
+-	.low_ino	= PROC_ROOT_INO, 
+-	.namelen	= 5, 
+-	.mode		= S_IFDIR | S_IRUGO | S_IXUGO, 
+-	.nlink		= 2, 
++	.low_ino	= PROCFS_ROOT_INO,
++	.namelen	= 5,
++	.mode		= S_IFDIR | S_IRUGO | S_IXUGO,
++	.nlink		= 2,
+ 	.refcnt		= REFCOUNT_INIT(1),
+-	.proc_iops	= &proc_root_inode_operations, 
++	.proc_iops	= &proc_root_inode_operations,
+ 	.proc_dir_ops	= &proc_root_operations,
+ 	.parent		= &proc_root,
+ 	.subdir		= RB_ROOT,
+diff --git a/include/linux/proc_ns.h b/include/linux/proc_ns.h
+index 6258455e49a4..4b20375f3783 100644
+--- a/include/linux/proc_ns.h
++++ b/include/linux/proc_ns.h
+@@ -40,7 +40,6 @@ extern const struct proc_ns_operations timens_for_children_operations;
+  * We always define these enumerators
+  */
+ enum {
+-	PROC_ROOT_INO		= 1,
+ 	PROC_IPC_INIT_INO	= IPC_NS_INIT_INO,
+ 	PROC_UTS_INIT_INO	= UTS_NS_INIT_INO,
+ 	PROC_USER_INIT_INO	= USER_NS_INIT_INO,
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 3d7bb6580cfb..0bd678a4a10e 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -60,6 +60,17 @@
+ #define RENAME_EXCHANGE		(1 << 1)	/* Exchange source and dest */
+ #define RENAME_WHITEOUT		(1 << 2)	/* Whiteout source */
+ 
++/*
++ * The root inode of procfs is guaranteed to always have the same inode number.
++ * For programs that make heavy use of procfs, verifying that the root is a
++ * real procfs root and using openat2(RESOLVE_{NO_{XDEV,MAGICLINKS},BENEATH})
++ * will allow you to make sure you are never tricked into operating on the
++ * wrong procfs file.
++ */
++enum procfs_ino {
++	PROCFS_ROOT_INO = 1,
++};
++
+ struct file_clone_range {
+ 	__s64 src_fd;
+ 	__u64 src_offset;
+
+---
+base-commit: 40e87bc3b0e06018c908c338b73268ca12e28d89
+change-id: 20250708-uapi-procfs-root-ino-a180d59a9a6d
 
 Best regards,
-Krzysztof
+-- 
+Aleksa Sarai <cyphar@cyphar.com>
+
 
