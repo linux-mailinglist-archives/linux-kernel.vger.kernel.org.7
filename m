@@ -1,47 +1,48 @@
-Return-Path: <linux-kernel+bounces-721213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF681AFC631
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:52:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B19AFC632
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D7301AA1E31
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:52:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 381F17A6FC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4442BEFFE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928D32BF3E4;
 	Tue,  8 Jul 2025 08:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQVpBAOt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r7YsaUmV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A0A2BE7C0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E632B2BF00D
 	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 08:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751964740; cv=none; b=FLruf4xc/2Zs4/6Kd2GSjiF6jS+niGOjYZBPE1GZZOXcwnX9Y9wIP94Ap1Iil9BYzl+sX/46q08u1k/PxlNlAI5U6FccaQAU1KVlzrMBE9AiCX2Zgk00IrH2ZTGMxPPcqOERPXywrWa1AYxjO+IcAbrSN5AdqH1KROJN7i93i40=
+	t=1751964741; cv=none; b=mcAhrXY5CRsJSO6aAHsbZR0YK57pDdwe6Pz0k4YeKdpQb3i/RR+XuxPRSd8Vbko6AHz5gJ87b9/UfmZ/Fq1zYTJE6kt1eMYyeGJ8AQDstp0OBNXWxZTbacDsW23uvp0NL9kZKWgr1rdq05HIyWxX2ILEmw91dd+oioMeljKtPvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751964740; c=relaxed/simple;
-	bh=LKFf/zGyLqNzojJhAHw+kv8fYXSumZx4S7DH83BWnk8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y3urg7K7EO7tYW+kEfOf+Zpjnpmvi0sYmFjYYKW1PqYv9raV0IEE5gveOtJKfjjd2D4dwXnMHIyVtn8PvUb7s81ztrUHwlT2vcYLhMi9U7oSD0DqTFx3helMAKeiovwMzu5MboVlyUka1a8F3RCgzjcw+4I3w1qUo3RJgoqjVrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hQVpBAOt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F71BC4AF09;
+	s=arc-20240116; t=1751964741; c=relaxed/simple;
+	bh=QIqY2h1NWf9cbTcj6mUj2T3JGhmfNBfrg9dpy8GlrF0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nbDJaZqzo2c/nwJ0h/yNBh4JEpXeLo5DEyJvZraP4rpMxn7X1j6UV3IrXdyq18vsOrLeYx7PG7EKs8MuAgOVnSS+hXSw/JUG/J9/4qOP76ZRmd924XmTsYyr4JhLNNL1+JkEkq0lXX2s8EIX6oEWAKj0oMXBhwasuMWcdHsxqGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r7YsaUmV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BE8BC4CEED;
 	Tue,  8 Jul 2025 08:52:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1751964740;
-	bh=LKFf/zGyLqNzojJhAHw+kv8fYXSumZx4S7DH83BWnk8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=hQVpBAOtXe2Ftl4fyf22qUArzX/GT6xR4VDo2wX8IK++1rRkgFtg0+GQIG+YnlDgI
-	 4d5SMPSsxqUIlbtVTD11TtMeNA3Y+TRY5c/b3JJTGN16U1GpGUO+fSBMUtx9bO6KUf
-	 aUT735vo1iLyw0LYpdR5MjvMC8W1xfy8gh2x4Mf7t8cP8T6HMB87EozpZrXOy83s4s
-	 FGm1BCoqhzEAA4IiTG32oWJ4HZ2MTFhGthqcsokcHxz8jNTw7cTDfH0E0YbLOl5+aS
-	 1w0hw8u/vGUF+pkZbN9urer2IGQLbpwHr9Di/BjxLmAXXNm8kzsRIC354LiTmt8su4
-	 0vEco7d2TxnmA==
+	bh=QIqY2h1NWf9cbTcj6mUj2T3JGhmfNBfrg9dpy8GlrF0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=r7YsaUmVCdo9PWttJRs+Qb0hOI4FD3haWcT16lpz/lEu4mHt+B1iUFFv0rQ7A/jTb
+	 6t9yMwH+UdZXYs6yY+wjFuvvdX+Q1bmFaVsYZ0RMg22vxcwwYYS62oNFd2Ml3+Bcei
+	 ZLTh2kP8/aBDlMeMpgD6H0V7TZZOPjo6eZrHJLtNz8NUSPN2lZSNhhSzj2saAG3HKq
+	 VP6+WrxU9ULoYEzdSKH6UHTL6VKcUUsJZR2ZBKgtIo3JPwqtzc6HnBcXIGW5BDeYDt
+	 T2rFCoK0udDUw0NmdEZw3TXT5fBfHTiLeCyALTQsPPIWWAHxKZs4r1M/XQognu64Dt
+	 cubAg4HkHvsDQ==
 Received: from johan by xi.lan with local (Exim 4.97.1)
 	(envelope-from <johan@kernel.org>)
-	id 1uZ43g-0000000042E-1Ju7;
+	id 1uZ43g-0000000042H-1tXm;
 	Tue, 08 Jul 2025 10:52:12 +0200
 From: Johan Hovold <johan@kernel.org>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
@@ -60,10 +61,12 @@ Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 0/2] drm/bridge: fix OF node leaks
-Date: Tue,  8 Jul 2025 10:51:22 +0200
-Message-ID: <20250708085124.15445-1-johan@kernel.org>
+Subject: [PATCH 1/2] drm/bridge: fix OF node leak
+Date: Tue,  8 Jul 2025 10:51:23 +0200
+Message-ID: <20250708085124.15445-2-johan@kernel.org>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250708085124.15445-1-johan@kernel.org>
+References: <20250708085124.15445-1-johan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,20 +75,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make sure to drop the OF node references taken when creating bridge
-device when the devices are later released.
+Make sure to drop the OF node reference taken when creating the aux
+bridge device when the device is later released.
 
-Johan
+Fixes: 6914968a0b52 ("drm/bridge: properly refcount DT nodes in aux bridge drivers")
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+ drivers/gpu/drm/bridge/aux-bridge.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
-Johan Hovold (2):
-  drm/bridge: fix OF node leak
-  drm/bridge: ti-sn65dsi86: fix OF node leak
-
- drivers/gpu/drm/bridge/aux-bridge.c   | 2 ++
- drivers/gpu/drm/bridge/ti-sn65dsi86.c | 2 ++
- 2 files changed, 4 insertions(+)
-
+diff --git a/drivers/gpu/drm/bridge/aux-bridge.c b/drivers/gpu/drm/bridge/aux-bridge.c
+index c179b86d208f..6642ac6819a0 100644
+--- a/drivers/gpu/drm/bridge/aux-bridge.c
++++ b/drivers/gpu/drm/bridge/aux-bridge.c
+@@ -17,6 +17,7 @@ static void drm_aux_bridge_release(struct device *dev)
+ {
+ 	struct auxiliary_device *adev = to_auxiliary_dev(dev);
+ 
++	of_node_put(dev->of_node);
+ 	ida_free(&drm_aux_bridge_ida, adev->id);
+ 
+ 	kfree(adev);
+@@ -64,6 +65,7 @@ int drm_aux_bridge_register(struct device *parent)
+ 
+ 	ret = auxiliary_device_init(adev);
+ 	if (ret) {
++		of_node_put(adev->dev.of_node);
+ 		ida_free(&drm_aux_bridge_ida, adev->id);
+ 		kfree(adev);
+ 		return ret;
 -- 
 2.49.0
 
