@@ -1,459 +1,589 @@
-Return-Path: <linux-kernel+bounces-720870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B8EDAFC183
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:31:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F4173AFC12D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B61C04A45DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:31:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47EF84A6591
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3081B3925;
-	Tue,  8 Jul 2025 03:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Bh5p5qE1"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2068.outbound.protection.outlook.com [40.107.236.68])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E74230BFD;
+	Tue,  8 Jul 2025 03:11:42 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348FE101FF
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 03:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751945506; cv=fail; b=HXfWMzqFDcERIWy6/uv9kR1v6jztX8bgLu3IXrOFreZpMfzykjCwGbNs97xXjqhxF5HQdEqjFtfobYm17UvaJn3A0tzVFxaqjEIMX6SjeGkCPEzVgAgnkj0IgNnnBQCeNa967TWw2MAAvrCBg/D1I4O7BM+hvYAuMR6D0eZVDE0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751945506; c=relaxed/simple;
-	bh=9Vn2qw6LDm27lzgAB4E+8s2LuUvZgUYSPF+JWfht8eg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Rqz8p96kbPt0v+UD/apwCAeIo8n++KFxd6WXur+e2EhzE57W+aKmiS1MnuOoZmxGxomCmo71M/Fx1doqLw5+orKAw/xXL11OW6SYFGCMvYBY2hePe9BTwLAdWfLMXgBWx0AhEQJkfillsGyMIS5jNfGGcXB2MW3WT7+vPH31QSc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Bh5p5qE1; arc=fail smtp.client-ip=40.107.236.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oMWa6vpk9OXz5S36P7BtWW/piQm0e+p3+8MarzE8v0ZKTXDKu+96zYtWu4lBMSp0aUCJsR9YMgLXBL6O+U9kwEe8Hi0uColTcr+2aYUB/dN8yQU/UZtIA0XQiK+jY8CHr2bbXpnYZPOjBktJk127vSL+MP/TRAoBAcnUbFYovDB+otEo2jCvu/YddKGF/qGaMHuWw1NXKuT+YfOebMQYoKFAFdNRnybAQPeq0rNltSb+J+cdODIxP4Rufh3kxuVMuxnHOS7tIL0UWosyJDTnLtajcg1uJ8t7vF6K2Zd8oW73Jm3RClOSFwZFVjUIF3BMX+/BL3Ki/WrF+4qv8GjCqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Nehk1c4/gpPS9hZlIuDkOWl52z6HxaNvNmQStIL9quI=;
- b=sHxQH8X08iqapVa0SHxBCtd1GEPWgTAzz6PNDXS2VrKJk7gfQHJaSMK0G31svLNY4mwSFKEpuMB6FB2AkJOzABbKk7Cf38Z99FjYTtvflfqeg5OUQZaiQ2IeQD0wGdhse/HBKN9Jekl6NE0YmWC9PcnXFDwVHJK1aG7swHe6K1BzB9hJn/YH+soUdjI6ZO2TngVdUZkbUHl2m+DCa84UBQKAlFgCSd37TEzsEsDckFtUvr/jwpcJxoVGFje1WW+UPwX9PkUlSl6XtSqCrMWhgjICKxuYBt5tP3OMfRnH6nkN4fP/6JwswTtVr0XebU2tXxOX84hZzdp+WBPd5ADZEQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Nehk1c4/gpPS9hZlIuDkOWl52z6HxaNvNmQStIL9quI=;
- b=Bh5p5qE1EHJcwDGL7HmdE5DjNMcw+NaCVJqPATIAKx6DUL+ZCHkVmdRDnmtjqGvQO3oHNMMpZF8HFz728wK9bmmss0HxvO9spuQNjl9EWfOmKw38536mtztoYpjqURjLlIXrfwQNr2WD1RyETyNQdAkd5tDWUOdVkrWuhmV/Gb4yvtE3stZORBPin1xYM5xoVm0auwVVKDP/tmF95ZXaFo1cjlpgKgMf5ELj6mEh5t3Jf8nIw9EO+gSVf6iQwvqTs+mJZUEl3+TjS5L8KfPxdxzZKN59YVw3Q7MDPL6bMvRV/yRpnRbqOyfTAvq7pjGVDIkVi8T7VAKr6afX/i6roA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
- by CY3PR12MB9580.namprd12.prod.outlook.com (2603:10b6:930:10a::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Tue, 8 Jul
- 2025 03:31:37 +0000
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251%4]) with mapi id 15.20.8901.021; Tue, 8 Jul 2025
- 03:31:36 +0000
-Message-ID: <c741a198-74b4-4412-bca9-91a8e730f11f@nvidia.com>
-Date: Tue, 8 Jul 2025 13:31:29 +1000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v1 resend 08/12] mm/thp: add split during migration support
-To: Zi Yan <ziy@nvidia.com>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org, Karol Herbst <kherbst@redhat.com>,
- Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
- Shuah Khan <shuah@kernel.org>, David Hildenbrand <david@redhat.com>,
- Barry Song <baohua@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Matthew Wilcox <willy@infradead.org>,
- Peter Xu <peterx@redhat.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
- Jane Chu <jane.chu@oracle.com>, Alistair Popple <apopple@nvidia.com>,
- Donet Tom <donettom@linux.ibm.com>
-References: <20250703233511.2028395-1-balbirs@nvidia.com>
- <20250703233511.2028395-9-balbirs@nvidia.com>
- <D129A3F2-D79C-482E-BC70-A26C781B149E@nvidia.com>
- <1a451d37-56c3-4d60-8e06-3abae72e6bbd@nvidia.com>
- <007E2728-5BFC-40F9-8B8F-25504863D217@nvidia.com>
- <aa4f94a3-f601-4379-b6ca-4389421ccca4@nvidia.com>
- <906590D4-04E2-40CB-A853-25FE6212700C@nvidia.com>
- <eab52820-813f-4137-b664-c79ba8b453b7@nvidia.com>
- <2BC37A17-1005-4016-B4D8-85832F75C500@nvidia.com>
- <94D8C1A4-780C-4BEC-A336-7D3613B54845@nvidia.com>
- <0d1e51f3-ccea-4255-9c5f-68e5a41da03c@nvidia.com>
- <660F3BCC-0360-458F-BFF5-92C797E165CC@nvidia.com>
-Content-Language: en-US
-From: Balbir Singh <balbirs@nvidia.com>
-In-Reply-To: <660F3BCC-0360-458F-BFF5-92C797E165CC@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR05CA0039.namprd05.prod.outlook.com
- (2603:10b6:a03:33f::14) To PH8PR12MB7277.namprd12.prod.outlook.com
- (2603:10b6:510:223::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96AB41B6D08;
+	Tue,  8 Jul 2025 03:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751944301; cv=none; b=pmUU5kOoZiN8LZBghbib75CtQ+wDNLEou4lHAbqn6M3iqOELNqg8JdlBTm/bIwkmmEbN39jspVDmXJ40TLHvNBx8Jzyada/spGBpo+yc9qn/qADmLO2JVjddjggdLzUXz6NUYSFjtOYSEncE6JKlOXI6ZiUgZfJ2XilkGaxGGDE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751944301; c=relaxed/simple;
+	bh=Z0NPDqp5NTdgn7YLMA1y4FG+kMg/EMgdDJL/g4Nqm0s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ob1h0GTLEUveeFLWoTBP7t4GYpavoKBAozhwz7pnWKmn+xLK5dqpZHmC2faEfAFE0PYgYUkMEcne4pZjMlgv9rMIeeDmofwEgcgqq5uGQ2EV5lU8eLuhKViQCcuiivYJdRzXthL5bDK7bgZJeXy5OE0Erd9ivSqQjKcby+9GGKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bbmKH1zsvz13Mkj;
+	Tue,  8 Jul 2025 11:08:51 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7366E180B60;
+	Tue,  8 Jul 2025 11:11:28 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by dggpemf500016.china.huawei.com
+ (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 8 Jul
+ 2025 11:11:27 +0800
+From: Wang Liang <wangliang74@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <horms@kernel.org>, <alex.aring@gmail.com>,
+	<dsahern@kernel.org>
+CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<wangliang74@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
+	<linux-wpan@vger.kernel.org>
+Subject: [PATCH net-next v3] net: replace ND_PRINTK with dynamic debug
+Date: Tue, 8 Jul 2025 11:33:42 +0800
+Message-ID: <20250708033342.1627636-1-wangliang74@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|CY3PR12MB9580:EE_
-X-MS-Office365-Filtering-Correlation-Id: 444f449a-e395-42b7-ad69-08ddbdcff173
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bEx2VXlGNjRSbmtMTnFnQjNTZnFmZi9Pc2loYzVjaDI1Skc2aDN5NDlLOHZ5?=
- =?utf-8?B?Njd6dndvZzB1NTBXd2ZGbnU4aEpQZmk3QkIxQWpLenE5L3luUGRLZlE4MlRX?=
- =?utf-8?B?R3ZjaW5CSldsRmJKcjNraHQ0VVNGUGZZcFF1Zy9uSjZHdWRhZGRKNjBRcTYz?=
- =?utf-8?B?UzVIS3NWczZOblRMM0Ezczl3emxNR3JsQ20wZXV5NDhWSjBtS2RrMmQ5Uksw?=
- =?utf-8?B?MXJWWkVGOEs0RUlMVTdscytvZ3ZTRG5wVWl4eVViZmdhdHh0a1JvNzY1cGpN?=
- =?utf-8?B?djN4SzdmWFlEL2FENDRHKzdYZ2U3ZXRienFEK0xNd0JaTUt6a3RwQjkvZ2x4?=
- =?utf-8?B?eUNRbkh4QkRlOWxqTHQxTm52ZmVWcHJxbnNyd0lhVjJOc2JPVU9RMnFwSUJa?=
- =?utf-8?B?ZmdnMktQZzREcDJOVEh2Uzl2c3NaWGxSYjIya3FkUDl1QVRvMzc5VG5TMVVo?=
- =?utf-8?B?aWRQTVVPd3VEZFUzV3dTeDZIMHJHQkdsUGtRUzIrYTBmMm5NeUVZN0dnQ2V6?=
- =?utf-8?B?c3ByOHB6NGVNWC9qcWR6UG1HRDBQejd1VU8xcmtuMmd6SE5qUHZmckZDcnNi?=
- =?utf-8?B?K3pkbGZaV3dlRklQanVvVE1rNVFjZ2g0UEFtZENsdm4rbTE2SytiUGFGTWZF?=
- =?utf-8?B?UklxQTYvNThKcEloVUREM3pSQThyaXM4Zk5lWXp1MEtHUk5yU1Jac1VGZnM5?=
- =?utf-8?B?N1pIQWNVVC9qWEVIazBuSk9WTlRDdlBrbVBPYzFwZWRmVzF6dld3Z1hib3dW?=
- =?utf-8?B?SjVHNXUyd1dEMC9SaDJqUmxscHl5NkVqOVR2UzlWNitEZEJrNXN1VG9wQjVx?=
- =?utf-8?B?WVNkU2JoLzFIY20vYUs1Slo2RmZranVwTG1qZUpyS29DeDlwY1pOSW4yaUxj?=
- =?utf-8?B?UHF6MnpUSEZaa1dnWW9jWnhFQW00V1pzSGNNa3RkMmtEa0NiYTk4cjdDNndQ?=
- =?utf-8?B?ajYxTGd0TURwWUxzUWVkclNHTHY2L2hENzFVSXk5U0RlcGNqVmlKY1BuNnNR?=
- =?utf-8?B?eXRrM2dlWXptSm9BU0lzK3dieU4rYml4RHRvNGV1bDdpMDJZT01wVnVER2pn?=
- =?utf-8?B?enF6SVpoODc3NXROcDBXaDFGNHMvT3hJOEg2M05VOHpSUm43WXR4Tm12YmRL?=
- =?utf-8?B?bm0wQm1ERllJRm9NMGVSQlNoQjJTTEljdk14cEhjV21nZS9uQ1RXN1l6dHU4?=
- =?utf-8?B?a0t1Z1E5dFdLd2ZpNWlpTXNnWUtMZUZDeTNRVUxYRWNBYnZ6VVBFYktSSEVx?=
- =?utf-8?B?SDNzZjE3WlFjQjFad25zSWFtejdDN25ZR3p0UmVKR2R2ZWJsZzc3alN5Z1pO?=
- =?utf-8?B?M3dXcE1FU2hCU0ZQTGlNRmgyMFJPcTBCOGY1dFh6eVpmOVpzRk1hZzl6VVhu?=
- =?utf-8?B?ZkMvTXdFMUtzTHp3RURGdDlKOE5vMXNRdFBQTUhtSjZKL2tyTkltRlQ0azg1?=
- =?utf-8?B?VUxIQ1EvSUphb2dGSUdmMXhzakYvRUE5ZHAxaUJHempGYnN2MmJpbTRraGMw?=
- =?utf-8?B?c3duV1g5MTBreUMvNGlqQkZpYklpOC9TVWdwY3crOGphemNodG94YkJtYnpz?=
- =?utf-8?B?ZjBqMHIwTVluN3dKUE1ocVZkZEdaOURWQUI0VUhQakRvTWFQUXlNS0p6L2Nk?=
- =?utf-8?B?S01oMXU2ajdwS0VYNkdCUmhEaVByMTlUQUtaUkRtRnA3dFArSitHd0syTDB1?=
- =?utf-8?B?RWRlWm9Vc1dBeUh1NlRsNHJycVNONkUwWWZ0SnBxTUhHb2w2Zzg4cFJvdUJP?=
- =?utf-8?B?MjhIS1hVZmkrVjR4bkV3cXY4V2NHZ1B0eG5TdklMR1JSdVhKVTRvbHBGenRY?=
- =?utf-8?B?dWlYMWVUVXJtekU1ZVVNU3hkTTE5L1g2V1VoRzV0NUFEVGRHeW5GUUZuR1VZ?=
- =?utf-8?B?QU9yc09ZU2o1eXltVld2bzNCUmZIMXQxOXFNZzVmMS9tYW9iK2RsWUp5QlEy?=
- =?utf-8?Q?3jmkZ0MRO8c=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MmhPakJ5M05RWXNPNE44R2FjRElwZVlwRWp6NFQvbGdmT1dqekg5cjJqYWtF?=
- =?utf-8?B?KzUxbkcvbHVsYTlTM0UwdkYvWHF3UXlpNHZpWU9wQkJtRjVjMXNyYzhHbVhR?=
- =?utf-8?B?Ymh6YmVaSFZ0RmU3QkUzV1pEaUtoRUdBVkRNYjNieXVQWGViUjRmaCtLK2dL?=
- =?utf-8?B?SGpsRkpONjh5ZmlYb3BsU2ZiREtGQVJsRHQ5T1ZwOHR5UzZsSEMwV1REWnV4?=
- =?utf-8?B?VU1hczExWGRmNTMvaG1meERyZnpGTnpCeXpjY2hHbnBYOHRYY2ZrbjhpV3pU?=
- =?utf-8?B?UmcxK0pwN1ZUTyt0MmhXMXJkcVZEY2Y5LzRqU0VzZEdEbkdKS1dock5jY3l5?=
- =?utf-8?B?TXhiMXFwK1BXaUQ1eU03bE5pYWYvaEJNZnJzazFSdDF0cVJIVjlZUVJBa3hR?=
- =?utf-8?B?ZFROUkROMGp1YmtNTXF5ZnA0K0RHcHYrRnZaL2U2S0pheXBXbUcvV0NHc1c2?=
- =?utf-8?B?Q29uQkVKRFpYVkNQQmtpRVl2d1lGNkgzZ2grN2ljemtCbFBIejA1cWh5NEdL?=
- =?utf-8?B?RFAxTzMzVUR6aExaMlJYWGdGUHM0Nkk5RDVQdzVyZjFqa2hldWdkM3RJOU5h?=
- =?utf-8?B?RTdQUUhmRVJodnd2d1FsWDQ3dVVRVXQ3b0RXOElYRjQwcWxiQ1JWKzNoWFdF?=
- =?utf-8?B?OGJVYkgweElWWUxjS254WG90b0psUVRaaHJOeGV1Z1cxVnlkajFpaGFYWVZn?=
- =?utf-8?B?NFJHOVptdzRTN3k4d3IvN3FDN09rQXJzMXVJR3d0bklOYWN6Vlhsdk43NkZl?=
- =?utf-8?B?TGdCbUt4Rkl2eUdWVzBlT2FobDFVdnBBbFZycGlMMG5xU0R3QlZNeWJOcFFE?=
- =?utf-8?B?YXhENWV6SzdZY3ZKMm0xcHVVMmRGc1hkQ3BoZHlkS3NsS2QrZTdtb3lVaGUv?=
- =?utf-8?B?aDI4UmJvaWdHU0tlT3dZc3RPSGVVQjNFdVBpV0VERFdoaTFkVnlaYjZ4RmI4?=
- =?utf-8?B?aHE5andWTnoxd1VXLzEweHZOLy9Tb0RVdCtaZXhqckIyendUNWk5QXJYZ3ZK?=
- =?utf-8?B?K2syaXBBeERydGczS2NjRE5DeHRDbHdIbXNWTjRML2NMS3ltTE1QT0hGSWdS?=
- =?utf-8?B?MmFDODJlUjEzbkUzODVnek9BK3lwT2E2WkQwQ3hsMW0zdHZ3Y0J3WStXejMy?=
- =?utf-8?B?aHZ4cTVRbG9PRXZNOFVpK3g0S0ZPY2xEcWZsaStwMGN3ZzBwQVEzMzB1S0xo?=
- =?utf-8?B?VTFVdkpGZjhkYVkyU2VnNUkwRTViKzJkRVJnT0htV3dYSnVZU0ZKL1lRU3I1?=
- =?utf-8?B?NlZrZVdmTHNLTHY0WFplVnhTVC84b0JGcDRsSHhjUXc1Y0FKcjNYWnBneUVt?=
- =?utf-8?B?NE1raUFybmtwRkpIcmdTeHRwbkFjTnRVL1ZRQi93TnZ4eEJ3ajFJc2g5WkJ5?=
- =?utf-8?B?MEtXdlJIS2ZDUTc0ektzdHRYL0ZBdDM0V0w4ZTJVd3lNYWN3REhsV1BXMjFs?=
- =?utf-8?B?OHhBVTJYa3pPT2JNMGZPMm14SkV6aytvcFNrZHZXc3dUa1VxWXlYSWgxR2tm?=
- =?utf-8?B?VnRPb3BLVUVkMCtkK01MKzJUcHJxa3loRmg5NGJBNjdVMUtRWmpPSFRDS3R4?=
- =?utf-8?B?dDlKa0pkYjRpd09vM2JScW02cGJzNkhwcVFJZXpyM05iYjVvNXkxdG41NGRt?=
- =?utf-8?B?ZVpvZ3R6OGk0cFgvN01aV2JBU3Y0Um9yUGI5eXhNVlh3NDRCbkNRQ0NiTEVP?=
- =?utf-8?B?OHFaT0pySFAxVEwyMnBpWHZqSTFWNDJWUFNjN1d3V1p4L1grVTNTZVA2cms0?=
- =?utf-8?B?RjM4VllRM2ZlT1FadmxMcmt4Z1d3RGpvcm1CWWlhT0hNSExxSlowdGlEdnNi?=
- =?utf-8?B?Y0ZHUzFobHVqSUk0Y2pVMnFVMXFtZ3B3RFhOVTlFZU1yMmhGUTk5cForcjJS?=
- =?utf-8?B?SG1FU2ZsTFk1OWdLa0E5VHBoa0pqRnQ1QU5xMzNSYXk1OCtiZldvZDk2ejhP?=
- =?utf-8?B?Z3l1RkJkMXMyRm56ekVHMnp4Z0hKZzFTWDR0QUx6b0I4ZytFY3ZuMzZyZ2Ra?=
- =?utf-8?B?S29BcXhEbEd1cWt0RkVFUnNmclg0R24yOWw2dGd0Q0JDYjJMcjJvWld1eHpN?=
- =?utf-8?B?dGZLMXhuUy92Ti9PdEIzVzFqN2dZK05VV2dMWDQyWEpVKzh2bkxsd1NYaFp4?=
- =?utf-8?Q?sSdahhdv6iMIisJswZT+wkvC1?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 444f449a-e395-42b7-ad69-08ddbdcff173
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 03:31:36.5784
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: o7rV9VcCOJXYYI108jKZrYi/Ed3hXJ6lQHC5Zx1T3aGNJGHA6BEEvRRMC63dE3/DpElQ3pDV1bGZ/fXKbm4Txg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY3PR12MB9580
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-On 7/7/25 12:45, Zi Yan wrote:
-> On 6 Jul 2025, at 22:29, Balbir Singh wrote:
-> 
->> On 7/6/25 13:03, Zi Yan wrote:
->>> On 5 Jul 2025, at 22:34, Zi Yan wrote:
->>>
->>>> On 5 Jul 2025, at 21:47, Balbir Singh wrote:
->>>>
->>>>> On 7/6/25 11:34, Zi Yan wrote:
->>>>>> On 5 Jul 2025, at 21:15, Balbir Singh wrote:
->>>>>>
->>>>>>> On 7/5/25 11:55, Zi Yan wrote:
->>>>>>>> On 4 Jul 2025, at 20:58, Balbir Singh wrote:
->>>>>>>>
->>>>>>>>> On 7/4/25 21:24, Zi Yan wrote:
->>>>>>>>>>
->>>>>>>>>> s/pages/folio
->>>>>>>>>>
->>>>>>>>>
->>>>>>>>> Thanks, will make the changes
->>>>>>>>>
->>>>>>>>>> Why name it isolated if the folio is unmapped? Isolated folios often mean
->>>>>>>>>> they are removed from LRU lists. isolated here causes confusion.
->>>>>>>>>>
->>>>>>>>>
->>>>>>>>> Ack, will change the name
->>>>>>>>>
->>>>>>>>>
->>>>>>>>>>>   *
->>>>>>>>>>>   * It calls __split_unmapped_folio() to perform uniform and non-uniform split.
->>>>>>>>>>>   * It is in charge of checking whether the split is supported or not and
->>>>>>>>>>> @@ -3800,7 +3799,7 @@ bool uniform_split_supported(struct folio *folio, unsigned int new_order,
->>>>>>>>>>>   */
->>>>>>>>>>>  static int __folio_split(struct folio *folio, unsigned int new_order,
->>>>>>>>>>>  		struct page *split_at, struct page *lock_at,
->>>>>>>>>>> -		struct list_head *list, bool uniform_split)
->>>>>>>>>>> +		struct list_head *list, bool uniform_split, bool isolated)
->>>>>>>>>>>  {
->>>>>>>>>>>  	struct deferred_split *ds_queue = get_deferred_split_queue(folio);
->>>>>>>>>>>  	XA_STATE(xas, &folio->mapping->i_pages, folio->index);
->>>>>>>>>>> @@ -3846,14 +3845,16 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
->>>>>>>>>>>  		 * is taken to serialise against parallel split or collapse
->>>>>>>>>>>  		 * operations.
->>>>>>>>>>>  		 */
->>>>>>>>>>> -		anon_vma = folio_get_anon_vma(folio);
->>>>>>>>>>> -		if (!anon_vma) {
->>>>>>>>>>> -			ret = -EBUSY;
->>>>>>>>>>> -			goto out;
->>>>>>>>>>> +		if (!isolated) {
->>>>>>>>>>> +			anon_vma = folio_get_anon_vma(folio);
->>>>>>>>>>> +			if (!anon_vma) {
->>>>>>>>>>> +				ret = -EBUSY;
->>>>>>>>>>> +				goto out;
->>>>>>>>>>> +			}
->>>>>>>>>>> +			anon_vma_lock_write(anon_vma);
->>>>>>>>>>>  		}
->>>>>>>>>>>  		end = -1;
->>>>>>>>>>>  		mapping = NULL;
->>>>>>>>>>> -		anon_vma_lock_write(anon_vma);
->>>>>>>>>>>  	} else {
->>>>>>>>>>>  		unsigned int min_order;
->>>>>>>>>>>  		gfp_t gfp;
->>>>>>>>>>> @@ -3920,7 +3921,8 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
->>>>>>>>>>>  		goto out_unlock;
->>>>>>>>>>>  	}
->>>>>>>>>>>
->>>>>>>>>>> -	unmap_folio(folio);
->>>>>>>>>>> +	if (!isolated)
->>>>>>>>>>> +		unmap_folio(folio);
->>>>>>>>>>>
->>>>>>>>>>>  	/* block interrupt reentry in xa_lock and spinlock */
->>>>>>>>>>>  	local_irq_disable();
->>>>>>>>>>> @@ -3973,14 +3975,15 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
->>>>>>>>>>>
->>>>>>>>>>>  		ret = __split_unmapped_folio(folio, new_order,
->>>>>>>>>>>  				split_at, lock_at, list, end, &xas, mapping,
->>>>>>>>>>> -				uniform_split);
->>>>>>>>>>> +				uniform_split, isolated);
->>>>>>>>>>>  	} else {
->>>>>>>>>>>  		spin_unlock(&ds_queue->split_queue_lock);
->>>>>>>>>>>  fail:
->>>>>>>>>>>  		if (mapping)
->>>>>>>>>>>  			xas_unlock(&xas);
->>>>>>>>>>>  		local_irq_enable();
->>>>>>>>>>> -		remap_page(folio, folio_nr_pages(folio), 0);
->>>>>>>>>>> +		if (!isolated)
->>>>>>>>>>> +			remap_page(folio, folio_nr_pages(folio), 0);
->>>>>>>>>>>  		ret = -EAGAIN;
->>>>>>>>>>>  	}
->>>>>>>>>>
->>>>>>>>>> These "isolated" special handlings does not look good, I wonder if there
->>>>>>>>>> is a way of letting split code handle device private folios more gracefully.
->>>>>>>>>> It also causes confusions, since why does "isolated/unmapped" folios
->>>>>>>>>> not need to unmap_page(), remap_page(), or unlock?
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>
->>>>>>>>> There are two reasons for going down the current code path
->>>>>>>>
->>>>>>>> After thinking more, I think adding isolated/unmapped is not the right
->>>>>>>> way, since unmapped folio is a very generic concept. If you add it,
->>>>>>>> one can easily misuse the folio split code by first unmapping a folio
->>>>>>>> and trying to split it with unmapped = true. I do not think that is
->>>>>>>> supported and your patch does not prevent that from happening in the future.
->>>>>>>>
->>>>>>>
->>>>>>> I don't understand the misuse case you mention, I assume you mean someone can
->>>>>>> get the usage wrong? The responsibility is on the caller to do the right thing
->>>>>>> if calling the API with unmapped
->>>>>>
->>>>>> Before your patch, there is no use case of splitting unmapped folios.
->>>>>> Your patch only adds support for device private page split, not any unmapped
->>>>>> folio split. So using a generic isolated/unmapped parameter is not OK.
->>>>>>
->>>>>
->>>>> There is a use for splitting unmapped folios (see below)
->>>>>
->>>>>>>
->>>>>>>> You should teach different parts of folio split code path to handle
->>>>>>>> device private folios properly. Details are below.
->>>>>>>>
->>>>>>>>>
->>>>>>>>> 1. if the isolated check is not present, folio_get_anon_vma will fail and cause
->>>>>>>>>    the split routine to return with -EBUSY
->>>>>>>>
->>>>>>>> You do something below instead.
->>>>>>>>
->>>>>>>> if (!anon_vma && !folio_is_device_private(folio)) {
->>>>>>>> 	ret = -EBUSY;
->>>>>>>> 	goto out;
->>>>>>>> } else if (anon_vma) {
->>>>>>>> 	anon_vma_lock_write(anon_vma);
->>>>>>>> }
->>>>>>>>
->>>>>>>
->>>>>>> folio_get_anon() cannot be called for unmapped folios. In our case the page has
->>>>>>> already been unmapped. Is there a reason why you mix anon_vma_lock_write with
->>>>>>> the check for device private folios?
->>>>>>
->>>>>> Oh, I did not notice that anon_vma = folio_get_anon_vma(folio) is also
->>>>>> in if (!isolated) branch. In that case, just do
->>>>>>
->>>>>> if (folio_is_device_private(folio) {
->>>>>> ...
->>>>>> } else if (is_anon) {
->>>>>> ...
->>>>>> } else {
->>>>>> ...
->>>>>> }
->>>>>>
->>>>>>>
->>>>>>>> People can know device private folio split needs a special handling.
->>>>>>>>
->>>>>>>> BTW, why a device private folio can also be anonymous? Does it mean
->>>>>>>> if a page cache folio is migrated to device private, kernel also
->>>>>>>> sees it as both device private and file-backed?
->>>>>>>>
->>>>>>>
->>>>>>> FYI: device private folios only work with anonymous private pages, hence
->>>>>>> the name device private.
->>>>>>
->>>>>> OK.
->>>>>>
->>>>>>>
->>>>>>>>
->>>>>>>>> 2. Going through unmap_page(), remap_page() causes a full page table walk, which
->>>>>>>>>    the migrate_device API has already just done as a part of the migration. The
->>>>>>>>>    entries under consideration are already migration entries in this case.
->>>>>>>>>    This is wasteful and in some case unexpected.
->>>>>>>>
->>>>>>>> unmap_folio() already adds TTU_SPLIT_HUGE_PMD to try to split
->>>>>>>> PMD mapping, which you did in migrate_vma_split_pages(). You probably
->>>>>>>> can teach either try_to_migrate() or try_to_unmap() to just split
->>>>>>>> device private PMD mapping. Or if that is not preferred,
->>>>>>>> you can simply call split_huge_pmd_address() when unmap_folio()
->>>>>>>> sees a device private folio.
->>>>>>>>
->>>>>>>> For remap_page(), you can simply return for device private folios
->>>>>>>> like it is currently doing for non anonymous folios.
->>>>>>>>
->>>>>>>
->>>>>>> Doing a full rmap walk does not make sense with unmap_folio() and
->>>>>>> remap_folio(), because
->>>>>>>
->>>>>>> 1. We need to do a page table walk/rmap walk again
->>>>>>> 2. We'll need special handling of migration <-> migration entries
->>>>>>>    in the rmap handling (set/remove migration ptes)
->>>>>>> 3. In this context, the code is already in the middle of migration,
->>>>>>>    so trying to do that again does not make sense.
->>>>>>
->>>>>> Why doing split in the middle of migration? Existing split code
->>>>>> assumes to-be-split folios are mapped.
->>>>>>
->>>>>> What prevents doing split before migration?
->>>>>>
->>>>>
->>>>> The code does do a split prior to migration if THP selection fails
->>>>>
->>>>> Please see https://lore.kernel.org/lkml/20250703233511.2028395-5-balbirs@nvidia.com/
->>>>> and the fallback part which calls split_folio()
->>>>
->>>> So this split is done when the folio in system memory is mapped.
->>>>
->>>>>
->>>>> But the case under consideration is special since the device needs to allocate
->>>>> corresponding pfn's as well. The changelog mentions it:
->>>>>
->>>>> "The common case that arises is that after setup, during migrate
->>>>> the destination might not be able to allocate MIGRATE_PFN_COMPOUND
->>>>> pages."
->>>>>
->>>>> I can expand on it, because migrate_vma() is a multi-phase operation
->>>>>
->>>>> 1. migrate_vma_setup()
->>>>> 2. migrate_vma_pages()
->>>>> 3. migrate_vma_finalize()
->>>>>
->>>>> It can so happen that when we get the destination pfn's allocated the destination
->>>>> might not be able to allocate a large page, so we do the split in migrate_vma_pages().
->>>>>
->>>>> The pages have been unmapped and collected in migrate_vma_setup()
->>>>
->>>> So these unmapped folios are system memory folios? I thought they are
->>>> large device private folios.
->>>>
->>>> OK. It sounds like splitting unmapped folios is really needed. I think
->>>> it is better to make a new split_unmapped_folio() function
->>>> by reusing __split_unmapped_folio(), since __folio_split() assumes
->>>> the input folio is mapped.
->>>
->>> And to make __split_unmapped_folio()'s functionality match its name,
->>> I will later refactor it. At least move local_irq_enable(), remap_page(),
->>> and folio_unlocks out of it. I will think about how to deal with
->>> lru_add_split_folio(). The goal is to remove the to-be-added "unmapped"
->>> parameter from __split_unmapped_folio().
->>>
->>
->> That sounds like a plan, it seems like there needs to be a finish phase of
->> the split and it does not belong to __split_unmapped_folio(). I would propose
->> that we rename "isolated" to "folio_is_migrating" and then your cleanups can
->> follow? Once your cleanups come in, we won't need to pass the parameter to
->> __split_unmapped_folio().
-> 
-> Sure.
-> 
-> The patch below should work. It only passed mm selftests and I am planning
-> to do more. If you are brave enough, you can give it a try and use
-> __split_unmapped_folio() from it.
-> 
-> From e594924d689bef740c38d93c7c1653f31bd5ae83 Mon Sep 17 00:00:00 2001
-> From: Zi Yan <ziy@nvidia.com>
-> Date: Sun, 6 Jul 2025 22:40:53 -0400
-> Subject: [PATCH] mm/huge_memory: move epilogue code out of
->  __split_unmapped_folio()
-> 
-> The code is not related to splitting unmapped folio operations. Move
-> it out, so that __split_unmapped_folio() only do split works on unmapped
-> folios.
-> 
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
-> 
+ND_PRINTK with val > 1 only works when the ND_DEBUG was set in compilation
+phase. Replace it with dynamic debug. Convert ND_PRINTK with val <= 1 to
+net_{err,warn}_ratelimited, and convert the rest to net_dbg_ratelimited.
 
-The patch fails to apply for me, let me try and rebase it on top of this series
+Suggested-by: Ido Schimmel <idosch@idosch.org>
+Signed-off-by: Wang Liang <wangliang74@huawei.com>
+---
+v2:
+- Use dynamic debug instead of sysctl.
+v3:
+- Keep print level.
+---
+ include/net/ndisc.h |   9 ---
+ net/6lowpan/ndisc.c |  16 ++---
+ net/ipv6/ndisc.c    | 157 +++++++++++++++++---------------------------
+ 3 files changed, 67 insertions(+), 115 deletions(-)
 
-Balbir
+diff --git a/include/net/ndisc.h b/include/net/ndisc.h
+index 3c88d5bc5eed..d38783a2ce57 100644
+--- a/include/net/ndisc.h
++++ b/include/net/ndisc.h
+@@ -60,15 +60,6 @@ enum {
+ 
+ #include <net/neighbour.h>
+ 
+-/* Set to 3 to get tracing... */
+-#define ND_DEBUG 1
+-
+-#define ND_PRINTK(val, level, fmt, ...)				\
+-do {								\
+-	if (val <= ND_DEBUG)					\
+-		net_##level##_ratelimited(fmt, ##__VA_ARGS__);	\
+-} while (0)
+-
+ struct ctl_table;
+ struct inet6_dev;
+ struct net_device;
+diff --git a/net/6lowpan/ndisc.c b/net/6lowpan/ndisc.c
+index c40b98f7743c..868d28583c0a 100644
+--- a/net/6lowpan/ndisc.c
++++ b/net/6lowpan/ndisc.c
+@@ -20,9 +20,8 @@ static int lowpan_ndisc_parse_802154_options(const struct net_device *dev,
+ 	switch (nd_opt->nd_opt_len) {
+ 	case NDISC_802154_SHORT_ADDR_LENGTH:
+ 		if (ndopts->nd_802154_opt_array[nd_opt->nd_opt_type])
+-			ND_PRINTK(2, warn,
+-				  "%s: duplicated short addr ND6 option found: type=%d\n",
+-				  __func__, nd_opt->nd_opt_type);
++			net_dbg_ratelimited("%s: duplicated short addr ND6 option found: type=%d\n",
++					    __func__, nd_opt->nd_opt_type);
+ 		else
+ 			ndopts->nd_802154_opt_array[nd_opt->nd_opt_type] = nd_opt;
+ 		return 1;
+@@ -63,8 +62,7 @@ static void lowpan_ndisc_802154_update(struct neighbour *n, u32 flags,
+ 			lladdr_short = __ndisc_opt_addr_data(ndopts->nd_802154_opts_src_lladdr,
+ 							     IEEE802154_SHORT_ADDR_LEN, 0);
+ 			if (!lladdr_short) {
+-				ND_PRINTK(2, warn,
+-					  "NA: invalid short link-layer address length\n");
++				net_dbg_ratelimited("NA: invalid short link-layer address length\n");
+ 				return;
+ 			}
+ 		}
+@@ -75,8 +73,7 @@ static void lowpan_ndisc_802154_update(struct neighbour *n, u32 flags,
+ 			lladdr_short = __ndisc_opt_addr_data(ndopts->nd_802154_opts_tgt_lladdr,
+ 							     IEEE802154_SHORT_ADDR_LEN, 0);
+ 			if (!lladdr_short) {
+-				ND_PRINTK(2, warn,
+-					  "NA: invalid short link-layer address length\n");
++				net_dbg_ratelimited("NA: invalid short link-layer address length\n");
+ 				return;
+ 			}
+ 		}
+@@ -209,9 +206,8 @@ static void lowpan_ndisc_prefix_rcv_add_addr(struct net *net,
+ 						   sllao, tokenized, valid_lft,
+ 						   prefered_lft);
+ 		if (err)
+-			ND_PRINTK(2, warn,
+-				  "RA: could not add a short address based address for prefix: %pI6c\n",
+-				  &pinfo->prefix);
++			net_dbg_ratelimited("RA: could not add a short address based address for prefix: %pI6c\n",
++					    &pinfo->prefix);
+ 	}
+ }
+ #endif
+diff --git a/net/ipv6/ndisc.c b/net/ipv6/ndisc.c
+index ecb5c4b8518f..1e6a100e9e93 100644
+--- a/net/ipv6/ndisc.c
++++ b/net/ipv6/ndisc.c
+@@ -243,9 +243,8 @@ struct ndisc_options *ndisc_parse_options(const struct net_device *dev,
+ 		case ND_OPT_NONCE:
+ 		case ND_OPT_REDIRECT_HDR:
+ 			if (ndopts->nd_opt_array[nd_opt->nd_opt_type]) {
+-				ND_PRINTK(2, warn,
+-					  "%s: duplicated ND6 option found: type=%d\n",
+-					  __func__, nd_opt->nd_opt_type);
++				net_dbg_ratelimited("%s: duplicated ND6 option found: type=%d\n",
++						    __func__, nd_opt->nd_opt_type);
+ 			} else {
+ 				ndopts->nd_opt_array[nd_opt->nd_opt_type] = nd_opt;
+ 			}
+@@ -275,11 +274,8 @@ struct ndisc_options *ndisc_parse_options(const struct net_device *dev,
+ 			 * to accommodate future extension to the
+ 			 * protocol.
+ 			 */
+-			ND_PRINTK(2, notice,
+-				  "%s: ignored unsupported option; type=%d, len=%d\n",
+-				  __func__,
+-				  nd_opt->nd_opt_type,
+-				  nd_opt->nd_opt_len);
++			net_dbg_ratelimited("%s: ignored unsupported option; type=%d, len=%d\n",
++					    __func__, nd_opt->nd_opt_type, nd_opt->nd_opt_len);
+ 		}
+ next_opt:
+ 		opt_len -= l;
+@@ -751,9 +747,8 @@ static void ndisc_solicit(struct neighbour *neigh, struct sk_buff *skb)
+ 	probes -= NEIGH_VAR(neigh->parms, UCAST_PROBES);
+ 	if (probes < 0) {
+ 		if (!(READ_ONCE(neigh->nud_state) & NUD_VALID)) {
+-			ND_PRINTK(1, dbg,
+-				  "%s: trying to ucast probe in NUD_INVALID: %pI6\n",
+-				  __func__, target);
++			net_dbg_ratelimited("%s: trying to ucast probe in NUD_INVALID: %pI6\n",
++					    __func__, target);
+ 		}
+ 		ndisc_send_ns(dev, target, target, saddr, 0);
+ 	} else if ((probes -= NEIGH_VAR(neigh->parms, APP_PROBES)) < 0) {
+@@ -811,7 +806,7 @@ static enum skb_drop_reason ndisc_recv_ns(struct sk_buff *skb)
+ 		return SKB_DROP_REASON_PKT_TOO_SMALL;
+ 
+ 	if (ipv6_addr_is_multicast(&msg->target)) {
+-		ND_PRINTK(2, warn, "NS: multicast target address\n");
++		net_dbg_ratelimited("NS: multicast target address\n");
+ 		return reason;
+ 	}
+ 
+@@ -820,7 +815,7 @@ static enum skb_drop_reason ndisc_recv_ns(struct sk_buff *skb)
+ 	 * DAD has to be destined for solicited node multicast address.
+ 	 */
+ 	if (dad && !ipv6_addr_is_solict_mult(daddr)) {
+-		ND_PRINTK(2, warn, "NS: bad DAD packet (wrong destination)\n");
++		net_dbg_ratelimited("NS: bad DAD packet (wrong destination)\n");
+ 		return reason;
+ 	}
+ 
+@@ -830,8 +825,7 @@ static enum skb_drop_reason ndisc_recv_ns(struct sk_buff *skb)
+ 	if (ndopts.nd_opts_src_lladdr) {
+ 		lladdr = ndisc_opt_addr_data(ndopts.nd_opts_src_lladdr, dev);
+ 		if (!lladdr) {
+-			ND_PRINTK(2, warn,
+-				  "NS: invalid link-layer address length\n");
++			net_dbg_ratelimited("NS: invalid link-layer address length\n");
+ 			return reason;
+ 		}
+ 
+@@ -841,8 +835,7 @@ static enum skb_drop_reason ndisc_recv_ns(struct sk_buff *skb)
+ 		 *	in the message.
+ 		 */
+ 		if (dad) {
+-			ND_PRINTK(2, warn,
+-				  "NS: bad DAD packet (link-layer address option)\n");
++			net_dbg_ratelimited("NS: bad DAD packet (link-layer address option)\n");
+ 			return reason;
+ 		}
+ 	}
+@@ -859,10 +852,8 @@ static enum skb_drop_reason ndisc_recv_ns(struct sk_buff *skb)
+ 				if (nonce != 0 && ifp->dad_nonce == nonce) {
+ 					u8 *np = (u8 *)&nonce;
+ 					/* Matching nonce if looped back */
+-					ND_PRINTK(2, notice,
+-						  "%s: IPv6 DAD loopback for address %pI6c nonce %pM ignored\n",
+-						  ifp->idev->dev->name,
+-						  &ifp->addr, np);
++					net_dbg_ratelimited("%s: IPv6 DAD loopback for address %pI6c nonce %pM ignored\n",
++							    ifp->idev->dev->name, &ifp->addr, np);
+ 					goto out;
+ 				}
+ 				/*
+@@ -1013,13 +1004,13 @@ static enum skb_drop_reason ndisc_recv_na(struct sk_buff *skb)
+ 		return SKB_DROP_REASON_PKT_TOO_SMALL;
+ 
+ 	if (ipv6_addr_is_multicast(&msg->target)) {
+-		ND_PRINTK(2, warn, "NA: target address is multicast\n");
++		net_dbg_ratelimited("NA: target address is multicast\n");
+ 		return reason;
+ 	}
+ 
+ 	if (ipv6_addr_is_multicast(daddr) &&
+ 	    msg->icmph.icmp6_solicited) {
+-		ND_PRINTK(2, warn, "NA: solicited NA is multicasted\n");
++		net_dbg_ratelimited("NA: solicited NA is multicasted\n");
+ 		return reason;
+ 	}
+ 
+@@ -1038,8 +1029,7 @@ static enum skb_drop_reason ndisc_recv_na(struct sk_buff *skb)
+ 	if (ndopts.nd_opts_tgt_lladdr) {
+ 		lladdr = ndisc_opt_addr_data(ndopts.nd_opts_tgt_lladdr, dev);
+ 		if (!lladdr) {
+-			ND_PRINTK(2, warn,
+-				  "NA: invalid link-layer address length\n");
++			net_dbg_ratelimited("NA: invalid link-layer address length\n");
+ 			return reason;
+ 		}
+ 	}
+@@ -1060,9 +1050,9 @@ static enum skb_drop_reason ndisc_recv_na(struct sk_buff *skb)
+ 		   unsolicited advertisement.
+ 		 */
+ 		if (skb->pkt_type != PACKET_LOOPBACK)
+-			ND_PRINTK(1, warn,
+-				  "NA: %pM advertised our address %pI6c on %s!\n",
+-				  eth_hdr(skb)->h_source, &ifp->addr, ifp->idev->dev->name);
++			net_warn_ratelimited("NA: %pM advertised our address %pI6c on %s!\n",
++					     eth_hdr(skb)->h_source, &ifp->addr,
++					     ifp->idev->dev->name);
+ 		in6_ifa_put(ifp);
+ 		return reason;
+ 	}
+@@ -1149,7 +1139,7 @@ static enum skb_drop_reason ndisc_recv_rs(struct sk_buff *skb)
+ 
+ 	idev = __in6_dev_get(skb->dev);
+ 	if (!idev) {
+-		ND_PRINTK(1, err, "RS: can't find in6 device\n");
++		net_err_ratelimited("RS: can't find in6 device\n");
+ 		return reason;
+ 	}
+ 
+@@ -1257,11 +1247,9 @@ static enum skb_drop_reason ndisc_router_discovery(struct sk_buff *skb)
+ 	optlen = (skb_tail_pointer(skb) - skb_transport_header(skb)) -
+ 		sizeof(struct ra_msg);
+ 
+-	ND_PRINTK(2, info,
+-		  "RA: %s, dev: %s\n",
+-		  __func__, skb->dev->name);
++	net_dbg_ratelimited("RA: %s, dev: %s\n", __func__, skb->dev->name);
+ 	if (!(ipv6_addr_type(&ipv6_hdr(skb)->saddr) & IPV6_ADDR_LINKLOCAL)) {
+-		ND_PRINTK(2, warn, "RA: source address is not link-local\n");
++		net_dbg_ratelimited("RA: source address is not link-local\n");
+ 		return reason;
+ 	}
+ 	if (optlen < 0)
+@@ -1269,15 +1257,14 @@ static enum skb_drop_reason ndisc_router_discovery(struct sk_buff *skb)
+ 
+ #ifdef CONFIG_IPV6_NDISC_NODETYPE
+ 	if (skb->ndisc_nodetype == NDISC_NODETYPE_HOST) {
+-		ND_PRINTK(2, warn, "RA: from host or unauthorized router\n");
++		net_dbg_ratelimited("RA: from host or unauthorized router\n");
+ 		return reason;
+ 	}
+ #endif
+ 
+ 	in6_dev = __in6_dev_get(skb->dev);
+ 	if (!in6_dev) {
+-		ND_PRINTK(0, err, "RA: can't find inet6 device for %s\n",
+-			  skb->dev->name);
++		net_err_ratelimited("RA: can't find inet6 device for %s\n", skb->dev->name);
+ 		return reason;
+ 	}
+ 
+@@ -1285,18 +1272,16 @@ static enum skb_drop_reason ndisc_router_discovery(struct sk_buff *skb)
+ 		return SKB_DROP_REASON_IPV6_NDISC_BAD_OPTIONS;
+ 
+ 	if (!ipv6_accept_ra(in6_dev)) {
+-		ND_PRINTK(2, info,
+-			  "RA: %s, did not accept ra for dev: %s\n",
+-			  __func__, skb->dev->name);
++		net_dbg_ratelimited("RA: %s, did not accept ra for dev: %s\n", __func__,
++				    skb->dev->name);
+ 		goto skip_linkparms;
+ 	}
+ 
+ #ifdef CONFIG_IPV6_NDISC_NODETYPE
+ 	/* skip link-specific parameters from interior routers */
+ 	if (skb->ndisc_nodetype == NDISC_NODETYPE_NODEFAULT) {
+-		ND_PRINTK(2, info,
+-			  "RA: %s, nodetype is NODEFAULT, dev: %s\n",
+-			  __func__, skb->dev->name);
++		net_dbg_ratelimited("RA: %s, nodetype is NODEFAULT, dev: %s\n", __func__,
++				    skb->dev->name);
+ 		goto skip_linkparms;
+ 	}
+ #endif
+@@ -1325,18 +1310,16 @@ static enum skb_drop_reason ndisc_router_discovery(struct sk_buff *skb)
+ 		send_ifinfo_notify = true;
+ 
+ 	if (!READ_ONCE(in6_dev->cnf.accept_ra_defrtr)) {
+-		ND_PRINTK(2, info,
+-			  "RA: %s, defrtr is false for dev: %s\n",
+-			  __func__, skb->dev->name);
++		net_dbg_ratelimited("RA: %s, defrtr is false for dev: %s\n", __func__,
++				    skb->dev->name);
+ 		goto skip_defrtr;
+ 	}
+ 
+ 	lifetime = ntohs(ra_msg->icmph.icmp6_rt_lifetime);
+ 	if (lifetime != 0 &&
+ 	    lifetime < READ_ONCE(in6_dev->cnf.accept_ra_min_lft)) {
+-		ND_PRINTK(2, info,
+-			  "RA: router lifetime (%ds) is too short: %s\n",
+-			  lifetime, skb->dev->name);
++		net_dbg_ratelimited("RA: router lifetime (%ds) is too short: %s\n", lifetime,
++				    skb->dev->name);
+ 		goto skip_defrtr;
+ 	}
+ 
+@@ -1346,9 +1329,8 @@ static enum skb_drop_reason ndisc_router_discovery(struct sk_buff *skb)
+ 	net = dev_net(in6_dev->dev);
+ 	if (!READ_ONCE(in6_dev->cnf.accept_ra_from_local) &&
+ 	    ipv6_chk_addr(net, &ipv6_hdr(skb)->saddr, in6_dev->dev, 0)) {
+-		ND_PRINTK(2, info,
+-			  "RA from local address detected on dev: %s: default router ignored\n",
+-			  skb->dev->name);
++		net_dbg_ratelimited("RA from local address detected on dev: %s: default router ignored\n",
++				    skb->dev->name);
+ 		goto skip_defrtr;
+ 	}
+ 
+@@ -1366,9 +1348,8 @@ static enum skb_drop_reason ndisc_router_discovery(struct sk_buff *skb)
+ 					 rt->fib6_nh->fib_nh_dev, NULL,
+ 					  &ipv6_hdr(skb)->saddr);
+ 		if (!neigh) {
+-			ND_PRINTK(0, err,
+-				  "RA: %s got default router without neighbour\n",
+-				  __func__);
++			net_err_ratelimited("RA: %s got default router without neighbour\n",
++					    __func__);
+ 			fib6_info_release(rt);
+ 			return reason;
+ 		}
+@@ -1381,10 +1362,10 @@ static enum skb_drop_reason ndisc_router_discovery(struct sk_buff *skb)
+ 		rt = NULL;
+ 	}
+ 
+-	ND_PRINTK(3, info, "RA: rt: %p  lifetime: %d, metric: %d, for dev: %s\n",
+-		  rt, lifetime, defrtr_usr_metric, skb->dev->name);
++	net_dbg_ratelimited("RA: rt: %p  lifetime: %d, metric: %d, for dev: %s\n", rt, lifetime,
++			    defrtr_usr_metric, skb->dev->name);
+ 	if (!rt && lifetime) {
+-		ND_PRINTK(3, info, "RA: adding default router\n");
++		net_dbg_ratelimited("RA: adding default router\n");
+ 
+ 		if (neigh)
+ 			neigh_release(neigh);
+@@ -1393,9 +1374,7 @@ static enum skb_drop_reason ndisc_router_discovery(struct sk_buff *skb)
+ 					 skb->dev, pref, defrtr_usr_metric,
+ 					 lifetime);
+ 		if (!rt) {
+-			ND_PRINTK(0, err,
+-				  "RA: %s failed to add default route\n",
+-				  __func__);
++			net_err_ratelimited("RA: %s failed to add default route\n", __func__);
+ 			return reason;
+ 		}
+ 
+@@ -1403,9 +1382,8 @@ static enum skb_drop_reason ndisc_router_discovery(struct sk_buff *skb)
+ 					 rt->fib6_nh->fib_nh_dev, NULL,
+ 					  &ipv6_hdr(skb)->saddr);
+ 		if (!neigh) {
+-			ND_PRINTK(0, err,
+-				  "RA: %s got default router without neighbour\n",
+-				  __func__);
++			net_err_ratelimited("RA: %s got default router without neighbour\n",
++					    __func__);
+ 			fib6_info_release(rt);
+ 			return reason;
+ 		}
+@@ -1436,7 +1414,7 @@ static enum skb_drop_reason ndisc_router_discovery(struct sk_buff *skb)
+ 			fib6_metric_set(rt, RTAX_HOPLIMIT,
+ 					ra_msg->icmph.icmp6_hop_limit);
+ 		} else {
+-			ND_PRINTK(2, warn, "RA: Got route advertisement with lower hop_limit than minimum\n");
++			net_dbg_ratelimited("RA: Got route advertisement with lower hop_limit than minimum\n");
+ 		}
+ 	}
+ 
+@@ -1492,8 +1470,7 @@ static enum skb_drop_reason ndisc_router_discovery(struct sk_buff *skb)
+ 			lladdr = ndisc_opt_addr_data(ndopts.nd_opts_src_lladdr,
+ 						     skb->dev);
+ 			if (!lladdr) {
+-				ND_PRINTK(2, warn,
+-					  "RA: invalid link-layer address length\n");
++				net_dbg_ratelimited("RA: invalid link-layer address length\n");
+ 				goto out;
+ 			}
+ 		}
+@@ -1507,9 +1484,8 @@ static enum skb_drop_reason ndisc_router_discovery(struct sk_buff *skb)
+ 	}
+ 
+ 	if (!ipv6_accept_ra(in6_dev)) {
+-		ND_PRINTK(2, info,
+-			  "RA: %s, accept_ra is false for dev: %s\n",
+-			  __func__, skb->dev->name);
++		net_dbg_ratelimited("RA: %s, accept_ra is false for dev: %s\n", __func__,
++				    skb->dev->name);
+ 		goto out;
+ 	}
+ 
+@@ -1517,9 +1493,8 @@ static enum skb_drop_reason ndisc_router_discovery(struct sk_buff *skb)
+ 	if (!READ_ONCE(in6_dev->cnf.accept_ra_from_local) &&
+ 	    ipv6_chk_addr(dev_net(in6_dev->dev), &ipv6_hdr(skb)->saddr,
+ 			  in6_dev->dev, 0)) {
+-		ND_PRINTK(2, info,
+-			  "RA from local address detected on dev: %s: router info ignored.\n",
+-			  skb->dev->name);
++		net_dbg_ratelimited("RA from local address detected on dev: %s: router info ignored.\n",
++				    skb->dev->name);
+ 		goto skip_routeinfo;
+ 	}
+ 
+@@ -1555,9 +1530,8 @@ static enum skb_drop_reason ndisc_router_discovery(struct sk_buff *skb)
+ #ifdef CONFIG_IPV6_NDISC_NODETYPE
+ 	/* skip link-specific ndopts from interior routers */
+ 	if (skb->ndisc_nodetype == NDISC_NODETYPE_NODEFAULT) {
+-		ND_PRINTK(2, info,
+-			  "RA: %s, nodetype is NODEFAULT (interior routes), dev: %s\n",
+-			  __func__, skb->dev->name);
++		net_dbg_ratelimited("RA: %s, nodetype is NODEFAULT (interior routes), dev: %s\n",
++				    __func__, skb->dev->name);
+ 		goto out;
+ 	}
+ #endif
+@@ -1586,7 +1560,7 @@ static enum skb_drop_reason ndisc_router_discovery(struct sk_buff *skb)
+ 		}
+ 
+ 		if (mtu < IPV6_MIN_MTU || mtu > skb->dev->mtu) {
+-			ND_PRINTK(2, warn, "RA: invalid mtu: %d\n", mtu);
++			net_dbg_ratelimited("RA: invalid mtu: %d\n", mtu);
+ 		} else if (READ_ONCE(in6_dev->cnf.mtu6) != mtu) {
+ 			WRITE_ONCE(in6_dev->cnf.mtu6, mtu);
+ 			fib6_metric_set(rt, RTAX_MTU, mtu);
+@@ -1605,7 +1579,7 @@ static enum skb_drop_reason ndisc_router_discovery(struct sk_buff *skb)
+ 	}
+ 
+ 	if (ndopts.nd_opts_tgt_lladdr || ndopts.nd_opts_rh) {
+-		ND_PRINTK(2, warn, "RA: invalid RA options\n");
++		net_dbg_ratelimited("RA: invalid RA options\n");
+ 	}
+ out:
+ 	/* Send a notify if RA changed managed/otherconf flags or
+@@ -1633,15 +1607,13 @@ static enum skb_drop_reason ndisc_redirect_rcv(struct sk_buff *skb)
+ 	switch (skb->ndisc_nodetype) {
+ 	case NDISC_NODETYPE_HOST:
+ 	case NDISC_NODETYPE_NODEFAULT:
+-		ND_PRINTK(2, warn,
+-			  "Redirect: from host or unauthorized router\n");
++		net_dbg_ratelimited("Redirect: from host or unauthorized router\n");
+ 		return reason;
+ 	}
+ #endif
+ 
+ 	if (!(ipv6_addr_type(&ipv6_hdr(skb)->saddr) & IPV6_ADDR_LINKLOCAL)) {
+-		ND_PRINTK(2, warn,
+-			  "Redirect: source address is not link-local\n");
++		net_dbg_ratelimited("Redirect: source address is not link-local\n");
+ 		return reason;
+ 	}
+ 
+@@ -1702,15 +1674,13 @@ void ndisc_send_redirect(struct sk_buff *skb, const struct in6_addr *target)
+ 	}
+ 
+ 	if (ipv6_get_lladdr(dev, &saddr_buf, IFA_F_TENTATIVE)) {
+-		ND_PRINTK(2, warn, "Redirect: no link-local address on %s\n",
+-			  dev->name);
++		net_dbg_ratelimited("Redirect: no link-local address on %s\n", dev->name);
+ 		return;
+ 	}
+ 
+ 	if (!ipv6_addr_equal(&ipv6_hdr(skb)->daddr, target) &&
+ 	    ipv6_addr_type(target) != (IPV6_ADDR_UNICAST|IPV6_ADDR_LINKLOCAL)) {
+-		ND_PRINTK(2, warn,
+-			  "Redirect: target address is not link-local unicast\n");
++		net_dbg_ratelimited("Redirect: target address is not link-local unicast\n");
+ 		return;
+ 	}
+ 
+@@ -1729,8 +1699,7 @@ void ndisc_send_redirect(struct sk_buff *skb, const struct in6_addr *target)
+ 	rt = dst_rt6_info(dst);
+ 
+ 	if (rt->rt6i_flags & RTF_GATEWAY) {
+-		ND_PRINTK(2, warn,
+-			  "Redirect: destination is not a neighbour\n");
++		net_dbg_ratelimited("Redirect: destination is not a neighbour\n");
+ 		goto release;
+ 	}
+ 
+@@ -1743,8 +1712,7 @@ void ndisc_send_redirect(struct sk_buff *skb, const struct in6_addr *target)
+ 	if (dev->addr_len) {
+ 		struct neighbour *neigh = dst_neigh_lookup(skb_dst(skb), target);
+ 		if (!neigh) {
+-			ND_PRINTK(2, warn,
+-				  "Redirect: no neigh for target address\n");
++			net_dbg_ratelimited("Redirect: no neigh for target address\n");
+ 			goto release;
+ 		}
+ 
+@@ -1845,14 +1813,12 @@ enum skb_drop_reason ndisc_rcv(struct sk_buff *skb)
+ 	__skb_push(skb, skb->data - skb_transport_header(skb));
+ 
+ 	if (ipv6_hdr(skb)->hop_limit != 255) {
+-		ND_PRINTK(2, warn, "NDISC: invalid hop-limit: %d\n",
+-			  ipv6_hdr(skb)->hop_limit);
++		net_dbg_ratelimited("NDISC: invalid hop-limit: %d\n", ipv6_hdr(skb)->hop_limit);
+ 		return SKB_DROP_REASON_IPV6_NDISC_HOP_LIMIT;
+ 	}
+ 
+ 	if (msg->icmph.icmp6_code != 0) {
+-		ND_PRINTK(2, warn, "NDISC: invalid ICMPv6 code: %d\n",
+-			  msg->icmph.icmp6_code);
++		net_dbg_ratelimited("NDISC: invalid ICMPv6 code: %d\n", msg->icmph.icmp6_code);
+ 		return SKB_DROP_REASON_IPV6_NDISC_BAD_CODE;
+ 	}
+ 
+@@ -2003,9 +1969,8 @@ static int __net_init ndisc_net_init(struct net *net)
+ 	err = inet_ctl_sock_create(&sk, PF_INET6,
+ 				   SOCK_RAW, IPPROTO_ICMPV6, net);
+ 	if (err < 0) {
+-		ND_PRINTK(0, err,
+-			  "NDISC: Failed to initialize the control socket (err %d)\n",
+-			  err);
++		net_err_ratelimited("NDISC: Failed to initialize the control socket (err %d)\n",
++				    err);
+ 		return err;
+ 	}
+ 
+-- 
+2.34.1
+
 
