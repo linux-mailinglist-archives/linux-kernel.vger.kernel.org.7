@@ -1,106 +1,236 @@
-Return-Path: <linux-kernel+bounces-722013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E5BAFD17D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:36:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 114C0AFD18B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7792517A4C1
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92931487B9B
 	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFBB2E5B1C;
-	Tue,  8 Jul 2025 16:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB4B2E542C;
+	Tue,  8 Jul 2025 16:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zTwCKCBE"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s/QU+qW7"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A561A2E339D
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 16:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F692E5425
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 16:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751992464; cv=none; b=G55LvoyVJgduU4JIW1FCPUq3QZ+HdH+JTuU2OXhEvGRYbM7NDHtdqDru78J6WH+VaSrAOjJCwRCUv+PB+r8+73riov2NPKveQdFjs+nDnMTjGo5qqb3u8XyApAmcWJdcSP9M7bdHeLvUaXt4eOzsrcKWRBtSd7Zg4yl2FwfOgYA=
+	t=1751992502; cv=none; b=FPkkN7MEBCjhZJUeLtR13boxIwyusjj4L+0VsrL3U+iKHCgKmkkSH7feFyR+AogV9+GQEyCIiWLQGpty6ynIcVibVkhMaYsW62bCP6LC/EaLiLTyqeIPmjQ3t+7ymis2J2LMYwxqWtE8cJqxfP+Y8baDlIMpTmgwRcJKYRmbK/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751992464; c=relaxed/simple;
-	bh=egjXBQIDVMcPJrFuesqfHI+sAnZEJZw1CswxrACs2UM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g3rZtVk1nukyv98bizvxEUjj0EgJZ3KttFuNj/KLukdDgSxpEkDc4C0evpI10Li/uO3FGOSXc5J+s9Yb0FW8DRpFbgR2FuZhg3NlioARkcLnoonHOLXP71tZx2HRKhguFJnXHVuhR1QzzoTITF3Jg8KDnuoAFLL/qkLZR5fPV4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zTwCKCBE; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ade5b8aab41so959209566b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 09:34:21 -0700 (PDT)
+	s=arc-20240116; t=1751992502; c=relaxed/simple;
+	bh=LOh1uVyuOGC3cLQ5Hyqg/PyFMIWeI77AdXpS9ZiQd8g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bqpd8CJQFWzP/jbehWVrptCsEpiCToi99WlSU6lcQ50PynK6JB6fe1g+Kyfhv4dZiwj7OpMlVy7MiuBJimnXnil+utTW3jKNoQ/LONgaYjRqmUWIXaIAoMc5bZ3LbsM+vw7Yw2aBecYgpK1SR70+/z0RTAVpnUM8/YLgAlTFod8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s/QU+qW7; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4a5ac8fae12so4501cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 09:35:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751992460; x=1752597260; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r0at4FacdZ6pma9HH5OGwEa8HPAQDJiRPxVtv3dm2mI=;
-        b=zTwCKCBEjZVqNGlOUf66R0xz6GPjDzoODQCQjowRKc4kLXpR2NdKTHja9tpXiUm7vE
-         sGZDVqSVjSoZs3+qRNAn6eHGTdYG8hkw/xj81WBWGY6vOqpQHGJ/Jdr3010WT9oeihic
-         GHuvL3gOxCkxl3hHhH+9ILkphOMi2csjKtISJSNZadKlaueWEokcGdhaWbZ/NYQefMVD
-         BnuibIJLAEXXhA6JPVgxmnr+in2fd2FkmuvVjyvpBHdF4KZr7l7Z1GEjXOEiKIREoHZI
-         vlFgmrsh8yjsjEWTtFmRv9XlLd8MC6QCWf/rEBgAWY5OsyEgqfia3wnUlh9DDJuKEgpL
-         baCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751992460; x=1752597260;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1751992499; x=1752597299; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r0at4FacdZ6pma9HH5OGwEa8HPAQDJiRPxVtv3dm2mI=;
-        b=gZnF4kAAl9nRPX94Xly7HblHCQ5AXD/Sb3+kF9AiUwmCgS39pGz3QpqgZfwMhb7NQY
-         jZ35jFBodcpD9+Gk5joGpXWNYyoDTdyTaHv30YVayt4cM95UTaXCpff+6bK5a7VVkttd
-         ehrQJ+QSC6ehlVy+7OPxYCILg6gRIgRe85rwWo3gS6unVQNpZJqiptTJN73b3tNSRBfz
-         iW5ecqliqeKUKEgdl3/SSTvCthfP4MiTcchNEam1nNfv9snYzv5QS2lOvOB9nUK0dtRV
-         uG4PkvDPO0Fy+ofJVv8DsarhhJEoHr4pQL8hm4KL3cCEPErwIILC+hspIbiUVnXAjhLh
-         JsgA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6n5aJkSdrkWhcdAMF1/bklOPS7yl+GirSph92FG2FUfisMH9YszELtLDr6PHRM9q92x/paFOAtl3oyac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMdVUHm1C4ddC9WzqmeiYbA6VUA+33KHmMbx9F0fo9T39Iqwxr
-	ir1jwHnbgQVcKYpHJIzyPYvjt6QAujVIxNULbtisaFcqPuGGXILjb5p65yGCRlNb0Nw=
-X-Gm-Gg: ASbGncsTNYgTMQ4HBR8ciCo4oc8Hd0LSGDS9iBPLdo8LAa7PLwVouS8QKcGZ4pAzS5B
-	wCxqSeyzaD/uRhAL317aKHnjDTjZRBOwTkl0aft8SpmO/+0JZihsnglfkObOarDD+JYWdnn0Y6I
-	62DyJqgbXesp+vXFBL2T+Lq2VWJwrKy/YqPdkL7hJZ8B9toa5ePNwD1C9oeSWAZ4/oy0Q0dmcME
-	6WZrY+NikNU1+gJ/UYa6xU+VWDjvfH3hUin6Me8pWCPRY1A5EKMyZ8QqAKHHnfDesgnCAK5L5wc
-	fgPFFzzp8bqRXXkKyH6lBx1iDDj/KdiphHU32G8pEsaWmgQgEjfzFRRxd/U=
-X-Google-Smtp-Source: AGHT+IGKBE0r3i/OgmjaRqVmGAN5LyHLg8zBEZZguDeNMFqqfCLNiGPwn8x/2LgZv96cHHN089ljmg==
-X-Received: by 2002:a17:907:9496:b0:ade:422d:3168 with SMTP id a640c23a62f3a-ae3fe6fa77cmr1690286466b.37.1751992459765;
-        Tue, 08 Jul 2025 09:34:19 -0700 (PDT)
-Received: from linaro.org ([82.79.186.23])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6bb1effsm934223466b.175.2025.07.08.09.34.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 09:34:18 -0700 (PDT)
-Date: Tue, 8 Jul 2025 19:34:17 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
-	Frank Li <frank.li@nxp.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] MAINTAINERS: Update i.MX Clock Entry
-Message-ID: <aG1IiVXZSl+/4+Xg@linaro.org>
-References: <20250707-imx95-blk-ctl-7-1-v3-0-c1b676ec13be@nxp.com>
- <20250707-imx95-blk-ctl-7-1-v3-5-c1b676ec13be@nxp.com>
+        bh=lyPVyPZ7g8sae8dggze/O0X+T0IkRpg9KIq+ZglFhHY=;
+        b=s/QU+qW7MfJD+eyrgW0/3u0WW40CcqWg4ZPngbE8cfTlAFhuH+IDICeLo87qNV/Aqr
+         x9z+Bim1Jd8rXM33+wynCpLxCual0zZKML32+ml+CGs3CYPJ0ZMapVXG2YKwGwyDFucj
+         zvM7+bLGnljIwZGiQJbI5TgGQK4TgA8snENVM52Vbep9XR5VKycvomGbS4dn78oAkymV
+         qU7AEfFFJMQndARUdnSynwy2S89x+Xak6/GiiyI5wZ//GGUEvj+XIHZQOR79racl8Fkf
+         Ku+8WnDPTBw7fBt/k421sUF6c7IUMAaAORcruxpp5U9gu8iSi8uTiyAY84p+KK2ABzIA
+         FLuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751992499; x=1752597299;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lyPVyPZ7g8sae8dggze/O0X+T0IkRpg9KIq+ZglFhHY=;
+        b=pz9OuIP35Q8dzK57CcPDmSYJC0V0yFp9yvGfG9T/eMCYUVvkIl8U6huvGDjG1p79IW
+         LfnZjoAWbzeFn8hKrmRgap+G1jMtJ+qbpRgA8Nxc1s/cyEl/jazGSg95cqpFL67JY13v
+         aUkL1MvXTdGWmDjVb779UTb7C6qwI1NgU6HkGsy03PHg3NF0fOH9gc2xriqaXXwLN2Ca
+         nM7eErArcG9vJyr/F0LHrYrOqYFk56xfBt8GsWceXAT6UT8Vy/3OfxEfgB0rx3899vYH
+         0ywgtS2ZJaecYaXIjRs1y+2UFnrFQLT/UtXeeNeArVOLWyS8ZOVlEbDyRjbZTNgRKXRx
+         6CZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjBz++1Iwm05flzb/63GQ6zgWzipR4MKZ9X/ZkXZsj7NIzN2D7FpfSGmXL70UPiFy+bTnMtRGheUgQuVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0ZBKTelPCFlUuBUo0jNfNnNd4OP0dGDvq+UEwcnoHuPBm9Gfx
+	Qu9l9tj2C4pscqPtzXydq2jPB0w7IWQyQXLA9w4K06efDVZlaM9WSwXgY2pE/p4AOT5y3PUyenF
+	OqsqkTY1r1mvNpIV/uXLFcmk8ve7A0MRvnw0vSyVa
+X-Gm-Gg: ASbGncs8vQhFLwKrnOom0aK9sQJ1tjqQ4TavKM2O41O1NSnfDdqxEN1ceDqzlB1Ol+s
+	3pSTm208C9rZiwX8LCV7trKCjsDHVOvq1N3BY6Ke2nY/FlLA+3tt0wuSRCtAbJ8li5EnM4s0UqM
+	kIVei2a3KCsubKAF6P38Egr1yyhmqhnYZzcq1x1aGzdzO2Lvv6LTNM9R1zB8qVNZ9Nb85ZjZfTE
+	w==
+X-Google-Smtp-Source: AGHT+IEh67BPddDPTFD/tfb4fSwiCqr0a9Zn5VVe9gpDL/kfIfnog3VmVjGUueJWQ9mX4X2FFYYG425DMTQCtZmeDdo=
+X-Received: by 2002:a05:622a:738b:b0:4a9:a4ef:35d3 with SMTP id
+ d75a77b69052e-4a9d4701facmr2137511cf.7.1751992499047; Tue, 08 Jul 2025
+ 09:34:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707-imx95-blk-ctl-7-1-v3-5-c1b676ec13be@nxp.com>
+References: <20250630031958.1225651-1-sashal@kernel.org> <20250630175746.e52af129fd2d88deecc25169@linux-foundation.org>
+ <a4d8b292-154a-4d14-90e4-6c822acf1cfb@redhat.com> <aG06QBVeBJgluSqP@lappy>
+ <CAJuCfpH5NQBJMqs9U2VjyA_f6Fho2VAcQq=ORw-iW8qhVCDSuA@mail.gmail.com> <aG0_-79QiMEk3N-R@lappy>
+In-Reply-To: <aG0_-79QiMEk3N-R@lappy>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 8 Jul 2025 09:34:48 -0700
+X-Gm-Features: Ac12FXzzSrrvF71LQqsCA0KSGYduhbXVbeZdy5-T37l-FdsQQhzkvZIbKhxe_qE
+Message-ID: <CAJuCfpF3K49Z8uevF6M9FZX-tFgJDCkCi54iL=xwDuQB2RMqoA@mail.gmail.com>
+Subject: Re: [PATCH] mm/userfaultfd: fix missing PTE unmap for non-migration entries
+To: Sasha Levin <sashal@kernel.org>
+Cc: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, peterx@redhat.com, 
+	aarcange@redhat.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25-07-07 10:24:41, Peng Fan wrote:
-> Update file match pattern to include nxp,imx* and fsl,imx*.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+On Tue, Jul 8, 2025 at 8:57=E2=80=AFAM Sasha Levin <sashal@kernel.org> wrot=
+e:
+>
+> On Tue, Jul 08, 2025 at 08:39:47AM -0700, Suren Baghdasaryan wrote:
+> >On Tue, Jul 8, 2025 at 8:33=E2=80=AFAM Sasha Levin <sashal@kernel.org> w=
+rote:
+> >>
+> >> On Tue, Jul 08, 2025 at 05:10:44PM +0200, David Hildenbrand wrote:
+> >> >On 01.07.25 02:57, Andrew Morton wrote:
+> >> >>On Sun, 29 Jun 2025 23:19:58 -0400 Sasha Levin <sashal@kernel.org> w=
+rote:
+> >> >>
+> >> >>>When handling non-swap entries in move_pages_pte(), the error handl=
+ing
+> >> >>>for entries that are NOT migration entries fails to unmap the page =
+table
+> >> >>>entries before jumping to the error handling label.
+> >> >>>
+> >> >>>This results in a kmap/kunmap imbalance which on CONFIG_HIGHPTE sys=
+tems
+> >> >>>triggers a WARNING in kunmap_local_indexed() because the kmap stack=
+ is
+> >> >>>corrupted.
+> >> >>>
+> >> >>>Example call trace on ARM32 (CONFIG_HIGHPTE enabled):
+> >> >>>   WARNING: CPU: 1 PID: 633 at mm/highmem.c:622 kunmap_local_indexe=
+d+0x178/0x17c
+> >> >>>   Call trace:
+> >> >>>     kunmap_local_indexed from move_pages+0x964/0x19f4
+> >> >>>     move_pages from userfaultfd_ioctl+0x129c/0x2144
+> >> >>>     userfaultfd_ioctl from sys_ioctl+0x558/0xd24
+> >> >>>
+> >> >>>The issue was introduced with the UFFDIO_MOVE feature but became mo=
+re
+> >> >>>frequent with the addition of guard pages (commit 7c53dfbdb024 ("mm=
+: add
+> >> >>>PTE_MARKER_GUARD PTE marker")) which made the non-migration entry c=
+ode
+> >> >>>path more commonly executed during userfaultfd operations.
+> >> >>>
+> >> >>>Fix this by ensuring PTEs are properly unmapped in all non-swap ent=
+ry
+> >> >>>paths before jumping to the error handling label, not just for migr=
+ation
+> >> >>>entries.
+> >> >>
+> >> >>I don't get it.
+> >> >>
+> >> >>>--- a/mm/userfaultfd.c
+> >> >>>+++ b/mm/userfaultfd.c
+> >> >>>@@ -1384,14 +1384,15 @@ static int move_pages_pte(struct mm_struct =
+*mm, pmd_t *dst_pmd, pmd_t *src_pmd,
+> >> >>>             entry =3D pte_to_swp_entry(orig_src_pte);
+> >> >>>             if (non_swap_entry(entry)) {
+> >> >>>+                    pte_unmap(src_pte);
+> >> >>>+                    pte_unmap(dst_pte);
+> >> >>>+                    src_pte =3D dst_pte =3D NULL;
+> >> >>>                     if (is_migration_entry(entry)) {
+> >> >>>-                            pte_unmap(src_pte);
+> >> >>>-                            pte_unmap(dst_pte);
+> >> >>>-                            src_pte =3D dst_pte =3D NULL;
+> >> >>>                             migration_entry_wait(mm, src_pmd, src_=
+addr);
+> >> >>>                             err =3D -EAGAIN;
+> >> >>>-                    } else
+> >> >>>+                    } else {
+> >> >>>                             err =3D -EFAULT;
+> >> >>>+                    }
+> >> >>>                     goto out;
+> >> >>
+> >> >>where we have
+> >> >>
+> >> >>out:
+> >> >>      ...
+> >> >>      if (dst_pte)
+> >> >>              pte_unmap(dst_pte);
+> >> >>      if (src_pte)
+> >> >>              pte_unmap(src_pte);
+> >> >
+> >> >AI slop?
+> >>
+> >> Nah, this one is sadly all me :(
+> >>
+> >> I was trying to resolve some of the issues found with linus-next on
+> >> LKFT, and misunderstood the code. Funny enough, I thought that the
+> >> change above "fixed" it by making the warnings go away, but clearly is
+> >> the wrong thing to do so I went back to the drawing table...
+> >>
+> >> If you're curious, here's the issue: https://qa-reports.linaro.org/lkf=
+t/sashal-linus-next/build/v6.13-rc7-43418-g558c6dd4d863/testrun/29030370/su=
+ite/log-parser-test/test/exception-warning-cpu-pid-at-mmhighmem-kunmap_loca=
+l_indexed/details/
+> >
+> >Any way to symbolize that Call trace? I can't find build artefacts to
+> >extract vmlinux image...
+>
+> The build artifacts are at
+> https://storage.tuxsuite.com/public/linaro/lkft/builds/2zSrTao2x4P640QKIx=
+18JUuFdc1/
+> but I couldn't get it to do the right thing. I'm guessing that I need
+> some magical arm32 toolchain bits that I don't carry:
+>
+> cat tr.txt | ./scripts/decode_stacktrace.sh vmlinux
+> <4>[   38.566145] ------------[ cut here ]------------
+> <4>[ 38.566392] WARNING: CPU: 1 PID: 637 at mm/highmem.c:622 kunmap_local=
+_indexed+0x198/0x1a4
+> <4>[   38.569398] Modules linked in: nfnetlink ip_tables x_tables
+> <4>[   38.570481] CPU: 1 UID: 0 PID: 637 Comm: uffd-unit-tests Not tainte=
+d 6.16.0-rc4 #1 NONE
+> <4>[   38.570815] Hardware name: Generic DT based system
+> <4>[   38.571073] Call trace:
+> <4>[ 38.571239] unwind_backtrace from show_stack (arch/arm64/kernel/stack=
+trace.c:465)
+> <4>[ 38.571602] show_stack from dump_stack_lvl (lib/dump_stack.c:118 (dis=
+criminator 1))
+> <4>[ 38.571805] dump_stack_lvl from __warn (kernel/panic.c:791)
+> <4>[ 38.572002] __warn from warn_slowpath_fmt+0xa8/0x174
+> <4>[ 38.572290] warn_slowpath_fmt from kunmap_local_indexed+0x198/0x1a4
+> <4>[ 38.572520] kunmap_local_indexed from move_pages_pte+0xc40/0xf48
+> <4>[ 38.572970] move_pages_pte from move_pages+0x428/0x5bc
+> <4>[ 38.573189] move_pages from userfaultfd_ioctl+0x900/0x1ec0
+> <4>[ 38.573376] userfaultfd_ioctl from sys_ioctl+0xd24/0xd90
+> <4>[ 38.573581] sys_ioctl from ret_fast_syscall+0x0/0x5c
+> <4>[   38.573810] Exception stack(0xf9d69fa8 to 0xf9d69ff0)
+> <4>[   38.574546] 9fa0:                   00001000 00000005 00000005 c028=
+aa05 b2d3ecd8 b2d3ecc8
+> <4>[   38.574919] 9fc0: 00001000 00000005 b2d3ece0 00000036 b2d3ed84 b2d3=
+ed50 b2d3ed7c b2d3ed58
+> <4>[   38.575131] 9fe0: 00000036 b2d3ecb0 b6df1861 b6d5f736
+> <4>[   38.575511] ---[ end trace 0000000000000000 ]---
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Ah, I know what's going on. 6.13.rc7 which is used in this test does
+not have my fix 927e926d72d9 ("userfaultfd: fix PTE unmapping
+stack-allocated PTE copies") (see
+https://elixir.bootlin.com/linux/v6.13.7/source/mm/userfaultfd.c#L1284).
+It was backported into 6.13.rc8. So, it tries to unmap a copy of a
+mapped PTE, which will fail when CONFIG_HIGHPTE is enabled. So, it
+makes sense that it is failing on arm32.
+
+>
+> --
+> Thanks,
+> Sasha
 
