@@ -1,56 +1,53 @@
-Return-Path: <linux-kernel+bounces-722279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49CF8AFD738
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:39:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E507AFD744
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:42:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A0AE3B83FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:39:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DF353B5803
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF7E2253BC;
-	Tue,  8 Jul 2025 19:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA3C2264B6;
+	Tue,  8 Jul 2025 19:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8bb9bqb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pgvKYoKy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE1121E08D;
-	Tue,  8 Jul 2025 19:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF2D21ADAE;
+	Tue,  8 Jul 2025 19:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752003527; cv=none; b=J8tBYZZrFeo1VoSCbc3BsnSt5duEREuflLqIzjsmVvIDxsLMoeRbaR+wKT5a9jw8vy3yTqRBXHaoEyIDcJPtLMPw+h1OZ/X1flyaaIC3kEUWQzGEz1S+SyvF0ZpLRdtgEyRcD7Dw6c5duBzjGFCRa6icJMx6iChsx/PacG9u3yU=
+	t=1752003711; cv=none; b=ZsKVsIq1ZoiEk4iZMkdoNAb4XbFTS3Cly/K9Le8y/sObnG+TX1EljoTV64vHH2iLy5QexZraw1RwFAixZlEgU19ZjGfKVwm5+VoeqOoUc9bR0iODKb+KNcc5twUo/OvYbclMSz1/QxWXAyd1ABFhnSBgCN/XQIGAmqQD/W17EJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752003527; c=relaxed/simple;
-	bh=nVC2iS4sClY7u807TQfWCbAZEkUsGmhqWpv9rafvYAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E/YeqKcOByew58nJDZYml178eObPEtxntSCer1G9F3s8uTm/IcyFmHKpshd6BBFFRqF6oKZQ7j/A7QJdWugaupIue+hD5avl3dk0m4zWXk7WRS0O1WqamhXAQeBFfaCPcJB+gM0qgvmxz5KdOGxj5LaARkYBx4hTS1k3eIpwYmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8bb9bqb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97E24C4CEED;
-	Tue,  8 Jul 2025 19:38:44 +0000 (UTC)
+	s=arc-20240116; t=1752003711; c=relaxed/simple;
+	bh=ASVIGag1Iljcn4wjjI4ObOm37+x5zt0kmgSjG4XxnOk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u9cSb2YRcMGcADXlQbOhv6AznEVcAHgpES2Aahz7c48wpZK20DOIGBKxgQiHsMqcpgweakJfLk/3BUQa1kGx7qi1pQEuqjDyG+1pj1nb0SvgLTiGRaKSJAIMAC3byPvHf8DYU0hSy6YOx6z4Tl4+j501GghM51mUF1OEhZj3I1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pgvKYoKy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B399C4CEF0;
+	Tue,  8 Jul 2025 19:41:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752003526;
-	bh=nVC2iS4sClY7u807TQfWCbAZEkUsGmhqWpv9rafvYAw=;
+	s=k20201202; t=1752003710;
+	bh=ASVIGag1Iljcn4wjjI4ObOm37+x5zt0kmgSjG4XxnOk=;
 	h=From:To:Cc:Subject:Date:From;
-	b=L8bb9bqb3IkVQXrSSgqW5W4t2Z9Fe8rvTVu48ecgoL6Ikb2snsG77o2s00bFsoPPQ
-	 gk7MWl92Ao366aObR18t0yVjOaIb4weVuwP2Lvou7kVGxTPRnunx1AkEJgSSMZOZm5
-	 Pzwmw59U/mXFOk2KqiQ8uJua4fM9KBz+FdIbTcQCKP1SSPlWRwLEg93Uy3807gU4IO
-	 pGUvtXnn0BBniIFI/7I9b3bBnza6vx7lZ8ku7p0TTQhztUbMTUwa3zvy6xY983drfD
-	 AEi6nIEf8LAp/WJdQ35ZykjrR7Rl8aJxkmGGxbFUDrVn7JRcOsJxVSPmbkGZkd2MFE
-	 KLs1MFpTcqvXA==
-From: Daniel Gomez <da.gomez@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	linux-modules@vger.kernel.org
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Modules fixes for v6.16-rc6
-Date: Tue,  8 Jul 2025 21:38:20 +0200
-Message-ID: <20250708193822.45168-1-da.gomez@kernel.org>
+	b=pgvKYoKyyNtunYyyh/z6u4yQ/GVUvUMkb+Dl1DD3M5YI+jw5ZqBx2jLG4w4u9O1im
+	 JkToZ+b1P7mXZNlhXz47nHuFmdp3eDB47hyeGABYzknXFaQnl6YdadJOGw3S0a5z2r
+	 EzpNVQgzt9nX5ShZ4UHmhsEdxIur26ekmAqvnJZPdG5JgDq/Imb4lkDXiH08EDqUB4
+	 WXqL9QHzQwLHx9KvUj24Hq4z7EMAqno7so95RZ1NcYvRurAZ6K0fx+/hNzU46pRwCx
+	 4y80N4EM+0/tsTEkP1UWy/s6adFgHoKyD2g1yDCJlbPbQgN9/KuWzRRGd+YsRm1IIs
+	 GHboInCMNtTXA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH 0/2] x86 AEGIS fixes
+Date: Tue,  8 Jul 2025 12:38:27 -0700
+Message-ID: <20250708193829.656988-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -60,71 +57,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The following changes since commit d7b8f8e20813f0179d8ef519541a3527e7661d3a:
+Since the legacy crypto API likes to randomly allocate memory, the x86
+AEGIS code has some bugs.  This series fixes them.
 
-  Linux 6.16-rc5 (2025-07-06 14:10:26 -0700)
+Eric Biggers (2):
+  crypto: x86/aegis - Fix sleeping when disallowed on PREEMPT_RT
+  crypto: x86/aegis - Add missing error checks
 
-are available in the Git repository at:
+ arch/x86/crypto/aegis128-aesni-glue.c | 40 +++++++++++++++++++--------
+ 1 file changed, 29 insertions(+), 11 deletions(-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git tags/modules-6.16-rc6.fixes
 
-for you to fetch changes up to af1ccf546e5f2915fbbde26841db43a971d81cf3:
+base-commit: 181698af38d3f93381229ad89c09b5bd0496661a
+-- 
+2.50.0
 
-  MAINTAINERS: update Daniel Gomez's role and email address (2025-07-08 20:52:30 +0200)
-
-----------------------------------------------------------------
-Modules fixes for 6.16-rc6
-
-This includes 2 fixes: one introduced in the current release cycle (v6.16-rc1)
-and another introduced back in v6.4-rc1. Both have been in linux-next since
-next-250701 and have passed the modules ci tests using kdevops. Finally, as Petr
-and Luis mentioned in previous pull requests, add myself (Daniel Gomez) to the
-list of modules maintainers.
-
-The first was reported by Intel's kernel test robot, and it addresses a crash
-exposed by Sebastian's commit c50d295c37f2 ("rds: Use nested-BH locking for
-rds_page_remainder") by allowing relocations for the per-CPU section even if it
-lacks the SHF_ALLOC flag. Petr and Sebastian went down to the archive history
-(before Git) and found the commit that broke it b3b91325f3c7 ("Don't relocate
-non-allocated regions in modules.").
-
-The second fix, reported and fixed by Petr (with additional cleanup), resolves a
-memory leak by ensuring proper deallocation if module loading fails. We couldn't
-find a reproducer other than forcing it manually or leveraging eBPF. So, I
-tested it by enabling error injection in the codetag functions through the error
-path that produces the leak and made it fail until execmem is unable to allocate
-more memory.
-
-Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE73Ua4R8Pc+G5xjxTQJ6jxB8ZUfsFAmhta7AACgkQQJ6jxB8Z
-UftulhAAiK78CFOdIcKbGKMD8tBGCHUT6IVCskY0E3aqDmhZiNEXhpmwKnOq56zo
-ztbwg81Acc41t0Y283vgmZuEpJbzmS47qRYIZEhk5BuLdKl3Hn91Iyi3sdZLB9gD
-VaYkpY0y4V3pWL5AM/9rtnLvY7PSLZG0bnAeS2fsOzxN5DIn2IIdD3WsU++96O+k
-LHIik7dXcBQQKOukRClAI+cZiU2IGGG/FcDuMmANcsw+E4GKTBQunZiixTZOjdgi
-e//NMYw1+Y5DJQ/i7C3Fl6+W+r/8/HPkRxyZ3Wt79WBZxwV/Hp5iTG9652vHKE1i
-ybBDwlJkQC/EQsup4NKzDby38bPW1tdYwwK0dNbMRGxNICqNe7rq5fEG4WjTjXAA
-H2O5VZ84Ys1SRx+uXeu83aog6fdiZ9DezGuaxFgrTRHUken2QvxJ/HTXe1BmMNY5
-9BbHPrG22dp+dEDptSVaDWWMQZ6OP73gXrPYowQC8/FOm9NdBXVIH9hvvI7KRSf5
-OC4A7nyZCDNW/Dwzc6yi3qAWMkKCR6IGMqN9vFiR3iIkaHJN1KABFzaVmh3JpR+B
-6TsuO8/EIu9Ue25VgMehSj9LuGFgbhcfg40N2Fj/7+vgAM4Rd5sOw/NyiaD8xUPC
-j0Ql4ehZiOQof8wAhdxpHFQQjO30UdpQgOmUO1yNUdmuPIpdSN0=
-=dQvQ
------END PGP SIGNATURE-----
-
-----------------------------------------------------------------
-Daniel Gomez (1):
-      MAINTAINERS: update Daniel Gomez's role and email address
-
-Petr Pavlu (2):
-      module: Fix memory deallocation on error path in move_module()
-      module: Avoid unnecessary return value initialization in move_module()
-
-Sebastian Andrzej Siewior (1):
-      module: Make sure relocations are applied to the per-CPU section
-
- MAINTAINERS          |  2 +-
- kernel/module/main.c | 17 +++++++++++------
- 2 files changed, 12 insertions(+), 7 deletions(-)
 
