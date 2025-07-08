@@ -1,233 +1,204 @@
-Return-Path: <linux-kernel+bounces-720995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54FB9AFC315
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:48:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55ED4AFC30E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 049D0188599A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:48:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9471F1882FE5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4010D22126C;
-	Tue,  8 Jul 2025 06:48:11 +0000 (UTC)
-Received: from n169-110.mail.139.com (n169-110.mail.139.com [120.232.169.110])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD3321B9D6;
-	Tue,  8 Jul 2025 06:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=120.232.169.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6772222C4;
+	Tue,  8 Jul 2025 06:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YRrpjKOb"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA12321B9D6;
+	Tue,  8 Jul 2025 06:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751957290; cv=none; b=pdWtSVmEeSjcf3c3zonqszC9Ak8e+UYgph+ufmPTrJ4E+iUk2UqcLMjLi62sV3k0ZqDRQ47nYQ2WqNA1iqw3COWpNKXVbZdCvqxbEdWbKXycup7JqNP+NRdHl4UAvKEAPvQZ1WuLqokLh0gE8kleow2GjX20eWCOZDNt4jl702E=
+	t=1751957210; cv=none; b=dV1Fpw8pKwfppeS7pDHwsNr8DUPrx3m8+O8MBU2wV6FVOevvmvNY3VFRHjJyIE6iGqnO8adbyc3eGekKxUsTQ/ntjrMEpyPBiWwzv9OcQsyOro8/GpqXykhtkKhPxWn2mAFtRW5hNsSLbznejtj/8GFjeJIHGcGWG2wKiDmp/Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751957290; c=relaxed/simple;
-	bh=FH42PShFQS4bzOW+GV/Fj6tDxfMjXK4ggHFG/pBRaqs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FE+kcObzDb/cgNwj2rXc94IijS0yE8/pOBy4DXdK0CoNDco7nj9pr3sPuxgBGLJI7Irsd5rZ/sO6iVp9U/MiF3+PbB7/hbYuEX+OiOuXfna+5Lro2dbXVL4QS9R4VAH4pfv5kA05qDhoo5NtxisFZZZFpG1T2SipfWk5egKHAd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com; spf=pass smtp.mailfrom=139.com; arc=none smtp.client-ip=120.232.169.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=139.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM:                                                                                        
-X-RM-SPAM-FLAG:00000000
-Received:from [10.103.165.236] (unknown[106.38.209.7])
-	by rmsmtp-lg-appmail-07-12085 (RichMail) with SMTP id 2f35686cbe43622-bf2ed;
-	Tue, 08 Jul 2025 14:44:20 +0800 (CST)
-X-RM-TRANSID:2f35686cbe43622-bf2ed
-Message-ID: <5584b66a-9845-491a-922d-08c1467cb81d@139.com>
-Date: Tue, 8 Jul 2025 14:44:17 +0800
+	s=arc-20240116; t=1751957210; c=relaxed/simple;
+	bh=/cApN7+nPLX4ympFWe9LXoIFG9iaQZgbTZy3sGnfWz8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g73Yp2anRWAUiq6p46hFzNigW8H7RQyZ1WGp7eMVTJveCKTdwnICxuP1VB2AdmirJ7cqBwbC3sUaB28P6r/yj53g9dsWAKxygfgwThy9Cfjxq5h1i+OPUIeXWNJu+md+qzsB7Mtw05ilWpO61t4L9rg2m4ImOv2X6iUhgpUb+Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YRrpjKOb; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b39011e5f8eso2147857a12.0;
+        Mon, 07 Jul 2025 23:46:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751957208; x=1752562008; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=awAK1sQvEZGu9RSuFaWauBkV5Ie3EeA43euQnu2ZDvY=;
+        b=YRrpjKOb6dDO0XrqmoXzWmMru2cNfTll5TbikfPAa4daiAlYnmhLVHMI8BSsetlO/k
+         0PT1TTlV0BczkwkJGpHbJ6mGpSA5AXbeeIHUEa2xqh3lbH9MGu0r+A7onZt82r6lfyI1
+         499ibqv+KJTodkt9KdbfZaq8k5SqyovKJlnWR35+FhEsxkqUvKg1TgOlEBAUZHiCRDmW
+         eEMt/NorLCFs2I2C371xiJj1BwQKMAFGMqDnrg5B/FPbq//yb6a2SP5Yri23Va4AvRox
+         TP6JzqP8howobYorMuvXULNv1gG0tzinMLoLc5M2Db+LhRmEx88sBbTppBvgsEU+2Jzb
+         IkYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751957208; x=1752562008;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=awAK1sQvEZGu9RSuFaWauBkV5Ie3EeA43euQnu2ZDvY=;
+        b=cvcrBucPjg7aRHqOMWSNkp9QX6N3PaQKCXQcY80GVKiCiwo9G/F+ZU2gJxfB9K78Oz
+         fKlgt90mUW5hXkm/o9Y3Lm10sneQPDqsCx7rCduiSX2rYm5M6Iu5RgS+wZPDaKc2+6Cz
+         pwrW3HC3KEVQWsJ7JmKLNgqvkpSLrKSSPFkdLi0Qspmjfe/dAvUw9AUk4azsY/sirlr7
+         RYiYC+dJ0D35K4odIkM3LUlSLKVxEuZecPjO/iSsBU1UM4V2XI3SGJXXef5bi7pq0z05
+         HA7sh859IEw7ir8rgHAM1z6ndYXVzTVIOgOtz2dSIRIdIf1DG2OQhCkXXxJ3pTfMpeUP
+         mZhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVMvT2BrrWdfjk68RS5J6aL+8kBPKx6GKiaYVu2su6a8A4dX3MrV6zutk+jPyzmIgEBLKiY5xZ@vger.kernel.org, AJvYcCX3tmORRA/5GxhFzisetUrTxFz98MmOZBd+nvCpyCcCvlPAewc2YJSNp8Ydn8fbgQ4cGIqMMcHweg0YeCg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw66h5foPkZE7sC+EkJq78Md98mkCxJH3YXKMwFYx6LGWm3WEEZ
+	wB69Uu4nSD/13I2ik2SwnuhL63PpH2xfWB1RI04WTK3/idyHhmuVK+4N
+X-Gm-Gg: ASbGncvY/RQfrHYaOqaGxNXfwYyUkYD+kjQPzebZ9XI6IgMfcFJBkI9HEVUOUxQ7LgJ
+	30IOwfo+Gux5fYEmRKq+v0U4/PW6GrxUuC7rXjqzzLbI+xQxNEmOjA1XGoxZX/5g8KXa1T4QPLo
+	7rObmIjSrkmAzoMrFK1IgzuAHx+F78Hn0g0VG3xliRB5CAQgCkACpEf5nRAs/O0E71PmZ5bv8hA
+	LWdbxdBXKEhxdIi8h9RRPpJ4QKqHiHmMLF5wr+PnzeIKyfxVaTu7Sy4WJwu2n1yK1nBRardVoSD
+	82DE3eISrJoWaq/PwEck9UfAFvsnU1IkujgG+qaUlV1sbccDo14eAuB3fbZ9Sw==
+X-Google-Smtp-Source: AGHT+IHNx4OiWoCq7M9t3p40CvKjBGEYTQs9/RQVmrqVzX0hKDNozKjkB+NwYNXyY7dlbQecei9Awg==
+X-Received: by 2002:a17:90b:2ed0:b0:311:f30b:c21 with SMTP id 98e67ed59e1d1-31aadd9fd46mr18022165a91.26.1751957208011;
+        Mon, 07 Jul 2025 23:46:48 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23c8457e15fsm103684335ad.154.2025.07.07.23.46.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 23:46:47 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Richard Cochran <richardcochran@gmail.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Zixian Zeng <sycamoremoon376@gmail.com>,
+	Guo Ren <guoren@kernel.org>
+Cc: devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>,
+	Han Gao <rabenda.cn@gmail.com>
+Subject: [PATCH v2] riscv: dts: sophgo: add ethernet GMAC device for sg2042
+Date: Tue,  8 Jul 2025 14:46:25 +0800
+Message-ID: <20250708064627.509363-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86: lenovo-hotkey: Handle missing
- hardwarefeaturesgracefully
-To: Hans de Goede <hansg@kernel.org>, Mark Pearson
- <mpearson-lenovo@squebb.ca>, Armin Wolf <W_Armin@gmx.de>,
- Kurt Borja <kuurtb@gmail.com>, alireza.bestboyy@gmail.com, atescula@gmail.com
-Cc: Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20250627195436.3877-1-W_Armin@gmx.de>
- <DAXLSMRH9E6Y.3Q8Z59YG2B50C@gmail.com>
- <fb08672d-881b-458c-b8ed-1a27ca93fe7d@gmx.de>
- <DAXMVOI4AXHY.18HUV9THTG0DJ@gmail.com>
- <50361e3c-c947-4df8-97fd-4963d18ee4f2@gmx.de>
- <7f2496e7-7092-46a2-885f-8e8f44fc0af1@app.fastmail.com>
- <92feb1cf-798c-4026-9084-cf90988e1604@139.com>
- <ab1b00a0-3449-499c-ab6f-2f0f98895eee@kernel.org>
-Content-Language: en-US
-From: Jackie Dong <xy-jackie@139.com>
-In-Reply-To: <ab1b00a0-3449-499c-ab6f-2f0f98895eee@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Hans,
-On 7/7/25 17:22, Hans de Goede wrote:
-> Hi Jackie,
-> 
-> On 7-Jul-25 05:03, Jackie Dong wrote:
->> On 6/30/25 04:36, Mark Pearson wrote:
->>> Hi Armin & Kurt,
->>>
->>> On Sat, Jun 28, 2025, at 8:01 AM, Armin Wolf wrote:
->>>> Am 27.06.25 um 23:29 schrieb Kurt Borja:
->>>>
->>>>> On Fri Jun 27, 2025 at 6:17 PM -03, Armin Wolf wrote:
->>>>>> Am 27.06.25 um 22:38 schrieb Kurt Borja:
->>>>>>
->>>>>>> Hi Armin,
->>>>>>>
->>>>>>> On Fri Jun 27, 2025 at 4:54 PM -03, Armin Wolf wrote:
->>>>>>>> Not all devices support audio mute and microphone mute LEDs, so the
->>>>>>>> explicitly checks for hardware support while probing. However missing
->>>>>>>> hardware features are treated as errors, causing the driver so fail
->>>>>>>> probing on devices that do not support both LEDs.
->>>>>>>>
->>>>>>>> Fix this by simply ignoring hardware features that are not present.
->>>>>>>> This way the driver will properly load on devices not supporting both
->>>>>>>> LEDs and will stop throwing error messages on devices with no LEDS
->>>>>>>> at all.
->>>>>>> This patch makes me wonder what is the policy around issues like this.
->>>>>>> In fact I've submitted and changes that do the exact opposite :p
->>>>>>> Like commit: 4630b99d2e93 ("platform/x86: dell-pc: Propagate errors when
->>>>>>> detecting feature support")
->>>>>>>
->>>>>>> IMO missing features should be treated as errors. i.e. The probe should
->>>>>>> fail.
->>>>>> IMHO the probe should only fail if some features are deemed essential, like
->>>>>> required ACPI methods. Optional features like in this case LEDs should be
->>>>>> handled by the driver in a graceful manner if possible.
->>>>>>
->>>>>>> Quoting documentation [1]:
->>>>>>>
->>>>>>>      If a match is found, the device’s driver field is set to the
->>>>>>>      driver and the driver’s probe callback is called. This gives the
->>>>>>>      driver a chance to verify that it really does support the
->>>>>>>      hardware, and that it’s in a working state.
->>>>>>>
->>>>>>> And again [2]:
->>>>>>>
->>>>>>>      This callback holds the driver-specific logic to bind the driver
->>>>>>>      to a given device. That includes verifying that the device is
->>>>>>>      present, that it’s a version the driver can handle, that driver
->>>>>>>      data structures can be allocated and initialized, and that any
->>>>>>>      hardware can be initialized.
->>>>>>>
->>>>>>> Both of these makes me wonder if such a "fail" or error message should
->>>>>>> be fixed in the first place. In this case the probe correctly checks for
->>>>>>> device support and fails if it's not found, which is suggested to be the
->>>>>>> correct behavior.
->>>>>> The driver should only fail probing if it cannot handle some missing features.
->>>>>> In this case however both features (audio mute LED and mic mute LED) are completely
->>>>>> optional and the driver should not fail to load just because one of them is absent.
->>>>> I agree, both are individually optional, but at least one should be
->>>>> required.
->>>>>
->>>>>> Just think about machines supporting only a single LED (audio or mic mute). Currently
->>>>>> the driver would fail to load on such devices leaving the users with nothing.
->>>>> That's very true.
->>>>>
->>>>> But I do still think if both fail the probe should still fail. Maybe
->>>>> there is a way to accomplish this?
->>>>>
->>>>> I'm thinking of something like
->>>>>
->>>>> if (lenovo_super_hotkey_wmi_led_init(MIC_MUTE, dev) ||
->>>>>        lenovo_super_hotkey_wmi_led_init(AUDIO_MUTE, dev))
->>>>>        return -ENODEV;
->>>>>
->>>>> What do you think?
->>>>
->>>> Normally i would agree to such a thing, but in this case the underlying
->>>> WMI device
->>>> supports many more functions that are currently not supported by this
->>>> driver. Additionally
->>>> the driver cannot control when the WMI device is registered, so it has
->>>> to be prepared to
->>>> encounter a device without the features it supports.
->>>>
->>>> Also keep in mind that a failing probe attempt produces a irritating
->>>> error message.
->>>>
->>>>>>> BTW this also leaks `wpriv`, which would remain allocated for no reason.
->>>>>> wpriv will be freed using devres, so no memory leak here. However i admit that there is
->>>>>> some room for optimizations, however i leave this to the maintainer of the driver in
->>>>>> question.
->>>>> Leak was a bit of an overstatement :) But if both features are missing
->>>>> it would be kinda leaked, in practice.
->>>>
->>>> I see, however i would leave this to the maintainer of the driver
->>>> because i have no hardware
->>>> to test the resulting patches :/.
->>>>
->>>
->>> As a note, I'm on vacation for three weeks and avoiding accessing work emails, so won't be able to discuss this with Jackie properly until I'm back.
->>>
->>> For history/context - this particular driver was a bit of a oddity as the Ideapads aren't in the Lenovo Linux program (hope they will be one day). We had a Thinkbook that is using the same LUDS interface, that we were Linux certifying, and LED support is a requirement to work.
->>>
->>> I do think this needs revisiting a bit. I am leaning to agreeing that it shouldn't error out - but we were also being careful to not have this cause problems on HW we ourselves don't have access to. It would be nice if it could be extended to more platforms though.
->>>
->>> I don't have the specs handy right now (would need to go on the Lenovo VPN for that). Is it OK if we re-visit this when I'm back at home and working?
->>> Jackie - please do have a look and think about this in the meantime.
->>>
->>> Mark
->>>
->>>
->> Hi Kurt, Armin, Mark,
->>     I have reviewed the Lenovo Keyboard WMI Specification and find GetIfSupportOrVersion method has defined that Output parameters define: 0 is not support, Non-zero is support.
->>     As you have noted in previous mail, not all of Lenovo ideapad brand laptop support both mic mute LED(on F4) and audio mute LED(on F1). Some of them only support one mute LED, some of them don't have any mute LED. So, I think that the below codes should be work to handle it. I have verified the below codes on Lenovo Yoga Pro7 14APH8(MachineType 82Y8) which is only support mic mute LED. In fact, I have gotten user mail which describe the same issue on Lenovo Yoga Pro7 14APH8 with https://bugzilla.kernel.org/show_bug.cgi?id=220271 which reported this issue on MachineType: 81Y3.
->>     If you have any comment, let me know, I'll update the below patch and submit it later.
->>
->> diff --git a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
->> b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
->> index 89153afd7015..47f5ee34ea71 100644
->> --- a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
->> +++ b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
->> @@ -122,8 +122,13 @@ static int lenovo_super_hotkey_wmi_led_init(enum
->> mute_led_type led_type, struct
->>            return -EIO;
->>
->>        union acpi_object *obj __free(kfree) = output.pointer;
->> -    if (obj && obj->type == ACPI_TYPE_INTEGER)
->> +    if (obj && obj->type == ACPI_TYPE_INTEGER) {
->>            led_version = obj->integer.value;
->> +
->> +        /*Output parameters define: 0 is not support, Non-zero is support*/
->> +        if (led_version == 0 )
->> +            return 0;
->> +    }
->>        else
->>            return -EIO;
->>
-> 
-> Thank you that seems like a good change / fix.
-> 
-> We should probably also change this:
-> 
->          case MIC_MUTE:
->                  if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER)
->                          return -EIO;
-> 
-> into logging a warning and then returning 0 and the same here:
-> 
->          case AUDIO_MUTE:
->                  if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER)
->                          return -EIO;
-> 
-> Regards,
-> 
-> Hans
-> 
-It's good suggestion and I have updated the patch and submit it in 
-another mail.
+Add ethernet GMAC device node for the sg2042.
 
-Thanks a lot,
+Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+Tested-by: Han Gao <rabenda.cn@gmail.com>
+---
+Require the ethernet patch series for functional device:
+https://lore.kernel.org/all/20250708064052.507094-1-inochiama@gmail.com/
 
-Jackie Dong
+Real board dts patch:
+https://lore.kernel.org/linux-riscv/cover.1751700954.git.rabenda.cn@gmail.com/
 
+Change from v1:
+- https://lore.kernel.org/all/20250506093256.1107770-1-inochiama@gmail.com
+1. separate from the original series and add dependency id
+---
+ arch/riscv/boot/dts/sophgo/sg2042.dtsi | 61 ++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
+
+diff --git a/arch/riscv/boot/dts/sophgo/sg2042.dtsi b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
+index 85636d1798f1..b3e4d3c18fdc 100644
+--- a/arch/riscv/boot/dts/sophgo/sg2042.dtsi
++++ b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
+@@ -569,6 +569,67 @@ spi1: spi@7040005000 {
+ 			status = "disabled";
+ 		};
+
++		gmac0: ethernet@7040026000 {
++			compatible = "sophgo,sg2042-dwmac", "snps,dwmac-5.00a";
++			reg = <0x70 0x40026000 0x0 0x4000>;
++			clocks = <&clkgen GATE_CLK_AXI_ETH0>,
++				 <&clkgen GATE_CLK_PTP_REF_I_ETH0>,
++				 <&clkgen GATE_CLK_TX_ETH0>;
++			clock-names = "stmmaceth", "ptp_ref", "tx";
++			dma-noncoherent;
++			interrupt-parent = <&intc>;
++			interrupts = <132 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "macirq";
++			resets = <&rstgen RST_ETH0>;
++			reset-names = "stmmaceth";
++			snps,multicast-filter-bins = <0>;
++			snps,perfect-filter-entries = <1>;
++			snps,aal;
++			snps,tso;
++			snps,txpbl = <32>;
++			snps,rxpbl = <32>;
++			snps,mtl-rx-config = <&gmac0_mtl_rx_setup>;
++			snps,mtl-tx-config = <&gmac0_mtl_tx_setup>;
++			snps,axi-config = <&gmac0_stmmac_axi_setup>;
++			status = "disabled";
++
++			mdio {
++				compatible = "snps,dwmac-mdio";
++				#address-cells = <1>;
++				#size-cells = <0>;
++			};
++
++			gmac0_mtl_rx_setup: rx-queues-config {
++				snps,rx-queues-to-use = <8>;
++				queue0 {};
++				queue1 {};
++				queue2 {};
++				queue3 {};
++				queue4 {};
++				queue5 {};
++				queue6 {};
++				queue7 {};
++			};
++
++			gmac0_mtl_tx_setup: tx-queues-config {
++				snps,tx-queues-to-use = <8>;
++				queue0 {};
++				queue1 {};
++				queue2 {};
++				queue3 {};
++				queue4 {};
++				queue5 {};
++				queue6 {};
++				queue7 {};
++			};
++
++			gmac0_stmmac_axi_setup: stmmac-axi-config {
++				snps,blen = <16 8 4 0 0 0 0>;
++				snps,wr_osr_lmt = <1>;
++				snps,rd_osr_lmt = <2>;
++			};
++		};
++
+ 		emmc: mmc@704002a000 {
+ 			compatible = "sophgo,sg2042-dwcmshc";
+ 			reg = <0x70 0x4002a000 0x0 0x1000>;
+
+base-commit: cc6a9fb055e446e76a23867e42f12c4eff44eb00
+prerequisite-patch-id: 7a82e319b011e5d0486a6ef4216d931d671c9f53
+prerequisite-patch-id: 5a30fb99ec483c1f5a8dca97df862c3a042c9027
+prerequisite-patch-id: e0da79790a934916d9fc39c18e8e98c9596d27ab
+--
+2.50.0
 
 
