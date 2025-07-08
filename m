@@ -1,137 +1,128 @@
-Return-Path: <linux-kernel+bounces-721839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB9AAFCE72
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:01:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D5E8AFCE6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2A827B025E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:59:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7F83189D3FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B9022332E;
-	Tue,  8 Jul 2025 15:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65162E0931;
+	Tue,  8 Jul 2025 15:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="biu4aKAC"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABGeFg8I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB7E2E0938
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068FA223DE7;
+	Tue,  8 Jul 2025 15:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751986824; cv=none; b=Mq14IKU+RXEWvvbA1xhn3w07q/wENIay5/bbDTCj3xzYbjWBlMeDSDyyANTlL42iX2saejyIalVPsiNCMQPr0tddhMkgOi41dFYRg0n27v5tGezex+jrdBVPKiRn0swfnqznzPEC+DP7XGduB/5hd5S8Vhc9JfHTGRTk7A9zmZg=
+	t=1751986809; cv=none; b=f0Z8ZO6nj4KnQYpuPl7PlpwMNfzX/kwZNd6ik4M+dBNHYyDxdmjUM+A/yL6wCrI8qOWmc9U/KuosUlkG9cMcIOnhHgBUOXVHx4ZVNcRpkPMJTp/JZ8EvEru+usEzdQto8fRXpmCj+FFY93VRcIuhpwMX7aLicaasRobdZqe9rHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751986824; c=relaxed/simple;
-	bh=oubSlw9c6CwwNGJChX5pk5uvHul9AR5futtvxpba9J8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gyFjd54E3FgjUTbDWNulVKbsrmAN/BY4lcRbxVRQ7eQcCwCtfvi9oWSsGHQ+EBvC2CXj8gM0+HuxTLUe/34eFXqRaxHdylv2fQk9gzd2AJMTu5zDwKuOnTUtpKPKoUcVHJUBZVDeG7ChdI0G5XToDlycyTZ/A+jXn8mN+TTBLSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=biu4aKAC; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-454b1d0a115so15387845e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 08:00:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1751986819; x=1752591619; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XYl+uMBjHYHOG7bkXi/XB3f8f6YY8kSh6gh2qtJwtzA=;
-        b=biu4aKACauSb4umshrzMzEgm2E4u2EAxc3C5L1iv4BFOpn7jNR53S476Y0NtzOm7t9
-         tz9r51wcYX7375E8BhKMT0u+nATXuRwB0BeiqhDAcub8m6QQKFVycccexEX/ULjACp4Z
-         o3/FEP+fqipMG7xNJ6lcY2JHWgWC5LWsh60IYQeOQWMRJTs2ofkj0KhMt9pSDuu1baUc
-         jxhxq34cDZTg/aRudvAkI1F6PL7vBqwm68C18N29teUHFOW4BnOl7GY21hPQwzGnUFqn
-         lC453SEzxXZK9Vt08TFq3EWlu0B9fwrTMM/QFR2/qDFNM3l/9hngqsjEQb970uFUHbpG
-         WC9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751986819; x=1752591619;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XYl+uMBjHYHOG7bkXi/XB3f8f6YY8kSh6gh2qtJwtzA=;
-        b=ow28lZPVOs8cOY4thEtaWItqnUIyJ8yptMNliEZlZ7TecBXHUeULNuFiolPE+lOUzk
-         DZCT7AGW2fgO9m3yxkTaAE3dOI09OuV8EGjug2i3aLYQxI2KbuppxHw7hQlBs7BqsNkY
-         S41jdCw5uihIL80AM2ua4vFL8TaUHIz0mZlE19OklCtLb5IWVba6FncHTwBPUTdSTdrd
-         pmL2a9GNNTVcohkHiKCsrLbvs0dQrpr3dENcyJEhD1IZLQxmIgXzRgSK4qMzYNJEiN6i
-         1Si+oLyo45mJ2RDAD2pIfuM6hSZ6DnQyfaWo9b2P+hKtchi8Ld1jlrrTh8yzYQmCEasr
-         BsfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzPeCr95ZPWWpE4+c0iMrCJ+BkpidZkWzzG1MVvtv5rDpIoua0X5XSB5V0xfDMnHuXb8GJLVB+y/zLmF8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1+DMSooOrAN6drHGj/U96gKMz9w5p716PJ51z+AfIwJH4zt/6
-	tiIg9/8ZfuzFlgOL5akw7m4OVKIGACHX7ETfSo3tw9Gc1h+cK0UFhbJP4laqCh+XsJEk1d3tmES
-	rtSXxk5c=
-X-Gm-Gg: ASbGncuO8rg//ooRF8P66qJk1h74QbELq3NW4PwozusDVzIBMz+snG0VWVKNeIxh7W3
-	fZHXA78pHUtuzHePQF2pvgjaLL9RLMmrIDPNTK+/UKEKwCMkOFCdFDdUd8Y4vpZQH1OKa6QDXMW
-	5d8IVvXL0KuW7L3g49WCueI34a0DKv3HMuvfaEUHXRYCNjwNkZ7Jn3StPCtxPvQ7wM9M1RO9qFi
-	c+10x1HO56SSa7YnGfe/exHbR6BgC+uKr8RxmoTJYngeZEhpAolzy5AP7sBGOrGXsouMm0s9wkJ
-	wU4r05GhwaFEYNNFmz6xR7xxT4a5fIfAFkLiy6ovdVAZZQs89liALJZ+bGGVl6NONXz7Hlp4oL5
-	jFH0=
-X-Google-Smtp-Source: AGHT+IFlo7yukXz1+RpPI+9aM+Wv+VR26H54kHPCJ0VBY6icdoCFLAGnDf70y3tI5+eVHEmKCs6qtg==
-X-Received: by 2002:a05:600c:1c06:b0:450:d3b9:4ba4 with SMTP id 5b1f17b1804b1-454b4e682ebmr166687725e9.2.1751986819301;
-        Tue, 08 Jul 2025 08:00:19 -0700 (PDT)
-Received: from [127.0.1.1] ([2a00:23c7:1d1a:9c01:f9da:8274:e1d1:97ce])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47030b4f6sm13517433f8f.10.2025.07.08.08.00.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 08:00:18 -0700 (PDT)
-From: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
-Date: Tue, 08 Jul 2025 15:59:47 +0100
-Subject: [PATCH v3 3/3] dt-bindings: leds: issi,is31fl3236: add
- issi,22kHz-pwm property
+	s=arc-20240116; t=1751986809; c=relaxed/simple;
+	bh=8zhdXKTkB9Q4veJXhlqQ8WPtuFRRjdAu8mZrNb0FZIM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=hCOTakkvcZLjl3/gepX3W8GFzLoDxUHnUj0xZxPDg2HrlA6qP+v8oEIUwoDNYZ8hk97kQTMP+jsS8GCQAvqIJGDuDslN3kl19gHLSG70xQ8p5NsDQJpPYO4IpkDBiQpnzBCLTbBfbHkwP5RzWtOHG6N3mhdAes7qd6AtzyiGhDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABGeFg8I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5426FC4CEEF;
+	Tue,  8 Jul 2025 15:00:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751986808;
+	bh=8zhdXKTkB9Q4veJXhlqQ8WPtuFRRjdAu8mZrNb0FZIM=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=ABGeFg8IZcrpiwF2E5/VAvkRG+wMvkvFc2Ddba5FN/gXW/iwOBuVdp6OTkqN3dwjO
+	 uWSDMs9o0RbluEucdgQi/Qg334hI4dOlr/+eey3nPQIUywQ6Vohzx+oq1rxszOMGNx
+	 Tn3aQJKZgoy4dR8u8wF5I496GfCTu/vDtiV+FO67BgKVOLhAV3+OCqb4PecIQg3wEJ
+	 S8+ZIqWxLo1ycJ6NveVnpztGPoihkyS3QRPYpxXaUwLhjUYpj7vgSuZBxi1uAEkAVo
+	 UpK3bLYur6v0I/qfPkVlZsxRNSyg32bvDeg2vZrLJLiGQldfK2aeW5xHv13HuX+n2+
+	 ECB60jByno6Zw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250708-leds-is31fl3236a-v3-3-d68979b042dd@thegoodpenguin.co.uk>
-References: <20250708-leds-is31fl3236a-v3-0-d68979b042dd@thegoodpenguin.co.uk>
-In-Reply-To: <20250708-leds-is31fl3236a-v3-0-d68979b042dd@thegoodpenguin.co.uk>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org, 
- Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751986814; l=1098;
- i=pzalewski@thegoodpenguin.co.uk; s=20250625; h=from:subject:message-id;
- bh=oubSlw9c6CwwNGJChX5pk5uvHul9AR5futtvxpba9J8=;
- b=LBQ1yPV/JzboE//xuT/t1MfJoj3jNSbBfc86H1rwbBeRybamxiXNZS2wzbfmz+da+JbhLGweW
- nZuDXpKQnACDWBCqmmsdkV2yYF8gC2MHfA8H0Ak5QK09N0soZnVl4wF
-X-Developer-Key: i=pzalewski@thegoodpenguin.co.uk; a=ed25519;
- pk=hHrwBom/yjrVTqpEvKpVXLYfxr6nqBNP16RkQopIRrI=
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 08 Jul 2025 17:00:03 +0200
+Message-Id: <DB6RHMJJ5I4F.3LB85KT35FO5C@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Asahi Lina" <lina+kernel@asahilina.net>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v11 1/4] rust: types: Add Ownable/Owned types
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Oliver Mangold" <oliver.mangold@pm.me>
+X-Mailer: aerc 0.20.1
+References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me>
+ <20250618-unique-ref-v11-1-49eadcdc0aa6@pm.me>
+ <DB1IPFNLFDWV.2V5O73DOB2RV6@kernel.org> <aGtv9qs682gTyQWX@mango>
+ <DB5PPGOWNW4K.2C5A4UE9V9IEF@kernel.org> <aGzrZqIrStGD_UBp@mango>
+In-Reply-To: <aGzrZqIrStGD_UBp@mango>
 
-Add an additional and optional control property for setting
-the output PWM frequency to 22kHz. The default is 3kHz and
-this option puts the operational frequency outside of the
-audible range.
+On Tue Jul 8, 2025 at 11:56 AM CEST, Oliver Mangold wrote:
+> On 250707 1123, Benno Lossin wrote:
+>> On Mon Jul 7, 2025 at 8:58 AM CEST, Oliver Mangold wrote:
+>> > On 250702 1303, Benno Lossin wrote:
+>> >> On Wed Jun 18, 2025 at 2:27 PM CEST, Oliver Mangold wrote:
+>> >> > +///
+>> >> > +/// # Invariants
+>> >> > +///
+>> >> > +/// The pointer stored in `ptr` can be considered owned by the [`O=
+wned`] instance.
+>> >>
+>> >> What exactly is "owned" supposed to mean? It depends on the concrete =
+`T`
+>> >> and that isn't well-defined (since it's a generic)...
+>> >
+>> > "owned" means that access to the `T` is exclusive through the `Owned<T=
+>`,
+>> > so normal Rust semantics can be applied.
+>>=20
+>> Okay, in that case just say that `ptr` has exclusive access.
+>
+> Or, ehm, sorry, I forgot, ownership also implies that the allocation of t=
+he
+> underlying resource/object is now under the responsibility of the owner,
+> i.e. the owner should free it at the appropriate time.
+>
+> In short, just the standard meaning of ownership in Rust.
+>
+> https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html
 
-Signed-off-by: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
+Okay that's good to hear. I think what tripped me up the most was the
+"can be considered" wording. Let's just say:
+
+    /// # Invariants
+    ///
+    /// - `ptr` is valid,
+    /// - `*ptr` is owned by `self`,
+    /// - `ptr` is an "owning pointer" according to the [`Ownable`] impleme=
+ntation for `T`.
+
+And then on `Ownable` we add:
+
+    /// # Invariants
+    ///
+    /// An implementer of this trait needs to define which pointers can be =
+supplied to
+    /// [`Self::release`]. These pointers are called "owning pointers".
+
+This should be as general as possible and still give us exactly the
+guarantees that we need to implement `Owned`.
+
+`Owned::from_raw` can then require that the pointer is an owning
+pointer (& it's valid) and that the caller yields ownership to
+`from_raw`.
+
 ---
- Documentation/devicetree/bindings/leds/issi,is31fl3236.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/leds/issi,is31fl3236.yaml b/Documentation/devicetree/bindings/leds/issi,is31fl3236.yaml
-index d0f9add5af01ac06c4bb87b0cd0faec71d0ef37c..5bce0fc48f84c7ae804e6522e312c51ed2d77bc5 100644
---- a/Documentation/devicetree/bindings/leds/issi,is31fl3236.yaml
-+++ b/Documentation/devicetree/bindings/leds/issi,is31fl3236.yaml
-@@ -42,6 +42,12 @@ properties:
-   "#size-cells":
-     const: 0
- 
-+  issi,22kHz-pwm:
-+    type: boolean
-+    description:
-+      When present, the chip's PWM will operate at ~22kHz as opposed
-+      to ~3kHz to move the operating frequency out of the audible range.
-+
- patternProperties:
-   "^led@[1-9a-f]+$":
-     type: object
-
--- 
-2.48.1
-
+Cheers,
+Benno
 
