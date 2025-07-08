@@ -1,135 +1,133 @@
-Return-Path: <linux-kernel+bounces-721807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5428AFCE0F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:45:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D19AFCE16
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32C727A2382
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:44:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B014166422
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322482E0915;
-	Tue,  8 Jul 2025 14:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C65F2E03ED;
+	Tue,  8 Jul 2025 14:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GRCWCtUh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b="OnZ6/4kz"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBFB92DFF3E
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 14:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407301AAC9
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 14:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751985899; cv=none; b=s+l0C8c8dauRBGgLVEKoEIV7Q4w1Vt0LutPcZqsKiiPpequ5vlCmorVmnQ0DLvV7tDSHgu7B5zAHV4oJ3ETc5OZN2zyng6rXz61y5D7cVIIUVYHToMNBNOfhm5Pvnf+YwURKDTnRfq1Sc+dhjBP3dcROT/z+z7fO4wtEJDoxxdA=
+	t=1751985897; cv=none; b=VDwIge2j/sS+6F2m1hLfGyB6Zj5Yh4CphvdotJYuofAmRCA5QmwvvOCWV3sqvACWESV3nAnwNLlvXaJI65azYahK02ZW+Dr8kmrrS4r+tL/UFs31QeVA2w3Yq6ZhTC9igcplaD7E2ncN8YJvYZLZyinq6sjIwGQlFPiJrYSjAOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751985899; c=relaxed/simple;
-	bh=TcDPvUHToLQm+qE1E4pCpm9KbQqVDU7Yt4W9UJNjcH8=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=ftqtLw64OLqZE/y7BtBg6jNlecdwhTVj9wGNdOb91ekTbgFEwJ2XJCjYPbUywr15BTLGlDQp0uycDuyAiXkD2fvPTJ8RVDL/YEwglirDmS9xpCeA6Z4RkeQTVditGAxBF6j1L/Zonch7AdJFVCYq11B6e7yS6o4xdFznafw9Kok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GRCWCtUh; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751985896;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xcTQlaxZHiwdLJ2cMTpNwOinGOe77WY04pTSRjm/G0I=;
-	b=GRCWCtUhbqIqRiDkhwlkRk0VE3wyRzCNRByuu30ik74dQXFm9Iec5gQJYPjFKhjKJiN28r
-	PgSGk8ocNBWvre8HAu+DYpxkZtD0iyg4s8t+KWBo13H7GZzSUv4d+LnFbCnq8VM6ScxvSO
-	/d65wLQOZ59KSdOgOtqofisXothRVIU=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-613-gcqhxnjcOCGariLGAkYUAQ-1; Tue,
- 08 Jul 2025 10:44:53 -0400
-X-MC-Unique: gcqhxnjcOCGariLGAkYUAQ-1
-X-Mimecast-MFC-AGG-ID: gcqhxnjcOCGariLGAkYUAQ_1751985891
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6138A1808985;
-	Tue,  8 Jul 2025 14:44:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9C07118002B6;
-	Tue,  8 Jul 2025 14:44:47 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250707054112.101081-1-jiayuan.chen@linux.dev>
-References: <20250707054112.101081-1-jiayuan.chen@linux.dev>
-To: Jiayuan Chen <jiayuan.chen@linux.dev>
-Cc: dhowells@redhat.com, netdev@vger.kernel.org, mrpre@163.com,
-    syzbot+de6565462ab540f50e47@syzkaller.appspotmail.com,
-    Eric Dumazet <edumazet@google.com>,
-    Neal Cardwell <ncardwell@google.com>,
-    Kuniyuki Iwashima <kuniyu@google.com>,
-    "David S. Miller" <davem@davemloft.net>,
-    David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
-    Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v4] tcp: Correct signedness in skb remaining space calculation
+	s=arc-20240116; t=1751985897; c=relaxed/simple;
+	bh=fN4tOIQJAoq+AKMfht5dCRp3iRRsCe06SubkHAC/Bdw=;
+	h=From:Date:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=VeObq9eTjeSaQtDZTSTKuwDp6ZTtYh2IpGo9rI8g/2G53VxzzUn8hfHJ9mVzzOhPW/4PDP3D8zE75PbPAmtRx6SpCaT0b+WUZiDIfXrZ2dCqojtcPgNclg7GN7J6YYiJFp8HZcSvOMZauXOiAh/LQzLgQdt3yJBQIRtOo2SPL0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maine.edu; spf=pass smtp.mailfrom=maine.edu; dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b=OnZ6/4kz; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maine.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maine.edu
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4a589b7dd5fso72262381cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 07:44:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=maine.edu; s=google; t=1751985895; x=1752590695; darn=vger.kernel.org;
+        h=mime-version:message-id:subject:cc:to:date:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NzXFZEk6yErY6D/LjQRstWxZLYYVjR6/95xhHqGbv20=;
+        b=OnZ6/4kzGFD7k0pSK2stL7IDrMFKy2Q1fNgKN113CuLiP5xMXzNqm1RK0mpP77IVXh
+         pdR5CVi4JPBnTjx/x9iui7FExv9ufpbgBJ+P66qiG9oeECAckMQgXWxvadwkF/yU5d9q
+         jfRcItcFSLCW2GUjgXa2sAyhcUGu1RYspODgI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751985895; x=1752590695;
+        h=mime-version:message-id:subject:cc:to:date:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NzXFZEk6yErY6D/LjQRstWxZLYYVjR6/95xhHqGbv20=;
+        b=ByWviWNy/ALAHiAGVvDygpS4SRTywDM8nHrdDy1ns2mIqY4p6b9cr6cNaHXa6B8zVB
+         P6MPuJbNgm+mQBascnCBEN22saOFZ0ksa77bWmWFhBjUHtG5mZFCOA8EwP3ipk8LkXZz
+         oWv5pSaC1CWafOxTUBKwuBhya3J35htFgx2LUb8Yhc7KjM3jX9Bk0OLfLiWpzU7LRNzn
+         FQxITa/Wo1ZZ/iaojjwDKqszjGHMsH5ganv2PZM7vKQ6u2UaSMg8ZxHoK/3J4igGGnkR
+         EGc6yXetO6w/RPMykfCidyTsOGuMRxDdtStFZ31kVVK3y41hlgirhoLp9XFr/Md3Gpp4
+         F9fg==
+X-Gm-Message-State: AOJu0YwG/o+GiRMJbqiWQMBtfq0rpObNv9GzmdTPizf+hqNyhJRzXHZY
+	k7qmg75Zw/hTLe70FKRzmUJn/MzAnsDiitU5vHSzDjt57JUaLJNit6atF6cerVTTt0FuKnbkYWV
+	uKHw=
+X-Gm-Gg: ASbGncumw/P/WbYDbfUsGWStZPfcdQhl4+iIcYxy2IvhRODboDbE2vafeFFlzo1NO/V
+	Hkd8Ea2/oo3+iOHknRpNU+C2lHUPk57JoZ9ruTwQO9gr3U5VWKqua00WPegEZz0Lp3J5P1yxpSq
+	MBQ8/V+6aFTdviMYRb/L5JC+Pei4GFJZfkr1vXiHZpcMI0yNy5Pzyrr/ABMmXU8IaNIMe8lzQ2B
+	0RmWoi4Grl82VRieTz8WJ9BzK6+LtCkydKneJpoHzscaMYjO2vP8jnCfg5CYk+keaQqEFwis0xl
+	OzO3ZB0kMgEyl117U6TJzTobAeuWXUEO/nLYddtRK5Hy+wiCDttNBDPcVP9x67jBKk3GbhnEFhx
+	kAhzSxg==
+X-Google-Smtp-Source: AGHT+IHsUOny0OkJ2EB15KMJQvEZrTOer5pzJrOyVcvXVEprUMWypU/1HP1gAhVYH0BuTrhYNhwDPQ==
+X-Received: by 2002:a05:622a:191e:b0:4a9:5220:7fc3 with SMTP id d75a77b69052e-4a9cc6ca287mr59779551cf.18.1751985894660;
+        Tue, 08 Jul 2025 07:44:54 -0700 (PDT)
+Received: from [192.168.8.146] (weaver.eece.maine.edu. [130.111.218.23])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a994a79106sm83843961cf.45.2025.07.08.07.44.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 07:44:54 -0700 (PDT)
+From: Vince Weaver <vincent.weaver@maine.edu>
+X-Google-Original-From: Vince Weaver <vince@maine.edu>
+Date: Tue, 8 Jul 2025 10:44:49 -0400 (EDT)
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+cc: "Liang, Kan" <kan.liang@linux.intel.com>, 
+    Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+    Arnaldo Carvalho de Melo <acme@kernel.org>, 
+    Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+    Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+    Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+    Adrian Hunter <adrian.hunter@intel.com>
+Subject: [perf] fuzzer triggers "BUG: kernel NULL pointer dereference"
+Message-ID: <5baea1f7-6edd-d6fa-27ce-04eddb7e5199@maine.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2627956.1751985886.1@warthog.procyon.org.uk>
-Date: Tue, 08 Jul 2025 15:44:46 +0100
-Message-ID: <2627957.1751985886@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=US-ASCII
 
-Jiayuan Chen <jiayuan.chen@linux.dev> wrote:
+Hello
 
-> Syzkaller reported a bug [1] where sk->sk_forward_alloc can overflow.
-> 
-> When we send data, if an skb exists at the tail of the write queue, the
-> kernel will attempt to append the new data to that skb. However, the code
-> that checks for available space in the skb is flawed:
-> '''
-> copy = size_goal - skb->len
-> '''
-> 
-> The types of the variables involved are:
-> '''
-> copy: ssize_t (s64 on 64-bit systems)
-> size_goal: int
-> skb->len: unsigned int
-> '''
-> 
-> Due to C's type promotion rules, the signed size_goal is converted to an
-> unsigned int to match skb->len before the subtraction. The result is an
-> unsigned int.
-> 
-> When this unsigned int result is then assigned to the s64 copy variable,
-> it is zero-extended, preserving its non-negative value. Consequently, copy
-> is always >= 0.
-> 
-> Assume we are sending 2GB of data and size_goal has been adjusted to a
-> value smaller than skb->len. The subtraction will result in copy holding a
-> very large positive integer. In the subsequent logic, this large value is
-> used to update sk->sk_forward_alloc, which can easily cause it to overflow.
-> 
-> The syzkaller reproducer uses TCP_REPAIR to reliably create this
-> condition. However, this can also occur in real-world scenarios. The
-> tcp_bound_to_half_wnd() function can also reduce size_goal to a small
-> value. This would cause the subsequent tcp_wmem_schedule() to set
-> sk->sk_forward_alloc to a value close to INT_MAX. Further memory
-> allocation requests would then cause sk_forward_alloc to wrap around and
-> become negative.
-> 
-> [1]: https://syzkaller.appspot.com/bug?extid=de6565462ab540f50e47
-> 
-> Reported-by: syzbot+de6565462ab540f50e47@syzkaller.appspotmail.com
-> Fixes: 270a1c3de47e ("tcp: Support MSG_SPLICE_PAGES")
-> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+the perf_fuzzer can reliably trigger this on a 6.16-rc2 kernel.  It 
+doesn't look obviously perf related but since the perf_fuzzer triggered it 
+I thought I'd report it as a perf issue first.  I can work on a smaller 
+test case but that might take a bit especially as the machine locks up 
+super hard and requires being unplugged after it's triggered.
 
-Reviewed-by: David Howells <dhowells@redhat.com>
+let me know if there's any other info I can provide.  The dump below is 
+transcribed from a screenshot as I still haven't figured out a way to get 
+a serial console on this Raptorlake system.
+
+BUG: kernel NULL pointer dereference, address: 0000000000000008
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 0 P4D 0
+Oops: Oops: 0000 [#1] SMP NOPTI
+CPU: 5 UID: 0 PID: 0 Comm: swapper/5 Not tainted 6.16.0-rc2+ #8 PREEMPT (voluntary)
+Hardware name: Dell Inc. Precision 3660/0VJ7G2
+RIP: 0010:rb_insert_color+0x18/0x130
+Code: 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 48 8b 07
+RSP: 0018:ffffb5e5c01e3df8 EFLAGS: 00010046
+RAX: ffff93f1927f8168 .....
+...
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000000008 CR3: 00000000596824001 CR4: 000000000000f72ef0
+DR0: 00000000a000001 ....
+PKRU: 55555554
+Call Trace:
+ <TASK>
+ timerqueue_add+0x66/0xb0
+ hrtimer_start_range_ns+0x102/0x420
+ ? next_zone+0x42/0x70
+ tick_nohz_stop_tick+0xce/0x230
+ tick_nohz_idle_stop_tick+0x70/0xd0
+ do_idle+0x1d3/240
+ cpu_startup_entry+0x29/0x30
+ start_secondary+0x119/0x140
+ common_startup_64+0x13e/0x141
+ </TASK>
+
+
 
 
