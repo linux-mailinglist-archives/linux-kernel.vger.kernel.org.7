@@ -1,108 +1,110 @@
-Return-Path: <linux-kernel+bounces-720789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5119AFC065
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:03:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE1FAAFC041
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 537C95607F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:03:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B31AB7AE55C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AADE521B8F5;
-	Tue,  8 Jul 2025 02:01:11 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C54F1FE45A;
+	Tue,  8 Jul 2025 01:58:11 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DFC20DD75
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 02:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272F923DE;
+	Tue,  8 Jul 2025 01:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751940071; cv=none; b=jbYaeSpnS3326Z8R6xwSaT5HPq9cJIq9NfSHPPWWvu+1zF7QHp+epRQw9Gtw5yk3fbE6D2DXy1736MZLH/MXoWGUmHbGq3vIqgJZyuEfVG1UUsgbBz2Da3h5TJe0XBfZbE/KnM0Wxn7HjTq+4xh0yynP26okK6bIOLeHxGJ/Nn0=
+	t=1751939891; cv=none; b=QRBCmovBZZz/gvNQINM4Z9ZxKjS7GhyaWaujZUrNUF/tXdDJJS14Jmaouq4mYed5SZ+x/dcscNNRiYAM//wdZkHGJnEa7JExB51sVWhnPfyjxDdLumcqZYOnOsmaatItQKg773FOo0aE//qvcC4WzdvspBwHSuy2MbEZ3ui25b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751940071; c=relaxed/simple;
-	bh=z6y7IOeDjNMJhZTBF9Z0MIt6zjY4xdtUGncSaCBeI3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m7SUg4jTN/fJcKnmxr6nPA9SHfdRf7jX2xgI/zzqvR6hcJDa/mDqsXwgem7VocjpQ3hhn03d7pjX3QyKNzSQEcHkisHH3I9Lkpu8E+DyNy4JLXqQhZcpIxhSpfm0XCtvtXYeNVJriL3YDizDyOlN4rDLAohmfAxu+AXmxzEV4lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf11.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id D17FF14042B;
-	Tue,  8 Jul 2025 01:53:24 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf11.hostedemail.com (Postfix) with ESMTPA id 6229B20032;
-	Tue,  8 Jul 2025 01:53:22 +0000 (UTC)
-Date: Mon, 7 Jul 2025 21:53:22 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Li,Rongqing" <lirongqing@baidu.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- David Laight <david.laight.linux@gmail.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "vschneid@redhat.com"
- <vschneid@redhat.com>, "mgorman@suse.de" <mgorman@suse.de>,
- "bsegall@google.com" <bsegall@google.com>, "dietmar.eggemann@arm.com"
- <dietmar.eggemann@arm.com>, "vincent.guittot@linaro.org"
- <vincent.guittot@linaro.org>, "juri.lelli@redhat.com"
- <juri.lelli@redhat.com>, "mingo@redhat.com" <mingo@redhat.com>
-Subject: Re: [????] Re: divide error in x86 and cputime
-Message-ID: <20250707215322.0e4ec431@gandalf.local.home>
-In-Reply-To: <42f5344b80e244278aaf49f112498e02@baidu.com>
-References: <78a0d7bb20504c0884d474868eccd858@baidu.com>
-	<20250707220937.GA15787@redhat.com>
-	<20250707182056.66a8468a@gandalf.local.home>
-	<20250707183331.029570bf@gandalf.local.home>
-	<42f5344b80e244278aaf49f112498e02@baidu.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1751939891; c=relaxed/simple;
+	bh=irH2w41k9Uvwito0VsAvxOhTKcuRLLK8X19x6yZULL0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=KYUl2adyIG2Swg+Ras555J/DOVYxQXTAfRFDQZqqnzmjYpos3y05fPMxUAq7YzdLRXgpKYK6I9s9tdpiYptpIXWm994s/4xKrtDdM6hJLwcWPyQvz+WbwyziKskrkS5Z/BVXxflg9XDxHUqmRm9ICFQmI7WQLgyggwu4CWbfgOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bbklZ2nkvzYQvJk;
+	Tue,  8 Jul 2025 09:58:02 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 35ABD1A10FF;
+	Tue,  8 Jul 2025 09:58:01 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP3 (Coremail) with SMTP id _Ch0CgAHaCUne2xo2J8ABA--.63781S3;
+	Tue, 08 Jul 2025 09:58:01 +0800 (CST)
+Subject: Re: linux-next: Fixes tag needs some work in the block tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>
+Cc: Zheng Qixing <zhengqixing@huawei.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250708114925.2413cc77@canb.auug.org.au>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <c1e6ab2e-7562-1c99-38cd-5083e728057d@huaweicloud.com>
+Date: Tue, 8 Jul 2025 09:57:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: dt47jj1esr1161c1diqhqtdu7fobhh16
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 6229B20032
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/jSp8rIk6Px7djoMX3FWrS8SmfaUcs64Y=
-X-HE-Tag: 1751939602-601385
-X-HE-Meta: U2FsdGVkX18gYAwzcgmsVOdNJwuaVqcHgd/fH9NYZfGpTE/lUTYSWWjG4E6Fvoy/9Wmx48p8z2DJHrwYyrHcTaTXR4T5Yyej6uoQdfRPGuRgvadBcDz47ZZgxuJZsg0q0NAVn1g2bIX6H7wjsDeR1w517AImqHuQxO3Soej9RZtX/ej+r6B+S0tLTpA+fvBZT0W40J12KzImNjQIxWeXBn3tOtrcKWNvahBBqdvzGqbljuiaJSVZmMkK1YR7pGcWZxsQIqSPeXQ28/Y2s0qre6RSx+lu/Dz9QAX/2juEwN2o7gxW20IlYOoENveuT0Lxe1X5D4wPsixLnbOEO4BWruV/mQm8/C2K
+In-Reply-To: <20250708114925.2413cc77@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgAHaCUne2xo2J8ABA--.63781S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrXrWrXry7WryxCr4fAw1rCrg_yoWxXwcEgF
+	yjyr97G3yDXws7tas0yrZ8AFW3Gr4avrWDGrWvgF42ywn8ur4DXFZ2k3s7XrWfta98tr1Y
+	gr13J34fZFWYvjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb4AYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
+	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHD
+	UUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Tue, 8 Jul 2025 01:40:27 +0000
-"Li,Rongqing" <lirongqing@baidu.com> wrote:
+Hi,
 
-> > That would be:
-> > 
-> >                                    minutes    days
-> >                                       v        v
-> >   9223372036854775808 / 1000000000 / 60 / 60 / 24 / 365.25 = 292.27
-> >                            ^               ^         ^
-> >                         ns -> sec       hours       years
-> > 
-> > So the report says they have threads running for a very long time, it would still
-> > be 292 years of run time!  
+在 2025/07/08 9:49, Stephen Rothwell 写道:
+> Hi all,
 > 
-> Utime/rtime is u64, it means overflow needs 292.27*2=584 year,
+> In commit
 > 
-> But with multiple thread, like 292 threads, it only need two years, it is a thread group total running time
+>    5fa31c499281 ("md/raid1,raid10: strip REQ_NOWAIT from member bios")
 > 
+> Fixes tag
 > 
-> void thread_group_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
-> {
->     struct task_cputime cputime;
+>    Fixes: 9f346f7d4ea7 ("md/raid1,raid10: don't handle IO error for
 > 
->     thread_group_cputime(p, &cputime);
->     cputime_adjust(&cputime, &p->signal->prev_cputime, ut, st);
-> }
+> has these problem(s):
+> 
+>    - Subject has leading but no trailing parentheses
+>    - Subject has leading but no trailing quotes
+> 
+> Please do not split Fixes tags over more than one line.
 > 
 
-So you are saying that you have been running this for over two years
-without a reboot?
+This is my fault, I just build a new development environment and I added
+the fix tag while applying the patch, without noticing the line is
+wrapped automatically.
 
-Then the issue isn't the divider, it's that the thread group cputime can
-overflow. Perhaps it needs a cap, or a way to "reset" somehow after "so long"?
+Jens, please let me know if I should send a new pr.
 
--- Steve
+Thanks,
+Kuai
 
 
