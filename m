@@ -1,92 +1,169 @@
-Return-Path: <linux-kernel+bounces-721497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 579E1AFC9FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:00:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC546AFCA11
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 648D91BC5093
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:00:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D5BF564B5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D989E2DAFD9;
-	Tue,  8 Jul 2025 12:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LUL7Tiod"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6862D8DC8;
+	Tue,  8 Jul 2025 12:06:16 +0000 (UTC)
+Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F032DAFD6;
-	Tue,  8 Jul 2025 12:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B3F2D3206
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 12:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751976025; cv=none; b=Vw7Muq/+dvcsW9kX95Ax++MdwZaRadxpU0+oCJtNn/yYCP2+uQGO+ReeeGpAqCTMw6s2aosU5DjlAVDYbubVhywuwm8rsh4JnIzLmw3v244ZUKhH1SsQjbdX1MHV6YPU2dmRVV1ebdiChXle6Zd4/+gRLe1Bp+DidtaOYCTy9Dc=
+	t=1751976375; cv=none; b=LjHJyWRHVG2liNw70ZpkUF5p2dT5FjIeSHFrF0xdkI9CwliJpe9WCes4wy/qwIU9olklM2zv+FBOu268nyCHsI2KzZW2NEVbYFA4t3vxaxFIcOWeTPGT8a77jKubUqlnbbClDOAWmG7Y9xH6HbggpNv0bmu5aX/RoZ0Ng+1MXOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751976025; c=relaxed/simple;
-	bh=JhQaAXFww5cgFc3ThL7I+C4YjjUeRx7F4hDjE8VLpT0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=crNkxVGONLXBujNWDXGM+XUagjgaOUx+1KLMc1iFXEdV57E1NBN2JaxliWbh97juEUn4QPuXzEU9lNQUUUfRFl68HIGN6h1qdwpPGT/lYlOlTC+4zXWAVW94XnQ4wYH6l69uFmfvOGZh1gw8fneqmnkIEiAh9ZCq61WiMW/j2po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LUL7Tiod; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69F2EC4CEF6;
-	Tue,  8 Jul 2025 12:00:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751976024;
-	bh=JhQaAXFww5cgFc3ThL7I+C4YjjUeRx7F4hDjE8VLpT0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=LUL7TiodYJkz2bXI8+H5HNzS2OoQ2oIm30ti3T+msmif1Je6salTFWDI7h1fSP65c
-	 JYLyrJrhDthauuBgleSVvD5pjQ+ATLcbM/MRywb8WhXOp8WnXmQvz/l+iF7HP8eKLu
-	 WcgBU1qVvLG6IwEjGQ2POj4HZMzTZUF7puh+B6zMOauktLbQ+n/b7owBAp7brahprk
-	 hDWvfPOoW/k2glFvtKPvD3JvB1VJweAQGXoh3MAEym2jIGAJ42sCkGaMaWhMIW5AHE
-	 nTuE0T7J+4W8E9Y2akz2NEexvGGwPUMO2HtSP/MW3l9KG2lkIqp9g7VgtIPB8ikYdo
-	 HEeDXY+d4mFbQ==
-From: Carlos Maiolino <cem@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>, 
- Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org, 
- linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-In-Reply-To: <20250702093935.123798-1-pchelkin@ispras.ru>
-References: <20250702093935.123798-1-pchelkin@ispras.ru>
-Subject: Re: [PATCH v2 0/6] xfs: cleanup key comparing routines
-Message-Id: <175197602309.1155040.9466707632114261976.b4-ty@kernel.org>
-Date: Tue, 08 Jul 2025 14:00:23 +0200
+	s=arc-20240116; t=1751976375; c=relaxed/simple;
+	bh=t+WJwxPkODL2E6JX2lsUG2PpKcpJXeK+83BK2XJFyAo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TQQR3grH0CH3sGt/jCO7flDQRw5nX1U/UGJ1xwNq7FQ+PEf6hewIK2HyLObTrA0XoRzm4TyG2YrtIvErumXPaxrd8+nAkPKB5r1ikjOdPkjhYfHkTpn2Q7pmoxeaMykoHCUt7Zu+/qcvxQOpnEi9bC69FroqttETQhgSch5wNL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201610.home.langchao.com
+        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202507082004536617;
+        Tue, 08 Jul 2025 20:04:53 +0800
+Received: from localhost.localdomain (10.94.5.51) by
+ jtjnmail201610.home.langchao.com (10.100.2.10) with Microsoft SMTP Server id
+ 15.1.2507.57; Tue, 8 Jul 2025 20:04:55 +0800
+From: Bo Liu <liubo03@inspur.com>
+To: <xiang@kernel.org>, <chao@kernel.org>
+CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>, Bo Liu
+	<liubo03@inspur.com>
+Subject: [PATCH] erofs: support metadata compression
+Date: Tue, 8 Jul 2025 08:01:43 -0400
+Message-ID: <20250708120143.3572-1-liubo03@inspur.com>
+X-Mailer: git-send-email 2.18.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain
+tUid: 202570820045303427c2756c5b6d41fb4883f4037d374
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On Wed, 02 Jul 2025 12:39:27 +0300, Fedor Pchelkin wrote:
-> Key comparing routines are currently opencoded with extra casts and
-> subtractions which is error prone and can be replaced with a neat
-> cmp_int() helper which is now in a generic header file.
-> 
-> Started from:
-> https://lore.kernel.org/linux-xfs/20250426134232.128864-1-pchelkin@ispras.ru/T/#u
-> 
-> [...]
+Filesystem metadata has a high degree of redundancy, so
+should compress well in the general case.
+To implement this feature, we make a special on-disk inode
+which keeps all metadata as its data, and then compress the
+special on-disk inode with the given algorithm.
 
-Applied to for-next, thanks!
+Signed-off-by: Bo Liu <liubo03@inspur.com>
+---
+ fs/erofs/data.c     |  4 +++-
+ fs/erofs/erofs_fs.h |  2 +-
+ fs/erofs/internal.h |  7 +++++++
+ fs/erofs/super.c    | 10 ++++++++++
+ 4 files changed, 21 insertions(+), 2 deletions(-)
 
-[1/6] xfs: rename diff_two_keys routines
-      commit: c4c6aee6ba87fdfbaeed1966f81298e3f3913f3c
-[2/6] xfs: rename key_diff routines
-      commit: fb7eff8c9f1b7ac46b8e376f9da19d8996cd0262
-[3/6] xfs: refactor cmp_two_keys routines to take advantage of cmp_int()
-      commit: ff48e83c9dcd8c4f6b92b7d695ebe599c0a0e57d
-[4/6] xfs: refactor cmp_key_with_cur routines to take advantage of cmp_int()
-      commit: 786b3b2e16600a642ddf15bcaf94694cfc6b3250
-[5/6] xfs: use a proper variable name and type for storing a comparison result
-      commit: a0b2b28e1cc1c3c95bd889eec455bf8e68def61d
-[6/6] xfs: refactor xfs_btree_diff_two_ptrs() to take advantage of cmp_int()
-      commit: 10e4f0aebdadc94930e82ac13ef1e01abb0bda03
-
-Best regards,
+diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+index 6a329c329f43..34c82421af4c 100644
+--- a/fs/erofs/data.c
++++ b/fs/erofs/data.c
+@@ -55,7 +55,9 @@ void erofs_init_metabuf(struct erofs_buf *buf, struct super_block *sb)
+ 
+ 	buf->file = NULL;
+ 	buf->off = sbi->dif0.fsoff;
+-	if (erofs_is_fileio_mode(sbi)) {
++	if (erofs_is_metadata_comp_mode(sbi))
++		buf->mapping = sbi->meta_inode->i_mapping;
++	else if (erofs_is_fileio_mode(sbi)) {
+ 		buf->file = sbi->dif0.file;	/* some fs like FUSE needs it */
+ 		buf->mapping = buf->file->f_mapping;
+ 	} else if (erofs_is_fscache_mode(sb))
+diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
+index 767fb4acdc93..bf1ef306ca3c 100644
+--- a/fs/erofs/erofs_fs.h
++++ b/fs/erofs/erofs_fs.h
+@@ -82,7 +82,7 @@ struct erofs_super_block {
+ 	__u8 reserved[3];
+ 	__le32 build_time;	/* seconds added to epoch for mkfs time */
+ 	__le64 rootnid_8b;	/* (48BIT on) nid of root directory */
+-	__u8 reserved2[8];
++	__le64 meta_nid;	/* meta data nid */
+ };
+ 
+ /*
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index a32c03a80c70..a2437e5eada2 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -125,6 +125,7 @@ struct erofs_sb_info {
+ 	struct erofs_sb_lz4_info lz4;
+ #endif	/* CONFIG_EROFS_FS_ZIP */
+ 	struct inode *packed_inode;
++	struct inode *meta_inode;
+ 	struct erofs_dev_context *devs;
+ 	u64 total_blocks;
+ 
+@@ -148,6 +149,7 @@ struct erofs_sb_info {
+ 	/* what we really care is nid, rather than ino.. */
+ 	erofs_nid_t root_nid;
+ 	erofs_nid_t packed_nid;
++	erofs_nid_t meta_nid;
+ 	/* used for statfs, f_files - f_favail */
+ 	u64 inos;
+ 
+@@ -190,6 +192,11 @@ static inline bool erofs_is_fscache_mode(struct super_block *sb)
+ 			!erofs_is_fileio_mode(EROFS_SB(sb)) && !sb->s_bdev;
+ }
+ 
++static inline bool erofs_is_metadata_comp_mode(struct erofs_sb_info *sbi)
++{
++	return sbi->meta_inode;
++}
++
+ enum {
+ 	EROFS_ZIP_CACHE_DISABLED,
+ 	EROFS_ZIP_CACHE_READAHEAD,
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index e1e9f06e8342..9bc40083cd00 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -324,6 +324,7 @@ static int erofs_read_superblock(struct super_block *sb)
+ 	sbi->epoch = (s64)le64_to_cpu(dsb->epoch);
+ 	sbi->fixed_nsec = le32_to_cpu(dsb->fixed_nsec);
+ 	super_set_uuid(sb, (void *)dsb->uuid, sizeof(dsb->uuid));
++	sbi->meta_nid = le64_to_cpu(dsb->meta_nid);
+ 
+ 	/* parse on-disk compression configurations */
+ 	ret = z_erofs_parse_cfgs(sb, dsb);
+@@ -691,6 +692,13 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+ 		sbi->packed_inode = inode;
+ 	}
+ 
++	if (sbi->meta_nid) {
++		inode = erofs_iget(sb, sbi->meta_nid);
++		if (IS_ERR(inode))
++			return PTR_ERR(inode);
++		sbi->meta_inode = inode;
++	}
++
+ 	inode = erofs_iget(sb, sbi->root_nid);
+ 	if (IS_ERR(inode))
+ 		return PTR_ERR(inode);
+@@ -845,6 +853,8 @@ static void erofs_drop_internal_inodes(struct erofs_sb_info *sbi)
+ {
+ 	iput(sbi->packed_inode);
+ 	sbi->packed_inode = NULL;
++	iput(sbi->meta_inode);
++	sbi->meta_inode = NULL;
+ #ifdef CONFIG_EROFS_FS_ZIP
+ 	iput(sbi->managed_cache);
+ 	sbi->managed_cache = NULL;
 -- 
-Carlos Maiolino <cem@kernel.org>
+2.31.1
 
 
