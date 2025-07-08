@@ -1,224 +1,188 @@
-Return-Path: <linux-kernel+bounces-721761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C5AAFCD83
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:27:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DFD1AFCD88
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76D055664EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:26:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E0C31894855
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A582E11A5;
-	Tue,  8 Jul 2025 14:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352AE2E06DC;
+	Tue,  8 Jul 2025 14:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JzVEIFkL"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TMfhbosk"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B898A2E041E
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 14:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2899D2DC35A
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 14:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751984704; cv=none; b=DPxrFSmKob41/bHAor0yb8xZ5UKACthIoenRWSyzmJmbCDjVKDg6wyeFQkonsMiXzAwAB86td7KT/tlMXblmc+vVIaOvPsB+1v9IAZuINDRF1s0uVuitT3fFoPPvDM3kaK9xl/+XZj7KwHToJyJegEebeKoqm0pvtIsQX3bih5k=
+	t=1751984696; cv=none; b=DDClnw4mKcArDIKQnzeb6uc0lCcGNJC0fa5lFZTBIOgqB/kvbhJ0QaEBdl3XFTGPl5Hpj6oPNTJkexSf0tDQGlU0SXYkkflP1TTWDzPumoXA+LagJNsNR6bJqRw7Z+OxMumZOivOu3jKaqojPyO95BQZy5JzxEHtHP3xEg7ajUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751984704; c=relaxed/simple;
-	bh=47sMeezCkfD7BpmYxS/tUpV+p5t2PAyjflbnzmAsGmc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WxsITtRif2Hn8ycSRG4IBzqgaSusOgpxsoZzEjtGxQvlYG4EErcJEBS7op4nOoTxlHIUlTL+6Z35Wj1y1gNgtcV8atOL8AO7P41+mfub3GUqZD3e8yo1IZKQ0AbCJgHgqg9hpPLy75GjFJnOjlWJpUi0OBJsaykD9fqpHkty0Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JzVEIFkL; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1751984696; c=relaxed/simple;
+	bh=B+JOpbrgnQUARzMxGPuyQzQbSxpka8rFnoYh0/4Z1KA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MQNUgP7e5+2Z1D2CD3zSDQYT8yrjHs5oISJetaJusY3hOJgbILZEmMk4Lz0cKrsXT880FdNf/X13mxwgvMCa88j2MOi6KPknfIr1AhqBTG00RqemobIHfXeqNc0dHI9KQbhpLB83Jyrm6+IgW70PeeVAMLefiudIr48hMhFarYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TMfhbosk; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a57c8e247cso3341054f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 07:25:02 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so3536663f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 07:24:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1751984701; x=1752589501; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YpG3scJ3Np9QEUPPCVmqEg3Q5rZcnXDIMT/gTqWl5i8=;
-        b=JzVEIFkLDHqcCTe+N5gm3FZYXKUN2tlXYY9mj6O7IQVyzUFjUegYsxMrQVVUB0MM5B
-         NW/BUfnr2eyGm7+8V3ROR3znq6XSiqVA7TgBpBLUSQS2MvRB3lhFq3Efsi8i3aNoCfu5
-         HfwMb5y+l4V3w7AjWZgGea49DmataQbqU19zqhmkZv2CpsO90nsVh7TLRhxi0ZPsmdO3
-         i0t+xbIHbXvRX60202Te91Ax1VTMQk/tSca9eEQWjQ4mzlVQUH0E3PxHb+CHStHWZY01
-         5ypdwky7L9POUlvz5APOw708xcBYb5Y8SyVtRPujx/tQNniHf5RCxxE7VeyzOxgycIcN
-         hEmw==
+        d=suse.com; s=google; t=1751984692; x=1752589492; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=aGD5qf+W7iUuNQ0dw7d26qPURGpSWS6QvwWe8Qj/asg=;
+        b=TMfhboskROtal/Z5evIqnxlGTwUW+C50ir/sD81DkDtvlxnkYir4EQ5RHW257gGp5E
+         uZrPdpGa4wYqErExkzYT/LkTtUQAtJDxEbwTbMs/Pu8P6465vBL67zsKxViLSo22Djko
+         jLrAyIsaAjIQmfhLihciTEOSwE7oHP4NebBCJoLuFlpdz/y9y8S2EUzFUEVGfNOpLjXR
+         NOc50L4je/mEKpHT32AJoYe6QveSYO6e+7oZtNXf0YiFpdxouA679E5TQfvA3zX6N4MG
+         +DnYX9TuHxjjkixbXyZ2+pTvomnTKecNG8HNI4zREd9s//mpJjzpBd4sKp0tQg5uGSX3
+         BbBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751984701; x=1752589501;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1751984692; x=1752589492;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YpG3scJ3Np9QEUPPCVmqEg3Q5rZcnXDIMT/gTqWl5i8=;
-        b=rZZoiky8a+b20fHKWyzIrHtv3LAO/snUroHoHr29/DiphorIfPEbih1Yi7Ri2g/mSq
-         TU00mGN4pPWK0GFT9pkEBArZfhSVe5hAd40sg+cMwX8jEx0mV7sQYYjVsv6Gc+ws4/u2
-         s0o9fAYtCxWJ1E/siVIg0DoogtqqyQYhbls2VgRdJiDK6JiitQetDkCTfh+DhxF72xvj
-         ww0xwlXzndg6JJ4InukaFyaBYZCm2T/gv9FuK9TG2zvj6LSLEwqDDBLlfmfySyAP2U/x
-         lyhkTXALwniI/d0fsB1XUFEGlzclp5v1NvGpT0V/GuOo/8sboS8b/Sv4Zy8+mHsrVOsm
-         P4nw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnUFC88LFoajFxpNaT+FbqGTR+7NPsSbqj+eXveJIBgdgi1A+rp/j9mKE88WLzGm/Q2ZzofOnHFDHpon4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYV6X62ocVAEhmOqq7Vk9PyabOww+sa7eOQW/pEe8HXF1Ybffa
-	CTwenpzjHS4+AEWUXTD43PwJ9850lWZvch6bYPzzhNfuw1Bpt1QwOTTJ5/0XQXZmISQ=
-X-Gm-Gg: ASbGncsl9yGV89H5xRjcPNWU4r8DUQk1B1E7OqOn+GUx5ZIRGnzM2kCr058iPpeNyyl
-	CrOo+yhWNEMyBPUIWe4Ut9UOZgbmruJXcEv6zctECdSkq/Q9uEH/9FNaDbkOuWN5cA69Ybuoeua
-	IYGWCd9FxQPxNDPFt4biSm8k+riKAYF34eF/YZiI9oP0khx/H6oy8XESbi9+tsbzVqmL8Zc/oVB
-	jMwfTQ8y7x2sEkP+Ej0xmsEbk+frYEmqflUJhSgh96tVn2qOk/CpnA9ZK5UPA7DT7aj3ugP6LCi
-	8E5SGcd04RjwYXn4dtD8kGAM+smVdIJiSknIX8j996bLA1gdsTXv0dnUNOW5IMNW
-X-Google-Smtp-Source: AGHT+IEymzRvPZkwJUFRSR10rZv1xLWU8N2unb76TA0g+rPIrc6wJMjUMy01VtJ0OvHT3jK2NCdVsw==
-X-Received: by 2002:a05:6000:2d10:b0:3b4:9c09:1aa2 with SMTP id ffacd0b85a97d-3b49c091dbbmr6654462f8f.13.1751984700864;
-        Tue, 08 Jul 2025 07:25:00 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce359d642sm12433730b3a.22.2025.07.08.07.24.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 07:25:00 -0700 (PDT)
-Date: Tue, 8 Jul 2025 16:24:45 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	John Ogness <john.ogness@linutronix.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	David Gow <davidgow@google.com>, Arnd Bergmann <arnd@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 2/3] printk: kunit: support offstack cpumask
-Message-ID: <aG0qLaeAoTGaRs0n@pathway.suse.cz>
-References: <20250702095157.110916-1-pmladek@suse.com>
- <20250702095157.110916-3-pmladek@suse.com>
- <20250702202835.GA593751@ax162>
+        bh=aGD5qf+W7iUuNQ0dw7d26qPURGpSWS6QvwWe8Qj/asg=;
+        b=kvEfJDul9A9iNRtI5PzV3NMvP4gmE9PG5+0eBBU5iaWOtODx7Phu8Ij3nW9YyywOsY
+         0IcfXysoq1aLZzbHmgVMje5NNfY67iAnAbbuxp4Ha1QPlc7638p6BkUdY+vNcOpLPD9b
+         mVZczbYolTMuiFMML9sXu7pY2jDpXj+dMCZHfg4Nd3MSIj4RXIVHJL1sRV/RWDBinm+6
+         IYXaY3M/gs62NNPKzFckPZfRwgXM0A6qzP9DsJr7lV6g1Nb0gXBlNfuBgHQih89NW6i9
+         VwVyxq+xGPiEdX+oByZZdtNJXeYncASXjY4oDuPdhx2PNmZYMInu9M9Lk1qzKlFFn99Z
+         PQfA==
+X-Gm-Message-State: AOJu0YzI50RxRMoNjB4fHqSQMe5y5A+49abjjE8ZpL676dKLTrskYlMB
+	Jom93uHw2kWPms7zspgHTRF9QkqF0j6Fwz2rQDqvao1GxW6E2A/EJLb7ZvujWRSAMgA=
+X-Gm-Gg: ASbGncuf+5RESw6TooyglfbkU2xKMg+jOuLGOK1FAUz4MR5IsPdRxgFmPnhQCT24wqN
+	PMglqf+pShPR2XiyKVLImGbvu1bFdUM6OyHntsuFwk1HfNhaRLqb1DbxGKY38mWdE7UUTMtGfXd
+	eFznYDEe4uCgKnu0cUdDDTFd4bkVkGOfrFwrG2yMkcWNqfqT31i10Ygo2w5uw0B9mDFmnzYlkuJ
+	mVz3mTJYod39CW+LyAvsTis6XzvB0i9waD5h7zbJ22IG2NQCir8Mf1t+N8rh1ny2FzWSxq7hMw3
+	2ByB+QvyHO3rPJYOI2XiGkS20JA6NNJqzUP0fbNMVLip82HldkI31R+ynYR7n65yN4r1fygs6qC
+	x9JesDpY1irtq8Q==
+X-Google-Smtp-Source: AGHT+IG0irpwA7N5b4P0TSBLPOgiP6YNu1Phtt6O8oEGN9SQbgz/Iv4AemaHRchokErh3x8EtRRO/A==
+X-Received: by 2002:a05:6000:25c1:b0:3a5:8601:613b with SMTP id ffacd0b85a97d-3b5de124084mr2471405f8f.20.1751984692315;
+        Tue, 08 Jul 2025 07:24:52 -0700 (PDT)
+Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [109.121.143.125])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47030ba54sm13010634f8f.8.2025.07.08.07.24.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jul 2025 07:24:52 -0700 (PDT)
+Message-ID: <bff2170d-680a-489a-8f38-605e37624037@suse.com>
+Date: Tue, 8 Jul 2025 17:24:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702202835.GA593751@ax162>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] x86/kvm: Force legacy PCI hole as WB under SNP/TDX
+To: Sean Christopherson <seanjc@google.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ Dionna Glaze <dionnaglaze@google.com>, Peter Gonda <pgonda@google.com>,
+ =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+ Kirill Shutemov <kirill.shutemov@linux.intel.com>,
+ Vitaly Kuznetsov <vkuznets@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ Binbin Wu <binbin.wu@intel.com>, Tom Lendacky <thomas.lendacky@amd.com>
+References: <20250201005048.657470-1-seanjc@google.com>
+Content-Language: en-US
+From: Nikolay Borisov <nik.borisov@suse.com>
+Autocrypt: addr=nik.borisov@suse.com; keydata=
+ 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
+In-Reply-To: <20250201005048.657470-1-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed 2025-07-02 13:28:35, Nathan Chancellor wrote:
-> On Wed, Jul 02, 2025 at 11:51:56AM +0200, Petr Mladek wrote:
-> > From: Arnd Bergmann <arnd@arndb.de>
-> > 
-> > For large values of CONFIG_NR_CPUS, the newly added kunit test fails
-> > to build:
-> > 
-> > kernel/printk/printk_ringbuffer_kunit_test.c: In function 'test_readerwriter':
-> > kernel/printk/printk_ringbuffer_kunit_test.c:279:1: error: the frame size of 1432 bytes is larger than 1280 bytes [-Werror=frame-larger-than=]
-> > 
-> > Change this to use cpumask_var_t and allocate it dynamically when
-> > CONFIG_CPUMASK_OFFSTACK is set.
-> > 
-> > Fixes: 5ea2bcdfbf46 ("printk: ringbuffer: Add KUnit test")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > [pmladek@suse.com: Correctly handle allocation failures and freeing using KUnit test API.]
-> > Signed-off-by: Petr Mladek <pmladek@suse.com>
-> > ---
-> >  kernel/printk/printk_ringbuffer_kunit_test.c | 18 ++++++++++++------
-> >  1 file changed, 12 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/kernel/printk/printk_ringbuffer_kunit_test.c b/kernel/printk/printk_ringbuffer_kunit_test.c
-> > index 217dcc14670c..0c3030fde8c2 100644
-> > --- a/kernel/printk/printk_ringbuffer_kunit_test.c
-> > +++ b/kernel/printk/printk_ringbuffer_kunit_test.c
-> > @@ -216,6 +216,7 @@ static int prbtest_reader(struct prbtest_data *test_data, unsigned long timeout_
-> >  	return 0;
-> >  }
-> >  
-> > +KUNIT_DEFINE_ACTION_WRAPPER(prbtest_cpumask_cleanup, free_cpumask_var, cpumask_var_t);
+
+
+On 2/1/25 02:50, Sean Christopherson wrote:
+> Attempt to hack around the SNP/TDX guest MTRR disaster by hijacking
+> x86_platform.is_untracked_pat_range() to force the legacy PCI hole, i.e.
+> memory from TOLUD => 4GiB, as unconditionally writeback.
 > 
-> This appears to break the build for me when CONFIG_CPUMASK_OFFSTACK is not
-> set, like when enabling this test on top of x86_64 defconfig:
+> TDX in particular has created an impossible situation with MTRRs.  Because
+> TDX disallows toggling CR0.CD, TDX enabling decided the easiest solution
+> was to ignore MTRRs entirely (because omitting CR0.CD write is obviously
+> too simple).
 > 
->   In file included from kernel/printk/printk_ringbuffer_kunit_test.c:14:
->   kernel/printk/printk_ringbuffer_kunit_test.c: In function 'prbtest_cpumask_cleanup':
->   include/kunit/resource.h:409:32: error: cast specifies array type
->     409 |                 arg_type arg = (arg_type)in;                    \
->         |                                ^
->   kernel/printk/printk_ringbuffer_kunit_test.c:226:1: note: in expansion of macro 'KUNIT_DEFINE_ACTION_WRAPPER'
->     226 | KUNIT_DEFINE_ACTION_WRAPPER(prbtest_cpumask_cleanup, free_cpumask_var, cpumask_var_t);
->         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+> Unfortunately, under KVM at least, the kernel subtly relies on MTRRs to
+> make ACPI play nice with device drivers.  ACPI tries to map ranges it finds
+> as WB, which in turn prevents device drivers from mapping device memory as
+> WC/UC-.
 > 
-> Clang's error might be a little clearer with the "aka" note it provides.
+> For the record, I hate this hack.  But it's the safest approach I can come
+> up with.  E.g. forcing ioremap() to always use WB scares me because it's
+> possible, however unlikely, that the kernel could try to map non-emulated
+> memory (that is presented as MMIO to the guest) as WC/UC-, and silently
+> forcing those mappings to WB could do weird things.
 > 
->   kernel/printk/printk_ringbuffer_kunit_test.c:226:1: error: used type 'cpumask_var_t' (aka 'struct cpumask[1]') where arithmetic or pointer type is required
->     226 | KUNIT_DEFINE_ACTION_WRAPPER(prbtest_cpumask_cleanup, free_cpumask_var, cpumask_var_t);
->         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   include/kunit/resource.h:409:18: note: expanded from macro 'KUNIT_DEFINE_ACTION_WRAPPER'
->     409 |                 arg_type arg = (arg_type)in;                    \
->         |                                ^         ~~
+> My initial thought was to effectively revert the offending commit and
+> skip the cache disabling/enabling, i.e. the problematic CR0.CD toggling,
+> but unfortunately OVMF/EDKII has also added code to skip MTRR setup. :-(
 > 
-> >  KUNIT_DEFINE_ACTION_WRAPPER(prbtest_kthread_cleanup, kthread_stop, struct task_struct *);
-> >  
-> >  static void prbtest_add_kthread_cleanup(struct kunit *test, struct task_struct *kthread)
+> Sean Christopherson (2):
+>    x86/mtrr: Return success vs. "failure" from guest_force_mtrr_state()
+>    x86/kvm: Override low memory above TOLUD to WB when MTRRs are forced
+>      WB
+> 
+>   arch/x86/include/asm/mtrr.h        |  5 +++--
+>   arch/x86/kernel/cpu/mtrr/generic.c | 11 +++++++----
+>   arch/x86/kernel/kvm.c              | 31 ++++++++++++++++++++++++++++--
+>   3 files changed, 39 insertions(+), 8 deletions(-)
+> 
+> 
+> base-commit: fd8c09ad0d87783b9b6a27900d66293be45b7bad
 
-Thanks a lot for the nice report.
 
-The problem is how cpumask_var_t is defined in include/linux/cpumask_types.h:
-
-#ifdef CONFIG_CPUMASK_OFFSTACK
-typedef struct cpumask *cpumask_var_t;
-#else
-typedef struct cpumask cpumask_var_t[1];
-#endif /* CONFIG_CPUMASK_OFFSTACK */
-
-And KUNIT_DEFINE_ACTION_WRAPPER() expect that the 3rd parameter
-is a pointer.
-
-I am going to solve this by adding a wrapper over free_cpumask_var()
-which would work with a pointer to cpumask_var_t.
-
-It has another catch, though. It seems that the automatic clean up is
-done after test_readerwriter() finishes. Therefore the variable
-@test_cpus can't be on stack.
-
-Anyway, the following seems to work with both CONFIG_CPUMASK_OFFSTACK
-enabled and disabled:
-
---- a/kernel/printk/printk_ringbuffer_kunit_test.c
-+++ b/kernel/printk/printk_ringbuffer_kunit_test.c
-@@ -223,7 +223,17 @@ static int prbtest_reader(struct prbtest_data *test_data, unsigned long timeout_
- 	return 0;
- }
- 
--KUNIT_DEFINE_ACTION_WRAPPER(prbtest_cpumask_cleanup, free_cpumask_var, cpumask_var_t);
-+/*
-+ * Add a custom wrapper around free_cpumask_var() to be used by
-+ * KUNIT_DEFINE_ACTION_WRAPPER(). It allows to pass @mask using
-+ * a pointer even when CONFIG_CPUMASK_OFFSTACK is disabled.
-+ */
-+static void prbtest_free_cpumask_var(cpumask_var_t *mask)
-+{
-+	free_cpumask_var(*mask);
-+}
-+
-+KUNIT_DEFINE_ACTION_WRAPPER(prbtest_cpumask_cleanup, prbtest_free_cpumask_var, cpumask_var_t *);
- KUNIT_DEFINE_ACTION_WRAPPER(prbtest_kthread_cleanup, kthread_stop, struct task_struct *);
- 
- static void prbtest_add_kthread_cleanup(struct kunit *test, struct task_struct *kthread)
-@@ -244,16 +254,19 @@ static void test_readerwriter(struct kunit *test)
- {
- 	/* Equivalent to CONFIG_LOG_BUF_SHIFT=13 */
- 	DEFINE_PRINTKRB(test_rb, 8, 5);
--
-+	/*
-+	 * @test_cpus can't be on stack. THe pointer to this variable is passed
-+	 * to an automatic clean up action, see prbtest_free_cpumask_var().
-+	 */
-+	static cpumask_var_t test_cpus;
- 	struct prbtest_thread_data *thread_data;
- 	struct prbtest_data *test_data;
- 	struct task_struct *thread;
--	cpumask_var_t test_cpus;
- 	int cpu, reader_cpu;
- 	int err;
- 
- 	KUNIT_ASSERT_TRUE(test, alloc_cpumask_var(&test_cpus, GFP_KERNEL));
--	err = kunit_add_action_or_reset(test, prbtest_cpumask_cleanup, test_cpus);
-+	err = kunit_add_action_or_reset(test, prbtest_cpumask_cleanup, &test_cpus);
- 	KUNIT_ASSERT_EQ(test, err, 0);
- 
- 	cpus_read_lock();
+This prevents TPM from functioning which in turn breaks attestation on 
+TDX enabled guests. So what's the status of it?
 
