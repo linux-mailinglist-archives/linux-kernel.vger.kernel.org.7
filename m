@@ -1,132 +1,131 @@
-Return-Path: <linux-kernel+bounces-722004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3AF4AFD0F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:29:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 489BCAFD12A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D3DF167BE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:28:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDC0A58182D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DF82E5402;
-	Tue,  8 Jul 2025 16:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B7B2E543A;
+	Tue,  8 Jul 2025 16:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="MInj6+0q";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="M+xlxHEG"
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="jY5uWivI"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E1E2A1BA;
-	Tue,  8 Jul 2025 16:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540722E427E;
+	Tue,  8 Jul 2025 16:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751992117; cv=none; b=FLbqcVvL/iTC1OjvOqQDWupZ/LrIHhaVXCZgogDIcJYQG6D3z61wlpSrvYJv4yAqw9P9GWKhAE4z46ZVOtR7Y+X/iNhIfA0eglQxUPktM//nqs8XUURtv9iD4QdL2tGAH/hCZIBdswZlLOq16/tJlyWtP+ZN3kKLKXCpOsfXdC4=
+	t=1751992288; cv=none; b=ITG3S0ZkXKfZbKqOh7A1oUDXgDFV8fzchS39ile3hTZ8mRCpjui5BoiAj6HHT4HizKqMu4HZfkri31NakmI8b461J+I1Q1U54TGr79Nzs2rBgMLhUp66z8EEFM1Cs95Qr+4VfjjqOCyJWrfdGDvKco8QJ2RPce78zH+s/T2jrPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751992117; c=relaxed/simple;
-	bh=w6wMl1xm8whz4FVlYpYyLCnOKc1n9j2q2icjjjCVQKc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=q+0ut44HKfqKd20gtg9VDpcR+uQ5rbIzhpu85BwXLWttOGa2yNnsoHEgnBsVUzz17dEYTWbHT1nL04Pti5rBxK58nfPrV2m6f61aBDZeT+g3UKgw7DSQx+T/ddMsh+2Tlw/AEqB7h7Pwv7m5EqQPPckIajJUDTiKKufGIhGYIBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=MInj6+0q; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=M+xlxHEG; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 80612EC07CF;
-	Tue,  8 Jul 2025 12:28:34 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Tue, 08 Jul 2025 12:28:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1751992114;
-	 x=1752078514; bh=yAMMwurFHCZ7tyH4Kbmxgi61UpDu7V0P44pjbcdyPVk=; b=
-	MInj6+0qm2VL7fgWYXgUP91tJjHfRaZSvnN4blMHepfQ1m1AUb/eImVY11L/bob9
-	dHmRm0x9a9aUSQTGSsRBVn56fzn6mqV2XBe6a/8bq8xp6+Gu7wa87El4JvT5Cfax
-	uC1Od66oI7Vef/cz8iz15abeyjSkc//Ld8DFMNMiSpKSv1QrOf6FOkk4MXZ0+2x8
-	RxbuuWQxwQksA/R2guQUz+QyoNf7RqEg6tvGhJmfEI15S0Clx4ZIsPrfcpfsYmTp
-	T5/x5NGxrIvgGRDNrKtvG5CyenDPezmG0zFDJo1Ht/vz5Uvv14lj0QMrJkYJs5jF
-	91Uu7NnavuRQl6kJ2c/FtA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751992114; x=
-	1752078514; bh=yAMMwurFHCZ7tyH4Kbmxgi61UpDu7V0P44pjbcdyPVk=; b=M
-	+xlxHEGvzGSfjuN0uX5h8iCiS7tba+PH6DZgkiGauwWlMGvZgO91NLPs4XzJQbdS
-	ZWBmVXrS43Pxt73d3I3hRzxPxZGIekWk+WoZ5wTlpMhCOKicEnsqumjbRAWzeeDl
-	OgypS6duUt0iQu6tY8nCMh+0UvBEoa1SlGPGrbDXoDEOUeczLGDZzq4ZZ3PB4bkh
-	cEt19VtP1YFlBo/VnZTD59iqIisP6t8XmbEjyQGS2z95t5UJpd5xJHXBmLW3vLHG
-	5IqP+4xhYWIYzn1BuUU7gF8wCR0aRBrNOfyHfot+1KDW6SWB3+UOcuhoCoayQiYk
-	JshFWeVyQH1tzt4YeYsVA==
-X-ME-Sender: <xms:MUdtaJhB5E-ed-iIatglbbBVT2pf9cYKMWdS3Iod_W16pLuMKTt_YQ>
-    <xme:MUdtaOCZNKfoQLelOKnGMZPnmEi6Mhy-XIK5_CC4JrLKsNZPcxikOdmzU-Y02UQdh
-    GpnGwYW3oJk0h9tUEE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefheduiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepjhgrtghophhordhmohhnughisehiuggvrghsohhnsghorghrugdrtg
-    homhdprhgtphhtthhopehkihgvrhgrnhdrsghinhhghhgrmhesihguvggrshhonhgsohgr
-    rhgurdgtohhmpdhrtghpthhtoheplhgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrg
-    hsohhnsghorghrugdrtghomhdprhgtphhtthhopehmtghhvghhrggssehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehmvghhughirdgujhgrihhtsehlihhnuhigrdhinhhtvghlrd
-    gtohhmpdhrtghpthhtohepshgrkhgrrhhirdgrihhluhhssehlihhnuhigrdhinhhtvghl
-    rdgtohhmpdhrtghpthhtohephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtph
-    htthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopehlihhnuhigqdhmvgguihgrsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:MUdtaA7MqVOw1heNx-wKigSwNSI9lINkuWNcoF4ZgVf9ydCjEq5moQ>
-    <xmx:MUdtaKi51mS1TNKc2jWXk6hZ6vE1W7XzH2cMVxSTRmdRQ1qkl6hmPg>
-    <xmx:MUdtaG7P_qdMcq7V0eGqICxClKHdnjgiuQYEDZFsIqYaCl_LNxbG3w>
-    <xmx:MUdtaPFADuPYtdPCOqbNrE4qF_ck8VTu8777VTO_8Uj3n-Z84Yrv8w>
-    <xmx:MkdtaHwy09m11MOGxm7fxd0EYyWwV6-KsGqmAj80k1LhFAIljpVTDw5t>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id CF4FC700070; Tue,  8 Jul 2025 12:28:33 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1751992288; c=relaxed/simple;
+	bh=tM8UU61oLb5NiOTVd1J7j8w068VJ63i5mhYSLUE3NLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QLaEZl2GeaSwr3Hh/TNMIAl8JRiaZppC5HH/FwFOOI0tVuQ0H8vofeVX+IegxmEeSns3J0tngb9idJm4RE0go6g+TiWmj2V8sdrwj42I2aUUsA1SqyBp+6w6MN0+geutq9w9qZbCgdk+JRWlholaq3aYopxGBSdNNvdrity9Yfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=jY5uWivI; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=G4Te8l81esj5WHrgUTJCOoPkkVEuLKBrAeWZP67mcxg=; b=jY5uWivIuyJn3mv2A5EwpXUAtQ
+	tNkPhMJYAOxe0Hsjf7JA2dqJ2yjgjJRc3OfPtXOGM9jd68zyCtSV+sAT07TbLYlKF7lkYV0BsSYi8
+	Qc0PKxj0kkQ8rTbi3iRosL2UArkrbAZNSjvKc7HCRebvoCuiaPdzn5aCdFVQzezwtPjE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uZBDr-000qNa-QF; Tue, 08 Jul 2025 18:31:11 +0200
+Date: Tue, 8 Jul 2025 18:31:11 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Luo Jie <quic_luoj@quicinc.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/3] net: phy: qcom: Add PHY counter support
+Message-ID: <d64c9e64-879a-431a-b53f-06cb7166b940@lunn.ch>
+References: <20250709-qcom_phy_counter-v1-0-93a54a029c46@quicinc.com>
+ <20250709-qcom_phy_counter-v1-1-93a54a029c46@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Tfbee3c376bb009bb
-Date: Tue, 08 Jul 2025 18:28:12 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Mehdi Djait" <mehdi.djait@linux.intel.com>,
- "Sakari Ailus" <sakari.ailus@linux.intel.com>,
- "laurent.pinchart" <laurent.pinchart@ideasonboard.com>
-Cc: "Jacopo Mondi" <jacopo.mondi@ideasonboard.com>,
- "Hans Verkuil" <hverkuil@xs4all.nl>,
- "Kieran Bingham" <kieran.bingham@ideasonboard.com>,
- "Mauro Carvalho Chehab" <mchehab@kernel.org>,
- "Hans de Goede" <hdegoede@redhat.com>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-Id: <04c7c949-d0ac-43c0-91cb-7445cb44a036@app.fastmail.com>
-In-Reply-To: <20250708161637.227111-1-mehdi.djait@linux.intel.com>
-References: <20250708161637.227111-1-mehdi.djait@linux.intel.com>
-Subject: Re: [PATCH] media: i2c: Kconfig: Select COMMON_CLK for ACPI-based systems
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709-qcom_phy_counter-v1-1-93a54a029c46@quicinc.com>
 
-On Tue, Jul 8, 2025, at 18:16, Mehdi Djait wrote:
-> ACPI-based systems are required to create and register a fixed rate clock
-> using the new v4l2 helper devm_v4l2_sensor_clk_get() that uses the
-> common clk framework.
->
-> Ensure that COMMON_CLK is selected.
->
-> Signed-off-by: Mehdi Djait <mehdi.djait@linux.intel.com>
+> +static const struct qcom_phy_hw_stat qcom_phy_hw_stats[] = {
+> +	{
+> +		.string		= "phy_rx_good_frame",
+> +		.devad		= MDIO_MMD_AN,
+> +		.cnt_31_16_reg	= QCA808X_MMD7_CNT_RX_GOOD_CRC_31_16,
+> +		.cnt_15_0_reg	= QCA808X_MMD7_CNT_RX_GOOD_CRC_15_0,
+> +	},
+> +	{
+> +		.string		= "phy_rx_bad_frame",
+> +		.devad		= MDIO_MMD_AN,
+> +		.cnt_31_16_reg	= 0xffff,
+> +		.cnt_15_0_reg	= QCA808X_MMD7_CNT_RX_BAD_CRC,
+> +	},
+> +	{
+> +		.string		= "phy_tx_good_frame",
+> +		.devad		= MDIO_MMD_AN,
+> +		.cnt_31_16_reg	= QCA808X_MMD7_CNT_TX_GOOD_CRC_31_16,
+> +		.cnt_15_0_reg	= QCA808X_MMD7_CNT_TX_GOOD_CRC_15_0,
+> +	},
+> +	{
+> +		.string		= "phy_tx_bad_frame",
+> +		.devad		= MDIO_MMD_AN,
 
-You should never 'select' another subsystem or a drvier from
-an unrelated subsystem.
+Are there any counters which might be added later which are not in
+MDIO_MMD_AN? It seems pointless having this if it is fixed.
 
-What you want here instead is 'depends on COMMON_CLK'.
+> +		.cnt_31_16_reg	= 0xffff,
+> +		.cnt_15_0_reg	= QCA808X_MMD7_CNT_TX_BAD_CRC,
+> +	},
+> +};
 
-      Arnd
+There has been an attempt to try to standardise PHY statistics. Please
+look at:
+
+**
+ * struct ethtool_phy_stats - PHY-level statistics counters
+ * @rx_packets: Total successfully received frames
+ * @rx_bytes: Total successfully received bytes
+ * @rx_errors: Total received frames with errors (e.g., CRC errors)
+ * @tx_packets: Total successfully transmitted frames
+ * @tx_bytes: Total successfully transmitted bytes
+ * @tx_errors: Total transmitted frames with errors
+ *
+ * This structure provides a standardized interface for reporting
+ * PHY-level statistics counters. It is designed to expose statistics
+ * commonly provided by PHYs but not explicitly defined in the IEEE
+ * 802.3 standard.
+ */
+struct ethtool_phy_stats {
+        u64 rx_packets;
+        u64 rx_bytes;
+        u64 rx_errors;
+        u64 tx_packets;
+        u64 tx_bytes;
+        u64 tx_errors;
+};
+
+Please use this if possible.
+
+    Andrew
+
+---
+pw-bot: cr
 
