@@ -1,78 +1,242 @@
-Return-Path: <linux-kernel+bounces-721791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BC69AFCDFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:42:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C50E3AFCDF0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 941091890088
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:40:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B26694A5E2A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FA52E0409;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7252E0405;
 	Tue,  8 Jul 2025 14:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3F0Jy+OG"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uH5R3MYc"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2085.outbound.protection.outlook.com [40.107.96.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1893E2DE6F1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB39421B184;
 	Tue,  8 Jul 2025 14:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751985612; cv=none; b=pWuyUWZB/Q9JhvVsUS1Gtog58Ol2jal4VoaC35golWICO8ZaGYL3g70DbHjUyfI+E4mdQeOVqc+R7xMP7Ap/fQaIcw/bIeXO0FTBtxUJGJnKqB/hVMquqUrUnVmgiQn3XvRU0aJ4MhF+0CeVRdt8MuwrDScS8gYbl4vgT9IambM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751985612; cv=fail; b=UdcjYX69gEoLroT67DOQt8tBJO0mjn6nS2lHs2kDsxXXCRsdT8FVIi3kdbz67tJh40uXgI8hpXpfPuFxNsC/QM6emS+gFMm5P3BuH+TPlLaprODGnv01l3mrVHNplrydPmuaNiLnVH6V5C4YBQXkgfTIWI7dPRBX7whyAyEMxy0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751985612; c=relaxed/simple;
-	bh=DzLkRuRGnIPC0vr+z5cisyB4/ddM7FcrspuLmC3VLcs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iDfDJ9BsjdAXX2SrTZ8D0ambnN9uX/vJuIq7VQtCS5LZcb3OifuzDIh568xlNnHRddsfqygjFLlofNvBnFnmWHyTgdBqnkNPjLhcXEU8GK9Xg8yeNqlJxLjeoR4LbsOBlcnt0gHxLhkNv4QGNyn6aIlZXbW5WJKjBtmKGdhX+ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3F0Jy+OG; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ugBcuZ5foeQpsflut58LWJ8esb5lgXiSVvtouGW/36Q=; b=3F0Jy+OGErqId+IBKXIHRbEF4h
-	b2L31wB44ozQE4DzuQV1UklkQ3+nC/I7dR9KDpbbi2Z0rtG4rOgt6Dbeukbow9VO/YWyjjkfEVLPA
-	gOcWJexH5v6HvTJ6bQPfqrsoHpQHhVM0AH3kvlUfkMfTb9pXHCRicrPLrDMsCHfSnevU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uZ9UH-000pZS-Jl; Tue, 08 Jul 2025 16:40:01 +0200
-Date: Tue, 8 Jul 2025 16:40:01 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
-	shenjian15@huawei.com, liuyonglong@huawei.com,
-	chenhao418@huawei.com, jonathan.cameron@huawei.com,
-	shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
-	arnd@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 07/11] net: hns3: use seq_file for files in reg/
- in debugfs
-Message-ID: <dfc4c29f-4a28-4768-b2d9-fc2be9921a18@lunn.ch>
-References: <20250708130029.1310872-1-shaojijie@huawei.com>
- <20250708130029.1310872-8-shaojijie@huawei.com>
+	bh=qKEA8HSmM6ym0JkxpL3dljeT/Vpf5F7kxgvicxcdA20=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=U/Aa7Mb2CJds+QZpDwBUcdAZhVVdtjtLSxVorRJtEoHHged/H3xLUez9rkh4VkHyhB2rgTltWqvIaEukV/iYTMjiGwdwU0XYwTvwAEevfRScRvxwjZn1clUlMKGmgn3lTWhWsUuj5bSLw4TGR50Bba+Ytp3fYk6WvM86TYzIfNI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uH5R3MYc; arc=fail smtp.client-ip=40.107.96.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fihEw9TVHmW2j19lf0zQXDiMFYIJNlSKXh8agNx0XuFwCIUKywA8//WqrueOeXzKKPVk8JlohX44cQa+7FxNiSSFyvOJun6rOk9guVI1WESvxRD5VgrfB5kg0rvfHsAqmySisGIT6db+jAcjKDlvu5Z4pJQT6ZyAGtgY8xs1C4kKtzjkF6oK69OVBd3jpPNV2hnR0SgRLBfTNOtkpQ9T4UfdXwzzoKz6csh9yDtklTJPOuPQylFPfOpfx/Lzi0QtZ2yykTWqJX1N4sEZUFQkZjOOiIQn5U00msqjzDrTFdKxCT4cbSogeY5H1obnvTb7aSkW7ll6iK6dvWJbX6/TJQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=q01eD6iiHAHvjNC3slmkZd/eJluU8Zcf45p5kJ9sceg=;
+ b=VgQlwdzfzozPn5kJds48mucK5Lkhz0vhQTZLLyicCdsz1np5XFny8tDDaAK2TdJONUJWO7qqL6RglaNKea+zrXfBbDeD8LkqUavRP8sfau7TvOu5E8k7gnW28iGTylCmDa3KUOfmqvdsv05i4Hj+UkN38X34SOosnO1n1G+/YBqLysgSy8bUzyKrfx7szxPtkMAW1Fo5SVbzA0KfIHofdtuV9i4hdaDDVIlVSW0rMTuOQYRrG+g8iH07Ytjg5w8SJIF98Y6n7o3H76m2dEKY/idyptTGOUDRQS/7EHdCEELUWgUzVWImRuUSwPNTvpGND3qiB+cE4bki4jPStdJqjA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q01eD6iiHAHvjNC3slmkZd/eJluU8Zcf45p5kJ9sceg=;
+ b=uH5R3MYckdNbCiOwe3hbvs3nR6I5S7kVkpOQhklHELUUZy8cEe8XHhrrBK0pF6IEwP+W5JxrNzBjL80x7dxMABW/9MpvTCYtMUK5mUTsp1keP+3WSWPgMTSq2mHMEEkXkr8fhbWA6YZTbcwKnYdMc4VGRZupPV4vP7RbKI+TJNg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by CYYPR12MB8655.namprd12.prod.outlook.com (2603:10b6:930:c4::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Tue, 8 Jul
+ 2025 14:40:06 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%3]) with mapi id 15.20.8901.024; Tue, 8 Jul 2025
+ 14:40:06 +0000
+Message-ID: <a23ee023-3e70-4d49-8f11-7d5798ca7576@amd.com>
+Date: Tue, 8 Jul 2025 10:40:03 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/5] drm/amdgpu: do not resume device in thaw for
+ normal hibernation
+To: Samuel Zhang <guoqing.zhang@amd.com>, alexander.deucher@amd.com,
+ christian.koenig@amd.com, rafael@kernel.org, len.brown@intel.com,
+ pavel@kernel.org, gregkh@linuxfoundation.org, dakr@kernel.org,
+ airlied@gmail.com, simona@ffwll.ch, ray.huang@amd.com,
+ matthew.auld@intel.com, matthew.brost@intel.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de
+Cc: lijo.lazar@amd.com, victor.zhao@amd.com, haijun.chang@amd.com,
+ Qing.Ma@amd.com, Owen.Zhang2@amd.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+References: <20250708074248.1674924-1-guoqing.zhang@amd.com>
+ <20250708074248.1674924-6-guoqing.zhang@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20250708074248.1674924-6-guoqing.zhang@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YT4PR01CA0370.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:fd::27) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250708130029.1310872-8-shaojijie@huawei.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|CYYPR12MB8655:EE_
+X-MS-Office365-Filtering-Correlation-Id: 71e679f4-d411-405a-138b-08ddbe2d5486
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VkpKV2MvRkoyVjRoUGpFbW5MTzRuZUNocFlFYWdueXNLQzFraEQvcUNJQTF1?=
+ =?utf-8?B?VUVXS0w4VnJxZTc3TUJ0UHo1TGdyYjJyZmpJQy9IMU5HMzZQUm1LSW9SZjRZ?=
+ =?utf-8?B?T2RWRWw1aUtTNWxKcEowZ0lzRjhEYWYrY1Y4amt6M1pTOHFaVHhWbHRQcWhW?=
+ =?utf-8?B?djVYUjlaMTFoV2VsbGt2OWFSVkhJS05nTFJ3Ri9hTlJqMXJoNGNLNnU4NWZw?=
+ =?utf-8?B?NnUvQWhwMFpORlpFUGpvY1YvNll0OFVxMTRtWURheUFrWDBKeDdITHdSSjY2?=
+ =?utf-8?B?UUhmRmVLdEt2SjZoVzRDaGErUjk1ZVdTYjRJTFVYWGNTekkySHQyWm9aTTc0?=
+ =?utf-8?B?QjAwSm43dlQza2hiZFlxbXdwSjFRbDJmd1FxdDJXb2k5dmNtN0hGYnM1NGpk?=
+ =?utf-8?B?QjZwWGlxdGxTdmxUMFFlS05RWlEvcUYxQkhvOGVJekFlcWFNcjQvdzlDSDFo?=
+ =?utf-8?B?N0NNRHlLQy9BMEsrS05FTkcrM1RyZ0NQOFpUTklnUFZwYzc4QW1uaFlkdGto?=
+ =?utf-8?B?U3dBQ0hqK0FkNldPeDV5czNXbjV0aVB2bEc3Zmh4UUNSams1VTBtdUw3eGgw?=
+ =?utf-8?B?c0NiY3VaS3cxNWRxSmZhQ1RrZklXZDlScm5RQ25DaUhVNzBGdU9oWlNFcGpX?=
+ =?utf-8?B?UXk2RU1WVm5RRzNFK3B4VFpTWjdWeGFua1dSQVlGS2dzM1R5VTloL1NNWXBQ?=
+ =?utf-8?B?bzUvWWQvQkpWSnIyWXdtRlI3L1hPaXdQMEcwUFMycDZ0UnMwODRqMFV1RFcy?=
+ =?utf-8?B?SkU0c1BvWjBURExIUW1UVEorU3QvVEVURjZzSVVvSElVRXFEOWYrbTV1dDdY?=
+ =?utf-8?B?ZGVrdCtMa3NxMHVFUHpuRXNLUjRSUzM0L3pCblh4QS9NRlpZSDJDSG01a0JT?=
+ =?utf-8?B?MkpkU0Q0dy9qVHBmL2ZmUGlOWGROUzNpTjg2WDJSR25YS2dxeFlzT3cwU1ZE?=
+ =?utf-8?B?cnEvdzJOUGc1eFVxUTA1RkJ1bDRzejU3TENKakFXQytsWUp5M0syNlFFMkRB?=
+ =?utf-8?B?RzNYTmJoMlFYK3YvcVNqbzdlOUFESERsNWJ4d2V1L1h6UkFMS3loOUFScVZJ?=
+ =?utf-8?B?c1dPQ2I5NlZvb2NzMWpKOThwTC85NVkybm5WRk1DS0ZTOUlId2RMWEhiKzkv?=
+ =?utf-8?B?RW1EeEo4U3pmZVpiTkJpT1NZREljUzN2b09SRVBSMysrekMyUDc4Tmc5dHky?=
+ =?utf-8?B?L2VKZml5eXZHYW9mb244THZHby9xZ0RMRloxU2FzZXdMNE1jb2V2d1ZYN1FT?=
+ =?utf-8?B?alc4bzFMR0J6Q3gyUVNTaklmRHliQ0tWZGFGVVI0ZzdweGY5ZTZRaUVwOVNt?=
+ =?utf-8?B?Ui9vbk1DUHpXenV6N0p3K3p3dk9qSHp3bzBVR1NadGN4aFZzb2xRWnBrMStE?=
+ =?utf-8?B?OElsdnZQeU1jMVgzc2ovSEVkWTFPYk1GVFJFWEVYNytoN0lOM1l2YnQ3VlNX?=
+ =?utf-8?B?NEVCS1IvMVRabUdGbVdnMDFSaWFGTCtWSndmMTE3ZkxWYWxZcnlabUs3Wkpw?=
+ =?utf-8?B?Y25VM2dNNVFWY3dYT0lSZzlqVEljbnBxbVlFcGtPbzJLSGF4TXRnU0N3Q0tS?=
+ =?utf-8?B?UjBwS05PbVJGTU1wajdVT3FQMURIT2ZkRVRrRGhobCsxWFFELzA5OUVXSnRn?=
+ =?utf-8?B?RGJsSlAzNzk5QTVPUXhsRXh4YmcxcEFDZWhVNzBlOU1xUkhvbkdVNy9LbVB6?=
+ =?utf-8?B?MFF4VVBzS2JPWEptQlYvS0oraG5jRkd3TUE4OFgvclZpUEgxTWk1bk54RDNh?=
+ =?utf-8?B?dWdwWW9XaStIQ0dtdVFVekhKSUdwS2cxWDFtbUtYandXckgxeDRTalF4cUla?=
+ =?utf-8?B?NTY1Q3pBMVd0c1E2SGNvTE94bjB4b2dUUE5CRHRLUXE2QkttdUJYZEVVN2NH?=
+ =?utf-8?B?SjhaOTlsZytvbGFBMmxOYXhSWUJTVWltekZXUUNHVlR0bnl6Z3VNRFEydlhI?=
+ =?utf-8?B?NTNpbDF6TmRQVHVXMC8rMmVJZjZwa05rQTlZTWkzU29ZMXV0K0QzdXUzUkxi?=
+ =?utf-8?B?b3M4eDdkNzNRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MHljMUdsa2N5Z2ltWFhNTDI0eWhlSElKTWQ0ZmVHWnpFbnVYYk4zNEp0VGlY?=
+ =?utf-8?B?ei80ZGVpUmdHbGNwcnpqYlB2Tm9QbzVkazZWSEZsT2E5NGxFZVhSLzlqL0RP?=
+ =?utf-8?B?bFFxRFZ2SExIVVZqSVM5ME9BaGZ4NnFYa1V2WkJDTVBQQUl5N0M5ZkZTa0dZ?=
+ =?utf-8?B?cU1sUlZKS040NjZOWGpkVCs2RWMxb1BsbzMreVpLSUpZemhwc2JNV29GSzBX?=
+ =?utf-8?B?aTRGOWFsMHhURWt2NkdGdlJJTm9GdDhIdnlDWmRwVTJHQlZ5K09NdUtrNVdv?=
+ =?utf-8?B?LzNBRUpOcjQ3L1JYOXVwNWxoemtVSnJKWHh2azhxbnJBY2NFTUZDdUhCdFVV?=
+ =?utf-8?B?N2hwRE9WMnJRUjcxRjNZdmpkOGVscE04TW1pbzUrdEdINWVFcGtxM1BadWlH?=
+ =?utf-8?B?d3I0bXZWbzFNOU14YU82Y0hIaEpDWHB2ZVdFcjh5dTVaRkdJeXpUTmlnVW03?=
+ =?utf-8?B?dUJPdG9DRWN3RE5ISTROZHRPMUl1RXQwQ0NSckxCSkRsOGV2REcyWVl0Yzgw?=
+ =?utf-8?B?djk1ZEhCN0cxc1JsU2ZKM3NVcTFuVHVTUzVaZjRxeFdNVjZYdVBnaUYrT084?=
+ =?utf-8?B?c0dJaTJtR0hSOVQyb2FRcXdQT3dkZGx2a29yRmZoN1RBeThlY1JyTHBuRVk3?=
+ =?utf-8?B?dTYySkhwcFlqU2RkRTNQNXhlZDk4eWo2b2Y3amdreEJjclZQbFpaTjhjQnhN?=
+ =?utf-8?B?S3hETHZvNThGYk1aNEpPME1qQTg0UHNqYTM4OVZHZ1lLcWl3L0JmZkhVdjBk?=
+ =?utf-8?B?VVJSRFRWLzZPai83WUtVV0M5NUVXQllnamhkSXprZVEvMCtIVlJqd21QNW1y?=
+ =?utf-8?B?VW42dHRRNzVEZjZZWmlxY0sxVFNPanhNcXp3YVRFcGU4TEpQQ2E3bnQyb09Q?=
+ =?utf-8?B?eE9Od3ViS3Y0WHBjbFZsUjlWVmJjZEZIRFdiZEZoYjk1emhrSGtGQ2ZwcTZm?=
+ =?utf-8?B?RUdMMXovdTJjcnJRRmpvRy9BM0FJdkdOc2VpcExzN2VaMEZRR3dsdFprdGx4?=
+ =?utf-8?B?T09JNGEzd1hPY3JhQm5KWEZ2TmJ0eElhelJGaWRvTkJiNjRVSDZJU0Z2a0FQ?=
+ =?utf-8?B?L1p3dlNFUzR2YmUzV0pXVVJqTHVxTzB0eVhuMmRlMjVDNituQ0ZRc2R1N1cr?=
+ =?utf-8?B?bFlHd1IzODViZVNZL1o4R05tVVBmWk0xRUcxYUZ3cHNyTmV5T2h2WUVrWjYz?=
+ =?utf-8?B?Sjd5U3NrR243S3BqOEhNTDNmQUJraVZ6NmZRdnNjSGFqcFNMcG9JQWxLdmVh?=
+ =?utf-8?B?SFNSR2R6eGhjbnRCQ2pkM3NxcHptZ2JRd3ZRRkJZYVI5KzdhTmJ0RlhJTFRY?=
+ =?utf-8?B?STRDZWs0TzJaSWR4bElMS1Uwdkt2SFhwMDR3VE4wUGRZVFkrM0dVYiswNkl4?=
+ =?utf-8?B?V0FKcVIwdXZqeHIrUnV6MXd0cys2WFJQUHJxRm1qajBjT1VadTduK1BXR2VX?=
+ =?utf-8?B?b2FsZXJMeXdMOHdpOElSMHhuK0hBWE1kb2RrL0UyOU5GOTZOS25ubCtlQi9t?=
+ =?utf-8?B?MHZHdXlwYzY1OWV4d3Y0RmhPeVhJb1VlOUpieDBjYjBxcmdtNkt2RUt2RXZk?=
+ =?utf-8?B?SEdKNS9hdmhXdXBZM3JTb0tMaGNMM0gwRWtheXF6WDNEMWhYeWRwYWhaQjZS?=
+ =?utf-8?B?MTJ6U3hwRnZad1MxeGp6N1hrYUVGWXVtbnZjWkw5Rmc4R0xLb2N0NDB0L2V5?=
+ =?utf-8?B?MU1OazJKN1NRUjFIOXcxZUxpQ2NoZDIvQy9ydTkxOVNjeDRTS0Q3T3BPYXRN?=
+ =?utf-8?B?dkgyb1Q0UnRYMkpWNzF6ZUdkOWpPdTNrV2lYOVJFR3IrRW5lUUVuWXhSV0ov?=
+ =?utf-8?B?aXlMTkYrVHcxaFI2dmF1UkhwajVNTjRhZ1RxTkVVcWhncFErWEhuYkhvN0ZH?=
+ =?utf-8?B?QnZUQ0UvS2d5Q1kxM2djZDAvb3ZvcU1rWmUwbnhXM0Fjb08xMklxeDRoN1la?=
+ =?utf-8?B?eWxlYnBhQW1Gb0tjblRVbmpXODJicFEwMTBLSnhMb2pLVXlxUlRhc3dWeHB6?=
+ =?utf-8?B?b0dxdzlGL0YvMTJSbjdqUXl1TXJWaWFaT2NYUEFONHQ0WDkvTE1IVjV3cGVN?=
+ =?utf-8?B?SEgxcVIyRGZOdFY0U3VTQnRDQW9tQS9IZ1V6ZmJTNDdmellaTjY0VWFSTmxm?=
+ =?utf-8?Q?1X6W7H5H91TMUnD3EmuvFZklK?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71e679f4-d411-405a-138b-08ddbe2d5486
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 14:40:05.8921
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MvYLqr4ESARJ6fp12fgveh2berPQbPq9aGsIWe2Gupd+W60YXG59PExgbpy8h6oWhCZRJWQ0S6MCvBeM7vftmg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8655
 
-On Tue, Jul 08, 2025 at 09:00:25PM +0800, Jijie Shao wrote:
-> This patch use seq_file for the following nodes:
-> bios_common/ssu/igu_egu/rpu/ncsi/rtc/ppp/rcb/tqp/mac/dcb
+On 7/8/2025 3:42 AM, Samuel Zhang wrote:
+> For normal hibernation, GPU do not need to be resumed in thaw since it is
+> not involved in writing the hibernation image. Skip resume in this case
+> can reduce the hibernation time.
 > 
-> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> On VM with 8 * 192GB VRAM dGPUs, 98% VRAM usage and 1.7TB system memory,
+> this can save 50 minutes.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+If I'm not mistaken this will also have the side effect that display is 
+not resumed in the "normal case" too, right?
 
-    Andrew
+I know the GPU you used doesn't have a display, but I'm just thinking 
+about the callpaths and implications.
+
+Would you be able to test this series specifically on an APU with a 
+display connected to eDP and no compositor running (so no DRM master) to 
+make sure it works as intended?
+
+> 
+> Signed-off-by: Samuel Zhang <guoqing.zhang@amd.com>
+> ---
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 15 ++++++++++++++-
+>   1 file changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> index 4f8632737574..10827becf855 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> @@ -2541,6 +2541,10 @@ amdgpu_pci_shutdown(struct pci_dev *pdev)
+>   	if (amdgpu_ras_intr_triggered())
+>   		return;
+>   
+> +	/* device maybe not resumed here, return immediately in this case */
+> +	if (adev->in_s4 && adev->in_suspend)
+> +		return;
+> +
+>   	/* if we are running in a VM, make sure the device
+>   	 * torn down properly on reboot/shutdown.
+>   	 * unfortunately we can't detect certain
+> @@ -2654,8 +2658,17 @@ static int amdgpu_pmops_freeze(struct device *dev)
+>   static int amdgpu_pmops_thaw(struct device *dev)
+>   {
+>   	struct drm_device *drm_dev = dev_get_drvdata(dev);
+> +	int event = pm_transition_event();
+>   
+> -	return amdgpu_device_resume(drm_dev, true);
+> +	switch (event) {
+> +	case PM_EVENT_THAW: /* normal case */
+> +		return 0;
+> +	case PM_EVENT_RECOVER: /* error case */
+> +		return amdgpu_device_resume(drm_dev, true);
+> +	default:
+> +		pr_err("unknown pm_transition_event %d\n", event);
+> +		return -EOPNOTSUPP;
+> +	}
+>   }
+>   
+>   static int amdgpu_pmops_poweroff(struct device *dev)
+
 
