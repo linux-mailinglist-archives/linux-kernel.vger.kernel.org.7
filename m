@@ -1,268 +1,146 @@
-Return-Path: <linux-kernel+bounces-722543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAE8FAFDBE4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:35:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF3A2AFDBE8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB8593A857F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:34:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D68631C23FBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C58B236A8B;
-	Tue,  8 Jul 2025 23:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC5723770D;
+	Tue,  8 Jul 2025 23:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PaChChSl"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2044.outbound.protection.outlook.com [40.107.223.44])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iety5ptW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEA721D3E1;
-	Tue,  8 Jul 2025 23:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752017708; cv=fail; b=dJa6t0U5eOA62M4S7b58zXAQhVFtKZiz8TXyA8ssLDLkngD1sgdTLxAA2r7n9Vw/SQFs78C9G8vYFFm/0wOqK/eD5vctpCpU4Pl8aZUraS0R7A7G7yvyuKlGPNh1B0WXe+Az9O9I2IWNiFuHRBgnKgJGZhdS+Gcx70dj7N6GsH8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752017708; c=relaxed/simple;
-	bh=PuJ/h4Q0sYBXWIJ2cGfzgTCK5gEmhWopr8+4Y87CPu0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c0f1Sj2S+vKKulLSW/2q80xIR7ctEfNP7SSu3Iv3uF5KWQeU+wBzgRIdZUeR3J51An+vE0bgx0Hmr+NImoUMPuW8FeYYcvjgda1MA8PGNO6JpIriYBbvwB1TErhiEkQKDDg8f6Ud5dTiGD9U+meBrZGh9U1xsnjSGMbkF5It5Gg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PaChChSl; arc=fail smtp.client-ip=40.107.223.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Wo4wLs1WETQMxuTI5oqb3Yck9Pf/P5bvFSneyjVr6gjegsVDV+6Oh6jhjr4mts2vvmTE0/kwXhRgIQHTvG8SiBDWc0P78fWzzEUy5X2LUJ7i/41uKijdzcho+EvbTZHjtz4yGh/sscRJ0FLN7p1BvUHt/cUOMqw2kbnTzoVEp1V+bR+/EgKP07uLqPXIOBQVXwHWq+ptLHyH+EN4nWafgx18GZns9LGtpZOFbI9612d2A9HqGNjUWYxgaHZXXMwX+e00KmQmcxSJHnisBSpgjuHMfJli8fCh7ImY0fa1H7ErMRlBHjo2OjvploMU2ROHFuivJtgx1yFx1X9PzajZ1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=29omWAJBRw+ThXe98QXxew2Aga5gnrYyG8qwg4CXcCQ=;
- b=pCjIn0AHNYKx67t4X4SqzWp8PiyRLgfWr4BPnmLdZ/sJTR2uOrl+LxxwkaZgVGnalTqrPCuPQcg/1JImm3chCKIHf+ZkhkW2/lNMXidB+gwKp+Av+L4WHhXd6DX+pTNNb2NWStVrOzAjN8pJQg93sLXggg8z2VI6JhZAP/ifzk4NFLzkqIXRiMk6oCv/TDbtRe5qMgG/0zOhbUyWsTqvE7O1UYE4yW7erCH+vwSkKmJsX7uytHnTA0nqF+1XRcb+zPfC5Jpn9I/wiw5U2q1qnDUjrlemRiEWoBPFohdMfAXUx1O74mNK/jPexK6XzxMKrF+hqwcNaRZfOgxf0kIbLw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=linux-watchdog.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=29omWAJBRw+ThXe98QXxew2Aga5gnrYyG8qwg4CXcCQ=;
- b=PaChChSlUunCSs0zZvUrFURzE07EU8OTIVB9/BwYmFGmbLnCx6JzphG73eGfgZuZ2pnj4cCn9IHiRM1mxjVfmQoRx2NEGXW8aowj01JejoA3Dp3ygFB3RcYlo30O4PbzH2gPDIUdeeNmTHfvMeOlJbeJBnXUXCZK8/W39b0dnUsIxEbznaaaub2kpVts4IauMHT2gcwjwH5fWuUEXa+yU4SZpwVyo031AmLFLeJC5EtziIhNDURnniSU0orxcyLxUWaa83a4B0PXIjIze+fte1MdYfiW26pVgZFUcyQOy0Nih+BMdJI22WRXJPb6DhxqocZGowWVkPNknPorxzviZg==
-Received: from DM6PR03CA0025.namprd03.prod.outlook.com (2603:10b6:5:40::38) by
- SJ2PR12MB9163.namprd12.prod.outlook.com (2603:10b6:a03:559::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Tue, 8 Jul
- 2025 23:35:01 +0000
-Received: from DS3PEPF000099D7.namprd04.prod.outlook.com
- (2603:10b6:5:40:cafe::1) by DM6PR03CA0025.outlook.office365.com
- (2603:10b6:5:40::38) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.21 via Frontend Transport; Tue,
- 8 Jul 2025 23:35:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- DS3PEPF000099D7.mail.protection.outlook.com (10.167.17.8) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.15 via Frontend Transport; Tue, 8 Jul 2025 23:35:00 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 8 Jul 2025
- 16:34:56 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Tue, 8 Jul 2025 16:34:55 -0700
-Received: from treble.plattner.fun (10.127.8.9) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Tue, 8 Jul 2025 16:34:55 -0700
-From: Aaron Plattner <aplattner@nvidia.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
-	<linux@roeck-us.net>
-CC: Aaron Plattner <aplattner@nvidia.com>, <linux-watchdog@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Timur Tabi <ttabi@nvidia.com>
-Subject: [PATCH] watchdog: sbsa: Adjust keepalive timeout to avoid MediaTek WS0 race condition
-Date: Tue, 8 Jul 2025 16:33:51 -0700
-Message-ID: <20250708233354.1551268-1-aplattner@nvidia.com>
-X-Mailer: git-send-email 2.50.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E74E223DF5;
+	Tue,  8 Jul 2025 23:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752018084; cv=none; b=iIw1c0y3kpRhGee+cUyCY9OUid7ROokFCwVLGBhAu2JZkwSaVAS2QIGFssLJENziHNJhP0UWyToFnxFHuQB0M4aK18B6Rhmdj6Jh2bh/Wd7+1Epms5bcVmLY1kd+Njn42z1jDTZJABs8whjAWkI4+dkcRFA/2Q/ZJSuJGjYWEKM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752018084; c=relaxed/simple;
+	bh=gjvuPMDAEGBM+MgPjQyQtXwPygyNMFei5YKp9m4Oods=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=I9dDaVuJ+YwSRiRYghSNA07Zbpri+di+XOHomXLHazsmcgTFIK38kirG7P7VI6u/hY8SrOKY3UnzwWgB43yLLQFv1ni3A4oQIKFOC5yAFZLQIEFUkt+Cn+j8oxU5q5D3thgf4esldB2PRWBw6yJiUlqPC2JQTWk+0NZKVhFUO4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iety5ptW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6DF1C4CEED;
+	Tue,  8 Jul 2025 23:41:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752018084;
+	bh=gjvuPMDAEGBM+MgPjQyQtXwPygyNMFei5YKp9m4Oods=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Iety5ptWAkzSP9haKVL8gXlgGrEQfau84nIpIRVrwXjR+ICCl28xTs4gdikrc6lTT
+	 vr+ANlzZjf+E2wKLlXi2jWkgjyadYOHEbRMhWcM342cxZ4AlY0mr6XIbvmtde5WRti
+	 WuMAfMyah8rmWfA9eQlZXeVc3Zsz6H7pMMnxNY/uij52R9WoXqSEjbFM9VRnFU4aAh
+	 JNkx+sK31wMBmfQNuVFJjCKrGYOjgCJ484iDi9mXfJ5XVQTemTIxxlun/sE4U4azZd
+	 ktHGUzSkY1NotVUvLjOufKbd9Fy9zalrhg1E4iXhEjzI8M1qH48FeObRk5ioT9Ei/w
+	 LUsx9MuAOOMhg==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Tue, 08 Jul 2025 16:41:01 -0700
+Subject: [PATCH] platform/x86/intel/pmt/discovery: Fix size_t specifiers
+ for 32-bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099D7:EE_|SJ2PR12MB9163:EE_
-X-MS-Office365-Filtering-Correlation-Id: 68913076-b465-401f-af27-08ddbe780ebd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?lKyMAxVHBCjkAC9EGC4Uypb7mU9eTrDhuwJrYjsApCZrNpuQdHF45L37gzve?=
- =?us-ascii?Q?MxpP4lnQw9SDGNpmajL9MTVu4OFvBu4YwArbSn6epmqRmPXPVyT3FZYivIYz?=
- =?us-ascii?Q?p3Qi+z3zyCODYO54Pfe2EBmZXIaa0eP0UcAeKOw7MxWFGJp8sMvf6V7GzJ5/?=
- =?us-ascii?Q?mwlgUYaDQFbAPoV3JhJ2RyYhA4h8QkkRMiFkZ4ZCb5hohbmrKOWxmKGAjPs2?=
- =?us-ascii?Q?2+ByOpAqQWJeATnKjC13LrPAq4mcixkHUd+/cgcGURD7IqoeOt9qgDGrQjW0?=
- =?us-ascii?Q?foVPgGXhq3gjmCtK/2Bz7xtqyh3R0yUqiWAWXrWP2wxYLaswwn71nVT530AS?=
- =?us-ascii?Q?Kts8/Qy+xWwCI6X2wLMHfVjRn6wrRAz39RnEBv7CtIvLmZcEYAV0VMSdIYXU?=
- =?us-ascii?Q?rvtxLSrzj2fIejxqosQYvSub4zKmKZ0UpMCXyYAh5nx0H+65WtAUuSk3W6kW?=
- =?us-ascii?Q?0MrgeVz8S7GkC8oWKMcolk5LDXpUcJoGLQ3yyrQNvgPo/uGNY651l27ffinz?=
- =?us-ascii?Q?wYHIarUN46bqmj2rNI92t3imuMTInIsfMINHp5h/hMC3hFW+SxvlmbfQnXpx?=
- =?us-ascii?Q?vrhVDiA/d8bAt1rKyXutrDiCdeFkBLwGEQ54SxLHTfgZEM101gDxkE9db+3E?=
- =?us-ascii?Q?TuOPQXdIzuUSYhJB0XFpj3cHYWR1y6WBPd5zzdFf3UXxpGD4IHHZCSPLdfCA?=
- =?us-ascii?Q?49sLfyuD6Ni6H25hc3zKRtpvXzqZMlw1eONQvc3P/AUNbHFLlYC57nIvbKXe?=
- =?us-ascii?Q?pe9Md6YwQvpzzhh2fTP6iA4Gb/DwLVEk/zfydFLclkhTDo4OeyOgR2m/b66P?=
- =?us-ascii?Q?oOBd/YV8S7ZBAN4V8Laz21CQxZeywk+kc9SFG71/Ei0PJq0eglzBuy4kYUTJ?=
- =?us-ascii?Q?iR9wAme4pIwrHfXeYMZeV1ajmmv+oPhwVK9evjybqEZlwsT2l5my1K5UIHeT?=
- =?us-ascii?Q?S7HVdfikKuv0Sa9eRlgrFYDzFYkot5lQ6xoAnOZADsIeS7fhUJzv7zt7IVT1?=
- =?us-ascii?Q?kK9ozyzCLl0hcFys2KTfJaFI7G1AnowcC94G53TsjTe0qHdkEu/b22IJNd4U?=
- =?us-ascii?Q?3wvwS3bFtOgyuPnu+pBIJb7Wd3WWk/A+pueJIwmQxwwrSCAsFdAJ6BxMuUKV?=
- =?us-ascii?Q?hPXwSOCLQjLNM6mYphcJb77xluRC9/FPSjPWUYHwF9+NV3/A5lYKjuLIhEdt?=
- =?us-ascii?Q?QJs00mlVlK3LSrw9p+LvTBAngmJiZBH/7lNuo/rDn+yJKEIFYkU5mk6mXYpR?=
- =?us-ascii?Q?KGN6bZJFQYPeTyccBQoG0eIwT4TkTE3+SDcDBAZHjoACuEGahmUMr66MldIh?=
- =?us-ascii?Q?y9ydGFVvjqweKV1cECtw/AT2cTeJEB5zRcyxya+sBlqYljKe39K6j6pj0Vvj?=
- =?us-ascii?Q?NiQfCFQDIk7hTXYeMsG/9d2EKa8VjAlnsJ/KBXtdHXkqqSxwkQ3wAIA7m4Rq?=
- =?us-ascii?Q?RncG2Zn6uhZAoO0/8U1HFac6J8PSC5g/Epd7CB0UHwD5hPmRHpBBa6/P4GNA?=
- =?us-ascii?Q?cOIvw9KTpiJQmTJ/goCGHkrRNX4Nyk5XZmB2?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 23:35:00.7661
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68913076-b465-401f-af27-08ddbe780ebd
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF000099D7.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9163
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250708-discovery-pmt-fix-32-bit-formats-v1-1-296a5fc9c3d4@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAIysbWgC/x2NQQqDQAxFryJZG0hntHa8SunCaqpZ6Egi0iLev
+ cHde/D4/wBjFTZoiwOUdzHJi8utLKCfumVklMEdAoWaGnrgINbnnfWH67zhR74YA77FMevcbYb
+ xnmJDVZ0iJfCZVdmr6+L5Os8/L1R7VXIAAAA=
+X-Change-ID: 20250708-discovery-pmt-fix-32-bit-formats-369370459309
+To: "David E. Box" <david.e.box@linux.intel.com>, 
+ Hans de Goede <hansg@kernel.org>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4000; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=gjvuPMDAEGBM+MgPjQyQtXwPygyNMFei5YKp9m4Oods=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDBm5axZVyjvZHXi7/7Rk+SpJLZ2qh3ohG+zMdKS3c+gp7
+ rsnInOmo5SFQYyLQVZMkaX6sepxQ8M5ZxlvnJoEM4eVCWQIAxenAExk5gaG/5l7ZknGqRYtXVZ9
+ Mdnpz7Lar+YKgapLpb93PFC83r/M2Ynhf0al+NVWo9bKGcsaJr28WvtHLm2HglbsLo27r5ZYdIo
+ +4QEA
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-The MediaTek implementation of the sbsa_gwdt watchdog has a race
-condition where a write to SBSA_GWDT_WRR is ignored if it occurs while
-the hardware is processing a timeout refresh that asserts WS0.
+When building i386 allmodconfig, there are two warnings in the newly
+added discovery code:
 
-Detect this based on the hardware implementer and adjust wdd->timeout to
-avoid the race.
+  drivers/platform/x86/intel/pmt/discovery.c: In function 'pmt_feature_get_feature_table':
+  drivers/platform/x86/intel/pmt/discovery.c:427:35: error: format '%ld' expects argument of type 'long int', but argument 2 has type 'size_t' {aka 'unsigned int'} [-Werror=format=]
+    427 |         if (WARN(size > res_size, "Bad table size %ld > %pa", size, &res_size))
+        |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~  ~~~~
+        |                                                               |
+        |                                                               size_t {aka unsigned int}
+  ...
+  drivers/platform/x86/intel/pmt/discovery.c:427:53: note: format string is defined here
+    427 |         if (WARN(size > res_size, "Bad table size %ld > %pa", size, &res_size))
+        |                                                   ~~^
+        |                                                     |
+        |                                                     long int
+        |                                                   %d
 
-Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
-Acked-by: Timur Tabi <ttabi@nvidia.com>
+  drivers/platform/x86/intel/pmt/discovery-kunit.c: In function 'validate_pmt_regions':
+  include/linux/kern_levels.h:5:25: error: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'size_t' {aka 'unsigned int'} [-Werror=format=]
+  ...
+  drivers/platform/x86/intel/pmt/discovery-kunit.c:35:17: note: in expansion of macro 'kunit_info'
+     35 |                 kunit_info(test, "\t\taddr=%p, size=%lu, num_rmids=%u", region->addr, region->size,
+        |                 ^~~~~~~~~~
+
+size_t is 'unsigned long' for 64-bit platforms but 'unsigned int' for
+32-bit platforms, so '%ld' is not correct. Use the proper size_t
+specifier, '%zu', to resolve the warnings on 32-bit platforms while not
+affecting 64-bit platforms.
+
+Fixes: d9a078809356 ("platform/x86/intel/pmt: Add PMT Discovery driver")
+Fixes: b9707d46a959 ("platform/x86/intel/pmt: KUNIT test for PMT Enhanced Discovery API")
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 ---
- drivers/watchdog/sbsa_gwdt.c | 52 +++++++++++++++++++++++++++++++++---
- 1 file changed, 49 insertions(+), 3 deletions(-)
+ drivers/platform/x86/intel/pmt/discovery-kunit.c | 2 +-
+ drivers/platform/x86/intel/pmt/discovery.c       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/watchdog/sbsa_gwdt.c b/drivers/watchdog/sbsa_gwdt.c
-index 5f23913ce3b4..81012dbe9088 100644
---- a/drivers/watchdog/sbsa_gwdt.c
-+++ b/drivers/watchdog/sbsa_gwdt.c
-@@ -75,11 +75,17 @@
- #define SBSA_GWDT_VERSION_MASK  0xF
- #define SBSA_GWDT_VERSION_SHIFT 16
+diff --git a/drivers/platform/x86/intel/pmt/discovery-kunit.c b/drivers/platform/x86/intel/pmt/discovery-kunit.c
+index b4493fb96738..f44eb41d58f6 100644
+--- a/drivers/platform/x86/intel/pmt/discovery-kunit.c
++++ b/drivers/platform/x86/intel/pmt/discovery-kunit.c
+@@ -32,7 +32,7 @@ validate_pmt_regions(struct kunit *test, struct pmt_feature_group *feature_group
+ 		kunit_info(test, "\t\tbus=%u, device=%u, function=%u, guid=0x%x,",
+ 			   region->plat_info.bus_number, region->plat_info.device_number,
+ 			   region->plat_info.function_number, region->guid);
+-		kunit_info(test, "\t\taddr=%p, size=%lu, num_rmids=%u", region->addr, region->size,
++		kunit_info(test, "\t\taddr=%p, size=%zu, num_rmids=%u", region->addr, region->size,
+ 			   region->num_rmids);
  
-+#define SBSA_GWDT_IMPL_MASK	0x7FF
-+#define SBSA_GWDT_IMPL_SHIFT	0
-+#define SBSA_GWDT_IMPL_MEDIATEK	0x426
-+
- /**
-  * struct sbsa_gwdt - Internal representation of the SBSA GWDT
-  * @wdd:		kernel watchdog_device structure
-  * @clk:		store the System Counter clock frequency, in Hz.
-  * @version:            store the architecture version
-+ * @need_ws0_race_workaround:
-+ *			indicate whether to adjust wdd->timeout to avoid a race with WS0
-  * @refresh_base:	Virtual address of the watchdog refresh frame
-  * @control_base:	Virtual address of the watchdog control frame
-  */
-@@ -87,6 +93,7 @@ struct sbsa_gwdt {
- 	struct watchdog_device	wdd;
- 	u32			clk;
- 	int			version;
-+	bool			need_ws0_race_workaround;
- 	void __iomem		*refresh_base;
- 	void __iomem		*control_base;
- };
-@@ -161,6 +168,31 @@ static int sbsa_gwdt_set_timeout(struct watchdog_device *wdd,
- 		 */
- 		sbsa_gwdt_reg_write(((u64)gwdt->clk / 2) * timeout, gwdt);
  
-+	/*
-+	 * Some watchdog hardware has a race condition where it will ignore
-+	 * sbsa_gwdt_keepalive() if it is called at the exact moment that a
-+	 * timeout occurs and WS0 is being asserted. Unfortunately, the default
-+	 * behavior of the watchdog core is very likely to trigger this race
-+	 * when action=0 because it programs WOR to be half of the desired
-+	 * timeout, and watchdog_next_keepalive() chooses the exact same time to
-+	 * send keepalive pings.
-+	 *
-+	 * This triggers a race where sbsa_gwdt_keepalive() can be called right
-+	 * as WS0 is being asserted, and affected hardware will ignore that
-+	 * write and continue to assert WS0. After another (timeout / 2)
-+	 * seconds, the same race happens again. If the driver wins then the
-+	 * explicit refresh will reset WS0 to false but if the hardware wins,
-+	 * then WS1 is asserted and the system resets.
-+	 *
-+	 * Avoid the problem by scheduling keepalive heartbeats one second
-+	 * earlier than the WOR timeout.
-+	 *
-+	 * This workaround might not be needed in a future revision of the
-+	 * hardware.
-+	 */
-+	if (gwdt->need_ws0_race_workaround)
-+		wdd->timeout -= 2;
-+
- 	return 0;
- }
+diff --git a/drivers/platform/x86/intel/pmt/discovery.c b/drivers/platform/x86/intel/pmt/discovery.c
+index e72d43b675b4..1a680a042a98 100644
+--- a/drivers/platform/x86/intel/pmt/discovery.c
++++ b/drivers/platform/x86/intel/pmt/discovery.c
+@@ -424,7 +424,7 @@ pmt_feature_get_feature_table(struct pmt_features_priv *priv,
+ 	size = sizeof(*header) + FEAT_ATTR_SIZE(header->attr_size) +
+ 	       PMT_GUID_SIZE(header->num_guids);
+ 	res_size = resource_size(&res);
+-	if (WARN(size > res_size, "Bad table size %ld > %pa", size, &res_size))
++	if (WARN(size > res_size, "Bad table size %zu > %pa", size, &res_size))
+ 		return -EINVAL;
  
-@@ -202,12 +234,15 @@ static int sbsa_gwdt_keepalive(struct watchdog_device *wdd)
- static void sbsa_gwdt_get_version(struct watchdog_device *wdd)
- {
- 	struct sbsa_gwdt *gwdt = watchdog_get_drvdata(wdd);
--	int ver;
-+	int iidr, ver, impl;
- 
--	ver = readl(gwdt->control_base + SBSA_GWDT_W_IIDR);
--	ver = (ver >> SBSA_GWDT_VERSION_SHIFT) & SBSA_GWDT_VERSION_MASK;
-+	iidr = readl(gwdt->control_base + SBSA_GWDT_W_IIDR);
-+	ver = (iidr >> SBSA_GWDT_VERSION_SHIFT) & SBSA_GWDT_VERSION_MASK;
-+	impl = (iidr >> SBSA_GWDT_IMPL_SHIFT) & SBSA_GWDT_IMPL_MASK;
- 
- 	gwdt->version = ver;
-+	gwdt->need_ws0_race_workaround =
-+		!action && (impl == SBSA_GWDT_IMPL_MEDIATEK);
- }
- 
- static int sbsa_gwdt_start(struct watchdog_device *wdd)
-@@ -299,6 +334,15 @@ static int sbsa_gwdt_probe(struct platform_device *pdev)
- 	else
- 		wdd->max_hw_heartbeat_ms = GENMASK_ULL(47, 0) / gwdt->clk * 1000;
- 
-+	if (gwdt->need_ws0_race_workaround) {
-+		/*
-+		 * A timeout of 3 seconds means that WOR will be set to 1.5
-+		 * seconds and the heartbeat will be scheduled every 0.5
-+		 * seconds.
-+		 */
-+		wdd->min_timeout = 3;
-+	}
-+
- 	status = readl(cf_base + SBSA_GWDT_WCS);
- 	if (status & SBSA_GWDT_WCS_WS1) {
- 		dev_warn(dev, "System reset by WDT.\n");
-@@ -348,6 +392,8 @@ static int sbsa_gwdt_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	if (gwdt->need_ws0_race_workaround)
-+		dev_warn(dev, "Adjusting timeout to avoid watchdog WS0 race condition.\n");
- 	dev_info(dev, "Initialized with %ds timeout @ %u Hz, action=%d.%s\n",
- 		 wdd->timeout, gwdt->clk, action,
- 		 status & SBSA_GWDT_WCS_EN ? " [enabled]" : "");
--- 
-2.50.0
+ 	/* Get the feature attributes, including capability fields */
+
+---
+base-commit: 56036d6af41a473a8129fc960a5ab3673eda13d5
+change-id: 20250708-discovery-pmt-fix-32-bit-formats-369370459309
+
+Best regards,
+--  
+Nathan Chancellor <nathan@kernel.org>
 
 
