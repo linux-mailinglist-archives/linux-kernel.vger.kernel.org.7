@@ -1,149 +1,203 @@
-Return-Path: <linux-kernel+bounces-720875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B320AFC193
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:58:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90349AFC19A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A509D4A1286
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:58:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5F824A5649
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E694202F9F;
-	Tue,  8 Jul 2025 03:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4979423C4FC;
+	Tue,  8 Jul 2025 04:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RhITuDGx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XSDQsS9/"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD9A12B94
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 03:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B2A1F869E;
+	Tue,  8 Jul 2025 04:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751947129; cv=none; b=MvhkLJcdqhNZ7rKh6/I/EGOIpRkkKCrAmBv8GIO+Cp9yWf8wCz58aU1/BeVww7QSxS7UxVvUz3sFE0zJz9fVWhbQ42BgGWHj7TxKzcOSTwExBJ/7Ociu3F2Rg5NErCJ9CY8HVG0/lq0VIhSLCbNMbqT8VRcuvZeXYDIf/paAb1Q=
+	t=1751947453; cv=none; b=XindnjsgC0eb93FIFjuW4EZXQsD4LEuiy/UvRMLk8dOIo48OsFZmPLbbzSNgfogbUAzCBZ+ftlooh4oFjmVP+wVCgho3p6wjkYaXJba6EmGmAfbAqYu5yIJ3mffJIT8bPWZ337/GBKCnNkpfiTtTKXE5VhTwsiFqsSkSpw2jfIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751947129; c=relaxed/simple;
-	bh=3AKkxcfvUlMu5TUYKLPTuhhBUALR+VAT3BG3ruqNIDo=;
+	s=arc-20240116; t=1751947453; c=relaxed/simple;
+	bh=y20hIvj7FJ+ub26EEZ5MyosVhGj+5NSliq7e+YqImEo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e1jbBhlO+7r5+q1kcf8Fo9O/8zURtvjftKQIoXUd2suMMK5UHjo89z4/6sSdgVIqGAWYYUF0GoUGIbfpbsRrDHMlxhtntJDSPv44zQdCI2PL5MufeDgLcjFc+iUs0IJsi5YWYdobmv65OijsJ/Yp6j1mmJ1UOhpw4mrlRcqhbgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RhITuDGx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 567JbYAR003120
-	for <linux-kernel@vger.kernel.org>; Tue, 8 Jul 2025 03:58:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yVmdwoyRmqDc17tvesd0pZRhto/8N/zF0tcxD1+SpSA=; b=RhITuDGxVaX2nn3X
-	I3OQEFd2qRV3Kz5NsAafp+ON6RCsUZKC4B2/PEnO/FrGl0an5Ym41eu1adpgG07X
-	Wl+bq49fI/gfgZ+YQuHMFYbbDMrV/8I2pUVIEgYvBgb/gv4ewG8VusvkqiNVnk2N
-	oj9qT7nKfu0peyx/Plqz32GFtLrZYN1k0/y2GjefjVfIbh83ouCrxJRtHIY67yIf
-	3kc3rSjoBdD4Ya1dygCCSzaHHM/V7XySI7Ir8YzB8WZkRA1xdHmwzSr9gbl7MtQ/
-	8ktNx9ptWCZXYRwfJi4js8DvJpTXmxLPS1itVWAKOu/iDPhCq//859dNnBIhcy5x
-	FtVnLg==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pu0wac6d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 03:58:47 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-235196dfc50so36899585ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 20:58:47 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=mlYCqJNznEoax1q4KFmpQFgb5QO79oR35bqfaQvX4eQILthGf3GSNIFIxu1lRBZWFkCQg3bLSutT+kUw2EAex8xACWezdrQ8ONd8qSX0XmeQkrbAGLL61vsYYGLs9xpV8lwpVMJl51m0caL05tr87sOjVxM/PhcQ1yqjaL8+09A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XSDQsS9/; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b31e0ead80eso2885288a12.0;
+        Mon, 07 Jul 2025 21:04:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751947451; x=1752552251; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SvGy7UdF6AbgGyEnqmLu7yYn0wddkSFKtO9DiUDvuus=;
+        b=XSDQsS9/JosR1Ev2t8EUFbLshTB7lFQQbAO0aDJXoApMqy6aITcviWqtCdEARseekt
+         2MJkOpFp9bWcfNuBVQUbMYEWtZCNNhqOQR+CUWFo+bkKjYEJiR4CqCm4g4zR4aJhpTeH
+         0hAaK+QCNSjiQOBIcCdLQPzocYwtIDPYh0BZYomC7vGa4bNWjdyaAzokylOT4qao+FcV
+         ZTAFBijK2ZBIpnawNZLJkMUd9/W1SzBa2YDCRozYQ3ic/+zzIErLMoLuCy7lkRbM1Vxw
+         3fJYxK/DtJw5OxtGNaYz7txmG0cTFOIvjGyG35psDJQjyqqYkwd4CtCFBvQ/KUOS6Mcq
+         wJzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751947126; x=1752551926;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yVmdwoyRmqDc17tvesd0pZRhto/8N/zF0tcxD1+SpSA=;
-        b=L1x2haRWdkp6cONuTksXL0nISdQo+Z9AS/RkBiA7O9RLnsvXEX7n1CpXmdmIb/kNUH
-         U/hYDBR0MDPeFXULCrh49rYPUEyYz3ihdn5la3+TffU+VFg56vsoRr5qoTFCybpNNIop
-         A8PN2RvimfvIZYw3xkCsYedjae/w3hXwqJUrcQL6eo66VxJwAvpdpGgM/qflUMZHyrfE
-         J9Zgk77uUexbq9rNnr3VM+yhGGOo7PC5x/szN4Kj95QO+RqT2/PSDI39n0SEh0NEsFxB
-         VXZfgZ+zTR1HL0PE34JdFr70gKH7+36plDmLvCRxMLJlPpIadDW3TQOXOCr4emQZv2X8
-         t8mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5YyAON1NmWHke9Vx4ioIz9CZpHBrK9kiqH9eCPADkrEb16BMhQS0UZCfrCv+lIB8Zdy9Amo1gNbpdsF8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBBxJ1ac1Y0PFVnxKBbmq7vtztSDpIqrbuPCZHxOLHmaPKITY6
-	aO8lxbBR/c1/7cWAVrrW8cjJpp9GW+t5pD3ckmTqDyBPg28WvEhPYL6+7dDAt14gavhCUlJsAlo
-	hS7S+1gNN+B0NBwCUyWfz72au6e2x+ByMmwtYoiKLTzPftrS2gT6HG2QEjMWbztK7WVc=
-X-Gm-Gg: ASbGncv3Yd7c9w9bltsVhcEBPZPV0PjoolVI1Mo0xhqh4lmCd8cp1iKJ5t0Zk/V28Es
-	uUwsMhaBXN16scza8sPyE/Hg7h7iR0yaKDJ4Yuxt/Ee10XDJ25OYZOvaHM+h2qoVzFKVy0eeoLD
-	bawbqLJBdo/j9GLX63qUnBW+bxPeF3IQRgn5cNlNl5qgI5EfismkhO4dkmy5dlNPrqUugAMNjld
-	5LSjdaCeUxg4Oo4aYcFppjUGznnJpfqHYrGHLPBGFFon1xOKOyA+oYG1lynbbkvTBlc0usPapne
-	T42b/8AqevSjIhjQ7KDQYkvkY+sAnclQ9RcvG8zWdld89ErTnL3g0/ILwE/QSRbD
-X-Received: by 2002:a17:902:e88c:b0:237:e753:1808 with SMTP id d9443c01a7336-23dd1b43dc5mr16754305ad.20.1751947126576;
-        Mon, 07 Jul 2025 20:58:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEso3ju5zhTdAEFrj8mTebhXy+yfUOAHYYTDpHBwzag4yfTDCfvyRpYY+6PtKpu5KUVV20vmg==
-X-Received: by 2002:a17:902:e88c:b0:237:e753:1808 with SMTP id d9443c01a7336-23dd1b43dc5mr16754025ad.20.1751947126139;
-        Mon, 07 Jul 2025 20:58:46 -0700 (PDT)
-Received: from [10.152.204.0] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c21edfe37sm824324a91.47.2025.07.07.20.58.43
+        d=1e100.net; s=20230601; t=1751947451; x=1752552251;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SvGy7UdF6AbgGyEnqmLu7yYn0wddkSFKtO9DiUDvuus=;
+        b=jw2J0y8wNyAcYK/zbxh/8mRSeWiuHIGGP+/seK4vQSdjE1dNxmRSnyo2zj7iVTMkmg
+         prLlUZvaWmpwJJdLVr8fuwsyMmX2NpOURowg68nGIkaIIsACOqbIGv2rOL2fd0Bd2N8N
+         P3HXy7hEVBy9RK5RW6q2WOOsuOuCWQr+ME8IcAIKMRBHGt9pCixIP/ubZQMtXpYUbq4O
+         uKssfjl13PqNVhaVn0xqGeREIYUTaFYD2ZTMZm9HePhOqAc+Op9z1ZsunCxEmH6u6PgE
+         ADTIKQI7V/xuFjfWGeYotjNtkMZAuZZE2wYuBqlVei1BQilbm+2mA1cxQJ+WmV/6SuVw
+         gBfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbH202SuUEsbDdn6HcF2XTmxS0elOPYGCli9lpHXPZMBkIoKwYzWSKLX67eocMyW1QbAVXIRA6YYwH@vger.kernel.org, AJvYcCXvt+z1AHFltcQ5qymgGDpdIaP3FlO21ywpKH3GzAde2A7bl3JW563q1FAmJBMOjXI+Utz5BvHwt1Qs3h+z@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBXdHlnI6vSxwqucj2VCYEsllRwivyBEQveRsti3+kyUl9CFxJ
+	yeeWMASnvaeGeXT/S3rbLp5GQIRkE54wOgg1aDqEVhledLo4c/KIBasM
+X-Gm-Gg: ASbGncsVBgp0pLgf4tDekMz5OD3g0DyrY73yhiNsi2ZNGUN74vm29AoN1eQ/7sKj2aa
+	hD0sBXkUVhmLVrObvhV+VwC68XFKYcpIGluXZSPBZ6G3uKSxUDJY92ZFyiqqu4iqE/8Ag/6MCuZ
+	kU2rddnwgdMxC2srpD+Yxovw4ACnY5OkM/btrZz5CJJyYAed1nRl/BIasfQ7SXUYogjuAr30jZG
+	mQI6OpXivHVGRQiWcngjApFK3k4dXUmEtT73A1D2EiiHcvBJjaOHxhmaOgM6CsgJZQDL8WtXg4a
+	ZYN7u98bWwX5GDjGJ/jF6LlWxRPxfqvvDQFVAYjyGZrDVGMWgXsUcnflJkzK7yL3pYgy2PsaaBU
+	uWmw=
+X-Google-Smtp-Source: AGHT+IFREujPi5EY8W+CcU1CZV4F2U5gLySYjhZNHD4XmStfesLIvGhunk58eYx3OWdIqgxOlskjBg==
+X-Received: by 2002:a17:90b:4a81:b0:313:d79d:87eb with SMTP id 98e67ed59e1d1-31c21e3bdcemr2110996a91.35.1751947451237;
+        Mon, 07 Jul 2025 21:04:11 -0700 (PDT)
+Received: from [30.221.128.116] ([47.246.101.52])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c220ed0f9sm685028a91.0.2025.07.07.21.04.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jul 2025 20:58:45 -0700 (PDT)
-Message-ID: <074969cf-676a-34eb-c2e3-219cab3658d4@oss.qualcomm.com>
-Date: Tue, 8 Jul 2025 09:28:41 +0530
+        Mon, 07 Jul 2025 21:04:10 -0700 (PDT)
+Message-ID: <17009dd5-fd3e-4d1d-92df-3ba9cdf666cc@gmail.com>
+Date: Tue, 8 Jul 2025 12:04:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH ath-next] wifi: ath12k: pack HTT pdev rate stats structs
-Content-Language: en-US
-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>,
-        Lingbo Kong <quic_lingbok@quicinc.com>
-Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20250702-debugfs_htt_packed-v1-1-07bd18b31e79@oss.qualcomm.com>
-From: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
-In-Reply-To: <20250702-debugfs_htt_packed-v1-1-07bd18b31e79@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 11/11] ext4: limit the maximum folio order
+To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
+ ojaswin@linux.ibm.com, sashal@kernel.org, naresh.kamboju@linaro.org,
+ yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
+ yangerkun@huawei.com
+References: <20250707140814.542883-1-yi.zhang@huaweicloud.com>
+ <20250707140814.542883-12-yi.zhang@huaweicloud.com>
+From: Joseph Qi <jiangqi903@gmail.com>
+In-Reply-To: <20250707140814.542883-12-yi.zhang@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: eVHsU_miQ_hwgLJXVtR5N14Uv2ZgTYS8
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDAyOCBTYWx0ZWRfXxRayx+0mTJE3
- xIiY7Haoc2pKfrFLNnCQBC7VeDOE4HpzcsY7g4O9KTSgU9KrDyfJLj4nkz4Hej6tJ5eriDUedgj
- qgXJpHs5Krd+8GJonLWXQ4OdBqXYwcy919q/DM+n3+mM941yXLJLwTc7NO9bE+bOPIUIEfMIkQe
- hi+VpybUfxGaIBo6kf+MsBJyc5g0Q+ybrV6cmVpzgBnZp94JazvXMplEj8Rf7yhQ8wdjKsIcUmZ
- JIyglcdjJfbhGMc/yO+mImgu1+ejWj8WrwhAe3bcfEiC4UlUzBsmmM4YoTiArEeqWFmgV2Avps0
- xMvoupwRrVMYokMGMfSQGdTX7D5yXdKF3Gl3fl1K47Dk6n5hug97mu81MJUa0cP5XCYFP4vS0IK
- Oe47lv22N7iyYc9jBR9t2FGhCs4Esp+nrJ0QGeNkPeKEpXb7jYqFEBmfrTom//kAli6YnmPB
-X-Authority-Analysis: v=2.4 cv=Rd2QC0tv c=1 sm=1 tr=0 ts=686c9777 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=D7ADwRd3ifBYD-KlsV0A:9
- a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-GUID: eVHsU_miQ_hwgLJXVtR5N14Uv2ZgTYS8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-08_01,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 suspectscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0
- mlxlogscore=879 impostorscore=0 spamscore=0 phishscore=0 priorityscore=1501
- adultscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507080028
 
 
 
-On 7/3/2025 2:59 AM, Jeff Johnson wrote:
-> In order to ensure the HTT DebugFS structs shared with firmware have
-> matching alignment, the structs should be packed. Most of the structs
-> are correctly packed, however the following are not:
+On 2025/7/7 22:08, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> ath12k_htt_tx_pdev_rate_stats_tlv
-> ath12k_htt_rx_pdev_rate_stats_tlv
-> ath12k_htt_rx_pdev_rate_ext_stats_tlv
+> In environments with a page size of 64KB, the maximum size of a folio
+> can reach up to 128MB. Consequently, during the write-back of folios,
+> the 'rsv_blocks' will be overestimated to 1,577, which can make
+> pressure on the journal space where the journal is small. This can
+> easily exceed the limit of a single transaction. Besides, an excessively
+> large folio is meaningless and will instead increase the overhead of
+> traversing the bhs within the folio. Therefore, limit the maximum order
+> of a folio to 2048 filesystem blocks.
 > 
-> So pack those structs.
-> 
-> Tested-on: WCN7850 hw2.0 PCI WLAN.HMT.1.1.c5-00284-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
-> 
-> Fixes: ba42b22aa336 ("wifi: ath12k: Dump PDEV transmit rate HTT stats")
-> Fixes: a24cd7583003 ("wifi: ath12k: Dump PDEV receive rate HTT stats")
-> Fixes: 7a3e8eec8d18 ("wifi: ath12k: Dump additional PDEV receive rate HTT stats")
-> Signed-off-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> Reported-by: Joseph Qi <jiangqi903@gmail.com>
+> Closes: https://lore.kernel.org/linux-ext4/CA+G9fYsyYQ3ZL4xaSg1-Tt5Evto7Zd+hgNWZEa9cQLbahA1+xg@mail.gmail.com/
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Reviewed-by: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+Confirmed that this can fix the following jbd2 warning in start_this_handle():
+"JBD2: kworker/u32:0 wants too many credits credits:32 rsv_credits:1577 max:2695"
+
+Tested-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+
+> ---
+>  fs/ext4/ext4.h   |  2 +-
+>  fs/ext4/ialloc.c |  3 +--
+>  fs/ext4/inode.c  | 22 +++++++++++++++++++---
+>  3 files changed, 21 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index f705046ba6c6..9ac0a7d4fa0c 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -3020,7 +3020,7 @@ int ext4_walk_page_buffers(handle_t *handle,
+>  				     struct buffer_head *bh));
+>  int do_journal_get_write_access(handle_t *handle, struct inode *inode,
+>  				struct buffer_head *bh);
+> -bool ext4_should_enable_large_folio(struct inode *inode);
+> +void ext4_set_inode_mapping_order(struct inode *inode);
+>  #define FALL_BACK_TO_NONDELALLOC 1
+>  #define CONVERT_INLINE_DATA	 2
+>  
+> diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
+> index 79aa3df8d019..df4051613b29 100644
+> --- a/fs/ext4/ialloc.c
+> +++ b/fs/ext4/ialloc.c
+> @@ -1335,8 +1335,7 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
+>  		}
+>  	}
+>  
+> -	if (ext4_should_enable_large_folio(inode))
+> -		mapping_set_large_folios(inode->i_mapping);
+> +	ext4_set_inode_mapping_order(inode);
+>  
+>  	ext4_update_inode_fsync_trans(handle, inode, 1);
+>  
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 4b679cb6c8bd..1bce9ebaedb7 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5181,7 +5181,7 @@ static int check_igot_inode(struct inode *inode, ext4_iget_flags flags,
+>  	return -EFSCORRUPTED;
+>  }
+>  
+> -bool ext4_should_enable_large_folio(struct inode *inode)
+> +static bool ext4_should_enable_large_folio(struct inode *inode)
+>  {
+>  	struct super_block *sb = inode->i_sb;
+>  
+> @@ -5198,6 +5198,22 @@ bool ext4_should_enable_large_folio(struct inode *inode)
+>  	return true;
+>  }
+>  
+> +/*
+> + * Limit the maximum folio order to 2048 blocks to prevent overestimation
+> + * of reserve handle credits during the folio writeback in environments
+> + * where the PAGE_SIZE exceeds 4KB.
+> + */
+> +#define EXT4_MAX_PAGECACHE_ORDER(i)		\
+> +		min(MAX_PAGECACHE_ORDER, (11 + (i)->i_blkbits - PAGE_SHIFT))
+> +void ext4_set_inode_mapping_order(struct inode *inode)
+> +{
+> +	if (!ext4_should_enable_large_folio(inode))
+> +		return;
+> +
+> +	mapping_set_folio_order_range(inode->i_mapping, 0,
+> +				      EXT4_MAX_PAGECACHE_ORDER(inode));
+> +}
+> +
+>  struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+>  			  ext4_iget_flags flags, const char *function,
+>  			  unsigned int line)
+> @@ -5515,8 +5531,8 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+>  		ret = -EFSCORRUPTED;
+>  		goto bad_inode;
+>  	}
+> -	if (ext4_should_enable_large_folio(inode))
+> -		mapping_set_large_folios(inode->i_mapping);
+> +
+> +	ext4_set_inode_mapping_order(inode);
+>  
+>  	ret = check_igot_inode(inode, flags, function, line);
+>  	/*
+
 
