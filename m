@@ -1,208 +1,158 @@
-Return-Path: <linux-kernel+bounces-721843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDC7FAFCE86
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:05:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEBB8AFCE84
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62C303A64BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:05:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16F4C3A6A81
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878A72E0935;
-	Tue,  8 Jul 2025 15:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C5A2DAFC1;
+	Tue,  8 Jul 2025 15:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mCxeE7iV"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SDHlSuWa"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CAF1A288
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0621A288
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751987129; cv=none; b=P0m39g/NItDiywghtVkD5VRDJOwNoVFEkMQ8nbrlF/0ewb2YUL/s0dDqaXZkHyRKe+C1G75EjinOgv3fYNtcigOEgCBzazcppgQ3SiJcFLTp1HsfZGjvcejxAY+jl0fxcC1p3aYeVtIucmPgi9hKh1HLOym5M7Zd33QFx9+4IxQ=
+	t=1751987123; cv=none; b=FByH7/ub+MBbCYzobGaZ1KtY/Bzaz5Oycv/x4yduosKHb7PIbXlqCJzPyebPTiwkSrd9GfXTnkPYaEXPxS5fjOhqvndNIQG1q97Hl6ktLrTzt8y1gZjCyoSXs9me/9u19uOyOQCpcTpBHt9RbCf57SQW5DqD5MLnFeKqhpaxijE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751987129; c=relaxed/simple;
-	bh=BKAEA2rbTjauN4CZf10Bop3hBmw+E3yiNiTQp2bPJVo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UMzXOFrFTF7namznmHCIVL3o+c+vSR2ICppfUV94B8NCHekGcO7fCRZPoVnIQkGS9p/hdZImYgSLyiEO2k5WpDKcSr3YFK9NvSn0lCI1baLHtXLR/EVSHtas+om/Em7njTb31/b+Bblaj49lcS5aV8pSqwPxy+tU2HnryK4vRYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mCxeE7iV; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-70e302191a3so37971867b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 08:05:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751987127; x=1752591927; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AbN9vJsY/mkHEsGghFEQy2rviLOqFLUvl0p6J+/2RvA=;
-        b=mCxeE7iVDSfoki+w5FHCuE8wu6pBkGzuNH/NDEu7FVD8wIBtqNJ8zRL1Ar8lE0ZYMA
-         wAWiex2OwHfSAVdFXlDELaG/7hDfHO39ycc0CHMn/hDxrf1s1oiFiefsSEJh5LgPzhiT
-         srYAavrZuGRVnv1I8n0F0QtlAY9VKqmCKpUoNxjWvxBsmd+QuLI90LMWSw4sxubJWTLA
-         OtsvqU7koBYxI9ZA7GHi7w8VnqrM8675x/U5O6/lN82eApWgfEqFJz+pFd0lQv1KZT94
-         ajNuXZVHSD0AtEG9aC2QshNor0E0JkXCE7VPvLq+osjtL7uf22mu7hKc6phLmuF7grHt
-         1Cug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751987127; x=1752591927;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AbN9vJsY/mkHEsGghFEQy2rviLOqFLUvl0p6J+/2RvA=;
-        b=v1jUY5OfJcfPmlSLmj02bBH/LO+ZcR9Ur73pB3ofIuPPYJ18DeFwcB42Bs5yJ8NY3X
-         1JJ33MKxZU+DU2uWasad1vWEkm19hf1s52fUpe66wHXs1kPPA84hBopcCVTQi9IICmIC
-         YEbccpTqMn7X8wIzFikQLNLFhMUqj1UUqEX7jcno0IwdplKBupNIkgyqXB2rsU5YISVi
-         rVwEaSlXKWj0YUykjiDMAnrnKRnZExCKefncTNu0WOHsZ0OpOjuZneSnfByHVNKw9Ev5
-         m7PqQqvMKaZKresmpnCKDXK+3SJ7OW/2O8biQmtUIgbuiEoDzAUOg+P1rJ9XPYnz006j
-         upXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFDWJN9nZvQ5ghoBUNvMAszIvVpRUkNd2EpF2FvMrJqcZJPJH7lkUp4MH+Fo2BraeQFsqGXSxVYMVR6K0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzcn6F7yZ7gh+oXvIiAyQksMFi6YLOzJs9+rHm0IX+IJtJf/vah
-	vS5gYD9IzyTb3JMtZwwhEnq8sHuqkjj7Ny0YVtoRJlp+7scYiEC6Uswf8jsYb2SyxX3LiflINJj
-	IErGq9VqpsM3yf0gMJ5yXiimJbwFPjW3qxm/JDsWeWg==
-X-Gm-Gg: ASbGncvu6vQSEbaV6VE8+1jTDKiTmd9GSZpAnyhD9gxlXTyuUgWiOgFFZUS2YKipaJf
-	4ml7JEF5FD6lL2T2Bt/F4VPH+Yi/lFwkJaBBXST9rJo5aXCA0ZnjcvkCqPN9nGEQqO1ZjGbKSfV
-	CTsArOM45mNk3WtLBVHLIClK35YESkVTojrx+DzUUYWfSs
-X-Google-Smtp-Source: AGHT+IHBtCLoH5+e5H6LltUDB7e8LY/seAM2AxugJI15zrEUc8YzJfSv/mbx//NgSFS3ANi+4dqcSKaKRPubRavB9Bw=
-X-Received: by 2002:a05:690c:45c9:b0:708:16b0:59c3 with SMTP id
- 00721157ae682-717a046193fmr41621337b3.33.1751987126648; Tue, 08 Jul 2025
- 08:05:26 -0700 (PDT)
+	s=arc-20240116; t=1751987123; c=relaxed/simple;
+	bh=LVGpOA1AlOfdfG+4yb7mp9YPnXmLH7nquNwJ8SPuEGc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fFRX33aAMqNPLtRp1kq9I+5urqjm+MwofMvjn5JG7zK1fuxbFkxqJ8Fs6PshTqX58RXZYryy08ZPegdxnfJuBxJdocCbkT2OH1HzJJFsdKiza5DAiLzwp5NxTBvSEkA9Tbhlb+6G7zchtuOJ5GORhIlXiXN9bWqnTo+Ousr9rCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SDHlSuWa; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568Ec0oq025387;
+	Tue, 8 Jul 2025 15:05:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=2q+LOA
+	6JI9ZB1VZSG9Mm/LOXT6Ndp6613RTVPc4LIFw=; b=SDHlSuWajIJNaXYffOR9wN
+	ZUqiMr+llWmt00XKszeOh0WB79FqiT2d+OV+TgnN/HU5XKvRnY051XkuGltONDsv
+	uW/Js5uQPxJa7dIKa+MesuFh26TDv1qfx3mTW9v+412IUHI+D2rL9sCbOaxXv8D2
+	4BsialFxI+zKbLkr6i1tLMKkTt5iYPVq1MrGS4nOZuwk2N+P/IJDF+IcXN3uarGN
+	5fRKmfp1Vsv9bC3V4Zc/cwqZWl2CLCZTSO1foLA8RdR1yGDifDo1VfLbwkvYb+Ir
+	yi+o0e2aOYWKiiQTFel6s7ZryYF1q3T2X5/NGAm047dkUupbWsPEpN64NdiFb7UA
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47ptjr04y4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Jul 2025 15:05:16 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 568CCk9x013562;
+	Tue, 8 Jul 2025 15:05:15 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 47qgkku9k9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Jul 2025 15:05:15 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 568F5Eh929688098
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 8 Jul 2025 15:05:14 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4576158065;
+	Tue,  8 Jul 2025 15:05:14 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1DE0658063;
+	Tue,  8 Jul 2025 15:05:14 +0000 (GMT)
+Received: from [9.61.33.195] (unknown [9.61.33.195])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  8 Jul 2025 15:05:14 +0000 (GMT)
+Message-ID: <36700745-a406-43ea-b623-f7033e33deb5@linux.ibm.com>
+Date: Tue, 8 Jul 2025 10:05:08 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707105605.98248-1-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20250707105605.98248-1-angelogioacchino.delregno@collabora.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 8 Jul 2025 17:04:50 +0200
-X-Gm-Features: Ac12FXwX-NP6E6P2Q56_QdBCypnbJ4xWnF08vZN6p09NHmwLlHzcTOT7bmz8Wbg
-Message-ID: <CAPDyKFrDytmrkd6SsJc6W=k7Ayijfadu5jTOyTGn9rJS1osQBg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/10] pmdomain: Partial refactor, support modem and RTFF
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-mediatek@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, matthias.bgg@gmail.com, y.oudjana@protonmail.com, 
-	fshao@chromium.org, wenst@chromium.org, lihongbo22@huawei.com, 
-	mandyjh.liu@mediatek.com, mbrugger@suse.com, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-pm@vger.kernel.org, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] fsi: make fsi_bus_type constant
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: Ninad Palsule <ninad@linux.ibm.com>, linux-fsi@lists.ozlabs.org
+References: <2025070100-overblown-busily-a04b@gregkh>
+Content-Language: en-US
+From: Eddie James <eajames@linux.ibm.com>
+In-Reply-To: <2025070100-overblown-busily-a04b@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=GL8IEvNK c=1 sm=1 tr=0 ts=686d33ac cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=voM4FWlXAAAA:8 a=ag1SF4gXAAAA:8 a=zBfx4fC51ErqrqZicDoA:9
+ a=QEXdDO2ut3YA:10 a=IC2XNlieTeVoXbcui8wp:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-Proofpoint-ORIG-GUID: nkxnG2WeZVDqX7a-Tz4Uj7UZpllGqux2
+X-Proofpoint-GUID: nkxnG2WeZVDqX7a-Tz4Uj7UZpllGqux2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDEyNCBTYWx0ZWRfX0ELS8OGLxwb8 pxqqlJk0vIAkiRMbQIot5zi9hWMoSwj8XYFyIqo3K5LvENy48tgqcmXo0PYVZY5fO/rXUNjzeHJ aK/rub2URZrHV4Non4JpCLyjExgdYjgL2FxBghgGxYY3kBy4g88AvJnLvdl9mPjETawAmIqipsg
+ +O4kzvrrlQVdIlA4GiQtd9mfdHZ6Wq9uzOmf13ybg7TVPvicZx9AeOyfNreU/rdlTPXn+FKbJj2 1n4JzVorPWzD/rozchd61oh9EjHN0zgC/J2nncegxS8+j7UOeDY8Ho4W/PN1ePxuAnFSFQAW+hT l4Xr/C7rPDaQvv/Nz8jsVsoCP+8JthawwOzZdHP692CUHj+tpIo97YN2ejEtEgbBBdLl2wYWvGK
+ P5PC++BAhzQrBg4QoNmTpiQ/V2DhOjfZXeN0kzQfDwEFpDmF+BG8pMaoe3sMNxioFsVQRr9B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-08_04,2025-07-07_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ clxscore=1011 impostorscore=0 suspectscore=0 bulkscore=0 adultscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507080124
 
-On Mon, 7 Jul 2025 at 12:56, AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Changes in v2:
->  - Added #access-controller-cells allowance for MT8188/95 infracfg_ao
->
-> This series is a subset of [1], leaving out the Hardware Voter specific
-> bits for MT8196 until the discussion around it reaches a conclusion.
->
-> Even though the proposed code was born as a preparation to support the
-> MT8196/MT6991 SoCs power domain controllers, it is a necessary cleanup
-> for all power domain controllers of all of the currently supported SoCs
-> from MediaTek.
->
-> You may also notice the addition of support for modem power sequences:
-> this was brought up 6 months ago (or more) by community contributors
-> (mainly Yassine Oudjana) that were trying to upstream the MediaTek
-> MT6735 Smartphone SoC and needed support to provide power to the MD
-> subsystem - so, even though in this specific series the code for the
-> modem power sequence is not yet triggered by any SoC, please please
-> please, let it in.
-> Besides, "a bunch" of upstream supported SoCs do have the MD power
-> domain even though it wasn't added to their drivers (because if there
-> was no support in the driver, it would just crash the system); the
-> addition is something that I plan to do at some point, but definitely
-> not now as I have no bandwidth for that (bar MT8196, which will have
-> this domain).
->
-> Compared to v1 in [1]:
->  - Changed mediatek,bus-protection to access-controllers
->    as suggested by Rob (thanks!)
->  - Added commits to document #access-controller-cells on all of
->    the access control providers
 
-The series looks good to me! I can pick patch 1->9, but I am awaiting
-an ack from some of the DT maintainers for patch 1->3 first.
+On 7/1/25 07:07, Greg Kroah-Hartman wrote:
+> Now that the driver core can properly handle constant struct bus_type,
+> move the fsi_bus_type variable to be a constant structure as well,
+> placing it into read-only memory which can not be modified at runtime.
 
-Kind regards
-Uffe
 
+Reviewed-by: Eddie James <eajames@linux.ibm.com>
+
+
+Thanks Greg.
 
 
 >
-> In the meanwhile.... relevant excerpt from the old series:
+> Cc: Eddie James <eajames@linux.ibm.com>
+> Cc: Ninad Palsule <ninad@linux.ibm.com>
+> Cc: linux-fsi@lists.ozlabs.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+> v2: fix up subject line to be correct
 >
-> This series refactors the bus protection regmaps retrieval to avoid
-> searching in all power domain devicetree subnodes for vendor properties
-> to get syscons for different busses, and adds a new property which is
-> located in the power controller root node containing handles to the same.
+>   drivers/fsi/fsi-core.c | 2 +-
+>   include/linux/fsi.h    | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
 >
-> Retrocompatibility is retained and was tested on multiple SoCs in the
-> Collabora lab - specifically, on Genio 350/510/700/1200, and manually
-> on MT6795 Helio (Xperia M5 Smartphone), MT8186, MT8192 and MT8195
-> Chromebooks.
->
-> This was tested *three times*:
->  - Before the per-SoC conversion in drivers/pmdomain/mediatek
->  - With per-SoC conversion code but with *legacy* devicetree
->  - With per-SoC conversion code and with *new* devicetree conversion
->
-> All of those tests were successful on all of the aforementioned SoCs.
->
-> This also adds support for:
->  - Modem power domain for both old and new MediaTek SoCs, useful for
->    bringing up the GSM/3G/4G/5G modem for both laptop and smartphone use
->  - RTFF MCU HW, as found in MT8196 Chromebooks and MT6991 Dimensity 9400
->
-> ...and prepares the pmdomain code to accomodate only the directly
-> controlled power domains for MT8196 (HW Voter support was left out).
->
-> [1] https://lore.kernel.org/all/20250623120154.109429-1-angelogioacchino.delregno@collabora.com
->
-> AngeloGioacchino Del Regno (10):
->   dt-bindings: memory: mtk-smi: Document #access-controller-cells
->   dt-bindings: clock: mediatek: Document #access-controller-cells
->   dt-bindings: power: mediatek: Document access-controllers property
->   pmdomain: mediatek: Refactor bus protection regmaps retrieval
->   pmdomain: mediatek: Handle SoCs with inverted SRAM power-down bits
->   pmdomain: mediatek: Move ctl sequences out of power_on/off functions
->   pmdomain: mediatek: Add support for modem power sequences
->   pmdomain: mediatek: Add support for RTFF Hardware in MT8196/MT6991
->   pmdomain: mediatek: Convert all SoCs to new style regmap retrieval
->   arm64: dts: mediatek: Convert all SoCs to use access-controllers
->
->  .../bindings/clock/mediatek,infracfg.yaml     |   3 +
->  .../clock/mediatek,mt8186-sys-clock.yaml      |  15 +
->  .../clock/mediatek,mt8188-sys-clock.yaml      |  15 +
->  .../clock/mediatek,mt8192-sys-clock.yaml      |  15 +
->  .../clock/mediatek,mt8195-sys-clock.yaml      |  15 +
->  .../clock/mediatek,mt8365-sys-clock.yaml      |  15 +
->  .../mediatek,smi-common.yaml                  |  16 +
->  .../power/mediatek,power-controller.yaml      |  39 ++
->  arch/arm64/boot/dts/mediatek/mt6795.dtsi      |   5 +-
->  arch/arm64/boot/dts/mediatek/mt8167.dtsi      |   6 +-
->  arch/arm64/boot/dts/mediatek/mt8173.dtsi      |   4 +-
->  arch/arm64/boot/dts/mediatek/mt8183.dtsi      |  17 +-
->  arch/arm64/boot/dts/mediatek/mt8186.dtsi      |  12 +-
->  arch/arm64/boot/dts/mediatek/mt8188.dtsi      |  23 +-
->  arch/arm64/boot/dts/mediatek/mt8192.dtsi      |  13 +-
->  arch/arm64/boot/dts/mediatek/mt8195.dtsi      |  20 +-
->  arch/arm64/boot/dts/mediatek/mt8365.dtsi      |  16 +-
->  drivers/pmdomain/mediatek/mt6795-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8167-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8173-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8183-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8186-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8188-pm-domains.h |   6 +
->  drivers/pmdomain/mediatek/mt8192-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8195-pm-domains.h |   5 +
->  drivers/pmdomain/mediatek/mt8365-pm-domains.h |  14 +-
->  drivers/pmdomain/mediatek/mtk-pm-domains.c    | 399 +++++++++++++++---
->  drivers/pmdomain/mediatek/mtk-pm-domains.h    |  74 +++-
->  28 files changed, 596 insertions(+), 181 deletions(-)
->
-> --
-> 2.49.0
->
+> diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
+> index 50e8736039fe..ee39d1699387 100644
+> --- a/drivers/fsi/fsi-core.c
+> +++ b/drivers/fsi/fsi-core.c
+> @@ -1404,7 +1404,7 @@ void fsi_driver_unregister(struct fsi_driver *fsi_drv)
+>   }
+>   EXPORT_SYMBOL_GPL(fsi_driver_unregister);
+>   
+> -struct bus_type fsi_bus_type = {
+> +const struct bus_type fsi_bus_type = {
+>   	.name		= "fsi",
+>   	.match		= fsi_bus_match,
+>   };
+> diff --git a/include/linux/fsi.h b/include/linux/fsi.h
+> index 8c5eef808788..adea1b432f2d 100644
+> --- a/include/linux/fsi.h
+> +++ b/include/linux/fsi.h
+> @@ -68,7 +68,7 @@ extern int fsi_slave_read(struct fsi_slave *slave, uint32_t addr,
+>   extern int fsi_slave_write(struct fsi_slave *slave, uint32_t addr,
+>   		const void *val, size_t size);
+>   
+> -extern struct bus_type fsi_bus_type;
+> +extern const struct bus_type fsi_bus_type;
+>   extern const struct device_type fsi_cdev_type;
+>   
+>   enum fsi_dev_type {
 
