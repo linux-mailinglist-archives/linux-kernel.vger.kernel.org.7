@@ -1,290 +1,146 @@
-Return-Path: <linux-kernel+bounces-722247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D96AFD6E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:08:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EEA4AFD6E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B19291AA827B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:08:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5622C582FFC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B5C2E5B1D;
-	Tue,  8 Jul 2025 19:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F272E6122;
+	Tue,  8 Jul 2025 19:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bf+KtHKq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jI+t2zQw"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6338488
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 19:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242958488
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 19:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752001709; cv=none; b=nNjeLX7BIQhyhMd6DrLx6miLsBhh4+I80mZRjRXsS/tMbGZs3Mu5EF48ez3s7mlEZA54yrIxidR+688EQX/BDvZBpU89stw0xltRPylPhUZtjSToK9wxOQUCCSBUb0K0hgrH8TilosqY+ZmLSj1bVHOJdDyI7K1Ogz6VacM0qOk=
+	t=1752001797; cv=none; b=fVA4xrsM+bSZ9tAuKFeJStZmrRdwWRGcNXIxzNVZVuY1ovKQLhonF/hb9F8h6TKF4RiHy+JABBUf7pNIwEb+ybOmppc+hC1NKbxzS8E154CSjMTGpCfd77X6aSIzwY9MLl1OGFqnMB10NvXveQ8nFokVbZjUWB5CKq9nVrvPtUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752001709; c=relaxed/simple;
-	bh=KQzM+BI5ZydMMyjFGRtS7bGi/J65IrANyglHGUPxDTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sTnLLauN73rrwVjS/yapp/h0IhdlI2rzP2qrb49qysVjD5Z9Yvk5uK8+4HFBP2HFTfNvz57sV38Om7XRsG7svRCOE0k5wExMiGVIevmHveUemRAiuN77hKkqYMr8dSy7Hjsls6MD3vrcEJD9tZcJz6o+7wWTYcJ0nDfbcMsdL/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bf+KtHKq; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752001707; x=1783537707;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KQzM+BI5ZydMMyjFGRtS7bGi/J65IrANyglHGUPxDTk=;
-  b=bf+KtHKqBJRtJl+bLy/etm/E3KrrsHEDx6hnV3txNjU87rMIGvmlVYTl
-   uvFBSfi8e98uu5AUIdnTchIZYkeSyEDkgSTFt4QE+v6613plq9BOJD9pC
-   drfjIM27deyFqXck7RHGnfWvocw5qhyJxPvC8GRBgXO5SzcXX6u2dj+Ft
-   +DYZBVFVgAHQjuaMS4Nq25Dsifeq1eiA0I30JDXZpCBvDV70CZh4OE0mQ
-   xMAh5q8WoIgmp0psIE0wz729ItK7JGCe/n+l4+6jr1FEtoReaQoKAojdq
-   3IxetJYGsNkUdKIzG072Hy0l3vx9AcugWz3P+YK7RMlKkHBnp7k1ynuV3
-   w==;
-X-CSE-ConnectionGUID: S9YLsmHvQXiaiZrbMoh6Jg==
-X-CSE-MsgGUID: 8RXC2X/xRa2f7CaArOc7TQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="64947663"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="64947663"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 12:08:26 -0700
-X-CSE-ConnectionGUID: Bh80IEN1Quu9PIXBPDzPHQ==
-X-CSE-MsgGUID: hsk36SrGT+C+fwVQv4Wimw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="159608638"
-Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.103.51])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 12:08:25 -0700
-Date: Tue, 8 Jul 2025 12:08:24 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Fenghua Yu <fenghuay@nvidia.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	Chen Yu <yu.c.chen@intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH v6 00/30] x86,fs/resctrl telemetry monitoring
-Message-ID: <aG1sqKBJSfHydDsx@agluck-desk3>
-References: <20250626164941.106341-1-tony.luck@intel.com>
- <b2de4c92-a883-40b0-92e0-16fac9e386b0@intel.com>
- <aGa8Pg9pSCJ3XjtY@agluck-desk3>
+	s=arc-20240116; t=1752001797; c=relaxed/simple;
+	bh=rYVTpZKN3pXmydkDpLtXQzpbF3ivuXWhDthP0ZCgqvA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=afQMjlwaSfrlWRoT8PvobtVIo1JBwnvm9CDE3iWqxgIW8oUm8798QR4FeXreQ3I0Zse3+RSF8nqQtecW2/LeawFMLHChIhfES/+kdqaVmgF/szYJZZFKzTZekd8h+MfC8wSvy1ZnlXJX9anlebV+msKiYvVBG75FQ1dhttGExNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jI+t2zQw; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55622414cf4so4426313e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 12:09:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752001792; x=1752606592; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BBmIZ/72TeWIcKTjEO97sep+39k5b0ipJBxEHB576K0=;
+        b=jI+t2zQwA4IbAgmGYp/GpyPxnWiqoWGFxcm7Nvt3MQJHipv/dxa1tCgLxsO9UrWNve
+         Ee69t/cdKu+Jy5NQ4/GBGZCTubN8sfIVwFuaaxZsT1wkbR4WJaAVCu18C6gVN01dezxb
+         MHhJlIwXnVVQ73vhxLU/94IOIG5f9hpqdnhlnAkUYziCnPDTtSRGBBLHwarQtmkxzSlM
+         5Tkptjba1t2uYOmNzJWMnMYyOPWjDEh0tNfqFMigRS+Ot8+u8Ot9j3Og78+6glvS6Ygl
+         p35pyRdLFUmNcJGPmmjkzFiqMY4OciKS7f2AhHcBFMjgIgHx7s5G9x6DZIbc7L0sYXFy
+         MIrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752001792; x=1752606592;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BBmIZ/72TeWIcKTjEO97sep+39k5b0ipJBxEHB576K0=;
+        b=bCB6NNwJc9KW/cDfHPAge1DtRuLo+ChCHT8iBnjPcUsvc1zCl1Jikh6RlfYv/ZqlsR
+         lt/PPIoQZBguweYbeA/T1gSE0HSZhVyFttNXR24b1/O2qzDDjgRFTInvc2VWN29mC54u
+         n6UhQctUmSKElSOPqAzeh/W0q36yDBYlk5sqBcq8hU2yCp9G8dZRHDI2wANOrY1dCNaI
+         OqKj3fsT8/8vzC1ten1YdxxHufcLSmFW4nE7Db5ICac9wjep+RUUcIRb463HuZBfb2ZD
+         vrG7DaZHLOBh8kVVC63LIkECJIRSP31xalyBjKXB3T6KDr6QRckBsRyQAgbCTPlLBmWn
+         2yaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2wrjfykF26RamaT8z0aduG+YwP1ysOWn5iB/W1ueC7jvsdAyyw2ty+qmBk13LA2sw9L4IeYRvKg+RGCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLLEICsvb7zsVbam5GtKV5e6MKawba2IyCIl3lmbdHnfMqOJQF
+	GERfYaKl2MKAdZGRnYQp71sroIS3wHmQiKD6xZxKOj8FuWl7OKgAy8/v7MK9m7cTGf3GWSkSgYr
+	AaXiKHb7a4tc4zYCuHAvhOZLBXBELf44ZVEWawJw=
+X-Gm-Gg: ASbGncvN7uHq9vM72jb3GXx2H5a3scdoO0uNyv1PpgWwJbOoF+PFDiAjl2Aq1OoGdUp
+	vB+f2E91dnGMyOp69oAdzMK72eNzCbT592wbwB9O3X6ckR4rbQeEU+b0bNkiEb/Bbb2lrY1oK65
+	gUAxxdDORrZa4cLSdkQawe1IeKRisBII2q8n0aVXQtVk2mqWDsW+C+o/SuvKhWBqVQoUKIWSn9
+X-Google-Smtp-Source: AGHT+IFWF7LZHx3nXpiJoB0IW90/W+d3LJqVwJy96jOg+MappwCC4jcuM87nAo8P7b8tVdwLPFqEZDpFBPyfPll5MKU=
+X-Received: by 2002:a05:6512:b25:b0:553:2c01:ff44 with SMTP id
+ 2adb3069b0e04-558f9a193d9mr84537e87.2.1752001792002; Tue, 08 Jul 2025
+ 12:09:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aGa8Pg9pSCJ3XjtY@agluck-desk3>
+References: <txyrr26hxe3xpq3ebqb5ewkgvhvp7xalotaouwludjtjifnah2@7tmgczln4aoo>
+In-Reply-To: <txyrr26hxe3xpq3ebqb5ewkgvhvp7xalotaouwludjtjifnah2@7tmgczln4aoo>
+From: John Stultz <jstultz@google.com>
+Date: Tue, 8 Jul 2025 12:09:40 -0700
+X-Gm-Features: Ac12FXwbkgvr1g6ENIgsAuAAMqXYkYu3gUgSioftbW8cqYw2DNqf3oIGuNaWM0g
+Message-ID: <CANDhNCoRZOs0qNdJqUF=5RBWP0MCCC_4zbvvftzNWwvuX087xA@mail.gmail.com>
+Subject: Re: [PATCH] timekeeping: Always initialize use_nsecs when querying
+ time from phc drivers
+To: =?UTF-8?Q?Markus_Bl=C3=B6chl?= <markus.bloechl@ipetronik.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, 
+	"Christopher S. Hall" <christopher.s.hall@intel.com>, 
+	Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 03, 2025 at 10:22:06AM -0700, Luck, Tony wrote:
-> On Thu, Jul 03, 2025 at 09:45:15AM -0700, Reinette Chatre wrote:
-> > Hi Tony and Dave,
-> > 
-> > On 6/26/25 9:49 AM, Tony Luck wrote:
-> > >  --- 14 ---
-> > > Add mon_evt::is_floating_point set by resctrl file system code to limit
-> > > which events architecture code can request be displayed in floating point.
-> > > 
-> > > Simplified the fixed-point to floating point algorithm. Reinette is
-> > > correct that the additional "lshift" and "rshift" operations are not
-> > > required. All that is needed is to multiply the fixed point fractional
-> > > part by 10**decimal_places, add a rounding amount equivalent to a "1"
-> > > in the binary place after those supplied. Finally divide by 2**binary_places
-> > > (with a right shift).
-> > > 
-> > > Explained in commit comment how I chose the number of decimal places to
-> > > use for each binary places value.
-> > > 
-> > > N.B. Dave Martin expressed an opinion that the kernel should not do
-> > > this conversion. Instead it should enumerate the scaling factor for
-> > > each event where hardware reported a fixed point value. This patch
-> > > could be dropped and replaced with one to enumerate scaling factors
-> > > per event if others agree with Dave.
-> > 
-> > Could resctrl accommodate both usages? For example, it does not
-> > look too invasive to add a second file <mon_evt::name>.raw for the
-> > mon_evt::is_floating_point events that can output something like Dave
-> > suggested in [1]:
-> > 
-> > .raw file format could be:
-> > 	#format:<output that depends on format>
-> > 	#fixed-point:<value>/<scaling factor>
-> > 
-> > Example output:
-> > 	fixed-point:0x60000/0x40000
-> 
-> Dave: Is that what you want in the ".raw" file? An alternative would be
-> to put the format information for non-integer events into an
-> "info" file ("info/{RESOURCE_NAME}_MON/monfeatures.raw.formats"?)
-> and just put the raw value into the ".raw" file under mon_data.
+On Tue, Jul 8, 2025 at 9:46=E2=80=AFAM Markus Bl=C3=B6chl
+<markus.bloechl@ipetronik.com> wrote:
+>
+> Most drivers only populate the fields cycles and cs_id in their
+> get_time_fn() callback for get_device_system_crosststamp() unless
+> they explicitly provide nanosecond values.
+> When this new use_nsecs field was added and used most drivers did not
+> care.
+> Clock sources other than CSID_GENERIC could then get converted in
+> convert_base_to_cs() based on an uninitialized use_nsecs which usually
+> results in -EINVAL during the following range check.
+>
+> Fixes: 6b2e29977518 ("timekeeping: Provide infrastructure for converting =
+to/from a base clock")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Markus Bl=C3=B6chl <markus.bloechl@ipetronik.com>
+> ---
+>
+> Notes:
+>     We observed this in the e1000e driver but at least stmmac and
+>     ptp_kvm also seem affected by this.
+>     ice was recently fixed by a5a441ae283d ("ice/ptp: fix crosstimestamp =
+reporting").
+>
+>
+>  kernel/time/timekeeping.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+> index a009c91f7b05..be0da807329f 100644
+> --- a/kernel/time/timekeeping.c
+> +++ b/kernel/time/timekeeping.c
+> @@ -1269,6 +1269,8 @@ int get_device_system_crosststamp(int (*get_time_fn=
+)
+>
+>         do {
+>                 seq =3D read_seqcount_begin(&tk_core.seq);
+> +               system_counterval.use_nsecs =3D false;
+> +
 
-Note that I thought it easier for users to keep the raw file to just
-showing a value, rather than including the formatting details in
-Reinette's proposal.
+So if the argument is the local system_counterval structure isn't
+being fully initialized by the get_time_fn() functions it is passed
+to, it seems like it would be better to do so at the top of
+get_device_system_crosststamp(), and not inside the seqloop.
 
-Patch to implement my alternative suggestion below. To the user things
-look like this:
+But having the responsibility to initialize/fill in the structure
+being split across the core and the implementation logic (leaving some
+of the fields as optional) feels prone to mistakes, so it makes me
+wonder if those drivers implementing the get_time_fn() really ought to
+fully fill out the structure, and thus the fix would be better done in
+those drivers.
 
-$ cd /sys/fs/resctrl/mon_data/mon_PERF_PKG_01
-$ cat core_energy
-0.02203
-$ cat core_energy.raw
-5775
-$ cat /sys/fs/resctrl/info/PERF_PKG_MON/mon_features_raw_scale
-core_energy 262144
-activity 262144
-$ bc -ql
-5775 / 262144
-.02202987670898437500
-
-If this seems useful I can write up a commit message and include
-as its own patch in v7. Suggestions for better names?
-
--Tony
-
----
-
-diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
-index 4704ea7228ca..5ac4e3c98f23 100644
---- a/fs/resctrl/internal.h
-+++ b/fs/resctrl/internal.h
-@@ -90,6 +90,8 @@ extern struct mon_evt mon_event_all[QOS_NUM_EVENTS];
-  *                   the event file belongs. When @sum is one this
-  *                   is the id of the L3 cache that all domains to be
-  *                   summed share.
-+ * @raw:             Set for ".raw" files that directly show hardware
-+ *                   provided counts with no interpretation.
-  *
-  * Pointed to by the kernfs kn->priv field of monitoring event files.
-  * Readers and writers must hold rdtgroup_mutex.
-@@ -100,6 +102,7 @@ struct mon_data {
- 	struct mon_evt		*evt;
- 	int			domid;
- 	bool			sum;
-+	bool			raw;
- };
- 
- /**
-diff --git a/fs/resctrl/ctrlmondata.c b/fs/resctrl/ctrlmondata.c
-index 29de0e380ccc..78e7af296d5a 100644
---- a/fs/resctrl/ctrlmondata.c
-+++ b/fs/resctrl/ctrlmondata.c
-@@ -753,7 +753,7 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
- 		seq_puts(m, "Error\n");
- 	else if (rr.err == -EINVAL)
- 		seq_puts(m, "Unavailable\n");
--	else if (evt->binary_bits == 0)
-+	else if (md->raw || evt->binary_bits == 0)
- 		seq_printf(m, "%llu\n", rr.val);
- 	else
- 		print_event_value(m, evt->binary_bits, rr.val);
-diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index 511362a67532..97786831722a 100644
---- a/fs/resctrl/rdtgroup.c
-+++ b/fs/resctrl/rdtgroup.c
-@@ -1158,6 +1158,21 @@ static int rdt_mon_features_show(struct kernfs_open_file *of,
- 	return 0;
- }
- 
-+static int rdt_mon_features_raw_scale_show(struct kernfs_open_file *of,
-+					   struct seq_file *seq, void *v)
-+{
-+	struct rdt_resource *r = rdt_kn_parent_priv(of->kn);
-+	struct mon_evt *mevt;
-+
-+	for_each_mon_event(mevt) {
-+		if (mevt->rid != r->rid || !mevt->enabled || !mevt->binary_bits)
-+			continue;
-+		seq_printf(seq, "%s %u\n", mevt->name, 1 << mevt->binary_bits);
-+	}
-+
-+	return 0;
-+}
-+
- static int rdt_bw_gran_show(struct kernfs_open_file *of,
- 			    struct seq_file *seq, void *v)
- {
-@@ -1823,6 +1838,13 @@ static struct rftype res_common_files[] = {
- 		.seq_show	= rdt_mon_features_show,
- 		.fflags		= RFTYPE_MON_INFO,
- 	},
-+	{
-+		.name		= "mon_features_raw_scale",
-+		.mode		= 0444,
-+		.kf_ops		= &rdtgroup_kf_single_ops,
-+		.seq_show	= rdt_mon_features_raw_scale_show,
-+		.fflags		= RFTYPE_MON_INFO,
-+	},
- 	{
- 		.name		= "num_rmids",
- 		.mode		= 0444,
-@@ -2905,7 +2927,7 @@ static void rmdir_all_sub(void)
-  */
- static struct mon_data *mon_get_kn_priv(enum resctrl_res_level rid, int domid,
- 					struct mon_evt *mevt,
--					bool do_sum)
-+					bool do_sum, bool rawfile)
- {
- 	struct mon_data *priv;
- 
-@@ -2916,7 +2938,8 @@ static struct mon_data *mon_get_kn_priv(enum resctrl_res_level rid, int domid,
- 
- 	list_for_each_entry(priv, &mon_data_kn_priv_list, list) {
- 		if (priv->rid == rid && priv->domid == domid &&
--		    priv->sum == do_sum && priv->evt == mevt)
-+		    priv->sum == do_sum && priv->evt == mevt &&
-+		    priv->raw == rawfile)
- 			return priv;
- 	}
- 
-@@ -2928,6 +2951,7 @@ static struct mon_data *mon_get_kn_priv(enum resctrl_res_level rid, int domid,
- 	priv->domid = domid;
- 	priv->sum = do_sum;
- 	priv->evt = mevt;
-+	priv->raw = rawfile;
- 	list_add_tail(&priv->list, &mon_data_kn_priv_list);
- 
- 	return priv;
-@@ -3078,12 +3102,13 @@ static int mon_add_all_files(struct kernfs_node *kn, struct rdt_domain_hdr *hdr,
- 	struct rmid_read rr = {0};
- 	struct mon_data *priv;
- 	struct mon_evt *mevt;
-+	char rawname[64];
- 	int ret;
- 
- 	for_each_mon_event(mevt) {
- 		if (mevt->rid != r->rid || !mevt->enabled)
- 			continue;
--		priv = mon_get_kn_priv(r->rid, domid, mevt, do_sum);
-+		priv = mon_get_kn_priv(r->rid, domid, mevt, do_sum, false);
- 		if (WARN_ON_ONCE(!priv))
- 			return -EINVAL;
- 
-@@ -3093,6 +3118,18 @@ static int mon_add_all_files(struct kernfs_node *kn, struct rdt_domain_hdr *hdr,
- 
- 		if (r->rid == RDT_RESOURCE_L3 && !do_sum && resctrl_is_mbm_event(mevt->evtid))
- 			mon_event_read(&rr, r, hdr, prgrp, &hdr->cpu_mask, mevt, true);
-+
-+		if (!mevt->binary_bits)
-+			continue;
-+
-+		sprintf(rawname, "%s.raw", mevt->name);
-+		priv = mon_get_kn_priv(r->rid, domid, mevt, do_sum, true);
-+		if (WARN_ON_ONCE(!priv))
-+			return -EINVAL;
-+
-+		ret = mon_addfile(kn, rawname, priv);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	return 0;
+thanks
+-john
 
