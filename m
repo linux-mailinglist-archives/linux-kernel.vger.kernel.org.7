@@ -1,181 +1,132 @@
-Return-Path: <linux-kernel+bounces-722003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32B76AFD0BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:27:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3AF4AFD0F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36D9A581018
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:25:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D3DF167BE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7462E541E;
-	Tue,  8 Jul 2025 16:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DF82E5402;
+	Tue,  8 Jul 2025 16:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fwzkQmWY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="MInj6+0q";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="M+xlxHEG"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92DF2D9790;
-	Tue,  8 Jul 2025 16:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E1E2A1BA;
+	Tue,  8 Jul 2025 16:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751991945; cv=none; b=Rnkm8hJ3MkKODaJzZ4nhZoFn6m3azt6B9/Nk629UTHQXLXgMvfAWtNalh81zkHjriYbOwtKbgwnGToY35Vm1/H/4ZamiTkAJSc6kM5h3/RaV2rkQphOb5GttUncPm5qsqk5sMmKceJysvHNalssbC09bsnJ9jTyfFAWyl7e8yto=
+	t=1751992117; cv=none; b=FLbqcVvL/iTC1OjvOqQDWupZ/LrIHhaVXCZgogDIcJYQG6D3z61wlpSrvYJv4yAqw9P9GWKhAE4z46ZVOtR7Y+X/iNhIfA0eglQxUPktM//nqs8XUURtv9iD4QdL2tGAH/hCZIBdswZlLOq16/tJlyWtP+ZN3kKLKXCpOsfXdC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751991945; c=relaxed/simple;
-	bh=QmoHd8cC81xmIDIbZJg1nKxwCyWUf9E8OERsbTNGp54=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QScfuie6OdSLqrL7Imr2kydSzrL0r1MuVc7ygR7LeczM0G0pL4W0GSJ7KKpskZwssjT6zIu+h8VVBW/mTEl319G3nQb3ayBqsHHotqbQCNHotG+jjHH3Abpz1XlKvKkT0DNDs8oyRfheVXic/U3GmdyRl4vnGz/iJh3WJjfXGFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fwzkQmWY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDBE8C4CEED;
-	Tue,  8 Jul 2025 16:25:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751991944;
-	bh=QmoHd8cC81xmIDIbZJg1nKxwCyWUf9E8OERsbTNGp54=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fwzkQmWYtKwmnrBgCnqdCq4I0KvH45mkaufs0g2zpZphsVw0UrX4WEkPeny+dVWaw
-	 M6AZK2sUINh5mh2Ry+BOP31dYkOZ+/mdz31oE6MwgCU8/kx+NLU4b9QF9QSwKguRYI
-	 FIl2/JTGLBdDbv+oquP1D1XzoJcXFefS6Zp0J/u0AA2TIyur4qjm2nIG7PdYsVGKs6
-	 reWPwpXw9y0Y/x/T4lVcbnYE/kfos1SMLIZmrqeWPEehNk5niV0pPeKHk7cAZwdgxb
-	 zBjpN9lr4h7umBdF0vmo+B/aP8G47E+Db71104HEEjjkmtNoTrlcJ1ZODG8HXjfNVQ
-	 NI2rF/+EjfqEQ==
-Date: Tue, 8 Jul 2025 21:55:33 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Jingoo Han <jingoohan1@gmail.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Jeff Johnson <jjohnson@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev, linux-wireless@vger.kernel.org, 
-	ath11k@lists.infradead.org, qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com, 
-	quic_vpernami@quicinc.com, quic_mrana@quicinc.com, 
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Subject: Re: [PATCH v4 02/11] PCI/bwctrl: Add support to scale bandwidth
- before & after link re-training
-Message-ID: <fhi7q5mbe75xbfmff6k4qe5pe6xveya5dsfqkm6bqpz7rcn3vr@jyn4uxl2exp7>
-References: <20250609-mhi_bw_up-v4-0-3faa8fe92b05@qti.qualcomm.com>
- <20250609-mhi_bw_up-v4-2-3faa8fe92b05@qti.qualcomm.com>
+	s=arc-20240116; t=1751992117; c=relaxed/simple;
+	bh=w6wMl1xm8whz4FVlYpYyLCnOKc1n9j2q2icjjjCVQKc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=q+0ut44HKfqKd20gtg9VDpcR+uQ5rbIzhpu85BwXLWttOGa2yNnsoHEgnBsVUzz17dEYTWbHT1nL04Pti5rBxK58nfPrV2m6f61aBDZeT+g3UKgw7DSQx+T/ddMsh+2Tlw/AEqB7h7Pwv7m5EqQPPckIajJUDTiKKufGIhGYIBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=MInj6+0q; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=M+xlxHEG; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 80612EC07CF;
+	Tue,  8 Jul 2025 12:28:34 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Tue, 08 Jul 2025 12:28:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1751992114;
+	 x=1752078514; bh=yAMMwurFHCZ7tyH4Kbmxgi61UpDu7V0P44pjbcdyPVk=; b=
+	MInj6+0qm2VL7fgWYXgUP91tJjHfRaZSvnN4blMHepfQ1m1AUb/eImVY11L/bob9
+	dHmRm0x9a9aUSQTGSsRBVn56fzn6mqV2XBe6a/8bq8xp6+Gu7wa87El4JvT5Cfax
+	uC1Od66oI7Vef/cz8iz15abeyjSkc//Ld8DFMNMiSpKSv1QrOf6FOkk4MXZ0+2x8
+	RxbuuWQxwQksA/R2guQUz+QyoNf7RqEg6tvGhJmfEI15S0Clx4ZIsPrfcpfsYmTp
+	T5/x5NGxrIvgGRDNrKtvG5CyenDPezmG0zFDJo1Ht/vz5Uvv14lj0QMrJkYJs5jF
+	91Uu7NnavuRQl6kJ2c/FtA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751992114; x=
+	1752078514; bh=yAMMwurFHCZ7tyH4Kbmxgi61UpDu7V0P44pjbcdyPVk=; b=M
+	+xlxHEGvzGSfjuN0uX5h8iCiS7tba+PH6DZgkiGauwWlMGvZgO91NLPs4XzJQbdS
+	ZWBmVXrS43Pxt73d3I3hRzxPxZGIekWk+WoZ5wTlpMhCOKicEnsqumjbRAWzeeDl
+	OgypS6duUt0iQu6tY8nCMh+0UvBEoa1SlGPGrbDXoDEOUeczLGDZzq4ZZ3PB4bkh
+	cEt19VtP1YFlBo/VnZTD59iqIisP6t8XmbEjyQGS2z95t5UJpd5xJHXBmLW3vLHG
+	5IqP+4xhYWIYzn1BuUU7gF8wCR0aRBrNOfyHfot+1KDW6SWB3+UOcuhoCoayQiYk
+	JshFWeVyQH1tzt4YeYsVA==
+X-ME-Sender: <xms:MUdtaJhB5E-ed-iIatglbbBVT2pf9cYKMWdS3Iod_W16pLuMKTt_YQ>
+    <xme:MUdtaOCZNKfoQLelOKnGMZPnmEi6Mhy-XIK5_CC4JrLKsNZPcxikOdmzU-Y02UQdh
+    GpnGwYW3oJk0h9tUEE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefheduiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepjhgrtghophhordhmohhnughisehiuggvrghsohhnsghorghrugdrtg
+    homhdprhgtphhtthhopehkihgvrhgrnhdrsghinhhghhgrmhesihguvggrshhonhgsohgr
+    rhgurdgtohhmpdhrtghpthhtoheplhgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrg
+    hsohhnsghorghrugdrtghomhdprhgtphhtthhopehmtghhvghhrggssehkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehmvghhughirdgujhgrihhtsehlihhnuhigrdhinhhtvghlrd
+    gtohhmpdhrtghpthhtohepshgrkhgrrhhirdgrihhluhhssehlihhnuhigrdhinhhtvghl
+    rdgtohhmpdhrtghpthhtohephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtph
+    htthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopehlihhnuhigqdhmvgguihgrsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:MUdtaA7MqVOw1heNx-wKigSwNSI9lINkuWNcoF4ZgVf9ydCjEq5moQ>
+    <xmx:MUdtaKi51mS1TNKc2jWXk6hZ6vE1W7XzH2cMVxSTRmdRQ1qkl6hmPg>
+    <xmx:MUdtaG7P_qdMcq7V0eGqICxClKHdnjgiuQYEDZFsIqYaCl_LNxbG3w>
+    <xmx:MUdtaPFADuPYtdPCOqbNrE4qF_ck8VTu8777VTO_8Uj3n-Z84Yrv8w>
+    <xmx:MkdtaHwy09m11MOGxm7fxd0EYyWwV6-KsGqmAj80k1LhFAIljpVTDw5t>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id CF4FC700070; Tue,  8 Jul 2025 12:28:33 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250609-mhi_bw_up-v4-2-3faa8fe92b05@qti.qualcomm.com>
+X-ThreadId: Tfbee3c376bb009bb
+Date: Tue, 08 Jul 2025 18:28:12 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Mehdi Djait" <mehdi.djait@linux.intel.com>,
+ "Sakari Ailus" <sakari.ailus@linux.intel.com>,
+ "laurent.pinchart" <laurent.pinchart@ideasonboard.com>
+Cc: "Jacopo Mondi" <jacopo.mondi@ideasonboard.com>,
+ "Hans Verkuil" <hverkuil@xs4all.nl>,
+ "Kieran Bingham" <kieran.bingham@ideasonboard.com>,
+ "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+ "Hans de Goede" <hdegoede@redhat.com>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-Id: <04c7c949-d0ac-43c0-91cb-7445cb44a036@app.fastmail.com>
+In-Reply-To: <20250708161637.227111-1-mehdi.djait@linux.intel.com>
+References: <20250708161637.227111-1-mehdi.djait@linux.intel.com>
+Subject: Re: [PATCH] media: i2c: Kconfig: Select COMMON_CLK for ACPI-based systems
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 09, 2025 at 04:21:23PM GMT, Krishna Chaitanya Chundru wrote:
-> If the driver wants to move to higher data rate/speed than the current data
+On Tue, Jul 8, 2025, at 18:16, Mehdi Djait wrote:
+> ACPI-based systems are required to create and register a fixed rate clock
+> using the new v4l2 helper devm_v4l2_sensor_clk_get() that uses the
+> common clk framework.
+>
+> Ensure that COMMON_CLK is selected.
+>
+> Signed-off-by: Mehdi Djait <mehdi.djait@linux.intel.com>
 
-s/driver/PCI client driver
+You should never 'select' another subsystem or a drvier from
+an unrelated subsystem.
 
-> rate then the controller driver may need to change certain votes so that
-> link may come up at requested data rate/speed like QCOM PCIe controllers
-> need to change their RPMh (Resource Power Manager-hardened) state. Once
-> link retraining is done controller drivers needs to adjust their votes
-> based on the final data rate.
-> 
-> Some controllers also may need to update their bandwidth voting like
-> ICC BW votings etc.
-> 
-> So, add pre_link_speed_change() & post_link_speed_change() op to call
-> before & after the link re-train. There is no explicit locking mechanisms
-> as these are called by a single client Endpoint driver.
-> 
+What you want here instead is 'depends on COMMON_CLK'.
 
-What if client drivers of multiple endpoints connected to different RP of the
-same Host Bridge call this API? Won't you need locking?
-
-- Mani
-
-> In case of PCIe switch, if there is a request to change target speed for a
-> downstream port then no need to call these function ops as these are
-> outside the scope of the controller drivers.
-> 
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> ---
->  drivers/pci/pcie/bwctrl.c | 15 +++++++++++++++
->  include/linux/pci.h       | 18 ++++++++++++++++++
->  2 files changed, 33 insertions(+)
-> 
-> diff --git a/drivers/pci/pcie/bwctrl.c b/drivers/pci/pcie/bwctrl.c
-> index 36f939f23d34e8a3b25a2d1b9059e015f298ca94..dafb8d4f1cfba987e1ff08edfc7caba527f0c76b 100644
-> --- a/drivers/pci/pcie/bwctrl.c
-> +++ b/drivers/pci/pcie/bwctrl.c
-> @@ -140,6 +140,8 @@ static int pcie_bwctrl_change_speed(struct pci_dev *port, u16 target_speed, bool
->  int pcie_set_target_speed(struct pci_dev *port, enum pci_bus_speed speed_req,
->  			  bool use_lt)
->  {
-> +	struct pci_host_bridge *host = pci_find_host_bridge(port->bus);
-> +	bool is_rootbus = pci_is_root_bus(port->bus);
->  	struct pci_bus *bus = port->subordinate;
->  	u16 target_speed;
->  	int ret;
-> @@ -152,6 +154,16 @@ int pcie_set_target_speed(struct pci_dev *port, enum pci_bus_speed speed_req,
->  
->  	target_speed = pcie_bwctrl_select_speed(port, speed_req);
->  
-> +	/*
-> +	 * The host bridge driver may need to be scaled for targeted speed
-> +	 * otherwise link might not come up at requested speed.
-> +	 */
-> +	if (is_rootbus && host->pre_link_speed_change) {
-> +		ret = host->pre_link_speed_change(host, port, target_speed);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
->  	scoped_guard(rwsem_read, &pcie_bwctrl_setspeed_rwsem) {
->  		struct pcie_bwctrl_data *data = port->link_bwctrl;
->  
-> @@ -176,6 +188,9 @@ int pcie_set_target_speed(struct pci_dev *port, enum pci_bus_speed speed_req,
->  	    !list_empty(&bus->devices))
->  		ret = -EAGAIN;
->  
-> +	if (bus && is_rootbus && host->post_link_speed_change)
-> +		host->post_link_speed_change(host, port, pci_bus_speed2lnkctl2(bus->cur_bus_speed));
-> +
->  	return ret;
->  }
->  
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 05e68f35f39238f8b9ce08df97b384d1c1e89bbe..1740bab514b0a9a61c027463a1fb154843312a22 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -599,6 +599,24 @@ struct pci_host_bridge {
->  	void (*release_fn)(struct pci_host_bridge *);
->  	int (*enable_device)(struct pci_host_bridge *bridge, struct pci_dev *dev);
->  	void (*disable_device)(struct pci_host_bridge *bridge, struct pci_dev *dev);
-> +	/*
-> +	 * Callback to the host bridge drivers to update ICC BW votes, clock
-> +	 * frequencies etc.. for the link re-train to come up in targeted speed.
-> +	 * These are intended to be called by devices directly attached to the
-> +	 * Root Port. These are called by a single client Endpoint driver, so
-> +	 * there is no need for explicit locking mechanisms.
-> +	 */
-> +	int (*pre_link_speed_change)(struct pci_host_bridge *bridge,
-> +				     struct pci_dev *dev, int speed);
-> +	/*
-> +	 * Callback to the host bridge drivers to adjust ICC BW votes, clock
-> +	 * frequencies etc.. to the updated speed after link re-train. These
-> +	 * are intended to be called by devices directly attached to the
-> +	 * Root Port. These are called by a single client Endpoint driver,
-> +	 * so there is no need for explicit locking mechanisms.
-> +	 */
-> +	void (*post_link_speed_change)(struct pci_host_bridge *bridge,
-> +				       struct pci_dev *dev, int speed);
->  	void		*release_data;
->  	unsigned int	ignore_reset_delay:1;	/* For entire hierarchy */
->  	unsigned int	no_ext_tags:1;		/* No Extended Tags */
-> 
-> -- 
-> 2.34.1
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+      Arnd
 
