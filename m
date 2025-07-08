@@ -1,110 +1,177 @@
-Return-Path: <linux-kernel+bounces-721182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AB4EAFC5D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:37:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 643DCAFC5D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C49E57AE57C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:36:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A719617B4D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A142BE03F;
-	Tue,  8 Jul 2025 08:37:18 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666AB2BCF4D;
+	Tue,  8 Jul 2025 08:37:28 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9049A219A97;
-	Tue,  8 Jul 2025 08:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DAB219A97
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 08:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751963838; cv=none; b=hBl+sia7BoO5myZgu7K1cxWoyp6BbHFehVTGJIUIeMCWzWFmyA6G5M+1RPv6apGdEsYZfEKM4hnHBnB7iRJRNGDsRHdw4u1TUilA4XTHhW5xOcO1fqMo81JAXtDhihSIqO5zVWebesXPa6GP5BZTJcaw6fluAOjbd4Uzr7tEGJo=
+	t=1751963848; cv=none; b=DQRw/VDyDFqVHsY8gcYE6vJDaNd0eMfL/lWRZqSvcfUrw8dZ30q4GDOUwchDNrRphF7iNAtuglCDXBvP8QwoTOKY/Ta9yAl7W9ecCcyZjIIum/XegvQYTaUeh3ecLxhoByHtatHyy0YcDp27p6HBKkPmVv4lCw+WNvOqHU2ItWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751963838; c=relaxed/simple;
-	bh=wFDxQyPXL6g3MFe3QXSf3Z855OPz+p2schpO6F/9y6g=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G+kIkP5c6eg3j5DjZGMMhRr5O+8UWQGvZRNdYd8if4KjeqypM9kK/R1Ch/IVCJrwO8+tgaxiFCtZjx/RtWpsqsJ/wwRrzzBP3Ux9sL6lHngSp8t9xf4+YTw35A7TH7oNHIxNHIOK/hrjMwtVY0he0ZwWwDbVmL9quhVqu56HS4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+	s=arc-20240116; t=1751963848; c=relaxed/simple;
+	bh=YVBLRbIVMOEpLw9Hns5hOIjQAkuFkNNYhqbl0OCveH0=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=fVQxLJhMYkZn4Nlo4Eil2+ZzDdrRjxikbgDr5c/MMmTpO10OD0glothRUXFAOHXMZmSNf9yom8NhRC3piO/N5BwCaNxFIfx7rZIYrS+XkmtRHEInw0RAXNWiL2vSJna0JGzlp9DQMnxFDkCgW5Mm9olocq0MujyIeNG3LN4e0HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bbvbK3p00z6GCjV;
-	Tue,  8 Jul 2025 16:36:29 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 54F2E140144;
-	Tue,  8 Jul 2025 16:37:14 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 8 Jul
- 2025 10:37:13 +0200
-Date: Tue, 8 Jul 2025 09:37:11 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Alireza Sanaee <alireza.sanaee@huawei.com>
-CC: <mark.rutland@arm.com>, <robh@kernel.org>, <coresight@lists.linaro.org>,
-	<devicetree@vger.kernel.org>, <dianders@chromium.org>,
-	<james.clark@linaro.org>, <krzk@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-perf-users@vger.kernel.org>, <linuxarm@huawei.com>,
-	<mike.leach@linaro.org>, <ruanjinjie@huawei.com>, <saravanak@google.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <suzuki.poulose@arm.com>
-Subject: Re: [PATCH 4/5] coresight: Use of_cpu_phandle_to_id for grabbing
- CPU id
-Message-ID: <20250708093711.0000295d@huawei.com>
-In-Reply-To: <20250707150414.620-5-alireza.sanaee@huawei.com>
-References: <20250707150414.620-1-alireza.sanaee@huawei.com>
-	<20250707150414.620-5-alireza.sanaee@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bbvWD55WczWfwJ;
+	Tue,  8 Jul 2025 16:32:56 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0BA30180466;
+	Tue,  8 Jul 2025 16:37:22 +0800 (CST)
+Received: from kwepemq200018.china.huawei.com (7.202.195.108) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 8 Jul 2025 16:37:21 +0800
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemq200018.china.huawei.com (7.202.195.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 8 Jul 2025 16:37:21 +0800
+CC: Juri Lelli <juri.lelli@redhat.com>, <yangyicong@hisilicon.com>,
+	<mingo@redhat.com>, <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+	<vschneid@redhat.com>, <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<prime.zeng@hisilicon.com>
+Subject: Re: [PATCH] sched/deadline: Don't count nr_running twice for
+ dl_server proxy tasks
+To: <peterz@infradead.org>
+References: <20250627035420.37712-1-yangyicong@huawei.com>
+ <aF5QwYFj15DLDbBR@jlelli-thinkpadt14gen4.remote.csb>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <a8037d19-bccc-0567-8e00-8692b3787f7c@huawei.com>
+Date: Tue, 8 Jul 2025 16:37:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+In-Reply-To: <aF5QwYFj15DLDbBR@jlelli-thinkpadt14gen4.remote.csb>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemq200018.china.huawei.com (7.202.195.108)
 
-On Mon, 7 Jul 2025 16:04:13 +0100
-Alireza Sanaee <alireza.sanaee@huawei.com> wrote:
+Hi Peter,
 
-> Use the newly created API to grab CPU id.
+On 2025/6/27 16:05, Juri Lelli wrote:
+> Hello,
 > 
-> Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
-> ---
->  drivers/hwtracing/coresight/coresight-platform.c | 14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
+> On 27/06/25 11:54, Yicong Yang wrote:
+>> From: Yicong Yang <yangyicong@hisilicon.com>
+>>
+>> On CPU offline the kernel stalled with below call trace:
+>>
+>>   INFO: task kworker/0:1:11 blocked for more than 120 seconds.
+>>         Tainted: G           O        6.15.0-rc4+ #1
+>>   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>>   task:kworker/0:1     state:D stack:0     pid:11    tgid:11    ppid:2   task_flags:0x4208060 flags:0x00000008
+>>   Workqueue: events vmstat_shepherd
+>>   Call trace:
+>>    __switch_to+0x118/0x188 (T)
+>>    __schedule+0x31c/0x1300
+>>    schedule+0x3c/0x120
+>>    percpu_rwsem_wait+0x12c/0x1b0
+>>    __percpu_down_read+0x78/0x188
+>>    cpus_read_lock+0xc4/0xe8
+>>    vmstat_shepherd+0x30/0x138
+>>    process_one_work+0x154/0x3c8
+>>    worker_thread+0x2e8/0x400
+>>    kthread+0x154/0x230
+>>    ret_from_fork+0x10/0x20
+>>   INFO: task kworker/1:1:116 blocked for more than 120 seconds.
+>>         Tainted: G           O        6.15.0-rc4+ #1
+>>   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>>   task:kworker/1:1     state:D stack:0     pid:116   tgid:116   ppid:2   task_flags:0x4208060 flags:0x00000008
+>>   Workqueue: events work_for_cpu_fn
+>>   Call trace:
+>>    __switch_to+0x118/0x188 (T)
+>>    __schedule+0x31c/0x1300
+>>    schedule+0x3c/0x120
+>>    schedule_timeout+0x10c/0x120
+>>    __wait_for_common+0xc4/0x1b8
+>>    wait_for_completion+0x28/0x40
+>>    cpuhp_kick_ap_work+0x114/0x3c8
+>>    _cpu_down+0x130/0x4b8
+>>    __cpu_down_maps_locked+0x20/0x38
+>>    work_for_cpu_fn+0x24/0x40
+>>    process_one_work+0x154/0x3c8
+>>    worker_thread+0x2e8/0x400
+>>    kthread+0x154/0x230
+>>    ret_from_fork+0x10/0x20
+>>
+>> cpuhp hold the cpu hotplug lock endless and stalled vmstat_shepherd.
+>> This is because we count nr_running twice on cpuhp enqueuing and failed
+>> the wait condition of cpuhp:
+>>
+>> enqueue_task_fair() // pick cpuhp from idle, rq->nr_running = 0
+>>   dl_server_start()
+>>     [...]
+>>     add_nr_running() // rq->nr_running = 1
+>>   add_nr_running() // rq->nr_running = 2
+>> [switch to cpuhp, waiting on balance_hotplug_wait()]
+>> rcuwait_wait_event(rq->nr_running == 1 && ...) // failed, rq->nr_running=2
+>>   schedule() // wait again
+>>
+>> This doesn't make sense to count one single task twice on
+>> rq->nr_running. So fix this.
+>>
+>> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+>> ---
+>>  kernel/sched/deadline.c | 8 ++++++--
+>>  1 file changed, 6 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+>> index ad45a8fea245..59fb178762ee 100644
+>> --- a/kernel/sched/deadline.c
+>> +++ b/kernel/sched/deadline.c
+>> @@ -1894,7 +1894,9 @@ void inc_dl_tasks(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+>>  	u64 deadline = dl_se->deadline;
+>>  
+>>  	dl_rq->dl_nr_running++;
+>> -	add_nr_running(rq_of_dl_rq(dl_rq), 1);
+>> +
+>> +	if (!dl_server(dl_se))
+>> +		add_nr_running(rq_of_dl_rq(dl_rq), 1);
+>>  
+>>  	inc_dl_deadline(dl_rq, deadline);
+>>  }
+>> @@ -1904,7 +1906,9 @@ void dec_dl_tasks(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+>>  {
+>>  	WARN_ON(!dl_rq->dl_nr_running);
+>>  	dl_rq->dl_nr_running--;
+>> -	sub_nr_running(rq_of_dl_rq(dl_rq), 1);
+>> +
+>> +	if (!dl_server(dl_se))
+>> +		sub_nr_running(rq_of_dl_rq(dl_rq), 1);
+>>  
+>>  	dec_dl_deadline(dl_rq, dl_se->deadline);
+>>  }
 > 
-> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
-> index 8192ba3279f0..f032fdbe959b 100644
-> --- a/drivers/hwtracing/coresight/coresight-platform.c
-> +++ b/drivers/hwtracing/coresight/coresight-platform.c
-> @@ -167,19 +167,9 @@ of_coresight_get_output_ports_node(const struct device_node *node)
->  
->  static int of_coresight_get_cpu(struct device *dev)
->  {
-> -	int cpu;
-> -	struct device_node *dn;
-> -
-> -	if (!dev->of_node)
-> -		return -ENODEV;
-> -
-> -	dn = of_parse_phandle(dev->of_node, "cpu", 0);
-> -	if (!dn)
-> -		return -ENODEV;
-> -
-> -	cpu = of_cpu_node_to_id(dn);
-> +	struct device_node *dn = NULL;
-> +	int cpu = of_cpu_phandle_to_id(dev->of_node, &dn, 0);
->  	of_node_put(dn);
-> -
-	Again, allowing for NULL parameter gives you simply
+> This seems to make sense to me. Thanks for the analysis and the patch.
+> 
+> Peter, what do you think?
+> 
 
-	return of_cpu_phandle_to_id(dev->of_node, NULL, 0);
+does this also make sense to you? or any other solutions you'd like me to try?
 
->  	return cpu;
->  }
->  
+thanks.
 
 
