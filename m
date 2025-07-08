@@ -1,40 +1,39 @@
-Return-Path: <linux-kernel+bounces-721300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B781AFC751
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:45:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA641AFC742
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:42:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5301A4A827E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:45:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CFDC561BBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29B7265CC2;
-	Tue,  8 Jul 2025 09:45:23 +0000 (UTC)
-Received: from n169-114.mail.139.com (n169-114.mail.139.com [120.232.169.114])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9FA2652AE;
-	Tue,  8 Jul 2025 09:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=120.232.169.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D94E263F5D;
+	Tue,  8 Jul 2025 09:42:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F38521FF51
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 09:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751967923; cv=none; b=rAy9QvWgGQ62GIXRf6s//Phn2i4pMHzS9HBpN0A+c6HJhAKzuzVqbhd47I9I+S5MQYECsIrUmv/dtPeL4c36a0ynCm3TS9hZoA72PhlPQWpJO8fPKiAdi219HCzyXS1D+yeUmWeG8YagHIZ+frCFunlhwt0isVTSap0I8czSYfE=
+	t=1751967732; cv=none; b=P1oCxwuKevIsNd5qgTHorqs3TA2RyXslSLCHvPp4VHE15lefvHbn2mkSq5Nct9Q5ueY2YXOOiTaQMmDd9yXrbVsFbSyJaxucHaV1wx1rWDEQ4rjO7SNWjO1PrJKGEFrCIGwTIAtj2e7tk8rvF2i5vGEy7O5rBCerFvkdMrU6whU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751967923; c=relaxed/simple;
-	bh=7Bzsdwiz9ACgyuUWbq9kuVCzJIyu+RQIp7OnQ1IEHek=;
+	s=arc-20240116; t=1751967732; c=relaxed/simple;
+	bh=se5x0yYrCUL+63fhhT38J9iOQc4ZRvtcA/JM8IxxtjI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I4YuiCTWAQbaxuotA6GjleE3PV7bYuzHwJW8idqJk60rXjgYUmWgAjGtIZbQZx6GtQbpUf5KUEkOI3P8TP4dlW1q/OYVDWNwW2bNeKiWEsF/0MVagf68wPA03GPBeq0ze3ew0yQ/Gz7FSdiwUXySVcic/JVSE3g0SLHqfDCtfp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com; spf=pass smtp.mailfrom=139.com; arc=none smtp.client-ip=120.232.169.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=139.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM:                                                                                        
-X-RM-SPAM-FLAG:00000000
-Received:from [10.103.165.236] (unknown[106.38.209.7])
-	by rmsmtp-lg-appmail-45-12076 (RichMail) with SMTP id 2f2c686ce7e4d3e-c1a7a;
-	Tue, 08 Jul 2025 17:41:59 +0800 (CST)
-X-RM-TRANSID:2f2c686ce7e4d3e-c1a7a
-Message-ID: <277b444e-5818-47ae-bf92-f31c25538572@139.com>
-Date: Tue, 8 Jul 2025 17:41:57 +0800
+	 In-Reply-To:Content-Type; b=BUgeiZET0vjeVCtlcHX8AaReBKvdIwBYkd003qpoVAS7EHr2sxD2TxZW+dUmlwvFb3TuKpbkYfRgtKUJeFkioirBEy7Lr1TF2YmJM59Fm77D4Ky2L7vTyiikDLABhSZZdtp3BcxQ6fhsUvJsNqQxIKPIkmccoLay1+61cjY6l/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59DDF153B;
+	Tue,  8 Jul 2025 02:41:57 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AB3413F77D;
+	Tue,  8 Jul 2025 02:42:07 -0700 (PDT)
+Message-ID: <03a76e9a-86ac-4791-9f0a-494b28c07fcc@arm.com>
+Date: Tue, 8 Jul 2025 10:42:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,119 +41,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] lenovo-wmi-hotkey: Fixed a kernel error report for
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: hansg@kernel.org, platform-driver-x86@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, dongeg1@lenovo.com
-References: <20250708071138.15602-1-xy-jackie@139.com>
- <78394a09-6ca2-afc4-3b35-de4ea8e998cd@linux.intel.com>
+Subject: Re: [PATCH 2/2] bitfield: Ensure the return value of
+ type##_replace_bits() is checked
+To: Yury Norov <yury.norov@gmail.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, maz@kernel.org,
+ oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com,
+ yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, linux@rasmusvillemoes.dk,
+ linux-kernel@vger.kernel.org, james.morse@arm.com
+References: <20250703135729.1807517-1-ben.horgan@arm.com>
+ <20250703135729.1807517-3-ben.horgan@arm.com> <aGv2WoAtxnEgqV4y@yury>
 Content-Language: en-US
-From: Jackie Dong <xy-jackie@139.com>
-In-Reply-To: <78394a09-6ca2-afc4-3b35-de4ea8e998cd@linux.intel.com>
+From: Ben Horgan <ben.horgan@arm.com>
+In-Reply-To: <aGv2WoAtxnEgqV4y@yury>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi Ilpo,
-    Thanks for your comments, I'll update it later.
+Hi Yury,
 
-    Jackie Dong
-On 7/8/25 16:07, Ilpo Järvinen wrote:
-> On Tue, 8 Jul 2025, Jackie Dong wrote:
+On 7/7/25 17:31, Yury Norov wrote:
+> Hi Ben,
 > 
-> Hi,
-> 
-> Shortlog in Subject seems incomplete
-> 
->> Not all of Lenovo non-ThinkPad devices support both mic mute LED(on F4)
->> and audio mute LED(on F1). Some of them only support one mute LED, some
-> 
-> Add spaces after (
-> 
->> of them don't have any mute LED. Add a decision to judge this device
->> support mute LED or not. Without this decision, not support both of mic
->> mute LED and audio mute LED Lenovo non-ThinkPad brand devices (including
->> Ideapad/Yoga/Xiaoxin/Gaming/ThinkBook, etc.) will report a failed message
->> with error -5.
+> On Thu, Jul 03, 2025 at 02:57:29PM +0100, Ben Horgan wrote:
+>> As type##_replace_bits() has no side effects it is only useful if its
+>> return value is checked. Add __must_check to enforce this usage. To have
+>> the bits replaced in-place typep##_replace_bits() can be used instead.
 >>
->> Signed-off-by: Jackie Dong <xy-jackie@139.com>
->> Suggested-by: Hans de Goede <hansg@kernel.org>
->>
+>> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
 >> ---
->> Changes in v2:
->>   - Add warning message and then return 0 if the device support mute LED
->>     abnormaly, based on Hans suggestion and Armin previous patch.
+>>   include/linux/bitfield.h | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
 >>
->>   .../x86/lenovo-wmi-hotkey-utilities.c         | 30 +++++++++++++------
->>   1 file changed, 21 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
->> index 89153afd7015..334c12f2896d 100644
->> --- a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
->> +++ b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
->> @@ -122,26 +122,35 @@ static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type led_type, struct
->>   		return -EIO;
->>   
->>   	union acpi_object *obj __free(kfree) = output.pointer;
->> -	if (obj && obj->type == ACPI_TYPE_INTEGER)
->> +	if (obj && obj->type == ACPI_TYPE_INTEGER) {
+>> diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+>> index 6d9a53db54b6..39333b80d22b 100644
+>> --- a/include/linux/bitfield.h
+>> +++ b/include/linux/bitfield.h
+>> @@ -195,8 +195,8 @@ static __always_inline __##type type##_encode_bits(base v, base field)	\
+>>   		__field_overflow();					\
+>>   	return to((v & field_mask(field)) * field_multiplier(field));	\
+>>   }									\
+>> -static __always_inline __##type type##_replace_bits(__##type old,	\
+>> -					base val, base field)		\
+>> +static __always_inline __##type __must_check type##_replace_bits(__##type old,	\
+>> +							base val, base field)	\
+>>   {									\
+>>   	return (old & ~to(field)) | type##_encode_bits(val, field);	\
+>>   }									\
 > 
-> Could you please reverse this logic and handle errors first.
+> So, would it make sense to mark _encode_bits() and _get_bits() as
+> __must_check as well? At least from the point of unification, it
+> would.
+Could do. It seems less important as there are no obvious foot-guns that 
+these would guards against. Would you like me to add this in a v2?
 > 
->>   		led_version = obj->integer.value;
->> -	else
->> -		return -EIO;
->>   
->> -	wpriv->cdev[led_type].max_brightness = LED_ON;
->> -	wpriv->cdev[led_type].flags = LED_CORE_SUSPENDRESUME;
->> +		/*
->> +		 * Output parameters define: 0 means mute LED is not supported, Non-zero means
->> +		 * mute LED can be supported.
->> +		 */
->> +		if (led_version == 0)
->> +			return 0;
->> +	} else {
->> +		return -EIO;
->> +	}
->>   
->>   	switch (led_type) {
->>   	case MIC_MUTE:
->> -		if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER)
->> -			return -EIO;
->> +		if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER) {
->> +			pr_warn("This device MIC_MUTE LED doesn't support now.\n");
->> +			return 0;
->> +		}
->>   
->>   		wpriv->cdev[led_type].name = "platform::micmute";
->>   		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_micmute_led_set;
->>   		wpriv->cdev[led_type].default_trigger = "audio-micmute";
->>   		break;
->>   	case AUDIO_MUTE:
->> -		if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER)
->> -			return -EIO;
->> +		if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER) {
->> +			pr_warn("This device AUDIO_MUTE LED doesn't support now.\n");
+> How would we move this - with my bitmap-for next or with arm branch?
+
+I'm not familiar with the branch machinery so can't comment on this.
 > 
-> Both of these warnings have the same grammar flaws and need to be
-> rephrased.
-> 
->> +			return 0;
->> +		}
->>   
->>   		wpriv->cdev[led_type].name = "platform::mute";
->>   		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_audiomute_led_set;
->> @@ -152,6 +161,9 @@ static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type led_type, struct
->>   		return -EINVAL;
->>   	}
->>   
->> +	wpriv->cdev[led_type].max_brightness = LED_ON;
->> +	wpriv->cdev[led_type].flags = LED_CORE_SUSPENDRESUME;
->> +
->>   	err = devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
->>   	if (err < 0) {
->>   		dev_err(dev, "Could not register mute LED %d : %d\n", led_type, err);
->>
+> Thanks,
+> Yury
 > 
 
+Thanks,
+
+Ben
 
 
