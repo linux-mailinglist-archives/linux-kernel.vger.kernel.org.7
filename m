@@ -1,251 +1,91 @@
-Return-Path: <linux-kernel+bounces-721207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA01AFC61B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:50:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9DDAFC623
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:51:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3B807B00DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:49:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED2073ACCB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F632BE637;
-	Tue,  8 Jul 2025 08:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7A32BEC50;
+	Tue,  8 Jul 2025 08:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yb8kEekc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RMaswhTs";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yb8kEekc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RMaswhTs"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GyjkQPOt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89171203706
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 08:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B08F221D87;
+	Tue,  8 Jul 2025 08:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751964635; cv=none; b=rd2mvxP5CzRtFb12Dn/eCQJOdVjSMfIRQFa8p9g10kFTOWaNdSJsuiCQOVjq9idLbnFHzSOu9pDYe7qifXfIcfhmz5bt4QAC65kXrH7gMaaMz9I0jzn5k1PPjjbLhDyb/wFfcgcenf01+tEUm4PZSDU9e2YnAv4HPQe4g1I0LI4=
+	t=1751964666; cv=none; b=lD0xzbSp/Iay5Vj63SAO/pBr6Lp5IVMtSXfUoBKS0NtO0epyt1taSrOKA54ljgnICqj3K6oLDUJ3A6r36mXaqBKM+SMZdseEjzAbmx1CqwdhNPuIdubeC7/1cPwa4hEL/z/994B8PM5M5YmandCXbE9zoRBmaGsW11lWiM0EVHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751964635; c=relaxed/simple;
-	bh=rU5S56Tjywba/GATBHNOl3N9qJOjs9GN3IxgTVFIRZg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UaeZtFBsSiXG07zmPVP/+pwUiK18sQeDyar/bA/b471Pr6UySg5FZB8Sb2Jv3+pC4JhtYGhazzOJUpuUoRkW7eEVcEYfVdMJWAIO9B4mYq9PiXeOaDb53JGUPcDvfpctRJgESC3d4n0hAbw/J2wBGSSzAejgs8lWxccyz+q+fXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yb8kEekc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RMaswhTs; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yb8kEekc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RMaswhTs; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9AFF721163;
-	Tue,  8 Jul 2025 08:50:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751964631; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=gMCFCpkthoPDnqZLoQ6eE0mOo4CJZy8pXcbBxUNA1GI=;
-	b=yb8kEekcx7VMwrl0kqiIlutBxj+2f6qt2heMp3G+HTTBlPjhI7hgFURWUFp3jX1p/4WsWa
-	EbEtKf8ufIgG/2WJ2HL33urHp4Lb/uam8/G8xt1LrLs4KDAK8oVdi0YxkneuDW5FoOtA6E
-	aC8U+sYARX+3VdTjUJfBOwO4+uGvzL0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751964631;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=gMCFCpkthoPDnqZLoQ6eE0mOo4CJZy8pXcbBxUNA1GI=;
-	b=RMaswhTsn4A2xOxws0wkKpz7lfGLUzzijcRjr4bjXQWPfWfRzlowgKApTqz5EdWoAH4sVL
-	j0GNxqZGAAQBM7Cg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751964631; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=gMCFCpkthoPDnqZLoQ6eE0mOo4CJZy8pXcbBxUNA1GI=;
-	b=yb8kEekcx7VMwrl0kqiIlutBxj+2f6qt2heMp3G+HTTBlPjhI7hgFURWUFp3jX1p/4WsWa
-	EbEtKf8ufIgG/2WJ2HL33urHp4Lb/uam8/G8xt1LrLs4KDAK8oVdi0YxkneuDW5FoOtA6E
-	aC8U+sYARX+3VdTjUJfBOwO4+uGvzL0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751964631;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=gMCFCpkthoPDnqZLoQ6eE0mOo4CJZy8pXcbBxUNA1GI=;
-	b=RMaswhTsn4A2xOxws0wkKpz7lfGLUzzijcRjr4bjXQWPfWfRzlowgKApTqz5EdWoAH4sVL
-	j0GNxqZGAAQBM7Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 64C4C13A68;
-	Tue,  8 Jul 2025 08:50:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id tNGDF9fbbGgXXgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 08 Jul 2025 08:50:31 +0000
-Message-ID: <5397779c-9a89-4dd3-9937-208fefb58f78@suse.cz>
-Date: Tue, 8 Jul 2025 10:50:31 +0200
+	s=arc-20240116; t=1751964666; c=relaxed/simple;
+	bh=N/0d0mKW07wFgRFLTBIlelDE6XtrInsDavk8ZqJpx5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=REeyhHl/ilDPqH95SICyVM7EjubbEqztugez+BY/VKDKBplVV5uuFVzeSXy/UQQck/dWfEYaxPdVfmrilNMZ4LUjjf1WDxT3dFflbpXNO8ssIWpdKqP/V6rCVfP9GNxlmfS7waS6G3xoDnIKDdUTCryhjVBDED4walXQjt/Uyr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GyjkQPOt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 514BEC4CEED;
+	Tue,  8 Jul 2025 08:51:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751964665;
+	bh=N/0d0mKW07wFgRFLTBIlelDE6XtrInsDavk8ZqJpx5s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GyjkQPOtw0ym/NrawZ2Hn26MiYvjJ2VzHekm5U8LVHv0NJsyc9lIRH84NvkZYNYSt
+	 2jzCq32+gtes2SzmX52d97LISK0cnyDUXlaHbuKusCLP0E8OOq/3upy+GtCxhuPfpj
+	 DYDQXMfCGKCzbY1Mjg1zmm8sdMalepsPeX10hz93durHXub9sSO6Z0ZaNtvs3yBkvN
+	 YS2iA/04qADiFOO+Nxgu8bHtrFD4Cm4gBSXrgXYYrTDMSrL2qqkJ3QPwPS2jJkXmYP
+	 YppHeyX7Gybx357//q7sPpvRPDyVA3iy1VOQC0BvodLAzQUbHwjQcQnxSUKUqtG7wo
+	 KZy5cignph7kg==
+Date: Tue, 8 Jul 2025 10:51:03 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Georgi Djakov <djakov@kernel.org>, Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH 1/4] arm64: dts: qcom: qcs615: Drop IPA interconnects
+Message-ID: <20250708-amiable-owl-of-enthusiasm-e75662@krzk-bin>
+References: <20250627-topic-qcs615_icc_ipa-v1-0-dc47596cde69@oss.qualcomm.com>
+ <20250627-topic-qcs615_icc_ipa-v1-1-dc47596cde69@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [mm?] WARNING in xfs_init_fs_context
-To: Dave Chinner <david@fromorbit.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Zi Yan
- <ziy@nvidia.com>, Barry Song <baohua@kernel.org>,
- Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org,
- syzbot <syzbot+359a67b608de1ef72f65@syzkaller.appspotmail.com>,
- akpm@linux-foundation.org, apopple@nvidia.com, byungchul@sk.com,
- david@redhat.com, gourry@gourry.net, joshua.hahnjy@gmail.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, matthew.brost@intel.com,
- rakie.kim@sk.com, syzkaller-bugs@googlegroups.com,
- ying.huang@linux.alibaba.com, Harry Yoo <harry.yoo@oracle.com>,
- Michal Hocko <mhocko@suse.com>, Matthew Wilcox <willy@infradead.org>
-References: <6861c281.a70a0220.3b7e22.0ab8.GAE@google.com>
- <DDD5FAAF-F698-4FC8-B49C-FD1D3B283A8E@nvidia.com>
- <1921ec99-7abb-42f1-a56b-d1f0f5bc1377@I-love.SAKURA.ne.jp>
- <630b4379-751a-4bf1-a249-f2e051ec77d6@suse.cz>
- <aGxF7NqHNK7Vtd1_@dread.disaster.area>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <aGxF7NqHNK7Vtd1_@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[359a67b608de1ef72f65];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[i-love.sakura.ne.jp,nvidia.com,kernel.org,vger.kernel.org,syzkaller.appspotmail.com,linux-foundation.org,sk.com,redhat.com,gourry.net,gmail.com,kvack.org,intel.com,googlegroups.com,linux.alibaba.com,oracle.com,suse.com,infradead.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250627-topic-qcs615_icc_ipa-v1-1-dc47596cde69@oss.qualcomm.com>
 
-On 7/8/25 00:10, Dave Chinner wrote:
-> On Wed, Jul 02, 2025 at 09:30:30AM +0200, Vlastimil Babka wrote:
->> On 7/2/25 3:41 AM, Tetsuo Handa wrote:
->> > By the way, why is xfs_init_fs_context() using __GFP_NOFAIL ?
->> > 
->> > 	mp = kzalloc(sizeof(struct xfs_mount), GFP_KERNEL | __GFP_NOFAIL);
->> > 	if (!mp)
->> > 		return -ENOMEM;
->> > 
->> > This looks an allocation attempt which can fail safely.
+On Fri, Jun 27, 2025 at 09:37:55PM +0200, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > 
-> It's irrelevant - it shouldn't fail regardless of __GFP_NOFAIL being
-> specified.
+> In the same spirit as e.g. Commit 6314184be391 ("arm64: dts: qcom:
+> sc8180x: Drop ipa-virt interconnect") drop the resources that should
+> be taken care of through the clk-rpmh driver.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 6 ------
 
-If you mean the "too small to fail" behavior then it's generally true,
-except in some corner cases like being an oom victim, in which case the
-allocation can fail - the userspace process is doomed anyway. But a (small)
-kernel allocation not handling NULL would still need __GFP_NOFAIL to prevent
-that corner case.
+This is non-bisectable and breaks the users. Should be the last patch,
+not the first, with explicit notice that it must wait after the next
+merge window.
 
->> Indeed. Dave Chinner's commit f078d4ea82760 ("xfs: convert kmem_alloc()
->> to kmalloc()") dropped the xfs wrapper. This allocation didn't use
->> KM_MAYFAIL so it got __GFP_NOFAIL. The commit mentions this high-order
->> nofail issue for another allocation site that had to use xlog_kvmalloc().
-> 
-> I don't see how high-order allocation behaviour is relevant here.
-> 
-> Pahole says the struct xfs_mount is 4224 bytes in length. It is an
-> order-1 allocation and if we've fragmented memory so badly that slab
-> can't allocate an order-1 page then *lots* of other stuff is going
-> to be stalling. (e.g. slab pages for inodes are typically order-3,
-> same as the kmalloc-8kk slab).
+Plus this affects all outside users, which also should be somehow
+explained. "Spirit" of some other commit does not apply here. These are
+different products, different users. It needs its own rationale and
+justification.
 
-Elsewhere in this thread we figured it out since I wrote the quoted reply.
-4224 bytes means kmalloc-8k where the fallback allocation (the one that
-passes on the __GFP_NOFAIL) order is 1 normally. But due to KASAN enabled
-its metadata means the per-object size goes above 8k and thus the fallback
-order will be 2. It's a corner case that wasn't anticipated and existed for
-years without known reports. We'll need to deal with it somehow.
-
-> Note that the size of the structure is largely because of the
-> embedded cpumask for inodegc:
-> 
-> 	struct cpumask             m_inodegc_cpumask;    /*  3104  1024 */
-> 
-> This should probably be pulled out into a dynamically allocated
-> inodegc specific structure. Then the struct xfs_mount is only a
-> order-0 allocation and should never fail, regardless of
-> __GFP_NOFAIL being specified or not.
-> 
->> I think either this allocation really can fail as the code (return
->> -ENOMEM) suggests and thus can drop __GFP_NOFAIL, or it can use
->> kvmalloc() - I think the wrapper for that can be removed now too after
->> the discussion in [1] resulted in commit 46459154f997 ("mm: kvmalloc:
->> make kmalloc fast path real fast path").
-> 
-> I know about that - I have patches that I'm testing that replace
-> xlog_kvmalloc() with kvmalloc calls.
-
-Great, thanks!
-
-> -Dave.
+Best regards,
+Krzysztof
 
 
