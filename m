@@ -1,121 +1,249 @@
-Return-Path: <linux-kernel+bounces-721274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDCB5AFC6F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:22:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9ACAFC6DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB0431AA7444
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:23:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 321B3188D3AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737BE235063;
-	Tue,  8 Jul 2025 09:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF7E220F5A;
+	Tue,  8 Jul 2025 09:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i/+YEXbF"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LewibExZ"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741EC20E6E2;
-	Tue,  8 Jul 2025 09:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DAB3595C
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 09:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751966552; cv=none; b=HSRVDMWBKK5M1Mb32E0J3bCCjrdqkqa5lSxhHBxo9GfrNdc8umfrNjjN58ttrn3h+LzxbXtbhzJNTfzqeZZt9tWpdM0jwSSNtde8VNli3T9RNIM9SNbr8wIRcfAi/LNodbbzIgEp8kzjMiOzxDiaY2FS/QaI99+V9qsw2LvZy+Q=
+	t=1751966206; cv=none; b=DT/71KTGNElO+0tNWqNjJjDwZUwcWlNBYq+B3SFERzldit6cT3AJGziJMs1nHIEnnWkVtZc+20Fpn8sW46MlMBYM/dx71HR107zqr924GUS97DGyyv2oQMOyhGiQC9hTaUEMC9yxheLpjkAmPzfQr03799+0h03Fco1CmmvrXA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751966552; c=relaxed/simple;
-	bh=77sVB26jwnSDML95AMB5ZHnN2D1iy2E80tv3DtFH/tk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m8qBZkYVZfKQ6Qy9jpjX93L8yJ2sHdbWgteIu6GRzOG2Ptiqs4DeEq9DxPI6r4g/VGQsJakxdGLUAVPDWsJZ9tkni7aEbGdJLyhaDt302MVw3u45ROMmk6rrk89bpoJ3y39hlw8YzyZjyOFzBS2ebLYV1KMTznQzq6sxK0K3poQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i/+YEXbF; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6fd1b2a57a0so43854456d6.1;
-        Tue, 08 Jul 2025 02:22:31 -0700 (PDT)
+	s=arc-20240116; t=1751966206; c=relaxed/simple;
+	bh=oWA+jyYXTFUVOVpq0A1KhzsVCekTcqZUOlf72Qn1/FU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oCDVZaUeBv6Nyo6A5sLzjfGnkmXiR77upLa6/BWLCYqwpPqJwwj5s0bI7ncKUfjX2dqAgQMvqr9mGzyqDcM0+wvVUMep7hXk2iIbLLpZ/uuqLyh20O67GGYkh/KLxMMabMGUM8alXyZYSruhJ0f1RJC7zhK0XAxOedss9ZBkMq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LewibExZ; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-555024588a8so3931820e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 02:16:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751966550; x=1752571350; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=77sVB26jwnSDML95AMB5ZHnN2D1iy2E80tv3DtFH/tk=;
-        b=i/+YEXbF7kTUAnSpqPq4cGXnGzfvrsDBpPYouPfa7MDPxAF0ZTrHjSb11TfSjlRnW9
-         LkU5cyzQ0R3fMZvsseUYUVYEXQ1kbV2yMUj38pwlo0k7/P3fAWFMG2zVUglVWsc8C5gh
-         QXecMtirDUFoF+mtwR3s6e4+/KTMuIZ7mlXu3GbwZxtRAoJ7wt937ZjPojFO+af1vm4f
-         PTQnLSgyOoefj2vn7MymrdzH1rPuo0yUN7WBX8R27wSqgyO7v5WPpyiUAxhJqaGn+yMD
-         rOJINutjvUSlD9PMD+ac9M+6tjXuhazaqGoFfGJELDT48hNULOu36pza6OgdU45hi3RG
-         RnXQ==
+        d=chromium.org; s=google; t=1751966202; x=1752571002; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cyLgLNqxZVEVrHG4u8oZzb76t/clebyyt0lejdbang0=;
+        b=LewibExZ9ull8f0lBV59s15uo3Dl6RcH9Doj8bhQbsYpc6Y08U06VyZRBlp2TqHjDk
+         g8PmwF7tuIU14BLEx8kOgDfw6aHFyvFadmTd4IC7Eq5lhLQPQjVeJ4LdolckZhWkHHtX
+         h+4IjsLXfnNsc8KlZERdMeIlp2toWkPGy/J2E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751966550; x=1752571350;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=77sVB26jwnSDML95AMB5ZHnN2D1iy2E80tv3DtFH/tk=;
-        b=lJQ70RT5kY5KouPR1QzMIxh1OOsEZt2gZag7odTgv+OHQReptFz/wiY3O1gXxfSS+i
-         FFAjVO+ubGHbW++XyzjWVw13hLy2zauybCu6oFJadpkSlDVO5A7H4n/1lMafq4h3rnbN
-         T/0bc8pn2mtaQVBv6e2Xvd+0d2MvcVonWyBlw89myLAjmKizo+vyQjuSsa90ioANIEK7
-         oLTeeSpvtyMKW6VEIa0LwS2eE4uMQ3HVOJse+OYwn2wASY7OLu2ceXDcnKK0lktZ2iDt
-         7dq1AnfZBrDoJv9xS4wqp5emHn2wcUXxC8Vryzd+uOEqJwbEO5eiL07+44vIC9ZrKHht
-         W5XA==
-X-Forwarded-Encrypted: i=1; AJvYcCWgF2M0lkLGjvG9uGFcmHP8Q2PDSBcb7xdC+Zr0YUHTZYYe+7fBTqhl2NoBkCuy7Rg5kIqlaw4w2JoEA5c=@vger.kernel.org, AJvYcCXxY0qadV1IpGn6aJJSt3UbD3+0/dFqxjepe6UkTbHMTf7ZAM8RA98vIJPXbggWX7KnSpQGcSNlo4ae1oqMfHDg0w+J@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMF0mxidW+EV1M943GDd7BRC/AR2i6lpUUf9AmH6Tc1j2pUc5c
-	5wTJXdtcom7BC3EdjBD5fCHnFJwEv0XdFd98AuZnPsl1y9pvbuO8Rtl7
-X-Gm-Gg: ASbGncu0kqGFmf6XsCLH3sUiJ6S4PrnDLLyPs6QCRhbyH/AQke33x/b7usbkXhZXK6V
-	HCfAmuW9+3pLaGsxFYguAnog1ujY77J/ciVNaxmSynt8nLZoumdhuIdW46gwoFu/DCURdBT++Gx
-	t7N2ikJYQ0iCetEJFrc/lmzQiqqp2+IpAm0PhBRSONS65KxHq5Zpt0dnZ+Qso1Y6j6NCMc/ACVL
-	dZl1ChRS3S/gDw5nXYpaEsZJCDw1UAQEjlJ5X2g8GjU2qcsIjPHVCZUD1dRYZ6NruAgQpqSQba5
-	SHmj0BvJA4ikFJ4r9cyUQaeo4VcKj8Wx9Wpln5pIr/3cK+xL4+/dze/F8iKIkmlOz/tCFuNYUyl
-	dNoxQ2w==
-X-Google-Smtp-Source: AGHT+IHSRzfQIdbKo7DAP1+iZkydKoM5NXdbUrrSwPBS8gomxfUQmwQgpncvTRLwCoXrDZEWMDyFcw==
-X-Received: by 2002:a05:6214:54c2:b0:6e8:9dfa:d932 with SMTP id 6a1803df08f44-7047d95a8ebmr32687226d6.15.1751966550311;
-        Tue, 08 Jul 2025 02:22:30 -0700 (PDT)
-Received: from Gentoo.localdomain ([37.19.198.89])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d9f590f256sm112284385a.109.2025.07.08.02.22.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 02:22:29 -0700 (PDT)
-From: Bhaskar Chowdhury <unixbhaskar@gmail.com>
-To: mhiramat@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: Bhaskar Chowdhury <unixbhaskar@gmail.com>
-Subject: [PATCH] tools: bootconfig:  Regex brackets need escape
-Date: Tue,  8 Jul 2025 14:46:08 +0530
-Message-ID: <20250708092204.1558-1-unixbhaskar@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1751966202; x=1752571002;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cyLgLNqxZVEVrHG4u8oZzb76t/clebyyt0lejdbang0=;
+        b=AnzYqU7TeBPwo/1LmMLpB0X5LSmQDVdrZMlQigIz//jSNZC9Yk7KXmbymNZKOFrhoB
+         iIa6AnGRcrTI6SCTETPCMZbCtvVwt7OYoYv8c8pFI/lDqK/uenYmvx28tollswegTOhl
+         Qp4KdMSjHE3hC4ITAGqLy1NNCFtpBvZg6QZqG4PmRcDr+ktWRbliQoAnt37AE5/AVthF
+         /GNP12mHbEFSRwRtt6gF0/J5dZ/AKi6Ai+6jhNWmrs9P7XlmaiQMsAWI/MRzdSclLJNX
+         xZIPU1H/yDMU5uW/COl3AqWlLyXCW/HZij+DSG+A10GIrvnPY0xAGciasyqjlW/RiaV/
+         Hr5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXVyOc83rwBn1Xb7XjkfbWwWWG05RANDICnRXUa6r2lNKx1WZKGvSpmRdDgeMnS6PyymmPlLxhFNhiTf44=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVNS3VUKqp22Vadele4bzGNN7/02TKs4G8XNfmBTiS7xx4tuTF
+	Xj2q7jOzOZbs2jZH+TXnv90RgG1dUfe/l1aSkjT/0hwDXJCbLv4I1AmtWac8d0DXOqJ9Od1EZCU
+	aV1gilA==
+X-Gm-Gg: ASbGncuL2ZqAuk97hLEBYyBhSDtDCPqcVulH0iP3XQ9RanW++EriSu8LRl5hFZFKxPZ
+	1Wog6sDzQaGVUb4f5VpleV4Ewab3fim4Nsab6RTgSulcPE3RnaXpI1k48kADekZRYMIiWvdbb+v
+	bXlO3JCHuhb5U5nwIGk4P9U6nTKYKKv1RNHZyA+CoNEeDPqPt1++wtst35oCMdLWnDXxtW6zl5f
+	FdDOd4dgR9vawbzKbSg8YMKK5QzrVtehzXCtpOLO54bKz6x3T6nDoepA3jHsfqx+SdMT3/FWP0C
+	P96IELyEgI8XrRuyElD/FnJy5VmiRiLUjtzLFB8SGEmSlVGsQ4oQyEiu2AuP7JpWiYg/BdQY1ML
+	i2hcIPobJH76+6Fs7uOJeGF2h4HIUwO194Go=
+X-Google-Smtp-Source: AGHT+IG0rrwwtABm612bNhtFSSAbkYWlZ2aseukIeZf+rC4qIMSmUsJZhgardRWbXxCOomDVxu6vtw==
+X-Received: by 2002:a05:6512:12c5:b0:553:cab0:37f6 with SMTP id 2adb3069b0e04-557a18e9c85mr5175590e87.20.1751966202156;
+        Tue, 08 Jul 2025 02:16:42 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55638494d9dsm1579872e87.115.2025.07.08.02.16.39
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jul 2025 02:16:40 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-556fd896c99so3379663e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 02:16:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXv3Ky4QYdA8O30dncpR1tuNYSR96UUWmsoboZk0muU6SdyrRQXQxwK9RadOI9G7tOWZfhYOVXK/qg91U8=@vger.kernel.org
+X-Received: by 2002:a05:6512:2386:b0:553:3407:eee0 with SMTP id
+ 2adb3069b0e04-557a132beb0mr6054641e87.4.1751966199327; Tue, 08 Jul 2025
+ 02:16:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
+ <20250605-uvc-orientation-v2-5-5710f9d030aa@chromium.org> <aGw_1T_Edm8--gXW@kekkonen.localdomain>
+In-Reply-To: <aGw_1T_Edm8--gXW@kekkonen.localdomain>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Tue, 8 Jul 2025 11:16:25 +0200
+X-Gmail-Original-Message-ID: <CANiDSCup2iRx+0RcaijSmbn04nBY4Ui9=esCPFsQzOKe=up9Gg@mail.gmail.com>
+X-Gm-Features: Ac12FXyzhfInZK890Wq_-YMIwMPEqs5CfSkqVHt4PZPUUwV21icplYQB7hfeIEM
+Message-ID: <CANiDSCup2iRx+0RcaijSmbn04nBY4Ui9=esCPFsQzOKe=up9Gg@mail.gmail.com>
+Subject: Re: [PATCH v2 05/12] media: ipu-bridge: Use v4l2_fwnode for unknown rotations
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It was showing malformed syntax colors below those lines,escaping the posix
-class brackets bring back the syntatic reference back.
+Hi Sakari
 
-Oh, malformed syntax colors means,(in a editor,in this case Vim, where syntax
-highlight is on). In essence, it might complain while running the script.
+Thanks for your review
 
-Hence, this trivialities.
+On Mon, 7 Jul 2025 at 23:45, Sakari Ailus <sakari.ailus@linux.intel.com> wr=
+ote:
+>
+> Hi Ricardo,
+>
+> On Thu, Jun 05, 2025 at 05:52:58PM +0000, Ricardo Ribalda wrote:
+> > The v4l2_fwnode_device_properties contains information about the
+> > rotation. Use it if the ssdb data is inconclusive.
+>
+> As SSDB and _PLD provide the same information, are they always aligned? D=
+o
+> you have any experience on how is this actually in firmware?
 
-Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
----
- tools/bootconfig/test-bootconfig.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Not really, in ChromeOS we are pretty lucky to control the firmware.
 
-diff --git a/tools/bootconfig/test-bootconfig.sh b/tools/bootconfig/test-bootconfig.sh
-index a2c484c243f5..211409539737 100755
---- a/tools/bootconfig/test-bootconfig.sh
-+++ b/tools/bootconfig/test-bootconfig.sh
-@@ -167,8 +167,8 @@ echo > $INITRD
+@HdG Do you have some experience/opinion here?
 
- xpass $BOOTCONF -a $TEMPCONF $INITRD
- $BOOTCONF $INITRD > $OUTFILE
--xfail grep -q val[[:space:]] $OUTFILE
--xpass grep -q val2[[:space:]] $OUTFILE
-+xfail grep -q val\[\[:space:\]\] $OUTFILE
-+xpass grep -q val2\[\[:space:\]\] $OUTFILE
+>
+> _PLD is standardised so it would seem reasonable to stick to that -- if i=
+t
+> exists. Another approach could be to pick the one that doesn't translate =
+to
+> a sane default (0=C2=B0).
 
- echo "=== expected failure cases ==="
- for i in samples/bad-* ; do
+I'd rather stick to the current prioritization unless there is a
+strong argument against it. Otherwise there is a chance that we will
+have regressions (outside CrOS)
+
+
+>
+> >
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> >  drivers/media/pci/intel/ipu-bridge.c | 30 +++++++++++++++++++---------=
 --
-2.49.0
+> >  1 file changed, 19 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/i=
+ntel/ipu-bridge.c
+> > index 020aa52f590d66b6d333adc56ebfb9ab0561db51..6f436a8b4d23373af8a6668=
+530333a827eca467a 100644
+> > --- a/drivers/media/pci/intel/ipu-bridge.c
+> > +++ b/drivers/media/pci/intel/ipu-bridge.c
+> > @@ -236,37 +236,41 @@ static int ipu_bridge_read_acpi_buffer(struct acp=
+i_device *adev, char *id,
+> >  }
+> >
+> >  static u32 ipu_bridge_parse_rotation(struct acpi_device *adev,
+> > -                                  struct ipu_sensor_ssdb *ssdb)
+> > +                                  struct ipu_sensor_ssdb *ssdb,
+> > +                                  struct v4l2_fwnode_device_properties=
+ *props)
+> >  {
+> >       switch (ssdb->degree) {
+> >       case IPU_SENSOR_ROTATION_NORMAL:
+> >               return 0;
+> >       case IPU_SENSOR_ROTATION_INVERTED:
+> >               return 180;
+> > -     default:
+> > +     }
+> > +
+> > +     if (props->rotation =3D=3D V4L2_FWNODE_PROPERTY_UNSET) {
+> >               dev_warn(ADEV_DEV(adev),
+> >                        "Unknown rotation %d. Assume 0 degree rotation\n=
+",
+> >                        ssdb->degree);
+> >               return 0;
+> >       }
+> > +
+> > +     return props->rotation;
+> >  }
+> >
+> > -static enum v4l2_fwnode_orientation ipu_bridge_parse_orientation(struc=
+t acpi_device *adev)
+> > +static enum v4l2_fwnode_orientation
+> > +ipu_bridge_parse_orientation(struct acpi_device *adev,
+> > +                          struct v4l2_fwnode_device_properties *props)
+> >  {
+> > -     struct v4l2_fwnode_device_properties props;
+> > -     int ret;
+> > -
+> > -     ret =3D v4l2_fwnode_device_parse(ADEV_DEV(adev), &props);
+> > -     if (!ret || props.rotation =3D=3D V4L2_FWNODE_PROPERTY_UNSET) {
+> > +     if (props->orientation =3D=3D V4L2_FWNODE_PROPERTY_UNSET) {
+> >               dev_warn(ADEV_DEV(adev), "Using default orientation\n");
+> >               return V4L2_FWNODE_ORIENTATION_EXTERNAL;
+> >       }
+> >
+> > -     return props.orientation;
+> > +     return props->orientation;
+> >  }
+> >
+> >  int ipu_bridge_parse_ssdb(struct acpi_device *adev, struct ipu_sensor =
+*sensor)
+> >  {
+> > +     struct v4l2_fwnode_device_properties props;
+> >       struct ipu_sensor_ssdb ssdb =3D {};
+> >       int ret;
+> >
+> > @@ -274,6 +278,10 @@ int ipu_bridge_parse_ssdb(struct acpi_device *adev=
+, struct ipu_sensor *sensor)
+> >       if (ret)
+> >               return ret;
+> >
+> > +     ret =3D v4l2_fwnode_device_parse(ADEV_DEV(adev), &props);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> >       if (ssdb.vcmtype > ARRAY_SIZE(ipu_vcm_types)) {
+> >               dev_warn(ADEV_DEV(adev), "Unknown VCM type %d\n", ssdb.vc=
+mtype);
+> >               ssdb.vcmtype =3D 0;
+> > @@ -287,8 +295,8 @@ int ipu_bridge_parse_ssdb(struct acpi_device *adev,=
+ struct ipu_sensor *sensor)
+> >       sensor->link =3D ssdb.link;
+> >       sensor->lanes =3D ssdb.lanes;
+> >       sensor->mclkspeed =3D ssdb.mclkspeed;
+> > -     sensor->rotation =3D ipu_bridge_parse_rotation(adev, &ssdb);
+> > -     sensor->orientation =3D ipu_bridge_parse_orientation(adev);
+> > +     sensor->rotation =3D ipu_bridge_parse_rotation(adev, &ssdb, &prop=
+s);
+> > +     sensor->orientation =3D ipu_bridge_parse_orientation(adev, &props=
+);
+> >
+> >       if (ssdb.vcmtype)
+> >               sensor->vcm_type =3D ipu_vcm_types[ssdb.vcmtype - 1];
+> >
+>
+> --
+> Regards,
+>
+> Sakari Ailus
 
+
+
+--
+Ricardo Ribalda
 
