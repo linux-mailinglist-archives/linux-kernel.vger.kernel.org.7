@@ -1,114 +1,81 @@
-Return-Path: <linux-kernel+bounces-721780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9B3AFCDC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:35:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB1C9AFCDC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:35:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CFF13ABEFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:34:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19C214807FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514052E03FA;
-	Tue,  8 Jul 2025 14:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B67E2DFA37;
+	Tue,  8 Jul 2025 14:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QW0lNDp6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dQ8yZRHF"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BE213957E;
-	Tue,  8 Jul 2025 14:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A3813957E;
+	Tue,  8 Jul 2025 14:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751985280; cv=none; b=KuwekP+zOO207VR/KxXCa+BCVYX3ryp+V9CLsOu0sKOHddL+cBabWhPzWPqFrc8yJ/Yv9Mv32O2LRYy8+2AjQJzEQ7FBjB+X5tJWhYyqgtYrYg9BL74Ex+iVwM81EYI6fZKLRk98g81mkMLJ+3GM4bAauVHsJlfn+xbbXzwpL3Q=
+	t=1751985303; cv=none; b=W27El1kHOXPom6UKbOYIUmjilsBylh5ZHQbO5mDfMo5Kt2EoMKnPKndKY0EULpoMIFC9SVEbajaub91Bz6UWDoaihe0U0O2rKX+EgUVU/ZTngacKegtDKEnAqO5zAIf8YAACNN4bf5GpusDeh3XPBPipaPQcCEdNdKj3a6x0lUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751985280; c=relaxed/simple;
-	bh=wszQK8fm1ArUjjQQdCE2DZm7Xw6xIb92NR0FqLsutXk=;
+	s=arc-20240116; t=1751985303; c=relaxed/simple;
+	bh=ECOKHVhK7xDoHwg8uSR2SY6e10kX8TNbz9priKpMX1w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cEYQjrIdRypdMii8o9Na9Pf++eQ+2sksd/Z8WjQhoaHvNqnuIXHD/uKGCrWp5yWvkCWnyIAqLXWh7CIuDyXs2S4pokUQZEoBTlFVJ+qw1ip1GWgF5qumutb3KQTTPhMHju+BEjdiWXyeH9fc6EdeyIurfbdRZ9ihUy0oD2ZSF7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QW0lNDp6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B22FBC4CEED;
-	Tue,  8 Jul 2025 14:34:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751985280;
-	bh=wszQK8fm1ArUjjQQdCE2DZm7Xw6xIb92NR0FqLsutXk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QW0lNDp64mrDGBM6oPe7z9/DiWNW0P4nMJ7y4O0CXD+3y9YwScw9iqKVK2yiZk+kk
-	 D4Xmznt4uPSZJVcqDDBwwvZ+R36X35yQM9FDJgcNyMG0jUUsoWuvy+Wx+GBfzIJo/1
-	 aWSew4MoJLLlKB7MOz97avPaBFTK1q2mnAYssE9OKzZ1f0aIHL/saJGrQR8ErFmDYW
-	 +NPv7SmkneXwFmHtbYWXtjRDMcF6a61+PcBbOrGfmT6WF20LZM2CBcmEAwl80OvLTY
-	 iUwqCTGlJo33FmJiDmwIqjibXJ4t0G2sd72v9zadn24nsSuj+svnKNV/5mnx4JT4ki
-	 dQG2CGdtwh8Ww==
-Date: Tue, 8 Jul 2025 07:34:36 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, 
-	Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, 
-	Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, 
-	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>
-Subject: Re: [PATCH v8 10/12] unwind_user/sframe: Enable debugging in uaccess
- regions
-Message-ID: <orpxec72lzxzkwhcu3gateqbcw6cdlojxvxmvopa2jxr67d4az@rvgfflvrbzk5>
-References: <20250708021115.894007410@kernel.org>
- <20250708021200.058879671@kernel.org>
- <CAHk-=widGT2M=kJJr6TwWsMjfYSghL9k3LgxJvRard0wtiP62A@mail.gmail.com>
- <20250708092351.4548c613@gandalf.local.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wt3p9cpXmdb9Qwu8z2ieShZZ4XsKdd5QFgF9Mm7qksOW7zAnFsWXjA2cbS7OkOXxXNAAGAqfbdP+UjSb24lLLfUmlUNUIqrjgTjBfuRvY1J9k0UwCr/opJtLISiY+lZiZjMv+uhvNr6doz6hckAbUW56NoR+38UHCrzIRSpNMeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=dQ8yZRHF; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=gdz0beR2fzyal7iK8mhUOStwe9TumUdajoByiuklz3M=; b=dQ8yZRHFNtcfSGeJj6SQ7JDVuG
+	suIPtCRFF4ysnj8g7sjhNEz+s6oWh6r0ynFF133iuOB4ddJ6dZHCtI6LZrvt+/wcUxEDU3Q/3EyXL
+	NcLcd99cVs3tukVBskxrS0t/JyHCSr/nD+VjAOx79e1WX0ec46XmmXN0zRBv6kFrLiLk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uZ9PJ-000pVD-3v; Tue, 08 Jul 2025 16:34:53 +0200
+Date: Tue, 8 Jul 2025 16:34:53 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
+	shenjian15@huawei.com, liuyonglong@huawei.com,
+	chenhao418@huawei.com, jonathan.cameron@huawei.com,
+	shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
+	arnd@kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 03/11] net: hns3: use seq_file for files in
+ queue/ in debugfs
+Message-ID: <2cae4f9f-9191-4e29-8204-23332b9ad55d@lunn.ch>
+References: <20250708130029.1310872-1-shaojijie@huawei.com>
+ <20250708130029.1310872-4-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250708092351.4548c613@gandalf.local.home>
+In-Reply-To: <20250708130029.1310872-4-shaojijie@huawei.com>
 
-On Tue, Jul 08, 2025 at 09:23:51AM -0400, Steven Rostedt wrote:
-> On Mon, 7 Jul 2025 20:38:35 -0700
-> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Tue, Jul 08, 2025 at 09:00:21PM +0800, Jijie Shao wrote:
+> From: Jian Shen <shenjian15@huawei.com>
 > 
-> > On Mon, 7 Jul 2025 at 19:12, Steven Rostedt <rostedt@kernel.org> wrote:
+> This patch use seq_file for the following nodes:
+> rx_queue_info/queue_map
 > 
-> > This patch is disgusting, in other words. It's wrong. STOP IT.
-> > 
-> 
-> No problem, I can easily drop it.
-> 
-> I just took Josh's PoC patches and posted them. This particular series
-> still needs a bit of work. That's one of the reasons I split it out of the
-> other series. The core series is at the stage for acceptance and looking
-> for feedback from other maintainers. This series is still a work in
-> progress. Others have asked me to post them so they can start playing with
-> it.
-> 
-> We still need to come up with a system call with a robust API to allow the
-> dynamic linker to tell the kernel where the SFrames are for the libraries
-> it loads. Hence the "DO NOT APPLY" patch at the end (which I just noticed the
-> subject text got dropped when I pulled it into git from patchwork and sent
-> out this version, at least the change long still suggest it shouldn't be
-> applied).
-> 
-> But I will remove this patch from the queue. I never even used this
-> debugging. What I did was inject trace_printk() all over the place to make
-> sure it was working as expected.
+> Signed-off-by: Jian Shen <shenjian15@huawei.com>
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
 
-I had found those debug printks really useful for debugging
-corrupt/missing .sframe data, but yeah, this patch is ridiculously bad.
-Sorry for putting that out into the world ;-)
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-And those are all error paths, so it's rather pointless to do that whole
-uaccess disable/enable/disable dance.
-
-So yeah, drop it for now and I can replace it with something better
-later on.
-
--- 
-Josh
+    Andrew
 
