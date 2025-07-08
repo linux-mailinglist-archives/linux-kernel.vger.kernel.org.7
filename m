@@ -1,114 +1,103 @@
-Return-Path: <linux-kernel+bounces-721669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B111AFCC3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:36:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22398AFCC48
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 544DB163CDD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:33:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D66EF1642E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DD52DD61E;
-	Tue,  8 Jul 2025 13:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4552DEA7A;
+	Tue,  8 Jul 2025 13:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikAZ81ZF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NtwkJ++E"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF4F26CE02;
-	Tue,  8 Jul 2025 13:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C5B2DE1FA;
+	Tue,  8 Jul 2025 13:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751981574; cv=none; b=JWjjHXYuSx5oF28SoFrkzuw451N7393OVipSnzwIOn+y0j99luLQxDZAvbouOwXly8q99d8CrBzdwFfBVRzB6ioADI2h4795kcXApt/tczAgQuv0k5McwaQp2oyDMYsvj0VZ6qgNYhxBf3sD9wXKinX55n32biB3mFlnecdAIDY=
+	t=1751981818; cv=none; b=PaCj2bXEg2Tga3phUdSO3zMTE9nIgwMdErSHajUUq1N/C+N8vHO0EYj8ZfkcEBrdUNjQ+RCzcxtyI3eDJ2pPZUAnTvcAEljVCntNILyFDRgvlB68ZRDZBXiqV/dpJkOqJUNAZFBPqL16NSenJBpb0+9GL7YGZ98h21vTFC95NbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751981574; c=relaxed/simple;
-	bh=Yw3Oj8jXPI3vGz0t1H7wwj43CNt2Evt/RzxXEtv38fE=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Z3tBeemyquARsN/ObY/dcMIWA+urUz7+NsR7Xrl0NZ1Sy9PYV6njrO5sToeacJn7r8+01i3i/Oxp7HOCOghQ0WFAWhV1GcYJ8nGpZZEndzvcmvVGXFrXeWw2hf3Szp2j361ZAuXr7MJodFGkJR2Xc0xKXGxxGR5NKUhvIMH+30Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikAZ81ZF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23171C4CEED;
-	Tue,  8 Jul 2025 13:32:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751981573;
-	bh=Yw3Oj8jXPI3vGz0t1H7wwj43CNt2Evt/RzxXEtv38fE=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=ikAZ81ZFry3fjKSFkOtt6InwqkSMqgBxmwTrrpOB+O965t340fbaCF7WDvT0qjwfM
-	 vEsmQEQXjE9v5Z85F1EaqY16zggFeksnxdGgC0JJy49PHAd3Eq3VsllMTru1pouXCr
-	 6hiTx9ODL8Ds+cFxmRF4X/NIxb7j7k230zOgMraiL15K9dP8t/Vp5zmB09xaHLc8uU
-	 NArf9CTLqCRQINvvCkZSqjkAZAXjM5Akv8MsyeuyWK55B+RG5kLlN13fxHEGNYr5mR
-	 5QARjGKBx52xLQgxhq7Bx3oW4m5f7Hs+N8ZfBDWYJZ15KaNVPA78kKf8Zoe0AJjDtb
-	 iXHgn1+UsB4nQ==
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 1F239F40066;
-	Tue,  8 Jul 2025 09:32:52 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Tue, 08 Jul 2025 09:32:52 -0400
-X-ME-Sender: <xms:Ax5taAQz7_jhkBJqUzeezI4x0XypswLMLklWPAyDyKyLdK5fYgvdTg>
-    <xme:Ax5taNxsVK3RTIpFcC3xzNPryqa4GKm3f1nokps2tDF3v3gBpNLdzgFBRPTyo2HJ9
-    AkSsAem5SsnpIE92JM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefgeektdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvghlrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeejjeffteetfeetkeeijedugeeuvdfgfeefiedtudeikeeggeefkefhudfhlefh
-    veenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidquddvkeehudejtddvgedq
-    vdekjedttddvieegqdgrrhhnugeppehkvghrnhgvlhdrohhrghesrghrnhgusgdruggvpd
-    hnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggr
-    vhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesgh
-    hoohhglhgvrdgtohhmpdhrtghpthhtoheptghhvghnhhgrohegudeksehhuhgrfigvihdr
-    tghomhdprhgtphhtthhopehjohhnrghthhgrnhdrtggrmhgvrhhonheshhhurgifvghird
-    gtohhmpdhrtghpthhtoheplhhiuhihohhnghhlohhngheshhhurgifvghirdgtohhmpdhr
-    tghpthhtohepshgrlhhilhdrmhgvhhhtrgeshhhurgifvghirdgtohhmpdhrtghpthhtoh
-    epshhhrghmvggvrhgrlhhirdhkohhlohhthhhumhdrthhhohguiheshhhurgifvghirdgt
-    ohhmpdhrtghpthhtohepshhhrghojhhijhhivgeshhhurgifvghirdgtohhmpdhrtghpth
-    htohepshhhvghnjhhirghnudehsehhuhgrfigvihdrtghomh
-X-ME-Proxy: <xmx:BB5taCELDn6mYiYmaFmcAwwJbvzZ-KVX7NMEuFn2Z9YAIFD9WhySYA>
-    <xmx:BB5taCRokb4LBOMs_TQd09am5j7eCmE9sOnruVtIx2-O8hcSWEDO5A>
-    <xmx:BB5taIMiVDSuvvVvfEmwjvOHuZlptzfWY6wL_gig784Dhb6MuH82FQ>
-    <xmx:BB5taPnTe6qxleuKlo-OV37ka_fqU3-p-HwkQ3yKGEjcrPbYrEhL9w>
-    <xmx:BB5taKbGSIWOsctkF8s7qsJ83tHV1DIjhsY4deHmuaf8Dc1o52axsI-p>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id E4548700065; Tue,  8 Jul 2025 09:32:51 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1751981818; c=relaxed/simple;
+	bh=Ap4QDUCyJPxPrr7O+kWeU2vEKmpGvwyPkXTCOZocQuA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qSSx7R7DhgZD9vzseZwMsvxcIfM5zx3/18WsGb6uw9c288tc3UzIkoz77ET6GLZINP4K8HgEzGeX5Bu3C944JDJKRmhdS5kQK/00bDr7bmXgv06Adg1RMmIOB9qoSPeYKGtb0B2JV34SIsFFtwHbfxSscblj8JxPyOpgjqt041M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NtwkJ++E; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751981817; x=1783517817;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Ap4QDUCyJPxPrr7O+kWeU2vEKmpGvwyPkXTCOZocQuA=;
+  b=NtwkJ++El+LaOC/0xan/TAi1HHXSzRUjlOwaDvEDN2JAgSMHZ53Vt+1A
+   9GenG5u0V5cYyjvmCQIIVkD6yWFw+YBWcHWzX/wlNp1ErajHCu64ilZg9
+   qKRmin/kDYiUydZiugVSicyS3OtNNGVLfSRMyeR2SkuExBfxJLjRyD66B
+   phi3PBjOBsdslrUM0e4ey2+Zs29y98wTSt4L/hUHx4nApniwDAM3mp+Ct
+   i+4MQdEcYkQyLSVUvtaa3hUqXyrhYHQqqeF5Z7I391u9QsDBKfllpnpu6
+   7Pa+o+ipXFnVCiuD5y0gxEBPFzQYpjvORZu3O5UCkOmE3y/T6l5kaFG4S
+   g==;
+X-CSE-ConnectionGUID: iZCjxWrgR12ra4BunGR+KA==
+X-CSE-MsgGUID: O9nNrlqoQJu+6rkzRistFg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="65678021"
+X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
+   d="scan'208";a="65678021"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 06:36:52 -0700
+X-CSE-ConnectionGUID: gzsweEymR/2qSsfrsnjqFQ==
+X-CSE-MsgGUID: qE4cxclKQiO2bTvfNsn7gw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
+   d="scan'208";a="154909699"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 08 Jul 2025 06:36:50 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 69BC71B7; Tue, 08 Jul 2025 16:36:48 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Guenter Roeck <linux@roeck-us.net>,
+	James Hilliard <james.hilliard1@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-watchdog@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
+Subject: [PATCH v3 0/2] watchdog: Don't use "proxy" inclusions
+Date: Tue,  8 Jul 2025 16:33:42 +0300
+Message-ID: <20250708133646.70384-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T0bfca88659d537b7
-Date: Tue, 08 Jul 2025 15:32:31 +0200
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "Jijie Shao" <shaojijie@huawei.com>,
- "David S . Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>, andrew+netdev@lunn.ch,
- "Simon Horman" <horms@kernel.org>
-Cc: "Jian Shen" <shenjian15@huawei.com>, liuyonglong@huawei.com,
- "Hao Chen" <chenhao418@huawei.com>,
- "Jonathan Cameron" <jonathan.cameron@huawei.com>,
- "Shameerali Kolothum Thodi" <shameerali.kolothum.thodi@huawei.com>,
- "Salil Mehta" <salil.mehta@huawei.com>, Netdev <netdev@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Message-Id: <38355e48-8eba-4e1b-8811-969a8ec3a669@app.fastmail.com>
-In-Reply-To: <20250708130029.1310872-1-shaojijie@huawei.com>
-References: <20250708130029.1310872-1-shaojijie@huawei.com>
-Subject: Re: [PATCH net-next 00/11] net: hns3: use seq_file for debugfs
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 8, 2025, at 15:00, Jijie Shao wrote:
-> Arnd reported that there are two build warning for on-stasck
-> buffer oversize. As Arnd's suggestion, using seq file way
-> to avoid the stack buffer or kmalloc buffer allocating.
->
+Update header inclusions to follow IWYU (Include What You Use)
+principle.
 
-Thank you for cleaning this up!
+Note that kernel.h is discouraged to be included as it's written
+at the top of that file.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Changelog v3:
+- added prerequisite to avoid compilation errors (LKP, Guenter)
+
+Andy Shevchenko (2):
+  watchdog: it87_wdt: Don't use "proxy" headers
+  watchdog: Don't use "proxy" headers
+
+ drivers/watchdog/it87_wdt.c            |  4 +++-
+ drivers/watchdog/watchdog_core.h       |  8 +++++++-
+ drivers/watchdog/watchdog_pretimeout.c |  2 ++
+ include/linux/watchdog.h               | 12 ++++++++----
+ 4 files changed, 20 insertions(+), 6 deletions(-)
+
+-- 
+2.47.2
+
 
