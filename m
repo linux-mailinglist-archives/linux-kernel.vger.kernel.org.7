@@ -1,106 +1,130 @@
-Return-Path: <linux-kernel+bounces-720918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35BEBAFC217
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:38:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51E65AFC219
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 045167A62DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:37:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1BE94A65B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3B2217739;
-	Tue,  8 Jul 2025 05:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3259A21767A;
+	Tue,  8 Jul 2025 05:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="waYixALk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z2yMPUou"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lFsNl0pL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cYEyFzQQ"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B20742058;
-	Tue,  8 Jul 2025 05:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143142066DE;
+	Tue,  8 Jul 2025 05:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751953117; cv=none; b=l1fwa6Xmc1G3ZbwEDGXPsDRmFEHIyimrRX8qtGs+To4/dOKf6/qKCQTixpgHp1RisaS+bAkVhrRwtBtT84Q9j1hhQ+xNGYlEw+jvBKqHW3MT0YJMR0dQmK4gAJueI0nAN3DhX2p6Hd2KaYhiEzFAm1pWKZk9aVKG6BuvAlYfYkU=
+	t=1751953153; cv=none; b=F0MSelbnlF5tamyxVvNbkPJmgREZLJN88F1xoB+kD2KpQD05MMNlK5AGlFc0Z3QcVOEIDR4Xf3Hih1b8y8t/aPIvqoSjiPcLZBYb6IDGSGvLXW3NQcTccE814ieTWzCjc0XHfec09fuOnbdy1su9gN3w1sRgNqBnQ1oRIN+jYDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751953117; c=relaxed/simple;
-	bh=50wPwiif2x2NtdNvunIgqs4/IiKrfgrTdCorrZvve5A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VXXnYsw93fhkxc7osZwQEJS0nbPRmFXz8BcAHstzEPzVnp95pt3pydvJM8WHew26i8B+Nz49gjUf2aCSHzzEBkzfyalDil2QObX71L7TFvskIeAb2vMVm4PfbSUGgPhm5IU6wit+gI3o2Hn4l1wZ9Vmz/IjOzXUMrkjJP3PuIrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=waYixALk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z2yMPUou; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1751953153; c=relaxed/simple;
+	bh=NZWQkkh1LvOo5VYGeid5YFRirCci5Yi0s4zWLiGD4fQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W3LC1OAL2d2U6jC2VwuqBKBoxFnkWfCHOw1FkMa+kmXNVhpdstxtg7JgJ2ipT0G27xXG8OjbrzCW4Qefc0uZDRFYP5vJC2Xm3EmnOdKuZFt20trHfbbIs7UZJMZ0biOBROAcj+wwrON9Q/NJDv36s8+/lDn7Wn6kAMcxTGkhxNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lFsNl0pL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cYEyFzQQ; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
+Date: Tue, 8 Jul 2025 07:39:06 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751953112;
+	s=2020; t=1751953150;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qGQOt9zJY1AhXD9o4NBc7iKeC5E/hVEdUUotGTlMF60=;
-	b=waYixALk8ew3kupKl+Sv0gwYp8se/Dfi/iHjRbrELdra9IIpCHgi6xaxBxrAoBeKmyntIQ
-	B44r85YOVVEYiq4QWp2PgXgRtP0wv1ngF/Sgts4eEXk7n6IAvfjXXLhJ0DTySMS1idlZZW
-	d+ML2ZTkAsNfmG+LdYZDtUkyEVts4CwTFT3Ei/wo5l8pvPhkbnC/B45UtcD9KHq4krXbWo
-	GzQ125bpeaoMgl1AGBCORDgprtqfscQcXHzdr5BwRkQ/hYSCgTiZ27YC+OUyCKZNgQkt4E
-	WNe2u7Rmf/QJ1kJNwqFusjZSCv4098CoM2gruTfjjA+kAfIcaMwc5SbEGCqnuw==
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fl7wLQ4GgSJMdfBRZNRETA8GIOa3a2MkSqRioQI6uyY=;
+	b=lFsNl0pLD87rF6sP4vRyFTlOdDRF7Zhq5fUgz8j1c2Zx+iAu8WNx0ff9rUxVT0dprgwBvl
+	oedm2j/u1uFxW9zhrNey/ClyzB/l3znH/jhNhIIsKrnn7155Pm7gJ2SLKTTvAA7dlA+Aes
+	dIsO8EVUjobZX3zk11DqiyYWMvSiZzVxiMNk7OyHy8Y+WeCeR/XP+lHpWy/ykl6I3Fyho/
+	4VHlChdf7w6m6Kunvrlv07Ozsu2B1ojChYSprLk8yVzdkCn9TNxCZz6Np1xE908kLGQJBC
+	26Bj/N0Q5C8Fm9EyY8BrMFPDnTNTJPFV8QoZlkAdOsSmC9BFy33gB/uOmPyaXQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751953112;
+	s=2020e; t=1751953150;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qGQOt9zJY1AhXD9o4NBc7iKeC5E/hVEdUUotGTlMF60=;
-	b=z2yMPUoun6joogG68ZUVq97zb0wQM4zYXJGzFbNOzQV49MpFFKgy0RitRPkynR5UaQwufD
-	/XaMFmlbzDKwoXAg==
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] PCI: iproc: Remove description of 'msi_domain' in struct iproc_msi
-Date: Tue,  8 Jul 2025 07:38:25 +0200
-Message-Id: <20250708053825.1803409-1-namcao@linutronix.de>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fl7wLQ4GgSJMdfBRZNRETA8GIOa3a2MkSqRioQI6uyY=;
+	b=cYEyFzQQUeauKKTZWun0p2DqgHO9DGlgfVcGInG0RjtS5nBTYqNlNIlJ5cZ+bMBJcMWq+i
+	RQnyJ2NKSwwwiwAg==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Andy Lutomirski <luto@kernel.org>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	shuah <shuah@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, John Stultz <jstultz@google.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Eric Biggers <ebiggers@google.com>, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] vdso: sparc: stub out custom vdso implementation
+Message-ID: <20250708073204-b67226e4-b140-4a1a-ae98-47769c1b2f98@linutronix.de>
+References: <20250707144726.4008707-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250707144726.4008707-1-arnd@kernel.org>
 
-The member msi_domain of struct iproc_msi has been removed, but its
-description was left behind. Remove the description.
+On Mon, Jul 07, 2025 at 04:46:37PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> sparc64 is the only remaining architecture that has its own implementation
+> of the vdso clock_gettime/gettimeofday helpers in place of the generic
+> code. This causes a number of issues:
+> 
+>  - Changes to the vdso interfaces require adding sparc64 specific hacks
+>    even when nothing else needs them
+> 
+>  - The prototypes in <vdso/gettime.h> don't match the function implementation,
+>    and not including that header to avoid the build error from that causes
+>    another warning:
+> 
+>   arch/sparc/vdso/vclock_gettime.c:274:1: error: no previous prototype for '__vdso_clock_gettime' [-Werror=missing-prototypes]
+>     274 | __vdso_clock_gettime(clockid_t clock, struct __kernel_old_timespec *ts)
+>         | ^~~~~~~~~~~~~~~~~~~~
+> 
+>  - Nobody has ever implemented the clock_gettime64() vdso that is required for
+>    32-bit compat tasks
+> 
+>  - The warning about the missing executable-stack flag was missed:
+> 
+>   sparc-linux-ld: warning: arch/sparc/vdso/vdso-note.o: missing .note.GNU-stack section implies executable stack
+>   sparc-linux-ld: NOTE: This behaviour is deprecated and will be removed in a future version of the linker
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202507080437.HQuYK7x8-lkp@int=
-el.com/
-Signed-off-by: Nam Cao <namcao@linutronix.de>
----
- drivers/pci/controller/pcie-iproc-msi.c | 1 -
- 1 file changed, 1 deletion(-)
+IMO this should be in its own patch.
 
-diff --git a/drivers/pci/controller/pcie-iproc-msi.c b/drivers/pci/controll=
-er/pcie-iproc-msi.c
-index d0c7f004217f..9ba242ab9596 100644
---- a/drivers/pci/controller/pcie-iproc-msi.c
-+++ b/drivers/pci/controller/pcie-iproc-msi.c
-@@ -82,7 +82,6 @@ struct iproc_msi_grp {
-  * @bitmap_lock: lock to protect access to the MSI bitmap
-  * @nr_msi_vecs: total number of MSI vectors
-  * @inner_domain: inner IRQ domain
-- * @msi_domain: MSI IRQ domain
-  * @nr_eq_region: required number of 4K aligned memory region for MSI event
-  * queues
-  * @nr_msi_region: required number of 4K aligned address region for MSI po=
-sted
---=20
-2.39.5
+> Most of the removed code only exists on sparc in order to dynamically
+> patch the vdso based on the presence of the tick vs vtick based
+> clocksource.
+> 
+> Rip out the whole thing and replace it with a minimal stub as we do
+> on parisc and uml. This introduces a small performance regression when
+> using a libc that is aware of the vdso (glibc-2.29 or higher).
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
+Thanks, this makes things easier.
+
+Reviewed-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+Tested-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+
+But why do we even need the stubs? Removing the time functions from the
+vDSO completely should also work, no?
+For parisc there was no reasoning why stubs were used. On uml the stubs are
+necessary to prevent the libc from calling into the host vsyscall [0], but
+that looks irrelevant for SPARC.
+
+[0] f1c2bb8b9964 ("um: implement a x86_64 vDSO")
 
