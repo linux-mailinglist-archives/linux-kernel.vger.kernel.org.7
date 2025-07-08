@@ -1,146 +1,116 @@
-Return-Path: <linux-kernel+bounces-721316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD459AFC7A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:59:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04180AFC7A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:01:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25ED83B2C79
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:59:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B425A3B4201
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E56267B74;
-	Tue,  8 Jul 2025 09:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9565D229B28;
+	Tue,  8 Jul 2025 10:01:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Amefj1Rm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IZxfI62n"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB8716DEB3;
-	Tue,  8 Jul 2025 09:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD00272610;
+	Tue,  8 Jul 2025 10:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751968791; cv=none; b=hISDR6VSCM36f8S7cEIRkjLkCpjhtfykt2EV3pAvzy/kL7Ux3AFL+Gyyun45Bd/wB152bOWqneIJTuJ0Do4uPfbMjewIHaiOmlAxTB35OicrFpjm3g5cqxkYrGYYq6r6wEsJ9G4wLnWJSj7uGKxMPY62KX48dPp/JFtQOJJejeE=
+	t=1751968865; cv=none; b=NW6c62+bzmhYTKdj9BaAyHIH/WQKeVwdHjyQ9VDyBshiN+BA/6a+6TbPNaadJHJDUgfOJf9WGUF3xsyWluF56eri7fD20aRVR/l3s8bIfBC/hPAVAw7Bh0gkEZQ/m7jesB28e69MatCkFolfD1rOoXDhSLLvGQ3+lINKxF9Hs5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751968791; c=relaxed/simple;
-	bh=U+ALmIvtauUGQfRxu/HLRvT7GiUuFduo9KYZ9g3pIvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KRNCw2BjPqBdVUpkvoLAjGS7QRoXYGZuIpRj2iLTDXQDae5c37Dp74tRpR2SWsop86lGHJWN8Qp3KLZBV/A3ekpm5yzcSHXrWlhZifuAvF1sxpww1zRjqgEqQvrc2qo0FPwJDR/Ymdb+EZ2m80jUc16i57WHZPiL7m90BzqSoXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Amefj1Rm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3950C4CEED;
-	Tue,  8 Jul 2025 09:59:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751968790;
-	bh=U+ALmIvtauUGQfRxu/HLRvT7GiUuFduo9KYZ9g3pIvk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Amefj1Rmg+fI/XRubKDeZ7IUZEnSfmrH6Njg7/73ml52H0kWvBbZjY/CP1IOIxRZv
-	 N3E3IQUet2ziFlYsm/lda+gLecuMRZFaTlON02n8IQ0Pj2vjIvnwZl2ewYXp7FsjYL
-	 AYTiwHzezEenNnQZg81CRyIHJG2YJ7Rp4XjploQio+6d4QqVlmXfqMIosH/0mHTOtT
-	 8ObsTXXeEyt9iSz7nCVEL52ohy24GZZHTp8VCgwy3Fgw9Iy0Ods4HDpRjV2HOTGDmk
-	 qvPhfxArg3zgagcFyw9QJiO6seV+rgwR8X7+Qpky+WzEqZjOSSYke77G1AbTN9OYMa
-	 mEYFGprXBIEoA==
-Date: Tue, 8 Jul 2025 11:59:44 +0200
-From: Carlos Maiolino <cem@kernel.org>
-To: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, skhan@linuxfoundation.org, 
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] xfs: replace strncpy with memcpy in xattr listing
-Message-ID: <l6sjutxf7g3gafcmwtzaadm7ngoqoss5lh6sc4f6naugb3vo2b@e4mdbr43xwge>
-References: <oxpeGQP7AC5GXfnifSYyeW7X_URDJhOvCxTG09iGmuvIXd330ZdXanoBmbUB3wpOcIORP1CakEzevsjtJKynhw==@protonmail.internalid>
- <20250617131446.25551-1-pranav.tyagi03@gmail.com>
- <huml6d5naz4kf6a3kh5g74dyrtivlaqyzajzwwmyvnpsqhuj3d@7zazaxb3225t>
- <rkCSJQOnZAt9nfcVUrC8gHDWqHhzMThp3xx38GD2BgJZM4iXJfvVgXZwa21-3xikSHHLO-scI4_47aO-O1d5FQ==@protonmail.internalid>
- <CAH4c4j+dhh9uW=GOoxaaefBTWQtbLeWQs1SqrWwpka9R8mwBTg@mail.gmail.com>
- <aaywkct2isosqxd37njlua4xxxll2vlvv7huhh34ko3ths7iw4@cdgrtvlp3cwh>
- <pygwb44kAWjcvW1e9Rveg6qGlQmY2r81JtgZ1dM1qhWT6DxalgoXub31RDJH0Mcx2S3cNbWTiFXM9o74gelVnA==@protonmail.internalid>
- <CAH4c4jKisoACHNOQH5Cusduu-_51_PcevxYJT3k_o6MjBWsVJw@mail.gmail.com>
+	s=arc-20240116; t=1751968865; c=relaxed/simple;
+	bh=pPJ3ZM+61NoEPP7sVqf8nRihh6saAoswmamcXrU9qmQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dLlX60JMu/Yes88DMcfF4Yly1Bj0U59/wZxbzqU+EzTYwiRc0N1cOiPSD89G59/9nkCyv/iEUQFGaSbozxpkzDF0bduObqkyjofWIEnuD/YR+R/gAoaeKfyUSoRC3XFIzbuFK/hOgyFa1lV+TRFaM5EFwK+3Nzaysnks87X2PVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IZxfI62n; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23508d30142so49865685ad.0;
+        Tue, 08 Jul 2025 03:01:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751968863; x=1752573663; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x3wkBIAWu6vMGhx4ihyYrJkvVRzXaSU5Nke0PKHHZR0=;
+        b=IZxfI62nuRf0pcjI1fu+dN6UyT1eGG0tzqEEA25u7KNC4DGXZP024LK0hY8cree43g
+         UAazC3ReUUvOft8J/m4PLyWBSJOu+uQwvHbl2euqcm2V6h94RpWnZN8HPVb1rHOAskyW
+         UDvBjjvHGmoGczuQQtaEyx0kuRJw1MQN5lc3ax6QcJZWn5+RC9CmMIBLcvIS7Ef4EI1N
+         5KFbqaMmJaI3CILzFZGv/Z+J+3DAeCCze8LVv31aekFdvHSAhKti/JUxHb83XtyPtUIf
+         FmyPeG3esN9rin/97TCTTXFHigNFnMRjZkX5W+NFf1Ufe9qdGa5dDv95BnuSoPxAxbUd
+         g0lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751968863; x=1752573663;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x3wkBIAWu6vMGhx4ihyYrJkvVRzXaSU5Nke0PKHHZR0=;
+        b=E5WuYOPf+5JF7sFuDcTu9/WSXq9cPkBAv7JOuW4b459Rq2NRmYC1p2QyP6nknS/KD7
+         TYZxh1wpFEbfiDWvvMmMf3syKfoIPR4ip81CicgbPDO/Oj4t8K1lvc6wj4XIG4RxpE3z
+         bUaYWhToOF73/hQF1Gx0VaNJIsa7Jm/7PYG3d4WsuAmIbmTZst+1TV9EEhxCcNINdglF
+         FKf2KQnF/BXjyIDjA2i9ZmG2Exn3fiyL1pxBs8oK5gdOm3CmDrKkTISuBIXSdcT+dgmU
+         /wCeowTwU2eP/LwCvTf996wuHu+CtF+my18g8CkSeKSxcXuYpQGqC5r4dGLoGKiuorD4
+         BTYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzWn04IQnjz/KSis1bpakEM4UkpVhKJgIY92p2vUR72gvA+BeotcWiG6CPlTvk+Fm9eaSgzLGtNPtrjLM2@vger.kernel.org, AJvYcCWlQPsIUnn/etJ7LCckJ8XX5MsVhywHg5crSy4Bu7wVrFFIhbOoROUG6TV7jNtgWauGg1Mo0f/jV2MB@vger.kernel.org, AJvYcCXLs61sEZWto39E8sCoy+a7BqVVtHOoFE6FnZ6SSjaGK64oCj4D5boIk4R73L3C8ahxF/dO9ggJxn15zw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5eNakFf2wf10ZP1MyNaoBjpfdwd6c7z+7KBMEap1AMgGzc5/t
+	yzCx69Z2G5A/kidiobf6lyB7CQlLkkt7RCEgI3eY0J2HpsrzSz71UhmMdhZjc9BYjITjVtChRnN
+	FH6beLy0IxrJATHW3Ne923mBDH8pyK48=
+X-Gm-Gg: ASbGnctpdaLC6CHRh2rC2h/ipOJHQKtffjxrRMkAzV4zRKyMY9CZPo34UX5/xTzUSoS
+	y+Y1kqxNlu6LIjE58nQ+DjnJ3V4gTJeMxWIpmjcEUfbpKbCJ9LC2BUtXjwZRZbnBZDORe5cSHov
+	b8E9JxM/EMT8GjUpKcqDNV9EcL29g/N2h94wV00tpb
+X-Google-Smtp-Source: AGHT+IGAe+59sFXxJtTzkwvN/ahnPXiW4uDCXu7SJ3GxoxXjyVqLVVp4TiGhxGEmNwLOC3JUTpSndKTB39EzWdmJQBw=
+X-Received: by 2002:a17:902:cec1:b0:21f:617a:f1b2 with SMTP id
+ d9443c01a7336-23c85ec7c0amr255897365ad.46.1751968862766; Tue, 08 Jul 2025
+ 03:01:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH4c4jKisoACHNOQH5Cusduu-_51_PcevxYJT3k_o6MjBWsVJw@mail.gmail.com>
+References: <20250706214111.45687-1-rosenp@gmail.com> <20250706214111.45687-2-rosenp@gmail.com>
+In-Reply-To: <20250706214111.45687-2-rosenp@gmail.com>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Tue, 8 Jul 2025 12:00:51 +0200
+X-Gm-Features: Ac12FXz_arerdXgv7XWPfT5u_8acT2yjf8UClrrHDQjOZEpD7ryHNclY75AcmHs
+Message-ID: <CAMhs-H-DNZik1EhM03QjUk=KwJwdQ=MCS-XdkA_dy6G7EpjBbQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] wifi: rt2x00: fix compilation
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-wireless@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, 
+	yangshiji66@qq.com, ansuelsmth@gmail.com, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Stanislaw Gruszka <stf_xl@wp.pl>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:MIPS" <linux-mips@vger.kernel.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 07, 2025 at 08:02:06PM +0530, Pranav Tyagi wrote:
-> On Tue, Jul 1, 2025 at 12:04 AM Carlos Maiolino <cem@kernel.org> wrote:
-> >
-> > On Mon, Jun 30, 2025 at 06:18:06PM +0530, Pranav Tyagi wrote:
-> > > On Mon, Jun 30, 2025 at 5:49 PM Carlos Maiolino <cem@kernel.org> wrote:
-> > > >
-> > > > On Tue, Jun 17, 2025 at 06:44:46PM +0530, Pranav Tyagi wrote:
-> > > > > Use memcpy() in place of strncpy() in __xfs_xattr_put_listent().
-> > > > > The length is known and a null byte is added manually.
-> > > > >
-> > > > > No functional change intended.
-> > > > >
-> > > > > Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
-> > > > > ---
-> > > > >  fs/xfs/xfs_xattr.c | 2 +-
-> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > >
-> > > > > diff --git a/fs/xfs/xfs_xattr.c b/fs/xfs/xfs_xattr.c
-> > > > > index 0f641a9091ec..ac5cecec9aa1 100644
-> > > > > --- a/fs/xfs/xfs_xattr.c
-> > > > > +++ b/fs/xfs/xfs_xattr.c
-> > > > > @@ -243,7 +243,7 @@ __xfs_xattr_put_listent(
-> > > > >       offset = context->buffer + context->count;
-> > > > >       memcpy(offset, prefix, prefix_len);
-> > > > >       offset += prefix_len;
-> > > > > -     strncpy(offset, (char *)name, namelen);                 /* real name */
-> > > > > +     memcpy(offset, (char *)name, namelen);                  /* real name */
-> > > > >       offset += namelen;
-> > > > >       *offset = '\0';
-> > > >
-> > > > What difference does it make?
-> > >
-> > > I intended this to be a cleanup patch as strncpy()
-> > > is deprecated and its use discouraged.
-> >
-> > Fair enough. This is the kind of information that's worth
-> > to add to the patch description on your future patches.
-> >
-> > No need to re-send this again.
-> >
-> > Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
-> 
-> Thanks Darrick and Carlos for the Reviewed-by tag.
-> 
-> I also wanted to ask if this patch has been queued for merging.
+On Sun, Jul 6, 2025 at 11:41=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wrot=
+e:
+>
+> The .remove prototype commits seem to have missed this driver. Probably
+> because COMPILE_TEST is missing.
+>
+> This is a mess anyway. These non static functions will be moved to their
+> proper place.
+>
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  drivers/net/wireless/ralink/rt2x00/Kconfig     | 2 +-
+>  drivers/net/wireless/ralink/rt2x00/rt2x00soc.c | 4 +---
+>  drivers/net/wireless/ralink/rt2x00/rt2x00soc.h | 2 +-
+>  3 files changed, 3 insertions(+), 5 deletions(-)
 
-xfs teams sends an ANNOUNCE email every merge done to the for-next
-branch, you can check if your patches are mentioned there, if not
-they are not queued up yet.
+Reviewed-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 
-Also, you'll likely receive a message saying your patch has been pushed
-into for-next.
-
-Note though that just because your patch has been added to for-next,
-doesn't automatically mean it will be merged. Several tests still
-happens on patches pushed to for-next branch (which are merged into
-linux-next) and linux-next 'after' your patch has been merged into.
-
-So your patch(es) being merged are conditional to that.
-
-Carlos
-
-> 
-> Regards
-> Pranav Tyagi
-> >
-> > >
-> > > Regards
-> > > Pranav Tyagi
-> > > >
-> > > >
-> > > > >
-> > > > > --
-> > > > > 2.49.0
-> > > > >
-> 
+Best regards,
+    Sergio Paracuellos
 
