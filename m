@@ -1,135 +1,116 @@
-Return-Path: <linux-kernel+bounces-721613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 220A1AFCBA5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:16:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71122AFCBA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AB41188C108
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:15:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44A5C5809AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333FF2DCF42;
-	Tue,  8 Jul 2025 13:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468BD2DD5E2;
+	Tue,  8 Jul 2025 13:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sxuj+IWq"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lRAXHFpu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246F72676DE
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 13:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281FC2DCBF7;
+	Tue,  8 Jul 2025 13:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751980495; cv=none; b=qMODgBkBeYBZB6oUqE9VqoGJo9hRWCFL+pz0C1q117N9ZkL2kVEZa7hSPfBcdIThde2EoNvOCNd4htL++Foei7buSWAmc7OSLjRVyDe6c74PoaNY1IKiFq0IDyize8a6y/k/kvEABLhv4v2B/SpQmLtgqr/iHnxeyVoArlwWA5g=
+	t=1751980499; cv=none; b=W9KMH3z2i9WtETIns6w3Lvc17wfCHVCvLB7DX3ayoupgURFSfu246J3Uw8f43sAUVOQ4JQgGLzLAuRnHhQEa9CcwrOmX0IozolmG1VrmkssPTHxOHJiuB1jtERLBsP/f4HLp9V1fxApc3B0PFwU6EggXZ3pFg0Pr/dDewXF2/ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751980495; c=relaxed/simple;
-	bh=tFHJxPGdW7YLwiTCC+ymu4+wJwk75Gz2e+bYNG+XMZw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eNuofEPCp5aAHyH3yD9+SqBx139UfA8DbrbhAzptMd1ootNu2Rv/Is6Rn3C/fBJeoJslaalQEB4v1h/FRz7eXq9wgCs0kTzfOuhoNemAzI8ukQwRBWLL1DRHbQMO/zsdyAT4XS8Vc6CkawKwDteHF5140P4le2xE46VNYtQtfkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Sxuj+IWq; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4a9bf46adedso20316401cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 06:14:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751980493; x=1752585293; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JJpRRm6OVnI3cucGqpSLTc5YS4ZE0AB/0aoKnTVMtNY=;
-        b=Sxuj+IWqBMSYXqkqkQZpDJkq+WO4Vl0ZHTB8XO9w3opA2W+r4dhvD5gAy6tpj6vAEW
-         clzjrPfR/hs3tItadxUNmoaXxBKeE/hK8KGamXoYk1QWmiw/BBmWC087/dSd21y1Hp+U
-         SWzASBxoPs2I3ZzfPowWTSSlVRauw34oSWaWjjUcM8ad1eHRQ+S8sML6STA1/nMRuY2B
-         22iP4LquI31hOONRDsQYzb6XFkgO4baNmlXDLG7+yU+ajTpfS37ogKolMudNuvBACrUE
-         ik+mYvHFmikkwvvhsa7uldUXb2FWgk3YjTULLNbdhh9tizxLMPhHt3sz2aXeCzdPT8gW
-         NRJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751980493; x=1752585293;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JJpRRm6OVnI3cucGqpSLTc5YS4ZE0AB/0aoKnTVMtNY=;
-        b=Lvy5vNa5tTf0inlB3dq8HxbXtHeoK/KC5oW8UTrshz/MaVX9qNjFwxmsorZDuL1xmr
-         oQYNRsCoqY6RyUn4nD2I9u/c9vBvHam4fYtFzGx/5U0p3b0AAtPifNoh4vqNaBVqxeWU
-         64aDccaq6FOnCXMidouG4wiNO3bEHw9nSlQO6KvVy37H3Aq0E6U2WZpSDx5rk8lKYG7q
-         eMNPf06fPoP/l2wdiXMmS/gAdqESl1kl30K1GHwQaGd34X69zUvR4VL2ViDQkRfitHhe
-         6SuPgDDZpgvEP8WPU5c4LW8WGE7crBldEpTEGX8r3d+dxRTTCh6cdQdF/soW97rsNu64
-         oWbg==
-X-Forwarded-Encrypted: i=1; AJvYcCXE+TK+8Pp05KFVyqlvqrypn6wHVSQCYoKiV+Fd5kp7pHPBFi99uZm1SYnNfV5UeE0HKM/O6uKnANNjtRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw51KPXau5eQyKPqoW9Z6qmvGTH6NwRy7AdcI5PGxEPb7cqI+oo
-	l+h6tM7e0wyDWcpSUNRb3V2KU97zCV8z/u/HHT7T+PJ+UywjhYwYghauLKoEsCE69NA3I784m55
-	Sm+8/gM8ZE+IROAu21qj5m4LxknpEVKry2DzvRRJd
-X-Gm-Gg: ASbGnctsz994/IpiH5NcdpTqXAcUgOdv/hguhNk1sxuzPznr0soHcsRh7/qExyQ8My0
-	1EstOeAZfUuvlY1/+CTE4UogNcQhXGPQPyj8xWJv+lUP/ojHqMAXUfjLsCTOBg1SKYSqXsq0fEr
-	kGBR4BZsqCbZDdKRpcP60Z7nFtm64J/ZqV/luTM8MrNc0=
-X-Google-Smtp-Source: AGHT+IEANuXYI52IC+nTksgTnfEgr3/rVdCC9iVyAqqPQiP47XkztuAwmnTQXLFgp9fAuIoedVvzyodNH+Gl1BM+j5g=
-X-Received: by 2002:a05:622a:a915:b0:4a9:a90a:7233 with SMTP id
- d75a77b69052e-4a9a90a85c0mr162163371cf.12.1751980492520; Tue, 08 Jul 2025
- 06:14:52 -0700 (PDT)
+	s=arc-20240116; t=1751980499; c=relaxed/simple;
+	bh=cU5ByOgwbuwKNQiNsdNv4TRrDApyVT56CFWQGxdiUP0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ToGI+qP9FmNyqcS/JIuX11GqPpqXFHTdINudc4qbr+69kRULTAWNFDmHE/oKf5K2yp4TNDBY6WcXUl0jgE2ddlM8z07UpshDwz0JTB8mJp+haQtJ96XiR1jDK9/UrnSbeA4ViT9IOlyHXaiu/FtkocGCnb8JWGaJow65bCxug3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lRAXHFpu; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751980498; x=1783516498;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cU5ByOgwbuwKNQiNsdNv4TRrDApyVT56CFWQGxdiUP0=;
+  b=lRAXHFpuvL2VGnvcE6Bo66yUerp+RmvYvQLlYbdUratVqxlYxwxK9Dfd
+   rGSHJM9mvymRbLL6gF4Hmdc01krGsXGq4Z33DMhrx3W51sjG6yFP00nfE
+   KAKuZyIgyWdGnlWcWo8bSzxKByQX3mR1EUBXHYdxs7LpRluzkKXb5pGgZ
+   IvOaAEAvrbvhrN7CvZZavRvdN6PJpPvk2/3J7+VexQrTxBoYREe6Pm7US
+   G/XBk+PTi8EkS2LauWtPGLc3queIu/6DJiRZJB0H5BZJDlCsmi3TpxHBn
+   cL2KGV2oTLNelnFWIFQQlqzWJ0pKBvrOytIP0Z1VT3rwl959uD/YLxj9A
+   Q==;
+X-CSE-ConnectionGUID: 9IBMOM4LTZaWjjOjWvkjhg==
+X-CSE-MsgGUID: bZbHR59NRO+59Mq8AckSog==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="53334773"
+X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
+   d="scan'208";a="53334773"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 06:14:57 -0700
+X-CSE-ConnectionGUID: 7UxPEPlTTWahGYoQ/ql4JQ==
+X-CSE-MsgGUID: 95M+uA/cSfut1PFofi4xew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
+   d="scan'208";a="186514106"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 06:14:55 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uZ89s-0000000DZv7-0a3g;
+	Tue, 08 Jul 2025 16:14:52 +0300
+Date: Tue, 8 Jul 2025 16:14:51 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: imu: inv_icm42600: fix temperature reading if
+ accel/gyro is off
+Message-ID: <aG0Zyxno62z1eMXx@smile.fi.intel.com>
+References: <20250708-icm42temp-v1-1-81af60aab82a@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707054112.101081-1-jiayuan.chen@linux.dev> <2554853.1751980274@warthog.procyon.org.uk>
-In-Reply-To: <2554853.1751980274@warthog.procyon.org.uk>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 8 Jul 2025 06:14:41 -0700
-X-Gm-Features: Ac12FXw1ODtOKJzzrY5ZGBbhogHnaEHF0oXr4Be5dtc0nZ0sr65yPqJTcxkS6ww
-Message-ID: <CANn89iJm718SNK5kyEZYKioJmNnn4yFxg+t7=ph_GYXfd98C0w@mail.gmail.com>
-Subject: Re: [PATCH net-next v4] tcp: Correct signedness in skb remaining
- space calculation
-To: David Howells <dhowells@redhat.com>
-Cc: Jiayuan Chen <jiayuan.chen@linux.dev>, netdev@vger.kernel.org, mrpre@163.com, 
-	syzbot+de6565462ab540f50e47@syzkaller.appspotmail.com, 
-	Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708-icm42temp-v1-1-81af60aab82a@geanix.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Jul 8, 2025 at 6:11=E2=80=AFAM David Howells <dhowells@redhat.com> =
-wrote:
->
-> Jiayuan Chen <jiayuan.chen@linux.dev> wrote:
->
-> > The types of the variables involved are:
-> > '''
-> > copy: ssize_t (s64 on 64-bit systems)
-> > size_goal: int
-> > skb->len: unsigned int
-> > '''
-> >
-> > Due to C's type promotion rules, the signed size_goal is converted to a=
-n
-> > unsigned int to match skb->len before the subtraction. The result is an
-> > unsigned int.
-> >
-> > When this unsigned int result is then assigned to the s64 copy variable=
-,
-> > it is zero-extended, preserving its non-negative value. Consequently, c=
-opy
-> > is always >=3D 0.
->
-> Ewww.
->
-> Would it be better to explicitly force the subtraction to be signed, e.g.=
-:
->
->                 skb =3D tcp_write_queue_tail(sk);
->                 if (skb)
->                         copy =3D size_goal - (ssize_t)skb->len;
->
-> rather than relying on getting it right with an implicit conversion to a
-> signed int of the same size?
->
-> If not, is it worth sticking in a comment to note the potential issue?
+On Tue, Jul 08, 2025 at 02:09:17PM +0200, Sean Nyekjaer wrote:
+> Avoid return invalid argument if one tries to read the temperature,.
 
-I prefer the old construct, without a cast. TCP has a lot of 32bit
-operations, stcking casts or comments is not helping.
+returning
 
-Note how throwing a 'bigger type just in case' was broken...
+(Stray period at the end)
+
+> if both the accelerometer and gyro are off. Power the accelerometer on
+> before reading the temperature.
+> The original state will be restored by runtine_suspend() or the next
+> reading of the accelerometer.
+
+Why don't you use the room on the previous lines, the formatting looks ugly.
+
+...
+
+Does it need a Fixes tag?
+
+...
+
+Code wise LGTM, though.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
