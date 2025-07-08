@@ -1,172 +1,188 @@
-Return-Path: <linux-kernel+bounces-721664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6371AFCC37
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:35:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C177FAFCBCF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E2FE3A8008
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:31:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B9A07B1F84
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC5B2DECDD;
-	Tue,  8 Jul 2025 13:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A702DC34F;
+	Tue,  8 Jul 2025 13:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BTuWmX68"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpIUSsJc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E7B220F5E;
-	Tue,  8 Jul 2025 13:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003BF2AF07;
+	Tue,  8 Jul 2025 13:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751981283; cv=none; b=dCYeVX8gRImPWJbNcRA1d6P9RUYSpNJJADZUh7NOGF992ZSahfwpXdq2Q0hiAB18B8Hp97JaAfxSf4vP6Yk0/r8NnFAbG1nL7gZ1qjUf1EmOPSK+kUXFAfb3IvU8kmYpD2tV9+CtaS+kh5Avwn+piVJcY2G4TNYKxUABbP/cJxQ=
+	t=1751981015; cv=none; b=OHHZuJwC7Sl2M0OHSWQ2zJoYajGBgFEvz+Sao+gOgUqVL7U7AvehBQec1EydM9OCm487q1ubAMYkcac6rzeSbntLpnNWSwHL0DxHfd3DbzyTO0nThUfu6UNxyFAtxKR8Fvq8gcVD2K9ZGUIQieGixu0Qg778RebPXnncet3VtNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751981283; c=relaxed/simple;
-	bh=jrtUBEXr/HBWduLFh4HBAKqnbKpMavXjwB5mCt2wdr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n6By83u2q/KeP6bM4jCHhYc7rZeNg2FuAEOBLqP/NgATmFs0AEALjjEIfjgbB8LDB/cVFx4yHRC7O4Sss+QXXEK+4hAoN7AkSP4cUirqPVTkM4gBvZNwinHv0B9rxIcx+ODrg9j4lM9c0xMkvUN5ulvrmEYYyVBB1a92O1HJ7tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BTuWmX68; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ED8AC4CEF6;
-	Tue,  8 Jul 2025 13:27:58 +0000 (UTC)
+	s=arc-20240116; t=1751981015; c=relaxed/simple;
+	bh=/1iFN9Ws/aEeuST/Nfzh/QqtvoeQni33+rb0JMvW6b0=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Wg3Eb2dVNw29jJkB/RHec5ivwQ1oaRK4hGOQQPqCDkfQHLofMdJH/pxofOL4XW3sBizUr2m9niIo+AQjYtzNcOPFrar+I8HhW62G1Zm5IlvqK2W6q3PL5P8Nr8IwV380tShczDT8WbMRVfT63KpXAMMLiPJR/GiO30KJ83YppHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cpIUSsJc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 441BEC4CEED;
+	Tue,  8 Jul 2025 13:23:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751981282;
-	bh=jrtUBEXr/HBWduLFh4HBAKqnbKpMavXjwB5mCt2wdr4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BTuWmX68TWVwy1liX9QuKeCqiiqOAxVJ+ub/4uBfaDkifECgKY9ptHKPI+d/8fFk9
-	 KHrNcCAUneEwX5L4xjpX5VwXcJv2QTaH+CGljhRsLNpf3ZDOSdOABtGKMnYnFqKcKf
-	 XD5FrMqecv4MxViRg5y+BZxnYlKtL0kSqxCooxAYUhn/QRmtudKvLtXnJal5dc6lIK
-	 YD62qTVYf+jDyTCd9dQG/xx/zbs19GFbCNPFVH8caxRKRbQJ1cfRZ7q85sgIvLSJoF
-	 ibBR5mcDOedu9+HCpo1u57AwHtOswXuHvjwUaEmvuop3zImSO4jnnnQ1ssxhS8Zg91
-	 FZ+05/03WBNqQ==
-From: Jiri Olsa <jolsa@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: Alejandro Colomar <alx@kernel.org>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org,
-	Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	David Laight <David.Laight@ACULAB.COM>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCHv4 22/22] man2: Add uprobe syscall page
-Date: Tue,  8 Jul 2025 15:23:31 +0200
-Message-ID: <20250708132333.2739553-23-jolsa@kernel.org>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250708132333.2739553-1-jolsa@kernel.org>
-References: <20250708132333.2739553-1-jolsa@kernel.org>
+	s=k20201202; t=1751981014;
+	bh=/1iFN9Ws/aEeuST/Nfzh/QqtvoeQni33+rb0JMvW6b0=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=cpIUSsJc926Rqyxocwd9lOms7TgwgZMOkrmp/AILO1nw8CLCpJJIOzZAEcvb8c1EI
+	 M/nzsm19kBajLlzM5aVK/JXJAXG0VBkVn751qqlmpvKoZ3XK1UwNlfXnMzMrAc094D
+	 NGBJL7zSwmQ9qrdoY0up1H/91xVmLzh1RAVE3Hc+KcefD++h2XWUj644Eav37D+zim
+	 PH1PaGJvikusjpB8YbKAZ/M6MgKN/FmsSMLuzfUkNz7de8y0k5VPb81MPexZSLEq3s
+	 Sa/UDPHar4p2YF2xV3f5yQmETgc2LWzQMiw7l4QaQb/TJn0Ert14Ba0AhlublyFTaF
+	 ugsCqQ5LZvkLw==
+Date: Tue, 08 Jul 2025 08:23:32 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: mripard@kernel.org, andy.yan@rock-chips.com, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, andyshrk@163.com, hjc@rock-chips.com, 
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ tzimmermann@suse.de, conor+dt@kernel.org, dri-devel@lists.freedesktop.org, 
+ quic_jesszhan@quicinc.com, maarten.lankhorst@linux.intel.com, 
+ neil.armstrong@linaro.org, krzk+dt@kernel.org, 
+ nicolas.frattaroli@collabora.com
+To: Heiko Stuebner <heiko@sntech.de>
+In-Reply-To: <20250707164906.1445288-1-heiko@sntech.de>
+References: <20250707164906.1445288-1-heiko@sntech.de>
+Message-Id: <175198090646.436895.4175521744544423549.robh@kernel.org>
+Subject: Re: [PATCH 00/13] Support DSI output on rk3576 and roc-rk3576-pc
+ board
 
-Changing uretprobe syscall man page to be shared with new
-uprobe syscall man page.
 
-Cc: Alejandro Colomar <alx@kernel.org>
-Reviewed-by: Alejandro Colomar <alx@kernel.org>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- man/man2/uprobe.2    |  1 +
- man/man2/uretprobe.2 | 36 ++++++++++++++++++++++++------------
- 2 files changed, 25 insertions(+), 12 deletions(-)
- create mode 100644 man/man2/uprobe.2
+On Mon, 07 Jul 2025 18:48:53 +0200, Heiko Stuebner wrote:
+> This enables all the necesary bits and bindings to get display output
+> on the dm-m10r800-v3s addon module for the Firefly roc-rk3576-pc board.
+> 
+> A bit of cleanup of the ili9881c, because the driver was still trying
+> to send dcs commands when the underlying DSI driver might have already
+> switched to video-mode, which caused me quite a bit of headache until
+> I realized this being the culprit for my garbled display output :-) .
+> 
+> Only the last patch has a dependency on Nicolas' pwm series [0]
+> everything else, is directly usable.
+> 
+> 
+> [0] https://lore.kernel.org/lkml/20250602-rk3576-pwm-v2-0-a6434b0ce60c@collabora.com/
+> 
+> Guochun Huang (1):
+>   drm/rockchip: dsi2: add support rk3576
+> 
+> Heiko Stuebner (12):
+>   drm/panel: ilitek-ili9881c: turn off power-supply when init fails
+>   drm/panel: ilitek-ili9881c: move display_on/_off dcs calls to
+>     (un-)prepare
+>   drm/panel: ilitek-ili9881c: convert (un-)prepare to
+>     mipi_dsi_multi_context
+>   dt-bindings: vendor-prefixes: Add prefix for Shenzhen Bestar
+>     Electronic
+>   dt-bindings: display: ili9881c: Add Bestar BSD1218-A101KL68 LCD panel
+>   drm/panel: ilitek-ili9881c: Add Bestar BSD1218-A101KL68 support
+>   dt-bindings: soc: rockchip: add rk3576 mipi dcphy syscon
+>   dt-bindings: display: rockchip: Add rk3576 to RK3588 DW DSI2
+>     controller schema
+>   arm64: dts: rockchip: add mipi-dcphy to rk3576
+>   arm64: dts: rockchip: add the dsi controller to rk3576
+>   arm64: dts: rockchip: add vcc3v3-lcd-s0 regulator to roc-rk3576-pc
+>   arm64: dts: rockchip: add dm-m10r800-v3s overlay for roc-rk3576-pc
+> 
+>  .../display/panel/ilitek,ili9881c.yaml        |   1 +
+>  .../rockchip/rockchip,rk3588-mipi-dsi2.yaml   |   1 +
+>  .../devicetree/bindings/soc/rockchip/grf.yaml |   1 +
+>  .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+>  arch/arm64/boot/dts/rockchip/Makefile         |   5 +
+>  .../rk3576-roc-pc-dm-m10r800-v3s.dtso         | 134 ++++++++
+>  .../arm64/boot/dts/rockchip/rk3576-roc-pc.dts |  16 +
+>  arch/arm64/boot/dts/rockchip/rk3576.dtsi      |  50 +++
+>  drivers/gpu/drm/panel/panel-ilitek-ili9881c.c | 301 ++++++++++++++----
+>  .../gpu/drm/rockchip/dw-mipi-dsi2-rockchip.c  |  21 ++
+>  10 files changed, 475 insertions(+), 57 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-roc-pc-dm-m10r800-v3s.dtso
+> 
+> --
+> 2.47.2
+> 
+> 
+> 
 
-diff --git a/man/man2/uprobe.2 b/man/man2/uprobe.2
-new file mode 100644
-index 000000000000..ea5ccf901591
---- /dev/null
-+++ b/man/man2/uprobe.2
-@@ -0,0 +1 @@
-+.so man2/uretprobe.2
-diff --git a/man/man2/uretprobe.2 b/man/man2/uretprobe.2
-index bbbfb0c59335..df0e5d92e5ed 100644
---- a/man/man2/uretprobe.2
-+++ b/man/man2/uretprobe.2
-@@ -2,22 +2,28 @@
- .\"
- .\" SPDX-License-Identifier: Linux-man-pages-copyleft
- .\"
--.TH uretprobe 2 (date) "Linux man-pages (unreleased)"
-+.TH uprobe 2 (date) "Linux man-pages (unreleased)"
- .SH NAME
-+uprobe,
- uretprobe
- \-
--execute pending return uprobes
-+execute pending entry or return uprobes
- .SH SYNOPSIS
- .nf
-+.B int uprobe(void);
- .B int uretprobe(void);
- .fi
- .SH DESCRIPTION
-+.BR uprobe ()
-+is an alternative to breakpoint instructions
-+for triggering entry uprobe consumers.
-+.P
- .BR uretprobe ()
- is an alternative to breakpoint instructions
- for triggering return uprobe consumers.
- .P
- Calls to
--.BR uretprobe ()
-+these system calls
- are only made from the user-space trampoline provided by the kernel.
- Calls from any other place result in a
- .BR SIGILL .
-@@ -26,22 +32,28 @@ The return value is architecture-specific.
- .SH ERRORS
- .TP
- .B SIGILL
--.BR uretprobe ()
--was called by a user-space program.
-+These system calls
-+were called by a user-space program.
- .SH VERSIONS
- The behavior varies across systems.
- .SH STANDARDS
- None.
- .SH HISTORY
-+.TP
-+.BR uprobe ()
-+TBD
-+.TP
-+.BR uretprobe ()
- Linux 6.11.
- .P
--.BR uretprobe ()
--was initially introduced for the x86_64 architecture
--where it was shown to be faster than breakpoint traps.
--It might be extended to other architectures.
-+These system calls
-+were initially introduced for the x86_64 architecture
-+where they were shown to be faster than breakpoint traps.
-+They might be extended to other architectures.
- .SH CAVEATS
--.BR uretprobe ()
--exists only to allow the invocation of return uprobe consumers.
--It should
-+These system calls
-+exist only to allow the invocation of
-+entry or return uprobe consumers.
-+They should
- .B never
- be called directly.
--- 
-2.49.0
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/v6.16-rc1-17-g63289206e26f (best guess, 8/9 blobs matched)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/rockchip/' for 20250707164906.1445288-1-heiko@sntech.de:
+
+arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm1:pwm1m1-ch5:rockchip,pins:0:2: 14 is greater than the maximum of 13
+	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm0:pwm0m1-ch1:rockchip,pins:0:2: 14 is greater than the maximum of 13
+	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): i3c1:i3c1m1-xfer:rockchip,pins:0:2: 14 is greater than the maximum of 13
+	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): i3c1:i3c1m1-xfer:rockchip,pins:1:2: 14 is greater than the maximum of 13
+	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): i3c1_sda:i3c1_sdam1-pu:rockchip,pins:0:2: 14 is greater than the maximum of 13
+	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm2:pwm2m1-ch1:rockchip,pins:0:2: 14 is greater than the maximum of 13
+	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm2:pwm2m0-ch4:rockchip,pins:0:2: 14 is greater than the maximum of 13
+	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm2:pwm2m1-ch0:rockchip,pins:0:2: 14 is greater than the maximum of 13
+	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm2:pwm2m0-ch2:rockchip,pins:0:2: 14 is greater than the maximum of 13
+	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm2:pwm2m1-ch2:rockchip,pins:0:2: 14 is greater than the maximum of 13
+	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm2:pwm2m1-ch5:rockchip,pins:0:2: 14 is greater than the maximum of 13
+	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm2:pwm2m1-ch6:rockchip,pins:0:2: 14 is greater than the maximum of 13
+	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm2:pwm2m0-ch3:rockchip,pins:0:2: 14 is greater than the maximum of 13
+	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: pinctrl (rockchip,rk3576-pinctrl): pwm2:pwm2m1-ch3:rockchip,pins:0:2: 14 is greater than the maximum of 13
+	from schema $id: http://devicetree.org/schemas/pinctrl/rockchip,pinctrl.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: syscon@26034000 (rockchip,rk3576-dcphy-grf): clocks: False schema does not allow [[21, 492]]
+	from schema $id: http://devicetree.org/schemas/soc/rockchip/grf.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dtb: syscon@26034000 (rockchip,rk3576-dcphy-grf): clocks: False schema does not allow [[20, 492]]
+	from schema $id: http://devicetree.org/schemas/soc/rockchip/grf.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-evb1-v10.dtb: syscon@26034000 (rockchip,rk3576-dcphy-grf): clocks: False schema does not allow [[21, 492]]
+	from schema $id: http://devicetree.org/schemas/soc/rockchip/grf.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dtb: syscon@26034000 (rockchip,rk3576-dcphy-grf): clocks: False schema does not allow [[21, 492]]
+	from schema $id: http://devicetree.org/schemas/soc/rockchip/grf.yaml#
+
+
+
+
 
 
