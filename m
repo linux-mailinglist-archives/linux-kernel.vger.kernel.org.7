@@ -1,103 +1,110 @@
-Return-Path: <linux-kernel+bounces-721014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A58AFC360
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:55:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA488AFC38D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A58A56224F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:52:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DAE217D814
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1963F22370D;
-	Tue,  8 Jul 2025 06:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149F9223DEE;
+	Tue,  8 Jul 2025 07:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="n4rnXU8Y"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="A28G1Ljo"
+Received: from out162-62-63-194.mail.qq.com (out162-62-63-194.mail.qq.com [162.62.63.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA85C9461;
-	Tue,  8 Jul 2025 06:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8354321CA0E;
+	Tue,  8 Jul 2025 07:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.63.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751957543; cv=none; b=kzjCSOsFqclMlDB8LU7jlVOCUTIYOryDAuId2ENhAGsJBMo2/VY7WSHioKBRH+rEHIekR3zeGH7r923h/nhV0DwQenFyDURPa6nUYT6HB3AXmC4XU1EKN7O4QCWVNaapkKMb+hVs7Db7rUIMogt/ZmeufO828yit5zqeNcW4ej0=
+	t=1751958240; cv=none; b=puYfhHhKX0kwbmTxmiHtkLDa+RqXSoSKfHr5zi/D+oKZYJou2FIDm9ep8m7kGH4muuvv5SegLMx3vaPGbz69G/L0aelzZ/Q5N43AUtl9lITOlEAaJLh/EJVvZ5mbaOvTYQU1LwIxOuSsLJW/1Hk7x8CzoyRinya+DFySk7Aevwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751957543; c=relaxed/simple;
-	bh=QgkicBTpwhIu4KhwMQ9MKtUqejjyYnHk87N/snpkRoM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=f6Z4uTWaMO8GQ4FZzXFalcDreTnMfeGHcRHbPTGUVB5YSxkMBtA+6s7yJAWD68vv0bp/L9xZQuDHdrOD/gPmLAwW6bUHwpOJXWUpAdG6auTmCm00bm+XulCXTkV6/IbGQbTDVWOhPMjNyhoCAR3qqzqKZiBzqjVyD7v11cNmho4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=n4rnXU8Y; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=QgkicBTpwhIu4KhwMQ9MKtUqejjyYnHk87N/snpkRoM=;
-	t=1751957542; x=1753167142; b=n4rnXU8YwOUQP1z7Vh14gcY7GRmkgNNX04XcYJMzWOkDkBo
-	Mu+AHAmEoxXdFpcmUMqXq7JqihpB+qgkt+l7Ep7KLwz0ZTpxVqQu8QVKDwgHzXvMwT5EwjVZKVhQW
-	8UZR5MBi3HMvBjEeWL9nrtl4E40Lr16l23O5P4qyS6KtLLKIvVI7sqKvVhAHQbEsbNSq+sRfSOXss
-	iFDm5z2NQyARgBRjfMoF0uOMJu5kaqtXXNOsXMNXrvYVPt2o9aZ+SywBNrZxCYvViy6HCHY7BZ89e
-	EqShB7dTWdOxvmgnJ91SGR92t2xJ/Pln2Nk+07Hy+5kCwSswCfMiLaIh0QxlfxjA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uZ2BD-0000000BePp-1ddS;
-	Tue, 08 Jul 2025 08:51:54 +0200
-Message-ID: <304f48242d99fec81990d492777cb45a58aa038c.camel@sipsolutions.net>
-Subject: Re: [PATCH 0/6] wifi: rt2x00: add OF bindings + cleanup
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-wireless@vger.kernel.org, yangshiji66@qq.com,
- ansuelsmth@gmail.com,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno	
- <angelogioacchino.delregno@collabora.com>, Stanislaw Gruszka
- <stf_xl@wp.pl>,  "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE
- BINDINGS"	 <devicetree@vger.kernel.org>, open list
- <linux-kernel@vger.kernel.org>,  "open list:MIPS"
- <linux-mips@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support"	
- <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC
- support" <linux-mediatek@lists.infradead.org>
-Date: Tue, 08 Jul 2025 08:51:44 +0200
-In-Reply-To: <CAKxU2N-XviPav1Bh0yidyMUr=QbMr=0jyYyHKc+h0oaM9vak=Q@mail.gmail.com> (sfid-20250708_005520_408645_C4B0336E)
-References: <20250706214111.45687-1-rosenp@gmail.com>
-	 <8c6f18ca47bf0dd78b6675d8b94000679b6c75cd.camel@sipsolutions.net>
-	 <CAKxU2N9vs5o4tj-9KxCHKevWU+J9wv+ZCOeD8o602y1GY8FzNw@mail.gmail.com>
-	 <b3a63d616c1ca337f6b9d14a9afaafe73bfbe8cc.camel@sipsolutions.net>
-	 <CAKxU2N-XviPav1Bh0yidyMUr=QbMr=0jyYyHKc+h0oaM9vak=Q@mail.gmail.com>
-	 (sfid-20250708_005520_408645_C4B0336E)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1751958240; c=relaxed/simple;
+	bh=OM6K+jZaBXAoTLY0N4NnW3rs077RdjL2OSQEQtpSYZc=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID; b=VPyZqG3/gRHrrh6IiqwyFUMjJTKc2vVtczRKd+AZtqqtJXjVAZ+wQ+DLTB/67EJV2S/qCUxmi07wu+V76BniTDY5LoH0WTpRCNCcoORQIu8ohSnTsb2AHBNN0vj5bNJishIYf/pmEpKGcEBqHoiSWJt3vjX7JYP81HbzxivcTWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=A28G1Ljo; arc=none smtp.client-ip=162.62.63.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1751957925;
+	bh=OM6K+jZaBXAoTLY0N4NnW3rs077RdjL2OSQEQtpSYZc=;
+	h=From:To:Cc:Subject:Date;
+	b=A28G1LjoZ3HwbAgyXYEvP5rNEuaFQZGqHOmhNsGNpGA2MvIqkYXL3+Yeo8vTaN1+T
+	 4hB9cZ5wul0OC/kjW5F+gmKoVMpQ7gVExHcYJzXYQhCltKQsfSu9P2jSEFA02Q71r9
+	 Dchj7N/pxnynDFj/dmMAjPYeuDKtnnwH/ga+AccE=
+X-QQ-FEAT: 3C1WcPM5lQ4i+tGOZHPx80amo8TvG3to
+X-QQ-SSF: 0000000000000010000000000000
+X-QQ-SPAM: true
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-XMAILINFO: M4kijGgdg8XvD6nB9qq3P51A2cCWZU8jZqnGM52RIwpXp1g0uc2MbUDM5iQFuM
+	 5RTLQjQiV/ny1SMNK6BiXkkbwONwK4byfFEUARK0XYXRx4aUON8oSwOfzVSXR9sk+IEY7DAK1wevk
+	 ik4UzdFQrQdG+cRd3XzZ17I7tMPwMJ3ItGCE8tFguM6UB5W1EIOJvZIXtsSiJJba3LzLiVrPlqhnS
+	 +uuW0FiWmXgKQgVeiGO4OOxQij4erJvlfzDgfZHK1uMEHn4VYCjfkz+xCgQG3I41KMuPclqGg3uyd
+	 Y0P3AClqAjg3qEk12DGHKBUTaZr2ZCt4CJFNrEmPAWQEbjv+go51HUO8yGxt4e7Ezh1NF7sAAuFoK
+	 3WCWXuJj2poDKjBe5mHqvviGnZSVnqkfRK9D9hswqxk9vP0kDv4oA3EuuS2UNZB6/PUpceS4ZEGCK
+	 vhhNMy8QQTbjJIZ2Uwyws3aKu3VQxchJpEcOFh+ey68Hs2FC8Ueg1K1i3t2OfDe+TS0NtPrJW1ixb
+	 KNW26RYYr2mtTfAViOI8VV/g5T1DpJpVLpEgYIdgeg4eaiJI+NPeULdjo9wU1jscTJMDAYhyqqYvM
+	 fRyIRbQT8NFxRcpacleYPGI68v6pRTH1GULo9kKlCDEe40Ac3KgOZY8ssl9SYtXlt6e7iLzJyqbw3
+	 a4DJVjQLYq+6yImHIFikYkIAXFqoqlKdW0Nl/HCNprh84Lz2V8DQRunV/2K8EfvQO65OA0Lg7dtvh
+	 qYcYBdQIMfvld5PK2ed9zfIRa8OvT1R8YGWRY9/bGOydjVcH8nLc35dRYlxjmDyjfayGc8OsWGBAk
+	 fRmdmwonXrSlGEU0PFdngoIma4Z2oE0pNfof71n75llqVsWtX21y4awb+KJkGn0chpiC0kQQLZnGz
+	 7fXukotVuxcuubhYKpiEEOCiWzuQOVp76tZY52j0IviZK1VeeN/0qKnVVr9iZ1Ybid6zIn8TCABer
+	 q8SXzxozxJtwXgielC7qSX3uwlJT8I8cqEPM1mJV/gpSt6tLQ+bh2Gvbafv803AzdVwqw0HBFGd5/
+	 dPzp3OdXaLrx1tuaAUgW+DNhQBBR7H7fwJ6ogu0CeLtzKGcj10h99QO8EXSDyrOJDtWNtifqQvG7w
+	 7KDsg4Zi4BzIGuHix+TBEUMV8c+QidhFfio=
+X-HAS-ATTACH: no
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-STYLE: 
+X-QQ-mid: webmail632t1751957538t2012164
+From: "=?ISO-8859-1?B?eXdlbi5jaGVu?=" <ywen.chen@foxmail.com>
+To: "=?ISO-8859-1?B?Q2hyaXN0b3BoIEhlbGx3aWc=?=" <hch@infradead.org>, "=?ISO-8859-1?B?RXJpYyBCaWdnZXJz?=" <ebiggers@kernel.org>
+Cc: "=?ISO-8859-1?B?Q2hyaXN0b3BoIEhlbGx3aWc=?=" <hch@infradead.org>, "=?ISO-8859-1?B?YnJhdW5lcg==?=" <brauner@kernel.org>, "=?ISO-8859-1?B?dHl0c28=?=" <tytso@mit.edu>, "=?ISO-8859-1?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?ISO-8859-1?B?bGludXgtZjJmcy1kZXZlbA==?=" <linux-f2fs-devel@lists.sourceforge.net>, "=?ISO-8859-1?B?YWRpbGdlci5rZXJuZWw=?=" <adilger.kernel@dilger.ca>, "=?ISO-8859-1?B?dmlybw==?=" <viro@zeniv.linux.org.uk>, "=?ISO-8859-1?B?bGludXgtZnNkZXZlbA==?=" <linux-fsdevel@vger.kernel.org>, "=?ISO-8859-1?B?amFlZ2V1aw==?=" <jaegeuk@kernel.org>, "=?ISO-8859-1?B?bGludXgtZXh0NA==?=" <linux-ext4@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] libfs: reduce the number of memory allocations in generic_ci_match
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="ISO-8859-1"
+Content-Transfer-Encoding: base64
+Date: Tue, 8 Jul 2025 14:52:17 +0800
+X-Priority: 3
+Message-ID: <tencent_FCCBB98BA5E88F7B6DFCDC55EC9C23CFF105@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
 
-On Mon, 2025-07-07 at 15:55 -0700, Rosen Penev wrote:
-> >=20
-> > Yeah well. That doesn't really mean it should be merged together though=
-,
-> > and we can pretty easily make that work by just putting the further wor=
-k
-> > in after net/wireless is merged back.
-> Looking at it again, I'm effectively removing rt2x00soc.c . Meaning
-> Felix' patch is mostly useless here.
-
-But we're not going to put your changes into 6.16. They're not even
-entirely ready yet, from what I see in the thread.
-
-> It might make more sense to submit this series at a later time.
->=20
-
-By end of the week Felix's patch should be in wireless-next too, if I
-get all the things done right...
-
-johannes
+Jmd0OyBCdXQgSSB3b25kZXIgd2h5IGdlbmVyaWNfY2lfbWF0Y2ggaXMgZXZlbiBjYWxsZWQg
+dGhhdCBvZnRlbi4gIEJvdGggZXh0NA0KJmd0OyBhbmQgZjJmcyBzdXBwb3J0IGhhc2hlZCBs
+b29rdXBzLCBzbyB5b3Ugc2hvdWxkIHVzdWFsbHkgb25seSBzZWUgaXQgY2FsbGVkDQomZ3Q7
+IGZvciB0aGUgbWFpbiBtYXRjaCwgcGx1cyB0aGUgb2NjYXNpb25hbCBoYXNoIGZhbHNlIHBv
+c2l0aXZlLCB3aGljaCBzaG91bGQNCiZndDsgYmUgcmF0ZSBpZiB0aGUgaGFzaCB3b3Jrcy4N
+Cg0KDQpBdCBwcmVzZW50LCBpbiB0aGUgbGF0ZXN0IHZlcnNpb24gb2YgTGludXgsIGluIHNv
+bWUgc2NlbmFyaW9zLA0KZjJmcyBzdGlsbCB1c2VzIGxpbmVhciBzZWFyY2guDQoNCg0KVGhl
+IGxvZ2ljIG9mIGxpbmVhciBzZWFyY2ggd2FzIGludHJvZHVjZWQgYnkgQ29tbWl0IDkxYjU4
+N2JhNzllMQ0KKGYyZnM6IEludHJvZHVjZSBsaW5lYXIgc2VhcmNoIGZvciBkZW50cmllcyku
+IENvbW1pdCA5MWI1ODdiYTc5ZTENCndhcyBkZXNpZ25lZCB0byBzb2x2ZSB0aGUgcHJvYmxl
+bSBvZiBpbmNvbnNpc3RlbnQgaGFzaGVzIGJlZm9yZQ0KYW5kIGFmdGVyIHRoZSByb2xsYmFj
+ayBvZiBDb21taXQgNWMyNmQyZjFkM2Y1DQooInVuaWNvZGU6IERvbid0IHNwZWNpYWwgY2Fz
+ZSBpZ25vcmFibGUgY29kZSBwb2ludHMiKSwNCndoaWNoIGxlZCB0byBmaWxlcyBiZWluZyBp
+bmFjY2Vzc2libGUuDQoNCg0KSW4gb3JkZXIgdG8gcmVkdWNlIHRoZSBpbXBhY3Qgb2YgbGlu
+ZWFyIHNlYXJjaCwgaW4gcmVsYXRpdmVseSBuZXcNCnZlcnNpb25zLCB0aGUgbG9naWMgb2Yg
+dHVybmluZyBvZmYgbGluZWFyIHNlYXJjaCBoYXMgYWxzbyBiZWVuDQppbnRyb2R1Y2VkLiBI
+b3dldmVyLCB0aGUgdHJpZ2dlcmluZyBjb25kaXRpb25zIGZvciB0aGlzDQp0dXJuIC0gb2Zm
+IGxvZ2ljIG9uIGYyZnMgYXJlIHJhdGhlciBzdHJpY3Q6DQoNCg0KMS4gVXNlIHRoZSBsYXRl
+c3QgdmVyc2lvbiBvZiB0aGUgZnNjay5mMmZzIHRvb2wgdG8gY29ycmVjdA0KdGhlIGZpbGUg
+c3lzdGVtLg0KMi4gVXNlIGEgcmVsYXRpdmVseSBuZXcgdmVyc2lvbiBvZiB0aGUga2VybmVs
+LiAoRm9yIGV4YW1wbGUsDQpsaW5lYXIgc2VhcmNoIGNhbm5vdCBiZSB0dXJuZWQgb2ZmIGlu
+IHY2LjYpDQoNCg0KVGhlIHBlcmZvcm1hbmNlIGdhaW4gb2YgdGhpcyBjb21taXQgaXMgdmVy
+eSBvYnZpb3VzIGluIHNjZW5hcmlvcw0Kd2hlcmUgbGluZWFyIHNlYXJjaCBpcyBub3QgdHVy
+bmVkIG9mZi4gSW4gc2NlbmFyaW9zIHdoZXJlIGxpbmVhcg0Kc2VhcmNoIGlzIHR1cm5lZCBv
+ZmYsIG5vIHBlcmZvcm1hbmNlIHByb2JsZW1zIHdpbGwgYmUgaW50cm9kdWNlZA0KZWl0aGVy
+Ljxicj4=
+e±
 
