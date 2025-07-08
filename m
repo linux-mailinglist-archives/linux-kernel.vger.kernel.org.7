@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-721228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B31AFC65C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:57:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04DDDAFC65E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE6805616E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:57:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 295C73AA556
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95F42BEFF1;
-	Tue,  8 Jul 2025 08:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6A92BEC31;
+	Tue,  8 Jul 2025 08:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rvh8iKxF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LUoRiKt3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C432BEC3E;
-	Tue,  8 Jul 2025 08:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B39A220F36;
+	Tue,  8 Jul 2025 08:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751965053; cv=none; b=FPLuzwaTSe03f/Ctm0/mXfQ9oQSWYuOwvRamIeoSmBbuAhp6sl9ale6RrrS6opcj5HwwCn/674VryMoqZgzQ08bdox1t4LQ97gC0u3s9cfFCh8haEoR+wmrinA+mFCBwbCzYDywX0Nubl1AbxVfYqeupNnvSxV3a5gglltyjtbc=
+	t=1751965117; cv=none; b=W+2OMc3/+UDycJLEz3Oe7m6NLFYJ5uIEZv3DQHYc5OKL9I+WxhdmfEh/1ej19WiJKIWyyTpOOGuaYM+Ma+sK5jnXzhXUaj5z9P9xMBLPJcMFtjUeuV/lBWRnUsIypNH1fKfAPgnDUNVBvC/wtcJ+9mAJbFw5DdzL9PGr2EoVvwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751965053; c=relaxed/simple;
-	bh=ArnlYJ2oQj3tI9v/yYa8u3NPCosxGc2PHAGvQ5Ft23I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=grIyDFQh4KQAvzUiIJ7aXpxTJZpjZxjV5NloIi3v/ZoVjUicqoJjvewd32eUS6Or0d/ymm6QDMbzf2gN6oDZ1kmUINaqzhgjEbN1EIYw0CEM+vuHqMAZUB9A4XWexH8MCtCfQbrwM724nKIO6ZNq6qGmTt/zWP2klxeALRYfIIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rvh8iKxF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFD10C4CEED;
-	Tue,  8 Jul 2025 08:57:32 +0000 (UTC)
+	s=arc-20240116; t=1751965117; c=relaxed/simple;
+	bh=3crF5tiVWA7WIsu4HOqTW/k1OSqDf0be25nX2X8tHXg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p1CvWx7yjiB2jrW0ycgBW+/aglpJcoPJtE2fvkTlaP4uRA45tu3qpjLArte68wmVuesWyn6ogzUQkq274n5Xm80hd+KHj4v3AX6ySotVytWU7bHnxd4/j051sIlx6K8CCESKNyNv5y67NRt9C6DhnV78xhtAX7XeC126q5aaFGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LUoRiKt3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7C51C4CEED;
+	Tue,  8 Jul 2025 08:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751965052;
-	bh=ArnlYJ2oQj3tI9v/yYa8u3NPCosxGc2PHAGvQ5Ft23I=;
+	s=k20201202; t=1751965116;
+	bh=3crF5tiVWA7WIsu4HOqTW/k1OSqDf0be25nX2X8tHXg=;
 	h=From:To:Cc:Subject:Date:From;
-	b=rvh8iKxF3DnqpYx5xx7WUAdDdmTftIqfB8+mn4y5D1x7xpIVv9/KB+M/mHH3IDiVn
-	 7/bi9LaIzkpv3NrZKieayo5CMfqXj7jnTA6Y+LnLXTGHleQf4NE7pexoEjqpaNSsqP
-	 3fAJ//M9QbrElXOx8FVL3I+a40pAotRZZHR7OtVjE0v8VtMcZ0pWwQBtvqY7UtDcxK
-	 lppicE78Ro6xzenJEHO4oi7HGYVizZ3/MDnx0IYVmPcF2XAbp5Q6xnTOq4KP10eENp
-	 uOqdYaPBHhuijCtqaXpAkSja3m9MmDycgdJJ7YIbf002Hvam8nmNRA/ZoWLQTJ8ttA
-	 ub2NG6/dq6qpA==
+	b=LUoRiKt3/DE+6BT0WMVG+BUBrtVWISV6s4GbKb1K5WycDFgbbEPwaqN5ZibPSnNjP
+	 y8khM9ihZ3VDg6OjMRr9VGLlXwAEJToQFbSmfX/NzaxuPa/QWpzjLC8i3ljbubx70Y
+	 WDY5ZVYVZ3oYepfTC5z1g5n/kfKO/N32hPCPtUPIDh/EhSM9Nip/q56b08Zswswr9K
+	 0LOjk3cU4ikBVtpKsNolIfmnbih8T+mRI9i3nS/N2oW9JQBunESiRdrs31in4WtXts
+	 oe9jh3qhfhYjD6z1nPRr+OrG8+mtuaT7qF2hSTLqLlPm94/MjGLBHdnGyAtS0gGut8
+	 /n9aI6xR/zvnQ==
 Received: from johan by xi.lan with local (Exim 4.97.1)
 	(envelope-from <johan@kernel.org>)
-	id 1uZ48j-0000000049T-0BDy;
-	Tue, 08 Jul 2025 10:57:25 +0200
+	id 1uZ49k-000000004BW-3nsJ;
+	Tue, 08 Jul 2025 10:58:28 +0200
 From: Johan Hovold <johan@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+	Aidan Stewart <astewart@tektelic.com>,
+	linux-serial@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Subject: [PATCH] soc: qcom: pmic_glink: fix OF node leak
-Date: Tue,  8 Jul 2025 10:57:17 +0200
-Message-ID: <20250708085717.15922-1-johan@kernel.org>
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH] serial: core: fix OF node leak
+Date: Tue,  8 Jul 2025 10:58:17 +0200
+Message-ID: <20250708085817.16070-1-johan@kernel.org>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,44 +62,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make sure to drop the OF node reference taken when registering the
-auxiliary devices when the devices are later released.
+Make sure to drop the OF node reference taken when initialising the
+control and port devices when the devices are later released.
 
-Fixes: 58ef4ece1e41 ("soc: qcom: pmic_glink: Introduce base PMIC GLINK driver")
-Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Fixes: d36f0e9a0002 ("serial: core: restore of_node information in sysfs")
+Cc: Aidan Stewart <astewart@tektelic.com>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/soc/qcom/pmic_glink.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/tty/serial/serial_base_bus.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/soc/qcom/pmic_glink.c b/drivers/soc/qcom/pmic_glink.c
-index 0a6d325b195c..c0a4be5df926 100644
---- a/drivers/soc/qcom/pmic_glink.c
-+++ b/drivers/soc/qcom/pmic_glink.c
-@@ -167,7 +167,10 @@ static int pmic_glink_rpmsg_callback(struct rpmsg_device *rpdev, void *data,
- 	return 0;
+diff --git a/drivers/tty/serial/serial_base_bus.c b/drivers/tty/serial/serial_base_bus.c
+index cb3b127b06b6..22749ab0428a 100644
+--- a/drivers/tty/serial/serial_base_bus.c
++++ b/drivers/tty/serial/serial_base_bus.c
+@@ -13,6 +13,7 @@
+ #include <linux/device.h>
+ #include <linux/idr.h>
+ #include <linux/module.h>
++#include <linux/of.h>
+ #include <linux/serial_core.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+@@ -93,6 +94,7 @@ static void serial_base_ctrl_release(struct device *dev)
+ {
+ 	struct serial_ctrl_device *ctrl_dev = to_serial_base_ctrl_device(dev);
+ 
++	of_node_put(dev->of_node);
+ 	kfree(ctrl_dev);
  }
  
--static void pmic_glink_aux_release(struct device *dev) {}
-+static void pmic_glink_aux_release(struct device *dev)
-+{
+@@ -140,6 +142,7 @@ static void serial_base_port_release(struct device *dev)
+ {
+ 	struct serial_port_device *port_dev = to_serial_base_port_device(dev);
+ 
 +	of_node_put(dev->of_node);
-+}
+ 	kfree(port_dev);
+ }
  
- static int pmic_glink_add_aux_device(struct pmic_glink *pg,
- 				     struct auxiliary_device *aux,
-@@ -181,8 +184,10 @@ static int pmic_glink_add_aux_device(struct pmic_glink *pg,
- 	aux->dev.release = pmic_glink_aux_release;
- 	device_set_of_node_from_dev(&aux->dev, parent);
- 	ret = auxiliary_device_init(aux);
--	if (ret)
-+	if (ret) {
-+		of_node_put(aux->dev.of_node);
- 		return ret;
-+	}
- 
- 	ret = auxiliary_device_add(aux);
- 	if (ret)
 -- 
 2.49.0
 
