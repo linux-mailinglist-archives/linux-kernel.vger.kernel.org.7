@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-720812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6437AAFC0A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:13:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CC05AFC0A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DE4A1BC0F47
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:13:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FD0E1BC0FA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3029B21FF5F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCAAF24169F;
 	Tue,  8 Jul 2025 02:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YPncEIZN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DpdZyziQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69B32248BF;
-	Tue,  8 Jul 2025 02:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBF7234964;
+	Tue,  8 Jul 2025 02:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751940719; cv=none; b=nszM96rxXygK4oKdfO02w5+muVvVadHBB8nRiso5x/4EUW+BpyUtN0QkdM1K9t2vkoKxAH5ysRZdAwQJaLGjGg/juuKDMwJbjbab6lhm2xQDIOFvjgiRcToOT2AW1W18y5obGUrqs7dxjhQp3+yWVZYr4ruLXkJBn+0oMc0VSmw=
+	t=1751940720; cv=none; b=kiR+1ENdikE5oB39djDZcVWLthYp8Ac48abnMtS8ZYC/yQ1uI+/4xxu+Bgx+vzZ3IbXRqZkrQhUmHiRDar4P53isCXW9kV2zfKjXbFD1aXjQIw0fw9SLDulphO0qu32ntEMGJaE4dvuhgqRTVSHTJ+00vfzk3wNFBd3YzQHZvjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751940719; c=relaxed/simple;
-	bh=tQh371Xu4aNv634IWnbNpzI8g0gGO4AVuobSDHJ5Ps4=;
+	s=arc-20240116; t=1751940720; c=relaxed/simple;
+	bh=/FbdkqgsRHQT3grN+rP3vo0JEynwNZBN/vKs+JQRgx0=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=qe2MWOLdmDCd9g3g+xVRI0eBb2HIgPLu8fYfSpwLwRLEbUWPrTy+R9xj5QQRapnFWp//8zXeBWkflcl3huxwaCtmkd7EGy5Pc2fqZYaSa1Z5kF/Usscrd4k8tpk69k4vOfXbocH/cQ6jswbfNWvdtPJxh59kTCuyFmBlq5fUces=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YPncEIZN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85FFAC4CEF5;
-	Tue,  8 Jul 2025 02:11:59 +0000 (UTC)
+	 Content-Type; b=MZRKzQWoSDyEqXeXaKnmQYQ/7V7189LB07nFCKUQGV6SQbsjkICojHqUsSzPZ+KscjXqYXSY6yjDhatM3fC19TCXf8NXAHTDoEPNK97T6CjQdzdT9q7DFvqV+pbznSg7oTE8hCz2sB8puCYgOo1zRVfA+3TQMXybdgbGoeAAQg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DpdZyziQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5591BC4CEFF;
+	Tue,  8 Jul 2025 02:12:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751940719;
-	bh=tQh371Xu4aNv634IWnbNpzI8g0gGO4AVuobSDHJ5Ps4=;
+	s=k20201202; t=1751940720;
+	bh=/FbdkqgsRHQT3grN+rP3vo0JEynwNZBN/vKs+JQRgx0=;
 	h=Date:From:To:Cc:Subject:References:From;
-	b=YPncEIZNeWYyU+Bt9rm/KZTt696DmMS0QKxERpoPjndVNQK3Oa6m4/ckgpS+5ylj6
-	 EscF0muNd5qA10L6Fs34V5HulXr3LzTuz0gu1Uv3Mx4Agq9kZNQFd+PzPiYV9jotzB
-	 1tAqgkqb8RaFVi9HfnEFEbXLBAGKirrOuRNKENm7kgW/i+q8nEwyf/9KTyxv8tqnU2
-	 C7nMQeo1DGU8qH4TBUy5Z35HGdobSU41BzzM507ZzfoX9DJZMyi/eld1OLy4pyRlkY
-	 xLYAuNwgYp3ENA+nm+zeaic4Z+ex3OFU5mY7vflH1150Pg6n6eRRNyZU4eNpOWDNdO
-	 p2MgRd8aTVj0Q==
+	b=DpdZyziQEjyLVkRSx5ewFYD3A/AwizLJSJax7xpONR6pAdGYkswEPqWnokSuqDrse
+	 3lRvrvqUQeGT5/xb0rrXaSTSvTNaEr7Lb/2R+Sxi379blICo7a4OepBduQ+YaOOSFl
+	 rPg+mfXM/U4PCIGAw0HdaFwUc2MEvweBMpByJO8IIQiXrCVd+L0OrHULCXQmA5Qdxe
+	 GgoC4ZpC2gdlnjy1bYpqmHEA4WQHa4kYQL+0ofNMK/CU/aRP/SjyNa8WkhyiANIzAC
+	 dchZlqejRnT5E688anYppXDW5VVGKWx0oODz8xehltry2jSnaV5UgNwaEAPaUOTMGA
+	 4cOxSlz4dujxw==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1uYxoN-00000000DeW-3dri;
-	Mon, 07 Jul 2025 22:11:59 -0400
-Message-ID: <20250708021159.719618907@kernel.org>
+	id 1uYxoO-00000000DgX-2J09;
+	Mon, 07 Jul 2025 22:12:00 -0400
+Message-ID: <20250708021200.397301537@kernel.org>
 User-Agent: quilt/0.68
-Date: Mon, 07 Jul 2025 22:11:23 -0400
+Date: Mon, 07 Jul 2025 22:11:27 -0400
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org,
@@ -70,7 +70,8 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Jens Axboe <axboe@kernel.dk>,
  Florian Weimer <fweimer@redhat.com>,
  Sam James <sam@gentoo.org>
-Subject: [PATCH v8 08/12] unwind_user/sframe: Remove .sframe section on detected corruption
+Subject: [PATCH v8 12/12] unwind_user/sframe: Add prctl() interface for registering .sframe
+ sections
 References: <20250708021115.894007410@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -82,30 +83,72 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Josh Poimboeuf <jpoimboe@kernel.org>
 
-To avoid continued attempted use of a bad .sframe section, remove it
-on demand when the first sign of corruption is detected.
+The kernel doesn't have direct visibility to the ELF contents of shared
+libraries.  Add some prctl() interfaces which allow glibc to tell the
+kernel where to find .sframe sections.
+
+[
+  This adds an interface for prctl() for testing loading of sframes for
+  libraries. But this interface should really be a system call. This patch
+  is for testing purposes only and should not be applied to mainline.
+]
 
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/unwind/sframe.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/uapi/linux/prctl.h | 6 +++++-
+ kernel/sys.c               | 9 +++++++++
+ 2 files changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c
-index b10420d19840..f246ead6c2a0 100644
---- a/kernel/unwind/sframe.c
-+++ b/kernel/unwind/sframe.c
-@@ -310,6 +310,10 @@ int sframe_find(unsigned long ip, struct unwind_user_frame *frame)
- 	ret = __find_fre(sec, &fde, ip, frame);
- end:
- 	user_read_access_end();
-+
-+	if (ret == -EFAULT)
-+		WARN_ON_ONCE(sframe_remove_section(sec->sframe_start));
-+
- 	return ret;
- }
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index 43dec6eed559..c575cf7151b1 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -351,7 +351,7 @@ struct prctl_mm_map {
+  * configuration.  All bits may be locked via this call, including
+  * undefined bits.
+  */
+-#define PR_LOCK_SHADOW_STACK_STATUS      76
++#define PR_LOCK_SHADOW_STACK_STATUS	76
  
+ /*
+  * Controls the mode of timer_create() for CRIU restore operations.
+@@ -371,4 +371,8 @@ struct prctl_mm_map {
+ # define PR_FUTEX_HASH_GET_SLOTS	2
+ # define PR_FUTEX_HASH_GET_IMMUTABLE	3
+ 
++/* SFRAME management */
++#define PR_ADD_SFRAME			79
++#define PR_REMOVE_SFRAME		80
++
+ #endif /* _LINUX_PRCTL_H */
+diff --git a/kernel/sys.c b/kernel/sys.c
+index adc0de0aa364..cf788e66dc86 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -65,6 +65,7 @@
+ #include <linux/rcupdate.h>
+ #include <linux/uidgid.h>
+ #include <linux/cred.h>
++#include <linux/sframe.h>
+ 
+ #include <linux/nospec.h>
+ 
+@@ -2824,6 +2825,14 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 	case PR_FUTEX_HASH:
+ 		error = futex_hash_prctl(arg2, arg3, arg4);
+ 		break;
++	case PR_ADD_SFRAME:
++		error = sframe_add_section(arg2, arg3, arg4, arg5);
++		break;
++	case PR_REMOVE_SFRAME:
++		if (arg3 || arg4 || arg5)
++			return -EINVAL;
++		error = sframe_remove_section(arg2);
++		break;
+ 	default:
+ 		trace_task_prctl_unknown(option, arg2, arg3, arg4, arg5);
+ 		error = -EINVAL;
 -- 
 2.47.2
 
