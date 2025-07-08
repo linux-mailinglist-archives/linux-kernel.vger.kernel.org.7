@@ -1,266 +1,229 @@
-Return-Path: <linux-kernel+bounces-722123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92CD2AFD58C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:38:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D689EAFD590
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26FA87B6D51
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:37:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA30D1892406
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40222E6D10;
-	Tue,  8 Jul 2025 17:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3512D2E6D0A;
+	Tue,  8 Jul 2025 17:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qZA+P/A2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2K1Ev5W/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZnALy4Dj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0Tmsowne"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ScBkgE01"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E937A2E5B10
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 17:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0EC82DC33D;
+	Tue,  8 Jul 2025 17:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751996227; cv=none; b=i+h5D4Xjgz6jA+U8yTHR9m6x9Qcsb07suM0+E2V6/RrlV04PxtCSC420+ugrzO1TIhxUNjocbNOr9CvGAufLDlfqxjj9+SVFsbtgnCjoYdRv1Dl27jq8k2Y2oeloERim8lhjV7JVKvAvgoe4kvdy2ZmGmWpXwylon9dDA7NzoXY=
+	t=1751996346; cv=none; b=XRj7UtxnS7VGuzmcXt5jxMmiVNWg/mzke0M4S5WSzI/MOqqKnJyDlRS7g+JVbOZtpJn0zOyUFF4GIL+TU8iMpLqbKjLh4y+tr147HbHVgUzU/pzowKP6ZK+80+lk2MNBsBXZKJyn8MXIo970wFWW74gk6xhEKB/0D3t51BrKasQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751996227; c=relaxed/simple;
-	bh=3ETbXfuDiIb1rIVsKs72/RN/EWQ8Fs3xt1oJEov4Oos=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=md+nLmjMvDec53KJUgl0pvRw4GTNwrlt/KBjQL8h6bgFZVjOehYhX9CwoAC7q21TEyuKu/RoOPZ4OfdY/E1cXTrdOyDQ8ZhbSf3tEhjFoecPkLrmK2ne8D6IF91AQ+W+7uAejTGvh4vw/auCR9LCLJsq2ob5ZymBLEE3ufgnxBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qZA+P/A2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2K1Ev5W/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZnALy4Dj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0Tmsowne; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E01E02111F;
-	Tue,  8 Jul 2025 17:37:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751996222; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tH+4qrLbFoh951omgyvvpr8ql1pn4Evyfl1gUPKbjaI=;
-	b=qZA+P/A2RdecqvTOlciyC6KN7axCUlYSQPG2qhRvxoYtO55RTu9DxXWWmAzw9fKZRqPOs6
-	HErbR84LTwKdnzxntSmH5Pe7q1Kl6iYgLWWC3T3m2ATmeHcxFdi7ncr5plYGULqALPX6Zy
-	jSLOsDRlas+u7BwUnXDmqSrg2p5UO1w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751996222;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tH+4qrLbFoh951omgyvvpr8ql1pn4Evyfl1gUPKbjaI=;
-	b=2K1Ev5W/Bta06tEANRaOF89d5Za6W09a/yHiWtGFAN3aIva8HQehA8atJ2relPR7ST4N6/
-	Dr7d2MgkWV1XMICA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751996221; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tH+4qrLbFoh951omgyvvpr8ql1pn4Evyfl1gUPKbjaI=;
-	b=ZnALy4DjQVwUJLSIAn0dOy+Hz4ezfzu7bZk/oFKSTPr/rqGkNnN/amIetP5Of1BmRKzFjP
-	vYfCsiAzIakSbmmGZfRd24Yt7t6RdFtvGfvygMTDhDWGnMPidb3AHfNIXxlWP/57Z3OLev
-	22tzeIAhrswJgEbyVBUm3w04QCqHoCQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751996221;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tH+4qrLbFoh951omgyvvpr8ql1pn4Evyfl1gUPKbjaI=;
-	b=0TmsowneyCfM2N0mNSL/Ne+cG/n8uIkuBz3s2PBsyjjhOLYiX0eFW70dGJ9MuAUHrNehHk
-	JfYokWamikkoMyDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A3F6313A54;
-	Tue,  8 Jul 2025 17:37:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ko5pJz1XbWjoAwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 08 Jul 2025 17:37:01 +0000
-Message-ID: <0e0312c9-9a89-4a1b-a135-4425ea95d6f6@suse.cz>
-Date: Tue, 8 Jul 2025 19:37:01 +0200
+	s=arc-20240116; t=1751996346; c=relaxed/simple;
+	bh=x2cUatXHX7xLPxvAV2RG5X+9WG2Zjf0Rso4cf3+eBRs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HI4da0EaxKWZR8AQBo4xFTn0QM7kqm9z+/7DLcWHd9lQg+Ihhf3d9ohK5DcQygSyeqlEl5HvfiGqaf/WeaQIe909JjiK0efDpQAE3DpZDcMwcKbvoxUNQ0vhKw5A1v8Mrot/iR25ZDrScFsxavRr1t72yn6WWeZWwwNeepttTtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ScBkgE01; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-235a3dd4f0dso29687145ad.0;
+        Tue, 08 Jul 2025 10:39:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751996344; x=1752601144; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ClIZSmfHPjXZm8/f+h7U+319eUsl5U3L+I8Es+EzDW4=;
+        b=ScBkgE015PNWI6Vq6/bZ9zj1yWyVeoEH5xSmO1FHi0tBrhthoIl+TyWhsOOiy/TJrZ
+         VkoktoMLY70V5qfUEmGe6VJmvWEfbHP8KC5t4SIatv1gLw4faCS6NrnVxidVX7Y3QOFe
+         RvH8oSJWSLYabxUjE+m8le15n4FbRCXy2y5evJetuea0jgxUUr4HvnIu7VxtmGXG7pk/
+         vf1xSB4Vz0lXO8BnCtnYX/+FcHcWgWhc/kG3ue1R2eWtaB03Vmo+lpsvfHoV4hmq9slF
+         s7XM/2yJtlZXl7ChIPpN0Jro6X+ISASW1k3dnpQnx8p4Wd+XljMWE+264Qpw/bF1cWhI
+         9Mng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751996344; x=1752601144;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ClIZSmfHPjXZm8/f+h7U+319eUsl5U3L+I8Es+EzDW4=;
+        b=ri51h4hz07w7UKhIt5Ub2bO8mS0rt1Pylj75Akat97Hv12E0DUmlCcLlL2Bnvq4jN0
+         AAvynPZgPWbjV1QbxIKZ2Yj3mRLGLg5jEFMbqbeml1bEdOipERElcryh4u+YVnbKveoC
+         T7d2iCpNPfiXxqfqAVdYp/m6YEDONPRGlGF5/QU3ymMXCM5oD3MZgWR25S2wiwiMzu0P
+         YfSeL9Pdz3p6pvXzNsmvYSnduGwUGC8bxZWRx88ycI8lVURF86FcpMEY2OXr1BuIRhAB
+         nYUSF6RI0Rql9eGplEAfMhDJZjJTsrtz7iq0MekpcpzOdUe4b47XD6+hL0jDz1KDUvjK
+         q7Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCUABQyTELaasV27bXg9oi9EPeVASsEUMzAMRS6ijr+SR/B8TSPArVldQ5UqavN7UOGh3a1cjzs9lyi3M5YK@vger.kernel.org, AJvYcCVzuw69xf0az/RpuNrVSDV5SXM5KU7NFEzd/YfOja0a8P9LiDtxCId630QK144uycgFscs=@vger.kernel.org, AJvYcCXOrxxJM5H98aGElPhflF/KkIKbSKdL3ChOi+wVY+yrJyannOsVvLPdAJ9YLcwMuqMRqWkN7N6c@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPsFNVu1gN55dOxVvTbWCEkhXLOiTSjCm3c58dlbBkcxg7eRvT
+	2YmcXuRXlFyLZcjAry8WHL/VHrUtfeE83DdSma1wzfdjYjG9sJlA0FDu
+X-Gm-Gg: ASbGnctcd6xQ12Pog48yQAvXoqj9YSi66k3b/M6V+iBo9jwBXxrn6E/P9CVXMvKgt+e
+	XkWf5nk/ubeQaI9/0Qoje/RFc3N7+L7/SMkxxsxZTOggUPhuJJGcn7EhHOkiE7jbAUyJ4LTIR4L
+	7CvqFMt67eyMpHKv6YGnHwtm8ojWwW1b3p3vHV/oqxdB/EpRSiRd77mcEZEx9reniHrXvwoZ9f4
+	O78BfNHlqxiovjY6JnX4AhVsV9i7du1roT9lcGcl+cZPJ/7G52W5arJa3xS+G0yGNMpJwI9yGlD
+	bo2cU28lS1ozYAjMPK1kUVfT93p+CO9NtaOfNLDrxBhE2O0H1iTv0B7valPi5kH6MxwT
+X-Google-Smtp-Source: AGHT+IFT1pxp1bRfM4fHER2ZOeDaIpqqQQY5SmraXSPbwq4KX6xdkbBPZwiRZuUjJ1aUnC9z9welWQ==
+X-Received: by 2002:a17:902:fc87:b0:235:779:ede0 with SMTP id d9443c01a7336-23dd98cca97mr4544185ad.35.1751996343909;
+        Tue, 08 Jul 2025 10:39:03 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c096:14a::647? ([2620:10d:c090:600::1:2404])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8455ba80sm117549785ad.114.2025.07.08.10.39.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 10:39:03 -0700 (PDT)
+Message-ID: <24a63d26171a49fa110fa7fff6d70f9e2b61a2fb.camel@gmail.com>
+Subject: Re: [syzbot] [bpf?] WARNING in reg_bounds_sanity_check
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Paul Chaignon <paul.chaignon@gmail.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, syzbot	
+ <syzbot+c711ce17dd78e5d4fdcf@syzkaller.appspotmail.com>, Andrii Nakryiko	
+ <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, bpf	
+ <bpf@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Hao Luo	
+ <haoluo@google.com>, John Fastabend <john.fastabend@gmail.com>, Jiri Olsa	
+ <jolsa@kernel.org>, KP Singh <kpsingh@kernel.org>, LKML	
+ <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+ Network Development <netdev@vger.kernel.org>, Stanislav Fomichev
+ <sdf@fomichev.me>, Song Liu <song@kernel.org>,  syzkaller-bugs
+ <syzkaller-bugs@googlegroups.com>, Yonghong Song <yonghong.song@linux.dev>
+Date: Tue, 08 Jul 2025 10:39:00 -0700
+In-Reply-To: <aG1FDHAu-H2oH4DY@mail.gmail.com>
+References: <aGa3iOI1IgGuPDYV@Tunnel>
+	 <865f2345eaa61afbd26d9de0917e3b1d887c647d.camel@gmail.com>
+	 <aGgL_g3wA2w3yRrG@mail.gmail.com>
+	 <df2cdc5f4fa16a4e3e08e6a997af3722f3673d38.camel@gmail.com>
+	 <e43c25b451395edff0886201ad3358acd9670eda.camel@gmail.com>
+	 <aGxKcF2Ceany8q7W@mail.gmail.com>
+	 <2fb0a354ec117d36a24fe37a3184c1d40849ef1a.camel@gmail.com>
+	 <c35d5392b961a4d5b54bdb4b92c4e104bd7857cc.camel@gmail.com>
+	 <CAADnVQKKdpj-0wXKoKJC4uGhMivdr9FMYvMxZ6jLdPMdva0Vvw@mail.gmail.com>
+	 <4ae6fd0d54ff2650d0f6724fb44b33723e26ea49.camel@gmail.com>
+	 <aG1FDHAu-H2oH4DY@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 6/8] fs/proc/task_mmu: remove conversion of seq_file
- position to unsigned
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com,
- peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org,
- paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com,
- brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com,
- linux@weissschuh.net, willy@infradead.org, osalvador@suse.de,
- andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu,
- tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-References: <20250704060727.724817-1-surenb@google.com>
- <20250704060727.724817-7-surenb@google.com>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20250704060727.724817-7-surenb@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[28];
-	FREEMAIL_CC(0.00)[oracle.com,redhat.com,google.com,cmpxchg.org,kernel.org,gmail.com,toxicpanda.com,huawei.com,weissschuh.net,infradead.org,suse.de,arm.com,csgroup.eu,vger.kernel.org,kvack.org];
-	RCVD_TLS_ALL(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLqwhhqik4qyk5i1fk54co8f1o)];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
 
-On 7/4/25 08:07, Suren Baghdasaryan wrote:
-> Back in 2.6 era, last_addr used to be stored in seq_file->version
-> variable, which was unsigned long. As a result, sentinels to represent
-> gate vma and end of all vmas used unsigned values. In more recent
-> kernels we don't used seq_file->version anymore and therefore conversion
-> from loff_t into unsigned type is not needed. Similarly, sentinel values
-> don't need to be unsigned. Remove type conversion for set_file position
-> and change sentinel values to signed.
-> 
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+On Tue, 2025-07-08 at 18:19 +0200, Paul Chaignon wrote:
+> On Mon, Jul 07, 2025 at 05:57:32PM -0700, Eduard Zingerman wrote:
+> > On Mon, 2025-07-07 at 17:51 -0700, Alexei Starovoitov wrote:
+> > > On Mon, Jul 7, 2025 at 5:37=E2=80=AFPM Eduard Zingerman <eddyz87@gmai=
+l.com> wrote:
+> > > >=20
+> > > > On Mon, 2025-07-07 at 16:29 -0700, Eduard Zingerman wrote:
+> > > > > On Tue, 2025-07-08 at 00:30 +0200, Paul Chaignon wrote:
+>=20
+> [...]
+>=20
+> > > > But I think the program below would still be problematic:
+> > > >=20
+> > > > SEC("socket")
+> > > > __success
+> > > > __retval(0)
+> > > > __naked void jset_bug1(void)
+> > > > {
+> > > >         asm volatile ("                                 \
+> > > >         call %[bpf_get_prandom_u32];                    \
+> > > >         if r0 < 2 goto 1f;                              \
+> > > >         r0 |=3D 1;                                        \
+> > > >         if r0 & -2 goto 1f;                             \
+> > > > 1:      r0 =3D 0;                                         \
+> > > >         exit;                                           \
+> > > > "       :
+> > > >         : __imm(bpf_get_prandom_u32)
+> > > >         : __clobber_all);
+> > > > }
+> > > >=20
+> > > > The possible_r0 would be changed by `if r0 & -2`, so new rule will =
+not hit.
+> > > > And the problem remains unsolved. I think we need to reset min/max
+> > > > bounds in regs_refine_cond_op for JSET:
+> > > > - in some cases range is more precise than tnum
+> > > > - in these cases range cannot be compressed to a tnum
+> > > > - predictions in jset are done for a tnum
+> > > > - to avoid issues when narrowing tnum after prediction, forget the
+> > > >   range.
+> > >=20
+> > > You're digging too deep. llvm doesn't generate JSET insn,
+> > > so this is syzbot only issue. Let's address it with minimal changes.
+> > > Do not introduce fancy branch taken analysis.
+> > > I would be fine with reverting this particular verifier_bug() hunk.
+>=20
+> Ok, if LLVM doesn't generate JSETs, I agree there's not much point
+> trying to reduce false positives. I like Eduard's solution below
+> because it handles the JSET case without removing the warning. Given
+> the number of crashes syzkaller is generating, I suspect this isn't
+> only about JSET, so it'd be good to keep some visibility into invariant
+> violations.
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+I suspect similar problems might be found in any place where tnum
+operations are used to narrow the range. E.g. if a repro for JSET
+would be found, same repro might be applicable to BPF_AND.
 
-Some stuff in the code gave me a pause but it's out of scope here so just in
-case someone wants to do some extra churn...
+In general, it might be the case we should not treat out of sync
+bounds as an error. Assuming that tnum and bounds based ranges have
+different precision in different scale regions, situations when
+one bound is changed w/o changing another can be legit. E.g.:
 
-> ---
->  fs/proc/task_mmu.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 751479eb128f..b8bc06d05a72 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -135,7 +135,7 @@ static struct vm_area_struct *proc_get_vma(struct proc_maps_private *priv,
->  	if (vma) {
->  		*ppos = vma->vm_start;
->  	} else {
-> -		*ppos = -2UL;
-> +		*ppos = -2;
->  		vma = get_gate_vma(priv->mm);
->  	}
->  
-> @@ -145,11 +145,11 @@ static struct vm_area_struct *proc_get_vma(struct proc_maps_private *priv,
->  static void *m_start(struct seq_file *m, loff_t *ppos)
->  {
->  	struct proc_maps_private *priv = m->private;
-> -	unsigned long last_addr = *ppos;
-> +	loff_t last_addr = *ppos;
->  	struct mm_struct *mm;
->  
->  	/* See m_next(). Zero at the start or after lseek. */
-> -	if (last_addr == -1UL)
-> +	if (last_addr == -1)
->  		return NULL;
->  
->  	priv->task = get_proc_task(priv->inode);
-> @@ -170,9 +170,9 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
->  		return ERR_PTR(-EINTR);
->  	}
->  
-> -	vma_iter_init(&priv->iter, mm, last_addr);
-> +	vma_iter_init(&priv->iter, mm, (unsigned long)last_addr);
+                              ____ bounds range ____
+                             /                      \
+0 --------------------------------------------------------- MAX
+    \___________________________________________________/
+          tnum range
 
-I wonder if this should rather be done only after dealing with the -2 case
-below. It seems wrong to init the iterator with a bogus address. What if it
-acquires some sanity checks?
+Narrowing only tnum:
+                              ____ bounds range ____
+                             /                      \
+0 --------------------------------------------------------- MAX
+    \___________________/
+          tnum range
 
->  	hold_task_mempolicy(priv);
+This does not highlight an error, but a difference in expressive power
+for specific values.
 
-It seems suboptimal to do that mempolicy refcount dance for numa_maps sake
-even if we're reading a different /proc file... maybe priv could have a flag
-to determine?
+> > My point is that the fix should look as below (but extract it as a
+> > utility function):
+> >=20
+> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> > index 53007182b46b..b2fe665901b7 100644
+> > --- a/kernel/bpf/verifier.c
+> > +++ b/kernel/bpf/verifier.c
+> > @@ -16207,6 +16207,14 @@ static void regs_refine_cond_op(struct bpf_reg=
+_state *reg1, struct bpf_reg_state
+> >                         swap(reg1, reg2);
+> >                 if (!is_reg_const(reg2, is_jmp32))
+> >                         break;
+> > +               reg1->u32_max_value =3D U32_MAX;
+> > +               reg1->u32_min_value =3D 0;
+> > +               reg1->s32_max_value =3D S32_MAX;
+> > +               reg1->s32_min_value =3D S32_MIN;
+> > +               reg1->umax_value =3D U64_MAX;
+> > +               reg1->umin_value =3D 0;
+> > +               reg1->smax_value =3D S64_MAX;
+> > +               reg1->smin_value =3D S32_MIN;
+>=20
+> Looks like __mark_reg_unbounded :)
 
-> -	if (last_addr == -2UL)
-> +	if (last_addr == -2)
->  		return get_gate_vma(mm);
+I suspected there should be something already :)
 
-I think only after the above it makes sense to init the iterator?
+> I can send a test case + __mark_reg_unbounded for BPF_JSET | BPF_X in
+> regs_refine_cond_op. I suspect we may need the same for the BPF_JSET
+> case as well, but I'm unable to build a repro for that so far.
 
->  	return proc_get_vma(priv, ppos);
-> @@ -180,8 +180,8 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
->  
->  static void *m_next(struct seq_file *m, void *v, loff_t *ppos)
->  {
-> -	if (*ppos == -2UL) {
-> -		*ppos = -1UL;
-> +	if (*ppos == -2) {
-> +		*ppos = -1;
->  		return NULL;
->  	}
->  	return proc_get_vma(m->private, ppos);
+Please go ahead.
 
+>=20
+> >                 val =3D reg_const_value(reg2, is_jmp32);
+> >                 if (is_jmp32) {
+> >                         t =3D tnum_and(tnum_subreg(reg1->var_off), tnum=
+_const(~val));
+> >=20
+> > ----
+> >=20
+> > Because of irreconcilable differences in what can be represented as a
+> > tnum and what can be represented as a range.
 
