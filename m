@@ -1,82 +1,99 @@
-Return-Path: <linux-kernel+bounces-720888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E5EAFC1BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:38:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41329AFC1BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:44:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F60C7B1B82
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:36:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2794A42074A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF82217F36;
-	Tue,  8 Jul 2025 04:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278B5218821;
+	Tue,  8 Jul 2025 04:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cC7H9O8M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cJDJajZ6"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C8943ABC;
-	Tue,  8 Jul 2025 04:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1F421767A;
+	Tue,  8 Jul 2025 04:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751949481; cv=none; b=H3u0I+UW3Ach1DZhmeF0ZedgNYlEuHOBSKOVFdkW5U5m/7nPCembai2TsfkZzji25k+CNVDDoEbEtHkqxQ6RZuax29fBtqSuuM99YNDE1vkMg42QyA+VEkEI3RasxR7B5C6FLcrDHJxJ8MjqbYFfGr/WFV3n/uk45VhU3rNdS3Q=
+	t=1751949859; cv=none; b=dArIWP2RYRP75U8w7pn1lCOtyuUbYzLMvCr+pmnxayxKONgkBnYXfjICt54dvGtvmVL9ZDna95qEs4KIdIzSSliaOSPiR2cKd2DemOBxoBzHNE9qirYQQWesmJs0oTyVQfUbMKnllrW9Gx4AAe8AEEdPtXTu0X08Zcof2G9THQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751949481; c=relaxed/simple;
-	bh=8N3WqoTh8R5m03QO9MG0mjw5/nDiTbVs4NZLJYjSrn8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GxGoTtSUf6oiPklGNiRJUMh/H2nQ7hGA2X6MZigjbwk8kpqKD1pNoBemBkx/+cJKlpim+jfScqmjwvxOwT4T3C4Jylj0LGnhaNws7xk8UEe1dWW+XIVIeSIY191bo0ibgz/7b/qRhEAwi/3hv5v2KMynNOfx/UDt+kNKlEH0eTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cC7H9O8M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FEA4C4CEED;
-	Tue,  8 Jul 2025 04:38:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751949480;
-	bh=8N3WqoTh8R5m03QO9MG0mjw5/nDiTbVs4NZLJYjSrn8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cC7H9O8M604CxiWk4tuxRFao2jCuYY08VKFn3EbKEu0hemwVbSwBI9TYB1rqZXW9c
-	 accYZRG+jT2WMVtJnQFJ8BQDEnnP9MFlaHib8pzTFJF2TU82B8JAevvCZhElo/iWcx
-	 ItA+2ukVF75Q4w08yk0y818nNl3lmjg+S7ZMUKbVCP7RLAEG1amHG53UuOx0nZgYTc
-	 xWgxXx09GgXk318ZntbMbuZGf2mg4UBc1ww5s9j4x2rpvYfAAhc/hqQf0UAHVmF3zm
-	 ePslGSvQcn/ga4eMia2zoXCgVdtxB56HC0RNX+02esyMEFWuQcM1r02SNPjg42FVKW
-	 s5+Zw/UY1f0hw==
-Date: Mon, 7 Jul 2025 18:37:59 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Benjamin Coddington <bcodding@redhat.com>
-Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>, linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, djeffery@redhat.com,
-	loberman@redhat.com
-Subject: Re: [PATCH 1/2] workqueue: Add a helper to identify current workqueue
-Message-ID: <aGygp-3mtsLxtGT3@slm.duckdns.org>
-References: <cover.1751913604.git.bcodding@redhat.com>
- <baad3adf8ea80b65d83dd196ab715992a0f1b768.1751913604.git.bcodding@redhat.com>
+	s=arc-20240116; t=1751949859; c=relaxed/simple;
+	bh=Tmj2WWxQ1vLCYPkk03e2pP/Oq0gUuCmP7E/ZT4hBsV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hfXA/lnEfTtRifMvaSJm9fwGfBabOhwZvWOzUsm5mrLz+rAO3erxyOzkgjLIeovyCa6mNfl70Qazdi+sEX7uNG0FF87Dw+24uLbEN2oAMFi3rCRshc4uUdy1t0FMZeU9Uy/oNBy1qon8fpsdl7pY3d2MXoK6lTSMfZwHQF7xbAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=cJDJajZ6; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1751949794;
+	bh=Tmj2WWxQ1vLCYPkk03e2pP/Oq0gUuCmP7E/ZT4hBsV8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=cJDJajZ6m795XCabOd6Xq6w6DfzlBOKrlEAkayO/ll2otaFZ2ySOLMZGaF8d9txfb
+	 ID626gvdZn7l9eTEX4/FUyJIUpv9UdVavF3ZBCav9CyO0cNiLS6yQMvCrtjNDg7FXN
+	 9k7G1D+nT4v8U7oDiOwVhbeYbs3Tf79MJssYc/7/rYP3mqzwOejwlWxOifzj4adVyY
+	 kkqRLzdGn/9g6vvrthNu01+q+1mFIBogSqim4nAPqaetJ5pENvNHaJ56FLSQbK2u3F
+	 bin+/fg7zEEXr8Yte35/nSWxgHjy7ApIvlgvUwfp20FAjXUPozLD+6vV+vZAfMtMjL
+	 GEE9UDn3PQGOw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bbpQ96Y30z4w2Q;
+	Tue,  8 Jul 2025 14:43:13 +1000 (AEST)
+Date: Tue, 8 Jul 2025 14:44:09 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Rob Clark <robdclark@gmail.com>, Sean Paul <seanpaul@chromium.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the drm-msm tree
+Message-ID: <20250708144409.73aec136@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <baad3adf8ea80b65d83dd196ab715992a0f1b768.1751913604.git.bcodding@redhat.com>
+Content-Type: multipart/signed; boundary="Sig_/k9EdxbP1gNVwKzP0oYfQ3+8";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Jul 07, 2025 at 02:46:03PM -0400, Benjamin Coddington wrote:
-> Introduce a new helper current_workqueue() which returns the current task's
-> workqueue pointer or NULL if not a workqueue worker.
-> 
-> This will allow the NFS client to recognize the case where writeback occurs
-> within the nfsiod workqueue or is being submitted directly.  NFS would like
-> to change the GFP_ flags for memory allocation to avoid stalls or cycles in
-> memory pools based on which context writeback is occurring.  In a following
-> patch, this helper detects the case rather than checking the PF_WQ_WORKER
-> flag which can be passed along from another workqueue worker.
+--Sig_/k9EdxbP1gNVwKzP0oYfQ3+8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-There's already current_work(). Wouldn't that be enough for identifying
-whether the current work item?
+Hi all,
 
-Thanks.
+After merging the drm-msm tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
--- 
-tejun
+drivers/gpu/drm/msm/msm.o: warning: objtool: submit_lock_objects+0x43c: sib=
+ling call from callable instruction with modified stack frame
+
+I don't know what introduced this warning.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/k9EdxbP1gNVwKzP0oYfQ3+8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhsohkACgkQAVBC80lX
+0GzpOAf/Q/McXSnqBtbg1M0Iahrt4LVMCKnPvL3iQtOnc5zN1fyISJi2QikvCZnl
+Uw6uMI02RQNTxSB9piHHQeXWACTLtzUvCIERCPoVeX8EKiqt8GlXJeujL2fXnW8t
+KyuxwKeeIgs+Zjh0EimEAxrJVl1u/wJAmCCdEGrvUwTED7aA/u1tGZhBYWB6f2H5
+1CuuT48lfKZNypz1RBHDeu/C9vm+SoAegxmSg7VU2L0cHmiVQDWzBfLiqoyM31Pz
+CHkpdGZapC+MDMIfkCVepbC7UBFY1pI5Hr/6fOrF2n+sjl6JWQ6yiHea6Oj378vC
+yudT1hrK85/lsni3sBiEtLWQZt1zMg==
+=BtR+
+-----END PGP SIGNATURE-----
+
+--Sig_/k9EdxbP1gNVwKzP0oYfQ3+8--
 
