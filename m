@@ -1,101 +1,82 @@
-Return-Path: <linux-kernel+bounces-721559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5904FAFCAD4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:49:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D85BAFCADE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72FC73BE39C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:48:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52B57188F4B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01A02DEA81;
-	Tue,  8 Jul 2025 12:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959402DCBF6;
+	Tue,  8 Jul 2025 12:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DgXycVGu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pm/uJkZc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C102DCC1C;
-	Tue,  8 Jul 2025 12:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F026B17A2E0;
+	Tue,  8 Jul 2025 12:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751978880; cv=none; b=PQjSXL8ZTM408+aRjh4Cp/jr4UC45XJWTfvHp3FcLxinuWpF7xG2eG/SXYGIMAdx58cZ7fvduWeSTUol0cgohZaAqnnDy/QZ5r9k/nEeLEMj5P9TDSwIdoKeCpa4iiu3Jz/Ykdk+PxfUrX6EZyQqyYfxkDaPX/L2jKnz0PnUobk=
+	t=1751978961; cv=none; b=Trcn5aiepCuScCAbNyFR4xqTf4xyEV8GeMrJATbyGEyJFEBEkvRBG1F8fuCU83ovsH0bv0AKtlLFbFj97ZVKelK0W/fBU17qJULfcNR6MbDDRUQaUC9/9pyhflnQREDnC2ma26/izLwTLocUEF87fxHWl8E5vDlI+uOMtIVxIkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751978880; c=relaxed/simple;
-	bh=7Qurdz4aVYMfN9sFAFacpmxMjZnnqVQebraOUXVsBCM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=TFV1CFNLVSOzRSLmKWzhu8hbpq1eQnkxv0MGw1Nb+fHMUYcMZeK+K+MCYnxJ3AYTGvVdZbgEzO1HX/uf8+XYD+1hx8rRDAJrS+y5oMc1TnmuEy1NK48mlx8e5kDqjSY5dQ8TAk+SECPQmWbGwUjT5dU+GDbzH5YGUB5eguIIbLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DgXycVGu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 634D4C4CEED;
-	Tue,  8 Jul 2025 12:47:55 +0000 (UTC)
+	s=arc-20240116; t=1751978961; c=relaxed/simple;
+	bh=1FTq7reRRyN9NdkmjnF7RldFQXRezF9Nfp2asq+A3JU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=RFc1Qwm9QDrWKXB4rig862dleiu8YRzaHja1ZotMsdZu+cglfPdZNajZ0nAfyj6M+tArsIybOyWsIKZCsg4buDnUEJZVuLD0nZ8dijVIM/JNkenED4dnSPeGAvX0O+3zsbtGCJpiAEOef83qRf6MypRhi/wTvIuaNsCg1x3iSQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pm/uJkZc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BDBBC4CEED;
+	Tue,  8 Jul 2025 12:49:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751978880;
-	bh=7Qurdz4aVYMfN9sFAFacpmxMjZnnqVQebraOUXVsBCM=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=DgXycVGuufy7piLeRQjyhQlzrNE0hZdKp4cjBcTDxSI0NWCDN1ZtBjS8gvNllyPw2
-	 9CElScLabmvEo3ghfUhW3H5IWqSGp3KwXjQRUBdsTZ6/4abQ+WF7s6cUEkC51pPFq1
-	 npQ/iMFGeFA1TUPuOA5Wd56lM+9jCFfap5uLraBLtlsvAQkMLLAkTHpuV0ajbiFdXc
-	 Q6PbotifxMp+FK3S60iaHDghUjwP+lNiOJNXZmwu5lxUY6e1bnLuDSwFYkG9L5iU2K
-	 qQf71eINShephrna6B8zDaagVsD772CHvp4UBHD2aqZrjNAsYN7DjstembP7T0by9p
-	 IcAyeGZtlcguA==
+	s=k20201202; t=1751978960;
+	bh=1FTq7reRRyN9NdkmjnF7RldFQXRezF9Nfp2asq+A3JU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=pm/uJkZcZ83W0pt74N10IwKUABPmHqbX+BHQJghwth80YTZ5pNQbLUsCExpj0cGBh
+	 aSctck/cMPBk+5i1JVy5gpxQnSjE9MJnbNpU1JuTaED1T5xrl4nQjIJWWpGbfh7QtM
+	 9UAqpVkjt7yE7AtAiC7/WKifmsLSldm793ohxdf/E4A6zPDaPWGPkZyM3vUPE9kNXs
+	 1hMbh3BDAV2NTgKhnX6b4u7fD1/HalJV82ioiBIO09wJybczPBR6LwIqRbPcDQefKq
+	 8cgaNTKR/h6Q/cmBMJepZOwZl7esoQYhsM10awc1puOslQMoHloLBxsok5cWCPrrQE
+	 3ihrNde+XqH6Q==
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: johan+linaro@kernel.org, mhi@lists.linux.dev, 
+ Manivannan Sadhasivam <mani@kernel.org>, Slark Xiao <slark_xiao@163.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250528092232.16111-1-slark_xiao@163.com>
+References: <20250528092232.16111-1-slark_xiao@163.com>
+Subject: Re: [PATCH v2] bus: mhi: host: pci_generic: Add Foxconn T99W696
+Message-Id: <175197895780.10109.7892492341064362636.b4-ty@kernel.org>
+Date: Tue, 08 Jul 2025 18:19:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 08 Jul 2025 14:47:53 +0200
-Message-Id: <DB6OOFKHIXQB.3PYJZ49GXH8MF@kernel.org>
-Cc: <miguel.ojeda.sandonis@gmail.com>, <kuba@kernel.org>,
- <gregkh@linuxfoundation.org>, <robh@kernel.org>, <saravanak@google.com>,
- <alex.gaynor@gmail.com>, <ojeda@kernel.org>, <rafael@kernel.org>,
- <a.hindborg@kernel.org>, <aliceryhl@google.com>, <bhelgaas@google.com>,
- <bjorn3_gh@protonmail.com>, <boqun.feng@gmail.com>,
- <david.m.ertman@intel.com>, <devicetree@vger.kernel.org>,
- <gary@garyguo.net>, <ira.weiny@intel.com>, <kwilczynski@kernel.org>,
- <leon@kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-pci@vger.kernel.org>, <lossin@kernel.org>, <netdev@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <tmgross@umich.edu>
-To: "FUJITA Tomonori" <fujita.tomonori@gmail.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v3 0/3] rust: Build PHY device tables by using
- module_device_table macro
-References: <20250704041003.734033-1-fujita.tomonori@gmail.com>
- <20250707175350.1333bd59@kernel.org>
- <CANiq72=LUKSx6Sb4ks7Df6pyNMVQFnUY8Jn6TpoRQt-Eh5bt8w@mail.gmail.com>
- <20250708.195908.2135845665984133268.fujita.tomonori@gmail.com>
-In-Reply-To: <20250708.195908.2135845665984133268.fujita.tomonori@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Tue Jul 8, 2025 at 12:59 PM CEST, FUJITA Tomonori wrote:
-> On Tue, 8 Jul 2025 12:45:20 +0200
-> Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
->
->> On Tue, Jul 8, 2025 at 2:53=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> =
-wrote:
->>>
->>> Does not apply to networking trees so I suspect someone else will take
->>> these:
->>>
->>> Acked-by: Jakub Kicinski <kuba@kernel.org>
->>=20
->> Thanks! Happy to take it through Rust tree if that is best.
->
-> This is based on Rust tree. If I remember correctly, it can't be
-> applied cleanly to other trees because of Tamir's patch in Rust tree.
 
-Had a brief look.
+On Wed, 28 May 2025 17:22:32 +0800, Slark Xiao wrote:
+> T99W696 is designed based on Qualcomm SDX61 chip which is a cost
+> down chip refer to previous SDX62/SDX65. Though we have a support
+> on SDX62/SDX65, we create a new channel config for SDX61 since
+> we add a NMEA channel support from this product.
+> For new products we are allowed to customize the subVID and
+> subPID only.
+> 
+> [...]
 
-There will be two trivial conflicts with the driver-core tree, which fixed =
-up
-some of the safety comments you modify in this series as well.
+Applied, thanks!
 
-The other way around, there is one trivial conflict with Tamir patch in the=
- rust
-tree fixing up an `as _` cast.
+[1/1] bus: mhi: host: pci_generic: Add Foxconn T99W696
+      commit: 7a793ba2cc4a9ef59ab290d50cd847d314514323
 
-So, either way works fine.
+Best regards,
+-- 
+Manivannan Sadhasivam <mani@kernel.org>
+
 
