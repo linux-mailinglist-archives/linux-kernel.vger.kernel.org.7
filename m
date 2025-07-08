@@ -1,120 +1,105 @@
-Return-Path: <linux-kernel+bounces-721304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B5F7AFC762
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:49:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36DDAAFC764
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3B577A1F02
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:47:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52FDC3B4448
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE30266B67;
-	Tue,  8 Jul 2025 09:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g3A7YfYI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F5A266B64;
+	Tue,  8 Jul 2025 09:50:04 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF051FBEBE;
-	Tue,  8 Jul 2025 09:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F852264A1
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 09:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751968123; cv=none; b=LMF3rnrJaHmcV8BGTL0zCjzAFVbO4awP7NPljy/gD2YeJCG6nV1Wr3qwb6QLU0dOQ5Yf3RYQIyVaxIKtp7OV51AHi8E6aymnZqYbVpmhf6fr84euqMqU5Z/H6vby0o6kB1UVyu/+stPR6N62+otWJr3+MqdZqoY2U6mIsddrR30=
+	t=1751968204; cv=none; b=Fh5IHaI7DwlhSSSAMDdt44UIGLV1x+VkZ63JSzk372/4tEumEuiuZhrOlmGr8w3DmDTUxU0qCzgWcSN1VHvkYu+/t9uBwVfqPqromYEnWuq+PlDZmm/X40OLh84AwfO/dSr7n34ynMJdgNVbxSAXTOS+ivIV9h2Z2DJkQf/DpaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751968123; c=relaxed/simple;
-	bh=nJZziPt5NASkQ4VYndMG5RDb3+l0adF6BWLpXEqDyZU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=c14SmepZu10GP9ahyo+XjDQUbkZSzKuel72e5ad1IJ5ag8dB/KDhYKqheILbNNsNC96sXkH4aHN/PV8xHtpZRiHSXIuXCkYpJRVsXThLe7ItUPeNcMt8YSKILc/88SCEEUS/vl97oJD7V4p3/ORoGzACo4AQLXpaA06Yuk7Zm7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g3A7YfYI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EAF5C4CEED;
-	Tue,  8 Jul 2025 09:48:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751968121;
-	bh=nJZziPt5NASkQ4VYndMG5RDb3+l0adF6BWLpXEqDyZU=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=g3A7YfYIR1aOagAlboL6HhqaKSUdo2bf5X4jag77WB+jDmeVQEPk4JDkTaUvw7zlO
-	 pMGZaLeP3bnedwWmfyK/vlEq1jTRveKAvnd2EZSLCbLbaInkp6eqHTbPWpt7Vq+L9g
-	 YzFsapvWf3y6o55TK2kPvqx0z98UO+3cq8IHXJEd/EaoJqW7OQbwf1jqZR1m3f2sNn
-	 ag+eQKS2cdQf4vDnafUSdrfHc9OuUcpTP0NJ6uSQ6Hk1O73u/h+eGXt2D4dQNRjyMV
-	 Ndq+dVFK5ppz+TmRcfyOEIfj5fGbSzuQEOzUXhuf8cBfrh7BQD2YWunc0ESV9fwsfU
-	 +4XQ8u+tVjfuw==
+	s=arc-20240116; t=1751968204; c=relaxed/simple;
+	bh=Q79VbRW19HkBZKVuJvLaZo6VdvFJCvi4GmBiP0okT1M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pYNXL9nYCU+29HimIdUrpZD8CmP3mU9ugnQw+Al7HyicGRtpFIbNSkHzAV44qUSMhmLBlV0WCmheXTDRIjFnduFk3eezirPs3xV3kfkMTY0Xxd+Kpfrx9CBm0jl4JtL06hVX78zcHD7nt8BPSGTFaXlcC5Oe96nOYYDdZOdHG3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 5689n2Cs013493;
+	Tue, 8 Jul 2025 18:49:02 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 5689n2YS013485
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 8 Jul 2025 18:49:02 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <70e7df49-ebba-4121-ae8d-83e04fbe25ba@I-love.SAKURA.ne.jp>
+Date: Tue, 8 Jul 2025 18:48:59 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [mm?] WARNING in xfs_init_fs_context
+To: Vlastimil Babka <vbabka@suse.cz>, Dave Chinner <david@fromorbit.com>
+Cc: Zi Yan <ziy@nvidia.com>, Barry Song <baohua@kernel.org>,
+        Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org,
+        syzbot <syzbot+359a67b608de1ef72f65@syzkaller.appspotmail.com>,
+        akpm@linux-foundation.org, apopple@nvidia.com, byungchul@sk.com,
+        david@redhat.com, gourry@gourry.net, joshua.hahnjy@gmail.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        matthew.brost@intel.com, rakie.kim@sk.com,
+        syzkaller-bugs@googlegroups.com, ying.huang@linux.alibaba.com,
+        Harry Yoo <harry.yoo@oracle.com>, Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>
+References: <6861c281.a70a0220.3b7e22.0ab8.GAE@google.com>
+ <DDD5FAAF-F698-4FC8-B49C-FD1D3B283A8E@nvidia.com>
+ <1921ec99-7abb-42f1-a56b-d1f0f5bc1377@I-love.SAKURA.ne.jp>
+ <630b4379-751a-4bf1-a249-f2e051ec77d6@suse.cz>
+ <aGxF7NqHNK7Vtd1_@dread.disaster.area>
+ <5397779c-9a89-4dd3-9937-208fefb58f78@suse.cz>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <5397779c-9a89-4dd3-9937-208fefb58f78@suse.cz>
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 08 Jul 2025 11:48:36 +0200
-Message-Id: <DB6KV5SVWIYG.2FAIFGZ90ZR2I@kernel.org>
-Subject: Re: [PATCH 1/2] rust: Add dma_set_mask() and
- dma_set_coherent_mask() bindings
-Cc: <rust-for-linux@vger.kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "John Hubbard" <jhubbard@nvidia.com>, "Alexandre
- Courbot" <acourbot@nvidia.com>, <linux-pci@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Alistair Popple" <apopple@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250708060451.398323-1-apopple@nvidia.com>
- <DB6JF2JLZEO8.4HZPDC26F3G8@kernel.org>
-In-Reply-To: <DB6JF2JLZEO8.4HZPDC26F3G8@kernel.org>
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav102.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Tue Jul 8, 2025 at 10:40 AM CEST, Danilo Krummrich wrote:
-> On Tue Jul 8, 2025 at 8:04 AM CEST, Alistair Popple wrote:
->> Add bindings to allow setting the DMA masks for both a generic device
->> and a PCI device.
->
-> Nice coincidence, I was about to get back to this. I already implemented =
-this in
-> a previous patch [1], but didn't apply it yet.
->
-> I think the approach below is thought a bit too simple:
->
->   (1) We want the DMA mask methods to be implemented by a trait in dma.rs=
-.
->       Subsequently, the trait should only be implemented by bus devices w=
-here
->       the bus actually supports DMA. Allowing to set the DMA mask on any =
-device
->       doesn't make sense.
+On 2025/07/08 17:50, Vlastimil Babka wrote:
+> On 7/8/25 00:10, Dave Chinner wrote:
+>> On Wed, Jul 02, 2025 at 09:30:30AM +0200, Vlastimil Babka wrote:
+>>> On 7/2/25 3:41 AM, Tetsuo Handa wrote:
+>>>> By the way, why is xfs_init_fs_context() using __GFP_NOFAIL ?
+>>>>
+>>>> 	mp = kzalloc(sizeof(struct xfs_mount), GFP_KERNEL | __GFP_NOFAIL);
+>>>> 	if (!mp)
+>>>> 		return -ENOMEM;
+>>>>
+>>>> This looks an allocation attempt which can fail safely.
+>>
+>> It's irrelevant - it shouldn't fail regardless of __GFP_NOFAIL being
+>> specified.
+> 
+> If you mean the "too small to fail" behavior then it's generally true,
+> except in some corner cases like being an oom victim, in which case the
+> allocation can fail - the userspace process is doomed anyway. But a (small)
+> kernel allocation not handling NULL would still need __GFP_NOFAIL to prevent
+> that corner case.
 
-Forgot to mention, another reason for a trait is that we can also use it as=
- a
-trait bound on dma::CoherentAllocation::new(), such that people can't pass
-arbitrary devices to dma::CoherentAllocation::new(), but only those that
-actually sit on a DMA capable bus.
+init_fs_context() is allowed to fail.
 
->
->   (2) We need to consider that with this we do no prevent
->       dma_set_coherent_mask() to concurrently with dma_alloc_coherent() (=
-not
->       even if we'd add a new `Probe` device context).
->
-> (2) is the main reason why I didn't follow up yet. So far I haven't found=
- a nice
->     solution for a sound API that doesn't need unsafe.
->
-> One thing I did consider was to have some kind of per device table (simil=
-ar to
-> the device ID table) for drivers to specify the DMA mask already at compi=
-le
-> time. However, I'm pretty sure there are cases where the DMA mask has to =
-derived
-> dynamically from probe().
->
-> I think I have to think a bit more about it.
->
-> [1] https://lore.kernel.org/all/20250317185345.2608976-7-abdiel.janulgue@=
-gmail.com/
+https://elixir.bootlin.com/linux/v6.16-rc4/source/fs/fs_context.c#L318
+https://elixir.bootlin.com/linux/v6.16-rc4/source/fs/ext4/super.c#L1990
+
+Therefore, I wonder why xfs does not want xfs_init_fs_context() to fail
+with -ENOMEM.
 
 
