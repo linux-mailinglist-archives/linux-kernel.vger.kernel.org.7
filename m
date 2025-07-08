@@ -1,120 +1,125 @@
-Return-Path: <linux-kernel+bounces-721702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC2A9AFCCE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:01:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEBDDAFCCE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C427B3A7B28
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:01:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECFF21AA4D4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F612DECB7;
-	Tue,  8 Jul 2025 14:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3622DECDF;
+	Tue,  8 Jul 2025 14:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="F4kH8C6j"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Lgo3sV9+"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F0A2D613;
-	Tue,  8 Jul 2025 14:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617A42DEA86;
+	Tue,  8 Jul 2025 14:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751983290; cv=none; b=SGMnvMAB+vMoolkZ9+eEnQkNjmxjxii19nS1eQY22yQBO3ld14BfSM+a1Cmbha/VxtP5SOvuFyOD/qReva7o6pAFk+YpHhu8kHpdBtuSKjF5POY5eqsAx6tE3c1NjST4eHVgmsEKH/bCyenZTA6OsUhsWjWbONSciJxkkQyP9WA=
+	t=1751983311; cv=none; b=B48DjhBoGVles8LanRI1rvYzAEOGtCrlVG2ez8uepxCVa2m1h8Pe0rC3ei5qSsp8pa0mzcxlWtqNRMDSVrfgyFZYyNec9qQwtRyzAAjtRJGbyjGz6Jt8WAvvpTpeSnRu7CK03tT6Nxn++zYEdVNNEkJb2ooK/n/KDU+jlvRGWnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751983290; c=relaxed/simple;
-	bh=jiSOZcyewoX4/3vPQOddofnAR9Fx/TVJaWuJIbk7pB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nXYQDr787dC5dQgtTEDNZ+eRVZ6uMbgPW9ADzjVC90ZVD+k7tC5h8VGQVgTzcMKch/WHUsairUjWLQf6VNrx5I6MPAlWc5BW89R/tw9gOzfsty/AK5pISwuOMyyWPD4ASLCN0iMQtVLcWUG/NMJRG6nKSwFVue6PiDqNdH8u8I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=F4kH8C6j; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=p+b4mVKuoAsfo3cEZdXjX+/aNWu2K+lEqLExqcNWMUg=; b=F4kH8C6jYQBYLoupXb2aexf8sT
-	uVL4oZsxSIOP9UPd301zLEdaVp7q/rXBCuxwpXTY4obCtJulpKCCPknU8VzZG+yP7OwKyY43F6IJM
-	cGy7PfLw2X1G2kw+WWfP/NtYuxDjqcYZLJNm4GvQb3V2vBI5YTOwyzU7j8UUsHwvZdjo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uZ8sc-000pFd-OL; Tue, 08 Jul 2025 16:01:06 +0200
-Date: Tue, 8 Jul 2025 16:01:06 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next 1/3] net: netdevsim: Add PHY support in netdevsim
-Message-ID: <c6685b48-b525-47bd-8364-a26d787b1e3a@lunn.ch>
-References: <20250702082806.706973-1-maxime.chevallier@bootlin.com>
- <20250702082806.706973-2-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1751983311; c=relaxed/simple;
+	bh=UYDAFPQOo8Df1no4NcJ8qGhOe6976wPrcOFUkWX2DJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eEsmpFO2Ik7EcWJQAPtEdubDqR/A3tMJNoXfBLXz3MRxPd53ogpW4vJmQpTW6wIxsQ3um7mI2Yb6IssjpiOyjL/ZIj5QS6a9EaSEjI06fHVjrJeF0qGylK3islpAIoQgiVa+2gqYhlw734WjckgOk+KxrHqRP2qp67MMIko54K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Lgo3sV9+; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 474CE431F1;
+	Tue,  8 Jul 2025 14:01:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1751983301;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mKpow068b4y6O1gxSiix706lmsCcguNU+95VkipNyxc=;
+	b=Lgo3sV9+gKq1MzSb3ze4M4OEbuhr7FakwYPT9tazV9qSlmudZFOkdpZL8GO9QMEqZ42kj/
+	TZK8iAyz+zdfEKAnswjR/DFDa+8UttlvUSpLXuLMo28qib/q8BHdgHWoSR5lncXXryezzZ
+	LfnN+w7w7M2RrYSuVdZ9mCQA0CZvSthCoMrWtHddMHMabJsD7Pc1Q5M6BKscmIhMkRszqa
+	dLsqM27GXSASr7zHaVHqculMu1nSRGWIaWPhVHaeEjE8HlnzKmebCrSn0EB88zyoSK2Xqz
+	cytfNarTG/DIfgCIPHsawnykOc8QT1UWUKLDp+f4SMAGN64QSJs+ZqyRl+gA/A==
+Date: Tue, 8 Jul 2025 16:01:09 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Douglas Anderson
+ <dianders@chromium.org>, Lucas Stach <l.stach@pengutronix.de>, Russell King
+ <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner
+ <christian.gmeiner@gmail.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo
+ Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, Laurentiu
+ Palcu <laurentiu.palcu@oss.nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Qiang Yu
+ <yuq825@gmail.com>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Boris
+ Brezillon <boris.brezillon@collabora.com>, Steven Price
+ <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Thierry Reding
+ <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Jyri Sarha <jyri.sarha@iki.fi>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Dave Stevenson
+ <dave.stevenson@raspberrypi.com>, =?UTF-8?B?TWHDrXJh?= Canal
+ <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance
+ <kernel-list@raspberrypi.com>, Dmitry Baryshkov
+ <dmitry.baryshkov@oss.qualcomm.com>, Damon Ding
+ <damon.ding@rock-chips.com>, Ayushi Makhija <quic_amakhija@quicinc.com>,
+ Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>,
+ Chen-Yu Tsai <wenst@chromium.org>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, etnaviv@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, imx@lists.linux.dev,
+ lima@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 20/80] drivers: drm: Remove redundant
+ pm_runtime_mark_last_busy() calls
+Message-ID: <20250708160109.08055641@booty>
+In-Reply-To: <20250704075413.3218307-1-sakari.ailus@linux.intel.com>
+References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+	<20250704075413.3218307-1-sakari.ailus@linux.intel.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702082806.706973-2-maxime.chevallier@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefgeekiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqfedtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeelheeufeetjeeigeeutdeiueelgeetkeeffeetgeeivdelleejhffhgefgjeelkeenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepkeejrdduvddtrddvudekrddvtdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepkeejrdduvddtrddvudekrddvtdejpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeehjedprhgtphhtthhopehsrghkrghrihdrrghilhhusheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhop
+ efnrghurhgvnhhtrdhpihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepjhhonhgrsheskhifihgsohhordhsvgdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhm
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-> +static int nsim_phy_state_link_set(void *data, u64 val)
-> +{
-> +	struct nsim_phy_device *ns_phy = (struct nsim_phy_device *)data;
-> +
-> +	ns_phy->link = !!val;
-> +
-> +	phy_trigger_machine(ns_phy->phy);
-> +
-> +	return 0;
-> +}
-> +
-> +static int nsim_phy_state_link_get(void *data, u64 *val)
-> +{
-> +	struct nsim_phy_device *ns_phy = (struct nsim_phy_device *)data;
-> +
-> +	*val = ns_phy->link;
-> +
-> +	return 0;
-> +}
-> +
-> +DEFINE_DEBUGFS_ATTRIBUTE(nsim_phy_state_link_fops, nsim_phy_state_link_get,
-> +			 nsim_phy_state_link_set, "%llu\n");
-> +
-> +static void nsim_phy_debugfs_create(struct nsim_dev_port *port,
-> +				    struct nsim_phy_device *ns_phy)
-> +{
-> +	char phy_dir_name[sizeof("phy") + 10];
-> +
-> +	sprintf(phy_dir_name, "phy%u", ns_phy->phy->phyindex);
-> +
-> +	/* create debugfs stuff */
-> +	ns_phy->phy_dir = debugfs_create_dir(phy_dir_name, port->ddir);
-> +
-> +	debugfs_create_file("link", 0600, ns_phy->phy_dir, ns_phy, &nsim_phy_state_link_fops);
+On Fri,  4 Jul 2025 10:54:13 +0300
+Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
 
-Maybe this can be converted into:
+> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+> pm_runtime_mark_last_busy().
+>=20
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-debugfs_create_bool("link", 0600, ns_phy->phy_dir, &ns_phy->link);
+With the cleanups required by Laurent and Ma=C3=ADra:
 
-You loose the phy_trigger_machine(), but that might actually be
-good. PHYs are async to any operation you take on them. It can take up
-to 1 second due to the polling before any change is reported. So any
-user space tools which expect an immediate state change are broken. So
-leaving the PHY state machine to poll the PHY to notice the link has
-changed is a better simulation.
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-	Andrew
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
