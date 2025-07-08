@@ -1,278 +1,167 @@
-Return-Path: <linux-kernel+bounces-721385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45E53AFC886
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:39:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01DF1AFC8A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:42:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9A1E7A3AFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:37:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA5951BC406F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494C32D8764;
-	Tue,  8 Jul 2025 10:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575562DA77F;
+	Tue,  8 Jul 2025 10:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Gbgvtn8U"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Iaqshucv"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC3E269808
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 10:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43AD2D9ED9;
+	Tue,  8 Jul 2025 10:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751971146; cv=none; b=Tg18B2KV+6j+uPUH/5fTZF57E65vxI3dcwHPIR43UyIFT+ig+ztp3nRk2zfRPtVNfAb108FJZ5s/3TzshXln9kKxgXg+5gMcuZwulfMiz7L/jc2DWLDzdY93qjimFK+zQmf0VzP7vveOJWRnA5BM1qUpGZsTyCnSVUJ0Nwjws6Q=
+	t=1751971275; cv=none; b=Obalx+ui+RfqlyANXaAamRLUdiBOerUROJZXonF9aIeEbJsq+PN09p/l0/mPHiulM1j3aQX43Xh9u769lnFQP4to4B5Ybbtp0WTUoQU6Q7gaSo28KT8RPUatyDmZDD0DnDOamZtpczm2aay3k6WAlZgCDwKOJdpJRhkkIpfrUrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751971146; c=relaxed/simple;
-	bh=1+K2vStuMbWEvbxNn4v5jMkIEs47um7WuK/tPjoaTZE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ngOXPac8lSb2EIgH5RaeSLTqs2PKe3hmg+eVqJfxUK7B9ubOrP5IlY3/Z/9vhKsAd3pCXWu6PsrkhbnUmD9UPzJg4MPphUiUpNUMiQmHvYemoa7C3INeBbDa7BaVeVjmlycHNDAyGf2ylsC3t8cnFbwObo5/8h/eCGw4pIetedo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Gbgvtn8U; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568AAGLa008288
-	for <linux-kernel@vger.kernel.org>; Tue, 8 Jul 2025 10:39:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MBWTgG1nt7QgnG2L1PdtfNApAGuuPN/fOFc0QPePaMA=; b=Gbgvtn8UMww41wns
-	B5/R2pshzbfIbdd3D4bOEe4XGEu0os7l3mMaoJjdWOzdBFsGtF/CMQZAqlv5OqSW
-	m6gyEdjx3Z5t8UblYJImazagnYYGrZY9hWnwpyvHQ6aNDXZa4gmcn1cPIZa2faxX
-	wDckYvzBUiFW0iEBI8L7+EWtY36HgsRe8LF10RAG38CqqwmlpTCCqPwUZcivdaYI
-	NQ7a2LgV4d1uFbITP+rWDruwf/jFM8fEbiMFcLWApIOmX2stZNz5B5vWIZwxf9wY
-	NnovWdEcBGEAzkLi2yKZNWwXzj/wdoTusg5QRyeTqY7jI5uH3N9Om7FLUmOVlQj9
-	KfuVVw==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pucmvrjc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 10:39:03 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-235e1d66fa6so35666365ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 03:39:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751971142; x=1752575942;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MBWTgG1nt7QgnG2L1PdtfNApAGuuPN/fOFc0QPePaMA=;
-        b=mcKXtk8xO/nXK+jrrJlgZ+qA5ycHGcYmDniYJmjGhpcPkXXCu9AGvroFm8d4GcAywc
-         pAOSZ113DsM45x8KFIW+WVGCegKeMOlpMIdQH4mtZejc6EoNX1kIGCAYXj7sOtZz62Uo
-         G4zC6qePWgl46hfdpPwgMao5n2ku9S1UIy8+0ZxzErrFJkXKN8Wq2C8sAA/7HtiY0Qb4
-         IV7u4WrZsLrCRRe3ULrOAziIfw5wwR4Il7ij3ze38sT6D3akOzxOnPBXf4ZyUU2s5ulm
-         umPYKLWC5ARD3+JDcQWedzdWKHjtVJy4lyIFpLYVXeo4cIMvWsk9RRVXRsjwbh3INpvw
-         Hlkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVktpjX+K4hubby2b5XGv2n8LELmJ+KBTmi9Rg5dddnLIHvYLqbY4uLEj2bawp5i07g5CeXUCVstyYhlUI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkwTZWXgqL5Xhfpl83yfj2zdHbaRq12cSsSJ36JbM8GBvgjcvx
-	4tkngbGogbAcEkmAqGVE1c0vBX02A74hVjBzY9qeS9c38gHYYEJewnv054/+uco+kFvNMbfg1RX
-	D9/hnd+Sr4Ee2jQrn2U51HF8tq0G72ZXgHzDzHen4RRc3YU5UZ/Jw4uvtQ3TFUCYBrRI=
-X-Gm-Gg: ASbGnct8QQRkB0+IIisqCyYxv+nX0lAmDLmZda91tonV6n2ZMnVp2o6lir860sLaVM0
-	IiU31CPcE60q0rBvsHN/DZgOas+vhKlbG0jc6IX1FApuuokWVaZaE6rm0HuD8dWo9vE07s9ZIXx
-	lFegGzuWaPEwmwNONur1tETIMgjRtSdn1n5y5bowb/J8d8sSsLLKr90IexyxIpSbmeUIAfAWiCJ
-	hUq5FC+17sc+7SQeMzuaUfl3u9BLiC8onUg3N8l0Hd3HjDi9SPicA8PU0vJjQ/bD328Eztg8Zf1
-	4X3vQjIxC8SrWWSBxqzewz6aPeh7uzs+Z12LtZJhJLLzCVK0QM6qJQkJfAGaEj49g03FqssDL9k
-	Dxvl0sIiqonbdefY=
-X-Received: by 2002:a17:902:e788:b0:234:1163:ff99 with SMTP id d9443c01a7336-23dd1d7ef95mr32972085ad.43.1751971142360;
-        Tue, 08 Jul 2025 03:39:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGC/n1Wv16I6oi8TfKFbGm9RVJSuG7cMjQtpyIJkVs3+lkD6ynLF8cQTccR4h0hqlT00wE5zA==
-X-Received: by 2002:a17:902:e788:b0:234:1163:ff99 with SMTP id d9443c01a7336-23dd1d7ef95mr32971795ad.43.1751971141853;
-        Tue, 08 Jul 2025 03:39:01 -0700 (PDT)
-Received: from [10.133.33.177] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8435022dsm114182915ad.86.2025.07.08.03.38.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 03:39:01 -0700 (PDT)
-Message-ID: <7aa0ac35-068f-4738-abbd-f1073294365b@oss.qualcomm.com>
-Date: Tue, 8 Jul 2025 18:38:55 +0800
+	s=arc-20240116; t=1751971275; c=relaxed/simple;
+	bh=M/R7QNtY3WWeSOL+meIUvajO8tLpcXYlab4cNCnyGoM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Dc90XY7QD1Imywkj/u+CBuaMREmaDw/BNpTKhJhGum10Pll/WED2U6tfpygpQLWHDc5Yv+FBfDYtA2aWW7XpRbULymFi1xLU3vcFuWsZM6XoayH0hklr7xVAuhVuN3L2R3TGtVK1utbmCFQP//FbV8qhPa6zdVQtAQD73SCCFb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Iaqshucv; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.0.172] (mob-5-90-136-241.net.vodafone.it [5.90.136.241])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 09D3350A;
+	Tue,  8 Jul 2025 12:40:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1751971238;
+	bh=M/R7QNtY3WWeSOL+meIUvajO8tLpcXYlab4cNCnyGoM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=IaqshucviT44STswB18ARkA4uVKslXHErGBrdTHWP31XFRilPI6iv0fRo66W8IRHq
+	 QxqRHMJZi49FS8IMeWeKc29kZC/DEWjRlBlx0O2IsYBTOijudh/jlBByYaTdrni7oG
+	 UOj0dnJ4+9oZZrfCVrwVttlPzKjOMvhppO40p4JY=
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Subject: [PATCH 0/8] media: Introduce V4L2 extensible parameters
+Date: Tue, 08 Jul 2025 12:40:47 +0200
+Message-Id: <20250708-extensible-parameters-validation-v1-0-9fc27c9c728c@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] bus: mhi: don't deinitialize and re-initialize again
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
-        Youssef Samir <quic_yabdulra@quicinc.com>,
-        Matthew Leung <quic_mattleun@quicinc.com>, Yan Zhen <yanzhen@vivo.com>,
-        Alexander Wilhelm <alexander.wilhelm@westermo.com>,
-        Alex Elder <elder@kernel.org>, Kunwu Chan <chentao@kylinos.cn>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Siddartha Mohanadoss <smohanad@codeaurora.org>,
-        Sujeev Dias <sdias@codeaurora.org>,
-        Julia Lawall <julia.lawall@lip6.fr>, John Crispin <john@phrozen.org>,
-        Muna Sinada <quic_msinada@quicinc.com>,
-        Venkateswara Naralasetty <quic_vnaralas@quicinc.com>,
-        Maharaja Kennadyrajan <quic_mkenna@quicinc.com>, mhi@lists.linux.dev,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org
-Cc: kernel@collabora.com
-References: <20250630074330.253867-1-usama.anjum@collabora.com>
- <20250630074330.253867-3-usama.anjum@collabora.com>
- <5f2a900a-3c8e-4b16-bd91-500af7d0315e@oss.qualcomm.com>
- <29ba0afa-9a1b-40f9-a174-d03902ea5d3f@collabora.com>
- <8b9eb6f4-6f0c-458d-b1e6-a1893c35b81d@oss.qualcomm.com>
- <a92b3d96-0c19-49c2-ad8b-ad31dec973c3@collabora.com>
- <7b8ea9ba-02ef-4676-a4d3-d088920283c3@oss.qualcomm.com>
- <9eba0149-290d-4010-8791-d4d8d8be3786@collabora.com>
- <fdb9f1e7-bf8f-4018-b0ac-ac8a70d9b8ec@oss.qualcomm.com>
- <5c9843b5-d756-4a99-b93f-d32ed8f16e32@collabora.com>
-Content-Language: en-US
-From: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-In-Reply-To: <5c9843b5-d756-4a99-b93f-d32ed8f16e32@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=GdQXnRXL c=1 sm=1 tr=0 ts=686cf547 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=n4c7CGo1Dgpf3paWKKAA:9
- a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-GUID: GGjaKVY6BRB-q6SGGJ_JjRxFa_2ZpTOC
-X-Proofpoint-ORIG-GUID: GGjaKVY6BRB-q6SGGJ_JjRxFa_2ZpTOC
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDA4NyBTYWx0ZWRfXynpDQgpcNSb4
- 57rjfxcHPZQIyuduBp1inUBfW35kok37A+nMUkb/5L7d27jyclppSk+RyQDrWR9dEDPkssmnFtR
- nA+OGQowkjU8yVwj3usvAa+k+AcJXUyQj9syMa0EXsAfkIL+f1SfXMJqIjuIDxqe2ghszduY+Gl
- C+2Iz3h+9Ro00FA8ABGn5plRUkyrdBYUdxuBjNSmHsZm9LVD3AG4K5TrWNsQR9W7Y3JREMIB7og
- HgkYvzhwB38JarGsZtRd5Etzm4ipuHJrZo+iRYzy9XPGjqGnI5Fuv+r0ASfnNoeREd7naxwGPgZ
- luy4DI01bQb/EvPtQFxftWYBXhstf+DzarQHki6lUnZTpe0M2QUWRAehl8nN4q+DQBQgRdyyVm3
- z+TQUvAFbAU4B0Wv7q0OWgN4eOCIJE42io4iF+3IxFibjXG2ooX8/f2OeQnIw7A5pcpBc7zp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-08_03,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 clxscore=1015
- spamscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
- malwarescore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507080087
+X-B4-Tracking: v=1; b=H4sIAK/1bGgC/x2NwQqDMBAFf0X23IXEIpb+SulhjS/tgk1lN4gg/
+ ntDj3OYmYMcpnC6dwcZNnX9lgbx0lF6S3mBdW5MfeiHMIbI2CuK67SAVzH5oMKcN1l0ltpkTrd
+ rzGMeUgoTtcxqyLr/F4/nef4A/D07FnIAAAA=
+X-Change-ID: 20250701-extensible-parameters-validation-c831f7f5cc0b
+To: Dafna Hirschfeld <dafna@fastmail.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Heiko Stuebner <heiko@sntech.de>, Dan Scally <dan.scally@ideasonboard.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3686;
+ i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
+ bh=M/R7QNtY3WWeSOL+meIUvajO8tLpcXYlab4cNCnyGoM=;
+ b=owEBbQKS/ZANAwAKAXI0Bo8WoVY8AcsmYgBobPW/xcSH01XHbjzoLEDUF3UwH7xfSWv4wBikg
+ ilaU3lDKZKJAjMEAAEKAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCaGz1vwAKCRByNAaPFqFW
+ PHv/EACnTT5Kx+do5148Oe5MQo4vnrINzTcR/3VRciCYZTnkpWGV4i483Aphv+Kdg7E8VOVxpS0
+ c8KvfVsnG7hN54xdkTAvP7ruWXYMNPh4Mv6fUlaVQRfC5aJZIHtlu1Fku72i5Mlo1c9g0PwvAsb
+ tIWswq4JZe5idmb3M6fRKYxzYQ69CPAGkugPTH76QKi6FO0tGYQu9t1askHeoxwz+nMNnGOn/7F
+ 5t2z8sDOB9YMkMZtRxHu/QCkC+JO1hD3G9qEsXZFjy2i6wqdq8gGwe9yvI1n4LdDzXhyls446nu
+ lFz4eTQe0tvZxzPCmpFT+vK7rOI5U+DFJug4mU6y+ddjUwf3tcQfCkdx3IzcXedQpLRdgJ6W/eT
+ uphHlYimadaEbNexprf9Y671xatpQzSsLrM67gP7SP9TybJgm2prpkYbVk2uwjpYSIpulwn6j8a
+ WWkQdm9a8Dyqh4KO5B+2Iw5aDLS2TVtG5j2m0T/Er32o7VIJtQR5EQKBVoFd/R4XVzXQ8X4IE2i
+ nJrX6ixGSDNcRo7il5eKuK7KmPqrrSeilog040Nhe4OIzms6ZMlhaeioXkKX6ONpKAMzjUTaVT7
+ CSheJI9Cp72swqX5GO9+lU8JJYpRSKaRUSJbCyDdNYm9ZZ5QZx5OgOPqALLOYR3+SRSjxoNr+iB
+ uCEmsWq75n93tHA==
+X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
+ fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
 
+Extensible parameters meta formats have been introduced in the Linux
+kernel v6.12 initially to support different revision of the RkISP1 ISP
+implemented in different SoC. In order to avoid breaking userspace
+everytime an ISP configuration block is added or modified in the uAPI
+these new formats, which are versionated and extensible by their
+definition have been introduced.
 
+See for reference:
+e9d05e9d5db1 ("media: uapi: rkisp1-config: Add extensible params format")
+6c53a7b68c5d ("media: rkisp1: Implement extensible params support")
 
-On 7/8/2025 5:12 PM, Muhammad Usama Anjum wrote:
-> On 7/8/25 6:43 AM, Baochen Qiang wrote:
->>
->>
->> On 7/7/2025 9:11 PM, Muhammad Usama Anjum wrote:
->>>>>>>>> diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
->>>>>>>>> index 4488e4cdc5e9e..bc4930fe6a367 100644
->>>>>>>>> --- a/drivers/net/wireless/ath/ath11k/core.c
->>>>>>>>> +++ b/drivers/net/wireless/ath/ath11k/core.c
->>>>>>>>> @@ -2213,14 +2213,9 @@ static int ath11k_core_reconfigure_on_crash(struct ath11k_base *ab)
->>>>>>>>>  	mutex_unlock(&ab->core_lock);
->>>>>>>>>  
->>>>>>>>>  	ath11k_dp_free(ab);
->>>>>>>>> -	ath11k_hal_srng_deinit(ab);
->>>>>>>>>  
->>>>>>>>>  	ab->free_vdev_map = (1LL << (ab->num_radios * TARGET_NUM_VDEVS(ab))) - 1;
->>>>>>>>>  
->>>>>>>>> -	ret = ath11k_hal_srng_init(ab);
->>>>>>>>> -	if (ret)
->>>>>>>>> -		return ret;
->>>>>>>>> -
->>>>>>>> while I agree there is no need of a dealloc/realloc, we can not simply remove calling the
->>>>>>>> _deinit()/_init() pair. At least the memset() cleanup to hal parameters (e.g.
->>>>>>> Why do is it being done in the resume handler? Shouldn't those parameters be cleaned up
->>>>>>> in resume handler? So when device wakes up, its state is already correct.
->>>>>>>
->>>>>> Hmm... not quite understand your question. Can you elaborate?
->>>>> I'm trying to understand the possibility of cleanup of hal in suspend handler. For example:
->>>>> * The driver has been loaded and has been working fine.
->>>>> * The user called suspend. So all devices would be suspended.
->>>>> * In suspend handler of the ath11k, we should do the necessary cleanups of the states
->>>>>   like hal.
->>>>> * When the device would resume after long time, the hal would have the correct state
->>>>>   already. So we'll not need to deinit and init again.
->>>> The hal cleanup is not only needed by suspend/resume, but also a step of reset/recover
->>>> process. So If we are moving the cleanup to suspend handler, similar stuff needs to be
->>>> done for reset/recover as well.
->>> It makes sense.
->>>
->>> So clearing the hal structure completely other than ab->hal.srn_config doesn't seem
->>> right. I've also tested it and it crashes the whole system.
->>>
->>> On contrary, with only the current patch applied, there is no abnormality.
->>>
->>> num_shadow_reg_configured and avail_blk_resource are non-zero. If I make them 0,
->>> driver still keeps on working.
->>>
->>> 	ab->hal.num_shadow_reg_configured = 0;
->>> 	ab->hal.avail_blk_resource = 0;
->>> 	ab->hal.current_blk_index = 0;
->>>
->>> As you have suggested setting these 3 to zero, is there any other variable in hal
->>> structure which should be set to zero?
->>
->> IMO srng_config, rdp, wrp and srng_key may keep unchanged through suspend/reset, all other
->> fields should be cleared/reinitialized.
-> 
-> memseting srng_list and shadow_reg_addr causes crashes. Please can you confirm why do you
-> think those should be memset. Here is WIP patch:
+The Amlogic C3 ISP driver followed shortly, introducing an extensible
+format for the ISP configuration:
 
-We need to make sure they have a clean state while resume/recover.
+6d406187ebc0 ("media: uapi: Add stats info and parameters buffer for C3 ISP")
 
-> 
-> 
-> --- a/drivers/net/wireless/ath/ath11k/core.c
-> +++ b/drivers/net/wireless/ath/ath11k/core.c
-> @@ -2213,14 +2213,10 @@ static int ath11k_core_reconfigure_on_crash(struct ath11k_base *ab)
->  	mutex_unlock(&ab->core_lock);
->  
->  	ath11k_dp_free(ab);
-> -	ath11k_hal_srng_deinit(ab);
-> +	ath11k_hal_srng_clear(ab);
->  
->  	ab->free_vdev_map = (1LL << (ab->num_radios * TARGET_NUM_VDEVS(ab))) - 1;
->  
-> -	ret = ath11k_hal_srng_init(ab);
-> -	if (ret)
-> -		return ret;
-> -
->  	clear_bit(ATH11K_FLAG_CRASH_FLUSH, &ab->dev_flags);
->  
->  	ret = ath11k_core_qmi_firmware_ready(ab);
-> diff --git a/drivers/net/wireless/ath/ath11k/hal.c b/drivers/net/wireless/ath/ath11k/hal.c
-> index b32de563d453a..d4be040acf2c8 100644
-> --- a/drivers/net/wireless/ath/ath11k/hal.c
-> +++ b/drivers/net/wireless/ath/ath11k/hal.c
-> @@ -1359,6 +1359,19 @@ void ath11k_hal_srng_deinit(struct ath11k_base *ab)
->  }
->  EXPORT_SYMBOL(ath11k_hal_srng_deinit);
->  
-> +void ath11k_hal_srng_clear(struct ath11k_base *ab)
-> +{
-> +// --> both of these memset causes crashes
-> +//	memset(ab->hal.srng_list, 0,
-> +//	       sizeof(ab->hal.srng_list) * HAL_SRNG_RING_ID_MAX);
+with a very similar, if not identical, implementation of the routines to
+validate and handle the ISP configuration in the ISP driver in the
+c3-isp-params.c file.
 
-You are memset too much, just sizeof(ab->hal.srng_list) is OK.
+fb2e135208f3 ("media: platform: Add C3 ISP driver")
 
-> +//	memset(ab->hal.shadow_reg_addr, 0,
-> +//	       sizeof(ab->hal.shadow_reg_addr) * HAL_SHADOW_NUM_REGS);
+With the recent upstreaming attempt of the Mali C55 ISP driver from Dan,
+a third user of extensible parameters is going to be itroduced in the
+kernel, duplicating again in the driver the procedure for validating and
+handling the ISP configuration blocks
 
-same here
+https://patchwork.linuxtv.org/project/linux-media/patch/20250624-c55-v10-15-54f3d4196990@ideasonboard.com/
 
-> +	ab->hal.avail_blk_resource = 0;
-> +	ab->hal.current_blk_index = 0;
-> +	ab->hal.num_shadow_reg_configured = 0;
-> +}
-> +EXPORT_SYMBOL(ath11k_hal_srng_clear);
-> +
->  void ath11k_hal_dump_srng_stats(struct ath11k_base *ab)
->  {
->  	struct hal_srng *srng;
-> diff --git a/drivers/net/wireless/ath/ath11k/hal.h b/drivers/net/wireless/ath/ath11k/hal.h
-> index 601542410c752..839095af9267e 100644
-> --- a/drivers/net/wireless/ath/ath11k/hal.h
-> +++ b/drivers/net/wireless/ath/ath11k/hal.h
-> @@ -965,6 +965,7 @@ int ath11k_hal_srng_setup(struct ath11k_base *ab, enum hal_ring_type type,
->  			  struct hal_srng_params *params);
->  int ath11k_hal_srng_init(struct ath11k_base *ath11k);
->  void ath11k_hal_srng_deinit(struct ath11k_base *ath11k);
-> +void ath11k_hal_srng_clear(struct ath11k_base *ab);
->  void ath11k_hal_dump_srng_stats(struct ath11k_base *ab);
->  void ath11k_hal_srng_get_shadow_config(struct ath11k_base *ab,
->  				       u32 **cfg, u32 *len);
-> 
-> 
+To avoid duplicating again the validation routines and common types
+definition, this series introduces v4l2-params.c/.h for the kAPI
+and v4l2-extensible-params.h for the uAPI and re-organize the RkISP1
+and Amlogic C3 drivers to use the common types and the helper validation
+routines.
+
+If the here proposed approach is accepted, I propose to rebase the Mali
+C55 driver on top of this series, to use the new common types and
+helpers.
+
+I have been able to test this on RkISP1 but not on C3.
+Keke: would you be able to give this series a try and see what happens ?
+
+Media CI pipeline:
+https://gitlab.freedesktop.org/linux-media/users/jmondi/-/pipelines/1465950
+
+Thanks
+  j
+
+Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+---
+Jacopo Mondi (8):
+      media: uapi: Introduce V4L2 extensible params
+      media: uapi: Convert RkISP1 to V4L2 extensible params
+      media: uapi: Convert Amlogic C3 to V4L2 extensible params
+      media: Documentation: uapi: Add V4L2 extensible parameters
+      media: v4l2-common: Introduce v4l2-params.c
+      media: rkisp1: Use v4l2-params for validation
+      media: amlogic-c3: Use v4l2-params for validation
+      media: Documentation: kapi: Add v4l2 extensible parameters
+
+ Documentation/driver-api/media/v4l2-core.rst       |   1 +
+ Documentation/driver-api/media/v4l2-params.rst     |   5 +
+ .../media/v4l/extensible-parameters.rst            |  89 +++++
+ .../userspace-api/media/v4l/meta-formats.rst       |   1 +
+ MAINTAINERS                                        |  10 +
+ .../media/platform/amlogic/c3/isp/c3-isp-params.c  | 272 ++++++---------
+ .../media/platform/rockchip/rkisp1/rkisp1-params.c | 364 +++++++++------------
+ drivers/media/v4l2-core/Makefile                   |   3 +-
+ drivers/media/v4l2-core/v4l2-params.c              | 106 ++++++
+ include/media/v4l2-params.h                        | 166 ++++++++++
+ include/uapi/linux/media/amlogic/c3-isp-config.h   |  45 +--
+ include/uapi/linux/media/v4l2-extensible-params.h  | 106 ++++++
+ include/uapi/linux/rkisp1-config.h                 |  60 +---
+ 13 files changed, 775 insertions(+), 453 deletions(-)
+---
+base-commit: a8598c7de1bcd94461ca54c972efa9b4ea501fb9
+change-id: 20250701-extensible-parameters-validation-c831f7f5cc0b
+
+Best regards,
+-- 
+Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
 
