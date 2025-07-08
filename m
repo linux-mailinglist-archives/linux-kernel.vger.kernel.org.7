@@ -1,98 +1,109 @@
-Return-Path: <linux-kernel+bounces-721986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBEB0AFD064
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:16:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19121AFD067
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:17:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67F7316DBC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:16:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1979E18851A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392392E427D;
-	Tue,  8 Jul 2025 16:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ABA32E3AE8;
+	Tue,  8 Jul 2025 16:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WHkDMXpm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Eok7irmG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D45021B199;
-	Tue,  8 Jul 2025 16:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE062E06D2;
+	Tue,  8 Jul 2025 16:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751991390; cv=none; b=GHj671il38FS2Zrcr9RUc+6dekQ4NvRKWgLQQZpKiTtQ/c+AP4nfEOoJU9yL8CIkLt42xd97Qu1peWvtNZGUiHCpw8w6PyTQBLB48ELwqMilA3zIUNNKxZOzGcUIWm5T5wUEKF4M2vah0v9KZUoY/kxGlMQqvja/XENJYswnvew=
+	t=1751991410; cv=none; b=HKYBk7duVOEvY2nkt+Lm3Sya2TiKYCBpfafM9AOmVKWw93Bg2xaFWqMtkg6Lf9944lqWPcVnd4c/ZrzacfNmW4obwZXpK9diKuWBqd1jLUF6+RNLouCevjqDT7O8Tr4ek7+ETY+VBkPqWW/fD7PZ8WNoRC79+d038ngw7HUJ6+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751991390; c=relaxed/simple;
-	bh=MlvZZ4a52AP4+QDRvUm5hDSogr1vDDiw9bguTeqre4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NccFFEyXZOxZIcbzWgtPX1xRdUDtQnfnn+di6RswOUqM5TXZgzXxXUhT8yQ//qFQ+Zk/ff4GVLZzdZ81qtE9xgpZhfY7Z4uN+IO4pDZKlv0JYTQopDwe0QjAiJFMhD0cCjLVGnGWn8C2OQdn30M1NowpHfunpU7hdTGDf/kTcJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WHkDMXpm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF4BEC4CEED;
-	Tue,  8 Jul 2025 16:16:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751991390;
-	bh=MlvZZ4a52AP4+QDRvUm5hDSogr1vDDiw9bguTeqre4k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WHkDMXpma6mUHWY1TvjLFbvGC4viBk4MR8OV9MrwZ/dTNKgT07LJpTY/NtXTCDXrZ
-	 dLjEZd/2stfi0fb8CD8B0SfIzQ6PTtunA4hOdl0neEM346rL6WymLLAFpuM3/xZ6Gt
-	 QO9DkRI4enn0lmHhspykXYqEdWOWahdODkBNZ0jylxzCe7tU8dP/VwqS6CGmJWrNjv
-	 EAETLzByJ4JTzHbGr3uk4fmxiyz8y26a7mwrercqkQST5xUubduncf9Zx5ya/jTpl+
-	 AsCll8GNnqL7PMZs3WvYXratllAkSary35yho11OgaklEU601N3wuM3bez/8naSIX0
-	 JoFLA4S0GU+Ww==
-Date: Tue, 8 Jul 2025 11:16:28 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Chen-Yu Tsai <wens@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Conor Dooley <conor+dt@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
-	Jernej Skrabec <jernej@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH RFT net-next 01/10] dt-bindings: net: sun8i-emac: Add
- A523 GMAC200 compatible
-Message-ID: <175199138810.517400.11158407408233098308.robh@kernel.org>
-References: <20250701165756.258356-1-wens@kernel.org>
- <20250701165756.258356-2-wens@kernel.org>
+	s=arc-20240116; t=1751991410; c=relaxed/simple;
+	bh=oLmz6Fo1/TvWmKFf6rPPDzGVB5g4NzA93/BjJnvHq2o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cZRj/NowOJ9SHrYuLy7cOwPciAoBBkQImNbnVaUpGQjMprXRme+nA6ueN0s3JSJ7ZRyKo0K+8sNjv5hzy/xwo+GbAIwhDQ2lcleR/f6ycmadP4mMNqrkbV0Wm/9bQNsDSg3hamYoMDNXSsvyY/RYDqFVfNF+MTAWsGyECvh17PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Eok7irmG; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751991409; x=1783527409;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=oLmz6Fo1/TvWmKFf6rPPDzGVB5g4NzA93/BjJnvHq2o=;
+  b=Eok7irmG6avLOVrewEHdNFLcPU/+kLThIPL2Hzh2iLTL0Ewvf166/Ocy
+   e6m2s9cjIwLeHEssNYGkw+57x/zKKlUPpla9nBZG7bUTlFwMcrlFaLjNR
+   k+gmpYUbWtCFgYrKDBn9YmWbsTZihiAGPYyajY67gdwUB4jyjBQga62dk
+   Hiu/oYnLXhDIygiYp36cECDqpuEh2lEM3Dbsuj020gyezfdqyWnbVtxJg
+   eUWLrcjE2Q9y5A1lRIfxyBfEpCl7zxX2TssU6QU/y5j02zgNdV8EG7PSN
+   0D9yKIdIVqQyc5HbRglmlh/HbLkJLpEd3FqlRnkMt2ICw2jOe1ugwGxs/
+   g==;
+X-CSE-ConnectionGUID: vHrD9/W8SjaRZAwrhiTy9Q==
+X-CSE-MsgGUID: r4R+yrjeTXuAPX3xddsTmw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="53448668"
+X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
+   d="scan'208";a="53448668"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 09:16:48 -0700
+X-CSE-ConnectionGUID: d4BrDOQBSJ60sdDivdIpEQ==
+X-CSE-MsgGUID: tUSkg3WkTcWC7TQM13IyDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
+   d="scan'208";a="154947950"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO mdjait-mobl.intel.com) ([10.245.245.81])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 09:16:45 -0700
+From: Mehdi Djait <mehdi.djait@linux.intel.com>
+To: sakari.ailus@linux.intel.com,
+	laurent.pinchart@ideasonboard.com
+Cc: jacopo.mondi@ideasonboard.com,
+	hverkuil@xs4all.nl,
+	kieran.bingham@ideasonboard.com,
+	mchehab@kernel.org,
+	hdegoede@redhat.com,
+	arnd@arndb.de,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mehdi Djait <mehdi.djait@linux.intel.com>
+Subject: [PATCH] media: i2c: Kconfig: Select COMMON_CLK for ACPI-based systems
+Date: Tue,  8 Jul 2025 18:16:37 +0200
+Message-ID: <20250708161637.227111-1-mehdi.djait@linux.intel.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250701165756.258356-2-wens@kernel.org>
+Content-Transfer-Encoding: 8bit
 
+ACPI-based systems are required to create and register a fixed rate clock
+using the new v4l2 helper devm_v4l2_sensor_clk_get() that uses the
+common clk framework.
 
-On Wed, 02 Jul 2025 00:57:47 +0800, Chen-Yu Tsai wrote:
-> From: Chen-Yu Tsai <wens@csie.org>
-> 
-> The Allwinner A523 SoC family has a second Ethernet controller, called
-> the GMAC200 in the BSP and T527 datasheet, and referred to as GMAC1 for
-> numbering. This controller, according to BSP sources, is fully
-> compatible with a slightly newer version of the Synopsys DWMAC core.
-> The glue layer around the controller is the same as found around older
-> DWMAC cores on Allwinner SoCs. The only slight difference is that since
-> this is the second controller on the SoC, the register for the clock
-> delay controls is at a different offset. Last, the integration includes
-> a dedicated clock gate for the memory bus and the whole thing is put in
-> a separately controllable power domain.
-> 
-> Add a compatible string entry for it, and work in the requirements for
-> a second clock and a power domain.
-> 
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  .../net/allwinner,sun8i-a83t-emac.yaml        | 68 ++++++++++++++++++-
->  1 file changed, 66 insertions(+), 2 deletions(-)
-> 
+Ensure that COMMON_CLK is selected.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Mehdi Djait <mehdi.djait@linux.intel.com>
+---
+ drivers/media/i2c/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+index e68202954a8f..f974a0e0dcec 100644
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -31,6 +31,7 @@ menuconfig VIDEO_CAMERA_SENSOR
+ 	select MEDIA_CONTROLLER
+ 	select V4L2_FWNODE
+ 	select VIDEO_V4L2_SUBDEV_API
++	select COMMON_CLK if ACPI && !HAVE_LEGACY_CLK
+ 	default y
+ 
+ if VIDEO_CAMERA_SENSOR
+-- 
+2.49.0
 
 
