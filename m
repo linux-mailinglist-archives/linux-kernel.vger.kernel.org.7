@@ -1,142 +1,229 @@
-Return-Path: <linux-kernel+bounces-721435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43BCDAFC928
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:07:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E853AFC92B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:10:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A6954A2DA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:07:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2C263B2CEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC692D8DA4;
-	Tue,  8 Jul 2025 11:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE99F2D8388;
+	Tue,  8 Jul 2025 11:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F7WUSjHO"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iv7UV2GP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AB6219A6B;
-	Tue,  8 Jul 2025 11:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D7628751C
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 11:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751972845; cv=none; b=eDf1ku/LQgL65b2p4fa3UPt1bs5okv/p7A9BhJWuI8O6AV4OHofRi5teMpwWhfAliPqsobzrBn9XQlgTqP0wquPTl10VN+591xRbwSeYDvMvQ6H2p80wizBkCwMGiCoW2wMSZZ6GD5PCoJPn5bkzfnQKodPwoGxxai6QDnTPdkw=
+	t=1751972999; cv=none; b=QIkTLWwsGtZpPyvfMWXmORrCVleUjtQ46MoRVV3Lc2eZOJjpv8b01j396kA/LdXG/mozM5nuzLhbgPVGX5BFKjNMTOu+gNXwshQYjSDRDBFRBULI8+TA/2KVL4C7PEHHne0IsCK1763ZwEMG0o82kXpSEzQ0EStV40HTLccWips=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751972845; c=relaxed/simple;
-	bh=ZbSluK+goZoZ2vBUeFQl34xKzEtPRYiwW9GIygGl56g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ARXqZUQ5HFG0b+km2RELl4/K5HrYaCdiNmwZKyMOg1BkIWsMTRBc46CCoTVjeSceOxYvec0rJZ2NBYS46kTgGLC3RFpoRBhJ4KWBepbAPvabiMI9G2UMD79UYXdUCkx3zpbqyDha/wmrcBmQrKXadY30Cmt7DjFynPYOJesbFtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F7WUSjHO; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60789b450ceso8207201a12.2;
-        Tue, 08 Jul 2025 04:07:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751972842; x=1752577642; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tckhY3cCUTf4GGK16hiCXvEoeDWgoUQjK8B2G9y/l10=;
-        b=F7WUSjHO7shgAkfH/JqxMdyfcnK25TLJkA2KV1QQtk6Jcw+PX/ce6w4fUL/FPn2TsN
-         Y2HLCB2xLYeFdHvaPazLrjqCnLbOjSNdT7NElKhskfT12uJud0/d5u/AJ3eLfqjp14ew
-         N3CfMS+bAitbF1qRdnulSiFMMyxxKHMehg331poPEVpiiJObiCDIO7le5l7zOHdXmJpr
-         4oEUF5g8brW/2X99TcHrgJc+yM8cAE7Jvdhseh7pBXmPutfT90Xq2A+2amsdYYhprtrl
-         SnrzHv+p3UUhL5Dq0jK9fiNQrTQG5UkNs9/HnLTb5R7Uu7AaaQddcWSM9pbizrmZ2lVG
-         O1HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751972842; x=1752577642;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tckhY3cCUTf4GGK16hiCXvEoeDWgoUQjK8B2G9y/l10=;
-        b=T7m+x6AaNY8RL4cBSnhFljpR3LYzDM5Nn7m8WKny4W+hlw+ntBo0tUNqiYazveFBng
-         7iuvEfpytCTEvufa+SgYKTG753b3Zh0PaK5zaKtTRPcoh1SazMsueaDxLg4n6ILBxmB8
-         9lNXEpDlzUP+WSzf8LDMbSYXZwXO3sGV+3thlNx2ZOjmUuNLh5TQnOd+kFZKnLZk16+m
-         DYxtMpzotBVTRDDdZpEykAyNwlk9YGqANSDdzj+lpDeBMig0kkwqLiSwyIg+0Oyb1pf7
-         VWpzbpCLv86BPRS3vgI3/nCtuSJ3teEsc6i3k0A07JyPfK5ieQnO6Q564zrriXy+nW/0
-         jyww==
-X-Forwarded-Encrypted: i=1; AJvYcCVWi6ITVjULnqK396X0X0Sge3+8eCapvm640ckPrIMRTiGpeBL7gptALa53gNv5IgECEVX3Yaj2@vger.kernel.org, AJvYcCW/siPCCsZSzYQdjdb32EGPaKTlXEBPhWjIvu9tKGdoQZndLlOii4G0pxM3IrXGX58INoH989Zt9ZSZlkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyecPyaRnF7jaFWD+6wVH4md6jkwkcwm0N85/+y1kFfNJI6jDd/
-	USyASOgM0+bk1CScazrUbW6+Muge6ujsHQ963QI1CIej7TSo9Vh9JagB
-X-Gm-Gg: ASbGncu72MGQBQr+VbhYhUbnjQuOQ0WsyyvbJKqcc6h3QChk5nyUAG9s1whGHuLg6eX
-	xvzXw2tzaUP1SJ7c4csdo19rn8jHITXY84I8bNMTHrbRp5LcozP79al+oG0XMoxqmChbLuN1ICg
-	22liQZaQH9ehLPrVRkFTQTU6Cgn0iycZ67z6ofaRYhay7vrasyx3Dh6PZj9L9GHye9vD2lXwIg2
-	eKrGlv+RsMs1RBzZwaqySACxKdxPN/J/b0SVWlC770o1PtjH1ta5zXPhngGJ4tnGXWDk0ImAckD
-	dVOh0nR2/8n1W1m8UqntZyFsPyWQ3QqfszbIaVzyAXaaQFN9UtAg7q+IHGlrXb5iBSAce0FpdUs
-	=
-X-Google-Smtp-Source: AGHT+IGN90dbnrn0GPt8YwyNv+T5NnqipNjNezqerVCjBFGAxVLs3WRntZcgzmMTKdg6W2CvpS6vhg==
-X-Received: by 2002:a17:907:96a1:b0:ae3:ab68:4d7a with SMTP id a640c23a62f3a-ae3fbce896emr1851830466b.25.1751972841651;
-        Tue, 08 Jul 2025 04:07:21 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:4dfd])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6abfd8bsm866154366b.81.2025.07.08.04.07.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 04:07:20 -0700 (PDT)
-Message-ID: <c006f353-8b35-43c5-b010-d058954ff993@gmail.com>
-Date: Tue, 8 Jul 2025 12:08:48 +0100
+	s=arc-20240116; t=1751972999; c=relaxed/simple;
+	bh=dzheaSPee36sOXHJUq2zZC2pzBfsWvT3LybX/c1YjKI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lpHjxjbfGT/ngNkTrJ6MvdehLinNpdgPhpnKYHfHznrz+Xw1GY5VG2byQuaYPZzFentqVC+IcL2T/K/04nyYdkmCyoFzYdV4O7raL4p/EQANl6w9T4GPjhT39B7NmIntCtFxmiHMHSx4yN1YyZQUyP9FcxxJpCg5Sjx0TgJ4Ekg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iv7UV2GP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC886C4CEED;
+	Tue,  8 Jul 2025 11:09:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751972999;
+	bh=dzheaSPee36sOXHJUq2zZC2pzBfsWvT3LybX/c1YjKI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iv7UV2GPxeslN/c+dWo2tlE6eeBbe6ESxV1+PppBsNhs+MUET4Fo1KhD2kdyZiqPG
+	 OLOXYF1G4KqiqeYkujK82qFUKO8n/LcKz8KOHxuFZFgubSuclYP0jgeMc4wcKGpeb1
+	 aT59nNUz4hy9iz9+PemFLUlvnitzu50lJbq+xmKjnxMPtN8wdL71nKfQ0gOl+KByoZ
+	 8PWLxlzjgL0Rg09qD+tUX0crYZsfBL6rLPZrGqUBMzm29IRM1o0q6ulmFMl23+k27m
+	 K/Pog/L3CrlZV2IQW9pbRIAQ9sr+aLLc1SsiNsUr7achFNDDVYWoxiuaIA0TRDjZXi
+	 y7FjQugVXwQEg==
+From: Chao Yu <chao@kernel.org>
+To: xiang@kernel.org
+Cc: linux-erofs@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Yue Hu <zbestahu@gmail.com>,
+	Jeffle Xu <jefflexu@linux.alibaba.com>,
+	Sandeep Dhavale <dhavale@google.com>,
+	Hongbo Li <lihongbo22@huawei.com>,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH v2] erofs: do sanity check on m->type in z_erofs_load_compact_lcluster()
+Date: Tue,  8 Jul 2025 19:09:28 +0800
+Message-ID: <20250708110928.3110375-1-chao@kernel.org>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC net-next 1/4] net: Allow non parent devices to be used for
- ZC DMA
-To: Dragos Tatulea <dtatulea@nvidia.com>, Parav Pandit <parav@nvidia.com>,
- Jakub Kicinski <kuba@kernel.org>
-Cc: "almasrymina@google.com" <almasrymina@google.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
- Cosmin Ratiu <cratiu@nvidia.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250702172433.1738947-1-dtatulea@nvidia.com>
- <20250702172433.1738947-2-dtatulea@nvidia.com>
- <20250702113208.5adafe79@kernel.org>
- <c5pxc7ppuizhvgasy57llo2domksote5uvo54q65shch3sqmkm@bgcnojnxt4hh>
- <20250702135329.76dbd878@kernel.org>
- <CY8PR12MB7195361C14592016B8D2217DDC43A@CY8PR12MB7195.namprd12.prod.outlook.com>
- <22kf5wtxym5x3zllar7ek3onkav6nfzclf7w2lzifhebjme4jb@h4qycdqmwern>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <22kf5wtxym5x3zllar7ek3onkav6nfzclf7w2lzifhebjme4jb@h4qycdqmwern>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/4/25 14:11, Dragos Tatulea wrote:
-> On Thu, Jul 03, 2025 at 01:58:50PM +0200, Parav Pandit wrote:
->>
->>> From: Jakub Kicinski <kuba@kernel.org>
->>> Sent: 03 July 2025 02:23 AM
-...>> In an offline discussion, Dragos mentioned that io_uring already
->> operates at the queue level, may be some ideas can be picked up
->> from io_uring?
-> The problem for devmem is that the device based API is already set in
-> stone so not sure how we can change this. Maybe Mina can chime in.
-> 
-> To sum the conversation up, there are 2 imperfect and overlapping
-> solutions:
-> 
-> 1) For the common case of having a single PCI device per netdev, going one
->     parent up if the parent device is not DMA capable would be a good
->     starting point.
-> 
-> 2) For multi-PF netdev [0], a per-queue get_dma_dev() op would be ideal
->     as it provides the right PF device for the given queue. io_uring
->     could use this but devmem can't. Devmem could use 1. but the
->     driver has to detect and block the multi PF case.
-> 
-> I think we need both. Either that or a netdev op with an optional queue
-> parameter. Any thoughts?
+All below functions will do sanity check on m->type, let's move sanity
+check to z_erofs_load_compact_lcluster() for cleanup.
+- z_erofs_map_blocks_fo
+- z_erofs_get_extent_compressedlen
+- z_erofs_get_extent_decompressedlen
+- z_erofs_extent_lookback
 
-No objection from zcrx for either approach, but it sounds like a good
-idea to have something simple for 1) sooner than later, and perhaps
-marked as a fix.
+Reviewed-by: Hongbo Li <lihongbo22@huawei.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v2:
+- include Xiang's cleanup diff.
+ fs/erofs/zmap.c | 103 +++++++++++++++++++-----------------------------
+ 1 file changed, 41 insertions(+), 62 deletions(-)
 
+diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
+index 0bebc6e3a4d7..431199452542 100644
+--- a/fs/erofs/zmap.c
++++ b/fs/erofs/zmap.c
+@@ -240,6 +240,13 @@ static int z_erofs_load_compact_lcluster(struct z_erofs_maprecorder *m,
+ static int z_erofs_load_lcluster_from_disk(struct z_erofs_maprecorder *m,
+ 					   unsigned int lcn, bool lookahead)
+ {
++	if (m->type >= Z_EROFS_LCLUSTER_TYPE_MAX) {
++		erofs_err(m->inode->i_sb, "unknown type %u @ lcn %u of nid %llu",
++				m->type, lcn, EROFS_I(m->inode)->nid);
++		DBG_BUGON(1);
++		return -EOPNOTSUPP;
++	}
++
+ 	switch (EROFS_I(m->inode)->datalayout) {
+ 	case EROFS_INODE_COMPRESSED_FULL:
+ 		return z_erofs_load_full_lcluster(m, lcn);
+@@ -265,12 +272,7 @@ static int z_erofs_extent_lookback(struct z_erofs_maprecorder *m,
+ 		if (err)
+ 			return err;
+ 
+-		if (m->type >= Z_EROFS_LCLUSTER_TYPE_MAX) {
+-			erofs_err(sb, "unknown type %u @ lcn %lu of nid %llu",
+-				  m->type, lcn, vi->nid);
+-			DBG_BUGON(1);
+-			return -EOPNOTSUPP;
+-		} else if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD) {
++		if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD) {
+ 			lookback_distance = m->delta[0];
+ 			if (!lookback_distance)
+ 				break;
+@@ -325,25 +327,18 @@ static int z_erofs_get_extent_compressedlen(struct z_erofs_maprecorder *m,
+ 	DBG_BUGON(lcn == initial_lcn &&
+ 		  m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD);
+ 
+-	if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD) {
+-		if (m->delta[0] != 1) {
+-			erofs_err(sb, "bogus CBLKCNT @ lcn %lu of nid %llu", lcn, vi->nid);
+-			DBG_BUGON(1);
+-			return -EFSCORRUPTED;
+-		}
+-		if (m->compressedblks)
+-			goto out;
+-	} else if (m->type < Z_EROFS_LCLUSTER_TYPE_MAX) {
+-		/*
+-		 * if the 1st NONHEAD lcluster is actually PLAIN or HEAD type
+-		 * rather than CBLKCNT, it's a 1 block-sized pcluster.
+-		 */
+-		m->compressedblks = 1;
+-		goto out;
++	if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD && m->delta[0] != 1) {
++		erofs_err(sb, "bogus CBLKCNT @ lcn %lu of nid %llu", lcn, vi->nid);
++		DBG_BUGON(1);
++		return -EFSCORRUPTED;
+ 	}
+-	erofs_err(sb, "cannot found CBLKCNT @ lcn %lu of nid %llu", lcn, vi->nid);
+-	DBG_BUGON(1);
+-	return -EFSCORRUPTED;
++
++	/*
++	 * if the 1st NONHEAD lcluster is actually PLAIN or HEAD type rather
++	 * than CBLKCNT, it's a 1 block-sized pcluster.
++	 */
++	if (m->type != Z_EROFS_LCLUSTER_TYPE_NONHEAD || !m->compressedblks)
++		m->compressedblks = 1;
+ out:
+ 	m->map->m_plen = erofs_pos(sb, m->compressedblks);
+ 	return 0;
+@@ -379,11 +374,6 @@ static int z_erofs_get_extent_decompressedlen(struct z_erofs_maprecorder *m)
+ 			if (lcn != headlcn)
+ 				break;	/* ends at the next HEAD lcluster */
+ 			m->delta[1] = 1;
+-		} else {
+-			erofs_err(inode->i_sb, "unknown type %u @ lcn %llu of nid %llu",
+-				  m->type, lcn, vi->nid);
+-			DBG_BUGON(1);
+-			return -EOPNOTSUPP;
+ 		}
+ 		lcn += m->delta[1];
+ 	}
+@@ -429,44 +419,33 @@ static int z_erofs_map_blocks_fo(struct inode *inode,
+ 	map->m_flags = EROFS_MAP_MAPPED | EROFS_MAP_ENCODED;
+ 	end = (m.lcn + 1ULL) << lclusterbits;
+ 
+-	switch (m.type) {
+-	case Z_EROFS_LCLUSTER_TYPE_PLAIN:
+-	case Z_EROFS_LCLUSTER_TYPE_HEAD1:
+-	case Z_EROFS_LCLUSTER_TYPE_HEAD2:
+-		if (endoff >= m.clusterofs) {
+-			m.headtype = m.type;
+-			map->m_la = (m.lcn << lclusterbits) | m.clusterofs;
+-			/*
+-			 * For ztailpacking files, in order to inline data more
+-			 * effectively, special EOF lclusters are now supported
+-			 * which can have three parts at most.
+-			 */
+-			if (ztailpacking && end > inode->i_size)
+-				end = inode->i_size;
+-			break;
+-		}
+-		/* m.lcn should be >= 1 if endoff < m.clusterofs */
+-		if (!m.lcn) {
+-			erofs_err(sb, "invalid logical cluster 0 at nid %llu",
+-				  vi->nid);
+-			err = -EFSCORRUPTED;
+-			goto unmap_out;
++	if (m.type != Z_EROFS_LCLUSTER_TYPE_NONHEAD && endoff >= m.clusterofs) {
++		m.headtype = m.type;
++		map->m_la = (m.lcn << lclusterbits) | m.clusterofs;
++		/*
++		 * For ztailpacking files, in order to inline data more
++		 * effectively, special EOF lclusters are now supported
++		 * which can have three parts at most.
++		 */
++		if (ztailpacking && end > inode->i_size)
++			end = inode->i_size;
++	} else {
++		if (m.type != Z_EROFS_LCLUSTER_TYPE_NONHEAD) {
++			/* m.lcn should be >= 1 if endoff < m.clusterofs */
++			if (!m.lcn) {
++				erofs_err(sb, "invalid logical cluster 0 at nid %llu",
++					  vi->nid);
++				err = -EFSCORRUPTED;
++				goto unmap_out;
++			}
++			end = (m.lcn << lclusterbits) | m.clusterofs;
++			map->m_flags |= EROFS_MAP_FULL_MAPPED;
++			m.delta[0] = 1;
+ 		}
+-		end = (m.lcn << lclusterbits) | m.clusterofs;
+-		map->m_flags |= EROFS_MAP_FULL_MAPPED;
+-		m.delta[0] = 1;
+-		fallthrough;
+-	case Z_EROFS_LCLUSTER_TYPE_NONHEAD:
+ 		/* get the corresponding first chunk */
+ 		err = z_erofs_extent_lookback(&m, m.delta[0]);
+ 		if (err)
+ 			goto unmap_out;
+-		break;
+-	default:
+-		erofs_err(sb, "unknown type %u @ offset %llu of nid %llu",
+-			  m.type, ofs, vi->nid);
+-		err = -EOPNOTSUPP;
+-		goto unmap_out;
+ 	}
+ 	if (m.partialref)
+ 		map->m_flags |= EROFS_MAP_PARTIAL_REF;
 -- 
-Pavel Begunkov
+2.49.0
 
 
