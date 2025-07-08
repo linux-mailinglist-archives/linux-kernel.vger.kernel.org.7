@@ -1,161 +1,161 @@
-Return-Path: <linux-kernel+bounces-722285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6062AFD74F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:43:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA3D8AFD75B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21AA61C20010
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:43:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B08031BC4621
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36CEE2264AB;
-	Tue,  8 Jul 2025 19:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201EC2367DC;
+	Tue,  8 Jul 2025 19:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YmnWVovS"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=wetterwald-eu.20230601.gappssmtp.com header.i=@wetterwald-eu.20230601.gappssmtp.com header.b="GMirxosY"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281D2223DCE;
-	Tue,  8 Jul 2025 19:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96CC223DCE
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 19:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752003762; cv=none; b=G1egZLzW7UiuV2TMv7xN9Q1xBe/FWuaN4FWSmb1+6aQa0msQmE8bj8iTIKLkIrWNCndIEVTHR3PiZZl6JvlTKIOSHI8wfyZk7z6OcgLUKukGJChxc+Ee1PavBQOB9NHdl20VplMG/NkFEf3JDX506o2X40optqJicu1SlZaxu50=
+	t=1752003900; cv=none; b=SAKF25maKAaefbYGXyFw27WfAWRzfHYGCS+RKh1HKNEOuZ2vDsjddEcCl7diXdHaedbz0VkzltQrTSHhi1Wk9KT1QxGj1XrU2ZmnPsQPxKmtok3Nmvs8TsK7n+XKYw/0J1WLkk7ljFLX9JBf8BapkfT9CpTPxG4YlD1j3ZNH3gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752003762; c=relaxed/simple;
-	bh=KSXceJjAMr56s8WXO0XKjA/vLlZ2ha6l665Xolaq4MA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G5jjIrRExVhctVATdbkxSPuuB1vE2CNKEn5MYeUNABSkYDSxeIA9K7s8tA9CT0VH6osxD2zf0LCpj1wfA6xQiRoR8ZwBEeTlIHGgRzW9VW57u0nXlSqCRxbEtG1MjGccdnq6pVukghAN6OdXIwt1xrO31s5tY/h/Pw3Qy0M4wMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YmnWVovS; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-747fba9f962so239656b3a.0;
-        Tue, 08 Jul 2025 12:42:40 -0700 (PDT)
+	s=arc-20240116; t=1752003900; c=relaxed/simple;
+	bh=mqQvmbpVSpwd4BJxpTbMnhfC49JhmthGVhf3kBQWduA=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=XzpQsQel+naVqdoel4fEk3foWItnniogK2p1jsI+VC1g81448rtwc2e2dnNS3AIo/sV2Yx/0GErddtX03bQ7WbGVSoSASLKWVuPV/TP9EZJOJ20ZYO/tmAnV2cqAtJFprSIf2PwGBmcXxWn18ROv7QK9XJuzclkoS7XMP7devgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wetterwald.eu; spf=pass smtp.mailfrom=wetterwald.eu; dkim=pass (2048-bit key) header.d=wetterwald-eu.20230601.gappssmtp.com header.i=@wetterwald-eu.20230601.gappssmtp.com header.b=GMirxosY; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wetterwald.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wetterwald.eu
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553b3316160so5620180e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 12:44:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752003760; x=1752608560; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8aD/dc9IrY4KhoC+qCcjIEawTLQLfUWAYgOgwipip0g=;
-        b=YmnWVovSutF8fRnCRmcnku5HJJoU17MKAlPMsGL9lZOQErsRoe6iogzSIRTdgKtK2Z
-         Z3kpn6LmwDgYwOGT+GC4x2cbPg3RzXQKuI8B2KU3iubUiKxgT3JhCGVxHa/+4BmJzEYT
-         5Jd7pN4NkAoibTmk/m7FZHNct65mUD0D7xP4IieRrKRRZQTbRZdJwWFXhX+ysodtv7MB
-         O9HG9s+qNB5rgqYJXbvUtvGt8QX/qMNv1EfcyGjOKvrUXZN6LzCmiddh6aLcsatEf0zN
-         4EWKhbz/TN/PxslEuucvH098oK5BhwxcPgLUsZ3x4nKPSKNtLCskuvtMlg3RGqCyfBF+
-         Hp3w==
+        d=wetterwald-eu.20230601.gappssmtp.com; s=20230601; t=1752003895; x=1752608695; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WIAuhguJbjbIbOUTc3BpFRhCievia3W8jmk4iJLHgNI=;
+        b=GMirxosYFGN3allPlLzWfdPYPc07Q3kQlw5gexgWPnJA4XQrMnfgG+4KvzFJYbykI6
+         NqAet9CjmVOZ8DF5kq/68ebeQAXxhj2P79Ey7LpcmVYho5J0g2Piv0Z9l0UJ2iPUI6Wj
+         M0Lag/N+1cN065dMPzcZZRbzOP7YVRUTQVuxmRTmS/1MDeronRwd1dqj2yteOht1ypXs
+         lFS43Y/bF3XKWrzCjiGHvmaW1x5K8bzvDVvYxhXGz24Mtz5V3D4xPbibF0he7QCJTKux
+         gtqm9Je6/zvOHGxJ/e7GMxZawZVBdmOf6Yi+JBntBT+yVNzd/nr2gz2COnP1E2mxhLuN
+         jBFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752003760; x=1752608560;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8aD/dc9IrY4KhoC+qCcjIEawTLQLfUWAYgOgwipip0g=;
-        b=eDFt4za9qlmfYh13GWjgKLzG1Yo9SQgHuDe0Te5LsNAusK9TQwqrO7iEsZge3/u/uy
-         G6CstsO0uqIhQh3VJj+qjw1J/7ffJJKVVYDItZbEuPF2lKk+D5gVu9xYOipwk/SPPtkB
-         tHuenFLU07kDedDoGkVFj5zFCbpTFU1OsUqOczwqFHPtMawHQLZQVtEIgCRRaIQfgwlP
-         ofiL9gLwTUQl5sDHEHRqOpNq5DiD3acxeSKlWE4tc8VDkw9MKAZJrlka856XlpXukZf1
-         A574Qt27W8TkOdZj522NN262ecNaGqYLTCZ0wwkBtO5IYyKwnkkJFLK+Dfz9OSHNllLs
-         jvuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVY/drVjPbvu+mkiEawyDzv/ccCNFZaJT4g6srhmn7zo0qpz99hpKlne0tTCR6LufvS4K5cPi8DekL1Fqs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzm271zRH6APvNXiCTO2KrGcfKZJ9caMYmgBH6HjRYtdkHLAvYG
-	QpzviJpiJO0MGvJagh/FlYiSLKOw9zw6YpYPKT/PQ76mprh1KgC7V3FR
-X-Gm-Gg: ASbGncup6cSou7lZCN1b3SvF13aPA2PbFUUBFmWhnYN65XadB3/DkzG2m+PnMuNDpDY
-	YtNmDipI3QNy6Td1mJB3pPWa8ENbJs/tduH5s9FhUp1H4+6k9ZmV7kgUTij5CarhPuFlQ4IoXiW
-	cAfyfJ+GG1KKGoGgdHy1VnkqMLjNJ0OYRmAHIK19vNyZERiN1K0qMd2EaHFjKpFjP+YpAidkJUD
-	b7/1bvzIeG4nJRDDbklJQec7GK5XS3AsRjkWqi7THiJ72meJBEc5bjM8Nf54sr9FVK8eIfCa23i
-	iX+SsGJVjzEcNgsvhKMxNOnulMvxi/hKPbFx9rG/rWr5iIrp3pIub7cJeK6EFP8DOQ==
-X-Google-Smtp-Source: AGHT+IFvPpyAkt8nBD5KnsmBx1Pixva+deEadP3F4seU0SRDJfo3lLxsotjkEeHHmjcSwUcLWLgVbg==
-X-Received: by 2002:a05:6a00:1903:b0:736:4d05:2e35 with SMTP id d2e1a72fcca58-74d2673784emr4964522b3a.3.1752003760210;
-        Tue, 08 Jul 2025 12:42:40 -0700 (PDT)
-Received: from localhost ([129.210.115.104])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce417e8e6sm12651239b3a.91.2025.07.08.12.42.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 12:42:39 -0700 (PDT)
-Date: Tue, 8 Jul 2025 12:42:38 -0700
-From: Cong Wang <xiyou.wangcong@gmail.com>
-To: William Liu <will@willsroot.io>
-Cc: netdev@vger.kernel.org, jhs@mojatatu.com, victor@mojatatu.com,
-	pctammela@mojatatu.com, pabeni@redhat.com, kuba@kernel.org,
-	stephen@networkplumber.org, dcaratti@redhat.com,
-	savy@syst3mfailure.io, jiri@resnulli.us, davem@davemloft.net,
-	edumazet@google.com, horms@kernel.org, linux-kernel@vger.kernel.org
-Subject: This breaks netem use cases
-Message-ID: <aG10rqwjX6elG1Gx@pop-os.localdomain>
-References: <20250708164141.875402-1-will@willsroot.io>
+        d=1e100.net; s=20230601; t=1752003895; x=1752608695;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WIAuhguJbjbIbOUTc3BpFRhCievia3W8jmk4iJLHgNI=;
+        b=G7teawpbOhdbMVo3SP+F/SNrrFfa/aFyQCeAtEFx0H1LW66cRpy32WJxgyTe+RhfYI
+         lyM5FwgvutZdvTBylIp3UlptrQJccPxbFvku/kjcetbWXazlk5shJKoM5t/Uzf1vszZA
+         8Ev6VY81cc91r2Kz0X9z4N2lRrh6oahZa7XD+araLcKeeF8UnsmtQKV/mtu2e/jw0WF3
+         4bMOknFgAMv+4afi5Xw0hsYYV+rDqThEeh6oRomGaKonq78uMFxi4SDj6IoNwOb2cljZ
+         dvUkPxaMIvAj89SnIguuAaNEexDVPrZlRj2bacXZcRmTPg5idLRKxoTqQMfB6U9xzl1H
+         RJzA==
+X-Forwarded-Encrypted: i=1; AJvYcCXUnMBa6KOMh9Weqf7+c9HbB6frqCmYRPtJWLIpzyXpcDyi7zU0AuvnGuij8Ta754q7No6VGvIh/3/OB1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygSnUnzfSdkZzqMVLoucTdFYVZXiXlE4caqCp0LKTQWe4uuBXV
+	BWoDj2U0yhG1LLU4r+Sh+SpcbgOSeocAYxd3mptXeKfLX9xIqD8o6tKTImKi2Tb2Z8PVP2Mg/SI
+	VLypS+tDY/nnSXuaBt8ZEptueOjxi6wkq4OZgsB5sgA==
+X-Gm-Gg: ASbGncuiVtgz1QTOXHNfTzcVWeRjU23uk3zYmo7tTAjnvS/viobwR0RaFw+qzqYI6Lk
+	Re3LokNsy8TD8RoCHpZchZKQ8nX6mHEjs7eWosOxjMXACw3wV//7EsP0XWIBWLsO/nmaBqdTp/2
+	ZZRHciPMbqvPKrPTLNjNMncP+GTxx/2UkSaxtiIZ5oJEbjnBYLGu37b/7dwju4Af8Lmmb6W6wrF
+	fo=
+X-Google-Smtp-Source: AGHT+IH/OYi1zhVRzbLWoXiGDXL/pwIwshawu+yWzAP5+4Np+28rT/YVvWgXf9ePBLccE4OypTRTipSLI44R0xQmhvU=
+X-Received: by 2002:a05:6512:31cf:b0:553:246f:d5cb with SMTP id
+ 2adb3069b0e04-557aa964099mr5151783e87.40.1752003895281; Tue, 08 Jul 2025
+ 12:44:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250708164141.875402-1-will@willsroot.io>
+From: Martin Wetterwald <martin@wetterwald.eu>
+Date: Tue, 8 Jul 2025 21:44:44 +0200
+X-Gm-Features: Ac12FXwxStEw7-ASRfno3Jq6d5Qa6fuSc5X61ioxY7IDp_eLCz6XHk1FLyE_E4I
+Message-ID: <CAFERDQ0zPoya5ZQfpbeuKVZEo_fKsonLf6tJbp32QnSGAtbi+Q@mail.gmail.com>
+Subject: Linux linking stage broken on ARM with binutils 2.33.1 (BFD)
+To: linus.walleij@linaro.org, Nathan Chancellor <nathan@kernel.org>, linux@armlinux.org.uk
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-(Cc LKML for more audience, since this clearly breaks potentially useful
-use cases)
+Hello,
 
-On Tue, Jul 08, 2025 at 04:43:26PM +0000, William Liu wrote:
-> netem_enqueue's duplication prevention logic breaks when a netem
-> resides in a qdisc tree with other netems - this can lead to a
-> soft lockup and OOM loop in netem_dequeue, as seen in [1].
-> Ensure that a duplicating netem cannot exist in a tree with other
-> netems.
+When I upgraded from 6.12.22 to 6.12.23 (without changing anything else), t=
+he
+linking stage of vmlinux broke (arch ARM).
 
-As I already warned in your previous patchset, this breaks the following
-potentially useful use case:
+> /home/.../linux-6.12.23/scripts/link-vmlinux.sh: line 49: 136961 Segmenta=
+tion fault      (core dumped) ${ld} ${ldflags} -o ${output} ${wl}--whole-ar=
+chive ${objs} ${wl}--no-whole-archive ${wl}--start-group ${libs} ${wl}--end=
+-group ${kallsymso} ${btf_vmlinux_bin_o} ${ldlibs}
+> make[2]: *** [/home/.../linux-6.12.23/scripts/Makefile.vmlinux:34: vmlinu=
+x] Error 139
+> make[1]: *** [/home/.../linux-6.12.23/Makefile:1179: vmlinux] Error 2
+> make: *** [/home/.../linux-6.12.23/Makefile:224: __sub-make] Error 2
 
-sudo tc qdisc add dev eth0 root handle 1: mq
-sudo tc qdisc add dev eth0 parent 1:1 handle 10: netem duplicate 100%
-sudo tc qdisc add dev eth0 parent 1:2 handle 20: netem duplicate 100%
+This patch seems related:
 
-I don't see any logical problem of such use case, therefore we should
-consider it as valid, we can't break it.
+> commit 59fc42318305cb38efb4f5565408150419be8451
+> Author: Nathan Chancellor <nathan@kernel.org>
+> Date:   Thu Mar 20 22:33:49 2025 +0100
+>
+>     ARM: 9443/1: Require linker to support KEEP within OVERLAY for DCE
+>
+>     commit e7607f7d6d81af71dcc5171278aadccc94d277cd upstream.
+>
+>     ld.lld prior to 21.0.0 does not support using the KEEP keyword within=
+ an
+>     overlay description, which may be needed to avoid discarding necessar=
+y
+>     sections within an overlay with '--gc-sections', which can be enabled
+>     for the kernel via CONFIG_LD_DEAD_CODE_DATA_ELIMINATION.
+>
+>     Disallow CONFIG_LD_DEAD_CODE_DATA_ELIMINATION without support for KEE=
+P
+>     within OVERLAY and introduce a macro, OVERLAY_KEEP, that can be used =
+to
+>     conditionally add KEEP when it is properly supported to avoid breakin=
+g
+>     old versions of ld.lld.
+>
+>     Cc: stable@vger.kernel.org
+>     Link: https://github.com/llvm/llvm-project/commit/381599f1fe973afad30=
+94e55ec99b1620dba7d8c
+>     Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>     Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+>     Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+>     [nathan: Fix conflict in init/Kconfig due to lack of RUSTC symbols]
+>     Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+>     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-> 
-> Previous approaches suggested in discussions in chronological order:
-> 
-> 1) Track duplication status or ttl in the sk_buff struct. Considered
-> too specific a use case to extend such a struct, though this would
-> be a resilient fix and address other previous and potential future
-> DOS bugs like the one described in loopy fun [2].
+I'm using BFD linker from GNU binutils 2.33.1 (built using musl-cross-make =
+with
+musl 1.2.5 and GCC 14).
 
-The link you provid is from 8 years ago, since then the redirection
-logic has been improved. I am not sure why it helps to justify your
-refusal of this approach. 
+> scripts/ld-version.sh /tmp/arm-linux-musleabihf-ld
+> BFD 23301
 
-I also strongly disagree with "too specific a use case to extend such
-a struct", we simply have so many use-case-specific fields within
-sk_buff->cb. For example, the tc_skb_cb->zone is very specific
-for act_ct.
+I don't know if it was the intention of the patch, but it is not only chang=
+ing
+a behavior for LLD, but also for BFD:
+- Before the patch, ld BFD 2.33.1 was not selecting
+  HAVE_LD_DEAD_CODE_DATA_ELIMINATION, and my build worked.
+- After the patch, ld BFD 2.33.1 is activating
+  HAVE_LD_DEAD_CODE_DATA_ELIMINATION, and it is segfaulting.
+Shouldn't we keep the previous behavior and only select this option when BF=
+D is
+>=3D 2.36.0 (and not just when we have a BFD linker) ?
 
-skb->cb is precisely designed to be use-case-specific and layer-specific.
+The issue is the interaction between LD_CAN_USE_KEEP_IN_OVERLAY and
+HAVE_LD_DEAD_CODE_DATA_ELIMINATION.
 
-None of the above points stands.
+Nathan, I've seen your proposal here: https://lkml.org/lkml/2025/7/5/431.
+I confirm it also fixes the issue on my side. Should I propose the patch?
 
-> 
-> 2) Restrict netem_enqueue recursion depth like in act_mirred with a
-> per cpu variable. However, netem_dequeue can call enqueue on its
-> child, and the depth restriction could be bypassed if the child is a
-> netem.
-> 
-> 3) Use the same approach as in 2, but add metadata in netem_skb_cb
-> to handle the netem_dequeue case and track a packet's involvement
-> in duplication. This is an overly complex approach, and Jamal
-> notes that the skb cb can be overwritten to circumvent this
-> safeguard.
-
-This is not true, except qdisc_skb_cb(skb)->data, other area of
-skb->cb is preserved within Qdisc layer.
-
-Based on the above reasoning, this is clearly no way to go:
-
-NACK-by: Cong Wang <xiyou.wangcong@gmail.com>
-
-Sorry for standing firmly for the users, we simply don't break use
-cases. This is nothing personal, just a firm principle.
-
-Please let me know if there is anything else I can help you with. I am
-always ready to help (but not in a way of breaking use cases).
-
-Thanks for your understanding!
+Thanks!
+Martin
 
