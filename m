@@ -1,170 +1,118 @@
-Return-Path: <linux-kernel+bounces-721293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC65AFC735
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:39:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B9C1AFC73A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5EF91BC334E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:40:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 962803AF67B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0FE262FF9;
-	Tue,  8 Jul 2025 09:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Xecoq2Er"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5969B266F0A;
+	Tue,  8 Jul 2025 09:40:04 +0000 (UTC)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0622236FC
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 09:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DDE263899;
+	Tue,  8 Jul 2025 09:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751967586; cv=none; b=WdpA6ZZaAzf4pcEYzZaeLaNsmghWkOigwayh1jbvLWj/e99ycOdIlLrofxwAOtxiTr263lmHZwY6KX1sYSOQIfX2CDt1cql4FA7EypD9x/s7V0xeZHmM7DQqiiGuX/o9vSz/0IDWg8b2Q5ExaAbL9cVAibi/7K1R3yVGa0d5qaw=
+	t=1751967603; cv=none; b=n8ryW0Uwh0Hz5fX6MOIMhESFxtWSEfCI+X5QgOpxc0cbGKsXAyt1zv5EfKU6+J9RVWhNqWB56+A8ySjBz0LrZLNhUPydoDCYDvnBC2MRL/A5RFgqf9fh6S+IvAzfqy/c7l7ztFenHFkuQTw90niWfiKGIKBtv2gy9D2cQ+BaNsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751967586; c=relaxed/simple;
-	bh=w0YOPULSSxvyU5kdaBpMpPOCESPVNkbbxq18LHihViE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HJLGSpWS4FXsa2LhEiVPxQZ2ZooCFCyNxotWWZcinIs+pYKmcwquu2rkGpMHsYKCK5s00+V50kyc+sgx+oInWUVnsBIQcMK6pigD7mZt6vicY+Q3yQosHaMnM+4qSMQgfD/nSP6dO/0VFGIHvxWrwrthMki4GCZsY4hrKIWfaE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Xecoq2Er; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a6cdc27438so3407465f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 02:39:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1751967582; x=1752572382; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qVAMgZjiytlKTltSVRaWqREvVS7taIwAdxD4AMeAYLU=;
-        b=Xecoq2ErBjmAYAGXuu+q/W1cz/PJD2QVwP090PJI1V2MJ+3aoM78ovIruXcmVMmhTx
-         IXq5nahKH5S/qMlutsXt1hkuhfdoNiuXypDVlJ803whyQ6SrGqDDWVzkRe+9rsUbpakp
-         8n6q3lhePAuk/88CBsgFEOFKLzWwQqMo0ioiY7beYlb1PCfE8t6S2k3kGuGR6st7xo4+
-         vBaB91xI/lXWRDTutiomCLwhzdk0Y7/PCKDG3MwzWMikksiVeZZIXmnc4T4C6zfx66MP
-         omkpn4CzmRkjOnOxhgfj7ZgQYj8/HhDRKI6Tn0zuVVWkOEEe5/rkc3Na0gyUhjUvVbj7
-         ZMUA==
+	s=arc-20240116; t=1751967603; c=relaxed/simple;
+	bh=/juqDHVkSFYcxrJeW4anGnUPTRAjelc4Xxu89KkV+6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bWqy0sW7/XCegv25dvhDOWM1ZGlMf72MKXBiKGr5cxdoNhac5Ag6z8K/mewW8IxzWfverkApKHYSQXIh2hwjek/x4/hXjWSxO9M7aCV4wx619OUxk6MocmPb7rFbuYf2+kJf+hdy3rEaHHbqWsPX2lSzJ3QohnvJPDf9KSPyorc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6088d856c6eso8052381a12.0;
+        Tue, 08 Jul 2025 02:40:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751967582; x=1752572382;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qVAMgZjiytlKTltSVRaWqREvVS7taIwAdxD4AMeAYLU=;
-        b=QqO4VejrFHhyJSX5M4eoBY8UDeyTMZ5GzXfwa7MEEHOpws50vTJCwiJt9ZPGkcfGwO
-         xx/2Ke0BjctNe5+dgFk5K4/0iVcPCFqFeaBr1uukmWkQgXau9YQzboSr36fSfkZgQJsJ
-         hBqc53+UANrg7Ep2aqpNVdVEWKoQvfYNQZjm1gm0kvvZOkQnlC6sF2pVbFHqxJeI6YJX
-         s4DBA/dXFc0MgoSNeE9iAzMxaoWL9Se2DEV1qbwkQGNvr8mRGcy6cDzBb6MTfvmWprhr
-         myHvmYanA0RdIuyhrcWgyiB+uDjIofQyTJP4UJbUmIjTBRLfgWJ4oXUNnT0rAmgNyBXW
-         RbeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXv2Alu4Zim+Nfuri34WQUkVTlRQn3H8J/vU2sahxsaJQK6j4GfqbM+gNk/PtMz1K1gKhdi0t61SOkNLSg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP4/MFlMGAweatqbYRuIjcqQgRdt9YwvgfdB9014RN+QoOyNbp
-	/zSEmpY9hEj1RShNEmKxHls1u8NvjUfMhviSYbLJco63Lc7SqPfPyV1qAm44Z1eZLOg=
-X-Gm-Gg: ASbGncuW8AZLK2CAZkX0LkMjGzII+H6jmEz1ZwOUiDUu885WR5j98ensV8tuRajUUOT
-	616JMs0LHKeUHuXguoJAonIiRq39edYyeP/9TSM5YmYtCn25zgbR+BAn+WtbK8tuE2emmE+5apR
-	hngfYU+H/ub9QEOGef2T/PPNDzJkElKyFao+27csy0L/R+4VPQzt+8g5iQG5I1YUlU1IN1IG2N/
-	9myYjaeFirBHHb810EJ5PNsiy0lDqa8IJ9gz5qvKGcWQETn6SOK3Ogp3moPXJnlgZFvfwpndkQ8
-	73lENhBDP2V0y5r8xbNFI2YtQylr9AwKI/itvZJx9d9GhjaY826nvv5PG7PGNnIOIA==
-X-Google-Smtp-Source: AGHT+IE8YM/OZ8CV631FC3za9fedEJqw2j98fUm8X6Ex7BoBBdzx8ToTsk4PmU9Yt2992ZZiuntlAg==
-X-Received: by 2002:a5d:5f90:0:b0:3aa:caea:aa7f with SMTP id ffacd0b85a97d-3b497042696mr11914245f8f.56.1751967582242;
-        Tue, 08 Jul 2025 02:39:42 -0700 (PDT)
-Received: from [10.100.51.209] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47285c919sm12569553f8f.92.2025.07.08.02.39.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 02:39:42 -0700 (PDT)
-Message-ID: <9e5669e5-fc7e-4297-b12f-ceb9dcf36d91@suse.com>
-Date: Tue, 8 Jul 2025 11:39:41 +0200
+        d=1e100.net; s=20230601; t=1751967600; x=1752572400;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zDGRwzwOvCrWWFQfPfpra9qYK3fJVDbD/wSIIQxXnMM=;
+        b=jbKUGsMNN8fnLoFaNadN1v3IHHlvLV7qSP3Gh0F2p55jG+DpDNPK7SnXyC4UnSIoK+
+         Ga8pNl4/kc/+hwpgVZdmB7c4FmeYTzuCjrvJov0pl2d7cAHC/iJqfv9VRPKny2Vi0/Q0
+         f0f8Ce7/UXxgAcxpevJniTE74fydYvgAKAziMtiSLiOXFu4Ph8/hxJJeSvynk+j+Pz3J
+         elSMiRNPZmtnq0r1jEhezK0AmY5+UqltwohZaSw+mRJMt4TcdyV9duEkYK8R+DQDKQR+
+         /Lq61bIBRjWB3N3KavLbt2+bleeIyy4MUlh7uJNiWzGIqpDl8toaKPSCPzJl2SKtdgMT
+         SgxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUm2hisHZPt1T8lcD5f3gNIJFdzDcAAAhFz/Go3/SQ3x8wvCvtV9TM1PqLZIZt9P0d4NV6/OpeWjVQ=@vger.kernel.org, AJvYcCXgL1ceJ2h9D5IAsKLpQAIMqaQHwCM2Q/pNKiyIXqsVysY2SB2+3EzotBfl/rItAK55jJPJeZwFaWllHGS/@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAcwrgkDXc4NVrQasjOLXrCXgkl5qxg39W4m/oPq9yGZxBGTGu
+	QS0K6fzoq/UGdpbezqDDn1etH/ouY6EcO3zW+x6Uw3GJ7HIZGIVXvZrA
+X-Gm-Gg: ASbGncu048cUUkvhKFNODpw2hzQ03Dw6cgdvrIOapFM54Khah8wgjgF+xiqppxb7C1J
+	/0O6qSLWcsB2OOXmHtVAZj6SMrFWVgEltuMILi8u/xWx+QU8LehYWOtdSaTtDYpHbgiDDOsD35X
+	6qgi7IGdyUlyZ1o+ep4lXpm5tJuB+95rNhZZ/NmvqzweRpybpI79wG9L59vUHRgV/z5kS5X4Xwf
+	BMlnb/JvvAtA2ytfx3JeSnL6hSjASovK+gLZRGWnDR5DyT9uW47KwuvS9bNglYawgDq19fJPElq
+	LzPjEgVLbKBjv9kTM900nqHcDsokUlLh1vDq6NdKF/VKH5hQcI3f
+X-Google-Smtp-Source: AGHT+IEKuh5P5XxfGU6tISC7d/SWRHDTdhtCdRwTY574SCwgIN9VltFkhI6/5VSmmx/mAhn8r/NsaQ==
+X-Received: by 2002:a17:907:97d0:b0:ae3:7022:b210 with SMTP id a640c23a62f3a-ae6b0b1ec6amr238872866b.12.1751967599680;
+        Tue, 08 Jul 2025 02:39:59 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:9::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f66e6f30sm864599066b.33.2025.07.08.02.39.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 02:39:58 -0700 (PDT)
+Date: Tue, 8 Jul 2025 02:39:56 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org, leo.yan@arm.com, kernel-team@meta.com
+Subject: Re: [PATCH 1/8] arm64: Enable VMAP_STACK support
+Message-ID: <aGznbObwbaZlnD17@gmail.com>
+References: <20250707-arm64_vmap-v1-0-8de98ca0f91c@debian.org>
+ <20250707-arm64_vmap-v1-1-8de98ca0f91c@debian.org>
+ <aGwCfRkYqcYBvxZK@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] module: make structure definitions always visible
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, Brendan Higgins <brendan.higgins@linux.dev>,
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
- linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-References: <20250612-kunit-ifdef-modules-v1-0-fdccd42dcff8@linutronix.de>
- <20250612-kunit-ifdef-modules-v1-2-fdccd42dcff8@linutronix.de>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20250612-kunit-ifdef-modules-v1-2-fdccd42dcff8@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aGwCfRkYqcYBvxZK@J2N7QTR9R3>
 
-On 6/12/25 4:53 PM, Thomas Weißschuh wrote:
-> To write code that works with both CONFIG_MODULES=y and CONFIG_MODULES=n
-> it is convenient to use "if (IS_ENABLED(CONFIG_MODULES))" over raw #ifdef.
-> The code will still fully typechecked but the unreachable parts are
-> discarded by the compiler. This prevents accidental breakage when a certain
-> kconfig combination was not specifically tested by the developer.
-> This pattern is already supported to some extend by module.h defining
-> empty stub functions if CONFIG_MODULES=n.
-> However some users of module.h work on the structured defined by module.h.
-> 
-> Therefore these structure definitions need to be visible, too.
-> 
-> Many structure members are still gated by specific configuration settings.
-> The assumption for those is that the code using them will be gated behind
-> the same configuration setting anyways.
-> 
-> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-> ---
->  include/linux/module.h | 23 ++++++++++++-----------
->  1 file changed, 12 insertions(+), 11 deletions(-)
-> 
-> diff --git a/include/linux/module.h b/include/linux/module.h
-> index 52f7b0487a2733c56e2531a434887e56e1bf45b2..7f783e71636542b99db3dd869a9387d14992df45 100644
-> --- a/include/linux/module.h
-> +++ b/include/linux/module.h
-> @@ -302,17 +302,6 @@ static typeof(name) __mod_device_table__##type##__##name		\
->  
->  struct notifier_block;
->  
-> -#ifdef CONFIG_MODULES
-> -
-> -extern int modules_disabled; /* for sysctl */
-> -/* Get/put a kernel symbol (calls must be symmetric) */
-> -void *__symbol_get(const char *symbol);
-> -void *__symbol_get_gpl(const char *symbol);
-> -#define symbol_get(x)	({ \
-> -	static const char __notrim[] \
-> -		__used __section(".no_trim_symbol") = __stringify(x); \
-> -	(typeof(&x))(__symbol_get(__stringify(x))); })
-> -
->  enum module_state {
->  	MODULE_STATE_LIVE,	/* Normal state. */
->  	MODULE_STATE_COMING,	/* Full formed, running module_init. */
-> @@ -598,6 +587,18 @@ struct module {
->  	struct _ddebug_info dyndbg_info;
->  #endif
->  } ____cacheline_aligned __randomize_layout;
-> +
-> +#ifdef CONFIG_MODULES
-> +
-> +extern int modules_disabled; /* for sysctl */
-> +/* Get/put a kernel symbol (calls must be symmetric) */
-> +void *__symbol_get(const char *symbol);
-> +void *__symbol_get_gpl(const char *symbol);
-> +#define symbol_get(x)	({ \
-> +	static const char __notrim[] \
-> +		__used __section(".no_trim_symbol") = __stringify(x); \
-> +	(typeof(&x))(__symbol_get(__stringify(x))); })
-> +
->  #ifndef MODULE_ARCH_INIT
->  #define MODULE_ARCH_INIT {}
->  #endif
-> 
+Hello Mark,
 
-Nit: I suggest keeping MODULE_ARCH_INIT in its current position,
-immediately after the 'struct module' declaration, because the macro is
-directly tied to that structure.
+On Mon, Jul 07, 2025 at 06:23:09PM +0100, Mark Rutland wrote:
+> On Mon, Jul 07, 2025 at 09:01:01AM -0700, Breno Leitao wrote:
+> > Enable virtually mapped kernel stacks for ARM64. This provides better
+> > stack overflow detection and improved security by mapping kernel stacks
+> > in vmalloc space rather than using direct mapping.
+> > 
+> > VMAP_STACK helps catch stack overflows early by placing guard pages
+> > around kernel stacks, and also provides better isolation between
+> > kernel stacks and other kernel data structures.
+> > 
+> > All dependencies are satisfied for arm64: HAVE_ARCH_VMAP_STACK is
+> > already selected above, and KASAN_VMALLOC is selected when KASAN is
+> > enabled, meeting the KASAN dependency requirements.
+> 
+> I reckon it might be better to say something like:
+> 
+> | arm64: Mandate VMAP_STACK
+> |
+> | On arm64, VMAP_STACK has been enabled by default for a while now, and
+> | the only reason to disable it was a historical lack of support for
+> | KASAN_VMALLOC. Today there's no good reason to disable VMAP_STACK.
+> |
+> | Mandate VMAP_STACK, which will allow code to be simplified in
+> | subsequent patches.
+> 
+> ... to make it clear that we're not changing the default, and we are
+> removing the ability to deselect VMAP_STACK.
+> 
+> Either way, the patch itself looks good to me.
 
--- 
-Thanks,
-Petr
+Thanks for the suggestion. I will update and respin.
+
+Thanks for the review,
+--breno
 
