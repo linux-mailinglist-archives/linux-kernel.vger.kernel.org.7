@@ -1,94 +1,94 @@
-Return-Path: <linux-kernel+bounces-722048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45363AFD3CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:01:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06510AFD3B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41471188EB36
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:58:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2FC5583832
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B09C2E5B09;
-	Tue,  8 Jul 2025 16:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076C02E4985;
+	Tue,  8 Jul 2025 16:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iwiVprnC"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nEJRKd5b"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AD52E5B08
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 16:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7922E5B11
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 16:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751993821; cv=none; b=vETiUBaEq+Wp37iCsfI2ywqnU/fJYfQUBi3Ux3JSUIiZ4naS3gNHDbyMR9c8crgHPuf23kJaUeeXiiP4WqTHJkLI/e9o+UMnc6rNUelMMI5BsUsrU2zNVG6X+y9yD9s6l31JutGyQVb5aKAiVu9beQ9be14kjS97dzrapg6XvEo=
+	t=1751993801; cv=none; b=KCJGLFIiYY9uqfUKggE6G/kU33UtQ7Sp8FS3yf27B9qgoPbE8n6peTolUskZWgZHGStM7yM0NvndZdV/0Cv+HC+fcIyk+k+ne8KjLye9WzyZGRppail2fCa3sMlBu5h2ZkI/GhCvICmnEGej2sOKp8DNjI3n7EMmv9a06Y2ImoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751993821; c=relaxed/simple;
-	bh=Jg6cutNa4wTuOT/R/PBaYwp8fpjwjRddjQ2/p/+s89Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b7vSIBdzOsgSXpEZ+zNZnboFBOR7TVpHsAQZ0xBOvrWGWvH2ihSAC8PsWa0dO1vb6AN+/3o6fwpyd7jzYrWhrAjP3/DTU/bnMy01q2r2mcLxNrdJVvbFfbxBxze+EYD+ewbVsqye+ZRqT2WNUEkazhPIQxHOPlDwkY47ByCTsBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iwiVprnC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568AAbEu017096
-	for <linux-kernel@vger.kernel.org>; Tue, 8 Jul 2025 16:56:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=WUhkVAeGLeKaNSN8AVmxhb1CINCnyT16ePT
-	Qp8qzBLo=; b=iwiVprnCBim/pwSuMC2ak0jO/SCNNEk1dfljlHQhWFV+RgIOSF4
-	8x3VNb2cq8DoWzS89s3B6KkAcAl1ipKr3WKRXAIkHdGQpcQj3/jXijAW5hH5tWpG
-	uBiRHMEW295kD/8BKmBk07afQsRghZbajQtd7fzdBoZwmUJpLqutx8nzlPtHxDPr
-	bHOPEHbnJ25GctFoOxrFMhv1D1M/GunAJaav3VOwcTzCZyGe+sZ/JHjihnISRCEF
-	l2ceBzAgFKx9WwXAr9gC+lpEzinunNt8OYtFgdfVfvzrLWEd0gVxB5eaEeXBLu05
-	/k/Ek5M0xtlTYTnYlQMkttVxBHsyUcmIaqg==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pvtkqrp1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 16:56:59 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b0e0c573531so3114933a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 09:56:59 -0700 (PDT)
+	s=arc-20240116; t=1751993801; c=relaxed/simple;
+	bh=+hKCEhP4wYBwtiBfNHK4dWd4+CVQUfB5UoPPhvv3fqY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=P8RJhif9X8f5DyXWSLgRejjvKyRBnaVztipxOTWHYzrAm9fN5+Msbcibo1uzrSj8mhsUM7DbQLf5IvURl2DKGNkAHz31/a00Ct7/pnk4bvzrxPUkk3e33AaHVturq9Jp3DSNx0Y2fSiKsN3ABaVCyd5zP83k+CgvpmAHHtkp2RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nEJRKd5b; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so66094f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 09:56:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751993798; x=1752598598; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qw0/sY1luj9u4dFIQwVq3jk5mAy8ce+dq4koRYOPL3I=;
+        b=nEJRKd5b9060RWMf69cHOSzfZF6T5JrietJhhMsu2OMi3hSh1m9Z1F2XePAYmyNbab
+         OFkDixBBGCf4V/Y2HGARIjeG+fAPAwKCuyytPLKUwFxllv7HShgBnPFzi8KBQmpZgmf2
+         9S92fUjlSOjNl0iM0na4H+hisgGNf03wuM0a1rieZ2uSTb+Xa4DYwg+ee74gSSYh2hWQ
+         LXl7x25sT37Qi7+Q+fqIb8oPl93i1yk/CJx1O5PXH922OKwFRAlsjN6iBxDWt4Gt6FF4
+         L6G1YidgPwclkoJviEBY18URzAXb36Id1KYQ5wCx4yPSLZJLTMOrDO4jYotTgxcnDH7W
+         Vlcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751993818; x=1752598618;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WUhkVAeGLeKaNSN8AVmxhb1CINCnyT16ePTQp8qzBLo=;
-        b=sptme2aeKEJUxQXfBDoG3r0nx1aQjo9wh3Hiia3ian1EC1h9OqqgaUqaYAC5qc6N4U
-         rMcLfpA1pVpvOyN43TBmHq/1+12s37o7E6X3hmwPBgfDY0UKylCeJwYvuC7cTZH8m+AW
-         iCh729JLJON6Yn9TCRWigdeyt06PjiHVFm92/xehCWV5ilf7Svc3mrAAnjOl/GQpm79W
-         anwEzi1JQXDTAXUIaPOn7w3PBr3cJl/H5BIU5dZ+snhB97ObYDmg0SOFZOWDGh/Z5cif
-         9TELG9xe12Oc3lhrS0fYr4eO1CttDmxsDdvtvPSMwMXRkbD439qSNkMJTiGH/Crv1Zmf
-         ZUZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzrtJ2GbCLtPVmcITRHQKMP7NN/46i8YEXel8m1ocK6M+gWV4QN9O5geBtjiAepKBst8iZN7Of1Nw5Yfk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxTLy3e/Ir7FH24803994cAai7l6hhqHZUfVIMT/nCqDgss0VU
-	XnpzBASmAWT36/Y5hUvGlXY29v4s/I0a0GPIz4S6oZYBRGWWofhm5jjUiy86iNI2j4PcKOYax8e
-	xsSxa/D/IYHGeOnGgMUAoD8cmY47ZB2Eu5tCoamOY6kFijCOSPeKCh1Q4wxag8W3A8fc=
-X-Gm-Gg: ASbGncta0AZ2dHJgpdPZrD33mf2pgq7qxvDntIbeyO4is8AyfyiFEdD1TZ7mUw29rRW
-	QKsG235YYdqoqxQXcexgn0+gHrcbtHbrgSErsSSqpqr2BxpwdVaAjQ8hKD2UMEe4nrAgT8W4LFn
-	Np7PTnNfNCzjCO8kCOWiXQaeMTFwEAGb78uNXaTdnZwEfA5N5p2/4bm9n3B5RfqatNB6HSgHnXH
-	X/grSiFcFZXJHicIxcGYZkg0vk7Y08tfxJViEVXT/7mWgfFfUnOncM2mslcppb1guGfvfGGHsBI
-	j9pUuZ7ub3yOFPsLCaJ+pImrWxlspa23GWMkwdt1SyUDM6FfZ8UozqslWgFCb7J/HaIFQ1OdfUj
-	4DF49UEgf2A==
-X-Received: by 2002:a17:903:2352:b0:234:bca7:292e with SMTP id d9443c01a7336-23dd982c7a1mr3703815ad.14.1751993818312;
-        Tue, 08 Jul 2025 09:56:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFZcNw1wDJD3D+XT0Ei373cW7Pc2/gf94PN0YMqeTOB1MGWQEUOYM3VpYyc41cGoWyfIaY6gg==
-X-Received: by 2002:a17:903:2352:b0:234:bca7:292e with SMTP id d9443c01a7336-23dd982c7a1mr3703505ad.14.1751993817865;
-        Tue, 08 Jul 2025 09:56:57 -0700 (PDT)
-Received: from hu-obabatun-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8431e4dasm124569365ad.30.2025.07.08.09.56.56
+        d=1e100.net; s=20230601; t=1751993798; x=1752598598;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qw0/sY1luj9u4dFIQwVq3jk5mAy8ce+dq4koRYOPL3I=;
+        b=IC9S72GFTW1GCiUdT6ToICT0C7dY/tah8+aObPsxSJOmusjjBBFf7hndzZdyTJY7jX
+         N8MAz2rOhSUGJRdIIDfrODkAHf8m2QPsv/hefIrTPxFLQBY8/shho6bnG8zUXWY8mnnv
+         /vFtNcTAhECe2ELH99RGL1j8vStouI5thDQ/bAETaG7FAM/LRtCI6aL7MYoYP1pOqXSx
+         dPXxAOtwTYCLvwZHASUq+byLsCC8NS2UgPQfFsw+ETy4VUVx+5m7Uy5HJU2YV21tRVt6
+         U9wNsROU8eiswJ2pxuHmMIwf53ZfGEJ0MSY1kP/XvgC37YPOoZQdw2oORZVMeJN+zpbj
+         FDwg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1yTauZlEbhw9ovdQhkBrfJJRAGV64sZAYeGxnXxHSCHdLAvjVOiZWFm2pR2HiT3nXICsGxcSZjvyPMIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU0hdoSzu2Nb5RqtS/DabUCsINn9sm8rUqW1HFc8xdAaS9uxC7
+	B9/mkLtlwiFrI+5xz25xPOQ7UHdF/gQNK3/AOsDDOz7eRCBNbyP/rFOEaRUWIhtiqNY=
+X-Gm-Gg: ASbGncunMmycJ6IyGLGQxP2oUtUwMlrvtGwvO2Uo5vsWLmJYU3JWvsYBpd5OCH7eP8o
+	i8tSlkJGf1MMiP7MzaPzEvEipofTwKHuIEaPWuEa4e76ynbruOTb5pLtb3NSupbdebtUUwKPCiz
+	5VF8hZ71a53sCTltdqQsyDAd4BkGdV0oZPQMDTiIdXQcCXSrkxWBKhScjWumAGn98clZsvZU5sJ
+	w14X3P4b3gPjtyzaH7FSMW3OILdihemJHV4VzeubtVjuHM0lsU+9k8qbXNkjCSMdHnr+RSlPOZA
+	jFcAiGmuGggn41ANCOOsMyEzTYzsB5BGipPAJhZ7QLX91418GqKgVKepn1SqC5UZ1gs+ELI=
+X-Google-Smtp-Source: AGHT+IEhFOlmagskQM2r5RzgT7BHKcPGdBCsQxmqbsZNtHcOI+6pwTYyTcX41NSxWi6wI0OkFi9pAA==
+X-Received: by 2002:a05:6000:40e0:b0:3a4:cec5:b59c with SMTP id ffacd0b85a97d-3b5de034ac1mr3523393f8f.25.1751993797811;
+        Tue, 08 Jul 2025 09:56:37 -0700 (PDT)
+Received: from vingu-cube.. ([2a01:e0a:f:6020:2a4a:c4af:2315:5f08])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454cd3d7d51sm27295965e9.29.2025.07.08.09.56.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 09:56:57 -0700 (PDT)
-From: Oreoluwa Babatunde <oreoluwa.babatunde@oss.qualcomm.com>
-To: robh@kernel.org, m.szyprowski@samsung.com
-Cc: saravanak@google.com, robin.murphy@arm.com, quic_obabatun@quicinc.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux.dev, william.zhang@broadcom.com,
-        kernel@oss.qualcomm.com, will@kernel.org, djakov@kernel.org,
-        Oreoluwa Babatunde <oreoluwa.babatunde@oss.qualcomm.com>
-Subject: [PATCH] of: reserved_mem: Restructure call site for dma_contiguous_early_fixup()
-Date: Tue,  8 Jul 2025 09:56:27 -0700
-Message-Id: <20250708165627.845295-1-oreoluwa.babatunde@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+        Tue, 08 Jul 2025 09:56:37 -0700 (PDT)
+From: Vincent Guittot <vincent.guittot@linaro.org>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	dhaval@gianis.ca,
+	linux-kernel@vger.kernel.org
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH v3 3/6] sched/fair: Remove spurious shorter slice preemption
+Date: Tue,  8 Jul 2025 18:56:27 +0200
+Message-ID: <20250708165630.1948751-4-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250708165630.1948751-1-vincent.guittot@linaro.org>
+References: <20250708165630.1948751-1-vincent.guittot@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,97 +96,124 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDE0MyBTYWx0ZWRfX37TqBD11TlWw
- kCRwCZBJGElU7BjXeiEy0txKtVyzJhOFc8nxUdPGJ9H3jAAPBDN7uF8H72YJv94a5bzciUxivj2
- MY1c+PDCTvd/OLSX0aWW0GDxsJfmRd0xBdcK+aH59CdCgxRDLN79/mN9A4m41pJiIGOcmXc9MY6
- oFCxQRxDslw7yhTSDu71orGAPt9wmu4QhHVM6zP/6zpapi3wL7uTZqPYvYq0AdhhbPLmpIQmD+4
- T7nIkXbBEW799KaquZ7KC611m29y9XxmNbvt5pAuq0PAO8UHS80UgNAbn0D0SRnlZwx8bVEu4KW
- RQ64i29ju+/MQd8EVUXj6Okq5sx5s0yNeSPCvZ7Bau1iMmvniS0QC1lplEScFVoal/xf5H8Bc30
- jOp7QT75qwmS80pVhnoSnra3ddW+LwVU89rXm+yUhZ3UWhccyxDRHOWy2FiU+quA+mtG6WGM
-X-Authority-Analysis: v=2.4 cv=Vq0jA/2n c=1 sm=1 tr=0 ts=686d4ddb cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=xFDPACk5BDkwkGjAhYwA:9
- a=bFCP_H2QrGi7Okbo017w:22
-X-Proofpoint-ORIG-GUID: zTbr7z7sLFMD56p5qhNvJx4YHPd1DJtr
-X-Proofpoint-GUID: zTbr7z7sLFMD56p5qhNvJx4YHPd1DJtr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-08_04,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
- clxscore=1011 mlxscore=0 malwarescore=0 mlxlogscore=709 impostorscore=0
- suspectscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507080143
 
-Restructure the call site for dma_contiguous_early_fixup() to
-where the reserved_mem nodes are being parsed from the DT so that
-dma_mmu_remap[] is populated before dma_contiguous_remap() is called.
+Even if the waking task can preempt current, it might not be the one
+selected by pick_task_fair. Check that the waking task will be selected
+if we cancel the slice protection before doing so.
 
-Fixes: 8a6e02d0c00e ("of: reserved_mem: Restructure how the reserved memory regions are processed")
-Signed-off-by: Oreoluwa Babatunde <oreoluwa.babatunde@oss.qualcomm.com>
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 ---
- drivers/of/of_reserved_mem.c | 14 +++++++++++---
- kernel/dma/contiguous.c      |  2 --
- 2 files changed, 11 insertions(+), 5 deletions(-)
+ kernel/sched/fair.c | 44 ++++++++++++++------------------------------
+ 1 file changed, 14 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-index 77016c0cc296..132d2c66cafc 100644
---- a/drivers/of/of_reserved_mem.c
-+++ b/drivers/of/of_reserved_mem.c
-@@ -25,6 +25,7 @@
- #include <linux/memblock.h>
- #include <linux/kmemleak.h>
- #include <linux/cma.h>
-+#include <linux/dma-map-ops.h>
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 97cf99bb71d6..7e82b357763a 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -931,7 +931,7 @@ static inline void cancel_protect_slice(struct sched_entity *se)
+  *
+  * Which allows tree pruning through eligibility.
+  */
+-static struct sched_entity *pick_eevdf(struct cfs_rq *cfs_rq)
++static struct sched_entity *__pick_eevdf(struct cfs_rq *cfs_rq, bool protect)
+ {
+ 	struct rb_node *node = cfs_rq->tasks_timeline.rb_root.rb_node;
+ 	struct sched_entity *se = __pick_first_entity(cfs_rq);
+@@ -948,7 +948,7 @@ static struct sched_entity *pick_eevdf(struct cfs_rq *cfs_rq)
+ 	if (curr && (!curr->on_rq || !entity_eligible(cfs_rq, curr)))
+ 		curr = NULL;
  
- #include "of_private.h"
+-	if (curr && protect_slice(curr))
++	if (curr && protect && protect_slice(curr))
+ 		return curr;
  
-@@ -175,13 +176,17 @@ static int __init __reserved_mem_reserve_reg(unsigned long node,
- 		base = dt_mem_next_cell(dt_root_addr_cells, &prop);
- 		size = dt_mem_next_cell(dt_root_size_cells, &prop);
+ 	/* Pick the leftmost entity if it's eligible */
+@@ -992,6 +992,11 @@ static struct sched_entity *pick_eevdf(struct cfs_rq *cfs_rq)
+ 	return best;
+ }
  
--		if (size &&
--		    early_init_dt_reserve_memory(base, size, nomap) == 0)
-+		if (size && early_init_dt_reserve_memory(base, size, nomap) == 0) {
-+			/* Architecture specific contiguous memory fixup. */
-+			if (of_flat_dt_is_compatible(node, "shared-dma-pool"))
-+				dma_contiguous_early_fixup(base, size);
++static struct sched_entity *pick_eevdf(struct cfs_rq *cfs_rq)
++{
++	return __pick_eevdf(cfs_rq, true);
++}
 +
- 			pr_debug("Reserved memory: reserved region for node '%s': base %pa, size %lu MiB\n",
- 				uname, &base, (unsigned long)(size / SZ_1M));
--		else
-+		} else {
- 			pr_err("Reserved memory: failed to reserve memory for node '%s': base %pa, size %lu MiB\n",
- 			       uname, &base, (unsigned long)(size / SZ_1M));
-+		}
+ struct sched_entity *__pick_last_entity(struct cfs_rq *cfs_rq)
+ {
+ 	struct rb_node *last = rb_last(&cfs_rq->tasks_timeline.rb_root);
+@@ -1175,27 +1180,6 @@ static inline bool resched_next_quantum(struct cfs_rq *cfs_rq, struct sched_enti
+ 	return !entity_eligible(cfs_rq, curr);
+ }
  
- 		len -= t_len;
- 	}
-@@ -472,6 +477,9 @@ static int __init __reserved_mem_alloc_size(unsigned long node, const char *unam
- 		       uname, (unsigned long)(size / SZ_1M));
- 		return -ENOMEM;
- 	}
-+	/* Architecture specific contiguous memory fixup. */
-+	if (of_flat_dt_is_compatible(node, "shared-dma-pool"))
-+		dma_contiguous_early_fixup(base, size);
+-static inline bool do_preempt_short(struct cfs_rq *cfs_rq,
+-				    struct sched_entity *pse, struct sched_entity *se)
+-{
+-	if (!sched_feat(PREEMPT_SHORT))
+-		return false;
+-
+-	if (pse->slice >= se->slice)
+-		return false;
+-
+-	if (!entity_eligible(cfs_rq, pse))
+-		return false;
+-
+-	if (entity_before(pse, se))
+-		return true;
+-
+-	if (!entity_eligible(cfs_rq, se))
+-		return true;
+-
+-	return false;
+-}
+-
+ /*
+  * Used by other classes to account runtime.
+  */
+@@ -8666,6 +8650,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+ 	struct sched_entity *se = &donor->se, *pse = &p->se;
+ 	struct cfs_rq *cfs_rq = task_cfs_rq(donor);
+ 	int cse_is_idle, pse_is_idle;
++	bool do_preempt_short = false;
  
- 	/* Save region in the reserved_mem array */
- 	fdt_reserved_mem_save_node(node, uname, base, size);
-diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
-index 8df0dfaaca18..9e5d63efe7c5 100644
---- a/kernel/dma/contiguous.c
-+++ b/kernel/dma/contiguous.c
-@@ -480,8 +480,6 @@ static int __init rmem_cma_setup(struct reserved_mem *rmem)
- 		pr_err("Reserved memory: unable to setup CMA region\n");
- 		return err;
+ 	if (unlikely(se == pse))
+ 		return;
+@@ -8714,7 +8699,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+ 		 * When non-idle entity preempt an idle entity,
+ 		 * don't give idle entity slice protection.
+ 		 */
+-		cancel_protect_slice(se);
++		do_preempt_short = true;
+ 		goto preempt;
  	}
--	/* Architecture specific contiguous memory fixup. */
--	dma_contiguous_early_fixup(rmem->base, rmem->size);
  
- 	if (default_cma)
- 		dma_contiguous_default_area = cma;
+@@ -8732,22 +8717,21 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+ 	/*
+ 	 * If @p has a shorter slice than current and @p is eligible, override
+ 	 * current's slice protection in order to allow preemption.
+-	 *
+-	 * Note that even if @p does not turn out to be the most eligible
+-	 * task at this moment, current's slice protection will be lost.
+ 	 */
+-	if (do_preempt_short(cfs_rq, pse, se))
+-		cancel_protect_slice(se);
++	do_preempt_short = sched_feat(PREEMPT_SHORT) && (pse->slice < se->slice);
+ 
+ 	/*
+ 	 * If @p has become the most eligible task, force preemption.
+ 	 */
+-	if (pick_eevdf(cfs_rq) == pse)
++	if (__pick_eevdf(cfs_rq, !do_preempt_short) == pse)
+ 		goto preempt;
+ 
+ 	return;
+ 
+ preempt:
++	if (do_preempt_short)
++		cancel_protect_slice(se);
++
+ 	resched_curr_lazy(rq);
+ }
+ 
 -- 
-2.34.1
+2.43.0
 
 
