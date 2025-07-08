@@ -1,52 +1,53 @@
-Return-Path: <linux-kernel+bounces-721933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E73CAAFCFAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:49:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 190CCAFCFAC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 524E7188AA40
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:49:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CE5918912BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551B22E1749;
-	Tue,  8 Jul 2025 15:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE96B2E11C3;
+	Tue,  8 Jul 2025 15:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oBhuJmtJ"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lNjA39nY"
 Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B5C2E03FA
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B64C221D87
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751989739; cv=none; b=gHpQ/njSaJlGKwW2+CN0TEZe031omdCfndxEF1PLIgo/Hz4twfbIVWNJzyrLIM96Il3Tqc6pxvH5LSZ9dj97axrF6tn0pf33nSCat+6ciBn0xb37h61OGoVrc/b82Aa/zlbTQNerle9po/xWBVN7BvmBrPMhtRBwNcha/4XcKW8=
+	t=1751989741; cv=none; b=FYYGNxzZ1qLfTw1e44E54g4FK9HPY8MgHeFaqWaRx8bJldniyRDsx8UnnFGVF7JFlDWarkY8TwTnzocZK4wjs/27tMOJA92Dab3LEPEfd/hvxWiQpiUHiONNay2uAtKzFcrkrEzA7wFihOnNsTa9YsPZY3FRfiSLjwacke9V0ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751989739; c=relaxed/simple;
-	bh=dDsl200tiQznj5GD3+5C6nXH/ACtIUf0AYxS7HnS1Pk=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=T/polWSZwW5AL+tqrqib25toKWiaUOEKKWZ10qL2698IeMD5mFz0uAilEIz7ajCNphdYvt0HCclNMk5aU/ZSpVUaznPWMAfx148iBJj3nOYXXGoTx9xdUp4hoLbPG+jJ/w9N36vvbapMkXdVqDh9xaZ/hpUlI0mbEvDfANsDl3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oBhuJmtJ; arc=none smtp.client-ip=217.70.183.196
+	s=arc-20240116; t=1751989741; c=relaxed/simple;
+	bh=l1OOh3ft9XolLJoP0NiVy9j3bR4efdCmJAwatwoOQE4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=c4Go50ZIEFS2Wk4UdHo3wZOYi5VuAByjqSoUFotUFTYDwv2ipwMUyRGWLSQiyPAhch0kTPsMGMa8H/ZipTS8Pm18LXBGpH787ZgEjr7I7z2TcFiRpPH/+C1Hze0sOmUQePe7FMHPiEGASB9F40qeSSV7i8nrTtGSLKVe2EdI474=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lNjA39nY; arc=none smtp.client-ip=217.70.183.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 70DD7443EF;
-	Tue,  8 Jul 2025 15:48:52 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 65A7E443E4;
+	Tue,  8 Jul 2025 15:48:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1751989735;
+	t=1751989737;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=XWn8tkHwi2RjacXnR5yqBza6YOAwtweEnReFLSISQuQ=;
-	b=oBhuJmtJ5xhEbdeIypr91qJvt2On2vgRuZwdbfCFdHX8E21NImCwasafH3Ic5sF5gUGH1M
-	9MRVNV02Shm1tV6GAp67qJ20zDqLQrwxSkcrCbHdpdDFsehwH6l6Z/PqmeiSzRgeOcdeJp
-	877K0ROBsJacaH/u1cgdNiou01DuEXaM44Ohp/LcB+xBJkNl8ReCosv4LIfkCQ0UE+D3HQ
-	cHdmvwGhG7z5rMl2zPz97nLh9Doq+vO7PBsyUFuqg92BJ2B+XmjFurUub9V5/zCSOoMKXw
-	FNwbBIfH8W/AM5my+hRwt70sFoe5V02wr+EtXlF6Z0EqavLyT2PAzf/NTT661A==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JL11Zrc4Yf6HM8VTZZGd0xEL+GSH49wFuy5GLaIUGiw=;
+	b=lNjA39nYHMR7S8FKlzwj5dK+AEu+NbZJ67iaBykOQRSWnqMFeAWg4cuX/bWB9eYi21uzGg
+	OwKnBFPdh+zYi+3FKxLuzIiu1mxZDdmdg9e0/X/0Uby813JcgOjiFx191yYn2h23wJxJrq
+	lVRFZwJBwSzx+0faNgCIT+kLCWbX4EJUW/yrCgSZpCb6oKmb3nzaq6lW+c82MEWesRah7W
+	M+B1rN/7mNDCqEfyhnI2MGCjj5OruX5UZGUV+r2Xk1ybrss+D1zCMeQ/vivNWjL1AcNS87
+	+afHDwr/tUxbd7XVdimxiw+84IiJAaHAu9tPvHJ0+hikEit/3hTdkn1ESGG+Lg==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: [PATCH v9 0/5] drm/bridge: get/put the bridge returned by
- drm_bridge_chain_get_first_bridge()
-Date: Tue, 08 Jul 2025 17:48:17 +0200
-Message-Id: <20250708-drm-bridge-alloc-getput-drm_bridge_chain_get_first_bridge-v9-0-db1ba3df7f58@bootlin.com>
+Date: Tue, 08 Jul 2025 17:48:18 +0200
+Subject: [PATCH v9 1/5] drm/bridge: add a cleanup action for scope-based
+ drm_bridge_put() invocation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,12 +55,10 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAME9bWgC/62OWwqDMBBFtyL5bkoaH2i/3EeRYF46oIkkqbSIe
- +9ou4R+nnOZuXcj0QQwkdyzjQSzQgTvEJpLRtTYu8FQ0MiEM16yijOqw0xlAI1JP01e0cGk5Zk
- OL75e4CE4gV5YCDH9NJUmb1RRcK10RfD/EoyF19n96JBHiMmH9zllrQ/7j9a1poyynN/qorSqt
- 7KV3qcJ3FX5mXT7vn8ASntc5AQBAAA=
-X-Change-ID: 20250620-drm-bridge-alloc-getput-drm_bridge_chain_get_first_bridge-be39c442dcd6
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250708-drm-bridge-alloc-getput-drm_bridge_chain_get_first_bridge-v9-1-db1ba3df7f58@bootlin.com>
+References: <20250708-drm-bridge-alloc-getput-drm_bridge_chain_get_first_bridge-v9-0-db1ba3df7f58@bootlin.com>
+In-Reply-To: <20250708-drm-bridge-alloc-getput-drm_bridge_chain_get_first_bridge-v9-0-db1ba3df7f58@bootlin.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
  Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -79,87 +78,64 @@ Cc: Liu Ying <victor.liu@nxp.com>, Hui Pu <Hui.Pu@gehealthcare.com>,
 X-Mailer: b4 0.14.2
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefhedtkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtkeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepjeejhffgffelveehhfefudehtdeftdettdekgfekueeihedtieefudevjeffveegnecuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorhhgpdhkvghrnhgvlhdrohhrghenucfkphepkeejrdduvddtrddvudekrddvtdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepkeejrdduvddtrddvudekrddvtdejpdhhvghloheplgduledvrdduieekrddurddufegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdehpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtt
- hhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefhedtkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieeiuedvffetgfeuudelheeutefggfejieettdetteekueeuueeukeevvedvueevnecukfhppeekjedruddvtddrvddukedrvddtjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeekjedruddvtddrvddukedrvddtjedphhgvlhhopegludelvddrudeikedruddrudefngdpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvhedprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdprhgtphhtt
+ hhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 X-GND-Sasl: luca.ceresoli@bootlin.com
 
-This series adds drm_bridge_get/put() calls for DRM bridges returned by
-drm_bridge_chain_get_first_bridge().
+Many functions get a drm_bridge pointer, only use it in the function body
+(or a smaller scope such as a loop body), and don't store it. In these
+cases they always need to drm_bridge_put() it before returning (or exiting
+the scope).
 
-All patches are Reviewed-by Maxime except patch 3.
+Some of those functions have complex code paths with multiple return points
+or loop break/continue. This makes adding drm_bridge_put() in the right
+places tricky, ugly and error prone in case of future code changes.
 
-This is part of the work towards removal of bridges from a still existing
-DRM pipeline without use-after-free. The grand plan was discussed in [1].
-Here's the work breakdown (➜ marks the current series):
+Others use the bridge pointer in the return statement and would need to
+split the return line to fit the drm_bridge_put, which is a bit annoying:
 
- 1. ➜ add refcounting to DRM bridges (struct drm_bridge)
-    (based on devm_drm_bridge_alloc() [0])
-    A. ✔ add new alloc API and refcounting (in v6.16-rc1)
-    B. ✔ convert all bridge drivers to new API (now in drm-misc-next)
-    C. ✔ kunit tests (now in drm-misc-next)
-    D. ✔ add get/put to drm_bridge_add/remove() + attach/detach()
-         and warn on old allocation pattern (now in drm-misc-next)
-    E. ➜ add get/put on drm_bridge accessors
-       1. ➜ drm_bridge_chain_get_first_bridge() + add a cleanup action (this series)
-       2. drm_bridge_chain_get_last_bridge()
-       3. drm_bridge_get_prev_bridge()
-       4. drm_bridge_get_next_bridge()
-       5. drm_for_each_bridge_in_chain()
-       6. drm_bridge_connector_init
-       7. of_drm_find_bridge
-       8. drm_of_find_panel_or_bridge, *_of_get_bridge
-    F. debugfs improvements
- 2. handle gracefully atomic updates during bridge removal
- 3. … avoid DSI host drivers to have dangling pointers to DSI devices
- 4. finish the hotplug bridge work, removing the "always-disconnected"
-    connector, moving code to the core and potentially removing the
-    hotplug-bridge itself (this needs to be clarified as points 1-3 are
-    developed)
+  -return some_thing(bridge);
+  +ret = some_thing(bridge);
+  +drm_bridge_put(bridge);
+  +return ret;
 
-All the patches in this series have already been sent as part of the larger
-"[PATCH v7 00/11] drm/bridge: add devm_drm_bridge_alloc() with bridge
-refcount" series [2], hence the v9 number. They have all been Reviewed-by
-Maxime too, however they could not be applied at that time, awaiting the
-conversion of all bridge drivers to devm_drm_bridge_alloc(), now done (item
-1.A).
+To make it easier for all of them to put the bridge reference correctly
+without complicating code, define a scope-based cleanup action to be used
+with __free().
 
-I'm resending all patches to give them visibility now that they are ready
-to be applied.
-
-[0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/0cc6aadd7fc1e629b715ea3d1ba537ef2da95eec
-[1] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/t/#u
-[2] https://lore.kernel.org/all/20250314-drm-bridge-refcount-v7-0-152571f8c694@bootlin.com/
-
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
-Changes in v9:
-- Small improvement to patch 3
-- Link to v8: https://lore.kernel.org/r/20250620-drm-bridge-alloc-getput-drm_bridge_chain_get_first_bridge-v8-0-0321845fcafb@bootlin.com
 
-Changes in v8:
-- rebased on current drm-misc-next
-- Patch 4: reworked based on current code
-- Link to v7: https://lore.kernel.org/all/20250314-drm-bridge-refcount-v7-0-152571f8c694@bootlin.com/
-
+This patch was added in v7.
 ---
-Luca Ceresoli (5):
-      drm/bridge: add a cleanup action for scope-based drm_bridge_put() invocation
-      drm/bridge: get the bridge returned by drm_bridge_chain_get_first_bridge()
-      drm/mxsfb: put the bridge returned by drm_bridge_chain_get_first_bridge()
-      drm/atomic-helper: put the bridge returned by drm_bridge_chain_get_first_bridge()
-      drm/probe-helper: put the bridge returned by drm_bridge_chain_get_first_bridge()
+ include/drm/drm_bridge.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- drivers/gpu/drm/drm_atomic_helper.c |  7 +++++++
- drivers/gpu/drm/drm_probe_helper.c  |  1 +
- drivers/gpu/drm/mxsfb/lcdif_kms.c   |  4 ++--
- include/drm/drm_bridge.h            | 11 +++++++++--
- 4 files changed, 19 insertions(+), 4 deletions(-)
----
-base-commit: e21354aea4b4420b53c44e36828607a7c94a994c
-change-id: 20250620-drm-bridge-alloc-getput-drm_bridge_chain_get_first_bridge-be39c442dcd6
+diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+index d2454ba83db36f8f0d475b0b37468c2ebe7e921d..88e7a41c39eb1163bd455003e9ca40468932d97a 100644
+--- a/include/drm/drm_bridge.h
++++ b/include/drm/drm_bridge.h
+@@ -23,6 +23,7 @@
+ #ifndef __DRM_BRIDGE_H__
+ #define __DRM_BRIDGE_H__
+ 
++#include <linux/cleanup.h>
+ #include <linux/ctype.h>
+ #include <linux/list.h>
+ #include <linux/mutex.h>
+@@ -1227,6 +1228,9 @@ drm_priv_to_bridge(struct drm_private_obj *priv)
+ struct drm_bridge *drm_bridge_get(struct drm_bridge *bridge);
+ void drm_bridge_put(struct drm_bridge *bridge);
+ 
++/* Cleanup action for use with __free() */
++DEFINE_FREE(drm_bridge_put, struct drm_bridge *, if (_T) drm_bridge_put(_T))
++
+ void *__devm_drm_bridge_alloc(struct device *dev, size_t size, size_t offset,
+ 			      const struct drm_bridge_funcs *funcs);
+ 
 
-Best regards,
 -- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
+2.50.0
 
 
