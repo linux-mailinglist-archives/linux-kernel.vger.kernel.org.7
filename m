@@ -1,123 +1,174 @@
-Return-Path: <linux-kernel+bounces-721251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B368AAFC69E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:05:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 104C9AFC69C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF8AC7B40BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:04:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91B113A3C1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3532C08DF;
-	Tue,  8 Jul 2025 09:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF23B2C08AB;
+	Tue,  8 Jul 2025 09:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="etIMp8h3"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jbXs6rrj";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VYGYDlq5";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jbXs6rrj";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VYGYDlq5"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95469221554;
-	Tue,  8 Jul 2025 09:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2E5221554
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 09:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751965498; cv=none; b=LSgWcvOyVTopMc4BdlknXxCXuOH2CnqgXbeIQ7dtCecBL1elPFtXld++3yCuEpItK7jXDSovN0puO0k7jT/f3LzbteLFt8MJX6PbAwDhGx+6gnVyoMTKuRDjYdQR61pgo5OBtzvmdpl+xm5VJ18yi8Se5FY+p/LphPhD6mVHmYY=
+	t=1751965486; cv=none; b=FJUNZS9LxruvQrQmfTpnjEfZzSkSF+OICMErM5yr1vTdh+ofv+5Cy1P9S/okcfYzUOM4xYvdPtqPLSPlYE6nTzjYaFQJqRXGiDqzkogeCNiTc2HTJzr+7HCRWGaF7DP71HMMrSbri6KuG8bVrp/muIeaNXode9jK5opk7L9Uv8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751965498; c=relaxed/simple;
-	bh=uK9rTdwq3+SmTytorDzAkLiXBoHD6ucYrtal0yWA/T0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g0LlRH2Y+ltitj2+hvRwHDF6tPL28n9KUiPx5z90L/Qlb7dz/LVgCMrRNjiLWIGL2s95v33x3NTdL+t4afLobdm/+AVL70OfL2z/AhwzNMZJ4qq9opHh5zEvQ3hp+TmfBJbmI0Ap75cFgk2neUzFskrkqAc3/wViVqp+dIca330=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=etIMp8h3; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-234fcadde3eso59890125ad.0;
-        Tue, 08 Jul 2025 02:04:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751965496; x=1752570296; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xycfwvqEgQNdhrxJZBBX+1ZZOPQm0ZskYOsUQsGWaC8=;
-        b=etIMp8h3aPzH+92XWlXrNzI1q+mlkpTr0pU1B6qx8AApNnR3dLSYqBa0vqbAnUjZdA
-         whQZisa7rgqHZtS/xrAlXHQa/OVaBFhMl5ey1jPdusklWf5u0toF1BDTzmZdKimPO4Wd
-         6IJQhgBlv1t+E6pmxIpGLOZ8GQu8OrxQZeR7iyNUSV4Mr84dyXXhSO6pnjPUJlsGr7xs
-         qA6sEwf9bg1fAFPuBPJnLEiEiu3TKCL3A6wFvYSIJ5nypoQDhJ9RRuNHNYJHAHZkYxGl
-         GMUs/Bd1rBFWATkRis/OxzNu5+FZc7YHzeowgEeFH6AJcR0Jvs6j3gQNK9ift9bx/8X7
-         7xCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751965496; x=1752570296;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xycfwvqEgQNdhrxJZBBX+1ZZOPQm0ZskYOsUQsGWaC8=;
-        b=XtI4QfjSKYzqh+YdyJKM5ucsy4ZLByDoiU2PaN/MBSSvNSuBqlVS6H9m2qOEpHXXwp
-         xKwhHPHk+yX8tXtIDmx1Y7XSVXr1DCbBIJtIouYOkCDl4+K2cLUCE5HjI70ijRgAI48G
-         s9t0VegqdepjVP2AXg25nZl79l+izomPrQbNFcUf3TZlz+YMkAuaVrwRNBSP5RfYiiw6
-         6of6l19aEdwvu8QII/RELUX6OhzH1uJ6omFqIq190TvAyIdn/9h4Q3oKm3TNO/gYP6Mf
-         q5qIqffD8bGXvlJYCWr2BFE4yjlDO2z54Rg+tFg+X6iZRUzpABpWLQeXcNj9+XfK/NYs
-         Da5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUvlsNNqe9lEgk6fG6m1+ViqzZaHz7PinF5DIpc+67GgAqlCVBDLh0Y84yrA7TCYcNqc/msPOtn@vger.kernel.org, AJvYcCX7OTu1BpW93crbbEF8Gk10Q/vVJiSEvjVzo4MXbjzQFRkdeUKSeUBmdYJFO6V6TPopuigWiJhLu8DgbWk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLLZcNS5z5TgZgsX5dy2TN+3WGE1+TEQxgeCeu5em94DXA4Wqp
-	HfLietRT0+71LNatW2y7jUZVKhywqqzOoNa5UB3KeyXtpAH40B70B/u9
-X-Gm-Gg: ASbGncur42aU/41txzFI/kxAHJ9hu9QXHBGqmGC0dtClGG7j4LmH1KVASy6slhBeNjS
-	VgSjq0+7xVsq+EEDm5cF0C8vHYNKL03anl1jvKLpoDQ6xZBpb6DEER8iKgP6H6RxwFeJI+435Tv
-	zCREpPHWc4qckaf7PRT31vlsdxBWuFnxbMy9G/940EfII592zdajdkrdlg5GnxC42REDhFpiWMD
-	mpC9dKNxp1lDROV/47vlCn65WMpQAj2ls10mr4qs8UIZsicUpSH5uNtZ9gZXHKrdG7Cw5vhSypx
-	uYF9LYBrXydoxxeed4m3y7YnclUerX2Y9OHnmP9SKRyLAZP6DRTLjil6Osul5bRN5/uvtw==
-X-Google-Smtp-Source: AGHT+IGxw/QdWH/t5lLNpewU2HMkLtFAjxhlV0kuOOO/I/w/DZhFPUIKFHMjokrZNRIsY9SG7txifw==
-X-Received: by 2002:a17:902:d511:b0:237:ed38:a5b3 with SMTP id d9443c01a7336-23c8746d7eamr216932725ad.8.1751965495714;
-        Tue, 08 Jul 2025 02:04:55 -0700 (PDT)
-Received: from syzkaller.mshome.net ([183.192.14.250])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-23c845bf51asm113576975ad.257.2025.07.08.02.04.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 02:04:55 -0700 (PDT)
-From: veritas501 <hxzene@gmail.com>
-To: davem@davemloft.net
-Cc: veritas501 <hxzene@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net: appletalk: Fix device refcount leak in atrtr_create()
-Date: Tue,  8 Jul 2025 09:04:30 +0000
-Message-Id: <20250708090431.472195-1-hxzene@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1751965486; c=relaxed/simple;
+	bh=WNhd3m8Dg2LgB68UjsnjzktyiN8y16CTifGdfuorDgQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GFNI5wQTlJ+34Qr+15i7PNFGg+Txf0WP4l/m1oHO+HhFzM5jAgdDLtgk+8CKNlAnpcVrMoGPyvkW7QsTNA1T8dHSoFE+BM+OljccKWRVPg2heHzsI0mUSHBWheOU1xeSSUBmyIrARKbEGelT/efMObSkOm0xlgZHepQpbYIv44Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jbXs6rrj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VYGYDlq5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jbXs6rrj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VYGYDlq5; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6E40F1F458;
+	Tue,  8 Jul 2025 09:04:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751965482; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NV4hN1Y39sFJflUarD+8UiB2fo2fSulG+qVsHsSi1U0=;
+	b=jbXs6rrjF21ytqFo47/V1+RxWIwTsUAr3VqHCW7CjRIgRomt0Hujwh4DrV8tB2xNwhVSXH
+	WA/0G5GJL89QnZsK9PI935eRgTXvNvuYZE/KVMv1yMyagfVHmeFyrYF1Awkr4J4H1GEziD
+	+7yqUVRvg0WXeBjFDand/9HyTzA1txA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751965482;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NV4hN1Y39sFJflUarD+8UiB2fo2fSulG+qVsHsSi1U0=;
+	b=VYGYDlq5SHTRJ3MwC9dF+Tyy5mdFgMdB76S73QwFe/T7o7E5xhfBTH0qdIn7C4FIWvAJSn
+	EO496q2hi6gLGyCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=jbXs6rrj;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=VYGYDlq5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751965482; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NV4hN1Y39sFJflUarD+8UiB2fo2fSulG+qVsHsSi1U0=;
+	b=jbXs6rrjF21ytqFo47/V1+RxWIwTsUAr3VqHCW7CjRIgRomt0Hujwh4DrV8tB2xNwhVSXH
+	WA/0G5GJL89QnZsK9PI935eRgTXvNvuYZE/KVMv1yMyagfVHmeFyrYF1Awkr4J4H1GEziD
+	+7yqUVRvg0WXeBjFDand/9HyTzA1txA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751965482;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NV4hN1Y39sFJflUarD+8UiB2fo2fSulG+qVsHsSi1U0=;
+	b=VYGYDlq5SHTRJ3MwC9dF+Tyy5mdFgMdB76S73QwFe/T7o7E5xhfBTH0qdIn7C4FIWvAJSn
+	EO496q2hi6gLGyCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 211BC13A70;
+	Tue,  8 Jul 2025 09:04:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id G8k9ByrfbGh/YgAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 08 Jul 2025 09:04:42 +0000
+Message-ID: <3f45a525-59a7-42fa-b51c-45eacdf038bd@suse.de>
+Date: Tue, 8 Jul 2025 11:04:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] scsi: fnic: Turn off FDMI ACTIVE flags on link
+ down
+To: Karan Tilak Kumar <kartilak@cisco.com>, sebaddel@cisco.com
+Cc: arulponn@cisco.com, djhawar@cisco.com, gcboffa@cisco.com,
+ mkai2@cisco.com, satishkh@cisco.com, aeasi@cisco.com, jejb@linux.ibm.com,
+ martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jmeneghi@redhat.com, revers@redhat.com,
+ dan.carpenter@linaro.org, stable@vger.kernel.org
+References: <20250612002212.4144-1-kartilak@cisco.com>
+ <20250612002212.4144-4-kartilak@cisco.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250612002212.4144-4-kartilak@cisco.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 6E40F1F458
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[cisco.com:email,suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -4.51
 
-When updating an existing route entry in atrtr_create(), the old device
-reference was not being released before assigning the new device,
-leading to a device refcount leak. Fix this by calling dev_put() to
-release the old device reference before holding the new one.
+On 6/12/25 02:22, Karan Tilak Kumar wrote:
+> When the link goes down and comes up, FDMI requests are not sent out
+> anymore.
+> Fix bug by turning off FNIC_FDMI_ACTIVE when the link goes down.
+> 
+> Fixes: 09c1e6ab4ab2 ("scsi: fnic: Add and integrate support for FDMI")
+> Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
+> Reviewed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
+> Reviewed-by: Gian Carlo Boffa <gcboffa@cisco.com>
+> Reviewed-by: Arun Easi <aeasi@cisco.com>
+> Tested-by: Karan Tilak Kumar <kartilak@cisco.com>
+> Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
+> ---
+>   drivers/scsi/fnic/fdls_disc.c | 9 ++++++---
+>   1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-Fixes: c7f905f0f6d4 ("[ATALK]: Add missing dev_hold() to atrtr_create().")
-Signed-off-by: veritas501 <hxzene@gmail.com>
----
- net/appletalk/ddp.c | 2 ++
- 1 file changed, 2 insertions(+)
+Cheers,
 
-diff --git a/net/appletalk/ddp.c b/net/appletalk/ddp.c
-index 73ea7e67f05a..e5708870a249 100644
---- a/net/appletalk/ddp.c
-+++ b/net/appletalk/ddp.c
-@@ -576,6 +576,8 @@ static int atrtr_create(struct rtentry *r, struct net_device *devhint)
- 
- 	/* Fill in the routing entry */
- 	rt->target  = ta->sat_addr;
-+	if (rt->dev)
-+		dev_put(rt->dev); /* Release old device */
- 	dev_hold(devhint);
- 	rt->dev     = devhint;
- 	rt->flags   = r->rt_flags;
+Hannes
 -- 
-2.34.1
-
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
