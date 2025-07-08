@@ -1,117 +1,240 @@
-Return-Path: <linux-kernel+bounces-721036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2450CAFC3E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:21:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98191AFC3EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B0F24A276C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:21:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B76857A3A52
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524EB298275;
-	Tue,  8 Jul 2025 07:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A7229898A;
+	Tue,  8 Jul 2025 07:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GIlF+J5g"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fmd/hUld"
+Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180AA29824E;
-	Tue,  8 Jul 2025 07:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A6621771B;
+	Tue,  8 Jul 2025 07:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751959312; cv=none; b=dLLf9C3MoD0y4h1sj9A1WUyQxqT6lzqQeqi/yPYl3BHrzoyO7YPosQc6j/GfdndXX4VBtLQGuWv31k+fqOhrBcFoK50GFBHxfuH8GNWiCBncn3p1y8VSxFPyy4jEuUqDG4rbjqD5FpYHrmCIP5k+loIc2NnQVE1AY0eKPHinRk8=
+	t=1751959405; cv=none; b=iEstBYIjj6s/IGDw/VMRn13HMCXZdtUodyKJelzsxCcm3HiYhqAavTaI0KivntGV+6r8PClJM7gbWxa0kDWG5FdYuIcvolYlPolKNez8JbSbe4TxCuoTC6eGaEQlDUUNXk5zDbHi8HA9+th9R44u/BR3xERZ3PdhfwF2giqxg08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751959312; c=relaxed/simple;
-	bh=fqGNOP8FBJPLy1RK0X+MHfKS0hKOfDFe7Hn4OMwdWtE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=jSvSi+UMY6FsmpMKo1app81tXjUj9asIOpl74FGBJxFL9+pz35uLQVKsMeoRKYH6z/Usu6UvDyt4iYmuYlgk0SXJmaVPMYUUOQhYZO5Ex4UvhIcjS8+SFRKoIiOc/O69WloBzB031WW1omJSjOBZn7P/BWTRmqJe3GSiGy5KtNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GIlF+J5g; arc=none smtp.client-ip=209.85.167.50
+	s=arc-20240116; t=1751959405; c=relaxed/simple;
+	bh=Y3K/9e6LhukCurcaD9o32N0OL7wRV4i+/V8Kh17uTV8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nYTpV6D83s5teEiVOYbNF/J+taX6lNneFcbqikrW80p8Ccu9KzPl1iqfHc/wYe5kavQCs0iZKrW6iDWY/6YOinarSb6XOebIaIV9qlsAkMvybNWRbtFDQJA0SUMbZ9bNlHncM5/dmDty4NLkCry1/EREu27WDqkpyLhCBDp/97M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fmd/hUld; arc=none smtp.client-ip=209.85.210.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553b165c80cso3962798e87.2;
-        Tue, 08 Jul 2025 00:21:50 -0700 (PDT)
+Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-73972a54919so3527400b3a.3;
+        Tue, 08 Jul 2025 00:23:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751959309; x=1752564109; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fqGNOP8FBJPLy1RK0X+MHfKS0hKOfDFe7Hn4OMwdWtE=;
-        b=GIlF+J5gxXDvie7ZI4folaN4tQS5Fl704k5bwyXi57J2UoK3glaJJmX4kPjaQSXGt4
-         zprWXj3F1nCFIkMUcF18c3hiDJ1qiRvdEM2SpFKpt4FZmNDkL24fU2rxFzO5ezuwy4fb
-         pESLfikPNIfCCUwPTaW7gPNHSTRg/TkCrNM+MV4mTGsP9z3TRrudoh6/FIl+VLrZoZQU
-         Hw/DCiLfahQuqntGSWcgLbMO1lC6ONgXwCKLfMxWp93Aap3qbxdjNchEvtgJzoGsFhqW
-         PQPNFhEjFvqBK2vldGoIxAzOgE51lkjYvAd6CyVPzu/zJC6fi3d+Tn6DMGlj/wXBUq/M
-         V3Wg==
+        d=gmail.com; s=20230601; t=1751959398; x=1752564198; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ryKkdoTUScOzRY+Hydd8wbTiQdLT0HSJ6uF3KQB6E6g=;
+        b=fmd/hUldVbAHUwlQUYfzULVY4pr0IqxgbjVAZaKOp+ukJ+LzUy2ngY2OwK/5MlNrvd
+         KkhEKdpLydYay7fYzZbuDj12+qrkatENB/LJWwZLk8x1Jf0XXgPMzJ82XPkhDZJvNwBN
+         aILHsOTafldCYAR8rk8+hvRKOs8w9P8acgb31a/4XrVt+c7mzhZxrHunobbWlLTrt6jB
+         XZkfhdbSLTijT6vi5vo7KbMkKPHEKY2WB31DKPPxDAreZev6i6Mm5JPiu0YAlr5XR+qd
+         thGGpnifL/VxUxQatf1YsR0ptToUh32gVenzRAtYymxUnywRGfRgsR7rAVeczH2kPpPa
+         K2sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751959309; x=1752564109;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fqGNOP8FBJPLy1RK0X+MHfKS0hKOfDFe7Hn4OMwdWtE=;
-        b=BCpfosn+yMpw8MmloSqWpjP3OqrCK0EbcxYpY2jIY0rOCmLJ1RFdtV7h8yBmK+Ot33
-         DqfVSjPnaiz/wAakt+uh0CXK/sGOg1rj+3/AuXajzxlu7gWKNAgh8xJS/3QH16f6lWjP
-         VJp+dQNYAUn3jiZ663cljzI8sl4thpx5kUQGmDSDwIciZJ6kIkiU3kKiO+whjCA/iiEU
-         mmXjHxbc5EsYbhWK2GPMo540CwOcMRRm6kAQz/RgOEWi2NPXUs81u8f/dlphaB7TV6uT
-         4Jfd+ZVfuXB0PSNUew0i+PIbHslm3poQQLkhHB/Cr6QMxvMNMiAK+tCwqh9c9eCS9bE3
-         A5JA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLO+Hidz6PlrmihDHVq5hM9bJRC0f9/v47OGsjhx4WszkAdocfESkDGIe3nCOjuQpvtjjWYn6E6ciMMrc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqMOvfobehx4evh58v94hGIoL+NPmXsbRUs/iQ+lPKUlkCLQrK
-	NrIkMuAf7+nJb8Rj53TmchewnIoZi0P65lfkdFqqzJ056BnEjhNlR+Bhed04wfAj3CVnhH4l7Z5
-	Rf8HcgAzPTZFS1U8L/m02c//ZJcRwYWc=
-X-Gm-Gg: ASbGncs+FmdKLsXHAMZ/obnclRnF2D1m3dIk/GgLAUIhkQcrNUPSmc8xiaF6YN7et4M
-	7FIarjvNLl0GMWVU46o/dI7i/IURKwDshg7ctgkNZZTGG/i67nWwWkZYLvNkg6UOZBmvCZj7TtO
-	GWWy6HaqJ8il2YTOXEIq3gP13BD9M1N3PUD0B4BC+u4fZawOiVZj5qXtW6EgaveDP2OA==
-X-Google-Smtp-Source: AGHT+IH+aAgWpAukCcmftBbkyq4OJ0H0gADAY9FjTzUG8UlxvQf98BIs2Ic+2Qwqzp7BIC2pDD49QzqGbVEcyvMRq9Q=
-X-Received: by 2002:a05:6512:1314:b0:549:8f10:ec25 with SMTP id
- 2adb3069b0e04-557f8353368mr619030e87.31.1751959308810; Tue, 08 Jul 2025
- 00:21:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751959398; x=1752564198;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ryKkdoTUScOzRY+Hydd8wbTiQdLT0HSJ6uF3KQB6E6g=;
+        b=h4tWcYGsAJ8EarTmJGWlpSjtfZWTOX7x9V0KUOvRw93wP8c7/OvkE9tX3Yikt4+QKE
+         tnPWDzHQzrHGy2LCSsSDlgNF6w2UxlN7/5urfovBBrzQdXiZ3W19X9zQyrsnABYqK1yE
+         Rya8by659BbtHbNSgvOSOTAZ9zR7pnMpRu5v8nZUvHa/Kuu5bEUrV16oBzAy0GU/dvu1
+         4EMqXwRgLQ07k23xPFnoBjp+tsOtLCfeTpQH/yqKddxYzsmipNLZYyxSqPIuCeQ01npz
+         O2rGmYB+GCe4GrXacPlU+OAQMoMnggP+cQNYZGEHdt7nEk5xNHVeZ+khQjB5anaxVn1X
+         7XqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAkeaZMIQaU4VBq1S1hKmxsjcosWp8KppaVNTqQDNeGEzXgb+XxLex1WlvlTZh9pdmJ2k=@vger.kernel.org, AJvYcCWOI+WG5uYOZpl/foQjcB5UDQV9fJTEJn33V9QfMN+KiX+0AGVJD2cjb43FIVqJaBIIzNH1Zv3REl+6iQGh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyild1QYSkKS9GLobFjBB4tKxTM7/QYqhIuQN2NJZCA8sD7YbVk
+	RT33xMeUwG0P3Zx6sjqw4rhIs9/oHIQ6GVglVHJOcwZq6ceWekDcTRqE
+X-Gm-Gg: ASbGncv7piwLxYH4OSj3viDjAT87Eu9n2idknqit89jrOJyThPOTwvpHME7X9EG6PxD
+	Luov6xGPlcajc6A2NCb6DuukL0QXOaI8lHZ511B/saoQ6ZTPFLzhRmkZNpSEDKBvbn5pFZ7QOgD
+	xJ27s1/2QY0+oGAVeqw9LNF15yp7Kkls0NeIv5YP+8Ybt2+FJlAsY/AcUPqJ7a1isuoA6k85IpJ
+	GJQO4m1zcHwpM4L+HqBqWaeG4Wc0kjFMuEEQaXfYUdxFqKmLvFHlWnBbW5XdNq3g2sM9TNeuVTt
+	ToUluqaluvbgDDqWM5JFu1amRblxyDvcD6jKLDFCvBCKQGhJIrrOiM2kwDgKP8eRQzkec4bCbUH
+	+RSE=
+X-Google-Smtp-Source: AGHT+IFUumMzJzvqvpxmGPjZnkmRW5rFTArp8vC8CThjKAAYpNnj8kKqRT30XmVCnawZfiWJGX6W0A==
+X-Received: by 2002:a05:6a00:928c:b0:742:a77b:8c4 with SMTP id d2e1a72fcca58-74ce8824f1bmr25686003b3a.3.1751959398385;
+        Tue, 08 Jul 2025 00:23:18 -0700 (PDT)
+Received: from localhost.localdomain ([43.129.244.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce429c138sm10826254b3a.117.2025.07.08.00.23.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 00:23:18 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: ast@kernel.org,
+	daniel@iogearbox.net
+Cc: john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Menglong Dong <dongml2@chinatelecom.cn>
+Subject: [PATCH bpf-next v2] bpf: make the attach target more accurate
+Date: Tue,  8 Jul 2025 15:21:40 +0800
+Message-Id: <20250708072140.945296-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Luka <luka.2016.cs@gmail.com>
-Date: Tue, 8 Jul 2025 15:21:36 +0800
-X-Gm-Features: Ac12FXzd4DMBrD9OuCc4Pv4dRViMZHCfjGnBhuXQCUAEp3a_lF2ko6fZ2IO8Q84
-Message-ID: <CALm_T+2AUcGgb+ukfGg5a3=ibQzRe93gHAzjh6XUubCePk=Mig@mail.gmail.com>
-Subject: [Bug] WARNING in vt_do_diacrit in Linux Kernel v6.14
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Dear Linux Kernel Maintainers,
+For now, we lookup the address of the attach target in
+bpf_check_attach_target() with find_kallsyms_symbol_value or
+kallsyms_lookup_name, which is not accurate in some cases.
 
-I hope this message finds you well.
+For example, we want to attach to the target "t_next", but there are
+multiple symbols with the name "t_next" exist in the kallsyms. The one
+that kallsyms_lookup_name() returned may have no ftrace record, which
+makes the attach target not available. So we want the one that has ftrace
+record to be returned.
 
-I am writing to report a potential vulnerability I encountered during
-testing of the Linux Kernel version v6.14.
+Meanwhile, there may be multiple symbols with the name "t_next" in ftrace
+record. In this case, the attach target is ambiguous, so the attach should
+fail.
 
-Git Commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557 (tag: v6.14)
+Introduce the function bpf_lookup_attach_addr() to do the address lookup,
+which is able to solve this problem.
 
-Bug Location: drivers/tty/vt/keyboard.c
+Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+---
+v2:
+- Lookup both vmlinux and modules symbols when mod is NULL, just like
+  kallsyms_lookup_name().
 
-Bug report: https://pastebin.com/yuVJpati
+  If the btf is not a modules, shouldn't we lookup on the vmlinux only?
+  I'm not sure if we should keep the same logic with
+  kallsyms_lookup_name().
 
-Complete log: https://pastebin.com/qKnipvvK
+- Return the kernel symbol that don't have ftrace location if the symbols
+  with ftrace location are not available
+---
+ kernel/bpf/verifier.c | 77 ++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 72 insertions(+), 5 deletions(-)
 
-Entire kernel config: https://pastebin.com/MRWGr3nv
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 53007182b46b..4bacd0abf207 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -23476,6 +23476,73 @@ static int check_non_sleepable_error_inject(u32 btf_id)
+ 	return btf_id_set_contains(&btf_non_sleepable_error_inject, btf_id);
+ }
+ 
++struct symbol_lookup_ctx {
++	const char *name;
++	unsigned long addr;
++	bool ftrace_addr;
++};
++
++static int symbol_callback(void *data, unsigned long addr)
++{
++	struct symbol_lookup_ctx *ctx = data;
++
++	ctx->addr = addr;
++	if (!ftrace_location(addr))
++		return 0;
++
++	if (ctx->ftrace_addr)
++		return -EADDRNOTAVAIL;
++	ctx->ftrace_addr = true;
++
++	return 0;
++}
++
++static int symbol_mod_callback(void *data, const char *name, unsigned long addr)
++{
++	if (strcmp(((struct symbol_lookup_ctx *)data)->name, name) != 0)
++		return 0;
++
++	return symbol_callback(data, addr);
++}
++
++/**
++ * bpf_lookup_attach_addr: Lookup address for a symbol
++ *
++ * @mod: kernel module to lookup the symbol, NULL means to lookup both vmlinux
++ * and modules symbols
++ * @sym: the symbol to resolve
++ * @addr: pointer to store the result
++ *
++ * Lookup the address of the symbol @sym. If multiple symbols with the name
++ * @sym exist, the one that has ftrace location is preferred. If more
++ * than 1 has ftrace location, -EADDRNOTAVAIL will be returned.
++ *
++ * Returns: 0 on success, -errno otherwise.
++ */
++static int bpf_lookup_attach_addr(const struct module *mod, const char *sym,
++				  unsigned long *addr)
++{
++	struct symbol_lookup_ctx ctx = { .addr = 0, .name = sym };
++	const char *mod_name = NULL;
++	int err = 0;
++
++#ifdef CONFIG_MODULES
++	mod_name = mod ? mod->name : NULL;
++#endif
++	if (!mod_name)
++		err = kallsyms_on_each_match_symbol(symbol_callback, sym, &ctx);
++
++	if (!err && !ctx.addr)
++		err = module_kallsyms_on_each_symbol(mod_name, symbol_mod_callback,
++						     &ctx);
++
++	if (!ctx.addr)
++		err = -ENOENT;
++	*addr = err ? 0 : ctx.addr;
++
++	return err;
++}
++
+ int bpf_check_attach_target(struct bpf_verifier_log *log,
+ 			    const struct bpf_prog *prog,
+ 			    const struct bpf_prog *tgt_prog,
+@@ -23729,18 +23796,18 @@ int bpf_check_attach_target(struct bpf_verifier_log *log,
+ 			if (btf_is_module(btf)) {
+ 				mod = btf_try_get_module(btf);
+ 				if (mod)
+-					addr = find_kallsyms_symbol_value(mod, tname);
++					ret = bpf_lookup_attach_addr(mod, tname, &addr);
+ 				else
+-					addr = 0;
++					ret = -ENOENT;
+ 			} else {
+-				addr = kallsyms_lookup_name(tname);
++				ret = bpf_lookup_attach_addr(NULL, tname, &addr);
+ 			}
+-			if (!addr) {
++			if (ret) {
+ 				module_put(mod);
+ 				bpf_log(log,
+ 					"The address of function %s cannot be found\n",
+ 					tname);
+-				return -ENOENT;
++				return ret;
+ 			}
+ 		}
+ 
+-- 
+2.39.5
 
-Root Cause Analysis:
-The vt_do_diacrit() function in the virtual terminal subsystem
-performs a write to a user-space pointer via __put_user_4() without
-ensuring that the destination address is mapped and accessible.
-Under conditions such as memory allocation failure or page table
-unavailability, this leads to a fault during execution of the mov
-%eax, (%rcx) instruction.
-
-At present, I have not yet obtained a minimal reproducer for this
-issue. However, I am actively working on reproducing it, and I will
-promptly share any additional findings or a working reproducer as soon
-as it becomes available.
-
-Thank you very much for your time and attention to this matter. I
-truly appreciate the efforts of the Linux kernel community.
-
-Best regards,
-Luka
 
