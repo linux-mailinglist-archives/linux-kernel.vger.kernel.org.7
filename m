@@ -1,121 +1,168 @@
-Return-Path: <linux-kernel+bounces-721377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8A62AFC865
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:28:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79B3DAFC867
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F0F056317D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:27:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3134F1BC4D7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D7C28469F;
-	Tue,  8 Jul 2025 10:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A6A2BE03D;
+	Tue,  8 Jul 2025 10:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="goyCVYPT"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="Xm8Sccn6"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E4228315D
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 10:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E922749E3
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 10:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751970443; cv=none; b=W+suY5YoSVWBJoSSSVtSg7skguuUMGfsF5Qr4Y9IQaRhefWCZ/ln4u+EdqjsCgpaCXYWd6+gWUQBZzGs+ELt+lmKw8nzRv0VjorgngVjD7vfcXpwXT2cmi9FfZdNvDlenkmdH21FQmRBeGRaGzlO077FuyFZ0GtxPaXR35DO5yo=
+	t=1751970485; cv=none; b=loqObk1mMGizo3fgtkvOH16Hf3eVeQXE7E8Cm66h+/jKo7YTFB/0mkXE9VoM8GAOKUl3BZobR7lB2ceQ0nRxhTkChu5fmSRWo2cvEEq1DF1zI6jjZb6obAO1dOSs09yvfrs/9V15zRCv/kEKU1qjhVTRBGokg++fduZ6J+pjwEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751970443; c=relaxed/simple;
-	bh=14manGusg8Qgqx1rKMesK88ejf15XhHcScCCmKXCkgk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=FPaMU4tvx7mxXany6DyzXVHtrgGbio0/Uqey3ff6eBthYUHyL6OelCH6t3ykoaYqM2v6LHhpE+bmoEg82EtktVrYX1S9rfzc0ALnNIRQGB5KRXIBQO6tigNOoD/7qQfujTXvGKaBwzDgJ05JIGsCQrz2IGRMra4GHlm7Wq+jBsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=goyCVYPT; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250708102712euoutp02be3f81ae27ea666ad842e98e973cdae9~QP9OTiN4R2035220352euoutp02X
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 10:27:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250708102712euoutp02be3f81ae27ea666ad842e98e973cdae9~QP9OTiN4R2035220352euoutp02X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1751970433;
-	bh=CvHwMYp2XIGbJnf/9QWS8C8NtBZtZV/va6aW8p1Pd0k=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=goyCVYPTGJec31NpQ9MuiZWPNwVsd9Tmt+dtufXuoWH9fESY6GRmHCV3IogYjxBwH
-	 FW8wi7eGBCXxHU70+QuQ5gt30FB8PoRsvUbcIZug6xKW+KWkUZqnck9E+kKu8ENViC
-	 LMtHzrZh60YIQnqMgYskMSyViJ/QRqZzQZ1yrD5A=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250708102712eucas1p1199b906d3c40b7ff5066a92aacd7b14c~QP9NsRWhM2715427154eucas1p1l;
-	Tue,  8 Jul 2025 10:27:12 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250708102710eusmtip12ad336592b93f91919ed398faf3d4122~QP9LytFDz1124711247eusmtip1B;
-	Tue,  8 Jul 2025 10:27:10 +0000 (GMT)
-Message-ID: <69b177dc-c149-40d3-bbde-3f6bad0efd0e@samsung.com>
-Date: Tue, 8 Jul 2025 12:27:09 +0200
+	s=arc-20240116; t=1751970485; c=relaxed/simple;
+	bh=xCTHOoLkdgQybEw/3ClPgB6sXkkKcXIzJacv5a1kNQ4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=ASa8DJhOwHui3G3L+Fzvipo57QtJ/auUc42kEiDX/JQUxFV48Ca90ICNMN3a7HN4kSF7LrB3GrUyT7SWzcf8JMLFBwgQx9TYSxqS3toxeSOHxbnLUTXCBsAsJDYyt3qef+nzq/QypZpDOguZWoZEtJ/lCh4EWzQpBfYtpORjzwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=Xm8Sccn6; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ae35f36da9dso796765866b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 03:28:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1751970481; x=1752575281; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JVV21gJNFvfXkrcluM+ctHAzr5MoawVmcTeL4xITtek=;
+        b=Xm8Sccn6g+fIOw/1UgTMXMfJHRkXTxHeh7lnyug324Q2Yfixn91FM7iYrX/oWchM+o
+         uVidExvPDCJ8Gi00lB+O269f0FFAKyh/qiLJC9sLZzm5oV/5F9ev9NO6ENxsh8ghspYt
+         Zz/klc9S2ivwIDOXrOkWi3bt7k5PPcjKficHRssokf4hps3ruL5OCaBn1a7WkxcDOn7n
+         JT/4qibsfY4thAz92QSeESeRMNO0c3R+cZB380KWx2lNSeu0aP0MxQkk7LGHdj1hs+hE
+         k7G6sum77esRt1CsTIMhqc5ZVloi6dY4mdhLYzh2zWWo9SshbBj7biAqwadrUveGB5U4
+         agiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751970481; x=1752575281;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JVV21gJNFvfXkrcluM+ctHAzr5MoawVmcTeL4xITtek=;
+        b=A6rZUZVOP1wmGbsnXg3dRRXd8dBiyXBjGHpwKoUIU4RCb7cbj5bJX8Hdirc3+97zGF
+         jJ2Ny95x/FuPWQHm0C7RGr/qQjYz8iDKYQioQAvsMKlZkD+2vnnFy8QRLlpjANxdpf3s
+         sfyBoMnZh2NWt5Y+Ij7Ox+cJepgPVr5sVv5eOJqWUyLSJWmbLI//O1UuSxfePf4fvHCC
+         JV0Gegs9rDd7z2HTlBcyBVQ4e+b4gpEkAHIgs+CFKSbMaQCGtxWW20ntF4prQKcqFHGX
+         3l/C6c+I8FMfTNlowLdXu3B+d2Xq9BwPh7BSdA/5I0yu9OI0LmSJ62UGEmxg8zIcRau5
+         7mDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqi3BSrcVm6f0oSobw842CKR5qLa3TVPnev9fosrF1T9SwkBLEgsRsmTI7AXlEJ4iMajZ5Erd0kCo63rk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIga1MO+C66KucyknifGo5D7HjQnzAHqXvIZZspUqMAkcxEQai
+	T58CMTvUIOcWoWaQtebdT2gt0J80KtuSpd2aGFf64/hP2Qz9NqyqX7ZdyoBFbaEtbQk=
+X-Gm-Gg: ASbGnct/ck2kDj0FOesOwHJ+k6oeNSMD9oV5abC49qT4A568qpz7MjtiKrPeJaYhNDw
+	xLWIMyt79I+C+hl9ZHb4UrLGl0o+4ln2aSlWOmwLpAPoFFhkfAwiE/UtuNoOWAc5Zhs6ZjrP3c6
+	143NsC1qfvfOsoNzSBfF1/I19IwWQqyaiYINx+0KOA6wJTZ/VnTgAFKTbKKXmcorTu/FDoppAxU
+	nTg0C1tuj+0OBrg7GhQDA87Vl8mURGIF7ZVYv2Ss3wOlrUeMe9JKTdI3QP3A2iSF+z6W6JugLhQ
+	xsXW2ds0xIpmkSx3b0c7x7pojAqH3cMF6fxGMbgnrPWsi/dQldCa+/E4vSVttHbWQX5B7uBzwnf
+	o2HXgo0Uq0dAZ8asu4GkVUcF2KJTKufw=
+X-Google-Smtp-Source: AGHT+IHaVz54M2Q9j7+0i4eoVqmwHKKm2/tqIC6pa1mIZEuAjoN4jfZ6/QMktPzCNPmSHVfF4oInMA==
+X-Received: by 2002:a17:906:751:b0:ae3:b22c:2ee8 with SMTP id a640c23a62f3a-ae3fbd8b392mr1292958866b.37.1751970481431;
+        Tue, 08 Jul 2025 03:28:01 -0700 (PDT)
+Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6b6007fsm860633366b.166.2025.07.08.03.28.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jul 2025 03:28:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] dma-mapping: migrate to physical address-based API
-To: Christoph Hellwig <hch@lst.de>, Leon Romanovsky <leon@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Madhavan Srinivasan
-	<maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
-	Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Will
-	Deacon <will@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang
-	<jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, Alexander Potapenko
-	<glider@google.com>, Marco Elver <elver@google.com>, Dmitry Vyukov
-	<dvyukov@google.com>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
-	Desnoyers <mathieu.desnoyers@efficios.com>, =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?=
-	<jglisse@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, iommu@lists.linux.dev,
-	virtualization@lists.linux.dev, kasan-dev@googlegroups.com,
-	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org, Jason Gunthorpe
-	<jgg@ziepe.ca>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250630133839.GA26981@lst.de>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20250708102712eucas1p1199b906d3c40b7ff5066a92aacd7b14c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250625131920eucas1p271b196cde042bd39ac08fb12beff5baf
-X-EPHeader: CA
-X-CMS-RootMailID: 20250625131920eucas1p271b196cde042bd39ac08fb12beff5baf
-References: <CGME20250625131920eucas1p271b196cde042bd39ac08fb12beff5baf@eucas1p2.samsung.com>
-	<cover.1750854543.git.leon@kernel.org>
-	<35df6f2a-0010-41fe-b490-f52693fe4778@samsung.com>
-	<20250627170213.GL17401@unreal> <20250630133839.GA26981@lst.de>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 08 Jul 2025 12:28:00 +0200
+Message-Id: <DB6LPBOU5TDL.13B4A6U4NQQZQ@fairphone.com>
+Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] interconnect: qcom: Add SM7635 interconnect
+ provider driver
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>, "Georgi Djakov"
+ <djakov@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250625-sm7635-icc-v1-0-8b49200416b0@fairphone.com>
+ <20250625-sm7635-icc-v1-2-8b49200416b0@fairphone.com>
+ <3f8bcecb-4c5e-48b1-98be-96f3c0c8329e@oss.qualcomm.com>
+In-Reply-To: <3f8bcecb-4c5e-48b1-98be-96f3c0c8329e@oss.qualcomm.com>
 
-On 30.06.2025 15:38, Christoph Hellwig wrote:
-> On Fri, Jun 27, 2025 at 08:02:13PM +0300, Leon Romanovsky wrote:
->>> Thanks for this rework! I assume that the next step is to add map_phys
->>> callback also to the dma_map_ops and teach various dma-mapping providers
->>> to use it to avoid more phys-to-page-to-phys conversions.
->> Probably Christoph will say yes, however I personally don't see any
->> benefit in this. Maybe I wrong here, but all existing .map_page()
->> implementation platforms don't support p2p anyway. They won't benefit
->> from this such conversion.
-> I think that conversion should eventually happen, and rather sooner than
-> later.
+Hi Konrad,
 
-Agreed.
+On Fri Jun 27, 2025 at 2:48 PM CEST, Konrad Dybcio wrote:
+> On 6/25/25 11:13 AM, Luca Weiss wrote:
+>> Add driver for the Qualcomm interconnect buses found in SM7635 based
+>> platforms. The topology consists of several NoCs that are controlled by
+>> a remote processor that collects the aggregated bandwidth for each
+>> master-slave pairs.
+>>=20
+>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+>> ---
+>
+> [...]
+>
+>> +static const struct of_device_id qnoc_of_match[] =3D {
+>> +	{ .compatible =3D "qcom,sm7635-aggre1-noc",
+>> +	  .data =3D &sm7635_aggre1_noc},
+>> +	{ .compatible =3D "qcom,sm7635-aggre2-noc",
+>> +	  .data =3D &sm7635_aggre2_noc},
+>> +	{ .compatible =3D "qcom,sm7635-clk-virt",
+>> +	  .data =3D &sm7635_clk_virt},
+>> +	{ .compatible =3D "qcom,sm7635-cnoc-cfg",
+>> +	  .data =3D &sm7635_cnoc_cfg},
+>> +	{ .compatible =3D "qcom,sm7635-cnoc-main",
+>> +	  .data =3D &sm7635_cnoc_main},
+>> +	{ .compatible =3D "qcom,sm7635-gem-noc",
+>> +	  .data =3D &sm7635_gem_noc},
+>> +	{ .compatible =3D "qcom,sm7635-lpass-ag-noc",
+>> +	  .data =3D &sm7635_lpass_ag_noc},
+>> +	{ .compatible =3D "qcom,sm7635-mc-virt",
+>> +	  .data =3D &sm7635_mc_virt},
+>> +	{ .compatible =3D "qcom,sm7635-mmss-noc",
+>> +	  .data =3D &sm7635_mmss_noc},
+>> +	{ .compatible =3D "qcom,sm7635-nsp-noc",
+>> +	  .data =3D &sm7635_nsp_noc},
+>> +	{ .compatible =3D "qcom,sm7635-pcie-anoc",
+>> +	  .data =3D &sm7635_pcie_anoc},
+>> +	{ .compatible =3D "qcom,sm7635-system-noc",
+>> +	  .data =3D &sm7635_system_noc},
+>
+> One line per entry, please
+>
+> In addition to what Dmitry asked for, please also look into porting
+> QoS settings - those will require additional clock references in the ICC
+> nodes and as such, the bindings will be altered (which we'd prefer to get
+> right from the getgo).
 
-Applied patches 1-7 to my dma-mapping-next branch. Let me know if one 
-needs a stable branch with it.
+I've forgotten to do this for v2, which I've just sent.
 
-Leon, it would be great if You could also prepare an incremental patch 
-adding map_phys callback to the dma_maps_ops, so the individual 
-arch-specific dma-mapping providers can be then converted (or simplified 
-in many cases) too.
+But we already have the clock references in the bindings, so the
+bindings should be final, also when QoS is added, so just a driver patch
+then.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+I will put this on my todo list for a future patch to enable this, if
+that's fine with you.
+
+> As far as testing goes, there may not be any apparent perf changes, but
+> if you get the clocks list wrong, the device will lock up at boot (unless
+> you're booting with clk_ignore_unused and friends)
+
+Ack
+
+Regards
+Luca
+
+>
+> Konrad
 
 
