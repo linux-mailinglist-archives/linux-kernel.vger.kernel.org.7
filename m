@@ -1,109 +1,87 @@
-Return-Path: <linux-kernel+bounces-721987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19121AFD067
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:17:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA5CAAFD06D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:17:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1979E18851A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:17:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9E8E3A85FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ABA32E3AE8;
-	Tue,  8 Jul 2025 16:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36CFA2E3AE6;
+	Tue,  8 Jul 2025 16:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Eok7irmG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nteUQ4Mq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE062E06D2;
-	Tue,  8 Jul 2025 16:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C3821B199;
+	Tue,  8 Jul 2025 16:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751991410; cv=none; b=HKYBk7duVOEvY2nkt+Lm3Sya2TiKYCBpfafM9AOmVKWw93Bg2xaFWqMtkg6Lf9944lqWPcVnd4c/ZrzacfNmW4obwZXpK9diKuWBqd1jLUF6+RNLouCevjqDT7O8Tr4ek7+ETY+VBkPqWW/fD7PZ8WNoRC79+d038ngw7HUJ6+I=
+	t=1751991423; cv=none; b=ct6m+PX7f1wKkZdL2BvxozD9eTDqm4G4g/HvTI694bwI9bE2ttjnUpQMZuWYZ17wpVmuAAa9s90eV6va2fahC2T1QV1svLZwXrCa4VC7gy98oToKs8zjEdMUkwJuLRmlI2/INB+dcvA8Q02iEL9RQlxBX2Atd25I7mKHhD/Th2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751991410; c=relaxed/simple;
-	bh=oLmz6Fo1/TvWmKFf6rPPDzGVB5g4NzA93/BjJnvHq2o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cZRj/NowOJ9SHrYuLy7cOwPciAoBBkQImNbnVaUpGQjMprXRme+nA6ueN0s3JSJ7ZRyKo0K+8sNjv5hzy/xwo+GbAIwhDQ2lcleR/f6ycmadP4mMNqrkbV0Wm/9bQNsDSg3hamYoMDNXSsvyY/RYDqFVfNF+MTAWsGyECvh17PA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Eok7irmG; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751991409; x=1783527409;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=oLmz6Fo1/TvWmKFf6rPPDzGVB5g4NzA93/BjJnvHq2o=;
-  b=Eok7irmG6avLOVrewEHdNFLcPU/+kLThIPL2Hzh2iLTL0Ewvf166/Ocy
-   e6m2s9cjIwLeHEssNYGkw+57x/zKKlUPpla9nBZG7bUTlFwMcrlFaLjNR
-   k+gmpYUbWtCFgYrKDBn9YmWbsTZihiAGPYyajY67gdwUB4jyjBQga62dk
-   Hiu/oYnLXhDIygiYp36cECDqpuEh2lEM3Dbsuj020gyezfdqyWnbVtxJg
-   eUWLrcjE2Q9y5A1lRIfxyBfEpCl7zxX2TssU6QU/y5j02zgNdV8EG7PSN
-   0D9yKIdIVqQyc5HbRglmlh/HbLkJLpEd3FqlRnkMt2ICw2jOe1ugwGxs/
-   g==;
-X-CSE-ConnectionGUID: vHrD9/W8SjaRZAwrhiTy9Q==
-X-CSE-MsgGUID: r4R+yrjeTXuAPX3xddsTmw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="53448668"
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="53448668"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 09:16:48 -0700
-X-CSE-ConnectionGUID: d4BrDOQBSJ60sdDivdIpEQ==
-X-CSE-MsgGUID: tUSkg3WkTcWC7TQM13IyDA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="154947950"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO mdjait-mobl.intel.com) ([10.245.245.81])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 09:16:45 -0700
-From: Mehdi Djait <mehdi.djait@linux.intel.com>
-To: sakari.ailus@linux.intel.com,
-	laurent.pinchart@ideasonboard.com
-Cc: jacopo.mondi@ideasonboard.com,
-	hverkuil@xs4all.nl,
-	kieran.bingham@ideasonboard.com,
-	mchehab@kernel.org,
-	hdegoede@redhat.com,
-	arnd@arndb.de,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mehdi Djait <mehdi.djait@linux.intel.com>
-Subject: [PATCH] media: i2c: Kconfig: Select COMMON_CLK for ACPI-based systems
-Date: Tue,  8 Jul 2025 18:16:37 +0200
-Message-ID: <20250708161637.227111-1-mehdi.djait@linux.intel.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1751991423; c=relaxed/simple;
+	bh=nbGCmYL+a3SA2RRWksLD7uACXMII0cs1xS2gIUHJeeI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ark8hvRjZx9pU9WPrntk8qP8SiHgWrAc9oMYncMAVNRgwoXFbCIgx/k9NvOV2gNRHtRkB0i+1SyQyEcqoiZvuwIBbSgT+xisXaTseJrf0Q+7N0t8AL876Fj3iEScRR4X2qpVT2sG9Tvoxke3CXeyySyodtyHl0ITPAa7CwG7KjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nteUQ4Mq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC665C4CEED;
+	Tue,  8 Jul 2025 16:17:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751991423;
+	bh=nbGCmYL+a3SA2RRWksLD7uACXMII0cs1xS2gIUHJeeI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nteUQ4MqJaaomEKaAVmOyO0KsiKqr+K9XvaCSQ8Y3SsSGh+9GrwopG/RPxPgam5h/
+	 I/grsXO8JtoslYXVSZepAC/UwZmigtruMZn+mIHTEzWbvpnj7q6MMoqZPsgbEjdA73
+	 +wfRMtVKGp0F2nMARO1vGmmJyUQxBleYTDhnauY5PNEm0MRpxdcEeHH3t1kPn5GvZ3
+	 LZ759JuwEtz0LvoGJKoktlENXDQ1680Jqh7B3WhSccqWpc9SKl2wi0aVVjdO3O0TVH
+	 PyiGbzxj8xWDB4z48EJ8nKiyMyzC6a/nRN9D57PMu2RBXYKDqonKfwmfyaFC94DRR1
+	 KAZEzGBV+If0Q==
+Date: Tue, 8 Jul 2025 11:17:01 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	linux-clk@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Stefan Schmidt <stefan.schmidt@linaro.org>,
+	Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 1/6] dt-bindings: clock: qcom,sm8450-videocc: Document
+ X1E80100 compatible
+Message-ID: <175199142127.518048.16838716470013972083.robh@kernel.org>
+References: <20250701-x1e-videocc-v1-0-785d393be502@linaro.org>
+ <20250701-x1e-videocc-v1-1-785d393be502@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250701-x1e-videocc-v1-1-785d393be502@linaro.org>
 
-ACPI-based systems are required to create and register a fixed rate clock
-using the new v4l2 helper devm_v4l2_sensor_clk_get() that uses the
-common clk framework.
 
-Ensure that COMMON_CLK is selected.
+On Tue, 01 Jul 2025 19:28:33 +0200, Stephan Gerhold wrote:
+> X1E80100 videocc is largely identical to SM8550, but needs slightly
+> different PLL frequencies. Add a separate qcom,x1e80100-videocc compatible
+> to the existing schema used for SM8550.
+> 
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Signed-off-by: Mehdi Djait <mehdi.djait@linux.intel.com>
----
- drivers/media/i2c/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index e68202954a8f..f974a0e0dcec 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -31,6 +31,7 @@ menuconfig VIDEO_CAMERA_SENSOR
- 	select MEDIA_CONTROLLER
- 	select V4L2_FWNODE
- 	select VIDEO_V4L2_SUBDEV_API
-+	select COMMON_CLK if ACPI && !HAVE_LEGACY_CLK
- 	default y
- 
- if VIDEO_CAMERA_SENSOR
--- 
-2.49.0
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
