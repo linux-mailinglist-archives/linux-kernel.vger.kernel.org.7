@@ -1,97 +1,108 @@
-Return-Path: <linux-kernel+bounces-721612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF78AFCBA3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:16:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07BE0AFCB5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F50A1778BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:14:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5899516FF7D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421AE2BE046;
-	Tue,  8 Jul 2025 13:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023CB2DBF5D;
+	Tue,  8 Jul 2025 13:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="q7PMcCMY"
-Received: from smtp95.ord1d.emailsrvr.com (smtp95.ord1d.emailsrvr.com [184.106.54.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIZ2F5MI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A1A1EBA19
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 13:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=184.106.54.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA621F4CB2;
+	Tue,  8 Jul 2025 13:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751980309; cv=none; b=PzLNNk+lmqDjIXf/CuR4WAC2nPtiaWmzDljrl5IxNjJ395uYwbmyb5wf1wZKfNuDb+fNDH/M+dcwhjBWZK8fT1imVA0w0lmijdlu1/VXaVWor/9ceqEVaOyEPVgLCj46+C/N90Mzvt+pdwcavRYoCnS17dkbv1dmMoeuJ4eYm6M=
+	t=1751980008; cv=none; b=Mf2zMPexJRVXojT09ZKwD8Jr0sW87qd7DPl/DWaFh3nVJN9znRXHapYCNNeCJp364Ut53WCKnCnksZXON9fe1WRqg5abrMG7Y2sB79rp3AkKgsHiAhG5eCsIAjyfQ9mSLWaG9N+v5V94lZvml1Y+s9HlHJ2gPsHDRiVD/8HBumA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751980309; c=relaxed/simple;
-	bh=dxPZ+Fuaa5k1y4O0VEmhEEArJ3pZOb3duRBLFdvU4y0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d+lql8BcpGzaUammil6KayTfCbh/Ml6YzcUlZdE9Mdz29Pr6BpsYwZnjEY0QnV9Etb5XBb5c50M27bbDXSz5jEmkMCloHjPQq/5shQNciQJKftz8WaxJOOBFvHAn8RbL0NiRzUGWTWlkI8LE3oneeKDfM+6iXjYWST/omIyaUyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=q7PMcCMY; arc=none smtp.client-ip=184.106.54.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1751979996;
-	bh=dxPZ+Fuaa5k1y4O0VEmhEEArJ3pZOb3duRBLFdvU4y0=;
-	h=From:To:Subject:Date:From;
-	b=q7PMcCMYko7/gJnkF+z8FLNgz9c+caLCnd5/vAgpZomXqbQwfnqUrLUULR+dAflON
-	 FKD7wkOabS273e2px2viZIxJdYirtUUchubv8W9IiGbsKi/FwT9VRDj3EO3uIwcU2e
-	 gwFHHs0o9DM3/i9qXYki45TW4ayAzgvyzTKRBs9E=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp20.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id A3A6DC01E0;
-	Tue,  8 Jul 2025 09:06:35 -0400 (EDT)
-From: Ian Abbott <abbotti@mev.co.uk>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] comedi: comedi_test: Fix possible deletion of uninitialized timers
-Date: Tue,  8 Jul 2025 14:06:27 +0100
-Message-ID: <20250708130627.21743-1-abbotti@mev.co.uk>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1751980008; c=relaxed/simple;
+	bh=XYrkKyZgWY8IZZADaNP4i2qGUIJ6T7ql6F4XTIyDbng=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Bh0NxQpPPv01l4QcJakZ7fJqzsjSsOhJA542Z8Pro/cK117ukMHfA8Kh60hPQl4EWMa/jnqIsqsowlzx5YgbXkhgV8Ky0teDPUinPIbyjZSLtaotTodieYYDAMiyOeU2rP7voeIJ3wGKwj6WMpiWJiOOYVsNa3Jt9Tv+8l4+SWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SIZ2F5MI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 823DDC4CEED;
+	Tue,  8 Jul 2025 13:06:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751980007;
+	bh=XYrkKyZgWY8IZZADaNP4i2qGUIJ6T7ql6F4XTIyDbng=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=SIZ2F5MIVn07HFPiPituRdZFG44LNOIGtrVnYx7LilEbdLOmD4bi9B5falz4Br5Bp
+	 8P1HY9/3aoQ82h2ONhMJVH4VTfgE8dEsgzvdFN1092G2B4C6WcT5nEw8Lvow6QaUuI
+	 LL+iwsQCXe/X6Iu9FJ3D1YgxSbg36sajctGKmSE8uk/+uWravLegj4xPDpc8zHFu4n
+	 0Zbc4R3hh17hjiOBT4Q7JzjZyPuvxmPRZ0dlxknkdg34wcHvNtvz+APaoxmJrBL3bq
+	 Tbxhn8VpxqYfe3OQrngk+fPd6+S6fliqWO2mgB280BFP9ynGjoZIo2FUh4Ao6LqbJN
+	 lf3t/wv0IL+dQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Classification-ID: fe9b16f4-105d-419e-8554-d2e3f51285c9-1-1
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 08 Jul 2025 15:06:43 +0200
+Message-Id: <DB6P2UQM08LH.2ALUM6EKC3Q45@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Asahi Lina" <lina+kernel@asahilina.net>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v11 1/4] rust: types: Add Ownable/Owned types
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>, "Oliver Mangold"
+ <oliver.mangold@pm.me>
+X-Mailer: aerc 0.20.1
+References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me>
+ <20250618-unique-ref-v11-1-49eadcdc0aa6@pm.me>
+ <DB1IPFNLFDWV.2V5O73DOB2RV6@kernel.org> <aGtv9qs682gTyQWX@mango>
+ <DB5PPGOWNW4K.2C5A4UE9V9IEF@kernel.org> <aGzrZqIrStGD_UBp@mango>
+ <CANiq72kWFYS-inzFPTQAGdPRBr7MffZLR9q7iWiT_j2w_e99MQ@mail.gmail.com>
+In-Reply-To: <CANiq72kWFYS-inzFPTQAGdPRBr7MffZLR9q7iWiT_j2w_e99MQ@mail.gmail.com>
 
-In `waveform_common_attach()`, the two timers `&devpriv->ai_timer` and
-`&devpriv->ao_timer` are initialized after the allocation of the device
-private data by `comedi_alloc_devpriv()` and the subdevices by
-`comedi_alloc_subdevices()`.  The function may return with an error
-between those function calls.  In that case, `waveform_detach()` will be
-called by the Comedi core to clean up.  The check that
-`waveform_detach()` uses to decide whether to delete the timers is
-incorrect.  It only checks that the device private data was allocated,
-but that does not guarantee that the timers were initialized.  It also
-needs to check that the subdevices were allocated.  Fix it.
+On Tue Jul 8, 2025 at 12:16 PM CEST, Miguel Ojeda wrote:
+> On Tue, Jul 8, 2025 at 11:57=E2=80=AFAM Oliver Mangold <oliver.mangold@pm=
+.me> wrote:
+>>
+>> Note, though, that I already moved it from types.rs to types/ownable.rs =
+on
+>> request. It seems to me different people here have different ideas where=
+ it
+>> should be placed. I feel now, that it would make sense to come to an
+>> agreement between the interested parties about where it should finally b=
+e
+>> placed, before I move it again. Could I ask that we settle that question
+>> once and for all before my next revision?
+>
+> Yeah, if there is a disagreement with something said previously, then
+> it should be resolved before starting to ping-pong between approaches
+> with more and more patch versions. Reviewers can forget or they may
+> not have read an earlier comment, but you did the right thing
+> mentioning there is such a conflict in opinions.
 
-Fixes: 73e0e4dfed4c ("staging: comedi: comedi_test: fix timer lock-up")
-Cc: <stable@vger.kernel.org> # 6.15+
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+Yeah, I checked and that was Andreas on v9. @Andreas what do you think?
+
+I think we should just get rid of `types.rs` and split it into:
+
+* `opaque.rs`
+* `foreign.rs`
+* `scope_guard.rs` (this might need a better name)
+
+`Either` can just be removed entirely, `AlwaysRefcounted` & `ARef`
+should be in the `sync` module (I already created an issue for this) as
+well as `NotThreadSafe` (or we could create a `marker` module for that).
+Thoughts?
+
 ---
-Patch fails to apply to kernels before 6.15, requiring backports.
----
- drivers/comedi/drivers/comedi_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/comedi/drivers/comedi_test.c b/drivers/comedi/drivers/comedi_test.c
-index 9747e6d1f6eb..7984950f0f99 100644
---- a/drivers/comedi/drivers/comedi_test.c
-+++ b/drivers/comedi/drivers/comedi_test.c
-@@ -792,7 +792,7 @@ static void waveform_detach(struct comedi_device *dev)
- {
- 	struct waveform_private *devpriv = dev->private;
- 
--	if (devpriv) {
-+	if (devpriv && dev->n_subdevices) {
- 		timer_delete_sync(&devpriv->ai_timer);
- 		timer_delete_sync(&devpriv->ao_timer);
- 	}
--- 
-2.47.2
-
+Cheers,
+Benno
 
