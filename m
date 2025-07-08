@@ -1,216 +1,197 @@
-Return-Path: <linux-kernel+bounces-721851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9CC0AFCEA7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:11:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F441AFCEA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C11E189B176
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:11:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D082E16D4E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B3626FA56;
-	Tue,  8 Jul 2025 15:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40F82E091A;
+	Tue,  8 Jul 2025 15:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VundQqz1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ohnQET+e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B812BE020
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C67F26FA56;
+	Tue,  8 Jul 2025 15:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751987452; cv=none; b=s0/FiAA0+BnU88ycq97R7SpY1XbZRSU1S9K3dQcxPvZa66tsS5T0sv/8SVXilZ4wWDN6HM2qRwcueRW3RJUJd/nfudzzp9lNyDk5cDkmP82EjmTAlxKWPg3hof++kiX4aqjUJaJbtkvR29n9XNQVydX1oZk5sU3hWXfVlN0z788=
+	t=1751987492; cv=none; b=ConqLpzOAQaihNszo1EiMByG3oSZqdocr5vg3mEBiV0Akjjv7rae4RGpXd3SYYzqTRZf1FoJbkmRrL8rkSrNResGbNvNf8KgK05O7rGWE5sjHzkKzBxINJFDuVgIJCqwOSpYbfxXiezV8uetErWR3DoBs5fbIWfPbXCZhTxw4lM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751987452; c=relaxed/simple;
-	bh=fGerUtoQfOMFV13NE4pLJmsZdVSRGXJsQRTXptzxl4E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NoY1fMH0qpAJxs0S3OIys7JH2ZKKtDHvMZFs2wEcLSrBVL4n0/QDzbswhNY6FKRnDN5Vbf1suSz8s3tZxKxE4cR+t5hzHq1cUgMQETi+Zmcihd1hl3oX++/ZRhF0cW7WD/mFMxmPevhrwrWY32eigvMeEtG2OdVfSNoqzoHXXJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VundQqz1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751987449;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vF7pB9kaskUnbY7SdEoT1uFkNdrhk58b8baotVEUIFo=;
-	b=VundQqz1enDYbzD2tVW3daoHlQvMqKIdY5PZHS7rNch0iyA+C/AQBqNiP7rie/AtAkgBZL
-	EYny/pinjjWPE0pjGvvM3xLoJGN3nhk9+30yxfdYXUEHkEGu624TTPGitgowQ/KGEpPpnO
-	gATQvxw7I9CfuedChPUsNE4JFlePr4U=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-368-5I_OiVDuPG-NrOBnqPdukQ-1; Tue, 08 Jul 2025 11:10:48 -0400
-X-MC-Unique: 5I_OiVDuPG-NrOBnqPdukQ-1
-X-Mimecast-MFC-AGG-ID: 5I_OiVDuPG-NrOBnqPdukQ_1751987447
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-451d5600a54so36303825e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 08:10:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751987447; x=1752592247;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vF7pB9kaskUnbY7SdEoT1uFkNdrhk58b8baotVEUIFo=;
-        b=OmKi69H2+QrzNb8640EOBmUC6hXCtlgMmhVY3IUZtPcWEdVlRydgUAc5/MwPueDfRf
-         gA7K8FOX4GzSHuzHJQuPjHLDc2ERBOTZEWeML+i7Ru79nNZSEmuwB8zLtzqlN/Y1QfIR
-         VeHgUgoOGcPZt8TFPwMZ8zKRJ5TYpeDpUWxGxh+SR60h9bbRn0x4CBLtqp7fBoYcaV+Y
-         US72uHxhRgmOlN5I62NDL+hQaSHmQGe/zJTD7efDKqaClUSNJz0Msp9/KY0PtlJ66S8k
-         yB7VrXNQPD/qUfX/g86NND5dXvhyyX75vYMrwY3OIuQS+FMIveKJVtja3QV7P54o6eh8
-         nppw==
-X-Forwarded-Encrypted: i=1; AJvYcCXIkM7sxBCG+6UNXfg3QiShkUd0ja0JCZIM8571OoU6VxmrmRlsJR7BxE3Cqb1z4FootLXKr0BibowYhDQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymxaWYmV5yO3e74X1/pXgWARQkaWZtp8gMSdATW4DRyB/ZTG3e
-	ue7HBrH2skJ04llNeVlJhbTWrzAq8obXGqEndVsWD6j/38a5YwB6MF+VYiPJ57t3wUbDDTiDreV
-	rAZFTRnyY9iHJINfUxkCBXmw2aHL1W/hfria6HViaF5VPc4FdVOdCSbMTPbWyCiIK+A==
-X-Gm-Gg: ASbGncvuQNsndGeErsOKkBADfaBVfa1NjxFYcjSwwdxXaCcxG2aNgfxSdrNNa35hykV
-	r7C9hlVifZovrXqwFmKrstXO1i2wO/usTOW5okAIb18q8HqsHeFW1ODPGmls7ohWMoEJP1+V4MC
-	pcgSQCmqdFj6d6TfP5jYo3lKjITUQABPpPltmgtYQTNVYQQQUF4I3CKVTfUbYWwA5EE05QfTOiG
-	7vLISV2j6P2cvEdaNQdXZHlg3aC0zId5ejzbQMtrmk6jcm00LAfS5MVhj/TNcsJ3OIdGNK83IOC
-	b5NGXYTTNKd2O/n6noA3SfdpuWDfKvSZIjw2AuxHNQg7HSLRy7bH/Hbr7cXHGn8Y9jxAv1udIsp
-	VMJ5duonYsNmuu4qXl8NL0P4EzpObEaqhxtt5+jHpcHbC+QuBNg==
-X-Received: by 2002:a05:600c:5250:b0:453:a95:f07d with SMTP id 5b1f17b1804b1-454cd4cbed3mr42121245e9.10.1751987446541;
-        Tue, 08 Jul 2025 08:10:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHmKLwKgLc+QDyg2LOJPqGWeJ4FiXBWn3lZISABRTzIZSV3j7/eNP1RHFdrHD/ZrgFBqgc0Jg==
-X-Received: by 2002:a05:600c:5250:b0:453:a95:f07d with SMTP id 5b1f17b1804b1-454cd4cbed3mr42120285e9.10.1751987445940;
-        Tue, 08 Jul 2025 08:10:45 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f1a:f500:4346:f17c:2bde:808c? (p200300d82f1af5004346f17c2bde808c.dip0.t-ipconnect.de. [2003:d8:2f1a:f500:4346:f17c:2bde:808c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47285c903sm13406200f8f.90.2025.07.08.08.10.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 08:10:45 -0700 (PDT)
-Message-ID: <a4d8b292-154a-4d14-90e4-6c822acf1cfb@redhat.com>
-Date: Tue, 8 Jul 2025 17:10:44 +0200
+	s=arc-20240116; t=1751987492; c=relaxed/simple;
+	bh=NRRNtg6vb+K/sjejePJsbFo5EUJno2MwHh8cVe80W/M=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=vBiOT6GCGlmxK9zKo8EjvyH2EqjxLdIL39kvxIkwDKaJ9mrEKx31FoiZA/XI3BK3+Jz1Tm4Sjn+AYdbH5ReRd71+o8j+NnOnM2UMBM3VzAIQkX66WcOoHVNEq8g/8usAyuyie8UXsgsc9yhveT43QhK7Ihqw3/wY+/Oxi6N0EJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ohnQET+e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11743C4CEED;
+	Tue,  8 Jul 2025 15:11:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751987491;
+	bh=NRRNtg6vb+K/sjejePJsbFo5EUJno2MwHh8cVe80W/M=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=ohnQET+eQxGJXcUGGacq3S9BmTACp9gcbeanlc8UFNYikvcNwBLqA3wp7IAx88NDN
+	 mQhwZ4Fbv+SNQRI33D6CAj2qHgR/VWgyyiz/QUgLfAWeGrmNlrCeS+U/sq27ocWSgW
+	 2w97t8GUtWaa8YpBO37ZY/4go8HuwLheGNZPEfbkI7O5goC3AyWTLI90fuNqt0iyo6
+	 Y/HZ4haLXe4nBArO7sOiuxZLJ78+vt4pH6OMF4YtUVJiVrDBD1NHTFy5QFkaJlpoGJ
+	 C2ThD/lJMOH1clYyfb7uz6zVdH1teZ8xik/B+iAv9NadUV4To5lgasIkriO5/UZL58
+	 g4oo/teCrkyYA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/userfaultfd: fix missing PTE unmap for non-migration
- entries
-To: Andrew Morton <akpm@linux-foundation.org>, Sasha Levin <sashal@kernel.org>
-Cc: peterx@redhat.com, aarcange@redhat.com, surenb@google.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250630031958.1225651-1-sashal@kernel.org>
- <20250630175746.e52af129fd2d88deecc25169@linux-foundation.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250630175746.e52af129fd2d88deecc25169@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 08 Jul 2025 17:11:28 +0200
+Message-Id: <DB6RQCZYHPSA.1UEPUVMC3FBBI@kernel.org>
+Subject: Re: [PATCH v11 0/4] support large align and nid in Rust allocators
+Cc: "Vitaly Wool" <vitaly.wool@konsulko.se>, <linux-mm@kvack.org>,
+ <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>, "Uladzislau
+ Rezki" <urezki@gmail.com>, "Alice Ryhl" <aliceryhl@google.com>, "Vlastimil
+ Babka" <vbabka@suse.cz>, <rust-for-linux@vger.kernel.org>, "Liam Howlett"
+ <liam.howlett@oracle.com>
+To: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250707164755.631374-1-vitaly.wool@konsulko.se>
+ <824065ea-1f5c-4cd4-9917-4b7a91882af8@lucifer.local>
+ <aG0HJte0Xw55z_y4@pollux>
+ <54fc10ce-c3b6-4571-93e7-eebfc538d0c7@lucifer.local>
+ <DB6QKIHD2VGS.AHEOXL25SSXW@kernel.org>
+ <4c122436-db58-4ca5-bc64-5ca596f03952@lucifer.local>
+In-Reply-To: <4c122436-db58-4ca5-bc64-5ca596f03952@lucifer.local>
 
-On 01.07.25 02:57, Andrew Morton wrote:
-> On Sun, 29 Jun 2025 23:19:58 -0400 Sasha Levin <sashal@kernel.org> wrote:
-> 
->> When handling non-swap entries in move_pages_pte(), the error handling
->> for entries that are NOT migration entries fails to unmap the page table
->> entries before jumping to the error handling label.
+On Tue Jul 8, 2025 at 4:39 PM CEST, Lorenzo Stoakes wrote:
+> On Tue, Jul 08, 2025 at 04:16:48PM +0200, Danilo Krummrich wrote:
+>> (Please also see the explanation in [1].)
 >>
->> This results in a kmap/kunmap imbalance which on CONFIG_HIGHPTE systems
->> triggers a WARNING in kunmap_local_indexed() because the kmap stack is
->> corrupted.
+>> There's a thin abstraction layer for allocators in Rust, represented by =
+the
+>> kernel's Allocator trait [2] (which has a few differences to the Allocat=
+or trait in
+>> upstream Rust, which, for instance, can't deal with GFP flags).
 >>
->> Example call trace on ARM32 (CONFIG_HIGHPTE enabled):
->>    WARNING: CPU: 1 PID: 633 at mm/highmem.c:622 kunmap_local_indexed+0x178/0x17c
->>    Call trace:
->>      kunmap_local_indexed from move_pages+0x964/0x19f4
->>      move_pages from userfaultfd_ioctl+0x129c/0x2144
->>      userfaultfd_ioctl from sys_ioctl+0x558/0xd24
+>> This allocator trait is implemented by three backends, one for each of
+>> krealloc(), vrealloc() and kvrealloc() [3].
 >>
->> The issue was introduced with the UFFDIO_MOVE feature but became more
->> frequent with the addition of guard pages (commit 7c53dfbdb024 ("mm: add
->> PTE_MARKER_GUARD PTE marker")) which made the non-migration entry code
->> path more commonly executed during userfaultfd operations.
+>> Otherwise, the alloc module implements Rust's core allocation primitives=
+ Box and
+>> Vec, which each of them have a type alias for allocator backends. For in=
+stance,
+>> there is KBox, VBox and KVBox [4].
 >>
->> Fix this by ensuring PTEs are properly unmapped in all non-swap entry
->> paths before jumping to the error handling label, not just for migration
->> entries.
-> 
-> I don't get it.
-> 
->> --- a/mm/userfaultfd.c
->> +++ b/mm/userfaultfd.c
->> @@ -1384,14 +1384,15 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
->>   
->>   		entry = pte_to_swp_entry(orig_src_pte);
->>   		if (non_swap_entry(entry)) {
->> +			pte_unmap(src_pte);
->> +			pte_unmap(dst_pte);
->> +			src_pte = dst_pte = NULL;
->>   			if (is_migration_entry(entry)) {
->> -				pte_unmap(src_pte);
->> -				pte_unmap(dst_pte);
->> -				src_pte = dst_pte = NULL;
->>   				migration_entry_wait(mm, src_pmd, src_addr);
->>   				err = -EAGAIN;
->> -			} else
->> +			} else {
->>   				err = -EFAULT;
->> +			}
->>   			goto out;
-> 
-> where we have
-> 
-> out:
-> 	...
-> 	if (dst_pte)
-> 		pte_unmap(dst_pte);
-> 	if (src_pte)
-> 		pte_unmap(src_pte);
+>> This was also mentioned in the mm rework in [5] and in the subsequent pa=
+tch
+>> series reworking the Rust allocator module [6].
+>>
+>> Before [6], the Rust allocator module only covered the kmalloc allocator=
+ (i.e.
+>> krealloc()) and was maintained under the "RUST" entry.
+>>
+>> Since [6], this is maintained under the "RUST [ALLOC]" entry by me.
+>>
+>> Given that, there is a clear and documented responsibility, which also A=
+ndrew is
+>> aware of.
+>>
+>> To me the current setup looks reasonable, but feel free to take a look a=
+t the
+>> code and its relationship to mm and Rust core infrastructure and let me =
+know
+>> what you think -- I'm happy to discuss other proposals.
+>
+> Thanks for the explanation.
+>
+> To me this is clearly mm rust code. This is an abstraction over mm bits t=
+o
+> provide slab or vmalloc allocations for rust bits.
+>
+> To be clear - I'm not suggesting anything dramatic here, nor in any way
+> suggesting you ought not maintain this (apologies if this wasn't clear :)
+>
+> It's really a couple points:
+>
+> 1. Purely pragmatically - how can we make sure relevant people are pinged=
+?
 
-AI slop?
+I'm very happy to add more reviewers to the RUST [ALLOC] entry for this pur=
+pose.
 
--- 
-Cheers,
+Can you please send a patch for this?
 
-David / dhildenb
+> 2. Having clarity on what does/does not constitute 'MEMORY MANAGEMENT - R=
+UST'
+>    (again, perhaps Alice best placed to give some input here from her poi=
+nt of
+>    view).
 
+In the end that's a question of definition.
+
+The reason RUST [ALLOC] is a thing is because it is very closely related to=
+ Rust
+core infrastructure with only a thin backend using {k,v}realloc().
+
+Compared to other abstractions, the main purpose is not to expose a Rust
+interface for an existing kernel specific API, but rather implement a very =
+Rust
+specific concept while being a user of an existing kernel C API.
+
+> We could solve 1 very simply by just using the fact we can have files in
+> multiple sections in MAINTAINERS.
+
+Please not -- I don't want to have files in multiple entries in MAINTAINERS=
+,
+especially when there are different maintainers and different trees. I pref=
+er
+clear responsibility.
+
+> Doing a scripts/get_maintainers.pl invocation will very clearly tell you
+> who's in charge of what so there'd be no lack of clarity on this.
+
+How's that when a file is in multiple entries?
+
+> It's a bit messy, obviously. But it'd solve the issue of mm people not
+> getting notified when things change.
+>
+> However, at this stage you might want to just limit this to people who ha=
+ve
+> _opted in_ to look at mm/rust stuff. In which case then it'd make sense t=
+o
+> add only to the "MEMORY MANAGEMENT - RUST" section (but here we need to
+> address point 2 obviously).
+>
+> Alternatively we could just add reviewers to the rust alloc bit.
+
+Yeah, let's do that instead please.
+
+>>
+>> [1] https://lore.kernel.org/all/aG0HJte0Xw55z_y4@pollux/
+>> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/t=
+ree/rust/kernel/alloc.rs#n139
+>> [3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/t=
+ree/rust/kernel/alloc/allocator.rs#n130
+>> [4] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/t=
+ree/rust/kernel/alloc/kbox.rs
+>> [5] https://lore.kernel.org/all/20240722163111.4766-1-dakr@kernel.org/
+>> [6] https://lore.kernel.org/all/20241004154149.93856-1-dakr@kernel.org/
+>
+>
+> I feel it's really important to not separate rust _too much_ from the
+> subsystems it utilises - if we intend to have rust be used more and more
+> and integrated further in the kernel (something I'd like to see, more so
+> when I learn it :P) - the only practical way forward is for the rust stuf=
+f
+> to be considered a first class citizen and managed hand-in-glove with the
+> not-rust stuff.
+
+You're preaching to the choir with this on my end. I'm recommending subsyst=
+ems
+that receive the first Rust bits to get involved in one or the other way al=
+l
+the time. And if it's only by reading along. :)
 
