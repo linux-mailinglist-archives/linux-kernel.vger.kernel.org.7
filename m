@@ -1,130 +1,122 @@
-Return-Path: <linux-kernel+bounces-721323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DF86AFC7BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:03:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EABF9AFC7C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 991221BC4182
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:04:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7AB21694E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58190267B74;
-	Tue,  8 Jul 2025 10:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3C4268C63;
+	Tue,  8 Jul 2025 10:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V6LkYvGT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F6TnXjE7"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4D020E033
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 10:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E02D2080C4;
+	Tue,  8 Jul 2025 10:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751969015; cv=none; b=h+mA+3C+skfBAdfsnIG8WKSkSMQrr02nr3pZkfOBUVdtCpQgkVTxz1fuLZR5iKVtHLTeKf7zgtihgPeKzqyJbpD8gY0qSHB7lCKxBRy4xnIvCJ5clNnJh6WW7xwYjkp7/Q5CqeNTEDhnegSJ+fPumS9uaTHUb1xWPGfzSaVW66Q=
+	t=1751969037; cv=none; b=N2PMPzvvQJPiF4q5gd/sSQu93qstCdlobVULWBpalrViv1B3qCgyUy0VUc5Q5BUs0hzFcYCpFocDUqBduxotHI/DTbaUi6ORurOSD7k/UVJz7cOcfL1f+2yafS8G1RAYFMN6t6b73jjLgiLywofDhggyAYOt6coOXVhX/bpovJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751969015; c=relaxed/simple;
-	bh=J8x/CPUWA0HL/cid4XRRf2yJGc3d9K5BSR2KvtLBWhc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r/bd73cd3hPam/MxjNg8FYwHx+nufAS027QFho/FMupaKoaQeWfuFhHmZjOlN0xWoaEkeZlCpa719OCFP81R1VDZiRViM1zEikpb13t/jRN4OqfG8R3f3BUKWCAha4BgOwRc1pYRgJSUNm6ItJDnQLyNS25eUrVr/NcqrbCwiLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V6LkYvGT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751969013;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5YHab4xqAP2Akdg2G04m0t1Le3rHcVZpLaQPZJUOZ1g=;
-	b=V6LkYvGTE6pn07RAvUL5Fx1HtVgO77Fgo8kv8Rm78GVrhQ1PwpBMKi7zNb+f6d+Q4WXarM
-	01re35gRccT+vnASoZrum+Hqtbxd8pVS7yDNXvU3HRj8DEYah9Zi87uMc9mJ28wfFpvYTx
-	loza9DCppkRwI43MvZze3S/NhmdQXco=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-322-OCyiKpLGO5yGQy4t60if9Q-1; Tue, 08 Jul 2025 06:03:32 -0400
-X-MC-Unique: OCyiKpLGO5yGQy4t60if9Q-1
-X-Mimecast-MFC-AGG-ID: OCyiKpLGO5yGQy4t60if9Q_1751969011
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a6d90929d6so1775147f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 03:03:31 -0700 (PDT)
+	s=arc-20240116; t=1751969037; c=relaxed/simple;
+	bh=Y1X9PBX7qcUQ3VQhQVIFAiKTntxUOEwd/Za4bXmASfc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L5p2Mp11XTK49bO/NsVv4A5I73xZ0oela+6qzjGOBIs2Dnh5c646d4GbTceQppUQJp9Qk8pP3ygI3nbOgui/ayvz4K12vT8dwCchXna8pmrhJz4NOg2sxDd5tbHQ4cvUDebdLOLhYPL/lLSlX5LGzUB/6lsDA6ST9t07bFAeAtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F6TnXjE7; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-237311f5a54so38477955ad.2;
+        Tue, 08 Jul 2025 03:03:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751969035; x=1752573835; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lpGeu0fct+3VmHlRdU5eb8NMKV/Ar7w1D2lbejumdKs=;
+        b=F6TnXjE7EibE1OiAWTl7V7TBoP4cvVVOCpXapuOdS+mgL/0QljvhYyCaXmss5XX0uB
+         /dk1aiPi4aPixrMj/xcX9hZc7vPyuF+Ci9Rz3lNpuQuLXOgM3YKrtl2d/N8ke114krZ3
+         0Pg3LWnMPGq8AEUnorLg/O1rOtZ78JkErm8vUiCRdkJg+l/kNl5WpH2kiQ0BS35+O2m5
+         fNVtUsRlwOI2bz8sKxj+kiSKL6HhyCaaPjl0zBEWnx2y4eYbP/3sBvEQVgb0sxy6JdG4
+         H98PFh+LNNmsdSVd5dUZzeth5afVo20nhSSJhr16YkO9pfWWtbVgT24kboi6ctaObaYo
+         Yoxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751969011; x=1752573811;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5YHab4xqAP2Akdg2G04m0t1Le3rHcVZpLaQPZJUOZ1g=;
-        b=NQ09JfLiWwQ/jdI0WwQBEqM3eLAor1m4QFCkMBi0HnTb9WkSPpA4c7/gp+Nu0Ibexf
-         oKWLs8d360KhwSmh+72Pm+en9aHTXh+y+NSFsnh/9cJSrSC/PsNhty6o/BkkJ1+dIR+x
-         6gC9BH10rnAVfOE+EFoiF60jk4xn+WKWIw2IiGf9QHEhEdpHpRJ/WPu5chuxvYOikaJT
-         ZiZM5Nhtcqyra/3nKbbR6tAqjY5HZMWZ7FKhTnRIVp/5VOq5Qmsr1CgrK/oKVQBnHs4t
-         KxA/7g0MtzzWtxsHf7rriZWHhicE9gB95x82Bi4DvFA7ykBwWIEpguBGDlIqXWU4UxKG
-         4vbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXffOVc8jxMxd9GW1vaZjivJ58lEF0WirNXUrCtaqzgeVCIQu3T91LDGVmHqusZ8CUSXfeO2n5JkHC4e2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpJtF10V8YV2JOXSk1fK28zzH/pGbR+RuLGAHvxrHXFb0LldPl
-	7ucZekG5kQzerV8cXcwJT/3oizO+7CoGZ1WhRiapIiHV+87+U/FrZsRJEs06iRYBAsTheweEzsS
-	xuMC/tzCpcudEIp9hwvcE3yLVyEhVQbw7WIyG1PbwFysAbCv3BSNoDhuDixWHpUKCRg==
-X-Gm-Gg: ASbGnctMsdd7Za6E0WSbL2+Tu6Gqw5bttZWEmY+2Hl0eC0KlKSpAy8mjYMuhllV0DS3
-	Zf9vSy9UW/SwP7ayV6CetEw/s40Otw6Als8mV243b238LeDGwvJ1K1HP2vLdr4+r0vXcA7pLGT+
-	qq8bXWGlaihCkkG301Ds0ctKl/phCfMkKpLdXOyPz8TIzME/YZuwwxMzd1mVqz/c2EIGX+BOdFC
-	soggKhWtiEj+2S0sqFVKRGVP7MwI1iFb0NVscATctLbDXPXjXP92BOA4kyNC8Vq3nj/UEk4zKqV
-	Gkl7s32wt4m6qdVdytFx15+IBs66ovLdsLt4Dqp6lu4IOUdJxRQ3Hee/hbvyBzKQhV74Eg==
-X-Received: by 2002:a05:6000:1787:b0:3a4:f72a:b19d with SMTP id ffacd0b85a97d-3b49701198dmr10216083f8f.8.1751969010540;
-        Tue, 08 Jul 2025 03:03:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH1SvwWcO9VGXYTPULjJBC0m6vJeUr2jVKEuOXwryHw29XUGkc++r6gFKLLfQS8l/e7j3Mcpw==
-X-Received: by 2002:a05:6000:1787:b0:3a4:f72a:b19d with SMTP id ffacd0b85a97d-3b49701198dmr10216057f8f.8.1751969010016;
-        Tue, 08 Jul 2025 03:03:30 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2717:8910:b663:3b86:247e:dba2? ([2a0d:3344:2717:8910:b663:3b86:247e:dba2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47030ba48sm12695745f8f.13.2025.07.08.03.03.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 03:03:29 -0700 (PDT)
-Message-ID: <ea22a546-9381-48c3-8bb6-258fdd784ca3@redhat.com>
-Date: Tue, 8 Jul 2025 12:03:27 +0200
+        d=1e100.net; s=20230601; t=1751969035; x=1752573835;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lpGeu0fct+3VmHlRdU5eb8NMKV/Ar7w1D2lbejumdKs=;
+        b=HJz2GoRTJ4PY299JvQAJ8VCZbikVcG7Q1OujWmmhWUO/aFJWASwDak6fcaR+XoWc+w
+         5vOE9R9mG6l8lki0ts3aonH4GiIo4fTcDlUKsAwTU6QOsneOcKT0viDGMVtM2AZSvVhF
+         vapqkRuETFcssOg7Hr16zvIFP2OsjZGkmZ22Ik5z35/vNaKNrSUsYFyg1PRi+bixewov
+         9hfr/4B+KaRbGuDRgKCwzOSNitMiSHDGjWlE6zy3fUg8gQBKGx2EDGCviLio9eV1wh9i
+         hWvrqXIzzEB8PF9EPBK6TTcUDBmbkCXZq3axKYEn/7AhPzoh1lW4cBlVfqK7ooHdwd3p
+         QJcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUSenDKRug8w8zOp9ZgtDrgCIwORlAGUz5b5fnHEJQxlWyDK6dLGbjdqAr40CRTmji2hZl/J5k0qaxurCI@vger.kernel.org, AJvYcCVteU8/E5ZnoZqUNN729eLogzcVATqGUtW5NnJhqXXFgZzjeOrKlxWeoqw/qADEOerd5dZiKHoGk7mEag==@vger.kernel.org, AJvYcCW2ccPGMbAm9/v82GrQanvQMadGTfmw5irW7koZuhJ8OuIQbSIqrUGw+68PWwE+9cZduMkR/rdqgjgl@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBWtz+lQ7GDkv/o8yJfK6suRZbGITWtX54LUVtaPv1L5E9DHAd
+	2xpWKv0saKCmw1615+cFf32f8wlZK4jj8DatQ+fFVEOguLhLu/CAMGOhhWYOb0Pqr7j2t9p8xos
+	e4Rvcfm78cKDYYgTe1rPY0U14w6xvdgk=
+X-Gm-Gg: ASbGnct87ZJWpEfWAOUFKrR5UTBcn35zq91iZ15Ecx11RpXav8Bd0hzWrKpw8nOz0Rn
+	158fVRS0Ys5PB2grHftD84D9uaA/5yHsCKXrLgzjy+Nvci5TOyGb/9hYhFkmqNMc6lumXFW8z4l
+	fNkBZ77lOhdasvd7tFzsOIQYfMNTD1KVtV/ouYCqIN
+X-Google-Smtp-Source: AGHT+IHCEfcIS2hUnEdB9PbPmt5ZD9T64WlU2Ot8WUjUZqgiMJ9d2john/gI6sTWhRffzI0DT19R2HBQAqTyVFgmv0M=
+X-Received: by 2002:a17:903:a47:b0:23c:8f21:ac59 with SMTP id
+ d9443c01a7336-23c8f21addemr149130485ad.29.1751969035426; Tue, 08 Jul 2025
+ 03:03:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next v14 06/12] net: mtip: Add net_device_ops functions to
- the L2 switch driver
-To: Lukasz Majewski <lukma@denx.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
- davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- Stefan Wahren <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>
-References: <20250701114957.2492486-1-lukma@denx.de>
- <20250701114957.2492486-7-lukma@denx.de>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250701114957.2492486-7-lukma@denx.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250706214111.45687-1-rosenp@gmail.com> <20250706214111.45687-4-rosenp@gmail.com>
+In-Reply-To: <20250706214111.45687-4-rosenp@gmail.com>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Tue, 8 Jul 2025 12:03:44 +0200
+X-Gm-Features: Ac12FXwhjylZMsoY4rDqa01BVMXMM5PiGD4HvSivpj3vJ2MwrtIBDDKsIP82h3Y
+Message-ID: <CAMhs-H9PcmyNsZsU_JujV0PkRmJX5HSc0TBMR05OWmhUP0ByYA@mail.gmail.com>
+Subject: Re: [PATCH 3/6] wifi: rt2800soc: allow loading from OF
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-wireless@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, 
+	yangshiji66@qq.com, ansuelsmth@gmail.com, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Stanislaw Gruszka <stf_xl@wp.pl>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:MIPS" <linux-mips@vger.kernel.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/1/25 1:49 PM, Lukasz Majewski wrote:
-> +static netdev_tx_t mtip_start_xmit_port(struct sk_buff *skb,
-> +					struct net_device *dev, int port)
-> +{
-> +	struct mtip_ndev_priv *priv = netdev_priv(dev);
-> +	struct switch_enet_private *fep = priv->fep;
-> +	unsigned short status;
-> +	struct cbd_t *bdp;
-> +	void *bufaddr;
-> +
-> +	spin_lock(&fep->hw_lock);
+On Sun, Jul 6, 2025 at 11:41=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wrot=
+e:
+>
+> Add a single bindng to help the already present dts files load the
+> driver. More are possible but there doesn't seem to be a significant
+> difference between them to justify this.
 
-mtip_start_xmit_port() runs with BH disabled. The above lock variant is
-inconsistent with what you use in patch 4. Please be sure to run tests
-vs the next iteration with CONFIG_PROVE_LOCKING enabled.
+typo: s/bindng/binding
 
-/P
+>
+> Use wifi name per dtschema requirements.
+>
+> The data field will be used to remove the custom non static probe
+> function and use of_device_get_match_data.
+>
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  drivers/net/wireless/ralink/rt2x00/rt2800soc.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 
+With the typo fixed:
+
+Reviewed-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+
+Best regards,
+    Sergio Paracuellos
 
