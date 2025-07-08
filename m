@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-721969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D596FAFD038
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:10:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87918AFD03C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EF901897A1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:09:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0180117A47B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCCF2E5409;
-	Tue,  8 Jul 2025 16:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC05B2E6139;
+	Tue,  8 Jul 2025 16:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ls5DLfnd"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C7Hq8Ffm"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C207A25B1EA;
-	Tue,  8 Jul 2025 16:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9DA2E5B3A;
+	Tue,  8 Jul 2025 16:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751990939; cv=none; b=NM3yavToGckzm1/D9FyopaaWxPcMx9YttjSY81uhaJaQzZDjKzPYHiUFUjQKcnZL+pgJvt0jkfkSBOrWCSI5NpfQHvR96Z26p3+meWdvCgfq15Z8WDT0yKeHktLc43INZozBaF3yBgF8Om9qQT9w5rLah0Ls6GnY3K/bejmrHcM=
+	t=1751990944; cv=none; b=t0+X0H2ZJoT56QyzCVRyNMDXBeeYc8bvkxOCnQ5mcBGvUlto/aIXskEGrEzoPTfQbzXqK3OSfgV6bgKk3/WEvdrWgyBk59ROCI/fS580LfRmNfaV7KEzShec2yte1a/n1C1tZXoNBYWll3VLcQ0PCn1lmeuhuAbftk+q2Cza1Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751990939; c=relaxed/simple;
-	bh=tIy1H4wPG07YsBcqQP5HeL5BygRp+bP2YqDFlNaKcuQ=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=nInZURTh4HVJKvU2pJ+oryrkMn6sHmAxdcXAnP0rJZ10mX0wmKrLN4Xbnml5dAgtmVlVEMcjZgD+ONjlsp/WIxPc3EazbSyA4TGid2BEloA308zP9DGOiKM9Pr9SeaA2cm3oGvz+ajIBpVkpp+v8lMASc5BHrlzLjb2RIcMHNbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ls5DLfnd; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1751990944; c=relaxed/simple;
+	bh=ZyaCKaQXI0uLhbZ/KKtzrJ/do4HoeAgRPraqtt4s6QY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=ikC/iniynOaV220ACpuuej+uK6tFH1/+LixXMdLVS4aTBHjrHcb5AvfcaVciLJ+9yHjnxOeKqSc5JmSAD8W8s78dRgRVflyUNvBhRUQOlG7oMDQ8SvysbTRpSxH4HceURCvzIXnToLatlizRg8auGYKQ8G0O07PxrfgIPArq9pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C7Hq8Ffm; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568AAZU9032619;
-	Tue, 8 Jul 2025 16:08:43 GMT
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568AAFBU008271;
+	Tue, 8 Jul 2025 16:08:51 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=0agtcIB70BbJp9hb7MOPGz
-	YwJiQf6tXtiaK4xwMXakI=; b=ls5DLfnd/JLXUSns2xDs6IR6uL7Tfi0OQABqit
-	gqOGuvaZCmCeevispmzxwA0l0tiB45OXX9JZ/1wgij7IiXJi3M3eg2kkCJUW2JxM
-	DDJub01BuLVGh9CbjNceWx54xxP3GdRP+PwNnOSqsteZmwMFcL9SaoJgrCcw5EUb
-	yyM+8moqfF2ndnJ0CuxRDhvHk6Vx2F5I5HlyfFu7vgJz/OTVtHSewny2bFCBqYd1
-	1J4M17cNfHE43uJRiP++R+XUI9TgwFWolBCuqImc5KyGKk4uqmcpY3XC+XUXqfy1
-	lWhntS1gmdEIpNuTwNx3sHTCPOXtlhmAzWDCQFEp0X7QixMw==
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7ZVj0+/oodglGDIZOrIveVBem+sp+h3oPXacN8rq34Q=; b=C7Hq8FfmrclS7ZHC
+	u3O/2Ye5XWMpAd/2yRdtVinFs4iH97c39ecKaD/0wXgizuDrZxSbSle1GtsioYE3
+	IEvPzdYFYUKzdjsf9XbC96jaRfSS0v2DT1b4qyYKAeiyKSvYcSZc55Losq1S4vim
+	PujDzbAHf2X0wd8Q5YWmlIr4R2EQoUw9IeFZ+4EQlHo8hed1VcGZDHLZ2doZ0mCR
+	Iio7kBrssNAyd1MsFPFyBIBwxgLlGCwFLi9oZTyRzNbbvP3bzTSFly2LEqGE9S3d
+	Ttt7R4ISb3Lv937cMcOsYTkK0OSZYgx6s/BqHj6ptknkXO8ytvvESN+LIl3zapGp
+	7BvcYA==
 Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47rfq320b7-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pucmywh9-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Jul 2025 16:08:43 +0000 (GMT)
+	Tue, 08 Jul 2025 16:08:51 +0000 (GMT)
 Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 568G8gKm016646
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 568G8o4J016775
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 8 Jul 2025 16:08:42 GMT
+	Tue, 8 Jul 2025 16:08:50 GMT
 Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
  nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Tue, 8 Jul 2025 09:08:39 -0700
+ 15.2.1748.10; Tue, 8 Jul 2025 09:08:47 -0700
 From: Luo Jie <quic_luoj@quicinc.com>
-Subject: [PATCH net-next 0/3] Add shared PHY counter support for QCA807x
- and QCA808x
-Date: Wed, 9 Jul 2025 00:07:55 +0800
-Message-ID: <20250709-qcom_phy_counter-v1-0-93a54a029c46@quicinc.com>
+Date: Wed, 9 Jul 2025 00:07:58 +0800
+Subject: [PATCH net-next 3/3] net: phy: qcom: qca807x: Support PHY counter
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,9 +66,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFxCbWgC/x3MQQqDMBBG4avIrBuIqSLpVaRISf7oLDrRJC0W8
- e4NLr/FewdlJEamR3NQwpczR6lobw255SUzFPtqMtr0etBWbS6+p3X5TS5+pCCpzgbYu+na4D3
- VbE0IvF/LkQRFCfZCz/P8A4EEdb5sAAAA
+Message-ID: <20250709-qcom_phy_counter-v1-3-93a54a029c46@quicinc.com>
+References: <20250709-qcom_phy_counter-v1-0-93a54a029c46@quicinc.com>
+In-Reply-To: <20250709-qcom_phy_counter-v1-0-93a54a029c46@quicinc.com>
 To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         "David S. Miller"
@@ -79,68 +79,86 @@ To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
 CC: <netdev@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, Luo Jie <quic_luoj@quicinc.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751990918; l=1162;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751990919; l=1670;
  i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
- bh=tIy1H4wPG07YsBcqQP5HeL5BygRp+bP2YqDFlNaKcuQ=;
- b=Uz+zPBJ48KadNb3JmhOPZpbZhaoi1xO1vGVXpfSh44hTqG2uiwg0cvrk6i3EaE9X5CB/Rv2JB
- ChQPE1oa0kqD1CCbZSAXEuxm7z74D7a5AZL3gaORedI5L0+uqzqHtg+
+ bh=ZyaCKaQXI0uLhbZ/KKtzrJ/do4HoeAgRPraqtt4s6QY=;
+ b=t3w9y1dCUgg5eeC4/2crzPz/R52eDMP16ISxFSl9SVOC4O0prBFP3ouMTYkCmU7yvyM0E494P
+ G/6QgEF5eQHBo9Vd1wc0CuZROANzIjo10NZ+nRZjSZ7krAqAgamkyJC
 X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
  pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
 X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nasanex01b.na.qualcomm.com (10.46.141.250)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDEzNiBTYWx0ZWRfX/GSbh3nzB9vX
- /LqJD+cfD0fb4e6gKioflyrYPDR89JguBmpN9NSCC9spgUgZf8VL4A+4OPVwmQXomqENtAIZxfu
- Qpp3v271BXX2r4tGRJKp6MPe4a2rbi0UN6FZ0XQYTXQwPLlc6xhrBZsK8+aH5z1dpH/E0j/xiFd
- kR9xvKgK24Omt6dadx0MLH8sG/DHcsaZF2PUsNiOeNZPGEOennb4Q5D1ER7LCag9YZYrjg8lrPm
- 26HRo9XMr3P47KSsC4XZ8o4loivWCfvZ5ZDHLBzb8+dPMDJLGi2xmE5lQm/bHBhO9l+rEnuQNt7
- cb9GKA9HZAfoODpN8QPrXvWhDZzPbodbxw2vHw9wpugNKblHEHK49LRl99qY0nIDSLTZ5wYUKFe
- ANlp2O1Zv2JELl9+6FIp2A4cczSSaFaG1/4mSGocDWEHRq+EVtPYeIa/1Rt7uY+lUCndeEl+
-X-Proofpoint-ORIG-GUID: EwvlLgeTYpt4e945PlSb_6BaAdzifgSg
-X-Proofpoint-GUID: EwvlLgeTYpt4e945PlSb_6BaAdzifgSg
-X-Authority-Analysis: v=2.4 cv=SOBCVPvH c=1 sm=1 tr=0 ts=686d428b cx=c_pps
+X-Authority-Analysis: v=2.4 cv=GdQXnRXL c=1 sm=1 tr=0 ts=686d4293 cx=c_pps
  a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
  a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=cCCatxcZxqH0WtuQzukA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+ a=gK5dAuqeCtZj7zEIbdkA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: LAOH6BJQrgGdi_sUYhw2ABYeB5I16xrz
+X-Proofpoint-ORIG-GUID: LAOH6BJQrgGdi_sUYhw2ABYeB5I16xrz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDEzNiBTYWx0ZWRfX8MbFRl3w7aIB
+ h/YL90g3EipBJK3qzYf3fAv0d6V0T00rcyygYmAMhKpHZ+ztdhL6cb88aBdgO0lm5WUZPVcrWW1
+ UQGPJiuMyRU16bYfp/O8sZz51CwRo9o2YAhoTwgGplm5cJSjJk6ViQ07LvAUcyEOb2e4vv3aBMV
+ GOetfBft1+0jcOKBUbdJXTazAxkjGMVsfspiaHvSxAIctHnarx54ZkXkURunXvj/1iflzVsOkQn
+ c5OTOAAO3zSuDvzL5Atm3MfXK2c5rKxX3NSd/zL1QFTomdFuoqKEOwpS/TEibwa7M0/GWRvkbWx
+ QsJFmTBEndhOivnMmFuTuw6VFW5hN8Y+0LlNQTzya6zXHsCGbbelGpKhI8iVPNJQepWUl0/O+kY
+ hOA1lfrg2HJ1P/WCvfP16bSlrrkhLLSgOR9WK2iSbUhH17nAi5fInKXuBVIrVXCEw45ou1Px
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-07-08_04,2025-07-07_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 malwarescore=0 bulkscore=0 priorityscore=1501
- adultscore=0 mlxlogscore=977 spamscore=0 impostorscore=0 phishscore=0
- mlxscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 clxscore=1015
+ spamscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
+ malwarescore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
  definitions=main-2507080136
 
-The implementation of the PHY counter is identical for both QCA808x and
-QCA807x series devices. This includes counters for both good and bad CRC
-frames in the RX and TX directions, which are active when CRC checking
-is enabled.
-
-This patch series introduces PHY counter functions into a shared library,
-enabling counter support for the QCA808x and QCA807x families through this
-common infrastructure. Additionally, CRC checking is enabled within
-config_init() to ensure accurate counter recording.
+Within the QCA807X PHY operation's config_init() function, enable CRC
+checking for received and transmitted frames to support counter recording,
+and add PHY counter operations
 
 Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
 ---
-Luo Jie (3):
-      net: phy: qcom: Add PHY counter support
-      net: phy: qcom: qca808x: Support PHY counter
-      net: phy: qcom: qca807x: Support PHY counter
+ drivers/net/phy/qcom/qca807x.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
- drivers/net/phy/qcom/qca807x.c      | 10 +++++
- drivers/net/phy/qcom/qca808x.c      |  7 ++++
- drivers/net/phy/qcom/qcom-phy-lib.c | 82 +++++++++++++++++++++++++++++++++++++
- drivers/net/phy/qcom/qcom.h         | 16 ++++++++
- 4 files changed, 115 insertions(+)
----
-base-commit: c523058713abac66b0d83ae12a0574d76cd7df2b
-change-id: 20250709-qcom_phy_counter-49fe93241fdd
+diff --git a/drivers/net/phy/qcom/qca807x.c b/drivers/net/phy/qcom/qca807x.c
+index 6d10ef7e9a8a..51101d009dce 100644
+--- a/drivers/net/phy/qcom/qca807x.c
++++ b/drivers/net/phy/qcom/qca807x.c
+@@ -768,6 +768,10 @@ static int qca807x_config_init(struct phy_device *phydev)
+ 			return ret;
+ 	}
+ 
++	ret = qcom_phy_counter_crc_check_en(phydev);
++	if (ret)
++		return ret;
++
+ 	control_dac = phy_read_mmd(phydev, MDIO_MMD_AN,
+ 				   QCA807X_MMD7_1000BASE_T_POWER_SAVE_PER_CABLE_LENGTH);
+ 	control_dac &= ~QCA807X_CONTROL_DAC_MASK;
+@@ -800,6 +804,9 @@ static struct phy_driver qca807x_drivers[] = {
+ 		.suspend	= genphy_suspend,
+ 		.cable_test_start	= qca807x_cable_test_start,
+ 		.cable_test_get_status	= qca808x_cable_test_get_status,
++		.get_sset_count		= qcom_phy_get_sset_count,
++		.get_strings		= qcom_phy_get_strings,
++		.get_stats		= qcom_phy_get_stats,
+ 	},
+ 	{
+ 		PHY_ID_MATCH_EXACT(PHY_ID_QCA8075),
+@@ -823,6 +830,9 @@ static struct phy_driver qca807x_drivers[] = {
+ 		.led_hw_is_supported = qca807x_led_hw_is_supported,
+ 		.led_hw_control_set = qca807x_led_hw_control_set,
+ 		.led_hw_control_get = qca807x_led_hw_control_get,
++		.get_sset_count		= qcom_phy_get_sset_count,
++		.get_strings		= qcom_phy_get_strings,
++		.get_stats		= qcom_phy_get_stats,
+ 	},
+ };
+ module_phy_driver(qca807x_drivers);
 
-Best regards,
 -- 
-Luo Jie <quic_luoj@quicinc.com>
+2.34.1
 
 
