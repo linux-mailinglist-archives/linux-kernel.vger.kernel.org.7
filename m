@@ -1,176 +1,149 @@
-Return-Path: <linux-kernel+bounces-721951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76D77AFCFE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:58:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4716AAFCFE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 037DB1C20B00
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:58:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF6601C20D66
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6142A2E338E;
-	Tue,  8 Jul 2025 15:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DDA2E3AEB;
+	Tue,  8 Jul 2025 15:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ksB29H8u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JqQX9nS/"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F4112CD8B;
-	Tue,  8 Jul 2025 15:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3392E2650
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751990273; cv=none; b=ad1qM4xBoRYX7M1OLRjlfhH5M8fo7M21tADj1AqAHgy4xB3J6+cyokw9eZZDsjo5A83fLOeYpxCKRkgXQ/psBgmwLP6s1GORmpGQdDmz1c+rFF+SD3Rx2tdnwLjJMFbmesbCgG/EgCppmTWB3yoGsJ3wa22pdcs44bEPV3XQ/sQ=
+	t=1751990285; cv=none; b=ElC6NezVOG4yUA2otOm+bxeujLNP8X2ElThtUfhmrpsCGF62dExiLA1Fy0mo6PWVIgP+WzyZqu7wtgjUraxR2u2PYrC2YcAplXDAlP7GPxMa3sy78dshAxfuLuaVipWvJEpWjaRZcuPUBhi0ULQwr3lCOZhJnpaE9x3DlZYg+fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751990273; c=relaxed/simple;
-	bh=dAawEQ7071SDEGT8nwUFF+pc4l88cMbyTERuSEFAVlE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PQmmmkKiGG89cpX2VmBTYJcNtQhg8pUYfWxJirU1SXfybXdKi3jFCSXcEcutyuUhJsk0V2Fp/syYkfO7y4tMVwrXjIGWmX7vmyDLURuLKqmSvLZNCuHrtYoQsZreRDTsNuFYDv53hHf7coxA03Dx36Kk2lnC2LQ331zI4SFgGq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ksB29H8u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57DE3C4CEF0;
-	Tue,  8 Jul 2025 15:57:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751990273;
-	bh=dAawEQ7071SDEGT8nwUFF+pc4l88cMbyTERuSEFAVlE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ksB29H8uVe9rbz6Gc3I/RVLHmi05Gz3NqUos+mLcVCNekHM+MZOm0XUkDQI5DarXF
-	 AGv5aS8KkH5aAIQ7PicKHbMFdvarEjksWRD/xpHwnPHgIeB4vHyjOE/Zua30T5jm1g
-	 0XKOTlhgJPYIyXoNnBl9vFc4afkCqyNeKeKVuhi/9waELKTJCtwc6rFIt01yIdExYe
-	 hJ3ARJqkLA4VKJnXqPW5nxiq1mCAS4bQMYyeuZDuZFn6Kzz8U5XMF0YV5y07Z3pEJ1
-	 zAOUUzOx+uU+Hu264wxZu5kAJpm62MXtco2vVEXJfxpa1OCULmBMvBiPaHZFjSKBJl
-	 Nt0ZOSHtCPv9w==
-Date: Tue, 8 Jul 2025 11:57:47 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>, peterx@redhat.com,
-	aarcange@redhat.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] mm/userfaultfd: fix missing PTE unmap for non-migration
- entries
-Message-ID: <aG0_-79QiMEk3N-R@lappy>
-References: <20250630031958.1225651-1-sashal@kernel.org>
- <20250630175746.e52af129fd2d88deecc25169@linux-foundation.org>
- <a4d8b292-154a-4d14-90e4-6c822acf1cfb@redhat.com>
- <aG06QBVeBJgluSqP@lappy>
- <CAJuCfpH5NQBJMqs9U2VjyA_f6Fho2VAcQq=ORw-iW8qhVCDSuA@mail.gmail.com>
+	s=arc-20240116; t=1751990285; c=relaxed/simple;
+	bh=7gQeCLAZtQEfIyXXcezsvaIrZXV7Qk5Jv0/UhljKckk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FAq2fYR90jR7OTR5Qxx8TQsuOzW3JHzckZdVi+qptTTiH5CzuXRsFccYYgbuSfyaIx7JrgnQwaiALxzjuTEJW6M4aLFmGKgScj4CuTaneFWnAEt3OCAL4WjTeNKBimP2POCw6MW4agIP+2fG63JGTCqM4HZ6iFPzp9cincyRKPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JqQX9nS/; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6088d856c6eso8802041a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 08:58:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751990282; x=1752595082; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tiJvxbpJm4ueaILExBT2ruQnafJPKLQnKbXYAJpzmYw=;
+        b=JqQX9nS/QiWWJ+Al0rJUSn3Qb3bPIJlfOylkeHvFqOE3KXrEZgyy9SafPhhlAzxaB6
+         vcE/O7Bo8K972vCtMf4hJ5AKb6haJ+EgOeJZwR+Ve/gIwXmBpIbfWmIXBo1lCYbm9xpo
+         C/o7ve5Ptb5po7C56fKKpKNK1R7x0nelTcstMciGo+27uammt/5hZ2HVY4Ai+DHLJzbw
+         PBd0XOx3STzQO9/Wrp6q2pHAne81pMynhU9IHhVBcuWWQNUIGyn0rJIobR9EV7861bNE
+         uOGcfgpXuVAUTb0PVfL3tY2WL2qM2a9frAKTiB0wVHJC89N3FVqH6+F76zOwG8tkT7S8
+         ANLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751990282; x=1752595082;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tiJvxbpJm4ueaILExBT2ruQnafJPKLQnKbXYAJpzmYw=;
+        b=UqAEbhKItAm3qzEh9B1JmjV7zZjJYbN/UvdUWTihQgoXW/k5qEGXqsHt6APf14V4ng
+         swLsVm/Y7VVof/uuyhBnsbxT/Gdqh6tzdoPL8CAfQlJL+zvpDGbyZNqBfjzEw8d8agaq
+         qjezyZtjGl5+KXOtzPREibbTE+yCEI1Hm8O5yfQDsd4b1wCiRqObEbCDXvCsABhBILxR
+         zgefIAw5N++70z/wYuh2UvwKRzWDAT/fLGPuqUE05YrNHfpy9U/DhwM8OkVrGvazXkyV
+         DgpqjorhSLF5F7cQYCuINIynJ6bUpDzcjV4eaxdpGtP8C+bpLuVQEY5GN9PlOjXnwzsG
+         hyWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqi4s27lCUOfxb4AX82f3mwm/VxgT9fOIk+oL8rcT+Dz2faiLpRZ6drdFv1FmhJywZ49UAnMcLrdt+iDc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4u4obfayWtqmP04yvMq4KQbdfWmml+4igUREplqnXzI2u8+SC
+	k4KFv1ywtj6cb/KHQjQXWplzuhBbhxYBdW2fyV7ei19Lxxle3geGoZvK20vD/WRDSNU=
+X-Gm-Gg: ASbGncvd+sX/BasJDv0wIXwGMs1uLgC5Wtij0KspbBfA5JjfT24n+rolEcI7v5PbRes
+	s18VITodPlxDFtqcqPNHq9WfT9t4JRguTzPH75Un1U+LwHLmKMg7XjO12Sf+v/WAy5bTjdy3pKv
+	YoBS9fEEXBWPLEeauNHIUNaIFALRUlcjZpaC6oY5O5QE6gBI1mkg0IDSsGM/MV8YONzfnMnGmS9
+	hc7muavJ9bbF0H75d5gh87ohtmtUE81exd2eaFcaaV1pqn6/gySJP3mRBsephF5FZPHFxHvuaKU
+	anmQYvAteDejl4GzF74S44CvarBDVOrB2TvHTmr/044J1/mF/e6rtV0veDW26eZ4cdwJBSg=
+X-Google-Smtp-Source: AGHT+IG00ZItLfvhtpCxt6kkcwqcafrRvWaaK7c0sFOt4CTrsTCYl9LvDHEYPMR0h+/qH0anL1ixPA==
+X-Received: by 2002:a17:907:1c9f:b0:ae3:f2a0:459f with SMTP id a640c23a62f3a-ae6b0ebac72mr353922366b.54.1751990281967;
+        Tue, 08 Jul 2025 08:58:01 -0700 (PDT)
+Received: from [192.168.0.251] ([82.76.204.12])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fcb8c80acsm7396418a12.80.2025.07.08.08.58.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jul 2025 08:58:01 -0700 (PDT)
+Message-ID: <cabab318-95a4-4e81-a931-458ee6023f3a@linaro.org>
+Date: Tue, 8 Jul 2025 16:58:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpH5NQBJMqs9U2VjyA_f6Fho2VAcQq=ORw-iW8qhVCDSuA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] PM: add kernel parameter to disable asynchronous
+ suspend/resume
+To: Randy Dunlap <rdunlap@infradead.org>, Jonathan Corbet <corbet@lwn.net>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>,
+ Len Brown <len.brown@intel.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, peter.griffin@linaro.org,
+ andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com
+References: <20250708-pm-async-off-v2-1-7fada54f01c0@linaro.org>
+ <18c12f92-2194-4244-8793-5d916edfd4e8@infradead.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <18c12f92-2194-4244-8793-5d916edfd4e8@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 08, 2025 at 08:39:47AM -0700, Suren Baghdasaryan wrote:
->On Tue, Jul 8, 2025 at 8:33 AM Sasha Levin <sashal@kernel.org> wrote:
->>
->> On Tue, Jul 08, 2025 at 05:10:44PM +0200, David Hildenbrand wrote:
->> >On 01.07.25 02:57, Andrew Morton wrote:
->> >>On Sun, 29 Jun 2025 23:19:58 -0400 Sasha Levin <sashal@kernel.org> wrote:
->> >>
->> >>>When handling non-swap entries in move_pages_pte(), the error handling
->> >>>for entries that are NOT migration entries fails to unmap the page table
->> >>>entries before jumping to the error handling label.
->> >>>
->> >>>This results in a kmap/kunmap imbalance which on CONFIG_HIGHPTE systems
->> >>>triggers a WARNING in kunmap_local_indexed() because the kmap stack is
->> >>>corrupted.
->> >>>
->> >>>Example call trace on ARM32 (CONFIG_HIGHPTE enabled):
->> >>>   WARNING: CPU: 1 PID: 633 at mm/highmem.c:622 kunmap_local_indexed+0x178/0x17c
->> >>>   Call trace:
->> >>>     kunmap_local_indexed from move_pages+0x964/0x19f4
->> >>>     move_pages from userfaultfd_ioctl+0x129c/0x2144
->> >>>     userfaultfd_ioctl from sys_ioctl+0x558/0xd24
->> >>>
->> >>>The issue was introduced with the UFFDIO_MOVE feature but became more
->> >>>frequent with the addition of guard pages (commit 7c53dfbdb024 ("mm: add
->> >>>PTE_MARKER_GUARD PTE marker")) which made the non-migration entry code
->> >>>path more commonly executed during userfaultfd operations.
->> >>>
->> >>>Fix this by ensuring PTEs are properly unmapped in all non-swap entry
->> >>>paths before jumping to the error handling label, not just for migration
->> >>>entries.
->> >>
->> >>I don't get it.
->> >>
->> >>>--- a/mm/userfaultfd.c
->> >>>+++ b/mm/userfaultfd.c
->> >>>@@ -1384,14 +1384,15 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
->> >>>             entry = pte_to_swp_entry(orig_src_pte);
->> >>>             if (non_swap_entry(entry)) {
->> >>>+                    pte_unmap(src_pte);
->> >>>+                    pte_unmap(dst_pte);
->> >>>+                    src_pte = dst_pte = NULL;
->> >>>                     if (is_migration_entry(entry)) {
->> >>>-                            pte_unmap(src_pte);
->> >>>-                            pte_unmap(dst_pte);
->> >>>-                            src_pte = dst_pte = NULL;
->> >>>                             migration_entry_wait(mm, src_pmd, src_addr);
->> >>>                             err = -EAGAIN;
->> >>>-                    } else
->> >>>+                    } else {
->> >>>                             err = -EFAULT;
->> >>>+                    }
->> >>>                     goto out;
->> >>
->> >>where we have
->> >>
->> >>out:
->> >>      ...
->> >>      if (dst_pte)
->> >>              pte_unmap(dst_pte);
->> >>      if (src_pte)
->> >>              pte_unmap(src_pte);
->> >
->> >AI slop?
->>
->> Nah, this one is sadly all me :(
->>
->> I was trying to resolve some of the issues found with linus-next on
->> LKFT, and misunderstood the code. Funny enough, I thought that the
->> change above "fixed" it by making the warnings go away, but clearly is
->> the wrong thing to do so I went back to the drawing table...
->>
->> If you're curious, here's the issue: https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.13-rc7-43418-g558c6dd4d863/testrun/29030370/suite/log-parser-test/test/exception-warning-cpu-pid-at-mmhighmem-kunmap_local_indexed/details/
->
->Any way to symbolize that Call trace? I can't find build artefacts to
->extract vmlinux image...
 
-The build artifacts are at
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2zSrTao2x4P640QKIx18JUuFdc1/
-but I couldn't get it to do the right thing. I'm guessing that I need
-some magical arm32 toolchain bits that I don't carry:
 
-cat tr.txt | ./scripts/decode_stacktrace.sh vmlinux
-<4>[   38.566145] ------------[ cut here ]------------
-<4>[ 38.566392] WARNING: CPU: 1 PID: 637 at mm/highmem.c:622 kunmap_local_indexed+0x198/0x1a4
-<4>[   38.569398] Modules linked in: nfnetlink ip_tables x_tables
-<4>[   38.570481] CPU: 1 UID: 0 PID: 637 Comm: uffd-unit-tests Not tainted 6.16.0-rc4 #1 NONE
-<4>[   38.570815] Hardware name: Generic DT based system
-<4>[   38.571073] Call trace:
-<4>[ 38.571239] unwind_backtrace from show_stack (arch/arm64/kernel/stacktrace.c:465)
-<4>[ 38.571602] show_stack from dump_stack_lvl (lib/dump_stack.c:118 (discriminator 1))
-<4>[ 38.571805] dump_stack_lvl from __warn (kernel/panic.c:791)
-<4>[ 38.572002] __warn from warn_slowpath_fmt+0xa8/0x174
-<4>[ 38.572290] warn_slowpath_fmt from kunmap_local_indexed+0x198/0x1a4
-<4>[ 38.572520] kunmap_local_indexed from move_pages_pte+0xc40/0xf48
-<4>[ 38.572970] move_pages_pte from move_pages+0x428/0x5bc
-<4>[ 38.573189] move_pages from userfaultfd_ioctl+0x900/0x1ec0
-<4>[ 38.573376] userfaultfd_ioctl from sys_ioctl+0xd24/0xd90
-<4>[ 38.573581] sys_ioctl from ret_fast_syscall+0x0/0x5c
-<4>[   38.573810] Exception stack(0xf9d69fa8 to 0xf9d69ff0)
-<4>[   38.574546] 9fa0:                   00001000 00000005 00000005 c028aa05 b2d3ecd8 b2d3ecc8
-<4>[   38.574919] 9fc0: 00001000 00000005 b2d3ece0 00000036 b2d3ed84 b2d3ed50 b2d3ed7c b2d3ed58
-<4>[   38.575131] 9fe0: 00000036 b2d3ecb0 b6df1861 b6d5f736
-<4>[   38.575511] ---[ end trace 0000000000000000 ]---
+On 7/8/25 4:36 PM, Randy Dunlap wrote:
+> Hi,
+> 
 
--- 
+Hi, Randy!
+
+> On 7/8/25 8:16 AM, Tudor Ambarus wrote:
+> 
+>> ---
+>>  Documentation/admin-guide/kernel-parameters.txt | 11 +++++++++++
+>>  kernel/power/main.c                             |  9 +++++++++
+>>  2 files changed, 20 insertions(+)
+>>
+>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>> index f1f2c0874da9ddfc95058c464fdf5dabaf0de713..33ca6b881b1d77bdeea765b19291a90b2a82e8a3 100644
+>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>> @@ -5000,6 +5000,17 @@
+>>  			that number, otherwise (e.g., 'pmu_override=on'), MMCR1
+>>  			remains 0.
+>>  
+> 
+> This should be more like:
+> 
+> 
+> 	pm_async=off	[PM]
+> 
+> or
+> 
+>> +	pm_async	[PM]
+> 
+> 	pm_async=	[PM]
+> 			Format: off
+
+Indeed. I see this second description, "kernel_param=", largely used in
+the existing kernel parameters, so maybe that's what I shall follow.
+However, I don't really know which format to choose, I see:
+
+Format: <string>
+Format: { off }
+Format: {off}
+Format: { "off" }
+Format: {"off"}
+Format: off
+
+Any idea if there's an already agreed string format?
 Thanks,
-Sasha
+ta
 
