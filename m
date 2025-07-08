@@ -1,45 +1,49 @@
-Return-Path: <linux-kernel+bounces-721286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6954BAFC720
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:32:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1795CAFC725
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BB893BE675
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:32:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B69F161DD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7C7254AE4;
-	Tue,  8 Jul 2025 09:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024EC26562C;
+	Tue,  8 Jul 2025 09:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VEAo92Pp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OHchkSpV"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB662343BE;
-	Tue,  8 Jul 2025 09:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6185258CF8;
+	Tue,  8 Jul 2025 09:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751967149; cv=none; b=ReFerXvv5p0FmZm81BNQ0Q4+wGbS2jEkQ0Ji5W0BQ1AM+ilpIH48oNP2bMgqF0UKojtARSOP+9Db3jNpYD7lxSLGNy0Nys7IhV6Ep+xi6AYR8joQxH+fQaBxAJwS34gU51lx7NRx/5F3ktmQU+NWlOQ61Pxk0LCEHseDt+XBlio=
+	t=1751967153; cv=none; b=DjJqwsKqzmY4gjQ3V/ujZaS1RdXvt9OhkgUiG0U8x34KpzuEtBaF6xyKYwvKINW5m4aNA9TIvD6kntHtr4LseTcGp5jGF4E0BVdiAe3rnwrh2elDiLCb4hhzaWJR3QgRCHCNtP2rlJ+Qd4kOnLg6fKDwYFjXhYHZ1aPpPh+01u0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751967149; c=relaxed/simple;
-	bh=odbyXf59vUqn2dRPJ8DZVcQ9vXKtu52T3STTFkXU/NQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=IOvVGCFW78DKdDIvRau/h5i6ouS6/7mPHciwF1uCD65UI8P7IT8sHTMbv89JbrCiTEyPMmvtJnJdb4Ag41KKcDPACQgDfJsUzkax7sf9S/ZCo3CU2F0PqFNJN9lJEZ/dLOxzo/xDyDGaS8AOvHObR86vOF+pnhnIePJNImBQbQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VEAo92Pp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 091C8C4CEED;
-	Tue,  8 Jul 2025 09:32:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751967149;
-	bh=odbyXf59vUqn2dRPJ8DZVcQ9vXKtu52T3STTFkXU/NQ=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=VEAo92PpvHcMZFNUGnl8furso34hSu9liyrOEMeLsk0olY+K2/fLIaDLrVjpJIR2r
-	 2iAxb6fPds7ZzgiZyLfO1c/tMGOexgPlCNJHQ0Qh8ZW/NWMfTe7owW5wLVRQDCZPgh
-	 VSDvw2HfdbUwOb2jYlwgLad6Sy0kHpZi0IoMAlkN7hPqZWoWc0nyCPaYFgRRmDh3oQ
-	 0fYTufiKG+LtW+D6B9r4MJOtApGvLQRjQ2RxLqLbBcufLQPCjMV4um/lNftOAe3iK4
-	 sPbhls3wqZxRvi2N3FCfeRIg3cEa+ihXFz89+/aROjlTK1pN67WzrGwdUvumnrPxvA
-	 f0tgCnwlOpn5Q==
+	s=arc-20240116; t=1751967153; c=relaxed/simple;
+	bh=1I60bl9wrWExT+hz6+BrPble5/gv0Q08kLXgIf9/HOI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=KJXsgAMlEFNacPjTXhnwWXGifJf7dmDwhsFOgLXsThShJf01RyYAmnxv3fc40Xc6kYog/2LD/oosEHgd2iRHpbfj3ilO2+nTFxDZm/ONJ/OELNMcOIBzzEM1gjoRbPiryIV8dP2f83jYurqt77pD7MV0/pJL2i+gUAver4JQ+ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OHchkSpV; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A01844341B;
+	Tue,  8 Jul 2025 09:32:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1751967148;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OiVIlldzdwfnJgeml3su1vpyy6HB/paT/1iGeKouukc=;
+	b=OHchkSpVvQ3O+nsCElLAct4ZakwcZD7+J7cMwvGI8MSHsKPd7CIYBNtrOQZWWW6+4a2fj5
+	Ususir7Hue/lO3QIM/VYqsFxbvWALMSofv4X3bR/Reyrg054HKwJ4Def0DxBSDxu+lc8n/
+	mvx93y76lrQXQd5Sf6XlzGksgXpR0DRYjxDSCgkw3RuUo9DCXe3BBno+TN+d0ZzNE4xbC9
+	Mfmhea47xNE3H/3DUmyIIyFggFM1UfMJL8v+Yid3LS4028KIl0/oDejRPVXFL12otk0D+t
+	s2Mkr3NZq/TyaJvLL7R1eEQvQN24vkZ4OY7QaXoBVjigArl8nVys+ZPe1oWeLg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,53 +52,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 08 Jul 2025 11:32:24 +0200
-Message-Id: <DB6KIR4X6GKM.3EJYQJXILGOGN@kernel.org>
-Subject: Re: [PATCH 2/2] rust: Add several miscellaneous PCI helpers
-Cc: <rust-for-linux@vger.kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Greg
+Date: Tue, 08 Jul 2025 11:32:27 +0200
+Message-Id: <DB6KISI6134O.20T5XKNQ2SF8E@bootlin.com>
+Subject: Re: [PATCH v10 09/11] input: keyboard: Add support for MAX7360
+ keypad
+Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
+ <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
  Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "John Hubbard" <jhubbard@nvidia.com>, "Alexandre
- Courbot" <acourbot@nvidia.com>, <linux-pci@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Alistair Popple" <apopple@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250708060451.398323-1-apopple@nvidia.com>
- <20250708060451.398323-2-apopple@nvidia.com>
-In-Reply-To: <20250708060451.398323-2-apopple@nvidia.com>
+ <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, <andriy.shevchenko@intel.com>,
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Dmitry Torokhov" <dmitry.torokhov@gmail.com>
+X-Mailer: aerc 0.19.0-0-gadd9e15e475d
+References: <20250530-mdb-max7360-support-v10-0-ce3b9e60a588@bootlin.com>
+ <20250530-mdb-max7360-support-v10-9-ce3b9e60a588@bootlin.com>
+ <uibf7p6niiljlymzp24h2sk5dzhw5xschaqxj6wfpgge6b7hdo@czpfchjl7pvw>
+In-Reply-To: <uibf7p6niiljlymzp24h2sk5dzhw5xschaqxj6wfpgge6b7hdo@czpfchjl7pvw>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefgeefvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkffuvefhvffofhgjsehtqhertdertdejnecuhfhrohhmpedfofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugdfuceomhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkefhkeeifeethfejteevfeduheduvddvuedvvddugfffhfevkefftefhuefftddunecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddvpdhrtghpthhtohepughmihhtrhihrdhtohhrohhkhhhovhesghhmrghilhdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrg
+ hdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghmvghlrdgsohhuhhgrrhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplh
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-On Tue Jul 8, 2025 at 8:04 AM CEST, Alistair Popple wrote:
-> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-> index 7f640ba8f19c..f41fd9facb90 100644
-> --- a/rust/kernel/pci.rs
-> +++ b/rust/kernel/pci.rs
-> @@ -393,6 +393,42 @@ pub fn device_id(&self) -> u16 {
->          unsafe { (*self.as_raw()).device }
->      }
-> =20
-> +    /// Returns the PCI revision ID.
-> +    pub fn revision_id(&self) -> u8 {
+On Wed Jul 2, 2025 at 11:00 PM CEST, Dmitry Torokhov wrote:
+> Hi Mathieu,
+>
+> On Fri, May 30, 2025 at 12:00:17PM +0200, Mathieu Dubois-Briand wrote:
+>> +	if (!in_range(max7360_keypad->debounce_ms, MAX7360_DEBOUNCE_MIN,
+>> +		      MAX7360_DEBOUNCE_MAX - MAX7360_DEBOUNCE_MIN)) {
+>> +		dev_err(dev, "Invalid keypad-debounce-delay-ms: %u, should be between=
+ %u and %u.\n",
+>> +			max7360_keypad->debounce_ms, MAX7360_DEBOUNCE_MIN, MAX7360_DEBOUNCE_=
+MAX);
+>> +		return -EINVAL;
+>
+> Is it inclusive of MAX7360_DEBOUNCE_MAX or exclusive? Do we need + 1
+> here?
+>
 
-We should add a compiler hint for those methods to be inlined.
+Yes, I definitely forgot the +1 here.
 
-> +        // SAFETY: `self.as_raw` is a valid pointer to a `struct pci_dev=
-`.
+> Anyway,
+>
+> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>
+> Thanks.
 
-Let's refer to the type invariant for the validity of self.as_raw().
+Thanks for the review!
 
-> +        unsafe { (*self.as_raw()).revision }
-> +    }
 
-Both is also true for the existing methods vendor_id() and device_id(). Can=
- you
-please fix them up in a separate patch as well?
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Also, please add a brief note in the commit message where those will be use=
-d
-(even though I obviously know). :)
 
