@@ -1,80 +1,62 @@
-Return-Path: <linux-kernel+bounces-722091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14141AFD53F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:24:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1D73AFD53E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68D03562716
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:24:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 590297A77DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132732E62C0;
-	Tue,  8 Jul 2025 17:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA302E6D3A;
+	Tue,  8 Jul 2025 17:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Y6JBlOFk"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hv+unAi3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E282E6139;
-	Tue,  8 Jul 2025 17:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D6C2E6D0B;
+	Tue,  8 Jul 2025 17:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751995440; cv=none; b=YcoOYLzk77SF6El8ACEavOTgybUDNDaKZZK0jJbeP/yqdMnwugT575jcFi06g6UohfwykxKt1h6QLJbU5bvJDXft6SLtrP+47oIKAQjIYEBNYdlipV8RCBqGuzDjipTJpJGkJpBYgeNgSsZVfbSOYaWgrKLWJ7dH/EOQqzY8iLY=
+	t=1751995426; cv=none; b=uj50bfihMy8rOvuF6aSunrtxNwmfmEM7zORRBew3K0Weok4FkeE//8EUe1tZpI7w9jdN3zrDGTak+j9lItabEjuteiwKV4Xw4p2qxdEG78pogQ/B/M6OBe0SI4XEhUnRHLLbm/vdicDGMRszHR18Pg1r+nxyKe19wLeJ1ALGwoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751995440; c=relaxed/simple;
-	bh=FY31zHYi8emkhgcdjvkzMSW74VcQ8ljIfVEX+OzkNZI=;
+	s=arc-20240116; t=1751995426; c=relaxed/simple;
+	bh=IL2Ec5vcZd1gBfh4nN8IvjVJbCH2TCDHEEJdjkJNnvI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jguj4IrlatjMd4GK9W/zd+m2sSUGXnAnw9PcQAEn5VnG/6mCOa+q49VMBU84F0vQj0S3p+a7M1MHCqPSowS1/l49wxAnnxWs6dvwkJQ9b3dkbnGJxpHpf6iNOb+WE7OdnaWRtBHk+0HMFeyJ8Y67phpousjB14jEOI1y6EXeH+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Y6JBlOFk; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 73B1440E021D;
-	Tue,  8 Jul 2025 17:23:55 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id YJju1TIK55oj; Tue,  8 Jul 2025 17:23:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1751995430; bh=DDciVo4dZIhYvTqDSCSNwmpmxcoETN4xI226KLR7z3g=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=RwOJQDB9LyAV5Sk7OdyvwD976ytet77kBevGlaMW/lOQqlKw5aRm6mUk6bIYMvIXwkz3yuHtUWARho8N5C9PoJNxaYd+SFeOYurhNZTHDjGB8Kn08eho9jr2vT59SAiAEHEDUa7eB+3z3Tzu76JCKjpRban0h2sqK3i9HO0Nw9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hv+unAi3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66A93C4CEF5;
+	Tue,  8 Jul 2025 17:23:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751995425;
+	bh=IL2Ec5vcZd1gBfh4nN8IvjVJbCH2TCDHEEJdjkJNnvI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y6JBlOFkFzSvrdczOgVTVc1c6Xuuc4goxaKaFH3W6xqWBTMV6w/n8NaywwB+hTtex
-	 WYxQrR4dbGyDAKRgWZOCUVbTman/AK8Sl96yRJzDIrQn1Y4SMIbYIZTemtzMzuSdRv
-	 mgu+E9y1v8vywWkaAKo2BXyLeW43PwRPXrZ7cPawM5J+RKhIO5DK0Lo+0dMet55INT
-	 H1vUpzh2L/XaxEz64q4RAcQlI8C1DoIbpOO3pqPuduDI0I4APlj5XhMuP9j3+8dqyY
-	 eGWLH2n7tz3vS0fSKtsr1Eo3Cc6LJQt0J4XDr2Uzvy1lY+gOuYH9pPOFeSnVd9OUGY
-	 /GXE5/O0pJGDWgSeaF3vZlLjWXJAbI2dBTQjpyO4Ocyrv2R9mJkI7QFCV+YgOmhCNP
-	 f5GPu+OBRjsNmZdCecv9snO+lQy12MwVrTwVaj+TcEB/sibjY71FNqrc5gfFO3OCXx
-	 0+vNUvEy9PSNvvURy44ClSYcB5hZUBUEDg73arAHqUiaXqOYZM85x+AnoiCqVH2U36
-	 azdyLEH4z3c+0b55P9AmRGHfTkGm0yZmdHV93saGgTcx5bQTr8FeBmM4YuqueJrudN
-	 A+/NpuQQ1HAILdrBlifOenRIC0nBHkt2nIczdyskAcpH/GkFECn0vVNzUnje0OnxVo
-	 H0f/DWOSTrxnD9RD/ugQuRhI=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6596640E021C;
-	Tue,  8 Jul 2025 17:23:29 +0000 (UTC)
-Date: Tue, 8 Jul 2025 19:23:19 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
-	Kim Phillips <kim.phillips@amd.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 5.15 000/160] 5.15.187-rc1 review
-Message-ID: <20250708172319.GEaG1UB5x3BffeL9VW@fat_crate.local>
-References: <20250708162231.503362020@linuxfoundation.org>
- <2438aa80-091d-4668-90e0-fb75f3e0b699@gmail.com>
+	b=hv+unAi3RatHtwdAZ+PtpIEWyLlOsvs0JJiNmgaxCpCMwLn8AtGddyj2nbcLaSU/N
+	 7TUssVOmnspDrZEVOIWnnLmhGBrqqeoA6suti0yLBMfNjRUp2BP20w+rIql4mjRfJA
+	 6BAXLJTUUGWzX12Sl5dTV46fSCzw7ZYuChb+43xpaelMBEyGhxfn73spu9Nr4rfmfm
+	 BsOJFBUx3zoJPikR8L73iCfQ8owzy70lCWgR4DHmz5Yui4oW7GPmirDZ89hvymRNoR
+	 fTePvQ3dlE3TZske4RBXO41ev/QS0ARQZz3Hpra5j59vAEND4aSMAp2aiKh0KE6qsr
+	 OoMCnIzU+vsrg==
+Date: Tue, 8 Jul 2025 22:53:34 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Jingoo Han <jingoohan1@gmail.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Jeff Johnson <jjohnson@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev, linux-wireless@vger.kernel.org, 
+	ath11k@lists.infradead.org, qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com, 
+	quic_vpernami@quicinc.com, quic_mrana@quicinc.com, 
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>, Miaoqing Pan <quic_miaoqing@quicinc.com>
+Subject: Re: [PATCH v4 11/11] wifi: ath11k: Add support for MHI bandwidth
+ scaling
+Message-ID: <7kgg4txp6fqfom7akzcodcvkfyjm6tlkgr6lhnnkluohydoiop@ywax65nn6emn>
+References: <20250609-mhi_bw_up-v4-0-3faa8fe92b05@qti.qualcomm.com>
+ <20250609-mhi_bw_up-v4-11-3faa8fe92b05@qti.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,16 +65,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2438aa80-091d-4668-90e0-fb75f3e0b699@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250609-mhi_bw_up-v4-11-3faa8fe92b05@qti.qualcomm.com>
 
-On Tue, Jul 08, 2025 at 10:20:01AM -0700, Florian Fainelli wrote:
-> The ARM 32-bit kernel fails to build with:
+On Mon, Jun 09, 2025 at 04:21:32PM GMT, Krishna Chaitanya Chundru wrote:
+> From: Miaoqing Pan <quic_miaoqing@quicinc.com>
+> 
+> Add support for MHI bandwidth scaling, which will reduce power consumption
+> if WLAN operates with lower bandwidth. This feature is only enabled for
+> QCA6390.
+> 
+> Bandwidth scaling is initiated by the endpoint firmware based upon the
+> bandwidth requirements, if there is high bandwidth data endpoint requests
+> for higher data rates or if there is less bandwidth they request for lower
+> data rates to reduce power. Endpoint initiates this through MHI protocol.
+> 
+> Tested-on: WCN6855 hw2.1 PCI WLAN.HSP.1.1-04546-QCAHSPSWPL_V1_V2_SILICONZ_IOE-1
+> 
+> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> ---
+>  drivers/net/wireless/ath/ath11k/mhi.c | 41 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+> 
+> diff --git a/drivers/net/wireless/ath/ath11k/mhi.c b/drivers/net/wireless/ath/ath11k/mhi.c
+> index acd76e9392d31192aca6776319ef0829a1c69628..f79507c7a82244f9e9d8a3ae6765df3f9432ae8c 100644
+> --- a/drivers/net/wireless/ath/ath11k/mhi.c
+> +++ b/drivers/net/wireless/ath/ath11k/mhi.c
+> @@ -20,6 +20,7 @@
+>  #define MHI_TIMEOUT_DEFAULT_MS	20000
+>  #define RDDM_DUMP_SIZE	0x420000
+>  #define MHI_CB_INVALID	0xff
+> +#define MHI_BW_SCALE_CHAN_DB 126
+>  
+>  static const struct mhi_channel_config ath11k_mhi_channels_qca6390[] = {
+>  	{
+> @@ -73,6 +74,17 @@ static struct mhi_event_config ath11k_mhi_events_qca6390[] = {
+>  		.client_managed = false,
+>  		.offload_channel = false,
+>  	},
+> +	{
+> +		.num_elements = 8,
+> +		.irq_moderation_ms = 0,
+> +		.irq = 1,
+> +		.mode = MHI_DB_BRST_DISABLE,
+> +		.data_type = MHI_ER_BW_SCALE,
+> +		.priority = 2,
+> +		.hardware_event = false,
+> +		.client_managed = false,
+> +		.offload_channel = false,
+> +	},
+>  };
+>  
+>  static const struct mhi_controller_config ath11k_mhi_config_qca6390 = {
+> @@ -313,6 +325,33 @@ static void ath11k_mhi_op_write_reg(struct mhi_controller *mhi_cntrl,
+>  	writel(val, addr);
+>  }
+>  
+> +static int ath11k_mhi_op_get_misc_doorbell(struct mhi_controller *mhi_cntrl,
+> +					   enum mhi_er_data_type type)
+> +{
+> +	if (type == MHI_ER_BW_SCALE)
+> +		return MHI_BW_SCALE_CHAN_DB;
+> +
+> +	return -EINVAL;
 
-Can you give .config pls?
+-EOPNOTSUPP?
+
+> +}
+> +
+> +static int ath11k_mhi_op_bw_scale(struct mhi_controller *mhi_cntrl,
+> +				  struct mhi_link_info *link_info)
+> +{
+> +	enum pci_bus_speed speed = pci_lnkctl2_bus_speed(link_info->target_link_speed);
+> +	struct ath11k_base *ab = dev_get_drvdata(mhi_cntrl->cntrl_dev);
+> +	struct pci_dev *pci_dev = to_pci_dev(ab->dev);
+> +	struct pci_dev *pdev;
+> +
+> +	if (!pci_dev)
+> +		return -EINVAL;
+
+Is it really possible?
+
+- Mani
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+மணிவண்ணன் சதாசிவம்
 
