@@ -1,149 +1,319 @@
-Return-Path: <linux-kernel+bounces-721570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB8CFAFCB10
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:56:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A68CAFCB14
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BD181AA6794
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:56:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB51F16AAC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9421E5B91;
-	Tue,  8 Jul 2025 12:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5727E2DCF5E;
+	Tue,  8 Jul 2025 12:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rUMpLiKt"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EoR+eqSi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790661E376E
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 12:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9B92DCBF6
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 12:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751979392; cv=none; b=Ncz4Oscp7z1E+Bo+c4kIjKun+62FA6aQzNWlTukSjnEwuu8SCJ+ZL0i81gUkbV0nN+gy66F1DWhOmhewiiOxreOjo8ODCDqY5DT5n01qPesolpcVlPacv0WJ+ncMpqKEjpJVdMCvXmD2WO46RunxyBbOu603CUJBfCH7rGkDpv8=
+	t=1751979394; cv=none; b=sk7RrhZ44OdRv0eYilLLHErHNWBmsBcuzus9sawjTcHTJIBKH32dj/R+BUv3tPtCuxWoRlg5WPzn/Q9mC5lZmi2rUJkRSGHiCSm+c/EJJrmYPrwJNb3zdE+k98RpZYDJKjhnx/2WgHTFdpXzHzh5YcDq87v4ZfCS4z4Ul40swKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751979392; c=relaxed/simple;
-	bh=tJRA7m1/e900tlxVd4Za+3wH7OTzUtyyJem1XRv1vJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=lFDYZPYqi7VDWP4rn+xcQ5ajdb1tQ3Q2s3q5sCH1nMm3plPpGucPi8W5BtMAiH1iKr8pC/XyNfaO0qVq/Q9508aKp+8BGXqB0UkipzboMKTrv+5fV/Vz5P5uLjaR5z8VpdPtlATm3olNmkTa5ofGZaJU9nwaSrD6grP6Ssss4/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rUMpLiKt; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250708125626euoutp01f6a9a2e3774bbab8d0a10849520199b8~QR-hLsOdZ0886408864euoutp013
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 12:56:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250708125626euoutp01f6a9a2e3774bbab8d0a10849520199b8~QR-hLsOdZ0886408864euoutp013
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1751979386;
-	bh=7/XLYR0OqGT6q8wsQL9awTM8RahowyCK2kF3Lml5n78=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=rUMpLiKtylansmwZEOTSLIDw3e88apapi9cZUeM+VwB6dnZwW74YiawcqeB7aNHsz
-	 phmldqGZGmgcE5mbHZFMvy+/ua/qmdnZrQIXXdjq/6DIcaz3yi5eWLpP0dS+1ew2NU
-	 O2DMyf6ZjkU0E5KGbps8p5YBy+HTdwiEMA3XvUgM=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250708125626eucas1p10fea4e2440d7273510ca606b8c879240~QR-go19vo0583905839eucas1p1z;
-	Tue,  8 Jul 2025 12:56:26 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250708125622eusmtip2e8d499202aebc1a18605d526cd72bbdc~QR-dBQdu70489204892eusmtip2-;
-	Tue,  8 Jul 2025 12:56:22 +0000 (GMT)
-Message-ID: <39d43309-9f34-48bc-a9ad-108c607ba175@samsung.com>
-Date: Tue, 8 Jul 2025 14:56:21 +0200
+	s=arc-20240116; t=1751979394; c=relaxed/simple;
+	bh=k0+kuM8Cz5ViKY95vOHHlaBqnsa27iueNbzExq+qfe8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SRLBDz2XGpY1/mlfp+ZOz4TD7D37nEDKvvwSHJtjpvQzEgTt3iR4BDk5M/VRD8MXf4qAzouddR+uk+rzod1ZoR/2kh1VQKchlOzdumcZr2GbweF6EHdoXfeDwJFMax8cvHEMXoHaJpTHRxVSISmofAYGGWS2P8ZzcSE2Ylvmuxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EoR+eqSi; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751979392;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=4enkuUM/Iqg8u3LUOVhlUlkEjtxCVEV8ARt1lHw3cJw=;
+	b=EoR+eqSieXWZ2/yvSAI93r79w/E1k1dSCNCdOgbcX7ni2G+fQi+p94cT0pOlyowkZMRDAJ
+	AalRAICeGcBPMLEALUA0hpjTfH722PHJR17muePRfr0wae+A3LurZ5bhYWBbVo0PpkePQN
+	5H/UOygdazgvjVPOx2+90W1X7/YJecM=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-661-uZOlekq8MOKZPh91CrH7SQ-1; Tue,
+ 08 Jul 2025 08:56:28 -0400
+X-MC-Unique: uZOlekq8MOKZPh91CrH7SQ-1
+X-Mimecast-MFC-AGG-ID: uZOlekq8MOKZPh91CrH7SQ_1751979387
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B7B7218DA5C0;
+	Tue,  8 Jul 2025 12:56:27 +0000 (UTC)
+Received: from sirius.home.kraxel.org (unknown [10.45.224.100])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D2CCA18003FC;
+	Tue,  8 Jul 2025 12:56:26 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+	id 384A218000B2; Tue, 08 Jul 2025 14:56:24 +0200 (CEST)
+From: Gerd Hoffmann <kraxel@redhat.com>
+To: linux-efi@vger.kernel.org
+Cc: Gerd Hoffmann <kraxel@redhat.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] efi: add ovmf debug log driver
+Date: Tue,  8 Jul 2025 14:56:23 +0200
+Message-ID: <20250708125624.734132-1-kraxel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] dma-mapping: migrate to physical address-based API
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Jonathan Corbet <corbet@lwn.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman
-	<mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
-	<christophe.leroy@csgroup.eu>, Robin Murphy <robin.murphy@arm.com>, Joerg
-	Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, "Michael S.
-	Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Xuan Zhuo
- <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Alexander Potapenko <glider@google.com>, Marco Elver
- <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>, Andrew Morton
- <akpm@linux-foundation.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- iommu@lists.linux.dev, virtualization@lists.linux.dev,
- kasan-dev@googlegroups.com, linux-trace-kernel@vger.kernel.org,
- linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250708120647.GG592765@unreal>
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250708125626eucas1p10fea4e2440d7273510ca606b8c879240
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250625131920eucas1p271b196cde042bd39ac08fb12beff5baf
-X-EPHeader: CA
-X-CMS-RootMailID: 20250625131920eucas1p271b196cde042bd39ac08fb12beff5baf
-References: <CGME20250625131920eucas1p271b196cde042bd39ac08fb12beff5baf@eucas1p2.samsung.com>
-	<cover.1750854543.git.leon@kernel.org>
-	<35df6f2a-0010-41fe-b490-f52693fe4778@samsung.com>
-	<20250627170213.GL17401@unreal> <20250630133839.GA26981@lst.de>
-	<69b177dc-c149-40d3-bbde-3f6bad0efd0e@samsung.com>
-	<20250708110007.GF592765@unreal>
-	<261f2417-78a9-45b8-bcec-7e36421a243c@samsung.com>
-	<20250708120647.GG592765@unreal>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 08.07.2025 14:06, Leon Romanovsky wrote:
-> On Tue, Jul 08, 2025 at 01:45:20PM +0200, Marek Szyprowski wrote:
->> On 08.07.2025 13:00, Leon Romanovsky wrote:
->>> On Tue, Jul 08, 2025 at 12:27:09PM +0200, Marek Szyprowski wrote:
->>>> On 30.06.2025 15:38, Christoph Hellwig wrote:
->>>>> On Fri, Jun 27, 2025 at 08:02:13PM +0300, Leon Romanovsky wrote:
->>>>>>> Thanks for this rework! I assume that the next step is to add map_phys
->>>>>>> callback also to the dma_map_ops and teach various dma-mapping providers
->>>>>>> to use it to avoid more phys-to-page-to-phys conversions.
->>>>>> Probably Christoph will say yes, however I personally don't see any
->>>>>> benefit in this. Maybe I wrong here, but all existing .map_page()
->>>>>> implementation platforms don't support p2p anyway. They won't benefit
->>>>>> from this such conversion.
->>>>> I think that conversion should eventually happen, and rather sooner than
->>>>> later.
->>>> Agreed.
->>>>
->>>> Applied patches 1-7 to my dma-mapping-next branch. Let me know if one
->>>> needs a stable branch with it.
->>> Thanks a lot, I don't think that stable branch is needed. Realistically
->>> speaking, my VFIO DMA work won't be merged this cycle, We are in -rc5,
->>> it is complete rewrite from RFC version and touches pci-p2p code (to
->>> remove dependency on struct page) in addition to VFIO, so it will take
->>> time.
->>>
->>> Regarding, last patch (hmm), it will be great if you can take it.
->>> We didn't touch anything in hmm.c this cycle and have no plans to send PR.
->>> It can safely go through your tree.
->> Okay, then I would like to get an explicit ack from Jérôme for this.
-> Jerome is not active in HMM world for a long time already.
-> HMM tree is managed by us (RDMA) https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/log/?h=hmm
-> ➜  kernel git:(m/dmabuf-vfio) git log --merges mm/hmm.c
-> ...
-> Pull HMM updates from Jason Gunthorpe:
-> ...
->
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=58ba80c4740212c29a1cf9b48f588e60a7612209
-> +hmm		git	git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git#hmm
->
-> We just never bothered to reflect current situation in MAINTAINERS file.
+Recent OVMF versions (edk2-stable202508 + newer) can write their debug
+log to a memory buffer.  This driver exposes the log content via sysfs
+(/sys/firmware/efi/ovmf_debug_log).
 
-Maybe this is the time to update it :)
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ include/linux/efi.h                   |   2 +
+ drivers/firmware/efi/efi.c            |   8 ++
+ drivers/firmware/efi/ovmf-debug-log.c | 136 ++++++++++++++++++++++++++
+ drivers/firmware/efi/Kconfig          |   8 ++
+ drivers/firmware/efi/Makefile         |   1 +
+ 5 files changed, 155 insertions(+)
+ create mode 100644 drivers/firmware/efi/ovmf-debug-log.c
 
-I was just a bit confused that no-one commented the HMM patch, but if 
-You maintain it, then this is okay.
-
-Best regards
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 7d63d1d75f22..a71830608422 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -439,6 +439,7 @@ void efi_native_runtime_setup(void);
+ 
+ /* OVMF protocol GUIDs */
+ #define OVMF_SEV_MEMORY_ACCEPTANCE_PROTOCOL_GUID	EFI_GUID(0xc5a010fe, 0x38a7, 0x4531,  0x8a, 0x4a, 0x05, 0x00, 0xd2, 0xfd, 0x16, 0x49)
++#define OVMF_MEMORY_LOG_TABLE_GUID		EFI_GUID(0x95305139, 0xb20f, 0x4723, 0x84, 0x25, 0x62, 0x7c, 0x88, 0x8f, 0xf1, 0x21)
+ 
+ typedef struct {
+ 	efi_guid_t guid;
+@@ -642,6 +643,7 @@ extern struct efi {
+ 	unsigned long			esrt;			/* ESRT table */
+ 	unsigned long			tpm_log;		/* TPM2 Event Log table */
+ 	unsigned long			tpm_final_log;		/* TPM2 Final Events Log table */
++	unsigned long                   ovmf_debug_log;
+ 	unsigned long			mokvar_table;		/* MOK variable config table */
+ 	unsigned long			coco_secret;		/* Confidential computing secret table */
+ 	unsigned long			unaccepted;		/* Unaccepted memory table */
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index e57bff702b5f..3161f918ce53 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -45,6 +45,7 @@ struct efi __read_mostly efi = {
+ 	.esrt			= EFI_INVALID_TABLE_ADDR,
+ 	.tpm_log		= EFI_INVALID_TABLE_ADDR,
+ 	.tpm_final_log		= EFI_INVALID_TABLE_ADDR,
++	.ovmf_debug_log         = EFI_INVALID_TABLE_ADDR,
+ #ifdef CONFIG_LOAD_UEFI_KEYS
+ 	.mokvar_table		= EFI_INVALID_TABLE_ADDR,
+ #endif
+@@ -473,6 +474,10 @@ static int __init efisubsys_init(void)
+ 		platform_device_register_simple("efi_secret", 0, NULL, 0);
+ #endif
+ 
++	if (IS_ENABLED(CONFIG_OVMF_DEBUG_LOG) &&
++	    efi.ovmf_debug_log != EFI_INVALID_TABLE_ADDR)
++		platform_device_register_simple("ovmf_debug_log", 0, NULL, 0);
++
+ 	return 0;
+ 
+ err_remove_group:
+@@ -617,6 +622,9 @@ static const efi_config_table_type_t common_tables[] __initconst = {
+ 	{LINUX_EFI_MEMRESERVE_TABLE_GUID,	&mem_reserve,		"MEMRESERVE"	},
+ 	{LINUX_EFI_INITRD_MEDIA_GUID,		&initrd,		"INITRD"	},
+ 	{EFI_RT_PROPERTIES_TABLE_GUID,		&rt_prop,		"RTPROP"	},
++#ifdef CONFIG_OVMF_DEBUG_LOG
++	{OVMF_MEMORY_LOG_TABLE_GUID,		&efi.ovmf_debug_log,	"OvmfDebugLog"	},
++#endif
+ #ifdef CONFIG_EFI_RCI2_TABLE
+ 	{DELLEMC_EFI_RCI2_TABLE_GUID,		&rci2_table_phys			},
+ #endif
+diff --git a/drivers/firmware/efi/ovmf-debug-log.c b/drivers/firmware/efi/ovmf-debug-log.c
+new file mode 100644
+index 000000000000..d4fec178fa9f
+--- /dev/null
++++ b/drivers/firmware/efi/ovmf-debug-log.c
+@@ -0,0 +1,136 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/efi.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/kobject.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/sysfs.h>
++
++#define OVMF_DEBUG_LOG_MAGIC1  0x3167646d666d766f  // "ovmfmdg1"
++#define OVMF_DEBUG_LOG_MAGIC2  0x3267646d666d766f  // "ovmfmdg2"
++
++struct ovmf_debug_log_header {
++	u64    magic1;
++	u64    magic2;
++	u64    hdr_size;
++	u64    log_size;
++	u64    lock; // edk2 spinlock
++	u64    head_off;
++	u64    tail_off;
++	u64    truncated;
++	u8     fw_version[128];
++};
++
++static struct ovmf_debug_log_header *hdr;
++static u8 *logbuf;
++static u64 logbufsize;
++
++static ssize_t ovmf_log_read(struct file *filp, struct kobject *kobj,
++			     const struct bin_attribute *attr, char *buf,
++			     loff_t offset, size_t count)
++{
++	u64 start, end;
++
++	start = hdr->head_off + offset;
++	if (hdr->head_off > hdr->tail_off && start >= hdr->log_size)
++		start -= hdr->log_size;
++
++	end = start + count;
++	if (start > hdr->tail_off) {
++		if (end > hdr->log_size)
++			end = hdr->log_size;
++	} else {
++		if (end > hdr->tail_off)
++			end = hdr->tail_off;
++	}
++
++	if (start > logbufsize || end > logbufsize)
++		return 0;
++	if (start >= end)
++		return 0;
++
++	memcpy(buf, logbuf + start, end - start);
++	return end - start;
++}
++
++static struct bin_attribute ovmf_log_bin_attr = {
++	.attr = {
++		.name = "ovmf_debug_log",
++		.mode = 0444,
++	},
++	.read = ovmf_log_read,
++};
++
++static int ovmf_log_probe(struct platform_device *dev)
++{
++	u64 size;
++	int ret = -EINVAL;
++
++	if (efi.ovmf_debug_log == EFI_INVALID_TABLE_ADDR) {
++		dev_err(&dev->dev, "OVMF debug log: not available\n");
++		return -EINVAL;
++	}
++
++	/* map + verify header */
++	hdr = memremap(efi.ovmf_debug_log, sizeof(*hdr), MEMREMAP_WB);
++	if (!hdr) {
++		dev_err(&dev->dev, "OVMF debug log: header map failed\n");
++		return -EINVAL;
++	}
++
++	if (hdr->magic1 != OVMF_DEBUG_LOG_MAGIC1 ||
++	    hdr->magic2 != OVMF_DEBUG_LOG_MAGIC2) {
++		dev_err(&dev->dev, "OVMF debug log: magic mismatch\n");
++		goto err_unmap;
++	}
++
++	size = hdr->hdr_size + hdr->log_size;
++	dev_info(&dev->dev, "firmware version: \"%s\"\n", hdr->fw_version);
++	dev_info(&dev->dev, "log buffer size: %lluk\n", size / 1024);
++
++	/* map complete log buffer */
++	memunmap(hdr);
++	hdr = memremap(efi.ovmf_debug_log, size, MEMREMAP_WB);
++	if (!hdr) {
++		dev_err(&dev->dev, "OVMF debug log: buffer map failed\n");
++		return -EINVAL;
++	}
++	logbuf = (void *)hdr + hdr->hdr_size;
++	logbufsize = hdr->log_size;
++
++	ovmf_log_bin_attr.size = size;
++	ret = sysfs_create_bin_file(efi_kobj, &ovmf_log_bin_attr);
++	if (ret != 0) {
++		dev_err(&dev->dev, "OVMF debug log: sysfs register failed\n");
++		goto err_unmap;
++	}
++
++	return 0;
++
++err_unmap:
++	memunmap(hdr);
++	return ret;
++}
++
++static void ovmf_log_remove(struct platform_device *dev)
++{
++	memunmap(hdr);
++}
++
++static struct platform_driver ovmf_log_driver = {
++	.probe = ovmf_log_probe,
++	.remove = ovmf_log_remove,
++	.driver = {
++		.name = "ovmf_debug_log",
++	},
++};
++
++module_platform_driver(ovmf_log_driver);
++
++MODULE_DESCRIPTION("OVMF debug log");
++MODULE_AUTHOR("Gerd Hoffmann <kraxel@redhat.com>");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:ovmf_debug_log");
+diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+index db8c5c03d3a2..ac0a03ec3452 100644
+--- a/drivers/firmware/efi/Kconfig
++++ b/drivers/firmware/efi/Kconfig
+@@ -263,6 +263,14 @@ config EFI_COCO_SECRET
+ 	  virt/coco/efi_secret module to access the secrets, which in turn
+ 	  allows userspace programs to access the injected secrets.
+ 
++config OVMF_DEBUG_LOG
++	tristate "Expose OVMF firmware debug log via sysfs"
++	depends on EFI
++	help
++	  Recent OVMF versions (edk2-stable202508 + newer) can write
++	  their debug log to a memory buffer.  This driver exposes the
++	  log content via sysfs (/sys/firmware/efi/ovmf_debug_log).
++
+ config UNACCEPTED_MEMORY
+ 	bool
+ 	depends on EFI_STUB
+diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
+index a2d0009560d0..8efbcf699e4f 100644
+--- a/drivers/firmware/efi/Makefile
++++ b/drivers/firmware/efi/Makefile
+@@ -29,6 +29,7 @@ obj-$(CONFIG_APPLE_PROPERTIES)		+= apple-properties.o
+ obj-$(CONFIG_EFI_RCI2_TABLE)		+= rci2-table.o
+ obj-$(CONFIG_EFI_EMBEDDED_FIRMWARE)	+= embedded-firmware.o
+ obj-$(CONFIG_LOAD_UEFI_KEYS)		+= mokvar-table.o
++obj-$(CONFIG_OVMF_DEBUG_LOG)		+= ovmf-debug-log.o
+ 
+ obj-$(CONFIG_SYSFB)			+= sysfb_efi.o
+ 
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.50.0
 
 
