@@ -1,217 +1,205 @@
-Return-Path: <linux-kernel+bounces-721665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 132AAAFCC3C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:35:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2110AFCC34
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 632533A6967
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:31:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62FCB4A2844
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46742DECD3;
-	Tue,  8 Jul 2025 13:28:19 +0000 (UTC)
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620BC2DEA96;
+	Tue,  8 Jul 2025 13:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ySDIL6M+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WRnJ9kUd";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ySDIL6M+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WRnJ9kUd"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6622F220F5E;
-	Tue,  8 Jul 2025 13:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085202DEA87
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 13:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751981299; cv=none; b=hoeckxl7UV5YZYsSmmKCcAMOFs3EZ6RGZqym1zmXUaIInHIrQWHE+VBkIMoLkBmIlPFnIkVuvj7lpKptf510SBDZVxnIswL9Y9A7gY4tjawvhppir3eTnAzKsYDidWOrkSWP90Hqoyrjsj1PcVQYuSQcO8iU3xFxQBWx7/mayyQ=
+	t=1751981409; cv=none; b=oP9GdT445XhFjb+XdiT/ODHsjR2XyEb6jHFHHbw0YdFkUyCy7fJcZmEo9zkwkMJB8k9ZxEhbbRUBxWQIaBy2F1Z5bQux/IThxBmUN/QnSJ4EpPZMvjblJZRanCZ/W39b+QntBSVmfI5USoX5NuyAShlYI6350+njeANZRSfZwP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751981299; c=relaxed/simple;
-	bh=1yZpcF/YahkL+DH/T9SpJ6dHIKpkpWwhLdbkP3+hyJg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bnI8QLyefaKJz7A5iHnBWwoVx5Hr1CpEtGxkQkQEJFOWVehYSCc3jQ72unHIkobflietq6Holx+GwC3tFI9TZklYde2JaZr+4TisB79WciELhiHqepqmdjwNBuClGO4koKzNrMJMkXg3wtkzB+GilnuXGeFeaDW4GpmohobNIBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-8794259ffe8so51627039f.1;
-        Tue, 08 Jul 2025 06:28:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751981291; x=1752586091;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HwXr5JQBPkaBLHWGddnnrahSfTIk8BLpRxGvjvBeRX0=;
-        b=uu8rXWcBOq+N9fkwF6BCOMztro6l1L5cN4A+FHMXeDj7f306eam3awgz1ynRbX203I
-         328egMRU37561VHPcJ5iE5AVtv3bfNV144GvjP9ACh/hgG9TvEbMqDfjz8UdhQ++7ymZ
-         WxDzB6hpdEtEZm8NFABM5yvpIgbr13tq9cKa9sGz73Duh9G/qsyOlHsIaf0qmsAqYLh7
-         rWrNhmqRkRtvAhjyg7BX0Mjy3+YrfJtaXsmFRIZcHvnKkvHWWeONkLm2F/aHt6EDTnAM
-         0PCp38oNmakNKDIhXtAkdw+L3kF/F7Ct0zvsztyD+WZ0FDsrcaz74ogcg13yZ2mQVfKI
-         PJ9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU5hwsxezmkLnhM2+Zp0wAXJNmdRw5JpsfCU6yLxs0Wqw/vKF2o+ej+f8SKpt1aAU2wfwJxOP/ZGSlDs1KX@vger.kernel.org, AJvYcCX2kd7029HXsiLf3q33LXSlEIBG/pJbdTgmkiIUqjt0zRnOT7ZdiZnaM9GOjyI5THwHPRh2ei/YOvmGaQ==@vger.kernel.org, AJvYcCX5sLfFSe4uLLdSdny1aqJDlkbAcJwngUaSSfEGQ733RahphhjrT+fe5IiXUFrenfWPyHVvpuJectvX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyrtk6uZ5PksQEKXKVscFNanxFwIxgzkA1Urpyn7ZBcNMTiHJvY
-	b2aJfKmlpBvTcga7q/4XNZ0Q+EPQgZphy76z18k/sskQeBlyfWc4vw8RiCG2cvRqBbE=
-X-Gm-Gg: ASbGncuMFf8wVkBKdd9uxze4tDpZaaVk9O8SF90tNCr2jUOSqziJ6kHKnqFWRidsNNw
-	uLZDuVjBHkHXzHbVlb+APXrIFPOAXL50FZXv2LQv9KUQ4xqzAyZPoRFDt3H4IKJKif0XhdlAvhq
-	Dc7m5ee9t4dNvAv6kzaaJn5PrYkctwjJFfd9vfpBAUQF1etPvJ1VrX3TNIOJqMgRy2ePiWrudqf
-	hnZgRjD2XIrkYnOqO5UxFtG6kjZ9NMzQ7bjBWaEl8rCfZn8cPTEFEyhOhi5L2+QPgrZGMIP2lMa
-	O3GvUu8hN4sQRSZxyDgwVI7+eJgyV/ygUjPIWbGu7/t3JViq+PNMxH1Tj14vsaR23bJA5TEPwtV
-	hs+Saj0txNjEBPB8=
-X-Google-Smtp-Source: AGHT+IE7qUsKgl5Uth7T/A1Bp8ngI7sw84zTX6ON9RqZpJk9nkhrzOKKJrHs+sgtmapH1YMqWV+knA==
-X-Received: by 2002:a05:6602:740c:b0:876:737:85da with SMTP id ca18e2360f4ac-8794c10a9cemr278744539f.0.1751981291319;
-        Tue, 08 Jul 2025 06:28:11 -0700 (PDT)
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com. [209.85.166.54])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-503b599b64asm2164119173.15.2025.07.08.06.28.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 06:28:10 -0700 (PDT)
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-8794259ffe8so51622839f.1;
-        Tue, 08 Jul 2025 06:28:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVKzCotSXFUkHlV7gWY+mZU385I48D1KjG8cLnWqWz1qQtJUTL11nVGtYr0hP9udaHafoYIqTCzhQW3Dg==@vger.kernel.org, AJvYcCW2jxc1fzehiFnB69RogO7kBPze2ExewGIVZcJqUdVEYbCzpOZ1pffkct/5iw4gR+tamLzFAy4RJfZ7@vger.kernel.org, AJvYcCWCM78DAUctphHmzBJBf2SPvMN4ob9BHUE31vT8Fpwd+zYVuNwEZ+55qIdqScqpI/fi+eiHm7kCVN7Pt8eC@vger.kernel.org
-X-Received: by 2002:a5d:94cd:0:b0:86a:441:25ca with SMTP id
- ca18e2360f4ac-8794c5a73e5mr262803939f.6.1751981289780; Tue, 08 Jul 2025
- 06:28:09 -0700 (PDT)
+	s=arc-20240116; t=1751981409; c=relaxed/simple;
+	bh=NVZvl7WHp/9NIMoUnSDfC/VS+77NPSF3zzdlEXkoEn8=;
+	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=Tmo21G1Xq1047o58CUn/O5wb99HDJ/Wy2ixE8SXvAZD1gX0Rn5ZSLVRGa15aKnZgVY7um8CnLkGzxymWqPftP7wzUvR2+1bBU5ZrJESUlfmjJP9hbanHoEhu5brrdZItSA9+hWks2XCawpPq9jbvqL7/FKCqWYmBc01m70IYLUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ySDIL6M+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WRnJ9kUd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ySDIL6M+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WRnJ9kUd; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 219861F45E;
+	Tue,  8 Jul 2025 13:30:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751981405; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=6kxLe6D5dx1SFFBze2VbjxGktZNC8moKxEYM93616JY=;
+	b=ySDIL6M+xOft3uqoSdX7rlKKib1fOhg2okXyNbaS7ZhVJPGeqsh2PBsLbroZ9wWp+YaU/y
+	vqQ9tgvA8agS7vf0t9mvtpxFy5H4cSOhupWDCcSVlupvzjQx2/NxZzcbR/a94PmOt1QJs/
+	FfRiSWGRfLWufAwwKqcZhMlp4vBzVKM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751981405;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=6kxLe6D5dx1SFFBze2VbjxGktZNC8moKxEYM93616JY=;
+	b=WRnJ9kUdKHmyqwEzEoPbV7PZYRXCr8IkRq+s+BaUb1VrUgAAzzNw2ggZICagwvksUtlWcm
+	oPKZWI8CFLkAQ3Ag==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ySDIL6M+;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=WRnJ9kUd
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751981405; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=6kxLe6D5dx1SFFBze2VbjxGktZNC8moKxEYM93616JY=;
+	b=ySDIL6M+xOft3uqoSdX7rlKKib1fOhg2okXyNbaS7ZhVJPGeqsh2PBsLbroZ9wWp+YaU/y
+	vqQ9tgvA8agS7vf0t9mvtpxFy5H4cSOhupWDCcSVlupvzjQx2/NxZzcbR/a94PmOt1QJs/
+	FfRiSWGRfLWufAwwKqcZhMlp4vBzVKM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751981405;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=6kxLe6D5dx1SFFBze2VbjxGktZNC8moKxEYM93616JY=;
+	b=WRnJ9kUdKHmyqwEzEoPbV7PZYRXCr8IkRq+s+BaUb1VrUgAAzzNw2ggZICagwvksUtlWcm
+	oPKZWI8CFLkAQ3Ag==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0B89813A54;
+	Tue,  8 Jul 2025 13:30:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QBJnAV0dbWhkNwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 08 Jul 2025 13:30:05 +0000
+Date: Tue, 08 Jul 2025 15:30:04 +0200
+Message-ID: <871pqq3j4z.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] sound fixes for 6.16-rc6
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250707165155.581579-1-paulk@sys-base.io> <20250707165155.581579-5-paulk@sys-base.io>
- <20250708003348.58fe509f@minigeek.lan> <CAGb2v650h05aNvsQeQOjg63Ljcarxy2zqXnvNnjJ5+5ooGOELQ@mail.gmail.com>
- <aG0bqasOYUwwgiQY@collins>
-In-Reply-To: <aG0bqasOYUwwgiQY@collins>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 8 Jul 2025 21:27:55 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64vYEkKm8D_6r_O+fg_tR4zG1Loai1BPVO5AiE-MO=DJw@mail.gmail.com>
-X-Gm-Features: Ac12FXxFG0byldtdYQU-R8wlvBgWN23RRGAX9zRQbdtbd5Tg1tBGYvUbeASjhVY
-Message-ID: <CAGb2v64vYEkKm8D_6r_O+fg_tR4zG1Loai1BPVO5AiE-MO=DJw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] arm64: dts: allwinner: a133-liontron-h-a133l: Add
- Ethernet support
-To: Paul Kocialkowski <paulk@sys-base.io>
-Cc: Andre Przywara <andre.przywara@arm.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 219861F45E
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid];
+	TO_DN_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -3.51
 
-On Tue, Jul 8, 2025 at 9:22=E2=80=AFPM Paul Kocialkowski <paulk@sys-base.io=
-> wrote:
->
-> Hi,
->
-> Le Tue 08 Jul 25, 16:18, Chen-Yu Tsai a =C3=A9crit :
-> > On Tue, Jul 8, 2025 at 7:36=E2=80=AFAM Andre Przywara <andre.przywara@a=
-rm.com> wrote:
-> > >
-> > > On Mon,  7 Jul 2025 18:51:55 +0200
-> > > Paul Kocialkowski <paulk@sys-base.io> wrote:
-> > >
-> > > Hi Paul,
-> > >
-> > > > The Liontron H-A133L board features an Ethernet controller with a
-> > > > JLSemi JL1101 PHY. Its reset pin is tied to the PH12 GPIO.
-> > > >
-> > > > Note that the reset pin must be handled as a bus-wide reset GPIO in
-> > > > order to let the MDIO core properly reset it before trying to read
-> > > > its identification registers. There's no other device on the MDIO b=
-us.
-> > >
-> > > putting the PHY reset GPIO into the MDIO node is a clever solution, I
-> > > was struggling with putting it either in the MAC or PHY node, though
-> > > conceptually it would still belong in the latter, I think. But this
-> > > might be a more generic problem: for most other devices we activate
-> > > reset and clock gates *before* trying to access them, though this mig=
-ht
-> > > be historically different for Ethernet PHYs.
-> >
-> > The phylib core has code to deal with reset GPIOs listed under the PHY =
-node.
-> > It might be worth checking why that doesn't work.
->
-> While this code does exist, it's too early to be called when the mdio bus=
- is
-> trying to probe the phy. I was also surprised the existing reset gpio sup=
-port
-> in the phylib core didn't take effect (that's how I tried to implement it=
- first)
-> only to find that the code was never called. It's only called once the ph=
-y was
-> probed and registered.
+Linus,
 
-OK, that's definitely weird. The code looked like it just walked the DT
-and registered PHY devices, upon which the GPIO lines would be found and
-toggled.
+please pull sound fixes for v6.16-rc6 from:
 
-ChenYu
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.16-rc6
 
-> Cheers,
->
-> Paul
->
-> > OOTH, there's no code to deal with regulator supplies for PHYs.
-> >
-> > ChenYu
-> >
-> > > > The datasheet of the PHY mentions that the reset signal must be hel=
-d
-> > > > for 1 ms to take effect. Make it 2 ms (and the same for post-delay)=
- to
-> > > > be on the safe side without wasting too much time during boot.
-> > > >
-> > > > Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
-> > >
-> > > Despite the above, this looks fine, and works for me:
-> > >
-> > > Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-> > > Tested-by: Andre Przywara <andre.przywara@arm.com>
-> > >
-> > > Cheers,
-> > > Andre
-> > >
-> > > > ---
-> > > >  .../sun50i-a133-liontron-h-a133l.dts          | 19 +++++++++++++++=
-++++
-> > > >  1 file changed, 19 insertions(+)
-> > > >
-> > > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a133-liontron-h-a=
-133l.dts b/arch/arm64/boot/dts/allwinner/sun50i-a133-liontron-h-a133l.dts
-> > > > index fe77178d3e33..90a50910f07b 100644
-> > > > --- a/arch/arm64/boot/dts/allwinner/sun50i-a133-liontron-h-a133l.dt=
-s
-> > > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a133-liontron-h-a133l.dt=
-s
-> > > > @@ -65,6 +65,25 @@ &ehci1 {
-> > > >       status =3D "okay";
-> > > >  };
-> > > >
-> > > > +&emac0 {
-> > > > +     pinctrl-names =3D "default";
-> > > > +     pinctrl-0 =3D <&rmii0_pins>;
-> > > > +     phy-handle =3D <&rmii_phy>;
-> > > > +     phy-mode =3D "rmii";
-> > > > +     status =3D "okay";
-> > > > +};
-> > > > +
-> > > > +&mdio0 {
-> > > > +     reset-gpios =3D <&pio 7 12 GPIO_ACTIVE_LOW>; /* PH12 */
-> > > > +     reset-delay-us =3D <2000>;
-> > > > +     reset-post-delay-us =3D <2000>;
-> > > > +
-> > > > +     rmii_phy: ethernet-phy@1 {
-> > > > +             compatible =3D "ethernet-phy-ieee802.3-c22";
-> > > > +             reg =3D <1>;
-> > > > +     };
-> > > > +};
-> > > > +
-> > > >  &mmc0 {
-> > > >       vmmc-supply =3D <&reg_dcdc1>;
-> > > >       cd-gpios =3D <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
-> > >
-> > >
->
-> --
-> Paul Kocialkowski,
->
-> Independent contractor - sys-base - https://www.sys-base.io/
-> Free software developer - https://www.paulk.fr/
->
-> Expert in multimedia, graphics and embedded hardware support with Linux.
+The topmost commit is d78f76457d70d30e80b5d2e067d45de7a0505fc0
+
+----------------------------------------------------------------
+
+sound fixes for 6.16-rc6
+
+Here are device-specific small fixes, including HD-audio, USB-audio
+and ASoC Intel quirks, as well as ASoC fsl, Cirrus codec and the
+legacy AD driver fixes.  All look safe and easy.
+
+----------------------------------------------------------------
+
+Alexander Tsoy (1):
+      ALSA: usb-audio: Improve filtering of sample rates on Focusrite devices
+
+Arun Raghavan (1):
+      ASoC: fsl_sai: Force a software reset when starting in consumer mode
+
+Baojun Xu (1):
+      ALSA: hda/tas2781: Fix calibration data parser issue
+
+Bard Liao (1):
+      ASoC: Intel: SND_SOC_INTEL_SOF_BOARD_HELPERS select SND_SOC_ACPI_INTEL_MATCH
+
+Charles Keepax (1):
+      ASoC: Intel: soc-acpi: arl: Correct order of cs42l43 matches
+
+Daniel Dadap (1):
+      ALSA: hda: Add missing NVIDIA HDA codec IDs
+
+Edip Hazuri (1):
+      ALSA: hda/realtek - Add mute LED support for HP Victus 15-fb2xxx
+
+Edson Juliano Drosdeck (1):
+      ALSA: hda/realtek: Enable headset Mic on Positivo K116J
+
+Peter Ujfalusi (1):
+      ALSA: hda/realtek: Add quirk for ASUS ExpertBook B9403CVAR
+
+Richard Fitzgerald (1):
+      ASoC: cs35l56: probe() should fail if the device ID is not recognized
+
+Shengjiu Wang (1):
+      ASoC: fsl_asrc: use internal measured ratio for non-ideal ratio mode
+
+Simon Trimmer (1):
+      ASoC: Intel: sof_sdw: Add quirks for Lenovo P1 and P16
+
+Srinivas Kandagatla (1):
+      MAINTAINERS: update Qualcomm audio codec drivers list
+
+Thorsten Blum (1):
+      ALSA: ad1816a: Fix potential NULL pointer deref in snd_card_ad1816a_pnp()
+
+---
+ MAINTAINERS                                       | 16 +++++-----------
+ sound/isa/ad1816a/ad1816a.c                       |  2 +-
+ sound/pci/hda/patch_hdmi.c                        | 19 +++++++++++++++++++
+ sound/pci/hda/patch_realtek.c                     |  3 +++
+ sound/pci/hda/tas2781_hda.c                       |  8 +++++---
+ sound/soc/codecs/cs35l56-shared.c                 |  2 +-
+ sound/soc/fsl/fsl_asrc.c                          |  3 ++-
+ sound/soc/fsl/fsl_sai.c                           | 14 ++++++++------
+ sound/soc/intel/boards/Kconfig                    |  1 +
+ sound/soc/intel/boards/sof_sdw.c                  |  3 +++
+ sound/soc/intel/common/soc-acpi-intel-arl-match.c | 14 +++++++-------
+ sound/usb/format.c                                | 22 ++++++++++------------
+ 12 files changed, 65 insertions(+), 42 deletions(-)
+
 
