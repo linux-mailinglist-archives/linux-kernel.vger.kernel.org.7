@@ -1,107 +1,132 @@
-Return-Path: <linux-kernel+bounces-721906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C6BAFCF50
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:34:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 967D9AFCF5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:36:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E885C7ABBBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:32:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92DD93AC531
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B5A1C4A0A;
-	Tue,  8 Jul 2025 15:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B842E1741;
+	Tue,  8 Jul 2025 15:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ifMKTzzZ"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1MB8nSP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F36221C9E4
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53985283FCD;
+	Tue,  8 Jul 2025 15:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751988848; cv=none; b=tMy+KgN1lvibTnGpRSgD39lKlLog8AJR3rV9Aoqe/TAS+l5HRgVr7o1LPT0/GafGfVCfSM+Ubecci6JEIgqmvJwGeZ+JCIHgatBvy0uFGQ/y5asDpFxsHV/XS+zlXHEBm7LlWNDGYe+4BtSyfH/odKPC5ifDCIfXYfgu4QzgoeI=
+	t=1751988963; cv=none; b=PjBXd8VEerGU7EpNfBUEwd4dJZH/jbFGNyJx7AK2TUwuce8f6IDHHS1GOp64jAmxQ6LYM6UKdTJhH13QFuPLU9oszliX8XSOZD0vTc3h95xis8q5LJGwDD6FQR4NYOnm/8biMyEZ2Cmey8NzgJi0z5FQf84jHYENsObOBjEe3fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751988848; c=relaxed/simple;
-	bh=ZhQARY+dMy04cmVCG3gKjNrTT6k7l5XUjHxmQQ3Odws=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=niYTkJijLAZxPg36+74ljr7V6lec1T1nyJDV41sMxF1RhItpHCR2mR8juq3CzFvUZ9Ka5m7QVzM7uiNOO9ePVxqRe8RQ8PM904YYM5hkMdB582e/ESofqWCEHONIq3RbAhX9x75iu5CSz7ZZqhNaohMHKaTl6heWN4+Vg1Ex3Oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ifMKTzzZ; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <06710fb3-fc55-479e-b029-134f41fb93eb@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1751988841;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UikPezaKOR74LDrxg8ACKqHsuH0yXZu32wrnQNh+phc=;
-	b=ifMKTzzZSNehwnTaGTAuaeH7r7ho9nFO+uR7Cs37lBKqjZPjj77jNkxFpkPFxX6gRmTI0p
-	GKXquz0dWmM+t4G/M4xfAwNee465VUQrrPcm7XPOsi3UDS26Sqk2c/OHj4fEU/e/weWkSB
-	IDum6qt7B0ZFVjFI6ycbReQeQ8GDsj8=
-Date: Tue, 8 Jul 2025 11:33:46 -0400
+	s=arc-20240116; t=1751988963; c=relaxed/simple;
+	bh=I7QL9rgNS99bH4s1/92a15NX0cgi1YBaLnyOoeaECcI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oY8lUkqaPkS6Fx/2Y6tnd08LoSlrfy0KQX3CNpcNnTffIC7TAlJK0Y/PQUd9EcwDIikb84rKieKFwVv9ZFXyS2BVqowRJ+YWDZ9UVpNgLRkGhM1EXvctVDEfY7HQ1V5ZB1z58eUot/HFlhx1tdz1eUR3U1Z9BK+RyKli9zF+jMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W1MB8nSP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2C0EC4CEED;
+	Tue,  8 Jul 2025 15:36:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751988962;
+	bh=I7QL9rgNS99bH4s1/92a15NX0cgi1YBaLnyOoeaECcI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=W1MB8nSPYEUZl5bcX47DF6gUX86qgHNuQ+y9I6vRsODULep4AXPYrW0y5fjp7oUdF
+	 xxeFXEtCkwX22xdekjuuR+Ut+KUsHTFa3pzOBB+H+wx0nTA/YeiVCN7DMGR0rbG1vg
+	 g8qj5HSYBzP/iK5vpLn1eFW7byDP1D9H/hckUMhb9CEYA6XSJSejQ8Gx63L+9Ea+mH
+	 HUeBVNRSPOevp4Va8d2THy5fY7BckYZ55BFztXh0765XLOjpD4UWZPtWHco+EKsmKB
+	 5+Q2+Ham1Ayu8N/7bOr13l+B1FifyyqRvtHa3ZKT084LyXr4tO6kPh6WfwRG9GmDpZ
+	 EGfngc11eBIUw==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553d771435fso3755720e87.3;
+        Tue, 08 Jul 2025 08:36:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUHCTQ6JHU9nxZ7Qku4892NrtZ45P+nQvutuzpqIePGAPJUSeWo6dQlpkh37nsnDubVcWy6E7AXGncE52ty@vger.kernel.org, AJvYcCUS8cWUEQVzSRdu7IsVeUACpobdrETcjPQZJBSzQy6/Vs+uFTJOwdIkbIXITILxhJ30wX9Dat83JMAy3Ffe7w==@vger.kernel.org, AJvYcCX0VBQh7hTnNLTDplcTvF0GLV/Yzvrg/jglHF5PZSC1pP08CCc4d/B6S9m4+vy7ZAjCkmsMd8ic99eSOYKwFg==@vger.kernel.org, AJvYcCXK0wt784YCl8Ij5ayUTcr/+XqHaBQY7SNhYxDruYfxiswx0ec4bErb0fos/A5OUBnDqNgHD4WnvXM=@vger.kernel.org, AJvYcCXfWyV0We4RKRQ47IZ2PU2QAROlmew2yR0hewIten0Zv8hnXJJOv+qL5Nb/v3amoXSOHIIHe+Q9dOO3gTXM@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTTUNxcIB3a7FxVcue9n9GVSJrg6XBMhQ6k8CCcwRYflzZ1YJn
+	tOci3Vl0LzeELz4YUPFP7ZpTi5d/ybeyt1Hryd3Bpu1ofUXG6faTmKU3lJ/aq91xMdQDa8Rt+gB
+	7WDtVZkt4jxrcC3ojz3S+RmWSX0uc+g8=
+X-Google-Smtp-Source: AGHT+IFRtLjaJasKpwEwyQ5+WW04Mv6p+1ysxEiZNM3+T5xfDfVpapMUU0ZvsSkmP7MRTMvglMUJAp47OpXNlDRGL1w=
+X-Received: by 2002:a05:6512:238e:b0:553:2e4a:bb58 with SMTP id
+ 2adb3069b0e04-557f82f578amr1243072e87.9.1751988961465; Tue, 08 Jul 2025
+ 08:36:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net] net: phy: Don't register LEDs for genphy
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
- linux-kernel@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
- Florian Fainelli <f.fainelli@gmail.com>, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Christian Marangi <ansuelsmth@gmail.com>
-References: <20250707195803.666097-1-sean.anderson@linux.dev>
- <aGzduaQp3hWA5V-i@shell.armlinux.org.uk>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <aGzduaQp3hWA5V-i@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250708-export_modules-v1-0-fbf7a282d23f@suse.cz>
+ <20250708-export_modules-v1-1-fbf7a282d23f@suse.cz> <CAK7LNATpQrHX_8x4WvhDN7cODCCLr8kihydtfM-6wxhY17xtQw@mail.gmail.com>
+ <39bed180-e21c-4801-8ac4-ba40b57f6df2@suse.cz>
+In-Reply-To: <39bed180-e21c-4801-8ac4-ba40b57f6df2@suse.cz>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 9 Jul 2025 00:35:25 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATRkZHwJGpojCnvdiaoDnP+aeUXgdey5sb_8muzdWTMkA@mail.gmail.com>
+X-Gm-Features: Ac12FXx_7nF2f-9gneX_4uOIrJSstDjyWshpyZ4rVtF2jAmgOIH61VW1BIqcAYY
+Message-ID: <CAK7LNATRkZHwJGpojCnvdiaoDnP+aeUXgdey5sb_8muzdWTMkA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] module: Restrict module namespace access to in-tree modules
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Matthias Maennich <maennich@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Christoph Hellwig <hch@infradead.org>, Peter Zijlstra <peterz@infradead.org>, 
+	David Hildenbrand <david@redhat.com>, Shivank Garg <shivankg@amd.com>, 
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/8/25 04:58, Russell King (Oracle) wrote:
-> On Mon, Jul 07, 2025 at 03:58:03PM -0400, Sean Anderson wrote:
->> If a PHY has no driver, the genphy driver is probed/removed directly in
->> phy_attach/detach. If the PHY's ofnode has an "leds" subnode, then the
->> LEDs will be (un)registered when probing/removing the genphy driver.
-> 
-> Maybe checking whether the PHY driver supports LEDs would be more
-> sensible than checking whether it's one of the genphy drivers?
+On Wed, Jul 9, 2025 at 12:08=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> On 7/8/25 14:41, Masahiro Yamada wrote:
+> > On Tue, Jul 8, 2025 at 4:29=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz>=
+ wrote:
+> >>
+> >> The module namespace support has been introduced to allow restricting
+> >> exports to specific modules only, and intended for in-tree modules suc=
+h
+> >> as kvm. Make this intention explicit by disallowing out of tree module=
+s
+> >> both for the module loader and modpost.
+> >>
+> >> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> >
+> >
+> >
+> > In my understanding, an external module with the same name
+> > can override the internal one.
+> >
+> > This change disallows such a use-case.
+>
+> Hmm I'm not familiar with this, but for such cases to be legitimate we ca=
+n
+> assume the external module has to be derived from the internal one and no=
+t
+> something completely unrelated impersonating the internal one? So in that
+> case just patch 2 alone would be sufficient and not break any legitimate =
+use
+> cases?
+>
 
-The genphy driver is special, since it is probed synchronously from
-phy_attach. All other drivers are probed asynchronously and don't have
-this problem.
+IIRC, nvdimm uses this feature for testing.
 
->> This could occur if the leds are for a non-generic driver that isn't
->> loaded for whatever reason. Synchronously removing the PHY device in
->> phy_detach leads to the following deadlock:
->> 
->> rtnl_lock()
->> ndo_close()
->>     ...
->>     phy_detach()
->>         phy_remove()
->>             phy_leds_unregister()
->>                 led_classdev_unregister()
->>                     led_trigger_set()
->>                         netdev_trigger_deactivate()
->>                             unregister_netdevice_notifier()
->>                                 rtnl_lock()
->> 
->> There is a corresponding deadlock on the open/register side of things
->> (and that one is reported by lockdep), but it requires a race while this
->> one is deterministic.
-> 
-> Doesn't this deadlock exist irrespective of whether the genphy driver(s)
-> are being used, and whether or not the PHY driver supports LEDs?
 
-Nope.
+In-tree drivers:
+  drivers/nvdimm/Makefile
 
---Sean
+Out-of-tree drivers:
+  tools/testing/nvdimm/Makefile
+  tools/testing/nvdimm/Kbuild
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
