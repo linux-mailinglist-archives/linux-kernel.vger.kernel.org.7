@@ -1,180 +1,312 @@
-Return-Path: <linux-kernel+bounces-721942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7605AFCFBF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:52:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27EE5AFCFC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17E4E16AF3A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:52:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA67E188CD86
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C802E1C6B;
-	Tue,  8 Jul 2025 15:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C6E2E2656;
+	Tue,  8 Jul 2025 15:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tbe5h42h"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AC96w9da"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB02B2DCF7B
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA79C221D87;
+	Tue,  8 Jul 2025 15:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751989920; cv=none; b=ANIYelbpZfxBtueyIN+v+qBeBDcast4f93m4DCWrQtiv+smU16IYAaIsqfbxsRQaAd8ALU6fHrR++28/U4XrKPG2V7fXIF4inUPIB68a5mXimnhWcZNn9oTd6xI6GMRK5+40vtR2SpQ76RI5ZxRXQVnbAJ7JYtXzkEkhWv1RFjY=
+	t=1751989946; cv=none; b=cASrV8iAOQClEaa94tP0UBGSObU8t0M0QaqyjJxeIqh/DGZYEL5dWFRaFHME7XNgjuP/oH3NxSObwW8pBPaX/W0rp9iKsmtAEZj6n3G3zDlPJVaj3PYkVhCOwNoJJzXKw4OVIylLL3mKfFncG1TA3kWDJppzjsmFwuWFLGR3bXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751989920; c=relaxed/simple;
-	bh=voeyQ0MDCj/Z+MBpJSQMfnqdjg3SDuJuOUlR1jBdKNk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QmAR8L0qxeIs/f1an5pIOYaR8RmmlME13vHC0WD1nDYPDiW9BohcCatheJZPKovEQsqj6X7z2ytXny0Wq9om7rejQrioRT1GGiij7IbDnmpZgB+fC5FmCJP6ZlNqVb8IIuLetUc/VtTRR65lpJUIq+A8JdRyjwNCSuMDdUtcw5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tbe5h42h; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2ef8df09ce9so2791910fac.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 08:51:58 -0700 (PDT)
+	s=arc-20240116; t=1751989946; c=relaxed/simple;
+	bh=+D5A4PuW8x5tixefVlky3Tm8gVQ5A1rN1sYTliWM8a8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dqz+cwgfnOozz9YW4pYjkz4O/50uS11wmCEKluTqmCyEVLW+RxPhhgqOpnf5lC2kPZWgtXp7Lbj+njxQbJSfdr0aSgMtXlulF/qARbw8WZCbbgFYxLW8JScuKzvmE8SaB+ckE1evtDHlMs70hVG05X2tL8AP1rCLHKYKb4015CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AC96w9da; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-32b435ef653so37646731fa.2;
+        Tue, 08 Jul 2025 08:52:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751989918; x=1752594718; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gRbXwJ4vnB/zDj0rM1xWnMPZ+mVdznTRW5M3IQISchU=;
-        b=tbe5h42hreuvgJ0PBzHdhelwDCFouy/8kUlmW5IhWDoD6FBRomYu4y2Zm/5A1N9Duu
-         QJTy1ahshvNWm6ad1+TFsgbt/eEsdm2BJi4EVnnGSv20WZJEik12VmP67CW8kmtejPt8
-         EqYLd9MwbQko4370izUtUU7TyAwVgFn1tXrK+aLJ7u1rMGT36O5ENYernScdDhf4ixA5
-         HaKFqHOMMyj51yBbe+JMEANt5O+JBSsogi34Re8/ZOzXi3XPwSf0WHb+nFRbR6iAnN+O
-         iqD51VEwAD9ENALlfH5zB+4OzCOKGaA/sV4tWSKvMNoCs2W72gV8350LwgB6/L9PMq6/
-         DoGg==
+        d=gmail.com; s=20230601; t=1751989943; x=1752594743; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jmSkHJCz+i+8oNuJ7dtPiAVYrxKnL1IVG/oZZEY1wHc=;
+        b=AC96w9daLtYpjhyQazUXKdS1LuoQ7tnXeGllws39ZnHdWoaswY2qvZagHcxdHUgeFh
+         XzLHehR4UktkXQ99LWQurTFSoVKKeByajewymGLUFgSLXqJ+tJNdIbb2UZIBgZ4Dd34g
+         XM7PTG7xNEh/Ipaw8jwImE+rWNdbsc9JUekWXtHwxeRz7t/l+Q8Bjs51fOnlpXPcgY4l
+         ms+5XPUTC1Bdc6+tGJgfQjbQgVX9B2R9uJF2jtyYbaZvjjyLHjYIe36QSK3TtOqAXHE3
+         rusISRt2IV0ha6cAaDZvpljdHKA7+nZjqiWp6nSshHZbEXTeFI7X+X6v1bvZ7D76jyrh
+         mLJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751989918; x=1752594718;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gRbXwJ4vnB/zDj0rM1xWnMPZ+mVdznTRW5M3IQISchU=;
-        b=qLPEmY9lq6fs+N64s94yvDjPyhUn8kTptmrx2EzO5/CtgMdeASQWXN6j6rNuGmZWYT
-         4v/gG5j8vwmQgrj/g30U1TfapNXRDyBwKIu6s6BmWQEAvW+2XZeoHZGFR2uNZr3NjoFi
-         kEk0ymQfMckwDUJlFKT5trib+PPGQ3/CWaG3BX5RGiBpEIZHBA6Wm004XDmVcMQKqw0A
-         FegySt49EsTkVHdyDd8wSVhK1yF76pQOp7HUeohhafSaK707dMe4+hOJPUAntWKUiZKA
-         b00d1d9KG0m5X1Lds7dy6FT5Y4dCIb8J2H/239wEhyR8EtTMEEfvo9KlXVNLyKwxN+H8
-         FjwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGHhMDSmG5BagbcOOUVTg64OZRXVWG/Zy5QK7JoN/SMUn6UGIuVhdjfePu1MuvYPmYDK+puENSRuoNRCw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywYHkYfaW2z5D/VUO3TldRMQM8i3hRT9flCZLCOS1UWdsdUe1D
-	9ByIDz4CYUCNL7CTVNBIPhDLBlwcll8MLKwzj6iE3lkn4b/RhwTCo3Av+W3vbeqXTiDH/uXST+l
-	QTL890SUkBQp2idnXTJZetZ1/p8w2LLWxzn9Vbeu3N1Y00EL9zvx2
-X-Gm-Gg: ASbGncseYy4u9JvZGnBYSGqjCgwMlPeaJBbJXlftQgTIc7WSmEuM1wgkArado9eftwX
-	ILqcaFCR3uRQ3NlmAZYw7ZJ9VyJrSFHBgCXZUvc/ryU0mREF2E9FiuvDGV8GT+yuxI2pmEAqwVX
-	9y3ZpK9AV/XHks+6aqbuNvjtj5/hpz1Xn0X2LlP5D+hgaM
-X-Google-Smtp-Source: AGHT+IGayKsL09US/aG4BWXfDqvwdj7IbiR5yylTrdq3b4SPkY53vMlQ75BaToWu3g2R7Y7GTXTocA55aVVbeeWQnIw=
-X-Received: by 2002:a05:6870:85cd:b0:2ea:7101:7dc1 with SMTP id
- 586e51a60fabf-2f796d387ddmr13310705fac.33.1751989916214; Tue, 08 Jul 2025
- 08:51:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751989943; x=1752594743;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jmSkHJCz+i+8oNuJ7dtPiAVYrxKnL1IVG/oZZEY1wHc=;
+        b=B0uQci0CjzKd+wsAhHMQcgv937MSUiTS5IWEoKbOvYxzGhxjwqQvT+lYJpr4yZGAbk
+         OchzyUVNWg1AoL69o+EVpBsCIW2ju3WTzl2VKQ6FGZV3EpqwscpfwKS8JvaLCieJkFDv
+         IbjbVwB3Xa+aVC5y+YsAaoowqH/vcaszsMMI8nJ0HniHnwTejZHGSjpIg9RbqFSj6Ceo
+         g1CUtoiTPNTQ4C6xAtn3zQvCEqfgYf6fMJWuKnA62rZDCUJsO63PMOR1Ea23HbcJv5Uc
+         +IdnsIbAVxkSpnbvfAvVK5cpcgST5Cn3+vLbS7m2w9TD7lhfpk2+cOsSqGoLn9EZNytB
+         Tudg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBZ0QWP65+YXh6btlo5Xib8Ncv0hlksmTnrBYwZ1joPG0pBy4iOlk84luxggvjVEQBCV7IVsvDb9jnAB4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/QDzWkaxKAbwFAU4cx6Scx7iFPNx1nkkEu+YPdQ7mbTc7pHPv
+	7PRYG3uik0eMARqXDFnrzqBGpw0//5Us4oNTBEabCUAX2SOxXpl0DaYK
+X-Gm-Gg: ASbGnctdfIQ+0PDVKE1n/SJvX7zVZswPU0So8G8HczcEuf0lOLcE0ZFkNDXrLIh9vLx
+	la+gPRlNrUR5Kl2zpNtUDpW94uZiTebrWHcu8Z1Ozvp8yAxx5zq2LQ2cjXWsL2pDHvx/kKM+O3n
+	A7JDYtDZvv0WIkGWIk1HTbt04Y2bpU73nPhkbPlRcTipBe6N4XTq4bNtOdetLEJVAkdmh8ja8Q4
+	4UoSRIwcxqKB2tP9oL3ukhrEDBiVY+IITVig4jja/sxzocGXexmTVa9YblBvamLJObjYAGs69ar
+	7tlvLC/GwKeZL1pBalpf12PCz41cgzaF7/VePB9aaeeNhLyO46OwsnsWgIBJfZL8vdri73JT48H
+	ajusRJCZczZmKddKRo6HUCSofogDxuC2pPsLG0dtWLn7pPtcvfUnB+hQ=
+X-Google-Smtp-Source: AGHT+IGObFuGXvT2GzyTk2CgC72i5HKiSRkLhd9+Z4VW0day2YqiJnhXKIGGedkBXsduKaq6TDUcnw==
+X-Received: by 2002:a05:651c:409c:b0:30b:d656:1485 with SMTP id 38308e7fff4ca-32f39af8edfmr9210121fa.32.1751989942306;
+        Tue, 08 Jul 2025 08:52:22 -0700 (PDT)
+Received: from uuba.fritz.box (2001-14ba-6e-3100-b168-44b6-f1aa-76.rev.dnainternet.fi. [2001:14ba:6e:3100:b168:44b6:f1aa:76])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32e1b1418c6sm16309481fa.75.2025.07.08.08.52.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 08:52:21 -0700 (PDT)
+From: =?UTF-8?q?Hanne-Lotta=20M=C3=A4enp=C3=A4=C3=A4?= <hannelotta@gmail.com>
+To: mchehab@kernel.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	=?UTF-8?q?Hanne-Lotta=20M=C3=A4enp=C3=A4=C3=A4?= <hannelotta@gmail.com>
+Subject: [PATCH v4] media: Documentation: Improve grammar in DVB API
+Date: Tue,  8 Jul 2025 18:52:06 +0300
+Message-ID: <20250708155206.91281-1-hannelotta@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250627-gs101-cpuidle-v3-1-0200452dfe60@linaro.org>
- <91a9d4dbe5504c493856ef81b30d98e7da925ac0.camel@linaro.org> <232267bf-d226-43df-bd4f-5977706176a2@kernel.org>
-In-Reply-To: <232267bf-d226-43df-bd4f-5977706176a2@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 8 Jul 2025 16:51:43 +0100
-X-Gm-Features: Ac12FXyQtnEeVlAK_PBT_PKHrE4fR7brNoVWCLA4QssHna082hO6RsgDRrOaQo8
-Message-ID: <CADrjBPp5ndaEs=s-bZOyYnH21r=b2BoROC7+zV=dH_O2Pwxvmw@mail.gmail.com>
-Subject: Re: [PATCH v3] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	William Mcvicker <willmcvicker@google.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
+Fix typos and punctuation and improve grammar in documentation.
 
-On Thu, 3 Jul 2025 at 11:19, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 03/07/2025 12:12, Andr=C3=A9 Draszik wrote:
-> > Thanks Pete for your patch!
-> >
-> > On Fri, 2025-06-27 at 14:08 +0100, Peter Griffin wrote:
-> >> Register cpu pm notifiers for gs101 which call the
-> >> gs101_cpu_pmu_online/offline callbacks which in turn program the ACPM
-> >> hint. This is required to actually enter the C2 idle state.
-> >>
-> >> A couple of corner cases are handled, namely when the system is reboot=
-ing
-> >> or suspending we ignore the request. Additionally the request is ignor=
-ed if
-> >> the CPU is in CPU hot plug. Some common code is refactored so that it =
-can
-> >> be called from both the CPU hot plug callback and CPU PM notifier taki=
-ng
-> >> into account that CPU PM notifiers are called with IRQs disabled where=
-as
-> >> CPU hotplug callbacks aren't.
-> >>
-> >> Note: this patch has a runtime dependency on adding 'local-timer-stop'=
- dt
-> >> property to the CPU nodes. This informs the time framework to switch t=
-o a
-> >> broadcast timer as the local timer will be shutdown. Without that DT
-> >> property specified the system hangs in early boot with this patch appl=
-ied.
-> >>
-> >> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> >
-> > With this applied, I see the following during boot:
-> >
-> > [    1.841304][    T0] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > [    1.841422][    T0] [ BUG: Invalid wait context ]
-> > [    1.841550][    T0] 6.16.0-rc4-next-20250702+ #54 Tainted: G     U  =
-        T
-> > [    1.841727][    T0] -----------------------------
-> > [    1.841844][    T0] swapper/0/0 is trying to lock:
-> > [    1.841965][    T0] ffff000800ee84b8 (&pmu_context->cpupm_lock){....=
-}-{3:3}
-> > [    1.842001][    T0] , at: gs101_cpu_pm_notify_callback+0x48/0x100
-> > [    1.842309][    T0] other info that might help us debug this:
-> > [    1.842613][    T0] context-{5:5}
-> > [    1.842987][    T0] 1 lock held by swapper/0/0:
-> > [    1.843442][    T0]  #0:
-> > [    1.843859][    T0] ffffafe9d8f1f100
-> > [    1.844282][    T0]  (
-> > [    1.844618][    T0] cpu_pm_notifier.lock
-> > [    1.844980][    T0] ){....}-{2:2}, at: cpu_pm_enter+0x30/0x88
-> > [    1.845340][    T0] stack backtrace:
-> > [    1.845855][    T0] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Tainted: G =
-    U          T   6.16.0-rc4-next-20250702+ #54 PREEMPT
-> > [    1.845878][    T0] Tainted: [U]=3DUSER, [T]=3DRANDSTRUCT
-> > [    1.845884][    T0] Hardware name: Oriole (DT)
-> > [    1.845897][    T0] Call trace:
-> > [    1.845909][    T0]  show_stack+0x24/0x38 (C)
-> > [    1.845934][    T0]  dump_stack_lvl+0x40/0xc0
-> > [    1.845949][    T0]  dump_stack+0x18/0x24
-> > [    1.845956][    T0]  __lock_acquire+0xc68/0xd90
-> > [    1.845976][    T0]  lock_acquire+0x14c/0x2b8
-> > [    1.845985][    T0]  _raw_spin_lock+0x54/0x78
-> > [    1.846011][    T0]  gs101_cpu_pm_notify_callback+0x48/0x100
-> > [    1.846021][    T0]  notifier_call_chain+0xb0/0x198
-> > [    1.846046][    T0]  raw_notifier_call_chain_robust+0x50/0xb0
-> > [    1.846053][    T0]  cpu_pm_enter+0x4c/0x88
-> > [    1.846063][    T0]  psci_enter_idle_state+0x2c/0x70
-> > [    1.846078][    T0]  cpuidle_enter_state+0x14c/0x4c0
-> > [    1.846097][    T0]  cpuidle_enter+0x44/0x68
-> > [    1.846121][    T0]  do_idle+0x1f0/0x2a8
-> > [    1.846142][    T0]  cpu_startup_entry+0x40/0x50
-> > [    1.846152][    T0]  rest_init+0x1c4/0x1d0
-> > [    1.846161][    T0]  start_kernel+0x358/0x438
-> > [    1.846181][    T0]  __primary_switched+0x88/0x98
->
-> Thanks for the report. Probably such code should be always tested with
-> lock debugging options enabled, e.g.:
-> https://github.com/krzk/tools/blob/master/linux/build.sh#L845
+Signed-off-by: Hanne-Lotta Mäenpää <hannelotta@gmail.com>
+---
 
-Thanks for the tip, I will do it for future versions.
+Notes:
+    v1 -> v2:
+    
+    Left out changes based on feedback from Jonathan Corbet
+    <corbet@lwn.net> and Bagas Sanjaya <bagasdotme@gmail.com>
+    
+    v2 -> v3:
+    
+    Switched word order in DTV_BANDWIDTH_HZ description based
+    on feedback from Bagas Sanjaya <bagasdotme@gmail.com>.
+    
+    Shortened the patch series to two patches, as parts
+    3/4 and 4/4 have been applied.
+    
+    v3 -> v4:
+    
+    Shortened commit title and message.
+    
+    Converted from a patch series to one patch, as other
+    parts have been applied.
 
-Peter
+ .../media/dvb/fe-diseqc-send-burst.rst        |  2 +-
+ .../userspace-api/media/dvb/fe-set-tone.rst   |  2 +-
+ .../media/dvb/fe-set-voltage.rst              |  2 +-
+ .../media/dvb/fe_property_parameters.rst      | 23 +++++++++----------
+ .../frontend-property-terrestrial-systems.rst |  2 +-
+ .../userspace-api/media/dvb/intro.rst         |  4 ++--
+ .../media/dvb/legacy_dvb_audio.rst            |  4 ++--
+ 7 files changed, 19 insertions(+), 20 deletions(-)
+
+diff --git a/Documentation/userspace-api/media/dvb/fe-diseqc-send-burst.rst b/Documentation/userspace-api/media/dvb/fe-diseqc-send-burst.rst
+index 8fb73ee29951..6ac1e5cd50ce 100644
+--- a/Documentation/userspace-api/media/dvb/fe-diseqc-send-burst.rst
++++ b/Documentation/userspace-api/media/dvb/fe-diseqc-send-burst.rst
+@@ -26,7 +26,7 @@ Arguments
+     File descriptor returned by :c:func:`open()`.
+ 
+ ``tone``
+-    An integer enumered value described at :c:type:`fe_sec_mini_cmd`.
++    An integer enumerated value described at :c:type:`fe_sec_mini_cmd`.
+ 
+ Description
+ ===========
+diff --git a/Documentation/userspace-api/media/dvb/fe-set-tone.rst b/Documentation/userspace-api/media/dvb/fe-set-tone.rst
+index 9f44bf946183..41cd7111a243 100644
+--- a/Documentation/userspace-api/media/dvb/fe-set-tone.rst
++++ b/Documentation/userspace-api/media/dvb/fe-set-tone.rst
+@@ -26,7 +26,7 @@ Arguments
+     File descriptor returned by :c:func:`open()`.
+ 
+ ``tone``
+-    an integer enumered value described at :c:type:`fe_sec_tone_mode`
++    An integer enumerated value described at :c:type:`fe_sec_tone_mode`
+ 
+ Description
+ ===========
+diff --git a/Documentation/userspace-api/media/dvb/fe-set-voltage.rst b/Documentation/userspace-api/media/dvb/fe-set-voltage.rst
+index c66771830be1..4d09ca5876f0 100644
+--- a/Documentation/userspace-api/media/dvb/fe-set-voltage.rst
++++ b/Documentation/userspace-api/media/dvb/fe-set-voltage.rst
+@@ -26,7 +26,7 @@ Arguments
+     File descriptor returned by :c:func:`open()`.
+ 
+ ``voltage``
+-    an integer enumered value described at :c:type:`fe_sec_voltage`
++    An integer enumerated value described at :c:type:`fe_sec_voltage`
+ 
+ Description
+ ===========
+diff --git a/Documentation/userspace-api/media/dvb/fe_property_parameters.rst b/Documentation/userspace-api/media/dvb/fe_property_parameters.rst
+index 1717a0565fe8..ce962d4a02c0 100644
+--- a/Documentation/userspace-api/media/dvb/fe_property_parameters.rst
++++ b/Documentation/userspace-api/media/dvb/fe_property_parameters.rst
+@@ -72,11 +72,11 @@ DTV_MODULATION
+ ==============
+ 
+ Specifies the frontend modulation type for delivery systems that
+-supports more multiple modulations.
++support multiple modulations.
+ 
+ The modulation can be one of the types defined by enum :c:type:`fe_modulation`.
+ 
+-Most of the digital TV standards offers more than one possible
++Most of the digital TV standards offer more than one possible
+ modulation type.
+ 
+ The table below presents a summary of the types of modulation types
+@@ -143,9 +143,8 @@ ISDB-T			5MHz, 6MHz, 7MHz and 8MHz, although most places
+      (DTV_ISDBT_SB_SEGMENT_IDX, DTV_ISDBT_SB_SEGMENT_COUNT).
+ 
+   #. On Satellite and Cable delivery systems, the bandwidth depends on
+-     the symbol rate. So, the Kernel will silently ignore any setting
+-     :ref:`DTV-BANDWIDTH-HZ`. I will however fill it back with a
+-     bandwidth estimation.
++     the symbol rate. The kernel will silently ignore any :ref:`DTV-BANDWIDTH-HZ`
++     setting and overwrites it with bandwidth estimation.
+ 
+      Such bandwidth estimation takes into account the symbol rate set with
+      :ref:`DTV-SYMBOL-RATE`, and the rolloff factor, with is fixed for
+@@ -200,7 +199,7 @@ DTV_VOLTAGE
+ Used on satellite delivery systems.
+ 
+ The voltage is usually used with non-DiSEqC capable LNBs to switch the
+-polarzation (horizontal/vertical). When using DiSEqC epuipment this
++polarization (horizontal/vertical). When using DiSEqC equipment this
+ voltage has to be switched consistently to the DiSEqC commands as
+ described in the DiSEqC spec.
+ 
+@@ -280,7 +279,7 @@ DTV_ISDBT_PARTIAL_RECEPTION
+ 
+ Used only on ISDB.
+ 
+-If ``DTV_ISDBT_SOUND_BROADCASTING`` is '0' this bit-field represents
++If ``DTV_ISDBT_SOUND_BROADCASTING`` is '0' this bit field represents
+ whether the channel is in partial reception mode or not.
+ 
+ If '1' ``DTV_ISDBT_LAYERA_*`` values are assigned to the center segment
+@@ -331,8 +330,8 @@ broadcaster has several possibilities to put those channels in the air:
+ Assuming a normal 13-segment ISDB-T spectrum he can align the 8 segments
+ from position 1-8 to 5-13 or anything in between.
+ 
+-The underlying layer of segments are subchannels: each segment is
+-consisting of several subchannels with a predefined IDs. A sub-channel
++The underlying layer of segments are sub-channels: each segment is
++consisting of several sub-channels with a predefined IDs. A sub-channel
+ is used to help the demodulator to synchronize on the channel.
+ 
+ An ISDB-T channel is always centered over all sub-channels. As for the
+@@ -728,7 +727,7 @@ DTV_ATSCMH_RS_FRAME_ENSEMBLE
+ 
+ Used only on ATSC-MH.
+ 
+-Reed Solomon(RS) frame ensemble.
++Reed Solomon (RS) frame ensemble.
+ 
+ The acceptable values are defined by :c:type:`atscmh_rs_frame_ensemble`.
+ 
+@@ -954,14 +953,14 @@ DTV_ENUM_DELSYS
+ 
+ A Multi standard frontend needs to advertise the delivery systems
+ provided. Applications need to enumerate the provided delivery systems,
+-before using any other operation with the frontend. Prior to it's
++before using any other operation with the frontend. Prior to its
+ introduction, FE_GET_INFO was used to determine a frontend type. A
+ frontend which provides more than a single delivery system,
+ FE_GET_INFO doesn't help much. Applications which intends to use a
+ multistandard frontend must enumerate the delivery systems associated
+ with it, rather than trying to use FE_GET_INFO. In the case of a
+ legacy frontend, the result is just the same as with FE_GET_INFO, but
+-in a more structured format
++in a more structured format.
+ 
+ The acceptable values are defined by :c:type:`fe_delivery_system`.
+ 
+diff --git a/Documentation/userspace-api/media/dvb/frontend-property-terrestrial-systems.rst b/Documentation/userspace-api/media/dvb/frontend-property-terrestrial-systems.rst
+index 8cd461ceeea7..8aad9ea817f2 100644
+--- a/Documentation/userspace-api/media/dvb/frontend-property-terrestrial-systems.rst
++++ b/Documentation/userspace-api/media/dvb/frontend-property-terrestrial-systems.rst
+@@ -52,7 +52,7 @@ DVB-T2 delivery system
+ ======================
+ 
+ DVB-T2 support is currently in the early stages of development, so
+-expect that this section maygrow and become more detailed with time.
++expect that this section may grow and become more detailed with time.
+ 
+ The following parameters are valid for DVB-T2:
+ 
+diff --git a/Documentation/userspace-api/media/dvb/intro.rst b/Documentation/userspace-api/media/dvb/intro.rst
+index 6784ae79657c..854c2073e69a 100644
+--- a/Documentation/userspace-api/media/dvb/intro.rst
++++ b/Documentation/userspace-api/media/dvb/intro.rst
+@@ -1,6 +1,6 @@
+ .. SPDX-License-Identifier: GFDL-1.1-no-invariants-or-later
+ 
+-.. _dvb_introdution:
++.. _dvb_introduction:
+ 
+ ************
+ Introduction
+@@ -125,7 +125,7 @@ demux, CA and IP-over-DVB networking. The video and audio devices
+ control the MPEG2 decoder hardware, the frontend device the tuner and
+ the Digital TV demodulator. The demux device gives you control over the PES
+ and section filters of the hardware. If the hardware does not support
+-filtering these filters can be implemented in software. Finally, the CA
++filtering, these filters can be implemented in software. Finally, the CA
+ device controls all the conditional access capabilities of the hardware.
+ It can depend on the individual security requirements of the platform,
+ if and how many of the CA functions are made available to the
+diff --git a/Documentation/userspace-api/media/dvb/legacy_dvb_audio.rst b/Documentation/userspace-api/media/dvb/legacy_dvb_audio.rst
+index b46fe2becd02..81b762ef17c4 100644
+--- a/Documentation/userspace-api/media/dvb/legacy_dvb_audio.rst
++++ b/Documentation/userspace-api/media/dvb/legacy_dvb_audio.rst
+@@ -195,7 +195,7 @@ Description
+ ~~~~~~~~~~~
+ 
+ The audio channel selected via `AUDIO_CHANNEL_SELECT`_ is determined by
+-this values.
++this value.
+ 
+ 
+ -----
+@@ -413,7 +413,7 @@ Constants
+        -  ``AUDIO_CAP_MP3``
+ 
+        -  The hardware accepts MPEG-1 Audio Layer III.
+-          Commomly known as .mp3.
++          Commonly known as .mp3.
+ 
+     -  ..
+ 
+-- 
+2.50.0
+
 
