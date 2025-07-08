@@ -1,136 +1,187 @@
-Return-Path: <linux-kernel+bounces-722354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE586AFD883
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:37:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA13BAFD875
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EA7C5687E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:37:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EC581AA473E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149C92417C2;
-	Tue,  8 Jul 2025 20:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F33F24169E;
+	Tue,  8 Jul 2025 20:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W7N4hLtq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b="omaWcSZ4"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED90D24676F
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 20:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21EE241665
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 20:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752007004; cv=none; b=IBTWXvhMOudeU21EtasLsH1zCZXPNDorvOmbyncaZHEdXlwns0P3Zso+3xuDUfOGfg6E7VJkjCgsQrK0944bdP5dEPoCl9dp3tYfEwZl9Kd7EZ9xJUqdB83CCoBifBOx0NVd8mCLBbLd4aTpPAXetqJyVjhTm/WhQFUjcyLSZIc=
+	t=1752006950; cv=none; b=VbM5eGga1pTk8RkcoDMDKDIarXhykOQbaGW/V+yOLqa5BnXfqlN3+O0M45j7BsGiFV+pNsd8eJnCuw2FStX4axrZd61HyxlwlAdu500B/IsawRjMyCR9tmm6jaXr4Gdpua/RA/qg8ighvcmZgzu9Q9ASk2c9E+R4eifk4M3xOnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752007004; c=relaxed/simple;
-	bh=vsvHIMQx+bz1MugawrqwN+PrKys/gpceYZf2lTHUZo8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BhRAce2burhqlUanHg3fzVLSIj3ScCDtjhDxbYuAvu9XnodaXfpiG3hV6UAQ4iiQaHlS9Q0i+v9+HK0eqD4dr7KgBaeoz4NcMH70T1buizWlNMCOWNVm2LUWFC5WJsT28kD5tr3dDapYr1dgMfKt8yldm8P6VaHzpM2CPcPib+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W7N4hLtq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752007002;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mkthyQecCVK2yqwg1DPkHhbTWatnZwsBkt13NL9bfxM=;
-	b=W7N4hLtq80IzvnCPhfXm4V38NH3g2Bx+/exni3pmwH9anoxOwJp5iW5UAh7c9FEE0H1UhH
-	17K54drv/9BNzispl/pEi/9a6A4A3I7RHqpToQlrsz971XUkT8p4lSXIXXzOVtLc9HhH1+
-	40Avm9xGPgv0OrLyLY/SoBuEie74u9c=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-647-eXTUk8hJM96iffEYT7fGYg-1; Tue,
- 08 Jul 2025 16:36:40 -0400
-X-MC-Unique: eXTUk8hJM96iffEYT7fGYg-1
-X-Mimecast-MFC-AGG-ID: eXTUk8hJM96iffEYT7fGYg_1752006998
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B8867193F061;
-	Tue,  8 Jul 2025 20:36:38 +0000 (UTC)
-Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.132])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A28B51956087;
-	Tue,  8 Jul 2025 20:36:36 +0000 (UTC)
-From: Anusha Srivatsa <asrivats@redhat.com>
-Date: Tue, 08 Jul 2025 15:35:18 -0500
-Subject: [PATCH 6/6] drm/panel/samsung-s6e63m0: Use refcounted allocation
- in place of devm_kzalloc()
+	s=arc-20240116; t=1752006950; c=relaxed/simple;
+	bh=zNJgzkdVewF1sgcn6yqbMkw49jggk50uxEN/tQQWkJU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vDls8jWDAsoVvUEq6B8eLZHtiEc6iOsuur/JKNmy3bhownqMcZQkJEVLAyWc/KXvwC/3ygCysvCsg7vbAHf6mVPWpwI5/H1JItqZmHqjkAmxx300PUfuGNIn34VUYda1DXGo0T/vsRL26+UEMHdrZSlmah5ng95TlC3veJ2Id3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com; spf=none smtp.mailfrom=mojatatu.com; dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b=omaWcSZ4; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mojatatu.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7481600130eso6401744b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 13:35:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mojatatu-com.20230601.gappssmtp.com; s=20230601; t=1752006948; x=1752611748; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zNJgzkdVewF1sgcn6yqbMkw49jggk50uxEN/tQQWkJU=;
+        b=omaWcSZ4YnAcydnmkORCuG7hysyc8A3OWO+kfHC6kA2aeqnhR6y1Mjt4I4Lb5U1B9K
+         KAVB70nQq7B/0EYSvu07WLOfHzuJefcjQEztZCJ9boChHnobBKOlYL72UJRbLkugZZv9
+         5C4TzSC55FbvoQTcGd8M0EbUczhUOMv3ZVYCtxpAGFbDp+aVtD5HpRJwGHF8jMvjxW1g
+         EpQftz4RbiVoov8fzkaCzIQXxlAJZ5f8FiLXe1k/UZT2R0q+nUzJ+toxwlJNbhjRtEup
+         OBG7x35nfGcUlCufmgPueAP8DMsCnp5JAnPSVQiH/XpPLWNDb8qsd3Oo2PTzjmyPHjBo
+         o6ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752006948; x=1752611748;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zNJgzkdVewF1sgcn6yqbMkw49jggk50uxEN/tQQWkJU=;
+        b=eCgGDov8qsYV/324GMZ1hAzLY/+rLC36AWqWmO5gOC73XmYt8xQSyE14/P3jz3+qqs
+         fZRbhppUKd1pRKqkSY8kShknDN3NWZ+c8S6QjsPBdKQyxdWeqhfj14IEGhYCS0cAjiig
+         CUAVVvYZug9Zoyg8XbKj9sZwgSFYsAFLFdlsQ97gwwMYFuqHPcVfSNBjFLkKBANsdcwF
+         nTplWx9rnU04TRH+L2n807BMc950A1vOdm/2h0/PV6N38k9HINVf3dFFOy/1KjAD/aHP
+         vHexJdFqBD1N+9Zr/AnEIQiPev5dob+SbTi6UwC4RAcw8hhiJpE4vlC9pQTg1eJtsi+g
+         xJGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUj17FMrRSkb8vparOoJU7jpz6dbEjI/YwDAlb/c71fbqduiiGrRd8ZfICIwqgpn5zXyphIQN+EQcJfCis=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhoL3jiCu9AP2LKn11uMt/EFCpjT121YewYWnVYtTAje5k6rhq
+	cjsqA/x7EhaGbKVRQ/CrRx5xneTCsmbFa/0feb43VRSXEOIkFxcrf6HPkrtbtdAs9V1gOVuPcZb
+	CFUhziHa/CvHs3vvolWYFW0aZ5rs7IPWMWvTs1K29
+X-Gm-Gg: ASbGncthjwQNf3egJLIBqueMbBrrZsWBhJDAr9thMTpQKa3Kv9DtqKWpB89xCT8DF0f
+	6gcPHr1R3k0Vnkj4vod50MJjrazxBH6APr54WiIXoLE4Blx+pWBwW40TeaYKo5MuBsRuD4Vo1Lm
+	qf3iqJfiGxJQK3MG6MLnMoizV6EpHz8/vFIRxXTChyZM5nmz9CnMQ4
+X-Google-Smtp-Source: AGHT+IE0+XzKROgjfzp9NPOsCpjMpjlbUPmxdId2cw1c0WEj2TGxtbssrNH2wIWQT/y1bMpsmYXPh0OC8/JbSml5218=
+X-Received: by 2002:a05:6a00:124f:b0:740:9c57:3907 with SMTP id
+ d2e1a72fcca58-74ce668a90cmr24704823b3a.19.1752006948032; Tue, 08 Jul 2025
+ 13:35:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250708-b4-simple-panel-api-convert-july-v1-6-630902123ea1@redhat.com>
-References: <20250708-b4-simple-panel-api-convert-july-v1-0-630902123ea1@redhat.com>
-In-Reply-To: <20250708-b4-simple-panel-api-convert-july-v1-0-630902123ea1@redhat.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Anusha Srivatsa <asrivats@redhat.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752006919; l=1510;
- i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
- bh=vsvHIMQx+bz1MugawrqwN+PrKys/gpceYZf2lTHUZo8=;
- b=/p/iezB5BBWwJRFLoAflR91gj1xcjB9ZRrKdmqtJ7EnES2GYibe0PfCMTmbLkVHOELUPZp7u6
- xjlljvh7aXiDpTeJ1qp+rBOTiN5VHwC0+BENbpvgiTtc/KdkQp6gnqS
-X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
- pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <20250708164141.875402-1-will@willsroot.io> <aG10rqwjX6elG1Gx@pop-os.localdomain>
+In-Reply-To: <aG10rqwjX6elG1Gx@pop-os.localdomain>
+From: Jamal Hadi Salim <jhs@mojatatu.com>
+Date: Tue, 8 Jul 2025 16:35:37 -0400
+X-Gm-Features: Ac12FXw94YBZG65uYraperz0cyEMIjR3Zlx7NpXNXAIHeIHSwb0GsSm4SbgdP2M
+Message-ID: <CAM0EoMmP5SBzhoKGGxfdkfvMEZ0nFCiKNJ8hBa4L-0WTCqC5Ww@mail.gmail.com>
+Subject: Re: This breaks netem use cases
+To: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: William Liu <will@willsroot.io>, netdev@vger.kernel.org, victor@mojatatu.com, 
+	pctammela@mojatatu.com, pabeni@redhat.com, kuba@kernel.org, 
+	stephen@networkplumber.org, dcaratti@redhat.com, savy@syst3mfailure.io, 
+	jiri@resnulli.us, davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Move to using the new API devm_drm_panel_alloc() to allocate the
-panel. In the call to the new API, avoid using explicit type and use
-__typeof() for more type safety.
+On Tue, Jul 8, 2025 at 3:42=E2=80=AFPM Cong Wang <xiyou.wangcong@gmail.com>=
+ wrote:
+>
+> (Cc LKML for more audience, since this clearly breaks potentially useful
+> use cases)
+>
+> On Tue, Jul 08, 2025 at 04:43:26PM +0000, William Liu wrote:
+> > netem_enqueue's duplication prevention logic breaks when a netem
+> > resides in a qdisc tree with other netems - this can lead to a
+> > soft lockup and OOM loop in netem_dequeue, as seen in [1].
+> > Ensure that a duplicating netem cannot exist in a tree with other
+> > netems.
+>
+> As I already warned in your previous patchset, this breaks the following
+> potentially useful use case:
+>
+> sudo tc qdisc add dev eth0 root handle 1: mq
+> sudo tc qdisc add dev eth0 parent 1:1 handle 10: netem duplicate 100%
+> sudo tc qdisc add dev eth0 parent 1:2 handle 20: netem duplicate 100%
+>
+> I don't see any logical problem of such use case, therefore we should
+> consider it as valid, we can't break it.
+>
 
-Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
----
- drivers/gpu/drm/panel/panel-samsung-s6e63m0.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+I thought we are trying to provide an intermediate solution to plug an
+existing hole and come up with a longer term solution.
+If there are users of such a "potential setup" you show above we are
+going to find out very quickly.
+We are working against security people who are finding all sorts of
+"potential use cases" to create CVEs.
 
-diff --git a/drivers/gpu/drm/panel/panel-samsung-s6e63m0.c b/drivers/gpu/drm/panel/panel-samsung-s6e63m0.c
-index ea241c89593b6726e8356c30229e99191c69bf03..562ad06c251f8992b3f28894ce2309913324ef11 100644
---- a/drivers/gpu/drm/panel/panel-samsung-s6e63m0.c
-+++ b/drivers/gpu/drm/panel/panel-samsung-s6e63m0.c
-@@ -677,9 +677,13 @@ int s6e63m0_probe(struct device *dev, void *trsp,
- 	u32 max_brightness;
- 	int ret;
- 
--	ctx = devm_kzalloc(dev, sizeof(struct s6e63m0), GFP_KERNEL);
--	if (!ctx)
--		return -ENOMEM;
-+	ctx = devm_drm_panel_alloc(dev, __typeof(*ctx), panel,
-+				   &s6e63m0_drm_funcs,
-+				   dsi_mode ? DRM_MODE_CONNECTOR_DSI :
-+				   DRM_MODE_CONNECTOR_DPI);
-+
-+	if (IS_ERR(ctx))
-+		return PTR_ERR(ctx);
- 
- 	ctx->transport_data = trsp;
- 	ctx->dsi_mode = dsi_mode;
-@@ -712,10 +716,6 @@ int s6e63m0_probe(struct device *dev, void *trsp,
- 		return PTR_ERR(ctx->reset_gpio);
- 	}
- 
--	drm_panel_init(&ctx->panel, dev, &s6e63m0_drm_funcs,
--		       dsi_mode ? DRM_MODE_CONNECTOR_DSI :
--		       DRM_MODE_CONNECTOR_DPI);
--
- 	ret = s6e63m0_backlight_register(ctx, max_brightness);
- 	if (ret < 0)
- 		return ret;
+> >
+> > Previous approaches suggested in discussions in chronological order:
+> >
+> > 1) Track duplication status or ttl in the sk_buff struct. Considered
+> > too specific a use case to extend such a struct, though this would
+> > be a resilient fix and address other previous and potential future
+> > DOS bugs like the one described in loopy fun [2].
+>
+> The link you provid is from 8 years ago, since then the redirection
+> logic has been improved. I am not sure why it helps to justify your
+> refusal of this approach.
+>
+> I also strongly disagree with "too specific a use case to extend such
+> a struct", we simply have so many use-case-specific fields within
+> sk_buff->cb. For example, the tc_skb_cb->zone is very specific
+> for act_ct.
+>
+> skb->cb is precisely designed to be use-case-specific and layer-specific.
+>
+> None of the above points stands.
+>
 
--- 
-2.48.1
+I doubt you have looked at the code based on how you keep coming back
+with the same points.
 
+> >
+> > 2) Restrict netem_enqueue recursion depth like in act_mirred with a
+> > per cpu variable. However, netem_dequeue can call enqueue on its
+> > child, and the depth restriction could be bypassed if the child is a
+> > netem.
+> >
+> > 3) Use the same approach as in 2, but add metadata in netem_skb_cb
+> > to handle the netem_dequeue case and track a packet's involvement
+> > in duplication. This is an overly complex approach, and Jamal
+> > notes that the skb cb can be overwritten to circumvent this
+> > safeguard.
+>
+> This is not true, except qdisc_skb_cb(skb)->data, other area of
+> skb->cb is preserved within Qdisc layer.
+>
+
+Your approach has issues as i pointed out. At minimum invest the time
+please and look at code.
+I am certain you could keep changing other code outside of netem and
+fix all issues you are exposing.
+We agreed this is for a short term solution and needs to be contained
+on just netem, what is the point of this whole long discussion really?
+We have spent over a month already..
+
+
+cheers,
+jamal
+
+> Based on the above reasoning, this is clearly no way to go:
+>
+> NACK-by: Cong Wang <xiyou.wangcong@gmail.com>
+>
+> Sorry for standing firmly for the users, we simply don't break use
+> cases. This is nothing personal, just a firm principle.
+>
+> Please let me know if there is anything else I can help you with. I am
+> always ready to help (but not in a way of breaking use cases).
+>
+> Thanks for your understanding!
 
