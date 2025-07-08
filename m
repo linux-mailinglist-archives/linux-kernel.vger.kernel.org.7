@@ -1,174 +1,95 @@
-Return-Path: <linux-kernel+bounces-721727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9363EAFCD22
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:14:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AEFAAFCD24
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BBC83AD5DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:14:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E7003AE760
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2642DCF4A;
-	Tue,  8 Jul 2025 14:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158812DF3F9;
+	Tue,  8 Jul 2025 14:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UF5z2Khn";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fI5fTs/Q";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2pzrGVc4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4DpvvbG2"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="LqyXc/Ga"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D209A25B1EA
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 14:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75CBEEC3;
+	Tue,  8 Jul 2025 14:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751984061; cv=none; b=VJ5uTV+qJgyIHwZJLBP91Pr5FsL2YG/gUBAwZjk+CHPxeJbOh4DQaCYzZ0u35McN+rRhe8ZFqjsVLM+iqG5OO31ZIwaKTJ1NWEiAiuPJaUkaDcYXx29t3W/k8ltOKO6ebnQp2OVVDssbaPCJ2IjnrunYm6IxwHOW5cpWEanGodM=
+	t=1751984081; cv=none; b=a1Ya2wZQm48JUYcXZEY6OKhbp1Y7tJjJcXiZabRx5HttKFtQ1eSh69x5Hz/wN11Z5ZpO+UMmJHV0AySEwRHnUaPPAksZ8YzznG9fpOgsVPLAcM1gnvCWeFmiL2GhS2oDrq/o2XAHgTaoUtsqLG2eFulPrVUzYLj3stC4T+xoofY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751984061; c=relaxed/simple;
-	bh=cnWaXa74/QbfnSb2LTs5sZmQXHNxB435+m+y24Jr8gI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cFTzwCYwdg2BdjnUzo/9YzvEXzFF2byeSAj1tyYSTn+JaewhjrfcUNVX3DN2YtNEn6ypWn/ZK9HJXTH+5t7QCxOabgeVQkkFe7qVTIeBqAzEuFMxUiniU2vyJW56+DzE5jrqIFCeNQE0+F0dJ1Ky5FfM/3kHTvk+Wrw3RSlag3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UF5z2Khn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fI5fTs/Q; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2pzrGVc4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4DpvvbG2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1751984081; c=relaxed/simple;
+	bh=FsDNbo8SKNA8IQp/RjKi16+L2G7xR/1hLOFC3Hn3rGw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=D8tofRAAR+z+qQm8ugGUgC/fhWyeQwxulMRkCaHObcCeYgjy+Isn/rr4ipqPrtAzD57A18BfWb5HgSV1y3OjlDt18eun0tSx38Rrvfu5I0RaQ/aM8XuYqjxJwr+XRSmk6edtk6NAOjAveKaRmYRNWhp+Pf5B0EAKWgX0mjhaMKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=LqyXc/Ga; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 00211406FC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1751984079; bh=DSJWbXFtHo5/zCD3cnB4EtER01TweueSmrBH2UgT2aE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=LqyXc/GaPT2G4IUBSZPnQpuOT4qrVsl8e5GH+sOdhPzvRGz3gJ//mpQgNZiqZ0oq/
+	 4FwZJpSe6T5jk64jp06xChTC9P+XlaKn8VoQXUXnStaUxQ04oZCWe4fF+1tEtAY1OM
+	 VgFh8RuZGI3ac2Vp1DofqIDNBlaQr6GeVl9xn9qW3rFznPtFEV+UNN9CJvkkzBJ7Vh
+	 7iRrLljr0HcDaQZG99JnMc+Nc/UUA3kGo2Hm2ADyEQF1s2glnvzFmxPmF1uJp9l+Qx
+	 4+uuEkS7ZxkZ++qK58rCcAbGgTtukW1FFbc+EndU3FQvZIzsGWv+RA5nsQq7LRmh9B
+	 4QXrq1Xhrv3ew==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F135F2111F;
-	Tue,  8 Jul 2025 14:14:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751984058;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jy7+FymTvjDCy1JGk/8xikVi4a2BjKPwW51tOqW3Ebs=;
-	b=UF5z2Khnttq1mw3Na6MdfoOFwxNq8t6qeI2mNA1fKrnBrWSLTj31b2ufiPfYWe3FUxTvNx
-	khngmhWAdgbx8lgLOyYzL49n/8UNcHhCUNsXw/8tSIjQMgE9WHBPYAC9mGD+1vR5pcn3GW
-	NipdN2gnTWHujDbtsGOIdNyuJ77oqBE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751984058;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jy7+FymTvjDCy1JGk/8xikVi4a2BjKPwW51tOqW3Ebs=;
-	b=fI5fTs/Q415OWmKm2xciqk1eDdKCZqaDg5lUn1fCv89Qb6rwvGWGjk7PlC/STdGEmgAr5h
-	/4wR/zJlT6zMAMDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=2pzrGVc4;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=4DpvvbG2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751984057;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jy7+FymTvjDCy1JGk/8xikVi4a2BjKPwW51tOqW3Ebs=;
-	b=2pzrGVc4KJ33UUEttCriZCxABDkgLaW64trvzx+p+esR/BBzOlQ/oJq+JSFhJUZNZPl6M9
-	hflkIEhS4SXNrUIAx1TznWSYmJqymukP54/D71IPw9SQ1MpbVM9bMjM0Vwfn3vmM+ao7DX
-	t92FF+bFKzzYKz32tCDAYuRnfngDBMw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751984057;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jy7+FymTvjDCy1JGk/8xikVi4a2BjKPwW51tOqW3Ebs=;
-	b=4DpvvbG2ZkS55xtJDFB3XSSTfyWfIBGCE+5gfFdTUy+Krjfj4cCE5TTlTm99ncmBPPpdCq
-	rcE7oI+XPJD3qBDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D121E13A54;
-	Tue,  8 Jul 2025 14:14:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZSLHMrknbWgDRQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 08 Jul 2025 14:14:17 +0000
-Date: Tue, 8 Jul 2025 16:14:12 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Nick Terrell <terrelln@fb.com>, David Sterba <dsterba@suse.com>,
-	linux-hardening@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: zstd - replace zero-length array with flexible
- array member
-Message-ID: <20250708141412.GL4453@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20250703171933.253654-2-thorsten.blum@linux.dev>
+	by ms.lwn.net (Postfix) with ESMTPSA id 00211406FC;
+	Tue,  8 Jul 2025 14:14:38 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2] tracing: doc: fix "for a while" typo
+In-Reply-To: <xygdnynf7m55p7d27ovzqtdjaa7pua3bxuk5c22cnmoovaji5e@tarta.nabijaczleweli.xyz>
+References: <xygdnynf7m55p7d27ovzqtdjaa7pua3bxuk5c22cnmoovaji5e@tarta.nabijaczleweli.xyz>
+Date: Tue, 08 Jul 2025 08:14:38 -0600
+Message-ID: <87ikk26a7l.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250703171933.253654-2-thorsten.blum@linux.dev>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: F135F2111F
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.21
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 03, 2025 at 07:19:34PM +0200, Thorsten Blum wrote:
-> Replace the deprecated zero-length array with a modern flexible array
-> member in the struct zstd_ctx.
-> 
-> No functional changes intended.
-> 
-> Link: https://github.com/KSPP/linux/issues/78
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xyz> writes:
+
+> Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xy=
+z>
 > ---
->  crypto/zstd.c | 2 +-
+> v1: https://lore.kernel.org/lkml/h2ieddqja5jfrnuh3mvlxt6njrvp352t5rfzp2cv=
+nrufop6tch@tarta.nabijaczleweli.xyz/t/#u
+>
+>  Documentation/trace/histogram.rst | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/crypto/zstd.c b/crypto/zstd.c
-> index 657e0cf7b952..c489976c3e8b 100644
-> --- a/crypto/zstd.c
-> +++ b/crypto/zstd.c
-> @@ -25,7 +25,7 @@ struct zstd_ctx {
->  	zstd_dctx *dctx;
->  	size_t wksp_size;
->  	zstd_parameters params;
-> -	u8 wksp[0] __aligned(8);
-> +	u8 wksp[] __aligned(8);
+>
+> diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/hist=
+ogram.rst
+> index 0aada18c38c6..2b98c1720a54 100644
+> --- a/Documentation/trace/histogram.rst
+> +++ b/Documentation/trace/histogram.rst
+> @@ -249,7 +249,7 @@ Extended error information
+>    table, it should keep a running total of the number of bytes
+>    requested by that call_site.
+>=20=20
+> -  We'll let it run for awhile and then dump the contents of the 'hist'
+> +  We'll let it run for a while and then dump the contents of the 'hist'
+>    file in the kmalloc event's subdirectory (for readability, a number
 
-This is from patch "crypto: zstd - convert to acomp" currently as commit
-f5ad93ffb54119a8dc in linux-next. Should it rather be folded there? It's
-part of the crypto queue.
+Applied, thanks.
+
+jon
 
