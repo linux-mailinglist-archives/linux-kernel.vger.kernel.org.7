@@ -1,156 +1,123 @@
-Return-Path: <linux-kernel+bounces-721686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE65FAFCC74
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:51:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F956AFCCC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BF5E167311
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:51:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24B511BC75AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59E82DEA92;
-	Tue,  8 Jul 2025 13:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06592DECBF;
+	Tue,  8 Jul 2025 13:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="MBlRUTly"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/BQcXjt"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7BB881E
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 13:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB512DECA5;
+	Tue,  8 Jul 2025 13:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751982676; cv=none; b=CaTTNriszP5k+dqA9wOoLBpuYNUct+ucGa1rgORJKkIpg+fLfz6+VdLnsR10x6J2q4yEfkTJn0ITT10kyw2xeZqU9nf/fxWqS8opatd4UVjYmOmDb0PktdGaxuhH/RzxGQpwFHDZtwXyTl54nhWI55HtVvVUz99QeKIbN3PPxpA=
+	t=1751982883; cv=none; b=fVUmcpUHwQF3dSfxMVVkujA8RgxRcQbAbRkN3fz7zMFHjty7UXXHlUOIbzQy2NRYzeccMVr3vbaqbwepsh2uXM3dSnAxYVo+3uqRff1g1EBbKDEy4zhNFOB/2nvzjjD1DAcbtsUrMBbmDYPB8uP3w1g1g1yBwJcBIlH+e4JZjAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751982676; c=relaxed/simple;
-	bh=qkHV+oubYu/O5KpKB/TIsQpLDj5mKUNq2idhGzy+r7s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DdNYHpdsY5hYPTqnGThiDXWGrtfBlMwk+0Ee/di9BD7lRi6LWtRWbE0wlPAapthJAqNMQpL6u+x/ALrXNa2b2Rl195de70rrGah4o3n3oBNmQnjeNDaHuzf5oX5SmG57wVhXJhSlvr5jPzgqmMsLmI1UAdd7SjdKHb3ffho4pYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=MBlRUTly; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55516abe02cso4354469e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 06:51:14 -0700 (PDT)
+	s=arc-20240116; t=1751982883; c=relaxed/simple;
+	bh=+TcuFQ5JXfXnFqeAMBmM7+3WUpidAPgIKaNnz9SsEQQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lGONJamCQYp+S3aKQI7DTlfa4bpQQAEQG7eY1BY1OIOvmLEL9QEpVkRmb2vCn6WSeZ6RQZB4OY4KLPkLx/acxVMUbEtJHNBq0ycpbH6MDf4/iKnABEk0S2KDPFk/i97/CesLn7uMQsSMO/3YDnwdHtLINAwPASlfEgaVicaLDHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K/BQcXjt; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ae04d3d63e6so734146966b.2;
+        Tue, 08 Jul 2025 06:54:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google; t=1751982672; x=1752587472; darn=vger.kernel.org;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=31MqR/E8gvc45qHOvdbZr7UXtdSXHcy53Qh8ZwjxaD0=;
-        b=MBlRUTlyH9cxaYU2jSw6vYHjJysk670xKuSrcsrt30nXStnUHx/1DBAyNfDbjxG4Be
-         sM1cghaj64PrdF+wd3jieeqiXODHrgk7HH2AmdmRU7nP0AZ9DnY9O9Vi4xdTv6xQOzmU
-         zksgurKCsDTu/uUJxP6mUN7N8I2WWEtfRCY5Y=
+        d=gmail.com; s=20230601; t=1751982880; x=1752587680; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QuSzMUX3wHghxJbKlKNyZysFBPZJv5OM61rjXeShdRQ=;
+        b=K/BQcXjtDIisNrI0gRMD42TcGjFl0Vl7jAsqAYPaqx5zIPPF0wktfK77XPqyHMrXA4
+         RaXAujn0DbgTsZQ+m7U2X8G9Nn5firv0mdHZP74GSR7kdU35CTNLYYMFGccCpaMzq/5X
+         idu1kem7HXwFrm1SkI8s24JgW3ffA9K+LInSyvzclm+44uJSm54kBcxosNkBhrf/gfzr
+         1FVyZT3gPx47iksJwnoSORjT5HhfjMCP6IdAroQOHr+Fp7KLNWBOqaDRy1gYaki+uRc6
+         AqIqgXMx5raHVWfH49PJV0/wPTWuu+oSraCVvWKF+oOeY3HjK/r2mtSBvwl2omcR/xZF
+         eWnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751982672; x=1752587472;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=31MqR/E8gvc45qHOvdbZr7UXtdSXHcy53Qh8ZwjxaD0=;
-        b=bvai3DG3Ofv7PhNHOmAUd84EULxHmaQ3YISYSt3tA9V6AHbICKLCKAqBtwwLwNgwRD
-         kTF1FLhlChW1KGqMReRCCyEySTz2hU6YBzdaEHmsIgAS1u5Cl+rU4eFTFTeksXNVpaDn
-         m6b0jCU+fxTp2uoCxUFiwZ+orX8z1NlrS/FVKqtwhBUxUlg4jRqw8LXEYhqZQL9NDZiM
-         PwLC3+mHw0pFcipkDBRE6NPdZFmusBEwIziVumyCgUSbTTct9nHfzJBoyk96ZIYL5E4G
-         EUSeNCI1fd0Fwa8C9yj3QtYi9lBMUHvRoV9d1Ktr7oipP6XBSQCKuLOdOlORq0cUSMZR
-         EFWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWDW3S0eoeanOiMiNS+Rt52EAFlL6b+AgIzuGrTrzGkpIZbo6Zme60Z3M09WV1/SC3L4o/MznEhhr2Mmpc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBFXVPvUzSrQTjgv6SB6/wIN6DcncJ/oojKc/D0zGcekd1IbyF
-	/e3ilElz86Jkm2Ct6PxX1Z1613687bSQi4G9eCV3VbE1BTcQO3RQ7rCuR4nrbNQnUoM=
-X-Gm-Gg: ASbGncvdH4l9pqtjOTSbPbGKFwKpqGXIKyEHc9l8KZO9MvpFI0fAqtUnhPDIItU0Z2O
-	CJ98RVlLLrY8umLegrYBzWHV7YwYw/JQ5sc7wj9BBsYXFZY5H0MPQ1iFNOPFtFSimI1EOsrajov
-	UtxBGt54UiuUId3e38RSgz6qiBAOJ6PNJe+IRvBLFOkFpvII6b+qAPKmYwlfcFF2NxNnoqHoWQ1
-	lkHRKjPrmkGL8MltzkdBQrAbX/BDbrdgC7F+XlSETz7r0cMrw1N+k8f7jb1yBosm4TvzbLWaan5
-	d4xKL0q4oTMbE/Qxyg/FEM7xT+lby3U0ZtsgS/cc/ymOZq/OlpJnx5wrcEkL51Z4
-X-Google-Smtp-Source: AGHT+IGAGFiZWkwFnSiMkLwKey/goUWPwP6l7a9KOAhmvZ6IpsJt6jVgzyte8sMjjpbz+51yLmRVhA==
-X-Received: by 2002:a05:6512:2381:b0:553:2308:1ac5 with SMTP id 2adb3069b0e04-557f8d6a9efmr1017578e87.4.1751982672246;
-        Tue, 08 Jul 2025 06:51:12 -0700 (PDT)
-Received: from localhost ([81.216.59.226])
-        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-556384cdf6fsm1699987e87.242.2025.07.08.06.51.11
+        d=1e100.net; s=20230601; t=1751982880; x=1752587680;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QuSzMUX3wHghxJbKlKNyZysFBPZJv5OM61rjXeShdRQ=;
+        b=cIkcrA1jz5KO8xqazI41thCYekj7ogG/NCFBQUEBTTksjIycgzgUWd/n66u0OzWzrL
+         9QJ3Xo+ZDPsh2eFu0XrEgNlimtIqwZCjH07+4GZWK74s+zN7Y7dc4bs17aJQ0raHl96m
+         Kj4bjbjH/K/1KUpC7NNQ5zvSBhCPBNCWTD7/gVrgC5Hj7iBWN0XbxF7GmTIjSKR28Jki
+         fLyNvNSLm0OcyGx+Hw2gUNJXxfggxEpXQhjOj+861c2qYSvQ9oM29Y6+27I24ISkzy60
+         IMQ+2t2CpKJtWaArN4IYLwcsuguZrPIn4O2FUYr1opBviMs/RGp36CeCKhvZszFJsXIi
+         6JJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmv153K55R0KctzBx8rKUAllD/11rrP5YLzQciTBV7IeV65trMT6QPYFv9RQsqEal6l3RShYVzZ3jUOuTr@vger.kernel.org, AJvYcCWP3WDELeP42hnM5SEfLm+pNQkE7no3OPObkUl3PkjqM6dZcbx794ByoJwWssPyT+7Nj6FrZWgjpmz0@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrX5TQQdczIAFmW1ZGV82l+iy+hKLr7tftwNf+whek3zvEWRRp
+	gRSC4EM9BFzKqKV41qFP/RKiO5u93pDAMxfU+f/M/x/Tzw6vxUcT9BJS
+X-Gm-Gg: ASbGncteGZ6NOPPyxoCu6Jh9NygqLH38jmwEyRiiBsgU8tmhnzCOkR7wQtJMvI6+kpk
+	M4MaFhlvUf8aFEiHD2vKQkk7cKsyuYhDwEzVVhWHxGtIdmc7vngmpiebRjxPZj4+qEhJ30myK7B
+	Qo3cLx3dfRdJReBGwninbjQ5VE51nSboq455L1trEun9ee7lRP/xojpRa3BtHSkPFzbyBGGM3WL
+	atCizOhDIvPwVasYB6YAK2tZOB3XbnVZKSlSFv02Z1i+7DM+AYr63kS6KkYrpWiUKP/pkMP4l3J
+	VaP4gsYFbvp75UGc4Y1y8Ol0gkWKxMxCB3JUcL82z2YF4HyAEoUY+OTY8Pfnl3UpZCJ6cY4lmW9
+	hlbw3xo7X1qAIbqwHS97dCxzjUMnSkvioCCS6KhpG0sFFmrXE+riT7Rw7sR9si3D7
+X-Google-Smtp-Source: AGHT+IEg8FYXr6keG6fLz0S3lPAROXenPPWH4ugJsZlSnOifah2zO//skjGha+hpIpCH4Ky47GCywA==
+X-Received: by 2002:a17:907:2dab:b0:ae3:62cb:7654 with SMTP id a640c23a62f3a-ae3fbc54c72mr2019958866b.17.1751982879591;
+        Tue, 08 Jul 2025 06:54:39 -0700 (PDT)
+Received: from toolbox.int.toradex.com (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6ac6641sm910431066b.99.2025.07.08.06.54.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 06:51:11 -0700 (PDT)
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: linux-mm@kvack.org,  linux-hardening@vger.kernel.org,  Kees Cook
- <kees@kernel.org>,  Christopher Bazley <chris.bazley.wg14@gmail.com>,
-  shadow <~hallyn/shadow@lists.sr.ht>,  linux-kernel@vger.kernel.org,
-  Andrew Morton <akpm@linux-foundation.org>,  kasan-dev@googlegroups.com,
-  Dmitry Vyukov <dvyukov@google.com>,  Alexander Potapenko
- <glider@google.com>,  Marco Elver <elver@google.com>,  Christoph Lameter
- <cl@linux.com>,  David Rientjes <rientjes@google.com>,  Vlastimil Babka
- <vbabka@suse.cz>,  Roman Gushchin <roman.gushchin@linux.dev>,  Harry Yoo
- <harry.yoo@oracle.com>
-Subject: Re: [RFC v1 0/3] Add and use seprintf() instead of less ergonomic APIs
-In-Reply-To: <ez7yty6w7pe5pfzd64mhr3yfitvcurzsivjibeabnkg457xu7x@tkompzcytwcj>
-	(Alejandro Colomar's message of "Tue, 8 Jul 2025 13:36:57 +0200")
-References: <cover.1751747518.git.alx@kernel.org> <87a55fw5aq.fsf@prevas.dk>
-	<ez7yty6w7pe5pfzd64mhr3yfitvcurzsivjibeabnkg457xu7x@tkompzcytwcj>
-Date: Tue, 08 Jul 2025 15:51:10 +0200
-Message-ID: <871pqqx035.fsf@prevas.dk>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        Tue, 08 Jul 2025 06:54:39 -0700 (PDT)
+From: max.oss.09@gmail.com
+To: Max Krummenacher <max.krummenacher@toradex.com>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Vitor Soares <vitor.soares@toradex.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] arm64: dts: freescale: imx8mp-toradex-smarc: remove gpio-hog on lvds_dsi_sel
+Date: Tue,  8 Jul 2025 15:51:40 +0200
+Message-ID: <20250708135300.2855155-1-max.oss.09@gmail.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 08 2025, Alejandro Colomar <alx@kernel.org> wrote:
+From: Max Krummenacher <max.krummenacher@toradex.com>
 
-> Hi Rasmus,
->
-> On Tue, Jul 08, 2025 at 08:43:57AM +0200, Rasmus Villemoes wrote:
->> On Sat, Jul 05 2025, Alejandro Colomar <alx@kernel.org> wrote:
->> 
->> > On top of that, I have a question about the functions I'm adding,
->> > and the existing kernel snprintf(3): The standard snprintf(3)
->> > can fail (return -1), but the kernel one doesn't seem to return <0 ever.
->> > Should I assume that snprintf(3) doesn't fail here?
->> 
->> Yes. Just because the standard says it may return an error, as a QoI
->> thing the kernel's implementation never fails. That also means that we
->> do not ever do memory allocation or similar in the guts of vsnsprintf
->> (that would anyway be a mine field of locking bugs).
->
-> All of that sounds reasonable.
->
->> If we hit some invalid or unsupported format specifier (i.e. a bug in
->> the caller), we return early, but still report what we wrote until
->> hitting that.
->
-> However, there's the early return due to size>INT_MAX || size==0,
-> which
+The LVDS_DSI_SEL does not leave the SoM, so do its pinmuxing on the SoM dtsi and don't
+leave that to a carrier board dts file.
 
-First of all, there's no early return for size==0, that's absolutely
-supported and the standard way for the caller to figure out how much to
-allocate before redoing the formatting - as userspace asprintf() and
-kernel kasprintf() does. And one of the primary reasons for me to write
-the kernel's printf test suite in the first place, as a number of the %p
-extensions weren't conforming to that requirement.
+Using a pull down on the LVDS_DSI_SEL signal is enough to have the signal not floating
+and have the SoM in a defined state.
+Thus remove the gpio-hog used on the line and leave this to carrier board dts files or
+overlays to use the signal as needed.
 
-> results in no string at all, and there's not an error code for this.
-> A user might think that the string is reliable after a vsprintf(3) call,
-> as it returned 0 --as if it had written ""--, but it didn't write
-> anything.
 
-No, because when passed invalid/bogus input we cannot trust that we can
-write anything at all to the buffer. We don't return a negative value,
-true, but it's not exactly silent - there's a WARN_ON to help find such
-bogus callers.
+Max Krummenacher (2):
+  arm64: dts: freescale: imx8mp-toradex-smarc: fix lvds dsi mux gpio
+  arm64: dts: freescale: imx8mp-toradex-smarc: remove gpio hog
 
-So no, there's "no string at all", but nothing vsnprint() could do in
-that situation could help - there's a bug in the caller, we point it out
-loudly. Returning -Ewhatever would not remove that bug and would only
-make a difference if the caller checked for that.
+ .../boot/dts/freescale/imx8mp-toradex-smarc-dev.dts    |  5 -----
+ .../arm64/boot/dts/freescale/imx8mp-toradex-smarc.dtsi | 10 ++--------
+ 2 files changed, 2 insertions(+), 13 deletions(-)
 
-We don't want to force everybody to check the return value of snprintf()
-for errors, and having an interface that says "you have to check for
-errors if your code might be buggy", well...
+-- 
+2.42.0
 
-In fact, returning -Ewhatever is more likely to make the problem worse;
-the caller mismanages buffer/size computations, so probably he's likely
-to just be adding the return value to some size_t or char* variable,
-making a subsequent use of that variable point to some completely
-out-of-bounds memory.
-
-Rasmus
 
