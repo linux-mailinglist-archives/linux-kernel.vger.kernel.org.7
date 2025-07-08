@@ -1,94 +1,87 @@
-Return-Path: <linux-kernel+bounces-721850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE7CBAFCEA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:11:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9CC0AFCEA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6D1B56305E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:10:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C11E189B176
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24CB2E06FD;
-	Tue,  8 Jul 2025 15:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B3626FA56;
+	Tue,  8 Jul 2025 15:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="m6Mz6Pmf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7l5l/6CP";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="m6Mz6Pmf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7l5l/6CP"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VundQqz1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFAF2DFA4C
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B812BE020
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751987421; cv=none; b=E2ZyIXeoMiJHyd+LCV9ZLhwVrIor8GJTJh1oPTRtTklqxaYPrN9NhXy0bRB71gYCtkDqEOE6rWsQ/l2htP9D3bYryoJHzaps2Umz7fqgO6LQyVVcplPdqWg3PveHIJEpNvPssIon4HIqBTSeHw7pWRtIhoOt2DRMetLC12onYc8=
+	t=1751987452; cv=none; b=s0/FiAA0+BnU88ycq97R7SpY1XbZRSU1S9K3dQcxPvZa66tsS5T0sv/8SVXilZ4wWDN6HM2qRwcueRW3RJUJd/nfudzzp9lNyDk5cDkmP82EjmTAlxKWPg3hof++kiX4aqjUJaJbtkvR29n9XNQVydX1oZk5sU3hWXfVlN0z788=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751987421; c=relaxed/simple;
-	bh=k9GvyPETSTWxZjuirrvbEszC1/K0UdH93QwUIWx5B+M=;
+	s=arc-20240116; t=1751987452; c=relaxed/simple;
+	bh=fGerUtoQfOMFV13NE4pLJmsZdVSRGXJsQRTXptzxl4E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HAPswrSLqfgGlXRMvGBT4FlU/0sJvOiNOqHenkRVtKOtPkntEt5Q9jF6EvJzS9G0CfPZBAeFQuvuV/94laP0cEmo2EryjAwnrDeuPQ9SEFYGedDbleiMo7Di4OXDHWXjrkJHuCF3uNUDKL0959BiBQgPDj1NbRrGdNzYOKecnzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=m6Mz6Pmf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7l5l/6CP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=m6Mz6Pmf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7l5l/6CP; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AE56C1F38D;
-	Tue,  8 Jul 2025 15:10:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751987417; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 In-Reply-To:Content-Type; b=NoY1fMH0qpAJxs0S3OIys7JH2ZKKtDHvMZFs2wEcLSrBVL4n0/QDzbswhNY6FKRnDN5Vbf1suSz8s3tZxKxE4cR+t5hzHq1cUgMQETi+Zmcihd1hl3oX++/ZRhF0cW7WD/mFMxmPevhrwrWY32eigvMeEtG2OdVfSNoqzoHXXJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VundQqz1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751987449;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RBJrq5rrEYK3BExPN1yatd5yFSUlyz7lh/vpdvXGyaI=;
-	b=m6Mz6Pmfkfhll36kjfI9evCnWYijYAdQHH3cVSK97NDajj7Bwsg86gZRMxYnFxDo3gOMMl
-	sjSleKQFeaqu4id7eCQuqL255r17i5MoSDP3K/zFZK/fjxUe1LYPWTC7bgzedx0vVD851L
-	rguyRY1zZ9qSNT3l5fZTAhS2jeaNVUE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751987417;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RBJrq5rrEYK3BExPN1yatd5yFSUlyz7lh/vpdvXGyaI=;
-	b=7l5l/6CP/McLTQpCHpcAgy0YjJdfc7K7uJRZNjuqKcuJ/Su/LSLr/1xvHBNHh924Fdj/4M
-	K4l9TzdEFvHoBhCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751987417; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RBJrq5rrEYK3BExPN1yatd5yFSUlyz7lh/vpdvXGyaI=;
-	b=m6Mz6Pmfkfhll36kjfI9evCnWYijYAdQHH3cVSK97NDajj7Bwsg86gZRMxYnFxDo3gOMMl
-	sjSleKQFeaqu4id7eCQuqL255r17i5MoSDP3K/zFZK/fjxUe1LYPWTC7bgzedx0vVD851L
-	rguyRY1zZ9qSNT3l5fZTAhS2jeaNVUE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751987417;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RBJrq5rrEYK3BExPN1yatd5yFSUlyz7lh/vpdvXGyaI=;
-	b=7l5l/6CP/McLTQpCHpcAgy0YjJdfc7K7uJRZNjuqKcuJ/Su/LSLr/1xvHBNHh924Fdj/4M
-	K4l9TzdEFvHoBhCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 86C4313A68;
-	Tue,  8 Jul 2025 15:10:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5nCzH9k0bWgkVwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 08 Jul 2025 15:10:17 +0000
-Message-ID: <55e427bc-53d6-4ec8-b86a-99bd7367d5bb@suse.de>
-Date: Tue, 8 Jul 2025 17:10:17 +0200
+	bh=vF7pB9kaskUnbY7SdEoT1uFkNdrhk58b8baotVEUIFo=;
+	b=VundQqz1enDYbzD2tVW3daoHlQvMqKIdY5PZHS7rNch0iyA+C/AQBqNiP7rie/AtAkgBZL
+	EYny/pinjjWPE0pjGvvM3xLoJGN3nhk9+30yxfdYXUEHkEGu624TTPGitgowQ/KGEpPpnO
+	gATQvxw7I9CfuedChPUsNE4JFlePr4U=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-368-5I_OiVDuPG-NrOBnqPdukQ-1; Tue, 08 Jul 2025 11:10:48 -0400
+X-MC-Unique: 5I_OiVDuPG-NrOBnqPdukQ-1
+X-Mimecast-MFC-AGG-ID: 5I_OiVDuPG-NrOBnqPdukQ_1751987447
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-451d5600a54so36303825e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 08:10:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751987447; x=1752592247;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vF7pB9kaskUnbY7SdEoT1uFkNdrhk58b8baotVEUIFo=;
+        b=OmKi69H2+QrzNb8640EOBmUC6hXCtlgMmhVY3IUZtPcWEdVlRydgUAc5/MwPueDfRf
+         gA7K8FOX4GzSHuzHJQuPjHLDc2ERBOTZEWeML+i7Ru79nNZSEmuwB8zLtzqlN/Y1QfIR
+         VeHgUgoOGcPZt8TFPwMZ8zKRJ5TYpeDpUWxGxh+SR60h9bbRn0x4CBLtqp7fBoYcaV+Y
+         US72uHxhRgmOlN5I62NDL+hQaSHmQGe/zJTD7efDKqaClUSNJz0Msp9/KY0PtlJ66S8k
+         yB7VrXNQPD/qUfX/g86NND5dXvhyyX75vYMrwY3OIuQS+FMIveKJVtja3QV7P54o6eh8
+         nppw==
+X-Forwarded-Encrypted: i=1; AJvYcCXIkM7sxBCG+6UNXfg3QiShkUd0ja0JCZIM8571OoU6VxmrmRlsJR7BxE3Cqb1z4FootLXKr0BibowYhDQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymxaWYmV5yO3e74X1/pXgWARQkaWZtp8gMSdATW4DRyB/ZTG3e
+	ue7HBrH2skJ04llNeVlJhbTWrzAq8obXGqEndVsWD6j/38a5YwB6MF+VYiPJ57t3wUbDDTiDreV
+	rAZFTRnyY9iHJINfUxkCBXmw2aHL1W/hfria6HViaF5VPc4FdVOdCSbMTPbWyCiIK+A==
+X-Gm-Gg: ASbGncvuQNsndGeErsOKkBADfaBVfa1NjxFYcjSwwdxXaCcxG2aNgfxSdrNNa35hykV
+	r7C9hlVifZovrXqwFmKrstXO1i2wO/usTOW5okAIb18q8HqsHeFW1ODPGmls7ohWMoEJP1+V4MC
+	pcgSQCmqdFj6d6TfP5jYo3lKjITUQABPpPltmgtYQTNVYQQQUF4I3CKVTfUbYWwA5EE05QfTOiG
+	7vLISV2j6P2cvEdaNQdXZHlg3aC0zId5ejzbQMtrmk6jcm00LAfS5MVhj/TNcsJ3OIdGNK83IOC
+	b5NGXYTTNKd2O/n6noA3SfdpuWDfKvSZIjw2AuxHNQg7HSLRy7bH/Hbr7cXHGn8Y9jxAv1udIsp
+	VMJ5duonYsNmuu4qXl8NL0P4EzpObEaqhxtt5+jHpcHbC+QuBNg==
+X-Received: by 2002:a05:600c:5250:b0:453:a95:f07d with SMTP id 5b1f17b1804b1-454cd4cbed3mr42121245e9.10.1751987446541;
+        Tue, 08 Jul 2025 08:10:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHmKLwKgLc+QDyg2LOJPqGWeJ4FiXBWn3lZISABRTzIZSV3j7/eNP1RHFdrHD/ZrgFBqgc0Jg==
+X-Received: by 2002:a05:600c:5250:b0:453:a95:f07d with SMTP id 5b1f17b1804b1-454cd4cbed3mr42120285e9.10.1751987445940;
+        Tue, 08 Jul 2025 08:10:45 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f1a:f500:4346:f17c:2bde:808c? (p200300d82f1af5004346f17c2bde808c.dip0.t-ipconnect.de. [2003:d8:2f1a:f500:4346:f17c:2bde:808c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47285c903sm13406200f8f.90.2025.07.08.08.10.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jul 2025 08:10:45 -0700 (PDT)
+Message-ID: <a4d8b292-154a-4d14-90e4-6c822acf1cfb@redhat.com>
+Date: Tue, 8 Jul 2025 17:10:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,171 +89,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbdev: kyro: Add missing PCI memory region request
-To: Giovanni Di Santi <giovanni.disanti.lkl@gmail.com>, deller@gmx.de
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250708144659.787676-1-giovanni.disanti.lkl@gmail.com>
+Subject: Re: [PATCH] mm/userfaultfd: fix missing PTE unmap for non-migration
+ entries
+To: Andrew Morton <akpm@linux-foundation.org>, Sasha Levin <sashal@kernel.org>
+Cc: peterx@redhat.com, aarcange@redhat.com, surenb@google.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250630031958.1225651-1-sashal@kernel.org>
+ <20250630175746.e52af129fd2d88deecc25169@linux-foundation.org>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250708144659.787676-1-giovanni.disanti.lkl@gmail.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250630175746.e52af129fd2d88deecc25169@linux-foundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com,gmx.de];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,bootlin.com:url,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.80
 
-Hi
+On 01.07.25 02:57, Andrew Morton wrote:
+> On Sun, 29 Jun 2025 23:19:58 -0400 Sasha Levin <sashal@kernel.org> wrote:
+> 
+>> When handling non-swap entries in move_pages_pte(), the error handling
+>> for entries that are NOT migration entries fails to unmap the page table
+>> entries before jumping to the error handling label.
+>>
+>> This results in a kmap/kunmap imbalance which on CONFIG_HIGHPTE systems
+>> triggers a WARNING in kunmap_local_indexed() because the kmap stack is
+>> corrupted.
+>>
+>> Example call trace on ARM32 (CONFIG_HIGHPTE enabled):
+>>    WARNING: CPU: 1 PID: 633 at mm/highmem.c:622 kunmap_local_indexed+0x178/0x17c
+>>    Call trace:
+>>      kunmap_local_indexed from move_pages+0x964/0x19f4
+>>      move_pages from userfaultfd_ioctl+0x129c/0x2144
+>>      userfaultfd_ioctl from sys_ioctl+0x558/0xd24
+>>
+>> The issue was introduced with the UFFDIO_MOVE feature but became more
+>> frequent with the addition of guard pages (commit 7c53dfbdb024 ("mm: add
+>> PTE_MARKER_GUARD PTE marker")) which made the non-migration entry code
+>> path more commonly executed during userfaultfd operations.
+>>
+>> Fix this by ensuring PTEs are properly unmapped in all non-swap entry
+>> paths before jumping to the error handling label, not just for migration
+>> entries.
+> 
+> I don't get it.
+> 
+>> --- a/mm/userfaultfd.c
+>> +++ b/mm/userfaultfd.c
+>> @@ -1384,14 +1384,15 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
+>>   
+>>   		entry = pte_to_swp_entry(orig_src_pte);
+>>   		if (non_swap_entry(entry)) {
+>> +			pte_unmap(src_pte);
+>> +			pte_unmap(dst_pte);
+>> +			src_pte = dst_pte = NULL;
+>>   			if (is_migration_entry(entry)) {
+>> -				pte_unmap(src_pte);
+>> -				pte_unmap(dst_pte);
+>> -				src_pte = dst_pte = NULL;
+>>   				migration_entry_wait(mm, src_pmd, src_addr);
+>>   				err = -EAGAIN;
+>> -			} else
+>> +			} else {
+>>   				err = -EFAULT;
+>> +			}
+>>   			goto out;
+> 
+> where we have
+> 
+> out:
+> 	...
+> 	if (dst_pte)
+> 		pte_unmap(dst_pte);
+> 	if (src_pte)
+> 		pte_unmap(src_pte);
 
-Am 08.07.25 um 16:46 schrieb Giovanni Di Santi:
-> The kyro framebuffer driver did not request its PCI memory regions,
-> which could lead to conflicts with other drivers.  This change
-> addresses the task "Request memory regions in all fbdev drivers"
-> from the file Documentation/gpu/todo.rst.
->
-> pci_request_regions() is now called during probe. To ensure proper
-> cleanup, the corresponding pci_release_regions() and a missing
-> pci_disable_device() call are added to both the driver's remove
-> function and the probe's error handling path.
->
-> Signed-off-by: Giovanni Di Santi <giovanni.disanti.lkl@gmail.com>
-> ---
->   drivers/video/fbdev/kyro/fbdev.c | 23 ++++++++++++++++++-----
->   1 file changed, 18 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/video/fbdev/kyro/fbdev.c b/drivers/video/fbdev/kyro/fbdev.c
-> index 08ee8baa79f8..80ac17337c1b 100644
-> --- a/drivers/video/fbdev/kyro/fbdev.c
-> +++ b/drivers/video/fbdev/kyro/fbdev.c
-> @@ -685,8 +685,14 @@ static int kyrofb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->   	}
->   
->   	info = framebuffer_alloc(sizeof(struct kyrofb_info), &pdev->dev);
-> -	if (!info)
-> -		return -ENOMEM;
-> +	if (!info) {
-> +		err = -ENOMEM;
-> +		goto out_disable;
-> +	}
-> +
-> +	err = pci_request_regions(pdev, "kyrofb");
-> +	if (err)
-> +		goto out_free_fb;
-
-Could this use pcim_request_all_regions() [1] instead? Cleanup and error 
-rollback would be automatic.
-
-[1] 
-https://elixir.bootlin.com/linux/v6.15.5/source/drivers/pci/devres.c#L927
-
-
->   
->   	currentpar = info->par;
->   
-> @@ -695,10 +701,11 @@ static int kyrofb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->   	kyro_fix.mmio_start = pci_resource_start(pdev, 1);
->   	kyro_fix.mmio_len   = pci_resource_len(pdev, 1);
->   
-> +	err = -EINVAL;
->   	currentpar->regbase = deviceInfo.pSTGReg =
->   		ioremap(kyro_fix.mmio_start, kyro_fix.mmio_len);
->   	if (!currentpar->regbase)
-> -		goto out_free_fb;
-> +		goto out_release;
->   
->   	info->screen_base = pci_ioremap_wc_bar(pdev, 0);
->   	if (!info->screen_base)
-> @@ -752,10 +759,13 @@ static int kyrofb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->   	iounmap(info->screen_base);
->   out_unmap_regs:
->   	iounmap(currentpar->regbase);
-> +out_release:
-> +	pci_release_regions(pdev);
->   out_free_fb:
->   	framebuffer_release(info);
-> -
-> -	return -EINVAL;
-> +out_disable:
-> +	pci_disable_device(pdev);
-> +	return err;
->   }
->   
->   static void kyrofb_remove(struct pci_dev *pdev)
-> @@ -780,6 +790,9 @@ static void kyrofb_remove(struct pci_dev *pdev)
->   
->   	unregister_framebuffer(info);
->   	framebuffer_release(info);
-> +
-> +	pci_release_regions(pdev);
-> +	pci_disable_device(pdev);
-
-Instead of manual cleanup, you're better off using pcim_enable_device() 
-[2] in kyrofb_probe(). Cleaning up is automatic then.
-
-Best regards
-Thomas
-
-[2] 
-https://elixir.bootlin.com/linux/v6.15.5/source/drivers/pci/devres.c#L476
-
->   }
->   
->   static int __init kyrofb_init(void)
+AI slop?
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Cheers,
+
+David / dhildenb
 
 
