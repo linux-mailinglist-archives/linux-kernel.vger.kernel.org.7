@@ -1,79 +1,81 @@
-Return-Path: <linux-kernel+bounces-721366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6692AFC838
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:21:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3DDAFC83D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 933EC7B2606
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:20:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76B1156585B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCEC26A0FF;
-	Tue,  8 Jul 2025 10:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFDF26B770;
+	Tue,  8 Jul 2025 10:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="AWvIjsV0"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="WC8jT2x0"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFDE269885
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 10:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3C1269D16
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 10:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751970052; cv=none; b=Y8QYR3VVoGXqI3NybK1By9f/T0aY8JrFfz4gFGqQ38y1+dk/AunX9g6po4XRGl2BksEVqgSdI6SB7ZYmxrREENSM1T8RFUZ/TAFhuXbPXHPDl2TTEp3YmOkury4aAIBj449dmLvtd3PiXfhfE6jFqWCfd7lOHIEAFrDkOqQ7iyg=
+	t=1751970053; cv=none; b=E0jTEhSlq+dTACDv63I6ymf+jYY8iwNvsdjYWtm6UHojgW5BknFhuGK33pDLsbMuGUXdbQEmVXfVjYgflRhEif/6k9sCMMpgf0OJgC5WCbQF3HLMg7AYfF86w290DAV4+7g2tjuYhaImvkO4RaUPMv0+FYK4QFN6Ao1U0PYuaOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751970052; c=relaxed/simple;
-	bh=pAsIyj8FNU22+l5qIW+892a7jSZOvqUK5br2O2YgYUc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=glfc0nN0j+K2zGRouEg000oYBf0ZUkPNjuuhQdy+vwKn3aTxmLH7sEayuMCcf6vUm2qYPQMpksTvPVX/GEnQLmIcEC9LKJa3tkJyxn5alRQkStizJjgo87VbpVFtHgnXWZneloULi9IGBe9nOW1P86X6JuxTz9yW+m2IONKoWJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=AWvIjsV0; arc=none smtp.client-ip=209.85.208.47
+	s=arc-20240116; t=1751970053; c=relaxed/simple;
+	bh=ElsSbEJA8AwkIPqQIMKrRL3D14OLtVaNEYmPEIsjV6A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=sTOz2IppsOmKA/SmtsjvJXheqOBOT6stRPjYGUkz7LkJw4iuhElOm5JkI9b0Ao5y98Ix5r6671zDt3VWCDELKol6qppSBHJObhyqEwmEIrPgYq7X6ir2bghG3j+bIlVURaJ5gocy+QV+Zcq7PQrfx148zLRlN9SIA+wc3K6Gd8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=WC8jT2x0; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6097d144923so8583704a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 03:20:49 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6099d89a19cso7443152a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 03:20:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1751970048; x=1752574848; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hoM/9evN0lu0yy22DYH2u1ViVQ0gB3dbplrxb3DKr6Y=;
-        b=AWvIjsV0DTz4b3QnAvtvYg6dMtXVDSk/tz9uKRMIJWUNbqHYnWyrcuThLslwhloeWt
-         eWyXj6INvQ//gjXeqbe4W8eesvcOVq6YwHazTrJwTr34ye5j1PUF/NypsamqFLxOAlkK
-         GIxEKH59Bg6ahTJCJ0nIFzKsXmA+en5AdpdISMXs3LJpJ4jguJpxle5jtG0JfVBTgP85
-         4EDjJvpfAX9RN15VKXe6HZWgz6Z0egHFlAvgIJyujLuf5m9vrUEp7py2hQYWskRD4/I+
-         tihS6X5eYKjFHlvyovBxTvrgKozQgYLTIfw8bwHeGAYWBO94KvwDccW77y2hvg9Tkqqe
-         OANg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751970048; x=1752574848;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=fairphone.com; s=fair; t=1751970049; x=1752574849; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hoM/9evN0lu0yy22DYH2u1ViVQ0gB3dbplrxb3DKr6Y=;
-        b=dHoRZjJIu0oaB0FLU8J4Lz/JKWISmLeCR+w2JHxGEIKE6vvE4mj+nO03VoAg+bZ5+c
-         ImmZCfinUjhcn6R7vJhy0l7VckZoTT86n9XeG1BPo0WgvA1vkqT8TiQp8v8EryD23d6Y
-         8j9NghG9DXjFYQAZL2Hq9s0erDUBL8QHYnCP9H0g9h01aDgBdd/ktuFW98x4wXCvD9vA
-         v1fk2aiqirEAbnkCkvXNxhBBBgzwnsJWex2t/LNmaj26ZTlYv/OgNfL2UFgrBrRDUE6f
-         1AJ8YFcAgZ6+3XRd3QVkp/3eFb3njZ+/T02w9qpfYEZTw/eNRKaNB10EjgQpGiA9L04l
-         bJ2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWK7sOe5vzEQIXnalToaC3XmpoeLZSHvgrtAHQDp2/EixVjQTozzqUBqyLNFsCHyMswp4/fx94bFZhWcww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfBnZ6kawwJFOeBOIWPDUMS3kV6rNVoACd5a7SbHj+109OVt+I
-	+QEE1jvCvL0cRQmVSCj4csI4IsozTdzEg92hHu+B0hasbeliyXmKVBGbC2WKTy7zJZ4=
-X-Gm-Gg: ASbGnctk/Xhxe4pqgKwDpn5ecuo9d0aEGw2/jgI3nz4nAbrsgwk5UPpUjbGBMWTxHTm
-	r75MPLkZHSkKEq7AEzlWWNtGkUCNvsYTEWb6iLpCZJqCaxeUUxqDEamoNrwJrYICkLSuGMg/Awj
-	e4zg7Sg5qP7iom+xnnzjZhqiihFYsQ1yMIcESOyvn5fiOJ3LvMQN6ygmzH0nxbd4+gljoSsktab
-	F8N3sEvQSGTo2y5/0J6rXveW9h3u3okFweenmk0CuYMoiTp2v//NZOl9ipvFSVPvP0lU+keiv3r
-	mUIEXCE4yInXO4eYgy4QgMIrpLRe5rE/eh+zEgfYj2bvYyRahlg0YPLP8ywGzRkSTNx/2/P/eIn
-	NFRZeCoosvPP7hpSR+byG49U95LfrCVPc
-X-Google-Smtp-Source: AGHT+IH19V1X0ltt7NP7bfNwdO7IOoGaifUMK/um+31+Mxp/DYWPUXnlKl7TgcAkqlDPd4fvJzqPoA==
-X-Received: by 2002:a05:6402:51d3:b0:60f:c32a:834 with SMTP id 4fb4d7f45d1cf-6104bf2097amr1851247a12.5.1751970048222;
+        bh=/ZRPMb+8cA2V0dYbf85NqITawJpU2dKEA/V8oIyC7gE=;
+        b=WC8jT2x08aNN2VotvNxOGiaF6UCxAkhu2oBsTzjMc18ZBvjS8DMy9xZLPXEd20CrUR
+         xCn4LZJViS5vlg/0hLzPVapEoifarfsGnd1o1UtCASnLv6Ge3tOQ79xQwNrB12u1+H4e
+         J41vrk1FSuO1xo8tk3//M0dGwgCpMdmh24J8Hmxxv4wKwDgih9p2Q2xRvEipDq92/rXN
+         rQzcWTb2O7cKDAd+fji6lZY5mjVIRH+kGSdMtoFkm5Pk0iNvsSUicrqZfqels9Ai2Auw
+         dIuhZtS5Spr/JsXSBFOErkpg4TYTj4aknKp87+NOiEY6q8g5ReoQAlYmod1YGAeDpWzg
+         yW5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751970049; x=1752574849;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/ZRPMb+8cA2V0dYbf85NqITawJpU2dKEA/V8oIyC7gE=;
+        b=GJl55FFhZ2bbV/YN48evNRX7m3E2AqkHzGq5KvvorFmQpMMCbINFTTJIg/JSCLgFKU
+         AvC4oB2Y3L1uhYAPFzGsDL1IgOkQ1w2JgH5owmbZDEkgaD2wHI/aVwqwoGJkltAW7Cvz
+         uoGhfu7FPXM6MKpgCqvGTD4rCX7n4vs8sTQmRFuFCuz0eC+EtN1AuENOdsevspWYK1RO
+         uFZv0HSo2889/vMtPw9jGXd7Z9Q+K+WWwfhPa3IUiJa6vKJ33K/WnItWuIlFQFBd+AP0
+         8Mt4gQhLyrKUoz0o6h3+Fyr5uR/HPZyq3eJrL+YIHOYNyq1ckH+AUZB047WpvHg3Ql0E
+         5p5g==
+X-Forwarded-Encrypted: i=1; AJvYcCW7oAxgZ/C4Hlc1nj/32CiXd/9d0gbyLzn9aLQDGNRJ2G8rN9MZ7h2YDxDTWyHvkU4VP4i/J+VNqgUyBvQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRHZpUfnFoLgjW2SfT9FvvBFIye2OJ9tRrllnmVrXZUV2nfHwg
+	XCcs/kH1Na3Li2XPUfZuuc/3rKLxcvORRv4cTQrX1W+StBWbPGlVBnsFLs/a7f1Ra1w=
+X-Gm-Gg: ASbGncuz4AKlotCWIYm8LxDTnzTcf0eclxeDzYzxvMrr8dlJ9NSGYcPFg+vFWGY/v74
+	7bHKMOZF93wgOJNO3A6SWbEqI7ENo9hbIZA/bl4k2b6x50iWb3QeNExyLRkbL8ZVSve2R/OWl/s
+	bVuj38gtbaMM3yeTO1N4kKQgdHybrwqgXBq+CgfOVvDtGucaBmyrYR/JifTvy5vzb4E730MLGlN
+	wiYQeHn4D7eSz5yDbh4hSJEdraPoEdjaFPPkln2e4d6riILPoqAmDT1IgKdfjKWCgVnfcLIBCqC
+	RPHQu7bIqtkdp+b16i1T29zPURKmWAJrQ3N+bYmjC0IsrvLx3ixMHMFlHL1gN46YtYdff7plkz9
+	z4CyNJyQG/7dKQbfVDt23WG9q7iwgnlva
+X-Google-Smtp-Source: AGHT+IGyKzQH8EiBpFIhcuyhJlSyvXgEUEiArxviPQcv8WrFOXy9pqEjBUm18kdUsJa5c3MVQPpsjQ==
+X-Received: by 2002:aa7:ca57:0:b0:60c:3c19:1e07 with SMTP id 4fb4d7f45d1cf-60fd6547550mr12283965a12.15.1751970048867;
         Tue, 08 Jul 2025 03:20:48 -0700 (PDT)
 Received: from otso.local (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fcb8c80c4sm6827718a12.75.2025.07.08.03.20.47
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fcb8c80c4sm6827718a12.75.2025.07.08.03.20.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 03:20:47 -0700 (PDT)
+        Tue, 08 Jul 2025 03:20:48 -0700 (PDT)
 From: Luca Weiss <luca.weiss@fairphone.com>
-Subject: [PATCH v2 0/2] Add interconnect driver for Milos
-Date: Tue, 08 Jul 2025 12:20:36 +0200
-Message-Id: <20250708-sm7635-icc-v2-0-e158dbadb29c@fairphone.com>
+Date: Tue, 08 Jul 2025 12:20:37 +0200
+Subject: [PATCH v2 1/2] dt-bindings: interconnect: document the RPMh
+ Network-On-Chip Interconnect in Qualcomm Milos SoC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,12 +84,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAPTwbGgC/12PQW7CMBBFrxJ53UFjO7HjrHqPikXiDM2IJgY7T
- UGIu2NCUVGX39J783wRiSJTEk1xEZEWThymPNRbIfzQTp8E3OctFKoKjUJIozW6AvYeqHQVIRk
- j0YkMHCLt+LTKPrZ5D5zmEM+re5H316emetUsEhDqrnQKsZSmw/ddy/EwhIk2Poxie324Ix2/c
- 9/8OPCXl2v/xfmv4PcJrHGu17ruvbbNosTrn56Q1BDpJ8T9moK97qyyprWu/iW6NhHkjJHnppj
- oNMMKWtQ57HoDHLU7o0ABAAA=
-X-Change-ID: 20250620-sm7635-icc-e495e0e66109
+Message-Id: <20250708-sm7635-icc-v2-1-e158dbadb29c@fairphone.com>
+References: <20250708-sm7635-icc-v2-0-e158dbadb29c@fairphone.com>
+In-Reply-To: <20250708-sm7635-icc-v2-0-e158dbadb29c@fairphone.com>
 To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>
@@ -96,84 +95,314 @@ Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Luca Weiss <luca.weiss@fairphone.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751970047; l=3932;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751970047; l=8656;
  i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=pAsIyj8FNU22+l5qIW+892a7jSZOvqUK5br2O2YgYUc=;
- b=M126imFYliguOaNvdJVfC7uQWPko5Mq8IQ1xCgrTpMX/rYWS2ATFuh3UPc1thlgcewAxFqSOY
- ADxawEHrAD8AaUxngjT/vkdykQ9huTq5SBRVVRqUVbRBHopdFIm5LlO
+ bh=ElsSbEJA8AwkIPqQIMKrRL3D14OLtVaNEYmPEIsjV6A=;
+ b=C6G79KccVkv/zZjZnaILGw7g97dn1M48hVr6zg7nv1HbRT1yP5GgUii8bosLa3Jwp6lr3dj2E
+ WNipKvPeUgpC/x2/PGMey3jmOW1MzihmGK5GRc4R5D181Ii4k443/+P
 X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
  pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-Add documentation and driver for the interconnect on the Milos SoC.
+Document the RPMh Network-On-Chip Interconnect of the Milos (e.g.
+SM7635) SoC.
 
 Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 ---
-Changes in v2:
-- Rebrand SM7635 to Milos as requested: https://lore.kernel.org/linux-arm-msm/aGMI1Zv6D+K+vWZL@hu-bjorande-lv.qualcomm.com/
-- Fix double colon in dt-bindings
-- Specify b4 dependency on gcc patches for dt-bindings example
-- Switch to using dynamic ICC IDs
-- Have .compatible+.data lines be one line
-- Link to v1: https://lore.kernel.org/r/20250625-sm7635-icc-v1-0-8b49200416b0@fairphone.com
+ .../bindings/interconnect/qcom,milos-rpmh.yaml     | 136 ++++++++++++++++++++
+ include/dt-bindings/interconnect/qcom,milos-rpmh.h | 141 +++++++++++++++++++++
+ 2 files changed, 277 insertions(+)
 
----
-Luca Weiss (2):
-      dt-bindings: interconnect: document the RPMh Network-On-Chip Interconnect in Qualcomm Milos SoC
-      interconnect: qcom: Add Milos interconnect provider driver
+diff --git a/Documentation/devicetree/bindings/interconnect/qcom,milos-rpmh.yaml b/Documentation/devicetree/bindings/interconnect/qcom,milos-rpmh.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..de11ddec6c233d1391ff5ff3569abdadd3d0d3a6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interconnect/qcom,milos-rpmh.yaml
+@@ -0,0 +1,136 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/interconnect/qcom,milos-rpmh.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm RPMh Network-On-Chip Interconnect on Milos
++
++maintainers:
++  - Luca Weiss <luca.weiss@fairphone.com>
++
++description: |
++  RPMh interconnect providers support system bandwidth requirements through
++  RPMh hardware accelerators known as Bus Clock Manager (BCM). The provider is
++  able to communicate with the BCM through the Resource State Coordinator (RSC)
++  associated with each execution environment. Provider nodes must point to at
++  least one RPMh device child node pertaining to their RSC and each provider
++  can map to multiple RPMh resources.
++
++  See also: include/dt-bindings/interconnect/qcom,milos-rpmh.h
++
++properties:
++  compatible:
++    enum:
++      - qcom,milos-aggre1-noc
++      - qcom,milos-aggre2-noc
++      - qcom,milos-clk-virt
++      - qcom,milos-cnoc-cfg
++      - qcom,milos-cnoc-main
++      - qcom,milos-gem-noc
++      - qcom,milos-lpass-ag-noc
++      - qcom,milos-mc-virt
++      - qcom,milos-mmss-noc
++      - qcom,milos-nsp-noc
++      - qcom,milos-pcie-anoc
++      - qcom,milos-system-noc
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    minItems: 1
++    maxItems: 2
++
++required:
++  - compatible
++
++allOf:
++  - $ref: qcom,rpmh-common.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,milos-clk-virt
++              - qcom,milos-mc-virt
++    then:
++      properties:
++        reg: false
++    else:
++      required:
++        - reg
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,milos-pcie-anoc
++    then:
++      properties:
++        clocks:
++          items:
++            - description: aggre-NOC PCIe AXI clock
++            - description: cfg-NOC PCIe a-NOC AHB clock
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,milos-aggre1-noc
++    then:
++      properties:
++        clocks:
++          items:
++            - description: aggre USB3 PRIM AXI clock
++            - description: aggre UFS PHY AXI clock
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,milos-aggre2-noc
++    then:
++      properties:
++        clocks:
++          items:
++            - description: RPMH CC IPA clock
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,milos-aggre1-noc
++              - qcom,milos-aggre2-noc
++              - qcom,milos-pcie-anoc
++    then:
++      required:
++        - clocks
++    else:
++      properties:
++        clocks: false
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,milos-gcc.h>
++
++    interconnect-0 {
++        compatible = "qcom,milos-clk-virt";
++        #interconnect-cells = <2>;
++        qcom,bcm-voters = <&apps_bcm_voter>;
++    };
++
++    interconnect@16e0000 {
++        compatible = "qcom,milos-aggre1-noc";
++        reg = <0x016e0000 0x16400>;
++        #interconnect-cells = <2>;
++        clocks = <&gcc GCC_AGGRE_USB3_PRIM_AXI_CLK>,
++                 <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>;
++        qcom,bcm-voters = <&apps_bcm_voter>;
++    };
+diff --git a/include/dt-bindings/interconnect/qcom,milos-rpmh.h b/include/dt-bindings/interconnect/qcom,milos-rpmh.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..9326d7d9c2a3b360aec62797963de9b07b8f6f9e
+--- /dev/null
++++ b/include/dt-bindings/interconnect/qcom,milos-rpmh.h
+@@ -0,0 +1,141 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
++ * Copyright (c) 2025, Luca Weiss <luca.weiss@fairphone.com>
++ */
++
++#ifndef __DT_BINDINGS_INTERCONNECT_QCOM_MILOS_H
++#define __DT_BINDINGS_INTERCONNECT_QCOM_MILOS_H
++
++#define MASTER_QUP_1				0
++#define MASTER_UFS_MEM				1
++#define MASTER_USB3_0				2
++#define SLAVE_A1NOC_SNOC			3
++
++#define MASTER_QDSS_BAM				0
++#define MASTER_QSPI_0				1
++#define MASTER_QUP_0				2
++#define MASTER_CRYPTO				3
++#define MASTER_IPA				4
++#define MASTER_QDSS_ETR				5
++#define MASTER_QDSS_ETR_1			6
++#define MASTER_SDCC_1				7
++#define MASTER_SDCC_2				8
++#define SLAVE_A2NOC_SNOC			9
++
++#define MASTER_QUP_CORE_0			0
++#define MASTER_QUP_CORE_1			1
++#define SLAVE_QUP_CORE_0			2
++#define SLAVE_QUP_CORE_1			3
++
++#define MASTER_CNOC_CFG				0
++#define SLAVE_AHB2PHY_SOUTH			1
++#define SLAVE_AHB2PHY_NORTH			2
++#define SLAVE_CAMERA_CFG			3
++#define SLAVE_CLK_CTL				4
++#define SLAVE_RBCPR_CX_CFG			5
++#define SLAVE_RBCPR_MXA_CFG			6
++#define SLAVE_CRYPTO_0_CFG			7
++#define SLAVE_CX_RDPM				8
++#define SLAVE_GFX3D_CFG				9
++#define SLAVE_IMEM_CFG				10
++#define SLAVE_CNOC_MSS				11
++#define SLAVE_MX_2_RDPM				12
++#define SLAVE_MX_RDPM				13
++#define SLAVE_PDM				14
++#define SLAVE_QDSS_CFG				15
++#define SLAVE_QSPI_0				16
++#define SLAVE_QUP_0				17
++#define SLAVE_QUP_1				18
++#define SLAVE_SDC1				19
++#define SLAVE_SDCC_2				20
++#define SLAVE_TCSR				21
++#define SLAVE_TLMM				22
++#define SLAVE_UFS_MEM_CFG			23
++#define SLAVE_USB3_0				24
++#define SLAVE_VENUS_CFG				25
++#define SLAVE_VSENSE_CTRL_CFG			26
++#define SLAVE_WLAN				27
++#define SLAVE_CNOC_MNOC_HF_CFG			28
++#define SLAVE_CNOC_MNOC_SF_CFG			29
++#define SLAVE_NSP_QTB_CFG			30
++#define SLAVE_PCIE_ANOC_CFG			31
++#define SLAVE_WLAN_Q6_THROTTLE_CFG		32
++#define SLAVE_SERVICE_CNOC_CFG			33
++#define SLAVE_QDSS_STM				34
++#define SLAVE_TCU				35
++
++#define MASTER_GEM_NOC_CNOC			0
++#define MASTER_GEM_NOC_PCIE_SNOC		1
++#define SLAVE_AOSS				2
++#define SLAVE_DISPLAY_CFG			3
++#define SLAVE_IPA_CFG				4
++#define SLAVE_IPC_ROUTER_CFG			5
++#define SLAVE_PCIE_0_CFG			6
++#define SLAVE_PCIE_1_CFG			7
++#define SLAVE_PRNG				8
++#define SLAVE_TME_CFG				9
++#define SLAVE_APPSS				10
++#define SLAVE_CNOC_CFG				11
++#define SLAVE_DDRSS_CFG				12
++#define SLAVE_IMEM				13
++#define SLAVE_PIMEM				14
++#define SLAVE_SERVICE_CNOC			15
++#define SLAVE_PCIE_0				16
++#define SLAVE_PCIE_1				17
++
++#define MASTER_GPU_TCU				0
++#define MASTER_SYS_TCU				1
++#define MASTER_APPSS_PROC			2
++#define MASTER_GFX3D				3
++#define MASTER_LPASS_GEM_NOC			4
++#define MASTER_MSS_PROC				5
++#define MASTER_MNOC_HF_MEM_NOC			6
++#define MASTER_MNOC_SF_MEM_NOC			7
++#define MASTER_COMPUTE_NOC			8
++#define MASTER_ANOC_PCIE_GEM_NOC		9
++#define MASTER_SNOC_GC_MEM_NOC			10
++#define MASTER_SNOC_SF_MEM_NOC			11
++#define MASTER_WLAN_Q6				12
++#define SLAVE_GEM_NOC_CNOC			13
++#define SLAVE_LLCC				14
++#define SLAVE_MEM_NOC_PCIE_SNOC			15
++
++#define MASTER_LPASS_PROC			0
++#define SLAVE_LPASS_GEM_NOC			1
++
++#define MASTER_LLCC				0
++#define SLAVE_EBI1				1
++
++#define MASTER_CAMNOC_HF			0
++#define MASTER_CAMNOC_ICP			1
++#define MASTER_CAMNOC_SF			2
++#define MASTER_MDP				3
++#define MASTER_VIDEO				4
++#define MASTER_CNOC_MNOC_HF_CFG			5
++#define MASTER_CNOC_MNOC_SF_CFG			6
++#define SLAVE_MNOC_HF_MEM_NOC			7
++#define SLAVE_MNOC_SF_MEM_NOC			8
++#define SLAVE_SERVICE_MNOC_HF			9
++#define SLAVE_SERVICE_MNOC_SF			10
++
++#define MASTER_CDSP_PROC			0
++#define SLAVE_CDSP_MEM_NOC			1
++
++#define MASTER_PCIE_ANOC_CFG			0
++#define MASTER_PCIE_0				1
++#define MASTER_PCIE_1				2
++#define SLAVE_ANOC_PCIE_GEM_NOC			3
++#define SLAVE_SERVICE_PCIE_ANOC			4
++
++#define MASTER_A1NOC_SNOC			0
++#define MASTER_A2NOC_SNOC			1
++#define MASTER_APSS_NOC				2
++#define MASTER_CNOC_SNOC			3
++#define MASTER_PIMEM				4
++#define MASTER_GIC				5
++#define SLAVE_SNOC_GEM_NOC_GC			6
++#define SLAVE_SNOC_GEM_NOC_SF			7
++
++
++#endif
 
- .../bindings/interconnect/qcom,milos-rpmh.yaml     |  136 ++
- drivers/interconnect/qcom/Kconfig                  |    9 +
- drivers/interconnect/qcom/Makefile                 |    2 +
- drivers/interconnect/qcom/milos.c                  | 1460 ++++++++++++++++++++
- include/dt-bindings/interconnect/qcom,milos-rpmh.h |  141 ++
- 5 files changed, 1748 insertions(+)
----
-base-commit: b803ad80123e6efccfeeffa7cd37f98f642e37f4
-change-id: 20250620-sm7635-icc-e495e0e66109
-prerequisite-change-id: 20250620-sm7635-clocks-7699d338dc37:v2
-prerequisite-patch-id: 30b56c4075513c2b4a44b32a07f270b5cb08d098
-prerequisite-patch-id: 37be728e2df777fedd469f7da865e5a256a54b06
-prerequisite-patch-id: 32cc06fb5708d126263bc3ac132126e530f72d4a
-prerequisite-patch-id: d200c8de06976d3cfa9f1db896301019ab8a68d9
-prerequisite-patch-id: f13af5b3633a7969c35f3c1497c3968ff438aa7b
-prerequisite-patch-id: 70cc297fa29e022d4ffa74b0aad59f1ed1671e09
-prerequisite-patch-id: fb0950b5ebf9ebdbb4381762362f131544252bc7
-prerequisite-patch-id: c6593a406bcb7d9cb35bfa54b6fd8fbcaa58ae99
-prerequisite-patch-id: 6b126e92f96a5f2152d8ca296489aaf712bbaa17
-prerequisite-patch-id: 728eae32feac9247a5a822343f777ca678cd666c
-prerequisite-patch-id: 1c49368327e67c86e9e3523213c2d3f8469c226c
-prerequisite-change-id: 20250613-rework-icc-0d3b7276a798:v2
-prerequisite-patch-id: cfef14406349a8de35f9a9f52a94c27b9760c98d
-prerequisite-patch-id: 2a0f6625a75fc2672c5b5b8838daf4c1b84dae06
-prerequisite-patch-id: c43395b7274c6c4866e293378c2784e1ede5796b
-prerequisite-patch-id: dc669619c955d963b478e6c5bf691b09a9e87e5c
-prerequisite-patch-id: ec455ecaae1134984fab4ee9b0ced416c8388733
-prerequisite-patch-id: b610e2d9aab84dd752188235293267130a540363
-prerequisite-patch-id: de89fdb08c0e9794ea1c758bb8429cd8648d16e9
-prerequisite-patch-id: 50c1ce836eff66d606cb886a6e16ad09aa0c4d07
-prerequisite-patch-id: 893d74d96ade5999f853b37b46dbf45c2b602c61
-prerequisite-patch-id: 1af362b4eb70298089b1f407119831ed47d0e53a
-prerequisite-patch-id: 99fc9ac3f20c10960aeaf8f95fbab2299fc1299c
-prerequisite-patch-id: 719eac9c833b38f49f788d1f347f580523464ba5
-prerequisite-patch-id: e5897f2ff8c6a908cbf4424fe34782cdfd8e78f7
-prerequisite-patch-id: da0770cbea0b965c9cc1593f4f70316c1f06db74
-prerequisite-patch-id: 9850436dafbeb49b4046094c7cff430f8b156d18
-prerequisite-patch-id: 99f36df03d920c8e0735c6ff49b6ce24c64e1c4e
-prerequisite-patch-id: 0e282a1707f7d4daa0f997f0e908248797a085a0
-prerequisite-patch-id: a2c334a79e965882258455a9d0eaa90412ed66d4
-prerequisite-patch-id: d4ff7d798a7cf3260a91672dbabaca06e663651c
-prerequisite-patch-id: b9065de90a016b2cf7edb31a3bd1fe222344d406
-prerequisite-patch-id: 5e809c2603fb204d11a2bda4126df60ccbf46206
-prerequisite-patch-id: a5f457c883c17a5ea0f7226b4eeabc1354c965b7
-prerequisite-patch-id: fe9cbf613cf61082c75dfb358d0e362680849f17
-prerequisite-patch-id: 022a649bf46677564390068752121c6acf91cd74
-prerequisite-patch-id: 259e32af18576dbe8cff7f20633437a80f9a50f5
-prerequisite-patch-id: 76e0ce648c22ecd9e5a96d8c5c7b49d74c96fdb9
-prerequisite-patch-id: d39b4a58681c5e5699ba045d3a889d843d768262
-prerequisite-patch-id: 8e648304c8a8b21db26f1ae991abeb52a11d6ee8
-
-Best regards,
 -- 
-Luca Weiss <luca.weiss@fairphone.com>
+2.50.0
 
 
