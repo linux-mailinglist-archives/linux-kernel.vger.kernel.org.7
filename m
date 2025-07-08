@@ -1,171 +1,135 @@
-Return-Path: <linux-kernel+bounces-720963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0F5EAFC2A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:24:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21BFEAFC2A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17CAB3A9A38
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:24:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B2E73A9D8E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1EF5220F4C;
-	Tue,  8 Jul 2025 06:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C3A221FBA;
+	Tue,  8 Jul 2025 06:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="buEhenlq"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+QgBC1+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC36221A447;
-	Tue,  8 Jul 2025 06:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D25221579;
+	Tue,  8 Jul 2025 06:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751955886; cv=none; b=bRNvySGryg5IjMzsExAWPoQXT1255NTO0vjCYrRxAPvx3o2CiOMAxDsrAddJALNDtemhLtlDeK1C6kWeWzuUNXz1tPujdEfRBGV6Hy8EddE7RQWN8cZWDz/YdvrYBEfaNzUJl2Nk02fCC2rNEeTrN+RnlqOKu+hq9b9O3lNEr+U=
+	t=1751955889; cv=none; b=qbKCb6d7yd9rC8fk5b+lZiCxkEFxj3XGLjqZG9IL7TRN94sFu7nQJSvpZG2gBEfTXylAdt9KjODXsOXguT+Tu868UJZq3jAMfLKVlSDA+os586DXAT5fI0bGK5eGMlrMuAXnniEePH4P5T4PhCBAHWdqtdZcFuGfL32ZOMEsIOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751955886; c=relaxed/simple;
-	bh=Nf3+6NTHNIN0tRpAL8M0KgHJQsnyO7yJZZXYEt7ioKw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:Mime-Version; b=dmsAPWIcYUxqKE2cUs70ywOSGWGJHQw7i3/U/P7poz87DPkXtPqdHcU0c4YPJbcfI0O/+Wa1n1IvE73Dqo5o0yos/2E3VwSp2syslHeQsOWA3zrz3uam6JpgirQ4vrKic6RNZJjR6BksfqvypMCx7KkmMDgHuK1nP6LtwUr7MiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=buEhenlq; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 567JxZ8l032551;
-	Tue, 8 Jul 2025 06:24:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=JrqkEG
-	QNWicN6z7I9Dn4pCP0FUXIKVd67WcnJYSb1UA=; b=buEhenlqN+VQLFHqmpmM8I
-	MC4YRw+E+96K2fSFaD3WUwP55sZfskieqyWJVJV82/0CElbnUtTNPhNS6CIiYGUN
-	kP6KcIPSzP266MhPv6gjCxKLOIHEdA99RRkAIOEH+nDaG/zEw37ZuAh7ebYT9M1f
-	7HZLr3KeUCXvuTJQv/3QoyBLBRSaH0KTdDpXvGN0iFizISKQJnvBg1nAE3eUlJ7I
-	RA4ODSj3WsOx40td8KmIRmfk2rKjZmFMyAxqH6wi+UdVTeLytpj45P+IUTbvpQoa
-	N7Lnvma8rMGh3ovPT33t7+mIQO7OD4+d0SwwUoZR/xoam/PjKAe22HH20+UlPohQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47ptjqwh5w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Jul 2025 06:24:38 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5686OcTX011214;
-	Tue, 8 Jul 2025 06:24:38 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47ptjqwh5u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Jul 2025 06:24:38 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5682K312002888;
-	Tue, 8 Jul 2025 06:24:37 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47qfvm9he6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Jul 2025 06:24:37 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5686OURk23986708
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 8 Jul 2025 06:24:30 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2D1AA58059;
-	Tue,  8 Jul 2025 06:24:36 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 185F358053;
-	Tue,  8 Jul 2025 06:24:35 +0000 (GMT)
-Received: from li-4910aacc-2eed-11b2-a85c-d93b702d4d28.ibm.com (unknown [9.61.17.45])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  8 Jul 2025 06:24:34 +0000 (GMT)
-Message-ID: <a5c6173f3109dac14e43c30f6483afe19573870f.camel@linux.ibm.com>
-Subject: Re: [PATCH RESEND 3/3] Documentation: ioctl-number: Correct full
- path to papr-physical-attestation.h
-From: Haren Myneni <haren@linux.ibm.com>
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
-        Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>,
-        Linux Documentation
- <linux-doc@vger.kernel.org>,
-        Linux PowerPC
- <linuxppc-dev@lists.ozlabs.org>,
-        Linux Networking <netdev@vger.kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-        Richard Cochran
- <richardcochran@gmail.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Donnellan
- <ajd@linux.ibm.com>
-Date: Mon, 07 Jul 2025 23:24:34 -0700
-In-Reply-To: <20250708004334.15861-4-bagasdotme@gmail.com>
-References: <20250708004334.15861-1-bagasdotme@gmail.com>
-	 <20250708004334.15861-4-bagasdotme@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-27.el8_10) 
+	s=arc-20240116; t=1751955889; c=relaxed/simple;
+	bh=W7dr38TTbkBwVMkT/BjGuMxoRLbvyVvHHrx/scViG4g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oh6Wf1I3MA9eOC0r0TC6nmMQktk18mCkJtTnWeiZiscC3xWkUAxHFRvdN+JccyowhZAsxl8Z+gPJlv98JzuccGrAzb7b6Sh7UPUVnuWuaQ6KTKPgky59M4lyS7Xmu5Q3AaQUc2jDcoIRP47GRXLfqVdarC6TI3g1L3W3atvFjDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+QgBC1+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBB07C4CEED;
+	Tue,  8 Jul 2025 06:24:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751955888;
+	bh=W7dr38TTbkBwVMkT/BjGuMxoRLbvyVvHHrx/scViG4g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=p+QgBC1+dL7DZ24gZ/o623L04leYDqNgP2j0o3nIEyRmm49BqJe3vaSMgPWNnRss1
+	 X3a91ndSeT6Xpbc1ZazDSyBJTVGBAeWMCvXeldqTX7vm+dWiuhSpCrS55Sd5hUAUfc
+	 TFoQ1CopVWsjsJAhB+xVXNuSkULZbP7ZzC20WAYxPEgO6VyhRS+48iNSL0q/+pDwak
+	 JHbgvKkSjS50vtyYpwr4uINkgrdL2lLXmu6dsx5qXhnaAT12+g60XkZh5hBwGVIJFQ
+	 XIRLhVRZtTiNYg35Uyfu0y/6bbzT3uTAPxjIfDunDHPOD5kgVtXfYmEns/a0bZsggm
+	 M+q1ftx+1LrLQ==
+Message-ID: <0c4316d8-7d4a-4a81-9694-30dd8f5f2f54@kernel.org>
+Date: Tue, 8 Jul 2025 08:24:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: media: add i.MX parallel csi support
+To: Frank Li <Frank.li@nxp.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Rui Miguel Silva <rmfrfs@gmail.com>,
+ Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ linux-media@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Alice Yuan <alice.yuan@nxp.com>
+References: <20250703-imx8qxp_pcam-v2-0-188be85f06f1@nxp.com>
+ <20250703-imx8qxp_pcam-v2-1-188be85f06f1@nxp.com>
+ <20250707-mustard-avocet-of-success-e68cbf@krzk-bin>
+ <aGvx74Bw8gcugUpv@lizhi-Precision-Tower-5810>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <aGvx74Bw8gcugUpv@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=GL8IEvNK c=1 sm=1 tr=0 ts=686cb9a6 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8 a=voM4FWlXAAAA:8 a=VwQbUJbxAAAA:8
- a=kidChhKsLFQF8T2tou0A:9 a=QEXdDO2ut3YA:10 a=IC2XNlieTeVoXbcui8wp:22
-X-Proofpoint-ORIG-GUID: t9WIYJFgt4RV27TIljZyJXv5Pk9JUO7_
-X-Proofpoint-GUID: uqEOUAgq8dakJ3CcwbrDoRHfx64MqKjM
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDA0OSBTYWx0ZWRfX8+eS8LAgOL/l +r0z332481+fayHUujf9JfUgcSI/OWojgHaViMh0Kl5QMtJDti66rumAb4OUgS2Epr+wgKsLmBJ U8nQSZ59C409hWJWcvW5k0UL60oAithLBI/qVaffgdWPlIe8nKUamjyy2EeP24AsVCNFp6XlPbY
- Yk2kk/UaHvMvbREPhQ7F71227bYKaQSm8BaC7u2ne3h+1O7zwUNZmXknpH8eEU43XtPN0e4r1N2 xvNCy5T7avGODHgiB4cmlyrAOUIMIfwrGBKWxViowvWz7CHhXcA79DbarXL0j23AAhlYlg2FUXd yODDabiygZ0S2jJmsZrwos62Ut4b832XqlLBNMHjowBrs3nrsaBQPqfZC1ESYrpWdJiYYhOq/Q9
- ZfrvrUUQlWLjwOU1WN7CuSAzvdDY2R0iRNh8D289yF/VyAiJQ+RC8JkY81bdk1DO5C8OvpRW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-08_02,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- clxscore=1015 impostorscore=0 suspectscore=0 bulkscore=0 adultscore=0
- priorityscore=1501 mlxscore=0 spamscore=0 mlxlogscore=873
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507080049
 
-On Tue, 2025-07-08 at 07:43 +0700, Bagas Sanjaya wrote:
-> Commit 03c9d1a5a30d93 ("Documentation: Fix description format for
-> powerpc RTAS ioctls") fixes Sphinx warning by chopping arch/ path
-> component of papr-physical-attestation.h to fit existing "Include
-> File"
-> column. Now that the column has been widened just enough for that
-> header file, add back its arch/ path component.
+On 07/07/2025 18:12, Frank Li wrote:
+>>> +examples:
+>>> +  - |
+>>> +    #include <dt-bindings/clock/imx93-clock.h>
+>>> +    #include <dt-bindings/power/fsl,imx93-power.h>
+>>> +
+>>> +    pcif@4ac10070 {
+>>
+>> That's a CPI bus from MIPI so cpi@, no?
 > 
-> Fixes: 03c9d1a5a30d ("Documentation: Fix description format for
-> powerpc RTAS ioctls")
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> It is not MIPI.  It is old camera interface, which use D0..7 and VSYNC ...
+> signal.
+Hm? I did not say it is MIPI. MIPI is a organization. I said this is
+CPI. pcif is the name of NXP block, not the name of the bus.
 
-Thanks for fixing.
-
-Reviewed-by: Haren Myneni <haren@linux.ibm.com>
-
-> ---
->  Documentation/userspace-api/ioctl/ioctl-number.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst
-> b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> index b45f5d857a00b6..5aa09865b3aa0f 100644
-> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> @@ -369,7 +369,7 @@ Code  Seq#    Include
-> File                                             Comments
->                                                                      
->    <mailto:linuxppc-dev@lists.ozlabs.org>
->  0xB2  06-07  arch/powerpc/include/uapi/asm/papr-platform-
-> dump.h        powerpc/pseries Platform Dump API
->                                                                      
->    <mailto:linuxppc-dev@lists.ozlabs.org>
-> -0xB2  08     powerpc/include/uapi/asm/papr-physical-
-> attestation.h      powerpc/pseries Physical Attestation API
-> +0xB2  08     arch/powerpc/include/uapi/asm/papr-physical-
-> attestation.h powerpc/pseries Physical Attestation API
->                                                                      
->    <mailto:linuxppc-dev@lists.ozlabs.org>
->  0xB3  00     linux/mmc/ioctl.h
->  0xB4  00-
-> 0F  linux/gpio.h                                              <mailto
-> :linux-gpio@vger.kernel.org>
-
+Best regards,
+Krzysztof
 
