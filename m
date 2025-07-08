@@ -1,197 +1,232 @@
-Return-Path: <linux-kernel+bounces-721829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A63AEAFCE47
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:54:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C04AFCE4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD9A7422981
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:53:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28BDB3A4EAB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7ED52E0923;
-	Tue,  8 Jul 2025 14:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726D62DFF2E;
+	Tue,  8 Jul 2025 14:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iwVvK5v8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NcSqfCbm"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD5D2E0914
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 14:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C50F20766C;
+	Tue,  8 Jul 2025 14:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751986424; cv=none; b=kozgQR+mLdKZwzegKx5EUlFhX05Q3TfLWnHCphm2EUuK34VIDuCXWNSYpBSU9Xb72kRinaFe4Kvj10HEXxcYFWYAFVVYsRlLFUqDvnWrpTnbvEdliFZG6WdJ8HPr41lPfXqFszhh+bUXYciekbtebDDhiQPV0RDM+QyUB4uKlAI=
+	t=1751986503; cv=none; b=buJ9BPzBpc1GDRIvvmCHFcIC9Be3rQioBht6Nb8fBrA8d11nXhVmp+8KbKd1VSsYqEDnl+1HTDqUKhQVneq+62toFey0jD1B7k5YJqvam1wwlX35q/cqN3eZQqA8XnMJSJAeipIrDSstZlia4JBfhY9OtC1jB1qwrhTtr6qzOVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751986424; c=relaxed/simple;
-	bh=d7gbSEXI43GBTfZOdsHtl52JHaIzxl8mG4ZoaZZRJe0=;
+	s=arc-20240116; t=1751986503; c=relaxed/simple;
+	bh=5ZOYpPpQedu6fd9KO9knWw1X3RRpwMkE1UKreUlY1MQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PY64kGru0te7Z2U8ZadJf3ra73iloI4Mb+TcekJ3gx1TMqJEP0MqI3tPs4Y+qzDEWpYPAHqSFzaxY8Yenu6hrxrXNW8HLUPtAljHKXKJECsGZS2CqdKxigqVaC5T0M/nuTFqdq4VGNB+r84hqlqxzoVMeN0B4NYnZXxbYDlMaeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iwVvK5v8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751986420;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F3gWcJzt2OgQaD/j6Pq/hyKgRUxk20XSr1dWAvhw+P4=;
-	b=iwVvK5v8ofZ67sNSXxilE4nBDLGMcyA4oe8ZacH/zom9xKeLBG//4u/y25hTtZUFawK5Ry
-	vrSl+pAQ0Rji8VQ25uddQHQXaqLyMnXGraMEH0ljsnqghKN8ZLUZqlUH54fy+5ugfP25RX
-	6mtuR+jmIrz/vrD3EjhnHoqlTp+U2t8=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-212-Qn7UfTL4NyChSGQF2Y-Q4Q-1; Tue, 08 Jul 2025 10:53:38 -0400
-X-MC-Unique: Qn7UfTL4NyChSGQF2Y-Q4Q-1
-X-Mimecast-MFC-AGG-ID: Qn7UfTL4NyChSGQF2Y-Q4Q_1751986417
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4eee2398bso1949893f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 07:53:38 -0700 (PDT)
+	 To:Cc:Content-Type; b=aHOk23B1wAJ3UR4fnAc+O5na7Enc67KshtuFEEozVmo5IMiGoNxsLtMVSb4B+pv8iUI+0U0cqZTei8JAU6ybG4LsJNp1CUQDTA7x0JazZuxIjWEvh2u0VUe4P/AZ5/fYHTClDfW1ggQKvFO0gaCiTL/sqYm7yzRngRWBr+Gb8eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NcSqfCbm; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e8b69a1d3abso55350276.2;
+        Tue, 08 Jul 2025 07:55:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751986501; x=1752591301; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gPvzK8TvPX5jcVxVSpM9kdKq5e8vtmE271oEINXGFR4=;
+        b=NcSqfCbmHgppUNbZhlNizEiPhic+9CtZmuVemDA8CN354I+mMCGebAWKmP17PnBYjj
+         FvFHEj2hlw2LrD34eiZ3sDTWiz9Rz2m5LHmTtMPBvEHwgRdKI7rNhLidgGOa0GDtD7q1
+         8WJrYJ/i5Dg4A7bUnbi99p1n1z+Drf0CnlXaM3rwcZb2qmJuaeAxnSB8EnhqA85FcI5h
+         xm5cUFJIbAMG/Y//gQcEajkDgbTwnQtwIH8ONyD2+EAiV/QVG2csc+LVf1CXgL0qvCpP
+         qwPu3lDY+7waHiRphxkleWsUsAw9LrXrzBbFfJmZNRxC2cP8aLxHN9wC5oGN9hHewftR
+         8dbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751986417; x=1752591217;
+        d=1e100.net; s=20230601; t=1751986501; x=1752591301;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F3gWcJzt2OgQaD/j6Pq/hyKgRUxk20XSr1dWAvhw+P4=;
-        b=Xwg55iq9pCcRXiixlej5u/8AbDlT4ELABiBOApwZpIgDRwqfitarxY0MGls8u5zRd3
-         n7GyoWEkTqrVy061VvucueV+pYdgc2dJrZzgb2dk+nRIhuBSLce2cw//YptYUzaIkFV/
-         1N+EmjLliR92Wnawj+2i91InXegjPuVkaJg0L9FDzRnC420rv7Y4JwPHWqAfQHEIcr9O
-         lwcvf8soj+qhD093KZgg4t/DXNlV8Fext/ZCBkeliusFv5VW4dfjMgy0OwrFsIwpTtMe
-         VmFAM7M+7JZkT7aRXNnmuaax8bO3umZzdgJnH9qRC82BGQadrS4Y5F1yD94O+91RR0gc
-         DpRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfsCZSrxYRBzV6I28CPl1UeDQyhvD1nhiTgWO9e2dx4ojDXtHbpi7V8awMwZVZyiQC+HPbAVPBJE0lZDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeRJpS4sIiGk/W3m1htTbwDXZDEDFCz0cDVAVYnhxCua0JQ3Ca
-	BelabH56P00RBRbN3xZ8C8PF530yB18zT5mmvqfWMrG9AkQr+hHRoNdCS94jIFw1wjo3wRZNjV/
-	qS9b8vtcfEPFx7WczDJ892xLJJVe5nL39VoXy+zEzKlmkvYErVScvndLYU6QU1FztrK0quY4o4d
-	Y7X1RvK0QpRyvNlKFnhAw3ppDmIXeGe6qcEU2DeIzy
-X-Gm-Gg: ASbGncvM/IoJq3vOwbZvY3hHqKcQZERIW39nJmqP0cAby+weakRW36Gt7JJ3YnlNcTb
-	TdzGQlkOH7GstWo0NX7/q5cxVAi0o8sWzAwmyDLq54HvBSf7liMJQR/1Ayk4hmHoMA+XlgeNsQy
-	JPZg==
-X-Received: by 2002:a05:6000:25f8:b0:3a5:1410:71c0 with SMTP id ffacd0b85a97d-3b5dde8bc28mr2590923f8f.38.1751986416892;
-        Tue, 08 Jul 2025 07:53:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGg3GmJ0S1o2rJ6zUsGGi+EaAx8edXiRPCdL8Si/WJUjuf8mbyhxY1fg84y1pk7fznC+2FEzhd0WZ1UFOXwtxY=
-X-Received: by 2002:a05:6000:25f8:b0:3a5:1410:71c0 with SMTP id
- ffacd0b85a97d-3b5dde8bc28mr2590899f8f.38.1751986416369; Tue, 08 Jul 2025
- 07:53:36 -0700 (PDT)
+        bh=gPvzK8TvPX5jcVxVSpM9kdKq5e8vtmE271oEINXGFR4=;
+        b=b2XxsabqKp3uF4j11giNdGFEMic3EaG6EEh9ZfoJwwBAJ0GNUs9DSE1Xa/EPLUFJph
+         3z83hh17jZVwvbUGLa251lrlRQdCFNhVu0EjZjucBgUmA/2d53oaB0oSZrcMLs5PbkMT
+         Bpr56dn/tE40diAGqPg+U4SV9PlTKEYR4iZQJ5jNSxWqGQh7oONKUcWYQ3SeP+feKTyh
+         WohpZcGid3YmVukRLtn/6P/fWHT+SARVsjDEAZjPYKvoE5GBvN7OVUtrULak95ChkzRK
+         O7cL0QqJ6vBVbaNYMA7Rj97Sgd1GvUWMXhjuPKC91NLuUQAnabQFuNNiSMnccy3wB7qw
+         WlHA==
+X-Forwarded-Encrypted: i=1; AJvYcCW20wxyfF1KENi3WkX1Hca3sPLEeok1bUxjcC7Yjp9OKy0tDTGT7fP2H8vVlV3ZbUi0hDK9tlBgwgpJLSc=@vger.kernel.org, AJvYcCWq3C9r3PRrEaoUHZTee9YBA6Hs8cR3jsuAaFG8tO2dSjn18P2NacqUqc0RwqFa8sSTB5dTRN2DXNx2Exs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlbcbG1nkYXr+sVi54sYe+PNtxm+DbWxzjNEWULe+RfVzaX/3F
+	JRHn6B5V3sQBethGJwwVA42lOf+6mj8ia0LlS0eQZWJmbEmxJcwsiE3ZeoMPHqYi6Wq6YUwQdbB
+	Wq3kOu5tGVpGotlx6tjh2z2hOg2Eh6ZY=
+X-Gm-Gg: ASbGnctVg6ocX0pZUQTkajfRs/YXxb2x2a1fRHx/psaQ04BPHd5Gti/FkLahhwHQET2
+	c53y2ohiz8IEM0qw6y1uyqek3r7vf55fBoYbqsuzzQsySqoXg0/UFISktS71pcW/HVpWxLdfojJ
+	VI+zKU1DF1x5TpfkgvYxe/4OiIAYJDegrTaHNMTPWolt0=
+X-Google-Smtp-Source: AGHT+IE2oBamYt3hOakYR1sNMb2lnRmFna7dOvcFvV9m1Ku889Zy9F+eHEBwieaFLXPLMaC0I8ddi3qQa/yJN5UvIjk=
+X-Received: by 2002:a05:690c:4b05:b0:70e:4745:33d4 with SMTP id
+ 00721157ae682-7166a18faf5mr102479867b3.7.1751986500865; Tue, 08 Jul 2025
+ 07:55:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250626223142.865249-1-seanjc@google.com>
-In-Reply-To: <20250626223142.865249-1-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Tue, 8 Jul 2025 16:53:24 +0200
-X-Gm-Features: Ac12FXx-DcAtBfbayKvwyU5qyZxOC1zIlmf0cVeiOP-SXoMxreAmZGSLm7CcTLg
-Message-ID: <CABgObfaF7Usi=UfreXDwRdnjXZ-zq4PT4bumOXb_Up1cD_UD9A@mail.gmail.com>
-Subject: Re: [GIT PULL] KVM: x86: Fixes for 6.16-rcN
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250707140923.58935-1-abdelrahmanfekry375@gmail.com>
+ <20250707140923.58935-3-abdelrahmanfekry375@gmail.com> <d063964c-5ca9-4602-8338-05c46c2d2775@kernel.org>
+In-Reply-To: <d063964c-5ca9-4602-8338-05c46c2d2775@kernel.org>
+From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+Date: Tue, 8 Jul 2025 17:54:49 +0300
+X-Gm-Features: Ac12FXxUw3FUwIq0kbMtrNrtA3RyDhEzzkrDs4rsXtdMfEo9vmnKvg5YOpeJoUc
+Message-ID: <CAGn2d8MetzWM0bwhdnocP1kLCYcYgmzb1ggPC5Fuv6cXFDniug@mail.gmail.com>
+Subject: Re: [PATCH 2/2] staging: media: atomisp: unify initialization flag
+ usage in HMM
+To: Hans de Goede <hansg@kernel.org>
+Cc: mchehab@kernel.org, sakari.ailus@linux.intel.org, andy@kernel.org, 
+	gregkh@linuxfoundation.org, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev, 
+	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
+	dan.carpenter@linaro.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 27, 2025 at 12:31=E2=80=AFAM Sean Christopherson <seanjc@google=
-.com> wrote:
->
-> Please pull a random smattering of fixes for 6.16.  Note, the SEV-ES intr=
-a-host
-> migration commits received your "Queued, thanks", but they never showed u=
-p in
-> kvm.git.
+Hi Hans,
+Thanks for the feedback!
 
-Ouch, sorry about htat.
+On Mon, Jul 7, 2025 at 5:14=E2=80=AFPM Hans de Goede <hansg@kernel.org> wro=
+te:
+>
+> Hi Abdelrahman,
+>
+> On 7-Jul-25 16:09, Abdelrahman Fekry wrote:
+> > Previously, the initialization state of the `hmm_bo_device` was tracked
+> > in two places: a global `hmm_initialized` boolean in `hmm.c`, and a loc=
+al
+> > integer `flag` in the `hmm_bo_device` struct. This was redundant and co=
+uld
+> > lead to inconsistent state checks.
+> >
+> > - Removes the global `hmm_initialized` variable and all checks against =
+it.
+> > - Replaces the `int flag` in `struct hmm_bo_device` with a strongly-typ=
+ed
+> >  `enum hmm_bo_device_init_flag flag` (values: UNINITED =3D 0, INITED =
+=3D 1).
+> > - Initializes `flag` to `HMM_BO_DEVICE_UNINITED` at declaration to
+> >   ensure a well-defined starting state.
+> > - Removes a redundant `hmm_init()` call inside `__hmm_alloc()` since it=
+s
+> >   always called after hmm_init()
+> >
+> > This change improves type safety, consistency, and readability when
+> > handling the HMM initialization state.
+> >
+> > Signed-off-by: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+> > ---
+> >  .../staging/media/atomisp/include/hmm/hmm_bo.h   |  9 +++++++--
+> >  drivers/staging/media/atomisp/pci/hmm/hmm.c      | 16 ++++------------
+> >  2 files changed, 11 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/drivers/staging/media/atomisp/include/hmm/hmm_bo.h b/drive=
+rs/staging/media/atomisp/include/hmm/hmm_bo.h
+> > index e09ac29ac43d..155f9d89b365 100644
+> > --- a/drivers/staging/media/atomisp/include/hmm/hmm_bo.h
+> > +++ b/drivers/staging/media/atomisp/include/hmm/hmm_bo.h
+> > @@ -58,7 +58,10 @@
+> >  #define      ISP_VM_SIZE     (0x7FFFFFFF)    /* 2G address space */
+> >  #define      ISP_PTR_NULL    NULL
+> >
+> > -#define      HMM_BO_DEVICE_INITED    0x1
+> > +enum hmm_bo_device_init_flag {
+> > +     HMM_BO_DEVICE_INITED    =3D 0x1,
+> > +     HMM_BO_DEVICE_UNINITED  =3D 0x2,
+> > +};
+> >
+> >  enum hmm_bo_type {
+> >       HMM_BO_PRIVATE,
+> > @@ -86,7 +89,9 @@ struct hmm_bo_device {
+> >
+> >       /* list lock is used to protect the entire_bo_list */
+> >       spinlock_t      list_lock;
+> > -     int flag;
+> > +
+> > +     /* flag to indicate whether the bo device is inited or not */
+> > +     enum hmm_bo_device_init_flag flag;
+>
+> Please just replace this with a "bool initialized"; data
+> member taking `true` and `false as values instead of
+> introducing a new type for this.
+>
+Okay , will do this.
 
-> Oh, and there's one more fix that is probably a candidate for 6.16, but I=
-'m
-> waiting for a response from the submitter, as I think we can go with a mo=
-re
-> targeted fix: https://lore.kernel.org/all/aFwLpyDYOsHUtCn-@google.com
-
-Yes, I agree with you there.  I see no reply from Yuntao, so let's
-decide tomorrow what to do about it.
-
->   https://github.com/kvm-x86/linux.git tags/kvm-x86-fixes-6.16-rcN
+> >
+> >       /* linked list for entire buffer object */
+> >       struct list_head entire_bo_list;
+> > diff --git a/drivers/staging/media/atomisp/pci/hmm/hmm.c b/drivers/stag=
+ing/media/atomisp/pci/hmm/hmm.c
+> > index c2ee9d2ec0d5..767a3a24f8e5 100644
+> > --- a/drivers/staging/media/atomisp/pci/hmm/hmm.c
+> > +++ b/drivers/staging/media/atomisp/pci/hmm/hmm.c
+> > @@ -24,9 +24,10 @@
+> >  #include "mmu/isp_mmu.h"
+> >  #include "mmu/sh_mmu_mrfld.h"
+> >
+> > -struct hmm_bo_device bo_device;
+> > +struct hmm_bo_device bo_device =3D {
+> > +     .flag =3D HMM_BO_DEVICE_UNINITED,
+> > +};
+> >  static ia_css_ptr dummy_ptr =3D mmgr_EXCEPTION;
+> > -static bool hmm_initialized;
+> >
+> >  int hmm_init(void)
+> >  {
+> > @@ -38,8 +39,6 @@ int hmm_init(void)
+> >               dev_err(atomisp_dev, "hmm_bo_device_init failed.\n");
+> >               return ret;
+> >
+> > -     hmm_initialized =3D true;
+> > -
+> >       /*
+> >        * As hmm use NULL to indicate invalid ISP virtual address,
+> >        * and ISP_VM_START is defined to 0 too, so we allocate
+> > @@ -62,7 +61,7 @@ void hmm_cleanup(void)
+> >       dummy_ptr =3D 0;
+> >
+> >       hmm_bo_device_exit(&bo_device);
+> > -     hmm_initialized =3D false;
+> > +     bo_device.flag =3D HMM_BO_DEVICE_UNINITED;
 >
-> for you to fetch changes up to fa787ac07b3ceb56dd88a62d1866038498e96230:
+> This clearing of the flag / setting `initialized =3D false` belongs insid=
+e bo_exit()
+> not here.
 >
->   KVM: x86/hyper-v: Skip non-canonical addresses during PV TLB flush (202=
-5-06-25 09:15:24 -0700)
-
-Done.
-
-Paolo
-
-> ----------------------------------------------------------------
-> KVM x86 fixes for 6.16-rcN
+okay, moving it in v2
 >
->  - Reject SEV{-ES} intra-host migration if one or more vCPUs are actively
->    being created so as not to create a non-SEV{-ES} vCPU in an SEV{-ES} V=
-M.
+> >  }
+> >
+> >  static ia_css_ptr __hmm_alloc(size_t bytes, enum hmm_bo_type type,
+> > @@ -72,13 +71,6 @@ static ia_css_ptr __hmm_alloc(size_t bytes, enum hmm=
+_bo_type type,
+> >       struct hmm_buffer_object *bo;
+> >       int ret;
+> >
+> > -     /*
+> > -      * Check if we are initialized. In the ideal world we wouldn't ne=
+ed
+> > -      * this but we can tackle it once the driver is a lot cleaner
+> > -      */
+> > -
+> > -     if (!hmm_initialized)
+> > -             hmm_init();
+> >       /* Get page number from size */
+> >       pgnr =3D size_to_pgnr_ceil(bytes);
+> >
 >
->  - Use a pre-allocated, per-vCPU buffer for handling de-sparsified vCPU m=
-asks
->    when emulating Hyper-V hypercalls to fix a "stack frame too large" iss=
-ue.
 >
->  - Allow out-of-range/invalid Xen event channel ports when configuring IR=
-Q
->    routing to avoid dictating a specific ioctl() ordering to userspace.
+> Regards,
 >
->  - Conditionally reschedule when setting memory attributes to avoid soft
->    lockups when userspace converts huge swaths of memory to/from private.
+> Hans
 >
->  - Add back MWAIT as a required feature for the MONITOR/MWAIT selftest.
 >
->  - Add a missing field in struct sev_data_snp_launch_start that resulted =
-in
->    the guest-visible workarounds field being filled at the wrong offset.
->
->  - Skip non-canonical address when processing Hyper-V PV TLB flushes to a=
-void
->    VM-Fail on INVVPID.
->
-> ----------------------------------------------------------------
-> Binbin Wu (1):
->       Documentation: KVM: Fix unexpected unindent warnings
->
-> Chenyi Qiang (1):
->       KVM: selftests: Add back the missing check of MONITOR/MWAIT availab=
-ility
->
-> David Woodhouse (1):
->       KVM: x86/xen: Allow 'out of range' event channel ports in IRQ routi=
-ng table.
->
-> Liam Merwick (1):
->       KVM: Allow CPU to reschedule while setting per-page memory attribut=
-es
->
-> Manuel Andreas (1):
->       KVM: x86/hyper-v: Skip non-canonical addresses during PV TLB flush
->
-> Nikunj A Dadhania (1):
->       KVM: SVM: Add missing member in SNP_LAUNCH_START command structure
->
-> Sean Christopherson (3):
->       KVM: SVM: Reject SEV{-ES} intra host migration if vCPU creation is =
-in-flight
->       KVM: SVM: Initialize vmsa_pa in VMCB to INVALID_PAGE if VMSA page i=
-s NULL
->       KVM: x86/hyper-v: Use preallocated per-vCPU buffer for de-sparsifie=
-d vCPU masks
->
->  Documentation/virt/kvm/api.rst                     | 28 +++++++++++-----=
-------
->  arch/x86/include/asm/kvm_host.h                    |  7 +++++-
->  arch/x86/kvm/hyperv.c                              |  5 +++-
->  arch/x86/kvm/svm/sev.c                             | 12 ++++++++--
->  arch/x86/kvm/xen.c                                 | 15 ++++++++++--
->  include/linux/psp-sev.h                            |  2 ++
->  .../testing/selftests/kvm/x86/monitor_mwait_test.c |  1 +
->  virt/kvm/kvm_main.c                                |  3 +++
->  8 files changed, 53 insertions(+), 20 deletions(-)
->
-
 
