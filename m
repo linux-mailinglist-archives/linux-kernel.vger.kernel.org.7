@@ -1,199 +1,187 @@
-Return-Path: <linux-kernel+bounces-721348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C54E7AFC7F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:10:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B685AFC7FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37900188059D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:09:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F3423AC1B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1859926AAAA;
-	Tue,  8 Jul 2025 10:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF7C267B9B;
+	Tue,  8 Jul 2025 10:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l707r4NI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="FpJd+aRR"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BCC269885;
-	Tue,  8 Jul 2025 10:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152C5241CBA
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 10:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751969277; cv=none; b=YPKkl7FNpFAajuo4CDyi7qu0bBqNklxYl6Ri4sGAVIn4hhCyUhRxKv97d9ZQq/dFRIVyWK1b6Uk6EH9jDaAJYqCNibGdEqpcqMu6tUwAM6dm4lFgtHFDW0GxEI7MqI2bmM4HUiDDYtTrDx5tg28gyLREOXGcSQKqLOtKBu5eVjI=
+	t=1751969401; cv=none; b=mSvjz7qTtt+im3fdSHiyDv5rOre8pklzyploOCxN8hEIZN5C3lTd5STZWUjK3k16fgIWuMtsuIowFJdGomSxmqAU6T5jjWWSsT5eqIFiJMnQIQt1TbVU5h4RKB/SHNBATszkCcinHb7zQS8zBwru0i1+/mKKk/mMilboN7LD2Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751969277; c=relaxed/simple;
-	bh=+mu09oHSFo0ENwJpcYeWTlUN02M1SVr8mPystHJp6wQ=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=oPOHS7MnHKsJTAWknu9XHJ7QtnZeoYBvf1YBTzC/WKpyZ1kIu/FDXNP8b9QFIYJU4IoFZhHIrlTcgFjZncdnTC7bmiMRtaryHWHWyd35STT1KdnoPqFJwofbEm8FhlBXewOLkkeDy0nmy1iA5uPa0GZQTcfIVONEmsnJyZXqNGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l707r4NI; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751969276; x=1783505276;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=+mu09oHSFo0ENwJpcYeWTlUN02M1SVr8mPystHJp6wQ=;
-  b=l707r4NIwiqvXVYT3fdnQvxeJbhmJaWmbXHngwXYNMCR+YmYLRp2LW1W
-   RstsZzy/mlFxQext0wt9SGe6gjmYmLulE1T7MM/HR+KobSlqmZrzBKU84
-   wiGK3IhwidG7PC2Vdv+CHKXS4HvimEQC7UEy/BFgYsUrBVpjmz7EjmM9v
-   WVmUuqHMs9OAVkA8OGex0DFHpIz/TTTO5CRp0ZCVLWyxiTLx2Zq72Omd9
-   GJv0vXdiSiwx0q38wJEEWGectKCCDAM3pNOqI7cmPZq5hwFbcOHGPJCmd
-   DSjyE6xndySYtGdId1oPqOTHO4THkyrtHlGpKA2V3li4so1Mp5EFlwOrs
-   A==;
-X-CSE-ConnectionGUID: SXWm8hGPS0ytn+ccywEdJQ==
-X-CSE-MsgGUID: uSQJvVJyQqi1GIvNI1bOcQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="71783239"
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="71783239"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 03:07:55 -0700
-X-CSE-ConnectionGUID: 9ZDZ+X/JQsq5EMv95U/8CA==
-X-CSE-MsgGUID: 5hv9hNiGSfeUKvS4LdxAVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="186410031"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.247])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 03:07:52 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 8 Jul 2025 13:07:49 +0300 (EEST)
-To: Jackie Dong <xy-jackie@139.com>
-cc: hansg@kernel.org, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, dongeg1@lenovo.com
-Subject: Re: [PATCH v3] lenovo-wmi-hotkey: Fixed a kernel error report for
- some Lenovo non-ThinkPad devices
-In-Reply-To: <20250708094352.26850-1-xy-jackie@139.com>
-Message-ID: <e45af10b-fa26-d7e4-8051-093a6f9ce552@linux.intel.com>
-References: <20250708094352.26850-1-xy-jackie@139.com>
+	s=arc-20240116; t=1751969401; c=relaxed/simple;
+	bh=47O6nAGkTl4F+LjVK4KzSkuF78FXCIFg8NWc0TWYEJQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lRZUsgOMMrjKusdMzFrSJjcQbn1fwTx3rjZ1U5ZHXk66zZVA3MPLqFbwio6Mu7wv6vXIXDH250eC8jd3lv7kXWPLKiCZ1LNY1BvDrZN0zU10kRuAhO7fmMMmfe3kLVu5xiVBxOlHzgk5c+P2ZhC9SRgN3lPZFJEpo6F1fpwNuGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=FpJd+aRR; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ae3b336e936so773311266b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 03:09:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1751969398; x=1752574198; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wW9jD4nttc2FFz4tK+x1u/l3hcsbPGY6bGVXePrYDv4=;
+        b=FpJd+aRRb1it8uGgFDuY0XeugoGH9+Xt8YLCtgSGvAG9ttAdIiF6uTEQDfV2vJt7pF
+         saS4jmFqJQgGfBAcYzMAuCSTyeJufjPSAKbukbKLwp0qRzoEfRZLDxXSCT67yvKKuZPe
+         WyRiz67d4dZPVTXwIZBmqYRMJqhH82gCHwxRHywXE8tZEP3m6Aaq6Qm/ffcZSFJI4HOw
+         IN9N5kR/UrRAwUhV+x2QQO2jo4bt4H88JL/nAETv+t59F9B8Wz3jd1W9w21UCZZkUtmO
+         nlIj+NTkhLtlvVIup1M1bUoAQcFfQ/9CLcp2NgLe0nPXqUbuA9FLNxm6d+zS/dX7X6gF
+         uL8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751969398; x=1752574198;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wW9jD4nttc2FFz4tK+x1u/l3hcsbPGY6bGVXePrYDv4=;
+        b=N40t1wIAk1Xovxi55mP6InQt3uQpmPGCf4O6wuzJDyF3JWT1n8zjeJpaX35nGAe3hd
+         PZs5+gJVK4cONIg17dXTN1nhCvPk4MYo4JNgdMEYqAPZeqy/KrJhNelbAZFQBwDKGdGj
+         FnfnTLIJrtXifEeS1V7xajLMjL6Ddgq+ls32XE+TKMMRlmdI/2Pe5H5c/h8NJ+dHgqw8
+         irwrQWzvHEq4rNpeC0Np9pRXaUWns9DA8ynMMJxFEz2dCjMugRz1bhA/mnmYIyE4rycs
+         kglXkyNR5N4fOup6XANHW7PEA3QypcfWoGUPisjSuB/+iMZgZUrCAbyzRKvgfRmp2au3
+         I/Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbCC4VotBpwoB6QL7gX4oLh1+SeUGHFX2sKsqXUZVHpPbGIioa0CaKbpjn3WmAyEUsc/0oz/1VkEscP+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWNMsro9tiOcWhAr/VxwB9QNSK01nO52DAfNMAiDzl5jRzxChq
+	ZhVBHGhhOwFHKWT6CyynFHguFKXaxRIigu04oS3YtQ38SK3xh4iMfHEmAA7IrQU6BFY=
+X-Gm-Gg: ASbGncuCciSpI6zP7paGlu7J9tRP6rsNSvcjfw3M1w+cTsrHhdhk//iTF78T8eMW5ac
+	2U/14+cd4jLqu6HIrQctQFdhnJgE3gd/mrzK9zh7NRPwjWnaEIPVqwC2Or/xoDnjYjprDQ0YHuy
+	FbCJxGsLSCgPL7Gmaml1D98NgU9WPnjdue4uWKugS1K/f1bhjvjiQfPU/bqdz9Wu9p+jpaAzWWZ
+	qLS496hJT0IvFwYvzE7rMgnhRDx4peCEljX8QGVlvonx9ahVag4cOAcbu6BlSKGT2i+8BuHothz
+	I7XCr7cEDYERK/Y/R5ujurMT1bz+NFr52A2MWiwTR/cQRGkKfpmvDuKRXiq+7PDUWj3xGQ==
+X-Google-Smtp-Source: AGHT+IFDhnpFLf+9SokY6ajJmYa0R4eHOoHCTd+GxI/yEq5DE0Ci4xD7oIth8WUim7upiSOwhgaH5Q==
+X-Received: by 2002:a17:907:1c26:b0:ad8:8719:f6f3 with SMTP id a640c23a62f3a-ae3fe5c28d7mr1545563166b.22.1751969397715;
+        Tue, 08 Jul 2025 03:09:57 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f66d931csm875767566b.10.2025.07.08.03.09.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jul 2025 03:09:57 -0700 (PDT)
+Message-ID: <7c8c7a25-c373-452a-9fe8-8b2d92ddd885@tuxon.dev>
+Date: Tue, 8 Jul 2025 13:09:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-2107425336-1751969014=:947"
-Content-ID: <9fd99530-fdbe-d2e2-19c3-ed13e9c4f86a@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/9] arm64: dts: renesas: rzg3s-smarc-som: Update
+ dma-ranges for PCIe
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+ "kwilczynski@kernel.org" <kwilczynski@kernel.org>,
+ "mani@kernel.org" <mani@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "lizhi.hou@amd.com" <lizhi.hou@amd.com>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250704161410.3931884-8-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB113464920ECAC2C3CB89DE2D5864FA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <TY3PR01MB113464920ECAC2C3CB89DE2D5864FA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi, Biju,
 
---8323328-2107425336-1751969014=:947
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <1601a485-9d89-d78d-7b0f-786d481b8ce7@linux.intel.com>
+On 07.07.2025 11:18, Biju Das wrote:
+> Hi Claudiu,
+> 
+>> -----Original Message-----
+>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>> Sent: 04 July 2025 17:14
+>> Subject: [PATCH v3 7/9] arm64: dts: renesas: rzg3s-smarc-som: Update dma-ranges for PCIe
+>>
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The first 128MB of memory is reserved on this board for secure area.
+>> Update the PCIe dma-ranges property to reflect this.
+> 
+> I see R-Car PCIe dma-ranges[1] and [2] maps all possible DDR area supported by the SoC?
+> Do we need to make board specific as well there?
 
-On Tue, 8 Jul 2025, Jackie Dong wrote:
+I'm not familiar with R-Car, but if there are ranges reserved for other
+purposes, I think we should reflect it in board specific device trees.
 
-> Not all of Lenovo non-ThinkPad devices support both mic mute LED (on F4)
-> and audio mute LED (on F1). Some of them only support one mute LED, some
-> of them don't have any mute LED. Add a decision to judge this device
-> support mute LED or not. Without this decision, not support both of mic
-> mute LED and audio mute LED Lenovo non-ThinkPad brand devices (including
-> Ideapad/Yoga/Xiaoxin/Gaming/ThinkBook, etc.) will report a failed message
-> with error -5.
->=20
-> Signed-off-by: Jackie Dong <xy-jackie@139.com>
-> Suggested-by: Hans de Goede <hansg@kernel.org>
-> Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+But that would have to be address though a different series as it has
+nothing to do with enabling the RZ/G3S PCIe support.
 
-Hi Jackie,
+Thank you,
+Claudiu
 
-Please don't add Reviewed-by nor Tested-by tags unless they were=20
-explicitly given to you.
-=20
-> ---
-> Changes in v3:
->  - Reverse orignal logic  (obj && obj->type =3D=3D ACPI_TYPE_INTEGER)=20
->    and add new decision for led_version =3D=3D 0.
->  - Optimize the descriptions based on reviewer comments.
->=20
-> Changes in v2:
->  - Add warning message and then return 0 if the device support mute LED
->    abnormaly, based on Hans suggestion and Armin previous patch.
->=20
->=20
->  .../x86/lenovo-wmi-hotkey-utilities.c         | 24 ++++++++++++++-----
->  1 file changed, 18 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c b/drivers=
-/platform/x86/lenovo-wmi-hotkey-utilities.c
-> index 89153afd7015..1850992f2ea8 100644
-> --- a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-> +++ b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-> @@ -127,21 +127,30 @@ static int lenovo_super_hotkey_wmi_led_init(enum mu=
-te_led_type led_type, struct
->  =09else
->  =09=09return -EIO;
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/renesas/r8a774e1.dtsi?h=next-20250704#n2487
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/renesas/salvator-common.dtsi?h=next-20250704
+> 
+> Cheers,
+> Biju
+> 
+>>
+>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>
+>> Changes in v3:
+>> - collected tags
+>>
+>> Changes in v2:
+>> - none, this patch is new
+>>
+>>  arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-
+>> smarc-som.dtsi
+>> index 39845faec894..1b03820a6f02 100644
+>> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+>> @@ -214,6 +214,11 @@ &sdhi2 {
+>>  };
+>>  #endif
+>>
+>> +&pcie {
+>> +	/* First 128MB is reserved for secure area. */
+>> +	dma-ranges = <0x42000000 0 0x48000000 0 0x48000000 0x0 0x38000000>; };
+>> +
+>>  &pinctrl {
+>>  #if SW_CONFIG3 == SW_ON
+>>  	eth0-phy-irq-hog {
+>> --
+>> 2.43.0
+>>
+> 
 
-The logic was not reversed as requested. Please change this code to:
-
-=09union acpi_object *obj __free(kfree) =3D output.pointer;
-=09if (!obj || obj->type !=3D ACPI_TYPE_INTEGER)
-=09=09return -EIO;
-
-=09led_version =3D obj->integer.value;
-
-> -=09wpriv->cdev[led_type].max_brightness =3D LED_ON;
-> -=09wpriv->cdev[led_type].flags =3D LED_CORE_SUSPENDRESUME;
-> +=09/*
-> +=09 * Output parameters define: 0 means mute LED is not supported, Non-z=
-ero means
-> +=09 * mute LED can be supported.
-> +=09 */
-> +=09if (led_version =3D=3D 0)
-> +=09=09return 0;
-> +
-> =20
->  =09switch (led_type) {
->  =09case MIC_MUTE:
-> -=09=09if (led_version !=3D WMI_LUD_SUPPORT_MICMUTE_LED_VER)
-> -=09=09=09return -EIO;
-> +=09=09if (led_version !=3D WMI_LUD_SUPPORT_MICMUTE_LED_VER) {
-> +=09=09=09pr_warn("The MIC_MUTE LED of this device isn't supported now.\n=
-");
-
-Drop "now" (or change it to more precise explanation why).
-
-> +=09=09=09return 0;
-> +=09=09}
-> =20
->  =09=09wpriv->cdev[led_type].name =3D "platform::micmute";
->  =09=09wpriv->cdev[led_type].brightness_set_blocking =3D &lsh_wmi_micmute=
-_led_set;
->  =09=09wpriv->cdev[led_type].default_trigger =3D "audio-micmute";
->  =09=09break;
->  =09case AUDIO_MUTE:
-> -=09=09if (led_version !=3D WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER)
-> -=09=09=09return -EIO;
-> +=09=09if (led_version !=3D WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER) {
-> +=09=09=09pr_warn("The AUDIO_MUTE LED of this device isn't supported now.=
-\n");
-
-Ditto.
-
-> +=09=09=09return 0;
-> +=09=09}
-> =20
->  =09=09wpriv->cdev[led_type].name =3D "platform::mute";
->  =09=09wpriv->cdev[led_type].brightness_set_blocking =3D &lsh_wmi_audiomu=
-te_led_set;
-> @@ -152,6 +161,9 @@ static int lenovo_super_hotkey_wmi_led_init(enum mute=
-_led_type led_type, struct
->  =09=09return -EINVAL;
->  =09}
-> =20
-> +=09wpriv->cdev[led_type].max_brightness =3D LED_ON;
-> +=09wpriv->cdev[led_type].flags =3D LED_CORE_SUSPENDRESUME;
-> +
->  =09err =3D devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
->  =09if (err < 0) {
->  =09=09dev_err(dev, "Could not register mute LED %d : %d\n", led_type, er=
-r);
->=20
-
---=20
- i.
---8323328-2107425336-1751969014=:947--
 
