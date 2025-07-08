@@ -1,96 +1,97 @@
-Return-Path: <linux-kernel+bounces-722034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2216AFD2FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E789DAFD31B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:53:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 541F81886CAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:49:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F238318911BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B345A2E49AF;
-	Tue,  8 Jul 2025 16:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260E72DAFA3;
+	Tue,  8 Jul 2025 16:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kpIElFVS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u4oOoADh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F498F5E;
-	Tue,  8 Jul 2025 16:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E50225414;
+	Tue,  8 Jul 2025 16:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751993342; cv=none; b=YZbCVAX7CD+60k57fii/VtiossAfhSuv30nbbGAvGoFL5fOSQF5H6mo6vgA+G8nvw0ZI8PicREWugl7YFsOO6k3/K75x4MXfwpqz8FdrGSbkUre05meL20BzPb9kExGkuA6aU7aNAKg92WLlLSQ/uGnWA1WYLpSLcItF490Oz5I=
+	t=1751993421; cv=none; b=aODjWFPMIpPM4xEzbwUru6trQrd0h6T+e+OBSSp0JiENZCb+fLEryCBZnelh1s8q76A+Krr+1jq1XVZ98zP6xUN3HeXT7+wSnTjAQ9xeCQfNrxFxiPq1rPgFkuFlXwEMWLKQJ1KJjpHxNuKrikG2UdtvqoYBJOfddntHKPYr12c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751993342; c=relaxed/simple;
-	bh=1gNumA3r3GWXNuef/Bq7M1ZrVMdzEyVC3hw1XVZeZDY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=STN71nru13MMF66O9hdyMp+s5Z43SiaRC7wYddqXE/5ufnkc6+iP2xzA+OGqNBp/Ja9dQ2uudW2gMW9xXVjco76mu9u3w5fwp2qsQg+qvP8CNUgF/cEtZyQB+2f+J3/odbZh8XP7ulgPSd/ggUhnm9bcCdSxEgnRJlwhE9Glo4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kpIElFVS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B982C4CEED;
-	Tue,  8 Jul 2025 16:48:58 +0000 (UTC)
+	s=arc-20240116; t=1751993421; c=relaxed/simple;
+	bh=8A40c7RkWLHp2FPC7aBzNnB7TI99rPspv5sgH1fkE8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EqFynrS4nT+Caeyljx7JOqxVyO+8daDIT90udLw+VaFtHx5fm9MByVeKG/RsCtvTkWm9DRb4AZTTc9eBLuT2DZ++6VuelBpkAzZl8Ly2FLQfvgbzT0n+2E4gwAjFC1v0oD5S5Sydg+lyiaGAMcs6iZZWTOeRangOBEI28Gh4JnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u4oOoADh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A293C4CEF0;
+	Tue,  8 Jul 2025 16:50:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751993341;
-	bh=1gNumA3r3GWXNuef/Bq7M1ZrVMdzEyVC3hw1XVZeZDY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kpIElFVScs7kdDepXVzX8Hv6HhgXfSaeW3ul7jauZjH0wFpF4ISjYG2QO629h5ORD
-	 u05aagrOPyeQEv0Mx+0fc2b9smbT77zHZt6pya4otJmfAASAqq0GyowWAchlgvmwg3
-	 h+pkeyXKTSTzxrlrBmozXOZmpJIJC8llzDkyLKK7KSLZ2YbfTbaZoAmttKehDfGROD
-	 ivDQtLfH1MtnTIlZR7j7THSCQHLtI1j87+SAwTdYrw/J5hcobS4Ifo93c87mJy2O9J
-	 Qc684oKClGQ5bG/NRHcgkKLy/6Ko9O9adnR1cyR+xKPP/K3ziQyuPrCNKnBDemhGZR
-	 mSkJ/yl1yOomQ==
+	s=k20201202; t=1751993421;
+	bh=8A40c7RkWLHp2FPC7aBzNnB7TI99rPspv5sgH1fkE8k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u4oOoADhfoGvM18Nn3/ykD59LMcHlKHrizmm2uAARvweNBAoOGZOSVmcbNHR68RRO
+	 lti+FK/MwEGlTEPEUP67aAArp+eYz7Usn7oN6xCwv1n4Yo2hKGvfgea4982oM14o2k
+	 w48iC0Z6TEy3rTGSwSiytK/b6adEgxwyKDQsr/aZUC8sdt4EENGzwR4pJeBUnxrab3
+	 QQ/YWuHCyWcpOGrrwgN1wE1vUzvFn5XkpAW3XFbxGiHI8AWvDhGkPoQO4ouDrXSSyO
+	 6Yx5zdt2oq9VKNLj2dpYLHRH1UH3ZQUYVcDlq9LRnBMKB3HO2pQbOSa0aCpr3pVheB
+	 d4XnQZs/nmR7w==
+Date: Tue, 8 Jul 2025 17:50:14 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Mark Brown <broonie@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Xingyu Wu <xingyu.wu@starfivetech.com>,
-	Walker Chen <walker.chen@starfivetech.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-riscv@lists.infradead.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] riscv: defconfig: Remove CONFIG_SND_SOC_STARFIVE=m
-Date: Tue,  8 Jul 2025 17:48:27 +0100
-Message-ID: <20250708-jubilant-abruptly-8ff77f7986ca@spud>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To:  <0886d3eb81bffbc1d48e701cae21c42cad29fefe.1751988704.git.geert+renesas@glider.be>
-References:  <0886d3eb81bffbc1d48e701cae21c42cad29fefe.1751988704.git.geert+renesas@glider.be>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Guodong Xu <guodong@riscstar.com>, ukleinek@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de,
+	drew@pdp7.com, inochiama@gmail.com, geert+renesas@glider.be,
+	heylenay@4d2.org, tglx@linutronix.de, hal.feng@starfivetech.com,
+	unicorn_wang@outlook.com, duje.mihanovic@skole.hr,
+	heikki.krogerus@linux.intel.com, elder@riscstar.com,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev
+Subject: Re: [PATCH v3 6/6] riscv: defconfig: Enable PWM support for SpacemiT
+ K1 SoC
+Message-ID: <20250708-wildfowl-curtly-1993ed320572@spud>
+References: <20250429085048.1310409-1-guodong@riscstar.com>
+ <20250429085048.1310409-7-guodong@riscstar.com>
+ <20250707222910-GYC408198@gentoo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=473; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=SWq9xtGH8SUIy+j6CnVjw/RxXXaBxMRnkvI45y+m/oM=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDBm53rd1q5g8P3e4H25a/HPH/fVnG59f5uvZfnjxvLgfn x89keSu7ihlYRDjYJAVU2RJvN3XIrX+j8sO5563MHNYmUCGMHBxCsBEZq1h+CvutHh5+jY+DaG3 rzxOz/rm/+KU3bNT3uFW7LtubT35LEmakeG4Z07R3rWncmXj4yaLlar/vXZu9/qIE1++Hvm63O8 1y34GAA==
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="tqHe0xDpc9gw5L64"
+Content-Disposition: inline
+In-Reply-To: <20250707222910-GYC408198@gentoo>
 
-From: Conor Dooley <conor.dooley@microchip.com>
 
-On Tue, 08 Jul 2025 17:36:48 +0200, Geert Uytterhoeven wrote:
-> The SND_SOC_STARFIVE Kconfig symbol was removed, but it is still enabled
-> in the RISC-V defconfig.  Just remove it, as it is no longer needed.
-> 
-> 
+--tqHe0xDpc9gw5L64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-As I mentioned to Palmer a few mins ago, I'll grab this along with a
-couple other soc-related defconfig patches I have. (Apologies if this
-goes out twice, I got a warning last time about a timeout, so ending again)
+On Mon, Jul 07, 2025 at 10:29:10PM +0000, Yixun Lan wrote:
+> Hi Conor,
+>   Can you take this patch? I've checked with riscv's tree for-next
+> branch, it's still applicable and meet the "savedefconfig" criteria.
 
-[1/1] riscv: defconfig: Remove CONFIG_SND_SOC_STARFIVE=m
-      https://git.kernel.org/conor/c/493e9b085299
+Sure, done.
 
-Thanks,
-Conor.
+--tqHe0xDpc9gw5L64
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaG1MRgAKCRB4tDGHoIJi
+0iMqAQCkQXOHEt1A4XzvWbSQcalLMF/bZO3zekAoxRIfbLq98QEAmuuZF9e149/a
+Dr4NUIYP7HDgky9w/jvCn45mJPQCOQM=
+=tdoU
+-----END PGP SIGNATURE-----
+
+--tqHe0xDpc9gw5L64--
 
