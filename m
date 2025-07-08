@@ -1,123 +1,477 @@
-Return-Path: <linux-kernel+bounces-722256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BCA8AFD705
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:19:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5ADAAFD707
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 738D3189A133
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:19:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F32D417D576
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554C22E49A8;
-	Tue,  8 Jul 2025 19:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8187D2E5413;
+	Tue,  8 Jul 2025 19:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CuiPiGRN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="w8Q3ZBuu"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B251E2356A4;
-	Tue,  8 Jul 2025 19:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9081DE2A7;
+	Tue,  8 Jul 2025 19:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752002337; cv=none; b=kTNJOXpVkEV+j+vUC5p0HFnS9edmRuYh4a5f9jf1JNDtwsW/DpP7tuSI1PQkbgws2SAQxYBFdnrH1AAuCpDb/SFywFDzI8i8tq/en5zuKnl1Xj4rq/HmTGwb0W9CkABSapt7/Kfm6SQJIefgsQVvN1GQAR8Y31HUjsnrljHau3s=
+	t=1752002482; cv=none; b=A9xakzbW9719lOlhw1bCPHceKAcrxh7YCLuMXeAYc4bx7NN78bU6vplt6TBzdCSocGi8HZRrWzuw/l+pmTUNAxjqpQTCW4hguY840qrDf+nN1pjSg2IiEVh50EnSsnfqaZfCPLinFDOEIfxfOSEIXS8qg9Fw560QKtDp3OZvcQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752002337; c=relaxed/simple;
-	bh=eZ+Vz8Em/OjOuWZ5o526dAej5vcRoSqRc9QSKjRGsKo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=Hr0GGcgCf4Tb1gzdtda5RaVUtBHsyylDFX9TNcj0NrzMr80OHGWnP+2RXZvmKrOE1ewB8pUdN08nkBOMy5U/X/Brsy1vb2aS1gMZjOa7/r8Dq41ybno7QiUoOhdi//6nIH8/bAclv7KAsjJPvkwG7NfnTfZbUMFtZn2yFvMCLV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CuiPiGRN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5B15C4CEED;
-	Tue,  8 Jul 2025 19:18:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752002337;
-	bh=eZ+Vz8Em/OjOuWZ5o526dAej5vcRoSqRc9QSKjRGsKo=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=CuiPiGRNr89Jbd52JUMhPzyNO0qXf8R3Piy1kGDMf1d3PEr5VQiK6ZTGenHVjEaL0
-	 bFH/iBIAUl5rxaVH9bZFVmvCc127lZPXL6J6MLJfbZ2xxygM9t1jjXMMEbprNSackW
-	 mKQLA+rPEusr989d5+wtvJffDuD7+ukz1Seqf7eNYBD0n0M1HZg0njJOD45xQXoJoH
-	 OkxmrWCJSalSYd6VmlfRt5yErv0rjz58XQ9B7mCFKJ3T+NkCpb+AJcLzmv2fpaEVH0
-	 p1LIPY1xebJgAMfB2EZmJ2vBYzkwGZza994Yi/fKo63beUlMFSbEN5sTOAY27GpcRZ
-	 ANGMiP4/gTWuw==
+	s=arc-20240116; t=1752002482; c=relaxed/simple;
+	bh=59aNncXnPlbNSy/pko/z0V4akGqnNneemlCM5SWgjk4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FPNve8+iPh/b7mozpMIrOCP+UOzKuVu+Fxez1gQkNaujRm9peAbZ+dmpWXtgomlnLWcORWYWTWLY/gidb5l4ZkqzqeeEqF8/w5SeRwBGjUVr1kS3D8DzbWTHMmuAB06z17wzjwNOlEkTxA/GPLUrnAlYVsFrQgs2tqX7wWnjgWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=w8Q3ZBuu; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 568JL9de600568;
+	Tue, 8 Jul 2025 14:21:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752002469;
+	bh=Nmgh09nutpZxP1wXRfH6vIZbv4tye4dLHW5T27eTx9Q=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=w8Q3ZBuuG+ZvXIwSauz+iDR22G6YIiBNiDJAyNWOTSR06pyX0fbSqvfVWyJuOF9p4
+	 RlsAno7qiurAtFiJ6kZsLxydfPRbvEFy0rZuvElVxm8q4JL2/DneeHiorNhx3quDLz
+	 /37U6bFLXtzVAALbeVVLMNfikksgqFNmtGdcL+KE=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 568JL9C51732317
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 8 Jul 2025 14:21:09 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 8
+ Jul 2025 14:21:09 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 8 Jul 2025 14:21:09 -0500
+Received: from [128.247.29.251] (dmz007xyy.dhcp.ti.com [128.247.29.251])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 568JL9Bd2607953;
+	Tue, 8 Jul 2025 14:21:09 -0500
+Message-ID: <4210f35d-e3ac-43cb-9e6d-e67c25b62c57@ti.com>
+Date: Tue, 8 Jul 2025 14:21:09 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 08 Jul 2025 21:18:52 +0200
-Message-Id: <DB6WZSFEJ6N1.SMX5O3QTJVDJ@kernel.org>
-Subject: Re: [PATCH v11 1/4] rust: types: Add Ownable/Owned types
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Andreas Hindborg" <a.hindborg@kernel.org>
-Cc: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>, "Oliver Mangold"
- <oliver.mangold@pm.me>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Alice Ryhl" <aliceryhl@google.com>, "Trevor
- Gross" <tmgross@umich.edu>, "Asahi Lina" <lina+kernel@asahilina.net>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me>
- <20250618-unique-ref-v11-1-49eadcdc0aa6@pm.me>
- <DB1IPFNLFDWV.2V5O73DOB2RV6@kernel.org> <aGtv9qs682gTyQWX@mango>
- <DB5PPGOWNW4K.2C5A4UE9V9IEF@kernel.org> <aGzrZqIrStGD_UBp@mango>
- <CANiq72kWFYS-inzFPTQAGdPRBr7MffZLR9q7iWiT_j2w_e99MQ@mail.gmail.com>
- <O_XE8MhYyfjIfrx0uca8YoUIWQ6z4SjdK_wLXfzZ8gfzOvUBrH1-0cRRuT7pwh6eMjsXrVXuBwary36TIkUzlg==@protonmail.internalid> <DB6P2UQM08LH.2ALUM6EKC3Q45@kernel.org> <87cyaamt6y.fsf@kernel.org>
-In-Reply-To: <87cyaamt6y.fsf@kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mfd: dt-bindings: Convert TPS65910 to DT schema
+To: Rob Herring <robh@kernel.org>
+CC: <lee@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <praneeth@ti.com>, <m-leonard@ti.com>, <rklein@nvidia.com>
+References: <20250702220217.155647-1-s-ramamoorthy@ti.com>
+ <20250708165827.GA607073-robh@kernel.org>
+Content-Language: en-US
+From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+Organization: PMIC
+In-Reply-To: <20250708165827.GA607073-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue Jul 8, 2025 at 8:30 PM CEST, Andreas Hindborg wrote:
-> "Benno Lossin" <lossin@kernel.org> writes:
+
+On 7/8/25 11:58 AM, Rob Herring wrote:
+> On Wed, Jul 02, 2025 at 05:02:17PM -0500, Shree Ramamoorthy wrote:
+>> Convert the TI TPS65910 documentation to DT schema format.
+>>
+>> Fix incorrect I2C address in example: should be 0x2d.
+>>
+>> TPS65910 datasheet: https://www.ti.com/lit/gpn/tps65910
+>>
+>> Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+>> ---
+>>   .../devicetree/bindings/mfd/ti,tps65910.yaml  | 333 ++++++++++++++++++
+>>   .../devicetree/bindings/mfd/tps65910.txt      | 205 -----------
+>>   2 files changed, 333 insertions(+), 205 deletions(-)
+>>   create mode 100644 Documentation/devicetree/bindings/mfd/ti,tps65910.yaml
+>>   delete mode 100644 Documentation/devicetree/bindings/mfd/tps65910.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/ti,tps65910.yaml b/Documentation/devicetree/bindings/mfd/ti,tps65910.yaml
+>> new file mode 100644
+>> index 000000000000..789b3c6d89cd
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/ti,tps65910.yaml
+>> @@ -0,0 +1,333 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: TI TPS65910 Power Management Integrated Circuit
+>> +
+>> +maintainers:
+>> +  - Shree Ramamoorthy <s-ramamoorthy@ti.com>
+>> +
+>> +description:
+>> +  TPS65910 device is a Power Management IC that provides 3 step-down converters,
+>> +  1 stepup converter, and 8 LDOs. The device contains an embedded power controller (EPC),
+>> +  1 GPIO, and an RTC.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - ti,tps65910
+>> +      - ti,tps65911
+>> +
+>> +  reg:
+>> +    description: I2C slave address
+>> +    maxItems: 1
+>> +
+>> +  gpio-controller: true
+>> +
+>> +  '#gpio-cells':
+>> +    const: 2
+>> +    description: |
+>> +      The first cell is the GPIO number.
+>> +      The second cell is used to specify additional options <unused>.
+>> +      See ../gpio/gpio.txt for more information.
+> Don't add references to old docs. Or new ones, just drop the last line.
 >
->> On Tue Jul 8, 2025 at 12:16 PM CEST, Miguel Ojeda wrote:
->>> On Tue, Jul 8, 2025 at 11:57=E2=80=AFAM Oliver Mangold <oliver.mangold@=
-pm.me> wrote:
->>>>
->>>> Note, though, that I already moved it from types.rs to types/ownable.r=
-s on
->>>> request. It seems to me different people here have different ideas whe=
-re it
->>>> should be placed. I feel now, that it would make sense to come to an
->>>> agreement between the interested parties about where it should finally=
- be
->>>> placed, before I move it again. Could I ask that we settle that questi=
-on
->>>> once and for all before my next revision?
->>>
->>> Yeah, if there is a disagreement with something said previously, then
->>> it should be resolved before starting to ping-pong between approaches
->>> with more and more patch versions. Reviewers can forget or they may
->>> not have read an earlier comment, but you did the right thing
->>> mentioning there is such a conflict in opinions.
->>
->> Yeah, I checked and that was Andreas on v9. @Andreas what do you think?
->>
->> I think we should just get rid of `types.rs` and split it into:
->>
->> * `opaque.rs`
->> * `foreign.rs`
->> * `scope_guard.rs` (this might need a better name)
->>
->> `Either` can just be removed entirely, `AlwaysRefcounted` & `ARef`
->> should be in the `sync` module (I already created an issue for this) as
->> well as `NotThreadSafe` (or we could create a `marker` module for that).
->> Thoughts?
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +
+>> +  interrupt-controller: true
+>> +
+>> +  '#interrupt-cells':
+>> +    description: Specifies the IRQ number and flags, as defined in
+>> +      Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+> Drop the reference.
 >
-> Sounds good. I just wanted to prevent us from cramming everything into
-> types.rs.
+>> +    const: 2
+>> +
+>> +  ti,vmbch-threshold:
+>> +    description: |
+>> +      (TPS65911) Main battery charged threshold comparator.
+>> +      See VMBCH_VSEL in TPS65910 datasheet.
+>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> Doesn't look like an array to me...
+>
+>> +    minItems: 1
+>> +    maxItems: 1
+>> +    items:
+>> +      minimum: 0
+> 0 is already the min.
+>
+>> +      maximum: 3
+>> +
+>> +  ti,vmbch2-threshold:
+>> +    description: |
+>> +      (TPS65911) Main battery discharged threshold comparator.
+>> +      See VMBCH_VSEL in TPS65910 datasheet.
+>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +    minItems: 1
+>> +    maxItems: 1
+>> +    items:
+>> +      minimum: 0
+>> +      maximum: 3
+> Same comments here.
+>
+>> +
+>> +  ti,en-ck32k-xtal:
+>> +    type: boolean
+>> +    description: Enable external 32-kHz crystal oscillator.
+>> +
+>> +  ti,en-gpio-sleep:
+>> +    description: |
+>> +      Enable sleep control for gpios.
+>> +      There should be 9 entries here, one for each gpio.
+> Don't repeat constraints in free form text.
+>
+>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +    minItems: 9
+>> +    maxItems: 9
+>> +    items:
+>> +      minimum: 0
+>> +      maximum: 1
+>> +
+>> +  ti,system-power-controller:
+>> +    type: boolean
+>> +    description: Identify whether or not this pmic controls the system power
+>> +
+>> +  ti,sleep-enable:
+>> +    type: boolean
+>> +    description: Enable SLEEP state.
+>> +
+>> +  ti,sleep-keep-therm:
+>> +    type: boolean
+>> +    description: Keep thermal monitoring on in sleep state.
+>> +
+>> +  ti,sleep-keep-ck32k:
+>> +    type: boolean
+>> +    description: Keep the 32KHz clock output on in sleep state.
+>> +
+>> +  ti,sleep-keep-hsclk:
+>> +    type: boolean
+>> +    description: Keep high speed internal clock on in sleep state.
+>> +
+>> +  regulators:
+>> +    type: object
+>> +    description: List of regulators provided by this controller.
+>> +
+>> +    patternProperties:
+>> +      "^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$":
+>> +        type: object
+>> +        $ref: /schemas/regulator/regulator.yaml#
+>> +        properties:
+>> +          ti,regulator-ext-sleep-control:
+>> +            description: |
+>> +              Enable external sleep control through external inputs:
+>> +              [0 (not enabled), 1 (EN1), 2 (EN2) or 4(EN3)].
+>> +              If this property is not defined, it defaults to 0 (not enabled).
+>> +            $ref: /schemas/types.yaml#/definitions/uint32
+>> +            enum: [0, 1, 2, 4, 8]
+>> +        unevaluatedProperties: true
+> false
+>
+>> +
+>> +      "^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$":
+>> +        type: object
+>> +        $ref: /schemas/regulator/regulator.yaml#
+>> +        properties:
+>> +          ti,regulator-ext-sleep-control:
+>> +            description: |
+>> +              Enable external sleep control through external inputs:
+>> +              [0 (not enabled), 1 (EN1), 2 (EN2) or 4(EN3)].
+>> +              If this property is not defined, it defaults to 0 (not enabled).
+>> +            $ref: /schemas/types.yaml#/definitions/uint32
+>> +            enum: [0, 1, 2, 4, 8]
+>> +        unevaluatedProperties: true
+> false
+>
+>> +
+>> +      "^ldo[1-8]$":
+>> +        type: object
+>> +        $ref: /schemas/regulator/regulator.yaml#
+>> +        properties:
+>> +          ti,regulator-ext-sleep-control:
+>> +            description: |
+>> +              Enable external sleep control through external inputs:
+>> +              [0 (not enabled), 1 (EN1), 2 (EN2) or 4(EN3)].
+>> +              If this property is not defined, it defaults to 0 (not enabled).
+>> +            $ref: /schemas/types.yaml#/definitions/uint32
+>> +            enum: [0, 1, 2, 4, 8]
+>> +        unevaluatedProperties: true
+>> +
+>> +    additionalProperties: true
+> false
+>
+> And move above patternProperties
+>
+>
+>> +
+>> +patternProperties:
+>> +  "^(vcc[1-7]-supply)|vccio-supply$":
+> ^vcc(io|[1-7])-supply$
+>
+>> +    description: |
+>> +      Input voltage supply phandle for regulators.
+>> +      These entries are required if PMIC regulators are enabled, or else it
+>> +      can cause the regulator registration to fail.
+> blank line between paragraphs.
+>
+>> +      If some input supply is powered through battery or always-on supply, then
+>> +      it is also required to have these parameters with the proper node handle for always-on
+>> +      power supply.
+>> +      tps65910:
+>> +          vcc1-supply: VDD1 input.
+>> +          vcc2-supply: VDD2 input.
+>> +          vcc3-supply: VAUX33 and VMMC input.
+>> +          vcc4-supply: VAUX1 and VAUX2 input.
+>> +          vcc5-supply: VPLL and VDAC input.
+>> +          vcc6-supply: VDIG1 and VDIG2 input.
+>> +          vcc7-supply: VRTC and VBB input.
+>> +          vccio-supply: VIO input.
+>> +      tps65911:
+>> +          vcc1-supply: VDD1 input.
+>> +          vcc2-supply: VDD2 input.
+>> +          vcc3-supply: LDO6, LDO7 and LDO8 input.
+>> +          vcc4-supply: LDO5 input.
+>> +          vcc5-supply: LDO3 and LDO4 input.
+>> +          vcc6-supply: LDO1 and LDO2 input.
+>> +          vcc7-supply: VRTC input.
+>> +          vccio-supply: VIO input.
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts
+>> +  - interrupt-controller
+>> +  - '#interrupt-cells'
+>> +  - gpio-controller
+>> +  - '#gpio-cells'
+>> +  - regulators
+>> +
+>> +additionalProperties: false
+>> +
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - ti,tps65910
+>> +    then:
+>> +      properties:
+>> +        regulators:
+>> +          patternProperties:
+>> +            "^(ldo[1-8]|vddctrl)$": false
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - ti,tps65911
+>> +    then:
+>> +      properties:
+>> +        regulators:
+>> +          patternProperties:
+>> +            "^(vdd3|vaux([1-2]|33)|vdig[1-2])$": false
+>> +            "^(vpll|vdac|vmmc|vbb)$": false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +    i2c {
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +
+>> +        pmic: tps65910@2d {
+> Indent by 4 here...
+>> +          compatible = "ti,tps65910";
+> And by 2 here. Be consistent (use 4).
+>
+>> +          reg = <0x2d>;
+>> +          interrupt-parent = <&intc>;
+>> +          interrupts = < 0 118 0x04 >;
+>> +
+>> +          #gpio-cells = <2>;
+>> +          gpio-controller;
+>> +
+>> +          #interrupt-cells = <2>;
+>> +          interrupt-controller;
+>> +
+>> +          ti,system-power-controller;
+>> +
+>> +          ti,vmbch-threshold = <0>;
+>> +          ti,vmbch2-threshold = <0>;
+>> +          ti,en-ck32k-xtal;
+>> +          ti,en-gpio-sleep = <0 0 1 0 0 0 0 0 0>;
+>> +
+>> +          vcc1-supply = <&reg_parent>;
+>> +          vcc2-supply = <&some_reg>;
+>> +          vcc3-supply = <&vbat>;
+>> +          vcc4-supply = <&vbat>;
+>> +          vcc5-supply = <&vbat>;
+>> +          vcc6-supply = <&vbat>;
+>> +          vcc7-supply = <&vbat>;
+>> +          vccio-supply = <&vbat>;
+>> +
+>> +          regulators {
+>> +            vrtc_reg: vrtc {
+> Drop unused labels
 
-Yeah me too :)
+Will update this series, thank you for your feedback!
 
-> But we should probably move `Owned` into `sync` with `ARef` et. al.,
-> right?
+>
+>> +              regulator-name = "vrtc";
+>> +              regulator-always-on;
+>> +            };
+>> +            vio_reg: vio {
+>> +              regulator-name = "vio";
+>> +              regulator-min-microvolt = <1500000>;
+>> +              regulator-max-microvolt = <3300000>;
+>> +              regulator-always-on;
+>> +              regulator-boot-on;
+>> +            };
+>> +            vdd1_reg: vdd1 {
+>> +              regulator-name = "vdd1";
+>> +              regulator-min-microvolt = < 600000>;
+>> +              regulator-max-microvolt = <1500000>;
+>> +              regulator-always-on;
+>> +              regulator-boot-on;
+>> +              ti,regulator-ext-sleep-control = <0>;
+>> +            };
+>> +            vdd2_reg: vdd2 {
+>> +              regulator-name = "vdd2";
+>> +              regulator-min-microvolt = < 600000>;
+>> +              regulator-max-microvolt = <1500000>;
+>> +              regulator-always-on;
+>> +              regulator-boot-on;
+>> +            };
+>> +            vdd3_reg: vdd3 {
+>> +              regulator-name = "vdd3";
+>> +              regulator-min-microvolt = <5000000>;
+>> +              regulator-max-microvolt = <5000000>;
+>> +              regulator-always-on;
+>> +            };
+>> +            vdig1_reg: vdig1 {
+>> +              regulator-name = "vdig1";
+>> +              regulator-min-microvolt = <1200000>;
+>> +              regulator-max-microvolt = <2700000>;
+>> +              regulator-always-on;
+>> +            };
+>> +            vdig2_reg: vdig2 {
+>> +              regulator-name = "vdig2";
+>> +              regulator-min-microvolt = <1000000>;
+>> +              regulator-max-microvolt = <1800000>;
+>> +              regulator-always-on;
+>> +            };
+>> +            vpll_reg: vpll {
+>> +              regulator-name = "vpll";
+>> +              regulator-min-microvolt = <1000000>;
+>> +              regulator-max-microvolt = <2500000>;
+>> +              regulator-always-on;
+>> +            };
+>> +            vdac_reg: vdac {
+>> +              regulator-name = "vdac";
+>> +              regulator-min-microvolt = <1800000>;
+>> +              regulator-max-microvolt = <2850000>;
+>> +              regulator-always-on;
+>> +            };
+>> +            vaux1_reg: vaux1 {
+>> +              regulator-name = "vaux1";
+>> +              regulator-min-microvolt = <1800000>;
+>> +              regulator-max-microvolt = <2850000>;
+>> +              regulator-always-on;
+>> +            };
+>> +            vaux2_reg: vaux2 {
+>> +              regulator-name = "vaux2";
+>> +              regulator-min-microvolt = <1800000>;
+>> +              regulator-max-microvolt = <3300000>;
+>> +              regulator-always-on;
+>> +            };
+>> +            vaux33_reg: vaux33 {
+>> +              regulator-name = "vaux33";
+>> +              regulator-min-microvolt = <1800000>;
+>> +              regulator-max-microvolt = <3300000>;
+>> +              regulator-always-on;
+>> +            };
+>> +            vmmc_reg: vmmc {
+>> +              regulator-name = "vmmc";
+>> +              regulator-min-microvolt = <1800000>;
+>> +              regulator-max-microvolt = <3300000>;
+>> +              regulator-always-on;
+>> +              regulator-boot-on;
+>> +            };
+>> +          };
+>> +        };
+>> +    };
 
-I don't think it fits into `sync`... It's more like a `Box` and could
-very well store something that is `!Send` & `!Sync`.
+-- 
+Best,
+Shree Ramamoorthy
+PMIC Software Engineer
 
----
-Cheers,
-Benno
 
