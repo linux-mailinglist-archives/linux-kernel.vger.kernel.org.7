@@ -1,112 +1,109 @@
-Return-Path: <linux-kernel+bounces-720721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59BB8AFBFAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:13:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D215AFBFB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:14:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 869E43B6EEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:13:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A33B3B692B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86621E47A5;
-	Tue,  8 Jul 2025 01:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C361E285A;
+	Tue,  8 Jul 2025 01:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ucErcMOW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="hSXvYdwi"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E7535893;
-	Tue,  8 Jul 2025 01:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD7A1E0083
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 01:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751937210; cv=none; b=eyq11UA87rIOJv/jiQiTYfm2kxpgMQh2FS0SpyHo7wNJny08KZ16umElshyulNymJBsFeqevjzBY/YjVXPe/J0Za/r2CC20EMxQDznZ6uJeZV+JJHWEaN3peHI9YQZdwJ5XKZxVxnxv/LV2vXjLDWHO2mOvbNQ07+V/DIvEL9bs=
+	t=1751937256; cv=none; b=ANgHSvI/Lgb8262tmVzN4wobp15EZVLmedCeEym16vJiRRKY7CTiErkoAMyFBP76MYpA8DQ+3krPRiBo4m9mv3R27eQBz9PrWXutzFrUHx0Lze6b6lj8GvMd36sBXQzPeAXic/8tFe9Th02SDZLhx++IgPNF5D9j/aDYJ/h7Nbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751937210; c=relaxed/simple;
-	bh=iPodmZohmSa31e+By01I1tCZZleFo6T1wFvi9no0O2g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gfYMqsGe98WnynzBLFz8zHxK1V7ZOcNKQqSj8Gc1X9SS9S25U4QUDTHOLrVeTSWrAa99n30lhNDZ8WkSLe/nOgGhLtv+EPE+eGWYjNF31+vFfDQs2Y+AlQ7Bvr8L0Len/l1ERxUwOmAWTE4pgwEkvzuRGpbBcEIUGRPeIv6UpMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ucErcMOW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A46F5C4AF09;
-	Tue,  8 Jul 2025 01:13:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751937209;
-	bh=iPodmZohmSa31e+By01I1tCZZleFo6T1wFvi9no0O2g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ucErcMOWnScg0VJtBHtMIuIwnc4gOBW3HGDeqvukg4nA1IZNaGGPFoo5j2IzLE5d7
-	 A5RCasoCOF1kpnM39cMYE1A112pn+BdrKaWSD9UQ5/zbOBy4UjpJcAoiP7ML8RHFUR
-	 SqN0Nc5Z0RbOXylJcPiGm22m4HcMeKvYewOMdNCvl4IooVRRZwT3xKUR5aQn6iZ0wk
-	 riZnsbHsyP3UH5z3ItHjfi1q9Sn9/HcwFKoljkJBCgiY3vpP8Yma1O//BuBbx366Yw
-	 GQbUB3otL04evcUdkGdGFDG/bALGNDUrYRFKFlepZCS1QjaXKVvnMbpaLTDucIdeD9
-	 YNitdUsp4gdQw==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-32ce1b2188dso36355511fa.3;
-        Mon, 07 Jul 2025 18:13:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX4v6dxR+tnbv9eyebImhq+K8Wzlro3GInbWSZl1phfNogl2iKjv3e0UdjaOez4ovBYZd7jpIDFU9ZX7Rwf@vger.kernel.org, AJvYcCXmFTXE1Kbd8phDPUVjX8UWDysIFWD9YSbu5GgODWThI3w7RlYiv4tk2aEKAsSpd0S1nNioQ2wfiEQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEVlnbb6LCQtT8A/DPS+Bhygz7qNmDXmuPqXjvA4LcDy88fjx5
-	QB0aJgPBa/4X20wixNwmPpoCph4k/pcFr91s33rEFUBAGF8hXHEIpgjO5wSJbZLEEMILtVtrYGk
-	WdOh7jMX0kOsbRpB9PbtOFiQykKjhegI=
-X-Google-Smtp-Source: AGHT+IHfCFdtnG1WPE1YHD1I9AO09IXZjLeoSWqh/sTSdfozG/IHbenZmNc+ALg/MxWLMeyzI2SRRpUrdsXlwPkt6P4=
-X-Received: by 2002:a05:651c:41c9:b0:32e:deb2:f75 with SMTP id
- 38308e7fff4ca-32f39ad0a8dmr1664961fa.23.1751937207992; Mon, 07 Jul 2025
- 18:13:27 -0700 (PDT)
+	s=arc-20240116; t=1751937256; c=relaxed/simple;
+	bh=YwPaOS5x2EKb8tK1pFEOHeYDlHV/6GGZzy/egOu7TaY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CGnHlbOU06ooNKj1TaQp4292maS3GGYBpQ0JOWxMwnKAJcjt15QMkYLpf8+33muU/SUrYH0ic/FY+4pU+iAOLXhxVQTtqdB67sQR3drqhQ+vf3Q1NojZy/HxESm4jI0Qt+g637zqE5f9p/xWZQZ4ogtPDdfEVGGtKyko7XeCEq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=hSXvYdwi; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1751937250; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=81k2TnA3ySuIrcjJ0C2twsaCPzS1HHoYg9nA+iYe+As=;
+	b=hSXvYdwi87kyF07xumYFfzevEth82QdjlkUhNXqWXLW8FeQhQDteTFybWuhQEUjFJlIA/OwXOWP2khEnOv1sNw6iO5D0X+5IpNH+9d7DwFTVPE4HT4GtsHaqBkopTFdGn+ZUQLYoU+h3VA+9vXPEljxvIZIppGC/0Gk994EfY64=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WiIL1OC_1751937247 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 08 Jul 2025 09:14:08 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>
+Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>,  "Huang, Ying"
+ <ying.huang@intel.com>,  "akpm@linux-foundation.org"
+ <akpm@linux-foundation.org>,  "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>,  "Yasunori Gotou (Fujitsu)"
+ <y-goto@fujitsu.com>,  Ingo Molnar <mingo@redhat.com>,  Peter Zijlstra
+ <peterz@infradead.org>,  Juri Lelli <juri.lelli@redhat.com>,  Vincent
+ Guittot <vincent.guittot@linaro.org>,  Dietmar Eggemann
+ <dietmar.eggemann@arm.com>,  Steven Rostedt <rostedt@goodmis.org>,  Ben
+ Segall <bsegall@google.com>,  Mel Gorman <mgorman@suse.de>,  Valentin
+ Schneider <vschneid@redhat.com>,  "lkp@intel.com" <lkp@intel.com>
+Subject: Re: [PATCH RFC v2] mm: memory-tiering: Fix PGPROMOTE_CANDIDATE
+ accounting
+In-Reply-To: <e71873b6-78ac-4555-a6a5-e9b5fb3f9112@fujitsu.com> (Zhijian Li's
+	message of "Mon, 30 Jun 2025 02:11:30 +0000")
+References: <20250625021352.2291544-1-lizhijian@fujitsu.com>
+	<e71873b6-78ac-4555-a6a5-e9b5fb3f9112@fujitsu.com>
+Date: Tue, 08 Jul 2025 09:14:06 +0800
+Message-ID: <87tt3nxz4x.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707-arm64_vmap-v1-0-8de98ca0f91c@debian.org>
-In-Reply-To: <20250707-arm64_vmap-v1-0-8de98ca0f91c@debian.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 8 Jul 2025 11:13:16 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXEjgFarhn4FNOMfCfrh1_DR9L-MNZBiZq83pg2i=RE08A@mail.gmail.com>
-X-Gm-Features: Ac12FXy70wEa8uRpKo6gT5MueTy0Q2ZIgEQp_8wVncqO7RC_E0zDip1k6PBM92Q
-Message-ID: <CAMj1kXEjgFarhn4FNOMfCfrh1_DR9L-MNZBiZq83pg2i=RE08A@mail.gmail.com>
-Subject: Re: [PATCH 0/8] arm64: set VMAP_STACK by default
-To: Breno Leitao <leitao@debian.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-efi@vger.kernel.org, leo.yan@arm.com, kernel-team@meta.com, 
-	mark.rutland@arm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ascii
 
-On Tue, 8 Jul 2025 at 02:01, Breno Leitao <leitao@debian.org> wrote:
->
-> Hi all,
->
-> This patchset select VMAP_STACK on arm64 by default, and cleans up the
-> code by removing all associated CONFIG_VMAP_STACK conditionals.
->
-> This is a suggestion from Will Deacon from another discussion[1].
->
-> With VMAP_STACK now always enabled on arm64, the code can be
-> significantly simplified, reducing complexity and potential for
-> misconfiguration.
->
-> Overview of Changes
->
->     * Remove all #ifdef CONFIG_VMAP_STACK and related runtime checks
->       throughout the architecture codebase.
->     * Replace runtime checks with build-time assertions where
->       appropriate.
->
-> Link: https://lore.kernel.org/all/aGfYL8eXjTA9puQr@willie-the-truck/ [1]
->
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
-> Breno Leitao (8):
->       arm64: Enable VMAP_STACK support
->       arm64: efi: Remove CONFIG_VMAP_STACK check
->       arm64: Remove CONFIG_VMAP_STACK conditionals from THREAD_SHIFT and THREAD_ALIGN
->       arm64: remove CONFIG_VMAP_STACK conditionals from irq stack setup
->       arm64: remove CONFIG_VMAP_STACK conditionals from traps overflow stack
->       arm64: remove CONFIG_VMAP_STACK checks from stacktrace overflow logic
->       arm64: remove CONFIG_VMAP_STACK checks from SDEI stack handling
->       arm64: remove CONFIG_VMAP_STACK checks from entry code
->
+"Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com> writes:
 
-For the series,
+> Hi,
+>
+>
+> On 25/06/2025 10:13, Li Zhijian wrote:
+>> V2:
+>> Fix compiling error # Reported by LKP
+>> 
+>> As Ying suggested, we need to assess whether this change causes regression.
+>> However, considering the stringent conditions this patch involves,
+>> properly evaluating it may be challenging, as the outcomes depend on your
+>> perspective. Much like in a zero-sum game, if someone benefits, another
+>> might lose.
+>> 
+>> If there are subsequent results, I will update them here.
+>
+> I ran memhog + pmbench to evaluate the impact of the patch(3 runs [1] for each kernel).
+>
+> The results show an approximate 4% performance increase in pmbench after applying this patch.
+>
+> Average     pmbench-access            max-promotion-rate
+> Before:     7956805 pages/sec                168301 pages/sec
+> After:      8313666 pages/sec (+4.4%)        207149 pages/sec
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+It's hard for me to understand why performance increases because of
+higher promotion rate, while the expected behavior is more promotion
+rate limiting.
+
+> The detailed logs are available at [2].
+>
+> [1] https://github.com/zhijianli88/misc/blob/main/20250627/promotion-evaluation/reproduce.sh
+> [2] https://github.com/zhijianli88/misc/tree/main/20250627/promotion-evaluation
+
+[snip]
+
+---
+Best Regards,
+Huang, Ying
 
