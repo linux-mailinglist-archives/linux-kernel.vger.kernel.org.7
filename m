@@ -1,52 +1,64 @@
-Return-Path: <linux-kernel+bounces-722345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 093C3AFD872
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:35:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B05C2AFD878
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B17F1AA421A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:35:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BDA41AA7FAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7CE243379;
-	Tue,  8 Jul 2025 20:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F2323D2BB;
+	Tue,  8 Jul 2025 20:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKFHl+IG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dzeawnEp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D76520468E;
-	Tue,  8 Jul 2025 20:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5740123AB9D
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 20:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752006904; cv=none; b=VN/sonJ31rgS7J0vFQP9W5vEug1QBO/6YLOTGcKrrtobGbDPdmZevpksewmidNOux6gNElHjcWJH8VSwOrLQ5oXbPmMQJ7jTxV+B1cPzgFTT1UyBSFK2nlyhi9xbTvgD1KGoCckIuzV9ijHUjbQX+VR0ZqYWDRqZ8gs0TWEs1+0=
+	t=1752006989; cv=none; b=cE16cOZFej6GgY0zmI6IUGPltB6jNaleoP129zVhPtTH8wl8v8GDr//eXbYIvtQ+YbiWCpPcYHB+q4ZXcJMVFV1POcYP68CVsHGGZEAft3T0rcA3glpICCMnOBhtJO2SuyetjD0QV68wUxHOgN33hF2l0w6iiQ3b013j1MTRFSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752006904; c=relaxed/simple;
-	bh=Wgcm5i5ENDfwLTKBgHyGJDYTaLDQNdy2g4ZYker8EaE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=i2upnbrF4HbyxH92Fj0hZzYjKzfFqvazn5uAnQmohhw+mdncESpYl1hZfkTkTLlJ6Sc/zE5mqv/bvi0eepui+HqUR3yb7Z3sHXx/ayST20JXTT+NXileRuGW+0blVeLBaNzHW9buLWix1mF+n4p2klC2K01kKRGFztPsH8xgRbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKFHl+IG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D83B4C4CEF6;
-	Tue,  8 Jul 2025 20:35:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752006903;
-	bh=Wgcm5i5ENDfwLTKBgHyGJDYTaLDQNdy2g4ZYker8EaE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=FKFHl+IG4sBY08G2kr8mWfB1ziEG5+1m7klmEUWJD04gCmtKfLS9GsH1lQPAAHcMb
-	 0M+6T4VROIdGz2Nh7L6+s4OgeJlV7/IDbSo3lJHaIjTkg3TtEIOTuZrf3eF3ydbyd0
-	 CzqiTwa7KSjLx9wp2XQxPreHdnCYJGnl0AsgeGnQV01b5pTPPRE8157sSyNKMh2aUT
-	 +wHfevkK9IlSuSiB1Mjr7LGag/HxyfHlPCyU1AETdd9fkNxud3AoX3ACMEAVSSBaiP
-	 ZbWwp1kXtlrj0Fo/2ErO+Fdjd0n/oSvxhyd2wl0T5uBw2vDa7qcZmJJCBPA1ZSAfVb
-	 hIUspZZuJHn4w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB5BBC8303C;
-	Tue,  8 Jul 2025 20:35:03 +0000 (UTC)
-From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
-Date: Tue, 08 Jul 2025 22:34:08 +0200
-Subject: [PATCH v5 3/3] arm64: dts: qcom: x1-hp-x14: Add support for
- X1P42100 HP Omnibook X14
+	s=arc-20240116; t=1752006989; c=relaxed/simple;
+	bh=ye8liTiYgzGO7x6UHhS9H869YttY6nt3eS7umiedAes=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BTay67Q/g+OcF2iSwkWcmEdUtuAecOdjh590+XH34HowxOh7mobUaB90L0tEI9/K7cKU5ZLnQdW7XRQ/l5EnuJfKaWv86BB/Pj4m14JiUwyW9QqbgDxXb4QFJnG++e7RRGx70/PvGmSCjcggt1n+q2WQ1+IiYk/fL2yviS7C2Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dzeawnEp; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752006986;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=aPQIW6AVsdIyzf3QyXYN0rJl2U1an9vOm+sVCLf9NSQ=;
+	b=dzeawnEpKNN4BIVt+Dh+TrOy7Cqm26LbnNhrrM2P6uP6xme2xUC5t6FHbHrBPSKpYQ/3fy
+	RzEri99WBqzL2bcPar/YcMFFxK4kIi9Xb88qzkid1j7cL699tdwYXrmURyNcu0Y2IjiIzh
+	O6QYZPRCFPk1Fyhjl1OszpCEC/HiHdM=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-362-vINcWXa4PWiIpOodOZ-jxQ-1; Tue,
+ 08 Jul 2025 16:36:23 -0400
+X-MC-Unique: vINcWXa4PWiIpOodOZ-jxQ-1
+X-Mimecast-MFC-AGG-ID: vINcWXa4PWiIpOodOZ-jxQ_1752006981
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2DCA318089B6;
+	Tue,  8 Jul 2025 20:36:21 +0000 (UTC)
+Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.132])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 73C7F1956087;
+	Tue,  8 Jul 2025 20:36:18 +0000 (UTC)
+From: Anusha Srivatsa <asrivats@redhat.com>
+Subject: [PATCH 0/6] drm/panel: Use refcounted allocation in place of
+ devm_kzalloc() - Part4
+Date: Tue, 08 Jul 2025 15:35:12 -0500
+Message-Id: <20250708-b4-simple-panel-api-convert-july-v1-0-630902123ea1@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,114 +67,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250708-hp-x14-x1p-v5-3-44c916efa973@oldschoolsolutions.biz>
-References: <20250708-hp-x14-x1p-v5-0-44c916efa973@oldschoolsolutions.biz>
-In-Reply-To: <20250708-hp-x14-x1p-v5-0-44c916efa973@oldschoolsolutions.biz>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752006901; l=2839;
- i=jens.glathe@oldschoolsolutions.biz; s=20240919;
- h=from:subject:message-id;
- bh=SS1iW7oT4myJxVc38sK5YLbfh87l/qiCbuk6ODbzS0s=;
- b=VbYC6pml2/dS06SPQTNIQYXoHxSz6hLJKBdxRaUnyktpQkre6jJ/aTER1xe6bLVN9fgPvc9Ry
- 2a7jwNJIaDyDaKpMNb5838j+1OGkikg1Z7lx2x8Fit9n6Cg5QxxwXES
-X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
- pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
-X-Endpoint-Received: by B4 Relay for
- jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
-X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-Reply-To: jens.glathe@oldschoolsolutions.biz
+X-B4-Tracking: v=1; b=H4sIAACBbWgC/x3NQQqDMBBG4avIrDsQQ4viVUoXk/S3HUljSFQs4
+ t0buvw27x1UkBWFhuagjE2LzrGivTTk3xJfYH1WkzX2ZjrTsbty0U8K4CQRgSUp+zluyAtPa/i
+ yiG9Hh94621PNpIxR9//i/jjPH6HggOZyAAAA
+X-Change-ID: 20250707-b4-simple-panel-api-convert-july-aac1fbe82b28
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Anusha Srivatsa <asrivats@redhat.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752006919; l=2160;
+ i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
+ bh=ye8liTiYgzGO7x6UHhS9H869YttY6nt3eS7umiedAes=;
+ b=b55ELB70ugm4QSAoHETsJvHJkWj5KrpJH8E0FevWl6ly5MQDGCOI7+yskVNvVK2XK3mJF/OhU
+ N/zOg2aRKL9C+6EIogxaZ+uZFItuUUSE47LL3G+kzKndB5OoY8Sk+5K
+X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
+ pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Use the new API devm_drm_panel_alloc() for panel allocations.
+A major chunk of driver conversion was sent in a 3 part series
+which is already merged. The coccinelle patch that was used to
+identify unsafe panel allocations didnt flag about 20 drivers.
 
-These laptops are the same as the already known 14-fe0xxx models, but
-with a Purwa SoC, SKU number 14-fe1xxx. [1]
+Not using any semantic patch for the remaining drivers.
+Apart from addressing a part of missing drivers, this series also
+does the conversion by not passing explicit type to the helper and
+maintaining type safety suggested by Geert.
 
-The supported features are the same as for the original Omnibook X14:
+Link to part 1, 2 and 3 of driver conversion:
+https://patchwork.freedesktop.org/series/147082/
+https://patchwork.freedesktop.org/series/147157/
+https://patchwork.freedesktop.org/series/147246/
 
-- Keyboard (no function keys though)
-- Display
-- PWM brightness control
-- Touchpad
-- Touchscreen
-- PCIe ports (pcie4, pcie6a)
-- USB type-c, type-a
-- WCN6855 Wifi-6E
-- WCN6855 Bluetooth
-- ADSP and CDSP
-- X1 GPU
-- GPIO Keys (Lid switch)
-- Audio definition (works via USB and with internal speakers)
+Geert's suggestion
+https://lore.kernel.org/dri-devel/CAN9Xe3TXZa1nrCLkHadiBkOO=q1ue8Jwc3V13pXcbAc9AFS2-Q@mail.gmail.com/
 
-https://www.hp.com/us-en/shop/pdp/hp-omnibook-x-laptop-next-gen-ai-pc-14-fe100-14-a4nd1av-1#techSpecs
+14 more to go which will be sent once this series gets feedback.
 
-Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 ---
- arch/arm64/boot/dts/qcom/Makefile                  |  2 ++
- .../boot/dts/qcom/x1p42100-hp-omnibook-x14.dts     | 36 ++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
+Anusha Srivatsa (6):
+      drm/panel/visionox-g2647fb105: Use refcounted allocation in place of devm_kzalloc()
+      drm/panel/truly-nt35597: Use refcounted allocation in place of devm_kzalloc()
+      drm/panel/tdo-tl070wsh30: Use refcounted allocation in place of devm_kzalloc()
+      drm/panel/kd070fhfid015: Use refcounted allocation in place of devm_kzalloc()
+      drm/panel/ls043t1le01: Use refcounted allocation in place of devm_kzalloc()
+      drm/panel/samsung-s6e63m0: Use refcounted allocation in place of devm_kzalloc()
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 4bfa926b6a0850c3c459bcba28129c559d50a7cf..63bf3ccc11124a70efb09782b57970b274d80d49 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -333,3 +333,5 @@ x1p42100-asus-zenbook-a14-el2-dtbs	:= x1p42100-asus-zenbook-a14.dtb x1-el2.dtbo
- dtb-$(CONFIG_ARCH_QCOM)	+= x1p42100-asus-zenbook-a14.dtb x1p42100-asus-zenbook-a14-el2.dtb
- x1p42100-crd-el2-dtbs	:= x1p42100-crd.dtb x1-el2.dtbo
- dtb-$(CONFIG_ARCH_QCOM)	+= x1p42100-crd.dtb x1p42100-crd-el2.dtb
-+x1p42100-hp-omnibook-x14-el2-dtbs := x1p42100-hp-omnibook-x14.dtb x1-el2.dtbo
-+dtb-$(CONFIG_ARCH_QCOM)	+= x1p42100-hp-omnibook-x14.dtb x1p42100-hp-omnibook-x14-el2.dtb
-diff --git a/arch/arm64/boot/dts/qcom/x1p42100-hp-omnibook-x14.dts b/arch/arm64/boot/dts/qcom/x1p42100-hp-omnibook-x14.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..4ec975f9acec30dc8a2383a4c6c15c3e1ee754e1
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/x1p42100-hp-omnibook-x14.dts
-@@ -0,0 +1,36 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+/dts-v1/;
-+
-+#include "x1p42100.dtsi"
-+#include "x1e80100-pmics.dtsi"
-+#include "x1-hp-omnibook-x14.dtsi"
-+/delete-node/ &pmc8380_6;
-+/delete-node/ &pmc8380_6_thermal;
-+
-+/ {
-+	model = "HP Omnibook X 14-fe1";
-+	compatible = "hp,omnibook-x14-fe1", "qcom,x1p42100";
-+	chassis-type = "laptop";
-+};
-+
-+&gpu_zap_shader {
-+	firmware-name = "qcom/x1p42100/hp/omnibook-x14/qcdxkmsucpurwa.mbn";
-+};
-+
-+&remoteproc_adsp {
-+	firmware-name = "qcom/x1p42100/hp/omnibook-x14/qcadsp8380.mbn",
-+			"qcom/x1p42100/hp/omnibook-x14/adsp_dtbs.elf";
-+
-+	status = "okay";
-+};
-+
-+&remoteproc_cdsp {
-+	firmware-name = "qcom/x1p42100/hp/omnibook-x14/qccdsp8380.mbn",
-+			"qcom/x1p42100/hp/omnibook-x14/cdsp_dtbs.elf";
-+
-+	status = "okay";
-+};
+ drivers/gpu/drm/panel/panel-samsung-s6e63m0.c       | 14 +++++++-------
+ drivers/gpu/drm/panel/panel-sharp-ls043t1le01.c     | 12 ++++++------
+ drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c | 12 ++++++------
+ drivers/gpu/drm/panel/panel-tdo-tl070wsh30.c        | 13 ++++++-------
+ drivers/gpu/drm/panel/panel-truly-nt35597.c         | 10 +++++-----
+ drivers/gpu/drm/panel/panel-visionox-g2647fb105.c   | 10 +++++-----
+ 6 files changed, 35 insertions(+), 36 deletions(-)
+---
+base-commit: 482c7e296edc0f594e8869a789a40be53c49bd6a
+change-id: 20250707-b4-simple-panel-api-convert-july-aac1fbe82b28
 
+Best regards,
 -- 
-2.48.1
-
+Anusha Srivatsa <asrivats@redhat.com>
 
 
