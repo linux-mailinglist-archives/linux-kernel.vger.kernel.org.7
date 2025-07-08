@@ -1,103 +1,112 @@
-Return-Path: <linux-kernel+bounces-720720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE21DAFBFAD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:12:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59BB8AFBFAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D09321AA3841
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:12:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 869E43B6EEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E525383;
-	Tue,  8 Jul 2025 01:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86621E47A5;
+	Tue,  8 Jul 2025 01:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="FM/sP0YU"
-Received: from r3-11.sinamail.sina.com.cn (r3-11.sinamail.sina.com.cn [202.108.3.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ucErcMOW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03211CEAC2
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 01:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E7535893;
+	Tue,  8 Jul 2025 01:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751937129; cv=none; b=BVhIq2FCuV1vFev5onEkEomdp25dVZbvVVS75d2P5QTKlOdrkC7jn8iUvogM8zH5CMML+huFFcBsdYqbEO8kudgL9p4RS3Ocy9tmf2DsqxfYFOY2PfUn04qVAlI8ICAZraqVPsFDAJVqQ2MsdVDLcP5poJbpzXKwn3lLmHgIVgE=
+	t=1751937210; cv=none; b=eyq11UA87rIOJv/jiQiTYfm2kxpgMQh2FS0SpyHo7wNJny08KZ16umElshyulNymJBsFeqevjzBY/YjVXPe/J0Za/r2CC20EMxQDznZ6uJeZV+JJHWEaN3peHI9YQZdwJ5XKZxVxnxv/LV2vXjLDWHO2mOvbNQ07+V/DIvEL9bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751937129; c=relaxed/simple;
-	bh=LxX0jf8sh8Yz/E6kIHKZeW2E/bEnRuwGJwzuq5FgUWw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cm55D54Q4IRLlcUcv+Zd012JyjsxvOiaw1ouCxmtm/+EtSeSOh6BRZ/CTziEOD1WKLMh3zlMEc0RPI9xlgy5xcyj5JnJn+Y6G0kCNLuhOb6cf4hzlaLhD+JMZSZp8swD7sMp/35KhHC6tMDwTUFzn6sMTWp7Ll2nC48CnVHNC8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=FM/sP0YU; arc=none smtp.client-ip=202.108.3.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1751937125;
-	bh=CIS4JY81OPJ4Pb7RMZw4G/MWhkUGLgSljkUbe1geWkc=;
-	h=From:Subject:Date:Message-ID;
-	b=FM/sP0YUixIvsAz47ydebWz/eRXqkf1qL6KNg1n9g+cCDfJ9D9WS9jbrbOjgI9QhS
-	 LNN0/sGis7dJILIJXZ5ItPRCj4z2lTUWE3HVE0dO17DLxMS87S48OlBke82YAB8S3f
-	 VTR6eosIKBes6lwM2JYfC8zErbGpJHlISQlUdMVs=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.34) with ESMTP
-	id 686C705A000018C6; Tue, 8 Jul 2025 09:11:55 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 8780886292077
-X-SMAIL-UIID: 4395FDE9C53A4B20B460B269595D449A-20250708-091155-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+eec47f88bae8951c6afd@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [kernel?] INFO: trying to register non-static key in waveform_detach
-Date: Tue,  8 Jul 2025 09:11:43 +0800
-Message-ID: <20250708011144.2840-1-hdanton@sina.com>
-In-Reply-To: <686bf660.a70a0220.29fe6c.0b10.GAE@google.com>
-References: 
+	s=arc-20240116; t=1751937210; c=relaxed/simple;
+	bh=iPodmZohmSa31e+By01I1tCZZleFo6T1wFvi9no0O2g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gfYMqsGe98WnynzBLFz8zHxK1V7ZOcNKQqSj8Gc1X9SS9S25U4QUDTHOLrVeTSWrAa99n30lhNDZ8WkSLe/nOgGhLtv+EPE+eGWYjNF31+vFfDQs2Y+AlQ7Bvr8L0Len/l1ERxUwOmAWTE4pgwEkvzuRGpbBcEIUGRPeIv6UpMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ucErcMOW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A46F5C4AF09;
+	Tue,  8 Jul 2025 01:13:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751937209;
+	bh=iPodmZohmSa31e+By01I1tCZZleFo6T1wFvi9no0O2g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ucErcMOWnScg0VJtBHtMIuIwnc4gOBW3HGDeqvukg4nA1IZNaGGPFoo5j2IzLE5d7
+	 A5RCasoCOF1kpnM39cMYE1A112pn+BdrKaWSD9UQ5/zbOBy4UjpJcAoiP7ML8RHFUR
+	 SqN0Nc5Z0RbOXylJcPiGm22m4HcMeKvYewOMdNCvl4IooVRRZwT3xKUR5aQn6iZ0wk
+	 riZnsbHsyP3UH5z3ItHjfi1q9Sn9/HcwFKoljkJBCgiY3vpP8Yma1O//BuBbx366Yw
+	 GQbUB3otL04evcUdkGdGFDG/bALGNDUrYRFKFlepZCS1QjaXKVvnMbpaLTDucIdeD9
+	 YNitdUsp4gdQw==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-32ce1b2188dso36355511fa.3;
+        Mon, 07 Jul 2025 18:13:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX4v6dxR+tnbv9eyebImhq+K8Wzlro3GInbWSZl1phfNogl2iKjv3e0UdjaOez4ovBYZd7jpIDFU9ZX7Rwf@vger.kernel.org, AJvYcCXmFTXE1Kbd8phDPUVjX8UWDysIFWD9YSbu5GgODWThI3w7RlYiv4tk2aEKAsSpd0S1nNioQ2wfiEQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEVlnbb6LCQtT8A/DPS+Bhygz7qNmDXmuPqXjvA4LcDy88fjx5
+	QB0aJgPBa/4X20wixNwmPpoCph4k/pcFr91s33rEFUBAGF8hXHEIpgjO5wSJbZLEEMILtVtrYGk
+	WdOh7jMX0kOsbRpB9PbtOFiQykKjhegI=
+X-Google-Smtp-Source: AGHT+IHfCFdtnG1WPE1YHD1I9AO09IXZjLeoSWqh/sTSdfozG/IHbenZmNc+ALg/MxWLMeyzI2SRRpUrdsXlwPkt6P4=
+X-Received: by 2002:a05:651c:41c9:b0:32e:deb2:f75 with SMTP id
+ 38308e7fff4ca-32f39ad0a8dmr1664961fa.23.1751937207992; Mon, 07 Jul 2025
+ 18:13:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250707-arm64_vmap-v1-0-8de98ca0f91c@debian.org>
+In-Reply-To: <20250707-arm64_vmap-v1-0-8de98ca0f91c@debian.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 8 Jul 2025 11:13:16 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXEjgFarhn4FNOMfCfrh1_DR9L-MNZBiZq83pg2i=RE08A@mail.gmail.com>
+X-Gm-Features: Ac12FXy70wEa8uRpKo6gT5MueTy0Q2ZIgEQp_8wVncqO7RC_E0zDip1k6PBM92Q
+Message-ID: <CAMj1kXEjgFarhn4FNOMfCfrh1_DR9L-MNZBiZq83pg2i=RE08A@mail.gmail.com>
+Subject: Re: [PATCH 0/8] arm64: set VMAP_STACK by default
+To: Breno Leitao <leitao@debian.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-efi@vger.kernel.org, leo.yan@arm.com, kernel-team@meta.com, 
+	mark.rutland@arm.com
+Content-Type: text/plain; charset="UTF-8"
 
-> Date: Mon, 07 Jul 2025 09:31:28 -0700
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    4c06e63b9203 Merge tag 'for-6.16-rc4-tag' of git://git.ker..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16528f70580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b29b1a0d7330d4a8
-> dashboard link: https://syzkaller.appspot.com/bug?extid=eec47f88bae8951c6afd
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a66c8c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11528f70580000
+On Tue, 8 Jul 2025 at 02:01, Breno Leitao <leitao@debian.org> wrote:
+>
+> Hi all,
+>
+> This patchset select VMAP_STACK on arm64 by default, and cleans up the
+> code by removing all associated CONFIG_VMAP_STACK conditionals.
+>
+> This is a suggestion from Will Deacon from another discussion[1].
+>
+> With VMAP_STACK now always enabled on arm64, the code can be
+> significantly simplified, reducing complexity and potential for
+> misconfiguration.
+>
+> Overview of Changes
+>
+>     * Remove all #ifdef CONFIG_VMAP_STACK and related runtime checks
+>       throughout the architecture codebase.
+>     * Replace runtime checks with build-time assertions where
+>       appropriate.
+>
+> Link: https://lore.kernel.org/all/aGfYL8eXjTA9puQr@willie-the-truck/ [1]
+>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> ---
+> Breno Leitao (8):
+>       arm64: Enable VMAP_STACK support
+>       arm64: efi: Remove CONFIG_VMAP_STACK check
+>       arm64: Remove CONFIG_VMAP_STACK conditionals from THREAD_SHIFT and THREAD_ALIGN
+>       arm64: remove CONFIG_VMAP_STACK conditionals from irq stack setup
+>       arm64: remove CONFIG_VMAP_STACK conditionals from traps overflow stack
+>       arm64: remove CONFIG_VMAP_STACK checks from stacktrace overflow logic
+>       arm64: remove CONFIG_VMAP_STACK checks from SDEI stack handling
+>       arm64: remove CONFIG_VMAP_STACK checks from entry code
+>
 
-#syz test
+For the series,
 
---- x/drivers/comedi/drivers.c
-+++ y/drivers/comedi/drivers.c
-@@ -994,10 +994,13 @@ int comedi_device_attach(struct comedi_d
- 	dev->board_name = dev->board_ptr ? *(const char **)dev->board_ptr
- 					 : dev->driver->driver_name;
- 	ret = driv->attach(dev, it);
--	if (ret >= 0)
-+	if (ret >= 0) {
- 		ret = comedi_device_postconfig(dev);
--	if (ret < 0) {
--		comedi_device_detach(dev);
-+		if (ret < 0) {
-+			comedi_device_detach(dev);
-+			module_put(driv->module);
-+		}
-+	} else {
- 		module_put(driv->module);
- 	}
- 	/* On success, the driver module count has been incremented. */
---
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
 
