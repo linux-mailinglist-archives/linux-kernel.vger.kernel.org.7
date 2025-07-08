@@ -1,635 +1,153 @@
-Return-Path: <linux-kernel+bounces-721418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C21A4AFC8F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:54:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54874AFC8F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 506D4188716B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:54:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76D433A220D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D392DA74D;
-	Tue,  8 Jul 2025 10:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4635A2D9EC9;
+	Tue,  8 Jul 2025 10:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/70UywE"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XGyi8GX/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74942D97BA;
-	Tue,  8 Jul 2025 10:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5992D9ECF
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 10:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751971984; cv=none; b=EhNI6OZvQvfcwySJp2vsLZj1GRzFGQRFSb7fShz7XZ01e4OMnS0k+x41e9DWZqfbDCVz4E5P6dwNC2O3lye240Or35qqYnTlK30YRIOB/WpGCdtTuqwIlXg2tiOi2rLnl34gPo0fm+VBp8cJ2SD4MLLN3fegBQdN0JOnvO29VMU=
+	t=1751971985; cv=none; b=fdlPjge8ax5dV/YPGwzeG8IuIEpNhYbyA6tiXSGTOWEheqos6vy4/v/BxNEsNa/ffY+ehxWUX3PXRrWZB0v9+VTuKDSo7+yXMsFRSJ5jpegJUoS58nywMfOnvlDvVzELlVwpDob6RqYl1NZCmjTGEmCiQZ/HkGcH2qOCWl+Guso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751971984; c=relaxed/simple;
-	bh=4os34tukUSCcoB9zTgeHWBJhPJD9mgXMNpSqiP6eJyM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bt4XuREyWHtER98ufSMGINIU1gleUOQ9pLxb6weLOBvqLTCXsvvvdiQk2h3rBstorODSl8ppCQentXaFt8yUn+WwVZ33/kCPjZYmAsZUxEhg+aqi5nLTaJ2KR27QQRZKzh7RcnQvV3Mi46rvajshoSiiyxluDC+NKlqjoLzx3j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/70UywE; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-453634d8609so28543035e9.3;
-        Tue, 08 Jul 2025 03:53:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751971980; x=1752576780; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C6HxebNTtnWCflsD0iD9yhWDvkU41a99jL+L8u3pzNA=;
-        b=a/70UywESU3uV52VxnBcw9rUPUkIVZ6zSpKVcNoU1Uh8SSSqARWaCRxlkXzsdhTTpv
-         0rNvqBJTbO7UZMIvoB/W1LiIF0V9I0y6lP4JlsrmncmxeIdw5qfA00QRcVVftJQO8G/r
-         5CazeZ1vqSC1fIgV2400neEFTiGjFpR7BSvR+4XMmR7s+IBqXbFBwvY9vUpUzZAT0c4b
-         ajXOinVkjTbfJkdTnOg1A2fnoGXia5cKCmKdhNm+FwVBeyuk0iU47ZoRq2EZa0laIt/8
-         L7+E6946Y+9BgEV5k6IUFrrfksxKShDA8MBtdoGeNgvl1MbMQaPn10UwLuevNXvz8P/W
-         J2XA==
+	s=arc-20240116; t=1751971985; c=relaxed/simple;
+	bh=1un7ouFwyBTSYIMY4zpatIXNYHrEz24iVPhqyQXJbbc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dnsPjOxQPN/fFsM0X6EV5Qs9m+j5ZG6rktIE/wKFpgtB0dZjW5gvZgx3H+DdBverhVmmRB4DVTBhjnPNnORw3m2AENAyHdhFwt2nhsyPRV9atIVdsh5AqRlfrfDSkCLwWtCrM8Xt1wJ6LaiCiUweKoHu5ZW87WfuKop8OmiW/NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XGyi8GX/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751971981;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=315fIenJWHN1D0z1wGXcALO7wPGrPSPVrNC7//PcDEU=;
+	b=XGyi8GX/BAF+tOmfHqd+RUxlCdsxzRVbD05HGxZ4kjHqn77OVe3cH1oDFRK3iEp19O6miC
+	2iYcWQ5gEJbkXmhZcZg5rxFWU3tGzHXpC+KHzOz5S7HI46bCAzBuyNEOWIDBOcmME0ehI0
+	4hpTPjKK1AOxhEM86Axbj1IeOsakvVs=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-562-MwWP6XeiOK2gDkoLEBegIw-1; Tue, 08 Jul 2025 06:53:00 -0400
+X-MC-Unique: MwWP6XeiOK2gDkoLEBegIw-1
+X-Mimecast-MFC-AGG-ID: MwWP6XeiOK2gDkoLEBegIw_1751971980
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4a42d650185so55372561cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 03:53:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1751971980; x=1752576780;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C6HxebNTtnWCflsD0iD9yhWDvkU41a99jL+L8u3pzNA=;
-        b=RtAvxjsEyo7DQSoSLOtMzO+yyKsU97WN2e7w0uORfYgPCJu8P7+mGDUNbvaM5kGx1A
-         lTZuDu7VIdgB52/ddKEIihIQr+fjgEItXv4ZQ6obihEcsnHOoC0dd/daZvXhoi1rSFmQ
-         5Tcjh1pKMo+kDBA2QMsnsEax93bixz70+JoRIhPuzGxgDRJH2MIISI4Xj+a7nM9ENhbC
-         BvWqWejBf7tkZYba8SXNcl8SGVZVHQZTsKO+i91HgoiByMZUzWuX6W/WxjjBW11JeL8q
-         kch9fGCmkOa0dGlnyt+lwFwOce2si7ZzylhRGaho1lLCavbatF9vhgmWgGgowIJ3AgR5
-         S1+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVansYrNUltEAef1ZuJFsLcTs9VpCsJVVNlJNcgH3gry4D7k3qxGWqaL40BTD8H+GE1ByYzMi6qITNxorU=@vger.kernel.org, AJvYcCVsf66XYRa7G70TkFx0SQikoHWagx885w1cJ4u6Zz9tgcr9dyAIPyjbD61lEAkF864ZOre4AiTg3I8+uvZ6@vger.kernel.org, AJvYcCXgfvGI/+YVJr3t7+clqhTmJaz8yC5IEiXL0w65R0uf/WkIxYde3+x54aD1K8Rr4aRKYG7Y68OKs3s0@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLDYZg0OkL4wQZKD/SBd17LFoWU9hK3c7wKYa/hMqwqsdIvWFD
-	VKtMzM7yJ60jdM8wWLM3b29ITf9w5BPGlUwTcND3Osbv4L/Gm7p/QDLd
-X-Gm-Gg: ASbGncuUMNPu9a+Wnux4bYZf9OsOzxk7ju3uDkkFjVuYJFJizREQnzrCUsTad5W6zK3
-	83ynHQS3KD+mNhqwZWYdZIscmZpDDOg0SGB8xsMToy4lDHh0UBwILJ7iCMZhn/Q1QEKD9AVBqhq
-	Vq7xMmwuv6gQ78ex8M5mGnWcsmzrZXItLlRinZxiAkjPNgnbxscKkuFLfO23daLagzvwo/a0qlQ
-	1qLiJ6jYClrJDuqq2tp/vM9+XbtLvok7q2IFLZVLcv3dPJnurhirGQWtnckCO4s8b0bB+5fEFQt
-	Hax5dOzI7yF3fAWhFPi+A+h28beuXm46bkn8pdkOk9/Qf+5z2AnmkUsvUPSAIIQ880SfGe0hI5G
-	WP48xng6q38lhgRJp9lL7F5JqjafkSOecRJgjKsMRc5+HW433Opk6Qg==
-X-Google-Smtp-Source: AGHT+IEG2Plv1gj+rljPJxC0ndbx2NSe3k9EdRhITIzAe8/bum514d5tkUca/o/OwiFJ6ZI1qKnPnA==
-X-Received: by 2002:a05:600c:64ca:b0:43d:fa58:81d3 with SMTP id 5b1f17b1804b1-454cd5461a7mr20244955e9.32.1751971979877;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=315fIenJWHN1D0z1wGXcALO7wPGrPSPVrNC7//PcDEU=;
+        b=BfWf9q/dXGMroVv4VRG2R9NaQY79xRRWxVzUKraqL245qdDz6JgiP6itd0REtHS1S9
+         CGF0PTLhI1pz32PTnoweLUQDY7R5N9CBXJKUmX7z6sBwYg34C9oDeGt4y5jjzrp+WPbY
+         OxXewyQ5RwLeHwZeSrUKc2iloThnMpjkRdwubUEmm/cVEC4a+varNwt8cfuoqLQlWL82
+         yGwWJJV1a4TUMZFSiaPrKQfphLZeSccdsvpZV2d5iU8PUTTwuQt63If5kBwOfUk9GQAM
+         /NuCsOATTxZtyJJpLntT5vTTlLLKrmDrrS+XO/oOuE9HllLBf7BknFYkbdpSeNwqitmK
+         m4KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKPAz+QjhU8p/IH/EUga4c4nJGRUtCJS+3P5NTrwU5Srzc50TLx5gQfJzVc34465UUIv8/HfqnN6H2rlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKnNYN/CXhiMC8I3WbaOih1ehX7mILSwzQnXec70VRc+mrA7xK
+	+Y1CG98ThH2BnBOLUBXqWeO/mDU/BFMn9jt/fyHSYQc9eyHxmGP97q1KTRtlSygeDwcJ8eGkH9/
+	I+2v/PregFHZAqwJd7H/vaiSv7JzM7hqZvzJY1zVrhyxMVXT2E9revIeCo6ODusZBvw==
+X-Gm-Gg: ASbGnct2W1JdgkEm2Yo3Glx6CGj2kiEluxdWEAUj5hlxoyj4iSlhE4h7S5XETF+8lDb
+	pBZNDr9G48YpKVkhvFsdB5Pq11sePClNarxQppjPx3RNsBekMMz3dzWdgwi0x2hXcWcFbvqT33c
+	ExVM8gxGqwLchv6ClvQKYQFE3E8SCszVzYK2oo9pqUmPnHCyA3RDoxiC/+DDtz/nrHYmhoRqN04
+	GLLczASFxi4aQyPgH99QIPLdMzdg9rrMH4+yO/tv85TAse6IIje7cDJKcmSxMQVQXCxHxx6zbPa
+	4XOuJ/wSkcdXGU8WXA2TzBJbGBPH
+X-Received: by 2002:ac8:7f95:0:b0:4a9:ae5a:e8a6 with SMTP id d75a77b69052e-4a9ae5afc23mr175966911cf.47.1751971979584;
         Tue, 08 Jul 2025 03:52:59 -0700 (PDT)
-Received: from localhost (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454cd4938ffsm18185685e9.21.2025.07.08.03.52.58
+X-Google-Smtp-Source: AGHT+IFzvc7u8j+WEd/fQJxoq873TigcJMGy49ozcWVyaqRVCjfg4qBqi9tMZtBOChGJAAMzAMDFrQ==
+X-Received: by 2002:ac8:7f95:0:b0:4a9:ae5a:e8a6 with SMTP id d75a77b69052e-4a9ae5afc23mr175966551cf.47.1751971979134;
+        Tue, 08 Jul 2025 03:52:59 -0700 (PDT)
+Received: from sgarzare-redhat ([193.207.147.103])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a994aa85edsm77449631cf.74.2025.07.08.03.52.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 08 Jul 2025 03:52:58 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] memory: tegra: Add Tegra264 MC and EMC support
-Date: Tue,  8 Jul 2025 12:52:45 +0200
-Message-ID: <20250708105245.1516143-5-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250708105245.1516143-1-thierry.reding@gmail.com>
-References: <20250708105245.1516143-1-thierry.reding@gmail.com>
+Date: Tue, 8 Jul 2025 12:52:51 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Xuewei Niu <niuxuewei.nxw@antgroup.com>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, niuxuewei97@gmail.com
+Subject: Re: [PATCH net-next v6 2/4] vsock: Add support for SIOCINQ ioctl
+Message-ID: <lh5vti5lmcxddhnfsz5pjhu7oepcbxcflqkyhlpwnwqzbe7tku@yw7bwfgafcby>
+References: <20250708-siocinq-v6-0-3775f9a9e359@antgroup.com>
+ <20250708-siocinq-v6-2-3775f9a9e359@antgroup.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250708-siocinq-v6-2-3775f9a9e359@antgroup.com>
 
-From: Sumit Gupta <sumitg@nvidia.com>
+On Tue, Jul 08, 2025 at 02:36:12PM +0800, Xuewei Niu wrote:
+>Add support for SIOCINQ ioctl, indicating the length of bytes unread in the
+>socket. The value is obtained from `vsock_stream_has_data()`.
+>
+>Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
+>---
+> net/vmw_vsock/af_vsock.c | 22 ++++++++++++++++++++++
+> 1 file changed, 22 insertions(+)
 
-Add support to enable Memory Controller (MC) and External Memory
-Controller (EMC) drivers for Tegra264. The nodes for MC and EMC are
-mostly the same as Tegra234 but differ in number of channels and
-interrupt numbers.
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
-The patch also adds the bandwidth manager definitions required for
-Tegra264 and uses them to populate the memory client table. All of
-these are needed to properly enable memory interconnect (ICC) support.
-
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/memory/tegra/Makefile         |   2 +
- drivers/memory/tegra/mc.c             |   5 +-
- drivers/memory/tegra/mc.h             |   9 +-
- drivers/memory/tegra/tegra186-emc.c   |   5 +-
- drivers/memory/tegra/tegra186.c       |  17 +-
- drivers/memory/tegra/tegra264-bwmgr.h |  50 ++++
- drivers/memory/tegra/tegra264.c       | 313 ++++++++++++++++++++++++++
- 7 files changed, 395 insertions(+), 6 deletions(-)
- create mode 100644 drivers/memory/tegra/tegra264-bwmgr.h
- create mode 100644 drivers/memory/tegra/tegra264.c
-
-diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
-index 0750847dac3c..6334601e6120 100644
---- a/drivers/memory/tegra/Makefile
-+++ b/drivers/memory/tegra/Makefile
-@@ -10,6 +10,7 @@ tegra-mc-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210.o
- tegra-mc-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186.o
- tegra-mc-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra186.o tegra194.o
- tegra-mc-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra186.o tegra234.o
-+tegra-mc-$(CONFIG_ARCH_TEGRA_264_SOC) += tegra186.o tegra264.o
- 
- obj-$(CONFIG_TEGRA_MC) += tegra-mc.o
- 
-@@ -21,5 +22,6 @@ obj-$(CONFIG_TEGRA210_EMC) += tegra210-emc.o
- obj-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186-emc.o
- obj-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra186-emc.o
- obj-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra186-emc.o
-+obj-$(CONFIG_ARCH_TEGRA_264_SOC) += tegra186-emc.o
- 
- tegra210-emc-y := tegra210-emc-core.o tegra210-emc-cc-r21021.o
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index bd5b58f1fd42..6edb210287dc 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) 2014 NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (C) 2014-2025 NVIDIA CORPORATION.  All rights reserved.
-  */
- 
- #include <linux/clk.h>
-@@ -48,6 +48,9 @@ static const struct of_device_id tegra_mc_of_match[] = {
- #endif
- #ifdef CONFIG_ARCH_TEGRA_234_SOC
- 	{ .compatible = "nvidia,tegra234-mc", .data = &tegra234_mc_soc },
-+#endif
-+#ifdef CONFIG_ARCH_TEGRA_264_SOC
-+	{ .compatible = "nvidia,tegra264-mc", .data = &tegra264_mc_soc },
- #endif
- 	{ /* sentinel */ }
- };
-diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
-index c3f6655bec60..1d97cf4d3a94 100644
---- a/drivers/memory/tegra/mc.h
-+++ b/drivers/memory/tegra/mc.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * Copyright (C) 2014 NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (C) 2014-2025 NVIDIA CORPORATION.  All rights reserved.
-  */
- 
- #ifndef MEMORY_TEGRA_MC_H
-@@ -182,6 +182,10 @@ extern const struct tegra_mc_soc tegra194_mc_soc;
- extern const struct tegra_mc_soc tegra234_mc_soc;
- #endif
- 
-+#ifdef CONFIG_ARCH_TEGRA_264_SOC
-+extern const struct tegra_mc_soc tegra264_mc_soc;
-+#endif
-+
- #if defined(CONFIG_ARCH_TEGRA_3x_SOC) || \
-     defined(CONFIG_ARCH_TEGRA_114_SOC) || \
-     defined(CONFIG_ARCH_TEGRA_124_SOC) || \
-@@ -193,7 +197,8 @@ extern const struct tegra_mc_ops tegra30_mc_ops;
- 
- #if defined(CONFIG_ARCH_TEGRA_186_SOC) || \
-     defined(CONFIG_ARCH_TEGRA_194_SOC) || \
--    defined(CONFIG_ARCH_TEGRA_234_SOC)
-+    defined(CONFIG_ARCH_TEGRA_234_SOC) || \
-+    defined(CONFIG_ARCH_TEGRA_264_SOC)
- extern const struct tegra_mc_ops tegra186_mc_ops;
- #endif
- 
-diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
-index bc807d7fcd4e..d6cd90c7ad53 100644
---- a/drivers/memory/tegra/tegra186-emc.c
-+++ b/drivers/memory/tegra/tegra186-emc.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) 2019 NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (C) 2019-2025 NVIDIA CORPORATION.  All rights reserved.
-  */
- 
- #include <linux/clk.h>
-@@ -393,6 +393,9 @@ static const struct of_device_id tegra186_emc_of_match[] = {
- #endif
- #if defined(CONFIG_ARCH_TEGRA_234_SOC)
- 	{ .compatible = "nvidia,tegra234-emc" },
-+#endif
-+#if defined(CONFIG_ARCH_TEGRA_264_SOC)
-+	{ .compatible = "nvidia,tegra264-emc" },
- #endif
- 	{ /* sentinel */ }
- };
-diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
-index 1b3183951bfe..aee11457bf8e 100644
---- a/drivers/memory/tegra/tegra186.c
-+++ b/drivers/memory/tegra/tegra186.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) 2017-2021 NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (C) 2017-2025 NVIDIA CORPORATION.  All rights reserved.
-  */
- 
- #include <linux/io.h>
-@@ -26,11 +26,24 @@
- static int tegra186_mc_probe(struct tegra_mc *mc)
- {
- 	struct platform_device *pdev = to_platform_device(mc->dev);
-+	struct resource *res;
- 	unsigned int i;
- 	char name[8];
- 	int err;
- 
--	mc->bcast_ch_regs = devm_platform_ioremap_resource_byname(pdev, "broadcast");
-+	/*
-+	 * From Tegra264, the SID region is not present in MC node and BROADCAST is first.
-+	 * The common function 'tegra_mc_probe()' already maps first region entry from DT.
-+	 * Check if the SID region is present in DT then map BROADCAST. Otherwise, consider
-+	 * the first entry mapped in mc probe as the BROADCAST region. This is done to avoid
-+	 * mapping the region twice when SID is not present and keep backward compatibility.
-+	 */
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sid");
-+	if (res)
-+		mc->bcast_ch_regs = devm_platform_ioremap_resource_byname(pdev, "broadcast");
-+	else
-+		mc->bcast_ch_regs = mc->regs;
-+
- 	if (IS_ERR(mc->bcast_ch_regs)) {
- 		if (PTR_ERR(mc->bcast_ch_regs) == -EINVAL) {
- 			dev_warn(&pdev->dev,
-diff --git a/drivers/memory/tegra/tegra264-bwmgr.h b/drivers/memory/tegra/tegra264-bwmgr.h
-new file mode 100644
-index 000000000000..93bfceaac9c8
---- /dev/null
-+++ b/drivers/memory/tegra/tegra264-bwmgr.h
-@@ -0,0 +1,50 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/* Copyright (C) 2025 NVIDIA CORPORATION.  All rights reserved. */
-+
-+#ifndef MEMORY_TEGRA_TEGRA264_BWMGR_H
-+#define MEMORY_TEGRA_TEGRA264_BWMGR_H
-+
-+#define TEGRA264_BWMGR_ICC_PRIMARY	1
-+#define TEGRA264_BWMGR_DEBUG		2
-+#define TEGRA264_BWMGR_CPU_CLUSTER0	3
-+#define TEGRA264_BWMGR_CPU_CLUSTER1	4
-+#define TEGRA264_BWMGR_CPU_CLUSTER2	5
-+#define TEGRA264_BWMGR_CPU_CLUSTER3	6
-+#define TEGRA264_BWMGR_CPU_CLUSTER4	7
-+#define TEGRA264_BWMGR_CPU_CLUSTER5	8
-+#define TEGRA264_BWMGR_CPU_CLUSTER6	9
-+#define TEGRA264_BWMGR_CACTMON		10
-+#define TEGRA264_BWMGR_DISPLAY		11
-+#define TEGRA264_BWMGR_VI		12
-+#define TEGRA264_BWMGR_APE		13
-+#define TEGRA264_BWMGR_VIFAL		14
-+#define TEGRA264_BWMGR_GPU		15
-+#define TEGRA264_BWMGR_EQOS		16
-+#define TEGRA264_BWMGR_PCIE_0		17
-+#define TEGRA264_BWMGR_PCIE_1		18
-+#define TEGRA264_BWMGR_PCIE_2		19
-+#define TEGRA264_BWMGR_PCIE_3		20
-+#define TEGRA264_BWMGR_PCIE_4		21
-+#define TEGRA264_BWMGR_PCIE_5		22
-+#define TEGRA264_BWMGR_SDMMC_1		23
-+#define TEGRA264_BWMGR_SDMMC_2		24
-+#define TEGRA264_BWMGR_NVDEC		25
-+#define TEGRA264_BWMGR_NVENC		26
-+#define TEGRA264_BWMGR_NVJPG_0		27
-+#define TEGRA264_BWMGR_NVJPG_1		28
-+#define TEGRA264_BWMGR_OFAA		29
-+#define TEGRA264_BWMGR_XUSB_HOST	30
-+#define TEGRA264_BWMGR_XUSB_DEV		31
-+#define TEGRA264_BWMGR_TSEC		32
-+#define TEGRA264_BWMGR_VIC		33
-+#define TEGRA264_BWMGR_APEDMA		34
-+#define TEGRA264_BWMGR_SE		35
-+#define TEGRA264_BWMGR_ISP		36
-+#define TEGRA264_BWMGR_HDA		37
-+#define TEGRA264_BWMGR_VI2FAL		38
-+#define TEGRA264_BWMGR_VI2		39
-+#define TEGRA264_BWMGR_RCE		40
-+#define TEGRA264_BWMGR_PVA		41
-+#define TEGRA264_BWMGR_NVPMODEL		42
-+
-+#endif
-diff --git a/drivers/memory/tegra/tegra264.c b/drivers/memory/tegra/tegra264.c
-new file mode 100644
-index 000000000000..5203e6c11372
---- /dev/null
-+++ b/drivers/memory/tegra/tegra264.c
-@@ -0,0 +1,313 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2025, NVIDIA CORPORATION.  All rights reserved.
-+ */
-+
-+#include <dt-bindings/memory/nvidia,tegra264.h>
-+
-+#include <linux/interconnect.h>
-+#include <linux/of_device.h>
-+#include <linux/tegra-icc.h>
-+
-+#include <soc/tegra/bpmp.h>
-+#include <soc/tegra/mc.h>
-+
-+#include "mc.h"
-+#include "tegra264-bwmgr.h"
-+
-+/*
-+ * MC Client entries are sorted in the increasing order of the
-+ * override and security register offsets.
-+ */
-+static const struct tegra_mc_client tegra264_mc_clients[] = {
-+	{
-+		.id = TEGRA264_MEMORY_CLIENT_HDAR,
-+		.name = "hdar",
-+		.bpmp_id = TEGRA264_BWMGR_HDA,
-+		.type = TEGRA_ICC_ISO_AUDIO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_HDAW,
-+		.name = "hdaw",
-+		.bpmp_id = TEGRA264_BWMGR_HDA,
-+		.type = TEGRA_ICC_ISO_AUDIO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_MGBE0R,
-+		.name = "mgbe0r",
-+		.bpmp_id = TEGRA264_BWMGR_EQOS,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_MGBE0W,
-+		.name = "mgbe0w",
-+		.bpmp_id = TEGRA264_BWMGR_EQOS,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_MGBE1R,
-+		.name = "mgbe1r",
-+		.bpmp_id = TEGRA264_BWMGR_EQOS,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_MGBE1W,
-+		.name = "mgbe1w",
-+		.bpmp_id = TEGRA264_BWMGR_EQOS,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_SDMMC0R,
-+		.name = "sdmmc0r",
-+		.bpmp_id = TEGRA264_BWMGR_SDMMC_1,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_SDMMC0W,
-+		.name = "sdmmc0w",
-+		.bpmp_id = TEGRA264_BWMGR_SDMMC_1,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_VICR,
-+		.name = "vicr",
-+		.bpmp_id = TEGRA264_BWMGR_VIC,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_VICW,
-+		.name = "vicw",
-+		.bpmp_id = TEGRA264_BWMGR_VIC,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_APER,
-+		.name = "aper",
-+		.bpmp_id = TEGRA264_BWMGR_APE,
-+		.type = TEGRA_ICC_ISO_AUDIO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_APEW,
-+		.name = "apew",
-+		.bpmp_id = TEGRA264_BWMGR_APE,
-+		.type = TEGRA_ICC_ISO_AUDIO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_APEDMAR,
-+		.name = "apedmar",
-+		.bpmp_id = TEGRA264_BWMGR_APEDMA,
-+		.type = TEGRA_ICC_ISO_AUDIO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_APEDMAW,
-+		.name = "apedmaw",
-+		.bpmp_id = TEGRA264_BWMGR_APEDMA,
-+		.type = TEGRA_ICC_ISO_AUDIO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_VIFALCONR,
-+		.name = "vifalconr",
-+		.bpmp_id = TEGRA264_BWMGR_VIFAL,
-+		.type = TEGRA_ICC_ISO_VIFAL,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_VIFALCONW,
-+		.name = "vifalconw",
-+		.bpmp_id = TEGRA264_BWMGR_VIFAL,
-+		.type = TEGRA_ICC_ISO_VIFAL,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_RCER,
-+		.name = "rcer",
-+		.bpmp_id = TEGRA264_BWMGR_RCE,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_RCEW,
-+		.name = "rcew",
-+		.bpmp_id = TEGRA264_BWMGR_RCE,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE0W,
-+		.name = "pcie0w",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_0,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE1R,
-+		.name = "pcie1r",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_1,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE1W,
-+		.name = "pcie1w",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_1,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE2AR,
-+		.name = "pcie2ar",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_2,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE2AW,
-+		.name = "pcie2aw",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_2,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE3R,
-+		.name = "pcie3r",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_3,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE3W,
-+		.name = "pcie3w",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_3,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE4R,
-+		.name = "pcie4r",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_4,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE4W,
-+		.name = "pcie4w",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_4,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE5R,
-+		.name = "pcie5r",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_5,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE5W,
-+		.name = "pcie5w",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_5,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_GPUR02MC,
-+		.name = "gpur02mc",
-+		.bpmp_id = TEGRA264_BWMGR_GPU,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_GPUW02MC,
-+		.name = "gpuw02mc",
-+		.bpmp_id = TEGRA264_BWMGR_GPU,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_NVDECSRD2MC,
-+		.name = "nvdecsrd2mc",
-+		.bpmp_id = TEGRA264_BWMGR_NVDEC,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_NVDECSWR2MC,
-+		.name = "nvdecswr2mc",
-+		.bpmp_id = TEGRA264_BWMGR_NVDEC,
-+		.type = TEGRA_ICC_NISO,
-+	},
-+};
-+
-+/*
-+ * tegra264_mc_icc_set() - Pass MC client info to the BPMP-FW
-+ * @src: ICC node for Memory Controller's (MC) Client
-+ * @dst: ICC node for Memory Controller (MC)
-+ *
-+ * Passing the current request info from the MC to the BPMP-FW where
-+ * LA and PTSA registers are accessed and the final EMC freq is set
-+ * based on client_id, type, latency and bandwidth.
-+ * icc_set_bw() makes set_bw calls for both MC and EMC providers in
-+ * sequence. Both the calls are protected by 'mutex_lock(&icc_lock)'.
-+ * So, the data passed won't be updated by concurrent set calls from
-+ * other clients.
-+ */
-+static int tegra264_mc_icc_set(struct icc_node *src, struct icc_node *dst)
-+{
-+	struct tegra_mc *mc = icc_provider_to_tegra_mc(dst->provider);
-+	struct mrq_bwmgr_int_request bwmgr_req = { 0 };
-+	struct mrq_bwmgr_int_response bwmgr_resp = { 0 };
-+	const struct tegra_mc_client *pclient = src->data;
-+	struct tegra_bpmp_message msg;
-+	int ret;
-+
-+	/*
-+	 * Same Src and Dst node will happen during boot from icc_node_add().
-+	 * This can be used to pre-initialize and set bandwidth for all clients
-+	 * before their drivers are loaded. We are skipping this case as for us,
-+	 * the pre-initialization already happened in Bootloader(MB2) and BPMP-FW.
-+	 */
-+	if (src->id == dst->id)
-+		return 0;
-+
-+	if (!mc->bwmgr_mrq_supported)
-+		return 0;
-+
-+	if (!mc->bpmp) {
-+		dev_err(mc->dev, "BPMP reference NULL\n");
-+		return -ENOENT;
-+	}
-+
-+	if (pclient->type == TEGRA_ICC_NISO)
-+		bwmgr_req.bwmgr_calc_set_req.niso_bw = src->avg_bw;
-+	else
-+		bwmgr_req.bwmgr_calc_set_req.iso_bw = src->avg_bw;
-+
-+	bwmgr_req.bwmgr_calc_set_req.client_id = pclient->bpmp_id;
-+
-+	bwmgr_req.cmd = CMD_BWMGR_INT_CALC_AND_SET;
-+	bwmgr_req.bwmgr_calc_set_req.mc_floor = src->peak_bw;
-+	bwmgr_req.bwmgr_calc_set_req.floor_unit = BWMGR_INT_UNIT_KBPS;
-+
-+	memset(&msg, 0, sizeof(msg));
-+	msg.mrq = MRQ_BWMGR_INT;
-+	msg.tx.data = &bwmgr_req;
-+	msg.tx.size = sizeof(bwmgr_req);
-+	msg.rx.data = &bwmgr_resp;
-+	msg.rx.size = sizeof(bwmgr_resp);
-+
-+	ret = tegra_bpmp_transfer(mc->bpmp, &msg);
-+	if (ret < 0) {
-+		dev_err(mc->dev, "BPMP transfer failed: %d\n", ret);
-+		goto error;
-+	}
-+	if (msg.rx.ret < 0) {
-+		pr_err("failed to set bandwidth for %u: %d\n",
-+		       bwmgr_req.bwmgr_calc_set_req.client_id, msg.rx.ret);
-+		ret = -EINVAL;
-+	}
-+
-+error:
-+	return ret;
-+}
-+
-+static int tegra264_mc_icc_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
-+				     u32 peak_bw, u32 *agg_avg, u32 *agg_peak)
-+{
-+	struct icc_provider *p = node->provider;
-+	struct tegra_mc *mc = icc_provider_to_tegra_mc(p);
-+
-+	if (!mc->bwmgr_mrq_supported)
-+		return 0;
-+
-+	*agg_avg += avg_bw;
-+	*agg_peak = max(*agg_peak, peak_bw);
-+
-+	return 0;
-+}
-+
-+static int tegra264_mc_icc_get_init_bw(struct icc_node *node, u32 *avg, u32 *peak)
-+{
-+	*avg = 0;
-+	*peak = 0;
-+
-+	return 0;
-+}
-+
-+static const struct tegra_mc_icc_ops tegra264_mc_icc_ops = {
-+	.xlate = tegra_mc_icc_xlate,
-+	.aggregate = tegra264_mc_icc_aggregate,
-+	.get_bw = tegra264_mc_icc_get_init_bw,
-+	.set = tegra264_mc_icc_set,
-+};
-+
-+const struct tegra_mc_soc tegra264_mc_soc = {
-+	.num_clients = ARRAY_SIZE(tegra264_mc_clients),
-+	.clients = tegra264_mc_clients,
-+	.num_address_bits = 40,
-+	.num_channels = 16,
-+	.client_id_mask = 0x1ff,
-+	.intmask = MC_INT_DECERR_ROUTE_SANITY |
-+		   MC_INT_DECERR_GENERALIZED_CARVEOUT | MC_INT_DECERR_MTS |
-+		   MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
-+		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
-+	.has_addr_hi_reg = true,
-+	.ops = &tegra186_mc_ops,
-+	.icc_ops = &tegra264_mc_icc_ops,
-+	.ch_intmask = 0x0000ff00,
-+	.global_intstatus_channel_shift = 8,
-+	/*
-+	 * Additionally, there are lite carveouts but those are not currently
-+	 * supported.
-+	 */
-+	.num_carveouts = 32,
-+};
--- 
-2.50.0
+>
+>diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+>index 2e7a3034e965db30b6ee295370d866e6d8b1c341..bae6b89bb5fb7dd7a3a378f92097561a98a0c814 100644
+>--- a/net/vmw_vsock/af_vsock.c
+>+++ b/net/vmw_vsock/af_vsock.c
+>@@ -1389,6 +1389,28 @@ static int vsock_do_ioctl(struct socket *sock, unsigned int cmd,
+> 	vsk = vsock_sk(sk);
+>
+> 	switch (cmd) {
+>+	case SIOCINQ: {
+>+		ssize_t n_bytes;
+>+
+>+		if (!vsk->transport) {
+>+			ret = -EOPNOTSUPP;
+>+			break;
+>+		}
+>+
+>+		if (sock_type_connectible(sk->sk_type) &&
+>+		    sk->sk_state == TCP_LISTEN) {
+>+			ret = -EINVAL;
+>+			break;
+>+		}
+>+
+>+		n_bytes = vsock_stream_has_data(vsk);
+>+		if (n_bytes < 0) {
+>+			ret = n_bytes;
+>+			break;
+>+		}
+>+		ret = put_user(n_bytes, arg);
+>+		break;
+>+	}
+> 	case SIOCOUTQ: {
+> 		ssize_t n_bytes;
+>
+>
+>-- 
+>2.34.1
+>
 
 
