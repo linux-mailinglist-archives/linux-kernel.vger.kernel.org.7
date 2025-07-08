@@ -1,106 +1,205 @@
-Return-Path: <linux-kernel+bounces-722360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FFD5AFD8BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:49:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E1B2AFD8BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C3CB1BC81AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:49:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF4AC56561C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C67241103;
-	Tue,  8 Jul 2025 20:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C106D23E336;
+	Tue,  8 Jul 2025 20:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Gqnkh++N"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="c87+sGKB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qc6BtjmG";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1NbQ6u4r";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="G0QoVCRH"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC22F3C01;
-	Tue,  8 Jul 2025 20:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9936F242D63
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 20:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752007732; cv=none; b=XkjFdxknqZGqaI13UbNW0N1PcDGqq8cqk7fROhI6EHn5HWnSlWHdsrDRX3CDO9CNJoKPDjT1xcmhGx3VuO6T5pMoeJE5ZTiai3DY8+4QGXJuw1sOQnKAXIAW3/sVCrzcBfX/eLPD43c8R9BOTZGNk4LkIirYOHaC3LGHAQKTD2I=
+	t=1752007740; cv=none; b=goaOSs2LbbKlpTm1SqYaGxxCdhikRftqX09Sw7TyIC3LfIU9SI/OHZSK4l8YwRzPcuLheAYNtkNzlDz+34gW0yeb5ts7akwM7UHnZU6SVlata/Ck4qpR+dGek6NgtzZmjzR1T4jX0/seZcGS+3rMvQnBAVPo04XBi6ZrWyUdks4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752007732; c=relaxed/simple;
-	bh=ggOq0+nzV05/VSnotq5oUum4/hLESHCJ41Lf6rzFU3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cC92qmb1xwSQhjxZDfmXBN3iRn/Zd0RFh+Iyq8Kn25vy9jvozuCNdMAp3Se1dT44xT7YkqQy6lRZtmSj4BZyP918L/cqW/NXH/znJDIsBMv48Ydbf9+QvI9Y3govED3BM/HIY1IobJQ6FctL+iRdzp+GkuDiGFsvaoCT5f7JEew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Gqnkh++N; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=DZoekFWDQRKYS8E//rmMDVjwcHRmk9UG+oNvcbgcvko=; b=Gqnkh++NdrrEy6eq
-	Z4VZVz+V47pRptvyZxxV/ID/De2WXDpJSTPe46C9TkSgO1qzr6ncjKK1sgriRC0fLFPMmT383TU9b
-	6BAme5M/yoN/Cb70eXFllJIKFdhPIWxNu1e6M33BN3E5mqMe0vPSUwG1IN1S55VzNsViOoAUOGGMG
-	+h3PAZDWJNu3+ik/pLlvR3NVFYUjqAHCXBQ2oIz5bgLw/mOOE0b24PEE5tNCqyOS2MOHBV+Wp1VYH
-	BmTXI9XS8sQnzPjl2H/VFLgYoDUgFNzWyGxuS4SL8XZ+L6j6QjDMVKlXsd+2nbSx1PpUjWd/bg3sP
-	Wj163Y2bE8KsUNAYuw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1uZFEu-00Erpy-0A;
-	Tue, 08 Jul 2025 20:48:32 +0000
-Date: Tue, 8 Jul 2025 20:48:31 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: kraxel@redhat.com, airlied@redhat.com, mripard@kernel.org
-Cc: maarten.lankhorst@linux.intel.com, tzimmermann@suse.de,
-	airlied@gmail.com, simona@ffwll.ch, virtualization@lists.linux.dev,
-	spice-devel@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] drm: qxl: Deadcoding
-Message-ID: <aG2EH86lesn7VZNZ@gallifrey>
-References: <20250413171058.271234-1-linux@treblig.org>
+	s=arc-20240116; t=1752007740; c=relaxed/simple;
+	bh=qm/GpJrttlqtY5GHGfwpxBU5KIRlvv2IFGm/6vaBjMo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FVAkW7TpeMB/2pjHBwdDgTeVcJ7iR1VL98wfW96txXk79IM14UKUlJkhHHlzsrCU5eSYPKhdtnX3jN84Tw127FyAWdnoiKTMXskq5wSw//ILzIKr9Vq8MXqTX1HqF5Ne3ugVLawtVlYvKCy43DkZIq8q6JQCYZch0MzxWK/5g3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=c87+sGKB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qc6BtjmG; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1NbQ6u4r; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=G0QoVCRH; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D11A821167;
+	Tue,  8 Jul 2025 20:48:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1752007734; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rSsadujEFtMorFlXBKn4QXXPoGqR+qQ2MvQ89dlpYSk=;
+	b=c87+sGKBc84puINuO5jttu7pbLK2V+fEcr66dCYfQcQ+IAZCeylXohl9gnguPcnSIuyK0k
+	7vrXGHpRjJvfZ0uYpphXjR+jShOSLXRKS+q/8Ox4YmLt37YkCt5CeA7I25HxvmwpuCo6Dl
+	M9fxjO3IANwNUZpWP/KYkeoLbLcbilI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1752007734;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rSsadujEFtMorFlXBKn4QXXPoGqR+qQ2MvQ89dlpYSk=;
+	b=qc6BtjmGNk0PtJ1kBIxfBRl7QnUJLy/CJ55yJ+2zjc0wEpCZwPFxUmLfWZxGDCQQXUvzsp
+	ISGP0+W54fyMXNDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1752007733; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rSsadujEFtMorFlXBKn4QXXPoGqR+qQ2MvQ89dlpYSk=;
+	b=1NbQ6u4rUEeuXp7o0DzMdMbWHwmwBbRqQG4fSNX6yi6Cu4fBLNJ34F6J8Leax9y3jbuCuP
+	MsewNqi/8CHMNJz0iU5OY+ARvzkYktUBAuXPjulizeBU6IkerG/SyQaeiangd1K6hlbFp2
+	86KC9NRRAS688CL3FI3AOrPoupUU+WU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1752007733;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rSsadujEFtMorFlXBKn4QXXPoGqR+qQ2MvQ89dlpYSk=;
+	b=G0QoVCRHYiaG7R8IHOnhYMXLGrl9d0padQzt57mAL+BaiL4fNJJrZNnu+9C/exPmWrpAr7
+	xIK+r7ZcOecInEDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B901513A54;
+	Tue,  8 Jul 2025 20:48:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id wQZYKzWEbWhmNwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 08 Jul 2025 20:48:53 +0000
+Message-ID: <e4b71105-733a-4096-b7ed-474548066a29@suse.cz>
+Date: Tue, 8 Jul 2025 22:48:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20250413171058.271234-1-linux@treblig.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
-X-Uptime: 20:46:26 up 72 days,  5:00,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: add mm folks as reviewers to rust alloc
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Danilo Krummrich <dakr@kernel.org>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Uladzislau Rezki <urezki@gmail.com>, rust-for-linux@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250708183747.104286-1-lorenzo.stoakes@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250708183747.104286-1-lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-8.30 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[oracle.com,gmail.com,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -8.30
 
-* linux@treblig.org (linux@treblig.org) wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On 7/8/25 20:37, Lorenzo Stoakes wrote:
+> The alloc implementation is a thin wrapper over slab/vmalloc, so to help
+> out on the mm side of things and to be cc'd on changes, add some mm people
+> as reviewers.
 > 
-> Hi,
->   A couple of small deadcodings for qxl.  The first
-> just cleans up a couple of trivial unusued wrappers.
-> The second cleans out some debugfs code that's been unused
-> for a few years.
-> 
-> Dave
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Hi All,
-  A gentle ping on this clean up set from April.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Thanks in advance,
+> ---
+>  MAINTAINERS | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 71599ab6bd56..54dd937160ac 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21751,6 +21751,10 @@ K:	\b(?i:rust)\b
+>  
+>  RUST [ALLOC]
+>  M:	Danilo Krummrich <dakr@kernel.org>
+> +R:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> +R:	Vlastimil Babka <vbabka@suse.cz>
+> +R:	Liam R. Howlett <Liam.Howlett@oracle.com>
+> +R:	Uladzislau Rezki <urezki@gmail.com>
+>  L:	rust-for-linux@vger.kernel.org
+>  S:	Maintained
+>  T:	git https://github.com/Rust-for-Linux/linux.git alloc-next
 
-Dave
-
-> 
-> Dr. David Alan Gilbert (2):
->   drm: qxl: Remove dead qxl_io_flush_* functions
->   drm: qxl: Remove unused debugfs code
-> 
->  drivers/gpu/drm/qxl/qxl_cmd.c     | 10 ----------
->  drivers/gpu/drm/qxl/qxl_debugfs.c | 29 -----------------------------
->  drivers/gpu/drm/qxl/qxl_drv.h     | 12 ------------
->  3 files changed, 51 deletions(-)
-> 
-> -- 
-> 2.49.0
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
 
