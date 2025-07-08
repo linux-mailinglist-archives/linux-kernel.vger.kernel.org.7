@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-721915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE0FAFCF6B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:39:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F317AFCF68
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0387E3A250E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:38:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 244FA5669D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839612E0B44;
-	Tue,  8 Jul 2025 15:38:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497302253A5;
-	Tue,  8 Jul 2025 15:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2B62E1C7E;
+	Tue,  8 Jul 2025 15:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9PbLbQ9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE892E11C3;
+	Tue,  8 Jul 2025 15:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751989104; cv=none; b=SJwdN0+KTWbxYKzDaxOZmwvjlmtxfmzY77WZedFPyRVRL22v29HtHZfSY7SG+i1dr+FPImXJ4nd2sgmpM97Zcy3/lxOCZ1C7KEPuZ5Qd/xlRTctC5Wfo0gFTRrqAy4q7iDBHGtfTqNEV2muyMtHT2ttTge7gHm7K1TwbwpYfTzc=
+	t=1751989109; cv=none; b=lv5Juoufd5tSAGXpT646DF/9c9ujnrM11/IQUS7KCQmjBswhRJov3BoNNFqAq5zQl7Hne8iLyXCwOFTJE6CRqAQNDQQWjlX9vMqkJMRvDB089HTo0dDpmjRtMiu20f/fYLkyYybU5OaweZnxOi+/qqiiN0ODXNmzs5sBPBEe8KM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751989104; c=relaxed/simple;
-	bh=9kYA5q14bvYkui25OvnWTMQwCQ8rj9WTIA6GWK59h9M=;
+	s=arc-20240116; t=1751989109; c=relaxed/simple;
+	bh=oDEtOf0DaTfsiKg+dTzSTHuTGeQPH+ZbPyfhdxIehAo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bzufPK+tHYw6ehqeRc45T1GGGAnxEsGbuT83/v4TmpGURPbhcCzzxAzy7/ip5NOpze3V8eYC3WMHCEVybJNB50Q1OVgRPXODb3kyaIQabHtseDFk/9ParWh6uR52WBmn+mH7IrggtYeC7JX6vZG9g+FzJDLqT2/t/U9BKD0g8is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 44D92153B;
-	Tue,  8 Jul 2025 08:38:03 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C9F603F738;
-	Tue,  8 Jul 2025 08:38:12 -0700 (PDT)
-Date: Tue, 8 Jul 2025 16:38:10 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Chuck Cannon <chuck.cannon@nxp.com>,
-	Souvik Chakravarty <souvik.chakravarty@arm.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, <arm-scmi@vger.kernel.org>,
-	<imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/7] firmware: arm_scmi: imx: Support discovering
- buildinfo of MISC protocol
-Message-ID: <20250708-spirited-pelican-of-renovation-f4218d@sudeepholla>
-References: <20250627-sm-misc-api-v1-v1-0-2b99481fe825@nxp.com>
- <20250627-sm-misc-api-v1-v1-2-2b99481fe825@nxp.com>
- <aGVOhMr7vg9Sl7Z2@bogus>
- <20250704051204.GB4525@nxa18884-linux>
- <aGeX5NQycd5WFxZ8@bogus>
- <20250708161006.GA13177@nxa18884-linux>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eW08wBY+XfVNgVtn349kE7r9sfIzH7/ZuudxD0cvllf9PWIdSR7boJG0XmwudHt9cP57g0D5pihnB4rb4cqrtFVjEm/Z25ZCqYveItltAW4H3ltr/rTyI01NJDDIBUiXMJqVoiR1ofdAru4bXgbTJTayJv9P48+Ly/KNWo/ka8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9PbLbQ9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D598C4CEED;
+	Tue,  8 Jul 2025 15:38:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751989108;
+	bh=oDEtOf0DaTfsiKg+dTzSTHuTGeQPH+ZbPyfhdxIehAo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n9PbLbQ9DxyvF2ZYdhO1L4fP9gUwKnXhGM1vEeabzvph5jN6AV4yyjNFpoTbw47f8
+	 S+Q8aAyfjkbCC4pqyV/qXa6M7F1y3K4Bp4CO5nSq/brqJz1Zci6a2rEyTsrvDzMyNY
+	 nHwAL0wmnYEM6YQF+Ij9iWqGjwWDaozG7oiav3//lv4qzSibydlDld+Ll1w8wng+m3
+	 bwVM80Xtw47Kh394C0tlvIXGvzgHgG6G/pcy+Rulh9/EueQA+imWyC32h9wvtz78ay
+	 U1Dh1lp4MfCN4dJ04q+S0S8YVRp1xsdKJP5ajdH4exlxyhPglxhKdE/gq20mPJuB2g
+	 Wc7OXHmbYDqOA==
+Date: Tue, 8 Jul 2025 16:38:24 +0100
+From: Simon Horman <horms@kernel.org>
+To: Yuto Ohnuki <ytohnuki@amazon.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Kohei Enju <enjuk@amazon.com>
+Subject: Re: [PATCH iwl-next v1] igbvf: remove unused fields from struct
+ igbvf_adapter
+Message-ID: <20250708153824.GM452973@horms.kernel.org>
+References: <20250707180116.44657-2-ytohnuki@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,83 +63,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250708161006.GA13177@nxa18884-linux>
+In-Reply-To: <20250707180116.44657-2-ytohnuki@amazon.com>
 
-On Wed, Jul 09, 2025 at 12:10:06AM +0800, Peng Fan wrote:
-> Hi Sudeep,
+On Mon, Jul 07, 2025 at 07:01:17PM +0100, Yuto Ohnuki wrote:
+> Remove following unused fields from struct igbvf_adapter that are never
+> referenced in the driver.
 > 
-> Sorry for late reply.
-> On Fri, Jul 04, 2025 at 09:59:16AM +0100, Sudeep Holla wrote:
-> >On Fri, Jul 04, 2025 at 01:12:04PM +0800, Peng Fan wrote:
-> >> Hi Sudeep,
-> >> 
-> >> On Wed, Jul 02, 2025 at 04:21:40PM +0100, Sudeep Holla wrote:
-> >> >On Fri, Jun 27, 2025 at 02:03:45PM +0800, Peng Fan wrote:
-> >> >> MISC protocol supports discovering the System Manager(SM) build
-> >> >> information including build commit, build time and etc. Add the API
-> >> >> for user to retrieve the information from SM.
-> >> >> 
-> >> >> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> >> >> ---
-> >> >>  .../firmware/arm_scmi/vendors/imx/imx-sm-misc.c    | 35 ++++++++++++++++++++++
-> >> >>  include/linux/scmi_imx_protocol.h                  | 12 ++++++++
-> >> >>  2 files changed, 47 insertions(+)
-> >> >> 
-> >> >> diff --git a/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c b/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
-> >> >> index a8915d3b4df518719d56bfff38922625ad9b70f6..1b24d070c6f4856b92f515fcdba5836fd6498ce6 100644
-> >> >> --- a/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
-> >> >> +++ b/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
-> >> >> @@ -25,6 +25,7 @@
-> >> >>  enum scmi_imx_misc_protocol_cmd {
-> >> >>  	SCMI_IMX_MISC_CTRL_SET	= 0x3,
-> >> >>  	SCMI_IMX_MISC_CTRL_GET	= 0x4,
-> >> >> +	SCMI_IMX_MISC_DISCOVER_BUILDINFO = 0x6,
-> >> >
-> >> >I clearly missed to raise this point when the documentation for this command
-> >> >was added. Anyways I assume, you had explored all the options before adding
-> >> >this as generic tools may not be able to pick this up. Instead, I would have
-> >> >just stuck with vendor version in the standard protocol with build number
-> >> >embedded into it. The date and other info must be implicit from the build.
-> >> >
-> >> >I try to be more cautious and ask questions in the future as I don't want
-> >> >vendor extensions to be dumping ground for really random things like this.
-> >> 
-> >> +Souvik
-> >> 
-> >> And Loop our firmware owner to help comment. I just add what the firmware
-> >> supports here and allow linux to see the information when the firmware
-> >> does not have uart output in some builds.
-> >> 
-> >> From SCMI spec, it does not restrict what vendor extensions should be like
-> >> as I know. So I am not sure what we should do when we define vendor
-> >> extensions and what I should do next for this patch.
-> >> 
-> >
-> >Just to be clear, I am not against vendor extensions. I am just saying
-> >this interface is not strictly needed. The vendor version could encode
-> >this nicely and you could have a map. The only and main concern is having
-> >such extensions will not help generic tools as these are very vendor specific.
-> >
-> >It is good to have firmware version and other related details in a standard
-> >format that anyone can understand without the need to dig deeper into vendor
-> >specific extensions.
-> >
-> >Again I am not saying to drop these interfaces, but you will get questioned
-> >for its use in the kernel if that doesn't seem like the right approach.
+> - blink_timer
+> - eeprom_wol
+> - fc_autoneg
+> - int_mode
+> - led_status
+> - mng_vlan_id
+> - polling_interval
+> - rx_dma_failed
+> - test_icr
+> - test_rx_ring
+> - test_tx_ring
+> - tx_dma_failed
+> - tx_fifo_head
+> - tx_fifo_size
+> - tx_head_addr
 > 
-> This is mostly for debug purpose to export the build information to linux,
-> such as firmware commit hash.
+> Also removed the following fields from struct igbvf_adapter since they
+> are never read or used after initialization by igbvf_probe() and igbvf_sw_init().
 > 
-> Should I still keep current patch, or do you have any suggestions
-> with current SM API?  I think there is little chance to update SM to encode
-> vendor version to include build date, build num, and commit hash.
+> - bd_number
+> - rx_abs_int_delay
+> - tx_abs_int_delay
+> - rx_int_delay
+> - tx_int_delay
 > 
+> This changes simplify the igbvf driver by removing unused fields, which
+> improves maintenability.
+> 
+> Tested-by: Kohei Enju <enjuk@amazon.com>
+> Signed-off-by: Yuto Ohnuki <ytohnuki@amazon.com>
+> ---
+>  drivers/net/ethernet/intel/igbvf/igbvf.h  | 25 -----------------------
+>  drivers/net/ethernet/intel/igbvf/netdev.c |  7 -------
+>  2 files changed, 32 deletions(-)
 
-I am against using this in the way you are doing in 7/7(i.e. exposing to
-the userspace). Just dump the info on the serial port from the init code.
-You don't need to expose it scmi_imx_misc_proto_ops as well.
+Less is more :)
 
--- 
-Regards,
-Sudeep
+Reviewed-by: Simon Horman <horms@kernel.org>
+
 
