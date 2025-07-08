@@ -1,86 +1,115 @@
-Return-Path: <linux-kernel+bounces-722025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C524AFD244
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:44:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3673AAFD28C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5CF016C43C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:41:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57F3616E084
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C5F2E540B;
-	Tue,  8 Jul 2025 16:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6232E5B1A;
+	Tue,  8 Jul 2025 16:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UvoO2R1o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="K7V9cthW"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D37E2DD5EF;
-	Tue,  8 Jul 2025 16:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484572E54C8;
+	Tue,  8 Jul 2025 16:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751992909; cv=none; b=JiKa1DIao6dt8uoIQFnFzljBGxDoCUnUlT2QpvXBxLusLzwsIBAJ6b6qmm0UqbOAnu8SToiuryq5KwO1qoHzmEa4Ra9P1rvEB1w+J+YGogRSTEwBTXNSDsb7+/TtZZMpL9WW+q0xSxIAKOJrD+1bAu7MCB81JuuhiHKlD+66T5c=
+	t=1751993069; cv=none; b=Fp9U28JEO4Uc2OIO9nD3eWf/dVC9CNC7AvbnbUjqqCvKIIbH3AOkITl4tgJSJDstOdZOlrlDrPeO6yuST6yh6b15rXJzj0yScpVU4VNg3d1wowDO6Yql+uMZxc9OiWD2/GuYaHv5kVWKUsh0P2YhrBiIbQ5rg9mIer+KFoPqy7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751992909; c=relaxed/simple;
-	bh=rdhMhDbDsUjX5hjIU+cPezj8rvV97MeHEnix0pjd8uw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pTDREB3LyO+hxg7o9UwKTumZp36nT3rkH8AnkGnjcdcWwppUItsLVuX9vNKw47uZllixNcbu7uz5nE8yqy2qcNHKRo/Dp6J2syNAobxpDUZObuhdqAJiO530ZliA7RuvBHQjd6ZewzVNQxJMR6/HFqrWraQv9uFUanp8VZtFo6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UvoO2R1o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FFA4C4CEF5;
-	Tue,  8 Jul 2025 16:41:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751992908;
-	bh=rdhMhDbDsUjX5hjIU+cPezj8rvV97MeHEnix0pjd8uw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UvoO2R1ocwBu3BcUOR6JUthSRVHALJHP3DmQaDLCBk79STEH2VyJD0xBK2AJp5A/W
-	 q0TwEC8ZFJW1veRmOMT33V5fUeqMARCvOa7aEm5nMtYvXF7reYMt7A8oEyhyU+doMe
-	 wjqdG5W1wpSlo6A3fiqMzuz2NOSIjZsLkj1Ne5hl4PUvdbMNo1dKvrG2QMw+Lqjckd
-	 aVS1vAhBB2SHXlYXXDQizdcFW1sxemkSydjJUhkzt4sHAESQ8Oj81Go54x2rI7axDJ
-	 Oa8zJ++ewGd0tFPQ/+QctMy1zZCppeQ04Y0XUSqqm+38e9W+EEhCcgGwEQAg4Fnqch
-	 VkFJXqFBOSyEw==
-From: Conor Dooley <conor@kernel.org>
-To: Conor Dooley <conor@kernel.org>,
-	Yixun Lan <dlan@gentoo.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	spacemit@lists.linux.dev
-Subject: Re: [PATCH] riscv: defconfig: spacemit: enable sdhci driver for K1 SoC
-Date: Tue,  8 Jul 2025 17:41:28 +0100
-Message-ID: <20250708-doily-concise-12620a7ceda5@spud>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250708-02-k1-sdhci-defconfig-v1-1-73c631717338@gentoo.org>
-References: <20250708-02-k1-sdhci-defconfig-v1-1-73c631717338@gentoo.org>
+	s=arc-20240116; t=1751993069; c=relaxed/simple;
+	bh=Uy6/ZiGNXgHfIB5TgE3/viq7cNwZuVQdmxHA3l5Q360=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=He9PCHxcTJUl7jgWuLYyMuYsMNgU3diRqQ2qVK3qMU+CPKmDRxfyjAMtKTJMsQri2tIbecTXGld1cdRSocH13y2R2qtkOu/SZOnuuKTHk3MeNFJJR5m5Nqn1g/vRUkDDDUT315FjQ1r95+E5MR8dZNOHRn0t6qggR2rZSjxzK6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=K7V9cthW; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id B53E1838;
+	Tue,  8 Jul 2025 18:43:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1751993038;
+	bh=Uy6/ZiGNXgHfIB5TgE3/viq7cNwZuVQdmxHA3l5Q360=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K7V9cthWAeOOxNJYowo9Sqf085LVfa7mePEdvEhfYUjc0Prmu5MXnzNgIGWhwu2Bd
+	 niaTPkQV7ifzH3NXBIm7wFGuSCyplzVsth8D5/LNKLu1Sx64XSR6oTXrGAZZfjznBD
+	 xNBzKpNW0avoET/LvC1wNmNADpOY749nxocvd2Wc=
+Date: Tue, 8 Jul 2025 19:43:58 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Desnes Nunes <desnesn@redhat.com>
+Cc: hansg@kernel.org, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@kernel.org
+Subject: Re: [PATCH v3] media: uvcvideo: avoid variable shadowing in
+ uvc_ctrl_cleanup_fh
+Message-ID: <20250708164358.GB23181@pendragon.ideasonboard.com>
+References: <20250708144628.273384-1-desnesn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=384; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=95Fz3TVw+WlzEnWMLxXYtXF67YYqJlPsPN4hDfqsBVY=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDBm5XtauXyYuEzncynLKUyByqX10zN6dH3uclv1p22kvZ 5T3eIlfRykLgxgHg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACZS/YuR4Wbz3XxHiZt531Yb WYif0l6e3rffy83n9Hylj09279E468rwv6ZmTvKRBStSOw/f71O0OlW+ITjkwgMVy9c5W3O7PTZ lsAAA
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250708144628.273384-1-desnesn@redhat.com>
 
-From: Conor Dooley <conor.dooley@microchip.com>
+Hi Desnes,
 
-On Tue, 08 Jul 2025 09:44:56 +0800, Yixun Lan wrote:
-> Enable sdhci driver support for SpacemiT K1 SoC, so eMMC storage
-> will be probed and activated, Tested on the Banana Pi BPI-F3 board.
+Thank you for the patch.
+
+On Tue, Jul 08, 2025 at 11:46:28AM -0300, Desnes Nunes wrote:
+> This avoids a variable loop shadowing occurring between the local loop
+> iterating through the uvc_entity's controls and the global one going
+> through the pending async controls of the file handle
+
+s/handle/handle./
+
+(easily handled when applying the patch, no need to resend)
+
+> Cc: stable@kernel.org
+> Fixes: 10acb9101355 ("media: uvcvideo: Increase/decrease the PM counter per IOCTL")
+
+I think CI will ask for Cc to go after Fixes. If so that can also be
+handled when applying.
+
+> Signed-off-by: Desnes Nunes <desnesn@redhat.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index 303b7509ec47..6b9486749c3f 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -3299,7 +3299,6 @@ int uvc_ctrl_init_device(struct uvc_device *dev)
+>  void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
+>  {
+>  	struct uvc_entity *entity;
+> -	int i;
+>  
+>  	guard(mutex)(&handle->chain->ctrl_mutex);
+>  
+> @@ -3317,7 +3316,7 @@ void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
+>  	if (!WARN_ON(handle->pending_async_ctrls))
+>  		return;
+>  
+> -	for (i = 0; i < handle->pending_async_ctrls; i++)
+> +	for (unsigned int i = 0; i < handle->pending_async_ctrls; i++)
+>  		uvc_pm_put(handle->stream->dev);
+>  }
+>  
 
-Applied to riscv-config-for-next, thanks!
+-- 
+Regards,
 
-[1/1] riscv: defconfig: spacemit: enable sdhci driver for K1 SoC
-      https://git.kernel.org/conor/c/0bb48ad676d5
-
-Thanks,
-Conor.
+Laurent Pinchart
 
