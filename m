@@ -1,197 +1,137 @@
-Return-Path: <linux-kernel+bounces-721852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F441AFCEA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:11:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 085B3AFCEB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:13:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D082E16D4E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:11:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19F3A1605E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40F82E091A;
-	Tue,  8 Jul 2025 15:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A7E2E0912;
+	Tue,  8 Jul 2025 15:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ohnQET+e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="bzrORXdC"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C67F26FA56;
-	Tue,  8 Jul 2025 15:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4211D21322F
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751987492; cv=none; b=ConqLpzOAQaihNszo1EiMByG3oSZqdocr5vg3mEBiV0Akjjv7rae4RGpXd3SYYzqTRZf1FoJbkmRrL8rkSrNResGbNvNf8KgK05O7rGWE5sjHzkKzBxINJFDuVgIJCqwOSpYbfxXiezV8uetErWR3DoBs5fbIWfPbXCZhTxw4lM=
+	t=1751987569; cv=none; b=OsY6pNMWr9HmHMQV1qU064wsIvKamLWQSyEQ4pqeKdck/MMDgqQ4M7mWL1HUxTb0/X+Ql85yTXwjn+fsPNZ14KvTxREy2eHVXu+A8fAcX93f7/3eEJdy8wc20R7u5CBv3a6kWKm3ruyxRAap+XAGIx5e0q1U+knnNPHYvk7rOJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751987492; c=relaxed/simple;
-	bh=NRRNtg6vb+K/sjejePJsbFo5EUJno2MwHh8cVe80W/M=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=vBiOT6GCGlmxK9zKo8EjvyH2EqjxLdIL39kvxIkwDKaJ9mrEKx31FoiZA/XI3BK3+Jz1Tm4Sjn+AYdbH5ReRd71+o8j+NnOnM2UMBM3VzAIQkX66WcOoHVNEq8g/8usAyuyie8UXsgsc9yhveT43QhK7Ihqw3/wY+/Oxi6N0EJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ohnQET+e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11743C4CEED;
-	Tue,  8 Jul 2025 15:11:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751987491;
-	bh=NRRNtg6vb+K/sjejePJsbFo5EUJno2MwHh8cVe80W/M=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=ohnQET+eQxGJXcUGGacq3S9BmTACp9gcbeanlc8UFNYikvcNwBLqA3wp7IAx88NDN
-	 mQhwZ4Fbv+SNQRI33D6CAj2qHgR/VWgyyiz/QUgLfAWeGrmNlrCeS+U/sq27ocWSgW
-	 2w97t8GUtWaa8YpBO37ZY/4go8HuwLheGNZPEfbkI7O5goC3AyWTLI90fuNqt0iyo6
-	 Y/HZ4haLXe4nBArO7sOiuxZLJ78+vt4pH6OMF4YtUVJiVrDBD1NHTFy5QFkaJlpoGJ
-	 C2ThD/lJMOH1clYyfb7uz6zVdH1teZ8xik/B+iAv9NadUV4To5lgasIkriO5/UZL58
-	 g4oo/teCrkyYA==
+	s=arc-20240116; t=1751987569; c=relaxed/simple;
+	bh=eMquM51JRSfeYMDza+BVGuZ8kV7EVga+TNgJDqVcsxs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zh7YXIc0gBiYolo7YlbhSn789LWBMPlNa4Zvf/peWUVdDIvBgMfMVs3jlsunfWU4HJm9m+EBWHkRiNpvK60ijBD8Q9pHvUhWISg1DHp0k4B2ZPCpQFaB9stJxGRPJTj1Kgjzv++lDhWziADe33e5M+RDg4/2WWAug2ELCLanIZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=bzrORXdC; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1751987558; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=iougDzW3D3SBa8Um4dOsc8Bp3F+DjNmLCnoOTK86N+Y=;
+	b=bzrORXdCcI+ob0WLOOvgBuPdC+KuHG5aPR4agH6lidnB9wV1ZPHAN5MCPuMibyMwvFG76AQVGEGHVdmuYLR+L8VlEl/QJKTPUEkagCWmVFIFTfRtfshLwsY2ogzi/1tJZkMdbkMZ65UhS6LE1Eqfa0MPJ/y0UDq9ntwWTzK3nZs=
+Received: from 30.170.233.0(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WiPkcpx_1751987557 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 08 Jul 2025 23:12:37 +0800
+Message-ID: <bab2d726-5c2f-4fe0-83d4-f83a0c248add@linux.alibaba.com>
+Date: Tue, 8 Jul 2025 23:12:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 08 Jul 2025 17:11:28 +0200
-Message-Id: <DB6RQCZYHPSA.1UEPUVMC3FBBI@kernel.org>
-Subject: Re: [PATCH v11 0/4] support large align and nid in Rust allocators
-Cc: "Vitaly Wool" <vitaly.wool@konsulko.se>, <linux-mm@kvack.org>,
- <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>, "Uladzislau
- Rezki" <urezki@gmail.com>, "Alice Ryhl" <aliceryhl@google.com>, "Vlastimil
- Babka" <vbabka@suse.cz>, <rust-for-linux@vger.kernel.org>, "Liam Howlett"
- <liam.howlett@oracle.com>
-To: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250707164755.631374-1-vitaly.wool@konsulko.se>
- <824065ea-1f5c-4cd4-9917-4b7a91882af8@lucifer.local>
- <aG0HJte0Xw55z_y4@pollux>
- <54fc10ce-c3b6-4571-93e7-eebfc538d0c7@lucifer.local>
- <DB6QKIHD2VGS.AHEOXL25SSXW@kernel.org>
- <4c122436-db58-4ca5-bc64-5ca596f03952@lucifer.local>
-In-Reply-To: <4c122436-db58-4ca5-bc64-5ca596f03952@lucifer.local>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Executable loading issues with erofs on arm?
+To: Jan Kiszka <jan.kiszka@siemens.com>, Gao Xiang <xiang@kernel.org>,
+ Chao Yu <chao@kernel.org>, linux-erofs@lists.ozlabs.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <38d43fae-1182-4155-9c5b-ffc7382d9917@siemens.com>
+ <452a2155-ab3b-43d1-8783-0f1db13a675f@siemens.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <452a2155-ab3b-43d1-8783-0f1db13a675f@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue Jul 8, 2025 at 4:39 PM CEST, Lorenzo Stoakes wrote:
-> On Tue, Jul 08, 2025 at 04:16:48PM +0200, Danilo Krummrich wrote:
->> (Please also see the explanation in [1].)
+Hi Jan,
+
+On 2025/7/8 20:43, Jan Kiszka wrote:
+> On 08.07.25 14:41, Jan Kiszka wrote:
+>> Hi all,
 >>
->> There's a thin abstraction layer for allocators in Rust, represented by =
-the
->> kernel's Allocator trait [2] (which has a few differences to the Allocat=
-or trait in
->> upstream Rust, which, for instance, can't deal with GFP flags).
+>> for some days, I'm trying to understand if we have an integration issue
+>> with erofs or rather some upstream bug. After playing with various
+>> parameters, it rather looks like the latter:
 >>
->> This allocator trait is implemented by three backends, one for each of
->> krealloc(), vrealloc() and kvrealloc() [3].
+>> $ ls -l erofs-dir/
+>> total 132
+>> -rwxr-xr-x 1 1000 users 132868 Jul  8 10:50 dash
+>> (from Debian bookworm)
+>> $ mkfs.erofs -z lz4hc erofs.img erofs-dir/
+>> mkfs.erofs 1.8.6 (trixie version, but same happens with bookworm 1.5)
+>> Build completed.
+>> ------
+>> Filesystem UUID: aae0b2f0-4ee4-4850-af49-3c1aad7fa30c
+>> Filesystem total blocks: 17 (of 4096-byte blocks)
+>> Filesystem total inodes: 2
+>> Filesystem total metadata blocks: 1
+>> Filesystem total deduplicated bytes (of source files): 0
 >>
->> Otherwise, the alloc module implements Rust's core allocation primitives=
- Box and
->> Vec, which each of them have a type alias for allocator backends. For in=
-stance,
->> there is KBox, VBox and KVBox [4].
+>> Now I have 6.15-rc5 and a defconfig-close setting for the 32-bit ARM
+>> target BeagleBone Black. When booting into init=/bin/sh, then running
 >>
->> This was also mentioned in the mm rework in [5] and in the subsequent pa=
-tch
->> series reworking the Rust allocator module [6].
+>> # mount -t erofs /dev/mmcblk0p1 /mnt
+>> erofs (device mmcblk0p1): mounted with root inode @ nid 36.
+>> # /mnt/dash
+>> Segmentation fault
 >>
->> Before [6], the Rust allocator module only covered the kmalloc allocator=
- (i.e.
->> krealloc()) and was maintained under the "RUST" entry.
+>> I once also got this:
 >>
->> Since [6], this is maintained under the "RUST [ALLOC]" entry by me.
+>> Alignment trap: not handling instruction 2b00 at [<004debc0>]
+>> 8<--- cut here ---
+>> Unhandled fault: alignment exception (0x001) at 0x000004d9
+>> [000004d9] *pgd=00000000
+>> Bus error
 >>
->> Given that, there is a clear and documented responsibility, which also A=
-ndrew is
->> aware of.
+>> All is fine if I
+>>   - run the command once more
+>>   - dump the file first (cat /mnt/dash > /dev/null; /mnt/dash)
+> 
+> Forgot to mention: That first dump when done via md5sum or so actually
+> gives the right checksum. So pure reading of the binary is also ok, just
+> trying to load it for execution fails on the first attempt.
+
+Thanks for your report.  I rarely take care arm32 platform
+because I don't have such setup.
+
+but could you share a reproducible rootfs image and
+I wonder if qemu could reproduce this?
+
+Otherwise it's hard for me to debug this issue...
+
+Thanks,
+Gao Xiang
+
+> 
+> Jan
+> 
+>>   - boot a full Debian system and then mount & run the command
+>>   - do not compress erofs
 >>
->> To me the current setup looks reasonable, but feel free to take a look a=
-t the
->> code and its relationship to mm and Rust core infrastructure and let me =
-know
->> what you think -- I'm happy to discuss other proposals.
->
-> Thanks for the explanation.
->
-> To me this is clearly mm rust code. This is an abstraction over mm bits t=
-o
-> provide slab or vmalloc allocations for rust bits.
->
-> To be clear - I'm not suggesting anything dramatic here, nor in any way
-> suggesting you ought not maintain this (apologies if this wasn't clear :)
->
-> It's really a couple points:
->
-> 1. Purely pragmatically - how can we make sure relevant people are pinged=
-?
-
-I'm very happy to add more reviewers to the RUST [ALLOC] entry for this pur=
-pose.
-
-Can you please send a patch for this?
-
-> 2. Having clarity on what does/does not constitute 'MEMORY MANAGEMENT - R=
-UST'
->    (again, perhaps Alice best placed to give some input here from her poi=
-nt of
->    view).
-
-In the end that's a question of definition.
-
-The reason RUST [ALLOC] is a thing is because it is very closely related to=
- Rust
-core infrastructure with only a thin backend using {k,v}realloc().
-
-Compared to other abstractions, the main purpose is not to expose a Rust
-interface for an existing kernel specific API, but rather implement a very =
-Rust
-specific concept while being a user of an existing kernel C API.
-
-> We could solve 1 very simply by just using the fact we can have files in
-> multiple sections in MAINTAINERS.
-
-Please not -- I don't want to have files in multiple entries in MAINTAINERS=
-,
-especially when there are different maintainers and different trees. I pref=
-er
-clear responsibility.
-
-> Doing a scripts/get_maintainers.pl invocation will very clearly tell you
-> who's in charge of what so there'd be no lack of clarity on this.
-
-How's that when a file is in multiple entries?
-
-> It's a bit messy, obviously. But it'd solve the issue of mm people not
-> getting notified when things change.
->
-> However, at this stage you might want to just limit this to people who ha=
-ve
-> _opted in_ to look at mm/rust stuff. In which case then it'd make sense t=
-o
-> add only to the "MEMORY MANAGEMENT - RUST" section (but here we need to
-> address point 2 obviously).
->
-> Alternatively we could just add reviewers to the rust alloc bit.
-
-Yeah, let's do that instead please.
-
+>> Also broken is -z zstd, so the decompression algorithm itself should not
+>> be the reason. I furthermore tested older kernels as well, namely
+>> stable-derived 6.1-cip and 6.12-cip, and those are equally affected.
 >>
->> [1] https://lore.kernel.org/all/aG0HJte0Xw55z_y4@pollux/
->> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/t=
-ree/rust/kernel/alloc.rs#n139
->> [3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/t=
-ree/rust/kernel/alloc/allocator.rs#n130
->> [4] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/t=
-ree/rust/kernel/alloc/kbox.rs
->> [5] https://lore.kernel.org/all/20240722163111.4766-1-dakr@kernel.org/
->> [6] https://lore.kernel.org/all/20241004154149.93856-1-dakr@kernel.org/
->
->
-> I feel it's really important to not separate rust _too much_ from the
-> subsystems it utilises - if we intend to have rust be used more and more
-> and integrated further in the kernel (something I'd like to see, more so
-> when I learn it :P) - the only practical way forward is for the rust stuf=
-f
-> to be considered a first class citizen and managed hand-in-glove with the
-> not-rust stuff.
+>> Any ideas? I have CONFIG_EROFS_FS_DEBUG=y, but that does not trigger
+>> anything. Is there anything I could instrument?
+>>
+>> Jan
+>>
+> 
 
-You're preaching to the choir with this on my end. I'm recommending subsyst=
-ems
-that receive the first Rust bits to get involved in one or the other way al=
-l
-the time. And if it's only by reading along. :)
 
