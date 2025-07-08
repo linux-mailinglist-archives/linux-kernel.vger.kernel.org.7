@@ -1,206 +1,183 @@
-Return-Path: <linux-kernel+bounces-722491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F81EAFDB46
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:43:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE8DAFDB49
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0404564EDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:43:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 704463A8369
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4FC262FF3;
-	Tue,  8 Jul 2025 22:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067E922331C;
+	Tue,  8 Jul 2025 22:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QfPThT9j"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="xkNnuUkT"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C721B23B633
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 22:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FF01B4257
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 22:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752014607; cv=none; b=dn7v7THC9OZH0/0ODip413Bjn6NTfM8Oiq+BG1fPXOTpyWCCa0ujIMyPJJDrI7N6NK4ZhhEFAmdhUuL68ZxS36UNT0OTfAjC1ZDQWq29cqjdSm/Ke6eji4rSW4C2ALyI+ukodWkFP9d6yp1NmH0z4PUcimz1d32zIo4UrUTPtCk=
+	t=1752014723; cv=none; b=RfAVwK0BF112C0hoJTH6oNjNtvM1azXJV7wFTzjVxYcC91zyrSzb+TnSctt6I8QNfySxnqBOw7xabjBxGGryVTdEGJITTwMU0Y8ROSkpvPsQYWAlh6IfKN57LoOWgHPGT6h4tMd5yVh1R2tK2548jh4aeGxplJJzpFDRL1sfafI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752014607; c=relaxed/simple;
-	bh=hew1ePhykAjsI9To26HnWi16u2zQDoYS797i5P3C8eM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ba6/T8e5ErfATuF+0Lk429OlBY4gP11GTckOLwuhZs5AO2gTuZuC1Sxz+FhKGxiDKns4SW7QyR16m7zERc3hmv5XiwTIzXYFtMko8ph4CKN+AmQkyEAYKkWG2XyRuN9ZiQh9rLaoKYwGz5vw/HETkSf3RE5uTZwngl5hzaTVUwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QfPThT9j; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752014606; x=1783550606;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hew1ePhykAjsI9To26HnWi16u2zQDoYS797i5P3C8eM=;
-  b=QfPThT9j0+DB9NunpiCMXOjXXRfKwGz9M9rmkAY7T2raY/I0rcgNg2os
-   Z7FKdSpR3vU8dAqiH26dDCPTjkyPr7K2EEcpzhGhif/VRJ88x8oTOeCJM
-   /5omdWFYrNak2Vg6waLLN8xuWX3tZqUhSgOWQfu9XTJa+DhSRVGup/OP+
-   hhGA921masjcFMz3wjq9w5tPhWtKw06TfD2pF4//1wBWwnNZlRVGwuXiq
-   C8nIFu+mXTIrBQ0xlD/OZ/8nf118d93R5wyXdE63YxndIuI3gpGmjKp9o
-   FxbOHZ5TxPkIxsCqOPTOdoKJTIuNDsxWU1NaTQ/+pTaRvMrxP1WImdQbw
-   g==;
-X-CSE-ConnectionGUID: bx6IX091QP+mtGeObZA4sg==
-X-CSE-MsgGUID: cISyd0D2Q8e4gTyveYIZXA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="56875337"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="56875337"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 15:43:22 -0700
-X-CSE-ConnectionGUID: Cm6LicrfSzKZvcKCmdTGBg==
-X-CSE-MsgGUID: vdvIkTZ6RtmZfUDS1oOc3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="155731793"
-Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.103.51])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 15:43:20 -0700
-Date: Tue, 8 Jul 2025 15:43:18 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Fenghua Yu <fenghuay@nvidia.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	Chen Yu <yu.c.chen@intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH v6 00/30] x86,fs/resctrl telemetry monitoring
-Message-ID: <aG2fBp5VojStKcCd@agluck-desk3>
-References: <20250626164941.106341-1-tony.luck@intel.com>
- <b2de4c92-a883-40b0-92e0-16fac9e386b0@intel.com>
- <aGa8Pg9pSCJ3XjtY@agluck-desk3>
- <aG1sqKBJSfHydDsx@agluck-desk3>
- <5b2d621f-459f-463e-abc6-9157513f1fee@intel.com>
+	s=arc-20240116; t=1752014723; c=relaxed/simple;
+	bh=jJwTjYDiDL5so0q+7rAas2zAmmOieSLdwGqq254e0BY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HekqSQMw8bimy6vmSchXGd3vkw2fcxtfGhTVDx08ZBFg4Bw1GoaMJWUms7Higp623C4vcFnuckYvwhzq4zs3j0i3St+gM2TcJZKyfxOkjs9xu5gtW9vZBJtkCXMhIjdIpkbODu41FVEfdy3n2WWHmdVVrpI1n9hiiaeY/jQnLk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=xkNnuUkT; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7d3f1bd7121so504941685a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 15:45:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1752014721; x=1752619521; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jJwTjYDiDL5so0q+7rAas2zAmmOieSLdwGqq254e0BY=;
+        b=xkNnuUkTSXSlowD2leQObTIC1+bFD0PFYh9R8ADTAi145U8QDNadtsCX/TaHiHO69m
+         5A5Hehd842y5vwT3qRni+I9xFWM8D+14keEOyfdv7yrNTuSTBIrR3I+Zemj+9MkMcrC/
+         vAOtGf14ZaR9VR0f1/gU5+qqVr8tNU8bN/PtflQd5NU61a8WoP8HaNqLkaUow5pKLPf7
+         QKPRTgVTwkELPJonndXix/dWgudjoBfR9GAe+bp1c4vwRqycFwqpA/1DUfZtexwOiKHN
+         lYvacY0Z+zDdXjYF7lncqOeOj93FzNINAZtlNl7KEUDvudmrI9kC2rZZ2igpFdtPTPUs
+         UHbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752014721; x=1752619521;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jJwTjYDiDL5so0q+7rAas2zAmmOieSLdwGqq254e0BY=;
+        b=qaK8hESy5qFH3of/3wlR4kH+Ku9CP1Ap3QH21v4s5JpA0XrWbVLIkTSyJ09G1Y1qOo
+         tzebGSGyNw+/Mh8cIO/+ksQBxaOt2GWeWTAKghJZ1NMiz0hp1JHEyBf77baR58bnA+Dk
+         WurtU/b8OYw6yliXlf0c83LMH85KnQYn5XPHGch8RJGPbTLOS69qevN5mQLgY0ChUgF7
+         U63rg0Xo8xcvofanrK4xwuhRDGkGHDnHCosAtNNrp3IzG/TyAVQ5GVq7wn0PbweYEcpi
+         heQQexhKDzRkpZueO7DSCx1RRba0eoH/3UO63MC4q6/myqZ/iUek+sIUz44ISz+PqoQl
+         u+mA==
+X-Forwarded-Encrypted: i=1; AJvYcCXfDtdOzjTOACfOcR86VhjDNHy6rC/T+nFyui2jQL9QDYimp3v2Vk8e32ze9LWYz3m5dYRvCWiaMKNhM3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVVEqeBfYHNFf0XO48TqcrZs9ZH0UymudKRY3qyeQOS4UPvwTM
+	0q8sacYWKXYi03J8lKnpZf4CiZbQQ6IMM3LqvQrhuTjnoIZqfPLMkPw+KRr0ueHEalA=
+X-Gm-Gg: ASbGnctFWO/ibzrorNgZ6y3pVfjZcN/kfbkPyxmNZIW/fyax2KstKQesc8UFgXdk0aZ
+	7aJK8+EVkL7dK4CGmBcc3MVll0NmHBTT5dbYkVtd6sqzyX97fUTtEztQrm+WNifV/Qp4axZgVnO
+	jdDxveud/ddExD6eh9Z42/hh6PByQfizi2jW/2bBmx929AEeTts1k1gKU5wZftStYFahK+ZHo6s
+	wIwv0YdHEgp11hZk3VXRpKNsnnDeLJmFdwj0qvI672QMHznmn4cy3oolGJsB/H2ZeGb5YWC4m6z
+	BKHKNYAywlJhSLgNEKG5UAYBUVDMi5uTKIjBRAmn8wAzASAOn64Rljtc6TG1tI6uaGVUbKxt1xC
+	P/TbmxIEH/FzWIPZIRB7uQ4FUc0N5Rb3Xpvog8NY=
+X-Google-Smtp-Source: AGHT+IGaSttCcjmFBXaIxysGtD3+QOBaV/hmFGxA9/T2lYKyhnz52dWB4G9cv/PM5KVkkeqmFpNNpA==
+X-Received: by 2002:a05:620a:2602:b0:7d4:5cea:83a3 with SMTP id af79cd13be357-7db7e34eabdmr79423285a.34.1752014715845;
+        Tue, 08 Jul 2025 15:45:15 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d5dbdc4623sm842482285a.50.2025.07.08.15.45.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 15:45:15 -0700 (PDT)
+Date: Tue, 8 Jul 2025 15:45:11 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>, William Liu <will@willsroot.io>,
+ netdev@vger.kernel.org, victor@mojatatu.com, pctammela@mojatatu.com,
+ pabeni@redhat.com, kuba@kernel.org, dcaratti@redhat.com,
+ savy@syst3mfailure.io, jiri@resnulli.us, davem@davemloft.net,
+ edumazet@google.com, horms@kernel.org, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org
+Subject: Re: This breaks netem use cases
+Message-ID: <20250708154511.58862605@hermes.local>
+In-Reply-To: <CAM0EoMmuL7-pOqQZMA6Y0WW_zDzpbyRsw0HRHzn0RV=An9gsRw@mail.gmail.com>
+References: <20250708164141.875402-1-will@willsroot.io>
+	<aG10rqwjX6elG1Gx@pop-os.localdomain>
+	<CAM0EoMmP5SBzhoKGGxfdkfvMEZ0nFCiKNJ8hBa4L-0WTCqC5Ww@mail.gmail.com>
+	<aG2OUoDD2m5MqdSz@pop-os.localdomain>
+	<CAM0EoMmuL7-pOqQZMA6Y0WW_zDzpbyRsw0HRHzn0RV=An9gsRw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5b2d621f-459f-463e-abc6-9157513f1fee@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 08, 2025 at 01:49:26PM -0700, Reinette Chatre wrote:
-> Hi Tony,
-> 
-> On 7/8/25 12:08 PM, Luck, Tony wrote:
-> > On Thu, Jul 03, 2025 at 10:22:06AM -0700, Luck, Tony wrote:
-> >> On Thu, Jul 03, 2025 at 09:45:15AM -0700, Reinette Chatre wrote:
-> >>> Hi Tony and Dave,
-> >>>
-> >>> On 6/26/25 9:49 AM, Tony Luck wrote:
-> >>>>  --- 14 ---
-> >>>> Add mon_evt::is_floating_point set by resctrl file system code to limit
-> >>>> which events architecture code can request be displayed in floating point.
-> >>>>
-> >>>> Simplified the fixed-point to floating point algorithm. Reinette is
-> >>>> correct that the additional "lshift" and "rshift" operations are not
-> >>>> required. All that is needed is to multiply the fixed point fractional
-> >>>> part by 10**decimal_places, add a rounding amount equivalent to a "1"
-> >>>> in the binary place after those supplied. Finally divide by 2**binary_places
-> >>>> (with a right shift).
-> >>>>
-> >>>> Explained in commit comment how I chose the number of decimal places to
-> >>>> use for each binary places value.
-> >>>>
-> >>>> N.B. Dave Martin expressed an opinion that the kernel should not do
-> >>>> this conversion. Instead it should enumerate the scaling factor for
-> >>>> each event where hardware reported a fixed point value. This patch
-> >>>> could be dropped and replaced with one to enumerate scaling factors
-> >>>> per event if others agree with Dave.
-> >>>
-> >>> Could resctrl accommodate both usages? For example, it does not
-> >>> look too invasive to add a second file <mon_evt::name>.raw for the
-> >>> mon_evt::is_floating_point events that can output something like Dave
-> >>> suggested in [1]:
-> >>>
-> >>> .raw file format could be:
-> >>> 	#format:<output that depends on format>
-> >>> 	#fixed-point:<value>/<scaling factor>
-> >>>
-> >>> Example output:
-> >>> 	fixed-point:0x60000/0x40000
-> >>
-> >> Dave: Is that what you want in the ".raw" file? An alternative would be
-> >> to put the format information for non-integer events into an
-> >> "info" file ("info/{RESOURCE_NAME}_MON/monfeatures.raw.formats"?)
-> >> and just put the raw value into the ".raw" file under mon_data.
-> > 
-> > Note that I thought it easier for users to keep the raw file to just
-> > showing a value, rather than including the formatting details in
-> > Reinette's proposal.
-> 
-> Could you please elaborate what makes this easier? It is not obvious to me
-> how it is easier for user to open, parse, and close two files rather than one.
-> (more below)
+On Tue, 8 Jul 2025 18:26:28 -0400
+Jamal Hadi Salim <jhs@mojatatu.com> wrote:
 
-I had only considered the case where the format does not change while
-the resctrl file system is mounted. So users would read the "info" file
-to get the scaling factor once, and then read the event files with a
-parser that only has to convert a numerical string.
+> On Tue, Jul 8, 2025 at 5:32=E2=80=AFPM Cong Wang <xiyou.wangcong@gmail.co=
+m> wrote:
+> >
+> > (Cc Linus Torvalds)
+> >
+> > On Tue, Jul 08, 2025 at 04:35:37PM -0400, Jamal Hadi Salim wrote: =20
+> > > On Tue, Jul 8, 2025 at 3:42=E2=80=AFPM Cong Wang <xiyou.wangcong@gmai=
+l.com> wrote: =20
+> > > >
+> > > > (Cc LKML for more audience, since this clearly breaks potentially u=
+seful
+> > > > use cases)
+> > > >
+> > > > On Tue, Jul 08, 2025 at 04:43:26PM +0000, William Liu wrote: =20
+> > > > > netem_enqueue's duplication prevention logic breaks when a netem
+> > > > > resides in a qdisc tree with other netems - this can lead to a
+> > > > > soft lockup and OOM loop in netem_dequeue, as seen in [1].
+> > > > > Ensure that a duplicating netem cannot exist in a tree with other
+> > > > > netems. =20
+> > > >
+> > > > As I already warned in your previous patchset, this breaks the foll=
+owing
+> > > > potentially useful use case:
+> > > >
+> > > > sudo tc qdisc add dev eth0 root handle 1: mq
+> > > > sudo tc qdisc add dev eth0 parent 1:1 handle 10: netem duplicate 10=
+0%
+> > > > sudo tc qdisc add dev eth0 parent 1:2 handle 20: netem duplicate 10=
+0%
+> > > >
+> > > > I don't see any logical problem of such use case, therefore we shou=
+ld
+> > > > consider it as valid, we can't break it.
+> > > > =20
+> > >
+> > > I thought we are trying to provide an intermediate solution to plug an
+> > > existing hole and come up with a longer term solution. =20
+> >
+> > Breaking valid use cases even for a short period is still no way to go.
+> > Sorry, Jamal. Since I can't convince you, please ask Linus.
+> >
+> > Also, I don't see you have proposed any long term solution. If you
+> > really have one, please state it clearly and provide a clear timeline to
+> > users.
+> > =20
+>=20
+> I explained my approach a few times: We need to come up with a long
+> term solution that looks at the sanity of hierarchies.
+> Equivalent to init/change()
+> Today we only look at netlink requests for a specific qdisc. The new
+> approach (possibly an ops) will also look at the sanity of configs in
+> relation to hierarchies.
+> You can work on it or come with an alternative proposal.
+> That is not the scope of this discussion though
+>=20
+> > > If there are users of such a "potential setup" you show above we are
+> > > going to find out very quickly. =20
+> >
+> > Please read the above specific example. It is more than just valid, it
+> > is very reasonable, installing netem for each queue is the right way of
+> > using netem duplication to avoid the global root spinlock in a multique=
+ue
+> > setup.
+> > =20
+>=20
+> In all my years working on tc I have never seen _anyone_ using
+> duplication where netem is _not the root qdisc_. And i have done a lot
+> of "support" in this area.
+> You can craft any example you want but it needs to be practical - I
+> dont see the practicality in your example.
+> Just because we allow arbitrary crafting of hierarchies doesnt mean
+> they are correct.
+> The choice is between complicating things to fix a "potential" corner
+> use case vs simplicity (especially of a short term approach that is
+> intended to be obsoleted in the long term).
 
-> > Patch to implement my alternative suggestion below. To the user things
-> > look like this:
-> > 
-> > $ cd /sys/fs/resctrl/mon_data/mon_PERF_PKG_01
-> > $ cat core_energy
-> > 0.02203
-> > $ cat core_energy.raw
-> > 5775
-> > $ cat /sys/fs/resctrl/info/PERF_PKG_MON/mon_features_raw_scale
-> > core_energy 262144
-> > activity 262144
-> > $ bc -ql
-> > 5775 / 262144
-> > .02202987670898437500
-> > 
-> > If this seems useful I can write up a commit message and include
-> > as its own patch in v7. Suggestions for better names?
-> > 
-> 
-> I expect users to regularly interact with the monitoring files. For example,
-> "read the core_energy of group x every second". An API like above would require
-> a contract that the scale value will never change from resctrl mount to
-> resctrl unmount. I understand that this implementation supports exactly this by
-> allowing an architecture to only enable an event once, but do you think this is
-> something that will always be the case? If not then an interface like above will
-> require user space to open, parse, close two files instead of one on a frequent basis.
-> This is not ideal if user space wants to read monitoring data of multiple
-> groups frequently.
-
-While hardware designers do some outlandish things. Changing the format
-of an event counter on the fly seems beyond the range of possibility.
-How would that even work? A driver would have to rerun enumeration of
-the feature every time it read a counter. Or hardware would have to
-supply some interrupt to tell s/w that the format changed.
-
-I think it reasonable that resctrl be able to guarantee that the format
-described in the info file is valid for the life of the mount.
-
-> I would also like to keep extensibility in mind. We now know that
-> unsigned decimal and fixed-point binary needs to be supported. I think any
-> new interface used to communicate formatting information to user space should be done
-> in a way that can be extended for a new format. That is, for example, why
-> I used the actual term "fixed-point" in the example. Something like this avoids
-> needing assumptions that a raw value always implies fixed-point format.
-
-This is fair. But could be covered in the "info" file with some more
-descriptive way to describe the format. Perhaps:
-
-$ cat /sys/fs/resctrl/info/PERF_PKG_MON/mon_features_raw_scale
-core_energy fixed-point scale=262144
-activity fixed-point scale=262144
-
-To allow for other types in the future.
-
-> 
-> Reinette
-
--Tony
+One of my initial examples was to use HTB and netem.
+Where each class got a different loss rate etc.
+But duplication is usually link wide.
 
