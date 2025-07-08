@@ -1,106 +1,143 @@
-Return-Path: <linux-kernel+bounces-721152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15ED1AFC55B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:22:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14605AFC55D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E04257A3267
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:21:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EFEB1BC2A2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86AF62BCF47;
-	Tue,  8 Jul 2025 08:22:42 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B778298261;
+	Tue,  8 Jul 2025 08:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u5arvs8f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C61223DC6;
-	Tue,  8 Jul 2025 08:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF9D223DC6;
+	Tue,  8 Jul 2025 08:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751962962; cv=none; b=hLcu4XRUrePxnhNK624E8gtc5YISERZukPG/vgZqNkRFQxNiKFk2UgKs+ASi6kNqyEUbedn4Z/fixEdBfiHrEPjj/k5jMoQ4+dLin6iYohyxbq7xruSVMQksLZTuRzdaeuGdlmc2NVNEQ9YtieuqT7XwwnpM5yTpoi/lhqDRIYU=
+	t=1751962967; cv=none; b=ZFHdi8BM+3xqL0FrFemib3fOyjNeW/MD1YACCes4JDz+WFzBaHmdIoOslrf9pLXkSdTOK/Vs5sIXbcHzty7wplm8uEDwfmcEODclL2mtYoRZyCzsUc9BhbtOPKHFIWaWZ8rYGu4+AY4HXborhQ5A7DXTV13sUzp+xTDFeKlGjEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751962962; c=relaxed/simple;
-	bh=K45xL/e5RcHsYP2b7YztImc3yubWmYwPqOvKCVSyuxk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M3wDHmFFhJqsNAXcLMAq0nDADrwSidcxE2iSrW5NkhnbTThEK3Ezjwi/CNgadkuMfxLHmE4LNm2WsR+OCzrCoWldnOAe/PWRTOYDCM2ninL78DBDCweVgqVlaWg0bIeM4cfjH5+L7xE75u8Utq0AvEaYbWMD8VUJpwzxXSlS7yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bbvGR4w7yz6GCk0;
-	Tue,  8 Jul 2025 16:21:51 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 762A41404C5;
-	Tue,  8 Jul 2025 16:22:36 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 8 Jul
- 2025 10:22:35 +0200
-Date: Tue, 8 Jul 2025 09:22:34 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Alireza Sanaee <alireza.sanaee@huawei.com>, <mark.rutland@arm.com>,
-	<robh@kernel.org>, <coresight@lists.linaro.org>,
-	<devicetree@vger.kernel.org>, <dianders@chromium.org>,
-	<james.clark@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
-	<linuxarm@huawei.com>, <mike.leach@linaro.org>, <ruanjinjie@huawei.com>,
-	<saravanak@google.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<suzuki.poulose@arm.com>
-Subject: Re: [PATCH 2/5] arch_topology: update CPU map to use the new API
-Message-ID: <20250708092234.00006fd5@huawei.com>
-In-Reply-To: <ca58608c-c147-45a7-910f-41a7c312fd5a@kernel.org>
-References: <20250707150414.620-1-alireza.sanaee@huawei.com>
-	<20250707150414.620-3-alireza.sanaee@huawei.com>
-	<ca58608c-c147-45a7-910f-41a7c312fd5a@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1751962967; c=relaxed/simple;
+	bh=oRwqOe1brAYvYekojKVNvxAmK4Lubg+YWxdejVSPic8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OXl7plU1n/u675mmJt/PKMDv805jR03S5DFTcjfk72pD/T/stXmCSiRv328NKiuq33XybvxNfURrQoXVTjobpKYCqQ25q/uGY3zpVlsQ5WHKCQ8zUslppZodi+UpS82Tp4JPk/WsnhdN2YGagqPPwxmM2jDa7goL2/rXTgV5+8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u5arvs8f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9065C4CEF0;
+	Tue,  8 Jul 2025 08:22:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751962966;
+	bh=oRwqOe1brAYvYekojKVNvxAmK4Lubg+YWxdejVSPic8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u5arvs8fUGa2VSSCCCZx+qpZf75PEDkfi/z0yr7IfzJRPNZ+Dv8qZa9/AmQiF15xA
+	 VZFsERmwXeI2iXyxDcdvbS5uM7Mb1rHNs2UyVpQJgTLP6Xmb/VmNlFhACZuYJZxvx5
+	 xgnJpeI4vR1D2QlyjmJGtqPkXK4hfZwAQt+ekDYlz2OQaawYMFKxwqtDOKabBE/E1C
+	 TbjFUsJsSMLvgtMr2mXGwb2UrjFB6SnEd2jYHgM+qmNivLYnOktUUB+JgCSeAsCVYn
+	 /E/v4Qjo+poQCiUa01PnM53uioAU2+QpmJAOfHjsCmyG+Pkub7MQeuBuuQ+hdVk6fz
+	 a8dQTTNzqW/dg==
+Date: Tue, 8 Jul 2025 11:22:37 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-modules@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH 1/8] execmem: drop unused execmem_update_copy()
+Message-ID: <aGzVTdfBU_SO7ss9@kernel.org>
+References: <20250704134943.3524829-1-rppt@kernel.org>
+ <20250704134943.3524829-2-rppt@kernel.org>
+ <7e52f721-1d8e-4c50-af33-bee3f0d2ac6e@csgroup.eu>
+ <aGu0Yj08EZvpL5Xv@kernel.org>
+ <2ea9c28f-c3d1-4837-b000-10eccaa2775b@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2ea9c28f-c3d1-4837-b000-10eccaa2775b@csgroup.eu>
 
-On Tue, 8 Jul 2025 08:29:43 +0200
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
-
-> On 07/07/2025 17:04, Alireza Sanaee wrote:
-> > Cleans up the cpu-map generation using the created API.
+On Mon, Jul 07, 2025 at 03:02:15PM +0200, Christophe Leroy wrote:
+> 
+> 
+> Le 07/07/2025 à 13:49, Mike Rapoport a écrit :
+> > On Mon, Jul 07, 2025 at 12:10:43PM +0200, Christophe Leroy wrote:
+> > > 
+> > > Le 04/07/2025 à 15:49, Mike Rapoport a écrit :
+> > > > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> > > > 
+> > > > The execmem_update_copy() that used text poking was required when memory
+> > > > allocated from ROX cache was always read-only. Since now its permissions
+> > > > can be switched to read-write there is no need in a function that updates
+> > > > memory with text poking.
+> > > 
+> > > Erm. Looks like I missed the patch that introduced this change.
+> > > 
+> > > On some variant of powerpc, namely book3s/32, this is not feasible.
 > > 
-> > Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
-> > ---
-> >  drivers/base/arch_topology.c | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
+> > The only user of EXECMEM_ROX_CACHE for now is x86-64, we can always revisit
+> > when powerpc book3s/32 would want to opt in to cache usage.
 > > 
-> > diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-> > index 3ebe77566788..88970f13f684 100644
-> > --- a/drivers/base/arch_topology.c
-> > +++ b/drivers/base/arch_topology.c
-> > @@ -518,23 +518,23 @@ core_initcall(free_raw_capacity);
-> >   */
-> >  static int __init get_cpu_for_node(struct device_node *node)
-> >  {
-> > +	struct device_node *cpu_node __free(device_node) = NULL;  
+> > And it seems that [MODULES_VADDR, MODULES_END] is already mapped with
+> > "large pages", isn't it?
 > 
+> I don't think so. It uses execmem_alloc() which sets VM_ALLOW_HUGE_VMAP only
+> when using EXECMEM_ROX_CACHE. And book3s/32 doesn't have large pages.
 > 
-> That's not a correct style anymore. What's more it is not really
-> explained anywhere. Follow standard cleanup.h rules (constructor).
+> Only 8xx has large pages but they are not PMD aligned (PMD_SIZE is 4M while
+> large pages are 512k and 8M) so it wouldn't work well with existing
+> execmem_vmalloc().
+ 
+The PMD_SIZE can be replaced with one of arch_vmap size helpers if needed. 
+Or even parametrized in execmem_info.
+ 
+> > > The granularity for setting the NX (non exec) bit is 256 Mbytes sections.
+> > > So the area dedicated to execmem [MODULES_VADDR; MODULES_END[ always have
+> > > the NX bit unset.
+> > > 
+> > > You can change any page within this area from ROX to RWX but you can't make
+> > > it RW without X. If you want RW without X you must map it in the VMALLOC
+> > > area, as VMALLOC area have NX bit always set.
+> > 
+> > So what will happen when one callse
+> > 
+> > 	set_memory_nx()
+> > 	set_memory_rw()
+> > 
+> > in such areas?
+> 
+> Nothing will happen. It will successfully unset the X bit on the PTE but
+> that will be ignored by the HW which only relies on the segment's NX bit
+> which is set for the entire VMALLOC area and unset for the entire MODULE
+> area.
 
-There isn't a good solution in this case as the constructor is via
-a pointer passed as an argument. I'd just fall back to not using
-__free here and instead doing a manual put of the node in the
-paths where it is set.   That might just be the final successful
-return path - I've not checked closely.
-
+And set_memory_rw() will essentially make the mapping RWX if it's in MODULE
+area?
+ 
+> Christophe
 > 
-> 
-> Best regards,
-> Krzysztof
 
+-- 
+Sincerely yours,
+Mike.
 
