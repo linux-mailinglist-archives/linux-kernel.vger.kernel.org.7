@@ -1,123 +1,119 @@
-Return-Path: <linux-kernel+bounces-721046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB72FAFC40D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:30:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB825AFC40E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86A9B7A2A2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:29:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08EB44A228F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D804298CB5;
-	Tue,  8 Jul 2025 07:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C149F298277;
+	Tue,  8 Jul 2025 07:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cF2pzRg4"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jOWlbxv3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28FF219EB;
-	Tue,  8 Jul 2025 07:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FB3220F38;
+	Tue,  8 Jul 2025 07:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751959816; cv=none; b=PU9rMzebMUNlqI44dVfE9280PbQtFV2hKf+kleqbV8RVRohdgO6bnvtt1KhRLaAYnbWL2dMDfOxDYlTX69d51+31tSw2tDN7XVHHIQcG67lflz9U5+OOyPwoo45ZdH/ufwNzeFJ4ouEH2IKHEsqMN7aHPb4B2EneaWZy8XZf3i8=
+	t=1751959847; cv=none; b=MJ8sK7+biqCKOvUCftIlpDYpsmAJamyWyoVwUx+xoO+rDm13INyWaLJ3z/TPsXncX6njeal9TelZhRy8WgjOvR8fQg66kuwNF5lrSY0j6PJzoK8isjUm4H701GCeUBkGvkchAStPC+uywg+I8LN6Wmo10E8/jDW5b35SuS++I4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751959816; c=relaxed/simple;
-	bh=cKMs56fyVZ6L7AKJr+/shd8+cZbwH4talnYosOwBTK8=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=mnzLehquautyLzUpCPzX0MgBLrUIe2/IErSNDqLc13s79gaUBkAFR6evJZLeKpnBRv23cdoQEf/TthZmIUPTXGM1zy4oIKzYorDmGLhUDOfkeZ+/uQtZbeCFwmQoOJ7UgbwdSv5ghSx58KLlbNUmBFqy7Tu43hPSyux5ckNA0A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cF2pzRg4; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-32cdc9544ceso34630321fa.0;
-        Tue, 08 Jul 2025 00:30:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751959813; x=1752564613; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cKMs56fyVZ6L7AKJr+/shd8+cZbwH4talnYosOwBTK8=;
-        b=cF2pzRg4Ozqeu34DkRUg5+IiSEv8+afQ/DWLbPwuY/JVSN2KzTYp6SFidi1veU9+5T
-         cOOX5SPW3iqHkAv520eSvC8AxjZRjwOo0m6pn67yL380mQvHRbbM5qYQqdzGlgGKAjBa
-         oe58ShZkzSWzWToANOseN6dORUiM47gV3ZqpbS7IrqzivqLeBuT85vgBX25a1ANWJ2z9
-         IHfjKiLFhheAgX13lQeEgE3AnNHoDcwxjibAzYW6kGdPdwz/960gOfMNfJ7lQ/j4qDhn
-         4HLW8EiUQrHqN2iGEuxiTbkMpTH9oH7IsWpNxjrv97GrF7lgSN/TTwh3uc7wmfAw4jzf
-         bw2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751959813; x=1752564613;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cKMs56fyVZ6L7AKJr+/shd8+cZbwH4talnYosOwBTK8=;
-        b=dqjskbSoy9xuB8CQW+tEQRwjrt1FAEPj4EwCsgG8cwQe+9maIsQE/OYtrb04sEgrUJ
-         7Kkz2DuLcvLWf5RBqsE8h3+hb/4r3C4GKVbGzQyBZn7t+6QNrjnmXWycJxv+xO2fBSW+
-         8ExR8D5TIHLwgJR69dhfTu7ImWpIM0oAEAMlurR8HFhcgJRlCp8Wg4GtTMqMzUVd7U1z
-         9jMK/5AAHBPNFGOxLynHoh/u2EymOEf+XpYtCLJ1jUUZuc2L1/NCjg8DPRSc95d1+E1Y
-         1PikDTZ2/rPYZQwrHnPvPhFj4c0/SRbSOKhpFUJAAfYceBhZrYXv/HNan2ZxC8N/c09L
-         t/ow==
-X-Forwarded-Encrypted: i=1; AJvYcCUU2VeJPLOTwkEbmnLZWc5shn+b14U3Bmaixud0iKtZsk1ygcnG7yUNL1qBUx6XUg3rStXDNETV@vger.kernel.org, AJvYcCVdq9UdPA1k8XhXaJrU+jYSoQlHTVMlrdRm4V9Lsuo6HXjvJ1/gN2JhUj502e3MqGzxeCl5Mx88nRecoKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWrRvGaEzK9WVbmNuzC4IxTU8A2g/V/T7uPWkiVyGc3MDd2oEP
-	O9TpE3IMoogj5abNxk1KWk3UnsSVkXFz+bIijuibAeYjDo+gMwP7lrDrVB8C+Wj04EsLAP0q+vH
-	TwqOdRtv8nbqIm1gJouKbriV8fuGJMG4=
-X-Gm-Gg: ASbGnctznUHGKzs3jwUhjRkMQcnX/rkXebSv0qVOTFJwD3fXWVzXsOGXP/Jfw5kaN50
-	8v+I0UYYpm4Hfm9xcQcMgqmuTf9GhyL5s0Mrr7tVjIJ0VaYtN99/ZcWIrBQ9X73w0y5gsyMl9Vy
-	qJJe1o/3KTx6hIawK8z7Fw72BFtX1JVGB1LD3dpI25mc9KQQnRWCJWwknJIl5CM8LYyg==
-X-Google-Smtp-Source: AGHT+IG9u7HevHo7AiuQj+pH88OB49lCJ5p4tfyJqAiwxXcSLRq1HfyoYecHFlcEolIQ+cfZ+WvRz0YimD4HCl+Udag=
-X-Received: by 2002:a05:651c:408b:b0:32a:749a:14d4 with SMTP id
- 38308e7fff4ca-32e5f57cd56mr30715501fa.12.1751959812512; Tue, 08 Jul 2025
- 00:30:12 -0700 (PDT)
+	s=arc-20240116; t=1751959847; c=relaxed/simple;
+	bh=xduxuR57W9POcc4TD/pZdEFQG4piTLlgO6F7+iSjm3k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HeGtW+pzD7QbfYTUx3vtdxBFnKMOcqae1gi0X/u3a+EqPH/X69XY5G4c0AcLGKhHE+3rNWkB9MwUVhO99uPLCwhckv7pTUoZA7+7CRpY61Beb11Wqa+gtUiTjAPJB/9HuMv4Pgfn1PNlcaQFZsKBE698ZDFnsNUp3F8b9602xno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jOWlbxv3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8DA1EC4CEED;
+	Tue,  8 Jul 2025 07:30:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751959845;
+	bh=xduxuR57W9POcc4TD/pZdEFQG4piTLlgO6F7+iSjm3k=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=jOWlbxv3RF28r0v5KKX20F5lp3tuWnEg7aIjFln8YS/Wl0L5CY9UuHaSQ1880PAoH
+	 joxbleQrbBkWkqhoUi0nEl1Yhc8ZkOXMCbJMqPwEk/B1fiQLaufrQ5AL62TTZSKVbL
+	 hRIx4lpEhhJOyzYoihQ1SD8pPTQ6Ft/P6FEnCYdOcK2+4WVaMMvi2fl3I00DQF+T44
+	 tg7qst5qiB72o/lD7XS6pWpQWjxNJ6YZs4cM7FElnxIpBNZjQCK4bmqcdJOYwma9DA
+	 nRESj0Fqyt3/h3DmMm/7+82OxZL8LmewRU6mh+3VHAFM7n8PJEKAshHSKNPFvey3bq
+	 u4IiFkbdUtjRg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 832BBC83F0F;
+	Tue,  8 Jul 2025 07:30:45 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Tue, 08 Jul 2025 02:30:42 -0500
+Subject: [PATCH] efistub: Lower default log level
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Luka <luka.2016.cs@gmail.com>
-Date: Tue, 8 Jul 2025 15:30:00 +0800
-X-Gm-Features: Ac12FXyraQ03idfOwzLtCSZFyJPKxJ_-bjxd743jjyA-XCOHtPya6EBPHGprq54
-Message-ID: <CALm_T+1s19Kr0=v94oUJEbN5ciGcumZDZp-hbn5=z_wPefqG1Q@mail.gmail.com>
-Subject: [Bug] soft lockup in ipv6_list_rcv in Linux kernel v6.15
-To: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250708-efi-default-loglevel-v1-1-12b80db5af16@gmail.com>
+X-B4-Tracking: v=1; b=H4sIACHJbGgC/x2MWwqAIBAArxL73YI9rOgq0ceiay1IhZYE0d2TP
+ gdm5oHIQTjCWDwQOEmUfctQlQWYlbaFUWxmqFWtVa8GZCdo2dHlT/T74jmxx9aSpqYzZIYecnq
+ ErN3/dprf9wNJVExsZgAAAA==
+X-Change-ID: 20250708-efi-default-loglevel-4da5a36cac87
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751959845; l=1284;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=ChssDVXeeXa5KArbpSvIR/bGgEJum64xNRRJ9Dgia9U=;
+ b=RtJOCFiU2aGfuqIawoZEJwZPTcljVs3ePx4Yx4kiqwjhMcNJ6DuCDFo0/JJg77PCkYtTCs7yx
+ OHKIz0/ER86BiJcmOgWrfqwM6nizx1zDBYZK6Oz+m9eZIlPn/1meBh9
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-Dear Linux Kernel Maintainers,
+From: Aaron Kling <webgeek1234@gmail.com>
 
-I hope this message finds you well.
+Some uefi implementations will write the efistub logs to the display
+over a splash image. This is not desirable for debug and info logs, so
+lower the default efi log level to exclude them.
 
-I am writing to report a potential vulnerability I encountered during
-testing of the Linux Kernel version v6.15.
+Suggested-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ drivers/firmware/efi/libstub/printk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Git Commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca (tag: v6.15)
+diff --git a/drivers/firmware/efi/libstub/printk.c b/drivers/firmware/efi/libstub/printk.c
+index 3a67a2cea7bdf1aa215d48dbf9ece4ceec6e4c28..bc599212c05dd746a9c54abbbe61a4bf70f1a8c4 100644
+--- a/drivers/firmware/efi/libstub/printk.c
++++ b/drivers/firmware/efi/libstub/printk.c
+@@ -5,13 +5,13 @@
+ #include <linux/ctype.h>
+ #include <linux/efi.h>
+ #include <linux/kernel.h>
+-#include <linux/printk.h> /* For CONSOLE_LOGLEVEL_* */
++#include <linux/kern_levels.h>
+ #include <asm/efi.h>
+ #include <asm/setup.h>
+ 
+ #include "efistub.h"
+ 
+-int efi_loglevel = CONSOLE_LOGLEVEL_DEFAULT;
++int efi_loglevel = LOGLEVEL_NOTICE;
+ 
+ /**
+  * efi_char16_puts() - Write a UCS-2 encoded string to the console
 
-Bug Location: net/ipv6/ip6_input.c
-
-Bug report: https://pastebin.com/vw0Vrd2m
-
-Complete log: https://pastebin.com/HsUKHEpJ
-
-Entire kernel config: https://pastebin.com/jQ30sdLk
-
-Root Cause Analysis:
-
-This bug is caused by a logic error in the ipv6_list_rcv() function
-within the IPv6 input processing pipeline. During the handling of
-multicast packets, specifically in the ip6_mc_input() and subsequent
-calls, improper synchronization and premature release of socket
-buffers (skb) through kfree_skb() lead to corrupted memory access.
-This results in the triggering of a soft lockup condition where the
-CPU becomes unresponsive due to prolonged execution in
-skb_release_data() without yielding control. The issue is likely
-rooted in incorrect reference management or double-free conditions on
-shared skb structures under concurrent processing scenarios.
-
-At present, I have not yet obtained a minimal reproducer for this
-issue. However, I am actively working on reproducing it, and I will
-promptly share any additional findings or a working reproducer as soon
-as it becomes available.
-
-Thank you very much for your time and attention to this matter. I
-truly appreciate the efforts of the Linux kernel community.
+---
+base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
+change-id: 20250708-efi-default-loglevel-4da5a36cac87
 
 Best regards,
-Luka
+-- 
+Aaron Kling <webgeek1234@gmail.com>
+
+
 
