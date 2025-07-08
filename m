@@ -1,105 +1,174 @@
-Return-Path: <linux-kernel+bounces-720803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2E0AFC08C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:11:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9782FAFC094
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C47BC189F281
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:11:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C9A81AA01ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C6922D9E9;
-	Tue,  8 Jul 2025 02:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB89223DE7;
+	Tue,  8 Jul 2025 02:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fPnh51Sg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UA+CrwH3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E1D21883F;
-	Tue,  8 Jul 2025 02:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91F8217719;
+	Tue,  8 Jul 2025 02:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751940625; cv=none; b=F1EWTVjhy8jzvoPFf01303hOipir9QZvH79pKiQFneom3oZPw+iVpn06zr+Y63W/EJqaEk/AK0CH7YZw51mK5x8BRhUW0rCfqxwXYMRqGfi9r1UNMM9Bfw8H1tEV/nssMnFD/Ns8dNARzVdmiS4JXrqN/Z9YRV6TdKIyKilVP58=
+	t=1751940718; cv=none; b=EQG1lBmyAzA6LEJyQSQSZmZ3lZf/hbJrOHwZAlE2UL+nezc9WcOHNA/RZXDyJ9pNoP/leMlBM7mOU5XO7B76i3Q7jnKqbznxRWWEGUZZ18kDLBuAuyo4uAyOuwhzvgFiHh7DvArEmMflbpjj2re5Tcpizg85dZPubkNUNvWNn1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751940625; c=relaxed/simple;
-	bh=MruwqvZc5LP3jAJGI/pDLVRJ8Xn8JFxY+XCfzAUT7eQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=JoQBPowH0RI55qOkkkxS5f/xa1uKXlqL3TYGUITq6M+xdI+jQlpY1ih2tAo68+IDD8zICv5LVP6/7Cn52XHE6YaWjCDOWhXV84re4lGPngYbs4X8vQVaScMLi1CNNrGSgZQgeuYG9OKrmAyLL6YuS6xURJXW/fTAl0Si0hFNKZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fPnh51Sg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DA8CC4CEE3;
-	Tue,  8 Jul 2025 02:10:25 +0000 (UTC)
+	s=arc-20240116; t=1751940718; c=relaxed/simple;
+	bh=HUAMBVlHDy1ZZzedd5ag1omB8qFZjUS0QyoIpq9v38I=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=WRylJ/EmG1mEwlEuhyXApPZDNxLK7kcG14MaUJqshpAjSIaOb+QV9jZ41vI0PE1xWtH5k/trs8oQJDHzp4DHIMdKo7qJ1sGoVyozXp2hyMSMxR6AmqCYs7AzvvuuL3H47DdqVe7cVeHQSwl/Rpq6Yi4mC4ypMABzwhMtQE0No68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UA+CrwH3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60560C4CEF5;
+	Tue,  8 Jul 2025 02:11:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751940625;
-	bh=MruwqvZc5LP3jAJGI/pDLVRJ8Xn8JFxY+XCfzAUT7eQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=fPnh51SgGgorkAiOWQC+Ez/dG7yG5Z9hX/BuTC9sJInmjiW4BYoAeG4ki7+vk2RMi
-	 AiySCwBMg0r3nITCBDOfxcMt+1G5x1qfOIUv7QVkSvrZMGwPh76XBJOYtFWE7z5uOI
-	 X9o1LM2P1rK1IuxQW4TYFXQ4Gj8kUlk/o4s3/Q2PI/ghO18gVIcuCp3FvB2PN0cxSw
-	 Pcjq17ppoJNrFTG6rh2SxZ0HmCOpTWuiHFI2jJ7NYBVJOAlSoitb32ebpfpRd8Hg89
-	 +ds9kkI48/pja3SvFmippX37+3uHNSopqw+w6rVA2No4Ti/IsWmsUszmLJos8nnJ6J
-	 zwOPbI9LkwgFg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D6F38111DD;
-	Tue,  8 Jul 2025 02:10:48 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1751940718;
+	bh=HUAMBVlHDy1ZZzedd5ag1omB8qFZjUS0QyoIpq9v38I=;
+	h=Date:From:To:Cc:Subject:From;
+	b=UA+CrwH33vbHJ5WsV3jEQD9MJAUCtMna90WFO7Xk52c6yzQ3wtcNLFhbudxJi4nsy
+	 NfmloDP/X9tbc712OZHILt6wC1FbnWHRindi0RAge89oaxHMKMAAkINeUrRw01bEXW
+	 6qQIMCBEHbqdVyO/OSRDUrGDezpAig2YAPrym+tdglimM7MWtOuV/5MUGqGqZ5gX4+
+	 FTe/ryqGq/PFcUQzrSWNUhoEPfB3yLXzvMgHzMuFqs9b/GY4fCdrtWxA3QSwkAnRk4
+	 NFfc5zVQyx9TpuOB4/+BTKmw5hkzdI+ic46l1QjllZ8XJIUCMpT9Xz+mmyXESRANIl
+	 0pxG3EgweO2iQ==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1uYxoM-00000000DaZ-26iW;
+	Mon, 07 Jul 2025 22:11:58 -0400
+Message-ID: <20250708021115.894007410@kernel.org>
+User-Agent: quilt/0.68
+Date: Mon, 07 Jul 2025 22:11:15 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org,
+ x86@kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>,
+ Jiri Olsa <jolsa@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>,
+ Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>,
+ Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ Florian Weimer <fweimer@redhat.com>,
+ Sam James <sam@gentoo.org>
+Subject: [PATCH v8 00/12] unwind_deferred: Implement sframe handling
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2 0/7] netpoll: Factor out functions from
- netpoll_send_udp() and add ipv6 selftest
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175194064702.3543842.10191674038121919735.git-patchwork-notify@kernel.org>
-Date: Tue, 08 Jul 2025 02:10:47 +0000
-References: <20250702-netpoll_untagle_ip-v2-0-13cf3db24e2b@debian.org>
-In-Reply-To: <20250702-netpoll_untagle_ip-v2-0-13cf3db24e2b@debian.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, andrew+netdev@lunn.ch, shuah@kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kernel-team@meta.com
-
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 02 Jul 2025 03:06:32 -0700 you wrote:
-> Refactors the netpoll UDP transmit path to improve code clarity,
-> maintainability, and protocol-layer encapsulation.
-> 
-> Function netpoll_send_udp() has more than 100 LoC, which is hard to
-> understand and review. After this patchset, it has only 32 LoC, which is
-> more manageable.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v2,1/7] netpoll: Improve code clarity with explicit struct size calculations
-    https://git.kernel.org/netdev/net-next/c/4b52cdfcce21
-  - [net-next,v2,2/7] netpoll: factor out UDP checksum calculation into helper
-    https://git.kernel.org/netdev/net-next/c/01dae7a61c1a
-  - [net-next,v2,3/7] netpoll: factor out IPv6 header setup into push_ipv6() helper
-    https://git.kernel.org/netdev/net-next/c/839388f39aee
-  - [net-next,v2,4/7] netpoll: factor out IPv4 header setup into push_ipv4() helper
-    https://git.kernel.org/netdev/net-next/c/8c27639dbe54
-  - [net-next,v2,5/7] netpoll: factor out UDP header setup into push_udp() helper
-    https://git.kernel.org/netdev/net-next/c/cacfb1f4e9f6
-  - [net-next,v2,6/7] netpoll: move Ethernet setup to push_eth() helper
-    https://git.kernel.org/netdev/net-next/c/eb4e773f13fb
-  - [net-next,v2,7/7] selftests: net: Add IPv6 support to netconsole basic tests
-    https://git.kernel.org/netdev/net-next/c/3dc6c76391cb
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
+This code is based on top of:
+
+ https://lore.kernel.org/linux-trace-kernel/20250708012239.268642741@kernel.org/ 
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+   unwind/core
+
+This is the implementation of parsing the SFrame section in an ELF file.
+It's a continuation of Josh's last work that can be found here:
+
+   https://lore.kernel.org/all/cover.1737511963.git.jpoimboe@kernel.org/
+
+Currently the only way to get a user space stack trace from a stack
+walk (and not just copying large amount of user stack into the kernel
+ring buffer) is to use frame pointers. This has a few issues. The biggest
+one is that compiling frame pointers into every application and library
+has been shown to cause performance overhead.
+
+Another issue is that the format of the frames may not always be consistent
+between different compilers and some architectures (s390) has no defined
+format to do a reliable stack walk. The only way to perform user space
+profiling on these architectures is to copy the user stack into the kernel
+buffer.
+
+SFrames[1] is now supported in gcc binutils and soon will also be supported
+by LLVM. SFrames acts more like ORC, and lives in the ELF executable
+file as its own section. Like ORC it has two tables where the first table
+is sorted by instruction pointers (IP) and using the current IP and finding
+it's entry in the first table, it will take you to the second table which
+will tell you where the return address of the current function is located
+and then you can use that address to look it up in the first table to find
+the return address of that function, and so on. This performs a user
+space stack walk.
+
+Now because the SFrame section lives in the ELF file it needs to be faulted
+into memory when it is used. This means that walking the user space stack
+requires being in a faultable context. As profilers like perf request a stack
+trace in interrupt or NMI context, it cannot do the walking when it is
+requested. Instead it must be deferred until it is safe to fault in user
+space. One place this is known to be safe is when the task is about to return
+back to user space.
+
+This series makes the deferred unwind code implement SFrames.
+
+[1] https://sourceware.org/binutils/wiki/sframe
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+unwind/sframe
+
+The unwind/main branch is just unwind/sframe merged into unwind/perf
+and can be used for testing with perf.
+
+Changes since v7: https://lore.kernel.org/linux-trace-kernel/20250701184939.026626626@goodmis.org/
+
+- Simply rebased on top of the latest unwind/core
+
+Josh Poimboeuf (12):
+      unwind_user/sframe: Add support for reading .sframe headers
+      unwind_user/sframe: Store sframe section data in per-mm maple tree
+      x86/uaccess: Add unsafe_copy_from_user() implementation
+      unwind_user/sframe: Add support for reading .sframe contents
+      unwind_user/sframe: Detect .sframe sections in executables
+      unwind_user/sframe: Wire up unwind_user to sframe
+      unwind_user/sframe/x86: Enable sframe unwinding on x86
+      unwind_user/sframe: Remove .sframe section on detected corruption
+      unwind_user/sframe: Show file name in debug output
+      unwind_user/sframe: Enable debugging in uaccess regions
+      unwind_user/sframe: Add .sframe validation option
+      unwind_user/sframe: Add prctl() interface for registering .sframe sections
+
+----
+ MAINTAINERS                       |   1 +
+ arch/Kconfig                      |  23 ++
+ arch/x86/Kconfig                  |   1 +
+ arch/x86/include/asm/mmu.h        |   2 +-
+ arch/x86/include/asm/uaccess.h    |  39 ++-
+ fs/binfmt_elf.c                   |  49 ++-
+ include/linux/mm_types.h          |   3 +
+ include/linux/sframe.h            |  60 ++++
+ include/linux/unwind_user_types.h |   1 +
+ include/uapi/linux/elf.h          |   1 +
+ include/uapi/linux/prctl.h        |   6 +-
+ kernel/fork.c                     |  10 +
+ kernel/sys.c                      |   9 +
+ kernel/unwind/Makefile            |   3 +-
+ kernel/unwind/sframe.c            | 612 ++++++++++++++++++++++++++++++++++++++
+ kernel/unwind/sframe.h            |  71 +++++
+ kernel/unwind/sframe_debug.h      |  99 ++++++
+ kernel/unwind/user.c              |  25 +-
+ mm/init-mm.c                      |   2 +
+ 19 files changed, 998 insertions(+), 19 deletions(-)
+ create mode 100644 include/linux/sframe.h
+ create mode 100644 kernel/unwind/sframe.c
+ create mode 100644 kernel/unwind/sframe.h
+ create mode 100644 kernel/unwind/sframe_debug.h
 
