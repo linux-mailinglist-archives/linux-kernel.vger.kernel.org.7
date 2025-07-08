@@ -1,158 +1,166 @@
-Return-Path: <linux-kernel+bounces-720677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 269FBAFBF25
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:14:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F693AFBF27
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 556633A67EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:14:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F87D4A2CDB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9F7288A8;
-	Tue,  8 Jul 2025 00:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F6912E7E;
+	Tue,  8 Jul 2025 00:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fyMOF3hc"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HdIbl8jH"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CF91BC58
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 00:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C0E3C01
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 00:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751933672; cv=none; b=jyaFhyOyOBK4Oev3BvA//8YOT6u/6wNculxguOM//w/+g0qDW8p9vW7yn9+WAyyHZUn6jTnlJKoi/EQzatuoF2+J5QX6dVECQWVpsfigeRLgrzj3Q6JDEpIzj7z+3HEpvpTGW9nJMUD5S/xjVfxAcBX2TViB/NsEPJbohNtNkhY=
+	t=1751933693; cv=none; b=G8jgAso6XFFKLkmbGC41wZyfuqFaREn1OW8ilGgKqoiEgYC4CLomYzLJ7VVeO4Z5ZNwCyj/6YF5+HvSoSBzlPfXLygwa0EqOvNUBc1t2KIXdLS8obdvOPSCk6GshxmyQO386zs4c5D2720SUin/+K3CEP/NxnWYiTqKoBe18WCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751933672; c=relaxed/simple;
-	bh=Q3YduanZhg5Y0sB2Odh2fAerxegQJGenK+wI+G6lALA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZTsPcgaWKNUaM78FPr10657oAx/tTu2ebT4RIj29QdaD63SmWmnJ53l4eINlNu5d7HEuSTTz+tOxGonIZWaymy66+H4SCIq3C4AkK8FPihBRvMgKnVwqZHxMpJ2HTWEQvdVo+0cy7yfK8bAMDKLQtoY9hKuAKBcWXvzC8vxY/MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fyMOF3hc; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-237f270513bso45165ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 17:14:31 -0700 (PDT)
+	s=arc-20240116; t=1751933693; c=relaxed/simple;
+	bh=dmlr9QU9PejKKi6yw4+ngRoaBiSbg3gp5UFCg3+6BGA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y0sdFNcst8Wn5rqsvSuC1DK96flQGLIt2jg0a937qAlE4aeDKPR1si9iK72GZSlw/CVb5V6dX6cJD1hwvQNJrNSjwjo1IUFx3GVSPTS6dfgpOiS/eS3hdqU4EexSP0Daoe7P+klT8n6pBA8CuT7LEwUroD5F5ZLhQk/gfZ7ADTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HdIbl8jH; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2350b1b9129so25196675ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 17:14:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751933671; x=1752538471; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1751933691; x=1752538491; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Q3YduanZhg5Y0sB2Odh2fAerxegQJGenK+wI+G6lALA=;
-        b=fyMOF3hcl5vFT3PHgZ0XuS4zOHuRPNH6I6nAmUEHi7hVuZ7Tb6AexApnychhf2SWl9
-         JGImb2iQteaEL+ZC/o7Jv3Fw7PYms7/qPE9+zLIENOph1dJSzqC/9PJIS3MOtqg2CJd+
-         dOz67q2Wv60QWU/iHJ0ONsdCSyb9nX/kBPWESXvwpAIj23FCiTI275YJINlYpIS70Baw
-         TVVE6O/Sc63Lvo2ZwxANe+0hoiGlGcCBQ0OoeFwW676YcMA/SPIWV1a0kDD4aineUAHc
-         DOrZ+2lbhYpXSLRApWEYZe+x7/QqLhQG5Ro44rDEj3W7p/4dXUseDot0iwE662uEf+oX
-         uSHw==
+        bh=ZetFX6wW4YDbBAC0JxzbJ3+PwShQwl335DiD7tIdsd4=;
+        b=HdIbl8jHRtHo6WV8GbQk/crxLRaBNt+Y2aTxqLV8281mdZOWeNsYtlBwx3+KV1dFtZ
+         VvTJwNrFm0Kv4SqZXz1eU9QxwU9uMf91Pi3GHd3FGDJxVcPRtQ3A4CjS688qdF5SilSS
+         3wNGIzTJwE+STpM46hT8pKwJtJtjzKWhmWM5bALNa18BbvsrhuW4ox1vuDTIq5kYkBln
+         946KtxsXPq1eBKxMYew6bVVVdCXfttDnwbZ49X+nm9DPlp5ZMVZF4kBttm3fSy8gd9cH
+         SGIoah57aOVBhVGlXpm6YcROOTFYPhZjs9X2D0BRpA1cEalFVPez68uWH6kqq/eCqwgh
+         yTUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751933671; x=1752538471;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1751933691; x=1752538491;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q3YduanZhg5Y0sB2Odh2fAerxegQJGenK+wI+G6lALA=;
-        b=N/Wij+s6QDkIUIyFLqohrRjI2azT4LHCe+f4HZRNJ4FcdO0MZcn3Ft0eLdclFICBAD
-         4fog/bQkdaJcCkQZbxIW3vSDBdu8aXG6KSWmJeJ/D2m1xOpd2Lbzdu3z+pqOlekXbEbQ
-         WZiyd7HIv7XThKY8RDAQo/rCaCxn1oxuMDiElCwLTt5Cg8FqHhR/A5fFc7aPvQEa4mK8
-         vLmVEMvmgCndQPfK5sSId7lZurGtgIVcAOoSUTW3PUjPYJOkM+Tut+Cw7E08SyJHPbOn
-         qZCIonNajpqEdmXY3LnqoIwDUqCI8ufoZgMSGJ7GJjkf4f/ceujc6W2ybkl3IVxsdx1w
-         Os2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW/hpRbM0ActFpkdCYUWAER0K+QTgJ7J937FbK0r0XNCGWaWUKWGbwlPTsqROymOW8cR1vyvVOVfAcBQ2E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRJCJLL3FTnt5qAEJBr5wXJLOvU+F1TxNf43GyNvx20X3Iw+Zk
-	3kvvMJ3X6S3QfaCszV6mpU8dC0ReVOWLV4DmsY3xp5Kwfb1tzqv51XSibPecMrLPrtECjAF2oGh
-	molDnOj6qckV2GKFoSQ3YbzjVa7b8fO4jhUo6SrzY
-X-Gm-Gg: ASbGncvWb5aXs95vRjaHocDeIt5usqtU3W8f9xfn2fAMfaBCpTu0Et3qPOzxExc+Snu
-	O7LE/dwntJWz6mclm6WHXaKSz7sDk1L2ocwVlhgHsM4FLQWZUOY7wG1H8Z5vlLKSx81HLpt/hcj
-	RxcLK/5pw1bx1UoWQq7/oE8b9K21Igr9PDEqTxWGY/v27nrMl9gTD8qfJO/2ZXPTmags2KO/Yqr
-	A==
-X-Google-Smtp-Source: AGHT+IG6uFwfViV4uRKlN7dtoaYWYJ2cAvUBFCR9zSfu99Vwne4/Ojg06Ia/L5ZZcaIijmv3rovYpa5VMqmmYY4ViY8=
-X-Received: by 2002:a17:903:98c:b0:234:c2e7:a0e7 with SMTP id
- d9443c01a7336-23dd0f66398mr1276695ad.4.1751933670151; Mon, 07 Jul 2025
- 17:14:30 -0700 (PDT)
+        bh=ZetFX6wW4YDbBAC0JxzbJ3+PwShQwl335DiD7tIdsd4=;
+        b=uKtFxZu3nlLousVDf19NUT+wTOMQX6DckAoiadgIWtDKdvzNouvD9AH7wi0RycgYvG
+         Vgnt3RZ9ecw8feLDkTcLf7R+KZX/07Axx6mOqfBVDtu2XBg2XaCDyoa0rdzXtmwxxTZr
+         W4ya5TQnjHxwqUbTlBofgbWjt+iIVVqOKH6rDtEDFRLH/QdSRtSuMsyEPpiMn/crq3To
+         PR+gU9PIiaYaEHXtlqrGg1n4+6E8kfRqgpoDZBdqgkC+mG4eEAbM2lBrk/MXKYAhi0UI
+         2pEZITZPm3VMerj7RWRhZn0ErN5+Nzj4drbeM97Ynbde7zfzzoFyzKXfrd965zqLmqaX
+         46nA==
+X-Gm-Message-State: AOJu0YyaPeJBFaHcazi0NTLGorF+DR/Ciq9aqfNYZKpOp+K3hJm8+EnI
+	V9C/WyRd234otOdiRg/1y+x/s6GvgQDta7g7GY1OQZZwd/GeUw2Ro6fXx9R8rzFJeeo=
+X-Gm-Gg: ASbGnculguWJfB7DtMu35Ac48JvasIa7YgZgOBmLo8AteszTqfd/5nVbEpwullfVnqh
+	hLJvGy8+09v2L4TKBzWnaz0WcfI93XqfCcFR3UtXtjoce3vrf0mn41V9TcvMCztza+VVKsqboaw
+	n3tEuc9Dcqcrl0VHQXYoZssc7ssXeyW2Sh65lGpwhz348JA0A/eNBzhwAHL6NPFPLaM7bUmn+u7
+	6CI2jrn8A0yRaS8tuXNCekFj4hV5n7tiKG2QTqjYCF4knC7R+hnMejnq1IoToS6rs/1vL1f8ndM
+	asI3bZSwSK/EJR2kBqhBl5xLRJ7kDPSiElGU9dlhcd/400m1Mc/u234vHs69hD94NfALM50S16e
+	zsz3cjoVp
+X-Google-Smtp-Source: AGHT+IG8TGYBMB1axi5fHGbVJ42BJ87cjqsFjSk1o0khIde1Z/ZybxhjiWb4KmGSQ8SCNbMNkpEj1g==
+X-Received: by 2002:a17:903:2784:b0:234:986c:66e0 with SMTP id d9443c01a7336-23c85d8f78dmr180752565ad.4.1751933691057;
+        Mon, 07 Jul 2025 17:14:51 -0700 (PDT)
+Received: from localhost.localdomain ([115.137.3.141])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c22055c73sm481201a91.1.2025.07.07.17.14.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 17:14:50 -0700 (PDT)
+From: Ryan Chung <seokwoo.chung130@gmail.com>
+To: jgross@suse.com,
+	sstabellini@kernel.org,
+	oleksandr_tyshchenko@epam.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Ryan Chung <seokwoo.chung130@gmail.com>
+Subject: [PATCH v3] xen-pciback: Replace scnprintf() with sysfs_emit_at()
+Date: Tue,  8 Jul 2025 09:14:40 +0900
+Message-ID: <20250708001444.86155-1-seokwoo.chung130@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250624070443.11740-1-seokwoo.chung130@gmail.com>
+References: <20250624070443.11740-1-seokwoo.chung130@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <aFPGlAGEPzxlxM5g@yzhao56-desk.sh.intel.com>
- <d15bfdc8-e309-4041-b4c7-e8c3cdf78b26@intel.com> <CAGtprH-Kzn2kOGZ4JuNtUT53Hugw64M-_XMmhz_gCiDS6BAFtQ@mail.gmail.com>
- <aGIBGR8tLNYtbeWC@yzhao56-desk.sh.intel.com> <CAGtprH-83EOz8rrUjE+O8m7nUDjt=THyXx=kfft1xQry65mtQg@mail.gmail.com>
- <aGNw4ZJwlClvqezR@yzhao56-desk.sh.intel.com> <CAGtprH-Je5OL-djtsZ9nLbruuOqAJb0RCPAnPipC1CXr2XeTzQ@mail.gmail.com>
- <aGxXWvZCfhNaWISY@google.com>
-In-Reply-To: <aGxXWvZCfhNaWISY@google.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Mon, 7 Jul 2025 17:14:17 -0700
-X-Gm-Features: Ac12FXz8PyaRfu4rhO-WaL1IGCmpiHbF9FfbCawryHLn0bG8xOVNVPi0PuKZNZ0
-Message-ID: <CAGtprH_57HN4Psxr5MzAZ6k+mLEON2jVzrLH4Tk+Ws29JJuL4Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
-To: Sean Christopherson <seanjc@google.com>
-Cc: Yan Zhao <yan.y.zhao@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, linux-fsdevel@vger.kernel.org, 
-	aik@amd.com, ajones@ventanamicro.com, akpm@linux-foundation.org, 
-	amoorthy@google.com, anthony.yznaga@oracle.com, anup@brainfault.org, 
-	aou@eecs.berkeley.edu, bfoster@redhat.com, binbin.wu@linux.intel.com, 
-	brauner@kernel.org, catalin.marinas@arm.com, chao.p.peng@intel.com, 
-	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com, 
-	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com, 
-	fan.du@intel.com, fvdl@google.com, graf@amazon.com, haibo1.xu@intel.com, 
-	hch@infradead.org, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
-	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
-	kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
-	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, usama.arif@bytedance.com, vbabka@suse.cz, 
-	viro@zeniv.linux.org.uk, vkuznets@redhat.com, wei.w.wang@intel.com, 
-	will@kernel.org, willy@infradead.org, yilun.xu@intel.com, 
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 7, 2025 at 4:25=E2=80=AFPM Sean Christopherson <seanjc@google.c=
-om> wrote:
->
-> On Tue, Jul 01, 2025, Vishal Annapurve wrote:
-> > I would be curious to understand if we need zeroing on conversion for
-> > Confidential VMs. If not, then the simple rule of zeroing on
-> > allocation only will work for all usecases.
->
-> Unless I'm misunderstanding what your asking, pKVM very specific does NOT=
- want
-> zeroing on conversion, because one of its use cases is in-place conversio=
-n, e.g.
-> to fill a shared buffer and then convert it to private so that the buffer=
- can be
-> processed in the TEE.
+This is the third revision (v3) of this patch series.
+No changes since v2—only adding Reviewed-by lines.
 
-Yeah, that makes sense. So "just zero on allocation" (and no more
-zeroing during conversion) policy will work for pKVM.
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
+---
+ drivers/xen/xen-pciback/pci_stub.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
->
-> Some architectures, e.g. SNP and TDX, may effectively require zeroing on =
-conversion,
-> but that's essentially a property of the architecture, i.e. an arch/vendo=
-r specific
-> detail.
+diff --git a/drivers/xen/xen-pciback/pci_stub.c b/drivers/xen/xen-pciback/pci_stub.c
+index 5c2f829d5b0b..045e74847fe6 100644
+--- a/drivers/xen/xen-pciback/pci_stub.c
++++ b/drivers/xen/xen-pciback/pci_stub.c
+@@ -1261,7 +1261,7 @@ static ssize_t slots_show(struct device_driver *drv, char *buf)
+ 		if (count >= PAGE_SIZE)
+ 			break;
+ 
+-		count += scnprintf(buf + count, PAGE_SIZE - count,
++		count += sysfs_emit_at(buf, count,
+ 				   "%04x:%02x:%02x.%d\n",
+ 				   pci_dev_id->domain, pci_dev_id->bus,
+ 				   PCI_SLOT(pci_dev_id->devfn),
+@@ -1290,7 +1290,7 @@ static ssize_t irq_handlers_show(struct device_driver *drv, char *buf)
+ 		if (!dev_data)
+ 			continue;
+ 		count +=
+-		    scnprintf(buf + count, PAGE_SIZE - count,
++		    sysfs_emit_at(buf, count,
+ 			      "%s:%s:%sing:%ld\n",
+ 			      pci_name(psdev->dev),
+ 			      dev_data->isr_on ? "on" : "off",
+@@ -1375,7 +1375,7 @@ static ssize_t quirks_show(struct device_driver *drv, char *buf)
+ 		if (count >= PAGE_SIZE)
+ 			goto out;
+ 
+-		count += scnprintf(buf + count, PAGE_SIZE - count,
++		count += sysfs_emit_at(buf, count,
+ 				   "%02x:%02x.%01x\n\t%04x:%04x:%04x:%04x\n",
+ 				   quirk->pdev->bus->number,
+ 				   PCI_SLOT(quirk->pdev->devfn),
+@@ -1391,7 +1391,7 @@ static ssize_t quirks_show(struct device_driver *drv, char *buf)
+ 			if (count >= PAGE_SIZE)
+ 				goto out;
+ 
+-			count += scnprintf(buf + count, PAGE_SIZE - count,
++			count += sysfs_emit_at(buf, count,
+ 					   "\t\t%08x:%01x:%08x\n",
+ 					   cfg_entry->base_offset +
+ 					   field->offset, field->size,
+@@ -1462,7 +1462,7 @@ static ssize_t permissive_show(struct device_driver *drv, char *buf)
+ 		if (!dev_data || !dev_data->permissive)
+ 			continue;
+ 		count +=
+-		    scnprintf(buf + count, PAGE_SIZE - count, "%s\n",
++		    sysfs_emit_at(buf, count, "%s\n",
+ 			      pci_name(psdev->dev));
+ 	}
+ 	spin_unlock_irqrestore(&pcistub_devices_lock, flags);
+@@ -1521,7 +1521,7 @@ static ssize_t allow_interrupt_control_show(struct device_driver *drv,
+ 		if (!dev_data || !dev_data->allow_interrupt_control)
+ 			continue;
+ 		count +=
+-		    scnprintf(buf + count, PAGE_SIZE - count, "%s\n",
++		    sysfs_emit_at(buf, count, "%s\n",
+ 			      pci_name(psdev->dev));
+ 	}
+ 	spin_unlock_irqrestore(&pcistub_devices_lock, flags);
+-- 
+2.43.0
 
-Conversion operation is a unique capability supported by guest_memfd
-files so my intention of bringing up zeroing was to better understand
-the need and clarify the role of guest_memfd in handling zeroing
-during conversion.
-
-Not sure if I am misinterpreting you, but treating "zeroing during
-conversion" as the responsibility of arch/vendor specific
-implementation outside of guest_memfd sounds good to me.
 
