@@ -1,81 +1,45 @@
-Return-Path: <linux-kernel+bounces-720956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F362AFC28D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:19:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF2FAFC28C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E92E7A72DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:18:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B02C54219B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747B8220F5B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA97221265;
 	Tue,  8 Jul 2025 06:19:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WrvdItYj"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mcR6ytGf"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7ED1F5413;
-	Tue,  8 Jul 2025 06:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77676219EB;
+	Tue,  8 Jul 2025 06:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751955571; cv=none; b=CXQZC94euVf7SHzEf/22D3aXszeekdOp3hcI144B1lTcGbr5chQ/aevvS3TwrGBaqNvA/Tv2L9YG12z9qb2fiZgWNXcAR2T1IMjb4HUGxJkfBqYLZkveKhAgG9zTtOF5ZY6czFMNnIv3ien5yx3i/ibQSuQVUXvymzAN61TrcL8=
+	t=1751955572; cv=none; b=rzvISAd90zz6gcf/hXAqC4baCKUc7KDIVBY5jZKRlY4U4cXfLj/JgaHCtQexcdCovT1XRu4G5NM7iEzY/E2rNNyLc9LJQrGO+7FEBVisjltcBu5qZB+bfzIVyxb+oGzswpk3r+sk9Bi7uY7WzUAFH9oXg5xVUkknfbJp2E4QW18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751955571; c=relaxed/simple;
-	bh=a9VQ/OKuMQxNDls3x39RI94adWFSYdHXGaxMD5Plndw=;
+	s=arc-20240116; t=1751955572; c=relaxed/simple;
+	bh=fdKst7IRAsqsenZliJt+GWMMOBmwKJwlNY3fqlSVZkE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lU+zil2BvpPrr1xV0CLqWksSBA1h1CJJGpC6WsD4bOmR0lmSBEfc9zFQ4SyjDAQ0gLbsYbLe2/oK2zDEPeCp/iF2dEYcUxtHMy4nWaKWMSygJBLsyaif7w/99Ave488FmS8JDS3PZtW58arfjKrCyO/tsVRq2wx9Tio1CObpj3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WrvdItYj; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5685BZBc006198;
-	Tue, 8 Jul 2025 06:19:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=ppMPP8
-	ppoa84lSjqkTeweSkbyPG03QPa5F2neMbbDPU=; b=WrvdItYjSh2gjwq5iitiNW
-	tVKMx7eXkAcalY1zBI8ARZOa1FCzWs3ycvzy9/XkPiqSTpgRxIkZvkQmZcS2KXeQ
-	YxO+4zm9cbXkpXUIq2RzBq8hwjyfuH3uzvr73rf3csn/KZHa2xq0Y+S+BfgiqaTM
-	AKCihfKNPL6YSLWvVe8/O7Yn2C/0ealGtAACoU+QrNaMpwSSUWiq/OBEv4YLswnQ
-	XIOnfsqe1p0MhAGDtTZJPE3XDzFatjDVWrgmYQAS4Btzxn1A6u4t0CvfJ525e81/
-	ZGtyb002mBRymIMPtt8waWS0QpqyW4xOs6z0CW1ugLEJcrR7kBRKGOamfy95e3hg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47puk3x2s5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Jul 2025 06:19:23 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5686JMfo002363;
-	Tue, 8 Jul 2025 06:19:22 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47puk3x2s1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Jul 2025 06:19:22 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5683fohR024317;
-	Tue, 8 Jul 2025 06:19:21 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 47qh329aek-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Jul 2025 06:19:21 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5686JJXR28443186
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 8 Jul 2025 06:19:19 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6D6A558055;
-	Tue,  8 Jul 2025 06:19:19 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0F39958066;
-	Tue,  8 Jul 2025 06:19:14 +0000 (GMT)
-Received: from [9.109.246.12] (unknown [9.109.246.12])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  8 Jul 2025 06:19:13 +0000 (GMT)
-Message-ID: <88176330-73c3-45d0-ac14-d7ae0a14e80d@linux.ibm.com>
-Date: Tue, 8 Jul 2025 11:49:12 +0530
+	 In-Reply-To:Content-Type; b=d4+mS7PweKbbILQYj9iAo2EcuzYadQHRUYKwvTKoFGBIyhB4h0tYLBSfBPv+YYfw9RjobNW5uJMTrryFPmsu1PJ1mueudxpt1PLcHS3U2X0raarVED3fvm1TYSR4GqF9sKX2YYEaHGcan5U43RWyTPoeLEZ+Knqics/S0Wvrj6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mcR6ytGf; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1751955566; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=qIRx+HCehqqza2IJhsneJV4WjfRLShJN2Hjm8Xb7L4M=;
+	b=mcR6ytGfjlZqBSdQlw2EshP17cFillFU1uZpHPvB1K09ZpkARvtetnsxNjsvXJ48TGFgoanB32ts36Wb9OLIq6GlZckOUDo/bwTlAZ8iXUmtZhOhKEcjx9lpHz3Y2nov6DqBkzND0nfCgIb4wu18bCcJ/zCH+khgEDI1tRsJpCc=
+Received: from 30.74.144.119(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WiLFdgJ_1751955558 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 08 Jul 2025 14:19:23 +0800
+Message-ID: <e6a18289-1417-4f47-a919-bb5a8ddc1579@linux.alibaba.com>
+Date: Tue, 8 Jul 2025 14:19:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,88 +47,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 1/2] net/smc: convert timeouts to
- secs_to_jiffies()
-To: Easwar Hariharan <eahariha@linux.microsoft.com>,
-        "D. Wythe" <alibuda@linux.alibaba.com>,
-        Dust Li <dust.li@linux.alibaba.com>,
-        Wenjia Zhang <wenjia@linux.ibm.com>,
-        Mahanta Jambigi
- <mjambigi@linux.ibm.com>,
-        Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-        David Ahern <dsahern@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-rdma@vger.kernel.org,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250707-netdev-secs-to-jiffies-part-2-v2-0-b7817036342f@linux.microsoft.com>
- <20250707-netdev-secs-to-jiffies-part-2-v2-1-b7817036342f@linux.microsoft.com>
-Content-Language: en-US
-From: Sidraya Jayagond <sidraya@linux.ibm.com>
-In-Reply-To: <20250707-netdev-secs-to-jiffies-part-2-v2-1-b7817036342f@linux.microsoft.com>
+Subject: Re: [PATCH v8 04/15] khugepaged: generalize alloc_charge_folio()
+To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: david@redhat.com, ziy@nvidia.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com,
+ corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
+ baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
+ wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com,
+ vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
+ yang@os.amperecomputing.com, kirill.shutemov@linux.intel.com,
+ aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
+ catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
+ dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+ jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org
+References: <20250702055742.102808-1-npache@redhat.com>
+ <20250702055742.102808-5-npache@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250702055742.102808-5-npache@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDA0OSBTYWx0ZWRfXyNZsdDHEcY90 u8UzrjIR5EU86PYRkYCM6Mxcj3byRjGQs0m1CrL+IIt595tsB5oUlWCI8b93uXBhXxR21rRFxa5 EDuS29D1SIzO3b6lQRiCEJLCkRhL/RShrie4QW5+b/ktEjLb3sQa3eYa0yJwBt7WrsbV7AB53nY
- s59lh7HA3vVNtZEPqAkeG8wMCZKwfe92IH3UtiIDMYCrDpT58u5ZS7bxa0F9I0osqtAGsNTobn9 OfEnnu1SpNpy4tVOqsKDRGt94Mm5hDeEEVHKvVFeUVJSHr+0thHomgdDDYcZDSY5ehdCAaD6CHP oU4MEFs/iKib12OvqibScKv7O8UvYIgzEuGqkld33PONCMOQeOXz5Dyvsr4pf2jT7sxaIZL5S1i
- brtHtPLVDExzHqgw75Ki1xDsLXF+T4ogiSn+UpNQfILh96GZfcVMoXn9ujmjo4V+4I3S1w30
-X-Authority-Analysis: v=2.4 cv=XYeJzJ55 c=1 sm=1 tr=0 ts=686cb86b cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=yMhMjlubAAAA:8 a=VnNF1IyMAAAA:8 a=Z_BCh-ONDyC5R4AT590A:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: RMisSh4tEMnFjdxfY2J90WO6jupJWmpj
-X-Proofpoint-GUID: QFE95R7zLzfrV4WgjMEO0JngNJcfM5WB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-08_02,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 suspectscore=0
- mlxscore=0 impostorscore=0 phishscore=0 bulkscore=0 clxscore=1011
- spamscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507080049
+Content-Transfer-Encoding: 7bit
 
 
 
-On 08/07/25 3:33 am, Easwar Hariharan wrote:
-> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
-> secs_to_jiffies().  As the value here is a multiple of 1000, use
-> secs_to_jiffies() instead of msecs_to_jiffies to avoid the multiplication.
+On 2025/7/2 13:57, Nico Pache wrote:
+> From: Dev Jain <dev.jain@arm.com>
 > 
-> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
-> the following Coccinelle rules:
+> Pass order to alloc_charge_folio() and update mTHP statistics.
 > 
-> @depends on patch@
-> expression E;
-> @@
-> 
-> -msecs_to_jiffies(E * 1000)
-> +secs_to_jiffies(E)
-> 
-> -msecs_to_jiffies(E * MSEC_PER_SEC)
-> +secs_to_jiffies(E)
-> 
-> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Co-developed-by: Nico Pache <npache@redhat.com>
+> Signed-off-by: Nico Pache <npache@redhat.com>
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
 > ---
->   net/smc/af_smc.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
+>   include/linux/huge_mm.h |  2 ++
+>   mm/huge_memory.c        |  4 ++++
+>   mm/khugepaged.c         | 17 +++++++++++------
+>   3 files changed, 17 insertions(+), 6 deletions(-)
 > 
-> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
-> index 8d56e4db63e041724f156aa3ab30bab745a15bad..bdbaad17f98012c10d0bbc721c80d4c5ae4fb220 100644
-> --- a/net/smc/af_smc.c
-> +++ b/net/smc/af_smc.c
-> @@ -2735,8 +2735,7 @@ int smc_accept(struct socket *sock, struct socket *new_sock,
->   
->   	if (lsmc->sockopt_defer_accept && !(arg->flags & O_NONBLOCK)) {
->   		/* wait till data arrives on the socket */
-> -		timeo = msecs_to_jiffies(lsmc->sockopt_defer_accept *
-> -								MSEC_PER_SEC);
-> +		timeo = secs_to_jiffies(lsmc->sockopt_defer_accept);
->   		if (smc_sk(nsk)->use_fallback) {
->   			struct sock *clcsk = smc_sk(nsk)->clcsock->sk;
->   
-> 
-﻿﻿﻿Reviewed-by: Sidraya Jayagond <sidraya@linux.ibm.com>
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 4d5bb67dc4ec..a6ea89fdaee6 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -125,6 +125,8 @@ enum mthp_stat_item {
+>   	MTHP_STAT_ANON_FAULT_ALLOC,
+>   	MTHP_STAT_ANON_FAULT_FALLBACK,
+>   	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
+> +	MTHP_STAT_COLLAPSE_ALLOC,
+> +	MTHP_STAT_COLLAPSE_ALLOC_FAILED,
+>   	MTHP_STAT_ZSWPOUT,
+>   	MTHP_STAT_SWPIN,
+>   	MTHP_STAT_SWPIN_FALLBACK,
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index ce130225a8e5..69777a35e722 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -614,6 +614,8 @@ static struct kobj_attribute _name##_attr = __ATTR_RO(_name)
+>   DEFINE_MTHP_STAT_ATTR(anon_fault_alloc, MTHP_STAT_ANON_FAULT_ALLOC);
+>   DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
+>   DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
+> +DEFINE_MTHP_STAT_ATTR(collapse_alloc, MTHP_STAT_COLLAPSE_ALLOC);
+> +DEFINE_MTHP_STAT_ATTR(collapse_alloc_failed, MTHP_STAT_COLLAPSE_ALLOC_FAILED);
+>   DEFINE_MTHP_STAT_ATTR(zswpout, MTHP_STAT_ZSWPOUT);
+>   DEFINE_MTHP_STAT_ATTR(swpin, MTHP_STAT_SWPIN);
+>   DEFINE_MTHP_STAT_ATTR(swpin_fallback, MTHP_STAT_SWPIN_FALLBACK);
+> @@ -679,6 +681,8 @@ static struct attribute *any_stats_attrs[] = {
+>   #endif
+>   	&split_attr.attr,
+>   	&split_failed_attr.attr,
+> +	&collapse_alloc_attr.attr,
+> +	&collapse_alloc_failed_attr.attr,
+>   	NULL,
+>   };
 
-
+Sorry, I forgot to mention that you should update the 
+'Documentation/admin-guide/mm/transhuge.rst' file for these new statistics.
 
