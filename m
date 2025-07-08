@@ -1,84 +1,114 @@
-Return-Path: <linux-kernel+bounces-721912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F73AFCF67
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:38:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80BFBAFCF6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B84E43B1698
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:36:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ACE73A3E70
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA682E172E;
-	Tue,  8 Jul 2025 15:36:56 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367482DF3F8;
+	Tue,  8 Jul 2025 15:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Xj0hRcUd"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E93B1D5150;
-	Tue,  8 Jul 2025 15:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8ED2DC357
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751989016; cv=none; b=otxVUk5gv6YgpAehrMrUvNDgzDwMyBpQM8IhbuzrHuXIT5WJRGpd762avRpOL7jWJ2eSryeJFPGpbNByioj4UAah6vRhEn/l42epAMrfA7ISUtCUs4Iq6Ob85hLPQ8WnVcPL5rsk7P/VsS8AdxPPlO8GQZfJJ5BXTA5A1+bGIHA=
+	t=1751989030; cv=none; b=hnC3/p0x8j+IV5GBt6yNunc5OGlZWuoNLMpfrusnU6FLRKE3HegjQhdt5OxsL+cjS/hNtfQDQyIFHGvTFQvWaKVynj7HAKxBy1w6YOwaGgNzCUr+u03HtQQ5bpWVYkyA36gfeSnxyx5BjXRfIVHBwWOE+gpp/gqVHshRpwbZMZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751989016; c=relaxed/simple;
-	bh=KBQo6WJ6K7Z011sDfx4sCVXePeIEXzyf1V8eTYUmdJ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cy+OOPWZKSWdQaXQa+W1sfYAln+luRwns2wnPPiM7rlxwQts7cd0Q3KP3yySJC3fFrBawW3V8WflufXSPCXHDHtLEmrDqMBh0hlRAI9Leavb5y/TEF0iwxHljgwCa3xQcS3hE5rZh+k/LnMUG8MQh8SrVxCpbcd12KVgpGCpD40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BADEC4CEED;
-	Tue,  8 Jul 2025 15:36:52 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Xingyu Wu <xingyu.wu@starfivetech.com>,
-	Walker Chen <walker.chen@starfivetech.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Conor Dooley <conor.dooley@microchip.com>
-Cc: linux-riscv@lists.infradead.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] riscv: defconfig: Remove CONFIG_SND_SOC_STARFIVE=m
-Date: Tue,  8 Jul 2025 17:36:48 +0200
-Message-ID: <0886d3eb81bffbc1d48e701cae21c42cad29fefe.1751988704.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1751989030; c=relaxed/simple;
+	bh=0RbTi4D1IRWwRmEwd+EtWP8T7PyJew8LCrBFX/p/vN4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=FBb5broEH5FRSBvNALLjianNLzfgdHOFxtJo75vOCktBgl/qFshw4ChmcgfsFTcACrQ4lux1xGwVXV0WrEjSIybcDuu53sV2HBqoL3rXxnmknWmy/gfo5NjyKzvCNUYsYq62SqGzS+2KoiNpec0/jLueR63KkXRYQn1dYF1ZA9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Xj0hRcUd; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1751989019; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
+	bh=l2uN4Cfwt3rAItEjrl964sCyBiqBYAj3m9Q/YHLFzGU=;
+	b=Xj0hRcUd5ph1UVBr694YoW0fkFKzJZCWR7Q/1LANMyHcul/YKAj6tJXBRO8JoqUyn2kEtNiijc3zUnYaCuZW3SPTuY6kEcnqv28qF/YNjigfojqdrT9kcFxhlEKTStBnk9dvCMnw9Nq/LbNPXycDfeY7HYMadR8DEKUUtk5P1bk=
+Received: from 30.170.233.0(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WiPkkGr_1751989018 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 08 Jul 2025 23:36:58 +0800
+Message-ID: <2bfd263e-d6f7-4dcd-adf5-2518ba34c36b@linux.alibaba.com>
+Date: Tue, 8 Jul 2025 23:36:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Executable loading issues with erofs on arm?
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>, Gao Xiang <xiang@kernel.org>,
+ Chao Yu <chao@kernel.org>, linux-erofs@lists.ozlabs.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <38d43fae-1182-4155-9c5b-ffc7382d9917@siemens.com>
+ <452a2155-ab3b-43d1-8783-0f1db13a675f@siemens.com>
+ <bab2d726-5c2f-4fe0-83d4-f83a0c248add@linux.alibaba.com>
+ <81a3d28b-4570-4d44-8ed6-51158353c0ff@siemens.com>
+ <6216008a-dc0c-4f90-a67c-36bead99d7f2@linux.alibaba.com>
+In-Reply-To: <6216008a-dc0c-4f90-a67c-36bead99d7f2@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The SND_SOC_STARFIVE Kconfig symbol was removed, but it is still enabled
-in the RISC-V defconfig.  Just remove it, as it is no longer needed.
 
-Fixes: acc317e5254a739e ("ASoC: starfive: Standardize ASoC menu")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/riscv/configs/defconfig | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index 37c98c0f98ffc0ee..82be92dd70dc29a8 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -191,7 +191,6 @@ CONFIG_SOUND=y
- CONFIG_SND=y
- CONFIG_SND_SOC=y
- CONFIG_SND_DESIGNWARE_I2S=m
--CONFIG_SND_SOC_STARFIVE=m
- CONFIG_SND_SOC_JH7110_PWMDAC=m
- CONFIG_SND_SOC_JH7110_TDM=m
- CONFIG_SND_SOC_WM8978=m
--- 
-2.43.0
+On 2025/7/8 23:32, Gao Xiang wrote:
+> 
+> 
+> On 2025/7/8 23:22, Jan Kiszka wrote:
+>> On 08.07.25 17:12, Gao Xiang wrote:
+>>> Hi Jan,
+>>>
+>>> On 2025/7/8 20:43, Jan Kiszka wrote:
+>>>> On 08.07.25 14:41, Jan Kiszka wrote:
+>>>>> Hi all,
+>>>>>
+>>>>> for some days, I'm trying to understand if we have an integration issue
+>>>>> with erofs or rather some upstream bug. After playing with various
+>>>>> parameters, it rather looks like the latter:
+>>>>>
+>>>>> $ ls -l erofs-dir/
+>>>>> total 132
+>>>>> -rwxr-xr-x 1 1000 users 132868 Jul  8 10:50 dash
+>>>>> (from Debian bookworm)
+>>>>> $ mkfs.erofs -z lz4hc erofs.img erofs-dir/
+>>>>> mkfs.erofs 1.8.6 (trixie version, but same happens with bookworm 1.5)
+>>>>> Build completed.
+>>>>> ------
+>>>>> Filesystem UUID: aae0b2f0-4ee4-4850-af49-3c1aad7fa30c
+>>>>> Filesystem total blocks: 17 (of 4096-byte blocks)
+>>>>> Filesystem total inodes: 2
+>>>>> Filesystem total metadata blocks: 1
+>>>>> Filesystem total deduplicated bytes (of source files): 0
+>>>>>
+>>>>> Now I have 6.15-rc5 and a defconfig-close setting for the 32-bit ARM
+>>>>> target BeagleBone Black. When booting into init=/bin/sh, then running
+>>>>>
+>>>>> # mount -t erofs /dev/mmcblk0p1 /mnt
+>>>>> erofs (device mmcblk0p1): mounted with root inode @ nid 36.
+>>>>> # /mnt/dash
+>>>>> Segmentation fault
 
+Two extra quick questions:
+  - If the segfault happens, then if you run /mnt/dash again, does
+    segfault still happen?
+
+  - If the /mnt/dash segfault happens, then if you run
+      cat /mnt/dash > /dev/null
+      /mnt/dash
+    does segfault still happen?
+
+Thanks,
+Gao Xiang
 
