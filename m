@@ -1,77 +1,98 @@
-Return-Path: <linux-kernel+bounces-721985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E645AFD062
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:15:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBEB0AFD064
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A83E188676A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:15:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67F7316DBC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584642E3708;
-	Tue,  8 Jul 2025 16:14:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7211D21C9E4
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 16:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392392E427D;
+	Tue,  8 Jul 2025 16:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WHkDMXpm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D45021B199;
+	Tue,  8 Jul 2025 16:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751991295; cv=none; b=phnzEaGQQvj74iY60o4W5Jf3WR1D+stlx0qe2MAcE4eFZdktVLLgpTi7HX/nnKR42MMbGnZuve3qhR6xfyMHwaPGcl3VWs2jjhB7emXUgaoDwM4zgAx/dQSvgzZRvI1UtHkiL36pXLpox8Ks2MLL3pbvB2aaQnIoiTXe4Gh3XJs=
+	t=1751991390; cv=none; b=GHj671il38FS2Zrcr9RUc+6dekQ4NvRKWgLQQZpKiTtQ/c+AP4nfEOoJU9yL8CIkLt42xd97Qu1peWvtNZGUiHCpw8w6PyTQBLB48ELwqMilA3zIUNNKxZOzGcUIWm5T5wUEKF4M2vah0v9KZUoY/kxGlMQqvja/XENJYswnvew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751991295; c=relaxed/simple;
-	bh=3kHplAdP0zVGF3P1aTKWa5BEPMasRXMF2rRY5rrDwuQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=T4Qsu3EsDVKUbPt9FWvDP/wFmKHui99Tnhq9FFbQPOutj8TdTXzujjoW0CKTWnncD6mafcwqIZvq68thxiftqLAzoIBMz1WSIxO9DTTH2A96+s24rhnq5FamAIHophGYLEI+uPXZcwNk/7l8wHiVI+6hK805VhE4cmu4yanqjqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 73F9E153B;
-	Tue,  8 Jul 2025 09:14:40 -0700 (PDT)
-Received: from [10.1.35.36] (unknown [10.1.35.36])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 74CCE3F694;
-	Tue,  8 Jul 2025 09:14:51 -0700 (PDT)
-Message-ID: <8413b873-d4db-4772-80b4-35c03370bdcc@arm.com>
-Date: Tue, 8 Jul 2025 17:14:50 +0100
+	s=arc-20240116; t=1751991390; c=relaxed/simple;
+	bh=MlvZZ4a52AP4+QDRvUm5hDSogr1vDDiw9bguTeqre4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NccFFEyXZOxZIcbzWgtPX1xRdUDtQnfnn+di6RswOUqM5TXZgzXxXUhT8yQ//qFQ+Zk/ff4GVLZzdZ81qtE9xgpZhfY7Z4uN+IO4pDZKlv0JYTQopDwe0QjAiJFMhD0cCjLVGnGWn8C2OQdn30M1NowpHfunpU7hdTGDf/kTcJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WHkDMXpm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF4BEC4CEED;
+	Tue,  8 Jul 2025 16:16:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751991390;
+	bh=MlvZZ4a52AP4+QDRvUm5hDSogr1vDDiw9bguTeqre4k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WHkDMXpma6mUHWY1TvjLFbvGC4viBk4MR8OV9MrwZ/dTNKgT07LJpTY/NtXTCDXrZ
+	 dLjEZd/2stfi0fb8CD8B0SfIzQ6PTtunA4hOdl0neEM346rL6WymLLAFpuM3/xZ6Gt
+	 QO9DkRI4enn0lmHhspykXYqEdWOWahdODkBNZ0jylxzCe7tU8dP/VwqS6CGmJWrNjv
+	 EAETLzByJ4JTzHbGr3uk4fmxiyz8y26a7mwrercqkQST5xUubduncf9Zx5ya/jTpl+
+	 AsCll8GNnqL7PMZs3WvYXratllAkSary35yho11OgaklEU601N3wuM3bez/8naSIX0
+	 JoFLA4S0GU+Ww==
+Date: Tue, 8 Jul 2025 11:16:28 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Chen-Yu Tsai <wens@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Conor Dooley <conor+dt@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+	Jernej Skrabec <jernej@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH RFT net-next 01/10] dt-bindings: net: sun8i-emac: Add
+ A523 GMAC200 compatible
+Message-ID: <175199138810.517400.11158407408233098308.robh@kernel.org>
+References: <20250701165756.258356-1-wens@kernel.org>
+ <20250701165756.258356-2-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Tejun Heo <tj@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, arighi@nvidia.com,
- Changwoo Min <changwoo@igalia.com>, David Vernet <dvernet@meta.com>
-From: Christian Loehle <christian.loehle@arm.com>
-Subject: [RESEND][PATCH] sched_ext: Fix scx_bpf_reenqueue_local() reference
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250701165756.258356-2-wens@kernel.org>
 
-The comment mentions bpf_scx_reenqueue_local(), but the function
-is provided for the BPF program implementing scx, as such the
-naming convention is scx_bpf_reenqueue_local(), fix the comment.
 
-Signed-off-by: Christian Loehle <christian.loehle@arm.com>
----
- kernel/sched/ext.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 02 Jul 2025 00:57:47 +0800, Chen-Yu Tsai wrote:
+> From: Chen-Yu Tsai <wens@csie.org>
+> 
+> The Allwinner A523 SoC family has a second Ethernet controller, called
+> the GMAC200 in the BSP and T527 datasheet, and referred to as GMAC1 for
+> numbering. This controller, according to BSP sources, is fully
+> compatible with a slightly newer version of the Synopsys DWMAC core.
+> The glue layer around the controller is the same as found around older
+> DWMAC cores on Allwinner SoCs. The only slight difference is that since
+> this is the second controller on the SoC, the register for the clock
+> delay controls is at a different offset. Last, the integration includes
+> a dedicated clock gate for the memory bus and the whole thing is put in
+> a separately controllable power domain.
+> 
+> Add a compatible string entry for it, and work in the requirements for
+> a second clock and a power domain.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  .../net/allwinner,sun8i-a83t-emac.yaml        | 68 ++++++++++++++++++-
+>  1 file changed, 66 insertions(+), 2 deletions(-)
+> 
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index b498d867ba21..702fa31459fe 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -884,7 +884,7 @@ enum scx_enq_flags {
- 	/*
- 	 * The task being enqueued was previously enqueued on the current CPU's
- 	 * %SCX_DSQ_LOCAL, but was removed from it in a call to the
--	 * bpf_scx_reenqueue_local() kfunc. If bpf_scx_reenqueue_local() was
-+	 * scx_bpf_reenqueue_local() kfunc. If scx_bpf_reenqueue_local() was
- 	 * invoked in a ->cpu_release() callback, and the task is again
- 	 * dispatched back to %SCX_LOCAL_DSQ by this current ->enqueue(), the
- 	 * task will not be scheduled on the CPU until at least the next invocation
--- 
-2.34.1
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
