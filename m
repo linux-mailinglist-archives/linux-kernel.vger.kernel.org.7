@@ -1,136 +1,100 @@
-Return-Path: <linux-kernel+bounces-721960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B16AFD00B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:05:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96235AFD00E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:06:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 881145604D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:05:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5CE41650B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE0B2E4257;
-	Tue,  8 Jul 2025 16:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211482E425D;
+	Tue,  8 Jul 2025 16:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="lkSsGTs8"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bm+GezH7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85052E3B03;
-	Tue,  8 Jul 2025 16:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7E92E0929;
+	Tue,  8 Jul 2025 16:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751990728; cv=none; b=oioaNKS1PLLUec8Qjm80prbncHC9ezSwqNYYMA8viBarrD47OiFn25WwCQkjOwFo72KFxtjX3OBttTWmxn3ESdnqS6P7oFnoHsxofBOUTLPqO67SzxbctYyrClk2ff6Pwuc8UyW4yfY/iYu7b3V5PGd1Zj03NRCkW1k5ruYnar8=
+	t=1751990762; cv=none; b=j/nZU22Y7Mij/vjH7E+EBufdmNPaI0f9AhCLoYgDniDC+NPCPbwFJ7lMFmO5s9mKsLoPGcIBV6x1QvT5cV+9d6Otd6JvFXSteYJLOTDj3rt08BZVluP8toJqqUS0unkV0jUzWsJR96e3N/Uoge3acUL1LXxUct4c/k2oRFkUyFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751990728; c=relaxed/simple;
-	bh=njlSf049HgeVwS1qYFLjUyYCR3cWn88GL4Ar2RuTuFk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r0tAw13Xyo/yP4LlvxHdNnOiR7OehyMujew/9LWYTRoFlpmJIB9vbfTH8eGCkzMCM55TidUGC3O83tftICKLw9jsFy86N3IhXnF1wHmhhujorOjw3bfC+x9Sqf9sBP1h9q0WpihxHpWxen1ICtpwYFk1nhH+lwVVf4CewWSHUws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=lkSsGTs8; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-236377f00easo58381525ad.1;
-        Tue, 08 Jul 2025 09:05:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1751990726; x=1752595526; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pcrq9Px5GbWJiB5AxSdJQdkhbTPu1vrVrShHO1zRmfQ=;
-        b=lkSsGTs8bVNFWDMwqA1t1ZfI8sOrmVPsdehssUlymBUmd5wyuagntjzRPG/YL7It3/
-         SsF73bSyMaXbpz7uSNzDYVS/p8kN12QLk8IwxKWEJxuXOzElE58KsTepQlDMEm5W+00k
-         n8OH3f+1PE18X50Zf6qquQ6h2phQNCem0GHRCngSUBV3SITEc7Io7l1icUCvcmYS82zY
-         RxLxO+bePyEFIl7MueV5LZ6tkh6lHBZL4RdhJAd3tMOiLXit0SvzQGGAcw0wTRIHYEQD
-         vOP9JGXMclex+EKF8kTPJorFXPzOZMYP48y6iSEbz7OOF/V7I2CXW4+HP4ah6ftgkFho
-         5BFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751990726; x=1752595526;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pcrq9Px5GbWJiB5AxSdJQdkhbTPu1vrVrShHO1zRmfQ=;
-        b=AC0bGN5Umur7QCA2hxcZpOx9bWTbvLAFVPhRznwKaPEl5bEC+S4xhRLTJ/hqgMRzHt
-         GHa0vAoeBHXENIaj0ONazjYfK8QAC2/7Quit48GKwpFKJP+M5wE1pfRZplGCtpOuPfj4
-         +HvP7fn6xX/SsRxXz/sPMLzKTNqvYzggRjN49zljm7glyac3ksnrro3NkgQUwxeLIlBn
-         YlsnesdDyNJALRuMVJAGOVz1NsrPaXikMPpchcVGxAXdUQIbRmAhoVjr0wcTQt0iVBwi
-         INATL4breelKcvQl20juLBvunxqOeL5T7H2z43Ow3GENX092MU1YgLuaN+4U/anRUM+Y
-         1M3w==
-X-Forwarded-Encrypted: i=1; AJvYcCV8mcV8+Qey2cISUJUaS1F3RmMc6o3k620AwLblWdwr+zxpPaJnzsdgJ0d4Pk7xqUcU1K5hV5cd+XuGPC0=@vger.kernel.org, AJvYcCWcQLYn0kj4SLKbx5ZoKr8M9zTaS4vMYGGwwKhh2GzUqwjp0H1S66ZAaY5n3yojfmsaM4Ka0kxe@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDUyaS1O9mVHIc18HiDMCaVRz4H3Gt8utwHXWyQhVQ1uRPN2+D
-	aUF3Z00rwbCautoiEG9lzULIDev0vkMBgkIzUhou4PneWQxXqeGYQ2pUvobu8OMZWmwECC8SIeP
-	w4oFvUG3Z747nvpCmDeaPwIlre1pBi+7e6w==
-X-Gm-Gg: ASbGncsZESPWkj0kGxH2oSFHrDDoZP3mUkz98OBUe5X4GwliYozGzy9Ow+kN49AhTXj
-	czYfW8oyVhVH3++Fcz8i/u7wl2S2Y3JUv8gZRis9DEKjxZ24BWrJzHyzJUtsq/Ya+VT51p195C8
-	uNIJArpuc742MerEjnI9gBLJw2HRyx9lofllNVcWa7oGsiLTQyDJ0lxGIWLGeza117XndvWzB26
-	P8=
-X-Google-Smtp-Source: AGHT+IEKVOlvfwl4eeYBuBVlq9Q5WesCQhGMUTJNOVwhBmexAudJe11ZvEDS+PJxNLKpg7tENHSnBWeB5BP04yZ+yrM=
-X-Received: by 2002:a17:902:ffc7:b0:235:f4f7:a654 with SMTP id
- d9443c01a7336-23c85e2be38mr294917555ad.22.1751990725856; Tue, 08 Jul 2025
- 09:05:25 -0700 (PDT)
+	s=arc-20240116; t=1751990762; c=relaxed/simple;
+	bh=VoqXC5vS3jsIa1yFv0oPoDMiBok2AlhMwtNJQb0+QVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=tUQTxZErs+pFfc2T8USy3kPHPMuPHOCSdjWDgOXVm+BfCm7Wm9yEDwyYWLOAw6d4l0Mrl7RmhgiEbPrnZzUu1BeuJXVPY+sfqwBq6aza1qI9Lv94w4HgEQXZ//0zSh3WmtLuatoIsQqj6Md54dRnsgeIlWvwC2msaCzoKwJSk3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bm+GezH7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13BD1C4CEED;
+	Tue,  8 Jul 2025 16:06:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751990762;
+	bh=VoqXC5vS3jsIa1yFv0oPoDMiBok2AlhMwtNJQb0+QVM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=bm+GezH77xN1w6ikSayOdd/DgOLYB3Egij8qvNsjOVoHaI+xqsL38XPX4H3K1GeeU
+	 FPQBVwShbzDpkvzmguPQjDdXexsaK8s4BJnm94pW9mnE3fn2wPJqnXOuB2/5B/tn0w
+	 UhkNqdX4QZ3TmmwfssxJ8Z7wuovZdo/ZNtcOZ+TFV9+elpQuavsytBj6CUSsYVf4t0
+	 T/1dh+Iy/RBAOsn6D67oTMk8AtB74jmoz+eNUfonfWh67pOro6KgVz/sHIOK1+lGPC
+	 DiYO6KgVPtso/VoB+hN9vxmgQkm7bU7EFWMmyVmYeI+1rAWZ1HgI3+/+8sO/ZORU0t
+	 HAzplkVeGB74g==
+Date: Tue, 8 Jul 2025 11:06:00 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] PCI: iproc: Remove description of 'msi_domain' in struct
+ iproc_msi
+Message-ID: <20250708160600.GA2147978@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250623130632.993849527@linuxfoundation.org> <70823da1-a24d-4694-bf8a-68ca7f85e8a3@roeck-us.net>
-In-Reply-To: <70823da1-a24d-4694-bf8a-68ca7f85e8a3@roeck-us.net>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Tue, 8 Jul 2025 18:05:14 +0200
-X-Gm-Features: Ac12FXyLKp-u4KETpYgI7t1oSJJS9hnhBb6_II1awELD-8NQbOBh3d0_lW58pb8
-Message-ID: <CAFBinCD8MKFbqzG2ge5PFgU74bgZVhmCwCXt+1UK8b=QDndVuw@mail.gmail.com>
-Subject: Re: [PATCH 5.15 000/411] 5.15.186-rc1 review
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708053825.1803409-1-namcao@linutronix.de>
 
-Hi Guenter,
+On Tue, Jul 08, 2025 at 07:38:25AM +0200, Nam Cao wrote:
+> The member msi_domain of struct iproc_msi has been removed, but its
+> description was left behind. Remove the description.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202507080437.HQuYK7x8-lkp@intel.com/
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
 
-On Mon, Jul 7, 2025 at 8:05=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> w=
-rote:
->
-> On Mon, Jun 23, 2025 at 03:02:24PM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.15.186 release.
-> > There are 411 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Wed, 25 Jun 2025 13:05:51 +0000.
-> > Anything received after that time might be too late.
-> >
-> ...
-> > Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> >     drm/meson: use unsigned long long / Hz for frequency types
-> >
->
-> This patch triggers:
->
-> Building arm:allmodconfig ... failed
-> --------------
-> Error log:
-> drivers/gpu/drm/meson/meson_vclk.c:399:17: error: this decimal constant i=
-s unsigned only in ISO C90 [-Werror]
->   399 |                 .pll_freq =3D 2970000000,
->
-> and other similar problems. This is with gcc 13.4.0.
-Sorry to hear that this is causing issues.
-Are you only seeing this with the backport on top of 5.15 or also on
-top of mainline or -next?
+Thanks for squashing this into the ("PCI: iproc: Switch to
+msi_create_parent_irq_domain()") patch that removed the msi_domain
+member, Mani.  No point in cluttering the history with extra commits
+that clean up things we haven't merged upstream yet.
 
-If it's only for 5.15 then personally I'd be happy with just skipping
-this patch (and the ones that depend on it).
-5.15 is scheduled to be sunset in 16 months and I am not aware of many
-people running Amlogic SoCs with mainline 5.15.
-
-
-Best regards,
-Martin
+> ---
+>  drivers/pci/controller/pcie-iproc-msi.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-iproc-msi.c b/drivers/pci/controller/pcie-iproc-msi.c
+> index d0c7f004217f..9ba242ab9596 100644
+> --- a/drivers/pci/controller/pcie-iproc-msi.c
+> +++ b/drivers/pci/controller/pcie-iproc-msi.c
+> @@ -82,7 +82,6 @@ struct iproc_msi_grp {
+>   * @bitmap_lock: lock to protect access to the MSI bitmap
+>   * @nr_msi_vecs: total number of MSI vectors
+>   * @inner_domain: inner IRQ domain
+> - * @msi_domain: MSI IRQ domain
+>   * @nr_eq_region: required number of 4K aligned memory region for MSI event
+>   * queues
+>   * @nr_msi_region: required number of 4K aligned address region for MSI posted
+> -- 
+> 2.39.5
+> 
 
