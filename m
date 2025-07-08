@@ -1,196 +1,120 @@
-Return-Path: <linux-kernel+bounces-722224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5876FAFD6A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:46:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B23AFD6A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 115EE1BC4D10
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:46:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2B381BC7177
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A06829AAF5;
-	Tue,  8 Jul 2025 18:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7133A221F13;
+	Tue,  8 Jul 2025 18:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iHSNkIvt"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjcL8iLk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D2254769;
-	Tue,  8 Jul 2025 18:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B066121A928;
+	Tue,  8 Jul 2025 18:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752000363; cv=none; b=p+JH8k7vKOkP+TtYzdtQQhsHu5JqR6Wt9s7torMe8zDFGvYwH7EqrrDgZJ98XCs5Q0LeHIqOo3NOERB2J3IwW82fLX4X+wtXE5qKv0cUGgFQFCWgMSJ05ij5MzPIZBAoMONBphpfJPmSnUDa+tY7OxSWVKqjp5M9r3rUUdpyHtc=
+	t=1752000383; cv=none; b=aFsbsVAaAoiF7zQwRFeT4/dJCnq/o2+4tM7c6gLbwmWqp0LySZ6t9VIDgdsH8d4LyteV3E9+E5hBAMJQ/YkrXKhMWx1nSyuBx3/VwQHLXViW2C7uoyhkcica/vRmyOduai1j/9wV9n66sT6f13Gt6V+6Z1jg7JBFdeI74iQceLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752000363; c=relaxed/simple;
-	bh=8dXXfLLdoPFLJfFpfPwne5HOEAelddNRC7uC+1IRMuY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FMv7BIKJc3m9hkiIf0pWc8Vl6LD6Sj2oOzzTprSh1FN96rSiT5pqIyckcsIPeG/Q9ZT4muFFj4IBHzmTf64tAszHK4Vs1aMVHaKSO91kMk7yMw7lYsVg4fTgUcGJ+sJfoeEqp6WiWQ8DoqoydSO4FVxVpZdXEkalytJQjmqpMYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iHSNkIvt; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-32b7113ed6bso39815281fa.1;
-        Tue, 08 Jul 2025 11:46:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752000360; x=1752605160; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jVNW2LmSpM43uoc9ePIuGFhxgCCqgN+VZjCsdL/aUEw=;
-        b=iHSNkIvtpsu4XLuPfaOYbxEtTVPFFHe/6tLdKiNPMbBu7As45SOJgNuOszprA+51y/
-         3/BTQLtqCABwxmKZxg0CQNaS/EVJiVj07XE91vYGCcueUQGchqsN9KY1qH15xXoOzX6K
-         2wAz8t2NSu5513FS80pBOUT+pkFLQcqNYe+2IiZjBuB+R8Uc9Byl5PlU+9j0xaF6X5/r
-         IQEbJWwQfQ1Iqy1kRQbdifd5W/tO7bwJAFsw92tzrgoRrL64GBeG6tuSC3GwxRN4w1l+
-         KywqlOmSWHOa0nDNSxv6riBM/RK1xRA7ZM/EEVHHC6uyp80htjcTvqiuEKSmkZ4wIGXv
-         cc6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752000360; x=1752605160;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jVNW2LmSpM43uoc9ePIuGFhxgCCqgN+VZjCsdL/aUEw=;
-        b=F8M2SL9RFIh/SNS2HVaMkQ0u41TkowyggbhXen28TmHQNTEw/pbYisSHi8+e2Dy4g0
-         bogRsdnlOExF/aQkd0VkdtWj0qWqZ9ugpWC7wx791MSzYFnzeR9V7qmmsbETa2wiyV8P
-         LIzOJSFA9D/DO3WE79kkGRAlQedtPD1ZY598jYHSff9ffeMU4F1oW9OKIDxM+4dHoK6q
-         j0dKvaXR5YZVeSKtkN/VxKC4O7D6sKzTaHVWZQcm3gQpYH8DUYJEZ5OS5nIKM/4R9KmZ
-         SLeY+KFwtKHyOP5n0imB2KalwQvQPLF3Bqi8Ocf4+mrl7YWFCzzrQ6eAGwzwhrAA+e0a
-         /Hpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWDwIswQQ5HIisijjj12y46MnE3womtNqI7PQVNsP2B6Fn5VHqY3MSMmJl3whq72l9TDjYm2fDvfKy3rh8oBvE=@vger.kernel.org, AJvYcCX0/Qvoo2YsetMmxniNPdq5M7jXx3L7bcE5yTn+wgClXxKdAyQ/hbli4B7n8UvKXasXnnuy9WWqo3F8DQhz@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDTTbj03JG8pB96uf33iyym7S4Y4N7m/83UOm+EH+iA8u8YwOF
-	txmuDXB+8oAGfO/WAlPxMrqsR/UsYx6XCxGtQ76nKYrz7n4rFEOZFTFZTwuZ7TIDD9u2nHx/A1a
-	0VY9g7KQUMyAJtpuJ6GySFHzWc3Bq3g6dWX8h
-X-Gm-Gg: ASbGncumILf5dwKKmr0/DcXMsvGC81ktiDoEd8cEKZFs2uOC+eR3FHzWIC0sPzfYWxq
-	2+RcKBjaVg504ekZFlAR+2GLij76zy0HmHFgqI+pgIlrUvomzS8qfd2cgg9TKu01PrObrN3Mqdt
-	aqCRMQUmvkrPEkikc+21kzZcEbLJAwLM0XS74G3GSPIsmH1dYDjsuPZP3+
-X-Google-Smtp-Source: AGHT+IF22uYs5AAzmK5bTeX1d4pT+M02Yu8ssSATceo3IbMWwKQPJSKEdRD9c0W6fqY5retTpGh0QURaGdsFR1snE+U=
-X-Received: by 2002:a2e:be07:0:b0:32b:7ddd:279e with SMTP id
- 38308e7fff4ca-32f00c94639mr37159711fa.14.1752000359289; Tue, 08 Jul 2025
- 11:45:59 -0700 (PDT)
+	s=arc-20240116; t=1752000383; c=relaxed/simple;
+	bh=/+CPrjLMQh0s5cyqHNAolf1U7ifkt8a0HKjp92l+1Mw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QrifqNCdQVEmpIY6czjpcfCf5jr3uDU3NP0VOm/j+jBLW+lGo2Y7UKNcRJ3Z8SVF7XoJS5oSwzo8fcFJY49pSTSYkHMp7/iMi7o2lGNRFQZ8QxMJYCSQ3zIX28iY6EJkmjd2Wq/MC8bEWMIZJlbps9GaHGbY9RB6zVGrS3FQuHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RjcL8iLk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72750C4CEED;
+	Tue,  8 Jul 2025 18:46:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752000383;
+	bh=/+CPrjLMQh0s5cyqHNAolf1U7ifkt8a0HKjp92l+1Mw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RjcL8iLkgtX//+3PhFZhrK5e1wQf2aHsOoBrC7oX2dVVmU0XxlHKEHaAaqR89eH2A
+	 PxNf2s5EeR/VeSzZXh/Axs1+V2Rj/YAKgzBfGUWW/A2frFJwY+PmNf+ZSWzga6GFnS
+	 lGj/21pnk5Xv4NzoOgLewE8SYs2LllvHpy3fp1p19XJGRTsrtqPh7ihPCps2bvCK8S
+	 oBDD4+uWBVGU8IgQdT4KaE5rirXbd5ReR0pZ23XxJyjQoEzgsdH5p37DbXltHz+Scv
+	 3+grrbwd00BGMrhJCnA18yrt7bTHBzR3b889fOwQZIXZWBye82SY9eZtv51uHQ2SzH
+	 YGij8uXHJ0hRA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Maciej Strozek <mstrozek@opensource.cirrus.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Shuming Fan <shumingf@realtek.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	=?UTF-8?q?P=C3=A9ter=20Ujfalusi?= <peter.ujfalusi@linux.intel.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: SDCA: fix HID dependency
+Date: Tue,  8 Jul 2025 20:46:06 +0200
+Message-Id: <20250708184618.3585473-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250708141617.3691-2-alex.gasbarroni@gmail.com>
-In-Reply-To: <20250708141617.3691-2-alex.gasbarroni@gmail.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Tue, 8 Jul 2025 14:45:45 -0400
-X-Gm-Features: Ac12FXx_X0wFgoSZOwqoWzzVArII0bAoLYypedj7J7QV9mx7iex-n1ZW2Ew1-XI
-Message-ID: <CABBYNZJ9jLwiieHC=ohp+EjtoO7_4Umd2giRKNe1y0u-qpP1ww@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: hci_sync: fix connectable extended advertising
- when using static random address
-To: Alessandro Gasbarroni <alex.gasbarroni@gmail.com>
-Cc: marcel@holtmann.org, johan.hedberg@gmail.com, 
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Alessandro,
+From: Arnd Bergmann <arnd@arndb.de>
 
-On Tue, Jul 8, 2025 at 10:17=E2=80=AFAM Alessandro Gasbarroni
-<alex.gasbarroni@gmail.com> wrote:
->
-> Currently, the connectable flag used by the setup of an extended
-> advertising instance drives whether we require privacy when trying to pas=
-s
-> a random address to the advertising parameters (Own Address).
-> If privacy is not required, then it automatically falls back to using the
-> controller's public address. This can cause problems when using controlle=
-rs
-> that do not have a public address set, but instead use a static random
-> address.
->
-> e.g. Assume a BLE controller that does not have a public address set.
-> The controller upon powering is set with a random static address by defau=
-lt
-> by the kernel.
->
->         < HCI Command: LE Set Random Address (0x08|0x0005) plen 6
->                 Address: E4:AF:26:D8:3E:3A (Static)
->         > HCI Event: Command Complete (0x0e) plen 4
->               LE Set Random Address (0x08|0x0005) ncmd 1
->                 Status: Success (0x00)
->
-> Setting non-connectable extended advertisement parameters in bluetoothctl
-> mgmt
->
->         add-ext-adv-params -r 0x801 -x 0x802 -P 2M -g 1
->
-> correctly sets Own address type as Random
->
->         < HCI Command: LE Set Extended Advertising Parameters (0x08|0x003=
-6)
->         plen 25
->                 ...
->             Own address type: Random (0x01)
->
-> Setting connectable extended advertisement parameters in bluetoothctl mgm=
-t
->
->         add-ext-adv-params -r 0x801 -x 0x802 -P 2M -g -c 1
->
-> mistakenly sets Own address type to Public (which causes to use Public
-> Address 00:00:00:00:00:00)
->
->         < HCI Command: LE Set Extended Advertising Parameters (0x08|0x003=
-6)
->         plen 25
->                 ...
->             Own address type: Public (0x00)
->
-> This causes either the controller to emit an Invalid Parameters error or =
-to
-> mishandle the advertising.
->
-> This patch makes sure that we use the already set static random address
-> when requesting a connectable extended advertising when we don't require
-> privacy and our public address is not set (00:00:00:00:00:00).
->
-> Signed-off-by: Alessandro Gasbarroni <alex.gasbarroni@gmail.com>
-> ---
->  net/bluetooth/hci_sync.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
->
-> diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
-> index 77b3691f3423..012a9e9a4f9b 100644
-> --- a/net/bluetooth/hci_sync.c
-> +++ b/net/bluetooth/hci_sync.c
-> @@ -6815,8 +6815,19 @@ int hci_get_random_address(struct hci_dev *hdev, b=
-ool require_privacy,
->                 return 0;
->         }
->
-> -       /* No privacy so use a public address. */
-> -       *own_addr_type =3D ADDR_LE_DEV_PUBLIC;
-> +       /* No privacy
-> +        *
-> +        * Even though no privacy is requested, we have to use the assign=
-ed random static address
-> +        * if we don't have a public address.
-> +        */
-> +       if (bacmp(&hdev->bdaddr, BDADDR_ANY) =3D=3D 0 && bacmp(&hdev->sta=
-tic_addr, BDADDR_ANY) !=3D 0) {
-> +               /* Re-use the static address if one is set */
-> +               bacpy(rand_addr, &hdev->static_addr);
-> +               *own_addr_type =3D ADDR_LE_DEV_RANDOM;
-> +       } else {
-> +               /* Use a public address. */
-> +               *own_addr_type =3D ADDR_LE_DEV_PUBLIC;
-> +       }
+It is not possible to enable SND_SOC_SDCA_HID when SND_SOC_SDCA is built-in
+but HID is in a loadable module, as that results in a link failure:
 
-Hmm, we should probably be using hci_copy_identity_address instead
-here, or have you tried and it didn't work?
+x86_64-linux-ld: sound/soc/sdca/sdca_functions.o: in function `find_sdca_entity_hide':
+sdca_functions.c:(.text+0x25b): undefined reference to `sdca_add_hid_device'
 
->
->         return 0;
->  }
-> --
-> 2.50.0
->
+Change SND_SOC_SDCA_HID into a 'bool' option that can only be enabled
+if this results in a working build, and change the Makefile so this driver
+is a loadable module if possible.
 
+Fixes: ac558015dfd8 ("ASoC: SDCA: add a HID device for HIDE entity")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ sound/soc/sdca/Kconfig  | 3 ++-
+ sound/soc/sdca/Makefile | 4 +++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
---=20
-Luiz Augusto von Dentz
+diff --git a/sound/soc/sdca/Kconfig b/sound/soc/sdca/Kconfig
+index 53f6926255ae..36c2fed54dad 100644
+--- a/sound/soc/sdca/Kconfig
++++ b/sound/soc/sdca/Kconfig
+@@ -12,8 +12,9 @@ config SND_SOC_SDCA_OPTIONAL
+ 	def_tristate SND_SOC_SDCA || !SND_SOC_SDCA
+ 
+ config SND_SOC_SDCA_HID
+-	tristate "SDCA HID support"
++	bool "SDCA HID support"
+ 	depends on SND_SOC_SDCA && HID
++	depends on HID=y || HID=SND_SOC_SDCA
+ 
+ config SND_SOC_SDCA_IRQ
+ 	tristate
+diff --git a/sound/soc/sdca/Makefile b/sound/soc/sdca/Makefile
+index 2a3938d11ca9..1efc869c6cbc 100644
+--- a/sound/soc/sdca/Makefile
++++ b/sound/soc/sdca/Makefile
+@@ -5,5 +5,7 @@ snd-soc-sdca-hid-y := sdca_hid.o
+ snd-soc-sdca-irq-y := sdca_interrupts.o
+ 
+ obj-$(CONFIG_SND_SOC_SDCA)	+= snd-soc-sdca.o
+-obj-$(CONFIG_SND_SOC_SDCA_HID)	+= snd-soc-sdca-hid.o
++ifdef CONFIG_SND_SOC_SDCA_HID
++obj-$(CONFIG_SND_SOC_SDCA)	+= snd-soc-sdca-hid.o
++endif
+ obj-$(CONFIG_SND_SOC_SDCA_IRQ)	+= snd-soc-sdca-irq.o
+-- 
+2.39.5
+
 
