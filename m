@@ -1,92 +1,123 @@
-Return-Path: <linux-kernel+bounces-721054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E966AFC420
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:33:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3D79AFC4A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7BE33A1C5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:33:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 884311AA5440
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CD8298CA7;
-	Tue,  8 Jul 2025 07:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBC729DB77;
+	Tue,  8 Jul 2025 07:51:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="x1UKY1my"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="U0cDHJnp"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B98220F38;
-	Tue,  8 Jul 2025 07:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E798229ACD4;
+	Tue,  8 Jul 2025 07:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751960002; cv=none; b=NbjHe5d4UA8GLc7kb9Jo1rlbJwH2XhKTYTZoby4wwadso4/VbM9YPOOMV8/MIYZEABSPfQY1nbdbxmEipFgphGxgPwrcGUfuD4uw5qfUNE4E6q2PLKuthXWjteyRx00HdSNqObYdq+t/fOBsAQ8g4bruAjkckxyOJX9/Kn7Ww5A=
+	t=1751961097; cv=none; b=lAfgNH+5fL77ztYGWoPFIRAyCN4p9StJgAor3dAStak84IdpgnIE4fM9Pvo91uvgxhEgbT1tMlVVUdwXj5iNXpdRSfNo6G8LH/E7ouS0AEeOjpy4UbvvPvAMmVXGe+lcglF392Iw/CyKzXuwTt/UPgU9rw4XseK23SnB1x9VNbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751960002; c=relaxed/simple;
-	bh=aKRhOcZ8Qjp0Em2Ph5UFHo25AahL0FqSJQPHHtZj0g4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DIM2q416SeRnVIE/Utln7X6MGZhKHdUOcHzdGR6tZchTzer8QapULmn303+cwXxDDYhB1QhtNAB6YFsIRskSjwRxaHnM0GQ9eNz3Q5lWDBej+adUL3/cZr0xJOxeVRlVfB0b73dHluiQF1Ua5uTe0ItTsLx6QjrrTWc1zup9ASM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=x1UKY1my; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ADF4C4CEF1;
-	Tue,  8 Jul 2025 07:33:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751960001;
-	bh=aKRhOcZ8Qjp0Em2Ph5UFHo25AahL0FqSJQPHHtZj0g4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=x1UKY1myZUr+KAU6chYYab3h3jg6fIL2z8tX/L2pCGMOTnEyMP0gt27vi+vueZnoh
-	 1T3Ok8kB6kvtxvFdo8kVt6m49zuWbdIfgwP66GhChNO1zgpu6RP6v1UYeL2fLqLXtw
-	 IO2YIOK0zi4xN5KHoiGu8ck8YqslapQKnuEri3Rk=
-Date: Tue, 8 Jul 2025 09:33:18 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Jie Deng <dengjie03@kylinos.cn>
-Cc: stern@rowland.harvard.edu, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net
-Subject: Re: [PATCH v2] usb: storage: Ignore UAS driver for SanDisk Extreme
- Pro 55AF storage device
-Message-ID: <2025070810-nintendo-congenial-95d4@gregkh>
-References: <2025070422-punctured-opal-f51e@gregkh>
- <20250707062507.39531-1-dengjie03@kylinos.cn>
- <2025070702-unsigned-runny-62c6@gregkh>
- <4bac2d53-0e5b-437e-92bc-12921a8efd8d@kylinos.cn>
+	s=arc-20240116; t=1751961097; c=relaxed/simple;
+	bh=5dvVW3pdLho+n4XOxAaO3k26gyabZjzykXYDBqe1/kE=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=ogNh+bX01DFX/mXml/A6DyyfoIO6I+jrpJFeYVkxknobRW3FEKXHgscZzT77uyK7EySu3ewjy64gNAteW3ykIOhRxQCgC2nQYLrEI5j8FosvP6bvJObAwgd5fz2MBJaHd2yYH+gc7NIJWGDcXXLBnutGsO8GMKFVXDX/tqNR+bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=U0cDHJnp; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1751961088;
+	bh=ja69UZHY3ug8x60Ljsr6P2AspfvfaVgkyzqS4C9OqYs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=U0cDHJnp1ukw7nlI7hOPtIQy4B/NbeDkkUWDuiXd4m6JRgFRIl91pAFYkBHFXFk+B
+	 h6LP16p/OMWiX/5rQJvSl9brpSvW/h8dq93umDt9Xd+VWyjTa4Pql29YmrnX+hhFwM
+	 ZPbDCALni4O79zz+3tc8Tz0ghUQ/RFJqfANTNaSQ=
+Received: from meizu-Precision-3660.meizu.com ([14.21.33.153])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 8629B05B; Tue, 08 Jul 2025 15:33:34 +0800
+X-QQ-mid: xmsmtpt1751960014tmcng8hqz
+Message-ID: <tencent_8F6BAFE88DDB6EFCC8D5E81C3BCFEAEBB105@qq.com>
+X-QQ-XMAILINFO: NafziRg7Bx69zREP8ImlZ7bFOVvu5pSrDUDJdJso3mb7i24tC75td0mv6SL0Yz
+	 TpLlAORjRwcKpg8QZEVS9vAa3jcr4D0MKJl82pnqWVJb2ffbdCYttb8NAoNAx1+RY+lOJoVEhRyt
+	 vIuO67689OnTpJ0mAphag4C7auoVrAgK39sf+UYGcOGsdTBG6GYF306Z160r3dBw4JJFn/APZTct
+	 oOFE2Ui4oSz20p03LY3vIgkVnOUf6lZyfBfe2cZ9wgmz+6rSh7UX3qowFBu2ILMUf6dl6Aks69Vx
+	 zN9Jhis2rSzO9jr9MQgwZ+b3/Mrl6CFYQFCSkZ4cF5vl0lEihfWkSsSW12VOjTJS/KjTCRHW4pCE
+	 qHKcgLvr5kxzwBWKLRbrT+uzQg/hgLvAv5b4/nG4MJUZ4HxCvBox27aCp28pRb1GV4XfsLY9y4fW
+	 U/XpFUeH9aQTd712ON94A2rracdo9wQ0uPKvbYP6MjUD+Y+x6+RkHzv619tVT/Z+qD4AEv6iT2cO
+	 grzq48hq4nRShByuyYzJ4mSzwZDahzVq1iIc89foNuv4AVaK6lzrQz5bzG1cs3mZaLJp2ke2OnBY
+	 nCbRv5pZbnt/C+lxQi4eFZt01SsqPhvQfv/a5AR/yVLNb7SahSJ0kQ/hN8YgGnHIFjl59JrqZn0p
+	 aa+IVEUW+89q6qqWwifL9wvQ2yxqSUonpUwZcHh/3a+S34iPD94tCUTlMXlxPurikaA8h+mb65Kn
+	 7ghDUZE1E9HYQpzZ3esq4q9323AdUEjj4Gc8Df+e8xtShdLlSVmxDPrxU4GS1Fkz3cN/NKhOfueW
+	 0Rzr0rdCjR/IiO/6O4sN25U7VANZJDoqrMij4ZMXCLejGkLCsj3OZVywMnh3jI1HHMwA9sf/CfJ/
+	 Ug3JsCZE9OeVqAEtLNcvVwCtVo6TPJK8ERtX4FrDT5vlLwTa2erLpu21ZvYdLQn/e8ax4gNN4gaM
+	 lTuwdV5Jdklse9hBU8JGMPx9MaOsmFBPaAlYxxnmX10beWllS+epjENRaRV9DwsDAVO5L3SWArBX
+	 rVrUiofg==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Yuwen Chen <ywen.chen@foxmail.com>
+To: ebiggers@kernel.org
+Cc: davem@davemloft.net,
+	herbert@gondor.apana.org.au,
+	jaegeuk@kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-fscrypt@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	ywen.chen@foxmail.com
+Subject: [PATCH v2] fscrypt: improve filename encryption and decryption performance
+Date: Tue,  8 Jul 2025 15:33:34 +0800
+X-OQ-MSGID: <20250708073334.848261-1-ywen.chen@foxmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250704051441.GA4199@sol>
+References: <20250704051441.GA4199@sol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4bac2d53-0e5b-437e-92bc-12921a8efd8d@kylinos.cn>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 08, 2025 at 01:55:47PM +0800, Jie Deng wrote:
-> 2. Regarding your question, before submitting the patch,
-> I conducted the following tests:
-> 1) linux + x86: The SanDisk Extreme Pro 55AF device can be recognized
-> normally when using the uas driver. USB controller model (VendorID:
-> 1D94, DeviceID: 145F,Chengdu Haiguang IC Design Co., Ltd.USB 3.0 Host
-> controller)
+On Thu, 3 Jul 2025 22:14:41 -0700, Eric Biggers wrote:
+> I'm guessing you have some debugging options enabled in your kconfig.  Usually
+> the allocations aren't quite *that* expensive.  That being said, it's always
+> been really annoying that they have to be there.
 
-So it all works, great!
+Turn off most of the debugging options and merge these two patches
+for memory allocation. The performance test results are as follows:
+Before this submission was merged, when creating 10000 files,
+the performance test results are as follows:
+$ time /data/file_creater 10000
+0m10.90s real     0m00.00s user     0m10.69s system
 
-> 2) linux + arm64: The SanDisk Extreme Pro 55AF device will report an error
-> when
-> using the uas driver and the driver cannot be loaded. USB Controller model
-> (Vendor ID: 1912, Device ID: 0014,uPD720201 USB 3.0 Host Controller).
+After merge these two patches, the performance is as follows:
+$ time /data/file_creater 10000
+0m05.32s real     0m00.00s user     0m05.28s system
 
-Ok, that sounds like an arm64 issue we should resolve.  Why can the
-driver not be loaded at all?  What happens?
+> Unfortunately, as far as I know, you actually can't just allocate the
+> skcipher_request on the stack like that, since the legacy crypto API assumes
+> that the request memory is DMA-able.  On-stack requests also might not be
+> properly aligned (see
+> https://lore.kernel.org/all/CA+55aFxJOzMim_d-O2E2yip8JWo0NdYs_72sNwFKSkTjy8q0Sw@mail.gmail.com/
+> -- may be outdated, but I haven't heard otherwise).
 
-> 3) linux + arm64: Add the parameter "USB-storage.quirks =0781:55af:u" in
-> grub.
-> The SanDisk Extreme Pro 55AF device runs the usb storage driver without any
-> error
-> and can be recognized normally.
+Thank you for the reminder. This should be a problem here.
+Just, why can SYNC_SKCIPHER_REQUEST_ON_STACK be allocated on
+the stack? Is it possible to use ALIGN to achieve alignment?
 
-Let's track down and fix the arm64 issue here please, and not paper over
-it by saying that this whole device will not work well on all arches.
+> The problem is really that the legacy crypto API (crypto_skcipher in this case)
+> was never really designed for efficient CPU-based crypto in the first place.
+> The correct solution is to add simple library APIs for the algorithms to
+> lib/crypto/, then update fscrypt to use that instead of crypto_skcipher.
+> I plan to do that, but I'm first focusing on other related things, such as doing
+> the same for fsverity.
 
-thakns,
+This sounds very good. For file name decryption, due to the
+relatively small amount of data, the cost of interface calls
+indeed cannot be ignored. Thank you very much for your guidance.
 
-greg k-h
 
