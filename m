@@ -1,102 +1,199 @@
-Return-Path: <linux-kernel+bounces-721864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193BBAFCEDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:18:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F76BAFCED5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68F491BC33CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:18:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3929B1AA44F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8912E0B72;
-	Tue,  8 Jul 2025 15:17:45 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514D0202C38;
+	Tue,  8 Jul 2025 15:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DeJ7K1jF"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41A42E06FD;
-	Tue,  8 Jul 2025 15:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85AF2BE042
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751987865; cv=none; b=SG58Mq+m6Y9L/x03dAAsi3DR8vRRFOSlw4FAlljK5oMLO5a8T4V/AH2LaAIRQpE2e1jhtv9Xyi9vDNzv340EboHcFvdlFQIV2erdu2pzjKvR7dmlbES336TAfX4ZjvUmWsBa6XIG6PjVp4Fr7t4ANxcck83BDkjaHmJ4Xglkey0=
+	t=1751987783; cv=none; b=cHXyxM9RT61ur5/Bei2voHZ/xuSprd6av2cwY910Pmz7cLaABt6wMqCbjxUE873w7bCkIzP1kHbq0vyBuH85M16V0tIwWyxP+ZRlS61KY6+sJOdH0Ul+U6cUi/VZe391dnVoApN04EjWWD5Av4z92rVDAuEyZpmCafH1CPm+Aj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751987865; c=relaxed/simple;
-	bh=5Ll5SzLbMD5h6Fr5OnCwNbeQhZoJ6/RxszGBv5T4Je0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BWjZxbjMAqc3JfyFk08s63cznR7O8mlhY3rgiJrrS46tU3JLcQ15tYTVy6jBLVTzBqy3miHpWg7bhcPtKbqM3IjrTh/JmJDnMqA6wMl/9/cv9uSWkG+PWHZWkHhk+u7gzHHS8mTu4DS907+QoowtLG3oIdpQ67JjwJmaVQzuwvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bc4TN15Fgz6GB73;
-	Tue,  8 Jul 2025 23:16:56 +0800 (CST)
-Received: from frapeml500003.china.huawei.com (unknown [7.182.85.28])
-	by mail.maildlp.com (Postfix) with ESMTPS id D24C01404D8;
-	Tue,  8 Jul 2025 23:17:41 +0800 (CST)
-Received: from a2303103017.china.huawei.com (10.203.177.99) by
- frapeml500003.china.huawei.com (7.182.85.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 8 Jul 2025 17:17:41 +0200
-From: Alireza Sanaee <alireza.sanaee@huawei.com>
-To: <krzk@kernel.org>, <robh@kernel.org>
-CC: <coresight@lists.linaro.org>, <devicetree@vger.kernel.org>,
-	<dianders@chromium.org>, <james.clark@linaro.org>,
-	<jonathan.cameron@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
-	<linuxarm@huawei.com>, <mark.rutland@arm.com>, <mike.leach@linaro.org>,
-	<ruanjinjie@huawei.com>, <saravanak@google.com>,
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: [PATCH v2 5/5] perf/arm-dsu: refactor cpu id retrieval via new API of_cpu_phandle_to_id
-Date: Tue, 8 Jul 2025 16:15:02 +0100
-Message-ID: <20250708151502.561-6-alireza.sanaee@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250708151502.561-1-alireza.sanaee@huawei.com>
-References: <20250708151502.561-1-alireza.sanaee@huawei.com>
+	s=arc-20240116; t=1751987783; c=relaxed/simple;
+	bh=BO0g3NVsjvD3zy5Hf1jD2LqFckcH8XesA8tsE3wCODk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=F9n5r1/Z3PM5d7MluHtAbiv7YPi5u0uB6nZa6AGX5mKoVf9aUgCNyl+Ku/zhWIc6hvpta7zSvz6vQOalXo8/Q0b7FiW3eRstFtcy3yCZaK+WAyEg9Z5trJOnw/AE9tD6fNJ40it6gFHUPlyFzW48WNgFsXINSORTfwQCfA0cJPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DeJ7K1jF; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a52874d593so3674358f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 08:16:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751987780; x=1752592580; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vefbhrYFOAFjA+Ss9IWgRjUUOKbEdez2x+aQKjYMss8=;
+        b=DeJ7K1jFzcFc29dPVAJPNFldlYzRxbBMp+wuVbWiLoyqhD7UNgQ2ThJCZOFfgdz6B9
+         rAoAA0WY/o3Nz594X97VD6+FLKmewST63HCjCc4hHW5ev9dUpn5VPAm/qidD3DxTw/zO
+         FFABxyURp0EuXCwC6AvNsDoMmWvQL5vXb7iaFACe3/luymEDYgyf7XdFyMxUkamCSpVt
+         TNYdmfYWqEOw/rlIxz6C4TittbBV+ID1aN5Vw4JfvJI01a9giPNltsLgJP6vFqemN8cU
+         6KoQ9oqan74ABR85Y/mwYlN+VBJhlH8CaY77tDbnFrfwljUYyRk/Q8zBTmeh55vImYyp
+         iACg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751987780; x=1752592580;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vefbhrYFOAFjA+Ss9IWgRjUUOKbEdez2x+aQKjYMss8=;
+        b=PNz04rrAbtbq7Bqkk6dJBrj9NtZmpvvettNprbR2kGhndD31wdZspFqJwHS64F8rqf
+         WvwGg+7WezOj4TPuS0zBM/YTXJZdYrhRjgAh4mTkT2rspp8nVC82qncOIzYsdS7y2zn+
+         iagQzidAJ8AwqtRH7bc4IsuVsi713XYFYGzfjo/poiFM2jYUCep0zGlyX5W0x8qY/Z17
+         4lOmFTWwy68RSOt2XsARmjMVWxuD1ApSsMXvKk/y/50vKTEmIH2WHAjN8mZhYVXPLL+2
+         Dyzxxpk4IFeFeZcpYFEfsaPICoqggV/uomyT6Q8E3ehpRwLxpWbtKM1K2cDrUM7lI3aJ
+         2r7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXnqqM1KNjgYluO3f9KuDY5UPLIO4sdXRRAhCi54J6S4BH1hR6O4wVYeI6lBP8nXf4z40xN11OOCeZC5FI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdOF+6SlreeUyfq3k7zWLhLSADApvcDWgLIvgLrp/20i2yHKFL
+	uy96oxXMiTbENeQZJ6r1OauApSJ1g/zS8icYDNld61T9L1MUZ8lR0QTTNgdQ9r/0tGA=
+X-Gm-Gg: ASbGncvt5Ot5jIUcgv/cz5GMCg6gUQv8/2GWRyXhwCo/Z/l0fQ45PCAtO+qLTxXhUsg
+	0aSG8TpVBS1VMmdTGftm0SNuZEt20GksmD/yeChm8oW7sHtiIeYwrUy6bRe81cKosAw59hAfVTY
+	57cSA+asvleiHLTq4gAJKUwQr6LSE/CbxDj5phpMHW+kE9CDNDEhgyBlDkDLLeIaqwxmz71rL8U
+	hOqZyv1N/pUZVezT415220qckby58/fcqkqAWek2gWuFn5gZkDooq1tVggfHTGDiKGFDuHr6fjh
+	cNNQsyiUbjktid3ttwZwXO/jvwtjyMqjxVKiOjcIaWuZAy85vjoUPmJgpzEFaJBD7Vwzjw0kIB9
+	OVYLPkOtEogTo6wt5HsTX+UXBArGG1pf5jJtPJX0/7g==
+X-Google-Smtp-Source: AGHT+IGcFQuwb1MMLl2dKUjfYTUZlEeNX8v0f5iGL8b9Z3yiss2UDsE8Rr8Y8j1xL6GHbC9MyU7dow==
+X-Received: by 2002:a5d:64c3:0:b0:3b2:e07f:757 with SMTP id ffacd0b85a97d-3b4964f5198mr15567653f8f.1.1751987779991;
+        Tue, 08 Jul 2025 08:16:19 -0700 (PDT)
+Received: from ta2.c.googlers.com (24.125.187.35.bc.googleusercontent.com. [35.187.125.24])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b4708d0ed9sm13422219f8f.38.2025.07.08.08.16.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 08:16:19 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Date: Tue, 08 Jul 2025 15:16:18 +0000
+Subject: [PATCH v2] PM: add kernel parameter to disable asynchronous
+ suspend/resume
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
- frapeml500003.china.huawei.com (7.182.85.28)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250708-pm-async-off-v2-1-7fada54f01c0@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAEE2bWgC/3WMQQqDMBBFryKz7pQ4Umy76j3ERYwTHWgTmRSpS
+ O7e1H35q/fhvR0Sq3CCe7WD8ipJYihApwrcbMPEKGNhIEMX05orLi+0aQsOo/c4eLINk6WWPRR
+ lUfbyOXJdX3iW9I66HfW1/r1/QmuNZQMZ45xpxpt7PCVYjeeoE/Q55y+T5r9MqQAAAA==
+X-Change-ID: 20250708-pm-async-off-bf2a3e2a27ef
+To: Jonathan Corbet <corbet@lwn.net>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Len Brown <len.brown@intel.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, peter.griffin@linaro.org, 
+ andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751987779; l=3744;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=BO0g3NVsjvD3zy5Hf1jD2LqFckcH8XesA8tsE3wCODk=;
+ b=nxgXM/6WbOhhZErwDKymuatsJhC3gAMLqLl3ogzft5EwC2wI9aAa9G7icLP6QytYoyEMXSCuC
+ HWSpx/mXtubCDNxhQaMC+gY5OFUYMbfd3DR7Q5i+L+shVizUN3H77xt
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Update arm-dsu to use the new API, where both "cpus" and "cpu"
-properties are supported.
+On some platforms, device dependencies are not properly represented by
+device links, which can cause issues when asynchronous power management
+is enabled. While it is possible to disable this via sysfs, doing so
+at runtime can race with the first system suspend event.
 
-Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
+This patch introduces a kernel command-line parameter, "pm_async", which
+can be set to "off" to globally disable asynchronous suspend and resume
+operations from early boot. It effectively provides a way to set the
+initial value of the existing pm_async sysfs knob at boot time. This
+offers a robust method to fall back to synchronous (sequential) operation,
+which can stabilize platforms with problematic dependencies and also
+serve as a useful debugging tool.
+
+The default behavior remains unchanged (asynchronous enabled). To disable
+it, boot the kernel with the "pm_async=off" parameter.
+
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- drivers/perf/arm_dsu_pmu.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Dealing with the pixel6 downstream drivers to cope with the changes from
+https://lore.kernel.org/linux-pm/10629535.nUPlyArG6x@rjwysocki.net/.
 
-diff --git a/drivers/perf/arm_dsu_pmu.c b/drivers/perf/arm_dsu_pmu.c
-index cb4fb59fe04b..1014b92c0fd2 100644
---- a/drivers/perf/arm_dsu_pmu.c
-+++ b/drivers/perf/arm_dsu_pmu.c
-@@ -591,17 +591,13 @@ static struct dsu_pmu *dsu_pmu_alloc(struct platform_device *pdev)
- static int dsu_pmu_dt_get_cpus(struct device *dev, cpumask_t *mask)
- {
- 	int i = 0, n, cpu;
--	struct device_node *cpu_node;
+Similar to what people already reported it seems pixel6 lacks proper
+device links dependencies downstream causing i2c and spi client drivers
+to fail to suspend. Add kernel param to disable async suspend/resume.
+---
+Changes in v2:
+- update the documentation and the commit message to describe that the
+  "pm_async" kernel parameter provides a way to change the initial value
+  of the existing /sys/power/pm_async sysfs knob.
+- Link to v1: https://lore.kernel.org/r/20250708-pm-async-off-v1-1-1b200cc03d9c@linaro.org
+---
+ Documentation/admin-guide/kernel-parameters.txt | 11 +++++++++++
+ kernel/power/main.c                             |  9 +++++++++
+ 2 files changed, 20 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index f1f2c0874da9ddfc95058c464fdf5dabaf0de713..33ca6b881b1d77bdeea765b19291a90b2a82e8a3 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -5000,6 +5000,17 @@
+ 			that number, otherwise (e.g., 'pmu_override=on'), MMCR1
+ 			remains 0.
  
- 	n = of_count_phandle_with_args(dev->of_node, "cpus", NULL);
- 	if (n <= 0)
- 		return -ENODEV;
++	pm_async	[PM]
++			If set to "off", disables asynchronous suspend and
++			resume of devices during system-wide power transitions.
++			This parameter sets the initial value of the
++			/sys/power/pm_async sysfs knob at boot time.
++			This can be useful on platforms where device
++			dependencies are not well-defined, or for debugging
++			power management issues. Defaults to "on" (asynchronous
++			operations enabled).
 +
- 	for (; i < n; i++) {
--		cpu_node = of_parse_phandle(dev->of_node, "cpus", i);
--		if (!cpu_node)
--			break;
--		cpu = of_cpu_node_to_id(cpu_node);
--		of_node_put(cpu_node);
-+		cpu = of_cpu_phandle_to_id(dev->of_node, NULL, i);
- 		/*
- 		 * We have to ignore the failures here and continue scanning
- 		 * the list to handle cases where the nr_cpus could be capped
++
+ 	pm_debug_messages	[SUSPEND,KNL]
+ 			Enable suspend/resume debug messages during boot up.
+ 
+diff --git a/kernel/power/main.c b/kernel/power/main.c
+index 3d484630505ae91fea29f7f9b3fbcf7e585955d8..3cf2d7e72567ecbea2cd80acd3c7f6da85f5bef4 100644
+--- a/kernel/power/main.c
++++ b/kernel/power/main.c
+@@ -8,6 +8,7 @@
+ 
+ #include <linux/acpi.h>
+ #include <linux/export.h>
++#include <linux/init.h>
+ #include <linux/kobject.h>
+ #include <linux/string.h>
+ #include <linux/pm-trace.h>
+@@ -112,6 +113,14 @@ int pm_notifier_call_chain(unsigned long val)
+ /* If set, devices may be suspended and resumed asynchronously. */
+ int pm_async_enabled = 1;
+ 
++static int __init pm_async_setup(char *str)
++{
++	if (!strcmp(str, "off"))
++		pm_async_enabled = 0;
++	return 1;
++}
++__setup("pm_async=", pm_async_setup);
++
+ static ssize_t pm_async_show(struct kobject *kobj, struct kobj_attribute *attr,
+ 			     char *buf)
+ {
+
+---
+base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
+change-id: 20250708-pm-async-off-bf2a3e2a27ef
+
+Best regards,
 -- 
-2.43.0
+Tudor Ambarus <tudor.ambarus@linaro.org>
 
 
