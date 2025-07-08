@@ -1,115 +1,161 @@
-Return-Path: <linux-kernel+bounces-721356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7768AFC815
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:16:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD981AFC819
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D676E3A5B6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:16:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A99C4248D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6347526981C;
-	Tue,  8 Jul 2025 10:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53188269B1C;
+	Tue,  8 Jul 2025 10:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="heDJNNvB"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dWZRC75l"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709081C6FEC;
-	Tue,  8 Jul 2025 10:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492B420E033;
+	Tue,  8 Jul 2025 10:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751969793; cv=none; b=Hlo6vl8GqvwpFX4v9UpopdDhuCFYnRcQUl2GuwC3JUHMGghM+lJj+cjYDVupyscTVMW95EqPOwbTXNsTwrPN6WDWE1MNGC54l7Xfv4OqdWw5ccjRqDkhjaZjIGNWSF2oKm3X9wjhNDwRp8KbiiwBKnJWPa+IQOFq85b+cbHlLD4=
+	t=1751969903; cv=none; b=UvpfN1bgyrwGrwj5zkSj7sGkplDStM1IKlJviyoU+MiZVBGN7TRMSKFIbbLZpKtX8yrbh9CzWejtXQwpc8UhrZEgEfxknwNaaJKDNtNoCbh4d/N/kNX0qNa10Kitr2KM4aIRqznytyyjShA/bWRT8nfAy5tI6yOj13g/Ah34FW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751969793; c=relaxed/simple;
-	bh=Mu2agmfNzU1947N28qDPAD2DRXup4PY6h7Z5E3r0lUI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cRdZ7+R6XTgJd6lonYKtfxtqYXCEv2T0QNWjONkrCQl+wDH2Ruy/JawMlAOLGleSOXeglo1f8pGzWa03YxGP3v2avYSp5de3rzo9PlMfV/jyoVqM45irDiQCqz+notEfAp5Q/PAycAUo7suyH8FuWdWzPzFl4tv4wkog+ZudpJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=heDJNNvB; arc=none smtp.client-ip=209.85.214.178
+	s=arc-20240116; t=1751969903; c=relaxed/simple;
+	bh=lQzrd3v8IVLh9gCaLq7WUnZF8AHGYqftBF79jT2Lra4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qJUcun038wilP5GJZRVR2yoDQlpa2N0o4mpU0+U+fJRXOIbXv8muEdGtYN2YGCsdSYzhEjm6wBNChXpU0pfaZOcHQmPapBrOjxyNFve+aipB3zxtDdPqn1T/PalXjfXqSksRJhreApDhAw9j2k9dkxsvMeM+wTtAOCTrosETRk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dWZRC75l; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-237f5c7f4d7so5871195ad.2;
-        Tue, 08 Jul 2025 03:16:32 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-742c3d06de3so4865129b3a.0;
+        Tue, 08 Jul 2025 03:18:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751969792; x=1752574592; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mu2agmfNzU1947N28qDPAD2DRXup4PY6h7Z5E3r0lUI=;
-        b=heDJNNvBvLNIjStZ4hphML3HbKBPKhtxDHZtKY0GEIAITSZOnYWO7/DgPNRc5DDIem
-         4ICEY96ZqmBC0FXMIzjUeT4udUTas+B9I+Bkv1ZopRqieVUNOmx2cBti91fgeuFeIBJl
-         60/xNFU0fbpoe+RnLsSaWK+PHoCoJMLrywIJojSqM2zFROtLdKb/ev0kb1nMX5e1tJJ8
-         1SAPzjBZiulVak1v7j3PzN+TLGU4kK9Ew9YP9io8FhjapqKi6Y5cs2mwl2eG8fa0H1A1
-         dZ+zUCDBTs7jUHCiHVR0BeesuKc+Pit56Sd3fkQhcMtK+aOMNG3kRb2WCa8Du5uL0qSk
-         CATg==
+        d=gmail.com; s=20230601; t=1751969901; x=1752574701; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dLtaJj3z2oPY1ShSlkHP1j/IqOzaduHiAyYzCbRo9Ls=;
+        b=dWZRC75lO3U6R7ZT3ccb6hBu/ZitOAVCN7UDdXa/uz5pnFzBkz/7d6YJlwgrH8JRSA
+         tYtwzyQzmReVMxKIBKJSyVF4KBh8fS0wNLUWI1q+voTItqeUdCLFa9gxuZ29mQehtCw2
+         OSBkmYf0fwayzS/xtHF1YqUGCI+NGWOfFlieL0QrAGJg1r0VI0OBaUWO8h1VVGu+EYMI
+         R+JGRR0deWP4YTraMTMEqe1vV1m3CLIZIf3LbnQLeX1wrtxInfO+1mqvvTNo8a36+sF8
+         gDPTllTQpGYaazYX67pmYrwQ/JsT4ZKG0kFZMZSqUnJ8WITpeNI6/outUP6N5Y5Vtukq
+         NUJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751969792; x=1752574592;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mu2agmfNzU1947N28qDPAD2DRXup4PY6h7Z5E3r0lUI=;
-        b=WmBg4/xkmCfy+Hxb/pVPFbmdOGgezSBALLaFgjESkRlv9sHqCiPgzoFKsEMRdSpWJ5
-         zXrWoWHwPxtILJ/5s5y2ll7oc6kH5vK6z4tlOiHi0y9duMpm+Uk5BwKBpQ6RIAg1awyU
-         QO2gvOfdov98mQDMET9/mOWg5A3y9AWJt7S5Y+o/rEt7dvKiWOZpqvxBtPCJHFxtbQAF
-         8iuUzw3docBdkwu7kyaFpMEHg7j2mQFNPLgSzG/Y+6KAhf9gmQjC0yKYIEMCFclNqhGd
-         voCqAcsIvpqbqJeYUdLZtCwE0mVPFUnpILoOh90KI9BmT1adfo1yp4OuZaJURonkOz9X
-         LmiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcP7GAuH6RoQLcinOGeJWCHIx6EbwDLlfiwucJZsQ4YsHUAU/0/SMJsuMPGpJmM1zkWdMItFuK6a+9vew=@vger.kernel.org, AJvYcCWfWxYSDXgjNkeFk2WSnoZlgNlrhoAwmxSqmxPUMuCWf37VL/mjn6iEoAI9pf+h+jCQAk6LAOEiE/OrDR8Oy1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7q3S4U8zdZ7F+G+OV5A3E7fUiwdFWc/2ZUYM3EqE+2qvqzx2x
-	20uKGznHUQc4FlwXV81o7LIUG5ionGNgbM4/7mcofnp4lUc/PLjij7LvFZGKdE6hAZR2Pvl7H1T
-	YRVJeVszYr+4KdmNAGAamEQ736gS4d3I=
-X-Gm-Gg: ASbGncshyXRN5sdaFu9y7rUVWx8wf6HAe8hPCijLyNzmA9mvfnUEyhFppZ80OjJjLua
-	Mi7r1KpLfruc1lNk21shvRzl+7moceDLebOZqlFmayecllAjuzKdDwDOm/8iaNbjnjhnQsmrSzT
-	smuiMZfDgC2phhmzuxI8Ynk4XAxS4IYwfTGbLBykkRqnC5
-X-Google-Smtp-Source: AGHT+IEtiSDbVtVY2B0pLNW44Ytg7MQuZSNigbC2JZeHZUhFXRF5LQyHh/k8dU/GxbIoUGVN8Hqb+K3w2wT9wrlhH/I=
-X-Received: by 2002:a17:903:94c:b0:23d:d2d2:b51f with SMTP id
- d9443c01a7336-23dd2d2b7dfmr9180415ad.10.1751969791683; Tue, 08 Jul 2025
- 03:16:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751969901; x=1752574701;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dLtaJj3z2oPY1ShSlkHP1j/IqOzaduHiAyYzCbRo9Ls=;
+        b=SeTzYPwZiXam/S+Fyf7tu/CSeQtzFrdIUDNJ+y+Z9MTkximq0m4Ftvr3UsZmRTId0C
+         qzOYUn/IhvWhsk6mNx7AbF9xTvpuc/1lPmWHLcGTgUEKGDCceZs5ayMeflZ6/KkxcJVi
+         ORAy55mp/tg6PRQZjv7YyapAbHaNgUi+ak0a/nRH7tP6SMdZRYxqxXGUeg1ytmKiEIGO
+         fgAMQgro91VYegmnWmFdUMKurQQn6MD/yuEkAThOp7+LZCoPZBWZol0xuwZ3adcaK4vM
+         y6BOYMkAQgsH8ZWQ5o5RfFGP8vQz6maxFcYJ3wnkGWFGfBLqx/tNmWoiyOTfI/EHaoMo
+         JXkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVY7AZP1+Q88hgJ9HfL79Iaqmzo/Kx9Ddwo9LAbxWx2Uo/xxTXjrdkKHa14RAE3udA09S5/2noOGwRYYjm1OVFdklI=@vger.kernel.org, AJvYcCXVXTr8emj1pSNgqSJDrc5IujbAx/IRXrK5ThFNCi6OqKzk9Epg9w38+2OaiCmYPzWAzGXU9b1axxYKhB44@vger.kernel.org, AJvYcCXppYcHM/z5IydpjbPtEcNqY3r9ATY14ePI9tToUZdARtwf6Yba1oDKHTBvhxqK3X0Dnn8+1K3ejhdVLwi/AP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf0bwqLpph/zjS1W508pMugHQnufCfyognz2LVqW66wLGLx/R6
+	Dz6IkJDT56Yw3Nuf9s34BpJSAS6cGUAT7XFSSe301WFQ702RPIRTx3bWnADNzw==
+X-Gm-Gg: ASbGnctiINtB5oBN005Blc3+vPdcEi8eey9yHwmSjh/2lZrxh6dlZoYJVWsY6prMBFU
+	kp+8TVlANhvhAjIsHgHyqonZ2OLjKNGp/Xc6xl314Q/jyZ58UL6RXyJd7VAPFx9XWgfd43ugpKW
+	qkd9qmOmvPlxSKEf4oq4jIM/MMchlZ8OQXmAklYpvjQLpskYbNCxGwERJSR6R/bP84HS1WhsgcN
+	Sr/Be9HwykDHSB1NNz90HoRu6noKIiuXMEPnbyGb2uS4oI7FIhKjnLFxNAu0SdVnA8nh534eYA9
+	4wVGlrsejxCweXqh1x2Cb8hrFDtpNdTafG6CAf8hrF1ZpZrtG6JqqW8aMFNO9sLAOfSr4scbEaR
+	/xgK1Er/xj86e0+pIQ5qT53cMgBvHVhM=
+X-Google-Smtp-Source: AGHT+IHFTbQU/uYOoMrihd+GoWidRAGLXPHYkD16HziD5MyIKSHN6gIaJzOtsuNhgeCshtOg1HOW5A==
+X-Received: by 2002:a05:6a21:a44:b0:1f5:9024:3254 with SMTP id adf61e73a8af0-225b7f19724mr25324211637.6.1751969900609;
+        Tue, 08 Jul 2025 03:18:20 -0700 (PDT)
+Received: from [172.17.0.2] (125-227-29-20.hinet-ip.hinet.net. [125.227.29.20])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b38ee4a40e3sm11114709a12.34.2025.07.08.03.18.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 03:18:19 -0700 (PDT)
+From: Leo Wang <leo.jt.wang@gmail.com>
+X-Google-Original-From: Leo Wang <leo.jt.wang@fii-foxconn.com>
+Subject: [PATCH v6 0/2] ARM: dts: Add support for Meta Clemente BMC
+Date: Tue, 08 Jul 2025 18:17:59 +0800
+Message-Id: <20250708-add-support-for-meta-clemente-bmc-v6-0-7f3e57bd0336@fii-foxconn.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me> <20250618-unique-ref-v11-1-49eadcdc0aa6@pm.me>
- <DB1IPFNLFDWV.2V5O73DOB2RV6@kernel.org> <aGtv9qs682gTyQWX@mango>
- <DB5PPGOWNW4K.2C5A4UE9V9IEF@kernel.org> <aGzrZqIrStGD_UBp@mango>
-In-Reply-To: <aGzrZqIrStGD_UBp@mango>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 8 Jul 2025 12:16:19 +0200
-X-Gm-Features: Ac12FXws6e6wjl4VXaStMJYjDvz_KB3jEXK4Nq0GnlHUnilneuNT3cDnqmhb8V4
-Message-ID: <CANiq72kWFYS-inzFPTQAGdPRBr7MffZLR9q7iWiT_j2w_e99MQ@mail.gmail.com>
-Subject: Re: [PATCH v11 1/4] rust: types: Add Ownable/Owned types
-To: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina+kernel@asahilina.net>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFfwbGgC/5XOTW6DMBAF4KtEXteV/4mz6j2iLMww01gqGNkUp
+ Yq4e01WLFiQ5XsafW+erGCOWNjl9GQZ51hiGmpwHycG9zB8I49dzUwJZYWTZx66jpffcUx54pQ
+ y73EKHH6wx2FC3vbAvZHBON+CVZpVZ8xI8fHauN5qvscypfz3mpzl2r6jz5ILjhaCcx7RNO0Xx
+ VhvH5CG4RNSz9aNWW1cJY+4qroOLJKwXhoP+67euvqIq6sLSmkiIOOA9l2zdZsjrlldbIiUNk6
+ A2Xft266trtBn7BxJaP3Ov8uy/AOXrcBoOAIAAA==
+X-Change-ID: 20250618-add-support-for-meta-clemente-bmc-941a469bc523
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, Kees Cook <kees@kernel.org>, 
+ Tony Luck <tony.luck@intel.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ Leo Wang <leo.jt.wang@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751969896; l=2063;
+ i=leo.jt.wang@fii-foxconn.com; s=20250618; h=from:subject:message-id;
+ bh=lQzrd3v8IVLh9gCaLq7WUnZF8AHGYqftBF79jT2Lra4=;
+ b=KlqQpQVMjrnLsTyzdw9K7byzDuSgHRV9Z3mimvYYtAWncmVd2YRbbCEniIfrILAVU2LEhX156
+ mgdNooJdzBbDK0eYj+sxgUbJ1UwgKhLdxEcF+FpXccjYalJHvhtPZBC
+X-Developer-Key: i=leo.jt.wang@fii-foxconn.com; a=ed25519;
+ pk=x+DKjAtU/ZbbMkkAVdwfZzKpvNUVgiV1sLJbidVIwSQ=
 
-On Tue, Jul 8, 2025 at 11:57=E2=80=AFAM Oliver Mangold <oliver.mangold@pm.m=
-e> wrote:
->
-> Note, though, that I already moved it from types.rs to types/ownable.rs o=
-n
-> request. It seems to me different people here have different ideas where =
-it
-> should be placed. I feel now, that it would make sense to come to an
-> agreement between the interested parties about where it should finally be
-> placed, before I move it again. Could I ask that we settle that question
-> once and for all before my next revision?
+This series adds initial support for the Meta Clemente BMC based on the
+ASPEED AST2600 SoC.
 
-Yeah, if there is a disagreement with something said previously, then
-it should be resolved before starting to ping-pong between approaches
-with more and more patch versions. Reviewers can forget or they may
-not have read an earlier comment, but you did the right thing
-mentioning there is such a conflict in opinions.
+Patch 1 documents the compatible string.
+Patch 2 adds the device tree for the board.
 
-Cheers,
-Miguel
+Signed-off-by: Leo Wang <leo.jt.wang@gmail.com>
+---
+Changes in v6:
+- Correct Author email to match Signed-off-by email address.
+- Link to v5: https://lore.kernel.org/r/20250627-add-support-for-meta-clemente-bmc-v5-0-038ed6f1cb9f@fii-foxconn.com
+
+Changes in v5:
+- Remove accidentally pasted texts.
+- Link to v4: https://lore.kernel.org/r/20250627-add-support-for-meta-clemente-bmc-v4-0-ce7ff23460c4@fii-foxconn.com
+
+Changes in v4:
+- Move properties of nodes defined in the same file from label ref back to where they belong.
+- Move pinctrl default configs for ncsi3 and ncsi4 to aspeed-g6-pinctrl.dtsi.
+- Add properties to i2c10 and i2c15 to enable MCTP.
+- Link to v3: https://lore.kernel.org/r/20250623-add-support-for-meta-clemente-bmc-v3-0-c223ffcf46cf@fii-foxconn.com
+
+Changes in v3:
+- Modify leakage sensor to reflect current design.
+- Link to v2: https://lore.kernel.org/r/20250621-add-support-for-meta-clemente-bmc-v2-0-6c5ef059149c@fii-foxconn.com
+
+Changes in v2:
+- Fix patch 1/2 subject line to match dt-bindings convention.
+- Reorder device tree nodes in patch 2/2 to follow upstream DTS style.
+- Link to v1: https://lore.kernel.org/r/20250618-add-support-for-meta-clemente-bmc-v1-0-e5ca669ee47b@fii-foxconn.com
+
+---
+Leo Wang (2):
+      dt-bindings: arm: aspeed: add Meta Clemente board
+      ARM: dts: aspeed: clemente: add Meta Clemente BMC
+
+ .../devicetree/bindings/arm/aspeed/aspeed.yaml     |    1 +
+ arch/arm/boot/dts/aspeed/Makefile                  |    1 +
+ .../dts/aspeed/aspeed-bmc-facebook-clemente.dts    | 1291 ++++++++++++++++++++
+ arch/arm/boot/dts/aspeed/aspeed-g6-pinctrl.dtsi    |   11 +
+ 4 files changed, 1304 insertions(+)
+---
+base-commit: 52da431bf03b5506203bca27fe14a97895c80faf
+change-id: 20250618-add-support-for-meta-clemente-bmc-941a469bc523
+
+Best regards,
+-- 
+Leo Wang <leo.jt.wang@fii-foxconn.com>
+
 
