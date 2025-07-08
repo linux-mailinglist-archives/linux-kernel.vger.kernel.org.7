@@ -1,60 +1,65 @@
-Return-Path: <linux-kernel+bounces-721961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96235AFD00E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:06:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BFA3AFD012
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5CE41650B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:06:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4E653A38AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211482E425D;
-	Tue,  8 Jul 2025 16:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B232E425B;
+	Tue,  8 Jul 2025 16:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bm+GezH7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="egs4zIuY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7E92E0929;
-	Tue,  8 Jul 2025 16:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9582E3B03;
+	Tue,  8 Jul 2025 16:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751990762; cv=none; b=j/nZU22Y7Mij/vjH7E+EBufdmNPaI0f9AhCLoYgDniDC+NPCPbwFJ7lMFmO5s9mKsLoPGcIBV6x1QvT5cV+9d6Otd6JvFXSteYJLOTDj3rt08BZVluP8toJqqUS0unkV0jUzWsJR96e3N/Uoge3acUL1LXxUct4c/k2oRFkUyFs=
+	t=1751990783; cv=none; b=c4C1ARosV9m62j4Zu0L/Rm/wvXgQ/JFGHgxNB42tyEPDxkt4Cbs1WOyOIoo+3AwD1NkotUVwHA45VEbzSpdKAKqRR9NfNymzd16Z3PWl7Bjv4T0rwOghqM+7DFaHHWwug41maekWnbQf8+AumsLTf44skCBjH3xwLJC1XUGxtEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751990762; c=relaxed/simple;
-	bh=VoqXC5vS3jsIa1yFv0oPoDMiBok2AlhMwtNJQb0+QVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=tUQTxZErs+pFfc2T8USy3kPHPMuPHOCSdjWDgOXVm+BfCm7Wm9yEDwyYWLOAw6d4l0Mrl7RmhgiEbPrnZzUu1BeuJXVPY+sfqwBq6aza1qI9Lv94w4HgEQXZ//0zSh3WmtLuatoIsQqj6Md54dRnsgeIlWvwC2msaCzoKwJSk3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bm+GezH7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13BD1C4CEED;
-	Tue,  8 Jul 2025 16:06:01 +0000 (UTC)
+	s=arc-20240116; t=1751990783; c=relaxed/simple;
+	bh=bwDss3LX8Ypcqtq7jxcfxHWBD9WVWZPQFO01VPVX6RY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nI+FgjfJL4YR4XOcayLeXGKoHaSDuGQqTLDQP8rl0/Ic6FQ2VLu+S8h+SyVqQk9B9iho8mteeGAaUCuJ2On2gS7ASGUKYhBVOAI8+MV0tMMpqBnqxLRgbvJdiZjUVf0xsz0ikEdYFb7RvJh8FDyzMRTi9fJo1x5ZLwcBNyrFOwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=egs4zIuY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FE59C4CEEF;
+	Tue,  8 Jul 2025 16:06:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751990762;
-	bh=VoqXC5vS3jsIa1yFv0oPoDMiBok2AlhMwtNJQb0+QVM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=bm+GezH77xN1w6ikSayOdd/DgOLYB3Egij8qvNsjOVoHaI+xqsL38XPX4H3K1GeeU
-	 FPQBVwShbzDpkvzmguPQjDdXexsaK8s4BJnm94pW9mnE3fn2wPJqnXOuB2/5B/tn0w
-	 UhkNqdX4QZ3TmmwfssxJ8Z7wuovZdo/ZNtcOZ+TFV9+elpQuavsytBj6CUSsYVf4t0
-	 T/1dh+Iy/RBAOsn6D67oTMk8AtB74jmoz+eNUfonfWh67pOro6KgVz/sHIOK1+lGPC
-	 DiYO6KgVPtso/VoB+hN9vxmgQkm7bU7EFWMmyVmYeI+1rAWZ1HgI3+/+8sO/ZORU0t
-	 HAzplkVeGB74g==
-Date: Tue, 8 Jul 2025 11:06:00 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] PCI: iproc: Remove description of 'msi_domain' in struct
- iproc_msi
-Message-ID: <20250708160600.GA2147978@bhelgaas>
+	s=k20201202; t=1751990783;
+	bh=bwDss3LX8Ypcqtq7jxcfxHWBD9WVWZPQFO01VPVX6RY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=egs4zIuYkMC5P5GewiEg8xuIRDlWKYVAMIn0dxV2XlcDy7sBLKvL/iEWG0qSUaDZU
+	 2w2vRUdyouzEw8U6fz3Bn3CCVsZ0yUh6g0gLsoWll1vtw0LOPPjte3MfSsSf68/hmU
+	 OWa+kqdoe6bWlc30n9Jf2jBjYpI1xGkjc/2JN1rWoYxbr5JsD0ZfbU5FEQCmjtnsTq
+	 LsOkJdW5PJLyczNWrNa2NMEYTYv9/pDzrK571ympsffTXuFzGDyPMa7truRTNd8n5Z
+	 ZV74NiupoEleMaHvPWmERKWBwk7u3ZzBEBx0/LOrco9xZOyaSjF3wsW+Z+lWopY6jU
+	 2Rnbgu00/pusA==
+Date: Tue, 8 Jul 2025 11:06:22 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Jiri Slaby <jirislaby@kernel.org>, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-serial@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v14 1/5] dt-bindings: serial: renesas,rsci: Add optional
+ secondary clock input
+Message-ID: <175199078171.503919.4967406677293355458.robh@kernel.org>
+References: <20250630202323.279809-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250630202323.279809-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,38 +68,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250708053825.1803409-1-namcao@linutronix.de>
+In-Reply-To: <20250630202323.279809-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Tue, Jul 08, 2025 at 07:38:25AM +0200, Nam Cao wrote:
-> The member msi_domain of struct iproc_msi has been removed, but its
-> description was left behind. Remove the description.
+
+On Mon, 30 Jun 2025 21:23:19 +0100, Prabhakar wrote:
+> From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
 > 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202507080437.HQuYK7x8-lkp@intel.com/
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-
-Thanks for squashing this into the ("PCI: iproc: Switch to
-msi_create_parent_irq_domain()") patch that removed the msi_domain
-member, Mani.  No point in cluttering the history with extra commits
-that clean up things we haven't merged upstream yet.
-
+> Update the RSCI binding to support an optional secondary clock input on
+> the RZ/T2H SoC. At boot, the RSCI operates using the default synchronous
+> clock (PCLKM core clock), which is enabled by the bootloader. However, to
+> support a wider range of baud rates, the hardware also requires an
+> asynchronous external clock input. Clock selection is controlled
+> internally by the CCR3 register in the RSCI block.
+> 
+> Due to an incomplete understanding of the hardware, the original binding
+> defined only a single clock ("fck"), which is insufficient to describe the
+> full capabilities of the RSCI on RZ/T2H. This update corrects the binding
+> by allowing up to three clocks and defining the `clock-names` as
+> "operation", "bus", and optionally "sck" for the asynchronous clock input.
+> 
+> This is an ABI change, as it modifies the expected number and names of
+> clocks. However, since there are no in-kernel consumers of this binding
+> yet, the change is considered safe and non-disruptive.
+> 
+> Also remove the unneeded `serial0` alias from the DTS example and use
+> the R9A09G077_CLK_PCLKM macro for core clock.
+> 
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  drivers/pci/controller/pcie-iproc-msi.c | 1 -
->  1 file changed, 1 deletion(-)
+> v13->v14:
+> - Dropped using `R9A09G077_CLK_PCLKM` macro in binding.
 > 
-> diff --git a/drivers/pci/controller/pcie-iproc-msi.c b/drivers/pci/controller/pcie-iproc-msi.c
-> index d0c7f004217f..9ba242ab9596 100644
-> --- a/drivers/pci/controller/pcie-iproc-msi.c
-> +++ b/drivers/pci/controller/pcie-iproc-msi.c
-> @@ -82,7 +82,6 @@ struct iproc_msi_grp {
->   * @bitmap_lock: lock to protect access to the MSI bitmap
->   * @nr_msi_vecs: total number of MSI vectors
->   * @inner_domain: inner IRQ domain
-> - * @msi_domain: MSI IRQ domain
->   * @nr_eq_region: required number of 4K aligned memory region for MSI event
->   * queues
->   * @nr_msi_region: required number of 4K aligned address region for MSI posted
-> -- 
-> 2.39.5
+> v12->v13:
+> - Rebased on latest linux-next.
+> - Updated commit message to clarify the ABI change.
+> - Used `R9A09G077_CLK_PCLKM` macro for core clock
+> ---
+>  .../bindings/serial/renesas,rsci.yaml           | 17 +++++++++--------
+>  1 file changed, 9 insertions(+), 8 deletions(-)
 > 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
