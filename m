@@ -1,78 +1,65 @@
-Return-Path: <linux-kernel+bounces-721701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCCA4AFCCDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:01:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC2A9AFCCE0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F52F166E07
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:00:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C427B3A7B28
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159602DEA86;
-	Tue,  8 Jul 2025 14:00:53 +0000 (UTC)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F612DECB7;
+	Tue,  8 Jul 2025 14:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="F4kH8C6j"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEE02D613;
-	Tue,  8 Jul 2025 14:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F0A2D613;
+	Tue,  8 Jul 2025 14:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751983252; cv=none; b=N7n3Afe48+aKPeD2y/APBX08byNl6b5kXRJVl7MvUZdPGP1drWqoxqN+C39/t20Em/gHiL/I1ZM3CKRTPMXDcGUPxuTsSoYEgKx9eQ5Yd1zwvmlOhmnh2pSwaRf6o3yK+F63gSW1MczE9V6sPZsWLgJ7TWON2uu29OofBp7PUXE=
+	t=1751983290; cv=none; b=SGMnvMAB+vMoolkZ9+eEnQkNjmxjxii19nS1eQY22yQBO3ld14BfSM+a1Cmbha/VxtP5SOvuFyOD/qReva7o6pAFk+YpHhu8kHpdBtuSKjF5POY5eqsAx6tE3c1NjST4eHVgmsEKH/bCyenZTA6OsUhsWjWbONSciJxkkQyP9WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751983252; c=relaxed/simple;
-	bh=XReFg8lzS1pkGZT0P1YIXIvT032iwGoONRTTI9SRBRk=;
+	s=arc-20240116; t=1751983290; c=relaxed/simple;
+	bh=jiSOZcyewoX4/3vPQOddofnAR9Fx/TVJaWuJIbk7pB0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BQXi3aGcQaUVcqGR9WDNRo1/qU++oa4+g2AgL33HGgkeYDQDUH/HvEE9w7wvhEUYY1h0Db7vOugodsdbr64iikHqkCdQps29Nh1+ay+LWcWgExVUKDxy9/xACVnBwoQk30I9BUh5QgkeyeME0j4B0kAg3scBYd6Z3gPIwW/vERA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ad56cbc7b07so737356566b.0;
-        Tue, 08 Jul 2025 07:00:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751983249; x=1752588049;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7YURTXCptCSZEmhbUYCBqxZVrD3kYao1LSH9kzVWrsc=;
-        b=nO/arqi3XkVWVHQXtMVnReZ7wL2c5aZx/sNPU1VwhoWpkfBAEVItJZFoJAuMMaLbS2
-         0BNXAr9ndPxLEQgiF8wE0DPdS8sYQyx4ms3C0UkGxL5eclHI5MHy1JFEjSF27SZEHsgT
-         nplinuN/blhUSueM3CBCW+1sCxwig7FaVY+YB3SGhXjaqKXnPJjWecdiFj6dsvZnTBQA
-         aCtT0OjSNE8CouoTwQLxDzR3puqayhH47VEbjrpBbFiRnSMRFNFrAJ3w46WfbmV/LBpH
-         h1k0v2fkToUD737FYy7HOpHBXFGmtSwjoNq/OIYEUtcuUY01/faW/EDA71o2qSiAQ0xn
-         qiWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGPOGrcFINZD3Fqb6Kymo6wKGzOW7VlU88P++vpsPr6wg66UkdsZhyZXdVT+EGDQ/MEVUVZnLiqmhDx/o=@vger.kernel.org, AJvYcCXHb5j3gEC/hsKI6EmMJXsTceA+H21yhG+eO56bbNlWOzg3/tTzG7rUfmKf4yN+y/8B/nQaDKSgWbSHI6Es@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/wXJHoDQVvdFsGBLsH6sAO3xn/8eP/CgcB80rg6H47en+501P
-	zm1m9Ssu19YeOOrYTrubvY3VIBmKE4QO5+B61vFvKrLfhs7YiBBoTenH
-X-Gm-Gg: ASbGncufcBSPy4nWeN/6WgeKnH4+X4lWVh4JC+a70YedTS6mImOg/kFEPibnDGjFaX8
-	dZ+E/G/rTwrKGek/iqwv0Kx3eU8sbaYxCaVxHf/YlBLieWA722aTAZ3k7TF1Sd2hGJADFX4rCvn
-	idBxMrTXlgA5sBJkKl9au2aH8NMTOIfqSGDUcu8HHzq4N5oDh2kVpc6+pEDjMDzx2MQo38P8Z0d
-	nXrpsRepsvcYXp5mBZq6QMyP0fBKUEhVxgXZkmfvRGKR5OhRCAwes0+7djDvY8+5rfaqCnu0PaU
-	tRrtFLNggEAMMUBAaubJDt0KzlxizFVny56ij92iPvRj0whE7S2t+954FXZY2Y0=
-X-Google-Smtp-Source: AGHT+IGXOKNS8CCiY5x6OJiBuZ2ATOTUIIt4Qq9+KAF8vaEWWbhlFc9sESTRoxEkjQhwxHSfc/uYLg==
-X-Received: by 2002:a17:907:d86:b0:ade:484d:1518 with SMTP id a640c23a62f3a-ae3fe6be48bmr1664163466b.26.1751983248358;
-        Tue, 08 Jul 2025 07:00:48 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:9::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6ac5f80sm911998166b.97.2025.07.08.07.00.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 07:00:47 -0700 (PDT)
-Date: Tue, 8 Jul 2025 07:00:45 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Mark Rutland <mark.rutland@arm.com>, ankita@nvidia.com,
-	bwicaksono@nvidia.com
-Cc: rmk+kernel@armlinux.org.uk, catalin.marinas@arm.com,
-	linux-serial@vger.kernel.org, rmikey@meta.com,
-	linux-arm-kernel@lists.infradead.org, usamaarif642@gmail.com,
-	leo.yan@arm.com, linux-kernel@vger.kernel.org, paulmck@kernel.org,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Besar Wicaksono <bwicaksono@nvidia.com>
-Subject: Re: arm64: csdlock at early boot due to slow serial (?)
-Message-ID: <aG0kYjl/sphGqd4r@gmail.com>
-References: <aGVn/SnOvwWewkOW@gmail.com>
- <aGZbYmV26kUKJwu_@J2N7QTR9R3>
- <aGaQBghdAl8VGWmV@gmail.com>
- <aGawTd8N2i8MDCmL@J2N7QTR9R3>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nXYQDr787dC5dQgtTEDNZ+eRVZ6uMbgPW9ADzjVC90ZVD+k7tC5h8VGQVgTzcMKch/WHUsairUjWLQf6VNrx5I6MPAlWc5BW89R/tw9gOzfsty/AK5pISwuOMyyWPD4ASLCN0iMQtVLcWUG/NMJRG6nKSwFVue6PiDqNdH8u8I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=F4kH8C6j; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=p+b4mVKuoAsfo3cEZdXjX+/aNWu2K+lEqLExqcNWMUg=; b=F4kH8C6jYQBYLoupXb2aexf8sT
+	uVL4oZsxSIOP9UPd301zLEdaVp7q/rXBCuxwpXTY4obCtJulpKCCPknU8VzZG+yP7OwKyY43F6IJM
+	cGy7PfLw2X1G2kw+WWfP/NtYuxDjqcYZLJNm4GvQb3V2vBI5YTOwyzU7j8UUsHwvZdjo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uZ8sc-000pFd-OL; Tue, 08 Jul 2025 16:01:06 +0200
+Date: Tue, 8 Jul 2025 16:01:06 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next 1/3] net: netdevsim: Add PHY support in netdevsim
+Message-ID: <c6685b48-b525-47bd-8364-a26d787b1e3a@lunn.ch>
+References: <20250702082806.706973-1-maxime.chevallier@bootlin.com>
+ <20250702082806.706973-2-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,166 +68,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aGawTd8N2i8MDCmL@J2N7QTR9R3>
+In-Reply-To: <20250702082806.706973-2-maxime.chevallier@bootlin.com>
 
-On Thu, Jul 03, 2025 at 05:31:09PM +0100, Mark Rutland wrote:
+> +static int nsim_phy_state_link_set(void *data, u64 val)
+> +{
+> +	struct nsim_phy_device *ns_phy = (struct nsim_phy_device *)data;
+> +
+> +	ns_phy->link = !!val;
+> +
+> +	phy_trigger_machine(ns_phy->phy);
+> +
+> +	return 0;
+> +}
+> +
+> +static int nsim_phy_state_link_get(void *data, u64 *val)
+> +{
+> +	struct nsim_phy_device *ns_phy = (struct nsim_phy_device *)data;
+> +
+> +	*val = ns_phy->link;
+> +
+> +	return 0;
+> +}
+> +
+> +DEFINE_DEBUGFS_ATTRIBUTE(nsim_phy_state_link_fops, nsim_phy_state_link_get,
+> +			 nsim_phy_state_link_set, "%llu\n");
+> +
+> +static void nsim_phy_debugfs_create(struct nsim_dev_port *port,
+> +				    struct nsim_phy_device *ns_phy)
+> +{
+> +	char phy_dir_name[sizeof("phy") + 10];
+> +
+> +	sprintf(phy_dir_name, "phy%u", ns_phy->phy->phyindex);
+> +
+> +	/* create debugfs stuff */
+> +	ns_phy->phy_dir = debugfs_create_dir(phy_dir_name, port->ddir);
+> +
+> +	debugfs_create_file("link", 0600, ns_phy->phy_dir, ns_phy, &nsim_phy_state_link_fops);
 
-> > How do I find the SoC exactly?
-> 
-> >From what you've told me above, the SoC is Nvidia Grace; what they call
-> the CPU is the whole SoC.
-> 
-> > > Likewise that might imply more folk to add to Cc.
-> 
-> I've added Ankit and Besar, since they've both worked on some system
-> level bits on Grace, and might have an idea.
-> 
-> Ankit, Besar, are you aware of any UART issues on Grace (as described in
-> Breno's messages below), or do you know of anyone who might have an
-> idea?
+Maybe this can be converted into:
 
-Here is more information I got about this problem. TL;DR: While the
-machine is booting, it is throttled by the UART speed, while having IRQ
-disabled.
+debugfs_create_bool("link", 0600, ns_phy->phy_dir, &ns_phy->link);
 
-Here is my line of investigation:
+You loose the phy_trigger_machine(), but that might actually be
+good. PHYs are async to any operation you take on them. It can take up
+to 1 second due to the polling before any change is reported. So any
+user space tools which expect an immediate state change are broken. So
+leaving the PHY state machine to poll the PHY to notice the link has
+changed is a better simulation.
 
-1) when the kernel start to flush the messages, there are ~700 messages
-   in the buffer that will be flushed using
-   pl011_console_write_atomic()
-
-	[    0.653673] printk: console [ttyAMA0] enabled
-	[    9.239225] ACPI: PCI Root Bridge [PCI2] (domain 0002 [bus 00-ff])
-
- a) pl011_console_write_atomic() is called  ~700 times. Each message
- have around 50 chars.
-
- b) For each char, it needs to wait for it to be sent before proceeding.
-
-3) pl011_console_write_atomic() have two big while()/cpu_relax() blocks.
-   One per character and one per message.
-
-    a) the first one is in pl011_console_putchar(), where it checks if the
-    FIFO is full before writing a single character. This is done one per
-    character.
-
-          while (pl011_read(uap, REG_FR) & UART01x_FR_TXFF)
-                  cpu_relax();
-	 
-    b) After the line is written, then it hits the second one, in
-    pl011_console_write_atomic(), where it waits until the controller is
-    not busy anymore:
-
-              while ((pl011_read(uap, REG_FR) ^ uap->vendor->inv_fr) & uap->vendor->fr_busy)
-                  cpu_relax();
-	
-
-4) The controller has FIFO enabled, but, it doesn't help much, because
-   the CPU is waiting for the 700 * 50 chars to be transmitted.
-
-5) At this time we just have one single CPU online (?)
-
-6) This is done with IRQ disabled, which causes a CSD lock to trigger,
-   given that the CPU has IRQ disabled
-
-
-   a) Following Paul's suggestion, I added
-   a `lockdep_assert_irqs_enabled()` at the entrance of
-   pl011_console_write_atomic(), and that is what I see.
-
-	hardirqs last  enabled at (256267): [<ffff800080364980>] vprintk_store+0x6f8/0x820
-	hardirqs last disabled at (256268): [<ffff80008036e1c4>] __nbcon_atomic_flush_pending+0x2c4/0x3e8
-	softirqs last  enabled at (255640): [<ffff8000801bb020>] handle_softirqs+0x910/0xe78
-	softirqs last disabled at (255635): [<ffff800080010938>] __do_softirq+0x18/0x20
-
-  b) This is the full stack in how we are calling cpu_relax() with irq
-  disabled million times:
-
-	WARNING: CPU: 0 PID: 1 at drivers/tty/serial/amba-pl011.c:2545 pl011_console_write_atomic (drivers/tty/serial/amba-pl011.c:2545)
-	Modules linked in:
-	pstate: 234003c9 (nzCv DAIF +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-	pc : pl011_console_write_atomic (drivers/tty/serial/amba-pl011.c:2545)
-	lr : pl011_console_write_atomic (drivers/tty/serial/amba-pl011.c:2545)
-	sp : ffff80008980dca0
-	pmr: 000000f0
-	x29: ffff80008980dca0 x28: ffff0000aebcc080 x27: dfff800000000000
-	x26: 1fffe00015d7985a x25: 0000000000000000 x24: 0000000000000000
-	x23: ffff0000a1800000 x22: ffff800087e6d7f8 x21: 1fffe00015d7985b
-	x20: ffff80008980dee0 x19: 0000000000000003 x18: 00000000ffffffff
-	x17: 30313478305b2030 x16: 3030303230303030 x15: 3078302055504320
-	x14: 6c61636973796870 x13: 0a2a2a2065676173 x12: ffff700011301b8b
-	x11: 1ffff00011301b8a x10: ffff700011301b8a x9 : ffff800081eafdb4
-	x8 : 0000000000000004 x7 : 0000000000000003 x6 : 0000000000000000
-	x5 : 1ffff00011301be2 x4 : 0000000000000018 x3 : 0000000000000000
-	x2 : 1ffff00010fcdb57 x1 : 0000000000000000 x0 : 0000000000000001
-	Call trace:
-	pl011_console_write_atomic (drivers/tty/serial/amba-pl011.c:2545) (P)
-	nbcon_emit_next_record (kernel/printk/nbcon.c:1026)
-	__nbcon_atomic_flush_pending_con (kernel/printk/nbcon.c:1498)
-	__nbcon_atomic_flush_pending (kernel/printk/nbcon.c:1541 kernel/printk/nbcon.c:1593)
-	nbcon_atomic_flush_pending (kernel/printk/nbcon.c:1610)
-	vprintk_emit (kernel/printk/printk.c:2429)
-	vprintk_default (kernel/printk/printk.c:2466)
-	vprintk (kernel/printk/printk_safe.c:83)
-	_printk (kernel/printk/printk.c:2470)
-	__warn (kernel/panic.c:768)
-	report_bug (lib/bug.c:197 lib/bug.c:215)
-	bug_handler (arch/arm64/kernel/traps.c:1002)
-	call_break_hook (arch/arm64/kernel/debug-monitors.c:319)
-	brk_handler (arch/arm64/kernel/debug-monitors.c:325)
-	do_debug_exception (arch/arm64/mm/fault.c:1002)
-	el1_dbg (arch/arm64/kernel/entry-common.c:514)
-	el1h_64_sync_handler (arch/arm64/kernel/entry-common.c:567)
-	el1h_64_sync (arch/arm64/kernel/entry.S:595)
-	pl011_console_write_atomic (drivers/tty/serial/amba-pl011.c:2524) (P)
-	nbcon_emit_next_record (kernel/printk/nbcon.c:1026)
-	__nbcon_atomic_flush_pending_con (kernel/printk/nbcon.c:1498)
-	__nbcon_atomic_flush_pending (kernel/printk/nbcon.c:1541 kernel/printk/nbcon.c:1593)
-	nbcon_atomic_flush_pending (kernel/printk/nbcon.c:1610)
-	vprintk_emit (kernel/printk/printk.c:2429)
-	vprintk_default (kernel/printk/printk.c:2466)
-	vprintk (kernel/printk/printk_safe.c:83)
-	_printk (kernel/printk/printk.c:2470)
-	register_console (kernel/printk/printk.c:4126 (discriminator 9))
-	serial_core_register_port (drivers/tty/serial/serial_core.c:2637 drivers/tty/serial/serial_core.c:3157 drivers/tty/serial/serial_core.c:3388)
-	serial_ctrl_register_port (drivers/tty/serial/serial_ctrl.c:42)
-	uart_add_one_port (drivers/tty/serial/serial_port.c:144)
-	pl011_register_port (drivers/tty/serial/amba-pl011.c:2867)
-	sbsa_uart_probe (drivers/tty/serial/amba-pl011.c:3041)
-	platform_probe (drivers/base/platform.c:1405)
-	really_probe (drivers/base/dd.c:579 drivers/base/dd.c:657)
-	__driver_probe_device (drivers/base/dd.c:799)
-	driver_probe_device (drivers/base/dd.c:829)
-	__device_attach_driver (drivers/base/dd.c:958)
-	bus_for_each_drv (drivers/base/bus.c:462)
-	__device_attach (drivers/base/dd.c:1031)
-	device_initial_probe (drivers/base/dd.c:1079)
-	bus_probe_device (drivers/base/bus.c:537)
-	device_add (drivers/base/core.c:3699)
-	platform_device_add (drivers/base/platform.c:716)
-	platform_device_register_full (drivers/base/platform.c:845)
-	acpi_create_platform_device (./include/linux/err.h:70 drivers/acpi/acpi_platform.c:178)
-	acpi_bus_attach (./include/linux/acpi.h:738 drivers/acpi/scan.c:2206 drivers/acpi/scan.c:2198 drivers/acpi/scan.c:2316)
-	acpi_dev_for_one_check (drivers/acpi/bus.c:1146)
-	device_for_each_child (drivers/base/core.c:4021)
-	acpi_dev_for_each_child (drivers/acpi/bus.c:1151)
-	acpi_bus_attach (drivers/acpi/scan.c:2323)
-	acpi_dev_for_one_check (drivers/acpi/bus.c:1146)
-	device_for_each_child (drivers/base/core.c:4021)
-	acpi_dev_for_each_child (drivers/acpi/bus.c:1151)
-	acpi_bus_attach (drivers/acpi/scan.c:2323)
-	acpi_bus_scan (drivers/acpi/scan.c:2533 drivers/acpi/scan.c:2606)
-	acpi_scan_init (drivers/acpi/scan.c:2739)
-	acpi_init (drivers/acpi/bus.c:1470)
-	do_one_initcall (init/main.c:1274)
-	kernel_init_freeable (init/main.c:1335 init/main.c:1352 init/main.c:1371 init/main.c:1584)
-	kernel_init (init/main.c:1476)
-	ret_from_fork (arch/arm64/kernel/entry.S:863)
-	irq event stamp: 256268
-	hardirqs last enabled at (256267): vprintk_store (kernel/printk/printk.c:2356 (discriminator 1))
-	hardirqs last disabled at (256268): __nbcon_atomic_flush_pending (kernel/printk/nbcon.c:1539 kernel/printk/nbcon.c:1593)
-	softirqs last enabled at (255640): handle_softirqs (./arch/arm64/include/asm/current.h:19 ./arch/arm64/include/asm/preempt.h:13 kernel/softirq.c:426 kernel/softirq.c:607)
-	softirqs last disabled at (255635): __do_softirq (kernel/softirq.c:614)
-	---[ end trace 0000000000000000 ]---
-
+	Andrew
 
