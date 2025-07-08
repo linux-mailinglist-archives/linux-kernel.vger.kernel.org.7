@@ -1,120 +1,254 @@
-Return-Path: <linux-kernel+bounces-721186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA757AFC5E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:38:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F00EAFC5E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C39F3189DD81
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:39:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8D817A1EA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A28E2BE03D;
-	Tue,  8 Jul 2025 08:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14022BE057;
+	Tue,  8 Jul 2025 08:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="fKtNOmpa";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="KARDZeMo"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="00q3Hjfj"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2085.outbound.protection.outlook.com [40.107.94.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1AB221FB5;
-	Tue,  8 Jul 2025 08:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751963930; cv=none; b=owsfSTgdl0Te0Gj5tIDOwZHWyihJovdvOIuPI44Q+S+OPkgoFhBZbRfqP+KOBE1pjOzcgsJpI/ecyrb/GP9MfKj+q2qEZEpOcyrBqBIDG3u08i8SF5i0RpsJiNsZz2huwwhjA9vmyHRpo0YF27KFDyQOO+ESnIECTzkJnJUSTMI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751963930; c=relaxed/simple;
-	bh=2zaYyiCu1/Y2VifYVRGpstzSWOLtBuPcVnufjTCVzng=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HDcg3VnQNfrlv7qpBjsqelEpKGGmeo6RYd+E5ANNgNmOR8Wl+9nVuMuuTUYVoHeJT6oNQP/mdqIqYW4jA1jrQ5qMrI2qUZXL8uLlmoghIXhRhEv74nZjTtpkmCTlt7C1IePT/ah2hw1jx0CKZlKMpP/Hpu6+YCuobZtoAr8S6zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=fKtNOmpa; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=KARDZeMo reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1751963926; x=1783499926;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=NyW3LEPljdWwfcjkUurkmy2RP4ljAYxZFVl0N6K9jS8=;
-  b=fKtNOmpaBEUvtIKEvClOGmflo/pkSIefCX/KCM3bCa1LieQqfu09C08/
-   tdOUTK3xW0Ys20lFiAnq3YcO3etAiYtqvfOJvVxdqPqyeBGMP1ZTI3jEp
-   GKZ0g5S+dQOJcbOMMWgt03M5Y9UUOxX7ccHJOe/VWQTPkpV4MIiotr6Ua
-   2VjUesm5pbw2q3ym9wQNRlPIsOccqY7WGWeTnZTU43Tp7EMwHfz0Q7SsV
-   p8oNUjZcuX6lBjxWyTEpoyNXgh8wDZ/F1z9FFiG/h07lGw+PiYubddRe2
-   lVKrQsVoy6wuwSZyALC29PhKadgxHBhyqQzN+CrxZg1gWExAEobqOTEHc
-   Q==;
-X-CSE-ConnectionGUID: BKA7qy/3SaeGYPsvRSYavw==
-X-CSE-MsgGUID: x5RCDCfgQSCTauPSxQ+5nQ==
-X-IronPort-AV: E=Sophos;i="6.16,296,1744063200"; 
-   d="scan'208";a="45081250"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 08 Jul 2025 10:38:42 +0200
-X-CheckPoint: {686CD912-43-B2B90094-F6B7211E}
-X-MAIL-CPID: B2572D919755F24A6E8681809FB22715_4
-X-Control-Analysis: str=0001.0A006368.686CD930.003F,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3C4CC160E21;
-	Tue,  8 Jul 2025 10:38:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1751963918;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=NyW3LEPljdWwfcjkUurkmy2RP4ljAYxZFVl0N6K9jS8=;
-	b=KARDZeMoLrc4+6D+SlGh4u2ZMVw3qStUYTXxhT9QWVnSHlH3d3VU3DkmhubvO79OZXZyhy
-	eYIkJdtUNgrmjtv/w3OPwXwUcFNYEH5pUHAvSLjnr9RW/4YAm4276MYLQ/FUUyq/eEQqhF
-	Nf6lK6jOhJsExJ/xn4egp1xiEtcPf4s5GgilGyuA9QnlfqCLRbAecGfARJll879bjfzH5Q
-	bFpHTLM7JOK6lhZOLItrJ/PCunjGN2fqi9bteEdG+jGWjTC0NLMqgzxwJ2s2nNp7HRCm2x
-	pFoUeHCmelPTio1lFDACjfevef/4hwixoA8Q6e1bkTtYkCgFX9Zq9DLT2tlAjA==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] gpiolib: of: Initialize variable
-Date: Tue,  8 Jul 2025 10:38:29 +0200
-Message-ID: <20250708083829.658051-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A101E2BE02C;
+	Tue,  8 Jul 2025 08:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751963944; cv=fail; b=N978DRVZIevSeakEPfyClezjCtRNeMkUKIU0JXI1pNJY0slDP3d9aQJGiBk4Q/ychIpUE4XOP70qf/zSp436X4SwO4SU1eDMlwUKfaK7S9BOj9pSjTnvgkxEyv3b5x+9vkngKT9N4ZYqMylX4VwiaQLk9ourL9UUtC94OPhPPfE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751963944; c=relaxed/simple;
+	bh=kH/75NK4LJhPTTHVhi4yPfGcMvoE5iforrphFc4wWfA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=a5jmpQGTEN2I+hDGhs1cr5HcnP/IKjF1VcQTivpyP0ibfVafORIZi7itgPBSMUqs7/d+4SDzdna9TztmnRlarfgsgcfVLH7XKJNjbcaolYswrEn+YgvIEH2WNSgOTMKOtBvzAVv18QPHl6GDnOnP09LUaglJ4lFFyzuaZzcz9nM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=00q3Hjfj; arc=fail smtp.client-ip=40.107.94.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IktdNwovsPl2B0GTSCmw2QE22cQj6qhkzPN+OzuRLI7j0uTfDs18MZcwKorlyCCOwfYVQ41Y4hOh98X1ZFEK6YGHRzK1PSIgElPw9/yirQoYw+u+22msAtxC+7bgXHY/XvdmjXz87xdmm/mvNukuQaIfG9SrB4umsbCHh5I5eo0+9loGO0PmqI/M1sc76X8E0uzK+zWhHGP5NYFwb4Je52cpJhSRCnj5OhsN5DGbN7NcQxgNx7KRhoDGSF9pVTyqpWqB8B2DljIni1PdHlRolPl3vHNujaRVacM1Waqzo+i0Ls9719UXunYRj+PXHy3a2JMcxwlov8Mux9iCW29V+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AckkaChKarYiP5lGuxGh4hG1efLqb+mx45NZQ+CWTJc=;
+ b=ORYSEMyooQZuWaJ8sfFF47qTUwK9QGac9wlnYK0Nse598VyQ4XKref06a5sX16XSMhVFDlgHR1t3acdYtseMqRn5czJBJEdCGgPmUXKpj1dG+HB3YnrAqWiVLJslmZgtV81WKChggGKSSWSaUZGQm1U6hI4Viwk1WWcmBgTYvFf/1p/G5tVcKccDHm+MZarz9YoAfsB1jnJ97LMAZiKRTmxscodHr4ceZ6yAAB3x9m8RjEtEXpK2RRbijIJTx6hT839LXUyNz48GyDut9u3YSpmN95qC/hEjrFnnDzeLjQxvlxcfA/mnCcfmGHULLS21HCkkZqX37xcYczrqhVpZgw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AckkaChKarYiP5lGuxGh4hG1efLqb+mx45NZQ+CWTJc=;
+ b=00q3HjfjmpFBcAvcfObQE7gSUDl3cwSqrqAKivLpwLgdZtmMX/9hxRzaSxT81CpDYKcisIGXLUb+N2dH0TZ4hqA7YuwwuUoGeWjQhCZMzMGtMoRGXZrYcuo61cbkRTUYZQBRNF5gCQlp2CHm+XpZJClOnBzxonqL9isnITbO5ao=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from SJ0PR12MB5673.namprd12.prod.outlook.com (2603:10b6:a03:42b::13)
+ by DS0PR12MB7899.namprd12.prod.outlook.com (2603:10b6:8:149::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Tue, 8 Jul
+ 2025 08:38:59 +0000
+Received: from SJ0PR12MB5673.namprd12.prod.outlook.com
+ ([fe80::ec7a:dd71:9d6c:3062]) by SJ0PR12MB5673.namprd12.prod.outlook.com
+ ([fe80::ec7a:dd71:9d6c:3062%4]) with mapi id 15.20.8901.024; Tue, 8 Jul 2025
+ 08:38:58 +0000
+Message-ID: <f5562f2b-1055-4ce1-817a-d51a996a2418@amd.com>
+Date: Tue, 8 Jul 2025 10:38:48 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] drm/ttm: add new api
+ ttm_device_prepare_hibernation()
+To: Samuel Zhang <guoqing.zhang@amd.com>, alexander.deucher@amd.com,
+ rafael@kernel.org, len.brown@intel.com, pavel@kernel.org,
+ gregkh@linuxfoundation.org, dakr@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch, ray.huang@amd.com, matthew.auld@intel.com,
+ matthew.brost@intel.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de
+Cc: mario.limonciello@amd.com, lijo.lazar@amd.com, victor.zhao@amd.com,
+ haijun.chang@amd.com, Qing.Ma@amd.com, Owen.Zhang2@amd.com,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+References: <20250708074248.1674924-1-guoqing.zhang@amd.com>
+ <20250708074248.1674924-2-guoqing.zhang@amd.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20250708074248.1674924-2-guoqing.zhang@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0179.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:b7::9) To SJ0PR12MB5673.namprd12.prod.outlook.com
+ (2603:10b6:a03:42b::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR12MB5673:EE_|DS0PR12MB7899:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2599b815-311a-4f81-e31e-08ddbdfae1da
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YmdBdDN3bk5xdTd4QVVHdmRmNUNaSS95Y0wwbDl5YlpoQ1FOWk1td2daZ3JR?=
+ =?utf-8?B?K3hKdUxsL3BsVy93NkUrUW1uN0kvWkpvV3ExSDNyL2c3cUpYempubno1UEYr?=
+ =?utf-8?B?T0Y5Q2x0VkxwNmZiWlFaZDYxNG1JaGdSK1ZtSCsrL2NMQUEwRmFnZ3E1OUZP?=
+ =?utf-8?B?RURRcjZmeUFPY0J3czI5TXBNUTdoK0ZXbFdpeUR1bG1OaFp2aE5DZVpQSDNk?=
+ =?utf-8?B?Wll6cVlOWVdxckF6a0lkQks3OU82ZG04cHZ4UVB4RUN5K0tZa205YU9zUVNo?=
+ =?utf-8?B?bVZERWFlNTJjUDVTMjM2aUtMMUZvUDUzN1FwTGpNTG1QdkZYbWxuYzhrWmJC?=
+ =?utf-8?B?aFR6L1lKUlJQRHg5Y3hXckNHNjdWMmY5QU5zZGJQMnIzZ3NFa1dvN1FDaVcw?=
+ =?utf-8?B?UjhuT09iR0lRNDRVTjd1Q0JBOTJmTmFmVmdDNXJTMWkyMUlFam5XeWpCTmJq?=
+ =?utf-8?B?WmgzNmludzFlc1hUOXRMRUh6UkhqcHNZbFR4SUhQQWRpV3ZmNkFCc0I3Y2Ra?=
+ =?utf-8?B?ZXBXbzJEYUhPMXI4QzE3ZFQrQk1ZaWgxaGd0dmpYMlZlTzh2T1JGZlpGMFJD?=
+ =?utf-8?B?ZWlLa0RVVU13RjUvZldQRThwc0FYWmFPZXo1S2NMNlBpNE0yWitsTlB6ZUZj?=
+ =?utf-8?B?S245dzV0cDRkTWxUZlgvQVVyZ3p2Tlg1d05CbjBMdnB2WGp5aEZoZnNpWTVI?=
+ =?utf-8?B?dFFIM1NzQURDSlN3bFJXUEFjU3AyeVcwZXBpUktxb2xIMERiWjN2YXVDd294?=
+ =?utf-8?B?YkEwNVg3OXVHRzFQNkNmdjY1R0VRbFVVMmhRV3BBdFhLTHQzV3F5dlcvMVdD?=
+ =?utf-8?B?T1Fua1ZmbEdaVmlHd09xbm9ESUtZL0kzcGhTbWRyZzNaTG9INFZjWHgzOEk0?=
+ =?utf-8?B?dE9mUnNhay90cFUvd2VrSW82cGdUdUQzKzZyQXJ2aFUvbXJPUUVTOW1HMTVH?=
+ =?utf-8?B?YmlQV3RqT1d1bkM3a2RzU0p1WHJvT2lDdlhwN2xlL3o4RmJXREo2OUlIWGxH?=
+ =?utf-8?B?THY5U0t0VkhhRmVoUkFqTS9SQ3JoV3BVQVIzcE9aQmI3aTZqU0p4RXJva1N6?=
+ =?utf-8?B?bE9kOUtldVloMS9rSDIrRm84Q2IzcnN0VlpxcFRxKzR4RmVodGsrdDlqNHMx?=
+ =?utf-8?B?NUxVbTlFaFlmVFZCUnl1eGdoMU94c3R5aWRQQVB0QW1GdjljTFh3V0c4cDFO?=
+ =?utf-8?B?ZCtPYmxZVXI4QU92QTNzVTNaY0tyWkZaNG5SRVBnRHNMMkdkMWJjWVgzMUpa?=
+ =?utf-8?B?dGNJMHVsdUJkZ0VlODB1QkxXSEJLMjdKbGxpcFpGRlRvNWYxVjdMcnR4UmJx?=
+ =?utf-8?B?d3BMM3ZhaDFCYnhlNWpZTjg0d2xLRjZTdzZudmlyamRqc0YxNTdBck40N3N2?=
+ =?utf-8?B?K055MzlwUGdxbmtMUkRZM3o4UnB5Z3U1QVdvUmI4c0IxWS9JNS9rYzJpY2hG?=
+ =?utf-8?B?b2JOT004NkgrT1loT3hnUGhsTmc1ZEowbytmekFoT1NDWHFSM1JhZHVWQksv?=
+ =?utf-8?B?Mit0NGg4ZVRnSlRxQmxKc0lod09zQ3RXNmZ3R2JuaWxpejFNcE84MUF5Rlg3?=
+ =?utf-8?B?VHVPRVJsZmZPRTloemxOcnVPeGlpYk9aR05vWW9HRU1ESk5yRGYyUnBYcmtY?=
+ =?utf-8?B?UU0wc1hTK0prQitYV2xiVWtCMEFJWktVeTl6U1dBNDJtcGlKWEFJNnZqUFhH?=
+ =?utf-8?B?c1UwTThNWng4YU94a05NRXZ3dVpmNzh5NHViTm5aNVRhQXluR0FMUmJYaFVj?=
+ =?utf-8?B?aWVYNkdXdE9LdTAxa0w5SGhySDVMY3Y1czdzTUNoTE8ybE1uQWlUd1BEOHBB?=
+ =?utf-8?B?SFc3R3dwcXFDV2h0MmoyQ1c3NE9XRDZSRGhsbzVHS3lRbGhkVEZETEVXL1Mx?=
+ =?utf-8?B?d0k3QkZmNCt6ZFJmWUhFM2lreHNTWTdobm1DdlltOWhtSXBBc3hBc0w4U3Jv?=
+ =?utf-8?B?TmJJVHV5UGE1OHkyYzRFcEJvQndrNTJHNG5KWWFEWDdyQ3lBcFFEaTVTck84?=
+ =?utf-8?B?TktNWUdHNDN3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB5673.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SnppYjZXNzFYQjQxSEhYVmZaOGFRcExrSWlVeHJ4dWdvNG1KbjN0OHRXdGtT?=
+ =?utf-8?B?OEM0RDByZkUvUjJYL1NNNVN4M2lwYnFKOWRic2xWVTVNQjdiWisyc1Q1QUk4?=
+ =?utf-8?B?UnloZFRiRUExKzh0WEVqdUlKUXJud25PUzBrOUl5NFZIcVg4MWxBaTZQN0U3?=
+ =?utf-8?B?YThMMlhLdmNUeWJJVC8yRGxXMmJMS0lTWkdEcWNObUl5blprVktLNTljZTJ6?=
+ =?utf-8?B?ODI4Qmtqa1JZMjUwRFNBRk05NWtzRWVuZ3ZFNVdNcENrV2xrTVE4WjAwZ0R3?=
+ =?utf-8?B?anhTcmFBWVUrN0s1VG1tYnRoQldsZ2hWeXQzcDJ1cGNoQ2VmcFZrM2tSTnhW?=
+ =?utf-8?B?TXMySG5kbHNhUytzbkhPYWVaWVY3VXVRbStvYUtlWEZSQjFYOVppWXpOVld2?=
+ =?utf-8?B?U3VnMlVQK244L0V5dGNabTBBL1dZWEExbk5SbUxaY3VsK1ByRXN3cFRkQWNL?=
+ =?utf-8?B?UEMzUFFVcXd0M1lZYzVaQ0JiM1hmQVRUa0xSOFZTcVBIZVZrK05aQ3AvQmlB?=
+ =?utf-8?B?YloxTlU5YVNrR2I2RUtJU0NlRXdDa3VUanhZVVN5ejZ4MUtEeTI5RXNxM2ZN?=
+ =?utf-8?B?aHpVRS9HSlhMRVdoUzhTMlRRd08wSGFDakpndFptWlhZb2QyS1YxcG0wdzA3?=
+ =?utf-8?B?V1lpM290dWYyaVZaUmpUZFpWS29wMDJjem9aVzgyOXU0OW0xd1psbjlGSzBi?=
+ =?utf-8?B?K29wY3ZJZytjSFNibDNnZ0FXM3VQbEV5dGUzamgwMVBZSkxyUkViSUpTWE4w?=
+ =?utf-8?B?VEhkUWxwSHVlUmZ2cURYa1RMTDhJRU9yMDVJRzlBWWdNSElMM1N5aG9lbWpD?=
+ =?utf-8?B?dGpSWXIwQmovUTZqTmJ2ekZVUnNRNkVPblJyTFB3ZGx6bHd6UHZzQ2tOakJC?=
+ =?utf-8?B?N0ZFbytDdDRwR3c0ZmZSaWlML3JoeTlsa0Jmczlpb3doMXl3cndLWFFUbGpS?=
+ =?utf-8?B?UGp6VGRSVmg5Qnk2Z25hUG5SRHU3ODNYS0xRTWhJYXNMeVFiY003RVdreVNz?=
+ =?utf-8?B?cThPWTJLRmxQdlkzeVk3SmhjY05Oc3YxaW5Va1NXMWptVDZsM29VMis2cEEv?=
+ =?utf-8?B?NEJycko4OSt6dFVJaFV3Q0tXM0tzeGZYeWpmSlFleUk4UXREajhnZTdMQ1JJ?=
+ =?utf-8?B?SDhEejlhQVNMWnFiQjN1Z2ZDQUhhREV6NVNCaUUrdHhtQks1WXQzNURRempx?=
+ =?utf-8?B?c0hMOFBISnVlZVp6Q0hYd2xkalNlMnFHeHkzOUtLWHBNRWUzbGxEQkF5QWxP?=
+ =?utf-8?B?OEVsTkJnK0ZwaStKTm81MjJkVFNCOXB3VjdHbWJZZnpkMlBzTkFWVElIaXJa?=
+ =?utf-8?B?N0xzcHg3WWpPV0J4OTkvMGdqT21jdzB2bVRTc1hYVnpadWhFZXRPM1R6VGFk?=
+ =?utf-8?B?OVJwOTBrbmhrZFZ4bUthcHdwVDJwajdqZUhaL2xCTENQMFlKdXAyMEhrNVhU?=
+ =?utf-8?B?dkpnVlJieHpFSllQSHdWcWpUVm9sUHl4MHVRd0ZIL0Q0Um45cE5UdnliRTd2?=
+ =?utf-8?B?b24zQVd5UkVGN0NuV24ya1JpbVhOQjltMmpWbFBjOWdxSEIvbXV4VjdHV2Ew?=
+ =?utf-8?B?eXE5WXN5UWhzYXZlaUM5Z3dpRGdveUNId0QwUzRXbG5BMHVOK2diZVhDU3hW?=
+ =?utf-8?B?YWhiQzBnK3ViajBONzVwbEJuSVdRWTM2S0NSQmRIOVNCbUJteWVHWUphbVVo?=
+ =?utf-8?B?Y1F0WTNSVE5OZUJveEFHa0hFSm00UU10VUdIYTgzaTRzT1p2VGZyQXUwamJ1?=
+ =?utf-8?B?Q3JEWHpGaHVnR01jbncxZ0ltNjFYMmZqRG55TmRnUE5lNlJ0UnhpVmVnWjVK?=
+ =?utf-8?B?U1YxZUE4YWErTWxKaTRxTVNMZkFMWWNxUjl1Z3diVEVJeFVVeEc4MU5yYmcw?=
+ =?utf-8?B?SkY3dEJCRjhJKzZSMFYvMUYwdGxhcjBkS2RWZEk1cnIxV3BnYTZTdUlDb1lN?=
+ =?utf-8?B?bkNkRVlEeDE5cXJlUURiK1BJUEVRSXhQQUxBRjFMWXZmdzRpQ2s0T0dBUXFF?=
+ =?utf-8?B?NGNLZ25MY1ZvS1R5Y1hFdmlmNS8yN3FRUnFjbm8wc0UzblNJcnZIUzVUaWZJ?=
+ =?utf-8?B?aHN1ZTIzbnF0SmpvZ250dXgzekhnRlRrNjZIeldRRzJnQkVvYSszbXpPbVkw?=
+ =?utf-8?Q?8gkCRQ0+VHY0zT1H0jO1S4kvb?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2599b815-311a-4f81-e31e-08ddbdfae1da
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB5673.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 08:38:58.7044
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /SIXkTyl+WYRQHVsfHk0rrZJybxRReL8dmoOb0ublvyGK4EWp46Rz7YLbpvNMrHs
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7899
 
-of_flags is passed down to GPIO chip's xlate function, so ensure this one
-is properly initialized.
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-I'm seeing errors like:
-gpio-720 (enable): multiple pull-up, pull-down or pull-disable enabled, invalid configuration
 
-Digging down it is caused because of_flags is not initialized and
-gpiochip_fwd_delay_of_xlate() does not set/clear the passed flags
-pointer.
-Is the of_xlate function expected to clear flags or is this the right
-location?
+On 08.07.25 09:42, Samuel Zhang wrote:
+> This new api is used for hibernation to move GTT BOs to shmem after
+> VRAM eviction. shmem will be flushed to swap disk later to reduce
+> the system memory usage for hibernation.
+> 
+> Signed-off-by: Samuel Zhang <guoqing.zhang@amd.com>
+> ---
+>  drivers/gpu/drm/ttm/ttm_device.c | 22 ++++++++++++++++++++++
+>  include/drm/ttm/ttm_device.h     |  1 +
+>  2 files changed, 23 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/ttm/ttm_device.c b/drivers/gpu/drm/ttm/ttm_device.c
+> index 02e797fd1891..f14437ea0cce 100644
+> --- a/drivers/gpu/drm/ttm/ttm_device.c
+> +++ b/drivers/gpu/drm/ttm/ttm_device.c
+> @@ -123,6 +123,28 @@ static int ttm_global_init(void)
+>  	return ret;
+>  }
+>  
+> +/**
+> + * move GTT BOs to shmem for hibernation.
 
- drivers/gpio/gpiolib-of.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+That is not the correct kerneldoc style.
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 73ba73b31cb1f..37ab78243faba 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -708,7 +708,7 @@ struct gpio_desc *of_find_gpio(struct device_node *np, const char *con_id,
- 			       unsigned int idx, unsigned long *flags)
- {
- 	char propname[32]; /* 32 is max size of property name */
--	enum of_gpio_flags of_flags;
-+	enum of_gpio_flags of_flags = 0;
- 	const of_find_gpio_quirk *q;
- 	struct gpio_desc *desc;
- 
--- 
-2.43.0
+Please make sure that for example make htmldocs doesn't throw any new warning.
+
+> + *
+> + * returns 0 on success, negative on failure.
+> + */
+> +int ttm_device_prepare_hibernation(struct ttm_device *bdev)
+> +{
+> +	struct ttm_operation_ctx ctx = {
+> +		.interruptible = false,
+> +		.no_wait_gpu = false,
+> +		.force_alloc = true
+> +	};
+> +	int ret;
+> +
+
+> +	guard(mutex)(&ttm_global_mutex);
+
+That is unnecessary now, the function doesn't touch the device list any more.
+
+Regards,
+Christian.
+
+> +	do {
+> +		ret = ttm_device_swapout(bdev, &ctx, GFP_KERNEL);
+> +	} while (ret > 0);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(ttm_device_prepare_hibernation);
+> +
+>  /*
+>   * A buffer object shrink method that tries to swap out the first
+>   * buffer object on the global::swap_lru list.
+> diff --git a/include/drm/ttm/ttm_device.h b/include/drm/ttm/ttm_device.h
+> index 39b8636b1845..592b5f802859 100644
+> --- a/include/drm/ttm/ttm_device.h
+> +++ b/include/drm/ttm/ttm_device.h
+> @@ -272,6 +272,7 @@ struct ttm_device {
+>  int ttm_global_swapout(struct ttm_operation_ctx *ctx, gfp_t gfp_flags);
+>  int ttm_device_swapout(struct ttm_device *bdev, struct ttm_operation_ctx *ctx,
+>  		       gfp_t gfp_flags);
+> +int ttm_device_prepare_hibernation(struct ttm_device *bdev);
+>  
+>  static inline struct ttm_resource_manager *
+>  ttm_manager_type(struct ttm_device *bdev, int mem_type)
 
 
