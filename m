@@ -1,219 +1,183 @@
-Return-Path: <linux-kernel+bounces-720908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC52AFC1F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:18:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65846AFC1E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:16:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AC467AD8C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:16:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A91A1AA5296
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D51DD27E;
-	Tue,  8 Jul 2025 05:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690601D5CE0;
+	Tue,  8 Jul 2025 05:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="I09U4vSn"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="HsWlEiWh"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92501419A9;
-	Tue,  8 Jul 2025 05:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E715D27E;
+	Tue,  8 Jul 2025 05:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751951872; cv=none; b=X+oln3la7IiV/RYHiB8SiW7ys29ajUXgQH8zM4YdspB31EVGk3fYCx9+wPUk48fCa94LC7/dJxj1FxF6BSjoDn6wMbgWal59JdntLorUJZUDuu9bapG/qPWVx0Q1zJ69BcSpoYTStJ4S5tzg3bmVkoj9Y95RqiEufvlUW4i5v78=
+	t=1751951765; cv=none; b=EU5bzjDzB/aK63dvdZK6BHc0IwgljXdOXOL+vwsSvPZpW0aRwGNrCDZC/LqI6nu8ggRygNB6HXs/596yx0/AYVyNoQ3L4Vz6ck22JK6svW8h+v4Wp0OYUET+acfK0crqP60HTTE/YsDUd81Qxzxq3kGma9o7oDtyLnF/XtxO9n8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751951872; c=relaxed/simple;
-	bh=aMO8N3eiZ+C7kFSYhUr+y770QsbPSSShfPNmtsRhMA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LNlPd3iupbYJICdFAX9hPRK3Un7yanjny25r87O91iVYMhT8I4h15Oa+1DMv8blO4HMfeuKkBxjpzCKel28kC5L69rTlrct01jb6SDsK+YHao4qEgLON/nanaJAlt7W7Nd3VMObH1nTmyA1r//C+RwXWCQHDZ6v5bfe/UZNsPqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=I09U4vSn; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56801JGM022666;
-	Tue, 8 Jul 2025 05:12:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=YIo1q4
-	dd0RPsvXkyj654gELeQyNh3xOur1uKto2yx+w=; b=I09U4vSnqXfajrjhkj/4Lb
-	KcEdl3iqFJwYqxWWW5nlTMHY8VbZitx23nmc69vxZCrXfnwF5tQdiSscy0URvlZP
-	6rkc0eV44CPgWWwJFsLKmglCB3ukIQ0zGnJopydBK0KDf+TWRhielauHicqxacMk
-	UJDxnCxQdao+8aWfbZ/yccWyfKJUAv8Ppez6PpCE2rqoLsoBd8cH+8N2+ZzxbZcq
-	32nm2HPq1n4rEjSE5BB6IBNElub+AuPyEdWumYS8yynK1PNFJ8rR250oXdbUQ1fa
-	vv2RggNuUM6k4iC7c928TuP6JQEOG9VlqPaX+VR4ikkbXCIX2Br18NIsOnTnQuEA
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47ptfyn6j6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Jul 2025 05:12:07 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5681FVAe010841;
-	Tue, 8 Jul 2025 05:12:07 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47qes01hk8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Jul 2025 05:12:07 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5685C6AV31457798
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 8 Jul 2025 05:12:06 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5411758056;
-	Tue,  8 Jul 2025 05:12:06 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4B09558052;
-	Tue,  8 Jul 2025 05:12:02 +0000 (GMT)
-Received: from [9.109.244.163] (unknown [9.109.244.163])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  8 Jul 2025 05:12:01 +0000 (GMT)
-Message-ID: <91174432-8c70-437f-811f-7c8a6c028f64@linux.ibm.com>
-Date: Tue, 8 Jul 2025 10:42:00 +0530
+	s=arc-20240116; t=1751951765; c=relaxed/simple;
+	bh=vwWTmtEhyYaokbT4pg4vQi/76twGoXovFRT7DrY0su0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SiLskqV7+rT0Cs+ldYWFqg4QOfcGR7Stj0ILGWRPwXpfWyiwy0Tx7iHTkZlf7/wShzZHIMtuu/936YvOOxEzwAeff4TT6JlpfHIz6NkL18X5DX0/soMA/hAOyLZ5NUtdC2v6B2D/o2eNT3tHckW7JZJovLN9wdBWNInDc0N/xsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=HsWlEiWh; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 8997825D3C;
+	Tue,  8 Jul 2025 07:16:01 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id wH3v3tcvD4eS; Tue,  8 Jul 2025 07:16:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1751951760; bh=vwWTmtEhyYaokbT4pg4vQi/76twGoXovFRT7DrY0su0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=HsWlEiWhVQJ5oNbhnw+ykb0EgLDskRU/cQH8h0Y1qV8sdf5ZQhtU5FwXjsvJkQxux
+	 ybOJgF+ZPVB0dQhier81jKRf9gMQEqgixR4xtdQn+fw/KgZdmDwtF9vrC9Dwrhl/Hw
+	 CeSkUincSsq3pbnoAu+C8vur5Ykkoxo8BBJfLqcT3pRjDGAAiV5QfhnawC8hu97G/J
+	 m5IejVLcCywGXIrWPGe0x0KMTZDMuUHPt+aonHX/sTbP/LJOTNzCsHBOI7n0bqFSvV
+	 mrIUZ43EYi0tXEOsxo5cBfO0F+8WlIjgrWLV4+LrOuPLn9pMpUgnE5fqt30YhKTrcm
+	 F2pVrsBr1qTEQ==
+Date: Tue, 8 Jul 2025 05:15:15 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Alexandre Ghiti <alex@ghiti.fr>, Andy Chiu <andybnac@gmail.com>,
+	alexghiti@rivosinc.com, palmer@dabbelt.com,
+	Andy Chiu <andy.chiu@sifive.com>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	Mark Rutland <mark.rutland@arm.com>, puranjay12@gmail.com,
+	paul.walmsley@sifive.com, greentime.hu@sifive.com,
+	nick.hu@sifive.com, nylon.chen@sifive.com, eric.lin@sifive.com,
+	vicent.chen@sifive.com, zong.li@sifive.com,
+	yongxuan.wang@sifive.com, samuel.holland@sifive.com,
+	olivia.chu@sifive.com, c2232430@gmail.com
+Cc: Han Gao <rabenda.cn@gmail.com>, Vivian Wang <wangruikang@iscas.ac.cn>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	regressions@lists.linux.dev, linux-riscv@lists.infradead.org
+Subject: Re: [REGRESSION] Random oops on SG2042 with Linux 6.16-rc and
+ dynamic ftrace
+Message-ID: <aGypYyyR3EtsKGKy@pie.lan>
+References: <aGODMpq7TGINddzM@pie.lan>
+ <b060e694-caa0-4aa5-ac67-75531a5f60eb@ghiti.fr>
+ <aGUO8L7oXpvEpvZo@pie.lan>
+ <6d478129-324a-4c5a-8258-4abe3d0732d6@ghiti.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nbd: fix false lockdep deadlock warning
-To: Yu Kuai <yukuai1@huaweicloud.com>, Ming Lei <ming.lei@redhat.com>
-Cc: josef@toxicpanda.com, axboe@kernel.dk, hch@infradead.org, hare@suse.de,
-        linux-block@vger.kernel.org, nbd@other.debian.org,
-        linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
-        yangerkun@huawei.com, johnny.chenyi@huawei.com,
-        "yukuai (C)" <yukuai3@huawei.com>
-References: <20250627092348.1527323-1-yukuai1@huaweicloud.com>
- <aF56oVEzTygIOUTN@fedora>
- <c2fbaacc-62a1-4a98-4157-2637b7f242b7@huaweicloud.com>
- <197b6dca-56be-438d-a60f-21011367c5ed@linux.ibm.com>
- <99b4afce-de05-ddcb-2634-b19214cf4534@huaweicloud.com>
- <aGSaVhiH2DeTvtdr@fedora>
- <7b09167f-bf8d-4d94-9317-3cfbb4f83cd8@linux.ibm.com>
- <bc3f20c3-21f8-443b-619f-da7569b37aaf@huaweicloud.com>
- <08ce91d9-756a-a8fa-a988-a13ec74d8c1c@huaweicloud.com>
-Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <08ce91d9-756a-a8fa-a988-a13ec74d8c1c@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=crubk04i c=1 sm=1 tr=0 ts=686ca8a7 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=tZyX4RX2Dpwam7ClYu8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: SARxAeRUtbsx8cT6B8GZwT_V5ryi8NZe
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDAzMSBTYWx0ZWRfX4fID3x1Nn7ZK VcSNPe6sZZjRnRGVa5wnb/+vWgSV38LR7kkYnARo2gG75zGtMB5HKfYG+fMxDLRtqJA5Ti+yTi3 ixPErlLyAg0+PfnDGX1h9iMTL+QES7X3n/s2+F+YFkmcnkw6mcCONZSaqia33gsehcIM6ioo4wt
- rnYwmoQ09vZK0LWf5PyWINEPwdX4L2VRQkKTqDhIosvrr3r8yLyG9vl4rrH6b8tQgdvT+X1efLZ Hnek1ew0FVfLgBbguPfFi+2OnCy00wxIXcX/1thHLMPlHwRVv89l5JI1GQfAD9H60+FA3kP74SO 9UJdz0rGXT9FSfMqyEERVazCNJhPVaFXES162/HnVAYdy00f2wURbmK2F81EhXg7T8hAkokJ7jY
- DPK3AX3VyoQ1rI+HW9rgtSA6FoW52mKwErNbgIRIAydlHdRyTpE+Zv8sHAkwoVzvOdq+qr/p
-X-Proofpoint-GUID: SARxAeRUtbsx8cT6B8GZwT_V5ryi8NZe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-08_01,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
- priorityscore=1501 adultscore=0 suspectscore=0 lowpriorityscore=0
- clxscore=1015 impostorscore=0 malwarescore=0 spamscore=0 bulkscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507080031
+In-Reply-To: <6d478129-324a-4c5a-8258-4abe3d0732d6@ghiti.fr>
 
-
-
-On 7/5/25 6:45 AM, Yu Kuai wrote:
-> Hi,
+On Wed, Jul 02, 2025 at 03:05:06PM +0200, Alexandre Ghiti wrote:
+> Hi Yao,
 > 
-> åœ¨ 2025/07/02 15:30, Yu Kuai å†™é“:
->> Hi,
->>
->> åœ¨ 2025/07/02 14:22, Nilay Shroff å†™é“:
->>>
->>>
->>> On 7/2/25 8:02 AM, Ming Lei wrote:
->>>> On Wed, Jul 02, 2025 at 09:12:09AM +0800, Yu Kuai wrote:
->>>>> Hi,
->>>>>
->>>>> åœ¨ 2025/07/01 21:28, Nilay Shroff å†™é“:
->>>>>>
->>>>>>
->>>>>> On 6/28/25 6:18 AM, Yu Kuai wrote:
->>>>>>> Hi,
->>>>>>>
->>>>>>> åœ¨ 2025/06/27 19:04, Ming Lei å†™é“:
->>>>>>>> I guess the patch in the following link may be simper, both two take
->>>>>>>> similar approach:
->>>>>>>>
->>>>>>>> https://lore.kernel.org/linux-block/aFjbavzLAFO0Q7n1@fedora/
->>>>>>>
->>>>>>> I this the above approach has concurrent problems if nbd_start_device
->>>>>>> concurrent with nbd_start_device:
->>>>>>>
->>>>>>> t1:
->>>>>>> nbd_start_device
->>>>>>> lock
->>>>>>> num_connections = 1
->>>>>>> unlock
->>>>>>> Â  Â Â Â Â t2:
->>>>>>> Â  Â Â Â Â nbd_add_socket
->>>>>>> Â  Â Â Â Â lock
->>>>>>> Â  Â Â Â Â config->num_connections++
->>>>>>> Â  Â Â Â Â unlock
->>>>>>> Â  Â Â Â Â Â Â Â  t3:
->>>>>>> Â  Â Â Â Â Â Â Â  nbd_start_device
->>>>>>> Â  Â Â Â Â Â Â Â  lock
->>>>>>> Â  Â Â Â Â Â Â Â  num_connections = 2
->>>>>>> Â  Â Â Â Â Â Â Â  unlock
->>>>>>> Â  Â Â Â Â Â Â Â  blk_mq_update_nr_hw_queues
->>>>>>>
->>>>>>> blk_mq_update_nr_hw_queues
->>>>>>> //nr_hw_queues updated to 1 before failure
->>>>>>> return -EINVAL
->>>>>>>
->>>>>>
->>>>>> In the above case, yes I see that t1 would return -EINVAL (as
->>>>>> config->num_connections doesn't match with num_connections)
->>>>>> but then t3 would succeed to update nr_hw_queue (as both
->>>>>> config->num_connections and num_connections set to 2 this
->>>>>> time). Isn't it? If yes, then the above patch (from Ming)
->>>>>> seems good.
->>>>>
->>>>> Emm, I'm confused, If you agree with the concurrent process, then
->>>>> t3 update nr_hw_queues to 2 first and return sucess, later t1 update
->>>>> nr_hw_queues back to 1 and return failure.
->>>>
->>>> It should be easy to avoid failure by simple retrying.
->>>>
->>> Yeah I think retry should be a safe bet here.
->>>
->>
->> I really not sure about the retry, the above is just a scenario that I
->> think of with a quick review, and there are still many concurrent
->> scenarios that need to be checked, I'm kind of lost here.
->>
->> Except nbd_start_device() and nbd_add_socked(), I'm not confident
->> other context that is synchronized with config_lock is not broken.
->> However, I'm ok with the bet.
->>
->>> On another note, synchronizing nbd_start_device and nbd_add_socket
->>> using nbd->task_setup looks more complex and rather we may use
->>> nbd->pid to synchronize both. We need to move setting of nbd->pid
->>> before we invoke blk_mq_update_nr_hw_queues in nbd_start_device.
->>> Then in nbd_add_socket we can evaluate nbd->pid and if it's
->>> non-NULL then we could assume that either nr_hw_queues update is in
->>> progress or device has been setup and so return -EBUSY. I think
->>> anyways updating number of connections once device is configured
->>> would not be possible, so once nbd_start_device is initiated, we
->>> shall prevent user adding more connections. If we follow this
->>> approach then IMO we don't need to add retry discussed above.
->>
->> It's ok for me to forbit nbd_add_socked after nbd is configured, there
->> is nowhere to use the added sock. And if there really are other contexts
->> need to be synchronized, I think nbd->pid can be used as well.
->>
+> On 7/2/25 12:50, Yao Zi wrote:
+> > On Tue, Jul 01, 2025 at 02:27:32PM +0200, Alexandre Ghiti wrote:
+> > > Hi Yao,
+> > > 
+> > > On 7/1/25 08:41, Yao Zi wrote:
+> > > > Linux v6.16 built with dynamic ftrace randomly oops or triggers
+> > > > ftrace_bug() on Sophgo SG2042 when booting systemd-based userspace,
+> > ...
+> > 
+> > > > Not sure either reverting the commits or fixing them up is a better
+> > > > idea, but anyway the fatal first issue shouidn't go into the stable
+> > > > release.
+> > > Let's fix this, we were expecting issues with dynamic ftrace :)
+> > > 
+> > > So the following diff fixes all the issues you mentioned (not the first
+> > > crash though, I'll let you test and see if it works better, I don't have
+> > > this board):
+> > Thanks for the fix! I've tested it with both QEMU and SG2042, it does
+> > fix the lockdep failures as well as the boot time crash on SG2042. The
+> > boot-time crash is caused by the race so will disappear as long as we
+> > fix the race.
+> > 
+> > > diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
+> > > index 4c6c24380cfd9..97ced537aa1e0 100644
+> > > --- a/arch/riscv/kernel/ftrace.c
+> > > +++ b/arch/riscv/kernel/ftrace.c
+> > > @@ -14,6 +14,16 @@
+> > >   #include <asm/text-patching.h>
+> > > 
+> > >   #ifdef CONFIG_DYNAMIC_FTRACE
+> > > +void ftrace_arch_code_modify_prepare(void)
+> > > +{
+> > > +       mutex_lock(&text_mutex);
+> > > +}
+> > > +
+> > > +void ftrace_arch_code_modify_post_process(void)
+> > > +{
+> > > +       mutex_unlock(&text_mutex);
+> > > +}
+> > > +
+> > >   unsigned long ftrace_call_adjust(unsigned long addr)
+> > >   {
+> > >          if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE_WITH_CALL_OPS))
+> > > @@ -29,10 +39,8 @@ unsigned long arch_ftrace_get_symaddr(unsigned long
+> > > fentry_ip)
+> > > 
+> > >   void arch_ftrace_update_code(int command)
+> > >   {
+> > > -       mutex_lock(&text_mutex);
+> > >          command |= FTRACE_MAY_SLEEP;
+> > >          ftrace_modify_all_code(command);
+> > > -       mutex_unlock(&text_mutex);
+> > >          flush_icache_all();
+> > >   }
+> > > 
+> > > @@ -149,16 +157,17 @@ int ftrace_init_nop(struct module *mod, struct
+> > > dyn_ftrace *rec)
+> > >          unsigned int nops[2], offset;
+> > >          int ret;
+> > > 
+> > > +       mutex_lock(&text_mutex);
+> > Besides using the guard API, could we swap the order between
+> > ftrace_rec_set_nop_ops() and calculation of the nops array? This shrinks
+> > the critical region a little.
 > 
-> Do we have a conclusion now? Feel free to send the retry version, or let
-> me know if I should send a new synchronize version.
 > 
-Personally, I prefer synchronizing nbd_start_device and nbd_add_socket
-using nbd->pid but I do agree retry version would also work. Having
-said that, lets wait for Ming's feedback as well.
+> If you don't mind, I won't, I don't like initializing stuff which could
+> never be used in case of error.
 
-Thanks,
---Nilay
+Yes, I don't mind it.
+
+> 
+> > 
+> > With or without the change, here's my tag,
+> > 
+> > Tested-by: Yao Zi <ziyao@disroot.org>
+> > 
+> > and also
+> > 
+> > Reported-by: Han Gao <rabenda.cn@gmail.com>
+> > Reported-by: Vivian Wang <wangruikang@iscas.ac.cn>
+> > 
+> > for their first-hand report of boot-time crash and analysis for the
+> > first lock issue.
+> 
+> 
+> I'll add all those tags in the patch I'll send today (or tomorrow if the CI
+> is slow).
+
+Is there any update about the fix patch? It'll be nice to get the
+problem fixed soon.
+
+> Thanks again for the great bug report, really appreciated.
+> 
+> Alex
+
+Best regards,
+Yao Zi
 
