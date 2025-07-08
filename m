@@ -1,134 +1,98 @@
-Return-Path: <linux-kernel+bounces-722527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A8EAFDBAC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:13:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3C9CAFDBBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2D7B7B020A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:11:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 275755A06C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A435265CB2;
-	Tue,  8 Jul 2025 23:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F154B23816A;
+	Tue,  8 Jul 2025 23:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="maG6tq4D"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="RB8MKUW6"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD4325A2C7;
-	Tue,  8 Jul 2025 23:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0024F235C01;
+	Tue,  8 Jul 2025 23:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752016324; cv=none; b=ObYCj9/EpfYNCMy4WcKudm6W0Hb6busOV3LKw89Ae6dN0U8FTuKXp7yb4yFV8A9uVufaep8jz/4vRRWpYNS4f9tiX5UQLHWAg5p8sXfWWqGKK+skzTo8Mb8Wevfhw+enribFekjmBqcIpHn8N/lk42C3kUEy18wceX7vL9oLBt4=
+	t=1752016367; cv=none; b=rXcXg832DyVqANkKrhJw16ouQwdrIODn72kyhqtg53PKDefCh9gBEugc0Wu8NcbzBNi6eql9TN8lecjq6RBrHA5ox0rP8RN3NL16nVj9seGD+HF4SOiYnj389G5i623TAr8qtyfkM4JujU3lau0U4tMidAsXsjDcpi+SwuS7PGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752016324; c=relaxed/simple;
-	bh=tpbdqx+pZt3zIStQ4Q085+Fu2fEEZYeaTuSZlts3qRY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ji7fN6wdFRKPjFDLuW33vum2p+fD2lUICyKmstNdC5QXCZGuvqQsdvf7NiN7FtW09poAcREjNPIb2w9VnKOWXk3rkrDIPMYsUGE/2SIXjO/cet07ns50LC9L2ItAcoufg7SkBc6IFDbeReUh4nZbeDNo2D8x7Mzx5kXlfCF7yCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=maG6tq4D; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752016323; x=1783552323;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=tpbdqx+pZt3zIStQ4Q085+Fu2fEEZYeaTuSZlts3qRY=;
-  b=maG6tq4Dm0oqDSpKmhn2cOMaWjnmevBv/eXSdH35x1t8aTuO1/7P7eVz
-   Ld5bDv9iX4o+BNnJoJj7suNSqUQ90zb/6Q3jVZxSFliodCC0pM8AqihK7
-   573N8OXY8jzupkmNNybA484VPO9WVbWa/YqbVbiPQA+MScPYKoe/AKVzR
-   rhRQPB/igmHGq7tNAKANl1CP8X7HppPS/wAT+GDMT7PtcY3+FtdZr+163
-   DdL0P+rY9+yLJJHx20Tf9QVyG7jfYGU3zpEGWmmizWqhIyLS4EsZ8Ob0Z
-   rZtVOVigT6G4TzcgRtZm9wyGDAwzHYKaR7J+7RL8xg32f/Nmj4jB0Po+6
-   g==;
-X-CSE-ConnectionGUID: UtJ4TjPPR6SJZht64p9NKQ==
-X-CSE-MsgGUID: 0+abS7DrQsyqE35WPyxIqg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="53986968"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="53986968"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 16:12:03 -0700
-X-CSE-ConnectionGUID: U99cAgAdQtGA8o2HpCwRfw==
-X-CSE-MsgGUID: 6wHWAofqSLa383Fqz9v1yw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="186622635"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.102])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 16:12:01 -0700
-Received: from punajuuri.localdomain (unknown [192.168.240.130])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 6C28E121574;
-	Wed,  9 Jul 2025 02:11:53 +0300 (EEST)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.96)
-	(envelope-from <sakari.ailus@linux.intel.com>)
-	id 1uZHTd-0044q8-1M;
-	Wed, 09 Jul 2025 02:11:53 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andreas Klinger <ak@it-klinger.de>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 11/12] iio: proximity: Remove redundant pm_runtime_mark_last_busy() calls
-Date: Wed,  9 Jul 2025 02:11:53 +0300
-Message-Id: <20250708231153.971907-1-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250708231144.971170-1-sakari.ailus@linux.intel.com>
-References: <20250708231144.971170-1-sakari.ailus@linux.intel.com>
+	s=arc-20240116; t=1752016367; c=relaxed/simple;
+	bh=90nGyAakCvWnLdZiCbX/FBGeaT6B4XoOp7i6Nr8lQMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=XTUkaKY93IBwCuIXwAKWBtWJKPjutRzpx+Sap/izL/M21mPxf6KDVivGx3i3P28Hizs1w3e1qb0rdwkisDR6G3CgY9nCc/pqrhTE29f2Z4IU3ZaeMCPKFzrg8JfbCDg0girWTQQWX4jjsCnQRpvc0wt5oUCe48Xl0GRNErscWv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=RB8MKUW6; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752016299;
+	bh=McXy+p10Grl2gXoY3hhtWWdErutYTtge4rPjEjVK6Rk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=RB8MKUW6E2K5DCzieYvgMP/QEGWWfkWvFBfiSKbTB+zTxouK8xx2QvFq0wO431cIW
+	 R16o7vXaBfujG+FsRgge4HIbkqX4BLz4zdnPVZOpyu7U33xXetVfwrhm9B+yZwT3Ut
+	 VNoMkY6hmfq0fWFiunXBtMTvZRPX8hfsVG6NA2tFa//MFWLVX30MvTuHlFn90Gb0XH
+	 +YB6N/exCMRb0Ae4DhRX+oa+JHIQbs4xyjjgQ67NELdb8Q16mR5s1kwd3V1gjTwIMt
+	 0kG5fvIautb4b8+PWjypQ7GG1udoC9n4TJmz6DNvh+nARGz0o/fcaYAPk9tFX6SQoa
+	 iBuE9uW7XO1JA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bcH1748KSz4wyh;
+	Wed,  9 Jul 2025 09:11:39 +1000 (AEST)
+Date: Wed, 9 Jul 2025 09:12:41 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Conor Dooley <Conor.Dooley@microchip.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the riscv-soc tree
+Message-ID: <20250709091241.66d1d701@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/QiX7_kY3XvkvNX2Dlt/zVpV";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-pm_runtime_mark_last_busy().
+--Sig_/QiX7_kY3XvkvNX2Dlt/zVpV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- drivers/iio/proximity/pulsedlight-lidar-lite-v2.c | 1 -
- drivers/iio/proximity/srf04.c                     | 4 +---
- 2 files changed, 1 insertion(+), 4 deletions(-)
+Hi all,
 
-diff --git a/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c b/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c
-index 1deaf70e92ce..d53a596128f5 100644
---- a/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c
-+++ b/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c
-@@ -191,7 +191,6 @@ static int lidar_get_measurement(struct lidar_data *data, u16 *reg)
- 		}
- 		ret = -EIO;
- 	}
--	pm_runtime_mark_last_busy(&client->dev);
- 	pm_runtime_put_autosuspend(&client->dev);
- 
- 	return ret;
-diff --git a/drivers/iio/proximity/srf04.c b/drivers/iio/proximity/srf04.c
-index b059bac1078b..310467ce39e2 100644
---- a/drivers/iio/proximity/srf04.c
-+++ b/drivers/iio/proximity/srf04.c
-@@ -117,10 +117,8 @@ static int srf04_read(struct srf04_data *data)
- 	udelay(data->cfg->trigger_pulse_us);
- 	gpiod_set_value(data->gpiod_trig, 0);
- 
--	if (data->gpiod_power) {
--		pm_runtime_mark_last_busy(data->dev);
-+	if (data->gpiod_power)
- 		pm_runtime_put_autosuspend(data->dev);
--	}
- 
- 	/* it should not take more than 20 ms until echo is rising */
- 	ret = wait_for_completion_killable_timeout(&data->rising, HZ/50);
--- 
-2.39.5
+Commit
 
+  0bb48ad676d5 ("riscv: defconfig: spacemit: enable sdhci driver for K1 SoC=
+")
+
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/QiX7_kY3XvkvNX2Dlt/zVpV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhtpekACgkQAVBC80lX
+0GwHKAgAk82rLqj2AszvDE/ogn3CMNeqJjXFwSX6ziwadhlfLgAgmCehkKv20mAz
+9+qyZA4XgOTRpGg/n9XLiLpcChu6Te9uIPBJ3EOc7EYmOqcgl7emxdGvuRM+zxo2
+HdSk6uWhf+MohwCohZTk4MOnBFtO4a/XH36kySVWnTlIU5mZYEzlqJWZjos6gej0
+SjozaQSkBeSiWhdOxioXRwu6Di81PFSb17x3CG21xCfZRoHgsvTZL3liyUkNGLEy
+L6myVwK8vvCUUORyMUJY+OjEz9kl6J/Qz4hebwLQsh6FYZjJ/oxpPBPzfWJpJ+hS
+z2hqrftwit8sZxwwHHXWxoukFDd/yA==
+=Ok1o
+-----END PGP SIGNATURE-----
+
+--Sig_/QiX7_kY3XvkvNX2Dlt/zVpV--
 
