@@ -1,115 +1,134 @@
-Return-Path: <linux-kernel+bounces-721465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42231AFC992
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:28:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A0CAFC99B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBB4A5641A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:28:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 393F8188DAE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83A72D9797;
-	Tue,  8 Jul 2025 11:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZkcCWHy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5CD2D373A;
+	Tue,  8 Jul 2025 11:31:07 +0000 (UTC)
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2781F2D8397;
-	Tue,  8 Jul 2025 11:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82AB13633F;
+	Tue,  8 Jul 2025 11:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751974121; cv=none; b=GadfGbzfTcxiuer72xGMRJszmbNuHFSS36F1NNLiGUuQksVqNUJvxrVdhIFSY2Cb3/VVb0McHt6+PubkMWefh4EJpiwTbcpvLIf7juXAVM2RV6L/P87p+U8uG/mda58dyF/tcCijXOQWmuki562dj17oBJPCkl69pgeurYpgmtI=
+	t=1751974267; cv=none; b=ahN1GzR8arqI9VOvRh0pCRzr36P8pc30lQaxaMIUngElYgZKXM52W4iW5tohJyVJFiQ7VYXqMOk3KxX0K6URWuiS26UbAhpK2DjgEIA+1qkWp4XG85ZyHI/q3s0jG8XbR07BudcoQXViiShqaYRikbnZMEbZjG2KvlKoh6ayc7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751974121; c=relaxed/simple;
-	bh=PAI6WWFjtdwba/04acNLopfZYFgXznmyKhSYceX0CEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XtM22Ngpto4ihGVQzk/kTd2EQXUhr5Ts6zBP9MvSOkW7M6EoRU8Wo3WbWc2VM28NBjTaFd28hyQ9Szy4OIdm7msD2aMBFKWhE8SHpg7F+6NhLlj5sJNO0GxjH7iQV396KKPTvKGzeAAiP24S91cZU0Ntt07ZBodpMB3QgFKsF9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZkcCWHy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0851EC4CEED;
-	Tue,  8 Jul 2025 11:28:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751974120;
-	bh=PAI6WWFjtdwba/04acNLopfZYFgXznmyKhSYceX0CEs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GZkcCWHy/s1fPtI1pg5EzNMm3q/RrWvryx9XfoEccjN0AR/whV4DY81m4ilcxiAAw
-	 1MqILkTdvHwieuH6G0I3Lve1NdLzOdQbZPaXcNXd628OBjAQQiabHY8qTNQva4G/Pl
-	 I/nALbY+YIDelNdRPnHVf2fmiBO2GHXMO8etY6ceABrbcg+JXZ8l1jnTZNEJFF/Pco
-	 BVE1B7Ix2qcfvHafpqgP85De9qQQvD1nxdAxnyuAkrzVUgZAoUMJv1ml045l3IB5Cm
-	 t/Api+Dt8MWa5qYSxJjVXBjDzg7NNhbh1fyFpmAdqVUSibdBzBOCC/eW3sZgeVB9ya
-	 qD9NnULPDgk5g==
-Date: Tue, 8 Jul 2025 16:58:31 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Asutosh Das <quic_asutoshd@quicinc.com>, 
-	Bart Van Assche <bvanassche@acm.org>, Stanley Chu <stanley.chu@mediatek.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Can Guo <quic_cang@quicinc.com>, 
-	Nitin Rawat <quic_nitirawa@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [RFC/RFT PATCH 0/5] Clean up UFS(-qcom) MCQ situation
-Message-ID: <mh4vv3i64rfx4hog7vgw6hnqk2ehrxkhz45q4e3pg66ufqsx37@csffhmn5fwm2>
-References: <20250704-topic-qcom_ufs_mcq_cleanup-v1-0-c70d01b3d334@oss.qualcomm.com>
+	s=arc-20240116; t=1751974267; c=relaxed/simple;
+	bh=LymYIJme+Ez7oZqlzVtyvBtsCMJq0OBfvyJ1HduLZ5o=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=RPsdwNgKpU9kpH3rYfez9WU4Uei51rO2ibbvMkUVVgZ7lHxOT6UnIMgn/GUGbZNX2GEcBsukTFjp8Q9mXYOMRtba74xIMIsN50lyBGooYo6p6yxj1ZsmcUQFOY2D0x6+w0gVcmzKXPx6EzCvwC2jezfnL+L6cmPrdauU9CwUj9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com; spf=pass smtp.mailfrom=foursemi.com; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foursemi.com
+X-QQ-mid: esmtpgz15t1751974215t776b0db9
+X-QQ-Originating-IP: IaXggDYYqP4Q+bo1yopKjjWstnZmfwYr2RBD4mHcO4k=
+Received: from localhost.localdomain ( [113.89.234.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 08 Jul 2025 19:30:13 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 5261513458296798822
+EX-QQ-RecipientCnt: 14
+From: Nick Li <nick.li@foursemi.com>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	nick.li@foursemi.com
+Cc: xiaoming.yang@foursemi.com,
+	danyang.zheng@foursemi.com,
+	like.xy@foxmail.com,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] ASoC: codecs: Add support for FourSemi FS2104/5S
+Date: Tue,  8 Jul 2025 19:28:57 +0800
+Message-Id: <20250708112901.25228-1-nick.li@foursemi.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20250703035639.7252-1-nick.li@foursemi.com>
+References: <20250703035639.7252-1-nick.li@foursemi.com>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:foursemi.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: OOYO4i1Nbl+Hws7b/EIM4tPr+420ZeHrGAyXQnDs6gGBRfl5c6cIfJZu
+	5g077LgB6WiyPyQNnSEsJe/6CZ+r6VE9crSdlooBuLR2g4XlMToc17jCCf1BUkLik8NDrOb
+	9WJRLbcML1BuqG7mFWTV5CHZ/Wg7yiNSgyc5IO9pzbXZHOFui4poj8VCuaK8qZbMxfgSPJg
+	EKJkSviMntvZ2z22Vgouq7EuUZVlbRrUCGWLMi9GUNSAbCF0dQYeSOICFcbeZyqatibU4Pd
+	AXTQMTwc1UX/o40dOtbRRDWNPuKaAG8CMvLUoeVnqUQ0ZzKx7BGHroCVxU6Caf4tl4OH/PD
+	X/Zfe1kYBZDQ5wgA/bgZzPfn2o2URnsynBQsVg2xjsqZ6PTlP66lnf+CUYM8quYg8PU4RJq
+	dQOsOQ/mKNXtHS8iO9NF+K2ETKDLRyogkkvxfx4qEKsrAVu0yr7CUSGN4qVIwN1TMyLr9Gj
+	X+rokINwaouoxcjuF1GjIbu5l/js+4nfdn/7lrBrYZ3cnjxF4gAUx5HhwDBuaaonFB4j+4w
+	Fu9t794d0XnxVM/emWEjN7UIX7pXRi8otw3RgWhf1aXe0F85fkM6gf7IpMgpvgNOAJfscBy
+	yL8rRSs9yMGfIXSPY5xansC7NmxpRQXF2jpBjoAYXwwzwNSvYt5YM1Ke/P2hJVTzYSNGu3+
+	XWfUq2kmnecMx2In6d3rUTqibJ7fAcZgfKYgpD5XdmmgVrOt2YM+WhVg9hn5iklc/pa91Kp
+	W+rOoBwuFuayf2bDur4R0gP5HN8YWdyVn2OJ++2f5Qm55JIMkKso3CZ8d41H1x+ajPa2hQ0
+	idXCxLxelrrmnXiiLYA1bnH6eX+3nkfwH47kMgF+d1YWYO2guQrY+w1y6pbDfMb0G8CKfsa
+	t53zEerORfi8fVvijwWscOZsiEVxUM6R0xhUODqOJs/18t/wS1XGaOWFFUnKOQvBXpcL86n
+	Wt16zWHGEnxjmMsy7eh8of8V2km2fnu8ktXOzpCL3Lx4TjEZ/G0OyxhS3K8kNl01pH/NVMN
+	o09REVduwUiw0+TVaxZirK95I86Be7voqE2UiNAMo6v9xKBmegs+OWY+0Y2LYakXbbwebhd
+	huWDeY4AS1N
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250704-topic-qcom_ufs_mcq_cleanup-v1-0-c70d01b3d334@oss.qualcomm.com>
 
-On Fri, Jul 04, 2025 at 07:36:08PM GMT, Konrad Dybcio wrote:
-> The initial implementation was quite messy, including requesting
-> regions that do not really exist in hardware (or at least not in the
-> way they were described).
-> 
-> As we have no users (and the corresponding dt-bindings were never even
-> accepted), remove a whole lot of boilerplate code and clean up the
-> software's expectations.
-> 
-> Note that this revision does not fix the bindings defficiency yet.
-> 
-> Compile-tested only & not the best code I've written, but I'm looking
-> for feedback whether this approach is acceptable.
-> 
+The FS2104/5S are Inductor-Less, Stereo, Closed-Loop,
+Digital Input Class-D Power Amplifiers with Enhanced Signal Processing
+FS2104 can deliver 2x15W into 4ohm BTL speaker loads,
+FS2105S can deliver 2x30W into 8ohm BTL speaker loads.
 
-I pushed for the bindings change within Qcom for a very long time, but it
-didn't materialize. I don't think it makes sense to accept any series
-targeting MCQ without bindings change (especially when it touches the memory
-regions).
+Most functions have been built and tested on EVB boards:
+ARMv8-A, Linux version 6.16.0-rc4-v8
 
-So please include the bindings change when you post the *real* series.
+v1 -> v2:
+- Adjust the order of patches according to the dependency relationship
+- Rename yaml file to foursemi,fs2105s.yaml
+- Fix some properties and error definitions in foursemi,fs2105s.yaml:
+  sdz-gpios -> reset->gpios
+  fs,fwm-name -> firmware-name
+  Delete fs,dai-name
+- Drop "dt-bindings for" from subject
+- Update the driver code according to the update of DT schema
+- Fix warnings/errors reported by running checkpatch.pl --strict
+- Fix warnings/errors reported by running make dt_bindings_check
 
-- Mani
+Nick Li (4):
+  dt-bindings: vendor-prefixes: Add Shanghai FourSemi Semiconductor
+    Co.,Ltd
+  ASoC: dt-bindings: Add schema for FS2104/5S audio amplifiers
+  ASoC: codecs: Add library for FourSemi audio amplifiers
+  ASoC: codecs: Add FourSemi FS2104/5S audio amplifier driver
 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
-> Konrad Dybcio (5):
->       ufs: ufs-qcom: Fix UFS base region name in MCQ case
->       ufs: ufs-qcom: Remove inferred MCQ mappings
->       ufs: ufs-qcom: Don't try to map inexistent regions
->       ufs: ufs-qcom: Rename "mcq_sqd" to "mcq_opr"
->       ufs: ufs-qcom: Kill ufshcd_res_info
-> 
->  drivers/ufs/host/ufs-qcom.c      | 151 ++++++++++-----------------------------
->  drivers/ufs/host/ufs-qcom.h      |   4 ++
->  drivers/ufs/host/ufshcd-pltfrm.c |   4 +-
->  include/ufs/ufshcd.h             |  26 +------
->  4 files changed, 45 insertions(+), 140 deletions(-)
-> ---
-> base-commit: 26ffb3d6f02cd0935fb9fa3db897767beee1cb2a
-> change-id: 20250704-topic-qcom_ufs_mcq_cleanup-3e7614ae06a8
-> 
-> Best regards,
-> -- 
-> Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
+ .../bindings/sound/foursemi,fs2105s.yaml      |  100 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
+ sound/soc/codecs/Kconfig                      |   14 +
+ sound/soc/codecs/Makefile                     |    4 +
+ sound/soc/codecs/fs-amp-lib.c                 |  265 +++
+ sound/soc/codecs/fs-amp-lib.h                 |  150 ++
+ sound/soc/codecs/fs210x.c                     | 1610 +++++++++++++++++
+ sound/soc/codecs/fs210x.h                     |   79 +
+ 8 files changed, 2224 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/foursemi,fs2105s.yaml
+ create mode 100644 sound/soc/codecs/fs-amp-lib.c
+ create mode 100644 sound/soc/codecs/fs-amp-lib.h
+ create mode 100644 sound/soc/codecs/fs210x.c
+ create mode 100644 sound/soc/codecs/fs210x.h
 
+
+base-commit: 870bd70790beeaff6ef016aece922e540675836e
 -- 
-மணிவண்ணன் சதாசிவம்
+2.17.1
+
 
