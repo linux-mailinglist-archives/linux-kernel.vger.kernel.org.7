@@ -1,131 +1,207 @@
-Return-Path: <linux-kernel+bounces-721073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33715AFC464
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:42:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 686C1AFC49A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD9CF1AA0CB1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:42:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9F703A9862
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ADA829A30A;
-	Tue,  8 Jul 2025 07:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4059829A9ED;
+	Tue,  8 Jul 2025 07:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="r1arUOkR";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WwiY0sYJ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ogo79nKS"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2077.outbound.protection.outlook.com [40.107.237.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040601E48A;
-	Tue,  8 Jul 2025 07:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751960544; cv=none; b=K25LKYsw/5CSrpBgQE1Z2QG7kXbLNfDeAO3PTUrClZQ/XIbEWa5N1iIyhTrivscflL/cK7kF1LuAJeLBl3mSJQW4tIeqQ1AfuxIVNKlp1WW0XZdyXfBwgrHt7jsLTh7zvXF/DjwZnCUWqLsPKfLoM+ahMnLeZksRCoUULjn+H8Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751960544; c=relaxed/simple;
-	bh=j9Gcl1MR8XonGtAZ9WPFx91cUYqZF+ofU8py5vit9KM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fygsgs8r1r5PyGOZFOyv+v+c+NRCEWWCoNhaTKWxOBIqWMgmYzX8WlP/eqm1mAVm7AuzHugeiKFUszrDfDMFWIHHgmJzgRfPsej+Od78npe4q5QYn4P0pmx6HbuOrO7BuWgnNfi7TODQ75aaL7N8kvTgwTXWO3Ulmx5SL5yoLmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=r1arUOkR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WwiY0sYJ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 8 Jul 2025 09:42:19 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751960540;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/y+zGBFHtkzuV2I1Uve5PJvHwtJ2rfDUFlcVSxc1/yA=;
-	b=r1arUOkR/5qzhcm7UyPVWfoVuYNdSm1wKr/YSAtoUpEmcAhZNPjB3xxDRRX1dVKW8PdcAi
-	QY+LjHf8xBw46E8IMcv1wUveWoePKPUHLfNoDuXLilxa9m5hko/0s8UyX9YdbHEjFAtTH2
-	bLMelHKYIMgZA8wpFzpY7bG8Ujv6OnejDWLuEY2Ln/16XveX2qbmujevLFoWuWeHCTdlG8
-	TcxLHEIDDvAhic4b2J2mY94MuQfFlkr3AXJFxKN+PSVpASxNxoKZWPH1T7fv6qgPI/Gc3L
-	9lt4t/NGNoywWgiK6EopH5kBNJy922zaNDYQZhoGZcXZIzmjTFNDVg+yDuqPkw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751960540;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/y+zGBFHtkzuV2I1Uve5PJvHwtJ2rfDUFlcVSxc1/yA=;
-	b=WwiY0sYJLObRNWCl3F0+8+OkcQhtgk7gbiOJAu7dWSL+2p5r6+8FjUm7bt1R4SOJXUOfLb
-	MdrXe/luiz9c7XAA==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: John Ogness <john.ogness@linutronix.de>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing: Remove pointless memory barriers
-Message-ID: <20250708074219.K7BthlGg@linutronix.de>
-References: <20250626151940.1756398-1-namcao@linutronix.de>
- <20250626113520.315db641@gandalf.local.home>
- <20250626160459.soHxOROG@linutronix.de>
- <20250626123445.5b01849d@gandalf.local.home>
- <84o6uatn6i.fsf@jogness.linutronix.de>
- <564f10574f11bd7ca42fcc5fb4d6c5625dc17205.camel@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0E929A308;
+	Tue,  8 Jul 2025 07:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751961090; cv=fail; b=b+wMOniryot2VznK2xia4/+AXWESINX7PU5vTsZHUSJmRUo1eLFzi7lndOll5G5MSytl07q215/GA7IUw4WTFAPIdZK5SbDtCaFPFJHCh5hLyyqfIYNbuF4RVLhtTj2P1oKdTwtzpVyHm1jK5ZjxMwQ3woMeWxua759iKNjjEAA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751961090; c=relaxed/simple;
+	bh=ffJOyJqtd4iCH+1H2RB5l4reTl6bphFy9XCcI0pa4jU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E4kxJrv4z9Q+5rZ2J4r0eGfdHj0MuFNqG+wRy9kj4mNhIv7+8zT/br/UVwbtH4pUBr2fAcp5h8ngodPSKpYvgCR9J5V+Uu0KA13ikSTnWo4JZX6AWGdc0YVo1o+FJGG8puFjXEmsw95p4hopHf1B/atoUMfdT6kQ0pb7WUiDoGU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ogo79nKS; arc=fail smtp.client-ip=40.107.237.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ykgNNKZC/U3NoMvZ6CXndxLAVXz9H+5uJcNQGrBY0o7JBtdyJ2bly6bHEcFKPfetf+xoT5xAY8tDQn16dw+eNFdDsMrAOYBlBvPs5b0GBvBTpnjuQkpveyuqEHPuLIvOIYhisY7JosKPLeN5tQOnKbg9GYghLkEGRhU7ICgqzMlp5I3NlkrFIm+E6BQSrljPMEKCjDbzJba59+ldbtN2iQMFibTKX7ZvW79w3MjxhXUTM/GALWMWF2AUkbbIsPdRWwsk4+xWpVTwaf0qHaxRCncqYBSHP7Ck/InurhteENnapz2pZE7fZXVVEsyV+5D5vHEVFmYXjzVyiX6286VR8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kk+d4hzbuJe50USVOvuui9ITaszWmMDnIMDzEfYFToo=;
+ b=iS8dUwwGyM/BRyoRkooKgg99x5C8Nr3xq1aiaH4iiE0wD3RFNcVWvqN0yuUCg5S3+0aP7UHsHQs91wUlalxSPTYu2JE9C5EX2I+InqA+cmTXHiX14FPH4LcQmo9x53xAceD+dQov+NuowWwlEPijYhnjLHqNTuOMzxy+s9KSH4Gcb5S6In56wc3+vYYGPzAodJfsTGOFbhY4aa4ZTBMWWSLrCGk3rSAMzy75eRanwkT/5b7bqaE+/h15tTN/OYz+ppPs8kANCO8VUY8YusNBoLAo43veFvRB7PHNmwxxv5jF54kPrYypgaoU8Tt/dRNvC9v9TdfyF+moyDdtbpizvA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kk+d4hzbuJe50USVOvuui9ITaszWmMDnIMDzEfYFToo=;
+ b=ogo79nKS+FWk8QSezFDnW/2qXIXBUyrLlNSOXSANvDGbbP5d7Dy7KQhsqGi6gPYzqoiiq3ebORUz2/U4NtHriYTu+5mxjFWuveLo65GGGlLwYsuryFae5MXU3lOsi7DmKS7nb2SClnMJSqDnu+HVT5eiQd+pef0jFS7kPuHs91o=
+Received: from MW4PR04CA0150.namprd04.prod.outlook.com (2603:10b6:303:84::35)
+ by MN2PR12MB4373.namprd12.prod.outlook.com (2603:10b6:208:261::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Tue, 8 Jul
+ 2025 07:51:24 +0000
+Received: from BY1PEPF0001AE19.namprd04.prod.outlook.com
+ (2603:10b6:303:84:cafe::e3) by MW4PR04CA0150.outlook.office365.com
+ (2603:10b6:303:84::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.27 via Frontend Transport; Tue,
+ 8 Jul 2025 07:51:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BY1PEPF0001AE19.mail.protection.outlook.com (10.167.242.101) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8901.20 via Frontend Transport; Tue, 8 Jul 2025 07:51:23 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 8 Jul
+ 2025 02:51:22 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 8 Jul
+ 2025 02:51:22 -0500
+Received: from hjbog-srdc-41.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Tue, 8 Jul 2025 02:51:17 -0500
+From: Samuel Zhang <guoqing.zhang@amd.com>
+To: <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
+	<rafael@kernel.org>, <len.brown@intel.com>, <pavel@kernel.org>,
+	<gregkh@linuxfoundation.org>, <dakr@kernel.org>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <ray.huang@amd.com>, <matthew.auld@intel.com>,
+	<matthew.brost@intel.com>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>
+CC: <mario.limonciello@amd.com>, <lijo.lazar@amd.com>, <victor.zhao@amd.com>,
+	<haijun.chang@amd.com>, <Qing.Ma@amd.com>, <Owen.Zhang2@amd.com>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>, "Samuel
+ Zhang" <guoqing.zhang@amd.com>
+Subject: [PATCH v3 0/5] reduce system memory requirement for hibernation
+Date: Tue, 8 Jul 2025 15:42:43 +0800
+Message-ID: <20250708074248.1674924-1-guoqing.zhang@amd.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <564f10574f11bd7ca42fcc5fb4d6c5625dc17205.camel@redhat.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE19:EE_|MN2PR12MB4373:EE_
+X-MS-Office365-Filtering-Correlation-Id: ed8cbadb-082e-4c28-b66b-08ddbdf43c19
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?x8X+flMea9yf6B7QMFHYsCTL6/pQDdJJFZgJWSJ7oVZ31YNjIUhjMwETk7Ep?=
+ =?us-ascii?Q?IYg2mapepu+oXSjqpQRKdPQVhPh2n9IKtb8af3G4BTzKlEGkYFuBMR213GLL?=
+ =?us-ascii?Q?y0qepjckwToItw9NuZLCoHzjjOgQ6levO3thu7WG3JgNLefA0Bj+5EZXdz7v?=
+ =?us-ascii?Q?J2s/nr4yx4uUlQEGHHSaHBo5ZKVArcSOxQCHXU6VDiDqOxs5uSiVyTM64vSX?=
+ =?us-ascii?Q?Fdog7HHZQItrkdB7lwQRxwmUfUOH0DXgpxz1CJabmtDkuYETlLWSPmldzqUV?=
+ =?us-ascii?Q?AdHyJ7I/qFgKG2LXDuxxLlLT1q0fKUZUyHx9my8HUrhlEDoJp7NCZEG0JrWG?=
+ =?us-ascii?Q?w8tMaVhzT+lzhb/ECsKiHj9wj7871ObfIHr7s42zpy3wFwSwSe5J6keVDHKE?=
+ =?us-ascii?Q?cEQY2ILxyBMZEnnwyL+mQMT96YoVpek/0wSOCp5XSV29uYDqLjhQJZmi30MX?=
+ =?us-ascii?Q?cisLOyLdKXYYkSYhGzhy/Hy91xwWxCL14ZJx5U6kr+CmH/p8ghME1nDDKaVq?=
+ =?us-ascii?Q?H7+Ml0QE5UBjf9Ob3D69BJsv4FDdCJQJKNzFYM02mJAsUxYRlX3ttkXMVfz0?=
+ =?us-ascii?Q?JNfFix6tN2kvnGlwrXf9h1bYeGQPpv82LlAS740UBKbVOUI5h2glEl9oGO0l?=
+ =?us-ascii?Q?kKnRc1mqinzIag0YJ+D89JQbXGPBOVVFtAx0Y2KMOX5g9/NShQMFHSGHYh2Z?=
+ =?us-ascii?Q?Ajn7vnU142UOCKkga0u6LKh5RF7/wGNJ/R3ml72Lx6ACmf1sTO3IJLCe8F9H?=
+ =?us-ascii?Q?7rJpqa9cfjfUMfV3m8HGEf110xzKDhrnINliOwYpqCUAXWCP8vVm7g9qCOUQ?=
+ =?us-ascii?Q?Ay28SyG/k/5tn9PbMpLPRtjrOZa1+ZLS9dNwNsAnbzPUnmPXz/gwV+Ib7/XD?=
+ =?us-ascii?Q?YNM+ifeQpFm0jJIfQG+rM7+WC1iU/xc7KIkWPFty3+KMtSbNPSWQctl6VuIq?=
+ =?us-ascii?Q?xlLqHJP4MYSmFE478UqgFbOG/RO7elZlDuWgxh73hzwggYUembI12bpWZKya?=
+ =?us-ascii?Q?T6dc+7Rf7eUFAjxuptDAD4RU4FWkGLI3C4lVeWRRK3TbK7BkYhikuydJH6gf?=
+ =?us-ascii?Q?TuBRX7HCAnGL2Ra9LLNzZXy6Fb1F8IPEp8B5wDpFh/ZwX5xpTqMpdWIFk6Cn?=
+ =?us-ascii?Q?FPETQ0/xq7eutRvnNSZpPP9mViShAUI1goTLOEcgLTc7Xtg0YQBe6p+s32/5?=
+ =?us-ascii?Q?bObh1Dxb72yKQVqmljKXPTspqmDE9hmovymztDUj1hBCcoJe0mZ0LYDDBdDc?=
+ =?us-ascii?Q?YMwhJSE5QaAEKas+STRTCthfu5oKkWB1B1i/vW8eTc95LwQru9kQfL+MT0Di?=
+ =?us-ascii?Q?EJHn9JTTLY075YLGeGirUZHHoo8EsZy/bv+jWSQtxH3vlfx13BuZbtGcnSsC?=
+ =?us-ascii?Q?LFJdVCRL8gcbO9BmSscvcmIKLvDpn3DFlfFRdhu5Naa0TfptGl/EVM3ToVYF?=
+ =?us-ascii?Q?cxAHnqV71SgSocnfTIwuYHbGmV5E+sdbBV+lByLgfAcm58Q51aePlpbhRCow?=
+ =?us-ascii?Q?odiaq62FU14NLrQih5xUPh7jpxsl8glsaTqJPCQC/YsaqwzlJcjtDc2obw?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 07:51:23.3123
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed8cbadb-082e-4c28-b66b-08ddbdf43c19
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BY1PEPF0001AE19.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4373
 
-On Thu, Jul 03, 2025 at 10:05:59AM +0200, Gabriele Monaco wrote:
-> Hi all,
-Hi Gabriele,
+Modern data center dGPUs are usually equipped with very large VRAM. On
+server with such dGPUs(192GB VRAM * 8) and 2TB system memory, hibernate
+will fail due to no enough free memory.
 
-> these statements made me curious: I always thought of memory barriers as a way
-> to order reads and writes to the same address across different CPUs (in other
-> words, for visibility).
-> 
-> For instance I'd do something like:
-> 
-> CPU 1             CPU2
-> 
-> write(x)
-> smp_mb()
->                   <implicit paired barrier>
->                   READ_ONCE(x)
-> 
-> Now, I get there isn't much we can do if reader and writer are racing, but, as
-> Steve said, I'm expecting the presence of barriers to make the racing window
-> smaller.
-> 
-> Am I misinterpreting the whole thing here? Are those barriers just ordering
-> reads with reads and writes with writes (hence useful only with multiple
-> variables)?
+The root cause is that during hibernation all VRAM memory get evicted to
+GTT or shmem. In both case, it is in system memory and kernel will try to 
+copy the pages to hibernation image. In the worst case, this causes 2 
+copies of VRAM memory in system memory, 2TB is not enough for the 
+hibernation image. 192GB * 8 * 2 = 3TB > 2TB.
 
-From "WHAT ARE MEMORY BARRIERS?" section in
-https://www.kernel.org/doc/Documentation/memory-barriers.txt
+The fix includes following changes. With these changes, there's much less
+pages needed to be copied to hibernate image and hibernation can succeed.
+* patch 1 and 2: move GTT to shmem after evicting VRAM. so that the GTT 
+  pages can be freed.
+* patch 3: force write shmem pages to swap disk and free shmem pages.
 
-    "Memory barriers [...] impose a perceived partial ordering over the
-    memory operations on either side of the barrier."
+After swapout GTT to shmem in hibernation prepare stage, the GPU will be
+resumed again in thaw stage. The swapin and restore BOs of resume takes
+lots of time (50 mintues observed for 8 dGPUs). And it's unnecessary since
+writing hibernation image do not need GPU for hibernate successful case.
+* patch 4 and 5: skip resume of device in thaw stage for successful
+  hibernation case to reduce the hibernation time.
 
-and also have a look at "WHAT MAY NOT BE ASSUMED ABOUT MEMORY BARRIERS?"
-later on:
+v2:
+* split first patch to 2 patches, 1 for ttm, 1 for amdgpu
+* refined the new ttm api
+* add more comments for shrink_shmem_memory() and its callsite
+* export variable pm_transition in kernel
+* skip resume in thaw() for successful hibernation case
+v3:
+* refined ttm_device_prepare_hibernation() to accept device argument
+* use guard(mutex) to replace mutex_lock and mutex_unlock
+* move ttm_device_prepare_hibernation call to amdgpu_device_evict_resources()
+* add pm_transition_event(), instead of exporting pm_transition variable
+* refined amdgpu_pmops_thaw(), use switch-case for more clarity
 
-    "There is no guarantee that any of the memory accesses specified before
-    a memory barrier will be _complete_ by the completion of a memory
-    barrier instruction"
+Samuel Zhang (5):
+1. drm/ttm: add ttm_device_prepare_hibernation() api
+2. drm/amdgpu: move GTT to shmem after eviction for hibernation
+3. PM: hibernate: shrink shmem pages after dev_pm_ops.prepare()
+4. PM: hibernate: add new api pm_transition_event()
+5. drm/amdgpu: do not resume device in thaw for normal hibernation
 
-Or data memory barrier explanation from Arm
-(https://developer.arm.com/documentation/den0042/0100/Memory-Ordering/Memory-barriers)
+ drivers/base/power/main.c                  |  5 +++++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 10 ++++++++-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c    | 15 ++++++++++++-
+ drivers/gpu/drm/ttm/ttm_device.c           | 23 +++++++++++++++++++
+ include/drm/ttm/ttm_device.h               |  1 +
+ include/linux/pm.h                         | 16 +++++++++++++
+ kernel/power/hibernate.c                   | 26 ++++++++++++++++++++++
+ 7 files changed, 94 insertions(+), 2 deletions(-)
 
-    "This instruction ensures that all memory accesses in program order
-    before the barrier are observed in the system before any explicit
-    memory accesses that appear in program order after the barrier. It does
-    not affect the ordering of any other instructions executing on the
-    processor, or of instruction fetches."
+-- 
+2.43.5
 
-So yes, smp_rmb() is only useful inbetween reads, and smp_wmb() is only
-userful inbetween writes.
-
-Best regards,
-Nam
 
