@@ -1,238 +1,151 @@
-Return-Path: <linux-kernel+bounces-721289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87DFAAFC72D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:37:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F67AFC732
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9BB33B053F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:36:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D147C1BC31F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1A325C810;
-	Tue,  8 Jul 2025 09:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6690262FCC;
+	Tue,  8 Jul 2025 09:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="Me8Rb2Im"
-Received: from mail-24417.protonmail.ch (mail-24417.protonmail.ch [109.224.244.17])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="gdWb6bxp"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A041521CA0D;
-	Tue,  8 Jul 2025 09:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63E421FF51;
+	Tue,  8 Jul 2025 09:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751967416; cv=none; b=rAEDbLWf2SW+aENHUnFHEu84p8uOEGTdFdodMUjw2DfiLPiN9nRxuvnVBNuQI3WTNf7/R/3Bt7DvhEpxDLc4W1OjwgbqV2HMwSFUAiasbiY1z3p2Li4Nn9hkrTC3TzBuR9vhoEQ0er5Uw50eKOBzE+OiK2uFl+5Jn9wV1BNeIyk=
+	t=1751967458; cv=none; b=VlbQgWbJxzCZYdz4zJMmCZSgWS5k4ouWqb1mwnAKBNZEcvTk2OxHkZV+fiZGMyGr1lKrSCdsC0U+ojUQlGW+33J699OUmL+bWWD78OzWW+MhQTNxJdy+xgbvpyMiozEhN/X5D0/k8DOwtP19jVzd5+oI3AppGdUpB/fdLnT6jPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751967416; c=relaxed/simple;
-	bh=sr9JKCrucqrOYgxNpZ30mEiwJhUbzxZ4qUAP94zM24Y=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kJmgO81+8QVW21Sv/6zy756GhmQjWh1tGo4EH81YTQgTcdLx+0/JhPmSe+PKSoPCCaU1xuO7ZaAUVcS15MhOs6zfqbhMfIxoGFdfbvvZjl8NboPrro0dRLhgHthn1yJpabn6/+dN19pvokP2v8P0XwIG6dHyOAPUxW7iWBcGuvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=Me8Rb2Im; arc=none smtp.client-ip=109.224.244.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1751967405; x=1752226605;
-	bh=F+WPDRCXS0ipV0YS4ZzxZsEEXBovLbNjpv6gT1R9BGg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=Me8Rb2Im9ZSarJFaeLxvD0GC20UNiucKzED7ZXyPaEmNLkWyEF5Nv7rrAIA1ukIKL
-	 BKTHIna+JDJix/siBN2YXW4DiDW627dJ6POPJnn7H9kNmDCT9OFH47uJP6SYvhqRU0
-	 R4jCD9vObMQ6GLKSieAPseHbWSEvblWRb6/vMiDkMzR1ccZIpTYokBDnkmsJWQrut2
-	 dXL8C8xFW4bicw1DYqi1rUewzmf5hiD0Lf/e+ib+bog/GBdai2LEMNHtqapGgX0hGY
-	 1mLN+QZVyIqdXwnwwTqPLSRAUDCZd9aNGpN50rdTexJAuSONJ+CcrEfgxllVDb+o5b
-	 jYfMcKLxFN2rQ==
-Date: Tue, 08 Jul 2025 09:36:38 +0000
-To: Benno Lossin <lossin@kernel.org>
-From: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina+kernel@asahilina.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 4/4] rust: Add `OwnableRefCounted`
-Message-ID: <aGzmoMWvy1v7ayyn@mango>
-In-Reply-To: <DB5PX74OB3DX.1UNT8MIBWNC2G@kernel.org>
-References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me> <20250618-unique-ref-v11-4-49eadcdc0aa6@pm.me> <DB1LPFAX66WG.1QL5JDCWI7RN4@kernel.org> <aGuAR7JCrlmzQrx4@mango> <DB5PX74OB3DX.1UNT8MIBWNC2G@kernel.org>
-Feedback-ID: 31808448:user:proton
-X-Pm-Message-ID: dbc2e24d718f3945dab4840749ba988923c77922
+	s=arc-20240116; t=1751967458; c=relaxed/simple;
+	bh=0DhIatYpr0tZAOUQ0uLvJSDlXCZMoMn2ooMgIUgWXhU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mebDTYQ3Lr+pk3kuziscsm9OKH1vhvw5ma7FMTD7JSoi870CfEQPg9lqJa+KBVOcf3HxEeHsSwodohO5M25qQk3OA1TXrxZNQsxhtXyTKBnmoih9n16Ytmh2AojfIGDCnFToTcFVCGz5/XoPfbkZV4M6iAoV6BUDqy14/Wz+uI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=gdWb6bxp; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5685JV16008794;
+	Tue, 8 Jul 2025 02:37:14 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=POlCOi98l8K3kXJjxUgD+wXFw
+	6jYs3weIfOyCSgP4Ds=; b=gdWb6bxpStiqw+fNtG9WbgAci7gCPUIvcKjR3x8VC
+	X+kjPnQ20GHi7TN5fN6mFwBKOMNYPIN+NZVeIp9OkxG500T4VEw6MOnR1LOHAaAe
+	01l2kz/Lix2L76o+DO3mAFiurJrp8WXaHl5Jqv2lNpSavaVuLlED2VJyK9YOxfu3
+	Jdc/ypvZXp+3zONXkEv42mO51xJgJrx8V/hYgRxiKoh9iHIw8hWDXR5zJJQh2aIE
+	HR6GsklbFBYC4tC6rkaUOaLHzvZkgh9q8BssmF0tI8eB3qnl8e8FsgH3ttKNCsaH
+	gfbICvYn/AmRgIuwhVBRBCzSLkZeCQzYUkvKgzm95E8oA==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47rw35gj6y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Jul 2025 02:37:14 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 8 Jul 2025 02:37:13 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 8 Jul 2025 02:37:13 -0700
+Received: from test-OptiPlex-Tower-Plus-7010 (unknown [10.29.37.157])
+	by maili.marvell.com (Postfix) with SMTP id 426613F70B2;
+	Tue,  8 Jul 2025 02:37:09 -0700 (PDT)
+Date: Tue, 8 Jul 2025 15:07:08 +0530
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: Simon Horman <horms@kernel.org>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Sunil Goutham
+	<sgoutham@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>,
+        "Subbaraya
+ Sundeep" <sbhatta@marvell.com>,
+        Bharat Bhushan <bbhushan2@marvell.com>,
+        "Andrew Lunn" <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>,
+        Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Tomasz Duszynski
+	<tduszynski@marvell.com>
+Subject: Re: [net] Octeontx2-vf: Fix max packet length errors
+Message-ID: <aGzmxAEN9KFC/qce@test-OptiPlex-Tower-Plus-7010>
+References: <20250702110518.631532-1-hkelam@marvell.com>
+ <20250704151511.GE41770@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250704151511.GE41770@horms.kernel.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDA3OCBTYWx0ZWRfXxwILy1kM6D/k /fBZIY24Dnw6HQmdeEsxGAetiIdgR3pfQ1kvkUNlFnunCFeMsfJqCeul/38d0z54vgd5VDlGD80 fLe40aFa+iE2QK2p8lRChxWwtUn9KZyQ861nUhE5GjWfdaal+cZXckYsfsBSDmmtS0uzLLPcwyR
+ uQZtH19z4bOOjnRI4VZlcCZlxieSxFFxosJmZZcMZ5AfMKyMZG4ryPLs/E57glbvExDUIIDCaIq RgbAU32fiW0l44Qx7kXuDCiVVC0l3zsv0V9bA4BZfB0VGah/xjXyVv6WZL6ouHqNP7AIxREb4oR tTl4yynnD5QZvZY35aoX9uQ3/BLtF5iK4TfM1MV7ZllhoHUiEiFScOpfCtgFztbjUgSKVVkwTuq
+ YfESeuhY4m0igHLByze3iNZWyFin1WOqsmWGGu8yawqS0k8P+VeuCUxr1Rm0VcP3xE+af0He
+X-Authority-Analysis: v=2.4 cv=drLbC0g4 c=1 sm=1 tr=0 ts=686ce6ca cx=c_pps p=gIfcoYsirJbf48DBMSPrZA==:17 a=gIfcoYsirJbf48DBMSPrZA==:117 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=M5GUcnROAAAA:8 a=ahM_0CIGR7yTG_xuzX0A:9 a=CjuIK1q_8ugA:10
+ a=OBjm3rFKGHvpk9ecZwUJ:22 a=lhd_8Stf4_Oa5sg58ivl:22
+X-Proofpoint-ORIG-GUID: oweZkv2f3wcSGtCQTDindKZdCWFPtDRs
+X-Proofpoint-GUID: oweZkv2f3wcSGtCQTDindKZdCWFPtDRs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-08_03,2025-07-07_01,2025-03-28_01
 
-On 250707 1133, Benno Lossin wrote:
-> On Mon Jul 7, 2025 at 10:07 AM CEST, Oliver Mangold wrote:
-> > On 250702 1524, Benno Lossin wrote:
-> >> On Wed Jun 18, 2025 at 2:27 PM CEST, Oliver Mangold wrote:
-> >> > @@ -132,3 +134,124 @@ fn drop(&mut self) {
-> >> >          unsafe { T::release(self.ptr) };
-> >> >      }
-> >> >  }
-> >> > +
-> >> > +/// A trait for objects that can be wrapped in either one of the re=
-ference types [`Owned`] and
-> >> > +/// [`ARef`].
-> >> > +///
-> >> > +/// # Safety
-> >> > +///
-> >> > +/// Implementers must ensure that:
-> >> > +///
-> >> > +/// - [`try_from_shared()`](OwnableRefCounted::into_shared) only re=
-turns an [`Owned<Self>`] if
-> >> > +///   exactly one [`ARef<Self>`] exists.
-> >>
-> >> This shouldn't be required?
-> >
-> > Ehm, why not? `Owned<T>` is supposed to be unique.
->=20
-> It's not needed as a safety requirement for implementing the trait. If
-> the implementation only contains sound code, then `Owned::from_raw`
-> should already ensure that `Owned<Self>` is only created if there is
-> exactly one reference to it.
+On 2025-07-04 at 20:45:11, Simon Horman (horms@kernel.org) wrote:
+> On Wed, Jul 02, 2025 at 04:35:18PM +0530, Hariprasad Kelam wrote:
+> > Implement packet length validation before submitting packets to
+> > the hardware to prevent MAXLEN_ERR.
+> > 
+> > Fixes: 3184fb5ba96e ("octeontx2-vf: Virtual function driver support")
+> > Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
+> > ---
+> >  drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
+> > index 8a8b598bd389..766237cd86c3 100644
+> > --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
+> > +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
+> > @@ -394,6 +394,13 @@ static netdev_tx_t otx2vf_xmit(struct sk_buff *skb, struct net_device *netdev)
+> >  	struct otx2_snd_queue *sq;
+> >  	struct netdev_queue *txq;
+> >  
+> > +	/* Check for minimum and maximum packet length */
+> > +	if (skb->len <= ETH_HLEN ||
+> > +	    (!skb_shinfo(skb)->gso_size && skb->len > vf->tx_max_pktlen)) {
+> > +		dev_kfree_skb(skb);
+> > +		return NETDEV_TX_OK;
+> > +	}
+> 
+> Hi Hariprasad,
+> 
+> I see the same check in otx2_xmit().
+> But I wonder if in that case and this one the rx drop counter for the
+> netdev should be incremented.
+>  
+  Assuming its tx_drop counter, Will add suggested change in V2.
+  
+> Also, do you need this check in rvu_rep_xmit() too?
+> 
+  ACK, will add this check in V2.
 
-Okay, got it now. I guess you are right, it is not strictly needed. If the
-requirement should be removed, not sure, though. Isn't it error-prone if it
-explicitly stated here (again) that it is required?
+THanks,
+Hariprasad k 
 
-> >> > +/// - [`into_shared()`](OwnableRefCounted::into_shared) set the ref=
-erence count to the value which
-> >> > +///   the returned [`ARef<Self>`] expects for an object with a sing=
-le reference in existence. This
-> >> > +///   implies that if [`into_shared()`](OwnableRefCounted::into_sha=
-red) is left on the default
-> >> > +///   implementation, which just rewraps the underlying object, the=
- reference count needs not to be
-> >> > +///   modified when converting an [`Owned<Self>`] to an [`ARef<Self=
->`].
-> >>
-> >> This also seems pretty weird...
-> >>
-> >> I feel like `OwnableRefCounted` is essentially just a compatibility
-> >> condition between `Ownable` and `RefCounted`. It ensures that the
-> >> ownership declared in `Ownable` corresponds to exactly one refcount
-> >> declared in `RefCounted`.
-> >>
-> >> That being said, I think a `RefCounted` *always* canonically is
-> >> `Ownable` by the following impl:
-> >>
-> >>     unsafe impl<T: RefCounted> Ownable for T {
-> >>         unsafe fn release(this: NonNull<Self>) {
-> >>             T::dec_ref(this)
-> >>         }
-> >>     }
-> >>
-> >> So I don't think that we need this trait at all?
-> >
-> > No. For an `ARef<T>` to be converted to an `Owned<T>` it requires a
-> > `try_from_shared()` implementation. It is not even a given that the
-> > function can implemented, if all the kernel exposes are some kind of
-> > `inc_ref()` and `dec_ref()`.
->=20
-> I don't understand this paragraph.
-
-What I mean is, to convert from an `ARef` to an `Owned`, it is necessary to
-check that there is only one reference. The API of the underlying object
-might not provide that.
-
-About the above documentation, it is a bit convoluted, because I had the
-case of `mq::Request` in mind, where the refcount needs to be changed
-during conversion.
-
-> > Also there are more complicated cases like with `Mq::Request`, where th=
-e
-> > existence of an `Owned<T>` cannot be represented by the same refcount v=
-alue
-> > as the existence of exactly one `ARef<T>`.
->=20
-> Ah right, I forgot about this. What was the refcount characteristics of
-> this again?
->=20
-> *  1 =3D in flight, owned by C
-> *  2 =3D in flight, owned by Rust
-> * >2 =3D in flight, owned by Rust + additional references used by Rust
->        code
->=20
-> Correct? Maybe @Andreas can check.
->=20
-> >> > +///
-> >> > +/// # Examples
-> >>
-> >> If we're having an example here, then we should also have on on `Owned=
-`.
-> >
-> > Yes, maybe. I mostly felt the need to create one for `OwnableRefCounted=
-`
-> > because it is a more complex idea than `Ownable`.
-> >
-> > If I remember correctly, I didn't create one for `Owned`, as it should
-> > probably more or less the same as for `ARef` and the one there has even
-> > more problems of the kind you are pointing out. So maybe it would be be=
-st
-> > to wait until someone fixes that and have the fixed version copied over=
- to
-> > `Owned` in the process?
->=20
-> Wait which problems on `ARef` do you mean? I disagree that `Owned` and
-> `ARef` have the same example. `Owned` should expose operations that
-> `ARef` can't otherwise there would be no value in using `Owned`.
-
-I mean it uses a `struct Empty {}`, which doesn't do any refcounting and
-the safety requirements of `ARef::from_raw()` are also not fulfilled.
-
-The point of `Owned` is not that it provides more operations than `ARef`
-but rather that it provides less. The reference cannot be cloned. Actually
-it is not supposed to provide much features at all, except for freeing the
-underlying object when it is dropped.
-
-It is supposed to just be a safe wrapper around a `*T`, marking that the
-reference is Owned/Unique. Safe functions defined elsewhere can then take a
-`Owned<T>` or `&mut Owned<T>` which provides the assurance of
-ownership/uniqueness.
-
-> >> > +///
-> >> > +/// A minimal example implementation of [`OwnableRefCounted`], [`Ow=
-nable`] and its usage with
-> >> > +/// [`ARef`] and [`Owned`] looks like this:
-> >> > +///
-> >> > +/// ```
-> >> > +/// # #![expect(clippy::disallowed_names)]
-> >> > +/// use core::cell::Cell;
-> >> > +/// use core::ptr::NonNull;
-> >> > +/// use kernel::alloc::{flags, kbox::KBox, AllocError};
-> >> > +/// use kernel::types::{
-> >> > +///     ARef, RefCounted, Owned, Ownable, OwnableRefCounted,
-> >> > +/// };
-> >> > +///
-> >> > +/// struct Foo {
-> >> > +///     refcount: Cell<usize>,
-> >> > +/// }
-> >> > +///
-> >> > +/// impl Foo {
-> >> > +///     fn new() -> Result<Owned<Self>, AllocError> {
-> >> > +///         // Use a `KBox` to handle the actual allocation.
-> >> > +///         let result =3D KBox::new(
-> >> > +///             Foo {
-> >> > +///                 refcount: Cell::new(1),
-> >> > +///             },
-> >> > +///             flags::GFP_KERNEL,
-> >> > +///         )?;
-> >> > +///         let result =3D NonNull::new(KBox::into_raw(result))
-> >> > +///             .expect("Raw pointer to newly allocation KBox is nu=
-ll, this should never happen.");
-> >>
-> >> I'm not really convinced that an example using `KBox` is a good one...
-> >> Maybe we should just have a local invisible `bindings` module that
-> >> exposes a `-> *mut foo`. (internally it can just create a KBox`)
-> >
-> > The example would become quite a bit more complicated then, no?
->=20
-> Just hide those parts behind `#` lines in the example.
-
-I don't know about this method. Can you give an example on how that works?
-
-> ---
-> Cheers,
-> Benno
-
+> > +
+> >  	sq = &vf->qset.sq[qidx];
+> >  	txq = netdev_get_tx_queue(netdev, qidx);
+> >  
+> > -- 
+> > 2.34.1
+> > 
+> > 
+> 
 
