@@ -1,185 +1,128 @@
-Return-Path: <linux-kernel+bounces-720949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FB1FAFC26F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:07:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E83D8AFC277
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CF674A66EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:07:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E5953BD15E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E6E21FF40;
-	Tue,  8 Jul 2025 06:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8B521FF36;
+	Tue,  8 Jul 2025 06:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hRCx2cnc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ED5bkynO"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D7C35962;
-	Tue,  8 Jul 2025 06:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CD335962;
+	Tue,  8 Jul 2025 06:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751954845; cv=none; b=BJfysOuyBdJNAEHPOJ2Ll1Cg0PJoaDRnXu7dqMXyuLCL6KGsaSab9LSnc297tB0hBk7cP90/HwTcS+rV3UeQUvSiL7pQ/FG10/xJM8Q0ig/akj5A+f62sy6uTvJwumZKvsRA4ingB77zNfb2Svyd1CidfoWgONGbXSd54k7v4NM=
+	t=1751954915; cv=none; b=cpPilmaEIW+2FJ6PI0jfw2Dh3fTPs8PRdHbyHQoYiQK29YIUF2AE1ldQCl1pryocsHs96XB20GXPddY2oRBr4u5+YF80lFFhQ3Ox1jRtVgEPBAsmeiyRSW7HsCV/zGZUza9rssPAYqUzKzotzqE+d/6QW8Jf2aVnWrMNka/zWJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751954845; c=relaxed/simple;
-	bh=Ih+qKsUZVzftzC6WOKB+NxIhVYKtNpoAKnGyaqzTauQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k3bhrXv/XD7Ekw1mGzJEyWupFTaXvINOiUdxL0XQweNfXQsOzU57npFnhFuFpfD7893wDAALVuY4EgyzG5TKSqYZlooGsFTz8i8xt8N2/vVDzpos5X35q1+xItSEwRrYC9gkT2LYx1ttJoHA7jfvHRFXMHpRXvoyH8etPbvwgLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hRCx2cnc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5D42C4CEED;
-	Tue,  8 Jul 2025 06:07:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751954844;
-	bh=Ih+qKsUZVzftzC6WOKB+NxIhVYKtNpoAKnGyaqzTauQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hRCx2cncCIe4LMmd+LKDGjF7u9XZgI5YzXgm3yl8al7WaWHR95gFBIsMZj7wC/6PY
-	 2h+7Q1VmlN/ltARXYGzko89RozYB7vOVSzd10CUat5XytkqOjB14oAelwWJsH6kCxw
-	 Vs4vdpEaIXvXmeaSUbqrqx4urMCkyN14A717ZCccOoW8AfAlctHLUnpP54xZ7mhMaH
-	 gZMKvmgd9VHEk3jnT3MC6Hc4chnP1lFsMTfbLNSeusQrz/mvuOb9wUOgiLp5+zGc41
-	 Sz9cSQbylvpuuUlUkGKrkZ2l+OQdGND99+LNuG866VDgJfZUjPQ7dpedrTtlwCcQl5
-	 fBuKpjMEliFww==
-Message-ID: <5f3e7d3b-f720-43e3-9c75-7e0f5230be2a@kernel.org>
-Date: Tue, 8 Jul 2025 08:07:19 +0200
+	s=arc-20240116; t=1751954915; c=relaxed/simple;
+	bh=RdElbirAdUkbyuH4kSxePtJFQ38Rx1k+Lfl+klu0PzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MFoIcv+m9/lOpNwvDSpe9zXcMEb836oIlwEeVUs2jWNVdS+sG8XxC4QWa89LYdt+JiYiWZwMUlO8E81fRP3LChufWJDzJ/L6Hw8mqSfcvByDZdgebsFlDfocAh60PzOaSpmVWmPkU2a4g8uTcT3Fg52SpFL9zncTc2j5q1nEO9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ED5bkynO; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1751954853;
+	bh=xnY6mnsrMkl2iu8PUzjgXYH+N9jdi2WR/fl5vaAs4ko=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ED5bkynOagLM50YQGQVXsof/4W/PU0WQOt1QgfxbRhOG8gT6UJq8YQn8nILKyfbHr
+	 OFH8fKM53kt92MU3QwZMf8qAkX8PQDYvdd8Zq+vucmfHeAWJrwdARL064qnUhrRU50
+	 rQ63zwWFiIolKXicxWV9bkkvLeg/TD8fVEhUKr/O4AC2RkC3T0fLAinjEn+b8Lp9YW
+	 0skPMalaECKQ6k+H03h/dCUMQkkpGUD/Pri7lsll8RL4h7V4Ot5jjZ49h16e+lKPUL
+	 j2WjibYIHJ8whElavN2n0Q3OTFyDL4RZGh1VXM4INGf9h1+4+ww2l+1zJ/Hk6j0yZx
+	 gLsw/FZMpxeqw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bbrHT4Lkqz4wb0;
+	Tue,  8 Jul 2025 16:07:33 +1000 (AEST)
+Date: Tue, 8 Jul 2025 16:08:30 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?= <thomas.weissschuh@linutronix.de>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the tip tree
+Message-ID: <20250708160830.36ddf20f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/1] Bluetooth: mediatek: add gpio pin to reset bt
-To: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>,
- Marcel Holtmann <marcel@holtmann.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Luiz Von Dentz <luiz.dentz@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Sean Wang <sean.wang@mediatek.com>, Jiande Lu <jiande.lu@mediatek.com>,
- Deren Wu <deren.Wu@mediatek.com>, Chris Lu <chris.lu@mediatek.com>,
- Hao Qin <Hao.qin@mediatek.com>, Wallace Yu <Wallace.Yu@mediatek.com>,
- linux-bluetooth <linux-bluetooth@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- linux-mediatek <linux-mediatek@lists.infradead.org>,
- devicetree <devicetree@vger.kernel.org>
-References: <20250708060150.27375-1-ot_zhangchao.zhang@mediatek.com>
- <20250708060150.27375-2-ot_zhangchao.zhang@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250708060150.27375-2-ot_zhangchao.zhang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/+83BFuWqt52WjS+LUCotkJq";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 08/07/2025 08:01, Zhangchao Zhang wrote:
-> Makes the platform Bluetooth to be reset by hardware pin,
-> it provides two methods to do it for mediatek controller,
-> and it has been tested locally many times and can reset normally.
-> 
-> When an exception occurs, resetting Bluetooth by hardware pin
-> is more stable than resetting Bluetooth by software.
-> If the corresponding pin is not found in dts,
-> bluetooth can also be reset successfully.
-> 
-> Co-developed: Hao Qin <hao.qin@mediatek.com>
-> Co-developed: Chris Lu <chris.lu@mediatek.com>
-> Co-developed: Jiande Lu <jiande.lu@mediatek.com>
-> Signed-off-by: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>
-> ---
->  drivers/bluetooth/btmtk.c | 69 +++++++++++++++++++++++++++++++++++++++
->  drivers/bluetooth/btmtk.h |  5 +++
->  2 files changed, 74 insertions(+)
-> 
-> diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
-> index 4390fd571dbd..cdb90143be61 100644
-> --- a/drivers/bluetooth/btmtk.c
-> +++ b/drivers/bluetooth/btmtk.c
-> @@ -6,6 +6,8 @@
->  #include <linux/firmware.h>
->  #include <linux/usb.h>
->  #include <linux/iopoll.h>
-> +#include <linux/of.h>
-> +#include <linux/of_gpio.h>
->  #include <linux/unaligned.h>
->  
->  #include <net/bluetooth/bluetooth.h>
-> @@ -109,6 +111,65 @@ static void btmtk_coredump_notify(struct hci_dev *hdev, int state)
->  	}
->  }
->  
-> +static void btmtk_reset_by_gpio_work(struct work_struct *work)
-> +{
-> +	struct btmtk_reset_gpio *reset_gpio_data =
-> +			container_of(work, struct btmtk_reset_gpio, reset_work.work);
-> +
-> +	gpio_direction_output(reset_gpio_data->gpio_number, 1);
-> +	kfree(reset_gpio_data);
-> +}
-> +
-> +static int btmtk_reset_by_gpio(struct hci_dev *hdev)
-> +{
-> +	struct btmtk_data *data = hci_get_priv(hdev);
-> +	struct btmtk_reset_gpio *reset_gpio_data;
-> +	struct device_node *node;
-> +	int reset_gpio_number;
-> +
-> +	node = of_find_compatible_node(NULL, NULL, "mediatek,mt7925-bluetooth");
+--Sig_/+83BFuWqt52WjS+LUCotkJq
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-No. You don't take GPIOs from random node. You take them from your
-device with proper API, instead of:
+Hi all,
 
-> +	if (node) {
-> +		reset_gpio_number = of_get_named_gpio(node, "reset-gpios", 0);
+After merging the tip tree, today's linux-next build (powerpc
+ppc64_allmodconfig) produced this warning:
 
-legacy OF API. This only points that your driver model is broken or your
-hardware description is wrong.
+In file included from include/vdso/datapage.h:8,
+                 from lib/vdso/gettimeofday.c:6,
+                 from <command-line>:
+lib/vdso/gettimeofday.c: In function '__cvdso_clock_gettime_common':
+include/uapi/linux/bits.h:7:56: warning: right shift count >=3D width of ty=
+pe [-Wshift-count-overflow]
+    7 | #define __GENMASK(h, l) (((~_UL(0)) << (l)) & (~_UL(0) >> (BITS_PER=
+_LONG - 1 - (h))))
+      |                                                        ^~
+include/vdso/datapage.h:50:25: note: in expansion of macro '__GENMASK'
+   50 | #define VDSO_AUX        __GENMASK(CLOCK_AUX_LAST, CLOCK_AUX)
+      |                         ^~~~~~~~~
+lib/vdso/gettimeofday.c:335:24: note: in expansion of macro 'VDSO_AUX'
+  335 |         else if (msk & VDSO_AUX)
+      |                        ^~~~~~~~
+lib/vdso/gettimeofday.c: In function '__cvdso_clock_getres_common':
+include/uapi/linux/bits.h:7:56: warning: right shift count >=3D width of ty=
+pe [-Wshift-count-overflow]
+    7 | #define __GENMASK(h, l) (((~_UL(0)) << (l)) & (~_UL(0) >> (BITS_PER=
+_LONG - 1 - (h))))
+      |                                                        ^~
+include/vdso/datapage.h:50:25: note: in expansion of macro '__GENMASK'
+   50 | #define VDSO_AUX        __GENMASK(CLOCK_AUX_LAST, CLOCK_AUX)
+      |                         ^~~~~~~~~
+lib/vdso/gettimeofday.c:481:26: note: in expansion of macro 'VDSO_AUX'
+  481 |         } else if (msk & VDSO_AUX) {
+      |                          ^~~~~~~~
 
+Introduced by commit
 
-Best regards,
-Krzysztof
+  7893ea1006fc ("vdso/gettimeofday: Add support for auxiliary clocks")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/+83BFuWqt52WjS+LUCotkJq
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhstd4ACgkQAVBC80lX
+0GwvsAf/a3vjDjh2/HG9J9hZyarDYQrVsHoRhD38GfZWl3pYwTvGDVNAGIYTwW4J
+H77qNEL34viaF1lOhIKj+yL+kvEU8pS5i9QpX/HAxNgp9fQpSqfmg6cTNkf05tm5
+fMHv59Hw615DGR1Ld9FzS2JAXjqxGqJC0LNq8TgXM7bj+utfROkPxAy9T87+M2+/
++2a/LyJRwZSU/D6t6H7s8M1Rb9LppPLykJhbNjRqWFBrmRY+QSDNXkOg2o8KW5nt
+KbyDS5D31bJWyG3Rz/GUujruNuY0JhM92smNmrjT6wNM3IdlhXUvblnzoXUVzw+J
+Z5WFsmiO+S026pNRi09oks1YEJOhaA==
+=OsNm
+-----END PGP SIGNATURE-----
+
+--Sig_/+83BFuWqt52WjS+LUCotkJq--
 
