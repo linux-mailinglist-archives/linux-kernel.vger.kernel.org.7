@@ -1,108 +1,147 @@
-Return-Path: <linux-kernel+bounces-721584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07BE0AFCB5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:06:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F16AAFCB62
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5899516FF7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:06:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0FF61899836
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023CB2DBF5D;
-	Tue,  8 Jul 2025 13:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C45E2DC34C;
+	Tue,  8 Jul 2025 13:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIZ2F5MI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g8eV6pOW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA621F4CB2;
-	Tue,  8 Jul 2025 13:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749C326B08F;
+	Tue,  8 Jul 2025 13:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751980008; cv=none; b=Mf2zMPexJRVXojT09ZKwD8Jr0sW87qd7DPl/DWaFh3nVJN9znRXHapYCNNeCJp364Ut53WCKnCnksZXON9fe1WRqg5abrMG7Y2sB79rp3AkKgsHiAhG5eCsIAjyfQ9mSLWaG9N+v5V94lZvml1Y+s9HlHJ2gPsHDRiVD/8HBumA=
+	t=1751980020; cv=none; b=g+DtuUE/zCAi9XnQci7yS4U9irU5T1N0/+TrzE1jYHVTDi4bebHXlqz7qtOfwBfkKUpInaV2JRNceoUn4Qzt/MmIuHL0mlCKB+TRrPLgL8Vo+zdECgCHpKMsH1lDp1os7Fa5sEYiHsNo7yEHdlQ2+jG7n0W1THRmpUUeNUnIECQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751980008; c=relaxed/simple;
-	bh=XYrkKyZgWY8IZZADaNP4i2qGUIJ6T7ql6F4XTIyDbng=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Bh0NxQpPPv01l4QcJakZ7fJqzsjSsOhJA542Z8Pro/cK117ukMHfA8Kh60hPQl4EWMa/jnqIsqsowlzx5YgbXkhgV8Ky0teDPUinPIbyjZSLtaotTodieYYDAMiyOeU2rP7voeIJ3wGKwj6WMpiWJiOOYVsNa3Jt9Tv+8l4+SWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SIZ2F5MI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 823DDC4CEED;
-	Tue,  8 Jul 2025 13:06:45 +0000 (UTC)
+	s=arc-20240116; t=1751980020; c=relaxed/simple;
+	bh=+kO/dnpSF92MEi9qv/Qf3ThC5gVQWquSZ0ZGR98UIOY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=vDiq5PsKKBRuE3+3KeJstSYXhib1hK+lLT32zlyUzbINrs9mVAzpOtG9dt4Pbdeck6tgZsSjROVJBJqjCy88ylVNmHvkVO0QulmT1lTyux++4tohCdsOC5nPLM3R9XKbxvDYF9Ho3i2kG8PPN0ngf9jT/RnPATeuspj5FIVV1Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g8eV6pOW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11D34C4CEF1;
+	Tue,  8 Jul 2025 13:06:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751980007;
-	bh=XYrkKyZgWY8IZZADaNP4i2qGUIJ6T7ql6F4XTIyDbng=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=SIZ2F5MIVn07HFPiPituRdZFG44LNOIGtrVnYx7LilEbdLOmD4bi9B5falz4Br5Bp
-	 8P1HY9/3aoQ82h2ONhMJVH4VTfgE8dEsgzvdFN1092G2B4C6WcT5nEw8Lvow6QaUuI
-	 LL+iwsQCXe/X6Iu9FJ3D1YgxSbg36sajctGKmSE8uk/+uWravLegj4xPDpc8zHFu4n
-	 0Zbc4R3hh17hjiOBT4Q7JzjZyPuvxmPRZ0dlxknkdg34wcHvNtvz+APaoxmJrBL3bq
-	 Tbxhn8VpxqYfe3OQrngk+fPd6+S6fliqWO2mgB280BFP9ynGjoZIo2FUh4Ao6LqbJN
-	 lf3t/wv0IL+dQ==
+	s=k20201202; t=1751980020;
+	bh=+kO/dnpSF92MEi9qv/Qf3ThC5gVQWquSZ0ZGR98UIOY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=g8eV6pOWw3M3BylCmg+NoMONX3t3s4obYesAL20OIOZtFNiur99heJBHWNFbWNgU9
+	 e2GcNowmUb14iJ7OO/hX4fCKohpDslsDW/zWzgv82kV1QUKaG/kxSHgXPEqwtrlFA8
+	 qquXLKlJFkE+PXvFZthqpHxq+4zGftcDmUJQoJf5bD30tY2kBxntTuH/okSKSiG3SW
+	 1ypVNVatE3Kt9eaKBcZJL8WT8NicWppDk+1L5Mm7v5mauzJYxMahh8h8oAYjPvvGX/
+	 Wxi0fT+3eQzDJcZi+6fXov7wLrsWVGh2hZHTM2fsBdke04AucWt0powD+Kgd0SHOEd
+	 1kaZl5tIimi2A==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <lossin@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice
+ Ryhl" <aliceryhl@google.com>,  "Masahiro Yamada" <masahiroy@kernel.org>,
+  "Nathan Chancellor" <nathan@kernel.org>,  "Luis Chamberlain"
+ <mcgrof@kernel.org>,  "Danilo Krummrich" <dakr@kernel.org>,  "Nicolas
+ Schier" <nicolas.schier@linux.dev>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Adam Bratschi-Kaye" <ark.email@gmail.com>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
+  <linux-kbuild@vger.kernel.org>,  "Petr Pavlu" <petr.pavlu@suse.com>,
+  "Sami Tolvanen" <samitolvanen@google.com>,  "Daniel Gomez"
+ <da.gomez@samsung.com>,  "Simona Vetter" <simona.vetter@ffwll.ch>,  "Greg
+ KH" <gregkh@linuxfoundation.org>,  "Fiona Behrens" <me@kloenk.dev>,
+  "Daniel Almeida" <daniel.almeida@collabora.com>,
+  <linux-modules@vger.kernel.org>
+Subject: Re: [PATCH v15 1/7] rust: sync: add `SetOnce`
+In-Reply-To: <DB6JVOZLCMBL.3EZQJP50UUB86@kernel.org> (Benno Lossin's message
+	of "Tue, 08 Jul 2025 11:02:17 +0200")
+References: <20250707-module-params-v3-v15-0-c1f4269a57b9@kernel.org>
+	<20250707-module-params-v3-v15-1-c1f4269a57b9@kernel.org>
+	<MsrRzRcWQU4DLY5mlpwajZZaSx_kPRSJTuMGxtI4igY_8NpNBSAbb9v5BcFv2WKZoRkr8QDlcfjlGlH4NwpB8w==@protonmail.internalid>
+	<DB6JVOZLCMBL.3EZQJP50UUB86@kernel.org>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Tue, 08 Jul 2025 15:06:48 +0200
+Message-ID: <87v7o2omqf.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 08 Jul 2025 15:06:43 +0200
-Message-Id: <DB6P2UQM08LH.2ALUM6EKC3Q45@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Asahi Lina" <lina+kernel@asahilina.net>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v11 1/4] rust: types: Add Ownable/Owned types
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>, "Oliver Mangold"
- <oliver.mangold@pm.me>
-X-Mailer: aerc 0.20.1
-References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me>
- <20250618-unique-ref-v11-1-49eadcdc0aa6@pm.me>
- <DB1IPFNLFDWV.2V5O73DOB2RV6@kernel.org> <aGtv9qs682gTyQWX@mango>
- <DB5PPGOWNW4K.2C5A4UE9V9IEF@kernel.org> <aGzrZqIrStGD_UBp@mango>
- <CANiq72kWFYS-inzFPTQAGdPRBr7MffZLR9q7iWiT_j2w_e99MQ@mail.gmail.com>
-In-Reply-To: <CANiq72kWFYS-inzFPTQAGdPRBr7MffZLR9q7iWiT_j2w_e99MQ@mail.gmail.com>
 
-On Tue Jul 8, 2025 at 12:16 PM CEST, Miguel Ojeda wrote:
-> On Tue, Jul 8, 2025 at 11:57=E2=80=AFAM Oliver Mangold <oliver.mangold@pm=
-.me> wrote:
+"Benno Lossin" <lossin@kernel.org> writes:
+
+> On Mon Jul 7, 2025 at 3:29 PM CEST, Andreas Hindborg wrote:
+>> Introduce the `SetOnce` type, a container that can only be written once.
+>> The container uses an internal atomic to synchronize writes to the inter=
+nal
+>> value.
 >>
->> Note, though, that I already moved it from types.rs to types/ownable.rs =
-on
->> request. It seems to me different people here have different ideas where=
- it
->> should be placed. I feel now, that it would make sense to come to an
->> agreement between the interested parties about where it should finally b=
-e
->> placed, before I move it again. Could I ask that we settle that question
->> once and for all before my next revision?
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 >
-> Yeah, if there is a disagreement with something said previously, then
-> it should be resolved before starting to ping-pong between approaches
-> with more and more patch versions. Reviewers can forget or they may
-> not have read an earlier comment, but you did the right thing
-> mentioning there is such a conflict in opinions.
+> One nit and a safety comment fix below. (feel free to ignore the nit)
+> With the safety comment fixed:
+>
+> Reviewed-by: Benno Lossin <lossin@kernel.org>
+>
+>> ---
+>>  rust/kernel/sync.rs          |   2 +
+>>  rust/kernel/sync/set_once.rs | 125 ++++++++++++++++++++++++++++++++++++=
++++++++
+>>  2 files changed, 127 insertions(+)
+>>
+>> diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
+>> index 81e3a806e57e2..13e6bc7fa87ac 100644
+>> --- a/rust/kernel/sync.rs
+>> +++ b/rust/kernel/sync.rs
+>> @@ -18,6 +18,7 @@
+>>  mod locked_by;
+>>  pub mod poll;
+>>  pub mod rcu;
+>> +mod set_once;
+>
+> I would have named this `once`.
 
-Yeah, I checked and that was Andreas on v9. @Andreas what do you think?
+So module `once` and struct `SetOnce`? Struct name `Once` would lead
+thoughts to `std::sync::Once`, which is a different thing.
 
-I think we should just get rid of `types.rs` and split it into:
+>
+>>  pub use arc::{Arc, ArcBorrow, UniqueArc};
+>>  pub use completion::Completion;
+>
+>> +    /// Get a reference to the contained object.
+>> +    ///
+>> +    /// Returns [`None`] if this [`SetOnce`] is empty.
+>> +    pub fn as_ref(&self) -> Option<&T> {
+>> +        if self.init.load(Acquire) =3D=3D 2 {
+>> +            // SAFETY: By the type invariants of `Self`, `self.init =3D=
+=3D 2` means that `self.value`
+>> +            // contains a valid value.
+>
+> And the type invariants also ensure that the value of `self.init`
+> doesn't change.
+>
+> So probably
+>
+>     // SAFETY: By the type invariants of `Self`, `self.init =3D=3D 2` mea=
+ns that `self.value`
+>     // contains a valid value. They also guarantee that `self.init` doesn=
+'t change.
+>
 
-* `opaque.rs`
-* `foreign.rs`
-* `scope_guard.rs` (this might need a better name)
+Sure =F0=9F=91=8D
 
-`Either` can just be removed entirely, `AlwaysRefcounted` & `ARef`
-should be in the `sync` module (I already created an issue for this) as
-well as `NotThreadSafe` (or we could create a `marker` module for that).
-Thoughts?
 
----
-Cheers,
-Benno
+Best regards,
+Andreas Hindborg
+
+
 
