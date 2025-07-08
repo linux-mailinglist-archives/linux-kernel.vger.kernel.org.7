@@ -1,78 +1,107 @@
-Return-Path: <linux-kernel+bounces-721794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAF48AFCDF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:41:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2BB3AFCDFA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9000C4A0789
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:41:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8063456360E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BDA2E0412;
-	Tue,  8 Jul 2025 14:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8C32E091C;
+	Tue,  8 Jul 2025 14:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gdj9+Tuu"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HA6JFNMO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191822DFF3F;
-	Tue,  8 Jul 2025 14:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8862DE6F1;
+	Tue,  8 Jul 2025 14:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751985639; cv=none; b=JEhmjaw0x1j47wPjXnWs8eoX7JMMjdda1Bmm8mfDWaBGqeLiGzUtHqFEMwYs7WHE+HLOlx/jTJ14hmmFKPU6zi34q4eQ7jfblkUGVQMph3gd4ZTU1vf1Lhn6v8UteHGPtJRQC5JdQ2oYue2vdsZpjiDbuMgkPJht51AlMXUyOA4=
+	t=1751985665; cv=none; b=J6GcFgE1bDsvjXp1KENuAlbN0IYMFbgpReP4mBtlUtGVKuYX4KqSQjDtdGpgXRWmqat6bJjVTdXzYsgyWtovPPGpHhxuj2hnrqqcCnTvxMrcOl1gUxYXOSdipIY9O834EKBUS8cEAFtLaj9D1g9GcuLSTN2V61iPr+5AzgkzONY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751985639; c=relaxed/simple;
-	bh=ici+d7X96ldZgmo8gOK9/ovem9QEybTlAcmkuCV3VRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KWSnwjImyWjRZEBgEfEJLYRpTFtGX4DlGjPAlarCKJ5gTzNgqshf+qN6zqxSi06C9ijCFUA7Ln61lFLbtbRIU/wnwOzEJGcvuRtCKkARF4tSt/usm4Ralt/CNrPKAG8YyHTwdPm0TqySB0TFjrtNfSCZFRaUjEnma1UqrS1DUq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=gdj9+Tuu; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=dgT+lxY1s69iozAyvWoICFQiXCuSbWbkU6hDrPGJuVI=; b=gdj9+TuuZ5gxf9tmpGmrK5TU/d
-	cktB/cltikxtVzYmfGkHdWsepGnd3j9d/DFZ/QQDunamYK4H8pca06RnOAOKLWj1B6hq+zrYIZxm8
-	NKyo/kIUHfuqxOZcalR6RWPFWf34R0GNbpTGRFdrfVDr06rYkz9b3wmsHL7B2HCTCmjA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uZ9Uj-000paE-Mg; Tue, 08 Jul 2025 16:40:29 +0200
-Date: Tue, 8 Jul 2025 16:40:29 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
-	shenjian15@huawei.com, liuyonglong@huawei.com,
-	chenhao418@huawei.com, jonathan.cameron@huawei.com,
-	shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
-	arnd@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 08/11] net: hns3: use seq_file for files in fd/
- in debugfs
-Message-ID: <7826b514-823c-4211-863a-8bed402f51ef@lunn.ch>
-References: <20250708130029.1310872-1-shaojijie@huawei.com>
- <20250708130029.1310872-9-shaojijie@huawei.com>
+	s=arc-20240116; t=1751985665; c=relaxed/simple;
+	bh=o+9yZP3hCqGsyFTdJeQZPiXoMBkX1jh2XVuQmFEjmBI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nUpj7byENKVfemiKPluBByUBTJRMt+tTU+hOdfojTNPwqmZQ/X/RS392reQ+o/sz4pmHRaineGeVMWL8cjQiWduXNARkXVlRJOxapUjLLJE5uvERRLYf/T8NihvBLwxq66Xssu5YrBA1WeOrbDBks1ZjJzW0oUHn84HwTvDhugo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HA6JFNMO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F1B7C4CEED;
+	Tue,  8 Jul 2025 14:41:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751985664;
+	bh=o+9yZP3hCqGsyFTdJeQZPiXoMBkX1jh2XVuQmFEjmBI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HA6JFNMOMFSvn2pwCigUy0Hy8cnFK32vInmMDrgIIzlhCd4zadfHcN6+Jcm7X/kvw
+	 8S+sBSDS8BV3X1rOegvUktfHECu8ZK1skJMC/+4rblRv1M1pABfs/uPAnF2h5RtcT5
+	 j/79hXxWJjvioOtJkwD2voNruTz9xO94Ta15VpxCylYQZsLwyWBwSrUrNoqVh01u5H
+	 2FWo51N4iUt08dHwHSLkR/p0T1YVaHL1VrpfGtGjprJYphd/6nnZ0mrfRKYBK/NX5c
+	 JRq2PUOPuhZqplXmik4V372bk5ioHztN3OuQxOomD/ku3/HBX0nSu4UWznA9p+i5qN
+	 E7+lTqimx1UyA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uZ9VG-00DnGo-3G;
+	Tue, 08 Jul 2025 15:41:02 +0100
+Date: Tue, 08 Jul 2025 15:41:01 +0100
+Message-ID: <86qzyqagoy.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: linux-pci@vger.kernel.org,	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,	Toan Le <toan@os.amperecomputing.com>,
+	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,	Manivannan
+ Sadhasivam <mani@kernel.org>,	Rob Herring <robh@kernel.org>,	Bjorn Helgaas
+ <bhelgaas@google.com>,	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 09/12] PCI: xgene-msi: Sanitise MSI allocation and affinity setting
+In-Reply-To: <aGvga+1Q6SOsTScK@lpieralisi>
+References: <20250628173005.445013-1-maz@kernel.org>
+	<20250628173005.445013-10-maz@kernel.org>
+	<aGvga+1Q6SOsTScK@lpieralisi>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250708130029.1310872-9-shaojijie@huawei.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: lpieralisi@kernel.org, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, toan@os.amperecomputing.com, kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, bhelgaas@google.com, tglx@linutronix.de
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Jul 08, 2025 at 09:00:26PM +0800, Jijie Shao wrote:
-> This patch use seq_file for the following nodes:
-> fd_tcam/fd_counter
+On Mon, 07 Jul 2025 15:57:47 +0100,
+Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
 > 
-> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> On Sat, Jun 28, 2025 at 06:30:02PM +0100, Marc Zyngier wrote:
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+[...]
 
-    Andrew
+> > + * Effectively, this amounts to:
+> > + * - hwirq[7]::cpu[2:0] is the target frame number
+> > + * - hwirq[6:4] is the register index in any given frame
+> > + * - hwirq[3:0] is the MSI data
+> 
+> I think that adding macros to define these subfields shifts would simplify
+> reading and reviewing the code - while reviewing xgene_msi_isr() I
+> realized it is hard to understand where the shifts to pack/unpack hwirq come
+> from. I'd understand you don't want to use FIELD_PREP/GET on hwirq, it
+> is not a HW field but rather a SW encoding you created but at least defining
+> the shifts and using them throughout would help.
+
+I have no problem using FIELD_*() for that. I've now reworked this to
+make it clearer as well as added a bit more documentation on the
+behaviour of the MSInRx registers (they are quite funky).
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
