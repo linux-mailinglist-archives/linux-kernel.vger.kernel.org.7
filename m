@@ -1,133 +1,246 @@
-Return-Path: <linux-kernel+bounces-720841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 692A1AFC10A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:53:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D253AFC10C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1A7C1AA6D92
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:53:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 117121AA6E07
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE29B227E83;
-	Tue,  8 Jul 2025 02:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BA7226CFE;
+	Tue,  8 Jul 2025 02:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I+6eZrX2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="veI//qkf"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D3A383;
-	Tue,  8 Jul 2025 02:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0242D20B7FE
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 02:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751943181; cv=none; b=po4AaIjldPKB2s9jdbTV3ZoCc7FCaqM1hZL+qGsxbx2Q20+/QKomD51ux6sOZ+tgyB8ADNvQeCbw3xDz4i3Lb2VM7J7q6alY4Vu46/HJAOAjsmT5e+3bBfK9qF3P8lbd7MgzkPr037/oBaytWg5103kNrlpWh+M6tbIVwkwb33A=
+	t=1751943190; cv=none; b=qlvVF3CBMdtN5c+/7pbGpOiLpOxWCUd6eSrtKXhR9rlY2BripmNqnLefsrHBJ76MGhIMb7OEnoZGZUmfadI1B3zdIPiXO9Zmw7+O2++iuEI80rIiwH649SxI2d1EqDJE6g881qnaWkw9aFuEIu7UxqIrfc2CSm8wE425KQYdb0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751943181; c=relaxed/simple;
-	bh=2YPaOuP0AKZnwJ6QA5VdtBos5n+zVrR0TqRlQjwzdAQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WCSNDDZX61b96FcilPKcsgaMRfDPudMicSDeebVGCdcG8JBgPTZmEroe2eDC0LGV7VOJg9ssPIU1pzKYqPHLR5rh2jKplbjVgnwe3W4zhLCQmrCEOxTVu+edYjRsJuuRQsWdmC84EhkquTh9fR8ov5CyT+ZW0jBhUYFNz4qtSd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I+6eZrX2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 567MXP4h019666;
-	Tue, 8 Jul 2025 02:52:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sR815mEl+sUZgpjEY6ReuyVgD3GFXXoJSV6V6GNAHLw=; b=I+6eZrX29+efemxn
-	iD1gVeUEGSmsWSrR84vXr8U01pk+aRJoNIndtKmBRFtZz1cC5QOtWnI/gIL5aRQE
-	IUCXmUweQZ+6dEMDEZGdmxl81H+bJu0aznH16MwvJcYpCwnmAFixEn2yAQaG3Mit
-	4TZNzwEx1pNRxzHhAOjcI/fI+Kl0oov1LDHp3KxhIyq0a63c/cp/m8igg69trnbk
-	JH0J3Obtnk8kBHxRglg3w5gSLAz/QkBW4Y8ZaM0gyfp+l3tnABSq3DadxSjyky+q
-	Lmi4B/lAfGFgMAmm/WHc6TQM/bLXKPCTBliRQccEmCno+twRn8zAPgKzXWxRdD8Y
-	0gyv4Q==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47psdqtmbn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Jul 2025 02:52:36 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5682qZuI026457
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 8 Jul 2025 02:52:35 GMT
-Received: from [10.253.13.246] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 7 Jul
- 2025 19:52:32 -0700
-Message-ID: <720a6969-7d30-4eb8-a970-2e06740c2780@quicinc.com>
-Date: Tue, 8 Jul 2025 10:52:30 +0800
+	s=arc-20240116; t=1751943190; c=relaxed/simple;
+	bh=XF/uGrtSptwtHtREcaHsc5q1URje318fjfLC475Pkuk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=La7U0XoNdz401MRANWTsaxj4LORaUXiVgHJ8plOIYEftsqrYVfr2gRquOQ+EPocG9G5aRBBQcb+twNtuYylEAJcNpH1m23TKFsjdg/bzG0UJlQhm8uXACa/DKvNI+CzWqTCo90NN0AeTA8Mc+GWLyxdto9kAJQzJuv3vZTy+bg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=veI//qkf; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-711d4689084so37824687b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 19:53:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751943188; x=1752547988; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/zGCQGxHrSRe/NxvAWIAsgtbup/awoRMVdcTUBJfyTs=;
+        b=veI//qkfT5iRWNQT0oNKWtkktbJRy2pA3ifntX4lRuCokWnbUQIIzaVIzT6cbj17sF
+         g8fN68yvG3FSBYs4epE0+e86a2kXig7KKO2mirq/TNDQqgoyB8hsKzfv17the5xn0/R+
+         r90kI2Aqpb6nNrKsu5iHwciUsFlU10fJuJfIp/3ogiPBahkT3dGOpAgutQnjR/csLnR3
+         y6bQyy4EN8PRm2njVRiuqlXWJH7/6k4KLKjhtAjsER1iqM8lHvxq8aYgqrhK5Nz9YI2d
+         81B5ZgDAxrGb0VriGt8tpsP1Dckh6WU8KYScgMDnQNEvIv+ScCXYyxANykYkLfI+myIM
+         RGdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751943188; x=1752547988;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/zGCQGxHrSRe/NxvAWIAsgtbup/awoRMVdcTUBJfyTs=;
+        b=RIXHBGB/yztw9Xa9aV4iIqktrbVVg7LI9VN9Xu0K668KHrCftUuDVfusXvmxdRBK1p
+         IKWAsmuOlU+FWtdDwmPdLOzUO48LdrT6R6VPoU9hjug3zZ3nZvW8JP7hxTAY427uMeh+
+         EdnlqRVfU2skC0yC8J4nwqG9Cn8xRq+ZjldGlMZr2jWYbFW2MNKOF/iIeax6KPB4j85d
+         7qzL0ZWNIj0dx48fi4HOJkd0cz4viKAORiGRDbfWJWI6f0UZpVurJrqJ+4nfSXQYkgxI
+         oYeuZg9fbcMZzWJ3HamsTmWy8LODou5t3r8AWEKGsdboaCUtO5ZzH/GbVRqsMJsCUf+e
+         aKXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXszIqS486F7IMgrsIVXcHjfcleAyXf8Z34ve9+gA8zFJ7LRvXvBiI7ZpYD/BIsoLdPWVZP83IBQxoO2is=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQE2wI5r0ZJSwzU939/CA18jJts0HaGT+aLWYL+XCJiAK9XaVv
+	SwiM9jlj6OaOW2//snf3n5AZ8LXBzcz0QPBTvle/YfHmVexsEnzTS/JaZSuRHBF24A==
+X-Gm-Gg: ASbGncu0Q4z9cFztpLExUk1klMtJdVbguNH8gXO7EMkITkeaWoG3J2GUtCyJkBvo98Q
+	0um2b706kW7rqxA2YR0G1ASq/1R8XrTHf4X+cNtv64O8SPk2scOqOSYa2IwwyLZBQVIN4qtRUA5
+	I82+38O0W9Mlw9FYzAKqHuY7cxN3PQO20jiEe9iIL+gDcI/sjmilXW2RsO7WzinTfgPMBRtQG1V
+	vnr2NHZ6LGoDTyqlIn60xUMmHizPxuOSDO6vMZXZvurhCcej7ECUQOTZW60xbEiaFxpd1+RXCyk
+	k+wRDmz9AoZK4qAOBeyUlQXlQGqXOJsZJk5Sw6+SBI21pW7RERG8QCcUtTBZeTKwNScW/WLBwmU
+	pH3pa2yncdGQ4YmXmL4tqHXrQQZ2kQcTVULZGtCyVoqKNLvk=
+X-Google-Smtp-Source: AGHT+IFGk1zw6u42yZgVl3xmkGAoYOyMoRKxLmKRqsd/hjEURFvgk/4mOy+h8KG+4313YBELzU59vA==
+X-Received: by 2002:a05:690c:62c6:b0:716:69e0:bb85 with SMTP id 00721157ae682-717a036f27fmr14923907b3.18.1751943187668;
+        Mon, 07 Jul 2025 19:53:07 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71665ae2c29sm19151417b3.78.2025.07.07.19.53.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 19:53:06 -0700 (PDT)
+Date: Mon, 7 Jul 2025 19:52:51 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: David Hildenbrand <david@redhat.com>
+cc: Hugh Dickins <hughd@google.com>, Lance Yang <lance.yang@linux.dev>, 
+    Oscar Salvador <osalvador@suse.de>, linux-kernel@vger.kernel.org, 
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nvdimm@lists.linux.dev, 
+    Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>, 
+    Stefano Stabellini <sstabellini@kernel.org>, 
+    Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
+    Dan Williams <dan.j.williams@intel.com>, 
+    Alistair Popple <apopple@nvidia.com>, Matthew Wilcox <willy@infradead.org>, 
+    Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+    Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>, 
+    Baolin Wang <baolin.wang@linux.alibaba.com>, 
+    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+    Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+    Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+    Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+    Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+    Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
+    Lance Yang <ioworker0@gmail.com>
+Subject: Re: [PATCH RFC 01/14] mm/memory: drop highest_memmap_pfn sanity
+ check in vm_normal_page()
+In-Reply-To: <36dd6b12-f683-48a2-8b9c-c8cd0949dfdc@redhat.com>
+Message-ID: <0b1cb496-4e50-252e-5bcf-74a89a78a8c0@google.com>
+References: <20250617154345.2494405-1-david@redhat.com> <20250617154345.2494405-2-david@redhat.com> <aFVZCvOpIpBGAf9w@localhost.localdomain> <c88c29d2-d887-4c5a-8b4e-0cf30e71d596@redhat.com> <CABzRoyZtxBgJUZK4p0V1sPAqbNr=6S-aE1S68u8tKo=cZ2ELSw@mail.gmail.com>
+ <5e5e8d79-61b1-465d-ab5a-4fa82d401215@redhat.com> <aa977869-f93f-4c2b-a189-f90e2d3bc7da@linux.dev> <b6d79033-b887-4ce7-b8f2-564cad7ec535@redhat.com> <b0984e6e-eabd-ed71-63c3-4c4d362553e8@google.com> <36dd6b12-f683-48a2-8b9c-c8cd0949dfdc@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND net 3/3] net: phy: qcom: qca807x: Enable WoL
- support using shared library
-To: Jakub Kicinski <kuba@kernel.org>
-CC: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Paolo Abeni
-	<pabeni@redhat.com>,
-        Viorel Suman <viorel.suman@nxp.com>, Li Yang
-	<leoyang.li@nxp.com>,
-        "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-        Wei Fang <wei.fang@nxp.com>, <linux-arm-msm@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <maxime.chevallier@bootlin.com>
-References: <20250704-qcom_phy_wol_support-v1-0-053342b1538d@quicinc.com>
- <20250704-qcom_phy_wol_support-v1-3-053342b1538d@quicinc.com>
- <20250707164332.1a3aaece@kernel.org>
-Content-Language: en-US
-From: Luo Jie <quic_luoj@quicinc.com>
-In-Reply-To: <20250707164332.1a3aaece@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=ffSty1QF c=1 sm=1 tr=0 ts=686c87f4 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
- a=5vVSTZcSAIpnvYd1Sv0A:9 a=QEXdDO2ut3YA:10 a=0lgtpPvCYYIA:10
-X-Proofpoint-ORIG-GUID: YH3PtwPB5M3HBfmMXCuPuMKfiWXBU18m
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDAyMiBTYWx0ZWRfXxiL6U2Luud0t
- DqhhkBXzEEByLIcuanmT/3wA+zcWDk05ueIVtroO1U18ORkT6No3LDZVhZ85L3C/qAajY2yjZjN
- eEVm4aE9x34c6uac7RpNtBllUQ/FhBgyZnDtSXDsahvJE4T9lRwMByftnn9rFwVS2EwKKAakmoF
- 2Sr5sC5MkI67nHoqu818BzjEujYgq2bICTslJV7pv84KUqJjJhLrJw9HphIcP3ulHVLw3WlSU7q
- nLE1HLwcmsW91L9Whl5o/aG1C1dbWPwpYvQuCaroKsOmLl1ItxUkjufceilbLz34BprwxmJkmDQ
- gbmTucIiC0MqZQCnTUVdbTYDBweD/UTjOO69nHFgXbTOvGFhjrxpKmzS+iHHPIy+NcrbJxvkWdj
- b76cwNXfTrJ1aZ9YQx0nomuTwKSuY7+XVOgPtxIfCoOG9aTJ2mFowpCvrTID+PK9Iq0TbAVr
-X-Proofpoint-GUID: YH3PtwPB5M3HBfmMXCuPuMKfiWXBU18m
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-08_01,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 mlxlogscore=893 mlxscore=0 bulkscore=0 priorityscore=1501
- phishscore=0 clxscore=1015 suspectscore=0 impostorscore=0 lowpriorityscore=0
- spamscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507080022
+Content-Type: multipart/mixed; boundary="-1463770367-475110467-1751943186=:6773"
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
+---1463770367-475110467-1751943186=:6773
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-On 7/8/2025 7:43 AM, Jakub Kicinski wrote:
-> On Fri, 4 Jul 2025 13:31:15 +0800 Luo Jie wrote:
->> The Wake-on-LAN (WoL) functionality for the QCA807x series is identical
->> to that of the AT8031. WoL support for QCA807x is enabled by utilizing
->> the at8031_set_wol() function provided in the shared library.
-> 
-> This needs to go to net-next in around a week (fixes go to net and
-> propagate to net-next only once a week, around Thursday/Friday).
-> I will apply the first 2 patches, please repost this later.
+On Mon, 7 Jul 2025, David Hildenbrand wrote:
+> On 07.07.25 08:31, Hugh Dickins wrote:
+> > On Fri, 4 Jul 2025, David Hildenbrand wrote:
+> >> On 03.07.25 16:44, Lance Yang wrote:
+> >>> On 2025/7/3 20:39, David Hildenbrand wrote:
+> >>>> On 03.07.25 14:34, Lance Yang wrote:
+> >>>>> On Mon, Jun 23, 2025 at 10:04=E2=80=AFPM David Hildenbrand <david@r=
+edhat.com>
+> >>>>> wrote:
+> >>>>>>
+> >>>>>> On 20.06.25 14:50, Oscar Salvador wrote:
+> >>>>>>> On Tue, Jun 17, 2025 at 05:43:32PM +0200, David Hildenbrand wrote=
+:
+> >>>>>>>> In 2009, we converted a VM_BUG_ON(!pfn_valid(pfn)) to the curren=
+t
+> >>>>>>>> highest_memmap_pfn sanity check in commit 22b31eec63e5 ("badpage=
+:
+> >>>>>>>> vm_normal_page use print_bad_pte"), because highest_memmap_pfn w=
+as
+> >>>>>>>> readily available.
 
-Understand. Thank you for applying the first two patches. I will repost
-the remaining patch to net-next once the first two are available there,
-as advised.
+highest_memmap_pfn was introduced by that commit for this purpose.
 
+> >>>>>>>>
+> >>>>>>>> Nowadays, this is the last remaining highest_memmap_pfn user, an=
+d
+> >>>>>>>> this
+> >>>>>>>> sanity check is not really triggering ... frequently.
+> >>>>>>>>
+> >>>>>>>> Let's convert it to VM_WARN_ON_ONCE(!pfn_valid(pfn)), so we can
+> >>>>>>>> simplify and get rid of highest_memmap_pfn. Checking for
+> >>>>>>>> pfn_to_online_page() might be even better, but it would not hand=
+le
+> >>>>>>>> ZONE_DEVICE properly.
+> >>>>>>>>
+> >>>>>>>> Do the same in vm_normal_page_pmd(), where we don't even report =
+a
+> >>>>>>>> problem at all ...
+> >>>>>>>>
+> >>>>>>>> What might be better in the future is having a runtime option li=
+ke
+> >>>>>>>> page-table-check to enable such checks dynamically on-demand.
+> >>>>>>>> Something
+> >>>>>>>> for the future.
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+> >=20
+> > The author of 22b31eec63e5 thinks this is not at all an improvement.
+> > Of course the condition is not triggering frequently, of course it
+> > should not happen: but it does happen, and it still seems worthwhile
+> > to catch it in production with a "Bad page map" than to let it run on
+> > to whatever kind of crash it hits instead.
+>=20
+> Well, obviously I don't agree and was waiting for having this discussion =
+:)
+>=20
+> We catch corruption in a handful of PTE bits, and that's about it. You ne=
+ither
+> detect corruption of flags nor of PFN bits that result in another valid P=
+FN.
+
+Of course it's limited in what it can catch (and won't even get called
+if the present bit was not set - a more complete patch might unify with
+those various "Bad swap" messages). Of course. But it's still useful for
+stopping pfn_to_page() veering off the end of the memmap[] (in some configs=
+).
+And it's still useful for printing out a series of "Bad page map" messages
+when the page table is corrupted: from which a picture can sometimes be
+built up (isolated instance may just be a bitflip; series of them can
+sometimes show e.g. ascii text, occasionally helpful for debugging).
+
+>=20
+> Corruption of the "special" bit might be fun.
+>=20
+> When I was able to trigger this during development once, the whole machin=
+e
+> went down shortly after -- mostly because of use-after-free of something =
+that
+> is now a page table, which is just bad for both users of such a page!
+>=20
+> E.g., quit that process and we will happily clear the PTE, corrupting dat=
+a of
+> the other user. Fun.
+>=20
+> I'm sure I could find a way to unify the code while printing some compara=
+ble
+> message, but this check as it stands is just not worth it IMHO: trying to
+> handle something gracefully that shouldn't happen, when really we cannot
+> handle it gracefully.
+
+So, you have experience of a time when it didn't help you. Okay. And we
+have had experience of other times when it has helped, if only a little.
+Like with other "Bad page"s: sometimes helpful, often not; but tending to
+build up a big picture from repeated occurrences.
+
+We continue to disagree. I can't argue more than append the 2.6.29
+commit message, which seems to me as valid now as it was then.
+
+From=2022b31eec63e5f2e219a3ee15f456897272bc73e8 Mon Sep 17 00:00:00 2001
+From: Hugh Dickins <hugh@veritas.com>
+Date: Tue, 6 Jan 2009 14:40:09 -0800
+Subject: [PATCH] badpage: vm_normal_page use print_bad_pte
+
+print_bad_pte() is so far being called only when zap_pte_range() finds
+negative page_mapcount, or there's a fault on a pte_file where it does not
+belong.  That's weak coverage when we suspect pagetable corruption.
+
+Originally, it was called when vm_normal_page() found an invalid pfn: but
+pfn_valid is expensive on some architectures and configurations, so 2.6.24
+put that under CONFIG_DEBUG_VM (which doesn't help in the field), then
+2.6.26 replaced it by a VM_BUG_ON (likewise).
+
+Reinstate the print_bad_pte() in vm_normal_page(), but use a cheaper test
+than pfn_valid(): memmap_init_zone() (used in bootup and hotplug) keep a
+__read_mostly note of the highest_memmap_pfn, vm_normal_page() then check
+pfn against that.  We could call this pfn_plausible() or pfn_sane(), but I
+doubt we'll need it elsewhere: of course it's not reliable, but gives much
+stronger pagetable validation on many boxes.
+
+Also use print_bad_pte() when the pte_special bit is found outside a
+VM_PFNMAP or VM_MIXEDMAP area, instead of VM_BUG_ON.
+
+Signed-off-by: Hugh Dickins <hugh@veritas.com>
+Cc: Nick Piggin <nickpiggin@yahoo.com.au>
+Cc: Christoph Lameter <cl@linux-foundation.org>
+Cc: Mel Gorman <mel@csn.ul.ie>
+Cc: Rik van Riel <riel@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+---1463770367-475110467-1751943186=:6773--
 
