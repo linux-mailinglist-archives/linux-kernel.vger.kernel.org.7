@@ -1,52 +1,62 @@
-Return-Path: <linux-kernel+bounces-720867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2CD3AFC159
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:22:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6225BAFC157
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 679EE7B0B4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:21:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 289ED7AFFB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360E0238D57;
-	Tue,  8 Jul 2025 03:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715DD233D85;
+	Tue,  8 Jul 2025 03:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b="EzSrw4gA"
-Received: from lf-2-13.ptr.blmpb.com (lf-2-13.ptr.blmpb.com [101.36.218.13])
+	dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b="0XFtq1rI"
+Received: from sg-1-30.ptr.blmpb.com (sg-1-30.ptr.blmpb.com [118.26.132.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F88217719
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 03:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.36.218.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E80217719
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 03:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751944949; cv=none; b=GEiq4WRHYSB0xIs8NCaRwsLrrLAX8EhDUl4gXvviPk5VlL/gUQlzXPIZ9vry2hEfCCnikZdPLG8tAHB23PUIt6km5sOd7tEJ5WVwbeIQPuJ07lLggR7Jm6EySFR9HjmYZ+6M/QnzOoxdJu0z86eDAdmiY3qwp+/t+n+o6Mv0V5w=
+	t=1751944892; cv=none; b=sLcW8P4JB30tgut6ZL4GbueQ0cTMtKRvxd2+jHrgqsH4uEAv/XRUxRGtbKq6Fp9A0ZEQBR5xoD+/CDZatRu7DWJdIP3ZXgDrzrURY0oIXGL/AmnB/5NwXvmFcnfCCtQ31DK/AE8jiuB0hvPVm7FSw1O3ukh/OEQU/nXS+BoI2jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751944949; c=relaxed/simple;
-	bh=WQZKwypkZrCF+/DhG7S/1KUaqssSv7W18WeRUduYiOE=;
-	h=References:Subject:Date:Cc:Mime-Version:In-Reply-To:Content-Type:
-	 To:Message-Id:From; b=mESXfl9BpoUn+brmjILBNLQFuzMTF0usZ6AtIdJL7oeLlEGYe1UJbNdUzuGzr5dWhNsifrliNLyOm9d5WJFDG9swgNuuluAuJtct7PlWqiI/QikWeQX/OUALUozgURhGNhRnz4RIicBfqARyM29tVg7YzYez02z4pqNWLGRb07g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com; spf=pass smtp.mailfrom=lanxincomputing.com; dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b=EzSrw4gA; arc=none smtp.client-ip=101.36.218.13
+	s=arc-20240116; t=1751944892; c=relaxed/simple;
+	bh=bzHv4eU31X/RdPTqcUe73N6UHOSb98BHHaw0WjDXxpg=;
+	h=Mime-Version:From:Date:Subject:In-Reply-To:Content-Type:
+	 References:To:Cc:Message-Id; b=E9i8bLFfisATf6LT81lL/DVd0f1UdV/povE75U5IfLnN1AtPzzsmXMV6rCU1AF6e/4pZBCV0ak2uajQVlvmKm1Z/oMGFLlwtc15EB6kP09ex6u1jpiMiHlNVxQp3174lU86cRdDzCV73e+BmjrdaKJ9eLVZ0ecUkeHbzLblJd6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com; spf=pass smtp.mailfrom=lanxincomputing.com; dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b=0XFtq1rI; arc=none smtp.client-ip=118.26.132.30
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lanxincomputing.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=lanxincomputing-com.20200927.dkim.feishu.cn; t=1751944859;
+ s=s1; d=lanxincomputing-com.20200927.dkim.feishu.cn; t=1751944882;
   h=from:subject:mime-version:from:date:message-id:subject:to:cc:
  reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=nVxAK1p5Sjn1pa+f8rh0kQXv3kG+RwEoJSIwBTfC/x8=;
- b=EzSrw4gA5uQL1GjOcnwI3cz6hkdgMmSdQDxiuXqryZ5J68k/pSVtWsPu6bxBf5ZKJc3QEF
- 616cYCTa+DDvfYG4NDEc+I+1lNISzqsLl/tn3VdCEPA1PlOIwEH767f4LharV+9jVdvuxv
- ytGFqTIKWQ56Z5ZlLLVf2xYxMZcX78ydNkMCG/eP/iyBBY7DY6erLvuKCTVGcgi5gjgt51
- YBKFedYttRkkxq/8ISHCiDHacWklSdT5V2D2b4MpRn+7xFWLSEut7jI/k3PMf6OrY+Mtkk
- 7mTDSjO4PRXkmObemFcYSrLbiYRme6MIdwTU4Jp9d95/IRQddTGN9SHbxwrylQ==
-References: <cover.1751700954.git.rabenda.cn@gmail.com> <27091134ce1f8a6541a349afc324d6f7402ea606.1751700954.git.rabenda.cn@gmail.com>
-X-Original-From: Nutty Liu <liujingqi@lanxincomputing.com>
-Content-Language: en-US
-Subject: Re: [PATCH v3 2/3] riscv: dts: sophgo: add Sophgo SG2042_EVB_V1.X board device tree
-Date: Tue, 8 Jul 2025 11:20:53 +0800
-Content-Transfer-Encoding: 7bit
+ bh=zg/YomFgWluXbABhhcO8ioOh4E5v2C7pZz7d5544dM4=;
+ b=0XFtq1rI2Q6dFJwemZvO8QeXnbU32xXFv6jDcy/HA7WN8LrPqfRr/5VgvayB9MVCwBTMXU
+ VJj6fRqLFra308eGJDZ4M09d20AFxzEtarTuQ7rE51jfY9g5egF8QXeNVtd9U+rxIGL8Fy
+ hVVzkmv+4ZArOPqEobdrPgRiLVEF+dyFvzM6+QHDTaXGQG7Cq3sqwQ0VzFu1PUzpEQxUyB
+ kk5iFmg/t46oZzorFzJnhG67UFUi3c/W09p6CSvQHbCGEuFQJAW1okA7UfDGUcPPWQNC3Q
+ zll79zrgR83ICAtQ6IxXvLBFF2i6PzAgrIkYTGjPQ1hEx7SkNUhwD+d3QX+jOg==
+Precedence: bulk
+X-Mailing-List: linux-kernel@vger.kernel.org
+List-Id: <linux-kernel.vger.kernel.org>
+List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Received: from [127.0.0.1] ([116.237.111.137]) by smtp.feishu.cn with ESMTPS; Tue, 08 Jul 2025 11:21:19 +0800
+From: "Nutty Liu" <liujingqi@lanxincomputing.com>
+Date: Tue, 8 Jul 2025 11:21:16 +0800
 User-Agent: Mozilla Thunderbird
+X-Lms-Return-Path: <lba+2686c8eb0+66e1f7+vger.kernel.org+liujingqi@lanxincomputing.com>
+Subject: Re: [PATCH v3 3/3] riscv: dts: sophgo: add Sophgo SG2042_EVB_V2.0 board device tree
+In-Reply-To: <c1b6ccdc69af0c1457fc1486a6bc8a1e83671537.1751700954.git.rabenda.cn@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+References: <cover.1751700954.git.rabenda.cn@gmail.com> <c1b6ccdc69af0c1457fc1486a6bc8a1e83671537.1751700954.git.rabenda.cn@gmail.com>
+X-Original-From: Nutty Liu <liujingqi@lanxincomputing.com>
+To: "Han Gao" <rabenda.cn@gmail.com>, <devicetree@vger.kernel.org>
 Cc: "Rob Herring" <robh@kernel.org>, 
 	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
 	"Conor Dooley" <conor+dt@kernel.org>, 
@@ -59,26 +69,16 @@ Cc: "Rob Herring" <robh@kernel.org>,
 	"Guo Ren" <guoren@kernel.org>, "Chao Wei" <chao.wei@sophgo.com>, 
 	<linux-riscv@lists.infradead.org>, <sophgo@lists.linux.dev>, 
 	<linux-kernel@vger.kernel.org>
-Precedence: bulk
-X-Mailing-List: linux-kernel@vger.kernel.org
-List-Id: <linux-kernel.vger.kernel.org>
-List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-In-Reply-To: <27091134ce1f8a6541a349afc324d6f7402ea606.1751700954.git.rabenda.cn@gmail.com>
-X-Lms-Return-Path: <lba+2686c8e99+3e9431+vger.kernel.org+liujingqi@lanxincomputing.com>
-Content-Type: text/plain; charset=UTF-8
-To: "Han Gao" <rabenda.cn@gmail.com>, <devicetree@vger.kernel.org>
-Message-Id: <0f5b623d-64d3-4ad8-8540-e10fb6e055a2@lanxincomputing.com>
-From: "Nutty Liu" <liujingqi@lanxincomputing.com>
-Received: from [127.0.0.1] ([116.237.111.137]) by smtp.feishu.cn with ESMTPS; Tue, 08 Jul 2025 11:20:56 +0800
+Message-Id: <e48c2706-86cf-4e1d-bfad-17f662f5fb75@lanxincomputing.com>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 
 On 7/5/2025 3:39 PM, Han Gao wrote:
-> Sophgo SG2042_EVB_V1.X [1] is a prototype development board based on SG2042
+> Sophgo SG2042_EVB_V2.0 [1] is a prototype development board based on SG2042
 >
 > Currently supports serial port, sdcard/emmc, pwm, fan speed control.
 >
-> Link: https://github.com/sophgo/sophgo-hardware/tree/master/SG2042/SG2042-x8-EVB [1]
+> Link: https://github.com/sophgo/sophgo-hardware/tree/master/SG2042/SG2042-x4-EVB [1]
 >
 > Signed-off-by: Han Gao <rabenda.cn@gmail.com>
 
@@ -89,26 +89,26 @@ Nutty
 
 > ---
 >   arch/riscv/boot/dts/sophgo/Makefile          |   1 +
->   arch/riscv/boot/dts/sophgo/sg2042-evb-v1.dts | 245 +++++++++++++++++++
->   2 files changed, 246 insertions(+)
->   create mode 100644 arch/riscv/boot/dts/sophgo/sg2042-evb-v1.dts
+>   arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts | 233 +++++++++++++++++++
+>   2 files changed, 234 insertions(+)
+>   create mode 100644 arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts
 >
 > diff --git a/arch/riscv/boot/dts/sophgo/Makefile b/arch/riscv/boot/dts/sophgo/Makefile
-> index 85966306801e..6c9b29681cad 100644
+> index 6c9b29681cad..6f65526d4193 100644
 > --- a/arch/riscv/boot/dts/sophgo/Makefile
 > +++ b/arch/riscv/boot/dts/sophgo/Makefile
-> @@ -3,4 +3,5 @@ dtb-$(CONFIG_ARCH_SOPHGO) += cv1800b-milkv-duo.dtb
->   dtb-$(CONFIG_ARCH_SOPHGO) += cv1812h-huashan-pi.dtb
+> @@ -4,4 +4,5 @@ dtb-$(CONFIG_ARCH_SOPHGO) += cv1812h-huashan-pi.dtb
 >   dtb-$(CONFIG_ARCH_SOPHGO) += sg2002-licheerv-nano-b.dtb
 >   dtb-$(CONFIG_ARCH_SOPHGO) += sg2042-milkv-pioneer.dtb
-> +dtb-$(CONFIG_ARCH_SOPHGO) += sg2042-evb-v1.dtb
+>   dtb-$(CONFIG_ARCH_SOPHGO) += sg2042-evb-v1.dtb
+> +dtb-$(CONFIG_ARCH_SOPHGO) += sg2042-evb-v2.dtb
 >   dtb-$(CONFIG_ARCH_SOPHGO) += sg2044-sophgo-srd3-10.dtb
-> diff --git a/arch/riscv/boot/dts/sophgo/sg2042-evb-v1.dts b/arch/riscv/boot/dts/sophgo/sg2042-evb-v1.dts
+> diff --git a/arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts b/arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts
 > new file mode 100644
-> index 000000000000..3320bc1dd2c6
+> index 000000000000..46980e41b886
 > --- /dev/null
-> +++ b/arch/riscv/boot/dts/sophgo/sg2042-evb-v1.dts
-> @@ -0,0 +1,245 @@
+> +++ b/arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts
+> @@ -0,0 +1,233 @@
 > +// SPDX-License-Identifier: GPL-2.0 OR MIT
 > +/*
 > + * Copyright (C) 2025 Sophgo Technology Inc. All rights reserved.
@@ -120,23 +120,11 @@ Nutty
 > +#include <dt-bindings/input/input.h>
 > +
 > +/ {
-> +	model = "Sophgo SG2042 EVB V1.X";
-> +	compatible = "sophgo,sg2042-evb-v1", "sophgo,sg2042";
+> +	model = "Sophgo SG2042 EVB V2.0";
+> +	compatible = "sophgo,sg2042-evb-v2", "sophgo,sg2042";
 > +
 > +	chosen {
 > +		stdout-path = "serial0";
-> +	};
-> +
-> +	gpio-power {
-> +		compatible = "gpio-keys";
-> +
-> +		key-power {
-> +			label = "Power Key";
-> +			linux,code = <KEY_POWER>;
-> +			gpios = <&port0a 22 GPIO_ACTIVE_HIGH>;
-> +			linux,input-type = <EV_KEY>;
-> +			debounce-interval = <100>;
-> +		};
 > +	};
 > +
 > +	pwmfan: pwm-fan {
