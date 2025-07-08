@@ -1,106 +1,129 @@
-Return-Path: <linux-kernel+bounces-721189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C002AFC5E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:39:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68AB2AFC5EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD6BC1699D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:39:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A6863A824D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E34A2BD590;
-	Tue,  8 Jul 2025 08:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D58F2BE03D;
+	Tue,  8 Jul 2025 08:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X1elsLSu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RbAJxTN8"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19772BE038;
-	Tue,  8 Jul 2025 08:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AE22BD016
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 08:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751963968; cv=none; b=JAbOysac5+nhiyVD2qUmoMcm8pjW6pYrpHH36fDrN45xNxfCAMTNjvy90cMF7RcyKU/kaQwFWT+T6APVnH/HS0j5XjewpOvMd1c7Z76rBU9QF0zMmQAi3J+FePPMp+FVxU8zJEOy5jHQqcDJAN1Ckvfmk3LpDIAAjLKXU2GjGGM=
+	t=1751964009; cv=none; b=a2Dk8zoe+gqVoyfM1SdUWeu089rU6WGQ6xVqFbi3zD2AHuCMr2cXB4/ZKBb9Yh2ribyQ0J2zueBZWUSVJq5ujJP2jEmd12Ru1991OnulPQaixMTbHzkU7kz8rqi7681H7e0nKzU7fKzrfRp3mjWvw/GgzFGfSRmAwkh+D2/agr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751963968; c=relaxed/simple;
-	bh=AgF/cWa8tyl4lX11C1ELXJPj6/yeF0Nvjn6w56HxM2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pPnMQdd66EZ32SYoiE2ih+iHO1oofCAuHQTPJsCIbrQSXBkFLtiNn50C7veN2ld9me+358orop3S3L3VBLKbt7qL6dyVeKQt1V7REwa6B2R+TE8lrPaYE7oh0LlwcR0ViWSSt87OZzNYXcuDznEmLoPHfvoS0p239/Myz0UEV0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X1elsLSu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CADF6C4CEED;
-	Tue,  8 Jul 2025 08:39:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751963968;
-	bh=AgF/cWa8tyl4lX11C1ELXJPj6/yeF0Nvjn6w56HxM2I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X1elsLSuTAVqQrj4csDgKcoib/rCgA+uxml22fkkRBDTABgwtDHHkCGH087jr0DMB
-	 CON6nvJ/lBgoCgdpXcz8MBqAfSOPEKm9HgkDb8BNyJkboISFMTgQG54ZWCWM1/nIeo
-	 qXc/FocCcUTyWjhMMP56VDYnY1azjS+LVwcy/0KM0WjXD4R+hGtQXcjfTYsnlZM3IH
-	 dm1cUvymqd++wfoTLvyfs9rQvNqTrGG4lrUuHMF696FG4IBAWDMKgSC0n5Rdt+ihyH
-	 82mYO8brI+We01pcfyRzLJywrk2oU7lwdx7KKMofCRbOXwuaWFy+b+U6si7PogTJWH
-	 cnhEpuEavWN7A==
-Date: Tue, 8 Jul 2025 10:39:25 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Stuart Burtner <sburtner@d3embedded.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Spencer Hill <shill@d3engineering.com>, Sebastian LaVine <slavine@d3engineering.com>
-Subject: Re: [PATCH 1/2] media: dt-bindings: Add Sony IMX728
-Message-ID: <20250708-kiwi-of-delightful-wholeness-cc90ea@krzk-bin>
-References: <20250625-imx728-on-6-12-v4-v1-0-cfc6e18c3e23@d3embedded.com>
- <20250625-imx728-on-6-12-v4-v1-1-cfc6e18c3e23@d3embedded.com>
+	s=arc-20240116; t=1751964009; c=relaxed/simple;
+	bh=oaSnugCEdeQcBT4v6FEIbhEgdiJTD1Msrq8MfPMc5iU=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=mmTIOHu2+c46EGFq9ivQw2xbUyk8XGHf2R5XsowFivP6eR8H/ftUZiymxPYuarvtl5TkS87wriZRY/VC3Pi5AOkI8K//n6Ivvgs0w5XPHUUXcfmbwg1AU6DWG4t7HIvv+phMj3upJqXtbVAf9QyzDA8i2N4TDL9fuKlYT89s2ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RbAJxTN8; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-716ee8947cdso29784127b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 01:40:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751964007; x=1752568807; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gl0QAD/tbVzDvZuawsafKO1HsSUYi+swaKefHPvsCQM=;
+        b=RbAJxTN8gBlzBf1fz+cmn1hLmFTtiOf2kz/KgisDZ8Dp1yDyRLXialPr2w/U/HR0hH
+         aA58jewsDljlwBRVz6L3EjzqoWhQy83SGtesCBgbKoRBCRWIgcHoDbJyxmtjJyuk9b1k
+         rTYsdxet+roIIDIwxE8tbZ4Y5FlnU3HWF1Q650WARoR0sNceu6G2WYz9ah3ZNneSK266
+         fLrMVaKUO+0fNn/4X6HKpVhCbprfv0TVzgax2dE8JT8HgqmTzRPyGeVSQ5tTaSghxRVw
+         ljfx1KkhEPAvMuIeYrWlPKLYc9omaE59N2rRQOIQoCTHzBHcHp/Q5ah+YZJUf8HRB0Jr
+         /wJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751964007; x=1752568807;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gl0QAD/tbVzDvZuawsafKO1HsSUYi+swaKefHPvsCQM=;
+        b=t6FxNdATGPsNuYWqdtQOhVyNpXqgJRi8qA1OnS18B7dujXS4UPw0E3/oHUacyibj+a
+         ZHtkrUb6kd7x36vXeIqW8uQlzXYLHMmBCTo5V7PfPYYkYlJ9umn96BJ3aqZbPxJMhxax
+         XSW3drLjybexkOS9pXYwRvPodMsN7VfLYoaoEUg3W8GWJywXgokWri+l5VEZV00iwlDA
+         51yFl2A9vzdcIqKbDkdsTuiYWUUdyUoKDwR2F6xQrPE04jA8v5ud1fED9MQd1wob4ImO
+         SGLlO4c6ebL79FyaM6X/TyqKYirBRnf60vAMNkKpKY+yEGu5aZqNrrGtxDXq5tyAVmE5
+         d1hg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoxofiOZFmyMEycnJ5WiyRPlNtDezjWwbaPoNONSaFfbVnFyzq7WcZ8/Lnpx9Zg6oxGtVqy+GPfmnGW3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkRaaZz8peQG6VkKMn1hr1Fwcvj4rKg+8HTQWIDDe4osjlBr97
+	+TJL9vJN8SVkXZEbSd3O+4xRHfpTxW6p/3ct1VZNjWgWNbaMS9J23WJHHvu9AEnoa0W5plvNdzb
+	ROgfiMeDTtBciFX8xDbGK8jxd3pSIKRk=
+X-Gm-Gg: ASbGncvc5A1nWbnbAchbqFxx/J8NA3nCrb1d7jcQfA9dO5xI2cCvNVXNQ7z3UPul2gW
+	2F/dKTvJrHEiVSXWPePhsqjWA2XL99Wq8V+7dLJBiNgdZv0UTnuQcsv2wuUWwXxKEinCWi8d0MR
+	IqXJox9mSNV99tFS3LQz5k4+SK/8nY91ez4RC5ialc6W4nDAC73/Waz1l9wDuPQXjNaMhnfGm3U
+	f8k
+X-Google-Smtp-Source: AGHT+IFVSqFV+JHejEaMrQ/AcobiDs3n3dnlQorVuoAZYAXAjM1srOc9PMjjID6k+C5uO2bRlqNjtZJkfHvqbDsFdLk=
+X-Received: by 2002:a05:690c:60c1:b0:70f:83ef:ddff with SMTP id
+ 00721157ae682-71668d47390mr217482997b3.30.1751964007285; Tue, 08 Jul 2025
+ 01:40:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250625-imx728-on-6-12-v4-v1-1-cfc6e18c3e23@d3embedded.com>
+From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
+Date: Tue, 8 Jul 2025 01:39:55 -0700
+X-Gm-Features: Ac12FXzBCT5EBKeLYS0vb_uaT7F7BBoWv3Jo27oObiDeVLb3zges4wxI2j_RbzA
+Message-ID: <CAF3JpA5UK1iRiHTbPZNej5izQZNVwi3phN5f0pzCzadqn7K0+Q@mail.gmail.com>
+Subject: [syzbot] [ntfs3?] WARNING in ni_rename
+To: syzbot+b0373017f711c06ada64@syzkaller.appspotmail.com
+Cc: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: multipart/mixed; boundary="000000000000507a1d063966e8b7"
 
-On Wed, Jun 25, 2025 at 02:20:03PM -0400, Stuart Burtner wrote:
-> Add bindings for the Sony IMX728.
-> 
-> Co-developed-by: Spencer Hill <shill@d3engineering.com>
-> Signed-off-by: Spencer Hill <shill@d3engineering.com>
-> Co-developed-by: Sebastian LaVine <slavine@d3engineering.com>
-> Signed-off-by: Sebastian LaVine <slavine@d3engineering.com>
-> Signed-off-by: Stuart Burtner <sburtner@d3embedded.com>
-> ---
->  .../devicetree/bindings/media/i2c/sony,imx728.yaml | 95 ++++++++++++++++++++++
->  MAINTAINERS                                        |  6 ++
->  2 files changed, 101 insertions(+)
+--000000000000507a1d063966e8b7
+Content-Type: text/plain; charset="UTF-8"
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+#syz test
 
-<form letter>
-This is an automated instruction, just in case, because many review
-tags are being ignored. If you know the process, just skip it entirely
-(please do not feel offended by me posting it here - no bad intentions
-intended, no patronizing, I just want to avoid wasted efforts). If you
-do not know the process, here is a short explanation:
+--000000000000507a1d063966e8b7
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-ntfs3-reject-zero-length-BITMAP-when-index-blocks-ar.patch"
+Content-Disposition: attachment; 
+	filename="0001-ntfs3-reject-zero-length-BITMAP-when-index-blocks-ar.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_mcu9wgkq0>
+X-Attachment-Id: f_mcu9wgkq0
 
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions of patchset, under or above your Signed-off-by tag, unless
-patch changed significantly (e.g. new properties added to the DT
-bindings). Tag is "received", when provided in a message replied to you
-on the mailing list. Tools like b4 can help here ('b4 trailers -u ...').
-However, there's no need to repost patches *only* to add the tags. The
-upstream maintainer will do that for tags received on the version they
-apply.
-
-https://elixir.bootlin.com/linux/v6.15/source/Documentation/process/submitting-patches.rst#L591
-</form letter>
-
-Best regards,
-Krzysztof
-
+RnJvbSBhN2U5NGFkNDk1OWU0NmFjZjM4NjFmYTBjNzI1YTJkMGMzMzczZWJiIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBNb29uIEhlZSBMZWUgPG1vb25oZWUubGVlLmNhQGdtYWlsLmNv
+bT4KRGF0ZTogVHVlLCA4IEp1bCAyMDI1IDAxOjE3OjEzIC0wNzAwClN1YmplY3Q6IFtQQVRDSF0g
+bnRmczM6IHJlamVjdCB6ZXJvLWxlbmd0aCAkQklUTUFQIHdoZW4gaW5kZXggYmxvY2tzIGFyZQog
+YWxsb2NhdGVkCgpBIG5vbi1lbXB0eSBpbmRleCBhbGxvY2F0aW9uIHJlcXVpcmVzIGF0IGxlYXN0
+IG9uZSBiaXQgaW4gJEJJVE1BUAp0byB0cmFjayB1c2FnZS4gUmVqZWN0IG1hbGZvcm1lZCBvbi1k
+aXNrIHN0cnVjdHVyZXMgd2l0aCB6ZXJvLWxlbmd0aApiaXRtYXBzIGFuZCBhbGxvY2F0ZWQgaW5k
+ZXggYmxvY2tzLgoKU2lnbmVkLW9mZi1ieTogTW9vbiBIZWUgTGVlIDxtb29uaGVlLmxlZS5jYUBn
+bWFpbC5jb20+Ci0tLQogZnMvbnRmczMvaW5kZXguYyB8IDEyICsrKysrKysrKysrKwogMSBmaWxl
+IGNoYW5nZWQsIDEyIGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9mcy9udGZzMy9pbmRleC5j
+IGIvZnMvbnRmczMvaW5kZXguYwppbmRleCAxYmYyYTY1OTNkZWMuLjE1ZjNhNzExZWEwYSAxMDA2
+NDQKLS0tIGEvZnMvbnRmczMvaW5kZXguYworKysgYi9mcy9udGZzMy9pbmRleC5jCkBAIC00Nzgs
+NiArNDc4LDcgQEAgc3RhdGljIGludCBpbmR4X2ZpbmRfZnJlZShzdHJ1Y3QgbnRmc19pbmRleCAq
+aW5keCwgc3RydWN0IG50ZnNfaW5vZGUgKm5pLAogCXN0cnVjdCBBVFRSX0xJU1RfRU5UUlkgKmxl
+ID0gTlVMTDsKIAljb25zdCBzdHJ1Y3QgSU5ERVhfTkFNRVMgKmluID0gJnNfaW5kZXhfbmFtZXNb
+aW5keC0+dHlwZV07CiAJaW50IGVycjsKKwl1NjQgYm1fc2l6ZTsKIAogCWIgPSBuaV9maW5kX2F0
+dHIobmksIE5VTEwsICZsZSwgQVRUUl9CSVRNQVAsIGluLT5uYW1lLCBpbi0+bmFtZV9sZW4sCiAJ
+CQkgTlVMTCwgTlVMTCk7CkBAIC00ODgsNiArNDg5LDE3IEBAIHN0YXRpYyBpbnQgaW5keF9maW5k
+X2ZyZWUoc3RydWN0IG50ZnNfaW5kZXggKmluZHgsIHN0cnVjdCBudGZzX2lub2RlICpuaSwKIAkq
+Yml0bWFwID0gYjsKIAkqYml0ID0gTUlOVVNfT05FX1Q7CiAKKwlibV9zaXplID0gYi0+bm9uX3Jl
+cyA/IGxlNjRfdG9fY3B1KGItPm5yZXMudmFsaWRfc2l6ZSkgOgorCQkJICAgICAgIGxlMzJfdG9f
+Y3B1KGItPnJlcy5kYXRhX3NpemUpOworCisJLyoKKwkgKiBBbGxvY2F0ZWQgaW5kZXggYmxvY2tz
+IHJlcXVpcmUgJEJJVE1BUCB0byBjb250YWluIGF0IGxlYXN0CisJICogb25lIGJpdCBmb3IgdXNh
+Z2UgdHJhY2tpbmcuIEEgemVyby1sZW5ndGggYml0bWFwIGluIHRoaXMKKwkgKiBjYXNlIGluZGlj
+YXRlcyBhIG1hbGZvcm1lZCBvbi1kaXNrIHN0cnVjdHVyZSBhbmQgY2Fubm90IGJlIHVzZWQuCisJ
+ICovCisJaWYgKHVubGlrZWx5KGJtX3NpemUgPT0gMCAmJiBpbmR4LT5hbGxvY19ydW4uY291bnQp
+KQorCQlyZXR1cm4gLUVJTlZBTDsKKwogCWlmICghYi0+bm9uX3JlcykgewogCQl1MzIgbmJpdHMg
+PSA4ICogbGUzMl90b19jcHUoYi0+cmVzLmRhdGFfc2l6ZSk7CiAJCXNpemVfdCBwb3MgPSBmaW5k
+X25leHRfemVyb19iaXRfbGUocmVzaWRlbnRfZGF0YShiKSwgbmJpdHMsIDApOwotLSAKMi40My4w
+Cgo=
+--000000000000507a1d063966e8b7--
 
