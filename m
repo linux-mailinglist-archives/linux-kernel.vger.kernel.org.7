@@ -1,135 +1,95 @@
-Return-Path: <linux-kernel+bounces-721255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3BC0AFC6AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:07:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D69A0AFC6B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A3103B8EFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:06:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DAED188ECE2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3E9217F26;
-	Tue,  8 Jul 2025 09:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pbwyDWmg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FC52BEC31;
+	Tue,  8 Jul 2025 09:07:34 +0000 (UTC)
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD57F1D5150;
-	Tue,  8 Jul 2025 09:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72A32153ED
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 09:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751965628; cv=none; b=q8epYmUO641nprnnvkqX/XxttNF/iraJH0CkF7tYTT1YqGdRnRXHxG9BdHh4FtCxDxYxPmK1ZpQKpKA+0XkZQk9pOg2GW85NRb+EkzyAZunlOqD5jcDA+AuC3nT+V/H0RNQLA1W9zcAu/arIVzff6I0TdxoD0QYcYXUkzf9EyAg=
+	t=1751965653; cv=none; b=a5kmofduu6CjCbrWLM1TAJwhebFi3cCY13sqLW+mpE2pVZdb4WJZOi4gIPCEGX6ITvUTMCx9Z4IWIYCq0gblyJzijrmZwi9tv0YPtvH/odgTjIoqGGaQZlFL26UaPYZatz9iLTsp7YZACNK5hcskHF6AQQ9bJbZQ1Mph0lwaZhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751965628; c=relaxed/simple;
-	bh=al45WhcYx+cfhiLoHHzrSgYvrkI1MfO5KGvm49P1sUE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=oT9JyYOgxB2h8VKbfbCCGtXU9XJXbdsuAHAQgMI8ZFlAe83zjMzjvH1wfUeRABcok0ccGjQwv1a+6PRc1tRT6XyNFN/QPczI/fQvj4+GsUpzLYOMBVFxVb+VVHhQMzx+2wHZRv1QZ2CXhZijB///TPFMNgtfay6hOmanKbKRKWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pbwyDWmg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDD44C4CEED;
-	Tue,  8 Jul 2025 09:07:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751965628;
-	bh=al45WhcYx+cfhiLoHHzrSgYvrkI1MfO5KGvm49P1sUE=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=pbwyDWmgKqTSNdqYbXxUOy9WkKykYt/5jWR1HUlyYlk0oJwyak86Ui/RB6B8WWrzl
-	 qDSSy0XSL+t/91MzhAN9K/rfoSFs/urQh3Q5I43r7EwlNaQpvAunkODmnzcDw996I3
-	 CbwCJzPMXEgmQMC0UaKcGZ+HCyjPU7qPLoSujaf9mJutIaLWF5lGNSOp4ubhonhZSY
-	 k1frEetBV/HfVmhBtoEo13AENUWORSqUpl4V0PMHnOlvV1nWEMioqZ4aQpAcWgOHDz
-	 bcagQ3QFJooQVFkI4ERB/MY91taVQvEzBmypNcGkren7jngOj09nDEAmbBynVerws2
-	 Hxf5wpJ/HpBrQ==
+	s=arc-20240116; t=1751965653; c=relaxed/simple;
+	bh=EnzK60yhKAfZWWzHVu38i8WNczrl81z1SJICTHds6Po=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=adzdV2s5AyEAW8dGzL7r2x2g4psbyYCXd7IjGEgZYEzEpWEz6k7ODbMTRB6qTqc0vh3a8wO5twevvHIGiGmoNjzF5/L4Sx6wIMpnkaR0T8NKQODKPwohsQqVrgoLJscURCOuah+STxwqA5S76+NAmrYyI8w8OU4E3bBtnkAfo9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B0430432D6;
+	Tue,  8 Jul 2025 09:07:17 +0000 (UTC)
+Message-ID: <44501b6d-12de-49dc-8d81-443500031d4a@ghiti.fr>
+Date: Tue, 8 Jul 2025 11:07:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 08 Jul 2025 11:07:02 +0200
-Message-Id: <DB6JZBUSWGKX.3M3M5TSWPLLFN@kernel.org>
-Cc: "Alice Ryhl" <aliceryhl@google.com>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Masahiro
- Yamada" <masahiroy@kernel.org>, "Nathan Chancellor" <nathan@kernel.org>,
- "Luis Chamberlain" <mcgrof@kernel.org>, "Danilo Krummrich"
- <dakr@kernel.org>, "Nicolas Schier" <nicolas.schier@linux.dev>, "Trevor
- Gross" <tmgross@umich.edu>, "Adam Bratschi-Kaye" <ark.email@gmail.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-kbuild@vger.kernel.org>, "Petr Pavlu" <petr.pavlu@suse.com>, "Sami
- Tolvanen" <samitolvanen@google.com>, "Daniel Gomez" <da.gomez@samsung.com>,
- "Simona Vetter" <simona.vetter@ffwll.ch>, "Greg KH"
- <gregkh@linuxfoundation.org>, "Fiona Behrens" <me@kloenk.dev>, "Daniel
- Almeida" <daniel.almeida@collabora.com>, <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v15 1/7] rust: sync: add `SetOnce`
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Andreas Hindborg" <a.hindborg@kernel.org>, "Boqun Feng"
- <boqun.feng@gmail.com>
-X-Mailer: aerc 0.20.1
-References: <20250707-module-params-v3-v15-0-c1f4269a57b9@kernel.org>
- <20250707-module-params-v3-v15-1-c1f4269a57b9@kernel.org>
- <CAH5fLgiKo=jN_V5cAe_AJqxxp7mQWqhKx7knkEj6js3yiU9sqA@mail.gmail.com>
- <KNYMPkLfLvLb8ocrLqSmk-5hRGhRaaPQ2sDHN5JoPAUxYJWlHNiOW4HRmtDDGkoMRfNwpziT8mkRzlPkdxDVaQ==@protonmail.internalid> <aGvkFbs5caxLSQxa@Mac.home> <877c0joyfo.fsf@kernel.org>
-In-Reply-To: <877c0joyfo.fsf@kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: mmap(): use unsigned offset type in riscv_sys_mmap
+To: liu.xuemei1@zte.com.cn, paul.walmsley@sifive.com
+Cc: palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250707193411886Kc-TWknP0PER2_sEg-byb@zte.com.cn>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250707193411886Kc-TWknP0PER2_sEg-byb@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: 0
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefgedvkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpedthfelfeejgeehveegleejleelgfevhfekieffkeeujeetfedvvefhledvgeegieenucfkphepudekhedrvddufedrudehgedrudegfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedukeehrddvudefrdduheegrddugeefpdhhvghloheplgdutddrudegrddtrdduudgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhurdiguhgvmhgvihduseiithgvrdgtohhmrdgtnhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrn
+ hgvlhdrohhrgh
+X-GND-Sasl: alex@ghiti.fr
 
-On Tue Jul 8, 2025 at 10:54 AM CEST, Andreas Hindborg wrote:
-> "Boqun Feng" <boqun.feng@gmail.com> writes:
+Hi Jessica,
+
+On 7/7/25 13:34, liu.xuemei1@zte.com.cn wrote:
+> From: Jessica Liu <liu.xuemei1@zte.com.cn>
 >
->> On Mon, Jul 07, 2025 at 03:38:58PM +0200, Alice Ryhl wrote:
->>> On Mon, Jul 7, 2025 at 3:32=E2=80=AFPM Andreas Hindborg <a.hindborg@ker=
-nel.org> wrote:
->>> >
->>> > Introduce the `SetOnce` type, a container that can only be written on=
-ce.
->>> > The container uses an internal atomic to synchronize writes to the in=
-ternal
->>> > value.
->>> >
->>> > Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->>>
->>> LGTM:
->>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->>>
->>> > +impl<T> Drop for SetOnce<T> {
->>> > +    fn drop(&mut self) {
->>> > +        if self.init.load(Acquire) =3D=3D 2 {
->>> > +            // SAFETY: By the type invariants of `Self`, `self.init =
-=3D=3D 2` means that `self.value`
->>> > +            // contains a valid value. We have exclusive access, as =
-we hold a `mut` reference to
->>> > +            // `self`.
->>> > +            unsafe { drop_in_place(self.value.get()) };
->>>
->>> This load does not need to be Acquire. It can be a Relaxed load or
->>> even an unsynchronized one since the access is exclusive.
->>
->> Right, I think we can do the similar as Revocable here:
->>
->>         if *self.init.get_mut() =3D=3D 2 { }
->>
->> Further, with my following Benno's suggestion and making `Atomic<T>` an
->> `UnsafeCell<T>:
->>
->> 	https://lore.kernel.org/rust-for-linux/aGhh-TvNOWhkt0JG@Mac.home/
->>
->> compiler can generate a noalias reference here, which allows further
->> optimization.
->>
+> The variable type of offset should be consistent with the relevant
+> interfaces of mmap which described in commit 295f10061af0 ("syscalls:
+> mmap(): use unsigned offset type consistently). Otherwise, a user input
+> with the top bit set would result in a negative page offset rather than a
+> large one.
 >
-> You would like to remove `PhantomPinned` to enable noalias? I guess that
-> makes sense in this case. I'll fix that for next spin.
+> Signed-off-by: Jessica Liu <liu.xuemei1@zte.com.cn>
+> ---
+>   arch/riscv/kernel/sys_riscv.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/kernel/sys_riscv.c b/arch/riscv/kernel/sys_riscv.c
+> index d77afe05578f..795b2e815ac9 100644
+> --- a/arch/riscv/kernel/sys_riscv.c
+> +++ b/arch/riscv/kernel/sys_riscv.c
+> @@ -10,7 +10,7 @@
+>
+>   static long riscv_sys_mmap(unsigned long addr, unsigned long len,
+>   			   unsigned long prot, unsigned long flags,
+> -			   unsigned long fd, off_t offset,
+> +			   unsigned long fd, unsigned long offset,
+>   			   unsigned long page_shift_offset)
+>   {
+>   	if (unlikely(offset & (~PAGE_MASK >> page_shift_offset)))
 
-I think you two are talking about different things. Boqun is saying that
-the `Atomic<T>` will use `UnsafeCell` rather than `Opaque`, which will
-potentially allow more optimizations.
 
-But you are talking about `SetOnce`, right? I think it makes more sense
-for `SetOnce` to use `UnsafeCell<MaybeUninit<T>>` rather than `Opaque`
-too. So feel free to change it in the next version.
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
----
-Cheers,
-Benno
+Thanks,
+
+Alex
+
 
