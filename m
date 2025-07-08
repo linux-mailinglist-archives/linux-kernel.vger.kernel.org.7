@@ -1,119 +1,197 @@
-Return-Path: <linux-kernel+bounces-721039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7B8FAFC3F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:25:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD1B9AFC3CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D78F07A6931
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:24:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA770189DFB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B00298991;
-	Tue,  8 Jul 2025 07:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBFF256C88;
+	Tue,  8 Jul 2025 07:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="pDaru0nC"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ynZIxnA3"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8053B188006;
-	Tue,  8 Jul 2025 07:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BF52566D3
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 07:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751959539; cv=none; b=PlbmWwpsibhzKrWhgYhuaATkGLCwoT59CN2TbWHDe1elxI5B2V4HviGzds5fC6VX2DVNlqQL7DxcV+1CjRyKmLkxtbNp+Qt3ld5b9SIeqjjIybR2xJO6huk6v6qo1fzBcPLiPSt3GQ18bZqqzByB8a6bdopJaEIHsuQHuf375XU=
+	t=1751958773; cv=none; b=UtYaGFaPGFZh6TMBz+0pjve1YRHVwps/sg/4dQjOnvuQHx7PPJUcrn/6HZ2ZVanA/BTm0VcsaF+J6EIbqlCMRFA3pS2/VcyG6Y67du4IfKpjIpKxWps61ruaijqeEgPDQI/7rr4a4iMXJP9ijuVY3IxiSUEj4Yn8xXoX8frcM5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751959539; c=relaxed/simple;
-	bh=hTsxhYYXUNl6kQHXHKWGlxUMQwI6ZkobTMVeUv0I7ts=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=A0IYEFUet+2SmoDYncQKInVIhHtLUMBa2hrDLaI9MsTqkbW8beyn3wysPw9JRI6ShWgZMrKCipw3M27zVO9lbeOOygXSte9BXtPsqM7Hgxd5OfwyWJRqqQoEMYuEfUMkFfzVRKsD7p/7Hp8EqurLiE7MEKjuy6b0djYQG0Qi3JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=pDaru0nC; arc=none smtp.client-ip=43.163.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1751959525;
-	bh=rgW1EbDqX+O9wPlMcm457ujwjBjyq0KCUjbW0ywG0Dg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=pDaru0nC1KxIf9pkQH+aM7Vs806suMvDW37K8eJfLGZM0AQuEhqmjw8pUGYI8c23i
-	 kD90a8o/QWIApQHp6lcwRjVqHSCyHUXMoVg8ntc2DvHIZm5GTqrsMTRHfvVtdkZrcF
-	 +2ByYUcLJbEgVxqWqOG0Qf0uxTXXBtU3DdKpFdnk=
-Received: from meizu-Precision-3660.meizu.com ([112.91.84.73])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id 2E92B483; Tue, 08 Jul 2025 15:11:41 +0800
-X-QQ-mid: xmsmtpt1751958701tlp273eg5
-Message-ID: <tencent_19ABF292BF48BBA08B98B8C3C7BD5D19CE09@qq.com>
-X-QQ-XMAILINFO: NDgMZBR9sMmawRpms6Ue/39BQQ1SRHowQpkx27lg4qRnEyrDKufpEe6JoiwE0s
-	 X4bUjYFCuqPdCbfYYIFhf9vrdN+PzxNOI/ByibxMc60LKkq1AUMsXP/6AcJrxdtQqAq5Q0a0IJkx
-	 NaTDDt2HEJ8CiHe9EOdkaQg5CO1oeqX3d919iGGttuQi7kXVNaq9YNMNQ8QXTsnTq7WOsCx3sF/Y
-	 2iqJm8SS8Hw7wbvdprC6vq2zA/oLeCyS0WpPYfjqEHYSRnrARSXp4ou+eQ+RdvvXG7BuYMHpA/d/
-	 vOYjXICj+D7IVgOL2xnAhpj4gc+zyJPFU8DK7Y4ULYekU378T+x9eye4cRdZrdZ8R86F4PC0Yxf0
-	 GUHK845Y8M/BURpKI/ERfIIxgcHgmceJwZSGud2LahiyT+1kKHg4Lixl0QTrxsZYYssTUi+1olqt
-	 TFm1jgsn0Kq+08J3hM1y2wIYvC0KGnmxG+fbtZ8bbmKCNATl4haAHgSQO8gpVNZnyBCe18tCQqW4
-	 AQf1teH5Q+FQ5osKuP4hCzjXCFSXNcnv+VUcQMZMwryTkz9N7dq3vb4cguh3Kf8L0WVzuuay3BTL
-	 5M/oIIOhYTSwSg2nOISpNaW04R+vvzqb+Ht59wY01WZdkI4uOjdLYcTc61uNs5j+gvURqYiwdFpU
-	 /gip+yblaxFsKwc1I6S9xMpA9YDONR0wB9yAFCFSh1IjwqRALZHRgp/67oasvkvNY8PzV6ilcdwO
-	 idNafDhJ2l94tg95QKmw0SSpxxWfeAZmXyEbhepumU3g6W+POnW59tFGNo2fkyMHwWaA9PVedHsq
-	 ZDO3wxqRQA+Mfb29a3P8Qjx35mO1lMoXbvFcBrTblRVvDdWgKxRL36jD+zJFx4jmD0PP9+hJvspG
-	 U+0K2myUpjwLv6S8iJrwTgWC2l+sW6WIhM4U5ihg4jY4U6VfB9UAURSuVgZxOXgSZ0VZYncVzH8b
-	 wcAj7s5h0lyB4CG3vj/gVRCxQHgaDqtXJYBN9aF1cN0+6fngS+YeK9VhrVR//z5HlizyVog2WO80
-	 fJOz+hfQ==
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Yuwen Chen <ywen.chen@foxmail.com>
-To: hch@infradead.org
-Cc: adilger.kernel@dilger.ca,
-	brauner@kernel.org,
-	ebiggers@kernel.org,
-	jaegeuk@kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	viro@zeniv.linux.org.uk,
-	ywen.chen@foxmail.com
-Subject: Re: [PATCH v3 1/2] libfs: reduce the number of memory allocations in generic_ci_match
-Date: Tue,  8 Jul 2025 15:11:41 +0800
-X-OQ-MSGID: <20250708071141.847557-1-ywen.chen@foxmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <aGtatW8g2fV6bFkm@infradead.org>
-References: <aGtatW8g2fV6bFkm@infradead.org>
+	s=arc-20240116; t=1751958773; c=relaxed/simple;
+	bh=XscmS3TYLZWbaJ1v/tB8VxNbRqDYd7mpJ2kmhToD68c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LC6eF4XMfGjasMgM3sYqdgwyhrktDLSYDcRkW12deWE/xfj7pWbQpcsPdodi4MULVoSD7Phz/kbv+pALMU2TNq+joS94SQTgHjawPRB+y08b6Vdyjehn2W/m3kPLazHHRHbhCKKnnCqhnDcdO7eM0aCwdwYTUSa/rxc3LM0s9HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ynZIxnA3; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4a44e94f0b0so52114501cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 00:12:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751958770; x=1752563570; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9Zp/fM2/qnk7Yqx0xtmAfSu2PC7PxlBF+F3QEFTY3nY=;
+        b=ynZIxnA31CHvFvzE6+Dl8VtP8/54vI4TpFuzpuxK7MD+BQsie4DkVODR0QTYGM9EAH
+         fz2UHha+agv7DZQzgZKgOMmH9ITrxMlz2KaqXWOn7clNn5SkGlG3fggk1hbOUmGtBBki
+         xBnKbD6vhVmjtmfTmqL3jDcWP5MSQ0AOTmCTyIR77lE3Vd80yslW9Rsn5NiRVNwesWB8
+         K70C1TGnX3kh+ZLwP5kSCQ5jFhNiciHwwI6TYHa0oV6UbnXJbZvL9/SNXINRoI7zR5qT
+         itSC9QJLdlwTUwF6qFSFAmVnr5j4XNC7AjApuwotgeWgUkDZ3c24dnczAmQ858rSi1Z4
+         LgIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751958770; x=1752563570;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9Zp/fM2/qnk7Yqx0xtmAfSu2PC7PxlBF+F3QEFTY3nY=;
+        b=iQVE8BwmmpQA3zUJ8hAGc6CxDxt5ENs1kDjdv2CFWtdZDcPXHSJ/FEQ/QkDaiNm4Lz
+         GOyCvu/8h1BsP53O7iuoM2c5JoL4bVJb+lBGC1VfNAYEaF++jxJpbY+e1jUUCdl3OGZI
+         JBU4LaFqNzFJDi+UQJ31mCOuL/Ir0fRX22dZ4g3PMd9Fg84/eqCFYSLGllvKpXR1ozas
+         kALhi8ArPJyffgQDyGNJ4ncAeCyyZHjtAX3cIOBuhudQ1p4B3hI43vVw36jzy4iBlZZf
+         /yYErgXu7VrGZUkErf+1cJ8TkkSTw4DnvFAhoS0C24p7z2fAQocJAzUWQ/ZuFLVUsmNJ
+         oZng==
+X-Forwarded-Encrypted: i=1; AJvYcCV+WogU8v9PJxcJxE7Ru01u6+DFY4CvlHmVMDjt9MkHNbIVaU/r6SwanfSEt3QVl+lSnS/D/5Hmp25YI9g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5uc10WhurCrdxZmgKWKkAyPjUOKivnqUXo/A81tc9V564zjYl
+	31PmFWxhNAT+bhNL/RGqGLzqE+mc5JCVZ0gAWXo7UPEp0Jb4ajBThS83tWfRPwBBPLtB4jMUBxP
+	ykk0YgZhNozHSgMzKlfwQcg/OUUKWMkGzLOX0a5ys
+X-Gm-Gg: ASbGncvm6GUVznFs4ndU7GhI54bhz4yqBjEg/byBjLTWjI5k/C3jBsqnOmN2o1s12uR
+	d1Y6L+iyfCaTqBcpmeZHF+v0LV0fzszE1FLOf2IR8rW/pCJjEeMIr7hUDGiunSMY65MiPcf9ErZ
+	ZIbZPnJI4nWK0Qq0z67gm55D+lgWPandowaQrPM/9KheQMcZzOj2Qjtg==
+X-Google-Smtp-Source: AGHT+IHhkMvmsDCUL3FUDuybpzrVJI1QMQzt44jXPwSlTwonG6zNEdeu6TlRuVYBnI0XFwUmj/OxQMuqYSOP0qRONk0=
+X-Received: by 2002:ac8:7d41:0:b0:4a6:ef6b:af17 with SMTP id
+ d75a77b69052e-4a9ccddc5a0mr34918981cf.35.1751958770074; Tue, 08 Jul 2025
+ 00:12:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250708020642.27838-1-luyun_611@163.com>
+In-Reply-To: <20250708020642.27838-1-luyun_611@163.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 8 Jul 2025 00:12:39 -0700
+X-Gm-Features: Ac12FXx7GzBAIyyAYSTsp8BsxlHWfg8I5emuM-v4Qk5cHT_Bn-LbE-CFfIHZD1I
+Message-ID: <CANn89i+6g+VwByu-xeJ-PVuaw8X_yQdC2buB7q=YO5S3MzMTUw@mail.gmail.com>
+Subject: Re: [PATCH v2] af_packet: fix soft lockup issue caused by tpacket_snd()
+To: Yun Lu <luyun_611@163.com>
+Cc: willemdebruijn.kernel@gmail.com, davem@davemloft.net, kuba@kernel.org, 
+	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 6 Jul 2025 22:27:17 -0700 Christoph Hellwig wrote:
-> But I wonder why generic_ci_match is even called that often.  Both ext4
-> and f2fs support hashed lookups, so you should usually only see it called
-> for the main match, plus the occasional hash false positive, which should
-> be rate if the hash works.
+On Mon, Jul 7, 2025 at 7:06=E2=80=AFPM Yun Lu <luyun_611@163.com> wrote:
+>
+> From: Yun Lu <luyun@kylinos.cn>
+>
+> When MSG_DONTWAIT is not set, the tpacket_snd operation will wait for
+> pending_refcnt to decrement to zero before returning. The pending_refcnt
+> is decremented by 1 when the skb->destructor function is called,
+> indicating that the skb has been successfully sent and needs to be
+> destroyed.
+>
+> If an error occurs during this process, the tpacket_snd() function will
+> exit and return error, but pending_refcnt may not yet have decremented to
+> zero. Assuming the next send operation is executed immediately, but there
+> are no available frames to be sent in tx_ring (i.e., packet_current_frame
+> returns NULL), and skb is also NULL, the function will not execute
+> wait_for_completion_interruptible_timeout() to yield the CPU. Instead, it
+> will enter a do-while loop, waiting for pending_refcnt to be zero. Even
+> if the previous skb has completed transmission, the skb->destructor
+> function can only be invoked in the ksoftirqd thread (assuming NAPI
+> threading is enabled). When both the ksoftirqd thread and the tpacket_snd
+> operation happen to run on the same CPU, and the CPU trapped in the
+> do-while loop without yielding, the ksoftirqd thread will not get
+> scheduled to run. As a result, pending_refcnt will never be reduced to
+> zero, and the do-while loop cannot exit, eventually leading to a CPU soft
+> lockup issue.
+>
+> In fact, as long as pending_refcnt is not zero, even if skb is NULL,
+> wait_for_completion_interruptible_timeout() should be executed to yield
+> the CPU, allowing the ksoftirqd thread to be scheduled. Therefore, the
+> execution condition of this function should be modified to check if
+> pending_refcnt is not zero.
+>
+> Fixes: 89ed5b519004 ("af_packet: Block execution of tasks waiting for tra=
+nsmit to complete in AF_PACKET")
+> Suggested-by: LongJun Tang <tanglongjun@kylinos.cn>
+> Signed-off-by: Yun Lu <luyun@kylinos.cn>
+>
+> ---
+> Changes in v2:
+> - Add a Fixes tag.
+> - Link to v1: https://lore.kernel.org/all/20250707081629.10344-1-luyun_61=
+1@163.com/
+> ---
+>  net/packet/af_packet.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+> index 3d43f3eae759..7df96311adb8 100644
+> --- a/net/packet/af_packet.c
+> +++ b/net/packet/af_packet.c
+> @@ -2845,7 +2845,7 @@ static int tpacket_snd(struct packet_sock *po, stru=
+ct msghdr *msg)
+>                 ph =3D packet_current_frame(po, &po->tx_ring,
+>                                           TP_STATUS_SEND_REQUEST);
+>                 if (unlikely(ph =3D=3D NULL)) {
+> -                       if (need_wait && skb) {
+> +                       if (need_wait && packet_read_pending(&po->tx_ring=
+)) {
+>                                 timeo =3D sock_sndtimeo(&po->sk, msg->msg=
+_flags & MSG_DONTWAIT);
+>                                 timeo =3D wait_for_completion_interruptib=
+le_timeout(&po->skb_completion, timeo);
+>                                 if (timeo <=3D 0) {
 
-At present, in the latest version of Linux, in some scenarios,
-f2fs still uses linear search.
+packet_read_pending() is super expensive on hosts with 256 cpus (or more)
 
-The logic of linear search was introduced by Commit 91b587ba79e1
-(f2fs: Introduce linear search for dentries). Commit 91b587ba79e1
-was designed to solve the problem of inconsistent hashes before
-and after the rollback of Commit 5c26d2f1d3f5
-("unicode: Don't special case ignorable code points"),
-which led to files being inaccessible.
+We are going to call it a second time at the end of the block:
 
-In order to reduce the impact of linear search, in relatively new
-versions, the logic of turning off linear search has also been
-introduced. However, the triggering conditions for this
-turn - off logic on f2fs are rather strict:
+do { ...
+} while (ph !=3D NULL || (need_wait && packet_read_pending(&po->tx_ring)...
 
-1. Use the latest version of the fsck.f2fs tool to correct
-the file system.
-2. Use a relatively new version of the kernel. (For example,
-linear search cannot be turned off in v6.6)
+Perhaps we can remove the second one ?
 
-The performance gain of this commit is very obvious in scenarios
-where linear search is not turned off. In scenarios where linear
-search is turned off, no performance problems will be introduced
-either.
+Also I think there is another problem with the code.
 
+We should call sock_sndtimeo() only once, otherwise SO_SNDTIMEO
+constraint could be way off.
+
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index f6b1ff883c9318facdcb9c3112b94f0b6e40d504..486ade64bddfddb1af91968dbdf=
+70015cfb93eb5
+100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -2785,8 +2785,9 @@ static int tpacket_snd(struct packet_sock *po,
+struct msghdr *msg)
+        int len_sum =3D 0;
+        int status =3D TP_STATUS_AVAILABLE;
+        int hlen, tlen, copylen =3D 0;
+-       long timeo =3D 0;
++       long timeo;
+
++       timeo =3D sock_sndtimeo(&po->sk, msg->msg_flags & MSG_DONTWAIT);
+        mutex_lock(&po->pg_vec_lock);
+
+        /* packet_sendmsg() check on tx_ring.pg_vec was lockless,
+@@ -2846,7 +2847,6 @@ static int tpacket_snd(struct packet_sock *po,
+struct msghdr *msg)
+                                          TP_STATUS_SEND_REQUEST);
+                if (unlikely(ph =3D=3D NULL)) {
+                        if (need_wait && skb) {
+-                               timeo =3D sock_sndtimeo(&po->sk,
+msg->msg_flags & MSG_DONTWAIT);
+                                timeo =3D
+wait_for_completion_interruptible_timeout(&po->skb_completion, timeo);
+                                if (timeo <=3D 0) {
+                                        err =3D !timeo ? -ETIMEDOUT :
+-ERESTARTSYS;
 
