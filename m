@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-721848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4537EAFCE98
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:10:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92399AFCE9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2B6D422070
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:09:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B8AF4A31D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBEA2E0936;
-	Tue,  8 Jul 2025 15:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0752E06D2;
+	Tue,  8 Jul 2025 15:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k9CBw1Ey"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PK3WpzAw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A876114883F;
-	Tue,  8 Jul 2025 15:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B042B2E093E;
+	Tue,  8 Jul 2025 15:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751987387; cv=none; b=I7tW8Z7iHbYrnRnfl/uwvegGe5xN/CPvpMB7Mv7sgC+zWQ3O7XmN7YUQW2RBg1oZK7YhIWBWIG7W3l8YgWzBVZkNQQWQWK0ck1MbdpJvgbfrrLI5FytQ+lUnhnaSHTJJb/NSipqRcqueUiD4jHsO+bE0jY1i6Tfea7TJ1nN6k6g=
+	t=1751987388; cv=none; b=SSExWuM9bTALuPfuOvuBwn5kYSy6eFdVzxo9SygQtCq1hPMFjOjZWqKdQ1Yw1GN0EprXvEcxT6nX36fteCgLrp9o4diIIjIwHKcjmJDeRsrdq1x5iESn2xwE/8uYdeW4GdZMLXg03Tv3uGoJEheE4OQPLtpUDpkPrDhoCjOTLog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751987387; c=relaxed/simple;
-	bh=7iAG9b47HjAbUmZonxDUG+A93PzhEo22h9CDJpaBB2I=;
+	s=arc-20240116; t=1751987388; c=relaxed/simple;
+	bh=m8j9BgC+C683QcWhHpBX4bU5kkyY9xFVDvRjCOR5Lc8=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=DBh7nLLSePh1JuDpgR6w6QOI68VDkqPlXd3ptJCCG1jRrgsB6ZXXSbq/Vwu8UuC0Ge55AV8HX0wiik5NfqCCtQdfZRj8rWhnORII5bb/9e8YutBoqviraxB359czwxesSE+FqYn2xKTwN9qCnJ6Ny61ZrCKSg1QjvIfQSSKmu+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k9CBw1Ey; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 315D2C4CEF7;
-	Tue,  8 Jul 2025 15:09:47 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=NC63e2LtO41db+rnJRZ34aTI6FJhzZcbu9CdY2vib20IaiGEV/R0oRLMWbNEuEmDjBW24w01VbiN/wiDx4G3MN5yGYIuFMLYGTTWVVwM3WYo0PEBfc/48SLLp6IB2usqZ8TBTi83A+MIQmjDDgGKub9QX+yv6Gx6MB4UEOGCYus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PK3WpzAw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54213C4CEEF;
+	Tue,  8 Jul 2025 15:09:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751987387;
-	bh=7iAG9b47HjAbUmZonxDUG+A93PzhEo22h9CDJpaBB2I=;
+	s=k20201202; t=1751987388;
+	bh=m8j9BgC+C683QcWhHpBX4bU5kkyY9xFVDvRjCOR5Lc8=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=k9CBw1EyWaTg85sJLPrOrDHGorYV9ojGW2JQDAEDJ10Qgu+A0oLXx23JPnXUjEh+Z
-	 6sO5frPjkFU94J+dW7l/a8JswaCpH09P4DsvfSkPP1oyldKhXN8x7Vu5zD2p860Fov
-	 6VNtlOUwrRPFphKBbXnrjO3YBUrTEzPcLnlkeniRmAGj/I0cwfjZfiAtzmrU/5MN7d
-	 zH8tEoFbd+/+eqr8YHxqzURNUjSwssczmatPwaPaGcHYxwDN2mrhZMI2SlsPlchHqv
-	 68v2oc4xmWAtSRj8uHxrcb7APk78Q2iAyq2Hj4mHzAYxmG0BvFHBFMUXa1etksBGOu
-	 1FpClfb/26yug==
+	b=PK3WpzAwrnRqcEQcygXjS8tZX6H/H132xlWnZ7NlMhYbci+4L8MXtkFo8Ny3nzbZ4
+	 8P5khn3ztmh6lzDBa4bBygBwvhHvhFF/IjPUdm0SK5ZHeWiETNzcis5hBD8uapz9ec
+	 a+fZjJnaifXs8AOyqNxDU174JvTZYCB91pHdaZHGmVw7xB8VgaRo6WFxCTMyqK3G+T
+	 Tm+TZr7G42OBFxUemRixpDO4qgrSpbVmNTJ1DDctKR6vDIaqNAYVLogOfHblZwxz3i
+	 le5ylARfhMK7jCt8jJdcdcDH0cue/yhSHtfc9POOdkvEWYYPT8TMdu/Nn9vtB20Id4
+	 veWieW7tZ5zSA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 340D838111DD;
-	Tue,  8 Jul 2025 15:10:11 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D83380DBEE;
+	Tue,  8 Jul 2025 15:10:12 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,14 +51,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3] tcp: Correct signedness in skb remaining spac
+Subject: Re: [PATCH net-next v4] tcp: Correct signedness in skb remaining
+ space
  calculation
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175198741001.4099273.99951051587276414.git-patchwork-notify@kernel.org>
-Date: Tue, 08 Jul 2025 15:10:10 +0000
-References: <20250704005252.21744-1-jiayuan.chen@linux.dev>
-In-Reply-To: <20250704005252.21744-1-jiayuan.chen@linux.dev>
+ <175198741125.4099273.6939974180776177373.git-patchwork-notify@kernel.org>
+Date: Tue, 08 Jul 2025 15:10:11 +0000
+References: <20250707054112.101081-1-jiayuan.chen@linux.dev>
+In-Reply-To: <20250707054112.101081-1-jiayuan.chen@linux.dev>
 To: Jiayuan Chen <jiayuan.chen@linux.dev>
 Cc: netdev@vger.kernel.org, mrpre@163.com,
  syzbot+de6565462ab540f50e47@syzkaller.appspotmail.com, edumazet@google.com,
@@ -71,7 +72,7 @@ Hello:
 This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri,  4 Jul 2025 08:52:52 +0800 you wrote:
+On Mon,  7 Jul 2025 13:41:11 +0800 you wrote:
 > Syzkaller reported a bug [1] where sk->sk_forward_alloc can overflow.
 > 
 > When we send data, if an skb exists at the tail of the write queue, the
@@ -84,7 +85,7 @@ On Fri,  4 Jul 2025 08:52:52 +0800 you wrote:
 > [...]
 
 Here is the summary with links:
-  - [net-next,v3] tcp: Correct signedness in skb remaining spac calculation
+  - [net-next,v4] tcp: Correct signedness in skb remaining space calculation
     https://git.kernel.org/netdev/net/c/d3a5f2871adc
 
 You are awesome, thank you!
