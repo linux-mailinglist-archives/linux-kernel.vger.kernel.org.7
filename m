@@ -1,160 +1,147 @@
-Return-Path: <linux-kernel+bounces-721432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368FCAFC921
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:05:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02D28AFC926
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 794724A25C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:05:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 131C53B26E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD7A2C1596;
-	Tue,  8 Jul 2025 11:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpzpIPXl"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBCC28A1D2;
+	Tue,  8 Jul 2025 11:07:06 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDC31E9B2D;
-	Tue,  8 Jul 2025 11:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F7A219A6B;
+	Tue,  8 Jul 2025 11:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751972706; cv=none; b=JFDe1mXwP0ZMa5E2XUwlJP1v7h3lvO8zZolpqn3zgG8OYc+MhsY3fsrtEsvmCjjQCvP0jym1rZUWosybiWAsMhCl6xZu3p6fnQWC0RTVC6z/RpK6guFMFk3HOy11feVcoUtqVuDugQqNBYUOLkJAWcJufDyWKdTZzO6F+5Ozwm8=
+	t=1751972826; cv=none; b=g95hzRzvN4yCJQHVXdTL5oTT/Ef81CePLK6tN9gLStbJmorqjPJaGRPIXg8XCJU4Ou2AyTyDkwLn+8xp/gNtERUFPkv45glsYvg0ivTcji7wCZJSBaeUcpkowA0qkO3E23p3zWtdGPJ2VZ51GxRRrzhwNJEtuN1AeEKmfp4JFyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751972706; c=relaxed/simple;
-	bh=5cG4DeDqbfiWCmY8G3IQIEWAgFjNloJd5T7LEMyt5OQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=snfFrws8PHBe8XOLwwKnSR2anLx7F2o74AZAAKE9ZumVjdkVYq3C50TquxkjCy3skiFt4tDiDjMPV/64INxh2HPpXnFv6PjNr/QwEdBjf7Y/Pf2ZYQOplzqvaKtp8l1cq6j7ztyKTA6mHDqMw7Rf0NQvPTdf5okU0RhYF9xceVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cpzpIPXl; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ad56cbc7b07so704598166b.0;
-        Tue, 08 Jul 2025 04:05:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751972702; x=1752577502; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mRU/+hFkoTw5qHqNwj6ei+Jmw40bwtYgcu8fT+5zfjE=;
-        b=cpzpIPXl9e9zi4PLUSoLV9aiMMkD8aW4DKwSHb+Q7ORCU/DkX2CBCNWEWRwJplEqgf
-         WGG0hecsc8V9GFAQZSBfglgIVEvzt32eEIGySMVHEFrbsEuI1Ngg0fayrcKo+wusPdcq
-         U62qErTTcDOlOFEzBULfCQYySUYblVRnqNKfy2HWFxm2+GKjTdp/xlWtCm3R9vOWHirj
-         XMr2S6rgaah2My5G9u9aRstX2Qgs/M3nkFrvmbdYeusKaWPD4gRd034p8T6io2LSH1eT
-         iofdvg7ATVzKykeJYNrGdkk0x0z/lng4YPitBC2CsxqdApwprMSY0f3rBSKdHsv69BuC
-         QCDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751972702; x=1752577502;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mRU/+hFkoTw5qHqNwj6ei+Jmw40bwtYgcu8fT+5zfjE=;
-        b=QOREB9poCN5m/lsZXf7Rs6wMr1f3rp8d5M+oc6vSn8zT0lIJOLhlNgWmPffAzGmc8Y
-         lSMEsFUiVH3QjC6su8K6u/koLMUqSWFRE4kTK/QXdAvZPQlDjvT3vseWxs2rC7D95tj2
-         YjcpF+AcE7vtXrAsguup2FjlLGXIt6gdYAhwzDQK7Rb0LXWwarfuii2m957VVPAWeZJi
-         LPqjmvdUJ7l7SW28NAmfDPi3D1oTbA1umNdKfOFILYJAY/RVRE7SlcVF/RruQFGWGEkC
-         F0CmuNECQmbA33YYDtKEogHBCnx6pQpYhK9GNkNCmpfninuoxQVfKNkIkGNfNDk4R1Wb
-         unMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmjGf3uZWIhhIssHsZZytLlrMvLOlJvg4yv8lApOcRIL1gHbu+dHEM2JsG5/XxxT3YUwD5kGzhPhRDzuI=@vger.kernel.org, AJvYcCVnfxgMqEqWsSwZ7r7I+IS9cAaGl4RyawVSpFpI/JGFFtfbImSEVXtUZFgRecXIywu5kIiz5xZI@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJcoEhJJKUbpFB0EV2Zgp6qf88kfaDI3B1P+DN9X9F8j9MtCDZ
-	HjTIAIIpSKN/mcDz2kPgg4x7Wc3LrtSiut9V6jkkdb6INm3ekpWub9tq
-X-Gm-Gg: ASbGncuJatOsX+F6PIcbbpE9g6PEq2cQvjYQlDXQVjxz9rDX3mbZEZbijTliRHLlmtL
-	yJl7s/gqz4drcKXaeD60P27lX34SPoCXisGDVr5ty8KCVgWo5l/C3DOGbflsu8rFr00E/Iv2+rJ
-	nGsBJYNWNGJkBYlv7xZLG1BPQnHSGyEygtbPMvQ7VhH8B/jSw7yWaxsCmdkxDfzA3DJwK4zGExq
-	ox3G+pfieUS9qFUDldNTgU3lDJlN8wtzKYA4j2VrcEoTfJCVGOyRWmZaJMIMeQJjq0f1QFZD/b0
-	tT/AleUslsyXB1yRL1cQAslPWR4FMe0WPF7sF7+cSbD444hlJnJPzJjyOKRnkunEEJKo63Jn/m4
-	=
-X-Google-Smtp-Source: AGHT+IG/xzC3tI0puBmckI4rTlIlwCBfe5a4dxt1kiLb4lcsEsza24eX2Ju6QgEjiCI465RP05ncRw==
-X-Received: by 2002:a17:907:7287:b0:adb:23e0:9297 with SMTP id a640c23a62f3a-ae3fe6923b3mr1557685666b.17.1751972702138;
-        Tue, 08 Jul 2025 04:05:02 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:4dfd])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f66d93c8sm884341566b.11.2025.07.08.04.05.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 04:05:01 -0700 (PDT)
-Message-ID: <32cb77d8-a4a5-4fc7-a427-d723e60efc59@gmail.com>
-Date: Tue, 8 Jul 2025 12:06:29 +0100
+	s=arc-20240116; t=1751972826; c=relaxed/simple;
+	bh=ytI5InlAc9OnRvhqJh5WkuHYoegFRzHjoPIoJVVR+TM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CoJiCLcmGBgQ8UgrhE8m8+3H3C92MfH2Jq44/XCzlh4cv5iO5yDLmcSxAIhilym38Yv96a8jVk3FAwJirGmDVnhv8GbIT4m78UXT+uudtx69DtlcG+0v12elmh3WoqiNHspSntz/zfoTf1f0r4S0XHAPg3rJGaErrTXF8M9JE84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bbyw66s5Fz6GCR5;
+	Tue,  8 Jul 2025 19:06:14 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 19A2614025A;
+	Tue,  8 Jul 2025 19:07:00 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 8 Jul
+ 2025 13:06:59 +0200
+Date: Tue, 8 Jul 2025 12:06:58 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+CC: <wsa+renesas@sang-engineering.com>, Patrice Chotard
+	<patrice.chotard@foss.st.com>, Andi Shyti <andi.shyti@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <opensource.kernel@vivo.com>
+Subject: Re: [PATCH v3] i2c: busses: Use min() to improve code
+Message-ID: <20250708120658.0000668a@huawei.com>
+In-Reply-To: <20250708031520.365110-1-rongqianfeng@vivo.com>
+References: <20250708031520.365110-1-rongqianfeng@vivo.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC net-next 1/4] net: Allow non parent devices to be used for
- ZC DMA
-To: Dragos Tatulea <dtatulea@nvidia.com>, almasrymina@google.com,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, tariqt@nvidia.com, cratiu@nvidia.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250702172433.1738947-1-dtatulea@nvidia.com>
- <20250702172433.1738947-2-dtatulea@nvidia.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250702172433.1738947-2-dtatulea@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 7/2/25 18:24, Dragos Tatulea wrote:
-> For zerocopy (io_uring, devmem), there is an assumption that the
-> parent device can do DMA. However that is not always the case:
-> for example mlx5 SF devices have an auxiliary device as a parent.
+On Tue,  8 Jul 2025 11:15:20 +0800
+Qianfeng Rong <rongqianfeng@vivo.com> wrote:
+
+> Use min() to reduce the code and improve its readability.
 > 
-> This patch introduces the possibility for the driver to specify
-> another DMA device to be used via the new dma_dev field. The field
-> should be set before register_netdev().
+> The type of the max parameter in the st_i2c_rd_fill_tx_fifo()
+> was changed from int to u32, because the max parameter passed
+> in is always greater than 0.
 > 
-> A new helper function is added to get the DMA device or return NULL.
-> The callers can check for NULL and fail early if the device is
-> not capable of DMA.
-> 
-> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
 > ---
->   include/linux/netdevice.h | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
+> v2-> v3:
+> - added the <linux/minmax.h> as suggested by Jonathan.
+> - used i = min(...) as the loop initializer according
+>   to Jonathan.
 > 
-> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-> index 5847c20994d3..83faa2314c30 100644
-> --- a/include/linux/netdevice.h
-> +++ b/include/linux/netdevice.h
-> @@ -2550,6 +2550,9 @@ struct net_device {
->   
->   	struct hwtstamp_provider __rcu	*hwprov;
->   
-> +	/* To be set by devices that can do DMA but not via parent. */
-> +	struct device		*dma_dev;
-> +
->   	u8			priv[] ____cacheline_aligned
->   				       __counted_by(priv_len);
->   } ____cacheline_aligned;
-> @@ -5560,4 +5563,14 @@ extern struct net_device *blackhole_netdev;
->   		atomic_long_add((VAL), &(DEV)->stats.__##FIELD)
->   #define DEV_STATS_READ(DEV, FIELD) atomic_long_read(&(DEV)->stats.__##FIELD)
->   
-> +static inline struct device *netdev_get_dma_dev(const struct net_device *dev)
-> +{
-> +	struct device *dma_dev = dev->dma_dev ? dev->dma_dev : dev->dev.parent;
-> +
-> +	if (!dma_dev->dma_mask)
+> v1-> v2:
+> - Change the max parameter type in st_i2c_rd_fill_tx_fifo()
+>   from int to u32
+> ---
+>  drivers/i2c/busses/i2c-st.c | 19 ++++++-------------
+>  1 file changed, 6 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-st.c b/drivers/i2c/busses/i2c-st.c
+> index 750fff3d2389..e4b2ed8a9264 100644
+> --- a/drivers/i2c/busses/i2c-st.c
+> +++ b/drivers/i2c/busses/i2c-st.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/of.h>
+>  #include <linux/pinctrl/consumer.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/minmax.h>
+>  
+>  /* SSC registers */
+>  #define SSC_BRG				0x000
+> @@ -422,12 +423,8 @@ static void st_i2c_wr_fill_tx_fifo(struct st_i2c_dev *i2c_dev)
+>  	tx_fstat = readl_relaxed(i2c_dev->base + SSC_TX_FSTAT);
+>  	tx_fstat &= SSC_TX_FSTAT_STATUS;
+>  
+> -	if (c->count < (SSC_TXFIFO_SIZE - tx_fstat))
+> -		i = c->count;
+> -	else
+> -		i = SSC_TXFIFO_SIZE - tx_fstat;
+> -
+> -	for (; i > 0; i--, c->count--, c->buf++)
+> +	for (i = min(c->count, SSC_TXFIFO_SIZE - tx_fstat);
+> +		i > 0; i--, c->count--, c->buf++)
+	for (i = min(c->count, SSC_TXFIFO_SIZE - tx_fstat);
+	     i > 0; i--, c->count--, c->buf++)
+  		st_i2c_write_tx_fifo(i2c_dev, *c->buf);
 
-dev->dev.parent is NULL for veth and I assume other virtual devices as well.
+So different alignment form what you have.
 
-Mina, can you verify that devmem checks that? Seems like veth is rejected
-by netdev_need_ops_lock() in netdev_nl_bind_rx_doit(), but IIRC per netdev
-locking came after devmem got merged, and there are other virt devices that
-might already be converted.
 
-> +		dma_dev = NULL;
-> +
-> +	return dma_dev;
-> +}
-> +
->   #endif	/* _LINUX_NETDEVICE_H */
-
--- 
-Pavel Begunkov
+>  		st_i2c_write_tx_fifo(i2c_dev, *c->buf);
+>  }
+>  
+> @@ -439,7 +436,7 @@ static void st_i2c_wr_fill_tx_fifo(struct st_i2c_dev *i2c_dev)
+>   * This functions fills the Tx FIFO with fixed pattern when
+>   * in read mode to trigger clock.
+>   */
+> -static void st_i2c_rd_fill_tx_fifo(struct st_i2c_dev *i2c_dev, int max)
+> +static void st_i2c_rd_fill_tx_fifo(struct st_i2c_dev *i2c_dev, u32 max)
+>  {
+>  	struct st_i2c_client *c = &i2c_dev->client;
+>  	u32 tx_fstat, sta;
+> @@ -452,12 +449,8 @@ static void st_i2c_rd_fill_tx_fifo(struct st_i2c_dev *i2c_dev, int max)
+>  	tx_fstat = readl_relaxed(i2c_dev->base + SSC_TX_FSTAT);
+>  	tx_fstat &= SSC_TX_FSTAT_STATUS;
+>  
+> -	if (max < (SSC_TXFIFO_SIZE - tx_fstat))
+> -		i = max;
+> -	else
+> -		i = SSC_TXFIFO_SIZE - tx_fstat;
+> -
+> -	for (; i > 0; i--, c->xfered++)
+> +	for (i = min(max, SSC_TXFIFO_SIZE - tx_fstat);
+> +		i > 0; i--, c->xfered++)
+>  		st_i2c_write_tx_fifo(i2c_dev, 0xff);
+>  }
+>  
 
 
