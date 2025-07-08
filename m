@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-721832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013B1AFCE61
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:59:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9D2AFCE62
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04A71172118
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:58:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 507874A4115
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676EF2D9ED2;
-	Tue,  8 Jul 2025 14:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CB72E0928;
+	Tue,  8 Jul 2025 14:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ltm6PWML"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KXkOTZ0R"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58A820B80D
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 14:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F314A2E0914;
+	Tue,  8 Jul 2025 14:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751986708; cv=none; b=j/auP8mcXSTug6lvtFKVy6QFhiSiM94IYG8+sN0a/JynrKGufgGCFt9gh9PhP+YGSmHSwu5evikFyHN707ONajb2/d0KOXqWetiSOr8isbC10PFhgAaAYmcI9mHg6G8e+np2Bnv49tnkhDWfhN3RoFdBLrPk18PpP4ZiK2Uttz8=
+	t=1751986714; cv=none; b=Mhs8d9bNwT3KZzFyt0uSCwurkPWeIajPXcNwk9IZc5M/Tuw5jEULLkanRgMv4hsIYWnd+oKJeKqjIWjrNqDNkDd8lRDwAByOGAndh2T893tuYCWtBPivn3b3ZDmqppQ8vBAVR6/O6IS9fJOFEzeOC+6sSsJlJDhqH6SmAHysHLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751986708; c=relaxed/simple;
-	bh=8s0xa7L5BjSxz1JQE/gd29Vqw8ZPITgvO9C8rgWyOmE=;
+	s=arc-20240116; t=1751986714; c=relaxed/simple;
+	bh=+NqjU4uQXlMtOkNUF+YqZyMgp92MuypF4BvPFXX8Ve0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X1wDWQIEhOPlrNKjoew8VCgFfZ1rrqH2/turvZjv36CoSooMOEVW7j0WDlBMTpVcyoHK6d5E+nS5rsTAgHWE8jo3ASGawYcRgJsGLollAfhz79vig/HaoKEypHBGDAxXNs8I9m6ZWii7OjXk0/MvDlLGn7ihepQ56UJPen0KcQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ltm6PWML; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6077dea37easo7490611a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 07:58:26 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=NxucAh/6T6Yvd/3DU+eOrWREqqmVrWv18dEwKKwG37nMOipSkiWv15wtCqVdhJz8faH3PmVyYC9MSSfoEOF+QIMny8hHtjoz6utq52JefeZO0E//LeMICXInxSfIjY8OXp1x9P6qIqgyGQz67UyaSBotSj3wBGjNPh/diLBOt9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KXkOTZ0R; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-235d6de331fso58333215ad.3;
+        Tue, 08 Jul 2025 07:58:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751986705; x=1752591505; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751986712; x=1752591512; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=B4jT32HA4W2Qzu0z0BHKWxYGrYNQ+ge5ttUU4NoaGyc=;
-        b=ltm6PWMLLvzPXSej1/qnr/0tD4n2ONwu0CbcMgOU3gnLVgw8r0n6mcNIB2kVo5Kl5u
-         IjCpQL12ruy8RhrIeInMjmwj6MTWxPBVkX2HT6clbQkMZKagDqmgS9FBYGM0nLY9dgit
-         7VvjzUsBX32LtCvF/egtwSWaQ1ies0z46gDb10CsjrKOtx6YiDf2lGlfWfxjsszWMT7f
-         ZO/CpztCZZh6YKaicfcde+QL+SQ5pHSK87OXW6AKD09qEVGP/icXxd14NWB6Q+iIs65x
-         9Z5rS4bN1ojFPqgnaXYdNcGFryjUNvTAz6kUs/cUknWzHG9fgGrjXSdo/qTrxuf4M9RT
-         Kbig==
+        bh=UWScCBjnLf2R/TIfIIUf9QArMhSADm4WDSoogHlveqE=;
+        b=KXkOTZ0Re8fWuo3lkOgCn+bjmW4Y+V04GITXg5C5W9iA5k/nO3uk6RMKQZBPuPRkyp
+         Sb4gLoo/uFvSeAYOq+3A1M/kuRiubdbCWLaUKX2Nvc1D+POtgfqj42dj59QYaBxLIRTl
+         Gww+wZgmFiJToy8ViegUBAWAdyMlzukrEcNJEG59HUMup+G1rqx7GtMzqvi55sJIHycn
+         jdatu0/vP1aWQ/zrEBzJB1P12C1ZUohIwsqnuvYpIiBYRftsWN9gUgapjYiuGXoXVXKu
+         DOjK3bp3pINTToJoXvahP4H6yHa5l3AUFL7F2q8Iaz/Et4a/bVe1A5DvZAxb6oWa4DuS
+         J3sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751986705; x=1752591505;
+        d=1e100.net; s=20230601; t=1751986712; x=1752591512;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B4jT32HA4W2Qzu0z0BHKWxYGrYNQ+ge5ttUU4NoaGyc=;
-        b=k/O+UDK98Hjl5lMKsua1BlufJac/3AT9GE7D3pYzaxFmMzL8Lb96MY+ArHCUOq7+aP
-         HY+sJCT/W+EkIrC77Q9uS9nBJQAIZaMjUAab5K9DfjWlL3dFxnb37g7Q+QOV65MiwYw5
-         z2soO3SFpHZv2S77zV6N151iPWCTBVOjzHoq56BmPuQtEcSQ4F8Z9y6OXNe87gQfg65H
-         fr01aO67RjQCdp3iJBfgBd0BhrPpeWKwZcojP7Tjvc8xdU+OHKU6heeZGccLmPdRgQZr
-         MAFlCzW5t1FjTqnytFE7hbHzi1h6PcrZYiB1bk5hKtv2Hc60jtjfzyEcCbfKJ7Sf6NnX
-         vFdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhgLJHQrN+bCQs1bAPKDnPO3TWfE34uIfheQs/1gPve0HyiGerGzf5gaf8A+XOBrSk+dAj3Z13tngJj5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8PID13cNbhc14gQqmmzMes0wZs/wNTUmBcbnIQ8cGnqBAfrxj
-	Q6u79Rnhd9jfiw/OZssnKZCLWg55xtzTr0ddoyPb8hTGwl9qsbUrU6UJvNqC3oUt7+w=
-X-Gm-Gg: ASbGnct9MYXbgkRY5DEWTFLtClLeJ/imWWhFqolBSe2y1FXV1+gSTnkhw67ltiytSjc
-	gOF0atKjV/RQ+OMIygvuuUc+PWhmms2IKSbDlYUzpXO8ZnYZSd1mx0R0dRf+IwtWnKwvlD2VLz0
-	EAQsySFwZMr9pGTN5gE/d9p2vpGSrX0rZw0uvwJFhTLTdcU7AWpVBqDOIm9pc+dGSgvF7twyVy6
-	yTvIYuoRGNjHtzuppmnj3HBbxBmnuuHR4PIl/9pCpv9FvpyaWVLfoop3XincEAsfRH+BJ4w8mVe
-	eDs0Y3CZpdCXrCu6EXy3TrfVYfgJsolLOiyuMwIiqBXRMUe0fWtOQaajNfuZJFs181An29Q=
-X-Google-Smtp-Source: AGHT+IEyVGRav48RsWOQ+IbAhO5COYztnDZYY9ox0Xfv6AASPPJWInKbHNlJUCQb/6Tlb54HYzvLrQ==
-X-Received: by 2002:a50:c052:0:b0:610:5794:d83c with SMTP id 4fb4d7f45d1cf-6105794dc39mr1106147a12.19.1751986705123;
-        Tue, 08 Jul 2025 07:58:25 -0700 (PDT)
-Received: from [192.168.0.251] ([82.76.204.12])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fca66e566sm7314471a12.11.2025.07.08.07.58.23
+        bh=UWScCBjnLf2R/TIfIIUf9QArMhSADm4WDSoogHlveqE=;
+        b=XHZUK7h9Ocr1uCEvKd89P71xc2oECMdy5lIDWDSEe73rEY7CUBOrYP0GbcU3ebIdsT
+         bt6m2gqSyP1cilC2PAkssSdoqZktcGneZ1/rJGm0sDfwki7lNGACUjGJ81b8x9ZxqCEV
+         /tJ7C2eGwf9qnONHEtnhqnGVxcUwtU7DkMJsHGSPrtcztgdCLvMlvG0VMOAzOlf7mSp3
+         PaRt4oiDDhmApovgm2h3J8VbcSxKDv7yCZapASpzTUO2sAWcON9YgY2y0eIusIigA+37
+         TrGoP0SSvyFo70XcVgKy18Hn9mov25vPLcJ+0xxWquWobL/Ni83G6QKlMk4z90dBwZv4
+         4opA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIYeoJ6HqmAFl5onHnKK0xpKABYTvpnQs4vG4CY0JAAWOaXiBnXFrf0Ju5BU1PXOWZnNu5ycDH@vger.kernel.org, AJvYcCWr2Y0G7Hc/suEj3elMeVev6XNz4UfdlDljdiRfsXGCDjgzqPLoa5ye4Zt5w6Jf2keOyfYiegv6Il0V8JA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyovaksIN4eatNru+XiJXxnkvQHrP/3POxoKuqbg0Bwab71ll8e
+	uz0XWpS+8fn0IDV+sJnmOWOusYW4KHcQVj51StwgjdQCjru2DxXzsBsh
+X-Gm-Gg: ASbGnct30YhYVGbZg5m46nhL3WHEzf0rJcKnbJ5qofK+msSW8Z3dLhfWuDw1+JJ7sGW
+	xhgFySCZmKq5VwNyR0HxfB9z/iEfHLOmffm6hKDROQWP3lDmjqh4s2b9IGjr3zwreO3MgsiAy1U
+	pRelrg5Bl5Zz9s2z/QpttRoVpZkqAfu81BMjJyzqQ7l6NmChpd8pyD2PyXWv2koS4zF4u2jCtUX
+	QB+XJUQU4qZfetha3Y1gbVp1mzQsGYizi8DrkLOp3rFO15AiHalttgnfvwZEK6f5FGgtgL2m4Ap
+	l90k7y4DWnTusB1gkY9zqHrnentRaMuKCBfrqp1vA/KCHYiF6/PVO9YBEFPYeSekL5L42Su+kJ7
+	+lGcuGMgsLccUQJHR/MjV/+vu7WHUeVvSalkJ1nVt
+X-Google-Smtp-Source: AGHT+IGsiWMFIFsAbr8aNOe79of4TnBXH6qxow/kWKTKfQRaWTwycD8M4/HGPfM50XdIS7N54Zneag==
+X-Received: by 2002:a17:903:40d1:b0:235:ca87:37ae with SMTP id d9443c01a7336-23c85eb057dmr299625885ad.41.1751986712178;
+        Tue, 08 Jul 2025 07:58:32 -0700 (PDT)
+Received: from ?IPV6:2001:ee0:4f0e:fb30:37c0:6356:b7b4:119a? ([2001:ee0:4f0e:fb30:37c0:6356:b7b4:119a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8455d153sm115207925ad.94.2025.07.08.07.58.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 07:58:24 -0700 (PDT)
-Message-ID: <fae52bad-b78f-4518-989f-9624c6a749d8@linaro.org>
-Date: Tue, 8 Jul 2025 15:58:22 +0100
+        Tue, 08 Jul 2025 07:58:31 -0700 (PDT)
+Message-ID: <a9def060-375b-4980-8ee5-e5a54fc6cb8c@gmail.com>
+Date: Tue, 8 Jul 2025 21:58:24 +0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,80 +81,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PM: add kernel parameter to disable asynchronous
- suspend/resume
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Pavel Machek <pavel@kernel.org>,
- Len Brown <len.brown@intel.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- peter.griffin@linaro.org, andre.draszik@linaro.org, willmcvicker@google.com,
- kernel-team@android.com
-References: <20250708-pm-async-off-v1-1-1b200cc03d9c@linaro.org>
- <CAJZ5v0gMk+Jt5WBUB=+cvv2YoU+49nRxL4KPRGm9TAdzkUvQhQ@mail.gmail.com>
+Subject: Re: [PATCH net v2] virtio-net: fix received length check in big
+ packets
+To: Parav Pandit <parav@nvidia.com>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "Minggang(Gavin) Li" <gavinl@nvidia.com>, Gavi Teitz <gavi@nvidia.com>,
+ "virtualization@lists.linux.dev" <virtualization@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250708144206.95091-1-minhquangbui99@gmail.com>
+ <CY8PR12MB7195AC4C23690D748ABAD675DC4EA@CY8PR12MB7195.namprd12.prod.outlook.com>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <CAJZ5v0gMk+Jt5WBUB=+cvv2YoU+49nRxL4KPRGm9TAdzkUvQhQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Bui Quang Minh <minhquangbui99@gmail.com>
+In-Reply-To: <CY8PR12MB7195AC4C23690D748ABAD675DC4EA@CY8PR12MB7195.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 7/8/25 3:38 PM, Rafael J. Wysocki wrote:
-> On Tue, Jul 8, 2025 at 4:28 PM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+On 7/8/25 21:52, Parav Pandit wrote:
+>> From: Bui Quang Minh <minhquangbui99@gmail.com>
+>> Sent: 08 July 2025 08:12 PM
 >>
->> On some platforms, device dependencies are not properly represented by
->> device links, which can cause issues when asynchronous power management
->> is enabled. While it is possible to disable this via sysfs, doing so
->> at runtime can race with the first system suspend event.
->>
->> This patch introduces a kernel command-line parameter, "pm_async", which
->> can be set to "off" to globally disable asynchronous suspend and resume
->> operations from early boot. This provides a robust way to fall back to
->> synchronous (sequential) operation, which can stabilize platforms with
->> problematic dependencies and also serve as a useful debugging tool.
->>
->> The default behavior remains unchanged (asynchronous enabled). To disable
->> it, boot the kernel with the "pm_async=off" parameter.
-> 
-> IIUC, this effectively is a way to change the initial value of the
-> existing pm_async sysfs knob.
-> 
-> Might be worth mentioning in the changelog.
-> 
+>> Since commit 4959aebba8c0 ("virtio-net: use mtu size as buffer length for big
+>> packets"), the allocated size for big packets is not MAX_SKB_FRAGS *
+>> PAGE_SIZE anymore but depends on negotiated MTU. The number of
+>> allocated frags for big packets is stored in
+>> vi->big_packets_num_skbfrags. This commit fixes the received length
+>> check corresponding to that change. The current incorrect check can lead to
+>> NULL page pointer dereference in the below while loop when erroneous
+>> length is received.
+> Do you mean a device has copied X bytes in receive buffer but device reports X+Y bytes in the ring?
 
-Right. Will update shortly.
+Yes, that's what I mean. AFAIK, it's not checked in the ring level.
 
->> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+
+Thanks,
+Quang Minh.
+
+>
+>> Fixes: 4959aebba8c0 ("virtio-net: use mtu size as buffer length for big
+>> packets")
+>> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
 >> ---
->> Dealing with the pixel6 downstream drivers to cope with the changes from
->> https://lore.kernel.org/linux-pm/10629535.nUPlyArG6x@rjwysocki.net/.
->>
->> Similar to what people already reported it seems pixel6 lacks proper
->> device links dependencies downstream causing i2c and spi client drivers
->> to fail to suspend. Add kernel param to disable async suspend/resume.
+>> Changes in v2:
+>> - Remove incorrect give_pages call
 >> ---
->>  Documentation/admin-guide/kernel-parameters.txt | 9 +++++++++
->>  kernel/power/main.c                             | 9 +++++++++
->>  2 files changed, 18 insertions(+)
+>>   drivers/net/virtio_net.c | 9 ++++++---
+>>   1 file changed, 6 insertions(+), 3 deletions(-)
 >>
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->> index f1f2c0874da9ddfc95058c464fdf5dabaf0de713..55ba3e747d86c09a0696e105a1d9cd99218f0c07 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -5000,6 +5000,15 @@
->>                         that number, otherwise (e.g., 'pmu_override=on'), MMCR1
->>                         remains 0.
->>
->> +       pm_async        [PM]
->> +                       If set to "off", disables asynchronous suspend and
->> +                       resume of devices during system-wide power transitions.
->> +                       This can be useful on platforms where device
->> +                       dependencies are not well-defined, or for debugging
->> +                       power management issues. Defaults to "on" (asynchronous
->> +                       operations enabled).
-> 
-> And here too because it is now unclear how this relates to the pm_sync
-> under /sys/power/.
+>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c index
+>> 5d674eb9a0f2..3a7f435c95ae 100644
+>> --- a/drivers/net/virtio_net.c
+>> +++ b/drivers/net/virtio_net.c
+>> @@ -823,7 +823,7 @@ static struct sk_buff *page_to_skb(struct virtnet_info
+>> *vi,  {
+>>   	struct sk_buff *skb;
+>>   	struct virtio_net_common_hdr *hdr;
+>> -	unsigned int copy, hdr_len, hdr_padded_len;
+>> +	unsigned int copy, hdr_len, hdr_padded_len, max_remaining_len;
+>>   	struct page *page_to_free = NULL;
+>>   	int tailroom, shinfo_size;
+>>   	char *p, *hdr_p, *buf;
+>> @@ -887,12 +887,15 @@ static struct sk_buff *page_to_skb(struct
+>> virtnet_info *vi,
+>>   	 * tries to receive more than is possible. This is usually
+>>   	 * the case of a broken device.
+>>   	 */
+>> -	if (unlikely(len > MAX_SKB_FRAGS * PAGE_SIZE)) {
+>> +	BUG_ON(offset >= PAGE_SIZE);
+>> +	max_remaining_len = (unsigned int)PAGE_SIZE - offset;
+>> +	max_remaining_len += vi->big_packets_num_skbfrags * PAGE_SIZE;
+>> +	if (unlikely(len > max_remaining_len)) {
+>>   		net_dbg_ratelimited("%s: too much data\n", skb->dev-
+>>> name);
+>>   		dev_kfree_skb(skb);
+>>   		return NULL;
+>>   	}
+>> -	BUG_ON(offset >= PAGE_SIZE);
+>> +
+>>   	while (len) {
+>>   		unsigned int frag_size = min((unsigned)PAGE_SIZE - offset,
+>> len);
+>>   		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags, page, offset,
+>> --
+>> 2.43.0
 
-Sounds good.
 
