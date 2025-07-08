@@ -1,161 +1,131 @@
-Return-Path: <linux-kernel+bounces-721072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56788AFC463
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:42:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33715AFC464
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A837F17D484
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:42:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD9CF1AA0CB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911FD29A30F;
-	Tue,  8 Jul 2025 07:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ADA829A30A;
+	Tue,  8 Jul 2025 07:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QiizzGcu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="r1arUOkR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WwiY0sYJ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5A71FFC41;
-	Tue,  8 Jul 2025 07:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040601E48A;
+	Tue,  8 Jul 2025 07:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751960530; cv=none; b=bcsBG9tZ+uVrWBNhBfRUDQgkkFTrgCcRMshSaqWyf28KvJTCP50f8W22nAij6VrXXAUf39xrcOA6gktt8z7ildGUrGC4FY/algYsaDU7yKzA2JRSA7qbV3GMPpEWhRzqnA0j7+F2KytGbRoadz/+sz8ZBtFex7aqRcQZ4zUIJEU=
+	t=1751960544; cv=none; b=K25LKYsw/5CSrpBgQE1Z2QG7kXbLNfDeAO3PTUrClZQ/XIbEWa5N1iIyhTrivscflL/cK7kF1LuAJeLBl3mSJQW4tIeqQ1AfuxIVNKlp1WW0XZdyXfBwgrHt7jsLTh7zvXF/DjwZnCUWqLsPKfLoM+ahMnLeZksRCoUULjn+H8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751960530; c=relaxed/simple;
-	bh=cu8tPtnIUR3fiQLsu8sRQhSmqshZhYdBxyLo1WB3PBU=;
+	s=arc-20240116; t=1751960544; c=relaxed/simple;
+	bh=j9Gcl1MR8XonGtAZ9WPFx91cUYqZF+ofU8py5vit9KM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e4CuN88dj3Q/7dP3dOyM0OCtDNA7nf48U6F7ngTtA6bslJUcTzWIOTfRUGbGTPvXMCRYc5wyZ3ZWkieaGQuS2RHltbpYwR6Z4ROQPeT5F7vur1/7Qk3HLwwtJehg8zy+cdpYIE/R/P/rA6Qnf2afT1TbxuXS8myf2zSoSyGmMbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QiizzGcu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27334C4CEED;
-	Tue,  8 Jul 2025 07:42:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751960529;
-	bh=cu8tPtnIUR3fiQLsu8sRQhSmqshZhYdBxyLo1WB3PBU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QiizzGcu3oRSNRBv2aXILXXI1jg/Hc9yWXALIH5umhNyhCXU4T26Edl4g/GJM58CG
-	 ujpBuIVs0g4usaLKSn2uI8/JFIkS9F72TnBwAO4uzliU8HW7+Q+4D1s2rHMDXc1jov
-	 SP8z9v8nUn5uZY205/ZM2aSHwc/lkkqpepGaRNVyI7RJdbKlbMYR5W7+YbzndanibP
-	 i90De+r0ey0cfLKrt02T2SG6pjMujzQqnB128lrSkEVDiUrR6D0x3yEtPT3ooRh5Ml
-	 DJwJINdjIuIQ6syHiFKJMa7OKU8yMupCzT11l2q7f6CejvPGwW3gf5zxama9IeVNPu
-	 WC1wzom8PBMIA==
-Date: Tue, 8 Jul 2025 13:11:59 +0530
-From: "mani@kernel.org" <mani@kernel.org>
-To: Hongxing Zhu <hongxing.zhu@nxp.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Frank Li <frank.li@nxp.com>, 
-	"l.stach@pengutronix.de" <l.stach@pengutronix.de>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>, 
-	"kwilczynski@kernel.org" <kwilczynski@kernel.org>, "robh@kernel.org" <robh@kernel.org>, 
-	"bhelgaas@google.com" <bhelgaas@google.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, 
-	"festevam@gmail.com" <festevam@gmail.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] PCI: imx6: Correct the epc_features of i.MX8M chips
-Message-ID: <pxxwlm6su6ugfo4m7borpgvvlczfrhdarzcy45fipqwvxaxban@u223udsukdwc>
-References: <20250617073441.3228400-1-hongxing.zhu@nxp.com>
- <20250707193415.GA2095765@bhelgaas>
- <AS8PR04MB8676B8D14A5C54E8C32025BD8C4EA@AS8PR04MB8676.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fygsgs8r1r5PyGOZFOyv+v+c+NRCEWWCoNhaTKWxOBIqWMgmYzX8WlP/eqm1mAVm7AuzHugeiKFUszrDfDMFWIHHgmJzgRfPsej+Od78npe4q5QYn4P0pmx6HbuOrO7BuWgnNfi7TODQ75aaL7N8kvTgwTXWO3Ulmx5SL5yoLmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=r1arUOkR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WwiY0sYJ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 8 Jul 2025 09:42:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751960540;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/y+zGBFHtkzuV2I1Uve5PJvHwtJ2rfDUFlcVSxc1/yA=;
+	b=r1arUOkR/5qzhcm7UyPVWfoVuYNdSm1wKr/YSAtoUpEmcAhZNPjB3xxDRRX1dVKW8PdcAi
+	QY+LjHf8xBw46E8IMcv1wUveWoePKPUHLfNoDuXLilxa9m5hko/0s8UyX9YdbHEjFAtTH2
+	bLMelHKYIMgZA8wpFzpY7bG8Ujv6OnejDWLuEY2Ln/16XveX2qbmujevLFoWuWeHCTdlG8
+	TcxLHEIDDvAhic4b2J2mY94MuQfFlkr3AXJFxKN+PSVpASxNxoKZWPH1T7fv6qgPI/Gc3L
+	9lt4t/NGNoywWgiK6EopH5kBNJy922zaNDYQZhoGZcXZIzmjTFNDVg+yDuqPkw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751960540;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/y+zGBFHtkzuV2I1Uve5PJvHwtJ2rfDUFlcVSxc1/yA=;
+	b=WwiY0sYJLObRNWCl3F0+8+OkcQhtgk7gbiOJAu7dWSL+2p5r6+8FjUm7bt1R4SOJXUOfLb
+	MdrXe/luiz9c7XAA==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: John Ogness <john.ogness@linutronix.de>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing: Remove pointless memory barriers
+Message-ID: <20250708074219.K7BthlGg@linutronix.de>
+References: <20250626151940.1756398-1-namcao@linutronix.de>
+ <20250626113520.315db641@gandalf.local.home>
+ <20250626160459.soHxOROG@linutronix.de>
+ <20250626123445.5b01849d@gandalf.local.home>
+ <84o6uatn6i.fsf@jogness.linutronix.de>
+ <564f10574f11bd7ca42fcc5fb4d6c5625dc17205.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AS8PR04MB8676B8D14A5C54E8C32025BD8C4EA@AS8PR04MB8676.eurprd04.prod.outlook.com>
+In-Reply-To: <564f10574f11bd7ca42fcc5fb4d6c5625dc17205.camel@redhat.com>
 
-On Tue, Jul 08, 2025 at 07:34:57AM GMT, Hongxing Zhu wrote:
-> > -----Original Message-----
-> > From: Bjorn Helgaas <helgaas@kernel.org>
-> > Sent: 2025年7月8日 3:34
-> > To: Hongxing Zhu <hongxing.zhu@nxp.com>
-> > Cc: Frank Li <frank.li@nxp.com>; l.stach@pengutronix.de;
-> > lpieralisi@kernel.org; kwilczynski@kernel.org; mani@kernel.org;
-> > robh@kernel.org; bhelgaas@google.com; shawnguo@kernel.org;
-> > s.hauer@pengutronix.de; kernel@pengutronix.de; festevam@gmail.com;
-> > linux-pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> > imx@lists.linux.dev; linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH v2] PCI: imx6: Correct the epc_features of i.MX8M chips
-> > 
-> > On Tue, Jun 17, 2025 at 03:34:41PM +0800, Richard Zhu wrote:
-> > > i.MX8MQ PCIes have three 64-bit BAR0/2/4 capable and programmable
-> > BARs.
-> > > But i.MX8MM and i.MX8MP PCIes only have BAR0/BAR2 64bit
-> > programmable
-> > > BARs, and one 256 bytes size fixed BAR4.
-> > >
-> > > Correct the epc_features for i.MX8MM and i.MX8MP PCIes here. i.MX8MQ
-> > > is the same as i.MX8QXP, so set i.MX8MQ's epc_features to
-> > > imx8q_pcie_epc_features.
-> > >
-> > > Fixes: 75c2f26da03f ("PCI: imx6: Add i.MX PCIe EP mode support")
-> > > Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > 
-> > "Correct the epc_features" doesn't include any specific information, and it's
-> > hard to extract the changes for a device from the commit log.
-> > 
-> > This is really two fixes that should be separated so the commit logs can be
-> > specific:
-> Yes, it's right.
-> Since it's just one line change for i.MX8MQ. So, I combine the changes into
-> this commit for i.MX8M chips.
+On Thu, Jul 03, 2025 at 10:05:59AM +0200, Gabriele Monaco wrote:
+> Hi all,
+Hi Gabriele,
+
+> these statements made me curious: I always thought of memory barriers as a way
+> to order reads and writes to the same address across different CPUs (in other
+> words, for visibility).
 > 
-> Hi Mani:
-> Since it had been applied, I don't know how to proceed.
-> Should I separate this commit into two patches, and re-send them again?
-> Thanks.
+> For instance I'd do something like:
 > 
+> CPU 1             CPU2
+> 
+> write(x)
+> smp_mb()
+>                   <implicit paired barrier>
+>                   READ_ONCE(x)
+> 
+> Now, I get there isn't much we can do if reader and writer are racing, but, as
+> Steve said, I'm expecting the presence of barriers to make the racing window
+> smaller.
+> 
+> Am I misinterpreting the whole thing here? Are those barriers just ordering
+> reads with reads and writes with writes (hence useful only with multiple
+> variables)?
 
-I've now dropped the patch from controller/imx6. Please resend them. Also, CC
-the stable list with relevant Fixes tag.
+From "WHAT ARE MEMORY BARRIERS?" section in
+https://www.kernel.org/doc/Documentation/memory-barriers.txt
 
-- Mani
+    "Memory barriers [...] impose a perceived partial ordering over the
+    memory operations on either side of the barrier."
 
-> Best Regards
-> Richard Zhu
-> > 
-> >   - For IMX8MQ_EP, use imx8q_pcie_epc_features (64-bit BARs 0, 2, 4)
-> >     instead of imx8m_pcie_epc_features (64-bit BARs 0, 2).
-> > 
-> >   - For IMX8MM_EP and IMX8MP_EP, add fixed 256-byte BAR 4 in
-> >     imx8m_pcie_epc_features.
-> > 
-> > > ---
-> > >  drivers/pci/controller/dwc/pci-imx6.c | 4 +++-
-> > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/pci/controller/dwc/pci-imx6.c
-> > > b/drivers/pci/controller/dwc/pci-imx6.c
-> > > index 5a38cfaf989b..9754cc6e09b9 100644
-> > > --- a/drivers/pci/controller/dwc/pci-imx6.c
-> > > +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> > > @@ -1385,6 +1385,8 @@ static const struct pci_epc_features
-> > imx8m_pcie_epc_features = {
-> > >  	.msix_capable = false,
-> > >  	.bar[BAR_1] = { .type = BAR_RESERVED, },
-> > >  	.bar[BAR_3] = { .type = BAR_RESERVED, },
-> > > +	.bar[BAR_4] = { .type = BAR_FIXED, .fixed_size = SZ_256, },
-> > > +	.bar[BAR_5] = { .type = BAR_RESERVED, },
-> > >  	.align = SZ_64K,
-> > >  };
-> > >
-> > > @@ -1912,7 +1914,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
-> > >  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
-> > >  		.mode_off[1] = IOMUXC_GPR12,
-> > >  		.mode_mask[1] = IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE,
-> > > -		.epc_features = &imx8m_pcie_epc_features,
-> > > +		.epc_features = &imx8q_pcie_epc_features,
-> > >  		.init_phy = imx8mq_pcie_init_phy,
-> > >  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
-> > >  	},
-> > > --
-> > > 2.37.1
-> > >
+and also have a look at "WHAT MAY NOT BE ASSUMED ABOUT MEMORY BARRIERS?"
+later on:
 
--- 
-மணிவண்ணன் சதாசிவம்
+    "There is no guarantee that any of the memory accesses specified before
+    a memory barrier will be _complete_ by the completion of a memory
+    barrier instruction"
+
+Or data memory barrier explanation from Arm
+(https://developer.arm.com/documentation/den0042/0100/Memory-Ordering/Memory-barriers)
+
+    "This instruction ensures that all memory accesses in program order
+    before the barrier are observed in the system before any explicit
+    memory accesses that appear in program order after the barrier. It does
+    not affect the ordering of any other instructions executing on the
+    processor, or of instruction fetches."
+
+So yes, smp_rmb() is only useful inbetween reads, and smp_wmb() is only
+userful inbetween writes.
+
+Best regards,
+Nam
 
