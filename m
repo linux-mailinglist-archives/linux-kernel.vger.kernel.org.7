@@ -1,124 +1,181 @@
-Return-Path: <linux-kernel+bounces-720839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D044AFC103
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:45:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A8F9AFC106
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B1901AA6D50
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:46:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 847113AB2C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D073322CBC0;
-	Tue,  8 Jul 2025 02:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B48225404;
+	Tue,  8 Jul 2025 02:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="gga3JszB"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="TtUObttV"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817121DD9AC
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 02:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770A4188006
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 02:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751942737; cv=none; b=BUaSlBtC308junRCY/tFgYrSbxsicr8q35rVGmSv1517TXQn78iNvWO3neJybtTiLKvR5o5LXBK5S6NLTIexUmyOhZ0z6FytesMeVQOrSbbNkN3pT4fVTWP1lW0KmiJ0GQ0qHv8WhGzvrXVspYQ5YdqWcz8iW+jL1zZhgjUlD7I=
+	t=1751942871; cv=none; b=rXbvh9fYrMWkqiKjRS2r9l2k9T+MwQzhZ0VRBFJeAh4qWVwlimkzli8y9Le3EJfQwSbDauNZD1cMguFULojGt69K/qIJHP35fGS8vRvmSNo6pPxvo9r4QHBH6qcDkiEPU34tyMMXm/mycYL/YFu1Oy26KLmpw1m5x6El+D5ws5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751942737; c=relaxed/simple;
-	bh=aUMMjB+yn4mSEgqXKC698aJON3QG4yYWMuKTKFB/0kM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SLczeuYOENraFqeeSKd9Cq6ONawmjhpCOaaHvnOjOSvR77LnseGoWK7CGQH4ai/cf/ypoFGrzNyGZzCxV9qzJqQxtQWNQVbI3GpWu5iSM60Tg9mxZTe3eQMd+feRMZzoxrYTLIPh7tcWmEGXsaoItCds1zguf3DRhJ1eLQt5a0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=gga3JszB; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-70e3c6b88dbso25930327b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 19:45:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1751942734; x=1752547534; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VQ/NiNUPsy7bq8yRlo+N7RrKNim2+iwf68n6XJkJTqU=;
-        b=gga3JszBe1+ZUdewSLprTGFloPNe7xaFU4ijUOmCJ75ENlEqPH3Ss6DurCaQ6VxqJg
-         /JhbLuw9x2zIHzwmdRAwgUxfjrlQ56o8srONhdjuW6mr1oBj89VSrlF9w3nmks5q9lYi
-         8Qzx8m3VRAdCdRpLJkxWD2PyAuWM+ZNIU/HoX4ejtzFat5F6BbKAqz+6r9QoTVoAX3Vv
-         tRnW1Zod60EHlTMqAgIA5Gr0N6JFLTEMH5DPai4QPtlBqVBNjGDesnBBmdf8k7qQZKID
-         ao2nMo/Frif/PdslDXdZ9YeaP1N5KTzAK8gt1OD57W1Tx/3GeSK/E1FErnnUOTNk1EPo
-         wfgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751942734; x=1752547534;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VQ/NiNUPsy7bq8yRlo+N7RrKNim2+iwf68n6XJkJTqU=;
-        b=i+KFoqhtB2wTnRHymrp5zJl/shdLVR4HH0PDKYgc9vVmA9DokLHwDwOgXBFGlwELAM
-         yDyjQ547+U1SERnyMPiogTsh7MitE2x2hf8xDTOyDyyvyHel8SNAjtsBYAzfeX8UoZVT
-         QLhrU5Jem5/11JH/O7ZSlLDbuVwhHcXaLlpQ3TbU2/CPjPQcepunxW30vLyk2tJfcOok
-         jTto0XQIATScS6OhmEk6l7HSZJM+YWXLxbKzDWhCdGmAvkfdyU7inaz7MhPNGf73R8tn
-         pRw/wpgYmzbd3wkiLvW0lr30zJNovTFhkKQYGW2hDOe5EK+f/5YXgdfWsWBR7CBNCULo
-         Zd1w==
-X-Forwarded-Encrypted: i=1; AJvYcCW0y4KqV0UwtAaDQXf0gGUbEuW8mWc9YNTG2Dy8IJHrr2foEObNFoy9ThrRt57YE0XaMdTF2AtwgnzYNDI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycRfvHSnDk6t1/HxOHato3rhAMliWPowTb95Cj1ZbeVbFlr2Fy
-	YFno7slwcPfZMk0ZZKAD2FCSLSAcN8o2UrMv2ZHi0kpTmgwgmsBbKqmAA1nY3oGDzgd/JqCeJTv
-	3kIGHLh85q8E0KP9gmjxqoDLNhb9jr1yK+53hKjWm
-X-Gm-Gg: ASbGncuzteTLDQLGaYDkc3uMfjWTY5QwKWVOGpvuiCs2JeVUJc02MxwLPVpTKSQiavg
-	cDiVJV8gMSf+fNLTs7/H93CFd/E2vmVsaEKzAnDZZiJJv2UAr497/FEAmxw5huzp1aQ9KVXeoEV
-	fdgSV5REGkGLAOMisYz5sghQ525MX35KrgxjTtcEoPoCQ=
-X-Google-Smtp-Source: AGHT+IHWCYgBwFfnvQ04g7x7wixvMXAER4hy7VugO4JmRhjOft/6uFE58Yw19AkqzbY/9MfAI0j4ZrhQW/BRI9ZtxG0=
-X-Received: by 2002:a05:690c:700d:b0:715:952:e8d1 with SMTP id
- 00721157ae682-717a0414aeemr15148317b3.20.1751942734451; Mon, 07 Jul 2025
- 19:45:34 -0700 (PDT)
+	s=arc-20240116; t=1751942871; c=relaxed/simple;
+	bh=+RGoPLQX+WphB0t0rf+wkCUFPxHTsYlpumekwBZPgVk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=E6cqE9Gc+5p5Jo8+hU/od6c+APM44WgRwykSatDE8baIX5UGL+O07cZGFwOKtTZyLjp4EqQGLx4bWWrbONUD9Avyh+wTiWcFUEUkYGdHtlZL2mgM4nGTbU83ktPfE9X98+EtjHcMN8+BegwbXo+tkyUNUYYqks3m0+FwaXQo2p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=TtUObttV; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1751942866; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=DQr0YCrQUB39u7/5W9qapxDHiBmCU/Fl1/td/w4vO4o=;
+	b=TtUObttVk1b4AZmasZ+RS2v4EQc4AVJb7S2sXqm378+n/JzpuGg3oqdReaGkhwKsrT5kfYSr1hL7duIcwn2bkxQ7BGL4OVQt0Jinrqdxo1k3yxe77LU+lagylUarWRJjGH1TAdsntj9QkxGiCk7FtXXUrkModuieoipM6UgXoxo=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WiJ5bee_1751942863 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 08 Jul 2025 10:47:44 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>
+Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>,  "Huang, Ying"
+ <ying.huang@intel.com>,  "akpm@linux-foundation.org"
+ <akpm@linux-foundation.org>,  "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>,  "Yasunori Gotou (Fujitsu)"
+ <y-goto@fujitsu.com>,  Ingo Molnar <mingo@redhat.com>,  Peter Zijlstra
+ <peterz@infradead.org>,  Juri Lelli <juri.lelli@redhat.com>,  Vincent
+ Guittot <vincent.guittot@linaro.org>,  Dietmar Eggemann
+ <dietmar.eggemann@arm.com>,  Steven Rostedt <rostedt@goodmis.org>,  Ben
+ Segall <bsegall@google.com>,  Mel Gorman <mgorman@suse.de>,  Valentin
+ Schneider <vschneid@redhat.com>,  "lkp@intel.com" <lkp@intel.com>
+Subject: Re: [PATCH RFC v2] mm: memory-tiering: Fix PGPROMOTE_CANDIDATE
+ accounting
+In-Reply-To: <ef637fe1-436e-4003-86fb-47f651433f7b@fujitsu.com> (Zhijian Li's
+	message of "Tue, 8 Jul 2025 02:26:54 +0000")
+References: <20250625021352.2291544-1-lizhijian@fujitsu.com>
+	<e71873b6-78ac-4555-a6a5-e9b5fb3f9112@fujitsu.com>
+	<87tt3nxz4x.fsf@DESKTOP-5N7EMDA>
+	<ef637fe1-436e-4003-86fb-47f651433f7b@fujitsu.com>
+Date: Tue, 08 Jul 2025 10:47:42 +0800
+Message-ID: <87zfdfwg8h.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250626191425.9645-5-shivankg@amd.com> <a888364d0562815ca7e848b4d4f5b629@paul-moore.com>
- <67c40ef1-8d90-44c5-b071-b130a960ecc4@amd.com> <CAHC9VhTXheV6vxEFMUw4M=fN3mKsT0Ygv2oRFU7Sq_gEcx2iyg@mail.gmail.com>
- <48916a70-2a89-4d24-8e36-d15ccc112519@ieee.org>
-In-Reply-To: <48916a70-2a89-4d24-8e36-d15ccc112519@ieee.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 7 Jul 2025 22:45:23 -0400
-X-Gm-Features: Ac12FXx48DIUvMS0yWAzdQUJMMUn3Ep5a8fVtcwuwTJZh9ePscSPqgGP30FbUrk
-Message-ID: <CAHC9VhRUkKWDc39BAz6uzjRBt47wDCNkzfV=z6+Tb-RznfycsQ@mail.gmail.com>
-Subject: Re: [PATCH v3] fs: generalize anon_inode_make_secure_inode() and fix
- secretmem LSM bypass
-To: Chris PeBenito <pebenito@ieee.org>
-Cc: Shivank Garg <shivankg@amd.com>, david@redhat.com, akpm@linux-foundation.org, 
-	brauner@kernel.org, rppt@kernel.org, viro@zeniv.linux.org.uk, 
-	seanjc@google.com, vbabka@suse.cz, willy@infradead.org, pbonzini@redhat.com, 
-	tabba@google.com, afranji@google.com, ackerleytng@google.com, jack@suse.cz, 
-	hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
-	roypat@amazon.co.uk, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, selinux-refpolicy@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=ascii
 
-On Mon, Jul 7, 2025 at 4:38=E2=80=AFPM Chris PeBenito <pebenito@ieee.org> w=
-rote:
-> On 7/7/2025 4:01 PM, Paul Moore wrote:
-> >
-> > Strictly speaking this is a regression in the kernel, even if the new
-> > behavior is correct.  I'm CC'ing the SELinux and Reference Policy
-> > lists so that the policy devs can take a look and see what impacts
-> > there might be to the various public SELinux policies.  If this looks
-> > like it may be a significant issue, we'll need to work around this
-> > with a SELinux "policy capability" or some other compatibility
-> > solution.
+"Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com> writes:
+
+> On 08/07/2025 09:14, Huang, Ying wrote:
+>> "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com> writes:
+>> 
+>>> Hi,
+>>>
+>>>
+>>> On 25/06/2025 10:13, Li Zhijian wrote:
+>>>> V2:
+>>>> Fix compiling error # Reported by LKP
+>>>>
+>>>> As Ying suggested, we need to assess whether this change causes regression.
+>>>> However, considering the stringent conditions this patch involves,
+>>>> properly evaluating it may be challenging, as the outcomes depend on your
+>>>> perspective. Much like in a zero-sum game, if someone benefits, another
+>>>> might lose.
+>>>>
+>>>> If there are subsequent results, I will update them here.
+>>>
+>>> I ran memhog + pmbench to evaluate the impact of the patch(3 runs [1] for each kernel).
+>>>
+>>> The results show an approximate 4% performance increase in pmbench after applying this patch.
+>>>
+>>> Average     pmbench-access            max-promotion-rate
+>>> Before:     7956805 pages/sec                168301 pages/sec
+>>> After:      8313666 pages/sec (+4.4%)        207149 pages/sec
+>> 
+>> It's hard for me to understand why performance increases because of
+>> higher promotion rate, while the expected behavior is more promotion
+>> rate limiting.
 >
-> In refpolicy, there are 34 rules for anon_inode and they all have {
-> create read write map } -- none of them have the execute permission.  Of
-> these, only 4 are explict and could potentially be broken.  The
-> remaining get it due to being unconfined, thus can be immediately fixed,
-> since it's unconfined.
+> Good question.
 >
-> IMO, this is very low impact.
+> Above max-promotion-rate means the maximum rate during the WHOLE pmbench period which
+> can not indicate the total promoted pages.
+>
+> Allow me to present each sample [0] recorded per second during the pmbench duration, as exemplified below:
+>
+>
+>              |       AFTER             |VS |           BEFORE       |
+> ------------+-------------------------+++++------------------------|
+> | Timestamp |  pgprom/s   |  pgdem/s  |   |  pgprom/s  |  pgdem/s  |
+> |-----------|-------------|-----------|---|------------|-----------|
+> |     1     |   122977    |     0     |   |   123051   |     0     |
+> |     2     |   50171     |     0     |   |   50159    |     0     |
+> |     3     |     18      |     0     |   |     28     |     0     |
+> |     4     |   16647     |     0     |   |     0      |     0     |
+> |     5     | 207149.5    |     0     |   |   78895    |     0     |
+> |     6     | 193411      | 161521    |   |  168301    |   8702    |
+> |     7     |  52464      |  53989    |   |   42294    |  39108    |
+> |     8     |   5133      |   2627    |   |     0      |     0     |
+> |     9     |     24      |     8     |   |   3875     |   6213    |
+> |    10     |     0       |     0     |   |  45513     |  43260    |
+> |    11     |     0       |     0     |   |  36600     |  44982    |
+> |    12     |     0       |     0     |   |  21091     |  11631    |
+> |    13     |     0       |     0     |   |  12276     |  10719    |
+> |    14     |     0       |     0     |   | 149699     | 149400    |
+> |    15     |     0       |     0     |   |   4026     |   4933    |
+> |    16     |     0       |     0     |   |   3780     |     0     |
+> |    17     |     0       |     0     |   |     2      |     0     |
+> |    18     |     0       |     0     |   |     0      |     0     |
+> |    19     |     0       |     0     |   |     0      |     0     |
+> |    20     |     0       |     0     |   |     0      |     0     |
+> |    21     |     0       |     0     |   |    62      |     0     |
+> |    22     |     0       |     0     |   |   2016     |     0     |
+> |    23     |     0       |     0     |   |     0      |     0     |
+> |    24     |     0       |     0     |   |    62      |     0     |
+> |    25     |   8308      |     0     |   |     1      |     0     |
+> |    26     |   220       |     0     |   |     0      |     0     |
+> |    27     |     0       |     0     |   |  1995.05   |     0     |
+> |    28     |     0       |     0     |   |     1      |     0     |
+> |    29     |   5791      |     0     |   |     0      |     0     |
+> |    30     |     0       |     0     |   |    62      |     0     |
+> ------------+-------------------------+++++------------------------|
+> |   total   | 662313.5    | 218145    |   | 743789.05  | 318948    |
+> |    max    | 207149.5    | 161521    |   |  168301    | 149400    |
+> ------------+-------------------------+++++------------------------|
+> |   pmbench |        8416250          |VS |        8079500         |
+>
+>
+> As far as I can tell, the higher pmbench scores applied-patch may be attributed to
+> a reduction in the total number of promoted pages in the entire pmbench execution period.
+> (Similar circumstances were observed in the results of other tests conducted)
+>
+>
+>
+> [0]
+> before:
+> https://github.com/zhijianli88/misc/blob/main/20250627/promotion-evaluation/without-patch/pmbench-1750988862.log
+> https://github.com/zhijianli88/misc/blob/main/20250627/promotion-evaluation/without-patch/sar-1750988862.log
+> after:
+> https://github.com/zhijianli88/misc/blob/main/20250627/promotion-evaluation/with-patch/pmbench-1750988291.log
+> https://github.com/zhijianli88/misc/blob/main/20250627/promotion-evaluation/with-patch/sar-1750988291.log
+>
 
-Thanks Chris, I think it's worth leaving the kernel code as-is and
-just patching the selinux-testsuite.  I'll send out a patch for that
-tomorrow.
+Check the usage of PGPROMOTE_CANDIDATE again.  It is used not only by
+rate limiting, but also promotion threshold adjustment, please take a
+look at numa_promotion_adjust_threshold().  Which may have larger
+influence on performance.
 
---=20
-paul-moore.com
+After checking the threshold adjustment code, I think the changes in
+this patch may confuse threshold adjustment.
+
+[snip]
+
+---
+Best Regards,
+Huang, Ying
 
