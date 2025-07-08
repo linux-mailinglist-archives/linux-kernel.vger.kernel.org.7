@@ -1,102 +1,84 @@
-Return-Path: <linux-kernel+bounces-721516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4EF2AFCA3C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:20:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25A6DAFCA3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FA94188A025
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:20:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38A5E3A6E3A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7541A2DC329;
-	Tue,  8 Jul 2025 12:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6DE2DAFCF;
+	Tue,  8 Jul 2025 12:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ozAnVNHI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ruuy5wWF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA972DAFD6;
-	Tue,  8 Jul 2025 12:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0B8214A6A;
+	Tue,  8 Jul 2025 12:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751977182; cv=none; b=naNenjRimpL1jCcYv5tNVH7ifrUt3uTaLnhpDEs84fBzkbRJyQ/ZCEIV6Uaw47A916S5bR99IFEfX2Z/iI/wRL0f+AcDWnWIjmIQtMxGDkClUer/C6CrUjWTqUX/cFvpiqBCJHJXSSHF3WcB1q3ZFP/xUmFgGc9bQdsvfYuLlvc=
+	t=1751977213; cv=none; b=pf9ES8nWxNxQDuzN6a5bKDU7r9jFASBJbW8uHQtkXwZfnfX+RQ09t5QurBMJNURvM7MD2vCsPwxi+tzM9HGYgZuL7WZUpz6rFEcpDVPkDQuqXxxGsBsqpdUCgGGy7GB/KraaSpxld/kCIYFL8LLuqxmKR1LvFE/2RTXcitFH4K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751977182; c=relaxed/simple;
-	bh=Y0tx0EqPvKxbehRPywzbQ+5cZgkvvq1HBIkZ2VN76bI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dNu0bU23H9auLJamggDpV51ivDPs23ATRe2hyQEuyEzOzCVabv9JSRHr926LEzfJNsiX1nqAk5JMLi88l+fEBDW/29ICOvzTIYXKV1TSb1vxGkV4/tDiaquiZlULWJ8Tnp03ObQ/gTp21YNFe3JdhZkQpag4cCpz4euqxPjb17I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ozAnVNHI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06506C4CEF0;
-	Tue,  8 Jul 2025 12:19:38 +0000 (UTC)
+	s=arc-20240116; t=1751977213; c=relaxed/simple;
+	bh=MIehr9jluEp3u5+Mu2StLmgYj37opZ6jQN+UeB8HFp8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dtML+kWfXZLWfMNJxOIfeXIMoBTr9yUOJz0SACdMWoToopzf5SCp5o9DuNZajs5RRFvK8wBsAPkK7xO3mXOjtnPyBbmQH6ThJNQ6iHDTWDct2jRPes5R62TPMG1sT0iKBwBIkGRnfCASJAuaAcyB/N7JEnhz9wYCLLwPFyqYU7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ruuy5wWF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83D64C4CEF0;
+	Tue,  8 Jul 2025 12:20:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751977182;
-	bh=Y0tx0EqPvKxbehRPywzbQ+5cZgkvvq1HBIkZ2VN76bI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ozAnVNHIzqETLDXhpZCG89MPrOOYSHfaBye6kqsGuu1tB+jM0BrM09AV2Yw/3jb56
-	 rgZ/M3jzjEtVWPZByBjK5N1SMedO9fmymiBhG4UPf2y9S9GMWpxhLf26RZgGa2JhQ4
-	 BJcPA0+O986jLCtaywlvLRXE7bw+wPrydKjc0ZyK80LPvyOKFMGBbtRICLvMovwMya
-	 dMCaIQn3WIoCe18kP3XcMAFVoa/UItVgoA0vI3vqLlnWZhyL2XIFaURTCR20nFEj5t
-	 iPwEKEJsX82ECqKlPJPB5wHC6AB9/fs7PX11WZDx9nTBQEGlkXMAj4J+zivndoUbzk
-	 nImiChjTIuMTQ==
-Message-ID: <dd81bc6d-5694-4051-a4aa-9d01e1cfb488@kernel.org>
-Date: Tue, 8 Jul 2025 14:19:37 +0200
+	s=k20201202; t=1751977211;
+	bh=MIehr9jluEp3u5+Mu2StLmgYj37opZ6jQN+UeB8HFp8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ruuy5wWFUqsEWusK7NUHv4T9ngpgfIWTzTzfEuRDXF1lU7cm+J6795JqMipPPizzk
+	 UfyjtwVIf8LQlnAr8Kca+F+pPxh7UIB29LOY42EER3EUpFRx7MBBsS7U/+UjCz8HlW
+	 9JWrHzLSoqBIaYj0erZpEgR+Ah8u7dE1MdC7RmjUFAkmDVBNeLzM2DRj+gZpPQfnnl
+	 0Ipt3jGhBi4sW9Z00K8YN108cGX/fuEToS9i7khLR6K7PxcB1EHPLjbRfFEjO7PMZE
+	 Q7iiqxyW9JlPOAO/rMeg9CS7SmVjsRCMJgazYhUPm14YmlVckB5cA3+ZCs8pat6Pif
+	 gk5MbjJnU+aqQ==
+Date: Tue, 8 Jul 2025 07:20:10 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Conor Dooley <conor@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v2 1/3] docs: dt: writing-bindings: Rephrase typical
+ fallback (superset) usage
+Message-ID: <175197717909.255573.12171787230277051433.robh@kernel.org>
+References: <20250707095019.66792-4-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, Benno Lossin <lossin@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- linux-pci@vger.kernel.org
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com>
- <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com>
- <abf29ebe-996e-47f6-8548-afc61ad29a89@de.bosch.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <abf29ebe-996e-47f6-8548-afc61ad29a89@de.bosch.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707095019.66792-4-krzysztof.kozlowski@linaro.org>
 
-On 7/8/25 2:15 PM, Dirk Behme wrote:
-> For example for Resource the elements size, start, name and flags are
-> accessible. Inspired by that, what do you think about exposing the irq
-> number here, as well?
-> 
-> diff --git a/rust/kernel/irq/request.rs b/rust/kernel/irq/request.rs
-> index bd489b8d2386..767d66e3e6c7 100644
-> --- a/rust/kernel/irq/request.rs
-> +++ b/rust/kernel/irq/request.rs
-> @@ -123,6 +123,11 @@ impl<'a> IrqRequest<'a> {
->       pub(crate) unsafe fn new(dev: &'a Device<Bound>, irq: u32) -> Self {
->           IrqRequest { dev, irq }
->       }
-> +
-> +    /// Returns the IRQ number of an [`IrqRequest`].
-> +    pub fn irq(&self) -> u32 {
-> +        self.irq
-> +    }
->   }
-> 
-> 
-> I'm using that for some dev_info!().
 
-Not sure that's a reasonable candidate for dev_info!() prints, but maybe it can
-be useful for some debug prints.
+On Mon, 07 Jul 2025 11:50:20 +0200, Krzysztof Kozlowski wrote:
+> When speaking about compatibles for new devices comparing to "prior
+> implementations", usually we expect new device to come with more
+> features, thus logically it is a superset, not subset, of "prior
+> implementations".
+> 
+> Suggested-by: Conor Dooley <conor@kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Changes in v2:
+> 1. New patch, superset suggested by Conor.
+> ---
+>  Documentation/devicetree/bindings/writing-bindings.rst | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+
+Applied, thanks!
+
 
