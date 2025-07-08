@@ -1,185 +1,191 @@
-Return-Path: <linux-kernel+bounces-721345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C5EAFC7EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:09:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9634DAFC7EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4CBC1BC4DCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:08:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA62A483B72
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E315026C3A0;
-	Tue,  8 Jul 2025 10:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2977926B2C8;
+	Tue,  8 Jul 2025 10:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="freOrkbw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gdycy6mG"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487DE26B74C
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 10:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E1026B09F;
+	Tue,  8 Jul 2025 10:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751969226; cv=none; b=D7sHHd3cl+zX8Q3LtrJsL8k8jhFibu7qhFqVAhs1C4yNx/fcDOnEZotO1SkZuNdEKFzGFD5Zegfyy4P7kvN8T/fZYvTiwLxUw4c0YnEINQOZgZ3N8G+JS4YIOkkIhTYeB3oETOhc3OT36NizULzcqVST0S21MT1Kk2JcyJLA3B8=
+	t=1751969222; cv=none; b=dQPNKd+xy48Jb6ppcGuTL8EiAzQSDVjxr+OkOfcGFDdtKghqoRz8aTN6n0fWylUFBEcsJhHGDvoXvXBRg/BBGZBs9gnVMvuJK5NztXmRWZQajBIYiOfOkzZh9p3q+feTt3EDMiHSjFmKucv1Ifcki1Jq8+SZjtSymAgJWbcnnMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751969226; c=relaxed/simple;
-	bh=fYyHl23C7iOML4Y3XMKrYo2vQEq5oT1hriKpsmH1Ugk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EILeVuHaJ93aVEQC0hax0F0E9gROoQO9QbQcGihVz9/dIcpHR7E3xks0PAbtJlxn/NkB6jn60Pnw0JMTB4PFn4BkupevHv0vn5LkmmcPVEVolYHbnBccMTTzVOoI2DqO33p4xYwId6NXb3FILxlpjIcol1jUkk+t6ebj/AQpkq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=freOrkbw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751969223;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=58D8nthEMttD8EOjkycPcqwbL7GCEdeTDZ0Fg2Jn8PI=;
-	b=freOrkbwKv7La195Q1fK8fA6gKnwc7hmLTSnFoiN7nZ1AqkMaxtRB94LwscZf2rjp/4LvJ
-	i7Gx8Lc7H1/3pzCo32mK3so58ee9H+K9DfQ51xGrG7ASi2AKafqiRhQfcr/D2VxzRYiXQg
-	FrTllqqRRcdWoHCJlqbNEdKPG9bbySY=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-341-tEF9GXMSNGKQXiTAv-gJ0Q-1; Tue, 08 Jul 2025 06:07:02 -0400
-X-MC-Unique: tEF9GXMSNGKQXiTAv-gJ0Q-1
-X-Mimecast-MFC-AGG-ID: tEF9GXMSNGKQXiTAv-gJ0Q_1751969221
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4ff581df3so1838054f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 03:07:01 -0700 (PDT)
+	s=arc-20240116; t=1751969222; c=relaxed/simple;
+	bh=e/Pd6vA+VmaF2zukYk9DBDpw0E2bjx0yWVQX/BqXoL4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=IWgV/eVYznY18lxoORXzNAD5XuePuFfdHo7/BUNPPm7WA9YXLWBWkpDFOe3sI5Sub2e5TpSL7dH6Q56CH/GBI3+lZa2JYwXFJBdbt76wMRfVV+nS1wtmGc4N6c/gU2oJVrgNWzPuGcEDKPi2/jH5/G/7dqXb2tSretB2EybEs8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gdycy6mG; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-74b56b1d301so2333005b3a.1;
+        Tue, 08 Jul 2025 03:07:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751969220; x=1752574020; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fVDZwMbI3MaZsqcDOMuRideVCsmXg1PFZTHplOr/W9w=;
+        b=gdycy6mG907z/8iG1smz0YY96oEVlfgMlOcUvOW1Gttln/tdWtszNhsEvSAd2uYexQ
+         fpD3w7G466tlrc37PvvR6AWtauXtnUhvDzWdflKyVMBfeLBfJeiMhwqnMug84ZHOIa39
+         +OQPT8QhghKjJlEycG9rZsLsJf4Z6HiimWiU4pHQdO/M1fSGWQPjl5Kw3E361UI1xW0w
+         ArN9keQ9z7Fh0migbwyu2WVt/fD0mhIxatgvbfsi2Bgs5M9W8YZpNUdFQ/Uhj0U1Yc/7
+         VdvXVy1DcvfdiKqh8+KmfsBjsOoiLWdz+OFRbGpAmrDFqr/ITgRxw7uHidES0OIRoxI7
+         sR6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751969221; x=1752574021;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=58D8nthEMttD8EOjkycPcqwbL7GCEdeTDZ0Fg2Jn8PI=;
-        b=U14FMD1oNV40R8heta96PZHg0jcszFT2CQFbLKN/+dHvzn+I3vUqb+ho/h7RQ25Wtn
-         n6Fg4wMp8wC3KILMmio9qCDOUEJAid7/NV36KZjgtP6hwWDVAddy1JdeNLrTTOxfEHXR
-         5I1J2/2locHxNrB5LPYJcXXXZDGGgFnQUAIdQqYME/hlS20zaTPxwOGBUUcCI1EfAqZ+
-         p65c5yiTyj4lR1Z9ZYaIRyeJblysaqIRSlrmzgZeoLGXsnAPHSwy+/YANF1gxOUUdn6e
-         +RdcHZE9vJlxqQhbDsOGgM7g7PqDfim78hqqYos/T7qBEPb0OklC1ULJ971Qx+u1EtBl
-         u7AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/srcz84H9LeXvhTTDwroG8WblFATqbnA171CLe+c+CrYc/8OFKmB0JJLdXu5Y7bDEfGnJcaQ+LfCIi28=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzil7DTrdyJpSsjc3ogVAUWCQxZX6kDsZ6oasHagYHiZKoUoKbX
-	3X0ZZB3WOFJv92z/+FD/NfOiNDDyz5Li3DFTPWqEClB9tJM3HPkM/uvch72UZQt6U7gY60D09En
-	tb0jGnFEgDMCS+U1oa76Hj48nKUol+2xEkz6H3NuvORnTwLjuwLmAuUf6dCzA2JWZZg==
-X-Gm-Gg: ASbGnct9qhR1kdotkWFuICfammufeueMPP3PTvlIlO2D3hTmIu/Gh6pfjwaTLpDfjm2
-	AVFN9RKn1uLlPVJYLPWxAfkCYE8KU1A/2BJ42NBuE+B/+W/XHnDzy2MyveAaxFQDT7BHDKH0nHx
-	Gs63vxodwlOolkO1+WuGLL5j8JB9Pa0T9Tq7w2iyLBgMPy9oN5r5gtn8k0xl3iH3aTMY9JK5NDR
-	UYBVF4Q2k8lILSOBHMwUrD4HdGnas+6fWmABA2B8xwQnpAPKQz1G9tYcsXyvK5N1Pb/eIUfaKhl
-	Wqn0TFy0REV3E0lR2MFphsoL0HeCsDVsPY/YpVv/55KvIc6gCa9qfrGVjMo90APnLUWc0w==
-X-Received: by 2002:a05:6000:2303:b0:3a5:271e:c684 with SMTP id ffacd0b85a97d-3b5de020c32mr1949628f8f.24.1751969220769;
+        d=1e100.net; s=20230601; t=1751969220; x=1752574020;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fVDZwMbI3MaZsqcDOMuRideVCsmXg1PFZTHplOr/W9w=;
+        b=r+brutq1sD/yAXk++vGw2gj3/9WDgoMvtQ1uXAcnpVAKWOzzbr67MZthwMgP3VCFqf
+         kut9w3+ALlQO6ID56wZPWV/hyxLVQCNTpHmKwqf5yhq1T+Huy6VpI/C5J66zPYi6AZmb
+         UvS+RfDazwHHuXfhYwtMLbZLpRJMTDThUc6HOZsdEHEX2dQGceq4m6pNRz0QIyNrcR4K
+         3ySVJOx1oJEPTyTq2AAyumDr+ZSu08WZNctcmz4+KBh8Ns8/SFsVYwyaw+NSV3Qwbl8n
+         Qk925CfUrpT5UHrnNZLyPKddZ+1repbC70QDTik7aGAZGeadfUENrLbnaKysdm/Q4TVi
+         8iLg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+WXKrQUUpR372fYavwQPBBcEHabDaVL9MeycotESOvLokU8klNyc+BvqR1gu6Elgo9SG1+tDCDwQDMSY=@vger.kernel.org, AJvYcCVHkyqI5j6Kos3iIkdq5dw+iA8QOVJYhZU8FzKFrTs1Ce79g1m4fvl5eKm+yiBDU2+7fOOa5deo19VhQ5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/rv4R2TidC/sUV+sQlGZ7oBy4sBrSjhRhzYp7N3O8fIryrr3x
+	n9BCMO5jqfahBKUsYcTaExOQxWS4CCG1ISDg5JapWzh/4rWYAVphUgEbQo1rZ7KT
+X-Gm-Gg: ASbGncvAzzL+Gjm0m9T6O/9pEgs2MF1nsqJXxorrZfBEjxcYz9Im1oA9dt2Et2WYdGf
+	tu4yQudLXZRa72VQSjQ7bh8SBOJVc2mnaKi0PeRK6IZDhYjodl680VpbdpvjO74tLLlbwrE2Nn4
+	0siNVFhyxX6g1LpBrehodjHRDkqnTNm5hLnXGgDZZEpWlHz1KkTbp/ALy+Mkrj2h8Su9yxKi9gU
+	0nYsGScm1Mi5/XIOiSEm7OAQmEy7aoTagOnKhFQh9yXzu5JScm6jpMuZNXqlr0u7S6Us3Cf7lHU
+	989n8UcZXVJpBHKP93fw7JvyDq9n0zretro+a9RqEyEmrjvUcPDOX2utoeBM1mLkW4Yic4GolM2
+	PvCOll3enHseBJD4=
+X-Google-Smtp-Source: AGHT+IF5IEEWA6P5DDZbTNTa4RdtlbgzI1iI+TTgS3Fon36qdFB1AdrHk/f2Cb401XdKTWTaFrqLUw==
+X-Received: by 2002:a05:6a21:7a44:b0:220:10e5:825d with SMTP id adf61e73a8af0-22608fbba67mr24621523637.8.1751969220107;
         Tue, 08 Jul 2025 03:07:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEtcYA73nlyPh3UUGiVwYijbG3S+DSKY5ccoYHAENjNZ6YmMjCSlj1e9xUsxHKnSmrtDCa3pg==
-X-Received: by 2002:a05:6000:2303:b0:3a5:271e:c684 with SMTP id ffacd0b85a97d-3b5de020c32mr1949573f8f.24.1751969220180;
-        Tue, 08 Jul 2025 03:07:00 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2717:8910:b663:3b86:247e:dba2? ([2a0d:3344:2717:8910:b663:3b86:247e:dba2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454cd2e7e89sm18221965e9.0.2025.07.08.03.06.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+Received: from [127.0.1.1] (211-23-39-77.hinet-ip.hinet.net. [211.23.39.77])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce359ecd6sm11971174b3a.24.2025.07.08.03.06.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 08 Jul 2025 03:06:59 -0700 (PDT)
-Message-ID: <b68a06a1-076a-4345-bbb4-7dda1cd73591@redhat.com>
-Date: Tue, 8 Jul 2025 12:06:45 +0200
+From: LiangCheng Wang <zaq14760@gmail.com>
+Date: Tue, 08 Jul 2025 18:06:46 +0800
+Subject: [PATCH 3/3] dt-bindings: display: Add Mayqueen Pixpaper e-ink
+ panel
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next v14 04/12] net: mtip: The L2 switch driver for imx287
-To: Lukasz Majewski <lukma@denx.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
- davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- Stefan Wahren <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>,
- Andrew Lunn <andrew@lunn.ch>
-References: <20250701114957.2492486-1-lukma@denx.de>
- <20250701114957.2492486-5-lukma@denx.de>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250701114957.2492486-5-lukma@denx.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250708-drm-v1-3-45055fdadc8a@gmail.com>
+References: <20250708-drm-v1-0-45055fdadc8a@gmail.com>
+In-Reply-To: <20250708-drm-v1-0-45055fdadc8a@gmail.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Wig Cheng <onlywig@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
+ linaro-mm-sig@lists.linaro.org, LiangCheng Wang <zaq14760@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751969205; l=2111;
+ i=zaq14760@gmail.com; h=from:subject:message-id;
+ bh=e/Pd6vA+VmaF2zukYk9DBDpw0E2bjx0yWVQX/BqXoL4=;
+ b=P5GfjvHLmmcmbgI2dFTUjdqZ0y/W6BouIch2ERcYaoYs/FheTOD13/2l73i/QtsOg1LUKzrJ6
+ 4rpICTvKNnLDDbZRfZoin3nmzabD5/ZtFPs7wf6Zde1OAS6Yr6Xq8cR
+X-Developer-Key: i=zaq14760@gmail.com; a=ed25519;
+ pk=5IaLhzvMqasgGPT47dsa8HEpfb0/Dv2BZC0TzSLj6E0=
 
-On 7/1/25 1:49 PM, Lukasz Majewski wrote:
-> +static int mtip_sw_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np = pdev->dev.of_node;
-> +	const struct mtip_devinfo *dev_info;
-> +	struct switch_enet_private *fep;
-> +	int ret;
-> +
-> +	fep = devm_kzalloc(&pdev->dev, sizeof(*fep), GFP_KERNEL);
-> +	if (!fep)
-> +		return -ENOMEM;
-> +
-> +	dev_info = of_device_get_match_data(&pdev->dev);
-> +	if (dev_info)
-> +		fep->quirks = dev_info->quirks;
-> +
-> +	fep->pdev = pdev;
-> +	platform_set_drvdata(pdev, fep);
-> +
-> +	fep->enet_addr = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(fep->enet_addr))
-> +		return PTR_ERR(fep->enet_addr);
-> +
-> +	fep->irq = platform_get_irq_byname(pdev, "enet_switch");
-> +	if (fep->irq < 0)
-> +		return fep->irq;
-> +
-> +	ret = mtip_parse_of(fep, np);
-> +	if (ret < 0)
-> +		return dev_err_probe(&pdev->dev, ret,
-> +				     "OF parse error\n");
-> +
-> +	/* Create an Ethernet device instance.
-> +	 * The switch lookup address memory starts at 0x800FC000
-> +	 */
-> +	fep->hwp_enet = fep->enet_addr;
-> +	fep->hwp = fep->enet_addr + ENET_SWI_PHYS_ADDR_OFFSET;
-> +	fep->hwentry = (struct mtip_addr_table __iomem *)
-> +		(fep->hwp + MCF_ESW_LOOKUP_MEM_OFFSET);
-> +
-> +	ret = devm_regulator_get_enable_optional(&pdev->dev, "phy");
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret,
-> +				     "Unable to get and enable 'phy'\n");
-> +
-> +	fep->clk_ipg = devm_clk_get_enabled(&pdev->dev, "ipg");
-> +	if (IS_ERR(fep->clk_ipg))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(fep->clk_ipg),
-> +				     "Unable to acquire 'ipg' clock\n");
-> +
-> +	fep->clk_ahb = devm_clk_get_enabled(&pdev->dev, "ahb");
-> +	if (IS_ERR(fep->clk_ahb))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(fep->clk_ahb),
-> +				     "Unable to acquire 'ahb' clock\n");
-> +
-> +	fep->clk_enet_out = devm_clk_get_optional_enabled(&pdev->dev,
-> +							  "enet_out");
-> +	if (IS_ERR(fep->clk_enet_out))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(fep->clk_enet_out),
-> +				     "Unable to acquire 'enet_out' clock\n");
-> +
-> +	/* setup MII interface for external switch ports */
-> +	mtip_enet_init(fep, 1);
-> +	mtip_enet_init(fep, 2);
-> +
-> +	spin_lock_init(&fep->learn_lock);
-> +	spin_lock_init(&fep->hw_lock);
-> +	spin_lock_init(&fep->mii_lock);
+The binding is for the Mayqueen Pixpaper e-ink display panel,
+controlled via an SPI interface.
 
-`mii_lock` is apparently unused in the whole series.
+Signed-off-by: LiangCheng Wang <zaq14760@gmail.com>
+---
+ .../bindings/display/mayqueen,pixpaper.yaml        | 63 ++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
-/P
+diff --git a/Documentation/devicetree/bindings/display/mayqueen,pixpaper.yaml b/Documentation/devicetree/bindings/display/mayqueen,pixpaper.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..cd27f8ba5ae1d94660818525b5fa71db98c8acb7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/mayqueen,pixpaper.yaml
+@@ -0,0 +1,63 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/mayqueen,pixpaper.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Mayqueen Pixpaper e-ink display panel
++
++maintainers:
++  - LiangCheng Wang <zaq14760@gmail.com>
++
++description:
++  The Pixpaper is an e-ink display panel controlled via an SPI interface.
++  The panel has a resolution of 122x250 pixels and requires GPIO pins for
++  reset, busy, and data/command control.
++
++allOf:
++  - $ref: /schemas/spi/spi-peripheral-props.yaml#
++
++properties:
++  compatible:
++    const: mayqueen,pixpaper
++
++  reg:
++    maxItems: 1
++
++  spi-max-frequency:
++    maximum: 1000000
++    default: 1000000
++
++  reset-gpios:
++    maxItems: 1
++
++  busy-gpios:
++    maxItems: 1
++
++  dc-gpios:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - reset-gpios
++  - busy-gpios
++  - dc-gpios
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++        display@0 {
++            compatible = "mayqueen,pixpaper";
++            reg = <0>;
++            spi-max-frequency = <1000000>;
++            reset-gpios = <&gpio1 17 GPIO_ACTIVE_HIGH>;
++            busy-gpios = <&gpio1 18 GPIO_ACTIVE_HIGH>;
++            dc-gpios = <&gpio1 19 GPIO_ACTIVE_HIGH>;
++        };
++    };
+
+-- 
+2.34.1
 
 
