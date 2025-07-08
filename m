@@ -1,104 +1,144 @@
-Return-Path: <linux-kernel+bounces-720940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A06C9AFC256
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:00:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 107F8AFC25A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:02:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14A3D16B981
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:00:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4098B16C60A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747E421CC6A;
-	Tue,  8 Jul 2025 06:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D72121D5B6;
+	Tue,  8 Jul 2025 06:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="IyjudGFd"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="geoNyks+"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B5143ABC;
-	Tue,  8 Jul 2025 06:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2183C288A8;
+	Tue,  8 Jul 2025 06:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751954445; cv=none; b=hIO6O9wTlQ5GUh6mNHx33nIITYZ4J1ex0+SCR8E6uZsSq/ppLQSfJhfcM/nS6l3WCiTPFNGB3PipVcbAHMox1QH/H7oYdEWPuHRLA1GTuV6OTG2V1Zrxkwyr33p8bHX/Eem3QcGdLr76aAEShpTvEK7JYl66pJFG2iK5THl46sY=
+	t=1751954535; cv=none; b=sRrPqdeL/qdtBWrGLBJ0y7PDzStBIRwyTA4z5V4BBIxkuSiWMbhydSDxAfdtQy5ElNj9qI7nBdxCI9e6T3R4Cl6C+p1Ku6aDYAigYSCS7PnHe/yftfEg/Fo0VIvkgzBdQiwR5e84vVnR9EX1mDXsx1LJOHganXALWDrCSBENoKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751954445; c=relaxed/simple;
-	bh=bWZ33B8LsS2f++eeuRVmCOmlo7lrX4+3k6UPVbNEXQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ICDvwWNx+s6d5Q8RcYuCYVOdUqu8CTFvE/bIQN2rmXUzTRne/73aJyyDKMvKmb/jqlevE00Rzx0tVpuQehbOzLZ2mTnehOikOSQfBrdN+AlHS0T5ttELmBNREDtTMP+IZUKM26xGiQoIo12ZG2BQGUr33EbZO7i9j9pBsEhB59c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=IyjudGFd; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1751954381;
-	bh=2Gog5nkNzN6nRFZlf9pvYtpU0uO2+cN8ZyU2FU3tFj8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=IyjudGFdCpl+MN01DXXZMjjoxcCS6JVIkvVrDzYHXRK8nTWYox2nNw3Qbt5N9VdC2
-	 t04W/HFXdXTwYUJrn9yK7qhjnhH3BX7GkqrrXZN2K6GXAsosUHHmY12dds/jYHO+li
-	 2SlellFOED20SoY648ZnipOiQHwLmFvFC4p3TPHtEv+OcKClkMiyABg/aEOWTU++JR
-	 9P3fk9DH1+HuyStuFBFKete+8P/RNwKfOuVK8oo0AgPCaxt9RnIJ/MHRY2xSZP7cBn
-	 09CY9pyFHL5pgm/FNtk9zlF4muWpGHDNACp/FG1Ol/iJsEWWhysEPSD922DebWc+Ea
-	 JAkttTT5vXcVA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bbr6N3KBYz4wxh;
-	Tue,  8 Jul 2025 15:59:40 +1000 (AEST)
-Date: Tue, 8 Jul 2025 16:00:37 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the tip tree
-Message-ID: <20250708160037.2ac0b55e@canb.auug.org.au>
+	s=arc-20240116; t=1751954535; c=relaxed/simple;
+	bh=giYT7I/4HDvp3JpNR5592PFV8m4RxRGaeyaV9WxlkB4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I0NQZbd1zKcmKxf9hKgsPmuiR9lWrTOb3Tn/lk7qhiurzTg+5weNVezT4ATjH2Hgpe6EQq5IMiZ9t6ty2RuZ2Fx0eB9vO13nwr+yGcxJldbuY4Rj0wpXuutVQ6keQbJOH6ELN5toxJRwd+bzdz9FKvU0xuyngfanhjlflLOlTL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=geoNyks+; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 13f5d3fa5bc111f0b33aeb1e7f16c2b6-20250708
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=SmnDLQMvlZ5p5M7y6ywDYdMNOlGcOTiBdLsaKeylsC4=;
+	b=geoNyks+i8qD7f3U50D7AdEQidRFcDS6V5+Fg8oWMRfajdG13CIZ82n4ziYha0knhLeBvf0d61ZYtjb9ML+u4I1AY6KwtL0QC8f4mCsfp2sGxxCeXyxf7QO9SypOZpO1Uyh630geSljAyo5SSMvQ8lgMC+6d0RS2POppZ9rhE9E=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.2,REQID:e2497827-cdd6-4cf9-a4b6-9a8dd67f8c75,IP:0,UR
+	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-25
+X-CID-META: VersionHash:9eb4ff7,CLOUDID:8572a518-744b-4ed9-9ccc-90bf001fb3bb,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 13f5d3fa5bc111f0b33aeb1e7f16c2b6-20250708
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
+	(envelope-from <ot_zhangchao.zhang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1826436405; Tue, 08 Jul 2025 14:02:07 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Tue, 8 Jul 2025 14:02:05 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Tue, 8 Jul 2025 14:02:04 +0800
+From: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>
+CC: Sean Wang <sean.wang@mediatek.com>, Jiande Lu <jiande.lu@mediatek.com>,
+	Deren Wu <deren.Wu@mediatek.com>, Chris Lu <chris.lu@mediatek.com>, Hao Qin
+	<Hao.qin@mediatek.com>, Wallace Yu <Wallace.Yu@mediatek.com>, linux-bluetooth
+	<linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-arm-kernel
+	<linux-arm-kernel@lists.infradead.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, devicetree
+	<devicetree@vger.kernel.org>, Zhangchao Zhang
+	<ot_zhangchao.zhang@mediatek.com>
+Subject: [PATCH v6 0/1] Bluetooth: mediatek: add gpio pin to reset bt
+Date: Tue, 8 Jul 2025 14:01:47 +0800
+Message-ID: <20250708060150.27375-1-ot_zhangchao.zhang@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/sIMCVMsMHHi.4aCSbyBCCex";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
---Sig_/sIMCVMsMHHi.4aCSbyBCCex
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Reset Bluetooth using hardware pin via dts
 
-Hi all,
+Compared with the previously submitted version, the following
+information are some specific revision histories
 
-The following commit is also in the mm-hotfixes tree as a different commit
-(but the same patch):
+V5-->V6 modifications:
+-Add specific revisions in the changes from v4 to v5.
+-Add hardware pin title and descriptions to dt-binding submission
+   information.
+-Modify the title descriptions in the dt-binding file.
+-Add 7925 what is it.
+-Wrap the descriptions of MT7925 chip uses the USB bus appropriately.
+-Change the compatible string to mediatek,mt7925-bluetooth in
+   the dt-binding file and driver code.
+-Drop gpio-controlelr properties in the dt-binding file.
+-Modify the descriptions of the reset-gpios
+   properties in the dt-binding file.
+-Change the node information of reset-gpios in bluetooth
+   from high level valid to low level valid.
 
-  f339770f60d9 ("Revert "sched/numa: add statistics of numa balance task"")
+V4-->V5 modifications:
+-Correct the spelling error of word provides mentioned in V1.
+-Drop the xhci0 node and status property in the dt-binding file.
+-Modify the bt_reset tag node to bluetooth in the dt-binding file.
+-Add #gpio-cell descriptions to properties, nodes and requests.
+-Make a separate patch for the changes to dt-binding.
 
-This is commit
+V3-->V4 modifications:
+-Modify submission information why use hardware pin to reset Bluetooth.
+-Write historical commit information into the cover letter.
+-Modify dt binding format information and
+   the explanation text in the dt-binding file.
 
-  63afea878dc4 ("Revert "sched/numa: add statistics of numa balance task"")
+V2-->V3 modifications:
+-Changed the capitalization of co-developer names,
+   using the correct capitalization of abbreviations and full
+   name, and corrected obvious spelling errors.
+-Add a revision history.
+-Remove the "BT Driver" in the prefix.
+-Add the bt-binding document, include inforamtion related to reset
+   pin and compatibility matching.
+-Add a comment before the schedule_delayed_work function call,
+   although schedule_delayed_work is asynchronous, there is no risk.
+   Even if it is not completed within 200ms, it will only postpone
+   the subsequent probe and will not have any impact.
+-Add a comment before the btmtk_reset_by_gpio function call,
+   if the compatibility filed or pin cannot be found in the dts
+   files, it can still reset bluetooth using software reset.
 
-in the mm-hotfixes tree.
+V2 modifications:
+-Modify gpio to GPIO, SW to software,
+   and fix other obvious spelling errors.
 
---=20
-Cheers,
-Stephen Rothwell
+-- 
+2.46.0
 
---Sig_/sIMCVMsMHHi.4aCSbyBCCex
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhstAUACgkQAVBC80lX
-0GxNSQgAj+PKp0rKF1oNaIZKUOs3lq25Ujc9bjRN735yI9v+ENVRKeRu3J6LRIBp
-waxCOf/bdFUcp94KYGCdvYL+4NXi/QwG6TWwLVlM58xsoByYQDIYZx2Bcl9nUB+W
-5YmexFEpJOe+NV/nXqCo6ADzsew87KjmQ9uYyfTsvTmbmMVLPEci+aKPOGCzizko
-2JLCyXVE8T5l0HwAXbKHlwGQ/h3nYIRWeHO2EYNy1OK1/UDjFBCYA1ERjCU5awjf
-p9SYj3QNFTYrk/3Wf18AE+kSSLIFy13P2vHOtIzxxDOVpaA03FGNWGJ4Pzm7qa73
-vGAs6BeaiozfSzfbaL1uTa3Ne+atew==
-=8WTF
------END PGP SIGNATURE-----
-
---Sig_/sIMCVMsMHHi.4aCSbyBCCex--
 
