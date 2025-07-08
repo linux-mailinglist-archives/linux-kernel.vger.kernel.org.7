@@ -1,73 +1,65 @@
-Return-Path: <linux-kernel+bounces-721088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18A27AFC48E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:51:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A656AFC48F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5189716FB1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:50:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29C463BD4FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C930229B76F;
-	Tue,  8 Jul 2025 07:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B706C29A9D2;
+	Tue,  8 Jul 2025 07:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q02YgEe7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H+z4SYro"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kTXlUkvJ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67F9298983;
-	Tue,  8 Jul 2025 07:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB280298CB5
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 07:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751961018; cv=none; b=ISsMtvEeZ1r2LXcwrs/mPQOIPyEkiFPuAOenLp0pR2L8H7J05W9ly9EYZOUIUdNRXEpLgS3XP2Rt08zht4xGHXzmuL+zXtXpa4VI4Q8b0C+Gr0DVrXHDI2pyHWliDycoHiUUQTPCEqq1DC+xnnpiiwHlmR3SIfA8UJnRKr2zNwU=
+	t=1751961031; cv=none; b=k11lAqxv5QQSyaAlcupObWOLDSsVMINwZHR1+E/otcZQXtDlQKKSpfKMKN0k5PJG9qxYgfc5Ya75ae9AIyk1VLOUSd34izglrw9qzT4b4cRcs2kQI/zGUCUhSSMdcW8buZ4S9p4Vs8cN8TzU0vGafX9C/ypuA08hU/qm5GX5+5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751961018; c=relaxed/simple;
-	bh=bp8wxgQ06nWmM2ZEK7BMnYwzPK2cJ1ftNM3z1kB5UbM=;
+	s=arc-20240116; t=1751961031; c=relaxed/simple;
+	bh=DTsBDkj96bXrh8JY1NhkIlAjz4FK+rJghyWRFdTIc7o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dySIbasKz3OgQqsdVhvO4788TyEYemQyv0ZTqlRxspE+CHf0X62D1QO5cB379iOXqiT6gO9Yp68XaGO4c41OFzKwdru5mNmqqvctwEpRJlG1VdsbcoRPY5I4YoumoKjSMqpXtFaXtY3FM2+eF5UB2p+DZfoi5kBY99bwFAEnpQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q02YgEe7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H+z4SYro; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 8 Jul 2025 09:50:13 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751961014;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AaSSFAIVJg+nrHF54Fxykfa7qVOo8icj8RNY5lB8ERc=;
-	b=q02YgEe7f2DE0eQedcOfU+2mv66JXzVOubhGsCxTuCFMdOM8sEX5UWDaCPKiKfXZwN0M84
-	gRYkTFHxdzThmTIfRbPG9N01ZiyUGzZkfJy6F8RbXPegdUnpVcwCe8x8YlUnWdFwmh5NJ2
-	gQci5voGId6r6up46fCjgMWoMGOVNILwaPN6xhNPO/oCkIKvwM/8CIo3TFPHVeD6ufcWDI
-	9UQ8cNlsUGvnpG3Ty5WGeGTeE3pXqw+niuyb++Id6D3jXEbZ3gf9m7Ygdx8MJ4lP6qJSO8
-	zmpJDoWj66mvhqD2pILs1A4n7CwoWFIpzbg0H6MXlgCPIbV1dapF1p0N6XIntg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751961014;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AaSSFAIVJg+nrHF54Fxykfa7qVOo8icj8RNY5lB8ERc=;
-	b=H+z4SYroc5SaVsN9JI+QCEYflST+5opIKgSuEVnCb3vS3xZfCDO76t1fjhI7ofZ58L+V48
-	q5EjNnHdxQSPxOBQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	john.ogness@linutronix.de
-Subject: Re: [PATCH v10 17/19] rv: Add rtapp_sleep monitor
-Message-ID: <20250708075013.hMCRH87n@linutronix.de>
-References: <d3cf55d3bf42a0f70a58c394b5cf6d603ca8a9f7.1749547399.git.namcao@linutronix.de>
- <20250630203401.1a11e58f@gandalf.local.home>
- <20250701051757.mBjQVdoo@linutronix.de>
- <20250701110218.5e742850@batman.local.home>
- <20250701110551.5c2dc2ee@batman.local.home>
- <20250701151114.OJQTlRCY@linutronix.de>
- <20250701111704.00456667@batman.local.home>
- <20250701210338.BooVbo54@linutronix.de>
- <20250701171715.5a1a99a0@batman.local.home>
- <309ecabeacc72f13de7b190f37423f1aeafe991d.camel@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nEvVwMgMvqnGjWtmD2uPwNJsfRCJwLdtObHt1p6em1bVfrbQiektaZQUe+j3iOM08KVM0KyIx6Co0SNwP7TJzgydKZ3Rdp+0OcljTiz9EA/csR/uaps8qyBbNNad2491ji1anTfRVDdha0+02OAeTwyYGVJ3598iwd9FU03s7i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kTXlUkvJ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=DTsBDkj96bXrh8JY1NhkIlAjz4FK+rJghyWRFdTIc7o=; b=kTXlUkvJI91VWOo/DWUJL5udvE
+	KVK5cfwxERjWtMniJ60JZgPmZrL4L5oEGVWKIpPTWQPNE5ArJ5jmTYQ7ZYnw8AB3q46n+sQ+5dfYw
+	Q4SVys6YEcGcys8bNIZ0SBrDt93/ljXv58c64jASkydde/pGEWnDGkck1cIWArvaTDLVE5ZEeTbZK
+	HLP3Hk4i3FpVTujgeFpHyxw+Aujbxr5XpXqzXspRo8hYvpN8EU8ebCpTIC0kqNZ+wi1zn4HSStqB+
+	9LXKEb5O1ASsskO+5dvk7WVNfiPBklnI1JhJg9fMfGQmavq3P0cPjfmhIZZi++Iw/Gi7+gwRvKiKu
+	BdICYGGQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uZ35t-0000000GT95-2BT8;
+	Tue, 08 Jul 2025 07:50:25 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 148EF30065D; Tue, 08 Jul 2025 09:50:25 +0200 (CEST)
+Date: Tue, 8 Jul 2025 09:50:25 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH 0/3] futex: Use RCU-based per-CPU reference counting
+Message-ID: <20250708075025.GF1613376@noisy.programming.kicks-ass.net>
+References: <20250707143623.70325-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,29 +68,12 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <309ecabeacc72f13de7b190f37423f1aeafe991d.camel@redhat.com>
+In-Reply-To: <20250707143623.70325-1-bigeasy@linutronix.de>
 
-On Wed, Jul 02, 2025 at 08:29:28AM +0200, Gabriele Monaco wrote:
-> That's a good point, at the moment the DA monitors have a comment in
-> the /completely/ generated files (the automata header), the others
-> where just a skeleton is prepared have some hints that we removed while
-> filling the monitor.
-> 
-> I'd say for now it's good to just add a comment in the LTL header (like
-> Dot2k:fill_model_h_header), then we can adapt all generated files
-> (whether fully or not) to have also the actual command that generated
-> them starting from the model file.
-> Or did you have something different in mind, Nam?
+On Mon, Jul 07, 2025 at 04:36:20PM +0200, Sebastian Andrzej Siewior wrote:
+> Since it was not yet released, should we rip out the IMMUTABLE bits and
+> just stick with GET/SET slots?
 
-Yes, I think the same.
-
-An easy way to do it is just dump out sys.argv. But one thing I'm unsure
-about: I prefer to execute the command from tools/verification, and the
-command I use would not work for people running from root directory. I
-would like the printed command to always appear as if it is executed from
-root directory. However, I see no elegant way to do it - will need to think
-some more.
-
-Best regards,
-Nam
+I suppose that makes sense. If someone ever comes up with another
+use-case for it we can always add it back in.
 
