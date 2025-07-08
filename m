@@ -1,93 +1,303 @@
-Return-Path: <linux-kernel+bounces-722019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F999AFD1D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:40:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C8EEAFD1F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:42:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 395F5481A19
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:37:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F85054253A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B9A2E54DC;
-	Tue,  8 Jul 2025 16:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E14A2E5402;
+	Tue,  8 Jul 2025 16:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgL1aIwp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="ntaB8MgU"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012007.outbound.protection.outlook.com [52.101.66.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9372E4985;
-	Tue,  8 Jul 2025 16:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751992648; cv=none; b=pcK0TiUcfsBrDLAqrEHsawsEcPRhwThaqWJJEp2UTSacNCr9qpbL/lp28T+Xd3KvaaPqfWb8fqhiN6v+XXq/3laKlSblnb4PjzGymn2RJYHQ15s0bPfcHSFt3dLk8loU1yGTcHlgfYv4djAyAqc2CHxOkSpESL+Mq2UiVmufwZo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751992648; c=relaxed/simple;
-	bh=E2MH6Era3uaTUyq6UQkdrQU623x75zpfdpctt6OS6N4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h6fyATLyqz7pOUfJPlwkVirpmtK7tk6xgbWds9mGNrVIrqNtlZqYGNAXNOkWxE3irt6lunDGborS2UuD3uuCj0jms+he3PNSWKXN9MdcsdCpichQadeUCXeizCb/lqXt2WLO649bp1Z3X3LVJBaH5IRUq3eSK3eXwj421VmmxB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YgL1aIwp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FCF8C4CEF8;
-	Tue,  8 Jul 2025 16:37:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751992647;
-	bh=E2MH6Era3uaTUyq6UQkdrQU623x75zpfdpctt6OS6N4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YgL1aIwpNDOsBhu1lHtzt/gdL7gFViln6CKGKjxHod0zyR2fLCbowFPIjsmwrutLC
-	 gHob9L7dauu0Y/QYDTiGGJI9hkGHHC6LacoeIUX3k3WEkFU8qQJeUs4C/ljg4IM81I
-	 n7JF9pyG5djAD/QPmt9ZtI9jW+irROhMMzukGAgbAj343qjRffn3mkLOyzwhT3vpin
-	 2Dg9e0e6fprGw8p9Ro0/426mcziDZDyHst+e4yANb4MisqoibpC1aZ9d5hFJ5MpGTk
-	 R4ZFmdjIuUD2Jn/G/K0N870yt+zdH0MfEARHWiTriEYlNKlMqsisRY6Y74E+cvDPUf
-	 7AS8TpPrL3jhg==
-Date: Tue, 8 Jul 2025 11:37:25 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Nick Hu <nick.hu@sifive.com>
-Cc: conor+dt@kernel.org, Cyan Yang <cyan.yang@sifive.com>,
-	krzk+dt@kernel.org, Samuel Holland <samuel.holland@sifive.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: power: Add SiFive Domain Management
- controllers
-Message-ID: <175199264440.598704.6992619905695386304.robh@kernel.org>
-References: <20250702091236.5281-1-nick.hu@sifive.com>
- <20250702091236.5281-2-nick.hu@sifive.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C105289E2C
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 16:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751992770; cv=fail; b=SngPbYTOwn3nTCaV7aPApXCVcf1bBhWOTl1NUTaZm885Q8XNAIAAoxI62sViyw7gqtZSOtuyGFIQOE3yHLu+OiWpgRk3rrAgtE4o+gy6e+H2rllQr7gYv7DgdoXVOUZTP5s0JZka312WygBztkmgGFrX8AIKIvDB7HP7p8AGDu4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751992770; c=relaxed/simple;
+	bh=QNYzjFvRfTOnqLFDNNfDwTwZO0rJMT9S1BvzX4sxi08=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ASRIcz5WukQcrhTf865YZwdilRnT+PUd6ipQSwRc+ZeiK+Oij5v32KtL8Kw2cSgRC8J0nmOEd1s+ctbzWK+Sm5NseWcrjMiDnJwB06To2HE+/sB/+QJzxnf9GhR3AN+LKpfCTE0SJcFZfRdvI1x1f1azMEplxQxky0hAtjArb+0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=ntaB8MgU; arc=fail smtp.client-ip=52.101.66.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QS/AT77YGBxHBJVQRJc2FT+HFQPFegaxFsI4WMCCzECkcHPjjIRnpDSg/r0USjEc4AJ4r7O666XdQZFXtvTDGaUQPXIOhxw7tmp70/+/UA9GVRuSkdtoSPSDwO8MOXPdrC+c/lPdynWV6cd9HzSl+rLyNu+mw8Jy39GMnZrAsKazeZ31tk4zE8DMg7d/QX9/eLTx+JMx+oGyYcP+JRlZs1VEyEKyFbB8SPCJ5ecHtt8BpwVs+a7vuzGmHH7fTNQNLNJIQ7XPCSiWiaabDBvGfmBgp6uacNGKHV+PnRPe4QWJ2O/EYEmxL4IinYFdsQD9vXuEan6B4vQF1zZ/hkATQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fgTDMeQ0so2NULltxhwsiJM76IId+pVWtNFCBzg6Meo=;
+ b=OgFD6PpNQGhp1UKdgIoC1lXTuhWr1NwbjdMc8BBnvwOMHW3AF9w7btTAPqNGSAt+kyMrK0DBUG/+0xFt49DWtCaah2qVh7O6sIaIxT9r1V8WqBkvEmfGt7pYkm9K4IM2KsajjdxbUgv142TBLYmbR+rOX72Bp3eRxAcSEPlP0cBbLlhbrhqYiqS7MwhqAqzEdJr5Wdm2Y8jCrPpzc2EQR4QEflFX0wXPGmJCGvRs8yEphtVSKoAXOPSLJwA0F7O5ZP8JvGt7oC14tmDwNYnThhINrGZECAQ4UBRL0C56DVb1WdlwwTy3p0jU5vfOa+J3bezSgCbb7powZppVjxTLbg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fgTDMeQ0so2NULltxhwsiJM76IId+pVWtNFCBzg6Meo=;
+ b=ntaB8MgUvq391h1W8oAnY6V3ypGlINgi6Y/+RF1LwbzsWnnz2nchYKrfy7DRxuhCJ3E9999fNccr79+S074ICLvBLREG6Z96e3dkaN4U/vTuuHVTcWcO8HwhCa/KtACtMRAP9FqoR+cESLNlFeZzRutQPihkUBdMR56TIVFxaIlLHjh0gV1AucszzBAzeHPu74ELUTOF+CtjYZtPYk+1TzCzpPXPXT2/RqsvPnFLcjCxyoiEuoq5ORuihquXyvtwlQ15ygxc4XB5SHNd5ihrQXzDXfX0jHsbz1PeafrxZ1IX/gekYYa/D8/fEFhu6+tSdOTiMXKWlXszyZhHkKnn4A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by VI1PR10MB3518.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:140::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Tue, 8 Jul
+ 2025 16:39:24 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%7]) with mapi id 15.20.8901.024; Tue, 8 Jul 2025
+ 16:39:24 +0000
+Message-ID: <7f9d35af-d71b-46c5-b0ea-216bbf68dfe7@siemens.com>
+Date: Tue, 8 Jul 2025 18:39:23 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: Executable loading issues with erofs on arm?
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, Gao Xiang <xiang@kernel.org>,
+ Chao Yu <chao@kernel.org>, linux-erofs@lists.ozlabs.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <38d43fae-1182-4155-9c5b-ffc7382d9917@siemens.com>
+ <452a2155-ab3b-43d1-8783-0f1db13a675f@siemens.com>
+ <bab2d726-5c2f-4fe0-83d4-f83a0c248add@linux.alibaba.com>
+ <81a3d28b-4570-4d44-8ed6-51158353c0ff@siemens.com>
+ <6216008a-dc0c-4f90-a67c-36bead99d7f2@linux.alibaba.com>
+ <2bfd263e-d6f7-4dcd-adf5-2518ba34c36b@linux.alibaba.com>
+ <edcffe3e-95f3-46ba-b281-33631a7653e5@linux.alibaba.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Content-Language: en-US
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+In-Reply-To: <edcffe3e-95f3-46ba-b281-33631a7653e5@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR2P281CA0043.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:92::16) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702091236.5281-2-nick.hu@sifive.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|VI1PR10MB3518:EE_
+X-MS-Office365-Filtering-Correlation-Id: c1f263dc-3ab8-4472-a1c0-08ddbe3dff34
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bXBOdTRjWnMzQlNLWXB1b2NoMkpYVm50ZXVla3JtdkhrRGZsb3lPSHNRRk1o?=
+ =?utf-8?B?VE5ETlVNS3ZRcDRyMTNrVzk3MTBXOHc0TXEyR0wwMHI3dTM0WjloQjh0VzEx?=
+ =?utf-8?B?OHNVV3FjTVA0dlU5eFFBZEs3QWhMd3ZUOW1zVi9PVVhqTFVyN0JJVFNsOC9u?=
+ =?utf-8?B?cVhXN1BDdldEdFMwNkNrdksrcG9vbm9GeU8zWDk1QkRpV3VmVnRtWVdDSnZs?=
+ =?utf-8?B?R2tnd1pMN1BkdWowcjU5eDBnUlhWNjBmdlp4YjdxOGt2a3JhbUNhczk3Q21I?=
+ =?utf-8?B?Qlp3ckpqWU5ONDFPTVBWSVZwbTFiYTY2WFRBVTlpaU1tKzdNK1ppMUZPZk9Z?=
+ =?utf-8?B?UkRJR0xwVkF6Zjc0aDl5R28yUEo3Rk45eDhhWm5zdThSdnhieks5RG1RTlUx?=
+ =?utf-8?B?TEJQL0EwZklJaTJPSU1zYkNQVFIzMEtnNWU1eHZTRzdOOXVxc0NHOHhBVVJx?=
+ =?utf-8?B?REd0VEY1Y0FvRFliWC9KT09jUDRYcmZqU0g2ZCtwMzZ4bUhNTEwzS2dDVjNr?=
+ =?utf-8?B?THcxYmVhc0p6b3V6cDl2a01DbVQwa1FCazhGczljNzhmS3QzUzZ6eHgvN2Vn?=
+ =?utf-8?B?akZSTnVtRm1MNitkTTdWam50Q04zanNHK3czcjBQZWZINGEraHJVSFJXT3l2?=
+ =?utf-8?B?UnRKa0FDbzh1d0tvR1J1RzUrSkJSeEc2a0NtSG1iVWFjaUZTOWk5L2J0VzRZ?=
+ =?utf-8?B?WVZCcFlKZWlDYURkUzdKOC9xb1dZUWNkaytiVWV3c0JIdTUrOU5zOXFFc0Ev?=
+ =?utf-8?B?ZnlDYXNKM0Q0VVI0bm5HaEgwRGtvWjM3cnA5NTFjOXVzaWJ0Q3FPdTZlR2ls?=
+ =?utf-8?B?SWRyNFpzV1VXWmhQZ0JjL1ZWNXBOc08zcHoyR2tqdm1lRU52WWk4LzQ0THRI?=
+ =?utf-8?B?b3haWmxBVWV3VEV0VmhWek1SRDlSWjIyZUpLaXplVkFua3lWbkJ2ZEtFa0hD?=
+ =?utf-8?B?dFpWcUJFRXl0Qzg5eldra1dlU3NuNzBaNUQ4WXc5by9HeEoxZytkUDNBTnhR?=
+ =?utf-8?B?VVlGVS80bnNkVnM3U1NLNy9ra2cvc3J5WDNNeTF3TmxrSzRwSUQzMURQUDg3?=
+ =?utf-8?B?b2F6dkpRdWRXelZid05WTnF3NE1vL2JYZGpvVnpoYXBESVUzNm9yWkEweEpQ?=
+ =?utf-8?B?a2R4dG9jYmpiSzQwa2RuUmFKLzhrMFpZV09rSkRIREVYVERjWW9xN3IzWUFW?=
+ =?utf-8?B?U2VNV25LdkVHRVhMbk5ub2NZbzNQcFpVWTBIRU1YWTNHRHppaXY3cStqUkQ0?=
+ =?utf-8?B?OC9KNzl6N0MvaGVWT1NSanB1VnhyUzdGb3NseE9JR3BzMlBpQS80d1lqeGpk?=
+ =?utf-8?B?dW5JRHJab0VmS0hMb1NjLzhKTGJBZ1dxK2pjMDFXNUhxdENVVm8zUGQyVWVW?=
+ =?utf-8?B?eXNUN1R5b3ZubTFNZ2taRmxNWk05RC94NDhaVHpQWW42VUpRSGF0NGJsM0kx?=
+ =?utf-8?B?bUVacHVwRzFpNklZMUs4WW0yQWZoQ05oaTlUdUp1eG9OeTN0N0NKUlZ5MkpU?=
+ =?utf-8?B?UENzeVB6YzUyYWphSFFSMzFBWGs1b0dKWWFoNmlFRXVnSncxZHRVenpGVE9K?=
+ =?utf-8?B?U2xSMjZtMm4raWlTTHNlMENncVVqVGxGbXE3Njc0QndleHFzbDJaaGhFMita?=
+ =?utf-8?B?NC9ta0lsYUZETlZDcWM3VXZCSGpMMGdsL3IvVmN3MHgwaGVBdG1YZngrN2pw?=
+ =?utf-8?B?UDdJYTBEOWpCNjBzaFMycDBudEt5c0E5UUhuVDBWaEk2RTREZGZSQlFZMG1R?=
+ =?utf-8?B?VGsyVHlBTjFjTnI0VTBzRFVDMXhoNU12MXdmZjJ1R3FiYWo4NGhESUd2Qk5s?=
+ =?utf-8?B?S1pzbkFPSENuK1M3cjRISndnMmtrcFFGNWMwc0oxVDBnYnpRV1RPLzE3ZTBt?=
+ =?utf-8?B?WXdSSEM1Q1dSNXdOemEvM0pDMTBROUpYc25pOUcwZm1GZ1JmaFY4R0did1Ro?=
+ =?utf-8?Q?rq/eUYCne8Q=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?N1NxR2FEUmpxbU1iRllrMEFkTUJSUU1zZTU0V2Vpb3FacHlZKzNWUWxpcEtR?=
+ =?utf-8?B?UmZLT3dNZWZFMjFvQmNtV0pFVU1vM3FLNEwwVThkMGNnWmhzWkFXdFFjTzVM?=
+ =?utf-8?B?MC8vQ3ZpMThOd2hZUHF6T1ZpZ1J3SUJFdzFNbEQxVGdycWZtakZCNDhHQXEy?=
+ =?utf-8?B?T3lFaU9qZlFBNFRPWlBhdkdLOGRjUUNnNE05empXbGpLcXRLV3pyZ0pVMUJh?=
+ =?utf-8?B?WFg0SWk3RTBHclhNcHczdE9GSGc4NHlJWHFqRjBUYk8zMmVqbzNuOFJvVnZO?=
+ =?utf-8?B?SFF5dTREU29oVUJRcGtQYkZaWVJWSVNMZmFMWm5kZWdtRS96dCtsZXBzSDJG?=
+ =?utf-8?B?ZDRobmFRRG93T3Q2enlkQXhuRHpxUXRucnpob3VpN0YzMUFhV2lqOW16Rmxj?=
+ =?utf-8?B?RFVYcmdwcFRDT216cXFocWNOS3kyZ1FYVHFlQmQycWZVaFZXaC80bUdVMEc3?=
+ =?utf-8?B?OFRNbW1VRDMydGNZYmNCUzhKZDJhY09Rd3U3VWxEVXh0RUIrZHpsSVFHTXlq?=
+ =?utf-8?B?aW1uenZzTnptTFVlUUpSa1UzUjB2cGdoRVQvZjJMTG5oYnB1K3RrVHJ5bXk3?=
+ =?utf-8?B?WE9UMVN0elB1VCtxMkFVc1lpOUhTK25kazUxWHlsOE00UENFNzg3ditiUy9x?=
+ =?utf-8?B?dXU3SjZuUm1URGtlaHJ4eG5NZHZmUHFwVnFwVmc3SnMwQWNEOVIwYnJVQkM3?=
+ =?utf-8?B?VUYxTWpIOENKZHZLUWlEMEROcWhUQW5BK0FZR3ZyYjFQUDlFN1k3c0xzSHlw?=
+ =?utf-8?B?U2FWWkdNMEJYYnNRSjdlUnpHR1BJWTQ3RzV3M1hBaERPREtyNDcvUGtJMURB?=
+ =?utf-8?B?anNvYk5oUkpVK3VKY2p6TkVUa3o3azJMcmw1NXovVHJ5bHlsZyt6WE0wc0RN?=
+ =?utf-8?B?WTRGSVJhSUVLUDdkT2VhMXhDdVc2UEpyUlhUTXRtNHVTYnJkbFpqTDU3ZWhE?=
+ =?utf-8?B?KzVpNTZjd252TmZKQ1h0QmlIdlBTTXlmMnJvS0hxSk4xbkYyZ0VIcHU1US9Q?=
+ =?utf-8?B?ZEI3NUVPWUd3NjF2Y3BtUXY5aXcyNXAzc3ZCenpSRFFHQ1NWcWFwSWlTSEs0?=
+ =?utf-8?B?NVpuQmZEaE90bVFzOFZqblMzeUF5bWRVYU9CWXlIOFRYZk5nL25WWktsbmgv?=
+ =?utf-8?B?MEplYUJXNmpjNW14NjlPdWRRREhkL0h2MnIvMlJtZE5xZFVlU01JbzJGL3VB?=
+ =?utf-8?B?WFJzbG1mWDBJUnNycm41M05qTDhkKzhzN1NKOFRJNmVlTGsrbVBUa1YxWTRE?=
+ =?utf-8?B?clZCNDlpSS9INExTRUo3Q09uc09TZnkzcG9YTk0vWDZGdkpscC9jZUdraXk0?=
+ =?utf-8?B?KzlWeVBvZmY0bUptUHpCdzhWM3hhaGRHZVhESFBQWlpPbjVidWNtYmU2Q09Q?=
+ =?utf-8?B?WmptWWk2aUxteDZyKzRMb05GRklsRkNpQnZLYTZIV09PYlJ6ZVg1dlo5R2tY?=
+ =?utf-8?B?S1JWdmEyajFyQ0VlQmhUOXRPUWRvRzJ2WmhUWmlNOVY1RlNFeDdTSnlMNldE?=
+ =?utf-8?B?UGxZRldEdCtLbFpSb2pwQzN0YnY5M3FIT0dRMDc1M05zQXplTEt4djR6elNn?=
+ =?utf-8?B?c3RDcW1BRXdOdkZFZHRubnNxZDdiZERUbE9NeFNQY29QWExDTnhUS2hya2lH?=
+ =?utf-8?B?ZUYraVBra2Voc3Y1T2dXeFdndTZhc0pqeUtsNUNqaWJjYVMyWkpUWmptdDM1?=
+ =?utf-8?B?RUJwSzd4M1ZkL0RtSXNOY3hLbG5nMjNxc2ttVERFYkR6Y1ltaUZvNHA2Um1y?=
+ =?utf-8?B?cUNvQ1FTMGVleDk5NTNqM1ErODNncXNQSWROQ0kzUmJ4N2xMRlNmT1gwZUZr?=
+ =?utf-8?B?aVk0NnVIWXN3UUlKWElRY3AvRWR4NEdNVnJyMXIrNDlEZ2F4QmY5QkdqaTMz?=
+ =?utf-8?B?cGNCWEdjM3VIMkdFc3BjN1JVcEt6dUN5UE56cW45U2RNT3poKzZCM1dPUkdK?=
+ =?utf-8?B?VSt1eEt0T0IyWjdabUlxa09oRnpsS2ZKWWt4cFhvSks2Qm9mUmR2QUFodEoy?=
+ =?utf-8?B?Z0djY1J0cWRLWWZ3ajdxL1pxVkhlVTRveWVpeEhwZ29kLzlyMldFS2diZjBX?=
+ =?utf-8?B?Z284YU9qblBjQlIrMWZseHBDdEdmMDRnYlEzcTZsQUlpTEswU290VWkvOVFO?=
+ =?utf-8?Q?y3MaNuyuvejy53iqXXp9hzI4f?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1f263dc-3ab8-4472-a1c0-08ddbe3dff34
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 16:39:24.1935
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: j2jzkI2L+yUL4xqXg0n7NQ4NkW7WUoK0cO6KlDprHr/1frRrvitxulMddrg3ly++GTk4r0DIguEDTZSLaxS8Uw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB3518
 
+On 08.07.25 17:57, Gao Xiang wrote:
+> 
+> 
+> On 2025/7/8 23:36, Gao Xiang wrote:
+>>
+>>
+>> On 2025/7/8 23:32, Gao Xiang wrote:
+>>>
+>>>
+>>> On 2025/7/8 23:22, Jan Kiszka wrote:
+>>>> On 08.07.25 17:12, Gao Xiang wrote:
+>>>>> Hi Jan,
+>>>>>
+>>>>> On 2025/7/8 20:43, Jan Kiszka wrote:
+>>>>>> On 08.07.25 14:41, Jan Kiszka wrote:
+>>>>>>> Hi all,
+>>>>>>>
+>>>>>>> for some days, I'm trying to understand if we have an integration
+>>>>>>> issue
+>>>>>>> with erofs or rather some upstream bug. After playing with various
+>>>>>>> parameters, it rather looks like the latter:
+>>>>>>>
+>>>>>>> $ ls -l erofs-dir/
+>>>>>>> total 132
+>>>>>>> -rwxr-xr-x 1 1000 users 132868 Jul  8 10:50 dash
+>>>>>>> (from Debian bookworm)
+>>>>>>> $ mkfs.erofs -z lz4hc erofs.img erofs-dir/
+>>>>>>> mkfs.erofs 1.8.6 (trixie version, but same happens with bookworm
+>>>>>>> 1.5)
+>>>>>>> Build completed.
+>>>>>>> ------
+>>>>>>> Filesystem UUID: aae0b2f0-4ee4-4850-af49-3c1aad7fa30c
+>>>>>>> Filesystem total blocks: 17 (of 4096-byte blocks)
+>>>>>>> Filesystem total inodes: 2
+>>>>>>> Filesystem total metadata blocks: 1
+>>>>>>> Filesystem total deduplicated bytes (of source files): 0
+>>>>>>>
+>>>>>>> Now I have 6.15-rc5 and a defconfig-close setting for the 32-bit ARM
+>>>>>>> target BeagleBone Black. When booting into init=/bin/sh, then
+>>>>>>> running
+>>>>>>>
+>>>>>>> # mount -t erofs /dev/mmcblk0p1 /mnt
+>>>>>>> erofs (device mmcblk0p1): mounted with root inode @ nid 36.
+>>>>>>> # /mnt/dash
+>>>>>>> Segmentation fault
+>>
+>> Two extra quick questions:
+>>   - If the segfault happens, then if you run /mnt/dash again, does
+>>     segfault still happen?
+>>
+>>   - If the /mnt/dash segfault happens, then if you run
+>>       cat /mnt/dash > /dev/null
+>>       /mnt/dash
+>>     does segfault still happen?
+> 
+> Oh, sorry I didn't read the full hints, could you check if
+> the following patch resolve the issue (space-damaged)?
+> 
+> diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+> index 6a329c329f43..701490b3ef7d 100644
+> --- a/fs/erofs/data.c
+> +++ b/fs/erofs/data.c
+> @@ -245,6 +245,7 @@ void erofs_onlinefolio_end(struct folio *folio, int
+> err)
+>         if (v & ~EROFS_ONLINEFOLIO_EIO)
+>                 return;
+>         folio->private = 0;
+> +       flush_dcache_folio(folio);
+>         folio_end_read(folio, !(v & EROFS_ONLINEFOLIO_EIO));
+>  }
+> 
 
-On Wed, 02 Jul 2025 17:12:34 +0800, Nick Hu wrote:
-> SiFive Domain Management controller includes the following components
-> - SiFive Tile Management Controller
-> - SiFive Cluster Management Controller
-> - SiFive Core Complex Management Controller
-> 
-> These controllers control the clock and power domain of the
-> corresponding domain.
-> 
-> Add `- {}` for the first entry [1][2]. Once the SoCs are ready, we will
-> add the SoC compatible string at that time.
-> 
-> Links:
-> - [1] https://lore.kernel.org/lkml/20250311195953.GA14239-robh@kernel.org/
-> - [2] https://lore.kernel.org/lkml/CAKddAkAzDGL-7MbroRqQnZzPXOquUMKNuGGppqB-d_XZXbcvBA@mail.gmail.com/T/#t
-> 
-> Signed-off-by: Nick Hu <nick.hu@sifive.com>
-> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
-> ---
->  .../devicetree/bindings/power/sifive,tmc.yaml | 58 +++++++++++++++++++
->  1 file changed, 58 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/sifive,tmc.yaml
-> 
+Yeah, indeed that seem to have helped with the minimal test. Will do the
+full scenario test (complete rootfs) next.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Jan
 
+-- 
+Siemens AG, Foundational Technologies
+Linux Expert Center
 
