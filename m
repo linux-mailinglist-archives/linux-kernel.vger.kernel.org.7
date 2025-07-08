@@ -1,229 +1,260 @@
-Return-Path: <linux-kernel+bounces-722367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97317AFD8EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:54:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46EF6AFD8F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2F057A7C7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:52:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEE9C7B170A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB1D24169F;
-	Tue,  8 Jul 2025 20:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63877242D64;
+	Tue,  8 Jul 2025 20:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jyudH2S9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zTiNDGFk"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED7321C19F
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 20:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752008054; cv=fail; b=A6o7BvfLer8kwBhyyk4bp506RtIOWk7BNlM/4u74i9FIUSw+p+V+Li0H2pxsyYPVDqS36jKqPYOvN5EnSAu5mNq0cevk7tO0N7cqxjAuOcj6wYLUkLXC5iv4iERx6uS9fD8oNW5+xSFstYqlh3CW1H7Gj8uexDoqtW84qL37Q9Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752008054; c=relaxed/simple;
-	bh=uH626Lxy3+2wcFyjfs1/HWwormty5ckzptLk78whUQY=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ae4uOVUU+hZNAFkmzrG3yBgsVGEQ7B2Ur7acuf5vHcYCJOXm/16Y13FeQkdoSnVdpFLpuh+Jrei0oj8Td2Mng86mBjdUYxI+px8E0EjeVzQJCWEeZzyjVv1MoOIwaEiqaYWj6aURa357rR8LwiRJ9nRqWeBIGv/K2TOiBnt7VhU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jyudH2S9; arc=fail smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752008052; x=1783544052;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=uH626Lxy3+2wcFyjfs1/HWwormty5ckzptLk78whUQY=;
-  b=jyudH2S9h2sBo2RYKlLEOHrqipHiqLauCY0sjEfIU8U65WkXR4BpbOSt
-   cRA6dZsjInnNweJspvcPS9pcME/GQuMdxCWNHMLRGTa5a26E/8/Z4lDMX
-   QEwcj1or1h2+G12timlR5fiuHkD9pOxE+dHVCKmg541YW0ufA8DdhgYHs
-   TnHSuUmaoKJpofYm9PxAvVTzhydgAYrAfSTOOV/e4huBdgxGhvlnTAs+q
-   lc44fhrC9Je2ohgUeFpJ9TZbjTi9m80ykKeITcSTx+QAzLJntQ3bqcpgv
-   tyIAyESRTMNm8BUtSxKl3l+v92oJrgwwpsqA5auNzuCiDotuq0Mj8rgvR
-   Q==;
-X-CSE-ConnectionGUID: wl3rr+HOQIO6D5I52S22qQ==
-X-CSE-MsgGUID: VgFvkhVbQNaUFxB3Uf5nhg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="71842365"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="71842365"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 13:54:07 -0700
-X-CSE-ConnectionGUID: ZW9SGkWjSySh5dK5uvsS8w==
-X-CSE-MsgGUID: ug3c3NnySfGUMiy/jv7wxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="155006774"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 13:54:07 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 8 Jul 2025 13:54:05 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Tue, 8 Jul 2025 13:54:05 -0700
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (40.107.212.41)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 8 Jul 2025 13:54:04 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Vn9aJj8jcHmDUIF68ul0FJEMsLMfOzm0m6AWBTu2fcA+SubgMR2giCvCmdxmbpQyTwNbiFb00IGPz9u19+QPGOh6Sr9irFZvj7RjZMhbKP7Xx6DK1bZ+NeskE+ngW/GRh3L585qAN+djANie22guw8OdZw5F/NxGPEBhcizIWTUQujiap2GUE1Jsfdg+PlsP22hJFUZKSaktAl3cNiql55afeNGH86cFZcD6FBqwHqn37pAEwGFKY28xKRx0dgfSY4up9QA4CRk7bLlq9ZbovcPtj320U/ArlU12CO49Hr1Wg7UqrpBkDAdomvtvk8l68RCxoGEaZ10tj6Ct1C9o0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5u1piQYOZd5WOggJA+i3OAXRgb5gGWPUyFL6bDngN+o=;
- b=uy8F4mKUiuTsm6E/4Llj8nxMP6iPRCMECYFxjxrAGCfdSYY85xv/j3IcYDUpT5S7YtjSTYCIYqwdRNoVlWELhGkNnwYngyDRcR4JtKR0tOV0LPSEg6Pa2VcoxJnMC0A/eHoIxpGYz+Ap559xODBW1uKqe2eCLPjMRDptkLqcrocMrmLf2uvNmGdxJ6uvfW4BjHUdEaUDGiy08qls14VwQBV5lkhbtTmd+bHaW1XjJcQJMY5l8xxl39s6QNblUrNVcKx2RPKICqDhoADR6O+bVxvtjelD1WY6xNCS5TFKEUluBPYsi4NU1XfqKY0vgvv/Dbys8NLhcjUL4KUEkuv1+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by CO1PR11MB4963.namprd11.prod.outlook.com (2603:10b6:303:91::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Tue, 8 Jul
- 2025 20:53:21 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%6]) with mapi id 15.20.8901.018; Tue, 8 Jul 2025
- 20:53:21 +0000
-Message-ID: <d3d31ec5-4901-4054-8dad-9fd0d9b0e7b0@intel.com>
-Date: Tue, 8 Jul 2025 13:53:19 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 03/30] x86/resctrl: Remove 'rdt_mon_features' global
- variable
-To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
- Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
-	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
-	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
-	<Dave.Martin@arm.com>, Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	Chen Yu <yu.c.chen@intel.com>
-CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<patches@lists.linux.dev>
-References: <20250626164941.106341-1-tony.luck@intel.com>
- <20250626164941.106341-4-tony.luck@intel.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <20250626164941.106341-4-tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4P220CA0018.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:303:115::23) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1858723C519
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 20:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752008105; cv=none; b=DHqzERvDRBakpyk3DXWnAj6EQTAZjs+an6vSHGxtmYBn8BGoDU9TyKgGobgeHBynhnFJQc/6anxbylANrz3lgTcrov00EtbWUt5W3zyYoMdF52C8D/z11mtnPHskYKoVKUOXOX4xDrBdPVAEaXskGfxt16XNL08NN/qH/699ufo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752008105; c=relaxed/simple;
+	bh=kjuzGXug/D4R5GG9GyQa4tvl1oIFOIPy3Hbjs+Knt7I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iIxFLQi+yq6TEsQQWCSRlx4Ha0ypJ4MGELMYWqmLvcran+sPjQxaQu1YCBY1wAMRiGXQv85Tp0mIw0MojSDKzdq9pCKQH14e/fgfitV3qPbMdlUJdwiv9ATPCffdJbV3HoY6iDdoD97yuGVi7QvcI6nSRQ4FZvZ8mtEdzz+i0uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zTiNDGFk; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b34a6d0c9a3so4901559a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 13:55:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752008103; x=1752612903; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gxJ02DChvr+wqzcbfqYcBr0RaqPB3ADatLZsLUUfYAs=;
+        b=zTiNDGFk3NmyURAanRQscpPtOx40uLlEEzpJENOpDqR2cCJQtXzZUYl7VNlVtg47fM
+         b1bHFS16IhpCXLI5GiHAfg+UN6hMPbM2CR9m/0KAEmAw/jui5s70a0x2+yEM9Y1iMMCV
+         n/JuSyXee8eKqo4ayaOFGbgg2PlbFtsplwDmvc5fBKz9BkaEvFjkC/k/CQ9dcHfgjI2z
+         NF3rYmDiHyZkWXBJfk2mohKyKiASR3n2EZXvUpyLLP5ivb9NcoRJUc0KKbF1Pd7dfOW5
+         2sJ6koju4tK0GPehyFTWZgNOwBNYNtoP6O1t1c1K1mADN/Ld/V32NxvXiddRNp1ZISQL
+         a0Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752008103; x=1752612903;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gxJ02DChvr+wqzcbfqYcBr0RaqPB3ADatLZsLUUfYAs=;
+        b=twOo96/DqgXWoajIvAnrgM+uLTrUNzXLn3OWkjxIZgRS0VslhKU4idmBjKEOi7kE5I
+         kowSFnimxhWtYNAg77ViH6UyJnmWvy30m3Kl6mM2L+ZsXoBYryotJ0Kyc4SzoAe+1SS6
+         V5y3faA1ewVk59bk69171ShQqjzgQxMAof6PId1IRck0zO0An7Euf30U0Gr9kPOPyIHU
+         O7HWsqlCKoNkQ84tk2/Xq0a1dAd7uVXAUVseNWbcOTEnkjlhdbUXuw8P7VJsosnMyVOf
+         bEgPOT+3Ve4MRPzG/HmO1SkRvw8sESpgh9nO77xW0/l6UaFI4AUqm4Pvw3oRU5OUqSk2
+         cyXA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+bNYoebvw2+jLCclq4mJCkSGB7B55iClBjOKNYVSWUavXsOE5koum1Vr8ENwo6+jV3UNiyVWFv7rj0qg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtNjRubN/isc2B79En3MuVy+t/E2X2pe6kw1s4qb6lHHv29SNO
+	gOYAFDFh9tzOxu0Ulk4sPfzFb7EDH2wDY7jx5hEqso46dwsHBKvCx1GqpOw4r89/OA==
+X-Gm-Gg: ASbGncvxY0j+96Fwbd2VaHNnVEoqDprjAJv1nAfRvUw89JW5NZwaoyBJLJx0ewp3noM
+	ioVEbiJ/SmTHD8wToMOtzD8YXs4iLn8rvVPEmuydKLwyraIGdpowYX+Ukb6JkUfMpJ5QvZTJCd7
+	pOXAp4amfPvQvD6FhJrWrrJw7k9jjtILu3vzZaXd76cugkLqf33Vj14SkPwe0jOiE4DaRi1fb+Z
+	PM37VWSO1Cb1EXTt4uPqlPfAN3/KQPBHYNVEx3bya10D66tfr3Wp0gO9xCFjrtpzrm02ADLT2ra
+	TEu5U2//yA0X2OjkqBdUAF4Br+iKUQfZl7Q4AXXfuSqV2WxoZ+X3WSfy5f9wFiY4zA9tsUkMsOr
+	gvQjaaGP0wWlVVDng4ujtvS/4GQOOyYcIuvziJw8hCN7eOgHDp9gDwq1sSw==
+X-Google-Smtp-Source: AGHT+IENn9KRBXLlUDYf/W80abgdynUrbIykjoaWTtbpQkehSN3ONHZRp3PyECxAzPSapU8TzEg2eA==
+X-Received: by 2002:a17:90b:3ec3:b0:311:e5b2:356b with SMTP id 98e67ed59e1d1-31c2fce1e72mr66728a91.11.1752008102930;
+        Tue, 08 Jul 2025 13:55:02 -0700 (PDT)
+Received: from ?IPV6:2a00:79e0:2e14:7:f0a:1e62:5952:b993? ([2a00:79e0:2e14:7:f0a:1e62:5952:b993])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c21edab71sm3042106a91.43.2025.07.08.13.55.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jul 2025 13:55:02 -0700 (PDT)
+Message-ID: <ab6c4132-a0c5-4143-b265-a9979a171646@google.com>
+Date: Tue, 8 Jul 2025 13:55:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|CO1PR11MB4963:EE_
-X-MS-Office365-Filtering-Correlation-Id: b5e909a7-afaf-4f5e-7370-08ddbe617946
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?WHB6akRjWVluemF5bzFmb2E2eGdJR1AxcWpsVFVqL3plVTl0T0liVmFhMi9v?=
- =?utf-8?B?T1IrQTZ5dzRIZndxRDVObnlhSUY0SW9FU3lEdldNc2xwUHZNTmtTRnVENWVP?=
- =?utf-8?B?S3EwRzRsNy9EY29RNm1rWjBzRTlDbzdLN0xmM0NyNlljT3BvakZwZHVaenNI?=
- =?utf-8?B?SVB3cFZoS0pMQVltTlJ5SHdOL0pGc1d5YVBydFZjU2IzU2diUnZkUUFnZ05r?=
- =?utf-8?B?MGNKSFhmUHhMb0FaclFHMDVmV20yZlRSZHR0c2x5THlHeHYwc2REeVhZYVcv?=
- =?utf-8?B?c3Z4bUpORmFpamRqTjFtVDlrZDJFdW1rNlFLQ1VzWjZDOGQvMzhsQnMvMGtQ?=
- =?utf-8?B?OGdoZzZuNjJUSUcyWW9oajNUOHRBWUl6ZUZQNWZjQjYzYW9jb2dILzhvdXdZ?=
- =?utf-8?B?M3FCTVRvQU13M1Q1Rk03TEU3NGZXakN0WlFiR3BNRlpRNmVOOUVvNUpaajUy?=
- =?utf-8?B?OVVDZkloZVJqRDVPd2NycXprZXZuZ2IvaUhxVnBuLzdjcGR4UkxSQjE2cXpa?=
- =?utf-8?B?MTlPb0tJd0VhUmlmUDlEL1BJTU5yWWdpd0JuWGV0Y0pVSGcyMzJxb25yeFRE?=
- =?utf-8?B?UURpNDd3UzBUSEdhbFJYV25vQS9aKzh5WS9GVXh6UTBxbWl1dnFoeVdUV0VD?=
- =?utf-8?B?aUpRZjhrRXhEbWZHOTI2T2RSaGZJNGNXd1hOQ3dsTFkwRGsrM0lua1dFVGls?=
- =?utf-8?B?U2VINm9ZdVEvM1lYYWUyS0x5QWVmTTM1RGE0Tkk2aCtDVXJMbFBOOEh5Zitj?=
- =?utf-8?B?aDBYNTg3L1JUeWZrQk5FT0E2MnZUaVYvVXd1ejR0dGplQklOeE1zUDZZRXVQ?=
- =?utf-8?B?QzBINTdXRjNOQzB3eUFDeFl4SjB4TGZkbnJvK2FybGNrZzZabytxQjQ3SFNp?=
- =?utf-8?B?ZlJXTzFzb2dERGt1VXZ3S3lBbUJ5Z2hSYUExNCt5Uk1NMFRmbnd0ckNmbTJ6?=
- =?utf-8?B?WlRVQ2JacGxQYmcvekc4bHArd0hnbnEzalZPRGJ2TmdwVTZwWS9mZ2lGOXov?=
- =?utf-8?B?dnFVSC9uVmw5ak15aGQ5MHkwZXFmaGwyWGxEb0sxRzRpRWFkSUdOVmwyTlI3?=
- =?utf-8?B?R0RyV0hUMFhVd0FkeGtaVWJXZWdxMmRlS3h4cVBaZDU3dU0yRkROVXM5TGFW?=
- =?utf-8?B?MjdYNmh6bXVaNVBjRUxkTmVWbGJ3ZUpBTHdBVDIrNTd3NjJ0WStoQmRBQmdL?=
- =?utf-8?B?eWhselI3cUF6RHdEcVNYL0sySThsR05ZQ05vQ2tRU2NXeDAxYTBCTVF4THJu?=
- =?utf-8?B?V25PaVVuVmt4TkhtT3k0ZXArSFBpeVZrMlNiVjZpVUwzaFRXM2tPdGlibW5R?=
- =?utf-8?B?c2J3dUxnYkNzK043KzZpTHdTNnlZMndUenNtYjVQRWRHSzlqYzhLRy9MUWlv?=
- =?utf-8?B?RG5aTGtQMjg5d0k0cjdrZkdzbXMyeXR5MW51U0d3UDJuaUwvakxHU2dmMDA3?=
- =?utf-8?B?c21VUFdYUmJ1M3Zzc1cvd3F2TUtRNkErcTBrbWhlditTK0VsYWJIU2tZL21O?=
- =?utf-8?B?ZWluL1BtSlZGN04zTFBRZWc5RU1kTEFvQVZwSmNVaEI3RzdHc3RhSTFmTy9j?=
- =?utf-8?B?VFdFdWJNL2VhdzZJbEY0MmQwR29MUkIxejZMb3htQnMwVTh2OFZyd2tkak9V?=
- =?utf-8?B?SlVNMDMrRDNUSDFBdU9OVGl0MytudFhNM1liSS95bnIwUjFRMjhjL0d0cmpS?=
- =?utf-8?B?NUVHMDVObHBZZU9QM3hrYXFid3NESE9VMnNqTGdkQXdXcDNxTVlwRVFITXhi?=
- =?utf-8?B?cXk0WTNTaGpGYjUydTJDTm5hSmZsVmNUd3ViOTAzKzdOb3k0dW51YTJsd0U1?=
- =?utf-8?B?ei90NmkwclRPOG1wcE9tMUlGUWRLOFp2QUJhayt3cDd6UXRlbEdXVGxwY3hj?=
- =?utf-8?B?dWpaTzE2TW9mTnNySGREQ0pxWHEybjBSM3JNeGEyYlRQYlNlQ3ltQ2VxcXlQ?=
- =?utf-8?B?bmdwQVpaWFNLN21NbkdpQUkwQmVES3RJRFZRN01RL2tSSUJ3RFR5R2YxSzh5?=
- =?utf-8?B?YUYrUlgrVXpBPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c2ZTSU5kNUNRVUpTVHE1Sko5Z2wrdGNwT3E0aU5MZGdWWTVVRWNROGgvOCtw?=
- =?utf-8?B?L0tzN28rSzk3ZXNqRXI1ZjlVQTlFVStTWlEvSlc2OTRMOEltaXZJNnNYSGh2?=
- =?utf-8?B?QmlLdkZ0aFF2M01zVFRDc1pOc0tBM2JCWDZtS1NQUFFxblV2V2R5WHRNTTlj?=
- =?utf-8?B?eURkNGN3T3ovL3BMVVFTOG5VRFEzTjFLZW5NbGFtbnF0Ym5UK25nYVV3NTgr?=
- =?utf-8?B?ZUJhUEtPeFduaXJ3YnFJWUUweGhCWEROT2o0ZGdRTzNzZmwzN053U211TGgx?=
- =?utf-8?B?enc0OURQdWR2dUxMdCtTSDluc0RybEM4blhOKy9ZM2VXS3FRdnJvTTZmWnJM?=
- =?utf-8?B?cGhjQ1l2R3ltTXhTbU5wNnFFWTA5a2JGOWtUdVYzMEJQK0pDbW1vNlRFRW9R?=
- =?utf-8?B?dUFKQUFOd2w0ZTluK0F2ZFUxcUlrYWhlQ3RaQXRaQkU0L0NJZ1BYc2tNckNr?=
- =?utf-8?B?SWJaM093dVJQY2RvSjdUcEttUnp3NGh3QjF6VkJmQ1p5RVBuUkVOTmRER1F4?=
- =?utf-8?B?QTdZSW91MFljNU90czZVM3JYR1BrdDBQWElQOVhCcDEreG5ISlUvN3RkTlZW?=
- =?utf-8?B?VVpLd1h1Tk1hMW9hby9OMHRwOUZVTERCSlNKQm9kblBjb09LL01VaFdobEhm?=
- =?utf-8?B?T09KSmd0bTRpN081OVVYVytrVmNuM29NRTBjVVpwK2d1VmloWHJXUWI5cGJ3?=
- =?utf-8?B?RXFtWWRHVzA1S05hSWxUQ09yK2pzL0Y5Uk0rem9mR0pFSEZKUmo1UTR0UUNp?=
- =?utf-8?B?T3NMMnBLeUVMNEVTRk9Ba01URWdqT01ySVJ5TlBnMDFTV1F5Vm5OQXpjWVVy?=
- =?utf-8?B?K1lhUXlnVHNIREwwYWZGTVFjVG8xU29ZeTg0SEpoQmxIYStDRFBaVFBRNGJs?=
- =?utf-8?B?VUFmS1NMWjk4aVl6cHltWDVnc2YrWkVQTFhmTUQvUkFJVitONVlIQjl0TE9M?=
- =?utf-8?B?K0EvZmV3UVA5UVdDRHhPSGpjVjZ2NUZaTmIxT3VjdVN1dTQ2aTJCT21yRGFD?=
- =?utf-8?B?Tkk2THFtcE5CcnpraERJSXlkVDErVVNOOE5VLzM0MEkvN2dobkNncEtadXFk?=
- =?utf-8?B?QzV1ZWpzS3VOSzBVSnNZaG5uYlcwSGpIZ004UTNwQ0d0dWFKNHZ4RmRuTnF2?=
- =?utf-8?B?eWZNR2JUbmcxcGEybnBBb3dKSkFxK3c2bWlnNVorR2tnSnFsL0Jxb096bmZi?=
- =?utf-8?B?RVYxQks2VlZQZFpYVDJkc1RxcGhYdUd5STBrek9rNVpqWWtad2F4RzZUeW5Z?=
- =?utf-8?B?OURHd1hWc2pmWUhISzFMRmIyeDJ3QkVGdGNoNFN6WEtCakttMzRzYXhOT3RI?=
- =?utf-8?B?N2kxRGJNQThQZG9YOCtCb2x4VlhPS29HTm1YRDFhYnhlQXQrQWRidlpJbmMy?=
- =?utf-8?B?RmhrOVNLWUgvZW03ampqSllUKzRtWlZTTVAyVGpSdHZ6VzZ3RmZ2QURhRnFT?=
- =?utf-8?B?QTllbXBLOHN2TXR1bXFETVdMb2Y2RGp5YUZLQVdWVDhLemU2VEptallodDJD?=
- =?utf-8?B?azR5MzRTNURyQmpaN21QekZtMnVZT1RhVklFQ0dwWFZxUXh3K1BnU2NqRFFM?=
- =?utf-8?B?b2pQbmxUQi92TjFEbVUyQkpqaS85V3hZL1BkQzRJS2NDc2hXTEV4NTJBaTBy?=
- =?utf-8?B?VGw3bmIwTHdCcERVbjQ0dkF0ZHgzQXdLUzRObThscEFXbkxGMmdRc0I4N3JD?=
- =?utf-8?B?ajNwZmdqckZVSzdSL1hwRGtUUi9qS3NJZW1MRnUyUWtkV3psb0JPL0hUYVZh?=
- =?utf-8?B?NUtIRXNZWVpKbkx6NWo0dDlBc2hhUk0yclAyeFB1YjBnT0lxMmVlZ29nOVY4?=
- =?utf-8?B?RGVLN2dUKzhaaUNtS0pqM0ZLb1A0Rnprci9GeXZrVXM3TkNSQjhIRHlvTUU5?=
- =?utf-8?B?L1REMFlYRHhyZndOL3IxQnNsS3MyZ2dBYXBMUERLYlZLczlxb3RLOHc0Tloz?=
- =?utf-8?B?U3ZUOSsybnhSQ3cxbXFHcVN1eTdDZ0J5WkorU2hRYXJ3aGxVR2dpSEpoQTNl?=
- =?utf-8?B?N1BOOTJaYkJHL1EzTWFCWVlBbzhBMC9qa2luRUt5dk1wSUZpR01Bd1p3UUJw?=
- =?utf-8?B?RUhHbXUvQmZVdndSWlRkUmhDVk5CTmFZREpnNXhGUGlaV3l3RWVSZmtxczdC?=
- =?utf-8?B?d0NHc1k0QVFDVXd6ak9ZN1Rka0ROZHUzSTEwS01SQWw1WmxrRSs5bGFDOWZ1?=
- =?utf-8?B?aUE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b5e909a7-afaf-4f5e-7370-08ddbe617946
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 20:53:21.4187
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: q3nasUBcR/3SkbulzW4lxjG3dT4RvahxxtLVpe4Ar0jHSBDYOye7fPQGizj0e7DKPHorERBbYH6ABDsd46V2dgTlLyHaPaC8G+hCkHFwYjY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB4963
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: connector: extend ports property to
+ model power connections
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Badhri Jagan Sridharan <badhri@google.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
+ Pavel Machek <pavel@kernel.org>, Kyle Tso <kyletso@google.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20250507-batt_ops-v2-0-8d06130bffe6@google.com>
+ <20250507-batt_ops-v2-1-8d06130bffe6@google.com>
+ <20250514194249.GA2881453-robh@kernel.org>
+ <b4a22161-8cab-4d76-a4b0-4bfd0d79cdc1@google.com>
+ <z2wrzts6cgunxs5tc764izvrfi4i2d637zpt6tj5f4piry6j66@cke2yxhih6dg>
+Content-Language: en-US
+From: Amit Sunil Dhamne <amitsd@google.com>
+In-Reply-To: <z2wrzts6cgunxs5tc764izvrfi4i2d637zpt6tj5f4piry6j66@cke2yxhih6dg>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Tony,
+Hi Sebastian,
 
-On 6/26/25 9:49 AM, Tony Luck wrote:
-> rdt_mon_features is used as a bitmask of enabled monitor events. A monitor
-> event's status is now maintained in mon_evt::enabled with all monitor
-> events' mon_evt structures found in the filesystem's mon_event_all[] array.
-> 
-> Remove the remaining uses of rdt_mon_features.
-> 
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> ---
+On 6/23/25 3:08 PM, Sebastian Reichel wrote:
+> Hi,
+>
+> On Tue, May 20, 2025 at 01:10:25PM -0700, Amit Sunil Dhamne wrote:
+>> Hi Rob,
+>>
+>> Thanks for your response!
+>>
+>> On 5/14/25 12:42 PM, Rob Herring wrote:
+>>> On Wed, May 07, 2025 at 06:00:22PM -0700, Amit Sunil Dhamne wrote:
+>>>> Extend ports property to model power lines going between connector to
+>>>> charger or battery/batteries. As an example, connector VBUS can supply
+>>>> power in & out of the battery for a DRP.
+>>>>
+>>>> Additionally, add ports property to maxim,max33359 controller example.
+>>>>
+>>>> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+>>>> ---
+>>>>   .../bindings/connector/usb-connector.yaml          | 20 +++++++++++------
+>>>>   .../devicetree/bindings/usb/maxim,max33359.yaml    | 25 ++++++++++++++++++++++
+>>>>   2 files changed, 38 insertions(+), 7 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+>>>> index 11e40d225b9f3a0d0aeea7bf764f1c00a719d615..706094f890026d324e6ece8b0c1e831d04d51eb7 100644
+>>>> --- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
+>>>> +++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+>>>> @@ -181,16 +181,16 @@ properties:
+>>>>   
+>>>>     port:
+>>>>       $ref: /schemas/graph.yaml#/properties/port
+>>>> -    description: OF graph bindings modeling a data bus to the connector, e.g.
+>>>> -      there is a single High Speed (HS) port present in this connector. If there
+>>>> -      is more than one bus (several port, with 'reg' property), they can be grouped
+>>>> -      under 'ports'.
+>>>> +    description: OF graph binding to model a logical connection between a device
+>>>> +      and connector. This connection may represent a data bus or power line. For
+>>>> +      e.g. a High Speed (HS) data port present in this connector or VBUS line.
+>>>> +      If there is more than one connection (several port, with 'reg' property),
+>>>> +      they can be grouped under 'ports'.
+>>> 'port' and 'port@0' are equivalent. So you can't be changing its
+>>> definition.
+>> Noted!
+>>
+>>
+>>> I'm not sure showing a power connection with the graph is the right
+>>> approach.
+>> I want to provide some more context and rationale behind using this design.
+>>
+>>  From a hardware perspective:
+>>
+>> The max77759/max33359 IC has Type-C port controller, charger, fuel gauge
+>> (FG) ICs. The Vbus from the connector goes to/from the TCPC and connects
+>> with the charger IP via circuitry & from there on to the battery. The FG
+>> is connected to the battery in parallel. As it can be seen that while
+>> these IPs are interconnected, there's no direct connection of the fuel
+>> gauge & the connector.
+>>
+>> For this feature, I am interested in getting the reference to the FG. As
+>> per graph description: "...These common bindings do not contain any
+>> information about the direction or type of the connections, they just
+>> map their existence." This works for my case because I just want the
+>> connector to be aware of the Fuel gauge device without imposing a
+>> specific directionality in terms of power supplier/supplied. This is
+>> also the reason why I didn't use
+>> "/schemas/power/supply/power-supply.yaml#power-supplies" binding.
+>>
+>>> We have a binding for that already with the regulator binding.
+>> I haven't explored the option of using regulator bindings. But in my
+>> case I am interested in fuel gauge and unfortunately, they're modeled as
+>> power_supply devices.
+>  From hardware point of view there is no direct connection at all
+> between the fuel gauge and the connector. The usual hardware
+> connection is
+>
+> connector -> charger -> battery
+>
+> With the charger potentially supporting reverse operation to provide
+> energy from the battery to the connector (with "battery" I assume
+> a "smart" battery, so the raw cells and some kind of fuel gauge).
+>
+> Thus the following example should properly document the hardware
+> connections:
+>
+> ---------------------------------------
+> typec-connector {
+>      /* ... */
+> };
+>
+> charger {
+>      /* ... */
+>      power-supplies = <&connector>;
+> };
+>
+> fuel-gauge {
+>      /* ... */
+>      power-supplies = <&charger>;
+> };
+> ---------------------------------------
 
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+The hardware description is unambiguous for single power role Type-C 
+devices such as Sink only & Source only device (demonstrated by 
+inverting the relationship given in the above example).
 
-Reinette
+For DRP power role, the above relationship feels semantically incorrect 
+because the illustrated relationship would not hold if the Type-C device 
+is Source for a given Type-C connection lifecycle.
 
+I'll add a note somewhere mentioning that for DRP, the relationship can 
+be demonstrated either like a sink or source to make it less ambiguous.
+
+
+> It means instead of the direct graph lookup for the fuel gauge,
+> you would need a function walking through the graph build by the
+> power-supplies phandles. But it also means that the DT properly
+> describes the hardware instead of adding random graph connections.
+
+Okay, will follow this approach.
+
+Thanks,
+
+Amit
+
+
+>
+> Greetings,
+>
+> -- Sebastian
+>
+>>> Perhaps the connector needs to be a supply. It's already using that
+>>> binding in the supplying power to the connector case.
+>> Want to clarify, in this case you mean
+>> /schemas/regulator/regulator.yaml#*-supply$ right?
+>>
+>> Adding to my response above, the reason I don't want to impose a
+>> directionality in terms of supplier/supplied is that in case of USB Dual
+>> Role Port they're dynamic i.e., when USB is source, the power is
+>> supplied out of the battery (battery/FG will be supplier) and in case
+>> USB is sink, battery is supplied power. Whether the connector port is in
+>> source or sink role is determined on a connection to connection basis.
+>> Also, the knowledge of the supply direction is of no consequence for
+>> this feature.
+>>
+>>
+>> Please let me know what you think.
+>>
+>> Thanks,
+>>
+>> Amit
+>>
+>>
+>>> Rob
 
