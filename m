@@ -1,155 +1,147 @@
-Return-Path: <linux-kernel+bounces-721476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 628D3AFC9B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:37:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33DA5AFC9BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ACC11BC0B05
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:37:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84F7E189FD54
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7B6286430;
-	Tue,  8 Jul 2025 11:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE32B2D9ECD;
+	Tue,  8 Jul 2025 11:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kqh+LDrT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mU0sxF4N"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6541E238D53;
-	Tue,  8 Jul 2025 11:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1A2285C87
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 11:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751974624; cv=none; b=sqRE42KbpFo7/71wsvwOXBts2BGe1T9wOEWxYIYu0+EDBdcRu3aQuKWcQ9cDQtUyBWk930RUpGIkeNH1Ec2Ls6QaAL1fil24PR53jNkfGZK5HhDb4MUgYq/zhCjefwsh9hsXuVH8hq6k7GkxTtNBOKIlBZ5mC7W+RvT7jVhWtPA=
+	t=1751974796; cv=none; b=UcFJwdiyaH6l/ZH7w1xALEBng1DNkm4eFQLGNxCCd5iI9iVZDAQFIhSyN1TW9dN5m1oq9X0mxj844GAXATa2OTn41FQ7OVk+iWNwBQ5SoJfgpBiIkd3RPVsGqwifKYdsDgZVyGa6HTk4y/Mhk69t08ioX+aQ2tOX2RMfyShF1Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751974624; c=relaxed/simple;
-	bh=n3haqzgSRmOkXk1/RvygLKwBN0/aRPw/ajN4WwagC/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=krAB6uIYirYN9PNxSF9lbYXSuBe9pMIuMKPNcTV8VgqJANZEY+h2xaP2htBLhr/zK8GixVyfq/PLZVS35SBMzMa/Qf8NUAsQCWKIelsGsc6UoEIRXcKWDAkKVvaiPMEnIxPVg5UHbhywVyz7p+JI2SljtQ9HXr1eOQPd49x60PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kqh+LDrT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D0B9C4CEED;
-	Tue,  8 Jul 2025 11:37:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751974623;
-	bh=n3haqzgSRmOkXk1/RvygLKwBN0/aRPw/ajN4WwagC/o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kqh+LDrTX8vmlPiu0dSU4XVCSG1H/+BAR2RDhcuxNjula+E1Q6xw+lWctd/p6lzc1
-	 wgqrDtDdTcqo/+2YJBYvkMuWTz0SCn45uDc8IoJ2k4xcURavwOll26jakawnXPzvmM
-	 rL35mfNF+dXGu77oy9hM3bLm6hRfgM27df8iSvZaV5ElY9JQcig0XMtRpECPJuLStR
-	 bikZJDUgfm7n1wDKa7xEYVb8rBNKDvmQhftW53Yik42QVlEpQ9dPe0sFmU4Owoptjh
-	 N/Z3Yj3DHdlg/cjhx4RSodl2d8qtzMhQbh86MzCDagxAvjd8+4TlP2vlIGqdEEoL+I
-	 wbzA32gJOeUNA==
-Date: Tue, 8 Jul 2025 13:36:57 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>
-Subject: Re: [RFC v1 0/3] Add and use seprintf() instead of less ergonomic
- APIs
-Message-ID: <ez7yty6w7pe5pfzd64mhr3yfitvcurzsivjibeabnkg457xu7x@tkompzcytwcj>
-References: <cover.1751747518.git.alx@kernel.org>
- <87a55fw5aq.fsf@prevas.dk>
+	s=arc-20240116; t=1751974796; c=relaxed/simple;
+	bh=anrcJkhR0K2UFvABRyTbtjlESGIkubeRDAlquXXlVdc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FMSByhknh/XrMpWmcJSiXJ5muaFxttWClEQxHXUC1geF/7+tkOhlN/YZll2cY85aq2Q+gQ4Z2JWFwRfMutNldzm4oHj7ujThokOTbojHBF59wGqK5IzqmLu2wn+lFOo3Q0HGREzm9ZarbwGWSUy/Dk/Ry9Lnclz5M0o/+0NJqaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mU0sxF4N; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-71173646662so37748297b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 04:39:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751974793; x=1752579593; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9eMeJVMzIthoABLN3c573S0lEtUCztks52HyLR1vSyo=;
+        b=mU0sxF4N67OcXvp/G/I8hXBR7tQ5dePAp5fFejtXyB18qBhn/5ajMQM4YAtY7O5gwW
+         duOkHtuGmVBebZJxrxRC4INqFuXxxGk+QJo938rJpOy6redeRnw7dgVwKgw2a7HuSDTW
+         Jx5Xfuvbj1HeqhotaCq3IPWQXSnOLOFVKhj/ydYGhBvpAV3eXnxWDasjkHmqPOV/v1+1
+         0BSqQNHuoFxP1mVcffcUpBuE+8FQgpxePn4b8kI6Mmh9IBPORvyVFYg54eOP68B1Z7kb
+         FcPWr8OCKwSqhVCI0lIt+mxIHuQRvuxyClGM8HX5Y3mxbOFFrJd7YG+Us953IVCvEDOH
+         Y3mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751974793; x=1752579593;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9eMeJVMzIthoABLN3c573S0lEtUCztks52HyLR1vSyo=;
+        b=BKv+BrwnN3T5ZkFizdAzwBPiFqXUaYGnVda1gnULGJ4V3oiSs60eXw7LxJ3jhPz/2L
+         uy1rA0qWtLAkBanCh6+l3MjxPH0rthdOPh1iWHCeYGEB9KqkGzGVZSEGMVr9Cg6IvEMv
+         3vpRb1y76jXvwvCXq8bn/xs2NY9UHFtQLuhpW4n0ih1j1Yhk0XuJhdZ0vieS0GeOlebs
+         dNdPtTuRsYtrevu0VeWgWBT9hiBhqQHsOGBMcDcvpQybrOU7rXhL8yYLSNcobZbMPEvw
+         X0cIU7y4nBiQPUk9nLa1oLIk6TYlptxMFjipjDilmmk7DSWQu8MXcdP4Iaj6EZ3x+Fkx
+         3tlw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3WqBpWmBM0eD2zp0wbVjfQpgcCqbCR21ggFxwPeYZDYGa2LTEcbAj5OrIsCilQIDgU9RSLa4VOesZOxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLjfOXNLkPhDpVB+AEE2HV9W8dv31xOLu7gAFB2tdUeY2vd7CP
+	NRtHyKJJrwO6TqlYIs1cisE5hxiC6L5NSoK31og7e3/fCt6t3d5HKm5mQanyfYkybMs8frIXSuR
+	hcf+TT+mlXDgQ3YfAmJ/c3JC0rxHlf6/hf7mKgWWivw==
+X-Gm-Gg: ASbGncsbG2RbkWqytZ74mbNxvLtrBRPDNEwxHrouATTSvAKby9/LsqBMYtTx42bAgHZ
+	QqUp37Lua5wPmVrjTW+PdpyHyN6o1F1uRUqqqIBWB6/UZkGY7wuqolgN/etTfVIEcPrbbdB5wVM
+	dlKHRqD5bOQqxENnkhEKhtDTXWE180izppVtldlwCObDI=
+X-Google-Smtp-Source: AGHT+IG6kwwi/O1JpxJQzqce7OC4YlDVtNrzWESKs36ZU9aEADMh6ZKR839SIoeejlL3CWzFXOhNldDkEPqgFZcBnJY=
+X-Received: by 2002:a05:690c:dc7:b0:70e:6105:2360 with SMTP id
+ 00721157ae682-71668deda5amr227576207b3.24.1751974793396; Tue, 08 Jul 2025
+ 04:39:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yu7ixni4xjxoijgm"
-Content-Disposition: inline
-In-Reply-To: <87a55fw5aq.fsf@prevas.dk>
-
-
---yu7ixni4xjxoijgm
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20250702053256.4594-1-byungchul@sk.com> <20250702053256.4594-4-byungchul@sk.com>
+In-Reply-To: <20250702053256.4594-4-byungchul@sk.com>
+From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Date: Tue, 8 Jul 2025 14:39:16 +0300
+X-Gm-Features: Ac12FXwbisTy0vRZbr1dnSDkZ4VZxeOs9_WADPGLv9-1kgfrQv9Qj4QdZfgR36o
+Message-ID: <CAC_iWj+mOqEfyanEk52Y7Pw4zMs_tZbES=5xBV7AfAG-nTUPpw@mail.gmail.com>
+Subject: Re: [PATCH net-next v8 3/5] page_pool: rename __page_pool_alloc_pages_slow()
+ to __page_pool_alloc_netmems_slow()
+To: Byungchul Park <byungchul@sk.com>
+Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org, 
+	almasrymina@google.com, harry.yoo@oracle.com, hawk@kernel.org, 
+	akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com, 
+	andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com, 
+	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, 
+	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net, david@redhat.com, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org, 
+	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com, 
+	hannes@cmpxchg.org, ziy@nvidia.com, jackmanb@google.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>
-Subject: Re: [RFC v1 0/3] Add and use seprintf() instead of less ergonomic
- APIs
-References: <cover.1751747518.git.alx@kernel.org>
- <87a55fw5aq.fsf@prevas.dk>
-MIME-Version: 1.0
-In-Reply-To: <87a55fw5aq.fsf@prevas.dk>
 
-Hi Rasmus,
+On Wed, 2 Jul 2025 at 08:33, Byungchul Park <byungchul@sk.com> wrote:
+>
+> Now that __page_pool_alloc_pages_slow() is for allocating netmem, not
+> struct page, rename it to __page_pool_alloc_netmems_slow() to reflect
+> what it does.
+>
+> Signed-off-by: Byungchul Park <byungchul@sk.com>
+> Reviewed-by: Mina Almasry <almasrymina@google.com>
+> Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+> ---
 
-On Tue, Jul 08, 2025 at 08:43:57AM +0200, Rasmus Villemoes wrote:
-> On Sat, Jul 05 2025, Alejandro Colomar <alx@kernel.org> wrote:
->=20
-> > On top of that, I have a question about the functions I'm adding,
-> > and the existing kernel snprintf(3): The standard snprintf(3)
-> > can fail (return -1), but the kernel one doesn't seem to return <0 ever.
-> > Should I assume that snprintf(3) doesn't fail here?
->=20
-> Yes. Just because the standard says it may return an error, as a QoI
-> thing the kernel's implementation never fails. That also means that we
-> do not ever do memory allocation or similar in the guts of vsnsprintf
-> (that would anyway be a mine field of locking bugs).
+Reviewed-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
 
-All of that sounds reasonable.
-
-> If we hit some invalid or unsupported format specifier (i.e. a bug in
-> the caller), we return early, but still report what we wrote until
-> hitting that.
-
-However, there's the early return due to size>INT_MAX || size=3D=3D0, which
-results in no string at all, and there's not an error code for this.
-A user might think that the string is reliable after a vsprintf(3) call,
-as it returned 0 --as if it had written ""--, but it didn't write
-anything.
-
-I would have returned -EOVERFLOW in that case.
-
-I think something similar is true of strscpy(): it returns -E2BIG on
-size=3D=3D0 || size>INT_MAX but it should be a different error code, as
-there's no string at all.
-
-I'll propose something very close to strscpy() for standardization, but
-the behavior for size=3D=3D0 will either be undefined, or errno will be
-EOVERFLOW.
-
-
-Have a lovely day!
-Alex
-
---=20
-<https://www.alejandro-colomar.es/>
-
---yu7ixni4xjxoijgm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhtAtIACgkQ64mZXMKQ
-wqmtvxAAmdw883CZToXhH1TBnZ2W4hbKBzvMaF3mq84wKNfBB/CyJKTfWfVNRW9k
-yAG58nel0gHuklLCVK2BMCuG7JfNXNIKdUG7bQTGEr8t//QYcx4haFut+xlfph/M
-R+lwiw1q4yy3Q/0q97e2WJ/c4eBbWo5D0A6Ggy1bbYYsVY7AagO1ZHnglzVIHf4j
-95IiyR5BFCEtVjmaU8gEACNQIVeC6OnpSw385YlumOiXFX+KFBsiipbew0kXre8M
-tv+hyM2u3MR7YSWoMsyAheqSZBKz+puMVS4BGhwg8aAdsRSMoUbTRiszW5GJgSmN
-iHxFecIMKkyN3pdKm1Ca4MBbBTe7iYQuALQq0I0bZiP/qhkQMFbxSn0ldBL/tsAU
-qkB36CF/S784nfKJ4wDKy1UFUQZBdgMVDLuRH/VWxahijzBhsBF/qnIDdmqEEP3q
-un7+CRbi8WkPanq8lVYiiixE/BmOrw95LcrYIycQfwxjShQizzDLCSVXA6NN+lVu
-Qae7GlLpZ2vmw+vX50Jq76DzpwspOsIbzpypuXy/Y4f36UBeoqfzI/XtUIZ9CNmS
-B0bDgV1z094QTghOi7pZSaWqK8FFpb6lUd0a9fRAKihqEoPPj+Xgg1fagOULkLiO
-gor9ti3mUbSyRbeVwQAp/kVVMIrnDZSPtFp945FmBvVVjR7XerI=
-=UstB
------END PGP SIGNATURE-----
-
---yu7ixni4xjxoijgm--
+>  net/core/page_pool.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+> index 95ffa48c7c67..05e2e22a8f7c 100644
+> --- a/net/core/page_pool.c
+> +++ b/net/core/page_pool.c
+> @@ -544,8 +544,8 @@ static struct page *__page_pool_alloc_page_order(stru=
+ct page_pool *pool,
+>  }
+>
+>  /* slow path */
+> -static noinline netmem_ref __page_pool_alloc_pages_slow(struct page_pool=
+ *pool,
+> -                                                       gfp_t gfp)
+> +static noinline netmem_ref __page_pool_alloc_netmems_slow(struct page_po=
+ol *pool,
+> +                                                         gfp_t gfp)
+>  {
+>         const int bulk =3D PP_ALLOC_CACHE_REFILL;
+>         unsigned int pp_order =3D pool->p.order;
+> @@ -615,7 +615,7 @@ netmem_ref page_pool_alloc_netmems(struct page_pool *=
+pool, gfp_t gfp)
+>         if (static_branch_unlikely(&page_pool_mem_providers) && pool->mp_=
+ops)
+>                 netmem =3D pool->mp_ops->alloc_netmems(pool, gfp);
+>         else
+> -               netmem =3D __page_pool_alloc_pages_slow(pool, gfp);
+> +               netmem =3D __page_pool_alloc_netmems_slow(pool, gfp);
+>         return netmem;
+>  }
+>  EXPORT_SYMBOL(page_pool_alloc_netmems);
+> --
+> 2.17.1
+>
 
