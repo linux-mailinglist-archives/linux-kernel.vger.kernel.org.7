@@ -1,402 +1,118 @@
-Return-Path: <linux-kernel+bounces-721105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9064AFC4CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:56:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 433D0AFC4BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A04DD1AA62F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:56:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03B861AA1437
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3451229AB11;
-	Tue,  8 Jul 2025 07:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4410829A9D2;
+	Tue,  8 Jul 2025 07:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="jZr7KQoJ"
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.9])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE09221F02;
-	Tue,  8 Jul 2025 07:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.9
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="df6FoVcg"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382AE298CCD
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 07:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751961391; cv=none; b=qGUMfxMsJMy8+U5CLAcCDZafPbtHLLS5pM0vhdvC2XOz2xCDOn9y8DMq349wxEDNMsoS2a/PTfaPsTFdKsgjeDElRCk7ATiOtOt/GDYWApI6WUG+b748lBwjf0LkbUC4Xckutom3rnXHbrZaboMqIwUxbF979AyPkwxzrmRV4HU=
+	t=1751961309; cv=none; b=ApYnbMozJy+fo5QdfFE7bRWKtc1LwaTgYfSfG8MhSOwK8dwIa8cmuWPufOhvvmYwo9kVSPXFGovq+EoylXOMELLoBpZKdCl7bV5J2XDSlCkyJKBNRT5dSew42AAA/iWIRF9crrGCB+Ns46p3e/W8WC98ePFjyni+oEgksD8Rltc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751961391; c=relaxed/simple;
-	bh=dZyzQBIMqiq0pYKOY8WlmZpFoaKKpKrqKimjRYGLVPE=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=KoBpi/ib67hmGOkO9TOyV75HRtvJMAibXZa/OE+Bfhhbbkwi/lsLtigFhLnuCYraNHxdJXVKKUdIOZ0pGzHUmQQYsNM/ObgYt7je0QNZJARocuAjxL9JTJ4jngmSgqzDDVN6IlICWIDqMuEvvI2rtu68jPALHz3SZf19lEM+65Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=jZr7KQoJ; arc=none smtp.client-ip=117.135.210.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id; bh=Plhb3+GAJDN9/RH
-	FHPMi9csGKHBSLiSibnIhdh5+24c=; b=jZr7KQoJR8kw30nF06M6UaLnuMlzyLA
-	WJ50MMvgn+xkARA45gAC/l2TNrHCbAVQqrap2nkNnQ5HvmnRWRtWrt1pLPsjJEHb
-	EijiXnjx7qvOrV2PJjbIkI1UThXM+UQ8xEbBMpOJuvhwyVs8LopUqaN0X/TUJLPB
-	TMVVjsHvaGz8=
-Received: from hg-OptiPlex-7040.hygon.cn (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wDnjx3MzmxopPIpAA--.45984S2;
-	Tue, 08 Jul 2025 15:54:52 +0800 (CST)
-From: yangge1116@126.com
-To: ardb@kernel.org
-Cc: jarkko@kernel.org,
-	sathyanarayanan.kuppuswamy@linux.intel.com,
-	ilias.apalodimas@linaro.org,
-	jgg@ziepe.ca,
-	linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	liuzixing@hygon.cn,
-	Ge Yang <yangge1116@126.com>
-Subject: [PATCH V4] efi/tpm: Fix the issue where the CC platforms event log header can't be correctly identified
-Date: Tue,  8 Jul 2025 15:54:49 +0800
-Message-Id: <1751961289-29673-1-git-send-email-yangge1116@126.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID:_____wDnjx3MzmxopPIpAA--.45984S2
-X-Coremail-Antispam: 1Uf129KBjvAXoWfGr4fCrWDKryDWw43XrykGrg_yoW8JF1kKo
-	W3Cr45X3yUXwn3urWY9ryDGF1DZryvkr1SyrWYyws8Xa4qvrW3ArWxJws3XF4avr1jyF12
-	q3s8t3W8AF43JFZ3n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvj4RX_-PUUUUU
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOgOEG2hsyJSf0wAAsy
+	s=arc-20240116; t=1751961309; c=relaxed/simple;
+	bh=SFYJ9F7huYqGN3attK23C+QMdeDJac4QlSPKRrDU4Dg=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=r2f8onJ4ng9I4kYR+oa4XE9yeeJOYRJMF8IZEe//4GdhfyJ1eoqv2y/3Ac/h+H9jLFP2poXsMdxuNvvyTTKtTFMmYi3wEA27OYXfyiawXOeMOQsgQwD3tTiaVobU8kGX6B7z4vFveqjcgfoTUssZxO7c+kjzf3PyQ118/Q3cGOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=df6FoVcg; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-70e3c6b88dbso27129267b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 00:55:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751961307; x=1752566107; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=unanIWyMjQ+vHf7d8Wd5oX37FaPuC+rf95W54Arze8E=;
+        b=df6FoVcgP6jz+tA+aARFu+cjhzKIn+tlxRcs/w1Ajt/PveIbitd94b248feZ0c0Hob
+         BSqg3t19CcnKb080GbUA6xfRGbFyy12AAq0KFMYDv1EyAZdUD476mcoVPryB/DP48d5P
+         tVtZVpRLdWBcxM05y+4eqiABCoLq99xifrTxJi7PWaHt1QEqHEIu+SGFYw7v9KFrqSRH
+         EVNl2ZuUMz178pClWzn34JjWTINTmaj5cA7AjluFCROY69+7JSAOsj6FoWXwd+p/cAWE
+         K5ake2x6JU7zCatAv/VKKh+Ngs5cwuS8DHqrC1KE8/yBgOcKYhkjJDDPMZp8ZivhaGGX
+         e/6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751961307; x=1752566107;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=unanIWyMjQ+vHf7d8Wd5oX37FaPuC+rf95W54Arze8E=;
+        b=IFyUfLYDc39kd3khTqMVcxm1JAWP3BdWUxWF2PSMbUurDYkL9yP45yM8R/+PaE02ri
+         8/rrCB7SppJ/L1dPC01ep+D4RNOLMo0F/501nwjquTRdwe5LmZPA2nYMwzmXo1g00wWu
+         AR5vz+VgqAp6yVvR0b5yXpiu7UmvmAAnDQKeP3sw24kvpx5tfEu0R/W8YlN7HHdkPiKB
+         JmOkO1FWS2wcxeUd5+8HTgI4TJrkYitJbJ82yivdnhfOqIf+EPdOQEv2DubalZwms0gV
+         BMFgAhsFDCLYDs9TkikB7NCyXxiCKLRLM+lSQBzpeJovlvkRNj7TUhZpKQX0ZuVy2pXF
+         GKRA==
+X-Forwarded-Encrypted: i=1; AJvYcCX4cq2lH5nJtjhIToLTVqT+z854fPYBfYWhrrPqy2sKEJ01CHRT+wL+pH0hKDiAe2EpCBtSf2DtrLMa1R4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMlZbHowpj3ZQ4LlTMzrkFzeOdnzk0ecPxNOy2s+TL1dv5kYp/
+	Sbn6+W6U0/b9V6VPc31DB5d1mA0XM5ijvoSyPny5Mq9yQxuo+wVXx9HE/fxwn/mHV4RRLqXcnSg
+	P5o1QNRwDWDjTZa0hngiy7TrSU66vIIA=
+X-Gm-Gg: ASbGncvImsPda0r7+MAeX2HnnijO186LuGEa8rBu/wxSsOyLLWEc47MPPItvjh9h1W/
+	qHCi1ePFnahkuvcHWvnHp3OMqbrHkG+XS7UoVsJSKjXOtJol/y+0bk/4KPA6g4ilImh40Jr8KkG
+	2H2T9aXRFPRlxB9atEmEsq83bz5sppD0WFlBY6HgiMeJMh6fwJcNE9pbvChx+xS32VxfF8LwLsX
+	vr4
+X-Google-Smtp-Source: AGHT+IFXKifAScORyZguiMoMWqTCt3CMHazmqXK1SBZk1Sap7bwF7y/fZva4KW9i9L5nvFPJCpqfn7D9xvuKGJD++hE=
+X-Received: by 2002:a05:690c:7241:b0:70e:7ff6:9ff3 with SMTP id
+ 00721157ae682-717a047fe9amr23118597b3.35.1751961307087; Tue, 08 Jul 2025
+ 00:55:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+From: Moonhee Lee <moonhee.lee.ca@gmail.com>
+Date: Tue, 8 Jul 2025 00:54:55 -0700
+X-Gm-Features: Ac12FXwGPoEdJrb6bmrbXp7t12R6zeJ0T_YO1VBL5JsCd8QHB1bvQPjmPk1YL3A
+Message-ID: <CAF3JpA5n1Xb7h_RWG+y10zu_cbciPsppv8Pnetmxw6QXxi1D9A@mail.gmail.com>
+Subject: [syzbot] [ntfs3?] WARNING in ni_rename
+To: syzbot+b0373017f711c06ada64@syzkaller.appspotmail.com
+Cc: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Ge Yang <yangge1116@126.com>
+#syz test
 
-Since commit d228814b1913 ("efi/libstub: Add get_event_log() support
-for CC platforms") reuses TPM2 support code for the CC platforms, when
-launching a TDX virtual machine with coco measurement enabled, the
-following error log is generated:
+diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
+index 1bf2a6593dec..15f3a711ea0a 100644
+--- a/fs/ntfs3/index.c
++++ b/fs/ntfs3/index.c
+@@ -478,6 +478,7 @@ static int indx_find_free(struct ntfs_index *indx,
+struct ntfs_inode *ni,
+        struct ATTR_LIST_ENTRY *le = NULL;
+        const struct INDEX_NAMES *in = &s_index_names[indx->type];
+        int err;
++       u64 bm_size;
 
-[Firmware Bug]: Failed to parse event in TPM Final Events Log
+        b = ni_find_attr(ni, NULL, &le, ATTR_BITMAP, in->name, in->name_len,
+                         NULL, NULL);
+@@ -488,6 +489,17 @@ static int indx_find_free(struct ntfs_index
+*indx, struct ntfs_inode *ni,
+        *bitmap = b;
+        *bit = MINUS_ONE_T;
 
-Call Trace:
-efi_config_parse_tables()
-  efi_tpm_eventlog_init()
-    tpm2_calc_event_log_size()
-      __calc_tpm2_event_size()
-
-The pcr_idx value in the Intel TDX log header is 1, causing the function
-__calc_tpm2_event_size() to fail to recognize the log header, ultimately
-leading to the "Failed to parse event in TPM Final Events Log" error.
-
-According to UEFI Specification 2.10, Section 38.4.1: For TDX, TPM PCR
-0 maps to MRTD, so the log header uses TPM PCR 1 instead. To successfully
-parse the TDX event log header, the check for a pcr_idx value of 0
-must be skipped.
-
-According to Table 6 in Section 10.2.1 of the TCG PC Client
-Specification, the index field does not require the PCR index to be
-fixed at zero. Therefore, skipping the check for a pcr_idx value of
-0 for CC platforms is safe.
-
-Link: https://uefi.org/specs/UEFI/2.10/38_Confidential_Computing.html#intel-trust-domain-extension
-Link: https://trustedcomputinggroup.org/wp-content/uploads/TCG_PCClient_PFP_r1p05_v23_pub.pdf
-Fixes: d228814b1913 ("efi/libstub: Add get_event_log() support for CC platforms")
-Signed-off-by: Ge Yang <yangge1116@126.com>
-Cc: stable@vger.kernel.org
----
-
-V4:
-- remove cc_platform_has(CC_ATTR_GUEST_STATE_ENCRYPT) suggested by Ard
-
-V3:
-- fix build error
-
-V2:
-- limit the fix for CC only suggested by Jarkko and Sathyanarayanan 
-
- drivers/char/tpm/eventlog/tpm2.c   |  6 +++++-
- drivers/firmware/efi/efi.c         |  8 ++++++--
- drivers/firmware/efi/libstub/tpm.c | 13 +++++++++----
- drivers/firmware/efi/tpm.c         | 36 ++++++++++++++++++++----------------
- include/linux/efi.h                |  4 +++-
- include/linux/tpm_eventlog.h       | 14 +++++++++++---
- 6 files changed, 54 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/char/tpm/eventlog/tpm2.c b/drivers/char/tpm/eventlog/tpm2.c
-index 37a0580..e9484fd 100644
---- a/drivers/char/tpm/eventlog/tpm2.c
-+++ b/drivers/char/tpm/eventlog/tpm2.c
-@@ -36,7 +36,11 @@
- static size_t calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
- 				   struct tcg_pcr_event *event_header)
- {
--	return __calc_tpm2_event_size(event, event_header, false);
-+	/*
-+	 * This function is only used by TPM2 and will not be used by CC.
-+	 * Therefore, the argument is_cc_event is set to 0.
-+	 */
-+	return __calc_tpm2_event_size(event, event_header, false, 0);
- }
- 
- static void *tpm2_bios_measurements_start(struct seq_file *m, loff_t *pos)
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index e57bff7..954b8f7 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -45,6 +45,7 @@ struct efi __read_mostly efi = {
- 	.esrt			= EFI_INVALID_TABLE_ADDR,
- 	.tpm_log		= EFI_INVALID_TABLE_ADDR,
- 	.tpm_final_log		= EFI_INVALID_TABLE_ADDR,
-+	.cc_final_log		= EFI_INVALID_TABLE_ADDR,
- #ifdef CONFIG_LOAD_UEFI_KEYS
- 	.mokvar_table		= EFI_INVALID_TABLE_ADDR,
- #endif
-@@ -613,7 +614,7 @@ static const efi_config_table_type_t common_tables[] __initconst = {
- 	{LINUX_EFI_RANDOM_SEED_TABLE_GUID,	&efi_rng_seed,		"RNG"		},
- 	{LINUX_EFI_TPM_EVENT_LOG_GUID,		&efi.tpm_log,		"TPMEventLog"	},
- 	{EFI_TCG2_FINAL_EVENTS_TABLE_GUID,	&efi.tpm_final_log,	"TPMFinalLog"	},
--	{EFI_CC_FINAL_EVENTS_TABLE_GUID,	&efi.tpm_final_log,	"CCFinalLog"	},
-+	{EFI_CC_FINAL_EVENTS_TABLE_GUID,	&efi.cc_final_log,	"CCFinalLog"	},
- 	{LINUX_EFI_MEMRESERVE_TABLE_GUID,	&mem_reserve,		"MEMRESERVE"	},
- 	{LINUX_EFI_INITRD_MEDIA_GUID,		&initrd,		"INITRD"	},
- 	{EFI_RT_PROPERTIES_TABLE_GUID,		&rt_prop,		"RTPROP"	},
-@@ -752,7 +753,10 @@ int __init efi_config_parse_tables(const efi_config_table_t *config_tables,
- 	if (!IS_ENABLED(CONFIG_X86_32) && efi_enabled(EFI_MEMMAP))
- 		efi_memattr_init();
- 
--	efi_tpm_eventlog_init();
-+	if (efi.tpm_final_log != EFI_INVALID_TABLE_ADDR)
-+		efi_tcg2_eventlog_init(&efi.tpm_log, &efi.tpm_final_log, 0);
-+	else if (efi.cc_final_log != EFI_INVALID_TABLE_ADDR)
-+		efi_tcg2_eventlog_init(&efi.tpm_log, &efi.cc_final_log, 1);
- 
- 	if (mem_reserve != EFI_INVALID_TABLE_ADDR) {
- 		unsigned long prsv = mem_reserve;
-diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
-index a5c6c4f..9728060 100644
---- a/drivers/firmware/efi/libstub/tpm.c
-+++ b/drivers/firmware/efi/libstub/tpm.c
-@@ -50,7 +50,8 @@ void efi_enable_reset_attack_mitigation(void)
- static void efi_retrieve_tcg2_eventlog(int version, efi_physical_addr_t log_location,
- 				       efi_physical_addr_t log_last_entry,
- 				       efi_bool_t truncated,
--				       struct efi_tcg2_final_events_table *final_events_table)
-+				       struct efi_tcg2_final_events_table *final_events_table,
-+				       bool is_cc_event)
- {
- 	efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
- 	efi_status_t status;
-@@ -87,7 +88,8 @@ static void efi_retrieve_tcg2_eventlog(int version, efi_physical_addr_t log_loca
- 			last_entry_size =
- 				__calc_tpm2_event_size((void *)last_entry_addr,
- 						    (void *)(long)log_location,
--						    false);
-+						    false,
-+						    is_cc_event);
- 		} else {
- 			last_entry_size = sizeof(struct tcpa_event) +
- 			   ((struct tcpa_event *) last_entry_addr)->event_size;
-@@ -123,7 +125,8 @@ static void efi_retrieve_tcg2_eventlog(int version, efi_physical_addr_t log_loca
- 			header = data + offset + final_events_size;
- 			event_size = __calc_tpm2_event_size(header,
- 						   (void *)(long)log_location,
--						   false);
-+						   false,
-+						   is_cc_event);
- 			/* If calc fails this is a malformed log */
- 			if (!event_size)
- 				break;
-@@ -157,6 +160,7 @@ void efi_retrieve_eventlog(void)
- 	efi_tcg2_protocol_t *tpm2 = NULL;
- 	efi_bool_t truncated;
- 	efi_status_t status;
-+	bool is_cc_event = false;
- 
- 	status = efi_bs_call(locate_protocol, &tpm2_guid, NULL, (void **)&tpm2);
- 	if (status == EFI_SUCCESS) {
-@@ -186,11 +190,12 @@ void efi_retrieve_eventlog(void)
- 
- 		final_events_table =
- 			get_efi_config_table(EFI_CC_FINAL_EVENTS_TABLE_GUID);
-+		is_cc_event = true;
- 	}
- 
- 	if (status != EFI_SUCCESS || !log_location)
- 		return;
- 
- 	efi_retrieve_tcg2_eventlog(version, log_location, log_last_entry,
--				   truncated, final_events_table);
-+				   truncated, final_events_table, is_cc_event);
- }
-diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
-index cdd4310..d79291d 100644
---- a/drivers/firmware/efi/tpm.c
-+++ b/drivers/firmware/efi/tpm.c
-@@ -16,14 +16,16 @@
- int efi_tpm_final_log_size;
- EXPORT_SYMBOL(efi_tpm_final_log_size);
- 
--static int __init tpm2_calc_event_log_size(void *data, int count, void *size_info)
-+static int __init tpm2_calc_event_log_size(void *data, int count,
-+					    void *size_info, bool is_cc_event)
- {
- 	struct tcg_pcr_event2_head *header;
- 	u32 event_size, size = 0;
- 
- 	while (count > 0) {
- 		header = data + size;
--		event_size = __calc_tpm2_event_size(header, size_info, true);
-+		event_size = __calc_tpm2_event_size(header, size_info, true,
-+						    is_cc_event);
- 		if (event_size == 0)
- 			return -1;
- 		size += event_size;
-@@ -36,7 +38,8 @@ static int __init tpm2_calc_event_log_size(void *data, int count, void *size_inf
- /*
-  * Reserve the memory associated with the TPM Event Log configuration table.
-  */
--int __init efi_tpm_eventlog_init(void)
-+int __init efi_tcg2_eventlog_init(unsigned long *log, unsigned long *final_log,
-+				   bool is_cc_event)
- {
- 	struct linux_efi_tpm_eventlog *log_tbl;
- 	struct efi_tcg2_final_events_table *final_tbl;
-@@ -44,7 +47,7 @@ int __init efi_tpm_eventlog_init(void)
- 	int final_tbl_size;
- 	int ret = 0;
- 
--	if (efi.tpm_log == EFI_INVALID_TABLE_ADDR) {
-+	if (*log == EFI_INVALID_TABLE_ADDR) {
- 		/*
- 		 * We can't calculate the size of the final events without the
- 		 * first entry in the TPM log, so bail here.
-@@ -52,23 +55,23 @@ int __init efi_tpm_eventlog_init(void)
- 		return 0;
- 	}
- 
--	log_tbl = early_memremap(efi.tpm_log, sizeof(*log_tbl));
-+	log_tbl = early_memremap(*log, sizeof(*log_tbl));
- 	if (!log_tbl) {
- 		pr_err("Failed to map TPM Event Log table @ 0x%lx\n",
--		       efi.tpm_log);
--		efi.tpm_log = EFI_INVALID_TABLE_ADDR;
-+		       *log);
-+		*log = EFI_INVALID_TABLE_ADDR;
- 		return -ENOMEM;
- 	}
- 
- 	tbl_size = sizeof(*log_tbl) + log_tbl->size;
--	if (memblock_reserve(efi.tpm_log, tbl_size)) {
-+	if (memblock_reserve(*log, tbl_size)) {
- 		pr_err("TPM Event Log memblock reserve fails (0x%lx, 0x%x)\n",
--		       efi.tpm_log, tbl_size);
-+		       *log, tbl_size);
- 		ret = -ENOMEM;
- 		goto out;
- 	}
- 
--	if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR) {
-+	if (*final_log == EFI_INVALID_TABLE_ADDR) {
- 		pr_info("TPM Final Events table not present\n");
- 		goto out;
- 	} else if (log_tbl->version != EFI_TCG2_EVENT_LOG_FORMAT_TCG_2) {
-@@ -76,25 +79,26 @@ int __init efi_tpm_eventlog_init(void)
- 		goto out;
- 	}
- 
--	final_tbl = early_memremap(efi.tpm_final_log, sizeof(*final_tbl));
-+	final_tbl = early_memremap(*final_log, sizeof(*final_tbl));
- 
- 	if (!final_tbl) {
- 		pr_err("Failed to map TPM Final Event Log table @ 0x%lx\n",
--		       efi.tpm_final_log);
--		efi.tpm_final_log = EFI_INVALID_TABLE_ADDR;
-+		       *final_log);
-+		*final_log = EFI_INVALID_TABLE_ADDR;
- 		ret = -ENOMEM;
- 		goto out;
- 	}
- 
- 	final_tbl_size = 0;
- 	if (final_tbl->nr_events != 0) {
--		void *events = (void *)efi.tpm_final_log
-+		void *events = (void *)*final_log
- 				+ sizeof(final_tbl->version)
- 				+ sizeof(final_tbl->nr_events);
- 
- 		final_tbl_size = tpm2_calc_event_log_size(events,
- 							  final_tbl->nr_events,
--							  log_tbl->log);
-+							  log_tbl->log,
-+							  is_cc_event);
- 	}
- 
- 	if (final_tbl_size < 0) {
-@@ -103,7 +107,7 @@ int __init efi_tpm_eventlog_init(void)
- 		goto out_calc;
- 	}
- 
--	memblock_reserve(efi.tpm_final_log,
-+	memblock_reserve(*final_log,
- 			 final_tbl_size + sizeof(*final_tbl));
- 	efi_tpm_final_log_size = final_tbl_size;
- 
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 7d63d1d..71efec0 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -642,6 +642,7 @@ extern struct efi {
- 	unsigned long			esrt;			/* ESRT table */
- 	unsigned long			tpm_log;		/* TPM2 Event Log table */
- 	unsigned long			tpm_final_log;		/* TPM2 Final Events Log table */
-+	unsigned long			cc_final_log;		/* CC Final Events Log table */
- 	unsigned long			mokvar_table;		/* MOK variable config table */
- 	unsigned long			coco_secret;		/* Confidential computing secret table */
- 	unsigned long			unaccepted;		/* Unaccepted memory table */
-@@ -1209,7 +1210,8 @@ struct linux_efi_tpm_eventlog {
- 	u8	log[];
- };
- 
--extern int efi_tpm_eventlog_init(void);
-+extern int efi_tcg2_eventlog_init(unsigned long *log, unsigned long *final_log,
-+				   bool is_cc_event);
- 
- struct efi_tcg2_final_events_table {
- 	u64 version;
-diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
-index 891368e..b3380c9 100644
---- a/include/linux/tpm_eventlog.h
-+++ b/include/linux/tpm_eventlog.h
-@@ -143,6 +143,7 @@ struct tcg_algorithm_info {
-  * @event:        Pointer to the event whose size should be calculated
-  * @event_header: Pointer to the initial event containing the digest lengths
-  * @do_mapping:   Whether or not the event needs to be mapped
-+ * @is_cc_event:  Whether or not the event is from a CC platform
-  *
-  * The TPM2 event log format can contain multiple digests corresponding to
-  * separate PCR banks, and also contains a variable length of the data that
-@@ -159,7 +160,8 @@ struct tcg_algorithm_info {
- 
- static __always_inline u32 __calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
- 					 struct tcg_pcr_event *event_header,
--					 bool do_mapping)
-+					 bool do_mapping,
-+					 bool is_cc_event)
- {
- 	struct tcg_efi_specid_event_head *efispecid;
- 	struct tcg_event_field *event_field;
-@@ -201,8 +203,14 @@ static __always_inline u32 __calc_tpm2_event_size(struct tcg_pcr_event2_head *ev
- 	count = event->count;
- 	event_type = event->event_type;
- 
--	/* Verify that it's the log header */
--	if (event_header->pcr_idx != 0 ||
-+	/*
-+	 * Verify that it's the log header. According to the TCG PC Client
-+	 * Specification, when identifying a log header, the check for a
-+	 * pcr_idx value of 0 is not required. For CC platforms, skipping
-+	 * this check during log header is necessary; otherwise, the CC
-+	 * platform's log header may fail to be recognized.
-+	 */
-+	if ((!is_cc_event && event_header->pcr_idx != 0) ||
- 	    event_header->event_type != NO_ACTION ||
- 	    memcmp(event_header->digest, zero_digest, sizeof(zero_digest))) {
- 		size = 0;
--- 
-2.7.4
-
++       bm_size = b->non_res ? le64_to_cpu(b->nres.valid_size) :
++                              le32_to_cpu(b->res.data_size);
++
++       /*
++        * Allocated index blocks require $BITMAP to contain at least
++        * one bit for usage tracking. A zero-length bitmap in this
++        * case indicates a malformed on-disk structure and cannot be used.
++        */
++       if (unlikely(bm_size == 0 && indx->alloc_run.count))
++               return -EINVAL;
++
+        if (!b->non_res) {
+                u32 nbits = 8 * le32_to_cpu(b->res.data_size);
+                size_t pos = find_next_zero_bit_le(resident_data(b), nbits, 0);
 
