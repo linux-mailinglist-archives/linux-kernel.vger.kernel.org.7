@@ -1,155 +1,120 @@
-Return-Path: <linux-kernel+bounces-721085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B420AFC486
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:50:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D69BAAFC48D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 166A116F735
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:50:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FE05169D32
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE23F29824E;
-	Tue,  8 Jul 2025 07:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7184029B220;
+	Tue,  8 Jul 2025 07:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BbKuXHVC"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mmKOdejG"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96AB298999;
-	Tue,  8 Jul 2025 07:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 342F429ACED;
+	Tue,  8 Jul 2025 07:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751960992; cv=none; b=JdjweoVUPnHSHT8k8dpBlajcHBtniIO4k2aD46UWoOiCKrR81CAkHkLJeZnDp4AGd++WNEWlsB+uBVqthq7rrJptU8IqLUALGHznXhr46u9KVEydBVN9oFgvGL+R0VT3nbJoIz63EW8XecBqJ/6bB44snamjkKyHcBIr5efIm6I=
+	t=1751961012; cv=none; b=axRw49IAdNUu5SkHqT9khBk2XI4gRuBmioH4/UalTzZk1L4kx9ZU0vW0Ql7q5jh/zzsmRFd+pLw1s0X/mtDZxnMlU3djMyBuR4JtCgQlzf3OOS8zBRtLCpJWtCl/3d75ZNpba9XTRzRM3JOwWHi/xMCmkq+v5XKB1nsdqLqKhaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751960992; c=relaxed/simple;
-	bh=0AMpQTfpxSLjgAs3N/PqckJJjy63x3iJFVIaAUZ7x4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=llCmOG6bVSulOBnoupd8kERX+riuqTHqEdYcXZ5ilmy39FXNQVfdETVCc+AqEtySXBiPhzOZOxHqU56Ceto/WTPDq0N6WncleGS1YL0/MSPXMrvTBo2cGIZ051r+JO17JdA3By/8oHRCl7TeFGBOwMwt+VGXKDOC4R5U9+egeBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=BbKuXHVC; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1751960925;
-	bh=wQMAZs9JG+dlk9X0QeLB39JyST3UKWFpkDlOJSOaYzA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BbKuXHVCp2IkMhY9fuRXKzRC+L7K/xINkkLRoyuMqwoNlq+9R4VXFt4rwkb3zpZsL
-	 FzjLNs1uXFKkshMAyw7G4glQ7OrS8cDso/HRqE5Yt8R9fZtrQLNueztNayr3s3KxDs
-	 xNFzaJEib3920YD+Ite8LOhYlI+OfI/yRR1Kjhi6IeKjU8LPnza8xS9ynrG7VsUrvM
-	 XAo665NmHkyPyvzHCrATOnJsIIccOiveMGNl4MydF5SSTQCM/2wtVNHLE5gsTbXKNS
-	 R8snKoACfvG2muoW6gZvZ0orZgFAUlTfX7nnm7Q+A2UNN464VCGUGCNddu9QdVbDpX
-	 JaceTwC6L4aZA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bbtX94m3lz4wbW;
-	Tue,  8 Jul 2025 17:48:41 +1000 (AEST)
-Date: Tue, 8 Jul 2025 17:49:38 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Matthias Maennich <maennich@google.com>, Jonathan Corbet
- <corbet@lwn.net>, Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu
- <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, Daniel
- Gomez <da.gomez@samsung.com>, Masahiro Yamada <masahiroy@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier
- <nicolas.schier@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Christoph
- Hellwig <hch@infradead.org>, Peter Zijlstra <peterz@infradead.org>, David
- Hildenbrand <david@redhat.com>, Shivank Garg <shivankg@amd.com>, "Jiri
- Slaby (SUSE)" <jirislaby@kernel.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org, Greg KH
- <greg@kroah.com>
-Subject: Re: [PATCH 0/2] Restrict module namespace to in-tree modules and
- rename macro
-Message-ID: <20250708174938.0d02040c@canb.auug.org.au>
-In-Reply-To: <20250708-export_modules-v1-0-fbf7a282d23f@suse.cz>
-References: <20250708-export_modules-v1-0-fbf7a282d23f@suse.cz>
+	s=arc-20240116; t=1751961012; c=relaxed/simple;
+	bh=HnGdA9rmUNMeqhHzuc3oI+jOUf+2CmsmtVhKZAqAw9U=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=j1zBuAS9BDpTHgg5X+7kLDqwX8cSBcjpgPVP+WDfum2bM1ge3u17zAdR/nTysPLS8o8r36tn7TkxoTUUrAQda0VM9sbKKNi6O+pQKZIqttIZ0ZNjz5CSxpewIcJ6lFHhEyCg6uzd42s/sFZKmBnh7oqyKarBmNpa4sw8Ovzo5cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mmKOdejG; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-32f144d0db8so22250021fa.0;
+        Tue, 08 Jul 2025 00:50:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751961009; x=1752565809; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=HnGdA9rmUNMeqhHzuc3oI+jOUf+2CmsmtVhKZAqAw9U=;
+        b=mmKOdejGXhJBjyM6ohwswnRyijqH/BT+P9Jo4JWe4fkZLkxWatJvMtv17H2LPQdHJ8
+         g3qVIrnNX8AYZoI852tdPr3DQ7Mkd1/Yym1iLX+8OEGPWlRZlVY+47d3XXpxDHFm2zkF
+         DMHXQytQSvfkUJSHEBAU+MmX/hnrt6hLoqEz+5eJeq35UwTu0Kt1lTf0iXKkblXUmAKD
+         q3C/qugkRw+YggwSBUNqaHS5Pq4Ulobhox/TCAnWOGpRiKYB6Ng62eTZv+INYAJfCHpr
+         EwH9xjKycbNO5w7B5kZ8jqmNt37hT9LQLTazp4irxKcCBZLm+SY9qbwV+v5YpgPMFm38
+         iNbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751961009; x=1752565809;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HnGdA9rmUNMeqhHzuc3oI+jOUf+2CmsmtVhKZAqAw9U=;
+        b=CoZ6Dgiaw9Jpgx8FNujljtkPb40DKlH5wWMcuVsb2AtHCvtoYWpgw7Au7hErKxeiVP
+         T43KIHZ5H5Ezo+i9Edomyop0oa00C+UukTMBxPaJiFuGfP+xjqtyW83115BJ+nKoiO3N
+         8+9YMsiH2j0y11tQR64SNtVmVb8a6OYJGU30M08894NEjBmrPWFEa6m+IQhEJ+ND6K+y
+         TINvuKWqjAjWptr/BfUz67cYcVUbyVriAVRpfxiQxM6AKjxF4duyaBN6GFaWvEosyxxZ
+         8nxZ7DSqHp/IRsFr+mdDCAiRto1oFxWSmlqWAk9nGUtzCpDMzrXt+qcZADmMvNvnEAuF
+         Aeew==
+X-Forwarded-Encrypted: i=1; AJvYcCUFc9y7PftF7cWfyH2F5EuQ0QbwzDK0Y6//SmgxZPYHFzQfjJoPZsnasbMks4YYme5D4lPE2e34@vger.kernel.org, AJvYcCXukVaiH7Dj+et1Xm9R+15gCT9MKhAWaQAq8voPbHcAGdXZEZQ5ZQpJIQu9gZv52eWujkYavt2l6m+d9g4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEfnpW8ljWz6izJg/U0UpgNInzpmw7cnLF1R6jWXqh3fuWNdaO
+	LUtCww3EpFZchEj8x+Ep9Oz7Mh2RqUyNjQAOcucpbp75Kg/y85Ku1Lgass0o2KT/Qr6kN7HdPJy
+	p++U2l+1B0GBBlD83k9t/C316oFrQMbA=
+X-Gm-Gg: ASbGncvTSrMXhGeXM5gK/lq3trZOgePq7ggVUEr7l5rbMnV7au3Ld2dnm1IUrOLSjtX
+	3ZMgchgn17ehyBgDk5wguyyhB1BjDxzE+gj/0pqgiZscMx5MxkhNwcyvpZcqC5ADg9bGnOdeHBM
+	uVmMeqCdN5XgLNTQxxrxCOEbLXkJtNcByl/qOvMVYvHuby4E3yoLZxALSLQ1IY05L0HaJZ/t9gl
+	gpX
+X-Google-Smtp-Source: AGHT+IG2Wm6AmQWCYYUqcI01Vck/UA6n8whkclDuyJ52pUQ/P8XUD+RthwIWzxq+tcVTZuysM9pJssY2Nnjffth6Uuk=
+X-Received: by 2002:a2e:bc18:0:b0:32b:7423:88b3 with SMTP id
+ 38308e7fff4ca-32f39f58826mr5327771fa.5.1751961009121; Tue, 08 Jul 2025
+ 00:50:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/fBozBVZ.Do+zD1PDuhFmP=r";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+From: Luka <luka.2016.cs@gmail.com>
+Date: Tue, 8 Jul 2025 15:49:57 +0800
+X-Gm-Features: Ac12FXz8K146n5yLFjHHwH8kb3cbMN6gql5cJVJTWDEhcLqjGanIzNfGJsQTOPM
+Message-ID: <CALm_T+2NP6RguKihvZbi_W61Yutup1ZcuNZBr950TJCGj-p8WQ@mail.gmail.com>
+Subject: [Bug] soft lockup in sys_sendmmsg in Linux kernel v6.14
+To: Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>
+Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/fBozBVZ.Do+zD1PDuhFmP=r
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Dear Linux Kernel Maintainers,
 
-Hi Vlastimil,
+I hope this message finds you well.
 
-On Tue, 08 Jul 2025 09:28:56 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
->
-> Christian asked [1] for EXPORT_SYMBOL_FOR_MODULES() without the _GPL_
-> part to avoid controversy converting selected existing EXPORT_SYMBOL().
-> Christoph argued [2] that the _FOR_MODULES() export is intended for
-> in-tree modules and thus GPL is implied anyway and can be simply dropped
-> from the export macro name. Peter agreed [3] about the intention for
-> in-tree modules only, although nothing currently enforces it.
->=20
-> It seems straightforward to add this enforcement, so patch 1 does that.
-> Patch 2 then drops the _GPL_ from the name and so we're left with
-> EXPORT_SYMBOL_FOR_MODULES() restricted to in-tree modules only.
->=20
-> Current -next has some new instances of EXPORT_SYMBOL_GPL_FOR_MODULES()
-> in drivers/tty/serial/8250/8250_rsa.c by commit b20d6576cdb3 ("serial:
-> 8250: export RSA functions"). Hopefully it's resolvable by a merge
-> commit fixup and we don't need to provide a temporary alias.
+I am writing to report a potential vulnerability I encountered during
+testing of the Linux Kernel version v6.14.
 
-Thanks for the heads up and it seems easy enough.  You probably should
-have cc'd Greg KH (the maintainer for the tty tree), though (done now).
+Git Commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557 (tag: v6.14)
 
->=20
-> [1] https://lore.kernel.org/all/20250623-warmwasser-giftig-ff656fce89ad@b=
-rauner/
-> [2] https://lore.kernel.org/all/aFleJN_fE-RbSoFD@infradead.org/
-> [3] https://lore.kernel.org/all/20250623142836.GT1613200@noisy.programmin=
-g.kicks-ass.net/
->=20
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
-> Vlastimil Babka (2):
->       module: Restrict module namespace access to in-tree modules
->       module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to EXPORT_SYMBOL_FOR_M=
-ODULES
->=20
->  Documentation/core-api/symbol-namespaces.rst | 11 ++++++-----
->  fs/anon_inodes.c                             |  2 +-
->  include/linux/export.h                       |  2 +-
->  kernel/module/main.c                         |  3 ++-
->  scripts/mod/modpost.c                        |  6 +++++-
->  5 files changed, 15 insertions(+), 9 deletions(-)
-> ---
-> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-> change-id: 20250708-export_modules-12908fa41006
->=20
-> Best regards,
-> --=20
-> Vlastimil Babka <vbabka@suse.cz>
+Bug Location: __x64_sys_sendmmsg+0x9d/0x110 net/socket.c:2733
 
---=20
-Cheers,
-Stephen Rothwell
+Bug report: https://pastebin.com/YrfrS22B
 
---Sig_/fBozBVZ.Do+zD1PDuhFmP=r
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Entire kernel config: https://pastebin.com/MRWGr3nv
 
------BEGIN PGP SIGNATURE-----
+Root Cause Analysis:
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhszZIACgkQAVBC80lX
-0GzKFQf+KKCk9pBJo1BlSjyo+VaXJN7IvCyQg5Xws4YX8jPtr2chs0topNP6fKKU
-bbgAWe/rurPbpPJ5L3zP5Z2pNPr4akBc8r0PiEG9U5PAErDOpgJwEJSWx+ZE0ftE
-XsvFyHsF/Shz4WBaWYuD+EsNdl4uVuoQBCOkzTSxuv6y0DyxiDi0BQV4I439N0tc
-YyCkNz3EE9SZwoE7R4qqTIDSr1k2XDGpGJebo7cHdwQqejLdrh9zUcLN1DAAyrrR
-LH3KJ9hf4b29EftQx5sVJNkh/2FKFNxHpPci2TuNGm61sKx1t8quDRXCVWTd1/Fm
-SU5/FVVz/h1Yw7xhAwR6pAziLBoulg==
-=kNBu
------END PGP SIGNATURE-----
+A soft lockup occurs during invocation of the sys_sendmmsg() syscall
+due to prolonged CPU occupation in packet transmission routines,
+likely caused by excessive memory allocation or reclaim activity in
+UDP socket send path. The issue involves __ip_append_data() and
+udp_sendmsg() functions exhausting CPU cycles within the softirq
+context, without yielding, which starves other kernel tasks and
+triggers a watchdog timeout.
 
---Sig_/fBozBVZ.Do+zD1PDuhFmP=r--
+At present, I have not yet obtained a minimal reproducer for this
+issue. However, I am actively working on reproducing it, and I will
+promptly share any additional findings or a working reproducer as soon
+as it becomes available.
+
+Thank you very much for your time and attention to this matter. I
+truly appreciate the efforts of the Linux kernel community.
+
+Best regards,
+Luka
 
