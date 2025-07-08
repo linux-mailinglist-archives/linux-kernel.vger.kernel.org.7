@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-720957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF2FAFC28C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:19:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50069AFC28E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B02C54219B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:19:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76C70421885
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA97221265;
-	Tue,  8 Jul 2025 06:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA37220F48;
+	Tue,  8 Jul 2025 06:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mcR6ytGf"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Hr6GQU9T"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77676219EB;
-	Tue,  8 Jul 2025 06:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CCF215F56;
+	Tue,  8 Jul 2025 06:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751955572; cv=none; b=rzvISAd90zz6gcf/hXAqC4baCKUc7KDIVBY5jZKRlY4U4cXfLj/JgaHCtQexcdCovT1XRu4G5NM7iEzY/E2rNNyLc9LJQrGO+7FEBVisjltcBu5qZB+bfzIVyxb+oGzswpk3r+sk9Bi7uY7WzUAFH9oXg5xVUkknfbJp2E4QW18=
+	t=1751955589; cv=none; b=HTBJttwf+wdyxjQCw/w/MqYJzXPCXRryO9Jqw0uXdRovaZ/jiwp5W1hPNexmZB/FZOR2N2bNd0mDGJIWbgeQ+YqttpZyv40Y8qUW/rCqSM0uhrXlyG223SylyjbW+C7ZFPSkMoEqsUA0r/IOPgxKx7jIiOKrSlVnXVMF5+jVGpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751955572; c=relaxed/simple;
-	bh=fdKst7IRAsqsenZliJt+GWMMOBmwKJwlNY3fqlSVZkE=;
+	s=arc-20240116; t=1751955589; c=relaxed/simple;
+	bh=XIIeIcrNCGILL2Ab7UwjlwIM9ikdUmDwyHs/41Fsd1o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d4+mS7PweKbbILQYj9iAo2EcuzYadQHRUYKwvTKoFGBIyhB4h0tYLBSfBPv+YYfw9RjobNW5uJMTrryFPmsu1PJ1mueudxpt1PLcHS3U2X0raarVED3fvm1TYSR4GqF9sKX2YYEaHGcan5U43RWyTPoeLEZ+Knqics/S0Wvrj6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mcR6ytGf; arc=none smtp.client-ip=115.124.30.119
+	 In-Reply-To:Content-Type; b=j1hgyJENEUDk0ANGgD5t+pKjq711YTfIm1HWrDTr2HXIZ9wcndUP5acyR+Yp3/eH/ksF4TalX8dE9flwBCv8BwFZs0BIHz26Y3Eznrklk95MEVS64zIAgkJEJsz0sqnEF8sW/IhAxxb1rWoELrF5GM+elVBLh/zZ6WqqDhLqsRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Hr6GQU9T; arc=none smtp.client-ip=115.124.30.110
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1751955566; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=qIRx+HCehqqza2IJhsneJV4WjfRLShJN2Hjm8Xb7L4M=;
-	b=mcR6ytGfjlZqBSdQlw2EshP17cFillFU1uZpHPvB1K09ZpkARvtetnsxNjsvXJ48TGFgoanB32ts36Wb9OLIq6GlZckOUDo/bwTlAZ8iXUmtZhOhKEcjx9lpHz3Y2nov6DqBkzND0nfCgIb4wu18bCcJ/zCH+khgEDI1tRsJpCc=
-Received: from 30.74.144.119(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WiLFdgJ_1751955558 cluster:ay36)
+	t=1751955582; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=00a02p8/QV+KKKOcQ7ATmh6Gos9w2u8Zz/Q2jIXVIqg=;
+	b=Hr6GQU9T8mE3kqtNWl2al8MQ5WdHWuIRaqiGUPSUSB06AfcsB+ih77fgX1SpaPtggaLI9L6aRWflHbQw+U6dpafZqhloQaFF67pqoIDESoXPDFNu3PO9d9txGGwU/OR4ZA2W/dT8c3bh1pd03urV4E31U8ZsIBukbsmK0RcTE98=
+Received: from 30.221.117.203(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0WiL4Hbh_1751955580 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Tue, 08 Jul 2025 14:19:23 +0800
-Message-ID: <e6a18289-1417-4f47-a919-bb5a8ddc1579@linux.alibaba.com>
-Date: Tue, 8 Jul 2025 14:19:18 +0800
+          Tue, 08 Jul 2025 14:19:41 +0800
+Message-ID: <670cf530-1b8f-4a65-8df8-7aec154b1e57@linux.alibaba.com>
+Date: Tue, 8 Jul 2025 14:19:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,83 +47,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 04/15] khugepaged: generalize alloc_charge_folio()
-To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: david@redhat.com, ziy@nvidia.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com,
- corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
- baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
- wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com,
- vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
- yang@os.amperecomputing.com, kirill.shutemov@linux.intel.com,
- aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
- catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
- dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org
-References: <20250702055742.102808-1-npache@redhat.com>
- <20250702055742.102808-5-npache@redhat.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250702055742.102808-5-npache@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH net-next v2 1/2] net/smc: convert timeouts to
+ secs_to_jiffies()
+To: Easwar Hariharan <eahariha@linux.microsoft.com>,
+ "D. Wythe" <alibuda@linux.alibaba.com>, Dust Li <dust.li@linux.alibaba.com>,
+ Sidraya Jayagond <sidraya@linux.ibm.com>, Wenjia Zhang
+ <wenjia@linux.ibm.com>, Mahanta Jambigi <mjambigi@linux.ibm.com>,
+ Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, David Ahern <dsahern@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-rdma@vger.kernel.org,
+ linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250707-netdev-secs-to-jiffies-part-2-v2-0-b7817036342f@linux.microsoft.com>
+ <20250707-netdev-secs-to-jiffies-part-2-v2-1-b7817036342f@linux.microsoft.com>
+From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+In-Reply-To: <20250707-netdev-secs-to-jiffies-part-2-v2-1-b7817036342f@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
 
-On 2025/7/2 13:57, Nico Pache wrote:
-> From: Dev Jain <dev.jain@arm.com>
+在 2025/7/8 06:03, Easwar Hariharan 写道:
+> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
+> secs_to_jiffies().  As the value here is a multiple of 1000, use
+> secs_to_jiffies() instead of msecs_to_jiffies to avoid the multiplication.
 > 
-> Pass order to alloc_charge_folio() and update mTHP statistics.
+> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
+> the following Coccinelle rules:
 > 
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Co-developed-by: Nico Pache <npache@redhat.com>
-> Signed-off-by: Nico Pache <npache@redhat.com>
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> @depends on patch@
+> expression E;
+> @@
+> 
+> -msecs_to_jiffies(E * 1000)
+> +secs_to_jiffies(E)
+> 
+> -msecs_to_jiffies(E * MSEC_PER_SEC)
+> +secs_to_jiffies(E)
+> 
+> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 > ---
->   include/linux/huge_mm.h |  2 ++
->   mm/huge_memory.c        |  4 ++++
->   mm/khugepaged.c         | 17 +++++++++++------
->   3 files changed, 17 insertions(+), 6 deletions(-)
+>  net/smc/af_smc.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 4d5bb67dc4ec..a6ea89fdaee6 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -125,6 +125,8 @@ enum mthp_stat_item {
->   	MTHP_STAT_ANON_FAULT_ALLOC,
->   	MTHP_STAT_ANON_FAULT_FALLBACK,
->   	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
-> +	MTHP_STAT_COLLAPSE_ALLOC,
-> +	MTHP_STAT_COLLAPSE_ALLOC_FAILED,
->   	MTHP_STAT_ZSWPOUT,
->   	MTHP_STAT_SWPIN,
->   	MTHP_STAT_SWPIN_FALLBACK,
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index ce130225a8e5..69777a35e722 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -614,6 +614,8 @@ static struct kobj_attribute _name##_attr = __ATTR_RO(_name)
->   DEFINE_MTHP_STAT_ATTR(anon_fault_alloc, MTHP_STAT_ANON_FAULT_ALLOC);
->   DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
->   DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
-> +DEFINE_MTHP_STAT_ATTR(collapse_alloc, MTHP_STAT_COLLAPSE_ALLOC);
-> +DEFINE_MTHP_STAT_ATTR(collapse_alloc_failed, MTHP_STAT_COLLAPSE_ALLOC_FAILED);
->   DEFINE_MTHP_STAT_ATTR(zswpout, MTHP_STAT_ZSWPOUT);
->   DEFINE_MTHP_STAT_ATTR(swpin, MTHP_STAT_SWPIN);
->   DEFINE_MTHP_STAT_ATTR(swpin_fallback, MTHP_STAT_SWPIN_FALLBACK);
-> @@ -679,6 +681,8 @@ static struct attribute *any_stats_attrs[] = {
->   #endif
->   	&split_attr.attr,
->   	&split_failed_attr.attr,
-> +	&collapse_alloc_attr.attr,
-> +	&collapse_alloc_failed_attr.attr,
->   	NULL,
->   };
+> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
+> index 8d56e4db63e041724f156aa3ab30bab745a15bad..bdbaad17f98012c10d0bbc721c80d4c5ae4fb220 100644
+> --- a/net/smc/af_smc.c
+> +++ b/net/smc/af_smc.c
+> @@ -2735,8 +2735,7 @@ int smc_accept(struct socket *sock, struct socket *new_sock,
+>  
+>  	if (lsmc->sockopt_defer_accept && !(arg->flags & O_NONBLOCK)) {
+>  		/* wait till data arrives on the socket */
+> -		timeo = msecs_to_jiffies(lsmc->sockopt_defer_accept *
+> -								MSEC_PER_SEC);
+> +		timeo = secs_to_jiffies(lsmc->sockopt_defer_accept);
+>  		if (smc_sk(nsk)->use_fallback) {
+>  			struct sock *clcsk = smc_sk(nsk)->clcsock->sk;
+>  
+> 
 
-Sorry, I forgot to mention that you should update the 
-'Documentation/admin-guide/mm/transhuge.rst' file for these new statistics.
+LGTM.
+Reviewed-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
 
