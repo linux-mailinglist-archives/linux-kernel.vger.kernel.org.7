@@ -1,63 +1,65 @@
-Return-Path: <linux-kernel+bounces-721963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86189AFD01C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:07:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AC9AAFD021
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 18:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94D9A167C4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:07:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F2D81AA1016
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2362B2E4262;
-	Tue,  8 Jul 2025 16:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00852E4257;
+	Tue,  8 Jul 2025 16:07:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AyWhgxPm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fEcLIgV3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8069C1E412A;
-	Tue,  8 Jul 2025 16:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D5D1E412A;
+	Tue,  8 Jul 2025 16:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751990818; cv=none; b=ooBkndAFIdMXrBsrqem2sGcz8qnrLdMQCGyUQdFsVwAgTG9ShxbPznTjVmQX7Uzwm7FMsrwmDZR2kqY/Co7UrGgMqGNmBXKOurzbBnOJ5s4n75aDXQNQIVqRuSGqDAm00iwYFvwwbDsZITnkBofoNSgd17tfInDn+uz1uWNt6RI=
+	t=1751990867; cv=none; b=GZMap+iL/DoMQpTrn9QfNMl9DXwjsPIF4/9w35gAjQzBPbHXGzMXXvIssPOvBPBLhDLDJkFmz9igGOnNxcVzFiiN+pZvqZ/GiAJC57lCWAZPJqVn3iU8I1NZU715ypXzSEmCqmFstxZ6a0QOkMnA1J81z7fcEYRIQhQ6K8ReCZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751990818; c=relaxed/simple;
-	bh=u/XqwXMvGwGUcQMh5nLy52xMhImOmTCmv1c95gYdotM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Dsuh7PF3zY6OnpPgJKXkj73PfeNmlnd6kBeP/X7zYw7s+KiLDgE71Ua+IwlANqpSrBOuNdB4j+S6+mS7o+S0UdwUUIxEvbe6X1ZkbFzz2LrdVvgNA/2ejm9GpA0+IzhAvXZYqq6zalI/LdjlOqlprpuRRHkq2/BDcRfHFsoF+Dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AyWhgxPm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CFAFC4CEED;
-	Tue,  8 Jul 2025 16:06:55 +0000 (UTC)
+	s=arc-20240116; t=1751990867; c=relaxed/simple;
+	bh=98fKvdP0i02lST6UkvFvXQHNgQ9XkTBzo+wtuhhTI8k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dbiaLsiA6ed6BGWv8J5TYO9jtEfsbo9sU5BjR9Ztmtk4F/kd5BcatpJnl/gsa7lyrqMemCI0+C/kRw/29yQXRXygxAuGyyE33ecgimdE6Q/BC5DHlvV9EBgSwDGaFEtfABMBw2MI7H2J7E1R5PGORHh2UDJJVin39jeSF2mwDdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fEcLIgV3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B8DEC4CEED;
+	Tue,  8 Jul 2025 16:07:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751990818;
-	bh=u/XqwXMvGwGUcQMh5nLy52xMhImOmTCmv1c95gYdotM=;
+	s=k20201202; t=1751990866;
+	bh=98fKvdP0i02lST6UkvFvXQHNgQ9XkTBzo+wtuhhTI8k=;
 	h=From:To:Cc:Subject:Date:From;
-	b=AyWhgxPm4VUthsW8kH0LLjf4nC7Z3OyguNy6KeGSZfahJSZhDpml7QFLHsDtvzjAw
-	 UmjpQxTvuBMz8LihCgODJIryzaeG8lF1t+aDfz0Zi75I5+LPhHleZIrwbVPFpxz0mt
-	 QGeGOlZIsNo6LwErHOx/DORkFI1/vJyIWKf+8491SantSMN9MZxN2LEmp+Eq+Wy1/7
-	 hklB/ZXDnB3oxuScQyCf4Hvro0d8nEpm/SpbmC1XiiZHhMeAlGY6jtTsPz0gZGXeUN
-	 B8s8Bw1WkEP2jkzNIlAGC+MBWWxthPqesZj9jAzPel6zHy5YQy56HRTVq7H/ln/XD4
-	 kvLmI1z8bOA4A==
+	b=fEcLIgV33jRV7doaIC0ukPrope5DureXTU5LscX8oc1XD4bp0iJ++oSt981aQp94h
+	 2E7Rf5eloQg3yDqmEYaoSmspEBAZSBj+6SJSdYe6LG4fhVJEkqpho81GgIkltm0UDX
+	 wc1dxTFssa38RwwwT8l+Ci1oS3JbiZSvwcQrKe6zJW9QaRAK8e+K1liv7G3OyPBxmY
+	 CHpY6jOKDBAUPZ18mQq5SaheCKRdNupH+pazVyFhJRTl8HCMsJ38FdkQjQ/4kvTm8g
+	 2j2JqVgUQ7pe9ulFtBTMgQxaipy/c+Iz+JmnhfFERJn7O+hPhzYNlSZvCy47w/VeV4
+	 IE56eEvQtO+3A==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Jiri Pirko <jiri@resnulli.us>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Carolina Jubran <cjubran@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Cosmin Ratiu <cratiu@nvidia.com>,
-	Mark Bloch <mbloch@nvidia.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Emil Tsalapatis <emil@etsalapatis.com>
 Cc: Arnd Bergmann <arnd@arndb.de>,
-	Simon Horman <horms@kernel.org>,
-	Joe Damato <jdamato@fastly.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	netdev@vger.kernel.org,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] devlink: move DEVLINK_ATTR_MAX-sized array off stack
-Date: Tue,  8 Jul 2025 18:06:43 +0200
-Message-Id: <20250708160652.1810573-1-arnd@kernel.org>
+Subject: [PATCH] bpf: fix dump_stack() type cast
+Date: Tue,  8 Jul 2025 18:07:29 +0200
+Message-Id: <20250708160737.1834080-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -69,81 +71,38 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-There are many possible devlink attributes, so having an array of them
-on the stack can cause a warning for excessive stack usage:
+Passing a pointer as a 'u64' variable requires a double cast when
+converting it back to a pointer:
 
-net/devlink/rate.c: In function 'devlink_nl_rate_tc_bw_parse':
-net/devlink/rate.c:382:1: error: the frame size of 1648 bytes is larger than 1536 bytes [-Werror=frame-larger-than=]
+kernel/bpf/stream.c: In function 'dump_stack_cb':
+kernel/bpf/stream.c:505:64: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
+  505 |         ctxp->err = bpf_stream_stage_printk(ctxp->ss, "%pS\n", (void *)ip);
+      |                                                                ^
 
-Change this to dynamic allocation instead.
-
-Fixes: 566e8f108fc7 ("devlink: Extend devlink rate API with traffic classes bandwidth management")
+Fixes: d7c431cafcb4 ("bpf: Add dump_stack() analogue to print to BPF stderr")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-I see that only two of the many array entries are actually used in this
-function: DEVLINK_ATTR_RATE_TC_INDEX and DEVLINK_ATTR_RATE_TC_BW. If there
-is an interface to extract just a single entry, using that would be
-a little easier than the kcalloc().
----
- net/devlink/rate.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ kernel/bpf/stream.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/devlink/rate.c b/net/devlink/rate.c
-index d39300a9b3d4..e4083649748f 100644
---- a/net/devlink/rate.c
-+++ b/net/devlink/rate.c
-@@ -346,19 +346,23 @@ static int devlink_nl_rate_tc_bw_parse(struct nlattr *parent_nest, u32 *tc_bw,
- 				       unsigned long *bitmap,
- 				       struct netlink_ext_ack *extack)
- {
--	struct nlattr *tb[DEVLINK_ATTR_MAX + 1];
-+	struct nlattr **tb;
- 	u8 tc_index;
- 	int err;
- 
-+	tb = kcalloc(DEVLINK_ATTR_MAX + 1, sizeof(struct nlattr *), GFP_KERNEL);
-+	if (!tb)
-+		return -ENOMEM;
- 	err = nla_parse_nested(tb, DEVLINK_ATTR_MAX, parent_nest,
- 			       devlink_dl_rate_tc_bws_nl_policy, extack);
- 	if (err)
--		return err;
-+		goto out;
- 
-+	err = -EINVAL;
- 	if (!tb[DEVLINK_ATTR_RATE_TC_INDEX]) {
- 		NL_SET_ERR_ATTR_MISS(extack, parent_nest,
- 				     DEVLINK_ATTR_RATE_TC_INDEX);
--		return -EINVAL;
-+		goto out;
+diff --git a/kernel/bpf/stream.c b/kernel/bpf/stream.c
+index 8c842f845245..24433cdf6ede 100644
+--- a/kernel/bpf/stream.c
++++ b/kernel/bpf/stream.c
+@@ -498,11 +498,11 @@ static bool dump_stack_cb(void *cookie, u64 ip, u64 sp, u64 bp)
+ 		if (ret < 0)
+ 			goto end;
+ 		ctxp->err = bpf_stream_stage_printk(ctxp->ss, "%pS\n  %s @ %s:%d\n",
+-						    (void *)ip, line, file, num);
++					    (void *)(uintptr_t)ip, line, file, num);
+ 		return !ctxp->err;
  	}
- 
- 	tc_index = nla_get_u8(tb[DEVLINK_ATTR_RATE_TC_INDEX]);
-@@ -366,19 +370,21 @@ static int devlink_nl_rate_tc_bw_parse(struct nlattr *parent_nest, u32 *tc_bw,
- 	if (!tb[DEVLINK_ATTR_RATE_TC_BW]) {
- 		NL_SET_ERR_ATTR_MISS(extack, parent_nest,
- 				     DEVLINK_ATTR_RATE_TC_BW);
--		return -EINVAL;
-+		goto out;
- 	}
- 
- 	if (test_and_set_bit(tc_index, bitmap)) {
- 		NL_SET_ERR_MSG_FMT(extack,
- 				   "Duplicate traffic class index specified (%u)",
- 				   tc_index);
--		return -EINVAL;
-+		goto out;
- 	}
- 
- 	tc_bw[tc_index] = nla_get_u32(tb[DEVLINK_ATTR_RATE_TC_BW]);
- 
--	return 0;
-+out:
-+	kfree(tb);
-+	return err;
+ end:
+-	ctxp->err = bpf_stream_stage_printk(ctxp->ss, "%pS\n", (void *)ip);
++	ctxp->err = bpf_stream_stage_printk(ctxp->ss, "%pS\n", (void *)(uintptr_t)ip);
+ 	return !ctxp->err;
  }
  
- static int devlink_nl_rate_tc_bw_set(struct devlink_rate *devlink_rate,
 -- 
 2.39.5
 
