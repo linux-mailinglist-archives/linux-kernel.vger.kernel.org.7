@@ -1,223 +1,250 @@
-Return-Path: <linux-kernel+bounces-722098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB49AFD557
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:30:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9163BAFD559
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70EA71BC28C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:30:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DC537A9AC5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DA32E5B08;
-	Tue,  8 Jul 2025 17:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LOciArRV"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B212E5B34;
+	Tue,  8 Jul 2025 17:30:32 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406FA217705;
-	Tue,  8 Jul 2025 17:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80B11FC109
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 17:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751995805; cv=none; b=TRl/NQUYsCkeDvqmpWk3CudGfKKTZksnke+bouKD5l4xgmx6fGteE+l8N12ULYpfeScyZMODItPXLskt18yN6LvQoNtR9F+jeGDwMR/gBuKMSeiv7qGR9/URv0mEagbBH90anYHQVWCjY7v1N7k5n62Dk/IKt+FK1crWiTTEfc0=
+	t=1751995831; cv=none; b=lB/Ab21u/MXrgn7WqIFM++lPmDroGM0Wzdc916yw1+zDJj88GVNZfZ3zeMN/WYbVwDg4CxcaELcoNm36qeDrmNB39EGhoPp0LAvjpp3zwBImvvvU/dEpoWopjRAIoqkf44d/O1QQHEaQYiziUOGTTWFEyYWXzn3PwvxHvVVzbL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751995805; c=relaxed/simple;
-	bh=vlMsyk8PePj05/Qp9smxa7jsagrQmzRpKk6M8DQUZX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EyNPGf2aTIR6afVdRnLjKl4DXU1/jBuAmPvmHk0xZxB3Gi9NSYIlySUHlYAYKtEKTR9YBXhMvHsKkUbYIqo0HqgSgcsfQJXTrALwH/kcsUKtxIZgRmgkBSqUZVBIlC/VukjVYrCQLEADHQJinJlpEQKO0DG1rM01QJlHp3ZhBAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LOciArRV; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7d5d0ea6c8dso347976585a.1;
-        Tue, 08 Jul 2025 10:30:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751995803; x=1752600603; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KDWmvBi+xrTnEZOGiVtOCiEcPvDY+R/VmkacimBElWU=;
-        b=LOciArRVWcni1ULkFZ484L/P9YFPVAEiqDmpJJEg0yM8u7s0WF7AkabF3jPzgQyped
-         jsJY5xbgCrHalb06vYFjlt9QQsPyjlgQPeHaHsGgH/DDdOn7VtoMOwBvWJanH94jOb3w
-         5hVfjByvhlZxWWEWm019o/DnCkpTbNNbWOAxxFnf8tacrYIbF3IPy9NYpbYzfJRHPL35
-         Ojob1YSqzO/i0TVst1CktA6EJIamBgtNXL+o5dlyfmux36l7MSVL2A6B3CE3tQb34cw/
-         5PST312z8lOcfdBRREq2mur3a6sMUnHE49CqoR1yvkhhb/R5EOmf8VMgkKG03v9cWQEv
-         j1Rw==
+	s=arc-20240116; t=1751995831; c=relaxed/simple;
+	bh=Ft+juv58VLMvhRWzX4+AKCs9fl31lVonbN0VUF9WHSw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nQB3TsQUOf7sEo4ulmQTd/8W+b9NqEQPbjvWvRImymz18xOhfw+JdX4kcRXQWgEusVwQUdMNOTdV8lb3lVy84qaynPI9t2T2eb3AKFecTeXKJvP7YaMVU/08OM9YHnuRuEZ6TxsdfqeZx2hybQ/EG3+anauDrnW77kPBix8J8Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-87632a0275dso375988439f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 10:30:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751995803; x=1752600603;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KDWmvBi+xrTnEZOGiVtOCiEcPvDY+R/VmkacimBElWU=;
-        b=Jml+SSQWofglYXttcjfYIuRA7lJO9ZPVbBOA1XnfRTs2mE+a9daCBVQNCazo6czLq6
-         5yVNRqIS3V6qgcXxHH7aWW0pagp2yXeC95HFzAYlMh7EAEJefd/gHCoKZ/zZJ2yQxWSt
-         IwysmxfIcnnTyzw/g4tyWy4EhPLRoftwm1uKD/iGkkVbx5nLAc8LqC/OtSe3bnbUE9uH
-         Sgb5PmBck//ZiP0ldVWFkBVrB9f895Kx7L9WqKCbLhgRlfhnpl5CVWrrZmwm1eNTA6vg
-         9YP9pHiDNI9EohdQb81WX+g3j8PZJhM4q+UkOggvhUD1SHa2vGB7yJ8449fk1mliZenP
-         oOuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVYBII5FoUbbw22s3hxHp8E0EdPQdxweinr3vAmCDdw4D67/A6w4hZz6xdH4nKbfr/TFbzJAIEdfaxlfY=@vger.kernel.org, AJvYcCXbdQMPBLj5crq+OJvQrP8M4XELOnTdtZyxMwrcB/lQLw2a3eZGDJ9u31KldMmRT8xpAPM3Sum0I3q8TWKG6Y9tfg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo7FA2h5j84gglnFA3y9ofQmlWYKlJY/hDGZug21wgmBhQa2o0
-	h3q8d+F5eG1pqxGmt7GpJIIP+LR50uQfyyldEgfmvatS8T3Cy8bv2Woo
-X-Gm-Gg: ASbGncvydNTeRNVhDsft8mxlm37g3+CCXrAlPLbwmkXFlOcgxWuDCg8kYAUANw13YW6
-	jfqFTnQWBDnEEYYHcCWJmAQUOLifPW9UqMMxRud/bVnVjqKJ9TIZs+t0VqLm0xsF+4NuhTpEC0K
-	vSkiDad55Ug1Y4dfBAnPTzU8KpnetU/pmcI7Ynt/llUcuFUq7vmC+BLVhBLZYQzuQBMMQSkMvdp
-	kP9CcB68LHKz3T+5uEpe+4CHCOmOzudXSLNWuz4FBBNb6iVDhVzsQhmi8OXZRgqYhdYRZ2d5MN9
-	htoofVkSpUlFGhLyeqNOD92sewkyxCKGBJUsU4Yhvn542SK0LKMehsrPqsE=
-X-Google-Smtp-Source: AGHT+IHpicuys1It3Yx8+rY+BPbIsN6Cyx0b4XZQ3+D2q9CPqUCHLJrwgcMoTXm4g+kFQQ5etcBEyA==
-X-Received: by 2002:a05:620a:4304:b0:7c5:a463:397b with SMTP id af79cd13be357-7d5df11dcbamr2094173085a.20.1751995802972;
-        Tue, 08 Jul 2025 10:30:02 -0700 (PDT)
-Received: from hiagonb ([67.159.246.222])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d5dbe7baedsm809718785a.57.2025.07.08.10.29.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 10:29:59 -0700 (PDT)
-Date: Tue, 8 Jul 2025 14:29:53 -0300
-From: Hiago De Franco <hiagofranco@gmail.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>,
-	Peng Fan <peng.fan@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	Ritesh Kumar <ritesh.kumar@toradex.com>
-Subject: Re: [PATCH] remoteproc: imx_rproc: merge ITCM and DTCM regions
-Message-ID: <20250708172953.rbsvk6gy4xuxo42l@hiagonb>
-References: <20250703130831.18830-1-hiagofranco@gmail.com>
- <aGgAbwToGhsc5VV9@p14s>
- <20250704190816.kth7bdf34ufc2ht6@hiagonb>
- <aGvyDp36iWv5UQ19@p14s>
+        d=1e100.net; s=20230601; t=1751995829; x=1752600629;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D0QuI5r6lOBDwHqNaBIJpOmCjV4Gimqib0l4a1lugcA=;
+        b=Fpz0ZjofUzS3eG3Hut6UgctL+vKGLcAI5UGDIP2u6+IMcXPExnSkqrzfdwnhJSdil/
+         GG6Gvo55EdUzxAfnROuPhxlm3Cns81Nr6tgG50CRf8wfC6NXlN87gTYNblk4P2e3izkl
+         R+vkCPFlDjOr02nQDIzIWPaBNb4zuSOvCcVbiK+orAxp7zRUau21e45ENu6MwOTIg1GT
+         zD2lC0XlhWcVDCCzdjWkXTMe096YnYXRy69NEP7zGLrQXcIAsJ0OS5bB66txRdPIALqv
+         tEI1qRfJ6jORajV5GRzEGfzYgugVcE/2Q42pNLFaf2mzNJILWKSD9yQ5kD5aA5Vk+7LW
+         P4jw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3NfpSNKrJVngFVFGH3d6KuAiWaPksTiEpnfGTQtGSTMiPqvwRW8wK5bGseC6r2hvc4wcQrGyXWO3NxRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1TNueNTfNT6joxhDpaANQNw+jOLDe7ifAoNs6ISJ0IJstLS1Z
+	8hQ2Z4aAYY8WPEVvMHygro2qFhq7q3U67V0rZtss/ANPd8xqL0skgRZ2HkmBGNbpk1BPhww29EX
+	2xVEJvwhpVST87RDd6gtO6uqkx+HmGx97QHl6l7QhLsDgQK5g0grE5SP03jM=
+X-Google-Smtp-Source: AGHT+IHwWtsSgL0GJcdWkOdN5/BrkJoD0QCrKgk/qkbW9WoCKBcWpzNKkGoRDqWXxtAxauH6Qcy66WxBabaA1VjuDdxZQeAIRh5t
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aGvyDp36iWv5UQ19@p14s>
+X-Received: by 2002:a05:6e02:b2d:b0:3df:34b4:1db8 with SMTP id
+ e9e14a558f8ab-3e1637eaaf1mr6875425ab.4.1751995828881; Tue, 08 Jul 2025
+ 10:30:28 -0700 (PDT)
+Date: Tue, 08 Jul 2025 10:30:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <686d55b4.050a0220.1ffab7.0014.GAE@google.com>
+Subject: [syzbot] [net?] BUG: sleeping function called from invalid context in
+ dev_set_promiscuity (2)
+From: syzbot <syzbot+6e619ff6dd4c8618a635@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Peng, Mathieu,
+Hello,
 
-On Mon, Jul 07, 2025 at 10:13:02AM -0600, Mathieu Poirier wrote:
-> On Fri, Jul 04, 2025 at 04:08:16PM -0300, Hiago De Franco wrote:
-> > Hi Mathieu,
-> > 
-> > On Fri, Jul 04, 2025 at 10:25:19AM -0600, Mathieu Poirier wrote:
-> > > Good morning,
-> > > 
-> > > On Thu, Jul 03, 2025 at 10:08:31AM -0300, Hiago De Franco wrote:
-> > > > From: Hiago De Franco <hiago.franco@toradex.com>
-> > > > 
-> > > > Merge the contiguous ITCM and DTCM regions into a single region to
-> > > > prevent failures when loading ELF files with large sections:
-> > > > 
-> > > > remoteproc remoteproc0: powering up imx-rproc
-> > > > remoteproc remoteproc0: Booting fw image rproc-imx-rproc-fw, size 151824
-> > > > imx-rproc imx8mp-cm7: Translation failed: da = 0x1f48 len = 0x1fcb0
-> > > > remoteproc remoteproc0: bad phdr da 0x1f48 mem 0x1fcb0
-> > > > remoteproc remoteproc0: Failed to load program segments: -22
-> > > > remoteproc remoteproc0: Boot failed: -22
-> > > > 
-> > > > This approach is the same as commit 8749919defb8 ("remoteproc:
-> > > > imx_rproc: Merge TCML/U").
-> > > > 
-> > > > Suggested-by: Ritesh Kumar <ritesh.kumar@toradex.com>
-> > > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
-> > > > ---
-> > > > Hi,
-> > > > 
-> > > > The ELF I tested had the following data section:
-> > > > 
-> > > > Memory region         Used Size  Region Size  %age Used
-> > > >     m_interrupts:         680 B         1 KB     66.41%
-> > > >           m_text:        6984 B       127 KB      5.37%
-> > > >           m_data:      130224 B       128 KB     99.35%
-> > > >          m_data2:          0 GB        16 MB      0.00%
-> > > > [100%] Built target hello_world_cm7.elf
-> > > > 
-> > > > Which triggered the error. After this patch, remoteproc was able to boot
-> > > > and work fine. Thanks!
-> > > > ---
-> > > >  drivers/remoteproc/imx_rproc.c | 6 ++----
-> > > >  1 file changed, 2 insertions(+), 4 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> > > > index 74299af1d7f1..bbf089ef48ee 100644
-> > > > --- a/drivers/remoteproc/imx_rproc.c
-> > > > +++ b/drivers/remoteproc/imx_rproc.c
-> > > > @@ -166,8 +166,8 @@ static const struct imx_rproc_att imx_rproc_att_imx8qxp[] = {
-> > > >  
-> > > >  static const struct imx_rproc_att imx_rproc_att_imx8mn[] = {
-> > > >  	/* dev addr , sys addr  , size	    , flags */
-> > > > -	/* ITCM   */
-> > > > -	{ 0x00000000, 0x007E0000, 0x00020000, ATT_OWN | ATT_IOMEM },
-> > > > +	/* D/ITCM */
-> > > > +	{ 0x00000000, 0x007E0000, 0x00040000, ATT_OWN | ATT_IOMEM },
-> > > >  	/* OCRAM_S */
-> > > >  	{ 0x00180000, 0x00180000, 0x00009000, 0 },
-> > > >  	/* OCRAM */
-> > > > @@ -180,8 +180,6 @@ static const struct imx_rproc_att imx_rproc_att_imx8mn[] = {
-> > > >  	{ 0x08000000, 0x08000000, 0x08000000, 0 },
-> > > >  	/* DDR (Code) - alias */
-> > > >  	{ 0x10000000, 0x40000000, 0x0FFE0000, 0 },
-> > > > -	/* DTCM */
-> > > > -	{ 0x20000000, 0x00800000, 0x00020000, ATT_OWN | ATT_IOMEM },
-> > > 
-> > > In commit 8749919defb8 "dev addr" and "sys addr" were both contiguous, but in
-> > > this patch "dev addr" is not.  How will this work with new kernel that use old
-> > > FW images?  Am I missing something?
-> > 
-> > No, you are correct, I think the use case I tested was not good enough.
-> > 
-> > If I understand correctly, this will break older firmware expecting
-> > .data at 0x20000000 because dev_addr is no longer mapped for DTCM entry.
-> > 
-> 
-> Correct.  Older firmware would still expect DTCM at 0x20000000.
-> 
-> 
-> > Do you think it is possible (or reccomend) another approach to fix this
-> > issue? In this case to keep using the TCM, instead of going to OCRAM or
-> > DDR.
-> >
-> 
-> To me the best way to proceed is understand why using the current mapping is a
-> problem.  The changelog describes a failure condition when dealing with large
-> sections but does not indicate _why_ that is happening.  I think that's what
-> needs to be fixed rather than trying to move mappings around.
+syzbot found the following issue on:
 
-Thanks for the information you both provided, sorry for the noise, so
-please Mathieu ignore this patch. I will work around this in a different
-way.
+HEAD commit:    1e3b66e32601 vsock: fix `vsock_proto` declaration
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=16cbf28c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b29b1a0d7330d4a8
+dashboard link: https://syzkaller.appspot.com/bug?extid=6e619ff6dd4c8618a635
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
-By the way, Peng, I noticed the DDR linker from MCUXpresso does not work
-if the firmware is larger than 128KB, since the .data is placed right
-after .text and loaded later to DDR. The imx_rproc driver should instead
-have a way to do the other way around: starting from the firwmare inside
-DDR, we could set PC and stack from M7 to point to DDR and start the
-execution. Probably will be slower, but it would make the DDR case
-possible.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Correct me if I am wrong, but as my current understanding the DDR linker
-is broken without this change to the driver. Anyway, maybe something for
-a future patch.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/11faaf1afe22/disk-1e3b66e3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ba355ce28c50/vmlinux-1e3b66e3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/018f94fd1327/bzImage-1e3b66e3.xz
 
-Thanks,
-Hiago.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6e619ff6dd4c8618a635@syzkaller.appspotmail.com
 
->  
-> > Thanks,
-> > Hiago.
-> > 
-> > > 
-> > > Thanks,
-> > > Mathieu
-> > > 
-> > > >  	/* OCRAM_S - alias */
-> > > >  	{ 0x20180000, 0x00180000, 0x00008000, ATT_OWN },
-> > > >  	/* OCRAM */
-> > > > -- 
-> > > > 2.39.5
-> > > > 
+netlink: 8 bytes leftover after parsing attributes in process `syz.3.2844'.
+macsec0: entered promiscuous mode
+BUG: sleeping function called from invalid context at kernel/locking/mutex.c:579
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 15744, name: syz.3.2844
+preempt_count: 201, expected: 0
+RCU nest depth: 0, expected: 0
+3 locks held by syz.3.2844/15744:
+ #0: ffffffff8fa219b8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8fa219b8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #0: ffffffff8fa219b8 (&ops->srcu#2){.+.+}-{0:0}, at: rtnl_link_ops_get+0x23/0x250 net/core/rtnetlink.c:570
+ #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
+ #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
+ #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8db/0x1c70 net/core/rtnetlink.c:4054
+ #2: ffff88802cb3a368 (&macsec_netdev_addr_lock_key/1){+...}-{3:3}, at: netif_addr_lock_bh include/linux/netdevice.h:4805 [inline]
+ #2: ffff88802cb3a368 (&macsec_netdev_addr_lock_key/1){+...}-{3:3}, at: dev_uc_add+0x67/0x120 net/core/dev_addr_lists.c:689
+Preemption disabled at:
+[<ffffffff895a79e6>] local_bh_disable include/linux/bottom_half.h:20 [inline]
+[<ffffffff895a79e6>] netif_addr_lock_bh include/linux/netdevice.h:4804 [inline]
+[<ffffffff895a79e6>] dev_uc_add+0x56/0x120 net/core/dev_addr_lists.c:689
+CPU: 1 UID: 0 PID: 15744 Comm: syz.3.2844 Not tainted 6.16.0-rc4-syzkaller-00114-g1e3b66e32601 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ __might_resched+0x495/0x610 kernel/sched/core.c:8800
+ __mutex_lock_common kernel/locking/mutex.c:579 [inline]
+ __mutex_lock+0x106/0xe80 kernel/locking/mutex.c:747
+ netdev_lock include/linux/netdevice.h:2756 [inline]
+ netdev_lock_ops include/net/netdev_lock.h:42 [inline]
+ dev_set_promiscuity+0x10e/0x260 net/core/dev_api.c:286
+ dev_change_rx_flags net/core/dev.c:9241 [inline]
+ __dev_set_promiscuity+0x534/0x740 net/core/dev.c:9285
+ __dev_set_rx_mode+0x17c/0x260 net/core/dev.c:-1
+ dev_uc_add+0xc8/0x120 net/core/dev_addr_lists.c:693
+ macsec_dev_open+0xd9/0x530 drivers/net/macsec.c:3634
+ __dev_open+0x470/0x880 net/core/dev.c:1683
+ __dev_change_flags+0x1ea/0x6d0 net/core/dev.c:9458
+ rtnl_configure_link net/core/rtnetlink.c:3577 [inline]
+ rtnl_newlink_create+0x555/0xb00 net/core/rtnetlink.c:3833
+ __rtnl_newlink net/core/rtnetlink.c:3940 [inline]
+ rtnl_newlink+0x16d6/0x1c70 net/core/rtnetlink.c:4055
+ rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6944
+ netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2551
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x759/0x8e0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:712 [inline]
+ __sock_sendmsg+0x219/0x270 net/socket.c:727
+ ____sys_sendmsg+0x505/0x830 net/socket.c:2566
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
+ __sys_sendmsg net/socket.c:2652 [inline]
+ __do_sys_sendmsg net/socket.c:2657 [inline]
+ __se_sys_sendmsg net/socket.c:2655 [inline]
+ __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f64fc18e929
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f64fd052038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f64fc3b5fa0 RCX: 00007f64fc18e929
+RDX: 0000000000000800 RSI: 0000200000000280 RDI: 0000000000000004
+RBP: 00007f64fc210b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f64fc3b5fa0 R15: 00007ffd8fec8448
+ </TASK>
+
+=============================
+[ BUG: Invalid wait context ]
+6.16.0-rc4-syzkaller-00114-g1e3b66e32601 #0 Tainted: G        W          
+-----------------------------
+syz.3.2844/15744 is trying to lock:
+ffff888077de0d30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2756 [inline]
+ffff888077de0d30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: netdev_lock_ops include/net/netdev_lock.h:42 [inline]
+ffff888077de0d30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: dev_set_promiscuity+0x10e/0x260 net/core/dev_api.c:286
+other info that might help us debug this:
+context-{5:5}
+3 locks held by syz.3.2844/15744:
+ #0: ffffffff8fa219b8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8fa219b8 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #0: ffffffff8fa219b8 (&ops->srcu#2){.+.+}-{0:0}, at: rtnl_link_ops_get+0x23/0x250 net/core/rtnetlink.c:570
+ #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
+ #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
+ #1: ffffffff8f51c5c8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8db/0x1c70 net/core/rtnetlink.c:4054
+ #2: ffff88802cb3a368 (&macsec_netdev_addr_lock_key/1){+...}-{3:3}, at: netif_addr_lock_bh include/linux/netdevice.h:4805 [inline]
+ #2: ffff88802cb3a368 (&macsec_netdev_addr_lock_key/1){+...}-{3:3}, at: dev_uc_add+0x67/0x120 net/core/dev_addr_lists.c:689
+stack backtrace:
+CPU: 1 UID: 0 PID: 15744 Comm: syz.3.2844 Tainted: G        W           6.16.0-rc4-syzkaller-00114-g1e3b66e32601 #0 PREEMPT(full) 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_lock_invalid_wait_context kernel/locking/lockdep.c:4833 [inline]
+ check_wait_context kernel/locking/lockdep.c:4905 [inline]
+ __lock_acquire+0xbcb/0xd20 kernel/locking/lockdep.c:5190
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
+ __mutex_lock_common kernel/locking/mutex.c:602 [inline]
+ __mutex_lock+0x182/0xe80 kernel/locking/mutex.c:747
+ netdev_lock include/linux/netdevice.h:2756 [inline]
+ netdev_lock_ops include/net/netdev_lock.h:42 [inline]
+ dev_set_promiscuity+0x10e/0x260 net/core/dev_api.c:286
+ dev_change_rx_flags net/core/dev.c:9241 [inline]
+ __dev_set_promiscuity+0x534/0x740 net/core/dev.c:9285
+ __dev_set_rx_mode+0x17c/0x260 net/core/dev.c:-1
+ dev_uc_add+0xc8/0x120 net/core/dev_addr_lists.c:693
+ macsec_dev_open+0xd9/0x530 drivers/net/macsec.c:3634
+ __dev_open+0x470/0x880 net/core/dev.c:1683
+ __dev_change_flags+0x1ea/0x6d0 net/core/dev.c:9458
+ rtnl_configure_link net/core/rtnetlink.c:3577 [inline]
+ rtnl_newlink_create+0x555/0xb00 net/core/rtnetlink.c:3833
+ __rtnl_newlink net/core/rtnetlink.c:3940 [inline]
+ rtnl_newlink+0x16d6/0x1c70 net/core/rtnetlink.c:4055
+ rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6944
+ netlink_rcv_skb+0x205/0x470 net/netlink/af_netlink.c:2551
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x759/0x8e0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:712 [inline]
+ __sock_sendmsg+0x219/0x270 net/socket.c:727
+ ____sys_sendmsg+0x505/0x830 net/socket.c:2566
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
+ __sys_sendmsg net/socket.c:2652 [inline]
+ __do_sys_sendmsg net/socket.c:2657 [inline]
+ __se_sys_sendmsg net/socket.c:2655 [inline]
+ __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f64fc18e929
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f64fd052038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f64fc3b5fa0 RCX: 00007f64fc18e929
+RDX: 0000000000000800 RSI: 0000200000000280 RDI: 0000000000000004
+RBP: 00007f64fc210b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f64fc3b5fa0 R15: 00007ffd8fec8448
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
