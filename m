@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-722115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 991D9AFD584
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:37:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E9EAFD587
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97031567263
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:37:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D70F5482569
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8A02E6D0B;
-	Tue,  8 Jul 2025 17:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741822E7181;
+	Tue,  8 Jul 2025 17:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="kGJYjVWq"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JTEWDkOg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8E82E5B2F;
-	Tue,  8 Jul 2025 17:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2542E5434;
+	Tue,  8 Jul 2025 17:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751996073; cv=none; b=i0X4OIm3gdt8vp0rAPml7BdIruFNqKKmpjIpOJIWKnYB+1KSkIea2cEYz1SdwoOp0EHZzZIpqpUezad5DsHfXSZTdiEnZfVjAFXv/ehu2ejPiQPSEdFC2T2jFSEdu91EKI4AVIaJl4xVSzCPt/BMcHjuesJTCBxPcYH4lpr9lg4=
+	t=1751996086; cv=none; b=qhJynI4/sgnVEm0iHjkVQFRLCtiYcYbnRWeLwfUFi6PS8XVIOSiUMusPOA1dy0fQKIPZlxAsSmkP1QYkzqcOagUletwU2FEUabN2xZXGNMkK8Pv5bry42u4O4eKfGAfIp1GYYqqyR6lxKNmjd1s0BKS6tlqVNRIAZrqbjg0r9Ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751996073; c=relaxed/simple;
-	bh=jAMQSvjI09pdeyUUa7Sm7Sk4KAidq+tSxk/w2vOpEv0=;
+	s=arc-20240116; t=1751996086; c=relaxed/simple;
+	bh=O1mTjwTh8tYUNOxmmvKTVdXoJHNyJf5rnO5qzxhcGwI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gpddXR8lWT3tWB043sbDGiTS2jrqrVkwNcJoAvgRs29QJLZw5v1NRYvrk6BtN/snAl1wlc5L3nP+MV8iSPVUr03Vf+s+nEZqLlrd/LLP4zMU3zLIIWrqwx4EAFT0tj/LDj/U9lRJXIOj4ZI7qPz3SaYIz7tEz93gWuGBJjfJ4VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=kGJYjVWq; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=HeTiWPyX1Uk+AB/SKOARIcNngzgui6r0hgRLKTkBHIA=; b=kGJYjVWq21LQqgydAHfeMNK8dp
-	J+6sYTxzXjuLubKC7Msz6ENWEUhgmhPn7m7sPTbPabrY4Fba/Z4b1v/jshyrMB+sTdxoUK4iuh2/a
-	w0SYNPthAl6FLk/Q0LS0blYMeW0hPMDJTZMy5Qe79sgTlbuRBhf8Er9jUGmxf6OxTVlY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uZCCl-000qlv-FD; Tue, 08 Jul 2025 19:34:07 +0200
-Date: Tue, 8 Jul 2025 19:34:07 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Lizhe <sensor1010@163.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, rmk+kernel@armlinux.org.uk,
-	vladimir.oltean@nxp.com, maxime.chevallier@bootlin.com,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: stmmac: Support gpio high-level reset for devices
- requiring it
-Message-ID: <52b71fe7-d10a-4680-9549-ca55fd2e2864@lunn.ch>
-References: <20250708165044.3923-1-sensor1010@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tpV/IbBqtbBvGlv8SAlIMZFvIkqLVeJrombPIdn4lp1isNhT4A0iLr9145fHWPMcD33qD2f+haDX2bBboMFUe/ewlexoYafKIPdvZ5R1hS0ZZy1TsM0I1cDImXbcYwvTeu2kiGtfZSWYQ+1L6/8IN60q7BZdcr/DRCruYogXXOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JTEWDkOg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA37DC4CEED;
+	Tue,  8 Jul 2025 17:34:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751996086;
+	bh=O1mTjwTh8tYUNOxmmvKTVdXoJHNyJf5rnO5qzxhcGwI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JTEWDkOg1wburMNhD0gDFLcBzjYxUZvO8XLgT+cmtwV4d7oFm2+YhHTwsCT0ZnurS
+	 LPEmixvtG5M4fLQ6rVZIv3kmgl45RgDwg4RA9bkcarz6g00C4rpLwUu2Sxd48q21E0
+	 6kSm13vQZR6gnOBlZbsjiPRSPa5Etpnk1UJgoKjQ=
+Date: Tue, 8 Jul 2025 19:34:38 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: stable@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 5.15 000/160] 5.15.187-rc1 review
+Message-ID: <2025070820-recital-subgroup-502f@gregkh>
+References: <20250708162231.503362020@linuxfoundation.org>
+ <2438aa80-091d-4668-90e0-fb75f3e0b699@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,23 +61,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250708165044.3923-1-sensor1010@163.com>
+In-Reply-To: <2438aa80-091d-4668-90e0-fb75f3e0b699@gmail.com>
 
-On Tue, Jul 08, 2025 at 09:50:44AM -0700, Lizhe wrote:
-> some devices only reset when the GPIO is at a high level, but the
-> current function lacks support for such devices. add high-level
-> reset functionality to the function to support devices that require
-> high-level triggering for reset
+On Tue, Jul 08, 2025 at 10:20:01AM -0700, Florian Fainelli wrote:
+> On 7/8/25 09:20, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.15.187 release.
+> > There are 160 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 10 Jul 2025 16:22:09 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.187-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> The ARM 32-bit kernel fails to build with:
+> 
+> /local/users/fainelli/buildroot/output/arm/host/bin/arm-linux-ld:
+> drivers/base/cpu.o: in function `.LANCHOR2':
+> cpu.c:(.data+0xbc): undefined reference to `cpu_show_tsa'
+> host-make[2]: *** [Makefile:1246: vmlinux] Error 1
+> 
+> This is caused by:
+> 
+> commit 5799df885785024821d09c334612c00992aa4c4b
+> Author: Borislav Petkov (AMD) <bp@alien8.de>
+> Date:   Wed Sep 11 10:53:08 2024 +0200
+> 
+>     x86/bugs: Add a Transient Scheduler Attacks mitigation
+> 
+>     Commit d8010d4ba43e9f790925375a7de100604a5e2dba upstream.
+> 
+>     Add the required features detection glue to bugs.c et all in order to
+>     support the TSA mitigation.
+> 
+>     Co-developed-by: Kim Phillips <kim.phillips@amd.com>
+>     Signed-off-by: Kim Phillips <kim.phillips@amd.com>
+>     Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+>     Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+>     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> I don't see this in Linus' tree but it's not clear yet why that is not
+> happening there.
 
-You can probably specify this in DT:
-
-reset-gpios = <&qe_pio_e 18 GPIO_ACTIVE_LOW>;
-
-The gpio core will then flip the meaning of
-
-gpiod_set_value_cansleep(reset_gpio, 1);
-
-such that a value of 1 will become low, 0 will become high.
-
-     Andrew
+I see it in Linus's tree, you might want to do a sync :)
 
