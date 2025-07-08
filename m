@@ -1,139 +1,175 @@
-Return-Path: <linux-kernel+bounces-722126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFDEBAFD599
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:40:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F7DAFD59C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:44:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92B151894FD9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:40:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B32551C20C08
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38692E62D3;
-	Tue,  8 Jul 2025 17:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D092E62C2;
+	Tue,  8 Jul 2025 17:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="vgUKd8v+"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="RLNQB+LE"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3952E5B0F;
-	Tue,  8 Jul 2025 17:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751996432; cv=none; b=DeCjzJ9yOanEcaz9dSvudLRkVyyq+6umveO/QwbVsmkl0IGYw9UyCYop5PJ31RzMXgdlRbHXSUnMDjCaX3nw+vr1VAzopUcAEMHySGGeD7iOj+qR626wsrx8gY+cOXJVNFIHwINjzSqiXl2igQ7R/IAeLlaEq089HscmDcrATYg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751996432; c=relaxed/simple;
-	bh=q8ErWWZB3bgtRnMHAOkyZzK9sHEQJyJpk0dmHap0jg4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gg1Wh9nNELbVZ2hSC4lfRTFvqs7ql31IPTc1/zVE2VfFXNwOgI5eBPkAJSjTl3qQjEPD89EutMbIbk846Q1IL3X+z7tPdfwn1xLz6VeeEZt9WAHCFZw6KMRmOtO7igdQLPaO0VyYNKHlQ6kcob/sy3X3Z+mUPi/GDsHFkyddL1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=vgUKd8v+; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=rzBPjq7zJ/E4WWNdaVu+VzaEbNExyKV4C2BkFHWH5JM=; b=vgUKd8v++Eqkxpg6mZRw6MBhUs
-	L6B0/4PxzDGgU3aatVWOahA8IabF7XTcbn54qC5w0KfxKVHMEx6UT45rPfIXoM68b5HIzawTXC3Wn
-	IY+4vJFuwmsqlGuSP8twmV2XkJH8rnJg1vrr0W4AfqULD9obkLggL0RfSexdLwHHLyJg8vro3/A34
-	rSDwrKVBx4FMZ9Es4iFaZtg9q6qEU4jk7yPGm4tLCEDcZnNWTS4TWEI5tUDmJW2wTYc+xXXg29AKY
-	8t9zgN2X4OVHXC5W4zeYXzKxwdp9BNVktd58g0dHu0E4YA5/SgPAgoBvH6HCRIlyzN5DuQeZYcJ+x
-	YvrFdBRw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:35708)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uZCIf-0006vc-11;
-	Tue, 08 Jul 2025 18:40:13 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uZCIY-0001nm-3D;
-	Tue, 08 Jul 2025 18:40:07 +0100
-Date: Tue, 8 Jul 2025 18:40:06 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Lizhe <sensor1010@163.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, vladimir.oltean@nxp.com,
-	maxime.chevallier@bootlin.com, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: stmmac: Support gpio high-level reset for devices
- requiring it
-Message-ID: <aG1X9pPYDGO8kfM9@shell.armlinux.org.uk>
-References: <20250708165044.3923-1-sensor1010@163.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFA721CFFD;
+	Tue,  8 Jul 2025 17:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751996663; cv=pass; b=uQVekUbON2KFWGD7GDH6lzsoAPisU2SsX5VuZWnX9/FM3kVuvsi+pJf+OCn2aJXFaUchDIHiEk0mbzr8hJxTkWbTf7F7hXi7hoJPXogQ7w2HLdmYWi4Rperd5RK0RnnzEksjhEP8hbWpPifYInsD1ZoGduv40j4YtWJQvFEL29c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751996663; c=relaxed/simple;
+	bh=xzfGNWA/W4VURIV6s4NhjzHwu/DUZQJc70I8LyEN5hQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=BJt/VUscKqWgaENUWhlDbXizefOm2CjSIQGqA9yC/id43u7AMxZCYDhiW7+fgOhI1RXOYrm0+ovfWb5i15EJkdqdqlaWQEm8+CI07jbWl/7iFgIvoCbfFIUEmtKMWkzNeaf7EHo5k8J9TVdwn+yPuEbG75trtVOsy8O0XgCGrQA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=RLNQB+LE; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1751996632; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=jnD1zxkDvkV8CPZGoevIrdlgfYz5Ec0KR92RJipuBtT7I8ROUKRh8CW1s3R2xI2N+/s2hwQKm+QXjSlJWgoRt25q8ncBCKUPmrVm9PqauvxioGUxgQtjZza51R0tpM/b7+x5JcE2XB93IPrC42U6fctn6/D+1xlXynDllWkWOmM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1751996632; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=L/J9V/m/bQt+h2uQUtg/Qt9JlVPTPrPt9k9u1Wdzraw=; 
+	b=L+oo7WgkmcW92TkIf4rEq1fp6z+eaBFPy+xNVuXpPlFh3Vll54h+mCh5P5zuDig5xXP8ayKs5cgR4T2iBb+ZKdPEvxzLjyYXb5nLpB8r1yUyojgSKm5ruZRFvhVH+xP/o6LGVwxTH5mked8SAmJ1VBmYn0r/L1+qD6LPGptPtsM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751996632;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=L/J9V/m/bQt+h2uQUtg/Qt9JlVPTPrPt9k9u1Wdzraw=;
+	b=RLNQB+LEoEB6mGWlNDo6zJlicHdCtIR5txVoP0384hiaQyIc+2MGjv/+LM6DpUxm
+	FpMsQN8Uc0n0JRyGQ8lt8GGhrj1XARNa51izjM0GnJk3Hs6dbbS3hnkwI60JtCiw84p
+	EAPv+WKB2wknMmtYKN6WXoen/9tAqcNvZOIUfYSU=
+Received: by mx.zohomail.com with SMTPS id 1751996630986809.7878015874878;
+	Tue, 8 Jul 2025 10:43:50 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250708165044.3923-1-sensor1010@163.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v12 1/3] rust: io: add resource abstraction
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aGt6CZAUeuK0XnmP@google.com>
+Date: Tue, 8 Jul 2025 14:43:33 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ =?utf-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Ying Huang <huang.ying.caritas@gmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ Fiona Behrens <me@kloenk.dev>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F1EA22CF-1C01-495D-97ED-59D51A45A8B0@collabora.com>
+References: <20250704-topics-tyr-platform_iomem-v12-0-1d3d4bd8207d@collabora.com>
+ <20250704-topics-tyr-platform_iomem-v12-1-1d3d4bd8207d@collabora.com>
+ <aGt6CZAUeuK0XnmP@google.com>
+To: Alice Ryhl <aliceryhl@google.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Tue, Jul 08, 2025 at 09:50:44AM -0700, Lizhe wrote:
-> some devices only reset when the GPIO is at a high level, but the
-> current function lacks support for such devices. add high-level
-> reset functionality to the function to support devices that require
-> high-level triggering for reset
-> 
-> Signed-off-by: Lizhe <sensor1010@163.com>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-> index 836f2848dfeb..cb989e6d7eac 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-> @@ -458,6 +458,7 @@ int stmmac_mdio_reset(struct mii_bus *bus)
->  
->  #ifdef CONFIG_OF
->  	if (priv->device->of_node) {
-> +		int active_low = 0;
->  		struct gpio_desc *reset_gpio;
->  		u32 delays[3] = { 0, 0, 0 };
->  
-> @@ -467,6 +468,9 @@ int stmmac_mdio_reset(struct mii_bus *bus)
->  		if (IS_ERR(reset_gpio))
->  			return PTR_ERR(reset_gpio);
->  
-> +		if (reset_gpio)
-> +			active_low = gpiod_is_active_low(reset_gpio);
-> +
->  		device_property_read_u32_array(priv->device,
->  					       "snps,reset-delays-us",
->  					       delays, ARRAY_SIZE(delays));
-> @@ -474,11 +478,11 @@ int stmmac_mdio_reset(struct mii_bus *bus)
->  		if (delays[0])
->  			msleep(DIV_ROUND_UP(delays[0], 1000));
->  
-> -		gpiod_set_value_cansleep(reset_gpio, 1);
-> +		gpiod_set_value_cansleep(reset_gpio, active_low ? 1 : 0);
->  		if (delays[1])
->  			msleep(DIV_ROUND_UP(delays[1], 1000));
->  
-> -		gpiod_set_value_cansleep(reset_gpio, 0);
-> +		gpiod_set_value_cansleep(reset_gpio, active_low ? 0 : 1);
->  		if (delays[2])
->  			msleep(DIV_ROUND_UP(delays[2], 1000));
->  	}
+Hi Alice,
 
-NAK. Not required. The GPIO layer can cope with active-high and
-active-low signals declared in firmware without needing driver
-modification. Use the right data in the firmware and you don't
-need to patch.
+[=E2=80=A6]
 
-/* Bit 0 express polarity */
-#define GPIO_ACTIVE_HIGH 0
-#define GPIO_ACTIVE_LOW 1
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+>> +
+>> +impl Resource {
+>> +    /// Creates a reference to a [`Resource`] from a valid pointer.
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// The caller must ensure that for the duration of 'a, the =
+pointer will
+>> +    /// point at a valid `bindings::resource`.
+>> +    ///
+>> +    /// The caller must also ensure that the [`Resource`] is only =
+accessed via the
+>> +    /// returned reference for the duration of 'a.
+>> +    pub(crate) const unsafe fn as_ref<'a>(ptr: *mut =
+bindings::resource) -> &'a Self {
+>=20
+> We usually call this method `from_raw`.
+
+Hmm, pretty sure I have seen the exact opposite being asked. In fact, =
+this was
+discussed a bit at length a while ago. See the thread starting at [0] =
+for context.
+
+>=20
+>> +            )
+>> +        };
+>> +
+>> +        Some(Region(NonNull::new(region)?))
+>> +    }
+>> +
+>> +    /// Returns the size of the resource.
+>> +    pub fn size(&self) -> ResourceSize {
+>> +        let inner =3D self.0.get();
+>> +        // SAFETY: safe as per the invariants of `Resource`.
+>> +        unsafe { bindings::resource_size(inner) }
+>> +    }
+>> +
+>> +    /// Returns the start address of the resource.
+>> +    pub fn start(&self) -> u64 {
+>> +        let inner =3D self.0.get();
+>> +        // SAFETY: safe as per the invariants of `Resource`.
+>> +        unsafe { *inner }.start
+>=20
+> This needs to be
+>=20
+> unsafe { (*inner).start }
+>=20
+> What you wrote is not equivalent. (*inner) is a place expression, but
+> when you write `unsafe { <place expr> }` that turns it into a value
+> expression by reading the value. So this code copies the entire struct
+> to the stack, and then you read `start` from the copy on the stack.
+
+To be honest, I've seen a bug where the opposite was going on, a field =
+was
+being written on the value that was copied to the stack, leaving the =
+original unchanged.
+
+In any case, I thought this would be optimized away by the compiler. =
+Also, IMHO
+there should be a lint for this, because it does not make sense to copy =
+a struct
+just to read a field if we can just read the original location.
+
+Thanks for catching that though, I will fix it on the next iteration :)
+
+[=E2=80=A6]
+
+Thanks for the other comments,
+
+=E2=80=94 Daniel
+
+[0] =
+https://lore.kernel.org/rust-for-linux/B3564D77-9E26-4019-9B75-B0C53B26B64=
+F@collabora.com/
+
+
 
