@@ -1,110 +1,104 @@
-Return-Path: <linux-kernel+bounces-721370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F17AFC849
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:24:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E22AFC84B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5EEE7A5F07
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:23:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6842E1BC226E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CDC269885;
-	Tue,  8 Jul 2025 10:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0015269B1C;
+	Tue,  8 Jul 2025 10:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dR7J9s/H"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FK3CfVjW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FA521767A;
-	Tue,  8 Jul 2025 10:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18442222C7
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 10:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751970280; cv=none; b=ZtHd1+XpteFc/jfys07uJ0fxIxCZibS7vEYXm6UMf6jfRjR9xW/baw5ldi7Y5PN6LuYN9cmChHLT2RIktFkUw0eU8rPfo3l1Iu9C9urmvRVkldflmC66Qd2QzgA83KxntOIU4xKjq268NGhcUFDTw19lHiXH6K7cV7Dl9v971so=
+	t=1751970324; cv=none; b=nPuMhgZ1FT9/er60AZ75NV4ny5oE1urtNGa0H8MBDEuU1H7EZWmh0ua7oXRkYwh2Dsp7TAMQnHdk9KUZjkvWsL75V7LXMtfc5vmIyFjFvmwlRzOVxIPKVOI6UIJlnSjZkx5ZR4J58KZmXj2HTLdGXaccRgjaSsPNB6NawBdquXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751970280; c=relaxed/simple;
-	bh=fPSbu8vL5+Dw3tHz+Tecc1OC52fP/N4M5CX40o9kUxM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=crwT1MGqzGdyIM4dAjt8KHECZY9l6Kjybs6D9PETzjWo78FyMp+YMUAfsoLrsBBjxkh5NQh1kQstl7vnm0SHw2YdbujwFsmqqgvWzot/R+nvrSqUb9euD6JukVmRY4dbyaJ2S+xPO2XHM9quqQOKGSA2tpR5/XjTkyHgt3NwRoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dR7J9s/H; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751970279; x=1783506279;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=fPSbu8vL5+Dw3tHz+Tecc1OC52fP/N4M5CX40o9kUxM=;
-  b=dR7J9s/H3rcFlnaSWb7Iy7icuFbXR1MjY2sy/3Nne/8jS44RNXCjuUUH
-   wrO49oh6xVLe65L8MtJAneEQsJPWeVt9Jnq68ZmA+BWV0FxabWICel/nn
-   4lWuthMaioSLTAEUM3THJ6FxVF1w1S7EWfXKXRj3rWND5Qm68bQBKyZ/1
-   wqEbYQuNoou8ENjEh2yqtaYetagxIEKysgUmwZSlPOpBTyCE+3ZiH+LQg
-   mGGBfwlMgZTyQVof/9Pmzx4xYubJ8JJrNhoFb4lWwbGCNRtA6eAa25BC5
-   iMpMWPAFCanYARjyqOK6CEcDUMfG9+u0OZZSStyi2CgWeFA/Fzj9DSIuS
-   A==;
-X-CSE-ConnectionGUID: jzyL8AQzSe2mMpwPWTqx/A==
-X-CSE-MsgGUID: yH5XcGWoTAaY0lzgs1/C7g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="56814764"
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="56814764"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 03:24:35 -0700
-X-CSE-ConnectionGUID: 7d7wOVTzRFyA2tJKQhaOIA==
-X-CSE-MsgGUID: 5EJskkxSR7m30vWQLU1baQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="159791390"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.247])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 03:24:31 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Ike Panhc <ikepanhc@gmail.com>, Hans de Goede <hansg@kernel.org>, 
- Rong Zhang <i@rong.moe>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Gergo Koteles <soyer@irl.hu>, 
- =?utf-8?q?Barnab=C3=A1s_P=C5=91cze?= <pobrn@protonmail.com>
-In-Reply-To: <20250707163808.155876-1-i@rong.moe>
-References: <20250707163808.155876-1-i@rong.moe>
-Subject: Re: [PATCH 0/2] platform/x86: ideapad-laptop: Fix FnLock & kbd
- backlight not remembered among boots
-Message-Id: <175197026643.1629.1219841831747579403.b4-ty@linux.intel.com>
-Date: Tue, 08 Jul 2025 13:24:26 +0300
+	s=arc-20240116; t=1751970324; c=relaxed/simple;
+	bh=adxrwvHH9jGA3rnCawcVdF/L4S3UTXsY1TjDr0W1ZqA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T/eGYsJBKzjFTdFfRfCGuqQT9vl2atR17Ys2lGKAbzl3b7ozjRJ9I8XhwrpKQlFYFH1OGJkHr26Fv06P2KO2LW/8kYqNp0p6WaXeiqiSqNmbrvlK7lqS9bY3zF6SaE8KqsDgXqnivNzS+Q/wCDxIDB1FerolbrRiycXr+gaX1so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FK3CfVjW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751970321;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hqVqXPKx/cgWhIOEtnql2P3i8N6AT9IoowaK1wcPp6w=;
+	b=FK3CfVjWuIsU6lpRXuqkgrk9RH0vpfu8sD7w79Lffkpo7w+p+oXoMQOnJOAeqDE1VWvSue
+	8buNfNkhkw6Pqy391/Uh8a6lYCWS5MhGjPuwhKpYLP90G6zv5Wq+3LzEaFFgtMhNX8v6eA
+	4/u+Z4S1W7TEJ40KZy4aV9Geg+CPEv0=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-114-3qkajHaYP0eP_EFym3SV_g-1; Tue,
+ 08 Jul 2025 06:25:17 -0400
+X-MC-Unique: 3qkajHaYP0eP_EFym3SV_g-1
+X-Mimecast-MFC-AGG-ID: 3qkajHaYP0eP_EFym3SV_g_1751970316
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 26F7A18002ED;
+	Tue,  8 Jul 2025 10:25:16 +0000 (UTC)
+Received: from [192.168.37.1] (unknown [10.22.74.5])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C94F7180045B;
+	Tue,  8 Jul 2025 10:25:13 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, djeffery@redhat.com, loberman@redhat.com
+Subject: Re: [PATCH 1/2] workqueue: Add a helper to identify current workqueue
+Date: Tue, 08 Jul 2025 06:25:11 -0400
+Message-ID: <8732DDAB-026F-49F8-9B10-8D25C4732CA9@redhat.com>
+In-Reply-To: <aGygp-3mtsLxtGT3@slm.duckdns.org>
+References: <cover.1751913604.git.bcodding@redhat.com>
+ <baad3adf8ea80b65d83dd196ab715992a0f1b768.1751913604.git.bcodding@redhat.com>
+ <aGygp-3mtsLxtGT3@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Tue, 08 Jul 2025 00:38:05 +0800, Rong Zhang wrote:
+On 8 Jul 2025, at 0:37, Tejun Heo wrote:
 
-> I had disabled ideapad-laptop for a long time until a critical bug was
-> fixed[1], and I soon noticed some behavior changes after reenabling
-> ideapad-laptop.
-> 
-> The behavior changes are about FnLock and keyboard backlight. The HW/FW
-> can remember their states among boots[2]. After enabling ideapad-laptop,
-> I noticed that their states were always reset to off after a reboot or a
-> power cycle.
-> 
-> [...]
+> On Mon, Jul 07, 2025 at 02:46:03PM -0400, Benjamin Coddington wrote:
+>> Introduce a new helper current_workqueue() which returns the current task's
+>> workqueue pointer or NULL if not a workqueue worker.
+>>
+>> This will allow the NFS client to recognize the case where writeback occurs
+>> within the nfsiod workqueue or is being submitted directly.  NFS would like
+>> to change the GFP_ flags for memory allocation to avoid stalls or cycles in
+>> memory pools based on which context writeback is occurring.  In a following
+>> patch, this helper detects the case rather than checking the PF_WQ_WORKER
+>> flag which can be passed along from another workqueue worker.
+>
+> There's already current_work(). Wouldn't that be enough for identifying
+> whether the current work item?
 
+NFS submits different work items to the same workqueue, so comparing the
+workqueue instead of the work items made more sense.
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-fixes branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
-local branch there, which might take a while.
+After discussion on patch 2 yesterday, I think we're going to try to fix
+this in NFS using a different approach that won't need this helper now.
 
-The list of commits applied:
-[1/2] platform/x86: ideapad-laptop: Fix FnLock not remembered among boots
-      commit: 9533b789df7e8d273543a5991aec92447be043d7
-[2/2] platform/x86: ideapad-laptop: Fix kbd backlight not remembered among boots
-      commit: e10981075adce203eac0be866389309eeb8ef11e
-
---
- i.
+Thanks for the look Tejun.
+Ben
 
 
