@@ -1,84 +1,131 @@
-Return-Path: <linux-kernel+bounces-722322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE71AFD806
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:15:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF3FAFD813
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 22:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CABC31BC7ED2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:15:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8822E486C97
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 20:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E506223E342;
-	Tue,  8 Jul 2025 20:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6188C23D298;
+	Tue,  8 Jul 2025 20:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pRG4ak4K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fnq/VJN7"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4130B188596;
-	Tue,  8 Jul 2025 20:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0AD14EC73;
+	Tue,  8 Jul 2025 20:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752005702; cv=none; b=rTJobpHL5ye7w+CDoOtHE3VhZiQ0R8GYMs0KnOOb11AVO848NxkDjJrjVyz5mIfWg1O9Y+s7uHtpRz/ViBXzKp3wDV6f3teQCOsd+2M/dyq6or4KBDJTFmNdYsWj4SXbBOZPLEjLFQQGED36wN9VDjSErXh6nv44Qr+hiowS2tM=
+	t=1752005869; cv=none; b=SAUoMFt2sjVB4W8ucHqB39KTt6X/kqzCrU31Jj3pabJEp/sjFBBWZLJgI1FGfJ5SBZbNtYB7/8o+DgrV0hHXVtyKg7rYu4hb6EZ4Mpkw5VXMaRgTkcG9QRW/pS7YEg+0jT3Q6wn51Vlqf+Rkf0N0KsqwlFLFcaLXcTZv4ORDlCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752005702; c=relaxed/simple;
-	bh=+hqQk6xFLmuAN5hbHH7Ah1KrkQUEmGmXnkg8briSWwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V8ogGj01rz01ydm848ugAFeZi/7SHrZObsLd10f79oB8i/9v+K7vqY4nlQxLhXYbZDjSmgM6v5llSyHvDPiqy2jEC0TSgCZzpf2kRrfZzfwdO5Xb4db2kGgXr0Eise46Js0solEEIM5QQi78Tqsnfr3qmUPpr2qz3YD2opziX3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pRG4ak4K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46EE3C4CEED;
-	Tue,  8 Jul 2025 20:15:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752005701;
-	bh=+hqQk6xFLmuAN5hbHH7Ah1KrkQUEmGmXnkg8briSWwU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pRG4ak4KyQhbFmSO4eGOOn0W/sSpvD4K0Ehk4qNZO81vMmH6HVVSCWvJf8+UIuD6e
-	 g/3YryjFebFBwoDuPb2db9mvu1qY6O3Xf0ZZwIDc4DyUnlHNiimvoPSkc4rpEwvA5F
-	 M5WanvL0gOKcuk6VZFmtj5J3YFk0QkNUCIlnD6jvXRRAgup4BV3jn6iU9eOm5IKdt7
-	 +kaBfagxTy/foxvzx/eXvSSnZBbWZhBXaD3OZmq9EizYV07PgcMFUcT5BoqGgqAUiz
-	 8SE7aK4DZVC+jYlQdQZT4jbYu8jPtwzTbZIuN+OQV0G1BB63oOErbHg9IgaR4Cd3OP
-	 7uCAfWbiKxVzw==
-Date: Tue, 8 Jul 2025 15:14:59 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
-Cc: linux-input@vger.kernel.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Vincent Huang <vincent.huang@tw.synaptics.com>,
-	phone-devel@vger.kernel.org, devicetree@vger.kernel.org,
+	s=arc-20240116; t=1752005869; c=relaxed/simple;
+	bh=vkIwiUUoskp2nTIzQuPKLfqizM839LywUOEUI/j4HcM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RHVXiZToWs2OpgKj8gIcKfieRwn/hjDgPVYPYEWW/H0dCVq5rTnCN3EPzSvEE8yyz3evKToYbrD0Vl18C2HShiJ5+52cSrSYsrO9F/zWksx+VWkXAuiqikMhwxOWxkdfTWX8ZeGTNdrnU12wo+9n22IF4cgBsSYLKa+uim4aBXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fnq/VJN7; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b3226307787so3742260a12.1;
+        Tue, 08 Jul 2025 13:17:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752005867; x=1752610667; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cTTrNTGhub8A8V0WSX4PYi6yLCXMR+wXKB4MowDi9Gg=;
+        b=Fnq/VJN7VRhB2J/vx2CKNwc/oLTSyje3IjtJyAIYeQvIxPDe/82LHsvWN6OKLPuCYl
+         dGuBRmmrS4d5XYbulJtxEITWD+24JJg3Q43AmdJbAXnI07KMOC3o+c+Nxy2eGJcTuxBM
+         rGfc4jqfK7J4joztO7VEH8WoAMBMhFHraRZzkIuBNXqvpHa7jUdH38YFwbeRvjjyZgsY
+         AUKOtRGTImUmmYy1SE2ZAuStGMHU77nRJV8dI2gafrMu3WViBG9AQeI1o3Yqk1EbWZh+
+         GsqCZsEJMGIgFKgjPMnAYgVTfVAHLvQ204A3BFD8JmEP3Lit4ZELcfYTsWsyEVjS/RUs
+         Xv6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752005867; x=1752610667;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cTTrNTGhub8A8V0WSX4PYi6yLCXMR+wXKB4MowDi9Gg=;
+        b=rrGk25eKfnT1LTLa/A/D/WhffKqV87TX0zcyQsvVoovFJAu+mKiTYGrF0woH/tSGG7
+         pvGh2s3QlYwyFlaimUYMbVbZa+42z45YJmce1HRp315EnbKh5S6u5xih6wJ0gi52+zHe
+         6fZCsz5nwFDDINxj2c4Ho0lu3WY+eK0sLWi/c6mldTh7OLDouDxgbClvKqIIl9lXvJLH
+         mO/u8AHiOQDx/cJJ+cfbhDOzhkPQ+2ybz0h5H+mPu4EyrIJtZnLxkRGAKNmdG4ocpOnm
+         Ja8prhbDJTj13iRPsBli9zuv5uy65f0mUYNKqXLeULJohKBJx06UrqPJOchMGDynMyaW
+         S1Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCV17kUXv1WeR7OE0/v1WHIVtLr03RlmExn6TVgpT29Pw6sMGZOoMBbb4/eKdat3RFxjIPbJnDFYJdvh@vger.kernel.org, AJvYcCWKfph1Mbdv2LsxpUZHIjdHi7onRuq1WYxAII38m3zFl8aKWKbmj/HlCmUdErygtyJYSvaFV4FfmTgDiA==@vger.kernel.org, AJvYcCXtfeGgjDT1STiTmcAP2kFkQ7kagOfuPlsOEEQt8mox/Yih/JBdDnJm3aHpbkh4jNsZ3tM1YrmkpGMUOM5f@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLol90cTHPCMWGSfFEifGAfJEvQytxBPTiuHOl2DYTbcahwEW7
+	0rRyAl5znage5mSPJdFVIfCsLtK2B0rC+gf4lTftW7Mhlf7LIltTGl3ZfL7mj5GQfQM=
+X-Gm-Gg: ASbGncsWM93MDksxqDeoUwa07UPxled9xWrx6fAHFjVX+Io6InPiXsxQMJkHUjxIDQw
+	FQFLf1kV4jwIM35MnempD5UnxpurAlUZt7hHfwK4tsbKG1aGeovD8ztsy84MyUyGvYxQmnbxsvj
+	4IPzKP573nbcSstOk+RJfrVbIDXmTihSgQhCVE5lvdUag0n/xy06zf74wpeV+yerVgUtNhxByE8
+	B9Ihyb6pj43XovgC9a3SBNz8Nve1Ygq8WEkgsS01sbj81UMOx698bQTqZPwtDUjAdzwKuWImmvZ
+	EtbatKrlHpnSBEuITD2dOQyLLc9snF+BG579AoJzAOo=
+X-Google-Smtp-Source: AGHT+IGIcRTQ/IVzI2tJOroz5Lqm+kvT8pKeiBj/N2Gf7unUpL73LQu99cUIoFH4FDd+4jyRsbL5bw==
+X-Received: by 2002:a05:6a20:a10a:b0:220:2da8:325c with SMTP id adf61e73a8af0-22606387110mr30289384637.0.1752005867470;
+        Tue, 08 Jul 2025 13:17:47 -0700 (PDT)
+Received: from archlinux.lan ([2601:644:8200:dab8::1f6])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b38ee5f5d8csm12289625a12.39.2025.07.08.13.17.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 13:17:47 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-wireless@vger.kernel.org
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	~postmarketos/upstreaming@lists.sr.ht,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: Re: [PATCH 1/2] dt-bindings: input: syna,rmi4: Document F1A function
-Message-ID: <175200569935.897402.7503152684767093360.robh@kernel.org>
-References: <20250707-rmi4_f1a-v1-0-838d83c72e7f@apitzsch.eu>
- <20250707-rmi4_f1a-v1-1-838d83c72e7f@apitzsch.eu>
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Stanislaw Gruszka <stf_xl@wp.pl>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-mips@vger.kernel.org (open list:MIPS),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
+	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support)
+Subject: [PATCHv2 wireless-next 0/7] wifi: rt2x00: add OF bindings + cleanup
+Date: Tue,  8 Jul 2025 13:17:38 -0700
+Message-ID: <20250708201745.5900-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250707-rmi4_f1a-v1-1-838d83c72e7f@apitzsch.eu>
 
+It doesn't even compile. Added OF bindings, documentation, and other
+stuff to hopefully this doesn't happen again.
 
-On Mon, 07 Jul 2025 21:54:25 +0200, André Apitzsch wrote:
-> In some configurations the touch controller can support touch keys.
-> Document the linux,keycodes property that enables those keys and
-> specifies the keycodes that should be used to report the key events.
-> 
-> Signed-off-by: André Apitzsch <git@apitzsch.eu>
-> ---
->  .../devicetree/bindings/input/syna,rmi4.yaml         | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
+v2: move all of 2x00soc to 2800soc. I didn't realize only two functions
+remained for no good reason.
+Fixed typos.
+Slightly changed probe for clarity.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Rosen Penev (7):
+  wifi: rt2x00: add COMPILE_TEST
+  wifi: rt2x00: remove mod_name from platform_driver
+  wifi: rt2800soc: allow loading from OF
+  wifi: rt2800: move 2x00soc to 2800soc
+  wifi: rt2x00: soc: modernize probe
+  MIPS: dts: ralink: mt7620a: add wifi
+  dt-bindings: net: wireless: rt2800: add
+
+ .../bindings/net/wireless/ralink,rt2800.yaml  |  47 ++++++
+ arch/mips/boot/dts/ralink/mt7620a.dtsi        |  10 ++
+ drivers/net/wireless/ralink/rt2x00/Kconfig    |   7 +-
+ drivers/net/wireless/ralink/rt2x00/Makefile   |   1 -
+ .../net/wireless/ralink/rt2x00/rt2800soc.c    | 102 +++++++++++-
+ .../net/wireless/ralink/rt2x00/rt2x00soc.c    | 151 ------------------
+ .../net/wireless/ralink/rt2x00/rt2x00soc.h    |  29 ----
+ 7 files changed, 156 insertions(+), 191 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml
+ delete mode 100644 drivers/net/wireless/ralink/rt2x00/rt2x00soc.c
+ delete mode 100644 drivers/net/wireless/ralink/rt2x00/rt2x00soc.h
+
+-- 
+2.50.0
 
 
