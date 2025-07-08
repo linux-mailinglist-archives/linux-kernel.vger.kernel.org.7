@@ -1,202 +1,123 @@
-Return-Path: <linux-kernel+bounces-721055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B2FAFC425
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:34:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 142F1AFC42A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CE227A4A58
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:33:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7EBE4A25B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789BE298CC6;
-	Tue,  8 Jul 2025 07:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F73629A331;
+	Tue,  8 Jul 2025 07:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SaojuR+X"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sd0vIGLO"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225E92248BE
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 07:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA812248BE;
+	Tue,  8 Jul 2025 07:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751960064; cv=none; b=MWms1oLIdIe3U5TGC9oJBeUztPIYqfvdD1LUH7geKZeK8yNipp5bBdhYpabV90PXrv47WZFda7BSsKymm4KFFK+ltZ63cPUtKPrV724UY1U3fFEXDceWfui0EprhlREqnynJeCFfKPhZFoq0hoRHlrVQDI4BhMF8zKpNK4sBs2c=
+	t=1751960110; cv=none; b=Gs9oV7VxSQdW8K714ljoHPG328hIMNuPrtyA4FUCtihAg8zyd3knvGIws5T+5fJisHxc/53wnnV1DgF9kOT7Xn0KsSsfK3JjA+4q84dLlAODKUQTEUxhxMv5iXCdTqOQFBGJ/LDKQ+PpKeujPZ4EwFeqairQDfZm8sBdHLyEsic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751960064; c=relaxed/simple;
-	bh=p8Rs9Nj21Lp0gN7Vr5H1MDd/Yb54AdEXOhLfu3r/RDg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q3DpcZ0kaQBwsoi7hGpOMWOYcPUvurGicDsQEpN1PfkN83enoPMa15cL1oEVewr6ZF7OeVn67yIr4NkCIsHkB762pJVFbGci3JrUXJ9w0KCENLx/COYeiHJJRvunibdGf3KCjaE7je9XLOaW3Brs0qSBz96cKlPV/lto4SVPmuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SaojuR+X; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751960062;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yyrOa/0bHa3VwV4PjrNhK+4OqEjCqXn7aozO5QOaBAM=;
-	b=SaojuR+X+2MymOIxJ6vvdLxDrQ2YzX5XNSVrhsNW6OtiBXzRp9jR1/BsXJyrStCtoCCn+3
-	125CN3m+Ll/0Z416XAg0DgBnT+XwojfJywhT3xbk8I0svVOG58njfj/EBFrgZ9M205cnfv
-	n7akL2e0EjSD0SR2hZIzhpY9vnTekIg=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-339-5WTsIdcCNDKNx9rh_kkX_Q-1; Tue,
- 08 Jul 2025 03:34:19 -0400
-X-MC-Unique: 5WTsIdcCNDKNx9rh_kkX_Q-1
-X-Mimecast-MFC-AGG-ID: 5WTsIdcCNDKNx9rh_kkX_Q_1751960057
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 53E84180136B;
-	Tue,  8 Jul 2025 07:34:15 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.64])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0428C30001B1;
-	Tue,  8 Jul 2025 07:34:06 +0000 (UTC)
-Date: Tue, 8 Jul 2025 15:34:01 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Nilay Shroff <nilay@linux.ibm.com>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, josef@toxicpanda.com,
-	axboe@kernel.dk, hch@infradead.org, hare@suse.de,
-	linux-block@vger.kernel.org, nbd@other.debian.org,
-	linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
-	yangerkun@huawei.com, johnny.chenyi@huawei.com,
-	"yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [PATCH] nbd: fix false lockdep deadlock warning
-Message-ID: <aGzJ6dssrCmJtG-3@fedora>
-References: <20250627092348.1527323-1-yukuai1@huaweicloud.com>
- <aF56oVEzTygIOUTN@fedora>
- <c2fbaacc-62a1-4a98-4157-2637b7f242b7@huaweicloud.com>
- <197b6dca-56be-438d-a60f-21011367c5ed@linux.ibm.com>
- <99b4afce-de05-ddcb-2634-b19214cf4534@huaweicloud.com>
- <aGSaVhiH2DeTvtdr@fedora>
- <7b09167f-bf8d-4d94-9317-3cfbb4f83cd8@linux.ibm.com>
- <bc3f20c3-21f8-443b-619f-da7569b37aaf@huaweicloud.com>
- <08ce91d9-756a-a8fa-a988-a13ec74d8c1c@huaweicloud.com>
- <91174432-8c70-437f-811f-7c8a6c028f64@linux.ibm.com>
+	s=arc-20240116; t=1751960110; c=relaxed/simple;
+	bh=d/TYnIdUHqL1gDc+g8DMoegQnKp7oqD6k62XmTekfJ0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=eFNnsrczj4pTRxN6fH7SmHKaMuHev2zdCvGxbkg5E7nZyH7Z8NviQWACnPk2Leqy/gzjENvhJfpgvWMZYmNDrkCvFVP4EGL5i/8IVKx8fYn6TuDuJs2RSFOdgz9WvHVYexiz8ty/N8iRqcewJ1VOZqLjFDjV8Ew16mCAXNfk71s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sd0vIGLO; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-32b8134ef6aso34787841fa.0;
+        Tue, 08 Jul 2025 00:35:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751960106; x=1752564906; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=d/TYnIdUHqL1gDc+g8DMoegQnKp7oqD6k62XmTekfJ0=;
+        b=Sd0vIGLOV/PeWm+KHxTydX21FqzCGUwHO9oVAjFwNJLBVgtw5QwwO3+cfKOFypWoXP
+         Ove1LMru2rQpY2UB1Gsf9c6R5ANV4Wz3Qkaykn4+ymZba0OOva9OTrBLryizzN0mbaFW
+         /RwSdEglTPLd7BCZFVv85+Gwsjqb447ZZI3LVxe7/E+MYoHrYlE3d4giOsS9Qxvwc9v7
+         Dk//36aM2s5AX76gMFSyBj5zU5EYwkruJDgT6ET/4J3T2CVy07SR30fBIF7KBu+1t0f/
+         5KPND4v/BkRrDfrEj3JrarIZ98TZA2bnGmjX7LXqTPe0t9SHCWeHEJvXBwEQHEyFUVE1
+         wNpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751960106; x=1752564906;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d/TYnIdUHqL1gDc+g8DMoegQnKp7oqD6k62XmTekfJ0=;
+        b=oS/2merI+s1DjBr59ZxPkmod/kN/lpFcQ6MEOXFtcWNzuzTmX4GVfnc7om+yoB9dke
+         xhs+AbsaT5H4Hj693ujLHbL7TsEN329ss4jmOqDwc5gSVo9rN7jl2Sbt+XCE7jU8+a3B
+         ZDqHYhLtXQ5l/nIOplWMp/lX8KlIoEEUq/xfb1XSSX7mZv9jSYfBQDZ7p3qqDP9V2Yw7
+         dMOD6NEahJVu37iFcjkgzAO5Xiuszy4T+ZcErJzKhzt/iGrXxUegMVsccCZeqRMz8XfB
+         ungRCom9IsZ9PcQa8Ms40pvnctDtVekjP/06UTuIb/nivWGmQ5STKg2n7W7Z0k7SiX0d
+         U/0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWDpW84ycuPu7P1qPz3TK39FzXk3jbG6FfauSHJjqeWmM/pYt6+P+GTY2nZeh4pCvIZoJoSEMr5@vger.kernel.org, AJvYcCWEEUIFF0SpqItxxbYYX19BmheheVXGjM+t3A3MhobSqAD+1MBdAlhDjMnFTXfLGhps39X0xobWrdb5I6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCFw1JewBUbTTMyETpU/bAfW6FuPSc9k76Ad4Z4/Ed2oae3oUn
+	OhJKTc6KHDS7r8k6EZ93cGBmW07hb31X7uHGbcLeTBpbLKE8MmxDZ0rOUxmBqdGcbz1fqMzszMv
+	kMw2bFIiRz4mdPEbimavoyopIxEbKWiUN3RYk
+X-Gm-Gg: ASbGncuAFxr+pBZArAzA1suDCrdzSZOIr5aQI7ufS9t5mBFX+qsomLvNJsAZjbTAQX/
+	Z11KiW4jDJulQsrjQcoUJUeqAGf4R05B4cgIKg6RL1vKgjN8hXlpmfITiSQS0YS9G+QKUuiDZVA
+	CS3uZV+LH0Fss6rSEOClUr0oYMic6boFC61zxfbNWvtbe5pRbCJKI11QeGrM9VuwTIXg==
+X-Google-Smtp-Source: AGHT+IHS+VMFjSUs8X6ux2eYl9znkhvwsXo5ZIAh4FLzrK9ZCDjn/WiGLGNs9MnqxDl1RjYb0yFt8edcbkgxPegrPMU=
+X-Received: by 2002:a2e:a7c1:0:b0:32b:82bf:cc45 with SMTP id
+ 38308e7fff4ca-32f39a96ba6mr3774051fa.15.1751960106277; Tue, 08 Jul 2025
+ 00:35:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <91174432-8c70-437f-811f-7c8a6c028f64@linux.ibm.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+From: Luka <luka.2016.cs@gmail.com>
+Date: Tue, 8 Jul 2025 15:34:53 +0800
+X-Gm-Features: Ac12FXz9JpuwpqCTDKW5H93gDKXnNqqTelYiArdy19j81d19WlFGt8bSmy-K-Ew
+Message-ID: <CALm_T+1zdfZ8Z-c6WseOfhrZBsZHHR-5ZFGefkGcxgUmxZcBdQ@mail.gmail.com>
+Subject: [Bug] soft lockup in netif_receive_skb_list_internal in Linux Kernel v6.15
+To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 08, 2025 at 10:42:00AM +0530, Nilay Shroff wrote:
-> 
-> 
-> On 7/5/25 6:45 AM, Yu Kuai wrote:
-> > Hi,
-> > 
-> > 在 2025/07/02 15:30, Yu Kuai 写道:
-> >> Hi,
-> >>
-> >> 在 2025/07/02 14:22, Nilay Shroff 写道:
-> >>>
-> >>>
-> >>> On 7/2/25 8:02 AM, Ming Lei wrote:
-> >>>> On Wed, Jul 02, 2025 at 09:12:09AM +0800, Yu Kuai wrote:
-> >>>>> Hi,
-> >>>>>
-> >>>>> 在 2025/07/01 21:28, Nilay Shroff 写道:
-> >>>>>>
-> >>>>>>
-> >>>>>> On 6/28/25 6:18 AM, Yu Kuai wrote:
-> >>>>>>> Hi,
-> >>>>>>>
-> >>>>>>> 在 2025/06/27 19:04, Ming Lei 写道:
-> >>>>>>>> I guess the patch in the following link may be simper, both two take
-> >>>>>>>> similar approach:
-> >>>>>>>>
-> >>>>>>>> https://lore.kernel.org/linux-block/aFjbavzLAFO0Q7n1@fedora/
-> >>>>>>>
-> >>>>>>> I this the above approach has concurrent problems if nbd_start_device
-> >>>>>>> concurrent with nbd_start_device:
-> >>>>>>>
-> >>>>>>> t1:
-> >>>>>>> nbd_start_device
-> >>>>>>> lock
-> >>>>>>> num_connections = 1
-> >>>>>>> unlock
-> >>>>>>>       t2:
-> >>>>>>>       nbd_add_socket
-> >>>>>>>       lock
-> >>>>>>>       config->num_connections++
-> >>>>>>>       unlock
-> >>>>>>>           t3:
-> >>>>>>>           nbd_start_device
-> >>>>>>>           lock
-> >>>>>>>           num_connections = 2
-> >>>>>>>           unlock
-> >>>>>>>           blk_mq_update_nr_hw_queues
-> >>>>>>>
-> >>>>>>> blk_mq_update_nr_hw_queues
-> >>>>>>> //nr_hw_queues updated to 1 before failure
-> >>>>>>> return -EINVAL
-> >>>>>>>
-> >>>>>>
-> >>>>>> In the above case, yes I see that t1 would return -EINVAL (as
-> >>>>>> config->num_connections doesn't match with num_connections)
-> >>>>>> but then t3 would succeed to update nr_hw_queue (as both
-> >>>>>> config->num_connections and num_connections set to 2 this
-> >>>>>> time). Isn't it? If yes, then the above patch (from Ming)
-> >>>>>> seems good.
-> >>>>>
-> >>>>> Emm, I'm confused, If you agree with the concurrent process, then
-> >>>>> t3 update nr_hw_queues to 2 first and return sucess, later t1 update
-> >>>>> nr_hw_queues back to 1 and return failure.
-> >>>>
-> >>>> It should be easy to avoid failure by simple retrying.
-> >>>>
-> >>> Yeah I think retry should be a safe bet here.
-> >>>
-> >>
-> >> I really not sure about the retry, the above is just a scenario that I
-> >> think of with a quick review, and there are still many concurrent
-> >> scenarios that need to be checked, I'm kind of lost here.
-> >>
-> >> Except nbd_start_device() and nbd_add_socked(), I'm not confident
-> >> other context that is synchronized with config_lock is not broken.
-> >> However, I'm ok with the bet.
-> >>
-> >>> On another note, synchronizing nbd_start_device and nbd_add_socket
-> >>> using nbd->task_setup looks more complex and rather we may use
-> >>> nbd->pid to synchronize both. We need to move setting of nbd->pid
-> >>> before we invoke blk_mq_update_nr_hw_queues in nbd_start_device.
-> >>> Then in nbd_add_socket we can evaluate nbd->pid and if it's
-> >>> non-NULL then we could assume that either nr_hw_queues update is in
-> >>> progress or device has been setup and so return -EBUSY. I think
-> >>> anyways updating number of connections once device is configured
-> >>> would not be possible, so once nbd_start_device is initiated, we
-> >>> shall prevent user adding more connections. If we follow this
-> >>> approach then IMO we don't need to add retry discussed above.
-> >>
-> >> It's ok for me to forbit nbd_add_socked after nbd is configured, there
-> >> is nowhere to use the added sock. And if there really are other contexts
-> >> need to be synchronized, I think nbd->pid can be used as well.
-> >>
-> > 
-> > Do we have a conclusion now? Feel free to send the retry version, or let
-> > me know if I should send a new synchronize version.
-> > 
-> Personally, I prefer synchronizing nbd_start_device and nbd_add_socket
-> using nbd->pid but I do agree retry version would also work. Having
-> said that, lets wait for Ming's feedback as well.
+Dear Linux Kernel Maintainers,
 
-IMO simpler fix, especially in concept, is more effective for addressing
-this kind of issue, with less chance to introduce regression.
+I hope this message finds you well.
 
-If no one objects, I may send the retry version.
+I am writing to report a potential vulnerability I encountered during
+testing of the Linux Kernel version v6.15.
 
+Git Commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca (tag: v6.15)
 
-Thanks,
-Ming
+Bug Location: netif_receive_skb_list_internal+0x2d3/0xc90 net/core/dev.c:6105
 
+Bug report: https://pastebin.com/SfxZ8pRX
+
+Complete log: https://pastebin.com/e0ZLhhr6
+
+Entire kernel config: https://pastebin.com/jQ30sdLk
+
+Root Cause Analysis:
+
+The soft lockup is triggered in netif_receive_skb_list_internal() due
+to a logic error during concurrent packet processing in the softirq
+context. Specifically, the function fails to exit or yield properly
+when processing a large batch of SKBs (socket buffers), potentially
+under contention for shared resources and lock acquisition. This
+results in prolonged CPU occupation in interrupt context, as shown by
+repeated attempts to acquire locks via lock_acquire() without forward
+progress. The issue likely arises from inefficient list traversal and
+insufficient interrupt mitigation, leading to starvation of other
+system tasks and triggering watchdog detection of a soft lockup.
+
+At present, I have not yet obtained a minimal reproducer for this
+issue. However, I am actively working on reproducing it, and I will
+promptly share any additional findings or a working reproducer as soon
+as it becomes available.
+
+Thank you very much for your time and attention to this matter. I
+truly appreciate the efforts of the Linux kernel community.
+
+Best regards,
+Luka
 
