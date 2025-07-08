@@ -1,235 +1,261 @@
-Return-Path: <linux-kernel+bounces-721442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10A15AFC945
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:13:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6525EAFC947
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:14:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 554031AA8300
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:14:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 952183B4F8A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5111F2D8DAA;
-	Tue,  8 Jul 2025 11:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F0D2D9781;
+	Tue,  8 Jul 2025 11:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aXbWfDJ/"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PPsjkJaR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D1A78F59;
-	Tue,  8 Jul 2025 11:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6231378F59;
+	Tue,  8 Jul 2025 11:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751973228; cv=none; b=KdBzsfhIeccqlMWWsT0Hm8iHw2GusLlroIeA+TzxiQod5JZUYPDB430RzcyBNjpNutBq3Q78DdtPG1IZza/yEbm85jQyokyFkdG59RJ5LLQujnd0cKrUJ79VvehxxUJW6bJbi2GwUBZcF337ofTFm4WS4WHDAQY8RYgv2PmUGQU=
+	t=1751973233; cv=none; b=TrPbMjDBQomtzWJB4tKOSzKEX3NmjZNEcshUCTRsHNfSo6U3qmFDxMlmdCzlH36fw2l0QZIis8wf3W/aoyss3l5eHpHs/AcI3IdEIDQnpB/PAw7XzpGXun77qHr8XnA0chqCBD8RID+1WaUbtWI09ku3eqSrgkPdwnkK2pFRgvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751973228; c=relaxed/simple;
-	bh=akZ/oFKHtBt9lSINCk/rLJ4nIUwf967LCMGx2qPaHNY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h8Mb5/pFpHFbetMkNymmQGUf9BRPCLbtX6nwQBG7TDkRzfdC/d+0hsIBc6j9CXVXtpIzNKH0xiFmEUL1nmDNDwN/PLpRNybbV00DWLgffYFqHj+wJvV6gNfBMGqdN6Eaiedz+1wK3QRX7x9UiJ+1a66wvCHSd959BNKGbkl4pgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aXbWfDJ/; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 567NriRF028461;
-	Tue, 8 Jul 2025 11:13:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=YlA3mh
-	SCzITCTWIUMR8JK/UJmo74o7B8OGsfDAdFx28=; b=aXbWfDJ/0CnDfug7ftCMnf
-	metpXO5gkjePGFWrZsgXN898VZHT56kghxuR6lYQnUKDT2+spvsS1DcVgvrfgODk
-	tWObwjv35iqavIIqn3DCKGSmTrF4yUL0JsIOLgn6YYy11AwyBhFa3MlOCi97JtmA
-	g7+mNDUJSWWHMCJIAyp8tDClvYhWjIucKxQYUNqbRSi6TDp4LZdBh+TItOL2Ncoy
-	wTqkx5H2qa2g5wQIpwqKN4q4Ew84mE+jsZJeUVM/wINNN2dW49CudbpkB0RpU96b
-	imVcZAKe6hH+2lBKwDIA2BPY0HowjJPJObCO94hqfuNjbIwZ3y0p+qtzIgcEBO1Q
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47pur6ybt5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Jul 2025 11:13:12 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 568A0XNF021519;
-	Tue, 8 Jul 2025 11:13:11 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47qectjt3s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Jul 2025 11:13:11 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 568BD5sQ30081558
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 8 Jul 2025 11:13:05 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1BBE758054;
-	Tue,  8 Jul 2025 11:13:11 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E97125805A;
-	Tue,  8 Jul 2025 11:13:06 +0000 (GMT)
-Received: from [9.109.244.163] (unknown [9.109.244.163])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  8 Jul 2025 11:13:06 +0000 (GMT)
-Message-ID: <63ae97dd-8284-4123-a879-a2680b6fab26@linux.ibm.com>
-Date: Tue, 8 Jul 2025 16:43:05 +0530
+	s=arc-20240116; t=1751973233; c=relaxed/simple;
+	bh=0l2+kSAOtLK9DJWI/UspcnAaGXDxspqYx8T+mmX/caE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qSOkPqShqOm6mn1HoJWfLa6v8ZMvVi59LWQIL7PCVvY13uMgkgyq7T4pAfWhAmr55uLdWf7ZHVaqdrpI7PRssFWK9x6x55BbHifBNaIhz1qIFLD/OR2OkQHoBuIklaYTjxbvdV02925aqVJDLCc1wXiZk0gybIhg92kE6XSIw7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PPsjkJaR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A47AC4CEED;
+	Tue,  8 Jul 2025 11:13:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751973232;
+	bh=0l2+kSAOtLK9DJWI/UspcnAaGXDxspqYx8T+mmX/caE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PPsjkJaRTme6O0vYeb/0rQs+UprSCM9AU5zeUG64CAgWLuOtf/p8YGjJilxOHpGix
+	 PRvM5U+N/G/mlpzKRFkQhy6telClOHLrGugY8iKcTK4fzsBt0OLaTJN7dJyHyYJbWo
+	 OLyqU4iZXawm2KCwz32iEX0l2Pcn21nNdxCjz78YXnrOV9FdJlMf+chq5ZLpkoZCsV
+	 oE/7WbWEqVdO+bvz6q5Zf3C/mUY6esS5b/Ic6e0WQGnKrQdZTvN6c7TXYCMyiVDaTX
+	 /G766ucl8r6dKagc96AJ78FZaBsY0ZL7I3NLJAvxaYi45TbMpk8U2PeOiGWBI6smdr
+	 pHbyzycqACluA==
+Date: Tue, 8 Jul 2025 16:43:43 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Asutosh Das <quic_asutoshd@quicinc.com>, 
+	Bart Van Assche <bvanassche@acm.org>, Stanley Chu <stanley.chu@mediatek.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Can Guo <quic_cang@quicinc.com>, 
+	Nitin Rawat <quic_nitirawa@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH RFC/RFT 2/5] ufs: ufs-qcom: Remove inferred MCQ mappings
+Message-ID: <7cdpetp3fuxpu2eeqctc5f7kytfpvoquopfsr7ea5non6bo74z@pu45jowjzwrt>
+References: <20250704-topic-qcom_ufs_mcq_cleanup-v1-0-c70d01b3d334@oss.qualcomm.com>
+ <20250704-topic-qcom_ufs_mcq_cleanup-v1-2-c70d01b3d334@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nbd: fix false lockdep deadlock warning
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, josef@toxicpanda.com, axboe@kernel.dk,
-        hch@infradead.org, hare@suse.de, linux-block@vger.kernel.org,
-        nbd@other.debian.org, linux-kernel@vger.kernel.org,
-        yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
-        "yukuai (C)" <yukuai3@huawei.com>
-References: <20250627092348.1527323-1-yukuai1@huaweicloud.com>
- <aF56oVEzTygIOUTN@fedora>
- <c2fbaacc-62a1-4a98-4157-2637b7f242b7@huaweicloud.com>
- <197b6dca-56be-438d-a60f-21011367c5ed@linux.ibm.com>
- <99b4afce-de05-ddcb-2634-b19214cf4534@huaweicloud.com>
- <aGSaVhiH2DeTvtdr@fedora>
- <7b09167f-bf8d-4d94-9317-3cfbb4f83cd8@linux.ibm.com>
- <bc3f20c3-21f8-443b-619f-da7569b37aaf@huaweicloud.com>
- <08ce91d9-756a-a8fa-a988-a13ec74d8c1c@huaweicloud.com>
- <91174432-8c70-437f-811f-7c8a6c028f64@linux.ibm.com>
- <aGzJ6dssrCmJtG-3@fedora>
-Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <aGzJ6dssrCmJtG-3@fedora>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA4MDA4OSBTYWx0ZWRfX5e7I9TUWuuUI gHBMGtlZssInr0JdoYLjlfmcuuSiGQ2aeRVwN1JQWE8ov42ikg+Yftnf6/J+elwElRlVCqX7WBx WXQGZzQZmDiMluKBL9x/0PYf+O9ISNaRSppw3M+hymSKUDk472X9MpAT9YL+uzKLjMqJXgQZSyH
- 8w6VZ683M4CPAJ/nAnvdwx7Qoh1nDC35zdT7+pgHi0t6d+2zsZTK9tCcwoVxHhrfVpySUzwMLa0 tt/JEG3aCjHH+UybMkAncOW0HwkpWILXGekx/Op0FwGe2phTNX5DbQ9iCzQ3Ad+o0hVx9scpmDW 8TT7PjLWYj1M3MShV6fIneqYybOqrYQ7eHrXA1YOEee6nMANRuqS83XubTF789RO7UZzvfmhwuu
- MF01B+qGQtBcazNGJEwOLm4E1NRTeF4tqTbNlUnao6eir70/9NEZ/Dfeo15Xvuisha2leeGb
-X-Proofpoint-GUID: A9wbSwByPkNm6TQTP7Npo5hQ7ySRXDAa
-X-Proofpoint-ORIG-GUID: A9wbSwByPkNm6TQTP7Npo5hQ7ySRXDAa
-X-Authority-Analysis: v=2.4 cv=W/M4VQWk c=1 sm=1 tr=0 ts=686cfd48 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=5nsAZIZkkCYsSzfyBqYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-08_03,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- mlxscore=0 priorityscore=1501 adultscore=0 clxscore=1015 suspectscore=0
- spamscore=0 lowpriorityscore=0 mlxlogscore=999 bulkscore=0 impostorscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507080089
+In-Reply-To: <20250704-topic-qcom_ufs_mcq_cleanup-v1-2-c70d01b3d334@oss.qualcomm.com>
 
-
-
-On 7/8/25 1:04 PM, Ming Lei wrote:
-> On Tue, Jul 08, 2025 at 10:42:00AM +0530, Nilay Shroff wrote:
->>
->>
->> On 7/5/25 6:45 AM, Yu Kuai wrote:
->>> Hi,
->>>
->>> 在 2025/07/02 15:30, Yu Kuai 写道:
->>>> Hi,
->>>>
->>>> 在 2025/07/02 14:22, Nilay Shroff 写道:
->>>>>
->>>>>
->>>>> On 7/2/25 8:02 AM, Ming Lei wrote:
->>>>>> On Wed, Jul 02, 2025 at 09:12:09AM +0800, Yu Kuai wrote:
->>>>>>> Hi,
->>>>>>>
->>>>>>> 在 2025/07/01 21:28, Nilay Shroff 写道:
->>>>>>>>
->>>>>>>>
->>>>>>>> On 6/28/25 6:18 AM, Yu Kuai wrote:
->>>>>>>>> Hi,
->>>>>>>>>
->>>>>>>>> 在 2025/06/27 19:04, Ming Lei 写道:
->>>>>>>>>> I guess the patch in the following link may be simper, both two take
->>>>>>>>>> similar approach:
->>>>>>>>>>
->>>>>>>>>> https://lore.kernel.org/linux-block/aFjbavzLAFO0Q7n1@fedora/
->>>>>>>>>
->>>>>>>>> I this the above approach has concurrent problems if nbd_start_device
->>>>>>>>> concurrent with nbd_start_device:
->>>>>>>>>
->>>>>>>>> t1:
->>>>>>>>> nbd_start_device
->>>>>>>>> lock
->>>>>>>>> num_connections = 1
->>>>>>>>> unlock
->>>>>>>>>       t2:
->>>>>>>>>       nbd_add_socket
->>>>>>>>>       lock
->>>>>>>>>       config->num_connections++
->>>>>>>>>       unlock
->>>>>>>>>           t3:
->>>>>>>>>           nbd_start_device
->>>>>>>>>           lock
->>>>>>>>>           num_connections = 2
->>>>>>>>>           unlock
->>>>>>>>>           blk_mq_update_nr_hw_queues
->>>>>>>>>
->>>>>>>>> blk_mq_update_nr_hw_queues
->>>>>>>>> //nr_hw_queues updated to 1 before failure
->>>>>>>>> return -EINVAL
->>>>>>>>>
->>>>>>>>
->>>>>>>> In the above case, yes I see that t1 would return -EINVAL (as
->>>>>>>> config->num_connections doesn't match with num_connections)
->>>>>>>> but then t3 would succeed to update nr_hw_queue (as both
->>>>>>>> config->num_connections and num_connections set to 2 this
->>>>>>>> time). Isn't it? If yes, then the above patch (from Ming)
->>>>>>>> seems good.
->>>>>>>
->>>>>>> Emm, I'm confused, If you agree with the concurrent process, then
->>>>>>> t3 update nr_hw_queues to 2 first and return sucess, later t1 update
->>>>>>> nr_hw_queues back to 1 and return failure.
->>>>>>
->>>>>> It should be easy to avoid failure by simple retrying.
->>>>>>
->>>>> Yeah I think retry should be a safe bet here.
->>>>>
->>>>
->>>> I really not sure about the retry, the above is just a scenario that I
->>>> think of with a quick review, and there are still many concurrent
->>>> scenarios that need to be checked, I'm kind of lost here.
->>>>
->>>> Except nbd_start_device() and nbd_add_socked(), I'm not confident
->>>> other context that is synchronized with config_lock is not broken.
->>>> However, I'm ok with the bet.
->>>>
->>>>> On another note, synchronizing nbd_start_device and nbd_add_socket
->>>>> using nbd->task_setup looks more complex and rather we may use
->>>>> nbd->pid to synchronize both. We need to move setting of nbd->pid
->>>>> before we invoke blk_mq_update_nr_hw_queues in nbd_start_device.
->>>>> Then in nbd_add_socket we can evaluate nbd->pid and if it's
->>>>> non-NULL then we could assume that either nr_hw_queues update is in
->>>>> progress or device has been setup and so return -EBUSY. I think
->>>>> anyways updating number of connections once device is configured
->>>>> would not be possible, so once nbd_start_device is initiated, we
->>>>> shall prevent user adding more connections. If we follow this
->>>>> approach then IMO we don't need to add retry discussed above.
->>>>
->>>> It's ok for me to forbit nbd_add_socked after nbd is configured, there
->>>> is nowhere to use the added sock. And if there really are other contexts
->>>> need to be synchronized, I think nbd->pid can be used as well.
->>>>
->>>
->>> Do we have a conclusion now? Feel free to send the retry version, or let
->>> me know if I should send a new synchronize version.
->>>
->> Personally, I prefer synchronizing nbd_start_device and nbd_add_socket
->> using nbd->pid but I do agree retry version would also work. Having
->> said that, lets wait for Ming's feedback as well.
+On Fri, Jul 04, 2025 at 07:36:10PM GMT, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > 
-> IMO simpler fix, especially in concept, is more effective for addressing
-> this kind of issue, with less chance to introduce regression.
+> Stop acquiring the base HCI memory region twice. Instead, because of
+> the need of getting the offset of MCQ regions from the controller base,
+> get the resource for the main region and store it separately.
 > 
-> If no one objects, I may send the retry version.
+> Demand all the regions are provided in DT and don't try to make
+> guesses, circumventing the memory map provided in FDT.
 > 
-Adding new socket/connection, after nr_hw_queue update is initiated or 
-device is setup, is of no use. But I am also good with retry version. 
-So please send your patch.
 
-Thanks,
---Nilay
+IIRC, during the MCQ review, Can/Asutosh justified the manual resource parsing
+due to some platforms just having a flat 'MCQ' region. So they ended up manually
+allocating the rest of the regions based on hw capabilities.
 
+So there is no such requirement to support those platforms now?
+
+- Mani
+
+> There are currently no platforms with MCQ enabled, so there is no
+> functional change.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  drivers/ufs/host/ufs-qcom.c      | 58 ++++------------------------------------
+>  drivers/ufs/host/ufshcd-pltfrm.c |  4 ++-
+>  include/ufs/ufshcd.h             |  2 +-
+>  3 files changed, 9 insertions(+), 55 deletions(-)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index 8dd9709cbdeef6ede5faa434fcb853e11950721f..67929a3e6e6242a93ed4c84cb2d2f7f10de4aa5e 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -28,12 +28,6 @@
+>  #include "ufshcd-pltfrm.h"
+>  #include "ufs-qcom.h"
+>  
+> -#define MCQ_QCFGPTR_MASK	GENMASK(7, 0)
+> -#define MCQ_QCFGPTR_UNIT	0x200
+> -#define MCQ_SQATTR_OFFSET(c) \
+> -	((((c) >> 16) & MCQ_QCFGPTR_MASK) * MCQ_QCFGPTR_UNIT)
+> -#define MCQ_QCFG_SIZE	0x40
+> -
+>  /* De-emphasis for gear-5 */
+>  #define DEEMPHASIS_3_5_dB	0x04
+>  #define NO_DEEMPHASIS		0x0
+> @@ -1899,7 +1893,6 @@ static void ufs_qcom_config_scaling_param(struct ufs_hba *hba,
+>  
+>  /* Resources */
+>  static const struct ufshcd_res_info ufs_res_info[RES_MAX] = {
+> -	{.name = "std",},
+>  	{.name = "mcq",},
+>  	/* Submission Queue DAO */
+>  	{.name = "mcq_sqd",},
+> @@ -1917,7 +1910,6 @@ static int ufs_qcom_mcq_config_resource(struct ufs_hba *hba)
+>  {
+>  	struct platform_device *pdev = to_platform_device(hba->dev);
+>  	struct ufshcd_res_info *res;
+> -	struct resource *res_mem, *res_mcq;
+>  	int i, ret;
+>  
+>  	memcpy(hba->res, ufs_res_info, sizeof(ufs_res_info));
+> @@ -1929,12 +1921,6 @@ static int ufs_qcom_mcq_config_resource(struct ufs_hba *hba)
+>  							     res->name);
+>  		if (!res->resource) {
+>  			dev_info(hba->dev, "Resource %s not provided\n", res->name);
+> -			if (i == RES_UFS)
+> -				return -ENODEV;
+> -			continue;
+> -		} else if (i == RES_UFS) {
+> -			res_mem = res->resource;
+> -			res->base = hba->mmio_base;
+>  			continue;
+>  		}
+>  
+> @@ -1948,63 +1934,29 @@ static int ufs_qcom_mcq_config_resource(struct ufs_hba *hba)
+>  		}
+>  	}
+>  
+> -	/* MCQ resource provided in DT */
+>  	res = &hba->res[RES_MCQ];
+> -	/* Bail if MCQ resource is provided */
+>  	if (res->base)
+> -		goto out;
+> +		return -EINVAL;
+>  
+> -	/* Explicitly allocate MCQ resource from ufs_mem */
+> -	res_mcq = devm_kzalloc(hba->dev, sizeof(*res_mcq), GFP_KERNEL);
+> -	if (!res_mcq)
+> -		return -ENOMEM;
+> -
+> -	res_mcq->start = res_mem->start +
+> -			 MCQ_SQATTR_OFFSET(hba->mcq_capabilities);
+> -	res_mcq->end = res_mcq->start + hba->nr_hw_queues * MCQ_QCFG_SIZE - 1;
+> -	res_mcq->flags = res_mem->flags;
+> -	res_mcq->name = "mcq";
+> -
+> -	ret = insert_resource(&iomem_resource, res_mcq);
+> -	if (ret) {
+> -		dev_err(hba->dev, "Failed to insert MCQ resource, err=%d\n",
+> -			ret);
+> -		return ret;
+> -	}
+> -
+> -	res->base = devm_ioremap_resource(hba->dev, res_mcq);
+> -	if (IS_ERR(res->base)) {
+> -		dev_err(hba->dev, "MCQ registers mapping failed, err=%d\n",
+> -			(int)PTR_ERR(res->base));
+> -		ret = PTR_ERR(res->base);
+> -		goto ioremap_err;
+> -	}
+> -
+> -out:
+>  	hba->mcq_base = res->base;
+> +
+>  	return 0;
+> -ioremap_err:
+> -	res->base = NULL;
+> -	remove_resource(res_mcq);
+> -	return ret;
+>  }
+>  
+>  static int ufs_qcom_op_runtime_config(struct ufs_hba *hba)
+>  {
+> -	struct ufshcd_res_info *mem_res, *sqdao_res;
+> +	struct ufshcd_res_info *sqdao_res;
+>  	struct ufshcd_mcq_opr_info_t *opr;
+>  	int i;
+>  
+> -	mem_res = &hba->res[RES_UFS];
+>  	sqdao_res = &hba->res[RES_MCQ_SQD];
+> -
+> -	if (!mem_res->base || !sqdao_res->base)
+> +	if (!sqdao_res->base)
+>  		return -EINVAL;
+>  
+>  	for (i = 0; i < OPR_MAX; i++) {
+>  		opr = &hba->mcq_opr[i];
+>  		opr->offset = sqdao_res->resource->start -
+> -			      mem_res->resource->start + 0x40 * i;
+> +			      hba->hci_res->start + 0x40 * i;
+>  		opr->stride = 0x100;
+>  		opr->base = sqdao_res->base + 0x40 * i;
+>  	}
+> diff --git a/drivers/ufs/host/ufshcd-pltfrm.c b/drivers/ufs/host/ufshcd-pltfrm.c
+> index ffe5d1d2b2158882d369e4d3c902633b81378dba..0ba13ab59eafe6e5c4f8db61691628a4905eb52f 100644
+> --- a/drivers/ufs/host/ufshcd-pltfrm.c
+> +++ b/drivers/ufs/host/ufshcd-pltfrm.c
+> @@ -463,8 +463,9 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
+>  	void __iomem *mmio_base;
+>  	int irq, err;
+>  	struct device *dev = &pdev->dev;
+> +	struct resource *hci_res;
+>  
+> -	mmio_base = devm_platform_ioremap_resource(pdev, 0);
+> +	mmio_base = devm_platform_get_and_ioremap_resource(pdev, 0, &hci_res);
+>  	if (IS_ERR(mmio_base))
+>  		return PTR_ERR(mmio_base);
+>  
+> @@ -479,6 +480,7 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
+>  	}
+>  
+>  	hba->vops = vops;
+> +	hba->hci_res = hci_res;
+>  
+>  	err = ufshcd_parse_clock_info(hba);
+>  	if (err) {
+> diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+> index 9b3515cee71178c96f42f757a01d975606f64c9e..28132ff759afbd3bf8977bc481da225d95fd461c 100644
+> --- a/include/ufs/ufshcd.h
+> +++ b/include/ufs/ufshcd.h
+> @@ -808,7 +808,6 @@ struct ufshcd_res_info {
+>  };
+>  
+>  enum ufshcd_res {
+> -	RES_UFS,
+>  	RES_MCQ,
+>  	RES_MCQ_SQD,
+>  	RES_MCQ_SQIS,
+> @@ -970,6 +969,7 @@ enum ufshcd_mcq_opr {
+>   */
+>  struct ufs_hba {
+>  	void __iomem *mmio_base;
+> +	struct resource *hci_res;
+>  
+>  	/* Virtual memory reference */
+>  	struct utp_transfer_cmd_desc *ucdl_base_addr;
+> 
+> -- 
+> 2.50.0
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
