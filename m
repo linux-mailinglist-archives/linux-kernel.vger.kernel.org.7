@@ -1,174 +1,119 @@
-Return-Path: <linux-kernel+bounces-722417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25664AFDA1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:43:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6992CAFDA29
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 23:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30E074E6CFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:42:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E88E1C25D78
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 21:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21642459FE;
-	Tue,  8 Jul 2025 21:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35881217709;
+	Tue,  8 Jul 2025 21:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="hm9omw8v";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="i31DRMRU"
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EzLZvghA"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3638D1A8F84;
-	Tue,  8 Jul 2025 21:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DE017C21E
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 21:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752010981; cv=none; b=jxnS4yMAAYTad2A+Y0kHMqOq3bzRJb8aHZAeJS59dDLsNZ1qmFDhYZZoN7AUcBrVM/A7SwIOLCAReJlq5nV3MDtDH+0uQI7dGxXf7pXJVU7FyDKMAsTMke+3hDMQQuC8TocC4ruea32MWg06qFJ2Cig9sPa1mjr63dINdYUaKuw=
+	t=1752011155; cv=none; b=SC2JkgWyH+vHwSiMp+D+y7CHd8rwKRK4RN9N2KqWn7bzFC8KiSx0saxZ8jikohksmvyfchQrtDiMB0NtUh7cpQaNW5t8QvGHMwuiTBg6hPcDeITzCVzYjNb68DKEGS/2PtvezWYzyClHN/FlcqFJA6Vkjv/a/Ul55icuOY5idlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752010981; c=relaxed/simple;
-	bh=rlUpxaefP62xVFcgqrG1RemxR+OP20zTE2mFC8Jwm6k=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=DvB0YZ22VlVlWDDJQgxKHm/46w0Ip9BSl2ZWYzRZXG8Aun0LfCHYId5R8AWC3/haLvILeAe/G7MewozdyZaEFThux5UT22JOuT3PtOyI4R9VIXt3uqpF9ftMMASxiuWku6rUzoEn818rooCqptak1AghznZroV5erhYlFPO9sX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=hm9omw8v; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=i31DRMRU; arc=none smtp.client-ip=202.12.124.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 30B157A0139;
-	Tue,  8 Jul 2025 17:42:58 -0400 (EDT)
-Received: from phl-imap-08 ([10.202.2.84])
-  by phl-compute-06.internal (MEProxy); Tue, 08 Jul 2025 17:42:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1752010978;
-	 x=1752097378; bh=122JoHfcZ2JTLSx2NlHDO3Rynz7MlgiM2NceyIsAJR8=; b=
-	hm9omw8vjMbPKDGX++H2mY6IRXMxRX6qFobPArQl0D6xBWgG/cXyVs6qLebnorHd
-	bTNGQ1gvL1CsluoyQPv7u3R62ujhivXiPH1dUJopwpVWO1somJRr2RjG5PfbH0rd
-	Ep5IekVW/GbrmWSezyMjokjoJfpB3Z9UhafVEX6uIBBnTZRQzfkR55DNIhkd6ccg
-	6KW5x05fdlZr1jCZ63TMwDMbYo+Jg+vch01lZn+MUU0CRytjcMj2DM1tSavgPhag
-	SLjhtkvHYCerVIZTyENRbhPfKAVNfrQ9BzMMmMi8m/Iz5+8m0bT1vZgKswnTqEff
-	ctqSIQZ0j2XMWFLJSFqw6A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752010978; x=
-	1752097378; bh=122JoHfcZ2JTLSx2NlHDO3Rynz7MlgiM2NceyIsAJR8=; b=i
-	31DRMRUltTAQdMl96JTnzTKm89i0zzgEx5fV7w8PBQS6SExdndtOQkdsFEnAFIkG
-	LXU8773vUzW988F/IpVx5/KBmCElG7a5TA7lc+EvGl9/agyi88M97hfzWY1yKjtR
-	aWYmwo2R/d5k3Ccu3YlhWBBjV1qNpH7EKUrgCDWsVbpDtyDsQL+VzhOL/fjQqGg1
-	z6fee5a/dadw3sFV27hqsEVN+NTIL87ori8sBRq7vvMcv4R7HoLi53T/Oi/nVCTU
-	SgcGhXYee883sRedRk7bosTB0Sajhps08EaX+V6zTSQkv36lmI5ViEWOpFz39ceW
-	2IDXf4lZAV3TNT+hak/Vg==
-X-ME-Sender: <xms:4ZBtaPaLeoVmism6rhms5Yt2xjzC2aDnfZEe12eYG-66vCzt_R38bA>
-    <xme:4ZBtaOa3qpEpHQVn53itbuntQTdz7e9l8ZlxxPkKUHaF8nXJ2CDZVK1XALFY7as4E
-    1awkNHxEkMlm3dOO8c>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefheejlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdflihgrgihu
-    nhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqeenuc
-    ggtffrrghtthgvrhhnpeejheefuddvtdfggfdvffekteehhfelgfdvvedvkeeuffefkeeh
-    heegvefhveetjeenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhnsggprhgtphht
-    thhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtshgsohhgvghnugesrg
-    hlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtohepghhrvghgohhrhidrtghlvghm
-    vghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehthhgvohdrlhgvsghruhhnse
-    gsohhothhlihhnrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhi
-    segsohhothhlihhnrdgtohhmpdhrtghpthhtohepthgrfihfihhkrdgsrgihohhukhesmh
-    hosghilhgvhigvrdgtohhmpdhrtghpthhtohepvhhlrgguihhmihhrrdhkohhnughrrght
-    ihgvvhesmhhosghilhgvhigvrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvg
-    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhiphhs
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:4ZBtaI5LZF_6NA4mBvxL4sljGe2YDehU1y0rPAteLsCj_jRLaXGZHg>
-    <xmx:4ZBtaGyUmwvJ0V_oWimqnGxRDXg_FnZ3gDVz8w_ojxSMlM6DIA25Hw>
-    <xmx:4ZBtaHPvs0FAqChrcG-QpYL6USL5_yBjLJYLMAy787jS_NWga4HR-g>
-    <xmx:4ZBtaMl1QpzmvpylhpA5q1AB7Jvx4gW_XwHyiewEB4HApf_-hQHlVA>
-    <xmx:4pBtaAuQ5kCk3cba5sDNk5GkJCIdw8tebhis12cdBgHKG9GKafJiYco3>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id D62642CE0071; Tue,  8 Jul 2025 17:42:57 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1752011155; c=relaxed/simple;
+	bh=AupsQCF0dWNjnaeNPs3+9yWwIfidJH7lNb8ftuw+vSk=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=NKae2QTIg/aVYb5Io7dmOF2pDGxCrCorkoG7Q1bnTVBjQVjzzjzgSVEP/RY9Mc456qkgNMsgvzw2ChFjPFdMW1CjL50rj9y5l3uNPSMPpdSlahgeLqlHLxI5YyGUvem+iHo5a2IaLsA+6vTn085//lbIN6/bmrs4jYoj/fuw3dM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EzLZvghA; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-70e75f30452so32744997b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 14:45:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752011153; x=1752615953; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0qfiTnhb6RgnIzn3Y/7jQJsasnXGa87k1HcGtvIkI6I=;
+        b=EzLZvghARE0EUX7Vt8NNqpqY+/JDxTpzwrVFwEO47dvpOuOx8BTUpHBoa5G+o+RlKl
+         L254jKbrFCoLGRcWzoRf6gIwK/vQGKbeO0V9XMg4IQoEQwb5Xw9w3/6eMqqIS401tQIE
+         7CYRh/4S+U09E102LtOO663TTdxfRwT/lgcD5xkhOpHiAAV2MNmmO06OrIj8tyzJwXsY
+         FLXYKI7u4n8sK6vwTyPcQkIbcQjs8FZi7e7NbBK4HHGr+CiRBECoFe7c7XEgG46Ya5FR
+         MgYw2T2VwP2JsbL0v1BhaWCj68/YBULcGFWMt1TylGUNL/z3UUKbj8oexnvU4Cso7bBF
+         Yqiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752011153; x=1752615953;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0qfiTnhb6RgnIzn3Y/7jQJsasnXGa87k1HcGtvIkI6I=;
+        b=DlHfYoQsGOWwReW1yfI37PTZ8KSYbL+8+tj8ImGdtc6RwVX9/t82ddquCzxZaOlfWh
+         nnIm3Mz/KF1OvPKqMvg/rr/iXegXhwLVBalJsOF0k4bfFns50plqTUtU0jGz8T4joOcB
+         +VaG45gFCXf2PI1hLgi9sBNJg0FHJhNhVeQv0oy42IAroU3n3FOVkWVxUmucPqkw1quC
+         F/Sbvbvi2fjA0ZJS2D6pQLXqtMgPDOReokBKgZ2lKGK6adh1h5p3VcTL/qlQyrAVt0Pf
+         2NGCya+ReMyD9eSNsTf5XRjbzZQGxTMtUI/gx0PXzjdXTLE3XFPAn4Heesrj39UX6zOJ
+         dHEA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8tIIUYAU6SfmwiSZhTbxmmv2f1aYAfePdMW2HRaOzy6Lte4JO61HSbzHC8X9Pc4VQk1mhqfDHp0CrDIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9nSnmIf6Wd2dlETzM0cyyrb4bprYNEYkXVyFtLZtHFJ1I9cXA
+	C5fdygzo1YbSMEBQDgf8yT2tZfQdO4vbTR6bL8nTbZP0uVWCXARWkm5KH3Fapi5RlDquVNiM7v8
+	cBrmovXXiHPD8iSNrxoFqdyah/RCn3Wg=
+X-Gm-Gg: ASbGncvpWU1AHGs5hDbYkJWazfsZNDsL6jzQmkmf/q1ryEdYcECIhd6TzncEgLUG1W3
+	sVxEsE8faAvbNhyEYcL68mO6TJb1y7tfcMzxs/VRyOFN50uTqNGB0vb8nlyHka7o4RB28/HzBBs
+	RdnMHwclWE48TTa3NfZvhEElHdUQZKIYnZh4jmyHdUrN5I6mhI1uWY5pytvGZrGJ523AjaxY+pD
+	3sr
+X-Google-Smtp-Source: AGHT+IFDLywOhIoTBUVsoUXWMjLAi/bix2Ut3Dp8N3IqRRXkqv60tAX3F1JWBWLSzGhwiJM/NwjKVWrmeXn+BAiuCho=
+X-Received: by 2002:a05:690c:8d05:b0:712:de91:53d4 with SMTP id
+ 00721157ae682-717b1999941mr4403417b3.24.1752011152881; Tue, 08 Jul 2025
+ 14:45:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T0d515a0de5731984
-Date: Tue, 08 Jul 2025 22:42:37 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Gregory CLEMENT" <gregory.clement@bootlin.com>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
-Cc: "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
- =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- "Tawfik Bayouk" <tawfik.bayouk@mobileye.com>,
- "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Message-Id: <cd148cc2-bc18-43f0-9b6d-1b59b45cb400@app.fastmail.com>
-In-Reply-To: <20250708-smp_calib-v3-2-6dabf01a7d9f@bootlin.com>
-References: <20250708-smp_calib-v3-0-6dabf01a7d9f@bootlin.com>
- <20250708-smp_calib-v3-2-6dabf01a7d9f@bootlin.com>
-Subject: Re: [PATCH v3 2/2] MIPS: CPS: Optimise delay CPU calibration for SMP
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
+Date: Tue, 8 Jul 2025 14:45:41 -0700
+X-Gm-Features: Ac12FXy6yZ6UCj-hjSdotBfvazCVnQYha1jcywIWZh69lrvJ-Cm7wQoK6JdoTQk
+Message-ID: <CAF3JpA7yXEB_Fj3AMtFG1OYLX2g9P3LFQ5f3qSSEcheB4axVKg@mail.gmail.com>
+Subject: [syzbot] [ntfs3?] WARNING in ni_rename
+To: syzbot <syzbot+b0373017f711c06ada64@syzkaller.appspotmail.com>
+Cc: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: multipart/mixed; boundary="0000000000006965b2063971e29b"
 
+--0000000000006965b2063971e29b
+Content-Type: text/plain; charset="UTF-8"
 
+#syz test
 
-=E5=9C=A82025=E5=B9=B47=E6=9C=888=E6=97=A5=E5=91=A8=E4=BA=8C =E4=B8=8B=E5=
-=8D=882:46=EF=BC=8CGregory CLEMENT=E5=86=99=E9=81=93=EF=BC=9A
-> On MIPS architecture with CPS-based SMP support, all CPU cores in the
-> same cluster run at the same frequency since they share the same L2
-> cache, requiring a fixed CPU/L2 cache ratio.
->
-> This allows to implement calibrate_delay_is_known(), which will return
-> 0 (triggering calibration) only for the primary CPU of each
-> cluster. For other CPUs, we can simply reuse the value from their
-> cluster's primary CPU core.
->
-> With the introduction of this patch, a configuration running 32 cores
-> spread across two clusters sees a significant reduction in boot time
-> by approximately 600 milliseconds.
->
-> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+--0000000000006965b2063971e29b
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-ntfs3-validate-BITMAP-size-when-index-blocks-are-pre.patch"
+Content-Disposition: attachment; 
+	filename="0001-ntfs3-validate-BITMAP-size-when-index-blocks-are-pre.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_mcv24lot0>
+X-Attachment-Id: f_mcv24lot0
 
-Reviewed-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-
-> ---
->  arch/mips/kernel/smp-cps.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/arch/mips/kernel/smp-cps.c b/arch/mips/kernel/smp-cps.c
-> index=20
-> 6c5f15293a8e58a701601b242f43ba19a6814f06..22d4f9ff3ae2671b07da5bb14915=
-4c686e07b209=20
-> 100644
-> --- a/arch/mips/kernel/smp-cps.c
-> +++ b/arch/mips/kernel/smp-cps.c
-> @@ -281,6 +281,17 @@ static void __init cps_smp_setup(void)
->  #endif /* CONFIG_MIPS_MT_FPAFF */
->  }
->=20
-> +unsigned long calibrate_delay_is_known(void)
-> +{
-> +	int first_cpu_cluster =3D 0;
-> +
-> +	/* The calibration has to be done on the primary CPU of the cluster =
-*/
-> +	if (mips_cps_first_online_in_cluster(&first_cpu_cluster))
-> +		return 0;
-> +
-> +	return cpu_data[first_cpu_cluster].udelay_val;
-> +}
-> +
->  static void __init cps_prepare_cpus(unsigned int max_cpus)
->  {
->  	unsigned int nclusters, ncores, core_vpes, nvpe =3D 0, c, cl, cca;
->
-> --=20
-> 2.47.2
-
---=20
-- Jiaxun
+RnJvbSA3ZmExZjRiMzk5YzJkNDdkMWFiMzAxYzI2NjJmNmE2MGMyMDk4YzQ1IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBNb29uIEhlZSBMZWUgPG1vb25oZWUubGVlLmNhQGdtYWlsLmNv
+bT4KRGF0ZTogVHVlLCA4IEp1bCAyMDI1IDE0OjM5OjQzIC0wNzAwClN1YmplY3Q6IFtQQVRDSF0g
+bnRmczM6IHZhbGlkYXRlICRCSVRNQVAgc2l6ZSB3aGVuIGluZGV4IGJsb2NrcyBhcmUgcHJlc2Vu
+dAoKUmVqZWN0IGRpcmVjdG9yaWVzIHdpdGggYWxsb2NhdGVkIGluZGV4IGJsb2NrcyBidXQgemVy
+by1sZW5ndGggJEJJVE1BUCwKYXMgdGhpcyBpbmRpY2F0ZXMgYW4gaW5jb25zaXN0ZW50IG9uLWRp
+c2sgc3RydWN0dXJlLgoKU2lnbmVkLW9mZi1ieTogTW9vbiBIZWUgTGVlIDxtb29uaGVlLmxlZS5j
+YUBnbWFpbC5jb20+Ci0tLQogZnMvbnRmczMvaW5kZXguYyB8IDEwICsrKysrKysrKysKIDEgZmls
+ZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZnMvbnRmczMvaW5kZXgu
+YyBiL2ZzL250ZnMzL2luZGV4LmMKaW5kZXggMWJmMmE2NTkzZGVjLi42ZDFiZjg5MDkyOWQgMTAw
+NjQ0Ci0tLSBhL2ZzL250ZnMzL2luZGV4LmMKKysrIGIvZnMvbnRmczMvaW5kZXguYwpAQCAtMTUw
+OCw2ICsxNTA4LDE2IEBAIHN0YXRpYyBpbnQgaW5keF9hZGRfYWxsb2NhdGUoc3RydWN0IG50ZnNf
+aW5kZXggKmluZHgsIHN0cnVjdCBudGZzX2lub2RlICpuaSwKIAkJCWJtcF9zaXplID0gYm1wX3Np
+emVfdiA9IGxlMzJfdG9fY3B1KGJtcC0+cmVzLmRhdGFfc2l6ZSk7CiAJCX0KIAorCQkvKgorCQkg
+KiBJbmRleCBibG9ja3MgZXhpc3QsIGJ1dCAkQklUTUFQIGhhcyB6ZXJvIHZhbGlkIGJpdHMuCisJ
+CSAqIFRoaXMgaW1wbGllcyBhbiBvbi1kaXNrIGNvcnJ1cHRpb24gYW5kIG11c3QgYmUgcmVqZWN0
+ZWQuCisJCSAqLworCQlpZiAoaW4tPm5hbWUgPT0gSTMwX05BTUUgJiYKKwkJICAgIHVubGlrZWx5
+KGJtcF9zaXplX3YgPT0gMCAmJiBpbmR4LT5hbGxvY19ydW4uY291bnQpKSB7CisJCQllcnIgPSAt
+RUlOVkFMOworCQkJZ290byBvdXQxOworCQl9CisKIAkJYml0ID0gYm1wX3NpemUgPDwgMzsKIAl9
+CiAKLS0gCjIuNDMuMAoK
+--0000000000006965b2063971e29b--
 
