@@ -1,123 +1,121 @@
-Return-Path: <linux-kernel+bounces-720798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74428AFC07D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:08:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB97AFC078
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4902B426C15
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:07:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50DA03B35B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B48B2165F3;
-	Tue,  8 Jul 2025 02:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6190217F34;
+	Tue,  8 Jul 2025 02:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="QO0w/G4t"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8DB521322F;
-	Tue,  8 Jul 2025 02:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="efnZSxRj"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E4420B7ED
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 02:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751940447; cv=none; b=EA58+KYXLf7PUglZ5gAR9HmxnedY2cTEDrNx7hAQoSbEskxWffLymUIIhWJq0ZTJ9cMjZksHDY66N3GiF0ZW8UYHlBEmuRQ9iX6KVI0iI5pL/GplLg6vDiZAMi/LVuryDdZK9NUNfxstcQx9gHSesBNas2feNdoXrinlQhqDl7I=
+	t=1751940414; cv=none; b=edwNr8F3p62d9FaURwh2fp563Gk4GoKrrx7tnE66HhesQ46tz12+MZame8B53MIc6bkYMVjX1EMqRco15qDeyjzE69/HNRNL0AEL9lC8B5CnxODD0I8miiHFWVgZCfirt7wXcaA3DvrTOp49t1LmTfu8K9frSVo5RDY3Uy1Jgas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751940447; c=relaxed/simple;
-	bh=HU5+bFi8QobTfHquwIIBkN9QpxnutF1KUIwAIOIWESs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Alp1FTfVJ2Aa92rLIqBgRZbGI+LKreR/0VIe+5Vg+AbiPtaJl0U/JdjzLXUT5b4MZ7ZznN2pTzOu8RP6OMp3sf1ZTfSfhgY/9eFvlezoGK1TWUhuNlsRJKUdHE2AfzhfTzVV9NwlwBh/IGWemA8vMbI6q4cbNtvQjviJbD74k00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=QO0w/G4t; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=5z
-	orhIvaOkBat1cSqTlRVG3btInGdG0ASdxa2yf4GyY=; b=QO0w/G4tDGHs5KEQa1
-	8yH+F4MiKDXgJFe4XGTfe+gUtk/KS1iTVLbj21st/UJWYAAS2MUi2i9ZcW3XwUUp
-	dKUkLPB25ot40yE5OJMVcYs4xWVys6BwkCmIGS1qEsDwih8Namn9XpLBrlt+dIOp
-	41xtqJjCBn+xscpYzTsap99ec=
-Received: from kylin-ERAZER-H610M.. (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wCnutkyfWxoh2_qDA--.118S2;
-	Tue, 08 Jul 2025 10:06:43 +0800 (CST)
-From: Yun Lu <luyun_611@163.com>
-To: willemdebruijn.kernel@gmail.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] af_packet: fix soft lockup issue caused by tpacket_snd()
-Date: Tue,  8 Jul 2025 10:06:42 +0800
-Message-ID: <20250708020642.27838-1-luyun_611@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1751940414; c=relaxed/simple;
+	bh=nghdqr1TNgA7GTnWXSxnqQpSMH1Jj0RJB/prk1nIUIw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VdmRiuhGclSsapnwxixtCDtRvNWc9aal0P6oij5wC1XjsfxusikseZw+BlkKrhr1gs3FGVkXYlaRJ1Brj601GQvPA4b38qYhDMPP/qTLZVYUzE6yS72rqRdnUvwYqUoSa1yJDd5yV0vMt3iObjx0iV2AAH9VU+ZoHuuw1ouD/Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=efnZSxRj; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1751940409;
+	bh=nghdqr1TNgA7GTnWXSxnqQpSMH1Jj0RJB/prk1nIUIw=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=efnZSxRjJWL650CnneLc0hEdvRZaLwoT/UZWjOeiMpODmJ9Qh7k66Ejf1RFGcD+Si
+	 RNbW+BHbe8Wbnxg9j5DjAZiT7uANwG9Kl+ZiHYTslCR8NaxSaCDFvl/BPD6lx70ygU
+	 gc6kXs/SoeLzq23e6EOWOCW+SEZlnFRaPsCHJsFy9X65evzc+eKBNfCeXPueyyNrWB
+	 g678EnZT064/eewjQKeW6naXKWK1grI0oNvOM+1stcQoXJDMJaevtV/6nzBkPw9bBP
+	 ZstormeTgESK2Wz847+nLuUXSEAsBD+pYRWcEcJtLBAIpwPLIkb2a8vuNX3xaa3u23
+	 7C+Vhb6Sb3ppA==
+Received: from [192.168.68.112] (unknown [180.150.112.153])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 26C476AE34;
+	Tue,  8 Jul 2025 10:06:49 +0800 (AWST)
+Message-ID: <7e4738d944c611cfb0e4eba4ce2926ed55a0096a.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v2 06/10] soc: aspeed: lpc-snoop: Rearrange channel paths
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: linux-aspeed@lists.ozlabs.org, Joel Stanley <joel@jms.id.au>, Henry
+ Martin <bsdhenrymartin@gmail.com>, Patrick Rudolph
+ <patrick.rudolph@9elements.com>,  Andrew Geissler <geissonator@yahoo.com>,
+ Ninad Palsule <ninad@linux.ibm.com>, Patrick Venture <venture@google.com>, 
+ Robert Lippert <roblip@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Date: Tue, 08 Jul 2025 11:36:48 +0930
+In-Reply-To: <20250704173443.3436f535@endymion>
+References: 
+	<20250616-aspeed-lpc-snoop-fixes-v2-0-3cdd59c934d3@codeconstruct.com.au>
+	 <20250616-aspeed-lpc-snoop-fixes-v2-6-3cdd59c934d3@codeconstruct.com.au>
+	 <20250704173443.3436f535@endymion>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCnutkyfWxoh2_qDA--.118S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZF1xXFy7Zr4rKw17Aw1rtFb_yoW5XFWrpa
-	y5K342y3WDJr1Iqw1rJan5Xr12vws5JFsrGrWkX34Sywnxtas3trWIk3yjyFyUZFWvya43
-	ZF4qvr4UZ34qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jrYFAUUUUU=
-X-CM-SenderInfo: pox130jbwriqqrwthudrp/1tbiWwuEzmhse4ZRvwAAsN
 
-From: Yun Lu <luyun@kylinos.cn>
+Hi Jean,
 
-When MSG_DONTWAIT is not set, the tpacket_snd operation will wait for
-pending_refcnt to decrement to zero before returning. The pending_refcnt
-is decremented by 1 when the skb->destructor function is called,
-indicating that the skb has been successfully sent and needs to be
-destroyed.
+On Fri, 2025-07-04 at 17:34 +0200, Jean Delvare wrote:
+> On Mon, 16 Jun 2025 22:43:43 +0930, Andrew Jeffery wrote:
+> > Order assignments such that tests for conditions not involving resource
+> > acquisition are ordered before those testing acquired resources, and
+> > order managed resource acquisition before unmanaged where possible. Thi=
+s
+> > way we minimise the amount of manual cleanup required.
+> >=20
+> > In the process, improve readability of the code by introducing a channe=
+l
+> > pointer that takes the place of the repeated object lookups.
+> >=20
+> > Acked-by: Jean Delvare <jdelvare@suse.de>
+> > Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
+> > ---
+> > =C2=A0drivers/soc/aspeed/aspeed-lpc-snoop.c | 51 ++++++++++++++++++++--=
+-------------
+> > =C2=A01 file changed, 29 insertions(+), 22 deletions(-)
+> > (...)
+> > @@ -238,6 +240,7 @@ static int aspeed_lpc_enable_snoop(struct aspeed_lp=
+c_snoop *lpc_snoop,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0goto err_misc_deregister;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > =C2=A0
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Enable LPC snoop channel =
+at requested port */
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0regmap_update_bits(lpc_=
+snoop->regmap, HICR5, hicr5_en, hicr5_en);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0regmap_update_bits(lpc_=
+snoop->regmap, SNPWADR, snpwadr_mask,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 lpc_port << snpwadr_shift);
+>=20
+> This duplicates a comment which is already present in the driver a few
+> lines before.
+>=20
+> This duplicated comment gets cleaned up later in patch 10/10 (soc:
+> aspeed: lpc-snoop: Lift channel config to const structs).
+>=20
 
-If an error occurs during this process, the tpacket_snd() function will
-exit and return error, but pending_refcnt may not yet have decremented to
-zero. Assuming the next send operation is executed immediately, but there
-are no available frames to be sent in tx_ring (i.e., packet_current_frame
-returns NULL), and skb is also NULL, the function will not execute
-wait_for_completion_interruptible_timeout() to yield the CPU. Instead, it
-will enter a do-while loop, waiting for pending_refcnt to be zero. Even
-if the previous skb has completed transmission, the skb->destructor
-function can only be invoked in the ksoftirqd thread (assuming NAPI
-threading is enabled). When both the ksoftirqd thread and the tpacket_snd
-operation happen to run on the same CPU, and the CPU trapped in the
-do-while loop without yielding, the ksoftirqd thread will not get
-scheduled to run. As a result, pending_refcnt will never be reduced to
-zero, and the do-while loop cannot exit, eventually leading to a CPU soft
-lockup issue.
+Thanks, I've dropped the duplicate in the process of applying the
+patches.
 
-In fact, as long as pending_refcnt is not zero, even if skb is NULL,
-wait_for_completion_interruptible_timeout() should be executed to yield
-the CPU, allowing the ksoftirqd thread to be scheduled. Therefore, the
-execution condition of this function should be modified to check if
-pending_refcnt is not zero.
-
-Fixes: 89ed5b519004 ("af_packet: Block execution of tasks waiting for transmit to complete in AF_PACKET")
-Suggested-by: LongJun Tang <tanglongjun@kylinos.cn>
-Signed-off-by: Yun Lu <luyun@kylinos.cn>
-
----
-Changes in v2:
-- Add a Fixes tag.
-- Link to v1: https://lore.kernel.org/all/20250707081629.10344-1-luyun_611@163.com/
----
- net/packet/af_packet.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index 3d43f3eae759..7df96311adb8 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2845,7 +2845,7 @@ static int tpacket_snd(struct packet_sock *po, struct msghdr *msg)
- 		ph = packet_current_frame(po, &po->tx_ring,
- 					  TP_STATUS_SEND_REQUEST);
- 		if (unlikely(ph == NULL)) {
--			if (need_wait && skb) {
-+			if (need_wait && packet_read_pending(&po->tx_ring)) {
- 				timeo = sock_sndtimeo(&po->sk, msg->msg_flags & MSG_DONTWAIT);
- 				timeo = wait_for_completion_interruptible_timeout(&po->skb_completion, timeo);
- 				if (timeo <= 0) {
--- 
-2.43.0
+Andrew
 
 
