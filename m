@@ -1,191 +1,128 @@
-Return-Path: <linux-kernel+bounces-720799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02AABAFC07B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:07:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20F0AAFC07F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:09:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8646F1884BFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:08:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A8F74A377B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D18120F062;
-	Tue,  8 Jul 2025 02:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57573218ACA;
+	Tue,  8 Jul 2025 02:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="ha7WJgDe"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfXSKREn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D5E20A5E5
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 02:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22CB158538;
+	Tue,  8 Jul 2025 02:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751940458; cv=none; b=GQcMB4vTzrF1uPe0GgOHt9CrLu41f1y+SEpTpGPz70GkTLIpJV0K7+YQZSviVz5+1hRFwXH6jD3Rcj0TN+LgQMXSjJ4yLzvlBXQDitUId+t+qSAoKa59ZAnRtVhT4ecPfx5dry0JMdkHBJUOnsS/BXXy6K7x3lewhsqDHdTW9TU=
+	t=1751940584; cv=none; b=Rq+bskrqKiIju7i4Ju3KDZCKHpsqtyX5ouYDeGj8bPXPUceQLGMeEVtUl1LOapeRX2FJmyx9eTNrqbOqEot/B/BiDg2g3dZrclIumRz66xFLriCXoFMNn0ygB98odp6hwIdMw46e4GLTBg7H/DkJahEbNffumWE8Mc06m5+DBOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751940458; c=relaxed/simple;
-	bh=kN2rGg2gNBfzoLzarmFrc1jj2Kw72Baij/wc1vu6ems=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nvfy550S8OL7iJd6f6BnWtd9WpRjLBaBXtdfe/ndpWLukTcMrktLIHi0/QOheNrlM62ERa4uownc+um+QCpro44eVB5Z61APbcSB1ITg9EbuTxPjoL0cmiNHFnt9wO+lTMEUkpR2U0yMmP2HCh6grwovRA+cR7FANy1GpmqAtWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=ha7WJgDe; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1751940454;
-	bh=kN2rGg2gNBfzoLzarmFrc1jj2Kw72Baij/wc1vu6ems=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=ha7WJgDe74gsOm+qeUSIHRg1ZoYq42zJfJfEFAdPLWCIehOh1LgUHY3Lu7ki+g3VL
-	 ooAPifuT5592xzW4KaZw5xgMa4XxL+qNaTjlis5u+x1SQvCv4DDgpqdWMbB8KtLLGK
-	 jnio7lHVl0gMqGHN9PhT+nK3TN9DTvVaTuzhQLh/TZCHrD66aSYjhqQ0vG5fLY0Q8E
-	 YvldycIztxQPZQU5Ai8h/1FqPz4xXhaL8KMHFLLk7NMQdUPh82hUvV1Ggv3/9CauXB
-	 05e+Rd10x9SxSsqfmnvkBTmJ111HvMq9x3VTctmTsiKdLUqq6+fjTFHyVQMqwl79va
-	 luKLA74fgVsnQ==
-Received: from [192.168.68.112] (unknown [180.150.112.153])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 148376ADE6;
-	Tue,  8 Jul 2025 10:07:34 +0800 (AWST)
-Message-ID: <24c957d3e63bf6dcd58b0807df79350d4b111926.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v2 10/10] soc: aspeed: lpc-snoop: Lift channel config to
- const structs
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Jean Delvare <jdelvare@suse.de>
-Cc: linux-aspeed@lists.ozlabs.org, Joel Stanley <joel@jms.id.au>, Henry
- Martin <bsdhenrymartin@gmail.com>, Patrick Rudolph
- <patrick.rudolph@9elements.com>,  Andrew Geissler <geissonator@yahoo.com>,
- Ninad Palsule <ninad@linux.ibm.com>, Patrick Venture <venture@google.com>, 
- Robert Lippert <roblip@gmail.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Date: Tue, 08 Jul 2025 11:37:33 +0930
-In-Reply-To: <20250704182348.53808e0f@endymion>
-References: 
-	<20250616-aspeed-lpc-snoop-fixes-v2-0-3cdd59c934d3@codeconstruct.com.au>
-	 <20250616-aspeed-lpc-snoop-fixes-v2-10-3cdd59c934d3@codeconstruct.com.au>
-	 <20250704182348.53808e0f@endymion>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1751940584; c=relaxed/simple;
+	bh=Y2HRJXm8RUdKfk7+RIco0EmNptQ798W6rD21ZSJGA28=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=tXCXKklJzecgndaJIYKwXO1bnmQaZqXvM4RaMG8QcP1gR/MbKWder5SsuBe8Du9SawoJs+TT9rLS8FQgCgmZv8Q3pIf355VwcmY12w+o1623BfRWxlmYAZmsqO6RXLKAL+kt2mG5XDwy++df8KX0BMNISTd3xtPvMRR+TxWq6Gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SfXSKREn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D9C3C4CEE3;
+	Tue,  8 Jul 2025 02:09:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751940583;
+	bh=Y2HRJXm8RUdKfk7+RIco0EmNptQ798W6rD21ZSJGA28=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=SfXSKREnt7r6CswOP+sXwROAUdQDX0t3Sf1PI+OpRgAuRXodIf/Kehq/uFCuL0mfu
+	 0NodUMAKATTEJzHxjCXLM2qoOSl+vPZ4ZA6maqpmfN+EkM7uWHhjVuzIyujvv/VMlB
+	 gjU4g+sY2EZQrrKAEm474M2TYstIrwyqWzvA2ZpFqWrsDHkKstMM2CtV7HQ/9O4jab
+	 SxF/RMAhlRYeOzvZUeefyw+si5H1ymGSz8VFFKtUB2Qmgs0G53lYApWox1xXiIubfO
+	 AvMxWseXgRuyYuxVhrzhI3J+YpGxohpzYU5fTsOmvId3sUAJjax7b20/7Mhw1VdU8k
+	 AfmtD8ueJq3vg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DFF38111DD;
+	Tue,  8 Jul 2025 02:10:07 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v2] net: bcmgenet: Initialize u64 stats seq counter
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175194060626.3543842.7090318547175398332.git-patchwork-notify@kernel.org>
+Date: Tue, 08 Jul 2025 02:10:06 +0000
+References: <20250702092417.46486-1-ryotkkr98@gmail.com>
+In-Reply-To: <20250702092417.46486-1-ryotkkr98@gmail.com>
+To: Ryo Takakura <ryotkkr98@gmail.com>
+Cc: horms@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, florian.fainelli@broadcom.com, kuba@kernel.org,
+ opendmb@gmail.com, pabeni@redhat.com, zakkemble@gmail.com,
+ bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
 
-Hi Jean,
+Hello:
 
-On Fri, 2025-07-04 at 18:23 +0200, Jean Delvare wrote:
->=20
-> > @@ -189,28 +215,27 @@ static int aspeed_lpc_snoop_config_irq(struct asp=
-eed_lpc_snoop *lpc_snoop,
-> > =C2=A0}
-> > =C2=A0
-> > =C2=A0__attribute__((nonnull))
-> > -static int aspeed_lpc_enable_snoop(struct aspeed_lpc_snoop *lpc_snoop,
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device *dev,
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum aspeed_lpc_snoo=
-p_index index, u16 lpc_port)
-> > +static int aspeed_lpc_enable_snoop(struct device *dev,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct aspeed_=
-lpc_snoop *lpc_snoop,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct aspeed_=
-lpc_snoop_channel *channel,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct a=
-speed_lpc_snoop_channel_cfg *cfg,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u16 lpc_port)
-> > =C2=A0{
->=20
-> I'm confused by this new calling convention. With lpc_snoop and index,
-> you could already retrieve the aspeed_lpc_snoop_channel struct and the
-> aspeed_lpc_snoop_channel_cfg struct. I can't see the benefit of the
-> change.=C2=A0
->=20
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-My motivation for this choice was to isolate the association between
-indexes into the arrays to the call-site of aspeed_lpc_enable_snoop(),
-rather than have that information spread through the implementation.
+On Wed,  2 Jul 2025 18:24:17 +0900 you wrote:
+> Initialize u64 stats as it uses seq counter on 32bit machines
+> as suggested by lockdep below.
+> 
+> [    1.830953][    T1] INFO: trying to register non-static key.
+> [    1.830993][    T1] The code is fine but needs lockdep annotation, or maybe
+> [    1.831027][    T1] you didn't initialize this object before use?
+> [    1.831057][    T1] turning off the locking correctness validator.
+> [    1.831090][    T1] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W           6.16.0-rc2-v7l+ #1 PREEMPT
+> [    1.831097][    T1] Tainted: [W]=WARN
+> [    1.831099][    T1] Hardware name: BCM2711
+> [    1.831101][    T1] Call trace:
+> [    1.831104][    T1]  unwind_backtrace from show_stack+0x18/0x1c
+> [    1.831120][    T1]  show_stack from dump_stack_lvl+0x8c/0xcc
+> [    1.831129][    T1]  dump_stack_lvl from register_lock_class+0x9e8/0x9fc
+> [    1.831141][    T1]  register_lock_class from __lock_acquire+0x420/0x22c0
+> [    1.831154][    T1]  __lock_acquire from lock_acquire+0x130/0x3f8
+> [    1.831166][    T1]  lock_acquire from bcmgenet_get_stats64+0x4a4/0x4c8
+> [    1.831176][    T1]  bcmgenet_get_stats64 from dev_get_stats+0x4c/0x408
+> [    1.831184][    T1]  dev_get_stats from rtnl_fill_stats+0x38/0x120
+> [    1.831193][    T1]  rtnl_fill_stats from rtnl_fill_ifinfo+0x7f8/0x1890
+> [    1.831203][    T1]  rtnl_fill_ifinfo from rtmsg_ifinfo_build_skb+0xd0/0x138
+> [    1.831214][    T1]  rtmsg_ifinfo_build_skb from rtmsg_ifinfo+0x48/0x8c
+> [    1.831225][    T1]  rtmsg_ifinfo from register_netdevice+0x8c0/0x95c
+> [    1.831237][    T1]  register_netdevice from register_netdev+0x28/0x40
+> [    1.831247][    T1]  register_netdev from bcmgenet_probe+0x690/0x6bc
+> [    1.831255][    T1]  bcmgenet_probe from platform_probe+0x64/0xbc
+> [    1.831263][    T1]  platform_probe from really_probe+0xd0/0x2d4
+> [    1.831269][    T1]  really_probe from __driver_probe_device+0x90/0x1a4
+> [    1.831273][    T1]  __driver_probe_device from driver_probe_device+0x38/0x11c
+> [    1.831278][    T1]  driver_probe_device from __driver_attach+0x9c/0x18c
+> [    1.831282][    T1]  __driver_attach from bus_for_each_dev+0x84/0xd4
+> [    1.831291][    T1]  bus_for_each_dev from bus_add_driver+0xd4/0x1f4
+> [    1.831303][    T1]  bus_add_driver from driver_register+0x88/0x120
+> [    1.831312][    T1]  driver_register from do_one_initcall+0x78/0x360
+> [    1.831320][    T1]  do_one_initcall from kernel_init_freeable+0x2bc/0x314
+> [    1.831331][    T1]  kernel_init_freeable from kernel_init+0x1c/0x144
+> [    1.831339][    T1]  kernel_init from ret_from_fork+0x14/0x20
+> [    1.831344][    T1] Exception stack(0xf082dfb0 to 0xf082dff8)
+> [    1.831349][    T1] dfa0:                                     00000000 00000000 00000000 00000000
+> [    1.831353][    T1] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> [    1.831356][    T1] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+> 
+> [...]
 
-I considered the approaches you outline next before posting v2, so
-while they have their merits as well, I'm going to chalk this one up to
-personal preference on my part.
+Here is the summary with links:
+  - [net,v2] net: bcmgenet: Initialize u64 stats seq counter
+    https://git.kernel.org/netdev/net/c/ffc2c8c4a714
 
-> It even forces you to add an index field to struct
-> aspeed_lpc_snoop_channel_cfg, which would otherwise not be needed.
->=20
-> If you prefer to pass cfg instead of index as a parameter, that does
-> not imply passing channel too. You can get the index from the cfg (if
-> you decide to keep it in that struct), and then the channel from index.
->=20
-> Or you could even pass only the channel (to be consistent with
-> aspeed_lpc_disable_snoop), if you set channel->cfg before calling this
-> function. Again this implies keeping index in struct
-> aspeed_lpc_snoop_channel_cfg.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-*snip*
 
->=20
-> > -
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Enable LPC snoop channel =
-at requested port */
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0regmap_update_bits(lpc_snoop=
-->regmap, HICR5, hicr5_en, hicr5_en);
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0regmap_update_bits(lpc_snoop=
-->regmap, SNPWADR, snpwadr_mask,
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 lpc_port << snpwadr_shift);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0regmap_set_bits(lpc_snoop->r=
-egmap, HICR5, cfg->hicr5_en);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0regmap_update_bits(lpc_snoop=
-->regmap, SNPWADR, cfg->snpwadr_mask,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0lpc_port << cfg->snpwadr_shift);
->=20
-> It is a good practice to align the second line on the opening
-> parenthesis of the first line (as was done originally).
-
-Thanks, I've fixed this up.
-
-*snip*
-
-> > =C2=A0
-> > =C2=A0static int aspeed_lpc_snoop_probe(struct platform_device *pdev)
-> > @@ -339,6 +326,8 @@ static int aspeed_lpc_snoop_probe(struct platform_d=
-evice *pdev)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rc)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0return rc;
-> > =C2=A0
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0static_assert(ARRAY_SIZE(cha=
-nnel_cfgs) =3D=3D ARRAY_SIZE(lpc_snoop->chan),
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0"Broken implementation assumption regarding cfg count"=
-);
->=20
-> Both also need to be equal to ASPEED_LPC_SNOOP_INDEX_MAX + 1, right?
-> Otherwise the loop below would break. But it turns out that both arrays
-> are now declared that way, so it just has to be true. This makes me
-> believe that this static assert is no longer needed.
-
-My intent was to convey that we require the arrays to be the same
-length, as opposed to being declared such that they happen to have the
-same length. It's a property of the design rather than the
-implementation. All static_assert()s should be obviously true; IMO
-their purpose is to communicate requirements and constrain change.
-
-With the view to getting these patches applied I intend to keep it.
-
-Thanks,
-
-Andrew
 
