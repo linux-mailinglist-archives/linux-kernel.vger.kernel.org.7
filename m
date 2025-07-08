@@ -1,145 +1,249 @@
-Return-Path: <linux-kernel+bounces-721147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33758AFC54C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:20:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 064EAAFC522
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86DE7177DC1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:20:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04EA116FA87
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0DD29E0F4;
-	Tue,  8 Jul 2025 08:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eOjT9l8u"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA142BCF47;
+	Tue,  8 Jul 2025 08:12:30 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35E41B0F1E
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 08:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B2829B8E2
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 08:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751962842; cv=none; b=L3JEsMe/mtzgAyZyACja/SWtdRW9gDrpI9F7w+h0pQblSbJs1STfAJelrh5bQlxJ0sG7T1//2u136qoBJqvWenkq1dlqCfXgOlM9V42zRx81LZ7/SkSzURGLcaV7+Zi7SszLo9pQQ6ppqgJCqVkXhr0Z91s5ivnG+Y+mtRo4Cp8=
+	t=1751962350; cv=none; b=rHGgIWlXN8Hlu6MXcbPkHqFLD5n3VxlDXvx0qigljNGUVsHQWXV4wZjmaWeKqFYubA47pbFQPLHZpzXgvb1KFPt4EkuoDLAMfTJ0urzPLcvTUhRTCIO0DrTyN3X1q2YQFfrxN2dY/xYf6c8uZipr63dyJ0MAFio/EVp8ySlUozM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751962842; c=relaxed/simple;
-	bh=nlwrLtl03wZynLrI5W8nM8lCn/KPdVjQrbS6ywj+uns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hJiCgtqEz69FX95swg1Em2MYw4xdgSkYp/nrQx9WP8It7dVbeEg4v2i3z82BTl6b78fEXs3OnjFqXMph7tX5FNacCewzIrWfGT4uCix3pS+CZzPKmmkiKaUk9HEqP1h9/HZ/ju8uk7difUnccseflY4eqZbg5sVcmmTjp/EVROs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eOjT9l8u; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751962841; x=1783498841;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nlwrLtl03wZynLrI5W8nM8lCn/KPdVjQrbS6ywj+uns=;
-  b=eOjT9l8uHGGBlzAl126R3npX4xMzZ3DBUNt7zEhl/pq0+SaSz1JKVHS/
-   lFiz6qETEOMNM//muzuTYDfpiUQiBeavQ0CJU/JJnw6NHr+HMDAvuf76F
-   Y3XVJ/1fV3WJ3IG99tGa5MHWH9HA51tVP57D0egwYHzWggOT8zjo0uSJX
-   aFkfhPKe2f1RnqpbgtbUpnNrOoQ1Am9uXnSwkzOSr4m5BnSxvxDJQrx51
-   aEw5DauZgwsH5oeLLRjmqi0Uj4qiCW0tzmM01uM4jpnjbtyFa7bjnHWNO
-   eE0uEo20W1XV3uPad0mk/BJIJZ0jcQlAZcgfnwMxHRhnYO07kb7bjyjIZ
-   Q==;
-X-CSE-ConnectionGUID: riCa1alvQAWDbFHgrDHaDw==
-X-CSE-MsgGUID: Vm7hA3wyQCiDtCMhh3i9rA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="56804499"
-X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
-   d="scan'208";a="56804499"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 01:20:40 -0700
-X-CSE-ConnectionGUID: rfOLo3+WQk6TEMPo1o8iAw==
-X-CSE-MsgGUID: 4ZhITdttTuSc2poDAMha4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
-   d="scan'208";a="186392208"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa001.fm.intel.com with ESMTP; 08 Jul 2025 01:20:36 -0700
-Date: Tue, 8 Jul 2025 16:12:23 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, jgg@ziepe.ca, kevin.tian@intel.com, will@kernel.org,
-	aneesh.kumar@kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, joro@8bytes.org, robin.murphy@arm.com,
-	shuah@kernel.org, aik@amd.com, dan.j.williams@intel.com,
-	baolu.lu@linux.intel.com, yilun.xu@intel.com
-Subject: Re: [PATCH v3 2/5] iommufd: Destroy vdevice on idevice destroy
-Message-ID: <aGzS57bGWtg8BpEU@yilunxu-OptiPlex-7050>
-References: <20250627033809.1730752-1-yilun.xu@linux.intel.com>
- <20250627033809.1730752-3-yilun.xu@linux.intel.com>
- <aGLmq8D88mN5lkmN@Asurada-Nvidia>
+	s=arc-20240116; t=1751962350; c=relaxed/simple;
+	bh=uXiA7socSE4CW9JrnAUV9yMkWu5Aq8uYT+iOpt1YZNY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Yn/140xEAmpEHjiTjum2ERkOhkd0xkD/gUcLKdtGGBhvgF0TNYbKMTM9RdQwoJOlLOfmo9EA6Lk7t9PxJJAA11IovqECiAPO17Mn7CWpU+/fcA1M78AoTVz061cmDl4VtB4I1Ukd6iyn8c/8IQZUx5YYsJbz4UvV7Uo6N+L+f9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3ddbfe1fc8fso110477965ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 01:12:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751962347; x=1752567147;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5yNg+Qnsn00jiC0zBfuV81VCJk/pcXdLU3om3egg/k8=;
+        b=sp237IXVfwOvRB0U2+DWpSbt0tQnRYS7X3Alm7REtPt7/Zh2AuhNlzsGR5rIk7z/1B
+         TS4oA636mny7aJzjZoIehyB5RZp9joxnRk+PP/0Q30JJ5MnhJlludjWwPEwHs6xCOQ0b
+         ycWqJ8W8ZDqaOUPT/0k5VIUpd8XmPyydUAj1dL+v3jm9HUg0TOpP9NO1YyCmx4ia5Hk7
+         Q+iesTRvq9lUMHO20KBxyeo1h3GzNnZkpS5LhO+soIeELaob/V2cbWe9x4xRUu4b6hz5
+         Ddu2zYA0xp9V7pzxGrbGZc7r20EOxfEIbH5oWN2hKm0S8N/n2ecY7ieAUT1M3tIczVv6
+         2u6g==
+X-Forwarded-Encrypted: i=1; AJvYcCV1OZR6Vf/DRtKSnudgbavbXiWLJc6d1+aky0CTAzG87ViY0Zr/Z34FUP7RKXyX4yJS5x4aKWrdfV/pgYY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk0IGajiKY5e3Je/PJPV7IfAcr4tmxa0HOdDj2K9fnADRKXw8D
+	9YPSwyRLdZRjt3bHCxEyT87XaeSoeG0O6KY7epbFS/8aVhxg/7RSEd1+DGIFA7AwBmgdWFwJFlF
+	Hr8bQ1b4cGo8km7+yKiiq+vrwYNe8lxemt+ALm/SYI+cC6Tag7dafWe67ThY=
+X-Google-Smtp-Source: AGHT+IGK4UeWYvxGWMgYwWA9ELfCGtqStvan7sq+2r5x9kZNSmHWn+R1UWjwphnjWMSmAcQTGWYI8UB9H594RT5K+G5PV6EUnTdT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aGLmq8D88mN5lkmN@Asurada-Nvidia>
+X-Received: by 2002:a05:6e02:1a6f:b0:3dc:79e5:e6a8 with SMTP id
+ e9e14a558f8ab-3e154e4e5ebmr19703635ab.15.1751962346500; Tue, 08 Jul 2025
+ 01:12:26 -0700 (PDT)
+Date: Tue, 08 Jul 2025 01:12:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <686cd2ea.a00a0220.338033.0007.GAE@google.com>
+Subject: [syzbot] [io-uring?] KASAN: slab-use-after-free Read in __io_req_task_work_add
+From: syzbot <syzbot+54cbbfb4db9145d26fc2@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 30, 2025 at 12:34:03PM -0700, Nicolin Chen wrote:
-> On Fri, Jun 27, 2025 at 11:38:06AM +0800, Xu Yilun wrote:
-> > +static void iommufd_device_remove_vdev(struct iommufd_device *idev)
-> > +{
-> > +	struct iommufd_vdevice *vdev;
-> > +
-> > +	mutex_lock(&idev->igroup->lock);
-> > +	/* vdev has been completely destroyed by userspace */
-> > +	if (!idev->vdev)
-> > +		goto out_unlock;
-> > +
-> > +	vdev = iommufd_get_vdevice(idev->ictx, idev->vdev->obj.id);
-> > +	if (IS_ERR(vdev)) {
-> > +		/*
-> > +		 * vdev is removed from xarray by userspace, but is not
-> > +		 * destroyed/freed. Since iommufd_vdevice_abort() is reentrant,
-> > +		 * safe to destroy vdev here.
-> > +		 */
-> > +		iommufd_vdevice_abort(&idev->vdev->obj);
-> > +		goto out_unlock;
-> 
-> This is the case #3, i.e. a racing vdev destory, in the commit log?
-> 
-> I think it is worth clarifying that there is a concurrent destroy:
-> 		/*
-> 		 * An ongoing vdev destroy ioctl has removed the vdev from the
-> 		 * object xarray but has not finished iommufd_vdevice_destroy()
-> 		 * yet, as it is holding the same mutex.
+Hello,
 
-Applied this part.
+syzbot found the following issue on:
 
->		 * Destroy the vdev here,
-> 		 * i.e. the iommufd_vdevice_destroy() will be a NOP once it is
-> 		 * unlocked.
-> 		 */
-> 
-> > @@ -147,10 +183,12 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
-> >  	if (rc)
-> >  		goto out_abort;
-> >  	iommufd_object_finalize(ucmd->ictx, &vdev->obj);
-> > -	goto out_put_idev;
-> > +	goto out_unlock_igroup;
-> >  
-> >  out_abort:
-> >  	iommufd_object_abort_and_destroy(ucmd->ictx, &vdev->obj);
-> > +out_unlock_igroup:
-> > +	mutex_unlock(&idev->igroup->lock);
-> 
-> Looks like we will have to partially revert the _ucmd allocator,
-> in this function:
-> https://lore.kernel.org/all/107b24a3b791091bb09c92ffb0081c56c413b26d.1749882255.git.nicolinc@nvidia.com/
-> 
-> Please try fixing the conflicts on top of Jason's for-next tree.
+HEAD commit:    17bbde2e1716 Merge tag 'net-6.16-rc5' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=167ef770580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a6dba31fc9bb876c
+dashboard link: https://syzkaller.appspot.com/bug?extid=54cbbfb4db9145d26fc2
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
-Yes, will rebase for next version.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Thanks,
-Yilun
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1dca76eb941c/disk-17bbde2e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/eb2bd74cc76e/vmlinux-17bbde2e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/43f10448e78b/bzImage-17bbde2e.xz
 
-> 
-> Thanks
-> Nicolin
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+54cbbfb4db9145d26fc2@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in io_req_local_work_add io_uring/io_uring.c:1184 [inline]
+BUG: KASAN: slab-use-after-free in __io_req_task_work_add+0x589/0x950 io_uring/io_uring.c:1252
+Read of size 4 at addr ffff88804f04f044 by task iou-wrk-19354/19356
+
+CPU: 1 UID: 0 PID: 19356 Comm: iou-wrk-19354 Not tainted 6.16.0-rc4-syzkaller-00108-g17bbde2e1716 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0xd2/0x2b0 mm/kasan/report.c:521
+ kasan_report+0x118/0x150 mm/kasan/report.c:634
+ io_req_local_work_add io_uring/io_uring.c:1184 [inline]
+ __io_req_task_work_add+0x589/0x950 io_uring/io_uring.c:1252
+ io_msg_remote_post io_uring/msg_ring.c:103 [inline]
+ io_msg_data_remote io_uring/msg_ring.c:133 [inline]
+ __io_msg_ring_data+0x820/0xaa0 io_uring/msg_ring.c:151
+ io_msg_ring_data io_uring/msg_ring.c:173 [inline]
+ io_msg_ring+0x134/0xa00 io_uring/msg_ring.c:314
+ __io_issue_sqe+0x17e/0x4b0 io_uring/io_uring.c:1739
+ io_issue_sqe+0x165/0xfd0 io_uring/io_uring.c:1762
+ io_wq_submit_work+0x6e9/0xb90 io_uring/io_uring.c:1874
+ io_worker_handle_work+0x7cd/0x1180 io_uring/io-wq.c:642
+ io_wq_worker+0x42f/0xeb0 io_uring/io-wq.c:696
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+Allocated by task 19354:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:319 [inline]
+ __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:345
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4148 [inline]
+ slab_alloc_node mm/slub.c:4197 [inline]
+ kmem_cache_alloc_noprof+0x1c1/0x3c0 mm/slub.c:4204
+ io_msg_get_kiocb io_uring/msg_ring.c:117 [inline]
+ io_msg_data_remote io_uring/msg_ring.c:126 [inline]
+ __io_msg_ring_data+0x47b/0xaa0 io_uring/msg_ring.c:151
+ io_msg_ring_data io_uring/msg_ring.c:173 [inline]
+ io_msg_ring+0x134/0xa00 io_uring/msg_ring.c:314
+ __io_issue_sqe+0x17e/0x4b0 io_uring/io_uring.c:1739
+ io_issue_sqe+0x165/0xfd0 io_uring/io_uring.c:1762
+ io_queue_sqe io_uring/io_uring.c:1969 [inline]
+ io_submit_sqe io_uring/io_uring.c:2225 [inline]
+ io_submit_sqes+0xa38/0x1c50 io_uring/io_uring.c:2338
+ __do_sys_io_uring_enter io_uring/io_uring.c:3405 [inline]
+ __se_sys_io_uring_enter+0x2df/0x2b20 io_uring/io_uring.c:3339
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 19354:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_mempool_poison_object+0xad/0x130 mm/kasan/common.c:522
+ kasan_mempool_poison_object include/linux/kasan.h:360 [inline]
+ io_alloc_cache_put io_uring/alloc_cache.h:23 [inline]
+ io_msg_tw_complete+0x12c/0x510 io_uring/msg_ring.c:80
+ __io_run_local_work_loop io_uring/io_uring.c:1295 [inline]
+ __io_run_local_work+0x350/0x810 io_uring/io_uring.c:1328
+ io_run_local_work_locked io_uring/io_uring.c:1350 [inline]
+ __do_sys_io_uring_enter io_uring/io_uring.c:3418 [inline]
+ __se_sys_io_uring_enter+0x1725/0x2b20 io_uring/io_uring.c:3339
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88804f04f000
+ which belongs to the cache io_kiocb of size 248
+The buggy address is located 68 bytes inside of
+ freed 248-byte region [ffff88804f04f000, ffff88804f04f0f8)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x4f04f
+memcg:ffff88805b8eca01
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000000 ffff88801ff1e3c0 ffffea0001f19540 0000000000000008
+raw: 0000000000000000 00000000000c000c 00000000f5000000 ffff88805b8eca01
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 19106, tgid 19105 (syz.3.4309), ts 738394506846, free_ts 738346896625
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1704
+ prep_new_page mm/page_alloc.c:1712 [inline]
+ get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3669
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:4959
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2419
+ alloc_slab_page mm/slub.c:2451 [inline]
+ allocate_slab+0x8a/0x3b0 mm/slub.c:2619
+ new_slab mm/slub.c:2673 [inline]
+ ___slab_alloc+0xbfc/0x1480 mm/slub.c:3859
+ __kmem_cache_alloc_bulk mm/slub.c:5294 [inline]
+ kmem_cache_alloc_bulk_noprof+0x20e/0x790 mm/slub.c:5366
+ __io_alloc_req_refill+0x9d/0x280 io_uring/io_uring.c:972
+ io_alloc_req io_uring/io_uring.h:447 [inline]
+ io_submit_sqes+0xc31/0x1c50 io_uring/io_uring.c:2327
+ __do_sys_io_uring_enter io_uring/io_uring.c:3405 [inline]
+ __se_sys_io_uring_enter+0x2df/0x2b20 io_uring/io_uring.c:3339
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 6405 tgid 6405 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1248 [inline]
+ __free_frozen_pages+0xc71/0xe70 mm/page_alloc.c:2706
+ pagetable_free include/linux/mm.h:2879 [inline]
+ pagetable_dtor_free include/linux/mm.h:2977 [inline]
+ __tlb_remove_table+0x2d2/0x3b0 include/asm-generic/tlb.h:220
+ __tlb_remove_table_free mm/mmu_gather.c:227 [inline]
+ tlb_remove_table_rcu+0x85/0x100 mm/mmu_gather.c:290
+ rcu_do_batch kernel/rcu/tree.c:2576 [inline]
+ rcu_core+0xca5/0x1710 kernel/rcu/tree.c:2832
+ handle_softirqs+0x286/0x870 kernel/softirq.c:579
+ do_softirq+0xec/0x180 kernel/softirq.c:480
+ __local_bh_enable_ip+0x17d/0x1c0 kernel/softirq.c:407
+ spin_unlock_bh include/linux/spinlock.h:396 [inline]
+ batadv_nc_purge_paths+0x318/0x3b0 net/batman-adv/network-coding.c:471
+ batadv_nc_worker+0x328/0x610 net/batman-adv/network-coding.c:720
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3321
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Memory state around the buggy address:
+ ffff88804f04ef00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff88804f04ef80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff88804f04f000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                           ^
+ ffff88804f04f080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc
+ ffff88804f04f100: fc fc fc fc fc fc fc fc 00 00 00 00 00 00 00 00
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
