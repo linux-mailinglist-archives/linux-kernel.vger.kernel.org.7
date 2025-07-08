@@ -1,85 +1,86 @@
-Return-Path: <linux-kernel+bounces-720683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00B90AFBF35
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:29:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E17AFBF3A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E41C24A2347
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:29:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BB151AA4F16
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E8A6A33B;
-	Tue,  8 Jul 2025 00:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nfd/Z+0r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC2311712;
-	Tue,  8 Jul 2025 00:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABEA14A4E0;
+	Tue,  8 Jul 2025 00:32:12 +0000 (UTC)
+Received: from mx.socionext.com (mx.socionext.com [202.248.49.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B1239FF3;
+	Tue,  8 Jul 2025 00:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.248.49.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751934551; cv=none; b=YGQySIDH2g9ZU0DNtMQelUfvpUTbxzvI9Q31K3hPQVVwF9TZt8Bm6zvhWKT8vJFOBoG67o2l1/JvdqVjhkyhytOEbE+PmwFyvMc2CXOgp5iATrN7dKUHlX/7L7u0aQNPBHMZPPQPO2tB+8RzU8Uel4L197nlqiHxdzkX0X8S6dE=
+	t=1751934731; cv=none; b=HkcVVlwq7GlgzdeBKMVW+HX0/iazDBRD4lPOWm5CP8ddcPOjdPqiGnt3/wDw51Q593Wu1eSYfZFqTH8GiND7AucqkoN8G8G7G+6Qjj0Acu5tX3bsikoS8lRlB2ydP9LNFG31W4VZ6rtTD3toT5+wJxJkiUKPlBTmE8NeKHN+fKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751934551; c=relaxed/simple;
-	bh=BzxUxFNNccp1yP6kh/RH3mA091YWynlqE3j8zqZne54=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LAW5xTxpj5tRDmAaz7P6+N4DNmIHAa0wu1zb9rNyKSA1wIr2V2pv6kvPnirS61Dv+36MwiaV0VwV06etpKQD2w6PS0Uea/TKl56rPqLMhJiMEARYtvRa/mqCfXtIHQrfUz7fhq7Ye2bmcM40FEO70LqlJYFibvfNCU4WVDNyD0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nfd/Z+0r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E7E4C4CEE3;
-	Tue,  8 Jul 2025 00:29:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751934550;
-	bh=BzxUxFNNccp1yP6kh/RH3mA091YWynlqE3j8zqZne54=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nfd/Z+0rtwc6Lq5fng+SR2wMiKFa4ttcQe0qK8ZUlXDzuUgqF2X0pkN8VokuuA1JL
-	 Wi/mRqcjue0TaqHqaVaq+AX4+7BeLYzHenGl64shIhjy/+ByhnAjwfPhR5allPClgm
-	 VS6V8LnoBXlt8BtztcrUzLyRfIIdudMABnZRSQYzKOeiQL0YSp93LneA95zXsIculs
-	 RG7kQnv2bPPiooJ+isgktVkaq9qwfFiEfZbBbmhpMLDD8ONx7C0lY+1r/5lHImhbD+
-	 JV1g+WxZQBXR0ESMFDS4l/KbZMjptmWVGYA2BIbsD9r+yB9zl3Y/6taYe8L8c3MFdG
-	 DRai9YrzDpdEQ==
-Date: Mon, 7 Jul 2025 17:29:09 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>, Laurent Vivier
- <lvivier@redhat.com>
-Cc: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, Jason Wang
- <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] virtio: Fixes for TX ring sizing and resize
- error reporting
-Message-ID: <20250707172909.49d40a92@kernel.org>
-In-Reply-To: <c7eb3517-2fc3-4d91-8fa3-e5c870acece1@redhat.com>
-References: <20250521092236.661410-1-lvivier@redhat.com>
-	<7974cae6-d4d9-41cc-bc71-ffbc9ce6e593@redhat.com>
-	<20250703053042-mutt-send-email-mst@kernel.org>
-	<c7eb3517-2fc3-4d91-8fa3-e5c870acece1@redhat.com>
+	s=arc-20240116; t=1751934731; c=relaxed/simple;
+	bh=lpBAjx+9OIWwohLyRF71S4GHKzadfqw3ME6fZ9/uARg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AtJgp05yBNPIsVrYSVV00ZQ5UPRarqSN+ytdqEKkOzucQRVmdDZFq9Dvy/otmucARoSjyB7suL1Z1lSQP6A2Cqfe06OUcOrp09TxsDvYyJlCB9tktYUPzvu9ggRYQB4h3mf/mhezjJ5TelzuZFKOXITnGH+qL7EnDEPkdov/XfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com; spf=pass smtp.mailfrom=socionext.com; arc=none smtp.client-ip=202.248.49.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=socionext.com
+Received: from unknown (HELO kinkan3-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 08 Jul 2025 09:31:00 +0900
+Received: from mail.mfilter.local (mail-arc02.css.socionext.com [10.213.46.40])
+	by kinkan3-ex.css.socionext.com (Postfix) with ESMTP id 34C662069FF1;
+	Tue,  8 Jul 2025 09:31:00 +0900 (JST)
+Received: from iyokan3.css.socionext.com ([172.31.9.53]) by m-FILTER with ESMTP; Tue, 8 Jul 2025 09:31:00 +0900
+Received: from [10.212.247.77] (unknown [10.212.247.77])
+	by iyokan3.css.socionext.com (Postfix) with ESMTP id 3CC7B10D84B;
+	Tue,  8 Jul 2025 09:30:59 +0900 (JST)
+Message-ID: <c300d168-797e-4812-b957-1b761e40ea44@socionext.com>
+Date: Tue, 8 Jul 2025 09:30:57 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/12] gpio: uniphier: use new GPIO line value setter
+ callbacks
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+ Viresh Kumar <vireshk@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux@ew.tq-group.com, linux-arm-kernel@lists.infradead.org,
+ virtualization@lists.linux.dev
+References: <20250707-gpiochip-set-rv-gpio-round4-v1-0-35668aaaf6d2@linaro.org>
+ <20250707-gpiochip-set-rv-gpio-round4-v1-10-35668aaaf6d2@linaro.org>
+Content-Language: en-US
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+In-Reply-To: <20250707-gpiochip-set-rv-gpio-round4-v1-10-35668aaaf6d2@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Thu, 3 Jul 2025 11:34:55 +0200 Paolo Abeni wrote:
-> On 7/3/25 11:31 AM, Michael S. Tsirkin wrote:
-> > On Wed, May 28, 2025 at 08:24:32AM +0200, Paolo Abeni wrote:  
-> >> @Michael: it's not clear to me if you prefer take this series via your
-> >> tree or if it should go via net. Please LMK, thanks!
-> > 
-> > I take it back: given I am still not fully operational, I'd like it
-> > to be merged through net please. Does it have to be resubmitted for
-> > this?
-> > 
-> > Acked-by: Michael S. Tsirkin <mst@redhat.com>  
+Hi Bartosz,
+
+On 2025/07/07 16:50, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> I just resurrected the series in PW, so no need to repost it.
+> struct gpio_chip now has callbacks for setting line values that return
+> an integer, allowing to indicate failures. Convert the driver to using
+> them.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>   drivers/gpio/gpio-uniphier.c | 16 ++++++++++------
+>   1 file changed, 10 insertions(+), 6 deletions(-)
 
-This was merged by Paolo as b0727b0ccd907a in net/main.
+Looks good to me.
 
-No reply from pw-bot I presume because patchwork is aggressively
-marking this series as Archived before the bot can get to it.
+Acked-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+
+Thank you,
+
+---
+Best Regards
+Kunihiko Hayashi
 
