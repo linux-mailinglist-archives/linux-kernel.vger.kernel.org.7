@@ -1,172 +1,114 @@
-Return-Path: <linux-kernel+bounces-720825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4564CAFC0CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:21:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62F4BAFC0C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 04:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 900F31AA64F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:21:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA23A3BD1D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 02:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0110C221277;
-	Tue,  8 Jul 2025 02:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36CE5225A32;
+	Tue,  8 Jul 2025 02:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfVuVxjD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t0Z7yeAK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D30770825;
-	Tue,  8 Jul 2025 02:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEC220766C;
+	Tue,  8 Jul 2025 02:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751941246; cv=none; b=Pklll3q27NCw/GqzSIQfn0PVNXogeiC70XsvVVrD90jTke3kCHl3OZtCW8pm2fRl5ZZgBTmk+/svKosIvjFTLMqbNuUAFXITX+sM/o/mttbLPDsxJbLLnl+OWtotMJwFADM7TAQZuAwjOkEcjmQ7O7zQuXbq3bIxJ72PBpomk/4=
+	t=1751941230; cv=none; b=tpLf/kIu7M9UTFFvRY1WkETFl6AUczL9WWfkYmeZtyQPtoIqxN1e8lrYQ1VYX9FCL50Jn3+z2cMfmAVC88HFmmZgux1f+07unUc6q07j08n0JscxK0YvsCpUYCtkbtO45xdrGOhHC1wWopDCpoZh/iM0e+4bhHAwPVjCp7hHvOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751941246; c=relaxed/simple;
-	bh=FdNfW5qOTMVaMNJhf3d4aC3Y6ZkzpECAp4ZXPawuD1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tbpBQrpdgiPOKmNMd6sZXS3sBKYgG1NKgXI3CF3quvmKSJN6GmM6EiLISzvxwYkiqgOGfaJCYFMqnFmbnj/kaVCJrQ/QU+6oy7SkV792fXw/JuT0iiNngebYq3XFKukg4bT7WlKypEKJBTMQnWAMKvIgV0k89EAO/y3FunbBwFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SfVuVxjD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A883DC4CEE3;
-	Tue,  8 Jul 2025 02:20:44 +0000 (UTC)
+	s=arc-20240116; t=1751941230; c=relaxed/simple;
+	bh=M1q9eKLn1p0r6Ruy94dsM/SECj373UWggsq9/COMgUc=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=e37xy/jpXxIHMFYzUExaMaOZxJPcnRGVr7TBsCnkgHQ1DqfcQY8+vZTXXGMCFSehWVZsZOpZWjio1X2UA5b/Mi3cHI8Cbx4T7w6dlKcjMFAaHlmy6UggTD5orvDz95dgmKSJcNIqtvFrBKUV0A3SbO96BkM662RVOIy9LT0KG6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t0Z7yeAK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2E32C4CEE3;
+	Tue,  8 Jul 2025 02:20:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751941246;
-	bh=FdNfW5qOTMVaMNJhf3d4aC3Y6ZkzpECAp4ZXPawuD1w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SfVuVxjDeHku7nPebEN4INSCvz6v89PVacBhg+NKah3iNBJs03PDRf+a+L4WHDLFf
-	 WN3uU2ocnUZAC5bIH/o0S8/qEpkJ/0I+oKfWaSmTOwD8jiiXyfoIkJXkQyLlarsQSQ
-	 zx5vCDH039tT51IGeUK1eV8qgTLEEaLvHGDEcsRTv15018+op0ewQehONP+7NB7AIk
-	 PMcGcXIbzs7t9S+Q/P+reRNeDudJ9WAON7SZsyFFHPtF7yUTGkVKtj4u9lOkFmRg9D
-	 JWu2J4YLfmN1MlhW31UUPbUqdaFfpPY7OGzYgaxgmRjVsjvtkEKxWvcRgXnTEOcE0M
-	 DhpVpRTUWCpMw==
-Date: Tue, 8 Jul 2025 04:20:43 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Sven Schnelle <svens@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, 
-	"Huang, Ying" <ying.huang@intel.com>, Lee Schermerhorn <lee.schermerhorn@hp.com>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, Chao Yu <chao.yu@oppo.com>
-Subject: Re: [RFC v3 3/7] mm: Use seprintf() instead of less ergonomic APIs
-Message-ID: <gnds5llds2bfqynijuaxafwsbb4ukafxfgggzuvhrqsi2rc6nb@dyf3qgdsmnti>
-References: <cover.1751862634.git.alx@kernel.org>
- <033bf00f1fcf808245ae150346019aa7b997ea11.1751862634.git.alx@kernel.org>
- <CAHk-=wh9Pqz07ne9iSt1_v0c14rkOGvF9AbEkaq1KnFhQD1SSA@mail.gmail.com>
- <ugf4pu7qrojegz7arkcpa4cyde6hoyh73h66oc4f6ncc7jg23t@bklkbbotyzvp>
- <CAHk-=whQ_0qFvg3cugt84+iKXi_eebNGY4so+PSnyyVNGVde1A@mail.gmail.com>
- <gjxc2cxjlsnccopdghektco2oulmhyhonigy7lwsaqqcbn62wj@wa3tidbvpyvk>
- <r43lulact3247k23clhbqnp3ms75vykf7yxa526agenq2b4osk@q6qp7hk7efo2>
- <CAHk-=wj6gEmYih1VfYZu9FiYtOJYSFQ0f45CQZtDLrJpzF47Bg@mail.gmail.com>
+	s=k20201202; t=1751941230;
+	bh=M1q9eKLn1p0r6Ruy94dsM/SECj373UWggsq9/COMgUc=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=t0Z7yeAKMH16T5HZNhuwBMKIgtgLhy0E6Utj6h8G00QNlY5BE/4RlpotEJMYv2kJQ
+	 UQYSuRGGFwB85JSRi6Pt+FRle0Ok9b83vkyE5STSdUffU+y0dbAcgxQ8HG0rMEISxf
+	 jq5piSaDVdops6i7NXbHjAe1/zkePp52eb5Tgej+sc+WiqbP9dCv1e4JYZxJusIrFI
+	 M4cKPVMkmPEamQytK3AzIV4sUTk5hwN9xqIX8jNqKuH0W4AbTBUurEch3W/q9J+s8w
+	 cFLmPiKndfibR93+MzjVwvG8hj4CzuAua9Zb7boFqpt7AoCC77aJXC+BCiw+TxlHVu
+	 bjsxbw126OjfA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E2338111DD;
+	Tue,  8 Jul 2025 02:20:54 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wj6gEmYih1VfYZu9FiYtOJYSFQ0f45CQZtDLrJpzF47Bg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3 00/10] net/mlx5: HWS,
+ Optimize matchers ICM usage
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175194125285.3546943.3231273757948141290.git-patchwork-notify@kernel.org>
+Date: Tue, 08 Jul 2025 02:20:52 +0000
+References: <20250703185431.445571-1-mbloch@nvidia.com>
+In-Reply-To: <20250703185431.445571-1-mbloch@nvidia.com>
+To: Mark Bloch <mbloch@nvidia.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+ edumazet@google.com, andrew+netdev@lunn.ch, horms@kernel.org,
+ saeedm@nvidia.com, gal@nvidia.com, leonro@nvidia.com, tariqt@nvidia.com,
+ leon@kernel.org, netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hello:
 
-On Mon, Jul 07, 2025 at 03:17:50PM -0700, Linus Torvalds wrote:
-> On Mon, 7 Jul 2025 at 14:27, Alejandro Colomar <alx@kernel.org> wrote:
-> >
-> > If the name is your main concern, we can discuss a more explicit name in
-> > the kernel.
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Thu, 3 Jul 2025 21:54:21 +0300 you wrote:
+> This series optimizes ICM usage for unidirectional rules and
+> empty matchers and with the last patch we make hardware steering
+> the default FDB steering provider for NICs that don't support software
+> steering.
 > 
-> So as they say: "There are only two hard problems in computer science:
-> cache invalidation, naming and off-by-one errors".
-
-Indeed.  And we have two of these classes here.  :)
-
-> And the *worst* model for naming is the "add random characters" (ok, I
-> still remember when people believed the insane "Hungarian Notation"
-> BS, *that* particular braindamage seems to thankfully have faded away
-> and was probably even worse, because it was both pointless, unreadable
-> _and_ caused long identifiers).
-
-To be fair, one letter is enough if you're used to the name.  Everything
-of the form s*printf() people know that the differentiating part is that
-single letter between 's' and 'p', and a quick look at the function
-prototype usually explains the rest.
-
-More than that, and it's unnecessarily noisy to my taste.  But not
-everyone does string work all the time, so I get why you'd be less prone
-to liking the name.
-
-I won't press for the name.  Unless you say anything, my next revision
-of the series will call it sprintf_end().
-
-> Now, we obviously tend to have the usual bike-shedding discussions
-> that come from naming, but my *personal* preference is to avoid the
-> myriad of random "does almost the same thing with different
-> parameters" by using generics.
+> Hardware steering (HWS) uses a type of rule table container (RTC) that
+> is unidirectional, so matchers consist of two RTCs to accommodate
+> bidirectional rules.
 > 
-> This is actually something that the kernel has done for decades, with
-> various odd macro games - things like "get_user()" just automatically
-> doing the RightThing(tm) based on the size of the argument, rather
-> than having N different versions for different types.
+> [...]
 
-In this case, I wouldn't want to go that way and reuse the name
-snprintf(3), because the kernel implementation of snprintf(3) is
-non-conforming, and both the standard and the kernel snprintf() have
-semantics that are importantly different than this API in terms of
-handling errors.
+Here is the summary with links:
+  - [net-next,v3,01/10] net/mlx5: HWS, remove unused create_dest_array parameter
+    https://git.kernel.org/netdev/net-next/c/60afb51c8941
+  - [net-next,v3,02/10] net/mlx5: HWS, remove incorrect comment
+    https://git.kernel.org/netdev/net-next/c/26b06579d50d
+  - [net-next,v3,03/10] net/mlx5: HWS, Export rule skip logic
+    https://git.kernel.org/netdev/net-next/c/d8e7ab591b50
+  - [net-next,v3,04/10] net/mlx5: HWS, Refactor rule skip logic
+    https://git.kernel.org/netdev/net-next/c/3dcac700d20b
+  - [net-next,v3,05/10] net/mlx5: HWS, Create STEs directly from matcher
+    https://git.kernel.org/netdev/net-next/c/59807d071724
+  - [net-next,v3,06/10] net/mlx5: HWS, Decouple matcher RX and TX sizes
+    https://git.kernel.org/netdev/net-next/c/c8332ce09691
+  - [net-next,v3,07/10] net/mlx5: HWS, Track matcher sizes individually
+    https://git.kernel.org/netdev/net-next/c/6b44fffdc7b7
+  - [net-next,v3,08/10] net/mlx5: HWS, Rearrange to prevent forward declaration
+    https://git.kernel.org/netdev/net-next/c/29063103f864
+  - [net-next,v3,09/10] net/mlx5: HWS, Shrink empty matchers
+    https://git.kernel.org/netdev/net-next/c/96e4c4a1a5bc
+  - [net-next,v3,10/10] net/mlx5: Add HWS as secondary steering mode
+    https://git.kernel.org/netdev/net-next/c/a9aec713d0d9
 
-I think reusing the name with slightly different semantics would be
-prone to bugs.
-
-Anyway, sprintf_end() should be clear enough that I don't expect much
-bikeshedding for the name.  Feel free to revisit this in the future and
-merge names if you don't like it; I won't complain.  :)
-
-
-Have a lovely night!
-Alex
-
-P.S.:  I'm not able to sign this email.
-
-> So we actually have a fair number of "generics" in the kernel, and
-> while admittedly the header file contortions to implement them can
-> often be horrendous - the *use* cases tend to be fairly readable.
-> 
-> It's not just get_user() and friends, it's things like our
-> type-checking min/max macros etc. Lots of small helpers that
-> 
-> And while the traditional C model for this is indeed macro games with
-> sizeof() and other oddities, these days at least we have _Generic() to
-> help.
-> 
-> So my personal preference would actually be to not make up new names
-> at all, but just have the normal names DoTheRightThing(tm)
-> automatically.
-> 
-> But honestly, that works best when you have good data structure
-> abstraction - *not* when you pass just random "char *" pointers
-> around.  It tends to help those kinds of _Generic() users, but even
-> without the use of _Generic() and friends, it helps static type
-> checking and makes things much less ambiguous even in general.
-> 
-> IOW, there's never any question about "is this string the source or
-> the destination?" or "is this the start or the end of the buffer", if
-> you just have a struct with clear naming that contains the arguments.
-> 
-> And while C doesn't have named arguments, it *does* have named
-> structure initializers, and we use them pretty religiously in the
-> kernel. Exactly because it helps so much both for readability and for
-> stability (ie it catches things when you intentionally rename members
-> because the semantics changed).
-> 
->                 Linus
-
+You are awesome, thank you!
 -- 
-<https://www.alejandro-colomar.es/>
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
