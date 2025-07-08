@@ -1,64 +1,56 @@
-Return-Path: <linux-kernel+bounces-721855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB53AFCEC5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:15:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 644BBAFCEDD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 107E41BC143D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:14:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61C8E3AAB01
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94532E0929;
-	Tue,  8 Jul 2025 15:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDE42E11A9;
+	Tue,  8 Jul 2025 15:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h11prScB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fXOqPdFw"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B999B12CD8B;
-	Tue,  8 Jul 2025 15:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC352E0B6E
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751987666; cv=none; b=SzGi3zy74MjhXLmstyac6e0slO+XeGOiIhDeQgdv/pf/kfcW1gYnou9+nQu/yOoUP7PRD3X3Q0qc0DEYyttmJM+CN/coslCelKfW/UfCSfFK+eOw4Y0Qhq0QuGs7DpOQohbE8KvKCT4SIzM4JVWusgx4QKwV5HRAjxfyyPHjHpE=
+	t=1751987845; cv=none; b=JAhs4vIsh348fzELWQtHVlxeQSLGZHHoYRDUY1y3YwOF1XYajkyUPf0CcWJ9yQBKYjp73Qy9bMF/Zmj1M/A9jug5ANKbTdcZGUTBmm5wF7gSdxROg8UtBynyAjxAelnpXmr5dplVfxwOgF/KmeXvUu12eiKYBjgSWdV6FmW1a0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751987666; c=relaxed/simple;
-	bh=kmtJbQ3J+/vO9zhyc5L6tmUHuqSrvGwb+8KERtX3NFc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EGt1uzQjph+kPBjv3pkmvOquAXadmstxcGk/WffYeXNJoiSNOF8+RuZkWszEOB3tJuOA23HQiOJ4tNhbyvSPqEfQQ3m2WYUGnGvU4y3E1kI785xAQNjj8AZf900vrTxwRoRj4eQh9g6/2FOgURrqyBhrKXGDmSih1puWxyLlHaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h11prScB; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751987665; x=1783523665;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=kmtJbQ3J+/vO9zhyc5L6tmUHuqSrvGwb+8KERtX3NFc=;
-  b=h11prScBYZZx5nWRKndddiy6G+j7wuBcsBL+cGfe+d5HgBiVYjoCYC9L
-   /Cjw8AZ1tj6Ti8n259xvb+CgXHzqbep44/mIZiV3pt6raeB7CTizNnrUf
-   3+c9L89NzH3J4J1jzi4yd5xk9vGmFsr1NqRSta/9SXan0SzxAY3SnWW/0
-   V0F+JRb9wnHrdS421y2vLw+Zk/N0dgtmhAOZaDqx4196VB6/tDsX+b+ed
-   /ocdDWiyqJyuUZ7SSg07eR31vYN3Nv1hQFL4tHCC/8JKq34zTKTcxG9dg
-   4MdPzYUM4e5AmRB1PB9cmcdKpmAda8t3/EnwccLj3V53WzJ88Lzp+2GRa
-   g==;
-X-CSE-ConnectionGUID: Xf8fiTIUQ0OJQjv5Q4v9eg==
-X-CSE-MsgGUID: GdNsdZUgS5q02MkDW4aTSQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="71677830"
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="71677830"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 08:14:24 -0700
-X-CSE-ConnectionGUID: pfS6v/CKQMWbDcumOzKOaA==
-X-CSE-MsgGUID: XFOGUadWRdOWbyoBw+2xgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,297,1744095600"; 
-   d="scan'208";a="154932798"
-Received: from tslove-mobl4.amr.corp.intel.com (HELO [10.125.110.133]) ([10.125.110.133])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 08:14:24 -0700
-Message-ID: <97e322a3-0526-414d-a288-835d11ee2b1a@intel.com>
-Date: Tue, 8 Jul 2025 08:17:16 -0700
+	s=arc-20240116; t=1751987845; c=relaxed/simple;
+	bh=AHNCCG5Tf5jpa/S+PhVW9zo376122RPdsJOEN6MRlrs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=sRpU2UEUBPVJ6fXGc5zHY6AzwrQCwsLnnybUGX0NMhJdqDfSUzr8PeXyHSO/JUxRGEmerYXZf4nEQTXOEP5HnUBgf3ez8qtdO5zix6Xlls3InVB60cVhP4jBSBKZIQk2kjWr9h2Cz5z6XXaK7zKNe2pxMJvtvm4GF0E3RXBk+do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fXOqPdFw; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250708151721euoutp0232fc0fa626d8b0e357917322db4e7cb3~QT6jA_Uca0512205122euoutp02p
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:17:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250708151721euoutp0232fc0fa626d8b0e357917322db4e7cb3~QT6jA_Uca0512205122euoutp02p
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1751987841;
+	bh=yaTLIoaKytTb1Jem3YqYe98mw9JwFlUpJPDA2tKD898=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=fXOqPdFwqMbLXYSJm7Di2upblR2Tsgr1Trx7197+vRwt5Pdc5/zRWXqN0QRFhZrun
+	 VVH57VAHLUm2Ytt/wpez3Y3vhPkBUg8FXf747xPsIhpvJeTwq6445TrELjgQG/ogZk
+	 1OB8tRI2SDQnT/n7bc0/lyyjF8FkWzyWYo+KguIs=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250708151720eucas1p260f984fd95d3460d3e9f6c9b48e0e25c~QT6iepPcr1882718827eucas1p2A;
+	Tue,  8 Jul 2025 15:17:20 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250708151718eusmtip2dcd49f64a9e9889791acd662135310b6~QT6gkeBFF2780927809eusmtip22;
+	Tue,  8 Jul 2025 15:17:18 +0000 (GMT)
+Message-ID: <02bcd954-5323-4663-a766-f53c67c5a18f@samsung.com>
+Date: Tue, 8 Jul 2025 17:17:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,85 +58,231 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] MAINTAINERS: Update the file list in the TDX entry.
-To: Sean Christopherson <seanjc@google.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev
-References: <20250708101922.50560-1-kirill.shutemov@linux.intel.com>
- <20250708101922.50560-2-kirill.shutemov@linux.intel.com>
- <d38b37c7-70fe-4c94-9ef2-e5d765ca5c79@intel.com>
- <aG0qB2OEUmBTKzpY@google.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH 06/14] vdso/gettimeofday: Return bool from
+ clock_gettime() helpers
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Shuah Khan
+	<shuah@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic
+	Weisbecker <frederic@kernel.org>, John Stultz <jstultz@google.com>, Stephen
+	Boyd <sboyd@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will
+	Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org, Richard
+	Cochran <richardcochran@gmail.com>, Christopher Hall
+	<christopher.s.hall@intel.com>, Miroslav Lichvar <mlichvar@redhat.com>,
+	Werner Abt <werner.abt@meinberg-usa.com>, David Woodhouse
+	<dwmw2@infradead.org>, Kurt Kanzenbach <kurt@linutronix.de>, Nam Cao
+	<namcao@linutronix.de>, Antoine Tenart <atenart@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <aG0qB2OEUmBTKzpY@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250701-vdso-auxclock-v1-6-df7d9f87b9b8@linutronix.de>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250708151720eucas1p260f984fd95d3460d3e9f6c9b48e0e25c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250708151720eucas1p260f984fd95d3460d3e9f6c9b48e0e25c
+X-EPHeader: CA
+X-CMS-RootMailID: 20250708151720eucas1p260f984fd95d3460d3e9f6c9b48e0e25c
+References: <20250701-vdso-auxclock-v1-0-df7d9f87b9b8@linutronix.de>
+	<20250701-vdso-auxclock-v1-6-df7d9f87b9b8@linutronix.de>
+	<CGME20250708151720eucas1p260f984fd95d3460d3e9f6c9b48e0e25c@eucas1p2.samsung.com>
 
-On 7/8/25 07:24, Sean Christopherson wrote:
->> That file list is getting a bit long, but it _is_ the truth.
-> What about adding
-> 
-> K:	tdx
-> 
-> instead of listing each file individually?  That might also help clarify what's
-> up for cases where there is overlap, e.g. with KVM, to convey that this is a
-> "secondary" entry of sorts.
+On 01.07.2025 10:58, Thomas Weißschuh wrote:
+> The internal helpers are effectively using boolean results,
+> while pretending to use error numbers.
+>
+> Switch the return type to bool for more clarity.
+>
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> ---
+>   lib/vdso/gettimeofday.c | 58 +++++++++++++++++++++++++------------------------
+>   1 file changed, 30 insertions(+), 28 deletions(-)
 
-Good idea. There are a couple of "tdx" things in the tree that aren't
-TDX, but:
+This patch landed in today's linux-next as commit fcc8e46f768f 
+("vdso/gettimeofday: Return bool from clock_gettime() helpers"). In my 
+tests I found that it causes serious problem with hwclock operation on 
+some of my ARM 32bit test boards. I observe that calling "hwclock -w -f 
+/dev/rtc0" never ends on those boards. Disabling vdso support (by 
+removing ARM architected timer) fixes this issue.
 
-N:	tdx
-K:	\b(tdx)
 
-seems like it might be a _bit_ more precise. I don't see any filenames
-with "tdx" in them that are false positives.
+> diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
+> index 9b77f23566f6a35887d4c9aaefc61a971131b499..c5266532a097c06f33d12e345c695357d75abf42 100644
+> --- a/lib/vdso/gettimeofday.c
+> +++ b/lib/vdso/gettimeofday.c
+> @@ -82,8 +82,8 @@ const struct vdso_time_data *__arch_get_vdso_u_timens_data(const struct vdso_tim
+>   #endif /* CONFIG_GENERIC_VDSO_DATA_STORE */
+>   
+>   static __always_inline
+> -int do_hres_timens(const struct vdso_time_data *vdns, const struct vdso_clock *vcns,
+> -		   clockid_t clk, struct __kernel_timespec *ts)
+> +bool do_hres_timens(const struct vdso_time_data *vdns, const struct vdso_clock *vcns,
+> +		    clockid_t clk, struct __kernel_timespec *ts)
+>   {
+>   	const struct vdso_time_data *vd = __arch_get_vdso_u_timens_data(vdns);
+>   	const struct timens_offset *offs = &vcns->offset[clk];
+> @@ -103,11 +103,11 @@ int do_hres_timens(const struct vdso_time_data *vdns, const struct vdso_clock *v
+>   		seq = vdso_read_begin(vc);
+>   
+>   		if (unlikely(!vdso_clocksource_ok(vc)))
+> -			return -1;
+> +			return false;
+>   
+>   		cycles = __arch_get_hw_counter(vc->clock_mode, vd);
+>   		if (unlikely(!vdso_cycles_ok(cycles)))
+> -			return -1;
+> +			return false;
+>   		ns = vdso_calc_ns(vc, cycles, vdso_ts->nsec);
+>   		sec = vdso_ts->sec;
+>   	} while (unlikely(vdso_read_retry(vc, seq)));
+> @@ -123,7 +123,7 @@ int do_hres_timens(const struct vdso_time_data *vdns, const struct vdso_clock *v
+>   	ts->tv_sec = sec + __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
+>   	ts->tv_nsec = ns;
+>   
+> -	return 0;
+> +	return true;
+>   }
+>   #else
+>   static __always_inline
+> @@ -133,16 +133,16 @@ const struct vdso_time_data *__arch_get_vdso_u_timens_data(const struct vdso_tim
+>   }
+>   
+>   static __always_inline
+> -int do_hres_timens(const struct vdso_time_data *vdns, const struct vdso_clock *vcns,
+> -		   clockid_t clk, struct __kernel_timespec *ts)
+> +bool do_hres_timens(const struct vdso_time_data *vdns, const struct vdso_clock *vcns,
+> +		    clockid_t clk, struct __kernel_timespec *ts)
+>   {
+> -	return -EINVAL;
+> +	return false;
+>   }
+>   #endif
+>   
+>   static __always_inline
+> -int do_hres(const struct vdso_time_data *vd, const struct vdso_clock *vc,
+> -	    clockid_t clk, struct __kernel_timespec *ts)
+> +bool do_hres(const struct vdso_time_data *vd, const struct vdso_clock *vc,
+> +	     clockid_t clk, struct __kernel_timespec *ts)
+>   {
+>   	const struct vdso_timestamp *vdso_ts = &vc->basetime[clk];
+>   	u64 cycles, sec, ns;
+> @@ -150,7 +150,7 @@ int do_hres(const struct vdso_time_data *vd, const struct vdso_clock *vc,
+>   
+>   	/* Allows to compile the high resolution parts out */
+>   	if (!__arch_vdso_hres_capable())
+> -		return -1;
+> +		return false;
+>   
+>   	do {
+>   		/*
+> @@ -173,11 +173,11 @@ int do_hres(const struct vdso_time_data *vd, const struct vdso_clock *vc,
+>   		smp_rmb();
+>   
+>   		if (unlikely(!vdso_clocksource_ok(vc)))
+> -			return -1;
+> +			return false;
+>   
+>   		cycles = __arch_get_hw_counter(vc->clock_mode, vd);
+>   		if (unlikely(!vdso_cycles_ok(cycles)))
+> -			return -1;
+> +			return false;
+>   		ns = vdso_calc_ns(vc, cycles, vdso_ts->nsec);
+>   		sec = vdso_ts->sec;
+>   	} while (unlikely(vdso_read_retry(vc, seq)));
+> @@ -189,13 +189,13 @@ int do_hres(const struct vdso_time_data *vd, const struct vdso_clock *vc,
+>   	ts->tv_sec = sec + __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
+>   	ts->tv_nsec = ns;
+>   
+> -	return 0;
+> +	return true;
+>   }
+>   
+>   #ifdef CONFIG_TIME_NS
+>   static __always_inline
+> -int do_coarse_timens(const struct vdso_time_data *vdns, const struct vdso_clock *vcns,
+> -		     clockid_t clk, struct __kernel_timespec *ts)
+> +bool do_coarse_timens(const struct vdso_time_data *vdns, const struct vdso_clock *vcns,
+> +		      clockid_t clk, struct __kernel_timespec *ts)
+>   {
+>   	const struct vdso_time_data *vd = __arch_get_vdso_u_timens_data(vdns);
+>   	const struct timens_offset *offs = &vcns->offset[clk];
+> @@ -223,20 +223,20 @@ int do_coarse_timens(const struct vdso_time_data *vdns, const struct vdso_clock
+>   	 */
+>   	ts->tv_sec = sec + __iter_div_u64_rem(nsec, NSEC_PER_SEC, &nsec);
+>   	ts->tv_nsec = nsec;
+> -	return 0;
+> +	return true;
+>   }
+>   #else
+>   static __always_inline
+> -int do_coarse_timens(const struct vdso_time_data *vdns, const struct vdso_clock *vcns,
+> -		     clockid_t clk, struct __kernel_timespec *ts)
+> +bool do_coarse_timens(const struct vdso_time_data *vdns, const struct vdso_clock *vcns,
+> +		      clockid_t clk, struct __kernel_timespec *ts)
+>   {
+> -	return -1;
+> +	return false;
+>   }
+>   #endif
+>   
+>   static __always_inline
+> -int do_coarse(const struct vdso_time_data *vd, const struct vdso_clock *vc,
+> -	      clockid_t clk, struct __kernel_timespec *ts)
+> +bool do_coarse(const struct vdso_time_data *vd, const struct vdso_clock *vc,
+> +	       clockid_t clk, struct __kernel_timespec *ts)
+>   {
+>   	const struct vdso_timestamp *vdso_ts = &vc->basetime[clk];
+>   	u32 seq;
+> @@ -258,10 +258,10 @@ int do_coarse(const struct vdso_time_data *vd, const struct vdso_clock *vc,
+>   		ts->tv_nsec = vdso_ts->nsec;
+>   	} while (unlikely(vdso_read_retry(vc, seq)));
+>   
+> -	return 0;
+> +	return true;
+>   }
+>   
+> -static __always_inline int
+> +static __always_inline bool
+>   __cvdso_clock_gettime_common(const struct vdso_time_data *vd, clockid_t clock,
+>   			     struct __kernel_timespec *ts)
+>   {
+> @@ -270,7 +270,7 @@ __cvdso_clock_gettime_common(const struct vdso_time_data *vd, clockid_t clock,
+>   
+>   	/* Check for negative values or invalid clocks */
+>   	if (unlikely((u32) clock >= MAX_CLOCKS))
+> -		return -1;
+> +		return false;
+>   
+>   	/*
+>   	 * Convert the clockid to a bitmask and use it to check which
+> @@ -284,7 +284,7 @@ __cvdso_clock_gettime_common(const struct vdso_time_data *vd, clockid_t clock,
+>   	else if (msk & VDSO_RAW)
+>   		vc = &vc[CS_RAW];
+>   	else
+> -		return -1;
+> +		return false;
+>   
+>   	return do_hres(vd, vc, clock, ts);
+>   }
+> @@ -293,9 +293,11 @@ static __maybe_unused int
+>   __cvdso_clock_gettime_data(const struct vdso_time_data *vd, clockid_t clock,
+>   			   struct __kernel_timespec *ts)
+>   {
+> -	int ret = __cvdso_clock_gettime_common(vd, clock, ts);
+> +	bool ok;
+>   
+> -	if (unlikely(ret))
+> +	ok = __cvdso_clock_gettime_common(vd, clock, ts);
+> +
+> +	if (unlikely(!ok))
+>   		return clock_gettime_fallback(clock, ts);
+>   	return 0;
+>   }
+>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
