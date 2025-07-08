@@ -1,183 +1,138 @@
-Return-Path: <linux-kernel+bounces-721176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF47AFC5CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:35:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A46AAFC5F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C39527A457C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:33:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B92F43B058A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D150A2BDC19;
-	Tue,  8 Jul 2025 08:34:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF5E2BE04C;
+	Tue,  8 Jul 2025 08:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="JHlCq5M/"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mx7zYsnL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9EF298258
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 08:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2AC1220F3F
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 08:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751963691; cv=none; b=ZFWTSPB2vkdHTI2/eUU+w6Zr5vmjgzFT0O7EqEtcNBZx7Kl+zdNHKKui4PIynKiDpMcGt5HW+P2AuARkzRZrLY/bkBf5PkcJTqNM0rE9Ol69CXwRE2OaaQe7CWI6+p0pfMyfdkYbpdW7Mlq9i5SEtzz+HxwyYp2G7VtURU7yhKk=
+	t=1751964177; cv=none; b=N20QOqau+Pwjv8Why3I8WbRv1reFwsL31rKLh6FyuJuBHXH0pgt+RxxafdwK1Q2+GzpTlG2NfTgnN3f7KCa0JPNiOaEklhkM42D3PQg/6mc5ljkVLgc/DIMfuSeRUHy2naMKRiBgLzFitb8smihcW/jqn0TzPP3fMI/sUO7bx0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751963691; c=relaxed/simple;
-	bh=3Ds2Sx45pnkMg7iaFweDgWNlUOwHGzX5GUkhgeYgbzQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=D7A1GXtVLlo03cxWWkgQT9HjBYhgV3N/a8vKISuOVOgZ0GKRdqvJHn9Nv0mGLyxYWVB1HCqXTnNvwyxumAPsMq/pBbgTEMx+Vrk5/LysmOkhLLlnLDiUR2Fq2E2h0CyaZR9E8e6L0hCheWQgY8UWofX0LsLrbyKl2yToSrcVibA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=JHlCq5M/; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-74264d1832eso4864547b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 01:34:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1751963688; x=1752568488; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=km9alGI0XcL6Qvzjzja6icFIdbRKvCumIapJv3kvhgI=;
-        b=JHlCq5M/IYsv507yOK/iTHer+g0MTpws79Wg84pR4YXLTi3g0xFVEfKBISBY5rXMjD
-         LUTIddSIPHdwfK6WO+apj5EZSwotAg50PwzmzH2HSqkzWfrXpT516GTiut7iTpjZRtKL
-         l9v4fIxBWQr6Yy4w1SWos/MRMZI96/8cNQmVce61rG7MxAIyopRTY4IezJsITs2viXj9
-         KCoEKUBg0p7fBX2H9dL8Q3oyHS87R7nDSBxL5bGquZa2CXHBnXqDPFckMz2lkwcOJ4Ph
-         pUoNTPZpoIf12pOtzdV+9teoDqAdU50FMaOwfAkYDEkXl08T45qTToEEhdSVNwx7ZnnU
-         YrKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751963688; x=1752568488;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=km9alGI0XcL6Qvzjzja6icFIdbRKvCumIapJv3kvhgI=;
-        b=ba9aKa2j8A2eXyzKCZHthLIOnph43WopdEVWXjaT5jMsvXikvOQsbSTvWB+gUIS7No
-         x5Fa08+yfYvOMK/7+X/tsrUiG2IEvUkPtE1jcUtYAsf6/cb21wTjCB/g0RiSpplQcWvb
-         TCtvMZTIHskYvJUVI9dxvmr9zQy/D8SMlvrqUkagkrCCMGmI1Q/rBlLL9R3n2FheYHp+
-         h88nc9NONJhZp9DzHQEROm1JBlPpyL7G/BaxmlJ+LTm9HTpRz49SMEZSgXnGfrzOluSP
-         K2/pjIMP1tigjBlI5P7JaIrMSeX3FlRK7Yzske7ITuXDaa5TgOW+i3BcpBj1vJPxER/d
-         YFNw==
-X-Gm-Message-State: AOJu0YxHo5isUUB7mrHYXsmliABV+pPlbR2f5KgHjZRg+N0O0A0Lf09R
-	Xtwlm/CY+H/LkPNSdaYuo3ihs10BGqC1nzuVKhS3QwlL5wexvP23V9UQ/ACqf/rW7u8=
-X-Gm-Gg: ASbGncvo92zZ8Ir7754RUeLGPip++xDDYKDUx0y/8Y0AHYGvw7uAyfeQnHwR9VzwZp6
-	0vwUhgG+DKE2sZ9420gWt/694osc33UFUe5cZhYDejeNU3DlNis+d2HwaPNN+daZ5RkRfgg2GEI
-	TB9hPA2/64x7/IcATktMNF8pk2MqBAldDxlRMl0FPHBpwECuE4s6okkFcsK28tBZt61TBCvmsrg
-	mGyOJ9h2YRLRJ385/wic5JS1W5q1NghSp7vZwO1LxUDmyBuB6SZLQE3sjLb86mtPIr7NH7R9Dw4
-	ZtJNBKqwz/L+doBJsFSY7V61/9iIWdxKgMoOZKyCI2R9cPv73YX5qxuutxMFn4X6M0hfY4gOzAT
-	7+bTz4HMhtyncX1wWgBAB6+hhxj1rW+59H4sgh8BxNF7v
-X-Google-Smtp-Source: AGHT+IHRcwV/1/T5oymXkbwGRFIYuEsWNfVXVWrzLoP+RWTG54BAK6UpJOoefXueOfXgf20o6DvMKw==
-X-Received: by 2002:a05:6a21:7a44:b0:215:efe1:a680 with SMTP id adf61e73a8af0-2260a795654mr20246310637.16.1751963688189;
-        Tue, 08 Jul 2025 01:34:48 -0700 (PDT)
-Received: from alexghiti.eu.rivosinc.com (alexghiti.eu.rivosinc.com. [141.95.202.232])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce43d4f1asm10877511b3a.161.2025.07.08.01.34.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 01:34:47 -0700 (PDT)
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Tue, 08 Jul 2025 08:33:48 +0000
-Subject: [PATCH] riscv: ftrace: Properly acquire text_mutex to fix a race
- condition
+	s=arc-20240116; t=1751964177; c=relaxed/simple;
+	bh=3W2W/I5PQ0k88njtcDlNpRAxY+PQLpS+bhmOD8piEcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SLHmxW68En+Eqx32X8cH4qbLU312g1ytpGyZuAFxqdNZUEOJdq/Daclqy6oH1mbKbwawASWVufZI9XD0q7fExWSv8KtUz7Rg3w1254lSU7q6ZQ2abvGC0kgcMP/FADnGctIDv5vjV6/x1jD8wFgBBnTNJDFC3a3nlkeS3KPiw0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mx7zYsnL; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751964176; x=1783500176;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3W2W/I5PQ0k88njtcDlNpRAxY+PQLpS+bhmOD8piEcc=;
+  b=mx7zYsnLnA87j8LLqsayhx7qq+FXYTaqsol4dW9muA+8i46LV8WdU4U7
+   XlrQqt53BPQDdbwitqYzMC9nXy8qBL9+t9eaW0bIu2DKWahlqeOwtTWOM
+   esLZsqSuOwURZNEBIdKuxiNUEkUyhcgAUAF5QODUnps5V58RR+o+1tDWO
+   +XIUiiLDvddCHm+Ag0TbdeL7FiIPjXj+vD32HA207uC9LMXCL1P5z+y4Z
+   6D4OIsz5TRSyHMziduoTmtSFa/aAAzR/S1X/vMUoY2m72SIEKH3hSoc2F
+   KMRM7O7CeM1B7lbljT2lYsWdB9PVijmtii8/HP2jasi053XAhqnxLTA4/
+   g==;
+X-CSE-ConnectionGUID: +9GyfippS5aCnJbeCPvpEg==
+X-CSE-MsgGUID: 0tI0uOb6SFec/5GQayuG2A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="53911985"
+X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
+   d="scan'208";a="53911985"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 01:42:56 -0700
+X-CSE-ConnectionGUID: 856l2fiJR0yNJyojHfaWLA==
+X-CSE-MsgGUID: K3I5cnZkSmGB5o9/Etfl8Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,296,1744095600"; 
+   d="scan'208";a="159974860"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa004.jf.intel.com with ESMTP; 08 Jul 2025 01:42:52 -0700
+Date: Tue, 8 Jul 2025 16:34:37 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Baolu Lu <baolu.lu@linux.intel.com>
+Cc: jgg@nvidia.com, jgg@ziepe.ca, kevin.tian@intel.com, will@kernel.org,
+	aneesh.kumar@kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, joro@8bytes.org, robin.murphy@arm.com,
+	shuah@kernel.org, nicolinc@nvidia.com, aik@amd.com,
+	dan.j.williams@intel.com, yilun.xu@intel.com
+Subject: Re: [PATCH v3 2/5] iommufd: Destroy vdevice on idevice destroy
+Message-ID: <aGzYHR0+/mjufmUQ@yilunxu-OptiPlex-7050>
+References: <20250627033809.1730752-1-yilun.xu@linux.intel.com>
+ <20250627033809.1730752-3-yilun.xu@linux.intel.com>
+ <b5b84208-e43c-483e-838b-c42375d3bada@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250708-alex-fixes-v1-1-5b008d3f4d0c@rivosinc.com>
-X-B4-Tracking: v=1; b=H4sIAOzXbGgC/x2LQQqAIBAAvyJ7TlAj1L4SHazWWggLF0II/550H
- GbmBcZMyDCKFzI+xHSlBroTsB4h7ShpawxGmUFZ5WQ4schIBVlqtNov3nkfe2jDnfEXrZ/mWj+
- cWU9oXAAAAA==
-X-Change-ID: 20250708-alex-fixes-1e719b9899f3
-To: Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- linux-riscv@lists.infradead.org, Han Gao <rabenda.cn@gmail.com>, 
- Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <ziyao@disroot.org>, 
- Alexandre Ghiti <alexghiti@rivosinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2192;
- i=alexghiti@rivosinc.com; h=from:subject:message-id;
- bh=3Ds2Sx45pnkMg7iaFweDgWNlUOwHGzX5GUkhgeYgbzQ=;
- b=owGbwMvMwCGWYr9pz6TW912Mp9WSGDJybqi8ChN0klf9crq7b8aPt753f26W6d7Q/lf4XIly/
- tbNVWHHOkpZGMQ4GGTFFFkUzBO6WuzP1s/+c+k9zBxWJpAhDFycAjARhkcM/71fRb1avvPr6cDQ
- 57eWZxy+GdJybW8Tt0THf0umRv+l5qsYGe4fuN+4spx9reHpB0yRSob6tk+dHI13b2m5sXtL/ql
- 4LV4A
-X-Developer-Key: i=alexghiti@rivosinc.com; a=openpgp;
- fpr=DC049C97114ED82152FE79A783E4BA75438E93E3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b5b84208-e43c-483e-838b-c42375d3bada@linux.intel.com>
 
-As reported by lockdep, some patching was done without acquiring
-text_mutex, so there could be a race when mapping the page to patch
-since we use the same fixmap entry.
+> > -void iommufd_vdevice_destroy(struct iommufd_object *obj)
+> > +void iommufd_vdevice_abort(struct iommufd_object *obj)
+> >   {
+> >   	struct iommufd_vdevice *vdev =
+> >   		container_of(obj, struct iommufd_vdevice, obj);
+> >   	struct iommufd_viommu *viommu = vdev->viommu;
+> > +	struct iommufd_device *idev = vdev->idev;
+> > +
+> > +	lockdep_assert_held(&idev->igroup->lock);
+> > +
+> > +	/*
+> > +	 * iommufd_vdevice_abort() could be reentrant, by
+> > +	 * iommufd_device_unbind() or by iommufd_destroy(). Cleanup only once.
+> > +	 */
+> > +	if (!viommu)
+> > +		return;
+> >   	/* xa_cmpxchg is okay to fail if alloc failed xa_cmpxchg previously */
+> >   	xa_cmpxchg(&viommu->vdevs, vdev->id, vdev, NULL, GFP_KERNEL);
+> >   	refcount_dec(&viommu->obj.users);
+> >   	put_device(vdev->dev);
+> > +	vdev->viommu = NULL;
+> > +	idev->vdev = NULL;
+> 
+> I feel it makes more sense to reorder the operations like this:
+> 
+> 	vdev->viommu = NULL;
+> 	vdev->idev = NULL;
+> 	idev->vdev = NULL;
+> 	put_device(vdev->dev);
+> 
+> put_device(vdev->dev) could potentially trigger other code paths that
+> might attempt to reference vdev or its associated pointers. Therefore,
+> it's safer to null all the relevant reference pointers before calling
+> put_device().
 
-Reported-by: Han Gao <rabenda.cn@gmail.com>
-Reported-by: Vivian Wang <wangruikang@iscas.ac.cn>
-Reported-by: Yao Zi <ziyao@disroot.org>
-Closes: https://lore.kernel.org/linux-riscv/aGODMpq7TGINddzM@pie.lan/
-Tested-by: Yao Zi <ziyao@disroot.org>
-Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
----
- arch/riscv/kernel/ftrace.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+Yep. due to other changes, now I keep:
 
-diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
-index 4c6c24380cfd9d6c51f0e4340cd674160b83a610..22e7bdf8de2b6ca950cf2c8b734bc82ea46ba8bf 100644
---- a/arch/riscv/kernel/ftrace.c
-+++ b/arch/riscv/kernel/ftrace.c
-@@ -14,6 +14,16 @@
- #include <asm/text-patching.h>
- 
- #ifdef CONFIG_DYNAMIC_FTRACE
-+void ftrace_arch_code_modify_prepare(void)
-+{
-+	mutex_lock(&text_mutex);
-+}
-+
-+void ftrace_arch_code_modify_post_process(void)
-+{
-+	mutex_unlock(&text_mutex);
-+}
-+
- unsigned long ftrace_call_adjust(unsigned long addr)
- {
- 	if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE_WITH_CALL_OPS))
-@@ -29,10 +39,8 @@ unsigned long arch_ftrace_get_symaddr(unsigned long fentry_ip)
- 
- void arch_ftrace_update_code(int command)
- {
--	mutex_lock(&text_mutex);
- 	command |= FTRACE_MAY_SLEEP;
- 	ftrace_modify_all_code(command);
--	mutex_unlock(&text_mutex);
- 	flush_icache_all();
- }
- 
-@@ -149,6 +157,8 @@ int ftrace_init_nop(struct module *mod, struct dyn_ftrace *rec)
- 	unsigned int nops[2], offset;
- 	int ret;
- 
-+	guard(mutex)(&text_mutex);
-+
- 	ret = ftrace_rec_set_nop_ops(rec);
- 	if (ret)
- 		return ret;
-@@ -157,9 +167,7 @@ int ftrace_init_nop(struct module *mod, struct dyn_ftrace *rec)
- 	nops[0] = to_auipc_t0(offset);
- 	nops[1] = RISCV_INSN_NOP4;
- 
--	mutex_lock(&text_mutex);
- 	ret = patch_insn_write((void *)pc, nops, 2 * MCOUNT_INSN_SIZE);
--	mutex_unlock(&text_mutex);
- 
- 	return ret;
- }
+        xa_cmpxchg(&viommu->vdevs, vdev->id, vdev, NULL, GFP_KERNEL);
+        refcount_dec(&viommu->obj.users);
++       idev->vdev = NULL;
+        put_device(vdev->dev);
 
----
-base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-change-id: 20250708-alex-fixes-1e719b9899f3
+Anyway, vdev->dev would be completely dropped in next patch, so it
+doesn't matter much.
 
-Best regards,
--- 
-Alexandre Ghiti <alexghiti@rivosinc.com>
+Thanks,
+Yilun
 
+> 
+> Others look good to me,
+> 
+> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+> 
+> Thanks,
+> baolu
 
