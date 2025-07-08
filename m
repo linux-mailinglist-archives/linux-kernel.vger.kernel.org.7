@@ -1,92 +1,135 @@
-Return-Path: <linux-kernel+bounces-722081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E9D5AFD50B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:17:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDFA8AFD513
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:17:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F13D84A663D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:17:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20B4F1AA67D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B771BC58;
-	Tue,  8 Jul 2025 17:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vDfJHdtR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00EAF9E8;
-	Tue,  8 Jul 2025 17:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069F42E62B3;
+	Tue,  8 Jul 2025 17:17:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901E12DECBD;
+	Tue,  8 Jul 2025 17:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751995007; cv=none; b=hUj7wvPf880UeyOKycoLv0unJVRxehm9cV5zgol/L7eKBCNO1xTGPJSesyG3huRC00lbKxmWkx/mYjhbPPtqvrx4y/KIqDiNO3aM3y4jtyKkvuoiIEuLtDyYn9XnWe7hfq+naZGMiK8ExJJXa0Dswadea24PPzpuPfShxa3nbTU=
+	t=1751995038; cv=none; b=sjge0O+jCDGGf+rKBVTDuMX+VdVekDB2EK3ZUMIfOF13rDfyeu9etOwWMXnhikxLdhsOM758yac8ITvw4D6TJTwk7TYjJflTZ5Vn0DYi7A1Pd530CqBa+jvsL77S0nIBOhYID0tFu539/rcEgmxp1cpHf3oxvYZry7XOQvY9w6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751995007; c=relaxed/simple;
-	bh=8JCM007Su614dbs0l57eUxf4MWAtqpo3iFUjAkEXeAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nKj/N5x8whWtK2g8rlneAF7RiNUtI0S1gAmZwapab9trUK/O1Gzr/KgL5H66Rnm1j2z0CmRtI23JENWXc4XPkryfCmMHBnJHeO3rRPd74iSQXWlHuCgcGxhj3ntmw4Xo64c3K1k4TSAWO4T5WTvaOuLDOOfPxSGSwvW2Xun3S2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vDfJHdtR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D8B7C4CEED;
-	Tue,  8 Jul 2025 17:16:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751995006;
-	bh=8JCM007Su614dbs0l57eUxf4MWAtqpo3iFUjAkEXeAQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vDfJHdtRTlcgaUIFBLrdCi1UWjZWnGedZeU5C7IhRs0DTnUrd43Jb4WcnU3ZVH2XR
-	 maXi/ZbFcpUUa1U36gKTtdWhSMQ9mXgQhWrnrrsyjNr/SGyW9Ol6iI9qYAAHlwtX5p
-	 2M5/YD6MYvhd/TtyVkUAtsKtbTo/tx+m26kPiAnhd4senIUj4vT/Zpxg2NA2vKv1Xm
-	 +3pTopEo669j9v4NV+3G1AtFLut/nYOYojVW3wZZwPpz0M4F1qc6uPMImCdjCqDhwJ
-	 Uv/8nT4jdDruw9aEk7MkFE49Y2FsR97NSDw3ufc3RIYol+W11/7UfAvmCjFxU6mBG5
-	 6agGSBMQYKTCg==
-Date: Tue, 8 Jul 2025 12:16:45 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Maxime Ripard <mripard@kernel.org>, Sean Paul <sean@poorly.run>,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>, devicetree@vger.kernel.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	linux-arm-msm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Krishna Manikandan <quic_mkrishn@quicinc.com>,
-	freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	Simona Vetter <simona@ffwll.ch>, David Airlie <airlied@gmail.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>
-Subject: Re: [PATCH 1/4] dt-bindings: display/msm: dsi-controller-main: add
- SC8180X
-Message-ID: <175199500495.649724.17681226218267809608.robh@kernel.org>
-References: <20250704-mdss-schema-v1-0-e978e4e73e14@oss.qualcomm.com>
- <20250704-mdss-schema-v1-1-e978e4e73e14@oss.qualcomm.com>
+	s=arc-20240116; t=1751995038; c=relaxed/simple;
+	bh=Bmuh/sDssPO4umf8W/0oiXhmbwT9roC/mlhT4Wqy7YU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gTmyyjVSzQdNdWMQfOyMkirLGTKgrpmIgLU2ntlrL3CZTemGHFwmg7Pbh9u4bHxUDzoU460SeXWYQNNRXUEQ3lZ5IeMzvFJxOXOekSEbEn2L9Ihlmb0Uwa0X2nJoHWsEKa/Y/8mphJuAdfvK57+Buj/xgsbJcxe0sFlEYFVUxfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DCC69153B;
+	Tue,  8 Jul 2025 10:17:02 -0700 (PDT)
+Received: from [10.1.196.50] (e121345-lin.cambridge.arm.com [10.1.196.50])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3F5883F694;
+	Tue,  8 Jul 2025 10:17:13 -0700 (PDT)
+Message-ID: <ceedcc51-7a4e-4da0-bdcd-429e7c212d19@arm.com>
+Date: Tue, 8 Jul 2025 18:17:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250704-mdss-schema-v1-1-e978e4e73e14@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] of: reserved_mem: Restructure call site for
+ dma_contiguous_early_fixup()
+To: Oreoluwa Babatunde <oreoluwa.babatunde@oss.qualcomm.com>,
+ robh@kernel.org, m.szyprowski@samsung.com
+Cc: saravanak@google.com, quic_obabatun@quicinc.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev, william.zhang@broadcom.com, kernel@oss.qualcomm.com,
+ will@kernel.org, djakov@kernel.org
+References: <20250708165627.845295-1-oreoluwa.babatunde@oss.qualcomm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250708165627.845295-1-oreoluwa.babatunde@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On Fri, 04 Jul 2025 19:31:53 +0300, Dmitry Baryshkov wrote:
-> Describe the SC8180X-specific compatible for the DSI controller persent
-> on the SoC. While the current DT for SC8180X doesn't use this
-> compatible, all other platforms were updated to have one. This change
-> makes SC8180X follow the lead.
+On 08/07/2025 5:56 pm, Oreoluwa Babatunde wrote:
+> Restructure the call site for dma_contiguous_early_fixup() to
+> where the reserved_mem nodes are being parsed from the DT so that
+> dma_mmu_remap[] is populated before dma_contiguous_remap() is called.
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Fixes: 8a6e02d0c00e ("of: reserved_mem: Restructure how the reserved memory regions are processed")
+> Signed-off-by: Oreoluwa Babatunde <oreoluwa.babatunde@oss.qualcomm.com>
 > ---
->  Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+>   drivers/of/of_reserved_mem.c | 14 +++++++++++---
+>   kernel/dma/contiguous.c      |  2 --
+>   2 files changed, 11 insertions(+), 5 deletions(-)
 > 
+> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+> index 77016c0cc296..132d2c66cafc 100644
+> --- a/drivers/of/of_reserved_mem.c
+> +++ b/drivers/of/of_reserved_mem.c
+> @@ -25,6 +25,7 @@
+>   #include <linux/memblock.h>
+>   #include <linux/kmemleak.h>
+>   #include <linux/cma.h>
+> +#include <linux/dma-map-ops.h>
+>   
+>   #include "of_private.h"
+>   
+> @@ -175,13 +176,17 @@ static int __init __reserved_mem_reserve_reg(unsigned long node,
+>   		base = dt_mem_next_cell(dt_root_addr_cells, &prop);
+>   		size = dt_mem_next_cell(dt_root_size_cells, &prop);
+>   
+> -		if (size &&
+> -		    early_init_dt_reserve_memory(base, size, nomap) == 0)
+> +		if (size && early_init_dt_reserve_memory(base, size, nomap) == 0) {
+> +			/* Architecture specific contiguous memory fixup. */
+> +			if (of_flat_dt_is_compatible(node, "shared-dma-pool"))
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Surely this is now going to call the fixup for *all* "shared-dma-pool" 
+reservations, rather than just the ones which are specifically CMA 
+regions? That seems potentially bad in a number of ways.
 
+Thanks,
+Robin.
+
+> +				dma_contiguous_early_fixup(base, size);
+> +
+>   			pr_debug("Reserved memory: reserved region for node '%s': base %pa, size %lu MiB\n",
+>   				uname, &base, (unsigned long)(size / SZ_1M));
+> -		else
+> +		} else {
+>   			pr_err("Reserved memory: failed to reserve memory for node '%s': base %pa, size %lu MiB\n",
+>   			       uname, &base, (unsigned long)(size / SZ_1M));
+> +		}
+>   
+>   		len -= t_len;
+>   	}
+> @@ -472,6 +477,9 @@ static int __init __reserved_mem_alloc_size(unsigned long node, const char *unam
+>   		       uname, (unsigned long)(size / SZ_1M));
+>   		return -ENOMEM;
+>   	}
+> +	/* Architecture specific contiguous memory fixup. */
+> +	if (of_flat_dt_is_compatible(node, "shared-dma-pool"))
+> +		dma_contiguous_early_fixup(base, size);
+>   
+>   	/* Save region in the reserved_mem array */
+>   	fdt_reserved_mem_save_node(node, uname, base, size);
+> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+> index 8df0dfaaca18..9e5d63efe7c5 100644
+> --- a/kernel/dma/contiguous.c
+> +++ b/kernel/dma/contiguous.c
+> @@ -480,8 +480,6 @@ static int __init rmem_cma_setup(struct reserved_mem *rmem)
+>   		pr_err("Reserved memory: unable to setup CMA region\n");
+>   		return err;
+>   	}
+> -	/* Architecture specific contiguous memory fixup. */
+> -	dma_contiguous_early_fixup(rmem->base, rmem->size);
+>   
+>   	if (default_cma)
+>   		dma_contiguous_default_area = cma;
 
