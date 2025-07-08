@@ -1,147 +1,131 @@
-Return-Path: <linux-kernel+bounces-721477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33DA5AFC9BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:40:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 980C0AFC9C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84F7E189FD54
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:40:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E45C43B655E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE32B2D9ECD;
-	Tue,  8 Jul 2025 11:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB3A2DAFA5;
+	Tue,  8 Jul 2025 11:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mU0sxF4N"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BWou2GPZ"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1A2285C87
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 11:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3062F25E828;
+	Tue,  8 Jul 2025 11:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751974796; cv=none; b=UcFJwdiyaH6l/ZH7w1xALEBng1DNkm4eFQLGNxCCd5iI9iVZDAQFIhSyN1TW9dN5m1oq9X0mxj844GAXATa2OTn41FQ7OVk+iWNwBQ5SoJfgpBiIkd3RPVsGqwifKYdsDgZVyGa6HTk4y/Mhk69t08ioX+aQ2tOX2RMfyShF1Rw=
+	t=1751974803; cv=none; b=AwQMLt0WWXolj+gNIqnOUIetDhcw6F87wVb6Hxhf6Qs+Y05uaQ5TNgNmp/xMy9BcNldEkS5TrCCHCiiZ4B8scYL8tP98WF4ST0f4per9eVLo3T1NTJdzqXGzrp4TYSIJrIpArh2sMkVucyAeaQ3M7fn8vSuNxlje340ymP87u/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751974796; c=relaxed/simple;
-	bh=anrcJkhR0K2UFvABRyTbtjlESGIkubeRDAlquXXlVdc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FMSByhknh/XrMpWmcJSiXJ5muaFxttWClEQxHXUC1geF/7+tkOhlN/YZll2cY85aq2Q+gQ4Z2JWFwRfMutNldzm4oHj7ujThokOTbojHBF59wGqK5IzqmLu2wn+lFOo3Q0HGREzm9ZarbwGWSUy/Dk/Ry9Lnclz5M0o/+0NJqaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mU0sxF4N; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-71173646662so37748297b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 04:39:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751974793; x=1752579593; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9eMeJVMzIthoABLN3c573S0lEtUCztks52HyLR1vSyo=;
-        b=mU0sxF4N67OcXvp/G/I8hXBR7tQ5dePAp5fFejtXyB18qBhn/5ajMQM4YAtY7O5gwW
-         duOkHtuGmVBebZJxrxRC4INqFuXxxGk+QJo938rJpOy6redeRnw7dgVwKgw2a7HuSDTW
-         Jx5Xfuvbj1HeqhotaCq3IPWQXSnOLOFVKhj/ydYGhBvpAV3eXnxWDasjkHmqPOV/v1+1
-         0BSqQNHuoFxP1mVcffcUpBuE+8FQgpxePn4b8kI6Mmh9IBPORvyVFYg54eOP68B1Z7kb
-         FcPWr8OCKwSqhVCI0lIt+mxIHuQRvuxyClGM8HX5Y3mxbOFFrJd7YG+Us953IVCvEDOH
-         Y3mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751974793; x=1752579593;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9eMeJVMzIthoABLN3c573S0lEtUCztks52HyLR1vSyo=;
-        b=BKv+BrwnN3T5ZkFizdAzwBPiFqXUaYGnVda1gnULGJ4V3oiSs60eXw7LxJ3jhPz/2L
-         uy1rA0qWtLAkBanCh6+l3MjxPH0rthdOPh1iWHCeYGEB9KqkGzGVZSEGMVr9Cg6IvEMv
-         3vpRb1y76jXvwvCXq8bn/xs2NY9UHFtQLuhpW4n0ih1j1Yhk0XuJhdZ0vieS0GeOlebs
-         dNdPtTuRsYtrevu0VeWgWBT9hiBhqQHsOGBMcDcvpQybrOU7rXhL8yYLSNcobZbMPEvw
-         X0cIU7y4nBiQPUk9nLa1oLIk6TYlptxMFjipjDilmmk7DSWQu8MXcdP4Iaj6EZ3x+Fkx
-         3tlw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3WqBpWmBM0eD2zp0wbVjfQpgcCqbCR21ggFxwPeYZDYGa2LTEcbAj5OrIsCilQIDgU9RSLa4VOesZOxU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLjfOXNLkPhDpVB+AEE2HV9W8dv31xOLu7gAFB2tdUeY2vd7CP
-	NRtHyKJJrwO6TqlYIs1cisE5hxiC6L5NSoK31og7e3/fCt6t3d5HKm5mQanyfYkybMs8frIXSuR
-	hcf+TT+mlXDgQ3YfAmJ/c3JC0rxHlf6/hf7mKgWWivw==
-X-Gm-Gg: ASbGncsbG2RbkWqytZ74mbNxvLtrBRPDNEwxHrouATTSvAKby9/LsqBMYtTx42bAgHZ
-	QqUp37Lua5wPmVrjTW+PdpyHyN6o1F1uRUqqqIBWB6/UZkGY7wuqolgN/etTfVIEcPrbbdB5wVM
-	dlKHRqD5bOQqxENnkhEKhtDTXWE180izppVtldlwCObDI=
-X-Google-Smtp-Source: AGHT+IG6kwwi/O1JpxJQzqce7OC4YlDVtNrzWESKs36ZU9aEADMh6ZKR839SIoeejlL3CWzFXOhNldDkEPqgFZcBnJY=
-X-Received: by 2002:a05:690c:dc7:b0:70e:6105:2360 with SMTP id
- 00721157ae682-71668deda5amr227576207b3.24.1751974793396; Tue, 08 Jul 2025
- 04:39:53 -0700 (PDT)
+	s=arc-20240116; t=1751974803; c=relaxed/simple;
+	bh=NaXF+SWgYv7kRBtwEFQbe7Bc7oXL2R98o9nJKHF8ma4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s6b0piTVcXdCEyLcIB8ZRVERCKUZJmW2yRRGoKB7T9NceZAzGquM/a9SkVzexnwK/e9fiuu0x1srSa20VL8G5OBjnvgYLn/t0TroYFZAE57g1fDUiJJYgRIHqQ1LgahdnvMCJnvHqF8nXZdCyC7BvMnJdaZCWSZhGfxcUVGEdNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BWou2GPZ; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 568Bdl3m499007;
+	Tue, 8 Jul 2025 06:39:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1751974787;
+	bh=mxl6kC3SyfXYPZI+86oINoVU7EXBLmnBKdgbQsXZOjA=;
+	h=From:To:CC:Subject:Date;
+	b=BWou2GPZiXLNX6iFcYbiJ66NJeRYAT2o/7GJQcEGFjh5LF+a948tDU0EpgTuQOcZ7
+	 /JzM2QaHJoxKVQmKDnuCgM5MmwWVVqMlpSlSGqjj7odxSM6cz5RFb72tgXHP5ifWGH
+	 swdoKqvMT0HwKdnWMsj/SEfG9c+yJygkvUf8Zbmk=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 568BdlZM3229883
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 8 Jul 2025 06:39:47 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 8
+ Jul 2025 06:39:46 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 8 Jul 2025 06:39:46 -0500
+Received: from hp-z2-tower.dhcp.ti.com (hp-z2-tower.dhcp.ti.com [172.24.227.4])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 568Bdgqi1700412;
+	Tue, 8 Jul 2025 06:39:43 -0500
+From: Hrushikesh Salunke <h-salunke@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <s-vadapalli@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <h-salunke@ti.com>, <danishanwar@ti.com>
+Subject: [PATCH v2] arm64: dts: ti: k3-am69-sk: Add idle-states for remaining SERDES instances
+Date: Tue, 8 Jul 2025 17:09:42 +0530
+Message-ID: <20250708113942.4137917-1-h-salunke@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702053256.4594-1-byungchul@sk.com> <20250702053256.4594-4-byungchul@sk.com>
-In-Reply-To: <20250702053256.4594-4-byungchul@sk.com>
-From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Date: Tue, 8 Jul 2025 14:39:16 +0300
-X-Gm-Features: Ac12FXwbisTy0vRZbr1dnSDkZ4VZxeOs9_WADPGLv9-1kgfrQv9Qj4QdZfgR36o
-Message-ID: <CAC_iWj+mOqEfyanEk52Y7Pw4zMs_tZbES=5xBV7AfAG-nTUPpw@mail.gmail.com>
-Subject: Re: [PATCH net-next v8 3/5] page_pool: rename __page_pool_alloc_pages_slow()
- to __page_pool_alloc_netmems_slow()
-To: Byungchul Park <byungchul@sk.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org, 
-	almasrymina@google.com, harry.yoo@oracle.com, hawk@kernel.org, 
-	akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com, 
-	andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com, 
-	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, 
-	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org, 
-	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com, 
-	hannes@cmpxchg.org, ziy@nvidia.com, jackmanb@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, 2 Jul 2025 at 08:33, Byungchul Park <byungchul@sk.com> wrote:
->
-> Now that __page_pool_alloc_pages_slow() is for allocating netmem, not
-> struct page, rename it to __page_pool_alloc_netmems_slow() to reflect
-> what it does.
->
-> Signed-off-by: Byungchul Park <byungchul@sk.com>
-> Reviewed-by: Mina Almasry <almasrymina@google.com>
-> Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
-> ---
+In AM69 SoC there are 4 instances of the 4 lane SERDES. So in
+"serdes_ln_ctrl" node there are total 16 entries in "mux-reg-mask"
+property. But "idle-states" is defined only for the lanes of first two
+SERDES instances. SERDES lane mapping is left at its reset state of
+"zero" for all four lanes of SERDES2 and SERDES4. The reset state of
+"zero" corresponds to the following configuration:
 
-Reviewed-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Lanes 0 and 1 of SERDES2 are unused
+CPSW MAC Ports 1 and 2 mapped to lanes 2 and 3 of SERDES2
+EDP Lanes 0, 1, 2 and 3 mapped to lanes 0, 1, 2 and 3 of SERDES4
 
->  net/core/page_pool.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-> index 95ffa48c7c67..05e2e22a8f7c 100644
-> --- a/net/core/page_pool.c
-> +++ b/net/core/page_pool.c
-> @@ -544,8 +544,8 @@ static struct page *__page_pool_alloc_page_order(stru=
-ct page_pool *pool,
->  }
->
->  /* slow path */
-> -static noinline netmem_ref __page_pool_alloc_pages_slow(struct page_pool=
- *pool,
-> -                                                       gfp_t gfp)
-> +static noinline netmem_ref __page_pool_alloc_netmems_slow(struct page_po=
-ol *pool,
-> +                                                         gfp_t gfp)
->  {
->         const int bulk =3D PP_ALLOC_CACHE_REFILL;
->         unsigned int pp_order =3D pool->p.order;
-> @@ -615,7 +615,7 @@ netmem_ref page_pool_alloc_netmems(struct page_pool *=
-pool, gfp_t gfp)
->         if (static_branch_unlikely(&page_pool_mem_providers) && pool->mp_=
-ops)
->                 netmem =3D pool->mp_ops->alloc_netmems(pool, gfp);
->         else
-> -               netmem =3D __page_pool_alloc_pages_slow(pool, gfp);
-> +               netmem =3D __page_pool_alloc_netmems_slow(pool, gfp);
->         return netmem;
->  }
->  EXPORT_SYMBOL(page_pool_alloc_netmems);
-> --
-> 2.17.1
->
+For completeness, define the "idle-states" for the lanes of remaining
+SERDES instances.
+
+Signed-off-by: Hrushikesh Salunke <h-salunke@ti.com>
+---
+This patch is based on commit
+26ffb3d6f02c  Add linux-next specific files for 20250704
+
+Changes since v1
+As pointed by out by Siddharth, setting lanes of remaining SERDES
+to "unused" will cause regression on AM69-SK as these lanes are used
+by CPSW and Display. Updated patch to set the desired values for
+remaining serdes lanes.
+
+Rebased on current next.
+
+v1: https://lore.kernel.org/all/20250609115921.2380611-1-h-salunke@ti.com/
+
+ arch/arm64/boot/dts/ti/k3-am69-sk.dts | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-am69-sk.dts b/arch/arm64/boot/dts/ti/k3-am69-sk.dts
+index f28375629739..e803fa139b73 100644
+--- a/arch/arm64/boot/dts/ti/k3-am69-sk.dts
++++ b/arch/arm64/boot/dts/ti/k3-am69-sk.dts
+@@ -1294,8 +1294,12 @@ partition@3fc0000 {
+ &serdes_ln_ctrl {
+ 	idle-states = <J784S4_SERDES0_LANE0_PCIE1_LANE0>, <J784S4_SERDES0_LANE1_PCIE1_LANE1>,
+ 		      <J784S4_SERDES0_LANE2_PCIE3_LANE0>, <J784S4_SERDES0_LANE3_USB>,
+-			<J784S4_SERDES1_LANE0_PCIE0_LANE0>, <J784S4_SERDES1_LANE1_PCIE0_LANE1>,
+-			<J784S4_SERDES1_LANE2_PCIE0_LANE2>, <J784S4_SERDES1_LANE3_PCIE0_LANE3>;
++		      <J784S4_SERDES1_LANE0_PCIE0_LANE0>, <J784S4_SERDES1_LANE1_PCIE0_LANE1>,
++		      <J784S4_SERDES1_LANE2_PCIE0_LANE2>, <J784S4_SERDES1_LANE3_PCIE0_LANE3>,
++		      <J784S4_SERDES2_LANE0_IP2_UNUSED>, <J784S4_SERDES2_LANE1_IP2_UNUSED>,
++		      <J784S4_SERDES2_LANE2_QSGMII_LANE1>, <J784S4_SERDES2_LANE3_QSGMII_LANE2>,
++		      <J784S4_SERDES4_LANE0_EDP_LANE0>, <J784S4_SERDES4_LANE1_EDP_LANE1>,
++		      <J784S4_SERDES4_LANE2_EDP_LANE2>, <J784S4_SERDES4_LANE3_EDP_LANE3>;
+ };
+ 
+ &serdes_wiz0 {
+-- 
+2.34.1
+
 
