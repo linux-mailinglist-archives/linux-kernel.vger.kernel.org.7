@@ -1,102 +1,146 @@
-Return-Path: <linux-kernel+bounces-721141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EC4FAFC52D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:15:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E542CAFC535
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 10:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E31B6189F612
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:15:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA3943AC898
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0CE29DB77;
-	Tue,  8 Jul 2025 08:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D35329E0EB;
+	Tue,  8 Jul 2025 08:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ijbFb4kx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AIeBEvpp"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B53253F3A
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 08:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66BEE21A428;
+	Tue,  8 Jul 2025 08:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751962500; cv=none; b=ftvic+UZJiwg5O2vobiwn9mhqKfJmvjK9D44CIeSUsb5M+gTyY7KA9qCxqzIoTW3dJo6pQJfmp0ntcpn/n5ej2I8pUgmdPXYSW4QQ0HuSEOmb9f6fUa327SrT0IuGqnv1l/0KNKz+70LdKhoJUpUBh6l7JiM7htImf+EjPAIqOQ=
+	t=1751962549; cv=none; b=P5ifZ+CJGDFM9YtdcjY4+f6yr3SF8NjThWjOAwHo+/tNc59fH93eVIU+z3zbsqbACt3/Nx/LiCpHKiC4uHmVlZapL8Liejxg+s1dMq+FpYJ1fTdeMJOvRZLHaIxKvRXph9+sbLhwUj9dgOoKdZfXTnzHw2ilZ170x+GrmcagKhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751962500; c=relaxed/simple;
-	bh=SPNT0DiGS8PGJDpF7qZQ/FP0xlliIFg7X5Aiozh5qx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ASUbac3UsRF5lP+I9jrg1TwyHSlG1uhE8ijRjw4pRHt2If9mwBn2VcEV0pG74F0uUk51GjoCR4o/VG2895tbNyeT3I7CtujnIU2bEpSERC6FCqvPX+zELX4vzs4xcXa1t6I4WsZQJSgnqpABCAAHUnBP3tQ/g7GRdunsdK7ZnGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ijbFb4kx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84EDEC4CEED;
-	Tue,  8 Jul 2025 08:14:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751962499;
-	bh=SPNT0DiGS8PGJDpF7qZQ/FP0xlliIFg7X5Aiozh5qx8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ijbFb4kxqyuW9MMXBwMHCH70yzRdOpzwdTQHC2zTOjMjfQzGRRlHptd0me+4t3AdC
-	 QdEm/yLussmfkV4oouKVZlF7z86ForCJ+/FsrwxXRy9bon87hR4drefmVTAIZO1d5Z
-	 JR188eyBI4xWzJYSQQxlPnu080jLAL4wa2J21EHs=
-Date: Tue, 8 Jul 2025 10:14:57 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: linux-kernel@vger.kernel.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, Lyude Paul <lyude@redhat.com>
-Subject: Re: [PATCH v5] drm/vgem/vgem_drv convert to use faux_device
-Message-ID: <2025070850-tiger-fabric-bc74@gregkh>
-References: <2025070114-iron-shiny-b92e@gregkh>
- <42d0f819-87ae-44d0-a9c5-ae4fa91b1227@suse.de>
- <2025070231-prism-unlatch-e99e@gregkh>
- <2f27e1f2-5c55-43a7-b204-575eb88da168@suse.de>
+	s=arc-20240116; t=1751962549; c=relaxed/simple;
+	bh=r9q/EiudV3kXfTjVVEmKd7UhTKCPCUE7+VKFJysxdME=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Rcrrz9ObdNluk472Gh5Hbq+gy6M/92Dz53fZsONMZdO/Udq//La4VfFmxJfy68f4fYfpXzZpmPXv4rCOq45CTjD6KZYDG6NexAOmrB6790idEUE+kJYnwgXIGo/1qJb9AvhHXVUOk/4elwnXoHY7rDNyVUYbSxgiG0LbHlevrX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=AIeBEvpp; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1751962483;
+	bh=L6uK0a8fc3zG//xlUD3YgxBcRzUgvy5utAg02bIAiyI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=AIeBEvppMWbCV1DI91zVlELJm2DTf3ynxD36NtCHFF2UyRft3vnlBpf7Y/oKIdXkj
+	 qXXk7PdYAC+FcaBZDROt9VOyky/LuvCEqyx6h5IP0piKybmUE05m87AT9gDDhITGDh
+	 YjoKp2vKFLoY1CG8loXChzPQ6ZPj4tQ2/vQxZ3J13h9jF0r81oKsEzHFpZTu0k+dvI
+	 V5QurFDnFSZrG/J4+FHcQJyuSaOuJ02bHXmcetReocMODBIzkdrGZv5UjQq5ewGdK4
+	 C7U0ttkNkK+MSiTBQImNXPHjCsBp4KzfNYAHZQAQyQuxqKaV0lFgOGlvcoap3ZerRc
+	 FjzoNhUWALfVw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bbv6B2syrz4wxx;
+	Tue,  8 Jul 2025 18:14:42 +1000 (AEST)
+Date: Tue, 8 Jul 2025 18:15:39 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Shuah Khan <skhan@linuxfoundation.org>, Richard Weinberger
+ <richard@nod.at>
+Cc: Johannes Berg <johannes.berg@intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Marie Zhussupova <marievic@google.com>,
+ Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?= <thomas.weissschuh@linutronix.de>
+Subject: linux-next: manual merge of the kunit-next tree with the uml tree
+Message-ID: <20250708181539.0e778563@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2f27e1f2-5c55-43a7-b204-575eb88da168@suse.de>
+Content-Type: multipart/signed; boundary="Sig_/rA/zZX9M.06NvosOvXORJgP";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Jul 07, 2025 at 03:52:32PM +0200, Thomas Zimmermann wrote:
-> Hi
-> 
-> Am 02.07.25 um 09:49 schrieb Greg Kroah-Hartman:
-> > On Wed, Jul 02, 2025 at 09:36:40AM +0200, Thomas Zimmermann wrote:
-> > > Hi
-> > > 
-> > > Am 01.07.25 um 12:51 schrieb Greg Kroah-Hartman:
-> > > > The vgem driver does not need to create a platform device, as there is
-> > > > no real platform resources associated it,  it only did so because it was
-> > > > simple to do that in order to get a device to use for resource
-> > > > management of drm resources.  Change the driver to use the faux device
-> > > > instead as this is NOT a real platform device.
-> > > > 
-> > > > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > > > Cc: Maxime Ripard <mripard@kernel.org>
-> > > > Cc: David Airlie <airlied@gmail.com>
-> > > > Cc: Simona Vetter <simona@ffwll.ch>
-> > > > Cc: dri-devel@lists.freedesktop.org
-> > > > Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-> > > > Reviewed-by: Lyude Paul <lyude@redhat.com>
-> > > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > ---
-> > > > v5: - rebased against 6.16-rc4 and resent as it seems to have been lost
-> > > Not lost, but thanks for the update. This patch and the one for vkms depend
-> > > on "drm/gem-shmem: Do not map s/g table by default". [1] It'll land soon and
-> > > the faux_device updates soon after.
-> > > 
-> > > Best regards
-> > > Thomas
-> > > 
-> > > [1] https://patchwork.freedesktop.org/series/150968/
-> > Great, thanks for letting me know.
-> 
-> This patch and the one for vkms have been merged into DRM trees. They should
-> show up in upstream in one of the next merge windows.
+--Sig_/rA/zZX9M.06NvosOvXORJgP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Wonderful, thank you!
+Hi all,
+
+Today's linux-next merge of the kunit-next tree got a conflict in:
+
+  lib/kunit/Kconfig
+
+between commit:
+
+  013c51446570 ("kunit: Enable PCI on UML without triggering WARN()")
+
+from the uml tree and commit:
+
+  5ac244b9cc8f ("kunit: Make default kunit_test timeout configurable via bo=
+th a module parameter and a Kconfig option")
+
+from the kunit-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc lib/kunit/Kconfig
+index c8ca155521b2,c10ede4b1d22..000000000000
+--- a/lib/kunit/Kconfig
++++ b/lib/kunit/Kconfig
+@@@ -93,11 -93,17 +93,24 @@@ config KUNIT_AUTORUN_ENABLE
+  	  In most cases this should be left as Y. Only if additional opt-in
+  	  behavior is needed should this be set to N.
+ =20
+ +config KUNIT_UML_PCI
+ +	bool "KUnit UML PCI Support"
+ +	depends on UML
+ +	select UML_PCI
+ +	help
+ +	  Enables the PCI subsystem on UML for use by KUnit tests.
+ +
++ config KUNIT_DEFAULT_TIMEOUT
++ 	int "Default value of the timeout module parameter"
++ 	default 300
++ 	help
++ 	  Sets the default timeout, in seconds, for Kunit test cases. This value
++ 	  is further multiplied by a factor determined by the assigned speed
++ 	  setting: 1x for `DEFAULT`, 3x for `KUNIT_SPEED_SLOW`, and 12x for
++ 	  `KUNIT_SPEED_VERY_SLOW`. This allows slower tests on slower machines
++ 	  sufficient time to complete.
++=20
++ 	  If unsure, the default timeout of 300 seconds is suitable for most
++ 	  cases.
++=20
+  endif # KUNIT
+
+--Sig_/rA/zZX9M.06NvosOvXORJgP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhs06wACgkQAVBC80lX
+0Gw/AQgAltP32Lo12gRByUmLpIEz38sxeWdOHP+kA26/VfeB2AOYoaP16hJqMRZi
+g8jjTjEVPVprDfJbfwGw2AU7T26z4SOTuLRyPZY+7uHvjKjmpYZlVtVye50oMDiw
+qpkAgNTe7I06P0VNtoEKcyNMDrUy6E5qZdXK3EVjSNu3bq7qbUO4jIeBy8E4Zwyo
+tAq1f92ocKni04QZh2oGLTInllJ5NswnRZTJKKSoyasAaT4DQ7lI2iIMijevX9ST
+l65AxlECnYb/WOGXsMS4l1lhE+ckJXVE/2yn91N2c0tkUQ6v4+QaeWw+M2KOeFl2
+ffHDT31usERcTQXnU+B5K8k4oYxZYA==
+=9fqo
+-----END PGP SIGNATURE-----
+
+--Sig_/rA/zZX9M.06NvosOvXORJgP--
 
