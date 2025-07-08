@@ -1,172 +1,216 @@
-Return-Path: <linux-kernel+bounces-721833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9D2AFCE62
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 16:59:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D71AFCE89
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 507874A4115
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:58:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA5EC171F0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CB72E0928;
-	Tue,  8 Jul 2025 14:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2DE2DEA78;
+	Tue,  8 Jul 2025 15:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KXkOTZ0R"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iYfoqZlw"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F314A2E0914;
-	Tue,  8 Jul 2025 14:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93DD1A288
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 15:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751986714; cv=none; b=Mhs8d9bNwT3KZzFyt0uSCwurkPWeIajPXcNwk9IZc5M/Tuw5jEULLkanRgMv4hsIYWnd+oKJeKqjIWjrNqDNkDd8lRDwAByOGAndh2T893tuYCWtBPivn3b3ZDmqppQ8vBAVR6/O6IS9fJOFEzeOC+6sSsJlJDhqH6SmAHysHLo=
+	t=1751987178; cv=none; b=WM8BpleplaZQqRkh7NAIc3pO3jw/BbOTfRqag7164M09JEjbkgl7nL/uO9EEPXgKaMfmU1QXjmo2IQEtewMfdSPSLiY2KiGIbQ2D+bECXbByl8rfDrw9R8cReNKQum3OhZygw+Pol48qMjcBTluIfc6y/WZwjwmnFHtvq8QtTJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751986714; c=relaxed/simple;
-	bh=+NqjU4uQXlMtOkNUF+YqZyMgp92MuypF4BvPFXX8Ve0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NxucAh/6T6Yvd/3DU+eOrWREqqmVrWv18dEwKKwG37nMOipSkiWv15wtCqVdhJz8faH3PmVyYC9MSSfoEOF+QIMny8hHtjoz6utq52JefeZO0E//LeMICXInxSfIjY8OXp1x9P6qIqgyGQz67UyaSBotSj3wBGjNPh/diLBOt9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KXkOTZ0R; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-235d6de331fso58333215ad.3;
-        Tue, 08 Jul 2025 07:58:32 -0700 (PDT)
+	s=arc-20240116; t=1751987178; c=relaxed/simple;
+	bh=HGTpVxEEJn+4Z8F/2vfMSUr1vMJyUPWvL7WDo/xrVN0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hrxfOUXgeJBMWv6pSHJPFCWFBrJE1Ab5nmoBn0umvzslhag97Q+s8znCPz9LVMSA0odrU+SpT77vjUfkzhrNg+xDGVVjDqDchzy+ZiFFJjax0bC8RunR7zOTPw5356EK1rIJc2Ezv2QSqspAhL4mRRMwRRmjB2A9LDhrGCjns2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iYfoqZlw; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55511c3e203so4067052e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 08:06:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751986712; x=1752591512; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UWScCBjnLf2R/TIfIIUf9QArMhSADm4WDSoogHlveqE=;
-        b=KXkOTZ0Re8fWuo3lkOgCn+bjmW4Y+V04GITXg5C5W9iA5k/nO3uk6RMKQZBPuPRkyp
-         Sb4gLoo/uFvSeAYOq+3A1M/kuRiubdbCWLaUKX2Nvc1D+POtgfqj42dj59QYaBxLIRTl
-         Gww+wZgmFiJToy8ViegUBAWAdyMlzukrEcNJEG59HUMup+G1rqx7GtMzqvi55sJIHycn
-         jdatu0/vP1aWQ/zrEBzJB1P12C1ZUohIwsqnuvYpIiBYRftsWN9gUgapjYiuGXoXVXKu
-         DOjK3bp3pINTToJoXvahP4H6yHa5l3AUFL7F2q8Iaz/Et4a/bVe1A5DvZAxb6oWa4DuS
-         J3sw==
+        d=chromium.org; s=google; t=1751987175; x=1752591975; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lsjEc9LmeMOTlM1N3xvojXwrwvOBpBec3I1iTp5IlDk=;
+        b=iYfoqZlw5nWnHnIMaRbf5FsYT1zsDYDO85OODkk7g+MecDXZW03LoPtLIHpS717JZj
+         2chSnaqF5ekc0xCmrC6C1QOIiFqWdBjoDo5bmWY2Xb4r+PBJTTUo8/CwPR00VVbwUKrE
+         vCxCnsxTB3mKeLJK7EKHfPdBJMnEOI14OSxoc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751986712; x=1752591512;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UWScCBjnLf2R/TIfIIUf9QArMhSADm4WDSoogHlveqE=;
-        b=XHZUK7h9Ocr1uCEvKd89P71xc2oECMdy5lIDWDSEe73rEY7CUBOrYP0GbcU3ebIdsT
-         bt6m2gqSyP1cilC2PAkssSdoqZktcGneZ1/rJGm0sDfwki7lNGACUjGJ81b8x9ZxqCEV
-         /tJ7C2eGwf9qnONHEtnhqnGVxcUwtU7DkMJsHGSPrtcztgdCLvMlvG0VMOAzOlf7mSp3
-         PaRt4oiDDhmApovgm2h3J8VbcSxKDv7yCZapASpzTUO2sAWcON9YgY2y0eIusIigA+37
-         TrGoP0SSvyFo70XcVgKy18Hn9mov25vPLcJ+0xxWquWobL/Ni83G6QKlMk4z90dBwZv4
-         4opA==
-X-Forwarded-Encrypted: i=1; AJvYcCWIYeoJ6HqmAFl5onHnKK0xpKABYTvpnQs4vG4CY0JAAWOaXiBnXFrf0Ju5BU1PXOWZnNu5ycDH@vger.kernel.org, AJvYcCWr2Y0G7Hc/suEj3elMeVev6XNz4UfdlDljdiRfsXGCDjgzqPLoa5ye4Zt5w6Jf2keOyfYiegv6Il0V8JA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyovaksIN4eatNru+XiJXxnkvQHrP/3POxoKuqbg0Bwab71ll8e
-	uz0XWpS+8fn0IDV+sJnmOWOusYW4KHcQVj51StwgjdQCjru2DxXzsBsh
-X-Gm-Gg: ASbGnct30YhYVGbZg5m46nhL3WHEzf0rJcKnbJ5qofK+msSW8Z3dLhfWuDw1+JJ7sGW
-	xhgFySCZmKq5VwNyR0HxfB9z/iEfHLOmffm6hKDROQWP3lDmjqh4s2b9IGjr3zwreO3MgsiAy1U
-	pRelrg5Bl5Zz9s2z/QpttRoVpZkqAfu81BMjJyzqQ7l6NmChpd8pyD2PyXWv2koS4zF4u2jCtUX
-	QB+XJUQU4qZfetha3Y1gbVp1mzQsGYizi8DrkLOp3rFO15AiHalttgnfvwZEK6f5FGgtgL2m4Ap
-	l90k7y4DWnTusB1gkY9zqHrnentRaMuKCBfrqp1vA/KCHYiF6/PVO9YBEFPYeSekL5L42Su+kJ7
-	+lGcuGMgsLccUQJHR/MjV/+vu7WHUeVvSalkJ1nVt
-X-Google-Smtp-Source: AGHT+IGsiWMFIFsAbr8aNOe79of4TnBXH6qxow/kWKTKfQRaWTwycD8M4/HGPfM50XdIS7N54Zneag==
-X-Received: by 2002:a17:903:40d1:b0:235:ca87:37ae with SMTP id d9443c01a7336-23c85eb057dmr299625885ad.41.1751986712178;
-        Tue, 08 Jul 2025 07:58:32 -0700 (PDT)
-Received: from ?IPV6:2001:ee0:4f0e:fb30:37c0:6356:b7b4:119a? ([2001:ee0:4f0e:fb30:37c0:6356:b7b4:119a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8455d153sm115207925ad.94.2025.07.08.07.58.27
+        d=1e100.net; s=20230601; t=1751987175; x=1752591975;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lsjEc9LmeMOTlM1N3xvojXwrwvOBpBec3I1iTp5IlDk=;
+        b=wFOzgKpeZStRlaXXuspQiqf2Xvv3FDRorMPyaUjZCBhpbZ6fd2DRAij7qHWATyP2ly
+         P6fRf4sZpQXlTgRrajPa2H34Wv1ZUUdtvxDHyQv//XGqIdcWUmtmSf9/4/RDr7eAuzjq
+         xarrxXjRJQ98suJJHIfhS0H5bn7ijPmxEgU+QoKPVOxhEkiU5nIo7v2kmiYrBRNCPfzw
+         XGS14MNnbHbxMKCdqcw1Iqr/QXTTymlT3AnAWndX5TD29QcJofsPhtKhJFmjuY2OgdWC
+         +2o9NwiSkAnCi3LNRcU5cPW8OSBULoBQ6/hMmylmyZHkdGaVg+nxi/t6W0+2RrRO8t+v
+         l+VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6sL9tkIlfOmjRP2O/zOJlS6z9O2dEtfE3rQTCi+szCN8llyEjVPC7Pfg4FcQmGTWgA6EP9/OLCGG9kK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOwrz9+w5ZaWQdb+o6UuczscBizAws+MQ6p6tlyEhCO72oGApt
+	Y9ic7CrZzzM26BaUVUwWujzKpjoGiWTE7coSs145cCuLYsssX7wdOCEev3jDKWbotDj/mUfvWDb
+	ClPbn5VXs
+X-Gm-Gg: ASbGncvVjhkUE/nuNWuLb+OY+MsiSq9T1WyPnrvvb4VZchoCznrIt++l1rljrHRf0o7
+	WXFwdPwlpU8uJlwJvPg+4jJLlc+f9FhV8jMhBNkFU1ukdkwvWWOLrUEr5wctHtQwNXgGCWXSZJk
+	XMxTkNFRxH/Kk217Uc6p1Xuhf4zwuKnbBVxf3ZRyhV/vPHMh17LGNon/oii3jY95enb889cTply
+	zfFdmSLYC6RO5yh8xv0WD8/HqatqHYb1kd+6aIAlUhhdL7CFk8V2qItXyZU2pIVdOiJMgO/CSah
+	dBA3EW0IPVzhCEUtmXfuRQhbx7yjSZQfvT/ylBI8+PLAeD+2awRCdAdO9ohcdNd2RMnLbS3+X81
+	JWsSp/C3J5griioeeXEZ2W9Svb1XK
+X-Google-Smtp-Source: AGHT+IHHWGLNHjUCyDoVgSBDup3LviPLMbBYro5hOeeg3C2lfxLbuB9Tk0/KLnQjc14pPi45EWAcMw==
+X-Received: by 2002:a05:6512:131c:b0:550:e527:886f with SMTP id 2adb3069b0e04-556de363b96mr5154324e87.51.1751987174460;
+        Tue, 08 Jul 2025 08:06:14 -0700 (PDT)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-556383d8dccsm1687294e87.66.2025.07.08.08.06.14
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 07:58:31 -0700 (PDT)
-Message-ID: <a9def060-375b-4980-8ee5-e5a54fc6cb8c@gmail.com>
-Date: Tue, 8 Jul 2025 21:58:24 +0700
+        Tue, 08 Jul 2025 08:06:14 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-32f2947ab0cso20447531fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 08:06:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXcnu5FVVIuqd/ozUNG6Or+KDNlin4I97IvvRmbNz5phQopobQW0emsO2lDoRbkWBxEBn6TU/jW/S0kw3g=@vger.kernel.org
+X-Received: by 2002:a05:6512:ac8:b0:553:3028:75ae with SMTP id
+ 2adb3069b0e04-556de076273mr5727105e87.46.1751986718368; Tue, 08 Jul 2025
+ 07:58:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2] virtio-net: fix received length check in big
- packets
-To: Parav Pandit <parav@nvidia.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "Minggang(Gavin) Li" <gavinl@nvidia.com>, Gavi Teitz <gavi@nvidia.com>,
- "virtualization@lists.linux.dev" <virtualization@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250708144206.95091-1-minhquangbui99@gmail.com>
- <CY8PR12MB7195AC4C23690D748ABAD675DC4EA@CY8PR12MB7195.namprd12.prod.outlook.com>
-Content-Language: en-US
-From: Bui Quang Minh <minhquangbui99@gmail.com>
-In-Reply-To: <CY8PR12MB7195AC4C23690D748ABAD675DC4EA@CY8PR12MB7195.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
+ <20250605-uvc-orientation-v2-5-5710f9d030aa@chromium.org> <aGw_1T_Edm8--gXW@kekkonen.localdomain>
+ <CANiDSCup2iRx+0RcaijSmbn04nBY4Ui9=esCPFsQzOKe=up9Gg@mail.gmail.com>
+ <aGzjTRSco39mKJcf@kekkonen.localdomain> <CANiDSCsqEHTnbvzLMoe_yxi8JRzp+2PQe3ksXhD=Y3+AqC_9hw@mail.gmail.com>
+ <aG0NI2V0Tfh2HZ6O@kekkonen.localdomain>
+In-Reply-To: <aG0NI2V0Tfh2HZ6O@kekkonen.localdomain>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Tue, 8 Jul 2025 16:58:25 +0200
+X-Gmail-Original-Message-ID: <CANiDSCu=wU_Oi7CLPcYTC3Xf_pGbDroaVitPAiAj7ND5pXy-6g@mail.gmail.com>
+X-Gm-Features: Ac12FXx3zIz7eqEIVhgOFhdr-yyA-k97hK_sQ1bucetsK4DfnOnoX-8awEd9Sp8
+Message-ID: <CANiDSCu=wU_Oi7CLPcYTC3Xf_pGbDroaVitPAiAj7ND5pXy-6g@mail.gmail.com>
+Subject: Re: [PATCH v2 05/12] media: ipu-bridge: Use v4l2_fwnode for unknown rotations
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/8/25 21:52, Parav Pandit wrote:
->> From: Bui Quang Minh <minhquangbui99@gmail.com>
->> Sent: 08 July 2025 08:12 PM
->>
->> Since commit 4959aebba8c0 ("virtio-net: use mtu size as buffer length for big
->> packets"), the allocated size for big packets is not MAX_SKB_FRAGS *
->> PAGE_SIZE anymore but depends on negotiated MTU. The number of
->> allocated frags for big packets is stored in
->> vi->big_packets_num_skbfrags. This commit fixes the received length
->> check corresponding to that change. The current incorrect check can lead to
->> NULL page pointer dereference in the below while loop when erroneous
->> length is received.
-> Do you mean a device has copied X bytes in receive buffer but device reports X+Y bytes in the ring?
-
-Yes, that's what I mean. AFAIK, it's not checked in the ring level.
-
-
-Thanks,
-Quang Minh.
-
+On Tue, 8 Jul 2025 at 14:21, Sakari Ailus <sakari.ailus@linux.intel.com> wr=
+ote:
 >
->> Fixes: 4959aebba8c0 ("virtio-net: use mtu size as buffer length for big
->> packets")
->> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
->> ---
->> Changes in v2:
->> - Remove incorrect give_pages call
->> ---
->>   drivers/net/virtio_net.c | 9 ++++++---
->>   1 file changed, 6 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c index
->> 5d674eb9a0f2..3a7f435c95ae 100644
->> --- a/drivers/net/virtio_net.c
->> +++ b/drivers/net/virtio_net.c
->> @@ -823,7 +823,7 @@ static struct sk_buff *page_to_skb(struct virtnet_info
->> *vi,  {
->>   	struct sk_buff *skb;
->>   	struct virtio_net_common_hdr *hdr;
->> -	unsigned int copy, hdr_len, hdr_padded_len;
->> +	unsigned int copy, hdr_len, hdr_padded_len, max_remaining_len;
->>   	struct page *page_to_free = NULL;
->>   	int tailroom, shinfo_size;
->>   	char *p, *hdr_p, *buf;
->> @@ -887,12 +887,15 @@ static struct sk_buff *page_to_skb(struct
->> virtnet_info *vi,
->>   	 * tries to receive more than is possible. This is usually
->>   	 * the case of a broken device.
->>   	 */
->> -	if (unlikely(len > MAX_SKB_FRAGS * PAGE_SIZE)) {
->> +	BUG_ON(offset >= PAGE_SIZE);
->> +	max_remaining_len = (unsigned int)PAGE_SIZE - offset;
->> +	max_remaining_len += vi->big_packets_num_skbfrags * PAGE_SIZE;
->> +	if (unlikely(len > max_remaining_len)) {
->>   		net_dbg_ratelimited("%s: too much data\n", skb->dev-
->>> name);
->>   		dev_kfree_skb(skb);
->>   		return NULL;
->>   	}
->> -	BUG_ON(offset >= PAGE_SIZE);
->> +
->>   	while (len) {
->>   		unsigned int frag_size = min((unsigned)PAGE_SIZE - offset,
->> len);
->>   		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags, page, offset,
->> --
->> 2.43.0
+> Hi Ricardo,
+>
+> On Tue, Jul 08, 2025 at 02:09:28PM +0200, Ricardo Ribalda wrote:
+> > On Tue, 8 Jul 2025 at 11:22, Sakari Ailus <sakari.ailus@linux.intel.com=
+> wrote:
+> > >
+> > > Hi Ricardo,
+> > >
+> > > On Tue, Jul 08, 2025 at 11:16:25AM +0200, Ricardo Ribalda wrote:
+> > > > Hi Sakari
+> > > >
+> > > > Thanks for your review
+> > > >
+> > > > On Mon, 7 Jul 2025 at 23:45, Sakari Ailus <sakari.ailus@linux.intel=
+.com> wrote:
+> > > > >
+> > > > > Hi Ricardo,
+> > > > >
+> > > > > On Thu, Jun 05, 2025 at 05:52:58PM +0000, Ricardo Ribalda wrote:
+> > > > > > The v4l2_fwnode_device_properties contains information about th=
+e
+> > > > > > rotation. Use it if the ssdb data is inconclusive.
+> > > > >
+> > > > > As SSDB and _PLD provide the same information, are they always al=
+igned? Do
+> > > > > you have any experience on how is this actually in firmware?
+> > > >
+> > > > Not really, in ChromeOS we are pretty lucky to control the firmware=
+.
+> > > >
+> > > > @HdG Do you have some experience/opinion here?
+> > > >
+> > > > >
+> > > > > _PLD is standardised so it would seem reasonable to stick to that=
+ -- if it
+> > > > > exists. Another approach could be to pick the one that doesn't tr=
+anslate to
+> > > > > a sane default (0=C2=B0).
+> > > >
+> > > > I'd rather stick to the current prioritization unless there is a
+> > > > strong argument against it. Otherwise there is a chance that we wil=
+l
+> > > > have regressions (outside CrOS)
+> > >
+> > > My point was rather there are no such rules currently for rotation: o=
+nly
+> > > SSDB was being used by the IPU bridge to obtain the rotation value,
+> > > similarly only _PLD is consulted when it comes to orientation.
+> >
+> > So something like this:?
+> >
+> > static u32 ipu_bridge_parse_rotation(struct acpi_device *adev,
+> >                                      struct ipu_sensor_ssdb *ssdb,
+> >                                      struct
+> > v4l2_fwnode_device_properties *props)
+> > {
+> >         if (props->rotation !=3D V4L2_FWNODE_PROPERTY_UNSET)
+> >                 return props->rotation;
+> >
+> >         switch (ssdb->degree) {
+> >         case IPU_SENSOR_ROTATION_NORMAL:
+> >                 return 0;
+> >         case IPU_SENSOR_ROTATION_INVERTED:
+> >                 return 180;
+> >         }
+> >
+> >         dev_warn(ADEV_DEV(adev),
+> >                  "Unknown rotation %d. Assume 0 degree rotation\n",
+> >                  ssdb->degree);
+>
+> Maybe:
+>
+>         acpi_handle_warn(acpi_device_handle(adev), ...);
+>
+> ?
+>
+> >         return 0;
+> > }
+>
+> Looks good to me. Maybe something similar for orientation?
 
+Do you mean using ssdb also for orientation or using acpi_handle_warn?
+
+
+I cannot find anything related to orientation for SSDB
+https://github.com/coreboot/coreboot/blob/main/src/drivers/intel/mipi_camer=
+a/chip.h#L150
+
+Am I looking in the right place?
+
+Regards!
+>
+> --
+> Regards,
+>
+> Sakari Ailus
+
+
+
+--=20
+Ricardo Ribalda
 
