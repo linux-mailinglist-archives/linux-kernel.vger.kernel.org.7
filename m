@@ -1,229 +1,147 @@
-Return-Path: <linux-kernel+bounces-721436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E853AFC92B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:10:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF36EAFC92D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:10:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2C263B2CEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:09:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7A8C1AA2672
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE99F2D8388;
-	Tue,  8 Jul 2025 11:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A1B2D8787;
+	Tue,  8 Jul 2025 11:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iv7UV2GP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="mDEy0/y/"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D7628751C
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 11:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50694219A6B
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 11:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751972999; cv=none; b=QIkTLWwsGtZpPyvfMWXmORrCVleUjtQ46MoRVV3Lc2eZOJjpv8b01j396kA/LdXG/mozM5nuzLhbgPVGX5BFKjNMTOu+gNXwshQYjSDRDBFRBULI8+TA/2KVL4C7PEHHne0IsCK1763ZwEMG0o82kXpSEzQ0EStV40HTLccWips=
+	t=1751973022; cv=none; b=MNhl/FSWVZXihR+Wzag0JP1G/zHxoB6H21qkLUkXx1TE9J+2nL3fMxROdODpslOlE+1tPCZeNoZqqLD+hnxUY/2H/H/41aTLQHeBQlb8XijJ/56a2JniggEbJwtlgjxSel9GXq+HShuHc190TXkL1N2CiAYVeYOMGlVqh9Xgftw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751972999; c=relaxed/simple;
-	bh=dzheaSPee36sOXHJUq2zZC2pzBfsWvT3LybX/c1YjKI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lpHjxjbfGT/ngNkTrJ6MvdehLinNpdgPhpnKYHfHznrz+Xw1GY5VG2byQuaYPZzFentqVC+IcL2T/K/04nyYdkmCyoFzYdV4O7raL4p/EQANl6w9T4GPjhT39B7NmIntCtFxmiHMHSx4yN1YyZQUyP9FcxxJpCg5Sjx0TgJ4Ekg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iv7UV2GP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC886C4CEED;
-	Tue,  8 Jul 2025 11:09:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751972999;
-	bh=dzheaSPee36sOXHJUq2zZC2pzBfsWvT3LybX/c1YjKI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=iv7UV2GPxeslN/c+dWo2tlE6eeBbe6ESxV1+PppBsNhs+MUET4Fo1KhD2kdyZiqPG
-	 OLOXYF1G4KqiqeYkujK82qFUKO8n/LcKz8KOHxuFZFgubSuclYP0jgeMc4wcKGpeb1
-	 aT59nNUz4hy9iz9+PemFLUlvnitzu50lJbq+xmKjnxMPtN8wdL71nKfQ0gOl+KByoZ
-	 8PWLxlzjgL0Rg09qD+tUX0crYZsfBL6rLPZrGqUBMzm29IRM1o0q6ulmFMl23+k27m
-	 K/Pog/L3CrlZV2IQW9pbRIAQ9sr+aLLc1SsiNsUr7achFNDDVYWoxiuaIA0TRDjZXi
-	 y7FjQugVXwQEg==
-From: Chao Yu <chao@kernel.org>
-To: xiang@kernel.org
-Cc: linux-erofs@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	Yue Hu <zbestahu@gmail.com>,
-	Jeffle Xu <jefflexu@linux.alibaba.com>,
-	Sandeep Dhavale <dhavale@google.com>,
-	Hongbo Li <lihongbo22@huawei.com>,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH v2] erofs: do sanity check on m->type in z_erofs_load_compact_lcluster()
-Date: Tue,  8 Jul 2025 19:09:28 +0800
-Message-ID: <20250708110928.3110375-1-chao@kernel.org>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+	s=arc-20240116; t=1751973022; c=relaxed/simple;
+	bh=2C+JqpHcaKQzyLw/XGlAE8Mf08lSrm6aP2riDGNq9tw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=qHRMJlzj8RpMcpqahOZseH+eM3AxJWV648U1Y40U2ZeG4fCDYb3P+KzmRyAowuXST5SsDZ0OrybwD/pBku0ciSYUwwI6N9ADA3NsZ6h+31CH0dKUnCvvMB5x7wVgLCZQUoQr0bRD8WfyKHwWfuV2sdTycXR+/qZmfvhJgukWGik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=mDEy0/y/; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a4f64cdc2dso589699f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 04:10:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1751973019; x=1752577819; darn=vger.kernel.org;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a6MXf+cnW7g75sWewP23Pqj+kzB/2yvPPFGN9ce4Tdo=;
+        b=mDEy0/y/3+ecqdBLfjZwgeP91Dhla1B6c71uAKa4mUcdVrm037orrmJA9fDu2gJyUp
+         x4nAn4gp2NQ7vHhIttdE7Bb2Rgm4dOSCU5D7GVuhVTGvH0C+8Y1wozQ4n3+gEMPcH6xz
+         JFYo6w3/JSfDGPX58ZKtLRjls1BvyEBEWxLkcGzSyVnoVFcIJqlQ/16uaIWgKnG6VSA4
+         LTU/x6sfEahu+Ito11CuWgbDopVt3elGo62Y3XaAKyDLQM0sS/6UfjmTsxi9ZpMKIky3
+         sq7dzX7jbBIFju6ww5qrsu9NPCO8zIpNB0f7CzXpP75vq5yO1upYrNC6u8Cqf9dRTq3q
+         eJ9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751973019; x=1752577819;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=a6MXf+cnW7g75sWewP23Pqj+kzB/2yvPPFGN9ce4Tdo=;
+        b=soENaZnJIVCEDa7Ah61BpRt7Fn0utmYzmvgEFeX0i8bDtTB7x3QzDKvzt3uic4ypaz
+         ZLd81DY97tPBgpWxYFItCTpMPyi155qRh4TiYa10PuDjrN0pPgJTFaL+nouGm43nZ5yO
+         lMlPnbJYCY5F6srLICu3iveMm9IFuu2ZQibgz6XsQXoCqR5wZwmMytZFMpwiJmteEO4b
+         5tZaBucM3z+uAQoE4L120oVdJcsi6LrO8hAtpwZDEElAkaOHjvCzscW8U7+avWj5hnWb
+         Uu3eWsEsmDaxVYCFL6LmLZHdncx0U9wD3bEJChAn7CFpBObJb37R8HbJ0NoZxNBqqb98
+         B9cw==
+X-Forwarded-Encrypted: i=1; AJvYcCWR4TDnmZvSyUqAdgClTSLidKmVlu1PTcaG64ze+B1PDNo3ScfftLCMyE89GpFTZFRloRdmHkBEGtcQrKM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHnZnnEkY6lbvJFhuiWh8/hajNOnYuimYCQpjdbopgPvgqbPdQ
+	eX+FS9l/tWoAMKfGSjV6fYjBffaarpHm/M78BCTq/z/2tj7lYzFXlerTK+1GjKBOyiI=
+X-Gm-Gg: ASbGncuPdXKvaB33fZDf7icS7SIMz7RW32nG9Vc2pq/sEDtZhcIBpx40OGJX/KG1Y71
+	pQ586fq+G/wGaFP3lL2B0iaioMvOTzbgW//HkYpkqx6S1bHcSTCnIZyxUvWMTLPYiLMkcTCZVS+
+	r8M8aXc9xOJcxd9cL8xE10nUcODiS8YT4nnhuibZK7hADD26aBimedSemVbW/XmcQGHgdpokRg4
+	8P//+CNXWRAy1l4rRCe95E6J7+6RFMnj1vflxIG8MAn3BZ1PXvnZCaBWxe3gVirYebCFxauGYf9
+	+HwTRgVGzKLgrTWVPnfMGNnzb+BpAGTXa37L7g9eqmyk3FLxQTyJPf7V5g0v7wK0reVQIw==
+X-Google-Smtp-Source: AGHT+IHb7haycFhehS+DKxl9ZCTVbzrVRxhiVWGlwDogb2eAqYTCyJ2HxoLQdVlyupJK2TxFwCvY8A==
+X-Received: by 2002:a05:6000:1789:b0:3a4:e0e1:8dbd with SMTP id ffacd0b85a97d-3b4966019c8mr4853212f8f.11.1751973018480;
+        Tue, 08 Jul 2025 04:10:18 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200:f873:aafc:f154:af28])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b4708d0beesm12854474f8f.36.2025.07.08.04.10.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 04:10:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 08 Jul 2025 13:10:17 +0200
+Message-Id: <DB6MLPA3BJ75.2U5FP5JSJD2LO@ventanamicro.com>
+Subject: Re: [External] [PATCH] RISC-V: store percpu offset in CSR_SCRATCH
+Cc: <masahiroy@kernel.org>, <nathan@kernel.org>, <nicolas.schier@linux.dev>,
+ <dennis@kernel.org>, <tj@kernel.org>, <cl@gentwo.org>,
+ <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+ <alex@ghiti.fr>, <andybnac@gmail.com>, <bjorn@rivosinc.com>,
+ <cyrilbur@tenstorrent.com>, <rostedt@goodmis.org>, <puranjay@kernel.org>,
+ <ben.dooks@codethink.co.uk>, <zhangchunyan@iscas.ac.cn>,
+ <ruanjinjie@huawei.com>, <jszhang@kernel.org>, <charlie@rivosinc.com>,
+ <cleger@rivosinc.com>, <antonb@tenstorrent.com>, <ajones@ventanamicro.com>,
+ <debug@rivosinc.com>, <haibo1.xu@intel.com>, <samuel.holland@sifive.com>,
+ <linux-kbuild@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>, "linux-riscv"
+ <linux-riscv-bounces@lists.infradead.org>, <wangziang.ok@bytedance.com>
+To: "yunhui cui" <cuiyunhui@bytedance.com>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+References: <20250704084500.62688-1-cuiyunhui@bytedance.com>
+ <DB5U402ARSEO.4H4PE19LGCR7@ventanamicro.com>
+ <CAEEQ3w=V6-d+YSWP=0WMt6UAZexrazq0UQjdyUmS3AnMtkdoKQ@mail.gmail.com>
+In-Reply-To: <CAEEQ3w=V6-d+YSWP=0WMt6UAZexrazq0UQjdyUmS3AnMtkdoKQ@mail.gmail.com>
 
-All below functions will do sanity check on m->type, let's move sanity
-check to z_erofs_load_compact_lcluster() for cleanup.
-- z_erofs_map_blocks_fo
-- z_erofs_get_extent_compressedlen
-- z_erofs_get_extent_decompressedlen
-- z_erofs_extent_lookback
+2025-07-08T18:07:27+08:00, yunhui cui <cuiyunhui@bytedance.com>:
+> This patch cleverly differentiates whether an exception originates
+> from user mode or kernel mode. However, there's still an issue with
+> using CSR_SCRATCH: each time handle_exception() is called, the
+> following instructions must be executed:
+>
+> REG_L s0, TASK_TI_CPU(tp)
+> slli s0, s0, 3
+> la s1, __per_cpu_offset
+> add s1, s1, s0
+> REG_L s1, 0(s1)
+> csrw CSR_SCRATCH, s1
 
-Reviewed-by: Hongbo Li <lihongbo22@huawei.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v2:
-- include Xiang's cleanup diff.
- fs/erofs/zmap.c | 103 +++++++++++++++++++-----------------------------
- 1 file changed, 41 insertions(+), 62 deletions(-)
+We can minimize the cost at exception entry by storing the precomputed
+offset in thread_info, which bloats the struct, and also incurs update
+cost on cpu migration, but should still be a net performance gain.
 
-diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
-index 0bebc6e3a4d7..431199452542 100644
---- a/fs/erofs/zmap.c
-+++ b/fs/erofs/zmap.c
-@@ -240,6 +240,13 @@ static int z_erofs_load_compact_lcluster(struct z_erofs_maprecorder *m,
- static int z_erofs_load_lcluster_from_disk(struct z_erofs_maprecorder *m,
- 					   unsigned int lcn, bool lookahead)
- {
-+	if (m->type >= Z_EROFS_LCLUSTER_TYPE_MAX) {
-+		erofs_err(m->inode->i_sb, "unknown type %u @ lcn %u of nid %llu",
-+				m->type, lcn, EROFS_I(m->inode)->nid);
-+		DBG_BUGON(1);
-+		return -EOPNOTSUPP;
-+	}
-+
- 	switch (EROFS_I(m->inode)->datalayout) {
- 	case EROFS_INODE_COMPRESSED_FULL:
- 		return z_erofs_load_full_lcluster(m, lcn);
-@@ -265,12 +272,7 @@ static int z_erofs_extent_lookback(struct z_erofs_maprecorder *m,
- 		if (err)
- 			return err;
- 
--		if (m->type >= Z_EROFS_LCLUSTER_TYPE_MAX) {
--			erofs_err(sb, "unknown type %u @ lcn %lu of nid %llu",
--				  m->type, lcn, vi->nid);
--			DBG_BUGON(1);
--			return -EOPNOTSUPP;
--		} else if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD) {
-+		if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD) {
- 			lookback_distance = m->delta[0];
- 			if (!lookback_distance)
- 				break;
-@@ -325,25 +327,18 @@ static int z_erofs_get_extent_compressedlen(struct z_erofs_maprecorder *m,
- 	DBG_BUGON(lcn == initial_lcn &&
- 		  m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD);
- 
--	if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD) {
--		if (m->delta[0] != 1) {
--			erofs_err(sb, "bogus CBLKCNT @ lcn %lu of nid %llu", lcn, vi->nid);
--			DBG_BUGON(1);
--			return -EFSCORRUPTED;
--		}
--		if (m->compressedblks)
--			goto out;
--	} else if (m->type < Z_EROFS_LCLUSTER_TYPE_MAX) {
--		/*
--		 * if the 1st NONHEAD lcluster is actually PLAIN or HEAD type
--		 * rather than CBLKCNT, it's a 1 block-sized pcluster.
--		 */
--		m->compressedblks = 1;
--		goto out;
-+	if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD && m->delta[0] != 1) {
-+		erofs_err(sb, "bogus CBLKCNT @ lcn %lu of nid %llu", lcn, vi->nid);
-+		DBG_BUGON(1);
-+		return -EFSCORRUPTED;
- 	}
--	erofs_err(sb, "cannot found CBLKCNT @ lcn %lu of nid %llu", lcn, vi->nid);
--	DBG_BUGON(1);
--	return -EFSCORRUPTED;
-+
-+	/*
-+	 * if the 1st NONHEAD lcluster is actually PLAIN or HEAD type rather
-+	 * than CBLKCNT, it's a 1 block-sized pcluster.
-+	 */
-+	if (m->type != Z_EROFS_LCLUSTER_TYPE_NONHEAD || !m->compressedblks)
-+		m->compressedblks = 1;
- out:
- 	m->map->m_plen = erofs_pos(sb, m->compressedblks);
- 	return 0;
-@@ -379,11 +374,6 @@ static int z_erofs_get_extent_decompressedlen(struct z_erofs_maprecorder *m)
- 			if (lcn != headlcn)
- 				break;	/* ends at the next HEAD lcluster */
- 			m->delta[1] = 1;
--		} else {
--			erofs_err(inode->i_sb, "unknown type %u @ lcn %llu of nid %llu",
--				  m->type, lcn, vi->nid);
--			DBG_BUGON(1);
--			return -EOPNOTSUPP;
- 		}
- 		lcn += m->delta[1];
- 	}
-@@ -429,44 +419,33 @@ static int z_erofs_map_blocks_fo(struct inode *inode,
- 	map->m_flags = EROFS_MAP_MAPPED | EROFS_MAP_ENCODED;
- 	end = (m.lcn + 1ULL) << lclusterbits;
- 
--	switch (m.type) {
--	case Z_EROFS_LCLUSTER_TYPE_PLAIN:
--	case Z_EROFS_LCLUSTER_TYPE_HEAD1:
--	case Z_EROFS_LCLUSTER_TYPE_HEAD2:
--		if (endoff >= m.clusterofs) {
--			m.headtype = m.type;
--			map->m_la = (m.lcn << lclusterbits) | m.clusterofs;
--			/*
--			 * For ztailpacking files, in order to inline data more
--			 * effectively, special EOF lclusters are now supported
--			 * which can have three parts at most.
--			 */
--			if (ztailpacking && end > inode->i_size)
--				end = inode->i_size;
--			break;
--		}
--		/* m.lcn should be >= 1 if endoff < m.clusterofs */
--		if (!m.lcn) {
--			erofs_err(sb, "invalid logical cluster 0 at nid %llu",
--				  vi->nid);
--			err = -EFSCORRUPTED;
--			goto unmap_out;
-+	if (m.type != Z_EROFS_LCLUSTER_TYPE_NONHEAD && endoff >= m.clusterofs) {
-+		m.headtype = m.type;
-+		map->m_la = (m.lcn << lclusterbits) | m.clusterofs;
-+		/*
-+		 * For ztailpacking files, in order to inline data more
-+		 * effectively, special EOF lclusters are now supported
-+		 * which can have three parts at most.
-+		 */
-+		if (ztailpacking && end > inode->i_size)
-+			end = inode->i_size;
-+	} else {
-+		if (m.type != Z_EROFS_LCLUSTER_TYPE_NONHEAD) {
-+			/* m.lcn should be >= 1 if endoff < m.clusterofs */
-+			if (!m.lcn) {
-+				erofs_err(sb, "invalid logical cluster 0 at nid %llu",
-+					  vi->nid);
-+				err = -EFSCORRUPTED;
-+				goto unmap_out;
-+			}
-+			end = (m.lcn << lclusterbits) | m.clusterofs;
-+			map->m_flags |= EROFS_MAP_FULL_MAPPED;
-+			m.delta[0] = 1;
- 		}
--		end = (m.lcn << lclusterbits) | m.clusterofs;
--		map->m_flags |= EROFS_MAP_FULL_MAPPED;
--		m.delta[0] = 1;
--		fallthrough;
--	case Z_EROFS_LCLUSTER_TYPE_NONHEAD:
- 		/* get the corresponding first chunk */
- 		err = z_erofs_extent_lookback(&m, m.delta[0]);
- 		if (err)
- 			goto unmap_out;
--		break;
--	default:
--		erofs_err(sb, "unknown type %u @ offset %llu of nid %llu",
--			  m.type, ofs, vi->nid);
--		err = -EOPNOTSUPP;
--		goto unmap_out;
- 	}
- 	if (m.partialref)
- 		map->m_flags |= EROFS_MAP_PARTIAL_REF;
--- 
-2.49.0
+The minimal code at exception entry would be:
 
+  REG_L s0, TASK_TI_PERCPU_OFFSET(tp)
+  csrw CSR_SCRATCH, s0
+
+> Should we consider adding a dedicated CSR (e.g., CSR_SCRATCH2) to
+> store the percpu offset instead?
+> See: https://lists.riscv.org/g/tech-privileged/topic/113437553#msg2506
+
+It would be nice to gather more data on the CSR_SCRATCH approach.
+Basically, the overhead of "REG_L s0, TASK_TI_PERCPU_OFFSET(tp)".
+(Or the longer sequence if we think it is worth it.)
+
+Can you benchmark the patch after reverting percpu.h, so we include the
+overhead of switching CSR_SCRATCH, but without any benefits provided by
+the per-cpu offset?
+The baseline would be the patch with reverted percpu.h, and reverted the
+sequence that sets the CSR_SCRATCH in handle_exception, so we roughly
+estimate the benefit of adding CSR_SCRATCH2.
+
+The CSR_SCRATCH2 does add overhead to hardware, and to domain context
+switches, and we also have to do something else for a few years anyway,
+because it's not even ratified...  It's possible we might not benefit
+enough from CSR_SCRATCH2 to make a good case for it.
+
+Thanks.
 
