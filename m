@@ -1,154 +1,337 @@
-Return-Path: <linux-kernel+bounces-722090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D73AFD53E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:24:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F679AFD541
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 19:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 590297A77DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:22:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9663F5624E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 17:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA302E6D3A;
-	Tue,  8 Jul 2025 17:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337EF2E62D4;
+	Tue,  8 Jul 2025 17:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hv+unAi3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="UWCS5wPf"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013047.outbound.protection.outlook.com [40.107.159.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D6C2E6D0B;
-	Tue,  8 Jul 2025 17:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751995426; cv=none; b=uj50bfihMy8rOvuF6aSunrtxNwmfmEM7zORRBew3K0Weok4FkeE//8EUe1tZpI7w9jdN3zrDGTak+j9lItabEjuteiwKV4Xw4p2qxdEG78pogQ/B/M6OBe0SI4XEhUnRHLLbm/vdicDGMRszHR18Pg1r+nxyKe19wLeJ1ALGwoc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751995426; c=relaxed/simple;
-	bh=IL2Ec5vcZd1gBfh4nN8IvjVJbCH2TCDHEEJdjkJNnvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RwOJQDB9LyAV5Sk7OdyvwD976ytet77kBevGlaMW/lOQqlKw5aRm6mUk6bIYMvIXwkz3yuHtUWARho8N5C9PoJNxaYd+SFeOYurhNZTHDjGB8Kn08eho9jr2vT59SAiAEHEDUa7eB+3z3Tzu76JCKjpRban0h2sqK3i9HO0Nw9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hv+unAi3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66A93C4CEF5;
-	Tue,  8 Jul 2025 17:23:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751995425;
-	bh=IL2Ec5vcZd1gBfh4nN8IvjVJbCH2TCDHEEJdjkJNnvI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hv+unAi3RatHtwdAZ+PtpIEWyLlOsvs0JJiNmgaxCpCMwLn8AtGddyj2nbcLaSU/N
-	 7TUssVOmnspDrZEVOIWnnLmhGBrqqeoA6suti0yLBMfNjRUp2BP20w+rIql4mjRfJA
-	 6BAXLJTUUGWzX12Sl5dTV46fSCzw7ZYuChb+43xpaelMBEyGhxfn73spu9Nr4rfmfm
-	 BsOJFBUx3zoJPikR8L73iCfQ8owzy70lCWgR4DHmz5Yui4oW7GPmirDZ89hvymRNoR
-	 fTePvQ3dlE3TZske4RBXO41ev/QS0ARQZz3Hpra5j59vAEND4aSMAp2aiKh0KE6qsr
-	 OoMCnIzU+vsrg==
-Date: Tue, 8 Jul 2025 22:53:34 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Jingoo Han <jingoohan1@gmail.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Jeff Johnson <jjohnson@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev, linux-wireless@vger.kernel.org, 
-	ath11k@lists.infradead.org, qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com, 
-	quic_vpernami@quicinc.com, quic_mrana@quicinc.com, 
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>, Miaoqing Pan <quic_miaoqing@quicinc.com>
-Subject: Re: [PATCH v4 11/11] wifi: ath11k: Add support for MHI bandwidth
- scaling
-Message-ID: <7kgg4txp6fqfom7akzcodcvkfyjm6tlkgr6lhnnkluohydoiop@ywax65nn6emn>
-References: <20250609-mhi_bw_up-v4-0-3faa8fe92b05@qti.qualcomm.com>
- <20250609-mhi_bw_up-v4-11-3faa8fe92b05@qti.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6882BD590
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 17:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751995454; cv=fail; b=gO9da0XFeE6AE1vxyJk2fhDyQ+Q4rWyIhPIIoz2HM6EoCcgbvQsw0lLp+nU6uVGJ1bt6a32e6sCmcb4UJNGHB7j+sQCpqPXTFTiBuenBlkxp6aAz7U60KZup2+8cn0HKejFRkYLBBr2vRUOtOAmu1/LB3SuN1ryGC1VXZt2i950=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751995454; c=relaxed/simple;
+	bh=rlRD9di7x6HbgYoIkak6MNf7ARovkubNbaonpQ8Uoqc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=mSh2CjD48iq//MVZVw/bv/WApNgeODtGYoAsp2vgULnmBy6H4N6DIiAHK3tVjsOwWW+o6RRVlyNabPdFOFcjSH1cqSplh3GgBMK0mAAsC2lx4QTMvPr6ZRkg9GejnDBeRt5ZtrivJ8Gc1E/Oz6r01jpEKqJ+5LydoNv/oD9gEww=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=UWCS5wPf; arc=fail smtp.client-ip=40.107.159.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xKki9sId2La5MLTEf5pkaK340d+tYDa7tUcke+LCZoRhb9CnXT2kE2NMXqohiEGWHQc5dnZIq4JkkYWPh8FPY35KlNrxP6qHsZwEjiHVfEoWUvbk6hECU2vmc8bSYAfiLfaV1nSxyeKmvSdY+NOKTxD+Dh2F9WWQz1lETVzkc4nBKqUnfGVX4anGZRcHHbYw/k4ai/E/9x/br/pYqk5wPWI7aURP5m8EO3ntNC4eZvMBWTnAZzjTBBqeLwHk3RtedEYc/h1sAmo5ErNN/EMf1OTIgQPdDph3cpo8WwVUAAe/eQXg6chAi3q2DD7cnNmjBCpajStq90yuExfhw+4Uaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rq5l1C9QRM7+loeI4sIz6eFkeAZKl3wJ+5oorTz1mFw=;
+ b=Un6x+0RRZXbyS69fMMp9xn/GSrdJWvEJGUtTLFGLn4q1GR64vjZuO7JK3eRGACyRVTUYrx2kktluD0j0ygW+M1XmKEVUPM2kBpbcRvZeo4iT1vzXKU09TocA9R7/aDQ4+B8v7w1I8r+DdWJiU+Q71dp1qK03b1fLTq+Qllk91o+9vuDENdHIZ5XJm4SH0pGWllRCmUejH5/D584MUE6hWnT1YvWoEtA7WKhHENbTSC6u9HMK1YRmUgDjRd3AgxkcHYTpgPHr7ANKj4SeqPW4y2M8TnDKTnrLMK5Jo/Mhw6odHDmwIGtquj5slMKAJwE3HJY9bd8/blebSlXIUZtXMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rq5l1C9QRM7+loeI4sIz6eFkeAZKl3wJ+5oorTz1mFw=;
+ b=UWCS5wPfmQA4KC7JXQd1Pc0JAKAfm/S9khBGuSyq6yaWKbIk/OwLhZcSC7ARVUyu2SP04mZxlIIPG2ZyjDfa0r1VavU6l2qU3OsT2jtH8uSjLVq+nW0y0BijkzWtUoxPFR2tG3Z/gg1I01DKgk6QCZCTs8hrn07sOtOhGYGfpTiK2+FWYbmwyexa7ljEKQiUp0A2Ok9t2idgVooMMFskyBBJhPaKX62d35Q9dPYhCRWhckGwhUS9uP78sX1hZnPZOJVE/BsP3jEAsMtexy+TD4Pl+I9eeNW9xOXmu9/lqNwjEagO43PlvBi1xjc7+OtdMEAxivHZthgKy7mjrB/j2Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by PA2PR10MB8989.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:421::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.25; Tue, 8 Jul
+ 2025 17:24:09 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%7]) with mapi id 15.20.8901.024; Tue, 8 Jul 2025
+ 17:24:08 +0000
+Message-ID: <72c30e9e-e444-4013-ad7c-36ab5655147b@siemens.com>
+Date: Tue, 8 Jul 2025 19:24:07 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: Executable loading issues with erofs on arm?
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, Gao Xiang <xiang@kernel.org>,
+ Chao Yu <chao@kernel.org>, linux-erofs@lists.ozlabs.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Stefan Kerkmann <s.kerkmann@pengutronix.de>
+References: <38d43fae-1182-4155-9c5b-ffc7382d9917@siemens.com>
+ <452a2155-ab3b-43d1-8783-0f1db13a675f@siemens.com>
+ <bab2d726-5c2f-4fe0-83d4-f83a0c248add@linux.alibaba.com>
+ <81a3d28b-4570-4d44-8ed6-51158353c0ff@siemens.com>
+ <6216008a-dc0c-4f90-a67c-36bead99d7f2@linux.alibaba.com>
+ <2bfd263e-d6f7-4dcd-adf5-2518ba34c36b@linux.alibaba.com>
+ <edcffe3e-95f3-46ba-b281-33631a7653e5@linux.alibaba.com>
+ <7f9d35af-d71b-46c5-b0ea-216bbf68dfe7@siemens.com>
+ <eb879ced-600a-4dd3-a9d6-3c391b4460c2@siemens.com>
+ <17432623-6d5d-4a8d-b4ae-8099c589b5e4@linux.alibaba.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Content-Language: en-US
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
+ uNUqthIkgLGWzKugodvkcCK8Wbyw+1vxcl4Lw56WezLsOTfu7oi7Z0vp1XkrLcM0tofTbClW
+ xMA964mgUlBT2m/J/ybZd945D0wU57k/smGzDAxkpJgHBrYE/iJWcu46jkGZaLjK4xcMoBWB
+ I6hW9Njxx3Ek0fpLO3876bszc8KjcHOulKreK+ezyJ01Hvbx85s68XWN6N2ulLGtk7E/sXlb
+ 79hylHy5QuU9mZdsRjjRGJb0H9Buzfuz0XrcwOTMJq7e7fbN0QakjivAXsmXim+s5dlKlZjr
+ L3ILWte4ah7cGgqc06nFb5jOhnGnZwnKJlpuod3pc/BFaFGtVHvyoRgxJ9tmDZnjzMfu8YrA
+ +MVv6muwbHnEAeh/f8e9O+oeouqTBzgcaWTq81IyS56/UD6U5GHet9Pz1MB15nnzVcyZXIoC
+ roIhgCUkcl+5m2Z9G56bkiUcFq0IcACzjcRPWvwA09ZbRHXAK/ao/+vPAIMnU6OTx3ejsbHn
+ oh6VpHD3tucIt+xA4/l3LlkZMt5FZjFdkZUuAVU6kBAwElNBCYcrrLYZBRkSGPGDGYZmXAW/
+ VkNUVTJkRg6MGIeqZmpeoaV2xaIGHBSTDX8+b0c0hT/Bgzjv8QARAQABzSNKYW4gS2lzemth
+ IDxqYW4ua2lzemthQHNpZW1lbnMuY29tPsLBlAQTAQoAPhYhBABMZH11cs99cr20+2mdhQqf
+ QXvYBQJmWPvXAhsDBQkFo5qABQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEGmdhQqfQXvY
+ zPAP/jGiVJ2VgPcRWt2P8FbByfrJJAPCsos+SZpncRi7tl9yTEpS+t57h7myEKPdB3L+kxzg
+ K3dt1UhYp4FeIHA3jpJYaFvD7kNZJZ1cU55QXrJI3xu/xfB6VhCs+VAUlt7XhOsOmTQqCpH7
+ pRcZ5juxZCOxXG2fTQTQo0gfF5+PQwQYUp0NdTbVox5PTx5RK3KfPqmAJsBKdwEaIkuY9FbM
+ 9lGg8XBNzD2R/13cCd4hRrZDtyegrtocpBAruVqOZhsMb/h7Wd0TGoJ/zJr3w3WnDM08c+RA
+ 5LHMbiA29MXq1KxlnsYDfWB8ts3HIJ3ROBvagA20mbOm26ddeFjLdGcBTrzbHbzCReEtN++s
+ gZneKsYiueFDTxXjUOJgp8JDdVPM+++axSMo2js8TwVefTfCYt0oWMEqlQqSqgQwIuzpRO6I
+ ik7HAFq8fssy2cY8Imofbj77uKz0BNZC/1nGG1OI9cU2jHrqsn1i95KaS6fPu4EN6XP/Gi/O
+ 0DxND+HEyzVqhUJkvXUhTsOzgzWAvW9BlkKRiVizKM6PLsVm/XmeapGs4ir/U8OzKI+SM3R8
+ VMW8eovWgXNUQ9F2vS1dHO8eRn2UqDKBZSo+qCRWLRtsqNzmU4N0zuGqZSaDCvkMwF6kIRkD
+ ZkDjjYQtoftPGchLBTUzeUa2gfOr1T4xSQUHhPL8zsFNBGZY+hkBEADb5quW4M0eaWPIjqY6
+ aC/vHCmpELmS/HMa5zlA0dWlxCPEjkchN8W4PB+NMOXFEJuKLLFs6+s5/KlNok/kGKg4fITf
+ Vcd+BQd/YRks3qFifckU+kxoXpTc2bksTtLuiPkcyFmjBph/BGms35mvOA0OaEO6fQbauiHa
+ QnYrgUQM+YD4uFoQOLnWTPmBjccoPuiJDafzLxwj4r+JH4fA/4zzDa5OFbfVq3ieYGqiBrtj
+ tBFv5epVvGK1zoQ+Rc+h5+dCWPwC2i3cXTUVf0woepF8mUXFcNhY+Eh8vvh1lxfD35z2CJeY
+ txMcA44Lp06kArpWDjGJddd+OTmUkFWeYtAdaCpj/GItuJcQZkaaTeiHqPPrbvXM361rtvaw
+ XFUzUlvoW1Sb7/SeE/BtWoxkeZOgsqouXPTjlFLapvLu5g9MPNimjkYqukASq/+e8MMKP+EE
+ v3BAFVFGvNE3UlNRh+ppBqBUZiqkzg4q2hfeTjnivgChzXlvfTx9M6BJmuDnYAho4BA6vRh4
+ Dr7LYTLIwGjguIuuQcP2ENN+l32nidy154zCEp5/Rv4K8SYdVegrQ7rWiULgDz9VQWo2zAjo
+ TgFKg3AE3ujDy4V2VndtkMRYpwwuilCDQ+Bpb5ixfbFyZ4oVGs6F3jhtWN5Uu43FhHSCqUv8
+ FCzl44AyGulVYU7hTQARAQABwsF8BBgBCgAmFiEEAExkfXVyz31yvbT7aZ2FCp9Be9gFAmZY
+ +hkCGwwFCQWjmoAACgkQaZ2FCp9Be9hN3g/8CdNqlOfBZGCFNZ8Kf4tpRpeN3TGmekGRpohU
+ bBMvHYiWW8SvmCgEuBokS+Lx3pyPJQCYZDXLCq47gsLdnhVcQ2ZKNCrr9yhrj6kHxe1Sqv1S
+ MhxD8dBqW6CFe/mbiK9wEMDIqys7L0Xy/lgCFxZswlBW3eU2Zacdo0fDzLiJm9I0C9iPZzkJ
+ gITjoqsiIi/5c3eCY2s2OENL9VPXiH1GPQfHZ23ouiMf+ojVZ7kycLjz+nFr5A14w/B7uHjz
+ uL6tnA+AtGCredDne66LSK3HD0vC7569sZ/j8kGKjlUtC+zm0j03iPI6gi8YeCn9b4F8sLpB
+ lBdlqo9BB+uqoM6F8zMfIfDsqjB0r/q7WeJaI8NKfFwNOGPuo93N+WUyBi2yYCXMOgBUifm0
+ T6Hbf3SHQpbA56wcKPWJqAC2iFaxNDowcJij9LtEqOlToCMtDBekDwchRvqrWN1mDXLg+av8
+ qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
+ 8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
+ ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
+In-Reply-To: <17432623-6d5d-4a8d-b4ae-8099c589b5e4@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR2P281CA0150.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:98::11) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250609-mhi_bw_up-v4-11-3faa8fe92b05@qti.qualcomm.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PA2PR10MB8989:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5db0830f-6ff5-48ef-1c0a-08ddbe443f46
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?a3VEaVduMjJ4dG5Kc2I2UWxPSW0wTHpXL29Pa1hsV1FWNHlQSGxYazRjUW8r?=
+ =?utf-8?B?eVdxSWpvR0FCdXFFeFNUY2EzTGtNdWZzd2FHZzhiUEkwKytlUEZoUCtvSm9X?=
+ =?utf-8?B?emwzUHRzNEpKYXhMclMwbzRTM0tmNzNZRWFHYzNKUnFsdUIrK1JOMGVZNlAy?=
+ =?utf-8?B?bG5kSjlwMEZXOS9od3lJZHZpa2l2M1p4V051Y29hbDV3dFJxc1RreEwzS3FS?=
+ =?utf-8?B?bXlkTkl6bzU4c3E0UjR6dWVabDFhMEJTT0t4MG5PUE5naDFicG10Q1JZSUtV?=
+ =?utf-8?B?RVRXT1Nla3l1eldUUlZyejdNZS9ySklTTDQ4SlFkRDVqU2R6c2FxM0ZYZWhY?=
+ =?utf-8?B?bFpEbFZxRTlrcElObjd4cmxCZUlWWDlmSXlSa2tUZEhLUW0rd2wxcnp1bm1W?=
+ =?utf-8?B?Q1FNczltbkdiNFVlTi8vMVpoWUFoTldBQzFsSjRBcFNML2xsY0ZKZ3o5UDBx?=
+ =?utf-8?B?cVJWY1lMTzl5UEV0SStidmw1cS8zaUYzUXQ3a1J6MjN3elVLRjNpSmpocVFR?=
+ =?utf-8?B?ME1XSElVYVlWUFJXQnpLQWF1YnBRaXVjaGNHRnh6ZzJqQWV5ZmwxMDBSRGtz?=
+ =?utf-8?B?WVREYU5iaWhXbjJnL29zbXZEcVl5MlUwVEZPZ2FzZzJGQnBHcnNKWkFhYU5P?=
+ =?utf-8?B?OTROQXg4NjlQc1JCUU9kMkpHVDRrZjBPZ2Vtem9jM3BOTXM3Q1VoVWZOTitC?=
+ =?utf-8?B?TFdCTzhJcSs2WjI0VXZDUkptL3VhRVdYZDFhQmpwQnlZT0Nzd3VoVDAySmoz?=
+ =?utf-8?B?NGFESWNwNFZvME5JRm10eWFGemYxam1jemwrczNBSVZrY0xBRHptcVdVWTJS?=
+ =?utf-8?B?cGZMeWovZStXa01oYU41YVdBTlp2UTMxOXcrL0w4MDYvcFFIYXNWdEdSYVQ0?=
+ =?utf-8?B?b0hvWjM2UTlsTVpoemErbjZUcHljRjBlOTdHbzhNenVwT2ZyWC9nSHdaaXht?=
+ =?utf-8?B?ZXNneEMrcU5OS1dFRmNET2lYelpKVTd6WTNIR0pBbnZxcURKdTBoUVBYcFdP?=
+ =?utf-8?B?WTdDYzYxRGhKdjd2R2tLaVBwY2txcEZRZ1hZMm5ubkQ0ckVCenFOeE1GempU?=
+ =?utf-8?B?OEVaa2RrUHZMSkFBRnd0ZHFCdlRPQVZKRmRTU1AxSEdPRldQL3JCaWx4SEJo?=
+ =?utf-8?B?RUtEcDQ4QUxBSysrVU5HbERUb1BCR1gvMDhreVZpa2diNnBMbmFkSDdMNHRV?=
+ =?utf-8?B?ckFKMEdEaXlBbmVzNE12QWUxNUJucUdwbHJWVFV2SmtIYmNhNFB2LzhXcEJP?=
+ =?utf-8?B?ZW9wWnd3WmpCTDVyMlhvUC9GVUlBQjZaMGpIbzFOSzZwQWgwUWpjRkpnLzI3?=
+ =?utf-8?B?MjNjN3hHLytqT0V4eU0rOXFFRmlRTEFNNC9pZGt3Q2thQmtuSUpqY0dpUitJ?=
+ =?utf-8?B?MTlXK0pPRHRUUlIwbTg4VUxkbWVOR1AzbWdxWjFTbU5pbjB4QXNaT1lKUys2?=
+ =?utf-8?B?d1JrS2RTaDQ1VzgvWkNKK1dNajhLWWhGYXdzbTJPMDQ1QlRlZkg2U3JWbHM2?=
+ =?utf-8?B?MkxTWWNlcFFBMlBPU1M0M0ZmbWRndXUxWlJhb0JYWEVXOHEwdVU5dEVPTGZq?=
+ =?utf-8?B?SjZadmVQN0hvLzloZ2JmYWZtUGJXY3o1STVyVFNrK0hQR3Uzc1I4dEZFM042?=
+ =?utf-8?B?TXpJZWtGK3cyT01CUzNvTU5OME9RSktNTnFsb2NnaThMZ2lOTlBPSGNiVXJH?=
+ =?utf-8?B?NW05cE9rY0QxNllueUxKTkdjNkt1akwvN1hRUUIrSVY0QXA2Slpmd2wyNHNF?=
+ =?utf-8?B?aGZRMjlMOWc2UzFacHRXcnQwcHhKelB6bCtyaEtXZjJwMFlwZkhPdU1EQmc1?=
+ =?utf-8?B?ZWhKUERvSXhvTllwSXpkU1JBV1E2bWZuVkU2ZmdNVEFyZ2ZEMDRHcXI1UUZm?=
+ =?utf-8?B?SWQ1a1UxYkxOcTRWSFh1NkxnR0xIcmJEbGJFSE1FY3lMcU14RnpyOXNhS0xF?=
+ =?utf-8?Q?MFaEg0h+Mhs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RjlqdWQ4b1RKemRiQUQwV2VmZzZRaENhNWpaczdvYnREVk5HMWx0M3lha2NK?=
+ =?utf-8?B?QUtDdDhhOU5ndWVHdS9FTVNIb3RQNk1HY0JCRUVpRnliT05oTThkZUlFUWNZ?=
+ =?utf-8?B?ZUdySk1JamV4cXBHVzg3dDJaSmJVb2NHcDl0aVozWUpRMWNRMW13UGtyVE4v?=
+ =?utf-8?B?N1RNRlZyWG1Ycmw3RmVMRkV5bHE1dUVhbjhhd3I3bGRkOVIrYmVmOVJuYjZD?=
+ =?utf-8?B?YXVPcEhkWW1QZlJwS3ZucWptMkNqTndCaUphVWpIVU81c014NThueE5vRVFM?=
+ =?utf-8?B?NHBIS3N5YTVpb0xITjEvcy9SRkNGeGRXNTJxWm1hRTJGdHh6bzhTVExEemw0?=
+ =?utf-8?B?QnN2RHkzTUgxR0tCTVh1Tml5ZDZHR2hiZ1BDTWI1L1d1UXAyS1Y2RTlvWnd5?=
+ =?utf-8?B?cmJ6RVc1aHJxR3FwdTRmRUREU1MrRkJISTBKVndmQlZQVnFLbmFhSDVlVTdz?=
+ =?utf-8?B?RUw5d1NSS1Jxb2NmenZqNFdqalRGNEh0anpaMEhXTTI3N3VkajhwQnpwZ2tz?=
+ =?utf-8?B?RmZyL2FPZUQvZFpsU3BOU1c0TXArVWIzanZHSVVsU2hKUVUzV2I5bzM0U2RN?=
+ =?utf-8?B?TWJXVDdrNytlSEVqWTR3SkFzTVZnU1E2MUdPcW91TTc4azZaKytNZ3RKdk9s?=
+ =?utf-8?B?cWd4ZHR3NkZqeG1ONklyRjh0OFFSalpQTUU0dUpnN2M1SVZmdzFWdUE1OXJ0?=
+ =?utf-8?B?dk1ZZVUxaitzV3VPN1ZpbzZxTFUvNWFCL0ZQSUNvakgzRW5TWXFVTUxaY01a?=
+ =?utf-8?B?cFkwdnAwd1Z2REdYRzhRYnRpNnZiR2FraDJIWi9RQlUzbGFRbGd6cjB1WFpK?=
+ =?utf-8?B?ZnJsR3cxcFdCdmtHV2RMRmNZdUZjMzZXcnpUVXJ1WXZTT203MUkycWZ5UGZI?=
+ =?utf-8?B?UUtYejhHYVl6N0wzeEN2cmlnVkxJTGtSWGVUNHhBZXFMeXpaWW0zWUhYZ0dZ?=
+ =?utf-8?B?TitoQ0VIdFAyTUFzVnFLVTRMczdKMFZTR3VIZmd1WGdmNEVJZGRSa2xwTW8r?=
+ =?utf-8?B?a1RTbUQ2cHNhcTRQZ3RxcjhTZTdhVDF1T0phWEVTclIzRlZCWm5zeXpVdElx?=
+ =?utf-8?B?YzNiblJlNVdDVUpoK2NQczVpSFNNZGtycDJIdnlmZGZEd2xkN3J2OEhlUnhL?=
+ =?utf-8?B?QmRIamp4SDBaZVVwNnNmWENWYzBBWVJ6N2ZJS1poeXY0ZW9WS01oVjFFM0U4?=
+ =?utf-8?B?VkJyb0NjL1RDdnJRUEdtSWxBTERnaTk2WVdwOGFQTlpwVEFucDBYcDY4Yksr?=
+ =?utf-8?B?ZThJVFdSNlBBUWRjVDVjL253V0lIUE1VOFArblVHVkxnQnhpb0hkTkJwcDNJ?=
+ =?utf-8?B?YmZLLzdKOStzR0s1QzVKbk45T0VmVDBMWm5GUFFENVV1U0Yvcm5Fc2RFN3dJ?=
+ =?utf-8?B?TDJwZWNBUzM5ZFpKZld6Rk4xcUdscXVpdDdHd3JSYnB1SnRhTzJ3NTN3QVhV?=
+ =?utf-8?B?TlhaNE1mOWQ0V0E5U3djdHFYbmZyZldWYkxjUGdKc0dqYmFoenBiRjdFVEFm?=
+ =?utf-8?B?WGIxNHVtTVFTdkI2a0Z1Vll2RGQ2RWUzNGViVWs5SmNjUHpmTStlK2JjMGE0?=
+ =?utf-8?B?RXNMRFJJODY0bFR1TlFaR3ErVllscDNMeGxwVUI1R1NRc2pQM1dkVUlSTFJG?=
+ =?utf-8?B?dTh1ZlRRQVZnZWNNdExsYW9KclovK1ZWZENZY3p2ZDBIbFQzcmpWMDlrRm5v?=
+ =?utf-8?B?N005S1RRWk9GU2FMeGZPeHZPVnJycnprc3RQblhKVHRWaFl0WUVlcCtBQitk?=
+ =?utf-8?B?Zy91dklteUE5aHl3MEVEaG9KUEtQSzY3c0liUEFZRVpITlQwN0JNdUdOb1BM?=
+ =?utf-8?B?OEJ2NUdkcTgreG1MUDJJWmRPT3d1T2o2VzllSTNVb0NwM0d4UnFzU2FQV0Vp?=
+ =?utf-8?B?SW1UQytHOUxLUUxkK1ZZUEtRRnJwa3pGUUxha1JndlNmZTRxVjZGNXVZbHFV?=
+ =?utf-8?B?OHNUNG1TRm45TEdzMzgxWVhtK0UyazlsR0E3Tk5SVU5QVUNNd1pTWjFXWCtF?=
+ =?utf-8?B?SEJKdkNVQ3dQTkNvbWJHWGNVdHloMm5FYTIremNtNk1GTjJ2WDlmWGgxOE51?=
+ =?utf-8?B?L2RiYlVmWG1xdUg4SEc1ME9MM0VuMGRGcnhISEtVUlJqZFF3MExIM1hTOVhB?=
+ =?utf-8?Q?aSEomQl6SkJJzxhWn3YNhsL6t?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5db0830f-6ff5-48ef-1c0a-08ddbe443f46
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2025 17:24:08.6303
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6o3a1ElDIcPFJDXmWjGJtXceXlrUxekvBqr6AAUjbzP+4EqS55wa0Ujm5ndN7qai5yCkDw4oK8StjhXL2rqfrw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR10MB8989
 
-On Mon, Jun 09, 2025 at 04:21:32PM GMT, Krishna Chaitanya Chundru wrote:
-> From: Miaoqing Pan <quic_miaoqing@quicinc.com>
+On 08.07.25 19:09, Gao Xiang wrote:
 > 
-> Add support for MHI bandwidth scaling, which will reduce power consumption
-> if WLAN operates with lower bandwidth. This feature is only enabled for
-> QCA6390.
 > 
-> Bandwidth scaling is initiated by the endpoint firmware based upon the
-> bandwidth requirements, if there is high bandwidth data endpoint requests
-> for higher data rates or if there is less bandwidth they request for lower
-> data rates to reduce power. Endpoint initiates this through MHI protocol.
+> On 2025/7/9 01:01, Jan Kiszka wrote:
+>> On 08.07.25 18:39, Jan Kiszka wrote:
+>>> On 08.07.25 17:57, Gao Xiang wrote:
+>>>>
+>>>>
+>>>> On 2025/7/8 23:36, Gao Xiang wrote:
+>>>>>
+>>>>>
+>>>>> On 2025/7/8 23:32, Gao Xiang wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 2025/7/8 23:22, Jan Kiszka wrote:
+>>>>>>> On 08.07.25 17:12, Gao Xiang wrote:
+>>>>>>>> Hi Jan,
+>>>>>>>>
+>>>>>>>> On 2025/7/8 20:43, Jan Kiszka wrote:
+>>>>>>>>> On 08.07.25 14:41, Jan Kiszka wrote:
+>>>>>>>>>> Hi all,
+>>>>>>>>>>
+>>>>>>>>>> for some days, I'm trying to understand if we have an integration
+>>>>>>>>>> issue
+>>>>>>>>>> with erofs or rather some upstream bug. After playing with
+>>>>>>>>>> various
+>>>>>>>>>> parameters, it rather looks like the latter:
+>>>>>>>>>>
+>>>>>>>>>> $ ls -l erofs-dir/
+>>>>>>>>>> total 132
+>>>>>>>>>> -rwxr-xr-x 1 1000 users 132868 Jul  8 10:50 dash
+>>>>>>>>>> (from Debian bookworm)
+>>>>>>>>>> $ mkfs.erofs -z lz4hc erofs.img erofs-dir/
+>>>>>>>>>> mkfs.erofs 1.8.6 (trixie version, but same happens with bookworm
+>>>>>>>>>> 1.5)
+>>>>>>>>>> Build completed.
+>>>>>>>>>> ------
+>>>>>>>>>> Filesystem UUID: aae0b2f0-4ee4-4850-af49-3c1aad7fa30c
+>>>>>>>>>> Filesystem total blocks: 17 (of 4096-byte blocks)
+>>>>>>>>>> Filesystem total inodes: 2
+>>>>>>>>>> Filesystem total metadata blocks: 1
+>>>>>>>>>> Filesystem total deduplicated bytes (of source files): 0
+>>>>>>>>>>
+>>>>>>>>>> Now I have 6.15-rc5 and a defconfig-close setting for the 32-
+>>>>>>>>>> bit ARM
+>>>>>>>>>> target BeagleBone Black. When booting into init=/bin/sh, then
+>>>>>>>>>> running
+>>>>>>>>>>
+>>>>>>>>>> # mount -t erofs /dev/mmcblk0p1 /mnt
+>>>>>>>>>> erofs (device mmcblk0p1): mounted with root inode @ nid 36.
+>>>>>>>>>> # /mnt/dash
+>>>>>>>>>> Segmentation fault
+>>>>>
+>>>>> Two extra quick questions:
+>>>>>    - If the segfault happens, then if you run /mnt/dash again, does
+>>>>>      segfault still happen?
+>>>>>
+>>>>>    - If the /mnt/dash segfault happens, then if you run
+>>>>>        cat /mnt/dash > /dev/null
+>>>>>        /mnt/dash
+>>>>>      does segfault still happen?
+>>>>
+>>>> Oh, sorry I didn't read the full hints, could you check if
+>>>> the following patch resolve the issue (space-damaged)?
+>>>>
+>>>> diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+>>>> index 6a329c329f43..701490b3ef7d 100644
+>>>> --- a/fs/erofs/data.c
+>>>> +++ b/fs/erofs/data.c
+>>>> @@ -245,6 +245,7 @@ void erofs_onlinefolio_end(struct folio *folio, int
+>>>> err)
+>>>>          if (v & ~EROFS_ONLINEFOLIO_EIO)
+>>>>                  return;
+>>>>          folio->private = 0;
+>>>> +       flush_dcache_folio(folio);
+>>>>          folio_end_read(folio, !(v & EROFS_ONLINEFOLIO_EIO));
+>>>>   }
+>>>>
+>>>
+>>> Yeah, indeed that seem to have helped with the minimal test. Will do the
+>>> full scenario test (complete rootfs) next.
+>>>
+>>
+>> And that looks good as! Thanks a lot for that quick fix - hoping that is
+>> the real solution already.
+>>
+>> BTW, that change does not look very specific to the armhf arch, rather
+>> like we were lucky that it didn't hit elsewhere, right?
 > 
-> Tested-on: WCN6855 hw2.1 PCI WLAN.HSP.1.1-04546-QCAHSPSWPL_V1_V2_SILICONZ_IOE-1
+> I may submit a formal patch tomorrow.
 > 
-> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> ---
->  drivers/net/wireless/ath/ath11k/mhi.c | 41 +++++++++++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
-> 
-> diff --git a/drivers/net/wireless/ath/ath11k/mhi.c b/drivers/net/wireless/ath/ath11k/mhi.c
-> index acd76e9392d31192aca6776319ef0829a1c69628..f79507c7a82244f9e9d8a3ae6765df3f9432ae8c 100644
-> --- a/drivers/net/wireless/ath/ath11k/mhi.c
-> +++ b/drivers/net/wireless/ath/ath11k/mhi.c
-> @@ -20,6 +20,7 @@
->  #define MHI_TIMEOUT_DEFAULT_MS	20000
->  #define RDDM_DUMP_SIZE	0x420000
->  #define MHI_CB_INVALID	0xff
-> +#define MHI_BW_SCALE_CHAN_DB 126
->  
->  static const struct mhi_channel_config ath11k_mhi_channels_qca6390[] = {
->  	{
-> @@ -73,6 +74,17 @@ static struct mhi_event_config ath11k_mhi_events_qca6390[] = {
->  		.client_managed = false,
->  		.offload_channel = false,
->  	},
-> +	{
-> +		.num_elements = 8,
-> +		.irq_moderation_ms = 0,
-> +		.irq = 1,
-> +		.mode = MHI_DB_BRST_DISABLE,
-> +		.data_type = MHI_ER_BW_SCALE,
-> +		.priority = 2,
-> +		.hardware_event = false,
-> +		.client_managed = false,
-> +		.offload_channel = false,
-> +	},
->  };
->  
->  static const struct mhi_controller_config ath11k_mhi_config_qca6390 = {
-> @@ -313,6 +325,33 @@ static void ath11k_mhi_op_write_reg(struct mhi_controller *mhi_cntrl,
->  	writel(val, addr);
->  }
->  
-> +static int ath11k_mhi_op_get_misc_doorbell(struct mhi_controller *mhi_cntrl,
-> +					   enum mhi_er_data_type type)
-> +{
-> +	if (type == MHI_ER_BW_SCALE)
-> +		return MHI_BW_SCALE_CHAN_DB;
-> +
-> +	return -EINVAL;
 
--EOPNOTSUPP?
+Great thanks. I quickly checked backports, and it fits cleanly on 6.12,
+but at least 6.1 requires more work to find a home there as well.
 
-> +}
-> +
-> +static int ath11k_mhi_op_bw_scale(struct mhi_controller *mhi_cntrl,
-> +				  struct mhi_link_info *link_info)
-> +{
-> +	enum pci_bus_speed speed = pci_lnkctl2_bus_speed(link_info->target_link_speed);
-> +	struct ath11k_base *ab = dev_get_drvdata(mhi_cntrl->cntrl_dev);
-> +	struct pci_dev *pci_dev = to_pci_dev(ab->dev);
-> +	struct pci_dev *pdev;
-> +
-> +	if (!pci_dev)
-> +		return -EINVAL;
+> This issue doesn't impact x86 and arm64. For example on arm64,
+> PG_dcache_clean is clear when it's a new page cache folio.
+> 
+> But it seems on arm platform flush_dcache_folio() does more
+> to handle D-cache aliasing so some caching setup may be
+> impacted.
 
-Is it really possible?
+Yeah, that would explain it. And Stefan (on CC) was on an arm32 as well
+back then.
 
-- Mani
+Jan
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Siemens AG, Foundational Technologies
+Linux Expert Center
 
