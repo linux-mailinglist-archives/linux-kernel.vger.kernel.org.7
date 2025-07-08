@@ -1,247 +1,143 @@
-Return-Path: <linux-kernel+bounces-720970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 819A5AFC2C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:30:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17484AFC2C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 08:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C52194A471D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:30:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A13D31AA795C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 06:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB7C221550;
-	Tue,  8 Jul 2025 06:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B176221265;
+	Tue,  8 Jul 2025 06:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="H6rmEwnO"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZL0nOi/"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59248189F3F;
-	Tue,  8 Jul 2025 06:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA08202F9F;
+	Tue,  8 Jul 2025 06:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751956244; cv=none; b=Yep4vDErErXrCZ0Leb9V88SWTKhC1TBHbqQqSzVoAsKycBjCHPLagpGpIAvBAtg/KKpS/qWrDxY4cw9MesA78zUHAv69OayI15cn4J00NM8dm/RyY3zhUcXnffevWRBiwHHQAK47D+tLzEjnfttPCFfgwpkV7LQ1mRCkXfM7iMw=
+	t=1751956251; cv=none; b=fn/sCCaaGSs5nxrEoyqM8bZfEjYLkqb6kIidgigYWpd0uEw0vdt4Z4uK2s4KYGrVadh0AhGZUZ8MV92y6B5WBp/vvwe32lFkmhosnBeSKo2mzaYUEeFIfshUE8tKQcXhwcby1k0WZHywnOAKvxcSoZDrdrb+ckA6YydQR4P8a2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751956244; c=relaxed/simple;
-	bh=P9QvZUpF/LJOw9fOYyRONt8KXGdUMhir9fRjkIe5LZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nyb4O0tIF3ZWZVFi1m/++1Gfr3nzsQzyM/1SPHoseWkjOLz2eSYLXhHdLRbTP5rzt61aFuw23zZGmDqW6N3gE9h3NVpMDRI8imPfYTn368r9sUh9lFWSumRJTkvHoM9Azk4vBYtEarFq/Cw49LUm74dssqPJWd9bBMGOvr2jsaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=H6rmEwnO; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0345D1039729E;
-	Tue,  8 Jul 2025 08:30:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1751956231; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=LmJDJSLxx1my+mfQ4+domzBvSClDWTc3E/feWX0CoU0=;
-	b=H6rmEwnOMrbwf3zurMHZ/ogFdVgjJ6whlG+B/JKdz0gBfNLGfa7uVUTbRQSfUBZOl3aZ/H
-	eQJoqexOd6PLoJ9l7HdWKUZnjXh17iWhuNVhcNrxhQ+G8Gc6sTvG3NlTILVpPhQoGMz+Qr
-	uL5x4SF39qt+rrE+YLu+NzwywUQJrj08vqUdhII/HqEiQK1/i25ttehwdXqZiB28A7mPO3
-	l5rgDDQCuJGJnJHPlJSXqnfydwFEZn+48eyCj7N+FykRluC8CMmqrdSSXoeYIeXfAx5V+7
-	jZ4hd1EhgAehHzWHnh4vKbfB+InV3Cajc8jcG78SYPG59oIPcTXq9l1innF2NA==
-Date: Tue, 8 Jul 2025 08:30:20 +0200
-From: Lukasz Majewski <lukma@denx.de>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
- <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Richard
- Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
- <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>
-Subject: Re: [net-next v14 00/12] net: mtip: Add support for MTIP imx287 L2
- switch driver
-Message-ID: <20250708083020.0d2a73cd@wsk>
-In-Reply-To: <20250701114957.2492486-1-lukma@denx.de>
-References: <20250701114957.2492486-1-lukma@denx.de>
-Organization: denx.de
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1751956251; c=relaxed/simple;
+	bh=1Zka75bNEvXEduKJP6vEIX1BbDz+ii0kbMA+uIdNB/A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZhZU0/wsgioJKN7PF0pFK7KdJixPEVoWaRAGu/ZsRFtevWP9+ESqlLOT6J1z1XQW1yzn3N8aaFuh0oAgtu3dTmIEGB8E5wWozz5tOGdtrXE7wsG6yU7SKcKZBRLNCKwog2+8uENI65McC+hN0FP610aHUYIA2k4u3ZEZG2r6RJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZL0nOi/; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-748e63d4b05so2102405b3a.2;
+        Mon, 07 Jul 2025 23:30:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751956249; x=1752561049; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NTSaPd2KsxbQLmtDO+kQIyiudpoUlJNATnX1VXPLxSg=;
+        b=TZL0nOi/RTbusbKLj+B0crkDalFYGzKynSqV9lPdNZMLH8oKtsF9u9Gpl9igAOGnsW
+         4M7XqUOxSC7q+MWaCbP7RtmIx46J7WZyuhEbujGb7uVGCIY4/RK74xR1NeSY26BjrnFx
+         lhCaQ1waOp01Om56rjN2S8aLZtWqPDJ9KCey4hn1RemIJVuwipC5oR418JLycJEig/9o
+         Xm5hi0d9RaaX/v2eQ/leFxkjehAzmw6Refg/I39Yu1H3ICjQKWMQZJtoRiY5ApjG71QY
+         fYs+qGjO+eOOBxx1ya5x8O+SAn14FNh4aq1et2VbdsUOhDpmpM+VGZtdgmXVtx1ybINv
+         MJpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751956249; x=1752561049;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NTSaPd2KsxbQLmtDO+kQIyiudpoUlJNATnX1VXPLxSg=;
+        b=IdXH++FianoSbCEJUi3UBPaqHUEtdFVNa8V2SghA6AGL/gvYzKhXVn78lo/7eBnU+k
+         ZHVZh4O9tabpIdyQvwJtZ5y+N/bbKmo2b5OGhN08Wmf5UPbrV4NwmF08tqU6Zvej+SJG
+         dUNF3LzxYKCAQ62GvtnPIAnT6Lq+Yr/AzGtJNqNk+9BatvBVjuIJKE8Pa+RQsH9f7X36
+         LagaRHjpgj1kf5PghHDLyZ/8wJJr36K+fIQZ1bVWQjHzJYiYvwqomZYPNBFru2ogX1la
+         Ma9MbnXuXOg8kU43cbJPBfkHRp/w1Qyve7wXVfU7u3FFhWCiOq1Lc+O8JWMkrzaKIer5
+         eAow==
+X-Forwarded-Encrypted: i=1; AJvYcCVIztFKF/CszElK8+yjoxzxJmg78plUWFnwch0gOv+CRhA3zdFqRoBfrBV8kr8BSoT7wdgBwb/wpZHA@vger.kernel.org, AJvYcCVMogHvnpNlZTrmAt2FFY6ErGkOnJjHmm7Dn/5TAOaTiLE6aQ0fN0+w7ImZZF30dYjJbv0w+vMzi4H1rgbe@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyuh2DSjPOw7VqGnnH4ljDeRQWOxO5y8ieD9IGCfk3jkUBPLX/K
+	kph31HABW2wPXQ5mc3l7N2pHZTlxfJV6GbpPh0iQ/x3c6B/HYPPqZook
+X-Gm-Gg: ASbGncvomskT1w5x1CACP7MfIXeTvzdP0xREk4KPlvWmm1A3SLoYUAznOm7J0T5wgBH
+	2R6yPwhGMsdVKZxQyyPFzNB7dHR+8Dfq4H5K+/rLg4SsR3TnhkJHE36KcSaB/LfMR4PyJFFEWTt
+	dNSrf/qSgT87u6yXKPu3f257Kdz+wHVeY/VUNs2Oj/ZXHSChnlmwM1NbB7FlT0hMKbjtaar3ZH2
+	x+z8bIGZRmZ1oWgL74RHq+ccuxaRZubr3Agh2ZIBBusI+raVP6HJC3R27bqpRVgN382g5znoXHu
+	qNady1V4i5hWF+i9cnyeEASc0oCBEAwOuWolWygC+J/HP1476UQrYYvyf0vr5nGt8BfDmkJH
+X-Google-Smtp-Source: AGHT+IF2gopwxM64FAD0FZDnw1lPgQORZkvtpUYpoRgRuNfklUmt4fK4rmjd5HBaL3Snj8yAGWBBoA==
+X-Received: by 2002:a05:6a00:3cd6:b0:748:3a1a:ba72 with SMTP id d2e1a72fcca58-74ce8acd777mr21400752b3a.20.1751956249103;
+        Mon, 07 Jul 2025 23:30:49 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-74ce42cc925sm9765276b3a.152.2025.07.07.23.30.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 23:30:48 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH v5 0/2] riscv: sophgo: add USB phy support for CV18XX series
+Date: Tue,  8 Jul 2025 14:30:35 +0800
+Message-ID: <20250708063038.497473-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/4lMkzAC5LI8uGc9.ud9OWwI";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
---Sig_/4lMkzAC5LI8uGc9.ud9OWwI
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Add USB PHY support for CV18XX/SG200X series
 
-Dear Community,
+Changed from v4:
+- https://lore.kernel.org/all/20250611081804.1196397-1-inochiama@gmail.com
+1. patch 1: apply Conor's tag
+2. patch 2: remove dr_mode debugfs entry.
+3. patch 2: simplify the cv1800_usb_phy_set_clock function
 
-> This patch series adds support for More Than IP's L2 switch driver
-> embedded in some NXP's SoCs. This one has been tested on imx287, but
-> is also available in the vf610.
->=20
-> In the past there has been performed some attempts to upstream this
-> driver:
->=20
-> 1. The 4.19-cip based one [1]
-> 2. DSA based one for 5.12 [2] - i.e. the switch itself was treat as a
-> DSA switch with NO tag appended.
-> 3. The extension for FEC driver for 5.12 [3] - the trick here was to
-> fully reuse FEC when the in-HW switching is disabled. When bridge
-> offloading is enabled, the driver uses already configured MAC and PHY
-> to also configure PHY.
->=20
-> All three approaches were not accepted as eligible for upstreaming.
->=20
-> The driver from this series has floowing features:
->=20
-> 1. It is fully separated from fec_main - i.e. can be used
-> interchangeable with it. To be more specific - one can build them as
-> modules and if required switch between them when e.g. bridge
-> offloading is required.
->=20
->    To be more specific:
->         - Use FEC_MAIN: When one needs support for two ETH ports with
-> separate uDMAs used for both and bridging can be realized in SW.
->=20
->         - Use MTIPL2SW: When it is enough to support two ports with
-> only uDMA0 attached to switch and bridging shall be offloaded to HW.=20
->=20
-> 2. This driver uses MTIP's L2 switch internal VLAN feature to provide
-> port separation at boot time. Port separation is disabled when
-> bridging is required.
->=20
-> 3. Example usage:
->         Configuration:
->         ip link set lan0 up; sleep 1;
->         ip link set lan1 up; sleep 1;
->         ip link add name br0 type bridge;
->         ip link set br0 up; sleep 1;
->         ip link set lan0 master br0;
->         ip link set lan1 master br0;
->         bridge link;
->         ip addr add 192.168.2.17/24 dev br0;
->         ping -c 5 192.168.2.222
->=20
->         Removal:
->         ip link set br0 down;
->         ip link delete br0 type bridge;
->         ip link set dev lan1 down
->         ip link set dev lan0 down
->=20
-> 4. Limitations:
->         - Driver enables and disables switch operation with learning
-> and ageing.
->         - Missing is the advanced configuration (e.g. adding entries
-> to FBD). This is on purpose, as up till now we didn't had consensus
-> about how the driver shall be added to Linux.
->=20
-> 5. Clang build:
-> 	make LLVM_SUFFIX=3D-19 LLVM=3D1 mrproper
-> 	cp ./arch/arm/configs/mxs_defconfig .config
-> 	make ARCH=3Darm LLVM_SUFFIX=3D-19 LLVM=3D1 W=3D1 menuconfig
-> 	make ARCH=3Darm LLVM_SUFFIX=3D-19 LLVM=3D1 W=3D1 -j8
-> LOADADDR=3D0x40008000 uImage dtbs
->=20
->         make LLVM_SUFFIX=3D-19 LLVM=3D1 mrproper
->         make LLVM_SUFFIX=3D-19 LLVM=3D1 allmodconfig
->         make LLVM_SUFFIX=3D-19 LLVM=3D1 W=3D1
-> drivers/net/ethernet/freescale/mtipsw/ | tee llvm_build.log make
-> LLVM_SUFFIX=3D-19 LLVM=3D1 W=3D1 -j8 | tee llvm_build.log
->=20
-> 6. Kernel compliance checks:
-> 	make coccicheck MODE=3Dreport J=3D4
-> M=3Ddrivers/net/ethernet/freescale/mtipsw/
-> ~/work/src/smatch/smatch_scripts/kchecker
-> drivers/net/ethernet/freescale/mtipsw/
->=20
-> 7. GCC
->         make mrproper
->         make allmodconfig
->         make W=3D1 drivers/net/ethernet/freescale/mtipsw/
->=20
+Changed from v3:
+- https://lore.kernel.org/all/IA1PR20MB4953C1876484E149AA390DD5BB1D2@IA1PR20MB4953.namprd20.prod.outlook.com/
+1. patch 1: remove vbus-gpio, switch-gpio and dr_mode properties.
+2. patch 2: remove all logic related to the bindings change.
+3. remove the syscon header file.
 
-Gentle ping on this driver's patch set ...
+Changed from v2:
+1. add item description for switch gpios.
 
-> Links:
-> [1] - https://github.com/lmajewski/linux-imx28-l2switch/commits/master
-> [2] -
-> https://github.com/lmajewski/linux-imx28-l2switch/tree/imx28-v5.12-L2-ups=
-tream-RFC_v1
-> [3] -
-> https://source.denx.de/linux/linux-imx28-l2switch/-/tree/imx28-v5.12-L2-u=
-pstream-switchdev-RFC_v1?ref_type=3Dheads
->=20
->=20
-> Lukasz Majewski (12):
->   dt-bindings: net: Add MTIP L2 switch description
->   ARM: dts: nxp: mxs: Adjust the imx28.dtsi L2 switch description
->   ARM: dts: nxp: mxs: Adjust XEA board's DTS to support L2 switch
->   net: mtip: The L2 switch driver for imx287
->   net: mtip: Add buffers management functions to the L2 switch driver
->   net: mtip: Add net_device_ops functions to the L2 switch driver
->   net: mtip: Add mtip_switch_{rx|tx} functions to the L2 switch driver
->   net: mtip: Extend the L2 switch driver with management operations
->   net: mtip: Extend the L2 switch driver for imx287 with bridge
->     operations
->   ARM: mxs_defconfig: Enable CONFIG_NFS_FSCACHE
->   ARM: mxs_defconfig: Update mxs_defconfig to 6.16-rc1
->   ARM: mxs_defconfig: Enable CONFIG_FEC_MTIP_L2SW to support MTIP L2
->     switch
->=20
->  .../bindings/net/nxp,imx28-mtip-switch.yaml   |  150 ++
->  MAINTAINERS                                   |    7 +
->  arch/arm/boot/dts/nxp/mxs/imx28-xea.dts       |   56 +
->  arch/arm/boot/dts/nxp/mxs/imx28.dtsi          |    9 +-
->  arch/arm/configs/mxs_defconfig                |   13 +-
->  drivers/net/ethernet/freescale/Kconfig        |    1 +
->  drivers/net/ethernet/freescale/Makefile       |    1 +
->  drivers/net/ethernet/freescale/mtipsw/Kconfig |   13 +
->  .../net/ethernet/freescale/mtipsw/Makefile    |    4 +
->  .../net/ethernet/freescale/mtipsw/mtipl2sw.c  | 1958
-> +++++++++++++++++ .../net/ethernet/freescale/mtipsw/mtipl2sw.h  |
-> 654 ++++++ .../ethernet/freescale/mtipsw/mtipl2sw_br.c   |  120 +
->  .../ethernet/freescale/mtipsw/mtipl2sw_mgnt.c |  443 ++++
->  13 files changed, 3418 insertions(+), 11 deletions(-)
->  create mode 100644
-> Documentation/devicetree/bindings/net/nxp,imx28-mtip-switch.yaml
-> create mode 100644 drivers/net/ethernet/freescale/mtipsw/Kconfig
-> create mode 100644 drivers/net/ethernet/freescale/mtipsw/Makefile
-> create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw.c
-> create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw.h
-> create mode 100644
-> drivers/net/ethernet/freescale/mtipsw/mtipl2sw_br.c create mode
-> 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw_mgnt.c
->=20
+Changed from v1:
+1. remove dr_mode property and use default mode instead.
+2. improve the description of `vbus_det-gpios` and `sophgo,switch-gpios`
 
+Inochi Amaoto (2):
+  dt-bindings: phy: Add Sophgo CV1800 USB phy
+  phy: sophgo: Add USB 2.0 PHY driver for Sophgo CV18XX/SG200X
 
-
-
-Best regards,
-
-Lukasz Majewski
+ .../bindings/phy/sophgo,cv1800b-usb2-phy.yaml |  54 ++++++
+ drivers/phy/Kconfig                           |   1 +
+ drivers/phy/Makefile                          |   1 +
+ drivers/phy/sophgo/Kconfig                    |  19 ++
+ drivers/phy/sophgo/Makefile                   |   2 +
+ drivers/phy/sophgo/phy-cv1800-usb2.c          | 170 ++++++++++++++++++
+ 6 files changed, 247 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/sophgo,cv1800b-usb2-phy.yaml
+ create mode 100644 drivers/phy/sophgo/Kconfig
+ create mode 100644 drivers/phy/sophgo/Makefile
+ create mode 100644 drivers/phy/sophgo/phy-cv1800-usb2.c
 
 --
+2.50.0
 
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/4lMkzAC5LI8uGc9.ud9OWwI
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmhsuvwACgkQAR8vZIA0
-zr18FAgAugcPdC55UMMKk5rfZiswE8C+zfajggnswPx6CsyMLd9VC+fQ0vLCEQVF
-50g00sQ138COO+I9mkbqjK3LAQFHuMVsuy7SBQqADQ9F2LjzSpt5Y/PiEOL0FQom
-bKpFJWGh9b6krGTT9gZcfnVEPDTJ1VRuWoQ1az1gXvGJBH/sHRBvuOqrDb+lVZKl
-pkRYXD/cKasueLGPk6GAjalN05PuLtL6wTRQWG2W6AdJcYamaflrDoVRnf1fCn2z
-K8fpqZbo91HS38hpjqa4sCQZAlQiHo5xv6nC7glH7Ffwo1PqPOFr4DIKFjkODEIT
-JLl4jELD21yMDPVJKxhCH/6sBJhb8Q==
-=xtyg
------END PGP SIGNATURE-----
-
---Sig_/4lMkzAC5LI8uGc9.ud9OWwI--
 
