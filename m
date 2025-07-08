@@ -1,256 +1,130 @@
-Return-Path: <linux-kernel+bounces-721061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FC8EAFC44A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:39:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E930AAFC449
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BAA41886DD4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:39:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F9A47A44F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 07:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A61299A84;
-	Tue,  8 Jul 2025 07:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104D229A30F;
+	Tue,  8 Jul 2025 07:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Z+cDIoqg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oCcz3XoT";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Z+cDIoqg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oCcz3XoT"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="CL55tIaj"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB55298258
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 07:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65CB299943
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 07:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751960337; cv=none; b=ulW3PiqzyS5GHz0/wdE6QLQt5pqHq/+teyDAIgdtLN+3PQxrpy8+5ip+EViEEln01mQ+5e3dvTB2WAk47yHfA9b8ZDDnzp8v50z1NDAZVwW4dfjyjahjfzqnr6V4KOlEO1ptiUjd0KDalJlTsET1+UP12qK3CBDLjpyxcuJny0w=
+	t=1751960349; cv=none; b=XztezR3pzMyEeoo5VXYZ/gAeOgmWv3VbhnmxFglPKXc+1pm7zUcTiqm2/kqEaUciopAp8lIqGHKoLLLDCJfywrhwjTZq8jq2ldhFyK9oRr9i5v2PU9N2p5Cc0r8EAuRPHn6RBItL2gf8BOI8U4uwx77TIRYM9XgOKyKZ4sUq4xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751960337; c=relaxed/simple;
-	bh=zCM8QgWrvDviVZ4FIBzFaUWr6BsAjVk0KYPCoXEN6uw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FhSN62YpWaSQOtUsljJzInUzjz3gkYUU61ngVilrssCJWTGnaSpz+7MPLn7l7wtEsmjwKYMoO5BISqqk0DnSn/yv14RqwbUgxow9cPzxLTL0WNcXbsxmIE/1Bn3i6YOcA9P/n5BhdYBCTIMVyQKGQGkFg+/B+8XA6EXNg7iAsfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Z+cDIoqg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oCcz3XoT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Z+cDIoqg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oCcz3XoT; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7DE6C2115F;
-	Tue,  8 Jul 2025 07:38:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751960333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=gvG5OJSZUKUfmOaM9AGtFnkko27si3EQj7m9quIH+1U=;
-	b=Z+cDIoqgze0oqsRAESJ+3Zsubl5j79M5/pT1u8FEq56KkABuklx2yAl0/NOQBBq7cLliEG
-	w/BgzsdD5oNmLng+Ej9dIh+o55N1YVqhN4CqcCO+MbE7SxVxW7+kKpJ1tPj7QM2zeYl1gr
-	4jUnK5OWMyE7gIUGrduMElIiHqfl0PA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751960333;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=gvG5OJSZUKUfmOaM9AGtFnkko27si3EQj7m9quIH+1U=;
-	b=oCcz3XoTG2OpMrgy6Go/NmHCi+I73sVD2Pqsd2PADEDbC8BCxQ6lqFq6fSktqH9ZfYBB//
-	meQGvKx6KWqOyyBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Z+cDIoqg;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=oCcz3XoT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751960333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=gvG5OJSZUKUfmOaM9AGtFnkko27si3EQj7m9quIH+1U=;
-	b=Z+cDIoqgze0oqsRAESJ+3Zsubl5j79M5/pT1u8FEq56KkABuklx2yAl0/NOQBBq7cLliEG
-	w/BgzsdD5oNmLng+Ej9dIh+o55N1YVqhN4CqcCO+MbE7SxVxW7+kKpJ1tPj7QM2zeYl1gr
-	4jUnK5OWMyE7gIUGrduMElIiHqfl0PA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751960333;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=gvG5OJSZUKUfmOaM9AGtFnkko27si3EQj7m9quIH+1U=;
-	b=oCcz3XoTG2OpMrgy6Go/NmHCi+I73sVD2Pqsd2PADEDbC8BCxQ6lqFq6fSktqH9ZfYBB//
-	meQGvKx6KWqOyyBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1198913A54;
-	Tue,  8 Jul 2025 07:38:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id HNbpAg3LbGhQRwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 08 Jul 2025 07:38:53 +0000
-Message-ID: <a421623f-e93f-4423-bf30-c7388c6a3508@suse.de>
-Date: Tue, 8 Jul 2025 09:38:52 +0200
+	s=arc-20240116; t=1751960349; c=relaxed/simple;
+	bh=wypA2EBmpHp+y/b2ODxhiTcNbDIFZEPcjrmQqxW5FIA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GD0rS/PD0w4Z1G579prTlQT7ELfhL98i5Pk3OzOWQrlpdPJvOB+tQ4NoxSQ+bWz8aPOD18dNGFrh+K4hgviMOYrNO6beY+Om8ttxrx1niDohbXWJXfEvmhLGhMZOXZIlVBkJMnTqQ8Hvfk/kHko5VDt8he4bp06taMkpufz86Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=CL55tIaj; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b390d09e957so2351878a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 00:39:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brighamcampbell.com; s=google; t=1751960347; x=1752565147; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZN7aSjUU2m/lgLen2skU4S+C9lHA5hU+Z1BWGyIcRGk=;
+        b=CL55tIajcxGi82FtpZGUu1hsD2cqwt6I9lYcPqxmJx5qm9tHAijELkYnA/8yhEpLjy
+         G5mAovIu7QkKzXh/HaLLr6Zh2cL0ytnExTVtm7ng2NLC4nCJ8ZdYn05sFEFMwURKmLz0
+         FXu2wUK1DW2oktKXdh3pxSTmbrqzoONkEk+xXEAXQaG/F0lJOyssz/LX326Q1OfXX+WD
+         T0Fuc4LVk0rnR6+wIBHOxC7tub+14bawjVF6N6KeXkOFWpYKVgILj/cEGp+Cl24ic0uU
+         Oy+4SNQHDkdkvq9GeE3cWcvLfGYHCTdmUBbQNIPofwL5EGOBuDP/jhi+yw51m77vqQPW
+         HIQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751960347; x=1752565147;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZN7aSjUU2m/lgLen2skU4S+C9lHA5hU+Z1BWGyIcRGk=;
+        b=vZgHSMfRVdkgEnNznDOZEDim6UiEv2K6b1Q9C4QaBmXfxs6rwiqDwGSrfUOvjpen7i
+         Xl8kbEBn3mma+O1guGL0vkIgy1mmBD8e4h57fHGqZ90zV1Oei+lF81wna8Tn8Oq0D+hk
+         li2R5SoeW8KDaH4De0LvZJvc6ZAVWeg9dB6NijdlTbRUhP3Ntxd2Zwin7uFBFyE6C7lq
+         5dkCY6f6Q/BjoQiQQYmGfs2XXeMj+8/gJ4FsB33PA7h/FKQkzYfhEnUtsA9XGvjMSqh0
+         ej6KrHFMG4Hjj9xPeDyq06rjYejivekfraGWQeGBKAyViF3U+wXnz51cIxRVx0AP9NoY
+         ckHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVHMDYH+WGedPe8BHYWoQHZOzwkZUrzTBYJdwqGFphBn1YXIZ4SpfMkbU6LZMtw+OUqR2iZr3spV3U5/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNO0rGlwyo2jjDj+fpksToYjVQG6oVaf8cplOCxfxbVBJrEVyF
+	XSPDUux1XrgDnyGZe9oth2Dvwobulxml/YdeY+a/UMecIR/9QfFRDKvY8akdqWShQrE=
+X-Gm-Gg: ASbGnctxBYMLA96CWJ3UPVO0hJyPoc16WATj5I9KnN52hqDNQ4/PFzwcWA6rhNW/43L
+	U+9ulMJMfIqVEa5SJRtSMVXJ57IG/3RkMEBZ43UO5UpZClunQZpvWyl0tVqCh9xwH6GOJ9XmLYC
+	S+co4iB9VNdJPKWQ+8OR2HvyL68RXpdFB68kcdlDqVl9QQOefTO+B8PzCTMvTING7jLqkNbxmSQ
+	sfV6dm3n1lcPrce9uFQTEzHuNn5FsnnlgGGuiWYb8/Z8v6vKfnIgy7IXZ5NgTTbwbU1rgocjLMv
+	95869Qgv6TleZwNfW/N3Q/Ju3PQxrZaVRenb/AMoZQ7qaMyiN05cOWgMycod8LDxzdIkew12vOx
+	j4UN0rlkH46+534vfqA==
+X-Google-Smtp-Source: AGHT+IGcYNPUjs2kwjkvmFdGShMU4syGWz/FE+DbOGjtHhPQiV8ZsbgVj6QjspJrmZqOo3MkvanzoA==
+X-Received: by 2002:a05:6a20:e687:b0:21f:cdfa:120e with SMTP id adf61e73a8af0-2260c839353mr26223435637.30.1751960347004;
+        Tue, 08 Jul 2025 00:39:07 -0700 (PDT)
+Received: from mystery-machine.brighamcampbell.com ([64.71.154.6])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce42a540bsm11633523b3a.140.2025.07.08.00.39.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 00:39:06 -0700 (PDT)
+From: Brigham Campbell <me@brighamcampbell.com>
+To: dianders@chromium.org,
+	tejasvipin76@gmail.com,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	dri-devel@lists.freedesktop.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Brigham Campbell <me@brighamcampbell.com>
+Subject: [PATCH v2 0/3] drm: docs: Remove deprecated MIPI DSI macro
+Date: Tue,  8 Jul 2025 01:38:57 -0600
+Message-ID: <20250708073901.90027-1-me@brighamcampbell.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] drm/framebuffer: Acquire internal references on GEM
- handles
-To: Satadru Pramanik <satadru@gmail.com>
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- asrivats@redhat.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- airlied@gmail.com, simona@ffwll.ch, jean-christophe@guillain.net,
- superm1@kernel.org, bp@alien8.de, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Bert Karwatzki <spasswolf@web.de>,
- Sumit Semwal <sumit.semwal@linaro.org>, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org, stable@vger.kernel.org
-References: <20250707131224.249496-1-tzimmermann@suse.de>
- <a3336964-1b72-421c-b4dc-2ac3f548430b@amd.com>
- <4c1bc40d-6bd4-4102-b12f-fda320216e1d@suse.de>
- <CAFrh3J9uh0M5bWeS3cv_Cb1yFTKhE2+9mSk5hsZTzWW3uYKaWg@mail.gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <CAFrh3J9uh0M5bWeS3cv_Cb1yFTKhE2+9mSk5hsZTzWW3uYKaWg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,web.de];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[amd.com,redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,guillain.net,alien8.de,lists.freedesktop.org,vger.kernel.org,web.de,linaro.org,lists.linaro.org];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 7DE6C2115F
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
 
-Hi
+This series removes the unintuitive mipi_dsi_generic_write_seq() macro
+and related mipi_dsi_generic_write_chatty() method from the drm
+subsystem. This is in accordance with a TODO item from Douglas Anderson
+in the drm subsystem documentation. Tejas Vipin (among others) has
+largely spearheaded this effort up until now, converting MIPI panel
+drivers one at a time.
 
-Am 07.07.25 um 18:14 schrieb Satadru Pramanik:
-> Applying this patch to 6.16-rc5 resolves the sleep issue regression 
-> from 6.16-rc4 I was having on my MacBookPro11,3 (Mid-2014 15" 
-> MacBookPro), which has the NVIDIA GK107M GPU enabled via the Nouveau 
-> driver.
+The first patch of the series removes the last remaining references to
+mipi_dsi_generic_write_seq() in the jdi-lpm102a188a driver and updates
+the driver to use the undeprecated _multi variants of MIPI functions.
+Any behavioral modification to the jdi lpm102a188a panel driver by this
+series is unintentional.
 
-Thanks for testing. I think the sleep regression was just a side effect 
-of the broken reference counting.
+changes to v2:
+ - Remove all usages of deprecated MIPI functions from jdi-lpm102a188a
+   driver instead of just mipi_dsi_generic_write_seq().
+ - Update TODO item in drm documentation instead of removing it
+   entirely.
 
-Best regards
-Thomas
+Brigham Campbell (3):
+  drm/panel: jdi-lpm102a188a: Update deprecated MIPI function calls
+  Remove unused MIPI write seq and chatty functions
+  drm: docs: Update task from drm TODO list
 
->
-> Many thanks,
->
-> Satadru
->
-> On Mon, Jul 7, 2025 at 9:33 AM Thomas Zimmermann <tzimmermann@suse.de> 
-> wrote:
->
->     Hi
->
->     Am 07.07.25 um 15:21 schrieb Christian König:
->
->     >>
->     >> +#define DRM_FRAMEBUFFER_HAS_HANDLE_REF(_i)  BIT(0u + (_i))
->     > Why the "0u + (_i)" here? An macro trick?
->
->     You mean why not just BIT(_i)? internal_flags could possibly contain
->     additional flags. Just using BIT(_i) would make it look as if it's
->     only
->     for those handle refs.
->
->     Best regards
->     Thomas
->
->     >
->     > Regards,
->     > Christian.
->     >
->     >> +
->     >>   /**
->     >>    * struct drm_framebuffer - frame buffer object
->     >>    *
->     >> @@ -188,6 +191,10 @@ struct drm_framebuffer {
->     >>       * DRM_MODE_FB_MODIFIERS.
->     >>       */
->     >>      int flags;
->     >> +    /**
->     >> +     * @internal_flags: Framebuffer flags like
->     DRM_FRAMEBUFFER_HAS_HANDLE_REF.
->     >> +     */
->     >> +    unsigned int internal_flags;
->     >>      /**
->     >>       * @filp_head: Placed on &drm_file.fbs, protected by
->     &drm_file.fbs_lock.
->     >>       */
->
->     -- 
->     --
->     Thomas Zimmermann
->     Graphics Driver Developer
->     SUSE Software Solutions Germany GmbH
->     Frankenstrasse 146, 90461 Nuernberg, Germany
->     GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
->     HRB 36809 (AG Nuernberg)
->
+ Documentation/gpu/todo.rst                    |  26 +--
+ drivers/gpu/drm/drm_mipi_dsi.c                |  34 +---
+ drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c | 150 +++++++-----------
+ include/drm/drm_mipi_dsi.h                    |  23 ---
+ 4 files changed, 71 insertions(+), 162 deletions(-)
 
+
+Link: https://lore.kernel.org/lkml/20250707075659.75810-1-me@brighamcampbell.com/
+base-commit: e33f256dbc293a1a3a31f18d56f659e7a27a491a
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+2.49.0
 
 
