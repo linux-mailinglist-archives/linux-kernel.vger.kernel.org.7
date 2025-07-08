@@ -1,364 +1,269 @@
-Return-Path: <linux-kernel+bounces-721506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94C2AFCA1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:10:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 883F7AFCA20
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 14:12:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAEDC5613E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:10:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F5CC3B6C89
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 12:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7422DAFA9;
-	Tue,  8 Jul 2025 12:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F55C2DAFB4;
+	Tue,  8 Jul 2025 12:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k6rJ0n2D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qpswLP0u";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sJlQRrkd";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ng1zuW7r";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7fDkh8ds"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F492D97A0;
-	Tue,  8 Jul 2025 12:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C085C238D53
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 12:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751976609; cv=none; b=sMcyh0MOJJiOx4IzN240OKJNrI0XrQDzrEa9aCNRxm2SNT6QUzcJNhh5lgbgVTaG4Y2MDw3WYAX7JfoGflG3lkAMQtKwxGPK4V3753KzeXnpeHVadZPjVRIW9x6f8a3cCHxg68+3vaIZ9KG/m9LToucWq6T2JF0lnGZoPBozWNQ=
+	t=1751976744; cv=none; b=HRHmy85FDqIIcRMY18/CupN2eO83FW+Li+z0bL2O0O8/lJ7h+g7cKfP1dZSBm6oW/XVeV2f1BTit4FHi7+YtE0XFfv5X8z0NeOOLOjfLC8JUOHz96Wq6w36CxEP5K/8v5zgpg7ZjScWQBHRZoYKI9qtL9aiu26E5kZ6cIuEXfFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751976609; c=relaxed/simple;
-	bh=4D3e58+fDv4wnL0mp2ESwrJPKCLUyhnwLJUlNrL3WYA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XlJexVb1T0GhNc6kBRJpaJtm+iJHUv6Uj4EKw0oznHb9w5hzHrqOdGSzThXGRIXawicrFragn6GUAr6tg91ZLy8S8HryjeUkUVIODD01otzU/eQUXUzY4PD3c8BvRk7UzSvE46OqkbUs1ZIODCJnUOs5L6/AYtyy6r05UYl0oRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k6rJ0n2D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB82FC4CEED;
-	Tue,  8 Jul 2025 12:10:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751976609;
-	bh=4D3e58+fDv4wnL0mp2ESwrJPKCLUyhnwLJUlNrL3WYA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=k6rJ0n2Dk+sMpYJI78QqSEUU3+uUlsMBqtUaXFRdL2BmtHHhBXzuUAKvVCeCa4LIZ
-	 /QDY6RFjRSToFvLKREyybxLMMezwv148Z6fIgV9SdtPvDH/9ZKVTbosmrkG4k2KXje
-	 vNUlwAzt/OGsCvaWR8USqZJ/H8s26bM/1WuoRnOR5wRGOy5kpZtpapX9TbTBF1qNNx
-	 o3DIc3TnNUyohOUzTKctq3JGlp++lXrTQaiOEwvxl3EsMhsyLvar5aRpmJovdb++po
-	 iisl8ruI4epj+gbbfdd+5QcCJ0Z2GbYfUUWLhVcJhryoXI86za3QpxrkGLsgd0YfO2
-	 sxPcsHnVUIjjg==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-32cd499007aso32026141fa.0;
-        Tue, 08 Jul 2025 05:10:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXfLBFM5vXI75VjHq4Vc1e8kDSR59wqEpuDa7K4jv8p1NhCPbthVjtRo/XA8TNMf9RWGwrPvrOPi8kQsVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyek52L5AQoH74HgDFHiT/T/6GACQY+OUXvm5Gf+xf3LPcDknc5
-	JtjmHXRUR9704r7wW1aHJ5X7rWi10sLkHOsY+IY0Lr89KKUzUQMnVLTvMmJ+kWoSj4kMvaHcD7X
-	bheRooSv/UvheDI9npLJBoB+0gJbq4EQ=
-X-Google-Smtp-Source: AGHT+IEpUTDRMnnqyxhAvvmWjcjCikmkzw4A/TXPHGaC6LVQ7BUpFBXytfDiRzUu7iWKv9L+8MfXJm4Q73VbvMwqON4=
-X-Received: by 2002:a2e:b80f:0:b0:32b:719f:1260 with SMTP id
- 38308e7fff4ca-32f39aa91f6mr7366821fa.9.1751976607238; Tue, 08 Jul 2025
- 05:10:07 -0700 (PDT)
+	s=arc-20240116; t=1751976744; c=relaxed/simple;
+	bh=c04L3iUAIPiI15KxDDXZC5Zg2kHOcVtpq+1i1QbUISU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LdcdmAFRajQydbeo0eFYBjFZ87xpY1ryJuQYkEVgayHSJzLFz4Xj7BgX+TniXJmOd7UG1SR4AKSJQz7evoKT9tpMG10c1FklTmkjSg9fsgAvRIYgdz/6NP2WZJbzGGCpOIepD5X9uUoNYEsF7Pbyp2Phqwm1KLFSR2ANTB5KTMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qpswLP0u; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sJlQRrkd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ng1zuW7r; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7fDkh8ds; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C0B131F38D;
+	Tue,  8 Jul 2025 12:12:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751976741; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jvXwVBSd1AJJG+tu7OkjqSWOH8Ox3gBNgCJ8ii7IyfU=;
+	b=qpswLP0uPO9lmq5Apj4Tp5+Qcs4bOnbnVZ/y8iM3w5CaGnwImRZZseMjkWnvTsEpJ6qW9F
+	83e8W11gE+5ynBU82by9/yuIy6BRr/Bat9mVNhydxgRIZUAFkopS8zIy65PcK5CXOOi8+2
+	TwCZXC07pI/UxJ+fEPjlRmDFUggJOhk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751976741;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jvXwVBSd1AJJG+tu7OkjqSWOH8Ox3gBNgCJ8ii7IyfU=;
+	b=sJlQRrkd4R8MHahyl9fZIYW+xI8BzxFkM1ckmQKnSKm5oe+v12h+txVWYJCYKzQc9alKvN
+	UG/ZP2ZlHoUdJlAA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ng1zuW7r;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=7fDkh8ds
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751976740; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jvXwVBSd1AJJG+tu7OkjqSWOH8Ox3gBNgCJ8ii7IyfU=;
+	b=ng1zuW7r8ZN8xfc+Ui9FfbhVFudowpVdH4oCh8j7pjkcmWyP2qoPC8aCe+IjfGsIMnx/3n
+	bYmVc6xkQjHDH4uyB2NpuhEK19UugyHEi5VLtFfjph39mz7v3kPDSUuCgU2OUjURrerNWf
+	7EUyNHW7UfsyBw2jQAt0K+PSeHc90cc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751976740;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jvXwVBSd1AJJG+tu7OkjqSWOH8Ox3gBNgCJ8ii7IyfU=;
+	b=7fDkh8dsVx+H4tqX1VEo7wG7ehiAClNUQHNDY+o/uV/ZbXZMdJiqqXzZVtZF5WxmbQPDws
+	eRaEuojlI/8NsBCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A73C713A54;
+	Tue,  8 Jul 2025 12:12:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id W2LSJyQLbWhfHgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 08 Jul 2025 12:12:20 +0000
+Message-ID: <628e8c0d-2bc5-4cc8-893a-0b8388ba98f9@suse.cz>
+Date: Tue, 8 Jul 2025 14:12:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250708105559.603425-1-kraxel@redhat.com>
-In-Reply-To: <20250708105559.603425-1-kraxel@redhat.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 8 Jul 2025 22:09:55 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXEvVT6BCOPuGRL8_v15c92-wzvp5wGBuh7pB6EYnhB4vg@mail.gmail.com>
-X-Gm-Features: Ac12FXxNpj2y0l_V1h8-6pyTTP5yz8BJIAx2zn36NfLzkzIowlxRv1a5bSnzAZw
-Message-ID: <CAMj1kXEvVT6BCOPuGRL8_v15c92-wzvp5wGBuh7pB6EYnhB4vg@mail.gmail.com>
-Subject: Re: [PATCH] efi: add ovmf debug log driver
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: linux-efi@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 1/4] mm/vmalloc: allow to set node and align in
+ vrealloc
+Content-Language: en-US
+To: Vitaly Wool <vitaly.wool@konsulko.se>, linux-mm@kvack.org
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ Uladzislau Rezki <urezki@gmail.com>, Danilo Krummrich <dakr@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org
+References: <20250707164755.631374-1-vitaly.wool@konsulko.se>
+ <20250707164843.631434-1-vitaly.wool@konsulko.se>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250707164843.631434-1-vitaly.wool@konsulko.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,vger.kernel.org,gmail.com,kernel.org,google.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: C0B131F38D
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
 
-Thanks for providing implementations for both sides of this interface
+On 7/7/25 18:48, Vitaly Wool wrote:
+> Reimplement vrealloc() to be able to set node and alignment should
+> a user need to do so. Rename the function to vrealloc_node_align()
+> to better match what it actually does now and introduce macros for
+> vrealloc() and friends for backward compatibility.
+> 
+> With that change we also provide the ability for the Rust part of
+> the kernel to set node and alignment in its allocations.
+> 
+> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+> Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
-On Tue, 8 Jul 2025 at 20:56, Gerd Hoffmann <kraxel@redhat.com> wrote:
->
-> Recent OVMF versions (edk2-stable202508 + newer) can write their debug
-> log to a memory buffer.  This driver exposes the log content via sysfs
-> (/sys/firmware/efi/ovmf_debug_log).
->
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
->  include/linux/efi.h             |   2 +
->  drivers/firmware/efi/efi.c      |  11 +++
->  drivers/firmware/efi/ovmf-log.c | 136 ++++++++++++++++++++++++++++++++
->  drivers/firmware/efi/Kconfig    |   9 +++
->  drivers/firmware/efi/Makefile   |   1 +
->  5 files changed, 159 insertions(+)
->  create mode 100644 drivers/firmware/efi/ovmf-log.c
->
-> diff --git a/include/linux/efi.h b/include/linux/efi.h
-> index 7d63d1d75f22..55479cd8438b 100644
-> --- a/include/linux/efi.h
-> +++ b/include/linux/efi.h
-> @@ -439,6 +439,7 @@ void efi_native_runtime_setup(void);
->
->  /* OVMF protocol GUIDs */
->  #define OVMF_SEV_MEMORY_ACCEPTANCE_PROTOCOL_GUID       EFI_GUID(0xc5a010fe, 0x38a7, 0x4531,  0x8a, 0x4a, 0x05, 0x00, 0xd2, 0xfd, 0x16, 0x49)
-> +#define OVMF_MEMORY_LOG_TABLE_GUID                     EFI_GUID(0x95305139, 0xb20f, 0x4723, 0x84, 0x25, 0x62, 0x7c, 0x88, 0x8f, 0xf1, 0x21)
->
+Nit:
 
-Please make the indentation consistent with the preceding entries
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -4089,13 +4089,22 @@ void *vzalloc_node_noprof(unsigned long size, int node)
+>  EXPORT_SYMBOL(vzalloc_node_noprof);
+>  
+>  /**
+> - * vrealloc - reallocate virtually contiguous memory; contents remain unchanged
+> + * vrealloc_node_align_noprof - reallocate virtually contiguous memory; contents
+> + * remain unchanged
+>   * @p: object to reallocate memory for
+>   * @size: the size to reallocate
+> + * @align: requested alignment
+>   * @flags: the flags for the page level allocator
+> + * @nid: node number of the target node
+> + *
+> + * If @p is %NULL, vrealloc_XXX() behaves exactly like vmalloc(). If @size is
+> + * 0 and @p is not a %NULL pointer, the object pointed to is freed.
+>   *
+> - * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If @size is 0 and
+> - * @p is not a %NULL pointer, the object pointed to is freed.
+> + * if @nid is not NUMA_NO_NODE, this function will try to allocate memory on
+> + * the given node. If reallocation is not necessary (e. g. the new size is less
+> + * than the current allocated size), the current allocation will be preserved
+> + * unless __GFP_THISNODE is set. In the latter case a new allocation on the
+> + * requested node will be attempted.
+>   *
+>   * If __GFP_ZERO logic is requested, callers must ensure that, starting with the
+>   * initial memory allocation, every subsequent call to this API for the same
+> @@ -4111,7 +4120,8 @@ EXPORT_SYMBOL(vzalloc_node_noprof);
+>   * Return: pointer to the allocated memory; %NULL if @size is zero or in case of
+>   *         failure
+>   */
+> -void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+> +void *vrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
+> +				 gfp_t flags, int nid)
+>  {
+>  	struct vm_struct *vm = NULL;
+>  	size_t alloced_size = 0;
+> @@ -4135,6 +4145,12 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+>  		if (WARN(alloced_size < old_size,
+>  			 "vrealloc() has mismatched area vs requested sizes (%p)\n", p))
+>  			return NULL;
+> +		if (WARN(!IS_ALIGNED((unsigned long)p, align),
+> +			 "will not reallocate with a bigger alignment (0x%lx)\n", align))
+> +			return NULL;
 
+Maybe this should be mentioned in the doc comment above?
 
->  typedef struct {
->         efi_guid_t guid;
-> @@ -642,6 +643,7 @@ extern struct efi {
->         unsigned long                   esrt;                   /* ESRT table */
->         unsigned long                   tpm_log;                /* TPM2 Event Log table */
->         unsigned long                   tpm_final_log;          /* TPM2 Final Events Log table */
-> +       unsigned long                   ovmf_debug_log;
->         unsigned long                   mokvar_table;           /* MOK variable config table */
->         unsigned long                   coco_secret;            /* Confidential computing secret table */
->         unsigned long                   unaccepted;             /* Unaccepted memory table */
-> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-> index e57bff702b5f..629a42e50b57 100644
-> --- a/drivers/firmware/efi/efi.c
-> +++ b/drivers/firmware/efi/efi.c
-> @@ -45,6 +45,9 @@ struct efi __read_mostly efi = {
->         .esrt                   = EFI_INVALID_TABLE_ADDR,
->         .tpm_log                = EFI_INVALID_TABLE_ADDR,
->         .tpm_final_log          = EFI_INVALID_TABLE_ADDR,
-> +#ifdef CONFIG_OVMF_DEBUG_LOG
-> +       .ovmf_debug_log         = EFI_INVALID_TABLE_ADDR,
-> +#endif
-
-You can drop the #ifdef here, given that the struct member is always declared.
-
->  #ifdef CONFIG_LOAD_UEFI_KEYS
->         .mokvar_table           = EFI_INVALID_TABLE_ADDR,
->  #endif
-> @@ -473,6 +476,11 @@ static int __init efisubsys_init(void)
->                 platform_device_register_simple("efi_secret", 0, NULL, 0);
->  #endif
->
-> +#ifdef CONFIG_OVMF_DEBUG_LOG
-
-... and so you can use if (IS_ENABLED(CONFIG_OVMF_DEBUG_LOG) && ... here
-
-> +       if (efi.ovmf_debug_log != EFI_INVALID_TABLE_ADDR)
-> +               platform_device_register_simple("ovmf_log", 0, NULL, 0);
-
-Use 'ovmf_debug_log' for consistency
-
-> +#endif
+> +		if (unlikely(flags & __GFP_THISNODE) && nid != NUMA_NO_NODE &&
+> +			     nid != page_to_nid(vmalloc_to_page(p)))
+> +			goto need_realloc;
+>  	}
+>  
+>  	/*
+> @@ -4165,8 +4181,10 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+>  		return (void *)p;
+>  	}
+>  
+> +need_realloc:
+>  	/* TODO: Grow the vm_area, i.e. allocate and map additional pages. */
+> -	n = __vmalloc_noprof(size, flags);
+> +	n = __vmalloc_node_noprof(size, align, flags, nid, __builtin_return_address(0));
 > +
->         return 0;
->
->  err_remove_group:
-> @@ -617,6 +625,9 @@ static const efi_config_table_type_t common_tables[] __initconst = {
->         {LINUX_EFI_MEMRESERVE_TABLE_GUID,       &mem_reserve,           "MEMRESERVE"    },
->         {LINUX_EFI_INITRD_MEDIA_GUID,           &initrd,                "INITRD"        },
->         {EFI_RT_PROPERTIES_TABLE_GUID,          &rt_prop,               "RTPROP"        },
-> +#ifdef CONFIG_OVMF_DEBUG_LOG
-> +       {OVMF_MEMORY_LOG_TABLE_GUID,            &efi.ovmf_debug_log,    "OVMF-LOG"      },
-> +#endif
->  #ifdef CONFIG_EFI_RCI2_TABLE
->         {DELLEMC_EFI_RCI2_TABLE_GUID,           &rci2_table_phys                        },
->  #endif
-> diff --git a/drivers/firmware/efi/ovmf-log.c b/drivers/firmware/efi/ovmf-log.c
-> new file mode 100644
-> index 000000000000..4af52adb57cc
-> --- /dev/null
-> +++ b/drivers/firmware/efi/ovmf-log.c
+>  	if (!n)
+>  		return NULL;
+>  
 
-ovmf-debug-log.c
-
-> @@ -0,0 +1,136 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/efi.h>
-> +#include <linux/init.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/kobject.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/sysfs.h>
-> +
-> +#define MEM_DEBUG_LOG_MAGIC1  0x3167646d666d766f  // "ovmfmdg1"
-> +#define MEM_DEBUG_LOG_MAGIC2  0x3267646d666d766f  // "ovmfmdg2"
-> +
-
-OVMF_DEBUG_LOG_MAGICn
-
-> +struct mem_debug_log_header {
-
-ovmf_debug_log_header
-
-> +       u64    magic1;
-> +       u64    magic2;
-> +       u64    hdr_size;
-> +       u64    log_size;
-> +       u64    lock; // edk2 spinlock
-> +       u64    head_off;
-> +       u64    tail_off;
-> +       u64    truncated;
-> +       u8     fw_version[128];
-> +};
-> +
-> +static struct mem_debug_log_header *hdr;
-> +static u8 *logbuf;
-> +static u64 logbufsize;
-> +
-> +static ssize_t ovmf_log_read(struct file *filp, struct kobject *kobj,
-> +                            const struct bin_attribute *attr, char *buf,
-> +                            loff_t offset, size_t count)
-> +{
-> +       u64 start, end;
-> +
-> +       start = hdr->head_off + offset;
-> +       if (hdr->head_off > hdr->tail_off && start >= hdr->log_size)
-> +               start -= hdr->log_size;
-> +
-> +       end = start + count;
-> +       if (start > hdr->tail_off) {
-> +               if (end > hdr->log_size)
-> +                       end = hdr->log_size;
-> +       } else {
-> +               if (end > hdr->tail_off)
-> +                       end = hdr->tail_off;
-> +       }
-> +
-> +       if (start > logbufsize || end > logbufsize)
-> +               return 0;
-> +       if (start >= end)
-> +               return 0;
-> +
-> +       memcpy(buf, logbuf + start, end - start);
-> +       return end - start;
-> +}
-> +
-> +static struct bin_attribute ovmf_log_bin_attr = {
-> +       .attr = {
-> +               .name = "ovmf_debug_log",
-> +               .mode = 0444,
-> +       },
-> +       .read = ovmf_log_read,
-> +};
-> +
-> +static int ovmf_log_probe(struct platform_device *dev)
-> +{
-> +       u64 size;
-> +       int ret = -EINVAL;
-> +
-> +       if (efi.ovmf_debug_log == EFI_INVALID_TABLE_ADDR) {
-> +               dev_err(&dev->dev, "OVMF debug log: not available\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       /* map + verify header */
-> +       hdr = memremap(efi.ovmf_debug_log, sizeof(*hdr), MEMREMAP_WB);
-> +       if (!hdr) {
-> +               dev_err(&dev->dev, "OVMF debug log: header map failed\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       if (hdr->magic1 != MEM_DEBUG_LOG_MAGIC1 ||
-> +           hdr->magic2 != MEM_DEBUG_LOG_MAGIC2) {
-> +               dev_err(&dev->dev, "OVMF debug log: magic mismatch\n");
-> +               goto err_unmap;
-> +       }
-> +
-> +       size = hdr->hdr_size + hdr->log_size;
-> +       dev_info(&dev->dev, "firmware version: \"%s\"\n", hdr->fw_version);
-> +       dev_info(&dev->dev, "log buffer size: %lldk\n", size / 1024);
-> +
-
-llu
-
-> +       /* map complete log buffer */
-> +       iounmap(hdr);
-
-memunmap()
-
-> +       hdr = memremap(efi.ovmf_debug_log, size, MEMREMAP_WB);
-> +       if (!hdr) {
-> +               dev_err(&dev->dev, "OVMF debug log: buffer map failed\n");
-> +               return -EINVAL;
-> +       }
-> +       logbuf = (void*)hdr + hdr->hdr_size;
-
-space between void and *
-
-> +       logbufsize = hdr->log_size;
-> +
-> +       ovmf_log_bin_attr.size = size;
-> +       ret = sysfs_create_bin_file(efi_kobj, &ovmf_log_bin_attr);
-> +       if (ret != 0) {
-> +               dev_err(&dev->dev, "OVMF debug log: sysfs register failed\n");
-> +               goto err_unmap;
-> +       }
-> +
-> +       return 0;
-> +
-> +err_unmap:
-> +       iounmap(hdr);
-
-memunmap
-
-> +       return ret;
-> +}
-> +
-> +static void ovmf_log_remove(struct platform_device *dev)
-> +{
-> +       iounmap(hdr);
-
-memunmap
-
-> +}
-> +
-> +static struct platform_driver ovmf_log_driver = {
-> +       .probe = ovmf_log_probe,
-> +       .remove = ovmf_log_remove,
-> +       .driver = {
-> +               .name = "ovmf_log",
-> +       },
-> +};
-> +
-> +module_platform_driver(ovmf_log_driver);
-> +
-> +MODULE_DESCRIPTION("OVMF debug log");
-> +MODULE_AUTHOR("Gerd Hoffmann <kraxel@redhat.com>");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:ovmf_log");
-> diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
-> index db8c5c03d3a2..4563d0df170f 100644
-> --- a/drivers/firmware/efi/Kconfig
-> +++ b/drivers/firmware/efi/Kconfig
-> @@ -263,6 +263,15 @@ config EFI_COCO_SECRET
->           virt/coco/efi_secret module to access the secrets, which in turn
->           allows userspace programs to access the injected secrets.
->
-> +config OVMF_DEBUG_LOG
-> +       tristate "Expose OVMF firmware debug log via sysfs"
-> +       depends on EFI
-> +       default y
-
-Please drop this - new features are never on by default.
-
-> +       help
-> +         Recent OVMF versions (edk2-stable202508 + newer) can write
-> +         their debug log to a memory buffer.  This driver exposes the
-> +         log content via sysfs (/sys/firmware/efi/ovmf_debug_log).
-> +
->  config UNACCEPTED_MEMORY
->         bool
->         depends on EFI_STUB
-> diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
-> index a2d0009560d0..4770c7c4e3c7 100644
-> --- a/drivers/firmware/efi/Makefile
-> +++ b/drivers/firmware/efi/Makefile
-> @@ -29,6 +29,7 @@ obj-$(CONFIG_APPLE_PROPERTIES)                += apple-properties.o
->  obj-$(CONFIG_EFI_RCI2_TABLE)           += rci2-table.o
->  obj-$(CONFIG_EFI_EMBEDDED_FIRMWARE)    += embedded-firmware.o
->  obj-$(CONFIG_LOAD_UEFI_KEYS)           += mokvar-table.o
-> +obj-$(CONFIG_OVMF_DEBUG_LOG)           += ovmf-log.o
->
->  obj-$(CONFIG_SYSFB)                    += sysfb_efi.o
->
-> --
-> 2.50.0
->
->
 
