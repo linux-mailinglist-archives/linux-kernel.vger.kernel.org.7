@@ -1,345 +1,105 @@
-Return-Path: <linux-kernel+bounces-720866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6225BAFC157
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:21:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD03EAFC15B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 05:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 289ED7AFFB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:20:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B124C1894F5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 03:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715DD233D85;
-	Tue,  8 Jul 2025 03:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597FC23B623;
+	Tue,  8 Jul 2025 03:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b="0XFtq1rI"
-Received: from sg-1-30.ptr.blmpb.com (sg-1-30.ptr.blmpb.com [118.26.132.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y9SAxK/o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E80217719
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 03:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A4F238C15;
+	Tue,  8 Jul 2025 03:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751944892; cv=none; b=sLcW8P4JB30tgut6ZL4GbueQ0cTMtKRvxd2+jHrgqsH4uEAv/XRUxRGtbKq6Fp9A0ZEQBR5xoD+/CDZatRu7DWJdIP3ZXgDrzrURY0oIXGL/AmnB/5NwXvmFcnfCCtQ31DK/AE8jiuB0hvPVm7FSw1O3ukh/OEQU/nXS+BoI2jI=
+	t=1751944972; cv=none; b=sahQyTv2EAZBbwTxF9HQWtdQ/pdyT3xy76CY6SNyF2O/cwcEsp1/9EyaiZLqqN54u1xLXpQsHtyoyXFFcaTbFX2gDDAO3BYt+8VDiPiQZLGQth/UCTPXdgKcfAACsD8D49tLzL71Js+V935UXLErSatY72FRsiHcHnux63xakRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751944892; c=relaxed/simple;
-	bh=bzHv4eU31X/RdPTqcUe73N6UHOSb98BHHaw0WjDXxpg=;
-	h=Mime-Version:From:Date:Subject:In-Reply-To:Content-Type:
-	 References:To:Cc:Message-Id; b=E9i8bLFfisATf6LT81lL/DVd0f1UdV/povE75U5IfLnN1AtPzzsmXMV6rCU1AF6e/4pZBCV0ak2uajQVlvmKm1Z/oMGFLlwtc15EB6kP09ex6u1jpiMiHlNVxQp3174lU86cRdDzCV73e+BmjrdaKJ9eLVZ0ecUkeHbzLblJd6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com; spf=pass smtp.mailfrom=lanxincomputing.com; dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b=0XFtq1rI; arc=none smtp.client-ip=118.26.132.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lanxincomputing.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=lanxincomputing-com.20200927.dkim.feishu.cn; t=1751944882;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=zg/YomFgWluXbABhhcO8ioOh4E5v2C7pZz7d5544dM4=;
- b=0XFtq1rI2Q6dFJwemZvO8QeXnbU32xXFv6jDcy/HA7WN8LrPqfRr/5VgvayB9MVCwBTMXU
- VJj6fRqLFra308eGJDZ4M09d20AFxzEtarTuQ7rE51jfY9g5egF8QXeNVtd9U+rxIGL8Fy
- hVVzkmv+4ZArOPqEobdrPgRiLVEF+dyFvzM6+QHDTaXGQG7Cq3sqwQ0VzFu1PUzpEQxUyB
- kk5iFmg/t46oZzorFzJnhG67UFUi3c/W09p6CSvQHbCGEuFQJAW1okA7UfDGUcPPWQNC3Q
- zll79zrgR83ICAtQ6IxXvLBFF2i6PzAgrIkYTGjPQ1hEx7SkNUhwD+d3QX+jOg==
+	s=arc-20240116; t=1751944972; c=relaxed/simple;
+	bh=9H4IIccotUnEJ0jLpuuFE179dM/I/HHnNlZqvuVjozo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E2BdO87UVOZWmKkwjnF1dY9JpR/aC/fX5gcYxbsHTbSfzupv+0etVQ4Jfl38H7mkCZ+QHdG4H2fq+NYlWanOcDQG3DQZKGJ5iJMUxqH7P//Y8Bd2k0LVQyPJ4c65WbO4nyc1kxHikJ0wz3OcI2msEZ+M0v4Kt4JlBM1LvIJJqzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y9SAxK/o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E33AC4CEE3;
+	Tue,  8 Jul 2025 03:22:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751944972;
+	bh=9H4IIccotUnEJ0jLpuuFE179dM/I/HHnNlZqvuVjozo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Y9SAxK/o4nH3WLJahoqUNxkDso+50RGGUdfWNGpHS7/7sKijjFC3ZMZkzbta24aai
+	 nwCoisz6CwEudnSSdHdAhxoZorLb5tDQkAeT/7VZInHEvyXvPi2pWxLfvfgB6bXfe2
+	 1jClM/ChUpdm70A7DSJ9NIzHaR3HY2E4Tlfkxug1zUxX7LV/qGfX68kcZuTvPEvSJ6
+	 phIHqTD2Ydjjtz3Fuf1b2Jm2jHz5d3YvU16Dcq3T/Tq40/2F70YB0a2zR86ibhX5CU
+	 pivzalF+Mp42j35ELtw2BpzPRjEa3h+wnwr7HWMYcZkkDfyfm/Vc+bct9ncHW9uElv
+	 H8nQ9ZWfo6Fbw==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553b5165cf5so4617400e87.0;
+        Mon, 07 Jul 2025 20:22:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUuJTumYosaZh1sM7o6+4afvInZExBrRTCK8egHkvCYQuqQmomI7FL2xlmvynO9HTeAPbUx1NM/Cy0qhtk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4dQT0IK+u255hHL93Qh5xdq1vRnQOJGjJvuW+BDJgOAJM/AK9
+	b1TnmaupqcFQQa4YfhuooouQKHEy/fc4CxsQeuicTTvIXzuI/dkUoch1hFzsEh7A0obzUnzYENR
+	OPWo29byaM3hM7hXZZvlOUV919Ww6o1U=
+X-Google-Smtp-Source: AGHT+IHfwjnhQDW4vHFZN+V9yZXUSxBn4uEviRCQeobt6aIgg+7vXB3BHniEBK2OzJBTx7v4sCsH4uyRP7lFFAZ9ptY=
+X-Received: by 2002:ac2:568a:0:b0:553:acbf:e003 with SMTP id
+ 2adb3069b0e04-557f8304874mr371133e87.13.1751944970584; Mon, 07 Jul 2025
+ 20:22:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Received: from [127.0.0.1] ([116.237.111.137]) by smtp.feishu.cn with ESMTPS; Tue, 08 Jul 2025 11:21:19 +0800
-From: "Nutty Liu" <liujingqi@lanxincomputing.com>
-Date: Tue, 8 Jul 2025 11:21:16 +0800
-User-Agent: Mozilla Thunderbird
-X-Lms-Return-Path: <lba+2686c8eb0+66e1f7+vger.kernel.org+liujingqi@lanxincomputing.com>
-Subject: Re: [PATCH v3 3/3] riscv: dts: sophgo: add Sophgo SG2042_EVB_V2.0 board device tree
-In-Reply-To: <c1b6ccdc69af0c1457fc1486a6bc8a1e83671537.1751700954.git.rabenda.cn@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-References: <cover.1751700954.git.rabenda.cn@gmail.com> <c1b6ccdc69af0c1457fc1486a6bc8a1e83671537.1751700954.git.rabenda.cn@gmail.com>
-X-Original-From: Nutty Liu <liujingqi@lanxincomputing.com>
-To: "Han Gao" <rabenda.cn@gmail.com>, <devicetree@vger.kernel.org>
-Cc: "Rob Herring" <robh@kernel.org>, 
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
-	"Conor Dooley" <conor+dt@kernel.org>, 
-	"Paul Walmsley" <paul.walmsley@sifive.com>, 
-	"Palmer Dabbelt" <palmer@dabbelt.com>, 
-	"Albert Ou" <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>, 
-	"Chen Wang" <unicorn_wang@outlook.com>, 
-	"Inochi Amaoto" <inochiama@gmail.com>, 
-	"Thomas Bonnefille" <thomas.bonnefille@bootlin.com>, 
-	"Guo Ren" <guoren@kernel.org>, "Chao Wei" <chao.wei@sophgo.com>, 
-	<linux-riscv@lists.infradead.org>, <sophgo@lists.linux.dev>, 
-	<linux-kernel@vger.kernel.org>
-Message-Id: <e48c2706-86cf-4e1d-bfad-17f662f5fb75@lanxincomputing.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+MIME-Version: 1.0
+References: <20250706231100.176113-1-ebiggers@kernel.org>
+In-Reply-To: <20250706231100.176113-1-ebiggers@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 8 Jul 2025 13:22:39 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXEdeeuceNXpoFjjwH_SnhEYm-sgZtFuA-bOy=5zYjkx4g@mail.gmail.com>
+X-Gm-Features: Ac12FXxVJEAkPh9C9EkTUxMjafGC2WjYO85Or9sKH7pRffl1eXeWxZ7xJ2FdfZI
+Message-ID: <CAMj1kXEdeeuceNXpoFjjwH_SnhEYm-sgZtFuA-bOy=5zYjkx4g@mail.gmail.com>
+Subject: Re: [PATCH 0/5] lib/crypto: Poly1305 fixes
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"Jason A . Donenfeld" <Jason@zx2c4.com>, linux-arm-kernel@lists.infradead.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/5/2025 3:39 PM, Han Gao wrote:
-> Sophgo SG2042_EVB_V2.0 [1] is a prototype development board based on SG2042
+On Mon, 7 Jul 2025 at 09:11, Eric Biggers <ebiggers@kernel.org> wrote:
 >
-> Currently supports serial port, sdcard/emmc, pwm, fan speed control.
+> This series is also available at:
 >
-> Link: https://github.com/sophgo/sophgo-hardware/tree/master/SG2042/SG2042-x4-EVB [1]
+>     git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git poly1305-fixes
 >
-> Signed-off-by: Han Gao <rabenda.cn@gmail.com>
+> This series fixes the arm, arm64, and x86 Poly1305 functions to not
+> corrupt random tasks' registers when called in the "wrong" context.  It
+> also fixes a performance regression on x86 with short messages.
+>
+> This series is needed for my upcoming poly1305_kunit test to pass.
+>
+> Eric Biggers (5):
+>   lib/crypto: arm/poly1305: Remove unneeded empty weak function
+>   lib/crypto: arm/poly1305: Fix register corruption in no-SIMD contexts
+>   lib/crypto: arm64/poly1305: Fix register corruption in no-SIMD
+>     contexts
+>   lib/crypto: x86/poly1305: Fix register corruption in no-SIMD contexts
+>   lib/crypto: x86/poly1305: Fix performance regression on short messages
+>
 
-Reviewed-by: Nutty Liu<liujingqi@lanxincomputing.com>
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
 
-Thanks,
-Nutty
-
-> ---
->   arch/riscv/boot/dts/sophgo/Makefile          |   1 +
->   arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts | 233 +++++++++++++++++++
->   2 files changed, 234 insertions(+)
->   create mode 100644 arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts
+>  lib/crypto/arm/poly1305-glue.c   |  8 ++----
+>  lib/crypto/arm64/poly1305-glue.c |  3 +-
+>  lib/crypto/x86/poly1305_glue.c   | 48 +++++++++++++++++++++++++++++++-
+>  3 files changed, 51 insertions(+), 8 deletions(-)
 >
-> diff --git a/arch/riscv/boot/dts/sophgo/Makefile b/arch/riscv/boot/dts/sophgo/Makefile
-> index 6c9b29681cad..6f65526d4193 100644
-> --- a/arch/riscv/boot/dts/sophgo/Makefile
-> +++ b/arch/riscv/boot/dts/sophgo/Makefile
-> @@ -4,4 +4,5 @@ dtb-$(CONFIG_ARCH_SOPHGO) += cv1812h-huashan-pi.dtb
->   dtb-$(CONFIG_ARCH_SOPHGO) += sg2002-licheerv-nano-b.dtb
->   dtb-$(CONFIG_ARCH_SOPHGO) += sg2042-milkv-pioneer.dtb
->   dtb-$(CONFIG_ARCH_SOPHGO) += sg2042-evb-v1.dtb
-> +dtb-$(CONFIG_ARCH_SOPHGO) += sg2042-evb-v2.dtb
->   dtb-$(CONFIG_ARCH_SOPHGO) += sg2044-sophgo-srd3-10.dtb
-> diff --git a/arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts b/arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts
-> new file mode 100644
-> index 000000000000..46980e41b886
-> --- /dev/null
-> +++ b/arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts
-> @@ -0,0 +1,233 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> +/*
-> + * Copyright (C) 2025 Sophgo Technology Inc. All rights reserved.
-> + */
-> +
-> +#include "sg2042.dtsi"
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +
-> +/ {
-> +	model = "Sophgo SG2042 EVB V2.0";
-> +	compatible = "sophgo,sg2042-evb-v2", "sophgo,sg2042";
-> +
-> +	chosen {
-> +		stdout-path = "serial0";
-> +	};
-> +
-> +	pwmfan: pwm-fan {
-> +		compatible = "pwm-fan";
-> +		cooling-levels = <103 128 179 230 255>;
-> +		pwms = <&pwm 0 40000 0>;
-> +		#cooling-cells = <2>;
-> +	};
-> +
-> +	thermal-zones {
-> +		soc-thermal {
-> +			polling-delay-passive = <1000>;
-> +			polling-delay = <1000>;
-> +			thermal-sensors = <&mcu 0>;
-> +
-> +			trips {
-> +				soc_active1: soc-active1 {
-> +					temperature = <30000>;
-> +					hysteresis = <8000>;
-> +					type = "active";
-> +				};
-> +
-> +				soc_active2: soc-active2 {
-> +					temperature = <58000>;
-> +					hysteresis = <12000>;
-> +					type = "active";
-> +				};
-> +
-> +				soc_active3: soc-active3 {
-> +					temperature = <70000>;
-> +					hysteresis = <10000>;
-> +					type = "active";
-> +				};
-> +
-> +				soc_hot: soc-hot {
-> +					temperature = <80000>;
-> +					hysteresis = <5000>;
-> +					type = "hot";
-> +				};
-> +			};
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&soc_active1>;
-> +					cooling-device = <&pwmfan 0 1>;
-> +				};
-> +
-> +				map1 {
-> +					trip = <&soc_active2>;
-> +					cooling-device = <&pwmfan 1 2>;
-> +				};
-> +
-> +				map2 {
-> +					trip = <&soc_active3>;
-> +					cooling-device = <&pwmfan 2 3>;
-> +				};
-> +
-> +				map3 {
-> +					trip = <&soc_hot>;
-> +					cooling-device = <&pwmfan 3 4>;
-> +				};
-> +			};
-> +		};
-> +
-> +		board-thermal {
-> +			polling-delay-passive = <1000>;
-> +			polling-delay = <1000>;
-> +			thermal-sensors = <&mcu 1>;
-> +
-> +			trips {
-> +				board_active: board-active {
-> +					temperature = <75000>;
-> +					hysteresis = <8000>;
-> +					type = "active";
-> +				};
-> +			};
-> +
-> +			cooling-maps {
-> +				map4 {
-> +					trip = <&board_active>;
-> +					cooling-device = <&pwmfan 3 4>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&cgi_main {
-> +	clock-frequency = <25000000>;
-> +};
-> +
-> +&cgi_dpll0 {
-> +	clock-frequency = <25000000>;
-> +};
-> +
-> +&cgi_dpll1 {
-> +	clock-frequency = <25000000>;
-> +};
-> +
-> +&emmc {
-> +	pinctrl-0 = <&emmc_cfg>;
-> +	pinctrl-names = "default";
-> +	bus-width = <4>;
-> +	no-sdio;
-> +	no-sd;
-> +	non-removable;
-> +	wp-inverted;
-> +	status = "okay";
-> +};
-> +
-> +&i2c1 {
-> +	pinctrl-0 = <&i2c1_cfg>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +
-> +	mcu: syscon@17 {
-> +		compatible = "sophgo,sg2042-hwmon-mcu";
-> +		reg = <0x17>;
-> +		#thermal-sensor-cells = <1>;
-> +	};
-> +};
-> +
-> +&gmac0 {
-> +	phy-handle = <&phy0>;
-> +	phy-mode = "rgmii-id";
-> +	status = "okay";
-> +
-> +	mdio {
-> +		phy0: phy@0 {
-> +			compatible = "ethernet-phy-ieee802.3-c22";
-> +			reg = <0>;
-> +			reset-gpios = <&port0a 27 GPIO_ACTIVE_LOW>;
-> +			reset-assert-us = <100000>;
-> +			reset-deassert-us = <100000>;
-> +		};
-> +	};
-> +};
-> +
-> +&pinctrl {
-> +	emmc_cfg: sdhci-emmc-cfg {
-> +		sdhci-emmc-wp-pins {
-> +			pinmux = <PINMUX(PIN_EMMC_WP, 0)>;
-> +			bias-disable;
-> +			drive-strength-microamp = <26800>;
-> +			input-schmitt-disable;
-> +		};
-> +
-> +		sdhci-emmc-cd-pins {
-> +			pinmux = <PINMUX(PIN_EMMC_CD, 0)>;
-> +			bias-pull-up;
-> +			drive-strength-microamp = <26800>;
-> +			input-schmitt-enable;
-> +		};
-> +
-> +		sdhci-emmc-rst-pwr-pins {
-> +			pinmux = <PINMUX(PIN_EMMC_RST, 0)>,
-> +				 <PINMUX(PIN_EMMC_PWR_EN, 0)>;
-> +			bias-disable;
-> +			drive-strength-microamp = <26800>;
-> +			input-schmitt-disable;
-> +		};
-> +	};
-> +
-> +	i2c1_cfg: i2c1-cfg {
-> +		i2c1-pins {
-> +			pinmux = <PINMUX(PIN_IIC1_SDA, 0)>,
-> +				 <PINMUX(PIN_IIC1_SCL, 0)>;
-> +			bias-pull-up;
-> +			drive-strength-microamp = <26800>;
-> +			input-schmitt-enable;
-> +		};
-> +	};
-> +
-> +	sd_cfg: sdhci-sd-cfg {
-> +		sdhci-sd-cd-wp-pins {
-> +			pinmux = <PINMUX(PIN_SDIO_CD, 0)>,
-> +				 <PINMUX(PIN_SDIO_WP, 0)>;
-> +			bias-pull-up;
-> +			drive-strength-microamp = <26800>;
-> +			input-schmitt-enable;
-> +		};
-> +
-> +		sdhci-sd-rst-pwr-pins {
-> +			pinmux = <PINMUX(PIN_SDIO_RST, 0)>,
-> +				 <PINMUX(PIN_SDIO_PWR_EN, 0)>;
-> +			bias-disable;
-> +			drive-strength-microamp = <26800>;
-> +			input-schmitt-disable;
-> +		};
-> +	};
-> +
-> +	uart0_cfg: uart0-cfg {
-> +		uart0-rx-pins {
-> +			pinmux = <PINMUX(PIN_UART0_TX, 0)>,
-> +				 <PINMUX(PIN_UART0_RX, 0)>;
-> +			bias-pull-up;
-> +			drive-strength-microamp = <26800>;
-> +			input-schmitt-enable;
-> +		};
-> +	};
-> +};
-> +
-> +&sd {
-> +	pinctrl-0 = <&sd_cfg>;
-> +	pinctrl-names = "default";
-> +	bus-width = <4>;
-> +	no-sdio;
-> +	no-mmc;
-> +	wp-inverted;
-> +	status = "okay";
-> +};
-> +
-> +&uart0 {
-> +	pinctrl-0 = <&uart0_cfg>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +};
+>
+> base-commit: f1da28dfadd26ef95bbd0b1ddf066e7ffe1505ff
+> --
+> 2.50.0
+>
 
