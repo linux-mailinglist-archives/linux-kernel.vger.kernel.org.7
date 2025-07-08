@@ -1,318 +1,287 @@
-Return-Path: <linux-kernel+bounces-721309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99054AFC78F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:52:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8857AFC791
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:54:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BAE61BC3843
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:52:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F28513B5432
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D90262FFF;
-	Tue,  8 Jul 2025 09:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F70266581;
+	Tue,  8 Jul 2025 09:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FCIIW5hR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LD0MCLIb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE481E2838
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 09:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3213D54764
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 09:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751968335; cv=none; b=Z6eejb25Vxi8rxE4ogvBFL2vV93hj/Y9Sk1e0/TKs5w8L4sLftVFABrLWlnFwmbb4Xno0tek9jxanvVhAWvvWXlp6liqmUnIO2tnPbsi1dxAfdBuAWxsvfLtXy+nrSQPTNtPrIjv7K0QjvQfyZTM8TSCEz8QO1V7TB5j7zI7Mfo=
+	t=1751968436; cv=none; b=mALXNTdiJXEJJVQoXcJNGUr8fKo5SKW4t4uL8DPO6SpeerWjAulezPF+Zlijs7Z+M5Fd2odisLXAUF09Y4neGKt0jXf+1zAmcI3Mo42qEJtVZ7qXgmuWGQuTqwxucPJN8xXYgfQoLLlvCW//fjYGFZZPrVhFr8sPzTxAOjaMXqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751968335; c=relaxed/simple;
-	bh=/0Y1Y7OTqONCmx1m/8TUQikKpKzMmzQI4UbNLHxksNA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QfPmAuyTWSV/qSzM1amOLbf4OgAwm9grhD1TP+ZQCHu2Lgrc7gjZYLio+7gEzZskkEbdbsgRCQTHUuSQXvpA+QKuHnLGsOwtJgzxLG/Cjh6PTmbHYatH60h0e8teT8aWWLVUD0go+EDoFbMCJn6fFhYsJSP5WbLhShWRoKJfTmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FCIIW5hR; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751968332;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2X5BK60lt8yHW2mcPT6pFw1X0evw7hr2NRoNEBvx6z8=;
-	b=FCIIW5hRlKDl0aaxY2Cv4PSpWMxf2T0AB1LjFG9bVejd68fIHNeUQo7422OTdF1vwFDo7W
-	iOeErN4c71i/Sq+tNapUhzMJfy6P7232G2RjP33K9vH8t8D0w+CD+rlj44feKhYhEnY/fZ
-	26qvTgEljZWmMHGIjfQ6TdlQWNd3rLQ=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-477-_lgoUS06P_emjAOAUXcXeA-1; Tue, 08 Jul 2025 05:52:11 -0400
-X-MC-Unique: _lgoUS06P_emjAOAUXcXeA-1
-X-Mimecast-MFC-AGG-ID: _lgoUS06P_emjAOAUXcXeA_1751968330
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45311704d1fso27349125e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 02:52:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751968330; x=1752573130;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2X5BK60lt8yHW2mcPT6pFw1X0evw7hr2NRoNEBvx6z8=;
-        b=fvzPkrpyJJVKb0GJ/cpjQcIcyDuANSE7cFy7d7QhAk2LIx8RQ/kki8EYfyVhCwz7TI
-         6VYp1Z+7F2ky3M5gCnmi8BpSQiiEzxITb3W2vQ1p4D51PPPRhqnADqdoM8y8FoW+0Xsv
-         tIZiax96rs/rd9rwwh8imvK1S9T2VOYfXPXPp4HjynSreUjog5kZRdzujUaobF2yM1gc
-         tBNiDNKH+JFEJS24v475kna7ICrjpg5GQSm/dOY5UZAsrnICMSnL7+MgjJqft0udsgBN
-         9pgu810WAvX6yvbzDvGHHY5LgTMqteJxNPDnj8lGrXntr/krCTWSJ9hWSwK/RDIOF4ht
-         xedQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNFKHDyy+TeQyxga3RUt46zLPH2y7iXO1NLve1LKIyQn3zMfREWdSOWz6fZyTTatD3klF7tIgMVK1kT8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrtSbgSG+fC/ASISkj5w+EILcl3K424tJpoCLhzpH4yrD392+8
-	WHAAMmv6/elhg548qM77YIHydwm+IYP1LqlmFLRdJ74lyAaV/Y+5Kuzj4FGMedZ5sARXWWbatpl
-	u445vM5rSzD4K79Wd6PMQmnROU8ELCIe7CI/fJueBvIJBc0fBbPMG2PxMCeuvz9epvg==
-X-Gm-Gg: ASbGncu0Uv2dQcVd+nBTN84s6DsSdszB1XGmPCIER6ziWaAjXDufQZM1xBL41WTQc5/
-	FIVqJXf48wGDX4TlKcM+jQlD31lVWTuKx+5U4EhC/8k0JMOqSp3oQpkzdYPQwc0jGlDuaWZygTe
-	EXaHcmreE6DxBXvK2b90gIbcdNg5MrdqMJYtxJuvRMH/OKZj0NRZEZRK5e/zpqRDa1Mfjawh7AX
-	SHJUCobbjQESYMAfY6gRs8nxyE2dqigWcK5d2DlyJpFmL2cG/7l6aQqLy2hA2FAiRfKqhv1myRa
-	Khp4oC518saAeU+kPgflyXSMb8k0EYclnJelMDP4AZgquXh2y+M/HiEtmNCD4Rr/EUwepg==
-X-Received: by 2002:a05:600c:190c:b0:442:f482:c42d with SMTP id 5b1f17b1804b1-454c6531885mr70789385e9.9.1751968329696;
-        Tue, 08 Jul 2025 02:52:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGMDOBH0qBMZ6iN2OTX9dqvc0LhZZ2FR75EoU2J03ehS7fOg9IG4eoFaiP/Vpy/EZIcQItAhw==
-X-Received: by 2002:a05:600c:190c:b0:442:f482:c42d with SMTP id 5b1f17b1804b1-454c6531885mr70788875e9.9.1751968329162;
-        Tue, 08 Jul 2025 02:52:09 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2717:8910:b663:3b86:247e:dba2? ([2a0d:3344:2717:8910:b663:3b86:247e:dba2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454cd45957fsm16437885e9.17.2025.07.08.02.52.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 02:52:08 -0700 (PDT)
-Message-ID: <d51a84c7-d534-44cc-88bc-73db8721e50e@redhat.com>
-Date: Tue, 8 Jul 2025 11:52:00 +0200
+	s=arc-20240116; t=1751968436; c=relaxed/simple;
+	bh=k9bd7X0Sh2Pza0Exd+St0GfMpG8zbrkte7VVpXAE0Es=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kZquqyEQFFA2Vo0KS2LEcDd3ddCNX0MY5ri//6m+6/ucxGzkE/5LZ0at/TEDSHWtr8g8ZFtuAuziZyuZ5tCGqN+Q4GsVVvA2rjlr664MxHkqE3fqVNDrnBiy+kMtT0AHO37WoggiYup3y0mbGOwNr7GulIe4yIL5U6iIaWjcuqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LD0MCLIb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3752C4CEED;
+	Tue,  8 Jul 2025 09:53:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751968434;
+	bh=k9bd7X0Sh2Pza0Exd+St0GfMpG8zbrkte7VVpXAE0Es=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LD0MCLIbGI8jEnLbkO1RTe1ucjO9GkoN6aYoa5XJIe3nVbahn4TAcgw6DS/Q8FbJt
+	 3f6RK/3bWgsWR+ApUgIejTSfZyboAj5MTXH2hMOy2Btd6jcLvccofuq/gmf21QxE+w
+	 T7ujP7vo56SuhYLJRMcEhh5oagwhzgC8dzuYg39p0s58BET1yoaQh40NcFRxtfcBSG
+	 1Ejg38nQvMVveyBgTrgPbpYOfqKmSsYHnWNaYEhnOrc+08x0gbEvmjRGekoxeiuW0l
+	 nYtwjM9aS9A5zsIvrpes/hG1lIAqvrut0mrO5i+4ogHLt+N1Ya/QHzXtNs0GuIShD1
+	 NwA/3ueQPuKiw==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH v2] f2fs: fix to avoid UAF in f2fs_sync_inode_meta()
+Date: Tue,  8 Jul 2025 17:53:39 +0800
+Message-ID: <20250708095339.3079788-1-chao@kernel.org>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next v14 07/12] net: mtip: Add mtip_switch_{rx|tx} functions
- to the L2 switch driver
-To: Lukasz Majewski <lukma@denx.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
- davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- Stefan Wahren <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>
-References: <20250701114957.2492486-1-lukma@denx.de>
- <20250701114957.2492486-8-lukma@denx.de>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250701114957.2492486-8-lukma@denx.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/1/25 1:49 PM, Lukasz Majewski wrote:
-> diff --git a/drivers/net/ethernet/freescale/mtipsw/mtipl2sw.c b/drivers/net/ethernet/freescale/mtipsw/mtipl2sw.c
-> index 63afdf2beea6..b5a82748b39b 100644
-> --- a/drivers/net/ethernet/freescale/mtipsw/mtipl2sw.c
-> +++ b/drivers/net/ethernet/freescale/mtipsw/mtipl2sw.c
-> @@ -228,6 +228,39 @@ struct mtip_port_info *mtip_portinfofifo_read(struct switch_enet_private *fep)
->  	return info;
->  }
->  
-> +static void mtip_atable_get_entry_port_number(struct switch_enet_private *fep,
-> +					      unsigned char *mac_addr, u8 *port)
-> +{
-> +	int block_index, block_index_end, entry;
-> +	u32 mac_addr_lo, mac_addr_hi;
-> +	u32 read_lo, read_hi;
-> +
-> +	mac_addr_lo = (u32)((mac_addr[3] << 24) | (mac_addr[2] << 16) |
-> +			    (mac_addr[1] << 8) | mac_addr[0]);
-> +	mac_addr_hi = (u32)((mac_addr[5] << 8) | (mac_addr[4]));
-> +
-> +	block_index = GET_BLOCK_PTR(crc8_calc(mac_addr));
-> +	block_index_end = block_index + ATABLE_ENTRY_PER_SLOT;
-> +
-> +	/* now search all the entries in the selected block */
-> +	for (entry = block_index; entry < block_index_end; entry++) {
-> +		mtip_read_atable(fep, entry, &read_lo, &read_hi);
-> +		*port = MTIP_PORT_FORWARDING_INIT;
-> +
-> +		if (read_lo == mac_addr_lo &&
-> +		    ((read_hi & 0x0000FFFF) ==
-> +		     (mac_addr_hi & 0x0000FFFF))) {
-> +			/* found the correct address */
-> +			if ((read_hi & (1 << 16)) && (!(read_hi & (1 << 17))))
-> +				*port = FIELD_GET(AT_PORT_MASK, read_hi);
-> +			break;
-> +		}
-> +	}
-> +
-> +	dev_dbg(&fep->pdev->dev, "%s: MAC: %pM PORT: 0x%x\n", __func__,
-> +		mac_addr, *port);
-> +}
-> +
->  /* Clear complete MAC Look Up Table */
->  void mtip_clear_atable(struct switch_enet_private *fep)
->  {
-> @@ -825,11 +858,217 @@ static irqreturn_t mtip_interrupt(int irq, void *ptr_fep)
->  
->  static void mtip_switch_tx(struct net_device *dev)
->  {
-> +	struct mtip_ndev_priv *priv = netdev_priv(dev);
-> +	struct switch_enet_private *fep = priv->fep;
-> +	unsigned short status;
-> +	struct sk_buff *skb;
-> +	struct cbd_t *bdp;
-> +
-> +	spin_lock(&fep->hw_lock);
-> +	bdp = fep->dirty_tx;
-> +
-> +	while (((status = bdp->cbd_sc) & BD_ENET_TX_READY) == 0) {
-> +		if (bdp == fep->cur_tx && fep->tx_full == 0)
-> +			break;
-> +
-> +		dma_unmap_single(&fep->pdev->dev, bdp->cbd_bufaddr,
-> +				 MTIP_SWITCH_TX_FRSIZE, DMA_TO_DEVICE);
-> +		bdp->cbd_bufaddr = 0;
-> +		skb = fep->tx_skbuff[fep->skb_dirty];
-> +		/* Check for errors */
-> +		if (status & (BD_ENET_TX_HB | BD_ENET_TX_LC |
-> +				   BD_ENET_TX_RL | BD_ENET_TX_UN |
-> +				   BD_ENET_TX_CSL)) {
-> +			dev->stats.tx_errors++;
-> +			if (status & BD_ENET_TX_HB)  /* No heartbeat */
-> +				dev->stats.tx_heartbeat_errors++;
-> +			if (status & BD_ENET_TX_LC)  /* Late collision */
-> +				dev->stats.tx_window_errors++;
-> +			if (status & BD_ENET_TX_RL)  /* Retrans limit */
-> +				dev->stats.tx_aborted_errors++;
-> +			if (status & BD_ENET_TX_UN)  /* Underrun */
-> +				dev->stats.tx_fifo_errors++;
-> +			if (status & BD_ENET_TX_CSL) /* Carrier lost */
-> +				dev->stats.tx_carrier_errors++;
-> +		} else {
-> +			dev->stats.tx_packets++;
-> +		}
-> +
-> +		if (status & BD_ENET_TX_READY)
-> +			dev_err(&fep->pdev->dev,
-> +				"Enet xmit interrupt and TX_READY.\n");
-> +
-> +		/* Deferred means some collisions occurred during transmit,
-> +		 * but we eventually sent the packet OK.
-> +		 */
-> +		if (status & BD_ENET_TX_DEF)
-> +			dev->stats.collisions++;
-> +
-> +		/* Free the sk buffer associated with this last transmit */
-> +		dev_consume_skb_irq(skb);
-> +		fep->tx_skbuff[fep->skb_dirty] = NULL;
-> +		fep->skb_dirty = (fep->skb_dirty + 1) & TX_RING_MOD_MASK;
-> +
-> +		/* Update pointer to next buffer descriptor to be transmitted */
-> +		if (status & BD_ENET_TX_WRAP)
-> +			bdp = fep->tx_bd_base;
-> +		else
-> +			bdp++;
-> +
-> +		/* Since we have freed up a buffer, the ring is no longer
-> +		 * full.
-> +		 */
-> +		if (fep->tx_full) {
-> +			fep->tx_full = 0;
-> +			if (netif_queue_stopped(dev))
-> +				netif_wake_queue(dev);
-> +		}
-> +	}
-> +	fep->dirty_tx = bdp;
-> +	spin_unlock(&fep->hw_lock);
->  }
->  
-> +/* During a receive, the cur_rx points to the current incoming buffer.
-> + * When we update through the ring, if the next incoming buffer has
-> + * not been given to the system, we just set the empty indicator,
-> + * effectively tossing the packet.
-> + */
->  static int mtip_switch_rx(struct net_device *dev, int budget, int *port)
->  {
-> -	return -ENOMEM;
-> +	struct mtip_ndev_priv *priv = netdev_priv(dev);
-> +	u8 *data, rx_port = MTIP_PORT_FORWARDING_INIT;
-> +	struct switch_enet_private *fep = priv->fep;
-> +	unsigned short status, pkt_len;
-> +	struct net_device *pndev;
-> +	struct ethhdr *eth_hdr;
-> +	int pkt_received = 0;
-> +	struct sk_buff *skb;
-> +	struct cbd_t *bdp;
-> +	struct page *page;
-> +
-> +	/* First, grab all of the stats for the incoming packet.
-> +	 * These get messed up if we get called due to a busy condition.
-> +	 */
-> +	bdp = fep->cur_rx;
-> +
-> +	while (!((status = bdp->cbd_sc) & BD_ENET_RX_EMPTY)) {
-> +		if (pkt_received >= budget)
-> +			break;
-> +
-> +		pkt_received++;
-> +
-> +		if (!fep->usage_count)
-> +			goto rx_processing_done;
-> +
-> +		status ^= BD_ENET_RX_LAST;
-> +		/* Check for errors. */
-> +		if (status & (BD_ENET_RX_LG | BD_ENET_RX_SH | BD_ENET_RX_NO |
-> +			      BD_ENET_RX_CR | BD_ENET_RX_OV | BD_ENET_RX_LAST |
-> +			      BD_ENET_RX_CL)) {
-> +			dev->stats.rx_errors++;
-> +			if (status & BD_ENET_RX_OV) {
-> +				/* FIFO overrun */
-> +				dev->stats.rx_fifo_errors++;
-> +				goto rx_processing_done;
-> +			}
-> +			if (status & (BD_ENET_RX_LG | BD_ENET_RX_SH
-> +				      | BD_ENET_RX_LAST)) {
-> +				/* Frame too long or too short. */
-> +				dev->stats.rx_length_errors++;
-> +				if (status & BD_ENET_RX_LAST)
-> +					netdev_err(dev, "rcv is not +last\n");
-> +			}
-> +			if (status & BD_ENET_RX_CR)	/* CRC Error */
-> +				dev->stats.rx_crc_errors++;
-> +
-> +			/* Report late collisions as a frame error. */
-> +			if (status & (BD_ENET_RX_NO | BD_ENET_RX_CL))
-> +				dev->stats.rx_frame_errors++;
-> +			goto rx_processing_done;
-> +		}
-> +
-> +		/* Get correct RX page */
-> +		page = fep->page[bdp - fep->rx_bd_base];
-> +		/* Process the incoming frame */
-> +		pkt_len = bdp->cbd_datlen;
-> +		data = (__u8 *)__va(bdp->cbd_bufaddr);
-> +
-> +		dma_sync_single_for_cpu(&fep->pdev->dev, bdp->cbd_bufaddr,
-> +					pkt_len, DMA_FROM_DEVICE);
-> +		net_prefetch(page_address(page));
+syzbot reported an UAF issue as below: [1] [2]
 
-Both `__va(bdp->cbd_bufaddr)` and `page_address(page)` should point to
-the same same memory. Please use constantly one _or_ the other  - likely
-page_address(page) is the best option.
+[1] https://syzkaller.appspot.com/text?tag=CrashReport&x=16594c60580000
 
-> +
-> +		if (fep->quirks & FEC_QUIRK_SWAP_FRAME)
-> +			swap_buffer(data, pkt_len);
-> +
-> +		if (data) {
+==================================================================
+BUG: KASAN: use-after-free in __list_del_entry_valid+0xa6/0x130 lib/list_debug.c:62
+Read of size 8 at addr ffff888100567dc8 by task kworker/u4:0/8
 
-The above check is not needed. If data is null swap_buffer will still
-unconditionally dereference it.
+CPU: 1 PID: 8 Comm: kworker/u4:0 Tainted: G        W          6.1.129-syzkaller-00017-g642656a36791 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Workqueue: writeback wb_workfn (flush-7:0)
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x151/0x1b7 lib/dump_stack.c:106
+ print_address_description mm/kasan/report.c:316 [inline]
+ print_report+0x158/0x4e0 mm/kasan/report.c:427
+ kasan_report+0x13c/0x170 mm/kasan/report.c:531
+ __asan_report_load8_noabort+0x14/0x20 mm/kasan/report_generic.c:351
+ __list_del_entry_valid+0xa6/0x130 lib/list_debug.c:62
+ __list_del_entry include/linux/list.h:134 [inline]
+ list_del_init include/linux/list.h:206 [inline]
+ f2fs_inode_synced+0x100/0x2e0 fs/f2fs/super.c:1553
+ f2fs_update_inode+0x72/0x1c40 fs/f2fs/inode.c:588
+ f2fs_update_inode_page+0x135/0x170 fs/f2fs/inode.c:706
+ f2fs_write_inode+0x416/0x790 fs/f2fs/inode.c:734
+ write_inode fs/fs-writeback.c:1460 [inline]
+ __writeback_single_inode+0x4cf/0xb80 fs/fs-writeback.c:1677
+ writeback_sb_inodes+0xb32/0x1910 fs/fs-writeback.c:1903
+ __writeback_inodes_wb+0x118/0x3f0 fs/fs-writeback.c:1974
+ wb_writeback+0x3da/0xa00 fs/fs-writeback.c:2081
+ wb_check_background_flush fs/fs-writeback.c:2151 [inline]
+ wb_do_writeback fs/fs-writeback.c:2239 [inline]
+ wb_workfn+0xbba/0x1030 fs/fs-writeback.c:2266
+ process_one_work+0x73d/0xcb0 kernel/workqueue.c:2299
+ worker_thread+0xa60/0x1260 kernel/workqueue.c:2446
+ kthread+0x26d/0x300 kernel/kthread.c:386
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+ </TASK>
 
-Also it looks like it can't be NULL.
+Allocated by task 298:
+ kasan_save_stack mm/kasan/common.c:45 [inline]
+ kasan_set_track+0x4b/0x70 mm/kasan/common.c:52
+ kasan_save_alloc_info+0x1f/0x30 mm/kasan/generic.c:505
+ __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:333
+ kasan_slab_alloc include/linux/kasan.h:202 [inline]
+ slab_post_alloc_hook+0x53/0x2c0 mm/slab.h:768
+ slab_alloc_node mm/slub.c:3421 [inline]
+ slab_alloc mm/slub.c:3431 [inline]
+ __kmem_cache_alloc_lru mm/slub.c:3438 [inline]
+ kmem_cache_alloc_lru+0x102/0x270 mm/slub.c:3454
+ alloc_inode_sb include/linux/fs.h:3255 [inline]
+ f2fs_alloc_inode+0x2d/0x350 fs/f2fs/super.c:1437
+ alloc_inode fs/inode.c:261 [inline]
+ iget_locked+0x18c/0x7e0 fs/inode.c:1373
+ f2fs_iget+0x55/0x4ca0 fs/f2fs/inode.c:486
+ f2fs_lookup+0x3c1/0xb50 fs/f2fs/namei.c:484
+ __lookup_slow+0x2b9/0x3e0 fs/namei.c:1689
+ lookup_slow+0x5a/0x80 fs/namei.c:1706
+ walk_component+0x2e7/0x410 fs/namei.c:1997
+ lookup_last fs/namei.c:2454 [inline]
+ path_lookupat+0x16d/0x450 fs/namei.c:2478
+ filename_lookup+0x251/0x600 fs/namei.c:2507
+ vfs_statx+0x107/0x4b0 fs/stat.c:229
+ vfs_fstatat fs/stat.c:267 [inline]
+ vfs_lstat include/linux/fs.h:3434 [inline]
+ __do_sys_newlstat fs/stat.c:423 [inline]
+ __se_sys_newlstat+0xda/0x7c0 fs/stat.c:417
+ __x64_sys_newlstat+0x5b/0x70 fs/stat.c:417
+ x64_sys_call+0x52/0x9a0 arch/x86/include/generated/asm/syscalls_64.h:7
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x3b/0x80 arch/x86/entry/common.c:81
+ entry_SYSCALL_64_after_hwframe+0x68/0xd2
 
-/P
+Freed by task 0:
+ kasan_save_stack mm/kasan/common.c:45 [inline]
+ kasan_set_track+0x4b/0x70 mm/kasan/common.c:52
+ kasan_save_free_info+0x2b/0x40 mm/kasan/generic.c:516
+ ____kasan_slab_free+0x131/0x180 mm/kasan/common.c:241
+ __kasan_slab_free+0x11/0x20 mm/kasan/common.c:249
+ kasan_slab_free include/linux/kasan.h:178 [inline]
+ slab_free_hook mm/slub.c:1745 [inline]
+ slab_free_freelist_hook mm/slub.c:1771 [inline]
+ slab_free mm/slub.c:3686 [inline]
+ kmem_cache_free+0x291/0x560 mm/slub.c:3711
+ f2fs_free_inode+0x24/0x30 fs/f2fs/super.c:1584
+ i_callback+0x4b/0x70 fs/inode.c:250
+ rcu_do_batch+0x552/0xbe0 kernel/rcu/tree.c:2297
+ rcu_core+0x502/0xf40 kernel/rcu/tree.c:2557
+ rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2574
+ handle_softirqs+0x1db/0x650 kernel/softirq.c:624
+ __do_softirq kernel/softirq.c:662 [inline]
+ invoke_softirq kernel/softirq.c:479 [inline]
+ __irq_exit_rcu+0x52/0xf0 kernel/softirq.c:711
+ irq_exit_rcu+0x9/0x10 kernel/softirq.c:723
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1118 [inline]
+ sysvec_apic_timer_interrupt+0xa9/0xc0 arch/x86/kernel/apic/apic.c:1118
+ asm_sysvec_apic_timer_interrupt+0x1b/0x20 arch/x86/include/asm/idtentry.h:691
+
+Last potentially related work creation:
+ kasan_save_stack+0x3b/0x60 mm/kasan/common.c:45
+ __kasan_record_aux_stack+0xb4/0xc0 mm/kasan/generic.c:486
+ kasan_record_aux_stack_noalloc+0xb/0x10 mm/kasan/generic.c:496
+ __call_rcu_common kernel/rcu/tree.c:2807 [inline]
+ call_rcu+0xdc/0x10f0 kernel/rcu/tree.c:2926
+ destroy_inode fs/inode.c:316 [inline]
+ evict+0x87d/0x930 fs/inode.c:720
+ iput_final fs/inode.c:1834 [inline]
+ iput+0x616/0x690 fs/inode.c:1860
+ do_unlinkat+0x4e1/0x920 fs/namei.c:4396
+ __do_sys_unlink fs/namei.c:4437 [inline]
+ __se_sys_unlink fs/namei.c:4435 [inline]
+ __x64_sys_unlink+0x49/0x50 fs/namei.c:4435
+ x64_sys_call+0x289/0x9a0 arch/x86/include/generated/asm/syscalls_64.h:88
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x3b/0x80 arch/x86/entry/common.c:81
+ entry_SYSCALL_64_after_hwframe+0x68/0xd2
+
+The buggy address belongs to the object at ffff888100567a10
+ which belongs to the cache f2fs_inode_cache of size 1360
+The buggy address is located 952 bytes inside of
+ 1360-byte region [ffff888100567a10, ffff888100567f60)
+
+The buggy address belongs to the physical page:
+page:ffffea0004015800 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x100560
+head:ffffea0004015800 order:3 compound_mapcount:0 compound_pincount:0
+flags: 0x4000000000010200(slab|head|zone=1)
+raw: 4000000000010200 0000000000000000 dead000000000122 ffff8881002c4d80
+raw: 0000000000000000 0000000080160016 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Reclaimable, gfp_mask 0xd2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_RECLAIMABLE), pid 298, tgid 298 (syz-executor330), ts 26489303743, free_ts 0
+ set_page_owner include/linux/page_owner.h:33 [inline]
+ post_alloc_hook+0x213/0x220 mm/page_alloc.c:2637
+ prep_new_page+0x1b/0x110 mm/page_alloc.c:2644
+ get_page_from_freelist+0x3a98/0x3b10 mm/page_alloc.c:4539
+ __alloc_pages+0x234/0x610 mm/page_alloc.c:5837
+ alloc_slab_page+0x6c/0xf0 include/linux/gfp.h:-1
+ allocate_slab mm/slub.c:1962 [inline]
+ new_slab+0x90/0x3e0 mm/slub.c:2015
+ ___slab_alloc+0x6f9/0xb80 mm/slub.c:3203
+ __slab_alloc+0x5d/0xa0 mm/slub.c:3302
+ slab_alloc_node mm/slub.c:3387 [inline]
+ slab_alloc mm/slub.c:3431 [inline]
+ __kmem_cache_alloc_lru mm/slub.c:3438 [inline]
+ kmem_cache_alloc_lru+0x149/0x270 mm/slub.c:3454
+ alloc_inode_sb include/linux/fs.h:3255 [inline]
+ f2fs_alloc_inode+0x2d/0x350 fs/f2fs/super.c:1437
+ alloc_inode fs/inode.c:261 [inline]
+ iget_locked+0x18c/0x7e0 fs/inode.c:1373
+ f2fs_iget+0x55/0x4ca0 fs/f2fs/inode.c:486
+ f2fs_fill_super+0x5360/0x6dc0 fs/f2fs/super.c:4488
+ mount_bdev+0x282/0x3b0 fs/super.c:1445
+ f2fs_mount+0x34/0x40 fs/f2fs/super.c:4743
+ legacy_get_tree+0xf1/0x190 fs/fs_context.c:632
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff888100567c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888100567d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888100567d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                              ^
+ ffff888100567e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888100567e80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+[2] https://syzkaller.appspot.com/text?tag=CrashLog&x=13654c60580000
+
+[   24.675720][   T28] audit: type=1400 audit(1745327318.732:72): avc:  denied  { write } for  pid=298 comm="syz-executor399" name="/" dev="loop0" ino=3 scontext=root:sysadm_r:sysadm_t tcontext=system_u:object_r:unlabeled_t tclass=dir permissive=1
+[   24.705426][  T296] ------------[ cut here ]------------
+[   24.706608][   T28] audit: type=1400 audit(1745327318.732:73): avc:  denied  { remove_name } for  pid=298 comm="syz-executor399" name="file0" dev="loop0" ino=4 scontext=root:sysadm_r:sysadm_t tcontext=system_u:object_r:unlabeled_t tclass=dir permissive=1
+[   24.711550][  T296] WARNING: CPU: 0 PID: 296 at fs/f2fs/inode.c:847 f2fs_evict_inode+0x1262/0x1540
+[   24.734141][   T28] audit: type=1400 audit(1745327318.732:74): avc:  denied  { rename } for  pid=298 comm="syz-executor399" name="file0" dev="loop0" ino=4 scontext=root:sysadm_r:sysadm_t tcontext=system_u:object_r:unlabeled_t tclass=dir permissive=1
+[   24.742969][  T296] Modules linked in:
+[   24.765201][   T28] audit: type=1400 audit(1745327318.732:75): avc:  denied  { add_name } for  pid=298 comm="syz-executor399" name="bus" scontext=root:sysadm_r:sysadm_t tcontext=system_u:object_r:unlabeled_t tclass=dir permissive=1
+[   24.768847][  T296] CPU: 0 PID: 296 Comm: syz-executor399 Not tainted 6.1.129-syzkaller-00017-g642656a36791 #0
+[   24.799506][  T296] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+[   24.809401][  T296] RIP: 0010:f2fs_evict_inode+0x1262/0x1540
+[   24.815018][  T296] Code: 34 70 4a ff eb 0d e8 2d 70 4a ff 4d 89 e5 4c 8b 64 24 18 48 8b 5c 24 28 4c 89 e7 e8 78 38 03 00 e9 84 fc ff ff e8 0e 70 4a ff <0f> 0b 4c 89 f7 be 08 00 00 00 e8 7f 21 92 ff f0 41 80 0e 04 e9 61
+[   24.834584][  T296] RSP: 0018:ffffc90000db7a40 EFLAGS: 00010293
+[   24.840465][  T296] RAX: ffffffff822aca42 RBX: 0000000000000002 RCX: ffff888110948000
+[   24.848291][  T296] RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
+[   24.856064][  T296] RBP: ffffc90000db7bb0 R08: ffffffff822ac6a8 R09: ffffed10200b005d
+[   24.864073][  T296] R10: 0000000000000000 R11: dffffc0000000001 R12: ffff888100580000
+[   24.871812][  T296] R13: dffffc0000000000 R14: ffff88810fef4078 R15: 1ffff920001b6f5c
+
+The root cause is w/ a fuzzed image, f2fs may missed to clear FI_DIRTY_INODE
+flag for target inode, after f2fs_evict_inode(), the inode is still linked in
+sbi->inode_list[DIRTY_META] global list, once it triggers checkpoint,
+f2fs_sync_inode_meta() may access the released inode.
+
+In f2fs_evict_inode(), let's always call f2fs_inode_synced() to clear
+FI_DIRTY_INODE flag and drop inode from global dirty list to avoid this
+UAF issue.
+
+Fixes: 0f18b462b2e5 ("f2fs: flush inode metadata when checkpoint is doing")
+Closes: https://syzkaller.appspot.com/bug?extid=849174b2efaf0d8be6ba
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v2:
+- add fixes line, commit 0f18b462b2e5 ("f2fs: flush inode metadata when
+checkpoint is doing") missed to call f2fs_inode_synced() to avoid any
+corner case when CONFIG_F2FS_CHECK_FS is off and inode is dirty.
+ fs/f2fs/inode.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 083d52a42bfb..d3c6f3202b69 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -949,8 +949,12 @@ void f2fs_evict_inode(struct inode *inode)
+ 	if (likely(!f2fs_cp_error(sbi) &&
+ 				!is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
+ 		f2fs_bug_on(sbi, is_inode_flag_set(inode, FI_DIRTY_INODE));
+-	else
+-		f2fs_inode_synced(inode);
++
++	/*
++	 * anyway, it needs to remove the inode from sbi->inode_list[DIRTY_META]
++	 * list to avoid UAF in f2fs_sync_inode_meta() during checkpoint.
++	 */
++	f2fs_inode_synced(inode);
+ 
+ 	/* for the case f2fs_new_inode() was failed, .i_ino is zero, skip it */
+ 	if (inode->i_ino)
+-- 
+2.49.0
 
 
