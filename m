@@ -1,180 +1,104 @@
-Return-Path: <linux-kernel+bounces-721246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5538BAFC69F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:05:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D46AFC695
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 11:04:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB9244A77FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:04:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55E4E3BBCC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 09:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97062298CCD;
-	Tue,  8 Jul 2025 09:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7821B2C08D0;
+	Tue,  8 Jul 2025 09:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CpsOn8Ep";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+URHbj4J";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CpsOn8Ep";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+URHbj4J"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="dSCtaprT"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FDA72BEC2D
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 09:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BA321771B;
+	Tue,  8 Jul 2025 09:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751965393; cv=none; b=MqjTFJTr1JDKYlSvL/i4I7Ci8Rr+gS7waloHbgdOeiYyVO/KwPGNwZIw3CUo7GZhA8/bUdX9us9uad8SbTYr4K3AOZj/7evI1V42XT8PO+BpHaMWdGZUBKagNhtD7OrMq7flS91mw5N8Qh3NBdHF//LwVhnjG0CRuvb465Q/9Xg=
+	t=1751965429; cv=none; b=B9ongL6vKpc0c0RbewZDCIP1Wqp57ojOSMkM2qQyWrcOD0yKUKhRjRrUeshglGney1mfiVQTINywwz8aqKIsuIF+ZHIcwqvB51X/Ui4EHHu73DgycUvUM9v48MqjDns+c8M74FXlSiQ2VQG3VbFG3VSle697m9sBkuch8JWpD50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751965393; c=relaxed/simple;
-	bh=4b+ZShGglIvw85XLnJQ79ec6jYuRVqoURM67v/XIrxU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qAic3qv1/DNvMt0MyD/UkiHwJUpDd/OCslHIIZWY/E6LXu92DsUk07qNNj+xbKjlfVY9Z7BDCG6hU6PRhLz7lSIjJbn1J+wsmGw/1VQ9w4w8n/H5Z9US9gqKbzELHJ69p9LJ1gnhikUlUcrwuJ1DKV+zvMcmbFW1/FfAGCuRDEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CpsOn8Ep; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+URHbj4J; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CpsOn8Ep; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+URHbj4J; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5D6B51F798;
-	Tue,  8 Jul 2025 09:03:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751965384; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8LoIjE0YohSQS/m/DeEM40Wt2aoGgwC03+iN87AqEfw=;
-	b=CpsOn8EpvXt8WGkCazO8YmhFZ1u3xu7iDCctROs0+56nkbv1EomzjHgFXfUDG5JohO19Zr
-	e3CIZTZi3h0gP6EDmkEZ5lBNw84dky4ULgBfdLLUC7UgujlA7fqFuFjuaETV+89UdwHH8s
-	W82l5X+5zMgZXUQ3HQPms54HdwMKYdw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751965384;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8LoIjE0YohSQS/m/DeEM40Wt2aoGgwC03+iN87AqEfw=;
-	b=+URHbj4JwqjW6/77p+LOglr50mzgUSGFjeekE19Tp+A1BjqD3aQurnTwmoCMe77I5fTMb2
-	BCnuCkieJIojPVDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751965384; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8LoIjE0YohSQS/m/DeEM40Wt2aoGgwC03+iN87AqEfw=;
-	b=CpsOn8EpvXt8WGkCazO8YmhFZ1u3xu7iDCctROs0+56nkbv1EomzjHgFXfUDG5JohO19Zr
-	e3CIZTZi3h0gP6EDmkEZ5lBNw84dky4ULgBfdLLUC7UgujlA7fqFuFjuaETV+89UdwHH8s
-	W82l5X+5zMgZXUQ3HQPms54HdwMKYdw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751965384;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8LoIjE0YohSQS/m/DeEM40Wt2aoGgwC03+iN87AqEfw=;
-	b=+URHbj4JwqjW6/77p+LOglr50mzgUSGFjeekE19Tp+A1BjqD3aQurnTwmoCMe77I5fTMb2
-	BCnuCkieJIojPVDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0998113A70;
-	Tue,  8 Jul 2025 09:03:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3tL4AMjebGjmYQAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 08 Jul 2025 09:03:04 +0000
-Message-ID: <f4ec4c04-6f41-4886-a7c0-da8334bd4745@suse.de>
-Date: Tue, 8 Jul 2025 11:03:03 +0200
+	s=arc-20240116; t=1751965429; c=relaxed/simple;
+	bh=p+GiKNZEBjzwpW+24vs2OU5pct4CwH8dO9pwT1J4sxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lv1+BkywHszoVlSwyUjPu7xdtaExCHUH7LHHX0hLPUIaMTCRupyiNh7mri7YxyeLZciDKlbXDtgvuCJzms0nNTAb3KVR1k71GXOR80lJYKEd4xMUbJS8YHxCC6I5DfoyIbgalMZIu84PSAHc6ipZmK+DKGF76gAB+ye9Gv+xv14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=dSCtaprT; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=h+bWulu03KvFIGJmJBpyzA89Qr4HtoUlW6fYCdRBZow=; b=dSCtaprTc7WU1iUPHnQifBdu0E
+	BafsQAVvLIfXzFS7Sqw0KiWoaukmHObyWgf4G6pWv6M4fjUP515+srl0ocfkEWJXznYHyZ+c5lkVq
+	yxC009IiQGgLmZ6suwwE7/VBXetj3wKZJJ3I/gM9LGhMpc71NM40w8NJmt4ifQSy9QIQBuCCqhVPc
+	CzftoIv7pX7gz0LTtF+Q+GPGl6cVyQK+UtbZWh7KQRmBq0P2LIuCm0Afg4v9dFTpbcAVAI0i2Atcv
+	FSJF3kcx+LyVN+fzqN1ty4sZ6SjNoLFibyWo/BUPn8Q+kfiH4SsxFbdjhk/EL43cyN5zZJsfkWF2S
+	GthD4zBg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:54124)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uZ4Ef-0006KQ-1m;
+	Tue, 08 Jul 2025 10:03:33 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uZ4EZ-0001Ub-2X;
+	Tue, 08 Jul 2025 10:03:27 +0100
+Date: Tue, 8 Jul 2025 10:03:27 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Kamil =?iso-8859-1?Q?Hor=E1k?= - 2N <kamilh@axis.com>
+Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+	andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	robh@kernel.org, andrew+netdev@lunn.ch, horms@kernel.org,
+	corbet@lwn.net, linux-doc@vger.kernel.org,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH net-next v7 1/4] net: phy: MII-Lite PHY interface mode
+Message-ID: <aGze3wgnHBcboFfq@shell.armlinux.org.uk>
+References: <20250708090140.61355-1-kamilh@axis.com>
+ <20250708090140.61355-2-kamilh@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] scsi: fnic: Fix crash in fnic_wq_cmpl_handler when
- FDMI times out
-To: Karan Tilak Kumar <kartilak@cisco.com>, sebaddel@cisco.com
-Cc: arulponn@cisco.com, djhawar@cisco.com, gcboffa@cisco.com,
- mkai2@cisco.com, satishkh@cisco.com, aeasi@cisco.com, jejb@linux.ibm.com,
- martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, jmeneghi@redhat.com, revers@redhat.com,
- dan.carpenter@linaro.org, stable@vger.kernel.org
-References: <20250612002212.4144-1-kartilak@cisco.com>
- <20250612002212.4144-2-kartilak@cisco.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250612002212.4144-2-kartilak@cisco.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email,cisco.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+In-Reply-To: <20250708090140.61355-2-kamilh@axis.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 6/12/25 02:22, Karan Tilak Kumar wrote:
-> When both the RHBA and RPA FDMI requests time out, fnic reuses a frame
-> to send ABTS for each of them. On send completion, this causes an
-> attempt to free the same frame twice that leads to a crash.
+On Tue, Jul 08, 2025 at 11:01:37AM +0200, Kamil Horák - 2N wrote:
+> Some Broadcom PHYs are capable to operate in simplified MII mode,
+> without TXER, RXER, CRS and COL signals as defined for the MII.
+> The MII-Lite mode can be used on most Ethernet controllers with full
+> MII interface by just leaving the input signals (RXER, CRS, COL)
+> inactive. The absence of COL signal makes half-duplex link modes
+> impossible but does not interfere with BroadR-Reach link modes on
+> Broadcom PHYs, because they are all full-duplex only.
 > 
-> Fix crash by allocating separate frames for RHBA and RPA,
-> and modify ABTS logic accordingly.
+> Add MII-Lite interface mode, especially for Broadcom two-wire PHYs.
 > 
-> Tested by checking MDS for FDMI information.
-> Tested by using instrumented driver to:
-> Drop PLOGI response
-> Drop RHBA response
-> Drop RPA response
-> Drop RHBA and RPA response
-> Drop PLOGI response + ABTS response
-> Drop RHBA response + ABTS response
-> Drop RPA response + ABTS response
-> Drop RHBA and RPA response + ABTS response for both of them
-> 
-> Fixes: 09c1e6ab4ab2 ("scsi: fnic: Add and integrate support for FDMI")
-> Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
-> Reviewed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
-> Reviewed-by: Gian Carlo Boffa <gcboffa@cisco.com>
-> Tested-by: Arun Easi <aeasi@cisco.com>
-> Co-developed-by: Arun Easi <aeasi@cisco.com>
-> Signed-off-by: Arun Easi <aeasi@cisco.com>
-> Tested-by: Karan Tilak Kumar <kartilak@cisco.com>
-> Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
-> ---
->   drivers/scsi/fnic/fdls_disc.c | 113 +++++++++++++++++++++++++---------
->   drivers/scsi/fnic/fnic_fdls.h |   1 +
->   2 files changed, 86 insertions(+), 28 deletions(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Signed-off-by: Kamil Horák - 2N <kamilh@axis.com>
+> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 
-Cheers,
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
-Hannes
+Thanks!
+
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 NÃ¼rnberg
-HRB 36809 (AG NÃ¼rnberg), GF: I. Totev, A. McDonald, W. Knoblich
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
