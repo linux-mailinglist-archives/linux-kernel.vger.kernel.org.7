@@ -1,100 +1,122 @@
-Return-Path: <linux-kernel+bounces-721675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-721676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0372BAFCC56
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:41:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 620CFAFCC57
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 15:41:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D70BA1AA77E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:41:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CA227A9980
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 13:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C782DD5F0;
-	Tue,  8 Jul 2025 13:41:27 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69552DCF74;
+	Tue,  8 Jul 2025 13:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PHRTauG6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35EAF6A33B
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Jul 2025 13:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F57126CE02;
+	Tue,  8 Jul 2025 13:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751982086; cv=none; b=LXQbgoagbNvxbbtrG7aMgAWTk3S54UkV7SFYeUy/igzVuB+4cQ3T9p/VrDs3lAaxWvWHy+qVENv30hr3k5tJkfwxYBuSyJYzaoEtVS6Jr/1ddms/v1HPW0hJi/X39e9bOv29t2C/oaMf0qhxVPfbG/hKDAdIYifdf4BSFvyRXkc=
+	t=1751982095; cv=none; b=Hq14DkcI/wvXK7zyhNWFrRfmv2hyNA2s6ROut1nfOwWBUUFXyJO7H26Vh/a/jIzn3ON+kNRCCU7AVITxn1nKtbEb2IcPVFu3BSiw7SwTpGLHPbiTk8MNz98mmjK9OM8JZ7QSg9jrFAVvQYZwwfegdCLL/1z6konUd138UHPvYXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751982086; c=relaxed/simple;
-	bh=DtbB4lgJf9UiUqFjNROhOaOtq+Q+ZUvuWg6zmLKxZqc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=pGmWvM1j0CXhaOGUfPdYol7jVIlGa6UTJWfbYLmLRDBFt2aN1FGSchcKFt++h4x3vcKvoodYkeTptRhLU6+x6M6yT3YbgbidORmDB4Fiujdinw280eXLVCt5MS6DGk8vcl4WPzHuePT2uo48goUzwDHYDWKD42Hf+u+/jrbiEdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3df6030ea24so46741085ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 06:41:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751982084; x=1752586884;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jlqaBHX5Z4gTs5jTlvB1HnLAHIY50wvLNKNDyz6F8Uo=;
-        b=OBJ9oX3zcauxuJAvPaKJNlqSKvxbhr7kk2JJiIjKZOs7AwBnLd1+teSqtSCTkF6DbL
-         0axam53NP2OhoIjMDJdrOLFNNlSL3P3McV4IbopkR/iox8pH7LXMnePLjabLWvvpglZf
-         s2EFU9O8ETSjjO2MxaUKo9S8gfP4wCO/WEkEoeWOuHAqBgdgKl8eZaGoirRl4ohGcdHq
-         tAWofB1sIKBT0mvNSeJGWW4QrnB20YhZC33m/mxQzBhHpX7+/bpJg0vzq6Ht67Cgynd8
-         NqK/7UcaYdGdWravAz40d1+Z+IVc1xyBuCqQCzP/p1Gx37CT+ulMX+xpGJuJdN9HsDTD
-         gbIA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdYXw6LiDlcjOHTxD5FWiMiFBjtTZhqxH+yJrhvPLoJbT1wXvIvDYKnqV8AIxYS8ND1LUelejYJgVODFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1gAEps3esHOTQQc0iIqGBhBxqKw26J+CO1J7Nic8HCxsp25tJ
-	u1MAEA/x6KpfmPzRQ2lvp8mm0g6l4F3UBtU0hMBmtQKW7SDbVlp4D5dbm9oESQsotrR7cw60Ir/
-	/VZ4uvP/VeqEa7YYA7CSro0GL0RZUQikzT+Tw5LxCnm8bcjzbP1EjrrNHZrU=
-X-Google-Smtp-Source: AGHT+IEHWDHAzY2BOBD1guc6Dv80BuQF/GE+kymFwnh2q2O4DxQH0bj2bZyWxe0lBsXIvMyxgolCgFnfYM1D3NrBPPPMtUM3bDFf
+	s=arc-20240116; t=1751982095; c=relaxed/simple;
+	bh=lQ+lFAMmkEa2z0Mr2+RjJhawqs2r65qSuiDH/oxq0cs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=kShbeHPMnJdpBRDvtit1bP5WzFI86dZhvQqPF0FJMiKsPnJ1MHTlZ9Xkm8zsewk4HPcF24M2Jy44jfHh93dCzFKvg22kVSEd//lVIyUQ6bmdjoQ2wJ/k09MTbSLKcrPFLQ1oyYB04q36tDXUCzXVua7q8FrzQCkiKjQo7/QFh0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PHRTauG6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE109C4CEED;
+	Tue,  8 Jul 2025 13:41:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751982094;
+	bh=lQ+lFAMmkEa2z0Mr2+RjJhawqs2r65qSuiDH/oxq0cs=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=PHRTauG6I9s0l5DAhv3NTmrlI3xWnX3hXzoBcm9i6vLM70lEpXtmUiqZMy7i98F92
+	 ZvQaRw6iV82rlgGXkCT0vBbHCpPgcViJd4OWUHuJJzBrdkDhyNu8XQ9dmsu8F+vP6e
+	 LU3fhKzYhg6d24RMcrXIBBURVkpgZ/DpVJ97Q4SwgCcDjo4yTUneT+0QRaakQkgElY
+	 zcBAqR4EsDnZL/aaQAiHtJnDEDw/nqphmC1tDRqpdAYioKLhsGeulSGxoGAXP0Y04H
+	 9AGZeqtubsw4MmrgIm2FUe5FOx8PRl8BMfStKdTwuVRAuDWLUJhrXOztUXk/BCaqE7
+	 m/m9GTcbXUR0Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a92:c26a:0:b0:3df:3be7:59d1 with SMTP id
- e9e14a558f8ab-3e154e3ca6amr26140235ab.11.1751982084422; Tue, 08 Jul 2025
- 06:41:24 -0700 (PDT)
-Date: Tue, 08 Jul 2025 06:41:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686d2004.050a0220.1ffab7.000b.GAE@google.com>
-Subject: [syzbot] Monthly nfc report (Jul 2025)
-From: syzbot <syzbot+list6b8e21ba94b2aeb18e4c@syzkaller.appspotmail.com>
-To: krzk@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 08 Jul 2025 15:41:31 +0200
+Message-Id: <DB6PTHLBMET8.2TN916HUP10X9@kernel.org>
+Cc: "Vitaly Wool" <vitaly.wool@konsulko.se>, <linux-mm@kvack.org>,
+ <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>, "Uladzislau
+ Rezki" <urezki@gmail.com>, "Alice Ryhl" <aliceryhl@google.com>, "Vlastimil
+ Babka" <vbabka@suse.cz>, <rust-for-linux@vger.kernel.org>, "Liam Howlett"
+ <liam.howlett@oracle.com>
+To: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v11 0/4] support large align and nid in Rust allocators
+References: <20250707164755.631374-1-vitaly.wool@konsulko.se>
+ <824065ea-1f5c-4cd4-9917-4b7a91882af8@lucifer.local>
+ <aG0HJte0Xw55z_y4@pollux>
+ <8a08931c-ce54-4e96-9e99-e7c696389dc3@lucifer.local>
+In-Reply-To: <8a08931c-ce54-4e96-9e99-e7c696389dc3@lucifer.local>
 
-Hello nfc maintainers/developers,
+On Tue Jul 8, 2025 at 2:36 PM CEST, Lorenzo Stoakes wrote:
+> TL;DR - the real issue here is not cc'ing the right people (Vlastimil was
+> not cc'd until v11 for instance).
 
-This is a 31-day syzbot report for the nfc subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/nfc
+Since Andrew was Cc'd and also did reply, but didn't mention anything about
+missing receipients on the -mm side of things, I did not see a reason to br=
+ing
+anything up regarding this from my end.
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 5 issues are still open and 27 have already been fixed.
+Thanks for bringing this up.
 
-Some of the still happening issues:
+> On Tue, Jul 08, 2025 at 01:55:18PM +0200, Danilo Krummrich wrote:
+>> On Tue, Jul 08, 2025 at 11:58:06AM +0100, Lorenzo Stoakes wrote:
+>> > +cc Liam
+>> >
+>> > Hi guys,
+>> >
+>> > We have a section in MAINTAINERS for mm rust (MEMORY MANAGEMENT - RUST=
+), so
+>> > it's slightly concerning to find a series (at v11!) like this that cha=
+nges
+>> > mm-related stuff and it involves files not listed there and nobody bot=
+hered
+>> > to cc- the people listed there.
+>>
+>> What files are you referring to? Are you referring to:
+>>
+>> 	rust/kernel/alloc.rs
+>> 	rust/kernel/alloc/*
+>
+> this ---> rust/helpers/slab.c            | 10 +++---
+> this ---> rust/helpers/vmalloc.c         |  5 +--
 
-Ref Crashes Repro Title
-<1> 459     Yes   INFO: task hung in nfc_rfkill_set_block
-                  https://syzkaller.appspot.com/bug?extid=3e3c2f8ca188e30b1427
-<2> 329     Yes   INFO: task hung in rfkill_unregister (3)
-                  https://syzkaller.appspot.com/bug?extid=bb540a4bbfb4ae3b425d
-<3> 63      Yes   KMSAN: uninit-value in nci_ntf_packet (3)
-                  https://syzkaller.appspot.com/bug?extid=3f8fa0edaa75710cd66e
-<4> 49      Yes   INFO: task hung in rfkill_sync_work
-                  https://syzkaller.appspot.com/bug?extid=9ef743bba3a17c756174
+So, your concern is about those?
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> These are clearly specifically related to mm no?
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+Yes, and if the maintainers of slab and vmalloc agree we can add them there=
+.
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+But again, they're just re-exporting inline functions and macros from heade=
+r
+files, which bindgen does not pick up automatically. They do not carry any =
+logic
+and purely are a workaround for bindgen.
 
-You may send multiple commands in a single email message.
+For instance,
+
+void * __must_check __realloc_size(2)
+	rust_helper_vrealloc(const void *p, size_t size, gfp_t flags)
+	{
+	        return vrealloc(p, size, flags);
+	}
+
+works around bindgen not picking up the vrealloc() macro.
 
