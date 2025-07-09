@@ -1,118 +1,136 @@
-Return-Path: <linux-kernel+bounces-724219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08DB1AFF02D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:53:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A7F0AFF02F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D51A57B5D74
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:51:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F40881C843A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D206237708;
-	Wed,  9 Jul 2025 17:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE26239E89;
+	Wed,  9 Jul 2025 17:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="GeIHh7Uo"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TGW7gE9Q"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0E32356D2
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 17:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13902397BE
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 17:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752083584; cv=none; b=lr/3wCoXzHBOC5zeyGhY9VO/LZ7sk7WutTYBLhIfRP9JAiPa+fmMhfoWuwu2q3JwSoYkHk3nQckpI+GB+Tk7k3lJswS3Br293S7pdnuHLQgukSCggvk9TzlFoNuKWtHHocwtyTF6tWu9DsoI5szNnavV9/cBI5eG/HRxigmQMbI=
+	t=1752083590; cv=none; b=XqCXwIgy12TeKTNslVOPpPR66V5RnnxN+z9oogXWt4yCrZIA3r++ANvG0StN3V8fl0Jo9iP3RPR+J/FdFc1qQTHiOLhWs0rsO6GiO5CNLw1wEwCnW5X1x7hU2MtJq5tg1bHHmIkpnfTU29Ji+dZ6O/TzZFyD2AZCaYsqMUyREuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752083584; c=relaxed/simple;
-	bh=5Ia0HRV7zH2WBWN+qpcO4e/eQosXMi2uWlBScRIgOoA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ne8fzBK9bmkOXq2RHtzdwUSjhahIWoqQKv31x2mnFv6Dcw4wHDCgUVd2UIFJjxXR/AnNl+cY85uqzpjGT7IqINC0wy0dKM38QS+qoBmiWBEJYwsodopAD0sydjaoeIJ/J4+Vc0mFHah09lNU7LupTXJ1Nse458kcxtbI7nwvjEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=GeIHh7Uo; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6fb0eb0f0fbso2653206d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 10:53:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1752083582; x=1752688382; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6kcOerGxtDRl0IqsXa2Fyv0O/gmOLQbQigHP1EIwUd0=;
-        b=GeIHh7UodvyMCRJ8oB0ar8ilUn/fFCiaTul5j9IwXGry1mmBfZFTuRV9qafsayDVpn
-         YSF2TLFYLj4yDDN/VvtbF9E+dffRjovmPzWmQZn0CtuINVtzkriImFEKt2mbP7XNFW0b
-         3vwq+2FW9y6pc2Lel0widrJ7t2rIyuR9ZOx1VG3DtkwHpVyc0hL7BuIdAZlslvF+awB5
-         9JjQNLbDQmTX9iv5XgBUZOJ3igobGqbe3Nivs37hq3UpjOPzoNu4ifB707Zo/2X2TO6l
-         D4x5K1osPBRCfjca6JxOu5O5somCV208lCmsgTakQBs8Jj4b9+16h3h/m6cQTn4LEwCT
-         Yo3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752083582; x=1752688382;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6kcOerGxtDRl0IqsXa2Fyv0O/gmOLQbQigHP1EIwUd0=;
-        b=pj4E/i4WY1cWPElU9E6IM8dI+NnsoBCgG/9ocvxfvjMFnuJJUZgz1hI2D+Gz+oXz+J
-         sB+RGDKbpMUArvH6t80FMoq2nSr+VIY36xTSHDZcL24a3WoJZbPaREYhXBhNs6Ub+KUz
-         xhxyEZieI02BzOpap+M48x7OHAa81XXYpsvUcboJrp3LDOisq34flEw/9iFVy2KItln9
-         jYtjOPl2oFCgPnvMT1jGnb9WVpXeKijd8wJD0+19TUv/9/0sVbfk8K9mJriC/qctcdJo
-         mToXsbVGK+xgCjXfkTqGvSV49MBiyEnd2fkxB0A+7QtyOnM+hwoIRIic90MsEFWM3k+w
-         4SLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVMqq5l0Pb3GE6r6xLE1G0xUfz9JdWjTK1enWCeIdvXUGEaHX9G4Z2LbJKuz+U/oGJYhVhau3Sc9v8RW5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSZLN81qBaAOHd3qU+QFV/a+xTpSB405b6+gJJ5UOZmRJqezJ9
-	wXmZAgllUOspPGe9krg/sPv2iud+ChockU0Z++TxdtuaJOaOczJfRGFG5Sv5hcrkew==
-X-Gm-Gg: ASbGncuwwNM0FJOUQ8wYK6tgLKD982X2NlVE9qUROdt9ubZgB9Ciory0I/r8lVil1Fb
-	OmYrplqnjOXgRgVfuycWuA4pIBnT2sGZBiipwO5NCLUJ3sJMPPA2kqcTqQmwYACubreXmVkwGcq
-	f3UoEiwuSnlYi23PM+p6Vcfq6u5v2s60C9sj4KSzfC5QKYiOp6us5/k5xh9Qdg2RW3GMDXcUUPS
-	ftqfbbY5JHtXe5mWtux9dSLEyBGZEOxrdlX9krgH98nq2jxdW/ckv2GnaWazYw90ztLdytDw/b9
-	3pAsbZi+QEVYN5o2/3E08D3ih6/bxZr5cUGRgizwT1nzpFAKNEOiPAPlFrfAzhxI3MKUKys2mlW
-	BaPJ7mxN8tZ1FQTgqKyLGFjbnpCaodVDsrmbu08Se3KSclP1XD81bO94=
-X-Google-Smtp-Source: AGHT+IHR6B3aBT6nP0giOBXXSp3GYX42d9A0RoMZKZC2VFmh9qTAyRprUaeevr7Q5whyisQ/mru2/w==
-X-Received: by 2002:a05:6214:5882:b0:702:bc5d:475b with SMTP id 6a1803df08f44-70495a2ac6amr5938216d6.1.1752083581895;
-        Wed, 09 Jul 2025 10:53:01 -0700 (PDT)
-Received: from rowland.harvard.edu (nat-65-112-8-52.harvard-secure.wrls.harvard.edu. [65.112.8.52])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-702c4d64feasm95362966d6.121.2025.07.09.10.53.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 10:53:01 -0700 (PDT)
-Date: Wed, 9 Jul 2025 13:52:58 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: syzbot <syzbot+8258d5439c49d4c35f43@syzkaller.appspotmail.com>
-Cc: Benjamin Tissoires <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] KASAN: slab-out-of-bounds Read in
- mon_copy_to_buff
-Message-ID: <681c4eac-e812-4022-96e8-cd6cada73910@rowland.harvard.edu>
-References: <5de04492-01d3-4b2c-b3f4-8c2237dfed6a@rowland.harvard.edu>
- <686c14c0.a00a0220.6237c.0000.GAE@google.com>
- <72fea4f2-40d7-4f9f-a08d-b1ada781256e@rowland.harvard.edu>
- <5644bdbc-8449-407c-8e0c-e725e10a40f1@rowland.harvard.edu>
+	s=arc-20240116; t=1752083590; c=relaxed/simple;
+	bh=Mu/vEwykicqa3sW2iz5ZrXrPavYLXSsA3HF6TMndu6k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LeN5TtFWG3+9r0BBDBjgoXnt9FwfXrd/8glMMOjfokk6q4WGoK2UNEo5Yp3dBXuLZz0pyas2SqxShAqMdBKyOFqUitt0ExTQnnSVfhXCJ7sBgQqB6eW33EZB7nqWpTkfYRXbX+jpgorw9uvTQytTHGX07UMpInx1pcdZlVihvd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TGW7gE9Q; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752083587;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6B8QlnDbL7txSd+jiz/U6vGVYrpYeKQzpaMnG5t2poQ=;
+	b=TGW7gE9QQ10Yl1F3zGklKsCAN9o/t3wWqYlLCE1QppIm1hGAs/WQmb23SUnkhKmP+6M2ss
+	NvF4ng+EsxzVSmxcP3NnSSCj7aXI+aN/JOUpoE7jTPNKABPb6ANp2s0HwKIHZZnPMxbffS
+	JHjBqAmJmOGLB/4XLNN05gYCKtdWvDE=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-625-pSGlg5aUMZil4X0oIUwjlA-1; Wed,
+ 09 Jul 2025 13:53:06 -0400
+X-MC-Unique: pSGlg5aUMZil4X0oIUwjlA-1
+X-Mimecast-MFC-AGG-ID: pSGlg5aUMZil4X0oIUwjlA_1752083585
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EFEB918011CD;
+	Wed,  9 Jul 2025 17:53:04 +0000 (UTC)
+Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F35AD1955E85;
+	Wed,  9 Jul 2025 17:53:03 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Cc: Yuntao Liu <liuyuntao12@huawei.com>,
+	Sean Christopherson <seanjc@google.com>
+Subject: [PATCH] KVM: x86: avoid underflow when scaling TSC frequency
+Date: Wed,  9 Jul 2025 13:53:03 -0400
+Message-ID: <20250709175303.228675-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5644bdbc-8449-407c-8e0c-e725e10a40f1@rowland.harvard.edu>
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Test patch to see the contents of the report descriptor.
+In function kvm_guest_time_update(), __scale_tsc() is used to calculate
+a TSC *frequency* rather than a TSC value.  With low-enough ratios,
+a TSC value that is less than 1 would underflow to 0 and to an infinite
+while loop in kvm_get_time_scale():
 
-Alan Stern
+  kvm_guest_time_update(struct kvm_vcpu *v)
+    if (kvm_caps.has_tsc_control)
+      tgt_tsc_khz = kvm_scale_tsc(tgt_tsc_khz,
+                                  v->arch.l1_tsc_scaling_ratio);
+        __scale_tsc(u64 ratio, u64 tsc)
+          ratio=122380531, tsc=2299998, N=48
+          ratio*tsc >> N = 0.999... -> 0
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/ d7b8f8e20813
+Later in the function:
 
-Index: usb-devel/drivers/hid/usbhid/hid-core.c
-===================================================================
---- usb-devel.orig/drivers/hid/usbhid/hid-core.c
-+++ usb-devel/drivers/hid/usbhid/hid-core.c
-@@ -1043,6 +1043,10 @@ static int usbhid_parse(struct hid_devic
- 		goto err;
- 	}
+  Call Trace:
+   <TASK>
+   kvm_get_time_scale arch/x86/kvm/x86.c:2458 [inline]
+   kvm_guest_time_update+0x926/0xb00 arch/x86/kvm/x86.c:3268
+   vcpu_enter_guest.constprop.0+0x1e70/0x3cf0 arch/x86/kvm/x86.c:10678
+   vcpu_run+0x129/0x8d0 arch/x86/kvm/x86.c:11126
+   kvm_arch_vcpu_ioctl_run+0x37a/0x13d0 arch/x86/kvm/x86.c:11352
+   kvm_vcpu_ioctl+0x56b/0xe60 virt/kvm/kvm_main.c:4188
+   vfs_ioctl fs/ioctl.c:51 [inline]
+   __do_sys_ioctl fs/ioctl.c:871 [inline]
+   __se_sys_ioctl+0x12d/0x190 fs/ioctl.c:857
+   do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+   do_syscall_64+0x59/0x110 arch/x86/entry/common.c:81
+   entry_SYSCALL_64_after_hwframe+0x78/0xe2
+
+This can really happen only when fuzzing, since the TSC frequency
+would have to be nonsensically low.
+
+Fixes: 35181e86df97 ("KVM: x86: Add a common TSC scaling function")
+Reported-by: Yuntao Liu <liuyuntao12@huawei.com>
+Suggested-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/kvm/x86.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index b58a74c1722d..de51dbd85a58 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -3258,9 +3258,11 @@ int kvm_guest_time_update(struct kvm_vcpu *v)
  
-+	dev_info(&intf->dev, "Report descriptor:\n");
-+	print_hex_dump(KERN_INFO, "  * ", DUMP_PREFIX_NONE, 16, 1,
-+			rdesc, rsize, false);
-+
- 	ret = hid_parse_report(hid, rdesc, rsize);
- 	kfree(rdesc);
- 	if (ret) {
+ 	/* With all the info we got, fill in the values */
+ 
+-	if (kvm_caps.has_tsc_control)
++	if (kvm_caps.has_tsc_control) {
+ 		tgt_tsc_khz = kvm_scale_tsc(tgt_tsc_khz,
+ 					    v->arch.l1_tsc_scaling_ratio);
++		tgt_tsc_khz = tgt_tsc_khz ? : 1;
++	}
+ 
+ 	if (unlikely(vcpu->hw_tsc_khz != tgt_tsc_khz)) {
+ 		kvm_get_time_scale(NSEC_PER_SEC, tgt_tsc_khz * 1000LL,
+-- 
+2.43.5
+
 
