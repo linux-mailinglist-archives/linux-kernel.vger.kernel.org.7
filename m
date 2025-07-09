@@ -1,117 +1,140 @@
-Return-Path: <linux-kernel+bounces-724160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D64DFAFEF4D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:02:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8F93AFEF52
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:04:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 073283BA385
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:01:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 497001BC7298
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603D3221286;
-	Wed,  9 Jul 2025 17:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EBCB222585;
+	Wed,  9 Jul 2025 17:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CwVMW57a"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="tD5mAcSV"
+Received: from smtp.smtpout.orange.fr (smtp-82.smtpout.orange.fr [80.12.242.82])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDF86BFCE;
-	Wed,  9 Jul 2025 17:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CE838F9C;
+	Wed,  9 Jul 2025 17:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752080523; cv=none; b=LTD4vKopO+J2u+qBCrbzsvvqed2jWj5qWlq5IR8L+wV/Uz+hMwTh6cGJ8y9qF6Gaa3Lg/6bFCJe9jHr5cR89pKO6Bq0jwpQ2EV5bjRP0ZPX41zne6jKpe67uuTxXGjPC2hZRwy56vhPxNtuuJHGyhq01sBPyQl7yvblfQIoNehI=
+	t=1752080641; cv=none; b=lFeAdhTa1j0J75iR4PrJgPX6YG5aKe7o0DWRxl0tDeoiwGJixZAb5onUN4tZ8BtsETahjQugJf/BkiGkpJj37IK3XqGhcHEUXXsCfajF8Epu0w1JuM6HbG3L2QTnjjxOzfvtp1Pj42hn2Mg4mhBhEEqYUZ64+ruNkTCDelhmU1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752080523; c=relaxed/simple;
-	bh=clG/NIToEMxKbs1ZmMy+5Ij2Vhl17097UxqpeHqElas=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UDtRKK7CN1dK5eXyhIPHbNjPhM6GMGYgV37PaROSuDUVR5O2NLAE2bMAhFww+5IMK9/jWV43uHjtdQZKDubJUX5KZHghCRP7+e4QNnlZufjFZzf8SJbvmYhtddejJgjp/GDKnaayAFRNyQHuGvfXzNWNmuyJwe1TuzLV9OUU7/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=CwVMW57a; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=xwIuPRfBvgwDUvog670XJikOKlbcAYFNfjUJsTugx6A=; b=Cw
-	VMW57aiB17xlq/dLe76GHEPU5J1MEexTvB8lWof2SLJB4Cje7+Cqa3FdsRzEK5ZRVjyNg1whbcbl7
-	00tT82y8NBDIr7x8bXUunG89PbkXlPnVl6VclpKalW4d2FBVW6zhNY1tD5IlaiiuSI2yrL/WPxTEo
-	60Pe9RLlao8dOWE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uZYAo-000y3p-7J; Wed, 09 Jul 2025 19:01:34 +0200
-Date: Wed, 9 Jul 2025 19:01:34 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: lizhe <sensor1010@163.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, vladimir.oltean@nxp.com,
-	maxime.chevallier@bootlin.com, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: Re: Re: Re: Re: [PATCH] net: stmmac: Support gpio high-level
- reset for devices requiring it
-Message-ID: <05cd64a0-ec24-4ea0-9f57-8d8542563a51@lunn.ch>
-References: <20250708165044.3923-1-sensor1010@163.com>
- <52b71fe7-d10a-4680-9549-ca55fd2e2864@lunn.ch>
- <5c7adfef.1876.197ece74c25.Coremail.sensor1010@163.com>
- <aG3vj1WYn3TjcBZe@shell.armlinux.org.uk>
- <5bb49dc0.6933.197ee28444e.Coremail.sensor1010@163.com>
- <aG5ORmbgMYd08eNR@shell.armlinux.org.uk>
- <4cfb4aab.9588.197eefef55f.Coremail.sensor1010@163.com>
- <aG582lPgpOr8oyyx@shell.armlinux.org.uk>
- <2352b745.a454.197efeef829.Coremail.sensor1010@163.com>
+	s=arc-20240116; t=1752080641; c=relaxed/simple;
+	bh=+QLS67LP3MAKEKzz3JJMVKPpv6Hxh0TQYFvpq7He7W4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BIhE/FIAcQ0ADeY4elqnxYNGEYQlKzj+YL8w9Z+0k2h/mB1jKGqgwTzOVXqvNhKV/RwHVuiO/wwR6iczXgVWrWOdya3hNI/956Y/tIgjJVjr3rnfwKUBMdup1RzM46MtG4JiNxUPOQ77YFYq4aEIgcko0P/YXbogCs8XBSzlFCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=tD5mAcSV; arc=none smtp.client-ip=80.12.242.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id ZYD2uiFK70i5kZYD2uV8Mx; Wed, 09 Jul 2025 19:03:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1752080636;
+	bh=zun+I1R1xXyJz0HTUliO8x5fV8L46/pP1oYWwkaGDyM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=tD5mAcSV17dDqivd0yuOdX396vyjLb9SPpJq1S1BRuBLPMHwTcBl8bCk3vF4KhkPw
+	 OK8IxCL8cbyTr3bvgOXKL+toR4ggJbJEHKEcVvqFDa092/Rn/YxTHLc3DDBbOxECQD
+	 WXYve3A5Mfdgmeb6914zViG/OBmyYgyTYrR+u51tqT/dBd7RsIDnFi54pjrIZRKfcs
+	 gCpKVZ6RtQWxPVZrBZZxqqxiHS+4vdCYwoCcAMGN0bffMcXV9LglKdF9SkkN2pF/So
+	 tcguz1UG4SuJober2Y+EUFsQKj/3ZQUjO9bpqr6em6c+uiov1WP6M+ieocdKqN2NOz
+	 N2qYgHK9wOjIw==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Wed, 09 Jul 2025 19:03:56 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <14040edb-5c27-42d2-a78b-f679bbc90ed8@wanadoo.fr>
+Date: Wed, 9 Jul 2025 19:03:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] squashfs: Fix incorrect argument to sizeof in
+ kmalloc_array call
+To: Andrew Morton <akpm@linux-foundation.org>,
+ kernel test robot <lkp@intel.com>
+Cc: Colin Ian King <colin.i.king@gmail.com>,
+ Phillip Lougher <phillip@squashfs.org.uk>, Chanho Min <chanho.min@lge.com>,
+ oe-kbuild-all@lists.linux.dev, kernel-janitors@vger.kernel.org,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ linux-kernel@vger.kernel.org
+References: <20250708142604.1891156-1-colin.i.king@gmail.com>
+ <aG3AVf8fbqHzk+OD@rli9-mobl>
+ <20250708195413.e990d63665144c28b0caa672@linux-foundation.org>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250708195413.e990d63665144c28b0caa672@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2352b745.a454.197efeef829.Coremail.sensor1010@163.com>
 
-On Thu, Jul 10, 2025 at 12:05:05AM +0800, lizhe wrote:
-> Hi，
+Le 09/07/2025 à 04:54, Andrew Morton a écrit :
+> On Wed, 9 Jul 2025 09:05:25 +0800 kernel test robot <lkp@intel.com> wrote:
+> 
+>> Hi Colin,
+>>
+>> kernel test robot noticed the following build errors:
+>>
+>> [auto build test ERROR on akpm-mm/mm-everything]
+>> [also build test ERROR on next-20250708]
+>> [cannot apply to linus/master v6.16-rc5]
+>> [If your patch is applied to the wrong git tree, kindly drop us a note.
+>> And when submitting patch, we suggest to use '--base' as documented in
+>> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>>
+>> url:    https://github.com/intel-lab-lkp/linux/commits/Colin-Ian-King/squashfs-Fix-incorrect-argument-to-sizeof-in-kmalloc_array-call/20250708-223017
+>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+>> patch link:    https://lore.kernel.org/r/20250708142604.1891156-1-colin.i.king%40gmail.com
+>> patch subject: [PATCH] squashfs: Fix incorrect argument to sizeof in kmalloc_array call
+>> :::::: branch date: 10 hours ago
+>> :::::: commit date: 10 hours ago
+>> config: mips-randconfig-r071-20250709 (attached as .config)
+>> compiler: mips64-linux-gcc (GCC) 8.5.0
+>> reproduce (this is a W=1 build): (attached as reproduce)
+>>
+>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>> the same patch/commit), kindly add following tags
+>> | Reported-by: kernel test robot <lkp@intel.com>
+>> | Closes: https://lore.kernel.org/oe-kbuild-all/202507090822.QI1bMiUV-lkp@intel.com/
+>>
+>> All error/warnings (new ones prefixed by >>):
+>>
+>>     In file included from include/linux/percpu.h:5,
+>>                      from include/linux/percpu_counter.h:14,
+>>                      from include/linux/mm_types.h:21,
+>>                      from include/linux/mmzone.h:22,
+>>                      from include/linux/gfp.h:7,
+>>                      from include/linux/xarray.h:16,
+>>                      from include/linux/list_lru.h:14,
+>>                      from include/linux/fs.h:14,
+>>                      from include/linux/highmem.h:5,
+>>                      from include/linux/bvec.h:10,
+>>                      from include/linux/blk_types.h:10,
+>>                      from include/linux/blkdev.h:9,
+>>                      from fs/squashfs/block.c:16:
+>>     fs/squashfs/block.c: In function 'squashfs_bio_read_cached':
+>>>> fs/squashfs/block.c:92:12: error: 'folio' undeclared (first use in this function)
+>>         sizeof(*folio), GFP_KERNEL | __GFP_ZERO);
+>>                 ^~~~~
+> 
+> I made it
+> 
+> 	struct folio **cache_folios = kmalloc_array(page_count,
+> 			sizeof(*cache_folios), GFP_KERNEL | __GFP_ZERO);
+> 
 
-Please don't top post.
+WHy not kcalloc(), to be less verbose and remove the explicit __GFP_ZERO?
 
->     snps, reset-gpio = <&gpioX RK_PXX GPIO_ACTIVE_HIGH>;   
->     All of them correctly parse the GPIO pin's state are described in the DTS
-> 
-> 
-> 
-> Thx !
-> 
-> Lizhe
-> 
-> 
-> 
-> 
-> At 2025-07-09 22:29:46, "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
-> >On Wed, Jul 09, 2025 at 07:42:55PM +0800, lizhe wrote:
-> >> Hi,
-> >>     i have already declared it in the DTS.
-> >>
-> >>     &gmac {
-> >>             snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_HIGH>;
-> >>     };
-> >
-> >Active high means that the reset is in effect when the output is at the
-> >logic '1' state. So, gpiod_get_value*() will return the same as
-> >gpiod_get_raw_value*().
-> >
-> >Active low means that the reset is in effect when the output is at the
-> >logic '0' state, and in that case the return value of
-> >gpiod_get_value*() will return true when the reset is active (at logic
-> >'0' state) whereas gpiod_get_raw_value*() will return zero.
+CJ
 
-Did you read what Russell said? If so, why are you using
-GPIO_ACTIVE_HIGH?
+> 
+> 
 
-	Andrew
 
