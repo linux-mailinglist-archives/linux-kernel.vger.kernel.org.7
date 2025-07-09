@@ -1,52 +1,62 @@
-Return-Path: <linux-kernel+bounces-723976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D75CDAFED4C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:12:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79777AFED28
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7971D5A48DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:09:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EA774E26E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4102E5B21;
-	Wed,  9 Jul 2025 15:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9479D2E5B3E;
+	Wed,  9 Jul 2025 15:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+EkCEXW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="FAWPm5uy"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E5C2D1914
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 15:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7322E2678;
+	Wed,  9 Jul 2025 15:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752073733; cv=none; b=E7sDL5jXfUk76V4wkVhLoH9m7h5Je6eCsH/+IW03yxdrtxRNHeT+9j3nBnmWORThvS4+PIo/qPS76SPUylESH76HNIFC37bCixwtw1FjjME0yamloVo98NkMg0Rl3AkQEOtP/JPbwkR5mIs+hcfpHLFW3nrE+a2exVJIu2dlQa0=
+	t=1752073762; cv=none; b=IL+wygg+pgY45xR1gtSYAl3EzGMkfOwhOm2E9t/zB3MQlmSVDV4Ivr2b6I85uInM6WgT25ebMMnOPRJ47xcjq/+U462VO3iJ7Ir581U/dCxFPFffU9ykWg8uZbdJXHbNxdcjPX3rsyRDtholFpYeStrniL8Sqyn6U40oPZo2kT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752073733; c=relaxed/simple;
-	bh=aOlbZkcI7oF3SOFwCQeZdFEAK3mOIpqRgWAeM2Pwt3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=a8a90yAbmwOTtmWhRq5RPM6ho/VLZlp73GTot49MU6rXl34/YIui5fZCz1FfSCn+GTzRoB/CdjP1jsCvfLpwYx6AiQtTRMzQDF8Z+pnmncnEU9HmjRK2cL/i7U9YzcNyYDBoCRQ7fSrxhkJ1D4pK0FvPGh/wnlijLTdoB0kM0ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+EkCEXW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CC08C4CEEF;
-	Wed,  9 Jul 2025 15:08:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752073733;
-	bh=aOlbZkcI7oF3SOFwCQeZdFEAK3mOIpqRgWAeM2Pwt3w=;
-	h=Date:From:To:Cc:Subject:From;
-	b=h+EkCEXW/Wib9SN4ISibuhk+/zMJh+JOmyHCKL+Oiy7izNmKXIcIJra7EA8P1hVBL
-	 IeAOCgavQHrySGhQmnUIWNY7ghn+GXwzqyy4eB/yy0ZUnRXZl161quP/6scunZC0O7
-	 WHfvEC2Gwqd9oM/ffORMUB/aEoVw4N42Ox/FVETTtsIY2KKruLbn0r2t2SajfnsMF9
-	 okc/s9eTYBf8gzvFC2XY0J/+97Wu1K6SDkOAHHxdj5jhYMq+QejJYm1wW3JR/GLRPC
-	 CqNmqjN0+GX2aR1ItathXL8WJBq0k1zjbEAcrKPGs9gS49VNwhoQVqWQqDVJJmkHVc
-	 voI3zkp0gP7Sg==
-Date: Wed, 9 Jul 2025 16:08:48 +0100
-From: Will Deacon <will@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: [GIT PULL] arm64 fixes for -rc6
-Message-ID: <aG6GAKc8EV0cERsn@willie-the-truck>
+	s=arc-20240116; t=1752073762; c=relaxed/simple;
+	bh=pPy2FKFkThlDVPMouYhG0qFiHsCT6VIKIzN17kas5VE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f6K3fltPj76vU0tEaGOt6lMAfOGgJY2gCjKsiAoEA5Jv/r6Pf1mRNiGLVxSZZKi7s4MkAAFtuEOAsL4UDCeDUZou/2Z/qhKdcCrAek2zWfy5o/oTqNGXn9qI1W2tw4hTTktfiXHoJ/vhwWpbAcuuUzKTPG4mXWAEda4S1vwjgZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=FAWPm5uy; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=5fTnbnfI2D0SW9Wd78YXcLrbOHt8ziweqWLL9StcYkQ=; b=FAWPm5uy6nPc15hpxU3RR511Jg
+	Tc8DelvKLdVlYFxHWtnEt/iAWsIh+jdVvO1PmXKMvvJ8CeE+UqxXKz9HctVZkPkvV7IDZMKkqOLZS
+	dtwVH/SZHK7vsK7b1bZSPVjbf3ArK81Px1Jns8WQv17ZTkbeId18fpJmmHcOpVK1y0vQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uZWQ9-000xH4-4l; Wed, 09 Jul 2025 17:09:17 +0200
+Date: Wed, 9 Jul 2025 17:09:17 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>,
+	Lee Jones <lee@kernel.org>, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH 4/9] gpio: regmap: add the .get_direction() callback
+Message-ID: <0d0e9cee-2aaa-402d-a811-8c4704aadd74@lunn.ch>
+References: <20250709112658.1987608-1-ioana.ciornei@nxp.com>
+ <20250709112658.1987608-5-ioana.ciornei@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,81 +65,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250709112658.1987608-5-ioana.ciornei@nxp.com>
 
-Hi Linus,
+On Wed, Jul 09, 2025 at 02:26:53PM +0300, Ioana Ciornei wrote:
+> There are GPIO controllers such as the one present in the LX2160ARDB
+> QIXIS CPLD which are single register fixed-direction. This cannot be
+> modeled using the gpio-regmap as-is since there is no way to
+> present the true direction of a GPIO line.
+> 
+> In order to make this use case possible, add a new callback to the
+> gpio_config structure - .get_direction() - which can be used by user
+> drivers to provide the fixed direction per GPIO line.
+> 
+> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+> ---
+>  drivers/gpio/gpio-regmap.c  | 17 ++++++++++++++++-
+>  include/linux/gpio/regmap.h |  3 +++
+>  2 files changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+> index 87c4225784cf..dac2acb26655 100644
+> --- a/drivers/gpio/gpio-regmap.c
+> +++ b/drivers/gpio/gpio-regmap.c
+> @@ -32,6 +32,8 @@ struct gpio_regmap {
+>  	unsigned int reg_dir_in_base;
+>  	unsigned int reg_dir_out_base;
+>  
+> +	int (*get_direction)(struct gpio_regmap *gpio, unsigned int offset);
+> +
 
-Please pull these arm64 fixes for -rc6. We've had a steady trickle of
-relatively minor fixes since -rc3 but they're all self-contained 6.16
-material and confined to the arch code.
+This is not my area, so i will deffer to the GPIO
+Maintainers. However, it is not clear to me what get_direction()
+should return. Is it the current direction, or the supported
+directions? Maybe it should be called get_fixed_direction()?
 
-There's the usual summary in the tag.
+I then wounder how it will be implemented. Since it is fixed, it is
+probably just a constant bitmap, and you look at the offset bit in
+this batmap? At minimum a ready made helper could be provided, or
+rather than have this op, just provide the bitmap, and gpio-regmap.c
+can look at the bit in the bitmap?
 
-Cheers,
-
-Will
-
---->8
-
-The following changes since commit 39dfc971e42d886e7df01371cd1bef505076d84c:
-
-  arm64/ptrace: Fix stack-out-of-bounds read in regs_get_kernel_stack_nth() (2025-06-12 17:28:18 +0100)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
-
-for you to fetch changes up to 9dd1757493416310a5e71146a08bc228869f8dae:
-
-  arm64/mm: Drop wrong writes into TCR2_EL1 (2025-07-04 16:46:04 +0100)
-
-----------------------------------------------------------------
-arm64 fixes for -rc6
-
-- Fix bogus KASAN splat on EFI runtime stack
-
-- Select JUMP_LABEL unconditionally to avoid boot failure with pKVM
-  and the legacy implementation of static keys
-
-- Avoid touching GCS registers when 'arm64.nogcs' has been passed on the
-  command-line
-
-- Move a 'cpumask_t' off the stack in smp_send_stop()
-
-- Don't advertise SME-related hwcaps to userspace when ID_AA64PFR1_EL1
-  indicates that SME is not implemented
-
-- Always check the VMA when handling an Overlay fault
-
-- Avoid corrupting TCR2_EL1 during boot
-
-----------------------------------------------------------------
-Anshuman Khandual (1):
-      arm64/mm: Drop wrong writes into TCR2_EL1
-
-Arnd Bergmann (1):
-      arm64: move smp_send_stop() cpu mask off stack
-
-Breno Leitao (1):
-      arm64: efi: Fix KASAN false positive for EFI runtime stack
-
-Kevin Brodsky (1):
-      arm64: poe: Handle spurious Overlay faults
-
-Marc Zyngier (1):
-      arm64: Unconditionally select CONFIG_JUMP_LABEL
-
-Mark Brown (2):
-      arm64/gcs: Don't try to access GCS registers if arm64.nogcs is enabled
-      arm64: Filter out SME hwcaps when FEAT_SME isn't implemented
-
- arch/arm64/Kconfig                 |  1 +
- arch/arm64/include/asm/el2_setup.h | 19 +++++--------
- arch/arm64/kernel/Makefile         |  3 +-
- arch/arm64/kernel/cpufeature.c     | 57 +++++++++++++++++++++-----------------
- arch/arm64/kernel/efi.c            | 11 ++++++--
- arch/arm64/kernel/process.c        |  5 ++++
- arch/arm64/kernel/smp.c            |  2 +-
- arch/arm64/mm/fault.c              | 30 ++++++++++++++------
- arch/arm64/mm/proc.S               |  1 -
- 9 files changed, 76 insertions(+), 53 deletions(-)
+	Andrew
 
