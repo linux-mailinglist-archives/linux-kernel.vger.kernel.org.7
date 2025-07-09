@@ -1,281 +1,239 @@
-Return-Path: <linux-kernel+bounces-724380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A7F1AFF1EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:37:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F21AFF1F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F056C7B996D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:36:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 818571C2442D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6022405E5;
-	Wed,  9 Jul 2025 19:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2FF6241695;
+	Wed,  9 Jul 2025 19:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X208eXa1"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="J1kQIvje"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012022.outbound.protection.outlook.com [52.101.66.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F101EDA2F;
-	Wed,  9 Jul 2025 19:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752089847; cv=none; b=sx74ezb0j+wtWvQcxRLTPdTTeu3kUH8nnQe+4PN8sborzM+1mjOlQsClxGIMpLLfGqRqAYkTe7OHvnJwWuZlbuLsedwu0DUHQI3g2yBPQZgZ5OnT6hwn/n+fTmN5XnLIf8NZ92SjuRFEBuS8fMrxf+0whLf6G/ld5CgS18kQFa0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752089847; c=relaxed/simple;
-	bh=5TAy1CJ6PgVUXJPq1NIn4jwcsuO+cVyf0liE1fZ5cyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kaUF8sFJMk0hun+4KZegZQtohdiuV5+1rJ8pAQwZa4oATE4ve5P/WVPXeH4lfbdpuc25TD3iXtn1L2q/I3QrzUL+xK+xChZPfZ4WBeeAxB5Aw3nKoVzwJmQ15zXQUoUechPlTGJ3Hy9UHUxJHHnbmI2zimzMR+HUp0J+EnnsclM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X208eXa1; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-454aaade1fbso2218975e9.3;
-        Wed, 09 Jul 2025 12:37:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752089843; x=1752694643; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=g6F7sBJOVYzaTZLPh0vr/ZEP7zbA5wl98nXj7vDhV+c=;
-        b=X208eXa1IscPRjO8QJYXjPykMmGFzWfMEhBsK4WWpSuK5elHzfCqZcJoCHIT1KXBst
-         yj65MFqp1Nvh4HnUB4HgprCrNRcldaHJctpbhjTSaroZ2SvK5ocJv7K4dHBd4RbXy0ka
-         eN5MabYAwyd9+gALZyJRLOFDzcwxKiM5Z6Md1yjX2GNmvJHsGMLqhiXhIR2DubfCa9W6
-         PzSVez3lTH4NRALYi52UsfwwBHyZHSGB/3YlYdKc3tMz95G6ZfVODJ1JrsQbV9OdPEdz
-         P2yw9pBLImQZHOT1qPeebtnvoaEO57X4La0zXwyR4uSdxIY9LSIsktMqAqxNGrxamoI2
-         M2DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752089843; x=1752694643;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g6F7sBJOVYzaTZLPh0vr/ZEP7zbA5wl98nXj7vDhV+c=;
-        b=Ff5KQRGUCTM+8o0AKOve7Ev83PROs6BO2H3GuQCfbFN6NMCgkHGMoysndplnUJj557
-         P/1ghWdQk0SQn0g8bgk7IVu+heHtSAzxTLypHP/Ea/JvIA3sNybgdTa5p2cIYqFuZjOE
-         GA/95HpredWAintJcSDYMvS8O33CEBegHUiVr5cnWo6L+Sfh35JlFTjvDHl8TqqKBOHQ
-         o6giJb8sv9TjaAI/Mb2gm7/Pt6SSBW0uRrmOO0HZpJ0Yx68slQk2vctr6xehXhiuNvN5
-         fkiza0+G9CE0Jt/vXhOo1c7urgkaLx7xsMEpN6If1Xdx3+Un5w9C3oaSCfLKNA9YGrbv
-         IUsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVysjIjC32rFonyEy5cLYU14CEG8wkI82ziG3xjAaDmAC0YY93M7GGLA81ykOTMPi9K9qjK8S7tUxJ9@vger.kernel.org, AJvYcCWngh+fiJpWXZNkQD+PGJu/sztebmsBydGD2sPk9ibphathUVdFoDKFYLmHj+3poHXKlVaFLah/QGQN@vger.kernel.org, AJvYcCX2Hznkvi9fiaYyTrCUQu+ni1nuGK9XRl95u/qX2O9jLKRR/F3YEXN9K+AJy6t1H43QdHhNqguFoTK7MR9l@vger.kernel.org
-X-Gm-Message-State: AOJu0YzffhuijRR1TnHCZv419bunrU0jwkvS9KthpbPS8ksRfmoB/3Ge
-	+vDZCexB2kyAYz2A2YIVACHQTBUJB5O0tix2KnLYHeo0Vc6zC8Q89APZ
-X-Gm-Gg: ASbGnct0OT/X5o4woMujCnilEKymZMwEtCVJjG//5Hx2Tu4mJDwpDYu4i33P+44g0vO
-	RWk+XcluC0siIbflAwRTDKYADSnEeQC+IWzv+fE+/QRM05RyLq+oVhNe5fU7RgilHUXOVIoIBQb
-	xd7BlsRvXgJBSdbUupldP9onJCNzR3iVp+Mj9wul8SxFz3WKGqDA0nbj4AtRujf157CpzgFi+G9
-	L9GwTOCF9cerAuuhWAk2tIF8f8MiWEaqtvidNfmBAuactvLzsK3MBRFCoIZQICYGtaEOsgpo6n+
-	sjiJjM9uzukQMzV8GLAUVbWvnDvGs7YX9YQlN0mfOMx9l07+wuin8PYqIcXIDSt1B2DZFDkofsp
-	/hcm1pR430qVbpEbOsbbOsYXGsO9I
-X-Google-Smtp-Source: AGHT+IEsYVcmDAsCDSZyGG1DdYCl5yjNR3m+GC3uhIowkAfdCEjFdKVVXyfExMjO5LZEtyGND3fgSA==
-X-Received: by 2002:a05:600c:314c:b0:43c:f44c:72a6 with SMTP id 5b1f17b1804b1-454d5311363mr38315545e9.2.1752089843343;
-        Wed, 09 Jul 2025 12:37:23 -0700 (PDT)
-Received: from antoni-VivoBook-ASUSLaptop-X512FAY-K512FA ([78.208.32.71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d508cc8asm38903645e9.35.2025.07.09.12.37.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 12:37:22 -0700 (PDT)
-Date: Wed, 9 Jul 2025 21:37:04 +0200
-From: Antoni Pokusinski <apokusinski01@gmail.com>
-To: alexandre.belloni@bootlin.com
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org,
-	alexander.stein@ew.tq-group.com, linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH RESEND v4 3/3] rtc: pcf85063: add support for RV8063
-Message-ID: <20250709193704.r7p6wkst3ydvdtqx@antoni-VivoBook-ASUSLaptop-X512FAY-K512FA>
-References: <20250509183750.95836-1-apokusinski01@gmail.com>
- <20250509183750.95836-4-apokusinski01@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7834F1EDA2F;
+	Wed,  9 Jul 2025 19:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.22
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752089906; cv=fail; b=J1eJutu6mnzH7vguNYnL1IEgOL1ziy6OoH/JNZ8YVjhySylFm9z6qFlXPW5NbRp2Ez9jh4TRD1RIHz1+1OJr65bXOvpGiNK90FGv3iY9RrS03NI+vTtUbFwGKIwwB8tBHhYgJ9yuPIoL6FPKbZc1MrBc6l5bQ7DUiAqDGtzgbB8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752089906; c=relaxed/simple;
+	bh=du9VsSWsdNJjtNNUeWxBqg4LXW4B7Dy5zao8l6/Jb68=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=XercP5S5B8jLtlhu8IvYQEug9iLgSjORzPptwELNDi2sELt8soVCnmZoZM01CTizit2/Zsi5hwOk7pgPmjr09VTez1wv2m6LeEb+9wCeIZRLv4WqPNPsAU9bI6A1ZkwXplcotOcxYJma6/mt/TSMmeylNxr0iJfvmBreIO+68m0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=J1kQIvje; arc=fail smtp.client-ip=52.101.66.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LAEPGBAMhebQDr3Qwiaccyl9kH8gdf+BDDp8f8NBN2p9nlZ91gf9jOjafqm8unrWLI8HsoqwdCa/GgGWuVaMtuY4rqGgnm0Rcu7bEcrdGeMejhvfnMYh3tOHI/F7X+8PlQuYxaUPbvatJb2kJu4pbAzk46H9BjR/CvyTzHXGtElFvN8vbqXzyR8tfPdC+GbU8gC5Hrw0p6EHxfhA9+ltcVeFIb6aLSFpxK/hE7adOrVBYoAqsguJULDnW57ovLtptFgL4wLaVamSZ6HgHRRXe8rj0RQ62riEK1s9mONP56ShDNgS5asN2wjsyhdNYHlw67DpTP9A1fJtJbDV5XU5pw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=k8tKjzTDVWNq99JRwdpYGeYuaYeeCcqiVu4WHheYceo=;
+ b=lPCObtUCRAlzKmmnUyWF0f7Q4iZ+y3z95dyaPG3gL1wu+DpVbi3JQ7y1u0fjcvN3Pj9tNtDADDz2w4Tm7tKlHDLNfyb7QqZ0DHfcFFuwX2oKhVAmpNMVwQUqf+U05637PNBJlD3EtVDi/bm3O4+45WoGlQPqiaQKHTq89FeqrulmmelV68TmBHWONZ0NgLUPq8LZq5Gr5FJc3jlOOFWpfm1ouyxERTDeKJTha8JOLu29nMyHu8BMoVrzyAml7Is0yn+oZUYAB7J6ZrJPLzGLCLrgUiiKphtorp6rtnEilFaNELz4ScSTVvl6qDSZ9jj/jqXnLX1nqrQn5k2PqHRERQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=de.bosch.com; dmarc=pass action=none header.from=de.bosch.com;
+ dkim=pass header.d=de.bosch.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=k8tKjzTDVWNq99JRwdpYGeYuaYeeCcqiVu4WHheYceo=;
+ b=J1kQIvjeSTlSXF1Nq5Z/H4rGnDvQdtp1XaNn7fEpv7ledfQfG+ADtdA9GRQONoftIZs7G0wyQT5tId4vqExRC/VUF+966z+ob5Tt4n7+i9o48wR/+WR4XvqJ/IyGg53azbWub9iLJpUzryZaI/X8kFaXLvpRx+3yvh8OpRZKNtzgw0+YOVyCJbz5gGSKuYqJ4+j4SxFfUzSn8sU1Q36pfevVdyXha8kpj2lqU4JaNgJnINDGzbNDDddkfTnR+XwfvkcIjGStkJOJqvu/KBaOgGONcdMxHRQjvctiaHXHm2JffOGL+8DKWKB3OrYDU8K1fKzXJDX99IbQZ99QiDFYew==
+Received: from AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:315::22)
+ by PA1PR10MB8390.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:446::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Wed, 9 Jul
+ 2025 19:38:18 +0000
+Received: from AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::c75f:604a:ce59:8114]) by AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::c75f:604a:ce59:8114%6]) with mapi id 15.20.8901.024; Wed, 9 Jul 2025
+ 19:38:18 +0000
+From: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
+To: Jonathan Cameron <jic23@kernel.org>
+CC: "lars@metafoo.de" <lars@metafoo.de>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "dima.fedrau@gmail.com" <dima.fedrau@gmail.com>,
+	"marcelo.schmitt1@gmail.com" <marcelo.schmitt1@gmail.com>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Lorenz
+ Christian (ME-SE/EAD2)" <Christian.Lorenz3@de.bosch.com>, "Frauendorf Ulrike
+ (ME/PJ-SW3)" <Ulrike.Frauendorf@de.bosch.com>, "Dolde Kai (ME-SE/PAE-A3)"
+	<Kai.Dolde@de.bosch.com>
+Subject: AW: [PATCH v3 2/2] iio: imu: smi330: Add driver
+Thread-Topic: [PATCH v3 2/2] iio: imu: smi330: Add driver
+Thread-Index: AQHb7DCnxFfdguezA0CMBsJ2vkpDJrQlVJwAgATVpeA=
+Date: Wed, 9 Jul 2025 19:38:18 +0000
+Message-ID:
+ <AM8PR10MB47217D838CA7DDACBE162D15CD49A@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
+References: <20250703153823.806073-1-Jianping.Shen@de.bosch.com>
+	<20250703153823.806073-3-Jianping.Shen@de.bosch.com>
+ <20250706175328.7207d847@jic23-huawei>
+In-Reply-To: <20250706175328.7207d847@jic23-huawei>
+Accept-Language: en-US
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=de.bosch.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM8PR10MB4721:EE_|PA1PR10MB8390:EE_
+x-ms-office365-filtering-correlation-id: a028adea-02b3-4c19-439b-08ddbf2027ea
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?tgmTwnfimjUE62zhR/KCP1ICgc0RsM6kysDH0n1g/VkYOSsLQrrTjnC83qkO?=
+ =?us-ascii?Q?G3P+Um+61jtkb6zSM2WSUrDcbaZuxb7G+YkIb8sVLddzPcV12yw3SBq/OjCr?=
+ =?us-ascii?Q?VGrwyGzNx5AXSeAirQdNq42ECMl5KSlWRsRbU5r8yCvD7QBvrtRl3wLuJfll?=
+ =?us-ascii?Q?IS/6yluotowz2b2WC7dK2ItYVAaZEhY+k5lIFKY9Ggu32yKq8buPHUbv73rW?=
+ =?us-ascii?Q?1HGQon8no+NFB/0AylauHHjX6gsAZd31wU5lvH82Ae92lwkPXyoXKfUyQugW?=
+ =?us-ascii?Q?PUQXut/NdGnblA0oDXZRmMnHgbyWQC8+E2u1E4Hve/e3OHdZuAsin0inlC5C?=
+ =?us-ascii?Q?frzckwdawmqtBaJAkk1bw/30VPfYf9t5+JOgGuajVW115eA+9dw/z3JQv1vx?=
+ =?us-ascii?Q?l9+oZT/oov6Mbmhqp0+Vaf09WWXkjYzrUk3WcYzb5KmsucYUDnEyG1aohRlr?=
+ =?us-ascii?Q?s3jLJZzPFbCl9SkC2ZYv/tsipxN34fN32TaXK9QZ8AS8QarMtBuTCjJppB7K?=
+ =?us-ascii?Q?vUkA8AM5lt0xr1zimQTYAPG9lcIqwZJhWgRDAjwQ0YNB9COY9oEmyYcXZ6mu?=
+ =?us-ascii?Q?oW0SM0664z8uaIFwsze+y6C4ZPrEIMFRATYZBhAH02Sfaj848wcS+xsMVtwz?=
+ =?us-ascii?Q?gI8QuczMy5bD2FJwDhpqzo2x72FntkYGJ03ID84vDOPGy4biLCp8Ieah7vWx?=
+ =?us-ascii?Q?ZuyvACqIrqJsGUmmQwrB9p4eRmT/pvlt1fccMhWZkRyrffPlVaGOYrdyjrpz?=
+ =?us-ascii?Q?Np9MlqxNPXP/sjkcV1AVul4BcVmBmcu+MNygrC5jX8Hm7uJJKgd4aowOQw0U?=
+ =?us-ascii?Q?CkVvSj2XFtC2mHk6B325h9PwKWFtXjMAywFGD1s3lTGDjBvDFvUFhp6jgMgT?=
+ =?us-ascii?Q?JH3GqqbUnRn279hWMNtxPmKmsFqQ3b7txDKrlLBU2UDiERQHPHpUeSl0ozK7?=
+ =?us-ascii?Q?1LXeZ9V8jYj9k8Di/JMRvFYa4seWWXP0pKHIV8mAnvh6KfvxWeiaFtG67t94?=
+ =?us-ascii?Q?4ppE/2sELV+Gubgaw935PO8JM7TZyjcz7XHHyP60OIkEpbJYwZwKdOJs6WPH?=
+ =?us-ascii?Q?UeAqHpDb/t1E7/CrSI5YQBbDHI7ph+iqmxyQREfu90MPji+1N4TeG55VDqDf?=
+ =?us-ascii?Q?lj9Hl4CA0N6Luh99882/9EU4wMHJbhw1HSsCR0ZS+w8fCVJ60gGCcxwe79bz?=
+ =?us-ascii?Q?6396UqsOjsLXhUlKqMgXZlxC2Kd6LHwQvfuJksFy8rYxFMToi6IlX/qJb/sN?=
+ =?us-ascii?Q?/eTSLj9Nwf8w2V/ek9Jo04ztg9ZLqy/GY6aioMQl7plrvQZsTOZ9xuvhKYTg?=
+ =?us-ascii?Q?v/2e0B6A+Ce04BEl14dr1VyuAKTQpRBGqrZ3pXEmikaKrFEW50cEzsACUIet?=
+ =?us-ascii?Q?Cl/JmOtFfoXvTF2d8ps4uw5L7/yf2XWrMx6vjM5JqinMmvDVF1Kxy+3eLhrV?=
+ =?us-ascii?Q?OOZCoMrdapACqy2mfPgh0GRL/HWacXGxf9bbZ9LDQeYPTwn2325/Jg=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?/t8R/MN+d3Cg+Ng4yQur1j5E8FfkK9Ifl2HWE4ckO3Pr30LydnzekI0mL5eq?=
+ =?us-ascii?Q?Fgd6u2Y6YEmVmwqdbLFadUk4S/cshmTWAxRcM22qYNHb6fkMKP82Zju2bc9P?=
+ =?us-ascii?Q?MPnXo3e8ZG0TkkDVGdX3Gwey5ZCDBczUimTZHJS34FHVYPdYE8nN+mHYBiw6?=
+ =?us-ascii?Q?hXius1RSfw0k+UaDolA5fzbUz1tsNwVqlJtMjPIw/tm6CvlGNw6JjQRgWg+Q?=
+ =?us-ascii?Q?2yBtKAOJwGKZ1w9hdwywLOQicaySAtmpxLZkyNeG+K/TM6Q/asMl/lNyqTc+?=
+ =?us-ascii?Q?O95bOQV40zkaWohtgMBKwaOv/haDHno4HD1x68WSZwUufITV6hu0WQ7sKapp?=
+ =?us-ascii?Q?JiXoiiKy3NSMXmInpaI4ZZrtQr5oOnT2bZDozRzJuR9n517yPPzvGt/CoFJS?=
+ =?us-ascii?Q?VMkjWo2rZNOpXA/RoXtmYJr+9k+DLfJ/MsM0Mt1VJVre+I59ESgKRrBpoxAz?=
+ =?us-ascii?Q?fJpayk6Wvn5rrXHqmZJGkj9Wk91XQHAcJyfN3QiLdv7mdTGMHVotN4VwESgH?=
+ =?us-ascii?Q?02ko8IdbabBZDACVCYDcPngtToNO3UN7sgaS6EbqQhyR8rvWsaQi3IMw0Tc+?=
+ =?us-ascii?Q?gS9jZ/7T7SmlbO0sANg41KR9rNQgyUHI1T/Be9MKHrj7eH5zdzq3j5TqTYdZ?=
+ =?us-ascii?Q?6JZTo+oRAaeAsiqeXfCLnk08qGs83j0gKZ7rqnO7DMB5asVc9IwE1BYAasLb?=
+ =?us-ascii?Q?Xxa0ohEXRqAPsO9p8gcmyVwensCx/d3nB/FvJqRLlC1WkFSpOYg3VuvKNg/E?=
+ =?us-ascii?Q?8RgDGZ59Gcb+ezIoW8apU3FXa3/d+Pb1sdBaz0FnuRkdSDMPZB2AUCAZdn+b?=
+ =?us-ascii?Q?urS0zCM/LpB2SlGYwH8V/vfbrf+YbNmg+T33X3lRklPf7QX0r33AYGOKl8YD?=
+ =?us-ascii?Q?NcDznAgPmrWkC6vSJykraMrjd3959kb31T7uA8oQGi+dRj9cznPST2LcuZ+M?=
+ =?us-ascii?Q?/SuutuEIvpZi8uByuuVgTXJpYx8cSp9CWe6Al82ErmYlIZ47Qu1bQxB7tXgj?=
+ =?us-ascii?Q?xht9MJlG/yNkf5bq91+gQi4aH26sYQ4NOBBuwsAsGtaPYvvedY//7WNlxnND?=
+ =?us-ascii?Q?CKUCW9yxdUQSUXXS7K+vHpUh4NYLBNl499F0o+hYh6oxvuWytGgdpir/D6jG?=
+ =?us-ascii?Q?9SKIPBkDVtRSplLR/uozdx8PTMDWFz2LAaE859tHWmqNVgoU8zbQgKfxB55J?=
+ =?us-ascii?Q?VteS3hWtnbGAgHlJqpfViUP1AMyDWZkPXOClLn4GmBD4aDkdcuKmg6ru2pRD?=
+ =?us-ascii?Q?vLdRc4s0vQpCKxXStvDGwUD9UNP227xfVa5H/nAuxkDsRsbaDHv3ooZthtVT?=
+ =?us-ascii?Q?+dUwZKoAV4lFfddBYgOywcLKztEX8JeyoCqyiOZ7NkFZxOxEOk5YEQcZ5a2k?=
+ =?us-ascii?Q?kXF47h2vr71T/Fh2u6A2W+UauLSQEzQ7gDkk55k8sgn+W0vw1avrJQlFff1n?=
+ =?us-ascii?Q?GdCGEcq+F37nFWVNA0HjLdbkXKTZ9/DMlLR+2VRVa7k7PNrN9wppB61CnWNi?=
+ =?us-ascii?Q?0/Ya4G4LXV9mjwPV6UHKPsKDRLe4iCtUPqSmIDMG/lRHoQ6GZUyHCN98ocjb?=
+ =?us-ascii?Q?dO7xfhr15lFAHKOoafQ=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250509183750.95836-4-apokusinski01@gmail.com>
+X-OriginatorOrg: de.bosch.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: a028adea-02b3-4c19-439b-08ddbf2027ea
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2025 19:38:18.5723
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: R7P25aGS0n6zjUPM0keDWX/l8of3S+ecE07bZZaJI1a/swoImE5spIhHdu9i8SOdtkvVEe4Db2TO57EE7KDJYA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR10MB8390
 
-Hello,
-Since there was no feedback for this patch I'd like to send a reminder here.
-Is there a chance that this patch series will get integrated into the mainline?
+Hi Jonathan,
 
-Kind regards,
-Antoni Pokusinski
+"available_scan_masks" works not as expected.  We test it using kernel vers=
+ion v6.16. see the test result inline.
 
-On Fri, May 09, 2025 at 08:37:50PM +0200, Antoni Pokusinski wrote:
-> Microcrystal RV8063 is a real-time clock with SPI interface. Its
-> functionality is very similar to the RV8263 rtc.
-> 
-> Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
-> ---
->  drivers/rtc/Kconfig        | 21 +++++----
->  drivers/rtc/rtc-pcf85063.c | 87 +++++++++++++++++++++++++++++++++++++-
->  2 files changed, 98 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-> index 838bdc138ffe..1b9be96faa13 100644
-> --- a/drivers/rtc/Kconfig
-> +++ b/drivers/rtc/Kconfig
-> @@ -483,15 +483,6 @@ config RTC_DRV_PCF8523
->  	  This driver can also be built as a module. If so, the module
->  	  will be called rtc-pcf8523.
->  
-> -config RTC_DRV_PCF85063
-> -	tristate "NXP PCF85063"
-> -	select REGMAP_I2C
-> -	help
-> -	  If you say yes here you get support for the PCF85063 RTC chip
-> -
-> -	  This driver can also be built as a module. If so, the module
-> -	  will be called rtc-pcf85063.
-> -
->  config RTC_DRV_PCF85363
->  	tristate "NXP PCF85363"
->  	select REGMAP_I2C
-> @@ -971,6 +962,18 @@ config RTC_DRV_PCF2127
->  	  This driver can also be built as a module. If so, the module
->  	  will be called rtc-pcf2127.
->  
-> +config RTC_DRV_PCF85063
-> +	tristate "NXP PCF85063"
-> +	depends on RTC_I2C_AND_SPI
-> +	select REGMAP_I2C if I2C
-> +	select REGMAP_SPI if SPI_MASTER
-> +	help
-> +	  If you say yes here you get support for the PCF85063 and RV8063
-> +	  RTC chips.
-> +
-> +	  This driver can also be built as a module. If so, the module
-> +	  will be called rtc-pcf85063.
-> +
->  config RTC_DRV_RV3029C2
->  	tristate "Micro Crystal RV3029/3049"
->  	depends on RTC_I2C_AND_SPI
-> diff --git a/drivers/rtc/rtc-pcf85063.c b/drivers/rtc/rtc-pcf85063.c
-> index 03dfc58f4cd7..d9b67b959d18 100644
-> --- a/drivers/rtc/rtc-pcf85063.c
-> +++ b/drivers/rtc/rtc-pcf85063.c
-> @@ -17,6 +17,7 @@
->  #include <linux/of.h>
->  #include <linux/pm_wakeirq.h>
->  #include <linux/regmap.h>
-> +#include <linux/spi/spi.h>
->  
->  /*
->   * Information for this driver was pulled from the following datasheets.
-> @@ -29,6 +30,9 @@
->   *
->   *  https://www.microcrystal.com/fileadmin/Media/Products/RTC/App.Manual/RV-8263-C7_App-Manual.pdf
->   *  RV8263 -- Rev. 1.0 — January 2019
-> + *
-> + *  https://www.microcrystal.com/fileadmin/Media/Products/RTC/App.Manual/RV-8063-C7_App-Manual.pdf
-> + *  RV8063 -- Rev. 1.1 - October 2018
->   */
->  
->  #define PCF85063_REG_CTRL1		0x00 /* status */
-> @@ -559,6 +563,18 @@ static const struct pcf85063_config config_rv8263 = {
->  	.force_cap_7000 = 1,
->  };
->  
-> +static const struct pcf85063_config config_rv8063 = {
-> +	.regmap = {
-> +		.reg_bits = 8,
-> +		.val_bits = 8,
-> +		.max_register = 0x11,
-> +		.read_flag_mask = BIT(7) | BIT(5),
-> +		.write_flag_mask = BIT(5),
-> +	},
-> +	.has_alarms = 1,
-> +	.force_cap_7000 = 1,
-> +};
-> +
->  static int pcf85063_probe(struct device *dev, struct regmap *regmap, int irq,
->  			  const struct pcf85063_config *config)
->  {
-> @@ -725,14 +741,83 @@ static void pcf85063_unregister_driver(void)
->  
->  #endif /* IS_ENABLED(CONFIG_I2C) */
->  
-> +#if IS_ENABLED(CONFIG_SPI_MASTER)
-> +
-> +static const struct spi_device_id rv8063_id[] = {
-> +	{ "rv8063" },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(spi, rv8063_id);
-> +
-> +static const struct of_device_id rv8063_of_match[] = {
-> +	{ .compatible = "microcrystal,rv8063" },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, rv8063_of_match);
-> +
-> +static int rv8063_probe(struct spi_device *spi)
-> +{
-> +	const struct pcf85063_config *config = &config_rv8063;
-> +	struct regmap *regmap;
-> +
-> +	regmap = devm_regmap_init_spi(spi, &config->regmap);
-> +	if (IS_ERR(regmap))
-> +		return PTR_ERR(regmap);
-> +
-> +	return pcf85063_probe(&spi->dev, regmap, spi->irq, config);
-> +}
-> +
-> +static struct spi_driver rv8063_driver = {
-> +	.driver         = {
-> +		.name   = "rv8063",
-> +		.of_match_table = rv8063_of_match,
-> +	},
-> +	.probe          = rv8063_probe,
-> +	.id_table	= rv8063_id,
-> +};
-> +
-> +static int __init rv8063_register_driver(void)
-> +{
-> +	return spi_register_driver(&rv8063_driver);
-> +}
-> +
-> +static void __exit rv8063_unregister_driver(void)
-> +{
-> +	spi_unregister_driver(&rv8063_driver);
-> +}
-> +
-> +#else
-> +
-> +static int __init rv8063_register_driver(void)
-> +{
-> +	return 0;
-> +}
-> +
-> +static void __exit rv8063_unregister_driver(void)
-> +{
-> +}
-> +
-> +#endif /* IS_ENABLED(CONFIG_SPI_MASTER) */
-> +
->  static int __init pcf85063_init(void)
->  {
-> -	return pcf85063_register_driver();
-> +	int ret;
-> +
-> +	ret = pcf85063_register_driver();
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = rv8063_register_driver();
-> +	if (ret)
-> +		pcf85063_unregister_driver();
-> +
-> +	return ret;
->  }
->  module_init(pcf85063_init);
->  
->  static void __exit pcf85063_exit(void)
->  {
-> +	rv8063_unregister_driver();
->  	pcf85063_unregister_driver();
->  }
->  module_exit(pcf85063_exit);
-> -- 
-> 2.25.1
-> 
+Best Regards=20
+Jianping=20
+
+>> +
+>> +static irqreturn_t smi330_trigger_handler(int irq, void *p) {
+>> +	struct iio_poll_func *pf =3D p;
+>> +	struct iio_dev *indio_dev =3D pf->indio_dev;
+>> +	struct smi330_data *data =3D iio_priv(indio_dev);
+>> +	int ret, chan;
+>> +	int i =3D 0;
+>> +
+>> +	ret =3D regmap_bulk_read(data->regmap, SMI330_ACCEL_X_REG, data-
+>>buf,
+>> +			       ARRAY_SIZE(smi330_channels));
+>> +	if (ret)
+>> +		goto out;
+>> +
+>> +	if (*indio_dev->active_scan_mask !=3D SMI330_ALL_CHAN_MSK) {
+>> +		iio_for_each_active_channel(indio_dev, chan)
+>> +			data->buf[i++] =3D data->buf[chan];
+>
+>If I follow this correctly you are reading all the channels and just copyi=
+ng out the
+>ones you want.  Just let the IIO core do that for you by setting iio_dev-
+>>available_scan_masks =3D {  SMI330_ALL_CHAN_MSK, 0 }; and push the whole
+>buffer every time.
+
+For the most frequent use cases, we define available_scan_masks =3D { SMI33=
+0_ALL_CHAN_MSK, SMI330_ACC_XYZ_MSK, SMI330_GYRO_XYZ_MSK, 0 }; and push the =
+whole buffer every time.
+From the user space we just enable 3 channels gyro_x, gyro_y, and gyro_z. T=
+hen we enable buffer and expect that only the gyro values and timestamp in =
+iio_buffer. Nevertheless, we have 3 accelerometer values and the timestamp =
+in iio_buffer.
+It seems that the iio core does not take care which channel is enabled,  ju=
+st copy the first 3 values (acc x,y,z) into iio_buffer.  Our driver code st=
+ill needs to take care and just copy the enabled channel value to buffer.
+
+Another side effect after using available_scan_masks is that the active_sca=
+n_masks sometimes does not reflect current channel activation status.
+
+Is some step missing to properly use available_scan_masks ?  How can a user=
+ find out from user space which channel combination is defined in available=
+_scan_masks ?
+
+>
+>The handling the core code is reasonably sophisticated and will use bulk
+>copying where appropriate.
+>
+>If there is a strong reason to not use that, add a comment here so we don'=
+t
+>have anyone 'fix' this code in future.
+>
+>> +	}
+>> +
+>> +	iio_push_to_buffers_with_timestamp(indio_dev, data->buf,
+>> +pf->timestamp);
+>> +
+>> +out:
+>> +	iio_trigger_notify_done(indio_dev->trig);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+
+
 
