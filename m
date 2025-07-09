@@ -1,139 +1,130 @@
-Return-Path: <linux-kernel+bounces-722948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D0A7AFE101
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:11:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D799EAFE108
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 851653A2DB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:11:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8322A188E982
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D59D26E6FB;
-	Wed,  9 Jul 2025 07:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062B926FA46;
+	Wed,  9 Jul 2025 07:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="phCH0oY7"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="Qg8gTY2z"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153BB26CE3F;
-	Wed,  9 Jul 2025 07:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752045086; cv=none; b=W2FrnOAlS4nMecltqaEu7YaJbvUmeHmIyHBpPBNft3UId2ENEo02OO4gDNAhL/MjiYr4BqXll6jXSxAcnqxzooaPltBmCJr4W7Lnhxi0Smn1KxGhu424fwwRVChQcNq5NF27YrKfoyM9jHBWbc7OYVUFulUy7ExVn73hRHiMlwI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752045086; c=relaxed/simple;
-	bh=Zg2yqmIawAcjnUxWeIFtD+iLiMBKl+ttmTor+a9wJDE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=URFlalwX+FFhPBChik4g99AwtHURdjgGGgkXn2opANCAAZMO1Rq5U65+glZ1TL406ZiRWusMFIvepmbrMJ9SzUJno+oZrQWeKxzQQNybWt9ZISD5ZQX13EB1MNRi/xaTuSe8TMQt1H93hVJ9D4yZmslMqQBkv+34ZnKmMVeSOns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=phCH0oY7; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752045011;
-	bh=rIjr5BfAbU/6+iVf8dDKK9BX4rSnCeVITcK5Ap37SY0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=phCH0oY7h/aDf3AnUoQ+FvjShix8v0suvoCTPX0E/kDUFHT0jzscWD4LOVsRBNIm4
-	 RPUIyUDpDMRB/4C6EsG2j9b7w1SU0gjluBFx9E5vjbERV+ylEwsgMWl28v6Mz1C/aO
-	 +ssqKw9FzDBxvoMDzaJLEto8/fAYA0AbQLKIkZ+7eYgmCmXX3K1Kqjt8fqbbNYCE4L
-	 vJqkBW3iyE9eY8r5tcLj4q2780xRmTFrR/ugCxCDJiUUKnbf39R+VDI26JLItooJkL
-	 1i86zQEzNVhrhoTqBsQj8H8vxayPKPxxcg3EtLuDiWNgyqUySfk3wRTJ50gxduNmYi
-	 o89Pkggt+i/+w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bcTdH5f3Mz4wb0;
-	Wed,  9 Jul 2025 17:10:11 +1000 (AEST)
-Date: Wed, 9 Jul 2025 17:11:15 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Sean Christopherson <seanjc@google.com>
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the kvm-x86 tree with Linus' tree
-Message-ID: <20250709171115.7556c98c@canb.auug.org.au>
-In-Reply-To: <20250709160456.12aabc8b@canb.auug.org.au>
-References: <20250709160456.12aabc8b@canb.auug.org.au>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80ED23D2A8;
+	Wed,  9 Jul 2025 07:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752045212; cv=pass; b=BZHiSitteqgs6w8QuBuAGWkqEbDZ7lUWOusYzhTFtGVtCwttZABPExPEEtd0z10A5KBk97Rp0TeYhnuyOyvBleHl5BH3evvSH72lvxyS4S/1L6gOQOvDtW6EgNzVUYHN13x0IbcdaVkmdUPDuBAodgr2BJYfiwwBk7UgESB/0aA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752045212; c=relaxed/simple;
+	bh=q+8kEUFKOe/AKuTRv4NGUZZO/epcQtr/DUmBVoSmhpk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DGmTJ1SR3Crkbx9g/UHY9dK58cCX0snNYzyVkiCne7xtiTGlgqmpcGNcCpbpRyQBlurULTk95Py54XoXDsszzzmeO7JDHwnF1Lt+cCQ+RHAOAIOsXeq9uNyFkuZLnRQBozejIBU89ye2tvNCfwIs3TiR0HJ9fLuP1qQQVABjNv4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=Qg8gTY2z; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1752045197; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=VrGL00rSnZWsEe4N7esptw4fm+gl31/S0FzTLFCOR7MyIMpnwcp8mQZ2vlIb6mGT3RY9kp/1HdycGRGoveSGm40MsbZCPSVp9Sq8dWeumEB5t/l4JCk4g/I6Nkkckr0AhjNgzE4bpDAcX3jxJYfyRQVK1qNAPkojiMZkls1l1J4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1752045197; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=wHiqZyuTgPxzdXyYfuv3UPD8orqV8Nu2TK8I32/j/G8=; 
+	b=K1r2LKszC0dAZi/YRoSK5vjSb8+Gm8wQqUtkunGJpD1IChSZ6Q6TwZBDyvSURCOEZX2NmwGnxSSLowUDq7H+Mm/piIETu6RkGXClEWwj7UcCemiEQLNNUtjFNbPlujG0GDnkayHmqmpKdzSDBx9zPF3oQkqU6vnkyTPy//M4ZII=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752045197;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=wHiqZyuTgPxzdXyYfuv3UPD8orqV8Nu2TK8I32/j/G8=;
+	b=Qg8gTY2z/Vt6feMcSXrbJ7RW+BSLDsvL5o3dVtthTAHkEo5xOQUTMyQ+5qomvqLp
+	GCHDTCEmbbxyCjfetqJCpHmmR6K2MeJT7wF8ZeSgm85v+BkMk5/lB1+nI9tKYSN9nd4
+	W8FYoQZjTJ5JHP1O2/n0YgAsDVfYgN654uxUpDjE=
+Received: by mx.zohomail.com with SMTPS id 1752045195118841.5038900262972;
+	Wed, 9 Jul 2025 00:13:15 -0700 (PDT)
+Message-ID: <86bcfb22-f9e7-4b2a-a51b-d8d63d423fcc@zohomail.com>
+Date: Wed, 9 Jul 2025 15:13:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/stMZzDaa9fPajp_8DWqLJ9o";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] cxl/edac: Fix wrong dpa checking for PPR operation
+To: Alison Schofield <alison.schofield@intel.com>
+Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
+ shiju.jose@huawei.com, andriy.shevchenko@linux.intel.com,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250708051536.92119-1-ming.li@zohomail.com>
+ <20250708051536.92119-3-ming.li@zohomail.com>
+ <aG3I9ooPm0eJnMPn@aschofie-mobl2.lan>
+From: Li Ming <ming.li@zohomail.com>
+In-Reply-To: <aG3I9ooPm0eJnMPn@aschofie-mobl2.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Feedback-ID: rr080112276557fa28b7021264f2e8d91000004c12bdf5733af7bb711d0b54f5dd71f5d2f6b8c8fd28096c90:zu08011227b142ed5d17c63be61cf5659600003121704cbb81ca4af9ae61ba2ee5d273286914cd85c86b2e8f:rf0801122d3604bdcbcb47a2d032448b100000e7f69e1d853b41f2ab6ac607679ef88887ab7517ea8b7b95651c0467b58c63:ZohoMail
+X-ZohoMailClient: External
 
---Sig_/stMZzDaa9fPajp_8DWqLJ9o
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Wed, 9 Jul 2025 16:04:56 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
+On 7/9/2025 9:42 AM, Alison Schofield wrote:
+> On Tue, Jul 08, 2025 at 01:15:35PM +0800, Li Ming wrote:
+>> DPA 0 is considered invalid in cxl_do_ppr(), but per Table 8-143. "Get
+>> Partition Info Output Payload" in CXL r3.2 section 8.2.10.9.2.1 "Get
+>> Partition Info(Opcode 4100h)", it mentions that DPA 0 is a valid address
+>> of a CXL device. So the correct implementation should be checking if the
+>> DPA is in the DPA range of the CXL device rather than checking if the
+>> DPA is equal to 0.
+>>
+> If it needs a fixes tag, doesn't it also need a user visible impact
+> statement? I get that the PPR won't happen. What does that look like
+> to the user? Is there a user level error message we can add to the
+> commit log?
 >
-> Today's linux-next merge of the kvm-x86 tree got a conflict in:
->=20
->   arch/x86/kvm/vmx/vmx.c
->=20
-> between commit:
->=20
->   f9af88a3d384 ("x86/bugs: Rename MDS machinery to something more generic=
-")
->=20
-> from Linus' tree and commit:
->=20
->   83ebe7157483 ("KVM: VMX: Apply MMIO Stale Data mitigation if KVM maps M=
-MIO into the guest")
->=20
-> from the kvm-x86 tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+> With that, you can add:
+> Reviewed-by: Alison Schofield <alison.schofield@intel.com>
+>
+Will do. Thanks.
 
-Actually, the resolution is below.
 
---=20
-Cheers,
-Stephen Rothwell
+Ming
 
-diff --cc arch/x86/kvm/vmx/vmx.c
-index 191a9ed0da22,65949882afa9..47019c9af671
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@@ -7290,8 -7210,8 +7210,8 @@@ static noinstr void vmx_vcpu_enter_exit
-  	if (static_branch_unlikely(&vmx_l1d_should_flush))
-  		vmx_l1d_flush(vcpu);
-  	else if (static_branch_unlikely(&cpu_buf_vm_clear) &&
-- 		 kvm_arch_has_assigned_device(vcpu->kvm))
-+ 		 (flags & VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO))
- -		mds_clear_cpu_buffers();
- +		x86_clear_cpu_buffers();
- =20
-  	vmx_disable_fb_clear(vmx);
- =20
+>
+>> Fixes: be9b359e056a ("cxl/edac: Add CXL memory device soft PPR control feature")
+>> Signed-off-by: Li Ming <ming.li@zohomail.com>
+>> Tested-by: Shiju Jose <shiju.jose@huawei.com>
+>> Reviewed-by: Shiju Jose <shiju.jose@huawei.com>
+>> ---
+>>  drivers/cxl/core/edac.c | 5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/cxl/core/edac.c b/drivers/cxl/core/edac.c
+>> index 623aaa4439c4..1cf65b1538b9 100644
+>> --- a/drivers/cxl/core/edac.c
+>> +++ b/drivers/cxl/core/edac.c
+>> @@ -1923,8 +1923,11 @@ static int cxl_ppr_set_nibble_mask(struct device *dev, void *drv_data,
+>>  static int cxl_do_ppr(struct device *dev, void *drv_data, u32 val)
+>>  {
+>>  	struct cxl_ppr_context *cxl_ppr_ctx = drv_data;
+>> +	struct cxl_memdev *cxlmd = cxl_ppr_ctx->cxlmd;
+>> +	struct cxl_dev_state *cxlds = cxlmd->cxlds;
+>>  
+>> -	if (!cxl_ppr_ctx->dpa || val != EDAC_DO_MEM_REPAIR)
+>> +	if (!resource_contains_addr(&cxlds->dpa_res, cxl_ppr_ctx->dpa) ||
+>> +	    val != EDAC_DO_MEM_REPAIR)
+>>  		return -EINVAL;
+>>  
+>>  	return cxl_mem_perform_ppr(cxl_ppr_ctx);
+>> -- 
+>> 2.34.1
+>>
 
---Sig_/stMZzDaa9fPajp_8DWqLJ9o
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhuFhMACgkQAVBC80lX
-0Gy6mAf/ZObl47K40W/UD9AP4MjdwrmrE2mz8balXdSNazAU7aZD+1GLU/XgjABX
-hmgdXaJ5MRbAzC89OrUOiwhIKqC0QJQnDSTUNIP1jkDdv+BqJ2fBY2GolnBa3jLJ
-S4buNQM2R84/6XJfc71BLUmBjvC05I0WkVLAu32p1ELMvI9VFCUxhF49YTzlWmC/
-tx3Cj0jKdgFI2aHXqHw/+q5GhI5tyZZ66GSbAC4ncYv52IQ0sENct4oo4UZhC0tZ
-Q9ipMnSREjIj4oG0uT16ySRlival1S0d8qFqnL6MetaPHM4yre6Dg1S+a4asYbXN
-g36gzzWU1fqoEMu2ZdM4EnfMOQC+dg==
-=paZS
------END PGP SIGNATURE-----
-
---Sig_/stMZzDaa9fPajp_8DWqLJ9o--
 
