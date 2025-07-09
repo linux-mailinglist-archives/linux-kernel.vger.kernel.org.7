@@ -1,136 +1,151 @@
-Return-Path: <linux-kernel+bounces-723444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7327CAFE6E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:05:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE790AFE6F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B8F6165B64
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:05:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0FF6188EA2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F1728DB49;
-	Wed,  9 Jul 2025 11:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6897728E56B;
+	Wed,  9 Jul 2025 11:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FSJ4xrj7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l0Ayf6ZX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0DA28505D;
-	Wed,  9 Jul 2025 11:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A8526F45A;
+	Wed,  9 Jul 2025 11:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752059116; cv=none; b=B/amqsif7VdSJggRslVV0Yq6vDSNEilrhJH4coid04xZnqeklDPY85YOuMpvHvGAU9Q7m+GlEo1Q76n18RKz/YHnYxHun0WkL2QqxyVYjG8ZLejO395Em1LBVOjc3DmLTHtEwxdsa/9VNGrRfbwVC9/Mg5cQMrPr9CpQ1O62IpM=
+	t=1752059247; cv=none; b=ojPc35uy+GaOeuM/h+JLiHk4xz0K45qu6agU7GN2RFI/EiLbWOtw8lQp9cGPAeq/p/PxrxFGjVAu2IV9C+US0ZNxnvCp6wdzYfryslSl2TkuL6W/VvRsCCU1GquO6qeN1Q6kouIpAQWZxdFa+GMm4YSHNterTjKTwTwOi6FVDss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752059116; c=relaxed/simple;
-	bh=L6FEap1P5pzGaj4wNUU+zauIzGODBRBQ8BtkaLI+3XM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Px1BcUn+C12nkZFwNltXC5wz+n2TNrzMhfVL8szNC9fAaBd8nbWzyK1CTLpMQa8lmFFEXJ/NC0++Nd+U8xEkjaGmPYl1D/wZy6yP5xaAuHbJifLWkYPv1MKxGdmzk+Fk9iE4KKOC4X9vhJNzcNf5lvvPtUFsn+y4RM/88nsTiOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FSJ4xrj7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99AEFC4CEEF;
-	Wed,  9 Jul 2025 11:05:13 +0000 (UTC)
+	s=arc-20240116; t=1752059247; c=relaxed/simple;
+	bh=9xgK+fBhA8h6jU2nAkgquJvvHtf3UTyu5jZV7nmkulY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lqxKAR4Nd4qq6HHAqj4cfx30mvF12VMal1NTDtQ7tfOEmJaCyLUtsMK504QhNOM7v+mIXYcnRVfiWkcR9PXhPYwcxbQKus+sMfMprR51J2fSUYcq1UWEmyCGzj3AG7XALW+nJbizgrwUYjHbvA+Qz5s95YTU0NcvD0Jg6hmJf0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l0Ayf6ZX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 87503C4CEEF;
+	Wed,  9 Jul 2025 11:07:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752059116;
-	bh=L6FEap1P5pzGaj4wNUU+zauIzGODBRBQ8BtkaLI+3XM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FSJ4xrj7BOFtxFZqPN6/S0owfj6x+iwNbeMojijrj3cXRXpOrUqtSzCd/4KSQjJuW
-	 pRVghCRJ86jaE8AFTQf0t2tllDeTj+5dtkjwnykFECfj5xCLfC3bYrpvep7UOJib0q
-	 yW9mRZK0K5VZwFh3IlSqowWqOeDk9TUC39LSZYYUry4/boRvE5JVGg8mNdIBIco4LF
-	 t3nKfh5f02MLzRw9i+yFIUwNog8yNGPUc2Ujk4pS8NCDsP5JR6u9NtLl5L1znEk+HM
-	 QT6mgS60tDC6htmjGvNrmEJ7bZe5K5xZKhtmAOnOjxaaCD114Vi3hovKbhlshcXc9V
-	 u5ThzjH3nzxfA==
-Message-ID: <649824ea-a420-437e-ace1-2f079235c604@kernel.org>
-Date: Wed, 9 Jul 2025 13:05:10 +0200
+	s=k20201202; t=1752059247;
+	bh=9xgK+fBhA8h6jU2nAkgquJvvHtf3UTyu5jZV7nmkulY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=l0Ayf6ZXcoKrtMmriIZLctPpPQQ+doQ/iXreRso00nHWkXJqDa9EGTe/a76dERfUf
+	 CKY+D54U1F39xa+stGjhAH94xUgPZBjbeoCDk1ZmhD8aOGy7LetCR0MIA0MP5ZbnPY
+	 e69SvQsM+soSjGtDH32XmydI5AnGheg01k5eOnLMk3AjvcUxdFm/4PpDOHQm8Oslsd
+	 Kg7WgigAWkHKBpqxulAvcfdbKsVL34/pQVGr1oBXgJkkxvRw/Gm5lwGHVuycxbcxHw
+	 PiiuXcxXwlYaBFKkjV9jNtQ5nxTzFF50XCcgK+5NIiOJ5puS5b3SHDneJN3BaHpYCg
+	 TbkJOLpjAwlWg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77566C83F0A;
+	Wed,  9 Jul 2025 11:07:27 +0000 (UTC)
+From: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>
+Subject: [PATCH v2 0/9] MIPS: loongson32: Convert all platform devices to
+ DT
+Date: Wed, 09 Jul 2025 19:05:51 +0800
+Message-Id: <20250709-loongson1-arch-v2-0-bcff6e518c09@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: rockchip: Add reset button to NanoPi R5S
-To: Diederik de Haas <didi.debian@cknow.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250709105715.119771-1-didi.debian@cknow.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250709105715.119771-1-didi.debian@cknow.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA9NbmgC/zWNSw7CIBQAr9K8tY8ApR9ceQ/jgtBXILZgQI2x6
+ d1FE5ezmJkNCuVABY7NBpmeoYQUK8hDA9ab6AjDVBkklx1XQuGSUnQlRYEmW48dmdHSpKw2Gqp
+ 0yzSH1y94vlSec1rx7jOZf6blg9SiVa0Ymei1Uv2AAq/kHnXH3t/pya0mLMymFfb9A3byxBqjA
+ AAA
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+ Keguang Zhang <keguang.zhang@gmail.com>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752059245; l=3440;
+ i=keguang.zhang@gmail.com; s=20231129; h=from:subject:message-id;
+ bh=9xgK+fBhA8h6jU2nAkgquJvvHtf3UTyu5jZV7nmkulY=;
+ b=H+G1PpJx5Jx4sLoMA0qdN+92ka3q+Vr90XkUJakkUx8pUHiGmrDHCKGJh7ShbhBrmbFWrjXRi
+ kfMkC6BMBMcCQx97SH4ple36WcC5lWv6ymHDOBlFDRjzU3bHkabn0bF
+X-Developer-Key: i=keguang.zhang@gmail.com; a=ed25519;
+ pk=FMKGj/JgKll/MgClpNZ3frIIogsh5e5r8CeW2mr+WLs=
+X-Endpoint-Received: by B4 Relay for keguang.zhang@gmail.com/20231129 with
+ auth_id=102
+X-Original-From: Keguang Zhang <keguang.zhang@gmail.com>
+Reply-To: keguang.zhang@gmail.com
 
-On 09/07/2025 12:57, Diederik de Haas wrote:
-> +	gpio-keys {
-> +		compatible = "gpio-keys";
-> +		pinctrl-0 = <&gpio4_a0_k1>;
-> +		pinctrl-names = "default";
-> +
-> +		button-reset {
-> +			debounce-interval = <50>;
-> +			gpios = <&gpio4 RK_PA0 GPIO_ACTIVE_LOW>;
-> +			label = "RESET";
-> +			linux,code = <KEY_RESTART>;
-> +		};
-> +	};
-> +
->  	gpio-leds {
->  		compatible = "gpio-leds";
->  		pinctrl-names = "default";
-> @@ -127,6 +140,12 @@ eth_phy0_reset_pin: eth-phy0-reset-pin {
->  		};
->  	};
->  
-> +	gpio-keys {
-> +		gpio4_a0_k1: gpio4-a0-k1 {
+Convert all platform devices to Device Tree.  
+Remove all obsolete platform device code.  
+Switch to the generic MIPS kernel.  
+Update Kconfig and Makefile accordingly.  
+Update and rename the defconfig.
 
-Are you sure that this passes checks?
+Changes in v2:
+- Document two new boards: loongson,ls1b-demo and loongson,cq-t300b.
+- Submit complete DTS files for each board.
+- Switch to the generic MIPS kernel.
+- Consolidate Loongson1 defconfigs.
+- Link to v1: https://lore.kernel.org/all/20230729134318.1694467-1-keguang.zhang@gmail.com/
+
+---
+Keguang Zhang (9):
+      dt-bindings: mips: loongson: Add LS1B demo board
+      dt-bindings: mips: loongson: Add CQ-T300B board
+      MIPS: dts: loongson: Add LS1B-DEMO board
+      MIPS: dts: loongson: Add LSGZ_1B_DEV board
+      MIPS: dts: loongson: Add Smartloong-1C board
+      MIPS: dts: loongson: Add CQ-T300B board
+      MIPS: loongson32: Switch to generic kernel
+      MIPS: Unify Loongson1 PRID_REV
+      MIPS: configs: Consolidate Loongson1 defconfigs
+
+ .../devicetree/bindings/mips/loongson/devices.yaml |   2 +
+ MAINTAINERS                                        |   3 +-
+ arch/mips/Kconfig                                  |  64 ++---
+ arch/mips/boot/dts/Makefile                        |   1 +
+ arch/mips/boot/dts/loongson/Makefile               |   9 +
+ arch/mips/boot/dts/loongson/cq-t300b.dts           |  93 +++++++
+ arch/mips/boot/dts/loongson/loongson1.dtsi         | 136 ++++++++++
+ arch/mips/boot/dts/loongson/loongson1b.dtsi        | 198 ++++++++++++++
+ arch/mips/boot/dts/loongson/loongson1c.dtsi        | 141 ++++++++++
+ arch/mips/boot/dts/loongson/ls1b-demo.dts          | 108 ++++++++
+ arch/mips/boot/dts/loongson/lsgz_1b_dev.dts        | 145 +++++++++++
+ arch/mips/boot/dts/loongson/smartloong-1c.dts      |  93 +++++++
+ .../{loongson1b_defconfig => loongson1_defconfig}  |  94 +++++--
+ arch/mips/configs/loongson1c_defconfig             | 121 ---------
+ arch/mips/include/asm/cpu-type.h                   |   3 +-
+ arch/mips/include/asm/cpu.h                        |   3 +-
+ arch/mips/include/asm/mach-loongson32/irq.h        | 107 --------
+ arch/mips/include/asm/mach-loongson32/loongson1.h  |  50 ----
+ arch/mips/include/asm/mach-loongson32/platform.h   |  23 --
+ arch/mips/include/asm/mach-loongson32/regs-mux.h   | 124 ---------
+ arch/mips/kernel/cpu-probe.c                       |   6 +-
+ arch/mips/loongson32/Kconfig                       |  43 +---
+ arch/mips/loongson32/Makefile                      |  17 --
+ arch/mips/loongson32/Platform                      |   1 -
+ arch/mips/loongson32/common/Makefile               |   6 -
+ arch/mips/loongson32/common/irq.c                  | 191 --------------
+ arch/mips/loongson32/common/platform.c             | 285 ---------------------
+ arch/mips/loongson32/common/prom.c                 |  42 ---
+ arch/mips/loongson32/common/setup.c                |  26 --
+ arch/mips/loongson32/common/time.c                 |  23 --
+ arch/mips/loongson32/ls1b/Makefile                 |   6 -
+ arch/mips/loongson32/ls1b/board.c                  |  55 ----
+ arch/mips/loongson32/ls1c/Makefile                 |   6 -
+ arch/mips/loongson32/ls1c/board.c                  |  23 --
+ 34 files changed, 1049 insertions(+), 1199 deletions(-)
+---
+base-commit: b5a1f9870f9828bd6625d6c946c66be4983d56f6
+change-id: 20250414-loongson1-arch-5ea8ced4c9a9
 
 Best regards,
-Krzysztof
+-- 
+Keguang Zhang <keguang.zhang@gmail.com>
+
+
 
