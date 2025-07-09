@@ -1,184 +1,85 @@
-Return-Path: <linux-kernel+bounces-723730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A9CDAFEA62
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:38:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B8D5AFEA69
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A32E1C823F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:39:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B30F1882294
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A462E0910;
-	Wed,  9 Jul 2025 13:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6C42E0917;
+	Wed,  9 Jul 2025 13:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cok7Ru6t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="NGPhZo9C"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390841C1F13;
-	Wed,  9 Jul 2025 13:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451BB292B59;
+	Wed,  9 Jul 2025 13:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752068318; cv=none; b=c16SIdn8tFpTaua7FkWDETuD83DbaGWYBRT/fGMU4B0A7rMYye9jCPPZIwVHxrjiNHLmgY7aszTHm89HwJGj/wzvVr17XZHyQ1oA3IhYNFZhoNxALRap5uE/GdPDlcCG401TYgNXHQGRWRVJ8aIxifASIdLhw/8ldUU6jFRuxt8=
+	t=1752068328; cv=none; b=i7pOY9Cuj5oSI8kdK2sp4tXnOoiR+/3BO0EmKDkqx05QeOqYi15nKE8o7s3FQNoSiV8qQElad+tZ+l5MbhxeRMY/H2SK4D9i6QZaWd4q9qwnShCHB8l6JBM/2RUjHuLqQZhYwGvM+EHt8t1gwte4GX3+KSlzp+F8LNGUStq2ESw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752068318; c=relaxed/simple;
-	bh=h8rkgdzFHzQfCXKGB13VqG6DTj3tCT4fvRbPC6Q9TJc=;
+	s=arc-20240116; t=1752068328; c=relaxed/simple;
+	bh=/qahDK0IYUkKuGYysnJtX6MM8jLq9TOrhizk1MDBSKs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mpS8BdtiwYWXVFRJ8zCkYMsHN7mVG7ZYMkqezvOGiRnMUcIVwXgw5tn15Agqa1v6AkKDR1qBNXMRA948OrNEoqXdtMHvhY9+A8rWAIehKYtGh+KG29IJeDFX6CgrXHvLYGuqeRSBXtpjUM8ED79ncfQwcUWaFhoZr6G8Z43/GP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cok7Ru6t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FEC4C4CEEF;
-	Wed,  9 Jul 2025 13:38:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752068317;
-	bh=h8rkgdzFHzQfCXKGB13VqG6DTj3tCT4fvRbPC6Q9TJc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cok7Ru6tbwPf8DJ/GhRrPstP/I0zh/TMSe60GW8wNsnXiRyHW+Tf9VR43hFMEXANp
-	 nA9yQR+3gGyjumTd2aR31jkaluaCPUfp9OJzMJNGL6iO1bosVebm+gtOam0s3LgviF
-	 0qgXZtR5I68ISvW6+7jrDWcLGDJ5eZ1lxF4wInZz59liiDUeFKysL48gZydSKKo/sV
-	 RBhFESjNO2O8yASjDhpRyrL3yew7ckHOedOhDO2NYrNdFPmP8ofnTqyxuSr/3hpl/V
-	 r9BARdBLahmPKDK4L5U6u/awlc3gw3+s31xuPfGtfv7Y4UgprYL97ykPOEARLt/Afz
-	 RKn2Zom/0ZhDw==
-Date: Wed, 9 Jul 2025 15:38:34 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Nicolas Dufresne <nicolas@ndufresne.ca>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
-	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Andrew Davis <afd@ti.com>, 
-	Jared Kangas <jkangas@redhat.com>, Mattijs Korpershoek <mkorpershoek@kernel.org>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, iommu@lists.linux.dev
-Subject: Re: [PATCH v6 0/2] dma-buf: heaps: Create a CMA heap for each CMA
- reserved region
-Message-ID: <20250709-spotted-ancient-oriole-c8bcd1@houat>
-References: <20250709-dma-buf-ecc-heap-v6-0-dac9bf80f35d@kernel.org>
- <49e3fa834aadb37452112bb704a1a1593c1fd0b8.camel@ndufresne.ca>
+	 Content-Type:Content-Disposition:In-Reply-To; b=chiV8KWFeqXBQVs4rRTrqPswhq9UwDwZTHraAe0U4QbfwSuafP5BD/5gSYSW6wvOg44NYkMEVFMor7iOLtJpsEsPH0ymaAga2N1HJ1yhJC5NNGZ3ianiREIozt84B1u3Bgvmf606yAzGdXZ4cw0Wr04nLu4enbxr8FiajTg2ODE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=NGPhZo9C; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=uFbfUiyAkr+pHnWKgq1GAWpjjH62LzZxy6ER26rGetM=; b=NG
+	PhZo9CF4z4CpWDVEOHzB6oY6vZFa5iJcnr2bewWpoSuvF9DTdsIJCeFkAzoPBip8OIhfbpLnJc0Q2
+	jD+bB9Z2dpYh2x9jSjGxfQybQX98CiMyMIxdeGd4dSCS5Zvkz64c15E34L2B8h8MWgvzfo5lfYh0M
+	GdouP+ZDXRmIayg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uZV0X-000wiG-7F; Wed, 09 Jul 2025 15:38:45 +0200
+Date: Wed, 9 Jul 2025 15:38:45 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Buday Csaba <buday.csaba@prolan.hu>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	=?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH 2/3] net: mdiobus: release reset_gpio in
+ mdiobus_unregister_device()
+Message-ID: <595b48b4-b830-411c-9cba-fcc3e8cf53a0@lunn.ch>
+References: <20250709133222.48802-1-buday.csaba@prolan.hu>
+ <20250709133222.48802-3-buday.csaba@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="t6erlqty7rzkhzhp"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <49e3fa834aadb37452112bb704a1a1593c1fd0b8.camel@ndufresne.ca>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250709133222.48802-3-buday.csaba@prolan.hu>
 
+On Wed, Jul 09, 2025 at 03:32:21PM +0200, Buday Csaba wrote:
+> reset_gpio is claimed in mdiobus_register_device(), but it is not
+> released in mdiobus_unregister_device().
+> When a device uses the reset_gpio property, it becomes impossible
+> to unregister it and register it again, because the GPIO remains
+> claimed.
+> This patch resolves that issue.
+> 
+> Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
+> Cc: Csókás Bence <csokas.bence@prolan.hu>
 
---t6erlqty7rzkhzhp
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 0/2] dma-buf: heaps: Create a CMA heap for each CMA
- reserved region
-MIME-Version: 1.0
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-On Wed, Jul 09, 2025 at 09:10:02AM -0400, Nicolas Dufresne wrote:
-> Hi Maxime,
->=20
-> Le mercredi 09 juillet 2025 =E0 14:44 +0200, Maxime Ripard a =E9crit=A0:
-> > Hi,
-> >=20
-> > Here's another attempt at supporting user-space allocations from a
-> > specific carved-out reserved memory region.
-> >=20
-> > The initial problem we were discussing was that I'm currently working on
-> > a platform which has a memory layout with ECC enabled. However, enabling
-> > the ECC has a number of drawbacks on that platform: lower performance,
-> > increased memory usage, etc. So for things like framebuffers, the
-> > trade-off isn't great and thus there's a memory region with ECC disabled
-> > to allocate from for such use cases.
-> >=20
-> > After a suggestion from John, I chose to first start using heap
-> > allocations flags to allow for userspace to ask for a particular ECC
-> > setup. This is then backed by a new heap type that runs from reserved
-> > memory chunks flagged as such, and the existing DT properties to specify
-> > the ECC properties.
-> >=20
-> > After further discussion, it was considered that flags were not the
-> > right solution, and relying on the names of the heaps would be enough to
-> > let userspace know the kind of buffer it deals with.
-> >=20
-> > Thus, even though the uAPI part of it had been dropped in this second
-> > version, we still needed a driver to create heaps out of carved-out mem=
-ory
-> > regions. In addition to the original usecase, a similar driver can be
-> > found in BSPs from most vendors, so I believe it would be a useful
-> > addition to the kernel.
-> >=20
-> > Some extra discussion with Rob Herring [1] came to the conclusion that
-> > some specific compatible for this is not great either, and as such an
-> > new driver probably isn't called for either.
-> >=20
-> > Some other discussions we had with John [2] also dropped some hints that
-> > multiple CMA heaps might be a good idea, and some vendors seem to do
-> > that too.
-> >=20
-> > So here's another attempt that doesn't affect the device tree at all and
-> > will just create a heap for every CMA reserved memory region.
->=20
-> Does that means that if we carve-out memory for a co-processor operating =
-system,
-> that memory region is now available to userspace to allocate from ? Or is=
- there
-> a nuance to that ?
-
-There is a nuance to that :)
-
-You need to have the "reusable" property set which is documented as:
-
-      The operating system can use the memory in this region with the
-      limitation that the device driver(s) owning the region need to be
-      able to reclaim it back. Typically that means that the operating
-      system can use that region to store volatile or cached data that
-      can be otherwise regenerated or migrated elsewhere.
-
-https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/rese=
-rved-memory/reserved-memory.yaml#L87
-
-If it's not set, it's not exposed, and I'd expect a coprocessor memory
-region wouldn't be flagged as such.
-
-> For other carveout, such as RK3588 HDMI receiver, that is clearly a win, =
-giving
-> user the ability to allocate using externally supplied constraints rather=
- then
-> having to convince the v4l2 driver to match these. While keeping the safe=
-ty that
-> this carveout will yield valid addresses for the IP.
->=20
-> Will there be a generic way to find out which driver/device this carveout
-> belongs to ? In V4L2, only complex cameras have userspace drivers, everyt=
-hing
-> else is generic code.
-
-I believe it's a separate discussion, but the current stance is that the
-heap name is enough to identify in a platform-specific way where you
-allocate from. I've worked on documenting what a good name is so
-userspace can pick it up more easily here:
-
-https://lore.kernel.org/r/20250616-dma-buf-heap-names-doc-v2-1-8ae43174cdbf=
-@kernel.org
-
-But it's not really what you expected
-
-Maxime
-
---t6erlqty7rzkhzhp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaG5w1QAKCRAnX84Zoj2+
-dp3pAX9+Z09k44eaivapsVKw/NqvekdMSYnQGvkEfOP/NBTjJF5RGakuRbEE73Xk
-qKAYEiMBgKsMpFVvSS9l9pFXZtK1LVDJ1XtphLJBeHq/gZxL+5K0t2qMG09CpG18
-A+HJas+mmg==
-=pWj1
------END PGP SIGNATURE-----
-
---t6erlqty7rzkhzhp--
+    Andrew
 
