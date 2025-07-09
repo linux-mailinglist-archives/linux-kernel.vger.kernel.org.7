@@ -1,177 +1,234 @@
-Return-Path: <linux-kernel+bounces-724455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5C31AFF312
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:32:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FF5EAFF31C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0743F3BF332
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:31:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2F811BC69F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E759824677F;
-	Wed,  9 Jul 2025 20:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772CE244679;
+	Wed,  9 Jul 2025 20:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="GzVYg66v";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iT/xiKGb"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CZJEsxNH"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B57C23BD13;
-	Wed,  9 Jul 2025 20:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0D5202F8F;
+	Wed,  9 Jul 2025 20:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752093076; cv=none; b=oPH6fxGyy8JiFclfUyqL2TxD6xxaWDAz7GMMx8QE3+FGiK/ytSMJnNfaTkDN+sTJ7dRMAH2w9IW8PT3L7MQ9jArl28orlM+5j+6VJhN2P6CnW0cXzeyv4XBc0hKtDoROuu+6QOdwyEgRlZ4wLbl/w4vCqv8Vh43Ob3s2/s58D5s=
+	t=1752093373; cv=none; b=F2fz4jjAJeAbgzA9Zd1oPgNCGJFCtFInyUl85AQpw7+mia8XXIFAEWP5JI8bEQgBiUdLPSv5DfJ2uMaQ0FL0j8YXkU+p4sq5yxmuvIhUzzl2CE75vM1saREiWSVqe5gjd84K7ARBWP96e5HlZ2ACMvG73W/LKO53dBookw+fMGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752093076; c=relaxed/simple;
-	bh=6Tz614NpehH6aczQmxQyMihVZ7CmfcI4Z562x5DJW+s=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=u6Qe+mMPcFWGkXUgnB+kwDC4FvZsjKWgGPiIXQ+8bMq8EfQ/FBYfB4KlbsrB9ove4iAiajt0jPkd8wt6LB36WSX/DrLzOp1bivpzhzVdst252IdcWwueHs3ecEcVPLLiq6qsyBsc/4+5PRLeexAWV7W5wFjRwd2DQ4JiAMU8XQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=GzVYg66v; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iT/xiKGb; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id E3B4C7A0026;
-	Wed,  9 Jul 2025 16:31:11 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Wed, 09 Jul 2025 16:31:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1752093071;
-	 x=1752179471; bh=llWN7pp7aG8O86Zdueocuq+HHi9GtObRXw5Q6xFES9w=; b=
-	GzVYg66v0Kt4dpjX55f7iOuq5EVY2oP4JgRptCTQcb5nzz3i7Fjzvyh3AyTS8jrR
-	xkJds4514NzxlftiOAQpGI5K3wqlL/qh4bsRR3szkwbGi2O5eFuXLBng8WxtxBYt
-	OM8rvADWIEHyGFofs+2Rz9YRWoNLLET3/PzjPuOAX+pUuX++sanAquruw8OXeaOP
-	p4bEJft9Q2krlf4ZzegRYZtecJ+xUZp9TwMAZDNRhQ9M+glyO29X4mTEggx2vUkD
-	gOMuYAvRqfIwNP6BsWlSoE2M6+YjBiabBIziatnKcIZcLOpUCqGiQ8JljIooc62v
-	p7J7qS1FsgoOgBu0+VAygw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752093071; x=
-	1752179471; bh=llWN7pp7aG8O86Zdueocuq+HHi9GtObRXw5Q6xFES9w=; b=i
-	T/xiKGbREElYeICO1GVUd8Wbc9/JdYb7S4JmpTpoWkZIga+XJ+7Cym/uMEvqNLCp
-	pQVrO1GfTBYwku6kWCcjkoPbb/Aw82ibuV8b4NVGYT2oGnzfli2qSJW46Yo0nU4h
-	4OzgEiAi+LGy13vMdyjNViFQNSgQVS5tvaORatsyWgcMoA2dBoWphLJ1fO59TYjs
-	JnxS650QpAD2JO68ruY8FbQJsKbNoGLJhY/DI+8hXoP9lBeyvGghdCWoqDFMdbm9
-	u5ILFbAdPFZfuW32a7xSs7rU9OkgCLXkNtqnB9FO9g1YJ+0yCBWN7SJX2QUonbGE
-	Bz7jQQi/r713VZiqLSaiA==
-X-ME-Sender: <xms:jtFuaEelBli-5kOnOZB6hhPcG6fCxWVNB6rHWs67jQaJpKUZKB6dew>
-    <xme:jtFuaGNFvKphXetz-u55UIOwy3Z_psjqLhWAqia69D2hjdFWgNg_8mjjLLqNgKr1H
-    ch_E6h4MhZoJ_xSa3Y>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefkeehfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduledpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheprgguohgsrhhihigrnhesghhmrghilhdrtghomhdprhgtphhtthhope
-    grshhmlhdrshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtphhtthhopegvsghighhg
-    vghrshesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrd
-    gukhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghr
-    rghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughjfihonhhgsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopegrnhguvghrshdrrhhogigvlhhlsehlihhnrghrohdr
-    ohhrghdprhgtphhtthhopegsvghnjhgrmhhinhdrtghophgvlhgrnhgusehlihhnrghroh
-    drohhrgh
-X-ME-Proxy: <xmx:jtFuaO6_FMAkDNEIbADE6FHbTV5t3LEdm25z6UdKWn1S2P48ExFB_A>
-    <xmx:jtFuaNCADNtE1ya6ZR9w3QASJia8WSPQujdxLUarZzB7CgJvkqnpog>
-    <xmx:jtFuaAaQnxw7iVxXR1yNvntVrGI-hWB1n-KYgVMrIbWGx8ES2RChyg>
-    <xmx:jtFuaBL_Kbi20z6ONoLdImTLKa8rvSCSVC8ruSu5T5Go51WmS-C6Rg>
-    <xmx:j9FuaKudRgcrBp3K67bNCujH_k1ZtWuyRy2tn6FLgBReOHoOiMT8hM4b>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 65A0A700065; Wed,  9 Jul 2025 16:31:10 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1752093373; c=relaxed/simple;
+	bh=c3UHhht/yT3ib42s9jPJQnqbR+fX5nr9MFjTgeyWB/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K48RdI2Zq4k4Sev4GbcpQQDZjVoZEoW9Idi3HQfWCUW6iVDxq8oLDE6368yNgFQztjT+atUoc+y7U00PHGTM75ouzkvywT4T7eOQsw8Q3qAnmcWr86rbkHL9/uWGYKrm0OkOPhJ5TQWnAYwnh+M4dMg+uRr2ztfMRCyTfYSYQig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CZJEsxNH; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a50956e5d3so303767f8f.1;
+        Wed, 09 Jul 2025 13:36:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752093370; x=1752698170; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y29/ym4L0MZltpXAdKD3JoqA5ATljycl2PRXSWr1woE=;
+        b=CZJEsxNHvHlzbUhu+CGm9R3TzKXo553ZSf5JLTIrC4cqTfXrPgTmgYRs5K15kK0jpI
+         89JzY+4CFpHXAmLxRKOkuMeaATGkTraOSoRZC9QNtWKmoE6vcgxs2P4X8o6v80TDJXMT
+         7pyfYjykCaAbJKOL7GMxbKfvB5AZIPqWdw/TL2gnhfIY7pAxTxZ8pvwyN7BaoPM3rBLK
+         Z23ZOSxBN10LCwHDiGYBDamTrSGruOaQVQDC4K5zc292fDJUyBL3dCXfHuHEVAqdGa54
+         mK8UFLIv4pmHoXnrOr9xUulKuyymkeyY8ChhWwetVKzjYi6aRV5twoYXBA0iSrX7MJ3A
+         Ty3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752093370; x=1752698170;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y29/ym4L0MZltpXAdKD3JoqA5ATljycl2PRXSWr1woE=;
+        b=CVn0ThCVBNjjsQ0k1t1Fn307xX8FFfE6J2wWu3CF4pZy4hFf64yMX+5WUxqG7vvW4n
+         SEzHM5klCSVjWZjtOiFalbiVfdfvxFYBq2LYrW8zphlKZKKVaxNFl+eZIgWEXm7Iu5NN
+         w6uh9b229bTJ1MIwwk0Js3+iy9y2E7anIeSmpddKWhogA5pfMo5u93hFsWZZc8gLJRLV
+         sm/seC9nW9RQRJuMHFQmJajNuQSyk+iOKTfOqa2/7S2jLv37hunBDBVcbSRhZVkJa805
+         nxjdyoN/TVKu1bTpfacG81GD7lXdlYb46Gl4N51FW+ZJmccv6S+HIgRzHdZHn3ZSZk5f
+         t4iw==
+X-Forwarded-Encrypted: i=1; AJvYcCUoWi1CPkc9rvtw03O5zl26lW5p5IhqW89h9DKC10STAdXdz8sAMgrkTODHF/fF5+auDL8GCJMiMdWV@vger.kernel.org, AJvYcCVfQzRQ0kPHmAcIP5cLAsFXuNd6MW5kJuMA/9PzEjf3cnkkk72Emnx9yhcEjReOORFMCCdecko+uav5z6w=@vger.kernel.org, AJvYcCXCX0PrEQmReTwnHqvRJDtiV/WWRSFo3kizqwuSOSm41PzL2W01/pgt0kbUrYj2W8UFEPZoxZwvyheeNzuP@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ56TGWjvwvpCnujMwrHJJrU5fUvwqD+ue9IuAktr5cu5zcuaz
+	u3XFQLMqbKRmmVA/nfwl/ZL39Tp0bp1B2HwE/AGpu1WPXQneyhn8zcm/
+X-Gm-Gg: ASbGncuKeetetuGWwPj2w7wa2ZFllK1U882LUWp5PdVWGnADjWKW/xpVJMzDWmr01Ww
+	fVvyVeF16jkDoBC2f+m2cz5HirSSEZNfXYmi7EAX0b8R7bgqRkZ0/L1Sy1Gv8rnsjt5Mie6Olom
+	hUKF+WSS/sL+jWjlAKS6CSckRse3iqMHMARpbdrQKLUVPbKI76J8dcNpmPmMJq+WUVhnaEJ/14O
+	mIcpUsd3bGf/F2Lq2vWvzkf66dbYakagtQYGIVytN9uptV7Yl76KxPIrWros0vuQ1qrCucJakcM
+	qIDOncopghTe5zrQZR2gs8A0/H4MRsqm/U+nm1XgWNuwCh7MfSgWonF9579V4tqEZKom3//kZZM
+	K43YDMEeg5TRQN+6PTU+tvJZklJJBZeTYpCxBsjZv62PG5Z1C
+X-Google-Smtp-Source: AGHT+IFH1iqTTHNEedaWfa0iqGZpnZbsn8YFpAWL1bsm1Q8amIn8wdf5T4PMSfGgjTQYSXwV8popaQ==
+X-Received: by 2002:a05:6000:1acf:b0:3a4:d898:3e2d with SMTP id ffacd0b85a97d-3b5e44e6b83mr3524010f8f.24.1752093370054;
+        Wed, 09 Jul 2025 13:36:10 -0700 (PDT)
+Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5e4ceb587sm2666847f8f.101.2025.07.09.13.36.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 13:36:08 -0700 (PDT)
+Date: Wed, 9 Jul 2025 22:36:06 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: memory: tegra: Add Tegra264 support
+Message-ID: <2ohrp2tbun6xdi77phk3fa4xsy24xomgg3uzjqqogmz3vfdqmm@megeivnzsgqd>
+References: <20250708105245.1516143-1-thierry.reding@gmail.com>
+ <20250708105245.1516143-2-thierry.reding@gmail.com>
+ <abbfc54d-96af-4e9d-8c2c-8965aa99076b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Tfdac8457399410f6
-Date: Wed, 09 Jul 2025 22:30:40 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Darrick J. Wong" <djwong@kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
- "Anuj Gupta" <anuj20.g@samsung.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- "Kanchan Joshi" <joshi.k@samsung.com>, "LTP List" <ltp@lists.linux.it>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Benjamin Copeland" <benjamin.copeland@linaro.org>, rbm@suse.com,
- "Naresh Kamboju" <naresh.kamboju@linaro.org>,
- "Anders Roxell" <anders.roxell@linaro.org>, "Jens Axboe" <axboe@kernel.dk>,
- "Pavel Begunkov" <asml.silence@gmail.com>,
- "Christian Brauner" <brauner@kernel.org>,
- "Alexey Dobriyan" <adobriyan@gmail.com>,
- "Eric Biggers" <ebiggers@google.com>, linux-kernel@vger.kernel.org
-Message-Id: <290c17df-1bf2-45b8-b0c2-7a1865585d0a@app.fastmail.com>
-In-Reply-To: <20250709182706.GF2672070@frogsfrogsfrogs>
-References: <20250709181030.236190-1-arnd@kernel.org>
- <20250709182706.GF2672070@frogsfrogsfrogs>
-Subject: Re: [PATCH] block: fix FS_IOC_GETLBMD_CAP parsing in blkdev_common_ioctl()
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yzpiiwzfsg5jlu7e"
+Content-Disposition: inline
+In-Reply-To: <abbfc54d-96af-4e9d-8c2c-8965aa99076b@kernel.org>
 
-On Wed, Jul 9, 2025, at 20:27, Darrick J. Wong wrote:
-> On Wed, Jul 09, 2025 at 08:10:14PM +0200, Arnd Bergmann wrote:
 
-> though we probably want a helper or something to encapsulate those three
-> comparisons to avoid the SOMETHING_SOMETHING part:
->
-> #define IOC_DISPATCH(c) \
-> 	((c) & ~(_IOC(0, 0, 0, _IOC_SIZE(_IOC_SIZEMASK))))
->
-> 	switch (IOC_DISPATCH(cmd)) {
-> 	case IOC_DISPATCH(FS_IOC_FSGETXATTR):
-> 		return ioctl_fsgetxattr(filp, cmd, argp);
->
-> Assuming that ioctl_fsgetxattr derives size from @cmd and rejects values
-> that it doesn't like.  Hrm?
+--yzpiiwzfsg5jlu7e
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/4] dt-bindings: memory: tegra: Add Tegra264 support
+MIME-Version: 1.0
 
-This may work in specific cases, but it adds a lot of complexity
-and room for error if we try to do this in more places:
+On Wed, Jul 09, 2025 at 08:19:51PM +0200, Krzysztof Kozlowski wrote:
+> On 08/07/2025 12:52, Thierry Reding wrote:
+> >    interrupts:
+> > -    items:
+> > -      - description: MC general interrupt
+> > +    minItems: 1
+> > +    maxItems: 8
+> > +
+> > +  interrupt-names:
+> > +    minItems: 1
+> > +    maxItems: 8
+> > =20
+> >    "#address-cells":
+> >      const: 2
+> > @@ -74,6 +79,7 @@ patternProperties:
+> >                - nvidia,tegra186-emc
+> >                - nvidia,tegra194-emc
+> >                - nvidia,tegra234-emc
+> > +              - nvidia,tegra264-emc
+> > =20
+> >        reg:
+> >          minItems: 1
+> > @@ -127,6 +133,15 @@ patternProperties:
+> >              reg:
+> >                minItems: 2
+> > =20
+> > +      - if:
+> > +          properties:
+> > +            compatible:
+> > +              const: nvidia,tegra264-emc
+> > +        then:
+> > +          properties:
+> > +            reg:
+> > +              minItems: 2
+> > +
+> >      additionalProperties: false
+> > =20
+> >      required:
+> > @@ -220,6 +235,52 @@ allOf:
+> >              - const: ch14
+> >              - const: ch15
+> > =20
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          const: nvidia,tegra264-mc
+> > +    then:
+> > +      properties:
+> > +        reg:
+> > +          minItems: 17
+>=20
+> Missing maxItems
 
-Ignoring the 'size' argument as above would mean that
-each case now has to add an extra size check in each 'case',
-which then defeats the entire purpose.
+My recollection was that maxItems didn't have to be specified if we
+already have minItems and they are both equal. That said, I see now
+there are a few cases in existing bindings where both are used in
+conjunction, so I must be misremembering. I've added "maxItems: 17".
 
-I should maybe dig out my notes for table-driver ioctl
-handlers, if we want to improve the way that drivers define
-their ioctl implementations, I'm sure there is some
-infrastructure we can come up with that can help here,
-but I don't think 'same as before but more macros' is the
-answer.
+>=20
+> > +          description: 17 memory controller channels
+> > +
+> > +        reg-names:
+> > +          items:
+> > +            - const: broadcast
+> > +            - const: ch0
+> > +            - const: ch1
+> > +            - const: ch2
+> > +            - const: ch3
+> > +            - const: ch4
+> > +            - const: ch5
+> > +            - const: ch6
+> > +            - const: ch7
+> > +            - const: ch8
+> > +            - const: ch9
+> > +            - const: ch10
+> > +            - const: ch11
+> > +            - const: ch12
+> > +            - const: ch13
+> > +            - const: ch14
+> > +            - const: ch15
+> > +
+> > +        interrupts:
+> > +          minItems: 8
+> > +          maxItems: 8
+> > +          description: One interrupt line for each MC component
+> > +
+> > +        interrupt-names:
+> > +          items:
+> > +            - const: mcf
+> > +            - const: hub1
+> > +            - const: hub2
+> > +            - const: hub3
+> > +            - const: hub4
+> > +            - const: hub5
+> > +            - const: sbs
+> > +            - const: channel
+>=20
+>=20
+> Missing constraints for interrupts and interrupt-names for all other
+> variants. Now this patch claims they all have 8 interrupts with any name.
 
-joydev_ioctl_common() is an existing example doing something
-like it and gets it right, while snd_compr_ioctl() is an
-example that looks completely broken to me.
+I'll add back the interrupts property for the other variants. For the
+interrupt-names it's slightly more tricky because on older variants we
+don't need it since there's only one interrupt. It looks like I can do
+"interrupt-names: false" in those cases.
 
->> +	    _IOC_SIZE(cmd) >= LBMD_SIZE_VER0 &&
->> +	    _IOC_SIZE(cmd) <= _IOC_SIZE(FS_IOC_GETLBMD_CAP))
->
-> blk_get_meta_cap already checks this.
+Thanks,
+Thierry
 
-I had thought about removing it there, but decided against that.
-Maybe a better way would be to have the full check inside of 
-blk_get_meta_cap() and use the -ENOIOCTLCMD return code
-to keep the caller simple:
+--yzpiiwzfsg5jlu7e
+Content-Type: application/pgp-signature; name="signature.asc"
 
-   switch(cmd) {
-   ...
-   default:
-         break;
-   }
-   ret = blk_get_meta_cap(bdev, cmd, argp);
-   if (ret != -ENOIOCTLCMD)
-        return ret;
-   ...
-   return -ENOIOCTLCMD;
+-----BEGIN PGP SIGNATURE-----
 
-       Arnd
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhu0rQACgkQ3SOs138+
+s6EndxAAgjzxHXgyJiqSvY6Bu1TgmN8YTKl8O7KS0vpNwiGldECJ3ov474vN6hGs
+B1vPywsJ0pOVMMRJLtpXyF2LzMFqpBp5z+0Xp/+0tyVGadVtzucyFcaNLLtSZxOu
+XDvRvobVYghVL8XbRrNcx7mBIuuKc4G9QYRRrI8O4nLksyUdRDPt3u4OwsUaRFVa
+rzGXr5+LsSqLwOcDHrDeE+BZCZuXW6Yw1v38Yctunx1Ct2WLdlFKNFBrnSqy/Rfo
+ttCH6IR1peqHschD/YLZEFQBcxSoeNhk0pgUAGUlR6UO1ZvtYsD0SRLRc8//jz0T
+TEeuUWXCv8pVyMhKQHLCTqI/gdP1BaDtr7BrqiLxaTLQDfo4jkabQI+rWJ4zRjNA
+kVEWR7SuD91XvQe4wa63/gPqJWHiIGhMpQ1p6pCVyykuF62vBu7nbMcWAZDmKN1I
+lhuDmbTpHkOB8AiugX6WqdVgZ5xJqDkSu6twE6ScUFwKf57q4cnwBWqmmG3XIeq9
+AUqJC5iX5sPVZQB2YMpaVncC523JepqlcXabptN9Yu+XMbbj4qQ3TcCRbz2Lt/aK
++kcJG1u3LS8rXAkvwzh47HlYWFaYVZbF7b6RfDEal9t59kz7jjoZmjeAn8Trbdut
+s3ZrmQ9bivbQwRy2DWzW7T7iasMoFX0Q7NOUeSaEbKkQeKwz15g=
+=zaJr
+-----END PGP SIGNATURE-----
+
+--yzpiiwzfsg5jlu7e--
 
