@@ -1,117 +1,197 @@
-Return-Path: <linux-kernel+bounces-724553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0859AFF434
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:58:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2119AFF436
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6635417CE9C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:58:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D4637BE8CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D36C243367;
-	Wed,  9 Jul 2025 21:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A034242D7B;
+	Wed,  9 Jul 2025 21:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HF7v+HHj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eOxdHuYI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDBF221DB4;
-	Wed,  9 Jul 2025 21:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6D25661;
+	Wed,  9 Jul 2025 21:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752098309; cv=none; b=f8IRrXrsUzp4OznqcmoFnBSXTQQ3BF7//HrXxRx2v0IpIuq+LzIlkyTw1vJtSoztFZIfmd0ytSt6tDxxlarQUI7leXRJj2GatgKa707n/dlIhJg5CGBOYnLskQLbonMnnWyadMslZ5XMfygXTPCKygGcnTYkHxjTFTwtENX2yZ0=
+	t=1752098371; cv=none; b=pQJhg8qb1JIr49vv7x8tH6eax1YqDA6bF6oqoVX+UxgcnmAOx+sDCnuHQwO72IsWf6n5ujv3A3/BkcFzZBwMKFqR0Ahw185c/BOEHiwAdVstr7h05LgYbk11EHmBhwac8IEzNLici3f3hH1jQhuaPNZCU5QMzbWgynBv9dhR4CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752098309; c=relaxed/simple;
-	bh=zjFlENAgBdh7xP1fuuUD0RuYSpO5zOXpYVPNVEcU4zg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=EG81XgAVH4X4DoJwxKRFMRwPhA0D/wmbz2NLI2+KOOhjhlFjyhEWKXe+FnRKr2xY6+WnNKoXbPAkrSzWi7PidF2Ug3IPlKXPogWuIu/cdQ9YGUeEY00mpkB8W26pNtmex97XAGNbvbLej/BpxMbjnwvNoyVa1T6sA0XYi2PFiKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HF7v+HHj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74C68C4CEEF;
-	Wed,  9 Jul 2025 21:58:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752098308;
-	bh=zjFlENAgBdh7xP1fuuUD0RuYSpO5zOXpYVPNVEcU4zg=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=HF7v+HHj1/uWYrZ1jHPBmeinlOFXd700YJB/0ji8rRD5yDDGO2vc4Zmp3mIQ1eZrJ
-	 dp32A945DkIzZftJkqzV/nrGFQPURiSIYC3nwMmCaWYInptJZsU9hjWMZTg+ay6gXe
-	 P7m1scf30QQMKycBWbPTIpa4yEGP9Zu/McyS3TIIgvBJTmi9TMYJtnyo9iREx4G/LD
-	 0qNjId+h+yzw3HhhgiXqsCKYA0O6XamG+OuGd2KI+D3jI3n8aHE9/hRLnryDnnBg84
-	 zdQ0kiNXyPfZyNIyJPLJUlKCkSoc4ivbeUTyBJITG+QmdoSnpRXn/WztQ1n8dEf4SD
-	 QndKJGpaSnYXA==
+	s=arc-20240116; t=1752098371; c=relaxed/simple;
+	bh=eD2dKPan0oJtd+hG31uBmZSGHJyNUWf+tU20HGcVDqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L9uh5CXpOFIgWNx6b9umh+YOVDow44KG8qyp1P4udVczMqlMtXZmY+uwFwKS1t2fGcWfEHTqNbhWc0HTd5ZxPwNYIXpvnL/qlaVE0VsntZPV4rORILUyYyl+yKu3OmhFDmBfUNwSDid/84wy3gm2gyLlKZz27CS8l9EfepKpquQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eOxdHuYI; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752098370; x=1783634370;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=eD2dKPan0oJtd+hG31uBmZSGHJyNUWf+tU20HGcVDqM=;
+  b=eOxdHuYIgkSeCM5YMuTTMYpL+rIbID+wCeYEeZHqzQUQAvKT/rB/D/kf
+   zNfT3zwZOZ8GJWNQzcsoPWmsxedvVK1fj+U+s9e3sV/adFNk/yVulGL2g
+   V9iobXhljis8AmNky+goFSnCiDaq4GGe5wbSplmMaQyX5Ati+9UGKJzF4
+   OtsUH60RmOSTOIekvvVjg/pjnzHB23eRNO/OkOR6L1d8Dbekgn20q7m7v
+   WweTzOSy94a/qBjeIHGO58S7GUkYt2F0dOstQNBRuFrwfSxg/+Wazc28E
+   bIlHdjObT8vBuc3N+9e4atWoStCRnVeQ/OKTl0ul8LuQqt6TnYqMIrazh
+   g==;
+X-CSE-ConnectionGUID: mqh1pYCHQmW93TbGVF+piQ==
+X-CSE-MsgGUID: Ne4w8PjRTDWiaP/biPXXwA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54342883"
+X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
+   d="scan'208";a="54342883"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 14:59:30 -0700
+X-CSE-ConnectionGUID: LyxA6DwPQt+RV72lYsidyA==
+X-CSE-MsgGUID: WV/e39FUTnqzerwi1wMNZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
+   d="scan'208";a="155308121"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 09 Jul 2025 14:59:25 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uZcp0-000479-23;
+	Wed, 09 Jul 2025 21:59:22 +0000
+Date: Thu, 10 Jul 2025 05:58:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Suleiman Souhlal <suleiman@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	John Stultz <jstultz@google.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ssouhlal@freebsd.org,
+	Suleiman Souhlal <suleiman@google.com>
+Subject: Re: [PATCH v6 1/3] KVM: x86: Advance guest TSC after deep suspend.
+Message-ID: <202507100515.ZQd2P9F8-lkp@intel.com>
+References: <20250709070450.473297-2-suleiman@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 09 Jul 2025 23:58:22 +0200
-Message-Id: <DB7V0GL2HVMV.BR1JSWQPDMC3@kernel.org>
-Cc: "Danilo Krummrich" <dakr@kernel.org>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Jens Axboe" <axboe@kernel.dk>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Brendan Higgins" <brendan.higgins@linux.dev>, "David
- Gow" <davidgow@google.com>, "Rae Moar" <rmoar@google.com>,
- <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <linux-block@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
- <kunit-dev@googlegroups.com>
-Subject: Re: [PATCH 7/9] rust: pin-init: use `kernel::{fmt,prelude::fmt!}`
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Tamir Duberstein" <tamird@gmail.com>
-X-Mailer: aerc 0.20.1
-References: <20250709-core-cstr-fanout-1-v1-0-64308e7203fc@gmail.com>
- <20250709-core-cstr-fanout-1-v1-7-64308e7203fc@gmail.com>
- <DB7SVTBZ46QB.31WTHFLWDHPZY@kernel.org>
- <CAJ-ks9nNc_pThtb+gHUcjEnvR6V0RAEG0tkv+_DHYYjXs1N7=A@mail.gmail.com>
-In-Reply-To: <CAJ-ks9nNc_pThtb+gHUcjEnvR6V0RAEG0tkv+_DHYYjXs1N7=A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709070450.473297-2-suleiman@google.com>
 
-On Wed Jul 9, 2025 at 11:01 PM CEST, Tamir Duberstein wrote:
-> On Wed, Jul 9, 2025 at 4:18=E2=80=AFPM Benno Lossin <lossin@kernel.org> w=
-rote:
->>
->> On Wed Jul 9, 2025 at 10:00 PM CEST, Tamir Duberstein wrote:
->> > Reduce coupling to implementation details of the formatting machinery =
-by
->> > avoiding direct use for `core`'s formatting traits and macros.
->> >
->> > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
->> > ---
->> >  rust/kernel/init.rs | 4 ++--
->> >  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> I usually prefix patches to init.rs with `rust: init`. I'll fix it up
->> when picking the patch or Miguel can do it if he takes it:
->>
->> Acked-by: Benno Lossin <lossin@kernel.org>
->
-> Actually, squinting at this patch more closely now, I think this isn't
-> what you had in mind. The comment says "Dummy error that can be
-> constructed outside the `kernel` crate." but the error now comes from
-> the kernel crate :(
+Hi Suleiman,
 
-It's a re-export, so the comment still holds.
+kernel test robot noticed the following build warnings:
 
-> Perhaps you could suggest a different modification that would both
-> meet the original intent and allow references to core::fmt to
-> disappear?
+[auto build test WARNING on kvm/queue]
+[also build test WARNING on kvm/next kvm/linux-next linus/master v6.16-rc5 next-20250709]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-The code comes from a time when `Error::from_errno` was `pub(crate)`,
-but that was changed some time ago... Now we can just remove the
-`FromErrno` trait entirely from that example. Feel free to do that in
-this series or as a standalone patch.
+url:    https://github.com/intel-lab-lkp/linux/commits/Suleiman-Souhlal/KVM-x86-Advance-guest-TSC-after-deep-suspend/20250709-150751
+base:   https://git.kernel.org/pub/scm/virt/kvm/kvm.git queue
+patch link:    https://lore.kernel.org/r/20250709070450.473297-2-suleiman%40google.com
+patch subject: [PATCH v6 1/3] KVM: x86: Advance guest TSC after deep suspend.
+config: i386-buildonly-randconfig-002-20250710 (https://download.01.org/0day-ci/archive/20250710/202507100515.ZQd2P9F8-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250710/202507100515.ZQd2P9F8-lkp@intel.com/reproduce)
 
----
-Cheers,
-Benno
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507100515.ZQd2P9F8-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   arch/x86/kvm/x86.c: In function 'kvm_arch_vcpu_load':
+   arch/x86/kvm/x86.c:5044:27: error: implicit declaration of function 'kvm_get_time_and_clockread'; did you mean 'kvm_get_monotonic_and_clockread'? [-Werror=implicit-function-declaration]
+    5044 |                 advance = kvm_get_time_and_clockread(&kernel_ns, &tsc_now);
+         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                           kvm_get_monotonic_and_clockread
+   arch/x86/kvm/x86.c:5062:17: error: 'kvm' undeclared (first use in this function)
+    5062 |                 kvm->arch.host_was_suspended = false;
+         |                 ^~~
+   arch/x86/kvm/x86.c:5062:17: note: each undeclared identifier is reported only once for each function it appears in
+   In file included from include/linux/bitops.h:7,
+                    from include/linux/kernel.h:23,
+                    from include/linux/cpumask.h:11,
+                    from include/linux/alloc_tag.h:13,
+                    from include/linux/percpu.h:5,
+                    from include/linux/context_tracking_state.h:5,
+                    from include/linux/hardirq.h:5,
+                    from include/linux/kvm_host.h:7,
+                    from arch/x86/kvm/x86.c:20:
+   arch/x86/kvm/x86.c:5063:71: error: 'flags' undeclared (first use in this function)
+    5063 |                 raw_spin_unlock_irqrestore(&kvm->arch.tsc_write_lock, flags);
+         |                                                                       ^~~~~
+   include/linux/typecheck.h:11:16: note: in definition of macro 'typecheck'
+      11 |         typeof(x) __dummy2; \
+         |                ^
+   arch/x86/kvm/x86.c:5063:17: note: in expansion of macro 'raw_spin_unlock_irqrestore'
+    5063 |                 raw_spin_unlock_irqrestore(&kvm->arch.tsc_write_lock, flags);
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>> include/linux/typecheck.h:12:25: warning: comparison of distinct pointer types lacks a cast
+      12 |         (void)(&__dummy == &__dummy2); \
+         |                         ^~
+   include/linux/spinlock.h:281:17: note: in expansion of macro 'typecheck'
+     281 |                 typecheck(unsigned long, flags);                \
+         |                 ^~~~~~~~~
+   arch/x86/kvm/x86.c:5063:17: note: in expansion of macro 'raw_spin_unlock_irqrestore'
+    5063 |                 raw_spin_unlock_irqrestore(&kvm->arch.tsc_write_lock, flags);
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/x86/kvm/x86.c: At top level:
+   arch/x86/kvm/x86.c:5068:9: error: expected identifier or '(' before 'if'
+    5068 |         if (unlikely(vcpu->cpu != cpu) || kvm_check_tsc_unstable()) {
+         |         ^~
+   include/linux/kvm_host.h:182:39: error: expected declaration specifiers or '...' before '(' token
+     182 | #define KVM_ARCH_REQ_FLAGS(nr, flags) ({ \
+         |                                       ^
+   include/linux/kvm_host.h:186:36: note: in expansion of macro 'KVM_ARCH_REQ_FLAGS'
+     186 | #define KVM_ARCH_REQ(nr)           KVM_ARCH_REQ_FLAGS(nr, 0)
+         |                                    ^~~~~~~~~~~~~~~~~~
+   arch/x86/include/asm/kvm_host.h:94:41: note: in expansion of macro 'KVM_ARCH_REQ'
+      94 | #define KVM_REQ_STEAL_UPDATE            KVM_ARCH_REQ(8)
+         |                                         ^~~~~~~~~~~~
+   arch/x86/kvm/x86.c:5096:26: note: in expansion of macro 'KVM_REQ_STEAL_UPDATE'
+    5096 |         kvm_make_request(KVM_REQ_STEAL_UPDATE, vcpu);
+         |                          ^~~~~~~~~~~~~~~~~~~~
+   arch/x86/kvm/x86.c:5096:48: error: unknown type name 'vcpu'
+    5096 |         kvm_make_request(KVM_REQ_STEAL_UPDATE, vcpu);
+         |                                                ^~~~
+   arch/x86/kvm/x86.c:5097:1: error: expected identifier or '(' before '}' token
+    5097 | }
+         | ^
+   cc1: some warnings being treated as errors
+
+
+vim +12 include/linux/typecheck.h
+
+e0deaff470900a Andrew Morton 2008-07-25   4  
+e0deaff470900a Andrew Morton 2008-07-25   5  /*
+e0deaff470900a Andrew Morton 2008-07-25   6   * Check at compile time that something is of a particular type.
+e0deaff470900a Andrew Morton 2008-07-25   7   * Always evaluates to 1 so you may use it easily in comparisons.
+e0deaff470900a Andrew Morton 2008-07-25   8   */
+e0deaff470900a Andrew Morton 2008-07-25   9  #define typecheck(type,x) \
+e0deaff470900a Andrew Morton 2008-07-25  10  ({	type __dummy; \
+e0deaff470900a Andrew Morton 2008-07-25  11  	typeof(x) __dummy2; \
+e0deaff470900a Andrew Morton 2008-07-25 @12  	(void)(&__dummy == &__dummy2); \
+e0deaff470900a Andrew Morton 2008-07-25  13  	1; \
+e0deaff470900a Andrew Morton 2008-07-25  14  })
+e0deaff470900a Andrew Morton 2008-07-25  15  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
