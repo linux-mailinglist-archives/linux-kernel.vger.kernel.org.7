@@ -1,88 +1,89 @@
-Return-Path: <linux-kernel+bounces-722662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30E1DAFDD7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:35:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FDD9AFDD80
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC4BC1AA61D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:36:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 075023AAFDB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABE81BD9CE;
-	Wed,  9 Jul 2025 02:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430DE1DF994;
+	Wed,  9 Jul 2025 02:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HgPaaBgN"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kf1+kyAj"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88918BF8
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 02:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8E11A3165
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 02:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752028538; cv=none; b=bRn8XFLvJnokkN8ZCn36ceSaTzhfNRnNke6Si/LxcaE91OohKoabDu/T/BM7eLpiEMkleSCKjFLOCx6J3Kf3TsD0g1NxcKP7ePz3Y697pMvHochJjnmggqIV22FzGRwSu6A0ajLUWa0t7iGGV7NgdolpP7e9s24+MbgyU5veBBg=
+	t=1752028541; cv=none; b=YFbNWVSzjy6KxEPxBsxCruc6MOBO3ndXY5CWSFXi7ht3tGu1aFAsW5/pNvt8/5NqtNayaJqAvyKwzjWXcz+MMYhWNRz5tUe5xxJcY/SUtOmMCbo8qp6nq5jyR/cF7e3rvGs8fT2ZV3n02ffLjm2H45eLzhBMbZ38BHLVzObWLRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752028538; c=relaxed/simple;
-	bh=9TO0Ie/tiu0fshmmifYBLUQYkYOY5QIWQq2+zPaxfDU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nKuw/N4lk/UpsvOs/ve1/Rjw3Csf6urFLGQeHXTgvUdSldI/myuyov/kq62a9lR6vR5N/XSnKTrfTn2Rs/0iQuJ9c9xRrA4+u3ppWajv/NiUnArXHPGs+xcDrhyt6f6ncuBf1N5Rxa7Robw9Te/XzRZ+lRE2ShRBCdlSWLdUltM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HgPaaBgN; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1752028541; c=relaxed/simple;
+	bh=tSN6YxxeeIwfNVtJUqNjYCzWvla7VBhlmPBH/aqTAKI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=VrYBMa3JXO9K6HAZukR2/MvQfSwRLldIrjcTvnTXXIUlJFisAxis8rI6cMwDJMGBiuUCBtihHYsXhf7MyYVGUY5EmDd4HaUUn7OaGI6P5wPWcboLxGqH3EIuSlRo6XtEs7R7161V3eV6/81cszFBYct2IP0dBLH6W2bTu9/RruY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kf1+kyAj; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568Mwugl018551
-	for <linux-kernel@vger.kernel.org>; Wed, 9 Jul 2025 02:35:30 GMT
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568JvZ3k008293
+	for <linux-kernel@vger.kernel.org>; Wed, 9 Jul 2025 02:35:32 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=hLMsEUe26f5H9JEFiKOUnL
-	PAORFVeXyz8x7J6XwjUvk=; b=HgPaaBgN1Q3w9fvb/kbMyfgbY1iCkkHoeroPED
-	UVvPc+OigvogN1u5+170fcUsfxLXNQzL9hQWG9U9DqaOwbYFc6BKFEBckhwNVgns
-	dSLTvrKPNG/rMcuhbuOi18/i21akVMvxEMfXgpdlhuwgQmzMyhgb/MQ1MjOOMHZ9
-	C1fhwmNnvzYOv26bPabt9+iZwP0HeRkAfQKkniLm9rFpnRYt+HjxjICdg5AfNCTd
-	p/kOndhWygl82cCmYas4qfjDZaJVugchWOki++9Mv3Z/9YGAmVEsRdQKkNg+HoUu
-	iMAK/nx+yVrvIqPmkqCjL5QhRyLTGn1YGdJQ9/0V0X2E8JUg==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47psdr301s-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	LrC/7rgM5KIH+dR455FE6P08mwk11Z/ujo/JN/gT4BE=; b=kf1+kyAjDxkNDOMU
+	kg6a4SruPw77esycZRlUOLQ6nP1pruOR+PuC2LNkv4DwlqACWt/2JAxNkBlFHYm7
+	CfdlH9th4Ww+tXHvxXCA6IQnmTxTJV0t+/cuIMO48OJGt126h2uDzOlYhxwk5KH7
+	qZL0ACh/ARBmHXoKoV1JzDsmmwE6eMJNZLm6L3F4VqaEj1XPglwkirbwZ3Oq7mua
+	i33l518yhbgjm+n4FDY+BAO2d1mwGKs+rU1ZRNkGOilsC3yKkoY8MABvH7nnPFhQ
+	jp4KxSto5Zp5FbYNVX9PZGKwgqKr5SnZG3ZK1R54RclvU0YBugTYns5ti+DOrieN
+	VnEtlA==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pucn2umy-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 02:35:29 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b31bc3128fcso7084931a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 19:35:29 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 02:35:31 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b38ffb62492so4785219a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 19:35:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752028528; x=1752633328;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hLMsEUe26f5H9JEFiKOUnLPAORFVeXyz8x7J6XwjUvk=;
-        b=VwDH9P/lZkmj0JYamKPoEyjGmlVk6fzq2pyhfnQMz5xo6Fp2VYc19ZMjblH3Qmwk5t
-         dPRM6lEe2B3HqY8sHIJZIh948GxmwWwE29Lc5LAGphT1mS3vH1QWkeIXgXy+YweZah+O
-         FyXAhK0Wq6cqws1vQYu1GdOF1xuU5+JZ2jvOtPcN+XnlOGnCiLWKsi/qWF3AHOQCUUeM
-         ILyC/6YEAUrWMLf9KvZLuaV6ea0apMEaTMhuCYdmma+kY1+ev1Yvd4po5c08fnYSqmq1
-         h27YrzQSDbZq88VMX8G1Tmbouugb5iv2KIGwPW1A1d9qUOneQccRxPbQLhUQU+TzTykZ
-         m/DA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8F4u8owemJ0YKGoOZD5ynklh0853Xbakd0WF0TT3QYwwJyhGvB98GmtjghkeH+pa5Z6SCFiHpGO7sWTo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT4yFohcFD3bfGrnmpmvHJwJJLuV3l3tuEZ/6JIZM6AnSni2RT
-	urLyun46VS7iHrTh/hFNKQtkMPnqq/59JO/wDjxzWc6tTn/6Ch/QN1a/6vPp8ae6E/IAPPQfE+3
-	uWLEt2dQEHBJBcxVQqWAFirtcVNxA1eQoVxpXaDmFR6kG1zG+GG+9OayYlvBhvf6XKPk=
-X-Gm-Gg: ASbGncuGxUosqaMOyGW3J5Fb/GFIFk+dStBc9cB8deU+K1OqtLsJxpbLKuhvJ+dAp2x
-	E/EopyobEeQupONywez4q2uzBLXhQSE86tpYyfephSkD+YIeBB0n31v7//lNYHl1s80x6b5X4Ze
-	hGtucXKzZUK0ZqO6L6iKPBDmWCzik9tIzOaAIo6wmx6CY/13T+jR5pHicdBOkW2kmLY5R9XuEbN
-	YFBRpieceJKGmxnLbtBjoANfhM8qR5fT9I20vNzqrvpipS0PvomOzLed/e2VZIUTYPFGgwWu7AX
-	fR+45ZXfrwBgeHTLOwAX3J9rcNUgCB3Aktj3X5Tv8yF2tuKcxj+OAbRzd862gagvMR1SfAihT7v
-	gWa+Dw/vI1J4jvV+geshk/G/YH2xI+Gt+wTgZINksv8sYz6I=
-X-Received: by 2002:a17:903:3d05:b0:235:a9b:21e0 with SMTP id d9443c01a7336-23ddb0c8821mr11858375ad.0.1752028528593;
-        Tue, 08 Jul 2025 19:35:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGhfR0QvmpiQ/tYvfymKWBtnaEA+zKZVZAoyoIq4XGfZxPY3DboSNdAbywwp4KVgp1XVSKJvw==
-X-Received: by 2002:a17:903:3d05:b0:235:a9b:21e0 with SMTP id d9443c01a7336-23ddb0c8821mr11858105ad.0.1752028528181;
-        Tue, 08 Jul 2025 19:35:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752028531; x=1752633331;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LrC/7rgM5KIH+dR455FE6P08mwk11Z/ujo/JN/gT4BE=;
+        b=Kp7VhTyMdzgGXQLGsbPbBAxtYRMjj6QFuOUIbERYRW7jg8K+B50Nz1b7axvfHGqy+c
+         KeG56CAksHN14vIJbJUkF5o/fqCLOl4ZktNQSnML1q9Wbs2yc6PtkaWlYzsizbItA8dS
+         bL0eb28uC0//JFUNqfvddBsANVLaknBZeOPk+SPwBZiUFzdrkPbb0MhvP4LeHU3fw3Ca
+         +U0XhJ4KM/Y3S6kPWIC7JHparjFOiw0Wof05n9FevqqvYFwckmUjOkO7blFgf42cAMQz
+         eQQ0dQGRq9WuHn4p6LUDYZLVv/F/ZJGXaf1cetqklahSHtf7S6JICkIquwAW290aStct
+         eSPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwIfPeCvtSitZwtbsv13iClGTJqY8VwDY7knvDNl/xpVaSt8AqcUlIoCx5MTCM7GuFW3JkCKpNTGgn9Fw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzykBa5P7NFrsx9DHzQEKUJS0p8S6MgdMPDVr7rxBOMmX1lbj1K
+	GF8ookWFHO5D8ftAiVL70hwiTwmkWU/8gd5zOXJ+ewSGgvCcLonBEk7PYGDojTEpbfN5jN5pZ3b
+	MX5CL9jgPRBwAVClwPi4fvLF/fk6Ut23l4floGQCksOHXgq/99btGXnZR1aPpAes5HLw=
+X-Gm-Gg: ASbGncsjNFSF4HYnUtMR6P4DYdHxsiElkq7yuAGq0NL+ZtMkulu1Efdkdr7TX0KT5oS
+	ehw1a9lEt7oFBPL3SoNcr7YEwuTco7y7IsTizJNuKDW+fTHNgV+Ex7iPyD0aM7G0s6vwpzCEI5/
+	vDBAxym1Rvqi5rkaFXDBw9t0aVfS6IgBBPfDLSZhp+CccmfLl27fa5zS58v01tBD826bIeH7bxD
+	6TS7NdDWGlt4cJRsXIsSs3fLA89rhLzi7PV6SGhiv26WEX66WR2eRAdRwKx5ot6kpuGN8b+44rA
+	bUkrbG1e2u33vvaLBVJzhAVPrl9akKSvJBxpEWLHiqoedtmvY7fcI0CHf0HirSDXZomOcapg1a3
+	WG2DfMBR31OnR47rJmMoZBx06uFNbsO2gfoVwrCZrRmOCb5g=
+X-Received: by 2002:a17:902:db0c:b0:235:caa8:1a72 with SMTP id d9443c01a7336-23ddb2f2c2dmr11512895ad.30.1752028530649;
+        Tue, 08 Jul 2025 19:35:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHAiXM0+YO7Lp5Y+AfPt1p2QIqNQp+OFLPNYizvEHO6VeMDTvLi20N2reU0NN2eXsOgIKyofg==
+X-Received: by 2002:a17:902:db0c:b0:235:caa8:1a72 with SMTP id d9443c01a7336-23ddb2f2c2dmr11512635ad.30.1752028530234;
+        Tue, 08 Jul 2025 19:35:30 -0700 (PDT)
 Received: from hu-adisi-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8431ef2bsm133169315ad.33.2025.07.08.19.35.26
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8431ef2bsm133169315ad.33.2025.07.08.19.35.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 19:35:27 -0700 (PDT)
+        Tue, 08 Jul 2025 19:35:29 -0700 (PDT)
 From: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
-Subject: [PATCH wireless-next 0/2] wifi: cfg80211/mac80211: parse and
+Date: Wed, 09 Jul 2025 08:05:18 +0530
+Subject: [PATCH wireless-next 1/2] wifi: cfg80211: parse attribute to
  update unsolicited probe response template
-Date: Wed, 09 Jul 2025 08:05:17 +0530
-Message-Id: <20250709-update_unsol_bcast_probe_resp-v1-0-d3323ce9a7b5@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,58 +92,130 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGXVbWgC/4XNSwrCMBCA4atI1kbyrMGV9xApSTpqoDY109aK9
- O7G4sKF0s3AMMP3PwlCCoBkt3qSBEPAEJu88PWK+IttzkBDlXcimNCs4IL2bWU7KPsGY106b7E
- r2xQdlAmwpd6YrSnA6UIxko02wSmMs38g95CgBkTawNiRYz5fAnYxPeb6wOenT8gshAZOGXXgK
- 1BcMGf1PiJubr2tfbxeN3nMgUF8oYItoSKj0hunTsAqo9UfVH6hchGVb1Qr5Yz03jD+A52m6QU
- rrCgeigEAAA==
-X-Change-ID: 20250612-update_unsol_bcast_probe_resp-c88786eb5640
+Message-Id: <20250709-update_unsol_bcast_probe_resp-v1-1-d3323ce9a7b5@oss.qualcomm.com>
+References: <20250709-update_unsol_bcast_probe_resp-v1-0-d3323ce9a7b5@oss.qualcomm.com>
+In-Reply-To: <20250709-update_unsol_bcast_probe_resp-v1-0-d3323ce9a7b5@oss.qualcomm.com>
 To: Johannes Berg <johannes@sipsolutions.net>
 Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
         Yuvarani V <quic_yuvarani@quicinc.com>,
         Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Authority-Analysis: v=2.4 cv=ffSty1QF c=1 sm=1 tr=0 ts=686dd571 cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=oCrXEwr5G_U2PBqafwoA:9
- a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
-X-Proofpoint-ORIG-GUID: B7JQE_tpbUe7tgZ75Vodc1uONh03OAA4
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDAyMyBTYWx0ZWRfX1FoOstG/emUa
- jB4amnQAY6OapVzyOdFJMdTwFoA3cpAv7p8HxnN23vZkFQg+RTJGocV1mKcRoT2NyI9O4F3eNL4
- +W5CXfObHjZ2SajBOtRNMelrsWDpjNhh5VHnmY6Bk22KKZYZhXBejaIvvUd2cmjsAIvAMz0hPMP
- OjJS9H00gOCFI9sv70XKyMeE69yn3k5hU8UQui0M/1gRkpLdlHbEocDIwZNIg81huCbJfBKsfu6
- e8qHDJPftdHsXbNpeYR0UBZ4SCRFQQbqaEk108TU8Q/it53b2LatbKwvZMvzKKt72Bl4DAEF5IN
- sbs2L6VW9cO4kBm/83z5iuZSsQnA7v3e5z8rM4vKtIoq6los8MTRgDKft0FlSgbztR41N2tTqMT
- KBvDQvoS+d+Re6p4LvOB3nnTRS+8ToipnsdVptliGhIw9H9FSLD4NEjEFGoEjM17yvRRxO77
-X-Proofpoint-GUID: B7JQE_tpbUe7tgZ75Vodc1uONh03OAA4
+X-Authority-Analysis: v=2.4 cv=GdQXnRXL c=1 sm=1 tr=0 ts=686dd573 cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=E4CoA09qZ1gvW9aZS_EA:9 a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: rVZI21KQTnHoOcpdwi8mBnoee5zZpPms
+X-Proofpoint-ORIG-GUID: rVZI21KQTnHoOcpdwi8mBnoee5zZpPms
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDAyMyBTYWx0ZWRfX7EwQ3iJFUkKL
+ VM3lC3Yshb2zqnRQm+gp0H+U5CLhdsBo1t9iLBNa3rZ+7D9TmG8Lj/TZsXBfhYBMwBnlEHxmD/3
+ vFbvr3orBTvAOEfr7M2yOZxJP8u5SLT2Jl3sSRX8CyadbEyeulw2s7o9P+8g7F0BbuBJHYogWzY
+ 1OJYPt0c6sMAY3zi6RbcmL0h8DlPJj/v6YZXEpxz2LbnubknKKaGfH5zYLltEsDW7bfbjLkzp4a
+ EvCS7Nn9ETo8X0cd3/RgssTnY7/6sNxkZ8tVRdtS84uGltm2DD/AoYJg+3oxtbteD7icfoThdwx
+ JuZNvU46v6/fZJc2li8Ciu06qWYe0m1sP1p0JdE3YI5EUx4n4moxJNVgbEybKuE9dfyNK1qPfWH
+ VMOuDjgFS0cC5QprYeOyEmKp5Z54mQNUN6mbB46FOUqDMTa+g/uZdaSkxIyFC7uI0auntYb4
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-07-09_01,2025-07-08_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 mlxlogscore=999 mlxscore=0 bulkscore=0 priorityscore=1501
- phishscore=0 clxscore=1015 suspectscore=0 impostorscore=0 lowpriorityscore=0
- spamscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 clxscore=1015
+ spamscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
+ malwarescore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
  definitions=main-2507090023
 
-Currently, during channel switch and color change events, the unsolicited
-probe response templates are not updated accordingly.
+From: Yuvarani V <quic_yuvarani@quicinc.com>
 
-This patch series introduces support for parsing the updated templates from
-these events and setting the appropriate BSS changed flag, enabling drivers
-to respond with the necessary actions.
+At present, the updated unsolicited broadcast probe response template is
+not processed during userspace commands such as channel switch or color
+change. This leads to an issue where older incorrect unsolicited probe
+response is still used during these events.
 
+Add support to parse the netlink attribute and store it so that
+mac80211/drivers can use it to set the BSS_CHANGED_UNSOL_BCAST_PROBE_RESP
+flag in order to send the updated unsolicited broadcast probe response
+templates during these events.
+
+Signed-off-by: Yuvarani V <quic_yuvarani@quicinc.com>
+Signed-off-by: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
 ---
-Yuvarani V (2):
-      wifi: cfg80211: parse attribute to update unsolicited probe response template
-      wifi: mac80211: parse unsolicited broadcast probe response data
-
  include/net/cfg80211.h |  4 ++++
- net/mac80211/cfg.c     | 12 ++++++++++++
  net/wireless/nl80211.c | 17 +++++++++++++++++
- 3 files changed, 33 insertions(+)
----
-base-commit: cc2b722132893164bcb3cee4f08ed056e126eb6c
-change-id: 20250612-update_unsol_bcast_probe_resp-c88786eb5640
+ 2 files changed, 21 insertions(+)
+
+diff --git a/include/net/cfg80211.h b/include/net/cfg80211.h
+index 4a092da3a9de80df62e9c0e8792377a7bf65c739..0b903b4aaf877465c163fbf7ce9552ec9a430129 100644
+--- a/include/net/cfg80211.h
++++ b/include/net/cfg80211.h
+@@ -1526,6 +1526,7 @@ struct cfg80211_ap_update {
+  * @n_counter_offsets_beacon: number of csa counters the beacon (tail)
+  * @n_counter_offsets_presp: number of csa counters in the probe response
+  * @beacon_after: beacon data to be used on the new channel
++ * @unsol_bcast_probe_resp: Unsolicited broadcast probe response parameters
+  * @radar_required: whether radar detection is required on the new channel
+  * @block_tx: whether transmissions should be blocked while changing
+  * @count: number of beacons until switch
+@@ -1540,6 +1541,7 @@ struct cfg80211_csa_settings {
+ 	unsigned int n_counter_offsets_beacon;
+ 	unsigned int n_counter_offsets_presp;
+ 	struct cfg80211_beacon_data beacon_after;
++	struct cfg80211_unsol_bcast_probe_resp unsol_bcast_probe_resp;
+ 	bool radar_required;
+ 	bool block_tx;
+ 	u8 count;
+@@ -1555,6 +1557,7 @@ struct cfg80211_csa_settings {
+  * @counter_offset_beacon: offsets of the counters within the beacon (tail)
+  * @counter_offset_presp: offsets of the counters within the probe response
+  * @beacon_next: beacon data to be used after the color change
++ * @unsol_bcast_probe_resp: Unsolicited broadcast probe response parameters
+  * @count: number of beacons until the color change
+  * @color: the color used after the change
+  * @link_id: defines the link on which color change is expected during MLO.
+@@ -1565,6 +1568,7 @@ struct cfg80211_color_change_settings {
+ 	u16 counter_offset_beacon;
+ 	u16 counter_offset_presp;
+ 	struct cfg80211_beacon_data beacon_next;
++	struct cfg80211_unsol_bcast_probe_resp unsol_bcast_probe_resp;
+ 	u8 count;
+ 	u8 color;
+ 	u8 link_id;
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index 70ca74a75f228d27057d0fdf4b13bd2fba3f2536..6cb3c173343301835176206976ec2ff798ff1105 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -10988,6 +10988,15 @@ static int nl80211_channel_switch(struct sk_buff *skb, struct genl_info *info)
+ 	if (info->attrs[NL80211_ATTR_CH_SWITCH_BLOCK_TX])
+ 		params.block_tx = true;
+ 
++	if (wdev->iftype == NL80211_IFTYPE_AP &&
++	    info->attrs[NL80211_ATTR_UNSOL_BCAST_PROBE_RESP]) {
++		err = nl80211_parse_unsol_bcast_probe_resp(
++			rdev, info->attrs[NL80211_ATTR_UNSOL_BCAST_PROBE_RESP],
++			&params.unsol_bcast_probe_resp);
++		if (err)
++			goto free;
++	}
++
+ 	params.link_id = link_id;
+ 	err = rdev_channel_switch(rdev, dev, &params);
+ 
+@@ -16790,6 +16799,14 @@ static int nl80211_color_change(struct sk_buff *skb, struct genl_info *info)
+ 		params.counter_offset_presp = offset;
+ 	}
+ 
++	if (info->attrs[NL80211_ATTR_UNSOL_BCAST_PROBE_RESP]) {
++		err = nl80211_parse_unsol_bcast_probe_resp(
++			rdev, info->attrs[NL80211_ATTR_UNSOL_BCAST_PROBE_RESP],
++			&params.unsol_bcast_probe_resp);
++		if (err)
++			goto out;
++	}
++
+ 	params.link_id = nl80211_link_id(info->attrs);
+ 	err = rdev_color_change(rdev, dev, &params);
+ 
+
+-- 
+2.34.1
 
 
