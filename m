@@ -1,202 +1,78 @@
-Return-Path: <linux-kernel+bounces-723550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FE6AFE866
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:55:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D39F8AFE858
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ADD7546B7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:54:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B78151C48363
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A902E175E;
-	Wed,  9 Jul 2025 11:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64412DA743;
+	Wed,  9 Jul 2025 11:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EvGQiVMN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JRMeoXt0"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37C52E11B6;
-	Wed,  9 Jul 2025 11:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1702D9EF4
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 11:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752062033; cv=none; b=DoEdhNlsc6vS6WeZ+JaIz/J7T9GnFrDD1eSUdSx5ovgbz0Vl024g+fQEzyA9keyar2DAH/9HnMAlojCvJ1kKYTrK3VG6Dvs/8GS4GAR4lUQhm8Tp/Z3a2FSNvOMLUZV+Vx9pRzwOyiO7yReWxTiBVw/BuYbNBCJqnHmfplDTVfQ=
+	t=1752062011; cv=none; b=sDVl3VKI8Q6tOLBpWecl5aza6IMKpigQUPqczb+kLZDP841SMUQ34lEYKSVzEehkoyrPsAPwmm7wR0BKp6oZwEQ9Pf4tZds7Ddz89fJtG7P0JYmRSDoscYD47ZcdOygomrR6s/SN8w7xncrCW55XfUQ114q5eJP+0aKzwO6v1tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752062033; c=relaxed/simple;
-	bh=jwQeQF43fuuFdeU+odOP0p6i6/kacIOeRK9joESZCeg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ChIVQa0PlMm8FX2MEW7eZZk3G+V0seUsmmyT+tk8x3LDyKVR6YOTA0OQY7aXjIgX0GtTenovfQGvgIOR7CDuEjzflpzO+tmOMdUz/VCGWCkBYnTzSukYSShG1c4KcX0lYs5AL+tVB2mLgQPJ601GIZkI8CFDJYhQI/43lAAus0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EvGQiVMN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72262C4CEF4;
-	Wed,  9 Jul 2025 11:53:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752062033;
-	bh=jwQeQF43fuuFdeU+odOP0p6i6/kacIOeRK9joESZCeg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EvGQiVMN8p5LGtSsPCloupb/qx9E6+SH7L0wcNxwuawdlWf3Hm46+of8DVTDB66UB
-	 kbjNzc9+wocjSiKGGT0ayFoZZEAZaiTZjXbXHGsG/G9neFX/2UsU/bh34wnBb14xX/
-	 CvZ15mUx4sOy2UbzEfvTT6BeNH5UYSZpOpm42eQaE1mSKm0uUKeCt51fkQ3y33EKoG
-	 ES37guYQBzUOXe6JFpBrnl8i02P5/92fNcXewMTmg5Ikjs8o6VxCXweMlYxyZ1Qf4Q
-	 jD/gv6HzLABKr8POaH0Ig8/izqDUMrjufRpqndGH7f5ICiyO7y6Izt9Tx43/rh4a2M
-	 KjZEofwBWQSig==
-From: Philipp Stanner <phasta@kernel.org>
-To: Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
-	Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-Cc: dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org
-Subject: [PATCH v3 7/7] drm/nouveau: Remove waitque for sched teardown
-Date: Wed,  9 Jul 2025 13:52:57 +0200
-Message-ID: <20250709115257.106370-9-phasta@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250709115257.106370-2-phasta@kernel.org>
-References: <20250709115257.106370-2-phasta@kernel.org>
+	s=arc-20240116; t=1752062011; c=relaxed/simple;
+	bh=iVyKalBrykbQzOyHrVdkLQGw3P47ZSLrUWm1tdumHC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IiaOqmfKS3DSCQz7zUp/VvELhce0uJ37MBepB1rCD7M3t6l6U6hEoZPA1lG9SoG34/lOND7QrzJrrHtplGhU+Mla87+5pszq1gJBEStAoKCe9yQ5rmdcHLEhtt1LMgQibODkcZi1eFUmDCOM3y+n2ub93dr4EtQcTEOjzBwY91I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JRMeoXt0; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=iVyKalBrykbQzOyHrVdkLQGw3P47ZSLrUWm1tdumHC4=; b=JRMeoXt0wH2Lpwpr5tp7v9eLDc
+	z+eOt68MS3S+fbCTe/+b8pfMqtGoAYw5ihlWNHn61aQs8r1vob8T/4Ek8vJNhJ+KtbvmScNiQsoIU
+	GmBjL30ID5/dyVoiUjEUllB7n5q+x4yTN18AndTxZdUhB/VRtpyKTod+UbpZVrq4wDEOOJfWzFMpx
+	G+P+IKaW5/D+GGvamlWjPmmmp2DsLAVwLHIEvAAKjjaeEjK+SzorfYnemJcyF0p3AeyAcsn7EVXm8
+	Tn1fh5qBcWaJRVd/nn2kPOR93rP9teKF/0tfQtf03vgpG6m2OLyh+Dk0AhY0PkzDxEhYzzBGlVFDv
+	I2bDeJYA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uZTMU-00000003n6p-3JkX;
+	Wed, 09 Jul 2025 11:53:18 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8E54230029B; Wed, 09 Jul 2025 13:53:17 +0200 (CEST)
+Date: Wed, 9 Jul 2025 13:53:17 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Zicheng Qu <quzicheng@huawei.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	tanghui20@huawei.com, zhangqiao22@huawei.com,
+	judy.chenhui@huawei.com
+Subject: Re: [PATCH] sched/fair: Fix overflow in vruntime_eligible() causing
+ NULL return
+Message-ID: <20250709115317.GK1613200@noisy.programming.kicks-ass.net>
+References: <20250709093829.3213647-1-quzicheng@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709093829.3213647-1-quzicheng@huawei.com>
 
-struct nouveau_sched contains a waitque needed to prevent
-drm_sched_fini() from being called while there are still jobs pending.
-Doing so so far would have caused memory leaks.
+On Wed, Jul 09, 2025 at 09:38:29AM +0000, Zicheng Qu wrote:
 
-With the new memleak-free mode of operation switched on in
-drm_sched_fini() by providing the callback nouveau_sched_cancel_job()
-the waitque is not necessary anymore.
+> The best approach should be to dig deep into why overflow occurs, which
+> attributes lead to the overflow, whether it is normal, and how to avoid
+> it.
 
-Remove the waitque.
-
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
-Acked-by: Danilo Krummrich <dakr@kernel.org>
----
- drivers/gpu/drm/nouveau/nouveau_sched.c | 20 +++++++-------------
- drivers/gpu/drm/nouveau/nouveau_sched.h |  9 +++------
- drivers/gpu/drm/nouveau/nouveau_uvmm.c  |  8 ++++----
- 3 files changed, 14 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/drm/nouveau/nouveau_sched.c
-index 2ec62059c351..7d9c3418e76b 100644
---- a/drivers/gpu/drm/nouveau/nouveau_sched.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
-@@ -122,11 +122,9 @@ nouveau_job_done(struct nouveau_job *job)
- {
- 	struct nouveau_sched *sched = job->sched;
- 
--	spin_lock(&sched->job.list.lock);
-+	spin_lock(&sched->job_list.lock);
- 	list_del(&job->entry);
--	spin_unlock(&sched->job.list.lock);
--
--	wake_up(&sched->job.wq);
-+	spin_unlock(&sched->job_list.lock);
- }
- 
- void
-@@ -307,9 +305,9 @@ nouveau_job_submit(struct nouveau_job *job)
- 	}
- 
- 	/* Submit was successful; add the job to the schedulers job list. */
--	spin_lock(&sched->job.list.lock);
--	list_add(&job->entry, &sched->job.list.head);
--	spin_unlock(&sched->job.list.lock);
-+	spin_lock(&sched->job_list.lock);
-+	list_add(&job->entry, &sched->job_list.head);
-+	spin_unlock(&sched->job_list.lock);
- 
- 	drm_sched_job_arm(&job->base);
- 	job->done_fence = dma_fence_get(&job->base.s_fence->finished);
-@@ -460,9 +458,8 @@ nouveau_sched_init(struct nouveau_sched *sched, struct nouveau_drm *drm,
- 		goto fail_sched;
- 
- 	mutex_init(&sched->mutex);
--	spin_lock_init(&sched->job.list.lock);
--	INIT_LIST_HEAD(&sched->job.list.head);
--	init_waitqueue_head(&sched->job.wq);
-+	spin_lock_init(&sched->job_list.lock);
-+	INIT_LIST_HEAD(&sched->job_list.head);
- 
- 	return 0;
- 
-@@ -502,9 +499,6 @@ nouveau_sched_fini(struct nouveau_sched *sched)
- 	struct drm_gpu_scheduler *drm_sched = &sched->base;
- 	struct drm_sched_entity *entity = &sched->entity;
- 
--	rmb(); /* for list_empty to work without lock */
--	wait_event(sched->job.wq, list_empty(&sched->job.list.head));
--
- 	drm_sched_entity_fini(entity);
- 	drm_sched_fini(drm_sched);
- 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.h b/drivers/gpu/drm/nouveau/nouveau_sched.h
-index 20cd1da8db73..b98c3f0bef30 100644
---- a/drivers/gpu/drm/nouveau/nouveau_sched.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_sched.h
-@@ -103,12 +103,9 @@ struct nouveau_sched {
- 	struct mutex mutex;
- 
- 	struct {
--		struct {
--			struct list_head head;
--			spinlock_t lock;
--		} list;
--		struct wait_queue_head wq;
--	} job;
-+		struct list_head head;
-+		spinlock_t lock;
-+	} job_list;
- };
- 
- int nouveau_sched_create(struct nouveau_sched **psched, struct nouveau_drm *drm,
-diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-index 48f105239f42..ddfc46bc1b3e 100644
---- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-@@ -1019,8 +1019,8 @@ bind_validate_map_sparse(struct nouveau_job *job, u64 addr, u64 range)
- 	u64 end = addr + range;
- 
- again:
--	spin_lock(&sched->job.list.lock);
--	list_for_each_entry(__job, &sched->job.list.head, entry) {
-+	spin_lock(&sched->job_list.lock);
-+	list_for_each_entry(__job, &sched->job_list.head, entry) {
- 		struct nouveau_uvmm_bind_job *bind_job = to_uvmm_bind_job(__job);
- 
- 		list_for_each_op(op, &bind_job->ops) {
-@@ -1030,7 +1030,7 @@ bind_validate_map_sparse(struct nouveau_job *job, u64 addr, u64 range)
- 
- 				if (!(end <= op_addr || addr >= op_end)) {
- 					nouveau_uvmm_bind_job_get(bind_job);
--					spin_unlock(&sched->job.list.lock);
-+					spin_unlock(&sched->job_list.lock);
- 					wait_for_completion(&bind_job->complete);
- 					nouveau_uvmm_bind_job_put(bind_job);
- 					goto again;
-@@ -1038,7 +1038,7 @@ bind_validate_map_sparse(struct nouveau_job *job, u64 addr, u64 range)
- 			}
- 		}
- 	}
--	spin_unlock(&sched->job.list.lock);
-+	spin_unlock(&sched->job_list.lock);
- }
- 
- static int
--- 
-2.49.0
-
+What kernel version are you seeing this on?
 
