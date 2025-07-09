@@ -1,178 +1,305 @@
-Return-Path: <linux-kernel+bounces-724171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99225AFEF63
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:07:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97E7CAFEF55
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CED31C40EBB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:07:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA244E5214
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40F82367C5;
-	Wed,  9 Jul 2025 17:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3ED52236F2;
+	Wed,  9 Jul 2025 17:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rWjvuRPZ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RpZHdvif"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OnHnN4j+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CED2235056
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 17:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B6220B7FE;
+	Wed,  9 Jul 2025 17:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752080781; cv=none; b=gvKJgSX4iWKfbzanQH+8SkTT2UdoZnu1FRZDArmYfBA1e8OuSxckDjvW94GPJWmQE1wGP+sbAgd3Q++SPhyMrBHlFY0ButUrresR/ADRPZXTd7OcZlDtxam42Mj5lyoWvrwE0n/CEDmA9jjzfMJJMGQZZZJC1ecICnG5BAnu0TA=
+	t=1752080712; cv=none; b=C1WVro7WHNAEUg1at7VVtnfIZmI3IvJ5892noUYcw7TMWmtdUAal5PMDGGu5zEGXQBf/+c8jXD9htIwKYfe43MGk/P0BCtQ1FsE2LMNu0sTGx4+ruSET6rWMd3meL1rKlueNnPBckbxp3kqm86P8ujR4Rt1GU0jaIiG3EUafGgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752080781; c=relaxed/simple;
-	bh=boRgXFhKddB07Ao/wmCchsRdbdJXJsaKKBS8cjumbkE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TtMaou69VDpk1FshsV71S3FuUKeeO4CaZlFUHkIor8YtZ0lZSI41almS7C0dZZBZ8pfDlMDyaIkgt//e6dO7pFModTXzZ8DvoQ04cR2ir9s5PxVZ7FdpvUrXx82slcUlJz6Ocr+r4R+6txRiD4q3l75X7l6ye/CEcq0Ri4vED/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rWjvuRPZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RpZHdvif; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752080778;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5OwVg3uk2MbXbIzloOALjinnMmaKuXJuiDJZknzR0Gg=;
-	b=rWjvuRPZ6UQ/B2QNFU9SSkgW9uRvXkAPdmRduiRvpUuOgXusdgnAYXpbUy24xL6upZYw6P
-	VFae9q13bmrpdzLJXG7hpJdLOoVbZfK+/h38QRhZFAjxMBTWY64Fqhzs0wxSDXAnlb/9aP
-	YfsD/JB7Ag7Ly4VMouh6PF7C/mFXPk6r3VevQrKHzIVU0JD89cbun379lS203Nvszzo+gN
-	gonS92s8KAQJwajF7C2hiEFu4KeAuqYXpOjdIZVT+lmscwJ0AGyw1mur9T6gBd3bR08VhN
-	RDIPE40kKt8xlLYIrL2r8he877YZXiyeP6mdoBupCwMWNnMMX9ZUQoTtXlTIgA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752080778;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5OwVg3uk2MbXbIzloOALjinnMmaKuXJuiDJZknzR0Gg=;
-	b=RpZHdvifupwHFp2UH9RHpC8LlxbdpPZjxahon9/pMDBWK7q9Ahx1MbK15PXoxk9p2Utdue
-	OOaRcid2opmKABAA==
-To: Borislav Petkov <bp@alien8.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	x86@kernel.org,
-	x86-cpuid@lists.linux.dev,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v1 7/7] x86/cpuid: Rename cpuid_leaf()/cpuid_subleaf() APIs
-Date: Wed,  9 Jul 2025 19:04:53 +0200
-Message-ID: <20250709170454.74854-8-darwi@linutronix.de>
-In-Reply-To: <20250709170454.74854-1-darwi@linutronix.de>
-References: <20250709170454.74854-1-darwi@linutronix.de>
+	s=arc-20240116; t=1752080712; c=relaxed/simple;
+	bh=McnLOlcWCG5BO2jKA1/qEpq1icS9OiqcRxhXegryC/8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=glsKfVaHqqFKEdvSKTgr7ZOOlSWtXtwDCUAYs67HLC7ug0u32O9iZ8Rb4zTKFqIa5PBmDffemsCCiHDhJOy6uidDMPV75K5tDk7Ys0Ndb2kW3Lt4TAEnbPENiC805hPh5O2U5n3D8SiOEtI+NUXbQSiDafp+NW/+oin49ImeqgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OnHnN4j+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 743EBC4CEEF;
+	Wed,  9 Jul 2025 17:05:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752080711;
+	bh=McnLOlcWCG5BO2jKA1/qEpq1icS9OiqcRxhXegryC/8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=OnHnN4j+AhbiHjBr5rs4CwJrBosZNWH2CZGfGMm+pPPDqINNpZhqpL2B2q6Q0IalF
+	 Pd2g/EaQkaci8Hqb0hdRXrLU5vNVcgcOpj2xSFrf2APU5u3G3okNgiBvJOVnryb3hp
+	 HaLQQ3y50EV8zH//02z9+TUt9tvXLXvCXRj9eM6cOv0vctKOCPcFxzdN9oUQeYl/HB
+	 THfg3Zvxu4vPTN2o1EEWLuDtp+J6Q66PxotSyT/WYxBInPyLOlEo5wb84jHDpQGH61
+	 jOVQDj8njJt7qAaT6GA85V3em/I513Zb0eM9Hp7PuRscEo6DY1fM4qHswwRZXDnnoK
+	 G9yAFFMaDQuvw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,  "Alexander Viro"
+ <viro@zeniv.linux.org.uk>,  "Arnd Bergmann" <arnd@arndb.de>,  "Miguel
+ Ojeda" <ojeda@kernel.org>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary
+ Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+  "Trevor Gross" <tmgross@umich.edu>,  "Danilo Krummrich"
+ <dakr@kernel.org>,  "Matthew Maurer" <mmaurer@google.com>,  "Lee Jones"
+ <lee@kernel.org>,  <linux-kernel@vger.kernel.org>,
+  <rust-for-linux@vger.kernel.org>,  "Benno Lossin" <lossin@kernel.org>
+Subject: Re: [PATCH v2 1/4] rust: iov: add iov_iter abstractions for
+ ITER_SOURCE
+In-Reply-To: <aG5iLiUJg_cHtB8r@google.com> (Alice Ryhl's message of "Wed, 09
+	Jul 2025 12:35:58 +0000")
+References: <20250704-iov-iter-v2-0-e69aa7c1f40e@google.com>
+	<U16UjMBBh1b7dLeO-Nhqw__nw_JwypctB1ze_G44BtsX0l_eVK6Sp-efbobmnuF44J0wQNgnK7b8nCmBX0KS_Q==@protonmail.internalid>
+	<20250704-iov-iter-v2-1-e69aa7c1f40e@google.com>
+ <878qkyoi6d.fsf@kernel.org>
+	<0Y9Bjahrc6dbxzIFtBKXUxv-jQtuvM2UWShaaSUsjKBuC1KKeGIpBFTC4a89oNrOLBP66SXtC7kQx1gtt04CMg==@protonmail.internalid>
+	<aG5NdqmUdvUHqUju@google.com> <87ecuplgqy.fsf@kernel.org>
+	<q7QRbcFgb5yhmBOt4eLkkzqyckspc2L2g3e0pXhJxm0yBVeG2Hifi4O77gaxwpWss1Z_CUjSy1P22ppxcxo8jw==@protonmail.internalid>
+	<aG5iLiUJg_cHtB8r@google.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Wed, 09 Jul 2025 19:05:01 +0200
+Message-ID: <87ikk1jnwi.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-A new CPUID model will be added where its APIs will be designated as the
-"official" CPUID API.  Free the cpuid_leaf() and cpuid_subleaf() function
-names for that model.  Rename them accordingly to cpuid_read() and
-cpuid_read_subleaf().
+"Alice Ryhl" <aliceryhl@google.com> writes:
 
-Note, for kernel/cpuid.c, rename its local file operations read function
-from cpuid_read() to cpuid_read_f() so that it does not conflict with the
-new names.
+> On Wed, Jul 09, 2025 at 01:56:37PM +0200, Andreas Hindborg wrote:
+>> "Alice Ryhl" <aliceryhl@google.com> writes:
+>>
+>> > On Tue, Jul 08, 2025 at 04:45:14PM +0200, Andreas Hindborg wrote:
+>> >> "Alice Ryhl" <aliceryhl@google.com> writes:
+>> >> > +/// # Invariants
+>> >> > +///
+>> >> > +/// Must hold a valid `struct iov_iter` with `data_source` set to `ITER_SOURCE`. For the duration
+>> >> > +/// of `'data`, it must be safe to read the data in this IO vector.
+>> >>
+>> >> In my opinion, the phrasing you had in v1 was better:
+>> >>
+>> >>   The buffers referenced by the IO vector must be valid for reading for
+>> >>   the duration of `'data`.
+>> >>
+>> >> That is, I would prefer "must be valid for reading" over "it must be
+>> >> safe to read ...".
+>> >
+>> > If it's backed by userspace data, then technically there aren't any
+>> > buffers that are valid for reading in the usual sense. We need to call
+>> > into special assembly to read it, and a normal pointer dereference would
+>> > be illegal.
+>>
+>> If you go with "safe to read" for this reason, I think you should expand
+>> the statement along the lines you used here.
+>>
+>> What is the special assembly that is used to read this data? From a
+>> quick scan it looks like that if `CONFIG_UACCESS_MEMCPY` is enabled, a
+>> regular `memcpy` call is used.
+>
+> When reading from userspace, you're given an arbitrary untrusted address
+> that could point anywhere. The memory could be swapped out and need to
+> be loaded back from disk. The memory could correspond to an mmap region
+> for a file on a NFS mount and reading it could involve a network call.
+> The address could be dangling, which must be properly handled and turned
+> into an EFAULT error instead of UB. Every architecture has its own asm
+> for handling all of this safely so that behavior is safe no matter what
+> pointer we are given from userspace.
 
-No functional change.
+I don't think that is relevant. My point is, you can't reference
+"special assemby" without detailing what that means.
 
-Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
----
- arch/x86/include/asm/cpuid/api.h   | 6 +++---
- arch/x86/kernel/cpu/topology_amd.c | 2 +-
- arch/x86/kernel/cpu/topology_ext.c | 2 +-
- arch/x86/kernel/cpuid.c            | 5 ++---
- 4 files changed, 7 insertions(+), 8 deletions(-)
+You have a safety requirement in `from_raw`:
 
-diff --git a/arch/x86/include/asm/cpuid/api.h b/arch/x86/include/asm/cpuid/api.h
-index 44fa82e1267c..2b9750cc8a75 100644
---- a/arch/x86/include/asm/cpuid/api.h
-+++ b/arch/x86/include/asm/cpuid/api.h
-@@ -131,12 +131,12 @@ static inline void __cpuid_read(u32 leaf, u32 subleaf, u32 *regs)
- 	__cpuid(regs + CPUID_EAX, regs + CPUID_EBX, regs + CPUID_ECX, regs + CPUID_EDX);
- }
- 
--#define cpuid_subleaf(leaf, subleaf, regs) {		\
-+#define cpuid_read_subleaf(leaf, subleaf, regs) {	\
- 	static_assert(sizeof(*(regs)) == 16);		\
- 	__cpuid_read(leaf, subleaf, (u32 *)(regs));	\
- }
- 
--#define cpuid_leaf(leaf, regs) {			\
-+#define cpuid_read(leaf, regs) {			\
- 	static_assert(sizeof(*(regs)) == 16);		\
- 	__cpuid_read(leaf, 0, (u32 *)(regs));		\
- }
-@@ -228,7 +228,7 @@ static inline u32 cpuid_base_hypervisor(const char *sig, u32 leaves)
-  */
- static inline void cpuid_leaf_0x2(union leaf_0x2_regs *regs)
- {
--	cpuid_leaf(0x2, regs);
-+	cpuid_read(0x2, regs);
- 
- 	/*
- 	 * All Intel CPUs must report an iteration count of 1.	In case
-diff --git a/arch/x86/kernel/cpu/topology_amd.c b/arch/x86/kernel/cpu/topology_amd.c
-index abc6f5a7a486..c6bedae12a7e 100644
---- a/arch/x86/kernel/cpu/topology_amd.c
-+++ b/arch/x86/kernel/cpu/topology_amd.c
-@@ -80,7 +80,7 @@ static bool parse_8000_001e(struct topo_scan *tscan, bool has_topoext)
- 	if (!boot_cpu_has(X86_FEATURE_TOPOEXT))
- 		return false;
- 
--	cpuid_leaf(0x8000001e, &leaf);
-+	cpuid_read(0x8000001e, &leaf);
- 
- 	tscan->c->topo.initial_apicid = leaf.ext_apic_id;
- 
-diff --git a/arch/x86/kernel/cpu/topology_ext.c b/arch/x86/kernel/cpu/topology_ext.c
-index eb915c73895f..60dfaa02ffd0 100644
---- a/arch/x86/kernel/cpu/topology_ext.c
-+++ b/arch/x86/kernel/cpu/topology_ext.c
-@@ -71,7 +71,7 @@ static inline bool topo_subleaf(struct topo_scan *tscan, u32 leaf, u32 subleaf,
- 	default: return false;
- 	}
- 
--	cpuid_subleaf(leaf, subleaf, &sl);
-+	cpuid_read_subleaf(leaf, subleaf, &sl);
- 
- 	if (!sl.num_processors || sl.type == INVALID_TYPE)
- 		return false;
-diff --git a/arch/x86/kernel/cpuid.c b/arch/x86/kernel/cpuid.c
-index cbd04b677fd1..b55fe9c7359a 100644
---- a/arch/x86/kernel/cpuid.c
-+++ b/arch/x86/kernel/cpuid.c
-@@ -59,8 +59,7 @@ static void cpuid_smp_cpuid(void *cmd_block)
- 	complete(&cmd->done);
- }
- 
--static ssize_t cpuid_read(struct file *file, char __user *buf,
--			  size_t count, loff_t *ppos)
-+static ssize_t cpuid_read_f(struct file *file, char __user *buf, size_t count, loff_t *ppos)
- {
- 	char __user *tmp = buf;
- 	struct cpuid_regs_done cmd;
-@@ -120,7 +119,7 @@ static int cpuid_open(struct inode *inode, struct file *file)
- static const struct file_operations cpuid_fops = {
- 	.owner = THIS_MODULE,
- 	.llseek = no_seek_end_llseek,
--	.read = cpuid_read,
-+	.read = cpuid_read_f,
- 	.open = cpuid_open,
- };
- 
--- 
-2.49.0
+    /// * For the duration of `'data`, the buffers backing this IO vector must be valid for
+    ///   reading.
+
+This should probably be promoted to invariant for the type, since
+`from_raw` is the only way to construct the type?
+
+But are you saying that the referenced buffers need not be mapped and
+readable while this type exists? The mapping happens as part of
+`bindings::_copy_to_iter`?
+
+> As for CONFIG_UACCESS_MEMCPY, I don't think it is used on any real
+> system today. It would require you to be on a NOMMU system where the
+> userspace and the kernel are in the same address space.
+
+Ah. I was just browsing for the "special assembly", and that was all I
+could find.
+
+>
+>> >> > +    /// Returns the number of bytes available in this IO vector.
+>> >> > +    ///
+>> >> > +    /// Note that this may overestimate the number of bytes. For example, reading from userspace
+>> >> > +    /// memory could fail with `EFAULT`, which will be treated as the end of the IO vector.
+>> >> > +    #[inline]
+>> >> > +    pub fn len(&self) -> usize {
+>> >> > +        // SAFETY: It is safe to access the `count` field.
+>> >>
+>> >> Reiterating my comment from v1: Why?
+>> >
+>> > It's the same reason as why this is safe:
+>> >
+>> > struct HasLength {
+>> >     length: usize,
+>> > }
+>> > impl HasLength {
+>> >     fn len(&self) -> usize {
+>> >         // why is this safe?
+>> >         self.length
+>> >     }
+>> > }
+>> >
+>> > I'm not sure how to say it concisely. I guess it's because all access to
+>> > the iov_iter goes through the &IovIterSource.
+>>
+>> So "By existence of a shared reference to `self`, `count` is valid for read."?
+>>
+>> >
+>> >> > +        unsafe {
+>> >> > +            (*self.iov.get())
+>> >> > +                .__bindgen_anon_1
+>> >> > +                .__bindgen_anon_1
+>> >> > +                .as_ref()
+>> >> > +                .count
+>> >> > +        }
+>> >> > +    }
+>> >> > +
+>> >> > +    /// Returns whether there are any bytes left in this IO vector.
+>> >> > +    ///
+>> >> > +    /// This may return `true` even if there are no more bytes available. For example, reading from
+>> >> > +    /// userspace memory could fail with `EFAULT`, which will be treated as the end of the IO vector.
+>> >> > +    #[inline]
+>> >> > +    pub fn is_empty(&self) -> bool {
+>> >> > +        self.len() == 0
+>> >> > +    }
+>> >> > +
+>> >> > +    /// Advance this IO vector by `bytes` bytes.
+>> >> > +    ///
+>> >> > +    /// If `bytes` is larger than the size of this IO vector, it is advanced to the end.
+>> >> > +    #[inline]
+>> >> > +    pub fn advance(&mut self, bytes: usize) {
+>> >> > +        // SAFETY: `self.iov` is a valid IO vector.
+>> >> > +        unsafe { bindings::iov_iter_advance(self.as_raw(), bytes) };
+>> >> > +    }
+>> >> > +
+>> >> > +    /// Advance this IO vector backwards by `bytes` bytes.
+>> >> > +    ///
+>> >> > +    /// # Safety
+>> >> > +    ///
+>> >> > +    /// The IO vector must not be reverted to before its beginning.
+>> >> > +    #[inline]
+>> >> > +    pub unsafe fn revert(&mut self, bytes: usize) {
+>> >> > +        // SAFETY: `self.iov` is a valid IO vector, and `bytes` is in bounds.
+>> >> > +        unsafe { bindings::iov_iter_revert(self.as_raw(), bytes) };
+>> >> > +    }
+>> >> > +
+>> >> > +    /// Read data from this IO vector.
+>> >> > +    ///
+>> >> > +    /// Returns the number of bytes that have been copied.
+>> >> > +    #[inline]
+>> >> > +    pub fn copy_from_iter(&mut self, out: &mut [u8]) -> usize {
+>> >> > +        // SAFETY: We will not write uninitialized bytes to `out`.
+>> >>
+>> >> Can you provide something to back this claim?
+>> >
+>> > I guess the logic could go along these lines:
+>> >
+>> > * If the iov_iter reads from userspace, then it's because we always
+>> >   consider such reads to produce initialized data.
+>>
+>> I don't think it is enough to just state that we consider the reads to
+>> produce initialized data.
+>
+> See above re userspace.
+
+You actually have the safety requirement I was looking for in
+`from_raw`:
+
+
+    /// * For the duration of `'data`, the buffers backing this IO vector must be valid for
+    ///   reading.
+
+But I am wondering whether this needs to align with the invariant, and
+not the other way around?
+
+>
+>> > * If the iov_iter reads from a kernel buffer, then the creator of the
+>> >   iov_iter must provide an initialized buffer.
+>> >
+>> > Ultimately, if we don't know that the bytes are initialized, then it's
+>> > impossible to use the API correctly because you can never inspect the
+>> > bytes in any way. I.e., any implementation of copy_from_iter that
+>> > produces uninit data is necessarily buggy.
+>>
+>> I would agree. How do we fix that? You are more knowledgeable than me in
+>> this field, so you probably have a better shot than me, at finding a
+>> solution.
+>
+> I think there is nothing to fix. If there exists a callsite on the C
+> side that creates an iov_iter that reads from an uninitialized kernel
+> buffer, then we can fix that specific call-site. I don't think anything
+> else needs to be done.
+
+If soundness of this code hinges on specific call site behavior, this
+should be a safety requirement.
+
+>
+>> As far as I can tell, we need to read from a place unknown to the rust
+>> abstract machine, and we need to be able to have the abstract machine
+>> consider the data initialized after the read.
+>>
+>> Is this volatile memcpy [1], or would that only solve the data race
+>> problem, not uninitialized data problem?
+>>
+>> [1] https://lore.kernel.org/all/25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de
+>
+> Volatile memcpy deals with data races.
+>
+> In general, we can argue all we want about wording of these safety
+> comments, but calling copy_from_iter is the right way to read from an
+> iov_iter. If there is a problem, the problem is specific call-sites that
+> construct an iov_iter with an uninit buffer. I don't know whether such
+> call-sites exist.
+
+I am not saying it is the wrong way. I am asking that we detail in the
+safety requirements _why_ it is the right way.
+
+You have a type invariant
+
+  For the duration of `'data`, it must be safe to read the data in this IO vector.
+
+that says "safe to read" instead of "valid for read" because "special
+assembly" is used to read the data, and that somehow makes it OK. We
+should be more specific.
+
+How about making the invariant:
+
+  For the duration of `'data`, it must be safe to read the data in this
+  IO vector with the C API `_copy_from_iter`.
+
+And then your safety comment regarding uninit bytes can be:
+
+  We write `out` with `copy_from_iter_raw`, which transitively writes
+  `out` using `_copy_from_iter`. By C API contract, `_copy_from_iter`
+  does not write uninitialized bytes to `out`.
+
+In this way we can defer to the implementation of `_copy_from_user`,
+which is what I think you want?
+
+
+Best regards,
+Andreas Hindborg
+
 
 
