@@ -1,143 +1,253 @@
-Return-Path: <linux-kernel+bounces-723569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F512AFE894
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:08:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E72FAFE898
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:09:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F32994861DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:07:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E68DC7A8FF6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C192D8380;
-	Wed,  9 Jul 2025 12:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C08C2D9796;
+	Wed,  9 Jul 2025 12:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cAxMDMb+"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AYy9mZxI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A77D1C1F13;
-	Wed,  9 Jul 2025 12:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2912D7816
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 12:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752062892; cv=none; b=AbqKM5fHhM4iCO4Pmy4fxVEFI+gsQ0lNDrI1tiebj7GzaOjGqh8ruOdYhDmgqGeBwvlgFBGrGK5WIIOByncT8qpb+BU+X5FvAmLJDOWFO7gQZn4VUChRzhRUvu/lG/LhSGw9X9CRVidiFnIWQuJ7grQQDFAH4utCcwg9pv6NHaU=
+	t=1752062924; cv=none; b=ji6cwsnoyhZ/hnLf6UVGY0MV9HZ2HjGUnv4VqGFJVWywYTKE+oaar/bRXGP5bKhjALWApxSxVpRjlmyaqsckYSsO5utqLFN9Yj9cM9IpiyFWe24j9RAMnUv7lK8an3p7OMfiJE6NFO8j+w2eOgYLw62rYmBwePknTtPMHvfuWSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752062892; c=relaxed/simple;
-	bh=0TGwVBbfI4sy043o3QJVws4UO8A5MpgEz50iBrBsWKM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MUh/5zAzIprN1as7SYEL2SB7bSSpo0AFmHwIhoLZJqn6CQwB+8PHTDdvx/AC2p+lLlm44xmRM1DFuK9Kixrm1fyS5oNmuVGjTOL14zUaggP333ZsunwzdDZwAxWX05eQPw/KRSECRnNa++O2CWJWcJkka2BgAMIIxsRq3Vox7+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cAxMDMb+; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a4f379662cso4765734f8f.0;
-        Wed, 09 Jul 2025 05:08:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752062889; x=1752667689; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IjQPHZ9ynvxD2rS3Yf7vu4AQO0hXoaY1LtKjdEL+iyM=;
-        b=cAxMDMb+sddrYzl7Na50BgJ3H9iVEXC+49VKj+pUC6Alb/h9pDKJYm77VqKbD47ye+
-         /2Q5/ahrgJe0JJtvRkutPPxg5V6fh9kcmSjeN9Q8oxPxFyr5/ZpoHNgK7jrF99JybqE7
-         qHJ1RD5DCkynzWX4RIVhTlQ/a3gvILNRuJ3xDnIW8nNwlDalJn0868fAxQr6VVYVg8uD
-         qtBB6R8Y3j6uB2rM1Z7bq5NczWtrSecfx5IV+ggU8goZlMHZ2ZwAncTO+ppG2B+sb1IN
-         lxbjbhb6SQ/oMYg+C5IPqb20KNfEVtBRGTNgFuwoFDVhz8LyUkYzwQGEnwX4iF7zdQmw
-         mMng==
+	s=arc-20240116; t=1752062924; c=relaxed/simple;
+	bh=WvdWGvOA7mruIfNqzDVZIul1sAUmObkrzYdqBVVnSkE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H6PY1UYUQq0K6alZ+J9iIOMPWGSxcBjcM0hebMK5vC+MobJl8H3LBMRdIjqpy8mpuzF67tMgqSFkf/fEVLbKAC6698Wy9nW8FgFzrrcDcDAUQo4cE6D/Ni9Se+u82OpW98054dWQBnFNprGjpKrey1nBm1oGf9b3PVsWBqHnqM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AYy9mZxI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5697COLX030392
+	for <linux-kernel@vger.kernel.org>; Wed, 9 Jul 2025 12:08:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xJxps7WNB224pVFYv2oMqbRsIVBO9JOpbY+yv27GphE=; b=AYy9mZxIh58Kztr2
+	/nyu7ryxyZs3ZkzzL1Tto1oUAqNxxRmQI+RQHPxiT2r7Zr5AlTtVDwSNqbxWNOp/
+	ZkUju/cFbgFcxwX7HMtIQR96qpM1Cppvsw1hhu+Cl1oKOHwYEA+S4ijP5YYFH0aV
+	G2fTmMlWK4AYHGyeOVyli2VsrQML715tCjk9xzLUsK5m4mAEfiOtA1pZTxdSOgPw
+	w7kfjfyuPuUhlxE5xxiPxToBxz8VjmkAqBH3GXwfy+nGh32lZeYOEoxW/JvekLyP
+	6lb5f+6Ai6EGiN7IHDMEhOjJPfMZUKlyaI77gnjwzDZbOgXgPbJFbQp/LiHwbbFJ
+	0zfa8A==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47r9b11r26-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 12:08:40 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-235dd77d11fso52318745ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 05:08:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752062889; x=1752667689;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IjQPHZ9ynvxD2rS3Yf7vu4AQO0hXoaY1LtKjdEL+iyM=;
-        b=l0OJfZnJcU0/EhEV9zN8HdMRMe9vel2BVuzKrtx/OCBAAxLa50SBYpNovhMm7S1orp
-         uVGH2njYNID+2Ekmn8BhYxNYl65z1OyU+EPY/ktuGfSRvs8zJ3T6VPsWEl1X7LKY5WaZ
-         YSepUfy+R1YmZyQtDpUeud1Y/qlCh3alG21vwrFcqUqL9/GD/dBEix3/KSpdkJRNGD0D
-         gcZyCFj47EtFiqDTGagJ/xvjAF+crKxo78G8XSTmi369eu9bluyQZLLg6MBwA32peFay
-         4eVqDptTrkw/0CFrQ4bxCgnw4jIWJaNZ6yvvihnzmiACQTF8A0OA9Wjlv1ORQi4XG7oQ
-         1vgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUW5xc8rfR1ZQniMHQg1LoRDrEsw9hHQKi8xTNR0D3SFNz4Py8LoFFwvcfuHeg6eWIU3O1gGL3NR7E=@vger.kernel.org, AJvYcCUemqk4R731VWpGicIhPIarxv54JPCvpj1J/5S89uw1WWecu8rBwYnWgFG/HI7i5fJXlUzR73XnW2PeZ0g=@vger.kernel.org, AJvYcCXF6OQ4qluHDBEGTlQin9CJB8mmWDw9W1/DD7ymjDKyFsm9HChcSWLcYAnbZUUQUEQfx8gGqYGNroEBaF7J@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGaCpSFzMXP3B9gOtZ0YvEDJ7uSTWXDsMrbY6DYBmhtroCoTYN
-	UH5a3eNh8r2FIQnhLXPxuXcidG4fck+Owf4Kl7NeDC1oyeoCuEo9CQ74
-X-Gm-Gg: ASbGncvvlqDJAX9WbBJ4qtRi39bFRQjiqIgd+133QHZH9PJen/aVIqrqtYuEMTE55x7
-	tZH8NXM9pB9IutJthyHECcMpu+p0MphDJRXk5haSd2/TDGjBJSJIl2jQ91X8nzYRWO94CDFEass
-	EQ2OxlzASoyooEwpFoVoqiQvWXs+BD68W2D/HjMf66AIIqrFFCCTU1P2y5eMIyYjQszBV72UWaf
-	qn/Ndt6pGPddCDvGFHLADjYYcT3XJ/pu8mn5KBjx6agD9pyrHhOSx+Qttcx5o2UyXk6MMzYFxSz
-	+yuntTKUxb2eQdzcb1e/sbCXr3KQeMoCZbb0oxyk8kbRcyS3n8wUlwm/4t9IhkJsoFbhdhxgRaG
-	0lBZhjItlEDDhUygCQbuX7rdZFpLo1QG0m6kvovUJE2GI3GBV
-X-Google-Smtp-Source: AGHT+IEA39s86i/v0pMayG6MQCNXniIC/f1IoHZeBXiCa548AvyVLpkQNHziiLzE25s483vSNV2Eiw==
-X-Received: by 2002:a05:6000:40cb:b0:3a4:f038:af74 with SMTP id ffacd0b85a97d-3b5e45311b5mr1977474f8f.51.1752062888454;
-        Wed, 09 Jul 2025 05:08:08 -0700 (PDT)
-Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b470caa1a2sm15396455f8f.42.2025.07.09.05.08.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 05:08:06 -0700 (PDT)
-Date: Wed, 9 Jul 2025 14:08:04 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Pei Xiao <xiaopei01@kylinos.cn>
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, 
-	sboyd@kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: tegra: periph: Fix error handling and resolve
- unsigned compare warning
-Message-ID: <jwlemmk4el6chr7fkzratg2si3s7rls3itq6ki7nbh4ssv3f4w@dxv5xnagtryr>
-References: <cover.1752046270.git.xiaopei01@kylinos.cn>
- <79c7f01e29876c612e90d6d0157fb1572ca8b3fb.1752046270.git.xiaopei01@kylinos.cn>
+        d=1e100.net; s=20230601; t=1752062920; x=1752667720;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xJxps7WNB224pVFYv2oMqbRsIVBO9JOpbY+yv27GphE=;
+        b=ut0c0WJczAn/TBBl9XaYJFKmpuMXN1g8ap8qCRynO7Tt+QIRf3qqtXSXTZx9q2lqhz
+         KkOSPxXDfCO0gMOzarj1fyjP2QzcO8XvfnyEPIObtlhMmn9QvgR3j4rEBC7Rontbbdd9
+         9h3aXsLV8G9R4ejP29+M3pG/SLlajuaKnigxKCtC18gluldMvQt+wb2W9+VhLZ30aC49
+         FQ9euL5hJcmzUikR9ODl/h957BI6CzBAXHdciX4hCsnCj77xOQXKKReAWk2+VJT3XKQy
+         SQDaHK+Lpxhi0SpnF9Lw5ECN+0wSj8hyN4u8t8nxu/bw9zJ4h67cav7SaR8ryyE5piCh
+         OPeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXx2xy42QlpdtAw5esxhv8Rd12bmbLhAJMT6MpRK11sbiNkqXpkvlzSL17toumstFrAxR7dGcLx9axHXpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0Tyfb/Ko1jx5PVqvGqkWNSwrCNi9oz1WMyn3RQbxtYaZ4OQWH
+	wNm8EJg2B9OsA8qCkx9bu0prEwxksVfZhadRKl971kBI5lEUo8FfPRGGXSDeEKXpqhaq+RU9KBu
+	zoOMubB0Q6rMmBxbWIqD11F5hjq/xiDOC+Us4LcUOK+PE7+Z93Uo0R9KdZrknQbXQiDg=
+X-Gm-Gg: ASbGncuC5p2OrKliffM+bG9YA3KoKlHT83GcY5Q7eTFuCGMptq7J6lj6dxCbOK81wJ7
+	EU80jOxK3/fNlvtFw2nup5mkMiY5p8+UrqXVMbDx+JbT929/jyrl4EYgzUcdkqqorO+TKY9g8y/
+	xPa7uS8dRxbDyNrV5YlNhuRMgyc6r26qsEki/FTSo3DYXmdvxmeAghenDWDrzUcI6ot0guMcT4F
+	KbQY8AUTthd0QzLe6G7C7m9TNGStwBeAN2M4tqh4dV1+lmXhpkz9ZcpWaGMNj10wf3lLMjpM+jp
+	eV3R300cXE7HgbLoPgI1vj3Vto5RCl6WhpAZJ5mBt/QsnDhJRw4d
+X-Received: by 2002:a17:902:ef47:b0:234:d7b2:2ab4 with SMTP id d9443c01a7336-23ddb1a0340mr37438845ad.17.1752062919983;
+        Wed, 09 Jul 2025 05:08:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEqtLZ+2Z/+gEvI3+1dVef7Kj2hVfOhPySi9l7Q95XTHCF49m6YWGP88DAjqKUR/2CZeBiXbQ==
+X-Received: by 2002:a17:902:ef47:b0:234:d7b2:2ab4 with SMTP id d9443c01a7336-23ddb1a0340mr37438255ad.17.1752062919533;
+        Wed, 09 Jul 2025 05:08:39 -0700 (PDT)
+Received: from [10.218.37.122] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c845bf51asm147826915ad.257.2025.07.09.05.08.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Jul 2025 05:08:39 -0700 (PDT)
+Message-ID: <a5b8bbcf-f4ea-45bb-8a81-efc834eba233@oss.qualcomm.com>
+Date: Wed, 9 Jul 2025 17:38:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dwom3yesrtmpnusx"
-Content-Disposition: inline
-In-Reply-To: <79c7f01e29876c612e90d6d0157fb1572ca8b3fb.1752046270.git.xiaopei01@kylinos.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 02/11] PCI/bwctrl: Add support to scale bandwidth
+ before & after link re-training
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi
+ <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev,
+        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+        qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com,
+        quic_vpernami@quicinc.com, quic_mrana@quicinc.com,
+        Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+References: <20250609-mhi_bw_up-v4-0-3faa8fe92b05@qti.qualcomm.com>
+ <20250609-mhi_bw_up-v4-2-3faa8fe92b05@qti.qualcomm.com>
+ <fhi7q5mbe75xbfmff6k4qe5pe6xveya5dsfqkm6bqpz7rcn3vr@jyn4uxl2exp7>
+Content-Language: en-US
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+In-Reply-To: <fhi7q5mbe75xbfmff6k4qe5pe6xveya5dsfqkm6bqpz7rcn3vr@jyn4uxl2exp7>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=dYuA3WXe c=1 sm=1 tr=0 ts=686e5bc8 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=PjKuzrdxt0Go-pjIBLUA:9
+ a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDEwOCBTYWx0ZWRfXzCJJm+feJWIz
+ rp6E5bGG+G8kXF8t2r09es2Q3jFywVysSWVtzZ6ns9LENkSG9ruse4XMKEM68ohLpweExm1SIzm
+ ydFlf7WS3DSYNh+LuRByMi+O0E2yV9x1y/6GpRQW4wy7Z0aAxsNDuyUjJX4LBdSwD0yBx5PDdkY
+ sh0SxzGIKIbjCj05zKtXOOfUtM2DtjF+n1bdMADBWp9Azir75ZDP1Awp8dfywRDzdA0iMYYmAW+
+ 5b2ymLrqGV2MoW4VpCHt9XzbD1E0gclHxQIrL8eqGl6KmZTHTpZv710PJZuiPap4+a5nmCBx3Co
+ s1GQwkoW7DXbo7bEPY9b6cvLC0kbR+PtO95rEboTOPB6OqcxKEeDvd182whXL/sK9DbXg7nWY18
+ lq6ShmAav+dP8Xqy0VqPT+tlBi6J1ixNDd2ZTjp70PGMCYfHVBMfVsiZO3UMEGW9HcgV4UaM
+X-Proofpoint-GUID: MgFaG8Ba3ZQBgsKDNa-N9bvVpLfON-bE
+X-Proofpoint-ORIG-GUID: MgFaG8Ba3ZQBgsKDNa-N9bvVpLfON-bE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-09_02,2025-07-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 suspectscore=0 clxscore=1015 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 spamscore=0 adultscore=0 mlxlogscore=999 malwarescore=0
+ mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507090108
 
 
---dwom3yesrtmpnusx
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/2] clk: tegra: periph: Fix error handling and resolve
- unsigned compare warning
-MIME-Version: 1.0
 
-On Wed, Jul 09, 2025 at 03:37:13PM +0800, Pei Xiao wrote:
-> ./drivers/clk/tegra/clk-periph.c:59:5-9: WARNING:
-> 	Unsigned expression compared with zero: rate < 0
->=20
-> The unsigned long 'rate' variable caused:
-> - Incorrect handling of negative errors
-> - Compile warning: "Unsigned expression compared with zero"
->=20
-> Fix by changing to long type and adding req->rate cast.
->=20
-> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
-> ---
->  drivers/clk/tegra/clk-periph.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On 7/8/2025 9:55 PM, Manivannan Sadhasivam wrote:
+> On Mon, Jun 09, 2025 at 04:21:23PM GMT, Krishna Chaitanya Chundru wrote:
+>> If the driver wants to move to higher data rate/speed than the current data
+> 
+> s/driver/PCI client driver
+> 
+>> rate then the controller driver may need to change certain votes so that
+>> link may come up at requested data rate/speed like QCOM PCIe controllers
+>> need to change their RPMh (Resource Power Manager-hardened) state. Once
+>> link retraining is done controller drivers needs to adjust their votes
+>> based on the final data rate.
+>>
+>> Some controllers also may need to update their bandwidth voting like
+>> ICC BW votings etc.
+>>
+>> So, add pre_link_speed_change() & post_link_speed_change() op to call
+>> before & after the link re-train. There is no explicit locking mechanisms
+>> as these are called by a single client Endpoint driver.
+>>
+> 
+> What if client drivers of multiple endpoints connected to different RP of the
+> same Host Bridge call this API? Won't you need locking?
+> 
+Yeah you are right, I will add locking in next patch.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---dwom3yesrtmpnusx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhuW6QACgkQ3SOs138+
-s6F5ew/+Kl2vGIaJ64fB7E6Xm2JjEiObyhSy9J7weUzAGKcRzIOGaZLJkU3hijLW
-RSBiQ5X4miuf8d4l6xMxKay1zEIS1fwFktZ8hMxxO0AHLUjNF0GbL1iI3zVOEpJw
-QlC9yIr8MIaIvlC/+5IkaTKVKbPdgZHQDZoqtFCuNW5dvlSE7Hi1net3t9UVuRk3
-uDRKnfGqsacjP1JRjkLFz3z+QxpWQaJmZVNpPkxclpm7ecdGWxf6+LkbuY//aOgc
-LBA1n3aeKe3YgHMZ/IWi+F9PDix+lrj3fveJKvYvJB5FrNhLauZa7b8na7nFpv1F
-VPs3DtI9F/xQr47gDK03/y49etZr+QHIzFSxnzLnRFfPwn2skdUTsxzoz0VgDTa5
-5SuGftvnWGC+8RokvKK6s0kBQrLqKc1qq9A8IHth8EPxiAKtHyb/XXzIRlRB2kX6
-EGwvGwos1dq8tooO64hdiDpze8+Hl9RBd3m10CjDH5hLsc+MQ06CKV8cPu5nTgZw
-1Xo5W23BnsieaQ+92lmm41UYEYh+SEow/XiwE0ze2I/gPXVdCLftQkpJs9LQMXX0
-zMiKhTd1Sl9lQ9zmoZygdSC6ii6lsIo8yrSOeRJCmQEFtsgZZWIwSSJEdxs8nP5W
-J7GXaF4nOriHIapiT2l3cRlWMdbrByhhFSkXUHAg4d2BmULY8Zo=
-=FfhE
------END PGP SIGNATURE-----
-
---dwom3yesrtmpnusx--
+- Krishna Chaitanya.
+> - Mani
+> 
+>> In case of PCIe switch, if there is a request to change target speed for a
+>> downstream port then no need to call these function ops as these are
+>> outside the scope of the controller drivers.
+>>
+>> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+>> ---
+>>   drivers/pci/pcie/bwctrl.c | 15 +++++++++++++++
+>>   include/linux/pci.h       | 18 ++++++++++++++++++
+>>   2 files changed, 33 insertions(+)
+>>
+>> diff --git a/drivers/pci/pcie/bwctrl.c b/drivers/pci/pcie/bwctrl.c
+>> index 36f939f23d34e8a3b25a2d1b9059e015f298ca94..dafb8d4f1cfba987e1ff08edfc7caba527f0c76b 100644
+>> --- a/drivers/pci/pcie/bwctrl.c
+>> +++ b/drivers/pci/pcie/bwctrl.c
+>> @@ -140,6 +140,8 @@ static int pcie_bwctrl_change_speed(struct pci_dev *port, u16 target_speed, bool
+>>   int pcie_set_target_speed(struct pci_dev *port, enum pci_bus_speed speed_req,
+>>   			  bool use_lt)
+>>   {
+>> +	struct pci_host_bridge *host = pci_find_host_bridge(port->bus);
+>> +	bool is_rootbus = pci_is_root_bus(port->bus);
+>>   	struct pci_bus *bus = port->subordinate;
+>>   	u16 target_speed;
+>>   	int ret;
+>> @@ -152,6 +154,16 @@ int pcie_set_target_speed(struct pci_dev *port, enum pci_bus_speed speed_req,
+>>   
+>>   	target_speed = pcie_bwctrl_select_speed(port, speed_req);
+>>   
+>> +	/*
+>> +	 * The host bridge driver may need to be scaled for targeted speed
+>> +	 * otherwise link might not come up at requested speed.
+>> +	 */
+>> +	if (is_rootbus && host->pre_link_speed_change) {
+>> +		ret = host->pre_link_speed_change(host, port, target_speed);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>>   	scoped_guard(rwsem_read, &pcie_bwctrl_setspeed_rwsem) {
+>>   		struct pcie_bwctrl_data *data = port->link_bwctrl;
+>>   
+>> @@ -176,6 +188,9 @@ int pcie_set_target_speed(struct pci_dev *port, enum pci_bus_speed speed_req,
+>>   	    !list_empty(&bus->devices))
+>>   		ret = -EAGAIN;
+>>   
+>> +	if (bus && is_rootbus && host->post_link_speed_change)
+>> +		host->post_link_speed_change(host, port, pci_bus_speed2lnkctl2(bus->cur_bus_speed));
+>> +
+>>   	return ret;
+>>   }
+>>   
+>> diff --git a/include/linux/pci.h b/include/linux/pci.h
+>> index 05e68f35f39238f8b9ce08df97b384d1c1e89bbe..1740bab514b0a9a61c027463a1fb154843312a22 100644
+>> --- a/include/linux/pci.h
+>> +++ b/include/linux/pci.h
+>> @@ -599,6 +599,24 @@ struct pci_host_bridge {
+>>   	void (*release_fn)(struct pci_host_bridge *);
+>>   	int (*enable_device)(struct pci_host_bridge *bridge, struct pci_dev *dev);
+>>   	void (*disable_device)(struct pci_host_bridge *bridge, struct pci_dev *dev);
+>> +	/*
+>> +	 * Callback to the host bridge drivers to update ICC BW votes, clock
+>> +	 * frequencies etc.. for the link re-train to come up in targeted speed.
+>> +	 * These are intended to be called by devices directly attached to the
+>> +	 * Root Port. These are called by a single client Endpoint driver, so
+>> +	 * there is no need for explicit locking mechanisms.
+>> +	 */
+>> +	int (*pre_link_speed_change)(struct pci_host_bridge *bridge,
+>> +				     struct pci_dev *dev, int speed);
+>> +	/*
+>> +	 * Callback to the host bridge drivers to adjust ICC BW votes, clock
+>> +	 * frequencies etc.. to the updated speed after link re-train. These
+>> +	 * are intended to be called by devices directly attached to the
+>> +	 * Root Port. These are called by a single client Endpoint driver,
+>> +	 * so there is no need for explicit locking mechanisms.
+>> +	 */
+>> +	void (*post_link_speed_change)(struct pci_host_bridge *bridge,
+>> +				       struct pci_dev *dev, int speed);
+>>   	void		*release_data;
+>>   	unsigned int	ignore_reset_delay:1;	/* For entire hierarchy */
+>>   	unsigned int	no_ext_tags:1;		/* No Extended Tags */
+>>
+>> -- 
+>> 2.34.1
+>>
+> 
 
