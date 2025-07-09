@@ -1,89 +1,94 @@
-Return-Path: <linux-kernel+bounces-724337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0985AFF185
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:12:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AB69AFF187
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D4D55A6526
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:12:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 207A218972A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1986323E334;
-	Wed,  9 Jul 2025 19:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202D823E336;
+	Wed,  9 Jul 2025 19:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AmD/OdWz"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mT1mJSoR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE3F2264B0;
-	Wed,  9 Jul 2025 19:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB0821D3E9;
+	Wed,  9 Jul 2025 19:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752088324; cv=none; b=EQG4aVn+k4+ak3bHwzKGYX+E/WZ3HHcsbsQGLkxXp365dLkwJoRbK8xwaTSVeu6VElXdpGAWsFElxHRH7UczP6D6vuo8grPHbbw160EziZjjJv802Ee4YdNtNPWT1VDQ46Dzx6n5gvWaSo5rTdIv1Wa56zHzn+laZDXJ79iGa5U=
+	t=1752088366; cv=none; b=FApRkryTfTJ+srZBr1YH9VZlTByBVA1R0nkCM1qzmgHtP6gFJV69yUwcgvt90lH1zpFr0P39HPU1+QLizpw7JThLYLXSB6XtsGcz10FctTam5yEsMwVOKBS7E1k7TDjIM4EO5q4+F+7U1JobTZ3VOf11HLSfvxSmJu38tyJt26E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752088324; c=relaxed/simple;
-	bh=SvnG7N1dBZHRJ7PjsRayqq88gPZu/mE8Ot254TQ3Nu4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=BzX9EpgBYxgBpSZvYL6FUKsNIt0oPm6XYxWAjzuURUEr+W+4BVpb+IYiCW4kjOuYzoh2mUMpNSbsFDGTvr4nOrYo8v0rYJzVFakE2q3WN9wj4xXIG/qyXLQbWux2+VWVDWCsH2t0GBlW+YMnhZ8Xs8BszZKW93DfbaZph091YwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AmD/OdWz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9116EC4CEEF;
-	Wed,  9 Jul 2025 19:12:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752088323;
-	bh=SvnG7N1dBZHRJ7PjsRayqq88gPZu/mE8Ot254TQ3Nu4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AmD/OdWzFwapWPRmkF98xkmc0ipnzVTH7vvE2veXT2AqoYj94MdWFY8TJjHmxS2V6
-	 RECyu5wRRny+OY9KF0CgMAtK1IZDnsfc8mwYEfACNhnm2z/YlYYvwMmgjA0zThMyAz
-	 T1YlkuY0T2cfidqHf3fYVXZDLszHVBjdKZFINTl8=
-Date: Wed, 9 Jul 2025 12:12:03 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin"
- <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the tip tree
-Message-Id: <20250709121203.d8edc8d05253bdf04ce580c6@linux-foundation.org>
-In-Reply-To: <20250709091702.GAaG4zjs-otcGsMyY2@fat_crate.local>
-References: <20250708160037.2ac0b55e@canb.auug.org.au>
-	<20250707234817.d09fc28a3510b23c31c461b4@linux-foundation.org>
-	<20250709091702.GAaG4zjs-otcGsMyY2@fat_crate.local>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752088366; c=relaxed/simple;
+	bh=Ki4ivrySu7ePZcyaS1IlHL9xvLCWTSoo7PhYCuddbHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qlSnCeoC299gUWZHYW68VifgyiVkfj7Hvzq1uu7VlG8ZpnxtfXQoiAG5zYC2X5TJh23Z6ReqN9JrGCfbGvZhbvodDEWm/P4U/+DpQ1VznYhBE1WlxyS0F7cacw8WIeWWHOsz1SS9cO98zCmwkjM5x6E34o9rXHwaq0vKx89oOIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mT1mJSoR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92B00C4CEEF;
+	Wed,  9 Jul 2025 19:12:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752088366;
+	bh=Ki4ivrySu7ePZcyaS1IlHL9xvLCWTSoo7PhYCuddbHA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mT1mJSoRWlB7Khl9nr+g9L6nkLRaQ+55gxia1uhoHhdegtgOAQek3enKuKhDxRPuy
+	 jz2XwALJjF2hOH0Zon16+/0xj0gMzp10uvzGJU6MG2Wf577GBdnBriLWvJL3lLFinF
+	 0LmzIDSU0McnRLqQT1w/fuQ1v9Ph2NAAYYtjb/ac=
+Date: Wed, 9 Jul 2025 21:12:45 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Christian Heusel <christian@heusel.eu>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	linux@frame.work
+Subject: Re: [PATCH 6.15 000/178] 6.15.6-rc1 review
+Message-ID: <2025070909-outmatch-malt-f9b7@gregkh>
+References: <20250708162236.549307806@linuxfoundation.org>
+ <75a83214-9cc4-4420-9c0c-69d1e871ceff@heusel.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <75a83214-9cc4-4420-9c0c-69d1e871ceff@heusel.eu>
 
-On Wed, 9 Jul 2025 11:17:02 +0200 Borislav Petkov <bp@alien8.de> wrote:
-
-> > > 
-> > > The following commit is also in the mm-hotfixes tree as a different commit
-> > > (but the same patch):
-> > > 
-> > >   f339770f60d9 ("Revert "sched/numa: add statistics of numa balance task"")
-> > > 
-> > > This is commit
-> > > 
-> > >   63afea878dc4 ("Revert "sched/numa: add statistics of numa balance task"")
-> > > 
-> > > in the mm-hotfixes tree.
+On Wed, Jul 09, 2025 at 07:19:32PM +0200, Christian Heusel wrote:
+> On 25/07/08 06:20PM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 6.15.6 release.
+> > There are 178 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
 > > 
-> > Thanks, I'll drop the mm.git copy.
+> > Responses should be made by Thu, 10 Jul 2025 16:22:09 +0000.
+> > Anything received after that time might be too late.
 > 
-> So we actually started adding it to tip for the time being until you send it
-> to Linus so that our testing doesn't fail - it was reproducing reliably on my
-> test machines.
+> Hey Greg,
+> 
+> on the Framework Desktop I'm getting a new regression / error message
+> within dmesg on 6.15.6-rc1 which was not present in previous versions of
+> the stable kernel series:
+> 
+>     $ journalctl -b-1 --dmesg | grep "PPM init"
+>     Jul 09 14:48:44 arch-external kernel: ucsi_acpi USBC000:00: error -ETIMEDOUT: PPM init failed
 
-Ah, OK.
+Is this also on 6.16-rc4?
 
-> So can you pls send it to Linus so that we can drop it from tip?
+And maybe if my Framework Desktop would ever get shipped to me, I could
+have debugged this ahead of time :)
 
-Yup.  Tomorrow seems likely.
+Anyway, how about a 'git bisect'?
+
+thanks,
+
+greg k-h
 
