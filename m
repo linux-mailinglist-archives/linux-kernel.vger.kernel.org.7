@@ -1,116 +1,212 @@
-Return-Path: <linux-kernel+bounces-722770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26DDBAFDEA0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:58:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC52AFDEA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E29B584D03
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:58:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15DBA3B19A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C2123ABBF;
-	Wed,  9 Jul 2025 03:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA4D23BCF2;
+	Wed,  9 Jul 2025 03:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="t40vXlIp"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+F+jf7e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E453208
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 03:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29661E47BA;
+	Wed,  9 Jul 2025 03:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752033509; cv=none; b=Nhux18THg7NwDp0nl1s2KTfqmYINKY6xn8xGnhKNtBRy5vPA9SJG8KezGjNMccKr5if1uNwWRWfdCKObotMyHbq4L6WvPWVkRIJtpVzWnVvt2nzCAgYMPtsTk89mhI6fIXWEKdeR0ArSOfbUb+LQ7+xRMGwhXnHHtCROILsM/wY=
+	t=1752033553; cv=none; b=kFi7TIjA8Iwp76o+owiNIxuOxCv0h9OLJI0rXRZIK1vY0xcwD79j5pnHQxxyJe2XQ9AjD+qoZwlN0SIvDrjkBY2HHi7qu4EYYZXWMlgd7qMajsvsW+lGrMZWZXFqBdTIpNsl/UJ+heMPIsMuS3DbXUSQ8fIy48dMiS1PiEkD+Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752033509; c=relaxed/simple;
-	bh=PIQpyc+uJ3idaxC3xRUFtlN03Wy0O3PPL9yw5WLZ/1s=;
+	s=arc-20240116; t=1752033553; c=relaxed/simple;
+	bh=QytHeqnrZC2ddp9eJpzCiJaHZYXcVEL3Y7kDVMmL3JU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J0E6cL0RyYIj+zJVgn2TWKCO96EDWXgsZ1DnaSRNps812Jfgv+ANCQyp3JZj20AWi+3SYCdj1yUseF9pD3hLG2NWGG/aiJ2VH5pY/mEuCcKyF3zCfZ3tCG7Ha8hePuzCeJV7G7sXfurEWm5CLZ+TQK6mtdoZ2OU4206pVDRMfxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=t40vXlIp; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752033498; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=F+TCm5yMLaR1zaqgTfgGSGazGjr5Lt2RVsmEPGa43Bk=;
-	b=t40vXlIp2EXXaWWf5zhRfbTZ+VyjenLhQhddswQl6szukkvPtSVEV+FcmiiY1XRhwTCfIvf2LoQ7zSwBwkU/j5aH471ET7WatFerXgQtj3Lh4X+wR9yaP2SX6jfpwC61khIROWmwwB3m11SJCu5qWbeyrL1eyKw10FRH/AEFx9I=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WiWD7Ko_1752033497 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 09 Jul 2025 11:58:17 +0800
-Date: Wed, 9 Jul 2025 11:58:17 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH 3/5] panic: add 'panic_sys_info' sysctl to take human
- readable string parameter
-Message-ID: <aG3o2RFHc5iXnJef@U-2FWC9VHC-2323.local>
-References: <ndckw7vr5zxiz2olstjaxxk4a6qgrnbo65rex4242u3swnvvhm@whxmilgtgoyd>
- <aG3hjKg81xrDHjZc@U-2FWC9VHC-2323.local>
- <vksfx7stglvc7dvdsbu6b6eflmacg5eexnmzu47tdkak4uwscm@rm2ilr5ntriy>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hNynulNp1nVqZ7n6WgRN09PuQ0gAgvUc0faVYlAOdJ3XUu9DriFDIofuEIkRVDoBecM9PApTn3bvxmHyrGzMs7x9rbiV+l8hrZl1zwO5L5nYRsurFnUekMIgWeTUax9N2KkmHjXOjln3M9md5GlRJCqVheZMgD3cFAeGB5JUyqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G+F+jf7e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CF41C4CEF0;
+	Wed,  9 Jul 2025 03:59:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752033552;
+	bh=QytHeqnrZC2ddp9eJpzCiJaHZYXcVEL3Y7kDVMmL3JU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G+F+jf7eTJoZeBlRdUxYZgi+fL8+T8t834jF3yNHRTd+OhJ9Yhg1I7wAX/yFH/YAZ
+	 uGEqYwpAHDcuvT+QqSM7ZjOLnKbKQv1VPVw/lENIbTX+RcNEmUeUpQtR/QqLpWIBkO
+	 TCXgKk7DaR2RRSE0oL7eS1SwgASxr1S1j08W1YF80X/zYAUFmgn3UgXqZGeIX5q1YL
+	 jYrTN3fmIhWhOQpxCRHTZnUNNz6Xx1i1GF7WgnqLk4XJF43bWhzKXS3hwm41CkT85S
+	 xHCbc8zmhN76MMR7xG6O2puO8kSf+UDTdAFeeU8qtxqcyXxa1unEsk/ZLQSE2+vRGI
+	 59myGqc7C424Q==
+Date: Tue, 8 Jul 2025 20:59:11 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Groves <John@groves.net>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Miklos Szeredi <miklos@szeredb.hu>,
+	Bernd Schubert <bschubert@ddn.com>,
+	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Stefan Hajnoczi <shajnocz@redhat.com>,
+	Joanne Koong <joannelkoong@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Aravind Ramesh <arramesh@micron.com>,
+	Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC V2 11/18] famfs_fuse: Basic famfs mount opts
+Message-ID: <20250709035911.GE2672029@frogsfrogsfrogs>
+References: <20250703185032.46568-1-john@groves.net>
+ <20250703185032.46568-12-john@groves.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <vksfx7stglvc7dvdsbu6b6eflmacg5eexnmzu47tdkak4uwscm@rm2ilr5ntriy>
+In-Reply-To: <20250703185032.46568-12-john@groves.net>
 
-On Wed, Jul 09, 2025 at 12:35:40PM +0900, Sergey Senozhatsky wrote:
-[...]
-> > 
-> > > Moving sys_info_avail[] inside sysctl_sys_info_handler() seems to help.
-> > 
-> > Sorry for the trouble. I assume this is clang?  I locally used gcc v10.2.1
-> 
-> No worries.  Yes, clang.
-> 
-> > Nathan Chancellor has helped to post a fix here https://lore.kernel.org/lkml/20250708-fix-clang-sys_info_avail-warning-v1-1-60d239eacd64@kernel.org/
-> 
-> Great.
-> Would __maybe_unused be better than something simpler:
+On Thu, Jul 03, 2025 at 01:50:25PM -0500, John Groves wrote:
+> * -o shadow=<shadowpath>
 
-I'm fine with both solutions :).
+What is a shadow?
 
-One thought is, as Petr also reminded, that user may extend the needed
-sys info in future, and we added some explicit note in sys_info.c: 
+> * -o daxdev=<daxdev>
 
-	/*
-	 * When 'si_names' gets updated,  please make sure the 'sys_info_avail'
-	 * below is updated accordingly.
-	 */
-	static const struct sys_info_name  si_names[] = {
-		{ SYS_INFO_TASKS,		"tasks" },
-		{ SYS_INFO_MEM,			"mem" },
-		{ SYS_INFO_TIMERS,		"timers" },
-		
-then standing-alone sys_info_avail[] may make it more obvious.  
+And, uh, if there's a FUSE_GET_DAXDEV command, then what does this mount
+option do?  Pre-populate the first element of that set?
 
-Thanks,
-Feng
+--D
 
+> Signed-off-by: John Groves <john@groves.net>
 > ---
+>  fs/fuse/fuse_i.h |  8 +++++++-
+>  fs/fuse/inode.c  | 28 +++++++++++++++++++++++++++-
+>  2 files changed, 34 insertions(+), 2 deletions(-)
 > 
-> diff --git a/lib/sys_info.c b/lib/sys_info.c
-> index 46d6f4f1ad2a..3bd789fe29d2 100644
-> --- a/lib/sys_info.c
-> +++ b/lib/sys_info.c
-> @@ -48,13 +48,11 @@ unsigned long sys_info_parse_param(char *str)
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index a592c1002861..f4ee61046578 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -583,9 +583,11 @@ struct fuse_fs_context {
+>  	unsigned int blksize;
+>  	const char *subtype;
+>  
+> -	/* DAX device, may be NULL */
+> +	/* DAX device for virtiofs, may be NULL */
+>  	struct dax_device *dax_dev;
+>  
+> +	const char *shadow; /* famfs - null if not famfs */
+> +
+>  	/* fuse_dev pointer to fill in, should contain NULL on entry */
+>  	void **fudptr;
+>  };
+> @@ -941,6 +943,10 @@ struct fuse_conn {
+>  	/**  uring connection information*/
+>  	struct fuse_ring *ring;
+>  #endif
+> +
+> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> +	char *shadow;
+> +#endif
+>  };
+>  
+>  /*
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index e48e11c3f9f3..a7e1cf8257b0 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -766,6 +766,9 @@ enum {
+>  	OPT_ALLOW_OTHER,
+>  	OPT_MAX_READ,
+>  	OPT_BLKSIZE,
+> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> +	OPT_SHADOW,
+> +#endif
+>  	OPT_ERR
+>  };
+>  
+> @@ -780,6 +783,9 @@ static const struct fs_parameter_spec fuse_fs_parameters[] = {
+>  	fsparam_u32	("max_read",		OPT_MAX_READ),
+>  	fsparam_u32	("blksize",		OPT_BLKSIZE),
+>  	fsparam_string	("subtype",		OPT_SUBTYPE),
+> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> +	fsparam_string("shadow",		OPT_SHADOW),
+> +#endif
+>  	{}
+>  };
+>  
+> @@ -875,6 +881,15 @@ static int fuse_parse_param(struct fs_context *fsc, struct fs_parameter *param)
+>  		ctx->blksize = result.uint_32;
+>  		break;
+>  
+> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> +	case OPT_SHADOW:
+> +		if (ctx->shadow)
+> +			return invalfc(fsc, "Multiple shadows specified");
+> +		ctx->shadow = param->string;
+> +		param->string = NULL;
+> +		break;
+> +#endif
+> +
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -888,6 +903,7 @@ static void fuse_free_fsc(struct fs_context *fsc)
+>  
+>  	if (ctx) {
+>  		kfree(ctx->subtype);
+> +		kfree(ctx->shadow);
+>  		kfree(ctx);
+>  	}
+>  }
+> @@ -919,7 +935,10 @@ static int fuse_show_options(struct seq_file *m, struct dentry *root)
+>  	else if (fc->dax_mode == FUSE_DAX_INODE_USER)
+>  		seq_puts(m, ",dax=inode");
+>  #endif
+> -
+> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> +	if (fc->shadow)
+> +		seq_printf(m, ",shadow=%s", fc->shadow);
+> +#endif
+>  	return 0;
 >  }
 >  
->  #ifdef CONFIG_SYSCTL
-> -
-> -static const char sys_info_avail[] = "tasks,mem,timers,locks,ftrace,all_bt,blocked_tasks";
-> -
->  int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
->  					  void *buffer, size_t *lenp,
->  					  loff_t *ppos)
->  {
-> +	static const char sys_info_avail[] = "tasks,mem,timers,locks,ftrace,all_bt,blocked_tasks";
->  	char names[sizeof(sys_info_avail) + 1];
->  	struct ctl_table table;
->  	unsigned long *si_bits_global;
+> @@ -1017,6 +1036,9 @@ void fuse_conn_put(struct fuse_conn *fc)
+>  		}
+>  		if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+>  			fuse_backing_files_free(fc);
+> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> +		kfree(fc->shadow);
+> +#endif
+>  		call_rcu(&fc->rcu, delayed_release);
+>  	}
+>  }
+> @@ -1834,6 +1856,10 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
+>  	sb->s_root = root_dentry;
+>  	if (ctx->fudptr)
+>  		*ctx->fudptr = fud;
+> +
+> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> +	fc->shadow = kstrdup(ctx->shadow, GFP_KERNEL);
+> +#endif
+>  	mutex_unlock(&fuse_mutex);
+>  	return 0;
+>  
+> -- 
+> 2.49.0
+> 
+> 
 
