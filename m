@@ -1,135 +1,120 @@
-Return-Path: <linux-kernel+bounces-723562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 200A7AFE87F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:59:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C845AFE887
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:03:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAE9D18907DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:00:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C9BC188BFB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8FB285050;
-	Wed,  9 Jul 2025 11:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51D12D6631;
+	Wed,  9 Jul 2025 12:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="I/l9ss5C"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nhq84Jhk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3181DDA15
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 11:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B12C72613;
+	Wed,  9 Jul 2025 12:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752062383; cv=none; b=rxG8zmKAG77he4gkP5sR/pGlT2gLBskyVoiDByUu3rpPxlfARHMJvSWhsiguY4TIO5nG5a9/jxPWy4Tp1J+Imd6V8jIhNeK9bnjJYlL8Mn3K5V7MsIq9CzRbTVYXkGNLRp8gLmOGXMbmpsEh+EWm/CqJA5++Y5/45ZKaEVZsLEw=
+	t=1752062580; cv=none; b=IUp1nN3DzLe43fgYibVtpL1pEwqoTMIpFgUP4w3sM+5pd5NxaBACG0JmLUFKk5ZWO4fL6lly4NaNRBxtiv3qLiKrWzPQUSW6fjxIJ2W3E0NR1WtyI4ao537j2Q7GXAeSGM4Lo//a+0SL7Lv8GAWAje1C8jbpocF5Fn6OB4sFgDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752062383; c=relaxed/simple;
-	bh=9pVv9RHixO9d2u5FdY4HrMvtjdLG3sLqMZQKJyVQ/RE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=R9y5NT1JOY3UJGIaoH4RM/fcK7YoW1c9nMQFQdSljG4cNokBanUZKx4NNcDqZqlVxNI6UNhx3+panathBvD9u4zj9AACso2HI+lAiryV75H+H6zSYwVHccMByqrqmN0Ecb1fU20d3vNrpXlh9EBrYsvsBBsE75Hu0CiJp6pVbTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=I/l9ss5C; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ae3a604b43bso864349966b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 04:59:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1752062380; x=1752667180; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VwaoJLiJYF12OSK8rGI95sJddGwuByNYIOGTk/ksVzQ=;
-        b=I/l9ss5C9PAfhDlfShQ35YWk+BRm0E17GRDikPaSam0JgAbLc7P2ns4sZtt/a4OVjg
-         rYbDpPQ0KVyUKUQSAikua41foV/Ua12/X2/pUCQyLppBr867YhrGPO1mnpzhnTsIzStj
-         ekxRxJJK3kCbTDa6KevbEF+bKhYv4R8x29hQuT/YtrSOHMAqlaqMGNs5alz1aVaA0hNZ
-         KCBMRZ60vAFAWebteaqt67asWPfIUBxKYEuYt9IbqYsqxxkifb2d8rF++zBaPUray8Kd
-         3QMI63XvglFpMilnPnKQaVVZkWl8xSMjvxmQbxieOILT2Hoo2iVGfrksdWPkBxTJDsp0
-         RXRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752062380; x=1752667180;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=VwaoJLiJYF12OSK8rGI95sJddGwuByNYIOGTk/ksVzQ=;
-        b=qF8wUyGcs63OAcPnoGCZRhzu11A3Qop+W4YdKHsoi+ms2Y/Ey3D9cEhz7vd1GUcHuW
-         YQet4BcJZ3mO8+IzX6cOHmlOWrHll1YwyqTODytvqHD8h9uvJOWK5Smt67eegFSCWWbJ
-         BIUD5tUPOJjrnWN9GpoCjDsV3MPj4tgHia1Wgg+5ZbG3dgfiOY39HNamTaETnHnWXRHF
-         yR+V/hTchlFqUV6GWMTaduu/IIXeF6i7eRgYOQAvJKcgIsTFDlkX9Dj1livG8YZsZTgc
-         OiTIgM8Uzsq5sP0WiycahPLxISjn3GBYXk4UfQnmi+IjAu4isokvxQY1fPUG+xn1AW5z
-         hQNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIcxkHjX410p2d7pjIrzRoX5KcTSm5xI/MbiFhTLXGXuMiNbYUO+4lhQeeTjWy80b4BsqF3/FIEgGP/gE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDciyWK8kVbwsxt6Y6vvJ/9qtDRdbHPkguffaLTAbEL+e284kT
-	BNpH1qHAHTEGAy/gOjbP8vQr5/pwTajYekHJ8ipN1MVgKzjIgMlZX4rGO77v2/waO5U=
-X-Gm-Gg: ASbGncuh/+5D0LxqYrFbV3knTs5gESJMy+ZvZTHvRfWk40HngUdYMhVCmcPPRH2FEsm
-	sDLg/JXrglgu0J1B+dCcV2KNYBnn0N0WtLGbVa9TSO7ktJurhnXuZLbKJGLfARW7avBpajKB/qm
-	Tsj53qCDqfe81btWewyBvEcgb9qkhlomnnZWY46H7WI9mbMTi3CcJzf2gzeaQ0x8doDtaoPGYtK
-	X8n9QA78dQZ3+ReH8Iuw7rGgr7drQz/TbMW85oSiS4dLwruHPKIclnjR1nV3XkkKmT+k0pvrj1Z
-	8oAFyftPkukFEMwchH/mg7HpzngxOtwg3teiIyhJ3zEzOJd5mDWEOOWJ4EKq3i1Y3K3HdMLL0nm
-	gvy6IDgvY6UgqBQVLHk2ujr4fB2JkDdGwZEzAACv01Q==
-X-Google-Smtp-Source: AGHT+IF5M43gbb1VPZRgUmXUN6Xh1tAveUbZcs0w5aMrTx9Nx/yzR4T2sKl+aY7FPc+zZ1BgthqpOg==
-X-Received: by 2002:a17:907:9708:b0:ae3:5f74:11fd with SMTP id a640c23a62f3a-ae6cf5e8e9bmr206052066b.23.1752062379715;
-        Wed, 09 Jul 2025 04:59:39 -0700 (PDT)
-Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6d7fc3584sm76721666b.62.2025.07.09.04.59.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Jul 2025 04:59:39 -0700 (PDT)
+	s=arc-20240116; t=1752062580; c=relaxed/simple;
+	bh=oENznkm65vTj+t+ZHIZEtLsX9J7JGFMk5uqn+AMTNFA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=swLho4MGZ3/A8HBEkziaE3tQjWrcMcBPVJIqZ0h3KOQiaDc5llIU7alowAZpjtnwRSyX9KblXedm70u9vFL3r8QHqs6vNgVLBBfNf/ZRqxE279XtTQA3mv0F0pvv9C0XPsxK7WiXIWZkeGQs9mQY1Ch7gWAO1HiSfVvmjUuZYxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nhq84Jhk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB69AC4CEF5;
+	Wed,  9 Jul 2025 12:02:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752062579;
+	bh=oENznkm65vTj+t+ZHIZEtLsX9J7JGFMk5uqn+AMTNFA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nhq84JhkVAsZAVEp1kpcJ8hkVhlWrUB0me1KUd48VrMejHXPPqDUFW5rbJ/ANuQxo
+	 XZOCYvA+ClpH23EI0UynauDmHb8A66cCd85KqI1N1Hr/CVajUN88ltTDkN1Ck/P7WQ
+	 v+skH/F+1ryzeaupWJ9fXVzF6nP7VuPoTBL4x9/o65xhT0ZiGlwJCBWbl8CPDStNeL
+	 cwrO6i5xJDsaVu579tM+oCeM5llecsE2YIJ2RPBcnv2aBg8zLwB5tLAEGOBBaAjwMR
+	 GnWn/4eMll4UjyqW8dsq9fEjRt/OimYkOY8nLjb5py4Fr+2ZcOVyGP5xZZTbCv+Pnr
+	 w6q7LYT2kZyiQ==
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-407a6c6a6d4so1542182b6e.1;
+        Wed, 09 Jul 2025 05:02:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVCM3vM8lJET8MUF5odOKv07W3r3V/np++f9DHAOJHI74hzk2AAegVhziojTgV+FHbG9NrfkSS8Tm55s+s=@vger.kernel.org, AJvYcCXBWKGs6eN57D4U20QhW8ziWfhqJ+f9/wQkE2eD+9f/ix3dzSue1tOKWOPLRBYlkqDxb5H5jcs1IQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzycdiRS/kAkZNhiIBLc8O9BUpiC5/uJK6nR8BbTbn1RjCldDw
+	3vgY5VVzwSq8eUEyAlAROgpx6TLXvdhpN+krNroiGeKbF554nKHV/WL1RMy/XyKOXjbRZZjOrwF
+	PMKEmDUCa9szE6j4phVbTCz0jzjLw9gM=
+X-Google-Smtp-Source: AGHT+IFCE9JQt69nhSM/sz+BuYJL3HdkNRxKQBR8VaBTjYb7SKdXlbpBctfrjE83UQJ2k2hgwtu9sN9Xfk/4HyFpnHA=
+X-Received: by 2002:a05:6820:308e:b0:611:7626:b5df with SMTP id
+ 006d021491bc7-613cce21f05mr1273558eaf.4.1752062579076; Wed, 09 Jul 2025
+ 05:02:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <4664631.LvFx2qVVIh@rjwysocki.net> <20250709114606.GJ1613200@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250709114606.GJ1613200@noisy.programming.kicks-ass.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 9 Jul 2025 14:02:47 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hS2+a4HsWQbhg5XCWph+tGMDnPy5DHXJnFCd8WMW5tqQ@mail.gmail.com>
+X-Gm-Features: Ac12FXxgL4XvXfSvtJ_CvN_H1m3hgjImJfOA2t0He5PuxoMakCJTO8hKc6KMiH4
+Message-ID: <CAJZ5v0hS2+a4HsWQbhg5XCWph+tGMDnPy5DHXJnFCd8WMW5tqQ@mail.gmail.com>
+Subject: Re: [PATCH v1] x86/sched: Print debug messages on hybrid asym
+ capacity changes
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, x86 Maintainers <x86@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 09 Jul 2025 13:59:38 +0200
-Message-Id: <DB7IA132RX61.200FUO5T7L3I8@fairphone.com>
-Cc: "Hans de Goede" <hdegoede@redhat.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Javier Martinez Canillas"
- <javierm@redhat.com>, "Helge Deller" <deller@gmx.de>,
- <linux-fbdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/5] drm/sysfb: simpledrm: Add support for
- interconnect paths
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250623-simple-drm-fb-icc-v2-0-f69b86cd3d7d@fairphone.com>
- <20250623-simple-drm-fb-icc-v2-3-f69b86cd3d7d@fairphone.com>
- <ypjcqiyfzjobg4zsm5sowjtu6ctvzgd4bvt3wpbqbb7o7f3rcm@q454aob3wwth>
-In-Reply-To: <ypjcqiyfzjobg4zsm5sowjtu6ctvzgd4bvt3wpbqbb7o7f3rcm@q454aob3wwth>
 
-Hi Dmitry,
-
-On Sun Jul 6, 2025 at 1:14 PM CEST, Dmitry Baryshkov wrote:
-> On Mon, Jun 23, 2025 at 08:44:47AM +0200, Luca Weiss wrote:
->> Some devices might require keeping an interconnect path alive so that
->> the framebuffer continues working. Add support for that by setting the
->> bandwidth requirements appropriately for all provided interconnect
->> paths.
->>=20
->> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
->> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->> ---
->>  drivers/gpu/drm/sysfb/simpledrm.c | 83 ++++++++++++++++++++++++++++++++=
-+++++++
->>  1 file changed, 83 insertions(+)
+On Wed, Jul 9, 2025 at 1:46=E2=80=AFPM Peter Zijlstra <peterz@infradead.org=
+> wrote:
 >
-> If simpledrm is being replaced by a proper DRM driver (thus removing
-> those extra votes), will it prevent ICC device from reaching the sync
-> state?
+> On Wed, Jul 09, 2025 at 12:47:17PM +0200, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > Subject: [PATCH v1] x86/sched: Print debug messages on hybrid asym capa=
+city changes
+> >
+> > Make arch_set_cpu_capacity() print a debug message including the
+> > capacity and maximum frequency ratio used in scale-invariant utilizatio=
+n
+> > computations for a given CPU and in capacity-aware scheduling (CAS) or
+> > energy-aware scheduling (EAS).
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >  arch/x86/kernel/cpu/aperfmperf.c |    4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > --- a/arch/x86/kernel/cpu/aperfmperf.c
+> > +++ b/arch/x86/kernel/cpu/aperfmperf.c
+> > @@ -416,6 +416,10 @@
+> >                          div_u64(cap << SCHED_CAPACITY_SHIFT, max_cap))=
+;
+> >               WRITE_ONCE(per_cpu_ptr(arch_cpu_scale, cpu)->freq_ratio,
+> >                          div_u64(cap_freq << SCHED_CAPACITY_SHIFT, base=
+_freq));
+> > +
+> > +             pr_debug("CPU%d: capacity =3D %lu, freq_ratio =3D %lu\n",=
+ cpu,
+> > +                      per_cpu_ptr(arch_cpu_scale, cpu)->capacity,
+> > +                      per_cpu_ptr(arch_cpu_scale, cpu)->freq_ratio);
+> >       } else {
+> >               WARN_ONCE(1, "Hybrid CPU capacity scaling not enabled");
+> >       }
+>
+> There's already a printk in the calling function
+> hybrid_set_cpu_capacity(), so now we get _2_ prints per CPU. That's a
+> bit excessive, no?
 
-How can I try this out? On Milos I don't have MDSS yet but I can add an
-interconnect path on another device to try it.
+Yeah, fair enough.
 
-Are there some prints I can enable, or check sysfs/debugfs to see if it
-reached sync state?
+> Also, should this print be conditional on sched_debug_verbose?
 
-I only recall seeing sync_state pending warnings in some instances, but
-never that it's synced.
-
-Regards
-Luca
+It might, but it is dynamic debug anyway.
 
