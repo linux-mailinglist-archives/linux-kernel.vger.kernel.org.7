@@ -1,207 +1,162 @@
-Return-Path: <linux-kernel+bounces-723598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AA58AFE8F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:31:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E792AAFE8FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1D481C46B84
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:31:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DC973B748E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC6221FF46;
-	Wed,  9 Jul 2025 12:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CD92DA76E;
+	Wed,  9 Jul 2025 12:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NupUPD60"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eyymeOuC"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39591A944
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 12:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3632DA75A;
+	Wed,  9 Jul 2025 12:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752064284; cv=none; b=VRf7ayYAiAhC0fmRihYVjr+A8tv1xI7BNQ1ygDa5wf8zRuxgZpwkUMLKw4jeg6rjsVmvjFPE2yNIIYWJVq87EN8UG0EivHnciRP3tEeGA5BBa+iooT4cHBqbKDIywloMWULfmpUHVgv9lBKTByprkEX8pod4LRd0Y+H9mb/y+7U=
+	t=1752064289; cv=none; b=TGZywonWtEY2ahD2snHYFQyiPlqG4p79dx7BUgi0dPosQOx85UHSsQ8N542p+i8bdPcfpKJl2HFe3L5P7FBOxf7jr56ha+CXMYoaNnQXq/nw8terb5kXUPAJzphIZxfxMKwocbXhe39N+kEPWujhaKMrHIyYSfg3oQluInBgEUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752064284; c=relaxed/simple;
-	bh=Ed4Twb2CQqgQw/j9EYSd4UBoWLDImfPhC3bCjXHZGDE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bTiy6JOQsTDaoOP4TDK/NSqBlQy9cYMKGORG3g7ndrs9yw5JaL/qtxC2QONa0gTvwZyPpXNyWHJRPJAb8eOwt39xVmPI1HIHTkuHg+nMpvo6h626BI3ks93fVzVMYIQfF/mJe2D+Jt5xK8Uk/8yHYhs11e1F03ZkXiXZUBHLcb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NupUPD60; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-451e2f0d9c2so8589225e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 05:31:21 -0700 (PDT)
+	s=arc-20240116; t=1752064289; c=relaxed/simple;
+	bh=1pfqYJyzyICeZghezgrG610OuPjosLSdxxoic9pAJq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AqCj/I8K1Z11HuqBF9pI6oG8iwR3zvlINIeoPwlhZdqIG56eEUBWdH2HAv36FRSUx5i1rGAxej3Rw4vBLJJOuJC9yiZMYUuzJPTE4xWnL0xGdYQIns4aid6Bv0m63Ub/eQ4UxABvL6nZaS3dq1KUBmza7D/ySvfuWV7aMUtS4mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eyymeOuC; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45363645a8eso38653605e9.1;
+        Wed, 09 Jul 2025 05:31:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752064280; x=1752669080; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FxL9ut2GQHQVUIwYpiqJ1CEIQmWXGnBhZS0iGBFnzFw=;
-        b=NupUPD60hKQflrmS/NCM+34QfpsoKJ/JkFsJOcvC+mKWOD/1cwYgNpYLspuQaiNKAD
-         9ihwacqGTXZFypfuojiiENoB4vMC2syZlTOC9dVlMSiZPhtDHSC6tWe0tm3YdvNyzzkx
-         DpkV2QKHhKVYQaLXMRh3ehPyiEUhEvWmt/bOa1FD5exlXBl6KV56Syb1e6k5uHfcpbrD
-         MkE4nOlD8ji/k2YHxWoQhSatv5XOiBy3e5VtrFqGBaYa+lzkTG3EJXDAcRFxaWh4bMrg
-         k6pefp8mT/319EC/3OudhLf/zTzxGFC4xew8pqW9MoovwNS7FR1SfuJu7PsExbUeY8Ma
-         zaow==
+        d=gmail.com; s=20230601; t=1752064286; x=1752669086; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UfRoQVMGljbReBXs19E2sn1Xup7fKJ5lonhUu/4oGEs=;
+        b=eyymeOuCDqZyO6A8r4tFRyA1GNKpG17HzFCe8O+ToxODgVO+w8jU4a6TnqrHf6gSh2
+         wnOwDpGlfUvePAJeGB+nxHQaLe1eRj8F3mjGx51qMoZxd7KfDqXEl4yEAZ7ZDMatPU3V
+         4baT/NXcnbUWI1/yCaf7Eipnp22Xxif7dNTHxIFfQFy7IR8hcCmtavObtpsu0lCQbTnm
+         jRzA0OmPAZNb722MExRu77E4yx2ai6tFCbr9brkzFI1wnnZNe6Rth/O6EZF2qpaOH7tN
+         sW/BTRLFOVWEphOipL9MdH/NTZEzqWwwiDj1vGVdniFH7TIxO+Ztfvwr5bhYTBNXkloo
+         705Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752064280; x=1752669080;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FxL9ut2GQHQVUIwYpiqJ1CEIQmWXGnBhZS0iGBFnzFw=;
-        b=ZlyrC6ustFHqKU8/4Ew3KqsTs6w70qe7G6Y74W2QMHOYTTKiUkamwA0bRA12JF3GNS
-         0afUP9+UneM6ltcY3U1oTHyDQcAt72R6GhqFShuvcqHFW785hPcMp7HPMTG0s0rapVzY
-         q9YNF4DOEawyNZcn6IJbwt0dgM8PXow68ALf9Dro4zwzmzkGaeHw/YHfFBbBom3QKq9E
-         F0eePN4BpRA0Up1dbEpIxjdAPytYMeMjb1CQBig3tYWhN+dI26tXjOJtvor8EwtrLBSC
-         hSbn6I331SvX+8G8UdMLtrb3tCa6rr3Oo3ZguihJ0To2s76TKJFlbVEH7rK4OE/yyKtc
-         S0Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/Dzq0izaRrTXb98qNxQCFWIc8IpnOGTArVDefVDTKE8+6pDKsrNHFyDFDGGPZK4HdxgszyiWpeItA/Rg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpLi5Qs2tlxsbnHE7d7K6ZoKhzmscNDz3qY9NIUkC7llwQrsJ+
-	Hwtsn2xvG7Kjp07677KJGiQb4dnJm1OXR2N4GQdf2K8UBS0LVh//7aceJWWE7cm8tXU=
-X-Gm-Gg: ASbGncv2OHB1Vxe7Jq+Xid9sz8ScXlxk0IKYe7L6dQo5h+aZRoMR0JbDyyGPooY3jPi
-	BWvqZE086lvIv+ej1c2e+LQA88LtiHXJIt3K59BpQxJKw4IbdEAoihP1DqRO8nCvjw/qsSs1rjL
-	YnZULilsRTqp1lxAn6pqwmEOu+i9gpB0gM7tiaQ7qc8HP9O5A2jAGTY5eJIQxeakusnf9L6zrWY
-	Y7ypGPsWE0BhzlslGQZ/YYjs88c464XKoqDsUwSVByqEv86gRUV80cSWE3kt/ByMar+Z869b1js
-	bZamas56SSCpjNZj1bdcJtpei58UbciF6Cts67F90A5owc4YySXwFftmcCz4K6LSqeLLfCGR2Sl
-	R0z8r7F6aiXLeMdhvLb4vpaKSCuoKg88g2vegd+Vv3g==
-X-Google-Smtp-Source: AGHT+IHWj61MUObzg8zjh1Gu+Q3+ULmgD+3Tet7Gf0YlEwHB9HCZZ9zrT7ksgxYACN6D+ljPvcYnRA==
-X-Received: by 2002:a05:600c:450f:b0:442:d9fb:d9a5 with SMTP id 5b1f17b1804b1-454d5601c97mr22911685e9.9.1752064280407;
-        Wed, 09 Jul 2025 05:31:20 -0700 (PDT)
-Received: from ta2.c.googlers.com (24.125.187.35.bc.googleusercontent.com. [35.187.125.24])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454cdb549absm37887155e9.1.2025.07.09.05.31.19
+        d=1e100.net; s=20230601; t=1752064286; x=1752669086;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UfRoQVMGljbReBXs19E2sn1Xup7fKJ5lonhUu/4oGEs=;
+        b=TO/7Z5YYobNDp/wHEGtH2L+Flcm8YYRF0O04f1MNIfDqpcSf0LhvB1dwWXRkZJC1NY
+         idG3Ki01jGvD08wpeA9zEew5Z4c2gL1C6QCxOpcWejpYdkHtX1VmEdX75c89mrkck+R6
+         8Vzb3ZZj/0cj08relSACsRZ9uYXpEelB+RS5xyLINosXxze0YKtfFLlu3g7ZbCZpvftT
+         EFCgCxzGowqPm4diDPgsbj81VNYmyXvHITMGhSLTtrauzflWmp5/H6n0yqEUDp4IUaKs
+         KbrKWAoZw6lU0K9GXCIlO8lT13kOn1w/zW77bWSnurCEoGJ5DDj8FvAUo0/KMwIoXvgU
+         WxXg==
+X-Forwarded-Encrypted: i=1; AJvYcCU7Qt2bVVTCF9eNEKlwM3pgSnYQfjR6GSqqHwYJ1UJuqHtNTBDYj/MX3O+pZZeqNIgNgEwkdtr4Shtgohae@vger.kernel.org, AJvYcCXVTshxSXUZVqTyJt399r+wzUcp/bVSAaq5eY+lQZ9E25wTFDSF6KcKVB6HMWIGoPW+J5jr2TZfhs4zuq4=@vger.kernel.org, AJvYcCXuWljE1Q5wMIYuUXe/7sbFqfsrOC7N8rGMLH0oGcaCiysXh8KqsIIb6kLDTl4TJBMTTXuJvLuwkA4R@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy40/+plIhAmg/pEconUj5XQlpA5AJqvTBhIk/XMJeVFtVBt27S
+	xlf5JAimGq9qfRcueFYUdyscygJH08PIYbGCI7MiTmDStutkEp7AmcnpzNkNgA==
+X-Gm-Gg: ASbGncu0CePCp+ucK/o6KtMImII4Ga1EqPf1lllKb+lMsyboU4S6vd9RJw97SgIdjkB
+	9MxPZlVrREkzKLiLlAdNfhmDTDYXkJ3qT3UyVdgdd1H8y4jKje1Bk0ml1I4qQY6Ukq3vxb2z9IE
+	/lvwlopc39DybWLzrzZQ9qNfL8PXW+yM+ezn4GL+Xe8jlcnAUcf8BxlLZFo6gnY2sWfu/h63UPu
+	Jr/MfzdnDQRQCGRWj9uGbDWUGfVt3togk+fU+AulOPFCRyHGkNTmcM2NhYdCe+j9cy7QbgMCXqt
+	XQt0BFXk3N2vAv+45j9FWhmwouaz4Pm6H3/4+hBHotQs01oT5ESFDFS5fQfv+xR3+lU3noCuhK1
+	2AFDkg99jbamw0wLqWgHjrOE5VHuq9YWVUlBjSCfuz3k9XYgf
+X-Google-Smtp-Source: AGHT+IHpLYTmMGsRn85E8rtAsthFXWZR8lTlpIo/NA8OR2OMn3yEsRBVdsSn9dM0e27DNVoe/djuOw==
+X-Received: by 2002:a05:600c:198c:b0:442:d9f2:c6ef with SMTP id 5b1f17b1804b1-454d52f4e20mr22132305e9.2.1752064285807;
+        Wed, 09 Jul 2025 05:31:25 -0700 (PDT)
+Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47030baa5sm16061019f8f.12.2025.07.09.05.31.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 05:31:19 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Wed, 09 Jul 2025 12:31:16 +0000
-Subject: [PATCH v3] PM: add kernel parameter to disable asynchronous
- suspend/resume
+        Wed, 09 Jul 2025 05:31:24 -0700 (PDT)
+Date: Wed, 9 Jul 2025 14:31:22 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: treding@nvidia.com, jonathanh@nvidia.com, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, tbergstrom@nvidia.com, 
+	bbasu@nvidia.com
+Subject: Re: [PATCH v2 0/8] Support for Tegra264 and Tegra254 in CBB driver
+Message-ID: <5xkzehwr7k3ycpd3buqahmvamn6gvaol3exv46oe7nfpj7aw3q@eze4dbhplgqa>
+References: <20250703103829.1721024-1-sumitg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250709-pm-async-off-v3-1-cb69a6fc8d04@linaro.org>
-X-B4-Tracking: v=1; b=H4sIABRhbmgC/32MQQ6CMBBFr0K6tmYYJKgr7mFclDIDk2hLWtNIC
- He3sHOh+av3k/cWFSkIRXUtFhUoSRTvMlSHQtnRuIG09JkVAtbQwFlPT23i7Kz2zLpjNBWhwYZ
- YZWUKxPLec7d75lHiy4d5r6dye3+EUqnzOgSwFqr+YtuHOBP80YdBbaWE/2zMdsOmN/WJobTwZ
- a/r+gEwuYca5wAAAA==
-X-Change-ID: 20250708-pm-async-off-bf2a3e2a27ef
-To: Jonathan Corbet <corbet@lwn.net>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Len Brown <len.brown@intel.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, peter.griffin@linaro.org, 
- andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com, 
- rdunlap@infradead.org, Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752064279; l=4059;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=Ed4Twb2CQqgQw/j9EYSd4UBoWLDImfPhC3bCjXHZGDE=;
- b=uuL2Ulb+3/5msMT8ELf6EoI8f2iEqu5Jl2oVMDbZvKJlIX1YmEO0S4Z1QBX0sUTOet1t961Rj
- B1v9AS7MguyC/vXudwLkhLrbrauVbYUDHuQxaeJl6H80Q+tJ3mDaN2x
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qncswnh7ljhekzcb"
+Content-Disposition: inline
+In-Reply-To: <20250703103829.1721024-1-sumitg@nvidia.com>
 
-On some platforms, device dependencies are not properly represented by
-device links, which can cause issues when asynchronous power management
-is enabled. While it is possible to disable this via sysfs, doing so
-at runtime can race with the first system suspend event.
 
-This patch introduces a kernel command-line parameter, "pm_async", which
-can be set to "off" to globally disable asynchronous suspend and resume
-operations from early boot. It effectively provides a way to set the
-initial value of the existing pm_async sysfs knob at boot time. This
-offers a robust method to fall back to synchronous (sequential) operation,
-which can stabilize platforms with problematic dependencies and also
-serve as a useful debugging tool.
+--qncswnh7ljhekzcb
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 0/8] Support for Tegra264 and Tegra254 in CBB driver
+MIME-Version: 1.0
 
-The default behavior remains unchanged (asynchronous enabled). To disable
-it, boot the kernel with the "pm_async=off" parameter.
+On Thu, Jul 03, 2025 at 04:08:21PM +0530, Sumit Gupta wrote:
+> This patch series adds support for Tegra264 and Tegra254 SoCs in the
+> Tegra CBB driver. It also includes a fix and some improvements to
+> make the driver more generic to add new SoC support.
+>=20
+> The patches can be applied in sequence. Patch info:
+> - Patch 1: Fix.
+> - Patch 2: Change lingo from 'Master/Slave' to 'Initiator/Target'.
+> - Patch 3 & 4: Improvements.
+> - Patch 5: New feature for HW lookup.
+> - Patch 6 & 7: Tegra264 SoC support.
+> - Patch 8: Tegra254 SoC support.
+>=20
+> ---
+> v1[1] -> v2:
+> - patch 8: change name from GB10 to Tegra254.
+> - patch 6: added ACK from Krzysztof
+>=20
+> Sumit Gupta (8):
+>   soc: tegra: cbb: clear err force register with err status
+>   soc: tegra: cbb: change master-slave to initiator-target
+>   soc: tegra: cbb: make error interrupt enable and status per SoC
+>   soc: tegra: cbb: improve handling for per SoC fabric data
+>   soc: tegra: cbb: support hw lookup to get timed out target address
+>   dt-bindings: arm: tegra: Add NVIDIA Tegra264 CBB 2.0 binding
+>   soc: tegra: cbb: add support for cbb fabrics in Tegra264
+>   soc: tegra: cbb: add support for cbb fabrics in T254
+>=20
+>  .../arm/tegra/nvidia,tegra234-cbb.yaml        |   4 +
+>  drivers/soc/tegra/cbb/tegra194-cbb.c          |  34 +-
+>  drivers/soc/tegra/cbb/tegra234-cbb.c          | 758 ++++++++++++++----
+>  3 files changed, 606 insertions(+), 190 deletions(-)
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
-Dealing with the pixel6 downstream drivers to cope with the changes from
-https://lore.kernel.org/linux-pm/10629535.nUPlyArG6x@rjwysocki.net/.
+Applied with a few fixups to the subject lines and commit messages.
 
-Similar to what people already reported it seems pixel6 lacks proper
-device links dependencies downstream causing i2c and spi client drivers
-to fail to suspend. Add kernel param to disable async suspend/resume.
----
-Changes in v3:
-- update documentation with "pm_async=" and "Format: off" (Randy)
-- reword documentation to make it clear "on" isn't a selectable option
-  for pm_async because it's the default behavior.
-- Link to v2: https://lore.kernel.org/r/20250708-pm-async-off-v2-1-7fada54f01c0@linaro.org
+Thanks,
+Thierry
 
-Changes in v2:
-- update the documentation and the commit message to describe that the
-  "pm_async" kernel parameter provides a way to change the initial value
-  of the existing /sys/power/pm_async sysfs knob.
-- Link to v1: https://lore.kernel.org/r/20250708-pm-async-off-v1-1-1b200cc03d9c@linaro.org
----
- Documentation/admin-guide/kernel-parameters.txt | 12 ++++++++++++
- kernel/power/main.c                             |  9 +++++++++
- 2 files changed, 21 insertions(+)
+--qncswnh7ljhekzcb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index f1f2c0874da9ddfc95058c464fdf5dabaf0de713..06beacf208de3242a3b4bb2413ab6cd3e0083f15 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5000,6 +5000,18 @@
- 			that number, otherwise (e.g., 'pmu_override=on'), MMCR1
- 			remains 0.
- 
-+	pm_async=	[PM]
-+			Format: off
-+			This parameter sets the initial value of the
-+			/sys/power/pm_async sysfs knob at boot time.
-+			If set to "off", disables asynchronous suspend and
-+			resume of devices during system-wide power transitions.
-+			This can be useful on platforms where device
-+			dependencies are not well-defined, or for debugging
-+			power management issues. Asynchronous operations are
-+			enabled by default.
-+
-+
- 	pm_debug_messages	[SUSPEND,KNL]
- 			Enable suspend/resume debug messages during boot up.
- 
-diff --git a/kernel/power/main.c b/kernel/power/main.c
-index 3d484630505ae91fea29f7f9b3fbcf7e585955d8..3cf2d7e72567ecbea2cd80acd3c7f6da85f5bef4 100644
---- a/kernel/power/main.c
-+++ b/kernel/power/main.c
-@@ -8,6 +8,7 @@
- 
- #include <linux/acpi.h>
- #include <linux/export.h>
-+#include <linux/init.h>
- #include <linux/kobject.h>
- #include <linux/string.h>
- #include <linux/pm-trace.h>
-@@ -112,6 +113,14 @@ int pm_notifier_call_chain(unsigned long val)
- /* If set, devices may be suspended and resumed asynchronously. */
- int pm_async_enabled = 1;
- 
-+static int __init pm_async_setup(char *str)
-+{
-+	if (!strcmp(str, "off"))
-+		pm_async_enabled = 0;
-+	return 1;
-+}
-+__setup("pm_async=", pm_async_setup);
-+
- static ssize_t pm_async_show(struct kobject *kobj, struct kobj_attribute *attr,
- 			     char *buf)
- {
+-----BEGIN PGP SIGNATURE-----
 
----
-base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-change-id: 20250708-pm-async-off-bf2a3e2a27ef
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhuYRoACgkQ3SOs138+
+s6EQ+w//fkomOwmgUj7XFjnfa43JfwU7dy3++PHFs+YwL0vAdqNtYZKpmBUOxzWA
+yhkdvX8JReSMUBLSxcQGZKjSNzm1qvV9/gigEtyWs2BwKT3ScJwZ8POHc75tQCsY
+TyeUe4uQdRA0EV6Tw3oYWgVuQNItSSM5SpS6TV6pcr13reloIpA4HG/NxTozlU+Y
+4nZrEku7y6QAcBILJ6Fnk7K1JL+5muQSjBP4oTmvIE9uDqQ99xc0Xe1Gi5Cs7Okq
+mvcQxh6kEqBcZHevkfi8KH2I5Ep7Oxf8+LUpTZi9EtTwUM+EhVCgcj8HLoFBFP1M
+cD3zXnYdR60xtysKVtmvNjfjxRP1LEN1e8nWcqYRxfRdPFuKC+3pzgQdxOnmkg5A
+55S0sXymQHJA1KmQC6Qa25rH9hWE8hyn+7jKTXkDLfzaDW9T8R5ULhqMXyvUkLMK
+xw8wDIJxbKGgISwUPjNh0j64r8NqGdbIzSLx+xQDUeoUV+Tzd0T6hdPNux2idbAc
+DHp/GElE7AHAFCPsMSVKuIrUhJnG/UV7pW/jMSRgwB6q1adzowRpPseM6YDGXXBD
+wgi6d5HLCWN/gfN2Howvr4110mOr717ArsPyuvv1pnyl1NiNI/VPAI+QoThmDbl5
+eL1un8qO/iZ8/ck3h6eYGtOxmOL/jH2XYt13J4tGSmqiWVCpFmE=
+=Phzg
+-----END PGP SIGNATURE-----
 
-Best regards,
--- 
-Tudor Ambarus <tudor.ambarus@linaro.org>
-
+--qncswnh7ljhekzcb--
 
