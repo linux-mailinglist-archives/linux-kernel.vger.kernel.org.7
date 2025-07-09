@@ -1,129 +1,160 @@
-Return-Path: <linux-kernel+bounces-723560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B179AFE87A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:58:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6285AFE87B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1479D189727F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:58:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DECDD6E212E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9367C2D7816;
-	Wed,  9 Jul 2025 11:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427102D8796;
+	Wed,  9 Jul 2025 11:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="e0gXmM2N"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1D5Iv2I"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F362285050;
-	Wed,  9 Jul 2025 11:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE772853F2;
+	Wed,  9 Jul 2025 11:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752062313; cv=none; b=J0KYRh1ExUUKPduqqdLwtzkklsBY36BRbMz5LLW1K/WUTQcd/C5eRd75GDwk0vud6YCiRmyQpPIXzt9XMTjn04H2FDJ1I9xBxMNpuZW17RuVgso7tuzlIbd0nxYdIHJ3KcVgJM4xAS+dJq6axdnF48biVSWTEtFhw2smiQ8fvQ0=
+	t=1752062349; cv=none; b=KKwqkegvRjkYNOXAMDMCgeHtTB60AUm9T1mOk0gUVexVfY+9TfXlyL4MEnTEUvQeuZNL8axgUZUr0eaNhS2dSsg8wFJ3mWe5aTG2nU938YdLQO/d4zKRkcvZfJC8915dw+HfPZAUdQSnzLekL+v0uCiip0cFsbBqKs1FiECXfIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752062313; c=relaxed/simple;
-	bh=deqaLj8n/NAFDUKiP5E2BnlV+hJ0ERmOIt2foB27GF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AVS4PDTchZ3GUCIHemzxODWCWJiSvCUaHnvP3a3QQlnlgBA6pi059WQhVIxHED+a2GXV0pDVizE4DycHqDHZCrtui2mhUty6R5a5Je3QxMpDjdqbc8M8NFHp8i/0w5KU2NUE/y+pWzHZujFDaEqs1bxNSiQjO7/mhrqLmFNsqMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=e0gXmM2N; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5696hFkm011039;
-	Wed, 9 Jul 2025 11:58:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=BALjs8cFSvExIVBNi8L8lLdQ3kLyc7
-	QtGrofM4HGey8=; b=e0gXmM2Nk1AmYLFB8cXcOefhHByeXJ+hFmw8413DbNL1ZP
-	7nqq5Wq/VkXpj0Ed+4UfR+AmRU2/0IlhKBnNElxx2crZfQ+MAlgb1vKHhF+cGVql
-	Yt/w2pB7vgrdZ6gsCHjTJfBL3p78FdaxNdkdvH5CtVYpMW5cHUfsXNCm4ojA+Ez/
-	3fMA/NiTBGoO+HzEB3JBYpfEZEmIWr06zX9fuas8yKLtgzvSRDSXj+YViHnOAXAI
-	bk1tDEjF9z/pApQccS+9796vQbvIrbEBEiL38RqkS+G+wQir0VothQeFQR0j8Hxh
-	9hSpQfV550MQxrazTO7F37YG/LxfOsrXEWdwlDOQ==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47puqnd5d5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Jul 2025 11:58:25 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5697o0Jh013602;
-	Wed, 9 Jul 2025 11:58:24 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 47qgkkysjh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Jul 2025 11:58:24 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 569BwKbw35914342
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 9 Jul 2025 11:58:20 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A8BAA2004D;
-	Wed,  9 Jul 2025 11:58:20 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7B6F720043;
-	Wed,  9 Jul 2025 11:58:20 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed,  9 Jul 2025 11:58:20 +0000 (GMT)
-Date: Wed, 9 Jul 2025 13:58:19 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: linux-kernel@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Oleg Nesterov <oleg@redhat.com>,
-        Kees Cook <kees@kernel.org>, Akihiko Odaki <akihiko.odaki@daynix.com>,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH 17/23] s390/ptrace: Use USER_REGSET_NOTE_TYPE() to
- specify regset note names
-Message-ID: <20250709115819.2052203Bc6-agordeev@linux.ibm.com>
-References: <20250701135616.29630-1-Dave.Martin@arm.com>
- <20250701135616.29630-18-Dave.Martin@arm.com>
+	s=arc-20240116; t=1752062349; c=relaxed/simple;
+	bh=bgR5awQX0vKasE3O7EHtXSFXPFtLWKVOsswzgDdWlbs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XZDsaewGaPXw+lqr2PF4DK3oq2hJEyMT99xTOTeMbFbEDPB6hO0DsELlWy/LXKS75dK8xAEIktKN/KJvfuNB5lOLKqriwKFGsU+h/LvPFuOYiUxD+k1IA4+GoLS6KMtGBFBx8FB3itAyvAj4aGR4y+yemURIR4/eTryb4Z8I5kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I1D5Iv2I; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-553dceb342aso4822269e87.1;
+        Wed, 09 Jul 2025 04:59:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752062345; x=1752667145; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cok7uU2jUvW7fnecoEr7WpQIhsCNVnn9HvuxNqMoKcs=;
+        b=I1D5Iv2I1T4dGkV2tzZaRRzzfdEF54JDCjsaY57SSXNtV1KpG6n6YfXhH/9cXuLzDE
+         a/8uaL37pqVRIuOuQIDaHqquKBeIPxFq4raEErRmAKFwFEBY4cpN40TtAgqDv3/YVJ+t
+         xyfbwBaKMfHHG71ZFZCh1WGMh5vM8MiK3JHpfsQsVyckcy+yoOlUdAB4UTYYIKurOTdA
+         bSs1XDrCxIzR+I8fgwkkHXXD+IuozNqLcGhxqGVMpNfnOsboEMvFVVECec79ZTTJzwDo
+         ksxYrzQqCw/xUimavoAI1iEYM+qyqzW4ilzFIo+bQzFXzbZ5ZIxgB++73LJ7BWmKGZ/2
+         yuJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752062345; x=1752667145;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cok7uU2jUvW7fnecoEr7WpQIhsCNVnn9HvuxNqMoKcs=;
+        b=SQ8iuAtNsGA/mqOIhBX8ipFBKcncu/H4GWlOGNzHs1Nvyw6XdtVmYcZH5vekVzDQqe
+         CG3yvJ88e5FltYSk9Fx7o8O2B3qxqNJompX1gXmE0hAhNTL4otUyz6Ttjr0e7i0g4Pgx
+         SKAljt+3KpdYJi05RxoxC4VtJ0jFVnTq5ynR8gRVXTmC86UTrdfuliBn4oI3v9yT5IHL
+         MVBnuajRqBCIJz0T9J8CDT9+XBSFqsL2tnkaBdNOh2h2tNGoC0chSB6AISzo1OxBhlhX
+         +fLWW+/6srjXLikcRxbbWTF0G3AbKSa+201Gi21aULiBwxDIdeJRfblzu8EB15tsluNG
+         f+Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2Xg5wgh8xmoF8aY2zTqA6uPaswmMTHWSFKxGI1BoRmwthVSFFUHlR85uDhfz8jnO26sRh7HEnto9EInR4UdU=@vger.kernel.org, AJvYcCXa+01+isGvDJAsNabG0TIhzqQHX2+vrhBnjtT99OgsvLJ3w0rVg2BRxMalIWEVLRIZeYDhiCuTkuOBVDA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ+ClSfbOauFecGSvqqVHSzWSzVYuXoDnKcxS0qTIDJq1ItriL
+	chrXv1g5h1LMKGkqXXRm+ScNerhVOlgzZTwBt/0D2vTkbpTFuOC/zBJM
+X-Gm-Gg: ASbGnct41XFteylh++nkr2diLpYhXASqfDTMcCZ1L9J/e3tIG1jlMh+VGHr6RpCJ6z6
+	9X3PYj0gD24563sSzZF8IDHtRY7LWzVyjWuw5hlR4LL3i7KJSjZmamofAKiwTg1TSIfqidZI7BS
+	70ZCQmnQhEacDjPKPnQC1caKB5Tu/ysmDeRRBKBj1P67cWXxKwAzI9WRsEOWciJKTde9fL3sVBe
+	pbN+5d/uWKIuGP7Gcq1tMAkNL6TuQBvmN0QQtFZT4JP9l5gx4Y/OWTsSYvs5w2dasIw3Iy/r7f5
+	PdzMUf0HOlEIDSULiZHsG1Ag4cRo/kxK38ncR7KUXQbftkIEuTllsrvk5NDxDGbe1eZ42BD0ycA
+	kuwAzaeCv0Paq8l07UaE7Bvb5mX6jpJpYGcNpoLfX3mZ2jJls5A==
+X-Google-Smtp-Source: AGHT+IFC8/vApe5HFeNaNKqi+jWCcD3kQruu4TovfGc8AxarPCJVnGOQYHuNec4peOG7S/XWGGoTrA==
+X-Received: by 2002:a05:6512:3f0b:b0:553:2e27:6769 with SMTP id 2adb3069b0e04-558fa86e7cfmr643645e87.7.1752062344958;
+        Wed, 09 Jul 2025 04:59:04 -0700 (PDT)
+Received: from [192.168.1.146] (dsl-hkibng22-54f8dc-251.dhcp.inet.fi. [84.248.220.251])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-556384c8c42sm1981269e87.237.2025.07.09.04.59.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Jul 2025 04:59:04 -0700 (PDT)
+Message-ID: <0206a7fa-ce7f-46af-8f1d-f9dedbb0a3d8@gmail.com>
+Date: Wed, 9 Jul 2025 14:59:03 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250701135616.29630-18-Dave.Martin@arm.com>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=FZ43xI+6 c=1 sm=1 tr=0 ts=686e5961 cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=7CQSdrXTAAAA:8 a=VnNF1IyMAAAA:8 a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=z4glEzOvAAAA:8
- a=-NsZcAWZZKZ1bNev53cA:9 a=CjuIK1q_8ugA:10 a=a-qgeE7W1pNrGK8U0ZQC:22 a=92dS5hN0c3Q7EetK7xW5:22
-X-Proofpoint-GUID: VM6ehRWDnWbw4T3e4r9waOE3AEN8zPyY
-X-Proofpoint-ORIG-GUID: VM6ehRWDnWbw4T3e4r9waOE3AEN8zPyY
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDEwNiBTYWx0ZWRfX7DpBeZ+tzApT 5C/26jd0RhV76vlAyRyk5qI9keDpp6ajISntt9lW2d6L/hFGFmHeSyd7wUUDgCKcCQr22nemyGj hYeovrL76RJp/5H4OH/OB6KWAaQwMa5nSVXdN6v7OZjJC47Q60N8Vh5kbAHsNv2OCgphRdOl/Ci
- mqWPgccGhtfJH4gFbyeYDOP9C/NNoet1Yhy9SUTEY59M8AA0hlJlFAdPZ2wBRk96zLa7pFBkf9u Z0YXP8QtESYN3q/s9lYUGRKe+fTkz4NYySsWuZ4aik2QiKMSL7fSf8xIdKkCpS8OysRdo6kmHuK q8e9b3N0PxoDUPFOeDh+nCnqnUzZuF2bAOfoy6Qs8A7z9HDQkOWesNh80m58jz6Vkro45nLBa/N
- v1FGeZyGPzFIRvx6Uctmne4Qaf1rx7spJHA9xIYAB6EOzzZVKqfGHjEI+PO7Ke8UG0X+tO6W
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-09_02,2025-07-08_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_spam_definite policy=outbound score=100 suspectscore=0
- mlxscore=100 priorityscore=1501 malwarescore=0 mlxlogscore=-999
- clxscore=1011 spamscore=100 bulkscore=0 phishscore=0 lowpriorityscore=0
- impostorscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507090106
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] rust: add initial scatterlist bindings
+To: Alexandre Courbot <acourbot@nvidia.com>, jgg@ziepe.ca, lyude@redhat.com,
+ dakr@kernel.org
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Valentin Obst <kernel@valentinobst.de>,
+ open list <linux-kernel@vger.kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>, airlied@redhat.com,
+ rust-for-linux@vger.kernel.org,
+ "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
+ Petr Tesarik <petr@tesarici.cz>, Andrew Morton <akpm@linux-foundation.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Sui Jingfeng <sui.jingfeng@linux.dev>, Randy Dunlap <rdunlap@infradead.org>,
+ Michael Kelley <mhklinux@outlook.com>
+References: <20250626203247.816273-1-abdiel.janulgue@gmail.com>
+ <20250626203247.816273-2-abdiel.janulgue@gmail.com>
+ <DAZQ9OGC1648.2WWABTO7A7UU6@nvidia.com>
+ <DAZVUN9N4GBT.38B6BX4CN516F@nvidia.com>
+ <DB17XMDHU5M7.2M2KN9A8TJQOB@nvidia.com>
+ <DB288AEQSBTC.63WK79TB77TW@nvidia.com>
+Content-Language: en-US
+From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+In-Reply-To: <DB288AEQSBTC.63WK79TB77TW@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 01, 2025 at 02:56:10PM +0100, Dave Martin wrote:
-> Instead of having the core code guess the note name for each regset,
-> use USER_REGSET_NOTE_TYPE() to pick the correct name from elf.h.
+Hi,
+
+On 03/07/2025 10:03, Alexandre Courbot wrote:
+> On Wed Jul 2, 2025 at 11:37 AM JST, Alexandre Courbot wrote:
+>> Thoughts? If Abdiel is comfortable with this I can submit a v3 with this design
+>> for review (putting myself as co-developer), on which Abdiel could then keep
+>> iterating, as I suspect this would be easier to understand than this long email
+>> :).
 > 
-> Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-> Cc: Heiko Carstens <hca@linux.ibm.com>
-> Cc: Vasily Gorbik <gor@linux.ibm.com>
-> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-> Cc: Sven Schnelle <svens@linux.ibm.com>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: Kees Cook <kees@kernel.org>
-> Cc: Akihiko Odaki <akihiko.odaki@daynix.com>
-> Cc: linux-s390@vger.kernel.org
-> ---
->  arch/s390/kernel/ptrace.c | 42 +++++++++++++++++++--------------------
->  1 file changed, 21 insertions(+), 21 deletions(-)
+> Figured I could just as well share the code with you and save both of us
+> some time. ^_^;
+> 
+> The top commit of this branch contains the proposal discussed:
+> 
+> https://github.com/Gnurou/linux/tree/scatterlists
+> 
+> The sample code has been updated to add dummy examples for the 3
+> use-cases discussed (reference to an existing `sg_table`, refcounted
+> reference, and owned data).
+> 
+> There are still things missing, including the typestate on `SGEntry`, as
+> it wasn't necessary to demonstrate the basic idea.
+> 
+> Note also that if we decide to only support DMA-mapped SG-entries, we
+> can remove a bunch of code, including the one that maps a `SGTable` if
+> the backing type implements `BorrowMut`.
+> 
+> For your consideration. :) Please feel free to take and use anything you
+> find useful.
 
-Acked-by: Alexander Gordeev <agordeev@linux.ibm.com>
+Sorry for the delay, just came back from a week vacation.
+
+Regarding your question regarding why I dropped type-state, I thought 
+the general consensus here is to drop this approach:
+
+https://lore.kernel.org/lkml/DAC20AXGABW2.X147X4JPMRBS@nvidia.com/
+
+I think I might have misunderstood after re-reading it now. What you 
+probably meant was to have no intermediate state from initialized to 
+mapped to create the sg_table?
+
+Anyways, thanks for the code above I'll look into this in detail and 
+pick bits to integrate into v3 :)
+
+/Abdiel
+
 
