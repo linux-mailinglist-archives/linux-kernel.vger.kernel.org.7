@@ -1,216 +1,150 @@
-Return-Path: <linux-kernel+bounces-724197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E66F9AFEFD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:27:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A94AFEFD8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D83471C8501F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:26:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D631D1C8091F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5FA230D08;
-	Wed,  9 Jul 2025 17:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C1621CC54;
+	Wed,  9 Jul 2025 17:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="gDlorIcp";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="hbTRQwrw"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OfrzZ+IU"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA661226D1F
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 17:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A13229B2A
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 17:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752081916; cv=none; b=TKBlNg4Vl72j6TN9a37WUWvMMsP8mY5W0/ZnOSMc4em7B+Jd0dNE4F0t1g0vJa3ovfkMkXmgvzrNo84aFyjNEh9fkyL6hEkqDb07xMgG5vOHTyu8yuM/vsf8OMrm+h7YzRpLT1lkYuKyw+DphbhORpuNHuUUuu4gzsUkVpDwdkQ=
+	t=1752081952; cv=none; b=MlwY3XwnuH+KpkwpxbQ7nMrrEF2jUSo2TvRFdk/LXuNJQrYxrZ29ezNAVSHGiRVuVH8o+pU62JAxILc+3wSSOFj5fi7v/YMAweWkuVhxPBOHcpOK/iU7XG/Nn5HuwWdN4nyOpG7e7SCluF6e33K0HUurnBpB270kRZdYG79Re9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752081916; c=relaxed/simple;
-	bh=7qxUEpd9QQwyJkAUKS96AZjZQn2zLtt4fGlO5K0b0ck=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HDcIlzU2J9pCc7R9UGT6Z8fKcY6Mnfr10zRBts5+2ryNDt4/9Qq74WxWb0hKHccuSQtqxzsfkuYUUL9gXEH3mdlYu5nHQqIA/ni4LDTE125sU/0O0P36EDXNGSQJkRONI71WNSI+J5FlfqQCp0VY8rrM7pN95j67R32Se0Y5gnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=gDlorIcp; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=hbTRQwrw; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1752081913; x=1752686713;
-	d=konsulko.se; s=rsa1;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=Nu0TsAG+vOSry9MLpyc10rSWYKN4T+im9PUF68OMJYc=;
-	b=gDlorIcpYUSIFo7TewO6/tewDFxmcd30T308/OpE0QQ0XIbDPH1eYtwkKzLAvTZmu5JsqploH9Ojo
-	 lL92YSsOyOCFFlKm1vfW43iI5ZU/4fzOFhgWcpEjRUzfIg3Mf2JzyremNE8vSQ1gUFiafB/TbPUOLN
-	 rlzyv/LBfEy9Sjt3cSkuUd0iVPMPGtI8H29etlNsdnxySbKCkTLKEO+p8TKVYyKXk2FPIvAEukj17O
-	 Imc+oAQXX42cENue3RWpHTnmrwLLKvvONflJbdoY3dHKXyxMjsKGUApd1NbQlgebYZSF+bCdObpG3L
-	 6wUjD+O5v7t9xDQDEfwG5qBeRe+PQRA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1752081913; x=1752686713;
-	d=konsulko.se; s=ed1;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=Nu0TsAG+vOSry9MLpyc10rSWYKN4T+im9PUF68OMJYc=;
-	b=hbTRQwrwvqMgxQQTs4t4pHabuI1+rrkDmtI1Wq76M65pbyGP+qj9aaIo5ouUy7ojNfcR2uqh1XVVF
-	 4wm/tklBA==
-X-HalOne-ID: aace5762-5ce9-11f0-a52e-632fe8569f3f
-Received: from slottsdator.home (host-90-238-19-233.mobileonline.telia.com [90.238.19.233])
-	by mailrelay2.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id aace5762-5ce9-11f0-a52e-632fe8569f3f;
-	Wed, 09 Jul 2025 17:25:12 +0000 (UTC)
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	rust-for-linux@vger.kernel.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-bcachefs@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Vitaly Wool <vitaly.wool@konsulko.se>
-Subject: [PATCH v12 4/4] rust: support large alignments in allocations
-Date: Wed,  9 Jul 2025 19:25:09 +0200
-Message-Id: <20250709172509.1032067-1-vitaly.wool@konsulko.se>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250709172345.1031907-1-vitaly.wool@konsulko.se>
-References: <20250709172345.1031907-1-vitaly.wool@konsulko.se>
+	s=arc-20240116; t=1752081952; c=relaxed/simple;
+	bh=jPpxTKLyPqI/cFRUCuUIyZbBG7qVBxV2OKuHj7nB3+4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jlMXrzgQkobL7tFVZ3F7VukHEAo8TcA1/2yrwI77piE3FtFoTzsKSZp40zMIgZbRYLvBQbPpAPOCdfgTPqMVjM9Z6FmdUJrlV/6DHdPOcyTFD9Vm85wIqlg5iA+e3lmPjGICPRmRBGaVDngxbYChA9ZxuatGVBUnqi4h0S4cPOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OfrzZ+IU; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4a9e8459f28so28951cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 10:25:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752081950; x=1752686750; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=RUjJtPe4ejoRXpGOVMVYkbRyzaSCAR7oa43uH1ZiIgE=;
+        b=OfrzZ+IUd8Nr9IyR6l9N7PjoU1oIK4BEwsZ0xfiO2N4Y1GN6kKTfdUTC4FlhBl4PuT
+         SrE4SUMF1jS/CxOl2cw1TkqqplDhjQ5UwBZh0Dh23rTdIGquTeMmf49X39T2ISZe4WJ/
+         dJYHXa3C824CMlCfPMftVYzKJn5M4qjDmH8EzmPDd3bZg9aiIEsv8zOoKhXNdO7LcFth
+         fXtqZjtFOf+/QcO9AjKYjr4HC/pmdHUYnzoiIXbOHnQkn9QUpAU1yvPSl4mhYPyW+NHe
+         bpFWAXnU31OHWwVOZ5vUz3B93CIuKbGA7FpEmOUtHVZXwb3YV3XPUVvFQNN8ZpFEV1j+
+         T2kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752081950; x=1752686750;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RUjJtPe4ejoRXpGOVMVYkbRyzaSCAR7oa43uH1ZiIgE=;
+        b=SgZNkbbZPfF+7lQ5Qf6jvVtCpawoBW7kqSUDVMPvGMI4m8cYgqS6vwRP1KM1jvP718
+         wI3ulPbgZtsAFVuAxI1LS44RxFm/jU9vbftioXiD+vL5S6TQntkUsa2vUtIEl/slhhMo
+         iLh7Vz807XmlliQQfCeW2o7GuP7ls1nu+Mz+73fcTa0Ev2KVUOmbR6uHV9w+f00Acezb
+         d3FDQdgJplm+23IKP3bOTj55YAUtqdKOEQSiDwzmptnqCQ+EiN6Meeg0OEwmef+r4BzP
+         8jzp5bFdUA0Z4tF9hZ/eLMm/+ExAfme338eL8ix+z0eiOmFFpRzW35EXqx+W5wS8aBfn
+         GJpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqtXd3f5fv1Wa7oDvVTkqdtOHFxobrsMXgxpL9H7U5TNOh2pe4kyzkOUBKV0JfBl+iZ4qyRnXbibR/IFk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGR+1cvY+BDlfAaWzII6TXNTeJSyBnbakmkV/nYMxJfQrfzIo3
+	+9aR6KoqR2ja8GCD0nTIyP9vNP+v/pLOe+fAO0t8ASLfUcYVdid9hlGxCPex/hJ8xZpy6El5oCk
+	W2QxCS7wgjtHMwQVZrRQ9Atu0hVk+z/Zs2u+UoY0H
+X-Gm-Gg: ASbGnctpq6rMbdivvb9yiLXr+WF7oHKZq0xAgc5eSbko7rBXwU7KLdSWu37i20z8tHH
+	1i4MUyVqwax6Svkt6Haw1FLyIRKp8+t/X39xwRbkh37gHURxWjjlj9On0N3wW51NtmY0IoNZyTd
+	nvBgWGHiK8En6JeC1Y/fRjdHIgobBEM7jqLVDta45qqfPwDBO9As8/g0KhPRmYpGEThsd7UJA=
+X-Google-Smtp-Source: AGHT+IFypQd7Mq/ljNYvUr9csDRkxavb+g9AvF8pr4DH1TvX4BRLGx90MyL0/szowHfersDuxpDtcmleZrEXJ8ECIS0=
+X-Received: by 2002:ac8:64cc:0:b0:4a9:d263:d983 with SMTP id
+ d75a77b69052e-4a9dcd8252fmr4031851cf.22.1752081949736; Wed, 09 Jul 2025
+ 10:25:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250619000925.415528-1-pmalani@google.com> <20250619000925.415528-3-pmalani@google.com>
+ <ff65b997-eb14-798f-1d2f-c375bf763e71@hisilicon.com> <CAFivqm+hjfDwPJCiHavnZSg2D+OaP5xbQnidmwxQ3HD32ic6EA@mail.gmail.com>
+ <ef3f933a-742c-9e8e-9da4-762b33f2de94@hisilicon.com> <CAFivqmLCW2waDnJ0nGbjBd5gs+w+DeszPKe0be3VRLVu06-Ytg@mail.gmail.com>
+ <CAFivqm+D9mbGku-nZKSUEMcQV5XK_ayarxL9gpV5JyfmhirsPw@mail.gmail.com> <aGuGLu2u7iKxR3ul@arm.com>
+In-Reply-To: <aGuGLu2u7iKxR3ul@arm.com>
+From: Prashant Malani <pmalani@google.com>
+Date: Wed, 9 Jul 2025 10:25:38 -0700
+X-Gm-Features: Ac12FXznsYt2b-23fsWr9XVQZcZdVZIe5uc43u-DcYDLBiSCRn72bCnu6KWzEgs
+Message-ID: <CAFivqmJL90xsELhz4tPtkYA9vMzS9C=V__nwo=kWJKjKS=mE_Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] cpufreq: CPPC: Dont read counters for idle CPUs
+To: Beata Michalska <beata.michalska@arm.com>
+Cc: Jie Zhan <zhanjie9@hisilicon.com>, Ionela Voinescu <ionela.voinescu@arm.com>, 
+	Ben Segall <bsegall@google.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>, Mel Gorman <mgorman@suse.de>, 
+	Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Valentin Schneider <vschneid@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	z00813676 <zhenglifeng1@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Add support for large (> PAGE_SIZE) alignments in Rust allocators.
-All the preparations on the C side are already done, we just need
-to add bindings for <alloc>_node_align() functions and start
-using those.
+Hi Beata,
 
-Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
-Acked-by: Danilo Krummrich <dakr@kernel.org>
----
- rust/helpers/slab.c            | 10 ++++++----
- rust/helpers/vmalloc.c         |  5 +++--
- rust/kernel/alloc/allocator.rs | 29 +++++++++--------------------
- 3 files changed, 18 insertions(+), 26 deletions(-)
+Thanks for taking a look.
 
-diff --git a/rust/helpers/slab.c b/rust/helpers/slab.c
-index 8472370a4338..d729be798f31 100644
---- a/rust/helpers/slab.c
-+++ b/rust/helpers/slab.c
-@@ -3,13 +3,15 @@
- #include <linux/slab.h>
- 
- void * __must_check __realloc_size(2)
--rust_helper_krealloc_node(const void *objp, size_t new_size, gfp_t flags, int node)
-+rust_helper_krealloc_node_align(const void *objp, size_t new_size, unsigned long align,
-+				gfp_t flags, int node)
- {
--	return krealloc_node(objp, new_size, flags, node);
-+	return krealloc_node_align(objp, new_size, align, flags, node);
- }
- 
- void * __must_check __realloc_size(2)
--rust_helper_kvrealloc_node(const void *p, size_t size, gfp_t flags, int node)
-+rust_helper_kvrealloc_node_align(const void *p, size_t size, unsigned long align,
-+				gfp_t flags, int node)
- {
--	return kvrealloc_node(p, size, flags, node);
-+	return kvrealloc_node_align(p, size, align, flags, node);
- }
-diff --git a/rust/helpers/vmalloc.c b/rust/helpers/vmalloc.c
-index 62d30db9a1a6..7d7f7336b3d2 100644
---- a/rust/helpers/vmalloc.c
-+++ b/rust/helpers/vmalloc.c
-@@ -3,7 +3,8 @@
- #include <linux/vmalloc.h>
- 
- void * __must_check __realloc_size(2)
--rust_helper_vrealloc_node(const void *p, size_t size, gfp_t flags, int node)
-+rust_helper_vrealloc_node_align(const void *p, size_t size, unsigned long align,
-+				gfp_t flags, int node)
- {
--	return vrealloc_node(p, size, flags, node);
-+	return vrealloc_node_align(p, size, align, flags, node);
- }
-diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
-index 8af7e04e3cc6..429d1b060f31 100644
---- a/rust/kernel/alloc/allocator.rs
-+++ b/rust/kernel/alloc/allocator.rs
-@@ -56,25 +56,26 @@ fn aligned_size(new_layout: Layout) -> usize {
- 
- /// # Invariants
- ///
--/// One of the following: `krealloc_node`, `vrealloc_node`, `kvrealloc_node`.
-+/// One of the following: `krealloc_node_align`, `vrealloc_node_align`, `kvrealloc_node_align`.
- struct ReallocFunc(
-     unsafe extern "C" fn(
-         *const crate::ffi::c_void,
-         usize,
-+        crate::ffi::c_ulong,
-         u32,
-         crate::ffi::c_int,
-     ) -> *mut crate::ffi::c_void,
- );
- 
- impl ReallocFunc {
--    // INVARIANT: `krealloc_node` satisfies the type invariants.
--    const KREALLOC: Self = Self(bindings::krealloc_node);
-+    // INVARIANT: `krealloc_node_align` satisfies the type invariants.
-+    const KREALLOC: Self = Self(bindings::krealloc_node_align);
- 
--    // INVARIANT: `vrealloc_node` satisfies the type invariants.
--    const VREALLOC: Self = Self(bindings::vrealloc_node);
-+    // INVARIANT: `vrealloc_node_align` satisfies the type invariants.
-+    const VREALLOC: Self = Self(bindings::vrealloc_node_align);
- 
--    // INVARIANT: `kvrealloc_node` satisfies the type invariants.
--    const KVREALLOC: Self = Self(bindings::kvrealloc_node);
-+    // INVARIANT: `kvrealloc_node_align` satisfies the type invariants.
-+    const KVREALLOC: Self = Self(bindings::kvrealloc_node_align);
- 
-     /// # Safety
-     ///
-@@ -116,7 +117,7 @@ unsafe fn call(
-         // - Those functions provide the guarantees of this function.
-         let raw_ptr = unsafe {
-             // If `size == 0` and `ptr != NULL` the memory behind the pointer is freed.
--            self.0(ptr.cast(), size, flags.0, nid.0).cast()
-+            self.0(ptr.cast(), size, layout.align(), flags.0, nid.0).cast()
-         };
- 
-         let ptr = if size == 0 {
-@@ -160,12 +161,6 @@ unsafe fn realloc(
-         flags: Flags,
-         nid: NumaNode,
-     ) -> Result<NonNull<[u8]>, AllocError> {
--        // TODO: Support alignments larger than PAGE_SIZE.
--        if layout.align() > bindings::PAGE_SIZE {
--            pr_warn!("Vmalloc does not support alignments larger than PAGE_SIZE yet.\n");
--            return Err(AllocError);
--        }
--
-         // SAFETY: If not `None`, `ptr` is guaranteed to point to valid memory, which was previously
-         // allocated with this `Allocator`.
-         unsafe { ReallocFunc::VREALLOC.call(ptr, layout, old_layout, flags, nid) }
-@@ -185,12 +180,6 @@ unsafe fn realloc(
-         flags: Flags,
-         nid: NumaNode,
-     ) -> Result<NonNull<[u8]>, AllocError> {
--        // TODO: Support alignments larger than PAGE_SIZE.
--        if layout.align() > bindings::PAGE_SIZE {
--            pr_warn!("KVmalloc does not support alignments larger than PAGE_SIZE yet.\n");
--            return Err(AllocError);
--        }
--
-         // SAFETY: If not `None`, `ptr` is guaranteed to point to valid memory, which was previously
-         // allocated with this `Allocator`.
-         unsafe { ReallocFunc::KVREALLOC.call(ptr, layout, old_layout, flags, nid) }
+On Mon, 7 Jul 2025 at 01:33, Beata Michalska <beata.michalska@arm.com> wrote:
+>
+> Hi Prashant,
+>
+> On Wed, Jul 02, 2025 at 11:38:11AM -0700, Prashant Malani wrote:
+> > Hi All,
+> >
+> > Ionela, Beata, could you kindly review ?
+> >
+> > On Fri, 27 Jun 2025 at 10:07, Prashant Malani <pmalani@google.com> wrote:
+> > >
+> >
+> > I think it is pertinent to note: the actual act of reading the CPPC counters
+> > will (at least for ACPI_ADR_SPACE_FIXED_HARDWARE counters)
+> > wake the CPU up, so even if a CPU *was* idle, the reading of the counters
+> > calls cpc_read_ffh() [1] which does an IPI on the target CPU [2] thus waking
+> > it up from WFI.
+> >
+> > And that brings us back to the original assertion made in this patch:
+> > the counter values are quite unreliable when the CPU is in this
+> > idle (or rather I should correct that to, waking from WFI) state.
+> >
+> I'd say that's very platform specific, and as such playing with the delay makes
+> little sense. I'd need to do more deliberate testing, but I haven't noticed
+> (yet) any discrepancies in AMU counters on waking up.
+> Aside, you have mentioned that you've observed the frequency reported to be
+> above max one (4GHz vs 3.5HZ if I recall correctly) - shouldn't that be clamped
+> by the driver if the values are outside of supported range ?
+>
+> Verifying whether the CPU is idle before poking it just to get a counters
+> reading to derive current frequency from those does feel rather like an
+> appealing idea.
+
+That's good to hear. What can we do to refine this series further?
+
+> Narrowing the scope for ACPI_ADR_SPACE_FIXED_HARDWARE cases
+> could be solved by providing a query for the address space. Though I am not an
+> expert here so would be good to get some input from someone who is
+> (on both).
+
+Who would be the expert here (are they on this mailing list)?
+
+Could you point me to an example for the query for the address space? Then
+I can respin this series to use that query and narrow the scope.
+
+BR,
+
 -- 
-2.39.2
-
+-Prashant
 
