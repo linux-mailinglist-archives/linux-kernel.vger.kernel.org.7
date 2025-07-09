@@ -1,165 +1,111 @@
-Return-Path: <linux-kernel+bounces-724596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E548AFF4B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:28:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62EAEAFF4B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:30:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 405027A382F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:26:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B55777B30E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393F4245016;
-	Wed,  9 Jul 2025 22:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD1C24888C;
+	Wed,  9 Jul 2025 22:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="Vz6drXgd";
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="vvXkv8Y5"
-Received: from mta-03.yadro.com (mta-03.yadro.com [89.207.88.253])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PTOuyLPK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141282192EE;
-	Wed,  9 Jul 2025 22:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.207.88.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F641CAA85;
+	Wed,  9 Jul 2025 22:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752100090; cv=none; b=fsGOAqFA2Qwtt39zPQTWmJDTN3ZgKvNx7hiVHlWeU2/70JmWUUqVMnhpdyhInLC3b1IXWp9iM5TdLa61KrwQxzgc6VNqIvbmTllJ2kgV/Ra2NsmnfHNUn3N7sF0EPUwT/HBmysHBsl82bQ7Z2X/aq02rMjjY89cyphVEqEtGzlE=
+	t=1752100211; cv=none; b=F6zSmKfNjhJQgkJGmBKIDMJIAaVF6FlOPX6I1jU4Y4il3RMNd0hkKsWtilnkvDOIq+oTEF3oWQDK9ET4Yx81YVhWdrc5h2PNqrmIH3Yxq28gStZOeg35fHGIYBRgPC4aWbRaYC+T5bQKR65Y38/QuX2zz7+OQdRH8mT4jWMDKxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752100090; c=relaxed/simple;
-	bh=PtpZsizklED06co7YfHQ+OVkoHRqI3ym9yV6CKrvhKQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jymVojE3eeF5FCP1FGjAB5H9MYO8yZjHro55orB8oCqxSof88lsGvC0IigdWfaZ8UA/OYALzQ8TTIv5wiYPOcGU7PabCSooJwCCJdEuJxdDDtlprIBnY/50ShaSJ3XwmkdurBO1hk0IP8AVX/quTCepOUKeGhYw922qT/rNymiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=Vz6drXgd; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=vvXkv8Y5; arc=none smtp.client-ip=89.207.88.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
-Received: from mta-03.yadro.com (localhost [127.0.0.1])
-	by mta-03.yadro.com (Postfix) with ESMTP id 0461CE0004;
-	Thu, 10 Jul 2025 01:27:54 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-03.yadro.com 0461CE0004
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-04;
-	t=1752100074; bh=rAKlh1L268GEHchFU4anWhGlMOF4p6LMzRAfCwc/atk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=Vz6drXgdPajAyFtMcDE6Z25hZctkedg/rUqd9f6S7S+1sPcfnA4SCu+3h4dOCnWRg
-	 7OiR6UBXRhVEPnV/IREJAuPeYpvrrOWWDTylnvq83ZNzBSGj6XFuO+vFn0ypb6p/xE
-	 7Volf4glXk7mM8OMRWcgvVlQBzvj781CVvU/HP38fdWI1iyMcYfMB+/xlx9hEf1kIX
-	 ee/sSa5CEvT98XlAv9LBGzHi48/gfWwnBXe/iqgjQfCJiTLMqFqMYZbaX5dz/FfA92
-	 GJ4dr8JcS9QLJoqdd/MhSDYjlOjGthR8mHeDs8wWMqgfJh3knpze9o3iIFt9y5bm7m
-	 8pkNzwwRf7UJg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
-	t=1752100074; bh=rAKlh1L268GEHchFU4anWhGlMOF4p6LMzRAfCwc/atk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=vvXkv8Y5Pt8cfT8QWT139Su4Ms+POJgow1T00yoI6T3kPtoA0d3BXCikJIjpo6cey
-	 P0RJgLKROwG/C68+vZkwNzG6wTiKHTRkIzktZt2A18XsXunloZEtry+z91JQus7u2i
-	 BMzUcgs+E0YVedAxkwV5AjQXfi3gv106lCXTTI2VxadYar45Zm2ihYrBqRnkjfF6li
-	 kuRdRoHq20nKIAPsoBHHxiKr+9e1cv2chP0aiIzXo0PRLKfYO4kpFqbEOnIJM+6irI
-	 fdsNIdJ4ectikz8xwN80jQ//iwCI1pVP7FRMkUTMB2QpoxfeU3uLOgd2gBFiJUrnxP
-	 FhnKRAGJRHy/Q==
-Received: from T-EXCH-10.corp.yadro.com (T-EXCH-10.corp.yadro.com [172.17.11.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mta-03.yadro.com (Postfix) with ESMTPS;
-	Thu, 10 Jul 2025 01:27:51 +0300 (MSK)
-Received: from t14gen1.corp.yadro.com (172.17.34.54) by
- T-EXCH-10.corp.yadro.com (172.17.11.60) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.9; Thu, 10 Jul 2025 01:27:50 +0300
-From: Evgenii Shatokhin <e.shatokhin@yadro.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-CC: Mauro Carvalho Chehab <mchehab@kernel.org>, <linux-media@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux@yadro.com>, Evgenii Shatokhin
-	<e.shatokhin@yadro.com>
-Subject: [PATCH] media: v4l: async: Set correct owner for sensor subdevices
-Date: Thu, 10 Jul 2025 01:27:08 +0300
-Message-ID: <20250709222708.1509409-1-e.shatokhin@yadro.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1752100211; c=relaxed/simple;
+	bh=xHr0SxcTTGeDN1ue6d/qY2D0xz+OPv9AcKajs1DQq90=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=gRrEJ3WDlKeYV+rAtOJCgKVYxaxwg47oXfkuvOdAyw133MDXVn5lElnhzwLTfKCdRo2rnssZx4XGf+24E4wD0fr9zLuaZDT7K1/YTEvFCO1Kr3NyotQOQXp0XIWtBL3GNa7Ugav1k5ml765fPAnej6UIil3QO0z/7Z22zB5rnjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PTOuyLPK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04E3CC4CEEF;
+	Wed,  9 Jul 2025 22:30:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752100211;
+	bh=xHr0SxcTTGeDN1ue6d/qY2D0xz+OPv9AcKajs1DQq90=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=PTOuyLPKEIvUR+suT8k+/1Ck2XqWrdas0m70vsOe6FMm5Og/ahHF0rQRSrcb14SnJ
+	 LMBvT+0iqFIbwI4vjH6c4giXZi8haH2E0bFdv+gbTkXsSrGlCmDMFW6ybv19i8+YYJ
+	 Zz9CDrMlNjkbBeep5UpnjlL2BuetozjIU0RZtYydCuwZnRQeGoAC8HuqAjUxfp+rt+
+	 B8kt3zUnn5ks84mSONbOczsJ38ndSunhqfdgTZ65h3ZrUWFHCLM9CCnjDpy9qgPFq/
+	 a7aOX4rEyyv3gzQ7UYzoxrvPAQBLn9nPjTvJXJj/SYCliMq6ctrBKHFLn/n9EPoeHU
+	 KX/MlRxnUQbqQ==
+Date: Wed, 09 Jul 2025 17:30:10 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTM-EXCH-04.corp.yadro.com (10.34.9.204) To
- T-EXCH-10.corp.yadro.com (172.17.11.60)
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/07/09 20:39:00 #27631947
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-KATA-Status: Not Scanned
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 5
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, linux-remoteproc@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ phone-devel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ ~postmarketos/upstreaming@lists.sr.ht
+To: Luca Weiss <luca.weiss@fairphone.com>
+In-Reply-To: <20250709-sm7635-remoteprocs-v3-1-c943be976180@fairphone.com>
+References: <20250709-sm7635-remoteprocs-v3-0-c943be976180@fairphone.com>
+ <20250709-sm7635-remoteprocs-v3-1-c943be976180@fairphone.com>
+Message-Id: <175210021011.3927964.2963774922041119366.robh@kernel.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: remoteproc: qcom,milos-pas:
+ Document remoteprocs
 
-Commit 8a718752f5c3 ("media: v4l: async: Set owner for async sub-devices")
-turned v4l2_async_register_subdev() into a macro that used THIS_MODULE to
-obtain the owner module for the subdevice.
 
-v4l2_async_register_subdev_sensor(sd) calls v4l2_async_register_subdev(),
-and that will reset sd->owner to NULL for the sensor device, if V4L2 core
-is built-in while the sensor driver is built as a module.
+On Wed, 09 Jul 2025 13:13:07 +0200, Luca Weiss wrote:
+> Document the bindings for the ADSP, CDSP, MPSS and WPSS PAS on the Milos
+> (e.g. SM7635) SoC.
+> 
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>  .../bindings/remoteproc/qcom,milos-pas.yaml        | 201 +++++++++++++++++++++
+>  1 file changed, 201 insertions(+)
+> 
 
-sd->owner is reset this way even if the sensor driver has set it properly
-earlier.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-This patch makes v4l2_async_register_subdev_sensor() a macro similar to
-v4l2_async_register_subdev() to pass the owner module to the latter.
+yamllint warnings/errors:
 
-Fixes: 8a718752f5c3 ("media: v4l: async: Set owner for async sub-devices")
-Signed-off-by: Evgenii Shatokhin <e.shatokhin@yadro.com>
----
- drivers/media/v4l2-core/v4l2-fwnode.c | 7 ++++---
- include/media/v4l2-async.h            | 4 +++-
- 2 files changed, 7 insertions(+), 4 deletions(-)
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/remoteproc/qcom,milos-pas.example.dts:20:18: fatal error: dt-bindings/interconnect/qcom,milos-rpmh.h: No such file or directory
+   20 |         #include <dt-bindings/interconnect/qcom,milos-rpmh.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/remoteproc/qcom,milos-pas.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1519: dt_binding_check] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
 
-diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
-index cb153ce42c45..c86daef2fd3f 100644
---- a/drivers/media/v4l2-core/v4l2-fwnode.c
-+++ b/drivers/media/v4l2-core/v4l2-fwnode.c
-@@ -1246,7 +1246,8 @@ v4l2_async_nf_parse_fwnode_sensor(struct device *dev,
- 	return 0;
- }
- 
--int v4l2_async_register_subdev_sensor(struct v4l2_subdev *sd)
-+int __v4l2_async_register_subdev_sensor(struct v4l2_subdev *sd,
-+					struct module *module)
- {
- 	struct v4l2_async_notifier *notifier;
- 	int ret;
-@@ -1272,7 +1273,7 @@ int v4l2_async_register_subdev_sensor(struct v4l2_subdev *sd)
- 	if (ret < 0)
- 		goto out_cleanup;
- 
--	ret = v4l2_async_register_subdev(sd);
-+	ret = __v4l2_async_register_subdev(sd, module);
- 	if (ret < 0)
- 		goto out_unregister;
- 
-@@ -1290,7 +1291,7 @@ int v4l2_async_register_subdev_sensor(struct v4l2_subdev *sd)
- 
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(v4l2_async_register_subdev_sensor);
-+EXPORT_SYMBOL_GPL(__v4l2_async_register_subdev_sensor);
- 
- MODULE_DESCRIPTION("V4L2 fwnode binding parsing library");
- MODULE_LICENSE("GPL");
-diff --git a/include/media/v4l2-async.h b/include/media/v4l2-async.h
-index f26c323e9c96..54a2d9620ed5 100644
---- a/include/media/v4l2-async.h
-+++ b/include/media/v4l2-async.h
-@@ -333,8 +333,10 @@ int __v4l2_async_register_subdev(struct v4l2_subdev *sd, struct module *module);
-  * An error is returned if the module is no longer loaded on any attempts
-  * to register it.
-  */
-+#define v4l2_async_register_subdev_sensor(sd) \
-+	__v4l2_async_register_subdev_sensor(sd, THIS_MODULE)
- int __must_check
--v4l2_async_register_subdev_sensor(struct v4l2_subdev *sd);
-+__v4l2_async_register_subdev_sensor(struct v4l2_subdev *sd, struct module *module);
- 
- /**
-  * v4l2_async_unregister_subdev - unregisters a sub-device to the asynchronous
--- 
-2.34.1
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250709-sm7635-remoteprocs-v3-1-c943be976180@fairphone.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
