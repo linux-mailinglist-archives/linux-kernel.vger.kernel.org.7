@@ -1,62 +1,56 @@
-Return-Path: <linux-kernel+bounces-722640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81332AFDD4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:13:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A0F3AFDD4E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5698568044
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:13:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 835AD1BC76FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368A01A315C;
-	Wed,  9 Jul 2025 02:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9918A153BD9;
+	Wed,  9 Jul 2025 02:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="RZMF+Z3f"
-Received: from mail3-167.sinamail.sina.com.cn (mail3-167.sinamail.sina.com.cn [202.108.3.167])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NYuBtwUR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7410F149C41
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 02:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.167
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2AB7FD;
+	Wed,  9 Jul 2025 02:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752027225; cv=none; b=DEypn5UYP+ebYM85GBfarC7odKxJt2xRzPMVvtSpL92sOgiT7yukGIpKk83WvIPUshn/9uyelFivk1VUFIubpPLj3TXU4rX3Vb39KE6gSPH3YCZWmy31nVdxmmCS2lB5JDJYDPIiLTniKIfQ5AYad62CL+j4WkZPk80wAU6Irao=
+	t=1752027405; cv=none; b=NrknK7qUXs8q9KedfdC6Hw5euEv4oaDOnSeswks+25soNR+V2ieaMHvYpUg8dFG3QSepeiyVXn64lp0Nze9gBQ4PQW2SassYZQRjlgLHosif4Xyo83FuJiTdWVJ/TKOfYH+7zIvOjnwssEx+yvT5g9u6bfoEDscA0gri9sY0Jt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752027225; c=relaxed/simple;
-	bh=DAbAPJqTk4RLxhR5u/dfbhKYuppSUwvMFxKfYMlzCpU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=icL1H2fNSbzVOQ1C1KmUXsFQKK9CO7n/h2D8oL6SvEdvoFLSInNohsR24AioMvoBCbItuCYj47BkIimIxT+sqy2okUfre/szd506im7KCQGTt3hDpSD9k3QgIYn0nPEnZ6L99l70f79Em1PNGUD5R7Cov17uz7t62g+86GTz8HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=RZMF+Z3f; arc=none smtp.client-ip=202.108.3.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752027220;
-	bh=f6Sw4qdPunDUVwAwItmHtx7NFCD0Zv9o7/bvQ+7zaxo=;
-	h=From:Subject:Date:Message-ID;
-	b=RZMF+Z3fXLpaj1ibnN9hIIQ8lpz5uV7WoY6zsypgOjTT0yH1Dw0EfCNbOknr4PBFq
-	 4kDFnOZViKzQsZ35gujL8NmN7I0by22vwiiZkGsVY5yZK22SUsjRs0miUBw0fe0pfD
-	 5JbQo639LjugB4vSZCqbIb1XkJWQBxBtCoLp4rCc=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 686DD04800006183; Wed, 9 Jul 2025 10:13:30 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 4062766685210
-X-SMAIL-UIID: 469CE6DAAC734DBDB594369FB1033FDB-20250709-101330-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+3f89ec3d1d0842e95d50@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] WARNING in usbnet_status_start
-Date: Wed,  9 Jul 2025 10:13:17 +0800
-Message-ID: <20250709021318.3100-1-hdanton@sina.com>
-In-Reply-To: <686d5a9f.050a0220.1ffab7.0017.GAE@google.com>
-References: 
+	s=arc-20240116; t=1752027405; c=relaxed/simple;
+	bh=W34gJZJ0Sfv42p0qrt0l9Q2E2RvLRp6jugQiTNTywbQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KS88aDEFcyGMmXjf2qbgBrGn8jciT13M8nqJTdU6O0AJ7knFsXiBouoitufFD+hgNHvcwymJ0Ky1MvyMIQ9IqLAivm12riXpeAbu/QViBjAZ0/WEzOKLJ9gnKGBe87sl2K99l2etq+pFxVfBmFR4QsSSHfeErTxvjeDac0HPCfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NYuBtwUR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73F00C4CEED;
+	Wed,  9 Jul 2025 02:16:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752027404;
+	bh=W34gJZJ0Sfv42p0qrt0l9Q2E2RvLRp6jugQiTNTywbQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NYuBtwURYidvFrxE2AGzKqfUZEwQg0sXZHw9tBkUQqrEGAg5kj/AB3C8AlscQh32C
+	 Gg53ryOb/isxZK9bck+A3vH+ri0b6mZWiroR5GCMknrmp9Ejnge7Cq7iW1rOsaj8TM
+	 3vIvhYp6t0TEMpwfhq22KtJmK1xOA1Bo3VUFiQkCSUUBmjUlwBTRJEWtEX46peQHoe
+	 As7yzZWmW24q4FB5mE7Lm0QvRCGAce5DJwHDMyEm1pqXeUHEwsIZSdxShKj1RKfA1U
+	 3o7GLzCue1reKRq2PTYr1wl4zfIpZ53k1Y1kqOvFR6f0dvkgnlMlx6rsXoYxsJ+pag
+	 +GMqZeG2WrOyw==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Mark Brown <broonie@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: linux-spi@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] spi: stm32-ospi: Use of_reserved_mem_region_to_resource() for "memory-region"
+Date: Tue,  8 Jul 2025 21:16:37 -0500
+Message-ID: <20250709021638.2047365-1-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,50 +59,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-> Date: Tue, 08 Jul 2025 10:51:27 -0700
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    d1b07cc0868f arm64: dts: s32g: Add USB device tree informa..
-> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1554d582580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=28729dff5d03ad1
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3f89ec3d1d0842e95d50
-> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11680a8c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14c9abd4580000
+Use the newly added of_reserved_mem_region_to_resource() function to
+handle "memory-region" properties.
 
-#syz test
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+v2:
+ - Fix unused variable warnings
+---
+ drivers/spi/spi-stm32-ospi.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
---- x/drivers/net/usb/usbnet.c
-+++ y/drivers/net/usb/usbnet.c
-@@ -231,6 +231,8 @@ static int init_status (struct usbnet *d
- 	if (!dev->driver_info->status)
- 		return 0;
+diff --git a/drivers/spi/spi-stm32-ospi.c b/drivers/spi/spi-stm32-ospi.c
+index 7c1fa55fbc47..4753e02a7d2f 100644
+--- a/drivers/spi/spi-stm32-ospi.c
++++ b/drivers/spi/spi-stm32-ospi.c
+@@ -771,9 +771,7 @@ static int stm32_ospi_get_resources(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct stm32_ospi *ospi = platform_get_drvdata(pdev);
+-	struct resource *res;
+-	struct reserved_mem *rmem = NULL;
+-	struct device_node *node;
++	struct resource *res, _res;
+ 	int ret;
  
-+	if (!dev->status)
-+		return -EINVAL;
- 	pipe = usb_rcvintpipe (dev->udev,
- 			dev->status->desc.bEndpointAddress
- 				& USB_ENDPOINT_NUMBER_MASK);
-@@ -254,6 +256,8 @@ static int init_status (struct usbnet *d
- 				"status ep%din, %d bytes period %d\n",
- 				usb_pipeendpoint(pipe), maxp, period);
+ 	ospi->regs_base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+@@ -825,17 +823,13 @@ static int stm32_ospi_get_resources(struct platform_device *pdev)
+ 			goto err_dma;
+ 	}
+ 
+-	node = of_parse_phandle(dev->of_node, "memory-region", 0);
+-	if (node)
+-		rmem = of_reserved_mem_lookup(node);
+-	of_node_put(node);
+-
+-	if (rmem) {
+-		ospi->mm_size = rmem->size;
+-		ospi->mm_base = devm_ioremap(dev, rmem->base, rmem->size);
++	res = &_res;
++	ret = of_reserved_mem_region_to_resource(dev->of_node, 0, res);
++	if (!ret) {
++		ospi->mm_size = resource_size(res);
++		ospi->mm_base = devm_ioremap_resource(dev, res);
+ 		if (!ospi->mm_base) {
+-			dev_err(dev, "unable to map memory region: %pa+%pa\n",
+-				&rmem->base, &rmem->size);
++			dev_err(dev, "unable to map memory region: %pR\n", res);
+ 			ret = -ENOMEM;
+ 			goto err_dma;
  		}
-+	} else {
-+		return -ENOMEM;
- 	}
- 	return 0;
- }
-@@ -1812,7 +1816,7 @@ usbnet_probe (struct usb_interface *udev
- 		if (status == 0 && !usb_check_bulk_endpoints(udev, ep_addrs))
- 			status = -EINVAL;
- 	}
--	if (status >= 0 && dev->status)
-+	if (status >= 0)
- 		status = init_status (dev, udev);
- 	if (status < 0)
- 		goto out3;
---
+-- 
+2.47.2
+
 
