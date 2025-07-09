@@ -1,196 +1,434 @@
-Return-Path: <linux-kernel+bounces-723446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3C99AFE6E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:06:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1A6BAFE70D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:09:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69562162AFF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:06:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1B56587DE9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18CF128DB52;
-	Wed,  9 Jul 2025 11:06:16 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED46293C63;
+	Wed,  9 Jul 2025 11:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fQ518iuc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10013265CBE;
-	Wed,  9 Jul 2025 11:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D1128DF41;
+	Wed,  9 Jul 2025 11:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752059175; cv=none; b=JNwTklA4pu5IgwVxZxFqLlpDlZxYSwkFXuJznt+yo/75osR1asGKInIjhcHHTWV07OrQtox7KJxoX5BZwqWp35Zmi+ZTmWfadHMqX0Cl0Z6Zk6rq7U4Xm0Cfl4zn3BIBjJP7m9um9qk4iQOb47BtxSyrjXlFlZHDgyjsXCqaV0o=
+	t=1752059248; cv=none; b=ngorWdaqLq+LXc78ydftbiEV+ki/lkXJ7ThdOELDkiU1ttH4R4pILtPXaQ4uLcW8HbklA8pXTkjyrEY9y39ajrLdtOs063Hr4cTD3my4kn3oGDTVuUSGglDFPr2G3K83cg0b2WYhKeqBfmCsalX/BNg/f5LS3J5wxmCTWMxPYoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752059175; c=relaxed/simple;
-	bh=7UH+NitmtShAKMej1iDR59vgq6OCawsU/qbLijymRUU=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=ARPP0KRMtGKzT03w3tnd+NCRUteGW/FlHkoB/64LLRiH51l2iDCFKvabui6bFAHWJk2HGfrI8M8xYGOT+EKWfYoZQvOIYUErZJq2pvq4vs2e0uooBeoSCmyrSa9HJFl+Q/55A2pgbywybTcNN4eYg9dU815+vv3HkqZRMKLR8l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bcZsM6G7Bz8R043;
-	Wed,  9 Jul 2025 19:05:59 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl2.zte.com.cn with SMTP id 569B5vN4059526;
-	Wed, 9 Jul 2025 19:05:57 +0800 (+08)
-	(envelope-from fan.yu9@zte.com.cn)
-Received: from mapi (xaxapp05[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Wed, 9 Jul 2025 19:05:59 +0800 (CST)
-Date: Wed, 9 Jul 2025 19:05:59 +0800 (CST)
-X-Zmail-TransId: 2afc686e4d171be-63e8a
-X-Mailer: Zmail v1.0
-Message-ID: <20250709190559883SkXisbe8RTqw6jz6kycBo@zte.com.cn>
-In-Reply-To: <CANn89i+JGSt=_CtWfhDXypWW-34a6SoP3RAzWQ9B9VL4+PHjDw@mail.gmail.com>
-References: CANn89iJvyYjiweCESQL8E-Si7M=gosYvh1BAVWwAWycXW8GSdg@mail.gmail.com,202507071846455418y7RHD-cnstxL3SlD6hBH@zte.com.cn,CANn89i+JGSt=_CtWfhDXypWW-34a6SoP3RAzWQ9B9VL4+PHjDw@mail.gmail.com
+	s=arc-20240116; t=1752059248; c=relaxed/simple;
+	bh=YezpPpr9MkIy8MdAiZQpsV+wych1Eokmh7cdGM1/b9Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=FTuhaOM+bP29zeZdqTv3HnU0vaeIyzv3/LW7RJL3gnM+DCVyaLd8iFyOKaz48Ni8k4C4J+aSIeGxeY8XZG+JhZbSKWakDMrD6eofcymTkpd7lHfUPfawMzVVezoLXuu7yTcMQI9DFNejOAYNB30hoBO2hFQU8VDU28k/jRiXb08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fQ518iuc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 114BFC19425;
+	Wed,  9 Jul 2025 11:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752059248;
+	bh=YezpPpr9MkIy8MdAiZQpsV+wych1Eokmh7cdGM1/b9Q=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=fQ518iuccBMTml/aNL8P0y9g+Uil6Ri//kBjTVnmEgKlFFfSVr7pRl2Ky/LuAYYbD
+	 Cy6n41d/YMzpeKyfUxwT0e95233avUeQekugGWGdliPhKkzdi5cgWqLLOEdxG+RRqc
+	 Ns6G9RmxPjKwDMh7MjyK93GTCfYxYVANfaU2iw6Ni+ARncsqymJrqvv7SLNjeO7UCA
+	 7Z5ptAR1ruhbBmSrMrQYlnJfra0c3m9WIQSyICxIhl5+i5Ag81/uPMat43T5CR1St6
+	 tVjgDFinVgGW0uJeH3Z541TwK1Xb3QjAjhPJQfjCJs+cBjh/LSeprV8z3zFANA1Xdu
+	 tmCs4c3alFRHw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07004C83F0A;
+	Wed,  9 Jul 2025 11:07:28 +0000 (UTC)
+From: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>
+Date: Wed, 09 Jul 2025 19:06:00 +0800
+Subject: [PATCH v2 9/9] MIPS: configs: Consolidate Loongson1 defconfigs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <fan.yu9@zte.com.cn>
-To: <edumazet@google.com>
-Cc: <xu.xin16@zte.com.cn>, <kuba@kernel.org>, <kuniyu@amazon.com>,
-        <ncardwell@google.com>, <davem@davemloft.net>, <horms@kernel.org>,
-        <dsahern@kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCBuZXQtbmV4dCB2Ml0gdGNwOiBleHRlbmQgdGNwX3JldHJhbnNtaXRfc2tiIHRyYWNlcG9pbnQgd2l0aCBmYWlsdXJlIHJlYXNvbnM=?=
-Content-Type: multipart/mixed;
-	boundary="=====_001_next====="
-X-MAIL:mse-fl2.zte.com.cn 569B5vN4059526
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 686E4D17.001/4bcZsM6G7Bz8R043
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250709-loongson1-arch-v2-9-bcff6e518c09@gmail.com>
+References: <20250709-loongson1-arch-v2-0-bcff6e518c09@gmail.com>
+In-Reply-To: <20250709-loongson1-arch-v2-0-bcff6e518c09@gmail.com>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+ Keguang Zhang <keguang.zhang@gmail.com>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752059245; l=10713;
+ i=keguang.zhang@gmail.com; s=20231129; h=from:subject:message-id;
+ bh=vXaIa8N3GToUGpAmk80FkzsQAYrU6OjHna1ZLvsKN7s=;
+ b=gZLj5Lic2lnAk8QI1LEquid689ED367epMJXPyv/mDNt7JJeIVbJh5ZmOY1zqN+wGj5ucDtt7
+ R4xd2+YyA1PAd9z3DHvZnwuGI+xiOsyKaaoc+sKsIFkDaB8/qCTASWk
+X-Developer-Key: i=keguang.zhang@gmail.com; a=ed25519;
+ pk=FMKGj/JgKll/MgClpNZ3frIIogsh5e5r8CeW2mr+WLs=
+X-Endpoint-Received: by B4 Relay for keguang.zhang@gmail.com/20231129 with
+ auth_id=102
+X-Original-From: Keguang Zhang <keguang.zhang@gmail.com>
+Reply-To: keguang.zhang@gmail.com
 
+From: Keguang Zhang <keguang.zhang@gmail.com>
 
+Unify loongson{1b,1c}_defconfig into a single loongson1_defconfig.
 
---=====_001_next=====
-Content-Type: multipart/related;
-	boundary="=====_002_next====="
+Enable the following options by default:
+ - CONFIG_SERIAL_OF_PLATFORM
+ - CONFIG_RTC_DRV_LOONGSON
+ - CONFIG_LOONGSON1_APB_DMA
+ - CONFIG_MTD_NAND_LOONGSON1
+ - CONFIG_SND_LOONGSON1_AC97
 
+Also disable unnecessary options.
 
---=====_002_next=====
-Content-Type: multipart/alternative;
-	boundary="=====_003_next====="
+Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
+---
+ MAINTAINERS                                        |   1 +
+ .../{loongson1b_defconfig => loongson1_defconfig}  |  94 +++++++++++++---
+ arch/mips/configs/loongson1c_defconfig             | 121 ---------------------
+ 3 files changed, 78 insertions(+), 138 deletions(-)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d42a83656879..c73e25af147c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16684,6 +16684,7 @@ L:	linux-mips@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/*/loongson,ls1*.yaml
+ F:	arch/mips/boot/dts/loongson/loongson1*
++F:	arch/mips/configs/loongson1_defconfig
+ F:	arch/mips/loongson32/
+ F:	drivers/*/*loongson1*
+ F:	drivers/mtd/nand/raw/loongson1-nand-controller.c
+diff --git a/arch/mips/configs/loongson1b_defconfig b/arch/mips/configs/loongson1_defconfig
+similarity index 51%
+rename from arch/mips/configs/loongson1b_defconfig
+rename to arch/mips/configs/loongson1_defconfig
+index 68207b31dc20..81acae6f61c8 100644
+--- a/arch/mips/configs/loongson1b_defconfig
++++ b/arch/mips/configs/loongson1_defconfig
+@@ -1,7 +1,6 @@
+ # CONFIG_LOCALVERSION_AUTO is not set
+ CONFIG_KERNEL_XZ=y
+ CONFIG_SYSVIPC=y
+-CONFIG_HIGH_RES_TIMERS=y
+ CONFIG_PREEMPT=y
+ CONFIG_BSD_PROCESS_ACCT=y
+ CONFIG_BSD_PROCESS_ACCT_V3=y
+@@ -12,15 +11,16 @@ CONFIG_NAMESPACES=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+ CONFIG_EXPERT=y
+ CONFIG_PERF_EVENTS=y
+-# CONFIG_COMPAT_BRK is not set
+ CONFIG_MACH_LOONGSON32=y
+-# CONFIG_SECCOMP is not set
+ # CONFIG_SUSPEND is not set
++# CONFIG_SECCOMP is not set
++# CONFIG_GCC_PLUGINS is not set
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_MODVERSIONS=y
+-# CONFIG_BLK_DEV_BSG is not set
++# CONFIG_BLOCK_LEGACY_AUTOLOAD is not set
+ # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
++# CONFIG_COMPAT_BRK is not set
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_UNIX=y
+@@ -31,6 +31,7 @@ CONFIG_SYN_COOKIES=y
+ # CONFIG_INET_DIAG is not set
+ # CONFIG_IPV6 is not set
+ # CONFIG_WIRELESS is not set
++# CONFIG_ETHTOOL_NETLINK is not set
+ CONFIG_DEVTMPFS=y
+ CONFIG_DEVTMPFS_MOUNT=y
+ # CONFIG_STANDALONE is not set
+@@ -38,32 +39,75 @@ CONFIG_MTD=y
+ CONFIG_MTD_CMDLINE_PARTS=y
+ CONFIG_MTD_BLOCK=y
+ CONFIG_MTD_RAW_NAND=y
++CONFIG_MTD_NAND_LOONGSON1=y
+ CONFIG_MTD_UBI=y
+ CONFIG_BLK_DEV_LOOP=y
+ CONFIG_SCSI=m
+ # CONFIG_SCSI_PROC_FS is not set
+ CONFIG_BLK_DEV_SD=m
++# CONFIG_BLK_DEV_BSG is not set
+ # CONFIG_SCSI_LOWLEVEL is not set
+ CONFIG_NETDEVICES=y
++# CONFIG_NET_VENDOR_ALACRITECH is not set
++# CONFIG_NET_VENDOR_AMAZON is not set
++# CONFIG_NET_VENDOR_AQUANTIA is not set
++# CONFIG_NET_VENDOR_ARC is not set
++# CONFIG_NET_VENDOR_ASIX is not set
+ # CONFIG_NET_VENDOR_BROADCOM is not set
++# CONFIG_NET_VENDOR_CADENCE is not set
++# CONFIG_NET_VENDOR_CAVIUM is not set
++# CONFIG_NET_VENDOR_CORTINA is not set
++# CONFIG_NET_VENDOR_DAVICOM is not set
++# CONFIG_NET_VENDOR_ENGLEDER is not set
++# CONFIG_NET_VENDOR_EZCHIP is not set
++# CONFIG_NET_VENDOR_FUNGIBLE is not set
++# CONFIG_NET_VENDOR_GOOGLE is not set
++# CONFIG_NET_VENDOR_HISILICON is not set
++# CONFIG_NET_VENDOR_HUAWEI is not set
+ # CONFIG_NET_VENDOR_INTEL is not set
++# CONFIG_NET_VENDOR_LITEX is not set
+ # CONFIG_NET_VENDOR_MARVELL is not set
++# CONFIG_NET_VENDOR_META is not set
+ # CONFIG_NET_VENDOR_MICREL is not set
++# CONFIG_NET_VENDOR_MICROCHIP is not set
++# CONFIG_NET_VENDOR_MICROSEMI is not set
++# CONFIG_NET_VENDOR_MICROSOFT is not set
++# CONFIG_NET_VENDOR_NI is not set
+ # CONFIG_NET_VENDOR_NATSEMI is not set
++# CONFIG_NET_VENDOR_NETRONOME is not set
++# CONFIG_NET_VENDOR_PENSANDO is not set
++# CONFIG_NET_VENDOR_QUALCOMM is not set
++# CONFIG_NET_VENDOR_RENESAS is not set
++# CONFIG_NET_VENDOR_ROCKER is not set
++# CONFIG_NET_VENDOR_SAMSUNG is not set
+ # CONFIG_NET_VENDOR_SEEQ is not set
++# CONFIG_NET_VENDOR_SOLARFLARE is not set
+ # CONFIG_NET_VENDOR_SMSC is not set
++# CONFIG_NET_VENDOR_SOCIONEXT is not set
+ CONFIG_STMMAC_ETH=y
++# CONFIG_DWMAC_GENERIC is not set
++# CONFIG_NET_VENDOR_SYNOPSYS is not set
++# CONFIG_NET_VENDOR_VERTEXCOM is not set
++# CONFIG_NET_VENDOR_VIA is not set
++# CONFIG_NET_VENDOR_WANGXUN is not set
+ # CONFIG_NET_VENDOR_WIZNET is not set
++# CONFIG_NET_VENDOR_XILINX is not set
++CONFIG_DAVICOM_PHY=y
++CONFIG_REALTEK_PHY=y
++# CONFIG_USB_NET_DRIVERS is not set
+ # CONFIG_WLAN is not set
+ CONFIG_INPUT_EVDEV=y
+ # CONFIG_INPUT_KEYBOARD is not set
+ # CONFIG_INPUT_MOUSE is not set
+ # CONFIG_SERIO is not set
++# CONFIG_VT_CONSOLE is not set
+ CONFIG_VT_HW_CONSOLE_BINDING=y
+ CONFIG_LEGACY_PTY_COUNT=8
+ CONFIG_SERIAL_8250=y
+ CONFIG_SERIAL_8250_CONSOLE=y
++CONFIG_SERIAL_OF_PLATFORM=y
+ # CONFIG_HW_RANDOM is not set
++# CONFIG_PTP_1588_CLOCK is not set
+ CONFIG_GPIOLIB=y
+ CONFIG_GPIO_LOONGSON1=y
+ # CONFIG_HWMON is not set
+@@ -71,7 +115,15 @@ CONFIG_WATCHDOG=y
+ CONFIG_WATCHDOG_NOWAYOUT=y
+ CONFIG_WATCHDOG_SYSFS=y
+ CONFIG_LOONGSON1_WDT=y
+-# CONFIG_VGA_CONSOLE is not set
++CONFIG_SOUND=y
++CONFIG_SND=y
++# CONFIG_SND_SUPPORT_OLD_API is not set
++# CONFIG_SND_DRIVERS is not set
++# CONFIG_SND_MIPS is not set
++# CONFIG_SND_USB is not set
++CONFIG_SND_SOC=y
++CONFIG_SND_LOONGSON1_AC97=y
++CONFIG_SND_SIMPLE_CARD=y
+ CONFIG_HID_GENERIC=m
+ CONFIG_USB_HID=m
+ CONFIG_USB=y
+@@ -86,17 +138,20 @@ CONFIG_NEW_LEDS=y
+ CONFIG_LEDS_CLASS=y
+ CONFIG_LEDS_GPIO=y
+ CONFIG_LEDS_TRIGGERS=y
++CONFIG_LEDS_TRIGGER_MTD=y
+ CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+ CONFIG_RTC_CLASS=y
+-CONFIG_RTC_DRV_LOONGSON1=y
++# CONFIG_RTC_NVMEM is not set
++CONFIG_RTC_DRV_LOONGSON=y
++CONFIG_DMADEVICES=y
++CONFIG_LOONGSON1_APB_DMA=y
++# CONFIG_VIRTIO_MENU is not set
++# CONFIG_VHOST_MENU is not set
++# CONFIG_MIPS_PLATFORM_DEVICES is not set
+ # CONFIG_IOMMU_SUPPORT is not set
+-CONFIG_EXT2_FS=y
+-CONFIG_EXT2_FS_XATTR=y
+-CONFIG_EXT2_FS_POSIX_ACL=y
+-CONFIG_EXT2_FS_SECURITY=y
+-CONFIG_EXT3_FS=y
+-CONFIG_EXT3_FS_POSIX_ACL=y
+-CONFIG_EXT3_FS_SECURITY=y
++# CONFIG_NVMEM is not set
++CONFIG_EXT4_FS=y
++CONFIG_EXT4_FS_POSIX_ACL=y
+ # CONFIG_DNOTIFY is not set
+ CONFIG_VFAT_FS=y
+ CONFIG_PROC_KCORE=y
+@@ -105,16 +160,21 @@ CONFIG_TMPFS_POSIX_ACL=y
+ CONFIG_UBIFS_FS=y
+ CONFIG_UBIFS_FS_ADVANCED_COMPR=y
+ CONFIG_UBIFS_ATIME_SUPPORT=y
++# CONFIG_UBIFS_FS_SECURITY is not set
+ CONFIG_NFS_FS=y
+ CONFIG_ROOT_NFS=y
+ CONFIG_NLS_CODEPAGE_437=m
+ CONFIG_NLS_ISO8859_1=m
+-# CONFIG_CRYPTO_ECHAINIV is not set
+ # CONFIG_CRYPTO_HW is not set
++# CONFIG_XZ_DEC_X86 is not set
++# CONFIG_XZ_DEC_POWERPC is not set
++# CONFIG_XZ_DEC_ARM is not set
++# CONFIG_XZ_DEC_ARMTHUMB is not set
++# CONFIG_XZ_DEC_ARM64 is not set
++# CONFIG_XZ_DEC_SPARC is not set
++# CONFIG_XZ_DEC_RISCV is not set
+ CONFIG_DYNAMIC_DEBUG=y
+-CONFIG_DEBUG_FS=y
++# CONFIG_DEBUG_MISC is not set
+ CONFIG_MAGIC_SYSRQ=y
+-# CONFIG_SCHED_DEBUG is not set
+-# CONFIG_DEBUG_PREEMPT is not set
+ # CONFIG_FTRACE is not set
+ # CONFIG_EARLY_PRINTK is not set
+diff --git a/arch/mips/configs/loongson1c_defconfig b/arch/mips/configs/loongson1c_defconfig
+deleted file mode 100644
+index c3910a9dee9e..000000000000
+--- a/arch/mips/configs/loongson1c_defconfig
++++ /dev/null
+@@ -1,121 +0,0 @@
+-# CONFIG_LOCALVERSION_AUTO is not set
+-CONFIG_KERNEL_XZ=y
+-CONFIG_SYSVIPC=y
+-CONFIG_HIGH_RES_TIMERS=y
+-CONFIG_PREEMPT=y
+-CONFIG_BSD_PROCESS_ACCT=y
+-CONFIG_BSD_PROCESS_ACCT_V3=y
+-CONFIG_IKCONFIG=y
+-CONFIG_IKCONFIG_PROC=y
+-CONFIG_LOG_BUF_SHIFT=16
+-CONFIG_NAMESPACES=y
+-CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+-CONFIG_EXPERT=y
+-CONFIG_PERF_EVENTS=y
+-# CONFIG_COMPAT_BRK is not set
+-CONFIG_MACH_LOONGSON32=y
+-CONFIG_LOONGSON1_LS1C=y
+-# CONFIG_SECCOMP is not set
+-# CONFIG_SUSPEND is not set
+-CONFIG_MODULES=y
+-CONFIG_MODULE_UNLOAD=y
+-CONFIG_MODVERSIONS=y
+-# CONFIG_BLK_DEV_BSG is not set
+-# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+-CONFIG_NET=y
+-CONFIG_PACKET=y
+-CONFIG_UNIX=y
+-CONFIG_INET=y
+-CONFIG_IP_PNP=y
+-CONFIG_IP_PNP_DHCP=y
+-CONFIG_SYN_COOKIES=y
+-# CONFIG_INET_DIAG is not set
+-# CONFIG_IPV6 is not set
+-# CONFIG_WIRELESS is not set
+-CONFIG_DEVTMPFS=y
+-CONFIG_DEVTMPFS_MOUNT=y
+-# CONFIG_STANDALONE is not set
+-CONFIG_MTD=y
+-CONFIG_MTD_CMDLINE_PARTS=y
+-CONFIG_MTD_BLOCK=y
+-CONFIG_MTD_RAW_NAND=y
+-CONFIG_MTD_UBI=y
+-CONFIG_BLK_DEV_LOOP=y
+-CONFIG_SCSI=m
+-# CONFIG_SCSI_PROC_FS is not set
+-CONFIG_BLK_DEV_SD=m
+-# CONFIG_SCSI_LOWLEVEL is not set
+-CONFIG_NETDEVICES=y
+-# CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_VENDOR_INTEL is not set
+-# CONFIG_NET_VENDOR_MARVELL is not set
+-# CONFIG_NET_VENDOR_MICREL is not set
+-# CONFIG_NET_VENDOR_NATSEMI is not set
+-# CONFIG_NET_VENDOR_SEEQ is not set
+-# CONFIG_NET_VENDOR_SMSC is not set
+-CONFIG_STMMAC_ETH=y
+-# CONFIG_NET_VENDOR_WIZNET is not set
+-# CONFIG_WLAN is not set
+-CONFIG_INPUT_EVDEV=y
+-# CONFIG_INPUT_KEYBOARD is not set
+-# CONFIG_INPUT_MOUSE is not set
+-# CONFIG_SERIO is not set
+-CONFIG_VT_HW_CONSOLE_BINDING=y
+-CONFIG_LEGACY_PTY_COUNT=8
+-CONFIG_SERIAL_8250=y
+-CONFIG_SERIAL_8250_CONSOLE=y
+-# CONFIG_HW_RANDOM is not set
+-CONFIG_GPIOLIB=y
+-CONFIG_GPIO_LOONGSON1=y
+-# CONFIG_HWMON is not set
+-CONFIG_WATCHDOG=y
+-CONFIG_WATCHDOG_NOWAYOUT=y
+-CONFIG_WATCHDOG_SYSFS=y
+-CONFIG_LOONGSON1_WDT=y
+-# CONFIG_VGA_CONSOLE is not set
+-CONFIG_HID_GENERIC=m
+-CONFIG_USB_HID=m
+-CONFIG_USB=y
+-CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
+-CONFIG_USB_EHCI_HCD=y
+-# CONFIG_USB_EHCI_TT_NEWSCHED is not set
+-CONFIG_USB_EHCI_HCD_PLATFORM=y
+-CONFIG_USB_STORAGE=m
+-CONFIG_USB_SERIAL=m
+-CONFIG_USB_SERIAL_PL2303=m
+-CONFIG_NEW_LEDS=y
+-CONFIG_LEDS_CLASS=y
+-CONFIG_LEDS_GPIO=y
+-CONFIG_LEDS_TRIGGERS=y
+-CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+-CONFIG_RTC_CLASS=y
+-CONFIG_RTC_DRV_LOONGSON1=y
+-# CONFIG_IOMMU_SUPPORT is not set
+-CONFIG_EXT2_FS=y
+-CONFIG_EXT2_FS_XATTR=y
+-CONFIG_EXT2_FS_POSIX_ACL=y
+-CONFIG_EXT2_FS_SECURITY=y
+-CONFIG_EXT3_FS=y
+-CONFIG_EXT3_FS_POSIX_ACL=y
+-CONFIG_EXT3_FS_SECURITY=y
+-# CONFIG_DNOTIFY is not set
+-CONFIG_VFAT_FS=y
+-CONFIG_PROC_KCORE=y
+-CONFIG_TMPFS=y
+-CONFIG_TMPFS_POSIX_ACL=y
+-CONFIG_UBIFS_FS=y
+-CONFIG_UBIFS_FS_ADVANCED_COMPR=y
+-CONFIG_UBIFS_ATIME_SUPPORT=y
+-CONFIG_NFS_FS=y
+-CONFIG_ROOT_NFS=y
+-CONFIG_NLS_CODEPAGE_437=m
+-CONFIG_NLS_ISO8859_1=m
+-# CONFIG_CRYPTO_ECHAINIV is not set
+-# CONFIG_CRYPTO_HW is not set
+-CONFIG_DYNAMIC_DEBUG=y
+-CONFIG_DEBUG_FS=y
+-CONFIG_MAGIC_SYSRQ=y
+-# CONFIG_SCHED_DEBUG is not set
+-# CONFIG_DEBUG_PREEMPT is not set
+-# CONFIG_FTRACE is not set
+-# CONFIG_EARLY_PRINTK is not set
 
---=====_003_next=====
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
+-- 
+2.43.0
 
-PiA+ID4gPg0KPiA+ID4gPiAtLyoNCj4gPiA+ID4gLSAqIHRjcCBldmVudCB3aXRoIGFyZ3VtZW50
-cyBzayBhbmQgc2tiDQo+ID4gPiA+IC0gKg0KPiA+ID4gPiAtICogTm90ZTogdGhpcyBjbGFzcyBy
-ZXF1aXJlcyBhIHZhbGlkIHNrIHBvaW50ZXI7IHdoaWxlIHNrYiBwb2ludGVyIGNvdWxkDQo+ID4g
-PiA+IC0gKiAgICAgICBiZSBOVUxMLg0KPiA+ID4gPiAtICovDQo+ID4gPiA+IC1ERUNMQVJFX0VW
-RU5UX0NMQVNTKHRjcF9ldmVudF9za19za2IsDQo+ID4gPiA+ICsjZGVmaW5lIFRDUF9SRVRSQU5T
-TUlUX1FVSVRfUkVBU09OICAgICAgICAgICAgIFwNCj4gPiA+ID4gKyAgICAgICAgICAgICAgIEVO
-VU0oVENQX1JFVFJBTlNfRVJSX0RFRkFVTFQsICAgICAgICAgICAicmV0cmFuc21pdCB0ZXJtaW5h
-dGUgdW5leHBlY3RlZGx5IikgICAgXA0KPiA+ID4gPiArICAgICAgICAgICAgICAgRU5VTShUQ1Bf
-UkVUUkFOU19TVUNDRVNTLCAgICAgICAgICAgICAgICJyZXRyYW5zbWl0IHN1Y2Nlc3NmdWxseSIp
-ICAgICAgICAgICAgICBcDQo+ID4gPiA+ICsgICAgICAgICAgICAgICBFTlVNKFRDUF9SRVRSQU5T
-X0lOX0hPU1RfUVVFVUUsICAgICAgICAgInBhY2tldCBzdGlsbCBxdWV1ZWQgaW4gZHJpdmVyIikg
-ICAgICAgIFwNCj4gPiA+ID4gKyAgICAgICAgICAgICAgIEVOVU0oVENQX1JFVFJBTlNfRU5EX1NF
-UV9FUlJPUiwgICAgICAgICAiaW52YWxpZCBlbmQgc2VxdWVuY2UiKSAgICAgICAgICAgICAgICAg
-XA0KPiA+ID4gPiArICAgICAgICAgICAgICAgRU5VTShUQ1BfUkVUUkFOU19UUklNX0hFQURfTk9N
-RU0sICAgICAgICJ0cmltIGhlYWQgbm8gbWVtb3J5IikgICAgICAgICAgICAgICAgICBcDQo+ID4g
-PiA+ICsgICAgICAgICAgICAgICBFTlVNKFRDUF9SRVRSQU5TX1VOQ0xPTkVfTk9NRU0sICAgICAg
-ICAgInNrYiB1bmNsb25lIGtlZXB0cnVlc2l6ZSBubyBtZW1vcnkiKSAgIFwNCj4gPiA+ID4gKyAg
-ICAgICAgICAgICAgIEVOVU0oVENQX1JFVFJBTlNfRlJBR19OT01FTSwgICAgICAgICAgICAiZnJh
-Z21lbnQgbm8gbWVtb3J5IikgICAgICAgICAgICAgICAgICAgXA0KPiA+ID4NCj4gPiA+IERvIHdl
-IHJlYWxseSBuZWVkIDMgKyAxIGRpZmZlcmVudCAnTk9NRU1PUlknIHN0YXR1cyA/DQo+ID4NCj4g
-PiBZZXMsIGRpZmZlcmVudCAiTk9NRU0iIHN0YXR1cyBwaW5wb2ludCBleGFjdCBmYWlsdXJlIHN0
-YWdlcyBpbiBwYWNrZXQgcmV0cmFuc21pc3Npb24sDQo+ID4gd2hpY2ggaGVscHMgZGlzdGluZ3Vp
-c2ggd2hpY2ggcHJvY2VzcyB0cmlnZ2VyZWQgaXQuIEJlbmVmaWNpYQ0KPg0KPiBFTk9NRU0gaXMg
-RU5PTUVNLiBIb25lc3RseSBJIGZhaWwgdG8gc2VlIHdoeSBpdCBtYXR0ZXJzLg0KPg0KPiBJZiB0
-aGlzIHdhcyB0aGUgY2FzZSwgd2Ugd291bGQgaGF2ZSB0aG91c2FuZHMgb2YgZGlmZmVyZW50IEVO
-T01FTSBlcnJub3MuDQoNCkhpIEVyaWMsDQoNClRoYW5rcyBmb3IgcmV2aWV3aW5nIHRoZSBwYXRj
-aCBhbmQgeW91ciB2YWxpZCBmZWVkYmFjayDigJMgSSBhZ3JlZSB3aXRoIHlvdXIgcG9pbnQNCnRo
-YXQgZXhjZXNzaXZlIEVOT01FTSBncmFudWxhcml0eSBjb3VsZCBjcmVhdGUgdW5uZWNlc3Nhcnkg
-cmVkdW5kYW5jeSBpbiB0aGUga2VybmVsLg0KDQpNeSBpbml0aWFsIGludGVudCB3YXMgdG8gZGlm
-ZmVyZW50aWF0ZSBhbGxvY2F0aW9uIGZhaWx1cmVzIGluIFRDUCByZXRyYW5zbWlzc2lvbg0KKFRS
-SU1fSEVBRCwgVU5DTE9ORSwgRlJBRykgdG8gcGlucG9pbnQgZXhhY3QgZmFpbHVyZSBwb2ludHMg
-ZHVyaW5nIGRlYnVnZ2luZywNCnNpbmNlIHRoZXNlIGVycm9ycyBvY2N1ciBhdCBkaXN0aW5jdCBz
-dGFnZXMgd2l0aCBkaWZmZXJlbnQgc3RhY2sgY29udGV4dHMuDQpIb3dldmVyLCBJIHJlY29nbml6
-ZSB0aGF0IEVOT01FTSBpdHNlbGYgc3VmZmljaWVudGx5IGNvbnZleXMgdGhlIGNvcmUgaXNzdWUu
-DQoNCldlIHdpbGwgY29uc29saWRhdGUgdGhlc2UgaW50byBhIHVuaWZpZWQgVENQX1JFVFJBTlNf
-Tk9NRU0gaW4gdjQgb2YgdGhlIHBhdGNoLg0KQXBwcmVjaWF0ZSB5b3VyIHRpbWUgYW5kIGV4cGVy
-dGlzZSE=
-
-
---=====_003_next=====
-Content-Type: text/html ;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-PGRpdiBjbGFzcz0iemNvbnRlbnRSb3ciPjxwPiZndDsgJmd0OyAmZ3Q7ICZndDs8L3A+PHA+Jmd0
-OyAmZ3Q7ICZndDsgJmd0OyAtLyo8L3A+PHA+Jmd0OyAmZ3Q7ICZndDsgJmd0OyAtICogdGNwIGV2
-ZW50IHdpdGggYXJndW1lbnRzIHNrIGFuZCBza2I8L3A+PHA+Jmd0OyAmZ3Q7ICZndDsgJmd0OyAt
-ICo8L3A+PHA+Jmd0OyAmZ3Q7ICZndDsgJmd0OyAtICogTm90ZTogdGhpcyBjbGFzcyByZXF1aXJl
-cyBhIHZhbGlkIHNrIHBvaW50ZXI7IHdoaWxlIHNrYiBwb2ludGVyIGNvdWxkPC9wPjxwPiZndDsg
-Jmd0OyAmZ3Q7ICZndDsgLSAqJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7YmUgTlVMTC48L3A+
-PHA+Jmd0OyAmZ3Q7ICZndDsgJmd0OyAtICovPC9wPjxwPiZndDsgJmd0OyAmZ3Q7ICZndDsgLURF
-Q0xBUkVfRVZFTlRfQ0xBU1ModGNwX2V2ZW50X3NrX3NrYiw8L3A+PHA+Jmd0OyAmZ3Q7ICZndDsg
-Jmd0OyArI2RlZmluZSBUQ1BfUkVUUkFOU01JVF9RVUlUX1JFQVNPTiZuYnNwOyAmbmJzcDsgJm5i
-c3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwO1w8L3A+PHA+Jmd0OyAmZ3Q7ICZndDsgJmd0
-OyArJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNw
-O0VOVU0oVENQX1JFVFJBTlNfRVJSX0RFRkFVTFQsJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7
-ICZuYnNwOyAmbmJzcDsicmV0cmFuc21pdCB0ZXJtaW5hdGUgdW5leHBlY3RlZGx5IikmbmJzcDsg
-Jm5ic3A7IFw8L3A+PHA+Jmd0OyAmZ3Q7ICZndDsgJmd0OyArJm5ic3A7ICZuYnNwOyAmbmJzcDsg
-Jm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwO0VOVU0oVENQX1JFVFJBTlNfU1VDQ0VT
-UywmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7
-InJldHJhbnNtaXQgc3VjY2Vzc2Z1bGx5IikmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5i
-c3A7ICZuYnNwOyAmbmJzcDsgXDwvcD48cD4mZ3Q7ICZndDsgJmd0OyAmZ3Q7ICsmbmJzcDsgJm5i
-c3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7RU5VTShUQ1BfUkVU
-UkFOU19JTl9IT1NUX1FVRVVFLCZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsicGFj
-a2V0IHN0aWxsIHF1ZXVlZCBpbiBkcml2ZXIiKSZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyBc
-PC9wPjxwPiZndDsgJmd0OyAmZ3Q7ICZndDsgKyZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAm
-bmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDtFTlVNKFRDUF9SRVRSQU5TX0VORF9TRVFfRVJST1Is
-Jm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyJpbnZhbGlkIGVuZCBzZXF1ZW5jZSIp
-Jm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAm
-bmJzcDtcPC9wPjxwPiZndDsgJmd0OyAmZ3Q7ICZndDsgKyZuYnNwOyAmbmJzcDsgJm5ic3A7ICZu
-YnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDtFTlVNKFRDUF9SRVRSQU5TX1RSSU1fSEVB
-RF9OT01FTSwmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsidHJpbSBoZWFkIG5vIG1lbW9yeSIp
-Jm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAm
-bmJzcDsgXDwvcD48cD4mZ3Q7ICZndDsgJmd0OyAmZ3Q7ICsmbmJzcDsgJm5ic3A7ICZuYnNwOyAm
-bmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7RU5VTShUQ1BfUkVUUkFOU19VTkNMT05F
-X05PTUVNLCZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsic2tiIHVuY2xvbmUga2Vl
-cHRydWVzaXplIG5vIG1lbW9yeSIpJm5ic3A7ICZuYnNwO1w8L3A+PHA+Jmd0OyAmZ3Q7ICZndDsg
-Jmd0OyArJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZu
-YnNwO0VOVU0oVENQX1JFVFJBTlNfRlJBR19OT01FTSwmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJz
-cDsgJm5ic3A7ICZuYnNwOyAiZnJhZ21lbnQgbm8gbWVtb3J5IikmbmJzcDsgJm5ic3A7ICZuYnNw
-OyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDtcPC9wPjxw
-PiZndDsgJmd0OyAmZ3Q7PC9wPjxwPiZndDsgJmd0OyAmZ3Q7IERvIHdlIHJlYWxseSBuZWVkIDMg
-KyAxIGRpZmZlcmVudCAnTk9NRU1PUlknIHN0YXR1cyA/PC9wPjxwPiZndDsgJmd0OzwvcD48cD4m
-Z3Q7ICZndDsgWWVzLCBkaWZmZXJlbnQgIk5PTUVNIiBzdGF0dXMgcGlucG9pbnQgZXhhY3QgZmFp
-bHVyZSBzdGFnZXMgaW4gcGFja2V0IHJldHJhbnNtaXNzaW9uLDwvcD48cD4mZ3Q7ICZndDsgd2hp
-Y2ggaGVscHMgZGlzdGluZ3Vpc2ggd2hpY2ggcHJvY2VzcyB0cmlnZ2VyZWQgaXQuIEJlbmVmaWNp
-YTwvcD48cD4mZ3Q7PC9wPjxwPiZndDsgRU5PTUVNIGlzIEVOT01FTS4gSG9uZXN0bHkgSSBmYWls
-IHRvIHNlZSB3aHkgaXQgbWF0dGVycy48L3A+PHA+Jmd0OzwvcD48cD4mZ3Q7IElmIHRoaXMgd2Fz
-IHRoZSBjYXNlLCB3ZSB3b3VsZCBoYXZlIHRob3VzYW5kcyBvZiBkaWZmZXJlbnQgRU5PTUVNIGVy
-cm5vcy48L3A+PHA+PGJyPjwvcD48cD5IaSBFcmljLDwvcD48cD48YnI+PC9wPjxwPlRoYW5rcyBm
-b3IgcmV2aWV3aW5nIHRoZSBwYXRjaCBhbmQgeW91ciB2YWxpZCBmZWVkYmFjayDigJMgSSBhZ3Jl
-ZSB3aXRoIHlvdXIgcG9pbnQ8L3A+PHA+dGhhdCBleGNlc3NpdmUgRU5PTUVNIGdyYW51bGFyaXR5
-IGNvdWxkIGNyZWF0ZSB1bm5lY2Vzc2FyeSByZWR1bmRhbmN5IGluIHRoZSBrZXJuZWwuPC9wPjxw
-Pjxicj48L3A+PHA+TXkgaW5pdGlhbCBpbnRlbnQgd2FzIHRvIGRpZmZlcmVudGlhdGUgYWxsb2Nh
-dGlvbiBmYWlsdXJlcyBpbiBUQ1AgcmV0cmFuc21pc3Npb248L3A+PHA+KFRSSU1fSEVBRCwgVU5D
-TE9ORSwgRlJBRykgdG8gcGlucG9pbnQgZXhhY3QgZmFpbHVyZSBwb2ludHMgZHVyaW5nIGRlYnVn
-Z2luZyw8L3A+PHA+c2luY2UmbmJzcDt0aGVzZSBlcnJvcnMgb2NjdXIgYXQgZGlzdGluY3Qgc3Rh
-Z2VzIHdpdGggZGlmZmVyZW50IHN0YWNrIGNvbnRleHRzLjwvcD48cD5Ib3dldmVyLCBJIHJlY29n
-bml6ZSB0aGF0IEVOT01FTSBpdHNlbGYgc3VmZmljaWVudGx5IGNvbnZleXMgdGhlIGNvcmUgaXNz
-dWUuPC9wPjxwPjxicj48L3A+PHA+V2Ugd2lsbCBjb25zb2xpZGF0ZSB0aGVzZSBpbnRvIGEgdW5p
-ZmllZCBUQ1BfUkVUUkFOU19OT01FTSBpbiB2NCBvZiB0aGUgcGF0Y2guPC9wPjxwPkFwcHJlY2lh
-dGUgeW91ciB0aW1lIGFuZCBleHBlcnRpc2UhPC9wPjxwPjxicj48L3A+PHA+PGJyPjwvcD48L2Rp
-dj4=
-
-
---=====_003_next=====--
-
---=====_002_next=====--
-
---=====_001_next=====--
 
 
