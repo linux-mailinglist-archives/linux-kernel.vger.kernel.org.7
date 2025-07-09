@@ -1,151 +1,146 @@
-Return-Path: <linux-kernel+bounces-724472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48EEFAFF350
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:57:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4476AFF35A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31F743B7DF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:56:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8C6F1C46F90
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4D92580E1;
-	Wed,  9 Jul 2025 20:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45AEF24467D;
+	Wed,  9 Jul 2025 20:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="asuZQm3m"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EMo1qaIx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522A3238C2C
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 20:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EF123A9B4;
+	Wed,  9 Jul 2025 20:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752094550; cv=none; b=camV4qMLbCgwA85Ns9wGFfJPN+7Eeoa6jty87wm6R2TLkvPUSnFtbngDWjOUGouoTXexcGLAy97H1288suFBQB45hdmibMxH2t5UuBzIefJLJ3ezwKfi13YGT4vwaaiu0b0ZPjACegD8m3i1aK3oDYFCMLc2FrgdIns/rCk3t/o=
+	t=1752094614; cv=none; b=gGNaFsc2yKKdHwmGWgaC7mVdTylyuBEQrla9UPRLbmooSjUC9KxBto9R7tPY4aX/PijKUeU3wbNABYO0u1xvAvo5rxUTFKi+abd+Q9QVOA2zqy6VEwhYw3OMtDrHcVlHAHlIiF51Q5hpC8W1auWfol5DlNmORouRSSM9RCzb7GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752094550; c=relaxed/simple;
-	bh=XzDzRk1vGfiNCPslKWqmbDqIYuYeqD89trWJuumtsro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XGyNOixCpp2o347BJKVrD9sDr1PMtfjIgdOR5E+rsHwQQdjUtHPvcnnyid3P+z40dFZv/7Mm6jEs++MjcPEEnAzHPoyQ95kq6g+wl23xZyelg0LzZBoVEIpP/Vo8hWxl/JxdGa/q8Y9nkf43x/eXx0nOZUKdqT4emGbeeQN+z/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=asuZQm3m; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752094548;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xIp9/NRPhy2+LTOMOMLpJCUzNZlMcoIeNR8roytz2o4=;
-	b=asuZQm3mVDiWGpug/Dn5JipGlZOmNHwSTClOjV9gr8QkRtFgPNIkeCeSNjuytoO0WsDC5n
-	/Gc2XCBDh1ifmG8YaA+bpXFJoAf3c+O0IPN0bz62e5BQOB+wpe8dG21fBkjOoICt0nadMO
-	2W8qoPAhEjSFExhTW0CE9d9Wc6JkQUA=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-435-NwBkgGxMPumDK3tZfIC9Lw-1; Wed, 09 Jul 2025 16:55:47 -0400
-X-MC-Unique: NwBkgGxMPumDK3tZfIC9Lw-1
-X-Mimecast-MFC-AGG-ID: NwBkgGxMPumDK3tZfIC9Lw_1752094546
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-453817323afso1333555e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 13:55:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752094546; x=1752699346;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xIp9/NRPhy2+LTOMOMLpJCUzNZlMcoIeNR8roytz2o4=;
-        b=bQJM9g9aOLa4hYcFaSinFXAZlqa4zQR9F7WKV4iF5AIj5pyDF4jQleZ9GVld9yLJfF
-         U7rzeP4B4jylpD5Y8t6Fhk8CoaRbhEUzlqpJwH4jZzqZ6bRTYaByFDI6IE9ZxPR4Ad5S
-         eVqmSVLZcLDd5YhBj//ROxrOVdYXHBtJtw+3t33dMMsSH5TR5WfdpnJKiG4VM+RWqRo3
-         EQ15mwBrb0JKU8OZpD5BgfHssukvFKawGjSAFqX5DGeY8K5J0JNgA1PgINjqiuTfXpLf
-         Addo+w4ExMNIIWLaekKHQi+qPcKwP+dOH9g+6joVHZIcKzUoS+yRHHtqf0u4xUdjaOzi
-         7jrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWb0YkWvCKPGRQHZM1AdTu77RpdD+ZO9WN8oqUn8x5hWEViWXUzuJX0liaNO0V08mLRbX41IIX5cd+8ZRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/kjZrtQja39vI7xHIXBtaoV3n+s8R7N+lHwV5yhWodkpABRlX
-	mkbPpDbTyndMI6M2icRxpLnJDWFmNjocBif1kp3VI2rMBCTWXhzI/ZTmW1p7AyXKWU7EAC7J9gk
-	do9/QAarFrmNa2D0iRbYYcEUSg6DdoBffUikJSOmRTA818MXbBhfzgK++dxz9AUtNjg==
-X-Gm-Gg: ASbGnctINf6QtsHpquJxbQTb/SceiFuk1sPJ06JcCrdUv6SyWFTjNmCSMAz/XiZrF40
-	G9tz3IcVtXZ/64Phtt1tkplD3hOwSoHtnRl5iSHgQG2vvhiSnZq9usyoilns/aQx/QXZZwnzi8q
-	8z0xITtLsaxj0L/sjn/jSeCwPDotAme1065v0GLslklr0JL/Elurbf4BqMTzYwhDb08HHmLyq5S
-	0w+yHK2P+70Sg8ERNt0PqhRiq23L7A5YPtpDpfsxeadOCk3zPyNBGDxw5ulEEo2MyRMsKC9eC8f
-	dYXPHA65tDyK68g=
-X-Received: by 2002:a05:600d:3:b0:445:49e:796b with SMTP id 5b1f17b1804b1-454dba8d8a4mr8203705e9.17.1752094545941;
-        Wed, 09 Jul 2025 13:55:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGA0EX5mCNSFaO3IMjRPLIrDmEC4QNJB9NGJ5evjYUf2XMKmpq4NVz9GiJiOeP0QPX4EYOFeA==
-X-Received: by 2002:a05:600d:3:b0:445:49e:796b with SMTP id 5b1f17b1804b1-454dba8d8a4mr8203565e9.17.1752094545563;
-        Wed, 09 Jul 2025 13:55:45 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:150d:fc00:de3:4725:47c6:6809])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d512c2bfsm36939635e9.39.2025.07.09.13.55.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 13:55:45 -0700 (PDT)
-Date: Wed, 9 Jul 2025 16:55:43 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vhost tree
-Message-ID: <20250709165533-mutt-send-email-mst@kernel.org>
-References: <20250709221905.61e77ab8@canb.auug.org.au>
- <20250709155616-mutt-send-email-mst@kernel.org>
- <fdfc2aa4-09d6-4e5c-ae24-8d99b8bbe207@infradead.org>
+	s=arc-20240116; t=1752094614; c=relaxed/simple;
+	bh=uTDnsC9gh78Vna16UuEA/n7cxHquFqpIFKCITxcMRbk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rhYZS6NwXVas7F4TPE7QVFc+h3bkuQPC9nOLcjdPDu5RsunaWf5UekEHBjtaop4DeTd4yXriwlcATUlHfSzdIx2wTfdewdw+YCR+y4VGzf/1kGQipEUIkJBc/IZ1paak6s07C0f8+Uo0Tnlus+PkW78ihSAtyik3dd2mjaxm0lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EMo1qaIx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 569CofRM023135;
+	Wed, 9 Jul 2025 20:56:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=RouWShojFsmqS6of0/eSW5ACb/WhEfF28ye
+	hu7XLt7s=; b=EMo1qaIxU5fxY1ppavqilTPWojE6d50rDqIodqDs/JuJMUo8t5o
+	92YxNVJhyv6SfnNjH76fynDU+pNbcAopoB6kQjOmxz6+I4QoGJBmFLqTulV9S2wE
+	fdb/F5EMeiYQW3POnQyzxXxpft6cuw5XNLXkXG+Du0z8UAReyP+99pWSM3DjZszc
+	h21nuVjW36DUoDPVguY7uYCzzwYyotCBXrC2lITcmzTe9H58HfKh8adrDvjPpyBP
+	DNBwZdmnsQmzt2ScymJVktHAObidB85IsDfoicKwKjo2dzAFgx3S/ayBLFPY55/w
+	Umo2Y3FVeu5KZeIjJWq8TjEJ49xSK3pagBw==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47smbejf9f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Jul 2025 20:56:41 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 569KubSc029877;
+	Wed, 9 Jul 2025 20:56:37 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 47sdus4c7e-1;
+	Wed, 09 Jul 2025 20:56:37 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 569KubcL029872;
+	Wed, 9 Jul 2025 20:56:37 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-nitirawa-hyd.qualcomm.com [10.213.109.152])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 569KubUB029870;
+	Wed, 09 Jul 2025 20:56:37 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2342877)
+	id EC41857186F; Thu, 10 Jul 2025 02:26:36 +0530 (+0530)
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+To: mani@kernel.org, James.Bottomley@HansenPartnership.com,
+        martin.petersen@oracle.com, bvanassche@acm.org, avri.altman@wdc.com,
+        ebiggers@google.com, neil.armstrong@linaro.org,
+        konrad.dybcio@oss.qualcomm.com
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Nitin Rawat <quic_nitirawa@quicinc.com>
+Subject: [PATCH V4 0/3] ufs: ufs-qcom: Align programming sequence as per HW spec
+Date: Thu, 10 Jul 2025 02:26:32 +0530
+Message-ID: <20250709205635.3395-1-quic_nitirawa@quicinc.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fdfc2aa4-09d6-4e5c-ae24-8d99b8bbe207@infradead.org>
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDE4OCBTYWx0ZWRfX3k3SM7tTlEdj
+ dbvjkObopihZgJ1+EH/hzE5FzEpoeqixpmkgoXr0e87QfsRNK37kj+9SKPTev0IfhIB7hLSQofF
+ ZCzi9Qu/MhQlCPVHxDQ4gJh3YDwG7Rlg5t2b0upHc+GBv6EVEls+UWkh91HGuCd66kRpFqaz2BD
+ lWYllpwYWlsuh1xgiza88sHVu0oRDLU/bmjGIuXndRqemap1ckjZqK1SOSqo0WrxCiCnPWuuF7r
+ vs5UhMCHzWyfM6IqgfJGNHdGJZk3jEtnpE4+e99pK/xSl4y/+VKi1sL4mtiLlUQwp5NNf+cUa06
+ ZtIadPgNogeVxuGvApuZMsz5EwdOySeKcJtftteLrjLwEDx4pTxN5aJekv7Mca8hAvgxUvkFXfK
+ 1BgnrXpnTOMOSlBb3zeYttKoRlCS7mKYG45FpxUrjAqDtalKiZzI0XcSN+z/oJbCS0FTOk4d
+X-Proofpoint-GUID: MI5ahkw7KbVTt1oPv358LiEUBrMDjit8
+X-Proofpoint-ORIG-GUID: MI5ahkw7KbVTt1oPv358LiEUBrMDjit8
+X-Authority-Analysis: v=2.4 cv=VpQjA/2n c=1 sm=1 tr=0 ts=686ed789 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=Wb1JkmetP80A:10 a=iRjbf9KB49bWgsSTYZMA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-09_05,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 malwarescore=0 suspectscore=0 clxscore=1015 impostorscore=0
+ phishscore=0 mlxlogscore=798 lowpriorityscore=0 adultscore=0
+ priorityscore=1501 bulkscore=0 spamscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507090188
 
-On Wed, Jul 09, 2025 at 01:51:53PM -0700, Randy Dunlap wrote:
-> 
-> 
-> On 7/9/25 1:00 PM, Michael S. Tsirkin wrote:
-> > On Wed, Jul 09, 2025 at 10:19:05PM +1000, Stephen Rothwell wrote:
-> >> Hi all,
-> >>
-> >> After merging the vhost tree, today's linux-next build (x86_64
-> >> allnoconfig) failed like this:
-> >>
-> >> In file included from /home/sfr/next/next/arch/x86/events/amd/ibs.c:12:
-> >> /home/sfr/next/next/include/linux/pci.h: In function 'pci_set_disconnect_work':
-> >> /home/sfr/next/next/include/linux/pci.h:2738:14: error: implicit declaration of function 'pci_device_is_present'; did you mean 'pci_dev_present'? [-Wimplicit-function-declaration]
-> >>  2738 |         if (!pci_device_is_present(pdev))
-> >>       |              ^~~~~~~~~~~~~~~~~~~~~
-> >>       |              pci_dev_present
-> >>
-> >> Caused by commit
-> >>
-> >>   b7468115b604 ("pci: report surprise removal event")
-> >>
-> >> I have reverted that commit and the 4 following ones (just in case).
-> >>
-> >> -- 
-> >> Cheers,
-> >> Stephen Rothwell
-> > 
-> > 
-> > 
-> > Weird:
-> > $ git grep pci_device_is_present include/linux/pci.h 
-> > include/linux/pci.h:bool pci_device_is_present(struct pci_dev *pdev);
-> > include/linux/pci.h:    if (!pci_device_is_present(pdev))
-> > 
-> 
-> in x86_64 allnoconfig, CONFIG_PCI is not enabled.
-> 
-> The function is only defined when CONFIG_PCI is enabled.
-> 
-> 
-> > and of course I did build it ... which commit should I test?
-> > 
-> 
-> The one that Stephen listed above?
-> 
-> -- 
-> ~Randy
+This patch series adds programming support for Qualcomm UFS
+to align with Hardware Specification.
 
-Fixed now, thanks!
+In this patch series below changes are taken care.
+
+1. Enable QUnipro Internal Clock Gating
+2. Update esi_vec_mask for HW major version >= 6
+
+Changes from v3:
+1. Updated the kernel-doc comment for function ufshcd_dme_rmw
+   to include descriptions for all parameters to fix compilation
+   warning (W=1).
+
+Changes from v2:
+1. Addressed bart's and Mani's comment to move ufshcd_dme_rmw
+   to ufshcd.c
+2. Addressed Mani's and bart's comment to avoid initialisation
+   of cfg.
+3. Addressed Mani's comment to update commit text.
+
+Changes from v1:
+1. Moved ufshcd_dme_rmw to ufshcd.h as per avri's comment.
+
+
+Bao D. Nguyen (1):
+  ufs: ufs-qcom: Update esi_vec_mask for HW major version >= 6
+
+Nitin Rawat (2):
+  scsi: ufs: core: Add ufshcd_dme_rmw to modify DME attributes
+  ufs: ufs-qcom: Enable QUnipro Internal Clock Gating
+
+ drivers/ufs/core/ufshcd.c   | 24 ++++++++++++++++++++++++
+ drivers/ufs/host/ufs-qcom.c | 24 ++++++++++++++++++++++--
+ drivers/ufs/host/ufs-qcom.h |  9 +++++++++
+ include/ufs/ufshcd.h        |  1 +
+ 4 files changed, 56 insertions(+), 2 deletions(-)
+
+--
+2.48.1
 
 
