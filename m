@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-722682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D244AFDDAD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:48:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60711AFDDB0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7426D4E3505
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:47:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EDFA180000
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B811E7C34;
-	Wed,  9 Jul 2025 02:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EA61F17E8;
+	Wed,  9 Jul 2025 02:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKYU7Y+5"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FdeZERMm"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4DB1DFD9A;
-	Wed,  9 Jul 2025 02:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE30F1E9915;
+	Wed,  9 Jul 2025 02:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752029277; cv=none; b=iVB4w/3uEwNGxBRnMaVtePdl5/U78HGN0JduGseLLyjS3p96h4SoXLKlpEcrNF+rwCUFR3Quh6awmrRAOTIF+/zShqMQm3d966QQFTIhnjwG1z6qVzN9ISmoRbEfcoTsHErK6HYItIdi4YlOqnAhXUe2ePqDOLxmHP6S+oX9jTs=
+	t=1752029279; cv=none; b=ry5qfFy6zaksm6YVTTx1GSf0XANnlU0ka9V9KowQtbhhCQ1efIdS2IF+FtPPsL4GtUGYMMHLZQMDV3nTm2tmrpzxYPJyPQCuEDvzglhWsYIQqnyZRLF9S6qnLm8oMw/lhDIYpTbakjy2lCqVOIJJ0b5IdmYJz3js0KBPnaOcIiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752029277; c=relaxed/simple;
-	bh=udArArRWFUDbtjVfaU8tEqSMaua7p5ESx6VJBG8z1U8=;
+	s=arc-20240116; t=1752029279; c=relaxed/simple;
+	bh=LYCvRX4GND48sxZPjt/8rvX52pFLQzPUFx/IGFXepak=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jr3/nZUfoG7y/vBFa17uDPgqDOk0piGgpXK1II2HLXjdU3H+vljrbFFGozB72iqga3sgpzK1HVmAe7gQ0x8p6s/r/PXGmjnIIW0AFWoXClORVYNJd5+EeCURYbSJVegbbCtgipMLKG2EvkCF5/htXelHCsezkOclta80G0Ep1S0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WKYU7Y+5; arc=none smtp.client-ip=209.85.215.173
+	 MIME-Version; b=ZYRpjshnXpFSnRUnBKIYFWcN7iQQ0NAO/FBcuEQz1Gm98TemloJK1WNC7uLsxvDh4MTbA96hZC0ZRHMYxJ6w4YUpke9a1aVCAE8OfhEnauYYIM/vUghlLe5C/WLx5On9rTuRFKO6Wlg4ZS/L1BXnSfLBAPQSg6chuLWooAQzfwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FdeZERMm; arc=none smtp.client-ip=209.85.215.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b0b2d0b2843so3696668a12.2;
-        Tue, 08 Jul 2025 19:47:55 -0700 (PDT)
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b2c4e46a89fso4440720a12.2;
+        Tue, 08 Jul 2025 19:47:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752029275; x=1752634075; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752029277; x=1752634077; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=As9tTvp//yaZUYeaTKYibSaYF/FG2MJo7/aKqapg7nw=;
-        b=WKYU7Y+5DDKLOL1rZwUkzjA9n7Hb4PTzfjid1MG0w/B/IgqHjJo9utxYtmiLP3tSNe
-         8YwAVs0iYaxeZu0gLQGc/A0lX+8qHi/lTDDjyiCyhgXB4xnZfMhRujp7DvILcm275YiO
-         Mai7aBV5XWVl4o+pADlBIAQ47NHB0Tr/pejjZkuwjooIav+q21rXmvoIExsyCRfkYVX4
-         d+m5qCIqtpNq0dDGCvKPtMxgEzQoicb5wwnMQpI+7pql1zb/6DD/gCy/A7UNyLYB9obG
-         4YsAj72nlQbwaSeYD1h3+gPgathRShk2+4XsSddyDbaOYVDQkQyglad2UgK8rXlPdU9p
-         3qOg==
+        bh=Nt3xJUsmRNuFj7mVdok6VzjlqWA5ZFnW4qry3w6ipOw=;
+        b=FdeZERMm4mntj150gb/UVP6f4vyVCTHS6oKQLUiwlstILQz4Ziq/sIb6LCOaprVTVh
+         L7SkDFARlPyH9kcm5gSXOQSaN9aWYfUcAFW4iEOCx8QahKmFqbkck6rH7ABBb9OGloK5
+         R2bp6tEwm8WmJKeI49W4VQFVpENNVMOSbEvhlkVuWU5SErZH/iVlRiDK1eWqT2tkE9yJ
+         BApYNyLMFpf4SIbU8sGZYVgk8IQsiyL8ba8ouKaO9MPhTEo6AJ8EbpNpKCOoQiX7Osdr
+         iYhiQwxOt8KYkD5n/ysvG7iSpCFJQhG89CG/6/ig3MdnnAlLqnsORqPUpFm5+Y+9TxbL
+         tV7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752029275; x=1752634075;
+        d=1e100.net; s=20230601; t=1752029277; x=1752634077;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=As9tTvp//yaZUYeaTKYibSaYF/FG2MJo7/aKqapg7nw=;
-        b=Oz3nFM0q8jVEOVRlYzrkjTC4vxtXBGk/1Zpq8V4g54zky1o60CGqdDXzUXEd6c5q/H
-         NLU+s1cFfmE8jjWYnfXB51HiBTcA4sT0F1rm7XGqbSwYw3N2NFqOazlw/SxdPv24Ew4O
-         pl9pYWzn4gv9KBHYKUHemtpXbtCIzbmeBvDxSDxVyowa3X9uAVFRFw4VWlt0W30kseiw
-         VacLqCQgm/mIEGaeI3+o1A4Zw7ZDB5IN+bg8Gvge7wjlU9I4pAsRd6AdfeTGrG1eUsx/
-         hStq90ZD3N1nYr2n6UiTRiiIrfVkLpIJXGXfqooIkQqKX52lcm2F2pV7YMhWuSV4maLq
-         R4Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCUI37s6AGvfBAMvbuotWrWGhzC6nFuYGb3FlTXjsWGFqsFDNh0pEHru1d6shIVAHKOtxMczHhCnnCweIWjV@vger.kernel.org, AJvYcCXbdQwwF+DOwZjajUFZu8+DgDXoBhvkJSx9mc/kO7Rr4KHHfi3S5v21qArW5D+ppStEleQCLufoa1ih@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVCVI9xpN0PpUfu0bD5Gbqpky6XKmUQ36lGLsxvORMMnHwhZoj
-	/91qq9OaG83CRjrHYBIehh4g3N2hHlmK7VY+0RF0RLexgkdxtYSYgCSr
-X-Gm-Gg: ASbGncuz/rHHOF97lO1WbpoxGxzVLC7n/VnhXtOJM/YQOWkTEYYktXdPVdVu0OnQNZu
-	FiKhV8XYCldQl248CiiTQnjkPIIyjLBoeUCyfinqkvOrUEmwVvzpx7E4V/gZBlSg5XMAO7jDYyV
-	wliwo9SNFcdUFQHuY9N3t21+QTvs4LMiU2mB00YbCXp/BEoxVuxa9l0pzKrkmMTId4LFNFkj165
-	EZUnSrIcWyCJCclBxO6vBbbsqn4u5QJxPl2WdQWbpdEjyV+dtU+6tqn8KD3+HJ3Zxp0+sQp8uLt
-	dHGQ8tq7yXOjh4oYJtLxtRQbSLY41TBcj92vy9KPJm1hbiCJXI+0g54hwN9kfDoPvGOiNPnGntQ
-	jdYjGx3CvJaX/Vxk=
-X-Google-Smtp-Source: AGHT+IGB5Um/wExt+ZkFY6T5iC8L1PVyN4uMxXVdQ3GuLmB90WvlG1nFqT5YFgxphQo9S7K8MIPm3Q==
-X-Received: by 2002:a17:90b:3c87:b0:30e:5c7f:5d26 with SMTP id 98e67ed59e1d1-31c2fdd15d0mr1623090a91.24.1752029274847;
-        Tue, 08 Jul 2025 19:47:54 -0700 (PDT)
+        bh=Nt3xJUsmRNuFj7mVdok6VzjlqWA5ZFnW4qry3w6ipOw=;
+        b=acf9EKNmJFEQUxF97SVYkpEKVsNFOhumzKU/2uPu6S38vqFC5tjGpDLK//baTGxd6U
+         mIF3afYMPPWKxMzVLx55ClJ3hJO7gDhNmbaBjG6BBFV6orzBh8nA3GFRXgAFUCGf+A4v
+         BcDoqk8tO6YyDWsm/GYz5cEGfYqv5ghp50jhVcCOVFU4zFeVOBKBzhk+6+eAJ8GX1hZ6
+         eYCAXyu/Ql5b/jvFeyLJCjC7jN8xIh7MGU8RqmG2EckBCwhfq1erHpG6ztBAVcoPO60T
+         e8ryK+YFSJY7HQzP22TNJxrAe4kQBi0+29LVI6jpb7Pi8UNuFKdfAeloqYDptR2mM7dZ
+         92Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCVX47mpew7feVg9TKUAeqxN4hh7lfPe/ieLt7X86iZZH2tYKL4uToUFi8JPdA5P+dx7ZrAEoToT8sSD@vger.kernel.org, AJvYcCWijbwOizn0Jl3fFHLfIuvRvKV/UsBo7djrrsn18/uCAkobM9n48c1+1kC1vOLvCSnwh2qiv66weqjioRZ+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxn0cuHhPPnVBl8MOmxdzAi3TkzgPK4+Jy2uQwite50rlSthKf0
+	bd+EUDp+QavpDSceiypE/exxJWAYwfmBHQ1m3FIGpB0A+4z4hhUT+wq0R+3YAA==
+X-Gm-Gg: ASbGncuFxlUKV5ZXNyGWvuoKnvpZDEV6U/HIzDwWOysKo2itoQmY0mN9rjqXi5E9iNN
+	a9bC3lXMhUF+hlD0swUs3wdVQ7NuVIkcfzNFJhpz2Emh6IJx9bihoG99qzkY+5gDYJC3KWfFrUZ
+	7Fsr77UEgIvK6+6tn6F5TsyWP4CVvZ0lIVjVShlbL9c3kPzWs6azJH6xfdwyUtbqWJrjW2QQ1P7
+	jrACnKfamvrztronyWCWxMvRN8/sOyxs9JrVRLajrFNtet4Ccrlzd4kliA+67MaMyqW25yblXFc
+	W+D2CydIfj1yq8fZUZA+42mAO6mvOL2MnYBDOR/dfsOquRQMPuXgASWC9y9thBaNRYjG3Ezby46
+	1OsY2qAJY6JmcfFo=
+X-Google-Smtp-Source: AGHT+IFfJtz8y+bke9bUUcK/cGdmMuoZJtCIDSrgjZjmUgo+3c2EkK2UtetMN3fEwLU/at8aN++NUA==
+X-Received: by 2002:a17:90b:3ccb:b0:311:ff02:3fcb with SMTP id 98e67ed59e1d1-31c2fde5a55mr1376797a91.28.1752029277227;
+        Tue, 08 Jul 2025 19:47:57 -0700 (PDT)
 Received: from localhost.localdomain ([207.34.150.221])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c300b50e8sm535082a91.31.2025.07.08.19.47.54
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c300b50e8sm535082a91.31.2025.07.08.19.47.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 19:47:54 -0700 (PDT)
+        Tue, 08 Jul 2025 19:47:57 -0700 (PDT)
 From: Kyle Hendry <kylehendrydev@gmail.com>
 To: Philipp Zabel <p.zabel@pengutronix.de>,
 	Rob Herring <robh@kernel.org>,
@@ -81,9 +81,9 @@ To: Philipp Zabel <p.zabel@pengutronix.de>,
 Cc: Kyle Hendry <kylehendrydev@gmail.com>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/6] dt-bindings: reset: add compatible for bcm63xx ephy control
-Date: Tue,  8 Jul 2025 19:47:26 -0700
-Message-ID: <20250709024740.194520-3-kylehendrydev@gmail.com>
+Subject: [PATCH 3/6] dt-bindings: reset: add BCM63268 ephy reset definitions
+Date: Tue,  8 Jul 2025 19:47:27 -0700
+Message-ID: <20250709024740.194520-4-kylehendrydev@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250709024740.194520-1-kylehendrydev@gmail.com>
 References: <20250709024740.194520-1-kylehendrydev@gmail.com>
@@ -95,28 +95,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add compatible string for bcm63xx ephy control.
+Add definitions for resets in the ephy control register.
 
 Signed-off-by: Kyle Hendry <kylehendrydev@gmail.com>
 ---
- .../devicetree/bindings/reset/brcm,bcm6345-reset.yaml         | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ include/dt-bindings/reset/bcm63268-reset.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/reset/brcm,bcm6345-reset.yaml b/Documentation/devicetree/bindings/reset/brcm,bcm6345-reset.yaml
-index 00150b93fca0..b8a320bb1776 100644
---- a/Documentation/devicetree/bindings/reset/brcm,bcm6345-reset.yaml
-+++ b/Documentation/devicetree/bindings/reset/brcm,bcm6345-reset.yaml
-@@ -13,7 +13,9 @@ maintainers:
+diff --git a/include/dt-bindings/reset/bcm63268-reset.h b/include/dt-bindings/reset/bcm63268-reset.h
+index d87a7882782a..676a62c9777b 100644
+--- a/include/dt-bindings/reset/bcm63268-reset.h
++++ b/include/dt-bindings/reset/bcm63268-reset.h
+@@ -27,4 +27,8 @@
+ #define BCM63268_TRST_HW	30
+ #define BCM63268_TRST_POR	31
  
- properties:
-   compatible:
--    const: brcm,bcm6345-reset
-+    enum:
-+      - brcm,bcm6345-reset
-+      - brcm,bcm63xx-ephy-ctrl
- 
-   reg:
-     maxItems: 1
++#define BCM63268_RST_EPHY1 0
++#define BCM63268_RST_EPHY2 1
++#define BCM63268_RST_EPHY3 2
++
+ #endif /* __DT_BINDINGS_RESET_BCM63268_H */
 -- 
 2.43.0
 
