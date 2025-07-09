@@ -1,242 +1,158 @@
-Return-Path: <linux-kernel+bounces-724290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B91BCAFF0D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:24:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D875AFF0DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 858D8189ACC3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:25:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18BAB7A23F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47767237A4F;
-	Wed,  9 Jul 2025 18:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A53239E7D;
+	Wed,  9 Jul 2025 18:26:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mXcnq4wQ"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="Cd5eIaWN";
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="j5vaIi+M"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DEB8F40;
-	Wed,  9 Jul 2025 18:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752085486; cv=none; b=nEi0olMesCdrh8/KC0badJLcQBwI8La5XveinE/ukV+wia11LlQbcDNx7I/NNG/VQBU7F0L8BUm3rVgcwmtyjmz1Wt7L0jmnxO7X+18fN+/auuSL6ZIbb5jO0vpqkiK3Be5ZUPdo6ytWgLLvolIFK69ytN3GLoc7NQXtUyNRyfw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752085486; c=relaxed/simple;
-	bh=wP02tXWJ6ShdmPK/mGbrE5WU/2Vnk4y3ic7CZTFpdmA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QZk4RvoXVGuxMOPMO6Pdj9IJXo6joswtSSZ62gdrUGGZa3KitDlY6GAJHF7cXqYf+zKVYLMuFkC3sRIDXCvXInAbK/vhxsnVNWnKXBY27gamBkkK+nWtq6P3aU8rkfkHi9C62O7B5wTRGmFz69E/8mOFcxDTP7E+wOXCRZ8xPfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mXcnq4wQ; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-70f94fe1e40so14920997b3.1;
-        Wed, 09 Jul 2025 11:24:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752085483; x=1752690283; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kfEz4rqEWja1PaN5ITE9k1Eh6xuG8m+k9OQNQf1a+lk=;
-        b=mXcnq4wQfHUD0hjrsAliPaEm1kkP7S0AZcZwOQ9LNJu19V+uHqfVKDIJOPTyAvnnvl
-         wvLOM/crr2jnB6dAlDWlCcaLHbfGZYUym7I3gYLyLnk/lQVH2U+A7MQH6v/v/AIzo1Pk
-         epz4ZBEBN6ZuO2A8QUCpjSgmy5vv08TZNiJX6A3zbXociaOFOCnhRr1P4GDRGXEvwGJ/
-         6fEWPvXSch/mFb85oEfYaB2gST6kqNevOf6TvR4WuQAStPSMGEhaepUAOdQ4h1+BrM2+
-         NM37kkEqRTN5SNsgX4qegYK5E72LLOp4yEtEUc8LSqdIdM+xc4WCU5rPxZ46tkJXgHOc
-         xbLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752085483; x=1752690283;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kfEz4rqEWja1PaN5ITE9k1Eh6xuG8m+k9OQNQf1a+lk=;
-        b=siFSpNM+X76eTtrD6U3P2pN3XarqNXSp6bUKeuda9kWQRJ7F6zFXmH9lxjjO82FRbi
-         pIulxXgfWGJ4hXVEYotEs0G3jEpy4KDb2kNsK/eFhkpkZIuVNmeXH1O8/+OotyG1OrZH
-         TihE//MBXAfE6G2UdNNPAj1gbYREPyofrN+i0L1QRUR9K8XZqsAQWsbJgrnURns0lddy
-         yvGtYaQkckp+FJBbh4vSvtpEc5o3oH3GG0Km0Sm6b5lC9PMZUushlSSASvV7F6ersA1c
-         nEMb6FBbJXggtmdnfXYTN+r2plA0oZCn9JRiriQP7AQt6H82Vhy6YB785SD+6lKCI/qE
-         pqUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW01yBTjsf6jtFNvZo9TrTcAD6VWmkj1xe3zYfWNT4SCz1wtElct0BEYvZlm/xe2M1Ur5jyR9PHZV6CWa3O3MMR@vger.kernel.org, AJvYcCXdS5gau0JibvT46t1YP2xIw5j+YJVX/Yang52gLwmCVKOPhY+V7h3wufV5ow/V2ZwiHyE29Ei3tElRPrc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRyVxkkGE+3SCaECI2kpo+WGRUrAXo0lB+zhwTCdPaQQWXzNfG
-	j4vSLpB3NSTlf57/PSxficEUHuzxJM104ckIluzDZSQTbDtH3bagRv/bE1CumA==
-X-Gm-Gg: ASbGnctO4XgqLaeDb5PgTh/7Dkwnlef5+Z2fPn8eDRNxsmqpsRG6EIXV2aCRVYqWLZs
-	0ezn/ZRWTJQ7ILYfnPBD0CspzDRyl9OjDr/X1hhpXIXI6FCgn85NHGlHMwZKj0jPYCczmKVqTdd
-	9C4hNil9vxkgmNqXlRUg56WCc+K2/UJAyEPOvJeHyAO92nBFfboNj4qNGeYJVdWlXCvNzLwIe8k
-	wppgSc6Gs2WABD5PKFWOrvE5xx3rvylKuFJnf/Y4UyO83ikzzkur+bBY1gYCNR0pn3XQAG5Bi47
-	Bx0zhm2UL6/rRYIlU2VqB7Rzmvk3T77/W6AF8ouUBl4M//2HwKNqvi78egiVAw==
-X-Google-Smtp-Source: AGHT+IEYYOadzxnywoxaX789M206GrbkLKEdNYBCA/EUDWpZPshYBYvXk8xq4EiH1MPzZCeeRpRMXw==
-X-Received: by 2002:a05:690c:6b81:b0:716:675c:d97d with SMTP id 00721157ae682-717c15d9221mr8472797b3.15.1752085482612;
-        Wed, 09 Jul 2025 11:24:42 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:72::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-716659a01f2sm26831257b3.34.2025.07.09.11.24.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 11:24:42 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Suresh K C <suresh.k.chandrappa@gmail.com>
-Cc: nphamcs@gmail.com,
-	hannes@cmpxchg.org,
-	joshua.hahnjy@gmail.com,
-	shuah@kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] selftests: cachestat: add tests for mmap Refactor and enhance mmap test for cachestat validation
-Date: Wed,  9 Jul 2025 11:24:40 -0700
-Message-ID: <20250709182441.2909688-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250709174657.6916-1-suresh.k.chandrappa@gmail.com>
-References: 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1ECC8F40;
+	Wed,  9 Jul 2025 18:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752085563; cv=pass; b=OW8/M+Nb1nUw/7aIIq3ENGV1/2Mf0xEFSt6azGvpYTZzUBKXjfCmjIFhS0EbFlEucG8zSuDvBNFzW3XRVu+JavbKqB2kxufMG1TijEriswOHaW0tatzfUh8KVq4wZN3AUBGClVAiSH1IYWyEd9W7h2J8s7w1oFovh+MrSrabjrs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752085563; c=relaxed/simple;
+	bh=Abcsubps400Tmimi8x/85khLrrQGEef3bZBOcjjxcGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZDqmjoydxvDurn+DPW9T6TX4rRsRxUYGOLZE58q4NWHSEombDA9UK+dqxITyiY1m7ZZk9UPCzppY0y5+gtQj30MsjmwGMKYSEJ8pmPOLHffprWnqNNl5eAxnSNX2S64i1Ceae80gqjFY7AbhoaRsIwssCSkUn4knmEfPwf4zpi4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=Cd5eIaWN; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=j5vaIi+M; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPS id 4bcmcs2hLQz49PyD;
+	Wed,  9 Jul 2025 21:25:49 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1752085549;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=idK43d5pW+sDqqJyF1QryvhgswgryS6oV6QlfEsn3to=;
+	b=Cd5eIaWNVHAris92EJIj5pBSOCxO2SSeEx55YMAx1UH0F34D+WCLNhazFOX2jNd1XWSOKn
+	PBuDK+BxMkolX+WQibY7vkv0hy/3q+pxnOnN3RRWOc83PppuRtvFzjT3+WbOT+N0Rq2Yy3
+	riZdKvjYZE5ZROqPw8QPB5FMn/xqVcTBRkw/fbINW3dEOVDBEIjC+Tw8+OeIT7d7JsbxpW
+	DobqtgYrGeJZ8ScUd0YGsgHoxxRY2d09+g2YPy+F9Y2MKHHKLXVmXHB3pcQF6H9BP4Dzzg
+	tb1Fa1XF4bF2R5IUHun1x7SshcRsM0RuO528sTGLjD/ncDbIOV2BVQKh4/wUrA==
+Received: from roadster.musicnaut.iki.fi (85-76-14-75-nat.elisa-mobile.fi [85.76.14.75])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: aaro.koskinen)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4bcmcW2pw0zyTV;
+	Wed,  9 Jul 2025 21:25:31 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1752085539;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=idK43d5pW+sDqqJyF1QryvhgswgryS6oV6QlfEsn3to=;
+	b=j5vaIi+MKE0K97FkMCCJSkf6NqB1iWzHr64fe76FUCCLFVDm7A3/c+peJxwaeLo0T0CSiU
+	MAGMXRNMz00c23w0I0f/W1kLQJnGgTVi/33b+khX6Ub/4GcGyggbIW/aHq8FM9Ybyx/71s
+	Z/q3EwX5M5W0klTxt39g5c9UZZc0wXk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1752085539;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=idK43d5pW+sDqqJyF1QryvhgswgryS6oV6QlfEsn3to=;
+	b=aC9jN/sxtfI1P8h0up0XRe/mAbUDv9hEENcRN1bcxYHJtiKDySolJsLhJIft7rM5c1LgRj
+	u7rtB8QrT3xCTsiIDfO1BNP/B4eaesw2rTIBWR5Ag4d1LJLnb5EDr3LPI1BEb8ksIZfeyi
+	7mP0dDp9W6MPaxncT2k9hf5u4kuNVN8=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=aaro.koskinen smtp.mailfrom=aaro.koskinen@iki.fi
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1752085539; a=rsa-sha256; cv=none;
+	b=gz2tdtmSexXg/gmdwhV70+VDtBZTb1fFyQFb0fnZOivnGsQhpNC8rA5wP/QPWRoNtTe2mO
+	SlsmZdBYUOxqasqNyUhXB3z6ffe5FggtAhM5RH4exvJTzJilQRxTUDfWln3dOWfdrtyfEL
+	ni8SKQmg6h4mbIox0/tdSJbp5T4Z+Bs=
+Date: Wed, 9 Jul 2025 21:25:28 +0300
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: vigneshr@ti.com, andreas@kemnade.info, khilman@baylibre.com,
+	rogerq@kernel.org, tony@atomide.com, jmkrzyszt@gmail.com,
+	andi.shyti@kernel.org, miaoqinglang@huawei.com,
+	grygorii.strashko@ti.com, wsa@kernel.org,
+	Jean Delvare <khali@linux-fr.org>,
+	Komal Shah <komal_shah802003@yahoo.com>,
+	Greg Kroah-Hartman <gregkh@suse.de>, linux-omap@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] i2c: omap: Handle omap_i2c_init() errors in
+ omap_i2c_probe()
+Message-ID: <aG60GJy60Jf3w8tZ@roadster.musicnaut.iki.fi>
+References: <cover.1751701715.git.christophe.jaillet@wanadoo.fr>
+ <565311abf9bafd7291ca82bcecb48c1fac1e727b.1751701715.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <565311abf9bafd7291ca82bcecb48c1fac1e727b.1751701715.git.christophe.jaillet@wanadoo.fr>
 
-On Wed,  9 Jul 2025 23:16:57 +0530 Suresh K C <suresh.k.chandrappa@gmail.com> wrote:
+Hi,
 
-> From: Suresh K C <suresh.k.chandrappa@gmail.com>
+On Sat, Jul 05, 2025 at 09:57:37AM +0200, Christophe JAILLET wrote:
+> omap_i2c_init() can fail. Handle this error in omap_i2c_probe().
 > 
-> This patch merges the previous two patches into a single,
-> cohesive test case that verifies cachestat behavior with memory-mapped files using mmap().
-> It also refactors the test logic to reduce redundancy, improve error reporting, and clarify failure messages for both shmem and mmap file types.
-
-Hi Suresh,
-LGTM, thank you for the iterations!
-
-Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
- 
-> Changes since v2:
-> 
-> - Merged the two patches into one as suggested
-> - Improved error messages for better clarity
-> 
-> Tested on x86_64 with default kernel config.
-> 
-> Signed-off-by: Suresh K C <suresh.k.chandrappa@gmail.com>
+> Fixes: 010d442c4a29 ("i2c: New bus driver for TI OMAP boards")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  .../selftests/cachestat/test_cachestat.c      | 66 +++++++++++++++----
->  1 file changed, 55 insertions(+), 11 deletions(-)
+> Compile tested only.
+> ---
+>  drivers/i2c/busses/i2c-omap.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> diff --git a/tools/testing/selftests/cachestat/test_cachestat.c b/tools/testing/selftests/cachestat/test_cachestat.c
-> index 632ab44737ec..18188d7c639e 100644
-> --- a/tools/testing/selftests/cachestat/test_cachestat.c
-> +++ b/tools/testing/selftests/cachestat/test_cachestat.c
-> @@ -33,6 +33,11 @@ void print_cachestat(struct cachestat *cs)
->  	cs->nr_evicted, cs->nr_recently_evicted);
->  }
->  
-> +enum file_type {
-> +	FILE_MMAP,
-> +	FILE_SHMEM
-> +};
-> +
->  bool write_exactly(int fd, size_t filesize)
->  {
->  	int random_fd = open("/dev/urandom", O_RDONLY);
-> @@ -201,8 +206,19 @@ static int test_cachestat(const char *filename, bool write_random, bool create,
->  out:
->  	return ret;
->  }
-> +const char* file_type_str(enum file_type type) {
-> +	switch (type) {
-> +		case FILE_SHMEM:
-> +			return "shmem";
-> +		case FILE_MMAP:
-> +			return "mmap";
-> +		default:
-> +			return "unknown";
-> +	}
-> +}
->  
-> -bool test_cachestat_shmem(void)
-> +
-> +bool run_cachestat_test(enum file_type type)
->  {
->  	size_t PS = sysconf(_SC_PAGESIZE);
->  	size_t filesize = PS * 512 * 2; /* 2 2MB huge pages */
-> @@ -212,27 +228,49 @@ bool test_cachestat_shmem(void)
->  	char *filename = "tmpshmcstat";
->  	struct cachestat cs;
->  	bool ret = true;
-> +	int fd;
->  	unsigned long num_pages = compute_len / PS;
-> -	int fd = shm_open(filename, O_CREAT | O_RDWR, 0600);
-> +	if (type == FILE_SHMEM)
-> +		fd = shm_open(filename, O_CREAT | O_RDWR, 0600);
-> +	else
-> +		fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, 0666);
->  
->  	if (fd < 0) {
-> -		ksft_print_msg("Unable to create shmem file.\n");
-> +		ksft_print_msg("Unable to create %s file.\n",file_type_str(type));
->  		ret = false;
->  		goto out;
+> diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
+> index 8b01df3cc8e9..485313d872e5 100644
+> --- a/drivers/i2c/busses/i2c-omap.c
+> +++ b/drivers/i2c/busses/i2c-omap.c
+> @@ -1472,7 +1472,11 @@ omap_i2c_probe(struct platform_device *pdev)
 >  	}
 >  
->  	if (ftruncate(fd, filesize)) {
-> -		ksft_print_msg("Unable to truncate shmem file.\n");
-> +		ksft_print_msg("Unable to truncate %s file.\n",file_type_str(type));
->  		ret = false;
->  		goto close_fd;
->  	}
-> -
-> -	if (!write_exactly(fd, filesize)) {
-> -		ksft_print_msg("Unable to write to shmem file.\n");
-> -		ret = false;
-> -		goto close_fd;
-> +	switch (type){
-> +		case FILE_SHMEM:
-> +			if (!write_exactly(fd, filesize)) {
-> +				ksft_print_msg("Unable to write to file.\n");
-> +				ret = false;
-> +				goto close_fd;
-> +			}
-> +			break;
-> +		case FILE_MMAP:
-> +			char *map = mmap(NULL, filesize, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-> +			if (map == MAP_FAILED) {
-> +				ksft_print_msg("mmap failed.\n");
-> +				ret = false;
-> +				goto close_fd;
-> +			}
-> +			for (int i = 0; i < filesize; i++) {
-> +				map[i] = 'A';
-> +			}
-> +			break;
-> +		default:
-> +			ksft_print_msg("Unsupported file type.\n");
-> +			ret = false;
-> +			goto close_fd;
-> +			break;
->  	}
-> -
->  	syscall_ret = syscall(__NR_cachestat, fd, &cs_range, &cs, 0);
->  
->  	if (syscall_ret) {
-> @@ -308,12 +346,18 @@ int main(void)
->  		break;
->  	}
->  
-> -	if (test_cachestat_shmem())
-> +	if (run_cachestat_test(FILE_SHMEM))
->  		ksft_test_result_pass("cachestat works with a shmem file\n");
->  	else {
->  		ksft_test_result_fail("cachestat fails with a shmem file\n");
->  		ret = 1;
->  	}
->  
-> +	if (run_cachestat_test(FILE_MMAP))
-> +		ksft_test_result_pass("cachestat works with a mmap file\n");
-> +	else {
-> +		ksft_test_result_fail("cachestat fails with a mmap file\n");
-> +		ret = 1;
-> +	}
->  	return ret;
->  }
-> -- 
-> 2.43.0
+>  	/* reset ASAP, clearing any IRQs */
+> -	omap_i2c_init(omap);
+> +	r = omap_i2c_init(omap);
+> +	if (r) {
+> +		dev_err(omap->dev, "failure to initialize i2c: %d\n", r);
 
-Sent using hkml (https://github.com/sjp38/hackermail)
+Error paths in omap_i2c_init already print a message and error code,
+so this is log is redundant.
+
+A.
+
+> +		goto err_mux_state_deselect;
+> +	}
+>  
+>  	if (omap->rev < OMAP_I2C_OMAP1_REV_2)
+>  		r = devm_request_irq(&pdev->dev, omap->irq, omap_i2c_omap1_isr,
+> @@ -1515,6 +1519,7 @@ omap_i2c_probe(struct platform_device *pdev)
+>  
+>  err_unuse_clocks:
+>  	omap_i2c_write_reg(omap, OMAP_I2C_CON_REG, 0);
+> +err_mux_state_deselect:
+>  	if (omap->mux_state)
+>  		mux_state_deselect(omap->mux_state);
+>  err_put_pm:
+> -- 
+> 2.50.0
+> 
+> 
 
