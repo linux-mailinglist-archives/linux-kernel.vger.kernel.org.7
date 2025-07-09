@@ -1,170 +1,172 @@
-Return-Path: <linux-kernel+bounces-723112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA822AFE314
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:47:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E19AFE316
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D8F27B901D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:45:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3EF43BCCFC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582DF28003A;
-	Wed,  9 Jul 2025 08:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32637283153;
+	Wed,  9 Jul 2025 08:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jmPBx8B7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AoP987Dk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F96A272E63;
-	Wed,  9 Jul 2025 08:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EFDE280CD0;
+	Wed,  9 Jul 2025 08:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752050800; cv=none; b=hEM13mqmRBiQve+aFBccZ7UUxkBfPIUePQY85x8sih5iLuJS/HCGpMNOnyIJE6PkKjQJW9H+U7Pn1N/jMeqJzaftPaId4CjiDCIMwz9b/2iz3eCn+NHGoB3NHO9uwzN+Qsv/HQ9MV3DH6OB4x9x94x+rktpp19jXhCaQuVUgyA4=
+	t=1752050803; cv=none; b=aZc4gYE52dDIgovP6FpObUq+slFM3OtzeDjpg6MiZD5017rJ2VGOy/CUMUosiFqwR2LoZ3wUoQDcLEbOHASG+mLZ1PB3BVgIv0Lg63XKbIpnp+2+SD+D+DVNPzyniLWvMo/cpdWgWy9x9zzmuNYD6dLzLYO7IwRHykOZBch2+G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752050800; c=relaxed/simple;
-	bh=WS+qRyxh1kNap86kDD/wFR6fyhvdeuNitOmkN2MO010=;
+	s=arc-20240116; t=1752050803; c=relaxed/simple;
+	bh=uQxOYRvhs1dO9YSJnNB7tHiB35UHAz6K7hOo9VmXY+Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iFzh7Cavs8CruvGL17ALkF6WgMvGW8qRto+kt0ggSytU9HyCb9VERnKRm+dwRKpSUY04gEnQiP2s3xhAfEznIKDwX5xETM8fYdnvxvk+R/tSHzJnbzKbLBn5kBoWgK5b88XJOHl4uSmcCOm2MShChD/DOaEdzqqu7hLjvwg4yK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jmPBx8B7; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752050800; x=1783586800;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WS+qRyxh1kNap86kDD/wFR6fyhvdeuNitOmkN2MO010=;
-  b=jmPBx8B7a+lHLOqvL3ipntwBxmhLT3N0I45DrKXZm0p2lYUlXVgqKkza
-   MDtp5JOX9GSa/ClDpnxqRO9aZCabFxzEWe8hodOTlOYyV+g8oeyQwMeda
-   CCzMdnYwcs9UUgl3aHM5RyrvVPYGaz0BQvkN78NZMkEdUZeRn75Kr65FN
-   KlvIStp0Q+ifM+tmQtD5fNrjnptvIvn9DKEkOLYwe53jaKWVg3Nmj+uck
-   HvB6z2YT3R5O+yVxJJ0rqiQT9e/SIXK3fv8dB8dauntibb1vAsUu7d0RH
-   DZs0KBZ15CJONAf1hvCVzERzgJ4Zyl24CBPhdJmo3p8EfypcHVf/mJKTJ
-   w==;
-X-CSE-ConnectionGUID: xUIQRpPkSBeoiRM6l8w2tg==
-X-CSE-MsgGUID: Y/hmbzUqSiqQmcjd/wt4BA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54022534"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="54022534"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 01:46:39 -0700
-X-CSE-ConnectionGUID: Y8lLoT0AQ+iouRRWSvPTGw==
-X-CSE-MsgGUID: FjKb1E+PREKHQ02KgOGBQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="155354781"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 01:46:34 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uZQRi-0000000DoPn-1Cxv;
-	Wed, 09 Jul 2025 11:46:30 +0300
-Date: Wed, 9 Jul 2025 11:46:30 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Waqar Hameed <waqar.hameed@axis.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Julien Stephan <jstephan@baylibre.com>, Bo Liu <liubo03@inspur.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, Sean Nyekjaer <sean@geanix.com>,
-	Haibo Chen <haibo.chen@nxp.com>, Han Xu <han.xu@nxp.com>,
-	Francisco Henriques <franciscolealhenriques@usp.br>,
-	Gustavo Vaz <gustavo.vaz@usp.br>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 01/12] iio: accel: Remove redundant
- pm_runtime_mark_last_busy() calls
-Message-ID: <aG4sZohbXE6kmq2G@smile.fi.intel.com>
-References: <20250708231144.971170-1-sakari.ailus@linux.intel.com>
- <20250708231151.971256-1-sakari.ailus@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CCotWXlMREBpeoUXUf5hoj2C3zPJN7ZIcmVjw+DVQYwes2UGaPhtQZi/frVY45drTbmLA2nV8+R+RVNJtKWlg7UDKlF5f7tQEls54C4JHyEpykGoAI9PdaCD3Uml85ReNJd7Wx1eH/tAgLmA+as+KQef7vSJrEOcxGNBNVtnvWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AoP987Dk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97906C4CEF0;
+	Wed,  9 Jul 2025 08:46:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752050803;
+	bh=uQxOYRvhs1dO9YSJnNB7tHiB35UHAz6K7hOo9VmXY+Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AoP987DkYwFOKbEqSX8RyTKu8GJlh5CiIxRpF6Xo3fdNBZ8oluAKLufGQEXBJnc12
+	 kTui6Na/YflqX+Wz3zCy5ix+G8CVRq/x57MxP2Ta+dK6u+IiQ8aLxEjojHOPTf/hOG
+	 H7vaWKdknaaqGTvzb7QlUTS20chEVqKr9k0jJmMT1DocofDWwtbb9PJka75IOWtSi7
+	 538DV8dOkTa6CaB8/EnEtsYY+NRCHVndVilOLu9PkqbmYcpyZexH7zUFjVPQ7En5dF
+	 9xParte1oEOiLqWDHYyR2R4U6VbBWGW7l7gW2Pstw+fE89J0n8hjUtT2uLVp8zS54C
+	 oHrf8nDhLcZeA==
+Date: Wed, 9 Jul 2025 09:46:39 +0100
+From: Mark Brown <broonie@kernel.org>
+To: ew.kim@samsung.com
+Cc: s.nawrocki@samsung.com, lgirdwood@gmail.com, perex@perex.cz,
+	tiwai@suse.com, linux-sound@vger.kernel.org,
+	alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: samsung: Implement abox generic structure
+Message-ID: <aG4sb7UcqvHz_Z5r@finisterre.sirena.org.uk>
+References: <CGME20250709002150epcas2p467416bdbc16754726599a0cacb1feecc@epcas2p4.samsung.com>
+ <20250709001002.378246-1-ew.kim@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="DxAKD3zsp1okH161"
+Content-Disposition: inline
+In-Reply-To: <20250709001002.378246-1-ew.kim@samsung.com>
+X-Cookie: Do not cut switchbacks.
+
+
+--DxAKD3zsp1okH161
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250708231151.971256-1-sakari.ailus@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 09, 2025 at 02:11:51AM +0300, Sakari Ailus wrote:
-> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> pm_runtime_mark_last_busy().
+On Wed, Jul 09, 2025 at 09:10:02AM +0900, ew.kim@samsung.com wrote:
+> From: ew kim <ew.kim@samsung.com>
+>=20
+> Implemet basic abox generic drivers.
+> This driver is a management driver for the generic drivers used in
+> Automotive Abox, connecting them to SOC drivers.
+> It supports various Exynos Automotive SOCs.
 
-...
+I can't really tell what the driver is supposed to do from this - what
+is abox?  Looking at the code I'm not really much clearer, to a large
+extent because it doesn't seem to integrate with the subsystem (or other
+kernel subsystems) at all.  It looks like this might be intended to
+control a DSP offload system, but it's not 100% clear, and it seems like
+there's an ioctl() interface which it looks like it's exposing internal
+abstractions to userspace.  This needs to be some combination of much
+more clearly explained and better integrated with the existing kernel
+subsystems, right now I can't really review it effectively because it's
+hard for me to tell what the code is trying to do.
 
-> -	if (on) {
-> +	if (on)
->  		ret = pm_runtime_resume_and_get(dev);
-> -	} else {
-> -		pm_runtime_mark_last_busy(dev);
-> +	else
->  		ret = pm_runtime_put_autosuspend(dev);
-> -	}
+I've got a few very supreficial comments below but really there's a
+structural problem that needs to be addressed first.
 
-The following blank line can be removed as it's done in the other file.
+> +++ b/sound/soc/samsung/auto_abox/generic/abox_generic.c
+> @@ -0,0 +1,568 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2020 Samsung Electronics Co., Ltd.
+> + *        http://www.samsung.com/
 
-...
+It's now 2025...
 
-Side note: Looking at this, perhaps we can also have a helper to toggle state?
+Please also make the entire comment a C++ one so things look more
+intentional.
 
-...
+> +//#define DEBUG
 
->  	if (on)
->  		ret = pm_runtime_resume_and_get(&data->client->dev);
-> -	else {
-> -		pm_runtime_mark_last_busy(&data->client->dev);
-> +	else
->  		ret = pm_runtime_put_autosuspend(&data->client->dev);
-> -	}
+Just delete this, it can be added if needed.
 
-So, already two users of the potential new helper :-)
+> +#include <linux/clk.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/delay.h>
+> +#include <linux/suspend.h>
+> +#include <sound/soc.h>
+> +#include <sound/soc-dapm.h>
+> +#include <sound/pcm_params.h>
+> +#include <linux/of_reserved_mem.h>
+> +#include <linux/types.h>
+> +#include <linux/kernel.h>
+> +#include <linux/init.h>
+> +#include <linux/sched/clock.h>
+> +#include <linux/ktime.h>
+> +#include <linux/iommu.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/kmod.h>
+> +#include <linux/umh.h>
+> +#include <linux/string.h>
 
-...
+Do you really need all these headers?
 
-> -	if (on) {
-> +	if (on)
->  		ret = pm_runtime_resume_and_get(&client->dev);
-> -	} else {
-> -		pm_runtime_mark_last_busy(&client->dev);
-> +	else
->  		ret = pm_runtime_put_autosuspend(&client->dev);
-> -	}
->  
+> +static struct abox_generic_data *g_abox_generic_data;
 
-No blank line?
+This isn't really the kernel style - neither the g_ naming, nor the
+concept of having a global for a driver.
 
-Three!
+> +/**
+> + * @cnotice
+> + * @prdcode
+> + * @Sub_SW_Component{abox_generic}
+> + * @ALM_Link {work item url}
+> + * @purpose "get value from virtual address"
+> + * @logic "return global abox_generic_data"
+> + * \image html
+> + * @params
+> + * @param{in, -, -, -}
+> + * @endparam
+> + * @retval {-, struct *abox_generic_data, !NULL, NULL}
+> + */
 
->  	if (ret < 0) {
+This is not the style for kernel comments, and doesn't seem to make
+terribly much sense.
 
-...
+--DxAKD3zsp1okH161
+Content-Type: application/pgp-signature; name="signature.asc"
 
->  	if (on)
->  		ret = pm_runtime_resume_and_get(&client->dev);
-> -	else {
-> -		pm_runtime_mark_last_busy(&client->dev);
-> +	else
->  		ret = pm_runtime_put_autosuspend(&client->dev);
-> -	}
->  
->  	if (ret < 0) {
+-----BEGIN PGP SIGNATURE-----
 
-As per above and counting...
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhuLGwACgkQJNaLcl1U
+h9D+wQgAg6ZiLWn6Tov6pqpgGSvOVCG4bO1wv+lii8kju0nn5wslEp0AFE4uumGf
+j2XuTXW1grfaywB4hCwouLmd/7kkB6AyrQlrftw9I50TrN3AViIU/hvYQwXMI5wf
+v+T8Hz90rmxvWHi7A2OkMK4jBAJtUxyBayxx3o9vnV55bb0yYQKSaoZUYwTWIx5a
+mFlgnzsS6ZdNG3FFp6AOEDOmypiJBZSpVTS37VifxCEa2bO/qCsgboXMC/8Jwz0U
+1Um1xoTMu1gJarD6+b012HGTvLp5eV7srl9LNwROFxXmhRG1p+IJAbFybBHJaNxs
+ILL9EhWyeBZt5EaOzlUpLVgFOtxJBA==
+=1drM
+-----END PGP SIGNATURE-----
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--DxAKD3zsp1okH161--
 
