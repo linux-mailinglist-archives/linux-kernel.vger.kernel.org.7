@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-723786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E1FAFEB12
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:59:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584A5AFEB0A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43D2A17192C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:56:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF156563F8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627DA2EA745;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9C22EA749;
 	Wed,  9 Jul 2025 13:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nRxU+ImK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i+tgUInd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5BE2E5B2A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D775B2E6136;
 	Wed,  9 Jul 2025 13:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752069141; cv=none; b=ThQNfNlXf7b1vqMHoYIxE0Y8Vsn6cgYzF/45epVptpF2JlhKFZqt5tjMcXGUgZ/MaUGMf6WCv+Dw3Gld+ytt/M5B9+rj5FyiewbumAGfGLPDZPQ9Tgfe29WtLGV/olkyRbzHlUeCLYYiMeb109hIG6/Y67jQmiPGCoGjhg9Deao=
+	t=1752069141; cv=none; b=OcygWRLbWXpRfV1AAbKOPCVkgFDBbAWH16BAXzt180eWlcuQ2DQmjDmIJsGtkbWgMYiqFc/Zv4kfVlDlxD1xAZqKHUiP0EVV1lomI9d3xinD4k+LELAjA1UOQ+YcS6ZVdNIB86m3XSqyt6T5mhJiEIfqRstSkPiNyakWB5wfcRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752069141; c=relaxed/simple;
-	bh=Yy7J/4VoJF2hoh3IMFZrdyACnwG/igCZyNXpxhDszW0=;
+	bh=N7BK29GwfAOZ3YwW51dAhPYfYECxSH+jGCCV1ivhuZU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BlN1LSWrDEJwHsXkJqcaEk1mfSyBBAVhKv+N9klG5TyCKWUYfysD1imfBIbDmQRybYGYmnpLdtI9AZu567VjGDIOpdinCu6dtcBN3IFJxkoRmKdwcvSmRu5lfI9DgCTOVvY7GhRZcjuDkOYFFerkwDetDfwA5wfx1qPli4hQRiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nRxU+ImK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86866C4CEFC;
+	 MIME-Version; b=fMF/yh/jG0oxYc22Y4aIscZLqdtjvIPSRO7vWNk3Q9GPBbrGKZ/O30PLrWaur1UWepZc0hutVPaY94LoOX0pQQTweY5srnr+qlr7BtxmyXqT0sk728Uuvuz8dB6RuOZgFzAhZdRu9F4YBcn4cecexEjsg0On4NnoqSqDxQrJdEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i+tgUInd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3457C113D0;
 	Wed,  9 Jul 2025 13:52:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1752069141;
-	bh=Yy7J/4VoJF2hoh3IMFZrdyACnwG/igCZyNXpxhDszW0=;
+	bh=N7BK29GwfAOZ3YwW51dAhPYfYECxSH+jGCCV1ivhuZU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nRxU+ImKrFr+absNDBcNqu17DM+zVNoh2D/JL4O0p+jVdEkAKOFz5ODt4m5dI8Xnq
-	 HhC9iK+BINEHIAThRZpJQRfYDaDpRBTuGigrWyBfMTsj3vSLHyAiNoZQeacp8mHVA3
-	 1pY6BpwGPTfwCzQDsf//yFztLUElvJRHqOHnH7wpFkUraEjOpjl1UIBrVorsTmkdI9
-	 ZirStnyRecZESoHwd1JikUen4ksPst32jxLKjiMk1udw6ev6vv1iL3zRcsKWUScOfR
-	 bxod9o3/FNgHOHgqq1EkDQpFR+pMeEvhop+mEOHN5r3PO6zR3OfmQDBBhX5L3UouXC
-	 UTrWJiUVMK4ig==
+	b=i+tgUInddmqT6/Nzaoal965lcYUEqITGSERg1bjN6Feoy2hbRvGpS6rNLdvAexkqr
+	 pJCNSj91+HpWfaIB7nzjiYgK4zUiOuYBpVXcOqsWrHulmWXbEYqh68WfyA/L94Eqjv
+	 /0dnG2f4E2bxUEeQkcAwGzgNYG7rD8QThWIzyNS9O+AfOeA4EAHjbu4aX+pf0IN/0f
+	 TsZ0FMK4cO3wguOcaAtc3z7x44tzobR6IZVcj8GcVInfUj1B7FYRkKNRIlVI9cBwet
+	 ZDqlr0rq2Dmw5Fwsy9nKedY1Sfg3vyzGlxIZ8+Z6LVkVK8xPENDqfekHtaZNyn3f87
+	 0uKzecDuut8gA==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab@kernel.org>)
-	id 1uZVDd-00000000ECU-1JGs;
+	id 1uZVDd-00000000ECX-1O7f;
 	Wed, 09 Jul 2025 15:52:17 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
@@ -51,9 +51,9 @@ Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Akira Yokosawa" <akiyks@gmail.com>,
 	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 08/39] scripts: sphinx-pre-install: Address issues with OpenSUSE Leap 15.x
-Date: Wed,  9 Jul 2025 15:51:40 +0200
-Message-ID: <2d67c2cc005ec27b377bbc2e33e45ca19006ee96.1752067814.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 09/39] scripts: sphinx-pre-install: fix opensuse Leap hint for PyYAML
+Date: Wed,  9 Jul 2025 15:51:41 +0200
+Message-ID: <3ac82fcdf6ea61267615bf85058913ebcdc49238.1752067814.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1752067814.git.mchehab+huawei@kernel.org>
 References: <cover.1752067814.git.mchehab+huawei@kernel.org>
@@ -66,73 +66,26 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-On openSUSE Leap 15.6, which is the current LTS version, has two
-Sphinx packages. The normal one requires Python 3.6, which we
-don't support anymore. However, it also has Python 3.11 with a
-newer Sphinx version (7.2.6).
-
-Suggest the newer version:
-
-        Detected OS: openSUSE Leap 15.6.
-        ERROR: at least python 3.7 is required to build the kernel docs
-        Warning: python version is not supported.
-        Warning: better to also install "convert".
-        Warning: better to also install "dot".
-        ERROR: please install "yaml", otherwise, build won't work.
-        You should run:
-
-                sudo zypper install --no-recommends ImageMagick graphviz python311-pyyaml
-
-        Sphinx needs to be installed either:
-        1) via pip/pypi with:
-
-           Currently not possible.
-
-           Please upgrade Python to a newer version and run this script again
-
-        2) As a package with:
-
-                sudo zypper install --no-recommends python311-Sphinx
-
-            Please note that Sphinx >= 3.0 will currently produce false-positive
-           warning when the same name is used for more than one type (functions,
-           structs, enums,...). This is known Sphinx bug. For more details, see:
-                https://github.com/sphinx-doc/sphinx/pull/8313
-
-        Can't build as 2 mandatory dependencies are missing
+On Leap, the name of the package is python311-PyYAML.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- scripts/sphinx-pre-install.py | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ scripts/sphinx-pre-install.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/scripts/sphinx-pre-install.py b/scripts/sphinx-pre-install.py
-index 0a73b1b33842..eca42d90ed01 100755
+index eca42d90ed01..65438c198674 100755
 --- a/scripts/sphinx-pre-install.py
 +++ b/scripts/sphinx-pre-install.py
-@@ -556,6 +556,22 @@ class SphinxDependencyChecker:
+@@ -569,7 +569,7 @@ class SphinxDependencyChecker:
+                 progs.update({
+                     "python-sphinx": "python311-Sphinx",
+                     "virtualenv":    "python311-virtualenv",
+-                    "yaml":          "python311-pyyaml",
++                    "yaml":          "python311-PyYAML",
+                 })
  
-         progs["latexmk"] = "texlive-latexmk-bin"
- 
-+        match = re.search(r"(Leap)\s+(\d+).(\d)", self.system_release)
-+        if match:
-+            rel = int(match.group(2))
-+
-+            # Leap 15.x uses Python 3.6, which is not compatible with
-+            # the build system anymore. Suggest Python 3.11
-+            if rel == 15:
-+                if not self.which(self.python_cmd):
-+                    self.add_package(self.python_cmd, 0)
-+
-+                progs.update({
-+                    "python-sphinx": "python311-Sphinx",
-+                    "virtualenv":    "python311-virtualenv",
-+                    "yaml":          "python311-pyyaml",
-+                })
-+
          # FIXME: add support for installing CJK fonts
-         #
-         # I tried hard, but was unable to find a way to install
 -- 
 2.49.0
 
