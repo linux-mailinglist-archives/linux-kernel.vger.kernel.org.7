@@ -1,155 +1,126 @@
-Return-Path: <linux-kernel+bounces-723071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48786AFE261
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:21:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF0BAFE264
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B79327B35BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:19:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B32163A41C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C392623C50B;
-	Wed,  9 Jul 2025 08:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6145E26CE15;
+	Wed,  9 Jul 2025 08:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="2SG0hPHr"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="Io91Noim"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A50223DD1
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 08:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0465D22A7F9
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 08:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752049254; cv=none; b=NULucV8GcT4yd63QR/0HcJsnK4FBMPITcyl/kXjE3mTmRNT1g63fGavCZ9Nf6okSTqM3NtWSgsG0/+jL+xUeaSyGo3zbmQi5EoF2yoyrdNHSI7LrYYx95LyEKi6qXxONiZXAPbakLn/+ziZR+SAi7YIBxo39K7xiGwCKbgdo1Tc=
+	t=1752049294; cv=none; b=CMgUH93MtWyTPqhykXhQIFfD4Ndh1lwosjCPqbJPFSvqGI5kCWvNcRfNbCSa4HTLMzRYX4v8GyT55pmwIK/C4gcusiUyzY3qzuqE4WEZp83rUau2xk1q/NAO4/3WJQK0xS6m0Olo4EtywsJgqsxg/QHYaue/f857r9uGmJQpNCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752049254; c=relaxed/simple;
-	bh=EHXyuAgrfEFtwOLv535hfHlLjgXTXtcDgMefdBRIoPk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bbGCK3Nx7aJp+Q3pWyBhkjEHSOEiTPajepMbMWXc0lZ/w8TWTiM252ZutlHnxB5glEcMVQ2j0qNvGCRZHRKIaQWoLN0WMpnZLsOKn7g+Geg1JgZj7nctIvOaGDjXgO9VhB9vSzKzraQdsxmiV+e0+E6VZcW+RlUHOZVDezdfhAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=2SG0hPHr; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-453066fad06so38085685e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 01:20:52 -0700 (PDT)
+	s=arc-20240116; t=1752049294; c=relaxed/simple;
+	bh=ckyRm0enfVjmN+8bEXMCVszo05DaltDdfV8EKcYo2zU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KUuXbxDScWukWl5DzlRSQa/2/6k5NKiTx+dr2LtFqdM7Llb0I58Awp+BRsbnvPSKIbmto4PKnlb6NLu18J8QrMtB8JdH9HPb3CCksP9719hIaqFtA641L2VWwO39mE2VtJ+kya3GQN7X2UHJUAAwrHAZf5OMrS4D4b0dEAT2zYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=Io91Noim; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae3c5f666bfso855636366b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 01:21:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1752049251; x=1752654051; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7B3VRXc09cS8APvBj52bRVQerXwb1XuAJdQMIRIyeh0=;
-        b=2SG0hPHrilVOq4DA3BKH5i1rPpqRffRqRzSyw9rMKTEbQVL5Z4ozarjiNEHoz4EtCX
-         +O2RdPsLYRsGuM/dkY8+tWNqRnq6qxLuA720mFsAQmApHaSmQMvnLbOX7CQosf8y0wHU
-         xoAzGIVutXY7UMomrAAG3CA1zPSEr6SwXvS/YurD70W8ldEXrdTWcT5Uxdg/a8X6Sbd8
-         w5na3R/UnGn2k6ZHg46gu0pql7IGwiIIftn4tmbQx1cxcktXmih1yURTntm9tDN/sJPF
-         U6GDmlY2E/2UWhEnP2tsO62vHJcuAoPp5NRgfDZn0JjKL+WfxtDUjarI72iQu7kEu1zV
-         plHA==
+        d=cloudflare.com; s=google09082023; t=1752049291; x=1752654091; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IIY1qdYnNRSWia/sQ0DcpA+sma7gafJUV5CauUUesdU=;
+        b=Io91NoimUWJVbkuv8hdq5FGo5UogO4bsYktaXa9txZFS2RVZ/UgBAdBMfrDmb7YSfL
+         lnRpsfPCSWgQd0RbsoDFAztN1UPcsZBjTEJT/22McpYb3LD0GsiACMWNpbfpGIEr4JnK
+         eWG9g/pAmTH7Rog3xu1GuLh3Q36V8GRH7Le1Qi6UlYqtUYdOnjgGg356mtXOvMJBwDC0
+         cTHn9IHqNGp9RWWhDI8fJ/vMe0WZ08P3ISZCRtWWdWu/wOhBMbla54qGQlgSIA0Jf6tZ
+         bMOp/acMu0HUpEwqcLPD2z4hr/+6HfneyFRTSBCStRiumKiyt4fN/drMXaDJ+U7cyFH5
+         ugDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752049251; x=1752654051;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7B3VRXc09cS8APvBj52bRVQerXwb1XuAJdQMIRIyeh0=;
-        b=acr7mktBEnBi5oodSqT2qiOl7Jfz8hRW4QuICisnXK5UOR/zlfvNatIIy/+ozOlnbU
-         jb4GcqTUxTFYYcJJBs55OMJ2kLdkT5SIfwpL3nf/L9fLVPfXgZCMlt3lhhqOMFYtzKoo
-         7AvzNhWfXC8LRny+GS2wVMENUvyr1/z73w5ykUZ9rPMz1znjH4yYb8LEQwsnJ4k5ZRUc
-         zjw3vaesd00DgjkULxbn4LBntCr4dFWd0djMtRxmBuLte0A0sQ9tcep37v/KNUkDya0O
-         Lehyh8fxKuQ9PT/nTCo73B7yW0mRdYZatvRPKABzLKHmNXdl6tyVbgT04HkDHEkxW/Tc
-         cArg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhx6qeRh1pYVR6KYySBr3VOYpNY5Bn+gXKqjaa2DNutWvQX5cohYkNh8Njmxr2PAq5e/KwUhP+ZkDX+Xk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7qQXvecfrH4VzZOfKp7m2FizFvR8XLxms3ZrGwL7ihJ2kTs/0
-	vBeDXm4VetXV4OdWByywV5rhapdjodSOz+tig1Larj7sLJ5DBkM5e7ckczYTrurOxv8=
-X-Gm-Gg: ASbGncvC9xuBjrUmDlikCUsC/7RAm3yWNGWTiZH/Qn9Wi4W7WLPMghzjIVrHPIfoOMk
-	KCs2gGvRz/d8Fgt4NycNv+7eSgiT7naSnnGksvDH90Q/+OOUQNQQH6Xoh+23m9DBcWZuS1+L0L0
-	K1YYjpTLkOBo8IPF5Dq5JZi+Y2kNWclQhgdZpZTsScd9dETrLUqZjJVhJb7XkB48eanElvT1aeh
-	98yTsLfhAvcG//9fLt8Kjen45r8TVrr3+l3EYCzQPpJywlSNDfkb4/upV3238P38ZsBQC2k/b95
-	bODEBJJa2tJvKrpO6dKQ3tINGBBOdbhV968id4fLlmwZhiUGBJ/SqQ5cdBmy9EWzUa4XTaX2HmW
-	V
-X-Google-Smtp-Source: AGHT+IEYNIjq5nVtF5eCRGm3USKuYX5yMn/POeyEHko97pwQhmn9XFmaUb7lW9CY6jfvANHnKvBFuA==
-X-Received: by 2002:a05:600c:8207:b0:445:1984:2479 with SMTP id 5b1f17b1804b1-454d52db33bmr12806645e9.5.1752049250612;
-        Wed, 09 Jul 2025 01:20:50 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:6015:b265:edf6:227e])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-454d50527acsm14451965e9.14.2025.07.09.01.20.49
+        d=1e100.net; s=20230601; t=1752049291; x=1752654091;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IIY1qdYnNRSWia/sQ0DcpA+sma7gafJUV5CauUUesdU=;
+        b=VXUDe8nkLQu9dMO1vjr38vnqobB02GkHPWTtr4Jp0agzmJQMYrAyBYWCjB7dwtCwBf
+         SvwVRZ9Y8193B0X/w+YkHVIz2htBQACGDQQyNgvWLWulKPRnkubqj1qoCyRQC8vFWgck
+         Hi5JPeVJZUGWZjSSFM91uapV3/ybA09X0IgxSvn3os8RFEOzVSOcrswrpmK/SA20ZIwx
+         uB3IshDb1mknMF/ZDJ1q+wuWwD8YYU5oAlCy2DggUreggfFyi/P/wyKTvuRE4JWFmHFT
+         6cz2TgEmyw/OVd4Wz3GUCW1h1/9w3btWVvhDXubXn6Qe3o/fHXpDSs6TdxlqnsLVAuEy
+         Nztw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrzHOHR4OGQ0Y0Uk1u6WZjxY4NTqN3Ctb04gntgX7uI798sicQIPOajKt2UUPckaswAlMTr6siB7IrWP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6Qg0/MhL5f+E6FPDPyhpPChfQrMgQJ9+CmVAXXoNU57Pe/mFN
+	mGWHRgJq93v5WsYOFjaN4iSAAjDlMsd/Cmrn7bmvx9PuroDx5OKj5GyzzVOKhakk8Pk=
+X-Gm-Gg: ASbGnct+hhTFj5pNVKFILr8iPncW6SlDdQu1U3+gJ2jWUJ+EW1Ka2h9yRt63TllUor3
+	1NbaiPmc+tRBHXSYNxnG4gimSEt4APPDFZ8sWQnq3c/n8E1VobUop/k9mufBr+yV2jQ0RPLBNgq
+	VnZe/7dPpn7HcvnwunnIPBh1Lm+LMqwly4DZZDmDstX8mykoSIFTwZLw8PZo7gVruq0hS1Jlogl
+	JpEsEM6Wsa8Qr75uHJkZ33LsmOq3Jy5vr7wuDvjD8vv5qAhVuJpOd/ajKzYDTbN2XKzYQnF89M1
+	HTS7UJV+dX+eGWGpO3ipMK4fmz/Fjsm2Z4XGDjVgrs6S0g+Y4WZTRrk=
+X-Google-Smtp-Source: AGHT+IGfHsYxZ/BQIrPnRIlZl++93uSpuvwPAd/R6OibEs4U8BXiJ1ECoDNeSW6UPcLJalW4MgZSaw==
+X-Received: by 2002:a17:907:8694:b0:ae0:b46b:decd with SMTP id a640c23a62f3a-ae6cf7621e5mr183572366b.31.1752049291233;
+        Wed, 09 Jul 2025 01:21:31 -0700 (PDT)
+Received: from cloudflare.com ([2a09:bac5:5063:2432::39b:b0])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f66d91ffsm1061547466b.14.2025.07.09.01.21.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 01:20:50 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Wed, 09 Jul 2025 10:20:39 +0200
-Subject: [PATCH v2] PCI: endpoint: pci-epf-vntb: fix MW2 configfs ID
+        Wed, 09 Jul 2025 01:21:30 -0700 (PDT)
+From: Jakub Sitnicki <jakub@cloudflare.com>
+To: Tao Chen <chen.dylane@linux.dev>
+Cc: daniel@iogearbox.net,  razor@blackwall.org,  andrew+netdev@lunn.ch,
+  davem@davemloft.net,  edumazet@google.com,  kuba@kernel.org,
+  pabeni@redhat.com,  ast@kernel.org,  andrii@kernel.org,
+  martin.lau@linux.dev,  eddyz87@gmail.com,  song@kernel.org,
+  yonghong.song@linux.dev,  john.fastabend@gmail.com,  kpsingh@kernel.org,
+  sdf@fomichev.me,  haoluo@google.com,  jolsa@kernel.org,
+  mattbobrowski@google.com,  rostedt@goodmis.org,  mhiramat@kernel.org,
+  mathieu.desnoyers@efficios.com,  horms@kernel.org,  willemb@google.com,
+  pablo@netfilter.org,  kadlec@netfilter.org,  hawk@kernel.org,
+  bpf@vger.kernel.org,  netdev@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  linux-trace-kernel@vger.kernel.org,
+  netfilter-devel@vger.kernel.org,  coreteam@netfilter.org
+Subject: Re: [PATCH bpf-next v3 5/7] bpf: Remove attach_type in bpf_netns_link
+In-Reply-To: <20250709030802.850175-6-chen.dylane@linux.dev> (Tao Chen's
+	message of "Wed, 9 Jul 2025 11:08:00 +0800")
+References: <20250709030802.850175-1-chen.dylane@linux.dev>
+	<20250709030802.850175-6-chen.dylane@linux.dev>
+Date: Wed, 09 Jul 2025 10:21:29 +0200
+Message-ID: <874ivlg4fq.fsf@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250709-vntb-mw-fixup-v2-1-27c14df6ed5b@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAFYmbmgC/3WMyw6CMBBFf4XM2jHtIKKu/A/DoqWjTCKPtFglp
- P9uZe/y3JtzVgjshQNcihU8RwkyDhloV0DbmeHBKC4zkKJK1eqEcZgt9m+8y+c1oW1LZUqmszp
- qyM7kOR9b79Zk7iTMo1+2fNS/9V8patRI5EylNR1qdldrlqdYz/t27KFJKX0BM1iVQq0AAAA=
-X-Change-ID: 20250708-vntb-mw-fixup-bc30a3e29061
-To: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, 
- Allen Hubbe <allenbh@gmail.com>, Manivannan Sadhasivam <mani@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>
-Cc: ntb@lists.linux.dev, linux-pci@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1443; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=EHXyuAgrfEFtwOLv535hfHlLjgXTXtcDgMefdBRIoPk=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBobiZgAHnLRl3ismay6Ijxwcw0NreYakccQ7CuM
- G8WL55cG12JAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaG4mYAAKCRDm/A8cN/La
- hdQcD/4+7GOPlvQ76ACj1f381w9IvlRgSLLe23LmFHIojk/yzji+2mVS4UgXKKuCVJcI912W2t9
- j1rvTxqb8Ss4o/cc3yv2VN5GjuyMdGvKVnrrueGZc2Gt5/8SKmbpW+JAx9dSRDxUGCQwa9Q3Lju
- QmyRKT4LulS9ciV3sTr2yw4GAcsCQH+qxWVHWASl82uVPtP3yporWKaBDbMljrgXeum+P8rLo8N
- zYfW4P9TR/Or2RzxBhwJlmouxQP2X+v84BvCC7V/01W24J0OigOu1eCgoAeaSiLnmjDBsVOkdjK
- YXM5R5vB4bv33RDY3cbPRKtpPcEePz8Pr6Pk+cfO7Mvr7TUJ0sLJoK2dRlF4NcXH4S3xwLEqdg6
- 70U3m7STxKnWVEeinuCP7vUNfKovh2txQcC5OQmdnwOi3kE3vwkfakpEesnSqA91viLUASY2iwv
- UaQdOisDcNO3WaCwD22f/mM/NVGKSZIv4B5ja25cqmhIZHDdNcR5IYDAvoHpmkVBL5NW5lLHHFv
- HC9N95EbjXtdri83ib4Iz3pRo18GUYeLYMFnrmxRaTZJEJ+JvO0n9RVTxxI7v+g7OTaOLlrlb1O
- qmBHWgQEqgjrl9uhrxGiIB4ntwvG/GB0w+T6jVt8OlLAvmyFEEtdDNZeiQNmtz9Hperk6JkTIqf
- b63n2sQ/LYoKrOQ==
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+Content-Type: text/plain
 
-The ID associated with MW2 configfs entry is wrong.
+On Wed, Jul 09, 2025 at 11:08 AM +08, Tao Chen wrote:
+> Use attach_type in bpf_link, and remove it in bpf_netns_link.
+>
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
+> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+> ---
+>  kernel/bpf/net_namespace.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/kernel/bpf/net_namespace.c b/kernel/bpf/net_namespace.c
+> index 63702c86275..6d27bd97c95 100644
+> --- a/kernel/bpf/net_namespace.c
+> +++ b/kernel/bpf/net_namespace.c
+> @@ -11,7 +11,6 @@
+>  
+>  struct bpf_netns_link {
+>  	struct bpf_link	link;
+> -	enum bpf_attach_type type;
+>  	enum netns_bpf_attach_type netns_type;
+>  
+>  	/* We don't hold a ref to net in order to auto-detach the link
 
-Trying to use MW2 will overwrite the existing BAR setup associated with
-MW1.
+Nit: Doesn't that create a hole? Maybe move netns_type to the end.
 
-Just put the correct ID for MW2 to fix the situation
-
-Fixes: 4eacb24f6fa3 ("PCI: endpoint: pci-epf-vntb: Allow BAR assignment via configfs")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
-Changes in v2:
-- Minor edit to the change description
-- Link to v1: https://lore.kernel.org/r/20250708-vntb-mw-fixup-v1-1-22da511247ed@baylibre.com
----
- drivers/pci/endpoint/functions/pci-epf-vntb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-index 41b297b16574558e7ab99fb047204ac29f6f3391..ac83a6dc6116be190f955adc46a30d065d3724fd 100644
---- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-@@ -993,8 +993,8 @@ EPF_NTB_BAR_R(db_bar, BAR_DB)
- EPF_NTB_BAR_W(db_bar, BAR_DB)
- EPF_NTB_BAR_R(mw1_bar, BAR_MW1)
- EPF_NTB_BAR_W(mw1_bar, BAR_MW1)
--EPF_NTB_BAR_R(mw2_bar, BAR_MW1)
--EPF_NTB_BAR_W(mw2_bar, BAR_MW1)
-+EPF_NTB_BAR_R(mw2_bar, BAR_MW2)
-+EPF_NTB_BAR_W(mw2_bar, BAR_MW2)
- EPF_NTB_BAR_R(mw3_bar, BAR_MW3)
- EPF_NTB_BAR_W(mw3_bar, BAR_MW3)
- EPF_NTB_BAR_R(mw4_bar, BAR_MW4)
-
----
-base-commit: 38be2ac97d2df0c248b57e19b9a35b30d1388852
-change-id: 20250708-vntb-mw-fixup-bc30a3e29061
-
-Best regards,
--- 
-Jerome
-
+[...]
 
