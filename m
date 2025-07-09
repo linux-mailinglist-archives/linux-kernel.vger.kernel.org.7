@@ -1,121 +1,107 @@
-Return-Path: <linux-kernel+bounces-724061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C6D6AFEE17
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:52:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52146AFEE13
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46EC65424E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:52:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A828216DD7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BA42E9EB6;
-	Wed,  9 Jul 2025 15:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316752E8E19;
+	Wed,  9 Jul 2025 15:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="GN9XGPMl"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4D31C861E;
-	Wed,  9 Jul 2025 15:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4004DYN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877311C861E;
+	Wed,  9 Jul 2025 15:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752076324; cv=none; b=ZozUvl/GZfBwlzFBDMFYyQy620NNir2nq0PWecpOJufIW6cyPdhE/4SFaj5FKv8s+1lWhr+6anekS159JGKFbOCAnGHz6CYxi4dMcI23tcf1eBCeCLbVaUP2jORbWeL4waLcFcUkP+gdpPBFipfWJKRMV6LtITnLEtZX42z+ovs=
+	t=1752076313; cv=none; b=PPcEXzlyh8NJPLSJXB66rdtFH7BHMSw7puiOGKo+a3wvwJdVTQM7AbhS7mZUcYsNy82I6B7VBa6QH6z0fPshY0UUaHkuIaJ533767xGUr5cJTdkXVwvw9XbiPgBc5tzrSMBxgyFCJHhA+sG4tjE0hdXH+759B3FyKY7sOtEO1Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752076324; c=relaxed/simple;
-	bh=pCIxYMdBBrl1dmFV60K7YSMml3hH20Vl3V0jZiGHrTk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jl3xmxtpLxUM5JMzTHBmSVyqe6LT9pdjyeBVcuCtv+rUIa6+UOflPHDLou+LcyzeRO6U1dDlHrO3rum7X99UFYVcL0iMNb8URq/f1AYWWwa+nao00cBB2KRqgjmB0PiOZFPkZHrZF3KWpljS0G+mWs9xtpLl+4fTvTJC2eQCEbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=GN9XGPMl; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=IeZhxlCCLyHzeZG1ulClczmMNQYSscPiCNyYdpKIAB4=;
-	b=GN9XGPMl6WimNEvHpeuFkSNibLcYkkzX/QavC27QDXDoxwBia8VxOvtoqvUKdG
-	TlDiiL3Qwi/CjHrgNyUmpj7bSAGSm+kOM+6E0rtchib1+YYUZ7WAzZ1mjKts8qli
-	TzqVtso4Cgn6EV02E9P98mINOqaUBI7Rx86IsH1suUA1U=
-Received: from [IPV6:240e:b8f:919b:3100:7981:39b4:a847:709a] (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wBnN0bbj25o6MZnDg--.7031S2;
-	Wed, 09 Jul 2025 23:50:53 +0800 (CST)
-Message-ID: <1429abd2-d9c8-46b9-8886-ee81feaf5602@163.com>
-Date: Wed, 9 Jul 2025 23:50:51 +0800
+	s=arc-20240116; t=1752076313; c=relaxed/simple;
+	bh=NG8CyYp+iUwexEUDhr3HehkhK/DI0dNzlH1iM98OlVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Sfw78YUyFr/8kOKnrW+cv/6YALO8b0qm28VtQRpd+7It3CIQdJiUVEcHGLe6L3bhUep8HTwkrO2ZNLGeq5IKz8IK/lpRx6tKF+MNmwaoaXXfzKxQFhqoGueods2R+RW6wp0R4iXtvXbL1LiskUGYVYJQrlA7Ky/xnsLyQoTOBCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4004DYN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF098C4CEEF;
+	Wed,  9 Jul 2025 15:51:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752076313;
+	bh=NG8CyYp+iUwexEUDhr3HehkhK/DI0dNzlH1iM98OlVs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=A4004DYNmTB30CAteC5mvwmOyTmJTG1jt7jQKgMVnZADRsaG07onp0XvffZ8l9ENC
+	 loF64wPD64lU8OCSXVuVR63O7K2m4c4nxeZE8LodiwlDeSUmbXtMi7A/7cb17bA62w
+	 IkV9k8+EWKFkxmgAuPwzmz8UhDNmrtGeA7TQY/uC2fXXjtVM+LkZmJkWnYr3ieE1Vz
+	 ynL47rt8V/K6rIwM+DkVWLxT6D/dBqbSyvSobackAjedpUWJjrvzmgSFfgOElk+Sri
+	 GMyUnzDGUuKoxy/ipn2eiTpHZchbpaZrNN38/4ejnERv+7LsH31tBvr6/Grvct7KC/
+	 O4Mf1nOCGFnSg==
+Date: Wed, 9 Jul 2025 16:51:44 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rui Miguel Silva
+ <rmfrfs@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Julien
+ Stephan <jstephan@baylibre.com>, Waqar Hameed <waqar.hameed@axis.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/12] iio: gyro: Remove redundant
+ pm_runtime_mark_last_busy() calls
+Message-ID: <20250709165144.62c3cad9@jic23-huawei>
+In-Reply-To: <20250708231152.971602-1-sakari.ailus@linux.intel.com>
+References: <20250708231144.971170-1-sakari.ailus@linux.intel.com>
+	<20250708231152.971602-1-sakari.ailus@linux.intel.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/11] bus: mhi: host: Add support to read MHI
- capabilities
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>,
- Jeff Johnson <jjohnson@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev,
- linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
- qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com,
- quic_vpernami@quicinc.com, quic_mrana@quicinc.com,
- Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-References: <20250609-mhi_bw_up-v4-0-3faa8fe92b05@qti.qualcomm.com>
- <20250609-mhi_bw_up-v4-3-3faa8fe92b05@qti.qualcomm.com>
- <ttjbjmixxbzatcfthaucuy3j4hosu4azpizes6ptxjnkzsawa5@5axodfdyjff2>
- <5625ffa1-f952-4646-a17a-fbbfffcdba2a@oss.qualcomm.com>
- <4c68074e-5809-bc4c-185a-88ddcb81f31b@linux.intel.com>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <4c68074e-5809-bc4c-185a-88ddcb81f31b@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBnN0bbj25o6MZnDg--.7031S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZry5try3tw1rtF15Cw4rXwb_yoWDWFb_uw
-	4xZ3srGFyUXF47Crn3Kwn5uanxtF42kF45Xw10v343Xwn2yF42vrs7Jr9aqa1xJFyxAF13
-	Kr1F9ayfW3yUZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1TKZtUUUUU==
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiQw+Fo2hujnwdFQAAsW
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed,  9 Jul 2025 02:11:52 +0300
+Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
 
-
-On 2025/7/9 20:20, Ilpo Järvinen wrote:
->>>> +	do {
->>>> +		if (*offset >= mhi_cntrl->reg_len)
->>>> +			return -ENXIO;
->>>> +
->>>> +		ret = mhi_read_reg(mhi_cntrl, mhi_cntrl->regs, *offset, &val);
->>>> +		if (ret)
->>>> +			return ret;
->>>> +
->>>> +		val = (__force u32)le32_to_cpu(val);
->>>> +		cur_cap = FIELD_GET(CAP_CAPID_MASK, val);
->>>> +		next_offset = FIELD_GET(CAP_NEXT_CAP_MASK, val);
->>>> +		if (cur_cap >= MHI_CAP_ID_MAX)
->>>> +			return -ENXIO;
->>>> +
->>>> +		if (cur_cap == capability)
->>>> +			return 0;
->>>> +
->>>> +		*offset = next_offset;
->>>> +	} while (next_offset);
->>>> +
->>>> +	return -ENXIO;
->>>> +}
+> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+> pm_runtime_mark_last_busy().
 > 
-> There's a generalization of capability search in Hans Zhang's series,
-> can it be used here too?
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Reviewed-by: Rui Miguel Silva <rui.silva@linaro.org>
+> ---
+>  drivers/iio/gyro/bmg160_core.c     | 4 +---
+>  drivers/iio/gyro/fxas21002c_core.c | 2 --
+>  drivers/iio/gyro/mpu3050-core.c    | 3 ---
+>  drivers/iio/gyro/mpu3050-i2c.c     | 1 -
+>  4 files changed, 1 insertion(+), 9 deletions(-)
+> 
+> diff --git a/drivers/iio/gyro/bmg160_core.c b/drivers/iio/gyro/bmg160_core.c
+> index 781d3e96645f..38394b5f3275 100644
+> --- a/drivers/iio/gyro/bmg160_core.c
+> +++ b/drivers/iio/gyro/bmg160_core.c
+> @@ -309,10 +309,8 @@ static int bmg160_set_power_state(struct bmg160_data *data, bool on)
+There are only two places where this actually takes a runtime variable on
+value.  So if you do introduce the helper Andy suggests then
+only apply that in those two cases.  Push the direct get/put down to the
+call sites for all the others.
 
-Dear Ilpo,
-
-Could you help add your review tag to my series of patches? Mani has 
-added the Acked-by tag. If you add the review tag, I believe Bjorn will 
-merge it in. At the same time, others can use the patches of my series. 
-Thank you very much for your previous suggestions and time.
-
-Best regards,
-Hans
-
+>  
+>  	if (on)
+>  		ret = pm_runtime_get_sync(dev);
+> -	else {
+> -		pm_runtime_mark_last_busy(dev);
+> +	else
+>  		ret = pm_runtime_put_autosuspend(dev);
+> -	}
+>  
+>  	if (ret < 0) {
+>  		dev_err(dev, "Failed: bmg160_set_power_state for %d\n", on);
 
 
