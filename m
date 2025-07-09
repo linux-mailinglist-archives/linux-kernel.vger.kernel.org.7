@@ -1,122 +1,123 @@
-Return-Path: <linux-kernel+bounces-724555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07966AFF437
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:59:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 426ADAFF443
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED1BF642A20
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:59:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 394581C82488
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694D12459E0;
-	Wed,  9 Jul 2025 21:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2358C242D7B;
+	Wed,  9 Jul 2025 22:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iIKnhcT+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IxR48/xL"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E8C243954;
-	Wed,  9 Jul 2025 21:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9D8245000
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 22:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752098372; cv=none; b=Pgi8MxykFgpB8DEnZF7rV7Tz5cBN+39C7C4ALWBM8AQ1O+UqUaYrwjKt4WyfdCCkN4r5FQzOOZu5MCZ5dsLpkWN8btsXZmmgQZyfXN95G3Dq8OIQg3eHdgWO+HKQKAvoZ7E3Lihn4MIfvAo0ExVj/KTW4qPcmMRcHFOyyy3Jllc=
+	t=1752098413; cv=none; b=XmePeB5m9tfV3jlHGm20zMeWLi+uW8vI/4MOGukb0LUGE0y1K7piK7YSF3MxjQZVbzf52BcNA5pZSaEf1cda4P1axfP7VmOn7ijJdKOJXUm8s97D98FEDhH4voWQcxSSjiFrvtHjSFX+E8NHroUmDw7cr2h03Dh9/56hnp9xgHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752098372; c=relaxed/simple;
-	bh=MhMNuP18X5hQYJri3LrwFPw0ye1BBwZvXWZJi0VOleU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=Ghg2VYKoiQzh3EcMjDOUEaQZe9i2P6Cyq71lyDBNQ/I5TGtQbxw2RapecVErbdMR3iNbDQk5hihMzi3UVBawDcmnRHXDxjIRkRbjp9PJc9nWw8oPlkMobYnO9tB6FmhNN0E553hKWO4J+aNP2q5z0zs5ssu6fcW9W/+kAczFb78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iIKnhcT+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 453C2C4CEEF;
-	Wed,  9 Jul 2025 21:59:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752098372;
-	bh=MhMNuP18X5hQYJri3LrwFPw0ye1BBwZvXWZJi0VOleU=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=iIKnhcT+YFdUdVKrxm3qic0NwPBssoqbkFF2esTf7yHh3PQmFWqOK2SUURMNA+QQO
-	 MiKt74ZD4lo0wrFYE8SCQbBf/qzV82owNKJ2jPe4qzb8D16ow7PHbiDbNbQLT/T0L/
-	 VF0xxNr1BKu2qfYY0GbVp/P7z1ME9WG5qNr6VmlV1XZ0S4p3UI7z73ZQto+H0120am
-	 ceHaIvqPvvpxlF5cnlSUB7kkHJV0h7lCGYSz/66JlYHu+jwpqp7h+WcTIVj/WDodvw
-	 Z0yhG7pzzjV5lOYCxETN/W4oMqBXiQjkYAcHPq78ByVjXs/I4KuFn6UCnu89zcWFBh
-	 osfVIY/ULZx1g==
+	s=arc-20240116; t=1752098413; c=relaxed/simple;
+	bh=E9Q5ZD8hLPIv4GGP/IuhXIhHJdD5qFjRVobn8MvJD5k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AhBAqdb/OktlUltBWkV+A+UH8Pu6s2+LLS/A47HnSlgmRMh4mgmQxvIz82QaIbS9UGav29PPz80unD2wPjDpcTUW27rMR5WYaXje0FjdOQ2nJyAkQtG1P9/BhpYnADRlhd9282jIXKCj2O4Fo1iJR8xp9+8dy8gMZkriGuTXwEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IxR48/xL; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-875ce3c8e24so18772839f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 15:00:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1752098411; x=1752703211; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=85sUwqG3UTvSBY9eq2mbMCJ2LiIG5KRrSnwcZNLE650=;
+        b=IxR48/xL8EnhT/cxQkFDKwvxI84BORiqPKKbQPC9HE7f4+aCA1wCURRHq2w2R7H052
+         xcepm3nCpIsXXDxNQg3uXhqj7bK31aiKMEE57e1om03VVPd/g2xsGnCs4GrP2EunLnqb
+         tw4VLpBE6m83NqEGWl4IPNs3cl74QY6ZDNA/c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752098411; x=1752703211;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=85sUwqG3UTvSBY9eq2mbMCJ2LiIG5KRrSnwcZNLE650=;
+        b=IdBMwqJcbk+khKOidGdGhiT4vWkuLG/k5/c5yFYady8xlAxrpnmZbItctyfH383AkG
+         lyFTKXB85HyktvwphekiS2BbAMn/eD92OrOecaxHE7fwnyYL6r+JH+kgYDY+61oStbrL
+         v7HCb6I79Tr48pNKPbNGJaqN1jPAipRRkYMuQjMjY9kKCq4AeA8M3IHjDtNnoDwZ1cLM
+         M5UbwhdSI90Kejn1zVBZ4rmLeasnNJ4WToOrfZ5ejvgQDGYZwg8uNQ5mRQBhD50LsaJp
+         UAojcQQsyHSvgyL3NEERoo50MBPd9uo28Qg0DLVY3AszQgytwgtc9qyfT4Bd4emJQjiV
+         XIUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVPXF4P+HeC0wU4FNBCwe99UMQoz5hygusxsyyFWPAIrLeBJrWZw2PMXepvDpAbUYDhFGL8w20ZzZB5TEs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPjxOD4YbS1wpgfbky67gzhv287qeTQLdmOf6X19ruchjs99ai
+	vnGTKiaC+zzDyELkOC7xCnVNHFA00dkbtv3VIdKv5BczLcIYVdgrttAAgBVHURWnm+U=
+X-Gm-Gg: ASbGncuCYYxj5nuk4w0ysODbQAXCzBdl9S3n8/u5eYcaQsd+JjUmcizQ+pRiurEiLjD
+	NY7zyhvfkDP+YcZXPFmo18KiAT5Fo6aQMHD96pJn+tcCDFNRdLit9R7OjMQ97HDOr6QE9htM02L
+	EPIaSzkyTW4CLI2Q4B0+z27/I69hXr4KdHppSvPurdDCcjJvm5Zj09A8/Rc3oJ4CNBe8j+1XAZr
+	1E+gnprGI7LByYenZwHWkpb9ex72xWGyoXi4sCYyRF0y5z5Smz5AgGwQ1uOxwxxXMQuRsIJHbm9
+	9PFWP67TlsdN4auDfieV/O6iLneKariuepH5bK2Qot+3gMp+hnD+2EPGpiwPBYMqQO3UoVlVyFF
+	OfRWEEsd8
+X-Google-Smtp-Source: AGHT+IHun6TfsfnEv/6FmCADt8kyWi0Ooqlkv+w+GZgNdAI9IkWYVqmqHa88dkbi68Y4nRcRs4o3SA==
+X-Received: by 2002:a05:6602:4c82:b0:876:b001:2cb0 with SMTP id ca18e2360f4ac-879663b35b9mr178724039f.11.1752098406062;
+        Wed, 09 Jul 2025 15:00:06 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50556b25536sm33365173.133.2025.07.09.15.00.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Jul 2025 15:00:05 -0700 (PDT)
+Message-ID: <903f7d9b-74dd-418d-8016-264d60cf6af9@linuxfoundation.org>
+Date: Wed, 9 Jul 2025 16:00:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 09 Jul 2025 23:59:26 +0200
-Message-Id: <DB7V19QE6KFB.3MR0BAOWXT7M7@kernel.org>
-Subject: Re: [PATCH v9 0/5] rust: DebugFS Bindings
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
- Tabi" <ttabi@nvidia.com>, "Benno Lossin" <lossin@kernel.org>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-To: "Matthew Maurer" <mmaurer@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250709-debugfs-rust-v9-0-92b9eab5a951@google.com>
- <DB7US8G7ISG0.20430M3P7I0K0@kernel.org>
- <CAGSQo01hORWAtrGaYp-_xxrAiN47JkJg=jiqnqdpw87QKzt9jg@mail.gmail.com>
-In-Reply-To: <CAGSQo01hORWAtrGaYp-_xxrAiN47JkJg=jiqnqdpw87QKzt9jg@mail.gmail.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 000/232] 6.12.37-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250708162241.426806072@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250708162241.426806072@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed Jul 9, 2025 at 11:53 PM CEST, Matthew Maurer wrote:
-> On Wed, Jul 9, 2025 at 2:47=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
- wrote:
->>
->> On Wed Jul 9, 2025 at 9:09 PM CEST, Matthew Maurer wrote:
->> > This series provides safe DebugFS bindings for Rust, with a sample
->> > module using them.
->> >
->> > Example interaction with the sample driver:
->>
->> I understand what you're trying to do here, i.e. showcase that values ex=
-ported
->> via debugfs can be altered.
->>
->> The problem is that the current abstractions only implement read(), but =
-not
->> write().
->
-> I was trying to keep the initial bindings simple. Adding `write` is
-> definitely something we could do, but I thought maybe that could be in
-> a subsequent patch.
+On 7/8/25 10:19, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.37 release.
+> There are 232 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 10 Jul 2025 16:22:09 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.37-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Absolutely, yes! I didn't mean to ask to add it now. :)
+Compiled and booted on my test system. No dmesg regressions.
 
->> If you really want to showcase changing values, you can, for instance, c=
-reate a
->> workqueue inside the sample driver and modify the counter periodically.
->
-> This is supposed to be sample code, so ideally it should be as narrow
-> as is reasonable in what subsystems it touches, no? If people would
-> really prefer the sample schedule a ticking counter I can do that, but
-> it already felt weird to be registering a platform driver in a debugfs
-> sample.
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-I'm not asking to do that. If the values don't change for now, because
-there's no write() yet, that's perfectly fine with me. :)
-
->>
->> We really should not teach people to modify values by read() instead of =
-write().
->> Also, without this workaround there shouldn't be a reason to export the =
-exact
->> same value twice, i.e. no need for File<File<AtomicUsize>>.
->>
->> - Danilo
->
-> How do you feel about the `Wrapper` struct, intended to simulate the
-> driver doing its actual job and show how that would look? Is that
-> similarly verboten, even though there's a comment on it saying this
-> isn't how one should do things?
-
-Yeah, let's not do that -- don't give people ideas. :)
+thanks,
+-- Shuah
 
