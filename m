@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-724140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 819B2AFEF27
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:50:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE188AFEF21
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:49:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4CFF188599B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:49:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 953E17A6CC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5229022687C;
-	Wed,  9 Jul 2025 16:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239C7221FC0;
+	Wed,  9 Jul 2025 16:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kzo37hbI"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UguBYVD7"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C992223338;
-	Wed,  9 Jul 2025 16:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D2C226D1F;
+	Wed,  9 Jul 2025 16:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752079721; cv=none; b=DdrTjiitaDlK2iFotqfGPf5VEotlV7U0g+2KylbnnGwykX47vRDTX1nbyQSeVY357Z6g9UieSk2mOl/nAWMQg/vPOZHWtl1NNE17uZYX6VxRMgosGfPU+kuifywotzFaW701TfYqBPg9GVGPsN5uTFBqLKl5CRVyGny4Pwdj3YM=
+	t=1752079726; cv=none; b=YBm6S/L/xBjMvRaP95uHDbThm9/e6Yv0Rfn2E+A8BsTiZd1+UpXfaf3muzSSARqZous3mshWZgrqKvPCivimNUPTKg9N6jawEDy+Jl2QxNbWOTjpgB4Hk8r4JiPNhsp9AtSF05KDvZjTuMCvsO14DQmf0NKTaK76L9mnAkTagJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752079721; c=relaxed/simple;
-	bh=RxNYHRjvRwbxissHn18e450qA3JeC6FShWF2D/8oXRc=;
+	s=arc-20240116; t=1752079726; c=relaxed/simple;
+	bh=7U5vf5d4/Zr9JNXcLnZIm1RTXbjFBjrAe7/FtxJPWtY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gXwoDmruWs/cGh4VaXXPPdRj2BwyX+Fau6nrO0VXsEo9KMlet81mJCEVsl6yfOH2f5bKlylG7arMzeiL0yLFA+9Wmf2/tGLdrdoQ1S7H4SZUc/Ej32Ka5pCk11CIiQ6RRK7eXMd89qPSjZB1sxmL5Hjtwf3nB8uivl7pFLvAAnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kzo37hbI; arc=none smtp.client-ip=209.85.128.45
+	 MIME-Version:Content-Type; b=n6Tlz7tSDJOdDMVpa3oXPC6SYlt1FscfiWUFkqX4fJ+I7Foej5PA5FA3wVekXY6JIn9A5XaDT0sC80wFw6gfmc/hvwV/1L/gJlw6xFesNfy6QbX127vF8B/Z7QZn5CbzOxeZ+xKFcFltd4c+60+PxJZ5WmFbhcvBmjnB8kFh5fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UguBYVD7; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-451d54214adso471875e9.3;
-        Wed, 09 Jul 2025 09:48:39 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-450ce671a08so368555e9.3;
+        Wed, 09 Jul 2025 09:48:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752079718; x=1752684518; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752079721; x=1752684521; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aW+6pvesmNnQet8sOGIglZFbJFOJ9GWYSbg9Z1nNP3U=;
-        b=kzo37hbI7TwzsHQy/uGC036cd528dgJBkXaFHtlD3av2coC/v1qVCRPPodLbLUtlzo
-         3l3wJfPdAShhPm7187kwsI7ZOQshzk7eQWd2yb3YAZfdrAfCTt8qZyP8EBCefiF/Oh4U
-         t2PtjjhnAeBqMXwS744IHrQuTPDU0YS4SupvAq6qd/I284BfL4mLJCM9RZO8Zu8TShGz
-         moTnHFm6n/FZIG4IKg/KgMIQ/3+/I6Me8cscxD70fHxYganxCYCS91MTJO52T9uanZOY
-         e2za6uENwlG1pAjiw9Ue03dDOCjClNc+Y8m3HQD8A2Zy9BcTcItFDeAv3OVmX7gr1l53
-         TlCw==
+        bh=k/VC6bFb6mm7Qpd0PQrSZpkcoTwbj8idx77T0g6SdXw=;
+        b=UguBYVD7EyOldg1Q+AazPqnC5HtjUJOAoZ2iH/E8/jjePUc7Sjnzt6WzhFuPf7Ku5G
+         i8nimquOxIV2qT1eOdGRVEKrL6SY9lBhw8sz5H8t0mW2w5JGqoXGcEJFuGzad8mGWa/G
+         I+OvKxJt4DzafiowdtkVbQcLGriBxklm9eOFvnNdWFcRjeAp0ICKqxt6qcKbY8TEl7ig
+         k6OrIJUcljpsoMie+bw/tyy7eICnK0s6lC8nIYIlHRy56SL54+7EPOy+W/U3nJK4xAa6
+         GY+9abT/2ICQOVC+r/oo0a5j0IXyDX0l6WzKm9CfaqlVwWhB5M8iK9/VojspYBWLlFrY
+         zGjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752079718; x=1752684518;
+        d=1e100.net; s=20230601; t=1752079721; x=1752684521;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aW+6pvesmNnQet8sOGIglZFbJFOJ9GWYSbg9Z1nNP3U=;
-        b=HoeDr9dcqLRQ0ziKHqP/2plj96NE69QrfuJPYgIUmmfuUTrRsplPBSOXYjCIpunoCb
-         CAaOXPmQLLJv6QL1gpMOdSgo6v9kc9QeJAG0FzN2+0KYYWJoqAmpGMa21FHUdJft6zsC
-         xRhWNVhlVXJMaoZksbsy9pSzYODgWD/QJLPtaW31qaNAR8HC/uow4+mNifCk/EsMRFcd
-         hKGo92lEWabu2wg3qfXpdMTb2Dy2oTv7BneNLJjGXEoMrv5aXEACLf0PQSTJt3et9HML
-         jqrXaZ9TlhxwTK7/5hB4Sl2exCa3w6y9QisZMHixP7F1WVPCYedhNT3nvZfJjdk7Q8az
-         V41w==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ6RsW0KflZbFi3rJRb0lzoju/OcKcOJg8d/DIc349zLdpcCAa4WaERN7SOHbYjr+3vsn9X+0K9bTh@vger.kernel.org, AJvYcCXNS0JhH3GQLzI5nylGpxx3E1m/glDEFEskbnPgzh+LbZNSnLs3UImy7uUU7geIjG/Lmb1Nu9M88dFu7zE=@vger.kernel.org, AJvYcCXWtFHrF06YAsx7Im3eblCBjP8+0ttzbdeCKAwpzM4Qh2ufL4cnRJtIuJJHQOcXxImohqKSPpsI+xeM@vger.kernel.org, AJvYcCXa04e6urGQKxFb2Gl3Q8Wa7BEfZjT/69XGxzdyuMkICajAAUp8HMhPhRSHxH1RXcftQsuWPFILYkgNl4H2@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOONRoR1bS5YCmVgZ4g2nB6hG3bguzwHA/dgewCoFdV0NqlBXZ
-	y1IP6VPrBNVXFd5D4DefFyTkgUFCs7FKqe0h2BE4qtH2IFGP4FD7MfgR
-X-Gm-Gg: ASbGncsXSNelqFFqSKQaIQXQ98EwUObCDS3X2TO3ETw+HkRQ2T4ByGLigGzG71DLqTA
-	FHEQ/BWpge54csm+FBw3D3xlcV9frFuXD0RrOCuWBnndgFv/cyK0ORDy9MEjDklnun7VLY0Hh8b
-	osTzUjX2/iUIp5GAhrXAiDNpPBEtLrYEyH0JFcpgBPGFSVkQkL8gOU2Eg8zQB4UeLure7SSSNPt
-	idRY8GWG67RrLOm8xJt2v8nWE7Q+B052dF5zgIZBsvG4HWJcE3l6hhA82q8Ot4KdhDcMoNuJM/w
-	4orx97392iR2aLtN7f8T+lujho0Nj6Z1899jJ1B8mgflvZ0130xZCHQynVg15VERgfCjAq3ZSq6
-	E5PlPve2QExRD6oefYceAzo4CnQUitw2ppyDAU7pjU5CpvzwHOsHXtFB9iWQ/y68=
-X-Google-Smtp-Source: AGHT+IHPW4nSqrMdmS43S2i2mtnBvt8UJAQyIY46BMAdgXyyUAUKk6tePIGQqYWemQlnRednj5ONfQ==
-X-Received: by 2002:a05:6000:4023:b0:3a4:e387:c0bb with SMTP id ffacd0b85a97d-3b5e455b399mr2535466f8f.59.1752079718115;
-        Wed, 09 Jul 2025 09:48:38 -0700 (PDT)
+        bh=k/VC6bFb6mm7Qpd0PQrSZpkcoTwbj8idx77T0g6SdXw=;
+        b=i1wVEYTtymjQlnbnQdQ+pRHCepiSd8BsFmF/GgZBPDdu7fKIrqtyIa7sRZNDB6NGkI
+         DDtY21XAfBypIKi/sLWN0vd2muXlI9Ck/ex8ZmWIsBcJ+r5sRG6KfT1nEEDnPdiwW+AN
+         5zX8qRLnCpmSCe2FaimETJZojqQTtiwtRhQ9lyOjVGEwLX+MTSrO/PZ4D+5GL+DOjy/d
+         5wwVGMxvxe1hfnj23iDdsDcXcrJ/pBSvK0CG4NyUPHetiNCfDO1pjpFJIXQe6Utzf9pc
+         3NRyePqWenjhskq3SfExuHJ7+HyKS2PperwxK3xV1Gl1SZphHRpwA+Z5D7F10nJE5y9K
+         aONw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYLYL+6YMeD4vF4kakAy9w1CR8CMNF03ufZkjyQLB0ljQsTvcFiGYcyLjJrOg4PM90t2T/Jy/tTFx4@vger.kernel.org, AJvYcCW3IKzBbuWHMMvXZ2l+LDWV+p4Yrj/iJDeo3xQPNN/qa2hLiLgfWuv4PLcH7m6UoqlKHy6znKHaiP3o@vger.kernel.org, AJvYcCWj7zLRN7ALwMdCiFL9E1Fo5aTUEP1KdaSODQmvrN/tQsFf52lENDjDV2Ca8q/FfjglWjOLMOffLk1ySPU=@vger.kernel.org, AJvYcCWnz7cAuqhOphuLI9NSwZZ0U6iCN2nLx7XBZfFHes/u/K+337wbTIBS6ia0e1r4Mi9nVOLD8eckV6H8HLb1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo18lEjX1k3Jwdqhh/2H5uo18l6Ngo442QXJ6gkcF4cha+HJ8q
+	dXK35lBOi9xphJM1NUk5DDF2JhiPzxjj+8nluumXGRj/pwNDYb18oIfp
+X-Gm-Gg: ASbGnct7PlddYfq5Izm8iaeIcKNDeN1fO4T1IdhDqXiREmTf+a3aF/v9+eM3FoIQ5OI
+	tSvmjdza+0ruoiHK9jjye9JPnfFkiD4dugrnpSPmHTc/YJnrn4yuSf03CdPChluNnqHK97J7H3d
+	zRpmSESrM3TQC0o5FsVQB8NDC9rneHk8YJXEV4Ura4zD6vHiqeCdKgV9ZioDWUAlwBcE8z8EcWp
+	Xg/8dju4MB63vIyke5W4BLAGg/loL5Or33ALAH4ng0KQ9Rk2kXOT687DIf0Qbq9OWPxwsiU48AN
+	p1MllAcFQFPLKSz+Sw+rNAPMLiAYxD71vnI+Q3akL2cMC5JqnqLyhPN7OzlP7Wv3Ml7snqb+Ian
+	T0nqH5ZUsQT7P/IASXZeab028RXKXHGmOyzGsWvf3jaitSftJJzeHgVqofypt1d0=
+X-Google-Smtp-Source: AGHT+IFLFvu2ef9LGGAhow4TyfUlm6ATN7ht6lr23+B+Zua5wNDrXL4qod40eHU+BfDGYhUbA9VG3w==
+X-Received: by 2002:a05:600c:8b62:b0:450:d568:909b with SMTP id 5b1f17b1804b1-454d5351577mr34916585e9.14.1752079720284;
+        Wed, 09 Jul 2025 09:48:40 -0700 (PDT)
 Received: from skynet.lan (2a02-9142-4580-2e00-0000-0000-0000-0008.red-2a02-914.customerbaf.ipv6.rima-tde.net. [2a02:9142:4580:2e00::8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d50df125sm30634915e9.19.2025.07.09.09.48.36
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d50df125sm30634915e9.19.2025.07.09.09.48.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 09:48:36 -0700 (PDT)
+        Wed, 09 Jul 2025 09:48:39 -0700 (PDT)
 From: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
 To: jdelvare@suse.com,
 	linux@roeck-us.net,
@@ -84,9 +84,9 @@ To: jdelvare@suse.com,
 	linux-kernel@vger.kernel.org,
 	linux-doc@vger.kernel.org
 Cc: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
-Subject: [PATCH v3 2/3] dt-bindings: hwmon: Add Microchip EMC2101 support
-Date: Wed,  9 Jul 2025 18:48:28 +0200
-Message-Id: <20250709164829.3072944-3-noltari@gmail.com>
+Subject: [PATCH v3 3/3] drivers: hwmon: add EMC2101 driver
+Date: Wed,  9 Jul 2025 18:48:29 +0200
+Message-Id: <20250709164829.3072944-4-noltari@gmail.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250709164829.3072944-1-noltari@gmail.com>
 References: <20250709164829.3072944-1-noltari@gmail.com>
@@ -99,84 +99,2257 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Introduce yaml schema for Microchip emc2101 pwm fan controller with
-temperature monitoring.
+The Microchip EMC2101 is a SMBus 2.0 fan controller with temperature
+monitoring.
+It supports up to 1 fan, 1 internal temperature sensor, 1 external
+temperature sensor and an 8 entry look up table to create a
+programmable temperature response.
 
 Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
 ---
- .../bindings/hwmon/microchip,emc2101.yaml     | 59 +++++++++++++++++++
- 1 file changed, 59 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/hwmon/microchip,emc2101.yaml
+ drivers/hwmon/Kconfig   |   11 +
+ drivers/hwmon/Makefile  |    1 +
+ drivers/hwmon/emc2101.c | 2176 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 2188 insertions(+)
+ create mode 100644 drivers/hwmon/emc2101.c
 
- v3: fix errors, remove patternProperties and drop emc2101-r.
+ v3: multiple improvements:
+  - Switch to regmap-i2c.
+  - Use regmap fields.
+  - Add Power Management support.
+  - Demote dev_info() to dev_dbg().
+  - Remove "emc2101-r" i2c_device_id.
+  - Remove "microchip,emc2101-r" of_device_id.
+  - Properly implement standby mode.
+  - Use milliseconds instead of millihertz for update_interval.
+  - Drop mutex except for FAN_LUT_DISABLE and TEMP_EXT_CRIT_UNLOCK.
+  - Fix u16 fraction temperature conversions.
+  - Other code cleanups and refactors.
 
- v2: add missing properties.
+ v2: multiple improvements:
+  - Remove FAN_RPM_MIN definition.
+  - Rename FAN_FALSE_READ to FAN_MIN_READ.
+  - pwm_auto_point_temp_hyst_store(): simplify function.
+  - emc2101_fan_min_read(): add missing FAN_MIN_READ condition.
+  - emc2101_fan_min_write(): fix tach_count calculation.
+  - emc2101_init(): fix REG_TACH_MIN value.
 
-diff --git a/Documentation/devicetree/bindings/hwmon/microchip,emc2101.yaml b/Documentation/devicetree/bindings/hwmon/microchip,emc2101.yaml
+diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+index 079620dd4286..16bcd560276e 100644
+--- a/drivers/hwmon/Kconfig
++++ b/drivers/hwmon/Kconfig
+@@ -2002,6 +2002,17 @@ config SENSORS_EMC1403
+ 	  Threshold values can be configured using sysfs.
+ 	  Data from the different diodes are accessible via sysfs.
+ 
++config SENSORS_EMC2101
++	tristate "SMSC EMC2101"
++	depends on I2C
++	select REGMAP_I2C
++	help
++	  If you say yes here you get support for the SMSC EMC2101
++	  fan controller chips.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called emc2101.
++
+ config SENSORS_EMC2103
+ 	tristate "SMSC EMC2103"
+ 	depends on I2C
+diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
+index 48e5866c0c9a..70e95096c6f2 100644
+--- a/drivers/hwmon/Makefile
++++ b/drivers/hwmon/Makefile
+@@ -73,6 +73,7 @@ obj-$(CONFIG_SENSORS_DRIVETEMP)	+= drivetemp.o
+ obj-$(CONFIG_SENSORS_DS620)	+= ds620.o
+ obj-$(CONFIG_SENSORS_DS1621)	+= ds1621.o
+ obj-$(CONFIG_SENSORS_EMC1403)	+= emc1403.o
++obj-$(CONFIG_SENSORS_EMC2101)	+= emc2101.o
+ obj-$(CONFIG_SENSORS_EMC2103)	+= emc2103.o
+ obj-$(CONFIG_SENSORS_EMC2305)	+= emc2305.o
+ obj-$(CONFIG_SENSORS_EMC6W201)	+= emc6w201.o
+diff --git a/drivers/hwmon/emc2101.c b/drivers/hwmon/emc2101.c
 new file mode 100644
-index 000000000000..10167747f748
+index 000000000000..13a7860ef161
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/hwmon/microchip,emc2101.yaml
-@@ -0,0 +1,59 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/hwmon/microchip,emc2101.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/hwmon/emc2101.c
+@@ -0,0 +1,2176 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Driver for Microchip EMC2101 fan controller.
++ *
++ * Copyright 2025 Álvaro Fernández Rojas <noltari@gmail.com>
++ */
 +
-+title: Microchip EMC2101 SMBus compliant PWM fan controller
++#include <linux/err.h>
++#include <linux/hwmon.h>
++#include <linux/hwmon-sysfs.h>
++#include <linux/i2c.h>
++#include <linux/init.h>
++#include <linux/jiffies.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/pm_runtime.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++#include <linux/util_macros.h>
 +
-+maintainers:
-+  - Álvaro Fernández Rojas <noltari@gmail.com>
++#define REG_TEMP_INT			0x00
++#define REG_TEMP_EXT_HI			0x01
++#define REG_STATUS			0x02
++#define  ADC_BUSY			BIT(7)
++#define  TEMP_INT_HIGH			BIT(6)
++#define  EEPROM_ERROR			BIT(5)
++#define  TEMP_EXT_HIGH			BIT(4)
++#define  TEMP_EXT_LOW			BIT(3)
++#define  TEMP_EXT_FAULT			BIT(2)
++#define  TEMP_EXT_CRIT			BIT(1)
++#define  TACH_LOW			BIT(0)
++#define REG_CONFIG			0x03
++#define  ALERT_IRQ_ACK			BIT(7)
++#define  FAN_STANDBY_ENABLE		BIT(6)
++#define  FAN_STANDBY_MODE		BIT(5)
++#define  FAN_MODE_DAC			BIT(4)
++#define  SMBUS_TOUT_DISABLE		BIT(3)
++#define  PIN_FUNC_TACH			BIT(2)
++#define  TEMP_EXT_CRIT_UNLOCK		BIT(1)
++#define  PIN_ASSERT_3_EXC		BIT(0)
++#define REG_CONV_RATE			0x04
++#define  CONV_RATE_SHIFT		0
++#define  CONV_RATE_16000		0
++#define  CONV_RATE_8000			1
++#define  CONV_RATE_4000			2
++#define  CONV_RATE_2000			3
++#define  CONV_RATE_1000			4
++#define  CONV_RATE_500			5
++#define  CONV_RATE_250			6
++#define  CONV_RATE_125			7
++#define  CONV_RATE_62			8
++#define  CONV_RATE_31			9
++#define  CONV_RATE_MASK			0xf
++#define REG_TEMP_INT_MAX		0x05
++#define REG_TEMP_EXT_MAX_HI		0x07
++#define REG_TEMP_EXT_MIN_HI		0x08
++#define REG_TEMP_EXT_FORCE		0x0c
++#define REG_ONE_SHOT			0x0f
++#define REG_TEMP_EXT_LO			0x10
++#define REG_SCRATCHPAD_1		0x11
++#define REG_SCRATCHPAD_2		0x12
++#define REG_TEMP_EXT_MAX_LO		0x13
++#define REG_TEMP_EXT_MIN_LO		0x14
++#define REG_ALERT_MASK			0x16
++#define  IRQ_TEMP_INT_MAX_DISABLE	BIT(6)
++#define  IRQ_TEMP_EXT_MAX_DISABLE	BIT(4)
++#define  IRQ_TEMP_EXT_MIN_DISABLE	BIT(3)
++#define  IRQ_TEMP_EXT_CRIT_DISABLE	BIT(1)
++#define  IRQ_TACH_MIN_DISABLE		BIT(0)
++#define REG_EXT_IDEALITY		0x17
++#define  EXT_IDEALITY_SHIFT		0
++#define  EXT_IDEALITY_START		9846
++#define  EXT_IDEALITY_STEP		13
++#define  EXT_IDEALITY_VAL(x)		(EXT_IDEALITY_START + \
++					 ((x) * EXT_IDEALITY_STEP))
++#define  EXT_IDEALITY_MASK		0x3f
++#define REG_BETA_COMP			0x18
++#define  BETA_COMP_AUTO			BIT(3)
++#define  BETA_COMP_SHIFT		0
++#define  BETA_COMP_DISABLE		7
++#define  BETA_COMP_2_33			6
++#define  BETA_COMP_1_00			5
++#define  BETA_COMP_0_43			4
++#define  BETA_COMP_0_33			3
++#define  BETA_COMP_0_25			2
++#define  BETA_COMP_0_18			1
++#define  BETA_COMP_0_11			0
++#define  BETA_COMP_MASK			0x7
++#define REG_TEMP_EXT_CRIT		0x19
++/* Can only be written once */
++#define REG_TEMP_EXT_CRIT_HYST		0x21
++#define REG_TACH_LO			0x46
++#define REG_TACH_HI			0x47
++#define REG_TACH_MIN_LO			0x48
++#define REG_TACH_MIN_HI			0x49
++#define REG_FAN_CONFIG			0x4a
++#define  FAN_EXT_TEMP_FORCE		BIT(6)
++#define  FAN_LUT_DISABLE		BIT(5)
++#define  FAN_POL_INV			BIT(4)
++#define  FAN_CLK_SEL			BIT(3)
++#define  FAN_CLK_OVR			BIT(2)
++#define  TACH_FALSE_READ_SHIFT		0
++#define  TACH_FALSE_READ_ENABLE		0
++#define  TACH_FALSE_READ_DISABLE	3
++#define  TACH_FALSE_READ_MASK		0x3
++#define REG_FAN_SPIN			0x4b
++#define  FAN_SPIN_UP_ABORT		BIT(5)
++#define  FAN_SPIN_UP_POWER_SHIFT	3
++#define  FAN_SPIN_UP_POWER_100		3
++#define  FAN_SPIN_UP_POWER_75		2
++#define  FAN_SPIN_UP_POWER_50		1
++#define  FAN_SPIN_UP_POWER_0		0
++#define  FAN_SPIN_UP_POWER_MASK		0x3
++#define  FAN_SPIN_UP_TIME_SHIFT		0
++#define  FAN_SPIN_UP_TIME_3200		7
++#define  FAN_SPIN_UP_TIME_1600		6
++#define  FAN_SPIN_UP_TIME_800		5
++#define  FAN_SPIN_UP_TIME_400		4
++#define  FAN_SPIN_UP_TIME_200		3
++#define  FAN_SPIN_UP_TIME_100		2
++#define  FAN_SPIN_UP_TIME_50		1
++#define  FAN_SPIN_UP_TIME_0		0
++#define  FAN_SPIN_UP_TIME_MASK		0x7
++#define REG_FAN_SET			0x4c
++#define  FAN_SET_SHIFT			0
++#define  FAN_SET_MASK			0x3f
++#define REG_PWM_FREQ			0x4d
++#define  PWM_FREQ_SHIFT			0
++#define  PWM_FREQ_MASK			0x1f
++#define REG_PWM_FREQ_DIV		0x4e
++#define REG_FAN_LUT_HYST		0x4f
++#define  FAN_LUT_HYST_SHIFT		0
++#define  FAN_LUT_HYST_MASK		0x1f
++#define REG_FAN_LUT_TEMP(x)		(0x50 + (0x2 * (x)))
++/* Write only with FAN_LUT_DISABLE */
++#define  FAN_LUT_TEMP_SHIFT		0
++#define  FAN_LUT_TEMP_MASK		0x7f
++#define REG_FAN_LUT_SPEED(x)		(0x51 + (0x2 * (x)))
++/* Write only with FAN_LUT_DISABLE */
++#define  FAN_LUT_SPEED_SHIFT		0
++#define  FAN_LUT_SPEED_MASK		0x3f
++#define REG_AVG_FILTER			0xbf
++#define  FILTER_SHIFT			1
++#define  FILTER_L2			3
++#define  FILTER_L1			1
++#define  FILTER_NONE			0
++#define  FILTER_MASK			0x3
++#define  ALERT_PIN_TEMP_COMP		BIT(0)
++#define REG_PRODUCT_ID			0xfd
++#define REG_MANUFACTURER_ID		0xfe
++#define REG_REVISION			0xff
 +
-+description:
-+  Microchip EMC2101 pwm controller which supports up to 1 fan, 1 internal
-+  temperature sensor, 1 external temperature sensor and an 8 entry look
-+  up table to create a programmable temperature response.
++#define CLK_FREQ_ALT			1400
++#define CLK_FREQ_BASE			360000
 +
-+properties:
-+  compatible:
-+    enum:
-+      - microchip,emc2101
++#define FAN_LUT_COUNT			8
++#define FAN_LUT_HYST_MIN		0
++#define FAN_LUT_HYST_MAX		31
++#define FAN_MIN_READ			0xffff
++#define FAN_RPM_FACTOR			5400000
 +
-+  reg:
-+    maxItems: 1
++#define MANUFACTURER_ID			0x5d
 +
-+  fan:
-+    $ref: fan-common.yaml#
-+    unevaluatedProperties: false
++#define PWM_MASK			0x3f
 +
-+  '#pwm-cells':
-+    const: 2
-+    description: |
-+      Number of cells in a PWM specifier.
-+      - cell 0: The PWM frequency
-+      - cell 1: The PWM polarity: 0 or PWM_POLARITY_INVERTED
++#define TEMP_FAULT_OPEN			0x7f00
++#define TEMP_FAULT_SHORT		0x7fe0
++#define TEMP_LO_FRAC			125
++#define TEMP_LO_SHIFT			5
++#define TEMP_LO_MASK			0x7
 +
-+required:
-+  - compatible
-+  - reg
++#define TEMP_MIN			-64
++#define TEMP_MAX			127
++#define TEMP_MAX_FRAC			750
 +
-+additionalProperties: false
++enum emc2101_auto_channels_temp {
++	EMC2101_ACT_EXT = 2,
++	EMC2101_ACT_FORCE = 3
++};
 +
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
++enum emc2101_mode {
++	EMC2101_MODE_PWM = 0,
++	EMC2101_MODE_DAC = 1
++};
 +
-+        fan_controller: fan-controller@4c {
-+            compatible = "microchip,emc2101";
-+            reg = <0x4c>;
++enum ecm2101_product_id {
++	EMC2101 = 0x16,
++	EMC2101_R = 0x28
++};
 +
-+            #pwm-cells = <2>;
++enum emc2101_pwm {
++	EMC2101_PWM_MANUAL = 1,
++	EMC2101_PWM_LUT = 2
++};
 +
-+            fan {
-+                pwms = <&fan_controller 5806 0>;
-+            };
-+        };
-+    };
-+...
++enum emc2101_temp_channels {
++	EMC2101_TC_INT = 0,
++	EMC2101_TC_EXT,
++	EMC2101_TC_FORCE,
++	EMC2101_TC_NUM
++};
++
++enum emc2101_temp_diode {
++	EMC2101_TD_CPU = 1,
++	EMC2101_TD_2N3904 = 2
++};
++
++enum emc2101_fields {
++	/* BETA_COMP */
++	F_BETA_COMP,
++	F_BETA_COMP_AUTO,
++
++	/* CONFIG */
++	F_TEMP_EXT_CRIT_UNLOCK,
++	F_PIN_FUNC_TACH,
++	F_SMBUS_TOUT_DISABLE,
++	F_FAN_MODE_DAC,
++	F_FAN_STBY,
++	F_STBY_MODE,
++
++	/* CONV_RATE */
++	F_CONV_RATE,
++
++	/* EXT_IDEALITY */
++	F_EXT_IDEALITY,
++
++	/* FAN_CONFIG */
++	F_TACH_FALSE_READ,
++	F_FAN_CLK_OVR,
++	F_FAN_CLK_SEL,
++	F_FAN_POL_INV,
++	F_FAN_LUT_DISABLE,
++	F_FAN_EXT_TEMP_FORCE,
++
++	/* FAN_LUT */
++	F_FAN_LUT_HYST,
++	F_FAN_LUT_SPEED_1,
++	F_FAN_LUT_SPEED_2,
++	F_FAN_LUT_SPEED_3,
++	F_FAN_LUT_SPEED_4,
++	F_FAN_LUT_SPEED_5,
++	F_FAN_LUT_SPEED_6,
++	F_FAN_LUT_SPEED_7,
++	F_FAN_LUT_SPEED_8,
++	F_FAN_LUT_TEMP_1,
++	F_FAN_LUT_TEMP_2,
++	F_FAN_LUT_TEMP_3,
++	F_FAN_LUT_TEMP_4,
++	F_FAN_LUT_TEMP_5,
++	F_FAN_LUT_TEMP_6,
++	F_FAN_LUT_TEMP_7,
++	F_FAN_LUT_TEMP_8,
++
++	/* FAN_SET */
++	F_FAN_SET,
++
++	/* FAN_SPIN */
++	F_SPIN_UP_TIME,
++	F_SPIN_UP_POWER,
++	F_SPIN_UP_ABORT,
++
++	/* PWM_FREQ */
++	F_PWM_FREQ,
++	F_PWM_FREQ_DIV,
++
++	/* STATUS */
++	F_TACH_LOW_ALARM,
++	F_TEMP_EXT_CRIT_ALARM,
++	F_TEMP_EXT_FAULT,
++	F_TEMP_EXT_LOW_ALARM,
++	F_TEMP_EXT_HIGH_ALARM,
++	F_TEMP_INT_HIGH_ALARM,
++
++	/* TEMP_INT */
++	F_TEMP_INT,
++	F_TEMP_INT_MAX,
++
++	/* TEMP_EXT */
++	F_TEMP_EXT_CRIT,
++	F_TEMP_EXT_CRIT_HYST,
++
++	/* TEMP_EXT_FORCE */
++	F_TEMP_EXT_FORCE,
++
++	/* sentinel */
++	F_MAX_FIELDS
++};
++
++#define F_FAN_LUT_SPEED(x) (F_FAN_LUT_SPEED_1 + (x))
++#define F_FAN_LUT_TEMP(x) (F_FAN_LUT_TEMP_1 + (x))
++
++static const struct reg_field emc2101_reg_fields[] = {
++	/* BETA_COMP */
++	[F_BETA_COMP] = REG_FIELD(REG_BETA_COMP, 0, 2),
++	[F_BETA_COMP_AUTO] = REG_FIELD(REG_BETA_COMP, 3, 3),
++
++	/* CONFIG */
++	[F_TEMP_EXT_CRIT_UNLOCK] = REG_FIELD(REG_CONFIG, 1, 1),
++	[F_PIN_FUNC_TACH] = REG_FIELD(REG_CONFIG, 2, 2),
++	[F_SMBUS_TOUT_DISABLE] = REG_FIELD(REG_CONFIG, 3, 3),
++	[F_FAN_MODE_DAC] = REG_FIELD(REG_CONFIG, 4, 4),
++	[F_FAN_STBY] = REG_FIELD(REG_CONFIG, 5, 5),
++	[F_STBY_MODE] = REG_FIELD(REG_CONFIG, 6, 6),
++
++	/* CONV_RATE */
++	[F_CONV_RATE] = REG_FIELD(REG_CONV_RATE, 0, 3),
++
++	/* EXT_IDEALITY */
++	[F_EXT_IDEALITY] = REG_FIELD(REG_EXT_IDEALITY, 0, 5),
++
++	/* FAN_CONFIG */
++	[F_TACH_FALSE_READ] = REG_FIELD(REG_FAN_CONFIG, 0, 1),
++	[F_FAN_CLK_OVR] = REG_FIELD(REG_FAN_CONFIG, 2, 2),
++	[F_FAN_CLK_SEL] = REG_FIELD(REG_FAN_CONFIG, 3, 3),
++	[F_FAN_POL_INV] = REG_FIELD(REG_FAN_CONFIG, 4, 4),
++	[F_FAN_LUT_DISABLE] = REG_FIELD(REG_FAN_CONFIG, 5, 5),
++	[F_FAN_EXT_TEMP_FORCE] = REG_FIELD(REG_FAN_CONFIG, 6, 6),
++
++	/* FAN_LUT */
++	[F_FAN_LUT_HYST] = REG_FIELD(REG_FAN_LUT_HYST, 0, 4),
++	[F_FAN_LUT_SPEED_1] = REG_FIELD(REG_FAN_LUT_SPEED(0), 0, 5),
++	[F_FAN_LUT_SPEED_2] = REG_FIELD(REG_FAN_LUT_SPEED(1), 0, 5),
++	[F_FAN_LUT_SPEED_3] = REG_FIELD(REG_FAN_LUT_SPEED(2), 0, 5),
++	[F_FAN_LUT_SPEED_4] = REG_FIELD(REG_FAN_LUT_SPEED(3), 0, 5),
++	[F_FAN_LUT_SPEED_5] = REG_FIELD(REG_FAN_LUT_SPEED(4), 0, 5),
++	[F_FAN_LUT_SPEED_6] = REG_FIELD(REG_FAN_LUT_SPEED(5), 0, 5),
++	[F_FAN_LUT_SPEED_7] = REG_FIELD(REG_FAN_LUT_SPEED(6), 0, 5),
++	[F_FAN_LUT_SPEED_8] = REG_FIELD(REG_FAN_LUT_SPEED(7), 0, 5),
++	[F_FAN_LUT_TEMP_1] = REG_FIELD(REG_FAN_LUT_TEMP(0), 0, 6),
++	[F_FAN_LUT_TEMP_2] = REG_FIELD(REG_FAN_LUT_TEMP(1), 0, 6),
++	[F_FAN_LUT_TEMP_3] = REG_FIELD(REG_FAN_LUT_TEMP(2), 0, 6),
++	[F_FAN_LUT_TEMP_4] = REG_FIELD(REG_FAN_LUT_TEMP(3), 0, 6),
++	[F_FAN_LUT_TEMP_5] = REG_FIELD(REG_FAN_LUT_TEMP(4), 0, 6),
++	[F_FAN_LUT_TEMP_6] = REG_FIELD(REG_FAN_LUT_TEMP(5), 0, 6),
++	[F_FAN_LUT_TEMP_7] = REG_FIELD(REG_FAN_LUT_TEMP(6), 0, 6),
++	[F_FAN_LUT_TEMP_8] = REG_FIELD(REG_FAN_LUT_TEMP(7), 0, 6),
++
++	/* FAN_SET */
++	[F_FAN_SET] = REG_FIELD(REG_FAN_SET, 0, 5),
++
++	/* FAN_SPIN */
++	[F_SPIN_UP_TIME] = REG_FIELD(REG_FAN_SPIN, 0, 2),
++	[F_SPIN_UP_POWER] = REG_FIELD(REG_FAN_SPIN, 3, 4),
++	[F_SPIN_UP_ABORT] = REG_FIELD(REG_FAN_SPIN, 5, 5),
++
++	/* PWM_FREQ */
++	[F_PWM_FREQ] = REG_FIELD(REG_PWM_FREQ, 0, 4),
++	[F_PWM_FREQ_DIV] = REG_FIELD(REG_PWM_FREQ_DIV, 0, 7),
++
++	/* STATUS */
++	[F_TACH_LOW_ALARM] = REG_FIELD(REG_STATUS, 0, 0),
++	[F_TEMP_EXT_CRIT_ALARM] = REG_FIELD(REG_STATUS, 1, 1),
++	[F_TEMP_EXT_FAULT] = REG_FIELD(REG_STATUS, 2, 2),
++	[F_TEMP_EXT_LOW_ALARM] = REG_FIELD(REG_STATUS, 3, 3),
++	[F_TEMP_EXT_HIGH_ALARM] = REG_FIELD(REG_STATUS, 4, 4),
++	[F_TEMP_INT_HIGH_ALARM] = REG_FIELD(REG_STATUS, 6, 6),
++
++	/* TEMP_INT */
++	[F_TEMP_INT] = REG_FIELD(REG_TEMP_INT, 0, 7),
++	[F_TEMP_INT_MAX] = REG_FIELD(REG_TEMP_INT_MAX, 0, 6),
++
++	/* TEMP_EXT */
++	[F_TEMP_EXT_CRIT] = REG_FIELD(REG_TEMP_EXT_CRIT, 0, 6),
++	[F_TEMP_EXT_CRIT_HYST] = REG_FIELD(REG_TEMP_EXT_CRIT_HYST, 0, 6),
++
++	/* TEMP_EXT_FORCE */
++	[F_TEMP_EXT_FORCE] = REG_FIELD(REG_TEMP_EXT_FORCE, 0, 7),
++};
++
++struct emc2101_data {
++	struct regmap *regmap;
++	struct regmap_field *fields[F_MAX_FIELDS];
++	struct device *dev;
++	struct mutex mutex; /* serializes FAN_LUT_DISABLE and TEMP_EXT_CRIT_UNLOCK */
++};
++
++static const u16 emc2101_conv_time[] = {
++	16000, 8000, 4000, 2000, 1000, 500, 250, 125, 62, 31
++};
++
++static const u8 emc2101_fan_spin_up_power[] = {
++	0, 50, 75, 100
++};
++
++static const u16 emc2101_fan_spin_up_time[] = {
++	0, 50, 100, 200, 400, 800, 1600, 3200
++};
++
++static const unsigned int regs_tach[2] = {REG_TACH_HI, REG_TACH_LO};
++static const unsigned int regs_tach_min[2] = {REG_TACH_MIN_HI, REG_TACH_MIN_LO};
++static const unsigned int regs_temp_ext[2] = {REG_TEMP_EXT_HI, REG_TEMP_EXT_LO};
++static const unsigned int regs_temp_ext_max[2] = {REG_TEMP_EXT_MAX_HI, REG_TEMP_EXT_MAX_LO};
++static const unsigned int regs_temp_ext_min[2] = {REG_TEMP_EXT_MIN_HI, REG_TEMP_EXT_MIN_LO};
++
++static inline int emc2101_read_u16(struct emc2101_data *data, const unsigned int *regs, u16 *val)
++{
++	u8 read_seq[2];
++	int ret;
++
++	ret = regmap_multi_reg_read(data->regmap, regs, read_seq, 2);
++	if (!ret) {
++		*val = (read_seq[0] & 0xff) << 8;
++		*val |= read_seq[1] & 0xff;
++	}
++
++	return ret;
++}
++
++static inline int emc2101_write_u16(struct emc2101_data *data, const unsigned int *regs, u16 val)
++{
++	const struct reg_sequence write_seq[2] = {
++		{ regs[0], (val >> 8) & 0xff },
++		{ regs[1], val & 0xff },
++	};
++
++	return regmap_multi_reg_write(data->regmap, write_seq, 2);
++}
++
++static inline u16 emc2101_rpm_to_u16(long rpm)
++{
++	u16 val;
++
++	if (rpm > 0)
++		val = clamp_val(FAN_RPM_FACTOR / rpm, 1, FAN_MIN_READ);
++	else
++		val = FAN_MIN_READ;
++
++	return val;
++}
++
++static inline long emc2101_u16_to_rpm(u16 val)
++{
++	long rpm;
++
++	val = clamp_val(val, 1, FAN_MIN_READ);
++	if (val < FAN_MIN_READ)
++		rpm = FAN_RPM_FACTOR / val;
++	else
++		rpm = 0;
++
++	return rpm;
++}
++
++static inline u16 emc2101_temp_to_u16(long temp)
++{
++	s8 val_hi = clamp_val(temp / 1000, TEMP_MIN, TEMP_MAX);
++	long rem = temp % 1000;
++	u8 val_lo;
++
++	if (val_hi == TEMP_MIN)
++		rem = 0;
++	else if (val_hi == TEMP_MAX)
++		rem = TEMP_MAX_FRAC;
++
++	if (rem < 0) {
++		val_hi -= 1;
++		rem = (1000 + rem);
++	}
++
++	rem /= TEMP_LO_FRAC;
++	val_lo = (rem & TEMP_LO_MASK) << TEMP_LO_SHIFT;
++
++	return (val_hi << 8) | val_lo;
++}
++
++static inline long emc2101_u16_to_temp(u16 val)
++{
++	const s8 val_hi = (val >> 8) & 0xff;
++	const u8 val_lo = (val >> TEMP_LO_SHIFT) & TEMP_LO_MASK;
++	long temp;
++
++	temp = val_hi * 1000;
++	temp += val_lo * TEMP_LO_FRAC;
++
++	return temp;
++}
++
++static inline bool emc2101_lut_edit(struct emc2101_data *data, bool *disabled)
++{
++	unsigned int lut_disabled;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_FAN_LUT_DISABLE], &lut_disabled);
++	if (ret)
++		return ret;
++
++	*disabled = lut_disabled;
++
++	return regmap_field_write(data->fields[F_FAN_LUT_DISABLE], 1);
++}
++
++static inline bool emc2101_lut_restore(struct emc2101_data *data, bool disabled)
++{
++	if (!disabled)
++		return regmap_field_write(data->fields[F_FAN_LUT_DISABLE], 0);
++
++	return 0;
++}
++
++static int emc2101_lut_hyst_write(struct regmap_field *field, long temp)
++{
++	const unsigned int val = clamp_val(temp / 1000, FAN_LUT_HYST_MIN, FAN_LUT_HYST_MAX);
++
++	return regmap_field_write(field, val);
++}
++
++static int emc2101_temp_neg_read(struct regmap_field *field, long *temp)
++{
++	unsigned int val;
++	int ret;
++
++	ret = regmap_field_read(field, &val);
++	if (!ret)
++		*temp = ((s8) val) * 1000;
++
++	return ret;
++}
++
++static int emc2101_temp_neg_write(struct regmap_field *field, long temp)
++{
++	const s8 val = clamp_val(temp / 1000, TEMP_MIN, TEMP_MAX);
++
++	return regmap_field_write(field, val);
++}
++
++static int emc2101_temp_pos_read(struct regmap_field *field, long *temp)
++{
++	unsigned int val;
++	int ret;
++
++	ret = regmap_field_read(field, &val);
++	if (!ret)
++		*temp = val * 1000;
++
++	return ret;
++}
++
++static int emc2101_temp_pos_write(struct regmap_field *field, long temp)
++{
++	const u8 val = clamp_val(temp / 1000, 0, TEMP_MAX);
++
++	return regmap_field_write(field, val);
++}
++
++static int emc2101_temp_frac_read(struct emc2101_data *data, const unsigned int *regs, long *temp)
++{
++	u16 temp_frac;
++	int ret;
++
++	ret = emc2101_read_u16(data, regs, &temp_frac);
++	if (ret)
++		return ret;
++
++	switch (temp_frac) {
++	case TEMP_FAULT_OPEN:
++		dev_warn(data->dev, "[%02x, %02x]: diode fault (open)", regs[0], regs[1]);
++		return -ENODATA;
++	case TEMP_FAULT_SHORT:
++		dev_warn(data->dev, "[%02x, %02x]: diode fault (short)", regs[0], regs[1]);
++		return -ENODATA;
++	default:
++		break;
++	}
++
++	*temp = emc2101_u16_to_temp(temp_frac);
++
++	return ret;
++}
++
++static int emc2101_temp_frac_write(struct emc2101_data *data, const unsigned int *regs, long temp)
++{
++	long temp_frac = emc2101_temp_to_u16(temp);
++
++	return emc2101_write_u16(data, regs, temp_frac);
++}
++
++static int emc2101_pwm_write(struct regmap_field *field, long pwm)
++{
++	const unsigned int val = clamp_val(pwm, 0, PWM_MASK);
++
++	return regmap_field_write(field, val);
++}
++
++static ssize_t fan_spin_up_abort_show(struct device *dev, struct device_attribute *devattr,
++				      char *buf)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int fan_spin_abort;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_SPIN_UP_ABORT], &fan_spin_abort);
++	if (ret)
++		return ret;
++
++	return sprintf(buf, "%u\n", fan_spin_abort);
++}
++
++static ssize_t fan_spin_up_abort_store(struct device *dev, struct device_attribute *devattr,
++				       const char *buf, size_t count)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int fan_spin_abort;
++	int ret;
++
++	ret = kstrtouint(buf, 10, &fan_spin_abort);
++	if (ret)
++		return ret;
++
++	switch (fan_spin_abort) {
++	case 0:
++	case 1:
++		ret = regmap_field_write(data->fields[F_SPIN_UP_ABORT], fan_spin_abort);
++		break;
++	default:
++		ret = -EOPNOTSUPP;
++		break;
++	}
++
++	return !ret ? count : ret;
++}
++
++static ssize_t fan_spin_up_time_show(struct device *dev, struct device_attribute *devattr,
++				     char *buf)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int fan_spin_time;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_SPIN_UP_TIME], &fan_spin_time);
++	if (ret)
++		return ret;
++
++	return sprintf(buf, "%u\n", emc2101_fan_spin_up_time[fan_spin_time]);
++}
++
++static ssize_t fan_spin_up_time_store(struct device *dev, struct device_attribute *devattr,
++				      const char *buf, size_t count)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int fan_spin_time, val;
++	int ret;
++
++	ret = kstrtouint(buf, 10, &fan_spin_time);
++	if (ret)
++		return ret;
++
++	val = find_closest(fan_spin_time, emc2101_fan_spin_up_time,
++			   ARRAY_SIZE(emc2101_fan_spin_up_time));
++
++	ret = regmap_field_write(data->fields[F_SPIN_UP_TIME], val);
++
++	return !ret ? count : ret;
++}
++
++static ssize_t fan_spin_up_power_show(struct device *dev, struct device_attribute *devattr,
++				      char *buf)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int fan_spin_power;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_SPIN_UP_POWER], &fan_spin_power);
++	if (ret)
++		return ret;
++
++	return sprintf(buf, "%u\n", emc2101_fan_spin_up_power[fan_spin_power]);
++}
++
++static ssize_t fan_spin_up_power_store(struct device *dev, struct device_attribute *devattr,
++				       const char *buf, size_t count)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int fan_spin_power, val;
++	int ret;
++
++	ret = kstrtouint(buf, 10, &fan_spin_power);
++	if (ret)
++		return ret;
++
++	val = find_closest(fan_spin_power, emc2101_fan_spin_up_power,
++			   ARRAY_SIZE(emc2101_fan_spin_up_power));
++
++	ret = regmap_field_write(data->fields[F_SPIN_UP_POWER], val);
++
++	return !ret ? count : ret;
++}
++
++static ssize_t fan_standby_show(struct device *dev, struct device_attribute *devattr,
++				char *buf)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int fan_standby;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_FAN_STBY], &fan_standby);
++	if (ret)
++		return ret;
++
++	return sprintf(buf, "%u\n", fan_standby);
++}
++
++static ssize_t fan_standby_store(struct device *dev, struct device_attribute *devattr,
++				 const char *buf, size_t count)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int fan_standby;
++	int ret;
++
++	ret = kstrtouint(buf, 10, &fan_standby);
++	if (ret)
++		return ret;
++
++	switch (fan_standby) {
++	case 0:
++	case 1:
++		ret = regmap_field_write(data->fields[F_FAN_STBY], fan_standby);
++		break;
++	default:
++		ret = -EOPNOTSUPP;
++		break;
++	}
++
++	return !ret ? count : ret;
++}
++
++static ssize_t pwm_auto_point_pwm_show(struct device *dev, struct device_attribute *devattr,
++				       char *buf)
++{
++	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int lut_pwm;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_FAN_LUT_SPEED(attr->index)], &lut_pwm);
++	if (ret)
++		return ret;
++
++	return sprintf(buf, "%u\n", lut_pwm);
++}
++
++static ssize_t __pwm_auto_point_pwm_store(struct emc2101_data *data,
++					  struct device_attribute *devattr, unsigned int lut_pwm)
++{
++	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
++	bool lut_disable;
++	int ret;
++
++	ret = emc2101_lut_edit(data, &lut_disable);
++	if (ret)
++		return ret;
++
++	ret = emc2101_pwm_write(data->fields[F_FAN_LUT_SPEED(attr->index)], lut_pwm);
++	if (ret)
++		return ret;
++
++	return emc2101_lut_restore(data, lut_disable);
++}
++
++static ssize_t pwm_auto_point_pwm_store(struct device *dev, struct device_attribute *devattr,
++					const char *buf, size_t count)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int lut_pwm;
++	int ret;
++
++	ret = kstrtouint(buf, 10, &lut_pwm);
++	if (ret)
++		return ret;
++
++	mutex_lock(&data->mutex);
++	ret = __pwm_auto_point_pwm_store(data, devattr, lut_pwm);
++	mutex_unlock(&data->mutex);
++
++	return !ret ? count : ret;
++}
++
++static ssize_t pwm_auto_point_temp_show(struct device *dev, struct device_attribute *devattr,
++					char *buf)
++{
++	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	long lut_temp;
++	int ret;
++
++	ret = emc2101_temp_pos_read(data->fields[F_FAN_LUT_TEMP(attr->index)], &lut_temp);
++	if (ret)
++		return ret;
++
++	return sprintf(buf, "%lu\n", lut_temp);
++}
++
++static ssize_t __pwm_auto_point_temp_store(struct emc2101_data *data,
++					   struct device_attribute *devattr, unsigned int lut_temp)
++{
++	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
++	bool lut_disable;
++	unsigned int i;
++	long cur_temp;
++	int ret;
++
++	ret = emc2101_lut_edit(data, &lut_disable);
++	if (ret)
++		return ret;
++
++	for (i = 0; i < FAN_LUT_COUNT; i++) {
++		struct regmap_field *field = data->fields[F_FAN_LUT_TEMP(i)];
++
++		ret = emc2101_temp_pos_read(field, &cur_temp);
++		if (ret)
++			return ret;
++
++		if (i < attr->index) {
++			if (cur_temp > lut_temp)
++				ret = emc2101_temp_pos_write(field, lut_temp);
++		} else if (i > attr->index) {
++			if (cur_temp < lut_temp)
++				ret = emc2101_temp_pos_write(field, lut_temp);
++		} else {
++			ret = emc2101_temp_pos_write(field, lut_temp);
++		}
++
++		if (ret)
++			return ret;
++	}
++
++	return emc2101_lut_restore(data, lut_disable);
++}
++
++static ssize_t pwm_auto_point_temp_store(struct device *dev, struct device_attribute *devattr,
++					 const char *buf, size_t count)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int lut_temp;
++	int ret;
++
++	ret = kstrtouint(buf, 10, &lut_temp);
++	if (ret)
++		return ret;
++
++	mutex_lock(&data->mutex);
++	ret = __pwm_auto_point_temp_store(data, devattr, lut_temp);
++	mutex_unlock(&data->mutex);
++
++	return !ret ? count : ret;
++}
++
++static ssize_t pwm_auto_point_temp_hyst_show(struct device *dev, struct device_attribute *devattr,
++					     char *buf)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	long lut_hyst;
++	int ret;
++
++	ret = emc2101_temp_pos_read(data->fields[F_FAN_LUT_HYST], &lut_hyst);
++	if (ret)
++		return ret;
++
++	return sprintf(buf, "%lu\n", lut_hyst);
++}
++
++static ssize_t pwm_auto_point_temp_hyst_store(struct device *dev, struct device_attribute *devattr,
++					      const char *buf, size_t count)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int lut_hyst;
++	int ret;
++
++	ret = kstrtouint(buf, 10, &lut_hyst);
++	if (ret)
++		return ret;
++
++	ret = emc2101_lut_hyst_write(data->fields[F_FAN_LUT_HYST], lut_hyst);
++
++	return !ret ? count : ret;
++}
++
++static ssize_t pwm_polarity_invert_show(struct device *dev, struct device_attribute *devattr,
++					char *buf)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int polarity_inverted;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_FAN_POL_INV], &polarity_inverted);
++	if (ret)
++		return ret;
++
++	return sprintf(buf, "%u\n", polarity_inverted);
++}
++
++static ssize_t pwm_polarity_invert_store(struct device *dev, struct device_attribute *devattr,
++					 const char *buf, size_t count)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int polarity_inverted;
++	int ret;
++
++	ret = kstrtouint(buf, 10, &polarity_inverted);
++	if (ret)
++		return ret;
++
++	switch (polarity_inverted) {
++	case 0:
++	case 1:
++		ret = regmap_field_write(data->fields[F_FAN_POL_INV], polarity_inverted);
++		break;
++	default:
++		ret = -EOPNOTSUPP;
++		break;
++	}
++
++	return !ret ? count : ret;
++}
++
++static ssize_t temp_external_force_show(struct device *dev, struct device_attribute *devattr,
++					char *buf)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	long temp_force;
++	int ret;
++
++	ret = emc2101_temp_neg_read(data->fields[F_TEMP_EXT_FORCE], &temp_force);
++	if (ret)
++		return ret;
++
++	return sprintf(buf, "%ld\n", temp_force);
++}
++
++static ssize_t temp_external_force_store(struct device *dev, struct device_attribute *devattr,
++					 const char *buf, size_t count)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	long temp_force;
++	int ret;
++
++	ret = kstrtol(buf, 10, &temp_force);
++	if (ret)
++		return ret;
++
++	ret = emc2101_temp_neg_write(data->fields[F_TEMP_EXT_FORCE], temp_force);
++
++	return !ret ? count : ret;
++}
++
++static ssize_t temp_external_ideality_show(struct device *dev, struct device_attribute *devattr,
++					   char *buf)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int ext_ideality;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_EXT_IDEALITY], &ext_ideality);
++	if (ret)
++		return ret;
++
++	return sprintf(buf, "%u\n", EXT_IDEALITY_VAL(ext_ideality));
++}
++
++static ssize_t temp_external_ideality_store(struct device *dev, struct device_attribute *devattr,
++					    const char *buf, size_t count)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int ext_ideality_factor, val;
++	int ret;
++
++	ret = kstrtouint(buf, 10, &ext_ideality_factor);
++	if (ret)
++		return ret;
++
++	ext_ideality_factor = clamp_val(ext_ideality_factor, EXT_IDEALITY_START,
++					EXT_IDEALITY_VAL(EXT_IDEALITY_MASK));
++	val = (ext_ideality_factor - EXT_IDEALITY_START) / EXT_IDEALITY_STEP;
++
++	ret = regmap_field_write(data->fields[F_EXT_IDEALITY], val);
++
++	return !ret ? count : ret;
++}
++
++static SENSOR_DEVICE_ATTR_RW(fan1_spin_up_abort, fan_spin_up_abort, 0);
++static SENSOR_DEVICE_ATTR_RW(fan1_spin_up_power, fan_spin_up_power, 0);
++static SENSOR_DEVICE_ATTR_RW(fan1_spin_up_time, fan_spin_up_time, 0);
++static SENSOR_DEVICE_ATTR_RW(fan1_standby, fan_standby, 0);
++
++static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point1_pwm, pwm_auto_point_pwm, 0);
++static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point1_temp, pwm_auto_point_temp, 0);
++
++static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point2_pwm, pwm_auto_point_pwm, 1);
++static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point2_temp, pwm_auto_point_temp, 1);
++
++static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point3_pwm, pwm_auto_point_pwm, 2);
++static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point3_temp, pwm_auto_point_temp, 2);
++
++static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point4_pwm, pwm_auto_point_pwm, 3);
++static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point4_temp, pwm_auto_point_temp, 3);
++
++static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point5_pwm, pwm_auto_point_pwm, 4);
++static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point5_temp, pwm_auto_point_temp, 4);
++
++static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point6_pwm, pwm_auto_point_pwm, 5);
++static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point6_temp, pwm_auto_point_temp, 5);
++
++static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point7_pwm, pwm_auto_point_pwm, 6);
++static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point7_temp, pwm_auto_point_temp, 6);
++
++static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point8_pwm, pwm_auto_point_pwm, 7);
++static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point8_temp, pwm_auto_point_temp, 7);
++
++static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point_temp_hyst, pwm_auto_point_temp_hyst, 0);
++
++static SENSOR_DEVICE_ATTR_RW(pwm1_polarity_invert, pwm_polarity_invert, 0);
++
++static SENSOR_DEVICE_ATTR_RW(temp2_external_ideality, temp_external_ideality, 0);
++
++static SENSOR_DEVICE_ATTR_RW(temp3, temp_external_force, 0);
++
++static struct attribute *emc2101_hwmon_attributes[] = {
++	&sensor_dev_attr_fan1_spin_up_abort.dev_attr.attr,
++	&sensor_dev_attr_fan1_spin_up_power.dev_attr.attr,
++	&sensor_dev_attr_fan1_spin_up_time.dev_attr.attr,
++	&sensor_dev_attr_fan1_standby.dev_attr.attr,
++	&sensor_dev_attr_pwm1_auto_point1_pwm.dev_attr.attr,
++	&sensor_dev_attr_pwm1_auto_point1_temp.dev_attr.attr,
++	&sensor_dev_attr_pwm1_auto_point2_pwm.dev_attr.attr,
++	&sensor_dev_attr_pwm1_auto_point2_temp.dev_attr.attr,
++	&sensor_dev_attr_pwm1_auto_point3_pwm.dev_attr.attr,
++	&sensor_dev_attr_pwm1_auto_point3_temp.dev_attr.attr,
++	&sensor_dev_attr_pwm1_auto_point4_pwm.dev_attr.attr,
++	&sensor_dev_attr_pwm1_auto_point4_temp.dev_attr.attr,
++	&sensor_dev_attr_pwm1_auto_point5_pwm.dev_attr.attr,
++	&sensor_dev_attr_pwm1_auto_point5_temp.dev_attr.attr,
++	&sensor_dev_attr_pwm1_auto_point6_pwm.dev_attr.attr,
++	&sensor_dev_attr_pwm1_auto_point6_temp.dev_attr.attr,
++	&sensor_dev_attr_pwm1_auto_point7_pwm.dev_attr.attr,
++	&sensor_dev_attr_pwm1_auto_point7_temp.dev_attr.attr,
++	&sensor_dev_attr_pwm1_auto_point8_pwm.dev_attr.attr,
++	&sensor_dev_attr_pwm1_auto_point8_temp.dev_attr.attr,
++	&sensor_dev_attr_pwm1_auto_point_temp_hyst.dev_attr.attr,
++	&sensor_dev_attr_pwm1_polarity_invert.dev_attr.attr,
++	&sensor_dev_attr_temp2_external_ideality.dev_attr.attr,
++	&sensor_dev_attr_temp3.dev_attr.attr,
++	NULL
++};
++
++static const struct attribute_group emc2101_hwmon_group = {
++	.attrs = emc2101_hwmon_attributes,
++};
++__ATTRIBUTE_GROUPS(emc2101_hwmon);
++
++static int emc2101_chip_update_interval_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int conv_rate;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_CONV_RATE], &conv_rate);
++	if (!ret) {
++		if (conv_rate < ARRAY_SIZE(emc2101_conv_time))
++			*val = emc2101_conv_time[conv_rate];
++		else
++			*val = emc2101_conv_time[CONV_RATE_31];
++	}
++
++	return ret;
++}
++
++static int emc2101_chip_update_interval_write(struct device *dev, long val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int conv_rate;
++
++	conv_rate = find_closest_descending(val, emc2101_conv_time, ARRAY_SIZE(emc2101_conv_time));
++
++	return regmap_field_write(data->fields[F_CONV_RATE], conv_rate);
++}
++
++static int emc2101_fan_div_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int pwm_freq_div;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_PWM_FREQ_DIV], &pwm_freq_div);
++	if (!ret)
++		*val = pwm_freq_div;
++
++	return ret;
++}
++
++static int emc2101_fan_div_write(struct device *dev, long val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	struct regmap_field *field = data->fields[F_PWM_FREQ_DIV];
++	unsigned int pwm_freq_div;
++
++	pwm_freq_div = clamp_val(val, 1, 0xff);
++
++	return regmap_field_write(field, pwm_freq_div);
++}
++
++static int emc2101_fan_input_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	u16 tach_count;
++	int ret;
++
++	ret = emc2101_read_u16(data, regs_tach, &tach_count);
++	if (ret)
++		return ret;
++
++	*val = emc2101_u16_to_rpm(tach_count);
++
++	return 0;
++}
++
++static int emc2101_fan_min_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	u16 tach_count;
++	int ret;
++
++	ret = emc2101_read_u16(data, regs_tach_min, &tach_count);
++	if (ret)
++		return ret;
++
++	*val = emc2101_u16_to_rpm(tach_count);
++
++	return 0;
++}
++
++static int emc2101_fan_min_write(struct device *dev, long val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	u16 tach_count = emc2101_rpm_to_u16(val);
++
++	return emc2101_write_u16(data, regs_tach_min, tach_count);
++}
++
++static int emc2101_fan_min_alarm_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int tach_low;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_TACH_LOW_ALARM], &tach_low);
++	if (ret)
++		return ret;
++
++	*val = tach_low;
++
++	return 0;
++}
++
++static int emc2101_pwm_auto_channels_temp_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int temp_ext_force;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_FAN_EXT_TEMP_FORCE], &temp_ext_force);
++	if (ret)
++		return ret;
++
++	*val = temp_ext_force ? EMC2101_ACT_FORCE : EMC2101_ACT_EXT;
++
++	return 0;
++}
++
++static int emc2101_pwm_auto_channels_temp_write(struct device *dev, long val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	int ret;
++
++	switch (val) {
++	case EMC2101_ACT_EXT:
++		ret = regmap_field_write(data->fields[F_FAN_EXT_TEMP_FORCE], 0);
++		break;
++	case EMC2101_ACT_FORCE:
++		ret = regmap_field_write(data->fields[F_FAN_EXT_TEMP_FORCE], 1);
++		break;
++	default:
++		ret = -EOPNOTSUPP;
++		break;
++	}
++
++	return ret;
++}
++
++static int emc2101_pwm_enable_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int lut_disable;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_FAN_LUT_DISABLE], &lut_disable);
++	if (ret)
++		return ret;
++
++	*val = lut_disable ? EMC2101_PWM_MANUAL : EMC2101_PWM_LUT;
++
++	return 0;
++}
++
++static int emc2101_pwm_enable_write(struct device *dev, long val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int lut_disable;
++	int ret;
++
++	switch (val) {
++	case EMC2101_PWM_MANUAL:
++		lut_disable = 1;
++		break;
++	case EMC2101_PWM_LUT:
++		lut_disable = 0;
++		break;
++	default:
++		return -EOPNOTSUPP;
++	}
++
++	mutex_lock(&data->mutex);
++	ret = regmap_field_write(data->fields[F_FAN_LUT_DISABLE], lut_disable);
++	mutex_unlock(&data->mutex);
++
++	return ret;
++}
++
++static int emc2101_pwm_freq_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int fan_clk_ovr, fan_clk_sel;
++	unsigned int pwm_freq, pwm_freq_div;
++	unsigned int base_clk, div;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_FAN_CLK_OVR], &fan_clk_ovr);
++	if (ret)
++		return ret;
++
++	ret = regmap_field_read(data->fields[F_FAN_CLK_SEL], &fan_clk_sel);
++	if (ret)
++		return ret;
++
++	ret = regmap_field_read(data->fields[F_PWM_FREQ], &pwm_freq);
++	if (ret)
++		return ret;
++
++	if (fan_clk_ovr) {
++		ret = regmap_field_read(data->fields[F_PWM_FREQ_DIV], &pwm_freq_div);
++		if (ret)
++			return ret;
++	} else {
++		pwm_freq_div = 1;
++	}
++
++	if (fan_clk_sel)
++		base_clk = CLK_FREQ_ALT;
++	else
++		base_clk = CLK_FREQ_BASE;
++
++	div = 2 * pwm_freq * pwm_freq_div;
++	if (div)
++		*val = base_clk / div;
++	else
++		*val = 0;
++
++	return ret;
++}
++
++static int emc2101_pwm_freq_write(struct device *dev, long val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int fan_clk_ovr, fan_clk_sel;
++	unsigned int pwm_freq, pwm_freq_div;
++	unsigned int base_clk;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_FAN_CLK_OVR], &fan_clk_ovr);
++	if (ret)
++		return ret;
++
++	ret = regmap_field_read(data->fields[F_FAN_CLK_SEL], &fan_clk_sel);
++	if (ret)
++		return ret;
++
++	if (fan_clk_ovr) {
++		ret = regmap_field_read(data->fields[F_PWM_FREQ_DIV], &pwm_freq_div);
++		if (ret)
++			return ret;
++	} else {
++		pwm_freq_div = 1;
++	}
++
++	if (fan_clk_sel)
++		base_clk = CLK_FREQ_ALT;
++	else
++		base_clk = CLK_FREQ_BASE;
++
++	pwm_freq = base_clk / (2 * pwm_freq_div * val);
++
++	return emc2101_pwm_write(data->fields[F_PWM_FREQ], pwm_freq);
++}
++
++static int emc2101_pwm_input_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int fan_set;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_FAN_SET], &fan_set);
++	if (!ret)
++		*val = fan_set;
++
++	return ret;
++}
++
++static int emc2101_pwm_input_write(struct device *dev, long val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++
++	return emc2101_pwm_write(data->fields[F_FAN_SET], val);
++}
++
++static int emc2101_pwm_mode_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int fan_mode_dac;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_FAN_MODE_DAC], &fan_mode_dac);
++	if (ret)
++		return ret;
++
++	*val = fan_mode_dac ? EMC2101_MODE_DAC : EMC2101_MODE_PWM;
++
++	return ret;
++}
++
++static int emc2101_pwm_mode_write(struct device *dev, long val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	int ret;
++
++	switch (val) {
++	case EMC2101_MODE_DAC:
++	case EMC2101_MODE_PWM:
++		ret = regmap_field_write(data->fields[F_FAN_MODE_DAC], val);
++		break;
++	default:
++		ret = -EOPNOTSUPP;
++		break;
++	}
++
++	return ret;
++}
++
++static int emc2101_temp_ext_crit_alarm_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int temp_ext_crit;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_TEMP_EXT_CRIT_ALARM], &temp_ext_crit);
++	if (ret)
++		return ret;
++
++	*val = temp_ext_crit;
++
++	return 0;
++}
++
++static int emc2101_temp_ext_crit_hyst_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++
++	return emc2101_temp_pos_read(data->fields[F_TEMP_EXT_CRIT_HYST], val);
++}
++
++static int emc2101_temp_ext_crit_hyst_write(struct device *dev, long val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++
++	return emc2101_temp_pos_write(data->fields[F_TEMP_EXT_CRIT_HYST], val);
++}
++
++static int emc2101_temp_ext_crit_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++
++	return emc2101_temp_pos_read(data->fields[F_TEMP_EXT_CRIT], val);
++}
++
++static int __emc2101_temp_ext_crit_write(struct emc2101_data *data, long val)
++{
++	unsigned int temp_ext_crit_unlock;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_TEMP_EXT_CRIT_UNLOCK], &temp_ext_crit_unlock);
++	if (ret)
++		return ret;
++
++	if (temp_ext_crit_unlock) {
++		dev_err(data->dev, "critical temperature can only be updated once");
++		return -EIO;
++	}
++
++	ret = regmap_field_write(data->fields[F_TEMP_EXT_CRIT_UNLOCK], 1);
++	if (ret)
++		return ret;
++
++	return emc2101_temp_pos_write(data->fields[F_TEMP_EXT_CRIT], val);
++}
++
++static int emc2101_temp_ext_crit_write(struct device *dev, long val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	int ret;
++
++	mutex_lock(&data->mutex);
++	ret = __emc2101_temp_ext_crit_write(data, val);
++	mutex_unlock(&data->mutex);
++
++	return ret;
++}
++
++static int emc2101_temp_ext_fault_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int temp_ext_fault;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_TEMP_EXT_FAULT], &temp_ext_fault);
++	if (ret)
++		return ret;
++
++	*val = temp_ext_fault;
++
++	return 0;
++}
++
++static int emc2101_temp_ext_max_alarm_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int temp_ext_high;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_TEMP_EXT_HIGH_ALARM], &temp_ext_high);
++	if (ret)
++		return ret;
++
++	*val = temp_ext_high;
++
++	return 0;
++}
++
++static int emc2101_temp_ext_max_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++
++	return emc2101_temp_frac_read(data, regs_temp_ext_max, val);
++}
++
++static int emc2101_temp_ext_max_write(struct device *dev, long val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++
++	return emc2101_temp_frac_write(data, regs_temp_ext_max, val);
++}
++
++static int emc2101_temp_ext_min_alarm_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int temp_ext_low;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_TEMP_EXT_LOW_ALARM], &temp_ext_low);
++	if (ret)
++		return ret;
++
++	*val = temp_ext_low;
++
++	return 0;
++}
++
++static int emc2101_temp_ext_min_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++
++	return emc2101_temp_frac_read(data, regs_temp_ext_min, val);
++}
++
++static int emc2101_temp_ext_min_write(struct device *dev, long val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++
++	return emc2101_temp_frac_write(data, regs_temp_ext_min, val);
++}
++
++static int emc2101_temp_ext_type_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int beta_comp, beta_comp_auto;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_BETA_COMP], &beta_comp);
++	if (ret)
++		return ret;
++
++	ret = regmap_field_read(data->fields[F_BETA_COMP], &beta_comp_auto);
++	if (ret)
++		return ret;
++
++	if (beta_comp == BETA_COMP_DISABLE && !beta_comp_auto)
++		*val = EMC2101_TD_2N3904;
++	else
++		*val = EMC2101_TD_CPU;
++
++	return 0;
++}
++
++static int emc2101_temp_ext_type_write(struct device *dev, long val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int beta_comp, beta_comp_auto;
++	int ret;
++
++	switch (val) {
++	case EMC2101_TD_CPU:
++		beta_comp = 0;
++		beta_comp_auto = 1;
++		break;
++	case EMC2101_TD_2N3904:
++		beta_comp = BETA_COMP_DISABLE;
++		beta_comp_auto = 0;
++		break;
++	default:
++		return -EOPNOTSUPP;
++	}
++
++	ret = regmap_field_write(data->fields[F_BETA_COMP_AUTO], beta_comp_auto);
++	if (ret)
++		return ret;
++
++	return regmap_field_write(data->fields[F_BETA_COMP], beta_comp);
++}
++
++static int emc2101_temp_ext_input_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++
++	return emc2101_temp_frac_read(data, regs_temp_ext, val);
++}
++
++static int emc2101_temp_int_max_alarm_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++	unsigned int temp_int_high;
++	int ret;
++
++	ret = regmap_field_read(data->fields[F_TEMP_INT_HIGH_ALARM], &temp_int_high);
++	if (ret)
++		return ret;
++
++	*val = temp_int_high;
++
++	return 0;
++}
++
++static int emc2101_temp_int_max_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++
++	return emc2101_temp_pos_read(data->fields[F_TEMP_INT_MAX], val);
++}
++
++static int emc2101_temp_int_max_write(struct device *dev, long val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++
++	return emc2101_temp_pos_write(data->fields[F_TEMP_INT_MAX], val);
++}
++
++static int emc2101_temp_int_input_read(struct device *dev, long *val)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++
++	return emc2101_temp_neg_read(data->fields[F_TEMP_INT], val);
++}
++
++static umode_t emc2101_is_visible(const void *data, enum hwmon_sensor_types type, u32 attr,
++				  int channel)
++{
++	int max_channels;
++
++	if (type == hwmon_temp)
++		max_channels = EMC2101_TC_NUM;
++	else
++		max_channels = 1;
++
++	if (channel >= max_channels)
++		return 0;
++
++	switch (type) {
++	case hwmon_chip:
++		switch (attr) {
++		case hwmon_chip_update_interval:
++			return 0644;
++		default:
++			break;
++		}
++		break;
++	case hwmon_fan:
++		switch (attr) {
++		case hwmon_fan_input:
++		case hwmon_fan_min_alarm:
++			return 0444;
++		case hwmon_fan_div:
++		case hwmon_fan_min:
++			return 0644;
++		default:
++			break;
++		}
++		break;
++	case hwmon_pwm:
++		switch (attr) {
++		case hwmon_pwm_auto_channels_temp:
++		case hwmon_pwm_enable:
++		case hwmon_pwm_freq:
++		case hwmon_pwm_input:
++		case hwmon_pwm_mode:
++			return 0644;
++		default:
++			break;
++		}
++		break;
++	case hwmon_temp:
++		switch (attr) {
++		case hwmon_temp_crit_alarm:
++		case hwmon_temp_fault:
++		case hwmon_temp_input:
++		case hwmon_temp_label:
++		case hwmon_temp_max_alarm:
++		case hwmon_temp_min_alarm:
++			return 0444;
++		case hwmon_temp_crit:
++		case hwmon_temp_crit_hyst:
++		case hwmon_temp_max:
++		case hwmon_temp_min:
++		case hwmon_temp_type:
++			return 0644;
++		default:
++			break;
++		}
++		break;
++	default:
++		break;
++	}
++
++	return 0;
++};
++
++static int emc2101_read(struct device *dev, enum hwmon_sensor_types type, u32 attr, int channel,
++			long *val)
++{
++	switch (type) {
++	case hwmon_chip:
++		switch (attr) {
++		case hwmon_chip_update_interval:
++			return emc2101_chip_update_interval_read(dev, val);
++		default:
++			break;
++		}
++		break;
++	case hwmon_fan:
++		switch (attr) {
++		case hwmon_fan_div:
++			return emc2101_fan_div_read(dev, val);
++		case hwmon_fan_input:
++			return emc2101_fan_input_read(dev, val);
++		case hwmon_fan_min:
++			return emc2101_fan_min_read(dev, val);
++		case hwmon_fan_min_alarm:
++			return emc2101_fan_min_alarm_read(dev, val);
++		default:
++			break;
++		}
++		break;
++	case hwmon_pwm:
++		switch (attr) {
++		case hwmon_pwm_auto_channels_temp:
++			return emc2101_pwm_auto_channels_temp_read(dev, val);
++		case hwmon_pwm_enable:
++			return emc2101_pwm_enable_read(dev, val);
++		case hwmon_pwm_freq:
++			return emc2101_pwm_freq_read(dev, val);
++		case hwmon_pwm_input:
++			return emc2101_pwm_input_read(dev, val);
++		case hwmon_pwm_mode:
++			return emc2101_pwm_mode_read(dev, val);
++		default:
++			break;
++		}
++		break;
++	case hwmon_temp:
++		switch (attr) {
++		case hwmon_temp_crit:
++			switch (channel) {
++			case EMC2101_TC_EXT:
++				return emc2101_temp_ext_crit_read(dev, val);
++			default:
++				break;
++			}
++			break;
++		case hwmon_temp_crit_alarm:
++			switch (channel) {
++			case EMC2101_TC_EXT:
++				return emc2101_temp_ext_crit_alarm_read(dev, val);
++			default:
++				break;
++			}
++			break;
++		case hwmon_temp_crit_hyst:
++			switch (channel) {
++			case EMC2101_TC_EXT:
++				return emc2101_temp_ext_crit_hyst_read(dev, val);
++			default:
++				break;
++			}
++			break;
++		case hwmon_temp_fault:
++			switch (channel) {
++			case EMC2101_TC_EXT:
++				return emc2101_temp_ext_fault_read(dev, val);
++			default:
++				break;
++			}
++			break;
++		case hwmon_temp_input:
++			switch (channel) {
++			case EMC2101_TC_EXT:
++				return emc2101_temp_ext_input_read(dev, val);
++			case EMC2101_TC_INT:
++				return emc2101_temp_int_input_read(dev, val);
++			default:
++				break;
++			}
++			break;
++		case hwmon_temp_max:
++			switch (channel) {
++			case EMC2101_TC_EXT:
++				return emc2101_temp_ext_max_read(dev, val);
++			case EMC2101_TC_INT:
++				return emc2101_temp_int_max_read(dev, val);
++			default:
++				break;
++			}
++			break;
++		case hwmon_temp_max_alarm:
++			switch (channel) {
++			case EMC2101_TC_EXT:
++				return emc2101_temp_ext_max_alarm_read(dev, val);
++			case EMC2101_TC_INT:
++				return emc2101_temp_int_max_alarm_read(dev, val);
++			default:
++				break;
++			}
++			break;
++		case hwmon_temp_min:
++			switch (channel) {
++			case EMC2101_TC_EXT:
++				return emc2101_temp_ext_min_read(dev, val);
++			default:
++				break;
++			}
++			break;
++		case hwmon_temp_min_alarm:
++			switch (channel) {
++			case EMC2101_TC_EXT:
++				return emc2101_temp_ext_min_alarm_read(dev, val);
++			default:
++				break;
++			}
++			break;
++		case hwmon_temp_type:
++			switch (channel) {
++			case EMC2101_TC_EXT:
++				return emc2101_temp_ext_type_read(dev, val);
++			default:
++				break;
++			}
++			break;
++		default:
++			break;
++		}
++		break;
++	default:
++		break;
++	}
++
++	return -EOPNOTSUPP;
++};
++
++static int emc2101_read_string(struct device *dev, enum hwmon_sensor_types type, u32 attr,
++			       int channel, const char **str)
++{
++	switch (type) {
++	case hwmon_temp:
++		switch (attr) {
++		case hwmon_temp_label:
++			switch (channel) {
++			case EMC2101_TC_EXT:
++				*str = "external";
++				return 0;
++			case EMC2101_TC_FORCE:
++				*str = "force";
++				return 0;
++			case EMC2101_TC_INT:
++				*str = "internal";
++				return 0;
++			default:
++				break;
++			}
++			break;
++		default:
++			break;
++		}
++		break;
++	default:
++		break;
++	}
++
++	return -EOPNOTSUPP;
++};
++
++static int emc2101_write(struct device *dev, enum hwmon_sensor_types type, u32 attr, int channel,
++			 long val)
++{
++	switch (type) {
++	case hwmon_chip:
++		switch (attr) {
++		case hwmon_chip_update_interval:
++			return emc2101_chip_update_interval_write(dev, val);
++		default:
++			break;
++		}
++		break;
++	case hwmon_fan:
++		switch (attr) {
++		case hwmon_fan_div:
++			return emc2101_fan_div_write(dev, val);
++		case hwmon_fan_min:
++			return emc2101_fan_min_write(dev, val);
++		default:
++			break;
++		}
++		break;
++	case hwmon_pwm:
++		switch (attr) {
++		case hwmon_pwm_auto_channels_temp:
++			return emc2101_pwm_auto_channels_temp_write(dev, val);
++		case hwmon_pwm_enable:
++			return emc2101_pwm_enable_write(dev, val);
++		case hwmon_pwm_freq:
++			return emc2101_pwm_freq_write(dev, val);
++		case hwmon_pwm_input:
++			return emc2101_pwm_input_write(dev, val);
++		case hwmon_pwm_mode:
++			return emc2101_pwm_mode_write(dev, val);
++		default:
++			break;
++		}
++		break;
++	case hwmon_temp:
++		switch (attr) {
++		case hwmon_temp_crit:
++			switch (channel) {
++			case EMC2101_TC_EXT:
++				return emc2101_temp_ext_crit_write(dev, val);
++			default:
++				break;
++			}
++			break;
++		case hwmon_temp_crit_hyst:
++			switch (channel) {
++			case EMC2101_TC_EXT:
++				return emc2101_temp_ext_crit_hyst_write(dev, val);
++			default:
++				break;
++			}
++			break;
++		case hwmon_temp_max:
++			switch (channel) {
++			case EMC2101_TC_EXT:
++				return emc2101_temp_ext_max_write(dev, val);
++			case EMC2101_TC_INT:
++				return emc2101_temp_int_max_write(dev, val);
++			default:
++				break;
++			}
++			break;
++		case hwmon_temp_min:
++			switch (channel) {
++			case EMC2101_TC_EXT:
++				return emc2101_temp_ext_min_write(dev, val);
++			default:
++				break;
++			}
++			break;
++		case hwmon_temp_type:
++			switch (channel) {
++			case EMC2101_TC_EXT:
++				return emc2101_temp_ext_type_write(dev, val);
++			default:
++				break;
++			}
++			break;
++		default:
++			break;
++		}
++		break;
++	default:
++		break;
++	}
++
++	return -EOPNOTSUPP;
++}
++
++#define EMC2101_CHIP_CFG	HWMON_C_UPDATE_INTERVAL
++#define EMC2101_FAN_CFG		(HWMON_F_DIV |\
++				 HWMON_F_INPUT |\
++				 HWMON_F_MIN |\
++				 HWMON_F_MIN_ALARM)
++#define EMC2101_PWM_CFG		(HWMON_PWM_AUTO_CHANNELS_TEMP |\
++				 HWMON_PWM_ENABLE |\
++				 HWMON_PWM_FREQ |\
++				 HWMON_PWM_INPUT |\
++				 HWMON_PWM_MODE)
++#define EMC2101_TEMP_INT_CFG	(HWMON_T_INPUT |\
++				 HWMON_T_LABEL |\
++				 HWMON_T_MAX |\
++				 HWMON_T_MAX_ALARM)
++#define EMC2101_TEMP_EXT_CFG	(HWMON_T_CRIT |\
++				 HWMON_T_CRIT_ALARM |\
++				 HWMON_T_CRIT_HYST |\
++				 HWMON_T_FAULT |\
++				 HWMON_T_INPUT |\
++				 HWMON_T_LABEL |\
++				 HWMON_T_MAX |\
++				 HWMON_T_MAX_ALARM |\
++				 HWMON_T_MIN |\
++				 HWMON_T_MIN_ALARM |\
++				 HWMON_T_TYPE)
++#define EMC2101_TEMP_FORCE_CFG	HWMON_T_LABEL
++
++static const struct hwmon_channel_info * const emc2101_info[] = {
++	HWMON_CHANNEL_INFO(chip, EMC2101_CHIP_CFG),
++	HWMON_CHANNEL_INFO(fan, EMC2101_FAN_CFG),
++	HWMON_CHANNEL_INFO(pwm, EMC2101_PWM_CFG),
++	HWMON_CHANNEL_INFO(temp, EMC2101_TEMP_INT_CFG,
++			   EMC2101_TEMP_EXT_CFG,
++			   EMC2101_TEMP_FORCE_CFG),
++	NULL
++};
++
++static const struct hwmon_ops emc2101_ops = {
++	.is_visible = emc2101_is_visible,
++	.read = emc2101_read,
++	.read_string = emc2101_read_string,
++	.write = emc2101_write,
++};
++
++static const struct hwmon_chip_info emc2101_chip_info = {
++	.info = emc2101_info,
++	.ops = &emc2101_ops,
++};
++
++static int emc2101_resume(struct device *dev)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++
++	return regmap_field_write(data->fields[F_STBY_MODE], 0);
++}
++
++static int emc2101_suspend(struct device *dev)
++{
++	struct emc2101_data *data = dev_get_drvdata(dev);
++
++	return regmap_field_write(data->fields[F_STBY_MODE], 1);
++}
++
++static DEFINE_SIMPLE_DEV_PM_OPS(emc2101_pm, emc2101_suspend, emc2101_resume);
++
++static int emc2101_init(struct emc2101_data *data)
++{
++	static const u8 lut_t[FAN_LUT_COUNT] = {  35,   40,   45,   50,   55,   60,   70,   75};
++	static const u8 lut_s[FAN_LUT_COUNT] = {0x12, 0x19, 0x1f, 0x25, 0x2c, 0x32, 0x38, 0x3f};
++	unsigned int i;
++	u16 tach_count;
++	int ret;
++
++	/* CONFIG */
++	ret = regmap_field_write(data->fields[F_PIN_FUNC_TACH], 1);
++	if (ret)
++		return ret;
++	ret = regmap_field_write(data->fields[F_SMBUS_TOUT_DISABLE], 1);
++	if (ret)
++		return ret;
++
++	/* FAN_CONFIG */
++	ret = regmap_field_write(data->fields[F_TACH_FALSE_READ], TACH_FALSE_READ_DISABLE);
++	if (ret)
++		return ret;
++	ret = regmap_field_write(data->fields[F_FAN_CLK_OVR], 1);
++	if (ret)
++		return ret;
++	ret = regmap_field_write(data->fields[F_FAN_CLK_SEL], 0);
++	if (ret)
++		return ret;
++
++	/* FAN_LUT */
++	ret = regmap_field_write(data->fields[F_FAN_LUT_DISABLE], 1);
++	if (ret)
++		return ret;
++	for (i = 0; i < FAN_LUT_COUNT; i++) {
++		ret = regmap_field_write(data->fields[F_FAN_LUT_TEMP(i)], lut_t[i]);
++		if (ret)
++			return ret;
++		ret = regmap_field_write(data->fields[F_FAN_LUT_SPEED(i)], lut_s[i]);
++		if (ret)
++			return ret;
++	}
++	ret = regmap_field_write(data->fields[F_FAN_LUT_DISABLE], 0);
++	if (ret)
++		return ret;
++
++	/* PWM_FREQ */
++	ret = regmap_field_write(data->fields[F_PWM_FREQ], PWM_FREQ_MASK);
++	if (ret)
++		return ret;
++	ret = regmap_field_write(data->fields[F_PWM_FREQ_DIV], 1);
++	if (ret)
++		return ret;
++
++	/* TACH gives invalid value on first reading */
++	return emc2101_read_u16(data, regs_tach, &tach_count);
++}
++
++static bool emc2101_regmap_is_volatile(struct device *dev, unsigned int reg)
++{
++	switch (reg) {
++	case REG_TEMP_INT:	/* internal diode */
++	case REG_TEMP_EXT_HI:	/* external diode high byte */
++	case REG_STATUS:	/* status */
++	case REG_TEMP_EXT_LO:	/* external diode low byte */
++	case REG_TACH_LO:	/* tach input low byte */
++	case REG_TACH_HI:	/* tach input high byte */
++	case REG_FAN_SET:	/* fan pwm */
++		return true;
++	default:
++		return false;
++	}
++}
++
++static const struct regmap_config emc2101_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.cache_type = REGCACHE_MAPLE,
++	.volatile_reg = emc2101_regmap_is_volatile,
++};
++
++static int emc2101_probe(struct i2c_client *client)
++{
++	struct i2c_adapter *adapter = client->adapter;
++	struct device *dev = &client->dev;
++	struct emc2101_data *data;
++	struct device *hwmon_dev;
++	unsigned int i;
++
++	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA))
++		return -EIO;
++
++	data = devm_kzalloc(dev, sizeof(struct emc2101_data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	data->regmap = devm_regmap_init_i2c(client, &emc2101_regmap_config);
++	if (IS_ERR(data->regmap))
++		return PTR_ERR(data->regmap);
++
++	for (i = 0; i < F_MAX_FIELDS; i++) {
++		data->fields[i] = devm_regmap_field_alloc(dev, data->regmap,
++							  emc2101_reg_fields[i]);
++		if (IS_ERR(data->fields[i])) {
++			dev_err(dev, "Unable to allocate regmap fields\n");
++			return PTR_ERR(data->fields[i]);
++		}
++	}
++
++	data->dev = dev;
++	mutex_init(&data->mutex);
++
++	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name, data,
++							 &emc2101_chip_info,
++							 emc2101_hwmon_groups);
++	if (IS_ERR(hwmon_dev))
++		return PTR_ERR(hwmon_dev);
++
++	dev_dbg(dev, "%s: sensor '%s'\n", dev_name(hwmon_dev), client->name);
++
++	return emc2101_init(data);
++}
++
++static int emc2101_detect(struct i2c_client *client, struct i2c_board_info *info)
++{
++	struct i2c_adapter *adapter = client->adapter;
++	s32 manufacturer, product, revision;
++	struct device *dev = &adapter->dev;
++
++	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA))
++		return -ENODEV;
++
++	manufacturer = i2c_smbus_read_byte_data(client, REG_MANUFACTURER_ID);
++	if (manufacturer != MANUFACTURER_ID)
++		return -ENODEV;
++
++	product = i2c_smbus_read_byte_data(client, REG_PRODUCT_ID);
++	switch (product) {
++	case EMC2101:
++		strscpy(info->type, "emc2101", I2C_NAME_SIZE);
++		break;
++	case EMC2101_R:
++		strscpy(info->type, "emc2101-r", I2C_NAME_SIZE);
++		break;
++	default:
++		return -ENODEV;
++	}
++
++	revision = i2c_smbus_read_byte_data(client, REG_REVISION);
++
++	dev_dbg(dev, "Found %s at 0x%02x (rev 0x%02x).\n", info->type, client->addr, revision);
++
++	return 0;
++}
++
++static const struct i2c_device_id emc2101_ids[] = {
++	{ "emc2101" },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, emc2101_ids);
++
++static const struct of_device_id emc2101_of_match_table[] = {
++	{ .compatible = "microchip,emc2101", },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, emc2101_of_match_table);
++
++static const unsigned short emc2101_address_list[] = {
++	0x4c, I2C_CLIENT_END
++};
++
++static struct i2c_driver emc2101_driver = {
++	.address_list = emc2101_address_list,
++	.class = I2C_CLASS_HWMON,
++	.detect = emc2101_detect,
++	.driver = {
++		.name = "emc2101",
++		.of_match_table = emc2101_of_match_table,
++		.pm = pm_sleep_ptr(&emc2101_pm),
++	},
++	.id_table = emc2101_ids,
++	.probe = emc2101_probe,
++};
++module_i2c_driver(emc2101_driver);
++
++MODULE_AUTHOR("Álvaro Fernández Rojas <noltari@gmail.com>");
++MODULE_DESCRIPTION("Microchip EMC2101 hwmon driver");
++MODULE_LICENSE("GPL");
 -- 
 2.39.5
 
