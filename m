@@ -1,105 +1,184 @@
-Return-Path: <linux-kernel+bounces-723729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DF78AFEA5B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:37:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A9CDAFEA62
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4D531C81F43
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:37:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A32E1C823F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F892DECB4;
-	Wed,  9 Jul 2025 13:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A462E0910;
+	Wed,  9 Jul 2025 13:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hf5W1YXP"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cok7Ru6t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C3C226D1D
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 13:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390841C1F13;
+	Wed,  9 Jul 2025 13:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752068251; cv=none; b=UkxAprB1yDyAk97vRl8eFEe2KIfFbCZkGkN8fBRALR+9SN5LYVO5sVsm9DWxB3X+S9wwuMjV6QvlbqWGCcO+8D9gB1WRxFdZI4/aH7WBa9toe/IePfipV3crWOjAD9iwYoLo4+TPILLKggR0Ha7Es9sVOt0OthNhhRZjQWaRJnU=
+	t=1752068318; cv=none; b=c16SIdn8tFpTaua7FkWDETuD83DbaGWYBRT/fGMU4B0A7rMYye9jCPPZIwVHxrjiNHLmgY7aszTHm89HwJGj/wzvVr17XZHyQ1oA3IhYNFZhoNxALRap5uE/GdPDlcCG401TYgNXHQGRWRVJ8aIxifASIdLhw/8ldUU6jFRuxt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752068251; c=relaxed/simple;
-	bh=x1O3yV0tYWPYFSK8SczYbxy40k33Giz5zO0qk0GiNPk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gU3NevsWi73w5x9T8CLQgOld8QVG76MBnGxShcc2cG1HL+UQJwbwiDzHYXMADDtYS2Li3rIOhjlmuTNAfDAU8YbJktXNSjxxQ5cACJWak/YELmgEKO4XoDeKWvsSYosqjN0H2ZzWKeWrYpzycQakaDQNTcwiNK33RaLd36Q/NyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hf5W1YXP; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a536ecbf6fso3050200f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 06:37:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752068248; x=1752673048; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x1O3yV0tYWPYFSK8SczYbxy40k33Giz5zO0qk0GiNPk=;
-        b=hf5W1YXPtxZSSzDSdszBMY8gTXr/oFFGyWLDNSCCQ0dOvd7B+VCaY9Ql19NRv9oPUL
-         A3plrVSFhLytYsY7m3teRtBFNpiU2F5vA6gy9z7ruqr9MqXv2P/7evyOR3KHNY1Q8h/d
-         1mPa3JlegriI6WyRoOb9jZB9EGdFTx2s6f6Hb4r+7d3g1m6u22pWS74nG+61m45NtzT9
-         rfGOe0WASEkT15p+I7xF8ORURKai/JhaIoJ9AdhWNbvIExpXS2PA+LTQWx2SDoeYBpfa
-         oacEByb7Eo4Udj2Lq5gnxgq1VLWCK7YvfXs72XsDa+/htpIC481oQyLso1MZsygt6b3j
-         ssOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752068248; x=1752673048;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x1O3yV0tYWPYFSK8SczYbxy40k33Giz5zO0qk0GiNPk=;
-        b=llsdRuhQC4zOb5mfZj6MLGoPGNwagTHZCxABDDS9VJ9gC3ijKM3NFVrKGx4sfWtiel
-         kHpvSrA8jUmqbGYWKs+F6Jj7/se9DejvUH1zIEdz3oR/w4KVzESH/853kdu0842wP1s0
-         VCE+Gi6SEU+IJO1/8rvu65lNdui9FiNQPsSuciw7SyDnEEhIQMjr7b7/wvn3waomS1lL
-         sPt9UYdNZnOXAPvhcdTVXCod89DGqO2cwMYaFTrjccfcuYyssxyE2PuZc5K1ZMHSLhog
-         Ot9g8v1vTatzxzxj5EVBDrTidLxIkW7wp530/dxOZV31KCRZkrqPvDPvBDD/vJe4w5RU
-         T4aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUQejpWxiC30Bl5nwc5O93AbFS6D6XVnvRNVXfjbazVW8p+Nps9A9dhLeeoGnRxP7s0A7tUxu1lnVRJfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOtO2HnBh7tTM9AF4TvFyCOoHPxdaXqq1ktozxjZeLvN4ZMuON
-	TmMXFGwF/tTkyKGWpFhldp/mc6p+m3v8rEln2uNxq+l0ueL5hd7pz+17pVT2ytr3p+mM3THHQ8B
-	p23SDc8iWeV+QthYMTXpBccY4EjO7fw3TEjPzAyQo
-X-Gm-Gg: ASbGncsfwCnOwVQVbingyzdUVUJKy92KWny4vlJNu4lO2rha1g3UpiV8bbadczFO2r0
-	LdV1uKG4bcPHOId628fSrbWcKLNamOdzWWJNjIcChfhVQV+SgZ5IUa89nMTzz+x70n0vbaq6ygC
-	scLVb9rpe/+QjbWWKUYfq0rwhoKMX0MLLkdYlgXh6tJOBVn/mPRhFo4F3PDlhD36VRj2+xCmCE3
-	g==
-X-Google-Smtp-Source: AGHT+IEA716nulAqRa5a2S60pK57wjynJP6MZeuoqr0aItMDvDtiVKvSCOQ7tPSH50CZIlyU0jurvE61IyCCQaR9h4E=
-X-Received: by 2002:a05:6000:178f:b0:3a5:25e0:1851 with SMTP id
- ffacd0b85a97d-3b5e44e3f6amr2141108f8f.7.1752068248159; Wed, 09 Jul 2025
- 06:37:28 -0700 (PDT)
+	s=arc-20240116; t=1752068318; c=relaxed/simple;
+	bh=h8rkgdzFHzQfCXKGB13VqG6DTj3tCT4fvRbPC6Q9TJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mpS8BdtiwYWXVFRJ8zCkYMsHN7mVG7ZYMkqezvOGiRnMUcIVwXgw5tn15Agqa1v6AkKDR1qBNXMRA948OrNEoqXdtMHvhY9+A8rWAIehKYtGh+KG29IJeDFX6CgrXHvLYGuqeRSBXtpjUM8ED79ncfQwcUWaFhoZr6G8Z43/GP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cok7Ru6t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FEC4C4CEEF;
+	Wed,  9 Jul 2025 13:38:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752068317;
+	bh=h8rkgdzFHzQfCXKGB13VqG6DTj3tCT4fvRbPC6Q9TJc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cok7Ru6tbwPf8DJ/GhRrPstP/I0zh/TMSe60GW8wNsnXiRyHW+Tf9VR43hFMEXANp
+	 nA9yQR+3gGyjumTd2aR31jkaluaCPUfp9OJzMJNGL6iO1bosVebm+gtOam0s3LgviF
+	 0qgXZtR5I68ISvW6+7jrDWcLGDJ5eZ1lxF4wInZz59liiDUeFKysL48gZydSKKo/sV
+	 RBhFESjNO2O8yASjDhpRyrL3yew7ckHOedOhDO2NYrNdFPmP8ofnTqyxuSr/3hpl/V
+	 r9BARdBLahmPKDK4L5U6u/awlc3gw3+s31xuPfGtfv7Y4UgprYL97ykPOEARLt/Afz
+	 RKn2Zom/0ZhDw==
+Date: Wed, 9 Jul 2025 15:38:34 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Nicolas Dufresne <nicolas@ndufresne.ca>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Andrew Davis <afd@ti.com>, 
+	Jared Kangas <jkangas@redhat.com>, Mattijs Korpershoek <mkorpershoek@kernel.org>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, iommu@lists.linux.dev
+Subject: Re: [PATCH v6 0/2] dma-buf: heaps: Create a CMA heap for each CMA
+ reserved region
+Message-ID: <20250709-spotted-ancient-oriole-c8bcd1@houat>
+References: <20250709-dma-buf-ecc-heap-v6-0-dac9bf80f35d@kernel.org>
+ <49e3fa834aadb37452112bb704a1a1593c1fd0b8.camel@ndufresne.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250423-list-no-offset-v3-0-9d0c2b89340e@gmail.com>
-In-Reply-To: <20250423-list-no-offset-v3-0-9d0c2b89340e@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 9 Jul 2025 15:37:16 +0200
-X-Gm-Features: Ac12FXyCr_gESQ0NBGSVDz1Tvd9THD57xkpCcUipxVzlzPqqz_epCDTU0SghXaQ
-Message-ID: <CAH5fLghgRy_B6kJ9c4HDWw-EUTcUQC6qhm81zizeRk+mZPu_0w@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] rust: list: remove HasListLinks::OFFSET
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="t6erlqty7rzkhzhp"
+Content-Disposition: inline
+In-Reply-To: <49e3fa834aadb37452112bb704a1a1593c1fd0b8.camel@ndufresne.ca>
+
+
+--t6erlqty7rzkhzhp
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 0/2] dma-buf: heaps: Create a CMA heap for each CMA
+ reserved region
+MIME-Version: 1.0
 
-On Wed, Apr 23, 2025 at 6:30=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> The bulk of this change occurs in the last commit, please its commit
-> messages for details.
->
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+On Wed, Jul 09, 2025 at 09:10:02AM -0400, Nicolas Dufresne wrote:
+> Hi Maxime,
+>=20
+> Le mercredi 09 juillet 2025 =E0 14:44 +0200, Maxime Ripard a =E9crit=A0:
+> > Hi,
+> >=20
+> > Here's another attempt at supporting user-space allocations from a
+> > specific carved-out reserved memory region.
+> >=20
+> > The initial problem we were discussing was that I'm currently working on
+> > a platform which has a memory layout with ECC enabled. However, enabling
+> > the ECC has a number of drawbacks on that platform: lower performance,
+> > increased memory usage, etc. So for things like framebuffers, the
+> > trade-off isn't great and thus there's a memory region with ECC disabled
+> > to allocate from for such use cases.
+> >=20
+> > After a suggestion from John, I chose to first start using heap
+> > allocations flags to allow for userspace to ask for a particular ECC
+> > setup. This is then backed by a new heap type that runs from reserved
+> > memory chunks flagged as such, and the existing DT properties to specify
+> > the ECC properties.
+> >=20
+> > After further discussion, it was considered that flags were not the
+> > right solution, and relying on the names of the heaps would be enough to
+> > let userspace know the kind of buffer it deals with.
+> >=20
+> > Thus, even though the uAPI part of it had been dropped in this second
+> > version, we still needed a driver to create heaps out of carved-out mem=
+ory
+> > regions. In addition to the original usecase, a similar driver can be
+> > found in BSPs from most vendors, so I believe it would be a useful
+> > addition to the kernel.
+> >=20
+> > Some extra discussion with Rob Herring [1] came to the conclusion that
+> > some specific compatible for this is not great either, and as such an
+> > new driver probably isn't called for either.
+> >=20
+> > Some other discussions we had with John [2] also dropped some hints that
+> > multiple CMA heaps might be a good idea, and some vendors seem to do
+> > that too.
+> >=20
+> > So here's another attempt that doesn't affect the device tree at all and
+> > will just create a heap for every CMA reserved memory region.
+>=20
+> Does that means that if we carve-out memory for a co-processor operating =
+system,
+> that memory region is now available to userspace to allocate from ? Or is=
+ there
+> a nuance to that ?
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+There is a nuance to that :)
+
+You need to have the "reusable" property set which is documented as:
+
+      The operating system can use the memory in this region with the
+      limitation that the device driver(s) owning the region need to be
+      able to reclaim it back. Typically that means that the operating
+      system can use that region to store volatile or cached data that
+      can be otherwise regenerated or migrated elsewhere.
+
+https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/rese=
+rved-memory/reserved-memory.yaml#L87
+
+If it's not set, it's not exposed, and I'd expect a coprocessor memory
+region wouldn't be flagged as such.
+
+> For other carveout, such as RK3588 HDMI receiver, that is clearly a win, =
+giving
+> user the ability to allocate using externally supplied constraints rather=
+ then
+> having to convince the v4l2 driver to match these. While keeping the safe=
+ty that
+> this carveout will yield valid addresses for the IP.
+>=20
+> Will there be a generic way to find out which driver/device this carveout
+> belongs to ? In V4L2, only complex cameras have userspace drivers, everyt=
+hing
+> else is generic code.
+
+I believe it's a separate discussion, but the current stance is that the
+heap name is enough to identify in a platform-specific way where you
+allocate from. I've worked on documenting what a good name is so
+userspace can pick it up more easily here:
+
+https://lore.kernel.org/r/20250616-dma-buf-heap-names-doc-v2-1-8ae43174cdbf=
+@kernel.org
+
+But it's not really what you expected
+
+Maxime
+
+--t6erlqty7rzkhzhp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaG5w1QAKCRAnX84Zoj2+
+dp3pAX9+Z09k44eaivapsVKw/NqvekdMSYnQGvkEfOP/NBTjJF5RGakuRbEE73Xk
+qKAYEiMBgKsMpFVvSS9l9pFXZtK1LVDJ1XtphLJBeHq/gZxL+5K0t2qMG09CpG18
+A+HJas+mmg==
+=pWj1
+-----END PGP SIGNATURE-----
+
+--t6erlqty7rzkhzhp--
 
