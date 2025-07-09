@@ -1,99 +1,69 @@
-Return-Path: <linux-kernel+bounces-724040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF319AFEDDD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:36:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9A2FAFEDE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAFEC3B7329
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:35:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CAE01C452E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874CB2E888D;
-	Wed,  9 Jul 2025 15:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJaOkhdx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80402E8DF9;
+	Wed,  9 Jul 2025 15:36:54 +0000 (UTC)
+Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63192E7655;
-	Wed,  9 Jul 2025 15:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA30EEA8;
+	Wed,  9 Jul 2025 15:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752075369; cv=none; b=rG1kip9i0GosiFOh+tiOQGnpK53fHk4/rm+n+gzmc59gbVvt8fBWWQE1/413qDUKMU6bEy0M8hZPi0HXLGRlWsUKr7sWw45CZ/5KC+0hH1zaLwe9tO13CqIx5vJqI690rnYIe4CtU39Oqgi+qb6Rwdw7MxJD9NmmEh+3WLch8Og=
+	t=1752075414; cv=none; b=eUk896c7IA0Wj/H3fJtB7zXq6bicwrUE7+DegBARLogyMGu+kAHKn8im2rtHhJPH3E3eZSqxFb+/RFHxWTGlaaD5sO+dIDA9mEK9F9sp4nMFdFso+UMg525KrzfP0IZwfQn+2Ms8yLmfUhFsJ/exThH083s40vAkPeVWn866w9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752075369; c=relaxed/simple;
-	bh=z5R0g5bRaFcE+byBEvAYFxwzxwtN+sL10BzKO0308UM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rFXG5lCbSCsVVyf+bZaAAGkQnFJg6m8QY9a+0LMBctljsbG/JZpzkQG9iMgLdjJd3WhqgPphesLsywgowL9i9mAFt0sZFCRqIIqIsIJoxiMzbmEJV3QofgRUa45SXGzqF8QerVAhayOclxUe3LwuZZhMlwxDihIxdB7mH29o+Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJaOkhdx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85F52C4CEEF;
-	Wed,  9 Jul 2025 15:36:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752075368;
-	bh=z5R0g5bRaFcE+byBEvAYFxwzxwtN+sL10BzKO0308UM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=kJaOkhdxWi9qV5vWcFnJ+JHTiQSlubZYl18mUsLG/pSBYdw+T1NKtWF5028TxIiFZ
-	 wZfpISsYz6qDXmz2TI9Vt2XUjIKX936nTToXVpxLwiDoaCgB6R4T9SzqBhHgJFfpBd
-	 DUjk1wdx3vSPwyZIM2EFvrhSQPqiWhpnXIU+dEh09EHx2ZObNI3mOIZsCcG9pdYe8q
-	 BC4Z5NY1XOLoQTFEXD6LRKGjWkLN/mitCQSJ4wZRDpY40o5N+wT3fnKdwgpqCDUsHx
-	 JG9DsmlWMhj+0erNX6r8khQZ4MuvF5NJtd+TeRO4St5FF7gaDqAbNdZh8u/V4dEqHi
-	 8bPTgLe8qW+Og==
-From: Mark Brown <broonie@kernel.org>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250709021638.2047365-1-robh@kernel.org>
-References: <20250709021638.2047365-1-robh@kernel.org>
-Subject: Re: [PATCH v2] spi: stm32-ospi: Use
- of_reserved_mem_region_to_resource() for "memory-region"
-Message-Id: <175207536585.695960.5730567147905543825.b4-ty@kernel.org>
-Date: Wed, 09 Jul 2025 16:36:05 +0100
+	s=arc-20240116; t=1752075414; c=relaxed/simple;
+	bh=Ra0q1YRk8dc9wL0sB8bADJNs5V8YEwxRwJMrTAmQyqQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:From:To:Subject:
+	 References:In-Reply-To; b=l1yg22UBBADTb85yEK6z/ADfdpRoK2yOf9mMbTXAH8p9qNNeRJTnDeFNhCCdFYplmoeWVkMW4T8IufvsdqwqmSY9SgmFoh7tyxSVr4Tu30zuiTYzBGIp/IwrHGRd/vFLTvyiPQfSSagnTjOxlrKX81VBGJ8U4KcjYRsqSObHkSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+Received: from localhost (unknown [IPv6:2a02:810b:4320:1000:4685:ff:fe12:5967])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3ffe.de (Postfix) with ESMTPSA id 4F76E299;
+	Wed,  9 Jul 2025 17:36:50 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-07fe9
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 09 Jul 2025 17:36:50 +0200
+Message-Id: <DB7MWBOS4YDK.2QIYX7WQ3X1KU@kernel.org>
+Cc: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Linus Walleij"
+ <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>, "Shawn
+ Guo" <shawnguo@kernel.org>, "Lee Jones" <lee@kernel.org>, "Frank Li"
+ <Frank.Li@nxp.com>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Andrew Lunn" <andrew@lunn.ch>, "Ioana Ciornei" <ioana.ciornei@nxp.com>
+Subject: Re: [PATCH 4/9] gpio: regmap: add the .get_direction() callback
+X-Mailer: aerc 0.16.0
+References: <20250709112658.1987608-1-ioana.ciornei@nxp.com>
+ <20250709112658.1987608-5-ioana.ciornei@nxp.com>
+ <0d0e9cee-2aaa-402d-a811-8c4704aadd74@lunn.ch>
+In-Reply-To: <0d0e9cee-2aaa-402d-a811-8c4704aadd74@lunn.ch>
 
-On Tue, 08 Jul 2025 21:16:37 -0500, Rob Herring (Arm) wrote:
-> Use the newly added of_reserved_mem_region_to_resource() function to
-> handle "memory-region" properties.
-> 
-> 
+> just provide the bitmap, and gpio-regmap.c can look at the bit in
+> the bitmap?
 
-Applied to
+I like that idea.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: stm32-ospi: Use of_reserved_mem_region_to_resource() for "memory-region"
-      commit: defe01abfb7f5c5bd53c723b8577d4fcd64faa5a
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+-michael
 
