@@ -1,97 +1,83 @@
-Return-Path: <linux-kernel+bounces-723419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C7FAFE678
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:56:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF2CBAFE5D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DB7B167252
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:56:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD781583485
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8ED121766A;
-	Wed,  9 Jul 2025 10:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9369B28D8D5;
+	Wed,  9 Jul 2025 10:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NWvypW9s"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AAD228FFCF;
-	Wed,  9 Jul 2025 10:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GK4ZwQ8Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4D328CF4C;
+	Wed,  9 Jul 2025 10:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752058225; cv=none; b=SWXqJYEIEwXeg0TV8+rNyuGKNu9hok8qw5ZsVmoRYsekLR98LG68JyjbfgkrbNUPDhUj5JN5PB17DzLUanSpUOQyylYNjX7WjPx66Xn1IpiMs7WidOxN+CX3CQd+yH+JDgrmrnJrgfrQiYKcpjeG+0ITBaEHl2XppF7zHL3I6ds=
+	t=1752057291; cv=none; b=Y66ioj24MlbyRm+Ob2hzUu9M/y3uaqf7G3zlEEJkb0ogAS5fljTcKvpWljY3tcIDX9wnvAL0xaiJOSzAvRO4LLFAfVP1XaFri0HWXZrwIPxELkRKP7eGAmewff6MB+WE0o9rjJabC6963IIPCtXasXAWN/88Ea2UcIkzHoMdUhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752058225; c=relaxed/simple;
-	bh=FpOBHbqxNPaRyuzoso35Bw5NmFuK5VKTTeQfVm72Vqk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N3MA+vCKoCcgarFupnR5qeKpITY8B3Rf8oz1RQmqJ8CABx03qLa9z1z0NRdFXodtYTosqoQyfc6+nz8KchWbDrRJnBzIXoX2R6cwp3iSHNAzVGw148Vto7XwbPtXV6ftwCUSEH1Vt226XYJhgWmSLHbfhmOLpC3kprQIokDzf1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NWvypW9s; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=YT
-	7+Q5/NWqu7pnKZyZQ2XSSZQm25QtlIaACuyvOyxGA=; b=NWvypW9spgpPozS5n6
-	jzJYk+xncOLnC/t8gU+nUY5ukpuOjIjRI1V1RRHwIB79lYsxHJ8MJj1T99aodS1T
-	cB7Uxc5YNbDJdDxRoouy+nbQcCQ5TzRxWOdznpAIYC+IW8/Id2aBujhL56bahims
-	FyVhnHvR4U5D1FqWbvSObluZI=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wB3hDbARW5oKB04Dg--.12748S2;
-	Wed, 09 Jul 2025 18:34:42 +0800 (CST)
-From: oushixiong1025@163.com
-To: Simona Vetter <simona@ffwll.ch>
-Cc: Helge Deller <deller@gmx.de>,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Shixiong Ou <oushixiong@kylinos.cn>
-Subject: [PATCH] fbcon: Fix outdated registered_fb reference in comment
-Date: Wed,  9 Jul 2025 18:34:38 +0800
-Message-Id: <20250709103438.572309-1-oushixiong1025@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1752057291; c=relaxed/simple;
+	bh=ye/kS3zQScJ7fXiXA7wmDs0gglazPSqwJCewE/16L18=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pweaAai0VM3FTCuc1zMF9fxWf9ftweLXRAnu7ahRcHRRkYHFPFq2PkV5pKo/s9IkRlDCbJbg9e3OVAZQu4C1eImTmQDum/js8I0uH/v/C13pl3W1pNffNn1D2wfhpNvxZoq6vf8DaBAzcLVELaKh6jKGTHCGaPqxQsD4MaqzmmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GK4ZwQ8Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E928FC4CEEF;
+	Wed,  9 Jul 2025 10:34:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752057291;
+	bh=ye/kS3zQScJ7fXiXA7wmDs0gglazPSqwJCewE/16L18=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GK4ZwQ8Q4yWpjjc/vZucPsCBat/t9+qnkE9Kfj4E8qQNtfBXiezLAyni4Da8WJ6Cz
+	 rLEZIm6LBmI16z5J1RYjRwk0Xsewusm+Grj1g3RjVvXrPwfEMZWy4ZSF30ju9yLNas
+	 JwQOrC5Xgijxf5YkOCTTuIAqE/2xtlB6hOnUHEV87SIigmuyX8hX3d7KGybcH/moA8
+	 d23U7VIRNcr0xw6pHYt5rIcmePhR1BrX2yzXXis6bTN/bXMXnz3z2Z/1yT3jJoKmOv
+	 YxWmeuGdIJateh7Hr1py+UAxFB82QcXL41Tr66TIfR8M6kzDzitev3IywQmz+2UQ7x
+	 u2XGZ+bJ0jrjQ==
+Date: Wed, 9 Jul 2025 12:34:48 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: interconnect: document the RPMh
+ Network-On-Chip Interconnect in Qualcomm Milos SoC
+Message-ID: <20250709-chestnut-beagle-of-painting-035a49@krzk-bin>
+References: <20250708-sm7635-icc-v2-0-e158dbadb29c@fairphone.com>
+ <20250708-sm7635-icc-v2-1-e158dbadb29c@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wB3hDbARW5oKB04Dg--.12748S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZFWDtF47uryDKryDGFyrtFb_yoWkCFc_Ca
-	sYv34DJ34DGrWfKrn3CFsxZ34FvayjvrWfu3WDtFyrta4UJ3y5Wr42vr1jqrWrKF1Ivrs0
-	gw17Kr4fuw1fCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8vD73UUUUU==
-X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXQSED2hsYPeT9wACsn
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250708-sm7635-icc-v2-1-e158dbadb29c@fairphone.com>
 
-From: Shixiong Ou <oushixiong@kylinos.cn>
+On Tue, Jul 08, 2025 at 12:20:37PM +0200, Luca Weiss wrote:
+> +++ b/Documentation/devicetree/bindings/interconnect/qcom,milos-rpmh.yaml
+> @@ -0,0 +1,136 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/interconnect/qcom,milos-rpmh.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm RPMh Network-On-Chip Interconnect on Milos
 
-The variable was renamed to fbcon_registered_fb, but this comment was
-not updated along with the change. Correct it to avoid confusion.
+on Milos SoC
 
-Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
----
- drivers/video/fbdev/core/fbcon.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-index 25684f5d6523..d8eab4859fd4 100644
---- a/drivers/video/fbdev/core/fbcon.c
-+++ b/drivers/video/fbdev/core/fbcon.c
-@@ -953,13 +953,13 @@ static const char *fbcon_startup(void)
- 	int rows, cols;
- 
- 	/*
--	 *  If num_registered_fb is zero, this is a call for the dummy part.
-+	 *  If fbcon_num_registered_fb is zero, this is a call for the dummy part.
- 	 *  The frame buffer devices weren't initialized yet.
- 	 */
- 	if (!fbcon_num_registered_fb || info_idx == -1)
- 		return display_desc;
- 	/*
--	 * Instead of blindly using registered_fb[0], we use info_idx, set by
-+	 * Instead of blindly using fbcon_registered_fb[0], we use info_idx, set by
- 	 * fbcon_fb_registered();
- 	 */
- 	info = fbcon_registered_fb[info_idx];
--- 
-2.25.1
+Best regards,
+Krzysztof
 
 
