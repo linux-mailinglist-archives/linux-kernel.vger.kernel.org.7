@@ -1,152 +1,119 @@
-Return-Path: <linux-kernel+bounces-723540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B32AFE841
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:52:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E3E2AFE849
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CACD4542D92
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:52:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB16348344A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E4D2D8DC4;
-	Wed,  9 Jul 2025 11:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62D42D8372;
+	Wed,  9 Jul 2025 11:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZvMd4y4R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PvlIVi3E"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A76B2BD5BC;
-	Wed,  9 Jul 2025 11:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483D52957CE;
+	Wed,  9 Jul 2025 11:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752061959; cv=none; b=HR6+3k1yDHZ5vgGX31EnSeJfuMb+yAY/65NLe0Xe3vBaz5e/7D0DjOOmkvFIWOysEY20h9B3vFhXlfXA1iW8cRwuch22DBkriELa30n6TyN3Bwiw3OYSQpiPEQTFkU2jCakyh/PM1ECyFhw9QZHHd5StdJ5rT9OUOyHAkvMe88c=
+	t=1752062001; cv=none; b=Fd6lw3/d51HpYB5FMpZw8W35S66zAfiyPQjyTpRXEgJ2XxcgJVBDBPJ+onBnMtj1qHveBbRTQgM06+Nq/Onth0m05WkkHV5Lc6Yq0AJI15UFtJ11v4JoBQovpIQb0oJGLSQrzpI7pYCpbTenDOKbgovOH7lUtXbW37kp8zJQbvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752061959; c=relaxed/simple;
-	bh=BL4mdT3PrGBtb3/SFQL2jD7FRK8O1qchsF7KKukY9XA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r0juhkrdNJruGqJOhzhkQ5h0QdsKfYBfA+piqfRz1IFOFxPwXb0qdCFrX1n9AKdD2CYkMU1a0JzlZqfoqbzWGgKz51KX4nc81sH4FcIRylQA2CCZJCXAY6xUkth+64R6Prb2eLKlAHvSDIxhEfK4G3THRB+KjTC/e4nCN93cTUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZvMd4y4R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DA51C4CEEF;
-	Wed,  9 Jul 2025 11:52:30 +0000 (UTC)
+	s=arc-20240116; t=1752062001; c=relaxed/simple;
+	bh=CzB6mDElDR+VEne/1VLgWZHCNaUK9k/sY72VkqmQsB8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oapKtL1P5D2nGofZeqflMcjMIl6Gcf896IRcDLr6dgzdDPG6gnzIAP3TaZ7VDjN4eZjdXr8twC+cjY5twI2QE1r9yOqPf5bHhzIkZCgulEKpgvIl4Ksb4vdfNUl0jj5A7VgoSrfXpRYCiQ400sLAvCRL7ZTRQWYksAUZFEWHpUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PvlIVi3E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BD2CC4CEEF;
+	Wed,  9 Jul 2025 11:53:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752061957;
-	bh=BL4mdT3PrGBtb3/SFQL2jD7FRK8O1qchsF7KKukY9XA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZvMd4y4RA/rH/vBz2NPE24B+63jpq3mXdRvGp9SqOHHXWwIfAg4hSDnkNt+OD6ZKq
-	 pCptueeS6OZeAkYaSoncsrNvJ8u0plrtK6kraivJUi5keG1qYYi/P/xx5bn/8eXvyR
-	 bgAQnt/NEdrcBNe00v1fxZOl+2HxbH5n+TZCNwJsnoaiTpOQfOISq63SRXLeKMHbBf
-	 /vVfgT1d1jJXYQdyNlQC/h5GtV9dYKqK2UcWJzRp9BDOpR/QokzyRzRDiPSc18bbIE
-	 R3OMtJbRFhCw1LqhPxL3Zk6wo9iAW4YEBIzOnXGqiXThDpUxRj79ndz30ijP5ExInM
-	 Rt85QuqDsa5Yw==
-Date: Wed, 9 Jul 2025 12:52:28 +0100
-From: Simon Horman <horms@kernel.org>
-To: Yassine Oudjana <y.oudjana@protonmail.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Sean Nyekjaer <sean@geanix.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Ramona Gradinariu <ramona.gradinariu@analog.com>,
-	"Yo-Jung (Leo) Lin" <0xff07@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	=?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
-	Danila Tikhonov <danila@jiaxyga.com>,
-	Antoni Pokusinski <apokusinski01@gmail.com>,
-	Vasileios Amoiridis <vassilisamir@gmail.com>,
-	Petar Stoykov <pd.pstoykov@gmail.com>,
-	shuaijie wang <wangshuaijie@awinic.com>,
-	Yasin Lee <yasin.lee.x@gmail.com>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Yassine Oudjana <yassine.oudjana@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH 2/3] net: qrtr: Define macro to convert QMI version and
- instance to QRTR instance
-Message-ID: <20250709115228.GY452973@horms.kernel.org>
-References: <20250406140706.812425-1-y.oudjana@protonmail.com>
- <20250406140706.812425-3-y.oudjana@protonmail.com>
- <fb61323b-aabd-4661-a202-02da7da557ea@oss.qualcomm.com>
- <aMbAZigHiAN2xupOYs9DodY2mOdNtw_oVjOaweflgA8IoXRQ5ctoZ8GYJ8PNAKDgL4f9N_UD7tFmkePUy9BCE8v20Mae2x-eL1ZpyJEdLZY=@protonmail.com>
- <20250707170636.GR89747@horms.kernel.org>
- <X2KJB3xtnC-pWM7o5TBw6ln3ItpMwn7tdn5Z8gpZY3oW31isE8PLTX5GUbJ6HcZk_9s72jb6ImwGL-anIoto4dK1MINTxzdRKfbejp_nXcA=@protonmail.com>
+	s=k20201202; t=1752062001;
+	bh=CzB6mDElDR+VEne/1VLgWZHCNaUK9k/sY72VkqmQsB8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PvlIVi3EIvVO8SXFThZm0t7FVpOUXK7jeODwMyf8k68JZqM4sYH7x5C2PPRxB3yJe
+	 kOVIpqpz+41eNjPwvzSTn+CxXFicIrOq9Q1bqV+arXsVfG0A2tJpsFWhwqk4+wNPOz
+	 C3ze1Q+CHpb8YSYSsa6rKUdvAweYNbqy1lpyYW45JEeYFBSiR6+R8U3zE/QzXXq6D0
+	 JsyPB6p2OlBoRIGayNZ3XkCmHdPJGJtt2YLvePNtUSGRHMaZd1Nvn0/SpEwc4iME6w
+	 YtxKALfZ7uk+9qhBWU4nZFFopGTm+nhrIOt1qQasR78eeKOPzvkWz54btF2iRzw+jX
+	 DgsMxbpY97Vlw==
+From: Philipp Stanner <phasta@kernel.org>
+To: Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Philipp Stanner <phasta@kernel.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
+	Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+Cc: dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org
+Subject: [PATCH v3 0/7] drm/sched: Fix memory leaks with cancel_job() callback
+Date: Wed,  9 Jul 2025 13:52:50 +0200
+Message-ID: <20250709115257.106370-2-phasta@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <X2KJB3xtnC-pWM7o5TBw6ln3ItpMwn7tdn5Z8gpZY3oW31isE8PLTX5GUbJ6HcZk_9s72jb6ImwGL-anIoto4dK1MINTxzdRKfbejp_nXcA=@protonmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 09, 2025 at 07:44:49AM +0000, Yassine Oudjana wrote:
-> 
-> 
-> 
-> 
-> 
-> Sent with Proton Mail secure email.
-> 
-> On Monday, July 7th, 2025 at 6:06 PM, Simon Horman <horms@kernel.org> wrote:
-> 
-> > On Sat, Jul 05, 2025 at 06:29:39PM +0000, Yassine Oudjana wrote:
-> > 
-> > > On Wednesday, April 9th, 2025 at 3:54 PM, Konrad Dybcio konrad.dybcio@oss.qualcomm.com wrote:
-> > > 
-> > > > On 4/6/25 4:07 PM, Yassine Oudjana wrote:
-> > 
-> > 
-> > ...
-> > 
-> > > > > diff --git a/include/linux/soc/qcom/qrtr.h b/include/linux/soc/qcom/qrtr.h
-> > > > > index 4d7f25c64c56..10c89a35cbb9 100644
-> > > > > --- a/include/linux/soc/qcom/qrtr.h
-> > > > > +++ b/include/linux/soc/qcom/qrtr.h
-> > > > > @@ -13,6 +13,8 @@ struct qrtr_device {
-> > > > > 
-> > > > > #define to_qrtr_device(d) container_of(d, struct qrtr_device, dev)
-> > > > > 
-> > > > > +#define QRTR_INSTANCE(qmi_version, qmi_instance) (qmi_version | qmi_instance << 8)
-> > > > 
-> > > > Please use FIELD_PREP + GENMASK to avoid potential overflows
-> > > > 
-> > > > Konrad
-> > > 
-> > > Since I'm using this macro in initializing QRTR match tables I am unable to use
-> > > FIELD_PREP. When I do, I get such errors:
-> > 
-> > 
-> > Does using FIELD_PREP_CONST, say in a QRTR_INSTANCE_CONST variant, help?
-> 
-> That works, but do we want to have two variants? Or in this case maybe
-> I should leave qmi_interface.c untouched and define the macro only for use
-> in match tables?
+Changes in v3:
+  - Remove forgotten copy-past artifacts. (Tvrtko)
+  - Remove forgotten done_list struct member. (Tvrtko)
+  - Slightly adjust commit message of patch 7.
+  - Add RBs. (Maira, Danilo, Tvrtko)
 
-FWIIW, my order of preference would be:
+Changes in v2:
+  - Add new unit test to test cancel_job()'s behavior. (Tvrtko)
+  - Add RB from Maíra
 
-1. Two variants, declared next to each other
-2. One variant (using FIELD_PREP_CONST)
-3. Leave qmi_interface.c untouched
+Changes since the RFC:
+  - Rename helper function for drm_sched_fini(). (Tvrtko)
+  - Add Link to Tvrtko's RFC patch to patch 1.
 
-...
+
+Since a long time, drm_sched_fini() can leak jobs that are still in
+drm_sched.pending_list.
+
+This series solves the leaks in a backwards-compatible manner by adding
+a new, optional callback. If that callback is implemented, the scheduler
+uses it to cancel all jobs from pending_list and then frees them.
+
+Philipp Stanner (7):
+  drm/sched: Avoid memory leaks with cancel_job() callback
+  drm/sched/tests: Implement cancel_job() callback
+  drm/sched/tests: Add unit test for cancel_job()
+  drm/sched: Warn if pending_list is not empty
+  drm/nouveau: Make fence container helper usable driver-wide
+  drm/nouveau: Add new callback for scheduler teardown
+  drm/nouveau: Remove waitque for sched teardown
+
+ drivers/gpu/drm/nouveau/nouveau_fence.c       | 35 ++++++----
+ drivers/gpu/drm/nouveau/nouveau_fence.h       |  7 ++
+ drivers/gpu/drm/nouveau/nouveau_sched.c       | 35 ++++++----
+ drivers/gpu/drm/nouveau/nouveau_sched.h       |  9 +--
+ drivers/gpu/drm/nouveau/nouveau_uvmm.c        |  8 +--
+ drivers/gpu/drm/scheduler/sched_main.c        | 37 ++++++----
+ .../gpu/drm/scheduler/tests/mock_scheduler.c  | 68 +++++++------------
+ drivers/gpu/drm/scheduler/tests/sched_tests.h |  1 -
+ drivers/gpu/drm/scheduler/tests/tests_basic.c | 42 ++++++++++++
+ include/drm/gpu_scheduler.h                   | 18 +++++
+ 10 files changed, 166 insertions(+), 94 deletions(-)
+
+-- 
+2.49.0
+
 
