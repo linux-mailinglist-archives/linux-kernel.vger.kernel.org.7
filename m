@@ -1,102 +1,123 @@
-Return-Path: <linux-kernel+bounces-724017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5559FAFEDA3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:24:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 950CDAFEDA2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:24:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94D8D16C5D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:23:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5533A7B0CEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EAF52E7181;
-	Wed,  9 Jul 2025 15:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="tfM/00Q/"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DD82E7F1E;
+	Wed,  9 Jul 2025 15:23:38 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976992D3EC1
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 15:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5771B28FFDB
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 15:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752074604; cv=none; b=K68+ahkFn9JgqSClMCfFJ/xjlwFk/JKiSwzufFTzUQil4Io4/5HhaIC2M64rDloRPMZl/U2Tie9TrxMLVdMf1MFA8OTLOgkBiTte3hwy6/sSl1l9H/3mU+LnTm7Xos65hfpIzn6uGLV7gGYJVC/N6rv0UjZz+gcYbUFePMgy3zo=
+	t=1752074617; cv=none; b=NO/f7VQgBGJUfZYBrzL8obbbqZ4LSXPKzW6X3wQKgBex32dQrQ2QOKqe+2W+mTI5L89vH5Z29c7SGk23kv9LZCcENRWTsD4qWRDjUVsKb9wAbj9Lrp6ox/t0dGmAGO8hl9s1omtkaQkaupjBBIO6DoH9p6aOXuiwey0UaCdME9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752074604; c=relaxed/simple;
-	bh=xNwWPqmfXox92HseMYI7HIS/IbNrVt1B74JGLKAC26I=;
+	s=arc-20240116; t=1752074617; c=relaxed/simple;
+	bh=jA466shT9OcyRSzYxq4e6vbv5RenQ1Yaspaa8D0m1kI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cFNGiTDqqJcENeipv7V6X4ukopqPqOCoNQqlCXVMvKH8oqSJIOnoN0ITRfnhQ7w0aSmYTsjbAsr89mHFY05pXt+bonzsxRsP5F3QBOtZMBtsLmiwth7WEchnZqfIUzrjtSUf6HpDHRfGsQfbfBM4pDnufDWrbst4OKBPPaK8+H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=tfM/00Q/; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7d3dd14a7edso865878085a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 08:23:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1752074601; x=1752679401; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=taKscuAxBARZZVcojDiir7HwGviwhLXve6yI29pYzq4=;
-        b=tfM/00Q/tJZssHdpFGe4w/pocrFNZCY55Kg4ExwytRN+Erx21XF4V15vIqVJbAL5Xs
-         P4k9lxxYlJn5lvRwIxqKdgNKF2lFs8IWW2Mg3LMo9/iLNTNGxegDpHmmQ9cKSOLW1wYd
-         eLK4vpXxwSd6M2y5nFP5Ui7gBbj745vovHy4bu5pYvv+yYPD+UM/VtLUu7FAaf/OXKLy
-         xMGh/amc/AKpQyALk+QHLYMOjN/agHxPI1u2cHXIgNghFogGQTxPfdLKp5yX8dFXZ2Ps
-         U2bQqN27LxaebdF3j5sBl9H6jFEs6V9kyiyjjqCnZJhj6W45MWOsOwZxXggNxPxHEAhY
-         gGzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752074601; x=1752679401;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=taKscuAxBARZZVcojDiir7HwGviwhLXve6yI29pYzq4=;
-        b=duw5L3U4u8+BaPBJcyNtqzEsWiKOarzqtX/z4SeESnU8ebH2W7JCTNM1oU2QzwZ53W
-         f6Bdkzs6QPxHu1iJcG8ryzOz58lo5PsnzMRwsJo+JC4fS1IyhYof/UcnCGYqbRWRtX1+
-         4AUirVgpggLDYZ9lOdg09daGGQGfoRu8e5WpyfAyweh5EzpH3OdGXWDUezVSGwIcGoTr
-         jWHaChpyRo5S7PhuA3UBcqbhTklAvGRa/wEI1utHHn5dsxkwZvWnY6bKUu8ypzkVllI9
-         oH1+Vm43pXhkSzAsP5chwiaea+mvBtd6VsWU/+xMwP2RLZTygrLzVPRo4B4hQxfVYGo0
-         EOgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVK6A7Xjiwdn0e8aA2zDvcsMbT3XrnFJGNXc3k3swieQBQHW3kXedXLF/aUjS5+0mEYDvS21fqXpWMjJVw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9TVGoeL9fTZsdYUxW5BCVqwCV7lgUXTfpJ1qI2HADeBOUvj5P
-	QUXdDaZZcgBolF8mW9llsayx3tDaEqwI4a31AE5FnQrOveQXerkxd6/5NdwjgJ7tpg==
-X-Gm-Gg: ASbGncvpnciLL7o4gDjFaRW4pa8/QlSRu88yWG/Cg9+aCtV2aLedASeekZ5KczxiOHG
-	Sxja6AQdQQy9P364nBFUbqt0O4zkwP0tUUhSz4t+u2aWYVquBt9oLMyKw0PxKWmHT8jCpE24bFY
-	/c0EE8fHGxRwp4EsqmDsZ4+mdM6F1w6fG4uWNpfZrlGozn4W/HlLE0/rzNO7n2whvnirgGOCyFa
-	mxox1ggt0TZcqPUkBp6FnlZ6uXmKem1jC4gotiqB7S8Z1zwvWGjOB1nqB3GViao9O7aOVupiqkW
-	Lsf+YxXfwp0/aOth7G0oPn+0eUTJEhdzef5bW4gYWTjD2sPVVHogufz2rvqC++ttbDq529RCXmk
-	a6MCVsLRQuLcXA7c=
-X-Google-Smtp-Source: AGHT+IFbarZZxnuGdEIcNxHTdtx9ncDHcHXXZLfwwDFk0c7S4XwskR5r0Tcfdvp0h6o4S0UIJPdXug==
-X-Received: by 2002:a05:6214:5981:b0:6ff:16da:ae22 with SMTP id 6a1803df08f44-70494e94cd8mr5492326d6.17.1752074601088;
-        Wed, 09 Jul 2025 08:23:21 -0700 (PDT)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-702c4d5ac6dsm92634596d6.96.2025.07.09.08.23.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 08:23:20 -0700 (PDT)
-Date: Wed, 9 Jul 2025 11:23:18 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 3/3] HID: core: do not bypass hid_hw_raw_request
-Message-ID: <dfaf82da-c389-4758-ac2c-102fc418ed41@rowland.harvard.edu>
-References: <20250709-report-size-null-v1-0-194912215cbc@kernel.org>
- <20250709-report-size-null-v1-3-194912215cbc@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=scXJXTBIrrM9neuGJwIG/ly4M/C0aA+nKaIsKzP+ydvGURloBa9Y1TuDGOov2f0TisTDjqxviBRG4jwUBaK/7x4xyXgj4DcTTnXQvRf+eBogtdPtW8B36ZmKLy8if9BaHD8tOZqA18iLNvhXemCGVMZut0/FE2PbVDFJVoA+N9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uZWdq-0000kp-8l; Wed, 09 Jul 2025 17:23:26 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uZWdo-007beD-0I;
+	Wed, 09 Jul 2025 17:23:24 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uZWdn-009ymh-39;
+	Wed, 09 Jul 2025 17:23:23 +0200
+Date: Wed, 9 Jul 2025 17:23:23 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	Andre Edich <andre.edich@microchip.com>,
+	Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH net v2 2/3] net: phy: allow drivers to disable polling
+ via get_next_update_time()
+Message-ID: <aG6Ja_Y9JNKkEon6@pengutronix.de>
+References: <20250709104210.3807203-1-o.rempel@pengutronix.de>
+ <20250709104210.3807203-3-o.rempel@pengutronix.de>
+ <e0b00f28-051e-4af6-afcb-7cdb5dc76549@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250709-report-size-null-v1-3-194912215cbc@kernel.org>
+In-Reply-To: <e0b00f28-051e-4af6-afcb-7cdb5dc76549@lunn.ch>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Jul 09, 2025 at 04:51:48PM +0200, Benjamin Tissoires wrote:
-> hid_hw_raw_request() is actually useful to ensure the provided buffer
-> and length are valid. Directly calling in the low level transport driver
-> function bypassed those checks and allowed invalid paramto be used.
+On Wed, Jul 09, 2025 at 04:10:48PM +0200, Andrew Lunn wrote:
+> >  	/* Only re-schedule a PHY state machine change if we are polling the
+> > -	 * PHY, if PHY_MAC_INTERRUPT is set, then we will be moving
+> > -	 * between states from phy_mac_interrupt().
+> > +	 * PHY. If PHY_MAC_INTERRUPT is set or get_next_update_time() returns
+> > +	 * PHY_STATE_IRQ, then we rely on interrupts for state changes.
+> >  	 *
+> >  	 * In state PHY_HALTED the PHY gets suspended, so rescheduling the
+> >  	 * state machine would be pointless and possibly error prone when
+> >  	 * called from phy_disconnect() synchronously.
+> >  	 */
+> > -	if (phy_polling_mode(phydev) && phy_is_started(phydev))
+> > -		phy_queue_state_machine(phydev,
+> > -					phy_get_next_update_time(phydev));
+> > +	if (phy_polling_mode(phydev) && phy_is_started(phydev)) {
+> > +		unsigned int next_time = phy_get_next_update_time(phydev);
+> > +
+> > +		/* Drivers returning PHY_STATE_IRQ opt out of polling.
+> > +		 * Use IRQ-only mode by not re-queuing the state machine.
+> > +		 */
+> > +		if (next_time != PHY_STATE_IRQ)
+> > +			phy_queue_state_machine(phydev, next_time);
+> > +	}
+> 
+> How does this interact with update_stats()?
+> 
+> phy_polling_mode() returns true because the update_stats() op is
+> implemented. phy_get_next_update_time() returns PHY_STATE_IRQ, because
+> the PHY is in a state where interrupts works, and then the statistics
+> overflow.
+> 
+> It seems like this code needs to be somehow made part of
+> phy_polling_mode(), so that it has the full picture of why polling is
+> being used.
 
-Don't worry too much about the sanity checks.  If they had been in 
-place, we wouldn't have learned about the bugs in __hid_request()!
+Ah, good point! I forgot about it.
 
-Alan Stern
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
