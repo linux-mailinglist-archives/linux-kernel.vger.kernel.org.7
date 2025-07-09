@@ -1,110 +1,94 @@
-Return-Path: <linux-kernel+bounces-724176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFDDBAFEF77
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:11:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF77AFEF79
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:13:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9740F7AD2F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:09:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4242563275
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420AD224AFB;
-	Wed,  9 Jul 2025 17:11:14 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383C9224B14;
+	Wed,  9 Jul 2025 17:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uxml2aPa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D6E223311;
-	Wed,  9 Jul 2025 17:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942FF1F0E50;
+	Wed,  9 Jul 2025 17:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752081073; cv=none; b=sa38OlhRTLQ1sWZVw73QzGLPgx3vBxiNXEV3xZxjqlIJefIKRvwdPTLy2JO7X6geGtvyXD2qfBk20wWeKtxYC1Fc6cp5u/MGXdxe23bW+pYtDaWjybxi8Ta1/I89gk3OwrdgaAgB+Wc2eDI+Us1grpL69kp7y57pZ5aWVBLDXmk=
+	t=1752081177; cv=none; b=rVbJL7b96j6hPKADWYeaifzTACWxtI8LgY2UiekbWwZOs0rGCGsvdBkl8SFJKsIZGBqactSQBLG5vfuAMhKYNz+sN8Y1GXanz/Xlx09mrSCjOrVMYH6hyLt0/oaCY9ujUFeR2TJyt8Crasr28ekcr88A5v3j/cLInnKLIiVo/XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752081073; c=relaxed/simple;
-	bh=rOxw1J6Bw5ePvIxnhvmcqIx1OhNgTapjbALNu/5KvXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V9jXb/Eu8FXxuNCWEnHvuyvdUQFK1AHFoeQ0zZ/hnsFEcuJ+sxdkMxMq0qe/3lo29P1hWGmdgiKkepMGSkhmaLlrRcrhuP2haxWy6Rgv2vdR4rzCrmlAJIrXUxfxD7ffjE1fMgeNHxvDnSfr4O78DvBqyCmHgv4Mq/IrJNxSWoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id 15D3157F1F;
-	Wed,  9 Jul 2025 17:11:10 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 6D1F82000F;
-	Wed,  9 Jul 2025 17:11:08 +0000 (UTC)
-Date: Wed, 9 Jul 2025 13:11:07 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] tracing: Remove "__attribute__()" from the type
- field of event format
-Message-ID: <20250709131107.397a3278@batman.local.home>
-In-Reply-To: <175197568917.977073.2201559708302320631.stgit@mhiramat.tok.corp.google.com>
-References: <175197567999.977073.8989204607899013923.stgit@mhiramat.tok.corp.google.com>
-	<175197568917.977073.2201559708302320631.stgit@mhiramat.tok.corp.google.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752081177; c=relaxed/simple;
+	bh=s4xgQFWfqOGsMAYXKhUvxzJT+bBNVYZkFEGG6DruuVs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LYoOjyyMh3nWW0xbA2BR1crdJfx8r8DGf93DTe1A9iA9Y6VgMXBCPbANDR2MoYfqsccCPwPgQYzGBuVBYvTD5rY/1laZip4HytxG/2//N8KaJM17dUANQa4H2IkbSnjNjPYAOItfm6yjJkIiH+WPJMKSLeaNZdrKd8jXrqKi1BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uxml2aPa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BA56C4CEEF;
+	Wed,  9 Jul 2025 17:12:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752081177;
+	bh=s4xgQFWfqOGsMAYXKhUvxzJT+bBNVYZkFEGG6DruuVs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Uxml2aPaR2k2BPpasv5uaHERpkSqJpu4dr3eAQmE/JQO4r1gXFPdE1fWf0d0zBJsu
+	 7NpGn71Cy//2bITr6DQxBexoJ3Rq8y/JwjzyEOaUrjCIM2aA4izDgmvXytl/B64QsQ
+	 pUb1Xg2o/W3j9uslQrvoSC7r7+CA2WFemChfs0uK5zGH7zOyR+QTsclMFy8Q1mqcC9
+	 SqUQmZewl7RoiXevt8UPhZUITRlUoUM5rp6UUyDNBnHJwd+W0NccQdL93RG+k1MwWw
+	 JPiSgj7bn+aZQE6/KwN1wIgO8fdzXzOORgJ8k0jXy1kPiaCdCb69SgdkL+pCucpwQ3
+	 ujBUsz3l+n5MA==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH v1] PM: sleep: Call pm_restore_gfp_mask() after dpm_resume()
+Date: Wed, 09 Jul 2025 19:12:47 +0200
+Message-ID: <2797018.mvXUDI8C0e@rjwysocki.net>
+Organization: Linux Kernel Development
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 6D1F82000F
-X-Rspamd-Server: rspamout02
-X-Stat-Signature: ck4kexkfb3ushs7d8a14y3thnw819uhe
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/p1rDc+3KDqYDO0FYp1TL/DM0A1phWDkA=
-X-HE-Tag: 1752081068-310608
-X-HE-Meta: U2FsdGVkX1+dWYv+E3E9ldTuVqBb3nhtSHRAjRp0OYBUDZ1no4dH0i2BSyEJnjhi3AJMsF+NX80EUeCkWnk7j/qVnW4xVFIcjsqjqI0dlPgPx1mYY1job0uYycQ2ll7X4LHjsZqbDO+woF3Ffz7/Ybxbq6JerVFJeoQqWG8WQ/tn/1lfBL74xQFEUEB6bbO8inBrlKuFIQw6YGqdANF6zvxQk3Gu3AUj5/Bm4zzsPKiGokoo1lvv8oU6FoVW3hoofmGfMnlwlS6xXbBSCZKcRtt7+1Vfv3jvp+yFvRQWvgO6qxUoKw8rJAtPVNftGFkgitwPM+UUfqkVJyZqWGH0GRfvqmlqaT8u
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue,  8 Jul 2025 20:54:49 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> With CONFIG_DEBUG_INFO_BTF=y and PAHOLE_HAS_BTF_TAG=y, `__user` is
-> converted to `__attribute__((btf_type_tag("user")))`. In this case,
-> some syscall events have it for __user data, like below;
-> 
-> /sys/kernel/tracing # cat events/syscalls/sys_enter_openat/format
-> name: sys_enter_openat
-> ID: 720
-> format:
->         field:unsigned short common_type;       offset:0;       size:2; signed:0;
->         field:unsigned char common_flags;       offset:2;       size:1; signed:0;
->         field:unsigned char common_preempt_count;       offset:3;       size:1; signed:0;
->         field:int common_pid;   offset:4;       size:4; signed:1;
-> 
->         field:int __syscall_nr; offset:8;       size:4; signed:1;
->         field:int dfd;  offset:16;      size:8; signed:0;
->         field:const char __attribute__((btf_type_tag("user"))) * filename;      offset:24;      size:8; signed:0;
->         field:int flags;        offset:32;      size:8; signed:0;
->         field:umode_t mode;     offset:40;      size:8; signed:0;
-> 
-> .
-> Then the trace event filter fails to set the string acceptable flag
-> (FILTER_PTR_STRING) to the field and rejects setting string filter;
-> 
->  # echo 'filename.ustring ~ "*ftracetest-dir.wbx24v*"' \
->     >> events/syscalls/sys_enter_openat/filter  
->  sh: write error: Invalid argument
->  # cat error_log
->  [  723.743637] event filter parse error: error: Expecting numeric field
->    Command: filename.ustring ~ "*ftracetest-dir.wbx24v*"
-> 
-> Since this __attribute__ makes format parsing complicated and not
-> needed, remove the __attribute__(.*) from the type string.
+Commit 12ffc3b1513e ("PM: Restrict swap use to later in the suspend
+sequence") changed two pm_restore_gfp_mask() calls in enter_state()
+and hibernation_restore() into one pm_restore_gfp_mask() call in
+dpm_resume_end(), but it put that call before the dpm_resume()
+invocation which is too early (some swap-backing devices may not be
+ready at that point).
 
-Actually, you can do this in update_event_fields() that already does
-this magic for enums as the field length.
+Moreover, this code ordering change was not even mentioned in the
+changelog of the commit mentioned above.
 
-And it doesn't free after allocation because it only does the
-allocation for events that will never be freed. For modules, it
-registers the allocated string so it will be freed on unload.
+Address this by moving that call after the dpm_resume() one.
 
--- Steve
+Fixes: 12ffc3b1513e ("PM: Restrict swap use to later in the suspend sequence")
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/base/power/main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -1254,8 +1254,8 @@
+  */
+ void dpm_resume_end(pm_message_t state)
+ {
+-	pm_restore_gfp_mask();
+ 	dpm_resume(state);
++	pm_restore_gfp_mask();
+ 	dpm_complete(state);
+ }
+ EXPORT_SYMBOL_GPL(dpm_resume_end);
+
+
+
 
