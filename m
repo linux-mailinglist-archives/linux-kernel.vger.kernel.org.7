@@ -1,141 +1,127 @@
-Return-Path: <linux-kernel+bounces-723320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF0ADAFE5C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:33:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3965AFE5A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:24:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEA801C233E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:34:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2F394850F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5C2258CEF;
-	Wed,  9 Jul 2025 10:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE2228D839;
+	Wed,  9 Jul 2025 10:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="zc+FHnde"
-Received: from out203-205-221-149.mail.qq.com (out203-205-221-149.mail.qq.com [203.205.221.149])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KPmYOEA3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE14E2580F2;
-	Wed,  9 Jul 2025 10:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B7E28C5D8;
+	Wed,  9 Jul 2025 10:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752057216; cv=none; b=NGBZng0jOp/1bOTN+lHhWECAJMM7Q8IYpMs8mQtU5JP8Bm1+JheVQ9F2nk+JYHjmFKmqVbfL82djPxBFMe/vhDbIvpqIhoQZ/NcA+t+ZoPCz4KJPMbayJWFNVa5yRu1tobiIGljhfaL1hE2MIaI0PtgHjOfkuLCvFCwjxuhiSwY=
+	t=1752056609; cv=none; b=Lcq59jBTUY9mKfh2FpD50FdkefA9AHf+1EtSjdwdiOfqQm8QJGWbeCtKQ4nWlpJkoJbmzT731E9f2RGB/sIMqdMHZWQx3CPkH3lYRD/cJw7bXmJrtGKRxd2RdzV2D4JH0LwAh09HWEG93NANEFvRLMwckE9c6NXWiYgJeoFHZWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752057216; c=relaxed/simple;
-	bh=3IsF1ew7kqgNm8XLHiLMvMYnA2sRgtdsC+g8eGCdlxc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b+/KN0LtzeeLr9GG2XorEXrtMaEvhzQe6X5gaJKnLNMUH0Ctx65gxtjEkQUHkci61R2Du3NxxFc60NN/ok8d12J2L4Pp8G3kIbwukoN3W923oCp10UYhwbrbfXmGh12f+LUYKUechPD9lK17H/i/k1XAr00mHWM9SH2cvj1It54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=zc+FHnde; arc=none smtp.client-ip=203.205.221.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1752056903; bh=cDzmZYAyC65zNQjN8HAkBF8tiGbPpVDTVh8/DtsyA/U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=zc+FHndel9DecQ8doMwid4wYzvhGF/92mMmo912tT67s6TNSch5Xe2Nwu1y+gswfP
-	 aSLlv3BGfIUZjLZPJtV6y7wCvuVfUBTFfTycYTpdX+k/+WHHnQRme58TjgqkYczM5u
-	 qchlaS8l+9N2kp3UAHi7wujHdH6qKZLDN10WqJZE=
-Received: from [30.20.172.11] ([119.147.10.163])
-	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
-	id 58D2DC6B; Wed, 09 Jul 2025 18:22:13 +0800
-X-QQ-mid: xmsmtpt1752056533tdq6vsbgx
-Message-ID: <tencent_7181918110AAD331E6775691326AD1000408@qq.com>
-X-QQ-XMAILINFO: MB5+LsFw85NoOhVH6De7JzWdBoDZ7i87tiBEi+WPetjo/JaGfY5RMN1wVnl13B
-	 ZrLONvetIaF0R/aRfHnSbmiU11UrsfcPYmu8OvFLQrWCz1pOMIiUBv3hNnCFsCajtTrcSqYVea5x
-	 qlKQxElSqU3r+q7tWI4Au5HhRw+CDPGTUK8DPM12OT9abFCLDdpkaDJRRvsK91Dxqeu4Oh4rSMlb
-	 w2XMqUMW2kKIbXI0DxeYC7yo/KXXDmxkypD1V3KDKf/0QHmL4A61Lj3M5IRvp8yQ0yVpTWGpyWva
-	 7RzcABXtZDp0mg3qnDk5xDg/atj2ZZhQKFROk7YG7BiCyMbUmeBid/BntvnswMsxJOAC0lTOkpGV
-	 9yQQl4Bsjny5ThYGZOKsw4qx3886+vOV6i0gmFw9IQ/1evcoiDpQt+ia4QABjO5U6wAOsPTTd6/n
-	 veeQLZLw75IFG1H5qeDefZrLv4FUWNpW1aEkc6qZ64MiD04Tdn5TpXEWxpgsLJkMzdVNC/ZoGGwM
-	 GVXgv43S1pji7jWfzgG95GxiMPRibs27eeHPO8aObaYW6jQfvUG5SCbq3HrcPeIW3f4xE97yt+cF
-	 DkjIBvQzVwHaQKgdpSrgoErg71p5QKJxSK4Ofp8jWwWSalQ6U/EkGEPlnnXkhKP+ZcarfpcLWLXE
-	 CFwa2k4hXTVq5m53iiCRdQZDIaY7+V6W7aogi4PvF5x2YhLFc439IvMzSp/7c3JEkfyanSbPFtkU
-	 NwgioTWMdQBCo84zNgBmo4biUuXthJItP+tiY3AByq1F0DKJbh/te6f0EzUxTurdc/Hn5fgOP9fY
-	 lITer4wKHOOHWUgWyczQwm0n2/4s6CwWJArVoZSD2PAwPrgDEZ8MCvUWaaNrQ0udceTFRseF2Z0C
-	 f6D4Ho9sEQ8AKLsCKZYu7gxPUXdxQZ5LsyEITOH0WrNvqExD8SF9M2sc2a1BuqUnxoJGNO7Qboql
-	 K/GuUW2KAsUb0tG9LJbHaMWPoZ0IE2Ay89E9pyDKKdMIbepFeT4sUOND/PMqX5eiBxPM5YUWS7yz
-	 apz/37Zi9qk2wd2vkoey6EETYnvOFDMkvvrTyqUA==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-OQ-MSGID: <dd7cd6ea-4c6e-4a00-b461-6888f2009ca8@qq.com>
-Date: Wed, 9 Jul 2025 18:22:12 +0800
+	s=arc-20240116; t=1752056609; c=relaxed/simple;
+	bh=2+N4smsYfrl5HTf8MH0tIEMC4qA9EcZ/1I6Yj3gLik4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A6uU6D6/EfQPPnpQ9qCD/H1TbkPU/hjcLROVnHLERWVCzJYHB0YmS0HNHulq4QDl2Xba94Ca/vtcSBvPdeOG/09f9FIJt7FQtsCUPTsJbO5DBczCQLQm/Ywk0b6d7zRAi11ozpf0gROzxqSNnkpMNBfh97YOu/LEMgvBoocNut4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KPmYOEA3; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752056608; x=1783592608;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2+N4smsYfrl5HTf8MH0tIEMC4qA9EcZ/1I6Yj3gLik4=;
+  b=KPmYOEA3C2EUNRcAE6pvyo4RqCfqyqcfF6FO424jTCg9jjUQZe+qmg1D
+   1O0QF/N24/IRPaJHe4z8RKVMUNOpll6x768dHe3F2CjQQIMUwoilhm/Vy
+   p7WQ8/qkzq2Bw4DchNlhtP7DgNsgiigRYXTONf3QPengqPx1wEFyYLW+D
+   k4VYE6prNIBAn28eCz54VGE6oriG3RIPUMn2JYdfDzExJpqv7brFCrGFU
+   F8gnjxA+bnc3uYxC4RAZNfWNFq52TxBn9ag17rMBPSoPlLxQlG7x30zoi
+   +AYWGcYpv5WZzDoEWhikG2Rl1qH49c+UpneRyIjUX2+8m3b4v9hxoS2oY
+   g==;
+X-CSE-ConnectionGUID: WPpMwy6rRuKVdkHsEjdq+Q==
+X-CSE-MsgGUID: 0dE/07ZyQlGenSHCR7B4Sw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="79750707"
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="79750707"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 03:23:19 -0700
+X-CSE-ConnectionGUID: nA7HpcjlRkSUBS07mOfahw==
+X-CSE-MsgGUID: 2ZH4Zb0hTQCxpOErnia7Jg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="160057178"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 09 Jul 2025 03:23:13 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uZRxG-0003OT-0W;
+	Wed, 09 Jul 2025 10:23:10 +0000
+Date: Wed, 9 Jul 2025 18:22:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje@dujemihanovic.xyz>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, David Wronek <david@mainlining.org>,
+	Karel Balej <balejk@matfyz.cz>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-hardening@vger.kernel.org, phone-devel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht, soc@lists.linux.dev,
+	linux-mmc@vger.kernel.org
+Subject: Re: [PATCH v16 3/5] arm64: Kconfig.platforms: Add config for Marvell
+ PXA1908 platform
+Message-ID: <202507091803.RBsXE3aX-lkp@intel.com>
+References: <20250708-pxa1908-lkml-v16-3-b4392c484180@dujemihanovic.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: gadget: configfs: Fix OOB read on empty string write
-To: Sergey Shtylyov <sergei.shtylyov@gmail.com>, gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- katieeliu@tencent.com, security@tencent.com
-References: <tencent_B1C9481688D0E95E7362AB2E999DE8048207@qq.com>
- <e1ef050c-9679-4571-a4dc-581bf005dab7@gmail.com>
-From: Xinyu Liu <1171169449@qq.com>
-In-Reply-To: <e1ef050c-9679-4571-a4dc-581bf005dab7@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708-pxa1908-lkml-v16-3-b4392c484180@dujemihanovic.xyz>
 
-Hi Sergey,
+Hi Duje,
 
-Thanks for your review.
+kernel test robot noticed the following build warnings:
 
-You are right, removing the blank line is inappropriate. I’ve 
-double-checked the original code and confirmed there are no invisible 
-spaces or tabs, yet checkpatch.pl still reports "ERROR: trailing 
-whitespace" on these lines. I removed the empty line here, and it 
-resolved the error.
+[auto build test WARNING on d7b8f8e20813f0179d8ef519541a3527e7661d3a]
 
-Thanks for pointing this out!
+url:    https://github.com/intel-lab-lkp/linux/commits/Duje-Mihanovi/dt-bindings-mmc-sdhci-pxa-restrict-pinctrl-to-pxav1/20250709-011510
+base:   d7b8f8e20813f0179d8ef519541a3527e7661d3a
+patch link:    https://lore.kernel.org/r/20250708-pxa1908-lkml-v16-3-b4392c484180%40dujemihanovic.xyz
+patch subject: [PATCH v16 3/5] arm64: Kconfig.platforms: Add config for Marvell PXA1908 platform
+config: arm64-kismet-CONFIG_I2C_GPIO-CONFIG_VIDEO_MMP_CAMERA-0-0 (https://download.01.org/0day-ci/archive/20250709/202507091803.RBsXE3aX-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20250709/202507091803.RBsXE3aX-lkp@intel.com/reproduce)
 
-Best regards,
-Xinyu Liu
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507091803.RBsXE3aX-lkp@intel.com/
 
-在 2025/7/9 16:48, Sergey Shtylyov 写道:
-> On 7/9/25 6:55 AM, Xinyu Liu wrote:
->
->> When writing an empty string to either 'qw_sign' or 'landingPage'
->> sysfs attributes, the store functions attempt to access page[l - 1]
->> before validating that the length 'l' is greater than zero.
->>
->> This patch fixes the vulnerability by adding a check at the beginning
->> of os_desc_qw_sign_store() and webusb_landingPage_store() to handle
->> the zero-length input case gracefully by returning immediately.
->>
->> Signed-off-by: Xinyu Liu <katieeliu@tencent.com>
->> ---
->>   drivers/usb/gadget/configfs.c | 6 ++++--
->>   1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
->> index fba2a56dae97..1bb32d6be9b3 100644
->> --- a/drivers/usb/gadget/configfs.c
->> +++ b/drivers/usb/gadget/configfs.c
->> @@ -1064,7 +1064,8 @@ static ssize_t webusb_landingPage_store(struct config_item *item, const char *pa
->>   	struct gadget_info *gi = webusb_item_to_gadget_info(item);
->>   	unsigned int bytes_to_strip = 0;
->>   	int l = len;
->> -
->     Why are you removing empty line here?
->
->> +	if (!len)
->> +		return len;
->>   	if (page[l - 1] == '\n') {
->>   		--l;
->>   		++bytes_to_strip;
->> @@ -1187,7 +1188,8 @@ static ssize_t os_desc_qw_sign_store(struct config_item *item, const char *page,
->>   {
->>   	struct gadget_info *gi = os_desc_item_to_gadget_info(item);
->>   	int res, l;
->> -
->     And here?
->
->> +	if (!len)
->> +		return len;
->>   	l = min_t(int, len, OS_STRING_QW_SIGN_LEN >> 1);
->>   	if (page[l - 1] == '\n')
->>   		--l;
-> MBR, Sergey
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for I2C_GPIO when selected by VIDEO_MMP_CAMERA
+   WARNING: unmet direct dependencies detected for I2C_GPIO
+     Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && (GPIOLIB [=n] || COMPILE_TEST [=n])
+     Selected by [y]:
+     - VIDEO_MMP_CAMERA [=y] && MEDIA_SUPPORT [=y] && MEDIA_PLATFORM_SUPPORT [=y] && MEDIA_PLATFORM_DRIVERS [=y] && V4L_PLATFORM_DRIVERS [=y] && I2C [=y] && VIDEO_DEV [=y] && (ARCH_MMP [=y] || COMPILE_TEST [=n]) && COMMON_CLK [=y]
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
