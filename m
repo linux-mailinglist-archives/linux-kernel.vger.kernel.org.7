@@ -1,220 +1,175 @@
-Return-Path: <linux-kernel+bounces-723273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C996AFE540
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:12:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B1DBAFE51F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:08:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DE594E7124
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:08:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580391C45323
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93D328CF5F;
-	Wed,  9 Jul 2025 10:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F83289E26;
+	Wed,  9 Jul 2025 10:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sGpfLbPo"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2050.outbound.protection.outlook.com [40.107.92.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="oOH+uUcf"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DC728C02C;
-	Wed,  9 Jul 2025 10:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752055566; cv=fail; b=ZwWN3TwvFi3mSMxj9dZ2PL1OaNZlGGeiVSXPw5nZ6DrOVJzI2B6W9np5tdmZj3PMrdGAPLKaLdyMU7Bi0kXeyTt6PWupLR9ExMlpkgQE0lpoBS5xnQazmpicfGt3XBLJ2IF0k0DMW+aocXfbxPEtEP90onBOfb8/EcU1GBUTNFA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752055566; c=relaxed/simple;
-	bh=886wp6r3x8V6QyRQp0vIyjr9MdBiVxy7NpyIky32p/o=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t7ItrrGP+hC1IRFlfivsmn+lzn4xlcSZe8jMjCDT5Bs8REa/RMlMUo/9SQirwpQYmXLyls3hTV8+V1UMup78j82w0WDMWWu62vz4bGCll4Nf4ShVqrcCTTQacCxQApWH9gkElc2IzbCHZe6YfNgTC0JufBZhU+AogmHruj9oEyA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sGpfLbPo; arc=fail smtp.client-ip=40.107.92.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RmU1MxKkTzOtP4MmpakQ5auO6SfAmW4/NBKxUqhoo98Xd7doswLU1WiBGowuTQm327VBnfh9PyrQOJNMN+2rnz1qZQ9gqV0VIykr9qSvT8qmtPQTPmH7d3H/aggiOkdNHOlrdXT+GkuPTLN9np1XZFXD6lFj+XD+aXs5lmRvwC5SJyXlsaJUOEzii9Tqm8vuxAN+tY4BIkaMPR/vNPOMewqhhvtSPLe4olzjADIQnZfVUG50uZiBPNxW45Zoz4TKDLkyxYmMKaIJlGLP51yeANsOE5Asa9RvtFAM6eeeNFmkxUKKq1zr9i/GlGSVipXkvly2VqRPqtClIVl6f1dHVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AqRuNUr1X/c6qSZqGmFlIUjbdBiunAB0M33CLbQVPo8=;
- b=f4+tTeZaQHMQY2rnIrpvhy0sIfBmwPnqIFpB9Yt7vfC0/pCEsUiWUK7Oi63asx5QXk/lSf2ATGWn0X705lFvt8/O3Q20HnUmqaHKgpwFqct9dfsKXJQbgfAx4XklHahyyFIwcvbvxIy2NSm+Z8LAiDvvtrDRzhPB1meP8cHTBYiu4SGPb/VuRBVhcxpLKDI3UrHy7J68EQJ29lYZvpwhb+q7T6DNRZOINGGKsOnKcdbQ/CPpbG7j7JTIxwvA6zmHRHBy9xR/E9ev0R0nFiGJ2d5hf5DpvofgWn56ga7zeY2Mq+GX8T2PLp32nf9JC+vxS9T01iaJVn0pUYDFqkhwig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AqRuNUr1X/c6qSZqGmFlIUjbdBiunAB0M33CLbQVPo8=;
- b=sGpfLbPock9LxITZgr7zpX4L/e1DN3O3fardfbmzQmQNpij+YE07gBKltxU3d785TPLO4yMDtx+lf7khjPxP3OtQHkIwTawtouZAlDjyOIpXrYsFIvpKrNuYS5SNYmGj8QeNHHpwbiUw4/Ns7PvBtfCaRZdpUa8/pXqAgu5DccE=
-Received: from SN7PR04CA0183.namprd04.prod.outlook.com (2603:10b6:806:126::8)
- by DS0PR12MB8072.namprd12.prod.outlook.com (2603:10b6:8:dd::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Wed, 9 Jul
- 2025 10:05:59 +0000
-Received: from SA2PEPF00003AE7.namprd02.prod.outlook.com
- (2603:10b6:806:126:cafe::89) by SN7PR04CA0183.outlook.office365.com
- (2603:10b6:806:126::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.21 via Frontend Transport; Wed,
- 9 Jul 2025 10:05:59 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- SA2PEPF00003AE7.mail.protection.outlook.com (10.167.248.7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8901.20 via Frontend Transport; Wed, 9 Jul 2025 10:05:59 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Jul
- 2025 05:05:59 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Jul
- 2025 05:05:58 -0500
-Received: from hjbog-srdc-41.amd.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 9 Jul 2025 05:05:53 -0500
-From: Samuel Zhang <guoqing.zhang@amd.com>
-To: <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
-	<rafael@kernel.org>, <len.brown@intel.com>, <pavel@kernel.org>,
-	<gregkh@linuxfoundation.org>, <dakr@kernel.org>, <airlied@gmail.com>,
-	<simona@ffwll.ch>, <ray.huang@amd.com>, <matthew.auld@intel.com>,
-	<matthew.brost@intel.com>, <maarten.lankhorst@linux.intel.com>,
-	<mripard@kernel.org>, <tzimmermann@suse.de>
-CC: <mario.limonciello@amd.com>, <lijo.lazar@amd.com>, <victor.zhao@amd.com>,
-	<haijun.chang@amd.com>, <Qing.Ma@amd.com>, <Owen.Zhang2@amd.com>,
-	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>, "Samuel
- Zhang" <guoqing.zhang@amd.com>
-Subject: [PATCH v5 5/5] drm/amdgpu: do not resume device in thaw for normal hibernation
-Date: Wed, 9 Jul 2025 18:05:12 +0800
-Message-ID: <20250709100512.3762063-6-guoqing.zhang@amd.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250709100512.3762063-1-guoqing.zhang@amd.com>
-References: <20250709100512.3762063-1-guoqing.zhang@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C2928934C
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 10:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752055536; cv=none; b=mMeWYgs2lrtBLR/fGbwgh7mXmrio0LU/MaVoRi69nigfVQEHpwROay4+rtOckGK2FIxS6knhmO/dHhtRPoolcmjvYSj1S3uRBVkSreHhovK9v3jWInrbDwMyAqoknTZELaAOknnw2gXXrxgVXzujNMO9A4E8Tnw5VO8m1lsiV6A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752055536; c=relaxed/simple;
+	bh=sFZ+QicVm3fqRKkbFrQtDvOSQDGAAazW2i7zJFINsO8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rrFe4eliSxvRVdRY3Z+PEw2nF8s6iF9kuhFa1BOai6ogm/JyYKxgvF3jGDGZzBMOvTXPIQsVJHVtOhVA/XEZherSjqWi5DwGDTvYc2RsMdzXf1tt55FRXNS8jxDllLLlRaRvD8SIiBOYX/O4Ghhj8mbZ66QGHJj2Xb/iMA+VmKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=oOH+uUcf; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-453647147c6so50831245e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 03:05:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1752055531; x=1752660331; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0x+leR6VZvjdpbbABt7eT4Ar2h6toyeGs2XG4qKz76A=;
+        b=oOH+uUcfnhLxUX/1TiA+CXk8zszEO+RvDOZpSh1MK3SLwG4hej9TrIEfhRjP5ACAe/
+         JVnOPk6e60AYZ9eNHFDuq8HkNU9jMJaqn7lsMLI7Zs6170KUpGZjUsCt4opf9k2M7y+m
+         Qo16wHkDizWZZunTYSA63dNpHLFMyU9bqRSAVG/DBCH0VanzdsgantFrgUojKgA26tmD
+         T+OhS73xOIkkmlmO5I43CYeX4zeWh0uuJSxxiH2Y02NyN3PR3bMbntyreKCzbVNeFzWU
+         qFtJ2XEYt8JqAoMcRpA9NdF8OSOIVDYVZZouZ2l1cSWEnW9QEfAKApvbJG/eliA8+ZpD
+         mhZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752055531; x=1752660331;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0x+leR6VZvjdpbbABt7eT4Ar2h6toyeGs2XG4qKz76A=;
+        b=TVUVbJMDAS5rDWZhEwBhyl27ilxfK+PzzT96gWnLz4Sq80D1vrdj21kCei4cPy8s9V
+         TCs5fzMCJolDn7U5hgmJvgc25orNZHbt63pHqt4RNOO3TTkU9lol7N7P/AhUSPo+2olo
+         dzqfrzAA0dCAF+S5R2VeMxA2MkJEEaNMI3typLUA0x1fFYXtvLF0bRkK45UHDqnwmsAx
+         oeJDhIp80ak09U/72Mn906Ak1ZeTjXZBSY8gpu7M+rUga9vVh/5SddmN3yfpAZ1zE2dD
+         8C6Vy4kSrY52q8GlG1kj9ThlPr0aHiv1/43acFVrof6CFF8z9Dn9Vl6/rwT2ekxIEk2o
+         8l7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUDw/0zDONfbDZ5+djezbmrrEBbpZvUEdiz16UGHSsW2lPa+jRFJMC1PHGCRF554Xo3uvizD/h/Dxy+IfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywn3Z6/1Bro03m1olsxLsOadA8qj+cTFkwa+5qVoXXUiwzCH2fh
+	OIL2NBLImC3K+uu1oePjDpj4B1G8lsiAH9MKajEADAYw32cbsiiv6dIUK8BXgFu81bk=
+X-Gm-Gg: ASbGncsWRPsNGaqzqFLGabW/rETHH/4d+G7dZ99XjaEHX5BjPH2AtrAahkK0y6523QO
+	4cgNZFxvfG5lHG36LXA3mKmdDfxKIiKQYZV5S+1B7ApFfkY5duk5HV3BMkgXIx9gcNYCr21S3iA
+	zE8i8n3gk/DDLWd3dC+qf/eUDhrTM1igGseUQM3zoNm7lMhGup7V/XPIaKLkdxfZd67PnNtqIRJ
+	EHgHH1LIVfdjYAF2mEqBgzJ7dfRTT1RZihMqJikodz9x3/afKEZ9C9hkxzusnsd592JFXQMfX/W
+	7QFVihHcCJmncKGe09kI/OqtbwVbLJJ83CMQT7mjRxaXRbmCypcc9gz9yH1OLsw=
+X-Google-Smtp-Source: AGHT+IHpIFajgMol8nI7yV85sDxF3J5lIWIyrknMcsC4HlnClZXLtkHdvmnIZr6BNblri25TvejkxA==
+X-Received: by 2002:a05:600c:3e14:b0:442:f98e:f37 with SMTP id 5b1f17b1804b1-454d53a0161mr13652105e9.21.1752055530479;
+        Wed, 09 Jul 2025 03:05:30 -0700 (PDT)
+Received: from jiri-mlt ([85.163.81.98])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d4fc333dsm18171305e9.0.2025.07.09.03.05.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 03:05:30 -0700 (PDT)
+Date: Wed, 9 Jul 2025 12:05:24 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Carolina Jubran <cjubran@nvidia.com>, 
+	Tariq Toukan <tariqt@nvidia.com>, Cosmin Ratiu <cratiu@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Simon Horman <horms@kernel.org>, Joe Damato <jdamato@fastly.com>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] devlink: move DEVLINK_ATTR_MAX-sized array off stack
+Message-ID: <dugteasq4zxwqww4hepsomjga4rxpyk76p5eudk7yrs74ub4vl@cusxvnvgmmtz>
+References: <20250708160652.1810573-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: guoqing.zhang@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003AE7:EE_|DS0PR12MB8072:EE_
-X-MS-Office365-Filtering-Correlation-Id: 17ff629e-326f-4505-12a9-08ddbed03448
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BC33KRkNvm1QxPyGWy1qhPzko8kkPTly/HN0Wq/5HvzrEjrgMjuRFxjFPFfb?=
- =?us-ascii?Q?ybpkNLgAWp41BGrMh4n5RD0xzLov5rFl1lR1y75ix7PaJgdmxt71uleaZRT1?=
- =?us-ascii?Q?mF/pB0j8wTanQRpI/yPU+dD/lFgfPg6bFVqdNwTyIqtrYMp11FFIwKnRRp3C?=
- =?us-ascii?Q?XT5IJBmuDA7B51Q0vEnwsQTl4Vj6EB+uvhHpBWY6zkwT3pDlu293MymI2Jhu?=
- =?us-ascii?Q?l3V5EYsurrVEUyC8wLBP2q5h99FA6POWFeB9ssKJslqhLqWZHMMYB9OYHwKV?=
- =?us-ascii?Q?hhBBeap/4MhRIZNr7YZMl9z0tG9yjxN1wrGBlIbTu57Rclu4LRKjQ6EZDGyh?=
- =?us-ascii?Q?+p8Ml7YMWVs/XwK8mr0adpYJ9MjMatF4doR/cBK4Jl0cBpUuVEs7FfyroRdY?=
- =?us-ascii?Q?5y+0mgzefLpNXsDLmfmQkQMDb3bmK4L0YNm5yvGSEIV+TTXa2CDme13a0LN2?=
- =?us-ascii?Q?MZbvX/QM5q9pVRtgWvlB/w9JlWwOOuvJZjIERezxyP5488BqFfH2pc25J1QU?=
- =?us-ascii?Q?Ro3Vt0A3thHX56/HvZ03LuPn//BVV6WKPO8NJDzSHqk8rdF7qDpd4WwDhdqo?=
- =?us-ascii?Q?q7xY3YRLl/yGmxiDgJZ5RbbYIFKAFJMgVFxHA31RH1z1gFsQIuhHfnRF8H21?=
- =?us-ascii?Q?iahBovUNdOqh7Pao0m6e64pa3wMiaIN8A9RiKRPRI2gT4ER1dm2DJeRQMhCZ?=
- =?us-ascii?Q?rvwbVYtrFFCxdof3krjG3BU+q9kMWxR3kSgt0mgSqJzZy+a/8EAzNb3DLLlA?=
- =?us-ascii?Q?sgLE37e/lLGoY85vgIYit04KTXLvPBVtG1QNooYGDfcP8tlFOjfk6KhTPw4r?=
- =?us-ascii?Q?YKqiMS+lM+Kqv98nQIumuxV/groUppzB+0Dv05RccghVGjdtbxRhjGlfHgDN?=
- =?us-ascii?Q?eFxoWQU2KykJNV7J57l3jtQWUppPgnOGoAS8jd5Sxam6EM1C6al0Tsygfl1r?=
- =?us-ascii?Q?WLGXPhlBjCPG7HLg6LVXIVVj9sSx8NNNbjxr4lDnyqDkkbSwk8TRwvG9C5F6?=
- =?us-ascii?Q?0clfg7PFvg6idUM+tEb5jvPTW6Vr9inQZvt6uBSttxAfCxlm8z8sRq7dVDaG?=
- =?us-ascii?Q?rk+N6q8RFkst+V2XkMzQhM4J+CV0V1mum1M6MPMvNt3Y3lP5nbS9J6Q9PrJB?=
- =?us-ascii?Q?jDG0SxUooSDd4nNug1uySMo3ETfUutnoh4pp1bT5bx9LaWRVqE2a++9Z34lr?=
- =?us-ascii?Q?serkDbhZLFZpOZ9F0XbyT1t11oo5bm7hIQdItThVa02fbWVqLUiCbYsrNkIK?=
- =?us-ascii?Q?08iScqlJt8W2PRocZbhlPlGul+6mnJanE8ACJzsucWQI4TVTk3JBhM6JzlI6?=
- =?us-ascii?Q?ADDXRoQlViNGTae1I7YW3BxHdlqngnS75fBn+gQ4jXVRDI1To6OYUGskxHEr?=
- =?us-ascii?Q?J9jyqi0YnBLTbg2m+9Hp9r8UUC9tj7a3IiwbJY7RtrnZP91WLYorPDHBx//7?=
- =?us-ascii?Q?A64O68518Wxk9o+e1zETD1h64m1SRgbCqj43OQ1+cbaprApp5YxbZeIQdqqh?=
- =?us-ascii?Q?C4e0a+bthLCA8esA5WEzOtLwmYSzephYkooKAqxGEP5RB0defwvF7EhUlw?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 10:05:59.5358
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 17ff629e-326f-4505-12a9-08ddbed03448
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003AE7.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8072
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708160652.1810573-1-arnd@kernel.org>
 
-For normal hibernation, GPU do not need to be resumed in thaw since it is
-not involved in writing the hibernation image. Skip resume in this case
-can reduce the hibernation time.
+Tue, Jul 08, 2025 at 06:06:43PM +0200, arnd@kernel.org wrote:
+>From: Arnd Bergmann <arnd@arndb.de>
+>
+>There are many possible devlink attributes, so having an array of them
+>on the stack can cause a warning for excessive stack usage:
+>
+>net/devlink/rate.c: In function 'devlink_nl_rate_tc_bw_parse':
+>net/devlink/rate.c:382:1: error: the frame size of 1648 bytes is larger than 1536 bytes [-Werror=frame-larger-than=]
+>
+>Change this to dynamic allocation instead.
+>
+>Fixes: 566e8f108fc7 ("devlink: Extend devlink rate API with traffic classes bandwidth management")
+>Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>---
+>I see that only two of the many array entries are actually used in this
+>function: DEVLINK_ATTR_RATE_TC_INDEX and DEVLINK_ATTR_RATE_TC_BW. If there
+>is an interface to extract just a single entry, using that would be
+>a little easier than the kcalloc().
+>---
+> net/devlink/rate.c | 18 ++++++++++++------
+> 1 file changed, 12 insertions(+), 6 deletions(-)
+>
+>diff --git a/net/devlink/rate.c b/net/devlink/rate.c
+>index d39300a9b3d4..e4083649748f 100644
+>--- a/net/devlink/rate.c
+>+++ b/net/devlink/rate.c
+>@@ -346,19 +346,23 @@ static int devlink_nl_rate_tc_bw_parse(struct nlattr *parent_nest, u32 *tc_bw,
+> 				       unsigned long *bitmap,
+> 				       struct netlink_ext_ack *extack)
+> {
+>-	struct nlattr *tb[DEVLINK_ATTR_MAX + 1];
+>+	struct nlattr **tb;
+> 	u8 tc_index;
+> 	int err;
+> 
+>+	tb = kcalloc(DEVLINK_ATTR_MAX + 1, sizeof(struct nlattr *), GFP_KERNEL);
+>+	if (!tb)
+>+		return -ENOMEM;
+> 	err = nla_parse_nested(tb, DEVLINK_ATTR_MAX, parent_nest,
+> 			       devlink_dl_rate_tc_bws_nl_policy, extack);
+> 	if (err)
+>-		return err;
+>+		goto out;
+> 
+>+	err = -EINVAL;
+> 	if (!tb[DEVLINK_ATTR_RATE_TC_INDEX]) {
+> 		NL_SET_ERR_ATTR_MISS(extack, parent_nest,
+> 				     DEVLINK_ATTR_RATE_TC_INDEX);
+>-		return -EINVAL;
+>+		goto out;
+> 	}
+> 
+> 	tc_index = nla_get_u8(tb[DEVLINK_ATTR_RATE_TC_INDEX]);
+>@@ -366,19 +370,21 @@ static int devlink_nl_rate_tc_bw_parse(struct nlattr *parent_nest, u32 *tc_bw,
+> 	if (!tb[DEVLINK_ATTR_RATE_TC_BW]) {
+> 		NL_SET_ERR_ATTR_MISS(extack, parent_nest,
+> 				     DEVLINK_ATTR_RATE_TC_BW);
+>-		return -EINVAL;
+>+		goto out;
+> 	}
+> 
+> 	if (test_and_set_bit(tc_index, bitmap)) {
+> 		NL_SET_ERR_MSG_FMT(extack,
+> 				   "Duplicate traffic class index specified (%u)",
+> 				   tc_index);
+>-		return -EINVAL;
+>+		goto out;
+> 	}
+> 
+> 	tc_bw[tc_index] = nla_get_u32(tb[DEVLINK_ATTR_RATE_TC_BW]);
+> 
+>-	return 0;
+>+out:
+>+	kfree(tb);
+>+	return err;
 
-On VM with 8 * 192GB VRAM dGPUs, 98% VRAM usage and 1.7TB system memory,
-this can save 50 minutes.
-
-Signed-off-by: Samuel Zhang <guoqing.zhang@amd.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-index 4f8632737574..b24c420983ef 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-@@ -2541,6 +2541,10 @@ amdgpu_pci_shutdown(struct pci_dev *pdev)
- 	if (amdgpu_ras_intr_triggered())
- 		return;
- 
-+	/* device maybe not resumed here, return immediately in this case */
-+	if (adev->in_s4 && adev->in_suspend)
-+		return;
-+
- 	/* if we are running in a VM, make sure the device
- 	 * torn down properly on reboot/shutdown.
- 	 * unfortunately we can't detect certain
-@@ -2557,6 +2561,10 @@ static int amdgpu_pmops_prepare(struct device *dev)
- 	struct drm_device *drm_dev = dev_get_drvdata(dev);
- 	struct amdgpu_device *adev = drm_to_adev(drm_dev);
- 
-+	/* device maybe not resumed here, return immediately in this case */
-+	if (adev->in_s4 && adev->in_suspend)
-+		return 0;
-+
- 	/* Return a positive number here so
- 	 * DPM_FLAG_SMART_SUSPEND works properly
- 	 */
-@@ -2655,12 +2663,21 @@ static int amdgpu_pmops_thaw(struct device *dev)
- {
- 	struct drm_device *drm_dev = dev_get_drvdata(dev);
- 
-+	/* do not resume device if it's normal hibernation */
-+	if (!pm_hibernate_is_recovering())
-+		return 0;
-+
- 	return amdgpu_device_resume(drm_dev, true);
- }
- 
- static int amdgpu_pmops_poweroff(struct device *dev)
- {
- 	struct drm_device *drm_dev = dev_get_drvdata(dev);
-+	struct amdgpu_device *adev = drm_to_adev(drm_dev);
-+
-+	/* device maybe not resumed here, return immediately in this case */
-+	if (adev->in_s4 && adev->in_suspend)
-+		return 0;
- 
- 	return amdgpu_device_suspend(drm_dev, true);
- }
--- 
-2.43.5
-
+Isn't it about the time to start to leverage or cleanup infrastructure
+for things like this? /me covers against all the eggs flying in
+I mean, there are subsystems where it's perfectly fine to use it.
+Can we start with frees like this one and avoid the silly gotos?
 
