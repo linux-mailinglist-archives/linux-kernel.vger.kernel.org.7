@@ -1,148 +1,354 @@
-Return-Path: <linux-kernel+bounces-723170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2924AFE3F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:20:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33C4FAFE3E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3245482770
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:19:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78C041C434F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64480286D7E;
-	Wed,  9 Jul 2025 09:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB9C284663;
+	Wed,  9 Jul 2025 09:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="Nh/Y3RCP"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="h+rtFD+O"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702E1285C92
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 09:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDCC265292;
+	Wed,  9 Jul 2025 09:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752052729; cv=none; b=pX3lsas5WoECNUhIXT8/GUcW7MiZ4LUsyHzcxWaTG/rviLhJREJnk0DUqeEtTd6qHtkNWKgWFioM0mPkDMPFYQJWK+O0ixw3GzHHFFApk0NpItYDBeb+ElZEtV4mA1k8qAkHaGAR1BUOUXpxgqL7d7gVQHFmXTBwiUpemh0PB80=
+	t=1752052719; cv=none; b=gWKenvWaH+0tONs1thI6q0OtuTRFJCvlz0K7xgkV0XLZxaT19wIZGIuIfgFZW3GxhbLUzuvjvxk3N22oBoA2BW7w4axNX7mJ7Ak6uFkS+VEp1PMUXqsjMUIcW+fnS6QwlC4hAbLiChlrhQqIYX0ZJXXThqAUqv7RTNpevXyWdeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752052729; c=relaxed/simple;
-	bh=YZmEw3jGDd+2qgbm25oUb6kfM16R2p862EV52VAwfqs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CpozqK63U90g65Bjvde4AW8PV/UcmR+97MSBBeXkm9TmG0WHRgR2PoTO998JRTMNuZpEvusfhQgxED2iJtyKnZNmhgI9DrjVWAi+UlCQGyj/oGPZRov9wr+ZA9chjiGnSc9W8g1uwliwJbj+ASFrUf44MBaOfC9/4/Ps7o/9Cmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=Nh/Y3RCP; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae0bde4d5c9so1095002566b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 02:18:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1752052726; x=1752657526; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uAQIOUI3dQN/BAWWa5L7E496C+B20N9+qpU1jibn7CE=;
-        b=Nh/Y3RCPN8O1hs40jnAcKShZ4I86K3FPiBxiteV36jDlKBWjE1pFWF/ovlzc9RjHQx
-         4qk559FPKK4+vd/UxO7AbYNx3Osnd3tJ4qlQ1NWoqW60WhJXf9zUcVhyVjnAYchzYDMu
-         ntSh+Gxkg0H9cdd5u+xJEaA8zqfwjAXetmGKT4/FkF5ynwQ0DwPUTIcM+gzdyU7khgpD
-         RMBiOy0EPouGpqy0uG9OgFZ3grdLTOT5Hs1UJTg7XFY96yluLnL9ocs1gMiNGpMz/m8q
-         rDpa6kl9jBx7svNvfwFWOAedjxWy3nCJ6CO8F2sRY7W09139ylkt1c7EAeyl76k1yY0w
-         N61w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752052726; x=1752657526;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uAQIOUI3dQN/BAWWa5L7E496C+B20N9+qpU1jibn7CE=;
-        b=A4PQIeVmWOctaXevai3RqzY5UMUrqRn7UrZXhmvaKOBilAAFbbCw49Ys67Ynb+W4w1
-         zgKQtDG4Xrg+dgAWi6dhpadwLydwLXCwZ2Y+31hEjRYS5iwUnARZcseXNfazr1MDt5rx
-         T9ei9TWQjowwFfGpE8c5dDiUnyr0STqPUlNpXaowf03ok9JR4aIjJwIzf6A5Etx1caka
-         7yvk1k0XyXWXJ/zeVRjf5fJG0BLzqLBLwCnTX7QLULsjWz2nPph3TiTk/TXpvYAkwkPi
-         qBukeYNxYyQASiL3Uoo0DI/7RjhnwpDY1cRYjtLwR3Dhtl9smSeUurJXmSNsPN5FdBGK
-         HHOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRh8jY9KcyAdVl/D8diZDJIUMJvYX/ef4XmgSyXObMCD4fiTFnykmhuGtawcDymEOo5A2qbmjXl0rjuoQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj99RADIbaqU0D0qsnNVkKeQhkM4tMH4V8zgSmtN/zeIg3u/wA
-	+GAY8vOwMteOZfX0MLzBEp14qH9EeoqD7ITIyx4+OrmtO2KJNay2ngfpDU8UxY0uoCc=
-X-Gm-Gg: ASbGncsQl8SicW/Zb7a2rpqhvxBmO9DQALTXWf/h+hi9s0Eq6D+GYoIwMPE4GqseAra
-	7/WpVodwG47MlzNkKKrtvVoxXO/m/LzLgGQGPfr0SblUAQg299z/Dzzs/bkgBsKBQaPU50WgW4o
-	J7R+y2TOg+b5HITLd4uw2YS0XD3GdyUwpMRLSlB+Kz5wIrQJL8ELzQtuDpLZBYRBviaLIgurLUb
-	qWiFc0N2D0c+73V51Zz5Fi0D69ULO0i8AHX6o1BqSUbYw77yuNmJcmTakwxeIsLlXesANixY0n0
-	8idQMiKjMMR9QbPBT/UiQeIEpEa/imt2JG76DLdWqLEURNGSXxSCW5oi9J+mKLeLVYejxK47DEf
-	v68ookoOMO0CtBshRKZiVAydNl+bcAQ1vsouP7p7Qsxw=
-X-Google-Smtp-Source: AGHT+IGx/vzlfyTviick6hyyNUlcbGsI+JPz+PSX0OW7+e4XECNcxPqd0I6M02c/e4D8+rgbMwjMcQ==
-X-Received: by 2002:a17:907:9281:b0:ae3:a8dd:418a with SMTP id a640c23a62f3a-ae6cfc748eamr190274466b.56.1752052725491;
-        Wed, 09 Jul 2025 02:18:45 -0700 (PDT)
-Received: from otso.local (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6b5e737sm1060116866b.142.2025.07.09.02.18.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 02:18:45 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Wed, 09 Jul 2025 11:18:18 +0200
-Subject: [PATCH v2 4/4] phy: qcom: phy-qcom-snps-eusb2: Add extra register
- write for Milos
+	s=arc-20240116; t=1752052719; c=relaxed/simple;
+	bh=IJkLg9cgBCEv7gEatQbd+FGXB6V+fMy+ZA2Hw/qJxKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l7wdOGL/CosPkhl8mMtOmuRjGtWi9dKSZPr6Q4w7eIHrylH9oyNbn1py+yYQ43rqmrTda/8fby0EIlex2bqv82Djpd6XPqHnb2rlltbja7dkE35hsDVppv3Rzsisq8eZbalL0Od2kOrEdsGVMRSbwWyjPEyHPtxax4Ae36EqGqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=h+rtFD+O; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9511C103972A7;
+	Wed,  9 Jul 2025 11:18:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1752052711; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=+E5u62zac/bI/nhyHC/KCVEzYQjnoInD57ATOWi7/J4=;
+	b=h+rtFD+OgSNbW8K1Lo3j/OMDeHR/MG8B4sC0DR/IleX2yLP6KxcadR90YVkGzadxoT16Vr
+	86Fd3RHN4CM3jMeTDzUbP5on8PURBNDwbtYZYnF5apatwyfzlUw8A9Hm2ShVOJDYpBEkPO
+	n2lvoVMO7mNxD6Ehgj+9ZH3bEzILesAv/jZmvIg0waLpxvWa4zEcd45Cpbpkny/M3VNKfK
+	A+fD3h8csuAWHkxRZupJ6gydPnkaD0XryOV3P0jzPCMUs7JwFlJQQ7W2wpE7P9XKMYXhHo
+	c+qBLP6VBHFbgWZfo+ILUc9kt1+fjfJ/mHdQQG/ONrpJgzkuLtjF0REFQcEp9w==
+Date: Wed, 9 Jul 2025 11:18:22 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Richard Cochran
+ <richardcochran@gmail.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
+ <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>
+Subject: Re: [net-next v14 07/12] net: mtip: Add mtip_switch_{rx|tx}
+ functions to the L2 switch driver
+Message-ID: <20250709111822.3b204b27@wsk>
+In-Reply-To: <d51a84c7-d534-44cc-88bc-73db8721e50e@redhat.com>
+References: <20250701114957.2492486-1-lukma@denx.de>
+	<20250701114957.2492486-8-lukma@denx.de>
+	<d51a84c7-d534-44cc-88bc-73db8721e50e@redhat.com>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250709-sm7635-eusb-phy-v2-4-4790eeee7ae0@fairphone.com>
-References: <20250709-sm7635-eusb-phy-v2-0-4790eeee7ae0@fairphone.com>
-In-Reply-To: <20250709-sm7635-eusb-phy-v2-0-4790eeee7ae0@fairphone.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>, 
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
- Abel Vesa <abel.vesa@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-phy@lists.infradead.org, Luca Weiss <luca.weiss@fairphone.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752052719; l=1428;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=YZmEw3jGDd+2qgbm25oUb6kfM16R2p862EV52VAwfqs=;
- b=zN8r6w9eZkpsfJvCdS/uEyRLTfMfcMPeQkNPEXxwm1zg2mzNgMq6//5XUqXcPzpMEX576tiX8
- v8sIG6hQ6VlD7xQf/Q2ZKTCgES3vUcgQxUzwebHmbVyiNZdDrA4X384
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
+Content-Type: multipart/signed; boundary="Sig_/RL_uXyrG8zwSfr1tH8qUxU/";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Last-TLS-Session-Version: TLSv1.3
 
-As per the downstream devicetree for Milos, add a register write for
-QCOM_USB_PHY_CFG_CTRL_1 as per the "eUSB2 HPG version 1.0.2 update".
+--Sig_/RL_uXyrG8zwSfr1tH8qUxU/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
-The downstream driver supports an arbitrary extra init sequence via
-qcom,param-override-seq.
+Hi Paolo,
 
-volcano-usb.dtsi has the following which is implemented in this patch:
+> On 7/1/25 1:49 PM, Lukasz Majewski wrote:
+> > diff --git a/drivers/net/ethernet/freescale/mtipsw/mtipl2sw.c
+> > b/drivers/net/ethernet/freescale/mtipsw/mtipl2sw.c index
+> > 63afdf2beea6..b5a82748b39b 100644 ---
+> > a/drivers/net/ethernet/freescale/mtipsw/mtipl2sw.c +++
+> > b/drivers/net/ethernet/freescale/mtipsw/mtipl2sw.c @@ -228,6
+> > +228,39 @@ struct mtip_port_info *mtip_portinfofifo_read(struct
+> > switch_enet_private *fep) return info; }
+> > =20
+> > +static void mtip_atable_get_entry_port_number(struct
+> > switch_enet_private *fep,
+> > +					      unsigned char
+> > *mac_addr, u8 *port) +{
+> > +	int block_index, block_index_end, entry;
+> > +	u32 mac_addr_lo, mac_addr_hi;
+> > +	u32 read_lo, read_hi;
+> > +
+> > +	mac_addr_lo =3D (u32)((mac_addr[3] << 24) | (mac_addr[2] <<
+> > 16) |
+> > +			    (mac_addr[1] << 8) | mac_addr[0]);
+> > +	mac_addr_hi =3D (u32)((mac_addr[5] << 8) | (mac_addr[4]));
+> > +
+> > +	block_index =3D GET_BLOCK_PTR(crc8_calc(mac_addr));
+> > +	block_index_end =3D block_index + ATABLE_ENTRY_PER_SLOT;
+> > +
+> > +	/* now search all the entries in the selected block */
+> > +	for (entry =3D block_index; entry < block_index_end;
+> > entry++) {
+> > +		mtip_read_atable(fep, entry, &read_lo, &read_hi);
+> > +		*port =3D MTIP_PORT_FORWARDING_INIT;
+> > +
+> > +		if (read_lo =3D=3D mac_addr_lo &&
+> > +		    ((read_hi & 0x0000FFFF) =3D=3D
+> > +		     (mac_addr_hi & 0x0000FFFF))) {
+> > +			/* found the correct address */
+> > +			if ((read_hi & (1 << 16)) && (!(read_hi &
+> > (1 << 17))))
+> > +				*port =3D FIELD_GET(AT_PORT_MASK,
+> > read_hi);
+> > +			break;
+> > +		}
+> > +	}
+> > +
+> > +	dev_dbg(&fep->pdev->dev, "%s: MAC: %pM PORT: 0x%x\n",
+> > __func__,
+> > +		mac_addr, *port);
+> > +}
+> > +
+> >  /* Clear complete MAC Look Up Table */
+> >  void mtip_clear_atable(struct switch_enet_private *fep)
+> >  {
+> > @@ -825,11 +858,217 @@ static irqreturn_t mtip_interrupt(int irq,
+> > void *ptr_fep)=20
+> >  static void mtip_switch_tx(struct net_device *dev)
+> >  {
+> > +	struct mtip_ndev_priv *priv =3D netdev_priv(dev);
+> > +	struct switch_enet_private *fep =3D priv->fep;
+> > +	unsigned short status;
+> > +	struct sk_buff *skb;
+> > +	struct cbd_t *bdp;
+> > +
+> > +	spin_lock(&fep->hw_lock);
+> > +	bdp =3D fep->dirty_tx;
+> > +
+> > +	while (((status =3D bdp->cbd_sc) & BD_ENET_TX_READY) =3D=3D 0) {
+> > +		if (bdp =3D=3D fep->cur_tx && fep->tx_full =3D=3D 0)
+> > +			break;
+> > +
+> > +		dma_unmap_single(&fep->pdev->dev, bdp->cbd_bufaddr,
+> > +				 MTIP_SWITCH_TX_FRSIZE,
+> > DMA_TO_DEVICE);
+> > +		bdp->cbd_bufaddr =3D 0;
+> > +		skb =3D fep->tx_skbuff[fep->skb_dirty];
+> > +		/* Check for errors */
+> > +		if (status & (BD_ENET_TX_HB | BD_ENET_TX_LC |
+> > +				   BD_ENET_TX_RL | BD_ENET_TX_UN |
+> > +				   BD_ENET_TX_CSL)) {
+> > +			dev->stats.tx_errors++;
+> > +			if (status & BD_ENET_TX_HB)  /* No
+> > heartbeat */
+> > +				dev->stats.tx_heartbeat_errors++;
+> > +			if (status & BD_ENET_TX_LC)  /* Late
+> > collision */
+> > +				dev->stats.tx_window_errors++;
+> > +			if (status & BD_ENET_TX_RL)  /* Retrans
+> > limit */
+> > +				dev->stats.tx_aborted_errors++;
+> > +			if (status & BD_ENET_TX_UN)  /* Underrun */
+> > +				dev->stats.tx_fifo_errors++;
+> > +			if (status & BD_ENET_TX_CSL) /* Carrier
+> > lost */
+> > +				dev->stats.tx_carrier_errors++;
+> > +		} else {
+> > +			dev->stats.tx_packets++;
+> > +		}
+> > +
+> > +		if (status & BD_ENET_TX_READY)
+> > +			dev_err(&fep->pdev->dev,
+> > +				"Enet xmit interrupt and
+> > TX_READY.\n"); +
+> > +		/* Deferred means some collisions occurred during
+> > transmit,
+> > +		 * but we eventually sent the packet OK.
+> > +		 */
+> > +		if (status & BD_ENET_TX_DEF)
+> > +			dev->stats.collisions++;
+> > +
+> > +		/* Free the sk buffer associated with this last
+> > transmit */
+> > +		dev_consume_skb_irq(skb);
+> > +		fep->tx_skbuff[fep->skb_dirty] =3D NULL;
+> > +		fep->skb_dirty =3D (fep->skb_dirty + 1) &
+> > TX_RING_MOD_MASK; +
+> > +		/* Update pointer to next buffer descriptor to be
+> > transmitted */
+> > +		if (status & BD_ENET_TX_WRAP)
+> > +			bdp =3D fep->tx_bd_base;
+> > +		else
+> > +			bdp++;
+> > +
+> > +		/* Since we have freed up a buffer, the ring is no
+> > longer
+> > +		 * full.
+> > +		 */
+> > +		if (fep->tx_full) {
+> > +			fep->tx_full =3D 0;
+> > +			if (netif_queue_stopped(dev))
+> > +				netif_wake_queue(dev);
+> > +		}
+> > +	}
+> > +	fep->dirty_tx =3D bdp;
+> > +	spin_unlock(&fep->hw_lock);
+> >  }
+> > =20
+> > +/* During a receive, the cur_rx points to the current incoming
+> > buffer.
+> > + * When we update through the ring, if the next incoming buffer has
+> > + * not been given to the system, we just set the empty indicator,
+> > + * effectively tossing the packet.
+> > + */
+> >  static int mtip_switch_rx(struct net_device *dev, int budget, int
+> > *port) {
+> > -	return -ENOMEM;
+> > +	struct mtip_ndev_priv *priv =3D netdev_priv(dev);
+> > +	u8 *data, rx_port =3D MTIP_PORT_FORWARDING_INIT;
+> > +	struct switch_enet_private *fep =3D priv->fep;
+> > +	unsigned short status, pkt_len;
+> > +	struct net_device *pndev;
+> > +	struct ethhdr *eth_hdr;
+> > +	int pkt_received =3D 0;
+> > +	struct sk_buff *skb;
+> > +	struct cbd_t *bdp;
+> > +	struct page *page;
+> > +
+> > +	/* First, grab all of the stats for the incoming packet.
+> > +	 * These get messed up if we get called due to a busy
+> > condition.
+> > +	 */
+> > +	bdp =3D fep->cur_rx;
+> > +
+> > +	while (!((status =3D bdp->cbd_sc) & BD_ENET_RX_EMPTY)) {
+> > +		if (pkt_received >=3D budget)
+> > +			break;
+> > +
+> > +		pkt_received++;
+> > +
+> > +		if (!fep->usage_count)
+> > +			goto rx_processing_done;
+> > +
+> > +		status ^=3D BD_ENET_RX_LAST;
+> > +		/* Check for errors. */
+> > +		if (status & (BD_ENET_RX_LG | BD_ENET_RX_SH |
+> > BD_ENET_RX_NO |
+> > +			      BD_ENET_RX_CR | BD_ENET_RX_OV |
+> > BD_ENET_RX_LAST |
+> > +			      BD_ENET_RX_CL)) {
+> > +			dev->stats.rx_errors++;
+> > +			if (status & BD_ENET_RX_OV) {
+> > +				/* FIFO overrun */
+> > +				dev->stats.rx_fifo_errors++;
+> > +				goto rx_processing_done;
+> > +			}
+> > +			if (status & (BD_ENET_RX_LG | BD_ENET_RX_SH
+> > +				      | BD_ENET_RX_LAST)) {
+> > +				/* Frame too long or too short. */
+> > +				dev->stats.rx_length_errors++;
+> > +				if (status & BD_ENET_RX_LAST)
+> > +					netdev_err(dev, "rcv is
+> > not +last\n");
+> > +			}
+> > +			if (status & BD_ENET_RX_CR)	/* CRC
+> > Error */
+> > +				dev->stats.rx_crc_errors++;
+> > +
+> > +			/* Report late collisions as a frame
+> > error. */
+> > +			if (status & (BD_ENET_RX_NO |
+> > BD_ENET_RX_CL))
+> > +				dev->stats.rx_frame_errors++;
+> > +			goto rx_processing_done;
+> > +		}
+> > +
+> > +		/* Get correct RX page */
+> > +		page =3D fep->page[bdp - fep->rx_bd_base];
+> > +		/* Process the incoming frame */
+> > +		pkt_len =3D bdp->cbd_datlen;
+> > +		data =3D (__u8 *)__va(bdp->cbd_bufaddr);
+> > +
+> > +		dma_sync_single_for_cpu(&fep->pdev->dev,
+> > bdp->cbd_bufaddr,
+> > +					pkt_len, DMA_FROM_DEVICE);
+> > +		net_prefetch(page_address(page)); =20
+>=20
+> Both `__va(bdp->cbd_bufaddr)` and `page_address(page)` should point to
+> the same same memory. Please use constantly one _or_ the other  -
+> likely page_address(page) is the best option.
 
-    /* eUSB2 HPG version 1.0.2 update */
-    qcom,param-override-seq =
-            <0x00 0x58>;
----
- drivers/phy/phy-snps-eusb2.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Yes, the __va() can be replaced with page_address(page) as those are
+the same addresses.
 
-diff --git a/drivers/phy/phy-snps-eusb2.c b/drivers/phy/phy-snps-eusb2.c
-index e232b8b4d29100b8fee9e913e2124788af09f2aa..87fc086424ba4d9fb3ce870aa7f7971a51d4a567 100644
---- a/drivers/phy/phy-snps-eusb2.c
-+++ b/drivers/phy/phy-snps-eusb2.c
-@@ -420,6 +420,12 @@ static int qcom_snps_eusb2_hsphy_init(struct phy *p)
- 	/* set default parameters */
- 	qcom_eusb2_default_parameters(phy);
- 
-+	if (of_device_is_compatible(p->dev.of_node, "qcom,milos-snps-eusb2-phy")) {
-+		/* eUSB2 HPG version 1.0.2 update */
-+		writel_relaxed(0x0, phy->base + QCOM_USB_PHY_CFG_CTRL_1);
-+		readl_relaxed(phy->base + QCOM_USB_PHY_CFG_CTRL_1);
-+	}
-+
- 	snps_eusb2_hsphy_write_mask(phy->base, QCOM_USB_PHY_HS_PHY_CTRL2,
- 				    USB2_SUSPEND_N_SEL | USB2_SUSPEND_N,
- 				    USB2_SUSPEND_N_SEL | USB2_SUSPEND_N);
+>=20
+> > +
+> > +		if (fep->quirks & FEC_QUIRK_SWAP_FRAME)
+> > +			swap_buffer(data, pkt_len);
+> > +
+> > +		if (data) { =20
+>=20
+> The above check is not needed. If data is null swap_buffer will still
+> unconditionally dereference it.
 
--- 
-2.50.0
++1
 
+>=20
+> Also it looks like it can't be NULL.
+
+Yes, those buffers are allocated at the initialization phase - if the
+allocation fails, driver is not operational.
+
+>=20
+> /P
+>=20
+
+
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH, Managing Director: Johanna Denk,
+Tabea Lutz HRB 165235 Munich, Office: Kirchenstr.5, D-82194
+Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/RL_uXyrG8zwSfr1tH8qUxU/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmhuM94ACgkQAR8vZIA0
+zr1RaQgArKJdLlpGVCfmHoWrOlhwERb9npP855S4nWH/nIu4LGnsEf8IIiz6wYxw
+wpt8UCBcuoagdoUDvfXBEM4SgGw/zpYJz63sYg1yVnUz6scgmcL5fdGitYQbC9O3
+DEeKJBzyOP3DP29+61LMWSbnLUm1z4eEuotPlOhy3xwrxs9FEy3Dwm8o74axdPhO
+icGeBaCPYvk86if7I4pHMGpRFA+on3upbCnMjjBSZdkX8am3gdZE/TAdeR7WdQ9+
+xaxf8NklQBJQfXwtY8LEoB6VsFzxZ7n+qotp3GD9FUq53jgR2dZLw3km1bEo6RBa
+t+ihQGZ1wEKNf9eE91UTFCBi796fYA==
+=aA9e
+-----END PGP SIGNATURE-----
+
+--Sig_/RL_uXyrG8zwSfr1tH8qUxU/--
 
