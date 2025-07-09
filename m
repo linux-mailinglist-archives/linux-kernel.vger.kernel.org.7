@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-723284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6568AFE554
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:13:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2978AFE556
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 030A31C46080
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:11:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F6901C46AB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D412877E8;
-	Wed,  9 Jul 2025 10:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9925E28C02D;
+	Wed,  9 Jul 2025 10:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RuGiAtFx"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KX7qqliJ"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB9528B400
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 10:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6241C28B7F8
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 10:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752055794; cv=none; b=L/4nu9znBwvg1s/GouSTuNM9Et79Byh4sZVV7RQVKlXooXilQzgbAEhslC13Gq6KrFrZNPaUjK72BG4OYbCOG4xlikRcJ8aZLP7weSeJfREAF3/4BADuyqnMvsgWMjFsC7BFjk5kkMcxuBdy7tNNMEYbx6jPFZ5c7oM6ej3wAb0=
+	t=1752055795; cv=none; b=a6pdeVFym+clKEtBbxyERpD4eo8GmL14XFzB4U6G+fIuPCINGaXSahzNwWrmkAi+9qwp6RGhxDFRXr1anfjj0qwJlQwXE8FPGqi/8ePlVDHrJvXTcbVxBaq9MpE2nAHiYTbREAuZDm2Wp4zjFwKNDSC0LpfULSEdo2mdwhjFJjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752055794; c=relaxed/simple;
-	bh=famRRvFrFYpSXcgLA4nbJLP0BYRXxaou57j/60RhaTs=;
+	s=arc-20240116; t=1752055795; c=relaxed/simple;
+	bh=JYs69k4hNVS5lPqOM38UStT63udUZ2u+pAlopyA1oc4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FQvLlF34EVbp1/5pkgaeRVKH6LimFFAv0lnSMepN/3dQ8wJWc9ZRknHsSot/DXYHSI6zkZ2NLEiFvPyfNJCjl87P8tQ9i/ggVOZqNeNLgma7rvpDezH0MjzW4l8fH5q3N3XHqhfklKEb03QfaJxMAer5wn0O0uVG3CM3iOU/zkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RuGiAtFx; arc=none smtp.client-ip=209.85.128.45
+	 In-Reply-To:To:Cc; b=P1EY74xz82Re67AajXboEFNe7pS9OVWq9kopd+ZFyrPQ6i0Z12Rbepk2JPuj0xfjyVwcRlVwB0PKW+DXnPJ96t/q29MpZhwDzsGxyBty/x/e5F7ne/tcfALm2neR7EgtrnHapKmb+DkGP5zgK5tMzVg9TX+AyYTRkZhfxaqYp/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KX7qqliJ; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45348bff79fso57353045e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 03:09:52 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4538a2fc7ffso5786655e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 03:09:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752055790; x=1752660590; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1752055792; x=1752660592; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=pMidPiz8WPRxgxTAsiQCyYCTxHgFambXMuO+HJdSTnU=;
-        b=RuGiAtFxfe7V8SltGasThXEfB805tdDLOGRKSa8tRGZnt51aW8CAAIS5OSaexbmCfH
-         kQR1Rq5AlylCmwtUa4FZ5FHjIBRtPOHZ2FvQOczz5r3Ki4AS7HnjWkwjdsjJ2KtKr7Mh
-         d/10rnAn/j0G6sShLvQ3NTXVExhy0iwzpyB1My9ahCEGYvqaocFs4gytRSnLTt7Tj3gP
-         38IEh7WLBKFLUU806CggYKFY+I0h+tMOf+FK+iUTVphygOExP4dw/5ifKVdkWcL78jO9
-         yj/XN8lCD1cJuDF4qX1VE9WapJQQI/cYi3QNAAvqsNGWX+68RE/OeXxLnpgxig90+uRy
-         knvw==
+        bh=uJKs6pSGcR05CnjZyNb4F7ZsaFdoT5cYwaxabxCmccs=;
+        b=KX7qqliJw4Dc3rjdyQ2hqqAKJ1XvyK5/WawggUIhwE2Mz/y5QmefMxkn+pQ99fHjA0
+         +QXUqFgfHD1Irp48V/jLBD09dteEmiiKF2ayWEiXsxmQ8jIhiXPVWrZlTjhyxAUdYpuP
+         wybA3vCXm7d2DP1aq3DpDsuRYbnhC4I8Fi4jkOBkMsoEUEy5+0AHjtuWJOAOt3pt2Gdp
+         s89tbRDuxH/2TH8878Otz1BOYxKSHU4v2PPUxK4fVrUMAFNjeYpNR282WUCFzvKxOE1R
+         Bq227UzZKJWzo7kZQIS1OrW9xjRAf3GMBXYUJdCkqRWMk1x6IKwahawUviSqtuNGGYii
+         2uRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752055790; x=1752660590;
+        d=1e100.net; s=20230601; t=1752055792; x=1752660592;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pMidPiz8WPRxgxTAsiQCyYCTxHgFambXMuO+HJdSTnU=;
-        b=BEbRSMl9MvUU8G603GAZyD/9pViYPvQy0VzL9ObQFYz8WLf2BBst65yMWfimRgVlDq
-         c2UI7pWfjyHjIsTWx4dBr29Ja4Y/g2z/j7N00MyPgjhRLOCuoF0nb+33ZYwYQmBW0GYo
-         AVvJGXj5ckVJIBH4o+Ni9qIzpPckLEU7gtyIEHq3UWSw+A7O1AiZZjwVDrMlPM/aexF2
-         QUvVZgOTYoqHEOfL6fb04rmz8PNkKOwX4dJM/F2HMfdxvbSmLTeQYzvEaHOblVGQqc3G
-         5r2i9lHwypJzZfj9BkDzKpm0sisiQzKUZO6XkEKP7abZ7qwEBlVxHtVCyzNuLNzzGLG4
-         ZSfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUkQTcRtxlNDsRzCRRyDPkJyxSpWL6B7WFhvFbt57wbt+7kdrLCEnMvbXufcTr1AaTdbkAPiax6p9cYOGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbodZ0FrUptEhVdHT8l42Lyu7KGg7Rfy65LFBQ1rVSL+yZggDz
-	nMVZm1GgRPmjLxusG4fl+6PTGXVWj9ogpyiBl4ufxYcSibjfZMb/qZaDHo9tMqunp10=
-X-Gm-Gg: ASbGnct4UWaoBpYGdLLkkjUmeChXyRHPSMPyIyv2wprlkoCdni4au2UCGSow/BBiaSw
-	m81313+Moz99ni5qgapqcie4WuUfMhj9E1Gpl6yk0zZWZnZTw3wtlR3T1nsuSjPHhKKjGe+eIYv
-	3bncTq/xvr2REI687rCbMWxldgQ0bn2UGUPuh1WFg3HlmFHZCp+1ZJSy3dmBjIeYICdu7Rakxr3
-	xgR3aBMUJ15p4IKLrnHT73okyp5j0YZxifdhIshcMd/uvbNNmprstuyG1Jbzj7yWVSKAwuCEz+q
-	OZ1Lvedg2/YYVbQN7BcCLp9WnX+xb2sjdpZmwLXHpt/0k80yCweKFElQG0BITBbZWChzpAxG4xf
-	GyQ==
-X-Google-Smtp-Source: AGHT+IEQkukkYSsMmMa7GE5Hjh/cy4YGqwOjr0P/jFLkEO6jYv+Hgr+mzq9RXN3BH/cGiA3SEVfLcQ==
-X-Received: by 2002:a05:600c:4fcf:b0:454:ad94:4b3d with SMTP id 5b1f17b1804b1-454d5310e5fmr15844895e9.1.1752055790451;
-        Wed, 09 Jul 2025 03:09:50 -0700 (PDT)
+        bh=uJKs6pSGcR05CnjZyNb4F7ZsaFdoT5cYwaxabxCmccs=;
+        b=LNlEe03cAdLZie3VGENPgFfIYZVnsZranWHExeB0TfXGg4yU7QgSELy2lbKo81UeUC
+         pgk2Yz0DXJBa2EH6HZtA4A3y0IOQMgg8WXQepJHStWbI4O5x2m1TGDcUr4JbsgyvE67Y
+         bYh66Hew0Vc0pu1DyMxuak/JYqBtCPFPu2Z187dJG0CPtJuXiGz741GyxqC5BzhvTR96
+         81pHPfEDH7jU7MOHlpbDFJU6fWPez/RBeSNBcSeV0Snax8pchJv/AyZcdwuhpnYvwnKj
+         jZAJFqegB+xevTS0KI4q3bnyS0vr/ffSS3xP2AknM0r7EfxtCiUn9PvzB0Lo4JMKPKi7
+         DnKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUkN4Tfpn2x3sxzuafIn9EwrA1tjTQh7gvasucdvmIRaq7Vrj5UgkRDrk6y5IE2wS8pkFwQ/1+WEiD0ies=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhyEKjaLSlfLVMP0MxGo8FxATqhEMQhUtk1E++gvbs66RY3l02
+	DXBKbOcy+bDd7XSW7wiHwOzMhpa0AVrFUjl70Bw6c39vWfcztHn0jOG9zFhz3M3/IZE=
+X-Gm-Gg: ASbGncv4K1k9FTCsFE680efMbPHi75mMxx8Ui2BrIlsRKaC/ZotGVA+31aTYf+L+IUW
+	bdlAZzYvR7xms9ku6TrzOsmTQtFiJPN2/oiFFrsgfMjhUOcjqloBwtdpcwwyFw2uBJ93nGVxjEb
+	xRfXriuT5qfWtWCkvhRYFsI8K3KY/pc7fQMSu6V7aP1psU+X2vntu/XsRE8RD9UEK5iQZvkwd4T
+	ydbp/jPikYb+IpK1D06UqFrY69CiOSSUffz655wIcOcJRBBNAU51yVFLMxRyteYnhVQ4Nne7tQn
+	1fOu7gSGifWeo+2wOgYx1YXfLNDSt+K3w3iQWQbqa2hDmj6FNPgdWRi/TyY8XwfYTaV4hOodXeW
+	4+w==
+X-Google-Smtp-Source: AGHT+IFzc5yFh2wY77gjYrxQjTpVR45vDYq6+m5WrPEq+P+xzIkohYmigMzwvUyhRV68cdwu0zEDuQ==
+X-Received: by 2002:a05:600c:8b0d:b0:454:b97a:486e with SMTP id 5b1f17b1804b1-454d5602748mr17103525e9.10.1752055791519;
+        Wed, 09 Jul 2025 03:09:51 -0700 (PDT)
 Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:d3be:a88a:dbb9:f905])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d5032997sm18342105e9.7.2025.07.09.03.09.49
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d5032997sm18342105e9.7.2025.07.09.03.09.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 03:09:50 -0700 (PDT)
+        Wed, 09 Jul 2025 03:09:51 -0700 (PDT)
 From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Date: Wed, 09 Jul 2025 12:08:53 +0200
-Subject: [PATCH v2 1/6] dt-bindings: clock: qcom,sm8450-videocc: Document
- X1E80100 compatible
+Date: Wed, 09 Jul 2025 12:08:54 +0200
+Subject: [PATCH v2 2/6] clk: qcom: videocc-sm8550: Allow building without
+ SM8550/SM8560 GCC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250709-x1e-videocc-v2-1-ad1acf5674b4@linaro.org>
+Message-Id: <20250709-x1e-videocc-v2-2-ad1acf5674b4@linaro.org>
 References: <20250709-x1e-videocc-v2-0-ad1acf5674b4@linaro.org>
 In-Reply-To: <20250709-x1e-videocc-v2-0-ad1acf5674b4@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>
@@ -101,29 +101,36 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
  linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
 
-X1E80100 videocc is largely identical to SM8550, but needs slightly
-different PLL frequencies. Add a separate qcom,x1e80100-videocc compatible
-to the existing schema used for SM8550.
+From the build perspective, the videocc-sm8550 driver doesn't depend on
+having one of the GCC drivers enabled. It builds just fine without the GCC
+driver. In practice, it doesn't make much sense to have it enabled without
+the GCC driver, but currently this extra dependency is inconsistent with
+most of the other VIDEOCC entries in Kconfig. This can easily cause
+confusion when you see the VIDEOCC options for some of the SoCs but not for
+all of them.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Let's just drop the depends line to allow building the videocc driver
+independent of the GCC selection. Compile testing with randconfig will also
+benefit from keeping the dependencies minimal.
+
 Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 ---
- Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/qcom/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-index 0d99178332cb99d3f02f50605e19b9b26e3ec807..fcd2727dae46711650fc8fe71221a06630040026 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-@@ -25,6 +25,7 @@ properties:
-       - qcom,sm8475-videocc
-       - qcom,sm8550-videocc
-       - qcom,sm8650-videocc
-+      - qcom,x1e80100-videocc
- 
-   clocks:
-     items:
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 36d6e6e1e7f0162d53f02f39125f4593517e0dba..26752bd79f508612347ce79fd3693359d4dd656d 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -1391,7 +1391,6 @@ config SM_VIDEOCC_8350
+ config SM_VIDEOCC_8550
+ 	tristate "SM8550 Video Clock Controller"
+ 	depends on ARM64 || COMPILE_TEST
+-	depends on SM_GCC_8550 || SM_GCC_8650
+ 	select QCOM_GDSC
+ 	help
+ 	  Support for the video clock controller on Qualcomm Technologies, Inc.
 
 -- 
 2.49.0
