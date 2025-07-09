@@ -1,175 +1,181 @@
-Return-Path: <linux-kernel+bounces-723136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 614A4AFE35C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:58:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97234AFE35E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E8723AA348
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:58:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AE141C432A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B896280CEA;
-	Wed,  9 Jul 2025 08:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7AF283686;
+	Wed,  9 Jul 2025 08:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b2lTwBGJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOClkRZd"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E448727A90A;
-	Wed,  9 Jul 2025 08:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864D55383;
+	Wed,  9 Jul 2025 08:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752051513; cv=none; b=WCXJvPCR/Rf3GM2FScWJPye/6nQuPiHZYgvBG7CnMDCRjmZL/hcl1h4M02hjRgnMZfZzdhV/xa03aifjC3OF5dOd3tFovD3Sk2fB2H5RrXi4Fyk8Sv+1fCgioJpj2QvjTWmz1Olsybj29K6/kCCgogqkhF4W6g7BcPdGF5whrAw=
+	t=1752051515; cv=none; b=AXT2eOh1RxtNy1eKin3bRqJpJa8mMdjQlo1yDURv6P3wlKnDht1KBczU7u/kHPB4AVw545JoXcrWTpIex+tSe+BQm4rSKltZgrw0MOTfrAOVKGUa7cg8ezTz3mU4TzKdwiybfGkmg3H/3R5NdKb5khwiUejG/WTzCcJFsvErzMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752051513; c=relaxed/simple;
-	bh=Nv/Nl8b0seZtopXBoNjco8cc0bW8jMDZef7vlC8WXDk=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=mDLrEHHoNE7A0TOZkbj+WDz5lzHzzY96BNSwXQjGYkkD0rOyMGo/EKyDAaxNzbo/t1gfeioWJ3xqm1I7w47zZ38bth3BrLd2serBZ1Lv67OULui6UXmlz625rG+9muoXHfK59sUEi25weXx4cUM1RIl1oTd1rNCtHobhNH6UbCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b2lTwBGJ; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752051512; x=1783587512;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Nv/Nl8b0seZtopXBoNjco8cc0bW8jMDZef7vlC8WXDk=;
-  b=b2lTwBGJeoEwdOl+Nev8Phdb/h2i6taGTqC+kLku90LeYDtD/SRh2QcA
-   L5y0emGr09TvHz/GW5ayYazwBkFqpBqbvdC0PRKenTLgxNiFXVYfqkQx/
-   GIET1ibPP4g2asfdefPVZCXIajUiVrUUEg7ioY9IfFfhz5yWvX9sDdXEK
-   jNPGxG47lcqf6QDUaAGKLJ/jL6F4kPpxFohka/QlXSFlBMSb2OE84qcIu
-   QB0kpnuu8mNJV1LgZzfU/Wx/iK+lmhascQkalxI/qvtWLp+8ZwZGczJjV
-   Zeo6tmKBXCJgJDort9akpofHQw2Hc8Q7d8EsMNVtq3GSouu1i+TrYwaGM
-   Q==;
-X-CSE-ConnectionGUID: qDN0TkkQTvenne3RI6Q6wQ==
-X-CSE-MsgGUID: aaySw6I9SsaYYkyYlQ9t6g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54188245"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="54188245"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 01:58:31 -0700
-X-CSE-ConnectionGUID: 4uVEJ6gFSkOwAI8f0qezxw==
-X-CSE-MsgGUID: j17kUzaoRH+1qBJwHDxInQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="156300494"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.168])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 01:58:29 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 9 Jul 2025 11:58:26 +0300 (EEST)
-To: Jackie Dong <xy-jackie@139.com>
-cc: hansg@kernel.org, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, dongeg1@lenovo.com
-Subject: Re: [PATCH v4] lenovo-wmi-hotkey: Fixed a kernel bug failed with
- error -5
-In-Reply-To: <20250709035716.36267-1-xy-jackie@139.com>
-Message-ID: <3c6f550d-6db4-66d4-f19c-59759450d454@linux.intel.com>
-References: <20250709035716.36267-1-xy-jackie@139.com>
+	s=arc-20240116; t=1752051515; c=relaxed/simple;
+	bh=Y0o0ryo0AoD3mTpRJuuHPuBO5t3sO486uzuJTcp1iEM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=au8f7u0CgiheGhjXGspwRiv8AnlWD4Y2R+tBerTMS3FehsAQDi0cdwVtULj8vQEri3WP9jRb1myJWI0Ni3N3UsDgmYjpIAkewGQ0q6Jp9+smyFIrmJGQKvPA5sPrioNbpDnGHWkgWUaxYMKyoEYwfbhohb5BviVNMYu5SeS3N24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XOClkRZd; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae0a0cd709bso157722466b.0;
+        Wed, 09 Jul 2025 01:58:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752051511; x=1752656311; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6ZU7PLU9etK740VjrgTZnaTTwZRId0YkGwhFbRJaUiw=;
+        b=XOClkRZdmXFoete18uk/9aEzr7JDDKV9tQPzR4CPH6bgOri1TA0tuKLfxbJ1auonev
+         J2s6pUl8NFSVVGqo44GtySvB8SgoaWiN+W0scoVe1pbtZKwgWoopQI0g2saJRQJQQQ/P
+         vw+YvL+JreeRqG/dqz4XoCCW4HhxHSqbSHhjmFNB13H/1+Xa99CXIksCRpuLU2/o95MI
+         vbJiGA/Pf3dfxKnr4ghzBlyloE18TTHuv4VTqiWQPJvYvXpYUzD2lyWB95LvdJ2R9tAx
+         XRBAdN+PQG7PrOT9JIAvlqY84lYKr2Iqwy5r/GeKaT3ac79nxhzM2zaVuM1ME/Y/6oUa
+         qK4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752051511; x=1752656311;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6ZU7PLU9etK740VjrgTZnaTTwZRId0YkGwhFbRJaUiw=;
+        b=Oymu1q8gknlJ7LOmC000dikkzZ1Qmy5Z3O9wnMo7+TyWHphowmfwydaMsQNE0rvAsm
+         +iFFtJ4xdVofSxwiSQZISioamFvjN54lmVXoItgcZ3iiReI5f4K0E9zy21WPet24qHeL
+         5uvpUcPd59DgVxU+uTFh5tJQy6NbyyaDKkPNbdEmgj2LZLQaxkRKiYgKPl0hBCKgFN4v
+         YNyWFPBqqnhtLUgKVtsdYxUrrmFaNfI4iLwC1QfmH7yz5Y1u3t63Wy2ZHSeR/7DA5TYL
+         0fJ9afa7hT89WBD0NIR0xX9566FYYAcxI/lZFTVOH+tM43zIlEMHmi0cRbVb+zs5VcNe
+         c70Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUAh3mQ8tCXxHkdqgXJRxteSucfQKeMqbh0Y7YegxL0daIPnsuigVXEBPdSqG7oBDzYHaIUTt7xXeTETGe8@vger.kernel.org, AJvYcCWk/zAA1lkv1uzyUwmZrJF+ci/6Ksy/Q/DMTpM1J//3t8ti2RYUB6FlLSPdArjjX6dc9ICcXU7c2sQt/QLTqO53vYVU@vger.kernel.org, AJvYcCWuM/kiklun1CAA01k/v0SaoCwtn6vmQ04MetLR6s2SXBb6ox6tUuXmxEjECiJRARww4nk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfFXSl9zfyDSEAu+A7XBoq+PU/3EfGe51ZLaQ7SQN5ruXCXsgu
+	1sj0EWh5CEMjEEUAU8vMSXaXO7w70U1vwQ6tHs1D1gn2kkbySAkiKWIJ
+X-Gm-Gg: ASbGnctkjRE5rQrB8qNFI1uVVIIw7L+RaaTEBrua6SZ3HAlIR8GCCFFDpcpJe2YqP+p
+	HM4DzP2vUfY5b9TW/k8rVl9niX2nkX1wqQjuD0Utx/IcJMR2jvtM/zTu8674JdyNRy9iUB0PSJK
+	PXJt/rH5gRB37m3DARrh5CfQyWt3qryPwFFoUbpPUHK8k7R1LIEqqRcfhyISMrAtPdydpxNnNzY
+	B2j6FM9kO2dh/DJaCL/0GS/frS1iEhHpl8W2PRq7GdovzN9AvzKcUlJ/ET+YZv8ib4EJFn8GTs1
+	QSEatOsqgp+pT7kA9fdTKNCVNWAcD2reKZMNdYN8TFMdG6FV
+X-Google-Smtp-Source: AGHT+IGMs8mKBfncdPVlgcuDOMHk/B1ZdoW3Ur23b6Nt5GbyAgyTzAx9ZOUVxdidKzOlFDPJNz3BFQ==
+X-Received: by 2002:a17:907:6ea2:b0:ae0:7e95:fb with SMTP id a640c23a62f3a-ae6b2363d94mr578100066b.5.1752051510223;
+        Wed, 09 Jul 2025 01:58:30 -0700 (PDT)
+Received: from krava ([173.38.220.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6abfd8bsm1061632866b.81.2025.07.09.01.58.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 01:58:29 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 9 Jul 2025 10:58:28 +0200
+To: Feng Yang <yangfeng59949@163.com>
+Cc: martin.lau@linux.dev, ast@kernel.org, daniel@iogearbox.net,
+	andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
+	yonghong.song@linux.dev, john.fastabend@gmail.com,
+	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
+	mattbobrowski@google.com, rostedt@goodmis.org, mhiramat@kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next] bpf: Clean up individual BTF_ID code
+Message-ID: <aG4vNLiusia14f4Z@krava>
+References: <20250709082038.103249-1-yangfeng59949@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709082038.103249-1-yangfeng59949@163.com>
 
-On Wed, 9 Jul 2025, Jackie Dong wrote:
-
-> Not all of Lenovo non-ThinkPad devices support both mic mute LED (on F4)
-> and audio mute LED (on F1). Some of them only support one mute LED, some
-> of them don't have any mute LED. Add a decision to judge this device
-> support mute LED or not. Without this decision, not support both of mic
-> mute LED and audio mute LED Lenovo non-ThinkPad brand devices (including
-> Ideapad/Yoga/Xiaoxin/Gaming/ThinkBook, etc.) will report a failed message
-> with error -5.
+On Wed, Jul 09, 2025 at 04:20:38PM +0800, Feng Yang wrote:
+> From: Feng Yang <yangfeng@kylinos.cn>
 > 
-> Signed-off-by: Jackie Dong <xy-jackie@139.com>
-> Suggested-by: Hans de Goede <hansg@kernel.org>
+> Use BTF_ID_LIST_SINGLE(a, b, c) instead of
+> BTF_ID_LIST(a)
+> BTF_ID(b, c)
 
-Thanks. I applied this to the review-ilpo-fixes branch after doing major 
-rephrasing to the changelog.
+there's couple more in:
 
--- 
- i.
+net/ipv6/route.c
+net/netlink/af_netlink.c
+net/sched/bpf_qdisc.c
 
+jirka
+
+
+> 
+> Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
 > ---
-> Changes in v4:
->  - Simplify the logic code as (!obj || obj->type != ACPI_TYPE_INTEGER).
->  - Drop "now" of the warning messages.
+>  kernel/bpf/btf.c         | 3 +--
+>  kernel/bpf/link_iter.c   | 3 +--
+>  kernel/bpf/prog_iter.c   | 3 +--
+>  kernel/trace/bpf_trace.c | 3 +--
+>  4 files changed, 4 insertions(+), 8 deletions(-)
 > 
-> Changes in v3:
->  - Reverse orignal logic  (obj && obj->type == ACPI_TYPE_INTEGER)
->    and add new decision for (led_version == 0).
->  - Optimize the descriptions based on reviewer comments.
-> 
-> Changes in v2:
->  - Add warning message and then return 0 if the device support mute LED
->    abnormaly, based on Hans suggestion and Armin previous patch.
-> 
-> ---
->  .../x86/lenovo-wmi-hotkey-utilities.c         | 30 +++++++++++++------
->  1 file changed, 21 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-> index 89153afd7015..7b9bad1978ff 100644
-> --- a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-> +++ b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-> @@ -122,26 +122,35 @@ static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type led_type, struct
->  		return -EIO;
+> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+> index 2dd13eea7b0e..0aff814cb53a 100644
+> --- a/kernel/bpf/btf.c
+> +++ b/kernel/bpf/btf.c
+> @@ -6200,8 +6200,7 @@ int get_kern_ctx_btf_id(struct bpf_verifier_log *log, enum bpf_prog_type prog_ty
+>  	return kctx_type_id;
+>  }
 >  
->  	union acpi_object *obj __free(kfree) = output.pointer;
-> -	if (obj && obj->type == ACPI_TYPE_INTEGER)
-> -		led_version = obj->integer.value;
-> -	else
-> +	if (!obj || obj->type != ACPI_TYPE_INTEGER)
->  		return -EIO;
+> -BTF_ID_LIST(bpf_ctx_convert_btf_id)
+> -BTF_ID(struct, bpf_ctx_convert)
+> +BTF_ID_LIST_SINGLE(bpf_ctx_convert_btf_id, struct, bpf_ctx_convert)
 >  
-> -	wpriv->cdev[led_type].max_brightness = LED_ON;
-> -	wpriv->cdev[led_type].flags = LED_CORE_SUSPENDRESUME;
-> +	led_version = obj->integer.value;
-> +
-> +	/*
-> +	 * Output parameters define: 0 means mute LED is not supported, Non-zero means
-> +	 * mute LED can be supported.
-> +	 */
-> +	if (led_version == 0)
-> +		return 0;
-> +
+>  static struct btf *btf_parse_base(struct btf_verifier_env *env, const char *name,
+>  				  void *data, unsigned int data_size)
+> diff --git a/kernel/bpf/link_iter.c b/kernel/bpf/link_iter.c
+> index fec8005a121c..8158e9c1af7b 100644
+> --- a/kernel/bpf/link_iter.c
+> +++ b/kernel/bpf/link_iter.c
+> @@ -78,8 +78,7 @@ static const struct seq_operations bpf_link_seq_ops = {
+>  	.show	= bpf_link_seq_show,
+>  };
 >  
->  	switch (led_type) {
->  	case MIC_MUTE:
-> -		if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER)
-> -			return -EIO;
-> +		if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER) {
-> +			pr_warn("The MIC_MUTE LED of this device isn't supported.\n");
-> +			return 0;
-> +		}
+> -BTF_ID_LIST(btf_bpf_link_id)
+> -BTF_ID(struct, bpf_link)
+> +BTF_ID_LIST_SINGLE(btf_bpf_link_id, struct, bpf_link)
 >  
->  		wpriv->cdev[led_type].name = "platform::micmute";
->  		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_micmute_led_set;
->  		wpriv->cdev[led_type].default_trigger = "audio-micmute";
->  		break;
->  	case AUDIO_MUTE:
-> -		if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER)
-> -			return -EIO;
-> +		if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER) {
-> +			pr_warn("The AUDIO_MUTE LED of this device isn't supported.\n");
-> +			return 0;
-> +		}
+>  static const struct bpf_iter_seq_info bpf_link_seq_info = {
+>  	.seq_ops		= &bpf_link_seq_ops,
+> diff --git a/kernel/bpf/prog_iter.c b/kernel/bpf/prog_iter.c
+> index 53a73c841c13..85d8fcb56fb7 100644
+> --- a/kernel/bpf/prog_iter.c
+> +++ b/kernel/bpf/prog_iter.c
+> @@ -78,8 +78,7 @@ static const struct seq_operations bpf_prog_seq_ops = {
+>  	.show	= bpf_prog_seq_show,
+>  };
 >  
->  		wpriv->cdev[led_type].name = "platform::mute";
->  		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_audiomute_led_set;
-> @@ -152,6 +161,9 @@ static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type led_type, struct
->  		return -EINVAL;
->  	}
+> -BTF_ID_LIST(btf_bpf_prog_id)
+> -BTF_ID(struct, bpf_prog)
+> +BTF_ID_LIST_SINGLE(btf_bpf_prog_id, struct, bpf_prog)
 >  
-> +	wpriv->cdev[led_type].max_brightness = LED_ON;
-> +	wpriv->cdev[led_type].flags = LED_CORE_SUSPENDRESUME;
-> +
->  	err = devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
->  	if (err < 0) {
->  		dev_err(dev, "Could not register mute LED %d : %d\n", led_type, err);
+>  static const struct bpf_iter_seq_info bpf_prog_seq_info = {
+>  	.seq_ops		= &bpf_prog_seq_ops,
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index e7f97a9a8bbd..c8162dc89dc3 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -781,8 +781,7 @@ BPF_CALL_1(bpf_task_pt_regs, struct task_struct *, task)
+>  	return (unsigned long) task_pt_regs(task);
+>  }
+>  
+> -BTF_ID_LIST(bpf_task_pt_regs_ids)
+> -BTF_ID(struct, pt_regs)
+> +BTF_ID_LIST_SINGLE(bpf_task_pt_regs_ids, struct, pt_regs)
+>  
+>  const struct bpf_func_proto bpf_task_pt_regs_proto = {
+>  	.func		= bpf_task_pt_regs,
+> -- 
+> 2.43.0
 > 
 
