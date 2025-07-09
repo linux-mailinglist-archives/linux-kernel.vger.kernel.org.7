@@ -1,130 +1,131 @@
-Return-Path: <linux-kernel+bounces-724062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6422EAFEE1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:53:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA4CBAFEE2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:54:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3045817B641
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:53:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD8401C41F42
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8C42E9725;
-	Wed,  9 Jul 2025 15:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7732E9743;
+	Wed,  9 Jul 2025 15:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sQehQtzA"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qV/UEic+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FA32E8DF6
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 15:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED72028FA87;
+	Wed,  9 Jul 2025 15:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752076413; cv=none; b=HT5IjuJ1dvTQgk2ZlCIkA+uDvIRWui0HPioJe+s3cpNNqyE106pkN0OO6BSstvSdurZYHboK0LPcGF6YWvLrnZh3rwJMXfTnVwef0EJs1BMO/bF1kFrxRbmRtIWI2I3e0lJAXjkTOIdJAKry4vcYpe3X3Ke5RIyDSJkUe4r7p0g=
+	t=1752076427; cv=none; b=KKOrgrUtJ4TRvIJ5E7Edy9Qyd5DyKyv1aLPBMU4J58D27cPh5oClZB/8EttN3jgkrAglBbx7R3OM6rf7IWJFhOG8KjfoKvoQWF7vActUlc8T5E4MNEny7vdipJev+y6jNwDfru0QJpir7XUbm5eCdT0idtvT/dt9r9qWW6NmZw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752076413; c=relaxed/simple;
-	bh=25FMe8x/OW3Lp3qeP0k9f4sApdVqQUoIa/qrXWF7ALg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=abcjnYDGkwe94dxsVRpmcc9hjYWPuntLpoygtn+8UmiaD4HhuelZVeGXpKuywO0P5d9khF9XpHqAkz15e8AG+QznlraLhoM5+Pk5a1n+RiDwSK1VbfJb49U9kpouFxFOh0MrQI9N6EiJKfouLVgvYolk9acpgncVJlNPnXkwNsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sQehQtzA; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-313f8835f29so124591a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 08:53:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752076411; x=1752681211; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qTbopsyjLwZagxO+PemAykhJLuXJRZ0JL1WGf/NIPOI=;
-        b=sQehQtzA0nyaAE7SI/A6x44LYofxmv/20YzS47mUHxH2mucH37uewhRd5N9L8ycMK8
-         eAwPzpPNnkXhUmcuEtZaFbcGZ4+HpI9xHgpfPQ7RBiaSrTq69M5jY53UBHnxUQTeHD8m
-         vDPDI2ceDr5gxPcimlmj19mflLloJetLCYdufnn5reGGkPvK8TszT3g/823NR8mqwF2u
-         CGS0Wo8KQ515IBVQ86XYIDWjneGrhK7vgDO2iF2yidQl96aNHRggyC4/JEiotFaAAnK0
-         PRJN4Bcy/KkmRoWAe85xX8Cdeyubuu+PGVV4FaVDKmEyrD269nW7wyeSVYJfh6XfeqDx
-         eoVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752076411; x=1752681211;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qTbopsyjLwZagxO+PemAykhJLuXJRZ0JL1WGf/NIPOI=;
-        b=iQYEIV1cD4NGw5omlGmjPXEdcktB35ZK8DA2yf48mqQEDZImCVjc87xiROw3y0s9PQ
-         xpOOh5kOkF9neo/OHxkFS3eRtm2t0w8AV/lijlvC/OfwaST/SBSampRdyk/IHcQCWUzQ
-         Ft/AcmYu7D+B/j3oo5sCMiLNVHf1Ikllh6eJKq+QEBEEArip6EhMFT5frVuPwNkRd5/Q
-         1FATd0E6YH/eJjiCgGRObnJJixIRlL3tHRzNppOm1Wkj3IjFWPUdXTBnvS96ETjx8Aha
-         Rbgj5iunWGfZ1rYzM+ltBan+bjfndM3U8VNZbE+PewEJHOkdq+58XhHYrniSpVAVCro4
-         7Nhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDrcNj6ZNaqkiOiLYz4/d9v6jx8BnJb7YA9rdvTrWNuyLJXp1AW7LrumL3ta9sb6cht2C0wsA93eoS4HE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/BkE6uLWH09KZPIZL1bjvO3PK85jqmkC9O28Qh54441FRCGqo
-	cxLQzKH2Zkys01w8KnZ+Mg+oFSLwLD1qrDxnWa1Q/jqjSWkcrxFBbjdsNJ0K8goNBPm/sBLpxzA
-	6ynMmIw==
-X-Google-Smtp-Source: AGHT+IGjePHxm4yhTC07WPmOQKWcW69yFAbNV3Ly82vKbgJPL+sCUOW7xQYxaSJ26UKg7Zgl6um4WrjHcrM=
-X-Received: from pjbpq7.prod.google.com ([2002:a17:90b:3d87:b0:313:17cf:434f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2e47:b0:311:ff18:b84b
- with SMTP id 98e67ed59e1d1-31c3c2f3c1amr536725a91.25.1752076411095; Wed, 09
- Jul 2025 08:53:31 -0700 (PDT)
-Date: Wed, 9 Jul 2025 08:53:29 -0700
-In-Reply-To: <a700ab4c-0e8d-499d-be71-f24c4a6439cf@amd.com>
+	s=arc-20240116; t=1752076427; c=relaxed/simple;
+	bh=RY67xBd5sUO3XFR2TQQgs/qjtaenGN5JeNcwWjGIERE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IyZuIg3JRfEHcg3kOYulx3R9U2W3Nqyp/LumkTY8fiTPDOkB4gWPzFudwajHOLWXxZMqRYYCGDII+k83WvO9T7R7P1zAautC8C954ZZ2nXSzb1YkNmwETZ8gfSiGuLyvR9XB/zJX9yXDBoyRiu2q7fKP/DwBtDVWeYzgdsD/nXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qV/UEic+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73D22C4CEF6;
+	Wed,  9 Jul 2025 15:53:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752076426;
+	bh=RY67xBd5sUO3XFR2TQQgs/qjtaenGN5JeNcwWjGIERE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qV/UEic+NBgClUfBz1cfNkW0Vs8dXgLz1LNkXdAdMku5pyLmZGxLWDxrPuEWj9qQ5
+	 G3wFAJZLcmoc6Uwi56kl1ecu/isZ4chLIGt97wnlb48XO2LYiQgAKafL41DgahbqlK
+	 vJbXyfnbcEjQFOLnSsPLactoi2xC1dtwd5rytZwZdCXrsbr2xknxOb/AwBRMtyi/wu
+	 5+/5DEdZg+rJQSehvL60c5UArOmtji26e0pGmSydFST+Bpbpc81AiyQfqkWSBNUT4a
+	 XdCpZiZ9ZAzK6taLlnMriEeH1wbbFiZ/srkU0mUv2pd7zyrQ3gVcaRXf032XINajL/
+	 KIKebC9QeAjMQ==
+Received: by wens.tw (Postfix, from userid 1000)
+	id 2F5C85FCB4; Wed,  9 Jul 2025 23:53:44 +0800 (CST)
+From: Chen-Yu Tsai <wens@kernel.org>
+To: Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-sunxi@lists.linux.dev,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH v2 0/4] allwinner: a523: Add power controllers
+Date: Wed,  9 Jul 2025 23:53:39 +0800
+Message-Id: <20250709155343.3765227-1-wens@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250324173121.1275209-1-mizhang@google.com> <20250324173121.1275209-21-mizhang@google.com>
- <a700ab4c-0e8d-499d-be71-f24c4a6439cf@amd.com>
-Message-ID: <aG6QeTXrd7Can8PK@google.com>
-Subject: Re: [PATCH v4 20/38] KVM: x86/pmu: Check if mediated vPMU can
- intercept rdpmc
-From: Sean Christopherson <seanjc@google.com>
-To: Sandipan Das <sandipan.das@amd.com>
-Cc: Mingwei Zhang <mizhang@google.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, Liang@google.com, 
-	Kan <kan.liang@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Yongwei Ma <yongwei.ma@intel.com>, Xiong Zhang <xiong.y.zhang@linux.intel.com>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Jim Mattson <jmattson@google.com>, 
-	Zide Chen <zide.chen@intel.com>, Eranian Stephane <eranian@google.com>, 
-	Shukla Manali <Manali.Shukla@amd.com>, Nikunj Dadhania <nikunj.dadhania@amd.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 26, 2025, Sandipan Das wrote:
-> > @@ -212,6 +212,18 @@ static void amd_pmu_refresh(struct kvm_vcpu *vcpu)
-> >  	bitmap_set(pmu->all_valid_pmc_idx, 0, pmu->nr_arch_gp_counters);
-> >  }
-> >  
-> > +static void amd_pmu_refresh(struct kvm_vcpu *vcpu)
-> > +{
-> > +	struct vcpu_svm *svm = to_svm(vcpu);
-> > +
-> > +	__amd_pmu_refresh(vcpu);
-> > +
-> > +	if (kvm_rdpmc_in_guest(vcpu))
-> > +		svm_clr_intercept(svm, INTERCEPT_RDPMC);
-> > +	else
-> > +		svm_set_intercept(svm, INTERCEPT_RDPMC);
-> > +}
-> > +
-> 
-> After putting kprobes on kvm_pmu_rdpmc(), I noticed that RDPMC instructions were
-> getting intercepted for the secondary vCPUs. This happens because when secondary
-> vCPUs come up, kvm_vcpu_reset() gets called after guest CPUID has been updated.
-> While RDPMC interception is initially disabled in the kvm_pmu_refresh() path, it
-> gets re-enabled in the kvm_vcpu_reset() path as svm_vcpu_reset() calls init_vmcb().
-> We should consider adding the following change to avoid that.
+From: Chen-Yu Tsai <wens@csie.org>
 
-Revisiting this code after the MSR interception rework, I think we should go for
-a more complete, big-hammer solution.  Rather than manipulate intercepts during
-kvm_pmu_refresh(), do the updates as part of the "common" recalc intercepts flow.
-And then to trigger recalc on PERF_CAPABILITIES writes, turn KVM_REQ_MSR_FILTER_CHANGED
-into a generic KVM_REQ_RECALC_INTERCEPTS.
+Hi folks,
 
-That way there's one path for calculating dynamic intercepts, which should make it
-much more difficult for us to screw up things like reacting to MSR filter changes.
-And providing a single path avoids needing to have a series of back-and-forth calls
-between common x86 code, PMU code, and vendor code.
+This is v2 of my A523 power controllers series.
+
+Changes since v1:
+- Re-order compatible string entries
+- Fix name of header file to match compatible string
+- Link to v1:
+  https://lore.kernel.org/all/20250627152918.2606728-1-wens@kernel.org/
+
+This series adds the power controllers found in the Allwinner A523
+family of SoCs. There are two power controllers. One is the same type
+as those found in the D1 SoC, just with a different number of valid
+power domains. The second is (I assume) a unit based on ARM's PCK-600
+power controller. Some of the registers and values match up, but there
+are extra registers for delay controls in the PCK-600's reserved
+register range.
+
+Patch 1 adds new compatible string entries for both of these
+controllers.
+
+Patch 2 adds support for the A523 PPU to the existing D1 PPU driver.
+
+Patch 3 adds a new driver of the PCK-600 unit in the A523 SoC.
+
+Patch 4 adds device nodes for both of these controllers.
+
+
+Please have a look. The power controllers are critical for enabling more
+peripherals, such as display output, camera input, video codecs, the NPU,
+and a second DWMAC-compatible ethernet interface.
+
+
+Thanks
+ChenYu
+
+
+Chen-Yu Tsai (4):
+  dt-bindings: power: Add A523 PPU and PCK600 power controllers
+  pmdomain: sunxi: sun20i-ppu: add A523 support
+  pmdomain: sunxi: add driver for Allwinner A523's PCK-600 power
+    controller
+  arm64: dts: allwinner: a523: Add power controller device nodes
+
+ .../power/allwinner,sun20i-d1-ppu.yaml        |   4 +-
+ .../arm64/boot/dts/allwinner/sun55i-a523.dtsi |  18 ++
+ drivers/pmdomain/sunxi/Kconfig                |   8 +
+ drivers/pmdomain/sunxi/Makefile               |   1 +
+ drivers/pmdomain/sunxi/sun20i-ppu.c           |  17 ++
+ drivers/pmdomain/sunxi/sun55i-pck600.c        | 225 ++++++++++++++++++
+ .../power/allwinner,sun55i-a523-pck-600.h     |  15 ++
+ .../power/allwinner,sun55i-a523-ppu.h         |  12 +
+ 8 files changed, 299 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/pmdomain/sunxi/sun55i-pck600.c
+ create mode 100644 include/dt-bindings/power/allwinner,sun55i-a523-pck-600.h
+ create mode 100644 include/dt-bindings/power/allwinner,sun55i-a523-ppu.h
+
+-- 
+2.39.5
+
 
