@@ -1,150 +1,142 @@
-Return-Path: <linux-kernel+bounces-722998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BFF2AFE18A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:42:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 008D1AFE18F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D51901BC090C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:42:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A2C93B74FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7B8273D9D;
-	Wed,  9 Jul 2025 07:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96081270EAB;
+	Wed,  9 Jul 2025 07:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="mbX82a42"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="U+l7Vgco"
+Received: from mail-4325.protonmail.ch (mail-4325.protonmail.ch [185.70.43.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D14271446;
-	Wed,  9 Jul 2025 07:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865CA2701CE;
+	Wed,  9 Jul 2025 07:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752046945; cv=none; b=crrSihqfZK2gaIjhc+jY0MdkhhtJh9XvkSUvO58E0L3mG/cFV4UnbABKki6D0r6FlXtzNyVbhZZ1KH6QNvCIdhgCAK+X3tMmz2HT5TYkbe4N/2/bjw7lhZtcmXyy64iHoK9TeFchM6U7bs0BVZCW0v4Sz4XjimgSayOSTqUD8xo=
+	t=1752047104; cv=none; b=cRPohmC3m87sFA/wvp1N4HGfL9YBwrF/2ZNmmpdQ7h8raBUj3Jnj1cJ6GohGxm8OX+1Nz0kYI18ZXqCk6uab7dHwAPCUmEUqeXfUb66W2t54Srmt7Kswe8gs5gAw9NenutSk7H5A1nNaoEZJLQokHMusQfLPMqIMlmVCelWf+3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752046945; c=relaxed/simple;
-	bh=sn6+L9T8LXlwEPq95mr2h5m46SbrPvXWFYmA5PdDErI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=AS3TiSUnXfc7edjemjbOTN3qIgQkB3auksiFjUvziX5nUC5cEeoXNTLFu+hwKQCBp+TciZrQnO5LApdn9aF4W2A3t4oJ8v8EeqBZRt1mwvIDG/QPiPo9oxmu2Gt7bU4gvcpphs3YFuIAcmWNFur+QsEO3OSfue+tg1u6dP8vjaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=mbX82a42; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 4FA0FA0ADA;
-	Wed,  9 Jul 2025 09:42:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=ZLkoBW4KcjWj0y/G1Sqx
-	Iam+xOIBFXwFZtg/dcSN0sM=; b=mbX82a42k6kCLeTb8swKYWk9JOW9APbk9JtK
-	P4LLU8jHxUixXajRW+3Gy3ZtrGil8EH/OuUKinvpDuhVmHIcEbjtQ7YFQ3+xnixF
-	tDXrH0y+gfnaH7b4g3nezGlF1cr0ammTmb2fWP3v7HnaeDhdZI4nqQvxek24Fn07
-	l0kSzvCb/I5nu4nHoItwphCYwIi7hRGylCMjFyob/uEqRH5JVZf1/0k2AdbgJ9HN
-	vCTlymCgxXvXjxRXJNKtK2Ot4NVY8pQX5apDXDs+mJT3pKuDUDx0jov0uFVxmSAM
-	rM8seh3KRNHsiBpSlJPqJB3ankRJdRwiWBBgrdKOtt+YAoJjXwvcgT9hwue6vwO5
-	lPj/pzmYFY+ILsZWgijPqSkE31vRBaUeDwWy1r1UYiAAyct0A1nsN/oi+kBY1bsr
-	rVeOd2QU/s5meHVTbwvXwsdo8iqDzFka7rKl8pvp9NX2oGq5jIDUvr8p1+wMtC7q
-	uegsXvlHx1HeZZCHTSW1S6YsIDbkP1pGcIg53ebmcBSKoO8CRUqBXN8K8G4pKryx
-	W97rK4e7pE2HyrWWok3RyRSDrHuCmCn1TVHMgXTc1u+VoXwK9TMR0BSOTXPBln9G
-	bZDs/YSW22UjgU2A3oNvGPMzRUFR9qD57IQHF+w7V/eMTTIWcDS9hDZuvircpEt+
-	Q0HXLqc=
-From: =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
-Date: Wed, 9 Jul 2025 09:42:02 +0200
-Subject: [PATCH v3 2/2] ARM: dts: imx6q-h100: Replace license text comment
- with SPDX identifier
+	s=arc-20240116; t=1752047104; c=relaxed/simple;
+	bh=f8alaJu9QGnxkHKJvU+EAqsIi5uNm0RpUbioG++EzEo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c8KHV8FcvjKPzqJsn608TXSXrB2Ok2+lhZZU2LEI5euu4yaUn00/3YGBLJ7U3ujcdB0fMLKyOe6zMycimEqUF6/Pe/6vj3PIGtNJzgJZX+u2eOVljG5z425NilPa+4npfLTX4f/caELwu/xZwtVYUmdrUG0JVI9FO0y8lxk8VcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=U+l7Vgco; arc=none smtp.client-ip=185.70.43.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1752047098; x=1752306298;
+	bh=f8alaJu9QGnxkHKJvU+EAqsIi5uNm0RpUbioG++EzEo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=U+l7VgcozOyYLykbS3qLvCc9HMc0Vi3UZsII0/jmMc/Zi+ap0gI1EonO0CiHymocP
+	 UXxP29lSmf9pq6A4EEkiCvUkUADDj3RTEZUGGOSWgizh7PPvqlqyWVcjQzQwgsGQNk
+	 PPwFx6W0dsQkFixQjE0AUAM11TgZVLKku2guLBx+DiHTpw5UMlx656MmCew3W92SlQ
+	 geWc2sclYkS8i2pU7VWMojmRaYnLIcYHfkEPFkfxY/Y4nxDMPXCiRZyJA4MXypxmU8
+	 KIXRu1J7hZ2yF7ZiZpMr1di7GIkDrN2GwrzEXVSUBPoAvlMRI1JSnsfvzfCi+BRfQi
+	 6e8EbSIJULohw==
+Date: Wed, 09 Jul 2025 07:44:49 +0000
+To: Simon Horman <horms@kernel.org>
+From: Yassine Oudjana <y.oudjana@protonmail.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, Alexander Sverdlin <alexander.sverdlin@gmail.com>, Sean Nyekjaer <sean@geanix.com>, Javier Carrasco <javier.carrasco.cruz@gmail.com>, Matti Vaittinen <mazziesaccount@gmail.com>, Antoniu Miclaus <antoniu.miclaus@analog.com>, Ramona Gradinariu <ramona.gradinariu@analog.com>, "Yo-Jung (Leo) Lin" <0xff07@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, =?utf-8?Q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?=
+	<barnabas.czeman@mainlining.org>, Danila Tikhonov <danila@jiaxyga.com>, Antoni Pokusinski <apokusinski01@gmail.com>, Vasileios Amoiridis <vassilisamir@gmail.com>, Petar Stoykov <pd.pstoykov@gmail.com>, shuaijie wang <wangshuaijie@awinic.com>, Yasin Lee <yasin.lee.x@gmail.com>, "Borislav Petkov (AMD)" <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Tony Luck <tony.luck@intel.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, Yassine Oudjana <yassine.oudjana@gmail.com>, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH 2/3] net: qrtr: Define macro to convert QMI version and instance to QRTR instance
+Message-ID: <X2KJB3xtnC-pWM7o5TBw6ln3ItpMwn7tdn5Z8gpZY3oW31isE8PLTX5GUbJ6HcZk_9s72jb6ImwGL-anIoto4dK1MINTxzdRKfbejp_nXcA=@protonmail.com>
+In-Reply-To: <20250707170636.GR89747@horms.kernel.org>
+References: <20250406140706.812425-1-y.oudjana@protonmail.com> <20250406140706.812425-3-y.oudjana@protonmail.com> <fb61323b-aabd-4661-a202-02da7da557ea@oss.qualcomm.com> <aMbAZigHiAN2xupOYs9DodY2mOdNtw_oVjOaweflgA8IoXRQ5ctoZ8GYJ8PNAKDgL4f9N_UD7tFmkePUy9BCE8v20Mae2x-eL1ZpyJEdLZY=@protonmail.com> <20250707170636.GR89747@horms.kernel.org>
+Feedback-ID: 6882736:user:proton
+X-Pm-Message-ID: 8f8894673857ba0bbc9a24fcb09c28e5f1c802d5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20250709-sr-som-dts-lic-v3-2-51fcbd61aef1@prolan.hu>
-References: <20250709-sr-som-dts-lic-v3-0-51fcbd61aef1@prolan.hu>
-In-Reply-To: <20250709-sr-som-dts-lic-v3-0-51fcbd61aef1@prolan.hu>
-To: Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
-	<festevam@gmail.com>
-CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	=?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
-X-Mailer: b4 0.13.0
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1752046939;VERSION=7994;MC=1202330779;ID=98590;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2998FD515E657160
-
-Replace verbatim license text with a `SPDX-License-Identifier`.
-
-The comment header mis-attributes this license to be "X11", but the
-license text does not include the last line "Except as contained in this
-notice, the name of the X Consortium shall not be used in advertising or
-otherwise to promote the sale, use or other dealings in this Software
-without prior written authorization from the X Consortium.". Therefore,
-this license is actually equivalent to the SPDX "MIT" license (confirmed
-by text diffing).
-
-Cc: Lucas Stach <kernel@pengutronix.de>
-Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
----
- arch/arm/boot/dts/nxp/imx/imx6q-h100.dts | 38 +-------------------------------
- 1 file changed, 1 insertion(+), 37 deletions(-)
-
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-h100.dts b/arch/arm/boot/dts/nxp/imx/imx6q-h100.dts
-index 46e011a363e8..c6161546a34e 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6q-h100.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-h100.dts
-@@ -1,42 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright (C) 2015 Lucas Stach <kernel@pengutronix.de>
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-
--- 
-2.43.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
+
+
+
+
+Sent with Proton Mail secure email.
+
+On Monday, July 7th, 2025 at 6:06 PM, Simon Horman <horms@kernel.org> wrote=
+:
+
+> On Sat, Jul 05, 2025 at 06:29:39PM +0000, Yassine Oudjana wrote:
+>=20
+> > On Wednesday, April 9th, 2025 at 3:54 PM, Konrad Dybcio konrad.dybcio@o=
+ss.qualcomm.com wrote:
+> >=20
+> > > On 4/6/25 4:07 PM, Yassine Oudjana wrote:
+>=20
+>=20
+> ...
+>=20
+> > > > diff --git a/include/linux/soc/qcom/qrtr.h b/include/linux/soc/qcom=
+/qrtr.h
+> > > > index 4d7f25c64c56..10c89a35cbb9 100644
+> > > > --- a/include/linux/soc/qcom/qrtr.h
+> > > > +++ b/include/linux/soc/qcom/qrtr.h
+> > > > @@ -13,6 +13,8 @@ struct qrtr_device {
+> > > >=20
+> > > > #define to_qrtr_device(d) container_of(d, struct qrtr_device, dev)
+> > > >=20
+> > > > +#define QRTR_INSTANCE(qmi_version, qmi_instance) (qmi_version | qm=
+i_instance << 8)
+> > >=20
+> > > Please use FIELD_PREP + GENMASK to avoid potential overflows
+> > >=20
+> > > Konrad
+> >=20
+> > Since I'm using this macro in initializing QRTR match tables I am unabl=
+e to use
+> > FIELD_PREP. When I do, I get such errors:
+>=20
+>=20
+> Does using FIELD_PREP_CONST, say in a QRTR_INSTANCE_CONST variant, help?
+
+That works, but do we want to have two variants? Or in this case maybe
+I should leave qmi_interface.c untouched and define the macro only for use
+in match tables?
+
+>=20
+> > In file included from ../arch/arm64/include/asm/sysreg.h:1108,
+> > from ../arch/arm64/include/asm/memory.h:223,
+> > from ../arch/arm64/include/asm/pgtable-prot.h:8,
+> > from ../arch/arm64/include/asm/sparsemem.h:8,
+> > from ../include/linux/numa.h:23,
+> > from ../include/linux/cpumask.h:17,
+> > from ../include/linux/smp.h:13,
+> > from ../include/linux/lockdep.h:14,
+> > from ../include/linux/mutex.h:17,
+> > from ../include/linux/kernfs.h:11,
+> > from ../include/linux/sysfs.h:16,
+> > from ../include/linux/iio/buffer.h:9,
+> > from ../drivers/iio/common/qcom_smgr/qcom_smgr.c:8:
+> > ../include/linux/bitfield.h:114:9: error: braced-group within expressio=
+n allowed only inside a function
+> > 114 | ({ \
+> > | ^
+> > ../include/linux/soc/qcom/qrtr.h:21:10: note: in expansion of macro 'FI=
+ELD_PREP'
+> > 21 | (FIELD_PREP(GENMASK(7, 0), qmi_version) | FIELD_PREP(GENMASK(15, 8=
+), qmi_instance))
+> > | ^~~~~~~~~~
+> > ../drivers/iio/common/qcom_smgr/qcom_smgr.c:825:29: note: in expansion =
+of macro 'QRTR_INSTANCE'
+> > 825 | .instance =3D QRTR_INSTANCE(SNS_SMGR_QMI_SVC_V1,
+> > | ^~~~~~~~~~~~~
+>=20
+>=20
+> ...
 
