@@ -1,102 +1,99 @@
-Return-Path: <linux-kernel+bounces-724008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA183AFED80
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:18:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15972AFED85
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3568B648115
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:17:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47887545A4F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714D52E7F13;
-	Wed,  9 Jul 2025 15:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DC82E7196;
+	Wed,  9 Jul 2025 15:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="y8wzZTnp"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mxwkSP2Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7037535958;
-	Wed,  9 Jul 2025 15:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF652C3242;
+	Wed,  9 Jul 2025 15:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752074241; cv=none; b=SSBjq4K2pxyybWNZRXXpSYMnFFMlovD9eZ0HpsoABzX9WkhggrGwO+E0uNjBsV04tEj/72+Kju8M9io6x0zU7+EAKUTFTeiAFwRjoeJ2115v0KpnOXYH3fWe4TJcbtAMTzrqVfDWTRy0InLVJu8l4SEIDMCbDJ8d8cRO3Suwb/A=
+	t=1752074259; cv=none; b=p4Rfct5YbYrSX4bDLJ79XaKHC6XI41gBsOT0ATNK9EzQAMO+R+VVax7D3WWWgKg54GKrW2Cy+ECHmxwUW29QYu8xlSS+3BSUbJtQG0SqvrKwH8UrAdV8Hp9BiRYWpxnPaFUii3ETmAGOvPVQZ+jVn/oxhYkMqOzh40hN0PwkeiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752074241; c=relaxed/simple;
-	bh=fW+9x2s6lvNsCTljHhcU4z5uUSJOFa9JnhC+Ifk1fVQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A4I6Q45NVNuQwL1Eu+RVVCqTv0NKDoFam30i19amkVSOrPrdytOvZxJcmfEqEforFXVSksTNm8NU9of/JAIR1Q++nWiy3GeHWlKynktVyKopuBtOhn0AbxBxrPhJM3LYX/BN2qp1LPT7SmM0Fgc9kAo15Hzl0sn2+w63mPw+JgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=y8wzZTnp; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=xOjCg4XbxOkhT8S8sZPEP73rpNtOVJZ5nJWx075Q+eE=; b=y8wzZTnpsTg0FnFL3ruJPMnfCs
-	4SAUf9W1zsjwJ9bwsBAqpEkCDCK441+3WUMr+3M5HjRS4r68s07b7M1DCm5fZoyBxTp4uZ+ORdJlx
-	IrKAcri0wEJcSe6UuHU3ZWu9cftE4qz4TnB/+agXCAzn35OfwCx3AL9UFzvN2o1BmIBQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uZWXu-000xJZ-3C; Wed, 09 Jul 2025 17:17:18 +0200
-Date: Wed, 9 Jul 2025 17:17:18 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>,
-	Lee Jones <lee@kernel.org>, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH 5/9] drivers: gpio: add QIXIS FPGA GPIO controller
-Message-ID: <898af9ea-9b90-4d1f-8e0d-a8e0686d72a7@lunn.ch>
-References: <20250709112658.1987608-1-ioana.ciornei@nxp.com>
- <20250709112658.1987608-6-ioana.ciornei@nxp.com>
+	s=arc-20240116; t=1752074259; c=relaxed/simple;
+	bh=biijjrqVXTPUyczrqI3oFT5OL7RF+tbYJJRJdTQ19bE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZMzZBopWKxKuta2Yaha4CC92w9kkRuE7NtQ7bUz8a56AzgY0nobnZZUNagaCAtLT9m/dECHakWFA+0AZosUeCYygWTVaVvGvUGoMuNmHF3W1+EIVlEV+yDVmW2fVNqikUqp7Z5fA2KcdT0VS0dt86xX+g4nw6LFBn7NEaqZxDlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mxwkSP2Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0976FC4CEF1;
+	Wed,  9 Jul 2025 15:17:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752074259;
+	bh=biijjrqVXTPUyczrqI3oFT5OL7RF+tbYJJRJdTQ19bE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mxwkSP2YAFQOxne/DBLeA/7XeKIzPWD8Qizc3aiqQwyWTjYwYi5R+zpa8/N3yamTF
+	 dzzj1dq2AnmKcMFLW7MogzB6AAE4m9m8bKWT2KiKcFdv2isXF8IjEns+BoyKY3CInm
+	 RzjSWgvkU/fYZL4Rg6OyreRuZEV8WsnYnVggjDmX3l0IHLwu5hHbwVMRi/WDzp4xtF
+	 SP+AJ7IusoLWFhPG52iKMiykpMOBEkIfQRI31cDYHSL21cbb7jA4a0EFzBvCRaQEQ3
+	 xsAMRB12Cpk55+t3bN1mxBkKncZw1Rlh/A4Wf+k4sCfCCz5jlQSSzl3GS5QWpTdUis
+	 ykod++ZMXGnyw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Mark Pearson <mpearson-lenovo@squebb.ca>,
+	"Derek J. Clark" <derekjohn.clark@gmail.com>,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Armin Wolf <W_Armin@gmx.de>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Alok Tiwari <alok.a.tiwari@oracle.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Jelle van der Waa <jvanderwaa@redhat.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86: lenovo: gamezone needs "other mode"
+Date: Wed,  9 Jul 2025 17:17:28 +0200
+Message-Id: <20250709151734.1268435-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250709112658.1987608-6-ioana.ciornei@nxp.com>
+Content-Transfer-Encoding: 8bit
 
-> A GPIO controller has a maximum of 8 lines (all found in the same
-> register). Even within the same controller, the GPIO lines' direction is
-> fixed, either output or input, without the possibility to change it.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Since this is an FPGA, not silicon, is the selection of output or
-input a syntheses option?
+Registering the "other mode" notifier fails if that is disabled:
 
-> +static const struct of_device_id qixis_cpld_gpio_of_match[] = {
-> +	{
-> +		.compatible = "fsl,lx2160ardb-fpga-gpio-sfp2",
-> +		.data = &lx2160ardb_sfp2_cfg,
-> +	},
-> +	{
-> +		.compatible = "fsl,lx2160ardb-fpga-gpio-sfp3",
-> +		.data = &lx2160ardb_sfp3_cfg,
-> +	},
-> +	{
-> +		.compatible = "fsl,ls1046aqds-fpga-gpio-stat-pres2",
-> +		.data = &ls1046aqds_stat_pres2_cfg,
-> +	},
+x86_64-linux-ld: drivers/platform/x86/lenovo/wmi-gamezone.o: in function `lwmi_gz_probe':
+wmi-gamezone.c:(.text+0x336): undefined reference to `devm_lwmi_om_register_notifier'
 
-Does the FPGA have an ID register you can read to confirm it is what
-you think it is?
+This could be fixed by adding a stub helper, but a Kconfig 'select'
+seems simpler here.
 
-Or is the bitstream downloaded at boot by another driver? Can you ask
-that driver what bitstream it downloaded?
+Fixes: 22024ac5366f ("platform/x86: Add Lenovo Gamezone WMI Driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/platform/x86/lenovo/Kconfig | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Given how similar these devices are, it seems like a typ0 could give a
-mostly working device which passes testing, so doing some validation
-of the compatible against the actual FPGA would be nice.
+diff --git a/drivers/platform/x86/lenovo/Kconfig b/drivers/platform/x86/lenovo/Kconfig
+index b76157b35296..e9e1c3268373 100644
+--- a/drivers/platform/x86/lenovo/Kconfig
++++ b/drivers/platform/x86/lenovo/Kconfig
+@@ -250,8 +250,7 @@ config LENOVO_WMI_GAMEZONE
+ 	depends on ACPI_WMI
+ 	depends on DMI
+ 	select ACPI_PLATFORM_PROFILE
+-	select LENOVO_WMI_EVENTS
+-	select LENOVO_WMI_HELPERS
++	select LENOVO_WMI_TUNING
+ 	help
+ 	  Say Y here if you have a WMI aware Lenovo Legion device and would like to use the
+ 	  platform-profile firmware interface to manage power usage.
+-- 
+2.39.5
 
-	Andrew
 
