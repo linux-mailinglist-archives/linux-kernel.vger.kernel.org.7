@@ -1,130 +1,123 @@
-Return-Path: <linux-kernel+bounces-722850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5F5BAFDFC9
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C374AFDFC8
 	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A3421C25ADC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:05:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E75113BB149
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D8726B74E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0A926B74D;
 	Wed,  9 Jul 2025 06:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SkyFYlyJ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nTmO4pte"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A44156678;
-	Wed,  9 Jul 2025 06:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3231426A0FD;
+	Wed,  9 Jul 2025 06:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752041108; cv=none; b=CGU134pwfzuJ5t4JTheYs/yfHcyYzqjLh30PWfNwQD5xv4pzgimOAOyK7wq7Q3csYlw3z2eu9HPQ1sIMFe90YGUovDvVme/W9f060LVIZzuXenbxbDwOAuwbrQjnK0traDW98HYigwtLfCcwnOLMLHwT9hiTSiG7seimivceYTs=
+	t=1752041108; cv=none; b=VClECMLQoXy0GZkOj25v4g1rCucGo/GdQr4aQV/l6pfmPbXDSJiLRks/sRKPasN0QKLA9VCnIEegdusjWHDWE8CMTby49UjOlmUDJLUds+VXA5sV+prlK5DSzMbTH418koPEEuXfRcU5Vi+XBW31w5qoruLIqXAqWdGw3BGGLxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752041108; c=relaxed/simple;
-	bh=vy/DxLLlBv73YYntcTpcNlvYRslRUHxSeYnYnaMFcuk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AQi/AIsglZ2iZHC0MgJQrcPtGd1/ptEzbcdTGJ1kYxQw0KnSoybiR9YkoxKOdyWKgKGvEoCG8HoSn8EOSn3l6Y8xMUrx4TVDiszVXxdksn9Qjj961aH9icpSpG3aARv+WoCQeVKwSHywuNdqrTEkwgVL7moeerGIbWwqMEErPfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=SkyFYlyJ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752041036;
-	bh=UtyfWyspUxfYp0JpUE65iqJngGZN/Z3HbFphQvQSFGo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=SkyFYlyJTjMe+KeKJBktthBTR2smy0NmhPIdWoe6YjXl8dpEZZvkSoH6KRLcnOnLx
-	 DIaFNpS9DTcX5x9Ejw8T/8WLVHsmWYelAVU+zD2NJnefYPszEobvY4pqpS/OkV2BfD
-	 bywqNWpsxB7a0roioBaGvdrMz7Yy6Mk2p8lUA/+TMg7x1pYdaDHG2RLSNyuMIRaqZp
-	 PFIPexwpTaiTdXfa2gDEA9hZfOywm0RQ5PAEZ9EKzDhdQ/hvg3BjoMVi43itMgFuNO
-	 0fLpK2wMk6og74e4+Z+5De/ldimQv1dEDHeAaZWKP6Nv2RbcHswcER496/oL4uTfGI
-	 1MUswC1jyE37A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bcS8q16Hxz4w2H;
-	Wed,  9 Jul 2025 16:03:55 +1000 (AEST)
-Date: Wed, 9 Jul 2025 16:04:56 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Sean Christopherson <seanjc@google.com>
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the kvm-x86 tree with Linus' tree
-Message-ID: <20250709160456.12aabc8b@canb.auug.org.au>
+	bh=SzD8fsHU7duvdSUQLYizw2PuJGQ8kvETIYaho9kNf10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H0C2z9BqF8gsL9v1Xyu/SO1+4L8Pyk+aVX5Tm8+aTbRl+cGbotgoBIT55UaqTGxzFlpBLd3xGvNgoMjviJJh2X9IuBlHkrnAfoLemL5P/bVm7DTGv+BksktU2tIGp5/SV341BBvubQgoEX8z4I3/tcGtMo5gGRHK/riITkDm6O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nTmO4pte; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 181DEC4CEF0;
+	Wed,  9 Jul 2025 06:05:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752041107;
+	bh=SzD8fsHU7duvdSUQLYizw2PuJGQ8kvETIYaho9kNf10=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nTmO4pteY97Kik7iPXm2GrBZ2k+ytY/51/0hYrDwr8tP2BmdFndwlFWeZJ02QxayF
+	 bP+HnMSYmzi23Ssn6wqpMjW78n5yCy71sUQpG/ByD9rmbRjp8Fu1Heb65xhY55ftCw
+	 SDCLTBwk04U+kQNIs3WyqmvuHvX6xTPHpLoFa3EpXJbaOKvntBEDo4W74kkRIxM5ZC
+	 APgtU64n1gCyVeFJ6pKTAuAFtUiX6uBc/ibClllYw6J2knt2vAIU8q8j36W0B8tkCM
+	 6DmMOv3mlUPoWFKtffaP6SoZFfBTKshsy7Mxoh3gt5cvUrUHnAE19vck0OwvLYdO6V
+	 dov1haKVEqIpw==
+Date: Wed, 9 Jul 2025 08:05:04 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	linux-pwm@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+Subject: Re: [PATCH] pwm: imx-tpm: reset counter if CMOD is 0
+Message-ID: <xo56zato6pgqqttdriskfgh4kdt2g6q5eg5jxte56uddkdfr63@sa7coeifbsmy>
+References: <20250701220147.1007786-1-laurentiumihalcea111@gmail.com>
+ <vwozlwajisjw5qomwtmnfdklmucevyxncsxl2cdmixn2yixxrk@x6j3r2lrl5qz>
+ <a1b6039e-7020-4d17-8186-d40ac17ba730@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/aG3Odpe9u=Wvas08u+AMVVI";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lxvmazlbdrmpdgwa"
+Content-Disposition: inline
+In-Reply-To: <a1b6039e-7020-4d17-8186-d40ac17ba730@gmail.com>
 
---Sig_/aG3Odpe9u=Wvas08u+AMVVI
-Content-Type: text/plain; charset=US-ASCII
+
+--lxvmazlbdrmpdgwa
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] pwm: imx-tpm: reset counter if CMOD is 0
+MIME-Version: 1.0
 
-Hi all,
+Hello Laurentiu,
 
-Today's linux-next merge of the kvm-x86 tree got a conflict in:
+On Wed, Jul 02, 2025 at 11:31:28AM +0300, Laurentiu Mihalcea wrote:
+> On 7/2/2025 8:51 AM, Uwe Kleine-K=F6nig wrote:
+> > On Tue, Jul 01, 2025 at 06:01:47PM -0400, Laurentiu Mihalcea wrote:
+> >> +		 * MOD will NOT reset the value of the TPM counter.
+> >> +		 *
+> >> +		 * Therefore, if CNT.COUNT > MOD.MOD, the counter will reset
+> >> +		 * after UINT32_MAX - CNT.COUNT + MOD.MOD cycles, which is
+> >> +		 * incorrect.
+> >> +		 *
+> >> +		 * To avoid this, we need to force a reset of the
+> >> +		 * counter before writing the new MOD value.
+> >> +		 */
+> > Without the reference manual at hand or a deeper understanding of the
+> > hardware this isn't understandable. What is MOD? What is CMOD?
+>=20
+> so, MOD is the reference value for the counter. The counter needs to
+> count until this value is reached, at which point the counter value
+> gets reset to 0 and the output signal is driven HIGH or LOW (depends
+> on the configured polarity). This value is used to define the period
+> of the PWM.
+>=20
+> CMOD, on the other hand, is a clocking-related configuration option.
+> I'd say what we're most interested in here is the fact that if CMOD is
+> 0 then the counter will be disabled. Otherwise, it will be enabled.
 
-  arch/x86/kvm/vmx/vmx.c
+JFTR: I marked your patch as "changes requested" now in patchwork and my
+inbox and expect an updated patch, but without holding my breath :-)
 
-between commit:
+Best regards
+Uwe
 
-  f9af88a3d384 ("x86/bugs: Rename MDS machinery to something more generic")
-
-from Linus' tree and commit:
-
-  83ebe7157483 ("KVM: VMX: Apply MMIO Stale Data mitigation if KVM maps MMI=
-O into the guest")
-
-from the kvm-x86 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/x86/kvm/vmx/vmx.c
-index 191a9ed0da22,65949882afa9..000000000000
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@@ -7290,8 -7210,8 +7210,7 @@@ static noinstr void vmx_vcpu_enter_exit
-  	if (static_branch_unlikely(&vmx_l1d_should_flush))
-  		vmx_l1d_flush(vcpu);
-  	else if (static_branch_unlikely(&cpu_buf_vm_clear) &&
-- 		 kvm_arch_has_assigned_device(vcpu->kvm))
- -		 (flags & VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO))
- -		mds_clear_cpu_buffers();
- +		x86_clear_cpu_buffers();
- =20
-  	vmx_disable_fb_clear(vmx);
- =20
-
---Sig_/aG3Odpe9u=Wvas08u+AMVVI
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--lxvmazlbdrmpdgwa
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhuBogACgkQAVBC80lX
-0GyyUwf+PPPRkMkevTL7YlN8qHkrsrO5sb5+g6EL7D63s5antBz19xdelk/bY84b
-KUeWkuJhc0ekLacTrHaBlDZ6BD+CNIAxWmu+HsrTiGsPDan6YsmEZuTn5vxw368b
-n/VUK9GgxcVZ37xGA5UX0pl+mDh0RIj3KqBmlf8EhUrn5rae5bkiNHyvP2ij97DC
-BR86XlZWpsgDizIGnWpxl+3NbJc6lGfFB3u2QYexw6MOdrFK8Nz8jyoBTEH9dC2i
-hAD0LuQSZPVU1+tQImle5VAxR5nN//zaCg++A2wKGYaPWoyQe5QMOepAbdFOMg8J
-lRhvE9+EYNWblDGHabjvznrqXGtxkA==
-=qdFk
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmhuBo0ACgkQj4D7WH0S
+/k6dsgf/RheRWtMwEqe7uWfXT5aywFTiqSMVTEDTy8ZWFhJ977cgY7pWfCCqtk2U
+RYLXoc+cp5FIhb0yBfk25qK5cHIzwVxE6p0H07itNWXjKlP2NYssB3ozzCv2Cer9
+WNO/rZKF4TYaYI7cd6eqM0+HJZMABZuOBvJnMG7xGds3ktFG4OHkYUSQfcDIBUqg
+Ty6LOq2LQMXKsT8IXzYYGlqGk8BblLKfgVyOing2W3+eKJCqI5R5G43S5dH5SZBR
+1EAAEEfmzVviiRbe2hpYVSrRoTgfQjCPjX42QmIDH0lsgoGtzhHllP7l+hlImesh
+RbFkCkmk8Aw6dTWrBeaF+89ovOg8lA==
+=k8wj
 -----END PGP SIGNATURE-----
 
---Sig_/aG3Odpe9u=Wvas08u+AMVVI--
+--lxvmazlbdrmpdgwa--
 
