@@ -1,84 +1,133 @@
-Return-Path: <linux-kernel+bounces-723723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FFCDAFEA4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:35:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51E46AFEA55
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1469F16BD25
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:33:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB399178DDC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8CCB2BE7D9;
-	Wed,  9 Jul 2025 13:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A127B276025;
+	Wed,  9 Jul 2025 13:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oxeeR58i"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KRh/Pyeh"
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DBC28A1C6
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 13:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7881B283FF0;
+	Wed,  9 Jul 2025 13:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752068011; cv=none; b=p2VxClHQDH3A+y2CUe7TuBLlNS+0jhduGdJt+tpUpx0AZnohJ91ODLXZDgdvrfNJeGXwEC9x4pCGTxbXPlfZjFm8ntcCRPHQgsVk+SU7nmnecJjn7Ue2RbJ03w33YyloMBZshX2qSf3/CPrSwKwNwG8Z3MdINWc4jsz+FP4ZMGk=
+	t=1752068025; cv=none; b=fQ1sQkMwUwZDk26poKHq7yqUn+kzHeuDh2ehWGPfZ1gADCB6tU4mWE1cGpQ1gr7LPaVH9H+Smc4PLgSKCpfA/3aUs0hryfXBG8RajgxwnW5bo0LXQ8chzqGlVNSejuUo3dcBD930l0aaA1Qtf/VhUgp25pQWxqAbUL6TUqVz8OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752068011; c=relaxed/simple;
-	bh=oBbi2dwj3JlrxNgNY8Hz815kTsf3eBPKfewu1okkeYw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UwBd55QNuwuBIMltSv9qgQUxCIYmHC6gjXGCk1Ih6d1LAsOuoodmK+GM1LGFuuTKilxtJLTaqbSehxJEM+vnNUHioPO/MbF9ppUUdO2jg2SEzeQJW9kZ6vJ33OHRe68wgqDa4PmKEPvK7v8WWbj03PFWDUkw9nR3BD9dbf7ooCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oxeeR58i; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <96cdeb5c-dd55-4800-9046-09ebbb818e8b@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752068006;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oBCmCKP8OFqBTk3+dFLXu6PLZZQVW5qJrW4VdVurS6A=;
-	b=oxeeR58i97heGcVCJSXRS5kIf0ZoWpaKVFuA1xKOPE+tM0xYffXEnHqt78071Q38yjPNko
-	Y4QRgF2X96dBafUfFZFFomZzR2RN8iTojzn16xNJ2BGFlpZdo3QQlSlTAnAQukTkr/bWSZ
-	vBhyC3OI7QXek+HvuxOrQSuPL9B5Xfo=
-Date: Wed, 9 Jul 2025 14:33:21 +0100
+	s=arc-20240116; t=1752068025; c=relaxed/simple;
+	bh=QJlrR7trKt+k0DHfB1l8dMYaqpFemIJMJjy9PZjYhGI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mJwy5Fq5q91ICtg2E8Kq5avOTaEyal03KQ0MoGGNSvIdjuhywib2F89sBdziSVsMoOCP9NUhLO67m88eS3NuIYGuucJx1qXKAoWdbKyj3vZu/XbHZmr+jsH0VcEcBsXfN+mopXzgxdfXb4gCPHrbu2+O2CUYB93MngcDePVEJxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KRh/Pyeh; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5314b486207so1996732e0c.2;
+        Wed, 09 Jul 2025 06:33:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752068022; x=1752672822; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8p8Y7xoNQwZAIw4F7Fb5uJJ11m4t3+5eBeshCHSxAZc=;
+        b=KRh/PyehWmz30JkkF3eP7KA+0F0azrF4lR+0lUV4un3JclqIvsjIx5ySw3bc92PInt
+         qNgynzQ0aZNW9COWGJoko3CVhBTCS98s9OHuIimE9D3I7Q0o1LqxRa4gAa/yux4N6/G4
+         dErG7LsBGUZW29XUhx3kZZFmKcgMuywhD/XMGmGun/1MMmDNbhYt+eFyoyswm2oxRDcO
+         YsUznaxx4ZgpAveftX8eFmJSGm+q+mXH5mv5aqP7gwp99ba0I/lU6ROgR/LYCfoefm8m
+         d1PIvC04AiSoWZ8M/QWnVWaAcEtiBmB7DOARVObEj8mRQUDhbp702+4eQzwt4KfK9baV
+         xDdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752068022; x=1752672822;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8p8Y7xoNQwZAIw4F7Fb5uJJ11m4t3+5eBeshCHSxAZc=;
+        b=pgtZfCPMW8NFwJvObHXlDzIICYBj9EcUevA8gst/mUsoXU4hOTwMAjV5uUJnGU0CVU
+         q5h+UTLi95zceOmKTUeKy6J/T+/69C94KwO4TLJlNE5IXm2gWK+rDbTTeSPXaf7e9SHc
+         NwXscjBHy4Pl8NTm/njU/map+LWdnumm6DcUICPMRSgbp/4DA7EyRrgHeyG8neqMQBKu
+         ON1/lM6RqT89sACUpnaOGkfVTh/yacsOB4RphKpaLJMSqXFY9hUkNrVreseP4WOecUlX
+         hdsStEWVE/RPVDpXlK95zX2d0cbcgoIiwFTifPgY6mjzK3kPwMS38z5acyRQHbshb7iw
+         SVnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVn1XBiXI1dqrnEVoAEk6aFz+coSTCfDJIXeN/W+zUENh3q633YXMQV/5CNvOaCw8jAT18ChV5XYvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlgzF+uMR5q0B6u1sTUDB/XJU5XrrOeoslRQ+ykr5xXNtS+o4x
+	Z7lHf6nLjAIovitjQYro99IwQRpE+m3+IzGWLNcRsctOmfdJli9mq8vz
+X-Gm-Gg: ASbGncvIuI2MdrlxmhBhvTul4EBNQ4zgyUUvD6KG6k0AUZb6+tk87ZqUr21VBgsTWHm
+	aD3oypo+Mzv411Zj1iVdzMeqax5RxJhT7Lnuj0q8X7PnorNirglQPXLhkFA563dN7vRUCt2Hiq9
+	F3IKGesIuGBvNT9/b9NNKyxbpaizA0nW7SlJ850P/fYxmuWop3oqgEm/FrBOGJ9eXXHuzJN09T2
+	ETUdGqx+DhllzIcdKd0zPsW+IhfKKSxPb7JAB+7/4g/Jm21UliouniU2h7TmJzugIlSbJdsnbCJ
+	S4r6SNtBy2Xj7MR2whYzRChxh6mmr4sl2P+nr8D3aElGyhzhC82ZTen8R9ti0tQKB7YATKmrZjt
+	WroIaDVvMY7ognMRZrmc4NQqgAblPys+uvLP1j3c=
+X-Google-Smtp-Source: AGHT+IHg9yphXawKg0kB+fw0hzH8WzGI686ZA2Hcr8oBVBE+CGD925dBJEbvwISlK1VPKVP3JKW+Qg==
+X-Received: by 2002:a05:6122:510:b0:52f:47de:3700 with SMTP id 71dfb90a1353d-535d7367703mr1472242e0c.5.1752068022077;
+        Wed, 09 Jul 2025 06:33:42 -0700 (PDT)
+Received: from Ubuntu.. (syn-097-097-020-058.res.spectrum.com. [97.97.20.58])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-534790ed831sm2083240e0c.43.2025.07.09.06.33.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 06:33:41 -0700 (PDT)
+From: Jonathan Velez <jonvelez12345@gmail.com>
+To: dlemoal@kernel.org,
+	cassel@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	shuah@kernel.org,
+	Jonathan Velez <jonvelez12345@gmail.com>
+Subject: [PATCH] ata: libata-transport: replace scnprintf with sysfs_emit for simple attributes
+Date: Wed,  9 Jul 2025 13:33:30 +0000
+Message-ID: <20250709133330.3546-1-jonvelez12345@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v3 7/7] net: dsa: microchip: Disable PTP function
- of KSZ8463
-To: Tristram.Ha@microchip.com, Woojung Huh <woojung.huh@microchip.com>,
- Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Marek Vasut <marex@denx.de>, UNGLinuxDriver@microchip.com,
- devicetree@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250709003234.50088-1-Tristram.Ha@microchip.com>
- <20250709003234.50088-8-Tristram.Ha@microchip.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20250709003234.50088-8-Tristram.Ha@microchip.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On 09/07/2025 01:32, Tristram.Ha@microchip.com wrote:
-> From: Tristram Ha <tristram.ha@microchip.com>
-> 
-> The PTP function of KSZ8463 is on by default.  However, its proprietary
-> way of storing timestamp directly in a reserved field inside the PTP
-> message header is not suitable for use with the current Linux PTP stack
-> implementation.  It is necessary to disable the PTP function to not
-> interfere the normal operation of the MAC.
+sprintf, snprintf, and scnprintf do not consider the PAGE_SIZE maximum
+of the temporary buffer used for outputting sysfs content and they may
+overrun the PAGE_SIZE buffer length.
 
-Could you please explain the "proprietary way of storing timestamps"?
-Maybe you can provide some examples of headers with timestamps?
+To avoid output defects with the ATA transport class simple attributes,
+use sysfs_emit instead of scnprintf().
+
+This aligns with the sysfs guidance provided in
+Documentation/filesystems/sysfs.rst.
+
+Signed-off-by: Jonathan Velez <jonvelez12345@gmail.com>
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+---
+ drivers/ata/libata-transport.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/ata/libata-transport.c b/drivers/ata/libata-transport.c
+index e898be49df6b..62415fe67a11 100644
+--- a/drivers/ata/libata-transport.c
++++ b/drivers/ata/libata-transport.c
+@@ -202,7 +202,7 @@ show_ata_port_##name(struct device *dev,				\
+ {									\
+ 	struct ata_port *ap = transport_class_to_port(dev);		\
+ 									\
+-	return scnprintf(buf, 20, format_string, cast ap->field);	\
++	return sysfs_emit(buf, format_string, cast ap->field);	        \
+ }
+ 
+ #define ata_port_simple_attr(field, name, format_string, type)		\
+@@ -389,7 +389,7 @@ show_ata_dev_##field(struct device *dev,				\
+ {									\
+ 	struct ata_device *ata_dev = transport_class_to_dev(dev);	\
+ 									\
+-	return scnprintf(buf, 20, format_string, cast ata_dev->field);	\
++	return sysfs_emit(buf, format_string, cast ata_dev->field);	\
+ }
+ 
+ #define ata_dev_simple_attr(field, format_string, type)		\
+-- 
+2.43.0
+
 
