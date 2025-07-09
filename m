@@ -1,288 +1,194 @@
-Return-Path: <linux-kernel+bounces-724314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADA5EAFF133
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:54:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5116AFF139
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C12C91C25734
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:54:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C8D91C24F85
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69DB623C513;
-	Wed,  9 Jul 2025 18:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC7523CEFF;
+	Wed,  9 Jul 2025 18:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jdZH6UrI"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Hs6yVIr3"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2072.outbound.protection.outlook.com [40.107.94.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1768F23C502
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 18:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752087273; cv=none; b=PV9eQKy0Ah4ZLmFPHPxmpbmtv3J8joiOm7hTAyqZfXYjNhr/wP3chfyAMmnU9YmLkmtTZsfjfXPV7WcEf0egjS6DbIM/UAI54WwqktuTikSsaOrX22ECqXaB72ur2dllYdpdMT+jHGTZB4o4CO4qiDdwECbRD7NCVoXioSx1CQ4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752087273; c=relaxed/simple;
-	bh=/2Cph1WYBxYVx20KUr3H7Ll6bA1dcyTf8kFf2WKUSvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h/137RJ1VOZyM5X0KjeOVN0D3r/bsWyJi4vGDifFGULCqv/rgY779w2W1xm1vpBPfm7OmYwluFxjt7USB44xlYNuIyMFN3Z04XeBfGqh/QTR+qIGAdZyCkU3MuydQT6tE3HlEHbJVuo8y4xZTxjQaDV0pzj4FbLSBikSryJkC/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jdZH6UrI; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-748d982e92cso156777b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 11:54:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752087271; x=1752692071; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rIMhi3jeGxa0s3nAJlQ56HwnBaYwf7ccfotGT5LQiSA=;
-        b=jdZH6UrIT/+An9oqstNGrdRH4Hl0B5r9vzYhGN9QZcWwhBuOJ9BoovibFtYK/YBuyr
-         ajjgNCsvQ1CIwpvG0o2JEgoZ6s/exazDfAKI+9OglF5ZEYo5MrEoU8stNLC0D8ZXpWaV
-         Lfi+LY9Ez1RpeYL7RKIDU0WVuKVxaxAxgWlDy9iKgAKqS8kBEGrsjUVoHa3SSts+iddi
-         FIthtRniZ0adBFJU4ifG6YmsC6hYJufDlRi6E1IVDH8zaYudbbEAUJWG16KDSpg34+lk
-         E7HEcdNlZlyprSTMaVQl/l8OPBh06cxCApuOm/vyjcA6yeEnfayM1OPCHPub2y3X4itA
-         bhMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752087271; x=1752692071;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rIMhi3jeGxa0s3nAJlQ56HwnBaYwf7ccfotGT5LQiSA=;
-        b=XLgaQQHGwr/PmDvMIt7fayApSZDlnxopzd5hvPGnxw6xgQpCKkbkbkI/BRHMUXS8QJ
-         OR7PtxYLzUDXiQZNRo+6nI1TZvICOdfDh8L21hQmEkQW+W+9dbamGwU3CAqlTUt2A0Yl
-         2TYl8iKZ5vuJosH3P6XQDYpWr5u2Qqztnl08EU0zIRt6FZTTDUd95SR90Ci6JVRSLw9v
-         PnE7Q+laoQRRp1nk6irJKd3cEvDyXiWj9vRfYztn2Zrad4xNo7wxBlVNnzv9MlHCtvAR
-         D02C767eDaN8QiNYYQqOzRLTdwjsrF3Ad2wfTY74MmmcC80od8V90ThEQ6qbbgsuSWrd
-         FYlw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0PhTWbhExb+0KfVuRxT/WVyp4xI3A+SKJHIQKXxoNPueEMWMzZfSoWiHXBr4bZ9O5UzTRPzX1fGMnPZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcQJ+KqI+l5luSKjj+QT5Cryuw8BK9EEpSSDy9U6KyjpTBwzUY
-	wXMyicmVONsVJ/3lnPdAfCrVAFsrDLpwIDsr5S+gpYl37ElTaQKSb+PSG1WnO3EjSA==
-X-Gm-Gg: ASbGncv9X7tWhEKBgEK7UtzQ6zjPpJ9fgU7vz0LIe8AboUAcp81xUhnRZN0Lx/78NiL
-	h/bJ7voBuAF/4fcLq8eyEVpHTVKBr5PYw7mA/97lA5+2xGXubU22KsvT9BLmlQQS3J1gjpPVdd8
-	2eKgV6MTtck1m0ns6NWLFNldZRDIH5czVhNz+Fa+4pC/ALDaVYwoKfnPu1ZhVIVZey5jrkCpLLv
-	moMMrzrufPZBNpyY3Vyut2PZxPXmi/dGMFr4d/4iKF3Oc19ogmG85LiGCfKMIieQjGT6YFYXOLu
-	Z6IsZ4Rz+RYjped7PnQ4c9DfUiOIHy4byXGCJKL5sDjbsoEsPRLKMaU0IHvms4REwT5VmzeCK1X
-	ed3l8zHTlxhMdAsgLuTMa1vjhZDaouibSk3A=
-X-Google-Smtp-Source: AGHT+IEsIujYYJQFxxPNbqyPqNVCpNc5ggBV2zGw34le7f+Ey5Jcbps5XsB6muy9L8TmdRt/c+Z1RA==
-X-Received: by 2002:a05:6a00:b44:b0:748:3964:6177 with SMTP id d2e1a72fcca58-74ea667e366mr5512476b3a.19.1752087271142;
-        Wed, 09 Jul 2025 11:54:31 -0700 (PDT)
-Received: from google.com (236.219.125.34.bc.googleusercontent.com. [34.125.219.236])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce429c46asm15759503b3a.129.2025.07.09.11.54.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 11:54:29 -0700 (PDT)
-Date: Wed, 9 Jul 2025 18:54:25 +0000
-From: Benson Leung <bleung@google.com>
-To: Radu Vele <raduvele@google.com>
-Cc: Benson Leung <bleung@chromium.org>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	Jameson Thies <jthies@google.com>,
-	Andrei Kuchynski <akuchynski@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] platform/chrome: cros_ec_typec: Add lock per-port
-Message-ID: <aG664X6LuA6eZXXm@google.com>
-References: <20250709132232.2475172-1-raduvele@google.com>
- <20250709132232.2475172-2-raduvele@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2738D22256F;
+	Wed,  9 Jul 2025 18:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752087340; cv=fail; b=EQ/CLwFHnJAVz96Cz2kLgZk7MrUt4V8HyU2iw5DUVS6zFCjeR9gx9waZagvOV+NyitmAfixakw8+yKnnnjeRzfuGIxWmDNHrxysueE8zvLQ7dcGX4YWqOMtidTg7I0glyillCD6+W5X+J7XyufPKLxdMwtrVeGHXSBqSj2LaDXY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752087340; c=relaxed/simple;
+	bh=tbCciAMPckCi0I3i/czCwtGQlXTIy8v4jE8edl53ZdQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BG7Jw48PxQP0bUjCC3F4pFWs1OwZIQBl7ZRv3iiHAKWtsceXZ77D0rwvhPgqs8gODUnqqRM4RL9lKSO2f2tU5nCfQm/sQ4aT93oCmbbvzlFy8SW1IrfHRO32quHq4eTizJug6DpWg+VQJmYyiLDEuU0UqPzuXqYZ4PoppvfLXZk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Hs6yVIr3; arc=fail smtp.client-ip=40.107.94.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kvUbXwXowqAd5XJUC+Skokn5uQZnV4QDtV14v0iChA+QFrAHbXxasSq2e8qAYrKBkDrl9AwSbTgkmvj0I+coF9Pm9XIMwBxz1I7YqQ4dGXyiXY4ctnw/ccdiK9+ofXV8sBL7/Jm4UVrT+WPVWNyEw7tGSsENYhIfdkc1peDt21WLqfrsFAWPgK0Zy8JfbdSnLTULkSmTYi6AU4boTA9ZIi3GVhuImNEbI4McX9iqi1rYQqSHi3G3GILbRluKyjOgNynWtl4Y5b3VhqY19kt0wPvmqIXbZsLAeM5sz6WEvfsKXlkV6nHzBQ84ZoH55HJWGWi62oFxU3T1KkFC469UiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UW/EqBnikuZrPbDGKrWFa/Cm1CNNxjLqc0Navg5SCKE=;
+ b=MmCf8+HATLnTj7xwjVPXeb8ALiDsDLPtgCQdFChfIOE0VB2W09TSdxUHFbeHndFA4PJzhShsAr6FYdn1tLL9I4+O8yxWDZUE8aMLjNdbeg9e3eK+n5v7Hmd8mgGm4gtHpwl7LnDHKv98ME8N37c0R3q/6hYZwXCdujrLrO+JsooPcrzbYKZVJKpIvT2v7EPSCA2zKvck7Sp6QhZdDBUCmikJjHgJrhk/OR+QzCI/YuYnK4jictx9YExWvGwgo8klT8DtxT51LI7202P11rpj1pEaHnZaK0Q/4NvWpCzgsJjwoaw5GRMsM7xZRLqtDrFY0oje3isGl2mCepc0Y0L7nA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UW/EqBnikuZrPbDGKrWFa/Cm1CNNxjLqc0Navg5SCKE=;
+ b=Hs6yVIr3giOkIcj8DGdwWZgIeCQtV5olOnyQEHGfmKoTrnah8DXi+AIE3L2Jl+4ug7hirUsgeuaAVFEJdSimbGAfX/WQciK6YEd5JkrE8cxBKqCT9mZ/qKB5pi916IvjxQr1L/fyInwWKaRg/koYKVe4ARzK8ymwSnLZ0a0WmhSJG44eZ4pg2OuAmuLWo5ECD+r2ZDMGdd/8DSGZFpspU7mQlIOzlyLiA3gjKpPsTiUqWLywg2q80rVGOLx1O6Gm9KHWHHCh0+BAA58891/DmdFCF2dWR0hHqmc64N+V/fgz+neBV3VJNpwoy5Qz+6zMIrpYecfYb0oMQZscANfZjg==
+Received: from BY5PR16CA0027.namprd16.prod.outlook.com (2603:10b6:a03:1a0::40)
+ by PH8PR12MB6985.namprd12.prod.outlook.com (2603:10b6:510:1bc::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.24; Wed, 9 Jul
+ 2025 18:55:33 +0000
+Received: from SJ5PEPF000001EC.namprd05.prod.outlook.com
+ (2603:10b6:a03:1a0:cafe::3d) by BY5PR16CA0027.outlook.office365.com
+ (2603:10b6:a03:1a0::40) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.22 via Frontend Transport; Wed,
+ 9 Jul 2025 18:55:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ SJ5PEPF000001EC.mail.protection.outlook.com (10.167.242.200) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8922.22 via Frontend Transport; Wed, 9 Jul 2025 18:55:33 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 9 Jul 2025
+ 11:55:23 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Wed, 9 Jul 2025 11:55:22 -0700
+Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Wed, 9 Jul 2025 11:55:21 -0700
+Date: Wed, 9 Jul 2025 11:55:20 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: <kevin.tian@intel.com>, <corbet@lwn.net>, <will@kernel.org>,
+	<bagasdotme@gmail.com>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
+	<shuah@kernel.org>, <jsnitsel@redhat.com>, <nathan@kernel.org>,
+	<peterz@infradead.org>, <yi.l.liu@intel.com>, <mshavit@google.com>,
+	<praan@google.com>, <zhangzekun11@huawei.com>, <iommu@lists.linux.dev>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <patches@lists.linux.dev>,
+	<mochs@nvidia.com>, <alok.a.tiwari@oracle.com>, <vasant.hegde@amd.com>,
+	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>
+Subject: Re: [PATCH v8 14/29] iommufd/viommu: Add IOMMUFD_CMD_HW_QUEUE_ALLOC
+ ioctl
+Message-ID: <aG67GDY97U8T6kuD@Asurada-Nvidia>
+References: <cover.1751677708.git.nicolinc@nvidia.com>
+ <49a93d92ce657cf6a0d588d2b31ad3600ace21f7.1751677708.git.nicolinc@nvidia.com>
+ <20250709170904.GG1599700@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250709132232.2475172-2-raduvele@google.com>
+In-Reply-To: <20250709170904.GG1599700@nvidia.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001EC:EE_|PH8PR12MB6985:EE_
+X-MS-Office365-Filtering-Correlation-Id: d000da8e-7d78-46f1-a1f5-08ddbf1a2ed0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|7416014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?UN98EhLKckUlMt40PlMe5saHyhsP6rlOTNyTy0DSSk5YNqgoZSWnOMWpr8lw?=
+ =?us-ascii?Q?wAXSgPIT7Jd+o7RgTvrmfJoG9sMXe8QZVj8oEtIVou1BCu1BBXgiT3T3C4/b?=
+ =?us-ascii?Q?gO3tckKIxwIAek9TMm/aBozah87dsmbmefVUb7DSuA00RYZg0NNNcOgq8rMF?=
+ =?us-ascii?Q?SjSARdR4KZVz7IqbL/iMvR4NsBn86QgUS8d99pHYXTaAenwgds+WityhtoD8?=
+ =?us-ascii?Q?gal/X+Oz0ElCPixPKNL9ZJNv/GB3pECf9byV5jGjQEgAPAiBdAKCYBq46VDr?=
+ =?us-ascii?Q?3uoLbM4vXscR+9/uE3CjRbmaVI8Glm4isIzSurjS4Ut+ShPck+txTMiE9Zd9?=
+ =?us-ascii?Q?SOZn4DXZiOYLvT8xoqC/Oby8EIUqB19BpLdZhhcVKeRXrYewYTusluE3IbQD?=
+ =?us-ascii?Q?lXYPFI57qurNsD1HaD5LUIweiMr8+ynFchGIXFFOvQuEkQIGhF3KwxDrXl67?=
+ =?us-ascii?Q?ZAHVjWu5fxq5GBaN2IOhYPmzXlvlAidAQkRpA6GZaFimRoovrWMOuK1gua/L?=
+ =?us-ascii?Q?h2ns1B+IQ9ltVMD7dZR6u0TCiXjleGCiCo1YKaDmH7lII8lVjsdAoZQOghNo?=
+ =?us-ascii?Q?oCgSmZCxtjIZctDqneaG4+qiLkqjGMGlZNaStBBvBPVSHBspjXta+yvfVMJS?=
+ =?us-ascii?Q?gpk+Z4snBkGpsjAiwLLZIAR3sg3X2OzKjhJohfQ+84l6CTulrTZ5OrwKOgen?=
+ =?us-ascii?Q?qyKLf5RTAKqd+pX8owopcNyAVjfgnm1fdTsMh1eM/5o5ChymZ+/shyh9Ezkg?=
+ =?us-ascii?Q?q6ROpFCfBl6hlB7yuKM01OTs8eicozg7TLYK8m0BWi7Oen1cp1tX31yAp7YD?=
+ =?us-ascii?Q?LqRKsNJ5CYG3hiQPH5PUXtbbGQKsC+YM74vh+rcgN040Qd4q36WBEEZFg0/u?=
+ =?us-ascii?Q?off44wGriFJIaWfoA8HqBmm3edQO2D0+4x47GK9yQ8t9cPt6zH6eUvsFBbt4?=
+ =?us-ascii?Q?aDS525ouAKqYAupYEzgHUga1Qc0LhcH3WiO3VoJAHOq/ggcK7gGXIKxCyurl?=
+ =?us-ascii?Q?tAcERnCon98lpfIvr1S+r5AqgyOeKCAwpUEB6efohXBRuV9usBMrUFLTv/Yv?=
+ =?us-ascii?Q?3sUvjHEgSCUXhGd/XwsiTyWsYldfzfJY8EruVtz4NLdHbkHH1MBDRNV8UrFZ?=
+ =?us-ascii?Q?tW3ayVOQVsRB/YfL94Z8KO2sOzYmfJQPVczv+VcX+BPlWVuodxLdh7eKIgu4?=
+ =?us-ascii?Q?Fk7yUrKmBmwjX/h/REYnx1X+19Em/BPnCphxSwzcos2d/ocrIUnZZMaNTAJb?=
+ =?us-ascii?Q?wCi2tpy5OVDMw0PqwkX172UdrKQCJZW9ggX1rb/kmyYkl+wb2Gdu2fXcNJ36?=
+ =?us-ascii?Q?03oRrEKbiEimaWtTD3peMIF10VRMSFp+BBMh2zxXxtLSyCkvdMwZc3pRK4AE?=
+ =?us-ascii?Q?gC22askic9SsgTl12/aU+La3bHInDU8QdMHrsePYu+pfiLogfA+s55PL0ipz?=
+ =?us-ascii?Q?wfX7IJ/i9m1GU9lfWDud23qWuvZPZMeOgMQYgcWibr1fQMXfoOhh5lDBD1k/?=
+ =?us-ascii?Q?CNyJNyzuHJAkk3TXRced1i2be+GLj/mPzx5z?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 18:55:33.1639
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d000da8e-7d78-46f1-a1f5-08ddbf1a2ed0
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001EC.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6985
 
-Hi Radu,
+On Wed, Jul 09, 2025 at 02:09:04PM -0300, Jason Gunthorpe wrote:
+> On Fri, Jul 04, 2025 at 06:13:30PM -0700, Nicolin Chen wrote:
+> > +static struct iommufd_access *
+> > +iommufd_hw_queue_alloc_phys(struct iommu_hw_queue_alloc *cmd,
+> > +			    struct iommufd_viommu *viommu, phys_addr_t *base_pa)
+> > +{
+> > +	struct iommufd_access *access;
+> > +	struct page **pages;
+> > +	size_t max_npages;
+> > +	size_t length;
+> > +	u64 offset;
+> > +	size_t i;
+> > +	int rc;
+> > +
+> > +	offset =
+> > +		cmd->nesting_parent_iova - PAGE_ALIGN(cmd->nesting_parent_iova);
+> 
+> PAGE_ALIGN is ALIGN UP, that is the wrong direction?
+> 
+> It is just:
+> 
+>       offset = cmd->nesting_parent_iova % PAGE_SIZE;
+> 
+> And this is missing:
+> 
+> 	*base_pa = (page_to_pfn(pages[0]) << PAGE_SHIFT) + offset;
+> 
+> ??
 
+Yes, my bad. And I realized that all my testings are page aligned.
+Maybe we could add an IOMMU_TEST_OP_HW_QUEUE_CHECK_ADDR..
 
-On Wed, Jul 09, 2025 at 01:22:32PM +0000, Radu Vele wrote:
-> Add a lock associated to each port to protect port data against
-> concurrent access. Concurrency may result from sysfs commands
-> and ec events.
->=20
-> Signed-off-by: Radu Vele <raduvele@google.com>
-> ---
->  drivers/platform/chrome/cros_ec_typec.c | 38 +++++++++++++++++++------
->  drivers/platform/chrome/cros_ec_typec.h |  3 ++
->  2 files changed, 32 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/c=
-hrome/cros_ec_typec.c
-> index 289429ef959f..bbb9e02624b8 100644
-> --- a/drivers/platform/chrome/cros_ec_typec.c
-> +++ b/drivers/platform/chrome/cros_ec_typec.c
-> @@ -8,6 +8,7 @@
-> =20
->  #include <linux/acpi.h>
->  #include <linux/module.h>
-> +#include <linux/mutex.h>
->  #include <linux/of.h>
->  #include <linux/platform_data/cros_ec_commands.h>
->  #include <linux/platform_data/cros_usbpd_notify.h>
-> @@ -54,8 +55,11 @@ static int cros_typec_enter_usb_mode(struct typec_port=
- *tc_port, enum usb_mode m
->  		.mode_to_enter =3D CROS_EC_ALTMODE_USB4
->  	};
-> =20
-> -	return cros_ec_cmd(port->typec_data->ec, 0, EC_CMD_TYPEC_CONTROL,
-> +	mutex_lock(&port->lock);
-> +	int ret =3D cros_ec_cmd(port->typec_data->ec, 0, EC_CMD_TYPEC_CONTROL,
->  			  &req, sizeof(req), NULL, 0);
-
-Please declare "int ret" at the top of the block, as per other examples of =
-it
-in this file.
-
-You have it in the middle of a block right now.
-
-> +	mutex_unlock(&port->lock);
-> +	return ret;
->  }
-> =20
->  static int cros_typec_perform_role_swap(struct typec_port *tc_port, int =
-target_role, u8 swap_type)
-> @@ -70,6 +74,8 @@ static int cros_typec_perform_role_swap(struct typec_po=
-rt *tc_port, int target_r
->  	if (!data->pd_ctrl_ver)
->  		return -EOPNOTSUPP;
-> =20
-> +	mutex_lock(&port->lock);
-> +
->  	/* First query the state */
->  	req.port =3D port->port_num;
->  	req.role =3D USB_PD_CTRL_ROLE_NO_CHANGE;
-> @@ -79,7 +85,7 @@ static int cros_typec_perform_role_swap(struct typec_po=
-rt *tc_port, int target_r
->  	ret =3D cros_ec_cmd(data->ec, data->pd_ctrl_ver, EC_CMD_USB_PD_CONTROL,
->  				&req, sizeof(req), &resp, sizeof(resp));
->  	if (ret < 0)
-> -		return ret;
-> +		goto unlock;
-> =20
->  	switch (swap_type) {
->  	case USB_PD_CTRL_SWAP_DATA:
-> @@ -92,18 +98,21 @@ static int cros_typec_perform_role_swap(struct typec_=
-port *tc_port, int target_r
->  		break;
->  	default:
->  		dev_warn(data->dev, "Unsupported role swap type %d", swap_type);
-> -		return -EOPNOTSUPP;
-> +		ret =3D -EOPNOTSUPP;
-> +		goto unlock;
->  	}
-> =20
-> -	if (role =3D=3D target_role)
-> -		return 0;
-> +	if (role =3D=3D target_role) {
-> +		ret =3D 0;
-> +		goto unlock;
-> +	}
-> =20
->  	req.swap =3D swap_type;
->  	ret =3D cros_ec_cmd(data->ec, data->pd_ctrl_ver, EC_CMD_USB_PD_CONTROL,
->  				&req, sizeof(req), &resp, sizeof(resp));
-> =20
->  	if (ret < 0)
-> -		return ret;
-> +		goto unlock;
-> =20
->  	switch (swap_type) {
->  	case USB_PD_CTRL_SWAP_DATA:
-> @@ -117,8 +126,11 @@ static int cros_typec_perform_role_swap(struct typec=
-_port *tc_port, int target_r
->  									TYPEC_SINK);
->  		break;
->  	}
-> +	ret =3D 0;
-> =20
-> -	return 0;
-> +unlock:
-> +	mutex_unlock(&port->lock);
-> +	return ret;
->  }
-> =20
->  static int cros_typec_dr_swap(struct typec_port *port, enum typec_data_r=
-ole role)
-> @@ -370,6 +382,7 @@ static void cros_unregister_ports(struct cros_typec_d=
-ata *typec)
->  		if (!typec->ports[i])
->  			continue;
-> =20
-> +		mutex_lock(&typec->ports[i]->lock);
->  		cros_typec_remove_partner(typec, i);
->  		cros_typec_remove_cable(typec, i);
-> =20
-> @@ -378,6 +391,8 @@ static void cros_unregister_ports(struct cros_typec_d=
-ata *typec)
->  		typec_mux_put(typec->ports[i]->mux);
->  		cros_typec_unregister_port_altmodes(typec->ports[i]);
->  		typec_unregister_port(typec->ports[i]->port);
-> +		mutex_unlock(&typec->ports[i]->lock);
-> +		mutex_destroy(&typec->ports[i]->lock);
->  	}
->  }
-> =20
-> @@ -472,6 +487,7 @@ static int cros_typec_init_ports(struct cros_typec_da=
-ta *typec)
->  			goto unregister_ports;
->  		}
-> =20
-> +		mutex_init(&cros_port->lock);
->  		cros_port->port_num =3D port_num;
->  		cros_port->typec_data =3D typec;
->  		typec->ports[port_num] =3D cros_port;
-> @@ -1232,6 +1248,7 @@ static int cros_typec_port_update(struct cros_typec=
-_data *typec, int port_num)
->  		return -EINVAL;
->  	}
-> =20
-> +	mutex_lock(&typec->ports[port_num]->lock);
->  	req.port =3D port_num;
->  	req.role =3D USB_PD_CTRL_ROLE_NO_CHANGE;
->  	req.mux =3D USB_PD_CTRL_MUX_NO_CHANGE;
-> @@ -1241,7 +1258,7 @@ static int cros_typec_port_update(struct cros_typec=
-_data *typec, int port_num)
->  			  EC_CMD_USB_PD_CONTROL, &req, sizeof(req),
->  			  &resp, sizeof(resp));
->  	if (ret < 0)
-> -		return ret;
-> +		goto unlock;
-> =20
->  	/* Update the switches if they exist, according to requested state */
->  	ret =3D cros_typec_configure_mux(typec, port_num, &resp);
-> @@ -1263,7 +1280,10 @@ static int cros_typec_port_update(struct cros_type=
-c_data *typec, int port_num)
->  	if (typec->typec_cmd_supported)
->  		cros_typec_handle_status(typec, port_num);
-> =20
-> -	return 0;
-> +	ret =3D 0;
-> +unlock:
-> +	mutex_unlock(&typec->ports[port_num]->lock);
-> +	return ret;
->  }
-> =20
->  static int cros_typec_get_cmd_version(struct cros_typec_data *typec)
-> diff --git a/drivers/platform/chrome/cros_ec_typec.h b/drivers/platform/c=
-hrome/cros_ec_typec.h
-> index f9c31f04c102..d0a8a12ec91a 100644
-> --- a/drivers/platform/chrome/cros_ec_typec.h
-> +++ b/drivers/platform/chrome/cros_ec_typec.h
-> @@ -82,6 +82,9 @@ struct cros_typec_port {
->  	struct usb_power_delivery_capabilities *partner_sink_caps;
-> =20
->  	struct cros_typec_data *typec_data;
-> +
-> +	/* Mutex to protect port data against concurrent access */
-> +	struct mutex lock;
->  };
-> =20
->  #endif /*  __CROS_EC_TYPEC__ */
-> --=20
-> 2.50.0.727.gbf7dc18ff4-goog
->=20
+Thanks
+Nicolin
 
