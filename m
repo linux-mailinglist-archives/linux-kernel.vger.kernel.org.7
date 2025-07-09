@@ -1,180 +1,306 @@
-Return-Path: <linux-kernel+bounces-724210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A8CAFF00A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:40:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22EB1AFF005
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A60E11884699
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:40:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14690543DA9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4DE235042;
-	Wed,  9 Jul 2025 17:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bHT7+DtS"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793A2231858;
+	Wed,  9 Jul 2025 17:39:33 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823B622FDF2;
-	Wed,  9 Jul 2025 17:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B807E22D9E3
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 17:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752082782; cv=none; b=IEPDAEW7RQHKCp1ml+zoenA+0V4wSTBHIoszWxZa9JsrkTJpE1C4wUa38ZNlPy6y8iv5UOq+3IbugJT4Mv6gg9WKAVWJohKLyY3cKfqO/uwj/M5IRjoozV4AItb4iYoE9aajxInLgS6FdWSaEY1xnK/Oqa4bwbmRPEI96VucL9U=
+	t=1752082772; cv=none; b=JdCwg/wB0j+gCnmYMISaRRmoRTxnM3SBXaCkpcdNGa5dw0ooWW3l8/exCw4zua2ddGjZ2++qQ56/LyguG8xHgOyPsgAJ1+1baIVy1LqCTh7D5YalNNXJLFIOUGQbNY3beHvf+4WyQQS7Z8WvwTYFDKl20zlLgoOWXHetooph2jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752082782; c=relaxed/simple;
-	bh=XElOcsdvO27Z69GW49Yu92xRPveSmIgmkRFK1bGgTqk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QhAQk/E48UUWdIW3WTZ8hyRPImJZnoXNS+ag8t0ZoVtYIL6woDI9/y29Y0kwEHL2bwSomkwF2zUkbNWrRj74x5HVmPkAD165VC5KlUUH2RMialOZRIxDKKI/LEkzEQqIyJ+gD/vWTYNJWd3ewBsrSmddM0Zct19LjYmeYLhbrus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bHT7+DtS; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 569HdHCY1547101;
-	Wed, 9 Jul 2025 12:39:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752082757;
-	bh=2Op+P3nGHZ2e7hDVxEF/lLCrCNuypSQlBiA2kHno7Ek=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=bHT7+DtSBBCnWXf83ggmmnnXviAgya1EjwHye3xsdKHSaPmfPme5HEyP6gYkRNGXm
-	 6XbZkYL17MVsz3XKsHf1KxhXslqwfxM7AVZvQHvMZNU01BUC7yqNBboiMXA9OcATzh
-	 9fAzhz1bK4N/eD0Kg1ceSNBHTMOoZGsBMfkZDvRg=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 569HdHZL2219365
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 9 Jul 2025 12:39:17 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 9
- Jul 2025 12:39:16 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 9 Jul 2025 12:39:16 -0500
-Received: from [10.250.35.60] ([10.250.35.60])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 569HdFaJ161592;
-	Wed, 9 Jul 2025 12:39:15 -0500
-Message-ID: <9182c5cd-b3de-470b-bf84-3ebef309def6@ti.com>
-Date: Wed, 9 Jul 2025 12:39:15 -0500
+	s=arc-20240116; t=1752082772; c=relaxed/simple;
+	bh=dLhcLXEz3T5QY3NMIKU7fpfYh0j3lYzTsI6Yk1XlaqA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GfWBWnErMr3B5ciA+YA5e1WPq0/IqWhag6S+SPuIVurU9m7jAaeCQdylyDO7i40PQAImNavYbjvs8TUSJ/+FKa52iR8KPNT9bEi+ODtAvyV0UgPdQmGE4Vpv5XRQj+YA9Ak/ujK36uRoMz0R4RqtcYJKgoo0zoTQZw8bH+yhRpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-873fd6e896bso20253839f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 10:39:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752082770; x=1752687570;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iRs/7skjGXVU+ooA28uLHDFVkU9E5UNs+MVsLcKKsyA=;
+        b=l2EPHWncGf59ZUgw7+n60uGaQWrNsAWA+bAtVoKHp+5ZIrfxtnrLRWBcCVaHsHaPcF
+         7RBDUK2enME2soB8rW1Jx6TkUM1U3lOgmUz4BUDCQXAimSOLMNzPm9y3s0Ml0Bxz1gSH
+         luNNAYBeRGz0x6MBKBukNSCvdPRMWqCjwwn9EvYvk6mrl4r1OTlsoAZMJZduV/h/CN9/
+         G3+xa6i52Dewd7DGciE/8mMihaa/QSC1I3DbZw35OZ8MypejRbWlU9bWGZzO9FIqK/sY
+         DdvW6TmD2/0r9qP+2S8+hi0IDaQbU4wVjUSRC8dzY1ZrBAPt+pDmML/fqpzhDXq1Jbef
+         wOpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXyAebT9Q6iR6Q31lBmVxRkyO577PbtQYqxUDLXhND5Bs9MP6WvzsXzGYagKhi4kbrx4+peCZ+K85aJY50=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywl4RteKGRkBf2/4bxhIBvRGi5zV0BUGowLRSemISpwf7BsnbCB
+	1179Uu0L5AHBnkBRJ1prU4Ln7q1ygpP16Lf2cJ99XNh21wSTVW6tVHfc0CLxOGHVvw7ZpeICssC
+	1ivT1npIXqUBPQLhHo+JzjVHGDqXpmifazDxkX5KL0OKZPo/gAmogSFzSZ1I=
+X-Google-Smtp-Source: AGHT+IH/2IsU3t0l5UT5Khhmq//gwyMLdjJ/hW58e0JvU76Ijmj364iS7wt+yaYajH5XrgEzM1lKuMqUdmAYCXLQM6jMT8deDcWM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Documentation: dma-buf: heaps: Add naming guidelines
-To: Maxime Ripard <mripard@kernel.org>,
-        Sumit Semwal
-	<sumit.semwal@linaro.org>,
-        Benjamin Gaignard
-	<benjamin.gaignard@collabora.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        John Stultz <jstultz@google.com>,
-        "T.J. Mercier" <tjmercier@google.com>,
-        Jonathan Corbet <corbet@lwn.net>
-CC: <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Jared Kangas <jkangas@redhat.com>,
-        Mattijs
- Korpershoek <mkorpershoek@kernel.org>,
-        Bagas Sanjaya <bagasdotme@gmail.com>
-References: <20250616-dma-buf-heap-names-doc-v2-1-8ae43174cdbf@kernel.org>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250616-dma-buf-heap-names-doc-v2-1-8ae43174cdbf@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-Received: by 2002:a05:6602:6d0f:b0:85d:b054:6eb9 with SMTP id
+ ca18e2360f4ac-8795b4e0b43mr448729539f.14.1752082769731; Wed, 09 Jul 2025
+ 10:39:29 -0700 (PDT)
+Date: Wed, 09 Jul 2025 10:39:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <686ea951.050a0220.385921.0015.GAE@google.com>
+Subject: [syzbot] [xfs?] INFO: task hung in xfs_file_fsync
+From: syzbot <syzbot+9bc8c0586b39708784d9@syzkaller.appspotmail.com>
+To: cem@kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/16/25 10:21 AM, Maxime Ripard wrote:
-> We've discussed a number of times of how some heap names are bad, but
-> not really what makes a good heap name.
-> 
-> Let's document what we expect the heap names to look like.
-> 
-> Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
-> Changes in v2:
-> - Added justifications for each requirement / suggestions
-> - Added a mention and example of buffer attributes
-> - Link to v1: https://lore.kernel.org/r/20250520-dma-buf-heap-names-doc-v1-1-ab31f74809ee@kernel.org
-> ---
->   Documentation/userspace-api/dma-buf-heaps.rst | 38 +++++++++++++++++++++++++++
->   1 file changed, 38 insertions(+)
-> 
-> diff --git a/Documentation/userspace-api/dma-buf-heaps.rst b/Documentation/userspace-api/dma-buf-heaps.rst
-> index 535f49047ce6450796bf4380c989e109355efc05..835ad1c3a65bc07b6f41d387d85c57162909e859 100644
-> --- a/Documentation/userspace-api/dma-buf-heaps.rst
-> +++ b/Documentation/userspace-api/dma-buf-heaps.rst
-> @@ -21,5 +21,43 @@ following heaps:
->      usually created either through the kernel commandline through the
->      `cma` parameter, a memory region Device-Tree node with the
->      `linux,cma-default` property set, or through the `CMA_SIZE_MBYTES` or
->      `CMA_SIZE_PERCENTAGE` Kconfig options. Depending on the platform, it
->      might be called ``reserved``, ``linux,cma``, or ``default-pool``.
-> +
-> +Naming Convention
-> +=================
-> +
-> +``dma-buf`` heaps name should meet a number of constraints:
-> +
-> +- That name must be stable, and must not change from one version to the
-> +  other. Userspace identifies heaps by their name, so if the names ever
-> +  changes, we would be likely to introduce regressions.
-> +
-> +- That name must describe the memory region the heap will allocate from,
-> +  and must uniquely identify it in a given platform. Since userspace
-> +  applications use the heap name as the discriminant, it must be able to
-> +  tell which heap it wants to use reliably if there's multiple heaps.
-> +
-> +- That name must not mention implementation details, such as the
-> +  allocator. The heap driver will change over time, and implementation
-> +  details when it was introduced might not be relevant in the future.
-> +
-> +- The name should describe properties of the buffers that would be
-> +  allocated. Doing so will make heap identification easier for
-> +  userspace. Such properties are:
-> +
-> +  - ``cacheable`` / ``uncacheable`` for buffers with CPU caches enabled
-> +    or disabled;
-> +
+Hello,
 
-We should avoid exposing cacheability to userspace. What users care about
-is if writes are readable by the other side (and vice versa) without SYNC
-operations in-between. This property is "coherency". Being non-cached
-is just one way to achieve coherency on some systems. For many systems
-even cached buffers are still coherent and manually specifying "non-cached"
-causes unneeded performance issues.
+syzbot found the following issue on:
 
-DMA-BUFs are default assumed to be non-coherent and sync operations should
-be always be performed (if the buffer is actually coherent these operations
-are turned into NOPs and no harm done). If sync operations cannot be done
-(for instance small multi-writer ring-buffers), then the property can
-be simply:
+HEAD commit:    d006330be3f7 Merge tag 'sound-6.16-rc6' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17d17f70580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b309c907eaab29da
+dashboard link: https://syzkaller.appspot.com/bug?extid=9bc8c0586b39708784d9
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15e24a8c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10ed3582580000
 
-- ``coherent`` for buffers which do not require sync operations
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/589c382b9e63/disk-d006330b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/756fa29cc5a7/vmlinux-d006330b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/41f40b8b4afc/bzImage-d006330b.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/f0df0d993fe8/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=11e24a8c580000)
 
-Andrew
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9bc8c0586b39708784d9@syzkaller.appspotmail.com
 
-> +  - ``contiguous`` for physically contiguous buffers;
-> +
-> +  - ``protected`` for encrypted buffers not accessible the OS;
-> +
-> +- The name may describe intended usage. Doing so will make heap
-> +  identification easier for userspace applications and users.
-> +
-> +For example, assuming a platform with a reserved memory region located
-> +at the RAM address 0x42000000, intended to allocate video framebuffers,
-> +physically contiguous, and backed by the CMA kernel allocator. Good
-> +names would be ``memory@42000000-cacheable-contiguous`` or
-> +``video@42000000``, but ``cma-video`` wouldn't.
-> 
-> ---
-> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-> change-id: 20250520-dma-buf-heap-names-doc-31261aa0cfe6
-> 
-> Best regards,
+INFO: task syz.6.141:7477 blocked for more than 143 seconds.
+      Not tainted 6.16.0-rc5-syzkaller-00025-gd006330be3f7 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.6.141       state:D stack:21864 pid:7477  tgid:7476  ppid:6658   task_flags:0x400140 flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5401 [inline]
+ __schedule+0x16f5/0x4d00 kernel/sched/core.c:6790
+ __schedule_loop kernel/sched/core.c:6868 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:6883
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6940
+ rwsem_down_read_slowpath+0x552/0x880 kernel/locking/rwsem.c:1084
+ __down_read_common kernel/locking/rwsem.c:1248 [inline]
+ __down_read kernel/locking/rwsem.c:1261 [inline]
+ down_read_nested+0x9a/0x2f0 kernel/locking/rwsem.c:1650
+ xfs_fsync_flush_log fs/xfs/xfs_file.c:112 [inline]
+ xfs_file_fsync+0x422/0xa30 fs/xfs/xfs_file.c:167
+ generic_write_sync include/linux/fs.h:3031 [inline]
+ xfs_file_buffered_write+0x713/0x890 fs/xfs/xfs_file.c:1018
+ do_iter_readv_writev+0x56e/0x7f0 fs/read_write.c:-1
+ vfs_writev+0x31a/0x960 fs/read_write.c:1057
+ do_pwritev fs/read_write.c:1153 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1211 [inline]
+ __se_sys_pwritev2+0x179/0x290 fs/read_write.c:1202
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fccbdb8e929
+RSP: 002b:00007fccbe9f2038 EFLAGS: 00000246 ORIG_RAX: 0000000000000148
+RAX: ffffffffffffffda RBX: 00007fccbddb5fa0 RCX: 00007fccbdb8e929
+RDX: 0000000000000001 RSI: 00002000000001c0 RDI: 0000000000000004
+RBP: 00007fccbdc10b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000e7b R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fccbddb5fa0 R15: 00007ffd671078d8
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/31:
+ #0: 
+ffffffff8e13f160 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ffffffff8e13f160 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ffffffff8e13f160 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6770
+2 locks held by kworker/u8:5/969:
+2 locks held by getty/5603:
+ #0: ffff88803539a0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc9000333b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
+1 lock held by syz-executor/5979:
+ #0: ffffffff8e144c78 (rcu_state.exp_mutex){+.+.}-{4:4}, at: exp_funnel_lock kernel/rcu/tree_exp.h:336 [inline]
+ #0: ffffffff8e144c78 (rcu_state.exp_mutex){+.+.}-{4:4}, at: synchronize_rcu_expedited+0x3b9/0x730 kernel/rcu/tree_exp.h:998
+1 lock held by syz-executor/5980:
+ #0: ffffffff8e144c78 (rcu_state.exp_mutex){+.+.}-{4:4}, at: exp_funnel_lock kernel/rcu/tree_exp.h:336 [inline]
+ #0: ffffffff8e144c78 (rcu_state.exp_mutex){+.+.}-{4:4}, at: synchronize_rcu_expedited+0x3b9/0x730 kernel/rcu/tree_exp.h:998
+4 locks held by syz.2.46/6517:
+ #0: ffff88802386a428 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:557
+ #1: ffff888022d85870 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: inode_lock include/linux/fs.h:869 [inline]
+ #1: ffff888022d85870 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: vfs_setxattr+0x144/0x2f0 fs/xattr.c:320
+ #2: ffff88802386a618 (sb_internal#2){.+.+}-{0:0}, at: xfs_trans_alloc_inode+0x13c/0x4a0 fs/xfs/xfs_trans.c:1098
+ #3: ffff888022d85658 (&xfs_nondir_ilock_class){++++}-{4:4}, at: xfs_trans_alloc_inode+0x161/0x4a0 fs/xfs/xfs_trans.c:1104
+4 locks held by syz.5.114/7216:
+ #0: ffff8880734a2428 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:557
+ #1: ffff88804fbfc8f0 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: inode_lock include/linux/fs.h:869 [inline]
+ #1: ffff88804fbfc8f0 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: vfs_setxattr+0x144/0x2f0 fs/xattr.c:320
+ #2: ffff8880734a2618 (sb_internal#2){.+.+}-{0:0}, at: xfs_trans_alloc_inode+0x13c/0x4a0 fs/xfs/xfs_trans.c:1098
+ #3: ffff88804fbfc6d8 (&xfs_nondir_ilock_class){++++}-{4:4}, at: xfs_trans_alloc_inode+0x161/0x4a0 fs/xfs/xfs_trans.c:1104
+2 locks held by syz.6.141/7477:
+ #0: ffff88805c398428 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3096 [inline]
+ #0: ffff88805c398428 (sb_writers#12){.+.+}-{0:0}, at: vfs_writev+0x288/0x960 fs/read_write.c:1055
+ #1: ffff88807f90a7d8 (&xfs_nondir_ilock_class){++++}-{4:4}, at: xfs_fsync_flush_log fs/xfs/xfs_file.c:112 [inline]
+ #1: ffff88807f90a7d8 (&xfs_nondir_ilock_class){++++}-{4:4}, at: xfs_file_fsync+0x422/0xa30 fs/xfs/xfs_file.c:167
+4 locks held by syz.6.141/7520:
+ #0: ffff88805c398428 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:557
+ #1: ffff88807f90a9f0 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: inode_lock include/linux/fs.h:869 [inline]
+ #1: ffff88807f90a9f0 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: vfs_setxattr+0x144/0x2f0 fs/xattr.c:320
+ #2: ffff88805c398618 (sb_internal#2){.+.+}-{0:0}, at: xfs_trans_alloc_inode+0x13c/0x4a0 fs/xfs/xfs_trans.c:1098
+ #3: ffff88807f90a7d8 (&xfs_nondir_ilock_class){++++}-{4:4}, at: xfs_trans_alloc_inode+0x161/0x4a0 fs/xfs/xfs_trans.c:1104
+4 locks held by syz.0.144/7510:
+ #0: ffff88807b726428 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:557
+ #1: ffff88804fbfb1b0 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: inode_lock include/linux/fs.h:869 [inline]
+ #1: ffff88804fbfb1b0 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: vfs_setxattr+0x144/0x2f0 fs/xattr.c:320
+ #2: ffff88807b726618 (sb_internal#2){.+.+}-{0:0}, at: xfs_trans_alloc_inode+0x13c/0x4a0 fs/xfs/xfs_trans.c:1098
+ #3: ffff88804fbfaf98 (&xfs_nondir_ilock_class){++++}-{4:4}, at: xfs_trans_alloc_inode+0x161/0x4a0 fs/xfs/xfs_trans.c:1104
+4 locks held by syz.7.184/8027:
+ #0: ffff888074d8c428 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:557
+ #1: ffff88807f90d870 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: inode_lock include/linux/fs.h:869 [inline]
+ #1: ffff88807f90d870 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: vfs_setxattr+0x144/0x2f0 fs/xattr.c:320
+ #2: ffff888074d8c618 (sb_internal#2){.+.+}-{0:0}, at: xfs_trans_alloc_inode+0x13c/0x4a0 fs/xfs/xfs_trans.c:1098
+ #3: ffff88807f90d658 (&xfs_nondir_ilock_class){++++}-{4:4}, at: xfs_trans_alloc_inode+0x161/0x4a0 fs/xfs/xfs_trans.c:1104
+4 locks held by syz.9.222/8459:
+ #0: ffff88802f5f8428 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:557
+ #1: ffff88804fa20330 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: inode_lock include/linux/fs.h:869 [inline]
+ #1: ffff88804fa20330 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: vfs_setxattr+0x144/0x2f0 fs/xattr.c:320
+ #2: ffff88802f5f8618 (sb_internal#2){.+.+}-{0:0}, at: xfs_trans_alloc_inode+0x13c/0x4a0 fs/xfs/xfs_trans.c:1098
+ #3: ffff88804fa20118 (&xfs_nondir_ilock_class){++++}-{4:4}, at: xfs_trans_alloc_inode+0x161/0x4a0 fs/xfs/xfs_trans.c:1104
+4 locks held by syz.8.287/8943:
+ #0: ffff8880310d6428 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:557
+ #1: ffff88804fac0330 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: inode_lock include/linux/fs.h:869 [inline]
+ #1: ffff88804fac0330 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: vfs_setxattr+0x144/0x2f0 fs/xattr.c:320
+ #2: ffff8880310d6618 (sb_internal#2){.+.+}-{0:0}, at: xfs_trans_alloc_inode+0x13c/0x4a0 fs/xfs/xfs_trans.c:1098
+ #3: ffff88804fac0118 (&xfs_nondir_ilock_class){++++}-{4:4}, at: xfs_trans_alloc_inode+0x161/0x4a0 fs/xfs/xfs_trans.c:1104
+5 locks held by syz-executor/9036:
+ #0: ffff88807b534428 (sb_writers#9){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3096 [inline]
+ #0: ffff88807b534428 (sb_writers#9){.+.+}-{0:0}, at: vfs_write+0x211/0xa90 fs/read_write.c:682
+ #1: ffff88804f649088 (&of->mutex){+.+.}-{4:4}, at: kernfs_fop_write_iter+0x1e0/0x4f0 fs/kernfs/file.c:325
+ #2: ffffffff8e176708 (cgroup_mutex){+.+.}-{4:4}, at: cgroup_lock include/linux/cgroup.h:387 [inline]
+ #2: ffffffff8e176708 (cgroup_mutex){+.+.}-{4:4}, at: cgroup_kn_lock_live+0x13c/0x230 kernel/cgroup/cgroup.c:1686
+ #3: ffffffff8dfd72d0 (cpu_hotplug_lock){++++}-{0:0}, at: cgroup_attach_lock kernel/cgroup/cgroup.c:2480 [inline]
+ #3: ffffffff8dfd72d0 (cpu_hotplug_lock){++++}-{0:0}, at: cgroup_procs_write_start+0x186/0x610 kernel/cgroup/cgroup.c:2984
+ #4: ffffffff8e1769b0 (cgroup_threadgroup_rwsem){++++}-{0:0}, at: cgroup_attach_lock kernel/cgroup/cgroup.c:2482 [inline]
+ #4: ffffffff8e1769b0 (cgroup_threadgroup_rwsem){++++}-{0:0}, at: cgroup_procs_write_start+0x19c/0x610 kernel/cgroup/cgroup.c:2984
+4 locks held by syz.1.340/9228:
+ #0: ffff888030946428 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:557
+ #1: ffff88804fa26fb0 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: inode_lock include/linux/fs.h:869 [inline]
+ #1: ffff88804fa26fb0 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: vfs_setxattr+0x144/0x2f0 fs/xattr.c:320
+ #2: ffff888030946618 (sb_internal#2){.+.+}-{0:0}, at: xfs_trans_alloc_inode+0x13c/0x4a0 fs/xfs/xfs_trans.c:1098
+ #3: ffff88804fa26d98 (&xfs_nondir_ilock_class){++++}-{4:4}, at: xfs_trans_alloc_inode+0x161/0x4a0 fs/xfs/xfs_trans.c:1104
+4 locks held by syz.2.347/9266:
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.16.0-rc5-syzkaller-00025-gd006330be3f7 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:158 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:307 [inline]
+ watchdog+0xfee/0x1030 kernel/hung_task.c:470
+ kthread+0x711/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 9264 Comm: syz.5.346 Not tainted 6.16.0-rc5-syzkaller-00025-gd006330be3f7 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+RIP: 0010:hlock_class kernel/locking/lockdep.c:234 [inline]
+RIP: 0010:check_wait_context kernel/locking/lockdep.c:4857 [inline]
+RIP: 0010:__lock_acquire+0x332/0xd20 kernel/locking/lockdep.c:5190
+Code: e5 15 09 d5 09 cd 44 09 f5 41 89 6c c7 20 45 89 44 c7 24 4c 89 7c 24 10 4d 8d 34 c7 81 e5 ff 1f 00 00 48 0f a3 2d 3e ce 09 12 <73> 10 48 69 c5 c8 00 00 00 48 8d 80 f0 02 49 93 eb 40 83 3d 85 5d
+RSP: 0018:ffffc90004d8f028 EFLAGS: 00000003
+RAX: 0000000000000000 RBX: ffffffff8e13f160 RCX: 0000000000000007
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888048581e00
+RBP: 0000000000000007 R08: 0000000000000000 R09: ffffffff81729ae5
+R10: dffffc0000000000 R11: ffffffff81acf330 R12: 0000000000020000
+R13: 0000000000000000 R14: ffff8880485828f0 R15: ffff8880485828f0
+FS:  00007fec077e56c0(0000) GS:ffff888125d1b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f83ec5b7bac CR3: 00000000489aa000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
+ rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ class_rcu_constructor include/linux/rcupdate.h:1155 [inline]
+ unwind_next_frame+0xc2/0x2390 arch/x86/kernel/unwind_orc.c:479
+ arch_stack_walk+0x11c/0x150 arch/x86/kernel/stacktrace.c:25
+ stack_trace_save+0x9c/0xe0 kernel/stacktrace.c:122
+ save_stack+0xf5/0x1f0 mm/page_owner.c:156
+ __reset_page_owner+0x71/0x1f0 mm/page_owner.c:308
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1248 [inline]
+ free_unref_folios+0xc66/0x14d0 mm/page_alloc.c:2763
+ folios_put_refs+0x559/0x640 mm/swap.c:992
+ folio_batch_release include/linux/pagevec.h:101 [inline]
+ shmem_undo_range+0x49e/0x14b0 mm/shmem.c:1125
+ shmem_truncate_range mm/shmem.c:1237 [inline]
+ shmem_evict_inode+0x272/0xa70 mm/shmem.c:1365
+ evict+0x504/0x9c0 fs/inode.c:810
+ __dentry_kill+0x209/0x660 fs/dcache.c:669
+ dput+0x19f/0x2b0 fs/dcache.c:911
+ __fput+0x68e/0xa70 fs/file_table.c:473
+ fput_close_sync+0x119/0x200 fs/file_table.c:570
+ __do_sys_close fs/open.c:1589 [inline]
+ __se_sys_close fs/open.c:1574 [inline]
+ __x64_sys_close+0x7f/0x110 fs/open.c:1574
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fec0698d58a
+Code: 48 3d 00 f0 ff ff 77 48 c3 0f 1f 80 00 00 00 00 48 83 ec 18 89 7c 24 0c e8 43 91 02 00 8b 7c 24 0c 89 c2 b8 03 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 36 89 d7 89 44 24 0c e8 a3 91 02 00 8b 44 24
+RSP: 002b:00007fec077e4e00 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007fec0698d58a
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 0000000000000010 R08: 0000000000000000 R09: 000000000000985e
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
+R13: 00007fec077e4ef0 R14: 00007fec077e4eb0 R15: 00007febfd600000
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
