@@ -1,155 +1,225 @@
-Return-Path: <linux-kernel+bounces-724247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66E29AFF063
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:04:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1A1CAFF061
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D34B3A9720
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:03:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97E70562BC1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37985239561;
-	Wed,  9 Jul 2025 18:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B795E238C20;
+	Wed,  9 Jul 2025 18:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KnupimiL"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dLDec0iU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB258224AFB
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 18:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8E8235050
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 18:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752084218; cv=none; b=A7EaPUJnjGuQLuuFtm1RvElD8bEmgdFn5eerF5xKJ9AcKq2TJvFWDMMZkYyB78C2MewlSQ8/vxHNZKn0NMGvePrsB7CUJAcXdU7nwT+ZDwXClQ5x6O0afQRtOWTZ6mx/SR6w+7dVYKDd/0bM8k6s2GbjOP909hiIPkORl6HD48Y=
+	t=1752084218; cv=none; b=G2rISzskSSREkG4n2gcS+kzg/q6eU6f7GrTAi3LwS51u8grJ1Ud3xy44iYeXhhg836detd9EWSmke40AKLs90NG6gAu5RQdb4DLRYSxHnLmOuMjKDDTzfPTpQYqiQUEodN7yQQ7xO8aQbiKWV+kZ7SWQRqQ3KsqHPa04Ct9+/vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752084218; c=relaxed/simple;
-	bh=27TDKvCzp0syh0EGTxobI8FWbGxi4OXzg+TEq6GiL0s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M2a+SIIxYAZxU3jkp+3sDvBdvr6Z4BbqzGqjkgUIwHm9R/442ljIL5xKoMq7pdkFzXmFkjv0oA9CSzF6qEoWs4IKRMTV42LbmRwlGjwml6dten7uftTwF01BqW5c5GrAzedpFOGlQFs1D/C/o7tu2CIfnfv4j2IqF83Qjr7cmlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KnupimiL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 569Coidq030103
-	for <linux-kernel@vger.kernel.org>; Wed, 9 Jul 2025 18:03:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2uc92O1GGv7emWG1TYEn9fypVsBaY5TnEeVaY/0T7/w=; b=KnupimiL4EZalts1
-	9iEjxmVspLViNkxnTUsyCodjfZClzaw3RAAZ2hh6QRgRGnyn1GoKdQZidsvNJHYN
-	Z7/VxAuaKpUtt74ZD+sV0H64fNlFc5S0Yd/FPiazPMl/e0V7hoqjbc5cJLu2kySp
-	7XUXkBuvInznLXZjQPSYeQDgGitwILYrSCJRWt//urOBqwyfdi8imRlHHWnrtTBo
-	MeSHWjhAulRW7flXAk5sA6yGYoCPCxRjjtv0S25CDHWIJ6+uRWzW4mTr47k5zDpu
-	9GsTKJHcr+xuVJte38F/oNEiHARwn1Tmmpzc1opgSA8fRa0kksABdaEGanDNpou6
-	KHMHmg==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47smcg20hn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 18:03:35 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7dbce38d456so3086385a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 11:03:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752084215; x=1752689015;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2uc92O1GGv7emWG1TYEn9fypVsBaY5TnEeVaY/0T7/w=;
-        b=ulcmP3uWQbCq9fVyrEFQPlX5p1Yta4TLCm6tb6e+ch7ekD+p6L4jBqYPBakXBMgHcd
-         6GwbzwJKyce1/Vygf8IGdDeq7Tkhk84owcle4kbQXrFAyead4faY78PZYPwx+L2ZreeX
-         5O3dSZRBZRo36zeHNGcCareUj7oJi1RQ371CVftUg8Z4GyQG5OiJzVR0cEK9JwvHjdlQ
-         P2Ao6BMCQMSYImVeVn5hsxqPJe9JEByqgFeQ8eQpMm6AgBuAXkG563Z5FtJvypSwI1dC
-         N5p66iCiTcw2Fo73donCaDjFMHL+hgRgElp8TlgfuJOicGbOw4el6U7sYjRRWeDl6MLF
-         o8/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXgU4V/HihPItH0ejMuYJKNdOswukhbNnUsCRkxgzKrmIAtJXyGIn06OOy6iTkanGnn5Wsj9NhSdH7JsiY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5emLDPpquN2/yBS5VCuOfCnSvA3lzd50v8WUQs5XIsFaw9re+
-	tpQD4x5loNlMnCa0SFIgJlSm4JGz9IMX4ENpPeG6nqJjbx+ybK8fA9JmODyCYVGY+ipxEpbYvSr
-	dlrLdHmC7X22FgXn+HkZ6gCeES84E46GtXw9729+N8T2oHKMQYCayAj4zQmuKocRsFxc=
-X-Gm-Gg: ASbGncudy9bU0rL1Evq45P/WkcRMFtOFBY7U2XrTuIe+if9TrUEibcNS6sfWS9+beTn
-	vj4/jzBMb0+4WYuLEvUL3PI9+EmftdkDcQ1nzbXrMwAycZXa6tqCoy+XKPuFM2LeiVFB1h+2mjn
-	3mY91tGB0+3+sduIgudxgMACnjQTcS6dRjyH9GpRtfXokGgjtMeyQTcb4MP7fyyUafQ/4tCnUDs
-	rNkNBGZml9vuXxceVaTPPXL0ZoHzs3cwDvlEyuefCAi1arM+m8J1ZUw4gT5svj/hfEt6If6UIGZ
-	K2mfpSFo+T8OJS5XaH4C1RRAHi74R6MoiNVritkI2EQbe4GxKhwCkEcQ870ZJ0pqkBek6WfHQA+
-	Q++M=
-X-Received: by 2002:a05:622a:1491:b0:48a:80e5:72be with SMTP id d75a77b69052e-4a9e9db4837mr1964031cf.2.1752084214591;
-        Wed, 09 Jul 2025 11:03:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHT4JbzQDFlByDuD7hy/m9S00Zb2j1K9B+NMiIKO0svgqjP5RylRzZ8vUZfB5MYmmWt5DXtBg==
-X-Received: by 2002:a05:622a:1491:b0:48a:80e5:72be with SMTP id d75a77b69052e-4a9e9db4837mr1963781cf.2.1752084214116;
-        Wed, 09 Jul 2025 11:03:34 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fcb8c80c4sm8994918a12.75.2025.07.09.11.03.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Jul 2025 11:03:33 -0700 (PDT)
-Message-ID: <68dfc6b7-1083-44dc-bdaf-4fc09e944671@oss.qualcomm.com>
-Date: Wed, 9 Jul 2025 20:03:30 +0200
+	bh=I8lESwgVV2YmCOlO1spzAwAlpxikzidKRjeQ4dBVCoc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=KiFlODcLLOIe5CtYVG51Kx3y7LULkHwJt9RMX7MZ4PDwWMGPU/bJAczTlYki7KqIfvIQoc1Una0knHR1Hz+SMxCBs+a4jLZss9vbiVEIat6xaK8Dly/j8LVhamLXahPXqOmeeoC6Q2JI42tLIuwaCro5Fd4hFb7IZqUXKW9S6K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dLDec0iU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E4B8C4CEF4;
+	Wed,  9 Jul 2025 18:03:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752084217;
+	bh=I8lESwgVV2YmCOlO1spzAwAlpxikzidKRjeQ4dBVCoc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=dLDec0iUaqX31hf62P3fe76Mb+XtWtkWsBkc2IvUhTxYhlsQG1aj1xMfvr3Ax4tgs
+	 cwMKrd9EbdAZ2PEk7EII5hhMZQEhws9IrIwHkBUortBxyJ2UnAyfSkvMyBxc+ciqZH
+	 7dfAlnDlKkLE7sFl/9ee5T381ypM4RPMOCNYKY8f4DxzE4+o8zefReVNiNhH4mQqld
+	 C3dJuh+sElsQ6+Ma7CxCfGN6+nyCh8Iup2J39DcLdjZ+l9qzhyWhIchOQybGS3YWKV
+	 7horklqCmPwTM1je4VX48ZKpMEPc2VBqTO17IoD1zTHNAPdupzU5ORbCr32W5e+16/
+	 TAXXwD0Uxv+xw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 1AB2BCE0B9F; Wed,  9 Jul 2025 11:03:37 -0700 (PDT)
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jon Pan-Doh <pandoh@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Karolina Stolarek <karolina.stolarek@oracle.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH v6 1/3] lib: Add trivial kunit test for ratelimit
+Date: Wed,  9 Jul 2025 11:03:33 -0700
+Message-Id: <20250709180335.1716384-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <d1007957-97ff-4f6f-92ac-606f68c65dfa@paulmck-laptop>
+References: <d1007957-97ff-4f6f-92ac-606f68c65dfa@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/12] pinctrl: qcom: mark the `gpio` and `egpio` pins
- function as non-strict functions
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Alexey Klimov <alexey.klimov@linaro.org>,
-        Lorenzo Bianconi <lorenzo@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Luca Weiss <luca.weiss@fairphone.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20250709-pinctrl-gpio-pinfuncs-v2-0-b6135149c0d9@linaro.org>
- <20250709-pinctrl-gpio-pinfuncs-v2-11-b6135149c0d9@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250709-pinctrl-gpio-pinfuncs-v2-11-b6135149c0d9@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=P7o6hjAu c=1 sm=1 tr=0 ts=686eaef8 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=XSwnDwznb6xmaXktW1IA:9 a=QEXdDO2ut3YA:10 a=ZXulRonScM0A:10
- a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: HXvZ8eG1airZAsdlwEtloxtOdLprXlSx
-X-Proofpoint-GUID: HXvZ8eG1airZAsdlwEtloxtOdLprXlSx
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDE2MyBTYWx0ZWRfX2n89sPbsSMgr
- LiA4A8ppbHikzwpOY6PuLZoGE8xNleeNlpboPg75lnOHZtxW78k2cxg4rgsd13FtjJzBEbpgWP6
- KsNriRVaxKZkyOsGJzo7dn11Jg+EI7H63XfFy8UD8kXpEw3DK9jS2aMQLGVdBXOBibyi6N75AUq
- I7JDzZEqmGdNpX9OWoeS84PaBOZYUuzqv2u5nf3peYlQZ/3usoMP2KfrJorTgTLItwed3d79y+k
- YLss7OzlxVGlHnO3pq/xRgQfl14ydBIfjSaKVwZ7Bubh7d1pX4F0boa8x+xIIEYKQtzRLxLmRZc
- TN8o/wUaRNYsWwKwXIlCusnAvVhuTrq+hPHerQiJY1LnlqFQImwlXM84TcU7E+yhTkbE537AyYq
- HhfrCgTKQM1/VjfSvBN6dOnjxzDY9/NVgpop6dmUNKORpTDu/mtceUK7zcUXCOBFkY4JUihR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-09_04,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 phishscore=0 bulkscore=0 mlxscore=0
- malwarescore=0 spamscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015
- adultscore=0 mlxlogscore=853 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507090163
+Content-Transfer-Encoding: 8bit
 
-On 7/9/25 4:39 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Allow pins muxed to the "gpio" or "egpio" function to be requested as
-> GPIOs even if pinmux_ops say the controller should be strict.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
+Add a simple single-threaded smoke test for lib/ratelimit.c
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+To run on x86:
 
-heads up for +Luca, I'm not sure how your Milos addition will
-stack up chronologically
+	make ARCH=x86_64 mrproper
+	./tools/testing/kunit/kunit.py run --arch x86_64 --kconfig_add CONFIG_RATELIMIT_KUNIT_TEST=y --kconfig_add CONFIG_SMP=y lib_ratelimit
 
-Konrad
+This will fail on old ___ratelimit(), and subsequent patches provide
+the fixes that are required.
+
+[ paulmck:  Apply timeout and kunit feedback from Petr Mladek. ]
+
+Link: https://lore.kernel.org/all/fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop/
+Link: https://lore.kernel.org/all/20250423115409.3425-1-spasswolf@web.de/
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Jon Pan-Doh <pandoh@google.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Karolina Stolarek <karolina.stolarek@oracle.com>
+---
+ lib/Kconfig.debug          | 11 ++++++
+ lib/tests/Makefile         |  1 +
+ lib/tests/test_ratelimit.c | 79 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 91 insertions(+)
+ create mode 100644 lib/tests/test_ratelimit.c
+
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index ebe33181b6e6e..d69d27f808340 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -3225,6 +3225,17 @@ config TEST_OBJPOOL
+ 
+ 	  If unsure, say N.
+ 
++config RATELIMIT_KUNIT_TEST
++	tristate "KUnit Test for correctness and stress of ratelimit" if !KUNIT_ALL_TESTS
++	depends on KUNIT
++	default KUNIT_ALL_TESTS
++	help
++	  This builds the "test_ratelimit" module that should be used
++	  for correctness verification and concurrent testings of rate
++	  limiting.
++
++	  If unsure, say N.
++
+ config INT_POW_KUNIT_TEST
+ 	tristate "Integer exponentiation (int_pow) test" if !KUNIT_ALL_TESTS
+ 	depends on KUNIT
+diff --git a/lib/tests/Makefile b/lib/tests/Makefile
+index 56d6450144828..3edc30a515840 100644
+--- a/lib/tests/Makefile
++++ b/lib/tests/Makefile
+@@ -46,5 +46,6 @@ obj-$(CONFIG_STRING_KUNIT_TEST) += string_kunit.o
+ obj-$(CONFIG_STRING_HELPERS_KUNIT_TEST) += string_helpers_kunit.o
+ obj-$(CONFIG_USERCOPY_KUNIT_TEST) += usercopy_kunit.o
+ obj-$(CONFIG_UTIL_MACROS_KUNIT) += util_macros_kunit.o
++obj-$(CONFIG_RATELIMIT_KUNIT_TEST) += test_ratelimit.o
+ 
+ obj-$(CONFIG_TEST_RUNTIME_MODULE)		+= module/
+diff --git a/lib/tests/test_ratelimit.c b/lib/tests/test_ratelimit.c
+new file mode 100644
+index 0000000000000..0374107f5ea89
+--- /dev/null
++++ b/lib/tests/test_ratelimit.c
+@@ -0,0 +1,79 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++#include <kunit/test.h>
++
++#include <linux/ratelimit.h>
++#include <linux/module.h>
++
++/* a simple boot-time regression test */
++
++#define TESTRL_INTERVAL (5 * HZ)
++static DEFINE_RATELIMIT_STATE(testrl, TESTRL_INTERVAL, 3);
++
++#define test_ratelimited(test, expected) \
++	KUNIT_ASSERT_EQ(test, ___ratelimit(&testrl, "test_ratelimit_smoke"), (expected))
++
++static void test_ratelimit_smoke(struct kunit *test)
++{
++	// Check settings.
++	KUNIT_ASSERT_GE(test, TESTRL_INTERVAL, 100);
++
++	// Test normal operation.
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, false);
++
++	schedule_timeout_idle(TESTRL_INTERVAL - 40);
++	test_ratelimited(test, false);
++
++	schedule_timeout_idle(50);
++	test_ratelimited(test, true);
++
++	schedule_timeout_idle(2 * TESTRL_INTERVAL);
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++
++	schedule_timeout_idle(TESTRL_INTERVAL - 40);
++	test_ratelimited(test, true);
++	schedule_timeout_idle(50);
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, false);
++
++	// Test disabling.
++	testrl.burst = 0;
++	test_ratelimited(test, false);
++	testrl.burst = 2;
++	testrl.interval = 0;
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++
++	// Testing re-enabling.
++	testrl.interval = TESTRL_INTERVAL;
++	test_ratelimited(test, true);
++	test_ratelimited(test, true);
++	test_ratelimited(test, false);
++	test_ratelimited(test, false);
++}
++
++static struct kunit_case sort_test_cases[] = {
++	KUNIT_CASE_SLOW(test_ratelimit_smoke),
++	{}
++};
++
++static struct kunit_suite ratelimit_test_suite = {
++	.name = "lib_ratelimit",
++	.test_cases = sort_test_cases,
++};
++
++kunit_test_suites(&ratelimit_test_suite);
++
++MODULE_DESCRIPTION("___ratelimit() KUnit test suite");
++MODULE_LICENSE("GPL");
+-- 
+2.40.1
+
 
