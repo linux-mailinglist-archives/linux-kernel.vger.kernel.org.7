@@ -1,154 +1,136 @@
-Return-Path: <linux-kernel+bounces-723726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 755EAAFEA57
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:37:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0836AAFEA5A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DB1216626F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:36:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B98155C0179
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8A81C1F13;
-	Wed,  9 Jul 2025 13:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852992DAFD2;
+	Wed,  9 Jul 2025 13:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ul6riFNm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zRDP7tmq"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA99D276025
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 13:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70AA292B33
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 13:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752068170; cv=none; b=siqkQxbxXy0wClOV/hK0v+89ArdaF/96syArPwy5cepSGsB1JNPSJbxqRAUanL92x4Wny8KTU8jxSQm/PSt+Te4AdQl6lQ+8I0Bwk+PAinT523PXeiYYGhLNGU2HGdfzBi6b7L9B4++b/GSzECKJ5r9DPcTEQ958ZGtZmh+IVQY=
+	t=1752068185; cv=none; b=ThZRw86zHwQuxwnGkwLkflDQTNOBXrdl615/9AADQOKhZVk56852ei/IgtRxzO2tVhuPFCCGqDV3uiMj5hj30bbqwvS3Xb/cKuwKfUFdzknE4f/oT6fYGmEJQsreyeHWpTqOzA+q06tf+GlgSl/zlbrEF3eMBbcYBoKY/D7Csso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752068170; c=relaxed/simple;
-	bh=eqEtyyZVHwgeHDKi4pSEA0NHYMoZ+A867z2ivGKxh20=;
+	s=arc-20240116; t=1752068185; c=relaxed/simple;
+	bh=unlKXJBhWL7HE7TTDy2vTAHpjeg4BcukQ6864uuG9pY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IGmnoWQBMK07gps+O2LtZXTh/N8tNH7Re8VEWyd59aWBV5hAa4WGpf2Cq1WoPVUHd8s9ntaQvssXm/KtHuaHmJG5UCwuoH0BjxueoXhWL2E0QcbGi/1Sfs0hoChM0rjN2EfktdQh8PEKh2ZwzvbbOGhndon5aepfjN1Ae/YLacE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ul6riFNm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752068165;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eqEtyyZVHwgeHDKi4pSEA0NHYMoZ+A867z2ivGKxh20=;
-	b=Ul6riFNm8HFgQTsEf3zUvCEmIm7x5+LdzuPuKzt+dWscChFMIcN53GjYh8Yf/XFSzyZNWu
-	nZ3LMFcgF95o613DyDekLu8LDCpCSvp+y7sJT8WEcqe5pCZEyH45koM0ESbbojm58Iysp1
-	miiu7cFoGNyLtB0aY+ZR9Zhc1nVB/40=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-568-S5U8XQ0JOWKJXohChf3HmA-1; Wed, 09 Jul 2025 09:36:02 -0400
-X-MC-Unique: S5U8XQ0JOWKJXohChf3HmA-1
-X-Mimecast-MFC-AGG-ID: S5U8XQ0JOWKJXohChf3HmA_1752068162
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4a9e1de6f5cso10672081cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 06:36:02 -0700 (PDT)
+	 To:Cc:Content-Type; b=KOLTY/k/K7cqnxaaZ0tmYVha2F5poKCewgC0kpqvMbdjxkLGL/7emhG9S+5gu8cj0t9GkDuyJ36G7/6C/gQEsESfkGqa88OFFu0P3vAPjtKgkyX5fVefSYbpCVjaySVoQk/0mSyXwjcbQovVTFEbXR0SLbOA/m1CEeUEPzyAFMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zRDP7tmq; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b3220c39cffso5441552a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 06:36:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752068183; x=1752672983; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X8QwFWHnoroOy7d+kOIv7RQtuglWSW8t0P8/KSAe0Eg=;
+        b=zRDP7tmqJWIOfk3IHMdsl/YFqxj2YIaAUKXyr02Lx+sJyw1vqVGFScjMTsRIy6CEtW
+         vAGVaFGLCnYmOMOzRvTI+lNnamUymqAbxS9fs5O/451M9YxvgvPQm0H6EGigRfIQzdDW
+         BZ4l5380icUd2gk0J8dgWczb73A5KQU/H843ULa/U9mxgMjAMOv5HSQ+FWSBWEpi55mh
+         0kQTw2bMbMsAKGwKeL8j3zCU1TFjIKhQQ84lJ10uIOkyUZzZWE+R1DTTbJegus2Y2Pqr
+         sJWF2PZrlLqZgfOVHteYqOUE/RVyT4eED/0gDTyuftDOTgvTz3aP+NRfLiLJX4DrFj9D
+         COCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752068162; x=1752672962;
+        d=1e100.net; s=20230601; t=1752068183; x=1752672983;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eqEtyyZVHwgeHDKi4pSEA0NHYMoZ+A867z2ivGKxh20=;
-        b=KKfHWXPLEWegnWwBNu2ZZk+F2Xw+S4vzJeJt9mm/Ua9Fwr0bOgiX02DCfT3HMTDviz
-         YyjeGyKBIGG35aIETYdjVwoHwEmoMfXvMSZ4U/mXokuxmdr1MMRKdntw9bFB5nc28zJg
-         9lBCSxYdPDsFaKw0pnMN69wWq2GSAKQt72awPamPdY5zGOwkjWtJFdC8WGGOECJw+PZi
-         rLCFU3X9WPKyXX2qUxYyTcwqurz19W+u0BbWvPTlMBS6enIUCKmm24BvgP2NaoA3iijV
-         4eI+WWyEusRehGxti0HoSWeN5xLaMYJZY1aLLkYCr6FsKgusoG7EEyFk+m3IfIzSYiuI
-         704g==
-X-Forwarded-Encrypted: i=1; AJvYcCXelJ2Du3GA0K/tdRlRp3xjYvgD76EqoBKe8t06lIKU1ree9ZrbGf8m2UBm6G0NBebAH4DwRCKYXdbBFfs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwE6WlBNs3XUV1QCc0lRNrY64iDJKkaiZdxXWW/OtUs8TxN9WJX
-	UET1V8vEiYEw9gQVnYRxZcSAa22gcoyStJm31R7InudGc7ZMv0nhlOp9UY3SE41+nPA4WC5rVAI
-	nMtsJF2Kx+CIqz4OCp4yXebwGuwU7Kheiwi19/Wd1Vm0trWzemHLlv4mvUDswR/lkw4ThdVKGTh
-	cCL8N8Ctv4T8hN2rUgZJEW2QjjPAt5C+2GXJW16O/2
-X-Gm-Gg: ASbGnctJ5vvBmfHV4ZAmMOosAQiFe+UK1zdSxQm07K4V9OGPmbzKvap4gtDlwxbZsOD
-	mbwxG/NEJsevlkyJGCFqPZOmUuTG2MjB/tdBXZcTskS8fxY9LJwZiBbVP5Jo/QJkLL+G7aMs7uT
-	82Zp7GJzlg3k9GKqLCFq9+9z2s5gxL5uNeq9c=
-X-Received: by 2002:ac8:7f09:0:b0:4a9:93f0:e228 with SMTP id d75a77b69052e-4a9dec29279mr34551821cf.1.1752068161591;
-        Wed, 09 Jul 2025 06:36:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFYc5vsGllycl+RXMiSuYfzk8U7dnfUY+sNJIFkjl/O4iokoCHvRs0OAlE8JVinxjj5VrbetYBd4QXqaj0LYBo=
-X-Received: by 2002:ac8:7f09:0:b0:4a9:93f0:e228 with SMTP id
- d75a77b69052e-4a9dec29279mr34551371cf.1.1752068161026; Wed, 09 Jul 2025
- 06:36:01 -0700 (PDT)
+        bh=X8QwFWHnoroOy7d+kOIv7RQtuglWSW8t0P8/KSAe0Eg=;
+        b=Xo/Pj8I9b/RSNBPAtr+4Q9Q1vpxbd71q+3yPv9M7k3ddDbmJc6TYfW2fDb9pSOq4tq
+         sLnX9G4JymubqTjthieeBZPvOLKF1jUxlZxa31X0QpzXYDzW4O0TD5rf7TXG1YrheP38
+         StzPjflQvh/hLnPWNjddIAzTb09dIOf3wElIt5BkMjRXDpwPjrEwMmqtoWHoyWIEzMOF
+         OU56sV5HuGBlybOz1sO+qK+SjXWcZkaZLYNBXlrYzcaKoglNI2X1/30fs8IKoFbbj7/3
+         ccDfQeFlj96VcbDnjypbFiXXhVN+vvLDBpXR65ACa2aFkGLuqpAwb13EiCB0OMFtCPoz
+         4HvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVA30S6HrswRUaii49+R0/amgSMH4WhnsWYt7S/Irq56l/R0yTC2CSRnwYv1eHZTMZxZtSeDBfIRJToxn8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXoBp6YjnvRrqhqYMrVnNv1TrHanBAeNz/UTHUMLKY+1eyu2w5
+	opbs45O+Xss+C32IFloHw6BvVPGdwO/0gZVWHqIOs7L4VH1hbi8NMK4IR92OQssLWNSkhbQ9U1w
+	QfocImJj/UY/9H3y955ctqV6b+hLKc/wQ2SiMFU2C
+X-Gm-Gg: ASbGncv5f02tkC0R0mq+23HKITg99SPZupVtvf3TJnKBu+SZoPny2Ts/uzoIcrXYgKH
+	+AtAHhJrNnjic9pSnQeHYov/E8nLvT0I33Z7u/hUrUlp0vTNJqw3XAHMK12R4eYnvGvVxIIwvyD
+	haXj6Hl0RUBdOpXBqnPi4tEN3diEqHqd8AwkSLQYpoc0zYjy+XPtc7yiEOYxRXQBbE+LzYTkO7L
+	A==
+X-Google-Smtp-Source: AGHT+IHLUaG78pPpolWgvKxo7JAqt+c+YIceLIH7tszHkOE1Sbi1pPFiMPOEdkHK6zyKwEyy9jYPRuBMaEXTzhgKa9Q=
+X-Received: by 2002:a17:903:8c3:b0:235:e942:cb9d with SMTP id
+ d9443c01a7336-23ddb2e2117mr44522245ad.17.1752068182802; Wed, 09 Jul 2025
+ 06:36:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250620085618.4489-1-gpaoloni@redhat.com> <20250701195939.3e297e20@gandalf.local.home>
- <20250709100626.fc0611eb6801b7a8dad9164f@kernel.org> <20250708212539.054a7d5b@batman.local.home>
-In-Reply-To: <20250708212539.054a7d5b@batman.local.home>
-From: Gabriele Paoloni <gpaoloni@redhat.com>
-Date: Wed, 9 Jul 2025 15:35:50 +0200
-X-Gm-Features: Ac12FXx5NWw9UHzx8YL3iucBA2PdBGf-Feo4aqU3LLlrumvb9g_yTwBvoL9WwGA
-Message-ID: <CA+wEVJab6Gwkd7q58=v8uVhfmKpwNRAqtK67f15JtZcKSB_ziA@mail.gmail.com>
-Subject: Re: [RFC PATCH RESEND] tracing: add kernel documentation for
- trace_array_set_clr_event, trace_set_clr_event and supporting functions
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, mathieu.desnoyers@efficios.com, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+References: <20250704-topics-tyr-platform_iomem-v12-0-1d3d4bd8207d@collabora.com>
+ <20250704-topics-tyr-platform_iomem-v12-1-1d3d4bd8207d@collabora.com>
+ <aGt6CZAUeuK0XnmP@google.com> <F1EA22CF-1C01-495D-97ED-59D51A45A8B0@collabora.com>
+In-Reply-To: <F1EA22CF-1C01-495D-97ED-59D51A45A8B0@collabora.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 9 Jul 2025 15:36:08 +0200
+X-Gm-Features: Ac12FXx8MsH1eDIFhZjajAuMUIOv4XaodeklU_8Hl_wL84YrJfqndKHflkJLh7E
+Message-ID: <CAH5fLgg9pL0LhaWAMNKig+vnoB97U9zybqjdQieWYB7QdyAwAg@mail.gmail.com>
+Subject: Re: [PATCH v12 1/3] rust: io: add resource abstraction
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Ying Huang <huang.ying.caritas@gmail.com>, Benno Lossin <lossin@kernel.org>, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Fiona Behrens <me@kloenk.dev>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-[resending as my previous reply had HTML stuff and was rejected]
-Apologies for duplicates
-
-On Wed, Jul 9, 2025 at 3:25=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org>=
- wrote:
+On Tue, Jul 8, 2025 at 7:44=E2=80=AFPM Daniel Almeida
+<daniel.almeida@collabora.com> wrote:
 >
-> On Wed, 9 Jul 2025 10:06:26 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+> Hi Alice,
 >
-> > On Tue, 1 Jul 2025 19:59:39 -0400
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
+> [=E2=80=A6]
+>
+>
+> >> +
+> >> +impl Resource {
+> >> +    /// Creates a reference to a [`Resource`] from a valid pointer.
+> >> +    ///
+> >> +    /// # Safety
+> >> +    ///
+> >> +    /// The caller must ensure that for the duration of 'a, the point=
+er will
+> >> +    /// point at a valid `bindings::resource`.
+> >> +    ///
+> >> +    /// The caller must also ensure that the [`Resource`] is only acc=
+essed via the
+> >> +    /// returned reference for the duration of 'a.
+> >> +    pub(crate) const unsafe fn as_ref<'a>(ptr: *mut bindings::resourc=
+e) -> &'a Self {
 > >
-> > > > + * __ftrace_event_enable_disable - enable or disable a trace event
-> > > > + * @file: trace event file associated with the event.
-> > > > + * @enable: 0 or 1 respectively to disable/enable the event (any o=
-ther value is
-> > > > + * invalid).
-> > >
-> > > Saying 0 or 1 should assume that those are the only values. Don't nee=
-d the
-> > > content in the parenthesis.
-> >
-> > BTW, it should be "0 or !0"? (or we should make it boolean)
-> > This description means if it is "2", that is undefined.
+> > We usually call this method `from_raw`.
 >
-> Hmm, now here's an interesting point. So this is to define requirements
-> of a function based on what the function is doing. But does the
-> function have to have strict requirements?
+> Hmm, pretty sure I have seen the exact opposite being asked. In fact, thi=
+s was
+> discussed a bit at length a while ago. See the thread starting at [0] for=
+ context.
 
-IMO one of the main goals for these requirements is testability.
-In order to have testable requirements we should state what the
-valid input values are. In this case:
-0 -> disable, 1 -> enable, everything else -> Error.
+I will submit a patch.
 
-Now checking the code again it seems that the switch statement
-is missing a default "ret =3D -EINVAL" (or else it should be changed
-to boolean, but I guess it would have a wider impact on the rest
-of the code...).
-
->
-> If it can handle "0" or "!0" does that mean that's how it will be
-> defined? Or can it just state "0" or "1" and yes "2" is UB. That is,
-> it's not part of the requirements but if someone passes in 2, it could
-> act as a 1 as it's UB and implementation defined. Not a requirement.
-
-Right now if 2 is passed the function would silently return success,
-but do we have a use case for this? I am trying to understand
-where the implementation defined behavior would be....
-
-Thanks
-Gab
-
->
-> -- Steve
->
-
+Alicej
 
