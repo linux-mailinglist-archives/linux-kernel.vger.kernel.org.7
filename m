@@ -1,127 +1,127 @@
-Return-Path: <linux-kernel+bounces-722641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB737AFDD4C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:15:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6BBAFDD40
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87FB71BC769E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:15:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16BC27A3C17
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FD81A315C;
-	Wed,  9 Jul 2025 02:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7F71AAE17;
+	Wed,  9 Jul 2025 02:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="vEBI9Nxx";
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="Ors8ehsB"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC02E7FD
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 02:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hesbc0OJ"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5092819C560;
+	Wed,  9 Jul 2025 02:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752027300; cv=none; b=oC33VXJddgGLaVtEJn27yKvNqKTRlCofw/rNZgFGvvA5NGgV7U6fhrPk8KFCdRDkodBnHYJsrZEy7ENAz2ot3CR088dPLQhJBdl2R5+Wl566zi2z3ticzr8AEV8Rp3m+FGakDZfk/iLX51xL8WK8LcRA7kicIHTaHYRExPYqzz0=
+	t=1752026933; cv=none; b=CMX/MBDMAChKtDKhydWHns0w60ac+TD47rKNzWTrfDtNrmVRriBTRpz2TP4cVpyQqe9ne7kiOniOCYEWfIipUMrDaYnDbinD5AP/NqvT0P/nLY/idX2CF0HpUwShh0ajSPBddrYVKVFSjSF9jqZxDIVXzBmbPtv3JJmaXTIMkI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752027300; c=relaxed/simple;
-	bh=Ei8LGnHLQKmWUzhY56R4dnEm+yzR2we+EK77ciKJ9A0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jKQanUQF3CXU2NOAUYW5dszSyoSBcl5ksV+AEOcqebj1lDECaWYwp+ZHdSuEkkAq3iGsNHkK2Hgnoy7omK4yH2INt0fHlXxPMWzIlSwFa07Rme+mZqek6jQOk7cmpeldTDCefSgTgGbM+taoXRhxg6TL7QQxeorIQrbM8DWt3A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=vEBI9Nxx; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=Ors8ehsB; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1752027296;
-	bh=kyiDDBqJ0a4ZYp5mVtSCFXYgn/hQu3322reAZwp/92E=; l=1430;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=vEBI9NxxSRor9w2ZogMjNrW7GBQpgRFYItIaVcjNNZQ/+kUFflk5jMf0oiEjA3kn1
-	 zZcILO1QFjro/a6ZB99n48EEweGzEfjIMJThH8VRC84nsaiamWPTR0C6pfPnysZxw/
-	 o8JfYTtk3FUXH70YQFnUBUxsM3HXVLPyPOJtFg0hkaie31ZrSG69s0jLSdDD/KbNMP
-	 mdRZLqYNW9Xh9Cz2kmN6lla+hs157MK/SGCjioMWgIkDyeShzJZDpVA2U3BrjBZvLk
-	 5sYgr/8V8ziKZh209pmxyEKdY1hlj+wSjTeVb/3dm5jbRb4Mn+rfhur0Sy9XoR6xHC
-	 1M7EAQyLvNvPw==
-Received: from 192.168.8.21
-	by mg.richtek.com with MailGates ESMTP Server V3.0(1128077:0:AUTH_RELAY)
-	(envelope-from <prvs=12824ECC85=cy_huang@richtek.com>); Wed, 09 Jul 2025 10:14:53 +0800 (CST)
-X-MailGates: (compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1752027293;
-	bh=kyiDDBqJ0a4ZYp5mVtSCFXYgn/hQu3322reAZwp/92E=; l=1430;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Ors8ehsBWJB5FVhxcpLobHVbqwGaixEfC67H8LPsfwyBKjlBPHOKPaePXeufXgTzI
-	 SZJtbL39eOFVB+7wqLTitNz5L9sRi97WQ3QQr+st5sCI/xclN0sM082N0ROQt79tBH
-	 rYC4iaPpGFVMjyczYKHbJlfwu6ohIa04A1ECKMPrQlpNBj6Ic8pFQeiFPiW+eta0MK
-	 E0HlG2VljjrNXPQ6HMk6ZFKo3qiCB2vJ7taQbrkKsrF6o4KCQgsVfL4Ye0juxxM+3w
-	 nharW0rbGpVH8SZOVnFIRIAjNqUUSZCDLSEhSD3aThhcIdoYzlkjOzh+7duitu/rP7
-	 h6MfNfto2+/Qg==
-Received: from 192.168.10.47
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(244594:0:AUTH_RELAY)
-	(envelope-from <cy_huang@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Wed, 09 Jul 2025 10:00:21 +0800 (CST)
-Received: from ex3.rt.l (192.168.10.46) by ex4.rt.l (192.168.10.47) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 9 Jul
- 2025 10:00:20 +0800
-Received: from git-send.richtek.com (192.168.10.154) by ex3.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
- Transport; Wed, 9 Jul 2025 10:00:20 +0800
-From: <cy_huang@richtek.com>
-To: Lee Jones <lee@kernel.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, ChiaEn Wu <chiaen_wu@richtek.com>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>, ChiYuan Huang
-	<cy_huang@richtek.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-Subject: [PATCH] mfd: mt6370: Fix the interrupt naming typo
-Date: Wed, 9 Jul 2025 10:00:48 +0800
-Message-ID: <a6ab943f4660e39b8112ff58fa97af0507cd89e9.1752026324.git.cy_huang@richtek.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1752026933; c=relaxed/simple;
+	bh=nXyAtH6Vo7+g/t59WIVyfnKJNBstAuGXzSwl60CYMv0=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=C5D/VNed9wEg62X9ZJOfTLa1hA6mn6ZIcA1YEH4roakb8MgI/rL1FgoFi1N8Cu1s8jTfsh327uisZ21kAm5rIlvmCXRJjGSRRqusoo4zDbOBrLn1FrFpVt6pAZC4FKLoHJey9L7rgL1WZUvSl9XJEDnQTfrot9xTsmRTdGX4cxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hesbc0OJ; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-748e378ba4fso6029247b3a.1;
+        Tue, 08 Jul 2025 19:08:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752026931; x=1752631731; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s/VGVZYtKjF4c+B+6eYx3LkCKFL+zh3OLRh1/+MrNXE=;
+        b=hesbc0OJw5ofjmkxeXCK7TMeuN7gkR2Ai3RXz1PqPGB5+B00TqP4EHDBh61Omy++4J
+         dDegZwGImuLbRewV6d9b4Ux2sGSvOk+KyOye2T6kSHHVbxsVlyV5ARSWOk3jYdej6+9S
+         wsgER5mNN2Z2aDIOKagvGP5+kvfqK7azYIUPum3wb4NQ24Pen+aBJwOVujEaybfaxKOu
+         4LyeHNHlwYpGfd211/UZDyAPU0aCQ1WjKXaqzEZo+EThgMElbYGU2TMELbWpXuoSZs7t
+         xYPwdbFrG1c136Q136eRcHCrNEoBYD9Pma7MX/qbHG/m8F6N7PlKb1b5qYUEYNAy8WDw
+         GN3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752026931; x=1752631731;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=s/VGVZYtKjF4c+B+6eYx3LkCKFL+zh3OLRh1/+MrNXE=;
+        b=xDYSaW+8nR7MtbyEF9a8nyAWFnD7CxSZb39Y08h1w+rsgB4+m3jgAn3uCSnX23kukS
+         lEAnI/g102niJveIyDdK4tUFwErE0zZtFaXmltShjRxkesVRV+TFQOsjfZXnTaKNfHRh
+         kELyOJ7WYmcpTX1PnYCNtXcTr6++CGlniIRyKE7IvlDIml6P1+6VD8F7r/n07YDTsTmT
+         v3tRIx+ImCz3vN3/T938YoFPMWho0lihhAiiXSy8kv5tXnBa8FvfBIf1hYfFVonHIxCS
+         dsS98yKu6ZauqoZ5+uAfQOFvKYU0dPZeCXTcxrMcy1bABQngFAEHHChFxva2dHXbBUAi
+         z/yA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+GFcutsK86+IJouaj3vw6yBhx2FWkBRBUvSm05kIAcCuDtm8URD8eLD/VSdWsq0qROIb8n11Zh/fJ@vger.kernel.org, AJvYcCVUTK3hXOcSuUt3fU2WSDP1YnnA6QL2D7PvCHnOre2fsri94owckyUUzNNXDa9laU08XOy2Ms7c@vger.kernel.org, AJvYcCVyepMfCFqYeDVfOcf4+J8BYa2KQg3V4Fz4NcN+zt2zU5jsL/TQsXo6qYPpjbly+QzRJVlpjawTF0zuLRaD@vger.kernel.org, AJvYcCW9CAEAX2WxlhOFpyiCAOxBNNwkbcm6dKwrGz+JksV6Fo2d3ANh3rUPRswHGNu0KIDRcymLKylZujFA@vger.kernel.org, AJvYcCWFksmt61YUU6ZM4pyjZ/eVLZFAcRb+cU1VcX+63I5CE519WOlg4ecKCdKMPZouLdFxn4HGJogL5S4mupxFbOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymRkPOkozOeDKQ21gMJOtER26WypbYdKugCQWM4kSomWuslJzU
+	LNKCaGazTuItTvzAgLBGjAtHPlvDANZ1AsALvzok4eEBVaoid67QxHcO
+X-Gm-Gg: ASbGncs9aoqaivuTSZh4HTX5HxEay11+OGUX98aJlwwi8GoBJoznNg8CLR/d9iydxxA
+	GTAGMOpGy8mW2s0UHCvLhCBsVE6bqV/Jtxj2wmywjFvoJWwxFDPxkLQXt4vToDIvrtS0rR+Ghng
+	44CAVUHaUdVYoI/WmQk9UIvxegDgUiV+BnuTU3Y2smJtwb+4xFVIm7lcSnGz6Ej3JKSgGluh/5T
+	+IB7G2mfa5FUdrBOALd5e3XTB+Z+XG5f9A8ch0/BY/EBXoY1CnJZlxxr+GCRDuvPtzWfpOFbZ4v
+	vHw8TudY3w7TEAdpTc2E73sAfAHt3sl8MraiPU/npNHnwznMg7znc5YXIptr73SQch0MiWF4YT1
+	HNG+bthzrOujYQkWcC+23q5oVPwT3Zy8fBjOgsiOn
+X-Google-Smtp-Source: AGHT+IEIGSf25dPNswTvM6+TAL0qEe4dVXvWaxhtYqydnrR41gGNmbufL14jJTenr2yiaOEFprn84Q==
+X-Received: by 2002:a05:6a20:431a:b0:226:b3f7:6797 with SMTP id adf61e73a8af0-22cd68c7667mr1053625637.12.1752026931394;
+        Tue, 08 Jul 2025 19:08:51 -0700 (PDT)
+Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce35cccafsm13502599b3a.46.2025.07.08.19.08.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 19:08:50 -0700 (PDT)
+Date: Wed, 09 Jul 2025 11:08:37 +0900 (JST)
+Message-Id: <20250709.110837.298179611860747415.fujita.tomonori@gmail.com>
+To: dakr@kernel.org
+Cc: miguel.ojeda.sandonis@gmail.com, fujita.tomonori@gmail.com,
+ kuba@kernel.org, gregkh@linuxfoundation.org, robh@kernel.org,
+ saravanak@google.com, alex.gaynor@gmail.com, ojeda@kernel.org,
+ rafael@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com,
+ bhelgaas@google.com, bjorn3_gh@protonmail.com, boqun.feng@gmail.com,
+ david.m.ertman@intel.com, devicetree@vger.kernel.org, gary@garyguo.net,
+ ira.weiny@intel.com, kwilczynski@kernel.org, leon@kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ lossin@kernel.org, netdev@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ tmgross@umich.edu
+Subject: Re: [PATCH v3 0/3] rust: Build PHY device tables by using
+ module_device_table macro
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <aG2g7HgDdvmFJpMz@pollux>
+References: <DB6OOFKHIXQB.3PYJZ49GXH8MF@kernel.org>
+	<CANiq72=Cbvrcwqt6PQHwwDVTx1vnVnQ7JBzzXk+K-7Va_OVHEQ@mail.gmail.com>
+	<aG2g7HgDdvmFJpMz@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-From: ChiYuan Huang <cy_huang@richtek.com>
+On Wed, 9 Jul 2025 00:51:24 +0200
+Danilo Krummrich <dakr@kernel.org> wrote:
 
-Modify the lowercase character to uppercase.
+>> Since it touched several subsystems and it is based on rust-next, I am
+>> happy to do so, but driver-core makes sense given that is the main
+>> change after all.
+>> 
+>> So if I don't see you picking it, I will eventually do it.
+> 
+> Checked again and the driver-core tree makes most sense, since we also need to
+> fix up the ACPI device ID code, which is queued up in driver-core-next.
+> 
+> I also caught a missing change in rust/kernel/driver.rs, which most likely
+> slipped through by not building with CONFIG_OF. :)
 
-Fixes: b2adf788e603 ("mfd: mt6370: Add MediaTek MT6370 support")
-Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
----
- drivers/mfd/mt6370.c | 2 +-
- drivers/mfd/mt6370.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Oops, you are right. I mistakenly thought that CONFIG_OF was enabled
+because kernel/of.rs was being compiled.
 
-diff --git a/drivers/mfd/mt6370.c b/drivers/mfd/mt6370.c
-index c126ccb25d66..c7c2efe3598c 100644
---- a/drivers/mfd/mt6370.c
-+++ b/drivers/mfd/mt6370.c
-@@ -95,7 +95,7 @@ static const struct regmap_irq mt6370_irqs[] = {
- 	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FLED1_SHORT, 8),
- 	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FLED2_STRB, 8),
- 	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FLED1_STRB, 8),
--	REGMAP_IRQ_REG_LINE(mT6370_IRQ_FLED2_STRB_TO, 8),
-+	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FLED2_STRB_TO, 8),
- 	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FLED1_STRB_TO, 8),
- 	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FLED2_TOR, 8),
- 	REGMAP_IRQ_REG_LINE(MT6370_IRQ_FLED1_TOR, 8),
-diff --git a/drivers/mfd/mt6370.h b/drivers/mfd/mt6370.h
-index 094e59e4af4e..dd9ccc0a53f1 100644
---- a/drivers/mfd/mt6370.h
-+++ b/drivers/mfd/mt6370.h
-@@ -69,7 +69,7 @@
- #define MT6370_IRQ_FLED1_SHORT		79
- #define MT6370_IRQ_FLED2_STRB		80
- #define MT6370_IRQ_FLED1_STRB		81
--#define mT6370_IRQ_FLED2_STRB_TO	82
-+#define MT6370_IRQ_FLED2_STRB_TO	82
- #define MT6370_IRQ_FLED1_STRB_TO	83
- #define MT6370_IRQ_FLED2_TOR		84
- #define MT6370_IRQ_FLED1_TOR		85
--- 
-2.34.1
 
+> Here's the diff to fix up both, I already fixed it up on my end -- no need to
+> send a new version.
+
+Thanks a lot!
 
