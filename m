@@ -1,291 +1,255 @@
-Return-Path: <linux-kernel+bounces-723526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA0AAFE7FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:42:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFB7FAFE7E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95C5F1892B57
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:43:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 701E01898024
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763982D6636;
-	Wed,  9 Jul 2025 11:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55282D662D;
+	Wed,  9 Jul 2025 11:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZJzfy1N3"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OtIZDkm3"
+Received: from relay16.mail.gandi.net (relay16.mail.gandi.net [217.70.178.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DE2202C5C;
-	Wed,  9 Jul 2025 11:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420B6293C57;
+	Wed,  9 Jul 2025 11:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752061357; cv=none; b=BMIyci1SoCKBRroBq8V8CSgWF8nJF8JTVK4QLzy/glPBvY6puEhNj1tnIfWWfH/3cwmrCsuZ977KTiTCuYm5PKOo6iA9g2O9Q9ml26t1mpJ4kIVsF3dXC7JpAiVHaxE2bj3v1+haPGKLq9lrzfnoQtP8/OVQPbWnr0keDhTM+3M=
+	t=1752060908; cv=none; b=ix0LkKKWue2HEPRsrC22Gf/VQItzx8phrW/F/Tz49Yd3gdjgb3gKJjjXzwH87Y8bTF3Y8D7fZmS+YEU9ohEcjqxPApj5MFO4qjn7YS9lc+s/2duAv9SnPOgK6NcKaPRF9SHAVLx8fXf5xh4OsmKoefauNDcPuChvOqygqZVw2+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752061357; c=relaxed/simple;
-	bh=4CTaLsR8YV2yEQfwN6D2XPkFm5HczJTSutCL69t+3wI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l+vBfQAEXnNaMX33FQDKehoF4SVhogJEYP/pLK31dk34lNgqMKs/tKYrvHUuD10pFtNbck4B3sbC9rMJJA9DQCeolH3qcV5iVfbh7SXqQokslV0oS2I98/cpQpyTJzk/ZLnrXXC0awVQCYGWOf6cUzAyGG5YGV2UxxvfuRFjIMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZJzfy1N3; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0A6F7669;
-	Wed,  9 Jul 2025 13:32:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1752060773;
-	bh=4CTaLsR8YV2yEQfwN6D2XPkFm5HczJTSutCL69t+3wI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZJzfy1N3ynUaMcXRgYRv1SaGEp9n3diop+9Bju3fdiCxK34zVFboSYxl3XHmPqQUv
-	 mTEbLSRI/UujaX3ZLtazI6zh7SW9UX8Vaqey+EcSs3xhFRNo5a0I6R7tCC5ivnC/HX
-	 HSRZRJHH5Ttqd9k0YR5xaEpV7xI2z5cOJqnxqDjU=
-Message-ID: <9b12b035-a80d-4d12-a039-daa94d13280e@ideasonboard.com>
-Date: Wed, 9 Jul 2025 12:33:17 +0100
+	s=arc-20240116; t=1752060908; c=relaxed/simple;
+	bh=oblwm8tMGNrZF5HFXoNDxy5pPBMbR1TevhAMMCwDFj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G/SWBYur/4rWD2RJGwI+vbL/sShV0c+9UT6nuFJZioWqh1IOWDCpGtq/5zCJuGDOAKNCNv4QQYh8tyRuoC8Z/61QRanFTuL07zRuA69piQXTP6w8CG3WFKiwa24+UNMFQyexpcZwAmPbHFg8eiQsGgsuZ6DdfwiPFbvcDitSvzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OtIZDkm3; arc=none smtp.client-ip=217.70.178.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 713EA449D6;
+	Wed,  9 Jul 2025 11:34:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1752060898;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fg+lF8iCUctj//lCFSpvYMAI+SIBkJhPfi7cfKPHguU=;
+	b=OtIZDkm3ZbnfELbWNy5PaHZUrLwjjYGRrP0yT4tEpIrTnwP29OLeG0wFC5/lwDSbb+LA8u
+	siBCHRXdNP7JkSSJxfFhZHWKoJXu7JaRLvqxZD6BueETrv4RJe9iCQf57PKbPBxsDxVIlL
+	/r4z5u8Dt/ZrD+2s4hOrFL9HQAKSStUt5x79BNFMsvCSi/8J0qOoqviRACm0e17KyF5OSg
+	VjC+Tn+Gkims3XUcQNrlS52diOLCnIOH82C4i+ipeEpeUPCsX3MjN1W/kwTqyHAmLc1rcE
+	FEGEnvCyF0etkzYqPVUfbCnKB1lnAo2Tej0lq2BCsmznbZYY4v4KjBvCzC3l7w==
+Date: Wed, 9 Jul 2025 13:34:56 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, Florian Fainelli
+ <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, Vladimir
+ Oltean <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
+ <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v2 1/3] net: netdevsim: Add PHY support in
+ netdevsim
+Message-ID: <20250709133456.46a1908e@fedora>
+In-Reply-To: <20250708115531.111326-2-maxime.chevallier@bootlin.com>
+References: <20250708115531.111326-1-maxime.chevallier@bootlin.com>
+	<20250708115531.111326-2-maxime.chevallier@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] media: uapi: Introduce V4L2 extensible params
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Dafna Hirschfeld <dafna@fastmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20250708-extensible-parameters-validation-v1-0-9fc27c9c728c@ideasonboard.com>
- <20250708-extensible-parameters-validation-v1-1-9fc27c9c728c@ideasonboard.com>
-Content-Language: en-US
-From: Dan Scally <dan.scally@ideasonboard.com>
-Autocrypt: addr=dan.scally@ideasonboard.com; keydata=
- xsFNBGLydlEBEADa5O2s0AbUguprfvXOQun/0a8y2Vk6BqkQALgeD6KnXSWwaoCULp18etYW
- B31bfgrdphXQ5kUQibB0ADK8DERB4wrzrUb5CMxLBFE7mQty+v5NsP0OFNK9XTaAOcmD+Ove
- eIjYvqurAaro91jrRVrS1gBRxIFqyPgNvwwL+alMZhn3/2jU2uvBmuRrgnc/e9cHKiuT3Dtq
- MHGPKL2m+plk+7tjMoQFfexoQ1JKugHAjxAhJfrkXh6uS6rc01bYCyo7ybzg53m1HLFJdNGX
- sUKR+dQpBs3SY4s66tc1sREJqdYyTsSZf80HjIeJjU/hRunRo4NjRIJwhvnK1GyjOvvuCKVU
- RWpY8dNjNu5OeAfdrlvFJOxIE9M8JuYCQTMULqd1NuzbpFMjc9524U3Cngs589T7qUMPb1H1
- NTA81LmtJ6Y+IV5/kiTUANflpzBwhu18Ok7kGyCq2a2jsOcVmk8gZNs04gyjuj8JziYwwLbf
- vzABwpFVcS8aR+nHIZV1HtOzyw8CsL8OySc3K9y+Y0NRpziMRvutrppzgyMb9V+N31mK9Mxl
- 1YkgaTl4ciNWpdfUe0yxH03OCuHi3922qhPLF4XX5LN+NaVw5Xz2o3eeWklXdouxwV7QlN33
- u4+u2FWzKxDqO6WLQGjxPE0mVB4Gh5Pa1Vb0ct9Ctg0qElvtGQARAQABzShEYW4gU2NhbGx5
- IDxkYW4uc2NhbGx5QGlkZWFzb25ib2FyZC5jb20+wsGNBBMBCAA3FiEEsdtt8OWP7+8SNfQe
- kiQuh/L+GMQFAmLydlIFCQWjmoACGwMECwkIBwUVCAkKCwUWAgMBAAAKCRCSJC6H8v4YxDI2
- EAC2Gz0iyaXJkPInyshrREEWbo0CA6v5KKf3I/HlMPqkZ48bmGoYm4mEQGFWZJAT3K4ir8bg
- cEfs9V54gpbrZvdwS4abXbUK4WjKwEs8HK3XJv1WXUN2bsz5oEJWZUImh9gD3naiLLI9QMMm
- w/aZkT+NbN5/2KvChRWhdcha7+2Te4foOY66nIM+pw2FZM6zIkInLLUik2zXOhaZtqdeJZQi
- HSPU9xu7TRYN4cvdZAnSpG7gQqmLm5/uGZN1/sB3kHTustQtSXKMaIcD/DMNI3JN/t+RJVS7
- c0Jh/ThzTmhHyhxx3DRnDIy7kwMI4CFvmhkVC2uNs9kWsj1DuX5kt8513mvfw2OcX9UnNKmZ
- nhNCuF6DxVrL8wjOPuIpiEj3V+K7DFF1Cxw1/yrLs8dYdYh8T8vCY2CHBMsqpESROnTazboh
- AiQ2xMN1cyXtX11Qwqm5U3sykpLbx2BcmUUUEAKNsM//Zn81QXKG8vOx0ZdMfnzsCaCzt8f6
- 9dcDBBI3tJ0BI9ByiocqUoL6759LM8qm18x3FYlxvuOs4wSGPfRVaA4yh0pgI+ModVC2Pu3y
- ejE/IxeatGqJHh6Y+iJzskdi27uFkRixl7YJZvPJAbEn7kzSi98u/5ReEA8Qhc8KO/B7wprj
- xjNMZNYd0Eth8+WkixHYj752NT5qshKJXcyUU87BTQRi8nZSARAAx0BJayh1Fhwbf4zoY56x
- xHEpT6DwdTAYAetd3yiKClLVJadYxOpuqyWa1bdfQWPb+h4MeXbWw/53PBgn7gI2EA7ebIRC
- PJJhAIkeym7hHZoxqDQTGDJjxFEL11qF+U3rhWiL2Zt0Pl+zFq0eWYYVNiXjsIS4FI2+4m16
- tPbDWZFJnSZ828VGtRDQdhXfx3zyVX21lVx1bX4/OZvIET7sVUufkE4hrbqrrufre7wsjD1t
- 8MQKSapVrr1RltpzPpScdoxknOSBRwOvpp57pJJe5A0L7+WxJ+vQoQXj0j+5tmIWOAV1qBQp
- hyoyUk9JpPfntk2EKnZHWaApFp5TcL6c5LhUvV7F6XwOjGPuGlZQCWXee9dr7zym8iR3irWT
- +49bIh5PMlqSLXJDYbuyFQHFxoiNdVvvf7etvGfqFYVMPVjipqfEQ38ST2nkzx+KBICz7uwj
- JwLBdTXzGFKHQNckGMl7F5QdO/35An/QcxBnHVMXqaSd12tkJmoRVWduwuuoFfkTY5mUV3uX
- xGj3iVCK4V+ezOYA7c2YolfRCNMTza6vcK/P4tDjjsyBBZrCCzhBvd4VVsnnlZhVaIxoky4K
- aL+AP+zcQrUZmXmgZjXOLryGnsaeoVrIFyrU6ly90s1y3KLoPsDaTBMtnOdwxPmo1xisH8oL
- a/VRgpFBfojLPxMAEQEAAcLBfAQYAQgAJhYhBLHbbfDlj+/vEjX0HpIkLofy/hjEBQJi8nZT
- BQkFo5qAAhsMAAoJEJIkLofy/hjEXPcQAMIPNqiWiz/HKu9W4QIf1OMUpKn3YkVIj3p3gvfM
- Res4fGX94Ji599uLNrPoxKyaytC4R6BTxVriTJjWK8mbo9jZIRM4vkwkZZ2bu98EweSucxbp
- vjESsvMXGgxniqV/RQ/3T7LABYRoIUutARYq58p5HwSP0frF0fdFHYdTa2g7MYZl1ur2JzOC
- FHRpGadlNzKDE3fEdoMobxHB3Lm6FDml5GyBAA8+dQYVI0oDwJ3gpZPZ0J5Vx9RbqXe8RDuR
- du90hvCJkq7/tzSQ0GeD3BwXb9/R/A4dVXhaDd91Q1qQXidI+2jwhx8iqiYxbT+DoAUkQRQy
- xBtoCM1CxH7u45URUgD//fxYr3D4B1SlonA6vdaEdHZOGwECnDpTxecENMbz/Bx7qfrmd901
- D+N9SjIwrbVhhSyUXYnSUb8F+9g2RDY42Sk7GcYxIeON4VzKqWM7hpkXZ47pkK0YodO+dRKM
- yMcoUWrTK0Uz6UzUGKoJVbxmSW/EJLEGoI5p3NWxWtScEVv8mO49gqQdrRIOheZycDmHnItt
- 9Qjv00uFhEwv2YfiyGk6iGF2W40s2pH2t6oeuGgmiZ7g6d0MEK8Ql/4zPItvr1c1rpwpXUC1
- u1kQWgtnNjFHX3KiYdqjcZeRBiry1X0zY+4Y24wUU0KsEewJwjhmCKAsju1RpdlPg2kC
-In-Reply-To: <20250708-extensible-parameters-validation-v1-1-9fc27c9c728c@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefjeegiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejpdhhvghlohepfhgvughorhgrpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudejpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvl
+ hdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhm
 
-Hi Jacopo - thanks for the patches
+On Tue,  8 Jul 2025 13:55:28 +0200
+Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
 
-On 08/07/2025 11:40, Jacopo Mondi wrote:
-> Introduce v4l2-extensible-params.h in the Linux kernel uAPI.
->
-> The header defines two types that all drivers that use the extensible
-> parameters format for ISP configuration shall use to build their own
-> parameters format.
->
-> The newly introduce type v4l2_params_block represent the
-> header to be prepend to each ISP configuration block and the
-> v4l2_params_buffer type represent the base type for the configuration
-> parameters buffer.
->
-> The newly introduced header is not meant to be used directly by
-> applications which should instead use the platform-specific ones.
->
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> With the introduction of phy_link_topology, we have the ability to keep
+> track of PHY devices that sit behind a net_device. While we still can
+> only attach one single PHY to a netdev, we can look at all these PHYs
+> through netlink, with the ETHTOOL_MSG_PHY_GET command.
+> 
+> Moreover, netlink commands that are targeting PHY devices also now
+> allow specifying which PHY we want to address in a given netlink
+> command.
+> 
+> That whole process comes with its own complexity, and a few bugs were
+> dicovered over the months following the introduction of
+> phy_link_topology.
+> 
+> As devices with multiple PHYs are fairly uncommon, testing the corner
+> cases of multi-phy setups proves to be difficult.
+> 
+> To that extent, introduce PHY support in netdevsim. The main goal (for
+> now) is not to be able to test PHYlib, but these phy-specific
+> netlink interfaces.
+> 
+> These netdevsim PHYs use a custom phy_driver that relies on
+> re-implementing the phy_driver callbacks. In other words, this is not a
+> PHY driver that relies on mdio emulation, and will not work with any of
+> the genphy helpers.
+> 
+> The debugfs API for PHY creation and deletion works as follows :
+> 
+> PHY device creation :
+> 
+> echo $ID > /sys/kernel/debug/netdevsim/netdevsimXXX/ports/YY/phy_add
+> 
+> if $ID is 0, then the PHY parent will be the netdev corresponding to the
+> port's netdev. The first PHY that is added with the netdev as a parent
+> will be attached to the netdev.
+> 
+> if $ID > 0, the index must correspond to a previously added PHY. This
+> allows creating any arbitrary tree of PHYs.
+> 
+> Upon PHY addition, a phyXX directory will be created, XX being the
+> phyindex of the PHY in the topology:
+> 
+>  [...]/ports/YY/phyXX/
+> 
+> This directory contains a "link" file, allowing to toggle the virtual
+> PHY's link state.
+> 
+> One can then list the PHYs with "ethtool --show-phys ethX".
+> 
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 > ---
->   MAINTAINERS                                       |   6 ++
->   include/uapi/linux/media/v4l2-extensible-params.h | 106 ++++++++++++++++++++++
->   2 files changed, 112 insertions(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 658543062bba3b7e600699d7271ffc89250ba7e5..49a9329e5fe8874bdbaca13946ea28bd80134cb3 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -25968,6 +25968,12 @@ F:	drivers/media/i2c/vd55g1.c
->   F:	drivers/media/i2c/vd56g3.c
->   F:	drivers/media/i2c/vgxy61.c
->   
-> +V4L2 EXTENSIBLE PARAMETERS FORMAT
-> +M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> +L:	linux-media@vger.kernel.org
-> +S:	Maintained
-> +F:	include/uapi/linux/media/v4l2-extensible-params.h
+>  drivers/net/netdevsim/Makefile    |   4 +
+>  drivers/net/netdevsim/dev.c       |   2 +
+>  drivers/net/netdevsim/netdev.c    |   8 +
+>  drivers/net/netdevsim/netdevsim.h |  25 ++
+>  drivers/net/netdevsim/phy.c       | 398 ++++++++++++++++++++++++++++++
+>  5 files changed, 437 insertions(+)
+>  create mode 100644 drivers/net/netdevsim/phy.c
+> 
+> diff --git a/drivers/net/netdevsim/Makefile b/drivers/net/netdevsim/Makefile
+> index f8de93bc5f5b..49f4c515e5e3 100644
+> --- a/drivers/net/netdevsim/Makefile
+> +++ b/drivers/net/netdevsim/Makefile
+> @@ -21,3 +21,7 @@ endif
+>  ifneq ($(CONFIG_MACSEC),)
+>  netdevsim-objs += macsec.o
+>  endif
 > +
->   VF610 NAND DRIVER
->   M:	Stefan Agner <stefan@agner.ch>
->   L:	linux-mtd@lists.infradead.org
-> diff --git a/include/uapi/linux/media/v4l2-extensible-params.h b/include/uapi/linux/media/v4l2-extensible-params.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..ed37da433c6b1a34523b6a9befde5c0dee601cfb
-> --- /dev/null
-> +++ b/include/uapi/linux/media/v4l2-extensible-params.h
-> @@ -0,0 +1,106 @@
-> +/* SPDX-License-Identifier: ((GPL-2.0+ WITH Linux-syscall-note) OR MIT) */
-> +/*
-> + * Video4Linux2 extensible configuration parameters base types
-> + *
-> + * Copyright (C) 2025 Ideas On Board Oy
-> + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> + */
+> +ifneq ($(CONFIG_PHYLIB),)
+> +netdevsim-objs += phy.o
+> +endif
+> diff --git a/drivers/net/netdevsim/dev.c b/drivers/net/netdevsim/dev.c
+> index b3647691060c..1ebb4f5b3bdd 100644
+> --- a/drivers/net/netdevsim/dev.c
+> +++ b/drivers/net/netdevsim/dev.c
+> @@ -1510,6 +1510,7 @@ static int nsim_dev_reload_create(struct nsim_dev *nsim_dev,
+>  	devlink = priv_to_devlink(nsim_dev);
+>  	nsim_dev = devlink_priv(devlink);
+>  	INIT_LIST_HEAD(&nsim_dev->port_list);
+> +	INIT_LIST_HEAD(&nsim_dev->phy_list);
+>  	nsim_dev->fw_update_status = true;
+>  	nsim_dev->fw_update_overwrite_mask = 0;
+>  
+> @@ -1583,6 +1584,7 @@ int nsim_drv_probe(struct nsim_bus_dev *nsim_bus_dev)
+>  	nsim_dev->switch_id.id_len = sizeof(nsim_dev->switch_id.id);
+>  	get_random_bytes(nsim_dev->switch_id.id, nsim_dev->switch_id.id_len);
+>  	INIT_LIST_HEAD(&nsim_dev->port_list);
+> +	INIT_LIST_HEAD(&nsim_dev->phy_list);
+>  	nsim_dev->fw_update_status = true;
+>  	nsim_dev->fw_update_overwrite_mask = 0;
+>  	nsim_dev->max_macs = NSIM_DEV_MAX_MACS_DEFAULT;
+> diff --git a/drivers/net/netdevsim/netdev.c b/drivers/net/netdevsim/netdev.c
+> index e36d3e846c2d..ff891536f691 100644
+> --- a/drivers/net/netdevsim/netdev.c
+> +++ b/drivers/net/netdevsim/netdev.c
+> @@ -952,6 +952,7 @@ static int nsim_init_netdevsim(struct netdevsim *ns)
+>  
+>  	nsim_macsec_init(ns);
+>  	nsim_ipsec_init(ns);
+> +	nsim_phy_init(ns);
+>  
+>  	err = register_netdevice(ns->netdev);
+>  	if (err)
+> @@ -968,6 +969,7 @@ static int nsim_init_netdevsim(struct netdevsim *ns)
+>  	return 0;
+>  
+>  err_ipsec_teardown:
+> +	nsim_phy_teardown(ns);
+>  	nsim_ipsec_teardown(ns);
+>  	nsim_macsec_teardown(ns);
+>  	nsim_bpf_uninit(ns);
+> @@ -1058,6 +1060,7 @@ void nsim_destroy(struct netdevsim *ns)
+>  	RCU_INIT_POINTER(ns->peer, NULL);
+>  	unregister_netdevice(dev);
+>  	if (nsim_dev_port_is_pf(ns->nsim_dev_port)) {
+> +		nsim_phy_teardown(ns);
+>  		nsim_macsec_teardown(ns);
+>  		nsim_ipsec_teardown(ns);
+>  		nsim_bpf_uninit(ns);
+> @@ -1098,6 +1101,10 @@ static int __init nsim_module_init(void)
+>  {
+>  	int err;
+>  
+> +	err = nsim_phy_drv_register();
+> +	if (err)
+> +		return err;
 > +
-> +#ifndef _UAPI_V4L2_PARAMS_H_
-> +#define _UAPI_V4L2_PARAMS_H_
+>  	err = nsim_dev_init();
+>  	if (err)
+>  		return err;
+> @@ -1124,6 +1131,7 @@ static void __exit nsim_module_exit(void)
+>  	rtnl_link_unregister(&nsim_link_ops);
+>  	nsim_bus_exit();
+>  	nsim_dev_exit();
+> +	nsim_phy_drv_unregister();
+>  }
+>  
+>  module_init(nsim_module_init);
+> diff --git a/drivers/net/netdevsim/netdevsim.h b/drivers/net/netdevsim/netdevsim.h
+> index 809dd29fc5fe..c73d16e67a3c 100644
+> --- a/drivers/net/netdevsim/netdevsim.h
+> +++ b/drivers/net/netdevsim/netdevsim.h
+> @@ -314,6 +314,7 @@ struct nsim_dev {
+>  	struct list_head bpf_bound_maps;
+>  	struct netdev_phys_item_id switch_id;
+>  	struct list_head port_list;
+> +	struct list_head phy_list;
+>  	bool fw_update_status;
+>  	u32 fw_update_overwrite_mask;
+>  	u32 max_macs;
+> @@ -419,6 +420,30 @@ static inline void nsim_macsec_teardown(struct netdevsim *ns)
+>  }
+>  #endif
+>  
+> +#if IS_ENABLED(CONFIG_PHYLIB)
+> +void nsim_phy_init(struct netdevsim *ns);
+> +void nsim_phy_teardown(struct netdevsim *dev);
+> +int nsim_phy_drv_register(void);
+> +void nsim_phy_drv_unregister(void);
+> +#else
+> +static inline void nsim_phy_init(struct netdevsim *ns)
+> +{
+> +}
 > +
-> +#ifndef _UAPI_V4L2_EXTENSIBLE_PARAMS_GUARD_
-> +/*
-> + * Note: each ISP driver exposes a different uAPI, where the types layout
-> + * match (more or less strictly) the hardware registers layout.
-> + *
-> + * This file defines the base types on which each ISP driver can implement its
-> + * own types that define its uAPI.
-> + *
-> + * This file is not meant to be included directly by applications which shall
-> + * instead only include the ISP-specific implementation.
-> + */
-> +#error "This file should not be included directly by applications"
-> +#endif
-> +
-> +#include <linux/types.h>
-> +
-> +/**
-> + * struct v4l2_params_block - V4L2 extensible parameters block header
+> +static inline void nsim_phy_teardown(struct netdevsim *ns);
 
-struct v4l2_params_block_header would be nicer I think
+Meh... that's why this fails, stray ';' that slept through the cracks
+when building netdevsim with CONFIG_PHYLIB=n ...
 
-> + *
-> + * This structure represents the common part of all the ISP configuration
-> + * blocks. Each parameters block shall embed an instance of this structure type
-> + * as its first member, followed by the block-specific configuration data. The
-> + * driver inspects this common header to discern the block type and its size and
-> + * properly handle the block content by casting it to the correct block-specific
-> + * type.
-> + *
-> + * The @type field is one of the values enumerated by each platform-specific ISP
-> + * block types which specifies how the data should be interpreted by the driver.
-> + * The @size field specifies the size of the parameters block and is used by the
-> + * driver for validation purposes.
-> + *
-> + * The @flags field is a bitmask of platform-specific control flags.
-Since we're including flags in this base struct rather than a platform specific subclass I think 
-perhaps we should centralise some flags (which I think is supported by the fact that all three 
-implementations share the same flags so far). Perhaps we could reserve the bottom 8 bits for common 
-flags (like ENABLE / DISABLE) and validate them centrally, and leave the top 8 for platform specific 
-flags. I think we could then drop the platform specific validation for rkisp1 and c3 and just pass 
-null to the helpers, since they do the same thing.
-> + *
-> + * Userspace shall never use this type directly but use the platform specific
-> + * one with the associated data types.
+I'll address that,
 
-Why wouldn't userspace just use these directly? I could see why it might be difficult for the C3 and 
-Rkisp1 which are merged, but for a new implementation couldn't they just use these objects without 
-bothering to define their own?
+Maxime
 
-
-If we end up using these objects directly I think it would be nice to have the example code block 
-from the platform specific headers documentation here too.
-
-> + *
-> + * - Rockchip RkISP1: :c:type:`rkisp1_ext_params_block_type`
-> + * - Amlogic C3: :c:type:`c3_isp_params_block_type`
-> + *
-> + * @type: The parameters block type (platform-specific)
-> + * @flags: A bitmask of block flags (platform-specific)
-> + * @size: Size (in bytes) of the parameters block, including this header
-> + */
-> +struct v4l2_params_block {
-> +	__u16 type;
-> +	__u16 flags;
-> +	__u32 size;
-> +} __attribute__((aligned(8)));
-> +
-> +/**
-> + * struct v4l2_params_buffer - V4L2 extensible parameters configuration
-> + *
-> + * This struct contains the configuration parameters of the ISP algorithms,
-> + * serialized by userspace into a data buffer. Each configuration parameter
-> + * block is represented by a block-specific structure which contains a
-> + * :c:type:`v4l2_params_block` entry as first member. Userspace populates
-> + * the @data buffer with configuration parameters for the blocks that it intends
-> + * to configure. As a consequence, the data buffer effective size changes
-> + * according to the number of ISP blocks that userspace intends to configure and
-> + * is set by userspace in the @data_size field.
-> + *
-> + * The parameters buffer is versioned by the @version field to allow modifying
-> + * and extending its definition. Userspace shall populate the @version field to
-> + * inform the driver about the version it intends to use. The driver will parse
-> + * and handle the @data buffer according to the data layout specific to the
-> + * indicated version and return an error if the desired version is not
-> + * supported.
-> + *
-> + * For each ISP block that userspace wants to configure, a block-specific
-> + * structure is appended to the @data buffer, one after the other without gaps
-> + * in between nor overlaps. Userspace shall populate the @data_size field with
-> + * the effective size, in bytes, of the @data buffer.
-> + *
-> + * Each ISP driver using the extensible parameters format shall define a
-> + * type which is type-convertible to this one, with the difference that the
-> + * @data member shall actually a memory buffer of platform-specific size and
-> + * not a pointer.
-
-Why not just use this object directly? We could provide a helper in v4l2-extensible-params.h that 
-calculates the size of the buffer with a given data array size for the driver's convenience
-
-
-Thanks
-
-Dan
-
-> + *
-> + * Userspace shall never use this type directly but use the platform specific
-> + * one with the associated data types.
-> + *
-> + * - Rockchip RkISP1: :c:type:`rkisp1_ext_params_cfg`
-> + * - Amlogic C3: :c:type:`c3_isp_params_cfg`
-> + *
-> + * @version: The parameters buffer version (platform-specific)
-> + * @data_size: The configuration data effective size, excluding this header
-> + * @data: The configuration data
-> + */
-> +struct v4l2_params_buffer {
-> +	__u32 version;
-> +	__u32 data_size;
-> +	__u8 data[];
-> +};
-> +
-> +#endif /* _UAPI_V4L2_PARAMS_H_ */
->
 
