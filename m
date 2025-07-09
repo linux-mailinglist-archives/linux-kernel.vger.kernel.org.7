@@ -1,97 +1,54 @@
-Return-Path: <linux-kernel+bounces-722598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3C38AFDCB5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:03:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B9C5AFDCB1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F15FB4E55EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:03:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88E7558277D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C7119E7D1;
-	Wed,  9 Jul 2025 01:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B828A1DE2C2;
+	Wed,  9 Jul 2025 01:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PRXAZ7Yt"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="siR4dsf+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F2F19D07A;
-	Wed,  9 Jul 2025 01:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F401E25F2;
+	Wed,  9 Jul 2025 01:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752022886; cv=none; b=fiWHwQkEdx8h1Q0j1fzbgR38uUVvdrJr663wHwUWqC6c5XTkAQ8CLBv1IcGSTp5M23KODQLidSxhFIn49sf7R4PmrNdztI/mPj7bZWQuygxzBCG64sdGpmkrUpi6zAyCuWJe0W0JFO8fqOX47t+ZC9hMlHcxQoq/y/RbPvxRLKw=
+	t=1752022871; cv=none; b=mbseJeF1pl4rm9/JhR58hu+aNO6xXzooX5F18pv09Fbi370IUtf4Pb2e7NReSVtQOxUujtgWGJAT5Jp8UwZ6X4kgU3DSmU4rG9HTxG6hw4LpYBO2JPJItswZt5lNPw1u9c1XW6s7xM6dRWQjVbrjD3wQG9h1HJ1PrZGVmlm/7UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752022886; c=relaxed/simple;
-	bh=e+T1fhlgewUCMGkVoR3tTxRjhF3Cc5drfaDrOO75184=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CQ1n+o37j6qxxPLZST6wlbe/d3Eqvx+4OmeYbmGEun2UOxB1HrBRr2BKkeV4yeAyiJBf/DPraT4SyZV/xR2cRXXoQtf3DZUV/dtDyCjvR3mn4+DD80YjvaiKK6EC9R/v1u6953rG8YrRrdfoDEvZ8HhpJeXxsFIsytCKsav3Xas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PRXAZ7Yt; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e81a7d90835so4149844276.1;
-        Tue, 08 Jul 2025 18:01:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752022883; x=1752627683; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IZC5q8LZ5pc6UFxmCdVHkQ+xcSY0x1BRxLFRLW7GuXk=;
-        b=PRXAZ7Yt1WxN7Nw3k6zuzoLgCuCqPWEtw0WdOIov03JSL6YQxCbUa+LlX+22rGdsTK
-         4P+TjdpQrVEhq/gL+WNldSaWOdjjJMa79nNJ2aHh/sul5J7z4BqerHklY08PdybwVLN3
-         7k9+c/fS2PJtTict5IIrK/d5fXTBpfed42FgnlLIyEkUFd/PovwYKfGa4i503b196/rF
-         RVcJt7SQXGJnzqZghtXAKKd4gFNvQ5nmgDLi9Wi4vWAFtnlzzIczKiSJ6urYkpcLlaT2
-         4SCsgirYHSDE/+2PHuJ9FDcelyh7BgQmLv/gl3SB1Oudqip4xtdeYst39ABgAiwZogr5
-         MKHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752022883; x=1752627683;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IZC5q8LZ5pc6UFxmCdVHkQ+xcSY0x1BRxLFRLW7GuXk=;
-        b=ANCNM0dcIppFExQzXfSAtXsgVTjKUbmMwg1YI+DHUAG5T5uIRPV6JDuiD01UrWsy61
-         Q1n700wlHAq7pYCeNku29L5CgGPJAcPf33NdNF7afnYMre18KP0nE1ptirIlf9YEbYZ2
-         bn8zhk3CVVm0ZX0UyFRrBsbHLNVhkvgcZRzZxP9OGxYL7/8s9ZgH2ljIye4SdCgdp5Wj
-         Jr9YYPZr2YjHxjTCfSeUrMOLxelCOJ22WkJMvF9zwKl8WWbNhPxlb2BroWLVO8CKkDv5
-         Zl8j2UcvLFagg+ITOT3xVqu62PYxzGoT/aSY5BhGf8iw2k8+dnSYoKPnCO7qmKhx/78u
-         Fx0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUeomKF8sIgfVDrKxTAJx9pYDb1y72+NNG1nkupbByLsH9Pvtg+7bjivOPOGCuKNMSOgDCLNJPLEqsb7gZs@vger.kernel.org, AJvYcCVQlUGFuvm1EMPnDnj1z/I2BZnLyWmnOygdzaVSgbjcqIRIOiGRwluxHRf1z+CGrpSF6Nwdn8REv5w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQRhVf3NSinZo0TlaGPO9bviia0RDp6wivW8lIE5Xscy82w3Jj
-	ydgF1BgJ0pAQXQnp/kPzhrpDk7aaQldx4xmnR6dS8RSy2Lzz8PDGWDbt
-X-Gm-Gg: ASbGncu7mBra8qguwcNdCuT4cfnCE5dUDzA4kcE4GQ6A/cBuUSatlz2jUFWZG+DNu7b
-	9yeLlvz5J4Z8AhXnJ8hn15/Nlex+iPKHvBOczEEyxoif1BPuleZ2eCwpDmm0XKc1YbQlEnJHB9A
-	v2LRP2o6h7pVdrSITwwOA1SInGqMkXot3/iACNj+9tZVkueYH1aFgJyx8wmbtr8AObmh37x3FWS
-	ZpOqNlvhyVA9kLitO32pn40X5+XUOM9i9UCcp/vNXJ/yP2EriZvfkA7Qs6ifG/wQiu8xESJlnqI
-	zUh8JOTD1NndjFpFLHG0dHzlbekU0JdEZPtvtgEp4b2ick2d3JosNso63C0eWSHsNqPkZhogl/K
-	IoF34m2A=
-X-Google-Smtp-Source: AGHT+IGBVL08fCEmXie0BqOThtC53srTZke6UZuD3rNGM0GVPqcqyBQP9Gr6apPaTrB4/7lyEi3sSA==
-X-Received: by 2002:a05:6902:2609:b0:e8b:444a:9298 with SMTP id 3f1490d57ef6-e8b6e0de728mr1064674276.5.1752022883567;
-        Tue, 08 Jul 2025 18:01:23 -0700 (PDT)
-Received: from bijan-laptop.attlocal.net ([2600:1700:680e:c000:235f:99bb:f36e:a060])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e899c43ed8asm3656043276.26.2025.07.08.18.01.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 18:01:23 -0700 (PDT)
-From: Bijan Tabatabai <bijan311@gmail.com>
-To: damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Cc: sj@kernel.org,
-	akpm@linux-foundation.org,
-	corbet@lwn.net,
-	bijantabatab@micron.com,
-	venkataravis@micron.com,
-	emirakhur@micron.com,
-	vtavarespetr@micron.com,
-	ajayjoshi@micron.com,
-	Ravi Shankar Jonnalagadda <ravis.opensrc@micron.com>
-Subject: [PATCH v4 13/13] mm/damon/vaddr: Apply filters in migrate_{hot/cold}
-Date: Tue,  8 Jul 2025 19:59:43 -0500
-Message-ID: <20250709005952.17776-14-bijan311@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250709005952.17776-1-bijan311@gmail.com>
-References: <20250709005952.17776-1-bijan311@gmail.com>
+	s=arc-20240116; t=1752022871; c=relaxed/simple;
+	bh=p+1ebn6vNh2rTReGQh5//ZEGguo2HhmtUqjfNBzIbsA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ek9Ifmsp9L6dIBtSAeS2PYmxQgkInfQKPrJgUSxi4Q2GROFJ901HjxoorrtHlFatxinaSnZ4/4ERebdZNDH9MdDFSpUTLZAUrXzQLg3zso9JDE3C4a2wyX2RVkkcLpam6o4L6KD6Vl70KQwKZWwJOsLXNDbBk3SOSQj4DXp/GTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=siR4dsf+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 847C2C4CEED;
+	Wed,  9 Jul 2025 01:01:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752022870;
+	bh=p+1ebn6vNh2rTReGQh5//ZEGguo2HhmtUqjfNBzIbsA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=siR4dsf+Qg4aH582lCEJSjNPrARp+yxvfN1ZWSiE0VArxrV7Wg0rvVbVzk3aAmR2C
+	 fW0UvCJqV75pNUXKVLcMcnxxSbboD4E2OqJj1Ye/tjG+2f3SY7iy6ZRHxtdavW7rE7
+	 w+FvKz4JzaB9I6sSneEhICDNVFWj9JT56JnbUPzCpCZ2437l3qvgyRY97HHOhJpwlB
+	 EosXTkedkaLlnJKhgJCXeAOLLkSuSr4+FmMRT4hdgbR4jhQ7ZanxXiAtA6peZVEdyQ
+	 FxY++8pR0lW+OzcFoQBLsk5cRFSn+hX4kmKnjL6QWEigl7j3PgY52G48MTw2gfqx8O
+	 gQLXARE5hYghA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Suman Kumar Chakraborty <suman.kumar.chakraborty@intel.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] crypto: acomp - Fix CFI failure due to type punning
+Date: Tue,  8 Jul 2025 17:59:54 -0700
+Message-ID: <20250709005954.155842-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,149 +57,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Bijan Tabatabai <bijantabatab@micron.com>
+To avoid a crash when control flow integrity is enabled, make the
+workspace ("stream") free function use a consistent type, and call it
+through a function pointer that has that same type.
 
-The paddr versions of migrate_{hot/cold} filter out folios from
-migration based on the scheme's filters. This patch does the same for
-the vaddr versions of those schemes.
-
-The filtering code is mostly the same for the paddr and vaddr versions.
-The exception is the young filter. paddr determines if a page is young
-by doing a folio rmap walk to find the page table entries corresponding
-to the folio. However, vaddr schemes have easier access to the page
-tables, so we add some logic to avoid the extra work.
-
-Co-developed-by: Ravi Shankar Jonnalagadda <ravis.opensrc@micron.com>
-Signed-off-by: Ravi Shankar Jonnalagadda <ravis.opensrc@micron.com>
-Signed-off-by: Bijan Tabatabai <bijantabatab@micron.com>
+Fixes: 42d9f6c77479 ("crypto: acomp - Move scomp stream allocation code into acomp")
+Cc: stable@vger.kernel.org
+Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
- mm/damon/vaddr.c | 69 +++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 65 insertions(+), 4 deletions(-)
+ crypto/deflate.c                    | 7 ++++++-
+ crypto/zstd.c                       | 7 ++++++-
+ include/crypto/internal/acompress.h | 5 +----
+ 3 files changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
-index 47d5f33f89c8..7f5dc9c221a0 100644
---- a/mm/damon/vaddr.c
-+++ b/mm/damon/vaddr.c
-@@ -611,9 +611,60 @@ static unsigned int damon_va_check_accesses(struct damon_ctx *ctx)
- 	return max_nr_accesses;
+diff --git a/crypto/deflate.c b/crypto/deflate.c
+index fe8e4ad0fee10..21404515dc77e 100644
+--- a/crypto/deflate.c
++++ b/crypto/deflate.c
+@@ -46,13 +46,18 @@ static void *deflate_alloc_stream(void)
+ 	ctx->stream.workspace = ctx->workspace;
+ 
+ 	return ctx;
  }
  
-+static bool damos_va_filter_young_match(struct damos_filter *filter,
-+		struct folio *folio, struct vm_area_struct *vma,
-+		unsigned long addr, pte_t *ptep, pmd_t *pmdp)
++static void deflate_free_stream(void *ctx)
 +{
-+	bool young = false;
-+
-+	if (ptep)
-+		young = pte_young(ptep_get(ptep));
-+	else if (pmdp)
-+		young = pmd_young(pmdp_get(pmdp));
-+
-+	young = young || !folio_test_idle(folio) ||
-+		mmu_notifier_test_young(vma->vm_mm, addr);
-+
-+	if (young && ptep)
-+		damon_ptep_mkold(ptep, vma, addr);
-+	else if (young && pmdp)
-+		damon_pmdp_mkold(pmdp, vma, addr);
-+
-+	return young == filter->matching;
++	kvfree(ctx);
 +}
 +
-+static bool damos_va_filter_out(struct damos *scheme, struct folio *folio,
-+		struct vm_area_struct *vma, unsigned long addr,
-+		pte_t *ptep, pmd_t *pmdp)
-+{
-+	struct damos_filter *filter;
-+	bool matched;
-+
-+	if (scheme->core_filters_allowed)
-+		return false;
-+
-+	damos_for_each_ops_filter(filter, scheme) {
-+		/*
-+		 * damos_folio_filter_match checks the young filter by doing an
-+		 * rmap on the folio to find its page table. However, being the
-+		 * vaddr scheme, we have direct access to the page tables, so
-+		 * use that instead.
-+		 */
-+		if (filter->type == DAMOS_FILTER_TYPE_YOUNG)
-+			matched = damos_va_filter_young_match(filter, folio,
-+				vma, addr, ptep, pmdp);
-+		else
-+			matched = damos_folio_filter_match(filter, folio);
-+
-+		if (matched)
-+			return !filter->allow;
-+	}
-+	return scheme->ops_filters_default_reject;
-+}
-+
- struct damos_va_migrate_private {
- 	struct list_head *migration_lists;
--	struct damos_migrate_dests *dests;
-+	struct damos *scheme;
+ static struct crypto_acomp_streams deflate_streams = {
+ 	.alloc_ctx = deflate_alloc_stream,
+-	.cfree_ctx = kvfree,
++	.free_ctx = deflate_free_stream,
  };
  
- /*
-@@ -673,7 +724,8 @@ static int damos_va_migrate_pmd_entry(pmd_t *pmd, unsigned long addr,
+ static int deflate_compress_one(struct acomp_req *req,
+ 				struct deflate_stream *ds)
  {
- 	struct damos_va_migrate_private *priv = walk->private;
- 	struct list_head *migration_lists = priv->migration_lists;
--	struct damos_migrate_dests *dests = priv->dests;
-+	struct damos *s = priv->scheme;
-+	struct damos_migrate_dests *dests = &s->migrate_dests;
- 	struct folio *folio;
- 	spinlock_t *ptl;
- 	pmd_t pmde;
-@@ -691,9 +743,13 @@ static int damos_va_migrate_pmd_entry(pmd_t *pmd, unsigned long addr,
- 	if (!folio)
- 		goto unlock;
+diff --git a/crypto/zstd.c b/crypto/zstd.c
+index 657e0cf7b9524..ff5f596a4ea7e 100644
+--- a/crypto/zstd.c
++++ b/crypto/zstd.c
+@@ -52,13 +52,18 @@ static void *zstd_alloc_stream(void)
+ 	ctx->wksp_size = wksp_size;
  
-+	if (damos_va_filter_out(s, folio, walk->vma, addr, NULL, pmd))
-+		goto put_folio;
-+
- 	damos_va_migrate_dests_add(folio, walk->vma, addr, dests,
- 		migration_lists);
- 
-+put_folio:
- 	folio_put(folio);
- unlock:
- 	spin_unlock(ptl);
-@@ -708,7 +764,8 @@ static int damos_va_migrate_pte_entry(pte_t *pte, unsigned long addr,
- {
- 	struct damos_va_migrate_private *priv = walk->private;
- 	struct list_head *migration_lists = priv->migration_lists;
--	struct damos_migrate_dests *dests = priv->dests;
-+	struct damos *s = priv->scheme;
-+	struct damos_migrate_dests *dests = &s->migrate_dests;
- 	struct folio *folio;
- 	pte_t ptent;
- 
-@@ -720,9 +777,13 @@ static int damos_va_migrate_pte_entry(pte_t *pte, unsigned long addr,
- 	if (!folio)
- 		return 0;
- 
-+	if (damos_va_filter_out(s, folio, walk->vma, addr, pte, NULL))
-+		goto put_folio;
-+
- 	damos_va_migrate_dests_add(folio, walk->vma, addr, dests,
- 		migration_lists);
- 
-+put_folio:
- 	folio_put(folio);
- 	return 0;
+ 	return ctx;
  }
-@@ -790,7 +851,7 @@ static unsigned long damos_va_migrate(struct damon_target *target,
  
- 	use_target_nid = dests->nr_dests == 0;
- 	nr_dests = use_target_nid ? 1 : dests->nr_dests;
--	priv.dests = dests;
-+	priv.scheme = s;
- 	priv.migration_lists = kmalloc_array(nr_dests,
- 		sizeof(*priv.migration_lists), GFP_KERNEL);
- 	if (!priv.migration_lists)
++static void zstd_free_stream(void *ctx)
++{
++	kvfree(ctx);
++}
++
+ static struct crypto_acomp_streams zstd_streams = {
+ 	.alloc_ctx = zstd_alloc_stream,
+-	.cfree_ctx = kvfree,
++	.free_ctx = zstd_free_stream,
+ };
+ 
+ static int zstd_init(struct crypto_acomp *acomp_tfm)
+ {
+ 	int ret = 0;
+diff --git a/include/crypto/internal/acompress.h b/include/crypto/internal/acompress.h
+index ffffd88bbbad3..2d97440028ffd 100644
+--- a/include/crypto/internal/acompress.h
++++ b/include/crypto/internal/acompress.h
+@@ -61,14 +61,11 @@ struct crypto_acomp_stream {
+ };
+ 
+ struct crypto_acomp_streams {
+ 	/* These must come first because of struct scomp_alg. */
+ 	void *(*alloc_ctx)(void);
+-	union {
+-		void (*free_ctx)(void *);
+-		void (*cfree_ctx)(const void *);
+-	};
++	void (*free_ctx)(void *);
+ 
+ 	struct crypto_acomp_stream __percpu *streams;
+ 	struct work_struct stream_work;
+ 	cpumask_t stream_want;
+ };
+
+base-commit: 181698af38d3f93381229ad89c09b5bd0496661a
 -- 
-2.43.0
+2.50.1
 
 
