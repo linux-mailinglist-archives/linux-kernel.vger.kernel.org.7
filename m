@@ -1,77 +1,87 @@
-Return-Path: <linux-kernel+bounces-724080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 088A6AFEE76
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:02:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D8FAFEE58
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B89E65A1D3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:59:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 197A017F6B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8F72EA495;
-	Wed,  9 Jul 2025 15:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0FE2E9746;
+	Wed,  9 Jul 2025 15:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KyBYxWNr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CHPmSxfj"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2086.outbound.protection.outlook.com [40.107.92.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B9E2E975D;
-	Wed,  9 Jul 2025 15:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752076749; cv=none; b=hx0NgHUAkznODHIUXEEz79qTZXfCMbWJK9SqXcKjCkg+heRYbQJPsQ+09JCqHiQX3Mpba1g2SLS90rNgeloIskYqT4s3OrGhpBp88r+2Wt/CJeMf30JGheUmeuQx5tsKmxZQfh5l0LkwjzNxtEVtkLqkKrTcgdpq5NqvWYKDhfo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752076749; c=relaxed/simple;
-	bh=7C4O3JBzzOwo5J3HrAhCDjFjwJdhB3lq6f05vLO4sUc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i8IazPSo/taAlv64b/jEDcZFwTVH9acn6XjtSRZMnsLiZFwXCr+73+MajfSPErwSYpJotjWmrxPMWVGoUQYukmdcbCh60VtxNOR+oH+G8h/lsjXKvksSG/FIWTA67rnOZIJ27z00JQa9N910me2AcyKFuoQ1DoFUC15L/C2d9xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KyBYxWNr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B132CC4CEF4;
-	Wed,  9 Jul 2025 15:59:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752076748;
-	bh=7C4O3JBzzOwo5J3HrAhCDjFjwJdhB3lq6f05vLO4sUc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=KyBYxWNrmh+yWZtzGlwosx5D5O7HAYvDmmKXG9rv6SyJ7jwWgV3xUNuvulG3W97yt
-	 ELpUwpSCSrEwuZr4ayD4YMfLi9xYMCEA3FbtoauphYQs78i+qLNVL/1/9Br+hL+QAM
-	 K0HPGDuP6Tz+tNtcc0EzvvDVtqsVJ74uunhTes0xkcXJ4K09NbOiZlNSSyPLQ5M5CF
-	 /SvG3/93H1kdrHy5MDgpaPG8IzH2hAN7UOhbCM3bIkEBpxRTxNQYv7zGRALyWQOu00
-	 Kq0b2t1DdYt3ELzhYs7LHpIia8yVcnwW+/LT4NGwp4ypkPkfEHSZFBjwxLSei0pviE
-	 8NoWEVFLPau1A==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab@kernel.org>)
-	id 1uZXCJ-00000000Igk-0b7w;
-	Wed, 09 Jul 2025 17:59:03 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Akira Yokosawa <akiyks@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Ignacio Encinas Rubio <ignacio@iencinas.com>,
-	Marco Elver <elver@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jan Stancek <jstancek@redhat.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Ruben Wauters <rubenru09@aol.com>,
-	joel@joelfernandes.org,
-	linux-kernel-mentees@lists.linux.dev,
-	lkmm@lists.linux.dev,
-	netdev@vger.kernel.org,
-	peterz@infradead.org,
-	stern@rowland.harvard.edu,
-	Breno Leitao <leitao@debian.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Simon Horman <horms@kernel.org>
-Subject: [PATCH v9 00/13] Don't generate netlink .rst files inside $(srctree)
-Date: Wed,  9 Jul 2025 17:58:44 +0200
-Message-ID: <cover.1752076293.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C37187346
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 15:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752076741; cv=fail; b=sYjqC5Kv8VAQHuS2rm9HlxplDc9Zj5NJH9weK59QVuzp0DZF4pIPVtStwzIEZS3R9uDnEYoQ0yKGpwQu3Xtm4+h0YIfiElYKGXGXR0SnYPohK7gpuLs6P7vFhEoXHeeUd7gDnBbEy78NkzuHM/vUMsXVtEPLN0ux4ubsGFqQDjg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752076741; c=relaxed/simple;
+	bh=P3GRBv3TvNC4WU/ZSTT3xcb1UoLq7qRxvju4mXRWXmE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nrt0hs44yvgK8ffFq4CqzeZ5hjIGMaYPnc1SXTmwTlh6pjzhrOv/amOCfjYATXCLFH0s+haCrjIi/d8ju6+YP08PfAqImtwZ7NripPulhgZfuDyx2KEqrGAiCkQM4pBoJ/gqsnp2ojF1t4ikGGA6MGZVG7dh3/EaQDEWAdacgWE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CHPmSxfj; arc=fail smtp.client-ip=40.107.92.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fjqDnu9ya5tiGUTrvxqaHEUAyTZ+N8sNIBk8Y0hRxX6rlW+jCDkqVbG7GEDrRg2qLMxJXL6dGXZk4K5Yy+v7oYI1NA9ZanpIGT5tBTsbUglc5NYV9ztL+xAfLzOQfAj2NhkpoWxA0jeoe82Up0anr8DEHTP6h//x39OYDIFo77MaEAd8Sl0XboSdRjv9WeuiFddBWSTM7YvDtgI8E5bcNl2Zy3Jelc13jMpX3OHRUAXe1iotSUN1CXbHfJk0mnr+d7Nicyq7HiYBmdguITBVaudFSB87P9e/5qoUsN/4S1G3Nve79s0UGWjTkkRP8PoEUEUtxVSyfp663epZi2dP+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uoSZFhiwauj3Q3o4wlbZuLF53i9pPeJ3ULXGx/8sOdE=;
+ b=oyCBrhTORlxy2583ra7P+Bujc0ii5ofDocfRgq5y+v9CRrvhGRAWpYewfMxj/iYWUeEDuXaeE92oUKuz3YoFtrj7xN3B5h5T9QUfKN7xq1X3S3Hnfh3F/oh1J40ckwgN56c73qFie5wxn78K1jFydK7JEEYBQHU8Kt9rUEK1nkiso6q3d0i0gyK694M6wWm3AiQq4WHB13hPOxU0DrVxb5TAkjHLKlOCWNJQKja28HtS4XOqLqNcwo8EO0FD1mMS4GXQhFWQp9JG8SZcuUq1ApdbzYG7UKvLIsve/da//eAkAHng8FR0npp5ge3/jQyIkKPzfpFL97ezP27Igj4ZcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uoSZFhiwauj3Q3o4wlbZuLF53i9pPeJ3ULXGx/8sOdE=;
+ b=CHPmSxfjE2FouNFmn/HvPkLzjcWBhExPtczO3d+HWoVLK5nCd4mfyVVAVg1IZz/wK6jZ+qBHhucM+Awzc62Qbx9iQKQl9OaMwHPo82ACFrfjR+GAz01O8b792V19opObeXJKyvPq0jiPJbikWR4Zg8Ui5rdW7C1HoWHMNPPZOpc=
+Received: from MW4PR04CA0071.namprd04.prod.outlook.com (2603:10b6:303:6b::16)
+ by CH0PR12MB8529.namprd12.prod.outlook.com (2603:10b6:610:18d::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Wed, 9 Jul
+ 2025 15:58:55 +0000
+Received: from SJ5PEPF000001F1.namprd05.prod.outlook.com
+ (2603:10b6:303:6b:cafe::fa) by MW4PR04CA0071.outlook.office365.com
+ (2603:10b6:303:6b::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.21 via Frontend Transport; Wed,
+ 9 Jul 2025 15:58:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF000001F1.mail.protection.outlook.com (10.167.242.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8922.22 via Frontend Transport; Wed, 9 Jul 2025 15:58:54 +0000
+Received: from tiny.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Jul
+ 2025 10:58:53 -0500
+From: David Kaplan <david.kaplan@amd.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Ingo Molnar
+	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
+CC: <linux-kernel@vger.kernel.org>
+Subject: [PATCH v7 19/22] x86/bugs: Add attack vector controls for TSA
+Date: Wed, 9 Jul 2025 10:58:44 -0500
+Message-ID: <20250709155844.3279471-1-david.kaplan@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250707183316.1349127-1-david.kaplan@amd.com>
+References: <20250707183316.1349127-1-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,127 +89,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F1:EE_|CH0PR12MB8529:EE_
+X-MS-Office365-Filtering-Correlation-Id: 672bb07e-5144-4a4a-f742-08ddbf0181a4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?4nvWdyj+rMSTGlfqtIxGDmLJvWTPA3HiiDnXbZp1iwmo2thWdL6sd9AutGqq?=
+ =?us-ascii?Q?YH26fV09B3RTrFJntyZaFBqKYXVujzWFLFMDxvyl0NCGA8euNt+6ZZC3/P1m?=
+ =?us-ascii?Q?oI2yqoI/1kLJ34lXGmmDxTNCg+pI1IJtu2i5vD62KEa9cy8pILgcNDacWVie?=
+ =?us-ascii?Q?7QutQ6iC36eEEifdEyBLGCXy8f84Z2AuMUxJH7Fc1HszzdO4ROHGbFUDQMZn?=
+ =?us-ascii?Q?xjbS9PEZCSg9LYVcYYQoM5aEcOkE03xQHqunELpUs/0Rkx35CC1HCASfUFy0?=
+ =?us-ascii?Q?lRyh3xfJ+rETZ3GX8Bk6NSbUa8vH0BLcmIDGoW03OY+t8+TAoK4LUjKvFsGO?=
+ =?us-ascii?Q?UveIZ/mdv/+6AtpuczwCqgWALZr/TY7HxIybdMmcGTEkKyRopB0GIg9+a28J?=
+ =?us-ascii?Q?SoBHLU+PFr+Fx4lSw4lLXzr0LvMmMRZm0xDa7HajMzotjDh9FVJL/Z40Dm6l?=
+ =?us-ascii?Q?0x+KQ1OS52pioAPkVW8jF1ZiwjJKjmMfJY6iWphxFUYbcRhb5W+PruFKNCmv?=
+ =?us-ascii?Q?iadJLT+TKfC6o9+WOmE31SZE20Sk/9baS/Xlqt/QGMPI0yiZyHP1lUSPLeay?=
+ =?us-ascii?Q?ng3WNlBAhgCfa9WYqwRilfpugVpO462llbzuOEtabGFqfnCfhtizyQcuTnc2?=
+ =?us-ascii?Q?Lteuv9NiwHR+mzetHXi1Vk2ldsX8H83S03QwFa5QwHAHMAURqbRxSzREWL2R?=
+ =?us-ascii?Q?tku7L5NykQoht/VZ0q8hSxlHgJyWJkkj406o3V+GdIik0ahsASRXBkHJ5XfU?=
+ =?us-ascii?Q?rgI+I6FvQMqsvfwWLjJARAHrHytuawcV7qlRCGbWAnUhF8hb2RDZzHTWN8Iv?=
+ =?us-ascii?Q?PO/PWm7a5Z2zns6AlU1bIswPeOuWdrMyFdPC0du5ezE0CnrpAL1400kJfwWo?=
+ =?us-ascii?Q?jbwSRGxOYL7Gssvz39Ura9aQn8J/swXp123rnYehzpwCzeOqkgmsQMrYUSWs?=
+ =?us-ascii?Q?pyt2Y49uqM2n6B2OvGX+Pk1TYhno8fcFmpMYh8NS6BHHEQH7zi8pZny2DZcb?=
+ =?us-ascii?Q?v+rySacjoHJ8jf+8fC7RohJJvCID3w9MOLNlBlkgyMpM/CawIr/CCrZJ9g5F?=
+ =?us-ascii?Q?2KzTSdwJpXloC85zw78iNwbvM9RfCyk8muBkljSYkpL37gcF01nEdk1xtZSZ?=
+ =?us-ascii?Q?96AoQbepfuppyTLAmUN+M5KfboeA+qSeIiJpkF/kT8YFXsW6NhfkxGY+MgZn?=
+ =?us-ascii?Q?ErBpFA54ouSccpWeTbWTe0us2ZER75SyUg8H8x0wKFH7V+mu+Yq4g3mbcyzD?=
+ =?us-ascii?Q?QKANnY9VHivzs3Rpfhque4COYuXhG14XMdXDoT4ZBB2pt90yloDSIbKKwNtG?=
+ =?us-ascii?Q?x+GqEZZufPl5l609uNXDchchqqPZb5XPmpjjJI8wjKrgRSFL0WMvx7pIcHw2?=
+ =?us-ascii?Q?7cuSlTKge2ZG+FY2u5R/OFXX77iIJ9XfqANsZpm8Mx9LwlWQMGhid5kjexPz?=
+ =?us-ascii?Q?EOwSzbWpY+93swFm2kXNQvzSd7Ht9TtCiZZRiQXczPNV6Aojui2aQiywPrY3?=
+ =?us-ascii?Q?/i2iHPkAP2TlhQBwXPWjhbAXl62DO3fkxucM?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 15:58:54.6070
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 672bb07e-5144-4a4a-f742-08ddbf0181a4
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001F1.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8529
 
-Hi Jon,
+Use attack vector controls to determine which TSA mitigation to use.
 
-That's the v9 version of the parser-yaml series, addressing a couple of
-issues raised by Donald.
-
-It should apply cleanly on the top of docs-next. It does require some
-changes there, so, if Donald wants to merge on his tree, he will
-need to merge from docs-next (or after Linus picks from you at the
-next merge window).
-
--
-
-As discussed at:
-   https://lore.kernel.org/all/20250610101331.62ba466f@foz.lan/
-
-changeset f061c9f7d058 ("Documentation: Document each netlink family")
-added a logic which generates *.rst files inside $(srctree). This is bad
-when O=<BUILDDIR> is used.
-
-A recent change renamed the yaml files used by Netlink, revealing a bad
-side effect: as "make cleandocs" don't clean the produced files and symbols
-appear duplicated for people that don't build the kernel from scratch.
-
-This series adds an yaml parser extension and uses an index file with glob for
-*. We opted to write such extension in a way that no actual yaml conversion
-code is inside it. This makes it flexible enough to handle other types of yaml
-files in the future. The actual yaml conversion logic were placed at 
-netlink_yml_parser.py. 
-
-As requested by YNL maintainers, this version has netlink_yml_parser.py
-inside tools/net/ynl/pyynl/ directory. I don't like mixing libraries with
-binaries, nor to have Python libraries spread all over the Kernel. IMO,
-the best is to put all of them on a common place (scripts/lib, python/lib,
-lib/python, ...) but, as this can be solved later, for now let's keep it this
-way.
-
+Signed-off-by: David Kaplan <david.kaplan@amd.com>
 ---
+ arch/x86/kernel/cpu/bugs.c | 26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
-v9:
-- did some cleanups due to changes caused by rebases;
-- added some reviewed-by/reported-by/tested-by tags;
-- addressed some pylint problems at the line numbering patch.
-
-v8:
-- minor fixes based on Donald's feedback;
-- removed unrelated patches.
-
-v7:
-- Added a patch to cleanup conf.py and address coding style issues;
-- Added a docutils version check logic to detect known issues when
-  building the docs with too old or too new docutils version.  The
-  actuall min/max vesion depends on Sphinx version.
-
-v6:
-- YNL doc parser is now at tools/net/ynl/pyynl/lib/doc_generator.py;
-- two patches got merged;
-- added instructions to test docs with Sphinx 3.4.3 (minimal supported
-  version);
-- minor fixes.
-
-v5:
-- some patch reorg;
-- netlink_yml_parser.py is now together with ynl tools;
-- minor fixes.
-
-v4:
-- Renamed the YNL parser class;
-- some minor patch cleanups and merges;
-- added an extra patch to fix a insert_pattern/exclude_pattern logic when
-   SPHINXDIRS is used.
-
-v3:
-- Two series got merged altogether:
-  - https://lore.kernel.org/linux-doc/cover.1749723671.git.mchehab+huawei@kernel.org/T/#t
-  - https://lore.kernel.org/linux-doc/cover.1749735022.git.mchehab+huawei@kernel.org
-
-- Added an extra patch to update MAINTAINERS to point to YNL library
-- Added a (somewhat unrelated) patch that remove warnings check when
-  running "make cleandocs".
-
-
-Mauro Carvalho Chehab (13):
-  docs: netlink: netlink-raw.rst: use :ref: instead of :doc:
-  tools: ynl_gen_rst.py: Split library from command line tool
-  docs: netlink: index.rst: add a netlink index file
-  tools: ynl_gen_rst.py: cleanup coding style
-  docs: sphinx: add a parser for yaml files for Netlink specs
-  docs: use parser_yaml extension to handle Netlink specs
-  docs: uapi: netlink: update netlink specs link
-  tools: ynl_gen_rst.py: drop support for generating index files
-  docs: netlink: remove obsolete .gitignore from unused directory
-  MAINTAINERS: add netlink_yml_parser.py to linux-doc
-  tools: netlink_yml_parser.py: add line numbers to parsed data
-  docs: parser_yaml.py: add support for line numbers from the parser
-  docs: parser_yaml.py: fix backward compatibility with old docutils
-
- Documentation/Makefile                        |  17 -
- Documentation/conf.py                         |  20 +-
- Documentation/netlink/specs/index.rst         |  13 +
- Documentation/networking/index.rst            |   2 +-
- .../networking/netlink_spec/.gitignore        |   1 -
- .../networking/netlink_spec/readme.txt        |   4 -
- Documentation/sphinx/parser_yaml.py           | 116 +++++
- Documentation/userspace-api/netlink/index.rst |   2 +-
- .../userspace-api/netlink/netlink-raw.rst     |   6 +-
- Documentation/userspace-api/netlink/specs.rst |   2 +-
- MAINTAINERS                                   |   1 +
- tools/net/ynl/pyynl/lib/__init__.py           |   2 +
- tools/net/ynl/pyynl/lib/doc_generator.py      | 398 ++++++++++++++++++
- tools/net/ynl/pyynl/ynl_gen_rst.py            | 384 +----------------
- 14 files changed, 558 insertions(+), 410 deletions(-)
- create mode 100644 Documentation/netlink/specs/index.rst
- delete mode 100644 Documentation/networking/netlink_spec/.gitignore
- delete mode 100644 Documentation/networking/netlink_spec/readme.txt
- create mode 100755 Documentation/sphinx/parser_yaml.py
- create mode 100644 tools/net/ynl/pyynl/lib/doc_generator.py
-
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index f41d871f0622..e02b232fcc6e 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -1657,28 +1657,38 @@ early_param("tsa", tsa_parse_cmdline);
+ 
+ static void __init tsa_select_mitigation(void)
+ {
+-	if (cpu_mitigations_off() || !boot_cpu_has_bug(X86_BUG_TSA)) {
++	if (!boot_cpu_has_bug(X86_BUG_TSA)) {
+ 		tsa_mitigation = TSA_MITIGATION_NONE;
+ 		return;
+ 	}
+ 
++	if (tsa_mitigation == TSA_MITIGATION_AUTO) {
++		if (cpu_attack_vector_mitigated(CPU_MITIGATE_USER_KERNEL) ||
++		    cpu_attack_vector_mitigated(CPU_MITIGATE_USER_USER)) {
++			if (cpu_attack_vector_mitigated(CPU_MITIGATE_GUEST_HOST) ||
++			    cpu_attack_vector_mitigated(CPU_MITIGATE_GUEST_GUEST))
++				tsa_mitigation = TSA_MITIGATION_FULL;
++			else
++				tsa_mitigation = TSA_MITIGATION_USER_KERNEL;
++		} else if (cpu_attack_vector_mitigated(CPU_MITIGATE_GUEST_HOST) ||
++			   cpu_attack_vector_mitigated(CPU_MITIGATE_GUEST_GUEST)) {
++			tsa_mitigation = TSA_MITIGATION_VM;
++		} else {
++			tsa_mitigation = TSA_MITIGATION_NONE;
++		}
++	}
++
+ 	if (tsa_mitigation == TSA_MITIGATION_NONE)
+ 		return;
+ 
+-	if (!boot_cpu_has(X86_FEATURE_VERW_CLEAR)) {
++	if (!boot_cpu_has(X86_FEATURE_VERW_CLEAR))
+ 		tsa_mitigation = TSA_MITIGATION_UCODE_NEEDED;
+-		goto out;
+-	}
+-
+-	if (tsa_mitigation == TSA_MITIGATION_AUTO)
+-		tsa_mitigation = TSA_MITIGATION_FULL;
+ 
+ 	/*
+ 	 * No need to set verw_clear_cpu_buf_mitigation_selected - it
+ 	 * doesn't fit all cases here and it is not needed because this
+ 	 * is the only VERW-based mitigation on AMD.
+ 	 */
+-out:
+ 	pr_info("%s\n", tsa_strings[tsa_mitigation]);
+ }
+ 
 -- 
-2.49.0
-
+2.34.1
 
 
