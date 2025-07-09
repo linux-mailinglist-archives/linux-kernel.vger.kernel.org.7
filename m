@@ -1,230 +1,295 @@
-Return-Path: <linux-kernel+bounces-724123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65220AFEEE1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:35:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08F09AFEEE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BB75486B5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:35:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAEE01C83DCB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2CA21D001;
-	Wed,  9 Jul 2025 16:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D5721D3F1;
+	Wed,  9 Jul 2025 16:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E4VabdK7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="rI4fuBV7"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D64721859A;
-	Wed,  9 Jul 2025 16:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A9E21B9F4
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 16:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752078925; cv=none; b=FWfHThh7HOjLioZFMq8lJNG2kg9LDDO0r8yEJXCjPUuI6AEBbeuz++h+TCehwd6vWxGF8NS51gLxCEbrHJl4/KIJUoirYdDjDXlx/zuPjU5k0ZaKxHTCFAygJdXzSaLm3NMeaPKcyphikkHLizY+8d6ebwg2uV71g8gqxDy77Z8=
+	t=1752078966; cv=none; b=TOORGc+WYgSsUBNljTRIzF9h0ZUlXEFafJndj3cIuRGYkG2wkx4pWMd49flJ5JzzhSLmoPAavqszk4wGe2SY9U3zJNTSzMQtC4TaF/nytj5LdUbpAetS/fLirmWsnsTNCl8S1FNatGtRqqP14XV4ybYNQ/MGKRLd6RpFPaPFZ+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752078925; c=relaxed/simple;
-	bh=qLAqIavMfIsW7n9k+wC1ExT+uqRdlxF4NJDphcNPadE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y6OCRaX0RcVTQYRjIi4oem8sK2tYCsGOD783Fv2CFZ+w9uXgwl7pRB5nDigw5S3uQLxiRkRoq/ALzJi7+sfamB0JKZryGQp6A70O8i+e8/akfEgaGcfyMpfR9ih93RZv7DqCNVPfg7Hl4Z60Y31LruaOw2D8iZ9SDG0JpQGlOX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E4VabdK7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4095DC4CEEF;
-	Wed,  9 Jul 2025 16:35:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752078925;
-	bh=qLAqIavMfIsW7n9k+wC1ExT+uqRdlxF4NJDphcNPadE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E4VabdK7lPH0uiw2B0R9RPJ2XfGWem2u4r4cco2AvIzQiAyjRsAH2yiRdP8y+S2yz
-	 0mpghlee1q75h+2jMYXtjcJT7GYbOk8SS/jJcwYnF8IejFLwpBs7SxC7Kes0ftc+9Z
-	 WA1Oz9TAtm4y0+0BWOM9p/1KtrQfagRGyuzEaHfwZaMPY3x+bAv4g2mERrpjEJxSGB
-	 LjbG+vJMdaYaThi7Pet4ZqjxDd+tu+ah3hUH6OUAJBCn3t9VqZzZE5y6Ejqwxgxjxo
-	 iG1uHj28n8lvEbetEMGxXrTkMqUiDp7wgtU7es13vGwLP2XZs9YcCSLsAVXe0ZB25p
-	 T707zn9+DKdAg==
-Date: Wed, 9 Jul 2025 09:35:21 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
-	John Garry <john.g.garry@oracle.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Gautam Menghani <gautam@linux.ibm.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v4 00/15] New perf ilist app
-Message-ID: <aG6aSX0Ws1cioo5T@google.com>
-References: <20250628000929.230406-1-irogers@google.com>
+	s=arc-20240116; t=1752078966; c=relaxed/simple;
+	bh=T/YxpJHaLl0ZEYjXbomfYbdvkf7AfwrF0GJmnkQ6J0I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=e90akb2Ah6Jj4J4it7nKHAqIg94K2fGHExdzCKg1hw85IxwVS5z90dvjLb+hvpklj8mvLteVYr3taGhLSvvpmzOl4B7aToUww7NlafwmNnaVWAZxpbq9DBKKXpFRnJgxUlJhGkMSUWhkFtPgippUm1Q58IyhRJ8Ht8Ec4NH7uzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=rI4fuBV7; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-40669fd81b5so87374b6e.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 09:36:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1752078963; x=1752683763; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=M2NCv5ZUnXAsXiQ1y5qCYPVBgj3kCuUiatyrb7NyC8w=;
+        b=rI4fuBV7AO/cb5VzTMA67RCM4x1V0JDmWPmWdV6tDjDdAVkSLGG6u15Kc/XF2o94S7
+         8nA0v6pMrF9YgzOUhqjXF4Fu9Nw6Ha1xCh9YK+I1GDnP5a8fVm6qblT2t4TWp76Uk2Rv
+         KMtO3Sw59qFnvVwoVodpEuPF919uy1c0vLF05Ai1bja5KpGcS/OLMD8goGSKGgTJuTA5
+         YcWKPIrmqq+Gb4G9rgUNjEVLGYd7vIRO5l9XflCzj9n4a7RH3Yg/yNZjzCad+Vmbk1aZ
+         UokTR/iaDkG5yaWZsB/61ltfvVztjoTcvVtfYtpyUN9JXSUu+NYMK3aizQY5GkWKZuma
+         Iw2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752078963; x=1752683763;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M2NCv5ZUnXAsXiQ1y5qCYPVBgj3kCuUiatyrb7NyC8w=;
+        b=f6LMljm3XHJ5u1IyeovA1POnce96wurkUjX5JI0fQJQa1ZFZhYZufz+my+enZl0EqI
+         j/bpU2ZUSbYH88K4M81amFyy+MSqDg6A41K5EPF0f9v8D51xjVY7xjR9LcUd+e5c6Bgm
+         BI/Cpcu0PPwmct2rCP3XB6yknBwYgl8cTtFzQnvbyGMGBew40+952YFFYumIMF3PMa85
+         eiGQs3lkg1T5FO4Jkicu9p4yCwJ2SrJGhTBKQlbi8U/gTq4X5/JnGjZ3fT6ofkFj3CBO
+         RZ9d6ynxLCNtbM15gTQBh1ZKHMg3OpoC+RgoqNj8YXeg87qmntKAAXCWa0KEaRpVjvJz
+         w7bA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7vKUqr27idosdDeCGXP1/sqjuQFqo0IcAuLxOCc8WWzMesBlGYasF2ZBg1cvgLJPGMH6q7bGeJNW4Fe4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDEov0mHK0ryW4j3SuKzPjk4cMzLmbJIVx08b75gi7J2277Luj
+	ucGhTVIAx212s4ZPm1nlsX1U0ftys0nwZTIvLuF4GSmqFBU+vfKiuwQtnhSZ6Z0l2eI=
+X-Gm-Gg: ASbGncsCtgaf3qxO8OPVI9vkCW5ZaZTJVo/yT/66EvBv6/+U9Hda95WEH4vUWHQbOuq
+	BiUhmdtpTi1GpVhLe/S/Pe6fYz794z6bElNX7flSlOG8Yk4BWhdG/6EohNBdV5+yzka1a+4MJI+
+	nWFTacteki+GLmaZc570nRobY4aLKXrIUjNPXxFaVtNwIU/jMpwKXqj09+NyIYPwfIhrm+pGjx9
+	pDelhPPtG1VUCF/lEcwgMOfLc4zTBSwpCQLv0XGpD59hDHpoa+9AdW8kiCFCrOqlU2RvOa730un
+	THYF4wDgH6M8wRMT4hPdh8XbYjBi2hGV6AOdUaZaxM55+KoeCugP9IjsgbOjQeSJHnsW
+X-Google-Smtp-Source: AGHT+IE+a5J4989lV0mNG3uoJIobk1P3f7G6nnrVcQuEoPyM2xrG7xGnluW8sIs1Q7PkyM/QB9HmCg==
+X-Received: by 2002:a05:6808:3012:b0:3f8:d2f8:d735 with SMTP id 5614622812f47-412bcf88924mr1867517b6e.33.1752078961998;
+        Wed, 09 Jul 2025 09:36:01 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:ddc3:43e9:8174:1067])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40d02ac747dsm2071589b6e.33.2025.07.09.09.36.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 09:36:01 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Wed, 09 Jul 2025 11:35:52 -0500
+Subject: [PATCH] iio: adc: ad7173: prevent scan if too many setups
+ requested
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250628000929.230406-1-irogers@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250709-iio-adc-ad7173-fix-setup-use-limits-v1-1-e41233029d44@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAGeabmgC/x2N0QqCQBBFf0XmuYFxQ7f6lfBhdae6UCo7GoL47
+ w09nIcDh3t3Mi1Qo1u1U9EvDNPoUp8qGl5pfCoju1OQ0EiUKwMTpzw4sY5nfmBj02WdeTXlNz5
+ YjCU1OfRtauNFyJfmot79X+7dcfwALA9yMHUAAAA=
+X-Change-ID: 20250709-iio-adc-ad7173-fix-setup-use-limits-0a5d2b6a6780
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7214; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=T/YxpJHaLl0ZEYjXbomfYbdvkf7AfwrF0GJmnkQ6J0I=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBobppph0m67SJSY5refN+iWtP3CCO+qC4Mi6bGc
+ 5WyAu6VjyCJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaG6aaQAKCRDCzCAB/wGP
+ wBujB/4za2HUMD8opIpTpE0X3c5+k7wNbl9Y2qcT7EGEYysPLv9oVSRVEw72ZIEoeKTLGIsuClv
+ WLgXr+t1KF/Q3R6T073OgUZpLya06ZCpQKh4YCkShSgi8f9QpvZty+3qI58M1iWn+rT0cpJRK6G
+ 2+z+NjoxQmpJe4C0Et3OTfuuE/OHLvo+gh3xDWQMEg+RQFNA17JurkNxFABy/Znc8iNvUR61Pj1
+ yvToRBdfcX97XmM31uKT40AAjV1vln2S9VdA5bgwh8KqH8F3HkqEYtvz71AIgeRmeWB3HX6xrrH
+ bW5sh2tvl64T+Wv7DRzNe3uruADnTioJgnkXlK5w/cfkXu2/
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-Hi Ian,
+Add a check to ad7173_update_scan_mode() to ensure that we didn't exceed
+the maximum number of unique channel configurations.
 
-Sorry for the delay.
+In the AD7173 family of chips, there are some chips that have 16
+CHANNELx registers but only 8 setups (combination of CONFIGx, FILTERx,
+GAINx and OFFSETx registers). Since commit 2233378a8c60 ("iio: adc:
+ad7173: fix num_slots"), it is possible to have more than 8 channels
+enabled in a scan at the same time, so it is possible to get a bad
+configuration where more than 8 channels are using unique configurations.
+This happens because the algorithm to allocate the setup slots only
+takes into account which slot has been least recently used and doesn't
+know about the maximum number of slots available.
 
-On Fri, Jun 27, 2025 at 05:09:14PM -0700, Ian Rogers wrote:
-> This patch series builds up to the addition of a new ilist app written
-> in python using textual [1] for the UI. The app presents perf PMUs and
-> events, displays the event information as in `perf list` while at the
-> bottom of the console showing recent activity of the event in total
-> and across all CPUs.
-> 
-> The first part of the patches are a few perf and perf python C API
-> fixes, most importantly the counter reading in python supports tool
-> PMUs.
+Since the algorithm to allocate the setup slots is quite complex, it is
+simpler to check after the fact if the current state is valid or not.
+So this patch adds a check in ad7173_update_scan_mode() after setting up
+all of the configurations to make sure that the actual setup still
+matches the requested setup for each enabled channel. If not, we prevent
+the scan from being enabled and return an error.
 
-The first part looks ok.  It'd be nice if you can send it separately.
+The setup comparison is ad7173_setup_equal() is refactored to a separate
+function since we need to call it in two places now.
 
-> 
-> The second part of the patches adds event json for the software PMU
-> and makes the tracepoint PMU support iteration of events and the
-> like. Without these improvements the tracepoint and software PMUs will
-> appear to have no events in the ilist app. As the software PMU moves
-> parsing to json, the legacy hard coded parsing is removed. This has
-> proven controversial for hardware events and so that cleanup isn't
-> done here.
+Fixes: 2233378a8c60 ("iio: adc: ad7173: fix num_slots")
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+I know this isn't pretty, but after puzzling over it for a day, this was
+the best I could come up with that didn't involve a complete rewrite of
+the setup allocation algorithm.
 
-I think it's ok to move hardware events to JSON as well.  Then we can
-probably remove the hard coded parsing code.
+I don't really understand why we care about which setup was the least
+recently used - it isn't like we are going to wear out one setup by
+using it too much. Maybe it was just to reduce the number of SPI xfers?
+Anyway, ad7124 has a similar setup allocation algorithm, so it could be
+nice to eventually replace both of these with something common that is
+a bit simpler, e.g. always use SETUP 0 for single transfers and allocate
+the rest of the setups in order for buffered reads with more than one
+channel enabled. And just always re-write the setup each time so we
+don't have to try to keep track of what each slot is programmed with.
 
-The tricky part is the hybrid machines.  Would it be possible to define
-common hardware with standard (legacy) encoding and to mark it "weak" or
-overridable by arch-specific events with the same name?
+Also, the commit hash this references is currently in iio/fixes-togreg,
+so if that gets rebased, it will need to be updated here.
+---
+ drivers/iio/adc/ad7173.c | 87 +++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 75 insertions(+), 12 deletions(-)
 
-> 
-> The final patch adds the ilist command. To run it you need the updated
-> perf.cpython.so in your PYTHONPATH and then execute the
-> script. Expanding PMUs and then selecting events will cause event
-> informatin to be displayed in the top-right and the counters values to
-> be displayed as sparklines and counts in the bottom half of the
-> screen.
-> 
-> Some thoughts on the series:
-> 
->  - The PMU changes will conflict with the addition of the DRM PMU:
->    https://lore.kernel.org/lkml/20250403202439.57791-1-irogers@google.com/
->    when these two are merged together ilist will show yet more
->    counters. It'd be nice if the DRM stuff could land and then I can
->    rebase these patches.
+diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+index c41bc5b9ac597f57eea6a097cc3a118de7b42210..d1d6c20fb1ee3f8479e8faa2209206e208adb90a 100644
+--- a/drivers/iio/adc/ad7173.c
++++ b/drivers/iio/adc/ad7173.c
+@@ -200,7 +200,7 @@ struct ad7173_channel_config {
+ 	/*
+ 	 * Following fields are used to compare equality. If you
+ 	 * make adaptations in it, you most likely also have to adapt
+-	 * ad7173_find_live_config(), too.
++	 * ad7173_setup_equal(), too.
+ 	 */
+ 	struct_group(config_props,
+ 		bool bipolar;
+@@ -563,12 +563,19 @@ static void ad7173_reset_usage_cnts(struct ad7173_state *st)
+ 	st->config_usage_counter = 0;
+ }
+ 
+-static struct ad7173_channel_config *
+-ad7173_find_live_config(struct ad7173_state *st, struct ad7173_channel_config *cfg)
++/**
++ * ad7173_setup_equal - Compare two channel setups
++ * @cfg1: First channel configuration
++ * @cfg2: Second channel configuration
++ *
++ * Compares all configuration options that affect the registers connected to
++ * SETUP_SEL, namely CONFIGx, FILTERx, GAINx and OFFSETx.
++ *
++ * Returns: true if the setups are identical, false otherwise
++ */
++static bool ad7173_setup_equal(const struct ad7173_channel_config *cfg1,
++			       const struct ad7173_channel_config *cfg2)
+ {
+-	struct ad7173_channel_config *cfg_aux;
+-	int i;
+-
+ 	/*
+ 	 * This is just to make sure that the comparison is adapted after
+ 	 * struct ad7173_channel_config was changed.
+@@ -581,14 +588,22 @@ ad7173_find_live_config(struct ad7173_state *st, struct ad7173_channel_config *c
+ 				     u8 ref_sel;
+ 			     }));
+ 
++	return cfg1->bipolar == cfg2->bipolar &&
++	       cfg1->input_buf == cfg2->input_buf &&
++	       cfg1->odr == cfg2->odr &&
++	       cfg1->ref_sel == cfg2->ref_sel;
++}
++
++static struct ad7173_channel_config *
++ad7173_find_live_config(struct ad7173_state *st, struct ad7173_channel_config *cfg)
++{
++	struct ad7173_channel_config *cfg_aux;
++	int i;
++
+ 	for (i = 0; i < st->num_channels; i++) {
+ 		cfg_aux = &st->channels[i].cfg;
+ 
+-		if (cfg_aux->live &&
+-		    cfg->bipolar == cfg_aux->bipolar &&
+-		    cfg->input_buf == cfg_aux->input_buf &&
+-		    cfg->odr == cfg_aux->odr &&
+-		    cfg->ref_sel == cfg_aux->ref_sel)
++		if (cfg_aux->live && ad7173_setup_equal(cfg, cfg_aux))
+ 			return cfg_aux;
+ 	}
+ 	return NULL;
+@@ -1230,7 +1245,7 @@ static int ad7173_update_scan_mode(struct iio_dev *indio_dev,
+ 				   const unsigned long *scan_mask)
+ {
+ 	struct ad7173_state *st = iio_priv(indio_dev);
+-	int i, ret;
++	int i, j, k, ret;
+ 
+ 	for (i = 0; i < indio_dev->num_channels; i++) {
+ 		if (test_bit(i, scan_mask))
+@@ -1241,6 +1256,54 @@ static int ad7173_update_scan_mode(struct iio_dev *indio_dev,
+ 			return ret;
+ 	}
+ 
++	/*
++	 * On some chips, there are more channels that setups, so if there were
++	 * more unique setups requested than the number of available slots,
++	 * ad7173_set_channel() will have written over some of the slots. We
++	 * can detect this by making sure each assigned cfg_slot matches the
++	 * requested configuration. If it doesn't, we know that the slot was
++	 * overwritten by a different channel.
++	 */
++	for_each_set_bit(i, scan_mask, indio_dev->num_channels) {
++		const struct ad7173_channel_config *cfg1, *cfg2;
++
++		cfg1 = &st->channels[i].cfg;
++
++		for_each_set_bit(j, scan_mask, indio_dev->num_channels) {
++			cfg2 = &st->channels[j].cfg;
++
++			/*
++			 * Only compare configs that are assigned to the same
++			 * SETUP_SEL slot and don't compare channel to itself.
++			 */
++			if (i == j || cfg1->cfg_slot != cfg2->cfg_slot)
++				continue;
++
++			/*
++			 * If we find two different configs trying to use the
++			 * same SETUP_SEL slot, then we know that the that we
++			 * have too many unique configurations requested for
++			 * the available slots and at least one was overwritten.
++			 */
++			if (!ad7173_setup_equal(cfg1, cfg2)) {
++				/*
++				 * At this point, there isn't a way to tell
++				 * which setups are actually programmed in the
++				 * ADC anymore, so we could read them back to
++				 * see, but it is simpler to just turn off all
++				 * of the live flags so that everything gets
++				 * reprogramed on the next attempt read a sample.
++				 */
++				for (k = 0; k < st->num_channels; k++)
++					st->channels[k].cfg.live = false;
++
++				dev_err(&st->sd.spi->dev,
++					"Too many unique channel configurations requested for scan\n");
++				return -EINVAL;
++			}
++		}
++	}
++
+ 	return 0;
+ }
+ 
 
-Yep, it's merged now.  Please rebase the series.
+---
+base-commit: 2233378a8c606f7f6893d4c16aa6eb6fea027a52
+change-id: 20250709-iio-adc-ad7173-fix-setup-use-limits-0a5d2b6a6780
 
-> 
->  - The parse-events clean up of the software and tracepoint PMU. The
->    software PMU hard coding to be legacy first has similar issues and
->    will conflict with the clean up in:
->    https://lore.kernel.org/lkml/20250416045117.876775-1-irogers@google.com/
->    Moving the software work to json means we don't need special parse
->    events terms for software events, etc. We can just treat things
->    like regular PMUs with json, etc. I'd much rather we had less
->    special case logic so that series is best rebased on top of this
->    work and it should drop the changes for software terms, etc. which
->    this series removes. Maybe one day the whole event parsing can be
->    much more regular in how PMUs are treated but there's always
->    "cycles".
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
 
-As I said, moving the hardware events would be a solution as long as it
-can handle complexities in hybrid.
-
-> 
->  - Should python libraries have feature tests? How does this get
->    packaged outside the kernel tree? I think these are open
->    questions. Clearly textual is kind of a big dependency and we've
->    largely been moving in the direction of fewer dependencies
->    recently. Hopefully the app makes it clear why I think this one is
->    worth carrying. We carry libslang as a dependency and I think
->    textual clearly far surpasses it.
-
-Hmm.. I think it can be checked at runtime.  And maybe it can ask users
-to install the required packages.
-
-> 
->  - How to launch? Currently I run tools/perf/python/ilist.py but it
->    would be much nicer if we could do `perf ilist` much as we do for
->    perf-archive.sh. There are probably other scripts that should be
->    perf commands like flamegraph and gecko. It'd be nice to follow up
->    the series with something to make using these commands easy.
-
-Sounds good.
-
-Thanks,
-Namhyung
-
-> 
->  - Additional thoughts were captured on the mailing list:
->    https://lore.kernel.org/lkml/CAP-5=fWC+doaVd5rEMWJXSQi_db_Wu2tyAe5Lm6jnQjcwXkF+w@mail.gmail.com/
->  
-> [1] https://textual.textualize.io/
-> 
-> v4: No conflict rebase. Picks up perf-tools-next DRM PMU which
->     displays as expected.
-> 
-> v3: Add a search dialog to the ilist app with 'n'ext and 'p'revious
->     keys. No changes in the ground work first 14 patches.
-> 
-> v2: In the jevents event description duplication, some minor changes
->     accidentally missed from v1 meaning that in v1 the descriptions
->     were still duplicated. Expand the cover letter with some thoughts
->     on the series.
-> 
-> Ian Rogers (15):
->   perf hwmon_pmu: Avoid shortening hwmon PMU name
->   perf parse-events: Minor tidy up of event_type helper
->   perf python: In str(evsel) use the evsel__pmu_name helper
->   perf python: Fix thread check in pyrf_evsel__read
->   perf python: Correct pyrf_evsel__read for tool PMUs
->   perf python: Add basic PMU abstraction and pmus sequence
->   perf python: Add function returning dictionary of all events on a PMU
->   perf jevents: If the long_desc and desc are identical then drop the
->     long_desc
->   perf jevents: Add common software event json
->   perf pmu: Tolerate failure to read the type for wellknown PMUs
->   perf parse-events: Remove non-json software events
->   perf tp_pmu: Factor existing tracepoint logic to new file
->   perf tp_pmu: Add event APIs
->   perf list: Remove tracepoint printing code
->   perf ilist: Add new python ilist command
-> 
->  tools/perf/builtin-list.c                     |  47 ++-
->  .../arch/common/common/software.json          |  92 +++++
->  tools/perf/pmu-events/empty-pmu-events.c      | 266 ++++++++-----
->  tools/perf/pmu-events/jevents.py              |  18 +-
->  tools/perf/python/ilist.py                    | 376 ++++++++++++++++++
->  tools/perf/util/Build                         |   1 +
->  tools/perf/util/evsel.c                       |  21 +-
->  tools/perf/util/hwmon_pmu.c                   |   2 +-
->  tools/perf/util/parse-events.c                | 225 ++++-------
->  tools/perf/util/parse-events.h                |   3 +-
->  tools/perf/util/parse-events.l                |  38 +-
->  tools/perf/util/parse-events.y                |  29 +-
->  tools/perf/util/pmu.c                         |  44 +-
->  tools/perf/util/print-events.c                |  95 -----
->  tools/perf/util/print-events.h                |   1 -
->  tools/perf/util/python.c                      | 248 +++++++++++-
->  tools/perf/util/tp_pmu.c                      | 209 ++++++++++
->  tools/perf/util/tp_pmu.h                      |  19 +
->  18 files changed, 1282 insertions(+), 452 deletions(-)
->  create mode 100644 tools/perf/pmu-events/arch/common/common/software.json
->  create mode 100755 tools/perf/python/ilist.py
->  create mode 100644 tools/perf/util/tp_pmu.c
->  create mode 100644 tools/perf/util/tp_pmu.h
-> 
-> -- 
-> 2.50.0.727.gbf7dc18ff4-goog
-> 
 
