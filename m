@@ -1,107 +1,80 @@
-Return-Path: <linux-kernel+bounces-723333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7927AFE5EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:37:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC39AFE5EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D4645836E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:37:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5519D1895B21
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306F0288C13;
-	Wed,  9 Jul 2025 10:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B89028D8C2;
+	Wed,  9 Jul 2025 10:38:52 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FEA25A354;
-	Wed,  9 Jul 2025 10:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB422749F1
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 10:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752057435; cv=none; b=pmEv7mSvZL7AC9gGCdoyqgGsfITa/k9Gh8wTiMJmpafKwCGj/VqdKt7AFL68CYW2WYGXqagAQWeALNK/A7xIXdr2rFceFx5iiC9jIIX7+aHo3zIvTvV529Xyt70GSnhxfDksn8voXTIzfyH+boJA+EVHb0CoheobuN+Qz3IxnT8=
+	t=1752057532; cv=none; b=WZJc8BV4Bh6nI6xjcjk65erBCNUcyMdAFUpW6dZ1bbmvGYzcCSmo3hciTAUnF/GiqPkYy8RHS627KFTlOtiDX1GfVxhufwSEIwRl0NX6PfU9smbx/O3SoxcQOc6jnxmjOiAg0YuLxKPito8wfv5KuMe6OpviD/c5g+Pw7gn0pQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752057435; c=relaxed/simple;
-	bh=hIse3im/CiwJjIbl6Zx+237E/cMf6Sjf9+f2leGFGzI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=peOpYOM8Odw5OXbienniCKYwBN5OtsBV+UX9HgNE9jdlfbjlUkoVF1XEakn41Ge0x0SyTygHWN3UKNfxBwyojBxjUkwntyC4zcOi/KJ+cbZ5eCTC/imCXhDHQ5+uspSv3pKdqpacOuFtgmCySA0+4rmI7taEUUF0KLyk0n/kd9g=
+	s=arc-20240116; t=1752057532; c=relaxed/simple;
+	bh=Fpxx5MLLvM75BD/Rcys04uH8/DSWIDvU1+fFmoln3rI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lrfzTUHdRg5BYiMUGxMlU+r5f/UUePDsH6P/9b6guhDgKgihKeSIMA+fGIlsDue3qe6OtgNz/Vwm/yKfbA5AXlGJJC1hMqavJhNJm1AX+zkwuNGEqmxVeA7fArJbqTjhs4BF55JcHKytWlypJAhXbA8lvMUCNJKISUp7MKU5/yQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C35191007;
-	Wed,  9 Jul 2025 03:37:01 -0700 (PDT)
-Received: from [10.57.86.38] (unknown [10.57.86.38])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E42B3F694;
-	Wed,  9 Jul 2025 03:37:10 -0700 (PDT)
-Message-ID: <f66307f4-7745-41a9-8c08-4be3b4d97403@arm.com>
-Date: Wed, 9 Jul 2025 11:37:08 +0100
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A11061007;
+	Wed,  9 Jul 2025 03:38:37 -0700 (PDT)
+Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1335F3F694;
+	Wed,  9 Jul 2025 03:38:47 -0700 (PDT)
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Yuanfang Zhang <quic_yuanfang@quicinc.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	kernel@oss.qualcomm.com,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] coresight: Only register perf symlink for sinks with alloc_buffer
+Date: Wed,  9 Jul 2025 11:38:38 +0100
+Message-ID: <175205730826.265536.15080802362273791797.b4-ty@arm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250630-etm_perf_sink-v1-1-e4a7211f9ad7@quicinc.com>
+References: <20250630-etm_perf_sink-v1-1-e4a7211f9ad7@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panfrost: Fix scheduler workqueue bug
-To: Philipp Stanner <phasta@kernel.org>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Rob Herring <robh@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
- Frank Binns <frank.binns@imgtec.com>, Danilo Krummrich <dakr@kernel.org>,
- Matthew Brost <matthew.brost@intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250709102957.100849-2-phasta@kernel.org>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250709102957.100849-2-phasta@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 09/07/2025 11:29, Philipp Stanner wrote:
-> When the GPU scheduler was ported to using a struct for its
-> initialization parameters, it was overlooked that panfrost creates a
-> distinct workqueue for timeout handling.
-> 
-> The pointer to this new workqueue is not initialized to the struct,
-> resulting in NULL being passed to the scheduler, which then uses the
-> system_wq for timeout handling.
-> 
-> Set the correct workqueue to the init args struct.
-> 
-> Cc: stable@vger.kernel.org # 6.15+
-> Fixes: 796a9f55a8d1 ("drm/sched: Use struct for drm_sched_init() params")
-> Reported-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-> Closes: https://lore.kernel.org/dri-devel/b5d0921c-7cbf-4d55-aa47-c35cd7861c02@igalia.com/
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
 
-Reviewed-by: Steven Price <steven.price@arm.com>
-
-> ---
->  drivers/gpu/drm/panfrost/panfrost_job.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, 30 Jun 2025 18:26:19 +0800, Yuanfang Zhang wrote:
+> Ensure that etm_perf_add_symlink_sink() is only called for devices
+> that implement the alloc_buffer operation. This prevents invalid
+> symlink creation for dummy sinks that do not implement alloc_buffer.
 > 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
-> index 5657106c2f7d..15e2d505550f 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
-> @@ -841,7 +841,6 @@ int panfrost_job_init(struct panfrost_device *pfdev)
->  		.num_rqs = DRM_SCHED_PRIORITY_COUNT,
->  		.credit_limit = 2,
->  		.timeout = msecs_to_jiffies(JOB_TIMEOUT_MS),
-> -		.timeout_wq = pfdev->reset.wq,
->  		.name = "pan_js",
->  		.dev = pfdev->dev,
->  	};
-> @@ -879,6 +878,7 @@ int panfrost_job_init(struct panfrost_device *pfdev)
->  	pfdev->reset.wq = alloc_ordered_workqueue("panfrost-reset", 0);
->  	if (!pfdev->reset.wq)
->  		return -ENOMEM;
-> +	args.timeout_wq = pfdev->reset.wq;
->  
->  	for (j = 0; j < NUM_JOB_SLOTS; j++) {
->  		js->queue[j].fence_context = dma_fence_context_alloc(1);
+> Without this check, perf may attempt to use a dummy sink that lacks
+> alloc_buffer operationsu to initialise perf's ring buffer, leading
+> to runtime failures.
+> 
+> [...]
 
+Applied, thanks!
+
+[1/1] coresight: Only register perf symlink for sinks with alloc_buffer
+      https://git.kernel.org/coresight/c/59b61f70
+
+Best regards,
+-- 
+Suzuki K Poulose <suzuki.poulose@arm.com>
 
