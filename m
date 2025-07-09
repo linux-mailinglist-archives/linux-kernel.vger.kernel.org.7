@@ -1,297 +1,200 @@
-Return-Path: <linux-kernel+bounces-723738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77022AFEA7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:42:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65CFCAFEA81
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2D2F1C82ACB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:41:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 543347B54BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6769F2E041F;
-	Wed,  9 Jul 2025 13:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5112E266B;
+	Wed,  9 Jul 2025 13:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="yQGPicK6";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="HClRKehy"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DXANZFZz"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2058.outbound.protection.outlook.com [40.107.93.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB8F22B8D0
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 13:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752068434; cv=none; b=R9nekovphzcYqmlM2FH4pCOipV+r54tdKZ71JeYbm5RVhsGG5QHmrbflOe5AvuFqlErnIgqdRW4d89pQrxUtTlX7dnB2gYWrX7reSBc1FlmWN+qU8oZ31VGBrio52XNnM6Bfxi+YBUGs0hGSa8sBeUxlLG1OqhdBKIoFvTALbwE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752068434; c=relaxed/simple;
-	bh=aQZymKyUrc/5I7EINX0x89zpUBG4TPzjuyZgGXp8cJA=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=M7sAyv3pDFkbplMjUOQY3OBtqwxMGFuxgW5iyQikSak6gSkVQZbY6mEfg3TXFPyXOfO0EJTceolINW8tgWq/2GgY3417ZbBWmcqzuXbQznB2mTw3a3WCUChW9QpSrj+E5F3NQzhH7vEeRtpQ2UGGvn3eBdbx+qlYCh8JQ67Chlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=yQGPicK6; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=HClRKehy; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1752068428; x=1752673228;
-	d=konsulko.se; s=rsa1;
-	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
-	 subject:mime-version:content-type:from;
-	bh=9wNmXzsT2Qm51iGkMW4W5Cj/ccZe0He2BomSiCEZkp4=;
-	b=yQGPicK6w3+28Yo5sIl58kfKYkdW1IWfx00KTopXUszMdQcH41UNa9nmn8KcgR+qdkHF/btI5xuz/
-	 etbJKDvR5BwYmOxdc247JXKwUqFfGpQzg45l9wKNb1G9B+B8KcJf2np9xg/JkTFnNf82SjHu90oSxz
-	 3cU6NMetiMOSZYNBFOmAumLiWF3jeeulgBdZsWKVdw/rygP5hwBeslZf5cW3SXqU2ffLLvELROOcQ2
-	 J7RwO4b1egyy/WjOC1JYKrX9ZUuuPuYI1+J4tW9eMZolC12GVmODmuP6bLn7ridnsu7lvOmchjvucu
-	 4l8Jqur4xU2hVOmfqr+O+nHDjuUcgxw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1752068428; x=1752673228;
-	d=konsulko.se; s=ed1;
-	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
-	 subject:mime-version:content-type:from;
-	bh=9wNmXzsT2Qm51iGkMW4W5Cj/ccZe0He2BomSiCEZkp4=;
-	b=HClRKehyLxD+atMHjqjFXjYpFGiwwHdAYs1D322FiACSdZUNRNlg9hMQ0NJXj9dFNv4cfeAHDm/Eg
-	 G4FsTXMBg==
-X-HalOne-ID: 45a67a1f-5cca-11f0-a5c1-81a63d10fb2d
-Received: from smtpclient.apple (c188-150-224-8.bredband.tele2.se [188.150.224.8])
-	by mailrelay5.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id 45a67a1f-5cca-11f0-a5c1-81a63d10fb2d;
-	Wed, 09 Jul 2025 13:40:28 +0000 (UTC)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC342DEA87;
+	Wed,  9 Jul 2025 13:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752068453; cv=fail; b=c9DzMA5NMbrvX77rrH6YSBag3fnTnbheuU9hfosWTXnLDgd9meORSvEnbK3a0FPLSG6SHhYJ8e3ArcYDUkksg1ZR3yWfsANKndvJWH2aVCga3RhKiKNSRpy8K6LMP7fmRVyYyLj0pzhhpMk+K8kDEo+fvek9Lkrm6T1SpWTTyrg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752068453; c=relaxed/simple;
+	bh=6fznZ0XtOgemC0TAhoKZZGZMscCvxfogSca4GvaNRRY=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=I7ukzdwrBRtV77Sustc3wWBLAQqfFztUCX4DBDWYESH/70+WsdK81DlGOGKNn66TFI/rt30AjuVdRzO41/uk7G7sVutc6ON3h5uqxeQDAvWcEjm5L4U4J3mC8tokRUuMXNCh0QhCMMPzaGMaq2NDxghs+QIeKsZrLkuPv6ksM8k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DXANZFZz; arc=fail smtp.client-ip=40.107.93.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dsFpibo8tHCXLi0TaPMT3G+klhWHHlqbFxGDwzLNUyCSPxvNe7hqZX5PQC7Ul6SmpdaVBxng6tPy/0dign0cCSlrH/RbiQvx8soMjetPBYHrrmcCohJyfpsB1KQ6zyZOqMMWVeZyhl4PC3683XTv1LYvRgn360o4wsu2+eCnqUntGQBzRQEGDP0lXhs4p3OTaMl5zEHnyDOYchkoDt0+2xPOAuREg4y3xUFHGgdV5CAlCQDK5Do8PAIWlXFZqIi7CjeeNUWUUWdcrvEsw2CS26Y7BADq663AG4CbZ4g2Bc8L3pGeIA6ulxZisQgjcLvWEbi9NyyD8Ykt3Q22xK56vw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jK6c0URmfyYob7mKURvuH6WPQbse1ekf14WzClqC1MM=;
+ b=TaOgSVarCbKisfdnhFKK4GmH1f3j9jGZFgZ8oUkGxQRELn10nLHwcCzeWuzI+Doykg2ePSSFgYnJDme3DpLHc05taeS1KU4WUii2ZbXXVz4f/90yDpDcQHykyOYYw3eUxgy1JsmSXeEoNKnDDBvdOmpDhYqcXtcmNIbF2EzGnt+Nd9I4kMBBeWd2NyXO+g5Epz3jyweW9snTB9tr/s7ORC7InJ3bAp2Th357YUT0Npd7SjLxsYbeSeco3VEGSZtd7H1lzOJ9bSHUJGdp4fognO5ydDNbu0UnlEdCYTGwRR32V/gWJyombaEkatziQJ4365uMfQaEmuETQmgDvAG3gw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jK6c0URmfyYob7mKURvuH6WPQbse1ekf14WzClqC1MM=;
+ b=DXANZFZzvaiQyQJJoZAy+lwF00TeWdtc8AOPiGPHZb/gmXeyhL+QITa2Sz6Ep/nsBNjVq5LNvIoQd2Bn0xdZA01+n5q/kvYFKFD+exQRpkzhkEqEs7wFE5dAypbKRaFGoo51d0yUN996M8/o+FESbAwm6RHTtSbniwimneWIjpdMXt8hXvKWJUxlnJuGJ4/Uk0i1gnl9dYIw1ul42zxQcopxAUcanfS9LKjQ8O5Rv6Z/42ImROdN3U1kUcmT7L70bVsYHQy9a/QbtBySHXejb7KTILbCPTvgf0RbCeSqXVOCtsRpNf+iz8Ewmonz2ss6WFEtYChUzusxYileLNZ50A==
+Received: from CY8PR10CA0009.namprd10.prod.outlook.com (2603:10b6:930:4f::20)
+ by MN0PR12MB6003.namprd12.prod.outlook.com (2603:10b6:208:37f::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.17; Wed, 9 Jul
+ 2025 13:40:47 +0000
+Received: from CY4PEPF0000E9D4.namprd03.prod.outlook.com
+ (2603:10b6:930:4f:cafe::b2) by CY8PR10CA0009.outlook.office365.com
+ (2603:10b6:930:4f::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.22 via Frontend Transport; Wed,
+ 9 Jul 2025 13:40:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CY4PEPF0000E9D4.mail.protection.outlook.com (10.167.241.139) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8922.22 via Frontend Transport; Wed, 9 Jul 2025 13:40:47 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 9 Jul 2025
+ 06:40:25 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 9 Jul
+ 2025 06:40:25 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Wed, 9 Jul 2025 06:40:25 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.12 000/232] 6.12.37-rc1 review
+In-Reply-To: <20250708162241.426806072@linuxfoundation.org>
+References: <20250708162241.426806072@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH v11 2/4] mm/slub: allow to set node and align in
- k[v]realloc
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-In-Reply-To: <76FFFF68-15F3-4A36-BF1D-A33CF36FDC9E@konsulko.se>
-Date: Wed, 9 Jul 2025 15:40:17 +0200
-Cc: linux-mm@kvack.org,
- akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org,
- Uladzislau Rezki <urezki@gmail.com>,
- Danilo Krummrich <dakr@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- rust-for-linux@vger.kernel.org,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <7099B4C7-311F-466D-B12C-BDC52FE34A65@konsulko.se>
-References: <20250707164755.631374-1-vitaly.wool@konsulko.se>
- <20250707164908.631462-1-vitaly.wool@konsulko.se>
- <4c5852cc-2ca5-432b-8426-01c108df66cb@suse.cz>
- <76FFFF68-15F3-4A36-BF1D-A33CF36FDC9E@konsulko.se>
-To: Vlastimil Babka <vbabka@suse.cz>
-X-Mailer: Apple Mail (2.3826.200.121)
+MIME-Version: 1.0
+Message-ID: <43abbd8c-821a-4b84-95a5-35699a35e142@rnnvmail205.nvidia.com>
+Date: Wed, 9 Jul 2025 06:40:25 -0700
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D4:EE_|MN0PR12MB6003:EE_
+X-MS-Office365-Filtering-Correlation-Id: e60939d0-79b5-4f52-9f8a-08ddbeee360b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|7416014|376014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cGhuZUd1NEViWGREMk5sYzcxSTZLd05EYkgwc2RqZ2dwanV2Yy8wSkhNaHFa?=
+ =?utf-8?B?Ty9iYUxEaFRHcndkRjlDVmhDS09JK1NLWTlDR2Nlb0w3MW96SExPYXp6UGVq?=
+ =?utf-8?B?VUlVK0Ryd3BMMGFjblpHUFVBYW9vaFJOMHlFUkhJRWlPWUZKMDFKU1NUai9E?=
+ =?utf-8?B?MWdud2FCU2M4NnlSTVA2eGJXdmJtd2hBeVgrSVk1U1dTbk1zU3A3NDc1aHJT?=
+ =?utf-8?B?RnRvbHdrSDEveWVXaGlWcHFCcTAxbFdnSFN1YWJvYi9objFVcnkwamVhZCtX?=
+ =?utf-8?B?UGRRWGEyMU1laUtjWmRQeDVKT09mZFNMdmdLYWk0aURaRmYxNzA5OUM3d093?=
+ =?utf-8?B?eWZvUldyNk9qZytFU2ZFajRtVjkxOFBlOFRQQ3ZGQWVTeUtNazlzR3I3RWF2?=
+ =?utf-8?B?OExTWHoyazRuaUpmalRMQ24yK3hiL3RNcUlITEo1Qzd3TGlGblFZSW9ibGx0?=
+ =?utf-8?B?eUxjaTNoKysxd1JUTk5HZTQyc0tmZlF2R2NyZlpmcGZJL3N6ZXQzaHFsSjZK?=
+ =?utf-8?B?SWtDVFFkUVgwMDc4SkIvdWdhOW5vU21OMzRCZjBmUnArUUFmeHFUekd5U3lS?=
+ =?utf-8?B?ak9CM2VGNDJ6aGc2TjFxV3BGUjV4NUNQbkUrZFVRalFwSkY2V2pGbFhKbW84?=
+ =?utf-8?B?ZWdDVXpaQ2ZxUmhac3dTNGtzcEdYaG1hcUx4UWpxQjVXSkpsL1VwKzl1Q2ZJ?=
+ =?utf-8?B?Z2lVQmUrUldNcEwyTnVmNlQrdXlJK2p5MU9NYlYvZzdVbW1OYU9NSW9BcHJJ?=
+ =?utf-8?B?eFlCdTNsNURyYy82MW1Qc1A3bnduay9HZWFDeUF1WUJzMlZ6bkVtdUlmbFRl?=
+ =?utf-8?B?SFExOWdrdUtTRStXdklUNzFBa2d4Z3g2bk9nM2xsZTJ2MHA2SFY1T2l4aDB0?=
+ =?utf-8?B?bGxBWmRsWWliWFBzSlRPS04wRjNZK0pKdTdYSGhkQ0toZFZKZXE5cFRGa0Q3?=
+ =?utf-8?B?NkYvRkRGbUUrK3Bwei9xZlgzUUpiazB5cUQ2NWpySDRySlo3dHlBMG5ZeGhB?=
+ =?utf-8?B?dzVkaFJoRDVEelcvTkZMY1ZZcDBhenEybEF3OUFQV2xwOEdodnlNU3k3ZXlF?=
+ =?utf-8?B?cnBHZ0lheGdzUHdmeXZ0MVZ5VXNLSFl2SXUrbDBqSGpQcTM2MU1PWmRvcHoy?=
+ =?utf-8?B?MlkrSFN6RGMvc1dVR1F0ZVFRL1FwcjFuYW1QS0FSRm1KTk5abTEzandSYmpk?=
+ =?utf-8?B?MWhxN0d0OHFpcTJOdnRTRG8rQ0Q0YlJWWWlIZ2ZBRzJWZU9OakxBOGpGbEtr?=
+ =?utf-8?B?WjJEN1UrdFRMUU1RS1JNQlJmN2xRaUtIZjdlM0VmbTR2TFJaN1BVNnhhSXpm?=
+ =?utf-8?B?NE85c1dlcjZsZTlZY1c5ZSsxSlF0dDZEOVpGMjR2RVlXSnF4MUZXNDhWREVj?=
+ =?utf-8?B?aWY0NDhuaVhISWgzUVBpd2w0OFFrMVdlNlNFZHFPNkd5ODVLVjB1b2FvcGg3?=
+ =?utf-8?B?MGdOQjNBVFkycytPUGVtcSsyY1BsVW9YVGZmY0dlOVpZMzU3cEVHb0pCdUVJ?=
+ =?utf-8?B?OFU5azNtb3Eya0RUMzFybzRBN2lGZ29QVmFVNVpHSndMN0pkRGVrblV3WDhp?=
+ =?utf-8?B?Tk1ROUlDUldtMERhTHQ4NEtjcFkrN2ZwMTV6aEF1cWVkMTE3V25iSHNHMXpJ?=
+ =?utf-8?B?cUxFMTV5a1dYTC9zc1NUUWxyUnZhR1RydGRDeVlZN0xkRHVUL0JqQmtmczhY?=
+ =?utf-8?B?T3lNOWZ2bXRnbVVmbndjWDBraXJuOTFHc3hZZjZQQkhqbERxc1Y5SkQ2aEgz?=
+ =?utf-8?B?U2JKRlJoV1Vnd21WQ3c5UDYyOUJRUVZFK0dQQkNLcW1vMTFjZEdHazJnN0tm?=
+ =?utf-8?B?eGROUE03aXRqR0I3VmU4SUpmU1JXalA5K1Q5Q05TRTFxSGZOM3I3cXZSK0JN?=
+ =?utf-8?B?NG5nMEZHZ2N3Qk0rdWZsM3JIMEtnSnV4VFFVc1JnbzVZY3FnR3puK094VmZZ?=
+ =?utf-8?B?UlFxOC9qMGhFY3UzMTBsVDJSa01pNk9vYnJOdXBtbHJ5ekhRTlNvTW9sS2M5?=
+ =?utf-8?B?TkxWeDhQQUVHbWt3anRBdG1BOW1zU2tKTVhFK2xpcERmR2pxNlJ6amhZZTln?=
+ =?utf-8?B?QmJPV0VGRWFrL0R6Y2tKWW5sWXRxZXEvYzRLQT09?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(7416014)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 13:40:47.3374
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e60939d0-79b5-4f52-9f8a-08ddbeee360b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9D4.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6003
 
+On Tue, 08 Jul 2025 18:19:56 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.37 release.
+> There are 232 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 10 Jul 2025 16:22:09 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.37-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
+All tests passing for Tegra ...
 
-> On Jul 8, 2025, at 4:03=E2=80=AFPM, Vitaly Wool =
-<vitaly.wool@konsulko.se> wrote:
->=20
->=20
->=20
->> On Jul 8, 2025, at 2:52=E2=80=AFPM, Vlastimil Babka <vbabka@suse.cz> =
-wrote:
->>=20
->> On 7/7/25 18:49, Vitaly Wool wrote:
->>> Reimplement k[v]realloc_node() to be able to set node and
->>> alignment should a user need to do so. In order to do that while
->>> retaining the maximal backward compatibility, add
->>> k[v]realloc_node_align() functions and redefine the rest of API
->>> using these new ones.
->>>=20
->>> With that change we also provide the ability for the Rust part of
->>> the kernel to set node and alignment in its K[v]xxx
->>> [re]allocations.
->>>=20
->>> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
->>> ---
->>> include/linux/slab.h | 40 ++++++++++++++++++---------
->>> mm/slub.c            | 64 =
-++++++++++++++++++++++++++++++--------------
->>> 2 files changed, 71 insertions(+), 33 deletions(-)
->>>=20
->>> diff --git a/include/linux/slab.h b/include/linux/slab.h
->>> index d5a8ab98035c..13abcf4ada22 100644
->>> --- a/include/linux/slab.h
->>> +++ b/include/linux/slab.h
->>> @@ -465,9 +465,15 @@ int kmem_cache_shrink(struct kmem_cache *s);
->>> /*
->>> * Common kmalloc functions provided by all allocators
->>> */
->>> -void * __must_check krealloc_noprof(const void *objp, size_t =
-new_size,
->>> -     gfp_t flags) __realloc_size(2);
->>> -#define krealloc(...) alloc_hooks(krealloc_noprof(__VA_ARGS__))
->>> +void * __must_check krealloc_node_align_noprof(const void *objp, =
-size_t new_size,
->>> +        unsigned long align,
->>> +        gfp_t flags, int nid) __realloc_size(2);
->>> +#define krealloc_node_noprof(_p, _s, _f, _n) \
->>> + krealloc_node_align_noprof(_p, _s, 1, _f, _n)
->>> +#define krealloc_noprof(...) krealloc_node_noprof(__VA_ARGS__, =
-NUMA_NO_NODE)
->>> +#define krealloc_node_align(...) =
-alloc_hooks(krealloc_node_align_noprof(__VA_ARGS__))
->>> +#define krealloc_node(...) =
-alloc_hooks(krealloc_node_noprof(__VA_ARGS__))
->>> +#define krealloc(...) alloc_hooks(krealloc_noprof(__VA_ARGS__))
->>=20
->> Hm wonder if krealloc() and krealloc_node_align() would be enough. Is
->> krealloc_node() only used between patch 3 and 4?
->> Also perhaps it would be more concise to only have
->> krealloc_node_align_noprof() with alloc_hooks wrappers filling the
->> NUMA_NO_NODE (and 1), so we don't need to #define the _noprof variant =
-of
->> everything. The _noprof callers are rare so they can just always use
->> krealloc_node_align_noprof() directly and also fill in the =
-NUMA_NO_NODE (and 1).
->=20
-> I don=E2=80=99t think that krealloc_node() is used at all at the =
-moment. I thought I=E2=80=99d define these to be symmetrical to =
-vmalloc() but if you believe these are redundant, I=E2=80=99m all for =
-removing them.
->=20
-Well, krealloc_noprof() appears to be used by nommu.c and it feels a bit =
-weird to make nommu code deal with NUMA nodes. So unless you feel =
-strongly about it, I would keep krealloc_noprof().
+Test results for stable-v6.12:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    120 tests:	120 pass, 0 fail
 
-~Vitaly
+Linux version:	6.12.37-rc1-g3d503afbd029
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
->>=20
->>> void kfree(const void *objp);
->>> void kfree_sensitive(const void *objp);
->>> @@ -1041,18 +1047,23 @@ static inline __alloc_size(1) void =
-*kzalloc_noprof(size_t size, gfp_t flags)
->>> #define kzalloc(...) alloc_hooks(kzalloc_noprof(__VA_ARGS__))
->>> #define kzalloc_node(_size, _flags, _node) kmalloc_node(_size, =
-(_flags)|__GFP_ZERO, _node)
->>>=20
->>> -void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), gfp_t =
-flags, int node) __alloc_size(1);
->>> -#define kvmalloc_node_noprof(size, flags, node) \
->>> - __kvmalloc_node_noprof(PASS_BUCKET_PARAMS(size, NULL), flags, =
-node)
->>> +void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), unsigned =
-long align,
->>> +      gfp_t flags, int node) __alloc_size(1);
->>> +#define kvmalloc_node_align_noprof(_size, _align, _flags, _node) \
->>> + __kvmalloc_node_noprof(PASS_BUCKET_PARAMS(_size, NULL), _align, =
-_flags, _node)
->>> +#define kvmalloc_node_noprof(_size, _flags, _node) \
->>> + kvmalloc_node_align_noprof(_size, 1, _flags, _node)
->>> +#define kvmalloc_node_align(...) \
->>> + alloc_hooks(kvmalloc_node_align_noprof(__VA_ARGS__))
->>> #define kvmalloc_node(...) =
-alloc_hooks(kvmalloc_node_noprof(__VA_ARGS__))
->>=20
->> Ditto.
->>=20
->>>=20
->>> -#define kvmalloc(_size, _flags) kvmalloc_node(_size, _flags, =
-NUMA_NO_NODE)
->>> -#define kvmalloc_noprof(_size, _flags) kvmalloc_node_noprof(_size, =
-_flags, NUMA_NO_NODE)
->>> +#define kvmalloc_noprof(...) kvmalloc_node_noprof(__VA_ARGS__, =
-NUMA_NO_NODE)
->>> +#define kvmalloc(...) alloc_hooks(kvmalloc_noprof(__VA_ARGS__))
->>> #define kvzalloc(_size, _flags) kvmalloc(_size, (_flags)|__GFP_ZERO)
->>>=20
->>> -#define kvzalloc_node(_size, _flags, _node) kvmalloc_node(_size, =
-(_flags)|__GFP_ZERO, _node)
->>> +#define kvzalloc_node(_s, _f, _n) kvmalloc_node(_s, =
-(_f)|__GFP_ZERO, _n)
->>> #define kmem_buckets_valloc(_b, _size, _flags) \
->>> - alloc_hooks(__kvmalloc_node_noprof(PASS_BUCKET_PARAMS(_size, _b), =
-_flags, NUMA_NO_NODE))
->>> + alloc_hooks(__kvmalloc_node_noprof(PASS_BUCKET_PARAMS(_size, _b), =
-1, _flags, NUMA_NO_NODE))
->>>=20
->>> static inline __alloc_size(1, 2) void *
->>> kvmalloc_array_node_noprof(size_t n, size_t size, gfp_t flags, int =
-node)
->>> @@ -1068,13 +1079,16 @@ kvmalloc_array_node_noprof(size_t n, size_t =
-size, gfp_t flags, int node)
->>> #define kvmalloc_array_noprof(...) =
-kvmalloc_array_node_noprof(__VA_ARGS__, NUMA_NO_NODE)
->>> #define kvcalloc_node_noprof(_n,_s,_f,_node) =
-kvmalloc_array_node_noprof(_n,_s,(_f)|__GFP_ZERO,_node)
->>> #define kvcalloc_noprof(...) kvcalloc_node_noprof(__VA_ARGS__, =
-NUMA_NO_NODE)
->>> -
->>> #define kvmalloc_array(...) =
-alloc_hooks(kvmalloc_array_noprof(__VA_ARGS__))
->>> #define kvcalloc_node(...) =
-alloc_hooks(kvcalloc_node_noprof(__VA_ARGS__))
->>> #define kvcalloc(...) alloc_hooks(kvcalloc_noprof(__VA_ARGS__))
->>>=20
->>> -void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
->>> - __realloc_size(2);
->>> +void *kvrealloc_node_align_noprof(const void *p, size_t size, =
-unsigned long align,
->>> +   gfp_t flags, int nid) __realloc_size(2);
->>> +#define kvrealloc_node_align(...) =
-kvrealloc_node_align_noprof(__VA_ARGS__)
->>> +#define kvrealloc_node_noprof(_p, _s, _f, _n) =
-kvrealloc_node_align_noprof(_p, _s, 1, _f, _n)
->>> +#define kvrealloc_node(...) =
-alloc_hooks(kvrealloc_node_noprof(__VA_ARGS__))
->>> +#define kvrealloc_noprof(...) kvrealloc_node_noprof(__VA_ARGS__, =
-NUMA_NO_NODE)
->>> #define kvrealloc(...) alloc_hooks(kvrealloc_noprof(__VA_ARGS__))
->>=20
->> Ditto.
->>=20
->>> extern void kvfree(const void *addr);
->>> diff --git a/mm/slub.c b/mm/slub.c
->>> index c4b64821e680..881244c357dd 100644
->>> --- a/mm/slub.c
->>> +++ b/mm/slub.c
->>> @@ -4845,7 +4845,7 @@ void kfree(const void *object)
->>> EXPORT_SYMBOL(kfree);
->>>=20
->>> static __always_inline __realloc_size(2) void *
->>> -__do_krealloc(const void *p, size_t new_size, gfp_t flags)
->>> +__do_krealloc(const void *p, size_t new_size, unsigned long align, =
-gfp_t flags, int nid)
->>> {
->>> void *ret;
->>> size_t ks =3D 0;
->>> @@ -4859,6 +4859,20 @@ __do_krealloc(const void *p, size_t new_size, =
-gfp_t flags)
->>> if (!kasan_check_byte(p))
->>> return NULL;
->>>=20
->>> + /* refuse to proceed if alignment is bigger than what kmalloc() =
-provides */
->>> + if (!IS_ALIGNED((unsigned long)p, align) || new_size < align)
->>> + return NULL;
->>> +
->>> + /*
->>> +  * If reallocation is not necessary (e. g. the new size is less
->>> +  * than the current allocated size), the current allocation will =
-be
->>> +  * preserved unless __GFP_THISNODE is set. In the latter case a =
-new
->>> +  * allocation on the requested node will be attempted.
->>> +  */
->>> + if (unlikely(flags & __GFP_THISNODE) && nid !=3D NUMA_NO_NODE &&
->>> +      nid !=3D page_to_nid(vmalloc_to_page(p)))
->>=20
->> We need virt_to_page() here not vmalloc_to_page().
->=20
-> Indeed, thanks. It is a c=E2=80=99n=E2=80=99p error, we had =
-virt_to_page() in earlier patchsets (i. e. up until v10).
->=20
->>=20
->>> + goto alloc_new;
->>> +
->>> if (is_kfence_address(p)) {
->>> ks =3D orig_size =3D kfence_ksize(p);
->>> } else {
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-
+Jon
 
