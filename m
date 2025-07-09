@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-723646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1D9FAFE978
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:55:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E20AFE97B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:56:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E50953AB320
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:55:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93E5E3BE74E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662C32DAFD6;
-	Wed,  9 Jul 2025 12:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D342DBF43;
+	Wed,  9 Jul 2025 12:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/vc0fqB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h0vmTSF6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B431D2D9EFE;
-	Wed,  9 Jul 2025 12:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BDE2D9EFE;
+	Wed,  9 Jul 2025 12:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752065723; cv=none; b=LIilXGlONMc8bfYLBwylPvhYyikvZ9+UlxvwRu/p3fhVN/LuecL2kgsv7wN4OU0yMto3E2CXbfilB0lWBKngYZogm96bUbpsi3IPy5ewHU+pT1VbnmUCJQ0fmcOUigRfwx9KMk4a1R4jM1mfiv428eYU5TuHeCaabcQu1dmPGj4=
+	t=1752065754; cv=none; b=Ng/XUXKRaIuChLzaY1iDvP5f9gTMoX6OaqayA7ktXEqf6VEMNdXjM315LGgeM70iWffmF063WB8K76vrPPWA5rsr4QX+vUF5k80uwFO87GKjI8X+GW2htOV2m6J2h+vKhQV38pTJZ9/fbo1njIbL+IPn912rgG8eS7/4tSQ56wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752065723; c=relaxed/simple;
-	bh=Zh8LvONHdmGvRE4Yc4ww2qFIsqRlv00+9BzFh1Du8ig=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=CukU/KnLXeEOqaqj0OQUKPWCCWE2aBBE6FSQw3JQBBG5RGgAcXE4VE7cwNqbN6o8yYfDroq8nxmk6amwn6AG+YD4g89i94uHH4fKwctGgM/L9TZJ+zui7i/QrRqicp0GNGbgRV1K4at7ReiJxiVZW8RFZWzbQXlNjiPDcAJ/P/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/vc0fqB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEC35C4CEEF;
-	Wed,  9 Jul 2025 12:55:22 +0000 (UTC)
+	s=arc-20240116; t=1752065754; c=relaxed/simple;
+	bh=qfvfN9HqncnRD9mLmFdxPNtB3Y1t4uk1+PKJGdZGCjs=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=UmN5aJVtTw6QkKv3Mi0MFsZ8a1Ks787nUIayzLQTLWJQhc9Zsy7LL9sTByjkgRe/6e9lZd9U/zjHiZdhnuxMoVi/1um1VYKl8mnyl9QUtcJPrTzQ/zO9LNY6NGG83BZSTkuXr19wcsfQw1bqVlQqFLPkIRo4EdWaXxmMvTWknWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h0vmTSF6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30BE7C4CEEF;
+	Wed,  9 Jul 2025 12:55:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752065723;
-	bh=Zh8LvONHdmGvRE4Yc4ww2qFIsqRlv00+9BzFh1Du8ig=;
+	s=k20201202; t=1752065753;
+	bh=qfvfN9HqncnRD9mLmFdxPNtB3Y1t4uk1+PKJGdZGCjs=;
 	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=l/vc0fqB0pDvdv2oHRma7pF8ljkaepoQK96Vw0Nro6kSZq4CFQT8aSJIXj5onFI/2
-	 HMGg8fVQNUlDMsmKXU8AtbKHtmOyoExKr6yTE9eYUkfoP4BC+KHApx7YjkZBhzbP5j
-	 qERNKlPKSBtmwjd6KQ793pR4F7Dyg97XAjf7pRMZPLqXD1CNgm4btk2h5SGS6EGUWY
-	 BOiYRsJomBp7DtzmBTAui0C8qrQ93d8vRJkaBdT4E6rc2RvH9lS7rcbyOrROEsKg3U
-	 o7iHH4mxYuXbxgq0BD/O32Nre6aH02zsVpS9+Q2F/pYsAalja3ofF2zjTjc4ckSbvF
-	 +pdr2pNGm+QRw==
-Message-ID: <b1bd9768ffec3f6f5d48e9148e8872ba@kernel.org>
-Date: Wed, 09 Jul 2025 12:55:20 +0000
+	b=h0vmTSF6R6KDUgBJ4nXYA/5Dekeg7WMqU0Cp3RD9bEWQy8RZSTkeqXHuMM6owHm8v
+	 GCPmi1hIwXA5M0OKWhBVBgKTKZjmtS9/K7w9HLAh/dcFl8EU/Z5PQTydpJYi5DpVpQ
+	 IOcjYmLuK3seTkkxqP5h8i6PuYvtlCTFYsxOL5ArY/0v9Ra9eWW2UiuuefSoLgNpCq
+	 dkL9TdOrMdc8k+1xKiiYMSTH3Vak2+lape7+eEeSNAjIAG87q9Bm6aO8Fo2N9eZja1
+	 0EQTAvOK95DAF8MZbzTpisGR0bfMJdzBid/giv/pmS1LN9xKhNK+FG1OHnHuVxhL9A
+	 k5g2xHWPmcFXQ==
+Message-ID: <65fc4a7a9a5dab16cf3c599f93404d04@kernel.org>
+Date: Wed, 09 Jul 2025 12:55:51 +0000
 From: "Maxime Ripard" <mripard@kernel.org>
 To: "Brian Masney" <bmasney@redhat.com>
-Subject: Re: [PATCH 02/10] clk: qcom: gcc-ipq4019: convert from round_rate()
- to determine_rate()
-In-Reply-To: <20250703-clk-cocci-drop-round-rate-v1-2-3a8da898367e@redhat.com>
-References: <20250703-clk-cocci-drop-round-rate-v1-2-3a8da898367e@redhat.com>
+Subject: Re: [PATCH 07/10] clk: sunxi-ng: ccu_gate: convert from
+ round_rate() to determine_rate()
+In-Reply-To: <20250703-clk-cocci-drop-round-rate-v1-7-3a8da898367e@redhat.com>
+References: <20250703-clk-cocci-drop-round-rate-v1-7-3a8da898367e@redhat.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, "Bjorn
  Andersson" <andersson@kernel.org>, "Broadcom internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>, "Chen-Yu
  Tsai" <wens@csie.org>, "Florian Fainelli" <florian.fainelli@broadcom.com>, "Jernej
@@ -61,7 +61,7 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-On Thu, 3 Jul 2025 19:22:26 -0400, Brian Masney wrote:
+On Thu, 3 Jul 2025 19:22:31 -0400, Brian Masney wrote:
 > The round_rate() clk ops is deprecated, so migrate this driver from
 > round_rate() to determine_rate() using the Coccinelle semantic patch
 > on the cover letter of this series.
