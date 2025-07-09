@@ -1,268 +1,197 @@
-Return-Path: <linux-kernel+bounces-724497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B783AFF3A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:05:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4729AFF3AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B828C16E783
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:05:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 877535A38B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D783A268C55;
-	Wed,  9 Jul 2025 21:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EFB242D7B;
+	Wed,  9 Jul 2025 21:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j8UMI3sz"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cdkPtuhn"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1372325D20D
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 21:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 019C023C4EC;
+	Wed,  9 Jul 2025 21:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752094975; cv=none; b=YDemVa/9sYgdGFu+aj4rWkHfXVo/ttHg9kLIXV5UtwazH8K2d5nFYDbBVhTNYFdurI085+wO9mmULleDNBPNuimPpvpQYz18+sCKNu8yO0AJ73jjdOSnkAF4oDbLltJaAozUzEYcciLH0LHAyh/jE3aU5BnSuKuVPFmTDwUysHQ=
+	t=1752095114; cv=none; b=UuPBlGicpRHmh+3MM3AWc4wA6G/qsNZhhLR6hMRK66gCN+7srLG/kcIEwMuN8U+bmm7xrVPiW99oAbEmOuoyTq/GdE/rFjwNNGtPV1GhlWHhQ1u0j+Go0MGmREZbPg4zE941w0ipVTO24Q0iiQTtbZ7Ms1yMJfoNZSPJRXYn21Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752094975; c=relaxed/simple;
-	bh=t+SGEA6oFuVdECPxoV6loo1YkTFudIBsqOlaod4L+j0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bNUnMTgOoegfmHwYzt+0D+Q15QaasboiqL2c7oJq1MoD/JunFRW4TnuiN+tdm46pSQ1N6vH2kHe3VB2eLiqkapex5/yvWZVQKdBuZMwzyyTPRJ0hnC8iHF8hD9iFgD/z3UvSNBaUeRAAmzw+rcQWAS5NoHC4jXSfaTb+DiP+IsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j8UMI3sz; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3df2fa612c4so20935ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 14:02:52 -0700 (PDT)
+	s=arc-20240116; t=1752095114; c=relaxed/simple;
+	bh=JqDMxZnmqKYLmQg7R6+bgbRHaT2ndVnR8RfUVyOSqoo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hS79u5hAhi+xjZYyGPd/QtOR3nqPU1Rlk9IXBFauVNLBLim49CRz5GqwlGMmXZrz2RcvvYl62uEI/Nho6hxMQUmv0ESNPssZAh3kZpF5fSxH0Tj4AEyY5UqWljVZ9V/2CCVQ+1IItndxy32oCbwFLc1bFUhZzD0G/yPocvJd2QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cdkPtuhn; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6fadb9a0325so3002446d6.2;
+        Wed, 09 Jul 2025 14:05:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752094972; x=1752699772; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1752095112; x=1752699912; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UGQrTOT/xhr3Yb3s9WztwAhfACqpB6++/b5+NXVjWt0=;
-        b=j8UMI3sznoCYD6eLkK0wOPm6AVfNphn2n54mf2hO98Qp+qHlExdTiKO2+vSXw8InHA
-         E4FFTAoDSkjg9Y1SBbHEsRq0wCj9WbV4EdrbCMgxILHmWN8MKeOeqreuWRO6Jnu6a/2M
-         yd1nkTIuTBEWAxOdMXaZJqjrZSn1awqmxSqDRnkaqh9IGLwh3PzIJU+zb2f917SZre/B
-         rA4q2nLrKdMj/VGnR/5XlvBscOLBIGvQEEf6vCTpJdIcWMG33c28TST1OgOJkMiY5L1O
-         lZxz6k0DzVJ2N4UsMDNz+fhDrcaQz/xsPcMy6wO0w0LWN0BMI1qUdzoX5pd/uB87c9yI
-         QeCw==
+        bh=6+IzJssnOfeb6EMV1AYSHtJ4+Rp7DCyKCX39HvIGnkw=;
+        b=cdkPtuhniQMylyPdtrAv7teUBZ1MhTn8aEgeheKz9LlRanhDII9/wB6u6R6z3L0hUd
+         xDvUuKqLbPi711Dhp4cWQloYKQNBNAtUgIADxmQvA6+IWOEOqHzEa9pXAkQ3Rr9NE13c
+         S1MPOTMc0sB8+8IFKYO550e79T8AXk9/9w4n3xp3IQz+hi+KhTxqKGSp+f5bNELXMVSQ
+         YG9P9Vm4QwRbtKoE3bQzoX+20jZpC4x5BjStc3qHP3meBscZkdiMVNNfUbuHAZoxrd5v
+         Uzykosk+X69CN4E6jcamfX7MZGI2dr84QOqELsP4nwgCmWYgtd3dbnK7XmAnz7O9o9TG
+         r0Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752094972; x=1752699772;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1752095112; x=1752699912;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UGQrTOT/xhr3Yb3s9WztwAhfACqpB6++/b5+NXVjWt0=;
-        b=MYXibTkYNILsZ+1uUnVIO6PBdPYjGdhhKgIpr4WCzBZ05K3JekaB+ZEBXz2zFoXIz1
-         Anm0yZwardXWdH43F1TDHqPJdwU7XS2x5+B9bWDv3aIDEZCh3tjaec0pKPfZM026Hh9l
-         GhrhwxMmDDpm9g32FNOxSdm8jNEDxOFu4/4QHpTiTx2b6rbRW9yOIDAriwNQjUSfi1br
-         cW0hG6XO/sTG8T9TqqbNsPM93CgxaSsT6PWTiys24cl2Z1XpO6V3NrGmuWos7rQLbae5
-         1IEKx42/zSDKyXy4047nSChMq0zVfebsMlmrlloZh6VhFm52bhfDdjtpPgLmpphpwC0k
-         wzhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYFXlpvWfRJhmAOl+YYWLQUzQpmUKkVB7fsLkGwOv7aNrjYyi6uy2cGeZGxzhMqzmJjzLkQUDencoRCUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGv1J5KC5AKbKvPWoz5bmnrJEszToZvXhbpq/luhantfMTwcUs
-	/xnZlpF6b1Ne/BcgBCm15GuaEEzF7qCWDbKpGNLIzERnVHfM6YDAKb0AWo4IyymilUuEQf0nQpD
-	U7IEwu3/4ye9FAmIG0A9ipZ/pb3ypeGfEjW3RX0EG
-X-Gm-Gg: ASbGncsJVjmNvLWkF2JKOgJD/FMZsLqZnDYw0YyC69BBwU05Yqb+bs9WAIk8GtjDLdl
-	yOoxBsQCD5x5lLU2L20KRwKN+uSodafyVucnLtADutSntBCPm4Zx4U6SAN4tFiSgKn2bbH/X5Nt
-	c34hU+fovy/XYA7BQnWQstY3zYnHh6kmco4Qoq4JOVohF1xIFkLGbx6r+WEr1QfMvmRtv03tUDd
-	ElhDzVenFdW
-X-Google-Smtp-Source: AGHT+IHecPZrvx+ydDC+IAxNKi8SNP9C+RAVx2p99q3fMrLmcL0/qWQwMlMr7ZZITggGGmPm3jNhrxGE/BOqjl4BPKA=
-X-Received: by 2002:a05:6e02:2703:b0:3de:215d:c9bd with SMTP id
- e9e14a558f8ab-3e2452b197emr963225ab.20.1752094971674; Wed, 09 Jul 2025
- 14:02:51 -0700 (PDT)
+        bh=6+IzJssnOfeb6EMV1AYSHtJ4+Rp7DCyKCX39HvIGnkw=;
+        b=gcaiVA4RVmsG61Gjl6er8yudb17IIMHZS4BnEXme5/kxaauL2XK4le5/7Q1ay8IL2o
+         mSveT0hY1SzX8HnVLIcHu/TCv1z0U1tVE3WT14NgqBfDD6skG2jHQmpgfTl0kzB40BE+
+         ctFN7qmLR43AcQJyZf7T8cFtKTsjoFvh+p4oZv/NpPHe5go0q9LhTnzK29j7SELmhozJ
+         Q/nGgNm3xJ2O8OFMmgPstVGU+iffSBWZDl9wLIhAFwGqb71gSYtr8S4D+IzFYaZeAdmy
+         RPG2/N3SN3eC+66C/BmPUWGF3MfnIzsz3jf3ykHMeQEeXVcnJVfvgntbM+O10CXZt4ym
+         qWgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUz8vMYOP7050wKmPuCqBiUV1dQRyrb0NL3aTNcABOeBZXzQnIhyMjY0tUWrN+pcNBEqKIBJyral+TUJS0=@vger.kernel.org, AJvYcCV2f9gbF6L9/feD1B0mCIlHkt8b9rX6EUEXWtQqqRN1WBawQw4WM5Dz+ad9NkTDegONzmhHCtEqcrzfdkZR@vger.kernel.org, AJvYcCVgImSGYcCM7TiGSMj5q5Hyj1TVwo+57kjNsfOMCV6pw/UxhSB3/L4ieetj1eEY10XH8aa4lZGf9knyvpA02qg=@vger.kernel.org, AJvYcCXTSUyhfbHbNFdEtKySItjocGr8dmWwmc0CrZb3SjkavTl/yJRi5DqcBxD3jXZGpmNgTA9CVYLTO5nJqXCWkw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4sj9WG/lHxbBAn0lIHYg0qhtKgJNtXQP25Czt+jGQtXGC3WqL
+	rEogc366fnKD9mS7PFutnjNQXfisvQQ4Iyy5Y8HZ5Zx04KYeEi/KvnZJ
+X-Gm-Gg: ASbGncsnat8asPcLgwsSH9aU9IM78q66skYxGI2PETM6V0syvkUxvTrYQexC2o2oUZU
+	71ZJwmsBOv6EA0qPRUkCr36hOqP6Nwtqsn01E/bdtcJwsbO5oaOUEf9VA9z153ynvkc3rJvWPWf
+	qS1BcEtVnOfWQwXvqjGOj31e07Zi6FPzkC/Z8412yG+MldZwvFTdotsNWyG+OYD5yMLgWxmJxE5
+	xhrzQNThS+tW+YLljuPE296suxCz0gF2bRH6QgJ3rUfmvgrehthf3r3q4KP4cL78WeG1/j7Sj8w
+	JRJYEj8j4p/qH8Xsk/TqWA7EVxu/1pdDmzFlZHP+p/R4HU0+pHLlJb2xPKofVaqvOqW4otxogPQ
+	1CIo8Orqn9H0EiKvS2KNLNAC9G5n7pA45pxNedloWVFa85AlipfAE
+X-Google-Smtp-Source: AGHT+IFuOy52f0AzBLLPaHxh5cK0HhrF3TJzNo1Yvb0GLJseUH40vmuIGi4iSOsWOnczl9a+vkeaiA==
+X-Received: by 2002:a05:6214:c62:b0:704:574a:d28d with SMTP id 6a1803df08f44-70494f4971amr25812076d6.17.1752095111759;
+        Wed, 09 Jul 2025 14:05:11 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70497dd0b27sm79476d6.120.2025.07.09.14.05.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 14:05:11 -0700 (PDT)
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 9DC07F40066;
+	Wed,  9 Jul 2025 17:05:10 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Wed, 09 Jul 2025 17:05:10 -0400
+X-ME-Sender: <xms:htluaFYnsMYc2T-kAIV9XmqGxwU8_aBfRxKTUtwI6NW4xR9Se19g5g>
+    <xme:htluaH4KeAo-UxE42OIzz4uxH6K-XV7DTp7NhDEolge6h0eGiXil7azazBu3f2Smz
+    cA-DJpoGk5szIGzyA>
+X-ME-Received: <xmr:htluaN9iYiYros3cCkxLabgTqn7fvPUrL9YtnYbvQC0Aiqt07pjQt0wG_e38>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefkeehlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedv
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
+    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
+    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
+    drnhgrmhgvpdhnsggprhgtphhtthhopedviedpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtoheplhhoshhsihhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrdhhihhnug
+    gsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlihgtvghrhihhlhesghho
+    ohhglhgvrdgtohhmpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopehg
+    rghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprh
+    hothhonhhmrghilhdrtghomhdprhgtphhtthhopehmrghsrghhihhrohihsehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehnrghthhgrnheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:htluaBZI1HrsLwyInA6sHmR3axuuZHueD0tcEHBi_9H8byeZzUITig>
+    <xmx:htluaF27SODdsyTVFs2Pmrt7pr9nFUMwzmYeP1A3paehqcRm82Io9w>
+    <xmx:htluaD4QWlXQHe6wpePnhM4xhyajH5JK6sGUmpk5uS_M7JgWhnzY_g>
+    <xmx:htluaBQ3XWmn0w1eYeVWuCp_XqK7R-tDQ6_CULJytDO4HOiuV_2Y0Q>
+    <xmx:htluaMrDYOW87WvbsWGExcnO0Odmv5imqfLPZdUaGym18HPGhlWLW6SJ>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 9 Jul 2025 17:05:09 -0400 (EDT)
+Date: Wed, 9 Jul 2025 14:05:09 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Trevor Gross <tmgross@umich.edu>,
+	Adam Bratschi-Kaye <ark.email@gmail.com>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	Greg KH <gregkh@linuxfoundation.org>, Fiona Behrens <me@kloenk.dev>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	linux-modules@vger.kernel.org
+Subject: Re: [PATCH v15 1/7] rust: sync: add `SetOnce`
+Message-ID: <aG7ZhTaZRL9ZpyP5@tardis.local>
+References: <CAH5fLgiKo=jN_V5cAe_AJqxxp7mQWqhKx7knkEj6js3yiU9sqA@mail.gmail.com>
+ <KNYMPkLfLvLb8ocrLqSmk-5hRGhRaaPQ2sDHN5JoPAUxYJWlHNiOW4HRmtDDGkoMRfNwpziT8mkRzlPkdxDVaQ==@protonmail.internalid>
+ <aGvkFbs5caxLSQxa@Mac.home>
+ <877c0joyfo.fsf@kernel.org>
+ <lsO9eeoR7qtPcjbhow9WfkrujYbxWh9JwZCHDO9K4VU6gtpl4pNYJisLImSI7OrRxW7qu-soEy9zjF_3snXZGQ==@protonmail.internalid>
+ <DB6JZBUSWGKX.3M3M5TSWPLLFN@kernel.org>
+ <87ple9lkjr.fsf@kernel.org>
+ <DB7QEZNTH2SB.SSRG5H7TXZZT@kernel.org>
+ <aG7NFizFGeFBSXY-@tardis.local>
+ <DB7SYPUAUBUS.30DITWX21NJ96@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250605233934.1881839-1-blakejones@google.com> <20250605233934.1881839-5-blakejones@google.com>
-In-Reply-To: <20250605233934.1881839-5-blakejones@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 9 Jul 2025 14:02:40 -0700
-X-Gm-Features: Ac12FXwkqrAs48pbGnnVnOa3S51JWJ2GVvtDL0V_3XeIUQKWbqkiHpT5CXzHi-U
-Message-ID: <CAP-5=fVX_Qohsf=f=-fR8mYsTq4zitURit2=4BYyD5HPJHOT7Q@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] perf: add test for PERF_RECORD_BPF_METADATA collection
-To: Blake Jones <blakejones@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tomas Glozar <tglozar@redhat.com>, 
-	James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@arm.com>, 
-	Guilherme Amadio <amadio@gentoo.org>, Yang Jihong <yangjihong@bytedance.com>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Chun-Tse Shao <ctshao@google.com>, 
-	Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	Zhongqiu Han <quic_zhonhan@quicinc.com>, Andi Kleen <ak@linux.intel.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Yujie Liu <yujie.liu@intel.com>, 
-	Graham Woodward <graham.woodward@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Ben Gainey <ben.gainey@arm.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB7SYPUAUBUS.30DITWX21NJ96@kernel.org>
 
-On Thu, Jun 5, 2025 at 4:39=E2=80=AFPM Blake Jones <blakejones@google.com> =
-wrote:
->
-> This is an end-to-end test for the PERF_RECORD_BPF_METADATA support.
-> It adds a new "bpf_metadata_perf_version" variable to perf's BPF programs=
-,
-> so that when they are loaded, there will be at least one BPF program with
-> some metadata to parse. The test invokes "perf record" in a way that load=
-s
-> one of those BPF programs, and then sifts through the output to find its
-> BPF metadata.
->
-> Signed-off-by: Blake Jones <blakejones@google.com>
+On Wed, Jul 09, 2025 at 10:22:04PM +0200, Benno Lossin wrote:
+[...]
+> >> >>>>> > +impl<T> Drop for SetOnce<T> {
+> >> >>>>> > +    fn drop(&mut self) {
+> >> >>>>> > +        if self.init.load(Acquire) == 2 {
+> >> >>>>> > +            // SAFETY: By the type invariants of `Self`, `self.init == 2` means that `self.value`
+> >> >>>>> > +            // contains a valid value. We have exclusive access, as we hold a `mut` reference to
+> >> >>>>> > +            // `self`.
+> >> >>>>> > +            unsafe { drop_in_place(self.value.get()) };
+> >> >>>>>
+> >> >>>>> This load does not need to be Acquire. It can be a Relaxed load or
+> >> >>>>> even an unsynchronized one since the access is exclusive.
+> >> >>>>
+> >> >>>> Right, I think we can do the similar as Revocable here:
+> >> >>>>
+> >> >>>>         if *self.init.get_mut() == 2 { }
+> >> >
+> >> > Ok, now I got it. You are saying I don't need to use the atomic load
+> >> > method, because I have mutable access. Sounds good.
+> >> >
+> >> > But I guess a relaxed load and access through a mutable reference should
+> >> > result in the same code generation on most (all?) platforms?
+> >> 
+> >> AFAIK it is not the same on arm.
+> >> 
+> >
+> > Right, when LTO=y, arm64 use acquire load to implement
+> > READ_ONCE()/atomic_read().
+> 
+> But Andreas was talking about relaxed load vs mutable reference (=
+> normal unsynchronized write)?
+> 
+
+No, I think it was a relaxed load (self.init.load(Relaxed)) vs a normal
+unsynchronized *load* (*self.init.get_mut()). Yes, there is a mutable
+reference, but we never use it for write.
+
+Regards,
+Boqun
+
 > ---
->  tools/perf/Makefile.perf                    |  3 +-
->  tools/perf/tests/shell/test_bpf_metadata.sh | 76 +++++++++++++++++++++
->  tools/perf/util/bpf_skel/perf_version.h     | 17 +++++
->  3 files changed, 95 insertions(+), 1 deletion(-)
->  create mode 100755 tools/perf/tests/shell/test_bpf_metadata.sh
->  create mode 100644 tools/perf/util/bpf_skel/perf_version.h
->
-> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-> index d4c7031b01a7..4f292edeca5a 100644
-> --- a/tools/perf/Makefile.perf
-> +++ b/tools/perf/Makefile.perf
-> @@ -1250,8 +1250,9 @@ else
->         $(Q)cp "$(VMLINUX_H)" $@
->  endif
->
-> -$(SKEL_TMP_OUT)/%.bpf.o: util/bpf_skel/%.bpf.c $(LIBBPF) $(SKEL_OUT)/vml=
-inux.h | $(SKEL_TMP_OUT)
-> +$(SKEL_TMP_OUT)/%.bpf.o: util/bpf_skel/%.bpf.c $(OUTPUT)PERF-VERSION-FIL=
-E util/bpf_skel/perf_version.h $(LIBBPF) $(SKEL_OUT)/vmlinux.h | $(SKEL_TMP=
-_OUT)
->         $(QUIET_CLANG)$(CLANG) -g -O2 --target=3Dbpf $(CLANG_OPTIONS) $(B=
-PF_INCLUDE) $(TOOLS_UAPI_INCLUDE) \
-> +         -include $(OUTPUT)PERF-VERSION-FILE -include util/bpf_skel/perf=
-_version.h \
->           -c $(filter util/bpf_skel/%.bpf.c,$^) -o $@
->
->  $(SKEL_OUT)/%.skel.h: $(SKEL_TMP_OUT)/%.bpf.o | $(BPFTOOL)
-> diff --git a/tools/perf/tests/shell/test_bpf_metadata.sh b/tools/perf/tes=
-ts/shell/test_bpf_metadata.sh
-> new file mode 100755
-> index 000000000000..11df592fb661
-> --- /dev/null
-> +++ b/tools/perf/tests/shell/test_bpf_metadata.sh
-> @@ -0,0 +1,76 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-
-The 2nd line in a shell test script is taken to be the name of the test, so
-```
-$ perf test list 108
-108: SPDX-License-Identifier: GPL-2.0
-```
-
-> +#
-> +# BPF metadata collection test.
-
-This should be on line 2 instead.
-
-Thanks,
-Ian
-
-> +
-> +set -e
-> +
-> +err=3D0
-> +perfdata=3D$(mktemp /tmp/__perf_test.perf.data.XXXXX)
-> +
-> +cleanup() {
-> +       rm -f "${perfdata}"
-> +       rm -f "${perfdata}".old
-> +       trap - EXIT TERM INT
-> +}
-> +
-> +trap_cleanup() {
-> +       cleanup
-> +       exit 1
-> +}
-> +trap trap_cleanup EXIT TERM INT
-> +
-> +test_bpf_metadata() {
-> +       echo "Checking BPF metadata collection"
-> +
-> +       if ! perf check -q feature libbpf-strings ; then
-> +               echo "Basic BPF metadata test [skipping - not supported]"
-> +               err=3D0
-> +               return
-> +       fi
-> +
-> +       # This is a basic invocation of perf record
-> +       # that invokes the perf_sample_filter BPF program.
-> +       if ! perf record -e task-clock --filter 'ip > 0' \
-> +                        -o "${perfdata}" sleep 1 2> /dev/null
-> +       then
-> +               echo "Basic BPF metadata test [Failed record]"
-> +               err=3D1
-> +               return
-> +       fi
-> +
-> +       # The BPF programs that ship with "perf" all have the following
-> +       # variable defined at compile time:
-> +       #
-> +       #   const char bpf_metadata_perf_version[] SEC(".rodata") =3D <..=
-.>;
-> +       #
-> +       # This invocation looks for a PERF_RECORD_BPF_METADATA event,
-> +       # and checks that its content contains the string given by
-> +       # "perf version".
-> +       VERS=3D$(perf version | awk '{print $NF}')
-> +       if ! perf script --show-bpf-events -i "${perfdata}" | awk '
-> +               /PERF_RECORD_BPF_METADATA.*perf_sample_filter/ {
-> +                       header =3D 1;
-> +               }
-> +               /^ *entry/ {
-> +                       if (header) { header =3D 0; entry =3D 1; }
-> +               }
-> +               $0 !~ /^ *entry/ {
-> +                       entry =3D 0;
-> +               }
-> +               /perf_version/ {
-> +                       if (entry) print $NF;
-> +               }
-> +       ' | egrep "$VERS" > /dev/null
-> +       then
-> +               echo "Basic BPF metadata test [Failed invalid output]"
-> +               err=3D1
-> +               return
-> +       fi
-> +       echo "Basic BPF metadata test [Success]"
-> +}
-> +
-> +test_bpf_metadata
-> +
-> +cleanup
-> +exit $err
-> diff --git a/tools/perf/util/bpf_skel/perf_version.h b/tools/perf/util/bp=
-f_skel/perf_version.h
-> new file mode 100644
-> index 000000000000..1ed5b2e59bf5
-> --- /dev/null
-> +++ b/tools/perf/util/bpf_skel/perf_version.h
-> @@ -0,0 +1,17 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +
-> +#ifndef __PERF_VERSION_H__
-> +#define __PERF_VERSION_H__
-> +
-> +#include "vmlinux.h"
-> +#include <bpf/bpf_helpers.h>
-> +
-> +/*
-> + * This is used by tests/shell/record_bpf_metadata.sh
-> + * to verify that BPF metadata generation works.
-> + *
-> + * PERF_VERSION is defined by a build rule at compile time.
-> + */
-> +const char bpf_metadata_perf_version[] SEC(".rodata") =3D PERF_VERSION;
-> +
-> +#endif /* __PERF_VERSION_H__ */
-> --
-> 2.50.0.rc0.604.gd4ff7b7c86-goog
->
+> Cheers,
+> Benno
+> 
 
