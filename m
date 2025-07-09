@@ -1,221 +1,110 @@
-Return-Path: <linux-kernel+bounces-722566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C4A7AFDC53
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:25:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA0EAFDC54
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 776394A6619
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:25:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3CF93B1E53
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AB11F948;
-	Wed,  9 Jul 2025 00:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866081F948;
+	Wed,  9 Jul 2025 00:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GlpXp6lE"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2077.outbound.protection.outlook.com [40.107.243.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="GY6W+B+Z"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D946D770FE
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 00:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752020734; cv=fail; b=D2ne3VwAzQwJ+KxcdGWGU/dKkezJ+dF4qOZqmiDloR7JL7DdEwkIg6+4IV0qHte56au4xinc/PtG1kH7NZcDG0PLHc579madioLA94mA1B+ULQ2T0XOEqIn0uPTDD4JQf2SxiAtNST+ntkr18by1rucctlvh7lq0vr2osDULYys=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752020734; c=relaxed/simple;
-	bh=i6bHUYu3m8kXqKZkKv6vvCEMahSFhL+wfMWl/C3933o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=C+VwZ3/b6ZNENfCdyO9COKgGqaHUJgGw1CmByNDo0SBz4WyAfmnA4jEYutAThiZ0q9E5OZMo3S7uWscsJrvMX3/GbD5zIkLnAbmsYCsER3guniXY6wyAYctKXcvP8VIKJjcvEwNYsEbVonia1xb+0CaF6rCOuPRZyKYIAx2SGro=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GlpXp6lE; arc=fail smtp.client-ip=40.107.243.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XKPMmY0tFdVe8IvHP4sWVaicgI3klpkyMUQPQgWjRD+d3pqFgIQC8tSPVBoGLatzJKgjk7eDYqa72HBWMACACJvKXnbgCJexrs795eTR0Q+RG3T5qzttNU/SwY1xZHnyjboBegRIWMK4W4TbJXYOCvh8zkfB6/u6bUn4dqwh72PWEBYZUtvbdhNxiQZRjuDusdEdFbeGax3ZJG1M7ZsvPsYCX8KvUbLfW/NWBupQVeJWVlJN+XBQJo08VxpOfcvmOBgS+53X+G6wjRSIRlbb7dolPe6pxcK3KV5d7mRE/91EPhyzQSkJpgRmw95aYQ3GXvph5FZHN6Y/elsIh/UHrQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/whylTgqrnDNakJUenm2EEQ17Y2CyfNYZFy15CxoSsc=;
- b=HPGTcsKDqGSyLvtb+0MDtpfKA0qyYER9meVAj+PMLJLd/xm7pptyqeSlY0nQBbxFQipjT9y3qEgIeOcwQqzcBSRxV+w561rDswVOz4VzXZujtZvceiP9hEVZVumPy1aI6Q3G3K8xJ85HAtcXokv5LHlyjIhoSuXcL5qGxaI4ap9VY891Wgz5Sv3yFSmM7S/lIp81HfZLQzRmpY23zNAIPZe97R+/+GYSopXkhPxuFLkNMmKjH0u1N/iXC7+dUhwVYXHdtaLJwDAuJVpgwY1nfk/CTn1rHu3+rAFM+uZRg33LmtVI6NiiMMyNad9BVxVXtdQLg6bUq5O85xlLzzOMYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/whylTgqrnDNakJUenm2EEQ17Y2CyfNYZFy15CxoSsc=;
- b=GlpXp6lEkw8N/QvTyjS3/TzsxPrk1JordBjk6jNuepWuY2vKBvcMIZp8bDz/VG9rQIyPzVs0G+C6E7uCIVrCJMdtMETgQ82mKB5voEdKho95h8+PRu83r8rTDCzG0aQdF6Ea1pdIFKGNSA/fw9Bry7ecK6LCVVfnL4P5/3FsT7OfOtC5zaf0seMoSb46dfqKpfAhvC4X/8E8KgjkPol7yIlkkItdYRNMXRjDP0YZoqiQfEG2bnYfxNlh3t3IhsfwJ2p7r1uY+Q4AQ84uhjG8H/TB+No4iVh2BeTL8q5HgQG4HRP+8PAbHiBfRZDVnZVWSR/asmRaW+PHz6EYw+dBgQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by SJ0PR12MB6990.namprd12.prod.outlook.com (2603:10b6:a03:449::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.24; Wed, 9 Jul
- 2025 00:25:29 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8901.024; Wed, 9 Jul 2025
- 00:25:23 +0000
-Date: Tue, 8 Jul 2025 21:25:21 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: open list <linux-kernel@vger.kernel.org>, iommu@lists.linux.dev,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: next-20250702 WARNING iommu io-pgtable-arm.c at
- arm_lpae_map_pages qcom_iommu_map
-Message-ID: <20250709002521.GB1599700@nvidia.com>
-References: <CA+G9fYvif6kDDFar5ZK4Dff3XThSrhaZaJundjQYujaJW978yg@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYvif6kDDFar5ZK4Dff3XThSrhaZaJundjQYujaJW978yg@mail.gmail.com>
-X-ClientProxiedBy: SA0PR12CA0020.namprd12.prod.outlook.com
- (2603:10b6:806:6f::25) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38E6111A8
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 00:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752020782; cv=none; b=pKDHSE3R1KoY++UQYHJtbqRctCdwmM4crfCV9IYVsstc3uCtsC1E0f+D78cIlN/xHxSCg2lTkGFvihXqOCLaXDHLqLbi9pZjkXJC+wy0z7pvGe98w/E1XGdNocMpxmGxpD/O7yoB4LZzbOHw20NdWVt8JY0BJVpQpxN/PY+IxBI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752020782; c=relaxed/simple;
+	bh=xbbei7U6p6rKAO0csoP3ETOXHvHtulZ3jMXriqErwDU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d/YTT4CYN6pRiYW1SZ6XKY35+RUUBVFuqb63F9XMdHyOLDCvABghvv6yGG02eBuUvXNDHCZzPSmvPewRowvGxevyWF/0FuPtZkqm04bQBZIzZEkgD1LyYYWjYWt5MwNjKfXEuGmqA6Qc1WV7qsO65NUFaGVDvO506KxNXEyuc6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=GY6W+B+Z; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4a9b08740e3so35258181cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 17:26:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1752020780; x=1752625580; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4dAC1p+EwdmBHwbIWbaFVBlz5nVRbD9VkK1roJ2KD4g=;
+        b=GY6W+B+Zv/W6ge0QsM4i9L+oARaYP4DcsT6BUVJOdxNn0iNfafaKIDvlP/xydDbgph
+         c36GqXkQNMx8ISjVlrJbgGGTmtfKYIC4xxc2hAUya9ZPv6V4NCXXxjrMPrEVr5DEAXm+
+         TvYd0IA5ueGhvnT2enqm29naP6AmChoyu3zBdji+XwvArjb+3Mwxh/QPzKwpNqEhV+uF
+         xi502esaSHcS9jytxwTkVN73PEqEl578oWQqtYjwYvqDXpJ0BcnrVknZTeJrD2qlNVaz
+         HvOOJxR2uANKcQ/YDaLs+kGeNb8+T0Dmbm6bzveXlXlhmrrqpPtrdrLnJb5D3LK/l50a
+         JjYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752020780; x=1752625580;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4dAC1p+EwdmBHwbIWbaFVBlz5nVRbD9VkK1roJ2KD4g=;
+        b=oIooPTZFOrw3Ru5R6DkIUUWob0rdpgB1sJMVt1LVg6OU5+mAQ4ui1BL9gjzSA8FABn
+         V+LB+EVpYwKkA/A3Hfbaly3WA2SQqzhl+VUvYO2h5jOsUFrkB7ms3E/MF6ar71Cbham8
+         A3n8xsDAEn1aL5/bNGMekpOpaN+hfC2znUr2/QovsO9nqJylyo8bvmHtwF/RSuyrOSZE
+         k0Q6g8VO9G91mOviv+jXvTZFtOj5Q/86n/ncvEnvVEyjXZy9/w8g9NWMnNF4wmqCXFu9
+         LKfhwYGUt89hBiB2iJ/pg43gewBJKflTEEqA1kGZ+PZpogAxSneX/nNnO0BIa0PJj5II
+         zGGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUi6mSt4j6T5lA9d5y6Pb5ICRPT88ElPrcOqL8fYYJVlAlQ6KvesG0t8Uh0A2CcrG2JdF2c9ITgMKO77N8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/H9NBFa+XTpqPoxrF5V4BYO1Asf/dR/e9b3aCxwp9W+TFSpjq
+	QrUa4Z+QZf66MVxUhtchAN0NeC7iTmVegAjoX7rBOygne5W4mxLuFALHG7XdDAHggw8=
+X-Gm-Gg: ASbGnctV/vApfIOM+zdZ4L+uLCO87MqqE3THp0NM88yiIhvSXdnt73GfTiMVLW+vtC+
+	SGOB9UHsvUX0t2T1U8Kdh3GYjOLR2RARpQ1vKWWCVyBMnyVU7JjLfdj8UqLEOjhxvlz18n0kpjQ
+	fX4yVT+R59EiWlKH27x+qeKebSkKq02ngqa67UI2Ty5pF4qXx5kmaxsWBiS821Orne/1jyvmWxO
+	diSg91DEFbuFEXGtU8CnCNFAQTPTQDAHZDiJs2c7wZ/0ABXCBzL3YaW90SEoZRd6jrQ32wvD3zA
+	FGKP+/GsbJ8hQhkdvHzFAEFokO3EPtXv1aDQ
+X-Google-Smtp-Source: AGHT+IFSaVO7q7bu+dYOf1GVeKqZs7GLoxtb1NdzR9hlmeu1FRZsqxH2hLA4RP5hCtbSDnx4/dkebQ==
+X-Received: by 2002:ac8:578c:0:b0:4a9:c2e1:8844 with SMTP id d75a77b69052e-4a9dec1f0bfmr6312041cf.10.1752020779702;
+        Tue, 08 Jul 2025 17:26:19 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a994a8e083sm89289331cf.65.2025.07.08.17.26.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 17:26:19 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uZIde-00000006x1B-1jAi;
+	Tue, 08 Jul 2025 21:26:18 -0300
+Date: Tue, 8 Jul 2025 21:26:18 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Daniel Mentz <danielmentz@google.com>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Will Deacon <will@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>
+Subject: Re: [PATCH] iommu/io-pgtable-arm: Remove unused macro iopte_prot
+Message-ID: <20250709002618.GA1599899@ziepe.ca>
+References: <20250708211705.1567787-1-danielmentz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SJ0PR12MB6990:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9323df96-26b8-4195-e155-08ddbe7f181f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?O25JRgbZqCnEHu4Ab0Ih15Fk/Uur9IS1I9AGMD6NVQt+lFviqy8Eo9RZp7ZW?=
- =?us-ascii?Q?2PDw96fjmPHdsWiLPLBp/L1enrgsuFhoYPuYc7b7GhKa6wooY2PU09OZ4qz+?=
- =?us-ascii?Q?kq4raXBma+tozwWCPWcbrdSCCH0NJLJvyJ1/63cCGa97cAtYMrU7IPqxf5TA?=
- =?us-ascii?Q?f8OMA8WXw0hbLygoESBAfPwkQSXYiPUoSorERVywIpvEbPCeWpVKzutY1sf0?=
- =?us-ascii?Q?POxdSIQ/N64pRK9ygGvrNV+KPBqBX4J7bxCAgGRx1GrVMbS9LKoRVZM+uHW1?=
- =?us-ascii?Q?Ig6jG1iwxsoLnTAKNTB0z8LHWZdx+Z1IIczTQ4zBWK6H+myKbYcOu/C8iWTv?=
- =?us-ascii?Q?qzdCEy/aIl16ddeLUrK21cNWijCRWSlmVv08eR20Xoz60DXb4ETW1ni8+IMG?=
- =?us-ascii?Q?+7kovxwMJysjTxYP4XbDFFOu0JMFOUS97uKCKExTzZeNJVZOVqHDdIg1yZRd?=
- =?us-ascii?Q?+iy8UCN7k9I2HSLRtgbl635fVt5mAb+Y/VZqRbvY/ClZdPnHawX1SCspW6bw?=
- =?us-ascii?Q?KNFS8jjePLEyLLm6OWAK0lTuMiRUPMoJUzK+pvLygimfC4omQdiE7uF8hJga?=
- =?us-ascii?Q?RWSd02ezPJvyfn7PeN9HgmohROQKu3xC+7V8uO9elVR9xju7ZZDKHywRFOHg?=
- =?us-ascii?Q?H8nxGg96GGX3x1jrkgoA5B9xFnlGSAfv9uoaM/DIdiZA4NsqSgWMtHAIbjzr?=
- =?us-ascii?Q?/OIFLz7JZ6te8aLTZFmU/FxgrRYMN7WZqo7CmrWVLLc1+YygVt5Q1+CCVIcX?=
- =?us-ascii?Q?fzdNlPT8vqhVTEvCWW39nz76APSY5wpH8qKfSmOEdNHEwDR3QIbz9Kq6Ye2c?=
- =?us-ascii?Q?FNoqE37+NDWffqGop2ZO5WHjR/RBjQp6HJ4tOK4KCYFnkhP8HcMfW+hH95xR?=
- =?us-ascii?Q?onluK1M5WIFLGN5XbpCcEfvFWQs8Vv9Ne1aWhMAfoJRDDg1i5stw3Czjiewi?=
- =?us-ascii?Q?BdOvJeK/1y8QomhAYbO5/SquVWFdW+aGyCWfyV2FKvbVT8IEB07xHDlmxomz?=
- =?us-ascii?Q?XQW/NxZLpSzCxK7VE6YJw0cl2PTdKhIS0UaeIT8dxSOWbm6ZvBCjUJhg6WYL?=
- =?us-ascii?Q?KN6oy5O7TiLAOkuk+762lxUyF2ociFmtJqEVLo2Y24bmlTCpvTK1wXFMzzgo?=
- =?us-ascii?Q?oxgoZLxNKhZgbgmh0xfH3KmAF9Aai1ims+YE75u1guhrCMbhuR3PtPvdY1sR?=
- =?us-ascii?Q?H2p7rXHkS1M2rYkALqsc/TZQoreUl+Sbnh7Z8e9F1mzViVjS8HnPDOinYQBT?=
- =?us-ascii?Q?HYscKEVQ7bsn4rEQQBVgsy8QT12QZX804F+QH2hudV+nbm3EqorT6uBMV4ba?=
- =?us-ascii?Q?rWZJVDVIqrWLy/Btn8zjd6dP3EGFY36BEPkom8FgeXpJVXa+aY26WEfhumyZ?=
- =?us-ascii?Q?cjkO7XPxMXmskfjNK6f5pQcdl8EKpo5Fd7G32D6le5RAodHzwwwEThze8ReX?=
- =?us-ascii?Q?bkyOHxUQl+U=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?JQGQ3mdN4+r+alxQ8ygqAUB6PvQMk9CeR7JP4/vsPabpNPhmAYLNgjmoziMW?=
- =?us-ascii?Q?CovSd5yb8+4kiR1rQi0QlnIRdjTI3AfdCL/ym+m7tK4Nt9X+XLAh1MYt6br2?=
- =?us-ascii?Q?dDEmrR2HvpjYkeVGHsMJ0NzS7Bz//D4rSbBKpaXCnn7Ld3uExx0dIv4RQ6Ga?=
- =?us-ascii?Q?RmneEdMTmzCA5+9A1mMbpLx64vWS+xBodGbVjMXgbZ95FGMSLz4J1G3qegJJ?=
- =?us-ascii?Q?SsZtoSwj/U7XQbwpSp/6iBatmM1UN9tumm+8KBnbrQIIGOPMFtvvo240BfqH?=
- =?us-ascii?Q?f5+NPzktmSb1O+tZZbRIgDUCuPnRwG8qCkJsomE/+Fgn7lgT3sgUgVnRTIYL?=
- =?us-ascii?Q?WBEZN6cfND9wdsqDL6S1737ygMh0HxwdEL9E1LfAeADApBBt9HaN6tu/OgA1?=
- =?us-ascii?Q?s6HJ2nmUFHls/t1Rb+DWGyaQbqbwl1s5Eh+GeBPz86WK6y/ebyqQ/Jo/ooXJ?=
- =?us-ascii?Q?KOUV9dWVnxqluTXkApB9TH5BYuPAoJf1c5PQSoKRY5HoCgUIxErXLrg1H0od?=
- =?us-ascii?Q?tMHaIgzNH80eXk6GMuGxC3JajarZ5MKAY6DCesw2Aftqocm4dEUyILq1CPVE?=
- =?us-ascii?Q?uPImmKtzCXX7JbKBtYNliuHXZ4gf2dmsh+eCsyqhwYbXN/4BQdbFDWjlmqOy?=
- =?us-ascii?Q?MKQgVhuezF6+DxpFvNu3fd0MZNlB/S8r8v+l86p0XqWUvfYrVxJp9zFT0KKK?=
- =?us-ascii?Q?3vsJBtxMUTzQQa8pXnSfpnS3SO1gICTD+OVakKpIvpccLVTc4PyZPzD13nxy?=
- =?us-ascii?Q?NUjPMP6ay5n4pV96Soj12uEmEL+OE5ywPPDROdh9Xdx2lBscY1u/8VU8syBV?=
- =?us-ascii?Q?AW3bOw63iJUr/jfJVtwSyZSAdcmlwZvTzb+Zi5jd95z3+v8CieD5vPsZ/MwW?=
- =?us-ascii?Q?Y7X9B+MMGSf9BneQzU9fQf/80yV/A9GcbkwSW0fXNxUfCYPsPEND/76M103V?=
- =?us-ascii?Q?k11G5aa6lMtEtQM0AemiLuNupGnTKOAI7r+ocNnBjZiVhpymL23ntke9Bk85?=
- =?us-ascii?Q?e43D3KhcispcvkGCOXWBxNRTVnT6lDqWJOw2Iq7qn7ixDkY22q+sBpIdI8yA?=
- =?us-ascii?Q?ygxPsxN6lujz26H5gvA1IbW0VPzXSQTsNvJ+Lq9Gr0Kh3qjhPVhRxYjFJsoq?=
- =?us-ascii?Q?PenXsNTlG/qAsPSDbJL4lX5drNr3YdRkBlPXAZmEszqMCLEa0rLuE5T1hsxy?=
- =?us-ascii?Q?CdXRc5OmfPkrHRdVd6HEBuAqBfMNqSPmnlJ1hn2L75bVu9lVYkcpx2zfd/BX?=
- =?us-ascii?Q?5C9wVbZa+IA86kmZ2kDjlu4UL8CCZhHquIp88F+FBjWCHxYv0qEgxrfEkHO4?=
- =?us-ascii?Q?WEPVOQFB19580U3jpW4kv+HHSOlNYYNL5BHKPvsZXdcGSXqq4RlYISUiUyO9?=
- =?us-ascii?Q?nybVmDBEwtzEYM60Zty9KBijLeIZEXANIGhjOiIN+K4Yq7haKd3dRcXle60l?=
- =?us-ascii?Q?YlljS6nvOZDzIu1kN9SjgRapjpM4j5eVxTz9+mVOL9Y+RGOs0/XBonUdPJKt?=
- =?us-ascii?Q?KqeiFz0pT9W8px3s4fx+YeULHfN+LnL2zITTH7s4WlzrRqC4w8FQz9R9vinX?=
- =?us-ascii?Q?y24es6VmQJpOkIiTLTCcBMg5VhfA8IiXMQ+O3GUa?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9323df96-26b8-4195-e155-08ddbe7f181f
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 00:25:23.5940
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Q7EpcYBo2PpUztnTqGwGpu18K8bnEwxdjc80ybzcSaxTr+FksDCIh+sqfYqJHvfr
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6990
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708211705.1567787-1-danielmentz@google.com>
 
-On Wed, Jul 09, 2025 at 02:26:20AM +0530, Naresh Kamboju wrote:
-> Regression identified while booting the Dragonboard 410c (Qualcomm
-> APQ8016 SBC) using the Linux next-20250702 kernel tag. During device
-> initialization, the kernel triggers a WARNING in the arm_lpae_map_pages()
-> function, which is part of the IOMMU subsystem. The call trace also involves
-> qcom_iommu_map().
+On Tue, Jul 08, 2025 at 09:17:05PM +0000, Daniel Mentz wrote:
+> Commit 33729a5fc0ca ("iommu/io-pgtable-arm: Remove split on unmap
+> behavior") removed the last user of the macro iopte_prot. Remove the
+> macro definition of iopte_prot as well as three other related
+> definitions.
 > 
-> Test environments:
-> - Dragonboard-410c
-> 
-> Regression Analysis:
-> - New regression? Yes
-> - Reproducibility? Yes
-> 
-> Boot regression: next-20250702 WARNING iommu io-pgtable-arm.c at
-> arm_lpae_map_pages qcom_iommu_map
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> List of suspected patches with recent changes.
->  * https://lore.kernel.org/all/0-v2-68a2e1ba507c+1fb-iommu_rm_ops_pgsize_jgg@nvidia.com/
+> Fixes: 33729a5fc0ca ("iommu/io-pgtable-arm: Remove split on unmap behavior")
+> Signed-off-by: Daniel Mentz <danielmentz@google.com>
+> ---
+>  drivers/iommu/io-pgtable-arm.c | 7 -------
+>  1 file changed, 7 deletions(-)
 
-Can you test this fix please:
-
---- a/drivers/iommu/arm/arm-smmu/qcom_iommu.c
-+++ b/drivers/iommu/arm/arm-smmu/qcom_iommu.c
-@@ -229,7 +229,7 @@ static int qcom_iommu_init_domain(struct iommu_domain *domain,
-                goto out_unlock;
- 
-        pgtbl_cfg = (struct io_pgtable_cfg) {
--               .pgsize_bitmap  = domain->pgsize_bitmap,
-+               .pgsize_bitmap  = SZ_4K | SZ_64K | SZ_1M | SZ_16M,
-                .ias            = 32,
-                .oas            = 40,
-                .tlb            = &qcom_flush_ops,
-@@ -246,6 +246,8 @@ static int qcom_iommu_init_domain(struct iommu_domain *domain,
-                goto out_clear_iommu;
-        }
- 
-+       /* Update the domain's page sizes to reflect the page table format */
-+       domain->pgsize_bitmap = pgtbl_cfg.pgsize_bitmap;
-        domain->geometry.aperture_end = (1ULL << pgtbl_cfg.ias) - 1;
-        domain->geometry.force_aperture = true;
- 
-@@ -335,7 +337,6 @@ static struct iommu_domain *qcom_iommu_domain_alloc_paging(struct device *dev)
- 
-        mutex_init(&qcom_domain->init_mutex);
-        spin_lock_init(&qcom_domain->pgtbl_lock);
--       qcom_domain->domain.pgsize_bitmap = SZ_4K | SZ_64K | SZ_1M | SZ_16M;
- 
-        return &qcom_domain->domain;
- }
-
-Of all the drivers qcom is the only one that uses the 64 bit arm page
-table, 4 & 64k sizes, and was using the ops global. The io_pgtable
-code will remove one of the two depending on PAGE_SIZE which makes
-things inconsistent and hits that warn.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
 Jason
 
