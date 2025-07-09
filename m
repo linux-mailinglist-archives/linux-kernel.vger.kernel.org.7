@@ -1,244 +1,99 @@
-Return-Path: <linux-kernel+bounces-723297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26EEFAFE587
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:18:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9580EAFE579
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:16:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49F91188B316
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:15:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B04A160FF6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10EB4289E10;
-	Wed,  9 Jul 2025 10:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA1B28B7F0;
+	Wed,  9 Jul 2025 10:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="WDgn0IoC"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GbFWwV9f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796F228AB02;
-	Wed,  9 Jul 2025 10:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2FE28B50B;
+	Wed,  9 Jul 2025 10:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752056121; cv=none; b=pdKCmimNRUrOoRVBXHE9LOwphH7CN914UKCCjnQnCVyUacK4XLLZ1JcTcCLB5l14hxaRdILQtbwCvaTMjzzIIbOGTcmxRJ+wpc0+80lxMz9SL9lbqXRJavD038/mtINZL2kx3Pz19PsSDRIRvB3voGZpTL3nEIOb1sy6mqZTros=
+	t=1752056147; cv=none; b=cgQexa4ts1dzNd6xR3q24m+LqXA0rdZ/0V7G7TT9a9QdZzbn+G2wP47yqLwLQ+OqdeVBzpnHNy6h0ymXiYb56vyMA9ae/Q2vpwaEL7zRYrOv1zr41fERd5KtB8ZwPQxkA69WqszpqXdCyxg6a94JJNEqki4GiB0/iJG6qo3aBJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752056121; c=relaxed/simple;
-	bh=9H7yNQmBzjwZpKm0GK1vm7xC4bKzfAoZXLAa93if9tA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NhkNpaOvHSPHzpN8wejwrBicz9l7dV90RZTaPlAmKdh6XvCERb3h71S/Zl88zauwfreiQmqO6RKsHys7E+eFF5c9AqKJF9xpcGeqmTtf81Vy294267ovYcAgYEwSLmjRt8b/buP12RSSn9vtE0jMCD1KY50yu/x9yesGCpltl0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=WDgn0IoC; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bcYkk5cDLz9sXg;
-	Wed,  9 Jul 2025 12:15:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1752056110; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mFira+KRxdt8d2FwCbb09WeKAggOn2O87AQVoaADDDg=;
-	b=WDgn0IoCwgiKpF286Do31Pin7PJ2guwZj4o9mUTgcnO0KxKRTMpqV1aW5zxiX3N5htkerQ
-	kLhuJfncnmUQFLRQycp7T3gADDfsZpqselBwPENiHlokvruIwHszV22QpuL2+jmHRmt6SC
-	2yWvgFkRY9erkLCMUhDcYQiYSuAD9QcIo7iKFxOvDGh2JLrZV6jU9u+yBUUarJcP9qa938
-	xzxeTJYjxtsL2NhiXfY1Iu86YK4LH1w0II4PxVwZh64bszBzCJlB/lXJnIgWpIqwwXfUWN
-	OnrrZ4LsSmNbTztfn1SQlVuOOhFrIzV65WwXMXNPPStL+o/Z9X9QGj9JNOiJlQ==
-Message-ID: <acb81a4e86f4f683c4f83509afdc5f24ea01e64d.camel@mailbox.org>
-Subject: Re: [PATCH v4] drm/sched: Use struct for drm_sched_init() params
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, Philipp Stanner
- <phasta@kernel.org>, Min Ma <min.ma@amd.com>, Lizhi Hou
- <lizhi.hou@amd.com>,  Oded Gabbay <ogabbay@kernel.org>, Alex Deucher
- <alexander.deucher@amd.com>, Christian =?ISO-8859-1?Q?K=F6nig?=
- <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Lucas Stach
- <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>, 
- Christian Gmeiner <christian.gmeiner@gmail.com>, Frank Binns
- <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>,  Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Qiang Yu
- <yuq825@gmail.com>,  Rob Clark <robdclark@gmail.com>, Sean Paul
- <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,  Abhinav Kumar
- <quic_abhinavk@quicinc.com>, Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>, Marijn Suijten
- <marijn.suijten@somainline.org>, Karol Herbst <kherbst@redhat.com>, Lyude
- Paul <lyude@redhat.com>, Danilo Krummrich <dakr@redhat.com>, Boris
- Brezillon <boris.brezillon@collabora.com>, Rob Herring <robh@kernel.org>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Matthew Brost <matthew.brost@intel.com>, Melissa Wen <mwen@igalia.com>, 
- =?ISO-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>, Lucas De Marchi
- <lucas.demarchi@intel.com>, Thomas =?ISO-8859-1?Q?Hellstr=F6m?=
- <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Sunil Khatri <sunil.khatri@amd.com>,  Lijo Lazar <lijo.lazar@amd.com>,
- Hawking Zhang <Hawking.Zhang@amd.com>, Mario Limonciello
- <mario.limonciello@amd.com>, Ma Jun <Jun.Ma2@amd.com>, Yunxiang Li
- <Yunxiang.Li@amd.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	amd-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org, 
-	lima@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
-	intel-xe@lists.freedesktop.org, Christian Gmeiner <cgmeiner@igalia.com>
-Date: Wed, 09 Jul 2025 12:14:54 +0200
-In-Reply-To: <b5d0921c-7cbf-4d55-aa47-c35cd7861c02@igalia.com>
-References: <20250211111422.21235-2-phasta@kernel.org>
-	 <b5d0921c-7cbf-4d55-aa47-c35cd7861c02@igalia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1752056147; c=relaxed/simple;
+	bh=+017oiMUTzcNGvL2ql5WZSYDo41lxsGGaD/fxm9DG7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mzrBN0A5N/vFdwRjjGQL35iOSAQuRSmmoF28ZKcwrWKhv3SEEzaHbhO9k2uHNbCsxFf0Zz8q078VVvhi8vyKMAdww3lEKYjDNtSFnNs6c37h8NZFjlyIwKDagHx0ZOjAkcowy0tFF2KEeRdQJG9sgUTZjMoqEH6kdQZwlxZL4fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GbFWwV9f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 540F5C4CEEF;
+	Wed,  9 Jul 2025 10:15:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752056146;
+	bh=+017oiMUTzcNGvL2ql5WZSYDo41lxsGGaD/fxm9DG7o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GbFWwV9fmYQ5jj46M19Z8KVdX+amQc7za0xXZvtGcMDfJ1bYvM8T1kI4omiRvUmTt
+	 aj2hhr40i4WegB/Ec/iqzd08KZ+N4Gx9VJ0vZFgM77hglSoUSh4qgSgwHbShptMDUr
+	 kSuZqnDl6qjogzL2IZrvJCebmoq86bY9N8qEh/1o=
+Date: Wed, 9 Jul 2025 12:15:44 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Luka <luka.2016.cs@gmail.com>, Jiri Slaby <jirislaby@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [Bug] WARNING in vt_do_diacrit in Linux Kernel v6.14
+Message-ID: <2025070923-alabaster-trilogy-d011@gregkh>
+References: <CALm_T+2AUcGgb+ukfGg5a3=ibQzRe93gHAzjh6XUubCePk=Mig@mail.gmail.com>
+ <2025070805-stoning-overeager-39f1@gregkh>
+ <d2c9f54e-9171-4970-b9c1-a6c70532e5ad@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-ID: 61cb9201dd4f5be0598
-X-MBO-RS-META: ay4k4wqr33dnoj1dmtnedfghmj9cfjnj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d2c9f54e-9171-4970-b9c1-a6c70532e5ad@kernel.org>
 
-On Tue, 2025-07-08 at 14:02 +0100, Tvrtko Ursulin wrote:
->=20
->=20
-> On 11/02/2025 11:14, Philipp Stanner wrote:
-> > drm_sched_init() has a great many parameters and upcoming new
-> > functionality for the scheduler might add even more. Generally, the
-> > great number of parameters reduces readability and has already
-> > caused
-> > one missnaming, addressed in:
-> >=20
-> > commit 6f1cacf4eba7 ("drm/nouveau: Improve variable name in
-> > nouveau_sched_init()").
-> >=20
-> > Introduce a new struct for the scheduler init parameters and port
-> > all
-> > users.
-> >=20
-> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> > Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-> > Acked-by: Matthew Brost <matthew.brost@intel.com> # for Xe
-> > Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com> # for
-> > Panfrost and Panthor
-> > Reviewed-by: Christian Gmeiner <cgmeiner@igalia.com> # for Etnaviv
-> > Reviewed-by: Frank Binns <frank.binns@imgtec.com> # for Imagination
-> > Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com> # for Sched
-> > Reviewed-by: Ma=C3=ADra Canal <mcanal@igalia.com> # for v3d
-> > ---
-> > Changes in v4:
-> > =C2=A0=C2=A0 - Add forgotten driver accel/amdxdna. (Me)
-> > =C2=A0=C2=A0 - Rephrase the "init to NULL" comments. (Tvrtko)
-> > =C2=A0=C2=A0 - Apply RBs by Tvrtko and Maira.
-> > =C2=A0=C2=A0 - Terminate the last struct members with a comma, so that =
-future
-> > =C2=A0=C2=A0=C2=A0=C2=A0 fields can be added with a minimal patch diff.=
- (Me)
-> >=20
-> > Changes in v3:
-> > =C2=A0=C2=A0 - Various formatting requirements.
-> >=20
-> > Changes in v2:
-> > =C2=A0=C2=A0 - Point out that the hang-limit is deprecated. (Christian)
-> > =C2=A0=C2=A0 - Initialize the structs to 0 at declaration. (Planet Eart=
-h)
-> > =C2=A0=C2=A0 - Don't set stuff explicitly to 0 / NULL. (Tvrtko)
-> > =C2=A0=C2=A0 - Make the structs const where possible. (Boris)
-> > =C2=A0=C2=A0 - v3d: Use just 1, universal, function for sched-init. (Ma=
-=C3=ADra)
-> > ---
->=20
-> 8><
->=20
-> > diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c
-> > b/drivers/gpu/drm/panfrost/panfrost_job.c
-> > index 9b8e82fb8bc4..5657106c2f7d 100644
-> > --- a/drivers/gpu/drm/panfrost/panfrost_job.c
-> > +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
-> > @@ -836,8 +836,16 @@ static irqreturn_t
-> > panfrost_job_irq_handler(int irq, void *data)
-> > =C2=A0=20
-> > =C2=A0 int panfrost_job_init(struct panfrost_device *pfdev)
-> > =C2=A0 {
-> > +	struct drm_sched_init_args args =3D {
-> > +		.ops =3D &panfrost_sched_ops,
-> > +		.num_rqs =3D DRM_SCHED_PRIORITY_COUNT,
-> > +		.credit_limit =3D 2,
-> > +		.timeout =3D msecs_to_jiffies(JOB_TIMEOUT_MS),
-> > +		.timeout_wq =3D pfdev->reset.wq,
->=20
-> ^^^
->=20
-> > +		.name =3D "pan_js",
-> > +		.dev =3D pfdev->dev,
-> > +	};
-> > =C2=A0=C2=A0	struct panfrost_job_slot *js;
-> > -	unsigned int nentries =3D 2;
-> > =C2=A0=C2=A0	int ret, j;
-> > =C2=A0=20
-> > =C2=A0=C2=A0	/* All GPUs have two entries per queue, but without
-> > jobchain
-> > @@ -845,7 +853,7 @@ int panfrost_job_init(struct panfrost_device
-> > *pfdev)
-> > =C2=A0=C2=A0	 * so let's just advertise one entry in that case.
-> > =C2=A0=C2=A0	 */
-> > =C2=A0=C2=A0	if (!panfrost_has_hw_feature(pfdev,
-> > HW_FEATURE_JOBCHAIN_DISAMBIGUATION))
-> > -		nentries =3D 1;
-> > +		args.credit_limit =3D 1;
-> > =C2=A0=20
-> > =C2=A0=C2=A0	pfdev->js =3D js =3D devm_kzalloc(pfdev->dev, sizeof(*js),
-> > GFP_KERNEL);
-> > =C2=A0=C2=A0	if (!js)
->=20
-> Stumbled on this while looking at drm_sched_init() workqueue usage.
->=20
-> I think this patch might need a fixup. Because somewhere around here
-> in=20
-> the code there is this:
->=20
-> 	pfdev->reset.wq =3D alloc_ordered_workqueue("panfrost-reset",
-> 0);
-> 	if (!pfdev->reset.wq)
-> 		return -ENOMEM;
->=20
-> Which means that after the patch panfrost is using system_wq for the=20
-> timeout handler instead the one it creates.
+On Wed, Jul 09, 2025 at 09:07:00AM +0200, Krzysztof Kozlowski wrote:
+> On 08/07/2025 09:49, Greg KH wrote:
+> > On Tue, Jul 08, 2025 at 03:21:36PM +0800, Luka wrote:
+> >> Dear Linux Kernel Maintainers,
+> >>
+> >> I hope this message finds you well.
+> >>
+> >> I am writing to report a potential vulnerability I encountered during
+> >> testing of the Linux Kernel version v6.14.
+> >>
+> >> Git Commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557 (tag: v6.14)
+> >>
+> >> Bug Location: drivers/tty/vt/keyboard.c
+> >>
+> >> Bug report: https://pastebin.com/yuVJpati
+> >>
+> >> Complete log: https://pastebin.com/qKnipvvK
+> >>
+> >> Entire kernel config: https://pastebin.com/MRWGr3nv
+> >>
+> >> Root Cause Analysis:
+> >> The vt_do_diacrit() function in the virtual terminal subsystem
+> >> performs a write to a user-space pointer via __put_user_4() without
+> >> ensuring that the destination address is mapped and accessible.
+> > 
+> > Where?  I see calls to put_user() happening in that function, and the
+> > return value is properly checked.  What lines exactly show the issue?
+> 
+> Greg,
+> 
+> Please don't waste time on this bot. It is AI generated spam. The person
+> learnt nothing from previous feedback.
+> 
+> I suggest ignoring completely.
 
-Ouch yes, that's definitely a very subtle bug. AFAICS it comes to be by
-pfdev being initialized to 0.
+Thanks for the warning.  Given the lack of response to our questions, I
+kind of figured that was the case :(
 
-Let me provide a fix..
-
-P.
-
->=20
-> > @@ -875,13 +883,7 @@ int panfrost_job_init(struct panfrost_device
-> > *pfdev)
-> > =C2=A0=C2=A0	for (j =3D 0; j < NUM_JOB_SLOTS; j++) {
-> > =C2=A0=C2=A0		js->queue[j].fence_context =3D
-> > dma_fence_context_alloc(1);
-> > =C2=A0=20
-> > -		ret =3D drm_sched_init(&js->queue[j].sched,
-> > -				=C2=A0=C2=A0=C2=A0=C2=A0 &panfrost_sched_ops, NULL,
-> > -				=C2=A0=C2=A0=C2=A0=C2=A0 DRM_SCHED_PRIORITY_COUNT,
-> > -				=C2=A0=C2=A0=C2=A0=C2=A0 nentries, 0,
-> > -				=C2=A0=C2=A0=C2=A0=C2=A0
-> > msecs_to_jiffies(JOB_TIMEOUT_MS),
-> > -				=C2=A0=C2=A0=C2=A0=C2=A0 pfdev->reset.wq,
-> > -				=C2=A0=C2=A0=C2=A0=C2=A0 NULL, "pan_js", pfdev->dev);
-> > +		ret =3D drm_sched_init(&js->queue[j].sched, &args);
->=20
-> ^^^
->=20
-> > =C2=A0=C2=A0		if (ret) {
-> > =C2=A0=C2=A0			dev_err(pfdev->dev, "Failed to create
-> > scheduler: %d.", ret);
-> > =C2=A0=C2=A0			goto err_sched;
->=20
-> Regards,
->=20
-> Tvrtko
->=20
-
+greg k-h
 
