@@ -1,136 +1,252 @@
-Return-Path: <linux-kernel+bounces-723484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 658ECAFE77B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:20:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27C3FAFE780
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C9FF4837F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:18:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 247114A43ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A829B29A9D2;
-	Wed,  9 Jul 2025 11:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3382D6638;
+	Wed,  9 Jul 2025 11:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="EZug0f5S"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WLnY2YD4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD59B2D23AB
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 11:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064F62D6629;
+	Wed,  9 Jul 2025 11:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752059858; cv=none; b=J03mmG25G7gp9wZdzPzc9C4K3ihhskhZut/ZypD+DJ7f0lanvmHErFTupeudT4QKaN21jZcFjZCY3rnBfacD/KaNPP7OTt4L64wGK5WTG6/e6sKKdEvjIdyTpOnanOFS5p7vjfBTqajgfgCw9aqpNDVbKTi3RQEhw3mnatAyUdc=
+	t=1752059868; cv=none; b=A/ViBIn1fx2JGG4aM6/1mUU8eE2fNtEoV+nhM0EBn7Eg3PNo1/i+laGod5hnhsoJXQl6EH9/3WN/pnacuGVgPEv+DKKuiNzIbSRExW6avhHeD/lnnA9OvigtKW47aRhyUxsCKTLxc5b9zodJ0eKZqyjM3F3aMhumyglTlyMryNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752059858; c=relaxed/simple;
-	bh=mAnIvJccH9bZYuNZ2FHma//yo1cWk2Hl4jldUa3rwQQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=eKNgT4986yVT22J7ZPdztP3+SC5HDCM6DLdPAi5MsFT1pV0b2zeHSjnfguYiZYFaRV39F7JiHrlX2zQjLzkZbwEPUuYr7UaHmvtaOK2h8fl/DtabxcBtyB6I7FMHJl77RNJT7rymga0iVSed1YdAkFXkl+SOdAb9wcPwbFuM3tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=EZug0f5S; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1752059868; c=relaxed/simple;
+	bh=qiFpo4aWjkNV01oyl4o4tAaO61XVSJG4q2F1qca3ljU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q0RMpM+d2aqYFAeH/Oq1EURdr4T/V3kg66vkDJpLZrN2lig4fV+6+a4De218wxJXiZ0i9OOVPcyMog53woS5l4rwoKWONDI/hNhkaFHMavCYGbgqEiY4yWAtVSTVN1LM5ehbrxnyf+C3g5ppHmAsGBaPki4jl76m+VLS7ibCfz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WLnY2YD4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D262C4CEF7;
+	Wed,  9 Jul 2025 11:17:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752059867;
+	bh=qiFpo4aWjkNV01oyl4o4tAaO61XVSJG4q2F1qca3ljU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WLnY2YD4tRgwgHE5E7cV6sZ9pBFWaYEtwqlESV7ogZ5vDf7h++jwBrzQgIqgZooPn
+	 8OuLXGbrtkNS6ANiNcmpUR2dMLXCKxSH0B6JsFalqD/wOnRhTd5N0KsOKgiFGdi3iL
+	 Vm6KSsowCOhAPViGsgthmAigZsGT+Qaapryvkp8c3rCK2rE+9bHCtJtoXDABDoeIV1
+	 JRFoeciAVREzM65239liUnVABedwFu1O9HJRQPp3gjQ71k0wxpwoEzTyyVOSR6lsGu
+	 7D10Cza5mkJXhzHumPAcumFdIOqhj/Uzz7rLWirmvk8QLyVCkwxiSdNHMbTjehoCWe
+	 zLnoYoqyG1TDw==
+Date: Wed, 9 Jul 2025 16:47:40 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Abinash Singh <abinashlalotra@gmail.com>
+Cc: vkoul@kernel.org, dmaengine@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Abinash Singh <abinashsinghlalotra@gmail.com>
+Subject: Re: [PATCH RFC] dma: dw-edma: Fix build warning in
+ dw_edma_pcie_probe()
+Message-ID: <qxsh3sqy7wxra4saidnfofx5md2nkachytn7b4tz4e2p7y42ht@ektcwnnaurfo>
+References: <20250705160055.808165-1-abinashsinghlalotra@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1752059852;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2jiUrJWIjrS/zl54Lua+tp5RGUjRBoaPMIxbNmfvQnk=;
-	b=EZug0f5S+/AFz3Oz/SwVdCwV/oLCi9n3Ho1yrquCajDl1sjiNb71yHqETQh7MqlOSf2uoz
-	psA3PKH5qYO+j+uDUSm0vloPFdNuC00n9oAK0Mf69vh9B9sD9XC9w21QHNRnGjRuDXqADX
-	XZH7dniVfMA7lFA5MMj+d90SH8UWusVxqKBQSOBxyxq7txnToUjO9mINyjmOiZHISkHr2u
-	LTDneFcGyq/7sBEViNnZsSPCsIMXNTRSAvwUsvGliPdu3kHee81sCLMbUJHN3df98ak4Uf
-	KTL+Yiyt0S0wB2819QUPuNkL1Mtj3mg45N4jemDAPidBTxICYrtikgmOrm8npQ==
-Content-Type: multipart/signed;
- boundary=a15b73511b44a3a7249de8bd0c977f6d60b982377015c90af4dbb343db1a;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Wed, 09 Jul 2025 13:17:23 +0200
-Message-Id: <DB7HDOPFOQAE.3NG4SP67ES80J@cknow.org>
-Cc: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] arm64: dts: rockchip: Add reset button to NanoPi R5S
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Heiko Stuebner" <heiko@sntech.de>
-References: <20250709105715.119771-1-didi.debian@cknow.org>
- <649824ea-a420-437e-ace1-2f079235c604@kernel.org>
-In-Reply-To: <649824ea-a420-437e-ace1-2f079235c604@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250705160055.808165-1-abinashsinghlalotra@gmail.com>
 
---a15b73511b44a3a7249de8bd0c977f6d60b982377015c90af4dbb343db1a
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Sat, Jul 05, 2025 at 09:30:55PM GMT, Abinash Singh wrote:
+> The function dw_edma_pcie_probe() in dw-edma-pcie.c triggered a
+> frame size warning:
+> ld.lld:warning:
+>   drivers/dma/dw-edma/dw-edma-pcie.c:162:0: stack frame size (1040) exceeds limit (1024) in function 'dw_edma_pcie_probe'
+> 
+> This patch reduces the stack usage by dynamically allocating the
+> `vsec_data` structure using kmalloc(), rather than placing it on
+> the stack. This eliminates the overflow warning and improves kernel
+> robustness.
+> 
+> Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
 
-On Wed Jul 9, 2025 at 1:05 PM CEST, Krzysztof Kozlowski wrote:
-> On 09/07/2025 12:57, Diederik de Haas wrote:
->> +	gpio-keys {
->> +		compatible =3D "gpio-keys";
->> +		pinctrl-0 =3D <&gpio4_a0_k1>;
->> +		pinctrl-names =3D "default";
->> +
->> +		button-reset {
->> +			debounce-interval =3D <50>;
->> +			gpios =3D <&gpio4 RK_PA0 GPIO_ACTIVE_LOW>;
->> +			label =3D "RESET";
->> +			linux,code =3D <KEY_RESTART>;
->> +		};
->> +	};
->> +
->>  	gpio-leds {
->>  		compatible =3D "gpio-leds";
->>  		pinctrl-names =3D "default";
->> @@ -127,6 +140,12 @@ eth_phy0_reset_pin: eth-phy0-reset-pin {
->>  		};
->>  	};
->> =20
->> +	gpio-keys {
->> +		gpio4_a0_k1: gpio4-a0-k1 {
->
-> Are you sure that this passes checks?
+Acked-by: Manivannan Sadhasivam <mani@kernel.org>
 
-I did the following:
+- Mani
 
-```sh
-export PATH=3D~/dev/kernel.org/dt-schema-venv/bin/:$PATH CROSS_COMPILE=3Daa=
-rch64-linux-gnu- ARCH=3Darm64
-make distclean
-make debarm64_defconfig
-make CHECK_DTBS=3Dy W=3D1 rockchip/rk3568-nanopi-r5s.dtb
-```
+> ---
+> The stack usage was further confirmed by using -fstack-usage flag.
+> it was usiing 928 bytes:
+> ..............................
+> drivers/dma/dw-edma/dw-edma-pcie.c:377:cleanup_module   8       static
+> drivers/dma/dw-edma/dw-edma-pcie.c:160:dw_edma_pcie_probe       928     static
+> ......................................
+> After applying the patch it becomes :
+> .........
+> drivers/dma/dw-edma/dw-edma-pcie.c:381:cleanup_module   8       static
+> drivers/dma/dw-edma/dw-edma-pcie.c:160:dw_edma_pcie_probe       120     static
+> .......
+> 
+> This function is used for probing . So dynamic allocation will not create
+> any issues.
+> 
+> Thank You
+> ---
+>  drivers/dma/dw-edma/dw-edma-pcie.c | 60 ++++++++++++++++--------------
+>  1 file changed, 32 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/dma/dw-edma/dw-edma-pcie.c b/drivers/dma/dw-edma/dw-edma-pcie.c
+> index 49f09998e5c0..1536395eacd2 100644
+> --- a/drivers/dma/dw-edma/dw-edma-pcie.c
+> +++ b/drivers/dma/dw-edma/dw-edma-pcie.c
+> @@ -161,12 +161,16 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
+>  			      const struct pci_device_id *pid)
+>  {
+>  	struct dw_edma_pcie_data *pdata = (void *)pid->driver_data;
+> -	struct dw_edma_pcie_data vsec_data;
+> +	struct dw_edma_pcie_data *vsec_data __free(kfree) = NULL;
+>  	struct device *dev = &pdev->dev;
+>  	struct dw_edma_chip *chip;
+>  	int err, nr_irqs;
+>  	int i, mask;
+>  
+> +	vsec_data = kmalloc(sizeof(*vsec_data), GFP_KERNEL);
+> +	if (!vsec_data)
+> +		return -ENOMEM;
+> +
+>  	/* Enable PCI device */
+>  	err = pcim_enable_device(pdev);
+>  	if (err) {
+> @@ -174,23 +178,23 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
+>  		return err;
+>  	}
+>  
+> -	memcpy(&vsec_data, pdata, sizeof(struct dw_edma_pcie_data));
+> +	memcpy(vsec_data, pdata, sizeof(struct dw_edma_pcie_data));
+>  
+>  	/*
+>  	 * Tries to find if exists a PCIe Vendor-Specific Extended Capability
+>  	 * for the DMA, if one exists, then reconfigures it.
+>  	 */
+> -	dw_edma_pcie_get_vsec_dma_data(pdev, &vsec_data);
+> +	dw_edma_pcie_get_vsec_dma_data(pdev, vsec_data);
+>  
+>  	/* Mapping PCI BAR regions */
+> -	mask = BIT(vsec_data.rg.bar);
+> -	for (i = 0; i < vsec_data.wr_ch_cnt; i++) {
+> -		mask |= BIT(vsec_data.ll_wr[i].bar);
+> -		mask |= BIT(vsec_data.dt_wr[i].bar);
+> +	mask = BIT(vsec_data->rg.bar);
+> +	for (i = 0; i < vsec_data->wr_ch_cnt; i++) {
+> +		mask |= BIT(vsec_data->ll_wr[i].bar);
+> +		mask |= BIT(vsec_data->dt_wr[i].bar);
+>  	}
+> -	for (i = 0; i < vsec_data.rd_ch_cnt; i++) {
+> -		mask |= BIT(vsec_data.ll_rd[i].bar);
+> -		mask |= BIT(vsec_data.dt_rd[i].bar);
+> +	for (i = 0; i < vsec_data->rd_ch_cnt; i++) {
+> +		mask |= BIT(vsec_data->ll_rd[i].bar);
+> +		mask |= BIT(vsec_data->dt_rd[i].bar);
+>  	}
+>  	err = pcim_iomap_regions(pdev, mask, pci_name(pdev));
+>  	if (err) {
+> @@ -213,7 +217,7 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
+>  		return -ENOMEM;
+>  
+>  	/* IRQs allocation */
+> -	nr_irqs = pci_alloc_irq_vectors(pdev, 1, vsec_data.irqs,
+> +	nr_irqs = pci_alloc_irq_vectors(pdev, 1, vsec_data->irqs,
+>  					PCI_IRQ_MSI | PCI_IRQ_MSIX);
+>  	if (nr_irqs < 1) {
+>  		pci_err(pdev, "fail to alloc IRQ vector (number of IRQs=%u)\n",
+> @@ -224,22 +228,22 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
+>  	/* Data structure initialization */
+>  	chip->dev = dev;
+>  
+> -	chip->mf = vsec_data.mf;
+> +	chip->mf = vsec_data->mf;
+>  	chip->nr_irqs = nr_irqs;
+>  	chip->ops = &dw_edma_pcie_plat_ops;
+>  
+> -	chip->ll_wr_cnt = vsec_data.wr_ch_cnt;
+> -	chip->ll_rd_cnt = vsec_data.rd_ch_cnt;
+> +	chip->ll_wr_cnt = vsec_data->wr_ch_cnt;
+> +	chip->ll_rd_cnt = vsec_data->rd_ch_cnt;
+>  
+> -	chip->reg_base = pcim_iomap_table(pdev)[vsec_data.rg.bar];
+> +	chip->reg_base = pcim_iomap_table(pdev)[vsec_data->rg.bar];
+>  	if (!chip->reg_base)
+>  		return -ENOMEM;
+>  
+>  	for (i = 0; i < chip->ll_wr_cnt; i++) {
+>  		struct dw_edma_region *ll_region = &chip->ll_region_wr[i];
+>  		struct dw_edma_region *dt_region = &chip->dt_region_wr[i];
+> -		struct dw_edma_block *ll_block = &vsec_data.ll_wr[i];
+> -		struct dw_edma_block *dt_block = &vsec_data.dt_wr[i];
+> +		struct dw_edma_block *ll_block = &vsec_data->ll_wr[i];
+> +		struct dw_edma_block *dt_block = &vsec_data->dt_wr[i];
+>  
+>  		ll_region->vaddr.io = pcim_iomap_table(pdev)[ll_block->bar];
+>  		if (!ll_region->vaddr.io)
+> @@ -263,8 +267,8 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
+>  	for (i = 0; i < chip->ll_rd_cnt; i++) {
+>  		struct dw_edma_region *ll_region = &chip->ll_region_rd[i];
+>  		struct dw_edma_region *dt_region = &chip->dt_region_rd[i];
+> -		struct dw_edma_block *ll_block = &vsec_data.ll_rd[i];
+> -		struct dw_edma_block *dt_block = &vsec_data.dt_rd[i];
+> +		struct dw_edma_block *ll_block = &vsec_data->ll_rd[i];
+> +		struct dw_edma_block *dt_block = &vsec_data->dt_rd[i];
+>  
+>  		ll_region->vaddr.io = pcim_iomap_table(pdev)[ll_block->bar];
+>  		if (!ll_region->vaddr.io)
+> @@ -298,31 +302,31 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
+>  		pci_dbg(pdev, "Version:\tUnknown (0x%x)\n", chip->mf);
+>  
+>  	pci_dbg(pdev, "Registers:\tBAR=%u, off=0x%.8lx, sz=0x%zx bytes, addr(v=%p)\n",
+> -		vsec_data.rg.bar, vsec_data.rg.off, vsec_data.rg.sz,
+> +		vsec_data->rg.bar, vsec_data->rg.off, vsec_data->rg.sz,
+>  		chip->reg_base);
+>  
+>  
+>  	for (i = 0; i < chip->ll_wr_cnt; i++) {
+>  		pci_dbg(pdev, "L. List:\tWRITE CH%.2u, BAR=%u, off=0x%.8lx, sz=0x%zx bytes, addr(v=%p, p=%pa)\n",
+> -			i, vsec_data.ll_wr[i].bar,
+> -			vsec_data.ll_wr[i].off, chip->ll_region_wr[i].sz,
+> +			i, vsec_data->ll_wr[i].bar,
+> +			vsec_data->ll_wr[i].off, chip->ll_region_wr[i].sz,
+>  			chip->ll_region_wr[i].vaddr.io, &chip->ll_region_wr[i].paddr);
+>  
+>  		pci_dbg(pdev, "Data:\tWRITE CH%.2u, BAR=%u, off=0x%.8lx, sz=0x%zx bytes, addr(v=%p, p=%pa)\n",
+> -			i, vsec_data.dt_wr[i].bar,
+> -			vsec_data.dt_wr[i].off, chip->dt_region_wr[i].sz,
+> +			i, vsec_data->dt_wr[i].bar,
+> +			vsec_data->dt_wr[i].off, chip->dt_region_wr[i].sz,
+>  			chip->dt_region_wr[i].vaddr.io, &chip->dt_region_wr[i].paddr);
+>  	}
+>  
+>  	for (i = 0; i < chip->ll_rd_cnt; i++) {
+>  		pci_dbg(pdev, "L. List:\tREAD CH%.2u, BAR=%u, off=0x%.8lx, sz=0x%zx bytes, addr(v=%p, p=%pa)\n",
+> -			i, vsec_data.ll_rd[i].bar,
+> -			vsec_data.ll_rd[i].off, chip->ll_region_rd[i].sz,
+> +			i, vsec_data->ll_rd[i].bar,
+> +			vsec_data->ll_rd[i].off, chip->ll_region_rd[i].sz,
+>  			chip->ll_region_rd[i].vaddr.io, &chip->ll_region_rd[i].paddr);
+>  
+>  		pci_dbg(pdev, "Data:\tREAD CH%.2u, BAR=%u, off=0x%.8lx, sz=0x%zx bytes, addr(v=%p, p=%pa)\n",
+> -			i, vsec_data.dt_rd[i].bar,
+> -			vsec_data.dt_rd[i].off, chip->dt_region_rd[i].sz,
+> +			i, vsec_data->dt_rd[i].bar,
+> +			vsec_data->dt_rd[i].off, chip->dt_region_rd[i].sz,
+>  			chip->dt_region_rd[i].vaddr.io, &chip->dt_region_rd[i].paddr);
+>  	}
+>  
+> -- 
+> 2.43.0
+> 
 
-And it did not report any issues.
-Then booted up my NanoPi R5S and verified that with the updated dtb the
-reset button worked.
-
-If it's about the 'weird' name/label, it is what is used in the
-schematic document I have and I asked Heiko (on IRC) if using
-``reset_button_pin: gpio4-a0-k1`` would not be better. That would make
-it more descriptive while also having the schematic traceability in it.
-The answer was no, use the form I used in this patch.
-
-Am I missing checks I should've done as well?
-
-Cheers,
-  Diederik
-
---a15b73511b44a3a7249de8bd0c977f6d60b982377015c90af4dbb343db1a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaG5PxgAKCRDXblvOeH7b
-bi3IAP0QZ6nrHeJEorK5zsrkL55Nlul5jDIYPBwehpDyDLT8BgD+JuPieM/qOX2V
-t77WC+GEezyPZaeos/wdCAlTkGS+OA8=
-=okS4
------END PGP SIGNATURE-----
-
---a15b73511b44a3a7249de8bd0c977f6d60b982377015c90af4dbb343db1a--
+-- 
+மணிவண்ணன் சதாசிவம்
 
