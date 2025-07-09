@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-723799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 771CFAFEB1B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:00:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34926AFEB20
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 654625C3334
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:57:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6ECC1889341
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A731F2EACEB;
-	Wed,  9 Jul 2025 13:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D272D2ED85D;
+	Wed,  9 Jul 2025 13:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cp6CdJ19"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j612QRsW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7A12E62C7;
-	Wed,  9 Jul 2025 13:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0202E6D08;
+	Wed,  9 Jul 2025 13:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752069142; cv=none; b=Xby6PnP/zIMlESRQQ1Qvtcd/CfyDmBY0aCXES/lNT8YUbNxGBIDj0UCcqhM3t+CjZeTnRU2dc9AjEZRi2DiV41ECfb+2yvwYqLNarRJD895hG361HElycjDr1tHdsI6OOCAfhnAIxYwbr+rBStXLyzlQsmBWEDm3iYNlT3D5EmA=
+	t=1752069142; cv=none; b=ZnpUolnOqjcWhTZA8quoHIBOTYYHd8lkPUch+nv7ruR8e7Pd7dNOHOGAqPWPGmgQvKJZkankYRZmnBlKTRQGeIDTqkqll38NMmbvs4JiBX+jhivSke+5rrRxSbWnr4Z2aDgzWaUV0MdoudPDrYASE6WyYPAOC12Wm/xTVVZh5BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752069142; c=relaxed/simple;
-	bh=FBElmqvyhBKLXVXL/Ckav/ng29pt1hj+3FlkcjHKvNg=;
+	bh=QTYVPi5+QHYNlWAjLlwESsHYWhntymHRulFXntyK2Ao=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sYLLdwGfOMU9iqLldrnLLwYTzdJM3yimCJKzidhW8z74neQY4LaOJmBy/M+aae6x3eSdBy8/xH8rFK3aE+ZrkDbHFhDvpGFqSuU3BBvlFYeEVBYTEk4zHPOC0UY6mC4X82YCL9RcLBJ+qIXwV6NwT12rNBAV4O86BqzfjxAovPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cp6CdJ19; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9094C4AF15;
+	 MIME-Version; b=WeMSlRF+HrGN7WZTSxpMWzuo5jhZnA9yr2AGbI2Xexh+Gz+4iuXguhq722TG1umh7lJiZJEndPqS7wf7Ke8QcVk7kq4594MkqwjuVb+yNDjUe4Zm/o2C3oK9ZsEU+l9cCHF5DoZdrQ1EOgfhjLPjRixlFtA840ciBWR7Rnj4e6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j612QRsW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCBA5C4CEF8;
 	Wed,  9 Jul 2025 13:52:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1752069141;
-	bh=FBElmqvyhBKLXVXL/Ckav/ng29pt1hj+3FlkcjHKvNg=;
+	bh=QTYVPi5+QHYNlWAjLlwESsHYWhntymHRulFXntyK2Ao=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cp6CdJ19RKlmasF6xihFNkVJUQuy66Dk7DJ05C1fEUgTE35cyyybr0FvQDVnzR7H8
-	 yKoFHGWtpWLBzqTGH8LjHmKmEq/6aOlszO07I6KwnkjmEpQKxlq/WmsddsG+zuFD3S
-	 b4+kZeG+TaIlfNHvrQ6d5syb1EEYLdOFTKQIBEnDyoZcPQkSAoXmDqKalCGx2BD3uC
-	 S4E8oCPTyHDUaLDR88TURREqk8PpHQCg6H0K3wv5hEzMMiYk9YfcLMiJjA+yvN+qEW
-	 BFZh9jITUYnAJoBQV+z8ksBNtSIS5sfRdmLVdM0mtKGKURPs5BH/gFpDtimrHg5aOP
-	 lNXf8tSkw7qrw==
+	b=j612QRsWx48p2RmEwVw4V78JHpb7j1E5lUslmENJznu/IINFtAsBrLyu6jcYECrf2
+	 MEumM0KFPc43kxIVTi8DLn8476dzHluDF/j9vTUPBtGWROLYgLF43XQdg9BaCwBjnD
+	 fw7Hd7A8edE6/g+n6wfAva7JqJ6VEcf3YXRxp2eh5gwVdTcNiyeUgmm4BWtE3AL6dY
+	 qFFnOENBJyaV0z3kbSYjvQhKhF2+GAjwo99RvQkX6oD42l64kAhyfkHmdsLxSNadWT
+	 guN0nxTLARrmlC+cxYT8dY1yHRkXnigzPRity+n/lIGq4p/Aoyq1yjbCC5XKT80686
+	 kFfzsUsyTjz6w==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab@kernel.org>)
-	id 1uZVDd-00000000EDJ-2jGo;
+	id 1uZVDd-00000000EDP-2uMQ;
 	Wed, 09 Jul 2025 15:52:17 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
@@ -51,9 +51,9 @@ Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Akira Yokosawa" <akiyks@gmail.com>,
 	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 25/39] scripts: sphinx-pre-install: better handle RHEL-based distros
-Date: Wed,  9 Jul 2025 15:51:57 +0200
-Message-ID: <96c4982d419b60af948e1b4d9b44a51a2681abd3.1752067814.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 27/39] scripts: sphinx-pre-install: move ancillary checkers to a separate class
+Date: Wed,  9 Jul 2025 15:51:59 +0200
+Message-ID: <335809ee3f373a2f4193be259c3f0bf769f4c0b9.1752067814.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1752067814.git.mchehab+huawei@kernel.org>
 References: <cover.1752067814.git.mchehab+huawei@kernel.org>
@@ -66,101 +66,192 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-Better implement support for RHEL-based distros. While here,
-get rid of a Fedora 28 support which cause troubles with
-server distros. Also, get rid of yum, as RHEL8 already
-suppords dnf, and this is not the minimal version we may
-still support.
+The code there are just a bunch of static functions that are used by
+the main class. group them altogether to better organize the code.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- scripts/sphinx-pre-install.py | 31 ++++++++++++-------------------
- 1 file changed, 12 insertions(+), 19 deletions(-)
+ scripts/sphinx-pre-install.py | 160 +++++++++++++++++-----------------
+ 1 file changed, 81 insertions(+), 79 deletions(-)
 
 diff --git a/scripts/sphinx-pre-install.py b/scripts/sphinx-pre-install.py
-index 0963da21c27b..592223fa686f 100755
+index 47dce1fcddfb..b00e50028f4d 100755
 --- a/scripts/sphinx-pre-install.py
 +++ b/scripts/sphinx-pre-install.py
-@@ -536,10 +536,6 @@ class SphinxDependencyChecker:
-             "yaml":             "python3-pyyaml",
-         }
+@@ -150,85 +150,11 @@ class DepManager:
+         if output_msg:
+             print(f"\n{output_msg}\n")
  
--        fedora26_opt_pkgs = [
--            "graphviz-gd",  # Fedora 26: needed for PDF support
--        ]
+-class SphinxDependencyChecker:
+-    # List of required texlive packages on Fedora and OpenSuse
+-    texlive = {
+-        "amsfonts.sty":       "texlive-amsfonts",
+-        "amsmath.sty":        "texlive-amsmath",
+-        "amssymb.sty":        "texlive-amsfonts",
+-        "amsthm.sty":         "texlive-amscls",
+-        "anyfontsize.sty":    "texlive-anyfontsize",
+-        "atbegshi.sty":       "texlive-oberdiek",
+-        "bm.sty":             "texlive-tools",
+-        "capt-of.sty":        "texlive-capt-of",
+-        "cmap.sty":           "texlive-cmap",
+-        "ctexhook.sty":       "texlive-ctex",
+-        "ecrm1000.tfm":       "texlive-ec",
+-        "eqparbox.sty":       "texlive-eqparbox",
+-        "eu1enc.def":         "texlive-euenc",
+-        "fancybox.sty":       "texlive-fancybox",
+-        "fancyvrb.sty":       "texlive-fancyvrb",
+-        "float.sty":          "texlive-float",
+-        "fncychap.sty":       "texlive-fncychap",
+-        "footnote.sty":       "texlive-mdwtools",
+-        "framed.sty":         "texlive-framed",
+-        "luatex85.sty":       "texlive-luatex85",
+-        "multirow.sty":       "texlive-multirow",
+-        "needspace.sty":      "texlive-needspace",
+-        "palatino.sty":       "texlive-psnfss",
+-        "parskip.sty":        "texlive-parskip",
+-        "polyglossia.sty":    "texlive-polyglossia",
+-        "tabulary.sty":       "texlive-tabulary",
+-        "threeparttable.sty": "texlive-threeparttable",
+-        "titlesec.sty":       "texlive-titlesec",
+-        "ucs.sty":            "texlive-ucs",
+-        "upquote.sty":        "texlive-upquote",
+-        "wrapfig.sty":        "texlive-wrapfig",
+-    }
 -
-         fedora_tex_pkgs = [
-             "dejavu-sans-fonts",
-             "dejavu-sans-mono-fonts",
-@@ -549,9 +545,8 @@ class SphinxDependencyChecker:
-             "texlive-xecjk",
-         ]
- 
--        old = 0
-+        fedora = False
-         rel = None
--        pkg_manager = "dnf"
- 
-         match = re.search(r"(release|Linux)\s+(\d+)", self.system_release)
-         if match:
-@@ -559,12 +554,12 @@ class SphinxDependencyChecker:
- 
-         if not rel:
-             print("Couldn't identify release number")
--            old = 1
-             self.pdf = False
-         elif re.search("Fedora", self.system_release):
-             # Fedora 38 and upper use this CJK font
- 
-             noto_sans_redhat = "google-noto-sans-cjk-fonts"
-+            fedora = True
-         else:
-             # Almalinux, CentOS, RHEL, ...
- 
-@@ -574,9 +569,6 @@ class SphinxDependencyChecker:
-             progs["virtualenv"] = "python-virtualenv"
- 
-             if not rel or rel < 8:
--                old = 1
--                self.pdf = False
+-    def __init__(self, args):
+-        self.pdf = args.pdf
+-        self.virtualenv = args.virtualenv
+-        self.version_check = args.version_check
 -
-                 print("ERROR: Distro not supported. Too old?")
-                 return
+-        self.deps = DepManager(self.pdf)
+-
+-        self.need_symlink = 0
+-        self.need_sphinx = 0
+-        self.need_pip = 0
+-        self.rec_sphinx_upgrade = 0
+-        self.verbose_warn_install = 1
+-
+-        self.system_release = ""
+-        self.install = ""
+-        self.virtenv_dir = ""
+-        self.python_cmd = ""
+-        self.activate_cmd = ""
+-
+-        # Some distros may not have a Sphinx shipped package compatible with
+-        # our minimal requirements
+-        self.package_supported = True
+-
+-        # Recommend a new python version
+-        self.recommend_python = None
+-
+-        # Certain hints are meant to be shown only once
+-        self.first_hint = True
+-
+-        self.min_version = (0, 0, 0)
+-        self.cur_version = (0, 0, 0)
+-        self.latest_avail_ver = (0, 0, 0)
+-        self.venv_ver = (0, 0, 0)
+-
+-        prefix = os.environ.get("srctree", ".") + "/"
+-
+-        self.conf = prefix + "Documentation/conf.py"
+-        self.requirement_file = prefix + "Documentation/sphinx/requirements.txt"
+-        self.virtenv_prefix = ["sphinx_", "Sphinx_" ]
+-
+-    #
+-    # Ancillary methods that don't depend on self
+-    #
++class AncillaryCheckers:
++    """
++    Ancillary methods that checks for missing dependencies for different
++    types of types, like binaries, python modules, rpm deps, etc.
++    """
  
-@@ -607,11 +599,16 @@ class SphinxDependencyChecker:
+     @staticmethod
+     def which(prog):
+@@ -335,6 +261,82 @@ class SphinxDependencyChecker:
  
-             self.check_missing_file(pdf_pkgs, noto_sans_redhat, DepType.PDF_MANDATORY)
+         return subprocess.run(*args, **kwargs)
  
--            if not old:
--                self.check_rpm_missing(fedora26_opt_pkgs, DepType.PDF_MANDATORY)
--                self.check_rpm_missing(fedora_tex_pkgs, DepType.PDF_MANDATORY)
-+            self.check_rpm_missing(fedora_tex_pkgs, DepType.PDF_MANDATORY)
++class SphinxDependencyChecker(AncillaryCheckers):
++    # List of required texlive packages on Fedora and OpenSuse
++    texlive = {
++        "amsfonts.sty":       "texlive-amsfonts",
++        "amsmath.sty":        "texlive-amsmath",
++        "amssymb.sty":        "texlive-amsfonts",
++        "amsthm.sty":         "texlive-amscls",
++        "anyfontsize.sty":    "texlive-anyfontsize",
++        "atbegshi.sty":       "texlive-oberdiek",
++        "bm.sty":             "texlive-tools",
++        "capt-of.sty":        "texlive-capt-of",
++        "cmap.sty":           "texlive-cmap",
++        "ctexhook.sty":       "texlive-ctex",
++        "ecrm1000.tfm":       "texlive-ec",
++        "eqparbox.sty":       "texlive-eqparbox",
++        "eu1enc.def":         "texlive-euenc",
++        "fancybox.sty":       "texlive-fancybox",
++        "fancyvrb.sty":       "texlive-fancyvrb",
++        "float.sty":          "texlive-float",
++        "fncychap.sty":       "texlive-fncychap",
++        "footnote.sty":       "texlive-mdwtools",
++        "framed.sty":         "texlive-framed",
++        "luatex85.sty":       "texlive-luatex85",
++        "multirow.sty":       "texlive-multirow",
++        "needspace.sty":      "texlive-needspace",
++        "palatino.sty":       "texlive-psnfss",
++        "parskip.sty":        "texlive-parskip",
++        "polyglossia.sty":    "texlive-polyglossia",
++        "tabulary.sty":       "texlive-tabulary",
++        "threeparttable.sty": "texlive-threeparttable",
++        "titlesec.sty":       "texlive-titlesec",
++        "ucs.sty":            "texlive-ucs",
++        "upquote.sty":        "texlive-upquote",
++        "wrapfig.sty":        "texlive-wrapfig",
++    }
 +
-+            self.check_missing_tex(DepType.PDF_MANDATORY)
++    def __init__(self, args):
++        self.pdf = args.pdf
++        self.virtualenv = args.virtualenv
++        self.version_check = args.version_check
 +
-+            # There's no texlive-ctex on RHEL 8 repositories. This will
-+            # likely affect CJK pdf build only.
-+            if not fedora and rel == 8:
-+                if "texlive-ctex" in self.missing:
-+                    del self.missing["texlive-ctex"]
- 
--            self.check_missing_tex()
- 
-         self.check_missing(progs)
- 
-@@ -621,11 +618,7 @@ class SphinxDependencyChecker:
-         if self.verbose_warn_install:
-             print("You should run:")
- 
--        if old:
--            # dnf is there since Fedora 18+ and RHEL 8
--            pkg_manager = "yum"
--
--        print(f"\n\tsudo {pkg_manager} install -y {self.install}")
-+        print(f"\n\tsudo dnf install -y {self.install}")
- 
-     def give_opensuse_hints(self):
-         progs = {
++        self.deps = DepManager(self.pdf)
++
++        self.need_symlink = 0
++        self.need_sphinx = 0
++        self.need_pip = 0
++        self.rec_sphinx_upgrade = 0
++        self.verbose_warn_install = 1
++
++        self.system_release = ""
++        self.install = ""
++        self.virtenv_dir = ""
++        self.python_cmd = ""
++        self.activate_cmd = ""
++
++        # Some distros may not have a Sphinx shipped package compatible with
++        # our minimal requirements
++        self.package_supported = True
++
++        # Recommend a new python version
++        self.recommend_python = None
++
++        # Certain hints are meant to be shown only once
++        self.first_hint = True
++
++        self.min_version = (0, 0, 0)
++        self.cur_version = (0, 0, 0)
++        self.latest_avail_ver = (0, 0, 0)
++        self.venv_ver = (0, 0, 0)
++
++        prefix = os.environ.get("srctree", ".") + "/"
++
++        self.conf = prefix + "Documentation/conf.py"
++        self.requirement_file = prefix + "Documentation/sphinx/requirements.txt"
++        self.virtenv_prefix = ["sphinx_", "Sphinx_" ]
++
+     #
+     # Methods to check if a feature exists
+     #
 -- 
 2.49.0
 
