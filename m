@@ -1,320 +1,548 @@
-Return-Path: <linux-kernel+bounces-724318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD8D0AFF13F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:59:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFADBAFF15F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACD681C8382C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:59:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58BB4540E6D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3E823C38C;
-	Wed,  9 Jul 2025 18:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="YKTpj/Jj"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442D323E334;
+	Wed,  9 Jul 2025 19:03:19 +0000 (UTC)
+Received: from sxb1plsmtpa01-02.prod.sxb1.secureserver.net (sxb1plsmtpa01-02.prod.sxb1.secureserver.net [188.121.53.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782DB1CD1E4
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 18:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD80C23F27B
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 19:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752087569; cv=none; b=LN1zW132UGZYnqG6m1V/11z48NYikz7msqVGMoo+cvURHJFwmqzip2cqXhLrACAb+TQ4ZdA4omV3CUbtVdkxlM1J8RQaxJ9nCunmFH44znd762BnMboLFbwcqigPZnewWFuTdNj9KNwSixhvEfA74B7GZNcvksMx1NnZZ8Fzld0=
+	t=1752087798; cv=none; b=tv+26l4dLc+D4E1MqHQ3M9HHL925MOA518ZOODJKmpzRNuMPUCXE/FUfjI5kx7DCmdnma78vSwWWZH5VGAgnog7WWHK1iPQu7AROR5kdKdj+Elp2Cgne71Yl8OKplGNjs6+smukBSvaH9AQJjTf8JmRTRfRLeM8QU4x5BtQNgpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752087569; c=relaxed/simple;
-	bh=XGAkAjqXaeQxQyulCGR3tIaiucKhABUC5GXTck/wb3k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Rg4+21Uzu6kAjXaiea7afbZYobPJzE7n8ffIHc25njaXrp+FLb1sNLdtXWQKlOmnfmxZu0fPOWfuf9UU/5y1L5ZB2LPBZmEpAk8i7Mo211ns7T7ClF0aQPad8AO5oaCh7s3xp+Q+t+0NbsWzC7BYb0N9agOG3e9WC8Ze9km5CTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=YKTpj/Jj; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-70478ba562aso15165206d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 11:59:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1752087566; x=1752692366; darn=vger.kernel.org;
-        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
-         :from:subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=hah8xMwtrntwfJmxq5xanQiqWRLwCEWuJJkLlImKYlo=;
-        b=YKTpj/JjN7fgTbN08ADDsNCATVFlC0Txf1VmkVXSod9Dpc9Y0PSDpRF4qwVqEWPD6D
-         q2MEkWe9PAUcFCSZoUZjJ+//5BX2cjyy0Ff3mvD1ypj3Q9fKFLkoLfQagbgvnSRmCmjo
-         Dpn9Nsh8vDFP+y2Ojs30L1I486Qw3SsPsTGoVOcn86SFsoSvT+lY3OPtGBWoR/I4daMW
-         byrcU3lzjPOLUMbGXkzl9judU5VLEy3YvhjhHLNgZ7Q5QTTZIb7BvTvwPN4CFx6yY7Mu
-         g3c0G7e1cPVsAqZS8gz1vQKsYhbkId4+7CxuOVidRngHhvnfuTBKdNc/uSmOpGg+M2gI
-         nRsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752087566; x=1752692366;
-        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
-         :from:subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hah8xMwtrntwfJmxq5xanQiqWRLwCEWuJJkLlImKYlo=;
-        b=TD6mWCK4gvkiU/cV1hK2QBYfxnJ00/TYER/vGlfvkTfsUtWzgplWuPY0DhxkRt7qsQ
-         EwTR5LkGwSNYm/KvF2NPqlwgain626MhAAXJlzBydjNZMpJ7cg8Pk1Gv83BjcqN6QPIO
-         6Jv4gJak4S4y05xsIEAveiNTvYTyl1C5mWswg0pT4UUVXxrNFcSE9xYKBNqxi0g6e6OY
-         n0WJCLSL4yb6tQ/3z/4oEERxdL94T45+FapDo/wLxRm8lClLOTQFnuSMPoU7Xg+BN7B4
-         wYt/Aw3379+8vQDB5NhQMjU29yd1PessvlZbilLX+9Q4kdmI9gWfbEP7BwAlBwOouXWE
-         niiA==
-X-Gm-Message-State: AOJu0YxteqnqLEMYuZdBsrv3KPLNZIn+zpzKtPE04sLRcqRe4NZ5Zzmx
-	hEd2ehxbKIeTP5xXZEABNDU/Wg0y4VGpfPLkEo/0EJKNZzGGHrEPDNXwYjToVcVhLPI=
-X-Gm-Gg: ASbGncsrOy90O7XW9+tgXGX8WEXwhbeGDB5jzmxyokjYZ/nDCQbOdNxsWRrJNQ6q4RI
-	ymLshpniG0lUKTw5I0gjCG2381lzA40XO+QAiuPZJEUEXArq6Ju+w5cqY6FeScFiLilc8haY6M0
-	tXnUIiRI3YrAkHg/eIB+SX6Ulpdi++JTgeDXcpV8qavXUwhy9ZsR0R1TWErbe4aAd3q0fpclCd4
-	/WWMnKprUik2aaE2NWaxoSi9ZLBMx5ekXFDmh590mkRdL5X3FRD/O77CyBQbY954wXz37EEZveF
-	YKew9/HSBPKlcQ7i9+cOnc6EeuTRrTy+xmuQGJwdRMU587EP6vYN0O3cRMaPqr+mmeB+Xj1ETVA
-	MTg==
-X-Google-Smtp-Source: AGHT+IEsmXyVdEbnWdXGnl0jejitKG8pR37Z+42TY6cq1R1SWQIVZRAxicjh2OAHwFA4l3xkXwgkCA==
-X-Received: by 2002:a05:6214:5f82:b0:704:886b:72dc with SMTP id 6a1803df08f44-704959cbf6emr8146366d6.2.1752087566238;
-        Wed, 09 Jul 2025 11:59:26 -0700 (PDT)
-Received: from ?IPv6:2606:6d00:17:b699::5ac? ([2606:6d00:17:b699::5ac])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-702c4cc7407sm96838676d6.8.2025.07.09.11.59.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 11:59:25 -0700 (PDT)
-Message-ID: <b45e0cabadac5d2d9dbdc467b1c29f8eaae72c9c.camel@ndufresne.ca>
-Subject: Re: [PATCH 1/8] media: uapi: Introduce V4L2 extensible params
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Dafna Hirschfeld	
- <dafna@fastmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-  Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Heiko Stuebner	 <heiko@sntech.de>, Dan Scally
- <dan.scally@ideasonboard.com>, Sakari Ailus	 <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Date: Wed, 09 Jul 2025 14:59:23 -0400
-In-Reply-To: <20250708-extensible-parameters-validation-v1-1-9fc27c9c728c@ideasonboard.com>
-References: 
-	<20250708-extensible-parameters-validation-v1-0-9fc27c9c728c@ideasonboard.com>
-	 <20250708-extensible-parameters-validation-v1-1-9fc27c9c728c@ideasonboard.com>
-Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0MU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAY29sbGFib3JhLmNvbT6ImQQTFg
- oAQQIbAwULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBO8NUoEVxMPCGgRvEtlBlFEpYHL0BQJ
- oLLLGBQkJZfd1AAoJENlBlFEpYHL0BEkA/3qkWYt99myYFSmTJUF8UB/7OroEm3vr1HRqXeQe9Qp2
- AP0bsoAe6KjEPa/pJfuJ2khrOPPHxvyt/PBNbI5BYcIABLQnTmljb2xhcyBEdWZyZXNuZSA8bmljb
- 2xhc0BuZHVmcmVzbmUuY2E+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQ
- TvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyy+AUJCWX3dQAKCRDZQZRRKWBy9FJ5AQCNy8SX8DpHbLa
- cy58vgDwyIpB89mok9eWGGejY9mqpRwEAhHzs+/n5xlVlM3bqy1yHnAzJqVwqBE1D0jG0a9V6VQI=
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-qC+6NnOKYiwDd0VA7yXp"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1752087798; c=relaxed/simple;
+	bh=3USmBxPoCJTdFOw52Tt9U7MlGgWZ4VonWC93OLVUsic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BVKg2UFNG6DPvwWlKi7O9SF2aHg5iBnqm+Ha3aOrMNOceQ2gV+AJbBEE8wD/p/HfRDm9fSDhn2V8l/7BoSruLxFSxYKV8fXbr7cDdWQ0yuryE7+cS4kphWCgHnJeWdl3zipSPoBg8Y+WGAfAkvV9jOxi8GoOpd8+xUOKqRbNExo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
+Received: from [192.168.178.95] ([82.69.79.175])
+	by :SMTPAUTH: with ESMTPSA
+	id Za26uSAwneMftZa29uadpG; Wed, 09 Jul 2025 12:00:46 -0700
+X-CMAE-Analysis: v=2.4 cv=VLTdn8PX c=1 sm=1 tr=0 ts=686ebc5e
+ a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
+ a=IkcTkHD0fZMA:10 a=F_93P0QhAAAA:8 a=_U7QmDlAlvGObv8z0AkA:9 a=QEXdDO2ut3YA:10
+ a=v2fne3mUlQEKA94IZ0Od:22
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk
+Message-ID: <30e057ae-572a-4c95-a87d-b2f4e8037cb6@squashfs.org.uk>
+Date: Wed, 9 Jul 2025 20:00:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Squashfs: add page cache share support
+To: Bo Liu <liubo03@inspur.com>
+Cc: linux-kernel@vger.kernel.org, phillip.lougher@gmail.com
+References: <20250626003644.3675-1-liubo03@inspur.com>
+Content-Language: en-US
+From: Phillip Lougher <phillip@squashfs.org.uk>
+In-Reply-To: <20250626003644.3675-1-liubo03@inspur.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfIIsQgn9XolzDOV8UYMW3nlptk10WN0mKoSRfYus6jmKtC0LddTQazZA8Ocf5HOMBGFCx739walAimXnaWg8NVrFNfi7H68RsZ3De8B1g4LZpyR0XpE4
+ bgkVmhKp/ekmHBsMPLAIRxD001znPLKumoQF0pqxbvcC1X4z0sqrLCsYNGEcj2Q1Vy4ervVzvcgk3oy9OVhPlEV7/pbT9gxhuvcSWS+GazQ/wzbECu0fMwuy
+ BVUOyX0kK7ZYOqZXtpFAnHsZzGUgKL5srG/q1dCm0T0=
 
+On 26/06/2025 01:36, Bo Liu wrote:
+> Last year, Hongzhen Luo submitted the page cache sharing feature
+> for the EROFS file system, highlighting that in container scenarios,
+> different images mounted at separate mount points cause identical files
+> to maintain duplicate page caches. This issue also exists in the SquashFS
+> file system, so we added support for page cache sharing on SquashFS.
+> 
 
---=-qC+6NnOKYiwDd0VA7yXp
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+I have been expecting a V2 patch-set fixing the "kernel test robot"
+emails.  But, as this hasn't arrived, I have decided to review this
+V1 patch-set.
 
-Le mardi 08 juillet 2025 =C3=A0 12:40 +0200, Jacopo Mondi a =C3=A9crit=C2=
-=A0:
-> Introduce v4l2-extensible-params.h in the Linux kernel uAPI.
->=20
-> The header defines two types that all drivers that use the extensible
-> parameters format for ISP configuration shall use to build their own
-> parameters format.
->=20
-> The newly introduce type v4l2_params_block represent the
-> header to be prepend to each ISP configuration block and the
-> v4l2_params_buffer type represent the base type for the configuration
-> parameters buffer.
->=20
-> The newly introduced header is not meant to be used directly by
-> applications which should instead use the platform-specific ones.
->=20
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+There are a number of things which need to be fixed in a V2 patch-set,
+namely:
+
+1. Some checkpatch.pl warnings.  Please remember to run
+    cripts/checkpatch.pl before sending the V2 patch-set.
+
+2. Compiler warnings/errors which cause build failure
+
+3. A potential NULL pointer dereference
+
+4. Typing and indentation mistakes etc.
+
+These issues are mentioned inline below.
+
+> To enable page cache sharing, the extended attribute of each file must
+> be configured. This involves calculating the file's MD5 value and setting
+> it via the setfattr command.
+>      # md5sum $file
+>      # setfattr -n "trusted.md5sum" -v "$hash" $file
+> 
+> A 300MB file was packaged into two separate images, which were mounted at different mount points.
+> fio was used to read the file contents, comparing the system page cache size with and without the
+> page cache sharing feature enabled.
+
+checkpatch.pl complains that the above lines exceed 75 characters per
+line.
+
+WARNING: Prefer a maximum 75 chars per line (possible unwrapped commit description?)
+
+> 
+> |---------------|-------------------------|--------------------------|
+> |               | enable page cache share | disable page cache share |
+> |---------------|-------------------------|--------------------------|
+> |page cache size|          501MiB         |         1052MiB          |
+> |---------------|-------------------------|--------------------------|
+> 
+> Signed-off-by: Bo Liu <liubo03@inspur.com>
 > ---
-> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 6 ++
-> =C2=A0include/uapi/linux/media/v4l2-extensible-params.h | 106 +++++++++++=
-+++++++++++
-> =C2=A02 files changed, 112 insertions(+)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 658543062bba3b7e600699d7271ffc89250ba7e5..49a9329e5fe8874bdbaca1394=
-6ea28bd80134cb3 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -25968,6 +25968,12 @@ F:	drivers/media/i2c/vd55g1.c
-> =C2=A0F:	drivers/media/i2c/vd56g3.c
-> =C2=A0F:	drivers/media/i2c/vgxy61.c
-> =C2=A0
-> +V4L2 EXTENSIBLE PARAMETERS FORMAT
-> +M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> +L:	linux-media@vger.kernel.org
-> +S:	Maintained
-> +F:	include/uapi/linux/media/v4l2-extensible-params.h
+>   fs/squashfs/Kconfig           |  10 +++
+>   fs/squashfs/Makefile          |   1 +
+>   fs/squashfs/inode.c           |  10 ++-
+>   fs/squashfs/pagecache_share.c | 159 ++++++++++++++++++++++++++++++++++
+>   fs/squashfs/pagecache_share.h |  22 +++++
+>   fs/squashfs/squashfs.h        |   2 +
+>   fs/squashfs/squashfs_fs_i.h   |   5 ++
+>   fs/squashfs/super.c           |  45 +++++++++-
+>   8 files changed, 252 insertions(+), 2 deletions(-)
+>   create mode 100644 fs/squashfs/pagecache_share.c
+>   create mode 100644 fs/squashfs/pagecache_share.h
+> 
+> diff --git a/fs/squashfs/Kconfig b/fs/squashfs/Kconfig
+> index a9602aae21ef..eb9eed538d0f 100644
+> --- a/fs/squashfs/Kconfig
+> +++ b/fs/squashfs/Kconfig
+> @@ -285,3 +285,13 @@ config SQUASHFS_FRAGMENT_CACHE_SIZE
+>   
+>   	  Note there must be at least one cached fragment.  Anything
+>   	  much more than three will probably not make much difference.
 > +
-> =C2=A0VF610 NAND DRIVER
-> =C2=A0M:	Stefan Agner <stefan@agner.ch>
-> =C2=A0L:	linux-mtd@lists.infradead.org
-> diff --git a/include/uapi/linux/media/v4l2-extensible-params.h b/include/=
-uapi/linux/media/v4l2-extensible-params.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..ed37da433c6b1a34523b6a9be=
-fde5c0dee601cfb
-> --- /dev/null
-> +++ b/include/uapi/linux/media/v4l2-extensible-params.h
-> @@ -0,0 +1,106 @@
-> +/* SPDX-License-Identifier: ((GPL-2.0+ WITH Linux-syscall-note) OR MIT) =
-*/
-> +/*
-> + * Video4Linux2 extensible configuration parameters base types
-> + *
-> + * Copyright (C) 2025 Ideas On Board Oy
-> + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> + */
+> +config SQUASHFS_PAGE_CACHE_SHARE
+> +	bool "SQUASHFS page cache share support"
+> +	depends on SQUASHFS
+> +	default n
+> +	help
+> +	 Saying Y here includes support for permiting SQUASHFS to share
+> +	 page cache for files with same fingerprints.
 > +
-> +#ifndef _UAPI_V4L2_PARAMS_H_
-> +#define _UAPI_V4L2_PARAMS_H_
+
+Two issues:
+
+1. Page cache sharing relies on Squashfs XATTR support being built.
+    If it isn't not only won't any sharing happen, but,
+    squashfs_pcs_fill_inode() will fault dereferencing a NULL pointer.
+
+    Thus this option should explictly select SQUASHFS_XATTR. Or this
+    option should be made to depend on SQUASHFS_XATTR.
+
+
+2. checkpatch.pl complains that the above configuration description is
+    insufficent.
+
+    WARNING: please write a help paragraph that fully describes the config symbol with at least 4 lines
+
+    You could add your description of how to enable page cache sharing,
+    e.g.
+
+    "To enable page cache sharing, the extended attribute of each file
+    must be configured. This involves calculating the file's MD5 value
+    and setting it via the setfattr command.
+       # md5sum $file
+       # setfattr -n "trusted.md5sum" -v "$hash" $file"
+
+
+> +	 If unsure, say N.
+> diff --git a/fs/squashfs/Makefile b/fs/squashfs/Makefile
+> index 477c89a519ee..568e851871ca 100644
+> --- a/fs/squashfs/Makefile
+> +++ b/fs/squashfs/Makefile
+> @@ -17,3 +17,4 @@ squashfs-$(CONFIG_SQUASHFS_LZO) += lzo_wrapper.o
+>   squashfs-$(CONFIG_SQUASHFS_XZ) += xz_wrapper.o
+>   squashfs-$(CONFIG_SQUASHFS_ZLIB) += zlib_wrapper.o
+>   squashfs-$(CONFIG_SQUASHFS_ZSTD) += zstd_wrapper.o
+> +squashfs-$(CONFIG_SQUASHFS_PAGE_CACHE_SHARE) += pagecache_share.o
+> diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
+> index d5918eba27e3..e8ea4dcf3bb8 100644
+> --- a/fs/squashfs/inode.c
+> +++ b/fs/squashfs/inode.c
+> @@ -35,6 +35,7 @@
+>   #include "squashfs_fs_i.h"
+>   #include "squashfs.h"
+>   #include "xattr.h"
+> +#include "pagecache_share.h"
+>   
+>   /*
+>    * Initialise VFS inode with the base inode information common to all
+> @@ -90,8 +91,15 @@ struct inode *squashfs_iget(struct super_block *sb, long long ino,
+>   		iget_failed(inode);
+>   		return ERR_PTR(err);
+>   	}
+> -
+>   	unlock_new_inode(inode);
 > +
-> +#ifndef _UAPI_V4L2_EXTENSIBLE_PARAMS_GUARD_
-> +/*
-> + * Note: each ISP driver exposes a different uAPI, where the types layou=
-t
-> + * match (more or less strictly) the hardware registers layout.
-> + *
-> + * This file defines the base types on which each ISP driver can impleme=
-nt its
-> + * own types that define its uAPI.
-> + *
-> + * This file is not meant to be included directly by applications which =
-shall
-> + * instead only include the ISP-specific implementation.
-> + */
-> +#error "This file should not be included directly by applications"
+> +#ifdef CONFIG_SQUASHFS_PAGE_CACHE_SHARE
+> +		if ((inode->i_mode & S_IFMT) == S_IFREG) {
+> +			if (squashfs_pcs_fill_inode(inode) > 0)
+> +				inode->i_fop = &squashfs_pcs_file_fops;
+> +		}
 > +#endif
+
+
+The above code block is indented wrongly, with an extra tab.
+
+
 > +
-> +#include <linux/types.h>
-> +
-> +/**
-> + * struct v4l2_params_block - V4L2 extensible parameters block header
-> + *
-> + * This structure represents the common part of all the ISP configuratio=
-n
-> + * blocks. Each parameters block shall embed an instance of this structu=
-re type
-> + * as its first member, followed by the block-specific configuration dat=
-a. The
-> + * driver inspects this common header to discern the block type and its =
-size and
-> + * properly handle the block content by casting it to the correct block-=
-specific
-> + * type.
-> + *
-> + * The @type field is one of the values enumerated by each platform-spec=
-ific ISP
-> + * block types which specifies how the data should be interpreted by the=
- driver.
-> + * The @size field specifies the size of the parameters block and is use=
-d by the
-> + * driver for validation purposes.
-> + *
-> + * The @flags field is a bitmask of platform-specific control flags.
-> + *
-> + * Userspace shall never use this type directly but use the platform spe=
-cific
-> + * one with the associated data types.
-> + *
-> + * - Rockchip RkISP1: :c:type:`rkisp1_ext_params_block_type`
-> + * - Amlogic C3: :c:type:`c3_isp_params_block_type`
-> + *
-> + * @type: The parameters block type (platform-specific)
-> + * @flags: A bitmask of block flags (platform-specific)
-> + * @size: Size (in bytes) of the parameters block, including this header
+>   	return inode;
+>   }
+>   
+> diff --git a/fs/squashfs/pagecache_share.c b/fs/squashfs/pagecache_share.c
+> new file mode 100644
+> index 000000000000..9b3dcc05948e
+> --- /dev/null
+> +++ b/fs/squashfs/pagecache_share.c
+> @@ -0,0 +1,159 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright (C) 2024, Inspur
 > + */
-> +struct v4l2_params_block {
-> +	__u16 type;
-> +	__u16 flags;
-> +	__u32 size;
-> +} __attribute__((aligned(8)));
+> +#include <linux/xarray.h>
+> +#include <linux/mutex.h>
+> +#include <linux/xxhash.h>
+> +#include <linux/slab.h>
+> +#include <linux/file.h>
+> +#include <linux/fs.h>
+> +#include <linux/mm.h>
+> +#include <linux/xattr.h>
+> +#include <linux/uio.h>
+> +#include <uapi/linux/fcntl.h>
+> +#include "squashfs_fs_i.h"
+> +#include "xattr.h"
+> +#include "pagecache_share.h"
+> +#include "squashfs.h"
 > +
-> +/**
-> + * struct v4l2_params_buffer - V4L2 extensible parameters configuration
-> + *
-> + * This struct contains the configuration parameters of the ISP algorith=
-ms,
-> + * serialized by userspace into a data buffer. Each configuration parame=
-ter
-> + * block is represented by a block-specific structure which contains a
-> + * :c:type:`v4l2_params_block` entry as first member. Userspace populate=
-s
-> + * the @data buffer with configuration parameters for the blocks that it=
- intends
-> + * to configure. As a consequence, the data buffer effective size change=
-s
-> + * according to the number of ISP blocks that userspace intends to confi=
-gure and
-> + * is set by userspace in the @data_size field.
-> + *
-> + * The parameters buffer is versioned by the @version field to allow mod=
-ifying
-> + * and extending its definition. Userspace shall populate the @version f=
-ield to
-> + * inform the driver about the version it intends to use. The driver wil=
-l parse
-> + * and handle the @data buffer according to the data layout specific to =
-the
-> + * indicated version and return an error if the desired version is not
-> + * supported.
-> + *
-> + * For each ISP block that userspace wants to configure, a block-specifi=
-c
-> + * structure is appended to the @data buffer, one after the other withou=
-t gaps
-> + * in between nor overlaps. Userspace shall populate the @data_size fiel=
-d with
-> + * the effective size, in bytes, of the @data buffer.
-> + *
-> + * Each ISP driver using the extensible parameters format shall define a
-> + * type which is type-convertible to this one, with the difference that =
-the
-> + * @data member shall actually a memory buffer of platform-specific size=
- and
 
-There is some word(s) missing here, "shall actually <> a memory buffer".
+This file generates a lot of compiler warnings and then the compiler
+aborts with a build failure.
 
-Nicolas
+This is caused by missing #includes.
 
->=20
-> + * not a pointer.
-> + *
-> + * Userspace shall never use this type directly but use the platform spe=
-cific
-> + * one with the associated data types.
-> + *
-> + * - Rockchip RkISP1: :c:type:`rkisp1_ext_params_cfg`
-> + * - Amlogic C3: :c:type:`c3_isp_params_cfg`
-> + *
-> + * @version: The parameters buffer version (platform-specific)
-> + * @data_size: The configuration data effective size, excluding this hea=
-der
-> + * @data: The configuration data
-> + */
-> +struct v4l2_params_buffer {
-> +	__u32 version;
-> +	__u32 data_size;
-> +	__u8 data[];
+You should replace
+
+#include "squashfs_fs_i.h"
+
+With
+
+#include "squashfs_fs.h"
+#include "squashfs_fs_sb.h"
+#include "squashfs_fs_i.h"
+#include "squashfs.h"
+
+
+> +#define PCS_FPRT_NAME  "md5sum"
+> +#define PCS_FPRT_MAXLEN 64
+> +
+> +static struct vfsmount *squashfs_pcs_mnt;
+> +
+> +int squashfs_pcs_init_mnt(void)
+> +{
+> +	struct vfsmount *mnt;
+> +
+> +	mnt = kern_mount(&squashfs_anon_fs_type);
+> +	if (IS_ERR(mnt))
+> +		return PTR_ERR(mnt);
+> +	squashfs_pcs_mnt = mnt;
+> +	return 0;
+> +}
+> +
+> +void squashfs_pcs_mnt_exit(void)
+> +{
+> +	kern_unmount(squashfs_pcs_mnt);
+> +	squashfs_pcs_mnt = NULL;
+> +}
+> +
+> +static int squashfs_pcs_eq(struct inode *inode, void *data)
+> +{
+> +	return *(unsigned long *)(inode->i_private) == *(unsigned long *)data ? 1 : 0;
+> +}
+> +
+> +static int squashfs_pcs_inode_set(struct inode *inode, void *data)
+> +{
+> +	inode->i_private = kmalloc(sizeof(unsigned long), GFP_KERNEL);
+> +	*(unsigned long *)(inode->i_private) = *(unsigned long *)data;
+> +	return 0;
+> +}
+> +
+> +int squashfs_pcs_fill_inode(struct inode *inode)
+> +{
+> +	struct squashfs_inode_info *sqi = squashfs_i(inode);
+> +	struct super_block *sb = inode->i_sb;
+> +	struct inode *ano_inode;
+> +	char fprt[PCS_FPRT_MAXLEN];
+> +	int fprt_len;
+> +	const struct xattr_handler *handler = sb->s_xattr[1];
+> +
+
+If SQUASHFS_XATTR is not configured then sb->s_xattr will be NULL.
+
+> +	fprt_len = handler->get(handler, NULL, inode, PCS_FPRT_NAME,
+> +				     fprt, PCS_FPRT_MAXLEN);
+> +	if (fprt_len < 0 || fprt_len > PCS_FPRT_MAXLEN)
+> +		return -EINVAL;
+> +
+> +	sqi->fprt_hash = xxh32(fprt, fprt_len, 0);
+> +	ano_inode = iget5_locked(squashfs_pcs_mnt->mnt_sb,
+> +				 sqi->fprt_hash, squashfs_pcs_eq,
+> +				 squashfs_pcs_inode_set, &sqi->fprt_hash);
+> +	if (IS_ERR(ano_inode))
+> +		return -ENOMEM;
+> +
+> +	if (ano_inode->i_state & I_NEW) {
+> +		ano_inode->i_mapping = inode->i_mapping;
+> +		ano_inode->i_size = inode->i_size;
+> +		ano_inode->i_data.a_ops = &squashfs_aops;
+> +		unlock_new_inode(ano_inode);
+> +	}
+> +	sqi->pcs_inode = ano_inode;
+> +	return fprt_len;
+> +}
+> +
+> +static int squashfs_pcs_file_open(struct inode *inode, struct file *file)
+> +{
+> +	struct squashfs_inode_info *sqi = squashfs_i(inode);
+> +	struct inode *pcs_inode;
+> +	struct file *ano_file;
+> +
+> +	pcs_inode = sqi->pcs_inode;
+> +	if (!pcs_inode)
+> +		return -EINVAL;
+> +
+> +	ano_file = alloc_file_pseudo(pcs_inode, squashfs_pcs_mnt,
+> +				     "[squashfs_pcs_f]", O_RDONLY,
+> +				     &generic_ro_fops);
+> +	if (!ano_file)
+> +		return -ENOMEM;
+> +
+> +	file_ra_state_init(&ano_file->f_ra, file->f_mapping);
+> +	file->private_data = (void *)ano_file;
+> +	ano_file->private_data = squashfs_i(inode);
+> +	return 0;
+> +}
+> +
+> +static int squashfs_pcs_file_release(struct inode *inode, struct file *file)
+> +{
+> +	if (!file->private_data)
+> +		return -EINVAL;
+> +	fput((struct file *)file->private_data);
+> +	file->private_data = NULL;
+> +
+> +	return 0;
+> +}
+> +
+> +static ssize_t squashfs_pcs_file_read_iter(struct kiocb *iocb,
+> +					   struct iov_iter *iter)
+> +{
+> +	size_t count = iov_iter_count(iter);
+> +	struct file *backing_file = iocb->ki_filp->private_data;
+> +	struct kiocb dedup_iocb;
+> +	ssize_t nread;
+> +
+> +	if (!count)
+> +		return 0;
+> +
+> +	kiocb_clone(&dedup_iocb, iocb, backing_file);
+> +	nread = filemap_read(&dedup_iocb, iter, 0);
+> +	iocb->ki_pos = dedup_iocb.ki_pos;
+> +	touch_atime(&iocb->ki_filp->f_path);
+> +
+> +	return nread;
+> +}
+> +
+> +const struct vm_operations_struct squashfs_file_vm_ops = {
+> +	.fault		= filemap_fault,
+> +	.map_pages	= filemap_map_pages,
+> +	.page_mkwrite	= filemap_page_mkwrite,
 > +};
 > +
-> +#endif /* _UAPI_V4L2_PARAMS_H_ */
+> +static int squashfs_pcs_mmap(struct file *file, struct vm_area_struct *vma)
+> +{
+> +	struct file *ano_file = file->private_data;
+> +
+> +	vma_set_file(vma, ano_file);
+> +	vma->vm_ops = &squashfs_file_vm_ops;
+> +	return 0;
+> +}
+> +
+> +const struct file_operations squashfs_pcs_file_fops = {
+> +	.open = squashfs_pcs_file_open,
+> +	.llseek = generic_file_llseek,
+> +	.read_iter = squashfs_pcs_file_read_iter,
+> +	.mmap = squashfs_pcs_mmap,
+> +	.release = squashfs_pcs_file_release,
+> +	.get_unmapped_area = thp_get_unmapped_area,
+> +	.splice_read = filemap_splice_read,
+> +};
+> diff --git a/fs/squashfs/pagecache_share.h b/fs/squashfs/pagecache_share.h
+> new file mode 100644
+> index 000000000000..fa3638de98dd
+> --- /dev/null
+> +++ b/fs/squashfs/pagecache_share.h
+> @@ -0,0 +1,22 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/*
+> + * Copyright (C) 2024, Inspur
+> + */
+> +#ifndef __SQUASHFS_PAGECACHE_SHARE_H
+> +#define __SQUASHFS_PAGECACHE_SHARE_H
+> +
+> +#include <linux/mutex.h>
+> +#include <linux/fs.h>
+> +#include <linux/mount.h>
+> +#include <linux/rwlock.h>
+> +#include <linux/mutex.h>
 
---=-qC+6NnOKYiwDd0VA7yXp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+Repeated inclusion of <linux/mutex.h>
 
------BEGIN PGP SIGNATURE-----
+> +
+> +int squashfs_pcs_fill_inode(struct inode *inode);
+> +int sqyashfs_pcs_remove(struct inode *inode);
 
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaG68DAAKCRDZQZRRKWBy
-9N4QAQDuYZURTpzmoJglyeKORvbV7cP8/jDhLqozIEG7DMDUPAD9GBadfAg5f3J/
-wIhi7od+eQPA7nxYjDzWzOxYbIsriAE=
-=qXwV
------END PGP SIGNATURE-----
+Mistyped forward declaration and the forward declaration is obviously
+not required.
 
---=-qC+6NnOKYiwDd0VA7yXp--
+> +int squashfs_pcs_init_mnt(void);
+> +void squashfs_pcs_mnt_exit(void);
+> +
+> +extern const struct file_operations squashfs_pcs_file_fops;
+> +extern const struct vm_operations_struct generic_file_vm_ops;
+> +#endif
+> +
+> diff --git a/fs/squashfs/squashfs.h b/fs/squashfs/squashfs.h
+> index 218868b20f16..f27fa8efb1b9 100644
+> --- a/fs/squashfs/squashfs.h
+> +++ b/fs/squashfs/squashfs.h
+> @@ -117,3 +117,5 @@ extern const struct inode_operations squashfs_symlink_inode_ops;
+>   
+>   /* xattr.c */
+>   extern const struct xattr_handler * const squashfs_xattr_handlers[];
+> +
+> +extern struct file_system_type squashfs_anon_fs_type;
+> diff --git a/fs/squashfs/squashfs_fs_i.h b/fs/squashfs/squashfs_fs_i.h
+> index 2c82d6f2a456..a1e57f597bbf 100644
+> --- a/fs/squashfs/squashfs_fs_i.h
+> +++ b/fs/squashfs/squashfs_fs_i.h
+> @@ -30,6 +30,11 @@ struct squashfs_inode_info {
+>   			int		parent;
+>   		};
+>   	};
+> +
+> +#ifdef CONFIG_SQUASHFS_PAGE_CACHE_SHARE
+> +	unsigned long fprt_hash;
+> +	struct inode *pcs_inode;
+> +#endif
+>   	struct inode	vfs_inode;
+>   };
+>   
+> diff --git a/fs/squashfs/super.c b/fs/squashfs/super.c
+> index 992ea0e37257..8aedb49b4ea2 100644
+> --- a/fs/squashfs/super.c
+> +++ b/fs/squashfs/super.c
+> @@ -29,6 +29,7 @@
+>   #include <linux/module.h>
+>   #include <linux/magic.h>
+>   #include <linux/xattr.h>
+> +#include <linux/pseudo_fs.h>
+>   
+>   #include "squashfs_fs.h"
+>   #include "squashfs_fs_sb.h"
+> @@ -36,6 +37,7 @@
+>   #include "squashfs.h"
+>   #include "decompressor.h"
+>   #include "xattr.h"
+> +#include "pagecache_share.h"
+>   
+>   static struct file_system_type squashfs_fs_type;
+>   static const struct super_operations squashfs_super_ops;
+> @@ -654,6 +656,15 @@ static int __init init_squashfs_fs(void)
+>   		return err;
+>   	}
+>   
+> +#ifdef CONFIG_SQUASHFS_PAGE_CACHE_SHARE
+> +	err = squashfs_pcs_init_mnt();
+> +	if (err) {
+> +		destroy_inodecache();
+> +		unregister_filesystem(&squashfs_fs_type);
+> +		return err;
+> +	}
+> +#endif
+> +
+>   	pr_info("version 4.0 (2009/01/31) Phillip Lougher\n");
+>   
+>   	return 0;
+> @@ -662,6 +673,9 @@ static int __init init_squashfs_fs(void)
+>   
+>   static void __exit exit_squashfs_fs(void)
+>   {
+> +#ifdef CONFIG_SQUASHFS_PAGE_CACHE_SHARE
+> +	squashfs_pcs_mnt_exit();
+> +#endif
+>   	unregister_filesystem(&squashfs_fs_type);
+>   	destroy_inodecache();
+>   }
+> @@ -675,7 +689,6 @@ static struct inode *squashfs_alloc_inode(struct super_block *sb)
+>   	return ei ? &ei->vfs_inode : NULL;
+>   }
+>   
+> -
+>   static void squashfs_free_inode(struct inode *inode)
+>   {
+>   	kmem_cache_free(squashfs_inode_cachep, squashfs_i(inode));
+> @@ -698,6 +711,36 @@ static const struct super_operations squashfs_super_ops = {
+>   	.put_super = squashfs_put_super,
+>   	.show_options = squashfs_show_options,
+>   };
+> +#ifdef CONFIG_SQUASHFS_PAGE_CACHE_SHARE
+> +static void squashfs_free_anon_inode(struct inode *inode)
+> +{
+> +	kfree(inode->i_private);
+> +	iput(inode);
+> +}
+> +#endif
+> +
+> +static const struct super_operations squashfs_anon_sops = {
+> +	.statfs = simple_statfs,
+> +#ifdef CONFIG_SQUASHFS_PAGE_CACHE_SHARE
+> +	.free_inode = squashfs_free_anon_inode,
+> +#endif
+> +};
+> +
+> +static int squashfs_anon_init_fs_context(struct fs_context *fc)
+> +{
+> +	struct pseudo_fs_context *ctx = init_pseudo(fc, SQUASHFS_MAGIC);
+> +
+> +	if (ctx)
+> +		ctx->ops = &squashfs_anon_sops;
+> +	return ctx ? 0 : -ENOMEM;
+> +}
+> +
+> +struct file_system_type squashfs_anon_fs_type = {
+> +	.owner = THIS_MODULE,
+> +	.name = "pseudo_squashfs",
+> +	.init_fs_context = squashfs_anon_init_fs_context,
+> +	.kill_sb = kill_anon_super,
+> +};
+>   
+>   module_init(init_squashfs_fs);
+>   module_exit(exit_squashfs_fs);
 
