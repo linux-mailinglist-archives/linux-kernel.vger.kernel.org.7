@@ -1,113 +1,119 @@
-Return-Path: <linux-kernel+bounces-723639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB1CAFE969
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:51:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F31AFE96F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:53:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B011A1748B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:51:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F9CF56426B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773672D9EFE;
-	Wed,  9 Jul 2025 12:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36A02DA779;
+	Wed,  9 Jul 2025 12:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VjgJ9No0"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="me+mpkST";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="46CJixdF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92CF427442
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 12:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35291A285;
+	Wed,  9 Jul 2025 12:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752065469; cv=none; b=bGVcrsYjxpk2Un5I/H/BUnwWSai5Gq4SoGovjEmB7jQ21j0qCR+gx5/gEqqiSAiXcFADK7qvhrnd23Y0336EFR7D4k7Fq9Z7zxgRv214D2lbAx9U80szgLwIhNOULE21gxWly78TpjtnonlPT4OPwkCcYnSHoVE4TQKGNEyxTFg=
+	t=1752065616; cv=none; b=Q1r11vHsY21wgcrnFy65S9jPYEp7Vv8GzkUeDaV4RJ9oXy09BJiPQDfOJmO2dLsNcdQlaqyRCJJJB6Tx+ooIjwDhC6BzqbpbrxDMCIUQmbXmU6ckG0PoHxvvCcljyPvmYAife/4EI8Bvge8NxgK8JcHOARBpO0fyYvb+09HvqIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752065469; c=relaxed/simple;
-	bh=bS30qzBKG0kk8EMi8ZpiEEOGC81mI51mpXsSY+KeUbk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lnT73GG8wwRKlhLXDimgYcX7LujYxuHNR8ZJmtDfq0wO9MYBf+XA/aaCK1XUE4d1e8aOSUjaK268DvwYMWMGQ64IlK2H5xKTONgIe45ZvOQtPAJ9zzVDj+KC9og57alPC7UYUy6DZRcGcOixpFMQhggIjY4bRc7SiaiIaRC/hIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VjgJ9No0; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-74b27c1481bso3349680b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 05:51:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752065468; x=1752670268; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3NyEhmSVIBICxuUIBvtGawGc4Iwp2NdQOe0bbugc22A=;
-        b=VjgJ9No03D7AaeNdL8QQQxNTWwechJOqpk3pZJJhNMvqVLtKn/bwQkNmYc2hX0djWb
-         mE0zxhdO541BQaYouEAPG2ODcsRgKSacsb2mZoOjhn09RfSGSlWbowiOi0uhDtRC69MZ
-         ip0CgVCYb7FfwRCydZ7xHXDTcRxOpjqAHG/CQhKjiL3rGTqdcekyTwFqF+CRIJKXQMxV
-         PjZPNJDZCQsqgRfktm7hlnunDfXM0+dKEZrFVwxzbzCXA8IP2BtvCpcZ8tTvghZYDUu1
-         wZi7YZH2/IX15uL3hpKFcxaCZjiZEFzUVIAqFes0ZQmkDOrlPNE07/AKiLLrWlf7ArA2
-         VgyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752065468; x=1752670268;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3NyEhmSVIBICxuUIBvtGawGc4Iwp2NdQOe0bbugc22A=;
-        b=uxuYhrmz9tTZ8ugw0If6BWqxKCQLNQFHocbkbbWjIwnCUIMyJag0t61bbRXfVME7of
-         F2WiUUDNIUR9SrTKfx4JNZlgfoNVkhvY1yKWPFRWKaY26RzmV6ZjLgKgFTMZydBFQHOu
-         nHKBkLGy3QZ9l9aFit17GGOerR+DFDkyN2xEnMz4CH5XfP+76Au1R46fL9qLwcgR1sES
-         RXHVyoU/SAlij11STlb/xb6uNVjY2T7zVdXYwZZEl7Y7IiqomPr91GX8Ar+wGJEbe/K0
-         fBaMkSXyBTbHr+1KRwhv+QlcBA1UeXWIVMrrFGjp3cQ2AdUF7fr94/lxNMC8Dq3488Wl
-         aglA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYXTvMQhlvqv83ZlSVypf93dFGdqNVY/0YM26qezNsFF1ICub5Tb5/9dVOQdQ7SNulnndhY+7gBIZ9l8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDHsEV0dGDhC7pX3DRYrPPzPYo/O08WtYvZ4E8fW/5a7cJN6q1
-	3MSfG0i8rpjn+Js4iLb5WFfF5Y8dGDnibFU0aar4iy8QhPBTCKNHfKTKaW37SVYKfu111T+6ixY
-	Y9FYSbsdlja12QDpcWpkUBEESREBRV+SrlTut
-X-Gm-Gg: ASbGncvAkYRrcx9ERwC21AOKJ37Yd3/YvWZl5/SfGrqvOTETCAMvqxwxcaLhe9AsV2K
-	86PZ1M6RJS5g8uH/5XKRHYhYPaao5Rc0u1ofc9Wu5ZbGs9Jy75s05z0cF/SdbyvY6JhA7/tuJA1
-	PsU7rIjPL6ME/XT6i/iYnzdglOs4NAyHXSzSffOpsk
-X-Google-Smtp-Source: AGHT+IGH2nT6IZbDo+Ks/jODFk/vV/IDP2mO4EVK6jpwo5O0W2jmbx6OyQumL7TIFPqqenseGtE+uLTBc2Qz1uGxJ1U=
-X-Received: by 2002:a17:90b:5247:b0:2fe:85f0:e115 with SMTP id
- 98e67ed59e1d1-31c2fdd1716mr3642904a91.26.1752065467724; Wed, 09 Jul 2025
- 05:51:07 -0700 (PDT)
+	s=arc-20240116; t=1752065616; c=relaxed/simple;
+	bh=7ZgBSHUUgA/KGLY3mSgIuEnMmqMC3guSaL+E3cU4ijU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L/wuOJD3MbFtKUfHsjYzIJwAql4ijXpcOjwPcD9gtLdMW6ggCy4RZWURXuDy89DxXr8pP1Hel+pdv0ezPSB1UUSqxjLV4Opp1MulQ8X+ni8sa2WZ4pZcjPdHWWAmfvkMrG46cAmTAxQVBdPEpUsxs7h1i2TquPZueOEVfsws8as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=me+mpkST; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=46CJixdF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 9 Jul 2025 14:53:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752065612;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J8clNqNVMJuj1KlbBMK3XL98FGf5ffsp4cRxWVfag48=;
+	b=me+mpkSThZKXMO7GMyF5lSe/F9EHgoLtxsq/F7rxb9Mf9/+wfAFZURIlBl4JYOjBIPMfW1
+	VyqBc1dzU/f8tQp+rJGV70XbQlI7Nix8rFQpttO0LDxuk0Qu+XSjM03PRl5AYYNgAwbLpW
+	ZU3xbRnFyWJKestgcpnavWU1u+/jRqov4VTrzaZRKTuau0L102VBOeWS4z+L6+iRDIsfY3
+	+Kw+TlAR5jHPCZfr1fFN9XFXhOBIPwLCbO7tyVaTYhpNogG4uJ0iJWr7+fplYW1vqnHKqa
+	yESehjYKvvaaMbSi7AEyRQdMO9Njw5tLoYD3iUFyZ5SByu4u9Z+FhK2HyiHObg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752065612;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J8clNqNVMJuj1KlbBMK3XL98FGf5ffsp4cRxWVfag48=;
+	b=46CJixdF0Xo5+iL9V4VxRKCnIAQDoSUJl7DA52y3DnlGnuYM/y6JNQL2wBhH2ceeRA7p1s
+	rGu9Py1gs/VinmBA==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Nathan Chancellor <nathan@kernel.org>, 
+	John Ogness <john.ogness@linutronix.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	David Gow <davidgow@google.com>, Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 2/3] printk: kunit: support offstack cpumask
+Message-ID: <20250709144706-efda2e7c-c3e4-4905-91ad-7553c46ed2e2@linutronix.de>
+References: <20250702095157.110916-1-pmladek@suse.com>
+ <20250702095157.110916-3-pmladek@suse.com>
+ <20250702202835.GA593751@ax162>
+ <aG0qLaeAoTGaRs0n@pathway.suse.cz>
+ <1217f48f-a12a-4ba1-8de5-bda4b2ad6107@app.fastmail.com>
+ <aG5ULpdSoAR6nF5R@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709122332.2874632-1-laurentiu.palcu@oss.nxp.com> <20250709122332.2874632-9-laurentiu.palcu@oss.nxp.com>
-In-Reply-To: <20250709122332.2874632-9-laurentiu.palcu@oss.nxp.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Wed, 9 Jul 2025 15:53:10 +0300
-X-Gm-Features: Ac12FXzjfnR6C_2CM5IgN-GnBOUmsZy0yzBqb-TNLTHux0vSrVzkSRKBepnd5vs
-Message-ID: <CAEnQRZDY6vKwUTVuGqV7_DdV43doq=NRij6+zqJp9h1M5HgBig@mail.gmail.com>
-Subject: Re: [PATCH 8/8] MAINTAINERS: Add entry for i.MX94 DCIF driver
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: imx@lists.linux.dev, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aG5ULpdSoAR6nF5R@pathway.suse.cz>
 
-On Wed, Jul 9, 2025 at 3:26=E2=80=AFPM Laurentiu Palcu
-<laurentiu.palcu@oss.nxp.com> wrote:
->
-> The driver is part of DRM subsystem and is located in
-> drivers/gpu/drm/imx/dcif.
->
-> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-> ---
->  MAINTAINERS | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8be3e0fbe72b8..fbec7e42e693b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18066,6 +18066,14 @@ S:     Maintained
->  F:     Documentation/devicetree/bindings/media/nxp,imx8-jpeg.yaml
->  F:     drivers/media/platform/nxp/imx-jpeg
->
-> +NXP i.MX 94 DCIF DRIVER
-> +M:     Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-> +L:     dri-devel@lists.freedesktop.org
+On Wed, Jul 09, 2025 at 01:36:14PM +0200, Petr Mladek wrote:
+> On Tue 2025-07-08 16:48:47, Arnd Bergmann wrote:
+> > On Tue, Jul 8, 2025, at 16:24, Petr Mladek wrote:
+> > > On Wed 2025-07-02 13:28:35, Nathan Chancellor wrote:
+> > >> On Wed, Jul 02, 2025 at 11:51:56AM +0200, Petr Mladek wrote:
+> > >
+> > > Thanks a lot for the nice report.
+> > >
+> > > The problem is how cpumask_var_t is defined in include/linux/cpumask_types.h:
+> > >
+> > > #ifdef CONFIG_CPUMASK_OFFSTACK
+> > > typedef struct cpumask *cpumask_var_t;
+> > > #else
+> > > typedef struct cpumask cpumask_var_t[1];
+> > > #endif /* CONFIG_CPUMASK_OFFSTACK */
+> > >
+> > > And KUNIT_DEFINE_ACTION_WRAPPER() expect that the 3rd parameter
+> > > is a pointer.
+> > >
+> > > I am going to solve this by adding a wrapper over free_cpumask_var()
+> > > which would work with a pointer to cpumask_var_t.
+> > 
+> > I'm not familiar enough with the cleanup mechanism of kunit,
+> > but can't you just move the mask allocation outside of
+> > test_readerwriter()?
+> 
+> The only solution would be global variable.
 
-Please also add imx@lists.linux.dev
+When the cpumask is allocated on the stack, free_cpumask_var() is a no-op.
+So while the stack address would be leaked to another thread,
+it should be fine as nothing is ever done with it.
+For more clarity it could also be gated explicitly:
+
+if (IS_ENABLED(CONFIG_CPUMASK_OFFSTACK)) {
+	err = kunit_add_action_or_reset(test, prbtest_cpumask_cleanup, test_cpus);
+	KUNIT_ASSERT_EQ(test, err, 0);
+}
+
+<snip>
 
