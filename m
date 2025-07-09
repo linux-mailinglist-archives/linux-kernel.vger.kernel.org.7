@@ -1,134 +1,124 @@
-Return-Path: <linux-kernel+bounces-722579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEB2CAFDC80
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:45:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A14C2AFDC8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:50:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41A04174B4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:45:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C899956773F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 00:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078CE130A54;
-	Wed,  9 Jul 2025 00:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C23135A53;
+	Wed,  9 Jul 2025 00:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i9kuF89l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dlELURfn"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9662C187;
-	Wed,  9 Jul 2025 00:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DAC5479B;
+	Wed,  9 Jul 2025 00:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752021892; cv=none; b=uSpYWgVW/df1FVwANtyQIHl4JuRhD65sJP+xUVB3UBX9HL9adgJeXVS84zP4oLe9YPb43zQ3iaRqSpoJbRYHk7MKYXq3UGW/2rI29PY+5ZO3/AnjWJVKfD1f9IAr73mX0q6nkUf7HFjCp+3Vv5OxvoV5OaI8cqCjXpahE+VZMLQ=
+	t=1752022204; cv=none; b=ew32ANbpL3AtUE481DDzz9UhZCRXupJ3Gg1le6mcl4M4R7AQhXU5VY03M1yI9/Z78a9mPbWzFhObOgsrGmhzN9jFE285P3ZEd5VxC8bx9BzgPUO9XqzmElqDEM9NtdLsJOaquVBXC6kiXzIT/UmyXsB69vBSu/YfKzBOJphPxwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752021892; c=relaxed/simple;
-	bh=T4lJ7IfchIx8O9WvBI06w6cJ9APqPZYrqfcn3GERTnc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MZBRR6U2s51MOQzXZn0fzGpXMEXJWrOT7GY0+rXo1NWU/QdmJ55lH/CyhG1DMK7Jor4DelbccGBlM+xconR52OzajY3hKYpE86l90/VxgLHu5vhGgqkxBCsezgDbUEygyDBdKoqmHd3vfub5ZjeQzN9uf+nhXPmzyajrZ3lkaPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i9kuF89l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13BA4C4CEED;
-	Wed,  9 Jul 2025 00:44:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752021891;
-	bh=T4lJ7IfchIx8O9WvBI06w6cJ9APqPZYrqfcn3GERTnc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=i9kuF89ldU0b1uMh3vMccYfMUpaz3W1vZn1wwiXEZTgBtDuDh7QZCKIlx5BCCu4Z2
-	 RFir5VLFXA9imk7oK0V/i1q7OGqEvsGd1UI0deRqedVHXc9a34nrNB0CMA3XXEtzBW
-	 aOTxcyh+eE3AqQOcE66QQby60yMccydVdqtGBps2Xwa2vsHjkDYxG9jwaiJu2gHImJ
-	 dztPSn8gNNS3SM3jdvnAA53lxAO6COWG1aA3en5UTk/V4SYsukxIzb3nrm7BZDNSj0
-	 IRKPMnGfg0ZxbB2qo6TZv6Fg+syBlOV5QDM79wrAJgtZ4AEsUi9/X94edNtJ4+1Qcy
-	 1gMu1pQXGmRcg==
-Date: Tue, 8 Jul 2025 17:44:49 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Parvathi Pudi <parvathi@couthit.com>
-Cc: danishanwar@ti.com, rogerq@kernel.org, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- ssantosh@kernel.org, richardcochran@gmail.com, s.hauer@pengutronix.de,
- m-karicheri2@ti.com, glaroque@baylibre.com, afd@ti.com,
- saikrishnag@marvell.com, m-malladi@ti.com, jacob.e.keller@intel.com,
- diogo.ivo@siemens.com, javier.carrasco.cruz@gmail.com, horms@kernel.org,
- s-anna@ti.com, basharath@couthit.com, linux-arm-kernel@lists.infradead.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, vadim.fedorenko@linux.dev, pratheesh@ti.com,
- prajith@ti.com, vigneshr@ti.com, praneeth@ti.com, srk@ti.com,
- rogerq@ti.com, krishna@couthit.com, pmohan@couthit.com, mohan@couthit.com
-Subject: Re: [PATCH net-next v10 02/11] net: ti: prueth: Adds ICSSM Ethernet
- driver
-Message-ID: <20250708174449.3e8744c5@kernel.org>
-In-Reply-To: <20250702140633.1612269-3-parvathi@couthit.com>
-References: <20250702140633.1612269-1-parvathi@couthit.com>
-	<20250702140633.1612269-3-parvathi@couthit.com>
+	s=arc-20240116; t=1752022204; c=relaxed/simple;
+	bh=NgldNzYwTkhlRxpEXq0DM09IquaTz8VFTwNZv++b108=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a1LokhPg5gEWMbyuRPep8hQVomawDpSBozYiFEjebHRGIl4A9d8Cygy6H01uIya7/6huUtMrQE0BXBQRV5o6Pfp7ToTmLEmrtDTy2CJeMlujisiTxFZe6y51LyWwKFWohNeYpqw87peAsd4dknB4DKSWXdNSw76XdmFVi+H/5Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dlELURfn; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-7170344c100so31337707b3.0;
+        Tue, 08 Jul 2025 17:50:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752022202; x=1752627002; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=elsYwPw6zDrpvs+3bhsQ9YOjxpF7Z+Q+nAJ2MBwZBNc=;
+        b=dlELURfnQEtpPZyjjMThsG0DVOJ4zDadYV/iIKIXzIzsolVBz7Vi31C9XzBp9I1DlV
+         Iq8Y1Ym5+WbSqWqIxz9kCVinSraIWsVLXZlJKdPDLIa715yT/Nio04kMZGCLeWB4YS0M
+         5JdCDEYheAwlve6FeBW/6lzWc9oO1DVFxIHaFNmlbiKYndsI4HMom40BAoB2q/wHEVqk
+         vZFbAUNhkZ7kcRsXh9ZXMQxw6AwCB6aA7y2A31or5spfDR+Q72f9Y0t98Y8y+KFi7eqX
+         MSOXqp3jL0Y7xcagl453R7NlEqB+qTobb0nWidpaA7iG8xRAgMspc2va+LumBdBZtErs
+         pzMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752022202; x=1752627002;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=elsYwPw6zDrpvs+3bhsQ9YOjxpF7Z+Q+nAJ2MBwZBNc=;
+        b=xFSE+4eGQFljhInX6zrxDvF+WDBka7QDmdRn4MZpb0qVFgnb6OLcSA7DbNfBYUSuuw
+         nIT5RWM7s6+jzwaveKBNoVxdmlL3m9mkD/E2PSuhkwl1ck1NzWJIqilZlyET5v5zXWNz
+         jF6tSwf4tUS9E5qhRV3WAxNAnSKsZd/XRIfBumNCPzP8SK7OoAzkh1sG7OMC61+tADEg
+         zgZ5fHYHZQ0pT92/KLT7FA/JrdhT5XwtuwEUxW7yf7S6W7PxL5BNTxMoc953/fhHZcbo
+         EJTn1EZK7zJjIQNfR71AQOZ5CeVJJhAOSPSeVPcHyDOOjkIlyu7Je1wpVpG8gh6KufnF
+         D+8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVJZ0hnzHUdvIAKxNKGExvePzMfG/+3FFCgkdiHxhJalcDOP54hPLcjS27Qy2Kv5pTmxjrnz2+J@vger.kernel.org, AJvYcCXtIC4ihvISCDZO4aKGT24cLmYWlSOMo/g3aBOo2J1Vzv65b3ijz+3rJSskz9ZVNtnLCqzRUBnaNLs1ES4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPK5FHHPGBfbl+TuUB8iHNbZCgCgWvWyDasjmbWYB0hVEAnHgq
+	ztTQT3f0CXYHnTVBhx+nXCgW/itzzIr3UvAihuXxC1ZaCWoy2/D04Lhy
+X-Gm-Gg: ASbGncuwIK41eXozZurOemvDqPvNn797Pn5wj7kE1jh+BeeGIufGshztke7xQQ4LwOG
+	5NX4HkhGrJZDPzoR+7W3ewSwpj0JyQUPzoqXV+/2y9mCtdFt3i4enEIrkL5EChPrj0hjG/1Ocw1
+	XN3CoPBElwQY95fzmdeX7aQXJ+JnkZs1RH8dA1cjoaRPNuIM6ftKwi04T+ql5c9nQ+HBU+ceBHl
+	LiINbhoyA8ZhwCkjyUJSIqowwRtjvmqPu6Ym/cRFriWrynoiCrpsjS56Kgj9EZ982OVE9AkS4Ss
+	2/GGa/JAIWdcwrkD3DQ9CbM2bcv+QCQ+I5SCsehIAf62nV1QXkJqAPMS+KwZQmENuYvfwK/SARj
+	R17kcUkkF9uXDQ1RGcg==
+X-Google-Smtp-Source: AGHT+IFrSrxMMJNXhy4I6nDgKxzf2q+J9ki4um8/p2fAqdLKruaJOFqYiuZujRclanonBZPwLTRzeA==
+X-Received: by 2002:a05:690c:3587:b0:70d:f338:8333 with SMTP id 00721157ae682-717b19847b1mr11911327b3.22.1752022201951;
+        Tue, 08 Jul 2025 17:50:01 -0700 (PDT)
+Received: from bijan-laptop.attlocal.net ([2600:1700:680e:c000:235f:99bb:f36e:a060])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71665b40d99sm23563877b3.112.2025.07.08.17.49.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 17:50:01 -0700 (PDT)
+From: Bijan Tabatabai <bijan311@gmail.com>
+To: linux-mm@kvack.org,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: sj@kernel.org,
+	akpm@linux-foundation.org,
+	Bijan Tabatabai <bijantabatab@micron.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] mm/damon/core: Commit damos->target_nid
+Date: Tue,  8 Jul 2025 19:47:29 -0500
+Message-ID: <20250709004729.17252-1-bijan311@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed,  2 Jul 2025 19:36:24 +0530 Parvathi Pudi wrote:
-> +		if (ret < 0) {
-> +			dev_err(dev, "%pOF error reading port_id %d\n",
-> +				eth_node, ret);
-> +		}
+From: Bijan Tabatabai <bijantabatab@micron.com>
 
-unnecessary parenthesis, but also did you mean to error out here?
+When committing new scheme parameters from the sysfs, the target_nid
+field of the damos struct would not be copied. This would result in the
+target_nid field to retain its original value, despite being updated in
+the sysfs interface.
 
-> +			dev_err(dev, "port reg should be 0 or 1\n");
-> +			of_node_put(eth_node);
+This patch fixes this issue by copying target_nid in damos_commit().
 
-this error will also trigger if same port is specified multiple times
+Cc: stable@vger.kernel.org
+Fixes: 83dc7bbaecae ("mm/damon/sysfs: use damon_commit_ctx()")
+Signed-off-by: Bijan Tabatabai <bijantabatab@micron.com>
+---
+ mm/damon/core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-+			ret = PTR_ERR(prueth->pru1);
-+			if (ret != -EPROBE_DEFER)
-+				dev_err(dev, "unable to get PRU1: %d\n", ret);
-+			goto put_pru;
-
-dev_err_probe() ?
-
-> +/**
-> + * struct prueth_private_data - PRU Ethernet private data
-> + * @fw_pru: firmware names to be used for PRUSS ethernet usecases
-> + * @support_lre: boolean to indicate if lre is enabled
-> + * @support_switch: boolean to indicate if switch is enabled
-
-Please improve or remove this, adding kdoc which doesn't explain
-anything is discouraged per kernel coding style.
-
-This one is actually more confusing than helpful the fields are
-called "support" but kdoc says "enabled". Maybe name the fields
-'enabled' ?
-
-> + */
-> +struct prueth_private_data {
-> +	const struct prueth_firmware fw_pru[PRUSS_NUM_PRUS];
-> +	bool support_lre;
-> +	bool support_switch;
-> +};
-> +
-> +/* data for each emac port */
-> +struct prueth_emac {
-> +	struct prueth *prueth;
-> +	struct net_device *ndev;
-> +
-> +	struct rproc *pru;
-> +	struct phy_device *phydev;
-> +
-> +	int link;
-> +	int speed;
-> +	int duplex;
-> +
-> +	enum prueth_port port_id;
-> +	const char *phy_id;
-> +	u8 mac_addr[6];
-> +	phy_interface_t phy_if;
-> +	spinlock_t lock;	/* serialize access */
-
-'serialize access' to what? Which fields does it protect?
+diff --git a/mm/damon/core.c b/mm/damon/core.c
+index 5357a18066b0..ab28ab5d08f6 100644
+--- a/mm/damon/core.c
++++ b/mm/damon/core.c
+@@ -978,6 +978,7 @@ static int damos_commit(struct damos *dst, struct damos *src)
+ 		return err;
+ 
+ 	dst->wmarks = src->wmarks;
++	dst->target_nid = src->target_nid;
+ 
+ 	err = damos_commit_filters(dst, src);
+ 	return err;
 -- 
-pw-bot: cr
+2.43.0
+
 
