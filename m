@@ -1,124 +1,182 @@
-Return-Path: <linux-kernel+bounces-724499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BEA1AFF3B0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:08:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1733AFF3B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64EFE7A6F8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:07:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0D875A572C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5360723AE84;
-	Wed,  9 Jul 2025 21:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B1D23AE87;
+	Wed,  9 Jul 2025 21:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EpegsM1t"
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="F1nQVyAE"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E2522D793
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 21:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75F121A92F
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 21:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752095309; cv=none; b=Zke1VwlONDGpI6GGQWIHwZaGv3XDFZcdJ90Dut1knYLgVR0C3bpShaIwL176OiOtIC/jNfGB7Twor6YOINlXwTqx+YcqbvY2aV2R6tsqSbDXC/0TULy46AhXLPaQ6zDchOynRp0x0JV9yjx0O6cLkiXzijwtiuC/0lwuoBt1DtI=
+	t=1752095324; cv=none; b=GPI2wkxFdAsTFJ/WP3R683KsVTukeCquzImchsA9V4p4rBWBE1kA6UYbL1hvv73m1W1tPPp0Na6VcYpzIiblWgwpOUYtOwuFqMSw79YmnG9cJ5NJ4i2rVRDi2QuijMTSGLhZsHQFouSXHmx8EQCJd+0WkwjbyKNizo935wdby3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752095309; c=relaxed/simple;
-	bh=y2wXxMQF6d3k4vp+pey/vuvx54s2OwWXTIMqdzyX87I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JU2Y677wHic7noaE52eeadXK+ZmqvWjAo7YUDOtQw/6dnqo6g0kWkWj/Tol5G/AhPd3mW/WO2MM5rjuAvmQRYzuVlNz1H8kGK7sJGoovat+Wz2ZRaw+WqzdXMUFUoHeZIOo3DDpxiutBIlfuU0WIrtzqZt7cGmhFHn9Ydus6uyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EpegsM1t; arc=none smtp.client-ip=209.85.222.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-87f26496daeso141164241.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 14:08:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752095307; x=1752700107; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y2wXxMQF6d3k4vp+pey/vuvx54s2OwWXTIMqdzyX87I=;
-        b=EpegsM1tJ9Sxuppd0N7nEcOClE62jaJVVTAdJ35RGbVkTX3kMGA4ExFV5ifYdt4WUq
-         aQnK3Fm2BJtQnuOKifBJ+ndSfk8u1ANKA7WHDsBzZhVw8PrdhktIEdWBJiCBQbQrtSV4
-         gFIGoVC19JbrNBDsi5hxKFFBhyLBaLUlB4NErcP6fw2FlMXWYB/aZubhqkskhyg8tW/o
-         BaR4cFAD4D90gWX33iOlt4U2z75R1JBqOdOMUNgZoJoWz5SL2yelb/UsqtX3JSA8Brwy
-         +hjzsDfjV6W9e2C5uS8/xzI4gtKdGyX+ZD7g5Ig0WlkjGKr0N2BOXfRsFN07yWvbZonC
-         rz5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752095307; x=1752700107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y2wXxMQF6d3k4vp+pey/vuvx54s2OwWXTIMqdzyX87I=;
-        b=X0DIxiLIN/peNEZILESj2xtJcy71qUxsQebfYFrajs299/O+tpVgBauMsp0irJnhGG
-         Py4rz/lVCKAkJ+/aERi75qvyZ9hWrAQlJrax0nXQtQkI0+gTm93ypnOylHgBgGg29qUU
-         q8tKqK8zgQilSX8Jn83ZDme4UqWkPRNOdceb6k9y1HofzelWIO20KVvffpnGV2/ycK7o
-         6MM6dMJYlTn6GssiVpNxy6AWt9k6vC3NNHCmxeUj1SSp4qQFc6IcdKcPIzq3BMsqm2ou
-         fc9ew7xJyZ1z6o8aDrnLQS1VNT0l0wk9n8MZH8CxoysqrvJ1EX9MfEh8Ep81nuKPzqJb
-         UwIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUg0fjz3zHZHd5XOMMxiXhgtFYIuN6R5pStDP37ePs6syyCJaBPNruVSZm0WzDCiwD5hu8m+sOE3JHlJLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+1Zt0P90w5xWI9u3SZ0kJ3pznsL4BlUg0N3OJcuoofBwdDKfy
-	ikznUwMrgNbhgfu0gcMP9yjRtmtjR6L6X+LDDQOuXeWH5NTgniMUjK2WkUg9n8Lrff2yj74Wazp
-	N7dP5pkcX3or6EpoNUQieArpsRG8MVbrRksiHRrpO
-X-Gm-Gg: ASbGncuSPXVE/OIlkkEp2F/ou7KBJT9a1oNr6XRyC3CH2n+gey8mRt9lWTKv2Ktv12S
-	ewE7IjhG74H9X5efGf/f3XGZCxh/TX1UToQC7kmv8iPu/nltBzyPByJDC5pTOnT+6QasLjUTvfg
-	rDk8SxL//7EJY6wJN7rqT0j9iITdEAb2mWaYHkKfL2TTawPKB3vZ5RVdU2A8FrAfb1/ZYSCagZ
-X-Google-Smtp-Source: AGHT+IGdh8eN3h8HscGvSa6bfWmnnHbDwGqF3PtjSKvTxi2yQaiUYm6rNI3VTgW1g2j5SJyRzIJjOT1h1JH55zPabDE=
-X-Received: by 2002:a05:6102:50a1:b0:4e5:59ce:4717 with SMTP id
- ada2fe7eead31-4f62df178aamr186458137.9.1752095306773; Wed, 09 Jul 2025
- 14:08:26 -0700 (PDT)
+	s=arc-20240116; t=1752095324; c=relaxed/simple;
+	bh=/sPHUll0HVA/zIYX4UgOh3ke6kfWHMxnpwreuceuMeE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mc5tM1Ifp1z8OzxKafQcFj4f4B5jluuuDUAu+PgxiR6AYyXwrbZZfKe8NEt65ejhvwTFQYNeNhYbC0DC9riAtHHGYdwOzzBJvmSXHGIOIkeBQHcYLSryqfp3ZsTfj5jivgsMrAxWWhMcZ9xSVVcXR8Bzdg/TyxMT0FN+VsZGR6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=F1nQVyAE; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: MIME-Version: Message-ID: Date: Subject: Cc:
+ To: From; q=dns/txt; s=fe-e1b5cab7be; t=1752095321;
+ bh=yLPdjZGdoWUbTfAy2GwqZq8+x71kvvXbnWtl1wzXyRk=;
+ b=F1nQVyAE0MXjmaRM9CJomt9wiM5mgfw+uVBEc9jJuhZ1/vGctTd1Kd25tgDk6qYds8PF0IM8o
+ U5jaTPMi9pQ9LYsFoUM+4jfsW/a5tq5pN+j28pK7cN5Q0YuetKVQH8Tp5jOnUhA96bFl1UYcu9E
+ /Agoiv2VoYyg8Uhqp2dq3zRdqoAblBvCNYY8u5NXesBAiam74lYpuXSfibtCE7E5IE99Ev3V66D
+ QW29496d7KUC6DKTPrjuyNV9gDgNVaoUtrwU99JEFD8oN31EPWXPbBUr15HNKU4qQO+k3nAzGxj
+ 0/SrfwEKJAVJQNWa1yTrqHzlR2+J4mmpqWVAanrUKvGA==
+X-Forward-Email-ID: 686eda55c4bb2e061789d0d3
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 1.1.3
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+From: Jonas Karlman <jonas@kwiboo.se>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chukun Pan <amadeus@jmu.edu.cn>
+Cc: Yao Zi <ziyao@disroot.org>,
+	linux-rockchip@lists.infradead.org,
+	Jonas Karlman <jonas@kwiboo.se>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: rockchip: Fix UART DMA support for RK3528
+Date: Wed,  9 Jul 2025 21:08:28 +0000
+Message-ID: <20250709210831.3170458-1-jonas@kwiboo.se>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250605233934.1881839-1-blakejones@google.com>
- <20250605233934.1881839-5-blakejones@google.com> <CAP-5=fVX_Qohsf=f=-fR8mYsTq4zitURit2=4BYyD5HPJHOT7Q@mail.gmail.com>
-In-Reply-To: <CAP-5=fVX_Qohsf=f=-fR8mYsTq4zitURit2=4BYyD5HPJHOT7Q@mail.gmail.com>
-From: Blake Jones <blakejones@google.com>
-Date: Wed, 9 Jul 2025 14:08:15 -0700
-X-Gm-Features: Ac12FXxXtr8XizMgnbtY6unx5cS16grFsxMMxrKhZdDg1-CAlIRC0HFgaVUWbWw
-Message-ID: <CAP_z_Cjuh9HJvcnsARaX-QUwDMbRPMDr9AtxbBxYUR_BTSzwCg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] perf: add test for PERF_RECORD_BPF_METADATA collection
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tomas Glozar <tglozar@redhat.com>, 
-	James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@arm.com>, 
-	Guilherme Amadio <amadio@gentoo.org>, Yang Jihong <yangjihong@bytedance.com>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Chun-Tse Shao <ctshao@google.com>, 
-	Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	Zhongqiu Han <quic_zhonhan@quicinc.com>, Andi Kleen <ak@linux.intel.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Yujie Liu <yujie.liu@intel.com>, 
-	Graham Woodward <graham.woodward@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Ben Gainey <ben.gainey@arm.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 9, 2025 at 2:02=E2=80=AFPM Ian Rogers <irogers@google.com> wrot=
-e:
-> > +++ b/tools/perf/tests/shell/test_bpf_metadata.sh
-> > @@ -0,0 +1,76 @@
-> > +#!/bin/sh
-> > +# SPDX-License-Identifier: GPL-2.0
->
-> The 2nd line in a shell test script is taken to be the name of the test, =
-so
-> ```
-> $ perf test list 108
-> 108: SPDX-License-Identifier: GPL-2.0
-> ```
->
-> > +#
-> > +# BPF metadata collection test.
->
-> This should be on line 2 instead.
+Trying to use UART2 DMA for Bluetooth on ArmSoM Sige1 result in tx
+timeout when using dma-names = "tx", "rx" as required by the dt-binding:
 
-Oof, that sure wasn't on my radar. Should I do a followup patch, or is
-it not worth bothering?
+  Bluetooth: hci0: command 0x0c03 tx timeout
+  Bluetooth: hci0: BCM: Reset failed (-110)
+
+Change the dmas order to fix UART DMA support on RK3528.
+
+With this fixed Bluetooth can be loaded using DMA on ArmSoM Sige1:
+
+  Bluetooth: hci0: BCM: chip id 159
+  Bluetooth: hci0: BCM: features 0x0f
+  Bluetooth: hci0: BCM4362A2
+  Bluetooth: hci0: BCM4362A2 (000.017.017) build 0000
+  Bluetooth: hci0: BCM4362A2 'brcm/BCM4362A2.hcd' Patch
+  Bluetooth: hci0: BCM: features 0x0f
+  Bluetooth: hci0: BCM43752A2 UART 37.4MHz Ampak AP6398 sLNA iLNA CL1 [Version: 1091.1173]
+  Bluetooth: hci0: BCM4362A2 (000.017.017) build 1173
+
+Fixes: ab6fcb58aedf ("arm64: dts: rockchip: Add UART DMA support for RK3528")
+Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+---
+This can be verified with an upcoming v2 of "arm64: dts: rockchip: Add
+ArmSoM Sige1" [1].
+
+[1] https://lore.kernel.org/r/20250708224921.2254116-5-jonas@kwiboo.se
+---
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+index b215126efcc2..001a555c83b7 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+@@ -595,7 +595,7 @@ uart0: serial@ff9f0000 {
+ 			clocks = <&cru SCLK_UART0>, <&cru PCLK_UART0>;
+ 			clock-names = "baudclk", "apb_pclk";
+ 			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+-			dmas = <&dmac 8>, <&dmac 9>;
++			dmas = <&dmac 9>, <&dmac 8>;
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
+ 			status = "disabled";
+@@ -607,7 +607,7 @@ uart1: serial@ff9f8000 {
+ 			clocks = <&cru SCLK_UART1>, <&cru PCLK_UART1>;
+ 			clock-names = "baudclk", "apb_pclk";
+ 			interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+-			dmas = <&dmac 10>, <&dmac 11>;
++			dmas = <&dmac 11>, <&dmac 10>;
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
+ 			status = "disabled";
+@@ -619,7 +619,7 @@ uart2: serial@ffa00000 {
+ 			clocks = <&cru SCLK_UART2>, <&cru PCLK_UART2>;
+ 			clock-names = "baudclk", "apb_pclk";
+ 			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+-			dmas = <&dmac 12>, <&dmac 13>;
++			dmas = <&dmac 13>, <&dmac 12>;
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
+ 			status = "disabled";
+@@ -631,7 +631,7 @@ uart3: serial@ffa08000 {
+ 			clocks = <&cru SCLK_UART3>, <&cru PCLK_UART3>;
+ 			clock-names = "baudclk", "apb_pclk";
+ 			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+-			dmas = <&dmac 14>, <&dmac 15>;
++			dmas = <&dmac 15>, <&dmac 14>;
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
+ 			status = "disabled";
+@@ -643,7 +643,7 @@ uart4: serial@ffa10000 {
+ 			clocks = <&cru SCLK_UART4>, <&cru PCLK_UART4>;
+ 			clock-names = "baudclk", "apb_pclk";
+ 			interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+-			dmas = <&dmac 16>, <&dmac 17>;
++			dmas = <&dmac 17>, <&dmac 16>;
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
+ 			status = "disabled";
+@@ -655,7 +655,7 @@ uart5: serial@ffa18000 {
+ 			clocks = <&cru SCLK_UART5>, <&cru PCLK_UART5>;
+ 			clock-names = "baudclk", "apb_pclk";
+ 			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
+-			dmas = <&dmac 18>, <&dmac 19>;
++			dmas = <&dmac 19>, <&dmac 18>;
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
+ 			status = "disabled";
+@@ -667,7 +667,7 @@ uart6: serial@ffa20000 {
+ 			clocks = <&cru SCLK_UART6>, <&cru PCLK_UART6>;
+ 			clock-names = "baudclk", "apb_pclk";
+ 			interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
+-			dmas = <&dmac 20>, <&dmac 21>;
++			dmas = <&dmac 21>, <&dmac 20>;
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
+ 			status = "disabled";
+@@ -679,7 +679,7 @@ uart7: serial@ffa28000 {
+ 			clocks = <&cru SCLK_UART7>, <&cru PCLK_UART7>;
+ 			clock-names = "baudclk", "apb_pclk";
+ 			interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
+-			dmas = <&dmac 22>, <&dmac 23>;
++			dmas = <&dmac 23>, <&dmac 22>;
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
+ 			status = "disabled";
+-- 
+2.49.0
+
 
