@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-724259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB143AFF098
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:11:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F48AFF09A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FADC16B82E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:10:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC00F16DB8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458492405E5;
-	Wed,  9 Jul 2025 18:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6858241680;
+	Wed,  9 Jul 2025 18:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ez9Wweml"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P74L/i5P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E1623F41A
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 18:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DB323E33D
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 18:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752084598; cv=none; b=CCweGkYLZWX/bgzRtEM0M/S61OwDlU1rXlunGxFr1IPGIKojjPnGCSFidTIRcsmQLQWWsJ92xkvVzmo+EaGOKwoiq/YmT++9jrUQkY4mHOOhUCysTTeRUefFlCMx1W+ZC3vRWbO6w6AHmUJ1Y2LArVcLHMJnOQ4KMnkFecQGs4Q=
+	t=1752084600; cv=none; b=fMPdTpqpayVig+v9q0oeDjfWkU0tNPRDYAkcdWDayGBTfxALMANz8Cd/DWU1OFvIrlvV6BYadMooOc0cnQaY45jdtYHYlSJnMLGPdTeEEDIAA+uWRJbqKD1yZnpAzc/mltKBOAe0fHuZn51iaZX3ulBm+ssNpepXnMUzhRoizKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752084598; c=relaxed/simple;
-	bh=PKgtzgcV/ujkOAVJ93cjdK7VUxmhwe/fYDKEX/qBY2c=;
+	s=arc-20240116; t=1752084600; c=relaxed/simple;
+	bh=TToFJF7a6cjpVJcvV/eyMdLrXl8Is6qU2qXyp4GSavQ=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=QjpP8jKeNItd1IJBjK8ltwHdD1ydCAgo/exrk/PkIObr4QuwcwAcKdxZcC+uNfYCz3jmsn9LrH8iYQtiwTT3MtRi/jRC89OHyH71AX+2KLgMhCi9Nkvbx7K16nbyN37rjk08nEqL5U3yHiT7lTKI7y4H72SPtlhz5qTDDpkOea8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ez9Wweml; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32985C4CEEF;
-	Wed,  9 Jul 2025 18:09:58 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=diD+NEtl+Fny4y6+4FXq3twILF768QhF4rPM8D1+sZ0BGVZZQYxOdYh/Vk/7XStP7YNt6bQkvYnTz20YpyO1JDVPNfhpmcUDcqzK+aKyL6Z7BNQmJFGb7DtvEkX9yaV6zYPR3DtEeXsS5QkCfa+oD0oAtPoM4LRnltqBH8OfFRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P74L/i5P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF5D0C4CEF4;
+	Wed,  9 Jul 2025 18:09:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752084598;
-	bh=PKgtzgcV/ujkOAVJ93cjdK7VUxmhwe/fYDKEX/qBY2c=;
+	s=k20201202; t=1752084599;
+	bh=TToFJF7a6cjpVJcvV/eyMdLrXl8Is6qU2qXyp4GSavQ=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Ez9WwemlwXgWPpRJYi6waK0cw98qZ/rZP7chh0KdElvol6VTRL3N3HrJdBwdrOd7j
-	 MvYoU7gNE/zB4yNDyvQUTcmFfNKqD5MNcFV2ZzEPd6mgJGPZqDFkwj+prt1WsotMGU
-	 cT6IZD5OeMuRSR+gRJeJI55PBszo8SgoapsMwKROHnnr2AGUAP3ainhrJpTEyL+ycX
-	 r7UBaVRCOV5fOE3l7yC+BEVljJ5UrsTpV7kTbSNhuLBqmV2CRMX4ssMH0rF5mOecnc
-	 COtBhqTBWHMjdbp2wRt46eTyyWEKfkkNNn3TK8nK+gPq8J0FMdGgO4EH+Bx+k859Ig
-	 2TEvNTTYn27qA==
+	b=P74L/i5PzRxQlIUkWsTC3QCH+cN05KSbq2rbXhsCF+vrrJIy3ZNP5K7aPcQV9vPyM
+	 S9kQ+k/lOLrkpwPbd76+XKzuknLVdcqV9+avFj58gOdMmKTzk7CukrOq5a4pxz87df
+	 iRAzw6PTjvESV7+7veYM6xvEBtbN1vNjCUcqg2WwfUyG2OnSJ34Iudlfo4hEYoBaQW
+	 HwS7Glm9DKJU3jcdnhCw0mlu/BcVROt4zaP0KFIB/2wMUCALaHDohXtG5d2/EIjiCx
+	 sbbrhTn0ZqD9nfnOsFgq/DQntwF/Li/+vvmKfUrLzCvmJVfYzmSV6+TZ1ixeAUHT8u
+	 2aMDzqxq0M/Vw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF6C380DBEE;
-	Wed,  9 Jul 2025 18:10:21 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 72196380DBEE;
+	Wed,  9 Jul 2025 18:10:23 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,34 +51,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH] f2fs: check the generic conditions first
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to avoid UAF in
+ f2fs_sync_inode_meta()
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <175208462050.806926.15984243723421568237.git-patchwork-notify@kernel.org>
-Date: Wed, 09 Jul 2025 18:10:20 +0000
-References: <20250630160839.1142073-1-jaegeuk@kernel.org>
-In-Reply-To: <20250630160839.1142073-1-jaegeuk@kernel.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+ <175208462203.806926.11617556974013999350.git-patchwork-notify@kernel.org>
+Date: Wed, 09 Jul 2025 18:10:22 +0000
+References: <20250708095339.3079788-1-chao@kernel.org>
+In-Reply-To: <20250708095339.3079788-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 
 Hello:
 
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Mon, 30 Jun 2025 16:08:38 +0000 you wrote:
-> Let's return errors caught by the generic checks. This fixes generic/494 where
-> it expects to see EBUSY by setattr_prepare instead of EINVAL by f2fs for active
-> swapfile.
+On Tue,  8 Jul 2025 17:53:39 +0800 you wrote:
+> syzbot reported an UAF issue as below: [1] [2]
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/file.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
+> [1] https://syzkaller.appspot.com/text?tag=CrashReport&x=16594c60580000
+> 
+> ==================================================================
+> BUG: KASAN: use-after-free in __list_del_entry_valid+0xa6/0x130 lib/list_debug.c:62
+> Read of size 8 at addr ffff888100567dc8 by task kworker/u4:0/8
+> 
+> [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: check the generic conditions first
-    https://git.kernel.org/jaegeuk/f2fs/c/e23ab8028de0
+  - [f2fs-dev,v2] f2fs: fix to avoid UAF in f2fs_sync_inode_meta()
+    https://git.kernel.org/jaegeuk/f2fs/c/7c30d7993013
 
 You are awesome, thank you!
 -- 
