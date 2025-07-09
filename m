@@ -1,97 +1,128 @@
-Return-Path: <linux-kernel+bounces-723121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B73AFE330
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:51:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A27DBAFE332
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:51:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71A627A86ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:49:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00431567442
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE79C272E63;
-	Wed,  9 Jul 2025 08:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7018127FD72;
+	Wed,  9 Jul 2025 08:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pNPKeHzS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ODaX+gjq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FCD275867;
-	Wed,  9 Jul 2025 08:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A8C272E63;
+	Wed,  9 Jul 2025 08:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752051056; cv=none; b=DyhnH62F0LfxdLTxmMJgWPYrLZKKcxn2aSI4Q5VeBvpx96wFLAoTGrhCK8tu7U2iBqozqvi8++KBD9VBehnli9vdJH1F9IbG/53iFhH0zt0uXsVgoATBWj9wGHNsGJ21BxMr6zPOcVfXtvQIUGhAa/4u97bSS3OAm4dzR3k0juc=
+	t=1752051089; cv=none; b=ssmfZMKY7JAhTSPGAiuh+Uu9IfZt4xw/TqFtOP2esoBd0txO/tHyUTH8QER0PlScp3Wh1HdCVyUaPNcrcBk5GS9OcUtTTQzZ13nIzsBl9EAJRSBcKxovlC1KDZ+NLKB7DOkjta/vqDX82e6qZumwxdo8UQzuTS/cl/STyZ3j1rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752051056; c=relaxed/simple;
-	bh=6WW73RHQ5+v7927tZdT44K1IZ701zL0rJ9JiMGlGqvU=;
+	s=arc-20240116; t=1752051089; c=relaxed/simple;
+	bh=JQTxYbGVI0kyMgtWKjaALo2ip/NPE/mLIqYCKujmZFk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kt29E0ZLt4JV6VbiCZVpfLKp4pQbYcMjLezG7G2M4VNg40UeqfkX3QTwkKcd7lJwmBgyCdYbMmHrhG8xxpDKPQFpFysVuBJlfc1de16CSRdPDKS0NHlFn6kihvz7flX8ZFRoukQn94wyrYNY63xtxgJkLPdOj6V7b1fFxvakdD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pNPKeHzS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84488C4CEEF;
-	Wed,  9 Jul 2025 08:50:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752051055;
-	bh=6WW73RHQ5+v7927tZdT44K1IZ701zL0rJ9JiMGlGqvU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pNPKeHzSwOwNHDjZMD4gXA/fGCRvw8zEUlqlC5es7CpjE8Rl8k0vEInO0L/pY8An4
-	 pEeoGEYh/HnzU3iYUTh3GiWEylzGeZhE0nGDtShjWwX5AyLtcaIrkfbVfZ7kYAjxr+
-	 GpJSc6qG/XsR4PUjm7uOHCoqcyeiUM+0teX0kLECmLeGBEs7BP06B+vtQYj0BU8pBs
-	 UhylnlvXDsAamViqV0sg678z+4g7XpqPKR7G9ZQ0obBNudZb7ciKB9drfBy8rxJPW7
-	 cQpW0Buc8/FLm5XwlX57gxMUbo3KN0vfiedFoIBQUWmEMwmuwlbV6HILLVhS//2NFb
-	 6za+aDlYAA8Cg==
-Date: Wed, 9 Jul 2025 09:50:52 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com
-Subject: Re: [PATCH 5.15 000/149] 5.15.187-rc3 review
-Message-ID: <aG4tbBOv4-10L8fe@finisterre.sirena.org.uk>
-References: <20250708183250.808640526@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N7OMmSOSLx8oZJCQanjXjJbI/ZaHuacIVjWtOOqgheSkyCdVYt47GlJ0HUOLsXhjuHiCgH0G272USC4MhCjYOK56Lq0ZUmM8huq/cOm0T9j8r57WqZeimcYpVyyVvPvfQ8UVWWjgDbBwOPTwxDTU1+xU7KmGyYuBAuTlXyD3F2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ODaX+gjq; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752051088; x=1783587088;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JQTxYbGVI0kyMgtWKjaALo2ip/NPE/mLIqYCKujmZFk=;
+  b=ODaX+gjq2nmiSlaDYubf75A5fiTD/otSDEJxXYLt7rUimTG51N61SN87
+   +o+JhyzDvdwp/oKKLXX1xegq3+Z6Wg4CId7/k8sk+Iq1TRsnUz6/VmFVb
+   YbRhf73jmh0npv9qKqe9U1tNiLacHLyz/Sk2vF/VH30+Ks9g+JmpkII2r
+   zD0wN1CttAm/PtzS69Q0UFzBM+aq16Uq+KH2y51AyHXRXNST49RtkY8Md
+   gy3W1c4eq6ihtCfsnKOaxNBOIadic7dpjN4R1HdCkk47bm+LTDlziMWNY
+   ZcObg6PgNbRrDqU2/VUhHmygO2qIfU5/WwPw3N3WJR5fnZ9kQYCKEvvzH
+   g==;
+X-CSE-ConnectionGUID: Bm5BYVqVTSOSjKzvoMvmzw==
+X-CSE-MsgGUID: k7zCvnS8RZSf1vVFv+GDDg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54394492"
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="54394492"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 01:51:27 -0700
+X-CSE-ConnectionGUID: 9WrJdixiThSvKGCMCgv5Hw==
+X-CSE-MsgGUID: dbVU3s+USEGesKmij1EbLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="159758771"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 01:51:25 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uZQWQ-0000000DoU0-0RFl;
+	Wed, 09 Jul 2025 11:51:22 +0300
+Date: Wed, 9 Jul 2025 11:51:21 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Julien Stephan <jstephan@baylibre.com>,
+	Waqar Hameed <waqar.hameed@axis.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/12] iio: gyro: Remove redundant
+ pm_runtime_mark_last_busy() calls
+Message-ID: <aG4tiRHySSsQq_KN@smile.fi.intel.com>
+References: <20250708231144.971170-1-sakari.ailus@linux.intel.com>
+ <20250708231152.971602-1-sakari.ailus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/FbvQND06Foej1RJ"
-Content-Disposition: inline
-In-Reply-To: <20250708183250.808640526@linuxfoundation.org>
-X-Cookie: Do not cut switchbacks.
-
-
---/FbvQND06Foej1RJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250708231152.971602-1-sakari.ailus@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Jul 08, 2025 at 08:33:33PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.187 release.
-> There are 149 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, Jul 09, 2025 at 02:11:52AM +0300, Sakari Ailus wrote:
+> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+> pm_runtime_mark_last_busy().
 
-Tested-by: Mark Brown <broonie@kernel.org>
+...
 
---/FbvQND06Foej1RJ
-Content-Type: application/pgp-signature; name="signature.asc"
+>  	if (on)
+>  		ret = pm_runtime_get_sync(dev);
+> -	else {
+> -		pm_runtime_mark_last_busy(dev);
+> +	else
+>  		ret = pm_runtime_put_autosuspend(dev);
+> -	}
+>  
+>  	if (ret < 0) {
 
------BEGIN PGP SIGNATURE-----
+More potential users! So, perhaps introduce a helper and then convert
+altogether to use a new
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhuLWsACgkQJNaLcl1U
-h9BoUgf/Umlalfyh9xPNhXvzXjar1lb9XYPRgohc5JT+56atxGxX9TJ1ChVy835X
-4kBWgOzSqvdxmDIjVzCx1OH14lbyaGJ4NBYQ5Ied4PEB3836R4ZrKkLeBzuC+IMa
-rBRwAwy8+hRxN5k51uLK62ditZ53J1UVR7sYjNxLrZlBrbtk9Z4wDhjhmiZPynru
-sNZMjJTpKYPGaGDKnJgeH1SBGny0YAijHYEfQ8HL22Fzg2iWVzY17d/i/n9+3TlV
-E9vTkklxRnvRQ4pEiiUEk22eN3NFX7ELs/glfvoaflunK7WHw94uyscwlJydVPQe
-oDojr1PpLgh7l0XiCt10Vsu+70I/Cw==
-=9hNw
------END PGP SIGNATURE-----
+/// choose better name
+static inline int pm_runtime_toggle_sync(dev, on)
+{
+	if (on)
+		return pm_runtime_get_sync(dev);
+	else // yes, I know it's redundant, just for the better view
+		return pm_runtime_put_autosuspend(dev);
+}
 
---/FbvQND06Foej1RJ--
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
