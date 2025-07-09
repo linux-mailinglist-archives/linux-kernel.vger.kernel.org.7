@@ -1,149 +1,125 @@
-Return-Path: <linux-kernel+bounces-722793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F066AFDEDA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:42:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 599D7AFDED8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C7B74A6379
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C71A1C22981
 	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031C726A1B0;
-	Wed,  9 Jul 2025 04:42:30 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0202B268683
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 04:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035D0268FDE;
+	Wed,  9 Jul 2025 04:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TYlwDQDr"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E554113A3F2;
+	Wed,  9 Jul 2025 04:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752036149; cv=none; b=US4r4rxA4xyo2B430KT5rc+c7ESe0APpHdIMfq6R5255bEtrl4DKa6trKEC6/EARvfd4VH71wASz4+tmKYkKix1KstSot+kh/BNB3pLxq4va0yRCYIpqwTa2RNeYyLKzwUyy/K2kbRNx7wuMrnt9HyrNXb/fRIrO5FvCIdHiAUg=
+	t=1752036137; cv=none; b=eTlKakylPlejzXQ15McUBMLfBs3cVpcDnJlWJOoHpMU08/9rHZy5C/ffPpi9pdUyCNJR2jaUmwmrfSMTVoZdZ49Y9QJDLZJv488rbxmD6fm5nJ2FT16SiPm9PgZ96EuCwZmtq44umquhjG4MgH88QpTpsnG8klDPFGuATa0NKGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752036149; c=relaxed/simple;
-	bh=sWTCjw7yV66pBVAAsh/JHklRYDUJqSx7zwbyy/gm3qg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UfSEGRuRtestUAp6p3KathSOND4Z9EjCKsqSYyIHYGx5xGMX3ifJqRWk/5t50Vz/rMH/7VQBej+hIExHPS68ahUn3outIM/SUXk7eUyCV9Uu7IZoeA3U66lFGEus7OF4XhFghRWxh6BenzG3hUIwd8tCdv9mLqDLAXvKffNsXQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uZMdH-0004mH-4L; Wed, 09 Jul 2025 06:42:11 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uZMdF-007WaS-0X;
-	Wed, 09 Jul 2025 06:42:09 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uZMdF-009pDy-03;
-	Wed, 09 Jul 2025 06:42:09 +0200
-Date: Wed, 9 Jul 2025 06:42:08 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Jun Miao <jun.miao@intel.com>
-Cc: kuba@kernel.org, oneukum@suse.com, qiang.zhang@linux.dev,
-	netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: usb: enable the work after stop usbnet by ip down/up
-Message-ID: <aG3zIMg_z2CpnG70@pengutronix.de>
-References: <20250708081653.307815-1-jun.miao@intel.com>
+	s=arc-20240116; t=1752036137; c=relaxed/simple;
+	bh=Fn21aLk8KOVq18tlx6uiN1yIKZDUgjxrdNQzKFjWHZo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rS7xKIxJRmnVt/LB08BmhUV8IBwQW1KALIF8JFGCHsHrr/j6kjNziW8G73cO3wm0bQTwtadrklXcT+ZK8TlbJNRcVh+Py0HSwZ9HAMhXStJ+HLKRcnsunPR5urm68zeteJnhoRhEQJ0/gL81T+VQIFWxiTVEZt70EW71ZodlY/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=TYlwDQDr; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.79.218.70] (unknown [4.194.122.136])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 629D9201B1AE;
+	Tue,  8 Jul 2025 21:42:12 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 629D9201B1AE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1752036135;
+	bh=0OdFxV7TyZBPInyMjkfna2ntk1j8yOVcJaUIxoV+hLA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TYlwDQDrC8u9N4j5ib7rMwBKMQWHAH2JmrCB/O9SG/ozV8WYCCPcTYW2yisUWq84l
+	 HNRPHeZJDrc67ktZFfz+KITRkkDmsgHZworX0yo2yCnCTAgmv2dFtyEBVMLGlkvyQM
+	 W1DDF1b91bUnfc7NZ7lUH7Tu7U/fBvv+ZVXHLPPk=
+Message-ID: <34d1f7e4-0729-4faf-95b7-e2fce6c3be2e@linux.microsoft.com>
+Date: Wed, 9 Jul 2025 10:12:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250708081653.307815-1-jun.miao@intel.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI/MSI: Initialize the prepare descriptor by default
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Marc Zyngier <maz@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hyperv@vger.kernel.org, Roman Kisel <romank@linux.microsoft.com>
+References: <20250708160817.GA2148355@bhelgaas>
+Content-Language: en-US
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <20250708160817.GA2148355@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Jun,
 
-please resend this patch with the name [PATCH net-next] and add all related
-people suggested by scripts/get_maintainer.pl.
 
-./scripts/get_maintainer.pl drivers/net/usb/usbnet.c 
-Oliver Neukum <oneukum@suse.com> (maintainer:USB "USBNET" DRIVER FRAMEWORK)
-Andrew Lunn <andrew+netdev@lunn.ch> (maintainer:NETWORKING DRIVERS)
-"David S. Miller" <davem@davemloft.net> (maintainer:NETWORKING DRIVERS)
-Eric Dumazet <edumazet@google.com> (maintainer:NETWORKING DRIVERS)
-Jakub Kicinski <kuba@kernel.org> (maintainer:NETWORKING DRIVERS)
-Paolo Abeni <pabeni@redhat.com> (maintainer:NETWORKING DRIVERS)
-netdev@vger.kernel.org (open list:USB "USBNET" DRIVER FRAMEWORK)
-linux-usb@vger.kernel.org (open list:USB NETWORKING DRIVERS)
-linux-kernel@vger.kernel.org (open list)
+On 7/8/2025 9:38 PM, Bjorn Helgaas wrote:
+> On Tue, Jul 08, 2025 at 03:45:05PM +0530, Naman Jain wrote:
+>> On 7/8/2025 3:32 PM, Shradha Gupta wrote:
+>>> On Tue, Jul 08, 2025 at 10:48:48AM +0530, Naman Jain wrote:
+>>>> Plug the default MSI-X prepare descriptor for non-implemented ops by
+>>>> default to workaround the inability of Hyper-V vPCI module to setup
+>>>> the MSI-X descriptors properly; especially for dynamically allocated
+>>>> MSI-X.
+>>>>
+>>>> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+>>>> ---
+>>>>    drivers/pci/msi/irqdomain.c | 2 ++
+>>>>    1 file changed, 2 insertions(+)
+>>>>
+>>>> diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
+>>>> index 765312c92d9b..655e99b9c8cc 100644
+>>>> --- a/drivers/pci/msi/irqdomain.c
+>>>> +++ b/drivers/pci/msi/irqdomain.c
+>>>> @@ -84,6 +84,8 @@ static void pci_msi_domain_update_dom_ops(struct msi_domain_info *info)
+>>>>    	} else {
+>>>>    		if (ops->set_desc == NULL)
+>>>>    			ops->set_desc = pci_msi_domain_set_desc;
+>>>> +		if (ops->prepare_desc == NULL)
+>>>> +			ops->prepare_desc = pci_msix_prepare_desc;
+>>>>    	}
+>>>>    }
+>>>>
+>>>> base-commit: 26ffb3d6f02cd0935fb9fa3db897767beee1cb2a
+>>>> -- 
+>>>> 2.34.1
+>>>>
+>>>
+>>> Hey Naman,
+>>>
+>>> can you please try your tests with this patch:
+>>> https://lore.kernel.org/all/1749651015-9668-1-git-send-email-shradhagupta@linux.microsoft.com/
+>>> I think this should help your use case
+>>
+>> Hey,
+>> Thanks for sharing this, this works for me.
+>>
+>> Closing this thread.
+> 
+> I guess this means we should ignore this patch?  If it turns out that
+> we do need this patch, I'd like to add some details in the commit log
+> about what this problem looks like to users.
+> 
+> Bjorn
 
-Best Regards,
-Oleksij
+Yes, my patch is no longer required, since it was doing the same thing
+that Shradha's patch (1-2) were doing, but in a different way. Shradha's
+patch is better and would suffice for the use case. Please ignore this
+patch.
 
-On Tue, Jul 08, 2025 at 04:16:53PM +0800, Jun Miao wrote:
-> From: Zqiang <qiang.zhang@linux.dev>
-> 
-> Oleksij reported that:
-> The smsc95xx driver fails after one down/up cycle, like this:
->  $ nmcli device set enu1u1 managed no
->  $ p a a 10.10.10.1/24 dev enu1u1
->  $ ping -c 4 10.10.10.3
->  $ ip l s dev enu1u1 down
->  $ ip l s dev enu1u1 up
->  $ ping -c 4 10.10.10.3
-> The second ping does not reach the host. Networking also fails on other interfaces.
-> 
-> Enable the work by replacing the disable_work_sync() with cancel_work_sync().
-> 
-> [Jun Miao: completely write the commit changelog]
-> 
-> Fixes: 2c04d279e857 ("net: usb: Convert tasklet API to new bottom half workqueue mechanism")
-> Reported-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> Tested-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> Signed-off-by: Zqiang <qiang.zhang@linux.dev>
-> Signed-off-by: Jun Miao <jun.miao@intel.com>
-> ---
->  drivers/net/usb/usbnet.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-> index 9564478a79cc..6a3cca104af9 100644
-> --- a/drivers/net/usb/usbnet.c
-> +++ b/drivers/net/usb/usbnet.c
-> @@ -861,14 +861,14 @@ int usbnet_stop (struct net_device *net)
->  	/* deferred work (timer, softirq, task) must also stop */
->  	dev->flags = 0;
->  	timer_delete_sync(&dev->delay);
-> -	disable_work_sync(&dev->bh_work);
-> +	cancel_work_sync(&dev->bh_work);
->  	cancel_work_sync(&dev->kevent);
->  
->  	/* We have cyclic dependencies. Those calls are needed
->  	 * to break a cycle. We cannot fall into the gaps because
->  	 * we have a flag
->  	 */
-> -	disable_work_sync(&dev->bh_work);
-> +	cancel_work_sync(&dev->bh_work);
->  	timer_delete_sync(&dev->delay);
->  	cancel_work_sync(&dev->kevent);
->  
-> -- 
-> 2.32.0
-> 
-> 
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Thanks.
+Regards,
+Naman
 
