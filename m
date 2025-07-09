@@ -1,152 +1,125 @@
-Return-Path: <linux-kernel+bounces-722936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE0D3AFE0D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:06:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C22E8AFE0D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D40F581F40
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:06:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E32CA1AA2DC9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895252749DF;
-	Wed,  9 Jul 2025 07:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC06271A71;
+	Wed,  9 Jul 2025 07:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lGa5dMb4"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SqRwgVJi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64093273D8E
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 07:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3BB27055A;
+	Wed,  9 Jul 2025 07:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752044708; cv=none; b=RJce0rOyM37R1sWoilaup8quL3NU3q9cGnnI5obJPxxtAP5Yi/s/Bypl/8mrYW6OotpBABmXZeBb8ww7yAbIz6lRlBHPo69oOToCbglt2SOjH2lta+mQ24b7mqgt56moTWI0CBqgfRcGVHPIVdm9ilTot9kO3eXtpNshTjhNVRM=
+	t=1752044704; cv=none; b=MHOxQ8WBzSucyivazBJ5+x3JL7Bo997gChyZ0ygZSbmufsBCd+9S6L1/xGylqfqRZZGOGxImFiQU2xYXAJSZBsyw/9Zc1yhjIBFu6mt6T9hlQA3MlYEXl9hIRAX/3WyU0qQ91wIiA2DUm9FKtoMD+tE5HKtUXwgLxGxvNoHAveU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752044708; c=relaxed/simple;
-	bh=bqDfiVKFuR+e8N7emCK6GdbPPlTbsBsyYl3PH3KjyJw=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Cc:Content-Type; b=lW//EAhFeRQ+q4AfHV9L6FmC7+uS7251jvfS/WEqaPQO6s7QhCKwJXITWWE30vRfz/iWOV8iGEXskLFPY7swHih/QPRDdCxfjjTAGJmgTGrlvVBw2zn7f/B4ycWpzygKuE3kuJgCP4G5x+bYl8j33016V/5MBppXRabLGqIzqVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--suleiman.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lGa5dMb4; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--suleiman.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e819e8eb985so6723034276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 00:05:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752044706; x=1752649506; darn=vger.kernel.org;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HaDQLHJuamQG+Oz/rXsc1nJQc3j6887WnfJ3FWY6wPY=;
-        b=lGa5dMb4/QCskSc/99m9viQEHFXRqBqRbuSxe8xbbz1YtNKIQIHcB3SWi2d6gc03NM
-         yjMjJYjLpL0efYbj12ikl3F9Vt1vpd40ZbT4SQEUyFezNUsZuxbxOO4foCxR9M6eeRDJ
-         0ddqiQYvYZsttyrpxusJBc1Lk8t31SSk11tb7LaEAQGqTgEeEUdjrQKl2FmJjeFNYvlx
-         ZQx3s3C0sOEOxfUt+NQeDSIvkXR1lQGvJs7RuI4fVOKa7zt/5mQkLHPa+eI0mAKQuPkm
-         PC5ZUj4H62nz3hRyxxrxayLIkoMo8SV9au9VXzGrTmwxQGpk0vde0OVl5yOU90R5uDLE
-         Q7pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752044706; x=1752649506;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HaDQLHJuamQG+Oz/rXsc1nJQc3j6887WnfJ3FWY6wPY=;
-        b=YQof20no55mSfQRzCDj3jcdBEg1QRT8okt/xZkN0pxvncxUwvf388SctZHAgugPm/Z
-         2xsPwXV72k0tu7jX0qgFXTA5xPdNgcFbYrdvBjW15L3Y6ZNthkRF+gVKwBAg4BOn5/eq
-         ze6dpMxVKqu7NYQwBXhp+ywjOHESuera3LjVJ4iAJH++yItwHKyFzXmqrsCN8/4iBiOV
-         F1+AUfkD0UT2geOVV+o0ofdvmn5pf2eD14uVBdgzxug/b2uIa4/uvjmuKeLR29xpG0VI
-         o1U74rgt5HVKoSlT5Y9OwaG/Lm8ElXcznpl4iCgZ0sbAPkru2cRysLuVOCQSeheUciXN
-         tbGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVue7V/3kHRg9uYfKX1E0+7A9wOVFskBoPmdT/KkjWPUUlO4cb+uHnIe91jrkcE5wOzPlLrGO+tv9HrS84=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEtqm38ZYbyaxIw5TT7Ysyb9e2PbXL/uusdqAN1s06nWkx7D9p
-	0PcOIy2LMdmXvywYQqXuxTY7ZIed5esAnfTp8IYoa2Jf/zAKg3SDqmfObCv+AH7WecWCeNqfwZB
-	iit3DjmsW0mvrag==
-X-Google-Smtp-Source: AGHT+IE5ZkJJrfChwxmjelv9TbY/xNBu5uRt03nGE+i4WAPwg6JLhbF8sllzldrGvtvYqXjNVHB2+Nx7G6uM6w==
-X-Received: from suleiman1.tok.corp.google.com ([2401:fa00:8f:203:a92c:694f:82fe:62a])
- (user=suleiman job=sendgmr) by 2002:a05:6902:6c0e:b0:e89:883d:dd33 with SMTP
- id 3f1490d57ef6-e8b6e19fdcamr688276.5.1752044706399; Wed, 09 Jul 2025
- 00:05:06 -0700 (PDT)
-Date: Wed,  9 Jul 2025 16:04:50 +0900
-In-Reply-To: <20250709070450.473297-1-suleiman@google.com>
-Message-Id: <20250709070450.473297-4-suleiman@google.com>
+	s=arc-20240116; t=1752044704; c=relaxed/simple;
+	bh=sBMDGnv3Py+rrKCjUei3p5nhxQILF6SynaL6wTFYP4Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AA+ONmwqZwpiov9QpkJ0aqqtBhJ+zRQ4gzWcbHaWK+CS+BlTjvYK9uHBIhCjXtfOBZ0o9ZIrBgEjTuhEMXq4zMgxIHXM/ZQPjuEdErj9C14x70KV7SiFXc1mXOm8kqevsYyS/U9zEAkHfzcJU456vxe5dlnOitsqxJPWk0luHXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SqRwgVJi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59122C4CEF7;
+	Wed,  9 Jul 2025 07:05:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752044703;
+	bh=sBMDGnv3Py+rrKCjUei3p5nhxQILF6SynaL6wTFYP4Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SqRwgVJiN4Ob83WHNKfgOe+bN9d1qa0i3+78kgLepnEDxjH1HHeIqjPSiVPtC3IN5
+	 t2DpqVX6RcWvL/dlt1sunuzK1LdyuFKqVgP99hijNf5bfkDTMDoUIy8VOGzHv5zyZO
+	 eOwAW456jjbv6JAyM/t+UfQr0hbS7Xp9RdU6+IHVkV8XV9CzmMgvvYVbg8hAMvrk13
+	 gDaxJus+SdGGZkV9MQNkKGl/MliWdLbZ4MqqxzwJbEMd1VCDrNghXtzM5sKRW8vws7
+	 urGsTqLB4yHW8q0pDE9C5Ka7nEkMCQyPAbL+rjgzLqxMsz0hyNgyxTgYd/Le2aOPvK
+	 Kq7VlzNpUGYCA==
+Message-ID: <64b43c77-68b9-4fd6-aa6e-b058689c8b83@kernel.org>
+Date: Wed, 9 Jul 2025 09:04:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250709070450.473297-1-suleiman@google.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Subject: [PATCH v6 3/3] KVM: x86: Add "suspendsteal" cmdline to request host
- to add suspend duration in steal time
-From: Suleiman Souhlal <suleiman@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>, 
-	David Woodhouse <dwmw2@infradead.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	John Stultz <jstultz@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ssouhlal@freebsd.org, Suleiman Souhlal <suleiman@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Bug] soft lockup in ipv6_list_rcv in Linux kernel v6.15
+To: Luka <luka.2016.cs@gmail.com>, "David S. Miller" <davem@davemloft.net>,
+ David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <CALm_T+1s19Kr0=v94oUJEbN5ciGcumZDZp-hbn5=z_wPefqG1Q@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CALm_T+1s19Kr0=v94oUJEbN5ciGcumZDZp-hbn5=z_wPefqG1Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Introduce a new command line parameter, "suspendsteal", enabling the
-guest to use MSR_KVM_SUSPEND_STEAL, which tells the host that it would
-like host suspend duration to be included in steal time.
+On 08/07/2025 09:30, Luka wrote:
+> Dear Linux Kernel Maintainers,
+> 
+> I hope this message finds you well.
+> 
+> I am writing to report a potential vulnerability I encountered during
+> testing of the Linux Kernel version v6.15.
+> 
+> Git Commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca (tag: v6.15)
 
-Signed-off-by: Suleiman Souhlal <suleiman@google.com>
----
- Documentation/admin-guide/kernel-parameters.txt |  5 +++++
- arch/x86/kernel/kvm.c                           | 15 +++++++++++++++
- 2 files changed, 20 insertions(+)
+The AI generated spam from this account restarted and continues. The
+person learnt nothing from previous feedback.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index f1f2c0874da9dd..9f5758ca8fadd5 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -7074,6 +7074,11 @@
- 			improve throughput, but will also increase the
- 			amount of memory reserved for use by the client.
- 
-+	suspendsteal
-+			[X86,PV_OPS]
-+			Enable requesting the host to include the duration the
-+			host was suspended in steal time. Disabled by default.
-+
- 	suspend.pm_test_delay=
- 			[SUSPEND]
- 			Sets the number of seconds to remain in a suspend test
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 921c1c783bc187..35d1bb2283c2c0 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -320,6 +320,18 @@ static void __init paravirt_ops_setup(void)
- #endif
- }
- 
-+static bool suspend_steal;
-+
-+static int __init suspendsteal_setup(char *s)
-+{
-+	if (kvm_para_has_feature(KVM_FEATURE_SUSPEND_STEAL))
-+		suspend_steal = true;
-+
-+	return 0;
-+}
-+
-+early_param("suspendsteal", suspendsteal_setup);
-+
- static void kvm_register_steal_time(void)
- {
- 	int cpu = smp_processor_id();
-@@ -331,6 +343,9 @@ static void kvm_register_steal_time(void)
- 	wrmsrq(MSR_KVM_STEAL_TIME, (slow_virt_to_phys(st) | KVM_MSR_ENABLED));
- 	pr_debug("stealtime: cpu %d, msr %llx\n", cpu,
- 		(unsigned long long) slow_virt_to_phys(st));
-+
-+	if (suspend_steal)
-+		wrmsrl(MSR_KVM_SUSPEND_STEAL, KVM_MSR_ENABLED);
- }
- 
- static DEFINE_PER_CPU_DECRYPTED(unsigned long, kvm_apic_eoi) = KVM_PV_EOI_DISABLED;
--- 
-2.50.0.727.gbf7dc18ff4-goog
+I suggest ignoring completely.
 
+Best regards,
+Krzysztof
 
