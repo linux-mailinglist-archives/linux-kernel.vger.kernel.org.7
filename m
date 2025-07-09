@@ -1,187 +1,258 @@
-Return-Path: <linux-kernel+bounces-724510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13BE5AFF3D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:23:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99225AFF3D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 069EA3BF121
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:22:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D69E117C75C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAB523E344;
-	Wed,  9 Jul 2025 21:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C382723C514;
+	Wed,  9 Jul 2025 21:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="hKA2TXkb"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010023.outbound.protection.outlook.com [52.101.69.23])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0oGw1LV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C628224AFE;
-	Wed,  9 Jul 2025 21:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.23
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752096175; cv=fail; b=FIyk8VVsNVU+3+QlKVqXRsoXSuo3KKieKKSECh+nfGRBw0DfoYeqVjcEEfsmGWNmHnnYWm025b6evk62j9vq4KVfJ+xOwG6aZdp0jJE1Fa5+RzEQxuTNqkwfrqLQoImwbJ26UsQEGaU327TUDTgcqt1OLSQvW35Rmm9NODGITZw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752096175; c=relaxed/simple;
-	bh=YPgJMraLqyjz6YckXO85cA1Q/SWDaF9aK3AOfnStJPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GsAvZSUjFbwBF0hF5eCG8H6oHE5L37LpHK7m4muyh5zJt7TjB96/vhDlD7R7NL5VnjlW/1VoB+dNZs+qRj/SGKO6cvcx5jUMIWcjbXm+Y/kNst2E3oh8VAfhGTA1+iQO9GJvb3hyOCXSTGOkrAs4uSou7WmX2LoCARtA0MOaswo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=hKA2TXkb; arc=fail smtp.client-ip=52.101.69.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l2ZQCwOgoX0DRc/H9mHolKHlZSyyV8//g/+gWKG+/8ARKhq2i4aWseqGwoRX3v/L2PWRjwTb6OsumNkK+NWNcZqdFUeXBGcfyqY0e9JI3HxQn3VqRyzDm9FETzKtPS9P07/Etv5CD5WlspwpU1cmSrOocsrgueFxQizjTLfK9g90s29ceXY/AuKa0S5dgAUGZFrHsAjvC1ul/4mjYrtL1kCcbGJxf8XZujpoF88doAh1wcwUQiuOBF5Da50EjBG2lin80Q6WmLIi+RkSX+wKKax0xjcNJyoS5zh0lB9JZkfi1qUi+vTP/vv/N/kE8dOoO7TucrBg5XiRZ1UNoWfuPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+mRCiKKFVMyRIJM5SyX4tbeY16NMRwiKh36oDhn/QEk=;
- b=Ovr6RFeG+dlRwAfMOjOC4vXIIbQ8VDfY1VqfLjEdRhhsMCKjAgjpRRUZ6LfjQkZpaTpd9qdITytUvefNjrhXa8Nu/MH04p9ic4SFix/baOVWJkzzoqjdkhnCOvd5yDWT9/IEsGjCbYrEHKhS0EmGgS3D7rqFH4Y1GnHmxMchRdI1+8D6V7CG9lJ89x4dSOFX1Wd8X4MyRTbDxuMuI0vTp7bf2YKQt0BfmG6A3jrDltWTMfYKfkuFbEHTC8vDGAMOUY5NkU6sz5IahZmHEQibiDVhqJATqvwtR9JkqtRjuZfywPuBHDlj8dOx0YNwiuWocIuEkwVlkZcsh4grDqdNRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+mRCiKKFVMyRIJM5SyX4tbeY16NMRwiKh36oDhn/QEk=;
- b=hKA2TXkbWuZUAUNq2zskVhrWqwOIbBlTYDwdNzG7JJXswkHIzEjXkSOPLrN5f/82dJlP5rVAbiKOJwvCioOQ2Sz8Yz//rHwVnKoc/noEcmVoAnd/T2kMq0gBU3rXvB7NNnAjgmTqrfuIIZVqWSvVA6mc1DHYRb+/lrUom/zqbnqtyYtQMCe4m0RKVrcMZXa9+NuV6WSIsdwUc7gGwZLVsNRI79DuOt8jK12i5yvv1bxDY6VKO5/o1dhPD+3XBc0+YDC8NvFTNwKNbbYwhPlcF3oPOscffSlKhzzvyJk3oBhw0FeFdbvAK2WEeX8OzkJ83jFh0Q8g7hfJk49j4uoOtg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PAWPR04MB9864.eurprd04.prod.outlook.com (2603:10a6:102:390::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Wed, 9 Jul
- 2025 21:22:44 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8901.023; Wed, 9 Jul 2025
- 21:22:44 +0000
-Date: Wed, 9 Jul 2025 17:22:39 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH v2 1/1] dt-bindings: nvmem: convert vf610-ocotp.txt to
- yaml format
-Message-ID: <aG7dn9YzfnIeDtOl@lizhi-Precision-Tower-5810>
-References: <20250521164031.306481-1-Frank.Li@nxp.com>
- <20250522-calm-pronghorn-of-storm-bb8a8c@kuoka>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250522-calm-pronghorn-of-storm-bb8a8c@kuoka>
-X-ClientProxiedBy: AS4P251CA0005.EURP251.PROD.OUTLOOK.COM
- (2603:10a6:20b:5d2::10) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9DF230BC9;
+	Wed,  9 Jul 2025 21:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752096221; cv=none; b=mm2UZQJnkqu3WNLzxoZPVIG7xKEyN4Xgovtpi3EdOS7TfSkvhLDJh3k/F1J5iQTNio1HLdvZ+pjtfqPYnbg4WHZyx7BxG947ubKxz1vSeTIkF+wNywXoHLEj26t5x5ishtvpMcyjZBQbpX1T8IJUhL0SViLg/J8jx+NA0f1x7IU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752096221; c=relaxed/simple;
+	bh=iCSfrE/TrVxc40nJx3JknRKRMdnt/HKs/yUc5oeLvDM=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=WRTRybOe3b5zhUpHlO4ZB/y+IHaZnLBPVEbYsSPpBl7nCkJ6CQ8PYhF0EZJYP8p9BuXknqYCsoXY3/rFhKJlQt+SeUpn8bn74G7vcMjtfXT8Fc/bv9tgeXBlX95Z+KZwy8rDG962gBkm8V2JJMmNHQPeJfh+dlU03Yd/+uakvO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K0oGw1LV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12BA6C4CEEF;
+	Wed,  9 Jul 2025 21:23:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752096220;
+	bh=iCSfrE/TrVxc40nJx3JknRKRMdnt/HKs/yUc5oeLvDM=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=K0oGw1LVnTlhK/zhMAXC0oVNJhwIUbPRBfJVwTX38u2orLbrEXKGBAFnwSSd7rpZ/
+	 pxpJBb+G/EQ7zVa4E+r8I4U0sUQ5oXqxJ1SAGdcaX/XD82Sl8gJ7b13tPlsbaVbEqI
+	 63TKIs1vrIQBwaIFfDkafCs6AfMeNYRuzgn0G+orhvB0Y0ep9VvxL6N5KBxHlKM641
+	 JK6PQZmlfG+d0uwbxkOGQi2VV8iiS+Wn3/xJzFdPPfYop+rIXrQdjwmsWJBzxBCFG6
+	 Dl+ttzPmmStjbCSfx5uxzylt4YLROlJfNm5zbhgSKJOyCOs965+y23W2HhFIdONIf5
+	 oxR948zhqhLbQ==
+Date: Wed, 09 Jul 2025 16:23:38 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAWPR04MB9864:EE_
-X-MS-Office365-Filtering-Correlation-Id: ab31c43c-fb74-4a85-c290-08ddbf2ebe54
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|19092799006|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9PFonrIDBGaht5A9CeBAV9Gt75cogjyby57nrs8eqAg7HRSciWClSZPJMPr2?=
- =?us-ascii?Q?CFUpB+Egrun0OjRdO0ZysmJShkeXKQpoouVgHBZxjfNc/DIctw+lKlFyOI+x?=
- =?us-ascii?Q?dLgya2X930xxQZG3ndx5PpF8ZQ8WnK7hdgW9PKlGT+97m1jyXZYaFsPPzvlW?=
- =?us-ascii?Q?KKKFR1s5qAVLdeJGBiTmQQl2gaMof2hLy5K/InAUP9r6+pHlBJ3XKKTpT+2X?=
- =?us-ascii?Q?r4sYD0FDrNp57nQKsdq8b7QpzRQk7UEHIzUVpeFEfAPJIJbSANNXuVJX75Li?=
- =?us-ascii?Q?7WRgDAje9L9GYNC5xWIuVBxXs7IuUJFJ0FWUe2rB6BcfHgfhwtuViEp9kDPM?=
- =?us-ascii?Q?UB1gDOorNXHynlKseAdAi6Y9nDtFACLUr7IWVbSh/yaRI2eQlVLa3pc5DsBL?=
- =?us-ascii?Q?uBRltMhQ6A0WjXnbS8qzQPljxZrzLiItUE0btOtC/0ML03lzchNs4WHZ+1qM?=
- =?us-ascii?Q?STKYp3++VZXkgP7Knm1vSUWUUuIvDXBfXQeksGPdJ5hN5t3LGjP1VSQrNlOn?=
- =?us-ascii?Q?2rZv/Sm/tQdDjemaHY/vpleoDIoFLNutbk7W2qKCP0HuMO6q/PJMqSMrrCTW?=
- =?us-ascii?Q?KhUld1YDgWxN5+DTfaCJaOjckj2oSgyO9F3pWQ3xBhrVs05KUcrE3S03yyqP?=
- =?us-ascii?Q?NBS8us7ep1To55J5YNVAqarALlFQOM4322VBJURdA+lnqwgr0On5GDwJxma1?=
- =?us-ascii?Q?ZEblqQMFthQirtBdnO7JzydrHx165QQVw3nIK7n+cqNet5U/HNEym6QI7Le4?=
- =?us-ascii?Q?c9loa8sCIEiUAFcwF0ghBX+E3PUMit/cPQLR+pTzZHNPLSJbG9Z4oAuz7ium?=
- =?us-ascii?Q?qR/s211eUdiY6iwvibiHPzUKW5F2YnVK008/l+UbdxBPJ3HDKcGPiMpuVQtd?=
- =?us-ascii?Q?vNhHIMFhBEp6X8XjVnbLwt+pL79frd6Zu4rn6JXMxR7YoK8By4F7wSZaxulB?=
- =?us-ascii?Q?qIxgqfQG+DnjIyN1u77h10F2kjw88wnFiDQ5Sa7/j5nZ0d4bYbCyWHZuf/yX?=
- =?us-ascii?Q?WfUW2qivpH2mzLP7DNEMkjiJx5tWx+av6icCcOuKXgb1aV0edRqXRNcRWCOZ?=
- =?us-ascii?Q?VUeDLiN7azRPnSSMHLGcznXPWyx7hR8VTMZsEGAuEJ5lNfgFFuvZ5eHCVPcg?=
- =?us-ascii?Q?+FNJsQBMcMq6gl5cTk/LARmi4q4sZ4GreyHOvfdHcBmTN/ceUJLUPo9AnQtN?=
- =?us-ascii?Q?rjX7sOuhHuXsPezbfmMngxcULrbdFR8o6ihB+UpDhiB9XQ4GBO6fRNhsrslZ?=
- =?us-ascii?Q?/RdgaLsM1+VfoaBhw3OikBvr74p3ztLHFyJ98r4t76Nh3F/NH1zf+dzia7Dq?=
- =?us-ascii?Q?3cC2MntRIRnG9iMYdUMsg5P1tNAxtf1aCwqo2p5RTDbFe8nICQqYb9zr42x7?=
- =?us-ascii?Q?yDth4c8teL24prQGKsoMQG1caCdEZJBSYiFnDV8O1XImKhKAwHj53HkT+GJH?=
- =?us-ascii?Q?8DhevPHxbTOJM4/9yt8+oKaLERteUTArUXiVwxqPXnzMgReE+mKcKA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ufEFNnh8EOxnfAqU7K/htv6OnVoP9oHtmaGzJ7kcdPPMme0VlaqV36uog2d7?=
- =?us-ascii?Q?kNpT8mlK3C7g39BIYn6YlQPvYm1xG2BbWrzWiw34uCI8BcjXWZNKoSFYSI+H?=
- =?us-ascii?Q?TC2DF24OT8zhuhOwP/lrwDMXOUFFG61aJGL/QOvOK1SlOSQkBB1fjIWHOQ00?=
- =?us-ascii?Q?oFlawjGDJB90Mp33UUdui3mbl/4YF5oam4tcpXPBCy4XbTmD8qQVYzfu0Mv6?=
- =?us-ascii?Q?sAIZMR6d1bZlag8u4ejIGkr0nAJtusahWh4MRrh7pVZ+o5MlK35iel9WwPaw?=
- =?us-ascii?Q?ir17niVKU1WxzNqZrRh525kuueVNKQT0pf5nvxC+O+scLKaONLpGf+gsQAOo?=
- =?us-ascii?Q?AjwK15IoeVsByct/VUtvBHrniL7WspNBbPS+cr7hFud7+o0K0Gglmv+/ewoi?=
- =?us-ascii?Q?HH7a1MjGCixBk7/Y4Ew7HUTrrMpkS47o8QcOVtYZwMOBLSU5qtZ1ghWg3pnm?=
- =?us-ascii?Q?gJsemk8aH+Mh4eSalborE6Kl70hFX35T4A3oKCw83Nb5DtKBVuI7GA5rK0P1?=
- =?us-ascii?Q?BCEaVy9b6fPyk2qU/ZooJt1qIWL46iGH5limrJ9Av70oOgfJjAhrXBVZyYiH?=
- =?us-ascii?Q?dDatDq5G4Ul2GmdiLKFY+fO+rLW3gJiv5LyhA/w9EospdeXiRNS2u2RPBtcl?=
- =?us-ascii?Q?6+yjkSRKWum0Or5dKKymYfsXlTUFFRPVdfXCOxNuARarGu0oAGrF8pZUnvrA?=
- =?us-ascii?Q?bue3fBa7eDMYUWSwCThaiICOXaJa9iw9RyhRde+JP68LXpj7wJXze5pULc6y?=
- =?us-ascii?Q?kVsk+kdyxqWwg8ewca8x02T3HtTR5uSIce6aH3HS8SOfXiVdjXw3FwyMDrB9?=
- =?us-ascii?Q?/CTKbt7tyh4rq5lqbgjvScdd/ZLA/GLcLFvquXjzEqFSxo5Ob3qE4ZJ7dNI4?=
- =?us-ascii?Q?9yKRvJ9vZ7k+iOc2wc5KBnhWSdNbtE6MMrx53sivMmesve3k6LjNykfOCDse?=
- =?us-ascii?Q?qNyNomJNYiRMJsx2MVx4BV8iiUqbAbOLQZ7Hiln2h8NRc73HGByIiOPZni1b?=
- =?us-ascii?Q?SAo8BPBPNZyy7+bAL98uygDBWqU+5dW3/Dml0lIN2whxQ+Y4ZM37oLO3HcFr?=
- =?us-ascii?Q?Nq9mdOAq9sswwmaZQPRPVXFbdTFKdMGgYkX6kdVQGLGoW14yWn9zXH6jmkIn?=
- =?us-ascii?Q?DuXsKZdZcfCvIOQugUscwc3aD6bhRy9jbXAISAR5JyfNdTZ2ditZUvQbGaOF?=
- =?us-ascii?Q?Nm8Yq/L21x0NUTIxXL0FQb9G9W/pbsJIoFFEVP/qd7nSmmvjhZQoDlhh/kjP?=
- =?us-ascii?Q?zWZ1HJybAWjRwa0zVbViXXAhh+nnFH4+9cZlDYxBHcU1DH+gBu1yttMh2IjJ?=
- =?us-ascii?Q?qZeTs9WSiH/da0Kr79End0l/xGBiKoXthFhr2/dAFzGe0MQMy67GnTKWfvOO?=
- =?us-ascii?Q?FXabi42EmvXbuJELNKyp1mgfEDfSX+ShDW65Z45Lgl6wv5MNNkPEAw7TeKFK?=
- =?us-ascii?Q?8XnAwscZfXyRJ+iYDEIxQazY6zzgLUsp5FcfXskxp0urZ6UPJ0SiPcDBgVek?=
- =?us-ascii?Q?hyoXcom97RNE2wshu3WfY2XvzC4ChxqwQUC+SrObbPH4BUubakxZBGMmJayo?=
- =?us-ascii?Q?NZ4olhU+sah15VMIxUY=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ab31c43c-fb74-4a85-c290-08ddbf2ebe54
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 21:22:44.0602
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nuwS4uc9EuEUetLEMqz4NiNH7Ae2uH+oyWnn2tuL2XA07O22DekYTbqET0u1kCX4O/b8yyqRyiNID0JT+ThtpQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB9864
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+ Ulf Hansson <ulf.hansson@linaro.org>, Samuel Holland <samuel@sholland.org>, 
+ Chen-Yu Tsai <wens@csie.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Jernej Skrabec <jernej@kernel.org>
+To: Chen-Yu Tsai <wens@kernel.org>
+In-Reply-To: <20250709155343.3765227-1-wens@kernel.org>
+References: <20250709155343.3765227-1-wens@kernel.org>
+Message-Id: <175209617694.3636022.5179038032273986646.robh@kernel.org>
+Subject: Re: [PATCH v2 0/4] allwinner: a523: Add power controllers
 
-On Thu, May 22, 2025 at 10:13:50AM +0200, Krzysztof Kozlowski wrote:
-> On Wed, May 21, 2025 at 12:40:30PM GMT, Frank Li wrote:
-> > Convert vf610-ocotp.txt to yaml format.
-> >
-> > Additional changes:
-> > - Remove label in examples.
-> > - Add include file in examples.
-> > - Move reg just after compatible in examples.
-> > - Add ref: nvmem.yaml and nvmem-deprecated-cells.yaml
-> > - Remove #address-cells and #size-cells from required list to match existed
-> > dts file.
-> >
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > ---
->
-> Thanks!
->
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-All:
-	Anyone pick this? Krzysztof already reviewed.
+On Wed, 09 Jul 2025 23:53:39 +0800, Chen-Yu Tsai wrote:
+> From: Chen-Yu Tsai <wens@csie.org>
+> 
+> Hi folks,
+> 
+> This is v2 of my A523 power controllers series.
+> 
+> Changes since v1:
+> - Re-order compatible string entries
+> - Fix name of header file to match compatible string
+> - Link to v1:
+>   https://lore.kernel.org/all/20250627152918.2606728-1-wens@kernel.org/
+> 
+> This series adds the power controllers found in the Allwinner A523
+> family of SoCs. There are two power controllers. One is the same type
+> as those found in the D1 SoC, just with a different number of valid
+> power domains. The second is (I assume) a unit based on ARM's PCK-600
+> power controller. Some of the registers and values match up, but there
+> are extra registers for delay controls in the PCK-600's reserved
+> register range.
+> 
+> Patch 1 adds new compatible string entries for both of these
+> controllers.
+> 
+> Patch 2 adds support for the A523 PPU to the existing D1 PPU driver.
+> 
+> Patch 3 adds a new driver of the PCK-600 unit in the A523 SoC.
+> 
+> Patch 4 adds device nodes for both of these controllers.
+> 
+> 
+> Please have a look. The power controllers are critical for enabling more
+> peripherals, such as display output, camera input, video codecs, the NPU,
+> and a second DWMAC-compatible ethernet interface.
+> 
+> 
+> Thanks
+> ChenYu
+> 
+> 
+> Chen-Yu Tsai (4):
+>   dt-bindings: power: Add A523 PPU and PCK600 power controllers
+>   pmdomain: sunxi: sun20i-ppu: add A523 support
+>   pmdomain: sunxi: add driver for Allwinner A523's PCK-600 power
+>     controller
+>   arm64: dts: allwinner: a523: Add power controller device nodes
+> 
+>  .../power/allwinner,sun20i-d1-ppu.yaml        |   4 +-
+>  .../arm64/boot/dts/allwinner/sun55i-a523.dtsi |  18 ++
+>  drivers/pmdomain/sunxi/Kconfig                |   8 +
+>  drivers/pmdomain/sunxi/Makefile               |   1 +
+>  drivers/pmdomain/sunxi/sun20i-ppu.c           |  17 ++
+>  drivers/pmdomain/sunxi/sun55i-pck600.c        | 225 ++++++++++++++++++
+>  .../power/allwinner,sun55i-a523-pck-600.h     |  15 ++
+>  .../power/allwinner,sun55i-a523-ppu.h         |  12 +
+>  8 files changed, 299 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/pmdomain/sunxi/sun55i-pck600.c
+>  create mode 100644 include/dt-bindings/power/allwinner,sun55i-a523-pck-600.h
+>  create mode 100644 include/dt-bindings/power/allwinner,sun55i-a523-ppu.h
+> 
+> --
+> 2.39.5
+> 
+> 
+> 
 
-Frank
 
->
-> Best regards,
-> Krzysztof
->
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/next-20250709 (exact match)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/allwinner/' for 20250709155343.3765227-1-wens@kernel.org:
+
+In file included from arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts:8:
+arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi:11:10: fatal error: dt-bindings/power/allwinner,sun55i-a523-pck600.h: No such file or directory
+   11 | #include <dt-bindings/power/allwinner,sun55i-a523-pck600.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dtb] Error 1
+make[2]: *** [scripts/Makefile.build:554: arch/arm64/boot/dts/allwinner] Error 2
+make[2]: Target 'arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1478: allwinner/sun55i-t527-orangepi-4a.dtb] Error 2
+In file included from arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dts:6:
+arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi:11:10: fatal error: dt-bindings/power/allwinner,sun55i-a523-pck600.h: No such file or directory
+   11 | #include <dt-bindings/power/allwinner,sun55i-a523-pck600.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dtb] Error 1
+make[2]: *** [scripts/Makefile.build:554: arch/arm64/boot/dts/allwinner] Error 2
+make[2]: Target 'arch/arm64/boot/dts/allwinner/sun55i-h728-x96qpro+.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1478: allwinner/sun55i-h728-x96qpro+.dtb] Error 2
+In file included from arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts:6:
+arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi:11:10: fatal error: dt-bindings/power/allwinner,sun55i-a523-pck600.h: No such file or directory
+   11 | #include <dt-bindings/power/allwinner,sun55i-a523-pck600.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dtb] Error 1
+make[2]: *** [scripts/Makefile.build:554: arch/arm64/boot/dts/allwinner] Error 2
+make[2]: Target 'arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1478: allwinner/sun55i-a527-cubie-a5e.dtb] Error 2
+In file included from arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts:6:
+arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi:11:10: fatal error: dt-bindings/power/allwinner,sun55i-a523-pck600.h: No such file or directory
+   11 | #include <dt-bindings/power/allwinner,sun55i-a523-pck600.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dtb] Error 1
+make[2]: *** [scripts/Makefile.build:554: arch/arm64/boot/dts/allwinner] Error 2
+make[2]: Target 'arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1478: allwinner/sun55i-t527-avaota-a1.dtb] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+make: Target 'allwinner/sun50i-h616-bigtreetech-cb1-manta.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h5-libretech-all-h3-it.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h6-tanix-tx6.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h616-x96-mate.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h5-orangepi-pc2.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h5-libretech-all-h3-cc.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h700-anbernic-rg35xx-plus.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h5-orangepi-zero-plus2.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a64-pinephone-1.1.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h618-orangepi-zero2w.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h618-longanpi-3h.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h6-pine-h64.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h616-orangepi-zero2.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a64-olinuxino-emmc.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a64-sopine-baseboard.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h5-emlid-neutis-n5-devboard.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h6-beelink-gs1.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h616-bigtreetech-pi.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h700-anbernic-rg35xx-2024.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a100-allwinner-perf1.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a64-orangepi-win.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a64-pinephone-1.2.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h700-anbernic-rg35xx-h.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a64-pine64.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a64-pinetab-early-adopter.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h5-nanopi-neo-plus2.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h5-bananapi-m2-plus-v1.2.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h618-yuzukihd-chameleon.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h6-orangepi-3.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a64-amarula-relic.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a64-pine64-lts.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h5-bananapi-m2-plus.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a64-bananapi-m64.dtb' not remade because of errors.
+make: Target 'allwinner/sun55i-t527-orangepi-4a.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h5-orangepi-zero-plus.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a64-olinuxino.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a64-pinebook.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a64-oceanic-5205-5inmfd.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a64-pine64-plus.dtb' not remade because of errors.
+make: Target 'allwinner/sun55i-h728-x96qpro+.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a64-teres-i.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a64-pinetab.dtb' not remade because of errors.
+make: Target 'allwinner/sun55i-a527-cubie-a5e.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h700-anbernic-rg35xx-sp.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h6-pine-h64-model-b.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h5-orangepi-prime.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a64-nanopi-a64.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h618-transpeed-8k618-t.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h5-libretech-all-h5-cc.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a64-pinephone-1.0.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h6-orangepi-lite2.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h6-tanix-tx6-mini.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h618-orangepi-zero3.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h5-nanopi-r1s-h5.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h64-remix-mini-pc.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-a133-liontron-h-a133l.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h5-nanopi-neo2.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h313-tanix-tx1.dtb' not remade because of errors.
+make: Target 'allwinner/sun55i-t527-avaota-a1.dtb' not remade because of errors.
+make: Target 'allwinner/sun50i-h6-orangepi-one-plus.dtb' not remade because of errors.
+
+
+
+
+
 
