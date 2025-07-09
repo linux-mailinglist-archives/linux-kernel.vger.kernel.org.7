@@ -1,153 +1,133 @@
-Return-Path: <linux-kernel+bounces-723216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D102AFE483
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:46:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7135FAFE489
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD2C44A3AA1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:46:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F0A318898D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CDCE287246;
-	Wed,  9 Jul 2025 09:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2660B1FBEA8;
+	Wed,  9 Jul 2025 09:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HQo71xhS"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OZLsVN0J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D9A2367B3;
-	Wed,  9 Jul 2025 09:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E6021579F;
+	Wed,  9 Jul 2025 09:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752054355; cv=none; b=Lk3OWjNgDTkKRSmT1DC7TStsxjJQh/VtuEkhRfQYh+1edbp+wiol0YIWWFuHb3qQ4xyDj/jTHplCxbstTTQc0/Rs7S1MmFPzRJ5J3wFk0GmbIdhO8CQ+KT60M7HIfhrzKGTCKBaG+yweM8T0mFOy7qhhpPlbfEUuDI3sDfwg7Oo=
+	t=1752054393; cv=none; b=EU+SJRNFtZSaBESPbiESTFTCGhDJbbs+Ae7dXWY9+V+ozq/eZ9g0jurrSN3M06aWuPLfGMN3/DU8uXLrWoZFyA1GY8Kjaq4UcGJ1Ei8h1pqkBBEh91KCF+CCufJxKwYuKOoNPblbGQtNj5Bu0xOZQc7V3mTirfc8GxKYwRqMIuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752054355; c=relaxed/simple;
-	bh=c6W+pjdL3fLgs4DKE4VuxDUC5yEKStcV+xtF81Jhgic=;
+	s=arc-20240116; t=1752054393; c=relaxed/simple;
+	bh=8O9nUeKXNTn0jBxQ5MAz5Ea056k/x0iPhq8D6zqIij0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gVDhZiL6wE9vAuvqnhERS/x53hhgA6QygoyqSiMoljgv1kZwefuzDHYEfJhrCCdDYfjTHYwNmaso3fRgWWFCH2QZ7BLn+BTmUsdOwDoWLQe95Np3C2vUCbQuKmuedAyybXntEu6FFaakJa11lAL5K956uIjpOez3yqBPX1/YrH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HQo71xhS; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <e50ef45e-4c1a-4874-8d5f-9ca86f9a532c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752054340;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WTz2wkEPilJ291aBXf8EittiLv9aIr5saM/qqA8YaKY=;
-	b=HQo71xhSDwkfGOSIB3FWw3v/YQdNclez8WkEdYwBvOTAIOl6AqbhbkkiJL16330Fl8+IFB
-	JIkYnrPO3KuLCRrrExhedm3XPWRaiA0VaUDJTQKabNmyYEFozGZqLnF6S6ObqT2+JOBPnh
-	CPfeQNHTjT8MKj0ZxmbHLM06SQaVEyI=
-Date: Wed, 9 Jul 2025 17:45:23 +0800
+	 In-Reply-To:Content-Type; b=K2Yj92bAcK1BSiklcu8lPr9sy9k8aqPr31nqf8A0RoMnYcV3gYw2072lOzipSe353cle7HBcXn6S7a6rOLSOIzHncbMWhIMzQXJ/91MzimA+MLWLXhBKtTpyTE06hJx4F1nsHfFb3lRtVag1cd6CUxWWp1YCNKWRZFfM8/PqtLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OZLsVN0J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41F7CC4CEEF;
+	Wed,  9 Jul 2025 09:46:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752054392;
+	bh=8O9nUeKXNTn0jBxQ5MAz5Ea056k/x0iPhq8D6zqIij0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OZLsVN0J+HRPRhW2gDLln8qFZ9hX1HvYRvVV9dnc94Z3A+3YNyI4VHzF75g00ha4z
+	 zqVHUTjxcX3wkDY4/qRVPSm+6isCs+GejwvX1As2LiD0dBd+HsRufbiFTo29wabP1W
+	 bXAr5pU89Sdc6UhD9WGN5ARZIAgJJNX1hF2+HiKDsHkGs6lMqWIrv0r4tEt/mryUVu
+	 649UeyzTLQMrUrVbfBhpZ+ZnM9xuoMVED5fYjiVd7TY2sgzhiZ3RCfDXGpDNIPEJeB
+	 trK5p8PkWgUYOM7f6cc4d6pUTP8sJ8h29xlQp7uv5nHIcDHrS9DD5skyx+lmloTb+9
+	 vvQqeyZ0vKeOQ==
+Message-ID: <6e8686bf-f3b8-4fdb-90da-767f492fd621@kernel.org>
+Date: Wed, 9 Jul 2025 11:46:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v2_00/11=5D_dm-pcache_=E2=80=93_persistent?=
- =?UTF-8?Q?-memory_cache_for_block_devices?=
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: agk@redhat.com, snitzer@kernel.org, axboe@kernel.dk, hch@lst.de,
- dan.j.williams@intel.com, Jonathan.Cameron@Huawei.com,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev, dm-devel@lists.linux.dev
-References: <20250707065809.437589-1-dongsheng.yang@linux.dev>
- <85b5cb31-b272-305f-8910-c31152485ecf@redhat.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Dongsheng Yang <dongsheng.yang@linux.dev>
-In-Reply-To: <85b5cb31-b272-305f-8910-c31152485ecf@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] dt-bindings: clock: qcom,sm8150-camcc: Reference
+ qcom,gcc.yaml
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
+ Srinivas Kandagatla <srini@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250709-gcc-ref-fixes-v1-0-ceddde06775b@quicinc.com>
+ <20250709-gcc-ref-fixes-v1-1-ceddde06775b@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250709-gcc-ref-fixes-v1-1-ceddde06775b@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 09/07/2025 11:37, Satya Priya Kakitapalli wrote:
+> Reference the common qcom,gcc.yaml schema to unify the common
+> parts of the binding.
+> 
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
 
-在 7/8/2025 4:16 AM, Mikulas Patocka 写道:
->
-> On Mon, 7 Jul 2025, Dongsheng Yang wrote:
->
->> Hi Mikulas,
->> 	This is V2 for dm-pcache, please take a look.
->>
->> Code:
->>      https://github.com/DataTravelGuide/linux tags/pcache_v2
->>
->> Changelogs
->>
->> V2 from V1:
->> 	- introduce req_alloc() and req_init() in backing_dev.c, then we
->> 	  can do req_alloc() before holding spinlock and do req_init()
->> 	  in subtree_walk().
->> 	- introduce pre_alloc_key and pre_alloc_req in walk_ctx, that
->> 	  means we can pre-allocate cache_key or backing_dev_request
->> 	  before subtree walking.
->> 	- use mempool_alloc() with NOIO for the allocation of cache_key
->> 	  and backing_dev_req.
->> 	- some coding style changes from comments of Jonathan.
-> Hi
->
-> mempool_alloc with GFP_NOIO never fails - so you don't have to check the
-> returned value for NULL and propagate the error upwards.
+If you copy subject and almost entire commit msg from existing commit,
+without writing anything different (!), you could also give
+Suggested-by... Saves me time to double check what happened with my
+prior patches doing that.
 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Hi Mikulas:
-
-    I noticed that the implementation of mempool_alloc—it waits for 5 
-seconds and retries when allocation fails.
-
-With this in mind, I propose that we handle -ENOMEM inside defer_req() 
-using a similar mechanism. something like this commit:
-
-
-https://github.com/DataTravelGuide/linux/commit/e6fc2e5012b1fe2312ed7dd02d6fbc2d038962c0
-
-
-Here are two key reasons why:
-
-(1) If we manage -ENOMEM in defer_req(), we don’t need to modify every 
-lower-level allocation to use mempool to avoid failures—for example,
-
-cache_key, backing_req, and the kmem.bvecs you mentioned. More 
-importantly, there’s no easy way to prevent allocation failure in some 
-places—for instance, bio_init_clone() could still return -ENOMEM.
-
-(2) If we use a mempool, it will block and wait indefinitely when memory 
-is unavailable, preventing the process from exiting.
-
-But with defer_req(), the user can still manually stop the pcache device 
-using dmsetup remove, releasing some memory if user want.
-
-
-What do you think?
-
-Thanx
-
-Dongsheng
-
->
-> "backing_req->kmem.bvecs = kmalloc_array(n_vecs, sizeof(struct bio_vec),
-> GFP_NOIO)" - this call may fail and you should handle the error gracefully
-> (i.e. don't end the bio with an error). Would it be possible to trim the
-> request to BACKING_DEV_REQ_INLINE_BVECS vectors and retry it?
-> Alternativelly, you can create a mempool for the largest possible n_vecs
-> and allocate from this mempool if kmalloc_array fails.
->
-> I'm sending two patches for dm-pcache - the first patch adds the include
-> file linux/bitfield.h - it is needed in my config. The second patch makes
-> slab caches per-module rather than per-device, if you have them
-> per-device, there are warnings about duplicate cache names.
->
->
-> BTW. What kind of persistent memory do you use? (afaik Intel killed the
-> Optane products and I don't know of any replacement)
->
-> Some times ago I created a filesystem for persistent memory - see
-> git://leontynka.twibright.com/nvfs.git - I'd be interested if you can test
-> it on your persistent memory implementation.
->
-> Mikulas
->
+Best regards,
+Krzysztof
 
