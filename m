@@ -1,91 +1,84 @@
-Return-Path: <linux-kernel+bounces-723307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3965AFE5A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:24:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 761F5AFE59B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2F394850F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:23:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64CCD1894931
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE2228D839;
-	Wed,  9 Jul 2025 10:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8CC28C869;
+	Wed,  9 Jul 2025 10:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KPmYOEA3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IeEC+s3X"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B7E28C5D8;
-	Wed,  9 Jul 2025 10:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81328267B89;
+	Wed,  9 Jul 2025 10:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752056609; cv=none; b=Lcq59jBTUY9mKfh2FpD50FdkefA9AHf+1EtSjdwdiOfqQm8QJGWbeCtKQ4nWlpJkoJbmzT731E9f2RGB/sIMqdMHZWQx3CPkH3lYRD/cJw7bXmJrtGKRxd2RdzV2D4JH0LwAh09HWEG93NANEFvRLMwckE9c6NXWiYgJeoFHZWs=
+	t=1752056598; cv=none; b=jiync6agpN1SP2LWVnzg6TA7Z3doj+rrtbejTsey668nTKH7hs1oVoo41ktTDrMyl97SLLLQtIhBTyTnOzWmZhu+kC9ZgM8Q2CzpMLZRNkUIhnJsXEIzuadQGNGXLV8YzBtHN1eBTCc/Jc+MvRWETv80I7bRRZZUzYSpZAfszes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752056609; c=relaxed/simple;
-	bh=2+N4smsYfrl5HTf8MH0tIEMC4qA9EcZ/1I6Yj3gLik4=;
+	s=arc-20240116; t=1752056598; c=relaxed/simple;
+	bh=saN/d4gfnEw13D+prR8b8IdE3mlm76MqGHQUgKWmIVM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A6uU6D6/EfQPPnpQ9qCD/H1TbkPU/hjcLROVnHLERWVCzJYHB0YmS0HNHulq4QDl2Xba94Ca/vtcSBvPdeOG/09f9FIJt7FQtsCUPTsJbO5DBczCQLQm/Ywk0b6d7zRAi11ozpf0gROzxqSNnkpMNBfh97YOu/LEMgvBoocNut4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KPmYOEA3; arc=none smtp.client-ip=192.198.163.7
+	 Content-Type:Content-Disposition:In-Reply-To; b=rveliFiIsLet6RMiuBR7zT5+J+ryVQ1J7LQYt1uiBGci/uRL7CR/PMi6e96HwR8SaGVwxWzdx74gkNBU92qfdgm9kg03SKJRYZUIxQt4CLs/ra/DlrHVhdEdjLPzuw6gZvGDGY/T8Xwzd0B6siz5MCqEUHzMo1gcHm2GcpQoltc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IeEC+s3X; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752056608; x=1783592608;
+  t=1752056597; x=1783592597;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=2+N4smsYfrl5HTf8MH0tIEMC4qA9EcZ/1I6Yj3gLik4=;
-  b=KPmYOEA3C2EUNRcAE6pvyo4RqCfqyqcfF6FO424jTCg9jjUQZe+qmg1D
-   1O0QF/N24/IRPaJHe4z8RKVMUNOpll6x768dHe3F2CjQQIMUwoilhm/Vy
-   p7WQ8/qkzq2Bw4DchNlhtP7DgNsgiigRYXTONf3QPengqPx1wEFyYLW+D
-   k4VYE6prNIBAn28eCz54VGE6oriG3RIPUMn2JYdfDzExJpqv7brFCrGFU
-   F8gnjxA+bnc3uYxC4RAZNfWNFq52TxBn9ag17rMBPSoPlLxQlG7x30zoi
-   +AYWGcYpv5WZzDoEWhikG2Rl1qH49c+UpneRyIjUX2+8m3b4v9hxoS2oY
-   g==;
-X-CSE-ConnectionGUID: WPpMwy6rRuKVdkHsEjdq+Q==
-X-CSE-MsgGUID: 0dE/07ZyQlGenSHCR7B4Sw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="79750707"
+  bh=saN/d4gfnEw13D+prR8b8IdE3mlm76MqGHQUgKWmIVM=;
+  b=IeEC+s3XfzBeXxRX6sHNh70TeJ6pGFSgvQSqxK+sMDGRJ9gEdUzTDuKz
+   Ual7t+24TOp3y0v0EUdVQE3hOs8UUMdt2k9g8MDnPBeUyjkWieCfsvydA
+   jOdSrgp+y4XyUPz/NZJjja95IcEI/zi2j7SR8nunOD1NAELX5tCjScbq8
+   YNMvURlRpe3mVf9hN1LDr0HHLlexqkBegSLTU8/uEOwW8ZtR1NdZ/N3bA
+   oAjCJJtxhB92nW+paRKQQx6Wb41ClW3MDAshsl2EJOqwDCKg5wsBVAHWA
+   Cit1knUaxW0ReufMZDsHtgvq8P/jETglTbapfqc5eIhmG50Sa0mOHi8DP
+   Q==;
+X-CSE-ConnectionGUID: KS1rp88IQxmrxT2viSX29A==
+X-CSE-MsgGUID: W/Qf2YTTRye0JP6nC37iAA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="76860272"
 X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="79750707"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 03:23:19 -0700
-X-CSE-ConnectionGUID: nA7HpcjlRkSUBS07mOfahw==
-X-CSE-MsgGUID: 2ZH4Zb0hTQCxpOErnia7Jg==
+   d="scan'208";a="76860272"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 03:23:16 -0700
+X-CSE-ConnectionGUID: 0H38jff9RYSTaPGDbHz5iw==
+X-CSE-MsgGUID: P5tlRiFCQPi8zz6fhqvRcQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="160057178"
+   d="scan'208";a="156221519"
 Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 09 Jul 2025 03:23:13 -0700
+  by orviesa008.jf.intel.com with ESMTP; 09 Jul 2025 03:23:13 -0700
 Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1uZRxG-0003OT-0W;
+	id 1uZRxG-0003OR-0S;
 	Wed, 09 Jul 2025 10:23:10 +0000
-Date: Wed, 9 Jul 2025 18:22:30 +0800
+Date: Wed, 9 Jul 2025 18:22:37 +0800
 From: kernel test robot <lkp@intel.com>
-To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje@dujemihanovic.xyz>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, David Wronek <david@mainlining.org>,
-	Karel Balej <balejk@matfyz.cz>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-hardening@vger.kernel.org, phone-devel@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht, soc@lists.linux.dev,
-	linux-mmc@vger.kernel.org
-Subject: Re: [PATCH v16 3/5] arm64: Kconfig.platforms: Add config for Marvell
- PXA1908 platform
-Message-ID: <202507091803.RBsXE3aX-lkp@intel.com>
-References: <20250708-pxa1908-lkml-v16-3-b4392c484180@dujemihanovic.xyz>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Dafna Hirschfeld <dafna@fastmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Keke Li <keke.li@amlogic.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Dan Scally <dan.scally@ideasonboard.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Subject: Re: [PATCH 2/8] media: uapi: Convert RkISP1 to V4L2 extensible params
+Message-ID: <202507091859.x8Yx8AZb-lkp@intel.com>
+References: <20250708-extensible-parameters-validation-v1-2-9fc27c9c728c@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,32 +87,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250708-pxa1908-lkml-v16-3-b4392c484180@dujemihanovic.xyz>
+In-Reply-To: <20250708-extensible-parameters-validation-v1-2-9fc27c9c728c@ideasonboard.com>
 
-Hi Duje,
+Hi Jacopo,
 
-kernel test robot noticed the following build warnings:
+kernel test robot noticed the following build errors:
 
-[auto build test WARNING on d7b8f8e20813f0179d8ef519541a3527e7661d3a]
+[auto build test ERROR on a8598c7de1bcd94461ca54c972efa9b4ea501fb9]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Duje-Mihanovi/dt-bindings-mmc-sdhci-pxa-restrict-pinctrl-to-pxav1/20250709-011510
-base:   d7b8f8e20813f0179d8ef519541a3527e7661d3a
-patch link:    https://lore.kernel.org/r/20250708-pxa1908-lkml-v16-3-b4392c484180%40dujemihanovic.xyz
-patch subject: [PATCH v16 3/5] arm64: Kconfig.platforms: Add config for Marvell PXA1908 platform
-config: arm64-kismet-CONFIG_I2C_GPIO-CONFIG_VIDEO_MMP_CAMERA-0-0 (https://download.01.org/0day-ci/archive/20250709/202507091803.RBsXE3aX-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20250709/202507091803.RBsXE3aX-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Jacopo-Mondi/media-uapi-Introduce-V4L2-extensible-params/20250708-184651
+base:   a8598c7de1bcd94461ca54c972efa9b4ea501fb9
+patch link:    https://lore.kernel.org/r/20250708-extensible-parameters-validation-v1-2-9fc27c9c728c%40ideasonboard.com
+patch subject: [PATCH 2/8] media: uapi: Convert RkISP1 to V4L2 extensible params
+config: i386-buildonly-randconfig-003-20250709 (https://download.01.org/0day-ci/archive/20250709/202507091859.x8Yx8AZb-lkp@intel.com/config)
+compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146a88f60492b520a36f8f8f3231e15f3cc6082)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250709/202507091859.x8Yx8AZb-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507091803.RBsXE3aX-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507091859.x8Yx8AZb-lkp@intel.com/
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for I2C_GPIO when selected by VIDEO_MMP_CAMERA
-   WARNING: unmet direct dependencies detected for I2C_GPIO
-     Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && (GPIOLIB [=n] || COMPILE_TEST [=n])
-     Selected by [y]:
-     - VIDEO_MMP_CAMERA [=y] && MEDIA_SUPPORT [=y] && MEDIA_PLATFORM_SUPPORT [=y] && MEDIA_PLATFORM_DRIVERS [=y] && V4L_PLATFORM_DRIVERS [=y] && I2C [=y] && VIDEO_DEV [=y] && (ARCH_MMP [=y] || COMPILE_TEST [=n]) && COMMON_CLK [=y]
+All errors (new ones prefixed by >>):
+
+   In file included from <built-in>:1:
+>> ./usr/include/linux/rkisp1-config.h:10:10: fatal error: 'linux/build_bug.h' file not found
+      10 | #include <linux/build_bug.h>
+         |          ^~~~~~~~~~~~~~~~~~~
+   1 error generated.
 
 -- 
 0-DAY CI Kernel Test Service
