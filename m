@@ -1,99 +1,190 @@
-Return-Path: <linux-kernel+bounces-723298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9580EAFE579
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:16:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62799AFE57A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:16:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B04A160FF6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:15:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C59C47A56C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA1B28B7F0;
-	Wed,  9 Jul 2025 10:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74CFBE6C;
+	Wed,  9 Jul 2025 10:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GbFWwV9f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lyFDM1De"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2FE28B50B;
-	Wed,  9 Jul 2025 10:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053D128B7F0;
+	Wed,  9 Jul 2025 10:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752056147; cv=none; b=cgQexa4ts1dzNd6xR3q24m+LqXA0rdZ/0V7G7TT9a9QdZzbn+G2wP47yqLwLQ+OqdeVBzpnHNy6h0ymXiYb56vyMA9ae/Q2vpwaEL7zRYrOv1zr41fERd5KtB8ZwPQxkA69WqszpqXdCyxg6a94JJNEqki4GiB0/iJG6qo3aBJ4=
+	t=1752056187; cv=none; b=Pxe+sj1t562CFYYtLK5CszYVgpd5ILRIG7AwOPEBVPRlvF8xbV4CtYLHkdvteNmetpaxxBLY+OFPLLILhTViQIO+HohnCnXGFJhNIOk4Ru79JKlXYz1ISaEBj8fktOSXb4/NnF7DoETXGfnbZzvhqyQRuC9zLA28F+l1Ja7HlzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752056147; c=relaxed/simple;
-	bh=+017oiMUTzcNGvL2ql5WZSYDo41lxsGGaD/fxm9DG7o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mzrBN0A5N/vFdwRjjGQL35iOSAQuRSmmoF28ZKcwrWKhv3SEEzaHbhO9k2uHNbCsxFf0Zz8q078VVvhi8vyKMAdww3lEKYjDNtSFnNs6c37h8NZFjlyIwKDagHx0ZOjAkcowy0tFF2KEeRdQJG9sgUTZjMoqEH6kdQZwlxZL4fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GbFWwV9f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 540F5C4CEEF;
-	Wed,  9 Jul 2025 10:15:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752056146;
-	bh=+017oiMUTzcNGvL2ql5WZSYDo41lxsGGaD/fxm9DG7o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GbFWwV9fmYQ5jj46M19Z8KVdX+amQc7za0xXZvtGcMDfJ1bYvM8T1kI4omiRvUmTt
-	 aj2hhr40i4WegB/Ec/iqzd08KZ+N4Gx9VJ0vZFgM77hglSoUSh4qgSgwHbShptMDUr
-	 kSuZqnDl6qjogzL2IZrvJCebmoq86bY9N8qEh/1o=
-Date: Wed, 9 Jul 2025 12:15:44 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Luka <luka.2016.cs@gmail.com>, Jiri Slaby <jirislaby@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [Bug] WARNING in vt_do_diacrit in Linux Kernel v6.14
-Message-ID: <2025070923-alabaster-trilogy-d011@gregkh>
-References: <CALm_T+2AUcGgb+ukfGg5a3=ibQzRe93gHAzjh6XUubCePk=Mig@mail.gmail.com>
- <2025070805-stoning-overeager-39f1@gregkh>
- <d2c9f54e-9171-4970-b9c1-a6c70532e5ad@kernel.org>
+	s=arc-20240116; t=1752056187; c=relaxed/simple;
+	bh=WU1rxoEN5qTryIgIVLvNxwFkuceff06Lwe4kPoXlgC4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YPasveM9+c2ToHg8Lc/m2l5ki4Pu5Aru/UDORSKXPLXaEJfJj963AFoD1weEwvi1DKYSbek9ozDbT/XVd5T9Fyr1Y3Ad1Xl5jNld3xwLSigDpufPzXmC7TNLrIpjLQhHuBTLfjAzICCiNZIjXWk50ePI51UzmUGp2u7IrEkCP3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lyFDM1De; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60D75C4CEEF;
+	Wed,  9 Jul 2025 10:16:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752056186;
+	bh=WU1rxoEN5qTryIgIVLvNxwFkuceff06Lwe4kPoXlgC4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lyFDM1DeGTIjOy6NpG5MKSX/cYOs/Xta57Tb8MAbFiOLsGgokVrlsI9crvwa3xBqT
+	 1MvGcz5Qm+jRZBKbaCvrgT41ifM3rTCmOriWm+DR7RF1Wvtu9pKOBG1K8yRTdME69X
+	 1c56b7DmtTiBkO5V7QYo33rwxxI6PPMF1EXV0JUCBJBUDCzDBRn0dFGXqN0Rh+6262
+	 C/RGmn7TrUiSH1cClo8uhJ1kMO5XyeVhrRppwLI0EqUcT92EwB5hpfHs0cgEe5cAZ6
+	 arQQohbHvRPr5DhP8gt1+usi0wS3TKVm3WiL2clx/WIYS4gQq0L1wtHsqvxiQLcKyj
+	 Rq3ADv0iEO7vQ==
+Message-ID: <1c7fdeca-d531-4f90-9e4c-4d8bfac67fae@kernel.org>
+Date: Wed, 9 Jul 2025 12:16:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d2c9f54e-9171-4970-b9c1-a6c70532e5ad@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: phy: qcom,snps-eusb2-repeater: Document
+ qcom,tune-res-fsdif
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
+ ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250625-sm7635-eusb-repeater-v1-0-19d85541eb4c@fairphone.com>
+ <20250625-sm7635-eusb-repeater-v1-1-19d85541eb4c@fairphone.com>
+ <20250708-unicorn-of-ancient-excellence-e8945c@krzk-bin>
+ <20250708-stoic-slim-bison-ac55ee@krzk-bin>
+ <DB6J86NHFTNT.31MFYDTZ6B4O0@fairphone.com>
+ <DB7FBNQ0TYFZ.3GGPN8XXJXGRW@fairphone.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <DB7FBNQ0TYFZ.3GGPN8XXJXGRW@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 09, 2025 at 09:07:00AM +0200, Krzysztof Kozlowski wrote:
-> On 08/07/2025 09:49, Greg KH wrote:
-> > On Tue, Jul 08, 2025 at 03:21:36PM +0800, Luka wrote:
-> >> Dear Linux Kernel Maintainers,
-> >>
-> >> I hope this message finds you well.
-> >>
-> >> I am writing to report a potential vulnerability I encountered during
-> >> testing of the Linux Kernel version v6.14.
-> >>
-> >> Git Commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557 (tag: v6.14)
-> >>
-> >> Bug Location: drivers/tty/vt/keyboard.c
-> >>
-> >> Bug report: https://pastebin.com/yuVJpati
-> >>
-> >> Complete log: https://pastebin.com/qKnipvvK
-> >>
-> >> Entire kernel config: https://pastebin.com/MRWGr3nv
-> >>
-> >> Root Cause Analysis:
-> >> The vt_do_diacrit() function in the virtual terminal subsystem
-> >> performs a write to a user-space pointer via __put_user_4() without
-> >> ensuring that the destination address is mapped and accessible.
-> > 
-> > Where?  I see calls to put_user() happening in that function, and the
-> > return value is properly checked.  What lines exactly show the issue?
+On 09/07/2025 11:40, Luca Weiss wrote:
+> Hi Krzysztof,
 > 
-> Greg,
+> On Tue Jul 8, 2025 at 10:31 AM CEST, Luca Weiss wrote:
+>> On Tue Jul 8, 2025 at 10:21 AM CEST, Krzysztof Kozlowski wrote:
+>>> On Tue, Jul 08, 2025 at 10:13:24AM +0200, Krzysztof Kozlowski wrote:
+>>>> On Wed, Jun 25, 2025 at 11:14:56AM +0200, Luca Weiss wrote:
+>>>>> Document the FS Differential TX Output Resistance Tuning value found on
+>>>>> the eUSB2 repeater on Qualcomm PMICs.
+>>>>>
+>>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+>>>>> ---
+>>>>>  Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml | 6 ++++++
+>>>>>  1 file changed, 6 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml b/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml
+>>>>> index 27f064a71c9fb8cb60e8333fb285f0510a4af94f..6bfd11657e2992735998063b3ca390e04a03930d 100644
+>>>>> --- a/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml
+>>>>> @@ -52,6 +52,12 @@ properties:
+>>>>>      minimum: 0
+>>>>>      maximum: 7
+>>>>>  
+>>>>> +  qcom,tune-res-fsdif:
+>>>>> +    $ref: /schemas/types.yaml#/definitions/uint8
+>>>>> +    description: FS Differential TX Output Resistance Tuning
+>>>>
+>>>> Resistance is in Ohms, tuning could be in dB, so I wonder what are the
+>>>> actual units here. Neither commit msg nor this description helps me to
+>>>> understand that.
+>>>
+>>> I checked and the values are in Ohms.
+>>
+>> Yes it's Ohms but not 0x00 = 0 ohms, and it's also an offset in ohms
+>> from the nominal value according to the Hardware Register Description I
+>> have, e.g. 0x7 = -12.1ohm from the default
+>>
+>> I can try and create bindings using these Ohm offset values, I didn't
+>> worry about it too much since the other tuning values in these bindings
+>> are also just register values, presumably from before Konrad had access
+>> to the docs.
 > 
-> Please don't waste time on this bot. It is AI generated spam. The person
-> learnt nothing from previous feedback.
+> I've taken some more looks, and checked how similar tuning is handled in
+> qcom,usb-snps-femto-v2.yaml and phy-qcom-snps-femto-v2.c, and changing up
+> the concept of tuning in the eUSB2-repeater bindings+driver is not a
+> trivial task.
 > 
-> I suggest ignoring completely.
+> Since this is adding just one more property in-line with the already
+> supported properties in the bindings+driver, can we get this in as-is,
+> and deprecate all 4 qcom,tune-* properties later with a replacement that
+> describes the values better?
 
-Thanks for the warning.  Given the lack of response to our questions, I
-kind of figured that was the case :(
+This is a new property, so other existing properties do not matter here.
+We cannot take new code which you already think should be deprecated.
 
-greg k-h
+register-like values are acceptable for vendor properties, but that does
+not make them usually more readable. The question is whether this should
+be more readable for hardware engineers or anyone writing/validating
+DTS. Is the actual resistance important or no one ever cares because you
+paste whatever qcom told you and you do not know what should be actually
+there?
+
+I can imagine the first - that some document explains you should have
+resistance of foo because of bar, which would mean the property should
+be more readable. But I can also imagine the second. Make your claim in
+commit msg.
+
+> We have enough people at Qualcomm by now that should be able to do that,
+> and have the required resources to answer any potential questions.
+They are busy sending vendor/downstream tree patches...
+
+Best regards,
+Krzysztof
 
