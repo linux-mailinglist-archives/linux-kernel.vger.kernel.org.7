@@ -1,146 +1,133 @@
-Return-Path: <linux-kernel+bounces-724459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D5DAAFF32E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:39:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25FABAFF338
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88275588247
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:39:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18780487DA8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8853A245021;
-	Wed,  9 Jul 2025 20:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF73245000;
+	Wed,  9 Jul 2025 20:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ewwjHI0S"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PGmZPTos"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D0F23F40A;
-	Wed,  9 Jul 2025 20:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30B21CAA85;
+	Wed,  9 Jul 2025 20:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752093553; cv=none; b=fPtPNnTxqqxI5HtYXNb1qv+/jW0b/Ir293NFN7eOPptN3ricdNQeZEfJWEY+iuyJLnNBtBpNuCsqZNip3zQaLJyZX5HZ2yf43ZfA1ZeFeD/N4Gttcqr97Jvfqex6BRW/KP/TBJOrh7aCu/rPHlExqzfbjud7vOJoV5XuwgpBQuQ=
+	t=1752093793; cv=none; b=aEVQ6kyvnl9o1ITkj8Bt9RcWciyubIEjz6B3v9wpvHu16DCVixcI+p6w+iskiB/1aUhWY+9I46ESgNZ9sE7xfdQPgWNVJq4Q2TRQz3zHxJyOFeAyFnJZiKKN4S5ONNmG4XsjWNzFtJd6mU5AwOuZzt5jXsbjdPcNqEAR2T+i1R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752093553; c=relaxed/simple;
-	bh=ieKlXhe8oEtDXZpavR3ahmGdUp+tvg3kg/Izn5Of7pg=;
+	s=arc-20240116; t=1752093793; c=relaxed/simple;
+	bh=vXZxtv0D4jlgPPRePM4PDpSU26LaCzorbsB/7xNQuB8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kHW4dXPFsb8iRexkYm1q3USM7XYZuunqAoQmX9XrB+HiqL0Sm64DX3lrOBezXoFZeZYSOf2+gO5U2BBczC+fB/kCgiiFDYtnuqGq095ZDt3ickSVRcqTbGvQM4mdicdic1n6ARSRBeJ/uOYW+WBTNBmhXcoY7p9PUDr1A7yRTyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ewwjHI0S; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a575a988f9so262068f8f.0;
-        Wed, 09 Jul 2025 13:39:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752093551; x=1752698351; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LsZpIkCRwWE/FKnHg1vz7ABb7C/paVv3QEw2cKWyROc=;
-        b=ewwjHI0S7mXSaMUyJpUqkFRgFuH5mZn3EzSJy0wtG5Cf76qjt+8A6W7LqQwV8QrwHi
-         wBgTEmq054Z1e2g7KLE18f7GXeqIHN3hKkvg1k962ByFrHUxUSdTqVrs1jIrrCI6G5bE
-         qjsSRCLmzyZBRdsMjBBdTwvF8Am7QQtDYnzQo8205JiW5JcoiTyqE2L0PmHKOWEVgluz
-         FRFZFUOAz7dRUJi1GNt+8qlOv/vR9X87bT8GEMOGeCyMRGnC3iMHPy4xwWA5SePEd6ss
-         u7prP0VgPnUBt//smm7b2qhjVc7/GNHY0O+wlPOr/GPy0IBnlUHtPRkVGHHd4toSU0Ag
-         iRmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752093551; x=1752698351;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LsZpIkCRwWE/FKnHg1vz7ABb7C/paVv3QEw2cKWyROc=;
-        b=ufLlKO5ayLwS4xHdf37/cXSbLIiiVms7JGveuuJD43uXDV7a3KPkTFBie0brCvUd+H
-         ZiPf62YdutvmklQXvz4C0svuvJX6G/DSA5QxHByFKYc+TphjExExlZhPD10lE8sn3T17
-         3Ac24nKZb1i4yQg0RyQf51Jv9WM4A5gTHjms+jnUDD1RC4ykEQSLyhMX3lLaGyTx/VlR
-         GDwOC8OzTVyBDI7TjjscqdaSoTxzw42tuXEIxtULna/Yg/vL1sDcKyWaexP4ztVEhCI4
-         hmiE2rbFANQqizgg06C/mCBRMZ1fBldiCIeS3Nqw+2SIFodS67FOmsheAOJjOFoRzmPh
-         xSHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUsrFrpVtwri1rQAFWHla3bPnYoT9JeGpovq9XLafBGCLymKVdqxr3HJMyUbIDMaJErZ017ZHNweV/U@vger.kernel.org, AJvYcCVOrJbXIzLon06K0lFNd/R0/LnMPrdsbjRo+kh4KqacsQz+72jMyBWoLsIYqOVqeK8ky8lkLC1xP9zlDFs=@vger.kernel.org, AJvYcCXqqtK1lddgPPEffjSbhMjONxteN+ECAFVqQdF7fnDpPV5Ecncl7T33K2vLUqfjGLmPmEzo1E0Cnrx862t2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy5bCE7IXhGqTTDtPlFvsaWZFXFByxT33b8CapMZcZwhbno66G
-	EptTlXrRDy1k3nQ7NCssx+KAk+snD0gS1O3pc/WU1qtlCsSy7qKvbum9
-X-Gm-Gg: ASbGncvi/h+9F9y4Hm1IQvh5oqBUWquYH1GCHZk5chmvEu45N6r5eUrIaAlapJ6f3Ph
-	VaZ9nZ7kxmow2Q6rgZ/ns6qGvBNiaVPxWf8nzHIqZx6Bzm7gpiHtkGT9BiCzbaLGFrRP9vbfYan
-	X2yskrE9ZmoUfXy6R0XErtZIeEkJoa6j5vSWyIzcpQsBcaUPYbUKmLe7PWyCSmzS9twf9Sd3TxX
-	He8ZoBKySjoOuqIlNS0Xcwzuc9KKLC0N4X6fehq1ygQ0xYl8brgRNC1R6AJgrHeBX1Jghk+z4ej
-	NwBQZgcTvotwTdlck4kJgeNhkkU6Lw7M+zq+W21Rm50m6c7I7CxLlCRiCRzNOQ+FcBY7LsAstYx
-	2sn3TH9Hb5RTWSzLuFlPMcgwELXpz0aMjInmLkhKrx5SIc0n7
-X-Google-Smtp-Source: AGHT+IH+GZXcZBfZnUdMw5w3GvbFnDMARYvK2oxipIHOdjJAqJ+6kH7i2+3NatSGclfatBwYKMwapg==
-X-Received: by 2002:adf:b612:0:b0:3a5:39be:c926 with SMTP id ffacd0b85a97d-3b5e78b9450mr1077051f8f.32.1752093550545;
-        Wed, 09 Jul 2025 13:39:10 -0700 (PDT)
-Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47225b5cdsm16669091f8f.85.2025.07.09.13.39.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 13:39:09 -0700 (PDT)
-Date: Wed, 9 Jul 2025 22:39:07 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] dt-bindings: memory: tegra: Add Tegra264 stream IDs
-Message-ID: <vwnfnc3bsvjx6pumnlktqll3x2eqgirszekogpia4mbsbkjdvv@suswbo3udfvj>
-References: <20250708105245.1516143-1-thierry.reding@gmail.com>
- <20250708105245.1516143-4-thierry.reding@gmail.com>
- <34bec0c6-6539-415f-b18b-b0c70c1b93b8@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xa8qAZmpx105BI/N4m8C7+pi22v2zDnWykLmHVEpUVcXaljAGEj0efCN3XVY7S+eTrTO/J60BRFT7SyDsux1X4camkwQKDW/YU3oCfZstyqRXfjn3usCLI7y8JLe9R8MTXXIbMU0SsoksoFtPFDQJKDhMZct6CuiQ7aEJC3DM9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PGmZPTos; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752093792; x=1783629792;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vXZxtv0D4jlgPPRePM4PDpSU26LaCzorbsB/7xNQuB8=;
+  b=PGmZPTosjKNO+g2c9a0FdKVVY4Qjezh+IC2YLVhX9fYbymlKWSLMGWfh
+   YjpdIDLkZKO2gTFu5OiFJPrWcWXIxV+9qM8OxONHVeVP0aMIq+1rggEIO
+   h6TlJhHHyaNkQN44KWWKaeALUDqQ42AKB6VEI5WQSBEG2IF91T0PE88Ic
+   d41goCv7d1Myx/annqHlomd+2hCfv5cvkO2yitqTUgL7XmMq4RbcYAdqC
+   MApr1/IAVm55n3qKIk+W/U4zU9iGQCdrHUY3t7SYNiB8pnj0RyDfyCM0L
+   HjVsPAuuLQUB0AH5uWS7kyqkBDi/9NESBR4SG8Ley2qn/m1xkqBq736R7
+   w==;
+X-CSE-ConnectionGUID: td9E98hPQHqEsEt1BdDgaw==
+X-CSE-MsgGUID: 4l8fyhPnT0CL7dk8mWyzQA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="53475870"
+X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
+   d="scan'208";a="53475870"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 13:43:11 -0700
+X-CSE-ConnectionGUID: fvbPLDfOQi+/JnPn7Fm0YQ==
+X-CSE-MsgGUID: NZKqYa5dTE6j/CNZyjq2FA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
+   d="scan'208";a="156432117"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.15])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 13:43:08 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 35B3D11FBEE;
+	Wed,  9 Jul 2025 23:43:06 +0300 (EEST)
+Date: Wed, 9 Jul 2025 20:43:06 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Mehdi Djait <mehdi.djait@linux.intel.com>
+Cc: laurent.pinchart@ideasonboard.com, jacopo.mondi@ideasonboard.com,
+	hverkuil@xs4all.nl, kieran.bingham@ideasonboard.com,
+	mchehab@kernel.org, hdegoede@redhat.com, arnd@arndb.de,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] media: i2c: Kconfig: Ensure a dependency on
+ COMMON_CLK for VIDEO_CAMERA_SENSOR
+Message-ID: <aG7UWg8kYMNX32MS@kekkonen.localdomain>
+References: <20250709101114.22185-1-mehdi.djait@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yegrs77m5cquiew4"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <34bec0c6-6539-415f-b18b-b0c70c1b93b8@kernel.org>
+In-Reply-To: <20250709101114.22185-1-mehdi.djait@linux.intel.com>
 
+Hi Mehdi,
 
---yegrs77m5cquiew4
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 3/4] dt-bindings: memory: tegra: Add Tegra264 stream IDs
-MIME-Version: 1.0
+Thanks for the update.
 
-On Wed, Jul 09, 2025 at 08:21:53PM +0200, Krzysztof Kozlowski wrote:
-> On 08/07/2025 12:52, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Add the stream IDs for various hardware blocks found on Tegra264. These
-> > are allocated as blocks of 256 IDs and each block can be subdivided for
-> > additional fine-grained isolation if needed.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  include/dt-bindings/memory/nvidia,tegra264.h | 50 ++++++++++++++++++++
->=20
-> Please squash it (you can take authorship and add co-developed), but
-> adding given bindings and bindings header for new device is one patch.
-> Not three.
+On Wed, Jul 09, 2025 at 12:11:14PM +0200, Mehdi Djait wrote:
+> Both ACPI and DT-based systems are required to obtain the external
+> camera sensor clock using the new devm_v4l2_sensor_clk_get() helper
+> function.
+> 
+> Ensure a dependency on COMMON_CLK when config VIDEO_CAMERA_SENSOR is
+> enabled.
+> 
+> Signed-off-by: Mehdi Djait <mehdi.djait@linux.intel.com>
+> ---
+> v1 -> v2:
+> Suggested by Arnd Bergmann:
+> 	- removed the select statement and replaced it by "depends on
+> 	  COMMON_CLK"
+> 
+> Link v1: https://lore.kernel.org/linux-media/20250708161637.227111-1-mehdi.djait@linux.intel.com
+> 
+>  drivers/media/i2c/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+> index e68202954a8f..98750fa5a7b6 100644
+> --- a/drivers/media/i2c/Kconfig
+> +++ b/drivers/media/i2c/Kconfig
+> @@ -27,7 +27,7 @@ config VIDEO_IR_I2C
+>  
+>  menuconfig VIDEO_CAMERA_SENSOR
+>  	bool "Camera sensor devices"
+> -	depends on MEDIA_CAMERA_SUPPORT && I2C
+> +	depends on MEDIA_CAMERA_SUPPORT && I2C && COMMON_CLK
 
-Will do.
+As of now, this patch makes COMMON_CLK a requirement to use camera sensors.
+I think you should depend on COMMON_CLK only on ACPI-based platforms as
+non-CCF clock implementations are still in use and these platforms do not
+use ACPI.
 
-Thanks,
-Thierry
+>  	select MEDIA_CONTROLLER
+>  	select V4L2_FWNODE
+>  	select VIDEO_V4L2_SUBDEV_API
 
---yegrs77m5cquiew4
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+Regards,
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhu02sACgkQ3SOs138+
-s6GbUw/7B/xXGPwCa+LIy/6i30Eb06BGCL7zvPCYMecvkOUTiyr6H+nP0gIXpEjX
-9hh4JxfznleKFXkFp7vBATmrCy3S+f4fi+/9QROwfS8GV1J0IlFVBKTk7HsqgWp8
-cps/J1/C686kQNGNx2uBzNkteVc4KZJ1hN4MzTJt24bKS4KaPJEIQz6jvcvoVhFs
-khsJf/siOeulRucKeokaUbCO9tVDH+JQNxUleh3fUv9XLX+IZbLhBPieswDvbyAd
-a35Eupfgo06OLpM8zQlbItRUeF0BT+qcDVMnEK8ZPFm114VB8eIo5yI2mz9Grs96
-1nzRYb/Le2RCYRDrnMeZx3bkvdYCV/y43Z2yw5r4uu8gxDYa0h91+Z+dHucMhi8X
-ZI8Qags8Uk084fp6pLXNAbE9ZUvY0G4EySxgUR5cggZTfSxNPwnb7ajl0qb/3zGS
-T8f5UhFn2ap3xCnWkG4/TOUfrgf+eLuLqhK6iToLL8s+/KPInEe2lET/xo7hT9E0
-BXFNh61qHLJP3foBWha7qmaESu+H85FNP5ETmnZi/rCo3Y9ITn/1K6JFA2toP7sK
-AajntvkXdQryciNrEeSfHU9BBxNDjt12sTcryAUPieZ8y9mcJGn8KJk0yQKF7rfX
-oiG7P0MRJ4+CFJsgqb/Rmsrxe6e/E8aIok08vrW7pT2IgJCzjwY=
-=9Uub
------END PGP SIGNATURE-----
-
---yegrs77m5cquiew4--
+Sakari Ailus
 
