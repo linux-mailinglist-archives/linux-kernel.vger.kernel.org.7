@@ -1,128 +1,150 @@
-Return-Path: <linux-kernel+bounces-723368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C22DAFE63E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:47:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 601F6AFE64B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:49:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92718547038
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:45:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12CE816F87C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1026428EA55;
-	Wed,  9 Jul 2025 10:42:33 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D211C291C04;
+	Wed,  9 Jul 2025 10:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OP00ZnQ4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6ABA28DB45
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 10:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB282918DE;
+	Wed,  9 Jul 2025 10:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752057752; cv=none; b=JR78ptMmDP8oGefLbACuuHd5OGZV7uESyO9H/NXD+iXqibJhCNZu9lMsowRtycSB5UERWIuEm96fyNHW0hKTxaAb8D2dV6p93Is3X12LJACl93Z3wlGsZ6DQCc4fzKI1VBkzJJ7FTb64bp/wN8oWRtY5pulGOEcyjs/eIGVEwqA=
+	t=1752057794; cv=none; b=qLlTecmlric50S80VhprNumLjU9Z/vnSxbyfgx4DHDSuRleU8/iIttitKFhHC1x+3s92gFnSc49CKK9odoB6nKGXFuUmLko/T4wtsjZjtG3yZCDkoiyMFP1hCYmI+VOz7nT9n801b0hrrZdvi/FbEj3WX6itjUDIGPQRJUByLKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752057752; c=relaxed/simple;
-	bh=IhrULyZ56NYjD/kQd/0N+EbFDTJWThM/94GBb5oDbgg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=oi7uZ0NMMZHpcJ7gEOIqHTJ9QmsYp/tWbAwH2c1saiFP8Z6A/WMqXptFjCZlJWQX6XwX0ptyRAbW54KJa40pHJ4raBCQwENpmNWc97bo0u/mL48p8vrpUIFwEc6lIMibNkUWGsujSknuHZ46sb23nPc/n492A5NIrPCFIUSuMcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uZSFh-0004mp-8w; Wed, 09 Jul 2025 12:42:13 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uZSFf-007ZJi-2M;
-	Wed, 09 Jul 2025 12:42:11 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uZSFf-00FyRK-27;
-	Wed, 09 Jul 2025 12:42:11 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	netdev@vger.kernel.org,
-	Andre Edich <andre.edich@microchip.com>,
-	Lukas Wunner <lukas@wunner.de>
-Subject: [PATCH net v2 0/3] net: phy: smsc: use IRQ + relaxed polling to fix missed link-up
-Date: Wed,  9 Jul 2025 12:42:07 +0200
-Message-Id: <20250709104210.3807203-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1752057794; c=relaxed/simple;
+	bh=SNPLFBpiKo7+F2IHAJdiaq/+KUvKNSLOdScapqS6Tis=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fC7zx213YzO5dG5ORFYShl+ju6aNIXFwwB3EaAek0A42CZ+Yjet7iyJ7i+jS5qtRU32wsXvy68I8+7eU0BPqJ6RnuT+uXnRtlwt6A8nh3EiJhnVXayuhqRhlENa5kMI9hDqcko0Haal2e1xtplU1ruGuo8vmWDed3Zq2/5zU7hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OP00ZnQ4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B11EBC4CEEF;
+	Wed,  9 Jul 2025 10:43:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752057793;
+	bh=SNPLFBpiKo7+F2IHAJdiaq/+KUvKNSLOdScapqS6Tis=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=OP00ZnQ4Wmbxivt1ptEZ0UfI2/HZRwmbw5e/0v2J3Mh738U25pqCKMTcuEHr7hUjb
+	 NQ1GH9UzwVvsEVsMVwOwGSgwc63s72MbB2kRC+aJ46lXqTjj1Ieu5Y4gup1MTeVXtl
+	 W+H9lNOcgGX7/rwvR2F9SJ0ocjCBgiYZ1Kk5f5o4t8H2M6a+x81PF1EuBiNhauuy6v
+	 F4mfHhZbwX/gNcxyUvqTRBsvaX4im3EsYC/yZBjkNBWF7H/NgEJ651YhDnbzHm+y6F
+	 /YbMwbqUVvX5ZWe0S1icRF5gsSj+mZTh0PG5KZN+2gmNwTFLSWslBmRP3DwBDMynnl
+	 M5sHcn4zr/fVg==
+From: neeraj.upadhyay@kernel.org
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	paulmck@kernel.org,
+	joelagnelf@nvidia.com,
+	frederic@kernel.org,
+	boqun.feng@gmail.com,
+	urezki@gmail.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com,
+	qiang.zhang1211@gmail.com,
+	neeraj.iitr10@gmail.com,
+	neeraj.upadhyay@amd.com,
+	"Neeraj Upadhyay (AMD)" <neeraj.upadhyay@kernel.org>,
+	kernel test robot <oliver.sang@intel.com>
+Subject: [PATCH rcu 07/15] rcutorture: Check for ->up_read() without matching ->down_read()
+Date: Wed,  9 Jul 2025 16:12:07 +0530
+Message-Id: <20250709104215.15562-8-neeraj.upadhyay@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20250709104215.15562-1-neeraj.upadhyay@kernel.org>
+References: <20250709104215.15562-1-neeraj.upadhyay@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-This series makes the SMSC LAN8700 (as used in LAN9512 and similar USB
-adapters) reliable again in configurations where it is forced to 10 Mb/s
-and the link partner still advertises autonegotiation.
+From: "Paul E. McKenney" <paulmck@kernel.org>
 
-In this scenario, the PHY may miss the final link-up interrupt, causing
-the network interface to remain down even though a valid link is
-present.
+This commit creates counters in the rcu_torture_one_read_state_updown
+structure that check for a call to ->up_read() that lacks a matching
+call to ->down_read().
 
-To address this:
+While in the area, add end-of-run cleanup code that prevents calls to
+rcu_torture_updown_hrt() from happening after the test has moved on.  Yes,
+the srcu_barrier() at the end of the test will wait for them, but this
+could result in confusing states, statistics, and diagnostic information.
+So explicitly wait for them before we get to the end-of-test output.
 
-Patch 1 – phylib: Enable polling if the driver implements
-get_next_update_time(). This ensures the state machine is active even
-without update_stats().
+[ paulmck: Apply kernel test robot feedback. ]
+[ joel: Apply Boqun's fix for counter increment ordering. ]
 
-Patch 2 – phylib: Allow drivers to return PHY_STATE_IRQ to explicitly
-disable polling.
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Tested-by: kernel test robot <oliver.sang@intel.com>
+Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+Signed-off-by: Neeraj Upadhyay (AMD) <neeraj.upadhyay@kernel.org>
+---
+ kernel/rcu/rcutorture.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-Patch 3 – smsc: Implement get_next_update_time() with adaptive 1 Hz
-polling for up to 30 seconds after the last interrupt in the affected
-10M autoneg-off mode.  All other configurations rely on IRQs only.
-
-Testing:
-
-The LAN9512 (LAN8700 core) was tested against an Intel I350 NIC using
-baseline, parallel-detection, and advertisement test suites. All
-relevant tests passed.
-
-Changes in v2:
-- Introduced explicit disable polling via PHY_STATE_IRQ
-- Changed the workaround logic to apply 1 Hz polling only for 30 seconds
-  after the last IRQ
-- Dropped relaxed 30s polling while link is up
-- Reworded commit messages and comments to reflect updated logic
-- Split core changes into two separate patches for clarity
-
-Thanks,
-Oleksij Rempel
-
-Oleksij Rempel (3):
-  net: phy: enable polling when driver implements get_next_update_time
-  net: phy: allow drivers to disable polling via get_next_update_time()
-  net: phy: smsc: recover missed link-up IRQs on LAN8700 with adaptive
-    polling
-
- drivers/net/phy/phy.c  | 18 +++++++++++-------
- drivers/net/phy/smsc.c | 40 ++++++++++++++++++++++++++++++++++++++++
- include/linux/phy.h    | 12 ++++++++++--
- 3 files changed, 61 insertions(+), 9 deletions(-)
-
---
-2.39.5
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 22288efc8c67..f773d4f8f2ae 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -2449,6 +2449,8 @@ struct rcu_torture_one_read_state_updown {
+ 	bool rtorsu_inuse;
+ 	ktime_t rtorsu_kt;
+ 	unsigned long rtorsu_j;
++	unsigned long rtorsu_ndowns;
++	unsigned long rtorsu_nups;
+ 	struct torture_random_state rtorsu_trs;
+ 	struct rcu_torture_one_read_state rtorsu_rtors;
+ };
+@@ -2463,6 +2465,8 @@ static enum hrtimer_restart rcu_torture_updown_hrt(struct hrtimer *hrtp)
+ 
+ 	rtorsup = container_of(hrtp, struct rcu_torture_one_read_state_updown, rtorsu_hrt);
+ 	rcu_torture_one_read_end(&rtorsup->rtorsu_rtors, &rtorsup->rtorsu_trs, -1);
++	WARN_ONCE(rtorsup->rtorsu_nups >= rtorsup->rtorsu_ndowns, "%s: Up without matching down #%zu.\n", __func__, rtorsup - updownreaders);
++	rtorsup->rtorsu_nups++;
+ 	smp_store_release(&rtorsup->rtorsu_inuse, false);
+ 	return HRTIMER_NORESTART;
+ }
+@@ -2507,8 +2511,12 @@ static void rcu_torture_updown_cleanup(void)
+ 	for (rtorsup = updownreaders; rtorsup < &updownreaders[n_up_down]; rtorsup++) {
+ 		if (!smp_load_acquire(&rtorsup->rtorsu_inuse))
+ 			continue;
+-		if (!hrtimer_cancel(&rtorsup->rtorsu_hrt))
+-			WARN_ON_ONCE(rtorsup->rtorsu_inuse);
++		if (hrtimer_cancel(&rtorsup->rtorsu_hrt) || WARN_ON_ONCE(rtorsup->rtorsu_inuse)) {
++			rcu_torture_one_read_end(&rtorsup->rtorsu_rtors, &rtorsup->rtorsu_trs, -1);
++			WARN_ONCE(rtorsup->rtorsu_nups >= rtorsup->rtorsu_ndowns, "%s: Up without matching down #%zu.\n", __func__, rtorsup - updownreaders);
++			rtorsup->rtorsu_nups++;
++			smp_store_release(&rtorsup->rtorsu_inuse, false);
++		}
+ 
+ 	}
+ 	kfree(updownreaders);
+@@ -2524,10 +2532,13 @@ static void rcu_torture_updown_one(struct rcu_torture_one_read_state_updown *rto
+ 
+ 	init_rcu_torture_one_read_state(&rtorsup->rtorsu_rtors, &rtorsup->rtorsu_trs);
+ 	rawidx = cur_ops->down_read();
++	rtorsup->rtorsu_ndowns++;
+ 	idx = (rawidx << RCUTORTURE_RDR_SHIFT_1) & RCUTORTURE_RDR_MASK_1;
+ 	rtorsup->rtorsu_rtors.readstate = idx | RCUTORTURE_RDR_UPDOWN;
+ 	rtorsup->rtorsu_rtors.rtrsp++;
+ 	if (!rcu_torture_one_read_start(&rtorsup->rtorsu_rtors, &rtorsup->rtorsu_trs, -1)) {
++		WARN_ONCE(rtorsup->rtorsu_nups >= rtorsup->rtorsu_ndowns, "%s: Up without matching down #%zu.\n", __func__, rtorsup - updownreaders);
++		rtorsup->rtorsu_nups++;
+ 		schedule_timeout_idle(HZ);
+ 		return;
+ 	}
+-- 
+2.40.1
 
 
