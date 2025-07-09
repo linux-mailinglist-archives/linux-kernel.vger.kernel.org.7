@@ -1,105 +1,97 @@
-Return-Path: <linux-kernel+bounces-722713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39702AFDE15
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:27:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BED6AFDE17
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8748A567DE7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:27:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD2F55682E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8181F1EDA2F;
-	Wed,  9 Jul 2025 03:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DB01F55F8;
+	Wed,  9 Jul 2025 03:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="KXQxlaqY"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KPUlI0u5"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11AAB1DC988
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 03:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C57E1DF970
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 03:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752031626; cv=none; b=Xi3fsLOFkM3vsMXc//EHuAlLK+Yb1GYhCQnt44rz9p+eEKwAgiUhiMCe5TRbRJlcAKtZsMooLx92W/opSgNTphdJtKDaavrN5DFDCx6qHbuxRsjf+/dG0MGytFwPJ0eh9xttyOKu8fFDAkdKOYenmi4Wz9N0vPHSxCBcy+fvdC8=
+	t=1752031642; cv=none; b=ZqalaZlXbNXjBZJuP7XFSKlXa2UvGW45t+kPu2G04GFkGkglp1oRRR6N38E8ioS53jgJlypc7/mqLONN2t8sCF6K7U9k3/mv4WkmM8AvClwpDBFLe9rIR2XIDu2zKj8wzB9w14tW4FiNjjQkLE/KjqBDX401NNszSBhpZ0wqhhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752031626; c=relaxed/simple;
-	bh=zw/fej0GkXW5A++Ge3FEYjbMmbv+hTBMbj5gw+U4//w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LP3gaKTmvYfdE/KqK+cVWJe3cJiq9xeeDO+/zybhAHfVdHsOGmQ6vJ8dbxoKoXuF291LRiTcbJyaQCcNNH8kiLUhg0yQFSKOEUD7rWDnETiTSACtXMeJVQ7Eunql+r0vz1ObavW1u+zV8GI9CxsyARrwqNUv8VeCd4PViGf9xxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=KXQxlaqY; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4a77ea7ed49so6837351cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 20:27:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1752031624; x=1752636424; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zw/fej0GkXW5A++Ge3FEYjbMmbv+hTBMbj5gw+U4//w=;
-        b=KXQxlaqYQfw0jkMx0UszkFkz6yZAkJym2Y4XdWw6DJwfxo7h8FDx3GciGZ4GfjpWq7
-         2by7ourxfJDrIk221f12+zzD98YK2TkxAwAEVam8W15bHr1Mj1EDYPPa85YXU51sAsSQ
-         /b/56IISOz1C8GvDDn5t0r5YCFfLOOHuTQUNo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752031624; x=1752636424;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zw/fej0GkXW5A++Ge3FEYjbMmbv+hTBMbj5gw+U4//w=;
-        b=L2TjV0/C0z0A9sEjzQti598YfWAdPzSWyVhX+EKguc/ZJ1PUJxIkxcdp+hC77gu2fD
-         kXQi063Xz1+WT/4tBy8z1r+MOTPGOQMUGMg+HQDRH3cB7VL5wVMrnkaeNiWBS5j0+4IR
-         L046Q7Xiqr+Y4K6avVZuW3RjkEtgoDdJvy01+vAU30f8BVIXRGbUlZ559K4JiCi1/UsA
-         Mlr0vNC4KiyzJkrdHP+hy7O67ay5pgydShzE39yGoGR5739Uzb064waES6MjJm/HwENA
-         2//jIh8pyl5VpS48jWNLBtn10PVJPAnQxBYD/NNfhNCtV1aRgWzB/0gY8YydwrO3wmjB
-         oDdw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1BJFb45fmNp+fwm4x4E7A1bcfvgKtWEm92O8+AstPvmFjdVeAaAh3RXC5qE60mKw7EyrXlqhUFe7TK2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrCW596beIRoBQSIkjCnT7ouLOfiiPN3m0T8i18OS6oPERE23y
-	p+aR9kuVwoDLxZ6X6VRkVMvwr2EgeBD12dcLgvGJbJPT/bgFPbdhpxv53D5UqjfCh0sPV93uNAp
-	/YbR02DN4oUhLw9pbTA5INCcLIHzTaooAWZkxjw6/Tg==
-X-Gm-Gg: ASbGnct/mO+9YXCDcGNCWWmhx2fvvAMqjln5coe22llDbpPCw3rNeH33G6Rugn7h0g+
-	jkfOFLGO7CtTifRXr9J2bUeJ1AmyODfyoc9De+a6w4YEQYor2yoB0fDcIEyb963q2S6VXoZ435i
-	IZyRsypJBLQ6jHlYKrY9GueWr04fmPKpDBAqStdBODooXK
-X-Google-Smtp-Source: AGHT+IEbfuPtiB8SJ8mM3IIy/0e+1oWhx4UxNRjIANMV3UTN0UVNRrT4FqNMCrH6Q0szGd55OwaVpm23wRX15i4H4tQ=
-X-Received: by 2002:ac8:6f19:0:b0:4a9:8b58:6300 with SMTP id
- d75a77b69052e-4a9ce5bbb43mr86267521cf.16.1752031623903; Tue, 08 Jul 2025
- 20:27:03 -0700 (PDT)
+	s=arc-20240116; t=1752031642; c=relaxed/simple;
+	bh=6b9Ey+t3Z409SM8UNbNeG8Oac3l11WQ8QOzdmoG8QTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=baTY5FeqJ13ytY29qTeJ2vuiJJbOfnm7rOM6rHpAn9lqD8MIy4oV/i4GTA+JRKR/7kk0993TrdtkBAJh4W6wjzENb/9QD+2dmvNl3X29e4nzJrP/s/ryR+xZHkhmfkWleCURfvfZXaRiPGpV+O5Y99yNokj4rqP0ztyrqN14pDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KPUlI0u5; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752031630; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=zXBLnMS5RETQ23u5rVHHtnY4TUYUS4WhWz9n1i8t/mc=;
+	b=KPUlI0u5BqvpePP4fwkXZsieLYzUKgrGSLXF8EGzBP+z3E7pocKLf59rc3GHd7IDaOIq4/t1XJXNH2Nj4AWmO38o+nGRMgFqKxdWxlfUrqIHuVqe4rT2dnDgsfHWSXthQ799/DJEBzbt/aZewDhjcM405zRasgpKfwm69+Se0Ak=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WiVtxX-_1752031629 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 09 Jul 2025 11:27:09 +0800
+Date: Wed, 9 Jul 2025 11:27:08 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 3/5] panic: add 'panic_sys_info' sysctl to take human
+ readable string parameter
+Message-ID: <aG3hjKg81xrDHjZc@U-2FWC9VHC-2323.local>
+References: <ndckw7vr5zxiz2olstjaxxk4a6qgrnbo65rex4242u3swnvvhm@whxmilgtgoyd>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703185032.46568-1-john@groves.net> <os4kk3dq6pyntqgcm4kmzb2tvzpywooim2qi5esvsyvn5mjkmt@zpzxxbzuw3lq>
-In-Reply-To: <os4kk3dq6pyntqgcm4kmzb2tvzpywooim2qi5esvsyvn5mjkmt@zpzxxbzuw3lq>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 9 Jul 2025 05:26:53 +0200
-X-Gm-Features: Ac12FXw6hgYHynMi-MN39oWlDifPLmPqesU1MFQWRlURFDaTLnL4XYV-SQPgaEw
-Message-ID: <CAJfpeguOAZ0np25+pv2P-AHPOepMn+ycQeMwiqnPs4e0kmWwuQ@mail.gmail.com>
-Subject: Re: [RFC V2 00/18] famfs: port into fuse
-To: John Groves <John@groves.net>
-Cc: Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
-	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	"Darrick J . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Jeff Layton <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
-	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
-	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ndckw7vr5zxiz2olstjaxxk4a6qgrnbo65rex4242u3swnvvhm@whxmilgtgoyd>
 
-On Thu, 3 Jul 2025 at 20:56, John Groves <John@groves.net> wrote:
->
-> DERP: I did it again; Miklos' email is wrong in this series.
+Hi Sergey,
 
-linux-fsdevel also lands in my inbox, so I don't even notice.
+On Wed, Jul 09, 2025 at 11:29:37AM +0900, Sergey Senozhatsky wrote:
+> Hi,
+> 
+> [..]
+> >+#ifdef CONFIG_SYSCTL
+> > +
+> > +static const char sys_info_avail[] = "tasks,mem,timers,locks,ftrace,all_bt,blocked_tasks";
+> > +
+> > +int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
+> > +                                         void *buffer, size_t *lenp,
+> > +                                         loff_t *ppos)
+> > +{
+> > +       char names[sizeof(sys_info_avail) + 1];
+> > +       struct ctl_table table;
+> > +       unsigned long *si_bits_global;
+> > +
+> > +       si_bits_global = ro_table->data;
+> [..]
+> 
+> Somehow this breaks the build with:
+> 
+> lib/sys_info.c:52:19: error: variable 'sys_info_avail' is not needed and will not be emitted [-Werror,-Wunneeded-internal-declaration]
+>    52 | static const char sys_info_avail[] = "tasks,mem,timers,locks,ftrace,all_bt,blocked_tasks";
+>       |                   ^~~~~~~~~~~~~~
+> 
+> Moving sys_info_avail[] inside sysctl_sys_info_handler() seems to help.
 
-I won't get to review this until August, sorry about that.
+Sorry for the trouble. I assume this is clang?  I locally used gcc v10.2.1
+
+Nathan Chancellor has helped to post a fix here https://lore.kernel.org/lkml/20250708-fix-clang-sys_info_avail-warning-v1-1-60d239eacd64@kernel.org/
 
 Thanks,
-Miklos
+Feng
+
+
 
