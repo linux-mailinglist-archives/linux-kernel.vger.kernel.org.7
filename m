@@ -1,67 +1,68 @@
-Return-Path: <linux-kernel+bounces-723383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54B64AFE649
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:49:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45193AFE63A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07CF2189141F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:49:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42D46189850C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021F12D3A89;
-	Wed,  9 Jul 2025 10:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GuDkwAul"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68C32C08AC;
+	Wed,  9 Jul 2025 10:42:34 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447E1292B2B;
-	Wed,  9 Jul 2025 10:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F2C28ECE3
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 10:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752057811; cv=none; b=gzOVDBNY7E8WVqDqKgENN2VKp17KC5O6vUbZVYQ3y1bNBHXmPe5/gllM4XSOrAG49+NVKzm+Y2cPnKOzWDrtWudxEE473IZmIWs2BjQ4X7i8LTkOLSxFvr10zCxQ4EJMmXpglZ5SbXyPU04RSVrFCyHBffsgkPqCYwWZuchjprM=
+	t=1752057754; cv=none; b=Tw3m7IG6ypIRA49lOrfSdKqzYTuLeeBPkKKZD80LYuB/J5lyvz2Nt4mbCKEAYTdt60UXzJ7hcYE5QjdhebZyasxhitLe0u3gSdbha5Rf28KIaUmQqe2IiDP/uHeYvK+1JfgdOIWKtXKc2XpgV5Kv/8Z3j2TG+SgGAM/cgNx41Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752057811; c=relaxed/simple;
-	bh=g5ytatk8FR+ZKb3V98rWAdbM2uy/6s4y3Qm5Q/BRvEk=;
+	s=arc-20240116; t=1752057754; c=relaxed/simple;
+	bh=KBBCA4ST0AIfZMPfEBu51s+rw1J0kOK14uQSN909J8M=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MZGSUwl+motH2CvER7chdg1GbzIuBqjyfk0bKDuO35U7ZAbpETuMq65noD1Hz0OYRVloIDKBRvU6D0h662Rw/F3qstmvOTrJUhpc+o1Ux5XtGEafYrBBWyu0rVzhgUv8ClK6Mzn4czjrigJc4YeK42UAD/mNEdlqVH9DzgDG8ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GuDkwAul; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE7DEC4CEEF;
-	Wed,  9 Jul 2025 10:43:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752057811;
-	bh=g5ytatk8FR+ZKb3V98rWAdbM2uy/6s4y3Qm5Q/BRvEk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GuDkwAul6vv3iGcz4uiC9mmCJtmD6iac6r5sXx2HHShs64gSgHD4XKWzbiGHQEPaO
-	 VUv0k3+gcnpQ7tssLZpOFzNrKLrXtARk1vfGdVMWKoXR4M/CuadnjZM0D55Uc6p3dU
-	 cpgWnTYGDri0CIjJ4aUqKRsBEfR6Qkk6TvyA9jlN3se6bWKdDGr+G47784BJgIenHF
-	 Jyht18xs/pNyNyGvlm83EGNxL6M7P68BS/E9yLxQZF30lLTJ4pAwpvTh2GlgleSljo
-	 XxqZiabnsiVWJmsiJbFv4fk6uR9w76MZwawBIW6QgLQsbMYXO4yNpwa54UePRQ7Y8J
-	 g8VbhKZvUsf7g==
-From: neeraj.upadhyay@kernel.org
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	paulmck@kernel.org,
-	joelagnelf@nvidia.com,
-	frederic@kernel.org,
-	boqun.feng@gmail.com,
-	urezki@gmail.com,
-	rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com,
-	jiangshanlai@gmail.com,
-	qiang.zhang1211@gmail.com,
-	neeraj.iitr10@gmail.com,
-	neeraj.upadhyay@amd.com,
-	"Neeraj Upadhyay (AMD)" <neeraj.upadhyay@kernel.org>,
-	kernel test robot <oliver.sang@intel.com>
-Subject: [PATCH rcu 10/15] rcutorture: Drop redundant "insoftirq" parameters
-Date: Wed,  9 Jul 2025 16:12:10 +0530
-Message-Id: <20250709104215.15562-11-neeraj.upadhyay@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20250709104215.15562-1-neeraj.upadhyay@kernel.org>
-References: <20250709104215.15562-1-neeraj.upadhyay@kernel.org>
+	 MIME-Version; b=YDGCLsnXPMwiEiBZ5T5iRbPjeiuUPOGtqP9a8j8yCxZpU6eV1POTRAU0ebaeqXZyo2rU88wJHZ8C/Ua++pSAg42KiEoo2SdEZVNGPvUEAIKLQc79tVPXKlIxWPBKOJJsiPyRLXPf7EGjvO1YeQpgEbcvgv7fMy0b8+0w87IplrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uZSFh-0004ms-8r; Wed, 09 Jul 2025 12:42:13 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uZSFf-007ZJl-2d;
+	Wed, 09 Jul 2025 12:42:11 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uZSFf-00FyRn-2M;
+	Wed, 09 Jul 2025 12:42:11 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Lukas Wunner <lukas@wunner.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	netdev@vger.kernel.org,
+	Andre Edich <andre.edich@microchip.com>
+Subject: [PATCH net v2 3/3] net: phy: smsc: recover missed link-up IRQs on LAN8700 with adaptive polling
+Date: Wed,  9 Jul 2025 12:42:10 +0200
+Message-Id: <20250709104210.3807203-4-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250709104210.3807203-1-o.rempel@pengutronix.de>
+References: <20250709104210.3807203-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,156 +70,139 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+Fix unreliable link detection on the LAN8700 PHY (integrated in LAN9512
+and related USB adapters) when configured for 10 Mbit/s half- or
+full-duplex with autonegotiation disabled, and connected to a link
+partner that still advertises autonegotiation.
 
-Given that the rcutorture_one_extend_check() function now uses
-in_serving_softirq() and in_hardirq(), it is no longer necessary to pass
-insoftirq flags down the function-call stack.  This commit therefore
-removes those flags, and, while in the area, does a bit of whitespace
-cleanup.
+In this scenario, the PHY may emit several link-down interrupts during
+negotiation but fail to raise a final link-up interrupt. As a result,
+phylib never observes the transition and the kernel keeps the network
+interface down, even though the link is actually up.
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Tested-by: kernel test robot <oliver.sang@intel.com>
-Signed-off-by: Neeraj Upadhyay (AMD) <neeraj.upadhyay@kernel.org>
+To handle this, add a get_next_update_time() callback that performs 1 Hz
+polling for up to 30 seconds after the last interrupt, but only while
+the PHY is in this problematic configuration and the link is still down.
+This ensures link-up detection without unnecessary long delays or
+full-time polling.
+
+After 30 seconds with no further interrupt, the driver switches back to
+IRQ-only mode. In all other configurations, IRQ-only mode is used
+immediately.
+
+This patch depends on:
+- commit 8bf47e4d7b87 ("net: phy: Add support for driver-specific next
+  update time")
+- a prior patch in this series:
+  net: phy: enable polling when driver implements get_next_update_time
+  net: phy: allow drivers to disable polling via get_next_update_time()
+
+Fixes: 1ce8b37241ed ("usbnet: smsc95xx: Forward PHY interrupts to PHY driver to avoid polling")
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Lukas Wunner <lukas@wunner.de>
 ---
- kernel/rcu/rcutorture.c | 35 ++++++++++++++++-------------------
- 1 file changed, 16 insertions(+), 19 deletions(-)
+changes v2:
+- Switch to hybrid approach: 1 Hz polling for 30 seconds after last IRQ
+  instead of relaxed 30s polling while link is up
+- Only enable polling in problematic 10M autoneg-off mode while link is down
+- Return PHY_STATE_IRQ in all other configurations
+- Updated commit message and comments to reflect new logic
+---
+ drivers/net/phy/smsc.c | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 3f644b1f5823..470b5a117602 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -1975,7 +1975,7 @@ static void rcu_torture_reader_do_mbchk(long myid, struct rcu_torture *rtp,
+diff --git a/drivers/net/phy/smsc.c b/drivers/net/phy/smsc.c
+index b6489da5cfcd..88eb15700dbd 100644
+--- a/drivers/net/phy/smsc.c
++++ b/drivers/net/phy/smsc.c
+@@ -39,6 +39,9 @@
+ /* interval between phylib state machine runs in ms */
+ #define PHY_STATE_MACH_MS		1000
  
- // Verify the specified RCUTORTURE_RDR* state.
- #define ROEC_ARGS "%s %s: Current %#x  To add %#x  To remove %#x  preempt_count() %#x\n", __func__, s, curstate, new, old, preempt_count()
--static void rcutorture_one_extend_check(char *s, int curstate, int new, int old, bool insoftirq)
-+static void rcutorture_one_extend_check(char *s, int curstate, int new, int old)
++/* max retry window for missed link-up */
++#define SMSC_IRQ_MAX_POLLING_TIME	secs_to_jiffies(30)
++
+ struct smsc_hw_stat {
+ 	const char *string;
+ 	u8 reg;
+@@ -54,6 +57,7 @@ struct smsc_phy_priv {
+ 	unsigned int edpd_mode_set_by_user:1;
+ 	unsigned int edpd_max_wait_ms;
+ 	bool wol_arp;
++	unsigned long last_irq;
+ };
+ 
+ static int smsc_phy_ack_interrupt(struct phy_device *phydev)
+@@ -100,6 +104,7 @@ static int smsc_phy_config_edpd(struct phy_device *phydev)
+ 
+ irqreturn_t smsc_phy_handle_interrupt(struct phy_device *phydev)
  {
- 	int mask;
++	struct smsc_phy_priv *priv = phydev->priv;
+ 	int irq_status;
  
-@@ -2038,8 +2038,7 @@ static void rcutorture_one_extend_check(char *s, int curstate, int new, int old,
-  * beginning or end of the critical section and if there was actually a
-  * change, do a ->read_delay().
-  */
--static void rcutorture_one_extend(int *readstate, int newstate, bool insoftirq,
--				  struct torture_random_state *trsp,
-+static void rcutorture_one_extend(int *readstate, int newstate, struct torture_random_state *trsp,
- 				  struct rt_read_seg *rtrsp)
- {
- 	bool first;
-@@ -2054,7 +2053,7 @@ static void rcutorture_one_extend(int *readstate, int newstate, bool insoftirq,
- 	first = idxold1 == 0;
- 	WARN_ON_ONCE(idxold2 < 0);
- 	WARN_ON_ONCE(idxold2 & ~(RCUTORTURE_RDR_ALLBITS | RCUTORTURE_RDR_UPDOWN));
--	rcutorture_one_extend_check("before change", idxold1, statesnew, statesold, insoftirq);
-+	rcutorture_one_extend_check("before change", idxold1, statesnew, statesold);
- 	rtrsp->rt_readstate = newstate;
+ 	irq_status = phy_read(phydev, MII_LAN83C185_ISF);
+@@ -113,6 +118,8 @@ irqreturn_t smsc_phy_handle_interrupt(struct phy_device *phydev)
+ 	if (!(irq_status & MII_LAN83C185_ISF_INT_PHYLIB_EVENTS))
+ 		return IRQ_NONE;
  
- 	/* First, put new protection in place to avoid critical-section gap. */
-@@ -2074,8 +2073,7 @@ static void rcutorture_one_extend(int *readstate, int newstate, bool insoftirq,
- 		idxnew2 = (cur_ops->readlock() << RCUTORTURE_RDR_SHIFT_2) & RCUTORTURE_RDR_MASK_2;
++	WRITE_ONCE(priv->last_irq, jiffies);
++
+ 	phy_trigger_machine(phydev);
  
- 	// Complain unless both the old and the new protection is in place.
--	rcutorture_one_extend_check("during change",
--				    idxold1 | statesnew, statesnew, statesold, insoftirq);
-+	rcutorture_one_extend_check("during change", idxold1 | statesnew, statesnew, statesold);
- 
- 	// Sample CPU under both sets of protections to reduce confusion.
- 	if (IS_ENABLED(CONFIG_RCU_TORTURE_TEST_LOG_CPU)) {
-@@ -2150,7 +2148,7 @@ static void rcutorture_one_extend(int *readstate, int newstate, bool insoftirq,
- 	WARN_ON_ONCE(*readstate < 0);
- 	if (WARN_ON_ONCE(*readstate & ~RCUTORTURE_RDR_ALLBITS))
- 		pr_info("Unexpected readstate value of %#x\n", *readstate);
--	rcutorture_one_extend_check("after change", *readstate, statesnew, statesold, insoftirq);
-+	rcutorture_one_extend_check("after change", *readstate, statesnew, statesold);
+ 	return IRQ_HANDLED;
+@@ -684,6 +691,38 @@ int smsc_phy_probe(struct phy_device *phydev)
  }
+ EXPORT_SYMBOL_GPL(smsc_phy_probe);
  
- /* Return the biggest extendables mask given current RCU and boot parameters. */
-@@ -2217,8 +2215,7 @@ rcutorture_extend_mask(int oldmask, struct torture_random_state *trsp)
-  * critical section.
-  */
- static struct rt_read_seg *
--rcutorture_loop_extend(int *readstate, bool insoftirq, struct torture_random_state *trsp,
--		       struct rt_read_seg *rtrsp)
-+rcutorture_loop_extend(int *readstate, struct torture_random_state *trsp, struct rt_read_seg *rtrsp)
++static unsigned int smsc_phy_get_next_update(struct phy_device *phydev)
++{
++	struct smsc_phy_priv *priv = phydev->priv;
++
++	/* If interrupts are disabled, fall back to default polling */
++	if (phydev->irq == PHY_POLL)
++		return PHY_STATE_TIME;
++
++	/*
++	 * LAN8700 may miss the final link-up IRQ when forced to 10 Mbps
++	 * (half/full duplex) and connected to an autonegotiating partner.
++	 *
++	 * To recover, poll at 1 Hz for up to 30 seconds after the last
++	 * interrupt - but only in this specific configuration and while
++	 * the link is still down.
++	 *
++	 * This keeps link-up latency low in common cases while reliably
++	 * detecting rare transitions. Outside of this mode, rely on IRQs.
++	 */
++	if (phydev->autoneg == AUTONEG_DISABLE && phydev->speed == SPEED_10 &&
++	    !phydev->link) {
++		unsigned long last_irq = READ_ONCE(priv->last_irq);
++
++		if (!time_is_before_jiffies(last_irq +
++					    SMSC_IRQ_MAX_POLLING_TIME))
++			return PHY_STATE_TIME;
++	}
++
++	/* switching to IRQ without polling */
++	return PHY_STATE_IRQ;
++}
++
+ static struct phy_driver smsc_phy_driver[] = {
  {
- 	int i;
- 	int j;
-@@ -2233,7 +2230,7 @@ rcutorture_loop_extend(int *readstate, bool insoftirq, struct torture_random_sta
- 	for (j = 0; j < i; j++) {
- 		mask = rcutorture_extend_mask(*readstate, trsp);
- 		WARN_ON_ONCE(mask & RCUTORTURE_RDR_UPDOWN);
--		rcutorture_one_extend(readstate, mask, insoftirq, trsp, &rtrsp[j]);
-+		rcutorture_one_extend(readstate, mask, trsp, &rtrsp[j]);
- 	}
- 	return &rtrsp[j];
- }
-@@ -2279,7 +2276,7 @@ static bool rcu_torture_one_read_start(struct rcu_torture_one_read_state *rtorsp
- 					  (rtorsp->readstate & RCUTORTURE_RDR_UPDOWN));
- 	if (rtorsp->p == NULL) {
- 		/* Wait for rcu_torture_writer to get underway */
--		rcutorture_one_extend(&rtorsp->readstate, 0, myid < 0, trsp, rtorsp->rtrsp);
-+		rcutorture_one_extend(&rtorsp->readstate, 0, trsp, rtorsp->rtrsp);
- 		return false;
- 	}
- 	if (rtorsp->p->rtort_mbtest == 0)
-@@ -2293,7 +2290,7 @@ static bool rcu_torture_one_read_start(struct rcu_torture_one_read_state *rtorsp
-  * critical sections and check for errors.
-  */
- static void rcu_torture_one_read_end(struct rcu_torture_one_read_state *rtorsp,
--				     struct torture_random_state *trsp, long myid)
-+				     struct torture_random_state *trsp)
- {
- 	int i;
- 	unsigned long completed;
-@@ -2340,7 +2337,7 @@ static void rcu_torture_one_read_end(struct rcu_torture_one_read_state *rtorsp,
- 	}
- 	if (cur_ops->reader_blocked)
- 		preempted = cur_ops->reader_blocked();
--	rcutorture_one_extend(&rtorsp->readstate, 0, myid < 0, trsp, rtorsp->rtrsp);
-+	rcutorture_one_extend(&rtorsp->readstate, 0, trsp, rtorsp->rtrsp);
- 	WARN_ON_ONCE(rtorsp->readstate);
- 	// This next splat is expected behavior if leakpointer, especially
- 	// for CONFIG_RCU_STRICT_GRACE_PERIOD=y kernels.
-@@ -2370,13 +2367,13 @@ static bool rcu_torture_one_read(struct torture_random_state *trsp, long myid)
- 	init_rcu_torture_one_read_state(&rtors, trsp);
- 	newstate = rcutorture_extend_mask(rtors.readstate, trsp);
- 	WARN_ON_ONCE(newstate & RCUTORTURE_RDR_UPDOWN);
--	rcutorture_one_extend(&rtors.readstate, newstate, myid < 0, trsp, rtors.rtrsp++);
-+	rcutorture_one_extend(&rtors.readstate, newstate, trsp, rtors.rtrsp++);
- 	if (!rcu_torture_one_read_start(&rtors, trsp, myid)) {
--		rcutorture_one_extend(&rtors.readstate, 0, myid < 0, trsp, rtors.rtrsp);
-+		rcutorture_one_extend(&rtors.readstate, 0, trsp, rtors.rtrsp);
- 		return false;
- 	}
--	rtors.rtrsp = rcutorture_loop_extend(&rtors.readstate, myid < 0, trsp, rtors.rtrsp);
--	rcu_torture_one_read_end(&rtors, trsp, myid);
-+	rtors.rtrsp = rcutorture_loop_extend(&rtors.readstate, trsp, rtors.rtrsp);
-+	rcu_torture_one_read_end(&rtors, trsp);
- 	return true;
- }
+ 	.phy_id		= 0x0007c0a0, /* OUI=0x00800f, Model#=0x0a */
+@@ -749,6 +788,7 @@ static struct phy_driver smsc_phy_driver[] = {
+ 	/* IRQ related */
+ 	.config_intr	= smsc_phy_config_intr,
+ 	.handle_interrupt = smsc_phy_handle_interrupt,
++	.get_next_update_time = smsc_phy_get_next_update,
  
-@@ -2469,7 +2466,7 @@ static enum hrtimer_restart rcu_torture_updown_hrt(struct hrtimer *hrtp)
- 	struct rcu_torture_one_read_state_updown *rtorsup;
- 
- 	rtorsup = container_of(hrtp, struct rcu_torture_one_read_state_updown, rtorsu_hrt);
--	rcu_torture_one_read_end(&rtorsup->rtorsu_rtors, &rtorsup->rtorsu_trs, -1);
-+	rcu_torture_one_read_end(&rtorsup->rtorsu_rtors, &rtorsup->rtorsu_trs);
- 	WARN_ONCE(rtorsup->rtorsu_nups >= rtorsup->rtorsu_ndowns, "%s: Up without matching down #%zu.\n", __func__, rtorsup - updownreaders);
- 	WRITE_ONCE(rtorsup->rtorsu_nups, rtorsup->rtorsu_nups + 1);
- 	WRITE_ONCE(rtorsup->rtorsu_nmigrates,
-@@ -2519,7 +2516,7 @@ static void rcu_torture_updown_cleanup(void)
- 		if (!smp_load_acquire(&rtorsup->rtorsu_inuse))
- 			continue;
- 		if (hrtimer_cancel(&rtorsup->rtorsu_hrt) || WARN_ON_ONCE(rtorsup->rtorsu_inuse)) {
--			rcu_torture_one_read_end(&rtorsup->rtorsu_rtors, &rtorsup->rtorsu_trs, -1);
-+			rcu_torture_one_read_end(&rtorsup->rtorsu_rtors, &rtorsup->rtorsu_trs);
- 			WARN_ONCE(rtorsup->rtorsu_nups >= rtorsup->rtorsu_ndowns, "%s: Up without matching down #%zu.\n", __func__, rtorsup - updownreaders);
- 			WRITE_ONCE(rtorsup->rtorsu_nups, rtorsup->rtorsu_nups + 1);
- 			smp_store_release(&rtorsup->rtorsu_inuse, false);
+ 	/* Statistics */
+ 	.get_sset_count = smsc_get_sset_count,
 -- 
-2.40.1
+2.39.5
 
 
