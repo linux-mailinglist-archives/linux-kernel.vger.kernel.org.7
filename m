@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-723887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E27EFAFEC0C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76165AFEC08
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A4BB564080
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:30:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91AAD562DD5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41F92E6D33;
-	Wed,  9 Jul 2025 14:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8622E54DA;
+	Wed,  9 Jul 2025 14:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="BU0Lh4cV"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CftVFqir"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C892D2E610F;
-	Wed,  9 Jul 2025 14:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F392E6110;
+	Wed,  9 Jul 2025 14:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752071415; cv=none; b=jPS3ivRyWwyMkhvYE4Rpb0tmWje3nXQFhaxtguvWYcoHgPhVPtzclk5cxs0j3PhEm5m3/o5ppTXcOraHizNgK/4bYV7q9ezV5nKpsnBdlVYEpkBXhGGAi67+fRQwIpJunVlLARv4DWet5DAQxQ9AxPwWBUi1MdzYGY0F0l4bFyI=
+	t=1752071413; cv=none; b=Hrs+oHyDRbWhtp3qSUEduLTu6+oFH6ryY8kAz65Ro/qgGa1leK/VAbw+kUKbqlvi0387iEKQZcsOpm3iHXLp2FZNcFv0Zd3MqGa6ogY4+QwLRP8sAuie9vQx6hqTgcg9+0N/4tfn3oKu8eZTQo3qhMDRjNUsK6Io9aGGLcQ5TX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752071415; c=relaxed/simple;
-	bh=YAldq9AC0L1eKgqS1rWvXdOf4l7f9PE1yyWoJp1WpLc=;
+	s=arc-20240116; t=1752071413; c=relaxed/simple;
+	bh=/BtTSH93VrIIZBv/TtRzPdF9xB2kfbOMw8pxnsx3XcU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l5TxZlSPo0kT0KnqhKe3ef8VtEyzWYzRXSltCmT8l3c3vmzoE0Djc4rupyOcE+QaOIEDHxp4QUXwjhTQCVG0vCvzSUPOivaxzDs5ZevxczN9v0YqGdKigrGWbYEgsUt8XTnzTThetxsz58KLzpHaQCHh6cR1H2Z2TpEnMPUtLjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=BU0Lh4cV; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ajTS+ah2xlTtyM+2OdyBW0mQCdQADRwx6tcLGItIUGs=; b=BU0Lh4cVcC9JYAhMHeec6iLzAT
-	8B5BDM6aSsgVyvlRIMF6YCm8hNDqSUb2nGDVOWOmgXMvbpfgML81+XLGjklzaaYdNmPIpIZNnReXE
-	XlOqfQTEeMzFTwwOKatkqx/5Kn5NqNQT5YPQalMmTq4IzcFAVHjTJG9Q5S2RwwqWa9at6i13H580M
-	bku1dmWB+UoihrDFufqoiIoFAmKf8H+67IYEVLSeyIScCP9VR+z3Jx01MAHmZYnaK5BC8EaDKx2Qy
-	gfctDV+yS+iGIo50Y7Si6JdllgeBE9inn4Dlo+524ULJ8HmSVIK2IM9sgxHLbjlNPBBddZkkO16va
-	GPhq0umw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:51968)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uZVo2-00086d-16;
-	Wed, 09 Jul 2025 15:29:54 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uZVnv-0002hv-0I;
-	Wed, 09 Jul 2025 15:29:47 +0100
-Date: Wed, 9 Jul 2025 15:29:46 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: lizhe <sensor1010@163.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, vladimir.oltean@nxp.com,
-	maxime.chevallier@bootlin.com, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: Re: Re: Re: [PATCH] net: stmmac: Support gpio high-level reset
- for devices requiring it
-Message-ID: <aG582lPgpOr8oyyx@shell.armlinux.org.uk>
-References: <20250708165044.3923-1-sensor1010@163.com>
- <52b71fe7-d10a-4680-9549-ca55fd2e2864@lunn.ch>
- <5c7adfef.1876.197ece74c25.Coremail.sensor1010@163.com>
- <aG3vj1WYn3TjcBZe@shell.armlinux.org.uk>
- <5bb49dc0.6933.197ee28444e.Coremail.sensor1010@163.com>
- <aG5ORmbgMYd08eNR@shell.armlinux.org.uk>
- <4cfb4aab.9588.197eefef55f.Coremail.sensor1010@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u9z2cJcLhIsVKlKXI/4/RwUWyyOdCOx6x/UNMf/0mKdwWPENdZbZAq3ch6o7Rot5XRrCK07ar6RWqdkKASzaurVVIZUbnwksuLmDwM0Jxmt3tZnfHz+nSaFazwjfIFoYvG+tZlcXs9C3pbR1aQz7JK47aDH9no3NhglXusf674Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CftVFqir; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752071412; x=1783607412;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/BtTSH93VrIIZBv/TtRzPdF9xB2kfbOMw8pxnsx3XcU=;
+  b=CftVFqir3pPfZH0bgl0Am7vE7mTHtX0y/ZhNyjpnDfDh/rCLYuJwSODk
+   bMB1cjax9lluMytEsTn1FKVZcXDv8ih1atNpnp26cDIHuD681KuDzGoZz
+   m4QotltiPmAmn+ysyrjl0w1/dNAC8ZI9L2NwehC0nBgWhzgFkI5GGvoxu
+   urmhYQ3/t6qJ+X9pRPbJAvpFNkGU0Dw3cdDWEDg8PXj5irFeJUBf2cPwB
+   3NwGr3Ezqkx4vu2RgwTEGVjf9o0lug4HBr8KfwE2fop+O3reqr+ufPm2H
+   nBREUywb0KNWjTE6KETeVvS3t0GXxa6iFlK8sDpKQPELHL18Q91TWdRbd
+   A==;
+X-CSE-ConnectionGUID: HWVdBX9cSMe4cXI5geqqzQ==
+X-CSE-MsgGUID: u1okw+R3QmuZp4ln73VkHA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54214375"
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="54214375"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 07:30:11 -0700
+X-CSE-ConnectionGUID: SP5P3WgvSMeaEBInRkzzuQ==
+X-CSE-MsgGUID: EECYl+1LRXONC+ta8D+JfA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="160328742"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa004.jf.intel.com with ESMTP; 09 Jul 2025 07:29:51 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 2A91D1B7; Wed, 09 Jul 2025 17:29:49 +0300 (EEST)
+Date: Wed, 9 Jul 2025 17:29:49 +0300
+From: "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"seanjc@google.com" <seanjc@google.com>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, 
+	"Gao, Chao" <chao.gao@intel.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"Huang, Kai" <kai.huang@intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv2 08/12] KVM: TDX: Handle PAMT allocation in fault path
+Message-ID: <nlnio65utrbd4t3vgkcibmwwmtkfhso6gz7lkqqnwhn5ialu7h@azdndahrdr3f>
+References: <20250609191340.2051741-1-kirill.shutemov@linux.intel.com>
+ <20250609191340.2051741-9-kirill.shutemov@linux.intel.com>
+ <aba17e84f56f2a51e7d3cf0e286a898adf66dc46.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,27 +83,293 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4cfb4aab.9588.197eefef55f.Coremail.sensor1010@163.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <aba17e84f56f2a51e7d3cf0e286a898adf66dc46.camel@intel.com>
 
-On Wed, Jul 09, 2025 at 07:42:55PM +0800, lizhe wrote:
-> Hi,
->     i have already declared it in the DTS.
+On Wed, Jun 25, 2025 at 10:38:42PM +0000, Edgecombe, Rick P wrote:
+> On Mon, 2025-06-09 at 22:13 +0300, Kirill A. Shutemov wrote:
+> > There are two distinct cases when the kernel needs to allocate PAMT
+> > memory in the fault path: for SEPT page tables in tdx_sept_link_private_spt()
+> > and for leaf pages in tdx_sept_set_private_spte().
+> > 
+> > These code paths run in atomic context. Use a pre-allocated per-VCPU
+> > pool for memory allocations.
 > 
->     &gmac {
->             snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_HIGH>;
->     };
+> This log is way to thin. It should explain the design, justify the function
+> pointer, excuse the export, etc.
 
-Active high means that the reset is in effect when the output is at the
-logic '1' state. So, gpiod_get_value*() will return the same as
-gpiod_get_raw_value*().
+Ack.
 
-Active low means that the reset is in effect when the output is at the
-logic '0' state, and in that case the return value of
-gpiod_get_value*() will return true when the reset is active (at logic
-'0' state) whereas gpiod_get_raw_value*() will return zero.
+> > 
+> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > ---
+> >  arch/x86/include/asm/tdx.h  |  4 ++++
+> >  arch/x86/kvm/vmx/tdx.c      | 40 ++++++++++++++++++++++++++++++++-----
+> >  arch/x86/virt/vmx/tdx/tdx.c | 21 +++++++++++++------
+> >  virt/kvm/kvm_main.c         |  1 +
+> >  4 files changed, 55 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
+> > index 47092eb13eb3..39f8dd7e0f06 100644
+> > --- a/arch/x86/include/asm/tdx.h
+> > +++ b/arch/x86/include/asm/tdx.h
+> > @@ -116,6 +116,10 @@ u32 tdx_get_nr_guest_keyids(void);
+> >  void tdx_guest_keyid_free(unsigned int keyid);
+> >  
+> >  int tdx_nr_pamt_pages(void);
+> > +int tdx_pamt_get(struct page *page, enum pg_level level,
+> > +		 struct page *(alloc)(void *data), void *data);
+> > +void tdx_pamt_put(struct page *page, enum pg_level level);
+> > +
+> >  struct page *tdx_alloc_page(void);
+> >  void tdx_free_page(struct page *page);
+> >  
+> > diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> > index 36c3c9f8a62c..bc9bc393f866 100644
+> > --- a/arch/x86/kvm/vmx/tdx.c
+> > +++ b/arch/x86/kvm/vmx/tdx.c
+> > @@ -1537,11 +1537,26 @@ static int tdx_mem_page_record_premap_cnt(struct kvm *kvm, gfn_t gfn,
+> >  	return 0;
+> >  }
+> >  
+> > +static struct page *tdx_alloc_pamt_page_atomic(void *data)
+> > +{
+> > +	struct kvm_vcpu *vcpu = data;
+> > +	void *p;
+> > +
+> > +	p = kvm_mmu_memory_cache_alloc(&vcpu->arch.pamt_page_cache);
+> > +	return virt_to_page(p);
+> > +}
+> > +
+> >  int tdx_sept_set_private_spte(struct kvm *kvm, gfn_t gfn,
+> >  			      enum pg_level level, kvm_pfn_t pfn)
+> >  {
+> > +	struct kvm_vcpu *vcpu = kvm_get_running_vcpu();
+> >  	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
+> >  	struct page *page = pfn_to_page(pfn);
+> > +	int ret;
+> > +
+> > +	ret = tdx_pamt_get(page, level, tdx_alloc_pamt_page_atomic, vcpu);
+> > +	if (ret)
+> > +		return ret;
+> >  
+> >  	/* TODO: handle large pages. */
+> >  	if (KVM_BUG_ON(level != PG_LEVEL_4K, kvm))
+> 
+> level is known to be PG_LEVEL_4K if you swap the order of these. I'm guessing
+> left over from order swap.
+
+We would need to pass actual level when huge pages are supported. It is
+better to keep it this way to avoid patching in the future.
+
+> 
+> > @@ -1562,10 +1577,16 @@ int tdx_sept_set_private_spte(struct kvm *kvm, gfn_t gfn,
+> >  	 * barrier in tdx_td_finalize().
+> >  	 */
+> >  	smp_rmb();
+> > -	if (likely(kvm_tdx->state == TD_STATE_RUNNABLE))
+> > -		return tdx_mem_page_aug(kvm, gfn, level, page);
+> >  
+> > -	return tdx_mem_page_record_premap_cnt(kvm, gfn, level, pfn);
+> > +	if (likely(kvm_tdx->state == TD_STATE_RUNNABLE))
+> > +		ret = tdx_mem_page_aug(kvm, gfn, level, page);
+> > +	else
+> > +		ret = tdx_mem_page_record_premap_cnt(kvm, gfn, level, pfn);
+> 
+> tdx_mem_page_record_premap_cnt() doesn't need tdx_pamt_get(). I think it could
+> be skipped if the order is re-arranged.
+
+We need to deposit PAMT memory for PAGE.ADD at some point. I think having
+it consolidated here for both PAGE.ADD and PAGE.AUG is better.
+
+> > +
+> > +	if (ret)
+> > +		tdx_pamt_put(page, level);
+> > +
+> > +	return ret;
+> >  }
+> >  
+> >  static int tdx_sept_drop_private_spte(struct kvm *kvm, gfn_t gfn,
+> > @@ -1622,17 +1643,26 @@ int tdx_sept_link_private_spt(struct kvm *kvm, gfn_t gfn,
+> >  			      enum pg_level level, void *private_spt)
+> >  {
+> >  	int tdx_level = pg_level_to_tdx_sept_level(level);
+> > -	gpa_t gpa = gfn_to_gpa(gfn);
+> > +	struct kvm_vcpu *vcpu = kvm_get_running_vcpu();
+> >  	struct page *page = virt_to_page(private_spt);
+> > +	gpa_t gpa = gfn_to_gpa(gfn);
+> >  	u64 err, entry, level_state;
+> > +	int ret;
+> > +
+> > +	ret = tdx_pamt_get(page, PG_LEVEL_4K, tdx_alloc_pamt_page_atomic, vcpu);
+> > +	if (ret)
+> > +		return ret;
+> >  
+> >  	err = tdh_mem_sept_add(&to_kvm_tdx(kvm)->td, gpa, tdx_level, page, &entry,
+> >  			       &level_state);
+> > -	if (unlikely(tdx_operand_busy(err)))
+> > +	if (unlikely(tdx_operand_busy(err))) {
+> > +		tdx_pamt_put(page, PG_LEVEL_4K);
+> >  		return -EBUSY;
+> > +	}
+> >  
+> >  	if (KVM_BUG_ON(err, kvm)) {
+> >  		pr_tdx_error_2(TDH_MEM_SEPT_ADD, err, entry, level_state);
+> > +		tdx_pamt_put(page, PG_LEVEL_4K);
+> >  		return -EIO;
+> >  	}
+> >  
+> > diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+> > index 4f9eaba4af4a..d4b50b6428fa 100644
+> > --- a/arch/x86/virt/vmx/tdx/tdx.c
+> > +++ b/arch/x86/virt/vmx/tdx/tdx.c
+> > @@ -2067,10 +2067,16 @@ static void tdx_free_pamt_pages(struct list_head *pamt_pages)
+> >  	}
+> >  }
+> >  
+> > -static int tdx_alloc_pamt_pages(struct list_head *pamt_pages)
+> > +static int tdx_alloc_pamt_pages(struct list_head *pamt_pages,
+> > +				 struct page *(alloc)(void *data), void *data)
+> >  {
+> >  	for (int i = 0; i < tdx_nr_pamt_pages(); i++) {
+> > -		struct page *page = alloc_page(GFP_KERNEL);
+> > +		struct page *page;
+> > +
+> > +		if (alloc)
+> > +			page = alloc(data);
+> > +		else
+> > +			page = alloc_page(GFP_KERNEL);
+> 
+> It's not great I think. A branch between a function pointer and alloc_page,
+> where there is only ever one value for the function pointer. There has to be a
+> better way?
+
+I guess we can do something like this (but I am not sure it is better):
+
+diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+index baa791ea5fd7..58a3066be6fc 100644
+--- a/arch/x86/virt/vmx/tdx/tdx.c
++++ b/arch/x86/virt/vmx/tdx/tdx.c
+@@ -2141,11 +2141,7 @@ static int tdx_alloc_pamt_pages(struct list_head *pamt_pages,
+ 	for (int i = 0; i < tdx_nr_pamt_pages(); i++) {
+ 		struct page *page;
+ 
+-		if (alloc)
+-			page = alloc(data);
+-		else
+-			page = alloc_page(GFP_KERNEL);
+-
++		page = alloc(data);
+ 		if (!page) {
+ 			tdx_free_pamt_pages(pamt_pages);
+ 			return -ENOMEM;
+@@ -2208,6 +2204,11 @@ static int tdx_pamt_add(atomic_t *pamt_refcount, unsigned long hpa,
+ 	return 0;
+ }
+ 
++static struct page *alloc_kernel_page(void *dummy)
++{
++	return alloc_page(GFP_KERNEL);
++}
++
+ /* Bump PAMT refcount for the given page and allocate PAMT memory if needed */
+ int tdx_pamt_get(struct page *page, enum pg_level level,
+ 		 struct page *(alloc)(void *data), void *data)
+@@ -2233,6 +2234,9 @@ int tdx_pamt_get(struct page *page, enum pg_level level,
+ 	if (atomic_inc_not_zero(pamt_refcount))
+ 		return 0;
+ 
++	if (!alloc)
++		alloc = alloc_kernel_page;
++
+ 	if (tdx_alloc_pamt_pages(&pamt_pages, alloc, data))
+ 		return -ENOMEM;
+ 
+> 
+> >  		if (!page)
+> >  			goto fail;
+> >  		list_add(&page->lru, pamt_pages);
+> > @@ -2115,7 +2121,8 @@ static int tdx_pamt_add(atomic_t *pamt_refcount, unsigned long hpa,
+> >  	return 0;
+> >  }
+> >  
+> > -static int tdx_pamt_get(struct page *page, enum pg_level level)
+> > +int tdx_pamt_get(struct page *page, enum pg_level level,
+> > +		 struct page *(alloc)(void *data), void *data)
+> >  {
+> >  	unsigned long hpa = page_to_phys(page);
+> >  	atomic_t *pamt_refcount;
+> > @@ -2134,7 +2141,7 @@ static int tdx_pamt_get(struct page *page, enum pg_level level)
+> >  	if (atomic_inc_not_zero(pamt_refcount))
+> >  		return 0;
+> >  
+> > -	if (tdx_alloc_pamt_pages(&pamt_pages))
+> > +	if (tdx_alloc_pamt_pages(&pamt_pages, alloc, data))
+> >  		return -ENOMEM;
+> >  
+> >  	ret = tdx_pamt_add(pamt_refcount, hpa, &pamt_pages);
+> > @@ -2143,8 +2150,9 @@ static int tdx_pamt_get(struct page *page, enum pg_level level)
+> >  
+> >  	return ret >= 0 ? 0 : ret;
+> >  }
+> > +EXPORT_SYMBOL_GPL(tdx_pamt_get);
+> >  
+> > -static void tdx_pamt_put(struct page *page, enum pg_level level)
+> > +void tdx_pamt_put(struct page *page, enum pg_level level)
+> >  {
+> >  	unsigned long hpa = page_to_phys(page);
+> >  	atomic_t *pamt_refcount;
+> > @@ -2179,6 +2187,7 @@ static void tdx_pamt_put(struct page *page, enum pg_level level)
+> >  
+> >  	tdx_free_pamt_pages(&pamt_pages);
+> >  }
+> > +EXPORT_SYMBOL_GPL(tdx_pamt_put);
+> >  
+> >  struct page *tdx_alloc_page(void)
+> >  {
+> > @@ -2188,7 +2197,7 @@ struct page *tdx_alloc_page(void)
+> >  	if (!page)
+> >  		return NULL;
+> >  
+> > -	if (tdx_pamt_get(page, PG_LEVEL_4K)) {
+> > +	if (tdx_pamt_get(page, PG_LEVEL_4K, NULL, NULL)) {
+> >  		__free_page(page);
+> >  		return NULL;
+> >  	}
+> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > index eec82775c5bf..6add012532a0 100644
+> > --- a/virt/kvm/kvm_main.c
+> > +++ b/virt/kvm/kvm_main.c
+> > @@ -436,6 +436,7 @@ void *kvm_mmu_memory_cache_alloc(struct kvm_mmu_memory_cache *mc)
+> >  	BUG_ON(!p);
+> >  	return p;
+> >  }
+> > +EXPORT_SYMBOL_GPL(kvm_mmu_memory_cache_alloc);
+> 
+> Did you consider pre-allocating a page and returning it to the cache if it's not
+> needed.
+
+I am not sure how returning object back to pool helps anything.
+
+Or do you mean to invent a new memory pool mechanism just for PAMT. Seems
+excessive.
+
+
+> Or moving kvm_mmu_memory_cache_alloc() to a static inline in a header
+> that core x86 can use.
+
+mmu_memory_cache_alloc_obj() need to be pulled into header too. At this
+point we might as well pull all KVM_ARCH_NR_OBJS_PER_MEMORY_CACHE stuff
+there. 
+
+It seems too extreme to avoid export.
+
+> They all seem bad in different ways.
+> 
+> >  #endif
+> >  
+> >  static void kvm_vcpu_init(struct kvm_vcpu *vcpu, struct kvm *kvm, unsigned id)
+> 
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+  Kiryl Shutsemau / Kirill A. Shutemov
 
