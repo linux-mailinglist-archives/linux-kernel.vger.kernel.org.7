@@ -1,177 +1,209 @@
-Return-Path: <linux-kernel+bounces-724121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C7DDAFEED9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:27:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27879AFEEDE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4A681C48405
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:27:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF7FC7BB183
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1D3219E8D;
-	Wed,  9 Jul 2025 16:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A86D21A43D;
+	Wed,  9 Jul 2025 16:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PYodFvO7"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2085.outbound.protection.outlook.com [40.107.223.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FQHVHgFe"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D982144CF;
-	Wed,  9 Jul 2025 16:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752078451; cv=fail; b=mhl717sm4HEYLEbCRIMlAxEDof0KN8yD0xj0EFs3AiOd7qMABihJ1h4cOXJoaAXTgMCK3pTNtoonKyqQVNHDKCh9+HJsDG2XX3nd7G2xSzK2Hir2/IjN6GfNnQUTj7OZQ4Lwol83B4s+fMsJ6oxsKFMEX1Ujw+PIhQo9cxKsOmQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752078451; c=relaxed/simple;
-	bh=KC+zilcQf6U2MCHfLZHxcIHrU4HWpTTab+Waxwh0Tpo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=B9dYazdtDyKHCWzRycyJ8RRPjQ2LphR2V3aztRyxDjF1B/IdLKJDXg332zs28I3rJtL++lp+cBvFkcCgU9H8ErlTMFQFv4HvqDNMRqdV9MK36hnad8cXbTnPhUcHnKbG7NjwHyKPgYVDD7qBKTgb0Z2GIKdstoPnDCL5NgV5X7M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PYodFvO7; arc=fail smtp.client-ip=40.107.223.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=maTW+cDHEImOMdJFI6DK5dxPx2qx/JgQ/kzUB30ohwI3pdnGFVG3206bKBcQJ6NRVTRe/uBngcpzXqvYSSq4CfGTrsOleiOPiubRiACJoXdLGQXxWZszU7LHp2pNLYjRf/EIL6+UbuCqR+DY2aDWI53CbodWfqTF6y/Y8Q+bNxLvQqVXoM/fu65GZmZcnJc7DRUWOm0glzQ9RRNWzs0Vh7EiCW0cIdEKb98Flm6Vy3SWb050c1KMrU6DdJzyCPy4HbmUeBEeBKZ0wEijOZim6ISp8f/mg7SoR5xJzqh2wbHVwpuanwQnvOxMlWh3iBWkW9w6duYeo7Z+wYsTLIyywg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KC+zilcQf6U2MCHfLZHxcIHrU4HWpTTab+Waxwh0Tpo=;
- b=Qy8Gx3+vdVISFj6EWohy7p/Cd9QizgX00xl0YTZ1Au0PEeI595C/9UjoFatbn3oSTu7UoK0X8UfhanPrhHP9NC5GhBAIEp4LtfJVRS1QwZVOFGDA0yLI4x9cumM5eNQQ6ODVEUCBxbVfovzoB91jEGewpt0bZFpN6vaZRIo3+5odG5SS7kNp/5W5vZGPrxAyl3gGvBy7xTzPf8Yu2s5zAZQEKdTlb+KI5ic9EIMKmLmE/XYaSS5UJ7lLua2A1T9FTyrPxp5pXxJbMlok/1O6Ie2pmP3jranPljps9Vu8Wz62VSLJhpI0jsB3jMg/fAceqgpOeoZB6VOHkD8IFkzZOQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KC+zilcQf6U2MCHfLZHxcIHrU4HWpTTab+Waxwh0Tpo=;
- b=PYodFvO7y/Yex3H0UgG07SmiRR7BHeOhg9cLXGXWbV+rC09+PGAV4JaYMX734csx693ZLsWVQ7IrRMfU89gqw/nNTZ8llmdfIyp7BOAHZeaOjKDckWmim659GK/bUEkYALkLFlhmJ62i6FTanEco7qqPu8Oxk0Vc9Tz61qVkJrYaw9H2TfGi8zR351441FE8nPrGHHFpM3T+OR3efdcrM6LvaC2UFahGJB9FxMpfC4SYjoYiMWEkABAAJsFOPyG4ZscYpWQ0HK3qFLhsE0UAgX2fObwnjFtTeF827R3JcQRJQcNrlYbclkrHGKVd+p/irgwhuBvnlaQTUhY1UpnQEg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by DS7PR12MB6311.namprd12.prod.outlook.com (2603:10b6:8:94::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Wed, 9 Jul
- 2025 16:27:26 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8901.024; Wed, 9 Jul 2025
- 16:27:26 +0000
-Date: Wed, 9 Jul 2025 13:27:24 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Jacob Pan <jacob.pan@linux.microsoft.com>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, Jann Horn <jannh@google.com>,
-	Vasant Hegde <vasant.hegde@amd.com>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Andy Lutomirski <luto@kernel.org>, iommu@lists.linux.dev,
-	security@kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/1] iommu/sva: Invalidate KVA range on kernel TLB flush
-Message-ID: <20250709162724.GE1599700@nvidia.com>
-References: <20250704133056.4023816-1-baolu.lu@linux.intel.com>
- <20250709085158.0f050630@DESKTOP-0403QTC.>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250709085158.0f050630@DESKTOP-0403QTC.>
-X-ClientProxiedBy: SA9PR13CA0089.namprd13.prod.outlook.com
- (2603:10b6:806:23::34) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E6D21516E;
+	Wed,  9 Jul 2025 16:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752078552; cv=none; b=QNHxA0ZOnZCqcyQggnncPG/b/xDpBxAqb51mC841XrQqWtD1ljhXO/7QEEUQZqfHhL7/myGdzudivyida59K9/46JYVsJ19ii1y0TTICLrM4uCXuKy31YtZBlxH6ac/U4LU0+MCi2j+4RRJCq9qfJd4HAPktvTyAg0fk2XvlPHU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752078552; c=relaxed/simple;
+	bh=sRZinxGJp0LHZgzPtfypMxAGSMAGRbauJmTwYUBpiyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D06BiLo6SYrPEsc/bgEO8m6m/+9FEhjYlakbEn8P0nXWgY5oBq787p7xuVX/wzOQRUu8wG8OcIOtNWdT8hjR/yebAnPwei9B8UAwdDI+HXm1IqFHwytDBO7dRAXeEObbmK+H+iWwNGhX+dXaw0IdRBE4pciJnTD0gPy/Bv1HWis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FQHVHgFe; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-31393526d0dso141275a91.0;
+        Wed, 09 Jul 2025 09:29:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752078550; x=1752683350; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cNKPiHQhGuB2A2mBLDUtVdPtTHbu/csglYuDV6e8cnY=;
+        b=FQHVHgFeGNgDsvHp14YKIZDGOBh0z1MHwIHrzDMFvr8X4N98afMuilMOj7eq3P9xIt
+         LZm3c+q5Xebw9mgJYmq2OE91gG67+wXeNyT1mGrR2vbe44/ZLJIUWB96hh3Yz4LypZI5
+         UCMAqsWniUR61s0saSMm5BZDYg0dG7kXp/yO5/yO/XwQO6nUq2nWeNiUuAlJdzkoDV49
+         f1wiymxqvY+gg0j9m7JHowk2W007n72aa5YXR6MV/DRnqReBgl8qN+dwVlQ3uvov682n
+         MSjrJrFRHbAcGk3zCYAUbpFdKU/2rwEeR5QD0x1UdhBHRhrpawxCiUvIEnbPJ0BzfBea
+         gD+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752078550; x=1752683350;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cNKPiHQhGuB2A2mBLDUtVdPtTHbu/csglYuDV6e8cnY=;
+        b=LEEyTlVeLfgllH0T+sA50MN8Ao0LRW+M/iFrEDkPogqFTXYrAF7OkGyNjI1351agCL
+         hooQwu0cyvq9pvGzHlGo2RzFaU2u0A92HO8mroA3YXd124eLEcS4MufEEnYGpzTLQl1b
+         1aNhP30VL0kZfnnXP9vAv/VudvwgVLgHBMAN5rRJCUXWTtxcCAmgWqr14i6x92s6Su9B
+         F0XvXd0h/79euj0oRB5vKdB/Q7TWCPUD2XZZ3B4Gl6i7pb60DBYBdFv0w99kMEWlw1E5
+         1JqlxBekiaIS6Pi2OonkTsckjLSyDtOlWTH9SA5pvu2C3qNek2Ix7jaTTfE8MeDOmhUr
+         qBcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/pp54qU8CwmxHEZ6TkZml+01aUZ8b0Rqh3Peehf7k3F0SyszWM+Nq2GtHNFaZ0tN2x+yz+ARR@vger.kernel.org, AJvYcCWIprSFA2cMoUYwCchdyJkviP+UxZV+EQ4EmxseMN1+wLYn1iUZCYZ3ULt5nqX2Y80Rl3Q2M9P+iZlA3EkH@vger.kernel.org, AJvYcCWMpYKE8TO7tCyEwArUt00uBAJRB8QBTRWANWcyxPGBnlUsiIrqZzh33nkE5drRy/TL7tOS+CBfYbRTb+m+41kM@vger.kernel.org, AJvYcCWNdjFpyQWGR6iO1BjIIOJZ0a2Ght5+IyChX8ZCuFIS+R8jCrSiFGsZkY7+bu4j9o0mDAQ=@vger.kernel.org, AJvYcCWszxf5RY3tgDdfXdNRBmxa2JgMGfYQSm0VzQdUDFm+DKp7BWi2+JHZDshHPXXBn+lMcNGj1iMT16Jk@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuU57ipT/ZwyTg0Lxc00W/k9tJdZS7hdoaCqfX5xcrLETlVvO3
+	qlYnCBa0TFAO7SQXQrIpuh4vcXCCjJ3m7NCLEtPpVrRhpq7bs2JuGsE=
+X-Gm-Gg: ASbGncsrcDccC6nG5digysRkb5YNIbtnhR0xlDgibJiG1HJ+85/lwAuyy6FM91UDV27
+	Sz/qEKruSWpeegSexZ7zalDvB0odktuybqZDGtzE3QWUgYcoGLJI8F6U4b9FyCBd6KANzKny1yH
+	TwPMypD+CFSVrX0RmS+Vy95gWh21mXOSZol2lX9MgeU8pgP0DkaFayJglBkBPL3vyJ0//3x8Bw8
+	W1COQgo84d2sifE95ojLvjMS659d06WfY/M2lDDWlaiV893RsCfrOS9+Hh/52PRKtob/3Hzx+XL
+	dGeP80ljYvhg2Ilwaoi955LEced9U2Slbj6nLEBhaEoxSkZAEu5HlbgMCMlx3v1swmmY/y22eRg
+	cQ8AYbZQ4UMycW6h4gP02r3A=
+X-Google-Smtp-Source: AGHT+IEay738lMrbJZ6+Qln/Mixh/N/XCUQ86AX7IEDIBEjNMhpWd1QA49Fe+glBMuPqgQKN87d2vg==
+X-Received: by 2002:a17:90b:57c7:b0:313:271a:af56 with SMTP id 98e67ed59e1d1-31c3c30a79amr705858a91.30.1752078550125;
+        Wed, 09 Jul 2025 09:29:10 -0700 (PDT)
+Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-31c301ae5fesm2516829a91.38.2025.07.09.09.29.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 09:29:09 -0700 (PDT)
+Date: Wed, 9 Jul 2025 09:29:08 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>,
+	"Song, Yoong Siang" <yoong.siang.song@intel.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>, Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Magnus Karlsson <magnus.karlsson@gmail.com>,
+	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Jonathan Lemon <jonathan.lemon@gmail.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH bpf-next,v3 2/2] selftests/bpf: Enhance XDP Rx metadata
+ handling
+Message-ID: <aG6Y1J9Li2DdjqWv@mini-arch>
+References: <20250702165757.3278625-1-yoong.siang.song@intel.com>
+ <20250702165757.3278625-3-yoong.siang.song@intel.com>
+ <77463344-1b1a-443a-97be-a7ef8a88b8af@kernel.org>
+ <IA3PR11MB92546301B67FB3A9FDCD716DD842A@IA3PR11MB9254.namprd11.prod.outlook.com>
+ <88a64a65-bd8c-4b73-af19-6764054d4572@kernel.org>
+ <f5d724ab-0eb6-41a1-b694-8aea566e99ab@iogearbox.net>
+ <aGvhzDLSuOolCCWW@mini-arch>
+ <27edae8a-f1a8-4000-ac1e-fd4d5b01e807@iogearbox.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DS7PR12MB6311:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1438eedb-9eae-4b98-eb23-08ddbf057dd4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?eLTrB3IOF4i8oAh+ryaANI+BC/mHjm3568Cr2/Nj9iDd5YOpLDBuPDehbCmv?=
- =?us-ascii?Q?FO5cG/uaXevFIbxXCtV7ImtZHkO/Oi+1oR5rImDG9IBQ4MBBoRr7pF/yWptK?=
- =?us-ascii?Q?33qXob/RQQ5E4chWnpn+owkDKMyg9kAIYBfHCvgmGw29jWfsJp0jIcA6m2Uz?=
- =?us-ascii?Q?5fVbDZYovpt0wMbXeG7wqJev+mIhn3Vztzhc8Qdazxa6o7UNl/ycKuSgJHY8?=
- =?us-ascii?Q?HP24WSPWs05xGZ7vFNzmFp7k3uADLXxNfi4GhMSAC9LVlP5ymgmbq0C33RU8?=
- =?us-ascii?Q?UWB/xkDjmx0o5rdq0lab4cw6r0LkxM+1JiopZsyyomoIzYvPjKMY4SB86GoY?=
- =?us-ascii?Q?emzG/Ky/SxFf16IS3Lu8abBfEkY1WRCX69JR/oLD2Uq8GnDnncLSizdngHui?=
- =?us-ascii?Q?v/CQec9JjSv4vgPlbtF/P3y8QIQRJy80PVXenKWNVV6Drnd2SLNKscg9KhRD?=
- =?us-ascii?Q?n/f+6JFJudIYQfxMv+q/T/HS1sGIEb6noUDQFX9CL0D6Pyev8duEdIVUqfXW?=
- =?us-ascii?Q?fmTj6CBkrBhMPNoU+X1G6DUGRPMQiy1bf4DK016iYJM1fWb7oDbNXfRQMxd4?=
- =?us-ascii?Q?+YdAK1TgYMtcm+bKiJJ8/MZ0fN3IZJl4AeKRdgu19wHt2SvxIfLvX6NIZPwM?=
- =?us-ascii?Q?NcczxtI6Vj0BprCF1UGBnuFpE8TXWMMJs5cppnSiABqJx9pyO7dS+Gp8/IuW?=
- =?us-ascii?Q?yh2qKI3v2876mjBED21Uc57mce8FU5sL34KHutOJg6Mn59RRgLoydc/lfFA/?=
- =?us-ascii?Q?xdjtIHoo/B2DzilD3AUps+ut1UYsLqE0gDX6oiV9XdqzN9tfCvZKdDK+eQyH?=
- =?us-ascii?Q?wJCZFZ85o/pWFi5+IfuS+lVCfWgDk7ji67h7mUd+9aDZU5ivsiQZSTyXGXGX?=
- =?us-ascii?Q?Km6D5CdQlbvfIm4nBnYpKxF9CWH6BI8Q6n2ZpdNl8edosIBQ2K/zhFIzY+eL?=
- =?us-ascii?Q?yzi7NbZFfpwVvPbErsW+7Jk0vKYdHNIo0zQRkw/W4svQEphnZ/N8PObTqmaP?=
- =?us-ascii?Q?ynzD1O8keoiKLgCa9Jf7T/g4w5PdQVizNbmXdckNfoAwfOT4Oa+8f0EJPhfr?=
- =?us-ascii?Q?R7l2hApBlJLKW+P/DEFytYsJCVG+g8yQFNOuv7J7vJXOM98C3CPLV7QHxkOR?=
- =?us-ascii?Q?hZfdjo/vdm+IlOYwJSBbuDPu75vl/Y0srvWgINUzK5QENlVE0WUbmTAduPrH?=
- =?us-ascii?Q?TN9VFAzGcbwgHTEov9EorGl2uJyJywJZ6BG4w4Cenhr+4bc1Cv1NQJYgLhY/?=
- =?us-ascii?Q?01MxiQUwDNoVFD0QfTVKfuEvMSuVLawlE73uuBaLNEvfsuXn3ZRw0C2hlIqG?=
- =?us-ascii?Q?4V8v2Go3KDHmE3Yn6Clq3p1CFIdhq4gmoHceLdQlrrkOvQJz9zK7jc/DY9Hg?=
- =?us-ascii?Q?gynsKGGeEwqO1XwN/paAWP05VeKn1OXHpJ2e/McmH1N9u6Ea4uAHDzQssO1r?=
- =?us-ascii?Q?gPRJ4AxjmmM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?QP9rIezKcYNrfxHe4pU5Jht4S1JyiC14TvVhOWl9bTidYar2E1uKfEGRZZO2?=
- =?us-ascii?Q?Tl9fhO0pEzZYEntffmvJhvPNsfrDGdrm19/5j+NjUYaBa5H35u7RzEPPAqm3?=
- =?us-ascii?Q?Q0dxpArN56x82KJT0YtTs3RaaenSLWwjv2RqAhQk3xv8BtNXiHoy857wfrf1?=
- =?us-ascii?Q?3k21SzKIX7PUsJWdhuvvksKmThsNUSP0MiEbMgmP87hV/vonoCQ2cYWwlY9z?=
- =?us-ascii?Q?jQCHwaEs5jhYkDCp5W1+Tnvv7NcoePn2FJIPK3Sazf0C88sW0Mxvu93MClPb?=
- =?us-ascii?Q?N+66mzccipV90kSRI+IX0uveSpwh6F7Wlz/Fdq4qoyChZYWlL1r/zaHhtT0s?=
- =?us-ascii?Q?H5p9lXVfije5irhlk60hwVhowDXmMgUEpHYPpbKoj7TS4OJ5m9dTTu6BEYy6?=
- =?us-ascii?Q?2BjtvAZHiG6ZmFAzfnAiCygfFKsLY5udbiX2od6rIvtGkZhO5pvnu5ggvd/1?=
- =?us-ascii?Q?oQZEe3t/YINRwMGIxVQ5wsvvZyG+FdD/kHdf1HQrvHezGJVLl+ed+88M77th?=
- =?us-ascii?Q?zhKyatYzKX9C8Pl10rgh1vflfUvgcWuRNlLvZEETyqsG/m/jG7jzo9s7o55T?=
- =?us-ascii?Q?qSRVU2XQvy7mxLimjdxU9RTCjDmbqx2oF6P1CKpzzVpsiXZ09SC9Z4zUx4mn?=
- =?us-ascii?Q?0h2V5Rw5OHur/H1wnGg2KsAi2qrvOplnf9aDAz7d5hbcLF+wtuvGi1fTETE+?=
- =?us-ascii?Q?W++2XB22CeHqA65dRLwAf6sJNk9sTIJr3T7zZpBbq2iMBWYZ+UFAnMfVcWiZ?=
- =?us-ascii?Q?MmvGDbrs5OoMOHQeE42OjK2b7Bt86FC0/SFS2NVls4oCnJuaOYMTneBG5dNS?=
- =?us-ascii?Q?+FoziLTiJWrt9MaEL7SSWtCtx5CMhK3Ruzs5mmtP//O5ibOe2EFgS7EX/dOs?=
- =?us-ascii?Q?oLHGWgNmVDM8DfeAjOHK/qgmo87Ew/FrUoHjovYiPH1vrZpQrNMHJaWLnx33?=
- =?us-ascii?Q?kzozjyfgl8uuUv3fN92e23b4SpHlyFAnPxSZ1yJSkz+zdLav3+xpZpu5pO4C?=
- =?us-ascii?Q?WCPIb9iOfhfrvK9G6PT+qPXDI1t9xCHKG0FBJb7pWCuEoRBSn9+Ke1iY7Sfj?=
- =?us-ascii?Q?8BdOBnSOaLB4hrE/1zFgEKQ16QXDp19KkycHMkT8wOKSoBNamo7NOtuZzwad?=
- =?us-ascii?Q?bhyO7enrVot+mRt8tXIRWnkDvfjmnCy5ZNr1aPjgXcOyP8qSgYUSvzIbOaXV?=
- =?us-ascii?Q?0SYfkVwB47i1QLB42ZVBV8oH96+nXNWKn6/L1ruSW/XB0Sj0VlM23TiGYfvQ?=
- =?us-ascii?Q?/vV/Mu8X7/HJjjt1s4pNSvDH9hGLJWL/KcCBHWpaNZQxPawFoR87xxnlu6zJ?=
- =?us-ascii?Q?jBnBjzBwRDQYRoGEDyj0NH/gYdt/f3/1IEEPWvpW2T88A2aH57nZBF9iHW+U?=
- =?us-ascii?Q?Jqcbc6VhFI2i2VVA/+b7bNCnWiYlKweMgfXuCtuMvu0cqg+xV992j4qyKn6x?=
- =?us-ascii?Q?J5AxI83U66kIN2Q7KITZeennzX5yyEGMyELVeVnb+7Oyhhib3hYFeHrgP0V3?=
- =?us-ascii?Q?a3q0tNsanQ1QzT+usnPuf5kJSZxW0n+V5555VRM1G7Bl+1i9g5FRLIgA3MQI?=
- =?us-ascii?Q?X3qEHbAXn74FMjHD/6ZjwjRsWDrjfARlCm2rlXk3?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1438eedb-9eae-4b98-eb23-08ddbf057dd4
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 16:27:26.4918
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 45khU/aXISmF67RB/VSfv9BJy2BWYLVIDidgCrWLAdafOqEQz7OsxcruatnYHruL
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6311
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <27edae8a-f1a8-4000-ac1e-fd4d5b01e807@iogearbox.net>
 
-On Wed, Jul 09, 2025 at 08:51:58AM -0700, Jacob Pan wrote:
-> > In the IOMMU Shared Virtual Addressing (SVA) context, the IOMMU
-> > hardware shares and walks the CPU's page tables. Architectures like
-> > x86 share static kernel address mappings across all user page tables,
-> > allowing the IOMMU to access the kernel portion of these tables.
+On 07/09, Daniel Borkmann wrote:
+> On 7/7/25 5:03 PM, Stanislav Fomichev wrote:
+> > On 07/04, Daniel Borkmann wrote:
+> > > On 7/4/25 11:58 AM, Jesper Dangaard Brouer wrote:
+> > > > On 04/07/2025 03.17, Song, Yoong Siang wrote:
+> > > > > On Friday, July 4, 2025 1:05 AM, Jesper Dangaard Brouer <hawk@kernel.org> wrote:
+> > > > > > On 02/07/2025 18.57, Song Yoong Siang wrote:
+> > > > > > > Introduce the XDP_METADATA_SIZE macro as a conservative measure to
+> > > > > > > accommodate any metadata areas reserved by Ethernet devices.
+> > > > > > 
+> > > > > > This seems like a sloppy workaround :-(
+> > > > > > 
+> > > > > > To me, the problem arise because AF_XDP is lacking the ability to
+> > > > > > communicate the size of the data_meta area.  If we had this capability,
+> > > > > > then we could allow the IGC driver to take some of the space, have the
+> > > > > > BPF-prog expand it futher (bpf_xdp_adjust_meta) and then userspace
+> > > > > > AF_XDP would simply be able to see the size of the data_meta area, and
+> > > > > > apply the struct xdp_meta at right offset.
+> > > > > > 
+> > > > > Thanks for your input.
+> > > > > 
+> > > > > I agree with you that the implementation will be simple if user application
+> > > > > able to get the size of data_meta area. The intention of this patch set is to let
+> > > > > developer aware of such limitations before we have a perfect solution.
+> > > > > 
+> > > > > Btw, do you got any suggestion on how to expose the metadata length?
+> > > > > I not sure whether xdp_desc.options is a simple and good idea or not?
+> > > > 
+> > > > That is a question to the AF_XDP maintainers... added them to this email.
+> > > > 
+> > > > /* Rx/Tx descriptor */
+> > > > struct xdp_desc {
+> > > >       __u64 addr;
+> > > >       __u32 len;
+> > > >       __u32 options;
+> > > > };
+> > > > 
+> > > > As far as I know, the xdp_desc.options field isn't used, right?
+> > > 
+> > > The options holds flags, see also XDP_PKT_CONTD and XDP_TX_METADATA.
+> > > 
+> > > > (Please AF_XDP experts, please verify below statements:)
+> > > > Something else we likely want to document: The available headroom in the
+> > > > AF_XDP frame.  When accessing the metadata in userspace AF_XDP we do a
+> > > > negative offset from the UMEM packet pointer.  IIRC on RX the available
+> > > > headroom will be either 255 or 192 bytes (depending on NIC drivers).
+> > > > 
+> > > > Slightly confusing when AF_XDP transmitting from userspace the UMEM
+> > > > headroom is default zero (XSK_UMEM__DEFAULT_FRAME_HEADROOM is zero).
+> > > > This is configurable via xsk_umem_config.frame_headroom, like I did in
+> > > > this example[1].
+> > > > 
+> > > > Maybe I did something wrong in[1], because I see that the new method is
+> > > > setting xsk_umem_config.tx_metadata_len + flag XDP_UMEM_TX_METADATA_LEN.
+> > > > This is nicely documented in [2]. How does this interact with setting
+> > > > xsk_umem_config.frame_headroom ?
+> > > 
+> > > If you request XDP_UMEM_TX_METADATA_LEN then on TX side you can fill
+> > > struct xsk_tx_metadata before the start of packet data, that is,
+> > > meta = data - sizeof(struct xsk_tx_metadata). The validity of the
+> > > latter is indicated via desc->options |= XDP_TX_METADATA and then
+> > > you fill meta->flags with things like XDP_TXMD_FLAGS_CHECKSUM to
+> > > tell that the related fields are valid (ex. request.csum_start,
+> > > request.csum_offset) and that you expect the driver to do the
+> > > offload with this info. This is also what I mentioned in the other
+> > > thread some time ago that imho it would make sense to have this also
+> > > on RX side somewhat similar to virtio_net_hdr..
+> > 
+> > Let's at least document the current behavior where some (small minority of)
+> > drivers can reuse the rx metadata area for some of its state? If we want
+> > to improve on that by adding another knob, we can follow up?
+> > (but I remember last time it was discussed, about a year ago, people
+> > were not enthusiastic about another parameter exported as uapi)
+> 
+> But its still fundamentally broken no? Unless there is no harm for BPF devs
+> to override that rx metadata area when the pkt later on goes up the stack, but
+> it sounds this is not the case here. Iiuc, Yoong is trying a different approach
+> now to prepend before data_hard_start [0]? Then if BPF prog needs it, igc
+> already implements xmo_rx_timestamp callback which can copy it from there.
+> 
+>   [0] https://lore.kernel.org/bpf/20250707191742.662aeffb@kernel.org/
 
-> Is there a use case where a SVA user can access kernel memory in the
-> first place?
-
-No. It should be fully blocked.
-
-Jason
+True, Jakub mentioned the same thread to me. This is, indeed, a better
+idea!
 
