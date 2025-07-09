@@ -1,112 +1,178 @@
-Return-Path: <linux-kernel+bounces-723152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 378E3AFE3B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:11:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9259CAFE3B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 589FE7B3393
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:09:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0350F1891E67
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93559283FFF;
-	Wed,  9 Jul 2025 09:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609DC285049;
+	Wed,  9 Jul 2025 09:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9t/r48+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VHZzAB8b"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25B878F36;
-	Wed,  9 Jul 2025 09:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EDF78F36;
+	Wed,  9 Jul 2025 09:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752052257; cv=none; b=iZV0nrPkn+9Z5gdNSf9WK1mEn9FQRhFqe7qLsxHmJU/ArXJOw0UaYawJYbxVOd8xLOYLBiJo1IgOE7EzTBPhAHHacArkHMh+ipcIi/ZSRF2RvxF1qYcYe6VZ+K5cXaNK/5CLGyqNkQ4EW8PsvBfSE2Hq5yp2hFMY0pcW2rYHp04=
+	t=1752052266; cv=none; b=McmROtQv9VghzIgJ3PXIjETJAHsY6a5CR91mCNIcD233b0pQdeFgX8UtWqvw5ad9VqJqCG7A2gmftyyqTVoGioOErrFG2jk1GaUeXK460U5LbqtFLjBiCjFcErgmC3f4EXl20Emq/cubQ2zFXTmMmoeQynziovHIsrzam/5gUpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752052257; c=relaxed/simple;
-	bh=jLWUqCCh+P7rb/vIveEHk3VQXEsAJdl3YjBTzAm6LOw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=CAUgxEcOM51qj+Hh/ttohkDewFo3tJ6rwhZBZAJYMOVEVLWUsVrkNcbru00BDO9W8zqdrso4eGDgdkru4el9gRGztMqegR47FCw1T1nxuE9QmaD40Qd2Vgx8GFYgCj9ddkS+8xnmfF/E3zcA4wCiRVpxTg1b8qL0MEFWGsucR0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9t/r48+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09609C4CEEF;
-	Wed,  9 Jul 2025 09:10:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752052256;
-	bh=jLWUqCCh+P7rb/vIveEHk3VQXEsAJdl3YjBTzAm6LOw=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=A9t/r48+Y243bSoSn50mSN5GgCDWZgiWrL7nyKtXQii9+s+Mh7tgd8IfApvQWjnGJ
-	 O8NqfwqO5NgTd3qvRamriBa0DvHPxcrU8LSXKrmAHofliFJu+8/kchn2k7L/vWI1TD
-	 8ftIme/i4uwSMseASL+xU7bTq/1aor9R+mPrlBP45s9MTcS3fcM1m3iCmkQFMFEHi+
-	 v6ERbwDjGz/wZjzgk/mGsGU786FGanDF5jLar2vnTIMZ6/iv++v/ML9y4dhdlnICOy
-	 ly+y8I7wsXv9pXR56lK/iuW+zWiNP3RY3zHQlxGni4dyqmWbToQYxrC5NGXxIZMIuU
-	 dJvLPsThymt4g==
+	s=arc-20240116; t=1752052266; c=relaxed/simple;
+	bh=e+AlNfEIWLEOUZb0WGiJuKUfwZfi9mwK1UILrKSjqnk=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=M7zQVWBtw8/slFSnBwYd7Muj0FMgMbGRPQxIzvM43d7QTjx/LO1w28wWGuBHGiFSf0VnVlVrr/zWJ5v83Vam2nzPe4sBzAucpdN8L8ychcERB+247D1mwRMF1nlD9Ie70eUxx5/virE37BaIswzWO2+uG8N+isIpawczLYCOfOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VHZzAB8b; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752052265; x=1783588265;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=e+AlNfEIWLEOUZb0WGiJuKUfwZfi9mwK1UILrKSjqnk=;
+  b=VHZzAB8bXpVPESqBubuBtAnaqdRM2qP+WSjy0zrQQlHsgxceRt6CVRvi
+   casoELT49zdjxg8Lva5eHI0AABJZbHl3/nvXO+Xcfh8O0/QRnd0OrSsVA
+   M57GkwNHl9qqAppk3dyhSl0kf53QJabbZtRqGJh7yUQ19qd0670UjMouy
+   9ZCTNQZLMKPcc8NKDoTHrQ72PfYUwJAoAJ3X8UjPxG5mpd29a9A55GbRu
+   LDHTJqqF0uKZ4yz7zkZdNuzMC4SwZmfnJrxvRMgfWhfLyvKkyR/U2hiSW
+   BqtpjpzwIKHTQdRxa5cMH2p2479jesPxwO7N/VbvfRx97H+pUvMhRi7M5
+   w==;
+X-CSE-ConnectionGUID: JZph60nNShWI1CkDwW7aiw==
+X-CSE-MsgGUID: Qiw2/TzASUq3qpwLoT2Zlg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54163409"
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="54163409"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 02:11:04 -0700
+X-CSE-ConnectionGUID: 2YofaDi1Rfa2S2hif6cl5Q==
+X-CSE-MsgGUID: uvbwgx//RiSED5u6g+R/jg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="155458540"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.168])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 02:10:56 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 9 Jul 2025 12:10:52 +0300 (EEST)
+To: Manivannan Sadhasivam <mani@kernel.org>
+cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+    Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
+    Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
+    Jeff Johnson <jjohnson@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kwilczynski@kernel.org>, 
+    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev, 
+    linux-wireless@vger.kernel.org, ath11k@lists.infradead.org, 
+    qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com, 
+    quic_vpernami@quicinc.com, quic_mrana@quicinc.com, 
+    Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Subject: Re: [PATCH v4 06/11] PCI/ASPM: Clear aspm_disable as part of
+ __pci_enable_link_state()
+In-Reply-To: <qo6mb3qlt3xpuvhepwcv6be4wd53neee2t6buzk4tdiy22xsub@vu7lykp3rnu2>
+Message-ID: <226bab3a-54e5-94ad-9d84-0b82f9dc4e2f@linux.intel.com>
+References: <20250609-mhi_bw_up-v4-0-3faa8fe92b05@qti.qualcomm.com> <20250609-mhi_bw_up-v4-6-3faa8fe92b05@qti.qualcomm.com> <qo6mb3qlt3xpuvhepwcv6be4wd53neee2t6buzk4tdiy22xsub@vu7lykp3rnu2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 09 Jul 2025 11:10:50 +0200
-Message-Id: <DB7EOS7AC5SZ.ZJRH3IRQ2ZMU@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Alice Ryhl" <aliceryhl@google.com>, "Masahiro
- Yamada" <masahiroy@kernel.org>, "Nathan Chancellor" <nathan@kernel.org>,
- "Luis Chamberlain" <mcgrof@kernel.org>, "Danilo Krummrich"
- <dakr@kernel.org>, "Nicolas Schier" <nicolas.schier@linux.dev>, "Trevor
- Gross" <tmgross@umich.edu>, "Adam Bratschi-Kaye" <ark.email@gmail.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-kbuild@vger.kernel.org>, "Petr Pavlu" <petr.pavlu@suse.com>, "Sami
- Tolvanen" <samitolvanen@google.com>, "Daniel Gomez" <da.gomez@samsung.com>,
- "Simona Vetter" <simona.vetter@ffwll.ch>, "Greg KH"
- <gregkh@linuxfoundation.org>, "Fiona Behrens" <me@kloenk.dev>, "Daniel
- Almeida" <daniel.almeida@collabora.com>, <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v15 1/7] rust: sync: add `SetOnce`
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Andreas Hindborg" <a.hindborg@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250707-module-params-v3-v15-0-c1f4269a57b9@kernel.org>
- <20250707-module-params-v3-v15-1-c1f4269a57b9@kernel.org>
- <MsrRzRcWQU4DLY5mlpwajZZaSx_kPRSJTuMGxtI4igY_8NpNBSAbb9v5BcFv2WKZoRkr8QDlcfjlGlH4NwpB8w==@protonmail.internalid> <DB6JVOZLCMBL.3EZQJP50UUB86@kernel.org> <87v7o2omqf.fsf@kernel.org> <lD3JbMPS7zWoGdRTDujIdJVoSh88nL71zGM_GrDDtARQ72mKzElYG1tZjZpi3bv_AchFrQMg0kFpAEBdB6Hl9w==@protonmail.internalid> <DB6QM8WOX9FS.2W36R3YF2VS0F@kernel.org> <87v7o1lp2g.fsf@kernel.org>
-In-Reply-To: <87v7o1lp2g.fsf@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed Jul 9, 2025 at 10:56 AM CEST, Andreas Hindborg wrote:
-> "Benno Lossin" <lossin@kernel.org> writes:
->
->> On Tue Jul 8, 2025 at 3:06 PM CEST, Andreas Hindborg wrote:
->>> "Benno Lossin" <lossin@kernel.org> writes:
->>>> On Mon Jul 7, 2025 at 3:29 PM CEST, Andreas Hindborg wrote:
->>>>> diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
->>>>> index 81e3a806e57e2..13e6bc7fa87ac 100644
->>>>> --- a/rust/kernel/sync.rs
->>>>> +++ b/rust/kernel/sync.rs
->>>>> @@ -18,6 +18,7 @@
->>>>>  mod locked_by;
->>>>>  pub mod poll;
->>>>>  pub mod rcu;
->>>>> +mod set_once;
->>>>
->>>> I would have named this `once`.
->>>
->>> So module `once` and struct `SetOnce`? Struct name `Once` would lead
->>> thoughts to `std::sync::Once`, which is a different thing.
->>
->> Hmm I thought that `Once` and `SetOnce` would live in the same module,
->> but if they don't then I think it's better to keep the `set_once`
->> module as-is.
->
-> I guess they could live together. I was thinking a module for each. We
-> can always move it, the module name is not part of a public API.
->
-> Let's go with `set_once` for now and we can change it later, if we
-> decide it is for the better?
+On Tue, 8 Jul 2025, Manivannan Sadhasivam wrote:
 
-Sure.
+> On Mon, Jun 09, 2025 at 04:21:27PM GMT, Krishna Chaitanya Chundru wrote:
+> > ASPM states are not being enabled back with pci_enable_link_state() when
+> > they are disabled by pci_disable_link_state(). This is because of the
+> > aspm_disable flag is not getting cleared in pci_enable_link_state(), this
+> > flag is being properly cleared when ASPM is controlled by sysfs.
+> > 
+> 
+> A comment in pcie_config_aspm_link() says:
+> 
+>  /* Enable only the states that were not explicitly disabled */
+> 
+> But the function is called from both aspm_attr_store_common() and
+> __pci_enable_link_state(). So I don't know if this is behavior is intentional
+> or wrong. 
 
----
-Cheers,
-Benno
+Hi,
+
+I think it's intentional. Whether the behavior is useful is another good 
+question but the current behavior aligns with the explanation in the 
+comment.
+
+My understanding of the situation is:
+
+pci_disable_link_state() and pci_enable_link_state() are not symmetric 
+despite the names, never have been (this is one of those many quirks ASPM 
+driver has which should be eventually cleaned up, IMO).
+
+It might be appropriate to rename pci_enable_link_state() to 
+pci_set_default_link_state() to match the name to its functionality (and 
+the function comment):
+
+ * pci_enable_link_state - Clear and set the default device link state
+
+Note: "the default ... link state".
+
+
+I've already raised this concern earlier! As you see, my comment are 
+not getting addressed. I'd like to see the author does one of these:
+
+1) Renames pci_enable_link_state() to pci_set_default_link_state()
+
+1b) If pci_enable_link_state() is still needed after that, a new function
+is added to symmetrically pair with pci_disable_link_state().
+
+or alternatively,
+
+2) Changelog justifies very clearly why this change is okay with the 
+existing callers. (And obviously the function comment should be altered to 
+match the functionality in that case too).
+
+If approach 2 is chosen, it should be very carefully reviewed when it 
+comes to the callers.
+
+
+> > Clear the aspm_disable flag with the requested ASPM states requested by
+> > pci_enable_link_state().
+> > 
+> > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> 
+> Fixes tag?
+> 
+> - Mani
+> 
+> > ---
+> >  drivers/pci/pcie/aspm.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> > index 94324fc0d3e650cd3ca2c0bb8c1895ca7e647b9d..0f858ef86111b43328bc7db01e6493ce67178458 100644
+> > --- a/drivers/pci/pcie/aspm.c
+> > +++ b/drivers/pci/pcie/aspm.c
+> > @@ -1453,6 +1453,7 @@ static int __pci_enable_link_state(struct pci_dev *pdev, int state, bool locked)
+> >  		down_read(&pci_bus_sem);
+> >  	mutex_lock(&aspm_lock);
+> >  	link->aspm_default = pci_calc_aspm_enable_mask(state);
+> > +	link->aspm_disable &= ~state;
+> >  	pcie_config_aspm_link(link, policy_to_aspm_state(link));
+> >  
+> >  	link->clkpm_default = (state & PCIE_LINK_STATE_CLKPM) ? 1 : 0;
+> > 
+> > -- 
+> > 2.34.1
+> > 
+> 
+> 
+
+-- 
+ i.
+
 
