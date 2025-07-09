@@ -1,155 +1,134 @@
-Return-Path: <linux-kernel+bounces-723120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA0C9AFE32D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:50:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2261AFE2FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAEAE3AEFBE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:50:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D04FF1C43076
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED39A27F75C;
-	Wed,  9 Jul 2025 08:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C0927D77B;
+	Wed,  9 Jul 2025 08:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nY9o6Ybb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHILO/Pu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9DF272E63;
-	Wed,  9 Jul 2025 08:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A70237713;
+	Wed,  9 Jul 2025 08:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752051032; cv=none; b=L5R6MqDtegJlBLDiWZOzzE1QiQkCyFAiKlRQ0prYuYs7s3NY1Rh+SnVw66a5Kzth9XZiRtJvGGE5oJEI98np032K7jSRtd8bwHvyEGV/IqHDUQpDqRqQ4PSkaFNdPFHHYZwHYyXO0CHf0cXlTVJ9B+ly8t4L9Fjmfkan6HuNizI=
+	t=1752050569; cv=none; b=hF6rxtBMZZF6H7Ij80tHXSMWEgH1XYWMRWyCYsDVv8QGoHOLIeyVoNjkZbALLUYtrVaOvD2JE6VOj84SYrvr5FvjJ7fcZx89QjSGY2tN53jAYGHKANe8/FHTWCcdlWtGExfQgRYZIr/Y6cs5qNqQPNiWjhqPGqaMZJAnLJm/EYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752051032; c=relaxed/simple;
-	bh=PmijWoo8arFesx63Y/hi1iglL6Yr53cGkDtSDwK7P+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b1lXO31uAED9EurQES/ETGIkX4ArggqLXb95EPPAiL3+V8Y0fNSvuui09jpkmnEolqyYRbNzlySbUys6qWdaIlM3c9Q07VeiFgz+3HPl+WWFWEjQBg0s7P2oFvMeLy5Ul5KAsMnJxhzO4/CViFuD7H1ofwHN2aXiuc4H5wXx6CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nY9o6Ybb; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752051031; x=1783587031;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PmijWoo8arFesx63Y/hi1iglL6Yr53cGkDtSDwK7P+o=;
-  b=nY9o6Ybbpbu9U4QkEZLYjvy9NLHViqN+AlwtDTrSw4FD8mi7gNuQ4/O0
-   YLSP35Cu1aH4kZ6aplVVOyMuIQZlhVCurFHIG6n5twTG+/keDcYrw7XCM
-   7XbJP3uVOnsJokn9keb+Eoh4Sg977rmoKX8x+u8xV4tNKw24LOQfxXg6d
-   Z4DH/hC+NeWO/SS7BxIa4hskBm/1nsHvFZRyoZwE07lrS72KN2waaGATH
-   +A763OsGg7HD1M3Q8IgldUaZ2JgXZO1AAZCIf54E39IUgtinohZSLFMvF
-   eNydcTAbfkRl1re0rRZdEbIV7wFM0EZ1ePypJmKapXZqYGrKoYECmmTx3
-   A==;
-X-CSE-ConnectionGUID: cOfw2RvoRD6YwKI2Y3hATA==
-X-CSE-MsgGUID: KJJcB5XYSsem96kXVQIMqA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="58110196"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="58110196"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 01:50:30 -0700
-X-CSE-ConnectionGUID: VHTXJY2tQ+6+fRGT39xP7w==
-X-CSE-MsgGUID: 0wOOL00WTG+9kuIJiQNzNA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="186688596"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa001.fm.intel.com with ESMTP; 09 Jul 2025 01:50:29 -0700
-Date: Wed, 9 Jul 2025 16:42:12 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Xu Yilun <yilun.xu@intel.com>, linux-fpga@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Moritz Fischer <mdf@kernel.org>,
-	Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>
-Subject: Re: [PATCH v2 1/1] fpga: altera-cvp: Use pci_find_vsec_capability()
- when probing FPGA device
-Message-ID: <aG4rZNGgROrXXy+F@yilunxu-OptiPlex-7050>
-References: <20250627112635.789872-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1752050569; c=relaxed/simple;
+	bh=ZZFvlmSG8DdeZdpkA8RVUggjrKV4E9t8w9rXo+qb1SE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K8O6RoheX1hL8lKA3c+ngz3TlLxmig5d+DWFly4l3BzUAH2mKumOP3qTBPEsx37+yuUDsjsjk+D0kFXalH0gxNDeJJMvC0QkIxQvbQ2bMAQjgh9PF46YpWtTA8nq5rg9aVQie+lE5d+03T7NlqlJH31+guaMyxs2RxZr0bUrDGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DHILO/Pu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AA41C4CEEF;
+	Wed,  9 Jul 2025 08:42:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752050569;
+	bh=ZZFvlmSG8DdeZdpkA8RVUggjrKV4E9t8w9rXo+qb1SE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DHILO/PuOe8yVH6FW2fDNERUXe1W0Z57mBbHXlFK8cK21M4Zgda5LqYnhGOV5qWUl
+	 vePhTbcOClHTs79iMv9cstP3EVQHBHRXV1oV2lBO1oLnZ6yk4DWuM+vpc8ITdnE1lr
+	 Ugy19pr70gnFgVPMxcnkhZIDWcJt7fKygTLjUQkxcG4kofeS1/27rWU9Z1uagGs0sz
+	 EffQ6RwXeVAD+OxCEcdGdeYGDSpSC8LiKzjkFBo67cqt3TUQSYt7b65nwkydUGnDcR
+	 XI+fSOD4R31tB4wwhzdHTH6o2sfuSpbS1ymaIKE0cfIrqxMMbdtB0nTZ5dICOfsnyu
+	 Ao1h1anqm6O4w==
+Message-ID: <6b69c2b6-39ff-4f56-b5bb-2d1bfd8f1bc6@kernel.org>
+Date: Wed, 9 Jul 2025 10:42:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250627112635.789872-1-andriy.shevchenko@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] arm64: dts: qcom: x1-hp-x14: Add support for
+ X1P42100 HP Omnibook X14
+To: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250708-hp-x14-x1p-v5-0-44c916efa973@oldschoolsolutions.biz>
+ <20250708-hp-x14-x1p-v5-3-44c916efa973@oldschoolsolutions.biz>
+ <20250709-arboreal-basilisk-of-opportunity-bafaf1@krzk-bin>
+ <52b68d5e-b051-4c59-9186-eda9071c9303@oldschoolsolutions.biz>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <52b68d5e-b051-4c59-9186-eda9071c9303@oldschoolsolutions.biz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 27, 2025 at 02:26:22PM +0300, Andy Shevchenko wrote:
-> Currently altera_cvp_probe() open-codes pci_find_vsec_capability().
-> Refactor the former to use the latter. No functional change intended.
+On 09/07/2025 10:09, Jens Glathe wrote:
+> Hi Krzysztof,
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
+> On 09.07.25 09:39, Krzysztof Kozlowski wrote:
+>> On Tue, Jul 08, 2025 at 10:34:08PM +0200, Jens Glathe wrote:
+>>> +// SPDX-License-Identifier: BSD-3-Clause
+>>> +/*
+>>> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+>> Odd copyrights. How could this file be published in 2023? Before the
+>> laptop was even made? And by Qualcomm? Qualcomm did nothing for this
+>> laptop on Linux - it's a Windows platform for them.
 > 
-> v2: removed unused variable (LKP)
-> 
->  drivers/fpga/altera-cvp.c | 20 +++++---------------
->  1 file changed, 5 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-> index 5af0bd33890c..514d2ac18e5f 100644
-> --- a/drivers/fpga/altera-cvp.c
-> +++ b/drivers/fpga/altera-cvp.c
-> @@ -22,9 +22,6 @@
->  #define TIMEOUT_US	2000	/* CVP STATUS timeout for USERMODE polling */
->  
->  /* Vendor Specific Extended Capability Registers */
-> -#define VSE_PCIE_EXT_CAP_ID		0x0
-> -#define VSE_PCIE_EXT_CAP_ID_VAL		0x000b	/* 16bit */
-> -
->  #define VSE_CVP_STATUS			0x1c	/* 32bit */
->  #define VSE_CVP_STATUS_CFG_RDY		BIT(18)	/* CVP_CONFIG_READY */
->  #define VSE_CVP_STATUS_CFG_ERR		BIT(19)	/* CVP_CONFIG_ERROR */
-> @@ -577,25 +574,18 @@ static int altera_cvp_probe(struct pci_dev *pdev,
->  {
->  	struct altera_cvp_conf *conf;
->  	struct fpga_manager *mgr;
-> -	int ret, offset;
-> -	u16 cmd, val;
-> +	u16 cmd, offset;
->  	u32 regval;
-> -
-> -	/* Discover the Vendor Specific Offset for this device */
-> -	offset = pci_find_next_ext_capability(pdev, 0, PCI_EXT_CAP_ID_VNDR);
-> -	if (!offset) {
-> -		dev_err(&pdev->dev, "No Vendor Specific Offset.\n");
-> -		return -ENODEV;
-> -	}
-> +	int ret;
->  
->  	/*
->  	 * First check if this is the expected FPGA device. PCI config
->  	 * space access works without enabling the PCI device, memory
->  	 * space access is enabled further down.
->  	 */
-> -	pci_read_config_word(pdev, offset + VSE_PCIE_EXT_CAP_ID, &val);
-> -	if (val != VSE_PCIE_EXT_CAP_ID_VAL) {
-> -		dev_err(&pdev->dev, "Wrong EXT_CAP_ID value 0x%x\n", val);
-> +	offset = pci_find_vsec_capability(pdev, PCI_VENDOR_ID_ALTERA, 0);
+> Ok understood, only license identifier. But I do copy from other dts(i) 
+> files, there may be unchanged portions.
 
-Mm.. the original code seems broken. It doesn't check the VSEC ID. And
-you filled '0'. Is '0' specified in any SPEC? I didn't see it as a
-wildcard.
 
-Anyway, we should describe the change and remove "No functional change
-intended".
+Then it is fine, although I really don't see much of a copy here. Every
+property is different.
 
-> +	if (!offset) {
-> +		dev_err(&pdev->dev, "Wrong EXT_CAP_ID value\n");
-
-Should be "VSEC ID not found"
-
-Thanks,
-Yilun
-
->  		return -ENODEV;
->  	}
->  
-> -- 
-> 2.47.2
-> 
-> 
+Best regards,
+Krzysztof
 
