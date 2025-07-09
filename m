@@ -1,223 +1,102 @@
-Return-Path: <linux-kernel+bounces-724504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A398CAFF3C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:15:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95474AFF3C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 615337B9694
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:13:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A75F54434A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF0723E344;
-	Wed,  9 Jul 2025 21:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5F2235BE8;
+	Wed,  9 Jul 2025 21:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kM9cRTsf"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="huzGxltQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE05B235BE8;
-	Wed,  9 Jul 2025 21:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2EA24467F;
+	Wed,  9 Jul 2025 21:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752095676; cv=none; b=FaDRHLUi2SorGA9ylnHJKht+GOD7yyIQu9yEpIdudFIbYHksqF9TCVVizniYAHJPyxyXBy0Icc8plH7ZM4YGGc4X5fkN9EV31y9UAAG69y3712Q3wfnxkfdo85/Gynir4dane/f9bgS1DbDVIuDmozYzVjSxCqROVWnxNuDYzFc=
+	t=1752095679; cv=none; b=JQ+xgj0SybSo7c5X3QPyrf+gcZRwLTymybMgq6kBV/++JXwCh3eWeCkTgwash2NZfeszOQ4qy2cDMJqHfO/1xMFrVyGW3N/wn4YsU2iZYwI6wMSof9mNVmiAoP7hceNlfSoOPCYZxElF5UPO75zsGfQhgBLnWGNuT0g58SpDT00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752095676; c=relaxed/simple;
-	bh=EsjRQS8w43XSyhz63hGv5/ch+OGRjyxFJx69rMe2Oww=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=DVO49aVTDeLv9f0lLjM5kP8oaAtanERMhaLDlPtGKrLnI1q3JxAp7gbFz41AxDRJQQd9ER4BxH/RgYWi+oaqcdD1uXU+51ogErIhhbfnm0GEumk3gXJZ/GFSiiEHXidZQPvtSi+IVy/qw+URfD7HM0fy5AiYrphwOefomZ0b268=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kM9cRTsf; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-708d90aa8f9so4017807b3.3;
-        Wed, 09 Jul 2025 14:14:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752095674; x=1752700474; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tEKNFsDNrC2CmAc6od85g2hTldkEsJPLiX/ve54EcUY=;
-        b=kM9cRTsfIPDcaw71ThWCZQCO5RHIlrDbNcxX7EGH8//9J18J3FTxRUDzqIUTB7jJqB
-         gF6lxRObMUvAxxtDA8X3Y2WkgUOeMh2ieGV0wvZTeWE69l/TL5EV8FscXMhuY9rgtYBg
-         7FYElLCFQCe5+bOWfV78rIpGzoaq9n+1X7GfB+VJu5m+20XSoF92ewuBUae4Cjm0RvFD
-         sIooMv+NBPZ3RG/K17kuLk2Q+HbQZ2xISJTmC8BiR+qhbhHnl3sqiOf/Z+zydRQlNKwX
-         892EZF+Ol787w8E+IZIm7NRgq0PDYLzGGRO6dcamuqlKymUJGUy5IX8phUfXbJ23Xn8C
-         17sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752095674; x=1752700474;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tEKNFsDNrC2CmAc6od85g2hTldkEsJPLiX/ve54EcUY=;
-        b=LfRCnFFP/m97uEPxfUggD3LMeWgKhBpJ5IVK8wPrbhITWbPpnZoc92aBNYYYRjJB1r
-         zJ/ARK+RmRJ3yBXPU6XkaxfdSM/OoXjWB8Eg1n4KwTzW1zWX+rshAEAgjI9mKKMKtnhY
-         o/K5CG3OxfAw3D6pq991hIShi5JIJ1hlnvHJeq4a4MrNwYW0KERrXOsLUjVupn+FqvOL
-         vG9URT0x3mrengW3wSHlyBTUjIJ4kSFZTsPHKnyOAr4EuCJjHutIGwFHCbhSFrQl7CpX
-         K7YXKLAx/wX5eNK9JSQ6cGp36xN7KBdaxPtxV3+rXtZZBGMVzIZtnzAqYUbnJu8zXEPY
-         7bWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXdccUVc2E7NEM3KMi+pHzWqwUzu9aBEEs+CyI7/N+ErEWUiuJ384uIc/+AyaMnqXL9bVM/E5tSC4Q7fp0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypTNO7GdNQ7gcBwhP72q95lCmerAAW9l17jSKHqBNHYbcB0pJ7
-	5ONUMf5BgCFc5j5dQU24KTZlsiJsmQp+o+NEhM9lvgaGroBtcdqB66fi
-X-Gm-Gg: ASbGncvDqWDXhSvdJfmBGx/l5PZnJIWoiIWzd/vt7CaAsa94QakSQ1QCmS5dfkpdajH
-	VOf9782Tmy4PKxY/t2RTZNPTSEtrYHnftWwi9nFGZiHTbDiCGTBO9k/BrT8ocwbhe8MgEaH+1np
-	UWqFr1qrf7yQXlqtUxqQl6UJSX+kPskuGXqHS0B6M9l95YZFq5CVZViLzfpKw6oldHbaIsptks0
-	BzndE7hVJgfggJqOEwhXr0osbPl+5xGiywAAWGaYCzhxevbcbRCG3dHxChCGTCt8oTU0k5x8waV
-	AI0XsyxAczn26zIRjFQ/yrCwx94WcEqXUTY8J0LRrFU8ucAAD+vNhU02Z2lqT4+otWaO6DxVKZV
-	A2S0QbeArygazd5Y2G+wTGIbFuVchlCXzcL+DRBM=
-X-Google-Smtp-Source: AGHT+IHmo0j1RAmg7nptfwCLglB7I9Sw42VHYV+nrp60FcfZLRjgsRdXm8M70ZdAnMw6OABHMQ/fIw==
-X-Received: by 2002:a05:690c:3349:b0:70c:c013:f2f with SMTP id 00721157ae682-717b1a2758amr66272547b3.35.1752095673507;
-        Wed, 09 Jul 2025 14:14:33 -0700 (PDT)
-Received: from localhost (234.207.85.34.bc.googleusercontent.com. [34.85.207.234])
-        by smtp.gmail.com with UTF8SMTPSA id 00721157ae682-7166598b40dsm27804137b3.19.2025.07.09.14.14.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 14:14:33 -0700 (PDT)
-Date: Wed, 09 Jul 2025 17:14:32 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Yun Lu <luyun_611@163.com>, 
- willemdebruijn.kernel@gmail.com, 
- davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- pabeni@redhat.com
-Cc: netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Message-ID: <686edbb8943d2_a6f49294e2@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20250709095653.62469-3-luyun_611@163.com>
-References: <20250709095653.62469-1-luyun_611@163.com>
- <20250709095653.62469-3-luyun_611@163.com>
-Subject: Re: [PATCH v3 2/2] af_packet: fix soft lockup issue caused by
- tpacket_snd()
+	s=arc-20240116; t=1752095679; c=relaxed/simple;
+	bh=P1DoSAva6EWU/0jIyHTXxv6AJdJvqc9wcq7KgycXTVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=FHMI5cZUglyAo0A5+sfkB3wHJZHwByMf6V4APYy/UzJLa8dgkcjvIyAhd41vLD+3nSrwHPiXXkzWzYwB/849/fF8Zdv1WMVVGcfBqfxjyOAcVX8MCcoGq/ypLQyONHb1odDg0ojTBquYaF0yHfmXQbzNilgOPRenZwwno8SeWn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=huzGxltQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3B17C4CEEF;
+	Wed,  9 Jul 2025 21:14:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752095679;
+	bh=P1DoSAva6EWU/0jIyHTXxv6AJdJvqc9wcq7KgycXTVE=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=huzGxltQLlKst7as9HvUXStmvqytuhUDCz8MvGdlfWrwFNCK8vAprGN0100hbWyyY
+	 E6t8CVQofePVHMLoXcC4HIVM/fOZKmkli94pvUSWjwsSG7Ch+i5gQI8rsEs9EAtanG
+	 yAZEF8PaFupa0dMWZSumyDHRrnfvIAxOh2ALmwEydlTsxnItzyuG5v7gg0sSfLvwfK
+	 Fjd9lQL7hqcFNXGG9rz8J9FbGLd9FyjiTebQjsXP55G6sbr2YB9wC6ir9BFsR2DinU
+	 ueJ9z29t0CWLlp55iZZg2zgnQCORB35grOJFza/68ReapaEqbSULvQ+/D3Xd6RFgqG
+	 ZOSLI2ouE1TcQ==
+Message-ID: <46f581c6-bb61-4163-91a5-27b90838dca8@kernel.org>
+Date: Wed, 9 Jul 2025 15:14:38 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Sasha Levin is halucinating, non human entity, has no ethics and
+ no memory
+To: Pavel Machek <pavel@ucw.cz>, sashal@kernel.org, stable@vger.kernel.org,
+ kernel list <linux-kernel@vger.kernel.org>, conduct@kernel.org,
+ ebiederm@xmission.com, shuah <shuah@kernel.org>
+References: <aG2B6UDvk2WB7RWx@duo.ucw.cz>
+Content-Language: en-US
+From: Shuah <shuah@kernel.org>
+In-Reply-To: <aG2B6UDvk2WB7RWx@duo.ucw.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Yun Lu wrote:
-> From: Yun Lu <luyun@kylinos.cn>
+On 7/8/25 14:39, Pavel Machek wrote:
+> Hi!
 > 
-> When MSG_DONTWAIT is not set, the tpacket_snd operation will wait for
-> pending_refcnt to decrement to zero before returning. The pending_refcnt
-> is decremented by 1 when the skb->destructor function is called,
-> indicating that the skb has been successfully sent and needs to be
-> destroyed.
+> So... I'm afraid subject is pretty accurate. I assume there's actual
+> human being called "Sasha Levin" somewhere, but I interact with him
+> via email, and while some interactions may be by human, some are
+> written by LLM but not clearly marked as such.
 > 
-> If an error occurs during this process, the tpacket_snd() function will
-> exit and return error, but pending_refcnt may not yet have decremented to
-> zero. Assuming the next send operation is executed immediately, but there
-> are no available frames to be sent in tx_ring (i.e., packet_current_frame
-> returns NULL), and skb is also NULL
-
-This is a very specific edge case. And arguably the goal is to wait
-for any pending skbs still, even if from a previous call.
-
-skb is true for all but the first iterations of that loop. So your
-earlier patch
-
--                       if (need_wait && skb) {
-+                       if (need_wait && packet_read_pending(&po->tx_ring)) {
-
-Is more concise and more obviously correct.
-
->, the function will not execute
-> wait_for_completion_interruptible_timeout() to yield the CPU. Instead, it
-> will enter a do-while loop, waiting for pending_refcnt to be zero. Even
-> if the previous skb has completed transmission, the skb->destructor
-> function can only be invoked in the ksoftirqd thread (assuming NAPI
-> threading is enabled). When both the ksoftirqd thread and the tpacket_snd
-> operation happen to run on the same CPU, and the CPU trapped in the
-> do-while loop without yielding, the ksoftirqd thread will not get
-> scheduled to run.
-
-Interestingly, this is quite similar to the issue that caused adding
-the completion in the first place. Commit 89ed5b519004 ("af_packet:
-Block execution of tasks waiting for transmit to complete in
-AF_PACKET") added the completion because a SCHED_FIFO task could delay
-ksoftirqd indefinitely.
-
-> As a result, pending_refcnt will never be reduced to
-> zero, and the do-while loop cannot exit, eventually leading to a CPU soft
-> lockup issue.
-> 
-> In fact, as long as pending_refcnt is not zero, even if skb is NULL,
-> wait_for_completion_interruptible_timeout() should be executed to yield
-> the CPU, allowing the ksoftirqd thread to be scheduled. Therefore, move
-> the penging_refcnt check to the start of the do-while loop, and reuse ph
-> to continue for the next iteration.
-> 
-> Fixes: 89ed5b519004 ("af_packet: Block execution of tasks waiting for transmit to complete in AF_PACKET")
-> Cc: stable@kernel.org
-> Suggested-by: LongJun Tang <tanglongjun@kylinos.cn>
-> Signed-off-by: Yun Lu <luyun@kylinos.cn>
-> 
-> ---
-> Changes in v3:
-> - Simplify the code and reuse ph to continue. Thanks: Eric Dumazet.
-> - Link to v2: https://lore.kernel.org/all/20250708020642.27838-1-luyun_611@163.com/
-
-If the fix alone is more obvious without this optimization, and
-the extra packet_read_pending() is already present, not newly
-introduced with the fix, then I would prefer to split the fix (to net,
-and stable) from the optimization (to net-next).
- 
-> Changes in v2:
-> - Add a Fixes tag.
-> - Link to v1: https://lore.kernel.org/all/20250707081629.10344-1-luyun_611@163.com/
-> ---
->  net/packet/af_packet.c | 21 ++++++++++++---------
->  1 file changed, 12 insertions(+), 9 deletions(-)
-> 
-> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-> index 7089b8c2a655..89a5d2a3a720 100644
-> --- a/net/packet/af_packet.c
-> +++ b/net/packet/af_packet.c
-> @@ -2846,11 +2846,21 @@ static int tpacket_snd(struct packet_sock *po, struct msghdr *msg)
->  		ph = packet_current_frame(po, &po->tx_ring,
->  					  TP_STATUS_SEND_REQUEST);
->  		if (unlikely(ph == NULL)) {
-> -			if (need_wait && skb) {
-> +			/* Note: packet_read_pending() might be slow if we
-> +			 * have to call it as it's per_cpu variable, but in
-> +			 * fast-path we don't have to call it, only when ph
-> +			 * is NULL, we need to check pending_refcnt.
-> +			 */
-> +			if (need_wait && packet_read_pending(&po->tx_ring)) {
->  				timeo = wait_for_completion_interruptible_timeout(&po->skb_completion, timeo);
->  				if (timeo <= 0) {
->  					err = !timeo ? -ETIMEDOUT : -ERESTARTSYS;
->  					goto out_put;
-> +				} else {
-> +					/* Just reuse ph to continue for the next iteration, and
-> +					 * ph will be reassigned at the start of the next iteration.
-> +					 */
-> +					ph = (void *)1;
->  				}
->  			}
->  			/* check for additional frames */
-> @@ -2943,14 +2953,7 @@ static int tpacket_snd(struct packet_sock *po, struct msghdr *msg)
->  		}
->  		packet_increment_head(&po->tx_ring);
->  		len_sum += tp_len;
-> -	} while (likely((ph != NULL) ||
-> -		/* Note: packet_read_pending() might be slow if we have
-> -		 * to call it as it's per_cpu variable, but in fast-path
-> -		 * we already short-circuit the loop with the first
-> -		 * condition, and luckily don't have to go that path
-> -		 * anyway.
-> -		 */
-> -		 (need_wait && packet_read_pending(&po->tx_ring))));
-> +	} while (likely(ph != NULL))
->  
->  	err = len_sum;
->  	goto out_put;
-> -- 
-> 2.43.0
+> And that's not okay -- because LLMs lie, have no ethics, and no
+> memory, so there's no point arguing with them. Its just wasting
+> everyone's time. People are not very thrilled by 'Markus Elfring' on
+> the lists, as he seems to ignore feedback, but at least that's actual
+> human, not a damn LLM that interacts as human but then ignores
+> everything.
 > 
 
+You aren't talking to an LLM - My understanding is that Sasha is sending
+these patches (generated with LLM assist) and discussing them on mailing
+lists.
 
+Do you have links/threads you can share to show how feedback is being
+ignored?
+
+> Do we need bot rules on the list?
+
+We have to get humans to follow agreed upon rules of conduct before
+coming up with bot rules.
+
+> 
+> Oh, and if you find my email offensive, feel free to ask LLM to change
+> the tone.
+> 
+
+I am sorry this isn't how we treat our fellow developers - Please take
+steps to make amends.
+
+thanks,
+-- Shuah (On behalf of the Code of Conduct Committee)
 
