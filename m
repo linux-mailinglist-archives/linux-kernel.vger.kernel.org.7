@@ -1,198 +1,98 @@
-Return-Path: <linux-kernel+bounces-723803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4EF2AFEB1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:03:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A52ADAFEB25
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8468418891D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:59:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E175189417C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFCF2ED859;
-	Wed,  9 Jul 2025 13:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC032E2644;
+	Wed,  9 Jul 2025 13:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ItPSvXtX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="WoVTKptX"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D58F2E6D24;
-	Wed,  9 Jul 2025 13:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879A2294A0C
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 13:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752069142; cv=none; b=VHoAZL1VYgezwc5QztwUjrf1WNpdYUUYCKkgOFKDIGMpWnaAR4ZdMWLrgv+5O2zFWKYNKXxFlWBU21YKlEFlqArbYAKOBghyXuUuLSX1z3qxVQimEkH0py4X0f7ZRFc6KpetsaWTj32ZzSnAnM5lNjZCVhnc39WBol2FB0LxcAE=
+	t=1752069205; cv=none; b=aK2q8xTzIkOzZkJqqBA3FIAycNaEK49syxT3geqM6FHDnmTtjEM/R5lU/XnJqfMtYEGptih9q345TCxIlQxxh9eGffCbnfgvIDdbnaiqczl5PzraIorosNdR+8xotOTPwf1WyG2HjSzoBrEwtJ239fRIY/wKua82v1ZsM1PwtxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752069142; c=relaxed/simple;
-	bh=mvj3Xvnz1Kow45xw72lXduZ8jwlthbe4eeg2CtKY50Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f6CmXdxkbkPZkzXDzbvQFabN4DkL2ylHKv6pXdu2Spt18A23yqXCdqMEZZAcIaYZXfKPQtde4qQr5FvEfvyNI1fRNNNgKdvpZ1vB7bOyVu+ifrfi3eVJ7VN05007OeUZsKRyS1rbK/93Ge6TeUEpHKwC44Yg2ynO9VzOxvv+QE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ItPSvXtX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 255B5C4CEEF;
-	Wed,  9 Jul 2025 13:52:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752069142;
-	bh=mvj3Xvnz1Kow45xw72lXduZ8jwlthbe4eeg2CtKY50Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ItPSvXtXomr5nuIXONW1K7s1DOERi206FPwuxMjSY331PBgqRd5J5GQwILUq3F4pm
-	 iNLK/ccnYYE12i84M3ID4PZrjFBOY09l53hnGyQi6uB50vVZcyAqH6UJzby3z7nXNt
-	 g5vqe8WS4waXqsmwuuNCSsJ2SZ2CrNXtj6vvEHv+WB5M3vPwLDlJye1IxV8lUdWI23
-	 BgbdhmgpPyQxVUnH6X7SmyoC108zSXw0/vMfdg5QCvMOI34z4wjV1VaWu7/MsMszp6
-	 jLPlnwlJidz2AQX4xbzKhsZg2rJo+JZ7atP7OYocgjgJ8n8PYhDVAlPrVYDZoS5S/K
-	 SlidjF+ejyn+w==
-Date: Wed, 9 Jul 2025 14:52:16 +0100
-From: Simon Horman <horms@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Vineeth Karumanchi <vineeth.karumanchi@amd.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Lei Wei <quic_leiwei@quicinc.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	Robert Hancock <robert.hancock@calian.com>,
-	John Crispin <john@phrozen.org>, Felix Fietkau <nbd@nbd.name>,
-	Robert Marko <robimarko@gmail.com>
-Subject: Re: [RFC] comparing the propesed implementation for standalone PCS
- drivers
-Message-ID: <20250709135216.GA721198@horms.kernel.org>
-References: <aEwfME3dYisQtdCj@pidgin.makrotopia.org>
- <24c4dfe9-ae3a-4126-b4ec-baac7754a669@linux.dev>
+	s=arc-20240116; t=1752069205; c=relaxed/simple;
+	bh=Fahz2F1dRveFqlM/iTd2DDbDxmoLTXNMYiwIG4bjO1Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eor3DCLFSwXbJYdZI6OIoy2QagKyQUZe4d3baOPt879UOG1DK5S6o4Sh+3QZ7E+EIGDNmhM+xe9+x+HSSpvIprEOZkM43AwYekpfkboz7PekXK0h17jMajnBr935tMWx6l5lTskYXPZyedoTsbsQ2BN3vtpTfLVGa5DRwtLkPfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=WoVTKptX; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752069194; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=/mKQu7tb4IqCL/bEEszvX7wtPRViVpX6KjOqifqgDtI=;
+	b=WoVTKptXTz8o4rMCoECpVnWmCxlYx99+QKdC5phWF4GQl2IP7lk16npBKDGzc0jo7LfiBIkdmOWyKR68633lw5d4AWfHiLDbmXRY6MAdbwWcDy8yQT9dPKO3SMUYgUPANahkGSVQabeS6hlpo6ku2F8BRx1AJFpitz/7yaGsDfU=
+Received: from 30.170.233.0(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WiYWRYo_1752069192 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 09 Jul 2025 21:53:13 +0800
+Message-ID: <da52a0d3-9a3b-4465-bf17-cf2ad8044330@linux.alibaba.com>
+Date: Wed, 9 Jul 2025 21:53:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <24c4dfe9-ae3a-4126-b4ec-baac7754a669@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] erofs: address D-cache aliasing
+To: Stefan Kerkmann <s.kerkmann@pengutronix.de>, linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Jan Kiszka <jan.kiszka@siemens.com>
+References: <20250709034614.2780117-1-hsiangkao@linux.alibaba.com>
+ <20250709034614.2780117-2-hsiangkao@linux.alibaba.com>
+ <862beb2e-f8a8-468a-a2ed-c8151eabb342@pengutronix.de>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <862beb2e-f8a8-468a-a2ed-c8151eabb342@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 13, 2025 at 12:06:23PM -0400, Sean Anderson wrote:
-> On 6/13/25 08:55, Daniel Golle wrote:
-> > Hi netdev folks,
-> > 
-> > there are currently 2 competing implementations for the groundworks to
-> > support standalone PCS drivers.
-> > 
-> > https://patchwork.kernel.org/project/netdevbpf/list/?series=970582&state=%2A&archive=both
-> > 
-> > https://patchwork.kernel.org/project/netdevbpf/list/?series=961784&state=%2A&archive=both
-> > 
-> > They both kinda stalled due to a lack of feedback in the past 2 months
-> > since they have been published.
-> > 
-> > Merging the 2 implementation is not a viable option due to rather large
-> > architecture differences:
-> > 
-> > 				| Sean			| Ansuel
-> > --------------------------------+-----------------------+-----------------------
-> > Architecture			| Standalone subsystem	| Built into phylink
-> > Need OPs wrapped		| Yes			| No
-> > resource lifecycle		| New subsystem		| phylink
-> > Supports hot remove		| Yes			| Yes
-> > Supports hot add		| Yes (*)		| Yes
-> > provides generic select_pcs	| No			| Yes
-> > support for #pcs-cell-cells	| No			| Yes
-> > allows migrating legacy drivers	| Yes			| Yes
-> > comes with tested migrations	| Yes			| No
-> > 
-> > (*) requires MAC driver to also unload and subsequent re-probe for link
-> > to work again
-> > 
-> > Obviously both architectures have pros and cons, here an incomplete and
-> > certainly biased list (please help completing it and discussing all
-> > details):
-> > 
-> > Standalone Subsystem (Sean)
-> > 
-> > pros
-> > ====
-> >  * phylink code (mostly) untouched
-> >  * doesn't burden systems which don't use dedicated PCS drivers
-> >  * series provides tested migrations for all Ethernet drivers currently
-> >    using dedicated PCS drivers
-> > 
-> > cons
-> > ====
-> >  * needs wrapper for each PCS OP
-> >  * more complex resource management (malloc/free) 
-> >  * hot add and PCS showing up late (eg. due to deferred probe) are
-> >    problematic
-> >  * phylink is anyway the only user of that new subsystem
+Hi Stefan,
+
+On 2025/7/9 19:25, Stefan Kerkmann wrote:
+> Hi Gao, Hi Jan,
 > 
-> I mean, if you want I can move the whole thing to live in phylink.c, but
-> that just enlarges the kernel if PCSs are not being used. The reverse
-> criticism can be made for Ansuel's series: most phylink users do not
-> have "dynamic" PCSs but the code is imtimately integrated with phylink
-> anyway.
-
-At the risk of stating the obvious it seems to me that a key decision
-that needs to be made is weather a new subsystem is the correct direction.
-
-If I understand things correctly it seems that not creating a new subsystem
-is likely to lead to a simpler implementation, at least in the near term.
-While doing so lends itself towards greater flexibility in terms of users,
-I'd suggest a cleaner abstraction layer, and possibly a smaller footprint
-(I assume space consumed by unused code) for cases where PCS is not used.
-
-On the last point, I do wonder if there are other approaches to managing
-the footprint. And if so, that may tip the balance towards a new subsystem.
-
-
-Another way of framing this is: Say, hypothetically, Sean was to move his
-implementation into phylink.c. Then we might be able to have a clearer
-discussion of the merits of each implementation. Possibly driving towards
-common ground. But it seems hard to do so if we're unsure if there should
-be a new subsystem or not.
-
-> > phylink-managed standalone PCS drivers (Ansuel)
-> > 
-> > pros
-> > ====
-> >  * trivial resource management
+> On 7/9/25 5:46 AM, Gao Xiang wrote:
+>> Flush the D-cache before unlocking folios for compressed inodes, as
+>> they are dirtied during decompression.
+>>
+>> Avoid calling flush_dcache_folio() on every CPU write, since it's more
+>> like playing whack-a-mole without real benefit.
+>>
+>> It has no impact on x86 and arm64/risc-v: on x86, flush_dcache_folio()
+>> is a no-op, and on arm64/risc-v, PG_dcache_clean (PG_arch_1) is clear
+>> for new page cache folios.  However, certain ARM boards are affected,
+>> as reported.
+>>
+>> Fixes: 3883a79abd02 ("staging: erofs: introduce VLE decompression support")
+>> Closes: https://lore.kernel.org/r/c1e51e16-6cc6-49d0-a63e-4e9ff6c4dd53@pengutronix.de
+>> Closes: https://lore.kernel.org/r/38d43fae-1182-4155-9c5b-ffc7382d9917@siemens.com
+>> Cc: Jan Kiszka <jan.kiszka@siemens.com>
+>> Cc: Stefan Kerkmann <s.kerkmann@pengutronix.de>
+>> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+>> ---
+>> Hi Jan and Stefan,
+>>
+>> if possible, please help test this patch on your arm devices,
+>> many thanks!  I will submit this later but if it's urgent you
+>> could also apply this locally in advance.
+>>
 > 
-> Actually, I would say the resource management is much more complex and
-> difficult to follow due to being spread out over many different
-> functions.
-> 
-> >  * no wrappers needed
-> >  * full support for hot-add and deferred probe
-> >  * avoids code duplication by providing generic select_pcs
-> >    implementation
-> >  * supports devices which provide more than one PCS port per device
-> >    ('#pcs-cell-cells')
-> > 
-> > cons
-> > ====
-> >  * inclusion in phylink means more (dead) code on platforms not using
-> >    dedicated PCS
-> >  * series does not provide migrations for existing drivers
-> >    (but that can be done after)
-> >  * probably a bit harder to review as one needs to know phylink very well
-> > 
-> > 
-> > It would be great if more people can take a look and help deciding the
-> > general direction to go.
-> 
-> I also encourage netdev maintainers to have a look; Russell does not
-> seem to have the time to review either system.
-> 
-> > There are many drivers awaiting merge which require such
-> > infrastructure (most are fine with either of the two), some for more
-> > than a year by now.
-> 
-> This is the major thing. PCS drivers should have been supported from the
-> start of phylink, and the longer there is no solution the more legacy
-> code there is to migrate.
+> Thank you for the fix and great work, it solved the issue I was seeing locally!
 
-This seems to be something we can all agree on :)
+Thanks for your confirmation too!
+
+Thanks,
+Gao Xiang
 
