@@ -1,71 +1,65 @@
-Return-Path: <linux-kernel+bounces-723864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E11BCAFEBC3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:24:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0942AFEBCC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9F2C1889B4C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:18:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7E7F5C2494
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F632E0B7C;
-	Wed,  9 Jul 2025 14:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB86D2E542B;
+	Wed,  9 Jul 2025 14:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DzSYRn9E"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="DSgRT7ZD"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1767A2DFA39
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2801482E7;
+	Wed,  9 Jul 2025 14:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752070680; cv=none; b=SkUy1pxJ6DHxAtkedIICeaLSC9JnvXqbVBKIttqtoNaWc598/8JJkO6+aO17QX1g8UHb2zbrDklcPGYNM8NyalQqvyI//zzCZZJCTV4rkzCpH7aXr+d0t1YN/HWy9ZxJL/2BT2pYRoLzVC72O9kczPy4+LSKeO1PdCtFMH4YTs0=
+	t=1752070682; cv=none; b=Nx6lUSpIAL+4BT1AGXZ/BXDJs6rWLJDaZrVRyRwvEHBGLhcc0WPOciekvJ22DbqfrLd4OPyWRtuQvWny7XwadrJOu9O5Q61UEiC3cnPZt7sW2wbk/9IKsvenNErR+SvkeEMpaPDy6bT6KGaLWBn0er7FPS0r9He0V7+MCqO200w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752070680; c=relaxed/simple;
-	bh=EHbBHE13kC79LDmdc23gmqBQNvLgY4u0iCZVgT2r5Bk=;
+	s=arc-20240116; t=1752070682; c=relaxed/simple;
+	bh=3GPtKOUtSTIseNHeCofjHeHZYBz2CDmdTP88RpiaJno=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CT7Cw4/UDQ0tI9sDF4zhQCfTvThGAabRP//VzdM9VAGtRtzGhZbJUOE7ALmTqjEORStSXV+/uGCqZVphDor9GdSKbUnXJlGxKd0gujzp+ZzmVHvkg3O6HrcXgrqEVZ9kMocJo8dSE1kmktAdb8FqyFHedVlBmDJbPdsqMpBCFZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DzSYRn9E; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752070678;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VHO9YyMYmJWGNN4TK+hwZojviX0X+UcJREW3wMl0Z/I=;
-	b=DzSYRn9EilWmZbuLQyVaIRh9t36uad0fJMoenY6KZ92/w4H3uE9MWSeeeLh7Jctg/PZQVQ
-	bw2kp2DjCQRcHZsHfD4rm5UXLLD5f1oCxAUrv1CdMiYNnir/M1cO4tiZJR6eS6hpeBXO1Z
-	P+9R1MIC8W/yvX+IfaOwIfV/fDwPNYY=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-275-534JlDTEP6aNjVL1Sa69TQ-1; Wed,
- 09 Jul 2025 10:17:54 -0400
-X-MC-Unique: 534JlDTEP6aNjVL1Sa69TQ-1
-X-Mimecast-MFC-AGG-ID: 534JlDTEP6aNjVL1Sa69TQ_1752070673
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B6DF319560AD;
-	Wed,  9 Jul 2025 14:17:53 +0000 (UTC)
-Received: from sirius.home.kraxel.org (unknown [10.45.224.100])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 61C8930001B1;
-	Wed,  9 Jul 2025 14:17:53 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-	id DDE6418000B2; Wed, 09 Jul 2025 16:17:50 +0200 (CEST)
-Date: Wed, 9 Jul 2025 16:17:50 +0200
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-efi@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] efi: add ovmf debug log driver
-Message-ID: <2mn65slwkwmjpeilma2isw7zgabdmda4rhpqjiutwdwqno2wrh@zghymlce2fiy>
-References: <20250708125624.734132-1-kraxel@redhat.com>
- <6edfa099-ab0c-41f6-89ea-0fd67666dd05@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MRY0ter/URrfOGSiUxywiRdPjXKj7nQJdz1ENLQFhwhAJHrp2Woh9zvGyNYhQVNS5lyE1KzeF3VEhzTjwhI38ClK8PArW4pVf6yoIG7cDOug3zMa/mjPS4k/TaXwPcqhNnHqHqOgydZS+NKdP08aA34prrEXWKsjCJpoLJwUqB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=DSgRT7ZD; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=99zglpx7L+yZpJYgis1C9cvS9FD00F06Jap26C53nDk=; b=DSgRT7ZDjh8nhXxM8g9IIasnky
+	kmYuaFcfFiyBr+qAAhPrcq5iddIwIb4uub6zHDoYsJwSJejUpKG+i8sTJPzktSDvDkBC470g+gUsk
+	q9ZQD5KM7DCx2a1UYOmqNATPJjNCNhgZO2CL6tddGOykzE1gJh3hjIzohQEcBDo/dwBg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uZVcO-000wyz-OX; Wed, 09 Jul 2025 16:17:52 +0200
+Date: Wed, 9 Jul 2025 16:17:52 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Yuiko Oshino <yuiko.oshino@microchip.com>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
+Subject: Re: [PATCH net v1 2/2] net: phy: microchip: limit 100M workaround to
+ link-down events on LAN88xx
+Message-ID: <a6c2059c-487b-4e00-9399-b98d867168b5@lunn.ch>
+References: <20250709130753.3994461-1-o.rempel@pengutronix.de>
+ <20250709130753.3994461-3-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,38 +68,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6edfa099-ab0c-41f6-89ea-0fd67666dd05@kernel.org>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <20250709130753.3994461-3-o.rempel@pengutronix.de>
 
-On Wed, Jul 09, 2025 at 03:58:58PM +0200, Krzysztof Kozlowski wrote:
-> On 08/07/2025 14:56, Gerd Hoffmann wrote:
-> > +MODULE_DESCRIPTION("OVMF debug log");
-> > +MODULE_AUTHOR("Gerd Hoffmann <kraxel@redhat.com>");
-> > +MODULE_LICENSE("GPL");
-> > +MODULE_ALIAS("platform:ovmf_debug_log");
-> > diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
-> > index db8c5c03d3a2..ac0a03ec3452 100644
-> > --- a/drivers/firmware/efi/Kconfig
-> > +++ b/drivers/firmware/efi/Kconfig
-> > @@ -263,6 +263,14 @@ config EFI_COCO_SECRET
-> >  	  virt/coco/efi_secret module to access the secrets, which in turn
-> >  	  allows userspace programs to access the injected secrets.
-> >  
-> > +config OVMF_DEBUG_LOG
-> > +	tristate "Expose OVMF firmware debug log via sysfs"
-> > +	depends on EFI
-> > +	help
-> > +	  Recent OVMF versions (edk2-stable202508 + newer) can write
-> > +	  their debug log to a memory buffer.  This driver exposes the
-> > +	  log content via sysfs (/sys/firmware/efi/ovmf_debug_log).
+On Wed, Jul 09, 2025 at 03:07:53PM +0200, Oleksij Rempel wrote:
+> Restrict the 100Mbit forced-mode workaround to link-down transitions
+> only, to prevent repeated link reset cycles in certain configurations.
 > 
-> Where did you document new ABI?
+> The workaround was originally introduced to improve signal reliability
+> when switching cables between long and short distances. It temporarily
+> forces the PHY into 10 Mbps before returning to 100 Mbps.
+> 
+> However, when used with autonegotiating link partners (e.g., Intel i350),
+> executing this workaround on every link change can confuse the partner
+> and cause constant renegotiation loops. This results in repeated link
+> down/up transitions and the PHY never reaching a stable state.
+> 
+> Limit the workaround to only run during the PHY_NOLINK state. This ensures
+> it is triggered only once per link drop, avoiding disruptive toggling
+> while still preserving its intended effect.
+> 
+> Note: I am not able to reproduce the original issue that this workaround
+> addresses. I can only confirm that 100 Mbit mode works correctly in my
+> test setup. Based on code inspection, I assume the workaround aims to
+> reset some internal state machine or signal block by toggling speeds.
+> However, a PHY reset is already performed earlier in the function via
+> phy_init_hw(), which may achieve a similar effect. Without a reproducer,
+> I conservatively keep the workaround but restrict its conditions.
+> 
+> Fixes: e57cf3639c32 ("net: lan78xx: fix accessing the LAN7800's internal phy specific registers from the MAC driver")
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-The log buffer header struct is documented in the header file for the
-edk2 code:
-https://github.com/tianocore/edk2/blob/master/OvmfPkg/Include/Library/MemDebugLogLib.h
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-take care,
-  Gerd
-
+    Andrew
 
