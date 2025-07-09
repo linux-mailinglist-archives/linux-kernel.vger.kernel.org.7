@@ -1,119 +1,159 @@
-Return-Path: <linux-kernel+bounces-724024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28950AFEDB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:28:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C35EAFEDBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:28:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A1A57B59F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:25:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E01C0188FD1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5812E7F18;
-	Wed,  9 Jul 2025 15:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54392E7654;
+	Wed,  9 Jul 2025 15:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e7S94nnE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPYZSuvC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E672E7F10
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 15:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D1A198E9B;
+	Wed,  9 Jul 2025 15:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752074811; cv=none; b=oShn9waoEzVUXiSUKh/DEUd4ubqXJnRjsf8FcQ9IzADsQOFbWgQZpptWFke1y6J9ix+4lZ+RcDYPshk86+hj0OvSiSK5UUYWncQFPk7JAZ5PXva7Sq4jeCf1zlviC9DAKD5LU3YnW5H8Mye3OTrupDiKZVq4Jc5MF0f4ruLWX6c=
+	t=1752074898; cv=none; b=LkA4dXPUPQPLL0QUCcXmZhugTdOLxSawngqOY7kKI1JdzPT3srPLGIv9w2IMR3e+/QVPKt+yc5wyy9SbXu3mOsyBQSrjdtDee57M6fLg6LoPsGm+Iiyxm1bzUFKbzt9Gjq0V57XMXtcSJ0zQBfD0yU55ry3+157W06lx88bvHyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752074811; c=relaxed/simple;
-	bh=Lf7bJFk3uV9MKQuav7jQz6/MttJtMdGad9u+KUEboXU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xscyxqw/bNuJJlQ6i6OmcpCmLC7awuphBKlEbXFYWTLwCJDVbNLVxKFAylYbTj2jBOTr7D1w0Ke91dMV9krRQiHsJoUmMQUX/xQ/T/mPNrdnieiivk2q7vURl+mvmedlEMpAfa1IQmsppY+viIxjat8nrLHdRA39nDUaZRVrr6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e7S94nnE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752074809;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lf7bJFk3uV9MKQuav7jQz6/MttJtMdGad9u+KUEboXU=;
-	b=e7S94nnEGpSrKl0vjipYKF8SDOGfV4owufizDIvNlO0d3nq4F1+J3Q9rnuJfIZuz0PrlyQ
-	V22Dsxm68Y6EPeZ5O1wcwnFTSje6dmk/5Vfje/3vpvVLhnkqh4zvF2yIH797UUrsCxVbLQ
-	zd+vH/cbGBw0euLrC2d4pwUdrrRi4bE=
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
- [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-343-KfTWJwmNNqC5Co2mcI4eJg-1; Wed, 09 Jul 2025 11:26:48 -0400
-X-MC-Unique: KfTWJwmNNqC5Co2mcI4eJg-1
-X-Mimecast-MFC-AGG-ID: KfTWJwmNNqC5Co2mcI4eJg_1752074807
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-714078014b8so737627b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 08:26:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752074807; x=1752679607;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Lf7bJFk3uV9MKQuav7jQz6/MttJtMdGad9u+KUEboXU=;
-        b=C3+RDFjUrdJXiS3JlNbyF7dvEc+2HNyPrGLbABY1kYxwsUmmYClUPwt2i1C/eDtg8X
-         POeUh1xGfJQUV6lermwhWHjXKQxsywaWAAUMJ9QSohXLspcQZetlJSIHnYbmI7d9AN0k
-         Sb41i8bouDtvw4RvI613EfHefXbLP8tXFd+2sZsRpccTBmMupD2nZtI2RVr36rsr18Y8
-         CUKBbrO3WJ5TizKjXdKkbbSmMVY8U7oMK+FajXczcZLLH9XiIN1rVOTrqewU7Djm+O8c
-         gYGeBZ8QwiNgdkQc9XwPHhYurepuhNXr7aLIneOIPjuzPC39H3/gkRR+4iA50RaCGJDs
-         QEPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfQUEHhU45r//MrioRulQY+rE4lxuXu10ItRS1Xge/f5NMt/53xr+aw8Xqt8Y1EHTFglQFj/T49AzD8e4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYdujzrYzcDwY4zE6UUM1gQIvHcplQ+fY7O4KPenJPyFRs+9fR
-	c9/tZ/pk9otFbI96veRnOAGzmYU/P2ykDO6s5TYpgcA5sE1F9srAZPOOFLJe4BB7GhzimFRKRPe
-	hKBVcl0HLUx/fBVIsumXvYhnNdvMWiv5zesQce2M9QwIJEZPJ8VTZ0ySB8tk+0/UogjQgMBgqiR
-	hlQIseOCK31bqKrhaJnZnX/0Wh+jHf1HUQjjcviCcM
-X-Gm-Gg: ASbGncsXGmP9yf1GarcK+1MOHB0L/bpwVWD+7eTZ67dclAXv4E8vW8MxB3Q92e4htBn
-	bhGD7lhoflkAKkWtLJZKwnfHkSrbHS7+06jQjaF7y5FATktv8P3VzPZ8I4RljyAXveqUydscJgj
-	VX/P+5
-X-Received: by 2002:a05:690c:4d83:b0:70e:326:6aeb with SMTP id 00721157ae682-717b1696280mr41605347b3.10.1752074807345;
-        Wed, 09 Jul 2025 08:26:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE9oyUbfKLC5sveWj0ptirc82cNeL70EgaNkak6GlzIurDedMJZY/972EbTHi8rpQ5YCU07IRWEQOOiaTHdLVE=
-X-Received: by 2002:a05:690c:4d83:b0:70e:326:6aeb with SMTP id
- 00721157ae682-717b1696280mr41604877b3.10.1752074806659; Wed, 09 Jul 2025
- 08:26:46 -0700 (PDT)
+	s=arc-20240116; t=1752074898; c=relaxed/simple;
+	bh=lk+8zMt56gCFuxNbdsiMnzJ2gRivwoTJdcbdfhoBhU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c4PLEMzDCPDVB0S3RMRu8NTn5zftraj4V5St+V+kD6UZ2Ahti0gB5O/mXGQkkZffaWNEj1JJrs56/oxfMHoKTeQFgRhJwGtCWkawSDvUNd/PwK+ST4rslVpSU1FnKJRPSFI8i8CJH/6kmPNrAWkTq13P7X1tyG0l0bjDLJ31pbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XPYZSuvC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 258A5C4CEEF;
+	Wed,  9 Jul 2025 15:28:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752074897;
+	bh=lk+8zMt56gCFuxNbdsiMnzJ2gRivwoTJdcbdfhoBhU8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XPYZSuvCWB5ax6nxzQ2iVciNLOI4/sMVn4yQmWXsVsHNJ13KmngNKXvNc7AeD0C0R
+	 rvYFat7CFFwGM6SOtS1QI2lw/GuHbpoKaVgykDQtXYNEXICj3VeueMOmDRzqB/9Dl2
+	 LPT0toSxIanMzvNFvDCQmZJFEo2IOXeWVoMxm5oBIL2Mzb02a0xBywInPgq0aoZwZF
+	 HaWBExvdXO0CtNQ40E4wh0xVu6/KN/wgFt0aNVXPj4Y99MJq8t1U0A8TXO6Ab0OOyB
+	 XeHjsNdcAJA6tXwypNs74ImWcXwhbWZQ0qi1U2N9SSIev8mWu0qt8Wzd4dVDOrvWxJ
+	 GLBmzciZmrgpA==
+Date: Wed, 9 Jul 2025 16:28:05 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Waqar Hameed <waqar.hameed@axis.com>, Greg KH
+ <gregkh@linuxfoundation.org>, Peter Zijlstra <peterz@infradead.org>, Julien
+ Stephan <jstephan@baylibre.com>, Bo Liu <liubo03@inspur.com>, Al Viro
+ <viro@zeniv.linux.org.uk>, Sean Nyekjaer <sean@geanix.com>, Haibo Chen
+ <haibo.chen@nxp.com>, Han Xu <han.xu@nxp.com>, Francisco Henriques
+ <franciscolealhenriques@usp.br>, Gustavo Vaz <gustavo.vaz@usp.br>, Matti
+ Vaittinen <mazziesaccount@gmail.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/12] iio: accel: Remove redundant
+ pm_runtime_mark_last_busy() calls
+Message-ID: <20250709162805.37e472ac@jic23-huawei>
+In-Reply-To: <aG4sZohbXE6kmq2G@smile.fi.intel.com>
+References: <20250708231144.971170-1-sakari.ailus@linux.intel.com>
+	<20250708231151.971256-1-sakari.ailus@linux.intel.com>
+	<aG4sZohbXE6kmq2G@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <472a5d43-4905-4fa4-8750-733bb848410d@linux.ibm.com>
-In-Reply-To: <472a5d43-4905-4fa4-8750-733bb848410d@linux.ibm.com>
-From: Stefano Garzarella <sgarzare@redhat.com>
-Date: Wed, 9 Jul 2025 17:26:35 +0200
-X-Gm-Features: Ac12FXyNj6u4xw4GpaDSraC2WH1PFh63NMAa2Sk2WZqN1f1LqOBvccFzhXYQrfM
-Message-ID: <CAGxU2F7bV7feiZs6FmdWkA7v9nxojuDbeSHyWoASS36fr1pSgw@mail.gmail.com>
-Subject: Re: [PATCH net-next v4] vsock/test: Add test for null ptr deref when
- transport changes
-To: Konstantin Shkolnyy <kshk@linux.ibm.com>
-Cc: mhal@rbox.co, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, v4bel@theori.io, leonardi@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, 9 Jul 2025 at 16:54, Konstantin Shkolnyy <kshk@linux.ibm.com> wrote:
->
-> I'm seeing a problem on s390 with the new "SOCK_STREAM transport change
-> null-ptr-deref" test. Here is how it appears to happen:
->
-> test_stream_transport_change_client() spins for 2s and sends 70K+
-> CONTROL_CONTINUE messages to the "control" socket.
->
-> test_stream_transport_change_server() spins calling accept() because it
-> keeps receiving CONTROL_CONTINUE.
->
-> When the client exits, the server has received just under 1K of those
-> 70K CONTROL_CONTINUE, so it calls accept() again but the client has
-> exited, so accept() never returns and the server never exits.
->
+On Wed, 9 Jul 2025 11:46:30 +0300
+Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
 
-Yep, I saw exactly the same issue while testing a new test.
-I already sent a fix:
-https://lore.kernel.org/netdev/20250708111701.129585-1-sgarzare@redhat.com/
+> On Wed, Jul 09, 2025 at 02:11:51AM +0300, Sakari Ailus wrote:
+> > pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> > pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> > to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+> > pm_runtime_mark_last_busy().  
+> 
+> ...
+> 
+> > -	if (on) {
+> > +	if (on)
+> >  		ret = pm_runtime_resume_and_get(dev);
+> > -	} else {
+> > -		pm_runtime_mark_last_busy(dev);
+> > +	else
+> >  		ret = pm_runtime_put_autosuspend(dev);
+> > -	}  
+> 
+> The following blank line can be removed as it's done in the other file.
+> 
+> ...
+> 
+> Side note: Looking at this, perhaps we can also have a helper to toggle state?
+> 
+> ...
+> 
+> >  	if (on)
+> >  		ret = pm_runtime_resume_and_get(&data->client->dev);
+> > -	else {
+> > -		pm_runtime_mark_last_busy(&data->client->dev);
+> > +	else
+> >  		ret = pm_runtime_put_autosuspend(&data->client->dev);
+> > -	}  
+> 
+> So, already two users of the potential new helper :-)
 
-Please, send a T-b/R-b on that if you can.
+Maybe, but also worth a close look at whether, after this simplification
+these little functions to set power state add anything over just
+calling pm_runtime_resume_and_get() or *_put_autosuspend()
+inline at the call sites.   There are some cases in these drivers
+where the state is not hard coded at the call site though so
+a helper might be useful for those.
 
-Stefano
+I'm not thinking of it as a job for this patch though which shouldn't
+be making significant changes even if they are enabled by
+the removals of the calls to pm_runtime_mark_last_busy()
+
+So good idea, but probably get this in first.
+
+
+> 
+> ...
+> 
+> > -	if (on) {
+> > +	if (on)
+> >  		ret = pm_runtime_resume_and_get(&client->dev);
+> > -	} else {
+> > -		pm_runtime_mark_last_busy(&client->dev);
+> > +	else
+> >  		ret = pm_runtime_put_autosuspend(&client->dev);
+> > -	}
+> >    
+> 
+> No blank line?
+> 
+> Three!
+> 
+> >  	if (ret < 0) {  
+> 
+> ...
+> 
+> >  	if (on)
+> >  		ret = pm_runtime_resume_and_get(&client->dev);
+> > -	else {
+> > -		pm_runtime_mark_last_busy(&client->dev);
+> > +	else
+> >  		ret = pm_runtime_put_autosuspend(&client->dev);
+> > -	}
+> >  
+> >  	if (ret < 0) {  
+> 
+> As per above and counting...
+> 
 
 
