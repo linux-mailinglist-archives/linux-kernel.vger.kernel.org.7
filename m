@@ -1,62 +1,77 @@
-Return-Path: <linux-kernel+bounces-723161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE294AFE3D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:17:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D805AFE3DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE1101C40CA4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:17:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFA315875CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCFE283FF0;
-	Wed,  9 Jul 2025 09:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E19275867;
+	Wed,  9 Jul 2025 09:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gnzsc+UG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CKwZzreb"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7667A24291A;
-	Wed,  9 Jul 2025 09:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F17B22DA0B;
+	Wed,  9 Jul 2025 09:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752052611; cv=none; b=DtdVkAoJSenuDFHRX2WRzZBWzTweeJENmpqsMpgI09WyVaEaUSny2rckmlRipg0x9igiZakB2clJ791pXUNPZn5VMwJF4bQT9U81fv2f9RxiNJ7G7PZU7YQBnMnb00nzDuD+sVozRuGanuIUuTwYBqkXRjvYh2f0bAU/4oy1sH4=
+	t=1752052648; cv=none; b=PIMQ338tTcPLsjGi2heL083HHQHrvv9SRRIQ6GANtpqQJqTLLk3zOly5Jma7gPWu4oy67zbEvds29Xj0w913dhZ228mqBJr/oem4PPi3rhZg5iexrn/Yp8skHIjCTMOgd3KP8dLpyP5DhFYf6wFnqdzUHUqlu/rc8CcjpCKdbcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752052611; c=relaxed/simple;
-	bh=tpV7YA9mLr/NTkE5w9xEZCWQh4cVbdwc4D1eG5LV2XI=;
+	s=arc-20240116; t=1752052648; c=relaxed/simple;
+	bh=SIOEIsn/iRCibzTWzmm4/iFa3isGrOWve09IOOTV9jI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mlCYIRlbG3jXHrbYSvmezMOxN/D04OgV+vx1AaE4NoFYkTc3pRgPkEatpCw4BkgyDZfik56eEIRbKDboCGUTGd/FyikemQKMqEHacguHxd3LTnTiZAW6aQFMYLxUJwRXCvn1fKWAPSQSzwLAnVgqRe1hqTNZOz7j27V6BQ7PCgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gnzsc+UG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB457C4CEF5;
-	Wed,  9 Jul 2025 09:16:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752052611;
-	bh=tpV7YA9mLr/NTkE5w9xEZCWQh4cVbdwc4D1eG5LV2XI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qo+88jYyRzyPEPJcte6P09QNgGmy1IZqzp/D4BqjMaZvE4E+ij8bg3iSwJTnih0HkWFc1Cdl0Jps4zztsRqpwHnd/KjdnpHjNfHLJUmNMCxdpSQzmPWsNgXG40uCmEsGGsE6NjhLBU/XGByHWxcfcJYyeIZ+EAiWjQeRfUtR/Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CKwZzreb; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E3CEE40E021D;
+	Wed,  9 Jul 2025 09:17:21 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id TnW2dmxPC4_5; Wed,  9 Jul 2025 09:17:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1752052638; bh=pyoSEQoZpwnpz3kLRoC/C4gNE9qlmORS6snlCTAOP4o=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gnzsc+UGSLuVdhJDd0Dqrd/QyyDKn/Cyha//l16jZA/FugUCs/qvDEUauXgZf9MLB
-	 4ycq8B8oGkEXgsE4EtmLfdp8pOdXhhOtwhthnBs4HDKI4Ku3C5uUuIeLmjSBdlKYhC
-	 kWHWzUPOuuV2WSGE0vhM1+4CniiTgF6Lz7bOkeRg33r+xFIccN344HZrrFIDWfvMDE
-	 C6QWFp47Sprn2bsZTI2PGlMCmeeZMyCnSSYNxWmr+WLukBmg0/a9ld2rZ1yXCwA37T
-	 7ZKfFNL0Oy7xarwSw+F7UiySC+SkUA5Vo4QyYDW6p5Fjd+DkM+kWwU1mty2+oXjgz+
-	 6HADPpYsmAlxg==
-Date: Wed, 9 Jul 2025 09:16:47 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Dawid =?utf-8?Q?Nied=C5=BAwiecki?= <dawidn@google.com>
-Cc: Benson Leung <bleung@chromium.org>, chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org, chromeos-krk-upstreaming@google.com,
-	=?utf-8?Q?=C5=81ukasz?= Bartosik <ukaszb@chromium.org>
-Subject: Re: [PATCH] platform/chrome: Add ChromeOS EC USB driver
-Message-ID: <aG4zf8rGnmt5xVtG@google.com>
-References: <20250624110028.409318-1-dawidn@google.com>
- <aF5N5jrRUlj3SUGS@google.com>
- <CAJ_BA_CppC58kc-Uv49PSmWFcCih-ySuGDuRcO5-AWQQqcqWVQ@mail.gmail.com>
- <aGOiu-sXFj1EUQAB@google.com>
- <CAJ_BA_CZWvC2=i8riNe5LReLKzPXK1vPwymiG2dzLEntda7TRg@mail.gmail.com>
- <aGSuS81Psqm_Ie4N@google.com>
- <CAJ_BA_BQOQe61r9t9rL=UiOqpHwOoTSbQcZNe=CrCcjMha_YQg@mail.gmail.com>
- <aGZrhe8Ku7eEIRqm@google.com>
- <CAJ_BA_AMaz0GWxOHJYws95h3fRdErghqUXPBkhrB1_eYegOJ0A@mail.gmail.com>
+	b=CKwZzrebDbh5/eUDfyXS8ouLooCpgBdmvNe8Hsp0OxLuhjx/IQQb0N58KUo7CEciR
+	 su16cWlEMTMfcZb99alYMJJ05bgaNTn8VCNp3tu5HdkLbnBVUToWq+miEIDkcmfCbZ
+	 KRKZ1MRRf999iu+VeUXSbINApEb8nFup+1YUKBQtmxOOcWEOro4rp9bY3Dg+S7Ns1z
+	 iHFK42bL4gjXFopvcpZNPY513S7bW0sIMmHQk2bmZuQFYkKdum6Xnix+JyIgywG+dd
+	 a4/KjiQZ+XBc6Q7uVoQBXRRzWhuVN6+KAdMIPN+/VgAgcblIqjnQ5N5/5Ad04P2Sf6
+	 h0nek8vNIZ9OvFP8jrD0ru4sFuBGOC5ykoFHFm7/NZgtXKi8boGAic7yfsAS2oFnps
+	 UEvUyGWA6PPzDFrE6y+sFi/lUfvV4qL3iGb5lImU/OYL2FuvyRskN+LyPxselrNhB6
+	 5/V4FVsPNMmLe7IeFkyZQc76+f3nEZuvTzniH7S9otUZnaRjLazHcQRyORGuX9/eZA
+	 lK17/WfRXPoUJu0hwZ8bT7J1MRPzEw1bSjpNcqTz7FRBqCrP+N2XtNCfMoTsIkvTn5
+	 FISFI/TQJ3ozxZxYZQkj6YreOPsWLRyMxAFpPwgm4REH0PtLNOgwb9gJPdr6z8sQ3m
+	 671dt+834mbdvsfkNmMEnpo4=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id F070240E0221;
+	Wed,  9 Jul 2025 09:17:09 +0000 (UTC)
+Date: Wed, 9 Jul 2025 11:17:02 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the tip tree
+Message-ID: <20250709091702.GAaG4zjs-otcGsMyY2@fat_crate.local>
+References: <20250708160037.2ac0b55e@canb.auug.org.au>
+ <20250707234817.d09fc28a3510b23c31c461b4@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,35 +80,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ_BA_AMaz0GWxOHJYws95h3fRdErghqUXPBkhrB1_eYegOJ0A@mail.gmail.com>
+In-Reply-To: <20250707234817.d09fc28a3510b23c31c461b4@linux-foundation.org>
 
-On Fri, Jul 04, 2025 at 11:03:01AM +0200, Dawid Niedźwiecki wrote:
-> > Given that:
-> > - The crash you encountered is a common issue for all cros_ec_X drivers.
-> > - I prefer to keep cros_ec_X drivers simple and similar rather than have
-> >   something special (e.g. the memorized `struct cros_ec_device` in current
-> >   cros_ec_usb) for fixing the crash.
-> > Could you give [3] a try to see if it fixes the crash and also call
-> > cros_ec_register()/cros_ec_unregister() everytime in the probe/disconnect?
+On Mon, Jul 07, 2025 at 11:48:17PM -0700, Andrew Morton wrote:
+> On Tue, 8 Jul 2025 16:00:37 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> I agree that the drivers should be simple and similar as much as possible.
-> But to be precise, I think, it should behave in a similar way as much
-> as possible
-> (e.g. reboot EC device doesn't cause re-registering), not be implemented in the
-> same way. That's why I believe the current implementation of the drivers follows
-> the already present drivers in a better way.
+> > Hi all,
+> > 
+> > The following commit is also in the mm-hotfixes tree as a different commit
+> > (but the same patch):
+> > 
+> >   f339770f60d9 ("Revert "sched/numa: add statistics of numa balance task"")
+> > 
+> > This is commit
+> > 
+> >   63afea878dc4 ("Revert "sched/numa: add statistics of numa balance task"")
+> > 
+> > in the mm-hotfixes tree.
+> 
+> Thanks, I'll drop the mm.git copy.
 
-FWIW: It depends on the bus details.  If you find my previous message, SCP
-over RPMSG also re-registers everytime after the firmware reboot.
+So we actually started adding it to tip for the time being until you send it
+to Linus so that our testing doesn't fail - it was reproducing reliably on my
+test machines.
 
-One challenge for current version: it makes the driver more complicated than
-others.  E.g. what would be happening if some friend drivers try to access
-`ec_dev` while the `cros_ec_usb_probe` is writing to `ec_usb` at a time?
-It tries to manage the device's lifecycle one level upper than USB (don't
-know what it should call, "session"?).
+So can you pls send it to Linus so that we can drop it from tip?
 
-Another challenge: it doesn't call cros_ec_unregister() in its driver removal
-entry.  What would be happening if someone re-inserts the module multiple
-times?
+Thx. 
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
