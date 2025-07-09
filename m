@@ -1,400 +1,129 @@
-Return-Path: <linux-kernel+bounces-722668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 743ACAFDD8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:39:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 126EEAFDD8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9D554161C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:38:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DC17541D9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63E71C7013;
-	Wed,  9 Jul 2025 02:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23E11DDA24;
+	Wed,  9 Jul 2025 02:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AuTOZoNr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P1HENscD"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CF11C3BEB
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 02:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752028748; cv=fail; b=UDJP03dImCnmByp01imkwBtAYOX42KmjSauPg5aWvv4zU4+O+5cCRA19WI3ofZuJ3uG73z3n2ZiuU7t8lZJ3Vp6GYwaSbQTRR1vLkDvNgveHyHqvbuV/hh6c4fYfA/c0oUrfRnACJckfqNYT5laXLOzAhIau4lUHeMa6P2EMwHo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752028748; c=relaxed/simple;
-	bh=PMqI+C59tPADmw3eJPorMF/QRaF97m2PTvp0MbRftbE=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=uK2PlesTxQ60bh6GXvABQ113Y8YinRNHL6qFWi5PRdFKYPpcdAF1mzc7Snv9frnDoQtG96eo+xsQiYhHbrB+oo1nZLzUTq7nnycckF+NW/tI+A1O/IqVhPMPJR2CRseL6Z76sczUGnc+vD+FN2RL58OV+9IGMOUD2lv6WvPaPAE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AuTOZoNr; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752028747; x=1783564747;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=PMqI+C59tPADmw3eJPorMF/QRaF97m2PTvp0MbRftbE=;
-  b=AuTOZoNr8OULuNU30PnjAkt2j5oGHwDA3x5QzJpY+re7fRqe2pLrfACw
-   dayHJZX0DwPkXBvK/V9VPBIBnwG7Gg1EnVrMRbplDKJ+tKve9d/zpt1FJ
-   /NbfwJdIKtkahxcb2CjVdiz2s6nRqvKYfdjxYbUgk9BVxhnRcNQD8ydrs
-   6mp5gPniBPvRpq3GScye/oLBq/r7ZKKlNz8bB+d0x/8OuxVyUUF+YchRQ
-   iBdP+EcyVMicuUPdze9IF6t0ftcigVeML2QyhDZKrFbeGe2wOOIu5Zqj+
-   bY1WCQFRuX+E6HK5rXtvAqjo+kK6iMVjJSeuGRnNqzhfziuScM13ZfXeE
-   g==;
-X-CSE-ConnectionGUID: kvEU7wv/Rp6MeZH6QdZA6w==
-X-CSE-MsgGUID: cd21n+eiQA6W+3rXSo3ubA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="64863084"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="64863084"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 19:39:06 -0700
-X-CSE-ConnectionGUID: ttZfCoJKRr25ZfOIrXX5Rw==
-X-CSE-MsgGUID: pnfrmBW6TpSGNR6tPTVILg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="155770505"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 19:39:06 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 8 Jul 2025 19:39:05 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Tue, 8 Jul 2025 19:39:05 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (40.107.94.53) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 8 Jul 2025 19:39:03 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IOsIMlWEYh8jfD8zvGRg0z166QWs/T3FnLF9ZM/RUm+hO6zIKA28Euw05QLXs2sdP8/V8+eU3Q+JdIUBw4tjHcWceASBAM+laOy8VT/GYYDN7DiZETYeYcgLR3SucqqB2OUDlYnMrwu7pzUEoP+xN1XzARdBZJGAJooGUH3TKSIF1O75ZH3WW/mU8Rt8cpC0cz2swK6jasCHyVD3lBNKR0lwrAV+Vr8moYkgczcQOONZcSCSXdi9wlCw6w1zDaUYICoBPcmgxCHCir6kVDJyteHDvgtnIERcJoDUlgR6aE0P0pBLMDCqER2STIbpntshTMR8rP5MKDJ5p06TiCTrPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nlA3Q1bBjNHIRB3uFDrTaWDBKjHrvEy8ZHAZoDS/UyY=;
- b=FDNGvC3GWPgxdXF5L3alzBGSeI2JkinRHc3HcETUo1jZ9o2L3BCkCsnYP/Cy3Sfr4jzOT2BqdoOtOJcT6/jYWK/09gFho516URzUAMp9ROrfaT2bGC9boO1C04zloeobPUvBtD4LwSLXidZ8Xb2ksqdthFNBaTibjGODltU7+YyD/LOHiTBUPMwIM7J29Gm2czF0qFwvLm1k0i3yi7O3syDyYL0uek/IdcZs12FK+pGZYaNBrmREYTUM3xi6/Cc4jkJVN/erAHoyEDB+/1SzqXQpUy0pnchG81po8SCpwRVPdxJjHkUWakWCbzEMdDNivNVoj+v4t52doebvGkz/0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by CYYPR11MB8388.namprd11.prod.outlook.com (2603:10b6:930:c2::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.24; Wed, 9 Jul
- 2025 02:38:21 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%6]) with mapi id 15.20.8901.018; Wed, 9 Jul 2025
- 02:38:21 +0000
-Message-ID: <a0800b06-030e-4aba-ad8e-937d4efa4804@intel.com>
-Date: Tue, 8 Jul 2025 19:38:18 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 19/30] x86/resctrl: Complete telemetry event
- enumeration
-To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
- Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
-	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
-	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
-	<Dave.Martin@arm.com>, Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	Chen Yu <yu.c.chen@intel.com>
-CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<patches@lists.linux.dev>
-References: <20250626164941.106341-1-tony.luck@intel.com>
- <20250626164941.106341-20-tony.luck@intel.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <20250626164941.106341-20-tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR03CA0135.namprd03.prod.outlook.com
- (2603:10b6:303:8c::20) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CE21C861E;
+	Wed,  9 Jul 2025 02:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752028752; cv=none; b=M20LAPrVU0wpo2AfGi/31O9Q0AO6mv8ye+QeX8wSS/uONW6XGK490i0Hi/kmtIX5Wm40LxfG/r8xkedIvH5C1deOSj5elnGrYvTJfIsUSPFN82xBLgdr4ofyZ9equcggJx9Xaqn8134UHcNglFafQYyUFcSbJssTIBYI4HC8b3Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752028752; c=relaxed/simple;
+	bh=2MFpJWPU8CWzunTAGDSW4LfrQNGdoBGczN7wNls5VGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mMZ7YECr0G58A2kWrPOAB//XIRNX60DH69xU7FK7EQDPjEiOHXEi8oI2qSRV69DpFKz0SVqmpqCuvwKMnuKiXLEs8au5rZFhVBrEBy8OZ8UiXP90/ACEKz1uUpsr+C/yqtL+B3aS0wvAVoFA8b7KssF4yvsr8ONqqM/cvdZ7a3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P1HENscD; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2363616a1a6so48377865ad.3;
+        Tue, 08 Jul 2025 19:39:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752028750; x=1752633550; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2MFpJWPU8CWzunTAGDSW4LfrQNGdoBGczN7wNls5VGE=;
+        b=P1HENscD6LEwpBWabENEMASecRUXU7Qh7IP7xSUKi3MaBsXvwr9A7/y9DvoUVZNeh4
+         2QOhfTVlYIXEQVNGbKvHGHwHS9ous4FbucphaQ4VvG2nIeyQMoR6kFyysXuQGgcKcAmi
+         V5cH9UDmirakTg0bOTjlNJWBFS3CLfIcVwtdYCNBEqUMJK4s8UKQBv3VIjIjlHOUf5Y/
+         Zr6sTlQuz5VZi/kTN/Cdsaw2JTMUV7gz10ra4NtJz5FNY4tcLGHlxynDn8c0R5TGvxrP
+         lZ6vhA1bkJwyNmV8nKIbiOsHUPuf+O0/Tx6suKrst4IJojUQPNcBpcqGEm3LICMSsI6M
+         x+/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752028750; x=1752633550;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2MFpJWPU8CWzunTAGDSW4LfrQNGdoBGczN7wNls5VGE=;
+        b=xLdllJXQa52kwgzOs5JVp7Zhd6TcN4smC0K+A8kmevT3vKA5zkTvd/SB9RfC0vfuNx
+         7JROunvNDJWn2+D0YWqHAPbjtY2uwDu0iEHzC5pXJDsu3nrj8TjBoJsvUt59fCJpXD1I
+         ZXvWUMiYyJL+aBLbE8MvOx9ntsXL5DIQ6UUhiX/eX4/q75ItUKLHzdGvhigyL4FHLDnH
+         wNZ3wI40d3rW5Zx85V9+8D0RdGyjdXWAeTx9btDXGmrN+erXOhcmkEH06o/kdDmBAmhd
+         x15PZWLUF90b8M/qfjW7isEQN9erf0Jwt8b7dU/LXrcLJ/5TUlooTUY2mdzIXE8QrhAW
+         JA4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVydHS8TLbH66v2CKh4hGJmpacW02DddcoLoJXsLIoV306TaZyWq+sdlceK1dC6SMDnmqO0/P95BSt3rQ==@vger.kernel.org, AJvYcCWadhxVdBJjL52FVQ1xDsqs0C9JfUv02NETGPBUGODRvcTVTUfFngNGJ+1IXKvjMMUk/6koEZMEvqYSJ60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiRQKZwcU4ou7fYdnoJmL2TZsFSdlS8LvTaR4SgIO7jxiDicNR
+	/vz0aeo7NLGifpY7iyPfTG8Hz78YulWqZm/zZ0wE+AzJgQwDfOIRywtq
+X-Gm-Gg: ASbGncs2cqhg7Y+Gyclx1mEgbZbI/6sLVYj0kQAELxMeHbyCW3+UAuDLBU/o8YV+nGz
+	/bk8HuDhnTHCVWZDIt0HQbTJ5dN3b0ekrXhrXHnMm+WGr0uu2P+lFvREM+iJNK1uq2/AtApTMC9
+	kdce76rmvyDbA8DreOGe2pzf+83L52GBPTVFeuOcn6pmnTxWNlZoaWitrF5jGIuT2K2CWQ5m+l+
+	fcOvcTr94m2y/U28Ec85PFsf+U1KPUr7cDUkuuaaKg5ZHDfm259ty4GVnjOKH5pRuzTbGrIDmkE
+	PYUjPyuWB22Bs/Q5c89HNLFgPDjyB+n7R7c9M1mjz1EJOxNHaGtt1qDxG5YCpQ==
+X-Google-Smtp-Source: AGHT+IFV7ath41Z2eEX5xWp8myyzeoBzOnPw7Ec8aWL3qv3ukG4ik7ICren+k5mAPFXPougQ9dJ1lQ==
+X-Received: by 2002:a17:902:f64c:b0:234:d10d:9f9f with SMTP id d9443c01a7336-23ddb30e308mr13855485ad.40.1752028750055;
+        Tue, 08 Jul 2025 19:39:10 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8434f06fsm125798655ad.87.2025.07.08.19.39.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jul 2025 19:39:09 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 4C012410194B; Wed, 09 Jul 2025 09:39:07 +0700 (WIB)
+Date: Wed, 9 Jul 2025 09:39:07 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	airlied@gmail.com, simona@ffwll.ch,
+	Raag Jadav <raag.jadav@intel.com>,
+	Krzysztof Karas <krzysztof.karas@intel.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com
+Subject: Re: [PATCH v4 3/3] drm/doc: Fix grammar for "Task information"
+Message-ID: <aG3WS3pEsJsZVbOF@archie.me>
+References: <20250704190724.1159416-1-andrealmeid@igalia.com>
+ <20250704190724.1159416-3-andrealmeid@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|CYYPR11MB8388:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3bef8f35-9b07-4258-8a44-08ddbe91ab57
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?SmlmcFJsNGdDb2M0SVgxQTZHS3dLaHpHYTd3VzFWdzRacG5WcFErWUg0b0Ns?=
- =?utf-8?B?MlkvMmgvS1ltd3drUEhYZFpoN3k0MVR5R1NYQW82MUFwVWpWNytHSHM5dUpK?=
- =?utf-8?B?R3c2V1pnZzYrQjB3TUp4ZDkrZjF4R0lGdzFYTXh6YjczalZxa041SGZRbXRH?=
- =?utf-8?B?MGxlNXZVWW9OQStuSDhCbW81RkFUcEhkVk9OclNmWVR5Tm9oTVdYTUZjRm5u?=
- =?utf-8?B?b05ZVjZxZXdQRWNtTUlWNDhYZ3hDM3VWMUcxRThXc2UvQlJmdlh6bUhOblN2?=
- =?utf-8?B?T1pRWEdiQWp0bVd1cXFIZmZaMnJFSy9iTXdPM3g0Y1E2OElRVDJ1NUl3dDB4?=
- =?utf-8?B?NGRXS2hIQTlWSmxXWm5VWG5CcW5ZYTZtM2dwZEZ3ditJK1hQdnducWtac0p4?=
- =?utf-8?B?Y2tHZmNMZFF3SEY4UjBrZW5Cc3I4UDdNbnRRbVZQUFBKaFU0WUdTalArQjJH?=
- =?utf-8?B?T0hBM0dZTWxpQ2l5VW5USzFXelNud3BxSkF5ekIwS3IwcDNOU1ErM3hWSDVn?=
- =?utf-8?B?Tk1aT1RLU09KODVEcXRaWXoxMCtMRW1vNGxVaks4Q3ZhN0w3anhwWi9YQTF6?=
- =?utf-8?B?NmJidEc0ZVhRWXIxWlZITTJ2U1Qwelc5ckZ1ZFhJV3ZDQUFHclJ3NkdUU0xw?=
- =?utf-8?B?QTE1ZWNDVHFZdnM2MW01aEJJN0N6YVJEcmFkWVZRd1FvUm55M0ZraGNGRldr?=
- =?utf-8?B?dGJHaUlIN0NhbVZLVVFTMnd4UHZYVVhXa1ZPSmRWVnpJREQ4NkI4eFRwNUlW?=
- =?utf-8?B?dS9QRlVtT08ySjJhY0lSTVk0cWlIeUNkbFlLdGNwKzFvNTREZlNieSs2ZTd4?=
- =?utf-8?B?cWl2YVB5djhLdSs3eUwxUS85b1RGMmhsVGRLWXBSdGJmSElTV2pzN1B0Zmh1?=
- =?utf-8?B?Rnc3VE15OVFUY2tHZm1QVTNGc1VBQkhRaXJYUHZ6RUpYMFNTOGdJOFRySVhE?=
- =?utf-8?B?YzVqdVpCWGxQT045dEx4WExoaW82aXk5YmxlbE16YWNBczdjR2NzNVpnVjNt?=
- =?utf-8?B?UmRtcERkTHMvWHJtQ00xMHNLUjBmdGZpME1MNmRLTDZ3azI3cTcybi9iV1Yw?=
- =?utf-8?B?WCtReWpncDZ5ZVlaQnA3VFNYWFhmZWlNN042MEhGVG9qNHVvdldYQ1hCK2Iw?=
- =?utf-8?B?aDZYZGNsZ0I4OXMzM05BQWtvb1VTNHdFbWl2T0ZRT0xIN3lKTi9lcEVkYmlG?=
- =?utf-8?B?cnl0WmdMdFd6a2hIblhuZ01CUDRCVytQOXliM1NOd2pFNXJvaTFXQXkrZXNT?=
- =?utf-8?B?dVB1alcvRmhONFNNQUZjL2kvWXJLdFY0UEhxSDR0a0cwa2lpWjAxWGxoYmM2?=
- =?utf-8?B?bFdEb0kvMXVCeEp3WUFNRmh2UkhnQ2tuUVhvTTl6WE5lUlg3b1lMaitjeVdW?=
- =?utf-8?B?RVFqL29iL3NkdENsQWZVM01hZ3grSE9zL2RtVzZFRFc4N2RhakFESEU3V09I?=
- =?utf-8?B?UDVCLzgzd1FHdXRCNndjaDFPV0V4QmdISmlvZlVrRmx1bTNXMzkzNE1QQW0y?=
- =?utf-8?B?QnlmMi81cEN6Z1BMTXhsdTIyaWtTS3c4c29rbXFkbVNWbkhSR1VVRmdFL1N3?=
- =?utf-8?B?Z3MycnJqeU1abU91T3RhVEtQOWRZZFFFanpQQk5lZndPWFpOSkZmTWIyV3dK?=
- =?utf-8?B?OUpjRk96d3VPWVlaMzRIUjhBNUJZRjZ2YVZ4MnB2MndvZkc2bkFBTzB3azM4?=
- =?utf-8?B?dDJDTzM5aWJaYi95SE13bXIrOUVrSm5OK0tCcDZQNDJoVktkcW5RV1krMGcr?=
- =?utf-8?B?R2o1ZHFRVkVBbXVtYVpSUHYrNVFiQXkwbStuOXF2cENZaDZlaE5PNHBjWVFO?=
- =?utf-8?B?cDljQ0kvUUFGaEpuVXdocjNWL3ZlZjc5N2ZENU44azdhSHR4b2JFM2xIMFNQ?=
- =?utf-8?B?aG1JQTVJVENORWIvaGpYTkkxemZYU3E5OHJ4aFg1T1RvZ04zVlFmc0lSVUwr?=
- =?utf-8?B?MjlxcUp2c3RLbWppVktoN3JUVTNJMmlpdFl3VW1DZUlPR2JaR2lOYjRKQm9h?=
- =?utf-8?B?aXpoWlBwdTRBPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UnNhcnB3blZONHhVbks4a0xBQjUwMGxzdmVOV3g0d01DN01DQ052QkRRcmk4?=
- =?utf-8?B?S21TZ2hFMkhNMUFVOS9rMzVUc09VekZVNk1CdkhJVFhCclB5TVQ1TnptTEVS?=
- =?utf-8?B?bXVjbnRFNmhBSTc0VlhNMXJzV2pkUUl1ZmxTekVJL0h2bit6RlUxbmRkeUl0?=
- =?utf-8?B?djRyNWlKUnZFRjNlQUdHRVU3Sys0Um85STNhQjBMRDMraE9VY1QyVUplUkF1?=
- =?utf-8?B?ZkVUMWg5ejlrcnF6cG9KUnc1OWZDdDhEQUh0TVpXalVJQVlVeDZkNjNWYm9G?=
- =?utf-8?B?S1hLVFhLR0R2QU9tUVQzRHA1MHB3VzZVaWkzUmIwczZNUmtHM1pydjk5RUVi?=
- =?utf-8?B?SnZTUyswKzVSa0pXa2J3MGpTT2lQdEN2MzhjNmJOb1psRWJLMWxhWnhrSXUr?=
- =?utf-8?B?VUlmd3ljeUlmTmVKeTVWVzdLUS8zeHQ0cWhKb3AzQm5TcjZRa1drRmlyMHMx?=
- =?utf-8?B?cjQyN0NJOEY1RkJXbFZ4QkE4dlNGMjdYaS9QU1FyZXF4eDlBa0xMMUF0L2Rn?=
- =?utf-8?B?bHQwQWd1VFg3VEduTkNtSGx5NFVsYlJkYVJQYkszYlBtYnUvSEQyY05HNXgv?=
- =?utf-8?B?NHFxQVVjWG9KemdhUjBTMEwyY2l4T1h0OHNscnlkNlZwc1BoTHhVeFlJcXJj?=
- =?utf-8?B?NEY2eUNXSHUvdlpRM2hMRjU4RVRxbU5rZnFyTUVLM1dvUUpQbXFMeHpBbWta?=
- =?utf-8?B?NjlTeTFnVnAwRmJkKzY4Tjg5amNqNzJOb3FYOWRpRmV2WUU0YlQ1b2NqdkJ6?=
- =?utf-8?B?Tmp0RDRUVzl2UklnbDI2U2pqbSthT3NBWUhsRW1Mcm9mSUU0VG9TNlBBYktP?=
- =?utf-8?B?SFBaRlltVFhvWHdjcFE0ZExXRkMzUVBJdmxQc1p2NWU3WDhQeGg3ZjNzTjVr?=
- =?utf-8?B?RW9GbjhFVUZId0RXSDBNYlMvVy90eSs2cFNSVW5BL0hZYTVQeTY1K0pvc3RB?=
- =?utf-8?B?ZGpmbDN2RVNTK3hRdFRUOTMvNWttNE1ib2lHUmZrVmZOSGlxZy9wallYdDJw?=
- =?utf-8?B?dkYxTUxSS0prNVk1UDdiNTk5WXREMzVOYU5EUk5HQ3llYndPaGVMNjRZTHdu?=
- =?utf-8?B?M2loWTVKOHpNU3JwL3NWQis0dU16NDVHMmx4V2FEaVNsREtCQVM2Yzl0S0hN?=
- =?utf-8?B?THVHdTdaNC81OTkyRXU5ZjFYUmt6ZmVyc2JCVnVGdGpMdFJhUkd5Q0lCb3dG?=
- =?utf-8?B?MGhkbDZZd2VIK2s5NC8wc1JnS3AyMW1USVFlZ2NXcDhIUVkybEMxR25MamJk?=
- =?utf-8?B?Qy91dElMTURGV2s1NHA5Rm5Ld0N4V2FNUHJFTytIblBMZ0tpV3QzTlczSGRJ?=
- =?utf-8?B?emNjQW5wZnk0Y2hTWmRyMXkxYzR6c3liQlpaWVVESGxpQUJ6VVk1Y1VkdWtE?=
- =?utf-8?B?bFNpdmwzVjJNTWc0d3lzR2JYNHJiQmJnN05FcTZLa3BEb3VGcVpNVXNSVzdi?=
- =?utf-8?B?VkM4Y3NLbGNBOUNBZEtFbmpkOTZNNmdzMGN2TEtYcnZlMG43RXB3aFU2WWRw?=
- =?utf-8?B?T2JNZ1pWcExVVGNnSWtxeEZEVzIveHZFVS9MRnoyS2R2UldtL0xLNVNFY3Br?=
- =?utf-8?B?VGp2UG5PemlMbHl5RGt5bW4wQ2hvbmJyTHFqcXBpTG16cU9FRzczSENFZUl1?=
- =?utf-8?B?VisrZkZYVGhMM2xpNkxXamdBejRLRTF2OHcxYjh1c3Z4ZnpkQXBBV0Fpb25v?=
- =?utf-8?B?dkNyY0tHSGJQdG9WRlc4c0t4ditHTUVpSWJxREhOMDF1K1N6cFhjR2xTNWov?=
- =?utf-8?B?bWpLNTZsaUtYSVNON2NpaXlHRXMzeHIxaGc3eE5mdDhDMjByVDUvUXNUak9t?=
- =?utf-8?B?NlY0VU8yOG1HTUJMRTNpZkg1SGxvWUMwR1IyVEF1U2EyRGNKY1EzK1IxZS9M?=
- =?utf-8?B?SVlVLzZQZ0o0dGFYYlA5SDVNM3pGVytDNE56V2tOcXJ5V2VLYUdncjQ5Z25M?=
- =?utf-8?B?cEp6MVJNTk51bTlKUlpMN1grYjhrbVp5dDJQaWl4a2ZUWXV6TTVoQjhUWDNN?=
- =?utf-8?B?c1JuU1hzdlVFRXFzRVNERXcvN1NHRWZmNjVLUm9FR1FMbkZvbzhYdEJMVlBG?=
- =?utf-8?B?MEFkVjU1VW1FdXhHaW84NWlsOFJFNXFzNmtLRWdPdTdQV2paSm1GNUtvSG5O?=
- =?utf-8?B?Y3RuUERZeGxtUHAvN25nQ2h5OU01OGtUbks4dTF5VWQ1ODJJRkV0dnpjVytT?=
- =?utf-8?B?elE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3bef8f35-9b07-4258-8a44-08ddbe91ab57
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 02:38:21.2403
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fwcMAb6kZrTgfVt4HPvmeWyJrHFGmB6oNLykpT3Xr7pRVxIh5KqrNWsFl7m85TwZiFXuC9DXoBGsKYR1RGVp3b9s40Cyth+J0dLUDTTST9I=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR11MB8388
-X-OriginatorOrg: intel.com
-
-Hi Tony,
-
-On 6/26/25 9:49 AM, Tony Luck wrote:
-> Counters for telemetry events are in MMIO space. Each telemetry_region
-> structure returned in the pmt_feature_group returned from OOBMSM contains
-> the base MMIO address for the counters.
-> 
-> Scan all the telemetry_region structures again and save the number
-> of regions together with a flex array of the mmio addresses for each
-
-mmio -> MMIO
-
-> aggregator indexed by package id. Note that there may be multiple
-> aggregators per package.
-
-This final "note" seems redundant considering the paragraph
-reads: "Scan all the telemetry_region structures (plural) again and
-save the number of regions (plural) ..." Perhaps just rework the
-paragraph to read:
-
-	There may be multiple aggregators per package. Scan all the
-	telemetry_region structures ...
-
-> 
-> Completed structure for each event group looks like this:
-> 
->              +---------------------+---------------------+
-> pkginfo** -->|   pkginfo[0]         |    pkginfo[1]      |
-
-since there are multiple arrays in this depiction it can be made
-specific with a:
-	       | pkginfo[package ID 0]  | pkginfo[package ID 1] |
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="BP0hOY7hk3PGD1j7"
+Content-Disposition: inline
+In-Reply-To: <20250704190724.1159416-3-andrealmeid@igalia.com>
 
 
->              +---------------------+---------------------+
->                         |                     |
->                         v                     v
->                 +----------------+    +----------------+
->                 |struct mmio_info|    |struct mmio_info|
->                 +----------------+    +----------------+
->                 |num_regions = N |    |num_regions = N |
->                 |  addrs[0]      |    |  addrs[0]      |
->                 |  addrs[1]      |    |  addrs[1]      |
->                 |    ...         |    |    ...         |
->                 |  addrs[N-1]    |    |  addrs[N-1]    |
->                 +----------------+    +----------------+
-> 
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> ---
->  arch/x86/kernel/cpu/resctrl/intel_aet.c | 64 +++++++++++++++++++++++++
->  1 file changed, 64 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/cpu/resctrl/intel_aet.c b/arch/x86/kernel/cpu/resctrl/intel_aet.c
-> index 8d67ed709a74..c770039b2525 100644
-> --- a/arch/x86/kernel/cpu/resctrl/intel_aet.c
-> +++ b/arch/x86/kernel/cpu/resctrl/intel_aet.c
-> @@ -19,17 +19,32 @@
->  
->  #include "internal.h"
->  
-> +/**
-> + * struct mmio_info - MMIO address information for one event group of a package.
-> + * @num_regions:	Number of telemetry regions on this package.
-> + * @addrs:		Array of MMIO addresses, one per telemetry region on this package.
-> + *
-> + * Provides convenient access to all MMIO addresses of one event group
-> + * for one package. Used when reading event data on a package.
-> + */
-> +struct mmio_info {
+--BP0hOY7hk3PGD1j7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This struct name is a bit generic. What do you think of "pkg_mmio_info" to
-at least help describe it is per package?
+On Fri, Jul 04, 2025 at 04:07:24PM -0300, Andr=C3=A9 Almeida wrote:
+> Remove the repetitive wording at the end of "Task information" section.
+>=20
 
-> +	int		num_regions;
-> +	void __iomem	*addrs[] __counted_by(num_regions);
-> +};
-> +
->  /**
->   * struct event_group - All information about a group of telemetry events.
->   * @pfg:		Points to the aggregated telemetry space information
->   *			within the OOBMSM driver that contains data for all
->   *			telemetry regions.
-> + * @pkginfo:		Per-package MMIO addresses of telemetry regions belonging to this group.
->   * @guid:		Unique number per XML description file.
->   * @mmio_size:		Number of bytes of MMIO registers for this group.
->   */
->  struct event_group {
->  	/* Data fields for additional structures to manage this group. */
->  	struct pmt_feature_group	*pfg;
-> +	struct mmio_info		**pkginfo;
->  
->  	/* Remaining fields initialized from XML file. */
->  	u32				guid;
-> @@ -81,6 +96,20 @@ static bool skip_this_region(struct telemetry_region *tr, struct event_group *e)
->  	return false;
->  }
->  
-> +static void free_mmio_info(struct mmio_info **mmi)
-> +{
-> +	int num_pkgs = topology_max_packages();
-> +
-> +	if (!mmi)
-> +		return;
-> +
-> +	for (int i = 0; i < num_pkgs; i++)
-> +		kfree(mmi[i]);
-> +	kfree(mmi);
-> +}
-> +
-> +DEFINE_FREE(mmio_info, struct mmio_info **, free_mmio_info(_T))
-> +
->  /*
->   * Configure events from one pmt_feature_group.
->   * 1) Count how many per package.
+Looks good, thanks!
 
-(no update to the function comments)
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+=20
+--=20
+An old man doll... just what I always wanted! - Clara
 
-> @@ -88,8 +117,10 @@ static bool skip_this_region(struct telemetry_region *tr, struct event_group *e)
->   */
->  static int configure_events(struct event_group *e, struct pmt_feature_group *p)
->  {
-> +	struct mmio_info **pkginfo __free(mmio_info) = NULL;
->  	int *pkgcounts __free(kfree) = NULL;
->  	struct telemetry_region *tr;
-> +	struct mmio_info *mmi;
->  	int num_pkgs;
->  
->  	num_pkgs = topology_max_packages();
-> @@ -99,6 +130,12 @@ static int configure_events(struct event_group *e, struct pmt_feature_group *p)
->  		tr = &p->regions[i];
->  		if (skip_this_region(tr, e))
->  			continue;
-> +
-> +		if (e->pkginfo) {
-> +			pr_warn_once("Duplicate telemetry information for guid 0x%x\n", e->guid);
-> +			return -EINVAL;
-> +		}
+--BP0hOY7hk3PGD1j7
+Content-Type: application/pgp-signature; name=signature.asc
 
-It does not seem necessary to repeat this check for every telemetry region. Could this check
-be moved to start of function to avoid parsing struct pmt_feature_group entirely?
+-----BEGIN PGP SIGNATURE-----
 
-> +
->  		if (!pkgcounts) {
->  			pkgcounts = kcalloc(num_pkgs, sizeof(*pkgcounts), GFP_KERNEL);
->  			if (!pkgcounts)
-> @@ -110,6 +147,32 @@ static int configure_events(struct event_group *e, struct pmt_feature_group *p)
->  	if (!pkgcounts)
->  		return -ENODEV;
->  
-> +	/* Allocate array for per-package struct mmio_info data */
-> +	pkginfo = kcalloc(num_pkgs, sizeof(*pkginfo), GFP_KERNEL);
-> +	if (!pkginfo)
-> +		return -ENOMEM;
-> +
-> +	/*
-> +	 * Allocate per-package mmio_info structures and initialize
-> +	 * count of telemetry_regions in each one.
-> +	 */
-> +	for (int i = 0; i < num_pkgs; i++) {
-> +		pkginfo[i] = kzalloc(struct_size(pkginfo[i], addrs, pkgcounts[i]), GFP_KERNEL);
-> +		if (!pkginfo[i])
-> +			return -ENOMEM;
-> +		pkginfo[i]->num_regions = pkgcounts[i];
-> +	}
-> +
-> +	/* Save MMIO address(es) for each telemetry region in per-package structures */
-> +	for (int i = 0; i < p->count; i++) {
-> +		tr = &p->regions[i];
-> +		if (skip_this_region(tr, e))
-> +			continue;
-> +		mmi = pkginfo[tr->plat_info.package_id];
-> +		mmi->addrs[--pkgcounts[tr->plat_info.package_id]] = tr->addr;
-> +	}
-> +	e->pkginfo = no_free_ptr(pkginfo);
-> +
->  	return 0;
->  }
->  
-> @@ -169,5 +232,6 @@ void __exit intel_aet_exit(void)
->  			intel_pmt_put_feature_group((*peg)->pfg);
->  			(*peg)->pfg = NULL;
->  		}
-> +		free_mmio_info((*peg)->pkginfo);
->  	}
->  }
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaG3WSwAKCRD2uYlJVVFO
+o9jIAP0d1DLbaozD7zuUrBvyw1KGHqGkDsCNoDIDdihdmWcChwD/dY1+06nHTlr2
+5HGf/WRMm48Oz8YYzpiq9c8wFT7zpQE=
+=qpdP
+-----END PGP SIGNATURE-----
 
-Reinette
+--BP0hOY7hk3PGD1j7--
 
