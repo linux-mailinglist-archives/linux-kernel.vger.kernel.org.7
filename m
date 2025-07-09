@@ -1,86 +1,85 @@
-Return-Path: <linux-kernel+bounces-724656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC276AFF57F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:47:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6D24AFF582
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AD924E22D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:46:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8EE74829DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A06237A3B;
-	Wed,  9 Jul 2025 23:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399BF23B637;
+	Wed,  9 Jul 2025 23:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GbnUUvkh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eWacwsk2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE951B3925;
-	Wed,  9 Jul 2025 23:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938E879DA;
+	Wed,  9 Jul 2025 23:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752104827; cv=none; b=fXcxyp8lXERas4dRbbKq8tq1HEtGnneb3AriJrOCE2NzLw5jnUEYdSjktNCUVIdXMu5wpqdYrABPJH3+YKyAo2BNnSx1lOYs5WdXy3ZlzMNdjAMGEBO8LGxzOIWsHIq0VP/nrEAMWwXuGpF1Mga7m3JrODuZl+ZrJTRvNHQegJw=
+	t=1752105081; cv=none; b=TJgHcROwku/J9FWnlPjW3ULVT+ZK7D+UotwPziwyoh9uCFKHvA//5CRl+YzmodiKRH9iOEYW/J+YsjFLKIIUMsS/xg5bSmGfrPJFr1q0GmGqNc9Y3buz6m5+AbVnPhV8XTHe5oAzlhZ52i3qPT4Hg0urzBBVJmCMirfgNuQ0K2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752104827; c=relaxed/simple;
-	bh=eIq0OFvNWB/Tp6MVf4iCCKg2VhT8N+pVSrssWB5jy4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NuapcQ+KHQ3ZOlM7b5VbzsM6zfpsomAHpecZJDvkoQYOxGc5z2ub4PZPCJyCfpIAS+qvLJ5kPe0HOSOAeCdt+swl3oW47vMiJaRNcJSVU6+kFLy+rgQW1zZwiJnq6ikIeQpWSYEizY30STvugW6LjX8/iJEThyuZQCtOFsu4s30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GbnUUvkh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8C2FC4CEEF;
-	Wed,  9 Jul 2025 23:47:04 +0000 (UTC)
+	s=arc-20240116; t=1752105081; c=relaxed/simple;
+	bh=iHHDdi61luMjOOB6cLZIe2NqS6hgH4l1r7NpDne4SJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kAMT4CJ1YXaGHCCT9+eB1ubHAfX9k1n0zgl4hzhiy9jiMG/waO2ABhyO512mln6wBJYPPPHOcWVKtyDBWgQpTfuYYQ0UrMviZyAMKVjoHSH5M75D6c6aw48v8WjBkq2kK5IHLYWEEEFJWwUt9KdpYg/dV9QoHEyzGi6ISagXIWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eWacwsk2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E4F3C4CEEF;
+	Wed,  9 Jul 2025 23:51:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752104825;
-	bh=eIq0OFvNWB/Tp6MVf4iCCKg2VhT8N+pVSrssWB5jy4Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GbnUUvkh4ZDK4rJsFQGmlv9MD8Jtm9fcj6oNCAbzyHmId1DCIWL5zflGe1pzO3lBs
-	 o6WdTgUP7UfJugJvr4maBCRN3awzayhv+EbPi3b7HLGUVWTP9zHFdEN9yalBvuQbej
-	 nItQZ98NJVnLIOzXuk4SnrlliyFLSxta2Fst5ex0xBRjYWgl93RkMO5GVibfibLLxQ
-	 JuhxXOvyQ9yLBrC5ioQOttDZt0eb3VmAEWV7Bs55kjG6ybp6Pp8VI3B3N2Wd4koU3Y
-	 y1XW+6G5ABvmHT+JHTw7VeCpMZwwpeSdJSE2QVJyngmBWuntYT8l7lt3gVnDWpYn+H
-	 0m1X5cgVqJeaw==
-Date: Wed, 9 Jul 2025 16:47:04 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Neill Kapron <nkapron@google.com>
-Cc: netdev@vger.kernel.org, kernel-team@android.com, cmllamas@google.com,
- jstultz@google.com, Nick Hawkins <nick.hawkins@hpe.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Kuniyuki Iwashima
- <kuniyu@google.com>, Al Viro <viro@zeniv.linux.org.uk>, Dmitry Safonov
- <0x7f454c46@gmail.com>, Anastasia Kovaleva <a.kovaleva@yadro.com>, Jinjie
- Ruan <ruanjinjie@huawei.com>, Siddh Raman Pant
- <siddh.raman.pant@oracle.com>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC net] netlink: lock nl_cb_mutex in netlink_release
-Message-ID: <20250709164704.4b0fcfff@kernel.org>
-In-Reply-To: <20250708230513.42922-1-nkapron@google.com>
-References: <20250708230513.42922-1-nkapron@google.com>
+	s=k20201202; t=1752105081;
+	bh=iHHDdi61luMjOOB6cLZIe2NqS6hgH4l1r7NpDne4SJM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eWacwsk2dDys5dUjq5eKhC6vFLRjjzMaKYIRbg9sezsrHgTqzkp9ItcMIJU5H+EN4
+	 EBeK0oVZGFl3JjKF4ktrsP5OVQz5KZjXDdlw1a1i7wFakVLu9cchydNeEV10/BVzdh
+	 8LnGZMottz+MOntboVjxv2QH5IzEPZK7MRuBNizGuG/xj/PIGObD/HMoxFqmZLoeqi
+	 TfFIksllkSLTBdPW1Oq4gX2V+lJ23Rg4EutgHkTwNIPEWiTG0SwMWzVjge5LEBJ9vH
+	 0tTj0c/oegwXKGz2Fk2B73+CZtCxWekDDlNCYYcnZpOhGC+QSQrniTMN2cmsDGl18d
+	 IruP939/zBCww==
+Date: Wed, 9 Jul 2025 23:51:19 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	mhklinux@outlook.com, tglx@linutronix.de, bhelgaas@google.com,
+	romank@linux.microsoft.com, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	catalin.marinas@arm.com, will@kernel.org, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	jinankjain@linux.microsoft.com, skinsburskii@linux.microsoft.com,
+	mrathor@linux.microsoft.com, x86@kernel.org
+Subject: Re: [PATCH v2 0/6] Nested virtualization fixes for root partition
+Message-ID: <aG8Ad0yeifapux5D@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+References: <1751582677-30930-1-git-send-email-nunodasneves@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1751582677-30930-1-git-send-email-nunodasneves@linux.microsoft.com>
 
-On Tue,  8 Jul 2025 23:04:52 +0000 Neill Kapron wrote:
-> It is at this point after the netlink_dump() checks for cb_running that
-> netlink_release() is called, which tears everything down. While the change
-> in [2] clears cb_running, it does so without holding the lock. This causes
-> the NULL pointer dereference in netlink_dump().
+On Thu, Jul 03, 2025 at 03:44:31PM -0700, Nuno Das Neves wrote:
+[...]
+>   PCI: hv: Don't load the driver for baremetal root partition
+>   x86/hyperv: Fix usage of cpu_online_mask to get valid cpu
+>   x86/hyperv: Clean up hv_map/unmap_interrupt() return values
+>   PCI: hv: Use the correct hypercall for unmasking interrupts on nested
+> 
 
-Closing a socket while it's being read is pretty unlikely for real
-life processes. I don't think its even possible, but I'm not a VFS
-expert.
+These are applied to hyperv-fixes.
 
-AFAICT the crash is on:
+>   Drivers: hv: Use nested hypercall for post message and signal event
+>   x86: hyperv: Expose hv_map_msi_interrupt function
 
-	if (dev->dev.parent &&
-	    nla_put_string(skb, IFLA_PARENT_DEV_NAME,
-			   dev_name(dev->dev.parent)))
-		goto nla_put_failure;
+These have pending comments so they are not yet applied.
 
-So my first suspicion would be dev.parent getting broken 
-under our feet for the "special" device you're dealing with..
+Wei
 
