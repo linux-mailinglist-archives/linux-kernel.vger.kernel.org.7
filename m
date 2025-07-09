@@ -1,104 +1,104 @@
-Return-Path: <linux-kernel+bounces-723717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 820D3AFEA42
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:32:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6CC6AFEA44
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6549F17E712
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:31:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1F291886BEF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E232DD61E;
-	Wed,  9 Jul 2025 13:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEFA2E0411;
+	Wed,  9 Jul 2025 13:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fXTk1+Cz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="WJgaDXMY"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F659292B33;
-	Wed,  9 Jul 2025 13:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF6128A1C6;
+	Wed,  9 Jul 2025 13:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752067874; cv=none; b=WYkVJ43ktiaUBVkc8BCy/HT/fOIqRdqkOklC79qt3FfJlPOtvc3d0ONREJp5JuZCz2juhLGEFuvRQaTRlT4m6TSFDMN8t7cec9NbNCQQTI3LAqZsanxlGMQpUeqqHBmzUih2w8yJAPPXHAxp/t4sdRIBOx3ov02uHJ7GPL/li7g=
+	t=1752067953; cv=none; b=YROG9iqSlEdk3NSbUddVixfLmqekiG++CzuAsQ+fjsFDjPofCzoanaI7YcY8XFaLHQ96ZaHPkKmTquF+tDlu6vcbXu5Dxn5792LDLfZIq//MRCs61GaRwl09clXEO6X6k/Ncx7JzwtGJLWvR2YZHysEmxrZU88fXoz8pm75mYX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752067874; c=relaxed/simple;
-	bh=UHDW8ZDAfnhhpmI6clemttOZzoKRv6zCBvWZLFReG9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l+At0QDYH7WmDwx+dRM2DeW6qLt9AP/wqJYfq/wMizXbdsNFXEgjip6VuqnXOCqtbn1PiRb+q7wRZCd0WGT7RYpy3N3RDvDdQ6axREteNk/G9ELYUIg0lO863ya2+tZ/0AvrK3uoJf/hLgpfgLLzqnrsVmezLYrt9HfznUE77mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fXTk1+Cz; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752067872; x=1783603872;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UHDW8ZDAfnhhpmI6clemttOZzoKRv6zCBvWZLFReG9w=;
-  b=fXTk1+CzELerQcxISZjmw9VdrVyYKW1ENN4E1nfF2TphhZvzn/MLkGvo
-   SE4OKhO5MModWSfx3XhLygxWi+rU1Dyu1SgglgXsQRyjL9EB5/oiv/lVm
-   rb4h5XEgnwTzmPWLFUhD4JoXH9Jxp/hYh62hcpi/wTBxaC9k2h6S9LnIJ
-   uPLvmtn3XMNKwChYWqgfLlu2rnHAr6HAlxsYWNJPj/snngw1dnp53566o
-   tGdgSbduuxSgfJlKlaRMk3tT/PsVO7F/HZa8+hfRdRF70bEfIGNiYX1qy
-   /DowLT7BPlUOamj5EqSK2UOh3C1jHiWONtGpNeh6s0EHMmsVX1UdqmH+p
-   w==;
-X-CSE-ConnectionGUID: Ak4M1pvMTgaLPEQduabt+Q==
-X-CSE-MsgGUID: 1JvCqHHtSSWfl7QES0qxmg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="65026901"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="65026901"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 06:31:12 -0700
-X-CSE-ConnectionGUID: JF5YtQFATR29zDJFKi8G9Q==
-X-CSE-MsgGUID: u7OG3qiySYGEGbvwpdkJ/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="156344642"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa008.fm.intel.com with ESMTP; 09 Jul 2025 06:31:08 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id EEE521B7; Wed, 09 Jul 2025 16:31:06 +0300 (EEST)
-Date: Wed, 9 Jul 2025 16:31:06 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Sean Christopherson <seanjc@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev
-Subject: Re: [PATCH 1/3] MAINTAINERS: Update the file list in the TDX entry.
-Message-ID: <zxgwojg556ni4ap7wago27hsjlawvjfdsgya6toxp5jrricffl@aploj7ygic45>
-References: <20250708101922.50560-1-kirill.shutemov@linux.intel.com>
- <20250708101922.50560-2-kirill.shutemov@linux.intel.com>
- <4068a586-532f-4c87-bcd3-c345cbf168c0@intel.com>
- <ebdba9aa-ce65-44c9-97f4-cae74a4db586@intel.com>
+	s=arc-20240116; t=1752067953; c=relaxed/simple;
+	bh=zVhc0zsnke3qJv818So+I9Sh2xStVwtQltXwS6FbNqI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BkRG4BtaKCMSGixgHLjhA23XILAPO2zhgLDOziGTOmkQ4MYlsiXXZ652eWmyvkdPIuSwEY6ULo+uSmFqSwrB9jUJ2Ni2+vU93sBIEIBjJ+CExCjnlWk4q62Asr3CsMhw/5KsT5yJtyNAGKxEVHU/2ZD7Q+18Z/C7pf/xN9LhF9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=WJgaDXMY; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 50DA5A055C;
+	Wed,  9 Jul 2025 15:32:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=Ss5jOBvOQM8AFGqBm1x/
+	NC9Iw7pGPxkamTpW9hfvWwU=; b=WJgaDXMYGFefDNLMOmELMWB61BbXyl3QGz3v
+	zv84t0u7uUkSqFHtb9Vxxzc2oFzat5WeoSpWFSczp70B/JHSq9DNrCt6tWydC+mD
+	mcpuXqMkDTqFBsHECnGgxSqcZ/oLfLiXH2RPuxbAEyQNp7vHs73tIpbiXdTFZOf4
+	jSM2yBHz7tg2Q6QE6/LrL4sjIHm4nzfuXOL+FWFhORur+QIyRZkeLNTsqXSuutbq
+	7dj2mVmB9OcdLe35c9z5FHAQRQ9HRE/fqPq0eNTJiLDuCfEdl3hIt27R52v7c12E
+	BPkx1Y+xn5ACuAlti5YgPl+4HlNK8ypkHBk68fFz6cisRJIQ9CkOGGsiGAZxV+1h
+	aD4Hx2FG52cHek96kRwfD8bZTAhItyOT8/cd9IORcKpIMPUQ799yvtSefaFZBbJW
+	q5PoF9yaf2kmvPjUQYTtXsdMSsy+FMRuf7zhsOtEKsQ0qoBJkRH3VujRZr69Myh2
+	ustjr0C8VA15rlGZYlnv1gLx4ojFCk+5dl/pZCGH+b00Y5PE5MRUf1dqeO5xmorY
+	3/PoSqh1b/vt1lgl4W/dcS8hSV0DFYPlIVKa31Mr1PiahGjmMsffS7bOf4rmtsz5
+	Wzt6hIAt2OGnXSFQzv40VMv+t0zLmVpRb6tMIJpxgIZJ0wfN/+UBsHhav/I7f+jA
+	3Wn39bE=
+From: Buday Csaba <buday.csaba@prolan.hu>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Buday Csaba <buday.csaba@prolan.hu>, =?UTF-8?q?Cs=C3=B3k=C3=A1s=20Bence?=
+	<csokas.bence@prolan.hu>, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit
+	<hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH 1/3] net: phy: smsc: add proper reset flags for LAN8710A
+Date: Wed, 9 Jul 2025 15:32:20 +0200
+Message-ID: <20250709133222.48802-2-buday.csaba@prolan.hu>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250709133222.48802-1-buday.csaba@prolan.hu>
+References: <20250709133222.48802-1-buday.csaba@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ebdba9aa-ce65-44c9-97f4-cae74a4db586@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1752067947;VERSION=7994;MC=1431488400;ID=104607;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2998FD515E657164
 
-On Tue, Jul 08, 2025 at 09:26:21PM -0700, Dave Hansen wrote:
-> On 7/8/25 20:31, Xiaoyao Li wrote:
-> > On 7/8/2025 6:19 PM, Kirill A. Shutemov wrote:
-> >> Include files that were previously missed in the TDX entry file list.
-> >> It also includes the recently added KVM enabling.
-> > 
-> > Side topic:
-> > 
-> > Could we add kvm maillist to the "L:" ?
-> 
-> Sure, but send another patch please.
+According to the LAN8710A datasheet (Rev. B, section 3.8.5.1), a hardware
+reset is required after power-on, and the reference clock (REF_CLK) must be
+established before asserting reset.
 
-Xiaoyao, do you want to send a patch, or should I?
+Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
+Cc: Csókás Bence <csokas.bence@prolan.hu>
+---
+ drivers/net/phy/smsc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/net/phy/smsc.c b/drivers/net/phy/smsc.c
+index 150aea7c9c367..357e16aa4a736 100644
+--- a/drivers/net/phy/smsc.c
++++ b/drivers/net/phy/smsc.c
+@@ -737,6 +737,7 @@ static struct phy_driver smsc_phy_driver[] = {
+ 
+ 	/* PHY_BASIC_FEATURES */
+ 
++	.flags		= PHY_RST_AFTER_CLK_EN,
+ 	.probe		= smsc_phy_probe,
+ 
+ 	/* basic functions */
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.39.5
+
+
 
