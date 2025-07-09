@@ -1,77 +1,98 @@
-Return-Path: <linux-kernel+bounces-724616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EAC8AFF4EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:46:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E573AFF4EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93E843AA0F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:45:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90D7C3A8938
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDAB212B2B;
-	Wed,  9 Jul 2025 22:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gq9eMn9Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA57191484;
+	Wed,  9 Jul 2025 22:46:32 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7598B72610;
-	Wed,  9 Jul 2025 22:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58475944F
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 22:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752101155; cv=none; b=RxnWFMVBWQ5QaSjKgHALWNrz43mLS7UzwL4oTe38IIC0GAZ+qbHAgYl5pZ8iRpJpBcYOnNSGQ9r/g8D4MwrpYkunfI684/cb8Otx5/9SHopmjjVyYghp7x9HeinwyXG/qn88X088+NABgR+1Z3WN/nwiKEvm4vil3ej0aysteIo=
+	t=1752101192; cv=none; b=TS3hMu6uZL/Cp//HJ8Zao3CQUGOxiY8kricGjzElOCCwKAUPkrxFAt6XnDWfyxHcQWT1KuZsHPCtf2UYNyYA8qV3Q4inF4f3wrrQdSQddvh0+sk7ZJ02qDzRXM9sDLerX6svTUi3iHEhUdTPVXhB9lLm72Jj1PJmwf9aN0uJL6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752101155; c=relaxed/simple;
-	bh=GrAeSpsc9kqclAfShSt30hKBE8+ntB6SvXTTc6+lDYQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FLNrJtCzO7Ko487dpKX5XDDE/Ua/++/cfoStj/7Qv2zOnHzcU1eawcncygUCo33SUfDrQUfKO1+abirtSqSdkzOC5zEhjtSLMQhhyOJeO2mJCNd6nbncVkCfwyJwfYaaWpJlpGxtwAJt28uxoEJYv2D5BrSBP3KYUj6oWa+9VpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gq9eMn9Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3059C4CEEF;
-	Wed,  9 Jul 2025 22:45:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752101155;
-	bh=GrAeSpsc9kqclAfShSt30hKBE8+ntB6SvXTTc6+lDYQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gq9eMn9Z3kXG3KGcUPp3wCj5rpPRBjcFcngOKHc1l4IaD1S0vPrkvS+1ClsMhKR6V
-	 aoRg5vw0ULQxm9VPibb7qh/AgRSNePryFxmtJnHMXHfkpc1/hVts1MBTSonFGYjOOK
-	 7xb+TtzrUI2qyIt0Cj/qY+9RjAj52ygYjtCZWyq5M+BsUhjXvJ4sB+7g2XAoalyiXP
-	 D2Ng+DyOlAHduPaNpSN/etczu6L/sbj5SSJCuBvqi494DrLdi5+YAm2hDVDXgE5x3l
-	 T2+3oMfVSpcBoI+xHay/jDrsSWwVXfKTlK8d/8GTWG5GgfbvtIGcujehzK5G3LGeZD
-	 3hzh2pXnMEHUQ==
-Date: Wed, 9 Jul 2025 22:45:53 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Naman Jain <namjain@linux.microsoft.com>,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Shradha Gupta <shradhagupta@microsoft.com>
-Subject: Re: [PATCH] hv/hv_kvp_daemon: Prevent similar logs in
- kvp_key_add_or_modify()
-Message-ID: <aG7xIUYTMvq9McCv@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
-References: <1750310761-13302-1-git-send-email-shradhagupta@linux.microsoft.com>
+	s=arc-20240116; t=1752101192; c=relaxed/simple;
+	bh=pZi8pi90uc8wi6TyC83UlDQE78r6g14/m4gdNOHaUbc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nAKQQ0iXANuFtYvKv8vY3yd/BpGT2GT15mGc4TtsZMHjFknKXrA+hyxwDY0RO8RrqEy1hYlRzxu664ngMmU+5h9Icc8M0y1E8w7fGv+SCWhVum4wcg7Vr+0WMokxyrwS8PuYNnnSnpsYrqXQVIZc6M8hq69Sk6+wDklJqsAhUps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf17.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id 77118C0203;
+	Wed,  9 Jul 2025 22:46:27 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf17.hostedemail.com (Postfix) with ESMTPA id 2A22B1B;
+	Wed,  9 Jul 2025 22:46:25 +0000 (UTC)
+Date: Wed, 9 Jul 2025 18:46:29 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
+ Kuniyuki Iwashima <kuniyu@amazon.com>, Mateusz Guzik <mjguzik@gmail.com>,
+ Petr Mladek <pmladek@suse.com>, John Ogness <john.ogness@linutronix.de>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>, Jon Pan-Doh
+ <pandoh@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Karolina Stolarek
+ <karolina.stolarek@oracle.com>
+Subject: Re: [PATCH v6 1/3] lib: Add trivial kunit test for ratelimit
+Message-ID: <20250709184629.563f0cab@gandalf.local.home>
+In-Reply-To: <20250709154152.8d2a3de8894b80e4d85d1692@linux-foundation.org>
+References: <d1007957-97ff-4f6f-92ac-606f68c65dfa@paulmck-laptop>
+	<20250709180335.1716384-1-paulmck@kernel.org>
+	<20250709154152.8d2a3de8894b80e4d85d1692@linux-foundation.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1750310761-13302-1-git-send-email-shradhagupta@linux.microsoft.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 2A22B1B
+X-Stat-Signature: irmu8sjxb36pmyzf4to4iwgmfwt469cw
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+EKxa8G6L/uT54ZTcXzhpVDxUd73R4Ols=
+X-HE-Tag: 1752101185-70261
+X-HE-Meta: U2FsdGVkX1+Ox6Lduli2zLwUfot5WzhCSIjHvTWfXEf4TiUeEl8TGqt8DmO+HTj9VOoPNbsQVzOvEMSfVlQ0RXWlh06D5upbs2fHo3B75Gme1c8HtdkwraSva169V7RjQ1aQwj/KmFCTC5hFWqxJGa/orOq/d6MBIrt7jwB2f9mOQj+dVbikgFKCDoq6zdsm7x1wN0duCpvb5NbNnWJXinZ95fnApuf3ORobjJ6NPE5E0FNkfhjAQynb9h1vfGwv/wSz+a59nSSWSPXVgSVdViYHgo3SK7L+tY098wBtvC7KtPwCWMaqW2FvBy+WczgTizsVxyi8MeSMGxR6Potl5r2f0ySoohpynS9Q8rB1XxQITbUx+xFRL4TrGVAICox7YG6mTSO7tSdsXsa/KmAsc20HP54YPWiRPetBOcgLTXlg0La1Tvag6MGDa6vHeupq6qmIw7if+q4Ezg0L3+RPBfrIwmXYppRqGTKNMMfeI/c=
 
-On Wed, Jun 18, 2025 at 10:26:01PM -0700, Shradha Gupta wrote:
-> When hv_kvp_daemon is started in debug mode, in function
-> kvp_key_add_or_modify() too many similar logs are logged for
-> key/value being too long.
-> 
-> Restructured the logs to prevent this extra logging
-> 
-> Suggested-by: Olaf Hering <olaf@aepfle.de>
-> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+On Wed, 9 Jul 2025 15:41:52 -0700
+Andrew Morton <akpm@linux-foundation.org> wrote:
 
-Applied to hyperv-next.
+> On Wed,  9 Jul 2025 11:03:33 -0700 "Paul E. McKenney" <paulmck@kernel.org> wrote:
+> 
+> > Add a simple single-threaded smoke test for lib/ratelimit.c
+> > 
+> > To run on x86:
+> > 
+> > 	make ARCH=x86_64 mrproper
+> > 	./tools/testing/kunit/kunit.py run --arch x86_64 --kconfig_add CONFIG_RATELIMIT_KUNIT_TEST=y --kconfig_add CONFIG_SMP=y lib_ratelimit
+> > 
+> > This will fail on old ___ratelimit(), and subsequent patches provide
+> > the fixes that are required.
+> > 
+> > [ paulmck:  Apply timeout and kunit feedback from Petr Mladek. ]  
+> 
+> The above line makes me suspect that this was paulmck tweaking someone
+> else's patch.  If the authorship correct on this one?
+
+Looks to me that Paul just took some advice from Petr and was just giving
+credit. Perhaps he could lose the "paulmck:" part?
+
+Perhaps:
+
+  Suggested-by: Petr Mladek <pmladek@suse.com> # for timeout and kunit feedback
+
+?
+
+-- Steve
 
