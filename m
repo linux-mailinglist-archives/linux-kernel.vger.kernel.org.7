@@ -1,116 +1,174 @@
-Return-Path: <linux-kernel+bounces-724055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC8E2AFEE0B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:49:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6941CAFEE0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8DCF48521E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:49:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45BAE7A6A7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BFE92E8E09;
-	Wed,  9 Jul 2025 15:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22472E92C6;
+	Wed,  9 Jul 2025 15:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cwuh3Xe6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="khNqZ8xT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBB52DA765;
-	Wed,  9 Jul 2025 15:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307D31C861E;
+	Wed,  9 Jul 2025 15:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752076183; cv=none; b=DAuW5/jYOThJnwQi5JIXimZBku2C3DDluKJniqK2+96NVcMKh43h/IuK0/4jzBi14lyXMDlY94dZ3OoXIMSEvpS8rjMmkbHm5a8gL19l4cB8uL0I6YtXR9Yhi+8+nuJpXCJQN1sfW7t/9PAuOZAxoSjNiuAMqTl3HAs1sceTS0U=
+	t=1752076207; cv=none; b=Dgu3xGi6jh1Agb/5moqHVp8ZG4W3s0PLWR0IuIKFXUoFou2x8y1NIcmbXeTH+n1cO/yH6eaotJeqy2XKq/HYDpl2KV3EpfVLRPLyDUnoQ2LdNEwPcSjZCDKDAvt5R8SGsblonI3J9wrxvBwGboLc6MhB2OYbJubyYMUEsD4C9j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752076183; c=relaxed/simple;
-	bh=4eG67VwdY6yryX9Oqb584knMPMQAKXI8QBnDkqUgg/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iUtTrm6kmRRlxvfYspfwYsHWgxwU8tybYT+fVpTt0FvdMoHbvTr8AYjFcndWzlz8JYX6d7mX0Y3NsdaF1NNBFZsvttr27y/6ijxp2USE343PrsGPdFRUh7OYLWUzNf1TF0RcCAAYMCwAtD3rYWpypSN+GEsspk26LraUiXpPpW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cwuh3Xe6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04AF3C4CEEF;
-	Wed,  9 Jul 2025 15:49:37 +0000 (UTC)
+	s=arc-20240116; t=1752076207; c=relaxed/simple;
+	bh=WjK6a/OHmJ6yvQ1O4hsR8AA2PzVHS34PUkaDU5m9YRc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=G2x116aflenbbqOB3hMPGHlpU8mCqfWgwx25RdLX8x2NYut8hcHCgIsO2zKRkkfKo9M9jxzZBuzuhbH6Z64nwxMOSNqUPKyNP448Ij4A4WqOYUn7pvbbJBPCsUSqBJ0Q328pJzzjGAUQ247+3x68TMB/F/HCvVcDcMOyR8VgSzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=khNqZ8xT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93E5FC4CEEF;
+	Wed,  9 Jul 2025 15:50:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752076182;
-	bh=4eG67VwdY6yryX9Oqb584knMPMQAKXI8QBnDkqUgg/c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Cwuh3Xe61CXjMKNkToIZevUXQzpOfauMU3w1uzfo4otQHWOZURQipbRvGCdThUF2q
-	 ye+BL+7tfamDxzHaO7jA7S7avZDaaw7zxWQGdu2Z8nZlAR36pAQvgnpwX2PHuVDkcB
-	 RTej8EmaA/9GFzRVcJyLhsAyoDuOX4LVihX1tnt5GDO+qrq/9g3oVfa8sCehLBJ3rM
-	 CmHD+UvXKoqROd00XIWOvQBQI0LGobiTS8tdnG/z0v8vPpssCsDOGyQLGffKl/w3Bz
-	 RmUVNmpSsAnRnXBKGECv+Z3/pcxdtMzheiG99XWQM6obd4Z5qxcVxhBd+5MTTc0WQx
-	 v3451WtbhxAmw==
-Date: Wed, 9 Jul 2025 16:49:33 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Uwe =?UTF-8?B?S2xlaW5l?=
- =?UTF-8?B?LUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>,
- linux-iio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/12] iio: dac: Remove redundant
- pm_runtime_mark_last_busy() calls
-Message-ID: <20250709164933.47913e22@jic23-huawei>
-In-Reply-To: <aG4sxEtXRw982Z9q@smile.fi.intel.com>
-References: <20250708231144.971170-1-sakari.ailus@linux.intel.com>
-	<20250708231152.971550-1-sakari.ailus@linux.intel.com>
-	<aG4sxEtXRw982Z9q@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=k20201202; t=1752076206;
+	bh=WjK6a/OHmJ6yvQ1O4hsR8AA2PzVHS34PUkaDU5m9YRc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=khNqZ8xTtDNK0sxRh61VvDlqTs3CqsnmJe/+C2cxmrr1blGmdYKCPGGvPXeJHqtfk
+	 YvP7z7nOn5ExlCxbzpIM216W+riK+sWsMjnCGIbw26H7TgOTECQNwQymsIzKC900Ps
+	 NwoNQ4noSMGolzQvTB5QxucaV8vx6Bf83+S+/zu5bb96pmLf/Cr/qz7EKbPPRA2gew
+	 QoDHgxnqEY3iELWhBOfMJMhWcaAP401Y1XLszkFDIjC1Cua0G3KfrwaCv8rD6iheEG
+	 9vqUvgWLMa/Ga3ksiWqMuWB0VmO2Xe4ENm+Fz3tHdnYy8Hqh01uz/e6WkQ3VS2UAsZ
+	 HE5MKXAjvBCwQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+Cc: "Boqun Feng" <boqun.feng@gmail.com>,  "Miguel Ojeda" <ojeda@kernel.org>,
+  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
+  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin"
+ <lossin@kernel.org>,  "Trevor Gross" <tmgross@umich.edu>,  "Danilo
+ Krummrich" <dakr@kernel.org>,  "Jens Axboe" <axboe@kernel.dk>,
+  <linux-block@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 03/14] rust: str: introduce `NullBorrowFormatter`
+In-Reply-To: <aG5tObucycBg9dP1@google.com> (Alice Ryhl's message of "Wed, 09
+	Jul 2025 13:23:05 +0000")
+References: <20250708-rnull-up-v6-16-v2-0-ab93c0ff429b@kernel.org>
+	<20250708-rnull-up-v6-16-v2-3-ab93c0ff429b@kernel.org>
+	<kpVk60lBMPJ_b4glgS0w-BfbIjN1cMCDSKDoM0RAB4p1Bg1BNfIdA4YRuOu70BbSZjlserkd8EJDwy0vVmR7yQ==@protonmail.internalid>
+	<aG5tObucycBg9dP1@google.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Wed, 09 Jul 2025 17:49:57 +0200
+Message-ID: <87qzypjrdm.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Wed, 9 Jul 2025 11:48:04 +0300
-Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+"Alice Ryhl" <aliceryhl@google.com> writes:
 
-> On Wed, Jul 09, 2025 at 02:11:52AM +0300, Sakari Ailus wrote:
-> > pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> > pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> > to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> > pm_runtime_mark_last_busy().  
-> 
-> ...
-> 
-> > -	if (!enable) {
-> > -		pm_runtime_mark_last_busy(dev);
-> > +	if (!enable)
-> >  		pm_runtime_put_autosuspend(dev);
-> > -	}
-> >  
-> >  	return 0;
-> >  
-> >  err_put_pm:
-> > -	if (enable) {
-> > -		pm_runtime_mark_last_busy(dev);
-> > +	if (enable)
-> >  		pm_runtime_put_autosuspend(dev);
-> > -	}
-> >  
-> >  	return ret;  
-> 
-> 
-> Hmm... Why not simply
-> 
-> 	ret = 0;
-It's already zero (as last call was a regmap_update_bits() return value ) so even easier.
-However, switch if (ret < 0) to if (ret) for that regmap call
-to make that more obvious.
+> On Tue, Jul 08, 2025 at 09:44:58PM +0200, Andreas Hindborg wrote:
+>> Add `NullBorrowFormatter`, a formatter that writes a null terminated string
+>> to an array or slice buffer. Because this type needs to manage the trailing
+>> null marker, the existing formatters cannot be used to implement this type.
+>>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> ---
+>>  rust/kernel/str.rs | 59 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 59 insertions(+)
+>>
+>> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+>> index 78b2f95eb3171..05d79cf40c201 100644
+>> --- a/rust/kernel/str.rs
+>> +++ b/rust/kernel/str.rs
+>> @@ -860,6 +860,65 @@ fn deref_mut(&mut self) -> &mut Self::Target {
+>>      }
+>>  }
+>>
+>> +/// A mutable reference to a byte buffer where a string can be written into.
+>> +///
+>> +/// The buffer will be automatically null terminated after the last written character.
+>> +///
+>> +/// # Invariants
+>> +///
+>> +/// `buffer` is always null terminated.
+>> +pub(crate) struct NullBorrowFormatter<'a> {
+>> +    buffer: &'a mut [u8],
+>> +    pos: usize,
+>> +}
+>
+> Do you need `pos`? Often I see this kind of code subslice `buffer`
+> instead.
 
-> 
-> err_put_pm:
-> 	if (enable)
-> 		pm_runtime_put_autosuspend(dev);
-> 
-> 	return ret;
-> 
-> instead of the duplication?
-> 
+How would that work? Can I move the start index of `buffer` in some way
+without an unsafe block?
+
+>
+>> +impl<'a> NullBorrowFormatter<'a> {
+>> +    /// Create a new [`Self`] instance.
+>> +    pub(crate) fn new(buffer: &'a mut [u8]) -> Result<NullBorrowFormatter<'a>> {
+>> +        *(buffer.first_mut().ok_or(EINVAL)?) = 0;
+>> +
+>> +        // INVARIANT: We null terminated the buffer above.
+>> +        Ok(Self { buffer, pos: 0 })
+>> +    }
+>
+> I would probably just use an Option for this constructor.
+
+OK.
+
+>
+>> +    #[expect(dead_code)]
+>> +    pub(crate) fn from_array<const N: usize>(
+>> +        a: &'a mut [crate::ffi::c_char; N],
+>> +    ) -> Result<NullBorrowFormatter<'a>> {
+>> +        Self::new(
+>> +            // SAFETY: the buffer of `a` is valid for read and write as `u8` for
+>> +            // at least `N` bytes.
+>> +            unsafe { core::slice::from_raw_parts_mut(a.as_mut_ptr().cast::<u8>(), N) },
+>> +        )
+>> +    }
+>
+> Arrays automatically coerce to slices, so I don't think this is
+> necessary. You can just call `new`.
+
+Nice!
+
+>
+>> +    /// Return the position of the write pointer in the underlying buffer.
+>> +    #[expect(dead_code)]
+>> +    pub(crate) fn pos(&self) -> usize {
+>> +        self.pos
+>> +    }
+>
+> You delete this function in one of the later patches, so it makes more
+> sense not to add it.
+
+Oops.
+
+>
+>> +}
+>> +
+>> +impl Write for NullBorrowFormatter<'_> {
+>> +    fn write_str(&mut self, s: &str) -> fmt::Result {
+>> +        let bytes = s.as_bytes();
+>> +        let len = bytes.len();
+>> +
+>> +        // We want space for a null terminator
+>> +        if self.pos + len > self.buffer.len() - 1 {
+>
+> Integer overflow?
+
+In the subtraction? `buffer.len()` is at least 1, because of the type invariant.
+
+Or do you mean I should do a checked add for `self.pos + len`?
+
+
+Best regards,
+Andreas Hindborg
+
 
 
