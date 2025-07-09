@@ -1,171 +1,110 @@
-Return-Path: <linux-kernel+bounces-723576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 658D1AFE8AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:18:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93418AFE8B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:19:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C2E9189A51D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:18:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDA4A16D293
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B890D2D9489;
-	Wed,  9 Jul 2025 12:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B592D9489;
+	Wed,  9 Jul 2025 12:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jlt2ga/y"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pUyU/sZS"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC2B21CC4D;
-	Wed,  9 Jul 2025 12:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9612A274B3B;
+	Wed,  9 Jul 2025 12:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752063495; cv=none; b=UskGtdwlsDxVFGfP7v1cojnho4vlojC78gqXYSqcO03xpfADKS00NjPnt7JN/g5P/ePS+8H1ICXCtv26R5MhngRRaa/mamh1BjibZDMK3razPTJ05AZUTDiFLMSVKAijYsvTyGzjY6grLo2c3QqIVGY6ffZF3VyVcNXmnXpcslU=
+	t=1752063554; cv=none; b=e04O2GVqgUYiLCZaiJyVvSs1PJRHrxdaJlX/ksXd0jj29Pg/p/5FZc82SIwv7lvQ3l5JRCyvCtT8otdFx5R4J0SiD9yCqqrPHL+rIK1yuN+vtsKItSPfejdeyNScS7mzU2xhVCZvyHu7yQlKVL1zQdfLg2uy1Rptflq5ZOM1qSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752063495; c=relaxed/simple;
-	bh=LTQb/WPBpiA1G5Eo6phjdBhMW+t9CY9M2pu2tV1a/C4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mEuEhzF7gzqjaXC532HXxKkj17CXmDIFnw9hoVPFO+pLgW6zNuz/KfSzzidSl57g97S9bzFeSjMaa2PIFYB2+9PdGhV9YpUKDL7TfS/RXIkDyOYs7zEiKRcdqMX9mGOq1wD9sUV6sf7Be2EahdcqhI3UyHqbQsT6aLGZUNZd1jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jlt2ga/y; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a5257748e1so4463599f8f.2;
-        Wed, 09 Jul 2025 05:18:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752063492; x=1752668292; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=X4q587aW3PXbLz1cLnzpc10VmfIDVk9l4eUo54HA5B8=;
-        b=jlt2ga/yMyG/NvoFVkVQzBvFK5uchqIPS9z4Su8r0qqsc6IrNLxG1BLljDV+MjczzM
-         zoauMgnS1i+Qs6q9bHZ1e2P37iJAuvX1yI/aWmafWS9nRe1miysNcW7EvMJ5H2NLknub
-         j8Z2DAY8wgnpMx8DvbK7Nrhv/66yJ//WR8lLv3d6ted+RX3u4w4Q1/OVnRu1yKoG7pLw
-         RyxiO9mkyoBojt1ZPGbHjBoaisLKLEgS8O6KZsUsyKntXMFCOIL5VfRacuxIQ+j3n6Z3
-         Z/psf6tTKUtzinS2gcvpsKzqeAsal7XzTBEfwTMNnq4+c8IP8pVWarwPBomGSkaTvPlG
-         GvOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752063492; x=1752668292;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X4q587aW3PXbLz1cLnzpc10VmfIDVk9l4eUo54HA5B8=;
-        b=REmn4MuTMoVIbY0t6nqfxovVlg0tNkmwHSMgJzoF1szuy+8ao/HigsPuVqKcaktmyO
-         U5x8o9AZyqzaGGXydShUDqWcilP1nUTNa+yZMMo1n/I0mt5vR+xTG8H72QUo7syaLk6/
-         E+ZsYtpcpBwqcohNCsvLzcHGAas1JYBK8OJmbv4ZBeaKIH6VOefC6IrePLcYi9sPVXoW
-         z37qJuOD1WYaAorWoKKLGnwIcTk/yjueXXJCZ3dmpgNfQL+JRkdaQiKf278UGi3cstsh
-         r5gtolrqg4Yi7jpYUw8v0a2GC5Kvb5jDViyXbpEGa4UPzIkTcfgK+a0j6gvJOt161isd
-         Lm+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUm1sM0lXLR7VARXEy2qyBwKfoSVFF8CppIrlrfstlsY5aqjnpxE0CSnjk3d0HvHNLiTL7wQfe/cLXCczZg@vger.kernel.org, AJvYcCVESuaaBWsDgLyrAWiTO3Lq+WDz/rTuwIsusU2Ke1zByOPzw/s51tg8pfBbrvcWq/lRcKnutUo6hZ5AlM0=@vger.kernel.org, AJvYcCVkkz3w/Hci7D+WuDrsBrBDULqjHZp3eWSNn35TELAlnf/bn1DWMhF8A4V2c9dRYnmehKtV2wAVehpb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg1/hdOz8IBdPpNlZVgYAlqO30ps+hw/wsPyspBfF4XynigWJy
-	OQj1csGkmwftuG1okqklYE84b726cPkbMIzqeJlThk3d2UZ+szdesDyDHeLLuA==
-X-Gm-Gg: ASbGnct7klWfUPucXzKJT+7YAB1zeHcc4fECRI2fPzfjDVhzu+fWBP7+D3GsLy/XtwN
-	P8wc3BCEjw6cTHGwE0dT4IOIc+M/yKvi8Yj4NdVhjGDu5DUiQv08Hj+coDb3v5dXU+E+zHklPT+
-	Pmf/EoElTRnI2J/PdWSZiEaRrJq+ep3C8W0AlkeDJi36uyIroB5SWdcTI+MgUdIY/qHgux/0wiP
-	jfGMKgu1h9ACZUGkBr/YBDvc39DrCifUmUsVDuXFqfJjHTBvNQjfGJoAMpt3ZwtrYHnGowUlFFG
-	oqRZK+JkPF9/6hCKO1B7ZoTNJ2FL0fx+6Q7pYhPc8nzX3jEPhVXrEycNl48I79B1ZmtQu4zww82
-	VOpmQiK9mS4b/dxFQIFpO/rjCSWtxRZoW2Bhsvk0aVRyLiVhB
-X-Google-Smtp-Source: AGHT+IFEMGUeze9X3qSxYsqLrz0dFf4f23b47ds5CoRc+BsOqyfOe/ETd1/kWf2fWB8CcW0PvVMbog==
-X-Received: by 2002:a05:6000:26c4:b0:3a6:d579:ec21 with SMTP id ffacd0b85a97d-3b5e450b3c4mr1707425f8f.12.1752063491506;
-        Wed, 09 Jul 2025 05:18:11 -0700 (PDT)
-Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d50329d5sm21320545e9.6.2025.07.09.05.18.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 05:18:10 -0700 (PDT)
-Date: Wed, 9 Jul 2025 14:18:08 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] memory: tegra: Add Tegra264 support
-Message-ID: <dnwxijowryyoaanvzcz4cfkpt2cejx4mnfu772utkt66fdrelk@n2prert7km4y>
-References: <20250708105245.1516143-1-thierry.reding@gmail.com>
+	s=arc-20240116; t=1752063554; c=relaxed/simple;
+	bh=t2BbGWEcPww9/zrhtw02Ren5jeVGKUgVNeFA8j+G1hQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qIU+XhMElrWqBVFIJpTtiCTwLgbOqc3SR4PUrdKfhhtg6NI8WicpXmUkUJV0wpUDAWEukIJM9eq8MR58ByGMOFh1NuNIE2NvPS5sKHe2wDvHdtjLxFPkoWUS8ClMdhtF3KP78kIKdIsU7lhvAg5z5YvjaTb40kYnvy30wp1GAKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=pUyU/sZS; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752063480;
+	bh=Si/UIBGqjtn/1epVGgHhJMdqwD159C/BVyCBGc8mYo0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=pUyU/sZSPyxGGH3rnVXeW82rXhE15et2nuO1LIFdf0Bk3SZ38MbqbQ63gB7cvzc5o
+	 vTf3ULofnN/9GGAmfdQgVJMoleLaoDNmvU6skuslHOBlTy8MzSF7ArACIKwVJ9IKPG
+	 oljk5SvoR16fGfHROT5uIQUK2dI+x+iBPYFad0Mu2Jz8BOAoq852Xx8qFYH1nvPWj8
+	 D4yzQJPvx/L2GRyCYRoX7OUEdm1BEZ5jL2hLraKoyOKHwA1iR8zhR7z5zMyL7w1AAR
+	 GhCKsSd5Xtphq2xlLPCDZuMLYA6ULNPJ7sDMllOw0dmarJKbER/vX/FjqKTk3O7/fQ
+	 d9GLDbzXQVV3Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bccSS5dmGz4wbb;
+	Wed,  9 Jul 2025 22:18:00 +1000 (AEST)
+Date: Wed, 9 Jul 2025 22:19:05 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the vhost tree
+Message-ID: <20250709221905.61e77ab8@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="h65bakmejm7mjtdl"
-Content-Disposition: inline
-In-Reply-To: <20250708105245.1516143-1-thierry.reding@gmail.com>
+Content-Type: multipart/signed; boundary="Sig_/MgQgRtSdtlaOfCMR5VyZIVa";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-
---h65bakmejm7mjtdl
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+--Sig_/MgQgRtSdtlaOfCMR5VyZIVa
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 0/4] memory: tegra: Add Tegra264 support
-MIME-Version: 1.0
 
-On Tue, Jul 08, 2025 at 12:52:41PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->=20
-> This set of patches extends the DT bindings for the memory controller
-> and external memory controller for Tegra264 and add the necessary DT
-> headers with memory client and stream ID definitions.
->=20
-> The driver changes in patch 4 are mostly an extension of existing code
-> and the bulk consists of the memory client table for the new chip as
-> well as the bandwidth manager calculations.
->=20
-> Thierry
->=20
-> Sumit Gupta (3):
->   dt-bindings: memory: tegra: Add Tegra264 support
->   dt-bindings: memory: tegra: Add Tegra264 definitions
->   memory: tegra: Add Tegra264 MC and EMC support
->=20
-> Thierry Reding (1):
->   dt-bindings: memory: tegra: Add Tegra264 stream IDs
->=20
->  .../nvidia,tegra186-mc.yaml                   |  65 +++-
->  drivers/memory/tegra/Makefile                 |   2 +
->  drivers/memory/tegra/mc.c                     |   5 +-
->  drivers/memory/tegra/mc.h                     |   9 +-
->  drivers/memory/tegra/tegra186-emc.c           |   5 +-
->  drivers/memory/tegra/tegra186.c               |  17 +-
->  drivers/memory/tegra/tegra264-bwmgr.h         |  50 +++
->  drivers/memory/tegra/tegra264.c               | 313 ++++++++++++++++++
->  include/dt-bindings/memory/nvidia,tegra264.h  | 136 ++++++++
->  9 files changed, 594 insertions(+), 8 deletions(-)
->  create mode 100644 drivers/memory/tegra/tegra264-bwmgr.h
->  create mode 100644 drivers/memory/tegra/tegra264.c
->  create mode 100644 include/dt-bindings/memory/nvidia,tegra264.h
+Hi all,
 
-Krzysztof,
+After merging the vhost tree, today's linux-next build (x86_64
+allnoconfig) failed like this:
 
-There's a dependency between this series and a series adding device tree
-files for Tegra264 (both the driver and DTS files include the memory
-client IDs in dt-bindings/memory/nvidia,tegra264.h), so I think it'd be
-easiest for me to take the driver patches here through the Tegra tree as
-well.
+In file included from /home/sfr/next/next/arch/x86/events/amd/ibs.c:12:
+/home/sfr/next/next/include/linux/pci.h: In function 'pci_set_disconnect_wo=
+rk':
+/home/sfr/next/next/include/linux/pci.h:2738:14: error: implicit declaratio=
+n of function 'pci_device_is_present'; did you mean 'pci_dev_present'? [-Wi=
+mplicit-function-declaration]
+ 2738 |         if (!pci_device_is_present(pdev))
+      |              ^~~~~~~~~~~~~~~~~~~~~
+      |              pci_dev_present
 
-Let me know if that works for you or not.
+Caused by commit
 
-Thanks,
-Thierry
+  b7468115b604 ("pci: report surprise removal event")
 
---h65bakmejm7mjtdl
-Content-Type: application/pgp-signature; name="signature.asc"
+I have reverted that commit and the 4 following ones (just in case).
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/MgQgRtSdtlaOfCMR5VyZIVa
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhuXgAACgkQ3SOs138+
-s6EPbQ/9ET5ytCQw/qExnetrPR7YSVS+P9xKFt4MFMY1vWr2I5vo+yNrZkg/rSGD
-1kJz3SFhyYRucknOOQ5Qkq7nxbNBbFsBFPHpJlKoD5il5qsCnItfTyVVUoggcO2R
-z+h60l4Ni92lzjRHkTJb6zsNEDd1CX1ZOFJukeAITKke72QNfeGWyglRLzI/+N50
-AmUq3WDFnXffjWaoGr8RGe2Ro8zXXcue3l07a/a4IGEZoCUE16n5QEcCAkIcRMsH
-yUfDAHzEzUgCuph0aBPjIYdr7IfPUY9+RJcTrKfnWfvok20VKDpdvlqVy/wwQ7zU
-L4YljT6LLqxdRliaBNKHQQHx+O51XJ1glDwZbRQ+SMf65Vgz3Zqf49i4iIX6kmir
-2hvShoOVcnpw26FP8a9rRwv5F1OE9ZiFdvQjRrWaT/Qd2cJlGEfgj1z3BYSOS0AL
-e59z6+5zEs0GAn6ttWaATFjh9RPEXeiz+kSFJk3rz5CY9K3MPOMKYO6eBXRX9HXz
-UBVOY6jwJ7dVenGeG7O8cHv1EXeRwxM+vRNuVDnqv3ZdgjQMljS6PH9DukPGM7hb
-OZ9wqlI7chwVusIjeYjBKV72S8PfYebWVwU3+Gc2wUbSAZIKrOhu37/ZMb02CGgT
-41dYs5M1fb3IEAJn0Hwy3P7XHt/bt0NKwspUwJRpTnxtU8nldIg=
-=PSyq
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhuXjkACgkQAVBC80lX
+0GzFuAf9HFoPx7fRWZDz1lrpKHiYA/e7niXJbm+aw9BxatzbUkKsAW3oFff0Ny5H
+YdsJ7lHfsqmDzDAqH4A6s4jB9BYmXvJi0KXLqaAXDm0gtyABNvFbM7WEG00CD0uR
+CuskQu3XnmiTHS5jTuxbkMwWTolvqcjeI26R7ELJ9Rr+m6s7dE42uytLMwkOuq1F
+5quBR43KkO1QXb5hQXuR1l/B8a83vGH3HS4+Z4YZb4bFgPnpFcuqH1mS1uUVJvft
+BZjtZMOA6DU4RG1hbzcQbzQg2DWEizaVUtPQ8py1i/IRF9fV1+lNIljZbIwS5Spt
+dX02KvgN4GDo8yKFxK2C25nGbq/qcw==
+=5rhw
 -----END PGP SIGNATURE-----
 
---h65bakmejm7mjtdl--
+--Sig_/MgQgRtSdtlaOfCMR5VyZIVa--
 
