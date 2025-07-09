@@ -1,130 +1,201 @@
-Return-Path: <linux-kernel+bounces-723280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DBDBAFE52E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:10:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 008C6AFE531
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A343D7B63CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:09:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7EC77B6A68
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:09:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D0E28983D;
-	Wed,  9 Jul 2025 10:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T0+nrJgY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C58289369;
-	Wed,  9 Jul 2025 10:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1FD28A1DE;
+	Wed,  9 Jul 2025 10:09:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82EF289368;
+	Wed,  9 Jul 2025 10:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752055758; cv=none; b=bPM7SiJmldAjkbY8K0CmU/eega0k1ljaTlM3jhTSrkMH2Fb4ZPR4v6FV5dHBxHNpihjzMp4paecGodSBO83ABKT1OAE1SJYsCTmR3GC7v2rbZGoKv1Gt91FFaIYhihFIynP/NC2mddc7pU4Tloaq3C7TIMjzR2rbss1PjUAf4+A=
+	t=1752055782; cv=none; b=tyQtGC1ueBjOdjIsp0ENGcx5O5sPYAqUex8LAQv7sBsIGPetZA1RpM6jzNpoCqbSWWa2ZoIKx/FG2nZtm3/EfTXBQ3ta79fBOQJwKMJB6AExXyXTBui1Oe7SIWO3SkSn/+VB7kAKEA5s63OaeKxJdVsdWhI1hn0Q7guM4cutOYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752055758; c=relaxed/simple;
-	bh=UJJFTGdGHx/I8Ko6SRTWuJSkRz7Op4s2mu0Q7x7wAfo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GE058oN+Z4/K38UelSIy0gRO8Llx15okS4yGyXjoS4hL/FY209jxVvN/PAmlVbTzyDssM/NjnBitRxi4CbwYCbxU8TSeOArA3ISdXw60hdSnFLfgHuDh+9gbmydesjMlaw46FyxUafqpK3+lML3zjYyUkGGqlRfIQfTqnU0XXY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T0+nrJgY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DB65C4CEF6;
-	Wed,  9 Jul 2025 10:09:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752055758;
-	bh=UJJFTGdGHx/I8Ko6SRTWuJSkRz7Op4s2mu0Q7x7wAfo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=T0+nrJgYJESbFXJ7lfr7j3b0HD8auEoAz5Ez8Wp4R6r6QR5pnQScWpcoqlFgdkrSR
-	 u+MHHqP0VgGhAIU0Hincp1pwhbtLiBYyL+R1psUrtDStQEBVH3Hd2CFG/YMAgFJgq1
-	 kL0jIiRd53wKm3nbKCX31WDeyQ76AfqglvkjRxs+4XynWi87ROjp65a1xwohW4KKDM
-	 xyUqXOKKsYTpquUNz9LLh+b+8mc4Iyg9ZbfKenFFmaUHYenCbQxhyB4GU2m4aDfBLg
-	 Q7lGQUFzq4AmxBa4kpyYZ4nThBKwoJfWVhDSmkNcwOc4glEknjJBaW40Gi/z3nTnvf
-	 DwUWgC/1Tr01g==
-Message-ID: <dc1686bf-712c-4829-afaa-c39acd8969bf@kernel.org>
-Date: Wed, 9 Jul 2025 12:09:12 +0200
+	s=arc-20240116; t=1752055782; c=relaxed/simple;
+	bh=Sw7oI7H4anCTEdENQ9OK36GMbuYvdgqWc1bZLlsHgW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uiLtpsgBhN8ORmSWts6pyMf0uh2196YR5XhdMdGz1cvc5t/1HTuPqKSQf2LZtB8VK+dg35Z2WAR+4gs2tlqBeuuwbZhUYOoYoBVf8ML1ciwL6SimTZq6V/ccyIAsu/D1h62vOw3iwe54b89/UHrAH0y9ZwWLS2xwH6KR+CqKd/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9060F153B;
+	Wed,  9 Jul 2025 03:09:28 -0700 (PDT)
+Received: from raptor (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 82CB43F694;
+	Wed,  9 Jul 2025 03:09:38 -0700 (PDT)
+Date: Wed, 9 Jul 2025 11:09:32 +0100
+From: Alexandru Elisei <alexandru.elisei@arm.com>
+To: James Clark <james.clark@linaro.org>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Anshuman Khandual <Anshuman.Khandual@arm.com>,
+	Rob Herring <Rob.Herring@arm.com>,
+	Suzuki Poulose <Suzuki.Poulose@arm.com>,
+	Robin Murphy <Robin.Murphy@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] perf: arm_spe: Disable buffer before writing to
+ PMBPTR_EL1 or PMBSR_EL1
+Message-ID: <aG4_3D1RG8CWncBF@raptor>
+References: <20250701-james-spe-vm-interface-v1-0-52a2cd223d00@linaro.org>
+ <20250701-james-spe-vm-interface-v1-2-52a2cd223d00@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/8] dt-bindings: clock: qcom,qdu1000-ecpricc: Reference
- qcom,gcc.yaml
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
- Srinivas Kandagatla <srini@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250709-gcc-ref-fixes-v1-0-ceddde06775b@quicinc.com>
- <20250709-gcc-ref-fixes-v1-5-ceddde06775b@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250709-gcc-ref-fixes-v1-5-ceddde06775b@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250701-james-spe-vm-interface-v1-2-52a2cd223d00@linaro.org>
 
-On 09/07/2025 11:37, Satya Priya Kakitapalli wrote:
-> Reference the common qcom,gcc.yaml schema to unify the common
-> parts of the binding.
+Hi James,
+
+On Tue, Jul 01, 2025 at 04:31:58PM +0100, James Clark wrote:
+> DEN0154 states that writes to PMBPTR_EL1 or PMBSR_EL1 must be done while
+> the buffer is disabled (PMBLIMITR_EL1.E == 0). Re-arrange the interrupt
+> handler to always disable the buffer for non-spurious interrupts before
+> doing either.
 > 
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> Most of arm_spe_pmu_disable_and_drain_local() is now always done, so for
+> faults the only thing left to do is clear PMSCR_EL1.
+> 
+> Elaborate the comment in arm_spe_pmu_disable_and_drain_local() to
+> explain the ramifications of not doing it in the right order.
+> 
+> Fixes: d5d9696b0380 ("drivers/perf: Add support for ARMv8.2 Statistical Profiling Extension")
+> Signed-off-by: James Clark <james.clark@linaro.org>
 > ---
->  .../devicetree/bindings/clock/qcom,qdu1000-ecpricc.yaml | 17 ++++-------------
->  1 file changed, 4 insertions(+), 13 deletions(-)
+>  drivers/perf/arm_spe_pmu.c | 33 +++++++++++++++++++++------------
+>  1 file changed, 21 insertions(+), 12 deletions(-)
 > 
-NAK
+> diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
+> index 6235ca7ecd48..5829947c8871 100644
+> --- a/drivers/perf/arm_spe_pmu.c
+> +++ b/drivers/perf/arm_spe_pmu.c
+> @@ -559,7 +559,12 @@ static void arm_spe_perf_aux_output_end(struct perf_output_handle *handle)
+>  
+>  static void arm_spe_pmu_disable_and_drain_local(void)
+>  {
+> -	/* Disable profiling at EL0 and EL1 */
+> +	/*
+> +	 * To prevent the CONSTRAINED UNPREDICTABLE behavior of either writing
+> +	 * to memory after the buffer is disabled, or SPE reporting an access
+> +	 * not allowed event, we must disable sampling before draining the
+> +	 * buffer.
+> +	 */
+>  	write_sysreg_s(0, SYS_PMSCR_EL1);
+>  	isb();
+>  
+> @@ -661,16 +666,24 @@ static irqreturn_t arm_spe_pmu_irq_handler(int irq, void *dev)
+>  	 */
+>  	irq_work_run();
+>  
+> +	/*
+> +	 * arm_spe_pmu_buf_get_fault_act() already drained, and PMBSR_EL1.S == 1
+> +	 * means that StatisticalProfilingEnabled() == false. So now we can
+> +	 * safely disable the buffer.
+> +	 */
+> +	write_sysreg_s(0, SYS_PMBLIMITR_EL1);
+> +	isb();
+> +
+> +	/* Status can be cleared now that PMBLIMITR_EL1.E == 0 */
+> +	write_sysreg_s(0, SYS_PMBSR_EL1);
 
-Best regards,
-Krzysztof
+I've been trying to figure out if we need an ISB here to order clearing the
+service bit before the PMBLIMITR_EL1 write in arm_spe_perf_aux_output_begin().
+
+arm_spe_perf_aux_output_begin() is called only when the buffer is full, and this
+rules out the event having the discard attribute (buffer management events are
+not generated in discard mode).
+
+If a new buffer cannot be allocated (perf_aux_output_begin() returns NULL), then
+PMBLIMITR_EL1.E remains 0, so no need to order the two writes.
+
+The only other path remaining in arm_spe_perf_aux_output_begin() is
+reprogramming the buffer, in which case there's an ISB before the write to
+PMBLIMITR_EL1.
+
+In conclusion, I think it's correct not to have an ISB here.
+
+> +
+>  	switch (act) {
+>  	case SPE_PMU_BUF_FAULT_ACT_FATAL:
+>  		/*
+> -		 * If a fatal exception occurred then leaving the profiling
+> -		 * buffer enabled is a recipe waiting to happen. Since
+> -		 * fatal faults don't always imply truncation, make sure
+> -		 * that the profiling buffer is disabled explicitly before
+> -		 * clearing the syndrome register.
+> +		 * To complete the full disable sequence, also disable profiling
+> +		 * at EL0 and EL1, we don't want to continue at all anymore.
+>  		 */
+> -		arm_spe_pmu_disable_and_drain_local();
+> +		write_sysreg_s(0, SYS_PMSCR_EL1);
+
+Before:
+
+arm_spe_pmu_buf_get_fault_act:
+  <drain buffer>
+  ISB
+arm_spe_pmu_disable_and_drain_local:
+  PMSCR_EL1 = 0
+  ISB		# disables profiling
+  <drain buffer>
+  PMBLIMITR_EL1=0
+PMBSR_EL1=0
+ERET		# synchronizes the two writes above
+
+Now:
+
+arm_spe_pmu_buf_get_fault_act:
+  <drain buffer>
+  ISB
+PMBLIMITR_EL1=0
+ISB 		# disables profiling
+PMBSR_EL1=0
+PMSCR_EL1=0
+ERET		# synchronizes the two writes above
+
+This looks correct to me.
+
+Thanks,
+Alex
+
+>  		break;
+>  	case SPE_PMU_BUF_FAULT_ACT_OK:
+>  		/*
+> @@ -679,18 +692,14 @@ static irqreturn_t arm_spe_pmu_irq_handler(int irq, void *dev)
+>  		 * PMBPTR might be misaligned, but we'll burn that bridge
+>  		 * when we get to it.
+>  		 */
+> -		if (!(handle->aux_flags & PERF_AUX_FLAG_TRUNCATED)) {
+> +		if (!(handle->aux_flags & PERF_AUX_FLAG_TRUNCATED))
+>  			arm_spe_perf_aux_output_begin(handle, event);
+> -			isb();
+> -		}
+>  		break;
+>  	case SPE_PMU_BUF_FAULT_ACT_SPURIOUS:
+>  		/* We've seen you before, but GCC has the memory of a sieve. */
+>  		break;
+>  	}
+>  
+> -	/* The buffer pointers are now sane, so resume profiling. */
+> -	write_sysreg_s(0, SYS_PMBSR_EL1);
+>  	return IRQ_HANDLED;
+>  }
+>  
+> 
+> -- 
+> 2.34.1
+> 
 
