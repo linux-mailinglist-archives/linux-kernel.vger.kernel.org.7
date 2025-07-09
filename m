@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-724563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F9FAFF462
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:08:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3C83AFF46A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D38F8488437
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:07:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 272587ABCA1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9EB5241669;
-	Wed,  9 Jul 2025 22:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C83248F55;
+	Wed,  9 Jul 2025 22:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hytf+ZTe"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FkrG+avE"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62281F956;
-	Wed,  9 Jul 2025 22:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1BE23ED5E;
+	Wed,  9 Jul 2025 22:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752098875; cv=none; b=CjsmTbZzubuutPxPna7IkK67EbasX+/PyQG+vRqtVrM4w7BfA19BcaSiyyB2a/L/QZAnFHJuZkohwbc0dvlEZnDAhj9gQ9Ppigl8tvTEB2F3kIb5qbZuv67x+ZvDdrDn7Lcp3EJ2fTfLfUgNyiE6e/M0ftgm2jk7RRUat+8/RZY=
+	t=1752098883; cv=none; b=lWbW97Uk3qujX2nuOBpvarw31hurg1wqhrlBO3xcn6p1fvwKYje9c9RBjTCSm2XJglq08lPlaKELOERIsl7OGVs4KcsFH1rvJ0qmaHAoaLxwJfnYaCv48zTcxqDaMkzGQgI7vqFupP42T3wWypC2uD6z+KSeWyFoC4P8ezWTGqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752098875; c=relaxed/simple;
-	bh=Y/YzqPly9vm7+9jHV31IJ68XWg619s2G8ueK7uPcjsw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MkJpWkQtocesTpfxH1kqhheNSZuTakzcj3p0LRWpURHD46NxZvshzspbH/JnxIZajMxP8+qR0Nr0RNI1eEx9M578aa3a68u2NdR7Rq6pV9AkWS6Y6iearZUPAhSh/DbbHz7yc2xcXbszoClFanOiqjfjJ8iePEiMLoD1pX4mwqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hytf+ZTe; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1752098883; c=relaxed/simple;
+	bh=xGvWdqKSX4M969CIZEzAazfWep2CB/hspQf7BxrJkOE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=axf6jJJz3VIdhvPKB597zlqB38w3ZN56DRl5V1nzyqH35c+gO/wO1xfr8E8m6F5MyqpoEs2tqSx3X7jn6sobpuh4ancOY47CQ0t4HI6JnE7XNyplERo6HwJ6ZiE9DQjxTXATcGz8qvdnk8ghm4az4Xuw/ZbPZJtzwrye8SA5VIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FkrG+avE; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-60c6fea6742so512099a12.1;
-        Wed, 09 Jul 2025 15:07:53 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ae0df6f5758so52037766b.0;
+        Wed, 09 Jul 2025 15:08:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752098872; x=1752703672; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tJzM1K1Dmueh7OdUtHBIOxpyAgF67zAJOJ63216nDS4=;
-        b=Hytf+ZTe7IAeqHSsqwnV05Pi92kH/rhnuNPqw//f+lRFhaqDLRvouLryV1DLKEgfxl
-         S4pKWs4UiwpiND9DmoLLrWdwP8kStBzzvn5ylB878HsDZ7nD+CHqfOL3PIr/GAmpfrhi
-         vZqBIB0S1InX7Y4UTEYMFLXH1gffwwsxCOM2m6PT0JYIqEGGASCoq5XOLMbz0g/XOth4
-         Zbesk9LjX8qrJVhiSJPYEahUGNpfemDTfZSpieEypA9B2mc00riDSmCC8NIPEMQ+RkOZ
-         OEJ8iaqsDQ+K8hrvTFOZorGkqMnift9RjZYEg2S9JhK693fP8PqAyZNnhDpXT3Z7pr5J
-         L7og==
+        d=gmail.com; s=20230601; t=1752098880; x=1752703680; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L4vGOKIiNJI2tJXCMd0e5H54wpKvUXMqTF3rDPaUqc4=;
+        b=FkrG+avEwWg1pOVN5SpSpxZImIe2LbhHHvgzS9ZlJBS7keH9vp0QxfOBg2vzwADJ/m
+         Ao4ocjQf2roTEXCgNMfpIeOPIAhnUf0QKRjKX2FTUg7URsdXn5ODhekpNV6bofJdLKTR
+         uJk12fGhorp61oQUFdQmEosFJMl4dTiedBGJbLSJdtnZgvMfXWXxc4PKW/zEhO/2R7Hg
+         aTmTogMNKymB22aMWBwvNzr8Pw20bsyt4NETNm/roMn2MUaKemCUo6ZdmGGXa/G0N+bA
+         x01H5VclWlfaJ+rL70uOlErWlHlMAVztgbEYGE3Ii4y1YMhb6MgGUOnq9Gsn+KPNe7kA
+         BbSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752098872; x=1752703672;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tJzM1K1Dmueh7OdUtHBIOxpyAgF67zAJOJ63216nDS4=;
-        b=toZAEiFuPYw8z4B8tdK1o/zHRQmi0G0UJPEULCqgxupdhbb+oWPoykXP7IHzyyK2lD
-         sKURZ/i0rOj8+lk4M/4fyiUvhVYw5/aMs6VdaRx8hel8m6+89zIAKD1Aw14Tg83qa7bd
-         vjrlD/nUfICH2vMPKEGyIsygImuekmNxnocMwfh0r3RM8+TZx8HH1HbjHlIm+g7kaek0
-         63ZZmhemm1FzIyLsV9xF4LpxbUen8TZWJVwb4yqMvLMT0F7yc6r8VNpqzoWZzWHEQyaX
-         at39HN9H0tmSvmGUq4TQPAaNso8AIATf1XYCHTY3wYzawGv8wh1dv0DthwUkfxxMBVqA
-         vcDw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqmPHolXLS+LJIC8kUoc/qww/SUhLn7yNysUPemVfi4a6is3Rbjh4nIeN4Ov7/GYYOBz5YUI7NlJ8/4R4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNu57TnNd/Oe0hgyMFW6U3bNErADv0Yyh7rsMl1h0+HlYTZ+J7
-	hemBqDet2soXbix3dsxZyKi6wBWE0JblmRYUP89bmE93nkC+CN8CsqAifmQ0mFwv
-X-Gm-Gg: ASbGncvhlOUKx3HyPyyVVKRWFeupiuWsZgK8GXobjNiZrP8+r3helwZXYXJD8s8pVzq
-	RstdxFtTHiaiDbJPjRUIPzLMZy4ge2SLXAaoCzQQnOHctwEqDD7y7H6ocgLq5wdg+kLsQowDD5i
-	NurbLiOg5TzJ1142SaLftNEn3NdnG3/Y+bzlXMle/GZUnw9hkqNqojv6GSYxJRC+BGhiBVzZ8T0
-	e/9K9hcpUFIZRxJWM5knsKciNdaKtiKr3z/JsT+VC7mgHNIii/0R/rJJA0lt6Roz4hPhW1uCK+C
-	6g3ljcJW7oIFRSWo9cgUmWQz/w/bRY4CpZRqSRQUoY4IFPshcScH2wQe8kwl/uK3HEHFINIIwhU
-	IlrkUeAuVzrrE1stjTj3RpRMmZgfrFNCBEeZhPLuBXzyLew==
-X-Google-Smtp-Source: AGHT+IHlkfkLvk0xG1HBQFG/XesTYuOQg3jZVndTCAQHvvSGCdCcXTtdOQ4Fa6CTUyNNcLVE4GCoTw==
-X-Received: by 2002:a17:906:d195:b0:ae3:a71d:1984 with SMTP id a640c23a62f3a-ae6e14550ccmr134642666b.57.1752098871710;
-        Wed, 09 Jul 2025 15:07:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752098880; x=1752703680;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L4vGOKIiNJI2tJXCMd0e5H54wpKvUXMqTF3rDPaUqc4=;
+        b=RCKdgIC8CXIi0uCSuUrvHPdI1nS+AowWgHi1Rv0n0Csg8L+RgpuUDqBNLuIfImvf7q
+         Exv5GO3Qj0GGOLX+qo5PEfNlOBmBfLDPndVUwGPfR/aky7IEuXf4MxE8BqQZ0OBUNuV7
+         3xmHncXamS2iCIJTodlKDspnzkG8jGfsLNRaRMZwsJLY6T1nIfjwzMrcIrNwCzA3iotx
+         0Ym0tnJYt9brNgO1o7wVPpC9FPW0d5HbHXoX21Qy0Iuhg6i51EnGqrIcdXchtmbwstSd
+         Bk4JaqTcNhXav/qYOFniIktH7bmhKjFKiY9CVGzhZKGS3uMJ6EEErZ3k5RgRKX+dSKyy
+         dIcg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/LX2aGIgEZMSN0M+DDRi7+fsv1yu3ef+B1vvAuX65YRtjcila1DVmsmJMvGeYE3VWMcxrx25LGQ0qPis=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6gf9gyHTVMgSP/OXO2ShqHeX/c53NMm50BeRds9EGm8gbuZ5d
+	OuZSSrgRnOHTYaikiNPHY28sZAWk8WRddyX4FZfB+wfxJbHZqkMPFu00Vfr2Eqnx
+X-Gm-Gg: ASbGnctVXfbZD7JN9b4hfdxhm9hX+QssxJpwy4072z9i0gP4Ds6W+rHk+8QsvEvl83P
+	XO/c7c4f9E+p8hcsIWdy+tTwvHYqdFuqImclfwHCmn/KTvTthmCxxPE9J7NQ7Q3qDkz1IASs52L
+	/tdPcVJ5Lw5zKHBNfzxBhX1dF3ArZC8sjR5KuJCImIkR3d0ck5NMckpUw7OIKprkhOGJqh9JLTh
+	eYOL+2aeS7/Qn79gceWkPHTzeagSKai5yL/o5GYKCDcAQLoImrrg9q9GIGdnQG/9ligOKCJPqz1
+	2X7l7DhYRZuMG9L4mthTMHqmGeU5VVxBh9yZA8I4XomyJyjYCH1+hNkYhKdLykJFCCIkfapKczf
+	snZ/ruQqe6fTZm4xW7vJ79CryPMY58t1GX5XTihAaykceSg==
+X-Google-Smtp-Source: AGHT+IFL+9YADh5yPMNkcoRGEhTWR60Z92TfBO9E0RsbRdcIJ90t6RAh9BWmJiSAtRtxnaUfQ26NHw==
+X-Received: by 2002:a17:907:e8c:b0:ae0:1883:78ce with SMTP id a640c23a62f3a-ae6e709ec9dmr38876866b.47.1752098879866;
+        Wed, 09 Jul 2025 15:07:59 -0700 (PDT)
 Received: from Lord-Beerus.station (net-93-70-53-177.cust.vodafonedsl.it. [93.70.53.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8264fbcsm10520666b.75.2025.07.09.15.07.50
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae6e8264fbcsm10520666b.75.2025.07.09.15.07.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 15:07:51 -0700 (PDT)
+        Wed, 09 Jul 2025 15:07:59 -0700 (PDT)
 From: Stefano Radaelli <stefano.radaelli21@gmail.com>
 To: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -81,10 +83,12 @@ Cc: Stefano Radaelli <stefano.radaelli21@gmail.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 0/3] Add support for Variscite VAR-SOM-AM62P5 and Symphony board
-Date: Thu, 10 Jul 2025 00:07:03 +0200
-Message-ID: <20250709220714.85697-1-stefano.radaelli21@gmail.com>
+Subject: [PATCH v2 1/3] dt-bindings: arm: ti: Add bindings for Variscite VAR-SOM-AM62P
+Date: Thu, 10 Jul 2025 00:07:04 +0200
+Message-ID: <20250709220714.85697-2-stefano.radaelli21@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250709220714.85697-1-stefano.radaelli21@gmail.com>
+References: <20250709220714.85697-1-stefano.radaelli21@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,42 +97,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch series adds support for the Variscite VAR-SOM-AM62P system on module
-and the Symphony carrier board.
+Add devicetree bindings for Variscite VAR-SOM-AM62P System on Module
+and its carrier boards.
 
-The VAR-SOM-AM62P is a compact SOM based on the TI AM62P Sitara processor,
-featuring up to 8GB DDR4 memory, eMMC storage, Gigabit Ethernet, and various
-peripheral interfaces. The Symphony board is a feature-rich carrier board that
-showcases the SOM capabilities.
+Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
+---
+v2:
+ - Add symphony carrier board compatible
 
-The series includes:
-- Device tree bindings documentation
-- SOM device tree with common peripherals
-- Symphony carrier board device tree with board-specific features
+ Documentation/devicetree/bindings/arm/ti/k3.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-The implementation follows the standard SOM + carrier board pattern where the
-SOM dtsi contains only peripherals mounted on the module, while carrier-specific
-interfaces are enabled in the board dts.
-
-Tested on VAR-SOM-AM62P with Symphony carrier board.
-
-Stefano Radaelli (3):
-  dt-bindings: arm: ti: Add bindings for Variscite VAR-SOM-AM62P
-  arm64: dts: ti: Add support for Variscite VAR-SOM-AM62P
-  arm64: dts: ti: var-som-am62p: Add support for Variscite Symphony
-    Board
-
- .../devicetree/bindings/arm/ti/k3.yaml        |   6 +
- arch/arm64/boot/dts/ti/Makefile               |   1 +
- .../dts/ti/k3-am62p5-var-som-symphony.dts     | 563 ++++++++++++++++++
- arch/arm64/boot/dts/ti/k3-am62p5-var-som.dtsi | 374 ++++++++++++
- 4 files changed, 944 insertions(+)
- create mode 100644 arch/arm64/boot/dts/ti/k3-am62p5-var-som-symphony.dts
- create mode 100644 arch/arm64/boot/dts/ti/k3-am62p5-var-som.dtsi
-
-
-base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-prerequisite-patch-id: 7e8493f8ed01ee319f827119ffdac7531afbbc4d
+diff --git a/Documentation/devicetree/bindings/arm/ti/k3.yaml b/Documentation/devicetree/bindings/arm/ti/k3.yaml
+index bf6003d8fb76..780fbb5970a5 100644
+--- a/Documentation/devicetree/bindings/arm/ti/k3.yaml
++++ b/Documentation/devicetree/bindings/arm/ti/k3.yaml
+@@ -100,6 +100,12 @@ properties:
+           - const: toradex,verdin-am62p          # Verdin AM62P Module
+           - const: ti,am62p5
+ 
++      - description: K3 AM62P5 SoC Variscite SOM and Carrier Boards
++        items:
++          - const: variscite,am62p-var-som-symphony
++          - const: variscite,am62p-var-som
++          - const: ti,am62p5
++
+       - description: K3 AM642 SoC
+         items:
+           - enum:
 -- 
 2.43.0
 
