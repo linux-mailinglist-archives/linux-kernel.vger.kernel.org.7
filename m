@@ -1,243 +1,305 @@
-Return-Path: <linux-kernel+bounces-723970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E0FDAFED1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:08:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B880AFED21
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB9141888B2F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:06:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E11AA189848D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F550149C41;
-	Wed,  9 Jul 2025 15:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9D32E6113;
+	Wed,  9 Jul 2025 15:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ug2C6jGT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Yb9zncWh"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29782D1914
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 15:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2894D149C41
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 15:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752073547; cv=none; b=Vv+o2MtaLFR0ZCSYB/+CnSmINbbs/GpIwo3M2wW591FRjPIedxTqfNGU8AYTL1cLLGDs/4vH3YKYeFMJB63tW2rpiEuscg28f6+CbJG6fFc7e9VjH6ov/BUBc7DuoN3x8HCbmR1M2bAf6w2AEyp6eNl44V9Tee+cce82MDOoGEQ=
+	t=1752073560; cv=none; b=CBDIK2ULpjaMgfr7iR5102WQ90nT6O+s32oLdnjcbSiueJ3TIL5eIwO+TePiSuBjWAc7juC21FogY2uKhnhBkS1gZHVBV3XATVwJexb//sB+ndB8irug1vsIo2iGzltNtmPnxcayF8T7Tzqt/pCLpUgS/Ddwlqmj3VW8isSaFEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752073547; c=relaxed/simple;
-	bh=m/tt151z5ux7hMXhmxhJ7BxLJ0o0bqtGIuFQnn5UosQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Boal2BcmBOVQOJ3KgmWd/tD0ykAkM2jV/ZQh3WwoO5p/SlkB8Ko7LRYXVxtJ7m84yaYPt+JF3yirvxb1k3Jcf2o0kyx/H3sB8/RzxZWz/toE/2+6bFWDRUjKXqUscgdlJMPwSsSWFCLZUQI6xP8g2VSkrPP3EMNng6X6SFrpGyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ug2C6jGT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752073544;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uvFBU/K6+KINjVqqjT8q9fA6T2cNaO+u1OFb0NSXgPM=;
-	b=Ug2C6jGTCKnL1XgEsNQ+fmrX2PTI1pusI5GJD4cMthS0npSfBrOexyR5uqNePfJGv2CNOk
-	QrBsp7A7BgnX369UKvKHWyB4KCJ1yK2AdXC/J5g5RKYiZgc+kpdo/ykraWTPdgRtorJAEs
-	+kFwr2F4ql+9fDq1YqrAVdyfMUwg8aM=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-674-S4xEtuwoMF2vfpUOKKicaw-1; Wed, 09 Jul 2025 11:05:43 -0400
-X-MC-Unique: S4xEtuwoMF2vfpUOKKicaw-1
-X-Mimecast-MFC-AGG-ID: S4xEtuwoMF2vfpUOKKicaw_1752073542
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a4eeed54c2so14006f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 08:05:43 -0700 (PDT)
+	s=arc-20240116; t=1752073560; c=relaxed/simple;
+	bh=8zi1n/cqktYcdVteHqm30BaQ/b2Xuu45f0ZR2Kufhwk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=esRJIrbilSeLmiQJW0JD3wpsjftYQV7/krmi9QHf28WdImwaPln5Zab3WQhCNB52bxTdeRCjXnHY6Ly58mb5tgDfq9UDTls2td03bWQ2OXeyBAXz29ThDCMuM/L1J5DyC4+QfjMO0F8U7eyEc0GXeoIKoupUDSS1m/Ri810UHLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Yb9zncWh; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-32cdc9544ceso49064671fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 08:05:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752073556; x=1752678356; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=X3EFJZWHFKRnvYs24gJy3y+hySRApe+N9eZ4FMpwih8=;
+        b=Yb9zncWhqL+J7wAH/L1btZ00izSb9JmN9Tu4qQi1OWJ+YFnskyOC8MyhV6KoGxXXe+
+         yHSFa4cc/QrXOFe4pD0juoK71DNtZIoeCjwu3y2XD8+9UlojyBLNRdP63z5Pp95QAONS
+         76xnHa0ICPMubuGHwKWpHgC1csM6PJlCQ77jt1RaC/6C0tRxwvLROSLxS5ORdgNOp9s7
+         e5Ovo1CLrybK1p3qm9PW8QgtH2orDsUd3ECFelk3FQ2a3Ki61A2x+0q2m8HR70mk29mo
+         rUyzYnQfHGjVsqqo+PmP41Y2Ee8WKrnCDpAkhH9vQGfLeIXaMJn4xh4hfRRDv8O54o6k
+         AKhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752073542; x=1752678342;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uvFBU/K6+KINjVqqjT8q9fA6T2cNaO+u1OFb0NSXgPM=;
-        b=e4CDyhy0rVD3d3dg+efymvFNMgLSKHvXxfs+AMHWpK52uWaN7OD7M22/V5vDKoVQ5k
-         MyKnTrxRVYn7qWlzebeS//huj7HrxFdtFS4pfYf5iIuOfrGM2mieEtJSrur+3kYDpOjR
-         yNmy/7ImVpPj120ypumwj5g9ZtBqKaDrBY3DKAXFf0towjhqrIYUPRIzTPswHKulRvR0
-         SPB8p87hl+367EJfMKlUE9PPtlSjx88MXX4/4h+H/5Ylnl96wPY7f/Wa59gMDLeUqWkF
-         y69JnkiUnYVuHtCohuGWSt/uDHb+eUj0aoCaolLv2ZpGMxri6CE72LIz0hIxzBkgWqFg
-         GkHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzMy7GzuNHEP0T7iCFp691c817FxTMbCTB7W/VgK6bN26NoLDuhTuDa+wSNINlHtMgKluGNX2cD2wi5H8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyG9TIci7rG0MJv4FTY8kQl6TFtQOXfq7Otf8tbV3fJpcJ5683P
-	Jhisr19ZwuRQofA9JQ11OYqWF7kFs2UTLSrdQ9f67KeJidh8y0KON4P9OXHySfNim0gXFIEA8+P
-	0jUbkM/LrRMoKvAVAyy73IpWALhJkfF9Z83uUvrJLDQj0lXQU1ax7NhDts9Fs9VkLlQ==
-X-Gm-Gg: ASbGncs9d1VGda+HjF5/PcGlkHFumwzKyj7qa6PNn4EePw9u5rEoLCccjtCaKcPuCev
-	QrljUojwUqcsFeoePuMb/Lim426rMfd8qqEZ90r3aQCVMFGD0JyLNyoxNWyokI5iufecb78c8n8
-	OjpRQDFmPR9hY816i82gmL6pckYBT2IQtq9lTh+NpbQTaFWCT55Oc9W9v4DQyh0wzHVsasHf+92
-	jrcQQUsHc/5Spsk0GzCT+rtqu1jS9tzR0EwSgrcEiq/rv6PQdO/KqBqqPmi9gMCmnhjT3JWOgY0
-	4pDqRK8QqSBGBhmDkJq8JleXXcw=
-X-Received: by 2002:a05:6000:22c8:b0:3b1:3466:6734 with SMTP id ffacd0b85a97d-3b5e78d8e4dmr304366f8f.44.1752073541705;
-        Wed, 09 Jul 2025 08:05:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IENULoeyQE4yUr9Bfl1DIihXJgUXeW/D01393xr1qgElFSMbyNkVPQ2AkcIO7O6Zl3RAG76Pw==
-X-Received: by 2002:a05:6000:22c8:b0:3b1:3466:6734 with SMTP id ffacd0b85a97d-3b5e78d8e4dmr304275f8f.44.1752073540970;
-        Wed, 09 Jul 2025 08:05:40 -0700 (PDT)
-Received: from leonardi-redhat ([176.206.17.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47030bd4dsm15901270f8f.7.2025.07.09.08.05.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 08:05:40 -0700 (PDT)
-Date: Wed, 9 Jul 2025 17:05:38 +0200
-From: Luigi Leonardi <leonardi@redhat.com>
-To: Xuewei Niu <niuxuewei.nxw@antgroup.com>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	Stefano Garzarella <sgarzare@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, linux-hyperv@vger.kernel.org, 
-	virtualization@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	niuxuewei97@gmail.com
-Subject: Re: [PATCH net-next v6 4/4] test/vsock: Add ioctl SIOCINQ tests
-Message-ID: <j6dgi7ptup6op37lgwpwdvrkfxpnelholoyc3rk6hb26xamgxk@h3nfy4ypnf36>
-References: <20250708-siocinq-v6-0-3775f9a9e359@antgroup.com>
- <20250708-siocinq-v6-4-3775f9a9e359@antgroup.com>
+        d=1e100.net; s=20230601; t=1752073556; x=1752678356;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X3EFJZWHFKRnvYs24gJy3y+hySRApe+N9eZ4FMpwih8=;
+        b=LMG98jPeADH0kGd6FZyVTsMNAqUy5/+yb+zonveBheW2Oo+6OCzqPmoVmeHWGIAjr8
+         C+/LuE4MHZqMXz3R/Llwgo0p086DWasp/Hk6DMGbbdmnHrRUAgwkn+yU2JM68UJHVEom
+         mLem1LfIHgKEodlofL9xCSEiq5LsCSKBdS8A1HA3eBLVbGotdsVpAkCT923X5j+Ffkwo
+         P5hCm3cYxonO28czQNGLYzuvTPfrgnFbQaJ90OzVU8GhNCPa21uBKcYAVpCKrGtMtYo/
+         ulOKEma0HgJZAUQobSHiyd4kaOjFmz3MmmMlmqqtdlWkMC41PW9uLbMiLt2rsFwWGRbY
+         aPSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXYorbk0uPDgaBdjKMawfCQ3C/5JM46XmPyVImF/loYjoJ3+QOE5CDdF2VbxEwLob3sNIsmGPxrzhptPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnHncxhQNOx1C54hPFjY2u55nMXQCwDDVrWOI/LkQHHRjL0g3S
+	22WVZeR9BmMeLO3vb1/Ml6YxSqN7dsioYx4CI/jkZ4eFLjmwnEsUIkOX73LdGr4YPHP2+6omB/4
+	HmHHFaXdxEmtlfqHxzxhTWIVCyc9Rqa/yOTs3e9zG
+X-Gm-Gg: ASbGnctx6s9/g5XsJf+q1bpL6jYlWAEhGVC6K/oo9RhdnZ5iCEPge56LrgsN+rsP0bM
+	UPAkUrm7mDerPndRpjH8sUH+sSUFyhQ3bDt9Rs5j0gZXnrZBaDT4/vt30FUTYsLOuFNEythgvyt
+	oquEGUkuQ7bfabAYeXfx8i7XDm5SwC+Tv2PNIOPkJUbGn6QqLjUnJncUM3nBiIBwm4nL8Mi52ZS
+	uXY
+X-Google-Smtp-Source: AGHT+IFP6WPvJjtqBbnQ2MWPG384RQqW2r8lGchjb4/ElWhgg6uXTvtdL/0jT8YeUWkGRk6O/eusAu4Raqeehjg3aWE=
+X-Received: by 2002:a05:651c:304c:b0:32b:a9a4:cd3b with SMTP id
+ 38308e7fff4ca-32f500208b3mr296861fa.1.1752073555389; Wed, 09 Jul 2025
+ 08:05:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250708-siocinq-v6-4-3775f9a9e359@antgroup.com>
+References: <20250626134158.3385080-1-glider@google.com> <20250626134158.3385080-8-glider@google.com>
+In-Reply-To: <20250626134158.3385080-8-glider@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 9 Jul 2025 17:05:44 +0200
+X-Gm-Features: Ac12FXzeQAhmBo1BEER1qVGdHBxq8SPxRNE1VAHT5W_fT8Mz44wAcz5cFMNrv3E
+Message-ID: <CACT4Y+Za7vRTQ6M6kKs-+4N4+D6q05OKf422LZCMBBy-k4Cqqw@mail.gmail.com>
+Subject: Re: [PATCH v2 07/11] kcov: add trace and trace_size to struct kcov_state
+To: Alexander Potapenko <glider@google.com>
+Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Marco Elver <elver@google.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 08, 2025 at 02:36:14PM +0800, Xuewei Niu wrote:
->Add SIOCINQ ioctl tests for both SOCK_STREAM and SOCK_SEQPACKET.
+On Thu, 26 Jun 2025 at 15:42, Alexander Potapenko <glider@google.com> wrote:
 >
->The client waits for the server to send data, and checks if the SIOCINQ
->ioctl value matches the data size. After consuming the data, the client
->checks if the SIOCINQ value is 0.
+> Keep kcov_state.area as the pointer to the memory buffer used by
+> kcov and shared with the userspace. Store the pointer to the trace
+> (part of the buffer holding sequential events) separately, as we will
+> be splitting that buffer in multiple parts.
+> No functional changes so far.
 >
->Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
->---
-> tools/testing/vsock/vsock_test.c | 79 ++++++++++++++++++++++++++++++++++++++++
-> 1 file changed, 79 insertions(+)
+> Signed-off-by: Alexander Potapenko <glider@google.com>
 >
->diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
->index be6ce764f69480c0f9c3e2288fc19cd2e74be148..a66d2360133dd0e36940a5907679aeacc8af7714 100644
->--- a/tools/testing/vsock/vsock_test.c
->+++ b/tools/testing/vsock/vsock_test.c
->@@ -24,6 +24,7 @@
-> #include <linux/time64.h>
-> #include <pthread.h>
-> #include <fcntl.h>
->+#include <linux/sockios.h>
+> ---
+> Change-Id: I50b5589ef0e0b6726aa0579334093c648f76790a
 >
-> #include "vsock_test_zerocopy.h"
-> #include "timeout.h"
->@@ -1307,6 +1308,54 @@ static void test_unsent_bytes_client(const struct test_opts *opts, int type)
-> 	close(fd);
-> }
+> v2:
+>  - Address comments by Dmitry Vyukov:
+>    - tweak commit description
+>  - Address comments by Marco Elver:
+>    - rename sanitizer_cov_write_subsequent() to kcov_append_to_buffer()
+>  - Update code to match the new description of struct kcov_state
+> ---
+>  include/linux/kcov_types.h |  9 ++++++-
+>  kernel/kcov.c              | 54 ++++++++++++++++++++++----------------
+>  2 files changed, 39 insertions(+), 24 deletions(-)
 >
->+static void test_unread_bytes_server(const struct test_opts *opts, int type)
->+{
->+	unsigned char buf[MSG_BUF_IOCTL_LEN];
->+	int client_fd;
->+
->+	client_fd = vsock_accept(VMADDR_CID_ANY, opts->peer_port, NULL, type);
->+	if (client_fd < 0) {
->+		perror("accept");
->+		exit(EXIT_FAILURE);
->+	}
->+
->+	for (int i = 0; i < sizeof(buf); i++)
->+		buf[i] = rand() & 0xFF;
->+
->+	send_buf(client_fd, buf, sizeof(buf), 0, sizeof(buf));
->+	control_writeln("SENT");
->+
->+	close(client_fd);
->+}
->+
->+static void test_unread_bytes_client(const struct test_opts *opts, int type)
->+{
->+	unsigned char buf[MSG_BUF_IOCTL_LEN];
->+	int fd;
->+
->+	fd = vsock_connect(opts->peer_cid, opts->peer_port, type);
->+	if (fd < 0) {
->+		perror("connect");
->+		exit(EXIT_FAILURE);
->+	}
->+
->+	control_expectln("SENT");
->+	/* The data has arrived but has not been read. The expected is
->+	 * MSG_BUF_IOCTL_LEN.
->+	 */
->+	if (!vsock_ioctl_int(fd, SIOCINQ, MSG_BUF_IOCTL_LEN)) {
->+		fprintf(stderr, "Test skipped, SIOCINQ not supported.\n");
->+		goto out;
->+	}
->+
->+	recv_buf(fd, buf, sizeof(buf), 0, sizeof(buf));
->+	/* All data has been consumed, so the expected is 0. */
->+	vsock_ioctl_int(fd, SIOCINQ, 0);
->+
->+out:
->+	close(fd);
->+}
->+
-> static void test_stream_unsent_bytes_client(const struct test_opts *opts)
-> {
-> 	test_unsent_bytes_client(opts, SOCK_STREAM);
->@@ -1327,6 +1376,26 @@ static void test_seqpacket_unsent_bytes_server(const struct test_opts *opts)
-> 	test_unsent_bytes_server(opts, SOCK_SEQPACKET);
-> }
->
->+static void test_stream_unread_bytes_client(const struct test_opts *opts)
->+{
->+	test_unread_bytes_client(opts, SOCK_STREAM);
->+}
->+
->+static void test_stream_unread_bytes_server(const struct test_opts *opts)
->+{
->+	test_unread_bytes_server(opts, SOCK_STREAM);
->+}
->+
->+static void test_seqpacket_unread_bytes_client(const struct test_opts *opts)
->+{
->+	test_unread_bytes_client(opts, SOCK_SEQPACKET);
->+}
->+
->+static void test_seqpacket_unread_bytes_server(const struct test_opts *opts)
->+{
->+	test_unread_bytes_server(opts, SOCK_SEQPACKET);
->+}
->+
-> #define RCVLOWAT_CREDIT_UPD_BUF_SIZE	(1024 * 128)
-> /* This define is the same as in 'include/linux/virtio_vsock.h':
->  * it is used to decide when to send credit update message during
->@@ -2276,6 +2345,16 @@ static struct test_case test_cases[] = {
-> 		.run_client = test_stream_transport_change_client,
-> 		.run_server = test_stream_transport_change_server,
-> 	},
->+	{
->+		.name = "SOCK_STREAM ioctl(SIOCINQ) functionality",
->+		.run_client = test_stream_unread_bytes_client,
->+		.run_server = test_stream_unread_bytes_server,
->+	},
->+	{
->+		.name = "SOCK_SEQPACKET ioctl(SIOCINQ) functionality",
->+		.run_client = test_seqpacket_unread_bytes_client,
->+		.run_server = test_seqpacket_unread_bytes_server,
->+	},
-> 	{},
-> };
->
->
->-- 
->2.34.1
->
+> diff --git a/include/linux/kcov_types.h b/include/linux/kcov_types.h
+> index 53b25b6f0addd..233e7a682654b 100644
+> --- a/include/linux/kcov_types.h
+> +++ b/include/linux/kcov_types.h
+> @@ -7,9 +7,16 @@
+>  struct kcov_state {
+>         /* Size of the area (in long's). */
+>         unsigned int size;
+> +       /*
+> +        * Pointer to user-provided memory used by kcov. This memory may
 
-I ran the tests, everything went smoothly!
-I had to apply this patch[1] first otherwise the transport_change test 
-would cause problems.
+s/kcov/KCOV/ for consistency
 
-Tested-by: Luigi Leonardi <leonardi@redhat.com>
-Reviewed-by: Luigi Leonardi <leonardi@redhat.com>
+> +        * contain multiple buffers.
+> +        */
+> +       void *area;
+>
+> +       /* Size of the trace (in long's). */
+> +       unsigned int trace_size;
+>         /* Buffer for coverage collection, shared with the userspace. */
+> -       void *area;
+> +       unsigned long *trace;
+>
+>         /*
+>          * KCOV sequence number: incremented each time kcov is reenabled, used
+> diff --git a/kernel/kcov.c b/kernel/kcov.c
+> index 8e98ca8d52743..038261145cf93 100644
+> --- a/kernel/kcov.c
+> +++ b/kernel/kcov.c
+> @@ -195,11 +195,11 @@ static notrace unsigned long canonicalize_ip(unsigned long ip)
+>         return ip;
+>  }
+>
+> -static notrace void kcov_append_to_buffer(unsigned long *area, int size,
+> +static notrace void kcov_append_to_buffer(unsigned long *trace, int size,
+>                                           unsigned long ip)
+>  {
+>         /* The first 64-bit word is the number of subsequent PCs. */
+> -       unsigned long pos = READ_ONCE(area[0]) + 1;
+> +       unsigned long pos = READ_ONCE(trace[0]) + 1;
+>
+>         if (likely(pos < size)) {
+>                 /*
+> @@ -209,9 +209,9 @@ static notrace void kcov_append_to_buffer(unsigned long *area, int size,
+>                  * overitten by the recursive __sanitizer_cov_trace_pc().
+>                  * Update pos before writing pc to avoid such interleaving.
+>                  */
+> -               WRITE_ONCE(area[0], pos);
+> +               WRITE_ONCE(trace[0], pos);
+>                 barrier();
+> -               area[pos] = ip;
+> +               trace[pos] = ip;
+>         }
+>  }
+>
+> @@ -225,8 +225,8 @@ void notrace __sanitizer_cov_trace_pc_guard(u32 *guard)
+>         if (!check_kcov_mode(KCOV_MODE_TRACE_PC, current))
+>                 return;
+>
+> -       kcov_append_to_buffer(current->kcov_state.area,
+> -                             current->kcov_state.size,
+> +       kcov_append_to_buffer(current->kcov_state.trace,
+> +                             current->kcov_state.trace_size,
+>                               canonicalize_ip(_RET_IP_));
+>  }
+>  EXPORT_SYMBOL(__sanitizer_cov_trace_pc_guard);
+> @@ -242,8 +242,8 @@ void notrace __sanitizer_cov_trace_pc(void)
+>         if (!check_kcov_mode(KCOV_MODE_TRACE_PC, current))
+>                 return;
+>
+> -       kcov_append_to_buffer(current->kcov_state.area,
+> -                             current->kcov_state.size,
+> +       kcov_append_to_buffer(current->kcov_state.trace,
+> +                             current->kcov_state.trace_size,
+>                               canonicalize_ip(_RET_IP_));
+>  }
+>  EXPORT_SYMBOL(__sanitizer_cov_trace_pc);
+> @@ -252,9 +252,9 @@ EXPORT_SYMBOL(__sanitizer_cov_trace_pc);
+>  #ifdef CONFIG_KCOV_ENABLE_COMPARISONS
+>  static void notrace write_comp_data(u64 type, u64 arg1, u64 arg2, u64 ip)
+>  {
+> -       struct task_struct *t;
+> -       u64 *area;
+>         u64 count, start_index, end_pos, max_pos;
+> +       struct task_struct *t;
+> +       u64 *trace;
+>
+>         t = current;
+>         if (!check_kcov_mode(KCOV_MODE_TRACE_CMP, t))
+> @@ -266,22 +266,22 @@ static void notrace write_comp_data(u64 type, u64 arg1, u64 arg2, u64 ip)
+>          * We write all comparison arguments and types as u64.
+>          * The buffer was allocated for t->kcov_state.size unsigned longs.
+>          */
+> -       area = (u64 *)t->kcov_state.area;
+> +       trace = (u64 *)t->kcov_state.trace;
+>         max_pos = t->kcov_state.size * sizeof(unsigned long);
+>
+> -       count = READ_ONCE(area[0]);
+> +       count = READ_ONCE(trace[0]);
+>
+>         /* Every record is KCOV_WORDS_PER_CMP 64-bit words. */
+>         start_index = 1 + count * KCOV_WORDS_PER_CMP;
+>         end_pos = (start_index + KCOV_WORDS_PER_CMP) * sizeof(u64);
+>         if (likely(end_pos <= max_pos)) {
+>                 /* See comment in kcov_append_to_buffer(). */
+> -               WRITE_ONCE(area[0], count + 1);
+> +               WRITE_ONCE(trace[0], count + 1);
+>                 barrier();
+> -               area[start_index] = type;
+> -               area[start_index + 1] = arg1;
+> -               area[start_index + 2] = arg2;
+> -               area[start_index + 3] = ip;
+> +               trace[start_index] = type;
+> +               trace[start_index + 1] = arg1;
+> +               trace[start_index + 2] = arg2;
+> +               trace[start_index + 3] = ip;
+>         }
+>  }
+>
+> @@ -382,11 +382,13 @@ static void kcov_start(struct task_struct *t, struct kcov *kcov,
+>
+>  static void kcov_stop(struct task_struct *t)
+>  {
+> +       int saved_sequence = t->kcov_state.sequence;
+> +
+>         WRITE_ONCE(t->kcov_mode, KCOV_MODE_DISABLED);
+>         barrier();
+>         t->kcov = NULL;
+> -       t->kcov_state.size = 0;
+> -       t->kcov_state.area = NULL;
+> +       t->kcov_state = (typeof(t->kcov_state)){ 0 };
 
-Thanks for the series!
+In a previous patch you used the following syntax, let's stick to one
+of these forms:
 
-[1]https://lore.kernel.org/netdev/20250708111701.129585-1-sgarzare@redhat.com/
+data->saved_state = (struct kcov_state){};
 
+
+> +       t->kcov_state.sequence = saved_sequence;
+>  }
+>
+>  static void kcov_task_reset(struct task_struct *t)
+> @@ -736,6 +738,8 @@ static long kcov_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+>                 }
+>                 kcov->state.area = area;
+>                 kcov->state.size = size;
+> +               kcov->state.trace = area;
+> +               kcov->state.trace_size = size;
+>                 kcov->mode = KCOV_MODE_INIT;
+>                 spin_unlock_irqrestore(&kcov->lock, flags);
+>                 return 0;
+> @@ -928,10 +932,12 @@ void kcov_remote_start(u64 handle)
+>                 local_lock_irqsave(&kcov_percpu_data.lock, flags);
+>         }
+>
+> -       /* Reset coverage size. */
+> -       *(u64 *)area = 0;
+>         state.area = area;
+>         state.size = size;
+> +       state.trace = area;
+> +       state.trace_size = size;
+> +       /* Reset coverage size. */
+> +       state.trace[0] = 0;
+>
+>         if (in_serving_softirq()) {
+>                 kcov_remote_softirq_start(t);
+> @@ -1004,8 +1010,8 @@ void kcov_remote_stop(void)
+>         struct task_struct *t = current;
+>         struct kcov *kcov;
+>         unsigned int mode;
+> -       void *area;
+> -       unsigned int size;
+> +       void *area, *trace;
+> +       unsigned int size, trace_size;
+>         int sequence;
+>         unsigned long flags;
+>
+> @@ -1037,6 +1043,8 @@ void kcov_remote_stop(void)
+>         kcov = t->kcov;
+>         area = t->kcov_state.area;
+>         size = t->kcov_state.size;
+> +       trace = t->kcov_state.trace;
+> +       trace_size = t->kcov_state.trace_size;
+>         sequence = t->kcov_state.sequence;
+>
+>         kcov_stop(t);
+> --
+> 2.50.0.727.gbf7dc18ff4-goog
+>
 
