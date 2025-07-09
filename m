@@ -1,185 +1,329 @@
-Return-Path: <linux-kernel+bounces-724600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71E7FAFF4BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:35:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD32AFF481
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:15:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9E4E7AA256
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:33:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6E323A8035
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CE1248865;
-	Wed,  9 Jul 2025 22:34:41 +0000 (UTC)
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915DF22F77E;
+	Wed,  9 Jul 2025 22:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OHTxLL9A"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BB6156237;
-	Wed,  9 Jul 2025 22:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752100481; cv=none; b=OqoHub95zpLLIMx0JoJbcwM8Mi6nccfxuc4pBoZAhx2Ls+cKU+7xhylOqA7DK5EtqPSCp164tRPrurpA/079XjyRpgUHj/cwKl8yV01DuuorC0RIzamgfme0XjdkD967I+yir+3A+FZnnPV8LwlZrJENMm32Wmso4Q9Tx/2ZgmQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752100481; c=relaxed/simple;
-	bh=MY2Vx9zpExNRGPVZnEiH82ov0uFOe4OTJxBtVTuPRIg=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=aos+ih7+Nxw2h/uOrgTKoAI7NmU/Z1yiCizEu4CTFetOknu8wc7wTLKEXJzvegTLisfnngQWNJHOqGp2hAI8ZF/kJgk/jyzEjVgMhQk57oLWeDNDySb2FQETtsQMDZ2mFPoeQghtwWaV30bcSr5wG+aUy3beA826pl7OYkP7lVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1uZd3M-001GCq-6w;
-	Wed, 09 Jul 2025 22:14:13 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2956623AB86
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 22:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752099315; cv=fail; b=jAbuvZxP4J49NqDrgLzIK1rez1PTOHvc2BsqdIVPpCowXKlkNOZnzinYl7B6UL4EFuiu9UvQ4kALyago4wI05HLJWk9WYSxx4Wl9CUXNrW01jZPLv+vFXLKMIlHgydwgtCHOrHcCGbpSNC6nxb81gYuDdQbXzF0L/JVfgl/Qt8c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752099315; c=relaxed/simple;
+	bh=xaJZyCYsXctxvWWJA5SeOmvk4Pn0fbCvITYQYZdVqL8=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Z33dEbf72nmwLioYzaxNhHWuIPBhKb/l6GgiQhDPl6mGMY6nW1H3AgUNZvlTor/8t/v9ew+1Gry/M8LyVGFLCIkmoZpWdktpw7rnIBX3l1nFo0KFvba6p9ndd9UmKHkoip9IO+iSP7u59lWDSUv8KbI2DApFU346cnav/4s0zQA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OHTxLL9A; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752099314; x=1783635314;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=xaJZyCYsXctxvWWJA5SeOmvk4Pn0fbCvITYQYZdVqL8=;
+  b=OHTxLL9Abhm7EmpXBS6z31xub4s4VpuOcUQKHU2pJ+qDb/djnC8b0dln
+   V9yTmGS+KC9eFmkjEW9z388pFgQtBns1I53EnK9HxwH/WgVqg0OvuQGDV
+   gN5GKOjNY85xwgGJvMFbgIRHPI+yEL0yRYK3Lb3CEO/O8v/rnexg9h6Zf
+   Fx4Ae9eCMb5fCq4uO0zbefqa/hiINZviZb+y8B/aY0GMTKm5hwXur0zyU
+   XLVqzz6hK/647PO2Pss2rcFI6l6flEr3lDMywUZnw99THn1RMFTO9uFYX
+   ecuXGQiKdnZknSWFR990SVrEHx30yjemFdZXMUIfHU2uFTn9HtrapheG6
+   g==;
+X-CSE-ConnectionGUID: K6YJoqrmQ3uvTPO1+8W1mA==
+X-CSE-MsgGUID: RiU+zMlSRoqbwcrl8e+O+w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54501014"
+X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
+   d="scan'208";a="54501014"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 15:15:12 -0700
+X-CSE-ConnectionGUID: dcUfPk4YRhWBwoThjXqNdA==
+X-CSE-MsgGUID: HKhJ5yiXReiLoBJcXgzE5A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
+   d="scan'208";a="156626903"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 15:15:11 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 9 Jul 2025 15:15:10 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Wed, 9 Jul 2025 15:15:10 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.40)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 9 Jul 2025 15:15:09 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=N/7r05bmfiW8mhmPYaHLYbN+HrWETzQ0F9D8Lqg+o0uj2h+hjFo3+lUZ+52mUDknnJDJ+eZRweeN5WYOedInDdGeEZO8wk/6eo4PCsTj8sLg97nRXR00TFC8YHDVl8czcKkazkVbYYvjHYvyDVbGIKRdOMMGBg6K1SJTujMVdGZ68xYnav+UR5Qo0WhVCY+55mlCtK5u/iMcviyigK33Xywr+HZMDMuuiNQ6To/8bLsqpYB1V9RF59FVG6Bp3O7FesqoIV8EJCUhdDup6lhxroTnNwNO80hQ0piFFYzr1C1l2B8i1Vp4knNVyQWDGTkgJaQjpP7wD7YaQnlUQ4J4yg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uWBvm72DI2Y/6wSc+WiDRS4yfUQ4QbBud+Oi4fOK1OQ=;
+ b=aSCno3r6JJqs1zYuYKkzb+8ky24sVfSamKsS4rMz7JKqZV4XOa6QQdhfw/N3mTolmBBMcYClfgX/Ukm1xACTPN3ws4J46E6MFPi6aZ8kx3rU//Lm7FTrRNlwWSCTVUsaQuPTS3qpFVCCLuionc7KQ7BENLfSPRYLHJbv6ce8qabJQ0KDkUrPLW30L+bNM5r/TZebWP2m9v15qDuev9E72zuwSlIP6kZXCmjOeySavPN4ov3Ww10SEu4r6qEPNfE9hDxglgu2pbQTlMzDgMNFcZsBM1GkT9DGKVvX/FGNjB6MutJjvR4w6NpX7pBatyPiA0Gk+ju6dDW/XKhd6OMOpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by SJ0PR11MB6791.namprd11.prod.outlook.com (2603:10b6:a03:484::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Wed, 9 Jul
+ 2025 22:14:54 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%6]) with mapi id 15.20.8901.018; Wed, 9 Jul 2025
+ 22:14:54 +0000
+Message-ID: <f95e4868-0f87-4b58-b4a8-4fd18dcbf6ad@intel.com>
+Date: Wed, 9 Jul 2025 15:14:52 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 24/30] x86/resctrl: Add energy/perf choices to rdt boot
+ option
+To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
+ Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
+	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
+	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
+	<Dave.Martin@arm.com>, Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	Chen Yu <yu.c.chen@intel.com>
+CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+References: <20250626164941.106341-1-tony.luck@intel.com>
+ <20250626164941.106341-25-tony.luck@intel.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <20250626164941.106341-25-tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR04CA0150.namprd04.prod.outlook.com
+ (2603:10b6:303:84::35) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: "Song Liu" <songliubraving@meta.com>
-Cc: "Christian Brauner" <brauner@kernel.org>, "Tingmao Wang" <m@maowtm.org>,
- =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- "Song Liu" <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>, "Kernel Team" <kernel-team@meta.com>,
- "andrii@kernel.org" <andrii@kernel.org>,
- "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
- "daniel@iogearbox.net" <daniel@iogearbox.net>,
- "martin.lau@linux.dev" <martin.lau@linux.dev>,
- "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
- "jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>,
- "mattbobrowski@google.com" <mattbobrowski@google.com>,
- =?utf-8?q?G=C3=BCnther?= Noack <gnoack@google.com>
-Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
-In-reply-to: <40D24586-5EC7-462A-9940-425182F2972A@meta.com>
-References: <>, <40D24586-5EC7-462A-9940-425182F2972A@meta.com>
-Date: Thu, 10 Jul 2025 08:14:13 +1000
-Message-id: <175209925346.2234665.15385484299365186166@noble.neil.brown.name>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SJ0PR11MB6791:EE_
+X-MS-Office365-Filtering-Correlation-Id: 006f2990-b881-441f-925b-08ddbf36083b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?cmJtdUFsQTRDc1FreWFLeXc1L1NPRVVQendWSy9sYjN1M01BZTFDOEFCb2xX?=
+ =?utf-8?B?ZTJwenpUZkVFTHBqOG1mNkxPdU9JV3ltTm1FeldvYXpRZFR3N1hZTjBQVGtp?=
+ =?utf-8?B?QVgxc0ttU1V5akJBRTkrV0hBYzJPSGp2Mmlhb2V2WUE4dFkzTlFVN2NzcFFN?=
+ =?utf-8?B?bmMxcjFsZksxUHA3endXZG1iSU1qakdYQnBOakdYeEsyL3NjQWlrRWVYT3Vw?=
+ =?utf-8?B?WlZPUHRqVkRkUXBhTnh3c3F2S1ZPcGFpU3NqMGIyNTFCVkVtcTd0WWpQVGdX?=
+ =?utf-8?B?WnEwdlRGc3ZOMWRoam43aXlpbTUyWGpseDNwZDVHQ3gvai8zSVdRS1BRV1h2?=
+ =?utf-8?B?VEJXVTZYZm54RXJrRnErak1hN0VDZ1lVaEkzbU9YNWNUQUhPS2I3TDFzWXZw?=
+ =?utf-8?B?cERzTVdJcWc4TUNrV0s1SHdUM2hEbDNiNUpiTmpqOWVGakxWWnZBelVYRjhG?=
+ =?utf-8?B?Tmo0NHI3TWZkSTFxUzE0bHgzQlFUcjJndThCVi9XT0p0NVJVS3luRFRtSENU?=
+ =?utf-8?B?Z3ZSUHNuUlhnS1pSelFqMC9LdzgzOVNicXhFQUw3aDVEajJnTWczenZnWGdv?=
+ =?utf-8?B?c3YwbGdpeHBnQlg2Njh0OXF6VDFSY3hXTG9TNDBmMXBIVm4xdDVEZktRUkJY?=
+ =?utf-8?B?RlpZTGtaN2s0OEthcW42U2E4NlNLRUNuVUtNWExHanpZSFdITjFqMUw0dExF?=
+ =?utf-8?B?c1FlNURiTVBMb3E3N2ZkV2VmUzNmRGc0d21zZ2RnSEFSRjBlQXlLUEkrNUVW?=
+ =?utf-8?B?WExEOHEzL3h5VTZVY2p0YjNDYndlNDRkQWVpKzlCMnFGR0ZHYlJtVUwvZkU2?=
+ =?utf-8?B?ZzNBOHVGS3RxQnVQWmErckoxVWZ1d1BiQ0ZuV2xGSXBCRldvZ1VNQWxrNjlC?=
+ =?utf-8?B?MEV1eUt2YUthbG1OMVdkSHFrNlYzcUdYNUs0UFdyRE5VT043K0ZsN1ErV0xO?=
+ =?utf-8?B?K3V1a3l5QWhSdmhNOERjbkZWbWQ5QUhSMDlvZTU0eG50OFg1Vlg5ekdCTG82?=
+ =?utf-8?B?ZVFSVk5DRGhVcmhOWnhkUnh2Wk9nS1dIRVNyaWJvdi9LSm5DczZYQU8zd0FE?=
+ =?utf-8?B?VGppTHJJVWJHRjk0THpmbmJ0Q3R6K1IwNXZERkpkZHFoU3dkNVA5Rm9Xbys5?=
+ =?utf-8?B?UHlmRnpuamUvWFhtNHdhajBZaE5PUDd4cnhvcTkxK1N1S1hxK3ZTTGkwT0x1?=
+ =?utf-8?B?Q0RudmlJaEJxeVZ3bGswRFFKc0haTlNobEpLaUhjZDRwWDJTaUVGQXJCUCtt?=
+ =?utf-8?B?RWhMN1Q1WFZUaklhUEtKQ05kSjJ5ZmZ2UllOOTNyTThlUWQ5aDlhWXVpcDkw?=
+ =?utf-8?B?WXN0cXF5aWlsYzZuNndML0NlYUlPajg4YkhYOGwyVUZlSVowZEhyVkF1Nmk1?=
+ =?utf-8?B?TzR2WFhseStmdExwYmJTZ2dEZnRsdEYwSWVDMXlvRkw2eW5ad05meGNjcGdU?=
+ =?utf-8?B?K0t0SFVnOVNGeUl2aEdmTzJ2TlJtclNrcUJpYWhMajN0SE45NFlQMzBPb25C?=
+ =?utf-8?B?SkxhWGJWblV6bmtCbzBxUGx3eWFOanE0eUwwVTZUL0REYUZKOWQvejRIYnVE?=
+ =?utf-8?B?RmlGbGFXWHhRSzRhcmc0UjRZT3pzWnRCK3BDalkrQ1Y5dTgveEd4TzJ0NHVz?=
+ =?utf-8?B?eFA1MmpJeWM2Mi9DZWIvdjhuZmxqWXNiSkwxcjBBRVIxczhIbTBCcjJPOFlB?=
+ =?utf-8?B?YVpqeUc3c3dUVFpOWGhCVi9PL0l3cVd6eVVkM2ZGdktKNTkzTTBqbTVaY3Zq?=
+ =?utf-8?B?OXcwK1pHZlNpVlRSZHpjYjZtNTlaZTJMVnROeDBwemYvOGI0dXVEbytyUHEv?=
+ =?utf-8?B?OE56VnVXZ0x0M1ArS0JGbkRFbDU0V1c2WDFCQkF0cHAySlV5NGcvbjlXNTY3?=
+ =?utf-8?B?TUZSSU1CdnJvUDlIUEk4czhSWXZ5N3JoS2NWbnlBK0c0WjFNZjZVRi9tS1Vl?=
+ =?utf-8?B?TXcwd2ZHME1ZakJua2lIaEtnQ3c3V2RGWXNweFlWMHRmNmdYRDhkLytYY3NO?=
+ =?utf-8?B?dW9YajFFdVhnPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aVlTaVVYZVVBV2hIaTdhR3A4ZzViZytWalRMek1GcmhEMkNwUldUeUNqdUZS?=
+ =?utf-8?B?TzBRa29yblZmdVc0SDl1YnA5RjhmSmFMK01FdzBWd3p2Y2ozRGRsZFNSVVBo?=
+ =?utf-8?B?RlRlVitQK1YvV1VaY2RuZU5CL1p2WlhDN2cveEtZeTVVS3oxejlIeFJrUEtP?=
+ =?utf-8?B?UGFETkZOQ3BXSXViTHZqbXArTzBhR2pod2xKS2gwWXU0Sy9FZnppclJheXBo?=
+ =?utf-8?B?Z2NON211M2hlbGJ0dWlEYmdCYjFHS1lZN2psbjZBYVkvTGlUU0N5T05jMEZK?=
+ =?utf-8?B?S2pEa0w0c0RERVdETHRLUTBOMUM5Z3ZiQlRDZkFxVFlzUkwyNkZqY3Y5c0Qz?=
+ =?utf-8?B?MXJYb0xzemp2K1l2M01LaiszdW5pc01hVDFZTlVGc3RrREgxcDYyaWdNa0VD?=
+ =?utf-8?B?K29Zd2hPa1ZEbEo3Smk1cU8xV1hYTFp5MUpESGsrNEZoS1dhdnllNlovTEhH?=
+ =?utf-8?B?TmZiL3V4K0JvK1p1dTlZc3VHclNONVpEbXA2U2VUWWRIV25tWFB1andDKzZo?=
+ =?utf-8?B?TFNQb0JzWWxCSEEvam1pOTl3OGQ1QktDOFNyYjFuUm9NQXpoQ1duSlFTMHNZ?=
+ =?utf-8?B?SVl2RnNqN1JGd3lKdTVmK3g0NW52bjhBRzlQYWFkMzY4bjdudjI2d2lZQ0dX?=
+ =?utf-8?B?MFNzTzNXN2pDU0lUdDYwQ2FZazM5NVhrUWZiTXY1RXFUSGl0cDBLZWlMaitI?=
+ =?utf-8?B?QzZGM2hyakdiOHVLb0J2UTQ4THQ0SjlqZHNSVHFJaW0wU1RWN2ExdjdjL1ZR?=
+ =?utf-8?B?T01XcDI5bDY1dGZmZmZERlZvZ0pyZHVDVXI1aDBqR2dmRFFQYjlkUGQvZDN6?=
+ =?utf-8?B?bW5nQTZSeSt4Lzl0V0pRS0F3SzUra3k4U0w5eWNJQ1QzMmhPTG4wZ3ZYMy90?=
+ =?utf-8?B?WlhlMGIvMHMrK1VUQlBnTytTSmF4NHcxSnh1b0hOdjF1Y1lxTitYb20zSkl0?=
+ =?utf-8?B?ZFYvR3djdlgvMlowcTliekZHVExGZGVpU0xsMWU0cityaTJ1cHJHU2Z1TUVE?=
+ =?utf-8?B?c1VoU1M4ZCtzOXFCcEVYNWNQaXZ0dC93UldLc3pHQ2VCbk5acDVpZzNLSVdX?=
+ =?utf-8?B?UkVSbkFIL0JvRW42dXoxUWtvcHg2bEpQNHFHaGtDdHFKRlI5TjJFaTlCNnEw?=
+ =?utf-8?B?YWVGMG9VOGlqa3hJbEdBUGtqUXRWaEJFUVF3QXZuNkpPMC9LRGhzVHg4UmJF?=
+ =?utf-8?B?YlVQR1Vqa3RCZGp1b2ZaWEZoRnFQSXdwM3JZUUtlZmdoT0RwSlNqVkVKeXRi?=
+ =?utf-8?B?enFlSTBOQmlTQzl3TkgxdGFPcWV6cS82dTNiTVBLbTR2Y3ovMmRYS0tsWGFT?=
+ =?utf-8?B?blo2ZnBVNEtXQnR1dE1LZXh6OG9vYjluNnhWMUhwSXM2UlN0WjloeTUzWTZV?=
+ =?utf-8?B?SHl5S2RKdk0vR081dm5MWkhnYkUybW9VRzFtM09jbUs5czl4ODZua2xweWIv?=
+ =?utf-8?B?SGYwZFAwME5ibWRGWmsrNjZoN00zN1ZpUkE2KzlYMjdReXlrMGNyTW1pckti?=
+ =?utf-8?B?OVJpKzdTZDF5NjhWL3JYaVEzUkdzbklwV01XcmRXaE9jKzRCcklYbE5URisz?=
+ =?utf-8?B?ZkZLNUZjOSsyWVNqWStDMmxWd1d2VnBKZ2grVWhJdUM4ZTBFWE9HZitpWDFx?=
+ =?utf-8?B?cWFxVFFkNWtKeXNJUmpIRjRnVis0dTBBU0RBV1YrYVFSR0hQazFKcFFTMG52?=
+ =?utf-8?B?MGZUaDE4Q3pWTEtYYmxtSEFNOTBzbExyYTZFUUEvck1tbVFSaHB1eTZTa0l6?=
+ =?utf-8?B?UGNsTi9NNXd0Y2ZiNmUyWS9TeEw4TmwvYzJIdUw0SmZjamZucVRHYkxPOUFB?=
+ =?utf-8?B?anJTYy9zMG9xZGhJbktSSkhBK2R1VVU3R2hwRDNPREt6bjZBRElzRHNBN3lt?=
+ =?utf-8?B?eUM5VDRWTEtKTVc0aXVvMkkxazQ3dy9DOE5sVXNCQ1VHeFo5M2JzWUxWRTJj?=
+ =?utf-8?B?Y3ZoaUdjODBiMnhrMGhBRG4xcUdkbjZSUmJmVmd6UkFMZDBVeTNackZtajZF?=
+ =?utf-8?B?cTlSRHliRVNqMzVFcEw0R3hFVE1aQ0c2Tnl1OUxhb0U3ZTU1bzVxRnl3R1hr?=
+ =?utf-8?B?VU4rOU50VzE1SGZaRnl6K3B6L2dZNVE4WlJGODl4TmI0OEhad1pHd3Q5citB?=
+ =?utf-8?B?TURHQkEwUndRZGNWSWIrSUNhUEg0NlhxQ3MyRk80dW5xU1l1bjY4YVZUbW9m?=
+ =?utf-8?B?NWc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 006f2990-b881-441f-925b-08ddbf36083b
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 22:14:54.5260
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7hDO+YDpDFY/gsEc22wwZK5MbGtwJX/WSfIuxwsZ+x9nMwhNu6xxf+pkgD3kUPQTndM6k5h88R/rdxtkK5EB0ootHoRyllXGZxY+nv8gsQ0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB6791
+X-OriginatorOrg: intel.com
 
-On Tue, 08 Jul 2025, Song Liu wrote:
-> Hi Christian,=20
->=20
-> Thanks for your comments!=20
->=20
-> > On Jul 7, 2025, at 4:17=E2=80=AFAM, Christian Brauner <brauner@kernel.org=
-> wrote:
->=20
-> [...]
->=20
-> >>> 3/ Extend vfs_walk_ancestors() to pass a "may sleep" flag to the callba=
-ck.
-> >>=20
-> >> I think that's fine.
-> >=20
-> > Ok, sorry for the delay but there's a lot of different things going on
-> > right now and this one isn't exactly an easy thing to solve.
-> >=20
-> > I mentioned this before and so did Neil: the lookup implementation
-> > supports two modes sleeping and non-sleeping. That api is abstracted
-> > away as heavily as possible by the VFS so that non-core code will not be
-> > exposed to it other than in exceptional circumstances and doesn't have
-> > to care about it.
-> >=20
-> > It is a conceptual dead-end to expose these two modes via separate APIs
-> > and leak this implementation detail into non-core code. It will not
-> > happen as far as I'm concerned.
-> >=20
-> > I very much understand the urge to get the refcount step-by-step thing
-> > merged asap. Everyone wants their APIs merged fast. And if it's
-> > reasonable to move fast we will (see the kernfs xattr thing).
-> >=20
-> > But here are two use-cases that ask for the same thing with different
-> > constraints that closely mirror our unified approach. Merging one
-> > quickly just to have something and then later bolting the other one on
-> > top, augmenting, or replacing, possible having to deprecate the old API
-> > is just objectively nuts. That's how we end up with a spaghetthi helper
-> > collection. We want as little helper fragmentation as possible.
-> >=20
-> > We need a unified API that serves both use-cases. I dislike
-> > callback-based APIs generally but we have precedent in the VFS for this
-> > for cases where the internal state handling is delicate enough that it
-> > should not be exposed (see __iterate_supers() which does exactly work
-> > like Neil suggested down to the flag argument itself I added).
-> >=20
-> > So I'm open to the callback solution.
-> >=20
-> > (Note for really absurd perf requirements you could even make it work
-> > with static calls I'm pretty sure.)
->=20
-> I guess we will go with Micka=C3=ABl=E2=80=99s idea:
->=20
-> > int vfs_walk_ancestors(struct path *path,
-> >                       bool (*walk_cb)(const struct path *ancestor, void *=
-data),
-> >                       void *data, int flags)
-> >=20
-> > The walk continue while walk_cb() returns true.  walk_cb() can then
-> > check if @ancestor is equal to a @root, or other properties.  The
-> > walk_cb() return value (if not bool) should not be returned by
-> > vfs_walk_ancestors() because a walk stop doesn't mean an error.
->=20
-> If necessary, we hide =E2=80=9Croot" inside @data. This is good.=20
->=20
-> > @path would be updated with latest ancestor path (e.g. @root).
->=20
-> Update @path to the last ancestor and hold proper references.=20
-> I missed this part earlier. With this feature, vfs_walk_ancestors=20
-> should work usable with open-codeed bpf path iterator.=20
+Hi Tony,
 
-I don't think path should be updated.  That adds complexity which might
-not be needed.  The original (landlock) requirements were only to look
-at each ancestor, not to take a reference to any of them.
+On 6/26/25 9:49 AM, Tony Luck wrote:
+> Hardware backed resctrl features are enumerated by X86_FEATURE_*
+> flags. These may be overridden by quirks to disable features in the case
+> of errata.
+> 
+> Users can use kernel command line options to either disable a feature,
+> or to force enable a feature that was disabled by a quirk.
+> 
+> Provide similar functionality for software defined features that do not
+> have an X86_FEATURE_* flag.
+> 
+> Unlike other options that are tied to X86_FEATURE_* flags, these must be
+> queried by name. Add rdt_is_software_feature_enabled() to check whether
+> quirks or kernel command line have disabled a feature. Just like the
+> hardware feature options the command line enable overrides quirk disable.
 
-If the caller needs a reference to any of the ancestors I think that
-walk_cb() needs to take that reference and store it in data.
-Note that attempting to take the reference might fail.  See
-legitimize_path() in fs/namei.c.
+Referring to "Intel Application Energy Telemetry" as a software feature does
+not sound right. It is a hardware feature, no? Perhaps just "a hardware feature
+that does not have a X86_FEATURE_* flag"? With this rdt_is_software_feature_enabled()
+could perhaps just be rdt_is_feature_enabled() (open to other ideas)?
 
-It isn't yet clear to me what would be a good API for requesting the
-reference.
-One option would be for vfs_walk_ancestors() to pass another void* to
-walk_cb(), and it passed it on to vfs_legitimize_path() which extracts
-the seq numbers from there.
-Another might be that the path passed to walk_cb is always
-nameidata.path, and so when that is passed to vfs_legitimize_path() path
-it can use container_of() to find the seq numbers.
+The idea that a "software feature" may have a "quirk" also sounds wrong ...
+to me that sounds like a different way of saying a "software bug" and we do not
+handle software bugs with quirks. Referring to it as a "software feature" just
+does not sound right.
 
-If vfs_legitimize_path() fail, walk_cb() might want to ask for the walk
-to be restarted.
+> 
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> ---
+>  .../admin-guide/kernel-parameters.txt         |  2 +-
+>  arch/x86/kernel/cpu/resctrl/internal.h        |  2 ++
+>  arch/x86/kernel/cpu/resctrl/core.c            | 30 +++++++++++++++++++
+>  arch/x86/kernel/cpu/resctrl/intel_aet.c       |  7 +++++
+>  4 files changed, 40 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index f1f2c0874da9..4c12159f3ea0 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -6066,7 +6066,7 @@
+>  	rdt=		[HW,X86,RDT]
+>  			Turn on/off individual RDT features. List is:
+>  			cmt, mbmtotal, mbmlocal, l3cat, l3cdp, l2cat, l2cdp,
+> -			mba, smba, bmec.
+> +			mba, smba, bmec, energy, perf.
+>  			E.g. to turn on cmt and turn off mba use:
+>  				rdt=cmt,!mba
+>  
+> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+> index e8d2a754bc0c..ee1c6204722e 100644
+> --- a/arch/x86/kernel/cpu/resctrl/internal.h
+> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
+> @@ -169,6 +169,8 @@ void __init intel_rdt_mbm_apply_quirk(void);
+>  
+>  void rdt_domain_reconfigure_cdp(struct rdt_resource *r);
+>  
+> +bool rdt_is_software_feature_enabled(char *option);
+> +
+>  bool intel_aet_get_events(void);
+>  void __exit intel_aet_exit(void);
+>  int intel_aet_read_event(int domid, int rmid, enum resctrl_event_id evtid,
+> diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+> index f857f92e7b8b..f9f3bc58290e 100644
+> --- a/arch/x86/kernel/cpu/resctrl/core.c
+> +++ b/arch/x86/kernel/cpu/resctrl/core.c
+> @@ -791,6 +791,8 @@ enum {
+>  	RDT_FLAG_MBA,
+>  	RDT_FLAG_SMBA,
+>  	RDT_FLAG_BMEC,
+> +	RDT_FLAG_ENERGY,
+> +	RDT_FLAG_PERF,
+>  };
+>  
+>  #define RDT_OPT(idx, n, f)	\
+> @@ -816,6 +818,8 @@ static struct rdt_options rdt_options[]  __ro_after_init = {
+>  	RDT_OPT(RDT_FLAG_MBA,	    "mba",	X86_FEATURE_MBA),
+>  	RDT_OPT(RDT_FLAG_SMBA,	    "smba",	X86_FEATURE_SMBA),
+>  	RDT_OPT(RDT_FLAG_BMEC,	    "bmec",	X86_FEATURE_BMEC),
+> +	RDT_OPT(RDT_FLAG_ENERGY,    "energy",	0),
+> +	RDT_OPT(RDT_FLAG_PERF,	    "perf",	0),
+>  };
+>  #define NUM_RDT_OPTIONS ARRAY_SIZE(rdt_options)
+>  
+> @@ -865,6 +869,32 @@ bool rdt_cpu_has(int flag)
+>  	return ret;
+>  }
+>  
+> +/*
+> + * Software options that are not based on X86_FEATURE_* bits.
 
->=20
-> I have a question about this behavior with RCU walk. IIUC, RCU=20
-> walk does not hold reference to @ancestor when calling walk_cb().
-> If walk_cb() returns false, shall vfs_walk_ancestors() then
-> grab a reference on @ancestor? This feels a bit weird to me.=20
-> Maybe =E2=80=9Cupdating @path to the last ancestor=E2=80=9D should only app=
-ly to
-> LOOKUP_RCU=3D=3Dfalse case?=20
->=20
-> > @flags could contain LOOKUP_RCU or not, which enables us to have
-> > walk_cb() not-RCU compatible.
-> >=20
-> > When passing LOOKUP_RCU, if the first call to vfs_walk_ancestors()
-> > failed with -ECHILD, the caller can restart the walk by calling
-> > vfs_walk_ancestors() again but without LOOKUP_RCU.
->=20
->=20
-> Given we want callers to handle -ECHILD and call vfs_walk_ancestors
-> again without LOOKUP_RCU, I think we should keep @path not changed
-> With LOOKUP_RCU=3D=3Dtrue, and only update it to the last ancestor=20
-> when LOOKUP_RCU=3D=3Dfalse.=20
+"Hardware features that do not have X86_FEATURE_* bits"?
 
-No, we really don't want to pass a LOOKUP_RCU() flag to
-vfs_walk_ancestors().
-vfs_walk_ancestors() might choose to pass that flag to walk_cb().
+> + * There is no "h/w does not support this at all" case.
+> + * Assume that the caller has already determined that s/w
 
-NeilBrown
+(please expand h/w to hardware, s/w to software)
+
+> + * support is present and just needs to check if the option has been
+
+Looking at how this function is used I rather interpret
+intel_pmt_get_regions_by_feature() as determining that hardware
+support is present.
+
+> + * disabled by a quirk that has not been overridden * by a command
+
+(stray *)
+
+> + * line option.
+> + */
+> +bool rdt_is_software_feature_enabled(char *name)
+> +{
+
+Reinette
+
 
