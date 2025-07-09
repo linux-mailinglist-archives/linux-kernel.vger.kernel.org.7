@@ -1,93 +1,120 @@
-Return-Path: <linux-kernel+bounces-723306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2EE6AFE59C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:23:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60A19AFE5A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0382482ED7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:23:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DD16487049
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C3428C878;
-	Wed,  9 Jul 2025 10:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3611C28CF6C;
+	Wed,  9 Jul 2025 10:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c5ft0tOO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Vc9IcAPY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eYUpMbwb"
+Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3DC289810;
-	Wed,  9 Jul 2025 10:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75EBC28B7DE;
+	Wed,  9 Jul 2025 10:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752056598; cv=none; b=e7e2Pwpv5EHSpjVzeYOwQ+8g/t6yVv0ITd2JxnopmUuxb9+Vgx0Qs1pnB/J8ukMN259suJd+v7Zydxk9LxDQc8GBDZGIjfoKgE6m3siYtXkoARON/f5JbkpJ0YtIdEgn4EPGXS8mLMMk1Hpuu+bmi9UyFLYTuyN6UXKoi6tY8nA=
+	t=1752056625; cv=none; b=iQNQbFQ3HAmR6ZwlCrjcaJkiHMzE9DPdGJdLUVYpHZuJK/p+NJ13zPnw05aaj1zRQGfJspf7aB6PbLAT3Gd3SyHpcLxHB51Bt6QIn4SSsqiei38MRirjsfkPX3c5OPCl1KuE1tYGf4IL0OdWqtABnOdKbd1m/Wj36lSWDYEHWWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752056598; c=relaxed/simple;
-	bh=m86klt3bUXzogxZ6eFXZ3X4S4JSQQ9rVLFkqhYarAm8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E+HNcvbcTo2+xHf4ti/qV7BCt9b7TAcy4ECJ6165PhlYys012yNPutCyGqrqJS0O2RWUwo0XVPWPnRHyRWdoS+thHiqzDaWAmDk1/Cb72ARvbraXNiaY5bzNEu60zkLYvE8fJiXnco2pX1GIjYBYDTndja8bCKybQ34CvrjaZlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c5ft0tOO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BD1CC4CEF4;
-	Wed,  9 Jul 2025 10:23:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752056596;
-	bh=m86klt3bUXzogxZ6eFXZ3X4S4JSQQ9rVLFkqhYarAm8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=c5ft0tOOLRtcwzbgnTtdCuFo137dBDhW2e8qFQf7m04ApNkjTh1hOdjw8E7GAW0cT
-	 Dhl7vWR/IR6wIMtMZN+L5Lo7zwoBWe3QBoTfgPyQzigHvu6w8JXPh2t+9wSDQJbEG9
-	 aHaU98gvve020wHJN8IJGqWIkyiSyaRCfnHWU145vn4+gj6IgB6Ota21nA+/QesumK
-	 n/WQpDlVcJy9KxtLtAmSaWM58nc5YEv+75p7U4BJcPp14oEFgw76vnNF8dMrZ4ihAY
-	 1rDLKki2o7AYkWh77IDj9da+oBz30cIXjPKbEbcFcs7RdIpJ7TjumJAjRxEIkvYaY0
-	 JKJo6MYE10+7A==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-555024588b1so5308778e87.1;
-        Wed, 09 Jul 2025 03:23:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVoSLsrQRFuWtd0koHL0XWdsxC1Rew7BKbLw6Z0k1PU5AKSmiZcY7Pab3Z1FsiyxYXTJDDa/l4gdI+WXw==@vger.kernel.org, AJvYcCX+UScxCPzf4hOA1V9r5qDILuf7ARz6qGj8hbamSShuz+2JCBzroaepf2mdHHbGLOoA8of8XhgMiq6bFFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVL+2CyWbQqIToeYkDUY0JK1uqe24joZAtasQLI55GTKNfaB9K
-	l6qlcR1M6waTRCi5TeD8HqvrKyipwnnyOlhcZjYoi8bc4TrldY70/d3bJ2EtAaLxDZmkaqyJjtz
-	sXY7YCGcNLlv5gJ9WseVZrH2yGUE9iwA=
-X-Google-Smtp-Source: AGHT+IHNNaG0A6nD9i3CnBYDisREyxVutwaDMEoYjuprFSlq+wkcOEKPSF/RdTk4+XmRjhkPZ2BqDbQzitDI7ebPPgM=
-X-Received: by 2002:a05:6512:2215:b0:553:aed7:9807 with SMTP id
- 2adb3069b0e04-558fa87c9a0mr752287e87.9.1752056594890; Wed, 09 Jul 2025
- 03:23:14 -0700 (PDT)
+	s=arc-20240116; t=1752056625; c=relaxed/simple;
+	bh=ULf6rUBrZVO5AevxDkStFm71r8YXmSZHbUlldzfLwK0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hGHGNGoIxwtRNZJMlPz22jPEg5pbR8mw2fotzYxuimtL5okF2Yc4BzfQ3dQ3kkDq7BZwcWdDa8VMjz+gycLud5whL+xP740bgy9NkrkHDM3clapVwiU3NfziRHV2voZHxedXzFj80DnpVhZvKkxkw1NcXfhevCBDD2WmaT/J2Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Vc9IcAPY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eYUpMbwb; arc=none smtp.client-ip=202.12.124.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 556F67A021B;
+	Wed,  9 Jul 2025 06:23:42 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Wed, 09 Jul 2025 06:23:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1752056622; x=
+	1752143022; bh=Wu+n0Ja3TQbYudPFKLGaBfu0YfVoEzLVb+bh9sJM1DQ=; b=V
+	c9IcAPYhfJbBn1AbnlDLgUc5JkPZSWTX8mcFdAfoR6X7UDdRNZg8zugqYElJ8f/f
+	7W9c9Y38O5GoSZunE+37/VGGAZnczAfUz/X6pDow702lC6GGiYAeEbNecjna2kOp
+	AI+duTQdajap88RJhKBy5iVBUS0JaFAkSljHSotFmNUXHuNSp+POtfT8WZktleXG
+	zCG2WXLsi9UJgrAa0S3riy+Vund+iCsj3CsQ4QwCEVrPupgfwWACrxA5d1JdElf/
+	cIjo4Ed5kOdZpWNopYMh5UfvufCJzVRaaH7Ups1LIf3l39XfSbHzAZKuq8Kxw7HU
+	gLEfPNHnaiWx09Irj8u3g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1752056622; x=1752143022; bh=Wu+n0Ja3TQbYudPFKLGaBfu0YfVoEzLVb+b
+	h9sJM1DQ=; b=eYUpMbwbJOQpyLvBhjMHbSKaIbT7MvGp+CdCuj50CsZLT+ZRVMD
+	6ZpPzWUcvswShYHBLt3n9aNEHKvfBQxbMHgRpWRJgVwX5jTWGTGJg1i3lOg7BRHA
+	XoTgj9p7DrKe9ltX0bm82HV//uK0k5atQtefnR1lANa3rSiFj89+WoTtoaTD/QYc
+	ONkuMAjZuRqoHnIgkAnYDFC6RPeVk0s1p2TXMeJeZBIYa60cuNmR9oP2MnnOnvxE
+	aFm40AP2AJj59S9pa6SU7WszsVTD2WQ9ElfKv3pN/MTOb0wZGifFDTEuG9NGnSJr
+	kQKoC2xfSIEBtbZr62utNnrmjgDBfkQDfoQ==
+X-ME-Sender: <xms:LUNuaNX6jNreFIv8fm7AvAnp46upsrcv-55ZildBMgQqrj-HAaHDAQ>
+    <xme:LUNuaDHBSPDG3eJSalkpC7v-N1qJ57lgUTxB8dGZZVLhwAvTY_F0UdwsribbWj55C
+    drxjFh3f31iZ1vH6ko>
+X-ME-Received: <xmr:LUNuaIcZt24nrtpmnW9j2lVsCkZ50sKB8El4-RSzxoFFOBfKS6ORsFLANQINPNWzoxEk6g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefjeefudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpedfmfhirhhilhhl
+    ucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvg
+    eqnecuggftrfgrthhtvghrnhepffdvveeuteduhffhffevlefhteefveevkeelveejuddu
+    vedvuddvleetudevhfeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphht
+    thhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghruggsodhgihhtse
+    hgohhoghhlvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgvfhhisehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsphesrghlihgvnh
+    ekrdguvgdprhgtphhtthhopehmihhnghhosehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    peguihhonhhnrghglhgriigvsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkvghvih
+    hnlhhouhhghhhlihhnsehgohhoghhlvgdrtghomh
+X-ME-Proxy: <xmx:LUNuaEo28ghIH8_Qn9hO0ppJz_8rU4ipKyH8TBPGvryHJQ5aF0WuWQ>
+    <xmx:LUNuaBAYivZpTMpyRZokx9hDOtKNXTjfriYUVUrqy7tIEHYcy_xfrA>
+    <xmx:LUNuaFfAGpZY2slYfPnyzYFoqlTp0jU0sgkfc3Z5DNkE5MHeST4sCg>
+    <xmx:LUNuaJuu0xm0KhiYQWMfkeMUzAbMh7H6I_ntVhz2LV1xp92ujtYHGw>
+    <xmx:LkNuaDM_-taFVi_39zSxGkB3RHxnWXGASCFm6Es2efu28tAVUeVOvm9n>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 9 Jul 2025 06:23:37 -0400 (EDT)
+Date: Wed, 9 Jul 2025 13:23:33 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
+	x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Ingo Molnar <mingo@kernel.org>, Dionna Amalie Glaze <dionnaglaze@google.com>, 
+	Kevin Loughlin <kevinloughlin@google.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v4 00/24] x86: strict separation of startup code
+Message-ID: <og5rlraf4zar6s3pvtcxpsvqomcrkzt3gxeojwnfljvpweobn5@6ee3wmdl6egn>
+References: <20250709080840.2233208-26-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709202107.6d570574@canb.auug.org.au>
-In-Reply-To: <20250709202107.6d570574@canb.auug.org.au>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 9 Jul 2025 20:23:03 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXFVBthh8Umx0WOEX_N-Yy6yYHtLKWV_H9dw6BU_JgWcrg@mail.gmail.com>
-X-Gm-Features: Ac12FXyiLEh9FYqjHRXAP8R9XPj8wyoWoOqDRCNmP4PpVlMCjbUs9qaHIZoECVg
-Message-ID: <CAMj1kXFVBthh8Umx0WOEX_N-Yy6yYHtLKWV_H9dw6BU_JgWcrg@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the efi tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Gerd Hoffmann <kraxel@redhat.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709080840.2233208-26-ardb+git@google.com>
 
-On Wed, 9 Jul 2025 at 20:21, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> After merging the efi tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
->
-> ERROR: modpost: "efi_kobj" [drivers/firmware/efi/ovmf-debug-log.ko] undefined!
->
-> Caused by commit
->
->   42c68c6e354f ("efi: add ovmf debug log driver")
->
-> I have used the efi tree from next-20250708 for today.
->
+On Wed, Jul 09, 2025 at 10:08:41AM +0200, Ard Biesheuvel wrote:
+> From: Ard Biesheuvel <ardb@kernel.org>
+> 
+> !!! Boot tested on non-SEV guest ONLY !!!!
 
+TDX guest boots fine.
 
-Thanks. I already dropped it from the EFI tree once I had received the
-same report, and an updated version of the patch should be
-forthcoming.
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
