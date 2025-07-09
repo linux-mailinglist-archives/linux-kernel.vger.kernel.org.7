@@ -1,133 +1,135 @@
-Return-Path: <linux-kernel+bounces-723870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DDBAFEBD1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:26:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322FAAFEBDE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:27:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A95F418992C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:20:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 548A656540E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977C72E0B4B;
-	Wed,  9 Jul 2025 14:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4570D2E175E;
+	Wed,  9 Jul 2025 14:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rAXtNAZ1"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="v1YkWv1y"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEF02E041F
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE9019F40B
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752070800; cv=none; b=OyNhQQgbtrnDlvcHzXAUcflBJNa8VfYmfngc5tBihXTxQyO8Zml6p910Z/KUWjnuSXNwEez0GG4en2Vn4ue5fJLAw1GE/RJnLNobFjfc+roBBmCPlGuqIbDLrtvwIickQ1LN7upKXgVIC94S2xUCzCNa+vpSTnyrOfs91+Hy1e8=
+	t=1752070820; cv=none; b=ohZP6K6H4SSiQx79BnMQogcLf1v3Gc8nJqzgCShwSLrmnWlS8vFeVCPm1X3RPTPtTJ/kENLNi8ySSsPjDGfNoEoWZ3vnAcRPu1JhlS8yxHQyOoSI2krGdf28u3NtjN7yrkZoRgKZmdA24PRpaNblEn5+XOVFrdYJWP57KkhkFaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752070800; c=relaxed/simple;
-	bh=onxQyqbXg2+8eNUdjRi8yLtGmLMnVsEDz+kKPNPRjAo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qxynh3fFf40hO2M5SLkK5rRdfF+DPfxiclMC90HlMStBb5bp5tUlkTsNe9JluXhj98zqdxZiVVsqrIe5Ed/gI4eKV8lOyv9caSkiAl9l1Cux5jhJ2+Z5YYesaF4hDlXDdEsoFrLHUlnpFhNTaWAjftopELtj10Q/YSfNUqGnig4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rAXtNAZ1; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45348bff79fso60079575e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 07:19:59 -0700 (PDT)
+	s=arc-20240116; t=1752070820; c=relaxed/simple;
+	bh=izxYMRmyjfLaPNfclpcKRt2rdXsw9LASTfTgnLOH6/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TzepyLFof/ib4pliMm2wyXGGJtlDTicvcBx+N3T57MhinzFjDfcO/2db7O/bVf8zYvih+ZGWizQ6tepQxTgwXe971VQBdCpCVVQ9Pv5pVmjnG8eEHj/F3t5NohH6WLcfDOknzm37caeg3dGJwnbOi9+4z+LycZVs+1aubQputyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=v1YkWv1y; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7d3e7503333so853392985a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 07:20:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752070797; x=1752675597; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=onxQyqbXg2+8eNUdjRi8yLtGmLMnVsEDz+kKPNPRjAo=;
-        b=rAXtNAZ1g38J888WZ3JPtxhSSjvhtdzBT1x84EFomAUxBE5XsMEuj5EzF1YBe0YK3R
-         eRGUZdXOC6gmvdSzsmcuVT9w4YyX/YcmvUwbs2uSJ10DZA6UFZtVH45NGFbFOdNlizYo
-         Na6SszQyri6aH4k0JkhSo7t69kDtPMvKDHtCUnOkB0oMJkdeCB4iv7jTrt31DSzDBSyB
-         jAGmJ4jCVn8KXtonYHCJZRooTAhJ4bV3fq9ocZRwR62QuLAycEuOOb7I02DF0O1dYiUw
-         uz7+9WjQObcbcMoPoXaEQr3U/ama0oJ4aHrqU1juD2cdJOVpbMwy4roMg6j5Qs8w5P1B
-         iPKQ==
+        d=rowland.harvard.edu; s=google; t=1752070818; x=1752675618; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oX966d2OnnOsVdLSRaxq3GIDCek+Q0oewFnZOwTFSCA=;
+        b=v1YkWv1ypHWlzX088QHdk05jmU60OSahGqNq+dTw9byhfKmU5kztGxG+zB/gfMsbl2
+         r22Cd9XfmJ0errB5DUh6SPxIIfyVbW1QuEC/zOWta+2DDSqqICeOsfxpM6I4HusKZx6Z
+         iH07gUNbael2nKNc0Dvp9xmts1qrmH5XhND3XitiYyjumPAJOxCMNm863Y/F5EQVqUnI
+         I4CrEZnaYlXhwzdEQUL0UH88uardBTn0JNxj43qhTQ1dQuDq6h9wUOjmSEqFLQxga07D
+         V1Tr7Qk7DEmoc9aYu1aWrUWAgF2Rs5bL4z5p6m2TwBT0itgBQlVEgZvktIQ1gHQ1mcNs
+         HDwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752070797; x=1752675597;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=onxQyqbXg2+8eNUdjRi8yLtGmLMnVsEDz+kKPNPRjAo=;
-        b=J1bU7/miG02pge7m9zJ8NiHRDLs/S4nFa79vG+/Zo0hXHODAKN0zRyeDaSaJkjsqA8
-         JZYPYbITmQT3u81INhVFKISTJIWY6xtV7BykkWtpXaGRTNLoINTjYZf9pBNuvnYdNjXL
-         vOef2JnyTx4BTlvvrZR0q1Sfb5y6z3wYOk2vrhrZH4dhlulJqPklQyIVumayzv94OcPI
-         d4bGzFebDkzLVFuU4DOAi0fLpOkyOXqqh29pF0Vz+5OGCoShWaNvfLIsMgfI9iuZA6Kh
-         WGAMuoHh35IFKMDc4BbJwZcjRc8pRtcUfGG27ZZB2hoHDSoJC4KL2v0I5+fwnqwH1p4B
-         WbhA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzM/JzYqUwxPkZCj3JZx4Iwq/uMazd1vhhx8EOj69Cw+lsHQz0VTdb/XceSW2jEURQbV13DoU9GhijDjs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJTlfdWSWM3ZyXnYjLieN9jXpM5MnNfL+Zsvjj/1nMyFmk4Uj9
-	soMxViUQ7x9nQJSh+MqoWDdWLeiM0AWiUXOCH0xWpa/iSjZjVIq38RCcQWf0mAcQ/VGh/mghrjn
-	oaTGB4YLCt2uXxAChIPWbjTrqKnWvZdiIFXVJOxhb
-X-Gm-Gg: ASbGncvbanQAthktoPdRoa3pYcq8otVOzewpYyvSAXryAcO7JXC7ghYxktANHBGN6Ur
-	eKORHvNuW4M1uh88F/syay4tT5GEvNNieBJQkKAGMwqsc6EFuKuYc/zPv0uG3NJgj5hvgXYcVpp
-	9/sfzODqlop0iK6zweXzuVwh0Ugh7cVRQUky5MFATUUCHtIbDep2K9ORPy43NUgbC1xikM1HbnK
-	w==
-X-Google-Smtp-Source: AGHT+IHymgYqf5Be4dPgTGavXNkdAqtCHlNw8IloAmJ/sAoTV++LmztnNSzx86sJhSRZfMqHeXmmwb/R6uZnNJhr5Ts=
-X-Received: by 2002:a05:6000:4712:b0:3b4:9721:2b13 with SMTP id
- ffacd0b85a97d-3b5e450988cmr2292725f8f.14.1752070796982; Wed, 09 Jul 2025
- 07:19:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752070818; x=1752675618;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oX966d2OnnOsVdLSRaxq3GIDCek+Q0oewFnZOwTFSCA=;
+        b=LYg/pQZ7+Pw6gMRHHAt6PIhHbYMi82x4PMYhzebCaOwhWjbvNYcLz41NyUm+TZ8HmI
+         qz01QZvL4Ci8oSqIcNUhjP1M0VraJNpiSXe44N5XJ0EJLJwI6+DghMKROIGpjlO6Q6Ir
+         SJKQXHqMrGKCpzUDT6DqWLB6AixcR04p06oXHM0aq+obHn6d/MpHFIHDCPB6fK29Fd3I
+         lNYBMUAtOxg5sWLNZZgN3PTVIxxAmEuxeI0anYgv2aFMIQCmpvlILH6hnnAbvn6QDe+x
+         MtSDt4NsnXHmKWRG7wQEwcaVuybLJIrYBLmg9ZIire0KKAAZ+Qrxk0dLs6enTKoCZLS6
+         5Gog==
+X-Forwarded-Encrypted: i=1; AJvYcCU0TuD6s37vhoSoTBR4Bp0wrb/V2keWyFn4fV+4h2Vq7cUgXAcgFOJeORJHRYUsSZTp7V71tZXEZ+HnN2Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo9FUTRCZB/6ceV7XER7uwp8wPQiPWvjdnfXzyvZGm+kPMIYX3
+	hARRYEwlKNagaodVHCUSWyxJoT+jgQTq6hKLvYiGYx5fE2aBRj0cP0BWevefhNyQjA==
+X-Gm-Gg: ASbGncv6Zs4hS2n/aGGjLowzfXqhIIJrpdaV7t/wxB3mug5x5CxlzXCiug7QayH4ZIR
+	06OWdHHB4v4YsB3FKfTlhmyIqIM5P7oH/ZTdXdY6+wLNy55xVQwxT81PPqLxB1y+88YBY2olnIm
+	qExt4SUDhEEn4eM3+GhiWT33aUQSW4Hlc4FbfIkwGh1+lwT2Fyp5v+90iZyDe9CUX0IsfA4cqxU
+	F8SH5BaR/9/yelkMDKyie7pIbqLWY/bHZjlnTxilrzLGNb0dVEtRLXf6OwLD9vWsPyw98l6FcFv
+	DZNigX3w5V2EpCA4pFjweIbyrW6SCNDhLToErb1yJ1WEift3C+tO/f6Kkl7p6ObDWW+8Kk8qXFF
+	9Me+b
+X-Google-Smtp-Source: AGHT+IG/uoOVNhIZcZGNS2qwUCpBTImqcv5OllmWRSz3tFYzjY/AZyQcMy3sAMZ5fv8ra7bDAqxtjw==
+X-Received: by 2002:a05:620a:192a:b0:7d4:57a5:9742 with SMTP id af79cd13be357-7db7d3a5cdemr333724285a.39.1752070817522;
+        Wed, 09 Jul 2025 07:20:17 -0700 (PDT)
+Received: from rowland.harvard.edu ([140.247.181.15])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d5dbe8f9a5sm936291585a.87.2025.07.09.07.20.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 07:20:16 -0700 (PDT)
+Date: Wed, 9 Jul 2025 10:20:15 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Zongmin Zhou <min_halo@163.com>, Shuah Khan <skhan@linuxfoundation.org>,
+	shuah@kernel.org, valentina.manea.m@gmail.com, i@zenithal.me,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	zhouzongmin@kylinos.cn
+Subject: Re: [PATCH v2] usbip: convert to use faux_device
+Message-ID: <dd3659dd-7e45-479d-ab65-9f5c1bab26a0@rowland.harvard.edu>
+References: <2025062004-navy-emboss-4743@gregkh>
+ <2e0bbc5a-e74a-4fb5-884c-686dbaf99caf@linuxfoundation.org>
+ <48ab511e-2847-4daa-98de-a234b8584b78@163.com>
+ <fac026d8-12c8-4c1f-96a7-264ced8391f1@linuxfoundation.org>
+ <a29703bd-08b7-489b-8fb0-15838a1245ab@163.com>
+ <1a13cf53-ffed-4521-917e-9c2856a5e348@linuxfoundation.org>
+ <4fc877f0-b55b-4fa3-8df4-2de4ba1ac51b@163.com>
+ <2a901b8a-9052-41d9-a70d-76508ebd819b@linuxfoundation.org>
+ <4759911b-8c35-4ca9-bc34-09dd41b14582@163.com>
+ <2025070949-activist-mammal-b806@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709-device-as-ref-v1-1-ebf7059ffa9c@google.com> <DB7KZXKOP5F0.1RMMCBJNR43KO@kernel.org>
-In-Reply-To: <DB7KZXKOP5F0.1RMMCBJNR43KO@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 9 Jul 2025 16:19:45 +0200
-X-Gm-Features: Ac12FXzkjhW6iD-XDuQYdQEQJTvTDaPwURvqNJ0qQ1PU5t7-VlkiVmA2ozb6b7I
-Message-ID: <CAH5fLghf1zwmR_hLVAxYU0khmeTGEejTL8qE_BaF3d-Ncg3HAg@mail.gmail.com>
-Subject: Re: [PATCH] drm: rust: rename Device::as_ref() to Device::from_raw()
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Thomas Gleixner <tglx@linutronix.de>, 
-	Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
-	linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025070949-activist-mammal-b806@gregkh>
 
-On Wed, Jul 9, 2025 at 4:07=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
-rote:
->
-> On Wed Jul 9, 2025 at 3:53 PM CEST, Alice Ryhl wrote:
-> > The prefix as_* should not be used for a constructor. Constructors
-> > usually use the prefix from_* instead.
-> >
-> > Some prior art in the stdlib: Box::from_raw, CString::from_raw,
-> > Rc::from_raw, Arc::from_raw, Waker::from_raw, File::from_raw_fd.
-> >
-> > There is also prior art in the kernel crate: cpufreq::Policy::from_raw,
-> > fs::File::from_raw_file, Kuid::from_raw, ARef::from_raw,
-> > SeqFile::from_raw, VmaNew::from_raw, Io::from_raw.
-> >
-> > Link: https://lore.kernel.org/r/aCZYcs6Aj-cz81qs@pollux
->
-> I think the link you actually wanted to refer to is probably [1]. :)
->
-> [1] https://lore.kernel.org/all/aCd8D5IA0RXZvtcv@pollux/
+On Wed, Jul 09, 2025 at 12:06:57PM +0200, Greg KH wrote:
+> On Wed, Jul 09, 2025 at 05:07:24PM +0800, Zongmin Zhou wrote:
+> > > > In fact, I've experimented with adding PM hooks to the faux bus,
+> > > > and found that faux bus devices then behave identically to platform
+> > > > bus devices during suspend/resume.
+> > > > See the attachment.
+> > > > 
+> > > 
+> > > Thanks for checking this scenario. No surprises here.
+> > Another part of my purpose in doing this is that the vhci-hcd driver seems
+> > should still retain suspend/resume hooks. Therefore, the faux bus should
+> > add corresponding hooks to allow the driver to call its own pm functions.
+> > Though currently don't know how to fix this problem yet.
+> 
+> I have no problem with adding the pm functions to the faux bus, BUT it
+> needs to make sense as to why they would be needed at all as this is not
+> a "real" device or bus that should need to do anything when
+> suspend/resume happens.
 
-I can update.
+The unique problem faced by vhci-hcd is that the devices it controls 
+reside on external computer systems that have a lot of their own state, 
+much more than ordinay USB devices have.  Consequently vhci-hcd may need 
+to do more work for a PM transition than a normal driver would.
 
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->
-> Can you please split this patch up in one for the DRM renames, i.e. drm::=
-Device,
-> gem::Object and drm::File, and one for device::Device?
+As an analogy, suppose you're running a program that has an open TCP 
+connection to an external server.  If you suspend your computer, it 
+won't be able to send the TCP keepalive packets that the server expects, 
+and the server will eventually close the connection.  Then when your 
+computer resumes, your program may misbehave when it finds its 
+connection has spontaneously been closed for no apparent reason.
 
-Sure I will split into two patches.
-
-Alice
+Alan Stern
 
