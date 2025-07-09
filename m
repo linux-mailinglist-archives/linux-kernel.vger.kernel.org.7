@@ -1,559 +1,257 @@
-Return-Path: <linux-kernel+bounces-723804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10935AFEB2B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:05:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60137AFEB2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 207D8172675
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:59:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4355A1BC03AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826462EE264;
-	Wed,  9 Jul 2025 13:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0FB2E6D0A;
+	Wed,  9 Jul 2025 13:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Os5ODMwm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ASXljfkR"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011054.outbound.protection.outlook.com [52.101.70.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B7A2E7174;
-	Wed,  9 Jul 2025 13:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752069142; cv=none; b=JiOhKv5z+FzPNEHPs5mZi4AhGTaLuqZTKSzIZb30oB363tFzi/tlRG+N5OC6sco1YwI8HpjTrwWDQ9R3X7aV1C2lGYI0IJJ5xeB322Z+4CzfiVdN1qZIuR25muln9HSnCmPPREVSqj9SBLLEeATXw+amZb6vMSkHZaLSSU4iIYI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752069142; c=relaxed/simple;
-	bh=RueffcvRIDBMi87r9z1UtD/9fAlr6jNpZ48zD4mdxEU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=btXqD9fAz/15uH/kXHJFtLt1tS0nol+LmjGwdj0ZpY988/Al5HXODx5pLWTEXkVCSR1mQwvmGImpmDRnHhlAiIsQtuGYR4O+RCT3YnezL/qX2+x8c7M++qkLOAqLMSc+9vxkuxSjhKNyId2BDAxQ5gba7GzzzTuQXpoyzFR0Iq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Os5ODMwm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE659C2BCAF;
-	Wed,  9 Jul 2025 13:52:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752069142;
-	bh=RueffcvRIDBMi87r9z1UtD/9fAlr6jNpZ48zD4mdxEU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Os5ODMwmRMfr1p9vKuQy8CQir2xKw3QFxr8Uzjkc465O5171W3mLLREHt2U1towi4
-	 qooZjWT5BMgqaKp1+aBmfFS4balt+ljGSx3XyAOmtUlr8hR/xBiYZBBAOsbVBfq+Xu
-	 dW2sgeWoBLSWqVMVVLZ7bPQLJ9+M9tEwrjfmQ69qDzV7NNAtqZF/5dIMH2N9ytx7NZ
-	 A6b5tHge5xw11uhNZ5u2UIOCpqlxL4f58qhaBpf/pqLzDWeYYgdZyM9zYnRfh7x+bm
-	 emtKv3ha3oZXRtFYJxPC3WOJPOZgXKxFVh7YAlmmsQ1gWI+mMACCjtIAyvijK0vSuw
-	 a1mfbmEdT6WBQ==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab@kernel.org>)
-	id 1uZVDd-00000000EDM-2pom;
-	Wed, 09 Jul 2025 15:52:17 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Akira Yokosawa" <akiyks@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 26/39] scripts: sphinx-pre-install: move missing logic to a separate class
-Date: Wed,  9 Jul 2025 15:51:58 +0200
-Message-ID: <b7fe13c07cf1d88b37d1ba3a3d6bb6a073a8c6c5.1752067814.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1752067814.git.mchehab+huawei@kernel.org>
-References: <cover.1752067814.git.mchehab+huawei@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76881E505;
+	Wed,  9 Jul 2025 13:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752069335; cv=fail; b=eGvMJ449ZmhownvXa2P3SJP8c+A+hgJner1514EAjSHGo4gm+0i+OYj+vSQdwsmEgaPyb9aC2L8TuqGoj9k4/alInwccc3zEkhoOXwawM/8ZjMmSvFN8tCupU2W9dsG3PNzOYPQ+hX3FSvPLjgYe3BlLJRKtS7LCR2io16I2ae4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752069335; c=relaxed/simple;
+	bh=RWIVVNxwJl1NoAgMrll6FA3orvN/uhUTnbtSLzh5VmY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=HGz+vF9Qev2eMVEWvhNlCkBTM4visyMWmDi7jvewoR6mJMUEsL+DzVjEU1oIRvfKwgEgqnwtpQ5n8/pfxrqJ0Id7MmvuG74sRgaUJL4kw4Iw3dYTB2wXWP+n+/ypCdecfX9eB/eSUYm4ybG3ApTF8uR2Ehmd6ufIvds0tBZ5b74=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ASXljfkR; arc=fail smtp.client-ip=52.101.70.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r3+YdvLeQvBXotyLUmJH/+Jjd43Bbl3HgAHtL2hsywLldV7etfHd0qp47pWPGfOkpIqnqImY6Lz0AgMI8ID+9q4Nl4QBbsni2MeIwaZvgmsKpLsm6EMKh4fPuhLjL+JjMv4y1dfIITGwsD6SIpJH2YhEaedmmSt1UIdTh2uPOnzGRvplGWZxTFXIcZ2K1hNnbYeQ8NihZNQyfAmMjhcRHohtCG/zAXO8b5DO9AHaIN4nddexYnX6raMxIjgsLB6nJTH4jFd4EsjnV8mXP+37BsA88PgQpbpXUwKUJ//TpAHBVGbfuZseGqMPt2qdUPd8Wpxbp1bm/IhHCseZzB9fgA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=i6/vwkW82qoQWrV89+srymJxcEx3e90cyJI9SDfLR74=;
+ b=SVszb+LjpGUNkOuKO/kKNoo1G6k0o1957zzl1Zp/+McF5kYfN1LfuemdtAxo4vGNWE6CbKWA7G2A2UsH0R47tGnRvdo0sftnqTBoPAfCdpt9jYxScfFqZxYszMuYW086vwNjnjXSeCy+6aKS48hZXKpsUnykBJAzFMkYkliMeNPPuM+5ysmy0Nk+3LUTeM42AEMVYjDZ47yubX5EGkO34coXBQEoaXL9k97jV2BsSnI2OF62H3zCtuFBNXF4mdWHZ3sdn32uIgo3dMmAglXPNdm5nOG7B3/I0Ps2bVUfG+4IYlXQED4mre7PRbHqw2dS8tVprWseS7tr/RbdrcGGaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i6/vwkW82qoQWrV89+srymJxcEx3e90cyJI9SDfLR74=;
+ b=ASXljfkRoUKV0HpOD+LLQEre/s23e5oeFyBOLiwoXTD1EIeCPnxCG92v6BMC7qHwQ0KQA7z05/76703UOVFz0zK2L5Wem7Ny5mAhqgQME/ZXL/2f5fh8sL4nh0dbJP2iOYfg3ukSHICDAF+y5HqO/JZLbJ+zhKCq/ITvriK3axrTeJ65YLuzXG0AQl6ZBMu2ildWjGei6o5fohqq3inNF5cyKOMUsuGTPZiPjldXyV/6JgQ2ZWckaha8GUFfkleiq9YiAbj6CERhym0mgpz8J5uFga68afV+Vm4tQE1Z/FVPWgpZcFKHu0rwpAs6cZeU53I/DGv3EuhUXBOVT3saew==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8868.eurprd04.prod.outlook.com (2603:10a6:20b:42f::6)
+ by DBAPR04MB7301.eurprd04.prod.outlook.com (2603:10a6:10:1a7::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Wed, 9 Jul
+ 2025 13:55:28 +0000
+Received: from AS8PR04MB8868.eurprd04.prod.outlook.com
+ ([fe80::b317:9c26:147f:c06e]) by AS8PR04MB8868.eurprd04.prod.outlook.com
+ ([fe80::b317:9c26:147f:c06e%5]) with mapi id 15.20.8880.030; Wed, 9 Jul 2025
+ 13:55:28 +0000
+Date: Wed, 9 Jul 2025 16:55:24 +0300
+From: Ioana Ciornei <ioana.ciornei@nxp.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Shawn Guo <shawnguo@kernel.org>, 
+	Michael Walle <mwalle@kernel.org>, Lee Jones <lee@kernel.org>, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH 1/9] dt-bindings: gpio: add bindings for the QIXIS FPGA
+ based GPIO controller
+Message-ID: <lv55xheu2glgsgey2wdupqp3cvem27afhrs3ibhzqgglf4ql6a@tzy7uwule7z4>
+References: <20250709112658.1987608-1-ioana.ciornei@nxp.com>
+ <20250709112658.1987608-2-ioana.ciornei@nxp.com>
+ <9aff4894-a8aa-47d2-8800-62959e064254@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9aff4894-a8aa-47d2-8800-62959e064254@kernel.org>
+X-ClientProxiedBy: FR2P281CA0005.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a::15) To AS8PR04MB8868.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42f::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8868:EE_|DBAPR04MB7301:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7889dbd6-2cac-4310-9ccc-08ddbef042b8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?o7xoMl8rNA8D7/m+ZxdS7vkdbYJD+5GOTlDOIBGJfhFEVy9qlrCTWJ6g5Kif?=
+ =?us-ascii?Q?n0oN6iZSnvqAzjQYnSzaEgnRFXczyBRiNliqk1hK0yfMJ9Y6wQ1AJTzsRrcs?=
+ =?us-ascii?Q?6VxLm7ilLSgfh9WYydv7bxq89XaxEBNZwyNLkm4tQqZYcomxgNJlbAa1gmwY?=
+ =?us-ascii?Q?trmrKDPHCR7aZTJfSs2wgu0aRDM/wULsOu5RBGTitDli9bVKB22Y0J3B9dit?=
+ =?us-ascii?Q?hJ1WZEbVx9AEDGpXCiXNPUOq9k7xRD+rjKLKyAI9BtWk9+IEfNRiYcPHmSAx?=
+ =?us-ascii?Q?hy3eDL+QWWCG7t5qMMv/ugDXFmOvXJNpB8V2nHRgu4TzGKyMG5Pyz385sHuv?=
+ =?us-ascii?Q?9tz4usL3jfGdd849nO8SArW4OfxRAE7/o9jvZIZQ7m12AjKNwHeHDxf3oJ/b?=
+ =?us-ascii?Q?uUhYP396rRoNJrc1ok5WvO4a2bH4CzCA0Wf5ivYtUIdJDE8mcEcO1HYwou7r?=
+ =?us-ascii?Q?b4WqTcc5J7e2sn8++kgw6bYH8n8ckSlnFaOPGEGW9DHef4hSlR9t7GCTzZrJ?=
+ =?us-ascii?Q?50hSgXLE7fE3U3OaH9GqT9fyVXZubM5NMtzYaaMLXqRhvNp/B/Xs174Jn7mk?=
+ =?us-ascii?Q?WQ57nFJ+JNDSe6mDgQoW3HC6EzkNJ5lqE3wJ/DvvTCloWu9yguNoUfAihxEQ?=
+ =?us-ascii?Q?kxpT8w13g5RLtbPNhuAQvrKdYjIWB1bE23ExgOWV78fAMSGI5brN2NtNobU5?=
+ =?us-ascii?Q?sAXtWbrGbdYvuOIW/UIgT9UixxBnjuNZscRd9rKgefcWg9c6vlL69+csGdCE?=
+ =?us-ascii?Q?3SadHEy8P5f5sp5fW6xPWxD8/i86zMVpP2rxlg8zVgWtzG9Da6aK6Q8O4DuB?=
+ =?us-ascii?Q?U3PX9RpHRcF67LuzcM2Q9gV1eZ/FOy0sBKgsvoTMoubQvFHA6D0itvS9UYRP?=
+ =?us-ascii?Q?1XBiBPnxxbHyyBEV66NW0G4Q4kgvyHxZjks1JgYozoZAgcPrsdkslgLexVxl?=
+ =?us-ascii?Q?3N4buvUv3uaXM3hiqTUymN0Nelq4MzjcyTfFAS571iuH9GlfoPXxc9z6AvLx?=
+ =?us-ascii?Q?BthCjJ/Jm0FlQovSh7oSIEkR+HeQLGNAykYDNX1R/lXI2azcwJ+Qb0Igkd1d?=
+ =?us-ascii?Q?C+RjZ5aar1LdeQDPlxYDLFovX3KW6sz30njQQJ9ENVqP4RF93XBPqfN0ZLE+?=
+ =?us-ascii?Q?hFeXg1x3/d40CoL8nZ7+jR95dDjYLjDbH1ja3UvqZFLZSM9pptuvmkuL6S42?=
+ =?us-ascii?Q?Gy6BrX/ZZ/FGimSAQ1e3corz8ckvA4tcv5EK5HcqqOmkfisnK+K68ljOHlVB?=
+ =?us-ascii?Q?7BxZ9PPQK2lDGfBqhw1slXqpmH7BvpkkJD0/oR4B/uXp+iRnbVlWgOaRTaAa?=
+ =?us-ascii?Q?+lwluFfQ9kHzXXTIuk3vtQW82by56kLHqlKMzka6ioC5R08cBsf9dSuL4ZcN?=
+ =?us-ascii?Q?3m12qbSqVF/wzGfAeOSko3bVlqn/?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8868.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?bS3NP2RCQ7BdNT5z8Webk6pNBmnpGaWuuqf00xND06wtGskp9FzdqUk0WosI?=
+ =?us-ascii?Q?JIdtvlmLfpXLN6ULRmOLSpggeLYwptm0IEdlresXJ5VLOSjg2j3eAun9hJtx?=
+ =?us-ascii?Q?LYKvxWBGbN+jWSlWAPxWv7rBHJC189sBKR7SS9lTSdhwO8VfUiAcuzL6hF8D?=
+ =?us-ascii?Q?q9Zq97q5KPqOBEDSkx/CLvReyQk/b2Im5zke2eECoDrcUimAr/p+9x58eXRs?=
+ =?us-ascii?Q?0iUZCs+wKKYp5GJ22+Dngsr3xo203/wPzUCHdprgUo9HetTyfa4rPQA7IYzd?=
+ =?us-ascii?Q?WsoKrU9NTJBWhscrGeEkLRQXsomSz3ukh26xBVEhTYIgqHQms19YThP122ZV?=
+ =?us-ascii?Q?S13Q/jmCaStugLMgIlzT0NN/q4DlbaVoitLnW4nOnh3z9T+UiZSi4l7Jz/k4?=
+ =?us-ascii?Q?2y5IdkVt2DRGnscatKQ9GbJs51MHHX6F/SW/GpZwSj3sS1nrJ3f243JvzyGu?=
+ =?us-ascii?Q?Lb2/EJFQp46CST8rEw/TIrmdt9GbbRA6mK4OqeNDzU2DlkyvppH1W/lYJ6Nn?=
+ =?us-ascii?Q?6s2USdyQQ5mj6tbHv5O32GWbZ5tCwbpgp/NenazSSuDjkNhVuKwEzNgQPoK+?=
+ =?us-ascii?Q?pet7QD621VYHEHA+RpGxeaa+GAEEidRQOVvQn3Zoj1Gts32gujYOLIy7wisF?=
+ =?us-ascii?Q?qVKm2zFi2sIBpl9dZLM8TaKNCNuBqUZwvVCaM5Ooa1BB+thyhVY08O/CxoJK?=
+ =?us-ascii?Q?QNLIZhA31JmkLXsIINEBdHEwGwI0HrIlSuxJUgZZAN+M+3Ww55QSM7tMnFx1?=
+ =?us-ascii?Q?B/g6z1Zr5c5iOJvQy1DKP8coit71hrpeFc3eI8tuuIZO2P49U1AU/3tYiYEE?=
+ =?us-ascii?Q?HmVwhsMrHWxbIanwd/xOW0HixZlLAYt5OTE+iqTmPhHKbIoy2QdCJH9uzl6r?=
+ =?us-ascii?Q?kKRMtdsAkHG/7Jomr+X+MLWkM3oKxLzYlj1RNDZh7OK4AqbHTza8U5b4NGGR?=
+ =?us-ascii?Q?MqgBROkjBy8FehDUSzXik1XdBY69MFQEXvphUPQag8si+B9ToCq81C+tARKM?=
+ =?us-ascii?Q?JHzQ1ODze0qCfEUTlR5QUrxJlLXYG086GCXTPn+dixU+w6IZ8GpUY9hXN6dK?=
+ =?us-ascii?Q?h2SLf5qQUdg+ZR8aeg60z1Oem2GuhT0lKnlYJ8qL5GrbNCRnpSmFb8zIHlYP?=
+ =?us-ascii?Q?fWfcJ2nACk2bbCBwB+ys6KhLx2ZqvybwRPs12sXnfBhSZGAmFNU9MK0FYanl?=
+ =?us-ascii?Q?LRh9+u283NtW+0bGrtfIMt8CNGiEiSs2n/oDl9g/FlpF8LYKKa3p5N83ORSg?=
+ =?us-ascii?Q?eR81Gvbby8qinQU8FLwQfuqQbILoxwl75a5ccBwIkDBBA6MtdDrPejKtWZcM?=
+ =?us-ascii?Q?F5rxiKCTL/CCGmQ0Jz5dxKUuxAusB1oMG1+75bPK1xjDNwoePDuUP146SrGr?=
+ =?us-ascii?Q?d+1gxMVfx6TUYE/mJO99+On0Eg+G57UshX9j6QLsFH5DyY2xMZa6bg9ZcM2O?=
+ =?us-ascii?Q?JUNbwzXJ8MSqeTJRf839/kMgTnSl48Hs2fvKWHCuqVSreWtad6PGeyMRrSLQ?=
+ =?us-ascii?Q?ruOQfH/UJYMC6ZjcauaoE0IXlOc3saMMfFcd1/6NZMBAcI5w/D/t1i0+e2yV?=
+ =?us-ascii?Q?iTSzVxD/SFFvoOHSkefqejQ32LWy+RftgNW7C2h1?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7889dbd6-2cac-4310-9ccc-08ddbef042b8
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8868.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 13:55:28.0641
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZgP9WQTQrEFPOfGzGJ72oLQnQ8Z0qJ+8Lrnqr/HBa2fHJs09XQBDtVc75WEplvlPn6Ev/yUbJX8FZdGBzQhn6w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7301
 
-Better manage dependencies by placing them on a distro-independent
-class.
+On Wed, Jul 09, 2025 at 02:14:47PM +0200, Krzysztof Kozlowski wrote:
+> On 09/07/2025 13:26, Ioana Ciornei wrote:
+> > Add a device tree binding for the QIXIS FPGA based GPIO controller.
+> > Depending on the board, the QIXIS FPGA exposes registers which act as a
+> > GPIO controller, each with 8 GPIO lines of fixed direction.
+> > 
+> > Since each QIXIS FPGA layout has its particularities, add a separate
+> > compatible string for each board/GPIO register combination supported.
+> > 
+> > Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+> 
+> Your changelog explains patches, which is kind of redundant - we see
+> that - but does not explain the dependency you have here between patches.
+> 
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- scripts/sphinx-pre-install.py | 251 +++++++++++++++++++---------------
- 1 file changed, 138 insertions(+), 113 deletions(-)
+Do you mean the logical dependency between all the components like
+FPGAs, GPIOs etc? I can expand on that, sure. I will also update the
+cover letter with some of the information below.
+If this is not what you are looking for, please let me know.
 
-diff --git a/scripts/sphinx-pre-install.py b/scripts/sphinx-pre-install.py
-index 592223fa686f..47dce1fcddfb 100755
---- a/scripts/sphinx-pre-install.py
-+++ b/scripts/sphinx-pre-install.py
-@@ -32,7 +32,7 @@ RECOMMENDED_VERSION = parse_version("3.4.3")
- MIN_PYTHON_VERSION = parse_version("3.7")
- 
- 
--class DepType:
-+class DepManager:
- 
-     # Internal types of dependencies.
-     _SYS_TYPE = 0
-@@ -53,11 +53,18 @@ class DepType:
-     PYTHON_OPTIONAL = (_PHY_TYPE, False)
-     PDF_OPTIONAL = (_PDF_TYPE, True)
- 
-+    def __init__(self, pdf):
-+        self.missing = {}
-+        self.run = {}
-+        self.need = 0
-+        self.optional = 0
-+        self.pdf = pdf
-+
-     @staticmethod
-     def name(dtype):
--        if dtype[0] == DepType._SYS_TYPE:
-+        if dtype[0] == DepManager._SYS_TYPE:
-             msg = "build"
--        elif dtype[0] == DepType._PHY_TYPE:
-+        elif dtype[0] == DepManager._PHY_TYPE:
-             msg = "Python"
-         else:
-             msg = "PDF"
-@@ -73,11 +80,75 @@ class DepType:
- 
-     @staticmethod
-     def is_pdf(dtype):
--        if (dtype[0] == DepType._PDF_TYPE):
-+        if (dtype[0] == DepManager._PDF_TYPE):
-             return True
- 
-         return False
- 
-+    def add_package(self, package, dtype):
-+        is_optional = DepManager.is_optional(dtype)
-+        self.missing[package] = dtype
-+        if is_optional:
-+            self.optional += 1
-+        else:
-+            self.need += 1
-+
-+    def del_package(self, package):
-+        if package in self.missing:
-+            del self.missing[package]
-+
-+    def clear_deps(self):
-+        """
-+        Clear dependencies without changing needed/optional.
-+
-+        This is an ackward way to have a separate section to recommend
-+        a package after system main dependencies.
-+
-+        TODO: rework the logic to prevent needing it
-+        """
-+
-+        self.missing = {}
-+
-+    def check_missing(self, progs):
-+        self.run = {}
-+
-+        for prog, dtype in sorted(self.missing.items()):
-+            # At least on some LTS distros like CentOS 7, texlive doesn't
-+            # provide all packages we need. When such distros are
-+            # detected, we have to disable PDF output.
-+            #
-+            # So, we need to ignore the packages that distros would
-+            # need for LaTeX to work
-+            if DepManager.is_pdf(dtype) and not self.pdf:
-+                self.optional -= 1
-+                continue
-+
-+            if not dtype in self.run:
-+                self.run[dtype] = []
-+
-+            self.run[dtype].append(progs.get(prog, prog))
-+
-+        install = []
-+        for dtype in self.run.keys():
-+            install += self.run[dtype]
-+
-+        return " ".join(sorted(set(install)))
-+
-+    def warn_install(self):
-+
-+        output_msg = ""
-+
-+        for dtype in sorted(self.run.keys()):
-+            progs = " ".join(sorted(set(self.run[dtype])))
-+
-+            try:
-+                name = DepManager.name(dtype)
-+                output_msg += f'{name}:\t{progs}\n'
-+            except KeyError:
-+                raise KeyError(f"ERROR!!!: invalid dtype for {progs}: {dtype}")
-+
-+        if output_msg:
-+            print(f"\n{output_msg}\n")
- 
- class SphinxDependencyChecker:
-     # List of required texlive packages on Fedora and OpenSuse
-@@ -120,10 +191,8 @@ class SphinxDependencyChecker:
-         self.virtualenv = args.virtualenv
-         self.version_check = args.version_check
- 
--        self.missing = {}
-+        self.deps = DepManager(self.pdf)
- 
--        self.need = 0
--        self.optional = 0
-         self.need_symlink = 0
-         self.need_sphinx = 0
-         self.need_pip = 0
-@@ -270,64 +339,18 @@ class SphinxDependencyChecker:
-     # Methods to check if a feature exists
-     #
- 
--    def check_missing(self, progs):
--        run = {}
--
--        for prog, dtype in sorted(self.missing.items()):
--            # At least on some LTS distros like CentOS 7, texlive doesn't
--            # provide all packages we need. When such distros are
--            # detected, we have to disable PDF output.
--            #
--            # So, we need to ignore the packages that distros would
--            # need for LaTeX to work
--            if DepType.is_pdf(dtype) and not self.pdf:
--                self.optional -= 1
--                continue
--
--            if not dtype in run:
--                run[dtype] = []
--
--            run[dtype].append(prog)
--
--        output_msg = ""
--
--        for dtype in sorted(run.keys()):
--            progs = " ".join(run[dtype])
--
--            if self.verbose_warn_install:
--                try:
--                    name = DepType.name(dtype)
--                    output_msg += f'{name}:\t{progs}\n'
--                except KeyError:
--                    raise KeyError(f"ERROR!!!: invalid dtype for {progs}: {dtype}")
--
--            self.install += " " + progs
--
--        if output_msg:
--            print(f"\n{output_msg}\n")
--
--        self.install = self.install.lstrip()
--
--    def add_package(self, package, dtype):
--        is_optional = DepType.is_optional(dtype)
--        self.missing[package] = dtype
--        if is_optional:
--            self.optional += 1
--        else:
--            self.need += 1
--
-     def check_missing_file(self, files, package, dtype):
-         for f in files:
-             if os.path.exists(f):
-                 return
--        self.add_package(package, dtype)
-+        self.deps.add_package(package, dtype)
- 
-     def check_program(self, prog, dtype):
-         found = self.which(prog)
-         if found:
-             return found
- 
--        self.add_package(prog, dtype)
-+        self.deps.add_package(prog, dtype)
- 
-         return None
- 
-@@ -340,52 +363,52 @@ class SphinxDependencyChecker:
-         # add it as a mandatory package, as some parts of the doc builder
-         # needs it.
-         if not self.which("perl"):
--            self.add_package("perl", DepType.SYSTEM_MANDATORY)
--            self.add_package(prog, dtype)
-+            self.deps.add_package("perl", DepManager.SYSTEM_MANDATORY)
-+            self.deps.add_package(prog, dtype)
-             return
- 
-         try:
-             self.run(["perl", f"-M{prog}", "-e", "1"], check=True)
-         except subprocess.CalledProcessError:
--            self.add_package(prog, dtype)
-+            self.deps.add_package(prog, dtype)
- 
-     def check_python_module(self, module, is_optional=False):
-         if is_optional:
--            dtype = DepType.PYTHON_OPTIONAL
-+            dtype = DepManager.PYTHON_OPTIONAL
-         else:
--            dtype = DepType.PYTHON_MANDATORY
-+            dtype = DepManager.PYTHON_MANDATORY
- 
-         try:
-             self.run([self.python_cmd, "-c", f"import {module}"], check=True)
-         except subprocess.CalledProcessError:
--            self.add_package(module, dtype)
-+            self.deps.add_package(module, dtype)
- 
-     def check_rpm_missing(self, pkgs, dtype):
-         for prog in pkgs:
-             try:
-                 self.run(["rpm", "-q", prog], check=True)
-             except subprocess.CalledProcessError:
--                self.add_package(prog, dtype)
-+                self.deps.add_package(prog, dtype)
- 
-     def check_pacman_missing(self, pkgs, dtype):
-         for prog in pkgs:
-             try:
-                 self.run(["pacman", "-Q", prog], check=True)
-             except subprocess.CalledProcessError:
--                self.add_package(prog, dtype)
-+                self.deps.add_package(prog, dtype)
- 
-     def check_missing_tex(self, is_optional=False):
-         if is_optional:
--            dtype = DepType.PDF_OPTIONAL
-+            dtype = DepManager.PDF_OPTIONAL
-         else:
--            dtype = DepType.PDF_MANDATORY
-+            dtype = DepManager.PDF_MANDATORY
- 
-         kpsewhich = self.which("kpsewhich")
-         for prog, package in self.texlive.items():
- 
-             # If kpsewhich is not there, just add it to deps
-             if not kpsewhich:
--                self.add_package(package, dtype)
-+                self.deps.add_package(package, dtype)
-                 continue
- 
-             # Check if the package is needed
-@@ -396,11 +419,11 @@ class SphinxDependencyChecker:
- 
-                 # Didn't find. Add it
-                 if not result.stdout.strip():
--                    self.add_package(package, dtype)
-+                    self.deps.add_package(package, dtype)
- 
-             except subprocess.CalledProcessError:
-                 # kpsewhich returned an error. Add it, just in case
--                self.add_package(package, dtype)
-+                self.deps.add_package(package, dtype)
- 
-     def get_sphinx_fname(self):
-         if "SPHINXBUILD" in os.environ:
-@@ -478,6 +501,17 @@ class SphinxDependencyChecker:
-                 return f.read().strip()
-         return ""
- 
-+    def check_missing(self, progs):
-+        self.install += self.deps.check_missing(progs)
-+        if self.verbose_warn_install:
-+            self.deps.warn_install()
-+
-+        if not self.deps.need and not self.deps.optional:
-+            return False
-+
-+        return True
-+
-+
-     #
-     # Distro-specific hints methods
-     #
-@@ -511,13 +545,11 @@ class SphinxDependencyChecker:
-             }
- 
-             for package, files in pdf_pkgs.items():
--                self.check_missing_file(files, package, DepType.PDF_MANDATORY)
-+                self.check_missing_file(files, package, DepManager.PDF_MANDATORY)
- 
--            self.check_program("dvipng", DepType.PDF_MANDATORY)
-+            self.check_program("dvipng", DepManager.PDF_MANDATORY)
- 
--        self.check_missing(progs)
--
--        if not self.need and not self.optional:
-+        if self.check_missing(progs):
-             return
- 
-         if self.verbose_warn_install:
-@@ -575,7 +607,7 @@ class SphinxDependencyChecker:
-             # RHEL 8 uses Python 3.6, which is not compatible with
-             # the build system anymore. Suggest Python 3.11
-             if rel == 8:
--                self.add_package("python39", DepType.SYSTEM_MANDATORY)
-+                self.deps.add_package("python39", DepManager.SYSTEM_MANDATORY)
-                 self.recommend_python = True
- 
-             if self.first_hint:
-@@ -597,22 +629,18 @@ class SphinxDependencyChecker:
-                 "/usr/share/fonts/google-noto-sans-cjk-fonts/NotoSansCJK-Regular.ttc",
-             ]
- 
--            self.check_missing_file(pdf_pkgs, noto_sans_redhat, DepType.PDF_MANDATORY)
-+            self.check_missing_file(pdf_pkgs, noto_sans_redhat, DepManager.PDF_MANDATORY)
- 
--            self.check_rpm_missing(fedora_tex_pkgs, DepType.PDF_MANDATORY)
-+            self.check_rpm_missing(fedora_tex_pkgs, DepManager.PDF_MANDATORY)
- 
--            self.check_missing_tex(DepType.PDF_MANDATORY)
-+            self.check_missing_tex(DepManager.PDF_MANDATORY)
- 
-             # There's no texlive-ctex on RHEL 8 repositories. This will
-             # likely affect CJK pdf build only.
-             if not fedora and rel == 8:
--                if "texlive-ctex" in self.missing:
--                    del self.missing["texlive-ctex"]
-+                self.deps.del_package("texlive-ctex")
- 
--
--        self.check_missing(progs)
--
--        if not self.need and not self.optional:
-+        if self.check_missing(progs):
-             return
- 
-         if self.verbose_warn_install:
-@@ -659,7 +687,7 @@ class SphinxDependencyChecker:
-             if rel == 15:
-                 if not self.which(self.python_cmd):
-                     self.recommend_python = True
--                    self.add_package(self.python_cmd, DepType.SYSTEM_MANDATORY)
-+                    self.deps.add_package(self.python_cmd, DepManager.SYSTEM_MANDATORY)
- 
-                 progs.update({
-                     "python-sphinx": "python311-Sphinx",
-@@ -681,12 +709,11 @@ class SphinxDependencyChecker:
-         # "Noto Sans CJK SC" on openSUSE
- 
-         if self.pdf:
--            self.check_rpm_missing(suse_tex_pkgs, DepType.PDF_MANDATORY)
-+            self.check_rpm_missing(suse_tex_pkgs, DepManager.PDF_MANDATORY)
-         if self.pdf:
-             self.check_missing_tex()
--        self.check_missing(progs)
- 
--        if not self.need and not self.optional:
-+        if self.check_missing(progs):
-             return
- 
-         if self.verbose_warn_install:
-@@ -730,13 +757,12 @@ class SphinxDependencyChecker:
-                 "/usr/share/fonts/TTF/NotoSans-Regular.ttf",
-             ]
- 
--            self.check_missing_file(pdf_pkgs, noto_sans, DepType.PDF_MANDATORY)
--            self.check_rpm_missing(tex_pkgs, DepType.PDF_MANDATORY)
-+            self.check_missing_file(pdf_pkgs, noto_sans, DepManager.PDF_MANDATORY)
-+            self.check_rpm_missing(tex_pkgs, DepManager.PDF_MANDATORY)
- 
--        self.check_missing(progs)
--
--        if not self.need and not self.optional:
-+        if self.check_missing(progs):
-             return
-+
-         if self.verbose_warn_install:
-             print("You should run:")
-         print(f"\n\tsudo {packager_cmd} {self.install}")
-@@ -759,7 +785,7 @@ class SphinxDependencyChecker:
-         ]
- 
-         if self.pdf:
--            self.check_pacman_missing(archlinux_tex_pkgs, DepType.PDF_MANDATORY)
-+            self.check_pacman_missing(archlinux_tex_pkgs, DepManager.PDF_MANDATORY)
- 
-             self.check_missing_file(
-                 ["/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc"],
-@@ -767,10 +793,9 @@ class SphinxDependencyChecker:
-                 2,
-             )
- 
--        self.check_missing(progs)
--
--        if not self.need and not self.optional:
-+        if self.check_missing(progs):
-             return
-+
-         if self.verbose_warn_install:
-             print("You should run:")
-         print(f"\n\tsudo pacman -S {self.install}")
-@@ -797,11 +822,9 @@ class SphinxDependencyChecker:
-                 ],
-             }
-             for package, files in pdf_pkgs.items():
--                self.check_missing_file(files, package, DepType.PDF_MANDATORY)
-+                self.check_missing_file(files, package, DepManager.PDF_MANDATORY)
- 
--        self.check_missing(progs)
--
--        if not self.need and not self.optional:
-+        if self.check_missing(progs):
-             return
- 
-         if self.verbose_warn_install:
-@@ -1039,16 +1062,18 @@ class SphinxDependencyChecker:
- 
-         print("\n2) As a package with:")
- 
--        old_need = self.need
--        old_optional = self.optional
--        self.missing = {}
-+        old_need = self.deps.need
-+        old_optional = self.deps.optional
-+
-         self.pdf = False
-         self.optional = 0
-         self.install = ""
-         old_verbose = self.verbose_warn_install
-         self.verbose_warn_install = 0
- 
--        self.add_package("python-sphinx", DepType.PYTHON_MANDATORY)
-+        self.deps.clear_deps()
-+
-+        self.deps.add_package("python-sphinx", DepManager.PYTHON_MANDATORY)
- 
-         self.check_distros()
- 
-@@ -1111,7 +1136,7 @@ class SphinxDependencyChecker:
-             print("\n")
-         else:
-             if self.need_sphinx:
--                self.need += 1
-+                self.deps.need += 1
- 
-         # Suggest newer versions if current ones are too old
-         if self.latest_avail_ver and self.latest_avail_ver >= self.min_version:
-@@ -1190,20 +1215,20 @@ class SphinxDependencyChecker:
-                 self.check_python_module("ensurepip")
- 
-         # Check for needed programs/tools
--        self.check_perl_module("Pod::Usage", DepType.SYSTEM_MANDATORY)
-+        self.check_perl_module("Pod::Usage", DepManager.SYSTEM_MANDATORY)
- 
--        self.check_program("make", DepType.SYSTEM_MANDATORY)
--        self.check_program("gcc", DepType.SYSTEM_MANDATORY)
-+        self.check_program("make", DepManager.SYSTEM_MANDATORY)
-+        self.check_program("gcc", DepManager.SYSTEM_MANDATORY)
- 
--        self.check_program("dot", DepType.SYSTEM_OPTIONAL)
--        self.check_program("convert", DepType.SYSTEM_OPTIONAL)
-+        self.check_program("dot", DepManager.SYSTEM_OPTIONAL)
-+        self.check_program("convert", DepManager.SYSTEM_OPTIONAL)
- 
-         self.check_python_module("yaml")
- 
-         if self.pdf:
--            self.check_program("xelatex", DepType.PDF_MANDATORY)
--            self.check_program("rsvg-convert", DepType.PDF_MANDATORY)
--            self.check_program("latexmk", DepType.PDF_MANDATORY)
-+            self.check_program("xelatex", DepManager.PDF_MANDATORY)
-+            self.check_program("rsvg-convert", DepManager.PDF_MANDATORY)
-+            self.check_program("latexmk", DepManager.PDF_MANDATORY)
- 
-         # Do distro-specific checks and output distro-install commands
-         self.check_distros()
--- 
-2.49.0
+Layerscape boards such as those that I update here have a QIXIS FPGA
+accessible through I2C. This FPGA exposes a set of registers which can
+be used to monitor the status of different components, configure muxing,
+act as GPIO controllers etc.
+
+Since the register layout that this device exposes is different on a per
+board basis, each board has a different compatible string such as the
+one that patch 2/9 adds - fsl,lx2160ardb-fpga.
+
+Going deeper, some of these registers are acting as GPIO controllers
+exposing status/control of different SFP cages on the board. For these
+kind of registers the new gpio-regmap driver is added.
+
+> A nit, subject: drop second/last, redundant "bindings". The
+> "dt-bindings" prefix is already stating that these are bindings.
+> See also:
+> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+> 
+
+Sure. Will fix.
+
+> > ---
+> >  .../bindings/gpio/fsl,fpga-gpio.yaml          | 44 +++++++++++++++++++
+> >  1 file changed, 44 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml b/Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml
+> > new file mode 100644
+> > index 000000000000..dc7b6c0d9b40
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml
+> > @@ -0,0 +1,44 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/gpio/fsl,fpga-gpio.yaml
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml
+> > +
+> > +title: GPIO controller embedded in the NXP QIXIS FPGA
+> > +
+> > +maintainers:
+> > +  - Ioana Ciornei <ioana.ciornei@nxp.com>
+> > +
+> > +description: |
+> > +  This module is part of the QIXIS FPGA found on some Layerscape boards such as
+> > +  LX2160ARDB and LS1046AQDS. For more details see
+> > +  ../board/fsl,fpga-qixis-i2c.yaml.
+> 
+> There are no "board" bindings, so this does not feel like correct path.
+
+As you have seen already in patch 2/9 there is already a dt-binding in
+the board/ folder.
+
+> 
+> > +
+> > +  Each controller supports a maximum of 8 GPIO lines and each line has a fixed
+> > +  direction which cannot be changed using a direction register.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - fsl,lx2160ardb-fpga-gpio-sfp2
+> > +      - fsl,lx2160ardb-fpga-gpio-sfp3
+> 
+> What is the difference between these?
+
+The layout of the registers backing these two GPIO controllers is the
+same but they each expose status/control of different SFP cages.
+
+> 
+> > +      - fsl,ls1046aqds-fpga-gpio-stat-pres2
+> 
+> Keep list sorted.
+> 
+
+Sure. Will fix.
 
 
