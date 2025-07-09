@@ -1,88 +1,111 @@
-Return-Path: <linux-kernel+bounces-724070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39CF4AFEE3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:56:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FDFCAFEE40
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F3DB4E5038
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:55:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5947017EA38
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6022E9748;
-	Wed,  9 Jul 2025 15:56:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277432E9759;
+	Wed,  9 Jul 2025 15:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k4SMq1lD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103F42E54C2
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 15:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A3D2206B8;
+	Wed,  9 Jul 2025 15:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752076565; cv=none; b=f+MHpiSRXTyXs4RL18QrQGdwEyrFuNVYjNQGpOQWnkcjzDETwHs5x1CYjNbqM/xwWtn+SVv24a6oWKRRlDJ7tXdYNTIkqtoKUiM0VKuZ1Gbu9SUWb+CfQI39a6nh33y3Ti6+HNQ/CcPmO88cqSCvsTrkuSDgkgtgs1PmNNJ9JAs=
+	t=1752076617; cv=none; b=tgQ2DkfloVKv89TrNuVEEQFjiXaICGSwevBf+5FbxT4KxLW9jEkD/PxqVFIxRZzAXRmJvfbsEyWG9G+yhu8uFRtIXjXp2JjqpgRgE1aBqp/M9T8z554GeSkitBzq0Of/klNLFEIqE3Qip6auAsieUSZ6M32X1X1Ss0Hg0ItVkyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752076565; c=relaxed/simple;
-	bh=Klhcqa0zXjE1jMAuczJtOID00nhS1/VKgAh4s0ac6qY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fnb5iPemzy/11RVlbDoZ/DifXeW58lvVSUcc7y6hjQewg6+LEU3hgI6fo5Jnddvy2iqP1BYFKgfVmIGfy10C4xjq2GA3kyKMxw1jC5/haY677xNNQBkDTBIVLX+mX/28lXVNCN35vEEDQssg6BxrOhHrN+zUE08k6t4P3s0NQWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86cfea700daso10364339f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 08:56:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752076563; x=1752681363;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZA6788H/o3UPwVHElcOp7R8jW6eULSWFdSmHy0kTRYk=;
-        b=JkQDp4FRUg1Vs7BYvjEcZ6p2a8gJXpIXIEBq2Ytgfy+lNFGaku22oiccACImQcb2dX
-         y5pcydr4DZ+X1qgQ63i6UF7bDYwSVTRGiRz5QRlgVnhidJqP1MXx4JNS/fpIT7Xmy2Ie
-         ZoVdjMBJpaynmokGqX6x+q+yWF/1vyABIbsp/29odvEDXFuzcBE/IsKFBcZWQ3mNgHjL
-         lN3iJ9xepAvozBzCHXk21s5u5u3XF9Bc1l26h6tjgBvIkV+7uMAiWQ8RTPp2tq/R5BWy
-         qwmn5/RzL3YY1LSZQd1dLEQ2yt2jQXAMPuqriHC1PkGwF0dMzyh+kUvf4FFyhmYdYKkR
-         kPDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqxaQLUF/f6WC6cLjlLdLl2nMT/B7KDDUvcLK8uNE1Mm601OLbDT3FtrELNOKqjJNkpVXDWpQ2eZ8zdSw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVkImC8J+2MZwYosmtofdepfyesciNGeQwwUeuXRNu8v1cPZ+l
-	1r8ww6X951y+57LEcItqvZmZe8C6ho42QvXvj/SgqLwp62eYr0fALFziK3sInUIWODwTku73JYh
-	lN/8XX0Fq/k6LPnke+T0hmInHJr5HaSyeXKiFqYneznPxxT+sBu5YgXo4QRQ=
-X-Google-Smtp-Source: AGHT+IHMYgVqoKgL7WaXTj2pN1Mdf52GVHjXjp6h7wMS57lXGHBOyXymkA/DWtdO3E5Hq+lBFpPsgwQ04QJsgHUr9H+vfOMSG0RG
+	s=arc-20240116; t=1752076617; c=relaxed/simple;
+	bh=O/H+N3TO1iyF42W90FkvMaPdy1iyg2L5o65UAMgY4T0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PzZapIg7qQJVv7roXUOebP8/Sg2TimFECjFFhPXrt26EqyGouODikMKfEHBPWFEoMmkhNcxiPj7n9cMmx3D9UNzrAmqQStxRUQnWK7Jt0pBICSs40u/4sKZzJWlm+jIW+WSKcNjQ12iUZlBrl6hnTS8P2YLoR8OwnENjCCMJCFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k4SMq1lD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 408B2C4CEEF;
+	Wed,  9 Jul 2025 15:56:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752076617;
+	bh=O/H+N3TO1iyF42W90FkvMaPdy1iyg2L5o65UAMgY4T0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=k4SMq1lDl0t/cpPFrA7uow796FMW7GCeKwtQrN5wEi5zXBiXSwxFeWIdMUbzVd5U8
+	 /tblIRlrJdfQKZdoPr64vHfpPgtdz3fhQFrMloKf7NMXZuE34W2HxGhgEcNfmHMSZY
+	 tq861hDUdrgazQaM7yKEeYXZflRhGBK75t5WX5mWhufldFDQzMfW4AOxp7jfLxl5h0
+	 O8ezv6cLXuzwzFIBfudhF8WWA8f5GaL8f1aQH9vOLfSmq60HHZMSfuyDc9fNtc45pT
+	 IP9aiI2TJCh67BTt8KnMuziAjKBMiYg6I6WH8b7cANgamtSjfRZhFslDKYecXU1Qn+
+	 rdOkyQBZs4YNQ==
+Date: Wed, 9 Jul 2025 16:56:44 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Aleksander Jan Bajkowski <olek2@wp.pl>, rafael@kernel.org,
+ daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com,
+ dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ s.hauer@pengutronix.de, zhiyong.tao@mediatek.com, linux-pm@vger.kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: iio: adc: Add support for MT7981
+Message-ID: <20250709165644.7614ac41@jic23-huawei>
+In-Reply-To: <20250709-industrious-marigold-snake-5a3eb5@krzk-bin>
+References: <20250708220405.1072393-1-olek2@wp.pl>
+	<20250708220405.1072393-2-olek2@wp.pl>
+	<20250709-industrious-marigold-snake-5a3eb5@krzk-bin>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2dd0:b0:86d:d6:5687 with SMTP id
- ca18e2360f4ac-8795b0c7254mr416874739f.6.1752076563029; Wed, 09 Jul 2025
- 08:56:03 -0700 (PDT)
-Date: Wed, 09 Jul 2025 08:56:03 -0700
-In-Reply-To: <5644bdbc-8449-407c-8e0c-e725e10a40f1@rowland.harvard.edu>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686e9113.050a0220.385921.0008.GAE@google.com>
-Subject: Re: [syzbot] [usb?] KASAN: slab-out-of-bounds Read in mon_copy_to_buff
-From: syzbot <syzbot+8258d5439c49d4c35f43@syzkaller.appspotmail.com>
-To: bentiss@kernel.org, jikos@kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	stern@rowland.harvard.edu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Wed, 9 Jul 2025 10:27:50 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> On Wed, Jul 09, 2025 at 12:04:03AM +0200, Aleksander Jan Bajkowski wrote:
+> > The temperature sensor in the MT7981 is same as in the MT7986.
+> > Add compatible string for mt7981.
+> > 
+> > Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+> > ---
+> >  .../devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml   | 4 ++++
+> >  1 file changed, 4 insertions(+)  
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+Picked up this patch for the togreg branch of iio.git. Initially pushed out
+as testing as other stuff on there needs some test build coverage.
+> 
+> <form letter>
+> This is an automated instruction, just in case, because many review
+> tags are being ignored. If you know the process, just skip it entirely
+> (please do not feel offended by me posting it here - no bad intentions
+> intended, no patronizing, I just want to avoid wasted efforts). If you
+> do not know the process, here is a short explanation:
+> 
+> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+> versions of patchset, under or above your Signed-off-by tag, unless
+> patch changed significantly (e.g. new properties added to the DT
+> bindings). Tag is "received", when provided in a message replied to you
+> on the mailing list. Tools like b4 can help here ('b4 trailers -u ...').
+> However, there's no need to repost patches *only* to add the tags. The
+> upstream maintainer will do that for tags received on the version they
+> apply.
+> 
+> https://elixir.bootlin.com/linux/v6.15/source/Documentation/process/submitting-patches.rst#L591
+> </form letter>
+> 
+> Best regards,
+> Krzysztof
+> 
 
-Reported-by: syzbot+8258d5439c49d4c35f43@syzkaller.appspotmail.com
-Tested-by: syzbot+8258d5439c49d4c35f43@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         d7b8f8e2 Linux 6.16-rc5
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/
-console output: https://syzkaller.appspot.com/x/log.txt?x=1155ebd4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f51185bd4f40ad44
-dashboard link: https://syzkaller.appspot.com/bug?extid=8258d5439c49d4c35f43
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1113ff70580000
-
-Note: testing is done by a robot and is best-effort only.
 
