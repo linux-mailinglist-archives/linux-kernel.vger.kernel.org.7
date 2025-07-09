@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-723782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78C41AFEB11
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:59:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A013AFEB22
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2865916F64A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:56:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2D105664F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C342E8DEC;
-	Wed,  9 Jul 2025 13:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2756B2ED86E;
+	Wed,  9 Jul 2025 13:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TPliMzAf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iqF6ZGnj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889862E5B08;
-	Wed,  9 Jul 2025 13:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B13D2E6D0A;
+	Wed,  9 Jul 2025 13:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752069141; cv=none; b=UuB483cqZjqP104Vv70DqdEhpf6jkAddubQHCal4TVViqGruI8Flyp6fvAvWSKvca/7PEht/BmFPQyXGFzpMmFLUxcWBKnBHj33mZmposTf378FSQmfJZYDIxJzr+VubHNwhH5h4cWusoUypTaLED/F0QveOn72y3bl18jqTCzQ=
+	t=1752069142; cv=none; b=JvN4b3LoAZ3/4yzF5v51114W2li8aFeiDVYVi7TnIe2TMtajY0QcVwIMq+kB45TcdHiWmIbWpYSshc6+WtWbLMjTMYdFFLoIjaLthKXHUOY/uEKsQfSW7mhkugHovh7CPAK9RPSXJDf6Y5C/VZig0mkrGQX7Ty16fJV8AlVlwFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752069141; c=relaxed/simple;
-	bh=cFBLDKNOa0cAvpqcz75eL+YkNUnkHhNOQfpoyeRf6Hc=;
+	s=arc-20240116; t=1752069142; c=relaxed/simple;
+	bh=k07T+F39In0bF6GHHTnnGiCYiH8jJBwsGqiEHYdTlR0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oDKvicaEHJRVE0a8gWt3QNxOhvUPsnH7sO16PVNfsEneFoyrOErkK0Z8yTpajsMMAjKNiX5fsnJW4BPzBhiJfHNFdJGiKeCIazenSkh19uXuMhStsnFDFikC/FGhFxe9e1+c8JvSCF9yi/VkK5EgK8VPNa6BryzhbX98WdCdsmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TPliMzAf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4377C4AF10;
-	Wed,  9 Jul 2025 13:52:20 +0000 (UTC)
+	 MIME-Version; b=cAj/cSQ/tB/44dMFMBEvsVsBdme4nwR0jleTw2OCWtLslVbwP4BgjN1yNj3WadZaDydBOHtOPxELAnTIpY0oie6nUL1WoU6QYeedJyivTYYW08xMx3ErY0jlxOXi+h/KvMO8zOk+8bBb0MK0aiq33dIypre8ZWJj4PwD49Jfi1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iqF6ZGnj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8C83C116D0;
+	Wed,  9 Jul 2025 13:52:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1752069141;
-	bh=cFBLDKNOa0cAvpqcz75eL+YkNUnkHhNOQfpoyeRf6Hc=;
+	bh=k07T+F39In0bF6GHHTnnGiCYiH8jJBwsGqiEHYdTlR0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TPliMzAf3njyuzZfLwW05Ceh/4IgNefqHpq5AsO/WIyROwZu92xeSsohvsvmiNeLZ
-	 PQJUc6eYGMspbz23cSf0dI0IKkGOSs1rRfXNk1cw7qf/2inVbTOq/Wv1oRnoECkDgk
-	 QdJXdQb+BPBScMTT9YR7OyBFtrCq8OSbOidyawMc875gSU1fvcOvKzs6e4rgCjdsaO
-	 r7dSwXJbp2SwPqBfgvTgrhKYo82EkM/MiYtqYwvNXchIBc399iJ27g7X08DkARXp81
-	 +zl5auA4092lmLeVkdStd4tx864piV7stVGPogA/1tCy+hkllhBpJG1UeQz9BUkDJx
-	 1FeXyjemo/svg==
+	b=iqF6ZGnjQ//5C9N/SIXj4MbRo98/RKIqu3V4asAw4rlaxhwa60YqdL7Wj9zVtIRYV
+	 WqlhtHvUpaJ0LOwT4tIm/MRrlkchbGALRtSub59CLNiI+1GcwDY+daoD/fp1Wr9K06
+	 RJwOYuIROALQhJum2weSSWb/owWVKbwhLue2ByYmBzFvPBI8wBpVZvrW7c4VB0ZLbN
+	 JV9WMTW1ftYCmAXeXfpGofQgl/zeZ1tu1xMqrVORZ/bCJNhU6jc0ql7Im5pT8V7eKy
+	 R0S1IfYaHPj2NwxxDQVwR5sFpRISDGAhwFHsdDUOOQhCZ/Nk+NNncoBSr3qp6louvW
+	 koM/LLFJPSybA==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab@kernel.org>)
-	id 1uZVDd-00000000EDS-307S;
+	id 1uZVDd-00000000EDV-35dz;
 	Wed, 09 Jul 2025 15:52:17 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
@@ -51,9 +51,9 @@ Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Akira Yokosawa" <akiyks@gmail.com>,
 	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 28/39] scripts: sphinx-pre-install: add more generic checkers on a class
-Date: Wed,  9 Jul 2025 15:52:00 +0200
-Message-ID: <bdf261a8fc29a06d41168244cac2b0ba45efe13c.1752067814.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 29/39] scripts: sphinx-pre-install: move get_system_release()
+Date: Wed,  9 Jul 2025 15:52:01 +0200
+Message-ID: <36abd1990595a79d6a6d479d80fe29f981d1ca26.1752067814.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1752067814.git.mchehab+huawei@kernel.org>
 References: <cover.1752067814.git.mchehab+huawei@kernel.org>
@@ -66,213 +66,166 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-Better organize the code by moving the more generic methods
-to MissingCheckers. Such class contain only binary and package
-dependent missing checkers, but no distro-specific data or code.
+The code at get_system_release() is actually a helper function,
+independent from the actual Sphinx verification checker. Move
+it to MissingCheckers class, where other checkers are present.
 
-All distro-specific data/code remains at SphinxDependencyChecker
+With that, the entire distro-specific handler logic, with
+all its complexity is confined at SphinxDependencyChecker
 class.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- scripts/sphinx-pre-install.py | 142 ++++++++++++++++++----------------
- 1 file changed, 76 insertions(+), 66 deletions(-)
+ scripts/sphinx-pre-install.py | 115 +++++++++++++++++-----------------
+ 1 file changed, 59 insertions(+), 56 deletions(-)
 
 diff --git a/scripts/sphinx-pre-install.py b/scripts/sphinx-pre-install.py
-index b00e50028f4d..9127487bd4d7 100755
+index 9127487bd4d7..593982f350b3 100755
 --- a/scripts/sphinx-pre-install.py
 +++ b/scripts/sphinx-pre-install.py
-@@ -150,7 +150,7 @@ class DepManager:
-         if output_msg:
-             print(f"\n{output_msg}\n")
- 
--class AncillaryCheckers:
-+class AncillaryMethods:
-     """
-     Ancillary methods that checks for missing dependencies for different
-     types of types, like binaries, python modules, rpm deps, etc.
-@@ -261,81 +261,24 @@ class AncillaryCheckers:
- 
-         return subprocess.run(*args, **kwargs)
- 
--class SphinxDependencyChecker(AncillaryCheckers):
--    # List of required texlive packages on Fedora and OpenSuse
--    texlive = {
--        "amsfonts.sty":       "texlive-amsfonts",
--        "amsmath.sty":        "texlive-amsmath",
--        "amssymb.sty":        "texlive-amsfonts",
--        "amsthm.sty":         "texlive-amscls",
--        "anyfontsize.sty":    "texlive-anyfontsize",
--        "atbegshi.sty":       "texlive-oberdiek",
--        "bm.sty":             "texlive-tools",
--        "capt-of.sty":        "texlive-capt-of",
--        "cmap.sty":           "texlive-cmap",
--        "ctexhook.sty":       "texlive-ctex",
--        "ecrm1000.tfm":       "texlive-ec",
--        "eqparbox.sty":       "texlive-eqparbox",
--        "eu1enc.def":         "texlive-euenc",
--        "fancybox.sty":       "texlive-fancybox",
--        "fancyvrb.sty":       "texlive-fancyvrb",
--        "float.sty":          "texlive-float",
--        "fncychap.sty":       "texlive-fncychap",
--        "footnote.sty":       "texlive-mdwtools",
--        "framed.sty":         "texlive-framed",
--        "luatex85.sty":       "texlive-luatex85",
--        "multirow.sty":       "texlive-multirow",
--        "needspace.sty":      "texlive-needspace",
--        "palatino.sty":       "texlive-psnfss",
--        "parskip.sty":        "texlive-parskip",
--        "polyglossia.sty":    "texlive-polyglossia",
--        "tabulary.sty":       "texlive-tabulary",
--        "threeparttable.sty": "texlive-threeparttable",
--        "titlesec.sty":       "texlive-titlesec",
--        "ucs.sty":            "texlive-ucs",
--        "upquote.sty":        "texlive-upquote",
--        "wrapfig.sty":        "texlive-wrapfig",
--    }
-+class MissingCheckers(AncillaryMethods):
- 
--    def __init__(self, args):
-+    def __init__(self, args, texlive):
-         self.pdf = args.pdf
-         self.virtualenv = args.virtualenv
-         self.version_check = args.version_check
-+        self.texlive = texlive
- 
-         self.deps = DepManager(self.pdf)
- 
-         self.need_symlink = 0
-         self.need_sphinx = 0
--        self.need_pip = 0
--        self.rec_sphinx_upgrade = 0
-+
-         self.verbose_warn_install = 1
- 
--        self.system_release = ""
--        self.install = ""
-         self.virtenv_dir = ""
--        self.python_cmd = ""
--        self.activate_cmd = ""
- 
--        # Some distros may not have a Sphinx shipped package compatible with
--        # our minimal requirements
--        self.package_supported = True
--
--        # Recommend a new python version
--        self.recommend_python = None
--
--        # Certain hints are meant to be shown only once
--        self.first_hint = True
--
--        self.min_version = (0, 0, 0)
--        self.cur_version = (0, 0, 0)
--        self.latest_avail_ver = (0, 0, 0)
--        self.venv_ver = (0, 0, 0)
--
--        prefix = os.environ.get("srctree", ".") + "/"
--
--        self.conf = prefix + "Documentation/conf.py"
--        self.requirement_file = prefix + "Documentation/sphinx/requirements.txt"
--        self.virtenv_prefix = ["sphinx_", "Sphinx_" ]
-+        self.install = ""
- 
-     #
-     # Methods to check if a feature exists
-@@ -460,9 +403,9 @@ class SphinxDependencyChecker(AncillaryCheckers):
-             if match:
-                 return parse_version(match.group(1))
- 
--    def check_sphinx(self):
-+    def check_sphinx(self, conf):
-         try:
--            with open(self.conf, "r", encoding="utf-8") as f:
-+            with open(conf, "r", encoding="utf-8") as f:
-                 for line in f:
-                     match = re.match(r"^\s*needs_sphinx\s*=\s*[\'\"]([\d\.]+)[\'\"]", line)
-                     if match:
-@@ -513,6 +456,73 @@ class SphinxDependencyChecker(AncillaryCheckers):
+@@ -456,6 +456,64 @@ class MissingCheckers(AncillaryMethods):
  
          return True
  
-+class SphinxDependencyChecker(MissingCheckers):
++    def get_system_release(self):
++        """
++        Determine the system type. There's no unique way that would work
++        with all distros with a minimal package install. So, several
++        methods are used here.
 +
-+    def __init__(self, args):
-+        # List of required texlive packages on Fedora and OpenSuse
-+        texlive = {
-+            "amsfonts.sty":       "texlive-amsfonts",
-+            "amsmath.sty":        "texlive-amsmath",
-+            "amssymb.sty":        "texlive-amsfonts",
-+            "amsthm.sty":         "texlive-amscls",
-+            "anyfontsize.sty":    "texlive-anyfontsize",
-+            "atbegshi.sty":       "texlive-oberdiek",
-+            "bm.sty":             "texlive-tools",
-+            "capt-of.sty":        "texlive-capt-of",
-+            "cmap.sty":           "texlive-cmap",
-+            "ctexhook.sty":       "texlive-ctex",
-+            "ecrm1000.tfm":       "texlive-ec",
-+            "eqparbox.sty":       "texlive-eqparbox",
-+            "eu1enc.def":         "texlive-euenc",
-+            "fancybox.sty":       "texlive-fancybox",
-+            "fancyvrb.sty":       "texlive-fancyvrb",
-+            "float.sty":          "texlive-float",
-+            "fncychap.sty":       "texlive-fncychap",
-+            "footnote.sty":       "texlive-mdwtools",
-+            "framed.sty":         "texlive-framed",
-+            "luatex85.sty":       "texlive-luatex85",
-+            "multirow.sty":       "texlive-multirow",
-+            "needspace.sty":      "texlive-needspace",
-+            "palatino.sty":       "texlive-psnfss",
-+            "parskip.sty":        "texlive-parskip",
-+            "polyglossia.sty":    "texlive-polyglossia",
-+            "tabulary.sty":       "texlive-tabulary",
-+            "threeparttable.sty": "texlive-threeparttable",
-+            "titlesec.sty":       "texlive-titlesec",
-+            "ucs.sty":            "texlive-ucs",
-+            "upquote.sty":        "texlive-upquote",
-+            "wrapfig.sty":        "texlive-wrapfig",
-+        }
++        By default, it will use lsb_release function. If not available, it will
++        fail back to reading the known different places where the distro name
++        is stored.
 +
-+        super().__init__(args, texlive)
++        Several modern distros now have /etc/os-release, which usually have
++        a decent coverage.
++        """
 +
-+        self.need_pip = 0
-+        self.rec_sphinx_upgrade = 0
++        system_release = ""
 +
-+        self.system_release = ""
-+        self.python_cmd = ""
-+        self.activate_cmd = ""
++        if self.which("lsb_release"):
++            result = self.run(["lsb_release", "-d"], capture_output=True, text=True)
++            system_release = result.stdout.replace("Description:", "").strip()
 +
-+        # Some distros may not have a Sphinx shipped package compatible with
-+        # our minimal requirements
-+        self.package_supported = True
++        release_files = [
++            "/etc/system-release",
++            "/etc/redhat-release",
++            "/etc/lsb-release",
++            "/etc/gentoo-release",
++        ]
 +
-+        # Recommend a new python version
-+        self.recommend_python = None
++        if not system_release:
++            for f in release_files:
++                system_release = self.catcheck(f)
++                if system_release:
++                    break
 +
-+        # Certain hints are meant to be shown only once
-+        self.first_hint = True
++        # This seems more common than LSB these days
++        if not system_release:
++            os_var = {}
++            try:
++                with open("/etc/os-release", "r", encoding="utf-8") as f:
++                    for line in f:
++                        match = re.match(r"^([\w\d\_]+)=\"?([^\"]*)\"?\n", line)
++                        if match:
++                            os_var[match.group(1)] = match.group(2)
 +
-+        self.min_version = (0, 0, 0)
-+        self.cur_version = (0, 0, 0)
-+        self.latest_avail_ver = (0, 0, 0)
-+        self.venv_ver = (0, 0, 0)
++                system_release = os_var.get("NAME", "")
++                if "VERSION_ID" in os_var:
++                    system_release += " " + os_var["VERSION_ID"]
++                elif "VERSION" in os_var:
++                    system_release += " " + os_var["VERSION"]
++            except IOError:
++                pass
 +
-+        prefix = os.environ.get("srctree", ".") + "/"
++        if not system_release:
++            system_release = self.catcheck("/etc/issue")
 +
-+        self.conf = prefix + "Documentation/conf.py"
-+        self.requirement_file = prefix + "Documentation/sphinx/requirements.txt"
-+        self.virtenv_prefix = ["sphinx_", "Sphinx_" ]
++        system_release = system_release.strip()
++
++        return system_release
++
+ class SphinxDependencyChecker(MissingCheckers):
  
-     #
-     # Distro-specific hints methods
-@@ -1187,7 +1197,7 @@ class SphinxDependencyChecker(AncillaryCheckers):
+     def __init__(self, args):
+@@ -499,7 +557,7 @@ class SphinxDependencyChecker(MissingCheckers):
+         self.need_pip = 0
+         self.rec_sphinx_upgrade = 0
+ 
+-        self.system_release = ""
++        self.system_release = self.get_system_release()
+         self.python_cmd = ""
+         self.activate_cmd = ""
+ 
+@@ -1193,7 +1251,6 @@ class SphinxDependencyChecker(MissingCheckers):
+               "\thttps://github.com/sphinx-doc/sphinx/pull/8313")
+ 
+     def check_needs(self):
+-        self.get_system_release()
          self.python_cmd = sys.executable
  
          # Check if Sphinx is already accessible from current environment
--        self.check_sphinx()
-+        self.check_sphinx(self.conf)
+@@ -1270,60 +1327,6 @@ class SphinxDependencyChecker(MissingCheckers):
  
-         if self.system_release:
-             print(f"Detected OS: {self.system_release}.")
+         print("Needed package dependencies are met.")
+ 
+-    def get_system_release(self):
+-        """
+-        Determine the system type. There's no unique way that would work
+-        with all distros with a minimal package install. So, several
+-        methods are used here.
+-
+-        By default, it will use lsb_release function. If not available, it will
+-        fail back to reading the known different places where the distro name
+-        is stored.
+-
+-        Several modern distros now have /etc/os-release, which usually have
+-        a decent coverage.
+-        """
+-
+-        if self.which("lsb_release"):
+-            result = self.run(["lsb_release", "-d"], capture_output=True, text=True)
+-            self.system_release = result.stdout.replace("Description:", "").strip()
+-
+-        release_files = [
+-            "/etc/system-release",
+-            "/etc/redhat-release",
+-            "/etc/lsb-release",
+-            "/etc/gentoo-release",
+-        ]
+-
+-        if not self.system_release:
+-            for f in release_files:
+-                self.system_release = self.catcheck(f)
+-                if self.system_release:
+-                    break
+-
+-        # This seems more common than LSB these days
+-        if not self.system_release:
+-            os_var = {}
+-            try:
+-                with open("/etc/os-release", "r", encoding="utf-8") as f:
+-                    for line in f:
+-                        match = re.match(r"^([\w\d\_]+)=\"?([^\"]*)\"?\n", line)
+-                        if match:
+-                            os_var[match.group(1)] = match.group(2)
+-
+-                self.system_release = os_var.get("NAME", "")
+-                if "VERSION_ID" in os_var:
+-                    self.system_release += " " + os_var["VERSION_ID"]
+-                elif "VERSION" in os_var:
+-                    self.system_release += " " + os_var["VERSION"]
+-            except IOError:
+-                pass
+-
+-        if not self.system_release:
+-            self.system_release = self.catcheck("/etc/issue")
+-
+-        self.system_release = self.system_release.strip()
+-
+ DESCRIPTION = """
+ Process some flags related to Sphinx installation and documentation build.
+ """
 -- 
 2.49.0
 
