@@ -1,166 +1,140 @@
-Return-Path: <linux-kernel+bounces-724548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1F89AFF421
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:52:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87ABEAFF424
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD0145A3508
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:52:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E7CA1BC57B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5CE23C8CE;
-	Wed,  9 Jul 2025 21:52:35 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E51B241673;
+	Wed,  9 Jul 2025 21:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HjyXM/ZV"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6B323534D
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 21:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8AE9221DB4
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 21:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752097954; cv=none; b=QA6+TAEfUr1GjPkG77xkSvQP4pAlBPkhHzTyGOg1xB+5sFWN+KwS/QoKEzY2g578adE2uo38Lz7OOnNqk6mX5sXAoqfqiCCNRdxAN7+q83DkcXgEIaINST0nlJYKMWwoFHxXmLsdKgbHI3xJRESqdyW3IGn3VKgRyxcjP7h7s6A=
+	t=1752098043; cv=none; b=kXy9kvdL6HY0x9Tc0WOR5apsEqz4gr/qQMovDZnO8AiyqyWCHICn8qi8kYrPJtM6V2AZy7CV3AqGENiegh7uuPXqQl+JbU55qcVYCY0BdnXvRrXw8C6B7DSA25QjfkhyeYwNEE59ZfDl2xKmuPM2/tRrtPNmWUs1Fpap1NVQYe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752097954; c=relaxed/simple;
-	bh=8G0jFNWAm6LngLUTyL0L/8Bmyg4IvAvoOOotujOiWoY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=t/cdreJNpvmkPl2kjEeFHR83pmnE1oLx5qOLzAOVYWXEX1tlPF3iCfoil/qzzGxhrdRZNRxJ0+lo0VXmfwfLojpaJxzzkBSLInkaDXVI10AcYtesupVaA6XAJY/Wpk45Y3nFT/ygjeLuV68X+0SGhM6Y6MiF+yTqrihpXozWhxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-875bd5522e9so37480239f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 14:52:32 -0700 (PDT)
+	s=arc-20240116; t=1752098043; c=relaxed/simple;
+	bh=ussmeAKsU5UyUSjBJVhduD/D8CHVdqbk5aJ/8Xb+cIM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ClWxwTqR26Y4WTrO1AjeHWk1nmdYDNj0kmgqn47E7elWpXb91S42W+I+pALGZtfKJB5F2ZqQhI03nNbR882u+PpY4pWY8v9H2Ezag/H2LkehoDRKp+xX7OCWOAcqs911N5pgIcI2Rps0F5aYoVg+hCWgnrU5x3W1l7FQfZUxMkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HjyXM/ZV; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-609b169834cso4166a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 14:54:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752098040; x=1752702840; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ussmeAKsU5UyUSjBJVhduD/D8CHVdqbk5aJ/8Xb+cIM=;
+        b=HjyXM/ZVyShMXCT9l3xay4qtKd+kDzlwTIVF9mRV8dFs7ZUDtEg9Ve0etw6T2JwWg2
+         qIGuOAKScFnmgfPAaPeNvReaXYu4XT9bXkeBScvqRMRnzQgwYSdYjtROaHFVlMIjf7ua
+         n4/2Ky31pPZ4I1ekqdR9XCX6UnIaFP+EfGM5wWQRTALrhNVLQijn+4ENMAe98hXsTsgW
+         0jrfGuKrLFFqGqppTe8R7bqArRqmMT90PeVzdnQVZz9NCnfs60PbQlEhlyqBDHq8cg1k
+         YMNFO/ABQ/4zXcyK/YxgNsMtzWGWYsdctS5HdGM9X0PRq2MjB5JijIptlcihR4ZOjn/Z
+         I7sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752097952; x=1752702752;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qns3PTsLSxHmcUEVZ0NGFxRYwJ/fQJEfgHSSuuxIADg=;
-        b=jVXzIL+rOLgdg//dk/A35plI8Xvd8981n8KgW9fRkke29On8nxgiEPOeUdPHKsgc5a
-         autrRik/qEcyqiZs9THsq7LBQrGxU9yHf7aJNcmAwa3cesiC99CkG2b9AXzcYsbBfrD3
-         C2wR8qjms8NfJOHlwgqBIapmEve3EfrIqNGw1/EyC078g3DCblDSu1K25g67lm6SgYuz
-         hWIotPWeMRKULdbemRm4opR54GPtfq4/PBtm+G5qbI5BKbtb9JXYJiRlri9+ccL5oUJj
-         6IVdWRin8NaN8kfKFNZRCliNT944/lNbAPOCXoDnFQiV5Le+zgm6L6RJ/VOYjK3MBbSu
-         xYZA==
-X-Forwarded-Encrypted: i=1; AJvYcCW08VwYA+mDnjE/z3jvPi78PM8VfEr6cEyCOIriiNrw8T5zfj8Wk/gvTcEzHmi7bPdM43IavZm6rGTu7yQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHV0fL/pjnzTwBNhS3QIyi6cu8BtAfHnvMbA/k490+2juMVw/j
-	UA10Gdn3YeuGmx3t26GYl8d1emMHmPqATytYQSkHUn61+jCg1lFkZgptueKLtSbAuvqZ4V2jpAa
-	F1MUKjgiNEAiDVwTOidvKEwyALcIjx5P5azeFqgLwjJUPj8/fYlWOjuucHl0=
-X-Google-Smtp-Source: AGHT+IHF/6O87P5etdEw8gMnH7CB8aKKGG2eoMmZZ1bQZ8DtPVF2qvf6Yy1PNZ6RQ0uG78YtQYbVcd7K0plzSxWYpWpKP/aFOCn2
+        d=1e100.net; s=20230601; t=1752098040; x=1752702840;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ussmeAKsU5UyUSjBJVhduD/D8CHVdqbk5aJ/8Xb+cIM=;
+        b=GFZP/NOuuVSfvQq4OfVOrsxHc5TcqT8k+GIG+yo1y57WX1wvClLIGTzAY2hFwE8mYE
+         UFGjMQZGftqkar2mNTQXwc60SDRWvia6mrjD22iFI9IPc0U5csBxh/s616Othxr068R+
+         nut0ACl+5hYfmLE4XVkGQdxZgWds+UBFIXGwOxt48zd4xDW7g/YfYeQ092BzvjssBBGg
+         zyXp++IOQdhuQFcI6lYu+Y0M98pH0ju8+VUeQ8qLz1VZOZb5kUI96QGxkCN0WMBlpI9v
+         ybrZ0Aan9v0B/fKRyE/87TX7H75GH5yo2tjhUqXmc9fgkUwQ64X5/ert+AyqC0+m+Ygs
+         iEUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVH2wRB8LuUOMy0GXgVf0yf70usWFxnNBECOc4xZjvf8albafXjQNrXAdrWrbuvgzRADLdoDIjW4PyOOg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLK2i9OdQLU/3BAu/Jut2NbJnnsVoMk7AFoEVBkLneeXrKQxPm
+	DdWT8/US83lZ8UOHyjrDVV1/B7BwQzq6y++OTHImRZycvngPYbv3tbKDeyzg+KsgSsALLRfyp2a
+	QSp9MxmFp1LNFMsfXVK45A8wnO9mU2QDcPr7oRmzz
+X-Gm-Gg: ASbGncuXnAeF3CnsG6nDNgovwo3szQ0urqBzZXBjqbR0o4KogcFLGo1z0JwOn1xGKFi
+	JLYjQYe4FUyOyZWqgy9S1v2PixmrGq2Db/vSPzMVwZNYvCIRHbZI4nFC74nzIYLY06MZm5wRVDg
+	0U/2YFZPT9pa4en2DY/hR5+tkJXOFW0ZDZdxItOuxKuZygr+kHLVcr7zk0p8YUhduewzADTY8lN
+	w==
+X-Google-Smtp-Source: AGHT+IFRN4CNJMEx5C1O8OOqdP/rgcRQDoaYg/mZR6xBdzHzo05JHMIJ/063LCPw8opQYmkXLwsQr8hruGMJCcPTzNY=
+X-Received: by 2002:a50:9e02:0:b0:608:fb55:bf12 with SMTP id
+ 4fb4d7f45d1cf-611c46403e9mr27076a12.4.1752098040055; Wed, 09 Jul 2025
+ 14:54:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:26c5:b0:875:bc7e:26ce with SMTP id
- ca18e2360f4ac-87968d06310mr35569739f.0.1752097952289; Wed, 09 Jul 2025
- 14:52:32 -0700 (PDT)
-Date: Wed, 09 Jul 2025 14:52:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686ee4a0.050a0220.385921.0022.GAE@google.com>
-Subject: [syzbot] [net?] WARNING: ./include/net/netdev_lock.h:LINE at
- __linkwatch_sync_dev, CPU: kworker/u8:NUM/NUM
-From: syzbot <syzbot+9196eb463ddf99a0be6e@syzkaller.appspotmail.com>
-To: cratiu@nvidia.com, davem@davemloft.net, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, kuniyu@amazon.com, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	sdf@fomichev.me, syzkaller-bugs@googlegroups.com, vladimir.oltean@nxp.com
+References: <20250709-debugfs-rust-v9-0-92b9eab5a951@google.com> <DB7US8G7ISG0.20430M3P7I0K0@kernel.org>
+In-Reply-To: <DB7US8G7ISG0.20430M3P7I0K0@kernel.org>
+From: Matthew Maurer <mmaurer@google.com>
+Date: Wed, 9 Jul 2025 14:53:48 -0700
+X-Gm-Features: Ac12FXw1T_zpTlpyMPgLzfrfnwpvNnIIPT9GSXgqhtg5XyR3BN4gk168q38zjQ8
+Message-ID: <CAGSQo01hORWAtrGaYp-_xxrAiN47JkJg=jiqnqdpw87QKzt9jg@mail.gmail.com>
+Subject: Re: [PATCH v9 0/5] rust: DebugFS Bindings
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Timur Tabi <ttabi@nvidia.com>, Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Jul 9, 2025 at 2:47=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
+rote:
+>
+> On Wed Jul 9, 2025 at 9:09 PM CEST, Matthew Maurer wrote:
+> > This series provides safe DebugFS bindings for Rust, with a sample
+> > module using them.
+> >
+> > Example interaction with the sample driver:
+>
+> I understand what you're trying to do here, i.e. showcase that values exp=
+orted
+> via debugfs can be altered.
+>
+> The problem is that the current abstractions only implement read(), but n=
+ot
+> write().
 
-syzbot found the following issue on:
+I was trying to keep the initial bindings simple. Adding `write` is
+definitely something we could do, but I thought maybe that could be in
+a subsequent patch.
 
-HEAD commit:    050f8ad7b58d Add linux-next specific files for 20250616
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=13ad8370580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d2efc7740224b93a
-dashboard link: https://syzkaller.appspot.com/bug?extid=9196eb463ddf99a0be6e
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=155c190c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=109c95d4580000
+> If you really want to showcase changing values, you can, for instance, cr=
+eate a
+> workqueue inside the sample driver and modify the counter periodically.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/49faa18d2f53/disk-050f8ad7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7c6f9cd7fe5d/vmlinux-050f8ad7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/84a08d6403ee/bzImage-050f8ad7.xz
+This is supposed to be sample code, so ideally it should be as narrow
+as is reasonable in what subsystems it touches, no? If people would
+really prefer the sample schedule a ticking counter I can do that, but
+it already felt weird to be registering a platform driver in a debugfs
+sample.
 
-The issue was bisected to:
+>
+> We really should not teach people to modify values by read() instead of w=
+rite().
+> Also, without this workaround there shouldn't be a reason to export the e=
+xact
+> same value twice, i.e. no need for File<File<AtomicUsize>>.
+>
+> - Danilo
 
-commit 04efcee6ef8d0f01eef495db047e7216d6e6e38f
-Author: Stanislav Fomichev <sdf@fomichev.me>
-Date:   Fri Apr 4 16:11:22 2025 +0000
-
-    net: hold instance lock during NETDEV_CHANGE
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16390dd4580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=15390dd4580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=11390dd4580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9196eb463ddf99a0be6e@syzkaller.appspotmail.com
-Fixes: 04efcee6ef8d ("net: hold instance lock during NETDEV_CHANGE")
-
-------------[ cut here ]------------
-RTNL: assertion failed at ./include/net/netdev_lock.h (72)
-WARNING: ./include/net/netdev_lock.h:72 at netdev_ops_assert_locked include/net/netdev_lock.h:72 [inline], CPU#0: kworker/u8:3/49
-WARNING: ./include/net/netdev_lock.h:72 at __linkwatch_sync_dev+0x303/0x350 net/core/link_watch.c:279, CPU#0: kworker/u8:3/49
-Modules linked in:
-CPU: 0 UID: 0 PID: 49 Comm: kworker/u8:3 Not tainted 6.16.0-rc2-next-20250616-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: bond0 bond_mii_monitor
-RIP: 0010:netdev_ops_assert_locked include/net/netdev_lock.h:72 [inline]
-RIP: 0010:__linkwatch_sync_dev+0x303/0x350 net/core/link_watch.c:279
-Code: 7c fe ff ff e8 5e 7f 66 f8 c6 05 ce 6b 31 06 01 90 48 c7 c7 20 2f 93 8c 48 c7 c6 7a 32 9d 8d ba 48 00 00 00 e8 9e 1d 2a f8 90 <0f> 0b 90 90 e9 4d fe ff ff 44 89 f1 80 e1 07 38 c1 0f 8c 22 fd ff
-RSP: 0018:ffffc90000ba7670 EFLAGS: 00010246
-RAX: a4c1d8d5a4094c00 RBX: ffff888032708000 RCX: ffff8880222a5a00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000002
-RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffffbfff1bfaa14 R12: 1ffff110064e105d
-R13: dffffc0000000000 R14: ffffffff8c1c95e8 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff888125c40000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000300 CR3: 000000007997c000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ethtool_op_get_link+0x15/0x70 net/ethtool/ioctl.c:63
- bond_check_dev_link+0x444/0x6c0 drivers/net/bonding/bond_main.c:863
- bond_miimon_inspect drivers/net/bonding/bond_main.c:2745 [inline]
- bond_mii_monitor+0x428/0x2e00 drivers/net/bonding/bond_main.c:2967
- process_one_work kernel/workqueue.c:3235 [inline]
- process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3318
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3399
- kthread+0x711/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+How do you feel about the `Wrapper` struct, intended to simulate the
+driver doing its actual job and show how that would look? Is that
+similarly verboten, even though there's a comment on it saying this
+isn't how one should do things?
 
