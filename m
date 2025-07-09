@@ -1,79 +1,61 @@
-Return-Path: <linux-kernel+bounces-723322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F05DAFE5CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:34:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41321AFE5CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:33:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59DB87AE382
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:32:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B23C1C23B74
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A5F28D827;
-	Wed,  9 Jul 2025 10:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDB628CF6B;
+	Wed,  9 Jul 2025 10:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JO7CB8oG"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SAA6Tj3P"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6302580F2;
-	Wed,  9 Jul 2025 10:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98402580F2;
+	Wed,  9 Jul 2025 10:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752057229; cv=none; b=uRWHpR5t9+x2I4cV4VZ6YspBCSrHiyPbSNlyRR5/QhRkZjFtFTfgbDy8Z8YMcoe67H8tlORIegmtMkLJKas3+TKCCsFwgXp1/nMl6J5AKC7IW44IfPmDx6nom7zmS4xuVzibEHce3Tpl1kAWxC+VNdg63Wyory57WGvQpseAoMU=
+	t=1752057222; cv=none; b=fx2CEbd82SccixhuPelC7dwDJvVXfa6c86cXv3TJ30vIO/9paf9X5Jwdu5xP1o8JLUONChhiSmLKNIky3WAPUYqqwPU318ktXTC+WOL5Em9Ulv7b6Y5612sXxyU3jkZLvrcNFnrTue+RuaVEjTSn2QjyMq1VeWiDYhDgrCrkBgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752057229; c=relaxed/simple;
-	bh=P2uh5ZChmmOcah0Df9obA9+hHYfozQkasHj4aaSTVe0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uFIV6nTXiSCUUNUHGtL8eoX94aQeZoBcPcT899RseBaULYX5jXgao4P3a0OhJ0NCIN5FCESQ50h2cbjv2vwvJuY15RXgbXtgkfczHbEr0VqkE87BP/Y7/tBJxtbh2mbDhKlB03pcR0f3d1aWlbdBrxF2oRLDLbBqqQjZO8ovxH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JO7CB8oG; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 569AXVMf1424240;
-	Wed, 9 Jul 2025 05:33:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752057211;
-	bh=M4cBAh5u93ghKn64oeBMcOBHkAQPi3PU/vSas/z3su8=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=JO7CB8oGXeQLTn9tnptJWarFqbizq75woRmnbV5gTlzWoEZdL7Ihsnr3g9t1Y/YCF
-	 T5z04BsrWqHym67KE3Jeq/azyrOLz1vDALrw933tUwgdflcQCcOloMuvwDRenisvka
-	 Fpid5ISb4j1F1qtAy9Hq1ZxQTeB+sssfBgIrYtvY=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 569AXVrd2376969
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 9 Jul 2025 05:33:31 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 9
- Jul 2025 05:33:31 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 9 Jul 2025 05:33:31 -0500
-Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.245])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 569AXR4I3493994;
-	Wed, 9 Jul 2025 05:33:28 -0500
-From: Vignesh Raghavendra <vigneshr@ti.com>
-To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Francesco Dolcini <francesco@dolcini.it>
-CC: Vignesh Raghavendra <vigneshr@ti.com>,
-        Francesco Dolcini
-	<francesco.dolcini@toradex.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] arm64: dts: ti: k3-am62p-verdin: add SD_1 CD pull-up
-Date: Wed, 9 Jul 2025 16:03:13 +0530
-Message-ID: <175203496994.564120.9500374393734102130.b4-ty@ti.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250701081643.71406-1-francesco@dolcini.it>
-References: <20250701081643.71406-1-francesco@dolcini.it>
+	s=arc-20240116; t=1752057222; c=relaxed/simple;
+	bh=evxnbxNdJiQRpJidwIbYDYSlAfPi1lXf9HEFeAqyEZI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=PnMD16kLo/3pDCgpTMDbKx4nwR5tKSD1G2oobnQzeBsw9QeeCTwne4FayqYEv2zhag+si7rGNuOSlD4RV0JqVSTzswa1FmL9htEo5NBY3Rb0dfkk3t+EKwMKARTZZHDwy5w0a5l8jJRc7Un9yj2dTDRMQk3Y9vVgRn/fH3AGtmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SAA6Tj3P; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5697Ttwi030346;
+	Wed, 9 Jul 2025 10:33:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=v2PHR2DDu0TFELpkQm+Yxc
+	D30hXA+1bfpoDVptwA8D0=; b=SAA6Tj3PIDNLnrP5p0/FUZ9sQn/mbM1w48uR18
+	BK3eKPHRP3YY94O/ECwfQHKFTWor1tgm7pThzjrD8fklRDQuxX80+Un/jPDa63/N
+	yPEaUlQNKiiMB3SmP6QID7d8/Yx9YcUaA+nYfjfM3QrUjTDmtEuqzYgkn9b1cexl
+	TCMiL7hs0+DosWba13NeN06bQdEQf/6iBdByUCpnx8WExNI14KBrARiCwOe4xQ92
+	PZ9BAjNE5cDXK6yMQznGHhTzOB8DN3XyliY61zSqtoCZeWZ3S3YcQD5Kwwq7/Wan
+	ie0w5aarrsjuhOdpE2zNspSfJa096HLDs61m6NJ/rKeyc/eQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47r9b11d1b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Jul 2025 10:33:36 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 569AXZN5020320
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 9 Jul 2025 10:33:35 GMT
+Received: from hu-sumk-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 9 Jul 2025 03:33:32 -0700
+From: Sumit Kumar <quic_sumk@quicinc.com>
+Date: Wed, 9 Jul 2025 16:03:17 +0530
+Subject: [PATCH] bus: mhi: ep: Fix chained transfer handling in read path
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,41 +63,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250709-chained_transfer-v1-1-2326a4605c9c@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAGxFbmgC/x2MQQqAIBAAvxJ7TjAp1L4SEVZr7cVijQjCv7d0n
+ IGZFzIyYYa+eoHxpkxHEmjqCpY9pA0VrcJgtOm01V6JpYTrdHFIOSIrPfsuuhBD6yxIdjJGev7
+ lMJbyAU5sdMpiAAAA
+X-Change-ID: 20250709-chained_transfer-0b95f8afa487
+To: Manivannan Sadhasivam <mani@kernel.org>, Alex Elder <elder@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_krichai@quicinc.com>,
+        <quic_akhvin@quicinc.com>, <quic_skananth@quicinc.com>,
+        <quic_vbadigan@quicinc.com>, Sumit Kumar <sumk@qti.qualcomm.com>,
+        <stable@vger.kernel.org>, Akhil Vinod <akhvin@qti.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752057212; l=1704;
+ i=quic_sumk@quicinc.com; s=20250409; h=from:subject:message-id;
+ bh=PhpwY58S37BveL7G5MxE5ZMM1hdgADLcuh02r6C4vaw=;
+ b=HZjUTZvaTlrvZ86GmR3+aEbZluTRdqVuFB4QihoAf7cXqgIConUo/KzVFMBMAMMtWRjlXzJ+l
+ NbaV91NSn2kDJY065lJFu3W0ZhyajAcH1Cxbm5DYi9XPCB21O95iV2e
+X-Developer-Key: i=quic_sumk@quicinc.com; a=ed25519;
+ pk=3cys6srXqLACgA68n7n7KjDeM9JiMK1w6VxzMxr0dnM=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=dYuA3WXe c=1 sm=1 tr=0 ts=686e4580 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8
+ a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=g1IBsBNUH_a299RqqfgA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDA5NCBTYWx0ZWRfXySKsRwfhtFyF
+ AhbtOOD6MwQt5DbVnCf7a4CSFgOnAKOoifl0lLtVgLJTV9Flhw4ddPd3tpKe6iRUdWZPazZKF91
+ gqd1S5PwRIY5tm88EtTa8yXgSKLV2jVkN7GQCPln7uzWmuhyjiSOhPDVBn1TT7qRczqX0UBQF5k
+ BGY07xeschpQjM2WhkHPwQ9DTMK/8cSd0hdz+oblaTZnY74S9/rz8o37D5frjVmoU2Pm0W1shHK
+ hskZhv8HE0kMmA+dxAUtDqsRCP9+mFn/ipkLzIS9ctDNZGzox74nwAHtrkyOz0pXA2JLQfoVGK2
+ tawXTBwaSqpDuyHS1cq4tcuPfnOThdyuh6jXUeK+Yf+VgpHPqaaxWpCzvSLxGFKuSjTbyypyi2r
+ jRWMTC+wY+wVWw51RcyFZVxj60RAFRAEg5lajsCxhABiZUXFXaoJBfSDiuOc7x1Lsa4pdPyD
+X-Proofpoint-GUID: wV7ae6Rqvf3m0bS-2mVBa71B6PbTKvXe
+X-Proofpoint-ORIG-GUID: wV7ae6Rqvf3m0bS-2mVBa71B6PbTKvXe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-09_02,2025-07-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 suspectscore=0 clxscore=1011 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 spamscore=0 adultscore=0 mlxlogscore=479 malwarescore=0
+ mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507090094
 
-Hi Francesco Dolcini,
+From: Sumit Kumar <sumk@qti.qualcomm.com>
 
-On Tue, 01 Jul 2025 10:16:43 +0200, Francesco Dolcini wrote:
-> Add internal pull-up to the SD_1 card detect signal, without this the CD
-> signal is floating and spurious detects events can happen.
-> 
-> 
+The current implementation of mhi_ep_read_channel, in case of chained
+transactions, assumes the End of Transfer(EOT) bit is received with the
+doorbell. As a result, it may incorrectly advance mhi_chan->rd_offset
+beyond wr_offset during host-to-device transfers when EOT has not yet
+arrived. This can lead to access of unmapped host memory, causing
+IOMMU faults and processing of stale TREs.
 
-I have applied the following to branch ti-k3-dts-next on [1].
-Thank you!
+This change modifies the loop condition to ensure rd_offset remains behind
+wr_offset, allowing the function to process only valid TREs up to the
+current write pointer. This prevents premature reads and ensures safe
+traversal of chained TREs.
 
-[1/1] arm64: dts: ti: k3-am62p-verdin: add SD_1 CD pull-up
-      commit: fefaa8d7f8012249729a987d3abce747ffab0ca7
+Fixes: 5301258899773 ("bus: mhi: ep: Add support for reading from the host")
+Cc: stable@vger.kernel.org
+Co-developed-by: Akhil Vinod <akhvin@qti.qualcomm.com>
+Signed-off-by: Akhil Vinod <akhvin@qti.qualcomm.com>
+Signed-off-by: Sumit Kumar <sumk@qti.qualcomm.com>
+---
+ drivers/bus/mhi/ep/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+diff --git a/drivers/bus/mhi/ep/main.c b/drivers/bus/mhi/ep/main.c
+index b3eafcf2a2c50d95e3efd3afb27038ecf55552a5..2e134f44952d1070c62c24aeca9effc7fd325860 100644
+--- a/drivers/bus/mhi/ep/main.c
++++ b/drivers/bus/mhi/ep/main.c
+@@ -468,7 +468,7 @@ static int mhi_ep_read_channel(struct mhi_ep_cntrl *mhi_cntrl,
+ 
+ 			mhi_chan->rd_offset = (mhi_chan->rd_offset + 1) % ring->ring_size;
+ 		}
+-	} while (buf_left && !tr_done);
++	} while (buf_left && !tr_done && mhi_chan->rd_offset != ring->wr_offset);
+ 
+ 	return 0;
+ 
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+---
+base-commit: 4c06e63b92038fadb566b652ec3ec04e228931e8
+change-id: 20250709-chained_transfer-0b95f8afa487
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
---
-Vignesh
+Best regards,
+-- 
+Sumit Kumar <quic_sumk@quicinc.com>
 
 
