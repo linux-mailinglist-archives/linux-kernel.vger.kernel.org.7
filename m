@@ -1,92 +1,202 @@
-Return-Path: <linux-kernel+bounces-722980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B215AFE157
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:32:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15F4CAFE159
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D4AB3B7A07
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:31:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 553D417CDBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE2F270559;
-	Wed,  9 Jul 2025 07:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18392701B4;
+	Wed,  9 Jul 2025 07:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R9O01RLa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oeMyOBce"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031FB1E50E;
-	Wed,  9 Jul 2025 07:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054C426CE18
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 07:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752046330; cv=none; b=l14/Ng1mQW2+RCpsZsrg9SORKbllUesT4rZCGpvQ0jgUIF/DV5WwfIuxWU4HeMynVwgdSMk1LPDbbRi5LpZd3hwvuiBSP/d6slLhMRmsjoxB/xxYghvgsLgZepbQ8S3tPADRCdfe9eUUNfaxCy2lvV1ei3rvQZ9V77l08L0NKew=
+	t=1752046351; cv=none; b=TslGJAtla3plhhVEIZXiynVIe1lznNmiNWtn4TLSZ4yq4hVoYLv6eSACjs17XcU628EHXqp98ruys5/l4skP5GBZxjzoWlNyz1rxm2vFLwWWHutciOTNUr0vn9x0/FvXkeivcgDWZ2XAa3WJNijW2ICdSu1T8X/7Bf+Od+dVUFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752046330; c=relaxed/simple;
-	bh=9O4wep8X80DnfmVYqTYuUTz8kwz/OoeOVVejGNflgW4=;
+	s=arc-20240116; t=1752046351; c=relaxed/simple;
+	bh=F/kiRIrGWQs4/5JBt8fnQyLeUlCY6ElHTRFaEDd9rpM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gcc4+b4QLVsl6M3J5fQdzO+QQsHZKhqYSGqkqXQBsltizWbpe6Yc3IrZZK2OVP29RELhRo/4BQ0prcAI8UYEzmlRuChySA0mP6aQIrPEaynKiX3S6WAw75QdRWMH1b7dvcp08R/GOFUAmyOhECyXIKq3P7XMAyd6JKQnfnWJNPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R9O01RLa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAA84C4CEF0;
-	Wed,  9 Jul 2025 07:32:08 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=P1R9++pLWKk3hylTnafv8nIMpZnJuBKHFN2wt06HIz3lO9j2xphxnfbK92hriqxX0UpM3rAOUSleL+bmHyUpXhQb6KTWlGdeFVo95c/Va0A6cTU4P/SbXDrEuBPo5010fnsSqoWe9rps4jo5ekSTCyqrV+yZK28UrWlVC3tvPHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oeMyOBce; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC79C4CEF0;
+	Wed,  9 Jul 2025 07:32:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752046329;
-	bh=9O4wep8X80DnfmVYqTYuUTz8kwz/OoeOVVejGNflgW4=;
+	s=k20201202; t=1752046350;
+	bh=F/kiRIrGWQs4/5JBt8fnQyLeUlCY6ElHTRFaEDd9rpM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R9O01RLaIusvUqR/F5/lKlhbtGKqEdItzKwGaL4hISRhsf5Mhy3vHF/+UjRds0xZl
-	 1GVNVlK5DEPm9psaU5Od/+qxB5DQWtYbxVInihuL8082el1hqwNRIMfuqCebnTU8pZ
-	 aQA3wzK15XNOK1tVpfE3d01Wd+5+o1YyWeRZ+AKYTBrvFK5JnpfeURHIPyzRmN7kG3
-	 CJJkwskmrqm2FW5P1fKNIbps2BKuIBU+aG4+aBkYWjrPVTOWWSGwSLi8mV1810tPJL
-	 c87u/Phg/PE28r5b+PmWxGbdpB7JqrKJaydOEqQxx/GuqXP/kMotgvr3H7zAjn7hDg
-	 DnzEBVDT/xRCA==
-Date: Wed, 9 Jul 2025 09:32:06 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Lubomir Rintel <lkundrak@v3.sk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
-	Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-hardening@vger.kernel.org, phone-devel@vger.kernel.org, 
-	~postmarketos/upstreaming@lists.sr.ht, soc@lists.linux.dev, linux-mmc@vger.kernel.org
-Subject: Re: [PATCH v16 1/5] dt-bindings: mmc: sdhci-pxa: restrict pinctrl to
- pxav1
-Message-ID: <20250709-spectacular-goat-of-tenacity-ced55a@krzk-bin>
-References: <20250708-pxa1908-lkml-v16-0-b4392c484180@dujemihanovic.xyz>
- <20250708-pxa1908-lkml-v16-1-b4392c484180@dujemihanovic.xyz>
+	b=oeMyOBce6S935WRVUIUM3aL0ZGhAF3LUUAeW/YO0nNBpYKJsqwqn1xFuFnQXZHBca
+	 bt+QYBu2odzlDgubNm40UccUaGPpTDiyvjRHbx7Qjf16lFQDcSR5EDIVqB9DabThk7
+	 FwvPMnpwCjW2M7iBeCBXK5xqnYeoDHsRkNPIeq/KAJUS8CPlkeRqmuLTxueDcgO1O2
+	 /MpCCxUQxbtiTwv6i/QIxZ9+s83qwYX2+b5TTmIexmKzhJSPkz9qP9kXAEcef5TAYT
+	 uEBiGNtNalXBQmPcMT89/Kna9u/nFR6dc4VumGsStccgC895qwDHhEEpi7I8pC8onN
+	 pxK9tsdNH97NQ==
+Date: Wed, 9 Jul 2025 09:32:28 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Alain Volmat <alain.volmat@foss.st.com>, 
+	Raphael Gallais-Pou <rgallaispou@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm/sti: hda: convert to devm_drm_bridge_alloc() API
+Message-ID: <20250709-foamy-neon-woodpecker-eea693@houat>
+References: <20250708-drm-bridge-convert-to-alloc-api-leftovers-v1-0-6285de8c3759@bootlin.com>
+ <20250708-drm-bridge-convert-to-alloc-api-leftovers-v1-2-6285de8c3759@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="fsxrs37u26bgqqst"
+Content-Disposition: inline
+In-Reply-To: <20250708-drm-bridge-convert-to-alloc-api-leftovers-v1-2-6285de8c3759@bootlin.com>
+
+
+--fsxrs37u26bgqqst
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250708-pxa1908-lkml-v16-1-b4392c484180@dujemihanovic.xyz>
+Subject: Re: [PATCH 2/2] drm/sti: hda: convert to devm_drm_bridge_alloc() API
+MIME-Version: 1.0
 
-On Tue, Jul 08, 2025 at 07:09:46PM +0200, Duje Mihanovi=C4=87 wrote:
-> The current pinctrl properties apply only to the pxav1 controller.
+Hi,
 
-Why they are not applicable for pxav3?
-
-> Adding one default pinctrl node to a pxav3 controller therefore causes
-> a schema warning.
+On Tue, Jul 08, 2025 at 05:24:43PM +0200, Luca Ceresoli wrote:
+> devm_drm_bridge_alloc() is the new API to be used for allocating (and
+> partially initializing) a private driver struct embedding a struct
+> drm_bridge.
 >=20
-> Check the existing properties only on pxav1. pxav2 and pxav3 may add
-> their own set of pinctrl properties if and when needed.
+> This driver was missed during the automated conversion in commit
+> 9c399719cfb9 ("drm: convert many bridge drivers from devm_kzalloc() to
+> devm_drm_bridge_alloc() API") and following commits.
+>=20
+> The lack of conversion for this driver is a bug since commit a7748dd127ea
+> ("drm/bridge: get/put the bridge reference in drm_bridge_add/remove()")
+> which is the first commmit having added a drm_bridge_get/put() pair and
+> thus exposing the incorrect initial refcount issue.
+>=20
+> Fix this by switching the driver to the new API.
+>=20
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Closes: https://lore.kernel.org/all/ce9c6aa3-5372-468f-a4bf-5a261259e459@=
+samsung.com/
+> Fixes: a7748dd127ea ("drm/bridge: get/put the bridge reference in drm_bri=
+dge_add/remove()")
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> ---
+>  drivers/gpu/drm/sti/sti_hda.c | 27 +++++++++++++--------------
+>  1 file changed, 13 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
+> index d202b6c1eb8f6032fef547c9f00ca9cd2a914520..2c015f563de96ae5895980149=
+3ead870c49f70e5 100644
+> --- a/drivers/gpu/drm/sti/sti_hda.c
+> +++ b/drivers/gpu/drm/sti/sti_hda.c
+> @@ -246,6 +246,7 @@ struct sti_hda {
+>  	struct device dev;
+>  	struct drm_device *drm_dev;
+>  	struct drm_display_mode mode;
+> +	struct drm_bridge bridge;
+>  	void __iomem *regs;
+>  	void __iomem *video_dacs_ctrl;
+>  	struct clk *clk_pix;
+> @@ -262,6 +263,11 @@ struct sti_hda_connector {
+>  #define to_sti_hda_connector(x) \
+>  	container_of(x, struct sti_hda_connector, drm_connector)
+> =20
+> +static struct sti_hda *drm_bridge_to_sti_hda(struct drm_bridge *bridge)
+> +{
+> +	return container_of(bridge, struct sti_hda, bridge);
+> +}
+> +
+>  static u32 hda_read(struct sti_hda *hda, int offset)
+>  {
+>  	return readl(hda->regs + offset);
+> @@ -401,7 +407,7 @@ static void sti_hda_configure_awg(struct sti_hda *hda=
+, u32 *awg_instr, int nb)
+> =20
+>  static void sti_hda_disable(struct drm_bridge *bridge)
+>  {
+> -	struct sti_hda *hda =3D bridge->driver_private;
+> +	struct sti_hda *hda =3D drm_bridge_to_sti_hda(bridge);
+>  	u32 val;
+> =20
+>  	if (!hda->enabled)
+> @@ -426,7 +432,7 @@ static void sti_hda_disable(struct drm_bridge *bridge)
+> =20
+>  static void sti_hda_pre_enable(struct drm_bridge *bridge)
+>  {
+> -	struct sti_hda *hda =3D bridge->driver_private;
+> +	struct sti_hda *hda =3D drm_bridge_to_sti_hda(bridge);
+>  	u32 val, i, mode_idx;
+>  	u32 src_filter_y, src_filter_c;
+>  	u32 *coef_y, *coef_c;
+> @@ -517,7 +523,7 @@ static void sti_hda_set_mode(struct drm_bridge *bridg=
+e,
+>  			     const struct drm_display_mode *mode,
+>  			     const struct drm_display_mode *adjusted_mode)
+>  {
+> -	struct sti_hda *hda =3D bridge->driver_private;
+> +	struct sti_hda *hda =3D drm_bridge_to_sti_hda(bridge);
+>  	u32 mode_idx;
+>  	int hddac_rate;
+>  	int ret;
+> @@ -677,7 +683,6 @@ static int sti_hda_bind(struct device *dev, struct de=
+vice *master, void *data)
+>  	struct drm_encoder *encoder;
+>  	struct sti_hda_connector *connector;
+>  	struct drm_connector *drm_connector;
+> -	struct drm_bridge *bridge;
+>  	int err;
+> =20
+>  	/* Set the drm device handle */
+> @@ -693,13 +698,7 @@ static int sti_hda_bind(struct device *dev, struct d=
+evice *master, void *data)
+> =20
+>  	connector->hda =3D hda;
+> =20
+> -	bridge =3D devm_kzalloc(dev, sizeof(*bridge), GFP_KERNEL);
+> -	if (!bridge)
+> -		return -ENOMEM;
+> -
+> -	bridge->driver_private =3D hda;
+> -	bridge->funcs =3D &sti_hda_bridge_funcs;
+> -	drm_bridge_attach(encoder, bridge, NULL, 0);
+> +	drm_bridge_attach(encoder, &hda->bridge, NULL, 0);
 
-This should be rather made complete here, because properties should be
-defined in top-level, not in allOf: block. Strictly speaking pinctrl-xxx
-are defined in core schema, but still the binding should follow same
-rule - define them in top.
+It's not entirely related, but the connector is also allocated right
+before and could be moved into the structure instead of storing a
+pointer.
 
-Best regards,
-Krzysztof
+Either way,
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
+Maxime
+
+--fsxrs37u26bgqqst
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaG4bDAAKCRAnX84Zoj2+
+dqrBAYDEyt9Y6J9ulC2nJmtIPZTjnV/XI5Cennr6erV/1J4jTOwHvFbo/20TSstb
+DrwXsFQBf0AwAAPHZVh6dTN5+nrVJlNadymA8MrUcHdizDI4WG2SJYLaqBZdqp4J
+GaUhxCkOTA==
+=R8zb
+-----END PGP SIGNATURE-----
+
+--fsxrs37u26bgqqst--
 
