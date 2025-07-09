@@ -1,136 +1,113 @@
-Return-Path: <linux-kernel+bounces-723507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8955BAFE7BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:29:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EC9AFE7C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1B677A86B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:28:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A97725A5B6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09792D97B0;
-	Wed,  9 Jul 2025 11:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Et+FLqWX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C70228D8C4;
+	Wed,  9 Jul 2025 11:28:03 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDEC29E0F9;
-	Wed,  9 Jul 2025 11:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9442BEFFF;
+	Wed,  9 Jul 2025 11:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752060472; cv=none; b=FT6P+W/y7lP/+kZshVzFk7jrZPuEnBvo1qcVFxkkiW4z20pECwP2jxKFhhZHETz3ZQyod60XIP4esxNQIUI4zxrKdQFPqpkZ4Wv5YZ5b8/vm+IsieJIIBI/MIpblWqjRx6+PeW3UwAkVNZ9sJPtPC6vXXrosagxbi7y4Mh8uqxQ=
+	t=1752060483; cv=none; b=rhp8LPQtZRc8HM36TTHZJq9WkqfGv750O31FVbs1ZfBm7XfREyBsrWN2y2ZwwaxtfHpslPE8x5EDzHwBZiyDihehsysXUWrot8vMIxnDw5XFBqYahi6qYSYEQsfojfuA0xJUJkI3/Yl0pKPp+NHiVMhe2qaqCbpycNxkUArCsz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752060472; c=relaxed/simple;
-	bh=HhFX0RfL+sP2Um7Qtfv4Vig0hKSodNaNvx4L1cYbfvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=audKyN+4hmVZhj6v7FmFg6DB9tBw5/PB8Nx0mlK043kV0/2E5JY92BNBoP7ys6wFawQN6iwwUouh6SzYkb5CP3YijmPYWOX3WM1vbX/6ZDG4co91LuNoHkmpp9mqTPSF2+NEeBFbvUp1lFTh/jWFlXy17by5RDbztAKIGnaBi6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Et+FLqWX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 108BAC4CEEF;
-	Wed,  9 Jul 2025 11:27:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752060471;
-	bh=HhFX0RfL+sP2Um7Qtfv4Vig0hKSodNaNvx4L1cYbfvI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Et+FLqWXFP09TYCJoCHwJOIOkHlm6h8Fy5CtahYOJ7SxLK0uorMPQP4D/ryjED6lY
-	 lan7U/lkvkM8aE6vR0jCKhx47JIMwc6wvRfKompMdHwzDmXdR0aCEJnCDw2+q/wzs/
-	 QeUuqGjvWgLVSV4pai/dwofK3gjgYdxiDuH9mhfo98ocFBoSwdHjoQZ6qMeQpySsou
-	 8Olt4UowWOh0Z+LCcL7fmM8CVkrJLFYuAhPajpTcUnaYxvKyEzx4Q/Ki8bZQTdyk6M
-	 krU9MQU2mbSicrIj7Aw8OjmNMNvpW6TbvyfTU498deuhG1sSwLWkavitcoFyief60t
-	 Cj4Cg12mo0SqA==
-Date: Wed, 9 Jul 2025 13:27:48 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: neeraj.upadhyay@kernel.org
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, paulmck@kernel.org,
-	joelagnelf@nvidia.com, boqun.feng@gmail.com, urezki@gmail.com,
-	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-	jiangshanlai@gmail.com, qiang.zhang1211@gmail.com,
-	neeraj.iitr10@gmail.com, neeraj.upadhyay@amd.com
-Subject: Re: [PATCH rcu 2/5] rcu: Protect ->defer_qs_iw_pending from data race
-Message-ID: <aG5SNJpn60Sz9px3@localhost.localdomain>
-References: <20250709104118.15532-1-neeraj.upadhyay@kernel.org>
- <20250709104118.15532-3-neeraj.upadhyay@kernel.org>
+	s=arc-20240116; t=1752060483; c=relaxed/simple;
+	bh=kf+NiVclc+sDXGzOBzKaDobKOTnaEML1L+EsObfXRF0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mn0E3DVqd7tg8lWANC6PId+kCirPK253RIEWv6xYGmb2/k/3/c828ru9aEjxQzHAmaeUnc2znX58A6eB443CE77tRY9+aIE7hmT7m2QzlaF54kL0fkEPK6gahWGLgsQrpVmBgYZ6qXJYQf6DudWgZS/bLVW07VVAhAQF2myAYIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 569BRrTZ011304;
+	Wed, 9 Jul 2025 20:27:53 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 569BRq5x011301
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 9 Jul 2025 20:27:53 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <b1c224bd-97f9-462c-a3e3-125d5e19c983@I-love.SAKURA.ne.jp>
+Date: Wed, 9 Jul 2025 20:27:52 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250709104118.15532-3-neeraj.upadhyay@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2] perf/core: Fix WARN in perf_sigtrap()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: syzbot <syzbot+2fe61cb2a86066be6985@syzkaller.appspotmail.com>,
+        linux-perf-users@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <685af60a.a00a0220.2e5631.0092.GAE@google.com>
+ <ed888189-dad4-47e1-bfc8-4f2213eda32d@I-love.SAKURA.ne.jp>
+ <f8dee957-d286-421d-976a-c0c580454fb3@I-love.SAKURA.ne.jp>
+ <20250709094451.GI1613200@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20250709094451.GI1613200@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav404.rs.sakura.ne.jp
 
-Le Wed, Jul 09, 2025 at 04:11:15PM +0530, neeraj.upadhyay@kernel.org a écrit :
-> From: "Paul E. McKenney" <paulmck@kernel.org>
-> 
-> On kernels built with CONFIG_IRQ_WORK=y, when rcu_read_unlock() is
-> invoked within an interrupts-disabled region of code [1], it will invoke
-> rcu_read_unlock_special(), which uses an irq-work handler to force the
-> system to notice when the RCU read-side critical section actually ends.
-> That end won't happen until interrupts are enabled at the soonest.
-> 
-> In some kernels, such as those booted with rcutree.use_softirq=y, the
-> irq-work handler is used unconditionally.
-> 
-> The per-CPU rcu_data structure's ->defer_qs_iw_pending field is
-> updated by the irq-work handler and is both read and updated by
-> rcu_read_unlock_special().  This resulted in the following KCSAN splat:
-> 
-> ------------------------------------------------------------------------
-> 
-> BUG: KCSAN: data-race in rcu_preempt_deferred_qs_handler / rcu_read_unlock_special
-> 
-> read to 0xffff96b95f42d8d8 of 1 bytes by task 90 on cpu 8:
->  rcu_read_unlock_special+0x175/0x260
->  __rcu_read_unlock+0x92/0xa0
->  rt_spin_unlock+0x9b/0xc0
->  __local_bh_enable+0x10d/0x170
->  __local_bh_enable_ip+0xfb/0x150
->  rcu_do_batch+0x595/0xc40
->  rcu_cpu_kthread+0x4e9/0x830
->  smpboot_thread_fn+0x24d/0x3b0
->  kthread+0x3bd/0x410
->  ret_from_fork+0x35/0x40
->  ret_from_fork_asm+0x1a/0x30
-> 
-> write to 0xffff96b95f42d8d8 of 1 bytes by task 88 on cpu 8:
->  rcu_preempt_deferred_qs_handler+0x1e/0x30
->  irq_work_single+0xaf/0x160
->  run_irq_workd+0x91/0xc0
->  smpboot_thread_fn+0x24d/0x3b0
->  kthread+0x3bd/0x410
->  ret_from_fork+0x35/0x40
->  ret_from_fork_asm+0x1a/0x30
-> 
-> no locks held by irq_work/8/88.
-> irq event stamp: 200272
-> hardirqs last  enabled at (200272): [<ffffffffb0f56121>] finish_task_switch+0x131/0x320
-> hardirqs last disabled at (200271): [<ffffffffb25c7859>] __schedule+0x129/0xd70
-> softirqs last  enabled at (0): [<ffffffffb0ee093f>] copy_process+0x4df/0x1cc0
-> softirqs last disabled at (0): [<0000000000000000>] 0x0
-> 
-> ------------------------------------------------------------------------
-> 
-> The problem is that irq-work handlers run with interrupts enabled, which
-> means that rcu_preempt_deferred_qs_handler() could be interrupted,
-> and that interrupt handler might contain an RCU read-side critical
-> section, which might invoke rcu_read_unlock_special().  In the strict
-> KCSAN mode of operation used by RCU, this constitutes a data race on
-> the ->defer_qs_iw_pending field.
-> 
-> This commit therefore disables interrupts across the portion of the
-> rcu_preempt_deferred_qs_handler() that updates the ->defer_qs_iw_pending
-> field.  This suffices because this handler is not a fast path.
-> 
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Signed-off-by: Neeraj Upadhyay (AMD) <neeraj.upadhyay@kernel.org>
+Since exit_task_work() runs after perf_event_exit_task_context() updated
+ctx->task to TASK_TOMBSTONE, perf_sigtrap() from perf_pending_task() might
+observe event->ctx->task == TASK_TOMBSTONE.
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Swap the early exit tests in order not to hit WARN_ON_ONCE().
 
+Reported-by: syzbot <syzbot+2fe61cb2a86066be6985@syzkaller.appspotmail.com>
+Closes: https://syzkaller.appspot.com/bug?extid=2fe61cb2a86066be6985
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ kernel/events/core.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 0db36b2b2448..22fdf0c187cd 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -7204,18 +7204,18 @@ void perf_event_wakeup(struct perf_event *event)
+ static void perf_sigtrap(struct perf_event *event)
+ {
+ 	/*
+-	 * We'd expect this to only occur if the irq_work is delayed and either
+-	 * ctx->task or current has changed in the meantime. This can be the
+-	 * case on architectures that do not implement arch_irq_work_raise().
++	 * Both perf_pending_task() and perf_pending_irq() can race with the
++	 * task exiting.
+ 	 */
+-	if (WARN_ON_ONCE(event->ctx->task != current))
++	if (current->flags & PF_EXITING)
+ 		return;
+ 
+ 	/*
+-	 * Both perf_pending_task() and perf_pending_irq() can race with the
+-	 * task exiting.
++	 * We'd expect this to only occur if the irq_work is delayed and either
++	 * ctx->task or current has changed in the meantime. This can be the
++	 * case on architectures that do not implement arch_irq_work_raise().
+ 	 */
+-	if (current->flags & PF_EXITING)
++	if (WARN_ON_ONCE(event->ctx->task != current))
+ 		return;
+ 
+ 	send_sig_perf((void __user *)event->pending_addr,
 -- 
-Frederic Weisbecker
-SUSE Labs
+2.47.1
+
+
 
