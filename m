@@ -1,96 +1,158 @@
-Return-Path: <linux-kernel+bounces-723027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8BA8AFE1F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:07:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C627FAFE1E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 039083A8C7C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:06:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 622481C410D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C502367DC;
-	Wed,  9 Jul 2025 08:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6872E274669;
+	Wed,  9 Jul 2025 08:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hNZxqAQ8"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BejsIL3E"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B714231C9F;
-	Wed,  9 Jul 2025 08:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D658218585
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 08:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752048289; cv=none; b=d0Lpnn1roPr8vA4oWS3D8wAzl32u9lQua28AdAnP3UVYwhxnTTzeglXKCO2Ea7qcG/qwCT8GB3rCJwY7kQKLYd18zjMC51vqUenOMmnvRC8LUWT/136Xt7iwBlcqXow4XYlojvlGuZ7jnqP+RKNgEMSeZCMX5I1QWRuw5n+lJTQ=
+	t=1752048267; cv=none; b=UIHAQf9Val4xsQyXXiOlOGIUj6hEwsRbhfyL21Knr7vP+bKwv2pOU4+Ligy93C5X6Srwa9U9aR49vUZEwi65UXkSLDAGKpj8ulerXgXKR3qixLczmvkHTPFGGQCMbazwatSlpGBpOU9qxys2i2lShwlcagjFL7kicKOAz+7nXVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752048289; c=relaxed/simple;
-	bh=/vN4f6GloB2HKqs9li9tfVZYL82dtQ+vnhzZDOE8C7c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qlzmimi2+g89TvykC/axmcgnVYFZjmY7kJg7i3HTkky0n9I4CNCWc9JHFDwJlwXlJmT83e2RrGo+hJ9pzhqjTaypTdtCNdbVcvr3quwvUPVCDLQYYUv8NsYkJo5i95BTw2sK3H+96djOU8gL0ucyyh29f9xNrnxe+79raewNQeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hNZxqAQ8; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-32f3ef6178bso10925791fa.1;
-        Wed, 09 Jul 2025 01:04:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752048285; x=1752653085; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/vN4f6GloB2HKqs9li9tfVZYL82dtQ+vnhzZDOE8C7c=;
-        b=hNZxqAQ8Ac5eWIauecBd0lZJ6PbagYN8Z1/UjzfGjlPKqdbx4fr0YCP333oqImiaw6
-         8GH2RR9cl0B83ys6F8kcbSYs51QCzH4VFMMiKOBER5+RryvDnEEsjFX6PFFDgVQFUPyr
-         3uI/CBG1qJSqZLp+H6wd62nFgmGP4+tTbpKWAcZzXQx9MJs7KjkF35Jgiidh9MWC7TPt
-         9X/Ra3NvYCklJ0ynPCClmtHQbubVGTAy3H91ry8OFVlUmAkxEUcuFsAFe6bzSbhs6867
-         rnSEdYy8J8KBxoC9e4ENpTCLxKx9Uap+cpMaEV+IWzC+nf2adDVBueVzXlBXA5xpVa1l
-         I/fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752048285; x=1752653085;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/vN4f6GloB2HKqs9li9tfVZYL82dtQ+vnhzZDOE8C7c=;
-        b=iU9KlkPAiAD90RuCjASH3zdOsmwV8atXBUaMaw8z/Rv3F16mPDcvJi3XPGYx5k5f7A
-         yWH+I09OjsKPWLpmOHFXHz5PoqhSYB3cPjFb+EjKh3YPKQrcUYRK4lIwrxgA9tsPoj3F
-         4ESzyDTVPvdJT0ifvze1Q+QJrVMsR44YalNqbK6vwKUtl6MWYL3A5KMA4aiCvsb0rl4S
-         KHSl+K42wr+5cu1iLGYorYl2WoimtmPsHfKP4rVIrNI2NgAjy1aF+Ta9kg5oE0vIcBQN
-         2A+RE5tAGrxBwxsVevDI9MwfGv8VY4qUhQjGCTAr9ciybnJeBuuCjkWtP8mU3Ykmi01A
-         1UuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVWcVKJM8MeyhYm/7v8h6tPcirroGVron+1iWjB896vKiw6BvUXT1kqlijHUV6P7xDwDczkQWopKwF4hy35nTI=@vger.kernel.org, AJvYcCW5EU6SuTfoQ5IJKDvANKHSkJQS89qQXHhv9EtsxqnVU/RrngJ+DMzUTjZ+J2yOCNsgNi+xNl5HqjOn6gVl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3BIQBpN/BLfu8LOtawOU1DlcL4QSDYYGnBIEoTrdCrGfKajNr
-	DCFdnOgC/DJtWP9sQVZHmVCvFMMM+d8HGw4rUiykH0gdkOHhaDprdQn6PgYQ7sywgeykixZ+mCM
-	7cx5fdsb0QidhIyFjmyEiAHnwNf5fdcqrBAyKZ6pZ+Q==
-X-Gm-Gg: ASbGncswPSxbr+vjwxuzZpoouQS6U+LUs5uzi6DnPQB/iByoxvK4Zt9gP0N8WFrgBK6
-	wmaPhOc/o12MvJGTJK6Zu5Ja0e6vNwiD+5PcIQGn8sfVZl/qDi4/5EzE/TXwPXd8iegmqJRojBY
-	64r4sDs/RzcjY4biC84OWwL0FfmE87TY1xGItrkHgeBrzFbtBvwf638KGdsUxrkGPAntwo41L2f
-	dYV
-X-Google-Smtp-Source: AGHT+IH96QsTL3RrgUgPJVlkDGHpCJxIIYfO75lVlWUgFwfF6IIJV3+4SisXlJWruFit22AOqIfUjKdaZW6v1qQVjRg=
-X-Received: by 2002:a05:651c:220d:b0:32a:714c:12d1 with SMTP id
- 38308e7fff4ca-32f484b6366mr4164781fa.1.1752048285386; Wed, 09 Jul 2025
- 01:04:45 -0700 (PDT)
+	s=arc-20240116; t=1752048267; c=relaxed/simple;
+	bh=x9wghamldx0u2j9gj7AiFtcSvp3lW0Ag37ypArC2Ehw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=o+90KwwUJLDcnRkUtjMN7LHzLcNkkMNNqUion5cfR0P90b2B2OK49+pmflINbX7T07bOqBhbDK/L5gVDD/06mRGmy4bFUnnVoQBzBJoNt8MZ/LBnV66Ih3z78dXTxAoyAigL8F7gvFLrY9nNoT/BrqNNtK4PZXxPSbEyZeJ3RoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BejsIL3E; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250709080423euoutp0166907e8b8c86e34a5aedf84a3ace341a~Qhpz_R6D22745827458euoutp01T
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 08:04:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250709080423euoutp0166907e8b8c86e34a5aedf84a3ace341a~Qhpz_R6D22745827458euoutp01T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1752048263;
+	bh=XPbLR1Y/RGDLT3IFIFuCqTuW/2Jy/AlFcSJHBKSvw54=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=BejsIL3EWsf1nvFXXKXEDc28c+jKSqRqzVnXTP9ucKRVOC83T+YG3NJGwW6f0y31H
+	 sEOQ1TrvM/NSYn1JeF4uK/DDivm8Uh6yUFPp+lWJCgQfNsrmCLeCdcy6r4ceDlSxeQ
+	 p7/W5+y4zTJr/nqLxzDGNlvV+N5HtKeTajdw1Ng8=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250709080423eucas1p2cda340188c287620d72277f9f667ccb5~QhpzPtyr50478804788eucas1p2O;
+	Wed,  9 Jul 2025 08:04:23 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250709080421eusmtip10fa864a7ea9517a2b891420091998289~QhpyFWvlX2552125521eusmtip1E;
+	Wed,  9 Jul 2025 08:04:21 +0000 (GMT)
+Message-ID: <eb5feef3-0a7d-438c-9dbb-00d1d72fad66@samsung.com>
+Date: Wed, 9 Jul 2025 10:04:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250708141617.3691-2-alex.gasbarroni@gmail.com> <CABBYNZJ9jLwiieHC=ohp+EjtoO7_4Umd2giRKNe1y0u-qpP1ww@mail.gmail.com>
-In-Reply-To: <CABBYNZJ9jLwiieHC=ohp+EjtoO7_4Umd2giRKNe1y0u-qpP1ww@mail.gmail.com>
-From: Alessandro Gasbarroni <alex.gasbarroni@gmail.com>
-Date: Wed, 9 Jul 2025 10:04:09 +0200
-X-Gm-Features: Ac12FXw_h22SikHgQhsvyr9LCUfkngysfL28LGgr9rvqB3agCBrD0b5mwRreAmg
-Message-ID: <CAHsjepRDUN6Ry-M-_7MRwgKF_xAB_U8k9e4=p+u7NFFd_5VV3w@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: hci_sync: fix connectable extended advertising
- when using static random address
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: marcel@holtmann.org, johan.hedberg@gmail.com, 
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/14] vdso/gettimeofday: Return bool from
+ clock_gettime() helpers
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>, Vincenzo Frascino
+	<vincenzo.frascino@arm.com>, Shuah Khan <shuah@kernel.org>, Anna-Maria
+	Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+	<frederic@kernel.org>, John Stultz <jstultz@google.com>, Stephen Boyd
+	<sboyd@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+	<will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org, Richard
+	Cochran <richardcochran@gmail.com>, Christopher Hall
+	<christopher.s.hall@intel.com>, Miroslav Lichvar <mlichvar@redhat.com>,
+	Werner Abt <werner.abt@meinberg-usa.com>, David Woodhouse
+	<dwmw2@infradead.org>, Kurt Kanzenbach <kurt@linutronix.de>, Nam Cao
+	<namcao@linutronix.de>, Antoine Tenart <atenart@kernel.org>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250709092958-37148883-ed89-40fe-8cd5-ded5dd60957e@linutronix.de>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250709080423eucas1p2cda340188c287620d72277f9f667ccb5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250708154921eucas1p1fd8fa4374610a991ca5c67bd612ca0c2
+X-EPHeader: CA
+X-CMS-RootMailID: 20250708154921eucas1p1fd8fa4374610a991ca5c67bd612ca0c2
+References: <20250701-vdso-auxclock-v1-0-df7d9f87b9b8@linutronix.de>
+	<20250701-vdso-auxclock-v1-6-df7d9f87b9b8@linutronix.de>
+	<02bcd954-5323-4663-a766-f53c67c5a18f@samsung.com>
+	<CGME20250708154921eucas1p1fd8fa4374610a991ca5c67bd612ca0c2@eucas1p1.samsung.com>
+	<e8c6b9a7-eaa6-4947-98e1-9d6fecc958d4@samsung.com>
+	<20250709092958-37148883-ed89-40fe-8cd5-ded5dd60957e@linutronix.de>
 
-Hi Luiz,
+On 09.07.2025 09:34, Thomas Weißschuh wrote:
+> On Tue, Jul 08, 2025 at 05:49:18PM +0200, Marek Szyprowski wrote:
+>> On 08.07.2025 17:17, Marek Szyprowski wrote:
+>>> On 01.07.2025 10:58, Thomas Weißschuh wrote:
+>>>> The internal helpers are effectively using boolean results,
+>>>> while pretending to use error numbers.
+>>>>
+>>>> Switch the return type to bool for more clarity.
+>>>>
+>>>> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+>>>> ---
+>>>>    lib/vdso/gettimeofday.c | 58
+>>>> +++++++++++++++++++++++++------------------------
+>>>>    1 file changed, 30 insertions(+), 28 deletions(-)
+>>> This patch landed in today's linux-next as commit fcc8e46f768f
+>>> ("vdso/gettimeofday: Return bool from clock_gettime() helpers"). In my
+>>> tests I found that it causes serious problem with hwclock operation on
+>>> some of my ARM 32bit test boards. I observe that calling "hwclock -w
+>>> -f /dev/rtc0" never ends on those boards. Disabling vdso support (by
+>>> removing ARM architected timer) fixes this issue.
+>> I spent some time analyzing the code refactored in this patch and it
+>> looks that the following change is missing:
+> Thanks for the report and investigation!
+>
+>> diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
+>> index c5266532a097..7e79b02839b0 100644
+>> --- a/lib/vdso/gettimeofday.c
+>> +++ b/lib/vdso/gettimeofday.c
+>> @@ -344,7 +344,7 @@ __cvdso_gettimeofday_data(const struct
+>> vdso_time_data *vd,
+>>           if (likely(tv != NULL)) {
+>>                   struct __kernel_timespec ts;
+>>
+>> -               if (do_hres(vd, &vc[CS_HRES_COARSE], CLOCK_REALTIME, &ts))
+>> +               if (!do_hres(vd, &vc[CS_HRES_COARSE], CLOCK_REALTIME, &ts))
+>>                           return gettimeofday_fallback(tv, tz);
+>>
+>>                   tv->tv_sec = ts.tv_sec;
+>>
+>>
+>> In my tests this fixed the hwclock issue on the mentioned boards.
+> This fix looks correct to me.
+>
+>
+> tglx:
+>
+> Are you going to fold the fix into the commit or do you want a proper patch?
+>
+>
+> Marek:
+>
+> If a new patch is required, do you want to send it? You found and fixed the
+> issue after all. If not, I'll take care of it.
 
-> Hmm, we should probably be using hci_copy_identity_address instead
-> here, or have you tried and it didn't work?
+If it is possible to fold it into original patch then go ahead, it would 
+make less noise imho. If you need a formal patch, I can send it in a few 
+minutes.
 
-I wasn't aware of that function. You are absolutely right, that works
-and behaves exactly how I would expect. I'll send a v2.
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
