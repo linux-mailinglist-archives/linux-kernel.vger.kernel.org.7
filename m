@@ -1,80 +1,135 @@
-Return-Path: <linux-kernel+bounces-723335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AC39AFE5EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:38:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DD6DAFE5F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5519D1895B21
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:39:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DE3F188E452
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B89028D8C2;
-	Wed,  9 Jul 2025 10:38:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB422749F1
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 10:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF49928D8D2;
+	Wed,  9 Jul 2025 10:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OOP8+wbi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B266D2749F1;
+	Wed,  9 Jul 2025 10:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752057532; cv=none; b=WZJc8BV4Bh6nI6xjcjk65erBCNUcyMdAFUpW6dZ1bbmvGYzcCSmo3hciTAUnF/GiqPkYy8RHS627KFTlOtiDX1GfVxhufwSEIwRl0NX6PfU9smbx/O3SoxcQOc6jnxmjOiAg0YuLxKPito8wfv5KuMe6OpviD/c5g+Pw7gn0pQY=
+	t=1752057545; cv=none; b=HHP2sJdFPaQ3WpZ9VjkaI5Z9wXyifizQBEzSAjknpQnGX3SiO8G2ghvzaACPVfGzh4S9X9UZ+omCgSUoIQ8G079l3SmnA5zibUw4Chdox1k5dJz3ImTYUntyAisN3Owjl8AZGjPjAM/QwU0yw5zSaCgOZDW04vFSUlLGravByoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752057532; c=relaxed/simple;
-	bh=Fpxx5MLLvM75BD/Rcys04uH8/DSWIDvU1+fFmoln3rI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lrfzTUHdRg5BYiMUGxMlU+r5f/UUePDsH6P/9b6guhDgKgihKeSIMA+fGIlsDue3qe6OtgNz/Vwm/yKfbA5AXlGJJC1hMqavJhNJm1AX+zkwuNGEqmxVeA7fArJbqTjhs4BF55JcHKytWlypJAhXbA8lvMUCNJKISUp7MKU5/yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A11061007;
-	Wed,  9 Jul 2025 03:38:37 -0700 (PDT)
-Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1335F3F694;
-	Wed,  9 Jul 2025 03:38:47 -0700 (PDT)
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-To: Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Yuanfang Zhang <quic_yuanfang@quicinc.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	kernel@oss.qualcomm.com,
-	coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] coresight: Only register perf symlink for sinks with alloc_buffer
-Date: Wed,  9 Jul 2025 11:38:38 +0100
-Message-ID: <175205730826.265536.15080802362273791797.b4-ty@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250630-etm_perf_sink-v1-1-e4a7211f9ad7@quicinc.com>
-References: <20250630-etm_perf_sink-v1-1-e4a7211f9ad7@quicinc.com>
+	s=arc-20240116; t=1752057545; c=relaxed/simple;
+	bh=paNdGmMvXYKesKr9lHKdIn0w6u/c7Qg2bSBDUVpg9kc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U+xOaPELu1ZyxIDpc6o3zm2Yo861zXGCooiuv5tGWbrsUQV/hFWS0JdmP0noVdz36G5ovnHzX59xHabw1ZBTifxt0EzYv3Ptj0OVyERKoNCWzfzVRK9FqRQ5Ee/yugDCTWacRSsVy06d+WJvhzFHE611v7UX+6z1zS6QESLswMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OOP8+wbi; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752057544; x=1783593544;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=paNdGmMvXYKesKr9lHKdIn0w6u/c7Qg2bSBDUVpg9kc=;
+  b=OOP8+wbidhXynzV57CiNYToKK6d4edfaqjoviBH7G58BY3i+Cpwv8ff3
+   ypzS8z3yCjt0x+7GiMU3OhJ5Ovx2OWIwbYXX2oJCeVldL+rVIuAzJdXmO
+   U8CAhWuriSNSo2/n9kDJrUtYyaRCz+1J173fvuEE8cEYqbeLNcavBxtBW
+   gLGGMBgbHt+X4uZJGpwcETe2TFNaguxf9GkniPVPy0cGi4Ig6XmtAsgCD
+   nT2qFvD4hq5Bt88X20wKCq/dXACw3s8qI5RA9Nmtcn2/KR1FMWZX8CzlV
+   ads/50lIdPzKgRu0mYM8HkmfajWjv201hLpphE/k29pwx1fLlVBAsvmes
+   A==;
+X-CSE-ConnectionGUID: UG8RRdClSaeweqTrD6Wnqg==
+X-CSE-MsgGUID: 1o4Qsv0tQI2da9QsiLs3UA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="71898553"
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="71898553"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 03:39:03 -0700
+X-CSE-ConnectionGUID: DKLMS5x4S+qHUf1zKmtxkQ==
+X-CSE-MsgGUID: GI4OZrhPQGG8QCZqg4GF9Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="155869422"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa007.jf.intel.com with ESMTP; 09 Jul 2025 03:38:50 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 231611B7; Wed, 09 Jul 2025 13:38:49 +0300 (EEST)
+Date: Wed, 9 Jul 2025 13:38:49 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
+	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
+	Alexey Kardashevskiy <aik@amd.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Daniel Sneddon <daniel.sneddon@linux.intel.com>, 
+	Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>, 
+	Breno Leitao <leitao@debian.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
+	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
+	linux-mm@kvack.org
+Subject: Re: [PATCHv9 13/16] x86/traps: Handle LASS thrown #SS
+Message-ID: <j76lggwdlxv3lbs7iaqny42ay3m4qqwjnf6vqgesaykpozciaj@a2azdryhmaig>
+References: <20250707080317.3791624-1-kirill.shutemov@linux.intel.com>
+ <20250707080317.3791624-14-kirill.shutemov@linux.intel.com>
+ <1a2f6b4a-114b-4c27-83f9-1aac46f2e7c0@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1a2f6b4a-114b-4c27-83f9-1aac46f2e7c0@intel.com>
 
-
-On Mon, 30 Jun 2025 18:26:19 +0800, Yuanfang Zhang wrote:
-> Ensure that etm_perf_add_symlink_sink() is only called for devices
-> that implement the alloc_buffer operation. This prevents invalid
-> symlink creation for dummy sinks that do not implement alloc_buffer.
+On Tue, Jul 08, 2025 at 10:12:28PM -0700, Sohil Mehta wrote:
+> On 7/7/2025 1:03 AM, Kirill A. Shutemov wrote:
 > 
-> Without this check, perf may attempt to use a dummy sink that lacks
-> alloc_buffer operationsu to initialise perf's ring buffer, leading
-> to runtime failures.
+> > +	hint = get_kernel_exc_address(regs, &exc_addr);
+> > +	if (hint != EXC_NO_HINT)
+> > +		printk(SSFSTR ", %s 0x%lx", kernel_exc_hint_help[hint], exc_addr);
+> > +
+> > +	if (hint != EXC_NON_CANONICAL)
+> > +		exc_addr = 0;
+> > +
+> > +	die_addr(SSFSTR, regs, error_code, exc_addr);
 > 
-> [...]
+> I see a slight difference between the #GP handling and the #SS handling
+> here. For the #GP case, we seem to pass the hint string to die_addr().
+> 
+> However, for the #SS, the hint is printed above and only SSFSTR gets
+> passed onto die_addr(). I am curious about the reasoning.
 
-Applied, thanks!
+I hate how 'desc' size is defined in #GP handler:
 
-[1/1] coresight: Only register perf symlink for sinks with alloc_buffer
-      https://git.kernel.org/coresight/c/59b61f70
+	char desc[sizeof(GPFSTR) + 50 + 2*sizeof(unsigned long) + 1] = GPFSTR;
 
-Best regards,
+Too much voodoo to my liking. And it will overflow if any hint string is
+going to be longer than 50.
+
+I don't want to repeat this magic for #SS.
+
+I would argue we need to print directly in #GP handler as I do in #SS.
+But, IMO, it is outside of the scope of this patchset.
+
 -- 
-Suzuki K Poulose <suzuki.poulose@arm.com>
+  Kiryl Shutsemau / Kirill A. Shutemov
 
