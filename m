@@ -1,135 +1,244 @@
-Return-Path: <linux-kernel+bounces-723155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48AB6AFE3BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:12:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA1B7AFE3CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 944E5583D5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:12:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21E517A4547
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC2D283FFF;
-	Wed,  9 Jul 2025 09:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CCA283FF0;
+	Wed,  9 Jul 2025 09:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n5ZO2yZg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vdh8fbOO"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2082.outbound.protection.outlook.com [40.107.94.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554A578F36;
-	Wed,  9 Jul 2025 09:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752052310; cv=none; b=r86V6rmySly8KmJQjiaLBKdYZihfaU86+RDA5qfbGwQx4spRKuRBAG/jWCUGtMGjPKPcLQGWKpvO6ZzCnghfXwqnafXLkitDWiIIdICKbJ687qEid2TNC6Hxe+MVyrF+O43t+UZauwDEuNjVLK4pVn+d3T0T76LyDcjBa69mpK4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752052310; c=relaxed/simple;
-	bh=vnipX9GoYx3/y1Xa0VtwcO3BGX4bvKshgpGfk00TKQs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=JpH7gnHQbHzhHt6tEUqpgeZl1afJZOME9WIbOrqYcaRWuzC08ICItGqlSBgSIfdAF/lrdp2QNZHU1ahv/qChOP89OYwHvwrn9XbdZjeYxYvAe+0j8f91WJNQGOZq//9M7MH4xjLf2WVYxZU0/xa5W2ifKr4aLkIxuXdPW3es6zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n5ZO2yZg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D423C4CEEF;
-	Wed,  9 Jul 2025 09:11:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752052309;
-	bh=vnipX9GoYx3/y1Xa0VtwcO3BGX4bvKshgpGfk00TKQs=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=n5ZO2yZgpzQqWTM8SeLwqNh7TTMM+lV49qGx6Ei98xYfpOCAJdnW9XG0gASb26I1A
-	 lXwkA1HCM8yhTzJgGhaTAkP/Ap40g3YDdfJfgBdzdPaeFFSFYTvk2elKhJvZRV4pZm
-	 NdqZpHF7YbC/NP/rQWV5pR2oxqIxOTSE4fH5rfBxhyUTy9Ee7KRuJLs0IH7VNgVlc+
-	 vejTBR6uH/l+URGKYAewMq1XGtK70/VkUDKU4neg7CHJ/eDzCjwn87QPP0h6g80NpR
-	 4yNHBOKUpMk8OILKruWPfG3UjDkhnVlDwJ8T7NccDQdYPC3PsLfw38DQ54WLOyojvV
-	 q4TcW35ReHGyQ==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC11275867;
+	Wed,  9 Jul 2025 09:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752052442; cv=fail; b=RtkJ9VtH6Oy5xeufDM/tLAWMAk+mYLlJpL9Ty7p1AAy4t5IO1o10CkQ+HJ/KmpYhSoncaRQnhRmxOLztRrpVmIiQKGhVQtpf/nLSYlWyrW9Qe9ACP44Ql8p74az1ZUWMlrlgujJYRg+1OMD1YxSbObHWZMd93feRgJB+FjJClCk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752052442; c=relaxed/simple;
+	bh=kRGukeNeyK6N0w1cel9yhjhmQK/FC3DjOh7KizwgqhY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kE/qJAqp1JEyozjteFJb9WO+I2R1z/Re1cKmfgt1DN6q3C9/OoYS5eWhiJmRcV4ZjdYzi0c825HAOjocvyYleOD0kYJV9kKhMXgQoe9vP+hXlVE+uM9/JUcTontCoRs0CojvaitVDY8XLnRO5GeCU2CZatqhy5CNCK68rpeHx+o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vdh8fbOO; arc=fail smtp.client-ip=40.107.94.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=s9zJP1ZNRnac5qPEaYPajaT78M4EzVkBgbedRw0ayDC1HBhUonwQ2P4J44qvuuj4Y62Bd/FgpPA6XhJXCWXgS6bkh9qCGoVqDXYHa2F/UDQ9UzynAgwBy89ejAqmaREcz3MZdJxBdQedgr/wZO+67siQOFxoCIT+FApCXAEvMPel9ElVl3FI6pYA+fmQ4xOk46YlznGQdfYA1gVWTWeuKfczz19gEgO7EQPE2Ak2+z/uIhc6DKnjRlBNUnbKKUoZd9+NCUSwWAPVkpK5NNpTGgcNcwa52XK/8B5LEmWO+4D1o/eAk6j20jy95D0IWYG5MtfdnlwGzks3a2FMnvsPKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=p74tVXTHTRuw+eB0/39qIFF0/amZXlokYFw4dqG0Leg=;
+ b=rCtqJ6eJS7uRyMpxSCFlyODghrKSPcm61VxlP/utMYyHgHSfgPdk8idhhYU5PBmEuF5YS/9y/1W2eGO/840t2nQ9SPH4sL6XVu+3Ha+U9tKSGkTh27Lx7IL0JO580qmWNVz1Mr9pa87dqetKEO4GZykyS3YrRwh3abWUADXfdHoPMw8K+aOE5eh+G/cGjpHtdGWeSqujS1Z38mQBqiTLHs4ATwo8PnpvfRpBEWmd+YKYfLc5VIuQMRrScIA/LWAcRNCJocQ2jbGfEdhHZneEJ0MqPlrfxwhK3LpQH4O7JLbw7pE0eN3NZ/e3tNrw4bd9rMTxYtaua0tREK1OxHGSPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p74tVXTHTRuw+eB0/39qIFF0/amZXlokYFw4dqG0Leg=;
+ b=vdh8fbOOe6O5DMx1nXP9AAE9oUmMvdQs3hoxxhwjEKDYZHKegViFznLxxIcM9wnC2d7exzZj/XxUR50NJIxcM06JOa9b2q1ruKv12j4BcgT+xgLaiD6afEk9hgb754CkHwvchaNjLt6DM2u1RhujHKXTN6MQEsOcBMorCBZ9TMY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by CYYPR12MB8704.namprd12.prod.outlook.com (2603:10b6:930:c2::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Wed, 9 Jul
+ 2025 09:13:57 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8901.024; Wed, 9 Jul 2025
+ 09:13:57 +0000
+Message-ID: <a72d9d65-d05c-435c-8387-600797725998@amd.com>
+Date: Wed, 9 Jul 2025 11:13:48 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/5] drm/ttm: add new api
+ ttm_device_prepare_hibernation()
+To: Samuel Zhang <guoqing.zhang@amd.com>, alexander.deucher@amd.com,
+ rafael@kernel.org, len.brown@intel.com, pavel@kernel.org,
+ gregkh@linuxfoundation.org, dakr@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch, ray.huang@amd.com, matthew.auld@intel.com,
+ matthew.brost@intel.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de
+Cc: mario.limonciello@amd.com, lijo.lazar@amd.com, victor.zhao@amd.com,
+ haijun.chang@amd.com, Qing.Ma@amd.com, Owen.Zhang2@amd.com,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+References: <20250709064404.839975-1-guoqing.zhang@amd.com>
+ <20250709064404.839975-2-guoqing.zhang@amd.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20250709064404.839975-2-guoqing.zhang@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR2P281CA0127.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:9e::15) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 09 Jul 2025 11:11:45 +0200
-Message-Id: <DB7EPHQO844E.RQ2E9FAOU7CD@kernel.org>
-Cc: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>, "Oliver Mangold"
- <oliver.mangold@pm.me>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Alice Ryhl" <aliceryhl@google.com>, "Trevor
- Gross" <tmgross@umich.edu>, "Asahi Lina" <lina+kernel@asahilina.net>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v11 1/4] rust: types: Add Ownable/Owned types
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Andreas Hindborg" <a.hindborg@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me>
- <20250618-unique-ref-v11-1-49eadcdc0aa6@pm.me>
- <DB1IPFNLFDWV.2V5O73DOB2RV6@kernel.org> <aGtv9qs682gTyQWX@mango>
- <DB5PPGOWNW4K.2C5A4UE9V9IEF@kernel.org> <aGzrZqIrStGD_UBp@mango>
- <CANiq72kWFYS-inzFPTQAGdPRBr7MffZLR9q7iWiT_j2w_e99MQ@mail.gmail.com>
- <O_XE8MhYyfjIfrx0uca8YoUIWQ6z4SjdK_wLXfzZ8gfzOvUBrH1-0cRRuT7pwh6eMjsXrVXuBwary36TIkUzlg==@protonmail.internalid> <DB6P2UQM08LH.2ALUM6EKC3Q45@kernel.org> <87cyaamt6y.fsf@kernel.org> <gIlzl-AnkJlcHeysZo5H8xkls4gUo9xCmQDouCh1lf_HpIrU8a4qhBP9YjdtUEq5A5fZ8zQNAllNTOd5Qu-Plg==@protonmail.internalid> <DB6WZSFEJ6N1.SMX5O3QTJVDJ@kernel.org> <871pqpn3su.fsf@kernel.org>
-In-Reply-To: <871pqpn3su.fsf@kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CYYPR12MB8704:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4c755ce3-3223-4636-c564-08ddbec8ef1a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WHVJcFRmK2xGNWF2dm9uZUNkK3gwSEhjaFN0UFZ5d2tnbStRS2xnVnZKdmwz?=
+ =?utf-8?B?SHdnRlFVWUpheVZqRkNhQjRHSzROb0xjV0NBeTloQUU1SkxjOHplNHNKRldj?=
+ =?utf-8?B?ZEJZUTNmSnpUWXQ3QzQrdDNvM0hmQ0xVUFUxc0lUaWRteVh5ZGdrNFlvUW51?=
+ =?utf-8?B?YlpSYUlTQldnQldUQlRQUE5RM0xscnVnSWNZV1h2RVV0QUlEUHUrRDBlNWJL?=
+ =?utf-8?B?L3NRTmpzVWxIVHUya3dPK0hFZDcrYUg3bDZCTkhpU1JCQjB5bnVqWkk2dUpF?=
+ =?utf-8?B?SlBsQys2RHg4U0w3RnVZL0hWY0lNc1BNUUU2V2FtK01icFJVU2hUQnVCUzhi?=
+ =?utf-8?B?WjQ5UTNSNy9HZUZLSUN6QWpJa3FsMUN0YUczbERTMVFFZDB4bU1ia3RLOGpZ?=
+ =?utf-8?B?UTlhU1N0YnAya3JRNUhLQXlsRzNJVk1NUUJnQWRmRHhka0ttd29vMzlnS2sv?=
+ =?utf-8?B?NVlXb2c3eDBuQnBkQWpjdUdnSnFhZkdTTDhrRVprd3pzRUlHUlNhZGZicEcr?=
+ =?utf-8?B?eDNEdyt1SExSdHpLbjhKWWxnMVVhOFp6Sm54Q0NGN2tJYnRSSWNwZEdjRlNS?=
+ =?utf-8?B?Uk52N2d1dExVajA3b3VJUzlTMkp0UERzQVVxZ21aTHZUdkVmMFdnNHVhYThW?=
+ =?utf-8?B?RVZrYXlsaEc5WEZ4bjRCelpLMHdYeC9QVU0vczdhclZVaExhU2NYaHRkc3Iy?=
+ =?utf-8?B?S21HcUhrS003VWlTbWcrZjQxQlJHdWdzdGs3SG9JSHJucnptamtHTW9VOUZB?=
+ =?utf-8?B?QWl3SHl2ZjZISmgzeG9wdElEaXBtQ1QyZHBPbjhqTnAyTUtVSHpSd2UvNjNL?=
+ =?utf-8?B?SnkxSDJ6RDA1T28xa01XUmFUNUZ5QlFZbm9hMXE5S0M2WEI4YS9oYVZCQ3R5?=
+ =?utf-8?B?Wis1VXE0OURFM2VKd1IyWXhyd3RsZTc3dUNBbDZ4KzdveEtUejN6N0dGQU1w?=
+ =?utf-8?B?N013THpUckVNeUd1SmJ0UlNnaWEzeWdXVmVROWh2ZFFEZjFqVExScXFlSnNZ?=
+ =?utf-8?B?K2FBRExzenJ2SStibFZkOERRY3A2c3I2YlJ0aWQ0Y3RRWlcxVWdvTExBcmg3?=
+ =?utf-8?B?aUF0Y0pzNW5KUVdEUFRkVGZLeWhZa1BLUGljQ2ZscXllbFVPNDArdEFaUmxZ?=
+ =?utf-8?B?cFFLOEZZUm9YUHlTZU4reFJWSTdxTkRHNllqNGpKUzdmOFNNbG1ya3p6VnE1?=
+ =?utf-8?B?ZHpWMk81aUpTMzhtUS9mNmRiVzlLUlg5bUFSTW9GM0xmalk0d3BicEFvVmVD?=
+ =?utf-8?B?d2w4NnZTSk1mV3QrNW5LdCtmNk5RSFgwZmZnQzhwR20yS1F3TFZhSVRybFY2?=
+ =?utf-8?B?UWk4L0l1cFdpUDh3RlR5SmpIRVc2d3VuZmwrMngwUVBxOHQwb2F2d2tlM3Iv?=
+ =?utf-8?B?VVRiRndLQ2g3OCtHc1RKWEVRMDYzeDBJZ1BWTlFrRDY5NngxNVgxS2c3YjdS?=
+ =?utf-8?B?aGZZdW5NVWd1bnFReGNVSlNMYTBmN1NXUldXNnZESXlWRUJmK2EyK2p0SFIr?=
+ =?utf-8?B?anYzMEo1UDh0cmFNTGFDVGJabVp4MzdWbStJakF2Vk1XYS9EQUxNN0xqUzBt?=
+ =?utf-8?B?YXlpQVIvSVFRanJVa09RemtkOFlaWVFpZG9sOXBTVU9MV3RCU21ycDNVN2Fp?=
+ =?utf-8?B?SVpHUjcrN2M0TGRBaE44ZWU3SisrVkRYM1B4NEMzYmYzRmF4MVVWbTJNczB3?=
+ =?utf-8?B?Z1VsaVZZUC82clFkMjJ6RzQyNnV3TndxY3ZHT1N2T1A4ZXpEODhrZlMzWDU3?=
+ =?utf-8?B?OTJsbnVvUnBpMzI2NjMwS28vK20rdzhHMGE4Y00wYWkrd01xUmJhcG5wdStq?=
+ =?utf-8?B?Uzc3bGxVOEhCNWdtUXlubmFKZ09zWnNXbUZ5bUpZTDA5V25nSFMwSDROUUdz?=
+ =?utf-8?B?K0pQY2hCZDdSRE9NSGFjSitVbjF1a3JKenRrN2tQcDZlRk5DTTVFejUrSFNE?=
+ =?utf-8?B?NHhqM2hjYVVQay9MM3NoWDByRSsvVy9iRGYzcFlkZDFHelh5b2JHZHhZVzlU?=
+ =?utf-8?B?NVVZd1RhQ0l3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TGpybmszQXQ0UXE0ZnNxVmtmbzFEdDN2eWtUQk1aWkNEL3cyaWNlSGkzUS9U?=
+ =?utf-8?B?eFNrU3YrUmU3QmdDejBiNktBN2hMZjlnYUIrVWdDVGJUNCt2aEl5ZnBMekdy?=
+ =?utf-8?B?SjRIcVMwRmlKY2QzOUtsUXg5b05IazlzT3U5M1piL2RqaHZDUHhZTXcwMkRM?=
+ =?utf-8?B?RGs1RGJVYkEvcEdDZ1BqdDZwMnZJS2ZFUUhrY09kYlNsM0ZjR1k4a0lYSmw4?=
+ =?utf-8?B?dGp2U3FZSlJKMUttNXdpRmQ0QURTTlFiZ29sT3pxRUdzaGg4aktlZm5PNFlL?=
+ =?utf-8?B?aUJTSEJYL25JKy9zdE1KVFRhZm1FOFNLSXVHN1k2SllQTDh2NjIrLzduTnBK?=
+ =?utf-8?B?SWhtRTdvUFZ3UTRJWVdVc2JtN0V4VW1MOVN6TzI0eERjcnRSK01Zemc3Tnls?=
+ =?utf-8?B?NFE1Q0U5cWI0REM1ZTB1KzY5WGx1N3ZTK0pGSVhxbkh4SUxsR3QrL1dySVBm?=
+ =?utf-8?B?cUlWSVZVZDNTVEo1Rk85bWZSeTFQWlZhcmJQUGNpK1NQeUhUdnZzeXh3bVZV?=
+ =?utf-8?B?eFkyNWRBa1g3aVFlVzRLUUhPZzFOQyt2UU5Ndnl3ZWN6WlVZNmNSdk9BY0xw?=
+ =?utf-8?B?NnhvdlFUcjhWRHlPK0JyUXk1MjBRaWx1RTFMK1VmamthRFRGdVlKdXRETzdH?=
+ =?utf-8?B?WUoyWWhPbEtBOE1PcGg3bUk3Qzc2YUdyM0FaSVQxZVdBSWYzTmRvWlZpdy94?=
+ =?utf-8?B?NFBVeHBMeldabFJweEJhcmNLb0N5b284c2VUS3RRK0Z3UzBNK0RkcllueUw3?=
+ =?utf-8?B?VTNJMFAvcUtHYzdLVlBNZnp6b1JEam9rQW9CUUxZbzJiM2Z3UGlucFFqdnNy?=
+ =?utf-8?B?T3h6cThUaUpzNmI2NTJ1cm9ZK2xpVU1YQ1RpYzNJcDVISitwZ3RxOW1rMk1I?=
+ =?utf-8?B?ZzhGTVdjYmhLY1hMTzFqb05HeXdER0dPVklTMjZvMUgwN09YY0VYNEQ0djdJ?=
+ =?utf-8?B?bG80Q1hhcC9DZnlJbk9xcTNKNlVlV2xJVDFkZDdoRXE1RnIrT1BRRVRVRURB?=
+ =?utf-8?B?N0FGbkxDWkpqYVZ6NFo3VGRXUTJjK21WSVRYY1BUQmpPMnZJRDlNeUdJSk84?=
+ =?utf-8?B?MlBZa3lpU2x4Zm84RDBzdjAweXZUT2trdDl2UU5oMlBqRWY1eTBtcXoxcTRH?=
+ =?utf-8?B?ekEwWHorTEVpVytWRFZpQTM1bzFraFlPSXdHaHVBYXdteHdBTU50Qzh2UU5a?=
+ =?utf-8?B?WWFMblZONmdLSklETWhWQkRQT0gyRVpodThRNGw2RDZwc1J3SmxOTW9yUnpo?=
+ =?utf-8?B?QURzN2JGenJRNGl4R2pPcEtpRXdxeWxycUlYa1VqTzRpcWVGenZZdkIrRVZn?=
+ =?utf-8?B?dkRwVEN4c1JBMTF0U0x5Zmk5N25jR1lHYmxEL0lnK01LZ3U2THEwQ0p5cENH?=
+ =?utf-8?B?VjdhR2xCWTJvdFRkYzdHQzdqOWRPNGlnNU9Ba0dRd0o0ME5wRnJCdzdnZHpV?=
+ =?utf-8?B?WlE5Tk1LaWtnVjJuT2g2SzBIZ3U3K295Q0Nubk1yTnkvbHVxT21HWUNEOVVN?=
+ =?utf-8?B?UlpXZU11NUVEMVBPUmVqM3k5dUZtTCsrVTRheTM0bmNIck5tNG9kWnpqNThw?=
+ =?utf-8?B?TkJJRWF1d3JweXlSSndDdjhJUjFteFFMRmU5QTUvbjZQdWZSTVdFcGNsVnZm?=
+ =?utf-8?B?MTdZTGZGeEpldGlpQ1ZQRkk4bGRrVWJBTXB6OExES0VrVWxPa0NJKy81bytz?=
+ =?utf-8?B?Z3ZUazJ4QUpWZS94U09OU3gxNi9CZWNMRDhHL29Vb0JmVyszd2RWMmxBM2c3?=
+ =?utf-8?B?UW1YeXJLNWdtUEZzYVlKQ1RPZGxHdklqUzRzQytmRUN4dHg3TzBRNzBFKytD?=
+ =?utf-8?B?aWV5MFlzYU1EZ0lUaXpDQlQ3RnI4bHIyalV1aUtKM2xFZlR0WDlmNHhpUnZ0?=
+ =?utf-8?B?UWJ2NVFROXBnKzhRRXVuMVJIQ1lZZkIxTStzN1RFU3dka1hKVWI2M1RxTDBU?=
+ =?utf-8?B?L0tIOERZYS9JZVQvQW94Vm41NGpDQmlrMWtJNlIwdmpkWGN4OUJIZEM1aXdR?=
+ =?utf-8?B?cTJQNDkzTTFheUNlQmtRbWFGUEZ3NWNFWjd3dCtiZTQwcUpZVGdTOXkwalh5?=
+ =?utf-8?B?bTRuaFZoOVgvQlZZdXVSNHlxWVVWZ1ovVmhZNVIrVmdtZzZ4NzVTZTZmMjVB?=
+ =?utf-8?Q?CmS0fN93ymNPAk7e9edWoaVuW?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c755ce3-3223-4636-c564-08ddbec8ef1a
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 09:13:57.4186
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yBZVUyU8ymUrcQNaxK1KJov6ZUa1ls+caxvdKM9r/bLkj5op1q6vhJUVsyZIZ1zy
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8704
 
-On Wed Jul 9, 2025 at 10:53 AM CEST, Andreas Hindborg wrote:
-> "Benno Lossin" <lossin@kernel.org> writes:
->
->> On Tue Jul 8, 2025 at 8:30 PM CEST, Andreas Hindborg wrote:
->>> "Benno Lossin" <lossin@kernel.org> writes:
->>>
->>>> On Tue Jul 8, 2025 at 12:16 PM CEST, Miguel Ojeda wrote:
->>>>> On Tue, Jul 8, 2025 at 11:57=E2=80=AFAM Oliver Mangold <oliver.mangol=
-d@pm.me> wrote:
->>>>>>
->>>>>> Note, though, that I already moved it from types.rs to types/ownable=
-.rs on
->>>>>> request. It seems to me different people here have different ideas w=
-here it
->>>>>> should be placed. I feel now, that it would make sense to come to an
->>>>>> agreement between the interested parties about where it should final=
-ly be
->>>>>> placed, before I move it again. Could I ask that we settle that ques=
-tion
->>>>>> once and for all before my next revision?
->>>>>
->>>>> Yeah, if there is a disagreement with something said previously, then
->>>>> it should be resolved before starting to ping-pong between approaches
->>>>> with more and more patch versions. Reviewers can forget or they may
->>>>> not have read an earlier comment, but you did the right thing
->>>>> mentioning there is such a conflict in opinions.
->>>>
->>>> Yeah, I checked and that was Andreas on v9. @Andreas what do you think=
-?
->>>>
->>>> I think we should just get rid of `types.rs` and split it into:
->>>>
->>>> * `opaque.rs`
->>>> * `foreign.rs`
->>>> * `scope_guard.rs` (this might need a better name)
->>>>
->>>> `Either` can just be removed entirely, `AlwaysRefcounted` & `ARef`
->>>> should be in the `sync` module (I already created an issue for this) a=
-s
->>>> well as `NotThreadSafe` (or we could create a `marker` module for that=
-).
->>>> Thoughts?
->>>
->>> Sounds good. I just wanted to prevent us from cramming everything into
->>> types.rs.
->>
->> Yeah me too :)
->>
->>> But we should probably move `Owned` into `sync` with `ARef` et. al.,
->>> right?
->>
->> I don't think it fits into `sync`... It's more like a `Box` and could
->> very well store something that is `!Send` & `!Sync`.
->
-> Good point. My primary use case is `OwnableRefCounted`. Where do you
-> want tput that? It is strongly tied to `Ownable` and `Owned`, but
-> revolving around refcounts.
+On 09.07.25 08:44, Samuel Zhang wrote:
+> This new api is used for hibernation to move GTT BOs to shmem after
+> VRAM eviction. shmem will be flushed to swap disk later to reduce
+> the system memory usage for hibernation.
+> 
+> Signed-off-by: Samuel Zhang <guoqing.zhang@amd.com>
 
-Yeah... Let's just put it in owned.rs too.
+Reviewed-by: Christian König <christian.koenig@amd.com>
 
----
-Cheers,
-Benno
+> ---
+>  drivers/gpu/drm/ttm/ttm_device.c | 23 +++++++++++++++++++++++
+>  include/drm/ttm/ttm_device.h     |  1 +
+>  2 files changed, 24 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/ttm/ttm_device.c b/drivers/gpu/drm/ttm/ttm_device.c
+> index 02e797fd1891..9c9ab1903919 100644
+> --- a/drivers/gpu/drm/ttm/ttm_device.c
+> +++ b/drivers/gpu/drm/ttm/ttm_device.c
+> @@ -123,6 +123,29 @@ static int ttm_global_init(void)
+>  	return ret;
+>  }
+>  
+> +/**
+> + * ttm_device_prepare_hibernation - move GTT BOs to shmem for hibernation.
+> + *
+> + * @bdev: A pointer to a struct ttm_device to prepare hibernation for.
+> + *
+> + * Return: 0 on success, negative number on failure.
+> + */
+> +int ttm_device_prepare_hibernation(struct ttm_device *bdev)
+> +{
+> +	struct ttm_operation_ctx ctx = {
+> +		.interruptible = false,
+> +		.no_wait_gpu = false,
+> +		.force_alloc = true
+> +	};
+> +	int ret;
+> +
+> +	do {
+> +		ret = ttm_device_swapout(bdev, &ctx, GFP_KERNEL);
+> +	} while (ret > 0);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(ttm_device_prepare_hibernation);
+> +
+>  /*
+>   * A buffer object shrink method that tries to swap out the first
+>   * buffer object on the global::swap_lru list.
+> diff --git a/include/drm/ttm/ttm_device.h b/include/drm/ttm/ttm_device.h
+> index 39b8636b1845..592b5f802859 100644
+> --- a/include/drm/ttm/ttm_device.h
+> +++ b/include/drm/ttm/ttm_device.h
+> @@ -272,6 +272,7 @@ struct ttm_device {
+>  int ttm_global_swapout(struct ttm_operation_ctx *ctx, gfp_t gfp_flags);
+>  int ttm_device_swapout(struct ttm_device *bdev, struct ttm_operation_ctx *ctx,
+>  		       gfp_t gfp_flags);
+> +int ttm_device_prepare_hibernation(struct ttm_device *bdev);
+>  
+>  static inline struct ttm_resource_manager *
+>  ttm_manager_type(struct ttm_device *bdev, int mem_type)
+
 
