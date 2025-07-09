@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-724605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A45AFF4CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:36:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F36AFF4CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:36:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FB7A588500
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:36:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14D3D58850A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6162525A2AA;
-	Wed,  9 Jul 2025 22:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1C525B30D;
+	Wed,  9 Jul 2025 22:36:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aHQZn5Yr"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="o5arJryF"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB5224A063;
-	Wed,  9 Jul 2025 22:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE46024DCE8;
+	Wed,  9 Jul 2025 22:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752100559; cv=none; b=E5X/I453qhK4Gzm+Nh1P0pgjAAwcQJrQIZ/MgPEo+/Dgba+3uYDwSZfoo25Qzr4mJ+qDHYFNKR6jMX4tMJRI2Y/LcKVL+V8dSVYCpIYTOS44RI3VleGTMGz+DfX4vY04Xdl805qOoBIFGSwynng93gDQUs9BnHT1ly+aioE8o+o=
+	t=1752100560; cv=none; b=JPCeZmFnS7IBpkWieITP9NQo50nkS0WNotKakHBCrQqflSu/J2g2MbHtD00wia/TThRcuikELdjaHQNWcpesa2fWsronC84lQEe8vI/4upOzLRo4gN2Tg6P0+oRkeS6V7Rtz5gSbgyDGDumc4GOjIAKuV05aylgGRBYVZVGmVAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752100559; c=relaxed/simple;
-	bh=ysqyFm2bbGfEc8u3dm+cgbyyWoFjlqbwr+P3EXSSjLY=;
+	s=arc-20240116; t=1752100560; c=relaxed/simple;
+	bh=bt4X9r72r6rI1ELQrvh8+CGDgf398vlVmIs10sdnrrM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=ci4AFUxDek7wZ/Sf9XbGJFoAEP5SXcTO/RgxN+2xmQzqgQAsbCMMb9FQy2PuqyjvegVuIuvdLdlDnqzqmydCaoAHZgjkrnp4jlxS4HY4BbCCzrQLetG8mElUBrp/kbvhdC7Sq5hp5poaZsj76/w/aN/8YIn6ZJI56s0AeonY3Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=aHQZn5Yr; arc=none smtp.client-ip=198.47.19.246
+	 In-Reply-To:To:CC; b=QlyCI/QJGjr1exXyMkXQWkhxOT8NAnwTPEWZSE0mtCibhmk2wIEqbTAjD0KzEL6zsyMhsa8m9JdwewonFFuI6scVb7Qm3RlBEap5H19uc+427mwtpydAlUvjiSiMnG6y/ABjdM1fxia5S7D0xSgdXaCFSeVaPst/bTHGJP7GSpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=o5arJryF; arc=none smtp.client-ip=198.47.23.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 569MZoxU1569128;
-	Wed, 9 Jul 2025 17:35:51 -0500
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 569MZoE0952190;
+	Wed, 9 Jul 2025 17:35:50 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1752100551;
-	bh=ieWThEMAjC1kkWBufnewbQMKpVwyrb/YlxHe6w5rs5g=;
+	bh=Olm4mSIpu4FebWepzFV2T6KFHpND3n+3YfGovDjUUVU=;
 	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=aHQZn5YrvDk6zXI/Dlvyw3Sv8QMHXCeyzInI2DWZPb1+u6US0u5Ai+mJwDrnXZlqg
-	 NHYJ5H6wmCtFVUjL38niqVgijlq3pRLlDi6AXvlg27ISdQhW5E3LB+6r/YtrPZZZXs
-	 AL+LV1aQlrKbVs8iqiPWea9vR8pHYNPE7twvvCsY=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 569MZogW568838
+	b=o5arJryFbenrTNRAWTVSCVj9Iq3z2lIj+HnKqbtxqHK8KTZ7gLTpE+/YWQJ2JAXgH
+	 ovqW8SCaQBApuldfAVgcEfqgFtdPPT/oKNGG8BjCxCTx0FAmVbj5fXAro6+4MEFiCZ
+	 RCYTvBSQisjFrTrcZnU0sge9tRlP8L2WMfNntSaE=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 569MZo623753491
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
 	Wed, 9 Jul 2025 17:35:50 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 9
  Jul 2025 17:35:50 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
  Frontend Transport; Wed, 9 Jul 2025 17:35:50 -0500
 Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 569MZoU3520527;
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 569MZotI520530;
 	Wed, 9 Jul 2025 17:35:50 -0500
 From: Bryan Brattlof <bb@ti.com>
-Date: Wed, 9 Jul 2025 17:35:43 -0500
-Subject: [PATCH 1/2] arm64: dts: ti: k3-am65: add boot phase tags
+Date: Wed, 9 Jul 2025 17:35:44 -0500
+Subject: [PATCH 2/2] arm64: dts: ti: k3-am654-base-board: add boot phase
+ tags
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,7 +67,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20250709-65-boot-phases-v1-1-e1f89d97a931@ti.com>
+Message-ID: <20250709-65-boot-phases-v1-2-e1f89d97a931@ti.com>
 References: <20250709-65-boot-phases-v1-0-e1f89d97a931@ti.com>
 In-Reply-To: <20250709-65-boot-phases-v1-0-e1f89d97a931@ti.com>
 To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
@@ -82,92 +83,160 @@ X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 The 'bootph-all' tag was added to the dt-schema to describe the various
 nodes used during the different phases of bootup with DT. Add the
-bootph-all tag to all required nodes for all AM65x platforms.
+bootph-all tag to all nodes that are used in the bootloader for the
+AM654 reference board.
 
-Mark the mailbox and ring accelerators needed to communicate the with
-various vendor firmware and the power, clock and reset nodes along with
-the MMR for the chip-id to facilitate detecting the SoC and which
-silicon version during the early stages of bootup with 'bootph-all' as
-they are used during all phases of bootup
+UARTs used as a console, the SD and eMMC nodes along with the needed
+regulators for UHS modes, and the needed nodes for OSPI boot are all
+marked with 'bootph-all' to handle the various boot modes the board is
+capable of
 
 Signed-off-by: Bryan Brattlof <bb@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-am65-main.dtsi   | 1 +
- arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi    | 2 ++
- arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi | 5 +++++
- 3 files changed, 8 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am654-base-board.dts | 17 +++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am654-pcie-usb2.dtso |  1 +
+ arch/arm64/boot/dts/ti/k3-am654-pcie-usb3.dtso |  1 +
+ 3 files changed, 19 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-index b085e736111660ed0dad5f127ef0c3d79c52fe1d..61c11dc92d9c27fc9e47123698c17118cd522be1 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-@@ -655,6 +655,7 @@ secure_proxy_main: mailbox@32c00000 {
- 			      <0x00 0x32800000 0x00 0x100000>;
- 			interrupt-names = "rx_011";
- 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-+			bootph-all;
- 		};
- 
- 		hwspinlock: spinlock@30e00000 {
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-index 7cf1f646500a16c1d1bac6dfb37fb285218063b3..5bbd817bc51464f6605c5b2dc9cb544a109a695d 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-@@ -211,6 +211,7 @@ mcu_ringacc: ringacc@2b800000 {
- 			ti,sci = <&dmsc>;
- 			ti,sci-dev-id = <195>;
- 			msi-parent = <&inta_main_udmass>;
-+			bootph-all;
- 		};
- 
- 		mcu_udmap: dma-controller@285c0000 {
-@@ -235,6 +236,7 @@ mcu_udmap: dma-controller@285c0000 {
- 			ti,sci-rm-range-rchan = <0xb>, /* RX_HCHAN */
- 						<0xa>; /* RX_CHAN */
- 			ti,sci-rm-range-rflow = <0x0>; /* GP RFLOW */
-+			bootph-all;
- 		};
- 	};
- 
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
-index eee072e44a42f5f66423200975016447d22bdc46..d62a0be767c814706e146bcf95ee4ff84461a515 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
-@@ -21,16 +21,19 @@ dmsc: system-controller@44083000 {
- 		k3_pds: power-controller {
- 			compatible = "ti,sci-pm-domain";
- 			#power-domain-cells = <2>;
-+			bootph-all;
- 		};
- 
- 		k3_clks: clock-controller {
- 			compatible = "ti,k2g-sci-clk";
- 			#clock-cells = <2>;
-+			bootph-all;
- 		};
- 
- 		k3_reset: reset-controller {
- 			compatible = "ti,sci-reset";
- 			#reset-cells = <2>;
-+			bootph-all;
- 		};
- 	};
- 
-@@ -43,6 +46,7 @@ wkup_conf: bus@43000000 {
- 		chipid: chipid@14 {
- 			compatible = "ti,am654-chipid";
- 			reg = <0x14 0x4>;
-+			bootph-all;
- 		};
- 	};
- 
-@@ -107,5 +111,6 @@ wkup_vtm0: temperature-sensor@42050000 {
- 		reg = <0x42050000 0x25c>;
- 		power-domains = <&k3_pds 80 TI_SCI_PD_EXCLUSIVE>;
- 		#thermal-sensor-cells = <1>;
+diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+index c30425960398ebb75ebda44726ed90cd78947d58..e589690c7c8213d5e4989942735fa53825e610f5 100644
+--- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
++++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+@@ -144,6 +144,7 @@ vtt_supply: regulator-3 {
+ 		regulator-boot-on;
+ 		vin-supply = <&vcc3v3_io>;
+ 		gpio = <&wkup_gpio0 28 GPIO_ACTIVE_HIGH>;
 +		bootph-all;
  	};
  };
+ 
+@@ -155,12 +156,14 @@ AM65X_WKUP_IOPAD(0x00a4, PIN_OUTPUT, 0)	/* (AB5) WKUP_UART0_TXD */
+ 			AM65X_WKUP_IOPAD(0x00c8, PIN_INPUT, 1)	/* (AC2) WKUP_GPIO0_6.WKUP_UART0_CTSn */
+ 			AM65X_WKUP_IOPAD(0x00cc, PIN_OUTPUT, 1)	/* (AC1) WKUP_GPIO0_7.WKUP_UART0_RTSn */
+ 		>;
++		bootph-all;
+ 	};
+ 
+ 	ddr_vtt_pins_default: ddr-vtt-default-pins {
+ 		pinctrl-single,pins = <
+ 			AM65X_WKUP_IOPAD(0x0040, PIN_OUTPUT_PULLUP, 7)	/* WKUP_GPIO0_28 */
+ 		>;
++		bootph-all;
+ 	};
+ 
+ 	wkup_i2c0_pins_default: wkup-i2c0-default-pins {
+@@ -168,6 +171,7 @@ wkup_i2c0_pins_default: wkup-i2c0-default-pins {
+ 			AM65X_WKUP_IOPAD(0x00e0, PIN_INPUT, 0) /* (AC7) WKUP_I2C0_SCL */
+ 			AM65X_WKUP_IOPAD(0x00e4, PIN_INPUT, 0) /* (AD6) WKUP_I2C0_SDA */
+ 		>;
++		bootph-all;
+ 	};
+ 
+ 	push_button_pins_default: push-button-default-pins {
+@@ -191,6 +195,7 @@ AM65X_WKUP_IOPAD(0x0024, PIN_INPUT, 0)  /* (R2) MCU_OSPI0_D6 */
+ 			AM65X_WKUP_IOPAD(0x0028, PIN_INPUT, 0)  /* (R3) MCU_OSPI0_D7 */
+ 			AM65X_WKUP_IOPAD(0x002c, PIN_OUTPUT, 0) /* (R4) MCU_OSPI0_CSn0 */
+ 		>;
++		bootph-all;
+ 	};
+ 
+ 	wkup_pca554_default: wkup-pca554-default-pins {
+@@ -206,6 +211,7 @@ AM65X_WKUP_IOPAD(0x0048, PIN_OUTPUT, 4)	/* (P5) MCU_OSPI1_D2.MCU_UART0_TXD */
+ 			AM65X_WKUP_IOPAD(0x004C, PIN_INPUT, 4)	/* (P1) MCU_OSPI1_D3.MCU_UART0_CTSn */
+ 			AM65X_WKUP_IOPAD(0x0054, PIN_OUTPUT, 4)	/* (N3) MCU_OSPI1_CSn1.MCU_UART0_RTSn */
+ 		>;
++		bootph-all;
+ 	};
+ 
+ 	mcu_cpsw_pins_default: mcu-cpsw-default-pins {
+@@ -248,6 +254,7 @@ AM65X_IOPAD(0x01e8, PIN_OUTPUT, 0)	/* (AE11) UART0_TXD */
+ 			AM65X_IOPAD(0x01ec, PIN_INPUT, 0)	/* (AG11) UART0_CTSn */
+ 			AM65X_IOPAD(0x01f0, PIN_OUTPUT, 0)	/* (AD11) UART0_RTSn */
+ 		>;
++		bootph-all;
+ 	};
+ 
+ 	main_i2c2_pins_default: main-i2c2-default-pins {
+@@ -281,6 +288,7 @@ AM65X_IOPAD(0x0188, PIN_INPUT_PULLUP, 0) /* (D25) MMC0_DAT7 */
+ 			AM65X_IOPAD(0x01b4, PIN_INPUT_PULLUP, 0) /* (A23) MMC0_SDCD */
+ 			AM65X_IOPAD(0x01b0, PIN_INPUT, 0) /* (C25) MMC0_DS */
+ 		>;
++		bootph-all;
+ 	};
+ 
+ 	main_mmc1_pins_default: main-mmc1-default-pins {
+@@ -294,6 +302,7 @@ AM65X_IOPAD(0x02c4, PIN_INPUT_PULLUP, 0) /* (D27) MMC1_DAT3 */
+ 			AM65X_IOPAD(0x02dc, PIN_INPUT_PULLUP, 0) /* (B24) MMC1_SDCD */
+ 			AM65X_IOPAD(0x02e0, PIN_INPUT, 0) /* (C24) MMC1_SDWP */
+ 		>;
++		bootph-all;
+ 	};
+ 
+ 	usb1_pins_default: usb1-default-pins {
+@@ -343,6 +352,7 @@ &main_uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&main_uart0_pins_default>;
+ 	power-domains = <&k3_pds 146 TI_SCI_PD_SHARED>;
++	bootph-all;
+ };
+ 
+ &wkup_i2c0 {
+@@ -368,6 +378,7 @@ vdd_mpu: regulator@60 {
+ 		ti,vsel0-state-high;
+ 		ti,vsel1-state-high;
+ 		ti,enable-vout-discharge;
++		bootph-all;
+ 	};
+ 
+ 	gpio@38 {
+@@ -456,6 +467,7 @@ &sdhci0 {
+ 	bus-width = <8>;
+ 	non-removable;
+ 	ti,driver-strength-ohm = <50>;
++	bootph-all;
+ };
+ 
+ /*
+@@ -470,6 +482,7 @@ &sdhci1 {
+ 	pinctrl-0 = <&main_mmc1_pins_default>;
+ 	ti,driver-strength-ohm = <50>;
+ 	disable-wp;
++	bootph-all;
+ };
+ 
+ &usb1 {
+@@ -630,3 +643,7 @@ &cpsw_port1 {
+ &dss {
+ 	status = "disabled";
+ };
++
++&wkup_gpio0 {
++	bootph-all;
++};
+diff --git a/arch/arm64/boot/dts/ti/k3-am654-pcie-usb2.dtso b/arch/arm64/boot/dts/ti/k3-am654-pcie-usb2.dtso
+index c3cb752f8cd79459d6d321dfdf0644748514a48d..d04dd7a44008205301ea3fb3d0a883b6a6a2562b 100644
+--- a/arch/arm64/boot/dts/ti/k3-am654-pcie-usb2.dtso
++++ b/arch/arm64/boot/dts/ti/k3-am654-pcie-usb2.dtso
+@@ -46,6 +46,7 @@ AM65X_IOPAD(0x02bc, PIN_OUTPUT, 0) /* (AD9) USB0_DRVVBUS */
+ 
+ &dwc3_0 {
+ 	status = "okay";
++	bootph-all;
+ };
+ 
+ &usb0_phy {
+diff --git a/arch/arm64/boot/dts/ti/k3-am654-pcie-usb3.dtso b/arch/arm64/boot/dts/ti/k3-am654-pcie-usb3.dtso
+index 333e423e8bb6b033f5f45c782ef0095d29983158..04393f21d712ebd95ce1a411e2ac13a56e63e57b 100644
+--- a/arch/arm64/boot/dts/ti/k3-am654-pcie-usb3.dtso
++++ b/arch/arm64/boot/dts/ti/k3-am654-pcie-usb3.dtso
+@@ -45,6 +45,7 @@ &dwc3_0 {
+ 	<&k3_clks 151 8>;      /* set PIPE3_TXB_CLK to WIZ8B2M4VSB */
+ 	phys = <&serdes0 PHY_TYPE_USB3 0>;
+ 	phy-names = "usb3-phy";
++	bootph-all;
+ };
+ 
+ &usb0 {
 
 -- 
 2.49.0
