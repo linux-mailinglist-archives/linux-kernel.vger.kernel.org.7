@@ -1,47 +1,81 @@
-Return-Path: <linux-kernel+bounces-722796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1ED8AFDEEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:55:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF3E4AFDEEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D97CF1AA0F10
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:55:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A838568563
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2BF2690EA;
-	Wed,  9 Jul 2025 04:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206A31D63D8;
+	Wed,  9 Jul 2025 04:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QKVlEt+q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="h7oE+Yge"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947043208;
-	Wed,  9 Jul 2025 04:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC68B3208;
+	Wed,  9 Jul 2025 04:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752036934; cv=none; b=DnEOSI0SMP5AnfQ9qDuaApZ5ZCteeBYnMtWGksoDqGkqki2afpMph6/WaKCYv1i8vS1rs6G6UOOdJFpGkfkFLjhKQ0Pq56ayyYE5evn6pDqHhCAd1T0vGLxU+HYz+mB5gZhGo1R8Lky+sPhDwkqA6CHq8Ec1O1CRtWxKe/1zmOM=
+	t=1752037026; cv=none; b=mxH37f8bEeOIh7QR813aHAXuII0/BHiPsWDkC8XR7T3VoKpDkvReF//kD6W0Q2bZH0a6rMEofVKsLFVbMPvVsU5gxvSfiSsDbPA18yeJ3hWyQruk0nWDHKBj/w5eGjQnhREk8wxJKT9Hw/hDXSRjf9TvabW2ulosbj86ZAMrDoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752036934; c=relaxed/simple;
-	bh=DTtmQWR5l3EFJNXzuSG6Ij8Qfw3voACpeB1Qs8ovSeg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=X9QzBEDOvN05BB4vHGxXrteu/w6AN7ty4umPS2ORFQcwmnnB3xE+fAf7QZW1LYKKOg++jKwMO3nWEyucXIPZStXa2ZdfY953xbTxO4pTNbkE2ZiI4lGBGP0DxhxTVs9sOGZWnXuHm44IYuo4gjVT4mnPsmvta4XIBg8/aA3rSY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QKVlEt+q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD538C4CEF0;
-	Wed,  9 Jul 2025 04:55:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752036934;
-	bh=DTtmQWR5l3EFJNXzuSG6Ij8Qfw3voACpeB1Qs8ovSeg=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=QKVlEt+q0kznxdZN1WP9MPvrwF+cw3G1ilVd9KRp5bQD/s305SestRna8Ju72nhxC
-	 IYGxKrIRDp/XFqeyfUDwApKSLVFTifqaiSoxXVce8k1FmN8CKmEclfAOVcRT6AmaN6
-	 KCJs+nEecUzjmykzuw9s7aPTE0VT99AN54EGCrUSh+94p39jqVC2vBblRDwMfpMinL
-	 4lCwEhTyBpkg4BmKkyUQhvL8Lvm4IdD1j29NOnOjvBZpTBHoe5p7xIGQJmUKH/G7WG
-	 m8vlgnZxFp1v9h44n42NorutYVAPvF8uGoIIDHDHO1fNE8h4hOFeiyhYcfCHPbnb5T
-	 F5+EvzbL0cDzQ==
-Message-ID: <17543afd-e06a-4d3a-abe3-0bd42349a69b@kernel.org>
-Date: Wed, 9 Jul 2025 06:55:30 +0200
+	s=arc-20240116; t=1752037026; c=relaxed/simple;
+	bh=/l4cfGLDS6AGtndGwU5W5f0KphHso5AXugN/m/uYjPQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sYIVny/uBb4uvfOccKUifCG30XXQ54wg1SOYbar1xWMo3GLBk4/nw7fH/K+63FxqVAIWv3r0sVIceeLG0UrWVa6bANsz5hlLETMIbHCzv3GWQ2Nls8DX5ryiciOeWUR51yE21oFe1BCYtY1lbAdFa2Sg9nuEhJtyf3l4Bl15L9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=h7oE+Yge; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568H9vHr021381;
+	Wed, 9 Jul 2025 04:56:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=DlXWq/
+	411ueEkqzLGqQzZCN8hdxa3O/+rcqq+PoXxd0=; b=h7oE+YgeQ2sXh7Ov/StHpf
+	61Ya+HpaOJsXF3WBMfMlOTW/iFpNIT9Y4aVslQbyRjKdCFlNf15toQPASI5VJVU1
+	2KzCwjwY9vgERrXaDos9tTL0FF8WNfGXFT+AcUTtLxLQMnI3EvLDBUel7ru9LPQT
+	MTkJ1Io1yIrzgRXB/YEQNA42MUjPaMIhrKWziQyzqSiMr5bY8EvtrUDoiBwSF5XO
+	r45iHA7Ylag0e+RTY9Tcy98pL+I/r5nePAoJfMNU4y3f7cWfZ0xZXnAEmmNa1a87
+	+o3rQ3ilgeRMTHqh47Inso3cf+T+VwVONVDIYqF6I8aMVbjJjkCWKJtrOCiS0Ufg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47puss43uf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Jul 2025 04:56:50 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5694unIp028717;
+	Wed, 9 Jul 2025 04:56:49 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47puss43ud-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Jul 2025 04:56:49 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5692540a010841;
+	Wed, 9 Jul 2025 04:56:48 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47qes06nhc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Jul 2025 04:56:48 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5694ulDO16515588
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 9 Jul 2025 04:56:47 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7827758054;
+	Wed,  9 Jul 2025 04:56:47 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D19AB5803F;
+	Wed,  9 Jul 2025 04:56:41 +0000 (GMT)
+Received: from [9.124.214.51] (unknown [9.124.214.51])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  9 Jul 2025 04:56:41 +0000 (GMT)
+Message-ID: <8f174b94-8b87-47f8-a533-d6c4020cab2a@linux.ibm.com>
+Date: Wed, 9 Jul 2025 10:26:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,69 +83,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/12] wifi: ath5k: Use max() to improve code
-To: Qianfeng Rong <rongqianfeng@vivo.com>,
- Nick Kossifidis <mickflemm@gmail.com>, Luis Chamberlain <mcgrof@kernel.org>,
- "open list:ATHEROS ATH5K WIRELESS DRIVER" <linux-wireless@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250709022210.304030-1-rongqianfeng@vivo.com>
- <20250709022210.304030-8-rongqianfeng@vivo.com>
+Subject: Re: [PATCH] selftests/mm: fix split_huge_page_test for folio_split()
+ tests.
+To: Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm@kvack.org
+Cc: David Hildenbrand <david@redhat.com>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250709012800.3225727-1-ziy@nvidia.com>
 Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250709022210.304030-8-rongqianfeng@vivo.com>
+From: Donet Tom <donettom@linux.ibm.com>
+In-Reply-To: <20250709012800.3225727-1-ziy@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=Vaj3PEp9 c=1 sm=1 tr=0 ts=686df692 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=Ikd4Dj_1AAAA:8 a=VnNF1IyMAAAA:8 a=vaSJ1NGlu7uV31DG9JwA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: G2H5mlqWwfGvIaxv4ojnQyuoF99dXNy2
+X-Proofpoint-ORIG-GUID: a1UNkvOqO_f8zTACf69J-Ere4HV9P9N8
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDA0MCBTYWx0ZWRfX09BsIRavhHaD 0pRNw06GYixOVeLqqjYK+/jjiipzgUvj8+AZKtDWXK1yC9LvkXUc2BdqG+iqQgot+KXr7mXQj5b M4uG6V1w9jTHd494e0YlHC1+/x6XJxz39fn+4tGm3Qirburzkt+y1/GaOy/xaplNahBOhmU6jGb
+ V5orutHiO7JPV4WJZXAhIkdqixX3khQC00yYeKhJKNdmFyRQit0F6pWH+F7lz1SxYD7oPaTxpUW ITuiCreX9EQqBoxrI0hnwAO9TKe5GzUXGOTlUBtEMpkHUzU4nrjR7zUcbN7BWq7FxI5yFwBfCcb BtjAHMO5cDmREJlRsea3iZC/8QlXMA0liwrYhmj1yic6LQNgsYWL7GrwoedhrAnclj5rBluURrl
+ ySlEgGD5iWGNQ17JVojX7JayKDvo6ij1JsrqBwPUvku+XgMgJ8jgWxs3Xh/OeZXVH/6pdmTt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-09_01,2025-07-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 suspectscore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 impostorscore=0 malwarescore=0 bulkscore=0 mlxscore=0
+ spamscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507090040
 
-On 09. 07. 25, 4:21, Qianfeng Rong wrote:
-> Use max() to reduce the code and improve its readability.
-> 
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 
-Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+On 7/9/25 6:57 AM, Zi Yan wrote:
 
--- 
-js
-suse labs
+Hi Zi Yan
+
+> PID_FMT does not have an offset field, so folio_split() tests are not
+> performed. Add PID_FMT_OFFSET with an offset field and use it to perform
+> folio_split() tests.
+>
+> Fixes: 80a5c494c89f ("selftests/mm: add tests for folio_split(), buddy allocator like split")
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+>   tools/testing/selftests/mm/split_huge_page_test.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
+> index aa7400ed0e99..f0d9c035641d 100644
+> --- a/tools/testing/selftests/mm/split_huge_page_test.c
+> +++ b/tools/testing/selftests/mm/split_huge_page_test.c
+> @@ -31,6 +31,7 @@ uint64_t pmd_pagesize;
+>   #define INPUT_MAX 80
+>   
+>   #define PID_FMT "%d,0x%lx,0x%lx,%d"
+> +#define PID_FMT_OFFSET "%d,0x%lx,0x%lx,%d,%d"
+>   #define PATH_FMT "%s,0x%lx,0x%lx,%d"
+>   
+>   #define PFN_MASK     ((1UL<<55)-1)
+> @@ -483,7 +484,7 @@ void split_thp_in_pagecache_to_order_at(size_t fd_size, const char *fs_loc,
+>   		write_debugfs(PID_FMT, getpid(), (uint64_t)addr,
+>   			      (uint64_t)addr + fd_size, order);
+>   	else
+> -		write_debugfs(PID_FMT, getpid(), (uint64_t)addr,
+> +		write_debugfs(PID_FMT_OFFSET, getpid(), (uint64_t)addr,
+>   			      (uint64_t)addr + fd_size, order, offset);
+>   
+>   	for (i = 0; i < fd_size; i++)
+>
+
+This looks good to me.
+
+I tested it on my system, and the test is passing.
+
+ok 17 Split PMD-mapped pagecache folio to order 0 at in-folio offset 0 
+passed
+ok 18 Split PMD-mapped pagecache folio to order 0 at in-folio offset 8 
+passed
+ok 19 Split PMD-mapped pagecache folio to order 0 at in-folio offset 16 
+passed
+ok 20 Split PMD-mapped pagecache folio to order 0 at in-folio offset 24 
+passed
+ok 21 Split PMD-mapped pagecache folio to order 1 at in-folio offset 0 
+passed
+ok 22 Split PMD-mapped pagecache folio to order 1 at in-folio offset 8 
+passed
+ok 23 Split PMD-mapped pagecache folio to order 1 at in-folio offset 16 
+passed
+ok 24 Split PMD-mapped pagecache folio to order 1 at in-folio offset 24 
+passed
+ok 25 Split PMD-mapped pagecache folio to order 2 at in-folio offset 0 
+passed
+ok 26 Split PMD-mapped pagecache folio to order 2 at in-folio offset 8 
+passed
+ok 27 Split PMD-mapped pagecache folio to order 2 at in-folio offset 16 
+passed
+ok 28 Split PMD-mapped pagecache folio to order 2 at in-folio offset 24 
+passed
+ok 29 Split PMD-mapped pagecache folio to order 3 at in-folio offset 0 
+passed
+ok 30 Split PMD-mapped pagecache folio to order 3 at in-folio offset 8 
+passed
+ok 31 Split PMD-mapped pagecache folio to order 3 at in-folio offset 16 
+passed
+ok 32 Split PMD-mapped pagecache folio to order 3 at in-folio offset 24 
+passed
+ok 33 Split PMD-mapped pagecache folio to order 4 at in-folio offset 0 
+passed
+ok 34 Split PMD-mapped pagecache folio to order 4 at in-folio offset 16 
+passed
+
+
+Feel free to add:
+
+Reviewed-by: Donet Tom <donettom@linux.ibm.com>
+Tested-by : Donet Tom <donettom@linux.ibm.com>
+
+
+
 
