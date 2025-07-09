@@ -1,160 +1,206 @@
-Return-Path: <linux-kernel+bounces-724429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE93EAFF2BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:12:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F91AFF2BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C47B41C83A75
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:13:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E52E11C8471D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA7A242D8E;
-	Wed,  9 Jul 2025 20:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43ADE243367;
+	Wed,  9 Jul 2025 20:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="DNSHEZw4"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LQWoyEpA"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BC7242D70;
-	Wed,  9 Jul 2025 20:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A56623B63D;
+	Wed,  9 Jul 2025 20:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752091959; cv=none; b=HdYCzFdwRwxGxJfAgCgGLUqVv/8PxUERVJ+fpWlonyLDkeJf2HSMZk1Mqe/THcRhBEyYTbxR8tIKBU4UT00fhsXX6TxeTffY52pXqxdHig43LHLbHVweYF6Rd2bcfB8nD5zWKoLMw2fx316vIeHNE0j8GBZWRkeyaH5fmh0SGkU=
+	t=1752091933; cv=none; b=k6KjewYfY5KgcOYDUcH7VyzAqP4FbYK6iqNoBORDx9FuggwwxT2fijYCTG5puZ8ImxQvfU6WvDSc/PxnIEHIntOpKfF79cGSTPnljOLsvINkQp5GHnPA9XeMYqLbicxP81jh2ucaR4cxfNgPxCjyo+cx2pcwqdjgmb2hX3f0ttQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752091959; c=relaxed/simple;
-	bh=2nqDSuR0WVKbc6ZhgkUGTS6FjeJdDWr5ffg0NN5mU1w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Tz4eu1UG1kDtGOq5pDG6uafwbngEmqiahHNYUhZpc4A/0OUFN1NSd6OMfHueLDOqwywYzwwbEb3zPn8lYOBfnuTJU1ORDFKziop8E8B2UeDFC9NEc2mCRoqNicrFINpUIUolIou7Z9yzEH6IffMBMZnyKLTaJhftYoZrU2jaCfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=DNSHEZw4; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=N/toHkVpq5LggOD6b8zz+uspZ81zoDnz2v1z+PgrMD0=; b=DNSHEZw4BymD6PssVNCmF5xBld
-	+onC/2Xi9Wsb1lQvLjY3kueI6oFAB1bEFZ3F0EC7YexGzUVrbMStjX4sJIJ/QwdIQWjwufqMPEzgB
-	6Fi/3Szt9XKCXgxIH6jHXaie5ifGQ4vqCySAvGA+Gxt+3pu27Si62X8s4vFpkzjRTDAywxo86CNTo
-	+2vawRGvpcKFESbdXzYuAqnJP2A1nIUniYhLtMgHPF+CTApd9tycmDUEmCUdhgZfUkaxw/YOxe8ek
-	yt9WI9PbdtnJMYBBsPEsttDnSRrSdMp8s9KY8sjNfGb46QRf1WxkLAa2ZrmjCwIJNnFphMoLM/R6u
-	H0AfbQSQ==;
-Received: from i53875a79.versanet.de ([83.135.90.121] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uZb94-0006oW-DP; Wed, 09 Jul 2025 22:11:58 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Damon Ding <damon.ding@rock-chips.com>
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- hjc@rock-chips.com, andy.yan@rock-chips.com,
- dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
- dianders@chromium.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- Damon Ding <damon.ding@rock-chips.com>
-Subject:
- Re: [PATCH v2 12/12] drm/bridge: analogix_dp: Apply drm_bridge_connector
- helper
-Date: Wed, 09 Jul 2025 22:11:57 +0200
-Message-ID: <6140569.FjKLVJYuhi@diego>
-In-Reply-To: <20250709070139.3130635-13-damon.ding@rock-chips.com>
-References:
- <20250709070139.3130635-1-damon.ding@rock-chips.com>
- <20250709070139.3130635-13-damon.ding@rock-chips.com>
+	s=arc-20240116; t=1752091933; c=relaxed/simple;
+	bh=fJveY3LVY7fA7ARwkkO3eFFnhZSk5sSVRzKniKU51as=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JfolbzHxKqeAd+2KKQ34+j4GMvIUIlaeOSX+sNSoCNDbewt5Gy7mNatEaCnCVWhxkKfzTz7a6n7A/iWFn11D+p0IOmqAhHF6MYkpp7DvESIrZUrnQ42XF2QrG0JfbwM1sNtGoqChY+qRKGP5GqA5tp+rgfvrHzIBBv31qD0w9w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LQWoyEpA; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4a98208fa69so13381931cf.1;
+        Wed, 09 Jul 2025 13:12:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752091930; x=1752696730; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=WBZOpba1sbIab5SXIQhqnQOQmbIt7B49KIb86YpHxyQ=;
+        b=LQWoyEpAqyoXNBuiAEI34rJmF6euY2LoCyWmcYp8VqYr2Gf/nQcExflLMMr+oDkG0/
+         JYnen05eyubiXf3vb3tnWhkFQu9u1qh98SOgRBDjANK52CegyPNPjXGbBZOFsFvBozoK
+         08aCgX9rosu8TaIzP9npRgKpjiykpfBYLiiod/la0gW/Ia10/pea5g6TvLtPL6WeEvWn
+         WVf1Ak8SQNk6t6hkP/JbZi+/hp0FJddrMc/mD96akxHQpeYVrOcxNFOzRHdGVJZwZfE4
+         t/THdxIhFKN4slLiiF1TXiHf6siKbzX0Jnke9odbiOdwzORpGAKIse2MEeVeYurRm4Gc
+         uaQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752091930; x=1752696730;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WBZOpba1sbIab5SXIQhqnQOQmbIt7B49KIb86YpHxyQ=;
+        b=iPLSeTBTPBgwMKH39odNaV077KgoeH+S6yBQ+6EPY/YVr9LR4ZcU6bzk/5dNUphIXe
+         NVAAH3/OrYbo3+EZuusZlDtZ7ckO/cbk6V4fZcV3zX7UuB3CSSC+8SHk12aJ8j/LgDHm
+         fHAPykOeBjVYbQrBfRFX6HpZrqtTjgUw4ofnc1d90xP+xoaqmvZz7jl+KA57bN63ARBH
+         ILC8fDXDZ78uC9rhCiOtANepp2V972KOudULtI0elMN/vOtUVYRAemlqgRDFqsgrhXef
+         4aXh6cDMD21a0Z8fsBtrmLlD2tw28NZnmKF92KL747i7HokCrODLL4vX6ZInOJfq8YWt
+         XTng==
+X-Forwarded-Encrypted: i=1; AJvYcCUAwPKXFzHwsGX8GTBGqzGc1mc+Gukx6SMi4Zmon3GP/XalV4pfz49E5rgTsWqnrp+CNzzT0xlrZ2vjFZc=@vger.kernel.org, AJvYcCVVpI7Ri7m+HZvfwGh5QQbGs2cllofUm7+zqEs+h9/e/M3ZhCd7gpA6x9oh1mQAMv3wNgoaSvk7AfyYzwEV@vger.kernel.org, AJvYcCWPwhtyaqe1GBeOA7WTA17W/HBDzx8SLOiDfJeoE2wgDl6k6rptpw6lGUyRm+Q+2pT+FQULxI2OLXH759AQ5w==@vger.kernel.org, AJvYcCX8cmprOhh7eERl/CFiNdnngwHnEq/Uw/EhCc0ln3XPskxJjG9sB6pU4PobmezPMDziBl4PW+zqHGxZZmcraN0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaNpr5XhuAPz3Xi5hWZo5kLCfZHjGmwViBlo57EDG3CZNcUPKN
+	uogfuA4AlCeVGfjkw+NpHCz9x++GhifXozgRKXS0reVp+OOs2+FSiq/U
+X-Gm-Gg: ASbGncuo/m+PN0wV6jU8tUqpx+Ro7ti1tpoMgUCaR39UkNSfgisQkLS7T4XbNXYF2Cq
+	ass+BlyS3wm0FD0rLoEmEfQr4SmLlce7BCb+shaLw13bSTFXIZUYedeJNoq0tmj8uh8CVzBi+tB
+	tYrQPlSJ10GOFlftZ4OWauCBhoZaSExKl5vHC5oBb0n/6mO+k107AgBL5vCcTypYV0IhRu5eIpM
+	vk+6jghqKB2S3eMkuGxdJ0uBnNDgOyFCyOZTcJtCtC8Fpf8XfU872+JI4Kwino9N5kpQ86kA3J2
+	uDVrNCMipFp6/JOzezZ2N/zT5/onGJs/2DSYu0KFHNaHgoszXZlgM5l6enuYipbcsbUq6DMWm0N
+	bwDasqB+KES9Wj+GzwhfU41HgKd8vIWC1eQMnZLczDL6vvNiEsqTl
+X-Google-Smtp-Source: AGHT+IEHr6/atxC/zl3e7yt+jYahnuC7nEwPQ6xpP+Y9jMSfaWyupbIOl9QXPI6m7ug2AnL6Yho0tw==
+X-Received: by 2002:a05:622a:903:b0:48d:4887:9850 with SMTP id d75a77b69052e-4a9e9cff232mr12740001cf.19.1752091929606;
+        Wed, 09 Jul 2025 13:12:09 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a9949e8933sm101178491cf.7.2025.07.09.13.12.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 13:12:09 -0700 (PDT)
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 6E314F40068;
+	Wed,  9 Jul 2025 16:12:08 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Wed, 09 Jul 2025 16:12:08 -0400
+X-ME-Sender: <xms:GM1uaDg1yUdvIYMqmYeb-BuS32mrPR2vCj8PnaiRbd8XDz2kq8IT8Q>
+    <xme:GM1uaLj_80zLyN7ldHn_DyxqBUKvDF55ryjmGFlm74sPBZjmFJ7Y34Q1LBmLg27OY
+    Ghkg3kPZG3R5jorBg>
+X-ME-Received: <xmr:GM1uaJHo8zBgmI6Mpn8usHhf7wXVsoCvHmbe9mNAPgzAHOGdquTKmZTR8QEVv5UmjzgPQLoWvxFFY21oGiUZUdvF-Wk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefkeeglecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomhepuehoqhhunhcu
+    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
+    gvrhhnpeevgffhueevkedutefgveduuedujeefledthffgheegkeekiefgudekhffggeel
+    feenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsoh
+    hquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedq
+    udejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmh
+    gvrdhnrghmvgdpnhgspghrtghpthhtohepvdeipdhmohguvgepshhmthhpohhuthdprhgt
+    phhtthhopehlohhsshhinheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprgdrhhhinh
+    gusghorhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhhitggvrhihhhhlsehg
+    ohhoghhlvgdrtghomhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
+    ghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesph
+    hrohhtohhnmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrshgrhhhirhhohieskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepnhgrthhhrghnsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:GM1uaOAgAFWiJdSSlgm1QzaFgbuG35F-L_P5H6hWSHMtFrjCI5gw3A>
+    <xmx:GM1uaF-F8S-qaK4b4cMXbq4svP7HP4AgS0zXlYH8RLPR_HV2fdWhAQ>
+    <xmx:GM1uaBjfjdsAwYu9XIRRrkHqWL-cweXUJt_EmBxycJBUICtCj3VzEg>
+    <xmx:GM1uaOYlPNblUJWo_OqeSfYA62yHFsXomvt9UfwNNm5YrJEJdMZYzQ>
+    <xmx:GM1uaDQfddBIRQ-Fd1MMSuJ0XH17dCGgf2sOO0QI2K-gJfRXwXZha-D2>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 9 Jul 2025 16:12:07 -0400 (EDT)
+Date: Wed, 9 Jul 2025 13:12:06 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Trevor Gross <tmgross@umich.edu>,
+	Adam Bratschi-Kaye <ark.email@gmail.com>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	Greg KH <gregkh@linuxfoundation.org>, Fiona Behrens <me@kloenk.dev>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	linux-modules@vger.kernel.org
+Subject: Re: [PATCH v15 1/7] rust: sync: add `SetOnce`
+Message-ID: <aG7NFizFGeFBSXY-@tardis.local>
+References: <20250707-module-params-v3-v15-0-c1f4269a57b9@kernel.org>
+ <20250707-module-params-v3-v15-1-c1f4269a57b9@kernel.org>
+ <CAH5fLgiKo=jN_V5cAe_AJqxxp7mQWqhKx7knkEj6js3yiU9sqA@mail.gmail.com>
+ <KNYMPkLfLvLb8ocrLqSmk-5hRGhRaaPQ2sDHN5JoPAUxYJWlHNiOW4HRmtDDGkoMRfNwpziT8mkRzlPkdxDVaQ==@protonmail.internalid>
+ <aGvkFbs5caxLSQxa@Mac.home>
+ <877c0joyfo.fsf@kernel.org>
+ <lsO9eeoR7qtPcjbhow9WfkrujYbxWh9JwZCHDO9K4VU6gtpl4pNYJisLImSI7OrRxW7qu-soEy9zjF_3snXZGQ==@protonmail.internalid>
+ <DB6JZBUSWGKX.3M3M5TSWPLLFN@kernel.org>
+ <87ple9lkjr.fsf@kernel.org>
+ <DB7QEZNTH2SB.SSRG5H7TXZZT@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DB7QEZNTH2SB.SSRG5H7TXZZT@kernel.org>
 
-Am Mittwoch, 9. Juli 2025, 09:01:39 Mitteleurop=C3=A4ische Sommerzeit schri=
-eb Damon Ding:
-> Apply drm_bridge_connector helper for Analogix DP driver.
->=20
-> The following changes have been made:
-> - Remove &analogix_dp_device.connector and change
->   &analogix_dp_device.bridge from a pointer to an instance.
-> - Apply devm_drm_bridge_alloc() to allocate &analogix_dp_device that
->   contains &drm_bridge.
-> - Apply drm_bridge_connector helper to get rid of &drm_connector_funcs
->   and &drm_connector_helper_funcs.
->=20
-> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
->=20
-> ------
->=20
-> Changes in v2:
-> - For &drm_bridge.ops, remove DRM_BRIDGE_OP_HPD and add
->   DRM_BRIDGE_OP_EDID.
-> - Add analogix_dp_bridge_edid_read().
-> - Move &analogix_dp_plat_data.skip_connector deletion to the previous
->   patches.
+On Wed, Jul 09, 2025 at 08:22:16PM +0200, Benno Lossin wrote:
+> On Wed Jul 9, 2025 at 12:34 PM CEST, Andreas Hindborg wrote:
+> > "Benno Lossin" <lossin@kernel.org> writes:
+> >> On Tue Jul 8, 2025 at 10:54 AM CEST, Andreas Hindborg wrote:
+> >>> "Boqun Feng" <boqun.feng@gmail.com> writes:
+> >>>> On Mon, Jul 07, 2025 at 03:38:58PM +0200, Alice Ryhl wrote:
+> >>>>> On Mon, Jul 7, 2025 at 3:32 PM Andreas Hindborg <a.hindborg@kernel.org> wrote:
+> >>>>> >
+> >>>>> > Introduce the `SetOnce` type, a container that can only be written once.
+> >>>>> > The container uses an internal atomic to synchronize writes to the internal
+> >>>>> > value.
+> >>>>> >
+> >>>>> > Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> >>>>>
+> >>>>> LGTM:
+> >>>>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> >>>>>
+> >>>>> > +impl<T> Drop for SetOnce<T> {
+> >>>>> > +    fn drop(&mut self) {
+> >>>>> > +        if self.init.load(Acquire) == 2 {
+> >>>>> > +            // SAFETY: By the type invariants of `Self`, `self.init == 2` means that `self.value`
+> >>>>> > +            // contains a valid value. We have exclusive access, as we hold a `mut` reference to
+> >>>>> > +            // `self`.
+> >>>>> > +            unsafe { drop_in_place(self.value.get()) };
+> >>>>>
+> >>>>> This load does not need to be Acquire. It can be a Relaxed load or
+> >>>>> even an unsynchronized one since the access is exclusive.
+> >>>>
+> >>>> Right, I think we can do the similar as Revocable here:
+> >>>>
+> >>>>         if *self.init.get_mut() == 2 { }
+> >
+> > Ok, now I got it. You are saying I don't need to use the atomic load
+> > method, because I have mutable access. Sounds good.
+> >
+> > But I guess a relaxed load and access through a mutable reference should
+> > result in the same code generation on most (all?) platforms?
+> 
+> AFAIK it is not the same on arm.
+> 
+
+Right, when LTO=y, arm64 use acquire load to implement
+READ_ONCE()/atomic_read().
+
+Regards,
+Boqun
+
 > ---
->  .../drm/bridge/analogix/analogix_dp_core.c    | 169 ++++++++----------
->  .../drm/bridge/analogix/analogix_dp_core.h    |   4 +-
->  2 files changed, 80 insertions(+), 93 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers=
-/gpu/drm/bridge/analogix/analogix_dp_core.c
-> index abc64cc17e4c..fb510e55ef06 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> @@ -23,6 +23,7 @@
->  #include <drm/drm_atomic.h>
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_bridge.h>
-> +#include <drm/drm_bridge_connector.h>
->  #include <drm/drm_crtc.h>
->  #include <drm/drm_device.h>
->  #include <drm/drm_edid.h>
-> @@ -948,23 +949,13 @@ static int analogix_dp_disable_psr(struct analogix_=
-dp_device *dp)
->  	return analogix_dp_send_psr_spd(dp, &psr_vsc, true);
->  }
-> =20
-> -static int analogix_dp_get_modes(struct drm_connector *connector)
-> +static int analogix_dp_bridge_get_modes(struct drm_bridge *bridge, struc=
-t drm_connector *connector)
->  {
-> -	struct analogix_dp_device *dp =3D to_dp(connector);
-> -	const struct drm_edid *drm_edid;
-> +	struct analogix_dp_device *dp =3D to_dp(bridge);
->  	int num_modes =3D 0;
-> =20
->  	if (dp->plat_data->panel) {
->  		num_modes +=3D drm_panel_get_modes(dp->plat_data->panel, connector);
-
-here is one example where a panel_bridge would help :-)
-
-I.e. I'd think without it the code would need some sort of
-
-  	if (dp->plat_data->bridge) {
-  		num_modes +=3D drm_bridge_get_modes(dp->plat_data->bridge, connector);
-
-thing?
-
-> -	} else {
-> -		drm_edid =3D drm_edid_read_ddc(connector, &dp->aux.ddc);
-> -
-> -		drm_edid_connector_update(&dp->connector, drm_edid);
-> -
-> -		if (drm_edid) {
-> -			num_modes +=3D drm_edid_connector_add_modes(&dp->connector);
-> -			drm_edid_free(drm_edid);
-> -		}
->  	}
-> =20
->  	if (dp->plat_data->get_modes)
-
-
-
+> Cheers,
+> Benno
+> 
 
