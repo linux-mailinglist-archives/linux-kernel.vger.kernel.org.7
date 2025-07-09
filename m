@@ -1,105 +1,121 @@
-Return-Path: <linux-kernel+bounces-723517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0FD9AFE7E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:36:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36735AFE7EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1E441BC4900
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:36:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24C881BC4D71
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767692D5C89;
-	Wed,  9 Jul 2025 11:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D4B2957C1;
+	Wed,  9 Jul 2025 11:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g+8o9/H9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQ59+//l"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD12528DB7B;
-	Wed,  9 Jul 2025 11:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C0629346B;
+	Wed,  9 Jul 2025 11:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752060986; cv=none; b=JBJrJgtbkvkKdw8/I68TgQj1OTzpF3QNcZYHMmP7yxf6f5UX6TRkhQJLkNVqAP2lIQ7/OT8lXNZ3j6EGjTBq0DIAx9oBLeWBNWS/JREx0qh84Ls8/QJBbl4hcKF3YNNkQoKqfYT5YFG3Sf3uIoc4b/fB4Ak4lWxwGwgxkrBy+e0=
+	t=1752061019; cv=none; b=JSRkZy3lAYreo85XcIsK6ZFcjWHQprX9FJBBqOAxJK6N3TzzS6jgKU1PPZNl0Q4qAGOS6MVSL4wUI2E3e6SZoyFSljnJZlEA5/I0Ahb0F0R+BQQ2ukFMRAcYRsn4GbwcgMAQK6TMlP8oFsErAEuN9Zw1d87HBBQH2rY1Hpz4uQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752060986; c=relaxed/simple;
-	bh=rnrcKNFDvtzE1G7HLcjWDoj9d1wK6tddqGGd8H1wIVc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ccu4P+IWYdz0NIIbBU43QPPgqsYAiqD/wey2mL0KlwP8JyM8Q/CTxWETlh1F802byMGf5/SYb+uGreGQLLbI6wbBWGuBx+ZznLj9MyNC3dJX432PO/2qOZM+0+vunBU1HUWbJ75XqDeocSpaWP4KQLHQV3U/baCQJBqsdyHRtao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g+8o9/H9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57450C4CEF5;
-	Wed,  9 Jul 2025 11:36:24 +0000 (UTC)
+	s=arc-20240116; t=1752061019; c=relaxed/simple;
+	bh=IoPyQsMo0CBuHSM2wjigZc657/Kn1Fz4Cn0dRzHpySQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KT0cTDs9VQYqI80zUiOjPhoCrvmLrt+ByBSzH2aCrHT0OlFF7EJTvNUTAjThCX7gxCXr/82uEnGOGXJYJlzu81bnKVBujb7z8kgfFNvSjT6tl0ct1uDdy8+xk9eC+JzUnIs1oleVjIZoWqMv5BPeSNVONRXA85tiZZUcDGg9nsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQ59+//l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF3FFC4CEEF;
+	Wed,  9 Jul 2025 11:36:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752060986;
-	bh=rnrcKNFDvtzE1G7HLcjWDoj9d1wK6tddqGGd8H1wIVc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=g+8o9/H9nux7mnifj3cg/4hXWjUlCYOROAxqeBI9sNKWoIIw/hP+LjBUh2QY10PfH
-	 KSBFyTn7yKgszc34+sBIC6PE3JLzrSLsGuco4AAfE8HDPFfMyWC+gp0JPF1bwAu25O
-	 H21Dwnv/XbO9MddF+S3qeZzEmOxkgWihsG5k6qWrrmwTcOVOkT/x6tCoFEEmPZZWHE
-	 Mgd5Bkte6LEPYZRRbEzIdoRjhJmAzALSP75K5av1JhIwtMNngq+Cr9WLMQ8xzv2NrF
-	 X+ILBo5z9HYm4n/5CEmXtIGTiePq6wLbPtFsBHd1t7XHHLtlGCKKuxLXHSZLWkDBGK
-	 MhiIXQhz2Jr/w==
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
- Rahul Bedarkar <rahulbedarkar89@gmail.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-sound@vger.kernel.org, linux-mips@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <242832f225ae68018111648ea9934dc059741567.1751989463.git.geert+renesas@glider.be>
-References: <242832f225ae68018111648ea9934dc059741567.1751989463.git.geert+renesas@glider.be>
-Subject: Re: [PATCH] ASoC: img: Imagination Technologies sound should
- depend on MIPS
-Message-Id: <175206098407.674109.10318726327489121881.b4-ty@kernel.org>
-Date: Wed, 09 Jul 2025 12:36:24 +0100
+	s=k20201202; t=1752061019;
+	bh=IoPyQsMo0CBuHSM2wjigZc657/Kn1Fz4Cn0dRzHpySQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kQ59+//lk9y7bLmOt3bbemmvloK2T6R+NsmRNtccHDcA0NTNlULC/8NGDrEuzITsj
+	 tUTrdSflhmddfxD3Xmvb74zgyH5d+YkYJoVMXOzxj1qfRVKnMVgbhoROoKBt5okR3i
+	 VZonXW+ziubWjMRgivNsY7kwzgVJTZIIfsuspGT7PUfQOHESG945+u1WVDXzR6KuvZ
+	 s8BEVuF34zsNDMjCgzmfhmvAFv1OEmz1onZ52D7oRx6loshp1w2Ug7t3o4E6xmHpEY
+	 PtruC0SO0aExl86sgUBZ5NHwZ7hXrDyhognUugvjvhYT/PHA8oZ7cBKm3Qaqh8Vi+Y
+	 wojGQ3ZRBLDWA==
+Date: Wed, 9 Jul 2025 13:36:56 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: neeraj.upadhyay@kernel.org
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, paulmck@kernel.org,
+	joelagnelf@nvidia.com, boqun.feng@gmail.com, urezki@gmail.com,
+	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com, qiang.zhang1211@gmail.com,
+	neeraj.iitr10@gmail.com, neeraj.upadhyay@amd.com
+Subject: Re: [PATCH rcu 3/5] rcu: Enable rcu_normal_wake_from_gp on small
+ systems
+Message-ID: <aG5UWDQ0L3Utm8wT@localhost.localdomain>
+References: <20250709104118.15532-1-neeraj.upadhyay@kernel.org>
+ <20250709104118.15532-4-neeraj.upadhyay@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-07fe9
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250709104118.15532-4-neeraj.upadhyay@kernel.org>
 
-On Tue, 08 Jul 2025 17:47:29 +0200, Geert Uytterhoeven wrote:
-> Before, all Imagination sound symbols were gated by the SND_SOC_IMG
-> symbol, offering the user a simple option to hide them all.  After the
-> removal of this gate symbol, all symbols are exposed to the user, even
-> when configuring a kernel for a non-Imagination platform.
-> Fix this by adding a dependency on MIPS, to prevent asking the user
-> about these drivers when configuring a kernel for a different
-> architecture.
+Le Wed, Jul 09, 2025 at 04:11:16PM +0530, neeraj.upadhyay@kernel.org a écrit :
+> From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
 > 
-> [...]
+> Automatically enable the rcu_normal_wake_from_gp parameter on
+> systems with a small number of CPUs. The activation threshold
+> is set to 16 CPUs.
+> 
+> This helps to reduce a latency of normal synchronize_rcu() API
+> by waking up GP-waiters earlier and decoupling synchronize_rcu()
+> callers from regular callback handling.
+> 
+> A benchmark running 64 parallel jobs(system with 64 CPUs) invoking
+> synchronize_rcu() demonstrates a notable latency reduction with the
+> setting enabled.
+> 
+> Latency distribution (microseconds):
+> 
+> <default>
+>  0      - 9999   : 1
+>  10000  - 19999  : 4
+>  20000  - 29999  : 399
+>  30000  - 39999  : 3197
+>  40000  - 49999  : 10428
+>  50000  - 59999  : 17363
+>  60000  - 69999  : 15529
+>  70000  - 79999  : 9287
+>  80000  - 89999  : 4249
+>  90000  - 99999  : 1915
+>  100000 - 109999 : 922
+>  110000 - 119999 : 390
+>  120000 - 129999 : 187
+>  ...
+> <default>
+> 
+> <rcu_normal_wake_from_gp>
+>  0      - 9999  : 1
+>  10000  - 19999 : 234
+>  20000  - 29999 : 6678
+>  30000  - 39999 : 33463
+>  40000  - 49999 : 20669
+>  50000  - 59999 : 2766
+>  60000  - 69999 : 183
+>  ...
+> <rcu_normal_wake_from_gp>
+> 
+> Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
+> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> Signed-off-by: Neeraj Upadhyay (AMD) <neeraj.upadhyay@kernel.org>
 
-Applied to
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: img: Imagination Technologies sound should depend on MIPS
-      commit: 68e4dadacb7faa393b532b41bbf99a2dbfec3b1b
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+-- 
+Frederic Weisbecker
+SUSE Labs
 
