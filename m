@@ -1,116 +1,111 @@
-Return-Path: <linux-kernel+bounces-723162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D805AFE3DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:17:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 765BDAFE3DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:18:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFA315875CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:17:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64507166268
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E19275867;
-	Wed,  9 Jul 2025 09:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813C0265292;
+	Wed,  9 Jul 2025 09:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CKwZzreb"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kjG96jQr"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F17B22DA0B;
-	Wed,  9 Jul 2025 09:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9406735897
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 09:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752052648; cv=none; b=PIMQ338tTcPLsjGi2heL083HHQHrvv9SRRIQ6GANtpqQJqTLLk3zOly5Jma7gPWu4oy67zbEvds29Xj0w913dhZ228mqBJr/oem4PPi3rhZg5iexrn/Yp8skHIjCTMOgd3KP8dLpyP5DhFYf6wFnqdzUHUqlu/rc8CcjpCKdbcs=
+	t=1752052679; cv=none; b=jnBc+8Gg1j1GjlYRAKUjrXNRruPLEnB7BN3tghDu/BIKimyeGZNMo6OfJrrAA6eFGUKYCcujrKUdrFnaJMjzYp6EZaa9BCGsq/q5bmpZZgqmw/nsiLp/QEZU6I6QjQg4/UmKVqMz8hIUr8ipD0egvzSnC2VIrz0ojr4c4ETjpnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752052648; c=relaxed/simple;
-	bh=SIOEIsn/iRCibzTWzmm4/iFa3isGrOWve09IOOTV9jI=;
+	s=arc-20240116; t=1752052679; c=relaxed/simple;
+	bh=6NLJOD4mUSJZOJBrGweRXFb4jvQpuTuvqn99WvuAma0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qo+88jYyRzyPEPJcte6P09QNgGmy1IZqzp/D4BqjMaZvE4E+ij8bg3iSwJTnih0HkWFc1Cdl0Jps4zztsRqpwHnd/KjdnpHjNfHLJUmNMCxdpSQzmPWsNgXG40uCmEsGGsE6NjhLBU/XGByHWxcfcJYyeIZ+EAiWjQeRfUtR/Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CKwZzreb; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E3CEE40E021D;
-	Wed,  9 Jul 2025 09:17:21 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id TnW2dmxPC4_5; Wed,  9 Jul 2025 09:17:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1752052638; bh=pyoSEQoZpwnpz3kLRoC/C4gNE9qlmORS6snlCTAOP4o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CKwZzrebDbh5/eUDfyXS8ouLooCpgBdmvNe8Hsp0OxLuhjx/IQQb0N58KUo7CEciR
-	 su16cWlEMTMfcZb99alYMJJ05bgaNTn8VCNp3tu5HdkLbnBVUToWq+miEIDkcmfCbZ
-	 KRKZ1MRRf999iu+VeUXSbINApEb8nFup+1YUKBQtmxOOcWEOro4rp9bY3Dg+S7Ns1z
-	 iHFK42bL4gjXFopvcpZNPY513S7bW0sIMmHQk2bmZuQFYkKdum6Xnix+JyIgywG+dd
-	 a4/KjiQZ+XBc6Q7uVoQBXRRzWhuVN6+KAdMIPN+/VgAgcblIqjnQ5N5/5Ad04P2Sf6
-	 h0nek8vNIZ9OvFP8jrD0ru4sFuBGOC5ykoFHFm7/NZgtXKi8boGAic7yfsAS2oFnps
-	 UEvUyGWA6PPzDFrE6y+sFi/lUfvV4qL3iGb5lImU/OYL2FuvyRskN+LyPxselrNhB6
-	 5/V4FVsPNMmLe7IeFkyZQc76+f3nEZuvTzniH7S9otUZnaRjLazHcQRyORGuX9/eZA
-	 lK17/WfRXPoUJu0hwZ8bT7J1MRPzEw1bSjpNcqTz7FRBqCrP+N2XtNCfMoTsIkvTn5
-	 FISFI/TQJ3ozxZxYZQkj6YreOPsWLRyMxAFpPwgm4REH0PtLNOgwb9gJPdr6z8sQ3m
-	 671dt+834mbdvsfkNmMEnpo4=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id F070240E0221;
-	Wed,  9 Jul 2025 09:17:09 +0000 (UTC)
-Date: Wed, 9 Jul 2025 11:17:02 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the tip tree
-Message-ID: <20250709091702.GAaG4zjs-otcGsMyY2@fat_crate.local>
-References: <20250708160037.2ac0b55e@canb.auug.org.au>
- <20250707234817.d09fc28a3510b23c31c461b4@linux-foundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FR+/G+lY2Vv76kSxI3g/6T+a0d69Rrzcs75wPpFaAuADGbfNWuIkMBVaStnSedAZphaI8gnnyocjaXqxcjavJ9ft3y6UTlbNHdLKxJOSVSS4Ndsr4ROoImecg/l/c+WT+VTuSQ0g+dgzWqimkQruu586CscM6Z2nH7ka8qVuTf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kjG96jQr; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=hu+SDxzRoyWfWTYHxn/gl+38SKrFmF6sGQthxNefc7g=; b=kjG96jQr8GyqfcM0QJ/FVh2q2i
+	1C8WDcsf/jE514W9O8s38D0ORKUsxwsKzGr/SDsWCn3WzSj3HLCcqcwZZHEU4ehk62ccJCnjz2gvu
+	lvxf3VjLtTwqjWCqmgT7t5DyFjf9AuS5ket1fcACzA5mtA8Qc7BWheONqmD7ycYf/BAWvTk7u1fQY
+	XkaXLU+h4izmbiJaDQ0t4Om02iblznmJhP+Ga3WHUCKl3Nf6hTQkvRmPmDbThry2xG6LHFJ9VxA0F
+	7pi9lCPu5WJa/xa53MlspNI2qNL1566WzlBhMpaODoGJuNpOgFRiQRQfUmL1Fokwnaa0esgcXxo67
+	1A7bi1Qg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uZQvu-00000008qRs-3bm3;
+	Wed, 09 Jul 2025 09:17:43 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4404530029B; Wed, 09 Jul 2025 11:17:41 +0200 (CEST)
+Date: Wed, 9 Jul 2025 11:17:41 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, dhaval@gianis.ca, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] sched/fair: Fix NO_RUN_TO_PARITY case
+Message-ID: <20250709091741.GH1613200@noisy.programming.kicks-ass.net>
+References: <20250708165630.1948751-1-vincent.guittot@linaro.org>
+ <20250708165630.1948751-3-vincent.guittot@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250707234817.d09fc28a3510b23c31c461b4@linux-foundation.org>
+In-Reply-To: <20250708165630.1948751-3-vincent.guittot@linaro.org>
 
-On Mon, Jul 07, 2025 at 11:48:17PM -0700, Andrew Morton wrote:
-> On Tue, 8 Jul 2025 16:00:37 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > Hi all,
-> > 
-> > The following commit is also in the mm-hotfixes tree as a different commit
-> > (but the same patch):
-> > 
-> >   f339770f60d9 ("Revert "sched/numa: add statistics of numa balance task"")
-> > 
-> > This is commit
-> > 
-> >   63afea878dc4 ("Revert "sched/numa: add statistics of numa balance task"")
-> > 
-> > in the mm-hotfixes tree.
-> 
-> Thanks, I'll drop the mm.git copy.
+On Tue, Jul 08, 2025 at 06:56:26PM +0200, Vincent Guittot wrote:
 
-So we actually started adding it to tip for the time being until you send it
-to Linus so that our testing doesn't fail - it was reproducing reliably on my
-test machines.
+>  static inline void set_protect_slice(struct sched_entity *se)
+>  {
+> -	se->vlag = se->deadline;
+> +	u64 quantum = se->slice;
+> +
+> +	if (!sched_feat(RUN_TO_PARITY))
+> +		quantum = min(quantum, normalized_sysctl_sched_base_slice);
+> +
+> +	if (quantum != se->slice)
+> +		se->vprot = min_vruntime(se->deadline, se->vruntime + calc_delta_fair(quantum, se));
+> +	else
+> +		se->vprot = se->deadline;
+>  }
 
-So can you pls send it to Linus so that we can drop it from tip?
+I've done s/quantum/slice/ on the whole series. In the end this thing:
 
-Thx. 
+> +static inline bool resched_next_quantum(struct cfs_rq *cfs_rq, struct sched_entity *curr)
 
--- 
-Regards/Gruss,
-    Boris.
+is gone, and *_protect_slice() has slice in the name, and its mostly
+assigned from slice named variables.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Final form ends up looking like so:
+
+static inline void set_protect_slice(struct cfs_rq *cfs_rq, struct sched_entity *se)
+{
+	u64 slice = normalized_sysctl_sched_base_slice;
+	u64 vprot = se->deadline;
+
+	if (sched_feat(RUN_TO_PARITY))
+		slice = cfs_rq_min_slice(cfs_rq);
+
+	slice = min(slice, se->slice);
+	if (slice != se->slice)
+		vprot = min_vruntime(vprot, se->vruntime + calc_delta_fair(slice, se));
+
+	se->vprot = vprot;
+}
+
+I'll run a few compiles and then push out to queue/sched/core (and stick
+the ttwu bits in queue/sched/ttwu -- as I should've done earlier).
 
