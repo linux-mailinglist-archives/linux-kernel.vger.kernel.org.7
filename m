@@ -1,128 +1,154 @@
-Return-Path: <linux-kernel+bounces-723122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A27DBAFE332
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:51:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 108E1AFE4CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00431567442
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:51:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D46C25662D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7018127FD72;
-	Wed,  9 Jul 2025 08:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1258288524;
+	Wed,  9 Jul 2025 10:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ODaX+gjq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="crM7sDQ1"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A8C272E63;
-	Wed,  9 Jul 2025 08:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A2B28469C
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 10:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752051089; cv=none; b=ssmfZMKY7JAhTSPGAiuh+Uu9IfZt4xw/TqFtOP2esoBd0txO/tHyUTH8QER0PlScp3Wh1HdCVyUaPNcrcBk5GS9OcUtTTQzZ13nIzsBl9EAJRSBcKxovlC1KDZ+NLKB7DOkjta/vqDX82e6qZumwxdo8UQzuTS/cl/STyZ3j1rg=
+	t=1752055240; cv=none; b=SJm/iP0tu1wsidjdGCWEaQlF9H0WiW+EeSkO94Nqm5G/51ltTLBNl/whfjNURYpfeZmtPfN1MEq20sv0YQQgQlOjVII3x9iJDXOBqVyd9xIVN4jcd6wGMcDjN89X0eALw2K2NauX1QrZlmZI2KpBXFBRCsnfL4p9Gg0UrwoZIUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752051089; c=relaxed/simple;
-	bh=JQTxYbGVI0kyMgtWKjaALo2ip/NPE/mLIqYCKujmZFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N7OMmSOSLx8oZJCQanjXjJbI/ZaHuacIVjWtOOqgheSkyCdVYt47GlJ0HUOLsXhjuHiCgH0G272USC4MhCjYOK56Lq0ZUmM8huq/cOm0T9j8r57WqZeimcYpVyyVvPvfQ8UVWWjgDbBwOPTwxDTU1+xU7KmGyYuBAuTlXyD3F2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ODaX+gjq; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752051088; x=1783587088;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JQTxYbGVI0kyMgtWKjaALo2ip/NPE/mLIqYCKujmZFk=;
-  b=ODaX+gjq2nmiSlaDYubf75A5fiTD/otSDEJxXYLt7rUimTG51N61SN87
-   +o+JhyzDvdwp/oKKLXX1xegq3+Z6Wg4CId7/k8sk+Iq1TRsnUz6/VmFVb
-   YbRhf73jmh0npv9qKqe9U1tNiLacHLyz/Sk2vF/VH30+Ks9g+JmpkII2r
-   zD0wN1CttAm/PtzS69Q0UFzBM+aq16Uq+KH2y51AyHXRXNST49RtkY8Md
-   gy3W1c4eq6ihtCfsnKOaxNBOIadic7dpjN4R1HdCkk47bm+LTDlziMWNY
-   ZcObg6PgNbRrDqU2/VUhHmygO2qIfU5/WwPw3N3WJR5fnZ9kQYCKEvvzH
-   g==;
-X-CSE-ConnectionGUID: Bm5BYVqVTSOSjKzvoMvmzw==
-X-CSE-MsgGUID: k7zCvnS8RZSf1vVFv+GDDg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54394492"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="54394492"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 01:51:27 -0700
-X-CSE-ConnectionGUID: 9WrJdixiThSvKGCMCgv5Hw==
-X-CSE-MsgGUID: dbVU3s+USEGesKmij1EbLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="159758771"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 01:51:25 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uZQWQ-0000000DoU0-0RFl;
-	Wed, 09 Jul 2025 11:51:22 +0300
-Date: Wed, 9 Jul 2025 11:51:21 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Julien Stephan <jstephan@baylibre.com>,
-	Waqar Hameed <waqar.hameed@axis.com>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 06/12] iio: gyro: Remove redundant
- pm_runtime_mark_last_busy() calls
-Message-ID: <aG4tiRHySSsQq_KN@smile.fi.intel.com>
-References: <20250708231144.971170-1-sakari.ailus@linux.intel.com>
- <20250708231152.971602-1-sakari.ailus@linux.intel.com>
+	s=arc-20240116; t=1752055240; c=relaxed/simple;
+	bh=3cMxryECHbFyInj86wbRy79c+zpxeGN9+i2nNUGxS78=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=NwSwZCroHCYDaFZEDZ06a2KMiBx2yyuLf7GBAz45rlljcvIpGErNQW/kKE3jkmdR4pRuQ4GrwIRtCa37qLkA4Tng/jAaRKSEqe2cbk4RAZVY6pII1vheUsU5iYTUc6FvYhObNnPOdKVhmut2jHUEh7j5864Tdk/c01DDP6R72qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=crM7sDQ1; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250709100035epoutp03a4a2187519c7c186cc5e42903b91a911~QjPRJVjxj0724807248epoutp03R
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 10:00:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250709100035epoutp03a4a2187519c7c186cc5e42903b91a911~QjPRJVjxj0724807248epoutp03R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1752055235;
+	bh=8YjDIVkSzZ1qBfDNEzt6aiWfmZ06SFpmvJBdwg8GbFU=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=crM7sDQ1Uz9NtR7Lf5itnb9Kxo52UH9FjSGOjp2JkszPtedhMD5yYtuYLOW3diez/
+	 JPkFeY49RxYNNxrnIaqgsbyUhQeN8lHbywF+MaOZmR+G2WbWzqcQ5AR4mnJDBjOoQ2
+	 uzRfhHRw+oNiDyxGt4ThAj8UYDSsUzBnjC+ZaEg0=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250709100035epcas5p11cefc566289685aa4dadd35429e93d22~QjPQiuHEG1114111141epcas5p1k;
+	Wed,  9 Jul 2025 10:00:35 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4bcYPr5Dhtz6B9mD; Wed,  9 Jul
+	2025 10:00:32 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250709085159epcas5p15cd74d4ab9d7944eef406ce118768a84~QiTXJ9MsA0055000550epcas5p1N;
+	Wed,  9 Jul 2025 08:51:59 +0000 (GMT)
+Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250709085156epsmtip13f8f84df1a677aaa0f8edc8247250f7a~QiTUNkrE12100421004epsmtip1O;
+	Wed,  9 Jul 2025 08:51:55 +0000 (GMT)
+From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
+Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
+	<neil.armstrong@linaro.org>, <kauschluss@disroot.org>,
+	<ivo.ivanov.ivanov1@gmail.com>, <m.szyprowski@samsung.com>,
+	<s.nawrocki@samsung.com>, <linux-phy@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <20250706-grouse-of-pastoral-bloom-7d79b0@krzk-bin>
+Subject: RE: [PATCH v4 3/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 combo HS phy
+Date: Wed, 9 Jul 2025 14:21:54 +0530
+Message-ID: <07d401dbf0ae$bb0256b0$31070410$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250708231152.971602-1-sakari.ailus@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJAgQZ9LFXBZrDskwNBYris6jFv1AJNRgOcAqL7pisBlv/N8LMsH/TA
+Content-Language: en-in
+X-CMS-MailID: 20250709085159epcas5p15cd74d4ab9d7944eef406ce118768a84
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250701120002epcas5p2c4d728d599a819057bcc40b724881276
+References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
+	<CGME20250701120002epcas5p2c4d728d599a819057bcc40b724881276@epcas5p2.samsung.com>
+	<20250701120706.2219355-4-pritam.sutar@samsung.com>
+	<20250706-grouse-of-pastoral-bloom-7d79b0@krzk-bin>
 
-On Wed, Jul 09, 2025 at 02:11:52AM +0300, Sakari Ailus wrote:
-> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> pm_runtime_mark_last_busy().
+Hi Krzysztof,
 
-...
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: 06 July 2025 03:12 PM
+> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com;
+> andre.draszik=40linaro.org; peter.griffin=40linaro.org; neil.armstrong=40=
+linaro.org;
+> kauschluss=40disroot.org; ivo.ivanov.ivanov1=40gmail.com;
+> m.szyprowski=40samsung.com; s.nawrocki=40samsung.com; linux-
+> phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-s=
+amsung-
+> soc=40vger.kernel.org; rosa.pila=40samsung.com; dev.tailor=40samsung.com;
+> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
+> selvarasu.g=40samsung.com
+> Subject: Re: =5BPATCH v4 3/6=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
+dd
+> ExynosAutov920 combo HS phy
+>=20
+> On Tue, Jul 01, 2025 at 05:37:03PM +0530, Pritam Manohar Sutar wrote:
+> > This phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
+>=20
+> What is =22this=22? You add here HS PHY, so HS is 3.1?
+>=20
 
->  	if (on)
->  		ret = pm_runtime_get_sync(dev);
-> -	else {
-> -		pm_runtime_mark_last_busy(dev);
-> +	else
->  		ret = pm_runtime_put_autosuspend(dev);
-> -	}
->  
->  	if (ret < 0) {
+=22this=22 means =22combo phy=22. Combo phy is combination of 2 types of th=
+e phys.=20
+1. one supports only USB3.1 SSP+ and denoted as =22samsung,exynosautov920-u=
+sb31drd-combo-ssphy=22 as in patch no 5 (combo SS phy)
+2. another supports only USB2.0 HS and termed as =22samsung,exynosautov920-=
+usbdrd-combo-hsphy=22 as in this patch (combo HS phy)
 
-More potential users! So, perhaps introduce a helper and then convert
-altogether to use a new
+> If this is the same phy, why are you adding another compatible?
 
-/// choose better name
-static inline int pm_runtime_toggle_sync(dev, on)
-{
-	if (on)
-		return pm_runtime_get_sync(dev);
-	else // yes, I know it's redundant, just for the better view
-		return pm_runtime_put_autosuspend(dev);
-}
+As explained earlier (even in cover letter), there are 3 types of the phys =
+in this SoC.
+1. one is simmilar with exynos850 and termed as =22samsung,exynosautov920-u=
+sbdrd-phy=22 as mentioned in patch no.1
+2. two phys are in combo phys as explained above (patch no 3 =5Bcombo HS ph=
+y=5D and 5=5Bcombo SS phy=5D)
+		=09
+NOTE: hs phy in combo phy in =22NOT=22 same as phy (patch no. 1 which is si=
+milar with exynos850).=20
+		=09
+These three phys (usbdrd-phy, combo-hsphy, combo-ssphy) are totally deferen=
+t =22NOT=22 same, hence added 3 three compatible for three phys.
 
--- 
-With Best Regards,
-Andy Shevchenko
+>=20
+> Best regards,
+> Krzysztof
 
 
 
