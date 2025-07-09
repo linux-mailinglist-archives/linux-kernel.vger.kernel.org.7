@@ -1,219 +1,130 @@
-Return-Path: <linux-kernel+bounces-723816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C208AFEB3D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:08:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41729AFEB2E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63972188C5F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:04:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45815548433
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B332E972B;
-	Wed,  9 Jul 2025 13:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08EA2E9EC2;
+	Wed,  9 Jul 2025 13:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Kvta3z+C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4tBlqORK";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Kvta3z+C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4tBlqORK"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQBXTkG/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498F72E92D5
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 13:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BCB2E9EB3;
+	Wed,  9 Jul 2025 13:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752069560; cv=none; b=NSz2cVkTJw9jS+VMFTKk27Xc+yN7+gATbH8Li/qSRyH7VQR1SuO5vN2xBDbIe8X3GgW67mQ2J/qH8LzDTg+Pj6AHFxBxMkjGDp54iisB7in5KCvu3Wizd82GRS2gcThvcFkfC/SEIFJD7n9YDFEefdcZWZWCcatmjY6EMi7q0OI=
+	t=1752069594; cv=none; b=Hwa/cQBv0qV89IsQe8vvpGijCgi5S6zW3cjki+C/MmQVdXzJUG1Q18fTWGc2Ag1+RlWyNbmV9BgDurXn3drP6hdZEClzq4zLNLcM/rYgbmw+MbBUhQPX68ipc4m2G43N7j0nMoW4+0EahcwGIZBDWYwSSMBSZtQ6sOiXXmVph54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752069560; c=relaxed/simple;
-	bh=W44Dx8CEiJqAGNoNDQUtc/NEP3Hw1jy06vJzBk5AcI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lfmFj7ooTd4NmdbxYeTTodqApehsh9AgNNYHu17yZzMezFLWARgAv6POSrOhfrSlS8UABR9ttM+dI60awgPs99rG83kYQbKekupIsGYVkHFemz2TQehwoF1g5R5qTsyMOBkBkR00LIeXkN9kWPsg0iewMyq9J04ZK6OCxueuzYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Kvta3z+C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4tBlqORK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Kvta3z+C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4tBlqORK; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 604A72117F;
-	Wed,  9 Jul 2025 13:59:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752069555; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DMPCr6UINKuwRmQCKzwzD7Kn5z/OexCUwjNTVqkIBlo=;
-	b=Kvta3z+C1eqTOTttOm8SL+69h173JX6lByKFQPdeN8k5ywThIAsO2p755FsZBqmJYIDiC7
-	yxdpqzQOCpVDa0QI95l2u6KUsBueEYfGXlH14k//aWs4g/QbIxHUFZbYqyBosp9KM3wim+
-	OK+7gaRsBTRCHklQumEbYWN3+4+Zm5M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752069555;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DMPCr6UINKuwRmQCKzwzD7Kn5z/OexCUwjNTVqkIBlo=;
-	b=4tBlqORKs+wv7oWchEAKjeSXcRqwvmGMvgvf7Rpwk+llfITL7lHgYuDldHRz2nJ3lYm8Tx
-	Xb06hZFakHm5uYDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Kvta3z+C;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=4tBlqORK
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1752069555; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DMPCr6UINKuwRmQCKzwzD7Kn5z/OexCUwjNTVqkIBlo=;
-	b=Kvta3z+C1eqTOTttOm8SL+69h173JX6lByKFQPdeN8k5ywThIAsO2p755FsZBqmJYIDiC7
-	yxdpqzQOCpVDa0QI95l2u6KUsBueEYfGXlH14k//aWs4g/QbIxHUFZbYqyBosp9KM3wim+
-	OK+7gaRsBTRCHklQumEbYWN3+4+Zm5M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1752069555;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DMPCr6UINKuwRmQCKzwzD7Kn5z/OexCUwjNTVqkIBlo=;
-	b=4tBlqORKs+wv7oWchEAKjeSXcRqwvmGMvgvf7Rpwk+llfITL7lHgYuDldHRz2nJ3lYm8Tx
-	Xb06hZFakHm5uYDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 52743136DC;
-	Wed,  9 Jul 2025 13:59:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id iFkZFLN1bmjhZAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 09 Jul 2025 13:59:15 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E8D0DA09C3; Wed,  9 Jul 2025 15:59:10 +0200 (CEST)
-Date: Wed, 9 Jul 2025 15:59:10 +0200
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, yi.zhang@huawei.com, 
-	yangerkun@huawei.com, libaokun1@huawei.com
-Subject: Re: [PATCH] ext4: fix inode use after free in ext4_end_io_rsv_work()
-Message-ID: <oluows6umr337xas6i6tgq37t426px22rxyujl752xounwkfr5@zxizoujhnbe6>
-References: <20250708111504.3208660-1-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1752069594; c=relaxed/simple;
+	bh=Erl57mOb0kxqnr2sSmE9JhyZZwqRc4TQufilDF+qT7g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dVT4mat3jVUR5Dfk9azuE2CvGrOvCcoV8QH7mQZdHVyebHXi4HEDClI8Q2ys2N6APsbRZagwm8oeOqNTpiCbOamD3BJh4WksYTYNgvUYXRCdYRGM6gDGcKkCvffl4j9IgYe+u0em9ycETaQ2qJRhiWEy1owI/xrauQgoLHBoyc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQBXTkG/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBB48C4CEF1;
+	Wed,  9 Jul 2025 13:59:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752069594;
+	bh=Erl57mOb0kxqnr2sSmE9JhyZZwqRc4TQufilDF+qT7g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YQBXTkG/y16NnpbS8TcslnX9zf+nm02zKDz0kS1U+Ttt9o73O0iiiDb6GX4aRflcx
+	 wsxt2P+jGBM1EKLjdJnQdgPcHEb/7ghEYdyuJFZVtfKgnSsCf5PYF68569vW5VqerK
+	 Jodm5emt1ltKA0VJVILQUEmzqG96P/ZEKwkyb2rcw6j3hFFEH+EpUhUE3T/k3QbAEY
+	 y9LHXChHzArLHoeWL++RMqHkokDP6okvJN46eAyfRf+QZo4EySBM1+xx2yVn7yVjIB
+	 zH+iYrL7rwPzAnAAiKPXv3NwJ+VHf5rGg46Sv616Eg1Rpofp/2t8OtvSetkT5fQ8CZ
+	 yhTNUBRVrgqKw==
+Message-ID: <c2cec176-007b-4944-b72e-ce27290c98e0@kernel.org>
+Date: Wed, 9 Jul 2025 15:59:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250708111504.3208660-1-libaokun@huaweicloud.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 604A72117F
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] efi: add ovmf debug log driver
+To: Ard Biesheuvel <ardb@kernel.org>, Gerd Hoffmann <kraxel@redhat.com>
+Cc: linux-efi@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+References: <20250708125624.734132-1-kraxel@redhat.com>
+ <CAMj1kXHd6__0Hcu1UyK+1obsK3bNsQh=1uBVWoaNsX1iTLx6CA@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CAMj1kXHd6__0Hcu1UyK+1obsK3bNsQh=1uBVWoaNsX1iTLx6CA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue 08-07-25 19:15:04, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
+On 08/07/2025 15:06, Ard Biesheuvel wrote:
+> On Tue, 8 Jul 2025 at 22:56, Gerd Hoffmann <kraxel@redhat.com> wrote:
+>>
+>> Recent OVMF versions (edk2-stable202508 + newer) can write their debug
+>> log to a memory buffer.  This driver exposes the log content via sysfs
+>> (/sys/firmware/efi/ovmf_debug_log).
+>>
+>> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+>> ---
+>>  include/linux/efi.h                   |   2 +
+>>  drivers/firmware/efi/efi.c            |   8 ++
+>>  drivers/firmware/efi/ovmf-debug-log.c | 136 ++++++++++++++++++++++++++
+>>  drivers/firmware/efi/Kconfig          |   8 ++
+>>  drivers/firmware/efi/Makefile         |   1 +
+>>  5 files changed, 155 insertions(+)
+>>  create mode 100644 drivers/firmware/efi/ovmf-debug-log.c
+>>
 > 
-> In ext4_io_end_defer_completion(), check if io_end->list_vec is empty to
-> avoid adding an io_end that requires no conversion to the
-> i_rsv_conversion_list, which in turn prevents starting an unnecessary
-> worker. An ext4_emergency_state() check is also added to avoid attempting
-> to abort the journal in an emergency state.
-> 
-> Additionally, ext4_put_io_end_defer() is refactored to call
-> ext4_io_end_defer_completion() directly instead of being open-coded.
-> This also prevents starting an unnecessary worker when EXT4_IO_END_FAILED
-> is set but data_err=abort is not enabled.
-> 
-> This ensures that the check in ext4_put_io_end_defer() is consistent with
-> the check in ext4_end_bio(). Otherwise, we might add an io_end to the
-> i_rsv_conversion_list and then call ext4_finish_bio(), after which the
-> inode could be freed before ext4_end_io_rsv_work() is called, triggering
-> a use-after-free issue.
-> 
-> Fixes: ce51afb8cc5e ("ext4: abort journal on data writeback failure if in data_err=abort mode")
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Thanks, I've queued this up now.
 
-Looks good. Feel free to add:
+Giving people 10 minutes for review?
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/page-io.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-> index 179e54f3a3b6..3d8b0f6d2dea 100644
-> --- a/fs/ext4/page-io.c
-> +++ b/fs/ext4/page-io.c
-> @@ -236,10 +236,12 @@ static void dump_completed_IO(struct inode *inode, struct list_head *head)
->  
->  static bool ext4_io_end_defer_completion(ext4_io_end_t *io_end)
->  {
-> -	if (io_end->flag & EXT4_IO_END_UNWRITTEN)
-> +	if (io_end->flag & EXT4_IO_END_UNWRITTEN &&
-> +	    !list_empty(&io_end->list_vec))
->  		return true;
->  	if (test_opt(io_end->inode->i_sb, DATA_ERR_ABORT) &&
-> -	    io_end->flag & EXT4_IO_END_FAILED)
-> +	    io_end->flag & EXT4_IO_END_FAILED &&
-> +	    !ext4_emergency_state(io_end->inode->i_sb))
->  		return true;
->  	return false;
->  }
-> @@ -256,6 +258,7 @@ static void ext4_add_complete_io(ext4_io_end_t *io_end)
->  	WARN_ON(!(io_end->flag & EXT4_IO_END_DEFER_COMPLETION));
->  	WARN_ON(io_end->flag & EXT4_IO_END_UNWRITTEN &&
->  		!io_end->handle && sbi->s_journal);
-> +	WARN_ON(!io_end->bio);
->  
->  	spin_lock_irqsave(&ei->i_completed_io_lock, flags);
->  	wq = sbi->rsv_conversion_wq;
-> @@ -318,12 +321,9 @@ ext4_io_end_t *ext4_init_io_end(struct inode *inode, gfp_t flags)
->  void ext4_put_io_end_defer(ext4_io_end_t *io_end)
->  {
->  	if (refcount_dec_and_test(&io_end->count)) {
-> -		if (io_end->flag & EXT4_IO_END_FAILED ||
-> -		    (io_end->flag & EXT4_IO_END_UNWRITTEN &&
-> -		     !list_empty(&io_end->list_vec))) {
-> -			ext4_add_complete_io(io_end);
-> -			return;
-> -		}
-> +		if (ext4_io_end_defer_completion(io_end))
-> +			return ext4_add_complete_io(io_end);
-> +
->  		ext4_release_io_end(io_end);
->  	}
->  }
-> -- 
-> 2.46.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Best regards,
+Krzysztof
 
