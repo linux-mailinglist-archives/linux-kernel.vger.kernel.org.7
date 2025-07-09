@@ -1,121 +1,496 @@
-Return-Path: <linux-kernel+bounces-723432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4A55AFE69F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:00:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C29AFE6B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0DE2188A199
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:59:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65E803BA001
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D6C28D8EB;
-	Wed,  9 Jul 2025 10:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B7F28DF08;
+	Wed,  9 Jul 2025 10:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X7jDIuaX"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="d+3bQ99j"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169F227E05B
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 10:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B162A286892;
+	Wed,  9 Jul 2025 10:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752058732; cv=none; b=Q0u6DjcZJsoWhcHJg+NNohedM+BfWfSawobQ+8dasnXX6+tyoHpv6WLE3JuoRn8lAKTBcfG2zQJtVwE7pSjVI8bsv5VVro0iYZuXkucYeJ8/IGi/b8rcyPumIDLBzCb7H/mjCkSAGCmAmL8ASKARtoF5JW8eA4eBK3ijBnQLzbQ=
+	t=1752058748; cv=none; b=AEzgfgTXVFPH+xz5X4kiV/Z5ruZUEhYToIUqcVyobuHKLkS4X3IhNPYE6aZ/p7RrXs8Jb0MAh9sZrExH2bIGBE0IvKTpsJMWAxOaJh/FX9SrvmevR8Pa6lSSAAszlGJ431n7mHYdvScaNoQyYkadbfHOU8Z8UGNu6BGCFxJjo9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752058732; c=relaxed/simple;
-	bh=gHzWcOCz3sc3VIt6v1K7pqU3nk+zsaBzIN3PIAfwD0c=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OIinJWajB4AhFPAhaqZkDE7TEBCmIqNTYmYPAhUi+zF34zxjX6tubfPEGkWUuY9Yca7cY6wuQqDNhMoDTyPWahsfmLVt8bgpkJDOrXfphioqd8tCVCSoH33DG79EQHDh2qDVaNDr3ku2wh7WYJ6xeHHoFx1LZ5peT1+JDsYB9P8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X7jDIuaX; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4538f375e86so44695355e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 03:58:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752058729; x=1752663529; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Ufzj6YqaxPGXZ7DCvWZzYpEGIMdPZyH+W75nyNg9CQ=;
-        b=X7jDIuaXV1m3GgTHf2YfBmQxRnYrm17CcW8aXRI4nt0FoFA3wbtJvBO54V4v0Hzj9Q
-         5yDK8Q4e+L6OykFB3pXytPqI1HjNg6zDd54wVQ3HPmeTeCtlAAXmwNg6okhGs58wdi6g
-         G/L+nWnAYv7cXq2cCgBu22aVsalqjIvhCP0rSivtWNxtkGKi+91ESoXvBD+jDw6grKOk
-         aw4bhPhvs4FMEp5ex24T1eLhUNOGtup47sycTW2KzVki1KTLSlM2FiNFl7zo7xy9VJFC
-         9+6wH8HbbTEs2BZyzszIDGQiDYKcc99wpIWn1RljRaE1slOctrKhsancvEksNpe+FA6P
-         5NeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752058729; x=1752663529;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Ufzj6YqaxPGXZ7DCvWZzYpEGIMdPZyH+W75nyNg9CQ=;
-        b=IrklGU6EeTLieMu1e2BUe1OJQAZWNmutnK1phnnqkJRWAP0+Uj63vbVNj8H2nIr0zW
-         yGOnufKdT7VVpN23wBrCZkI0Ml4W5DBvdcKstBJD2/mJh6KA4lu4nYsVSgbfE6uedoCA
-         n5FBCNty67q/2zyPKwyIV3pM+nW+nqxffnyIXJ6AHeW079O4RzeXNRssAVTTj8jrkcma
-         a+5kkAPBAF9p5+R99ts5dlgJu93sbI6+hTI6uO3vqKJ4QLxfWNDGZGoomgqOo6DprR00
-         dDWNtAB8oYzB2gRkoSVOJfSScvnzQqPXz8iJyBP0UyD18dy4ojrWaiWArFzNvEy10V0/
-         gjQg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3EO21n/QP1wLtfbJFz3L16RdggRJoo7Vs4Bq37XW6uAVyAxQ6fIXz3waj5h71Yi2iQ8fH7hIE0eObB0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyEEPq6b6rEFJEV7l0P8MzH+eOC+qsrj5C0VKP2xo6oGivir5o
-	hHbx1qHXIJTMwyrtCX4K/iv8r/mFs4x7+zIg3geMRT7c5CyQcs9XqB5SfJXriLTjru85vtwtkDn
-	EOnUP5LWLMGTNYuLrkw==
-X-Google-Smtp-Source: AGHT+IGN7sIoCCk3NlTPmMYAv3Z3q38BFYn7msCvXHPNFB6alJvoxsbzz2fZGF3mfwttj2Fs1vKU2gG3U3nXuTw=
-X-Received: from wmdd5.prod.google.com ([2002:a05:600c:a205:b0:454:acb0:359a])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:5305:b0:453:d3d:d9fd with SMTP id 5b1f17b1804b1-454d531e49fmr17268565e9.12.1752058729385;
- Wed, 09 Jul 2025 03:58:49 -0700 (PDT)
-Date: Wed, 9 Jul 2025 10:58:48 +0000
-In-Reply-To: <8734b6oi20.fsf@kernel.org>
+	s=arc-20240116; t=1752058748; c=relaxed/simple;
+	bh=RJved2QjKn5WB/B2u8Gz9nuwNpu71L1b3B5t7Qmfah4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=X5LNcr6BPuiXJ7iGqznwqbJJLhiluTFHcG40L1Xjm527ao7evFyjZWHXxkGFR+SKCIVMpezpEHSpAj0cuWr4emYme/0iZuvnPtAIFzkR9riIgauCojEVJv4Q1yyXOisSCHKrszxRqauHcoC1090IiY9QTrKlObuiGQXKyRrz+Q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=d+3bQ99j; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=/LHGFWufVFwsdY7GE2k90qFknUoqYZlEyV08IyG7e9I=; b=d+3bQ99jpJsmPFYmErQH8VdBaw
+	pfSOhEcaCSmd/yJWMBfe6pCCquIP8CRKLdwfx7pi3lS+5wEWMgy7UKVonFU4GsEcfLkRoVTmGII//
+	oXezU4JLJlAZMsbCo4HXh0J+9Jo+iTcw3TcBwiJjWseZt3fbAZV4ypm4E+1LZ+Wym+zVyBiML1wDB
+	JgaA4lfPONsK9oUgNTuoHRzZrPG+XY6+AydAis+apKJB3Ww2Td325FLGXawJwtyam6a1kyhV5/z1V
+	g/Wv4BdHkT7aPzA4KbqujlOT0ilY19D+YlTciOrdRhwd972mL1Y4pdQpzOLO5LMt5yXIjOzQyD6Za
+	FBtgCJHg==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uZSVu-00EQrl-Kf; Wed, 09 Jul 2025 12:58:58 +0200
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd@bsbernd.com>,  Laura Promberger
+ <laura.promberger@cern.ch>,  Dave Chinner <david@fromorbit.com>,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  kernel-dev@igalia.com,  Matt Harvey <mharvey@jumptrading.com>
+Subject: Re: [PATCH v4] fuse: new work queue to periodically invalidate
+ expired dentries
+In-Reply-To: <20250707153413.19393-1-luis@igalia.com> (Luis Henriques's
+	message of "Mon, 7 Jul 2025 16:34:13 +0100")
+References: <20250707153413.19393-1-luis@igalia.com>
+Date: Wed, 09 Jul 2025 11:58:57 +0100
+Message-ID: <87ple9zl3i.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250704-iov-iter-v2-0-e69aa7c1f40e@google.com>
- <bzRIJnmP3zwPCPlJ4GG9diQ2CKzp-7bKbOIEHrtXVfmQ5ImkOBNAxI8wlg0jdrT4nzELpnE3rVzr6T7cJ3xVFg==@protonmail.internalid>
- <20250704-iov-iter-v2-2-e69aa7c1f40e@google.com> <8734b6oi20.fsf@kernel.org>
-Message-ID: <aG5LaDgyv2dowPjL@google.com>
-Subject: Re: [PATCH v2 2/4] rust: iov: add iov_iter abstractions for ITER_DEST
-From: Alice Ryhl <aliceryhl@google.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, Lee Jones <lee@kernel.org>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Benno Lossin <lossin@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 08, 2025 at 04:47:51PM +0200, Andreas Hindborg wrote:
-> "Alice Ryhl" <aliceryhl@google.com> writes:
-> 
-> > This adds abstractions for the iov_iter type in the case where
-> > data_source is ITER_DEST. This will make Rust implementations of
-> > fops->read_iter possible.
-> >
-> > This series only has support for using existing IO vectors created by C
-> > code. Additional abstractions will be needed to support the creation of
-> > IO vectors in Rust code.
-> >
-> > These abstractions make the assumption that `struct iov_iter` does not
-> > have internal self-references, which implies that it is valid to move it
-> > between different local variables.
-> >
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> 
-> Please see the comments on v1 [1].
-> 
-> Best regards,
-> Andreas Hindborg
-> 
-> 
-> [1] https://lore.kernel.org/all/439baec2-dba8-4dab-abb5-faa14fbda943@gmail.com
+On Mon, Jul 07 2025, Luis Henriques wrote:
 
-Sorry I should probably have articulated this somewhere. After I looked
-at this code with fresh eyes, I realized that the only things the two
-types have in common are len, advance, and revert. I didn't think that
-attempting to deduplicate the logic was worth it.
+> This patch adds a new module parameter 'inval_wq' which is used to start a
+> work queue that will periodically invalidate expired dentries.  The value
+> of this new parameter is the period, in seconds, of the work queue.  When
+> it is set, every new dentry will be added to an rbtree, sorted by the
+> dentry's expiry time.
+>
+> When the work queue is executed, it will check the dentries in the tree
+> and invalidate them if:
+>
+>   - The dentry has timed-out, or
+>   - The connection epoch has been incremented.
+>
+> The work queue will reschedule itself if the dentries tree isn't empty.
+>
+> The work queue period is set per file system with the 'inval_wq' parameter
+> value when it is mounted.  This value can not be smaller than 5 seconds.
+> If this module parameter is changed later on, the mounted file systems
+> will keep using the old value until they are remounted.
+>
+> Signed-off-by: Luis Henriques <luis@igalia.com>
+> ---
+> Hi Miklos,
+>
+> I'm sending v4 without implementing your request to turn the dentries
+> trees and work queues into global data structures.  After thinking about
+> it a bit more, I'm not sure anymore that it makes sense.  And the reason
+> is that the epoch is a per-connection attribute.  I couldn't find an
+> elegant way of having a single work queue with a global tree to handle the
+> fact that the epoch of a connection may have been incremented.  Any option
+> to avoid walking through all the tree dentries when an epoch is
+> incremented would be more complex than simply keeping it (and work queue)
+> per connection.
+>
+> Does this make sense?
 
-Alice
+One thing I just realised I forgot to mention: I haven't implemented the
+hashed locking as suggested.  It makes sense to implement it, but I'd like
+to have confirmation that you're actually OK to keep the data structures
+local to the fuse connection.
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+
+> Changes since v3:
+>
+> - Use of need_resched() instead of limiting the work queue to run for 5
+>   seconds
+> - Restore usage of union with rcu_head, in struct fuse_dentry
+> - Minor changes in comments (e.g. s/workqueue/work queue/)
+>
+> Changes since v2:
+>
+> - Major rework, the dentries tree nodes are now in fuse_dentry and they a=
+re
+>   tied to the actual dentry lifetime
+> - Mount option is now a module parameter
+> - workqueue now runs for at most 5 seconds before rescheduling
+>
+>  fs/fuse/dev.c    |   2 -
+>  fs/fuse/dir.c    | 179 +++++++++++++++++++++++++++++++++++++++++------
+>  fs/fuse/fuse_i.h |  12 ++++
+>  fs/fuse/inode.c  |  21 ++++++
+>  4 files changed, 189 insertions(+), 25 deletions(-)
+>
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index e80cd8f2c049..2ec7fefcc1a1 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -2034,8 +2034,6 @@ static int fuse_notify_resend(struct fuse_conn *fc)
+>  /*
+>   * Increments the fuse connection epoch.  This will result of dentries f=
+rom
+>   * previous epochs to be invalidated.
+> - *
+> - * XXX optimization: add call to shrink_dcache_sb()?
+>   */
+>  static int fuse_notify_inc_epoch(struct fuse_conn *fc)
+>  {
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 45b4c3cc1396..7eba86fe52d6 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -34,33 +34,152 @@ static void fuse_advise_use_readdirplus(struct inode=
+ *dir)
+>  	set_bit(FUSE_I_ADVISE_RDPLUS, &fi->state);
+>  }
+>=20=20
+> -#if BITS_PER_LONG >=3D 64
+> -static inline void __fuse_dentry_settime(struct dentry *entry, u64 time)
+> +struct fuse_dentry {
+> +	u64 time;
+> +	union {
+> +		struct rcu_head rcu;
+> +		struct rb_node node;
+> +	};
+> +	struct dentry *dentry;
+> +};
+> +
+> +static void __fuse_dentry_tree_del_node(struct fuse_conn *fc,
+> +					struct fuse_dentry *fd)
+>  {
+> -	entry->d_fsdata =3D (void *) time;
+> +	if (!RB_EMPTY_NODE(&fd->node)) {
+> +		rb_erase(&fd->node, &fc->dentry_tree);
+> +		RB_CLEAR_NODE(&fd->node);
+> +	}
+>  }
+>=20=20
+> -static inline u64 fuse_dentry_time(const struct dentry *entry)
+> +static void fuse_dentry_tree_del_node(struct dentry *dentry)
+>  {
+> -	return (u64)entry->d_fsdata;
+> +	struct fuse_conn *fc =3D get_fuse_conn_super(dentry->d_sb);
+> +	struct fuse_dentry *fd =3D dentry->d_fsdata;
+> +
+> +	if (!fc->inval_wq)
+> +		return;
+> +
+> +	spin_lock(&fc->dentry_tree_lock);
+> +	__fuse_dentry_tree_del_node(fc, fd);
+> +	spin_unlock(&fc->dentry_tree_lock);
+>  }
+>=20=20
+> -#else
+> -union fuse_dentry {
+> -	u64 time;
+> -	struct rcu_head rcu;
+> -};
+> +static void fuse_dentry_tree_add_node(struct dentry *dentry)
+> +{
+> +	struct fuse_conn *fc =3D get_fuse_conn_super(dentry->d_sb);
+> +	struct fuse_dentry *fd =3D dentry->d_fsdata;
+> +	struct fuse_dentry *cur;
+> +	struct rb_node **p, *parent =3D NULL;
+> +	bool start_work =3D false;
+> +
+> +	if (!fc->inval_wq)
+> +		return;
+> +
+> +	spin_lock(&fc->dentry_tree_lock);
+> +
+> +	if (!fc->inval_wq) {
+> +		spin_unlock(&fc->dentry_tree_lock);
+> +		return;
+> +	}
+> +
+> +	start_work =3D RB_EMPTY_ROOT(&fc->dentry_tree);
+> +	__fuse_dentry_tree_del_node(fc, fd);
+> +
+> +	p =3D &fc->dentry_tree.rb_node;
+> +	while (*p) {
+> +		parent =3D *p;
+> +		cur =3D rb_entry(*p, struct fuse_dentry, node);
+> +		if (fd->time > cur->time)
+> +			p =3D &(*p)->rb_left;
+> +		else
+> +			p =3D &(*p)->rb_right;
+> +	}
+> +	rb_link_node(&fd->node, parent, p);
+> +	rb_insert_color(&fd->node, &fc->dentry_tree);
+> +	spin_unlock(&fc->dentry_tree_lock);
+> +
+> +	if (start_work)
+> +		schedule_delayed_work(&fc->dentry_tree_work,
+> +				      secs_to_jiffies(fc->inval_wq));
+> +}
+> +
+> +void fuse_dentry_tree_prune(struct fuse_conn *fc)
+> +{
+> +	struct rb_node *n;
+> +
+> +	if (!fc->inval_wq)
+> +		return;
+> +
+> +	fc->inval_wq =3D 0;
+> +	cancel_delayed_work_sync(&fc->dentry_tree_work);
+> +
+> +	spin_lock(&fc->dentry_tree_lock);
+> +	while (!RB_EMPTY_ROOT(&fc->dentry_tree)) {
+> +		n =3D rb_first(&fc->dentry_tree);
+> +		rb_erase(n, &fc->dentry_tree);
+> +		RB_CLEAR_NODE(&rb_entry(n, struct fuse_dentry, node)->node);
+> +	}
+> +	spin_unlock(&fc->dentry_tree_lock);
+> +}
+> +
+> +/*
+> + * work queue that, when enabled, will periodically check for expired de=
+ntries
+> + * in the dentries tree.
+> + *
+> + * A dentry has expired if:
+> + *
+> + *   1) it has been around for too long (timeout) or if
+> + *
+> + *   2) the connection epoch has been incremented.
+> + *
+> + * The work queue will be rescheduled itself as long as the dentries tre=
+e is not
+> + * empty.
+> + */
+> +void fuse_dentry_tree_work(struct work_struct *work)
+> +{
+> +	struct fuse_conn *fc =3D container_of(work, struct fuse_conn,
+> +					    dentry_tree_work.work);
+> +	struct fuse_dentry *fd;
+> +	struct rb_node *node;
+> +	u64 start;
+> +	int epoch;
+> +	bool reschedule;
+> +
+> +	spin_lock(&fc->dentry_tree_lock);
+> +	start =3D get_jiffies_64();
+> +	epoch =3D atomic_read(&fc->epoch);
+> +
+> +	node =3D rb_first(&fc->dentry_tree);
+> +	while (node && !need_resched()) {
+> +		fd =3D rb_entry(node, struct fuse_dentry, node);
+> +		if ((fd->dentry->d_time < epoch) || (fd->time < start)) {
+> +			rb_erase(&fd->node, &fc->dentry_tree);
+> +			RB_CLEAR_NODE(&fd->node);
+> +			spin_unlock(&fc->dentry_tree_lock);
+> +			d_invalidate(fd->dentry);
+> +			spin_lock(&fc->dentry_tree_lock);
+> +		} else
+> +			break;
+> +		node =3D rb_first(&fc->dentry_tree);
+> +	}
+> +	reschedule =3D !RB_EMPTY_ROOT(&fc->dentry_tree);
+> +	spin_unlock(&fc->dentry_tree_lock);
+> +
+> +	if (reschedule)
+> +		schedule_delayed_work(&fc->dentry_tree_work,
+> +				      secs_to_jiffies(fc->inval_wq));
+> +}
+>=20=20
+>  static inline void __fuse_dentry_settime(struct dentry *dentry, u64 time)
+>  {
+> -	((union fuse_dentry *) dentry->d_fsdata)->time =3D time;
+> +	((struct fuse_dentry *) dentry->d_fsdata)->time =3D time;
+>  }
+>=20=20
+>  static inline u64 fuse_dentry_time(const struct dentry *entry)
+>  {
+> -	return ((union fuse_dentry *) entry->d_fsdata)->time;
+> +	return ((struct fuse_dentry *) entry->d_fsdata)->time;
+>  }
+> -#endif
+>=20=20
+>  static void fuse_dentry_settime(struct dentry *dentry, u64 time)
+>  {
+> @@ -81,6 +200,7 @@ static void fuse_dentry_settime(struct dentry *dentry,=
+ u64 time)
+>  	}
+>=20=20
+>  	__fuse_dentry_settime(dentry, time);
+> +	fuse_dentry_tree_add_node(dentry);
+>  }
+>=20=20
+>  /*
+> @@ -283,21 +403,36 @@ static int fuse_dentry_revalidate(struct inode *dir=
+, const struct qstr *name,
+>  	goto out;
+>  }
+>=20=20
+> -#if BITS_PER_LONG < 64
+>  static int fuse_dentry_init(struct dentry *dentry)
+>  {
+> -	dentry->d_fsdata =3D kzalloc(sizeof(union fuse_dentry),
+> -				   GFP_KERNEL_ACCOUNT | __GFP_RECLAIMABLE);
+> +	struct fuse_dentry *fd;
+> +
+> +	fd =3D kzalloc(sizeof(struct fuse_dentry),
+> +			  GFP_KERNEL_ACCOUNT | __GFP_RECLAIMABLE);
+> +	if (!fd)
+> +		return -ENOMEM;
+> +
+> +	fd->dentry =3D dentry;
+> +	RB_CLEAR_NODE(&fd->node);
+> +	dentry->d_fsdata =3D fd;
+> +
+> +	return 0;
+> +}
+> +
+> +static void fuse_dentry_prune(struct dentry *dentry)
+> +{
+> +	struct fuse_dentry *fd =3D dentry->d_fsdata;
+>=20=20
+> -	return dentry->d_fsdata ? 0 : -ENOMEM;
+> +	if (!RB_EMPTY_NODE(&fd->node))
+> +		fuse_dentry_tree_del_node(dentry);
+>  }
+> +
+>  static void fuse_dentry_release(struct dentry *dentry)
+>  {
+> -	union fuse_dentry *fd =3D dentry->d_fsdata;
+> +	struct fuse_dentry *fd =3D dentry->d_fsdata;
+>=20=20
+>  	kfree_rcu(fd, rcu);
+>  }
+> -#endif
+>=20=20
+>  static int fuse_dentry_delete(const struct dentry *dentry)
+>  {
+> @@ -331,18 +466,16 @@ static struct vfsmount *fuse_dentry_automount(struc=
+t path *path)
+>  const struct dentry_operations fuse_dentry_operations =3D {
+>  	.d_revalidate	=3D fuse_dentry_revalidate,
+>  	.d_delete	=3D fuse_dentry_delete,
+> -#if BITS_PER_LONG < 64
+>  	.d_init		=3D fuse_dentry_init,
+> +	.d_prune	=3D fuse_dentry_prune,
+>  	.d_release	=3D fuse_dentry_release,
+> -#endif
+>  	.d_automount	=3D fuse_dentry_automount,
+>  };
+>=20=20
+>  const struct dentry_operations fuse_root_dentry_operations =3D {
+> -#if BITS_PER_LONG < 64
+>  	.d_init		=3D fuse_dentry_init,
+> +	.d_prune	=3D fuse_dentry_prune,
+>  	.d_release	=3D fuse_dentry_release,
+> -#endif
+>  };
+>=20=20
+>  int fuse_valid_type(int m)
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index b54f4f57789f..638d62d995a2 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -975,6 +975,15 @@ struct fuse_conn {
+>  		/* Request timeout (in jiffies). 0 =3D no timeout */
+>  		unsigned int req_timeout;
+>  	} timeout;
+> +
+> +	/** Cache dentries tree */
+> +	struct rb_root dentry_tree;
+> +	/** Look to protect dentry_tree access */
+> +	spinlock_t dentry_tree_lock;
+> +	/** Periodic delayed work to invalidate expired dentries */
+> +	struct delayed_work dentry_tree_work;
+> +	/** Period for the invalidation work queue */
+> +	unsigned int inval_wq;
+>  };
+>=20=20
+>  /*
+> @@ -1259,6 +1268,9 @@ void fuse_wait_aborted(struct fuse_conn *fc);
+>  /* Check if any requests timed out */
+>  void fuse_check_timeout(struct work_struct *work);
+>=20=20
+> +void fuse_dentry_tree_prune(struct fuse_conn *fc);
+> +void fuse_dentry_tree_work(struct work_struct *work);
+> +
+>  /**
+>   * Invalidate inode attributes
+>   */
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 9572bdef49ee..df20ff91898f 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -58,6 +58,20 @@ MODULE_PARM_DESC(max_user_congthresh,
+>   "Global limit for the maximum congestion threshold an "
+>   "unprivileged user can set");
+>=20=20
+> +static unsigned __read_mostly inval_wq;
+> +static int inval_wq_set(const char *val, const struct kernel_param *kp)
+> +{
+> +	return param_set_uint_minmax(val, kp, 5, (unsigned int)(-1));
+> +}
+> +static const struct kernel_param_ops inval_wq_ops =3D {
+> +	.set =3D inval_wq_set,
+> +	.get =3D param_get_uint,
+> +};
+> +module_param_cb(inval_wq, &inval_wq_ops, &inval_wq, 0644);
+> +__MODULE_PARM_TYPE(inval_wq, "uint");
+> +MODULE_PARM_DESC(inval_wq,
+> +		 "Dentries invalidation work queue period in secs (>=3D 5).");
+> +
+>  #define FUSE_DEFAULT_BLKSIZE 512
+>=20=20
+>  /** Maximum number of outstanding background requests */
+> @@ -963,6 +977,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse=
+_mount *fm,
+>  	memset(fc, 0, sizeof(*fc));
+>  	spin_lock_init(&fc->lock);
+>  	spin_lock_init(&fc->bg_lock);
+> +	spin_lock_init(&fc->dentry_tree_lock);
+>  	init_rwsem(&fc->killsb);
+>  	refcount_set(&fc->count, 1);
+>  	atomic_set(&fc->dev_count, 1);
+> @@ -972,6 +987,8 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse=
+_mount *fm,
+>  	INIT_LIST_HEAD(&fc->bg_queue);
+>  	INIT_LIST_HEAD(&fc->entry);
+>  	INIT_LIST_HEAD(&fc->devices);
+> +	fc->dentry_tree =3D RB_ROOT;
+> +	fc->inval_wq =3D 0;
+>  	atomic_set(&fc->num_waiting, 0);
+>  	fc->max_background =3D FUSE_DEFAULT_MAX_BACKGROUND;
+>  	fc->congestion_threshold =3D FUSE_DEFAULT_CONGESTION_THRESHOLD;
+> @@ -1848,6 +1865,9 @@ int fuse_fill_super_common(struct super_block *sb, =
+struct fuse_fs_context *ctx)
+>  	fc->group_id =3D ctx->group_id;
+>  	fc->legacy_opts_show =3D ctx->legacy_opts_show;
+>  	fc->max_read =3D max_t(unsigned int, 4096, ctx->max_read);
+> +	fc->inval_wq =3D inval_wq;
+> +	if (fc->inval_wq > 0)
+> +		INIT_DELAYED_WORK(&fc->dentry_tree_work, fuse_dentry_tree_work);
+>  	fc->destroy =3D ctx->destroy;
+>  	fc->no_control =3D ctx->no_control;
+>  	fc->no_force_umount =3D ctx->no_force_umount;
+> @@ -2052,6 +2072,7 @@ void fuse_conn_destroy(struct fuse_mount *fm)
+>=20=20
+>  	fuse_abort_conn(fc);
+>  	fuse_wait_aborted(fc);
+> +	fuse_dentry_tree_prune(fc);
+>=20=20
+>  	if (!list_empty(&fc->entry)) {
+>  		mutex_lock(&fuse_mutex);
+>
+
 
