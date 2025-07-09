@@ -1,80 +1,122 @@
-Return-Path: <linux-kernel+bounces-722634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DE4AFDD29
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:54:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41B94AFDD35
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 721B116BE55
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:54:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E337D1C21755
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DDB199FB2;
-	Wed,  9 Jul 2025 01:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B258F19F40B;
+	Wed,  9 Jul 2025 02:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5pWlTw/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPp/d4xm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D1380C1C;
-	Wed,  9 Jul 2025 01:54:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103E1EEB3;
+	Wed,  9 Jul 2025 02:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752026072; cv=none; b=i+e1VutDjEz/OwmEZRLf9xwezO6ZNcGljLs7uX4J5qzq8UkawDj8uafAdJvLzzBUKRmNzJccdmHRulA0CWUyVt3b/JfBz0gVR//YjqAaFCh2YQKL6o17psEavA6uNNKjSZ2kRaTHACxTNsNW9TFFHMj88EJdtcJ6BV9gAje/bD4=
+	t=1752026430; cv=none; b=j2yMhlEEHrDWaO8Glgt7bXoOfOwDNKNh27JQKq7jhkz6NKfMyEpZhKUTov2hu97DmwoJryrjydI6yzCAUfBglryAVgpErtWBnID9gqLYzRsxxS16eQeHKVh/TWgF5ljlqIMmlQxe5a4xihAP8Zyrrjed9cF44nbQ+yQYc4fvCzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752026072; c=relaxed/simple;
-	bh=asWLqyRRMNPGhcUWpVSdiagdrtMDgHVRskAAx1fw/W4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NVoUXWyBobp/kBhxbLPY4xaj9XIPW6sZJuy0SBNzbzhbaElJMeMq1HJp+cvaRvSIUplKFloNyo2nbmma6TmlnCYOYAmE3WufI4QeP8E0REXlumWmfYNGo3+N7kqqeVzMGnO+AiJkJ7/mxoxzibclwjp6vto7VrNWpIKcoLtZjKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5pWlTw/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D81F0C4CEED;
-	Wed,  9 Jul 2025 01:54:31 +0000 (UTC)
+	s=arc-20240116; t=1752026430; c=relaxed/simple;
+	bh=SCd2Rskvq412sYYjzoMaYjBEDDWKuLbV0h++4NRJ7Hs=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=MzWFdmobLpV3ozhmSog5jMxqQv3Quh60KD8LQ99+eDGYTMuSFFKtOvu9vo5a7tajhVhkHwG7GMu+WbmNKGMXIMvzB9EIL12b5z5IrowO2cQwl7iZo4xmu7XAV0WokzkOpjvBUfE+x2XklRN8k6M/vlUVMGt7Gf7rgj2aAw5hr3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPp/d4xm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 614DFC4CEED;
+	Wed,  9 Jul 2025 02:00:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752026072;
-	bh=asWLqyRRMNPGhcUWpVSdiagdrtMDgHVRskAAx1fw/W4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=f5pWlTw/XS/MtkpZGkvojs/wlxNHQ374pCmvZoTBYkgzKTGRKxx8S4aigC+tZtIYq
-	 1K+n+XNxqkCMM7LmH3saBti/33iSCu8B6xT842NyWauJLSbxnkXlGIhWSnx9gIWZv2
-	 TPpgt2fl63wKz8DWtfRCR6o71ySjgf2UsqStZDPbD1VcKH31tCIAChlm3HMN3Pc0sU
-	 3qUORESptCEgGTOp50OzHsrvX0FewvuBoR93QoB7APmF0iyV4zbto92rLKXwIGjmhK
-	 RV/4jccssWqzTrBcVs5WxzNybyEl6TPmZmc9jIjoW1RdLShx5f/s08wRsUC7LF6jQZ
-	 Ih/qc54cmMhpA==
-Date: Tue, 8 Jul 2025 18:54:30 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Oscar Maes <oscmaes92@gmail.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, dsahern@kernel.org,
- edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
- stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v2 1/2] net: ipv4: fix incorrect MTU in broadcast
- routes
-Message-ID: <20250708185430.68f143a2@kernel.org>
-In-Reply-To: <20250703152838.2993-1-oscmaes92@gmail.com>
-References: <20250703152838.2993-1-oscmaes92@gmail.com>
+	s=k20201202; t=1752026429;
+	bh=SCd2Rskvq412sYYjzoMaYjBEDDWKuLbV0h++4NRJ7Hs=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=vPp/d4xmieKxl3KV4U+NXVMO0UtLsKDJYyTkoEpjqNWtAzrJyoM/zofD8TJXrbAPm
+	 SWnAnNcwkdNkA/zFbs1EHhiobFGc3f3wk9LJM303f27o49ETNfZRnriXDIL5rX7/tB
+	 UO9TKqLMhcq1N2vtM72KRIBoasNtxtoyas7T35Rz96orCLumUejoob5PinY1+cmdtb
+	 Dfw93GcD1O1epJevRBYtH+tuGkhau9TpxKvsp4S2GL66e5OVjBRcOMSxChCkLKzTqK
+	 J6Vg3BY7OhyWCFMaV+1F6ikOwi82usmJmxaYfqGD4hZ9aszzXiGqy9hcmb72CVO8SB
+	 YYaXQi7gnQ5BA==
+Date: Tue, 08 Jul 2025 21:00:28 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, 
+ alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, 
+ krzk+dt@kernel.org, s.nawrocki@samsung.com, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com, 
+ broonie@kernel.org
+To: ew kim <ew.kim@samsung.com>
+In-Reply-To: <20250709001239.379695-1-ew.kim@samsung.com>
+References: <CGME20250709002434epcas2p29b2368f0de6c760b17565ad7f2c37a19@epcas2p2.samsung.com>
+ <20250709001239.379695-1-ew.kim@samsung.com>
+Message-Id: <175202642853.1975547.14734415377016191511.robh@kernel.org>
+Subject: Re: [PATCH] ASoC: dt-bindings: Add samsung,abox-generic document
 
-On Thu,  3 Jul 2025 17:28:37 +0200 Oscar Maes wrote:
->  	if (type == RTN_BROADCAST) {
->  		flags |= RTCF_BROADCAST | RTCF_LOCAL;
-> -		fi = NULL;
->  	} else if (type == RTN_MULTICAST) {
->  		flags |= RTCF_MULTICAST | RTCF_LOCAL;
->  		if (!ip_check_mc_rcu(in_dev, fl4->daddr, fl4->saddr,
 
-Not super familiar with this code, but do we not need to set 
-do_cache = false; ? I'm guessing cache interactions may have
-been the reason fib_info was originally cleared, not sure if
-that's still relevant..
+On Wed, 09 Jul 2025 09:12:39 +0900, ew kim wrote:
+> Add soundcard bindings for the abox generic of exynus automotive.
+> 
+> Signed-off-by: ew kim <ew.kim@samsung.com>
+> ---
+>  .../bindings/sound/samsung,abox-generic.yaml  | 77 +++++++++++++++++++
+>  1 file changed, 77 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/samsung,abox-generic.yaml
+> 
 
-I'd also target this at net-next, unless you can pinpoint
-some kernel version where MTU on bcast routes worked..
--- 
-pw-bot: cr
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/sound/samsung,abox-generic.yaml:4:6: [error] string value is redundantly quoted with any quotes (quoted-strings)
+./Documentation/devicetree/bindings/sound/samsung,abox-generic.yaml:5:10: [error] string value is redundantly quoted with any quotes (quoted-strings)
+./Documentation/devicetree/bindings/sound/samsung,abox-generic.yaml:43:13: [error] string value is redundantly quoted with any quotes (quoted-strings)
+./Documentation/devicetree/bindings/sound/samsung,abox-generic.yaml:43:21: [error] string value is redundantly quoted with any quotes (quoted-strings)
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/samsung,abox-generic.yaml: maintainers:0: {'name': 'Eunwoo Kim', 'email': 'ew.kim@samsung.com'} is not of type 'string'
+	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/samsung,abox-generic.yaml: properties:ranges: 'anyOf' conditional failed, one must be fixed:
+	'maxItems' is a required property
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	'type' is not one of ['maxItems', 'description', 'deprecated']
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	Additional properties are not allowed ('type' was unexpected)
+		hint: Arrays must be described with a combination of minItems/maxItems/items
+	'type' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
+	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
+	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/samsung,abox-generic.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
+ 	 $id: http://devicetree.org/schemas/soc/samsung/abox-generic.yaml
+ 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/samsung,abox-generic.yaml
+Documentation/devicetree/bindings/sound/samsung,abox-generic.example.dts:26.11-18: Warning (ranges_format): /example-0/abox_generic@generic:ranges: empty "ranges" property but its #address-cells (2) differs from /example-0 (1)
+Documentation/devicetree/bindings/sound/samsung,abox-generic.example.dts:18.44-27.11: Warning (unit_address_vs_reg): /example-0/abox_generic@generic: node has a unit name, but no reg or ranges property
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/samsung,abox-generic.example.dtb: abox_generic@generic (samsung,abox_generic): ranges: True is not of type 'object'
+	from schema $id: http://devicetree.org/schemas/soc/samsung/abox-generic.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250709001239.379695-1-ew.kim@samsung.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
