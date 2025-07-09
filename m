@@ -1,136 +1,146 @@
-Return-Path: <linux-kernel+bounces-723727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0836AAFEA5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:37:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D58AFEA58
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B98155C0179
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:36:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D851F1887047
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852992DAFD2;
-	Wed,  9 Jul 2025 13:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793422DEA75;
+	Wed,  9 Jul 2025 13:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zRDP7tmq"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="EjzSYvJz";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NtQBkO2E"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70AA292B33
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 13:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC3E2DE217;
+	Wed,  9 Jul 2025 13:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752068185; cv=none; b=ThZRw86zHwQuxwnGkwLkflDQTNOBXrdl615/9AADQOKhZVk56852ei/IgtRxzO2tVhuPFCCGqDV3uiMj5hj30bbqwvS3Xb/cKuwKfUFdzknE4f/oT6fYGmEJQsreyeHWpTqOzA+q06tf+GlgSl/zlbrEF3eMBbcYBoKY/D7Csso=
+	t=1752068235; cv=none; b=hT+2ZslyrXSV7/kXn4O4lHsKvsljd53SjnM+IEAwPnw0VaoRkhfktiJGzGUD7esWBgaXVfIy490l/ZWDe9RbiNGj9A/wir+9ChwHwDYTXaaiIb65LuJsciwPzvWrI2QV4k16hdgLtvu39mIxPXDCnd8awizX8jt8kmN9RxvvR1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752068185; c=relaxed/simple;
-	bh=unlKXJBhWL7HE7TTDy2vTAHpjeg4BcukQ6864uuG9pY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KOLTY/k/K7cqnxaaZ0tmYVha2F5poKCewgC0kpqvMbdjxkLGL/7emhG9S+5gu8cj0t9GkDuyJ36G7/6C/gQEsESfkGqa88OFFu0P3vAPjtKgkyX5fVefSYbpCVjaySVoQk/0mSyXwjcbQovVTFEbXR0SLbOA/m1CEeUEPzyAFMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zRDP7tmq; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b3220c39cffso5441552a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 06:36:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752068183; x=1752672983; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X8QwFWHnoroOy7d+kOIv7RQtuglWSW8t0P8/KSAe0Eg=;
-        b=zRDP7tmqJWIOfk3IHMdsl/YFqxj2YIaAUKXyr02Lx+sJyw1vqVGFScjMTsRIy6CEtW
-         vAGVaFGLCnYmOMOzRvTI+lNnamUymqAbxS9fs5O/451M9YxvgvPQm0H6EGigRfIQzdDW
-         BZ4l5380icUd2gk0J8dgWczb73A5KQU/H843ULa/U9mxgMjAMOv5HSQ+FWSBWEpi55mh
-         0kQTw2bMbMsAKGwKeL8j3zCU1TFjIKhQQ84lJ10uIOkyUZzZWE+R1DTTbJegus2Y2Pqr
-         sJWF2PZrlLqZgfOVHteYqOUE/RVyT4eED/0gDTyuftDOTgvTz3aP+NRfLiLJX4DrFj9D
-         COCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752068183; x=1752672983;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X8QwFWHnoroOy7d+kOIv7RQtuglWSW8t0P8/KSAe0Eg=;
-        b=Xo/Pj8I9b/RSNBPAtr+4Q9Q1vpxbd71q+3yPv9M7k3ddDbmJc6TYfW2fDb9pSOq4tq
-         sLnX9G4JymubqTjthieeBZPvOLKF1jUxlZxa31X0QpzXYDzW4O0TD5rf7TXG1YrheP38
-         StzPjflQvh/hLnPWNjddIAzTb09dIOf3wElIt5BkMjRXDpwPjrEwMmqtoWHoyWIEzMOF
-         OU56sV5HuGBlybOz1sO+qK+SjXWcZkaZLYNBXlrYzcaKoglNI2X1/30fs8IKoFbbj7/3
-         ccDfQeFlj96VcbDnjypbFiXXhVN+vvLDBpXR65ACa2aFkGLuqpAwb13EiCB0OMFtCPoz
-         4HvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVA30S6HrswRUaii49+R0/amgSMH4WhnsWYt7S/Irq56l/R0yTC2CSRnwYv1eHZTMZxZtSeDBfIRJToxn8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXoBp6YjnvRrqhqYMrVnNv1TrHanBAeNz/UTHUMLKY+1eyu2w5
-	opbs45O+Xss+C32IFloHw6BvVPGdwO/0gZVWHqIOs7L4VH1hbi8NMK4IR92OQssLWNSkhbQ9U1w
-	QfocImJj/UY/9H3y955ctqV6b+hLKc/wQ2SiMFU2C
-X-Gm-Gg: ASbGncv5f02tkC0R0mq+23HKITg99SPZupVtvf3TJnKBu+SZoPny2Ts/uzoIcrXYgKH
-	+AtAHhJrNnjic9pSnQeHYov/E8nLvT0I33Z7u/hUrUlp0vTNJqw3XAHMK12R4eYnvGvVxIIwvyD
-	haXj6Hl0RUBdOpXBqnPi4tEN3diEqHqd8AwkSLQYpoc0zYjy+XPtc7yiEOYxRXQBbE+LzYTkO7L
-	A==
-X-Google-Smtp-Source: AGHT+IHLUaG78pPpolWgvKxo7JAqt+c+YIceLIH7tszHkOE1Sbi1pPFiMPOEdkHK6zyKwEyy9jYPRuBMaEXTzhgKa9Q=
-X-Received: by 2002:a17:903:8c3:b0:235:e942:cb9d with SMTP id
- d9443c01a7336-23ddb2e2117mr44522245ad.17.1752068182802; Wed, 09 Jul 2025
- 06:36:22 -0700 (PDT)
+	s=arc-20240116; t=1752068235; c=relaxed/simple;
+	bh=S72tt1Q86mjuZ/H45KolFCbnlTKTnTpglpzCK0oYG8s=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Weu/bYmFY+xQxqIRTrFnBTstf+FtjwRYEoOXyeu1ViY1ifoviicE5ugtmQY3/oZ2zNZ3Qzo4eO+jevkLv7bJMFzIDyNyS6lGwyRmqNzraB+e36AVSORnduq8FwmGI/q8uqTn4/PVfm6rC35MmI5BLhloDb9RS+rWpiwEYtIynro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=EjzSYvJz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NtQBkO2E; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id AAB07140036D;
+	Wed,  9 Jul 2025 09:37:11 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 09 Jul 2025 09:37:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1752068231;
+	 x=1752154631; bh=VjTXoYpJ9Pen/liWCvMuqC7LhwbLr/nwib0obOR75MA=; b=
+	EjzSYvJzZH/RwXf8rki+ggp9Emyy0bbZX4nDTbe+SJeCx5Yh0Huq6UPR1w8Tlxes
+	bHx7mkugV2wQAJNqXrMD4lh358w/9C4MPPM9P3ABKLLIrd3deGCaXKt5mjzDu65M
+	6qEcfmxZhEjZpuW89dTjMdDH8J+kWOWZoWp9mil5ZgzFQ0Wbur+J5FFBt4Pp+sTs
+	aLm79AxV+q1YdsENftaw0Jb8KXDNItBcICVAryDiof/RUIfUmnH1FjM2xb9QQL0F
+	ZgRD7FgNSCAq6FT0EwiqjNYzeV91B9HCCYoSQWuc44S2EiV2KuSNe3A4lUBypvLO
+	32+kADl9sDHC8HwyuAkWpw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752068231; x=
+	1752154631; bh=VjTXoYpJ9Pen/liWCvMuqC7LhwbLr/nwib0obOR75MA=; b=N
+	tQBkO2ED9YmzZCjnkOJtMf1CE+EuaS5Cz3jBbq5bGoIJHXrK2jsT5TwFMtrW/t3j
+	deg/4fzcnnJFquKsDLay/lJSv1Zd9N2l8/M7WThxti5RTpnNPdatBAwiAHx1p8lx
+	S9iCZzZNoXIzSh88Avz/K7fgr8pR9VaWNPvGUC1DNGABTpQzq+OTaMxiqtpwl7f1
+	nMd5kzO1/UZYyGRK5MYUudRxM+BDAe9DqrtK0qcyMYjP+9cHfuF7f0UD53L5zIGY
+	B5rB8E5Ux0kf6m2QVjiTcSVflop/VPut6YA9m6ROPGQYsBm6WvD8/O9q21hCRcHV
+	TcIQIIuZeWfvpULeOZ9Zg==
+X-ME-Sender: <xms:hnBuaL9QBiSo3qqmplamd_FpB67Xn8rVG_2q8bkgmkUl95m22gg_Ww>
+    <xme:hnBuaHsXRl26JKJShUFbSMRzUChz4PR1-rajtMsMvm_xfXemy0r9g7VYRxcxzO145
+    Ig-IpHgzOXyIZEi15c>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefjeejtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgtphhtthhope
+    grrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepphhivghrrhgvqdhlohhuihhsrdgsohhsshgrrhhtse
+    hlihhnuhigrdguvghvpdhrtghpthhtohepphgvthgvrhdruhhjfhgrlhhushhisehlihhn
+    uhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohephihunhhgqdgthhhurghnrdhlihgroh
+    eslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopegtkhgvvghprgigsehophgv
+    nhhsohhurhgtvgdrtghirhhruhhsrdgtohhmpdhrtghpthhtohepmhhsthhrohiivghkse
+    hophgvnhhsohhurhgtvgdrtghirhhruhhsrdgtohhmpdhrtghpthhtohepphgrthgthhgv
+    shesohhpvghnshhouhhrtggvrdgtihhrrhhushdrtghomh
+X-ME-Proxy: <xmx:hnBuaH2cvqrDHLEnJrjl4VPr4vG92XAXRAw_dd8xz8YN4U1LBAjH5w>
+    <xmx:hnBuaBQt_GySbGqBCRi-pGUKe8ho0eM0xRm4djvWv4yi6sb7zMr4IA>
+    <xmx:hnBuaLunhxrPme2IQ_aTjj7c9d53mFkVuD95r2TuTY3CeDb6Hz_Iow>
+    <xmx:hnBuaHJyhdXHEGrjK8W1P7hnfxEhHws43T7SaBLfAY53vFG69qzv5A>
+    <xmx:h3BuaLM7Pp7E4HWGZwTpEwkJ2RBVvbvKdZxaziwYfU8w9On7IV3srjQm>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 55725700065; Wed,  9 Jul 2025 09:37:10 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704-topics-tyr-platform_iomem-v12-0-1d3d4bd8207d@collabora.com>
- <20250704-topics-tyr-platform_iomem-v12-1-1d3d4bd8207d@collabora.com>
- <aGt6CZAUeuK0XnmP@google.com> <F1EA22CF-1C01-495D-97ED-59D51A45A8B0@collabora.com>
-In-Reply-To: <F1EA22CF-1C01-495D-97ED-59D51A45A8B0@collabora.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 9 Jul 2025 15:36:08 +0200
-X-Gm-Features: Ac12FXx8MsH1eDIFhZjajAuMUIOv4XaodeklU_8Hl_wL84YrJfqndKHflkJLh7E
-Message-ID: <CAH5fLgg9pL0LhaWAMNKig+vnoB97U9zybqjdQieWYB7QdyAwAg@mail.gmail.com>
-Subject: Re: [PATCH v12 1/3] rust: io: add resource abstraction
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Ying Huang <huang.ying.caritas@gmail.com>, Benno Lossin <lossin@kernel.org>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Fiona Behrens <me@kloenk.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ThreadId: T2af2efebb1220e26
+Date: Wed, 09 Jul 2025 15:36:49 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Charles Keepax" <ckeepax@opensource.cirrus.com>,
+ "Arnd Bergmann" <arnd@kernel.org>
+Cc: "Maciej Strozek" <mstrozek@opensource.cirrus.com>,
+ "Liam Girdwood" <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>,
+ "Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
+ "Shuming Fan" <shumingf@realtek.com>,
+ "Bard Liao" <yung-chuan.liao@linux.intel.com>,
+ "Pierre-Louis Bossart" <pierre-louis.bossart@linux.dev>,
+ "Peter Ujfalusi" <peter.ujfalusi@linux.intel.com>,
+ "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>,
+ linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
+ linux-kernel@vger.kernel.org
+Message-Id: <f0275a4c-9801-4288-91fd-e28aa4bc5b7e@app.fastmail.com>
+In-Reply-To: <aG5iwy6j3rR0YdPy@opensource.cirrus.com>
+References: <20250708184618.3585473-1-arnd@kernel.org>
+ <aG5iwy6j3rR0YdPy@opensource.cirrus.com>
+Subject: Re: [PATCH] ASoC: SDCA: fix HID dependency
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 8, 2025 at 7:44=E2=80=AFPM Daniel Almeida
-<daniel.almeida@collabora.com> wrote:
+On Wed, Jul 9, 2025, at 14:38, Charles Keepax wrote:
+> On Tue, Jul 08, 2025 at 08:46:06PM +0200, Arnd Bergmann wrote:
+>>  
+>>  config SND_SOC_SDCA_HID
+>> -	tristate "SDCA HID support"
+>> +	bool "SDCA HID support"
+>>  	depends on SND_SOC_SDCA && HID
+>> +	depends on HID=y || HID=SND_SOC_SDCA
 >
-> Hi Alice,
->
-> [=E2=80=A6]
->
->
-> >> +
-> >> +impl Resource {
-> >> +    /// Creates a reference to a [`Resource`] from a valid pointer.
-> >> +    ///
-> >> +    /// # Safety
-> >> +    ///
-> >> +    /// The caller must ensure that for the duration of 'a, the point=
-er will
-> >> +    /// point at a valid `bindings::resource`.
-> >> +    ///
-> >> +    /// The caller must also ensure that the [`Resource`] is only acc=
-essed via the
-> >> +    /// returned reference for the duration of 'a.
-> >> +    pub(crate) const unsafe fn as_ref<'a>(ptr: *mut bindings::resourc=
-e) -> &'a Self {
-> >
-> > We usually call this method `from_raw`.
->
-> Hmm, pretty sure I have seen the exact opposite being asked. In fact, thi=
-s was
-> discussed a bit at length a while ago. See the thread starting at [0] for=
- context.
+> Does it perhaps make more sense to add a (HID || !HID) dependency
+> on SND_SOC_SDCA and leave the dependencies here alone? I feel
+> like that lets the Kconfig figure out the right settings for
+> SND_SOC_SDCA automatically, rather than just disappearing the SDCA
+> HID option when HID and SDCA are set incompatibly.
 
-I will submit a patch.
+The problem is that SND_SOC_SDCA is not a user-visible option
+but instead gets selected by SND_SOC_ACPI_INTEL_SDCA_QUIRKS,
+which itself gets selected indirectly.
 
-Alicej
+It could work, but then the 'depends on HID || !HID' would
+need to be under SND_SST_ATOM_HIFI2_PLATFORM_ACPI and anything
+else that might select SND_SOC_ACPI_INTEL_MATCH,
+SND_SOC_ACPI_INTEL_SDCA_QUIRKS, or SND_SOC_SDCA in the future.
+
+     Arnd
 
