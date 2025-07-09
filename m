@@ -1,206 +1,209 @@
-Return-Path: <linux-kernel+bounces-723635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D69AAFE961
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:49:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D796AFE962
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E309565374
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:48:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5489118847A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE31B2E0937;
-	Wed,  9 Jul 2025 12:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A84A2D8796;
+	Wed,  9 Jul 2025 12:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9cN77tY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJcl03i5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4403828DF42;
-	Wed,  9 Jul 2025 12:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA69F23770D;
+	Wed,  9 Jul 2025 12:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752065292; cv=none; b=U52J8/s6w3E5kq/tk4GR14AvGM8gtZL34Ybse3v+wEJjW9neD0G1JW4Ujk9w5/uOJofY64xvLHL1i+rqkSeRbYbemvRf/aPZfG++dtx8ojh/1iiF1cyWTqNp4qy/FcCoOBgqUkxDmd+LkJIfaerxxUIYu5PswLsv95QQQ7YVDpM=
+	t=1752065342; cv=none; b=gX2OFcgWBYHw5gJYwWc3Oo4DBlnmmoSgAJvJ5YZurlLgzdWteLe9MJK5BPCer7Rp0YShypohEeW1cQvY1zJhWBmqGnFxyEQclse7qK5Q3rhIY72Wz/obiAksD1PpjPey7xI3JT23t3385mebSYKFct77RlrgOfWEeSpMgpQRSQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752065292; c=relaxed/simple;
-	bh=IjKafDrSKpDO3jWbUE5S33Zi4PuRIjRGcR1MuBt2QsE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qoCpoeMVq6UtFAgfO3xBNhi786G93OEQW7aUZYqJ240DNM60Y1StCba3FVm6h1764Z1SnLTnD5shlPSaxr8Aimx0oVIicPFsAGkiFDZnxDD0vKdTx4Lx3bTiCznmjpN5zOcMT0H4CQZ4lqjThEWsfTyJB6J4uq1Eui95G9B1wTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D9cN77tY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23D06C4CEEF;
-	Wed,  9 Jul 2025 12:48:12 +0000 (UTC)
+	s=arc-20240116; t=1752065342; c=relaxed/simple;
+	bh=kW9fpJeu4MuVl5tgvQBS2+J5VX7tdkjdMXBdal5v4w8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EcgejNbI5VBRNvgowpf7j4ZEAsqyhTfUix1Eu37aCV4tJz02Y8vAeZ+8LIczV7gQRgxzzLsYqO+wkRjGFF+CF5aO0FxSdMoQvo1upzQu/tv3zKNp0jqQeASKEdoZ0vQdllxuwJW5wnPAF9pOcvEmaX5eEcyO01AoC8zBHmWZt4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJcl03i5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44532C4CEEF;
+	Wed,  9 Jul 2025 12:49:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752065292;
-	bh=IjKafDrSKpDO3jWbUE5S33Zi4PuRIjRGcR1MuBt2QsE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=D9cN77tYsBx7RnFEQtcP4Bqg1Wqu7kNoj0aF+UP7qcq0dJWw0wCH/uUhGBWaopshB
-	 71+AniRIHP/d22+LXp3v7RXvyA4YwdTkD8ibDgnyirVs+cuNS0NxjKoNeYLsA897Ot
-	 WIFTJiLckNxn4uBd1fNhlsJ+C3ByidIxbZ4S5MK9LrPMZ5AKjOqBSOYDwrihKy83DK
-	 P1GRWBp6f3kx61RTLxjHCqTPhvQtQ/yhpLXeIq9sJhXuI6NM2zD1s9W6Ojm6o3LQ5l
-	 4FkJH3UWBZiFFqotlbIMb+Rz82nGTFUC6vHDRRisicM9mQKmD1Y7y8bZmvCJGrC0hO
-	 KqdlO2NFtVTHA==
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-60f0a92391bso2844156eaf.0;
-        Wed, 09 Jul 2025 05:48:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW6r4vVFNkc30NJX0m2fRJViOA+MMRSgPXN8Yw37BTaVfZNrwoTNBbvKsNW7LBT10YvOBzv0rKQL7c=@vger.kernel.org, AJvYcCWyi5i+Hl5qmt+Ep8guV523/zUnpRAw65cITBNwRE+GHtXhWPEdgdjemkJOBJrynf2qwat31vjbC8xpmig=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhm5get1mugcWesDBz2Zlr4lSu31T0iJos24tlZnOHuxYv0gMd
-	PA4KglA/JMK43t8f0E+yb9nM3KTJyM/44O/LFz2Dt2xl+LDZMBiChnb3lk7QKA+NGvlQU0rDLZt
-	beRUXwYvE0EfF7DrA1SlUU9kI2EimwfI=
-X-Google-Smtp-Source: AGHT+IEG7HX5l8eAamULm2qP4yxYrJlancU7qVZt40GWX3GoE5XQFna5v28re8xxoiPRwNMzlWvYRZDAzqoG/O0+7g4=
-X-Received: by 2002:a4a:e912:0:b0:613:cafd:610 with SMTP id
- 006d021491bc7-613ccedd834mr1557919eaf.7.1752065291018; Wed, 09 Jul 2025
- 05:48:11 -0700 (PDT)
+	s=k20201202; t=1752065342;
+	bh=kW9fpJeu4MuVl5tgvQBS2+J5VX7tdkjdMXBdal5v4w8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VJcl03i5hnMpETP7FsxKeXgGxG6SHJkncfnTuE+XrlN1cIbkgzM86fLVn7ieBVxEW
+	 akc5WGA4bCqPOTJ+YczAeq3/sMx6PuQBfgF5tCwdIRvoQ1hIpHxX+9lXx9OniStHBv
+	 EJCUSJfANt3hzi79HlNOx3F8vUedC/YmCBxmsk1xry7wCkTk4hx1+O9YIcHTbMf9+7
+	 FFv4NeGV2plGn8c+uMxzEqvNgYUt7EJP2K3mogLvwB7PVneHVWYw7DSd55+09i0/Oe
+	 NJG7qc33gzC1jG4wSd2TmuE+rPMZuHZey5wq+fmsII6JGMT9dt+Vn/8wcK6O0XIcer
+	 Yomo/8qyve9Aw==
+Date: Wed, 9 Jul 2025 14:48:59 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: neeraj.upadhyay@kernel.org
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, paulmck@kernel.org,
+	joelagnelf@nvidia.com, boqun.feng@gmail.com, urezki@gmail.com,
+	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com, qiang.zhang1211@gmail.com,
+	neeraj.iitr10@gmail.com, neeraj.upadhyay@amd.com,
+	Xiongfeng Wang <wangxiongfeng2@huawei.com>,
+	Qi Xi <xiqi2@huawei.com>
+Subject: Re: [PATCH rcu 5/5] rcu: Fix rcu_read_unlock() deadloop due to IRQ
+ work
+Message-ID: <aG5lOzY7s4GKjCOT@localhost.localdomain>
+References: <20250709104118.15532-1-neeraj.upadhyay@kernel.org>
+ <20250709104118.15532-6-neeraj.upadhyay@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12700973.O9o76ZdvQC@rjwysocki.net> <CAPDyKFpGH=ZUyQ0wbkEKVLxknm59hDX6DNm9hXpuqzHCpoe-KQ@mail.gmail.com>
- <CAJZ5v0how7VXTjuxtd533zNeqKwCqnJDVVKK=Vpww_HbQkwxKw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0how7VXTjuxtd533zNeqKwCqnJDVVKK=Vpww_HbQkwxKw@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 9 Jul 2025 14:48:00 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0isuV-HDyGCrLeFp0WFcCQoQpi9dMEbJnWrsOdvk4Bf1A@mail.gmail.com>
-X-Gm-Features: Ac12FXxWzmeQz1W1fKJ2C4G3hUpEArUz5F_Y7Bx1Mk9dwdcqkFiQ4FUOOpZ0ei0
-Message-ID: <CAJZ5v0isuV-HDyGCrLeFp0WFcCQoQpi9dMEbJnWrsOdvk4Bf1A@mail.gmail.com>
-Subject: Re: [PATCH v1] PM: runtime: Take active children into account in pm_runtime_get_if_in_use()
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Alex Elder <elder@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250709104118.15532-6-neeraj.upadhyay@kernel.org>
 
-On Wed, Jul 9, 2025 at 2:06=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
-> wrote:
->
-> On Wed, Jul 9, 2025 at 1:47=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.or=
-g> wrote:
-> >
-> > On Wed, 9 Jul 2025 at 12:41, Rafael J. Wysocki <rjw@rjwysocki.net> wrot=
-e:
-> > >
-> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > >
-> > > For all practical purposes, there is no difference between the situat=
-ion
-> > > in which a given device is not ignoring children and its active child
-> > > count is nonzero and the situation in which its runtime PM usage coun=
-ter
-> > > is nonzero.  However, pm_runtime_get_if_in_use() will only increment =
-the
-> > > device's usage counter and return 1 in the latter case.
-> > >
-> > > For consistency, make it do so in the former case either by adjusting
-> > > pm_runtime_get_conditional() and update the related kerneldoc comment=
-s
-> > > accordingly.
-> > >
-> > > Fixes: c0ef3df8dbae ("PM: runtime: Simplify pm_runtime_get_if_active(=
-) usage")
-> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > ---
-> > >  drivers/base/power/runtime.c |   27 ++++++++++++++++++---------
-> > >  1 file changed, 18 insertions(+), 9 deletions(-)
-> > >
-> > > --- a/drivers/base/power/runtime.c
-> > > +++ b/drivers/base/power/runtime.c
-> > > @@ -1203,10 +1203,12 @@
-> > >   *
-> > >   * Return -EINVAL if runtime PM is disabled for @dev.
-> > >   *
-> > > - * Otherwise, if the runtime PM status of @dev is %RPM_ACTIVE and ei=
-ther
-> > > - * @ign_usage_count is %true or the runtime PM usage counter of @dev=
- is not
-> > > - * zero, increment the usage counter of @dev and return 1. Otherwise=
-, return 0
-> > > - * without changing the usage counter.
-> > > + * Otherwise, if its runtime PM status is %RPM_ACTIVE and (1) @ign_u=
-sage_count
-> > > + * is set, or (2) @dev is not ignoring children and its active child=
- count is
-> > > + * nonero, or (3) the runtime PM usage counter of @dev is not zero, =
-increment
-> > > + * the usage counter of @dev and return 1.
-> > > + *
-> > > + * Otherwise, return 0 without changing the usage counter.
-> > >   *
-> > >   * If @ign_usage_count is %true, this function can be used to preven=
-t suspending
-> > >   * the device when its runtime PM status is %RPM_ACTIVE.
-> > > @@ -1228,7 +1230,8 @@
-> > >                 retval =3D -EINVAL;
-> > >         } else if (dev->power.runtime_status !=3D RPM_ACTIVE) {
-> > >                 retval =3D 0;
-> > > -       } else if (ign_usage_count) {
-> > > +       } else if (ign_usage_count || (!dev->power.ignore_children &&
-> > > +                  atomic_read(&dev->power.child_count) > 0)) {
-> >
-> > I am not sure I understand why this is needed, sorry.
-> >
-> > If someone and somehow we have "dev->power.runtime_status =3D=3D
-> > RPM_ACTIVE", then the dev's parents/childrens and suppliers/consumers
-> > should have been reference counted correctly already.
->
-> Sure.
->
-> > Otherwise it should not have been possible to set the runtime_status to=
- RPM_ACTIVE
-> > in the first place, right?
->
-> Right.
->
-> runtime_status must be RPM_ACTIVE, but pm_runtime_get_if_in_use() only
-> wants to bump it up if the device is in use in addition to that.
+Le Wed, Jul 09, 2025 at 04:11:18PM +0530, neeraj.upadhyay@kernel.org a écrit :
+> From: Joel Fernandes <joelagnelf@nvidia.com>
+> 
+> During rcu_read_unlock_special(), if this happens during irq_exit(), we
+> can lockup if an IPI is issued. This is because the IPI itself triggers
+> the irq_exit() path causing a recursive lock up.
+> 
+> This is precisely what Xiongfeng found when invoking a BPF program on
+> the trace_tick_stop() tracepoint As shown in the trace below. Fix by
+> managing the irq_work state correctly.
+> 
+> irq_exit()
+>   __irq_exit_rcu()
+>     /* in_hardirq() returns false after this */
+>     preempt_count_sub(HARDIRQ_OFFSET)
+>     tick_irq_exit()
+>       tick_nohz_irq_exit()
+> 	    tick_nohz_stop_sched_tick()
+> 	      trace_tick_stop()  /* a bpf prog is hooked on this trace point */
+> 		   __bpf_trace_tick_stop()
+> 		      bpf_trace_run2()
+> 			    rcu_read_unlock_special()
+>                               /* will send a IPI to itself */
+> 			      irq_work_queue_on(&rdp->defer_qs_iw, rdp->cpu);
+> 
+> A simple reproducer can also be obtained by doing the following in
+> tick_irq_exit(). It will hang on boot without the patch:
+> 
+>   static inline void tick_irq_exit(void)
+>   {
+>  +	rcu_read_lock();
+>  +	WRITE_ONCE(current->rcu_read_unlock_special.b.need_qs, true);
+>  +	rcu_read_unlock();
+>  +
+> 
+> Reported-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+> Closes: https://lore.kernel.org/all/9acd5f9f-6732-7701-6880-4b51190aa070@huawei.com/
+> Tested-by: Qi Xi <xiqi2@huawei.com>
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+> Reviewed-by: "Paul E. McKenney" <paulmck@kernel.org>
+> Signed-off-by: Neeraj Upadhyay (AMD) <neeraj.upadhyay@kernel.org>
+> ---
+>  kernel/rcu/tree.h        | 11 ++++++++++-
+>  kernel/rcu/tree_plugin.h | 23 +++++++++++++++++++----
+>  2 files changed, 29 insertions(+), 5 deletions(-)
+> 
+> diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+> index 3830c19cf2f6..f8f612269e6e 100644
+> --- a/kernel/rcu/tree.h
+> +++ b/kernel/rcu/tree.h
+> @@ -174,6 +174,15 @@ struct rcu_snap_record {
+>  	unsigned long   jiffies;	/* Track jiffies value */
+>  };
+>  
+> +/*
+> + * The IRQ work (deferred_qs_iw) is used by RCU to get scheduler's attention.
+> + * It can be in one of the following states:
+> + * - DEFER_QS_IDLE: An IRQ work was never scheduled.
+> + * - DEFER_QS_PENDING: An IRQ work was scheduler but never run.
 
-I mean pm_runtime_get_if_in_use() only wants to bump up the device's
-usage counter if it is in use already.
+Never as in "never ever" ? :-)
 
-> So far it's been checking the usage counter only though.
+I'm not a native speaker, so you guys tell me, but isn't it less
+ambiguous:
 
-And the above is correct.
+- DEFER_QS_IDLE: The IRQ work isn't pending
+- DEFER_QS_PENDING: The IRQ work is pending but hasn't run yet
 
-> >
-> > >                 retval =3D 1;
-> > >                 atomic_inc(&dev->power.usage_count);
-> > >         } else {
-> > > @@ -1261,10 +1264,16 @@
-> > >   * @dev: Target device.
-> > >   *
-> > >   * Increment the runtime PM usage counter of @dev if its runtime PM =
-status is
-> > > - * %RPM_ACTIVE and its runtime PM usage counter is greater than 0, i=
-n which case
-> > > - * it returns 1. If the device is in a different state or its usage_=
-count is 0,
-> > > - * 0 is returned. -EINVAL is returned if runtime PM is disabled for =
-the device,
-> > > - * in which case also the usage_count will remain unmodified.
-> > > + * %RPM_ACTIVE and its runtime PM usage counter is greater than 0 or=
- it is not
-> > > + * ignoring children and its active child count is nonzero.  1 is re=
-turned in
-> > > + * this case.
-> > > + *
-> > > + * If @dev is in a different state or it is not in use (that is, its=
- usage
-> > > + * counter is 0, or it is ignoring children, or its active child cou=
-nt is 0),
-> > > + * 0 is returned.
-> > > + *
-> > > + * -EINVAL is returned if runtime PM is disabled for the device, in =
-which case
-> > > + * also the usage counter of @dev is not updated.
-> > >   */
-> > >  int pm_runtime_get_if_in_use(struct device *dev)
-> > >  {
-> > >
-> > >
-> > >
-> >
-> > Kind regards
-> > Uffe
-> >
+But then the name are already self-explanatory. And then keeping
+it as a boolean should be enough too. Why do we need these two
+states?
+
+> + */
+> +#define DEFER_QS_IDLE		0
+> +#define DEFER_QS_PENDING	1
+> +
+>  /* Per-CPU data for read-copy update. */
+>  struct rcu_data {
+>  	/* 1) quiescent-state and grace-period handling : */
+> @@ -192,7 +201,7 @@ struct rcu_data {
+>  					/*  during and after the last grace */
+>  					/* period it is aware of. */
+>  	struct irq_work defer_qs_iw;	/* Obtain later scheduler attention. */
+> -	bool defer_qs_iw_pending;	/* Scheduler attention pending? */
+> +	int defer_qs_iw_pending;	/* Scheduler attention pending? */
+>  	struct work_struct strict_work;	/* Schedule readers for strict GPs. */
+>  
+>  	/* 2) batch handling */
+> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> index a91b2322a0cd..aec584812574 100644
+> --- a/kernel/rcu/tree_plugin.h
+> +++ b/kernel/rcu/tree_plugin.h
+> @@ -486,13 +486,16 @@ rcu_preempt_deferred_qs_irqrestore(struct task_struct *t, unsigned long flags)
+>  	struct rcu_node *rnp;
+>  	union rcu_special special;
+>  
+> +	rdp = this_cpu_ptr(&rcu_data);
+> +	if (rdp->defer_qs_iw_pending == DEFER_QS_PENDING)
+> +		rdp->defer_qs_iw_pending = DEFER_QS_IDLE;
+> +
+>  	/*
+>  	 * If RCU core is waiting for this CPU to exit its critical section,
+>  	 * report the fact that it has exited.  Because irqs are disabled,
+>  	 * t->rcu_read_unlock_special cannot change.
+>  	 */
+>  	special = t->rcu_read_unlock_special;
+> -	rdp = this_cpu_ptr(&rcu_data);
+>  	if (!special.s && !rdp->cpu_no_qs.b.exp) {
+>  		local_irq_restore(flags);
+>  		return;
+> @@ -629,7 +632,18 @@ static void rcu_preempt_deferred_qs_handler(struct irq_work *iwp)
+>  
+>  	rdp = container_of(iwp, struct rcu_data, defer_qs_iw);
+>  	local_irq_save(flags);
+> -	rdp->defer_qs_iw_pending = false;
+> +
+> +	/*
+> +	 * Requeue the IRQ work on next unlock in following situation:
+
+s/in/to avoid/
+
+> +	 * 1. rcu_read_unlock() queues IRQ work (state -> DEFER_QS_PENDING)
+> +	 * 2. CPU enters new rcu_read_lock()
+> +	 * 3. IRQ work runs but cannot report QS due to rcu_preempt_depth() > 0
+> +	 * 4. rcu_read_unlock() does not re-queue work (state still PENDING)
+> +	 * 5. Deferred QS reporting does not happen.
+> +	 */
+> +	if (rcu_preempt_depth() > 0)
+> +		WRITE_ONCE(rdp->defer_qs_iw_pending, DEFER_QS_IDLE);
+
+Why WRITE_ONCE() ? Also this lacks the explanation telling why it's not
+unconditionally setting back to DEFER_QS_IDLE (ie: just a few words about that
+irq_work() recursion thing), because I'm sure my short memory will suggest to
+make it unconditional for simplification within two years (being optimistic) :-)
+
+Thanks.
+
+-- 
+Frederic Weisbecker
+SUSE Labs
 
