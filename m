@@ -1,56 +1,71 @@
-Return-Path: <linux-kernel+bounces-722922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB236AFE0AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:01:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7401FAFE0B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1215C1C2731C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:01:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61EE81C27436
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BB526B757;
-	Wed,  9 Jul 2025 07:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A495826D4E7;
+	Wed,  9 Jul 2025 07:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ees+XgtX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="ZwK7Ywp5"
+Received: from mail-m32123.qiye.163.com (mail-m32123.qiye.163.com [220.197.32.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0761321ABAC;
-	Wed,  9 Jul 2025 07:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C5821ABAC;
+	Wed,  9 Jul 2025 07:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752044472; cv=none; b=VoV+44FJ/sr1Lkdx4V4ENkOoNa2RsJui9pRJ5GVRDIBwepDiTDlhKeGPNTJ2G6ydXSgrZuSczRig6DEHiih41fz9XTWl+cXxI14Lcxy/NzBBQYocY8o+xTEEMgka6TuiUPavWKH8Tul8qKFl7p1HtMoo+dmstJs50rYnqO6xdGU=
+	t=1752044552; cv=none; b=o7oDyWfwICFaLwAJo42eNesmDC9JSj13DcHK4XYrAtMQbC7Q2O9kBbd0F0Au82uHC+XO+WLaMqepzOqGMnUMkoQFvTQNUcqbrTv/pwxW/ASRA0XABipOyTH40Hgiut4RJ7SzrAsU2Rog5ukQPSZhlnOMamG+O+Tr8/Znnb7MJbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752044472; c=relaxed/simple;
-	bh=hxPSyY5k5W1yAZvXq3K3ryc/SwkGUc1a7pKy7EuahwQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p1WcWaqCewtRA5Q0AhsXTp6yTi4hFJqD0HDvi2Wg4Orvasq/LiOUaJI30hk+fYlQejomxc2JT4FfZ6JryBtYa65xYGIrLMGVM0E7tq5zS1+pheRPqgLhui7+ZkAJSDSi8Yz1sEcNJO/Q2y0rua9gHKG7+QNczTsWX9G2y8sh4lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ees+XgtX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22D0FC4CEF0;
-	Wed,  9 Jul 2025 07:01:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752044471;
-	bh=hxPSyY5k5W1yAZvXq3K3ryc/SwkGUc1a7pKy7EuahwQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Ees+XgtXV73RpRtZCFqm9jbRNdg4BDEX7Uiy+Eu+Id3eisjdRXsK/U1Tr1fiJOijY
-	 F8HRS0MzuijbA8Cy2H8dq68eMOFCJYyH/qxkoSBUDfgwAJ2IZOhbOzcnb2nF7yLH09
-	 CFCNVCi7Uclc8E2PVv3DMBdSVdlSl39uqJ3uOKlmCS66NGRIiLkEVoBuFNAc7v++H0
-	 yIKT4wp9ELfwpBTMV4zyXHeXrbWCfTnsY81Cprk3+SF54OzS3UmG9T4vFB9HvI5mXs
-	 mDQ7Z28pxa7OqFcwIR1aCWcmOu+iCtJ2/m5yD7RR3esVmdPcludLijl25xEcQsKiTL
-	 mBJZ7lV0NIsKg==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Sudeep Holla <sudeep.holla@arm.com>,
-	Peng Fan <peng.fan@nxp.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	arm-scmi@vger.kernel.org,
+	s=arc-20240116; t=1752044552; c=relaxed/simple;
+	bh=rTFmnY9GoHSbGPdwpO3DBnr9SBTvcFpOMk3OBJB4CVE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p0kh4z20om+xcV0Ddu6iY1a8o5rfnhZwjVMEotNyhh4V77HBBs35LkHITJ04spQhoNZdfJUSdSLWR8p1C5R4tjOfH/stcr/s26O4sM1cOxAiLX4F1AvgTT4Kxc3g3biZ71r+SaZFnNLXI1JefMyQUcOlQRZxD18QjA+X3kJjZL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=ZwK7Ywp5; arc=none smtp.client-ip=220.197.32.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1b69b799a;
+	Wed, 9 Jul 2025 15:02:16 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	jingoohan1@gmail.com,
+	inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	hjc@rock-chips.com,
+	heiko@sntech.de,
+	andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com,
+	l.stach@pengutronix.de,
+	dianders@chromium.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] firmware: arm_scmi: convert to SYSTEM_SLEEP_PM_OPS
-Date: Wed,  9 Jul 2025 09:01:01 +0200
-Message-Id: <20250709070107.1388512-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v2 00/12] Apply drm_bridge_connector helper for the Analogix DP driver
+Date: Wed,  9 Jul 2025 15:01:27 +0800
+Message-Id: <20250709070139.3130635-1-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,47 +73,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh8dTlYeS04YHR9IGE8fHhlWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
+	xVSktLVUpCS0tZBg++
+X-HM-Tid: 0a97edfe02a503a3kunm3a7bcd50c83882
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MyI6Lww*KjEzQi8rFRVMI0oR
+	NjxPCTdVSlVKTE5JS09PTkhDTE9MVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJQ0NNNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=ZwK7Ywp5C+VjGI7jFlKvgIwk+1+l+e/7zKTo8xfobMIrnOsi7a2QU8ONWp4yynusrFZ+sJtHriTtrdJb38/HUkENYELRlSR7UJ2qy0bHUH2/KbsrnLVkLn+olHV8VIYm7s9U/838ajb8N3TGCodnJVASttHPQ/4vD0LCe9WOzJY=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=+bjluHkW3SFP0xqLuvonF0izTiZCHO6le07wELtphZs=;
+	h=date:mime-version:subject:message-id:from;
 
-From: Arnd Bergmann <arnd@arndb.de>
+PATCH 1 is a small format optimization for struct analogid_dp_device.
+PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
+PATCH 3-8 are preparations for the movement of the panel/bridge parsing.
+PATCH 9 is to apply a better API for the encoder initialization.
+PATCH 10-11 are to apply the newly added API to find panel or bridge.
+PATCH 12 is to apply the drm_bridge_connector helper.
 
-The old SET_SYSTEM_SLEEP_PM_OPS() macro leads to a warning about an
-unused function:
+Damon Ding (12):
+  drm/bridge: analogix_dp: Formalize the struct analogix_dp_device
+  drm/bridge: analogix_dp: Move &drm_bridge_funcs.mode_set to
+    &drm_bridge_funcs.atomic_enable
+  drm/bridge: analogix_dp: Add &analogix_dp_plat_data.bridge
+  drm/exynos: exynos_dp: Remove &exynos_dp_device.ptn_bridge
+  drm/exynos: exynos_dp: Remove redundant
+    &analogix_dp_plat_data.skip_connector
+  drm/bridge: analogix_dp: Remove redundant
+    &analogix_dp_plat_data.skip_connector
+  drm/bridge: analogix_dp: Add support to find panel or bridge
+  drm/rockchip: analogix_dp: Apply drmm_encoder_init() instead of
+    drm_simple_encoder_init()
+  drm/rockchip: analogix_dp: Apply analogix_dp_find_panel_or_bridge()
+  drm/exynos: exynos_dp: Apply analogix_dp_find_panel_or_bridge()
+  drm/bridge: analogix_dp: Remove unused APIs for AUX bus
+  drm/bridge: analogix_dp: Apply drm_bridge_connector helper
 
-drivers/firmware/arm_scmi/scmi_power_control.c:363:12: error: 'scmi_system_power_resume' defined but not used [-Werror=unused-function]
-  363 | static int scmi_system_power_resume(struct device *dev)
+ .../drm/bridge/analogix/analogix_dp_core.c    | 370 ++++++++++--------
+ .../drm/bridge/analogix/analogix_dp_core.h    |   8 +-
+ drivers/gpu/drm/exynos/exynos_dp.c            |  27 +-
+ .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  42 +-
+ include/drm/bridge/analogix_dp.h              |   6 +-
+ 5 files changed, 217 insertions(+), 236 deletions(-)
 
-The proper way to do this these days is to use SYSTEM_SLEEP_PM_OPS()
-and pm_sleep_ptr().
-
-Fixes: 9a0658d3991e ("firmware: arm_scmi: power_control: Ensure SCMI_SYSPOWER_IDLE is set early during resume")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/firmware/arm_scmi/scmi_power_control.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/firmware/arm_scmi/scmi_power_control.c b/drivers/firmware/arm_scmi/scmi_power_control.c
-index ab0cee0d4bec..955736336061 100644
---- a/drivers/firmware/arm_scmi/scmi_power_control.c
-+++ b/drivers/firmware/arm_scmi/scmi_power_control.c
-@@ -369,7 +369,7 @@ static int scmi_system_power_resume(struct device *dev)
- }
- 
- static const struct dev_pm_ops scmi_system_power_pmops = {
--	SET_SYSTEM_SLEEP_PM_OPS(NULL, scmi_system_power_resume)
-+	SYSTEM_SLEEP_PM_OPS(NULL, scmi_system_power_resume)
- };
- 
- static const struct scmi_device_id scmi_id_table[] = {
-@@ -380,7 +380,7 @@ MODULE_DEVICE_TABLE(scmi, scmi_id_table);
- 
- static struct scmi_driver scmi_system_power_driver = {
- 	.driver	= {
--		.pm = &scmi_system_power_pmops,
-+		.pm = pm_sleep_ptr(&scmi_system_power_pmops),
- 	},
- 	.name = "scmi-system-power",
- 	.probe = scmi_syspower_probe,
 -- 
-2.39.5
+2.34.1
 
 
