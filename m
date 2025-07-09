@@ -1,101 +1,140 @@
-Return-Path: <linux-kernel+bounces-724323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B09B6AFF156
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:03:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D313AFF15E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4B651C84008
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:03:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DF945415E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E106923E25B;
-	Wed,  9 Jul 2025 19:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337BD24167D;
+	Wed,  9 Jul 2025 19:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Mlh2kdJx"
-Received: from smtp.smtpout.orange.fr (smtp-65.smtpout.orange.fr [80.12.242.65])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="O20vyTVm"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465051F63D9;
-	Wed,  9 Jul 2025 19:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F212021A452;
+	Wed,  9 Jul 2025 19:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752087785; cv=none; b=HcdP6zkAfxKo9f0oG0vKqKqAfQpq/3IIj3HdglVOvSZwx1+/Zeb9ttj12Thw6lqjX2N1y63ya6DxzY5KrRBKttkFtDmgrO7Y+JGnbCiFLq7pCQffdKgrwvOKCO0vwU2uLQWLxAKIJfoDgslOs7FgKp5CVn2m4S9dv+4o1rYoyIs=
+	t=1752087796; cv=none; b=jgAjPLjQGm843BqP9SmsDfYrL7qcEw6USJU5GVY0n0L42+/E0S1AGY3MiG++WF5lHyHUfGXpRrYARbQsL1lFfKrzNlW4dCjrjG4lhFMFAOWqrKcCI89/mHZ38QVzuNFACrwR6C2tHR306R/omXXioxd7gpfEwLplNIN0GNjghHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752087785; c=relaxed/simple;
-	bh=G519BjdkDY1+Rfyc181KLiDG1zEMN5MlAxYWGwUIhis=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MAmzoU6eiIfj3EnPW5nwrL+0vS+X4Zn/XEiC5BL8Vg1pAyB7jjd+aP/+S47sMQZQmQ+kjIfDxTMpIxlMMyxN7ks4bDRu9d6tPubrsJTbkVGKoZhJ8JzuF8z+mMo8eL4GPQrszUUq9GbWinSxZNIL2qPEOtMleXfuBNXEAWypkXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Mlh2kdJx; arc=none smtp.client-ip=80.12.242.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id Za4EuohZXIU3AZa4EuA5yn; Wed, 09 Jul 2025 21:02:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1752087775;
-	bh=DU9gqi8o4hCHl2YklDSYazmq20NfmNbWp6osbg8n6+8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Mlh2kdJxE+2erlXyzB/j9fcd3pgNavt+mSXgVyTlrnsdyBa8hroweuI5b02zmojTn
-	 EtE2Vo1N3KAOkVUhGsaYTo+pvW8n289lT5osOgU4qNReL2KwJvlPBzh+x3jCJmVvjK
-	 4n0igQnj4ahsFbXXCeVQUMFKN3jwAlqiPbrBpoLdvvUkspqsp/59NIZfZ7eUSGr8ni
-	 ZemDE8hf8A5LKzDbJ+8tZfJ8cWjwygSbh3ddibSPEgVmFfHFDIKt6fJEkPgY1Y1axe
-	 ZGvW0fbydjgZMsRaSahXv8w/1a0N/2HxWS7BeMbh+cmzebsqF77EJ79fpPW7/DpF47
-	 1PZQl8lLuWWlg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 09 Jul 2025 21:02:55 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Sunil Khatri <sunil.khatri@amd.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/amdgpu: Fix missing unlocking in an error path in amdgpu_userq_create()
-Date: Wed,  9 Jul 2025 21:02:51 +0200
-Message-ID: <366557fa7ca8173fd78c58336986ca56953369b9.1752087753.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1752087796; c=relaxed/simple;
+	bh=w33Yy1b2aTYcQmR5hFPvM8miDleChN70erjham5PHCM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RJ6Vn5jbgdxHpAbSvdES1Jof4mIbDPAlBZsU6H0f1CmuLz3+/G2oMNPGezUzA5xIiBU9MEMSv+FgntJ3NgkhBTYeMgP8yZ9EnBUg6Ktyzkp38wyaleE6zQw89AoV2HU+aC+BD6JVcDDOUiDrzRhi01k2h7gq+K+/SwgLJv9ubwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=O20vyTVm; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 569F2Quu006870;
+	Wed, 9 Jul 2025 19:03:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ifBq+E
+	R6NWxi5h+0YyMfp5vKAFMEsKXlgVcLfp9LX/Y=; b=O20vyTVmt7UI03X1PUbP6v
+	gLNn75TGOtHlui9nIWXXF4dW1KRgIQwUcvR8gZdpWNKXBv7cetag6bVmxkFJMYvi
+	9pwLjNfrRT4RBU+rR+wWDgiXGwnpAvWzdeH/ZjTH78cdOeUgqvlDGxTfCcPDX+nT
+	oFZEFOHFLNh7RCEBP/U+UToxyFDnDLOSzSlzFKZP1VwpuiSi4Rg2TjGn5GNtCBVg
+	aU4EbP1QFaoGRd1Og0KyfJ/689L2OzYMcM4ojNdQr1+1uG+2AazxaWMea7nP6YaA
+	OU54E3u/lsieh0Ee1gdDZnUFcrqxCS7VJLJM3wwwYmxSV3kXlpzBvRuozU68/1Kw
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47pur787jc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Jul 2025 19:03:06 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 569I7DMs021519;
+	Wed, 9 Jul 2025 19:03:05 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47qectsvqs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Jul 2025 19:03:05 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 569J349930081604
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 9 Jul 2025 19:03:04 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5E15358043;
+	Wed,  9 Jul 2025 19:03:04 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E9B6E58059;
+	Wed,  9 Jul 2025 19:03:03 +0000 (GMT)
+Received: from [9.41.105.251] (unknown [9.41.105.251])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  9 Jul 2025 19:03:03 +0000 (GMT)
+Message-ID: <1915e11f-9513-4d9a-a46a-3f97ac152a3b@linux.ibm.com>
+Date: Wed, 9 Jul 2025 14:03:02 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4] vsock/test: Add test for null ptr deref when
+ transport changes
+Content-Language: en-US
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: mhal@rbox.co, virtualization@lists.linux.dev, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, v4bel@theori.io, leonardi@redhat.com
+References: <472a5d43-4905-4fa4-8750-733bb848410d@linux.ibm.com>
+ <CAGxU2F7bV7feiZs6FmdWkA7v9nxojuDbeSHyWoASS36fr1pSgw@mail.gmail.com>
+ <CAGxU2F4GbeCJDYrs8Usd8JJcTrp99gyn3c_zXqpnz+UH2NNBGw@mail.gmail.com>
+From: Konstantin Shkolnyy <kshk@linux.ibm.com>
+In-Reply-To: <CAGxU2F4GbeCJDYrs8Usd8JJcTrp99gyn3c_zXqpnz+UH2NNBGw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDE2OCBTYWx0ZWRfX3evddJ+8NLPa A+2M9HsTl5MiPujeHMFFR02XW0fE5ucHEGxkMPVMHjjdakA2qSTgz9gupgEQbxxuqsuTW91FV1B +fS00PioldEa7EgKcIG2FQuq4JUnRq0AlmDkzuUOmTOcOn2ihxKM2Wnx0Jp+dBKl7O2AXU0XQV7
+ PNfStIz7IyyIsvq77z9t4qWHipEzNmKjKubcrdV/t0R2hkSGvxGIFwH0Rt+PiK6Gzt3vBYMZWGp JAsei8gc/RGSlWcVoF65dZ3DIojsGgoiug5vtDPcXo4r3v912fVWeXFmoi4uJdqTeNnNQwhUqcQ MI3wEBEvh9UmniMQTuZzQxDikketwAF3jCVv6Ch+pyWnT4PMFMyByJFY5S2WY84/He7M15l/MM1
+ OeBfiJrtau0nC2T+6Jsqhg2W4zMm9TU9Vn/OVnbSzBs6czQova9jCw/FD8F6To4pRj2dBSbz
+X-Proofpoint-GUID: EcdP8gGMadH59a8D28cOtQinDaUFNt6X
+X-Proofpoint-ORIG-GUID: EcdP8gGMadH59a8D28cOtQinDaUFNt6X
+X-Authority-Analysis: v=2.4 cv=W/M4VQWk c=1 sm=1 tr=0 ts=686ebcea cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8 a=yc8Tnp-ilgVpimbPip8A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-09_04,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ mlxscore=0 priorityscore=1501 adultscore=0 clxscore=1015 suspectscore=0
+ spamscore=0 lowpriorityscore=0 mlxlogscore=999 bulkscore=0 impostorscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507090168
 
-If kasprintf() fails, some mutex still need to be released to avoid locking
-issue, as already done in all other error handling path.
+On 09-Jul-25 10:41, Stefano Garzarella wrote:
+> On Wed, 9 Jul 2025 at 17:26, Stefano Garzarella <sgarzare@redhat.com> wrote:
+>>
+>> On Wed, 9 Jul 2025 at 16:54, Konstantin Shkolnyy <kshk@linux.ibm.com> wrote:
+>>>
+>>> I'm seeing a problem on s390 with the new "SOCK_STREAM transport change
+>>> null-ptr-deref" test. Here is how it appears to happen:
+>>>
+>>> test_stream_transport_change_client() spins for 2s and sends 70K+
+>>> CONTROL_CONTINUE messages to the "control" socket.
+>>>
+>>> test_stream_transport_change_server() spins calling accept() because it
+>>> keeps receiving CONTROL_CONTINUE.
+>>>
+>>> When the client exits, the server has received just under 1K of those
+>>> 70K CONTROL_CONTINUE, so it calls accept() again but the client has
+>>> exited, so accept() never returns and the server never exits.
+> 
+> Just to be clear, I was seeing something a bit different.
+> The accept() in the server is no-blocking, since we set O_NONBLOCK on
+> the socket, so I see the server looping around a failing accept()
+> (errno == EAGAIN) while dequeueing the CONTROL_CONTINUE messages, so
+> after 10/15 seconds the server ends on my case.
+> 
+> It seems strange that in your case it blocks, since it should be a
+> no-blocking call.
 
-Fixes: c03ea34cbf88 ("drm/amdgpu: add support of debugfs for mqd information")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-index 513bbc543f40..bce97318965c 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-@@ -520,8 +520,10 @@ amdgpu_userq_create(struct drm_file *filp, union drm_amdgpu_userq *args)
- 	}
- 
- 	queue_name = kasprintf(GFP_KERNEL, "queue-%d", qid);
--	if (!queue_name)
--		return -ENOMEM;
-+	if (!queue_name) {
-+		r = -ENOMEM;
-+		goto unlock;
-+	}
- 
- 	/* Queue dentry per client to hold MQD information   */
- 	queue->debugfs_queue = debugfs_create_dir(queue_name, filp->debugfs_client);
--- 
-2.50.0
+It was my mistake. The accept() doesn't block. I've retested it more 
+carefully and it keeps returning and the loop eventually consumes all 
+queued CONTROL_CONTINUE messages and quits, as you described.
 
 
