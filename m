@@ -1,170 +1,125 @@
-Return-Path: <linux-kernel+bounces-724294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B29B8AFF0E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:27:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAEBBAFF0E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:28:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40D481C45A7A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:27:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C15E83BF4FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E691223B62B;
-	Wed,  9 Jul 2025 18:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA0323908B;
+	Wed,  9 Jul 2025 18:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A0eLWdrX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KY3Mz/Pu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449F8239E9F;
-	Wed,  9 Jul 2025 18:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A500B21C161
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 18:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752085627; cv=none; b=PE7yM6YPwhxwHNxSnq1azuZlz5wglWl4YZUxvkTiUN29Mj21N9Wtgio+fE9TQm9LlzhmMrcfyEK3hxjuyrPSOYw3xlErJ4hJE+2fWkgXyinjtOU+h4388jLexbesUbyG1u6qOpn37/tYHCJBesHiXC6S2dCj8CCsZ1jOo7HBBGU=
+	t=1752085702; cv=none; b=ZpHKUX5iU6X7VFYvTkJOO3hau1ETw1PujxFvVzvmvrVEjxfS9BwqVID4WTJE0P/aPXm3dqZNm8a2lz6VLegUHDnTtDGo0y22dErJej6DCL0+u553CPPfp3tkm9X+ecdfJSzvSrkOY4Vh0LBPpwsIjkhHptYOHntTlDBvkmiWHN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752085627; c=relaxed/simple;
-	bh=TkEtI4TBo+oLh+9EDnF1wp+1HPKjhz3UEa6azIGpx8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K4URxisy5Rs08+FHRIDSGDDc5xKdzbNUEt9+KA851WyR0yaZTQ1LYt9MpRnGEu8W1il2mxCiMlix3SKcB6POPTUIzpAeZCF37J4v3bJCu3PeHUJfysLANmwcz5np6AYlb3SE5cudIw0wKVWAfrXbnukznIJvAwEZiUV0WHcuimY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A0eLWdrX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF20CC4CEF4;
-	Wed,  9 Jul 2025 18:27:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752085626;
-	bh=TkEtI4TBo+oLh+9EDnF1wp+1HPKjhz3UEa6azIGpx8s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A0eLWdrX2EjFSwq0YRgjpLMGmLYq9wZ/5E1px/SdSaCuRcpGJhnSpY8Av8ZaTHqnF
-	 2uanjGMyhegxve7PCLAzmnAJEd4kQMd0IiqGJ9tI2Vj2UPsTM+oMXiK8QoCyhUwQl/
-	 Dfonxy1bBUy7AsVN/OT/ASxMcZ0SViomyGzvHtmu8g/8m/Zx1/AVhjFdSle0slHTAt
-	 +GwxwOSxKqU4/aW2UujOh/Hc3WHYx9pWBjMtxs1CMtHussLvrBzR5HN9Cfi9Qn4FXS
-	 0XSYsbHW8a8Untd/Sgxnm68Px4swGCddzbFY3Hn/sNUyRnTBOCcbrpFWZJ4lYn5S2w
-	 Q6Ge/2SbPzkYQ==
-Date: Wed, 9 Jul 2025 11:27:06 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	Anuj Gupta <anuj20.g@samsung.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Kanchan Joshi <joshi.k@samsung.com>, ltp@lists.linux.it,
-	dan.carpenter@linaro.org, benjamin.copeland@linaro.org,
-	rbm@suse.com, Arnd Bergmann <arnd@arndb.de>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexey Dobriyan <adobriyan@gmail.com>,
-	Eric Biggers <ebiggers@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] block: fix FS_IOC_GETLBMD_CAP parsing in
- blkdev_common_ioctl()
-Message-ID: <20250709182706.GF2672070@frogsfrogsfrogs>
-References: <20250709181030.236190-1-arnd@kernel.org>
+	s=arc-20240116; t=1752085702; c=relaxed/simple;
+	bh=dKX8gzXfarQgmmuuB0RsHMccpb+YBuMvQwS8B3FzqgU=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=quaYUPRyfTNgB207g3A7ok2N05WkN5Sv8sAutoymexjJzYgk9ICMUkYOBmG32kDYK1Pfg1PwY4xZfjQFxQFSPVH2PNhrKAgV+aCJgWZDsTasHaoA7TuPhdtEifOzZD6tfKO6vltk7ZsyPrO8PmiwGPrn9P3YXUUMTEVfe5IIMo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KY3Mz/Pu; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752085699;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NTpQrtg95kpBADHc+5OI/w0ENxi/NiihyaZUfC7Yj2M=;
+	b=KY3Mz/PuCvozOxMtG2dSUzGnu7XdbqxVlHlvs68eiVJNZNHDlM69hlbklK6u0fodHKucfF
+	7DGlNadr5vyR9dj4aX9X/KQszPpLO4BG459Tms8q2dIjekh/rL+4lbmHNfxTP4IZDEwV0A
+	eAgZLW1CIQ+QxPGKAJ49HPqvnSaLEKw=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-467-UeCUH4bZPUqIzxX8EZzXRQ-1; Wed, 09 Jul 2025 14:28:16 -0400
+X-MC-Unique: UeCUH4bZPUqIzxX8EZzXRQ-1
+X-Mimecast-MFC-AGG-ID: UeCUH4bZPUqIzxX8EZzXRQ_1752085696
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6fad9167e4cso4072106d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 11:28:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752085696; x=1752690496;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NTpQrtg95kpBADHc+5OI/w0ENxi/NiihyaZUfC7Yj2M=;
+        b=PpwifW5GnAZK1TNwyv0xUNtWDTQa8Wcpo2sB3Hke8wd2C1Oh+55F065QWIW6HpUXH5
+         AoxRqnxSAZrGq6TaxK6VlGTzS4GfUWjOQ1ZnpfLLw114DvskCql9Kq84rQNqDuDuAKv+
+         Z21bKvHDBiX8kd+l/8KDA43dxf9J6Da1S0lScd0tQAvUwMCZpCKpADAWv0PY3jNKWJXf
+         of/lHn/JTq1XYkX1ivCzN0niripgXrUR5YYhjJ507hdNIy43UnOOn3ETaWH1euaYtuvn
+         q9drE3R/k4ZOTIg5PSJNN+gyP5tDIqS5wyllyvY/2TZ/xgjjCUOlFrnZ/kfMYa6dzjU6
+         hGLg==
+X-Forwarded-Encrypted: i=1; AJvYcCUnHTAh1YRhi45EzdHx9Je2o1MYeCvBOIww4B10VTXOxbrxtVhYcULICOMgXSYQMpo4JLb9vwuY0xMYj3I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+IhFseWJIxbIebsGfhF3Czznw4i7+4wVimMVclYekxDmjhNGB
+	APqakxKDKVZTilRKtcMgfA7dX75HKteKpu4f1F5ugvqKccssifE9GvPdRDyU5IHd8BfZykpxCfM
+	Fm2Ynq48/3DeV6UD3tpulXXseXL7QpVjm1JCkUwzYrTAzKpXrfJ6Cdw6KrswzFD5qNA==
+X-Gm-Gg: ASbGnctU8qky1ZV3h4lc3IdEuDR8Sv0v9IcnRp7HX0rapqF0KcN1jABVr10YFDRziNo
+	TPwgYD7EC3456uzmBA9mWOhYpkH8kh+oTwq+Fj/oEHP4dTMemnvXQkKJY04gkmN3dWZPmbECI7v
+	xJ9QDiZ+kOS9fKIZevPPGNt3mTJK7icKq5OX4auBOcWmfz6HL6/pNR0KLL8q/e0hFGxl1VMtZKD
+	BC+PO97EnK/n+zjgBZ8MTHrbcnBo+wRAxs6dn0+lytjJbUFu/rzSF9QVwnnvmHtHws22D9h11Gi
+	p6EN6auEWdPRjjDRMy0nyXZuXoOOkwxDm52JHMw/I1vMhA5CVB6wSPwcYOaiGh33GHt6
+X-Received: by 2002:a05:6214:21c5:b0:6fd:ace:4cfb with SMTP id 6a1803df08f44-70494f80620mr16633516d6.27.1752085695731;
+        Wed, 09 Jul 2025 11:28:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG7p4Sb17fzr1Qre5xY2iSNC7fP97zjrUse3FOgYAisSiJi7Y0DOPfnFLh3yImLGHnpBKc6ww==
+X-Received: by 2002:a05:6214:21c5:b0:6fd:ace:4cfb with SMTP id 6a1803df08f44-70494f80620mr16633166d6.27.1752085695365;
+        Wed, 09 Jul 2025 11:28:15 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-702c4d50f7esm95924946d6.59.2025.07.09.11.28.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Jul 2025 11:28:14 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <1f329aff-efd1-4996-9194-9e35030e9faa@redhat.com>
+Date: Wed, 9 Jul 2025 14:28:13 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250709181030.236190-1-arnd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] locking/mutex: Disable preemption in
+ __mutex_unlock_slowpath()
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+ Jann Horn <jannh@google.com>
+References: <20250709180550.147205-1-longman@redhat.com>
+ <CAHk-=wimw8A1ReDPMyAVPrB3rEzenkk-u21RN123BGmnGBwjiQ@mail.gmail.com>
+ <CAHk-=whVBKwK83R_7+52qzZb3DpFWGG8L=V5bDG6VS44e3=1-A@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAHk-=whVBKwK83R_7+52qzZb3DpFWGG8L=V5bDG6VS44e3=1-A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 09, 2025 at 08:10:14PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Anders and Naresh found that the addition of the FS_IOC_GETLBMD_CAP
-> handling in the blockdev ioctl handler breaks all ioctls with
-> _IOC_NR==2, as the new command is not added to the switch but only
-> a few of the command bits are check.
-> 
-> Refine the check to also validate the direction/type/length bits,
-> but still allow all supported sizes for future extensions.
-> 
-> Move the new command to the end of the function to avoid slowing
-> down normal ioctl commands with the added branches.
-> 
-> Fixes: 9eb22f7fedfc ("fs: add ioctl to query metadata and protection info capabilities")
-> Link: https://lore.kernel.org/all/CA+G9fYvk9HHE5UJ7cdJHTcY6P5JKnp+_e+sdC5U-ZQFTP9_hqQ@mail.gmail.com/
-> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Cc: Anders Roxell <anders.roxell@linaro.org>
-> Cc: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> It seems that we have a lot of drivers with the same bug, as the
-> large majority of all _IOC_NR() users in the kernel fail to also
-> check the other bits of the ioctl command code. There are currently
-> 55 files referencing _IOC_NR, and they all need to be manually
-> checked for this problem.
-> ---
->  block/ioctl.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/block/ioctl.c b/block/ioctl.c
-> index 9ad403733e19..5e5a422bd09f 100644
-> --- a/block/ioctl.c
-> +++ b/block/ioctl.c
-> @@ -567,9 +567,6 @@ static int blkdev_common_ioctl(struct block_device *bdev, blk_mode_t mode,
->  {
->  	unsigned int max_sectors;
->  
-> -	if (_IOC_NR(cmd) == _IOC_NR(FS_IOC_GETLBMD_CAP))
-> -		return blk_get_meta_cap(bdev, cmd, argp);
-> -
->  	switch (cmd) {
->  	case BLKFLSBUF:
->  		return blkdev_flushbuf(bdev, cmd, arg);
-> @@ -647,9 +644,16 @@ static int blkdev_common_ioctl(struct block_device *bdev, blk_mode_t mode,
->  		return blkdev_pr_preempt(bdev, mode, argp, true);
->  	case IOC_PR_CLEAR:
->  		return blkdev_pr_clear(bdev, mode, argp);
-> -	default:
-> -		return -ENOIOCTLCMD;
->  	}
-> +
-> +	if (_IOC_DIR(cmd)  == _IOC_DIR(FS_IOC_GETLBMD_CAP) &&
-> +	    _IOC_TYPE(cmd) == _IOC_TYPE(FS_IOC_GETLBMD_CAP) &&
-> +	    _IOC_NR(cmd)   == _IOC_NR(FS_IOC_GETLBMD_CAP) &&
 
-I think this problem was introduced by brauner trying to persuade people
-to perform size independent dispatch of ioctls:
+On 7/9/25 2:21 PM, Linus Torvalds wrote:
+> On Wed, 9 Jul 2025 at 11:19, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>> I absolutely detest the notion of "let's make locking be tied to
+>> object lifetimes".
+> Side note: I wonder if there's any way to detect this kind of race in general.
+>
+> And I suspect it would involve the exact *opposite* of your patch:
+> make mutex_unlock() actively cause preemption after it has released
+> the lock but before it has done the final accesses.
 
-       switch (_IOC_NR(cmd)) {
-       case _IOC_NR(FS_IOC_FSGETXATTR):
-               if (WARN_ON_ONCE(_IOC_TYPE(cmd) != _IOC_TYPE(FS_IOC_FSGETXATTR)))
-                       return SOMETHING_SOMETHING;
-               /* Only handle original size. */
-               return ioctl_fsgetxattr(filp, argp);
+I think we can do a a cond_resched() under CONFIG_DEBUG_MUTEXES and 
+CONFIG_KASAN. We certainly don't want to do that with a production kernel.
 
-https://lore.kernel.org/linux-xfs/20250515-bedarf-absagen-464773be3e72@brauner/
+Cheers,
+Longman
 
-though we probably want a helper or something to encapsulate those three
-comparisons to avoid the SOMETHING_SOMETHING part:
-
-#define IOC_DISPATCH(c) \
-	((c) & ~(_IOC(0, 0, 0, _IOC_SIZE(_IOC_SIZEMASK))))
-
-	switch (IOC_DISPATCH(cmd)) {
-	case IOC_DISPATCH(FS_IOC_FSGETXATTR):
-		return ioctl_fsgetxattr(filp, cmd, argp);
-
-Assuming that ioctl_fsgetxattr derives size from @cmd and rejects values
-that it doesn't like.  Hrm?
-
-> +	    _IOC_SIZE(cmd) >= LBMD_SIZE_VER0 &&
-> +	    _IOC_SIZE(cmd) <= _IOC_SIZE(FS_IOC_GETLBMD_CAP))
-
-blk_get_meta_cap already checks this.
-
---D
-
-> +		return blk_get_meta_cap(bdev, cmd, argp);
-> +
-> +	return -ENOIOCTLCMD;
->  }
->  
->  /*
-> -- 
-> 2.39.5
-> 
 
