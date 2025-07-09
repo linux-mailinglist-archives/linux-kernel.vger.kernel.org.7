@@ -1,162 +1,147 @@
-Return-Path: <linux-kernel+bounces-722971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C61B5AFE143
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:27:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79601AFE146
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DA7E177928
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:27:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DCDA485E07
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5A52701CC;
-	Wed,  9 Jul 2025 07:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB8926FDA3;
+	Wed,  9 Jul 2025 07:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DmM/KA3x"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o6FT649i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7C526FA4B
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 07:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDAA26C38D;
+	Wed,  9 Jul 2025 07:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752046013; cv=none; b=q5yIyE4lxYeSvL/7+e+3eTBFQd8SDaTjeQIZuIGQKJSmQmUQQwmLegZ1ATrzOcv5YYEjtTUkzErerN6sflL8/ozUBWmUvt/5UpLoGFvq0hFEPzlA6q+f0kJwZ6snqyN/m94Oe4ERSsrtUaJZWrvIhZUEWZsjBzgMfxEyhJ2f3H8=
+	t=1752046101; cv=none; b=aki9S39J2vN8Jl5jiG3z6UeE6sQLCKcM8WJyjgQCQ3eI8usUWW5tMICnzmBQ3z74H2s4Z1PVx5HPe/LAI+OuMDcojWzms7/uEkEF74YU2YZaoXDnSSfdemk1q1yKlZxU22SxRLqoB+tk6Z1SikyxYQOLULUL6MUEWbaEp4f4uYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752046013; c=relaxed/simple;
-	bh=XUUln88n+vvb0xdyre8bwQBB4xlA9ax/lxsdgBJNE7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YIdwHxXi9SJLj9Co/9VevwP3zIcK0gZlcXCZ4cocacL+6aqeOT9LsCUD2PkIKmsGdBtDQWbVALkxQeBLHi+U+tWCkyOpwop0qa7jioA0zNDZiXrTjJYW3UU9u7am+Hw1nkf09xbJcE8BJ4HknvVcCW51zDtCQ6jFpOIssZGQpVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DmM/KA3x; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-450ddb35583so4200725e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 00:26:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752046010; x=1752650810; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=XUUln88n+vvb0xdyre8bwQBB4xlA9ax/lxsdgBJNE7Y=;
-        b=DmM/KA3xuBI0/OPfUVznu9NTCcvfap28gJo/ahoTSa7OkVVEDYilyY00dI739FqxyK
-         ZYeGvM4Ce+N0ym3cwhaq/35OIUHi0ZBaRbv7zJN5qQ9nhzjL2JokYIYxaZmw68ucmiMh
-         CdEgyZRNu7eKe5fOQTpJuD9uhf9Bw5oy5guhlD3elphGtM8N+8+U4H2dLcxDK6ghxwhD
-         VQ/8hMh5iZaMtr6G/vI84MFZo68zyXahceZYYFpdcrwl3n84IkaXE4Ine/CTXOnXF0oH
-         QJKPV1T+0OrfsMv86Mm6Ti2M486EEjY5W2N6PFPs8oZKqQa9ARt/a3KK7e//HaqYnsAO
-         fVnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752046010; x=1752650810;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XUUln88n+vvb0xdyre8bwQBB4xlA9ax/lxsdgBJNE7Y=;
-        b=pHyYZplDm10nG2Gxtep2bIsvrwzKyqdQ2qONwihFpPh2WkQKuAYRgiH1JY69KFA0/9
-         dRyxRKlrkFLpmMeEs0bP0/d2zTyq4YuHfItMLtb/S080uwV/GbrmVIh3IFZXWUe/lcFG
-         eqXw4E4g7XUbIfnx7Tga3I2xJ/+Vq6Ufiy4z4ouPP5J4T31sSHoCbtWamyFRj0qspLz1
-         zekgrZhS2ZiP263HTsDRUWdqrr0mxrqJ2taNztnoCuh9RImEZpOWH2rEJ3M4h2wSaKk+
-         eUUrdgUCgGf9nO0L7i8ONCmwVB/yMWR4fN7/1JBE903lQf/grJcWXacJUEI1xYw8IunU
-         +BeA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7LbZP0DFCUt/dcNn0wAiiKxs4ZMfZJTaKAoHkuZuqRqY6Df66klg0L8iH4oFZgkxn9Ny888OwYATz/Zg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+ZuwZGBjO2+sNphsar9eGUKdhFKyMS1i+BgJWQvZ/FojcivgW
-	ec67V2zTskpznsJv3WDlx6AMzF6r2Lm45Kj5d4QnUnWWaq67uf/41sYwaKWJONPZ4LE=
-X-Gm-Gg: ASbGncsM6WLDFqrrimPzo1H5L8iNSkZdUhexX4GQLFseYpbSireeU+nNEjR+xu2WShh
-	Wx12Fkd6DnZdFSTI2BjrhV/LvzoTrV9ptxTOfyjFCaCzAU1PMFMpklg0AvgEgcfQoGKV6qqLS26
-	KscPuRo7JRW4P1s/PqlhSu7c508bUeg6SqOdn9HQ60PAHZLi9drszD0LRnviAA7Z3Ice946Vs0I
-	WVAQ4plZXMDdHrNG7F04vySu6hdatFO/SYsBoUFCAxPgZMvjF7eVnQ8ly2Vg6cFp4ZC6Jold6eS
-	Y7m/47RQvy9fV91pUBbFF1oTF5mufZN2oW9Q5otjJGX5fWA3IlJKpPZUu2LLtJNq21xhXJYFjEV
-	Suf4nyw==
-X-Google-Smtp-Source: AGHT+IHZpo9yVzRnXdUKvTXY9ZQtWtBLdKSOZfU7YVv7hkzlMjlyi3VsozBWY+UWea6vDF42mm0qzQ==
-X-Received: by 2002:a05:600c:37c5:b0:451:dee4:cd07 with SMTP id 5b1f17b1804b1-454d52681e5mr4298385e9.0.1752046009717;
-        Wed, 09 Jul 2025 00:26:49 -0700 (PDT)
-Received: from [192.168.1.110] ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b470f871casm14962751f8f.45.2025.07.09.00.26.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Jul 2025 00:26:49 -0700 (PDT)
-Message-ID: <3f2938ce-8045-44dd-aee6-542779cd9916@linaro.org>
-Date: Wed, 9 Jul 2025 09:26:47 +0200
+	s=arc-20240116; t=1752046101; c=relaxed/simple;
+	bh=d18pkVRGIBPPG4G9pX+IGPSZTDwYOv+ye5gJH+dBMLc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BuLZ9cNP+ExH7Ezr6dVQWAKqc1bx4lJUU4OAU3T4weWv07w575fCrLluD3GANFPXETnn8+J59vS1xwFVZerGSf4csLtCuSEdwIgwRqqZPUMLQhZO2BlorLkHys4S3zYJheiAUjSwqQ9dwtodfgtu4ukf1G8IaDLjwSFB78bPFss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o6FT649i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CA80C4CEF5;
+	Wed,  9 Jul 2025 07:28:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752046101;
+	bh=d18pkVRGIBPPG4G9pX+IGPSZTDwYOv+ye5gJH+dBMLc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=o6FT649iWVpxfhufT3grYlFhD4tQs4y85Ani2qSqYWvyIkD+7Hu2aGf1OKhcMGwjt
+	 4nBfIUY8iNBNot/k/I8axsaNl3ZNZzQP7gyv8A0ar3FI9a1zi9D9WoRg7RieGaIlcG
+	 Khc0SyGoSMSzNFstyG+hvI3wOEf0GZeX9IZHaksbtBIZOpoxiFKOdEZh76RblL+6DV
+	 iTnKFquYrweEKX4GDGwYXSXZ5ojFM6JSMYJGTR3zn32CefSzkIXuiR/h+UbeI1XhkM
+	 WxIf3IZuUFHQXuwOIm1z0XsMnckLYDtHK4TxKsG1bfet0VKgQwO2dD6IPPHIkDXXXK
+	 LotYEuka1f1xA==
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-613b02e8017so1639862eaf.2;
+        Wed, 09 Jul 2025 00:28:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU+hNcUpvacPX11J+ILcYpmgi9zfC6FPnBio1fBnq1Ih0mk96G7VY+Bpam8lxaF+VZVF+yQkbFxLew1ZXA=@vger.kernel.org, AJvYcCUDYfOezzJ3vDN7kf7NfOaC/Hhuw5jb/KzsAtR9gltCMtpgM3XhNsoZdlA7Xy8hOXPLzN8AfAMh48o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0ILpnz2T3AzXWYbsrjLCjIdkmzEQ/NSJ+5+E6cyEaCsMpOGBi
+	SyU8ZuKDInxPg75Km5acq80cdXtrVSNupU4Fn4CWUpP2/g1GWAY8X1t5seawxHeROhMmCndXFDB
+	ox+WOTG4APmH2lDVUnJRFSbzYRHjaqaY=
+X-Google-Smtp-Source: AGHT+IEVDujuiHSKbnG9L4mCMYodIqFWy1YBNRC1UP011pwNESpb1aHOQdevbto9bNZu+HnD6NOKMi2Qj8KFM65Eyeo=
+X-Received: by 2002:a05:6820:4c85:b0:613:84b1:c4c1 with SMTP id
+ 006d021491bc7-613cce2fc08mr745363eaf.5.1752046100452; Wed, 09 Jul 2025
+ 00:28:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] clocksource: timer-cadence-ttc: Support TTC device
- configured as PWM
-To: "Rao, Appana Durga Kedareswara" <appana.durga.kedareswara.rao@amd.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
- "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "Simek, Michal" <michal.simek@amd.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
- "git (AMD-Xilinx)" <git@amd.com>,
- "Vanukuri, Meher Thanmaiee" <MeherThanmaiee.Vanukuri@amd.com>
-References: <20250115113556.2832282-1-mubin.sayyed@amd.com>
- <20250115113556.2832282-3-mubin.sayyed@amd.com>
- <hwnhz4yr6vzz3oav4gq7qptejjy3rdwff7iveawaxexf3tbngr@pnrxi6jkpw3k>
- <DS7PR12MB824987018AAB745E38C638728F7CA@DS7PR12MB8249.namprd12.prod.outlook.com>
- <DS7PR12MB82495FE4A65F266D0857EB408F49A@DS7PR12MB8249.namprd12.prod.outlook.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <DS7PR12MB82495FE4A65F266D0857EB408F49A@DS7PR12MB8249.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250606231530.3032-1-joe.walter@codesensesolutions.com>
+In-Reply-To: <20250606231530.3032-1-joe.walter@codesensesolutions.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 9 Jul 2025 09:28:09 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0h5cLB3X17dLx7-6X4XDkCW2gqRYa_NG-QeRGLv1k0MvA@mail.gmail.com>
+X-Gm-Features: Ac12FXw-FgfRBsp4JpAARWPmMWfn5dRNJYMUZ7NYeyEWYE1j-0kV0tvflT_zsM4
+Message-ID: <CAJZ5v0h5cLB3X17dLx7-6X4XDkCW2gqRYa_NG-QeRGLv1k0MvA@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: intel_pstate: Add DMI quirk for Dell Inspiron systems
+To: joe.walter@codesensesolutions.com
+Cc: srinivas.pandruvada@linux.intel.com, rafael@kernel.org, 
+	viresh.kumar@linaro.org, lenb@kernel.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/07/2025 08:51, Rao, Appana Durga Kedareswara wrote:
-> Ping!
+On Sat, Jun 7, 2025 at 1:42=E2=80=AFAM Joe Walter
+<joe.walter@codesensesolutions.com> wrote:
+>
+> Some Dell Inspiron systems experience frequency scaling issues with
+> intel_pstate driver where the CPU gets locked at 900MHz after load.
+>
+> Add DMI quirk table to detect affected Dell Inspiron models and prevent
+> intel_pstate from loading, allowing acpi-cpufreq to handle frequency
+> scaling instead.
+>
+> Affected models:
+> - Dell Inspiron 15 7000 Gaming
+> - Dell Inspiron 7567
+> - Dell Inspiron 7559
+>
+> Tested-by: Joe Walter <joe.walter@codesensesolutions.com>
+> Signed-off-by: Joe Walter <joe.walter@codesensesolutions.com>
+> ---
+>  drivers/cpufreq/intel_pstate.c | 65 ++++++++++++++++++++++------------
+>  1 file changed, 42 insertions(+), 23 deletions(-)
+>
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
+e.c
+> index 1b1f62ccec92..3aeb04755afa 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -28,7 +28,6 @@
+>  #include <linux/pm_qos.h>
+>  #include <linux/bitfield.h>
+>  #include <trace/events/power.h>
+> -#include <linux/dmi.h>
+>  #include <linux/units.h>
+>
+>  #include <asm/cpu.h>
+> @@ -48,6 +47,7 @@
+>  #ifdef CONFIG_ACPI
+>  #include <acpi/processor.h>
+>  #include <acpi/cppc_acpi.h>
+> +#include <linux/dmi.h>
+>  #endif
+>
+>  #define FRAC_BITS 8
+> @@ -299,25 +299,6 @@ struct pstate_funcs {
+>
+>  static struct pstate_funcs pstate_funcs __read_mostly;
+>
+> -/* DMI quirk table for systems that should prefer acpi-cpufreq over inte=
+l_pstate */
+> -static int intel_pstate_prefer_acpi_cpufreq(const struct dmi_system_id *=
+id)
+> -{
+> -       pr_info("Preferring acpi-cpufreq for %s due to performance issues=
+ with intel_pstate\n",
+> -               id->ident);
+> -       return 1;
+> -}
+> -
+> -static const struct dmi_system_id intel_pstate_acpi_cpufreq_prefer[] =3D=
+ {
+> -       {
+> -               .callback =3D intel_pstate_prefer_acpi_cpufreq,
+> -               .ident =3D "Dell Inspiron 15 7000 Gaming",
+> -               .matches =3D {
+> -                       DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
+> -                       DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 15 7000 Gam=
+ing"),
+> -               },
+> -       },
+> -       { }
+> -};
 
-You responded after three months and now you keep pinging on that? No,
-implement entire feedback and then start working on recent Linux kernel.
-
-Best regards,
-Krzysztof
+This isn't a patch against mainline intel_pstate because there are no
+DMI checks in there.
 
