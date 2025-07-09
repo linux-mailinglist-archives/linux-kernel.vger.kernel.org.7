@@ -1,80 +1,101 @@
-Return-Path: <linux-kernel+bounces-723153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E46BAFE3B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:11:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CE45AFE3C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADF441C28020
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:11:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A89E11C28169
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB267283FFB;
-	Wed,  9 Jul 2025 09:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D20C28466C;
+	Wed,  9 Jul 2025 09:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMprPfhi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122D0283FC9;
-	Wed,  9 Jul 2025 09:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="dVwsXNe5"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A4A21FF48;
+	Wed,  9 Jul 2025 09:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752052266; cv=none; b=P3oFgsgicFX7EOW/qNXDCBvq5fETPEDvszqSNBO7uKa9A5mJx7QXC5so3uugmswvhTW+cT921tObICyMMZ1JH2IkgS5tvIwNyn4gvn7VTV7+7EwYN+DU8r7iy2efIaEV8KYsoq4CxU/AkDQv6uaatoWM898TVhelggS68jP3MHM=
+	t=1752052359; cv=none; b=B9QRDf73jL+Hsu96azXVkOReJ3cHv3PEs/y9pdQ1wZU2/9QyH6Upsw2pheWJrAjQPV66N10n6q2AkRTzPhhTgA/3/jpPAz6KynNM77cuNN8Khb72ieoj+NNVBbTmhVuVBxi+0DUrPbhGX/tWJjuWiW2FXOl9n0J3tz0C6Ia5pL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752052266; c=relaxed/simple;
-	bh=RJwFJnhBCkBRX2oCpEkFXcbwbETz3IhzKnPcOoJM9Us=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NZWd66MgHMzp4JEZS7lk6yBf8oZvJhV1/8YOD9AGKDReE/H9SVYKQUX2w+GizoHzXQPqCAsszg5EuUfUTsaIG2Np9j4aWArUBH7a1spy9kZl/HRBsksPTMJhnKjRd/2+yYUQvc9dg61/SVFv+MolF9tyE07B//KptN1fllOLjHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMprPfhi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D71AC4CEEF;
-	Wed,  9 Jul 2025 09:11:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752052265;
-	bh=RJwFJnhBCkBRX2oCpEkFXcbwbETz3IhzKnPcOoJM9Us=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cMprPfhi0ZgjXqW2uKja5OCGaDZ3+nfS5iqH4hY639wSmZEnZsdiTszfX7ZvsODWk
-	 NnKpz753NPp3+6G3sZR19pI3iy+LyD8udCx0wpCh2jFUbqgPQwz/q6jg2Rx9auIHMp
-	 aZ1zm9oq+eIxbQYbnBjzZnk/qEzFICbaCAVIACFxP1vxs6YaEX8aaII9I5I3TTvdJ6
-	 JsVgIVCAPQH3FDh9eZxqbgSxPUUMUEYdaT0c7fwMr748yTyTL3if9C7ghIYBjhdbKP
-	 LbaazpPgcOfWRPgEVQ7gx9A7tDx14j3fjWRtsKFELgXRgjoi5WjncZNf2zmpGclkVX
-	 DkS6pgiBv/XYA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uZQpO-0000000013f-1CHC;
-	Wed, 09 Jul 2025 11:10:58 +0200
-Date: Wed, 9 Jul 2025 11:10:58 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH v2 0/1] USB: serial: option: add GosunCn GM800 series
-Message-ID: <aG4yIioU1csCEU9f@hovoldconsulting.com>
-References: <20250701100002.798372-1-amadeus@jmu.edu.cn>
+	s=arc-20240116; t=1752052359; c=relaxed/simple;
+	bh=O+BLsHpgnFUtvEtPC/XBdVip6wm1ro7CzzM4jXQG/v0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ZkM8GEy2w1cYjGN+aG+a7mjiXrNPsB57chpf+CLHMDJ0oqLd1tIdcQSamoHyIDAyvKhzDvlVwawDyNE+Gp42vGrJ05j9SpRsRrxubIiTpUWxqRYVrSbZqj9qdeOiYHOPvbL6ZPzmb4g0klifDSRMILg8nrSCTOpjj60cvTFNuoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=dVwsXNe5; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=lh
+	Cp80mQdElxK6fidVFF2nq8SJyzqnVgad3pG4eNrmg=; b=dVwsXNe59pn5KL4R6M
+	2ATHt8KHEywcLi4tt8VpVUXFtBnYZY0rqQi9M+DFC4QJBywYqBqthy/UkJt1A9IQ
+	brr3+LTYZUgfnRxzKTLjcYzudrTf8ut/AQ75dk1fmX/sMefMtVyVvDTjB2HVTyBA
+	97TRxyMyULb/qW+6LonfxwhlA=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp5 (Coremail) with SMTP id QCgvCgDXR3BFMm5oWupSBg--.30597S2;
+	Wed, 09 Jul 2025 17:11:34 +0800 (CST)
+From: Feng Yang <yangfeng59949@163.com>
+To: olsajiri@gmail.com
+Cc: andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	martin.lau@linux.dev,
+	mattbobrowski@google.com,
+	mhiramat@kernel.org,
+	rostedt@goodmis.org,
+	sdf@fomichev.me,
+	song@kernel.org,
+	yangfeng59949@163.com,
+	yonghong.song@linux.dev
+Subject: Re: [PATCH bpf-next] bpf: Clean up individual BTF_ID code
+Date: Wed,  9 Jul 2025 17:11:33 +0800
+Message-Id: <20250709091133.127961-1-yangfeng59949@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <aG4vNLiusia14f4Z@krava>
+References: <aG4vNLiusia14f4Z@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250701100002.798372-1-amadeus@jmu.edu.cn>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:QCgvCgDXR3BFMm5oWupSBg--.30597S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjfUYvtADUUUU
+X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbipQWFeGhuLVMwQAACsX
 
-On Tue, Jul 01, 2025 at 06:00:01PM +0800, Chukun Pan wrote:
-> Changed from v2:
->   Only match option drivers for AT and MODEM ports
->   Add MBIM/ECM/RNDIS mode (ID is the same as GM500)
+Date: Wed, 9 Jul 2025 10:58:28 +0200 Jiri Olsa <olsajiri@gmail.com> wrote:
+
+> On Wed, Jul 09, 2025 at 04:20:38PM +0800, Feng Yang wrote:
+> > From: Feng Yang <yangfeng@kylinos.cn>
+> > 
+> > Use BTF_ID_LIST_SINGLE(a, b, c) instead of
+> > BTF_ID_LIST(a)
+> > BTF_ID(b, c)
 > 
-> GM500 commit (ports look the same):
-> https://github.com/torvalds/linux/commit/08d4ef5cc9203a113702f24725f6cf4db476c958
+> there's couple more in:
 > 
-> Chukun Pan (1):
->   USB: serial: option: add GosunCn GM800 series
+> net/ipv6/route.c
+> net/netlink/af_netlink.c
+> net/sched/bpf_qdisc.c
+> 
+> jirka
+> 
 
-Please just put the changelog and any additional comments below the
-cut-off line ("---") when sending single patches (i.e. skip the cover
-letter).
+I see. Can all of these be included in one patch? 
+There's also one in kernel/kallsyms.c.
 
-Johan
+Thanks.
+
 
