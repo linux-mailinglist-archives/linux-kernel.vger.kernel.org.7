@@ -1,90 +1,68 @@
-Return-Path: <linux-kernel+bounces-724162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E94D4AFEF51
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:04:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E4EBAFEF5E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:06:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D697E171683
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:04:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FAF3585D90
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F6A22068D;
-	Wed,  9 Jul 2025 17:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172252236F4;
+	Wed,  9 Jul 2025 17:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+g7CLbz"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="26zMKA1B";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="920GCBly"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DEA38F9C;
-	Wed,  9 Jul 2025 17:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B13222593
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 17:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752080648; cv=none; b=Sb9o8TM/DCz7i1Ge4o6ptYT3AXY1hEckGcdYW5P9S0TUSNw549ubSD735RaFJTZUQUZaeulIpBFRhdZCxxckOTB6CvZ4VPn/XHvk3mYx7nohALeZFDOsRF8fPaJsyzv8GND7IUOYLduLndgNH6oY9yhYdCMWafHj62SvnCg1vcc=
+	t=1752080755; cv=none; b=QK4MpnkKBFOU7V9vYZcexMVB83tujwzXvjIUtpRtYzuucG2MoOr5rTj0w/7x2fDy3CS9DoyvuPGIr9KsrgQ0EnpMdAOl4OPy4cBs8lzy6ogCutFfVejwjPuHlR0689zS5KEH32p9lbl7+p2ZEb0kz/LQf0Cy0RxvF/CIQrnhhIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752080648; c=relaxed/simple;
-	bh=YmsWXmEF9dpMIBcrL4XB4+12HYKjQYb9R1lJsoZBBLE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Tgi7PSntT2QRsRwFpfRkqvbOCujKGEps2XZ6SCt1km839Zmzfbp39VBuIr5EhHz6hX6ALLJP+tXxcE54xQWl/+dNMFez0xJNZvPgKwW2tm6mCR4rwk0IujMPxGOsSEXQ96J85sBS4aZNkXKhxro44IRsfvQeFv99kIJBeeWSSck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+g7CLbz; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e8187601f85so26739276.2;
-        Wed, 09 Jul 2025 10:04:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752080645; x=1752685445; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CnIaGfpNrt4K83qo5+MvNHV88ocMGD0HtklYZ77xixo=;
-        b=R+g7CLbzyNX7I+nX8iQkCfDFNEj4ycJgWunF04Yd11+tBDwMeuvqGrlHWQSJtsY4EJ
-         I8QEaMps76ChnJNP1hW/FM55E956EFLQSQe+m41hMbjbwK4xkK6RoMLXDgKexFzvq4li
-         wqv9/Sv/xYm97wAaFmF9cjn1g8Isc1lmGYumRNaDQ0nMeyiM513Nd+m5jzHDhZRLuhtS
-         wy5tUHbtRkrZAUOmGbOi/Xxb1beU7Fs0fZASYkcW57aCy1bm5YxiaB+oDtNxu8Mx64mk
-         +a+sPNxziHmvGX6qtB1azfKV0Cc6pOF5GAJMUDb7Ia4M8cSc2WPEV8P/PBDhjxL65Vw4
-         b2Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752080645; x=1752685445;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CnIaGfpNrt4K83qo5+MvNHV88ocMGD0HtklYZ77xixo=;
-        b=YpXqB9Uze81PDvOeGq4n1JqrfMNRfJN1KdyminVk580dQds/gUdJnPKGL3128DPKyH
-         cVOzrXxEG7Fmbw4bbpFd/nMAYfBpR6Bb3ReihVqO6eXKaiwlczDVnZ3+PS5X1MOS2kDs
-         4dkjfEjLaN72K3UtqObreSVhMUuH/cSbo9JvdVfDnJQFsUvjbWpPZv9HCWdCPa9lnEk2
-         3b7xwTQ1jYJr96KJzwjqu75lxmEua9NZeLJV27cen4Ocu8zEZJU02lXTTjRuFbzcoSJE
-         pjYDdjhKKsLjqMVauiIkIAeQfxDcMxVm3AW27TH+47M6dDlocx1olJPrLnxXM6caEfPV
-         O6Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCUByToNR4UhF8/gCgV0Z9WSsk5zF285kY1ZdiVv0g5u4wdzYyZ8lV05w6YYUWgYOBgToJKnEJJ2JbOaa3XWGwXD@vger.kernel.org, AJvYcCXBAhZCeQBQi981tHnUU+cYrgorP38dk3if9MR4LXhsmaRtwEvCerlBdrW9aJzVtyXDL28JyZHal9zYGb8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiS8xGWCmwGKddaCGE1x4uik5BRrtUtOQVTW5aA7v3BijTmGwX
-	xgfBRTvviVnbiPrrPrAcoyMww90e/7DsFD3FdU/V8wEeUUe8ryFvHs39
-X-Gm-Gg: ASbGncuR20U8dGFUrMt0R7teQ2nmK4EpGwru0/yvUZBheYFEXq+ufRTkWtSPJFnFvGx
-	w/fatPb7e04vT9ymiCBYFAxKNheVMWHx0uakEgafHTaxfnM5BQajBhgWqbtuiA3+2zk+lrANOCz
-	t/2wU8EBxx8lFr6OnDx43vjl6mUWqCAXgeXSWPBipit+rCZGLMRorP0POL47AcvTjAFxbuLjN6g
-	FxgyORmEkVHPZ3+ecR9+LZi/ibO5KExn36vnk19/wecW5WCX1M1+ZZ5UAN+AenS58VWgUSU3kQ1
-	y6tJoNhe4yVX7USKBv79anmmay5O+6+XkJfeg+g2/ep1Ic4XF2cINyOPTA3Niw==
-X-Google-Smtp-Source: AGHT+IHgRm6QHNJ36Cz4IWv+BXPReTKk7xvpcxLloQ17ROogfogPufIjdTMNs8dQuMvuz/H7K04QNA==
-X-Received: by 2002:a05:690c:6d10:b0:70e:185b:356d with SMTP id 00721157ae682-717b169e13bmr50960737b3.14.1752080645173;
-        Wed, 09 Jul 2025 10:04:05 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:48::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71665b12c88sm25985487b3.94.2025.07.09.10.04.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 10:04:04 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Suresh Chandrappa <suresh.k.chandrappa@gmail.com>
-Cc: nphamcs@gmail.com,
-	hannes@cmpxchg.org,
-	shuah@kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] selftests: cachestat: add tests for mmap
-Date: Wed,  9 Jul 2025 10:03:56 -0700
-Message-ID: <20250709170403.2453228-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <CAAMO5phQQ8wMdOfuW40No4kpK5Rn2o4_414F8cgUrQ5NBsCcng@mail.gmail.com>
-References: 
+	s=arc-20240116; t=1752080755; c=relaxed/simple;
+	bh=A0G4H8bFuqnqiTXuCjWbiwsUJVx82gdpTgPkj3RdNM4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=azpfVTQ4Zr9DSMUoKxM0JV6Hybtj+PmrMLS2Q/c43T6PTu+QSf8O3XPOVmnUjJBt9mBy0PlbrXdnUbg/eVKvYl39kUEgOHgGcFIuLfBk1lGSAO1B0TQANI317fOTEHt++g/JA6SqWLsvHhKWSFPPErLGF73jTyhN7xzDZNv3MSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=26zMKA1B; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=920GCBly; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752080750;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=LM3qQLQa6SKBGtPoteE/M1Ffa5SV889eaJhM4o1iua4=;
+	b=26zMKA1BI/7jtNaIh+9fZdhRin2ltLpBQJ31R4SmB8zv6WD9B8IXauNPFVvKsh+jzRbuwM
+	K7eyJ2CpQt/OwuqFuqEJs9lXqo8h+mth79PU30zDFAl00IZtkBSllrkW+PsY5gHqyZIQL9
+	rc7ETG+N0g72EfRCp6gTrtOxmIFF8UjHRYWd0jvccihwsOJiv7UXpL0Ekks4vvvvqoKrIr
+	9imVcGgbZu5dAq+vy/jd22chyX5uk5eVGVToGfB8svKvU0vGJAE2XAjruYxDrMkNaAkbK2
+	hkq/aI1yLEEkmK5gFeuhywSA9HhLYNtZ+nxIpWCu8xkZLTctjKXDUb70F+3naQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752080750;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=LM3qQLQa6SKBGtPoteE/M1Ffa5SV889eaJhM4o1iua4=;
+	b=920GCBlywpol85C01s1e5q7p6B8OxhBrsIKdlPLvAvdc6MhtXjHtJuSKkiJf1/vRxyMOJa
+	AKRWvDHe72uWewAw==
+To: Borislav Petkov <bp@alien8.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	x86@kernel.org,
+	x86-cpuid@lists.linux.dev,
+	LKML <linux-kernel@vger.kernel.org>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>
+Subject: [PATCH v1 0/7] x86: Disentangle <asm/processor.h> dependency on CPUID APIs
+Date: Wed,  9 Jul 2025 19:04:46 +0200
+Message-ID: <20250709170454.74854-1-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,34 +72,127 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On Tue, 8 Jul 2025 23:13:01 +0530 Suresh Chandrappa <suresh.k.chandrappa@gmail.com> wrote:
+Hi,
 
-> Hi Joshua,
-> 
-> Thanks for the feedback! In the first patch, both shmem and mmap operations
-> are present, but I hadn’t introduced any logic to distinguish between them
-> yet. That distinction is added in the second patch through a new API.
+This series avoids including the full CPUID API from <asm/processor.h>.
+That header only needs the CPUID data types and not the full API.
 
-Hi Suresh,
+Replace the <asm/cpuid/api.h> inclusion in <asm/processor.h> with an
+include of <asm/cpuid/types.h>.
 
-Yes, this makes sense to me. I think what I was getting at was that we could
-still make a conditional statement like
+Modify all CPUID call sites which implicitly included the CPUID API
+though <asm/processor.h> to explicitly include <asm/cpuid/api.h> instead.
 
-if (type == FILE_SHMEM)
-	ksft_print_msg("Unable to create shmem file.\n")'
-else if (type == FILE_MMAP)
-	ksft_print_msg("Unable to create mmap file.\n");
+This work prepares for an upcoming v4 of the CPUID model:
 
-(or use a switch statement)
+    [PATCH v3 00/44] x86: Introduce a centralized CPUID data model
+    https://lore.kernel.org/lkml/20250612234010.572636-1-darwi@linutronix.de
 
-...
+where <asm/cpuid/api.h> needs to include <asm/processor.h>, thus creating
+a circular dependency if not resolved beforehand…  Patches 1->19 of the
+v3 above had parts of this series circular dependency disentanglement.
 
-And just refactor it in patch 2, as opposed to changing the behavior.
-But this is mostly a nit. If you are planning to merge both patches in one
-patch in the next version, then all of these comments shouldn't matter : -)
+Per Boris' remarks above, merge the header includes reorderings into two
+patches only: one patch for x86 and one for drivers.
 
-Looking forward to the next version, have a great day!
-Joshua
+The 0-day bot x86-32 compilation error:
 
-Sent using hkml (https://github.com/sjp38/hackermail)
+    Re: [PATCH v3 41/44] x86/cpu: <asm/processor.h>: Do not include CPUID…
+    https://lore.kernel.org/lkml/202506132039.imS2Pflx-lkp@intel.com
+
+is also fixed in this series.
+
+Beside the call sites converted at CPUID model v3 above, this series also
+switches below files:
+
+    arch/x86/kernel/cpu/microcode/core.c
+    arch/x86/kernel/cpu/microcode/intel.c
+    arch/x86/kernel/cpu/mshyperv.c
+    arch/x86/kvm/lapic.c
+    arch/x86/kvm/svm/sev.c
+    drivers/acpi/acpi_processor.c
+    drivers/acpi/processor_core.c
+    drivers/cpufreq/longrun.c
+    drivers/cpufreq/powernow-k7.c
+    drivers/cpufreq/powernow-k8.c
+    drivers/hwtracing/coresight/coresight-platform.c
+    drivers/xen/xen-acpi-processor.c
+
+to explicitly include <asm/cpuid/api.h>.
+
+Based on v6.16-rc5.
+
+Note, the last patch is a CPUID API naming change in preparation for the
+model as well.  It can be skipped if merging it is not desired at this
+stage.
+
+Thanks!
+
+8<-----
+
+Ahmed S. Darwish (7):
+  x86/cpuid: Remove transitional <asm/cpuid.h> header
+  ASoC: Intel: avs: Include CPUID header at file scope
+  x86: Reorder headers alphabetically
+  drivers: Reorder headers alphabetically
+  treewide: Explicitly include <asm/cpuid/api.h>
+  x86/cpu: <asm/processor.h>: Do not include CPUID API header
+  x86/cpuid: Rename cpuid_leaf()/cpuid_subleaf() APIs
+
+ arch/x86/boot/compressed/pgtable_64.c        |  1 +
+ arch/x86/boot/startup/sme.c                  |  9 +--
+ arch/x86/coco/tdx/tdx.c                      |  6 +-
+ arch/x86/events/amd/core.c                   |  2 +
+ arch/x86/events/amd/ibs.c                    |  1 +
+ arch/x86/events/amd/lbr.c                    |  2 +
+ arch/x86/events/amd/power.c                  |  3 +
+ arch/x86/events/amd/uncore.c                 | 15 ++---
+ arch/x86/events/intel/core.c                 |  1 +
+ arch/x86/events/intel/lbr.c                  |  1 +
+ arch/x86/events/zhaoxin/core.c               | 12 ++--
+ arch/x86/include/asm/acrn.h                  |  2 +
+ arch/x86/include/asm/cpuid.h                 |  8 ---
+ arch/x86/include/asm/cpuid/api.h             |  6 +-
+ arch/x86/include/asm/microcode.h             |  1 +
+ arch/x86/include/asm/processor.h             |  2 +-
+ arch/x86/include/asm/xen/hypervisor.h        |  1 +
+ arch/x86/kernel/cpu/amd.c                    | 26 ++++----
+ arch/x86/kernel/cpu/centaur.c                |  1 +
+ arch/x86/kernel/cpu/hygon.c                  |  1 +
+ arch/x86/kernel/cpu/mce/core.c               | 63 ++++++++++----------
+ arch/x86/kernel/cpu/mce/inject.c             |  1 +
+ arch/x86/kernel/cpu/microcode/core.c         | 23 +++----
+ arch/x86/kernel/cpu/microcode/intel.c        | 12 ++--
+ arch/x86/kernel/cpu/mshyperv.c               | 29 +++++----
+ arch/x86/kernel/cpu/resctrl/core.c           |  6 +-
+ arch/x86/kernel/cpu/resctrl/monitor.c        |  1 +
+ arch/x86/kernel/cpu/scattered.c              |  3 +-
+ arch/x86/kernel/cpu/sgx/main.c               |  3 +
+ arch/x86/kernel/cpu/topology_amd.c           |  3 +-
+ arch/x86/kernel/cpu/topology_common.c        |  3 +-
+ arch/x86/kernel/cpu/topology_ext.c           |  3 +-
+ arch/x86/kernel/cpu/transmeta.c              |  3 +
+ arch/x86/kernel/cpu/zhaoxin.c                |  1 +
+ arch/x86/kernel/cpuid.c                      |  6 +-
+ arch/x86/kernel/paravirt.c                   | 29 ++++-----
+ arch/x86/kvm/cpuid.h                         |  3 +
+ arch/x86/kvm/mmu/spte.c                      |  1 +
+ drivers/cpufreq/longrun.c                    |  7 ++-
+ drivers/cpufreq/powernow-k7.c                | 14 ++---
+ drivers/cpufreq/powernow-k8.c                | 17 +++---
+ drivers/cpufreq/speedstep-lib.c              |  6 +-
+ drivers/firmware/efi/libstub/x86-5lvl.c      |  1 +
+ drivers/hwmon/fam15h_power.c                 | 14 +++--
+ drivers/hwmon/k10temp.c                      |  2 +
+ drivers/hwmon/k8temp.c                       | 12 ++--
+ drivers/thermal/intel/intel_hfi.c            |  1 +
+ drivers/thermal/intel/x86_pkg_temp_thermal.c | 15 ++---
+ sound/soc/intel/avs/tgl.c                    | 25 +++++---
+ 49 files changed, 235 insertions(+), 173 deletions(-)
+ delete mode 100644 arch/x86/include/asm/cpuid.h
+
+base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
+-- 
+2.49.0
+
 
