@@ -1,158 +1,206 @@
-Return-Path: <linux-kernel+bounces-723211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DEAAAFE47B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:44:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99797AFE43B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C149B7BDD49
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:42:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70EBF1C429BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69670286436;
-	Wed,  9 Jul 2025 09:43:27 +0000 (UTC)
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B82286892;
+	Wed,  9 Jul 2025 09:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Vl2c3eHW"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A222836B5;
-	Wed,  9 Jul 2025 09:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09B1286422;
+	Wed,  9 Jul 2025 09:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752054207; cv=none; b=Xx2qg8vVX7VGO2pLjoHRrxrGrislPQS73WNhOeRrHIkCo26KanquaypcDIBm9CbBVDLkO/4ZdLBohR3PVL6d2DqPHR7p9FW6ZS/3Kgh3MHJeNwPh7r99KGe1L9D7Z6w6oDw6Mw2U3QhXcPxi/3d/rTLe4V5c0tsjzlhaN75xhX0=
+	t=1752053825; cv=none; b=uiplnSvTBKkS3mDMxNkEHCaiBiGHlodphnh1uAJ5WQfl58OTGEwdgvusfKxIPAGVEh16ujfdYcz+Exr4sUTqwD4rTxmrJ+M/sDxBR/ClFQ77bUjaeUxYkl5+L10ggS3IINvASDpnf+4jlg+gtid0NI29mGeB7813+7Nr7M1OtaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752054207; c=relaxed/simple;
-	bh=5uzc0ic2FmPwqnXgV15dZx3MfYkfhUI0DTznkjWzvtw=;
+	s=arc-20240116; t=1752053825; c=relaxed/simple;
+	bh=d0jGkK6Mjl18HIJVp/ahQIiLxhwA9wSL4Pyd2Eg5xzI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KHeTuhMaaEtA4nfT2ewQUQcSFK288lSDLnWrcCIWmbFSqxEjO4Wu5QOYzoEH633TCnMPVTBJS5tHZR+IgZSdW0TctQxGdMt0zI9JMhB+P3aRvWCTGbh/jwFUELW8u4MBhkELk/4BC9Q44TjeR5RsJAzjpqsjBoGKJTZyzikuxR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4a589b7dd5fso84627561cf.0;
-        Wed, 09 Jul 2025 02:43:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=EXX0d8JjD92exRtPzOzkawOK+Gru8HTMH2dwqTnRV2gOzteSRW9fJDMmmJHcOGkpCFIPHIlxc2ar4EUt88Pxslz8ezxoxEO+1hwcNZHA8puhLOUlKOgicxWifn8o3+K4T0TsH5B5wWjynMhij8QbWqjYeOu58lQyHDl6KdXuR8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Vl2c3eHW; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23649faf69fso46908345ad.0;
+        Wed, 09 Jul 2025 02:37:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1752053823; x=1752658623; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y+LaGhFdH15NRohN6jDSwkhz0ZXYVZii1BB9nePp2aU=;
+        b=Vl2c3eHW0k2I0VeClyygdx5+H2JtjV9ez91GY0hhbO0GTEcqdbi7C4VA1KQji9ZeZ1
+         Qc7mGabgFZportRSLiM1hHwX2Z8WUMZzjb0LQugvDkpY1pJzd4GZ97cVyk5FMyuad9vN
+         KeGO+NeUXQjDaR6wTR0xIkUX9uEroeTff4UNzaoWi1Pfrcga7tOtEa1etIMg40V031R+
+         S+HxHP5pTRgBl34JwwlhZaWj/DJ/YHOxWBCfkxqGU7DAoKFj/Y8yO6C29RaR0Y+yKAGL
+         8fAkjyIjNZLz4V/eDRwC4GXsl5B1eXeeDm/q/7EAK3RQIX0Ia0ib/b/ldtlVVgFXR+Uz
+         EobA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752054203; x=1752659003;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qZqsDi4cJPGlgI/KDWvuyMOnCIb8A5zf9i9HEg4Izio=;
-        b=swk7Q8tXSd3gIqg2YmSyyQjMyIccGIrAl24aBOoCL2plOvxJ0+23TZMwhS3Z2tuH9M
-         mvWpKHN45F+fHUy66a1HWHIPZPK3i0E11RWX8AU7MmX/JniAttml1l5H5O9WtUQgQyy8
-         JPPkYxVlXSJQ9fzUsQ6LUi+WlId2HHaQmiA7pqXJOZMgJNe8K/vHxie9uQaIeEmx0mYD
-         e/m4cPoeyqnZr8TAv8ymkHKtwV5jumKhFTsyTO3pkZYa/HzRcSqkacGR8+7GcPGv++Fq
-         5OcOK0CuLDwr0cODTYm1Cm28XVJLR/Eu7X6JmeSU9YRM9M0IilnsTP7MDGCejtTors/i
-         Ijrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKI2htUZQAL24z4Ff1lZxUf4ZuL2S+V9b1uiGdunum1iaWjHP4g3EtCdhc6fsyebB9tfj/ppZ9y4A=@vger.kernel.org, AJvYcCVmQV4FovcIVlOy3Jzo/jc10JR7eaMSaIZ5dMYVsUeKEGg6+OAbUpXG1dRax4E3+VwoX2Efa/SnsNOAD9eG@vger.kernel.org, AJvYcCWE6tHXy75NpK4Kte6TRjZ4DhMUOAWHLysxnKMY9qfOzP2LlynD9wcLg7kqAnZPVa6+XjoJiU4KJzel@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3zWpvncOaTmQEhyejwn9edtKwcfBZf0sA0baifT67vpKnIc4+
-	bOkLLRKh+mIRpOVRi2w6llHYCoh6ukJF71toKqqEhyCLVsDrt4oP/LP65fEoe9+Z
-X-Gm-Gg: ASbGncsXedxeuRTVpBtiRSMvrxJ6YyG6cj9tLMxHzJ7Y6P19laTmm62wsqn4dwhllYM
-	wWGDBJepjKnCRjdxyF/eNTupZEsr1Ma+6M9Cczh1ZEhJH/Ll+/GLWDG/gK/wY8BB4Ko6ro8aNZ0
-	zkwHLhzBkU9mdbJtWLaQs11f9I4rIK0daHLi1hdVEo4KPPyfb9Wi0YV8dG8zHEZBhhOIvReguWB
-	PzO7XmSntGpfI3TWreJd+qabxyTeBLjDHegAusqf3Pw1Zf3bAk4h1Dl9Sp4PLU3dkohnU/63yZ0
-	KPn1x7Hn4Xq9fFhlIrCYA2GxYpyZ+QSgYcMlEZQPiplXmA4yz60+HhExSz/6K8chJcH4RIaHcd2
-	w/21sqergTxpJdCTin59uRqXCzUHx
-X-Google-Smtp-Source: AGHT+IGnYhO6DF8rf/vix23pw7PU1TOj4z0AMLGliJdBWETP/xtVPlXDLeW4xLBB4gVGMioeSiwBvA==
-X-Received: by 2002:a05:622a:255:b0:4a5:8b39:626b with SMTP id d75a77b69052e-4a9decf87b9mr22529571cf.27.1752054203417;
-        Wed, 09 Jul 2025 02:43:23 -0700 (PDT)
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com. [209.85.160.172])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a994a8cdc4sm92870901cf.60.2025.07.09.02.43.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Jul 2025 02:43:23 -0700 (PDT)
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4a7f61ea32aso105949771cf.3;
-        Wed, 09 Jul 2025 02:43:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUZNWp+xPMDQ9ncs5XGJqP4zsfA87RCp5xMbgPSRv1qbOBL6m601FZLR0CNt4Pp2yCQ6t9zawa2cnYZ@vger.kernel.org, AJvYcCV5nVkbbaEl7IuI+zwKBcaAssWTGpgNjheY/MvHjtSdbUMlfRkMgDI4KRtilH6fJta7mGOiYpvEFgc=@vger.kernel.org, AJvYcCVRWJxu36SNeKZM8EGD9vKsHzwiMK3JfFTsqAeLIgu39xq/vm6NS8UZyUUNAHWRNfV9ca3BFI5IADcnKBhY@vger.kernel.org
-X-Received: by 2002:a05:6102:5113:b0:4e4:5ed0:19b2 with SMTP id
- ada2fe7eead31-4f5414b7eaamr875062137.9.1752053799069; Wed, 09 Jul 2025
- 02:36:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752053823; x=1752658623;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y+LaGhFdH15NRohN6jDSwkhz0ZXYVZii1BB9nePp2aU=;
+        b=tbH4Ijlc/AtlV/Aew+dO8MLHLgLp6DXVzFBeQHrSLCt+TTEUtu1muke2I1R4N6eltg
+         pZ5KKq8+4UcNJux9afpOr2sBzSgctsuHxt/vwxzQYaj9blJP9VLP6od15JdXsvUsa/zy
+         Q+q7ahukczdTNRXF3KCwy5iUz8uGU4ywaxSEibZHStX4HefKdRwkgVQzjr52YV0tDsAN
+         w9Si8E0BSLizV02hoc2nw4YdXGZ7ElAKpTA+uMgxY/5qr6Q1+qpuXsvtE/j08thxYPAF
+         cnhNMU6/a+Z/IbQ0LNolKzGuw6kugKCKoYBRmc5J8HGxqzPpbmpF48MxctMZL33N4GJM
+         HSdA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbuBDovIRWMclHzew97MS1js2R6eOoH6FAZ7xtI+ICzk965Kf5HJBuki7CsDDj2iv74olYF78u8pE2@vger.kernel.org, AJvYcCXIclqtNI7jUwa+9twuI3OcNjhN7AD6L+rSGjPd3LCDCOAr71wXDmfg1CYwBUcNGmu9ZlcH5D7rjYuz@vger.kernel.org, AJvYcCXLc0D6PV/FPufqruONrX1xkBquWiC/UnUPZf50M+/rRLE+oi4FUfuWDM0r/o0SMk8rkljuiNLecvJw1Rhl@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCQz6pIAnFTNEjo4qXcCdK20MA6kL+10N/d+vxsV/edzwefrTS
+	2lRdSpVqu21Qv6Ryspy3CKiC8wlhcfe2iStM5qzKtKiEUS+xehV3ol8dkgXAH4n+c1Nb5hJGG57
+	SpBcIVF97o42cEWYjI3wv6yHI99SR3Mw=
+X-Gm-Gg: ASbGncvT+8LFDgKKZs81uL/bTLP5glJC4tvB4FP9YlbEXJtRSEkfZLzCEKDhyVo9iKt
+	Hy+mFjXYwmOY07Bld1X033MvDoHOOsjkhKv8R2kTXjZ8mrW4gHs/oXbNBT27vMejM/SMY8Ad3n7
+	Isyd0UXAkSHuNRGiaNz9NLVDRCfp/7F0h0H+Nos7jic+UqeljKDzxrcFS+OdiaakkS56NI
+X-Google-Smtp-Source: AGHT+IEwwywvEzlRHvTTHK1G+2vz8oNtYhpg6zze2DufMOLtj4x+/BetMBVk3t85MV8wrlNO97xNtmt2R0gZv4cwXFg=
+X-Received: by 2002:a17:903:287:b0:235:f55d:99cc with SMTP id
+ d9443c01a7336-23ddb198289mr32150745ad.2.1752053822733; Wed, 09 Jul 2025
+ 02:37:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707080317.3791624-1-kirill.shutemov@linux.intel.com>
- <20250707080317.3791624-12-kirill.shutemov@linux.intel.com>
- <a14155b7-65ff-4686-b6ba-a6900549864c@intel.com> <xy2ocwstdf44diw5p5hisjwvx467fyhm7bljz5xg72cmnhdfok@7pe3vmht6vcq>
-In-Reply-To: <xy2ocwstdf44diw5p5hisjwvx467fyhm7bljz5xg72cmnhdfok@7pe3vmht6vcq>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 9 Jul 2025 11:36:27 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXpW0re633tW9MsN-+A521Xytoicd-T0L7r7PAwJ-B0+Q@mail.gmail.com>
-X-Gm-Features: Ac12FXzhSGHLdm6kLZFXquKo1YsS99gZt-VKBXVubQkHxm__bRsl73xUeT8gKHo
-Message-ID: <CAMuHMdXpW0re633tW9MsN-+A521Xytoicd-T0L7r7PAwJ-B0+Q@mail.gmail.com>
-Subject: Re: [PATCHv9 11/16] x86/traps: Communicate a LASS violation in #GP message
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Sohil Mehta <sohil.mehta@intel.com>, Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
-	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
-	Alexey Kardashevskiy <aik@amd.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, 
-	Eric Biggers <ebiggers@google.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Yuntao Wang <ytcoode@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
-	Huang Shijie <shijie@os.amperecomputing.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Namhyung Kim <namhyung@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@redhat.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-mm@kvack.org
+References: <20250704-spisg-v4-0-6b731dfbe610@amlogic.com> <20250704-spisg-v4-2-6b731dfbe610@amlogic.com>
+ <CAFBinCB4Lw04StL-kPpzKHPyETKfi5FYFipHRBDDnPdtRVDrmA@mail.gmail.com> <646ef30f-cadb-40ab-a0ad-c493fbdb9709@amlogic.com>
+In-Reply-To: <646ef30f-cadb-40ab-a0ad-c493fbdb9709@amlogic.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Wed, 9 Jul 2025 11:36:51 +0200
+X-Gm-Features: Ac12FXzaQ629wbNl6vgvdIQIhSzEtFJGPC3mJVuls0iq3-leb4WRKCyFDDxPMKE
+Message-ID: <CAFBinCDctqZ_Q2aXOzU514nXBT45GYDHY5-V0cAmZvHkbUR0Mg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] spi: Add Amlogic SPISG driver
+To: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: Sunny Luo <sunny.luo@amlogic.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-amlogic@lists.infradead.org, linux-spi@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Kirill,
+Hi,
 
-On Wed, 9 Jul 2025 at 11:31, Kirill A. Shutemov
-<kirill.shutemov@linux.intel.com> wrote:
-> On Tue, Jul 08, 2025 at 07:40:35PM -0700, Sohil Mehta wrote:
-> > > @@ -664,14 +673,23 @@ static enum kernel_gp_hint get_kernel_gp_address(struct pt_regs *regs,
-> > >             return GP_NO_HINT;
-> > >
-> > >  #ifdef CONFIG_X86_64
-> >
-> > Might as well get rid of the #ifdef in C code, if possible.
-> >
-> > if (!IS_ENABLED(CONFIG_X86_64)
-> >       return GP_CANONICAL;
-> >
-> > or combine it with the next check.
+On Wed, Jul 9, 2025 at 8:29=E2=80=AFAM Xianwei Zhao <xianwei.zhao@amlogic.c=
+om> wrote:
 >
-> I tried this before. It triggers compiler error on 32-bit:
+> Hi Martin,
+>     Thanks for your reply.
 >
-> arch/x86/kernel/traps.c:673:16: error: shift count >= width of type [-Werror,-Wshift-count-overflow]
->   673 |         if (*addr >= ~__VIRTUAL_MASK)
->       |                       ^~~~~~~~~~~~~~
+> On 2025/7/9 00:01, Martin Blumenstingl wrote:
+> > [ EXTERNAL EMAIL ]
+> >
+> > Hi,
+> >
+> > On Fri, Jul 4, 2025 at 5:07=E2=80=AFAM Xianwei Zhao via B4 Relay
+> > <devnull+xianwei.zhao.amlogic.com@kernel.org> wrote:
+> > [...]
+> >> +       div->table =3D tbl;
+> >> +
+> >> +       /* Register value should not be outside of the table */
+> >> +       regmap_update_bits(spisg->map, SPISG_REG_CFG_BUS, CFG_CLK_DIV,
+> >> +                          FIELD_PREP(CFG_CLK_DIV, SPISG_CLK_DIV_MIN -=
+ 1));
+> > Are you doing this to prevent errors for value zero?
+> > If so, is CLK_DIVIDER_MAX_AT_ZERO applicable instead (it has been
+> > discussed for the t7 clock controller recently: [0])?
+> >
 >
-> __VIRTUAL_MASK is not usable on 32-bit configs.
+> No, if add add flag CLK_DIVIDER_MAX_AT_ZERO, reg value will equals
+> divider, see
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/=
+drivers/clk/clk-divider.c?h=3Dnext-20250708
+> As follow in function _get_div.
+>          "if (flags & CLK_DIVIDER_MAX_AT_ZERO)
+>                  return val ? val : clk_div_mask(width) + 1;"
+>
+> But here reg value adding one equals divider.
+I see, thanks.
 
-arch/x86/include/asm/page_32_types.h:#define __VIRTUAL_MASK_SHIFT       32
-arch/x86/include/asm/page_32_types.h:#define __VIRTUAL_MASK_SHIFT       32
-arch/x86/include/asm/page_64_types.h:#define __VIRTUAL_MASK_SHIFT
- (pgtable_l5_enabled() ? 56 : 47)
-arch/x86/include/asm/page_types.h:#define __VIRTUAL_MASK
- ((1UL << __VIRTUAL_MASK_SHIFT) - 1)
+> >> +       /* Register clk-divider */
+> >> +       parent_names[0] =3D __clk_get_name(spisg->pclk);
+> > Instead of using __clk_get_name my suggestion is to use struct
+> > clk_parent_data with .fw_name set.
+> > If you want to simplify the code further you can use helper macros
+> > like CLK_HW_INIT_FW_NAME
+>
+> here I don't know parent fw_name, The system does not have a
+> corresponding interface to obtain parent fw_name, only name (clk-core->na=
+me)
+The .fw_name is simply "pclk" in this case.
+That clock is then internally looked up (by the common clock
+framework) using the "clock-names" and "clocks" properties from your
+device-tree.
 
-Given __VIRTUAL_MASK_SHIFT is 32 on 32-bit platforms, perhaps
-__VIRTUAL_MASK should just be changed to shift 1ULL instead?
-Or better, use GENMASK(__VIRTUAL_MASK_SHIFT - 1, 0), so the
-resulting type is still unsigned long.
+[...]
+> >> +static int aml_spisg_probe(struct platform_device *pdev)
+> >> +{
+> >> +       struct spi_controller *ctlr;
+> >> +       struct spisg_device *spisg;
+> >> +       struct device *dev =3D &pdev->dev;
+> >> +       void __iomem *base;
+> >> +       int ret, irq;
+> >> +
+> >> +       const struct regmap_config aml_regmap_config =3D {
+> >> +               .reg_bits =3D 32,
+> >> +               .val_bits =3D 32,
+> >> +               .reg_stride =3D 4,
+> >> +               .max_register =3D SPISG_MAX_REG,
+> >> +       };
+> > Most regmap_configs in Amlogic drivers are static const.
+> > If you make it a static const then I suggest renaming the variable to
+> > aml_spisg_regmap_config for consistency.
+> >
+>
+> regmap_config as a local variable, it can save space.
+Thanks, I was not aware of that.
+For documentation purposes, with the original approach:
+$ aarch64-linux-gnu-size -d drivers/spi/spi-amlogic-spisg.ko
+  text    data     bss     dec     hex filename
+  7504    1377       0    8881    22b1 drivers/spi/spi-amlogic-spisg.ko
 
-Gr{oetje,eeting}s,
+and making the regmap_config static const:
+$ aarch64-linux-gnu-size -d drivers/spi/spi-amlogic-spisg.ko
+  text    data     bss     dec     hex filename
+  7716    1377       0    9093    2385 drivers/spi/spi-amlogic-spisg.ko
 
-                        Geert
+[...]
+> >> +       device_reset_optional(dev);
+> > I haven't checked the reset code but I think the return value still
+> > needs to be checked (drivers/mmc/host/meson-gx-mmc.c does so).
+> > Even though the reset is optional there's conditions where we must act
+> > for example on -EPROBE_DEFER (which must be propagated).
+> >
+>
+> The reset might not exist for this node, see relevant yaml file.
+This part I understand. Optional however doesn't mean that we can
+simply ignore all errors.
+Let's consider the following three scenarios:
+1) reset not provided in .dtb -> we don't expect any error here
+2) reset is provided in .dtb but the reset-controller has not been
+registered -> spisg driver must propagate -EPROBE_DEFER
+3) reset is provided in .dtb but reset_control_reset (which is used
+internally in device_reset_optional) returns an error -> spisg must
+propagate this error
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Your code works for the first case but it doesn't consider the other two.
+That said, I'm not sure if the third case is realistic given the T7
+reset controller uses MMIO access. This may change in future though
+(if SPISG IP is the same but the reset controller changes).
+It still leaves the second case where the spisg driver should be
+probed only after the reset controller is available.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+Best regards,
+Martin
 
