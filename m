@@ -1,149 +1,155 @@
-Return-Path: <linux-kernel+bounces-723073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE320AFE265
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:22:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48786AFE261
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB3721C42751
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:22:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B79327B35BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198EA26B0A9;
-	Wed,  9 Jul 2025 08:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C392623C50B;
+	Wed,  9 Jul 2025 08:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NRUohGkU"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152E023B617;
-	Wed,  9 Jul 2025 08:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="2SG0hPHr"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A50223DD1
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 08:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752049312; cv=none; b=XZI0J9s53Qsr2GUx3Bn1muZheAjmVsk3+nmeWe5J7YKUAKzRYOrjIu0/PaPRF4d1yPPrNOOeB8y3B6Zc0YV6Q8c3ENzY5W0SxQMYg3LxDvEcadG5g+A2DCfEUWsuTNubrwf+Wvw6yckxDHFf/BiJWStLngWSCZq7+Vc/a9zxPcA=
+	t=1752049254; cv=none; b=NULucV8GcT4yd63QR/0HcJsnK4FBMPITcyl/kXjE3mTmRNT1g63fGavCZ9Nf6okSTqM3NtWSgsG0/+jL+xUeaSyGo3zbmQi5EoF2yoyrdNHSI7LrYYx95LyEKi6qXxONiZXAPbakLn/+ziZR+SAi7YIBxo39K7xiGwCKbgdo1Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752049312; c=relaxed/simple;
-	bh=fxdYfuHbUSY1YccG+Ky4lNz5iZeGY6rLjPTXrtRR0Mc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eXY3P9e5hvHgQvqByLMpOQto5knYf0AXXWspYygQ7jeGH39VfOqz0RLrbRwgBBoB1MzoVe09LQ3S3hcy+ErtxPEiQEQLzezW/5EVInHDqxP4ffW4tRnu7hKykSOkoc7uEIVxh95AgQELCkDSLy/yD8wRjeRM2rJCI6hTQwujgdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NRUohGkU; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=ph
-	GeD/kctk/OQIfTnacFO2E//+JNX8HZT1+i9hPFOPc=; b=NRUohGkUuVWxp2JoSJ
-	sQWbCxGp3H1YiuIt0ziJTmgyiRdfl1g97SoJQuWRnRaYsh7ed/A5UNV/cvV6/eAq
-	hMAQdAPe04Zb1i2VR16MjTGib4qYhPB8RBkYbGXnMevwPu3MQVlBp+jHGZHqRiw1
-	/oyuui57E7q5/xmhaOXwg6gBc=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDHukpWJm5oDyoSDg--.32703S2;
-	Wed, 09 Jul 2025 16:20:39 +0800 (CST)
-From: Feng Yang <yangfeng59949@163.com>
-To: martin.lau@linux.dev,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mattbobrowski@google.com,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH bpf-next] bpf: Clean up individual BTF_ID code
-Date: Wed,  9 Jul 2025 16:20:38 +0800
-Message-Id: <20250709082038.103249-1-yangfeng59949@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1752049254; c=relaxed/simple;
+	bh=EHXyuAgrfEFtwOLv535hfHlLjgXTXtcDgMefdBRIoPk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bbGCK3Nx7aJp+Q3pWyBhkjEHSOEiTPajepMbMWXc0lZ/w8TWTiM252ZutlHnxB5glEcMVQ2j0qNvGCRZHRKIaQWoLN0WMpnZLsOKn7g+Geg1JgZj7nctIvOaGDjXgO9VhB9vSzKzraQdsxmiV+e0+E6VZcW+RlUHOZVDezdfhAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=2SG0hPHr; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-453066fad06so38085685e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 01:20:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1752049251; x=1752654051; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7B3VRXc09cS8APvBj52bRVQerXwb1XuAJdQMIRIyeh0=;
+        b=2SG0hPHrilVOq4DA3BKH5i1rPpqRffRqRzSyw9rMKTEbQVL5Z4ozarjiNEHoz4EtCX
+         +O2RdPsLYRsGuM/dkY8+tWNqRnq6qxLuA720mFsAQmApHaSmQMvnLbOX7CQosf8y0wHU
+         xoAzGIVutXY7UMomrAAG3CA1zPSEr6SwXvS/YurD70W8ldEXrdTWcT5Uxdg/a8X6Sbd8
+         w5na3R/UnGn2k6ZHg46gu0pql7IGwiIIftn4tmbQx1cxcktXmih1yURTntm9tDN/sJPF
+         U6GDmlY2E/2UWhEnP2tsO62vHJcuAoPp5NRgfDZn0JjKL+WfxtDUjarI72iQu7kEu1zV
+         plHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752049251; x=1752654051;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7B3VRXc09cS8APvBj52bRVQerXwb1XuAJdQMIRIyeh0=;
+        b=acr7mktBEnBi5oodSqT2qiOl7Jfz8hRW4QuICisnXK5UOR/zlfvNatIIy/+ozOlnbU
+         jb4GcqTUxTFYYcJJBs55OMJ2kLdkT5SIfwpL3nf/L9fLVPfXgZCMlt3lhhqOMFYtzKoo
+         7AvzNhWfXC8LRny+GS2wVMENUvyr1/z73w5ykUZ9rPMz1znjH4yYb8LEQwsnJ4k5ZRUc
+         zjw3vaesd00DgjkULxbn4LBntCr4dFWd0djMtRxmBuLte0A0sQ9tcep37v/KNUkDya0O
+         Lehyh8fxKuQ9PT/nTCo73B7yW0mRdYZatvRPKABzLKHmNXdl6tyVbgT04HkDHEkxW/Tc
+         cArg==
+X-Forwarded-Encrypted: i=1; AJvYcCXhx6qeRh1pYVR6KYySBr3VOYpNY5Bn+gXKqjaa2DNutWvQX5cohYkNh8Njmxr2PAq5e/KwUhP+ZkDX+Xk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7qQXvecfrH4VzZOfKp7m2FizFvR8XLxms3ZrGwL7ihJ2kTs/0
+	vBeDXm4VetXV4OdWByywV5rhapdjodSOz+tig1Larj7sLJ5DBkM5e7ckczYTrurOxv8=
+X-Gm-Gg: ASbGncvC9xuBjrUmDlikCUsC/7RAm3yWNGWTiZH/Qn9Wi4W7WLPMghzjIVrHPIfoOMk
+	KCs2gGvRz/d8Fgt4NycNv+7eSgiT7naSnnGksvDH90Q/+OOUQNQQH6Xoh+23m9DBcWZuS1+L0L0
+	K1YYjpTLkOBo8IPF5Dq5JZi+Y2kNWclQhgdZpZTsScd9dETrLUqZjJVhJb7XkB48eanElvT1aeh
+	98yTsLfhAvcG//9fLt8Kjen45r8TVrr3+l3EYCzQPpJywlSNDfkb4/upV3238P38ZsBQC2k/b95
+	bODEBJJa2tJvKrpO6dKQ3tINGBBOdbhV968id4fLlmwZhiUGBJ/SqQ5cdBmy9EWzUa4XTaX2HmW
+	V
+X-Google-Smtp-Source: AGHT+IEYNIjq5nVtF5eCRGm3USKuYX5yMn/POeyEHko97pwQhmn9XFmaUb7lW9CY6jfvANHnKvBFuA==
+X-Received: by 2002:a05:600c:8207:b0:445:1984:2479 with SMTP id 5b1f17b1804b1-454d52db33bmr12806645e9.5.1752049250612;
+        Wed, 09 Jul 2025 01:20:50 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:6015:b265:edf6:227e])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-454d50527acsm14451965e9.14.2025.07.09.01.20.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 01:20:50 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Wed, 09 Jul 2025 10:20:39 +0200
+Subject: [PATCH v2] PCI: endpoint: pci-epf-vntb: fix MW2 configfs ID
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDHukpWJm5oDyoSDg--.32703S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ZryDJr48AFykZryDCF47XFb_yoW5JFy5pa
-	yDZ3srCr40gw4YvF1UJr45uryaga10g3y3CF4DJw4fKr1UXw1kWF12gr13AF1aqryDKr9a
-	qw109r9xtw4xurDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jnYFAUUUUU=
-X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiYwiEeGhswHxPXwABs+
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250709-vntb-mw-fixup-v2-1-27c14df6ed5b@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAFYmbmgC/3WMyw6CMBBFf4XM2jHtIKKu/A/DoqWjTCKPtFglp
+ P9uZe/y3JtzVgjshQNcihU8RwkyDhloV0DbmeHBKC4zkKJK1eqEcZgt9m+8y+c1oW1LZUqmszp
+ qyM7kOR9b79Zk7iTMo1+2fNS/9V8patRI5EylNR1qdldrlqdYz/t27KFJKX0BM1iVQq0AAAA=
+X-Change-ID: 20250708-vntb-mw-fixup-bc30a3e29061
+To: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, 
+ Allen Hubbe <allenbh@gmail.com>, Manivannan Sadhasivam <mani@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>
+Cc: ntb@lists.linux.dev, linux-pci@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1443; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=EHXyuAgrfEFtwOLv535hfHlLjgXTXtcDgMefdBRIoPk=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBobiZgAHnLRl3ismay6Ijxwcw0NreYakccQ7CuM
+ G8WL55cG12JAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaG4mYAAKCRDm/A8cN/La
+ hdQcD/4+7GOPlvQ76ACj1f381w9IvlRgSLLe23LmFHIojk/yzji+2mVS4UgXKKuCVJcI912W2t9
+ j1rvTxqb8Ss4o/cc3yv2VN5GjuyMdGvKVnrrueGZc2Gt5/8SKmbpW+JAx9dSRDxUGCQwa9Q3Lju
+ QmyRKT4LulS9ciV3sTr2yw4GAcsCQH+qxWVHWASl82uVPtP3yporWKaBDbMljrgXeum+P8rLo8N
+ zYfW4P9TR/Or2RzxBhwJlmouxQP2X+v84BvCC7V/01W24J0OigOu1eCgoAeaSiLnmjDBsVOkdjK
+ YXM5R5vB4bv33RDY3cbPRKtpPcEePz8Pr6Pk+cfO7Mvr7TUJ0sLJoK2dRlF4NcXH4S3xwLEqdg6
+ 70U3m7STxKnWVEeinuCP7vUNfKovh2txQcC5OQmdnwOi3kE3vwkfakpEesnSqA91viLUASY2iwv
+ UaQdOisDcNO3WaCwD22f/mM/NVGKSZIv4B5ja25cqmhIZHDdNcR5IYDAvoHpmkVBL5NW5lLHHFv
+ HC9N95EbjXtdri83ib4Iz3pRo18GUYeLYMFnrmxRaTZJEJ+JvO0n9RVTxxI7v+g7OTaOLlrlb1O
+ qmBHWgQEqgjrl9uhrxGiIB4ntwvG/GB0w+T6jVt8OlLAvmyFEEtdDNZeiQNmtz9Hperk6JkTIqf
+ b63n2sQ/LYoKrOQ==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-From: Feng Yang <yangfeng@kylinos.cn>
+The ID associated with MW2 configfs entry is wrong.
 
-Use BTF_ID_LIST_SINGLE(a, b, c) instead of
-BTF_ID_LIST(a)
-BTF_ID(b, c)
+Trying to use MW2 will overwrite the existing BAR setup associated with
+MW1.
 
-Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
+Just put the correct ID for MW2 to fix the situation
+
+Fixes: 4eacb24f6fa3 ("PCI: endpoint: pci-epf-vntb: Allow BAR assignment via configfs")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- kernel/bpf/btf.c         | 3 +--
- kernel/bpf/link_iter.c   | 3 +--
- kernel/bpf/prog_iter.c   | 3 +--
- kernel/trace/bpf_trace.c | 3 +--
- 4 files changed, 4 insertions(+), 8 deletions(-)
+Changes in v2:
+- Minor edit to the change description
+- Link to v1: https://lore.kernel.org/r/20250708-vntb-mw-fixup-v1-1-22da511247ed@baylibre.com
+---
+ drivers/pci/endpoint/functions/pci-epf-vntb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 2dd13eea7b0e..0aff814cb53a 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -6200,8 +6200,7 @@ int get_kern_ctx_btf_id(struct bpf_verifier_log *log, enum bpf_prog_type prog_ty
- 	return kctx_type_id;
- }
- 
--BTF_ID_LIST(bpf_ctx_convert_btf_id)
--BTF_ID(struct, bpf_ctx_convert)
-+BTF_ID_LIST_SINGLE(bpf_ctx_convert_btf_id, struct, bpf_ctx_convert)
- 
- static struct btf *btf_parse_base(struct btf_verifier_env *env, const char *name,
- 				  void *data, unsigned int data_size)
-diff --git a/kernel/bpf/link_iter.c b/kernel/bpf/link_iter.c
-index fec8005a121c..8158e9c1af7b 100644
---- a/kernel/bpf/link_iter.c
-+++ b/kernel/bpf/link_iter.c
-@@ -78,8 +78,7 @@ static const struct seq_operations bpf_link_seq_ops = {
- 	.show	= bpf_link_seq_show,
- };
- 
--BTF_ID_LIST(btf_bpf_link_id)
--BTF_ID(struct, bpf_link)
-+BTF_ID_LIST_SINGLE(btf_bpf_link_id, struct, bpf_link)
- 
- static const struct bpf_iter_seq_info bpf_link_seq_info = {
- 	.seq_ops		= &bpf_link_seq_ops,
-diff --git a/kernel/bpf/prog_iter.c b/kernel/bpf/prog_iter.c
-index 53a73c841c13..85d8fcb56fb7 100644
---- a/kernel/bpf/prog_iter.c
-+++ b/kernel/bpf/prog_iter.c
-@@ -78,8 +78,7 @@ static const struct seq_operations bpf_prog_seq_ops = {
- 	.show	= bpf_prog_seq_show,
- };
- 
--BTF_ID_LIST(btf_bpf_prog_id)
--BTF_ID(struct, bpf_prog)
-+BTF_ID_LIST_SINGLE(btf_bpf_prog_id, struct, bpf_prog)
- 
- static const struct bpf_iter_seq_info bpf_prog_seq_info = {
- 	.seq_ops		= &bpf_prog_seq_ops,
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index e7f97a9a8bbd..c8162dc89dc3 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -781,8 +781,7 @@ BPF_CALL_1(bpf_task_pt_regs, struct task_struct *, task)
- 	return (unsigned long) task_pt_regs(task);
- }
- 
--BTF_ID_LIST(bpf_task_pt_regs_ids)
--BTF_ID(struct, pt_regs)
-+BTF_ID_LIST_SINGLE(bpf_task_pt_regs_ids, struct, pt_regs)
- 
- const struct bpf_func_proto bpf_task_pt_regs_proto = {
- 	.func		= bpf_task_pt_regs,
+diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+index 41b297b16574558e7ab99fb047204ac29f6f3391..ac83a6dc6116be190f955adc46a30d065d3724fd 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
++++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+@@ -993,8 +993,8 @@ EPF_NTB_BAR_R(db_bar, BAR_DB)
+ EPF_NTB_BAR_W(db_bar, BAR_DB)
+ EPF_NTB_BAR_R(mw1_bar, BAR_MW1)
+ EPF_NTB_BAR_W(mw1_bar, BAR_MW1)
+-EPF_NTB_BAR_R(mw2_bar, BAR_MW1)
+-EPF_NTB_BAR_W(mw2_bar, BAR_MW1)
++EPF_NTB_BAR_R(mw2_bar, BAR_MW2)
++EPF_NTB_BAR_W(mw2_bar, BAR_MW2)
+ EPF_NTB_BAR_R(mw3_bar, BAR_MW3)
+ EPF_NTB_BAR_W(mw3_bar, BAR_MW3)
+ EPF_NTB_BAR_R(mw4_bar, BAR_MW4)
+
+---
+base-commit: 38be2ac97d2df0c248b57e19b9a35b30d1388852
+change-id: 20250708-vntb-mw-fixup-bc30a3e29061
+
+Best regards,
 -- 
-2.43.0
+Jerome
 
 
