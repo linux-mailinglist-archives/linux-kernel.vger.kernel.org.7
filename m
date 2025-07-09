@@ -1,111 +1,127 @@
-Return-Path: <linux-kernel+bounces-723328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18B1AAFE5DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:35:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 431D6AFE5E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61A797A810F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:34:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FEA518984C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5F5287278;
-	Wed,  9 Jul 2025 10:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF1D28CF67;
+	Wed,  9 Jul 2025 10:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="SR3Ptud8"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ykc5PPtx"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16E42580F7;
-	Wed,  9 Jul 2025 10:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0D02580F7;
+	Wed,  9 Jul 2025 10:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752057348; cv=none; b=usfVis+p/br9O7C8kAGujXAScTh7r4b9NRb4tUFxAh0+0wL7Vvwjh1f407/NRD9lUoDAUbarEKm2jUqP9ar0vEjLqX/na0WY8dxcwJoS8/9eTG1sC3gZ9NjRxw3mmLMYNtNIIE5qVmqbhP+/LnlrhC70Vwvhm6kgRsPdGiB2ptY=
+	t=1752057386; cv=none; b=c9dvmEeCJ6ahR/xKmlbPvwJK8OJgoD4D/6gPk1W1uzwK36UmKPTa7vqDQJst9ABC+GU31rx/uK0xSKMk65c2c1Tv2BEhx/YUWG77k2XEf1GjH70RdR4N6kfpvj2lhnIgyO9gVwzHv07IK8n8+XXh/LRKVhv3dzNpkj17TWsGZw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752057348; c=relaxed/simple;
-	bh=qfkCfB6k2ReP+dIuVqT1u5dDA3EHf0EsByKW+aDAnCc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BQGM9BucF3EAMyImoFO1lDK2+1882ejq/bqJzM/HnyCIdrZCzGXV+a7cShJBqqEy6wV8HV8Scfp1NHS4Onzicfyds7SszEhN12EHyeKovKPr8T1z8GqT6bVuo3n16TsdSVQevrpFTG+kQbc3BGguD47+UTjfufMHQ+u/sANO9sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=SR3Ptud8; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752057342; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=823FBAhOPxpcuDF4eE0847BhYehDui+jDc+P2yvyv4Y=;
-	b=SR3Ptud8VVlfcNvgtR9d2F6ah29uZ/RtF2alFhkhoXlvaG3aQvKWpDwVW2wrDyipGeuQfDwH6BSmoXeXmuAPTqQvfrO5f5mi7x5EmtX9WMHnMt+JqQy8fgrUrdWuEnmmOLSifhuT/pzUHDqJ5+ANnBcvo5l+M98C4pIywwlJZFc=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WiXkGhQ_1752057341 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 09 Jul 2025 18:35:42 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Ard Biesheuvel <ardb@kernel.org>,
-	linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Feng Tang <feng.tang@linux.alibaba.com>
-Subject: [PATCH] efi:  remove the rtc-wakeup capability from default value
-Date: Wed,  9 Jul 2025 18:35:41 +0800
-Message-Id: <20250709103541.7268-1-feng.tang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1752057386; c=relaxed/simple;
+	bh=0ymFJB9KbboYSosezzraNLioZo6TGlf8YQ1eeMXYEPs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RbRZc9iKg9st6Zp5m3Y06770A1miQRWlkeCtVLcD0HGI+4ARyR/7jqMS8ykGDIzb2WOwi+TiCxgWwtJOLVU13cvd8wlDms91HXk+Zp+LcqUCiK7W8jexLe+/BhDtipINxNnZ01B8lWm7Eq7YY4BXo6wmkgdrdbU9juvgexfkHv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ykc5PPtx; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 569AaDh91453015;
+	Wed, 9 Jul 2025 05:36:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752057373;
+	bh=kUwbZxXvUidWuICcpMpWi7Gq0aS8eGh45D4id751BMU=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=ykc5PPtxfhPM7jZRzfohY5s1aiQ3ayN/IH63bb7M+pmczTf6qJo74YsCj1gk4yeJ4
+	 SXB3bxoYL00Bq9WF6aGj0DpF5orrfKnEwljBDi52IQ4gQtVk8+B65f1VxglIKZ7JuN
+	 DR8181SsQbarVuNxxxcUjPzDLe8aW17+g0E5+0hc=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 569AaDOH3270868
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 9 Jul 2025 05:36:13 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 9
+ Jul 2025 05:36:13 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 9 Jul 2025 05:36:13 -0500
+Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.245])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 569Aa9Iq3789169;
+	Wed, 9 Jul 2025 05:36:10 -0500
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: <devicetree@vger.kernel.org>,
+        Alexander Sverdlin
+	<alexander.sverdlin@gmail.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: ti: k3-pinctrl: Enable Schmitt Trigger by default
+Date: Wed, 9 Jul 2025 16:05:54 +0530
+Message-ID: <175205731408.919009.13331484172952220730.b4-ty@ti.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250701105437.3539924-1-alexander.sverdlin@siemens.com>
+References: <20250701105437.3539924-1-alexander.sverdlin@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The kernel selftest of rtc reported a error on an ARM server:
+Hi A. Sverdlin,
 
-	RUN           rtc.alarm_alm_set ...
-	rtctest.c:262:alarm_alm_set:Alarm time now set to 17:31:36.
-	rtctest.c:267:alarm_alm_set:Expected -1 (-1) != rc (-1)
-	alarm_alm_set: Test terminated by assertion
-		 FAIL  rtc.alarm_alm_set
-	not ok 5 rtc.alarm_alm_set
+On Tue, 01 Jul 2025 12:54:35 +0200, A. Sverdlin wrote:
+> Switch Schmitt Trigger functions for PIN_INPUT* macros by default. This is
+> HW PoR configuration, the slew rate requirements without ST enabled are
+> pretty tough for these devices. We've noticed spurious GPIO interrupts even
+> with noise-free edges but not meeting slew rate requirements (3.3E+6 V/s
+> for 3.3v LVCMOS).
+> 
+> It's not obvious why one might want to disable the PoR-enabled ST on any
+> pin. Just enable it by default. As it's not possible to provide OR-able
+> macros to disable the ST, shall anyone require it, provide a set of
+> new macros with _NOST suffix.
+> 
+> [...]
 
-The root cause is, the unerlying EFI firmware doesn't support wakeup
-service (get/set alarm), while it doesn't have the efi 'RT_PROP'
-table either. The current code logic will claim efi supports these
-runtime service capability by default, and let following 'RT_PROP'
-table parsing to correct it, if that table exists.
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
-This issue was reproduced on ARM server from another verndor, and not
-reproudce on one x86 server (Icelake). All these 3 platforms don't have
-'RT_PROP' tables, so they are all claimed to support alarm service,
-but x86 server uses real CMOS RTC device instead rtc-efi device, and
-passes the test.
+[1/1] arm64: dts: ti: k3-pinctrl: Enable Schmitt Trigger by default
+      commit: 5b272127884bded21576a6ddceca13725a351c63
 
-So remove the wakeup/alarm capability from default value, and setup
-the capability bits according to the 'RT_PROP' table parsing.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
----
- drivers/firmware/efi/efi.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index e57bff702b5f..7cf35376a2f7 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -789,6 +789,17 @@ int __init efi_config_parse_tables(const efi_config_table_t *config_tables,
- 		}
- 	}
- 
-+	/*
-+	 * After bootup, the runtime_supported_mask was set to be capable of
-+	 * all features, which could be kind of too optimistici. In real
-+	 * world, many platforms don't support advanced RTC wakeup runtime
-+	 * service, while they don't provide RT_PROPERTY table either, which
-+	 * led to rtc-wakeup capability being worngly claimed.
-+	 *
-+	 * So remove the wakeup capbility from default value, and let the
-+	 * RT_PROPERTY do the judge.
-+	 */
-+	efi.runtime_supported_mask &= ~EFI_RT_SUPPORTED_WAKEUP_SERVICES;
- 	if (rt_prop != EFI_INVALID_TABLE_ADDR) {
- 		efi_rt_properties_table_t *tbl;
- 
--- 
-2.43.5
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+--
+Vignesh
 
 
