@@ -1,116 +1,211 @@
-Return-Path: <linux-kernel+bounces-724150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64DA9AFEF35
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:52:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D68CAFEF0A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FAF01881919
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:51:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00522561CC4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE9E224B04;
-	Wed,  9 Jul 2025 16:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D2021B8F8;
+	Wed,  9 Jul 2025 16:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SSY3iiiq"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ALzddMnZ"
+Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4E9204C0C
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 16:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248A921C194
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 16:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752079762; cv=none; b=C4hh4NDsTWU2xZWv2jiLQeWTwDyUX/R4BNXEz7sIbH/I3cfn7T6F7JEEg+zGZFY90nplIi2x5jixOTuuOmKkOsBrmK86HUr7vio0hyQcmm4Zy+Hl4CVUfZaBdEptxqjOyfmSJbZomS+82BgxszW0mAOAGwLiPIRVshava4NGVBo=
+	t=1752079715; cv=none; b=UXHoXkrCvV2Wck5bjFOywV9X56AtYN03Ai+zeCZYAp8aLyxblicRw2AzvzMMMyuBr3773kRZKqwKmLwlPcqz6F4shuwtmiNg5LLyDY/lyaX3Hl3ShEWUckq/61eW2l3Mi+bg3033Ison8wnWtPRdOAiB0W9cBRqwVNBGnPoFC44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752079762; c=relaxed/simple;
-	bh=CecccEEp6xMqqwq13Yq1RsvGYSP4oxbH6K1TCkmW148=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Xrd0h5SXjJSoGiU83koQlnW3DStQkrTV4jOLxuw7aYmgj7W2SMDIbGQa8xFwfKBOqL0cHOG2RTxil6A0SnYqIc1J9Nw65Ot6B00iL4rIH5aGk8wNZ6lsI/pbyTCPWkhs361C5FPutzXtMti3F8iSrDqTXeXg4x2a7yOZGD+D01U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SSY3iiiq; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A1F5A4446A;
-	Wed,  9 Jul 2025 16:48:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1752079741;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=urTGCRx+pagS/LllFzv+AWPNdvP9WA8Q7pk3WEs5H7Y=;
-	b=SSY3iiiqZgfxbjO7Ed2YqlkJe2nr+7rAgE+hoeE2MfKPpYNCv6lWS2ZSqJR3JnBvrcr31i
-	4LemqgQUZkjZkGxr5NtL/bd0S+s0BeKoiFoaFAEXWEnHrotV2POodQfllkeQ4qDVCXdvVF
-	feLgtzlXLRNavm/fHEmzkD5Jn95GFCj7wGccQ2slHCbzyqJ1iNhjDBCsVJ2gZ9XuBNS2YN
-	nQrldlk8z+T4VDI84nbT954u6MaVtF8HJw8RIGeCvoEKr/qH+J1SNodfEqTMy7Z1cVFYJ8
-	6MuVv01k6Udu7LFeLaQ9IvWJumSkk/uXGRAi6SrqO+ozAw5OmKOow3INqlYwNw==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Wed, 09 Jul 2025 18:48:08 +0200
-Subject: [PATCH 9/9] drm/imx: parallel-display: put the bridge returned by
- drm_bridge_get_next_bridge()
+	s=arc-20240116; t=1752079715; c=relaxed/simple;
+	bh=wRmR9hNZzz7aXnp2PmuXRHHVYJ7nrQGQYHH/VK1KGAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LpmTgXDfNZAcVg+qCT4WQrKVbobz2tvuqA+Zw/YI3+mRpu1gVM0atnrgFkVkjhvmaiYbkP6rgVNne/fSVMw6+EgQbuwXocVs5hFhDqI9S9EnU2dhOOWZN6p7MtawdvCCxPDUV7GrRBh9nMwhvBLim+yLGb27Cv2EJIhvye7TSS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=ALzddMnZ; arc=none smtp.client-ip=66.163.186.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1752079706; bh=kc36E2wI4bhwWTlYhfYkcEYRMP1zv/4SkOL/rVZnv6o=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ALzddMnZhWw2MIif5phz8ng9yIsyHTKbMwEg3MgQpZOrTplxU6XaXfZrHwBi2B02I08pxWW9JXpj3RuZL5HIVibYMOtygMfheWchqy2vJ92bESmhdGHbXUtiHQVI3RjXxt8rGeVq+Xhxx/rVab22u0J1ynCNbu1bGBcRsZTJ0wNQVLYQ+5qEsNGYUohQt0tDYeA5hnBYtnRqm4cAbqG1VevQFRiy7mnXV9ZkvU9J8psWNgUDa99iPb2rJOSD/+oLEh87q18uYgthjFK9aMGn4qjLlprq+Gyo5p5VSUGyLdO6YssSZamK/O9YSTQgx5wNOVUC10RsuL2bSS/OE1RubQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1752079706; bh=/mimeaU6GDhZfsBWZ6ZZR/0Q2Yiel8Egxhz3jIsQSoW=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=S+d+xLE6zPZBmQT9qohqGXIifGui7v/TKaqMrobiq9b7HvlZEr9K777tIbdErFunYk+Y2cj3kLieHEqVNgAfhLqFA93r98KhFnmB2Y4sGyOn/zfhiuQUTEYIlbjzPLKAQifhtZPJT5gLVbqTVTW6dt8VEJEA3iSnoVT5J+v2+3ONnGe0MH2lKFwlIrywZYeSzjC+YLiDxV9UzujPFeaA7IAVeLjOZhoH728bBmlidS5E/UemNmti1rZwhWAJ7frkBHTXNdk+kloEBeLA5dMBi3z3bBc3SoVp4AOa+uYu/MbWz/DV1d6WPreIXPuaRNk9w1Pd79/H/CSIp0Z6mRnkRA==
+X-YMail-OSG: oOjeceIVM1lDOKc2hTjru7tHo9CzfFuHeUnjAvTkZY7lzXBXz7k8nP8XqPkQ2yM
+ BffS_2b.NZl77j_O6.aSgk.49KcS1YEzfRQMY0p1KEpjiXqVpGjEoBvrRYV3dZkd1AXVgrUe9mGo
+ P00QSszv1gCX6qDeyF9KBc3a4WM09qLeq1OPIeZovnQbfmhpnshzuXUtJNjO4mdKKDvhotPNzLwW
+ _xrwycoKeLXUZ.LRQpVLhBeV3wKM_Wtai.CpJJXiTzg_G_iA9HomCma8_iyVG07FfpDOz1KmRuVr
+ Luk.AdwkS1E5ggZZkqhcLyf0ljM2q1jnqgHCqxsrWwtijV5JibS7Lgzifx1OTK_mi46qZ9yFqHeU
+ JqDMaXPTeaI4SiMyl9vdM_LPPigfww6GRPMljxl_aJIxiCp8819C.T5DQ.ptJ.BLOqckR4rMonpc
+ X_4QFWtryCZsab.5x_U2ub34RiVt09dPm0BE7Ozu5GAV1Fx.0l1QKExh.Ffxy0sVcch77NSpUqBf
+ Pz_j4pwXhJsz0F6PnFPReAIC1jdX2SHMD0vati581YmqnI4y6KyBexSxFqQ9t.cyfPh2.aX22gVy
+ P2tth18W.eIV_6WzD2uIo5HqxunmH1aPorIt4DFG6lroHEETOMVEO56qKeZOWYBqbD2MrRKoCxxm
+ _6VIxHUdA6Z1Qj7ZrMl.CGA7A4LGoApPIzAssmGtScHf1xZmclTlEnMjCWESB4Ekqzci0GpMgqXa
+ D_3Ol24JNMesLMedscOzNumP_YHdi6sY8Ls7k6cMVdeCyLgpj2A1RheLLhHHGjXd1FLrbBLOMIQ5
+ LRWZCGKUPsW4MQAeXdFMsn7PAv2ZgeP9ueksDKkoVsuqjx0uXaU4AlBXboRZ4ro2zZtsP.aP8i7t
+ 6t.QKYLTMQsQ2h5IzV5R2wdxx8aVhlWrufi8g.r0qLm8wNDT1mJ9TuUveT59gV0ctVBjZD7kDj5F
+ Elw63n0ECmIprDQBqe_xPnL4SfLki3kkcqIXQBF5ShfsODzCPvOX7nYgObFL0j2AvcIciyfnKQai
+ gSf6xkEJ_dQ32eVUfWkWLY7_ja.vZu1kGYQgBF2jgEVOfEk5ihhmpcwVKkuyOYKVn.XP6DpqXEWG
+ FRHdxQ.SJ1fevh07Sxu8D.sFaSuT54th1fZ8OcFpdJmTuReZFrJew6rx5cDjItAFuNJAGFpTIdM.
+ Yk42VATl84vbQ7tWgcxLWUxBKWRXHVRJJLr1uO_cTFsB0bl3BiKQfT0zxdkAUup1W0CmnxA7bIGR
+ jG8MjOKiITW.1x5qJDDKlj.879lEjmwUvFI2RZBLS6fYuIn.GWxQOY3x7s6rRk6ACEpymN1PJb3b
+ 2okO.BnZkqof93_1C6G.QfHtzK3f144bO9MeNE6LugnbB3Cfm_921SqVIb0a6170m0AABOkDkgCX
+ WO5Lqy8rHyKqWuGoF0CCI7KX4I0IYBVPw9MfOHcxZIbRVJC4Ddyrav6jegXjPNQY2UORgxvNYBGU
+ WgPCA4uRmCtBO3pvkSK9nHdFFBqsjRLx3TAl0HFFcP7tlttuBp7NyIEx_gkMJxwbKb4iKqAsgQDh
+ tJdqb_7m9NKa0F7j2iuhKppL0LtPLtPTN7mperGNvjaUlNl4FFhdgM7Bk0pQ2AEIjEf_Y.utrnlW
+ 4ujR673upy4cONQbOWdQcYl.Uwnv4DcNE9v153OjfUE704NLiX0FVu_ciDJELWFIDp.R3g0N6scu
+ n6TsN6RE0VlikbbhY3d0EIvf6VgCwf12V5MyVs66Na1dvjmSicHFSSvFhvUsYkoQ.junpPN22llQ
+ eSObtvTNXZh6wYxeAi30PaEBfxs7swQ_oh45oRti9xkJE_QGbd3md11PoSy1nnlctgW45FD2N765
+ fLwZZuF9fHSQQZA9MTkF39kLIB_fViEiaCfxw.lrUts3H9.WIW7VhNhrwYBFmCOjW5o2gJJJv57i
+ ZoKpQw7so85w95vC.ONQfaSlH3WXX5mI86ngm4Uys868kB29IvDe2kgWvyPDRwipzpCIPTLODeXn
+ 0iKb90XcijGK.w.vmfnP5T63D6Czd4D6OSLUu.rbPjY2kO5SIBigO2KwfSIfuUwbxt_3BLJh0ybJ
+ 1eKXTXsA16.jpR0SgJ9LEvnv6zzamxuAQDyKoTM6NuOQkrPn5.FrJP6yJVhEqQSJx7eJQjH_M.6Z
+ gf4BIgExu1fqIJr8w3BtejYxu613S.FKVHHqMwal9uvstZ9E_gtGeClLvuKgafIy7YKD.DmyNID7
+ Th8ym1DxwiM4ob0qRP2Dpj6H3vUBDVD3wVeLVRrcHltDcXU_y2b3NlI0zG8EJi.82hR44rzFOm1a
+ 7fRO9ucClRTz3a3j5rbI-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 95f83a92-85ed-4d51-9d2f-7281f23145f7
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Wed, 9 Jul 2025 16:48:26 +0000
+Received: by hermes--production-gq1-74d64bb7d7-s6s6l (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 91ff29a2e51ab3f0eda0900cc0979479;
+          Wed, 09 Jul 2025 16:48:24 +0000 (UTC)
+Message-ID: <5ae541ce-613f-47c0-8a23-1ec9a0b346cf@schaufler-ca.com>
+Date: Wed, 9 Jul 2025 09:48:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250709-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v1-9-48920b9cf369@bootlin.com>
-References: <20250709-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v1-0-48920b9cf369@bootlin.com>
-In-Reply-To: <20250709-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v1-0-48920b9cf369@bootlin.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefkedtkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieeiuedvffetgfeuudelheeutefggfejieettdetteekueeuueeukeevvedvueevnecukfhppeekjedruddvtddrvddukedrvddtjeenucevlhhushhtvghrufhiiigvpeejnecurfgrrhgrmhepihhnvghtpeekjedruddvtddrvddukedrvddtjedphhgvlhhopegludelvddrudeikedruddrudefngdpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvhedprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtohepihhmgieslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopefjuhhirdfruhesghgvhhgvrghlthhhtggrrhgvrdgtohhmpdhrtghpthhtohepthhomhhirdhvrghlkhgvihhnvghnsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehvihgtthhorhdrlhhiuhesn
- higphdrtghomhdprhgtphhtthhopehshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepphdriigrsggvlhesphgvnhhguhhtrhhonhhigidruggv
-X-GND-Sasl: luca.ceresoli@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/3] lsm: introduce lsm_config_self_policy() and
+ lsm_config_system_policy() syscalls
+To: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>,
+ linux-security-module@vger.kernel.org
+Cc: john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com, mic@digikod.net, kees@kernel.org,
+ stephen.smalley.work@gmail.com, takedakn@nttdata.co.jp,
+ penguin-kernel@I-love.SAKURA.ne.jp, song@kernel.org, rdunlap@infradead.org,
+ linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
+ linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20250709080220.110947-1-maxime.belair@canonical.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250709080220.110947-1-maxime.belair@canonical.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.24099 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-The bridge returned by drm_bridge_get_next_bridge() is refcounted. Put it
-when done.
+On 7/9/2025 1:00 AM, Maxime Bélair wrote:
+> This patchset introduces two new syscalls: lsm_config_self_policy(),
+> lsm_config_system_policy() and the associated Linux Security Module hooks
+> security_lsm_config_*_policy(), providing a unified interface for loading
+> and managing LSM policies. These syscalls complement the existing per‑LSM
+> pseudo‑filesystem mechanism and work even when those filesystems are not
+> mounted or available.
+>
+> With these new syscalls, users and administrators may lock down access to
+> the pseudo‑filesystem yet still manage LSM policies. Two tightly-scoped
+> entry points then replace the many file operations exposed by those
+> filesystems, significantly reducing the attack surface. This is
+> particularly useful in containers or processes already confined by
+> Landlock, where these pseudo‑filesystems are typically unavailable.
+>
+> Because they provide a logical and unified interface, these syscalls are
+> simpler to use than several heterogeneous pseudo‑filesystems and avoid
+> edge cases such as partially loaded policies. They also eliminates VFS
+> overhead, yielding performance gains notably when many policies are
+> loaded, for instance at boot time.
+>
+> This initial implementation is intentionally minimal to limit the scope
+> of changes. Currently, only policy loading is supported, and only
+> AppArmor registers this LSM hook. However, any LSM can adopt this
+> interface, and future patches could extend this syscall to support more
+> operations, such as replacing, removing, or querying loaded policies.
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
- drivers/gpu/drm/imx/ipuv3/parallel-display.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+It would help me be more confident in the interface if you also included
+hooks for SELinux and Smack. The API needs to be general enough to support
+SELinux's atomic policy load, Smack's atomic and incremental load options,
+and Smack's self rule loads. I really don't want to have to implement
+lsm_config_self_policy2() when I decide to us it for Smack.
 
-diff --git a/drivers/gpu/drm/imx/ipuv3/parallel-display.c b/drivers/gpu/drm/imx/ipuv3/parallel-display.c
-index 6d8325c766979aa3ba98970f00806e99c139d3c3..44b2ce3c2a3a1641c4483a610607555dfbedff9e 100644
---- a/drivers/gpu/drm/imx/ipuv3/parallel-display.c
-+++ b/drivers/gpu/drm/imx/ipuv3/parallel-display.c
-@@ -138,9 +138,11 @@ static int imx_pd_bridge_atomic_check(struct drm_bridge *bridge,
- 	u32 bus_flags, bus_fmt;
- 
- 	next_bridge = drm_bridge_get_next_bridge(bridge);
--	if (next_bridge)
-+	if (next_bridge) {
- 		next_bridge_state = drm_atomic_get_new_bridge_state(crtc_state->state,
- 								    next_bridge);
-+		drm_bridge_put(next_bridge);
-+	}
- 
- 	if (next_bridge_state)
- 		bus_flags = next_bridge_state->input_bus_cfg.flags;
-
--- 
-2.50.0
-
+>
+> Landlock already provides three Landlock‑specific syscalls (e.g.
+> landlock_add_rule()) to restrict ambient rights for sets of processes
+> without touching any pseudo-filesystem. lsm_config_*_policy() generalizes
+> that approach to the entire LSM layer, so any module can choose to
+> support either or both of these syscalls, and expose its policy
+> operations through a uniform interface and reap the advantages outlined
+> above.
+>
+> This patchset is available at [1], a minimal user space example
+> showing how to use lsm_config_system_policy with AppArmor is at [2] and a
+> performance benchmark of both syscalls is available at [3].
+>
+> [1] https://github.com/emixam16/linux/tree/lsm_syscall
+> [2] https://gitlab.com/emixam16/apparmor/tree/lsm_syscall
+> [3] https://gitlab.com/-/snippets/4864908
+>
+> ---
+> Changes in v5
+>  - Improve syscall input verification
+>  - Do not export security_lsm_config_*_policy symbols
+>
+> Changes in v4
+>  - Make the syscall's maximum buffer size defined per module
+>  - Fix a memory leak
+>
+> Changes in v3
+>  - Fix typos
+>
+> Changes in v2
+>  - Split lsm_manage_policy() into two distinct syscalls:
+>    lsm_config_self_policy() and lsm_config_system_policy()
+>  - The LSM hook now calls only the appropriate LSM (and not all LSMs)
+>  - Add a configuration variable to limit the buffer size of these
+>    syscalls
+>  - AppArmor now allows stacking policies through lsm_config_self_policy()
+>    and loading policies in any namespace through
+>    lsm_config_system_policy()
+> ---
+>
+> Maxime Bélair (3):
+>   Wire up lsm_config_self_policy and lsm_config_system_policy syscalls
+>   lsm: introduce security_lsm_config_*_policy hooks
+>   AppArmor: add support for lsm_config_self_policy and
+>     lsm_config_system_policy
+>
+>  arch/alpha/kernel/syscalls/syscall.tbl        |  2 +
+>  arch/arm/tools/syscall.tbl                    |  2 +
+>  arch/m68k/kernel/syscalls/syscall.tbl         |  2 +
+>  arch/microblaze/kernel/syscalls/syscall.tbl   |  2 +
+>  arch/mips/kernel/syscalls/syscall_n32.tbl     |  2 +
+>  arch/mips/kernel/syscalls/syscall_n64.tbl     |  2 +
+>  arch/mips/kernel/syscalls/syscall_o32.tbl     |  2 +
+>  arch/parisc/kernel/syscalls/syscall.tbl       |  2 +
+>  arch/powerpc/kernel/syscalls/syscall.tbl      |  2 +
+>  arch/s390/kernel/syscalls/syscall.tbl         |  2 +
+>  arch/sh/kernel/syscalls/syscall.tbl           |  2 +
+>  arch/sparc/kernel/syscalls/syscall.tbl        |  2 +
+>  arch/x86/entry/syscalls/syscall_32.tbl        |  2 +
+>  arch/x86/entry/syscalls/syscall_64.tbl        |  2 +
+>  arch/xtensa/kernel/syscalls/syscall.tbl       |  2 +
+>  include/linux/lsm_hook_defs.h                 |  4 +
+>  include/linux/security.h                      | 20 +++++
+>  include/linux/syscalls.h                      |  5 ++
+>  include/uapi/asm-generic/unistd.h             |  6 +-
+>  include/uapi/linux/lsm.h                      |  8 ++
+>  kernel/sys_ni.c                               |  2 +
+>  security/apparmor/apparmorfs.c                | 31 +++++++
+>  security/apparmor/include/apparmor.h          |  4 +
+>  security/apparmor/include/apparmorfs.h        |  3 +
+>  security/apparmor/lsm.c                       | 84 +++++++++++++++++++
+>  security/lsm_syscalls.c                       | 25 ++++++
+>  security/security.c                           | 60 +++++++++++++
+>  tools/include/uapi/asm-generic/unistd.h       |  6 +-
+>  .../arch/x86/entry/syscalls/syscall_64.tbl    |  2 +
+>  29 files changed, 288 insertions(+), 2 deletions(-)
+>
+>
+> base-commit: 9c32cda43eb78f78c73aee4aa344b777714e259b
 
