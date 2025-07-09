@@ -1,216 +1,107 @@
-Return-Path: <linux-kernel+bounces-723854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D11AFEBB5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:22:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB57AFEBAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7EC616A0EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:13:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46A55179724
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5F32E7655;
-	Wed,  9 Jul 2025 14:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tua7tl5C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE7B2D3ECC;
+	Wed,  9 Jul 2025 14:12:28 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D221290092;
-	Wed,  9 Jul 2025 14:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1FC28DB56;
+	Wed,  9 Jul 2025 14:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752070318; cv=none; b=dtsMqOLb8oCjfpo6cTTzHG4SEEBYjBZ4A6BzYQPhv5y+G/cCgDhehzrE2wPiqh+E+OxOie5psJneNDhKn/wQf3vslxPSsFPvrv6w70lKOpe9DGSfcOyEGc61aMtEYtuQQKIN0UmXwes8SNpC+U1P9cmtPlOO7iqWkac0B6KkY7s=
+	t=1752070348; cv=none; b=ICqdXLWGxYkN7D8V0yXYeOldp4dF00q1niNkBBRU9cFXkb1F36jRi6C239HNLRlFo9qRK8xL/IBoSw83CQIWHfO0pSf/Fapl22THGErEoTYS2AMBK4LqMLJ5NViMyZeiIOIkwC6vblTfe58aXYsq3sb4aoJ8IDvyg/bltSlKGN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752070318; c=relaxed/simple;
-	bh=MP8y7OgpetDh3M79PleMX8TjA4AwgjOhJ4DgQjJGgRM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=utehtC1o9QLpb9I4B8if5lTjy2hBiy0JjeYA0DEd+/uR82DjQA00ndrKwEkicuQFo8GcF8uvE9NqGzYIrjzR1fu8/I9irR0nxUnxFjN7xkGeqQpcXuKxWuryhMndXaAeUTSj8kGDOjNNqWNz7426nZEYcaARHXVwlLiZey7/XEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tua7tl5C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE546C4CEEF;
-	Wed,  9 Jul 2025 14:11:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752070317;
-	bh=MP8y7OgpetDh3M79PleMX8TjA4AwgjOhJ4DgQjJGgRM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tua7tl5CR2shKodoU+r6z3cIdXQWuEXLopgPRh9M7/cSvu8WZsSysvpY3RIWew0hZ
-	 BhkS02BGy3Xm5tojLWZB0fTzLFtPtw0fgkNtAbNbzX4FMF5Y16IKAbD217aXUSeLq8
-	 4roJ/cR+jQqWrcx4JcSg9mpL4+A/grmBIpmXjnGAntcgloJROFXXMnq04hVJeG4jIf
-	 7T26wA6gI0HXvt5snzYdiL8dZuBs+61LtxRkFIA6Ln3tOLC82njLLnIrWa/6CfHjIX
-	 d1QnjLe0C+Mt59ze3U45rzdTNh1VMIeDKVZF2r7h6EDrNToReb9p+gN3lNGC9O9qEj
-	 kKyFB5JK0PI+w==
-Message-ID: <7311e4b6-8832-46fc-94b8-4ebcb2592926@kernel.org>
-Date: Wed, 9 Jul 2025 16:11:52 +0200
+	s=arc-20240116; t=1752070348; c=relaxed/simple;
+	bh=VRsZlWd0sKloPJJMyC2U4nSucDYa1R2NfHw8RJbt4XQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jBRNdUVC2SDrnv1UdLj1Cn3owTPEW8RvPVanWt9ROmYE/hiOUVjrK26YzztYPPYQUTwstAoOpNFIuXNtUwx69Ggml4D8Q+hJGv5munBemZsAKQNUbh67FGaBxXo5z5fvozPGW5B/avvG+eR/Ca5YcAsz28Ni4OAvy5oGMWs7w6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id BAAF61A0261;
+	Wed,  9 Jul 2025 14:12:18 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id D6C9D1C;
+	Wed,  9 Jul 2025 14:12:16 +0000 (UTC)
+Date: Wed, 9 Jul 2025 10:12:16 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Gabriele Paoloni <gpaoloni@redhat.com>
+Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH RESEND] tracing: add kernel documentation for
+ trace_array_set_clr_event, trace_set_clr_event and supporting functions
+Message-ID: <20250709101216.5949e86f@batman.local.home>
+In-Reply-To: <CA+wEVJab6Gwkd7q58=v8uVhfmKpwNRAqtK67f15JtZcKSB_ziA@mail.gmail.com>
+References: <20250620085618.4489-1-gpaoloni@redhat.com>
+	<20250701195939.3e297e20@gandalf.local.home>
+	<20250709100626.fc0611eb6801b7a8dad9164f@kernel.org>
+	<20250708212539.054a7d5b@batman.local.home>
+	<CA+wEVJab6Gwkd7q58=v8uVhfmKpwNRAqtK67f15JtZcKSB_ziA@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/9] dt-bindings: gpio: add bindings for the QIXIS FPGA
- based GPIO controller
-To: Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>,
- Lee Jones <lee@kernel.org>, Frank Li <Frank.Li@nxp.com>
-References: <20250709112658.1987608-1-ioana.ciornei@nxp.com>
- <20250709112658.1987608-2-ioana.ciornei@nxp.com>
- <9aff4894-a8aa-47d2-8800-62959e064254@kernel.org>
- <lv55xheu2glgsgey2wdupqp3cvem27afhrs3ibhzqgglf4ql6a@tzy7uwule7z4>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <lv55xheu2glgsgey2wdupqp3cvem27afhrs3ibhzqgglf4ql6a@tzy7uwule7z4>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Stat-Signature: nu7mjtp6rhcgkci7nawaq5yabzu95ksp
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: D6C9D1C
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/dopg29juvoVm7TUeKEpfoZGxpUo5A030=
+X-HE-Tag: 1752070336-670080
+X-HE-Meta: U2FsdGVkX18aQM8jb46m/z+hSFesLyStWtj7y7/B1lofbMY/GhdCruWcLsso1zK3FjgG/ItC7tRpyag5+AZb+fQAG1U1Iw/TqTRk7g4uj4gJTgFjWpykRT0FvujaW9dxbnoz5OXkEn9hRxxrtDwEltEWaz4lwQlwVBSr96n7Lh5JbdVxRlmobDT389KJZSIm53rHL/V55R7NjuL/k1VwPnpbAONcJDp4APfEzw9X6fO/7t7mkzlO+5AeFoFCWVkzqUJTNMxXt6xAIIiJ8r/F6nWNwS3pJsNnob1rL5nXtIXkUYXqBt/drjbOm+sMYlCHL5iWLDyO4jBWEUDjCC3rLV5BPiusm3yu
 
-On 09/07/2025 15:55, Ioana Ciornei wrote:
-> On Wed, Jul 09, 2025 at 02:14:47PM +0200, Krzysztof Kozlowski wrote:
->> On 09/07/2025 13:26, Ioana Ciornei wrote:
->>> Add a device tree binding for the QIXIS FPGA based GPIO controller.
->>> Depending on the board, the QIXIS FPGA exposes registers which act as a
->>> GPIO controller, each with 8 GPIO lines of fixed direction.
->>>
->>> Since each QIXIS FPGA layout has its particularities, add a separate
->>> compatible string for each board/GPIO register combination supported.
->>>
->>> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
->>
->> Your changelog explains patches, which is kind of redundant - we see
->> that - but does not explain the dependency you have here between patches.
->>
-> 
-> Do you mean the logical dependency between all the components like
-> FPGAs, GPIOs etc? I can expand on that, sure. I will also update the
-> cover letter with some of the information below.
-> If this is not what you are looking for, please let me know.
+On Wed, 9 Jul 2025 15:35:50 +0200
+Gabriele Paoloni <gpaoloni@redhat.com> wrote:
 
-I meant here cover letter, not changelog. It does not explain
-dependencies between patches. You just explain what each patch is doing
-- this is completely redundant cover letter.
+> > Hmm, now here's an interesting point. So this is to define requirements
+> > of a function based on what the function is doing. But does the
+> > function have to have strict requirements?  
+> 
+> IMO one of the main goals for these requirements is testability.
+> In order to have testable requirements we should state what the
+> valid input values are. In this case:
+> 0 -> disable, 1 -> enable, everything else -> Error.
+> 
+> Now checking the code again it seems that the switch statement
+> is missing a default "ret = -EINVAL" (or else it should be changed
+> to boolean, but I guess it would have a wider impact on the rest
+> of the code...).
+
+Well, it's mostly used internally and the only places that call it uses
+0 or 1, so there's never been any issue.
 
 > 
-> Layerscape boards such as those that I update here have a QIXIS FPGA
-> accessible through I2C. This FPGA exposes a set of registers which can
-> be used to monitor the status of different components, configure muxing,
-> act as GPIO controllers etc.
+> >
+> > If it can handle "0" or "!0" does that mean that's how it will be
+> > defined? Or can it just state "0" or "1" and yes "2" is UB. That is,
+> > it's not part of the requirements but if someone passes in 2, it could
+> > act as a 1 as it's UB and implementation defined. Not a requirement.  
 > 
-> Since the register layout that this device exposes is different on a per
-> board basis, each board has a different compatible string such as the
-> one that patch 2/9 adds - fsl,lx2160ardb-fpga.
-> 
-> Going deeper, some of these registers are acting as GPIO controllers
-> exposing status/control of different SFP cages on the board. For these
-> kind of registers the new gpio-regmap driver is added.
-> 
->> A nit, subject: drop second/last, redundant "bindings". The
->> "dt-bindings" prefix is already stating that these are bindings.
->> See also:
->> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
->>
-> 
-> Sure. Will fix.
-> 
->>> ---
->>>  .../bindings/gpio/fsl,fpga-gpio.yaml          | 44 +++++++++++++++++++
->>>  1 file changed, 44 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml b/Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml
->>> new file mode 100644
->>> index 000000000000..dc7b6c0d9b40
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml
->>> @@ -0,0 +1,44 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/gpio/fsl,fpga-gpio.yaml
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml
->>> +
->>> +title: GPIO controller embedded in the NXP QIXIS FPGA
->>> +
->>> +maintainers:
->>> +  - Ioana Ciornei <ioana.ciornei@nxp.com>
->>> +
->>> +description: |
->>> +  This module is part of the QIXIS FPGA found on some Layerscape boards such as
->>> +  LX2160ARDB and LS1046AQDS. For more details see
->>> +  ../board/fsl,fpga-qixis-i2c.yaml.
->>
->> There are no "board" bindings, so this does not feel like correct path.
-> 
-> As you have seen already in patch 2/9 there is already a dt-binding in
-> the board/ folder.
-> 
->>
->>> +
->>> +  Each controller supports a maximum of 8 GPIO lines and each line has a fixed
->>> +  direction which cannot be changed using a direction register.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - fsl,lx2160ardb-fpga-gpio-sfp2
->>> +      - fsl,lx2160ardb-fpga-gpio-sfp3
->>
->> What is the difference between these?
-> 
-> The layout of the registers backing these two GPIO controllers is the
-> same but they each expose status/control of different SFP cages.
+> Right now if 2 is passed the function would silently return success,
+> but do we have a use case for this? I am trying to understand
+> where the implementation defined behavior would be....
 
-So same devices? Why do they need separate compatibles?
+The issue is that all the callers pass in the proper value, and that
+can be easily verified, but by adding the "anything else ERROR", it
+would require adding more code that is not needed.
 
+I rather just switch that and soft_disable into a boolean than to add
+superficial error checks.
 
-
-Best regards,
-Krzysztof
+-- Steve
 
