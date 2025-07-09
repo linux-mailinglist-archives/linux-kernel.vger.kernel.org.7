@@ -1,134 +1,102 @@
-Return-Path: <linux-kernel+bounces-724436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A701DAFF2E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:22:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99624AFF2E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A80451C212D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:22:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B6F2545D60
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96C724336B;
-	Wed,  9 Jul 2025 20:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B110243374;
+	Wed,  9 Jul 2025 20:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nOXlium6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YOJw4Rx5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387E31E5B6A;
-	Wed,  9 Jul 2025 20:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5BC238173
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 20:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752092530; cv=none; b=p5W2FTIT6VQBxfMN3o1Z+JPd3Xk0F7qLDnlgCVvBV/l3ZYc82Jzx9lczlnEDBltLzVw5QClK5VohRoillOMPbn+ArGjxLkJkzCrYOYw8OEWrg1J7TxM5xRER3+9YlnB55+E+6mOpHfve/PqdmR+butvmP0YlkjYN+ttVcoOJlPs=
+	t=1752092564; cv=none; b=XeNI6h4Bect59UWB0QqQDYJdyjPAyoerLyt8H91woBehAbsEPT67jg1E8eqynlARe65T5YgkC5jFUVSqrgGIGsjmnpI78X0A+WrKlMJ6k6As93BZlUfLBieq93PhvNFqmFSkDCeTzNRd+J+bcpy5lzI18UEipnfugafP03tUA60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752092530; c=relaxed/simple;
-	bh=r4ykqC1BMysn26mbzqOJLBLUnrVxJa0A43xHGpGB23s=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=k/r/oAXIdLc9z358zA1bznpImpYB525kU4DNaBdIJkL/KMuo2qnNWRicM0enwxSUH0QDCCzLY3kwt9BrYdCxdc7sMuRNkFAUTEYlsCBoJomkn9nVjJP7v3jul0kEw3cwqUEbpy1rd8moccTZ5Q///WvQgi32+rdHY63EfCcsJKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nOXlium6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3226C4CEEF;
-	Wed,  9 Jul 2025 20:22:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752092530;
-	bh=r4ykqC1BMysn26mbzqOJLBLUnrVxJa0A43xHGpGB23s=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=nOXlium6yxzsnqoZeyAjnDBVr/+4EAnUE+lmZvPg5Z+OM32PXPh/cRQ+GaGFder7y
-	 y8n9ZPKr0LOMuYcKxURkwr57y50XEx6hDVrmZ96SyOxk44EBOcJt82SYetvZDSCFmD
-	 7WiYT/+YnKR2UQ7a6GOD9WBibY3MoKQnHmPOnqG13O2NX/7lxZ2ocRLBqyLez2iFUd
-	 3rBDMJ3Ws0xLrcckEEwddXVJpz/zYcNINhNAAaXPGWhYjGxJRIy0oa85+FkGWB5WIk
-	 lKEeh13grD6hLkoemvRumEeWOMS0fc+q9BxUNcDFXMyhSIGtp5ii9DO7ciJVVvwwjz
-	 YEv3+Ne4s9Cdw==
+	s=arc-20240116; t=1752092564; c=relaxed/simple;
+	bh=/9Kns4ZXz/Qn4PrGGI5OGogJEIPcnnOmSvL0JleJ6ik=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=c18Ijux8Eq6+VwGgPoEMhGfKH3bmqJSjsgbKFpVvm/++QEXnxoOd42ycs3pFHcchG2UvLhJj6n1Grw9Kz08TKkrBL5PudX+dAsqBCtUGu6NygUh6jmKc+YXV9KQVxZz5LJJznsKXo/gFfGqFMEBv7OMvZeTFMNnBLZkIFaNlXWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YOJw4Rx5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752092561;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kDiGMlKKETCealBEfy16p098aY14pQYAB7sWpWAIJfI=;
+	b=YOJw4Rx51IjPnVELJgH0BE0mxgZy0ff6mry+JHOCtY8cJu67B5Dt3qBZ/QUzlfgTDdQM+3
+	no5FL0ZnXjANDQ87agg5VBr8Dz4IFTaIaf5JdOqEVHxtApGNitAXY6JMJ7TcIrtZpiBa6l
+	78qPZB3YMQNhUeUHpafEM9lGeiqEFyc=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-441-lFtj-QW-N8iv7MzdbQf7tA-1; Wed,
+ 09 Jul 2025 16:22:40 -0400
+X-MC-Unique: lFtj-QW-N8iv7MzdbQf7tA-1
+X-Mimecast-MFC-AGG-ID: lFtj-QW-N8iv7MzdbQf7tA_1752092558
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BF21B180028D;
+	Wed,  9 Jul 2025 20:22:37 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 989511955E85;
+	Wed,  9 Jul 2025 20:22:33 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAKPOu+_ZXJqftqFj6fZ=hErPMOuEEtjhnQ3pxMr9OAtu+sw=KQ@mail.gmail.com>
+References: <CAKPOu+_ZXJqftqFj6fZ=hErPMOuEEtjhnQ3pxMr9OAtu+sw=KQ@mail.gmail.com> <20250701163852.2171681-1-dhowells@redhat.com> <CAKPOu+8z_ijTLHdiCYGU_Uk7yYD=shxyGLwfe-L7AV3DhebS3w@mail.gmail.com> <2724318.1752066097@warthog.procyon.org.uk>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
+    Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+    netfs@lists.linux.dev, linux-afs@lists.infradead.org,
+    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+    ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    stable@vger.kernel.org
+Subject: Re: [PATCH 00/13] netfs, cifs: Fixes to retry-related code
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 09 Jul 2025 22:22:04 +0200
-Message-Id: <DB7SYPUAUBUS.30DITWX21NJ96@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-Cc: "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
- <aliceryhl@google.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Masahiro
- Yamada" <masahiroy@kernel.org>, "Nathan Chancellor" <nathan@kernel.org>,
- "Luis Chamberlain" <mcgrof@kernel.org>, "Danilo Krummrich"
- <dakr@kernel.org>, "Nicolas Schier" <nicolas.schier@linux.dev>, "Trevor
- Gross" <tmgross@umich.edu>, "Adam Bratschi-Kaye" <ark.email@gmail.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-kbuild@vger.kernel.org>, "Petr Pavlu" <petr.pavlu@suse.com>, "Sami
- Tolvanen" <samitolvanen@google.com>, "Daniel Gomez" <da.gomez@samsung.com>,
- "Simona Vetter" <simona.vetter@ffwll.ch>, "Greg KH"
- <gregkh@linuxfoundation.org>, "Fiona Behrens" <me@kloenk.dev>, "Daniel
- Almeida" <daniel.almeida@collabora.com>, <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v15 1/7] rust: sync: add `SetOnce`
-From: "Benno Lossin" <lossin@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250707-module-params-v3-v15-0-c1f4269a57b9@kernel.org>
- <20250707-module-params-v3-v15-1-c1f4269a57b9@kernel.org>
- <CAH5fLgiKo=jN_V5cAe_AJqxxp7mQWqhKx7knkEj6js3yiU9sqA@mail.gmail.com>
- <KNYMPkLfLvLb8ocrLqSmk-5hRGhRaaPQ2sDHN5JoPAUxYJWlHNiOW4HRmtDDGkoMRfNwpziT8mkRzlPkdxDVaQ==@protonmail.internalid> <aGvkFbs5caxLSQxa@Mac.home> <877c0joyfo.fsf@kernel.org> <lsO9eeoR7qtPcjbhow9WfkrujYbxWh9JwZCHDO9K4VU6gtpl4pNYJisLImSI7OrRxW7qu-soEy9zjF_3snXZGQ==@protonmail.internalid> <DB6JZBUSWGKX.3M3M5TSWPLLFN@kernel.org> <87ple9lkjr.fsf@kernel.org> <DB7QEZNTH2SB.SSRG5H7TXZZT@kernel.org> <aG7NFizFGeFBSXY-@tardis.local>
-In-Reply-To: <aG7NFizFGeFBSXY-@tardis.local>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2738561.1752092552.1@warthog.procyon.org.uk>
+Date: Wed, 09 Jul 2025 21:22:32 +0100
+Message-ID: <2738562.1752092552@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Wed Jul 9, 2025 at 10:12 PM CEST, Boqun Feng wrote:
-> On Wed, Jul 09, 2025 at 08:22:16PM +0200, Benno Lossin wrote:
->> On Wed Jul 9, 2025 at 12:34 PM CEST, Andreas Hindborg wrote:
->> > "Benno Lossin" <lossin@kernel.org> writes:
->> >> On Tue Jul 8, 2025 at 10:54 AM CEST, Andreas Hindborg wrote:
->> >>> "Boqun Feng" <boqun.feng@gmail.com> writes:
->> >>>> On Mon, Jul 07, 2025 at 03:38:58PM +0200, Alice Ryhl wrote:
->> >>>>> On Mon, Jul 7, 2025 at 3:32=E2=80=AFPM Andreas Hindborg <a.hindbor=
-g@kernel.org> wrote:
->> >>>>> >
->> >>>>> > Introduce the `SetOnce` type, a container that can only be writt=
-en once.
->> >>>>> > The container uses an internal atomic to synchronize writes to t=
-he internal
->> >>>>> > value.
->> >>>>> >
->> >>>>> > Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->> >>>>>
->> >>>>> LGTM:
->> >>>>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->> >>>>>
->> >>>>> > +impl<T> Drop for SetOnce<T> {
->> >>>>> > +    fn drop(&mut self) {
->> >>>>> > +        if self.init.load(Acquire) =3D=3D 2 {
->> >>>>> > +            // SAFETY: By the type invariants of `Self`, `self.=
-init =3D=3D 2` means that `self.value`
->> >>>>> > +            // contains a valid value. We have exclusive access=
-, as we hold a `mut` reference to
->> >>>>> > +            // `self`.
->> >>>>> > +            unsafe { drop_in_place(self.value.get()) };
->> >>>>>
->> >>>>> This load does not need to be Acquire. It can be a Relaxed load or
->> >>>>> even an unsynchronized one since the access is exclusive.
->> >>>>
->> >>>> Right, I think we can do the similar as Revocable here:
->> >>>>
->> >>>>         if *self.init.get_mut() =3D=3D 2 { }
->> >
->> > Ok, now I got it. You are saying I don't need to use the atomic load
->> > method, because I have mutable access. Sounds good.
->> >
->> > But I guess a relaxed load and access through a mutable reference shou=
-ld
->> > result in the same code generation on most (all?) platforms?
->>=20
->> AFAIK it is not the same on arm.
->>=20
+Max Kellermann <max.kellermann@ionos.com> wrote:
+
+>      kworker/8:1-437     [008] ...1.   107.149531: netfs_rreq:
+> R=00000065 2C WAKE-Q  f=80002020
 >
-> Right, when LTO=3Dy, arm64 use acquire load to implement
-> READ_ONCE()/atomic_read().
+> ...
+> (The above was 6.15.5 plus all patches in this PR.)
 
-But Andreas was talking about relaxed load vs mutable reference (=3D
-normal unsynchronized write)?
+Can you check that, please?  If you have patch 12 applied, then the flags
+should be renumbered and there shouldn't be a NETFS_RREQ_ flag with 13, but
+f=80002020 would seem to have 0x2000 (ie. bit 13) set in it.
 
----
-Cheers,
-Benno
+If you do have it applied, then this might be an indicator of the issue.
+
+David
+
 
