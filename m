@@ -1,181 +1,118 @@
-Return-Path: <linux-kernel+bounces-724520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 539E9AFF3EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:27:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F309AAFF3ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 249641C85005
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:27:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE1297A36A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CEF24336D;
-	Wed,  9 Jul 2025 21:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE2D1FC109;
+	Wed,  9 Jul 2025 21:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldzQw00U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=frame.work header.i=@frame.work header.b="RzZtrXwX"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C2B231826;
-	Wed,  9 Jul 2025 21:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6435421FF39
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 21:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752096438; cv=none; b=LRcm0YoUCtgIVnkiYcRNsnGvQtrqK1QETna7ZAkiGzAZfg7OlSQ2/tRf4aCzgiH+D7A2TCKYfpOduVYZdV1fzB+ZjZaNfO87akCd2Y7TmTySwcPZgxpTmKEST3S9LPHxaw38icqq95WzRRa1VdfZo6T/NhvtrDPA4Xhqz/sK09I=
+	t=1752096610; cv=none; b=DygWDbzo1UBLsMeund7IspEUFxJ6G/Jp5RJS19svNL6OhTTeSunkAkl3YdNolXbVtlD8k21CyF5yuB5BqSVWCQl/r/P5Fce8A+b2/8ddGW4Xkk4j5rjpl2VdS0o64pYpICb4oUiTcN0MrIpcPqHDBeV88uPsraXZ6yzpURRQF04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752096438; c=relaxed/simple;
-	bh=di0qI7GEmczq14zBNaBk8AWjgNHZtoR0rPpsB6FrrvM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cim249bpC8A1gH0HPnZJwGgRZxF7etS9henaecWzsdP23Rp826bFmSoAbYoj1bVfuD1WyxfgopKcNYthdZzAZpJmhVardwao5oBtKb2w5z1Fj/tkfEkQahUfjZuh/MjfGibIV49TUhhrjGwIBnAqfGBjv2nqGO+mP5EQLPlWcSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldzQw00U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F162EC4CEF4;
-	Wed,  9 Jul 2025 21:27:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752096437;
-	bh=di0qI7GEmczq14zBNaBk8AWjgNHZtoR0rPpsB6FrrvM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ldzQw00U+OetIKA481nc0vtmKNZA1RskLqjb7X1NOEN1OeisHWun1QCwnCjI5ottS
-	 vx4NKF7Pf8e0EPpxQC9AFg2qPBCYZ3d6DbJ21t2lwKjYlgSAvwQRR1yt4EJkrndA1f
-	 trzz9UmGeEgappXz0em9JwDLdjx01xkdVQbI3rVE3SIia4ICLQG8cbVWFxlnpTAUKc
-	 WQFupUDU4w3ADhfQa1mGwDVdFb//Oc88+StcqBA4tOTf5V4klAd2DKIQiX+U54taBE
-	 cwWDg3qNLgwXVZYFjvCKSq8cfutNsrmXNizt1CYW6H3QEfQT+dYgCuQqr6GqUb4mQt
-	 RtrsejD0cEWWg==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,  Pasha Tatashin
- <pasha.tatashin@soleen.com>,  pratyush@kernel.org,  jasonmiu@google.com,
-  graf@amazon.com,  changyuanl@google.com,  dmatlack@google.com,
-  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
-  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
-  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
-  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
-  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
-  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
-  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com
-Subject: Re: [RFC v2 10/16] luo: luo_ioctl: add ioctl interface
-In-Reply-To: <aGqHFkPWOrD6whv6@kernel.org>
-References: <20250515182322.117840-1-pasha.tatashin@soleen.com>
-	<20250515182322.117840-11-pasha.tatashin@soleen.com>
-	<20250624-akzeptabel-angreifbar-9095f4717ca4@brauner>
-	<aGqHFkPWOrD6whv6@kernel.org>
-Date: Wed, 09 Jul 2025 23:27:08 +0200
-Message-ID: <mafs0qzypys0j.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1752096610; c=relaxed/simple;
+	bh=3AKXY6KIFSkR824wpfOMbdEKHzSAI9V2/86D74V3JQg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rQKO+eIp0IO5LYh8Ay35nqyQAJCyZM5OQZvbH5dzsTs2a4g6eO9XhSA+xCGbyiYjUY0LiZ4r/YiuTngRc2QUwQheQSckl8OmcJFnvrE4T7os4AHJJlNtsNOsT1CngIB5Ii8m62hka2Hx0H1vZjBrCDYxebji59uD/0yXazZdg1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=frame.work; spf=pass smtp.mailfrom=frame.work; dkim=pass (2048-bit key) header.d=frame.work header.i=@frame.work header.b=RzZtrXwX; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=frame.work
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=frame.work
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-712be7e034cso4144627b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 14:30:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=frame.work; s=google; t=1752096608; x=1752701408; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3AKXY6KIFSkR824wpfOMbdEKHzSAI9V2/86D74V3JQg=;
+        b=RzZtrXwXaWFkc8PpqifjN6S0EWAwtt7ceIML7jof7+WlGSdFBcfd12CTU3jVzKdOSS
+         tl/0th9w1dNoRTPk4YN3FWtJb7bfwqHAhvraZRIG0AhratiRzT9uKnNcjKS7URdLRDqN
+         y8MHsvRGyZNoTUOS+4YY3lvVm7wJKP9+hG4yhsT4ENLdiru1Qj6lvaiQWQL6r997pSjB
+         lufQtNBHxEAJrXPGjEVPSqM6KKuseOfRu/U0YMQ39OPOwl4AOfraOH0fA0lDUfLnhnJQ
+         5kn2GgteOfHxlaBFUt1RtOlqUlPsac4YGaavGmExU7j1XDsV/yMbwrxJgIKmQea0lwKC
+         2aOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752096608; x=1752701408;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3AKXY6KIFSkR824wpfOMbdEKHzSAI9V2/86D74V3JQg=;
+        b=UtfH6BJ1c0ry6YzXD5eP2CwoMdexzRzUp4r/wb0yy3MnpcN4kd/Yc2EtQVS4iUxLUp
+         vawq7Ax7vB2GdecgxeTf4XOa+AKAHusiYEympE1yxYkI5ThpK9V/sq/M0Y2ciIF7ppfX
+         mptSg5L8NS/rVxwfMjImMy0ga9Na0DKTHSVOG5myhQ0wD7Yo4VA5KY/RGiIodff6Sa3q
+         q3vtjfoeeTLwX6GimMmDGFuogC5xnT8gVkULBEY+JGgCZClkCzaDX+HUx3piImT52RpG
+         9SpzJ+MvmMcZD9QVh7ih5k3ZskXvdrnW9VlcRM1zAaOZC91+YPW62cioi1KtdbqthLTF
+         jsGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfDlbCV564n5vjhQeRqkk2Hep/nmd57fP3juiwb/qQsAzfaBDjjPJk7dfzCzSiHOLaklQ2qtw1e4S6ong=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmhiDC526fs5htY7ClmGAWQ6OQa6nrSJBJs609zdElfRrj6n/+
+	f3ld76QfjFjGH7J6sXUvgMCdbNw/isFdZydr+X7m6K/44QqniD2kGUiVngd4KxSS+E2IEnPxiKl
+	1u2/TU2o91tnQapARnbSjXkqqfbYvRSZ7QAUt09s6BA==
+X-Gm-Gg: ASbGncuIAtUCIaAf1nJeQi3eILv9Lvob9QeSBz2VgnmXv8q/ZPZupXKE6f92EwJTrhn
+	T9bkacAT1qGNO+XjTZWCEuyjjFVU7+19v8T3VWR+Z3jMGp/L14ekqaL8fIOdiHL7WMwG+elJGnp
+	WPJXD1WMp0Es31+rp/aNIWN8/fTHzbETbCZUDPenODGQ==
+X-Google-Smtp-Source: AGHT+IFA/TyZV8EGMF9IO4hNKLPs7QqkYpSA7lLh6/jJatQA3DN6SKf0unViUObnrSN6U2H3b26xG3/2UTAwiVdEKWo=
+X-Received: by 2002:a05:690c:640b:b0:710:ead5:8a95 with SMTP id
+ 00721157ae682-717c4652de5mr6850687b3.14.1752096608346; Wed, 09 Jul 2025
+ 14:30:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250708162236.549307806@linuxfoundation.org> <75a83214-9cc4-4420-9c0c-69d1e871ceff@heusel.eu>
+ <2025070909-outmatch-malt-f9b7@gregkh>
+In-Reply-To: <2025070909-outmatch-malt-f9b7@gregkh>
+From: Alexandru Stan <ams@frame.work>
+Date: Wed, 9 Jul 2025 14:29:31 -0700
+X-Gm-Features: Ac12FXwEdWtlHSc6c1BAt6plMlo5XE4LaJAIba1E3cFVgzAQ_-C7cnhnPzezAR0
+Message-ID: <CAORQ5J5my3cd-nb=6wJ68s8wJ5BPi+JSu1Mo7JdHiLTD+XnB6Q@mail.gmail.com>
+Subject: Re: [PATCH 6.15 000/178] 6.15.6-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Christian Heusel <christian@heusel.eu>, stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, linux@frame.work
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 06 2025, Mike Rapoport wrote:
+Hey Greg,
 
-> On Tue, Jun 24, 2025 at 11:50:49AM +0200, Christian Brauner wrote:
->> On Thu, May 15, 2025 at 06:23:14PM +0000, Pasha Tatashin wrote:
->> > Introduce the user-space interface for the Live Update Orchestrator
->> > via ioctl commands, enabling external control over the live update
->> > process and management of preserved resources.
->> > 
->> > Create a misc character device at /dev/liveupdate. Access
->> > to this device requires the CAP_SYS_ADMIN capability.
->> > 
->> > A new UAPI header, <uapi/linux/liveupdate.h>, defines the necessary
->> > structures. The magic number is registered in
->> > Documentation/userspace-api/ioctl/ioctl-number.rst.
->> > 
->> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
->> > ---
->> >  .../userspace-api/ioctl/ioctl-number.rst      |   1 +
->> >  drivers/misc/liveupdate/Makefile              |   1 +
->> >  drivers/misc/liveupdate/luo_ioctl.c           | 199 ++++++++++++
->> >  include/linux/liveupdate.h                    |  34 +-
->> >  include/uapi/linux/liveupdate.h               | 300 ++++++++++++++++++
->> >  5 files changed, 502 insertions(+), 33 deletions(-)
->> >  create mode 100644 drivers/misc/liveupdate/luo_ioctl.c
->> >  create mode 100644 include/uapi/linux/liveupdate.h
->
-> ...
->
->> > +static const struct file_operations fops = {
->> > +	.owner          = THIS_MODULE,
->> > +	.open           = luo_open,
->> > +	.unlocked_ioctl = luo_ioctl,
->> > +};
->> > +
->> > +static struct miscdevice liveupdate_miscdev = {
->> > +	.minor = MISC_DYNAMIC_MINOR,
->> > +	.name  = "liveupdate",
->> > +	.fops  = &fops,
->> > +};
->> 
->> I'm not sure why people are so in love with character device based apis.
->> It's terrible. It glues everything to devtmpfs which isn't namespacable
->> in any way. It's terrible to delegate and extremely restrictive in terms
->> of extensiblity if you need additional device entries (aka the loop
->> driver folly).
->> 
->> One stupid question: I probably have asked this before and just swapped
->> out that I a) asked this already and b) received an explanation. But why
->> isn't this a singleton simple in-memory filesystem with a flat
->> hierarchy?
->> 
->> mount -t kexecfs kexecfs /kexecfs
->> 
->> So userspace mounts kexecfs (or the kernel does it automagically) and
->> then to add fds into that thing you do the following:
->> 
->> linkat(fd_my_anon_inode_memfd, "", -EBADF, "kexecfs/my_serialized_memfd", AT_EMPTY_PATH)
->
-> Having an ability to link a file descriptor to kexecfs would have been
-> nice. We could even create a dependency hierarchy there, e.g.
->
-> mkdir -p kexecfs/vm1/kvm/{iommu,memfd}
->
-> linkat(kvmfd, "", -EBADF, "kexecfs/vm1/kvm/kvmfd", AT_EMPTY_PATH)
-> linkat(iommufd, "", -EBADF, "kexecfs/vm1/kvm/iommu/iommufd", AT_EMPTY_PATH)
-> linkat(memfd, "", -EBADF, "kexecfs/vm1/kvm/memfd/memfd", AT_EMPTY_PATH)
->
-> But unfortunately this won't work because VFS checks that new and old paths
-> are on the same mount. And even if cross-mount links were allowed, VFS does
-> not pass the file objects to link* APIs, so preserving a file backed by
-> anon_inode is another issue.
+On Wed, Jul 9, 2025 at 10:20=E2=80=AFAM Christian Heusel <christian@heusel.=
+eu> wrote:
+> on the Framework Desktop I'm getting a new regression / error message
+> within dmesg on 6.15.6-rc1 which was not present in previous versions of
+> the stable kernel series:
 
-Yep, I was poking around the VFS code last week and saw the same
-problem.
+I debugged with Christian a little bit, turns out that particular
+device ("arch-external") had a PD/UCSI firmware bug (which we have
+fixed since). Perhaps the new kernel just exposed some more of the
+broken firmware behavior. It does not reproduce with newer firmware.
+I think we can safely ignore it for now.
 
->
->> which will serialize the fd_my_anon_inode_memfd. You can also do this
->> with ioctls on the kexecfs filesystem of course.
->
-> ioctls seem to be the only option, but I agree they don't have to be bound
-> to a miscdev.
+On Wed, Jul 9, 2025 at 12:12=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> And maybe if my Framework Desktop would ever get shipped to me, I could
+have debugged this ahead of time :)
 
-I suppose you can have a special file, say "preserve_fd", where you can
-write() the FD number.
+Stay tuned ;)
 
-This is in some ways similar to how you would write it to the ioctl()
-via the arg buffer/struct. And I suppose you can have other special
-files to do the things that other ioctls would do.
-
-That is one way to do it, although I dunno if it classifies as a
-"proper" use of the VFS APIs...
-
--- 
-Regards,
-Pratyush Yadav
+Sorry for the false alarm,
+Alexandru M. Stan (amstan)
 
