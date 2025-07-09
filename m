@@ -1,137 +1,120 @@
-Return-Path: <linux-kernel+bounces-724316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D90DEAFF13B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:56:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D4F3AFF13C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E0C83A142D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:56:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 616431C24A71
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAB723C514;
-	Wed,  9 Jul 2025 18:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B96423C8C9;
+	Wed,  9 Jul 2025 18:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ba8fU/qK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BwNv6N/q"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1836022256F;
-	Wed,  9 Jul 2025 18:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A291CD1E4;
+	Wed,  9 Jul 2025 18:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752087390; cv=none; b=MIZWqHVKclSwZ+h7fk8nC70a3oaAc738W3mT6L5FKLID+pRM/ESiG+/jLqvPbMCUssdBn18G/CrZAR3vYtRDPokioIBJ8bZGXRjvvAblGtdp5l+Dy5/xkynsZHHNmRQw3neIb3c9AAFb078bImNPEo8vLEgAp47BdT6vEChaiTA=
+	t=1752087512; cv=none; b=sYf9MTO6bz9zQAxfSGyh9oC8xKgzboK1I/iGgiai7DycP9X4GhFoBegKs24x44UJenV4Ac3eQuYFEKjbmXq+oBnVuYETaL4QUfdsqWydk2IYtdQA/CnmoEgKHnBwZbHdmsWn/pGvM1jShvTtj8dPyaE6YfEHQCsXNwBh4z8qzN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752087390; c=relaxed/simple;
-	bh=U2ym3y03dOWKJNhcj1ySueQzgVlsYFO3xy7ENC+WF2M=;
+	s=arc-20240116; t=1752087512; c=relaxed/simple;
+	bh=QqF18QlY3qrZC4wsPhnG5pDyHTcVkEGCbvNLKmjtv8g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K7ovRXHBTbvngpVM0A84uhWuHT/aB0EPjnfxCEUUpo18TRagh21+kLNaChlrOw/FuB+8YLeJ9bCFS9Gf2o+yMk80n8Gqhuy7JvoNq5MwlYKgJ4PEvEfaYtIqtfyo+hJ9b5XvAvn91UNPHanEWXt3YLTXUOXMGpwGJ8quOkKpEnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ba8fU/qK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ECF9C4CEEF;
-	Wed,  9 Jul 2025 18:56:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752087389;
-	bh=U2ym3y03dOWKJNhcj1ySueQzgVlsYFO3xy7ENC+WF2M=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=aarv1QAREpj/lGQRLKPJSSqpK/s3q/RVrtX9Yp0lnklKRUN1IdoSl508ajse/Id5BQEY8AM283ibwMaPGUjbQ4GtLzsH/IQn4ukX1+3MgCBqZBpqw643+anfgLZMQn7YrRQVSY2QLaLxn0Xs3r2qSHFF9dpWpI59b/fT+73Qb+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BwNv6N/q; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 06ACC40E020E;
+	Wed,  9 Jul 2025 18:58:27 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 06aREvEx9Gc7; Wed,  9 Jul 2025 18:58:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1752087503; bh=/7kITGrxxjLtMgkq5/27X+rRYGn55l4yjCE06Pjnrqg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ba8fU/qK1STvM0PwmV/USglE/5Fis0nZN/esbL7Q3i8qfdOUZ2v0sPaSnxHDmaUso
-	 C7PnBabk6300KGb9JYrXtzQbXTXJJSffPtBrk0XIjbgWU+aY1RB5bdh6NamC19fM8z
-	 HhoGW7JZXDneDRYenG6p/NYw/Kflm9d8eZzwfV4Fx2plCiXiCtz6BBodKUmLyuP9eb
-	 XupPnQolMyElAt0vy2ODMNTNsMo8kRz7Hi/RLcsjh1hujxS0G9a1ivnYjV8EreL77w
-	 v31o3Zuy3pmlJitFtCk6pmbJ3krn+BY3LQdBEiiE12AlnM+FSb6GmYtgJqAmQvrOqs
-	 sBnfEuDbuRFXA==
-Date: Wed, 9 Jul 2025 19:56:26 +0100
-From: Simon Horman <horms@kernel.org>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Kuniyuki Iwashima <kuniyu@google.com>
-Subject: Re: [PATCH v2 net] atm: clip: Fix NULL pointer dereference in
- vcc_sendmsg()
-Message-ID: <20250709185626.GN721198@horms.kernel.org>
-References: <20250705085228.329202-1-yuehaibing@huawei.com>
+	b=BwNv6N/qjkKIJ6HDQTEpxV7E5hWbs5Ehe+QSBdIAwiRRiAohlDwldzkuZxUh+UOp8
+	 dZI8cmMC4bPp5zOCF37JnJ6JPmcJfSBcenSZmTg6bQ1juXYavz3iJxqIEDuRAXg9bw
+	 2DJTL4ePKECLnappcoUrBl3L+lKcaSuwGsNsReABWlM4eP2xvlNmnrtnVXv7OeoNYK
+	 swnSZp18HuQYUtJtVN3nkP6KAV1ZqlFYeyRthCZWR2GJ8aJVbPanA3yNv1+myxwfai
+	 lW5AgDBhLsYT4178klN9eMsDqEdjp2te+LkG59KfHJ/44Lvce7ZRHmG07+e5zW9vGt
+	 N4wDi89wCiYs3Zkbb0fd+EWEsTc7XN/W9HAPgJ715tiJvUcjdfkImGxEoOmoANiHYu
+	 4NFbkDzGqpSY34P2JMrdTiVmUNkjm901M6Wne8oxRFZCJ/Ta8KHZjpEAsRbVWXzi1B
+	 iKt0IpyhQop6D4pbBfcKvwiwDYroUIhPBfyFNh8/DfbpMgkBjkovIblUy6GjMgOgFS
+	 OmKqD9Apqk5PtQVpdAXjdfE0gt36gq9Ea9ybk67wGExV7c2Axc6e7wUti0Nn0KaNBb
+	 7bmNtUgkcX5C8K+ZvQ8jDPz2Ib2iuF2oMaLNw0cdxZE38yzEC7HW20DF/IGTLZFFjE
+	 gCJ03r8Fb6Hjn8YX6BbeueWw=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 545A040E01FD;
+	Wed,  9 Jul 2025 18:58:02 +0000 (UTC)
+Date: Wed, 9 Jul 2025 20:57:57 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Kevin Loughlin <kevinloughlin@google.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Kai Huang <kai.huang@intel.com>, Ingo Molnar <mingo@kernel.org>,
+	Zheyun Shen <szy0127@sjtu.edu.cn>,
+	Mingwei Zhang <mizhang@google.com>,
+	Francesco Lavra <francescolavra.fl@gmail.com>
+Subject: Re: [PATCH v3 0/8] x86, KVM: Optimize SEV cache flushing
+Message-ID: <20250709185757.GDaG67tbGFYHUQxte2@fat_crate.local>
+References: <20250522233733.3176144-1-seanjc@google.com>
+ <aG6X__K8MvVYORkr@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250705085228.329202-1-yuehaibing@huawei.com>
+In-Reply-To: <aG6X__K8MvVYORkr@google.com>
 
-+ Iwashima-san
+On Wed, Jul 09, 2025 at 09:25:35AM -0700, Sean Christopherson wrote:
+> On Thu, May 22, 2025, Sean Christopherson wrote:
+> > This is the combination of Kevin's WBNOINVD series[1] with Zheyun's targeted
+> > flushing series[2].  The combined goal is to use WBNOINVD instead of WBINVD
+> > when doing cached maintenance to prevent data corruption due to C-bit aliasing,
+> > and to reduce the number of cache invalidations by only performing flushes on
+> > CPUs that have entered the relevant VM since the last cache flush.
+> > 
+> > All of the non-KVM patches are frontloaded and based on v6.15-rc7, so that
+> > they can go through the tip tree (in a stable branch, please :-) ).
+> 
+> Tip tree folks, any feedback/thoughts on this series (patches 1-4 in particular)?
+> It'd be nice to get this into 6.17, and I'd really like land it by 6.18 at the
+> latest.
 
-On Sat, Jul 05, 2025 at 04:52:28PM +0800, Yue Haibing wrote:
-> atmarpd_dev_ops does not implement the send method, which may cause crash
-> as bellow.
-> 
-> BUG: kernel NULL pointer dereference, address: 0000000000000000
-> PGD 0 P4D 0
-> Oops: Oops: 0010 [#1] SMP KASAN NOPTI
-> CPU: 0 UID: 0 PID: 5324 Comm: syz.0.0 Not tainted 6.15.0-rc6-syzkaller-00346-g5723cc3450bc #0 PREEMPT(full)
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:0x0
-> Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-> RSP: 0018:ffffc9000d3cf778 EFLAGS: 00010246
-> RAX: 1ffffffff1910dd1 RBX: 00000000000000c0 RCX: dffffc0000000000
-> RDX: ffffc9000dc82000 RSI: ffff88803e4c4640 RDI: ffff888052cd0000
-> RBP: ffffc9000d3cf8d0 R08: ffff888052c9143f R09: 1ffff1100a592287
-> R10: dffffc0000000000 R11: 0000000000000000 R12: 1ffff92001a79f00
-> R13: ffff888052cd0000 R14: ffff88803e4c4640 R15: ffffffff8c886e88
-> FS:  00007fbc762566c0(0000) GS:ffff88808d6c2000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffffffffffffffd6 CR3: 0000000041f1b000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  vcc_sendmsg+0xa10/0xc50 net/atm/common.c:644
->  sock_sendmsg_nosec net/socket.c:712 [inline]
->  __sock_sendmsg+0x219/0x270 net/socket.c:727
->  ____sys_sendmsg+0x52d/0x830 net/socket.c:2566
->  ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
->  __sys_sendmmsg+0x227/0x430 net/socket.c:2709
->  __do_sys_sendmmsg net/socket.c:2736 [inline]
->  __se_sys_sendmmsg net/socket.c:2733 [inline]
->  __x64_sys_sendmmsg+0xa0/0xc0 net/socket.c:2733
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Reported-by: syzbot+e34e5e6b5eddb0014def@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/682f82d5.a70a0220.1765ec.0143.GAE@google.com/T
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-> ---
-> v2: Add atm_return_tx() call
-> ---
->  net/atm/clip.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/atm/clip.c b/net/atm/clip.c
-> index b234dc3bcb0d..170f9386d42d 100644
-> --- a/net/atm/clip.c
-> +++ b/net/atm/clip.c
-> @@ -616,8 +616,16 @@ static void atmarpd_close(struct atm_vcc *vcc)
->  	module_put(THIS_MODULE);
->  }
->  
-> +static int atmarpd_send(struct atm_vcc *vcc, struct sk_buff *skb)
-> +{
-> +	atm_return_tx(vcc, skb);
-> +	dev_kfree_skb_any(skb);
-> +	return 0;
-> +}
-> +
->  static const struct atmdev_ops atmarpd_dev_ops = {
-> -	.close = atmarpd_close
-> +	.close = atmarpd_close,
-> +	.send = atmarpd_send
->  };
->  
->  
-> -- 
-> 2.34.1
-> 
+I'll take a look tomorrow.
+
+If I queue 1-4, would you like an immutable branch to merge for the other 4?
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
