@@ -1,120 +1,152 @@
-Return-Path: <linux-kernel+bounces-723539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ECA2AFE83C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:50:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B32AFE841
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73D77486614
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:49:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CACD4542D92
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BD42D662C;
-	Wed,  9 Jul 2025 11:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E4D2D8DC4;
+	Wed,  9 Jul 2025 11:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="uPsDAqc6"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZvMd4y4R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C78A11EB36
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 11:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A76B2BD5BC;
+	Wed,  9 Jul 2025 11:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752061795; cv=none; b=Bx4Ma8i/o0vmEvu1TQBu72/X8uQjvAgrlV0/V9hZQhST322s+Kp8SXgArCp3epuinWWIlF7OKr6+ROXqgfKA0xxgnrSsS4Mi9xMFDX+kp5kZwmBEroMlWLSBQ0UuX8p/RXIg1aVliSuoFKg94hcto1z58FvjhP+cMKBUxDCkJI0=
+	t=1752061959; cv=none; b=HR6+3k1yDHZ5vgGX31EnSeJfuMb+yAY/65NLe0Xe3vBaz5e/7D0DjOOmkvFIWOysEY20h9B3vFhXlfXA1iW8cRwuch22DBkriELa30n6TyN3Bwiw3OYSQpiPEQTFkU2jCakyh/PM1ECyFhw9QZHHd5StdJ5rT9OUOyHAkvMe88c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752061795; c=relaxed/simple;
-	bh=5i2zcGivKE1mLIrk15Rq0Nf/cqjgo46vZNf10mEXShc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fNHEgoPe0dWXTcYnhS5YV3LuBmKlWooA6He1DBO9lDVbXAcaTuwhfmb/ZPa2YE69kBPzKKRLTwV99Hk01FYtAoVdl5Lj0lvg1PDPyGq0Gt3DHSXCnUObOASluI3qo9BoUEnxo1M5OPQntE3uhlZm0qD6AIBR5Kh7xSbHK0jhaCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=uPsDAqc6; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (p5b1645eb.dip0.t-ipconnect.de [91.22.69.235])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 326C52FC004A;
-	Wed,  9 Jul 2025 13:49:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1752061783;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z4tPrpohIKzA9dpzM7fgM3lnG/w3QgoJ+fb9JhKfdC4=;
-	b=uPsDAqc6/GRcnySbr4rLZwJ33I0X5BpdBk4Q51cS1ERVD7G8HdXp5zP98woiX7YiTJqH/D
-	oY+zZo39jMWR5dGAV6x5IYJgb2RbPK79kNq8koKODyfO/M0RLOt0L/JW8obNrLD+Ea6m+D
-	Eep5mkPx9ZXWPpSUdsRE54IHXFb4vGw=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <513aa035-8a00-4943-abc1-d68824a5c0c6@tuxedocomputers.com>
-Date: Wed, 9 Jul 2025 13:49:42 +0200
+	s=arc-20240116; t=1752061959; c=relaxed/simple;
+	bh=BL4mdT3PrGBtb3/SFQL2jD7FRK8O1qchsF7KKukY9XA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r0juhkrdNJruGqJOhzhkQ5h0QdsKfYBfA+piqfRz1IFOFxPwXb0qdCFrX1n9AKdD2CYkMU1a0JzlZqfoqbzWGgKz51KX4nc81sH4FcIRylQA2CCZJCXAY6xUkth+64R6Prb2eLKlAHvSDIxhEfK4G3THRB+KjTC/e4nCN93cTUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZvMd4y4R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DA51C4CEEF;
+	Wed,  9 Jul 2025 11:52:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752061957;
+	bh=BL4mdT3PrGBtb3/SFQL2jD7FRK8O1qchsF7KKukY9XA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZvMd4y4RA/rH/vBz2NPE24B+63jpq3mXdRvGp9SqOHHXWwIfAg4hSDnkNt+OD6ZKq
+	 pCptueeS6OZeAkYaSoncsrNvJ8u0plrtK6kraivJUi5keG1qYYi/P/xx5bn/8eXvyR
+	 bgAQnt/NEdrcBNe00v1fxZOl+2HxbH5n+TZCNwJsnoaiTpOQfOISq63SRXLeKMHbBf
+	 /vVfgT1d1jJXYQdyNlQC/h5GtV9dYKqK2UcWJzRp9BDOpR/QokzyRzRDiPSc18bbIE
+	 R3OMtJbRFhCw1LqhPxL3Zk6wo9iAW4YEBIzOnXGqiXThDpUxRj79ndz30ijP5ExInM
+	 Rt85QuqDsa5Yw==
+Date: Wed, 9 Jul 2025 12:52:28 +0100
+From: Simon Horman <horms@kernel.org>
+To: Yassine Oudjana <y.oudjana@protonmail.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Sean Nyekjaer <sean@geanix.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Ramona Gradinariu <ramona.gradinariu@analog.com>,
+	"Yo-Jung (Leo) Lin" <0xff07@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	=?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
+	Danila Tikhonov <danila@jiaxyga.com>,
+	Antoni Pokusinski <apokusinski01@gmail.com>,
+	Vasileios Amoiridis <vassilisamir@gmail.com>,
+	Petar Stoykov <pd.pstoykov@gmail.com>,
+	shuaijie wang <wangshuaijie@awinic.com>,
+	Yasin Lee <yasin.lee.x@gmail.com>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Yassine Oudjana <yassine.oudjana@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH 2/3] net: qrtr: Define macro to convert QMI version and
+ instance to QRTR instance
+Message-ID: <20250709115228.GY452973@horms.kernel.org>
+References: <20250406140706.812425-1-y.oudjana@protonmail.com>
+ <20250406140706.812425-3-y.oudjana@protonmail.com>
+ <fb61323b-aabd-4661-a202-02da7da557ea@oss.qualcomm.com>
+ <aMbAZigHiAN2xupOYs9DodY2mOdNtw_oVjOaweflgA8IoXRQ5ctoZ8GYJ8PNAKDgL4f9N_UD7tFmkePUy9BCE8v20Mae2x-eL1ZpyJEdLZY=@protonmail.com>
+ <20250707170636.GR89747@horms.kernel.org>
+ <X2KJB3xtnC-pWM7o5TBw6ln3ItpMwn7tdn5Z8gpZY3oW31isE8PLTX5GUbJ6HcZk_9s72jb6ImwGL-anIoto4dK1MINTxzdRKfbejp_nXcA=@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/1] drm/i915/display: Avoid unsupported 300Hz output
- mode on a TUXEDO device
-To: Rodrigo Vivi <rodrigo.vivi@intel.com>, t.guttzeit@tuxedocomputers.com
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250704192007.526044-1-wse@tuxedocomputers.com>
- <aG2IL07UtZ4YICMn@intel.com>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <aG2IL07UtZ4YICMn@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <X2KJB3xtnC-pWM7o5TBw6ln3ItpMwn7tdn5Z8gpZY3oW31isE8PLTX5GUbJ6HcZk_9s72jb6ImwGL-anIoto4dK1MINTxzdRKfbejp_nXcA=@protonmail.com>
 
-Hi all,
+On Wed, Jul 09, 2025 at 07:44:49AM +0000, Yassine Oudjana wrote:
+> 
+> 
+> 
+> 
+> 
+> Sent with Proton Mail secure email.
+> 
+> On Monday, July 7th, 2025 at 6:06 PM, Simon Horman <horms@kernel.org> wrote:
+> 
+> > On Sat, Jul 05, 2025 at 06:29:39PM +0000, Yassine Oudjana wrote:
+> > 
+> > > On Wednesday, April 9th, 2025 at 3:54 PM, Konrad Dybcio konrad.dybcio@oss.qualcomm.com wrote:
+> > > 
+> > > > On 4/6/25 4:07 PM, Yassine Oudjana wrote:
+> > 
+> > 
+> > ...
+> > 
+> > > > > diff --git a/include/linux/soc/qcom/qrtr.h b/include/linux/soc/qcom/qrtr.h
+> > > > > index 4d7f25c64c56..10c89a35cbb9 100644
+> > > > > --- a/include/linux/soc/qcom/qrtr.h
+> > > > > +++ b/include/linux/soc/qcom/qrtr.h
+> > > > > @@ -13,6 +13,8 @@ struct qrtr_device {
+> > > > > 
+> > > > > #define to_qrtr_device(d) container_of(d, struct qrtr_device, dev)
+> > > > > 
+> > > > > +#define QRTR_INSTANCE(qmi_version, qmi_instance) (qmi_version | qmi_instance << 8)
+> > > > 
+> > > > Please use FIELD_PREP + GENMASK to avoid potential overflows
+> > > > 
+> > > > Konrad
+> > > 
+> > > Since I'm using this macro in initializing QRTR match tables I am unable to use
+> > > FIELD_PREP. When I do, I get such errors:
+> > 
+> > 
+> > Does using FIELD_PREP_CONST, say in a QRTR_INSTANCE_CONST variant, help?
+> 
+> That works, but do we want to have two variants? Or in this case maybe
+> I should leave qmi_interface.c untouched and define the macro only for use
+> in match tables?
 
-Am 08.07.25 um 23:05 schrieb Rodrigo Vivi:
-> On Fri, Jul 04, 2025 at 09:03:45PM +0200, Werner Sembach wrote:
->> RFC because I'm not sure if this is the right approach.
-> Could you please file a gitlab issue for us so we can get someone from our
-> display team to take a look and see if there's anything else that could be done
-> before we take the quirk route?
->
-> https://drm.pages.freedesktop.org/intel-docs/how-to-file-i915-bugs.html
+FWIIW, my order of preference would be:
 
-Tim can you follow up with this? Reducing the communication chain to avoid 
-dropping information.
+1. Two variants, declared next to each other
+2. One variant (using FIELD_PREP_CONST)
+3. Leave qmi_interface.c untouched
 
-Best regards,
-
-Werner Sembach
-
->
-> Thanks for the investigation and the quirk,
-> Rodrigo.
->
->> The flicker manifests ever few seconds 1-3 black frames in quick
->> succession.
->>
->> On windows 300Hz can not be selected for the iGPU, but the panel advertises
->> it.
->>
->> A cleaner solution would probably to go over the pixel clock, but for this
->> device there is only one 300Hz mode in the panels edid and that is at the
->> nativ resolution. Chroma subsampling was not tested as linux afaik offers
->> no way to easily enforce it for intel gpus.
->>
->> Tim Guttzeit (1):
->>    drm/i915/display: Avoid unsupported output mode with 300Hz on TUXEDO
->>      device
->>
->>   drivers/gpu/drm/i915/display/intel_dp.c     |  5 ++++
->>   drivers/gpu/drm/i915/display/intel_quirks.c | 30 +++++++++++++++++++++
->>   drivers/gpu/drm/i915/display/intel_quirks.h |  1 +
->>   3 files changed, 36 insertions(+)
->>
->> -- 
->> 2.43.0
->>
+...
 
