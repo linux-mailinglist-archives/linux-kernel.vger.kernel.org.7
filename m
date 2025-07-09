@@ -1,124 +1,167 @@
-Return-Path: <linux-kernel+bounces-723828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE686AFEB6A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:12:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A1FAFEB72
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:14:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D56651C20026
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:07:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53561546C7B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C26A2E889D;
-	Wed,  9 Jul 2025 14:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9ABB2E543E;
+	Wed,  9 Jul 2025 14:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="di10ckS3"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mRgJFL2I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722512E8896
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E88C2E54DF;
+	Wed,  9 Jul 2025 14:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752069793; cv=none; b=gw/gGBoiPtHfQSfNy9/YN5CIuZBdQaYd5G6G6iDU2tKeXAvz/NBY2I9opOtt0n01WtZWsueb8rCGfKky9FedQJR/4ZwsQx1HeKmI0zy9kBOAF4Z9g+L7IqUo8wOFCZSdxSKQJjwdHkXUf4Uy2DkOqkZohiAAF7b3pHdtgGKSPsE=
+	t=1752069764; cv=none; b=FHIFCRENpT0vXGJhmeoAbYzPbVj8N4YV1q5BuihGQ/CILDLrsqCjwQ9SL+FGyTHtuIK7ggvpTBS6LQrDFI9DFBqIhjKKlB2+pdCcNRS6sYGv/C+V/c9sCS2/85/4ouK7VmyP2bz766btbejRw/A/O8c7G31KqelCS2DRwH/8hiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752069793; c=relaxed/simple;
-	bh=XUDGaCvJBz6YoMwE/FZTJi7uSguH2A6CEyneQP2Jlyc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K10y2AhZMz9U8AMa9MGnV2KhsT5HcrSmzUTk6sjYiCG2yMlvF48LocSk45F13Tnrsv7EQx33kHUk0lleBCIlO00kUMVIfosZ5kp4VJfab3VXgCuolWhmY4hSwcNtHra1JUZdLLEa2kLzTkwwPLW9W1ac7+XT2OunbKC6nKtddJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=di10ckS3; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-70e5e6ab7b8so50233357b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 07:03:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752069790; x=1752674590; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=icCn+9q6kPmD9b0ulEedxgle71lUmwe2tRNjPUys3K4=;
-        b=di10ckS3QIKJXN5f0elUTNvOykUmFH3BVYKQpXX+ikhpYktYTj+EmX+wGzxuD0gIm1
-         SIP2DcPC73ERjn8IBTZO/WkxrbjQkLMqhzRrh1CCW2snFCyqw6u8qumHXsGSE0JVJQjm
-         DDJVb5j/6FVWdfHvHPnkwI1D2Lura2rzeEmVrvzWf9kXKF+AXPMgByEr59KoWkOCBWvB
-         shwHUnPoD/J8tbid1biWvvUvpK9RNOA3/ZrEZFqgGpgjiFFZ/ENfFuTLnh/8oC/z+EQ+
-         zKWKL475TUafRE/0+qwBrCs/cVTPQOLqOSLD2ShndAzrT05za4wuPxZpLd0ZYsdiDucG
-         YudQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752069790; x=1752674590;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=icCn+9q6kPmD9b0ulEedxgle71lUmwe2tRNjPUys3K4=;
-        b=nGPTc7a+KPcINq4qHYmIaUjwlmzvAP9RUKDSKScSRco4wNeSxUqv4MPzjaACXrLFHO
-         WHatwzSTE8ePq3nWKwCcKSW7MjzwEhky04Yj7ZTsTbc5jygPt03m3nNH27FGSKdVf1iR
-         rUG9UxjTdA2Go47c6rORsCfaHQ6t6qaHFME1HRGUFt19bSh4tt/0JHpSmbEHaT57cZ6S
-         YfnKvYgIOEAqvvGyQKonDDOgv7dQT6I9iKFaWkhDi2C2PcWXQpicWJDou1B95okhnG/G
-         xUZ/GESTjsi6tvlhwL81lrM4zaxAFt59LVr8aX01yFANDvOxEPlGML7qyhcupsJoAjdC
-         wq6g==
-X-Forwarded-Encrypted: i=1; AJvYcCX9G04shpuixKJD7hqKmBxB6znbhrqQ9sifxPZ8k9xR7d1CqqUenkW4qCFhAU+qed/21uC5L7Lfj0jFz4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwajWepP+1Y72sw+yBQPYFHSKD547n9Ja2ew/BvWAHnSQmVFv6y
-	d1HT72B32Br+QV9oiCMc3y3ezDoxZoelkc56PdrIe7FAK8FHh9ndDSerdw2Z/apBEZO15UqvooO
-	aMWpgjiYC4hvZCTPhRTsEjP7CCASctY46Y9YWuflxYw==
-X-Gm-Gg: ASbGncvQM/A8cQuthwEqcKY3VJeeEq+vIxyYG8ggpwwMn6H/dQz7C0iWRDrRuXlE85w
-	i1wvTq9+7N1Aqxbv9GE3CNrQSPUoGE7aX+oo//0zbkpNQdrJptZt8589Fp2zcnTdQbA117FEb0e
-	GC2dqyo3ZCfV+7p7P/qYSoYWOenaptRw3mr5IYjpFT/iKc
-X-Google-Smtp-Source: AGHT+IHyJ46o+t0mO5xLY48+K9GG9/6xTUQtrqZjhxQ6H5sFIFl3XdMtdUngG/gpuMtaN9caUE3BU6VJXCmbohiatB0=
-X-Received: by 2002:a05:690c:7406:b0:70c:b882:305 with SMTP id
- 00721157ae682-717b1a8aa15mr39169157b3.36.1752069790146; Wed, 09 Jul 2025
- 07:03:10 -0700 (PDT)
+	s=arc-20240116; t=1752069764; c=relaxed/simple;
+	bh=U/gcQ/CvuoL0xOLo5eXp7QDf3EbxUpAN+lVuDP3y2QY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ncxKqSOq+PsfMeA5j+d2Zm1g1ZL7Ku3OqBNay1hUp/1lBP7X9oNZVF4iIPrmptgmpMJmTh5Culprx/VzyQVIZBFLm2XGkT4Bo/r5cy4gapx+mxcvR3JvTf58qmL/uyoFGLFv14Qzl2+OGcP8ZnQe3TYv+feRQB/b7LZnmzRFwls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mRgJFL2I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CA0AC4CEEF;
+	Wed,  9 Jul 2025 14:02:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752069762;
+	bh=U/gcQ/CvuoL0xOLo5eXp7QDf3EbxUpAN+lVuDP3y2QY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mRgJFL2I7DWBzHrYhmyUJ9/LXY5h4yPo7+N0ckgNjGyM0K7nh/9ROWmAapo/ZI/g+
+	 rr55rw5QdXTWftLIUGNrXRSsUDj2O5SExwhVeIzh3D8FdoMsvcEm8aY7rCHPTWVbNr
+	 JVA6jUo4asQDg3936mYKAFXee5OvCNVHT1CuSKi50coktYH3DbR4YZ6xQcLh1Gguy2
+	 YSSLy8LGcJmcMjQ/HA7k3nPcTjbUNzeE3TP5CJ+n6F/92bVr6kXus/WSHoduk0+IWZ
+	 c3L3zIlaXtV+7QSKt6z2myrCQR3nGZO+Gld7WHwcIEgSL722NuYhNlUdFrsgWyz/P0
+	 lCy3g/EyG/aWg==
+Message-ID: <ae058bda-c51a-4df0-b93c-5926030918a4@kernel.org>
+Date: Wed, 9 Jul 2025 16:02:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707185545.46275-1-sperezglz@gmail.com>
-In-Reply-To: <20250707185545.46275-1-sperezglz@gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 9 Jul 2025 16:02:33 +0200
-X-Gm-Features: Ac12FXyz2vOIo_1A0tAmH0M_RCTxhQ0qVbD0NzFevVPE2428c_74Zin4o4qMpt8
-Message-ID: <CAPDyKFq5S2srT4qf8wJKgA-Qhry1j=xrfWFipLjUc9weVZrBFA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: loongson2: prevent integer overflow in ret variable
-To: Sergio Perez Gonzalez <sperezglz@gmail.com>
-Cc: zhoubinbin@loongson.cn, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/6] arm64: dts: fsd: Add PPMU support for MFC block of
+ FSD SoC
+To: Vivek Yadav <vivek.2311@samsung.com>, pankaj.dubey@samsung.com,
+ ravi.patel@samsung.com, shradha.t@samsung.com, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ will@kernel.org, mark.rutland@arm.com, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, linux-fsd@tesla.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+References: <20250708103208.79444-1-vivek.2311@samsung.com>
+ <CGME20250708103243epcas5p2d8fd5bf02e64e104eca3def802813230@epcas5p2.samsung.com>
+ <20250708103208.79444-6-vivek.2311@samsung.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250708103208.79444-6-vivek.2311@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 7 Jul 2025 at 20:56, Sergio Perez Gonzalez <sperezglz@gmail.com> wrote:
->
-> In loongson2_mmc_dll_mode_init(), `ret` variable is declared
-> as u32 but it is expected to hold an int value.
->
-> Fixes: d0f8e961deae ("mc: loongson2: Add Loongson-2K2000 SD/SDIO/eMMC controller driver")
-> Reported-by: https://scan7.scan.coverity.com/#/project-view/53936/11354?selectedIssue=1644958
->
-> Signed-off-by: Sergio Perez Gonzalez <sperezglz@gmail.com>
-
-Applied for next, thanks!
-
-Kind regards
-Uffe
-
-
+On 08/07/2025 12:32, Vivek Yadav wrote:
+> Add device tree node for PPMU instances in MFC block and
+> enable the same for Tesla FSD platform.
+> 
+> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+> Signed-off-by: Vivek Yadav <vivek.2311@samsung.com>
 > ---
->  drivers/mmc/host/loongson2-mmc.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/loongson2-mmc.c b/drivers/mmc/host/loongson2-mmc.c
-> index 515ccf834f0a..ba6bb8fd5535 100644
-> --- a/drivers/mmc/host/loongson2-mmc.c
-> +++ b/drivers/mmc/host/loongson2-mmc.c
-> @@ -485,7 +485,8 @@ static irqreturn_t loongson2_mmc_irq(int irq, void *devid)
->
->  static void loongson2_mmc_dll_mode_init(struct loongson2_mmc_host *host)
->  {
-> -       u32 val, pad_delay, delay, ret;
-> +       u32 val, pad_delay, delay;
-> +       int ret;
->
->         regmap_update_bits(host->regmap, LOONGSON2_MMC_REG_SEL,
->                            LOONGSON2_MMC_SEL_DATA, LOONGSON2_MMC_SEL_DATA);
-> --
-> 2.43.0
->
+>  arch/arm64/boot/dts/tesla/fsd-evb.dts |  8 ++++++++
+>  arch/arm64/boot/dts/tesla/fsd.dtsi    | 20 ++++++++++++++++++++
+>  2 files changed, 28 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/tesla/fsd-evb.dts b/arch/arm64/boot/dts/tesla/fsd-evb.dts
+> index 8d7794642900..f543c7dad7cc 100644
+> --- a/arch/arm64/boot/dts/tesla/fsd-evb.dts
+> +++ b/arch/arm64/boot/dts/tesla/fsd-evb.dts
+> @@ -110,3 +110,11 @@ &serial_0 {
+>  &ufs {
+>  	status = "okay";
+>  };
+> +
+> +&ppmu0_mfc {
+
+Follow DTS coding style.
+
+> +	status = "okay";
+> +};
+> +
+> +&ppmu1_mfc {
+> +	status = "okay";
+> +};
+> diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi b/arch/arm64/boot/dts/tesla/fsd.dtsi
+> index 690b4ed9c29b..7b6e7d81be10 100644
+> --- a/arch/arm64/boot/dts/tesla/fsd.dtsi
+> +++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
+> @@ -970,6 +970,26 @@ timer@10040000 {
+>  			clock-names = "fin_pll", "mct";
+>  		};
+>  
+> +		ppmu0_mfc: ppmu@12840000 {
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+
+> +			compatible = "samsung,ppmu-v2";
+
+See writing bindings, DTS coding style and all other documents there
+explaining why this is wrong.
+
+
+Best regards,
+Krzysztof
 
