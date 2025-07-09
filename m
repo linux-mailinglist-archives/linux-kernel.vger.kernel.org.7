@@ -1,102 +1,135 @@
-Return-Path: <linux-kernel+bounces-724478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC34EAFF371
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:01:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C034EAFF370
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:01:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F39C7BA91F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:59:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5EB11C8114A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788B12367DC;
-	Wed,  9 Jul 2025 21:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DDA2230D2B;
+	Wed,  9 Jul 2025 21:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Whehk9WW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YpYTXG7Z"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC63942AA5;
-	Wed,  9 Jul 2025 21:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C03225A3B
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 21:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752094858; cv=none; b=Sp0hkDGgU7miy3xYnnyIjRqM7KA0KP/Pl8KVnEopqciEa9eSyUDy/Z8pNj4PoFseANEzyFW4qRAfgs60UCbsKPZJVXEhGGjQBpSqHAjH9o75lLrYfUkuwS4EDLPmbrzPkRB3y7F0iYI9c/UWZUT8BRBOKZ7XNduHNi+IAHgfiZ0=
+	t=1752094892; cv=none; b=R13/BWqPj8oqwXue3B/8v9+leBK8MdPaqgq4nAWOvOIZ/auV6ibB9rZD6Ud24l93QbuCoisvDWtvXCSbYB9HcenT9KnPD/1br4k6S1+c9J6TONi9w5FKF9e47m4eaawADBfVZVS1R/oMszFaYIwqOdZXI2brxMSDzQ045kTi97w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752094858; c=relaxed/simple;
-	bh=AmnUb7yJNWX4dwwep1SMKT/h6N+Cx4+LrtblZJzni+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QLxLVu5BjWAdCmPotX0zUweSddKotdegWZ6LdeuNZ40ebsgbQAl9DOKJXtDV59ExC5e9J7JGjwkZ0beflGn5htzR3VcskFN22KployJP72yqsShK8NSb/0okyKkKyxz6+YRNUZZI+a1lYSH2xh4QzC5P/fNgILQmVaRm1mi9gaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Whehk9WW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25A55C4CEEF;
-	Wed,  9 Jul 2025 21:00:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752094858;
-	bh=AmnUb7yJNWX4dwwep1SMKT/h6N+Cx4+LrtblZJzni+k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Whehk9WWYghHn/wCtVNA/Tk0Zu86XExQdHkvRXk6QzqRubkOrrgp2yH7/mNyMKFmt
-	 yyXcAVZZqHIEVFAUQFyvqgoqe0EQv01OYJuE5oEHZAazBJNRyYMQ3uxE3PG9VwQ3+Z
-	 R++8huQw5IDFb86bXOYYjdhnA2b5qdQfPoPQnw3pS0FK3Y2h9wr9kGSxsQCfLRUVea
-	 IR9lbCBScLQ3AJebsy/XXxQG9luGKNUpMMU7vtTAIaGnvTAVe/fffs6YcLVEKtY4i2
-	 D17/VKX4Rh9Dgpbom2XJXg+GDgrs/hSCRuxLfYjgb6h3ekw/FBpivjfy8SimhpcwRC
-	 VE9dLj/Bcy5QQ==
-Date: Wed, 9 Jul 2025 23:00:52 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Vitaly Wool <vitaly.wool@konsulko.se>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, Uladzislau Rezki <urezki@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>, Vlastimil Babka <vbabka@suse.cz>,
-	rust-for-linux@vger.kernel.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-bcachefs@vger.kernel.org, bpf@vger.kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>
-Subject: Re: [PATCH v12 4/4] rust: support large alignments in allocations
-Message-ID: <aG7YhNnGih9KcQjV@cassiopeiae>
-References: <20250709172345.1031907-1-vitaly.wool@konsulko.se>
- <20250709172509.1032067-1-vitaly.wool@konsulko.se>
+	s=arc-20240116; t=1752094892; c=relaxed/simple;
+	bh=kzWB2OH30J0P4Kym4GxrIAQEztbUTee1hXQn/eF6cEE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ITThXak6gCPTds3771cpbS1YruIQHxG3nuVxeIN/yLLeRsnY2dqEOThd7MxTAq+Nqszbr6UDNTHNRcQdizl1SXEWFlWzn2mvA/VIrMEyTX+4Rubu0B7ju+0H6YIimRlwA9kgHeinagbXDSx33PBeERpwWKUWsefGOBqXEQOQByE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YpYTXG7Z; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1752094888;
+	bh=kzWB2OH30J0P4Kym4GxrIAQEztbUTee1hXQn/eF6cEE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=YpYTXG7Z9N8Udk9MOvejUr3SGFs6JBAW6kumWTARcHqCtYrB4llIhjQE1JqFwOZtZ
+	 ktyRYvMuNbLtW2HOT6i5P2eVUr1rEGShKuotIUc05/Ar8N6y82rd6LDBxTrElt2DnL
+	 AW9/ZT3QSR2Qxk/9fbKzrZrq2P0YHeF3up6+VmXnNylRu9PbIHD59ZXphy2TciFnGg
+	 nutCcjjtuoXxBKkG3oUriOvawnuFQxcTJcMzuh38TCKGIIT9QoCfFjvas6UtcRhk9U
+	 tdAzcgVqezTjB2Zjjk4hA2kbm/K8TEplyyAtfFemxHe7aLwJpEwmTZni+/d8e3ZmbM
+	 2AyyUQONWdU3w==
+Received: from localhost (unknown [212.93.144.165])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 1308717E0456;
+	Wed,  9 Jul 2025 23:01:28 +0200 (CEST)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH v2 0/6] Add HDMI CEC support to Rockchip RK3588/RK3576 SoCs
+Date: Thu, 10 Jul 2025 00:01:11 +0300
+Message-Id: <20250710-rk3588-hdmi-cec-v2-0-f5884be34bc1@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250709172509.1032067-1-vitaly.wool@konsulko.se>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJfYbmgC/2WNQQrDIBRErxL+uhajkUhXvUfJwuhP/TSJQYu0B
+ O9eG+iqi1m8gXmzQ8JImODS7BAxU6KwVhCnBqw36x0ZucoguFC855LFh1RaM+8WYhZtjdGTEtJ
+ NnYa62iJO9DqMt6Gyp/QM8X0c5Pbb/lzdnyu3jDMxOu1Q95xbd7Vhns0YojnbsMBQSvkAj17gC
+ rIAAAA=
+X-Change-ID: 20250703-rk3588-hdmi-cec-cea8f523df48
+To: Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Algea Cao <algea.cao@rock-chips.com>, 
+ Derek Foreman <derek.foreman@collabora.com>
+X-Mailer: b4 0.14.2
 
-On Wed, Jul 09, 2025 at 07:25:09PM +0200, Vitaly Wool wrote:
->  void * __must_check __realloc_size(2)
-> -rust_helper_krealloc_node(const void *objp, size_t new_size, gfp_t flags, int node)
-> +rust_helper_krealloc_node_align(const void *objp, size_t new_size, unsigned long align,
-> +				gfp_t flags, int node)
+The first patch in the series implements the CEC capability of the
+Synopsys DesignWare HDMI QP TX controller found in RK3588 & RK3576 Socs.
+This is based on the downstream code, but rewritten on top of the CEC
+helpers added recently to the DRM HDMI connector framework.
 
-CHECK: Alignment should match open parenthesis
-#38: FILE: rust/helpers/slab.c:14:
-+rust_helper_kvrealloc_node_align(const void *p, size_t size, unsigned long align,
-+                               gfp_t flags, int node)
+The second patch is needed for RK3576 in order to fixup the timer base
+setup according to the actual reference clock rate, which differs
+slightly from RK3588.
 
-total: 0 errors, 0 warnings, 1 checks, 94 lines checked
+The following three patches setup platform data with the new information
+expected by the HDMI QP transmitter library, while improving the error
+handling in the probe path.
 
-Please make sure to always run scripts/checkpatch.pl. :)
+Please note the CEC helpers are currently affected by a resource
+deallocation issue which may crash the kernel and freeze the system
+under certain test conditions.  I've already submitted a patch [1] that
+seems to correct the problem.
 
-> @@ -185,12 +180,6 @@ unsafe fn realloc(
->          flags: Flags,
->          nid: NumaNode,
->      ) -> Result<NonNull<[u8]>, AllocError> {
-> -        // TODO: Support alignments larger than PAGE_SIZE.
-> -        if layout.align() > bindings::PAGE_SIZE {
-> -            pr_warn!("KVmalloc does not support alignments larger than PAGE_SIZE yet.\n");
-> -            return Err(AllocError);
-> -        }
-> -
+[1] https://lore.kernel.org/all/20250703-hdmi-cec-helper-unreg-fix-v1-1-7e7b0eb578bb@collabora.com/
 
-Since you remove the pr_warn!(), you also have to remove the corresponding
-import, otherwise you get a clippy warning.
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Changes in v2:
+- Collected R-b tag from Dmitry
+- Restructured the generic bridge patches to not depend on the
+  platform-specific changes and updated cover letter accordingly (Heiko)
+- Replaced the loop searching for "ref" clock with clk_get() (Maxime)
+- Added new patch "drm/rockchip: dw_hdmi_qp: Improve error handling with
+  dev_err_probe()"
+- Link to v1: https://lore.kernel.org/r/20250704-rk3588-hdmi-cec-v1-0-2bd8de8700cd@collabora.com
 
-Please build with CLIPPY=1, see also [1].
+---
+Cristian Ciocaltea (6):
+      drm/bridge: dw-hdmi-qp: Add CEC support
+      drm/bridge: dw-hdmi-qp: Fixup timer base setup
+      drm/rockchip: dw_hdmi_qp: Improve error handling with dev_err_probe()
+      drm/rockchip: dw_hdmi_qp: Provide CEC IRQ in dw_hdmi_qp_plat_data
+      drm/rockchip: dw_hdmi_qp: Provide ref clock rate in dw_hdmi_qp_plat_data
+      arm64: defconfig: Enable DW HDMI QP CEC support
 
-[1] https://rust-for-linux.com/contributing#submit-checklist-addendum
+ arch/arm64/configs/defconfig                   |   1 +
+ drivers/gpu/drm/bridge/synopsys/Kconfig        |   8 +
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c   | 231 ++++++++++++++++++++++++-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.h   |  14 ++
+ drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c |  77 ++++-----
+ include/drm/bridge/dw_hdmi_qp.h                |   2 +
+ 6 files changed, 291 insertions(+), 42 deletions(-)
+---
+base-commit: 8d6c58332c7a8ba025fcfa76888b6c37dbce9633
+change-id: 20250703-rk3588-hdmi-cec-cea8f523df48
+
 
