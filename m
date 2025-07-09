@@ -1,340 +1,186 @@
-Return-Path: <linux-kernel+bounces-722935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2410BAFE0D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:06:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB820AFE0CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77BF11738B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:05:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA49F1AA2E11
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E44273806;
-	Wed,  9 Jul 2025 07:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E7B26E6E2;
+	Wed,  9 Jul 2025 07:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AQx3t1PB"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="kjI1S40L"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011009.outbound.protection.outlook.com [40.107.130.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF45270571
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 07:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752044705; cv=none; b=Nv/Xfu3r2iGME6RysYJaEM8O8tWTi6C7gk4PdsQvB9mmt/kMBKYpIDsF9vE70gX2vD/u14oe/y+wrtrzipWagaUq74fiSxZoT6RD9HZ23uV7YehLExie2nsMijd7bpQPpfnFnNGyVDHy6tngTzNH1XpMHMd1Tg26szqQMUVK1Ik=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752044705; c=relaxed/simple;
-	bh=8acnn84F2EPwPo/2bUKI9y8xzYUhx0M85P0qcx2e/FM=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Cc:Content-Type; b=q+I9mkZUWQ19BQybBBfN9RtuJstXkAyFVBnYLUfowEzG1glaM3iaK6cjhWj2N0nBXMlBKZ8786Pcn9pYirR5iZF1hd3yilK4u5rZ8K4F9uJKU8w7tHM7y80dPVQvmhKNxu8mDHCj2Cg0E5Pib4z222yJeGeueRMaBmhQaY7Zu3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--suleiman.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AQx3t1PB; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--suleiman.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-70f841fb19dso65537047b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 00:05:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752044703; x=1752649503; darn=vger.kernel.org;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8hUdo8ARlQkzGI2qXgVk3yoTg5wBj9RNjVmfVyEYsuY=;
-        b=AQx3t1PBdqBcHVVibM34HQUd7PMnwcfc377Cuue613zxiv6KGDFvFYiefSSc5Aanon
-         yZ8UeafT+Ic3HW50/nEVdwtenrRULjtZcTkPbFA+JoqAiBCaUJ1Oo6eb7XDD+uXYMTqP
-         dHqCjElSGxIGHtF/H3S9z3lcimsNih9EuI75DbVYQYQEQnw1MbnsTR9MH8rd2ZZ3zaVp
-         b9lj7STUCTJlBixoWp3tHBPRhfJTA+3yL/ZXht4PeEJ7bazmh6Dt/8NXh99KBzfu+FXB
-         4mL0//2/GuvienP3HZvZtnCuEeP2B7OuJEBAgwKuNw6QudM6PwDKALrzJnpoNFPGmICg
-         yFSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752044703; x=1752649503;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8hUdo8ARlQkzGI2qXgVk3yoTg5wBj9RNjVmfVyEYsuY=;
-        b=PnJEgxFAMRCkurfR84kSVQWwk++Wt/jip2ZEM6g7u+ZpRMGeCCPJeYbt8YNjbe0FRN
-         4LESbTE0TtpjE9oE3/6TWaVi24GGPya5qTXSaNTHr3T9Zhm0G5IRkjW+EuL9nx8VS/GK
-         cT43l41CmjRPOdD3pXsQ9OnFLammI0uvm/LdGs7jxdYw4O48bhyWtjUvnC/QGiurNifZ
-         AHF/Mpr0QXeTqRylSmtV+1Ibr1j7SwzAKcHFv+PAGEl+xjPD5EWGpT34gyHzIdftZga9
-         KFrr0s/WrdC2LOp4Px8cOu49+4rJTwRhQ2+8ljOkYHxd67Zlq/4sSni67AOKybLj4Va0
-         pKVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ8xOQUZJCXmceLC+F1TyOM5b/mk+k6u3FFC2KmJLC/bvQzmGYQkjKbasyaYtCeKUnE1wPsDXB5HKYDHw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq0/vZ85qmXqBUlgdSERpN+8qqMa9iETsc6w7CPMt7fbNR2Viy
-	17fGoiQy1F2gUTPc5Uek5jhRaW2/MWpV6BuDrWzJtw8nQFGBp7H62vs5YM9iPZCcHtQORzOZVyO
-	AjxuQJYZRkuLupA==
-X-Google-Smtp-Source: AGHT+IGEfiidPbWbXfAEZ47CmcdUs9ZPOOEtK0ixwyyLTU/yNC0ka1UYfmzV8mQy6TonmuKtwlqV6SEZTjJqyg==
-X-Received: from suleiman1.tok.corp.google.com ([2401:fa00:8f:203:a92c:694f:82fe:62a])
- (user=suleiman job=sendgmr) by 2002:a25:d344:0:b0:e7d:6afc:71da with SMTP id
- 3f1490d57ef6-e8b6e10d3a8mr709276.2.1752044702827; Wed, 09 Jul 2025 00:05:02
- -0700 (PDT)
-Date: Wed,  9 Jul 2025 16:04:49 +0900
-In-Reply-To: <20250709070450.473297-1-suleiman@google.com>
-Message-Id: <20250709070450.473297-3-suleiman@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E6021ABAC;
+	Wed,  9 Jul 2025 07:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752044696; cv=fail; b=PFBn9JuEJyXon59qSZqFeJiRwoPcQvEc5TT6rF5sd+bbxhrVw29oQYpd/80LDRdLqPqfHXamqe0U0+F97zs4YMb50zCR9yrGUavsKEKWQJVUes+mu1GwlrgWqOcbZ6CRSg1+Oz6z7ajaAH6mB1FD426jGJBZG83/wqEuNO8lKrE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752044696; c=relaxed/simple;
+	bh=euuZhXzeSaxBjnDrP8k4EJekdNYhfq3JYIeis8B5/nM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NuWJRMpt2OJ9o1MWqKNRsz3+Ss8811q0y0/gZ9HjfdBqYCZKpRkEdvkXbnX5KKUJuhMgWhuczwc6EEY9TDNJQnd23PDrvfd+gmlkJO/aOtZFhYHlg1GrzyrRTwiHxzDEPSs1iXE/omC5z5LHPN0XlPxsNO82N2rQ9i+MXXs2MOE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=kjI1S40L; arc=fail smtp.client-ip=40.107.130.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iRO7nmpe9u1r+MTX1D9RyOYf9gdGHia2sNhx9xwqSO+j7gFDy1O+5ycFr5e797iv6omVrwiVAZupsBGDkVAIzIXuLKixDmnMY9UgkijfEkSBIXdl2/9VZLJ9b9hz4UwVwxDPQZjzb1VR/vwIca77PwHgba8hYsVjsBTRMVEOdBezfPPnCLsn6hGz753yw+zcvjxGxW067EPjn/qz3sb/1O10WEiDJeYlIxOELGg3tL4tN6T+2uJ1yPksKJULggOmuw6jAostga2+vZ0CN5Bc1TuIdBR7cAysCORoXIgJYHPNdtJXSgiMRlfh1FTjF2Umd2Y7AA3hk9EfXF4xo42hMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YcUdVf2DGJb0xtvWVtoirZ0nWkXYpxkrvPvsX6rSWgQ=;
+ b=KbJTJo/KPfCnL5eoT8gOrIHtEw4MOJQLXAJMi04u4u75FT/os3oSckWQBsAc6QXdFyvaaY786TkPM3Jhq1DdYIlDcewt0UgBFLjGv+YsnFhQCA7pL1blfy+y+I4lBSNCbyRF/+zuN53V83e9W8Ue1ccwKmo6MdVQQCR/oUoAYw2RF+RN3mQRUAT6FtdZx7KVQCxtrku+i3cau4n+oHy8Hw5Sv5/D4XXpGFmT8GpHnRwgTMpnCX9MPR5MJjr2Vb2BAVmiD1NIMmp2xBVrfWcALNYHwkW6u331KvPd6JNORelz3Dkif8OsNcmS7tr8uonV+Oxb3xvILC2pczc+nOgHjg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YcUdVf2DGJb0xtvWVtoirZ0nWkXYpxkrvPvsX6rSWgQ=;
+ b=kjI1S40LE3YyHinKikYzqUYPlevJkyATgYlI5e4ieI2JzMq4QxWF9Z2iDt150cVkeLf6g1P0jag3VMkhfazFmyRfE4kqao+ABOxDV7d6FckNPcL1DbsLr+xD90+IUfUy/FzRUa2Silqzm1CDNj0xvSczbX7KjKlZByJAbxTyPEuhrO+qPYCnbGt2Nwndwg9cpy7M3t+xBEJ+CgGwdxQzzYUpap5oTsIHVDeh+mn4Rm/0Sd0UF6JsTyDPxycqc/JGcdXUSkBjyxtXa/b+rayZuaYg9sGkI029gMUlbdO9By8NMy9YAsjSovxwnp7x4JlOwz17K2BIwDbSc1KArfnF5w==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AS1PR04MB9310.eurprd04.prod.outlook.com (2603:10a6:20b:4de::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.25; Wed, 9 Jul
+ 2025 07:04:50 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%7]) with mapi id 15.20.8901.024; Wed, 9 Jul 2025
+ 07:04:49 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Arnd Bergmann <arnd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+	Nathan Chancellor <nathan@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>, Cristian Marussi
+	<cristian.marussi@arm.com>, "arm-scmi@vger.kernel.org"
+	<arm-scmi@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] firmware: arm_scmi: convert to SYSTEM_SLEEP_PM_OPS
+Thread-Topic: [PATCH] firmware: arm_scmi: convert to SYSTEM_SLEEP_PM_OPS
+Thread-Index: AQHb8J9DPhR5QrLGOkWpN0R1YnII9rQpXaOQ
+Date: Wed, 9 Jul 2025 07:04:49 +0000
+Message-ID:
+ <PAXPR04MB845996327A0D0D85A1A93E8F8849A@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20250709070107.1388512-1-arnd@kernel.org>
+In-Reply-To: <20250709070107.1388512-1-arnd@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AS1PR04MB9310:EE_
+x-ms-office365-filtering-correlation-id: 204d1ef0-f2ac-4619-881e-08ddbeb6e56d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|19092799006|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?OfRgCHr55bhID/kitaZxVueP7f+wXAsj3XGqxx7L0wiWDQ/Cm6O6xPVBmMlC?=
+ =?us-ascii?Q?Mtyelc66cuGKj+Hcsp7Vy0DU54TPl1vCKnyh6EjkPrXk+r3OuK5wzWsPmLIo?=
+ =?us-ascii?Q?+rv5B0MKyp9683ZsilQFVJ8+qCJTi1RBMMJspzNzVDX3IkDraoyvPmqCr5uz?=
+ =?us-ascii?Q?sutX20JrhCgH+2dSx3bjbxPFnWiTYz2L6/124UMcPagIRIJ2KNxFto0U+zjo?=
+ =?us-ascii?Q?NdQnjxPKfJEJbjNJyK04wTkYG+rpMND1povpR81MnRNfoeeTCdJwgGwHSdTu?=
+ =?us-ascii?Q?YWmVYIb8xN4wN0/TabqD+Tmj5a/STRwIC8vq/RKhBq81Vyy5iRUy9EBGMipB?=
+ =?us-ascii?Q?/ebkLjthTusuV1DXrhMmFW8x414BHwrZhYUjTyBwnHlrt8yCL+49Symu2EqE?=
+ =?us-ascii?Q?CodDl0YN0AZe7YVSRxQX7+VjUBJj78nDMw1xr4RIuHwttCZpgAbgXmIsrdH5?=
+ =?us-ascii?Q?WeMDcEm6SgQeexOWussAgpxlQG9rfgefygEiQgpv6AWBzSgyPgdIlhED54jo?=
+ =?us-ascii?Q?5wtv15wNVGtI6NxCOoy+U71yPtIFi75QwLiML354HInX2HMJzIjsVoatuENX?=
+ =?us-ascii?Q?n9e9CBu47aExU4Ffvvh++FbU+gzZmOZ32eBFo5MXYoPVnl1NOPVlJSnfGouX?=
+ =?us-ascii?Q?onetbDzRPiVpkDYDo+Z85GF4t77NdaFAuSwjBB3nSzzLAJ+80Yrd6ie+BuYE?=
+ =?us-ascii?Q?LlSiCC1r14lPeHj87HWEjzszoQOpQfcsJsgHbAFHO/QGevOkDiyy4/H5rpFD?=
+ =?us-ascii?Q?w5fsG1N1UAoM/rhtHEliQ1ZwyRLIiPxXLpNSdmYkgy+uGG4XHDEDuG97Qt8P?=
+ =?us-ascii?Q?AdsgfL7++ayrtIEGBPSy/rzgiTkCmFsGxv9h0uIJ3QrN+e0C4hb14Cbv59g4?=
+ =?us-ascii?Q?iBGsvbLMjTCBFenACBiNKixm9rKEK6KBB8btBmdjNI9p14EStBWS7Yl5FFwD?=
+ =?us-ascii?Q?ZmjCFrefJiLxXLf3GwG1HOTiAuoA/1jn4nwafpKYBk0TlBFSPIXhl97dGGN2?=
+ =?us-ascii?Q?EsHOuCC4Mx4I4NacAmKxA1uuzQ3N2n0M+tE48NWp/bOA3ixktRqfZ+EEnRde?=
+ =?us-ascii?Q?HJP8uBf2ukHrjQCB7KiMY8y7LTb6Sk2o9WaXOj22rR4RBlN3BNsw+tpQFY79?=
+ =?us-ascii?Q?i3BEBs5RQnHW+Jx7s5U6YkfUMKZAM8ErWjsIStTU+PQRKNtph/jw6Lfma8sI?=
+ =?us-ascii?Q?seUbmQWpZ7igEscV8FramGPSLtUJvl8QxsnOKYVZvFICLQOCRksEk8CzEl9Z?=
+ =?us-ascii?Q?muWEMz3vGk/E5hGqUYcJUle9ZX7hiXwbC4GrtaMBGwGK5x8TFTOsPccxnO6P?=
+ =?us-ascii?Q?dcnybyUFpUp0rIdQ3PApM7oThZIJpNtbQqhEfPlgIh4gmIWvWVTF61xkP2Ci?=
+ =?us-ascii?Q?myIsM2A0pGNSKvfSDb5eSDQGcG7ugPh86Nfa/zLW2hNVd76W29Zk2taKz3hK?=
+ =?us-ascii?Q?aljFi9othBmoYAX0cbHfGcxZYT1MiyKQ62/qLgXd76t3Uv3VXvrlpQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(19092799006)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?OydAF2zTu0Em6fugRvCTuVocUoEzt1lvnaLwMKPSTf95u9IfuFOB8Ts7s5fH?=
+ =?us-ascii?Q?Xvgie4UPxvpHlSgBAout173mbNw9guW0UXbbBdvW3/8T/LP9y9fe1esd1pWF?=
+ =?us-ascii?Q?cjlaqvDm6/xUUAqQXadpx3o5Q2NPJXQdtQ/gFXiFRoYZ2IjVoVzBjDUcQ7Gx?=
+ =?us-ascii?Q?cV+7MgSl3R5NcC9qWtZhW08CHEVyrMP+wquStzoHklcckrAetkUit40GqAda?=
+ =?us-ascii?Q?4Ko2dL9Khk+mKwFrNmiYQ6El0qzCAF5JI7PCUSzm48x0lWf7fOPmguEjohK5?=
+ =?us-ascii?Q?oivvEC1eNp3FLwwWFlKnPZUAS9QIZucIBPg2NvIdHrNvrHZ6hx5q46F2K/ZZ?=
+ =?us-ascii?Q?VBmUDD+r6lTza2/IxSLUPWKLDGExVhcbXtPnV8XH46qvuK83PdkI3CtLY+5N?=
+ =?us-ascii?Q?NgmEeYmX/sLkX5o1i/A1KsJsyX/mkfriyeIoq0LAjLzFc2gDzS9mdXBy+fgD?=
+ =?us-ascii?Q?/xrs46kEOB3KWH1qDxHrpFu4DeCsYW+NG6uYZ6CgV6naINT/0YsnzKyB5UYr?=
+ =?us-ascii?Q?4f8FcWa7RqhA8mC0qnFD7/+N9RsoJpfthPlBZ0P7C32wU4TvXJS1r8J7hvjq?=
+ =?us-ascii?Q?XApxeZXEh4MxF7gsW0SK5Q+UfLW57c6S5qpI2TutQrv/Ez54hqSa4YSNsCVe?=
+ =?us-ascii?Q?1H7F0jjYTsVG3x3EnnbU0bAtvPBGQiDuRQsYd6jF7gZtLbitGnhEfE7niFku?=
+ =?us-ascii?Q?w3bvnRKivcl9oJjovkLzE17L0UrCPfYMuEM68az0S5D/obxV8Xn039C4XWdi?=
+ =?us-ascii?Q?bEWXvBOHzZLZZZeCJB7h90dIuQBc4lpg1SFPxT5pVurZwdeFHtQoENzoOTsZ?=
+ =?us-ascii?Q?QP0CVkikn8iZGaq9+enbTKCr1RNK8Fo33E7Vk95+gqcKsRjFQW+eJPpb2pbl?=
+ =?us-ascii?Q?WH5dEEhZma3H4Pbxca4HJbObrnpZyvm2wCbY2pC4vZ9SSGH5l1eUPChY4qwC?=
+ =?us-ascii?Q?dVmpnzkxJDYymxRRiOS1ibPqfioY7q0LGln4UKNCYxkKCIJms48Kfos8Ds3x?=
+ =?us-ascii?Q?xQin1/lJyce2rX9AfZn/SdL+r68vpBQJBg8/vu3UYibD8cqbJHjIVtHZ5f9p?=
+ =?us-ascii?Q?o8X8c3Dat4m4f2mgO2oHGu5ZhcC40xSFxc4IAFHTnvwjIhZ9gzyKWIZvh0pR?=
+ =?us-ascii?Q?8a9h5KVrU+Xt71ln8wMv3Jc7tStQHcytsg2rJfCLQBbyFhdepYrZ8fPogu3Q?=
+ =?us-ascii?Q?1rvMnmwVSVXcJA/AghqhSc5G1/mFTgG2cxFSVE9rOGXmiXPuiHEssbOnd/gY?=
+ =?us-ascii?Q?Vehc+obwVwR+6kOxtSvvDb9lIXf4piV+WBf+nb7Ogj1X0J2sdl2I0qKgBoPz?=
+ =?us-ascii?Q?A9cU53KwVZaf20G7N6w9XHCmhfPCR7x7r1ePpXG5OhrZ1kDJliASuetU2vFn?=
+ =?us-ascii?Q?peenUjVvwSE5384OGmk973tMHwWOcucCar4FzEv2K2hhsATJeCor7qmK61Zy?=
+ =?us-ascii?Q?UQAECjp64wblVzP8KHIwz+Asa0BgQb83hwt/BfYD+rHRax++2hBz9EMHl48D?=
+ =?us-ascii?Q?K7BJTocr6tLMLELYl276P+DJVyclQe80ACsslJsIT7DaiK1KQAUYuunOS1c6?=
+ =?us-ascii?Q?flpchbftvwlT8pCB2mk=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250709070450.473297-1-suleiman@google.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Subject: [PATCH v6 2/3] KVM: x86: Include host suspended duration in steal time
-From: Suleiman Souhlal <suleiman@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>, 
-	David Woodhouse <dwmw2@infradead.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	John Stultz <jstultz@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ssouhlal@freebsd.org, Suleiman Souhlal <suleiman@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 204d1ef0-f2ac-4619-881e-08ddbeb6e56d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2025 07:04:49.8386
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: eVkKDGee8VIj38g8jrwO3czOme1VBWb7o4L27IqulUIqiH1aCooXV6lDgsMkwxtWSQz8pT7Te2QGRuViUJiQ/g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9310
 
-Introduce MSR_KVM_SUSPEND_STEAL which controls whether or not a guest
-wants the duration of host suspend to be included in steal time.
+> Subject: [PATCH] firmware: arm_scmi: convert to
+> SYSTEM_SLEEP_PM_OPS
+>=20
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> The old SET_SYSTEM_SLEEP_PM_OPS() macro leads to a warning about
+> an unused function:
+>=20
+> drivers/firmware/arm_scmi/scmi_power_control.c:363:12: error:
+> 'scmi_system_power_resume' defined but not used [-Werror=3Dunused-
+> function]
+>   363 | static int scmi_system_power_resume(struct device *dev)
+>=20
+> The proper way to do this these days is to use
+> SYSTEM_SLEEP_PM_OPS() and pm_sleep_ptr().
+>=20
+> Fixes: 9a0658d3991e ("firmware: arm_scmi: power_control: Ensure
+> SCMI_SYSPOWER_IDLE is set early during resume")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-This lets guests subtract the duration during which the host was
-suspended from the runtime of tasks that were running over the suspend,
-in order to prevent cases where host suspend causes long runtimes in
-guest tasks, even though their effective runtime was much shorter.
+Thanks for the fix. Nathan Chancellor posted a fix earlier, but
+yours has pm_sleep_ptr which is better.
 
-Signed-off-by: Suleiman Souhlal <suleiman@google.com>
----
- Documentation/virt/kvm/x86/cpuid.rst |  4 ++
- Documentation/virt/kvm/x86/msr.rst   | 15 ++++++
- arch/x86/include/asm/kvm_host.h      |  3 ++
- arch/x86/include/uapi/asm/kvm_para.h |  2 +
- arch/x86/kvm/cpuid.c                 |  4 +-
- arch/x86/kvm/x86.c                   | 80 ++++++++++++++++++++++++++--
- 6 files changed, 102 insertions(+), 6 deletions(-)
-
-diff --git a/Documentation/virt/kvm/x86/cpuid.rst b/Documentation/virt/kvm/x86/cpuid.rst
-index bda3e3e737d71f..71b42b6499733b 100644
---- a/Documentation/virt/kvm/x86/cpuid.rst
-+++ b/Documentation/virt/kvm/x86/cpuid.rst
-@@ -103,6 +103,10 @@ KVM_FEATURE_HC_MAP_GPA_RANGE       16          guest checks this feature bit bef
- KVM_FEATURE_MIGRATION_CONTROL      17          guest checks this feature bit before
-                                                using MSR_KVM_MIGRATION_CONTROL
- 
-+KVM_FEATURE_SUSPEND_STEAL          18          guest checks this feature bit
-+                                               before using
-+                                               MSR_KVM_SUSPEND_STEAL.
-+
- KVM_FEATURE_CLOCKSOURCE_STABLE_BIT 24          host will warn if no guest-side
-                                                per-cpu warps are expected in
-                                                kvmclock
-diff --git a/Documentation/virt/kvm/x86/msr.rst b/Documentation/virt/kvm/x86/msr.rst
-index 3aecf2a70e7b43..8c31b3994e733d 100644
---- a/Documentation/virt/kvm/x86/msr.rst
-+++ b/Documentation/virt/kvm/x86/msr.rst
-@@ -296,6 +296,12 @@ data:
- 		the amount of time in which this vCPU did not run, in
- 		nanoseconds. Time during which the vcpu is idle, will not be
- 		reported as steal time.
-+		If the guest set the enable bit in MSR_KVM_SUSPEND_STEAL,
-+		steal time includes the duration during which the host is
-+		suspended. The case where the host suspends during a VM
-+		migration might not be accounted if VCPUs aren't entered
-+		post-resume. A workaround would be for the VMM to ensure that
-+		the guest is entered with KVM_RUN after resuming from suspend.
- 
- 	preempted:
- 		indicate the vCPU who owns this struct is running or
-@@ -388,3 +394,12 @@ data:
-         guest is communicating page encryption status to the host using the
-         ``KVM_HC_MAP_GPA_RANGE`` hypercall, it can set bit 0 in this MSR to
-         allow live migration of the guest.
-+
-+MSR_KVM_SUSPEND_STEAL:
-+	0x4b564d09
-+
-+data:
-+	This MSR is available if KVM_FEATURE_SUSPEND_STEAL is present in
-+	CPUID. Bit 0 controls whether the host should include the duration it
-+	has been suspended in steal time (1), or not (0).
-+
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 5c465bdd6d088a..b35099260aa625 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -932,6 +932,8 @@ struct kvm_vcpu_arch {
- 		u8 preempted;
- 		u64 msr_val;
- 		u64 last_steal;
-+		u64 suspend_ts;
-+		atomic64_t suspend_ns;
- 		struct gfn_to_hva_cache cache;
- 	} st;
- 
-@@ -1028,6 +1030,7 @@ struct kvm_vcpu_arch {
- 	} pv_eoi;
- 
- 	u64 msr_kvm_poll_control;
-+	u64 msr_kvm_suspend_steal;
- 
- 	/* pv related host specific info */
- 	struct {
-diff --git a/arch/x86/include/uapi/asm/kvm_para.h b/arch/x86/include/uapi/asm/kvm_para.h
-index a1efa7907a0b10..678ebc3d7eeb55 100644
---- a/arch/x86/include/uapi/asm/kvm_para.h
-+++ b/arch/x86/include/uapi/asm/kvm_para.h
-@@ -36,6 +36,7 @@
- #define KVM_FEATURE_MSI_EXT_DEST_ID	15
- #define KVM_FEATURE_HC_MAP_GPA_RANGE	16
- #define KVM_FEATURE_MIGRATION_CONTROL	17
-+#define KVM_FEATURE_SUSPEND_STEAL	18
- 
- #define KVM_HINTS_REALTIME      0
- 
-@@ -58,6 +59,7 @@
- #define MSR_KVM_ASYNC_PF_INT	0x4b564d06
- #define MSR_KVM_ASYNC_PF_ACK	0x4b564d07
- #define MSR_KVM_MIGRATION_CONTROL	0x4b564d08
-+#define MSR_KVM_SUSPEND_STEAL	0x4b564d09
- 
- struct kvm_steal_time {
- 	__u64 steal;
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index b2d006756e02a6..983867f243cafc 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -1614,8 +1614,10 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
- 			     (1 << KVM_FEATURE_PV_SCHED_YIELD) |
- 			     (1 << KVM_FEATURE_ASYNC_PF_INT);
- 
--		if (sched_info_on())
-+		if (sched_info_on()) {
- 			entry->eax |= (1 << KVM_FEATURE_STEAL_TIME);
-+			entry->eax |= (1 << KVM_FEATURE_SUSPEND_STEAL);
-+		}
- 
- 		entry->ebx = 0;
- 		entry->ecx = 0;
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index e66bab1a1f56e2..691f46b5e50f27 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -3753,6 +3753,8 @@ static void record_steal_time(struct kvm_vcpu *vcpu)
- 	steal += current->sched_info.run_delay -
- 		vcpu->arch.st.last_steal;
- 	vcpu->arch.st.last_steal = current->sched_info.run_delay;
-+	if (unlikely(atomic64_read(&vcpu->arch.st.suspend_ns)))
-+		steal += atomic64_xchg(&vcpu->arch.st.suspend_ns, 0);
- 	unsafe_put_user(steal, &st->steal, out);
- 
- 	version += 1;
-@@ -4058,6 +4060,17 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		vcpu->arch.msr_kvm_poll_control = data;
- 		break;
- 
-+	case MSR_KVM_SUSPEND_STEAL:
-+		if (!guest_pv_has(vcpu, KVM_FEATURE_SUSPEND_STEAL) ||
-+		    !guest_pv_has(vcpu, KVM_FEATURE_STEAL_TIME))
-+			return 1;
-+
-+		if (!(data & KVM_MSR_ENABLED))
-+			return 1;
-+
-+		vcpu->arch.msr_kvm_suspend_steal = data;
-+		break;
-+
- 	case MSR_IA32_MCG_CTL:
- 	case MSR_IA32_MCG_STATUS:
- 	case MSR_IA32_MC0_CTL ... MSR_IA32_MCx_CTL(KVM_MAX_MCE_BANKS) - 1:
-@@ -4404,6 +4417,11 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 
- 		msr_info->data = vcpu->arch.msr_kvm_poll_control;
- 		break;
-+	case MSR_KVM_SUSPEND_STEAL:
-+		if (!guest_pv_has(vcpu, KVM_FEATURE_SUSPEND_STEAL))
-+			return 1;
-+		msr_info->data = vcpu->arch.msr_kvm_suspend_steal;
-+		break;
- 	case MSR_IA32_P5_MC_ADDR:
- 	case MSR_IA32_P5_MC_TYPE:
- 	case MSR_IA32_MCG_CAP:
-@@ -7006,13 +7024,52 @@ static int kvm_arch_suspend_notifier(struct kvm *kvm)
- {
- 	struct kvm_vcpu *vcpu;
- 	unsigned long i;
-+	bool kick_vcpus = false;
- 
--	/*
--	 * Ignore the return, marking the guest paused only "fails" if the vCPU
--	 * isn't using kvmclock; continuing on is correct and desirable.
--	 */
--	kvm_for_each_vcpu(i, vcpu, kvm)
-+	kvm_for_each_vcpu(i, vcpu, kvm) {
-+		if (vcpu->arch.msr_kvm_suspend_steal & KVM_MSR_ENABLED) {
-+			kick_vcpus = true;
-+			WRITE_ONCE(vcpu->arch.st.suspend_ts,
-+				   ktime_get_boottime_ns());
-+		}
-+		/*
-+		 * Ignore the return, marking the guest paused only "fails" if
-+		 * the vCPU isn't using kvmclock; continuing on is correct and
-+		 * desirable.
-+		 */
- 		(void)kvm_set_guest_paused(vcpu);
-+	}
-+
-+	if (kick_vcpus)
-+		kvm_make_all_cpus_request(kvm, KVM_REQ_OUTSIDE_GUEST_MODE);
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static int
-+kvm_arch_resume_notifier(struct kvm *kvm)
-+{
-+	struct kvm_vcpu *vcpu;
-+	unsigned long i;
-+
-+	kvm_for_each_vcpu(i, vcpu, kvm) {
-+		u64 suspend_ns = ktime_get_boottime_ns() -
-+				 vcpu->arch.st.suspend_ts;
-+
-+		WRITE_ONCE(vcpu->arch.st.suspend_ts, 0);
-+
-+		/*
-+		 * Only accumulate the suspend time if suspend steal-time is
-+		 * enabled, but always clear suspend_ts and kick the vCPU as
-+		 * the vCPU could have disabled suspend steal-time after the
-+		 * suspend notifier grabbed suspend_ts.
-+		 */
-+		if (vcpu->arch.msr_kvm_suspend_steal & KVM_MSR_ENABLED)
-+			atomic64_add(suspend_ns, &vcpu->arch.st.suspend_ns);
-+
-+		kvm_make_request(KVM_REQ_STEAL_UPDATE, vcpu);
-+		kvm_vcpu_kick(vcpu);
-+	}
- 
- 	return NOTIFY_DONE;
- }
-@@ -7023,6 +7080,9 @@ int kvm_arch_pm_notifier(struct kvm *kvm, unsigned long state)
- 	case PM_HIBERNATION_PREPARE:
- 	case PM_SUSPEND_PREPARE:
- 		return kvm_arch_suspend_notifier(kvm);
-+	case PM_POST_HIBERNATION:
-+	case PM_POST_SUSPEND:
-+		return kvm_arch_resume_notifier(kvm);
- 	}
- 
- 	return NOTIFY_DONE;
-@@ -11212,6 +11272,16 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
- 
- static bool kvm_vcpu_running(struct kvm_vcpu *vcpu)
- {
-+	/*
-+	 * During host SUSPEND/RESUME tasks get frozen after SUSPEND notifiers
-+	 * run, and thawed before RESUME notifiers, i.e. vCPUs can be actively
-+	 * running when KVM sees the system as suspended.  Block the vCPU if
-+	 * KVM sees the vCPU as suspended to ensure the suspend steal time is
-+	 * accounted before the guest can run, and to the correct guest task.
-+	 */
-+	if (READ_ONCE(vcpu->arch.st.suspend_ts))
-+		return false;
-+
- 	return (vcpu->arch.mp_state == KVM_MP_STATE_RUNNABLE &&
- 		!vcpu->arch.apf.halted);
- }
--- 
-2.50.0.727.gbf7dc18ff4-goog
-
+Acked-by: Peng Fan <peng.fan@nxp.com>=20
 
