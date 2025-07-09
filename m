@@ -1,151 +1,92 @@
-Return-Path: <linux-kernel+bounces-723222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E35D8AFE49E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:54:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CE8AAFE4AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28D72189CAA4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:54:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA6241C235FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD78288509;
-	Wed,  9 Jul 2025 09:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A6B2882D4;
+	Wed,  9 Jul 2025 09:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3qeLASa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B832877E2;
-	Wed,  9 Jul 2025 09:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IDlFllrl"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3242F283FD3;
+	Wed,  9 Jul 2025 09:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752054853; cv=none; b=t7/c0QuCWK1qnB5Gv7xATDIgsvjLVdUcBopN6dsLzm47Kqgp1ZzWchJmYYFeqhsjtAkc3+YjHmIQZZ8OGdqzIrLDB6wvwVdJXaNEO+wl8hDh/YoviZTiElzFmC0RemFMHj5yvRg2ypyBDXCrkccpblO4v23uAAshU4EMic/nmsA=
+	t=1752055039; cv=none; b=lohLcf0pmGwEj/bX+P6UlOH3D6+WM00p2tYCZRtFX+5+hTNZ6dc0aBfGedvsXDRnGRuCfbE5shCKCchKgkqC7mhkmSqMBnDrP4uQmKFlUVFGeWDM1B/4QYIaAOx5yJ9d8Acify5LPS3L6hw/8XDaj6b508ZbpSHPvXP5mzuq6nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752054853; c=relaxed/simple;
-	bh=Cm2c3J7Uf/hL7IW4HuPxLzbo6FU8AzX/Hvb15wde1f0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MWUklDMR0JszaRnPoF65NpU7orYF4jjJRFDwTdiFOnq10fGD43228HFE2Q/XR72PxFBLMfG1qCNv3gD6tlD5/P4BBaeEV3KuzT/asl4LF/EPTaxGWRNTN7iz5kRK3cUVd6Pa7yi3ns7Y4g+MHmM9WVACi1OfWnvO0IlnQR04eM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C3qeLASa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEEA0C4CEEF;
-	Wed,  9 Jul 2025 09:54:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752054852;
-	bh=Cm2c3J7Uf/hL7IW4HuPxLzbo6FU8AzX/Hvb15wde1f0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C3qeLASaWgKzb9eA/weQrvoYIms/5ntLE/hQRJ0JVMEHsOORUUrNg34yLQhKGYvCe
-	 5VzjSl/77TLe/4FIE4ttPXLXxsvqde11mijUlMtyu7WvXc1EesSGCtRb5zKDxL4RyY
-	 Ti35JHP3ZBcrQhPlxkjo0+wT749IjiKtbh+UPBjDA85mC9EjD9Ieh3PeoTHvrDyGfI
-	 VRTqL1YrC8/Ws0Nto2Y7emJsCe/+oBKrxLf/7IP5PF/AIjKx7ANtxb1lhZ2oWZHePP
-	 0D22dmah/sEAt+1U7AXItRY0luTw20HxSAI1CroBT02cF0shfHZnElX+/1UyCk7gzC
-	 o38Ta5YmyJ+ZQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uZRV7-000000001mx-3Nrq;
-	Wed, 09 Jul 2025 11:54:05 +0200
-Date: Wed, 9 Jul 2025 11:54:05 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Ryan Mann <rmann@ndigital.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] NDI FTDI USB driver support
-Message-ID: <aG48PYdWZXwbrd5S@hovoldconsulting.com>
-References: <YQXPR01MB4987FF89C01297FA6F1B0C9FDF42A@YQXPR01MB4987.CANPRD01.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1752055039; c=relaxed/simple;
+	bh=vterP2lbqJfVM+LRua662GVvAJRfre8bg+d7uhEXYgA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qi227FTkjUl+IyJvKb3Itn++KkC0M3hsKOabG9tnJg/hS2Tqo6H4i5gShL3TJLXXIqMHk2Cq2qPdhuyMWvPQJv3Eb+Mq4BcoHBZmR36c1inK8ReOwhUcgs1J0XYnfBA931PWypPHf9mexsYaWBjczswOTZCgLFvgfQsYmgitV+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IDlFllrl; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Xg
+	REeszcf2ZOBM/naDNg6kKErMTPAHGiqhxpYs2RS0Y=; b=IDlFllrl+oXEJ5lYvS
+	y6kQCiL7kNihDM5e3kdZ0RbDsngYtaOmbP7uDW/4/HxDdg62IMVnw2NPTY8JnsFe
+	YGAlGxJCmViQbbE0OzIBiD8TOLJIFK/cOF4wnMfVPcF2cNOKhs1SNtcdWtqSlK5C
+	5Sj11byawTgqxvtForjkJP+J0=
+Received: from kylin-ERAZER-H610M.. (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgBn08jlPG5oBz4hBA--.440S2;
+	Wed, 09 Jul 2025 17:56:54 +0800 (CST)
+From: Yun Lu <luyun_611@163.com>
+To: willemdebruijn.kernel@gmail.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] fix two issues on tpacket_snd()
+Date: Wed,  9 Jul 2025 17:56:51 +0800
+Message-ID: <20250709095653.62469-1-luyun_611@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YQXPR01MB4987FF89C01297FA6F1B0C9FDF42A@YQXPR01MB4987.CANPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PCgvCgBn08jlPG5oBz4hBA--.440S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtry7XryxZr47GFyfKF1Dtrb_yoW3WFgE93
+	s3Za4vy34DJFZ8CFZYkF4Dtry8KrW8WwsYqF42qFZrt3WfArZxGrsrCrZ3Z3W3uan7tryY
+	yF1UJr1vvw1ayjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8PCztUUUUU==
+X-CM-SenderInfo: pox130jbwriqqrwthudrp/1tbiWxuFzmhuPGkO+gAAss
 
-On Fri, Jul 04, 2025 at 05:25:43PM +0000, Ryan Mann wrote:
-> From: Ryan Mann (NDI) <rmann@ndigital.com>
-> 
-> NDI (Northern Digital Inc.) is introducing a new product called the 
-> EMGUIDE GEMINI that will use an FTDI chip for USB serial communications.
+From: Yun Lu <luyun@kylinos.cn>
 
-> Remove the use of the baud rate mapping for NDI Aurora.
+This series fix two issues on tpacket_snd():
+1, fix the SO_SNDTIMEO constraint not effective;
+2, fix a soft lockup issue.
 
-Your commit message should explain *why* a change is done.
+---
+Changes in v3:
+- Split in two different patches.
+- Simplify the code and reuse ph to continue. Thanks: Eric Dumazet.
+- Link to v2: https://lore.kernel.org/all/20250708020642.27838-1-luyun_611@163.com/
 
-This bit also looks like an unrelated change that should go in it's own
-patch. It also no longer reflects what the patch does.
+Changes in v2:
+- Add a Fixes tag.
+- Link to v1: https://lore.kernel.org/all/20250707081629.10344-1-luyun_611@163.com/
 
-> Add the NDI VID definition as "FTDI_NDI_VID" into the ftdi_sio_ids.h.
-> Add the NDI EMGUIDE GEMINI PID definition into the ftdi_sio_ids.h.
+Yun Lu (2):
+  af_packet: fix the SO_SNDTIMEO constraint not effective on
+    tpacked_snd()
+  af_packet: fix soft lockup issue caused by tpacket_snd()
 
-No need to be this specific, just say something about the adding the
-device id which uses a new vendor define unlike the older products.
+ net/packet/af_packet.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
 
-> Add the NDI VID/EMGUIDE GEMINI PID combination to the USB_DEVICE list.
+-- 
+2.43.0
 
-Not needed.
-
-> Signed-off-by: Ryan Mann <rmann@ndigital.com>
-> ---
-> V1 -> V2: Email-to issues fixed
-> V2 -> V3: Email formatting issues fixed
-> V3 -> V4: Email formatting issues fixed
-
-You clearly left out some changes here since your initial submission
-also added ids for "future" devices.
-
-There was also some changes related to the two NID quirks.
-
->  drivers/usb/serial/ftdi_sio.c     | 4 ++--
->  drivers/usb/serial/ftdi_sio_ids.h | 2 ++
->  2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
-> index 6ac7a0a5cf07..e5d7cce83a72 100644
-> --- a/drivers/usb/serial/ftdi_sio.c
-> +++ b/drivers/usb/serial/ftdi_sio.c
-> @@ -801,8 +801,8 @@ static const struct usb_device_id id_table_combined[] = {
->                 .driver_info = (kernel_ulong_t)&ftdi_NDI_device_quirk },
->         { USB_DEVICE(FTDI_VID, FTDI_NDI_FUTURE_3_PID),
->                 .driver_info = (kernel_ulong_t)&ftdi_NDI_device_quirk },
-> -       { USB_DEVICE(FTDI_VID, FTDI_NDI_AURORA_SCU_PID),
-> -               .driver_info = (kernel_ulong_t)&ftdi_NDI_device_quirk },
-
-Why are you removing the old product from the id table which will
-prevent the driver from binding to it?
-
-> +       { USB_DEVICE(NDI_VID, FTDI_NDI_EMGUIDE_GEMINI_PID),
-> +         .driver_info = (kernel_ulong_t)&ftdi_NDI_device_quirk },
-
-Your patch is also white space damaged (e.g. tabs replaced with spaces,
-which prevents it from being applied.
-
-Try sending the patch to yourself first and make sure you can apply it
-with git am.
-
->         { USB_DEVICE(TELLDUS_VID, TELLDUS_TELLSTICK_PID) },
->         { USB_DEVICE(NOVITUS_VID, NOVITUS_BONO_E_PID) },
->         { USB_DEVICE(FTDI_VID, RTSYSTEMS_USB_VX8_PID) },
-> diff --git a/drivers/usb/serial/ftdi_sio_ids.h b/drivers/usb/serial/ftdi_sio_ids.h
-> index 9acb6f837327..0cb33d257973 100644
-> --- a/drivers/usb/serial/ftdi_sio_ids.h
-> +++ b/drivers/usb/serial/ftdi_sio_ids.h
-> @@ -203,6 +203,8 @@
->  #define FTDI_NDI_FUTURE_2_PID          0xDA72  /* NDI future device #2 */
->  #define FTDI_NDI_FUTURE_3_PID          0xDA73  /* NDI future device #3 */
->  #define FTDI_NDI_AURORA_SCU_PID                0xDA74  /* NDI Aurora SCU */
-
-Please include a newline here to separate the two sections.
-
-> +#define FTDI_NDI_VID                   0x23F2  /* NDI Vendor ID */
-
-And drop the comment here.
-
-> +#define FTDI_NDI_EMGUIDE_GEMINI_PID    0x0003  /* NDI Emguide Gemini */
-> 
->  /*
->   * ChamSys Limited (www.chamsys.co.uk) USB wing/interface product IDs
-
-Johan
 
