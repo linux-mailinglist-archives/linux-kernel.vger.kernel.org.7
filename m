@@ -1,142 +1,128 @@
-Return-Path: <linux-kernel+bounces-723998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A18AFED68
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:16:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7949DAFEDB3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 098C9188ECD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:15:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9326A176B97
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49C62E54B8;
-	Wed,  9 Jul 2025 15:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372692E8DF8;
+	Wed,  9 Jul 2025 15:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="LaBDSn6K";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lIc5g2xb"
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OG/j3EPF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E21A2E7656;
-	Wed,  9 Jul 2025 15:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E592E7F3B
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 15:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752074009; cv=none; b=q20oKAfs7XKFItR7NDeBNqDRrk6JsqTAqYe6mUq2Le+1Wmj1hC1WylV54QL8kCm8izm/aflDWYkhnsTCn1UExe4JSaaVs8ZP7AZWHKQwdxczQVg871p7CkepUeMlF6iaFaMfuX55ewdvJdyg6reGe+KGUZKsPXFWAfXgLjKtGeg=
+	t=1752074812; cv=none; b=E21ES7Y+oIHVRhdCdDD9FSEBT8rPrG4NVdsPo3w8J5LoI11QieeD6KU+gONRL06fb5YgMwmvzQaKs3AVGvOZl4oenRKm7QPcxwZ+5P5FWIv1ahitrZuMWfNqbtqyrgjn7H3ToNEU6NmsbAq/FBGTln51zuPCJLExc/lz+wVhW5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752074009; c=relaxed/simple;
-	bh=kfaIXpsAN92adgBRJE+BZn/SgtE9HPeehRd23OVh0ws=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=dv5ZYXNQzyCnsCJU2gh1Mu25qmKtRcPhRer8QW5SEMFbwrdQ0r35NrXYVoySFgj5F/r/JAX6Udxn/ld5gTR2csX0A109gtP5yJUHRtrxfnQcVRJZVIGHavFMWyenqi3sp89cHWeb2T5nJL2eo4ePTAPvGoo9mMS7h35RXj56DZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=LaBDSn6K; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lIc5g2xb; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id B961E14003AB;
-	Wed,  9 Jul 2025 11:13:26 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Wed, 09 Jul 2025 11:13:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1752074006;
-	 x=1752160406; bh=89B44pVO5SF6MdyiZPgzYQ56vuozar6DkxDCRlylYqw=; b=
-	LaBDSn6K2d6fcJXUQH/hS0hircUa3WN5OiyCrHhhMb9zAJlTBMhB6EuG+j6YDPdc
-	Q1ug7NnWC9i2KpeABKBQcFckQHfTADWZ09ITNffvXqZI/WPB4b47W3rmzGM7ykqq
-	7RwrxERJY5BaJyXWOCwhQmrV5Aglg8VpP8V32BSxgkVIC/4nz2APETtNGLkjkHlu
-	ATPW/72hJs7gXgdQ0dYH5fcJRRWlxeTkESrgLsU8+RT0Fa2zy9s6ZWU0X1fFH+02
-	Rtm8llGpb3G05WAkyYQcqIAxDIwWP/JlpwY6CEvwq++ij2Z6ONbkI3zZ4nZkfUt3
-	7Sfiyxiv11egfOG0lrrnlg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752074006; x=
-	1752160406; bh=89B44pVO5SF6MdyiZPgzYQ56vuozar6DkxDCRlylYqw=; b=l
-	Ic5g2xbPAWYCrdmf/UGGbWngkBtePyz3w1sRj+uPvS9NdEeQ6+cm9ec8VACy1BZq
-	1rOMP8kNsQLs419XSPMj7fBE/CRHzzogKpdtTx8i68FsehaPdQn+72CNu2tAMCnZ
-	/MMZTuLqRFTgsKdDdfxvp19fUveRn/e5yGWU8fW/vkBUkdbSUDlcu2hSCEHkCTmU
-	xTnl645j9XSK8BnsF0kinX5o2tLnacWHwt4uA/KnMEZJRD+Y7hs/84OrdQNLu4ai
-	HU+EP3iZ7e+ZZWPplqtA+uE33e0v9DIGhYEKRctT/01lvLnH9V4faGIwNbvbB8gR
-	KK99X/IWmDAJbSS4joLpw==
-X-ME-Sender: <xms:FYduaH5JZXJwLq_TKSPBsZ_BEptZYmF-nHAuUeCQVpOjQMAFg-fSaQ>
-    <xme:FYduaM6aRQEHQauq03N9FTG_IYVRcB6s6DUq984GMOZ9SU-31P2whOI758PcG5bf5
-    sSK3VyFNa15hjVgPLg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefjeeklecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgtphhtthhope
-    grrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtohepphhivghrrhgvqdhlohhuihhsrdgsohhsshgrrhhtse
-    hlihhnuhigrdguvghvpdhrtghpthhtohepphgvthgvrhdruhhjfhgrlhhushhisehlihhn
-    uhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohephihunhhgqdgthhhurghnrdhlihgroh
-    eslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopegtkhgvvghprgigsehophgv
-    nhhsohhurhgtvgdrtghirhhruhhsrdgtohhmpdhrtghpthhtohepmhhsthhrohiivghkse
-    hophgvnhhsohhurhgtvgdrtghirhhruhhsrdgtohhmpdhrtghpthhtohepphgrthgthhgv
-    shesohhpvghnshhouhhrtggvrdgtihhrrhhushdrtghomh
-X-ME-Proxy: <xmx:FYduaDQjqhye9h4TUcpjbqFP-kyiGEwqofRfnae5tUUNVnVW7uhO3Q>
-    <xmx:FYduaP_yAGwAAn6fiO_Ee6CBRGvkyEoCu80cDMRC3lDqKVSgTrTAJQ>
-    <xmx:FYduaMoOBThIMJO7ASrLA9QMV7xD-px8pcv6MK6NmtZc69kPuZLyWg>
-    <xmx:FYduaNXNVRLWAESDUeUTzgyrAmNUiYO2rs7M6EAiHEr4Q5SsPz6kDQ>
-    <xmx:FoduaFLJYCH3TPs0N7WlTqWXROs5__oY5GMahqmoDOTgRNacqRDbzCaS>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 56ED1700065; Wed,  9 Jul 2025 11:13:25 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1752074812; c=relaxed/simple;
+	bh=fkqSrszonc6CYHM9mwCkBFQcYyL70DUkCfbaT0jpal8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kiquFvVTp/+o3BB0Qq5mSSdUuDMoy2OjSpKo8uohFEO9jreJ/t8XeUBu2T1Kq0tUKSGftZSpaIVv3D0LpCqPpmWOVOF8Mtw6Gzwc0jKrsCM33eVHh0Fs2QfMaQEcOfDi1m5Nec5wx29DscUiI+PnseWBR+7k1EiKHk9XFw9gXeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OG/j3EPF; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752074811; x=1783610811;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=fkqSrszonc6CYHM9mwCkBFQcYyL70DUkCfbaT0jpal8=;
+  b=OG/j3EPFbUoFBXLyFlW5Nk9KqaHNcQbZY6e1C1VSTUVNTuawqV7Ymqhc
+   dMCQ/A3T6rvE+Lu/QOIxIWgBzO9A32yxT+d7Ng9KuI3i1fps0SsqBK2B6
+   vQW5Xel0cCjmuoxsbs+RfeH3tLCZw7FoH0fTVQ8xQCNMTi7fmNJdANdVc
+   0D5eCDfzNY94R2BlAwgAUu3Siabr+UFTPCzEbzrNppWaLzwlaAWKrCmAl
+   m71k5YaProA1/wF+LQEQYE7Txxs9weYKHIbz3bqOE/ZZyGPDzL/lWO7Rs
+   rFw3Zj3NWzFGTOrDBiseUCtPKEBnBqPZVp0ei0deVoJY3DyOuOw98TRsl
+   A==;
+X-CSE-ConnectionGUID: eW730pPGSheOvxn6BHCjKQ==
+X-CSE-MsgGUID: bSQGbOjXQs6oCSvzOilNWg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54487378"
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="54487378"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 08:26:50 -0700
+X-CSE-ConnectionGUID: Af8xvLPrRaK7UTVT/Xd4VQ==
+X-CSE-MsgGUID: UHnadyTgRWiaaYo4O+mCZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="155557793"
+Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 08:26:49 -0700
+From: Alexander Usyskin <alexander.usyskin@intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
+	Alexander Usyskin <alexander.usyskin@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [char-misc-next v3 0/5] mei: fix mei_device lifetime
+Date: Wed,  9 Jul 2025 18:13:39 +0300
+Message-ID: <20250709151344.104942-1-alexander.usyskin@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T2af2efebb1220e26
-Date: Wed, 09 Jul 2025 17:13:05 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Charles Keepax" <ckeepax@opensource.cirrus.com>
-Cc: "Arnd Bergmann" <arnd@kernel.org>,
- "Maciej Strozek" <mstrozek@opensource.cirrus.com>,
- "Liam Girdwood" <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>,
- "Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
- "Shuming Fan" <shumingf@realtek.com>,
- "Bard Liao" <yung-chuan.liao@linux.intel.com>,
- "Pierre-Louis Bossart" <pierre-louis.bossart@linux.dev>,
- "Peter Ujfalusi" <peter.ujfalusi@linux.intel.com>,
- "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>,
- linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
- linux-kernel@vger.kernel.org
-Message-Id: <0b385401-2291-4cc8-b10c-6e7f449724ec@app.fastmail.com>
-In-Reply-To: <aG6FFXrfOnBlnn1l@opensource.cirrus.com>
-References: <20250708184618.3585473-1-arnd@kernel.org>
- <aG5iwy6j3rR0YdPy@opensource.cirrus.com>
- <f0275a4c-9801-4288-91fd-e28aa4bc5b7e@app.fastmail.com>
- <aG6FFXrfOnBlnn1l@opensource.cirrus.com>
-Subject: Re: [PATCH] ASoC: SDCA: fix HID dependency
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 9, 2025, at 17:04, Charles Keepax wrote:
-> On Wed, Jul 09, 2025 at 03:36:49PM +0200, Arnd Bergmann wrote:
->> On Wed, Jul 9, 2025, at 14:38, Charles Keepax wrote:
->> > On Tue, Jul 08, 2025 at 08:46:06PM +0200, Arnd Bergmann wrote:
->> It could work, but then the 'depends on HID || !HID' would
->> need to be under SND_SST_ATOM_HIFI2_PLATFORM_ACPI and anything
->> else that might select SND_SOC_ACPI_INTEL_MATCH,
->> SND_SOC_ACPI_INTEL_SDCA_QUIRKS, or SND_SOC_SDCA in the future.
->
-> Ah yes I forgot things are selected by the Intel stuff, at least
-> the double depends on HID can be changed though? ie.
->
-> depends on SND_SOC_SDCA
-> depends on HID=y || HID=SND_SOC_SDCA
+mei_device data structure is allocated using devm_* functions
+and hooked to the parent device.
+It works for client systems where parent device is pci one.
+When parent device is auxiliary bus device produced by
+graphics driver, the parent can be destroyed before child
+and on the way it cleans all allocated memory.
+This leads to use-after-free if mei character device is
+opened when parent device is destroyed.
 
-Yes, that functionally the same, I wasn't sure which one
-you'd prefer. Let me know if I should send a v2.
+Connect mei_device structure lifteme to mei class device lifetime
+by adding mei_device free to class device remove callback.
+Decouple character device lifetime from parwnt structure lifetime.
 
-     Arnd
+As dev pointer in mei_device structure is converted to non-pointer
+device all dev_* calls should be touched in this patch series.
+
+Closes: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/14201
+
+V2: Make cdev patches first to avoid double refcounting
+    in the middle of the series.
+    Replace manual refcount with special device.
+
+V3: Use existing class device by Greg's insight, thanks!
+
+Alexander Usyskin (5):
+  mei: set parent for char device
+  mei: make char device control its own lifetime
+  mei: bus: use cldev in prints
+  mei: more prints with client prefix
+  mei: hook mei_device on class device
+
+ drivers/misc/mei/bus-fixup.c    |  16 ++--
+ drivers/misc/mei/bus.c          |  42 +++++-----
+ drivers/misc/mei/client.c       |  82 +++++++++----------
+ drivers/misc/mei/client.h       |   6 +-
+ drivers/misc/mei/dma-ring.c     |   8 +-
+ drivers/misc/mei/gsc-me.c       |  16 ++--
+ drivers/misc/mei/hbm.c          | 135 +++++++++++++++-----------------
+ drivers/misc/mei/hw-me.c        | 100 +++++++++++------------
+ drivers/misc/mei/hw-txe.c       |  60 +++++++-------
+ drivers/misc/mei/init.c         |  47 ++++++-----
+ drivers/misc/mei/interrupt.c    |  47 ++++++-----
+ drivers/misc/mei/main.c         | 135 +++++++++++++++++++-------------
+ drivers/misc/mei/mei_dev.h      |  12 +--
+ drivers/misc/mei/pci-me.c       |  20 ++---
+ drivers/misc/mei/pci-txe.c      |   4 +-
+ drivers/misc/mei/platform-vsc.c |  26 +++---
+ 16 files changed, 390 insertions(+), 366 deletions(-)
+
+-- 
+2.43.0
+
 
