@@ -1,636 +1,339 @@
-Return-Path: <linux-kernel+bounces-724590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD7D0AFF49C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:23:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A49AFF4A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B97624E04C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:22:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E508E1737C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB1825A35F;
-	Wed,  9 Jul 2025 22:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EEC2472BF;
+	Wed,  9 Jul 2025 22:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ahMPKann"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DdVltL8K"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1ED2586EF;
-	Wed,  9 Jul 2025 22:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752099722; cv=none; b=FAmvodYJQEEKzIuGnhlPCTZ2zolX9GU+YzH0uHF+4XMEGtrCIIyl/HsWTq/7+rxSF3OuY37q3fk4yWLzv/H/jZ/dR0rb6SSmNqXIeYYp0wStgjtlKnTwf5J7lKu/5VxiaoCYdgtV7y6bJiqKxRu4OAgsCevlY5PvY6rCRk0j538=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752099722; c=relaxed/simple;
-	bh=5/0jAujaEqAM5kVCht07cuykQyvnGeNYc3pxvAFMfVA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S8W+P3WGA2uCJZPBWGbjUt+MgwvdG4ux5ztQzfbTlnd6vOanMLL67G7EjePeLtuc3yInNdha6IWdLiHod//4P1tN8MZTHGvkpdvjQZ7SHunyKdEUcKHeXNwULhWQYLY1GSl27j26OsET0FR1womecP8s055NX9xPsYagX8W8aRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ahMPKann; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4538bc52a8dso2323635e9.2;
-        Wed, 09 Jul 2025 15:22:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752099719; x=1752704519; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rWp9UpZ6Jv5k+pmwwAXd8UaI0Vx7UAEeJy7Th/K4m6E=;
-        b=ahMPKannhPuW0EAP5F2yLUvZ3pKoa51Qqxquzpd9smVfNQtbdDft+mA+AmzM0RqnAu
-         ltgVjH9hdqgFN3RdXZlI20X2Ww2ctPF2NsD5BcydAAEgVgj9Q39LAJ1J+MZEU0PuWlz2
-         wZ01gfZMnhCo49vY6gBDJLlv4BD+c1bXsHkKbWx5KEL/ibxbLUILmCDgNUtybrsWBn9q
-         YMBLjX0ROC2sEI6AE+Bt0AXJtAeu8FeIyMcuH7HHi4b3j50jiV5h8fkvKsIa/NSX9vi2
-         GntPVkE1zxlQni33QlUk+SnfNJTybrBy5aaRI1h3vm0ksk2+DDsnpAfjLBOO0pEdiT9V
-         mTsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752099719; x=1752704519;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rWp9UpZ6Jv5k+pmwwAXd8UaI0Vx7UAEeJy7Th/K4m6E=;
-        b=W0vRoFM5EVck8NYMAu0yl4c7j+UJGeYdNh2O6+xVQU5aMa9LZ/570BKJilgmAkOGXS
-         Y2casPGb5XCC9zHJqnmYWTiz2U33rnGLJGLa7PemM3d0lGg/3e4latrLyJjxh9EvyCv8
-         1GCUh60avhEiQgtqgl2UYT0HC0LJxDRSgUNo2HadsIhh4a0SjtjLXcEYPFAZa5VD2zu9
-         XyQwP3XhgpZNN4lvMbOokJuZgeRako65shB+ePON6Bz4GA2Fj+Mlamxuou/v7P3kVkFX
-         2HM9Lbdi0Lp0IWuKeEX7TSxlNbFmt2t61/jtxDwBn50Ryg71PjlWFZau/0AADgN9uheb
-         O86Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUvs8gsm0Yhk07zTr6nH5htR2Gi6Gr0swnYCYLjaMvyibeKEPqp2+1lwohKA36Q4Smk7iMokO3YponD@vger.kernel.org, AJvYcCVVqZCfOROZLAxPdQuk7iJTXLt2mFp90YQLFo1CYhz6pdPHJDCQdMLDW1ZL6OE+a3Fq2AhoCSDsNGqahFe0@vger.kernel.org, AJvYcCXH+RJVjsDYENJlsokB0+FqHdHE8b3rH+LO6f6DDCT5VI+MIe/o/0z1a8xoAWetpLeSA3VzLhtJ9d8rwP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytKPhn701A1TDntHWZt6r+CWKSyHzIi1u/Y+DhijSaWdM2Y9No
-	mk25EyFUMfKQFXvKXfoEdVUTySF8m+p4rYAMdZVdyq3CW19VICYPPXK/
-X-Gm-Gg: ASbGncuCa+PpqittVGnRQdHSxXLzeTNc8Q9MKXPrpZCkAQDVpCxfwbmNKfcb4HkP1Wx
-	OdqrxgJaBGK5au/Dvm6/tbW+hJdJYgj58qe5VoXVlJa2i/XB0cvr7qW8ccTgP5VuYpGI9EtgZfx
-	JI6oAebeZrO2VUxT1SPsLRNX4yTtWkS+TBwjgXSpS2VUDKlbNTSWVDe5DfHFWnCTGGnjFNSPHrX
-	F3BH3kkfLVnejCPf8xNw2geUwWH10l79zZpdrSWpCLgggcQFvPYdGNHOYpzWUWVRUXqh1svpVWE
-	37Ye4wQHnNVWrgaUX36fYeNcmJUqvDhJyZcAR5C0JlQDkBVh1QSx6/A/ZncfCHUyxsWxBnuayP9
-	WncAQ6fgb7IQhHxvZNN0PbB+kV1PNOxg8eaA77hCCqIXYg/z+tqZZ5A==
-X-Google-Smtp-Source: AGHT+IHFj9vTFfeJ0xwJPdcmHths+RCYwosVl04z/Dll3lBoHgKy5VibJPaNj0+ViTQb/gys1WbBnw==
-X-Received: by 2002:a05:600c:674f:b0:450:d37d:7c with SMTP id 5b1f17b1804b1-454db868133mr10040185e9.21.1752099718674;
-        Wed, 09 Jul 2025 15:21:58 -0700 (PDT)
-Received: from localhost (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454dd439051sm1090465e9.8.2025.07.09.15.21.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 15:21:57 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 2/2] memory: tegra: Add Tegra264 MC and EMC support
-Date: Thu, 10 Jul 2025 00:21:47 +0200
-Message-ID: <20250709222147.3758356-3-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250709222147.3758356-1-thierry.reding@gmail.com>
-References: <20250709222147.3758356-1-thierry.reding@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F53523B63F
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 22:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752099804; cv=fail; b=PuQYand82d/cWNN1RJsBqV63KYhP/PtI8qb7R9Bm2iqT6V7VwHpOj4w9nBi7MBSE09hiVmmBrvLC+Y9GCslfUgSF6Xqo1DW6a5ZECp73H8XkkLQaq4FeW3AuOdpVaYLXFMn2X0Z4lk1FOs/MKSvvwPuifJdluCCCwGMfCLsFXK4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752099804; c=relaxed/simple;
+	bh=hnXmDTAgZKD/zfII81NG8erH2aGEGq+87aq+N+cIjuM=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=EgllF9U3/U52P8xY+x5QlTs4NzWRO6EmYdyEzqILKjNeHWz0Emitu/qGiuvOdyiIThG4qo8ufIFERvCVrRQKrVgRYStQ9BqkebZMtnQk5iqWaQd5yKiWY+5bG8PmA6A+LlLte+uW7EWmnuWC+SttnecH4Ivn/dwKMLUEkiVZjg0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DdVltL8K; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752099803; x=1783635803;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=hnXmDTAgZKD/zfII81NG8erH2aGEGq+87aq+N+cIjuM=;
+  b=DdVltL8KEfDFU2kYwWLauHd4ZE2tx2gFgeLaB4t/kCEbk5F4GNeHkXew
+   c43PC60Oocf3drNJbPhlXsrSfwizGIdAmMHCiSKXB67Vqx7vEOr/V9lJZ
+   F6ueJQR92VFWTGlFcn3s2Zj9wLUJKTXevb7po65bdQeNLR/gpaNcqiwy5
+   mv/Pe240lciM9Ox4uZ4qyur9iW3Y3eDeQCc5FsV3xJm1Awkrtos3EERUX
+   2umpisrAtq4RISGeDHLAEtzrrWDvtGMzGpslU/HsyynzXwF0KDUW8ifOi
+   f607gP8r20yHz2rSm+8OkAnei3Uv3RlePzXG/6KyZS65y9QqDCkne8Hg6
+   g==;
+X-CSE-ConnectionGUID: MP7JTd1MR7aOxfT+HTQ9wg==
+X-CSE-MsgGUID: H6iMxBGfTUC/h4h/B6sk0w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="79810443"
+X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
+   d="scan'208";a="79810443"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 15:23:23 -0700
+X-CSE-ConnectionGUID: Dx9h1FY+TdiZuftP+ZAIrA==
+X-CSE-MsgGUID: PfsY7qbiS1WTpFqNGADF6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
+   d="scan'208";a="160168682"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 15:23:22 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 9 Jul 2025 15:23:21 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Wed, 9 Jul 2025 15:23:21 -0700
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (40.107.101.80)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 9 Jul 2025 15:23:21 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RbvvX67uNDLqcMXHRODXxzEVx26drnuS8HSpZkHr2KgMV9vKDMvShHBMsmWr90WqSEUUm04rt+ijXIf1SRZy7SBOvT8GwyjDL72O+kceSRwjwG+prrNVtuZ2Bwt3gbpuNVyyuJ48ed+EGcQH/PyGJVfXt0hOuXMUASh8rWTQUqfCto9S3yuFWVxan17tAuyiXw9iQ7edfKjZWRc419GugbM6oFeaL6QdTqY7YSmY17X4abuLf58Ef2cAF6FPGxC7UZNQz7FAgiJjC+JEVSKpCzmg3iImjtQ3+nyRc65/t+F4YtT59GaEguptJNjzz+J9izEw6Ng4qRbZmz+ZestTRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/DIJs8QgHcwiuJKJ86M2ptibt2dN7vkiE1d8Qm9TsW0=;
+ b=XQpMWkFl7OQ//hUYIB00t+KfBoTxN3vleASgvMjLn2DahMvRfmxMSD/A2jy6f4Ya/tr2k6WV8PrKqe7yVrwGUn4KvTcktFSjECZ5BR9BB0nmL+/iG02XkeNZMvxJ5JcdXbhIZ2IQqV5atien5s7KhtLEdgqP5jJNduXh3UmKaK668xV8XdNzyjoG1tjyfy3Az8qX2kOfedo3IBEOebWodivEXCIT8MplAAvQQUa5c9MJZp6VQc5kNHjnliWD8l7WGJvOpNm04GntSqHPVhmx4Wvf0DaLC9KuD+ixf8V0WEC0CibcWEX2RyfH8TjIn1zWCCOW4y0PB2usJCVs2dnP2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by BL3PR11MB6313.namprd11.prod.outlook.com (2603:10b6:208:3b0::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Wed, 9 Jul
+ 2025 22:22:31 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%6]) with mapi id 15.20.8901.018; Wed, 9 Jul 2025
+ 22:22:31 +0000
+Message-ID: <24d61637-cfd7-414b-899f-856c9863dc1f@intel.com>
+Date: Wed, 9 Jul 2025 15:22:29 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 29/30] x86/resctrl: Add debug info/PERF_PKG_MON/status
+ files
+To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
+ Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
+	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
+	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
+	<Dave.Martin@arm.com>, Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	Chen Yu <yu.c.chen@intel.com>
+CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+References: <20250626164941.106341-1-tony.luck@intel.com>
+ <20250626164941.106341-30-tony.luck@intel.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <20250626164941.106341-30-tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0305.namprd03.prod.outlook.com
+ (2603:10b6:303:dd::10) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|BL3PR11MB6313:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3cd1ef9a-4efb-4bfd-5a8d-08ddbf37189d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?WFlmbmZ2Q29DUkU2VlFJR3hkcmFaOWI0ZU03TG9CQklHMG01a3ZHMkdKRzgr?=
+ =?utf-8?B?NFcwa1BnbFdRbldNdGRVczdsdCtib3cwU0xocmJMRTdIc2F4dlNPb2ZaNTlK?=
+ =?utf-8?B?ZktDb3RVa1BvU3E3NFdlWjkxdW5rKzEycWdiZEdiS2FsVXYzTGtGSDYzOGhG?=
+ =?utf-8?B?aGhBNkdWOEg5STdpM2Y0UXc5dmN6aXZMUHFOcFZSOStnTFZvS2wzakt5YmlV?=
+ =?utf-8?B?cUN4MVdUY29sQUNraU90aWJwM0tUclVZV3ZjRDQ2QnY5bmdEQzk0VkZ6UGNN?=
+ =?utf-8?B?S24zQ0dpemt0a3VycThjV25jajdkc3BJT0drTDFib3JFS2kwdFJ2cmZvRTJo?=
+ =?utf-8?B?QmlpRzhDWnFmMUNuMFBZV0s3WURhWXFQQzNwd1NRSGsvZXFoT1pmZy9BTmxx?=
+ =?utf-8?B?RWpMVzZ1bExqaGhBWXJOMHVPV2hiV2FBUVJhTUJYUDVFVXBDN1duZTdPZThU?=
+ =?utf-8?B?YjVMamphdmhLRGdyT0wra29UZUZYWS9CK2M4OFBtbnhwcHhOY2NOem9lcVFN?=
+ =?utf-8?B?eDE3LytJMUJvTTcvVzV6a2RJWjJPQllCUW1wVXRUSGVlZk9lWjUvOERYVy9B?=
+ =?utf-8?B?TTlYUFVudWxWUGVUcGxtREx3Q0VqT2c0SHBlMDd0bFV5RXpndUF4cTB3a1I2?=
+ =?utf-8?B?QlQ4UkpYUUNGUnVhODFtOW5NU00zeWpvU3VNRW9mNjVBTUp5UUZZZXB5RUxL?=
+ =?utf-8?B?UTltRlpVNE41dXEzVndTSWNLczdSeFhiZVBZelV4bHVpRGRkdDZVR3dML21D?=
+ =?utf-8?B?aDVjdFFLRThWTWxITGFOVFZ0bllrTlc4VGgwQW45QVhrclFwejZsL2pZZ1Fl?=
+ =?utf-8?B?WUwvNWs2YjUxWUROWFFrVnl3ZGVoOWhHMWhVV3E4NmQ2TkhHTTE1U0UwNkIv?=
+ =?utf-8?B?bnRSUFVQUlJCNmR5ZnRjU0d0MFdwWngyaG5tajhKWldJWCtqcWhDdlBGRUU1?=
+ =?utf-8?B?ay9XbW83cVNyb2tLYms1WEg4djRYaHJyblcxRzVqY3oyblV1RVhhTVpsWnRW?=
+ =?utf-8?B?dUxnV25rWHNESDl1R1RrNXpZN0t1UFA0enVFVFhLZHF2eU9EZGhmN044ZHU4?=
+ =?utf-8?B?OUNGN0NYd0tkK3huS3JyNWFwMUw0cjRMRHNyRGYzeVdMclE4Vjd0VnZrbDYy?=
+ =?utf-8?B?YjRhUG9hRzJDd241Wmt3US9md0Erdm1DeGhER3BVbVpTMnR6NnVBN3R0QjJQ?=
+ =?utf-8?B?dWxtdDFoVjc1Uk9hK3kybVZWTkpMNllSMFJxaDhTOTBWMEdhZG5aWUFsYWJ0?=
+ =?utf-8?B?cU9qa0EzZzFZM09ORzJSemFKemxDTUN1dGxoZTJ6N3dUTHZmc2JBTXNCa0lR?=
+ =?utf-8?B?cTJKTXRvaEQzeCtSVHE1MzIxaVpuc1AzTSs3U0ZPUk13NUlCZW5GRHcvbGY2?=
+ =?utf-8?B?dzFCYWVXeGliQks0U0xqaFBlakZMM09tN1FMcGs2S0FkQklGMU1DSkRvUDF2?=
+ =?utf-8?B?ajUxeWZyamhJZTBTbldjTk1JeVpZRkVFa202TW4vMEprYXdmMmRMbWV2M0Jx?=
+ =?utf-8?B?U2tnLzFnY25aN05rSmR1N2k5VzlkbENFVWczUGprRUx4aWlBWGhBSUNHaHdo?=
+ =?utf-8?B?S21JbkJMRFFSSTBHKzZUSlpXU1R1SE9kQS8zUjhzeUM4UkdtSFJwM0xqSDJQ?=
+ =?utf-8?B?ZlVPV2FDbTdjb052Yk5QZDg4NExFSVZ4aFdzaExsSUxaRzhuVmc3aksxcFBR?=
+ =?utf-8?B?ajM2Q3pBUVlYTFF3T3g3MEtZWU9IOUlDZ3FsaXlIN1hVUU45bEt0UDBwcFVh?=
+ =?utf-8?B?YVcxRGlzL3RHc0o5SldlMmhLNFNJbVNXR3VKeWNLRms4M2V0QnNUVVVBTlAr?=
+ =?utf-8?B?d01PdXJTUlFTeXFlaDRBc0FYTHcwQUExL2RiMm1FenY1SDZ3aFRITW82L1p1?=
+ =?utf-8?B?UlRwamlkU1RBODc5Ulgwa1M2RG16NU9vRS9ySmcrQVQ4RnhDK29vd3lZeWZu?=
+ =?utf-8?B?b0FFU0RCUGk0UVo1UUFmZFNsWFNPS044dXdJVTMyNlpGcUJaU3RtYVFLcU1l?=
+ =?utf-8?B?S1hndzNLWmtBPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZnJRbjdKVE9oS2R4QUgrVHZyYnpVTkdOUkNscUY4MmVLSWFTdFBhTnAxUWFW?=
+ =?utf-8?B?a2g3SlR6b2FDK0pYSk44KzcyN1hLbzE4b3I0M1JYRlJIc1RzUENxdEZETU40?=
+ =?utf-8?B?MTNGdHNDWlRYSHdURStDNlMyUFBFSGx2V3BEbFFCSHVyeG1Wdm0vb3FEcyta?=
+ =?utf-8?B?TDloaFdoVnkvU2VXQ3FRb3d1c0w1YmFjWUdDL3o3aDlET1VNVEh1Y3dPZHdi?=
+ =?utf-8?B?SGpER3JWUk1lWFZTZUx5UnEzQWtNNkRiVXFiTUFhcVRkdGVpYmJaU3hObHhK?=
+ =?utf-8?B?cWRNWUVmVC9zSjlMRktwdlhrRnJ2ZFBFWVBVSWUybWVYSGJ3K29oeGJidHRY?=
+ =?utf-8?B?UTZ3QjBUSUZCWW5oeXdIR1hLYlRiL2JDSnJTY1ZTTWxzbGMycHRuZm5SQWxn?=
+ =?utf-8?B?WTFLeG16VkZzOFVydXNkZjVFYldrSmgwUFNrQTBUZDhmdllsdVBIRi83YVda?=
+ =?utf-8?B?MGlMMmxxZmJ5bzR3ZENQTGw0S0xaaHF6MEZPZWtZWlBtNkNxWDVoUFVHN2lo?=
+ =?utf-8?B?L3B6QTZqNFJ3emRsdGUxbHVoT3lNcTJzODFER0hiRUdNMFhiV1RiSHJkaWQr?=
+ =?utf-8?B?b25rN1ZaNEVEUHQzU2F4VHBDZlVodVl3YmZ5ZGxrUmVpL2VNVDcrZW5WUEk1?=
+ =?utf-8?B?VlYvUGtQNnFZUjhVTDdpRFQ4RWEzR1BMS2JiK2xFZ0FHd3lOUVRKRGdVUm9Y?=
+ =?utf-8?B?OS8rNEdTNFZ2OVYzdWJpRGNTeGlPWlJVV3hVMVFLRTM4blZhb0ptNDJ4cEwr?=
+ =?utf-8?B?MHp1S2dLL0IvTHliTzg4QmtqUUloazgvZWZudlk5VzgxUFhaeEtjQkZFKzZy?=
+ =?utf-8?B?MDdDa3dteG1iUFo4aXhsK09Wd1hXSFd1aW9wdUUwa24zQXc5T2UvWCtJeWpR?=
+ =?utf-8?B?VG9vZHljaVZkWlNqM3JKTHNhVjZvZUxoZ1FUS3I2aVZwdjlpQ1gycU02Qzlk?=
+ =?utf-8?B?c01pQUFIeHh0eW5SZld0amZsZXVQVkJEM3dNSFVDTlpaajM0T0Jmc25RZVFl?=
+ =?utf-8?B?ZHhIaXRVcXpSNUZHWkZJVjZjSDNNVGRKaEMxbmRyNVNqQ0ZiOXhmd01xQVZK?=
+ =?utf-8?B?U0tOK2ZrcGhWRC9YUHdEUzB6MkhFVnRSc0dWaUpiMERTM0RUZHhEV1IramVY?=
+ =?utf-8?B?ZEFEeXZTZnJzOUpUUm12ek1HSGlwNXcrc1M3UmtMMHVvaXZ3MDAwUkZTWGtG?=
+ =?utf-8?B?L1dKMXZTQ3dGWVRNaFFxRjltRTdEWGNEc2x3VTc1cWNrSGhFZUZXQlpBazJ2?=
+ =?utf-8?B?Y3JpSGFpL1g2ZSs0bWxidWlNd0xtSXV2K3hTMW5ZOWh5K0dnakpySVJpbWNv?=
+ =?utf-8?B?cmtCR29hYlA5QVJDMzVnM3BNZnliSzd0cGIyNUpacXBxK3FYUWsxS0RBU0Ry?=
+ =?utf-8?B?Qi9xVyttaFhYMUFHWGc1Z2FYNkRPUGVrTENUK1paWHN3dDhIdUYyVWM3OXN5?=
+ =?utf-8?B?c0tmczZiazdDd0NBcjUvQkw2TXJnOXVJbWNidGpyemtPZHdtNVZ0SXQycDY3?=
+ =?utf-8?B?RHFqVXJXaXBXM0dYemx6YkVERzE5cGk3ZXlRL1IrbTkvVTg3ZFZvalF3cElB?=
+ =?utf-8?B?dW9JL2pOMlUreHVKaGdKZkorODZoWmx5Tjk5em9CcW9OUlN6a21WMU9USitw?=
+ =?utf-8?B?c3lvZ2ZrQnVyUUg4UFRPVmhSVE1IOVVzTG5BM2FVMmhzenhicVY4djdndXph?=
+ =?utf-8?B?ZDc5KytQM0RidUx3Wm80elBGK2VPSkZmWXNsWGxXeS9BUXJTNDBpc1hDczBZ?=
+ =?utf-8?B?QUtCc2swOTFwdUVuVmJ3UUxmZW1vQmNhNFFCdGd1SWtRMWphNERSNzZIUWg5?=
+ =?utf-8?B?Z0hjQjdCZEJJNU1SOCtJT1Nja3Y0Q1RKNDdab3NQclpOdXRBdFJBbmVKSWh5?=
+ =?utf-8?B?Ujdld0hIczJLZEJOTDZtdW5hUGpiUTZHMWk2TDYycWtSbUJvVjN4NlNjdjYr?=
+ =?utf-8?B?blNVd0tUS01PaTJUVFhEdndEUXJKT0RpbGNDOFpOemdVeHFBbDdicVZraGRK?=
+ =?utf-8?B?OHZoV2ZTTXdtdzlvQW1WNHQ1cXgydXFLSTQ0YWNtZWJjZ3UxU3A2UFYxSVVD?=
+ =?utf-8?B?Y0JZU1JVMGs1R1FzYnJROHVua09rcnNud3lGd2lFeTNPZS9nWkF2ZFNTOVE0?=
+ =?utf-8?B?SUY0QW9DeE53Q3NjWjlINGdWcTVaRWJCSTBhcEcxTkQ4bFgzbmU5UkwrSnJw?=
+ =?utf-8?B?OFE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3cd1ef9a-4efb-4bfd-5a8d-08ddbf37189d
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 22:22:31.5165
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fthMWvlUz4//65ayHfJQ2Bde0m6yvRb9uAtLx+tzxGorCXzYIp6bcZeP6fPbxJ4XT3ZoJxTAkixKgwsBN/30ArnGayqSFeife1FJdWqpErA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR11MB6313
+X-OriginatorOrg: intel.com
 
-From: Sumit Gupta <sumitg@nvidia.com>
+Hi Tony,
 
-Add support to enable Memory Controller (MC) and External Memory
-Controller (EMC) drivers for Tegra264. The nodes for MC and EMC are
-mostly the same as Tegra234 but differ in number of channels and
-interrupt numbers.
+Subject needs an update?
 
-The patch also adds the bandwidth manager definitions required for
-Tegra264 and uses them to populate the memory client table. All of
-these are needed to properly enable memory interconnect (ICC) support.
+On 6/26/25 9:49 AM, Tony Luck wrote:
+> Each telemetry aggregator provides three status registers at the top
+> end of MMIO space after all the per-RMID per-event counters:
+> 
+>   agg_data_loss_count: This counts the number of times that this aggregator
+>   failed to accumulate a counter value supplied by a CPU core.
+> 
+>   agg_data_loss_timestamp: This is a "timestamp" from a free running
+>   25MHz uncore timer indicating when the most recent data loss occurred.
+> 
+>   last_update_timestamp: Another 25MHz timestamp indicating when the
+>   most recent counter update was successfully applied.
+> 
+> Create files in /sys/kernel/debug/resctrl/info/PERF_PKG_MON/arch/
 
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/memory/tegra/Makefile         |   2 +
- drivers/memory/tegra/mc.c             |   5 +-
- drivers/memory/tegra/mc.h             |   9 +-
- drivers/memory/tegra/tegra186-emc.c   |   5 +-
- drivers/memory/tegra/tegra186.c       |  17 +-
- drivers/memory/tegra/tegra264-bwmgr.h |  50 ++++
- drivers/memory/tegra/tegra264.c       | 313 ++++++++++++++++++++++++++
- 7 files changed, 395 insertions(+), 6 deletions(-)
- create mode 100644 drivers/memory/tegra/tegra264-bwmgr.h
- create mode 100644 drivers/memory/tegra/tegra264.c
+"/sys/kernel/debug/resctrl/info/PERF_PKG_MON/{arch}/" or
+"/sys/kernel/debug/resctrl/info/PERF_PKG_MON/x86_64/"?
 
-diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
-index 0750847dac3c..6334601e6120 100644
---- a/drivers/memory/tegra/Makefile
-+++ b/drivers/memory/tegra/Makefile
-@@ -10,6 +10,7 @@ tegra-mc-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210.o
- tegra-mc-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186.o
- tegra-mc-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra186.o tegra194.o
- tegra-mc-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra186.o tegra234.o
-+tegra-mc-$(CONFIG_ARCH_TEGRA_264_SOC) += tegra186.o tegra264.o
- 
- obj-$(CONFIG_TEGRA_MC) += tegra-mc.o
- 
-@@ -21,5 +22,6 @@ obj-$(CONFIG_TEGRA210_EMC) += tegra210-emc.o
- obj-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186-emc.o
- obj-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra186-emc.o
- obj-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra186-emc.o
-+obj-$(CONFIG_ARCH_TEGRA_264_SOC) += tegra186-emc.o
- 
- tegra210-emc-y := tegra210-emc-core.o tegra210-emc-cc-r21021.o
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index bd5b58f1fd42..6edb210287dc 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) 2014 NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (C) 2014-2025 NVIDIA CORPORATION.  All rights reserved.
-  */
- 
- #include <linux/clk.h>
-@@ -48,6 +48,9 @@ static const struct of_device_id tegra_mc_of_match[] = {
- #endif
- #ifdef CONFIG_ARCH_TEGRA_234_SOC
- 	{ .compatible = "nvidia,tegra234-mc", .data = &tegra234_mc_soc },
-+#endif
-+#ifdef CONFIG_ARCH_TEGRA_264_SOC
-+	{ .compatible = "nvidia,tegra264-mc", .data = &tegra264_mc_soc },
- #endif
- 	{ /* sentinel */ }
- };
-diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
-index c3f6655bec60..1d97cf4d3a94 100644
---- a/drivers/memory/tegra/mc.h
-+++ b/drivers/memory/tegra/mc.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * Copyright (C) 2014 NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (C) 2014-2025 NVIDIA CORPORATION.  All rights reserved.
-  */
- 
- #ifndef MEMORY_TEGRA_MC_H
-@@ -182,6 +182,10 @@ extern const struct tegra_mc_soc tegra194_mc_soc;
- extern const struct tegra_mc_soc tegra234_mc_soc;
- #endif
- 
-+#ifdef CONFIG_ARCH_TEGRA_264_SOC
-+extern const struct tegra_mc_soc tegra264_mc_soc;
-+#endif
-+
- #if defined(CONFIG_ARCH_TEGRA_3x_SOC) || \
-     defined(CONFIG_ARCH_TEGRA_114_SOC) || \
-     defined(CONFIG_ARCH_TEGRA_124_SOC) || \
-@@ -193,7 +197,8 @@ extern const struct tegra_mc_ops tegra30_mc_ops;
- 
- #if defined(CONFIG_ARCH_TEGRA_186_SOC) || \
-     defined(CONFIG_ARCH_TEGRA_194_SOC) || \
--    defined(CONFIG_ARCH_TEGRA_234_SOC)
-+    defined(CONFIG_ARCH_TEGRA_234_SOC) || \
-+    defined(CONFIG_ARCH_TEGRA_264_SOC)
- extern const struct tegra_mc_ops tegra186_mc_ops;
- #endif
- 
-diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
-index bc807d7fcd4e..d6cd90c7ad53 100644
---- a/drivers/memory/tegra/tegra186-emc.c
-+++ b/drivers/memory/tegra/tegra186-emc.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) 2019 NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (C) 2019-2025 NVIDIA CORPORATION.  All rights reserved.
-  */
- 
- #include <linux/clk.h>
-@@ -393,6 +393,9 @@ static const struct of_device_id tegra186_emc_of_match[] = {
- #endif
- #if defined(CONFIG_ARCH_TEGRA_234_SOC)
- 	{ .compatible = "nvidia,tegra234-emc" },
-+#endif
-+#if defined(CONFIG_ARCH_TEGRA_264_SOC)
-+	{ .compatible = "nvidia,tegra264-emc" },
- #endif
- 	{ /* sentinel */ }
- };
-diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
-index 1b3183951bfe..aee11457bf8e 100644
---- a/drivers/memory/tegra/tegra186.c
-+++ b/drivers/memory/tegra/tegra186.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) 2017-2021 NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (C) 2017-2025 NVIDIA CORPORATION.  All rights reserved.
-  */
- 
- #include <linux/io.h>
-@@ -26,11 +26,24 @@
- static int tegra186_mc_probe(struct tegra_mc *mc)
- {
- 	struct platform_device *pdev = to_platform_device(mc->dev);
-+	struct resource *res;
- 	unsigned int i;
- 	char name[8];
- 	int err;
- 
--	mc->bcast_ch_regs = devm_platform_ioremap_resource_byname(pdev, "broadcast");
-+	/*
-+	 * From Tegra264, the SID region is not present in MC node and BROADCAST is first.
-+	 * The common function 'tegra_mc_probe()' already maps first region entry from DT.
-+	 * Check if the SID region is present in DT then map BROADCAST. Otherwise, consider
-+	 * the first entry mapped in mc probe as the BROADCAST region. This is done to avoid
-+	 * mapping the region twice when SID is not present and keep backward compatibility.
-+	 */
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sid");
-+	if (res)
-+		mc->bcast_ch_regs = devm_platform_ioremap_resource_byname(pdev, "broadcast");
-+	else
-+		mc->bcast_ch_regs = mc->regs;
-+
- 	if (IS_ERR(mc->bcast_ch_regs)) {
- 		if (PTR_ERR(mc->bcast_ch_regs) == -EINVAL) {
- 			dev_warn(&pdev->dev,
-diff --git a/drivers/memory/tegra/tegra264-bwmgr.h b/drivers/memory/tegra/tegra264-bwmgr.h
-new file mode 100644
-index 000000000000..93bfceaac9c8
---- /dev/null
-+++ b/drivers/memory/tegra/tegra264-bwmgr.h
-@@ -0,0 +1,50 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/* Copyright (C) 2025 NVIDIA CORPORATION.  All rights reserved. */
-+
-+#ifndef MEMORY_TEGRA_TEGRA264_BWMGR_H
-+#define MEMORY_TEGRA_TEGRA264_BWMGR_H
-+
-+#define TEGRA264_BWMGR_ICC_PRIMARY	1
-+#define TEGRA264_BWMGR_DEBUG		2
-+#define TEGRA264_BWMGR_CPU_CLUSTER0	3
-+#define TEGRA264_BWMGR_CPU_CLUSTER1	4
-+#define TEGRA264_BWMGR_CPU_CLUSTER2	5
-+#define TEGRA264_BWMGR_CPU_CLUSTER3	6
-+#define TEGRA264_BWMGR_CPU_CLUSTER4	7
-+#define TEGRA264_BWMGR_CPU_CLUSTER5	8
-+#define TEGRA264_BWMGR_CPU_CLUSTER6	9
-+#define TEGRA264_BWMGR_CACTMON		10
-+#define TEGRA264_BWMGR_DISPLAY		11
-+#define TEGRA264_BWMGR_VI		12
-+#define TEGRA264_BWMGR_APE		13
-+#define TEGRA264_BWMGR_VIFAL		14
-+#define TEGRA264_BWMGR_GPU		15
-+#define TEGRA264_BWMGR_EQOS		16
-+#define TEGRA264_BWMGR_PCIE_0		17
-+#define TEGRA264_BWMGR_PCIE_1		18
-+#define TEGRA264_BWMGR_PCIE_2		19
-+#define TEGRA264_BWMGR_PCIE_3		20
-+#define TEGRA264_BWMGR_PCIE_4		21
-+#define TEGRA264_BWMGR_PCIE_5		22
-+#define TEGRA264_BWMGR_SDMMC_1		23
-+#define TEGRA264_BWMGR_SDMMC_2		24
-+#define TEGRA264_BWMGR_NVDEC		25
-+#define TEGRA264_BWMGR_NVENC		26
-+#define TEGRA264_BWMGR_NVJPG_0		27
-+#define TEGRA264_BWMGR_NVJPG_1		28
-+#define TEGRA264_BWMGR_OFAA		29
-+#define TEGRA264_BWMGR_XUSB_HOST	30
-+#define TEGRA264_BWMGR_XUSB_DEV		31
-+#define TEGRA264_BWMGR_TSEC		32
-+#define TEGRA264_BWMGR_VIC		33
-+#define TEGRA264_BWMGR_APEDMA		34
-+#define TEGRA264_BWMGR_SE		35
-+#define TEGRA264_BWMGR_ISP		36
-+#define TEGRA264_BWMGR_HDA		37
-+#define TEGRA264_BWMGR_VI2FAL		38
-+#define TEGRA264_BWMGR_VI2		39
-+#define TEGRA264_BWMGR_RCE		40
-+#define TEGRA264_BWMGR_PVA		41
-+#define TEGRA264_BWMGR_NVPMODEL		42
-+
-+#endif
-diff --git a/drivers/memory/tegra/tegra264.c b/drivers/memory/tegra/tegra264.c
-new file mode 100644
-index 000000000000..5203e6c11372
---- /dev/null
-+++ b/drivers/memory/tegra/tegra264.c
-@@ -0,0 +1,313 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2025, NVIDIA CORPORATION.  All rights reserved.
-+ */
-+
-+#include <dt-bindings/memory/nvidia,tegra264.h>
-+
-+#include <linux/interconnect.h>
-+#include <linux/of_device.h>
-+#include <linux/tegra-icc.h>
-+
-+#include <soc/tegra/bpmp.h>
-+#include <soc/tegra/mc.h>
-+
-+#include "mc.h"
-+#include "tegra264-bwmgr.h"
-+
-+/*
-+ * MC Client entries are sorted in the increasing order of the
-+ * override and security register offsets.
-+ */
-+static const struct tegra_mc_client tegra264_mc_clients[] = {
-+	{
-+		.id = TEGRA264_MEMORY_CLIENT_HDAR,
-+		.name = "hdar",
-+		.bpmp_id = TEGRA264_BWMGR_HDA,
-+		.type = TEGRA_ICC_ISO_AUDIO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_HDAW,
-+		.name = "hdaw",
-+		.bpmp_id = TEGRA264_BWMGR_HDA,
-+		.type = TEGRA_ICC_ISO_AUDIO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_MGBE0R,
-+		.name = "mgbe0r",
-+		.bpmp_id = TEGRA264_BWMGR_EQOS,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_MGBE0W,
-+		.name = "mgbe0w",
-+		.bpmp_id = TEGRA264_BWMGR_EQOS,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_MGBE1R,
-+		.name = "mgbe1r",
-+		.bpmp_id = TEGRA264_BWMGR_EQOS,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_MGBE1W,
-+		.name = "mgbe1w",
-+		.bpmp_id = TEGRA264_BWMGR_EQOS,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_SDMMC0R,
-+		.name = "sdmmc0r",
-+		.bpmp_id = TEGRA264_BWMGR_SDMMC_1,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_SDMMC0W,
-+		.name = "sdmmc0w",
-+		.bpmp_id = TEGRA264_BWMGR_SDMMC_1,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_VICR,
-+		.name = "vicr",
-+		.bpmp_id = TEGRA264_BWMGR_VIC,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_VICW,
-+		.name = "vicw",
-+		.bpmp_id = TEGRA264_BWMGR_VIC,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_APER,
-+		.name = "aper",
-+		.bpmp_id = TEGRA264_BWMGR_APE,
-+		.type = TEGRA_ICC_ISO_AUDIO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_APEW,
-+		.name = "apew",
-+		.bpmp_id = TEGRA264_BWMGR_APE,
-+		.type = TEGRA_ICC_ISO_AUDIO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_APEDMAR,
-+		.name = "apedmar",
-+		.bpmp_id = TEGRA264_BWMGR_APEDMA,
-+		.type = TEGRA_ICC_ISO_AUDIO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_APEDMAW,
-+		.name = "apedmaw",
-+		.bpmp_id = TEGRA264_BWMGR_APEDMA,
-+		.type = TEGRA_ICC_ISO_AUDIO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_VIFALCONR,
-+		.name = "vifalconr",
-+		.bpmp_id = TEGRA264_BWMGR_VIFAL,
-+		.type = TEGRA_ICC_ISO_VIFAL,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_VIFALCONW,
-+		.name = "vifalconw",
-+		.bpmp_id = TEGRA264_BWMGR_VIFAL,
-+		.type = TEGRA_ICC_ISO_VIFAL,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_RCER,
-+		.name = "rcer",
-+		.bpmp_id = TEGRA264_BWMGR_RCE,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_RCEW,
-+		.name = "rcew",
-+		.bpmp_id = TEGRA264_BWMGR_RCE,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE0W,
-+		.name = "pcie0w",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_0,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE1R,
-+		.name = "pcie1r",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_1,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE1W,
-+		.name = "pcie1w",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_1,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE2AR,
-+		.name = "pcie2ar",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_2,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE2AW,
-+		.name = "pcie2aw",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_2,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE3R,
-+		.name = "pcie3r",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_3,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE3W,
-+		.name = "pcie3w",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_3,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE4R,
-+		.name = "pcie4r",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_4,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE4W,
-+		.name = "pcie4w",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_4,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE5R,
-+		.name = "pcie5r",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_5,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_PCIE5W,
-+		.name = "pcie5w",
-+		.bpmp_id = TEGRA264_BWMGR_PCIE_5,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_GPUR02MC,
-+		.name = "gpur02mc",
-+		.bpmp_id = TEGRA264_BWMGR_GPU,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_GPUW02MC,
-+		.name = "gpuw02mc",
-+		.bpmp_id = TEGRA264_BWMGR_GPU,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_NVDECSRD2MC,
-+		.name = "nvdecsrd2mc",
-+		.bpmp_id = TEGRA264_BWMGR_NVDEC,
-+		.type = TEGRA_ICC_NISO,
-+	}, {
-+		.id = TEGRA264_MEMORY_CLIENT_NVDECSWR2MC,
-+		.name = "nvdecswr2mc",
-+		.bpmp_id = TEGRA264_BWMGR_NVDEC,
-+		.type = TEGRA_ICC_NISO,
-+	},
-+};
-+
-+/*
-+ * tegra264_mc_icc_set() - Pass MC client info to the BPMP-FW
-+ * @src: ICC node for Memory Controller's (MC) Client
-+ * @dst: ICC node for Memory Controller (MC)
-+ *
-+ * Passing the current request info from the MC to the BPMP-FW where
-+ * LA and PTSA registers are accessed and the final EMC freq is set
-+ * based on client_id, type, latency and bandwidth.
-+ * icc_set_bw() makes set_bw calls for both MC and EMC providers in
-+ * sequence. Both the calls are protected by 'mutex_lock(&icc_lock)'.
-+ * So, the data passed won't be updated by concurrent set calls from
-+ * other clients.
-+ */
-+static int tegra264_mc_icc_set(struct icc_node *src, struct icc_node *dst)
-+{
-+	struct tegra_mc *mc = icc_provider_to_tegra_mc(dst->provider);
-+	struct mrq_bwmgr_int_request bwmgr_req = { 0 };
-+	struct mrq_bwmgr_int_response bwmgr_resp = { 0 };
-+	const struct tegra_mc_client *pclient = src->data;
-+	struct tegra_bpmp_message msg;
-+	int ret;
-+
-+	/*
-+	 * Same Src and Dst node will happen during boot from icc_node_add().
-+	 * This can be used to pre-initialize and set bandwidth for all clients
-+	 * before their drivers are loaded. We are skipping this case as for us,
-+	 * the pre-initialization already happened in Bootloader(MB2) and BPMP-FW.
-+	 */
-+	if (src->id == dst->id)
-+		return 0;
-+
-+	if (!mc->bwmgr_mrq_supported)
-+		return 0;
-+
-+	if (!mc->bpmp) {
-+		dev_err(mc->dev, "BPMP reference NULL\n");
-+		return -ENOENT;
-+	}
-+
-+	if (pclient->type == TEGRA_ICC_NISO)
-+		bwmgr_req.bwmgr_calc_set_req.niso_bw = src->avg_bw;
-+	else
-+		bwmgr_req.bwmgr_calc_set_req.iso_bw = src->avg_bw;
-+
-+	bwmgr_req.bwmgr_calc_set_req.client_id = pclient->bpmp_id;
-+
-+	bwmgr_req.cmd = CMD_BWMGR_INT_CALC_AND_SET;
-+	bwmgr_req.bwmgr_calc_set_req.mc_floor = src->peak_bw;
-+	bwmgr_req.bwmgr_calc_set_req.floor_unit = BWMGR_INT_UNIT_KBPS;
-+
-+	memset(&msg, 0, sizeof(msg));
-+	msg.mrq = MRQ_BWMGR_INT;
-+	msg.tx.data = &bwmgr_req;
-+	msg.tx.size = sizeof(bwmgr_req);
-+	msg.rx.data = &bwmgr_resp;
-+	msg.rx.size = sizeof(bwmgr_resp);
-+
-+	ret = tegra_bpmp_transfer(mc->bpmp, &msg);
-+	if (ret < 0) {
-+		dev_err(mc->dev, "BPMP transfer failed: %d\n", ret);
-+		goto error;
-+	}
-+	if (msg.rx.ret < 0) {
-+		pr_err("failed to set bandwidth for %u: %d\n",
-+		       bwmgr_req.bwmgr_calc_set_req.client_id, msg.rx.ret);
-+		ret = -EINVAL;
-+	}
-+
-+error:
-+	return ret;
-+}
-+
-+static int tegra264_mc_icc_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
-+				     u32 peak_bw, u32 *agg_avg, u32 *agg_peak)
-+{
-+	struct icc_provider *p = node->provider;
-+	struct tegra_mc *mc = icc_provider_to_tegra_mc(p);
-+
-+	if (!mc->bwmgr_mrq_supported)
-+		return 0;
-+
-+	*agg_avg += avg_bw;
-+	*agg_peak = max(*agg_peak, peak_bw);
-+
-+	return 0;
-+}
-+
-+static int tegra264_mc_icc_get_init_bw(struct icc_node *node, u32 *avg, u32 *peak)
-+{
-+	*avg = 0;
-+	*peak = 0;
-+
-+	return 0;
-+}
-+
-+static const struct tegra_mc_icc_ops tegra264_mc_icc_ops = {
-+	.xlate = tegra_mc_icc_xlate,
-+	.aggregate = tegra264_mc_icc_aggregate,
-+	.get_bw = tegra264_mc_icc_get_init_bw,
-+	.set = tegra264_mc_icc_set,
-+};
-+
-+const struct tegra_mc_soc tegra264_mc_soc = {
-+	.num_clients = ARRAY_SIZE(tegra264_mc_clients),
-+	.clients = tegra264_mc_clients,
-+	.num_address_bits = 40,
-+	.num_channels = 16,
-+	.client_id_mask = 0x1ff,
-+	.intmask = MC_INT_DECERR_ROUTE_SANITY |
-+		   MC_INT_DECERR_GENERALIZED_CARVEOUT | MC_INT_DECERR_MTS |
-+		   MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
-+		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
-+	.has_addr_hi_reg = true,
-+	.ops = &tegra186_mc_ops,
-+	.icc_ops = &tegra264_mc_icc_ops,
-+	.ch_intmask = 0x0000ff00,
-+	.global_intstatus_channel_shift = 8,
-+	/*
-+	 * Additionally, there are lite carveouts but those are not currently
-+	 * supported.
-+	 */
-+	.num_carveouts = 32,
-+};
--- 
-2.50.0
+> to display the value of each of these status registers for each aggregator
+> in each enabled event group.
+> 
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> ---
+>  arch/x86/kernel/cpu/resctrl/intel_aet.c | 56 +++++++++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/resctrl/intel_aet.c b/arch/x86/kernel/cpu/resctrl/intel_aet.c
+> index 090e7b35c3e2..422e3e126255 100644
+> --- a/arch/x86/kernel/cpu/resctrl/intel_aet.c
+> +++ b/arch/x86/kernel/cpu/resctrl/intel_aet.c
+> @@ -13,6 +13,7 @@
+>  
+>  #include <linux/cleanup.h>
+>  #include <linux/cpu.h>
+> +#include <linux/debugfs.h>
+>  #include <linux/intel_vsec.h>
+>  #include <linux/io.h>
+>  #include <linux/minmax.h>
+> @@ -275,6 +276,58 @@ static bool get_pmt_feature(enum pmt_feature_id feature)
+>  	return false;
+>  }
+>  
+> +static ssize_t status_read(struct file *f, char __user *buf, size_t count, loff_t *off)
+> +{
+> +	void __iomem *info = (void __iomem *)f->f_inode->i_private;
+> +	char status[32];
+> +	int len;
+> +
+> +	len = sprintf(status, "%llu\n", readq(info));
+> +
+> +	return simple_read_from_buffer(buf, count, off, status, len);
+> +}
+> +
+> +static const struct file_operations status_fops = {
+> +	.read = status_read
+> +};
 
+The custom seems to be to use DEFINE_SIMPLE_ATTRIBUTE() that can handle concurrent
+reads on an open file descriptor.
+
+> +
+> +static void make_status_files(struct dentry *dir, struct event_group *e, int pkg, int instance)
+> +{
+> +	void *info = (void __force *)e->pkginfo[pkg]->addrs[instance] + e->mmio_size;
+> +	char name[64];
+> +
+> +	sprintf(name, "%s_pkg%d_agg%d_data_loss_count", e->name, pkg, instance);
+> +	debugfs_create_file(name, 0400, dir, info - 24, &status_fops);
+> +
+> +	sprintf(name, "%s_pkg%d_agg%d_data_loss_timestamp", e->name, pkg, instance);
+> +	debugfs_create_file(name, 0400, dir, info - 16, &status_fops);
+> +
+> +	sprintf(name, "%s_pkg%d_agg%d_last_update_timestamp", e->name, pkg, instance);
+> +	debugfs_create_file(name, 0400, dir, info - 8, &status_fops);
+> +}
+> +
+> +static void create_debug_event_status_files(struct dentry *dir, struct event_group *e)
+> +{
+> +	int num_pkgs = topology_max_packages();
+> +
+> +	for (int i = 0; i < num_pkgs; i++)
+> +		for (int j = 0; j < e->pkginfo[i]->num_regions; j++)
+> +			make_status_files(dir, e, i, j);
+> +}
+> +
+> +static void create_debugfs_status_file(struct rdt_resource *r)
+> +{
+> +	struct event_group **eg;
+> +	struct dentry *infodir;
+> +
+> +	infodir = resctrl_debugfs_mon_info_arch_mkdir(r);
+
+I understand that debugfs guidance is that callers should ignore errors returned by
+debugfs_create_dir(). Even so, I think it is unnecessary to do so when so much unnecessary
+work can be avoided when, for example, debugfs is disabled. I see no harm in bailing
+out here if "infodir" cannot be created. If it can be created the other debugfs calls
+are likely to succeed so further checking should not be necessary. 
+No strong objection from my side if you prefer to keep it like this ... considering that
+it is indeed following debugfs guidance.
+
+> +	for (eg = &known_event_groups[0]; eg < &known_event_groups[NUM_KNOWN_GROUPS]; eg++) {
+> +		if (!(*eg)->pfg)
+> +			continue;
+> +		create_debug_event_status_files(infodir, *eg);
+> +	}
+> +}
+> +
+>  /*
+>   * Ask OOBMSM discovery driver for all the RMID based telemetry groups
+>   * that it supports.
+> @@ -300,6 +353,9 @@ bool intel_aet_get_events(void)
+>  		r->mon_capable = true;
+>  	}
+>  
+> +	if (ret1 || ret2)
+> +		create_debugfs_status_file(r);
+> +
+>  	return ret1 || ret2;
+>  }
+>  
+
+Reinette
 
