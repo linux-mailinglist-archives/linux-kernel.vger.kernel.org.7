@@ -1,224 +1,132 @@
-Return-Path: <linux-kernel+bounces-723101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0904EAFE2EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:40:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA9CAFE2F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B386A16BD4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:40:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA5C67BC71B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139AA27E7D9;
-	Wed,  9 Jul 2025 08:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7B227E07C;
+	Wed,  9 Jul 2025 08:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UGyntLRJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JtpE+kKF"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C3E270575;
-	Wed,  9 Jul 2025 08:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12461DE4FF;
+	Wed,  9 Jul 2025 08:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752050422; cv=none; b=nc6Ij8TDNwZBRtmkN6oKgfi3VDGj4ku+E042rVR3BqML9KNf8xktpXVnKbdVmjqZuutGswj6sZmS0pMQRmoSuWX+eKgM9f9bcRBPWntBwB3NllMIDaBRd63gJ/VQmd2DgfmMqnMrogiTfHSDpT9iRFMcXQ+5j++pG02IYVUomfc=
+	t=1752050444; cv=none; b=acOq6Wxpi7FSzrQ7cvrCzNvCEO9aoHfK890SqNYa+cpq9FV1sWyAfRlT4tkOEcQ9Nw+DUBts1mn6mbEm30RwIF5dXapaqzSrf2FpamQL0kf4FRUMaMjrHcJCPxhtWKb9DlXJkiAPhVDL/lCmu3RBqMyWsL4MLx2cJxKklvTeM8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752050422; c=relaxed/simple;
-	bh=rJjvFom5kGiJovMaDBO1GA+keaiaEhwhXvL8IYaiUbc=;
+	s=arc-20240116; t=1752050444; c=relaxed/simple;
+	bh=lVmwqwXwoXoRLrgQnhk5kpKYOZmo/Np4dRqsnZuNico=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dGL/xgrTQT4guZmIamVMU9WDvufOlwytTluYUBfe8akt7RKMylaxUOkZjCEM+PE5+vT8wN4W/1b5KwarF5lnogzR87QEzS3rLhmHxPSffrMNwl31KYyXwdRsxhP/ijGlZllqOpDvsXNeKFMmt7grdRp6shTfRM/23cS6WH4keUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UGyntLRJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E896C4CEEF;
-	Wed,  9 Jul 2025 08:40:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752050421;
-	bh=rJjvFom5kGiJovMaDBO1GA+keaiaEhwhXvL8IYaiUbc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UGyntLRJ72vNQ7mcHJApcv5FnCj24vgzsvCY88BiXV7MOwa2Sbv/d7u/AJpL67tZf
-	 bMGfs7mhqK7zwcgkUX2SE9Lg2hWaKBKlhB/cCeyrVmjg3KgPVm089bXXbQFCvY871v
-	 6znt4cNM9uZZZY9MgQMzqgaNBzuhJAGQJD6sD+fA=
-Date: Wed, 9 Jul 2025 10:40:18 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v4] usb: misc: qcom_eud: Access EUD_MODE_MANAGER2 through
- secure calls
-Message-ID: <2025070909-enlighten-skilled-2c71@gregkh>
-References: <20250709065533.25724-1-komal.bajaj@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ch7RspamNvf6dcobj4ZhCb91YpH7EoJ5xvQnfEJeSQmsd33YGl4oP5xHff424yu6zD2StwpIonBUbAgrVLSjYPI4w6Q79IQebTxGJ+6HrobBErSjEAUhLR+uQJwJZIrmPmOAPCw4Dod09Zi4EBz+iPNHNxexjXg4vg9cMfkUWi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JtpE+kKF; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b3508961d43so4306750a12.3;
+        Wed, 09 Jul 2025 01:40:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752050442; x=1752655242; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lVmwqwXwoXoRLrgQnhk5kpKYOZmo/Np4dRqsnZuNico=;
+        b=JtpE+kKFlzlUdOrcCcY4sC1JVI1QiOIXwDN93UegtNukgNV/Uew4eoMW2IH2J7Cuxm
+         ldPUDJakAPFOa1nRbZ2IbipRj1RPkVg/iXBa9CPQm/CW5iLoNSCoXapx1/tmwMa7iOnW
+         RPpAdcho68cturpAr66K8/SkRSNrRbwwxmhC9yxJPAfyCCAp1zXgd6VfBZaYVfTclZyD
+         aTcqxB+VLR80XHWhWVZT8BA5aXfjqyhhkYVgYfNQgHGGbHU69axXqLpFRqt8W9GNZMhH
+         j/EBkEk7Rmq3QO5l/kZFR7c6AmcYBdn1KxO7vKdd9IEPNRWsnPf+vp/FFCXues7xs/bB
+         DU9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752050442; x=1752655242;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lVmwqwXwoXoRLrgQnhk5kpKYOZmo/Np4dRqsnZuNico=;
+        b=GKT28xvYRWOiLGvIhdbeQwEJvTcghreXugSraCIsSso7ScaXj4ppTs0fsduhgSloyc
+         NjJLmpJqNzlUO82/G9l6kIVKQZQMidXvIDA88TodH8Q5LKYxnOtR2GkBm67nt3+Ea+T7
+         5PZBbpTdkvq9tki1kawod+93R/DuE+nk4R/FlYKiqOzxIZrSsbjqsDTdQyBkbm7qoa5T
+         lfkNztjVfgEnl/IOTaYPw0dBVuUYRSFmDr6DUrOANA/Jsz5z/pECSm3Gjd9F9xM/sgMT
+         VBkUr/I2uUacUy+WWhlPghC+k3SZoybs61P4SU+qlLVUGTYHPpflZBXTXV+tYq/5AOdT
+         RPTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXVz7ArlLLh7zFMVxwEwM7vxlGTRyvVoKUu/dIRJBIZjJXtpsIQ30tkEfUSprDIq2BvFEin7TN4cQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVO460kCuY974DfYO8LwkT+RTIURpstUQZh3xuoT32IYR0hXdL
+	yHIYiOQkszgFD3BOHFSOUC9UefSoMCkzYEKUZQZP/o3CuZts4Ghhohul
+X-Gm-Gg: ASbGnctx6GlAkNcWJdbARbAsJJTxwhLjM2i85ZynNzwpU49YZww+XbQw7/IG0EBi110
+	MKT2lWMKD1i0XKkzL+IMyZycz2xxyu8PUKSNyZAYoFZTIZDVRhigQRL3iuB51YHqDnvwytKkS+f
+	i+CTGGwEGxbzfTgIcIJoPt7TkSapxhShhVleYMHgUsm9expJScFi1eW2fsedfOkct6unUrIyjHL
+	YSSlBATJ9UmNq7N2tCkgcOagvxfs64nW6gzCC5WICTMuR6zUmQeFCSxZ+6sevPVeDChqhpaKN0M
+	0tsBizISmESTdy1PCBWSIUd4NmerxBSRw5BwfBsRqvBqQeZP2aRYSQ+MOmCMOw==
+X-Google-Smtp-Source: AGHT+IGF2o8G1bwQLiGet81gBmlMfqUC632G56A4Q5MAObcKdNhxT/tUUhEvHqLItldI9q1ue2k3/Q==
+X-Received: by 2002:a17:90a:da90:b0:311:c596:5c6f with SMTP id 98e67ed59e1d1-31c2fda079amr3351553a91.17.1752050441904;
+        Wed, 09 Jul 2025 01:40:41 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c301a95ffsm1414433a91.40.2025.07.09.01.40.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 01:40:40 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id CBAAA4101950; Wed, 09 Jul 2025 15:40:36 +0700 (WIB)
+Date: Wed, 9 Jul 2025 15:40:36 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux DRI Development <dri-devel@lists.freedesktop.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Antonino Maniscalco <antomani103@gmail.com>,
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Raag Jadav <raag.jadav@intel.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] drm/gpuvm: Wrap drm_gpuvm_sm_map_exec_lock() expected
+ usage in literal code block
+Message-ID: <aG4rBBJE_KEhkAfu@archie.me>
+References: <20250709024501.9105-1-bagasdotme@gmail.com>
+ <aade485e-0880-4c68-9b37-d8a27dc122e3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wFUsWKicYRt4Gvv7"
+Content-Disposition: inline
+In-Reply-To: <aade485e-0880-4c68-9b37-d8a27dc122e3@kernel.org>
+
+
+--wFUsWKicYRt4Gvv7
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250709065533.25724-1-komal.bajaj@oss.qualcomm.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 09, 2025 at 12:25:14PM +0530, Komal Bajaj wrote:
-> EUD_MODE_MANAGER2 register is mapped to a memory region that is marked
-> as read-only for HLOS, enforcing access restrictions that prohibit
-> direct memory-mapped writes via writel().
-> 
-> Attempts to write to this region from HLOS can result in silent failures
-> or memory access violations, particularly when toggling EUD (Embedded
-> USB Debugger) state. To ensure secure register access, modify the driver
-> to use qcom_scm_io_writel(), which routes the write operation to Qualcomm
-> Secure Channel Monitor (SCM). SCM has the necessary permissions to access
-> protected memory regions, enabling reliable control over EUD state.
-> 
-> SC7280, the only user of EUD is also affected, indicating that this could
-> never have worked on a properly fused device.
-> 
-> Fixes: 9a1bf58ccd44 ("usb: misc: eud: Add driver support for Embedded USB Debugger(EUD)")
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
-> Changes in v4:
-> * Added error logging in disable_eud() for SCM write failures, per Konrad’s suggestion
-> * Link to v3: https://lore.kernel.org/all/20250708085208.19089-1-komal.bajaj@oss.qualcomm.com/
-> 
-> Changes in v3:
-> * Moved secure write before normal writes
-> * Added error checking in disable_eud()
-> * Use ENOMEM error code if platform_get_resource() fails
-> * Select QCOM_SCM driver if USB_QCOM_EUD is enabled
-> * Link to v2: https://lore.kernel.org/all/20250627125131.27606-1-komal.bajaj@oss.qualcomm.com/
-> 
-> Changes in v2:
-> * Drop separate compatible to be added for secure eud
-> * Use secure call to access EUD mode manager register
-> * Link to v1: https://lore.kernel.org/all/20240807183205.803847-1-quic_molvera@quicinc.com/
-> 
->  drivers/usb/misc/Kconfig    |  1 +
->  drivers/usb/misc/qcom_eud.c | 27 +++++++++++++++++++++------
->  2 files changed, 22 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/usb/misc/Kconfig b/drivers/usb/misc/Kconfig
-> index 6497c4e81e95..f49d5ac0e957 100644
-> --- a/drivers/usb/misc/Kconfig
-> +++ b/drivers/usb/misc/Kconfig
-> @@ -148,6 +148,7 @@ config USB_QCOM_EUD
->  	tristate "QCOM Embedded USB Debugger(EUD) Driver"
->  	depends on ARCH_QCOM || COMPILE_TEST
->  	select USB_ROLE_SWITCH
-> +	select QCOM_SCM
->  	help
->  	  This module enables support for Qualcomm Technologies, Inc.
->  	  Embedded USB Debugger (EUD). The EUD is a control peripheral
-> diff --git a/drivers/usb/misc/qcom_eud.c b/drivers/usb/misc/qcom_eud.c
-> index 83079c414b4f..a58081f53db3 100644
-> --- a/drivers/usb/misc/qcom_eud.c
-> +++ b/drivers/usb/misc/qcom_eud.c
-> @@ -15,6 +15,7 @@
->  #include <linux/slab.h>
->  #include <linux/sysfs.h>
->  #include <linux/usb/role.h>
-> +#include <linux/firmware/qcom/qcom_scm.h>
->  
->  #define EUD_REG_INT1_EN_MASK	0x0024
->  #define EUD_REG_INT_STATUS_1	0x0044
-> @@ -34,7 +35,7 @@ struct eud_chip {
->  	struct device			*dev;
->  	struct usb_role_switch		*role_sw;
->  	void __iomem			*base;
-> -	void __iomem			*mode_mgr;
-> +	phys_addr_t			mode_mgr;
->  	unsigned int			int_status;
->  	int				irq;
->  	bool				enabled;
-> @@ -43,18 +44,30 @@ struct eud_chip {
->  
->  static int enable_eud(struct eud_chip *priv)
->  {
-> +	int ret;
-> +
-> +	ret = qcom_scm_io_writel(priv->mode_mgr + EUD_REG_EUD_EN2, 1);
-> +	if (ret)
-> +		return ret;
-> +
->  	writel(EUD_ENABLE, priv->base + EUD_REG_CSR_EUD_EN);
->  	writel(EUD_INT_VBUS | EUD_INT_SAFE_MODE,
->  			priv->base + EUD_REG_INT1_EN_MASK);
-> -	writel(1, priv->mode_mgr + EUD_REG_EUD_EN2);
->  
->  	return usb_role_switch_set_role(priv->role_sw, USB_ROLE_DEVICE);
->  }
->  
->  static void disable_eud(struct eud_chip *priv)
->  {
-> +	int ret;
-> +
-> +	ret = qcom_scm_io_writel(priv->mode_mgr + EUD_REG_EUD_EN2, 0);
-> +	if (ret) {
-> +		dev_err(priv->dev, "failed to disable eud\n");
-> +		return;
-> +	}
-> +
->  	writel(0, priv->base + EUD_REG_CSR_EUD_EN);
-> -	writel(0, priv->mode_mgr + EUD_REG_EUD_EN2);
->  }
->  
->  static ssize_t enable_show(struct device *dev,
-> @@ -178,6 +191,7 @@ static void eud_role_switch_release(void *data)
->  static int eud_probe(struct platform_device *pdev)
->  {
->  	struct eud_chip *chip;
-> +	struct resource *res;
->  	int ret;
->  
->  	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
-> @@ -200,9 +214,10 @@ static int eud_probe(struct platform_device *pdev)
->  	if (IS_ERR(chip->base))
->  		return PTR_ERR(chip->base);
->  
-> -	chip->mode_mgr = devm_platform_ioremap_resource(pdev, 1);
-> -	if (IS_ERR(chip->mode_mgr))
-> -		return PTR_ERR(chip->mode_mgr);
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> +	if (!res)
-> +		return -ENODEV;
-> +	chip->mode_mgr = res->start;
->  
->  	chip->irq = platform_get_irq(pdev, 0);
->  	if (chip->irq < 0)
-> -- 
-> 2.48.1
-> 
-> 
+On Wed, Jul 09, 2025 at 09:37:36AM +0200, Danilo Krummrich wrote:
+> I assume this has to go through the MSM tree?
 
-Hi,
+Of course!
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+--=20
+An old man doll... just what I always wanted! - Clara
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+--wFUsWKicYRt4Gvv7
+Content-Type: application/pgp-signature; name=signature.asc
 
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
+-----BEGIN PGP SIGNATURE-----
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaG4rBAAKCRD2uYlJVVFO
+o5vdAP4zYQraYcWZ5417LKimSuB/iobFIALeKUn0bIkGLhZxFAD8DstYb43X3+Wr
+oHbq2TC0/1xxUZP7Zx51Yb13YIsDlgA=
+=oNYA
+-----END PGP SIGNATURE-----
 
-thanks,
-
-greg k-h's patch email bot
+--wFUsWKicYRt4Gvv7--
 
