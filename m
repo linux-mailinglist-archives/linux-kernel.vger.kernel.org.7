@@ -1,183 +1,88 @@
-Return-Path: <linux-kernel+bounces-724071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF207AFEE3B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:56:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39CF4AFEE3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C64241C436BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:56:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F3DB4E5038
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64F02E9EC2;
-	Wed,  9 Jul 2025 15:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="m/wnR0mE"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA09C2E9749;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6022E9748;
 	Wed,  9 Jul 2025 15:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103F42E54C2
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 15:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752076568; cv=none; b=tIHRWk99nxwDmeUycTNdKckewpMdmaH0Dbj/IB8cIwdyeq7ZLmfcqAATOn0itZUgHYqQddrAOha5gd4Wgc67EVDmBr5F+lOER8+7F8z1SwO+6gMn5DOvnqQ3bNEHiQXuVU4+pYxJTbVg0xNmEpoLEO7I0xhNomQDv+1LCmNSQXA=
+	t=1752076565; cv=none; b=f+MHpiSRXTyXs4RL18QrQGdwEyrFuNVYjNQGpOQWnkcjzDETwHs5x1CYjNbqM/xwWtn+SVv24a6oWKRRlDJ7tXdYNTIkqtoKUiM0VKuZ1Gbu9SUWb+CfQI39a6nh33y3Ti6+HNQ/CcPmO88cqSCvsTrkuSDgkgtgs1PmNNJ9JAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752076568; c=relaxed/simple;
-	bh=G6jJF6k3GnUuuy4PcW4fUs7pcOeRqnQwVp5EqqLKCDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=D5a6SFzEDT5cUhr0BS63QZAl7VP4bmiWqBhwDp1YKBsjSbxEUSHs7VcNQHGdXOwZH9pMA8lzhifaQ4SkfOJaeYrdsjXc5cAMpU9yeR77ANSMROZ8XEc9APToro/vif3c+rkfDQLk3aw8Je8xwFl79nzZNMkTWVOeHCzjzvxsdho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=m/wnR0mE; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 569FtgxY1505172;
-	Wed, 9 Jul 2025 10:55:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752076542;
-	bh=MfT0l7g5qijaXkNJNgIEaao8kUCMjEOWRY9UATjc5Fs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=m/wnR0mEUQArPldBkTx+ov0ZYMSWaEU3JA2vN1d+CzuxUhpF8siwhchRvgnzumej3
-	 SjD3lNbs5iG+FDBPKrEhj7llrTiTJ3YmiKitqpdUWmlXFe3+9kUVwKX7DQJ6Fs7Dgt
-	 mngh3D5MNBPGFUqXGHnDY6HOP6E+BFZMQDBJ+lp0=
-Received: from DFLE20.ent.ti.com (dfle20.ent.ti.com [10.64.6.57])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 569Ftf0v282164
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 9 Jul 2025 10:55:41 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE20.ent.ti.com
- (10.64.6.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.1748.24; Wed, 9 Jul
- 2025 10:55:41 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 9 Jul 2025 10:55:41 -0500
-Received: from [10.250.35.60] ([10.250.35.60])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 569FteH03927392;
-	Wed, 9 Jul 2025 10:55:40 -0500
-Message-ID: <8b36f958-3406-421d-ab94-5e49f911f92e@ti.com>
-Date: Wed, 9 Jul 2025 10:55:40 -0500
+	s=arc-20240116; t=1752076565; c=relaxed/simple;
+	bh=Klhcqa0zXjE1jMAuczJtOID00nhS1/VKgAh4s0ac6qY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fnb5iPemzy/11RVlbDoZ/DifXeW58lvVSUcc7y6hjQewg6+LEU3hgI6fo5Jnddvy2iqP1BYFKgfVmIGfy10C4xjq2GA3kyKMxw1jC5/haY677xNNQBkDTBIVLX+mX/28lXVNCN35vEEDQssg6BxrOhHrN+zUE08k6t4P3s0NQWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86cfea700daso10364339f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 08:56:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752076563; x=1752681363;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZA6788H/o3UPwVHElcOp7R8jW6eULSWFdSmHy0kTRYk=;
+        b=JkQDp4FRUg1Vs7BYvjEcZ6p2a8gJXpIXIEBq2Ytgfy+lNFGaku22oiccACImQcb2dX
+         y5pcydr4DZ+X1qgQ63i6UF7bDYwSVTRGiRz5QRlgVnhidJqP1MXx4JNS/fpIT7Xmy2Ie
+         ZoVdjMBJpaynmokGqX6x+q+yWF/1vyABIbsp/29odvEDXFuzcBE/IsKFBcZWQ3mNgHjL
+         lN3iJ9xepAvozBzCHXk21s5u5u3XF9Bc1l26h6tjgBvIkV+7uMAiWQ8RTPp2tq/R5BWy
+         qwmn5/RzL3YY1LSZQd1dLEQ2yt2jQXAMPuqriHC1PkGwF0dMzyh+kUvf4FFyhmYdYKkR
+         kPDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqxaQLUF/f6WC6cLjlLdLl2nMT/B7KDDUvcLK8uNE1Mm601OLbDT3FtrELNOKqjJNkpVXDWpQ2eZ8zdSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVkImC8J+2MZwYosmtofdepfyesciNGeQwwUeuXRNu8v1cPZ+l
+	1r8ww6X951y+57LEcItqvZmZe8C6ho42QvXvj/SgqLwp62eYr0fALFziK3sInUIWODwTku73JYh
+	lN/8XX0Fq/k6LPnke+T0hmInHJr5HaSyeXKiFqYneznPxxT+sBu5YgXo4QRQ=
+X-Google-Smtp-Source: AGHT+IHMYgVqoKgL7WaXTj2pN1Mdf52GVHjXjp6h7wMS57lXGHBOyXymkA/DWtdO3E5Hq+lBFpPsgwQ04QJsgHUr9H+vfOMSG0RG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] dma/contiguous: Add helper to test reserved memory
- type
-To: Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Sumit Semwal
-	<sumit.semwal@linaro.org>,
-        Benjamin Gaignard
-	<benjamin.gaignard@collabora.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        John Stultz <jstultz@google.com>,
-        "T.J. Mercier" <tjmercier@google.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Marek
- Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>
-CC: Jared Kangas <jkangas@redhat.com>,
-        Mattijs Korpershoek
-	<mkorpershoek@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>, <iommu@lists.linux.dev>
-References: <20250709-dma-buf-ecc-heap-v6-0-dac9bf80f35d@kernel.org>
- <20250709-dma-buf-ecc-heap-v6-1-dac9bf80f35d@kernel.org>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250709-dma-buf-ecc-heap-v6-1-dac9bf80f35d@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-Received: by 2002:a05:6602:2dd0:b0:86d:d6:5687 with SMTP id
+ ca18e2360f4ac-8795b0c7254mr416874739f.6.1752076563029; Wed, 09 Jul 2025
+ 08:56:03 -0700 (PDT)
+Date: Wed, 09 Jul 2025 08:56:03 -0700
+In-Reply-To: <5644bdbc-8449-407c-8e0c-e725e10a40f1@rowland.harvard.edu>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <686e9113.050a0220.385921.0008.GAE@google.com>
+Subject: Re: [syzbot] [usb?] KASAN: slab-out-of-bounds Read in mon_copy_to_buff
+From: syzbot <syzbot+8258d5439c49d4c35f43@syzkaller.appspotmail.com>
+To: bentiss@kernel.org, jikos@kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	stern@rowland.harvard.edu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/9/25 7:44 AM, Maxime Ripard wrote:
-> A given reserved-memory region can be of multiple types.
-> 
-> We have currently four types defined in the tree: contiguous, backed by
-> CMA, coherent and swiotlb, backed by their respective allocators, and a
-> platform-specific one for tegra.
-> 
-> However, some users, like dma-buf heaps, might be interested in the
-> exact type of a reserved memory region they are getting. It would thus
-> be useful to have helpers to test if a given region is of a given type.
-> 
-> Since we only care about CMA for now though, let's create one for CMA
-> only.
-> 
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->   include/linux/dma-map-ops.h | 13 +++++++++++++
->   kernel/dma/contiguous.c     |  7 +++++++
->   2 files changed, 20 insertions(+)
-> 
-> diff --git a/include/linux/dma-map-ops.h b/include/linux/dma-map-ops.h
-> index f48e5fb88bd5dd346094bbf2ce1b79e5f5bfe1a6..ea646acb6367bd062619b337013db221749f85ab 100644
-> --- a/include/linux/dma-map-ops.h
-> +++ b/include/linux/dma-map-ops.h
-> @@ -153,10 +153,23 @@ static inline void dma_free_contiguous(struct device *dev, struct page *page,
->   {
->   	__free_pages(page, get_order(size));
->   }
->   #endif /* CONFIG_DMA_CMA*/
->   
-> +#if defined(CONFIG_DMA_CMA) && defined(CONFIG_OF_RESERVED_MEM)
-> +struct reserved_mem;
-> +
-> +bool of_reserved_mem_is_contiguous(const struct reserved_mem *rmem);
-> +#else
-> +struct reserved_mem;
-> +
-> +static inline bool of_reserved_mem_is_contiguous(const struct reserved_mem *rmem)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
+Hello,
 
-Should this all go in linux/of_reserved_mem.h?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
->   #ifdef CONFIG_DMA_DECLARE_COHERENT
->   int dma_declare_coherent_memory(struct device *dev, phys_addr_t phys_addr,
->   		dma_addr_t device_addr, size_t size);
->   void dma_release_coherent_memory(struct device *dev);
->   int dma_alloc_from_dev_coherent(struct device *dev, ssize_t size,
-> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
-> index 8df0dfaaca18eeb0a20145512ba64425d2e7601e..ace4982e928e404315cf38551e1596f7ed445156 100644
-> --- a/kernel/dma/contiguous.c
-> +++ b/kernel/dma/contiguous.c
-> @@ -493,6 +493,13 @@ static int __init rmem_cma_setup(struct reserved_mem *rmem)
->   		&rmem->base, (unsigned long)rmem->size / SZ_1M);
->   
->   	return 0;
->   }
->   RESERVEDMEM_OF_DECLARE(cma, "shared-dma-pool", rmem_cma_setup);
-> +
-> +bool of_reserved_mem_is_contiguous(const struct reserved_mem *rmem)
+Reported-by: syzbot+8258d5439c49d4c35f43@syzkaller.appspotmail.com
+Tested-by: syzbot+8258d5439c49d4c35f43@syzkaller.appspotmail.com
 
-Needing to check where the reserved mem comes from seems wrong, it hints
-that the reserved mem region drivers, like this one, are not in full control
-of their regions. Instead of looping over all the regions in DT in the next
-patch and searching for the owner, how about the owner (this driver) call
-into __add_cma_heap() if it chooses to expose the region in that way.
+Tested on:
 
-(I know RESERVEDMEM_OF_DECLARE callbacks are done very early and the CMA-Heap
-driver might not be able to deal with adding heaps at this point, so maybe
-keeping a table the heaps driver can later iterate over would also work).
+commit:         d7b8f8e2 Linux 6.16-rc5
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/
+console output: https://syzkaller.appspot.com/x/log.txt?x=1155ebd4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f51185bd4f40ad44
+dashboard link: https://syzkaller.appspot.com/bug?extid=8258d5439c49d4c35f43
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1113ff70580000
 
-Andrew
-
-> +{
-> +	return rmem->ops == &rmem_cma_ops;
-> +}
-> +EXPORT_SYMBOL_GPL(of_reserved_mem_is_contiguous);
-> +
->   #endif
-> 
+Note: testing is done by a robot and is best-effort only.
 
