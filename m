@@ -1,176 +1,131 @@
-Return-Path: <linux-kernel+bounces-722705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DF42AFDDFE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:11:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F053FAFDE01
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6394178D98
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:11:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C8E63A450B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8CA206F27;
-	Wed,  9 Jul 2025 03:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="crCUzkqV"
-Received: from lovable-gwydion.relay-egress.a.mail.umich.edu (relay-egress-host.us-east-2.a.mail.umich.edu [18.216.144.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A351F4E57;
+	Wed,  9 Jul 2025 03:13:39 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516A41F948;
-	Wed,  9 Jul 2025 03:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.216.144.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A9E41760;
+	Wed,  9 Jul 2025 03:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752030668; cv=none; b=foANLbep4ra9LRA+WfW7bFk8s6lS5XsspfFHNROduz0DVCLIe/o3+SgLcH1ndoaqZO6rWTZH7eYGYoak9wMhshCyWG6oZjN6Mnhp1fdpiiAX6mAtZgBSnj4QmIXNU2i6u/vC6ryADczFRshQwtdKgEsY43z4Xi0LYg/JWOo47Nk=
+	t=1752030818; cv=none; b=gFKASmITTiro0FvmWa8dGKD3Rv39XRJ1SXay5f4fzIUOc8uD5JuPAeb1HwEwBn8Cpv5YpJJN+7n7MGMmN3hCRJAyaPfXHdJXoqmDKftvG30JEN1d48W5Mi1yOAwDg4wlgM++tuMakqFJGJtLksPpDGwuKAAh3FOwtsQzq70hAfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752030668; c=relaxed/simple;
-	bh=lOrYDrryevsKziQEfPPl+YzMD+Y+PPiXdT68oDCLVnA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Zs05bLvds9t/XpNhrBNO21WdmyOfX4t4lEgPa9bb5OZgXmV4J9+Xw8g7/teFNsUJVQktGFrZRlPBwEzkDhecy7qwMdGFUhhGwse6o2z7Wo9okWNNePKCJH4PliIDT1sf1wNGuoYePuPsSTj921D7xoQ1NnE9dj2NDae35MfBnBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=crCUzkqV; arc=none smtp.client-ip=18.216.144.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
-Received: from inspiring-wechuge.authn-relay.a.mail.umich.edu (ip-10-0-74-32.us-east-2.compute.internal [10.0.74.32])
-	by lovable-gwydion.relay-egress.a.mail.umich.edu with ESMTPS
-	id 686DDDC2.31790818.2C2BE75F.1062603;
-	Tue, 08 Jul 2025 23:10:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=umich.edu;
-	s=relay-1; t=1752030653;
-	bh=vtrpzROaGDdeJynSM//iohKXHoLDyWPERSk5DuwBFR0=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To;
-	b=crCUzkqVzE22+L8+sli/J/nO12at9yJHYHXZ2pVNhIH3edsmo13o6dr2/ypyxTz3P
-	 w5jHg8CFhQCHWXTSiqWpbaxJxth1Y+hYY6jtRMrStZwmiwFa5GGSf2VPleoK87NDvR
-	 tHnUnryDPogsu0Tu/Qcm3G0DxTxgapjbTwnqmw9FdljwWqRetFZFqtmNfgMiJgZnqs
-	 1t+NXKrUPo6wikLFTqxFIN70J0co0+MFwz3dX4P/0/RCfpY7so9lHabVevgu8Uz8A+
-	 xDrMsKqiEPIGtDMqcoQL3yeVlnKVfxOlt8ceuwpY+FcXBKhzU7iukBAJqUNu5mYu8G
-	 88/PgPPUHk8DA==
-Authentication-Results: inspiring-wechuge.authn-relay.a.mail.umich.edu; 
-	iprev=pass policy.iprev=185.104.139.75 (ip-185-104-139-75.ptr.icomera.net);
-	auth=pass smtp.auth=tmgross
-Received: from localhost (ip-185-104-139-75.ptr.icomera.net [185.104.139.75])
-	by inspiring-wechuge.authn-relay.a.mail.umich.edu with ESMTPSA
-	id 686DDDBA.2CB243D0.576BB681.1044590;
-	Tue, 08 Jul 2025 23:10:53 -0400
+	s=arc-20240116; t=1752030818; c=relaxed/simple;
+	bh=hfM59/eh6N8wBYkqESiGLBYZjlk4OaX55Ho5jXZKwaU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y0QrudLLiKh59lQhd/nJOecUx7u0rOZcqYVUzb6KLC5LeERgBqjp8D9DRxR2jAgKImTW4+Uz3+cBf9og9qSQLmWGc6i/Vt5UJMR6ZVGDuG3M9hbhiTPqlkyriAJk8kAErFeag4olgohwqVbKo/F/s8oviyJAcSPY+A4847JaXiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: aad77c725c7211f0b29709d653e92f7d-20250709
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:df9bab53-0e06-44d2-be73-66e28e5212c9,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:cf1e7a028788195e57e165485a11aef1,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 1,FCT|NGT
+X-CID-BAS: 1,FCT|NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: aad77c725c7211f0b29709d653e92f7d-20250709
+X-User: dengjie03@kylinos.cn
+Received: from [10.42.12.86] [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <dengjie03@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
+	with ESMTP id 96761095; Wed, 09 Jul 2025 11:13:21 +0800
+Message-ID: <d19ad4df-8c68-4682-9580-76f9ac6a3ed2@kylinos.cn>
+Date: Wed, 9 Jul 2025 11:13:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 08 Jul 2025 23:10:48 -0400
-Message-Id: <DB7714QEA9EO.XB7BKFDO74JE@umich.edu>
-Cc: <a.hindborg@kernel.org>, <aliceryhl@google.com>, <bhelgaas@google.com>,
- <bjorn3_gh@protonmail.com>, <boqun.feng@gmail.com>,
- <david.m.ertman@intel.com>, <devicetree@vger.kernel.org>,
- <gary@garyguo.net>, <ira.weiny@intel.com>, <kwilczynski@kernel.org>,
- <leon@kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-pci@vger.kernel.org>, <lossin@kernel.org>, <netdev@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v3 1/3] rust: device_id: split out index support into a
- separate trait
-From: "Trevor Gross" <tmgross@umich.edu>
-To: "FUJITA Tomonori" <fujita.tomonori@gmail.com>, <alex.gaynor@gmail.com>,
- <dakr@kernel.org>, <gregkh@linuxfoundation.org>, <ojeda@kernel.org>,
- <rafael@kernel.org>, <robh@kernel.org>, <saravanak@google.com>
-X-Mailer: aerc 0.20.1
-References: <20250704041003.734033-1-fujita.tomonori@gmail.com>
- <20250704041003.734033-2-fujita.tomonori@gmail.com>
-In-Reply-To: <20250704041003.734033-2-fujita.tomonori@gmail.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] usb: storage: Ignore UAS driver for SanDisk Extreme
+ Pro 55AF storage device
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: stern@rowland.harvard.edu, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net
+References: <2025070422-punctured-opal-f51e@gregkh>
+ <20250707062507.39531-1-dengjie03@kylinos.cn>
+ <2025070725-circle-recite-bc04@gregkh>
+ <2c4af4f8-5763-4ebf-8070-c7eabf43fe5e@kylinos.cn>
+ <2025070830-edge-deprive-ce6b@gregkh>
+From: Jie Deng <dengjie03@kylinos.cn>
+In-Reply-To: <2025070830-edge-deprive-ce6b@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri Jul 4, 2025 at 12:10 AM EDT, FUJITA Tomonori wrote:
-> Introduce a new trait `RawDeviceIdIndex`, which extends `RawDeviceId`
-> to provide support for device ID types that include an index or
-> context field (e.g., `driver_data`). This separates the concerns of
-> layout compatibility and index-based data embedding, and allows
-> `RawDeviceId` to be implemented for types that do not contain a
-> `driver_data` field. Several such structures are defined in
-> include/linux/mod_devicetable.h.
+
+在 2025/7/8 15:32, Greg KH 写道:
+> On Mon, Jul 07, 2025 at 05:52:31PM +0800, Jie Deng wrote:
+>> 在 2025/7/7 16:47, Greg KH 写道:
+>>>    　> So ignore UAS driver for this device.
+>>>>> Signed-off-by: Jie Deng <dengjie03@kylinos.cn>
+>>>> ---
+>>>> v2:
+>>>> 	* According to the file modification rules (sort by VendorID > 	
+>>> first, then by ProductID.) Add the newly added "UNUSUAL_DEV" > 	  in the
+>>> correct position.
+>>>> v1:
+>>>> 	* The newly added "UNUSUAL_DEV" was directly added to the end > 	
+>>> without modifying the format according to the file.
+>>>>> ---
+>>>>   drivers/usb/storage/unusual_uas.h | 7 +++++++
+>>>>   1 file changed, 7 insertions(+)
+>>>>> diff --git a/drivers/usb/storage/unusual_uas.h
+>>> b/drivers/usb/storage/unusual_uas.h
+>>>> index 1477e31d7763..6b1a08e2e724 100644
+>>>> --- a/drivers/usb/storage/unusual_uas.h
+>>>> +++ b/drivers/usb/storage/unusual_uas.h
+>>>> @@ -52,6 +52,13 @@ UNUSUAL_DEV(0x059f, 0x1061, 0x0000, 0x9999,
+>>>>   		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+>>>>   		US_FL_NO_REPORT_OPCODES | US_FL_NO_SAME),
+>>>>   > +/* Reported-by: Jie Deng <dengjie03@kylinos.cn> */
+>>>> +UNUSUAL_DEV(0x0781, 0x55af, 0x0000, 0x9999,
+>>>> +		"SanDisk",
+>>>> +		"Extreme Pro 55AF",
+>>>> +		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+>>>> +		US_FL_IGNORE_UAS),
+>>>> +
+>>>>   /* Reported-by: Zhihong Zhou <zhouzhihong@greatwall.com.cn> */
+>>>>   UNUSUAL_DEV(0x0781, 0x55e8, 0x0000, 0x9999,
+>>>>   		"SanDisk",
+>>>> -- > 2.25.1
+>>> Why is there two "v2" patches sent here?  Shouldn't this be "v3"?
+>>>
+>>> confused,
+>>>
+>>> greg k-h 　 　 　 　 　 　 　 　 　 　　
+>>>
+>> The first sent V2 patch was missing the description of the
+>> differences between V1 and V2 patches. The V2 patch sent for
+>> the second time only adds a description of the differences
+>> from the V1 patch compared to the V2 patch sent for the first time.
+>> There is no modification to the code. So it is rashly believed
+>> that it does not need to be defined as a V3 patch.
+>>
+> Think about what you would do if you got sent 2 "v2" patches?  :)
 >
-> Refactor `IdArray::new()` into a generic `build()` function, which
-> takes an optional offset. Based on the presence of `RawDeviceIdIndex`,
-> index writing is conditionally enabled. A new `new_without_index()`
-> constructor is also provided for use cases where no index should be
-> written.
+> Remember, some of us get hundreds/thousands of emails to handle a day,
+> please make it very obvious what to do here.
 >
-> This refactoring is a preparation for enabling the PHY abstractions to
-> use device_id trait.
+> thanks,
 >
-> Acked-by: Danilo Krummrich <dakr@kernel.org>
-> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
-> ---
->  rust/kernel/auxiliary.rs | 11 ++---
->  rust/kernel/device_id.rs | 91 ++++++++++++++++++++++++++++------------
->  rust/kernel/of.rs        | 15 ++++---
->  rust/kernel/pci.rs       | 11 ++---
->  4 files changed, 87 insertions(+), 41 deletions(-)
-
-Few small suggestions if you wind up spinning this again:
-
-> diff --git a/rust/kernel/device_id.rs b/rust/kernel/device_id.rs
-> [...]
-> @@ -68,7 +77,14 @@ impl<T: RawDeviceId, U, const N: usize> IdArray<T, U, =
-N> {
->      /// Creates a new instance of the array.
->      ///
->      /// The contents are derived from the given identifiers and context =
-information.
-> -    pub const fn new(ids: [(T, U); N]) -> Self {
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// If `offset` is `Some(offset)`, then:
-> +    /// - `offset` must be the correct offset (in bytes) to the context/=
-data field
-> +    ///   (e.g., the `driver_data` field) within the raw device ID struc=
-ture.
-> +    /// - The field at `offset` must be correctly sized to hold a `usize=
-`.
-> +    const unsafe fn build(ids: [(T, U); N], offset: Option<usize>) -> Se=
-lf {
-
-Could you mention that calling with `offset` as `None` is always safe?
-Also calling the arg `data_offset` might be more clear.
-
-> @@ -92,7 +111,6 @@ impl<T: RawDeviceId, U, const N: usize> IdArray<T, U, =
-N> {
->              infos[i] =3D MaybeUninit::new(unsafe { core::ptr::read(&ids[=
-i].1) });
->              i +=3D 1;
->          }
-> -
->          core::mem::forget(ids);
-
-This removes the space between a block and an expression, possibly
-unintentional? :)
-
-> @@ -109,12 +127,33 @@ impl<T: RawDeviceId, U, const N: usize> IdArray<T, =
-U, N> {
->          }
->      }
-> =20
-> +    /// Creates a new instance of the array without writing index values=
-.
-> +    ///
-> +    /// The contents are derived from the given identifiers and context =
-information.
-
-Maybe the docs here should crosslink:
-
-    If the device implements [`RawDeviceIdIndex`], consider using
-    [`new`] instead.
-
-> +    pub const fn new_without_index(ids: [(T, U); N]) -> Self {
-> +        // SAFETY: Calling `Self::build` with `offset =3D None` is alway=
-s safe,
-> +        // because no raw memory writes are performed in this case.
-> +        unsafe { Self::build(ids, None) }
-> +    }
-> +
-
-With those changes, or as-is if there winds up not being another
-version:
-
-Reviewed-by: Trevor Gross <tmgross@umich.edu>
+> greg k-h
+I'm very sorry. I'll pay attention when submitting patches later
 
