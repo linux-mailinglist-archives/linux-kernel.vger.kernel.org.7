@@ -1,122 +1,126 @@
-Return-Path: <linux-kernel+bounces-723058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D91DAFE22F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:15:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA116AFE1FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81197565AED
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:15:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D078C1C22660
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47692283FF0;
-	Wed,  9 Jul 2025 08:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D36323B605;
+	Wed,  9 Jul 2025 08:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4P40U50b"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="BArrqa3f"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBBE283FE5
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 08:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8870A23AE83;
+	Wed,  9 Jul 2025 08:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752048715; cv=none; b=gQ74xhqMf99O0uDMJ3sdxmEufaLVwLPXzFHkE8jzSWPmOWsVeHEvQ53WHzTryXQoMEHceKgATTWe6dsOchLk9HuzAaTkS2Qn7x6dEMdbSAduMdGtjvQMwEZSUvtiWJMMpri4S3yrtwYf6CXvbRiJO7jYRJweJWIoR/3Ccy3ODWw=
+	t=1752048587; cv=none; b=H+Gk+hBpiQRn8D1D1lc4Tj935AIZrqBxDT4wxEN7coKhBXJ8JJDJc3jpjetd1RPSoQMo4oS1YBnkW1KvCZM7EPR4nxNlrqBeC0EC6N0VxLA9cwfTjEsJWAX4wKU20enPDr9gCfyvnHptVJX8yYU91cDPd5nW75atnxk2fzK7VA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752048715; c=relaxed/simple;
-	bh=MlIRBxRaja7ZlU2OXFrbRrUPNNl74/HsMd4o37sL9hE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Gjxd841Md3L2n58n3LwUFHtH3zQcQ+8cfKQndOgsrkOOjyaSX+uu5mX5HVP6tQdUpx2NX9tzzwlz/70uvHvHAF9oIIjdYdPi0qXe/eHr2S/YgfjuyOvRR8nXhbo8YdDvAL85+r3nrwVzOr7EqJQnLKVpVp8L0YgDh6bL9T8DNEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4P40U50b; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-451d5600a54so41828215e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 01:11:53 -0700 (PDT)
+	s=arc-20240116; t=1752048587; c=relaxed/simple;
+	bh=uZE5jplWSjAv+o+bVBwj8DwJFyiDM+RKcxpQzWaMbCM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iyqTqFBsh704BgayJXUtpkue6VnPxXEGsyM1Ebk561S/+FBRij2+vbtkBR0OayhIFTxHgqfcuFvYgUyrfZUk1T2vs0C2FLnNslZ8/eUqdzYCDTlmssvzwMCocjQqX36kPookXCr+AVC2sUenxccX3MOP0Sy0RzvSoHGngx36iKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=BArrqa3f; arc=none smtp.client-ip=212.227.126.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752048712; x=1752653512; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sRQugI64DfH4l5motO7Op00/v3FgIyII8TOhMD/41k4=;
-        b=4P40U50bRnG4ZrUEJERMgmwO4STUGsDxTltcezUNosQQpaXyro0mT4rDHtVaLj0Gfj
-         DivkdZFzXvkVkbJRPphkFBials+IH26Mu2+9ZpsLh4WaQcEB7AwB29+xfD2dMOWD4KBo
-         ETYLD8bKdyp9g0FeuAQDwuX+av2qHIO8uDERzYwAa36HwamiJjUNOmBKRzuIVK4dlGIG
-         MBD0w+BkueG7cxg4+XVPZK5rSXt9eujtMo2ZDSkZNA8B9BkcP9Znv93mj4Z5T0caBnZH
-         H0oBi4V67+bteOcje6Gh73LoN58YXstB1lCAeDXOQnHVwFI6NEiL26M139LNDmmaZa06
-         KEgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752048712; x=1752653512;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sRQugI64DfH4l5motO7Op00/v3FgIyII8TOhMD/41k4=;
-        b=go+dn+Qd+OIJZWiGr13vWnwxW4mcKh8e1qmlwXBXHsg8ZfbeGlMn/zalwjNXWOh4bK
-         nr02fXoy1WrQ0ptJESeUKiTLUHAi12j/UQrVF+R4yoQUj89AdV0nAd1VEesOGP9RlB9P
-         4Uof1Je/fXFWfJVvQtkqJZlgpPo7VCQxgYlqb2PVM3Rzu/8l1kog3tTvmzCH79xaUjiw
-         kKEr5YUIp5B8Sz0HXKkBANcwA1dFFK7yNUVTzuqfituLG9qJwR07PFRkUuXweYK2ZOxO
-         2AMaSLw6hsu6wpjYRgAlvhrUd5bNWtX1R51f2ASDBUY285wfDF/xXAjAz9EL4UKhK7lw
-         2BdA==
-X-Gm-Message-State: AOJu0YxLqjEd6tJE5lhuGgMMrBToGe25mrb1VXiLNxuYosjxAOV/G42S
-	KWTuMEnRAjFDlT6e7DCRHtpGLtA7kOMQptCT/JJO8+9T0tCi2JpvXqbhkcrL9JEWJq6RyUbgCbR
-	F1UROJ/ByumQBsUWfFnW/9C2IYSX5GBC+5G0ZyUM75A/VNBpUyU0D2UjGqDEtAdRT3lLiPdDH0J
-	YtCHAtlvyh6owG+HIvv2i2NzySp7jrZoJZEA==
-X-Google-Smtp-Source: AGHT+IGSJGX/pEHs6QWpVjrof537fmpAF9vkUHI44VaBcW8UIx6L7uDKveEm9eWEJjArZ+KCIFi3vL06
-X-Received: from wmbea14.prod.google.com ([2002:a05:600c:674e:b0:43e:9aac:5a49])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:5309:b0:43c:efed:733e
- with SMTP id 5b1f17b1804b1-454d5327ef4mr13878735e9.14.1752048712259; Wed, 09
- Jul 2025 01:11:52 -0700 (PDT)
-Date: Wed,  9 Jul 2025 10:09:05 +0200
-In-Reply-To: <20250709080840.2233208-26-ardb+git@google.com>
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1752048567; x=1752653367;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=uZE5jplWSjAv+o+bVBwj8DwJFyiDM+RKcxpQzWaMbCM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=BArrqa3fkxJXJWLJI/rBNR5q62+qhwP3y8ZBF9cMyf4EuC0vgd82XrbG0BeA9tO1
+	 4yAIJLltg/3qLc450uvocZ0gOgMSpFk8fsftNfusfuoQmcn6pF4OYrqh2JTcmWJ1q
+	 N9BUTcWO9roEr8GdCYoE5UNFJ/L1p5oK91vs5ICyt9e1fAZ3G2Cvjl9GFQNAdO4Qy
+	 iXqvGBW+/R+SyGi6x7ciIbyo9AiBUcHpInLWVkq1Vw58qmURjFh7t34z1SsxTvzkY
+	 GU0aXjPH2W50hVDf9zGBfTXc9XDmiGSvysRyy/ZFPmWcmFuOb2zIs9IBVsJ9KFHvj
+	 T9e88klvmUqqVV2l3A==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.107] ([91.64.235.193]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MUY9w-1u93JP0vIW-00YZub; Wed, 09 Jul 2025 10:09:27 +0200
+Message-ID: <52b68d5e-b051-4c59-9186-eda9071c9303@oldschoolsolutions.biz>
+Date: Wed, 9 Jul 2025 10:09:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250709080840.2233208-26-ardb+git@google.com>
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=737; i=ardb@kernel.org;
- h=from:subject; bh=2wDANTljMa+3l9R4Cw8PAic5NzJMQu4mfQTgCSM10MY=;
- b=owGbwMvMwCVmkMcZplerG8N4Wi2JISNPheUX9+Kv8/UmBnls2hwsZnLF65Plcca6y0LPlX8/q
- zgfkTOjo5SFQYyLQVZMkUVg9t93O09PlKp1niULM4eVCWQIAxenAEwkN5SRYUPj3MiwRQ//pe6+
- f3ff28PP/KIMOK6u32gX8iJ019HvehGMDAtWynwt99Jrzsjzj78V1Lt+4vrPdw3KnyYGRT1pXV9 wmgEA
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250709080840.2233208-50-ardb+git@google.com>
-Subject: [PATCH v4 24/24] x86/boot: Get rid of the .head.text section
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-efi@vger.kernel.org, x86@kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>, 
-	Dionna Amalie Glaze <dionnaglaze@google.com>, Kevin Loughlin <kevinloughlin@google.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] arm64: dts: qcom: x1-hp-x14: Add support for
+ X1P42100 HP Omnibook X14
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250708-hp-x14-x1p-v5-0-44c916efa973@oldschoolsolutions.biz>
+ <20250708-hp-x14-x1p-v5-3-44c916efa973@oldschoolsolutions.biz>
+ <20250709-arboreal-basilisk-of-opportunity-bafaf1@krzk-bin>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <20250709-arboreal-basilisk-of-opportunity-bafaf1@krzk-bin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:lR8fq6HQTQGSlHeN5MJ+99V2xxKIXYPiMFGrBSnMs5eTryMM+tN
+ auuOx0xOxQmfwki8RQYm+cEUsMfIZ4QBDxm8nQov0qBfVkmC1l6DPv2IXGHwbvKPDqhaVcF
+ g9kfM1mjgNM6GYdgMq/TUkU1LjpCLmekmfxyK5gRX3wskPBGHPBNsPL+XLe5U1Ge+hNDo+X
+ DXLI3N0fD5jqym3O7zdOQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:XVvFInXj01o=;jwXqqiOvdH4Jh3JNynB1QTCVb0R
+ +S9bwtd2sVobLel8B4LunQVoSqmDXsXEi9iRP8E0/KqHjAx/oqsz1i228Ft6wPoDrGr0HQvvS
+ mwMDvyRiHoP0SbzU4RWwB2sME7sqJvMr66898D5kHiBjQ3VQxTXRVdX8AnW5sBtxtSNqNdzmi
+ dy0Oej/kxO5Nu8SL8YH+9f2lSyBFGKtMjkgKNGovobmkxw0TH3fMbUm4joEGZU+R6603lcmIX
+ jQU1imz9IyqpWKF1DYE5VGeGEcE/eC0yIJaIQaCgATcDf3MnvhNup9O38UvW3cJPPZ9z7i/SW
+ 4FFnOqP9FNqcVYEQ8fb0AUi3qrb4yEpGPCY8avUWJzLYi1g0Wp97qZc+YHQTDBKrJ19dAQFxP
+ f52dlJcvYmdBGC+o5X0v72NlCq4doDwviDUc8QZZe9FAigJ/tkV2dj+jLPBorYcEbcDLw1i2C
+ wM20TiUr1Q4ipl/vOBB6lNwkxYjjXjG4xvtNoHyeW/BSpMN6Um3ifP8M7eM9uF16RUrP5tTjv
+ trZTvwHYaEv2BYMwYXSoEPcKdYfBtQFASdOdHOy5K8fp+LqA8RMsFFR75bOIsmbe73zlIPgOU
+ TmPet5VHY6tIiww0uUgIE5AydfYUb3GRkDcw7nfDFM7Ti0AhcDVb5Ku7U42uleBoS/YNDaZIl
+ AhauTKSj9hKbQQt62puXOT1nyvng8xKUmBsyBvvYDafFkMHzvZ8cJRvnPgqXv8+Az7W8wfck5
+ 6TujRxCvB9quLTcuA4eM8j7zrYrjFZ79o5YcBBExaUwO/XV4P044B+uMfZBxay5IVWDTZtCad
+ YNJhjMm+TNRK4M3u2N0Hkkqg20QicDAPheUImC3HBG8ZfEatB4jXmYLrMxSqZosAEjcApcQtf
+ QldOP469oIOYSglM7+NJtf9LxFj9X9YceKKazQKuWhP6KoZgQ4Rokfs0KV5t443gOwXSousMQ
+ QphSwsXQiSYLiHONWCPQAzy1RR+cS5/mp/ao0AoE3eTU72HfJWlaSakakF+7NqNEEanC95aIC
+ AX4KWWqXHeuodsPy07mzzEFEYgaWgfs8yuXTf0CuZ97rYfY3jaFDuYTyg6vSRICKfxLvVyd3r
+ IczZfTt47II5Ciy1t1yL4tI4qEpuFdMhuz/j7zGKnuf+JFJp7U/I8uk2ioNF5eDiUbOFKKxvW
+ sW81EKCl7Z9LDEjvJVQNA9FKXcuIityaeamnwl9sgNlrK3aH+NpSq+fkbdvFfNsBPEXJBFrX0
+ wFsIWpJbjKSg+mLqsen3S5JD/f0n3VV53OzPEGiQyBdQWSraHgMj3xvxSNBZy1IBGFNum2DkS
+ kuC/UuYB2V9FnhMXAoJAa7reNuoWdV8pCThYwwvrCjzsW2xwFfVZMp3E5s0TfuGWP2vOx5JvE
+ oXDwRXoLQoNpKajaTPY+W5T+2qL5CfyC2fL6YHpEvWVCZTrDGH9+ha7405pso78Za4X+hHo8y
+ sOE6WX5gM4QaJ6BdTLw34o44RxUTm+MtLKJhNueRg0f5vwm+GKynu17HM4GwCLGyupMe2ZrUQ
+ wMcXBeQ0KlNpgZFvofSKqDPjQqis3hOckDF+/6hbgllijggZpPw6IxA44+c0LsgUIYlOkXokq
+ w77+3pz3JDKXWYCfyMEt2u9QF6MoGac
 
-From: Ard Biesheuvel <ardb@kernel.org>
+Hi Krzysztof,
 
-The .head.text section is now empty, so it can be dropped from the
-linker script.
+On 09.07.25 09:39, Krzysztof Kozlowski wrote:
+> On Tue, Jul 08, 2025 at 10:34:08PM +0200, Jens Glathe wrote:
+>> +// SPDX-License-Identifier: BSD-3-Clause
+>> +/*
+>> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights rese=
+rved.
+> Odd copyrights. How could this file be published in 2023? Before the
+> laptop was even made? And by Qualcomm? Qualcomm did nothing for this
+> laptop on Linux - it's a Windows platform for them.
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/x86/kernel/vmlinux.lds.S | 5 -----
- 1 file changed, 5 deletions(-)
+Ok understood, only license identifier. But I do copy from other dts(i)=20
+files, there may be unchanged portions.
 
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index 4277efb26358..d7af4a64c211 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -160,11 +160,6 @@ SECTIONS
- 
- 	} :text = 0xcccccccc
- 
--	/* bootstrapping code */
--	.head.text : AT(ADDR(.head.text) - LOAD_OFFSET) {
--		HEAD_TEXT
--	} :text = 0xcccccccc
--
- 	/* End of text section, which should occupy whole number of pages */
- 	_etext = .;
- 	. = ALIGN(PAGE_SIZE);
--- 
-2.50.0.727.gbf7dc18ff4-goog
+with best regards
+
+Jens
 
 
