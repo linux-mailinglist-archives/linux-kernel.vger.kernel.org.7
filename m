@@ -1,140 +1,155 @@
-Return-Path: <linux-kernel+bounces-723912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FCDCAFEC61
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:44:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53CB6AFEC64
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6432E17D483
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:42:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2178317F0FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4B92E5B0A;
-	Wed,  9 Jul 2025 14:40:24 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F302E7F39;
+	Wed,  9 Jul 2025 14:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZUX+twZ4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E712E3B1E
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D532E3B1E;
+	Wed,  9 Jul 2025 14:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752072024; cv=none; b=d/nADgCmrQ7SJRVyKeMItwL806CO9QNEn4qeeqolxfcnD1MnKkPUppvrSSf3wPmAXQ/TS8VChe1g61rh0GY3ICiRCGpTg8VmEIdigKQo30IMg0Jiv/kjvGKwcnS0Xz1US3YNJYIUzDjuRHX68n3I/f/fnpaWDPNKzQLEbpyIHps=
+	t=1752072038; cv=none; b=TwLOmUa2b2xQM2RhlegjQTKYmCh7YIgnsjsALveJsqoyZW0OkgLX6Gm0PgOXEg/PS9cg2A7G+T0fsWCswwI+QyZ82d3QVoeZtlqoqZyHL51FN8b5+qtazhM534Pt4oM8CL8viUHzuRx+MSIDe8pBRCr7Di4ARglgrMd9pFjRZ/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752072024; c=relaxed/simple;
-	bh=+wiF1mWfrRX/2nd2AOlkGQKaziBZSRMRaVApHmfDW1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e1jsNXuMxsrP4OxVL83PrefcyaMJ63kl6U9vyIAlDMgIg9ZoA74CiJuoZISNoVx16RXvLRHC5pnWKU7t0k/fgQ/xXxAGBpbYotFHKV3VzzS1tXFbgWsoShZryIz1TPAoQn70cOkDg8jeYpR10xR+LfpxGjz20TLKNq75eu7jQ+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id AFB1B140540;
-	Wed,  9 Jul 2025 14:40:20 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id 0B2FC20011;
-	Wed,  9 Jul 2025 14:40:18 +0000 (UTC)
-Date: Wed, 9 Jul 2025 10:40:17 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Aditya Chillara <quic_achillar@quicinc.com>
-Cc: Ingo Molnar <mingo@redhat.com>, <linux-kernel@vger.kernel.org>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH 2/2] tracing: Prevent double unregister of tracepoint
- probes
-Message-ID: <20250709104017.69190334@batman.local.home>
-In-Reply-To: <20250709-fix-double-perf-probe-unregister-v1-2-2b588b3c0140@quicinc.com>
-References: <20250709-fix-double-perf-probe-unregister-v1-0-2b588b3c0140@quicinc.com>
-	<20250709-fix-double-perf-probe-unregister-v1-2-2b588b3c0140@quicinc.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752072038; c=relaxed/simple;
+	bh=4gltpAo6G2z6Uhvda05MhKbl9p35Vf6wHr1KiUVlyP4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=THUcBBUGJuEv6RqZsKw8jWy4GRZL4cO5qCSNm31QWW+l94NSxwYaH9hPuiG5SLRDNIiqrPgSmYQfbuOIQiLRrLkTUV3cqwMoHEMuvvtnCSV1CUVhNpIura72RVks9S0X3sNwUkbCY4khmouA0jXkIlNyN3fyAqt08Sf2fzh1MgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZUX+twZ4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05E68C4CEEF;
+	Wed,  9 Jul 2025 14:40:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752072038;
+	bh=4gltpAo6G2z6Uhvda05MhKbl9p35Vf6wHr1KiUVlyP4=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=ZUX+twZ4+jBAoRIbfBQCT00xQ5+ZsirmbzJun1ukTD3QAdiA6hDRfv6zD4durLKoP
+	 lvG0zq/8mCTPsYPkQY839i2JSeyzaYTJlpNiKcDF4YKmpnm6eXf/Mx3qCxGI4APTAh
+	 fhNKrq0HWZRMqZTUOGevD2ZEcc56hjNiHQ4H+4WdXBjaQv3OuhT/HqEyh2S04NZM6k
+	 P3mNWKvufwKJBKWlL2VlL41ZCMz35GxdR4qIvEuXxfZDffhzck9ww0zBQqu6B+gziJ
+	 RpEa1cTsFcW4zKN8guGq84wsRlfHfApPHxJ/GB6u/EQmwHYi6I3nu7/mUkVFgI92rK
+	 CpMyt6CIqOiqg==
+Message-ID: <73a18fe6-daef-4035-abb2-67db2c5619e2@kernel.org>
+Date: Wed, 9 Jul 2025 16:40:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] efi: add ovmf debug log driver
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Gerd Hoffmann <kraxel@redhat.com>
+Cc: linux-efi@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250708125624.734132-1-kraxel@redhat.com>
+ <6edfa099-ab0c-41f6-89ea-0fd67666dd05@kernel.org>
+ <2mn65slwkwmjpeilma2isw7zgabdmda4rhpqjiutwdwqno2wrh@zghymlce2fiy>
+ <8621135e-445a-42dd-89e0-bf8fc3e2b6b7@kernel.org>
+ <4cix3k4h32wozt3nxic5un7jyzfjrmqmzbzmtr3ivw5b2bz363@mw6bke7w4oaq>
+ <5800c426-95fd-4a81-b979-c0bc2bc293dd@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <5800c426-95fd-4a81-b979-c0bc2bc293dd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: dnokiu6mc51n7f8gcodffz7ho97uf87c
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 0B2FC20011
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/0bJeFijTuz8/ZNXl7BNW8Ds+81Svj7oU=
-X-HE-Tag: 1752072018-302675
-X-HE-Meta: U2FsdGVkX1+Zt3Adlh1n+22dMlWnMcXKeIEDMXvzuDY2MkspvQvc2Gp8ua0hb5vlI+pw72c3P4p7b7p1/A1yBluoV2rdL7W2t6EUn/a/CLIlHipiu6Ej+eY2Lcv3A3TuMcRS0Bkt+DFwdcw97Pdvw7fPRTeyQaIu8nMkMQ0xgY+FuycvSyZ0JDFdJg1Ygod3RZ8dkVomo/OMcYKFiPNxduqkZNLMTY/4+/DCmZg8weUxn699L5fC9wKOCSmRjy2CFCZro6pSDoaN3VtDwgtNARhHGhC7embtusnqqNvLnDl0+RIc1XOaEkh9cRgxnPfzZA3+69bLLkKfd2gIsrTRg5J2q0Sdy513beRlf0ASg47YkNk0mYooA/mHsj99mAl8
 
-[ Added Mathieu who is the author of the tracepoint code ]
-
-On Wed, 9 Jul 2025 11:11:10 +0530
-Aditya Chillara <quic_achillar@quicinc.com> wrote:
-
-> Prevent tracepoint_probe_unregister from being executed multiple times
-> for the same probe, which can cause issues with perf due to the lack
-> of error handling.
+On 09/07/2025 16:39, Krzysztof Kozlowski wrote:
+> On 09/07/2025 16:31, Gerd Hoffmann wrote:
+>> On Wed, Jul 09, 2025 at 04:20:49PM +0200, Krzysztof Kozlowski wrote:
+>>> On 09/07/2025 16:17, Gerd Hoffmann wrote:
+>>>> On Wed, Jul 09, 2025 at 03:58:58PM +0200, Krzysztof Kozlowski wrote:
+>>>>> On 08/07/2025 14:56, Gerd Hoffmann wrote:
+>>>>>> +MODULE_DESCRIPTION("OVMF debug log");
+>>>>>> +MODULE_AUTHOR("Gerd Hoffmann <kraxel@redhat.com>");
+>>>>>> +MODULE_LICENSE("GPL");
+>>>>>> +MODULE_ALIAS("platform:ovmf_debug_log");
+>>>>>> diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+>>>>>> index db8c5c03d3a2..ac0a03ec3452 100644
+>>>>>> --- a/drivers/firmware/efi/Kconfig
+>>>>>> +++ b/drivers/firmware/efi/Kconfig
+>>>>>> @@ -263,6 +263,14 @@ config EFI_COCO_SECRET
+>>>>>>  	  virt/coco/efi_secret module to access the secrets, which in turn
+>>>>>>  	  allows userspace programs to access the injected secrets.
+>>>>>>  
+>>>>>> +config OVMF_DEBUG_LOG
+>>>>>> +	tristate "Expose OVMF firmware debug log via sysfs"
+>>>>>> +	depends on EFI
+>>>>>> +	help
+>>>>>> +	  Recent OVMF versions (edk2-stable202508 + newer) can write
+>>>>>> +	  their debug log to a memory buffer.  This driver exposes the
+>>>>>> +	  log content via sysfs (/sys/firmware/efi/ovmf_debug_log).
+>>>>>
+>>>>> Where did you document new ABI?
+>>>>
+>>>> The log buffer header struct is documented in the header file for the
+>>>> edk2 code:
+>>>> https://github.com/tianocore/edk2/blob/master/OvmfPkg/Include/Library/MemDebugLogLib.h
+>>>
+>>> You added a new sysfs interface. I meant documentation for this.
+>>
+>> The sysfs file contains the log and you can simply use
+>> 'cat /sys/firmware/efi/ovmf_debug_log' to read it.
 > 
-> Return an error if the probe is not present in the list of probes.
+> Don't explain how it works to me. I did not ask how it works. I asked
+> where is the new ABI documented?
+... and if answer is nowhere, then that's the problem. You need to
+document new ABI - see docs in kernel sources.
 
-This patch even shows that the first patch is fixing a symptom.
-
-Yes, I agree with this patch (with some cleanups below), but there
-should be no reason for perf to be ever calling unreg() if it doesn't
-have a tracepoint registered. Something else got screwed up in the mean
-time.
-
-> 
-> Signed-off-by: Aditya Chillara <quic_achillar@quicinc.com>
-> ---
->  kernel/tracepoint.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-> index ef42c1a1192053cc05b45ccb61358a4996453add..e6eee7e44a9d6f4f19114fbcf8fd9e5c85075324 100644
-> --- a/kernel/tracepoint.c
-> +++ b/kernel/tracepoint.c
-> @@ -232,7 +232,7 @@ func_add(struct tracepoint_func **funcs, struct tracepoint_func *tp_func,
->  static void *func_remove(struct tracepoint_func **funcs,
->  		struct tracepoint_func *tp_func)
->  {
-> -	int nr_probes = 0, nr_del = 0, i;
-> +	int nr_probes = 0, nr_del = 0, nr_tp_stub_del = 0, i;
->  	struct tracepoint_func *old, *new;
->  
->  	old = *funcs;
-> @@ -246,11 +246,18 @@ static void *func_remove(struct tracepoint_func **funcs,
->  		for (nr_probes = 0; old[nr_probes].func; nr_probes++) {
->  			if ((old[nr_probes].func == tp_func->func &&
->  			     old[nr_probes].data == tp_func->data) ||
-> -			    old[nr_probes].func == tp_stub_func)
-> +			    old[nr_probes].func == tp_stub_func) {
-> +				if (old[nr_probes].func == tp_stub_func)
-> +					nr_tp_stub_del++;
->  				nr_del++;
-> +			}
-
-I would make this a bit cleaner by:
-
- 			if ((old[nr_probes].func == tp_func->func &&
- 			     old[nr_probes].data == tp_func->data))
-				nr_del++;
-
-			 if (old[nr_probes].func == tp_stub_func)
-				nr_tp_stub_del++;
->  		}
->  	}
->  
-> +	/* If there is nothing to delete, do not allow */
-> +	if (nr_del - nr_tp_stub_del == 0)
-> +		return ERR_PTR(-ENOENT);
-
-	if (!nr_del)
-		return ERR_PTR(-ENOENT);
-
-	nr_del += nr_tp_stub_del;
-
--- Steve
-
-> +
->  	/*
->  	 * If probe is NULL, then nr_probes = nr_del = 0, and then the
->  	 * entire entry will be removed.
-> 
-
+Best regards,
+Krzysztof
 
