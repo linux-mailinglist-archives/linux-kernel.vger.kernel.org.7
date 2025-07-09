@@ -1,133 +1,89 @@
-Return-Path: <linux-kernel+bounces-723725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E46AFEA55
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:36:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1455AFEA4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB399178DDC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:34:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDB0E1C81D7C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A127B276025;
-	Wed,  9 Jul 2025 13:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160FB2DFF3F;
+	Wed,  9 Jul 2025 13:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KRh/Pyeh"
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="PgdVTFIW"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7881B283FF0;
-	Wed,  9 Jul 2025 13:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84132BE7D9;
+	Wed,  9 Jul 2025 13:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752068025; cv=none; b=fQ1sQkMwUwZDk26poKHq7yqUn+kzHeuDh2ehWGPfZ1gADCB6tU4mWE1cGpQ1gr7LPaVH9H+Smc4PLgSKCpfA/3aUs0hryfXBG8RajgxwnW5bo0LXQ8chzqGlVNSejuUo3dcBD930l0aaA1Qtf/VhUgp25pQWxqAbUL6TUqVz8OY=
+	t=1752068017; cv=none; b=m1+GipWvICqq0pxlT4fswFUBf7DURhkvhKfNGF1NUUeQ4mvZDwWT9pIh+l6EEPax1N0OFif8owWU4aoiztxqyhpDvi8F2zjAFVuxztl1Dw16vAfj+ozWSFHyhyvH+DozNFPiy52Qurkg2sLrX5cy5hLPfZB+qAIxD+Tf24UDkwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752068025; c=relaxed/simple;
-	bh=QJlrR7trKt+k0DHfB1l8dMYaqpFemIJMJjy9PZjYhGI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mJwy5Fq5q91ICtg2E8Kq5avOTaEyal03KQ0MoGGNSvIdjuhywib2F89sBdziSVsMoOCP9NUhLO67m88eS3NuIYGuucJx1qXKAoWdbKyj3vZu/XbHZmr+jsH0VcEcBsXfN+mopXzgxdfXb4gCPHrbu2+O2CUYB93MngcDePVEJxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KRh/Pyeh; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5314b486207so1996732e0c.2;
-        Wed, 09 Jul 2025 06:33:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752068022; x=1752672822; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8p8Y7xoNQwZAIw4F7Fb5uJJ11m4t3+5eBeshCHSxAZc=;
-        b=KRh/PyehWmz30JkkF3eP7KA+0F0azrF4lR+0lUV4un3JclqIvsjIx5ySw3bc92PInt
-         qNgynzQ0aZNW9COWGJoko3CVhBTCS98s9OHuIimE9D3I7Q0o1LqxRa4gAa/yux4N6/G4
-         dErG7LsBGUZW29XUhx3kZZFmKcgMuywhD/XMGmGun/1MMmDNbhYt+eFyoyswm2oxRDcO
-         YsUznaxx4ZgpAveftX8eFmJSGm+q+mXH5mv5aqP7gwp99ba0I/lU6ROgR/LYCfoefm8m
-         d1PIvC04AiSoWZ8M/QWnVWaAcEtiBmB7DOARVObEj8mRQUDhbp702+4eQzwt4KfK9baV
-         xDdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752068022; x=1752672822;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8p8Y7xoNQwZAIw4F7Fb5uJJ11m4t3+5eBeshCHSxAZc=;
-        b=pgtZfCPMW8NFwJvObHXlDzIICYBj9EcUevA8gst/mUsoXU4hOTwMAjV5uUJnGU0CVU
-         q5h+UTLi95zceOmKTUeKy6J/T+/69C94KwO4TLJlNE5IXm2gWK+rDbTTeSPXaf7e9SHc
-         NwXscjBHy4Pl8NTm/njU/map+LWdnumm6DcUICPMRSgbp/4DA7EyRrgHeyG8neqMQBKu
-         ON1/lM6RqT89sACUpnaOGkfVTh/yacsOB4RphKpaLJMSqXFY9hUkNrVreseP4WOecUlX
-         hdsStEWVE/RPVDpXlK95zX2d0cbcgoIiwFTifPgY6mjzK3kPwMS38z5acyRQHbshb7iw
-         SVnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVn1XBiXI1dqrnEVoAEk6aFz+coSTCfDJIXeN/W+zUENh3q633YXMQV/5CNvOaCw8jAT18ChV5XYvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlgzF+uMR5q0B6u1sTUDB/XJU5XrrOeoslRQ+ykr5xXNtS+o4x
-	Z7lHf6nLjAIovitjQYro99IwQRpE+m3+IzGWLNcRsctOmfdJli9mq8vz
-X-Gm-Gg: ASbGncvIuI2MdrlxmhBhvTul4EBNQ4zgyUUvD6KG6k0AUZb6+tk87ZqUr21VBgsTWHm
-	aD3oypo+Mzv411Zj1iVdzMeqax5RxJhT7Lnuj0q8X7PnorNirglQPXLhkFA563dN7vRUCt2Hiq9
-	F3IKGesIuGBvNT9/b9NNKyxbpaizA0nW7SlJ850P/fYxmuWop3oqgEm/FrBOGJ9eXXHuzJN09T2
-	ETUdGqx+DhllzIcdKd0zPsW+IhfKKSxPb7JAB+7/4g/Jm21UliouniU2h7TmJzugIlSbJdsnbCJ
-	S4r6SNtBy2Xj7MR2whYzRChxh6mmr4sl2P+nr8D3aElGyhzhC82ZTen8R9ti0tQKB7YATKmrZjt
-	WroIaDVvMY7ognMRZrmc4NQqgAblPys+uvLP1j3c=
-X-Google-Smtp-Source: AGHT+IHg9yphXawKg0kB+fw0hzH8WzGI686ZA2Hcr8oBVBE+CGD925dBJEbvwISlK1VPKVP3JKW+Qg==
-X-Received: by 2002:a05:6122:510:b0:52f:47de:3700 with SMTP id 71dfb90a1353d-535d7367703mr1472242e0c.5.1752068022077;
-        Wed, 09 Jul 2025 06:33:42 -0700 (PDT)
-Received: from Ubuntu.. (syn-097-097-020-058.res.spectrum.com. [97.97.20.58])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-534790ed831sm2083240e0c.43.2025.07.09.06.33.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 06:33:41 -0700 (PDT)
-From: Jonathan Velez <jonvelez12345@gmail.com>
-To: dlemoal@kernel.org,
-	cassel@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	shuah@kernel.org,
-	Jonathan Velez <jonvelez12345@gmail.com>
-Subject: [PATCH] ata: libata-transport: replace scnprintf with sysfs_emit for simple attributes
-Date: Wed,  9 Jul 2025 13:33:30 +0000
-Message-ID: <20250709133330.3546-1-jonvelez12345@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752068017; c=relaxed/simple;
+	bh=EAjyN1mnuQEc2DPAj9sCbgFnm9w066/f8wIgUKYYUdg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nGJbpcvBZauk1bKGWpqwUbBqotTvWcy68ww+0eV2tKrUI2fzFxAahp+7pkk2Olex8aVdyA/9ejt9XJNKR7dUhp/VMIo2BrUlQAXgRHcEni5xoMfAr6ZIXmfS1OZKnlL2L2kmJ/xSC3V+kJ96z9kMvpXt3urbJtzG3Xk26gSwQh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=PgdVTFIW; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=/GZOP1kf5dBhxXZChg6bf018g5kHcCt9ChDwuA2ncBI=; b=PgdVTFIWg8Ltwdn7UXhgdbd7WQ
+	3oyHzL8fIi/r2E4SRo7qRg0IYkGHNAF1OmoakW4a6MvSW9vu61zW2lZMQ70axfr4Z4vWeZvUmyDmj
+	M7kJfeKRGKcwDsbIwGnFWe67zjN5xfQzv1YNXhJ18ZBoLiXiLehNayNhACc/VjqyxVQM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uZUvV-000wfY-Is; Wed, 09 Jul 2025 15:33:33 +0200
+Date: Wed, 9 Jul 2025 15:33:33 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Buday Csaba <buday.csaba@prolan.hu>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH] net: mdio: reset PHY before attempting to access
+ registers in fwnode_mdiobus_register_phy
+Message-ID: <fbb2da18-0929-4c61-a940-6a3d4fbea3e2@lunn.ch>
+References: <20250709132425.48631-1-buday.csaba@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709132425.48631-1-buday.csaba@prolan.hu>
 
-sprintf, snprintf, and scnprintf do not consider the PAGE_SIZE maximum
-of the temporary buffer used for outputting sysfs content and they may
-overrun the PAGE_SIZE buffer length.
+On Wed, Jul 09, 2025 at 03:24:24PM +0200, Buday Csaba wrote:
+> Some PHYs (e.g. LAN8710A) require a reset after power-on,even for
+> MDIO register access.
+> The current implementation of fwnode_mdiobus_register_phy() and
+> get_phy_device() attempt to read the id registers without ensuring
+> that the PHY had a reset before, which can fail on these devices.
 
-To avoid output defects with the ATA transport class simple attributes,
-use sysfs_emit instead of scnprintf().
+This is specific to this device, so the driver for this device should
+take care of the reset.
 
-This aligns with the sysfs guidance provided in
-Documentation/filesystems/sysfs.rst.
+To solve the chicken/egg, you need to put a compatible in the PHY node
+listing the ID of the PHY. That will cause the correct PHY driver to
+load, and probe. The probe can then reset it.
 
-Signed-off-by: Jonathan Velez <jonvelez12345@gmail.com>
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+We have to be careful about changing the reset behaviour, it is likely
+to break PHYs which currently work, but stop working when they get an
+unexpected reset.
+
+    Andrew
+
 ---
- drivers/ata/libata-transport.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/ata/libata-transport.c b/drivers/ata/libata-transport.c
-index e898be49df6b..62415fe67a11 100644
---- a/drivers/ata/libata-transport.c
-+++ b/drivers/ata/libata-transport.c
-@@ -202,7 +202,7 @@ show_ata_port_##name(struct device *dev,				\
- {									\
- 	struct ata_port *ap = transport_class_to_port(dev);		\
- 									\
--	return scnprintf(buf, 20, format_string, cast ap->field);	\
-+	return sysfs_emit(buf, format_string, cast ap->field);	        \
- }
- 
- #define ata_port_simple_attr(field, name, format_string, type)		\
-@@ -389,7 +389,7 @@ show_ata_dev_##field(struct device *dev,				\
- {									\
- 	struct ata_device *ata_dev = transport_class_to_dev(dev);	\
- 									\
--	return scnprintf(buf, 20, format_string, cast ata_dev->field);	\
-+	return sysfs_emit(buf, format_string, cast ata_dev->field);	\
- }
- 
- #define ata_dev_simple_attr(field, format_string, type)		\
--- 
-2.43.0
-
+pw-bot: cr
 
