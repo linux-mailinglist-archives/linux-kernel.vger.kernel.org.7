@@ -1,129 +1,185 @@
-Return-Path: <linux-kernel+bounces-722845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E82EAFDFAC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:52:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9572AFDFA9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BDD21C27A1E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:53:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60F5C1C27AA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C25226C38D;
-	Wed,  9 Jul 2025 05:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAC226B74E;
+	Wed,  9 Jul 2025 05:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qgicJCkS"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PfRsqiMf"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C72226B95A;
-	Wed,  9 Jul 2025 05:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD5E229B02;
+	Wed,  9 Jul 2025 05:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752040306; cv=none; b=r9Me6oSquMAzA33DZLv+pgiNwBeWO+swY3NJfizgumBB7229VlLsoKxAOC4p3aalYAj965W5KcSdgPQAvowGfZRrWHJGTu52m3ejpvYwpG3Gb2oXL1DcR7IEl/4ij/mV8igUp+/wBSQwpmk6ptgaRjlts7zsWr6LgQqs31GLd1s=
+	t=1752040302; cv=none; b=sj0CZqkNrF0pPmjC7OjCYujORqhM19X9FKA7vsX9+uMxste+BBfd0+tI8hT82FPgzodXZOpUdmFx7qRjl5BqeqM/lLsJunVfpGTDULONfBehullp9+1x+VCNcMQCCP+6uhiIbc0DOWkSbmUdMY0wzjSihkaJVl20FzEdiKJxrCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752040306; c=relaxed/simple;
-	bh=es6WMb9hlAoxAIRRFtKatfxvtBN7hYOOl6QsivtjBDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aAHCWdqtJPr/klsPc3yEIyTJVNjhCZLw9Hg/xrx6KQuUfqzMNFLHv3WitREpLDit/p8xNRc3ovuheXMyE64jGq0IS4+7EJpLvqcgYZ1n5L4RhJvGBi8syNhObzvFmb9YjLwLBcm5RG1AK8mHAePcNcei5yIkf3Ykv2sc0R85Ekg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qgicJCkS; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5695pXLN722034;
-	Wed, 9 Jul 2025 00:51:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752040293;
-	bh=uWmzUqKrcVoL1as9gAY2jOX82Zk8BVied/NoOb4adzo=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=qgicJCkSmjf1noVZyhgFoetrqIx45c6Z1Hf1tz7wp4n7oy9i9CQLda4UccZE3vB6/
-	 YMuFVB4rXejjQW81g5nkbl5fg1zyUKpoklnb7u9lckfig7C7WOjlEyLkdeCeUbSYh3
-	 F8DKtRUM8206IqKplwUDGsHbsUHqqxQBtt2ZTWdo=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5695pWvu2168926
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 9 Jul 2025 00:51:32 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 9
- Jul 2025 00:51:32 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 9 Jul 2025 00:51:32 -0500
-Received: from [172.24.227.245] (uda0132425.dhcp.ti.com [172.24.227.245])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5695pRhx3408594;
-	Wed, 9 Jul 2025 00:51:28 -0500
-Message-ID: <a8e83bd1-89bf-4288-8953-15cdfd9549b5@ti.com>
-Date: Wed, 9 Jul 2025 11:21:15 +0530
+	s=arc-20240116; t=1752040302; c=relaxed/simple;
+	bh=6rtRYvn5+oReLjmAEWFFqxSeCvskD+CL2ea5tkQtHHE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dOhQmHo2QYIrU+37QbUZ5+qdSA+Po5KX89Cx/+orNHGyQ8Cev8fmLfqmXR4uzPnfoIRbNBgOzkTKOZqY2dPSE/VsJh5qirMbPkbz0IQKCSfU08eM3LihDGvBuQNplSnvOAzkFX699tvMqXavEA3UmtrEVox1WwCk3XtVSZh5GiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PfRsqiMf; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id EAC0B44212;
+	Wed,  9 Jul 2025 05:51:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1752040297;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GLjyFaofA8MNXqn/woK0DZj/5o9p6QECmD05JujYBHw=;
+	b=PfRsqiMfspPZsfmDfw3DJ1jZbMX4/9x4q0IlsVb149GC8jNxZlFK797V+NZuiLB3Xo/jtV
+	nFt6rK58HyYXt7VKmrxv6Y/p6BEs0Bg0EB7R/4/CXiXcnCi7JVfXxPFCuPiIKq62P1ykY3
+	pSOqKlzsjhw3/p/0q9q9/Ow4QWZEVWabUnUhiDWXJq/90p5lPvYpmftEhdmj+VZpZ+qCOd
+	jsikiYbzNYFtXZ1P90TaCm3muVUbUJg7Bll4G9+8vA52Zw3DVQum1Z/XE/BI8QNGVl9S2l
+	/lIw+NmCm/daRKlaO+93S/m3FBxXmw8zuPUPAYIs24qg8tJQOKv8UHdwfWuf8Q==
+Date: Wed, 9 Jul 2025 07:51:34 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: <Tristram.Ha@microchip.com>
+Cc: <Woojung.Huh@microchip.com>, <andrew@lunn.ch>, <olteanv@gmail.com>,
+ <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+ <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+ <pabeni@redhat.com>, <marex@denx.de>, <UNGLinuxDriver@microchip.com>,
+ <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 6/6 v2] net: dsa: microchip: Setup fiber ports
+ for KSZ8463
+Message-ID: <20250709075134.0a0f5df2@fedora>
+In-Reply-To: <DM3PR11MB8736DE8A01523BD67AF73766EC4EA@DM3PR11MB8736.namprd11.prod.outlook.com>
+References: <20250708031648.6703-1-Tristram.Ha@microchip.com>
+	<20250708031648.6703-7-Tristram.Ha@microchip.com>
+	<20250708122237.08f4dd7c@device-24.home>
+	<DM3PR11MB8736DE8A01523BD67AF73766EC4EA@DM3PR11MB8736.namprd11.prod.outlook.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/4] arm64: dts: ti: Add pinctrl entries for AM62D2
- family of SoCs
-To: Rob Herring <robh@kernel.org>, Paresh Bhagat <p-bhagat@ti.com>
-CC: <nm@ti.com>, <praneeth@ti.com>, <kristo@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <khasim@ti.com>, <v-singh1@ti.com>, <afd@ti.com>, <bb@ti.com>,
-        <devarsht@ti.com>, <s-vadapalli@ti.com>, <andrew@lunn.ch>
-References: <20250708085839.1498505-1-p-bhagat@ti.com>
- <20250708085839.1498505-4-p-bhagat@ti.com>
- <20250708202259.GA904737-robh@kernel.org>
-From: Vignesh Raghavendra <vigneshr@ti.com>
-Content-Language: en-US
-In-Reply-To: <20250708202259.GA904737-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-GND-State: clean
+X-GND-Score: 0
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefieejiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduiedprhgtphhtthhopefvrhhishhtrhgrmhdrjfgrsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtohephghoohhjuhhnghdrjfhuhhesmhhitghrohgthhhiphdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopeholhhtvggrnhhvsehgmhgri
+ hhlrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvth
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Hi Rob,
+On Tue, 8 Jul 2025 19:45:44 +0000
+<Tristram.Ha@microchip.com> wrote:
 
-On 09/07/25 01:52, Rob Herring wrote:
-> On Tue, Jul 08, 2025 at 02:28:38PM +0530, Paresh Bhagat wrote:
->> Update k3-pinctrl file to include pin definitions for AM62D2 family of
->> SoCs.
->>
->> Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
->> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
->> ---
->>  arch/arm64/boot/dts/ti/k3-pinctrl.h | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-pinctrl.h b/arch/arm64/boot/dts/ti/k3-pinctrl.h
->> index cac7cccc1112..0cf57179c974 100644
->> --- a/arch/arm64/boot/dts/ti/k3-pinctrl.h
->> +++ b/arch/arm64/boot/dts/ti/k3-pinctrl.h
->> @@ -63,6 +63,9 @@
->>  #define AM62AX_IOPAD(pa, val, muxmode)		(((pa) & 0x1fff)) ((val) | (muxmode))
->>  #define AM62AX_MCU_IOPAD(pa, val, muxmode)	(((pa) & 0x1fff)) ((val) | (muxmode))
->>  
->> +#define AM62DX_IOPAD(pa, val, muxmode)		(((pa) & 0x1fff)) ((val) | (muxmode))
->> +#define AM62DX_MCU_IOPAD(pa, val, muxmode)	(((pa) & 0x1fff)) ((val) | (muxmode))
->> +
->>  #define AM62PX_IOPAD(pa, val, muxmode)		(((pa) & 0x1fff)) ((val) | (muxmode))
->>  #define AM62PX_MCU_IOPAD(pa, val, muxmode)	(((pa) & 0x1fff)) ((val) | (muxmode))
+> > Hi Tristram,
+> > 
+> > On Mon, 7 Jul 2025 20:16:48 -0700
+> > <Tristram.Ha@microchip.com> wrote:
+> >   
+> > > From: Tristram Ha <tristram.ha@microchip.com>
+> > >
+> > > The fiber ports in KSZ8463 cannot be detected internally, so it requires
+> > > specifying that condition in the device tree.  Like the one used in
+> > > Micrel PHY the port link can only be read and there is no write to the
+> > > PHY.  The driver programs registers to operate fiber ports correctly.
+> > >
+> > > The PTP function of the switch is also turned off as it may interfere the
+> > > normal operation of the MAC.
+> > >
+> > > Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+> > > ---
+> > >  drivers/net/dsa/microchip/ksz8.c       | 26 ++++++++++++++++++++++++++
+> > >  drivers/net/dsa/microchip/ksz_common.c |  3 +++
+> > >  2 files changed, 29 insertions(+)
+> > >
+> > > diff --git a/drivers/net/dsa/microchip/ksz8.c b/drivers/net/dsa/microchip/ksz8.c
+> > > index 904db68e11f3..1207879ef80c 100644
+> > > --- a/drivers/net/dsa/microchip/ksz8.c
+> > > +++ b/drivers/net/dsa/microchip/ksz8.c
+> > > @@ -1715,6 +1715,7 @@ void ksz8_config_cpu_port(struct dsa_switch *ds)
+> > >       const u32 *masks;
+> > >       const u16 *regs;
+> > >       u8 remote;
+> > > +     u8 fiber_ports = 0;
+> > >       int i;
+> > >
+> > >       masks = dev->info->masks;
+> > > @@ -1745,6 +1746,31 @@ void ksz8_config_cpu_port(struct dsa_switch *ds)
+> > >               else
+> > >                       ksz_port_cfg(dev, i, regs[P_STP_CTRL],
+> > >                                    PORT_FORCE_FLOW_CTRL, false);
+> > > +             if (p->fiber)
+> > > +                     fiber_ports |= (1 << i);
+> > > +     }
+> > > +     if (ksz_is_ksz8463(dev)) {
+> > > +             /* Setup fiber ports. */  
+> > 
+> > What does fiber port mean ? Is it 100BaseFX ? As this configuration is
+> > done only for the CPU port (it seems), looks like this mode is planned
+> > to be used as the MAC to MAC mode on the DSA conduit. So, instead of
+> > using this property maybe you should implement that as handling the
+> > "100base-x" phy-mode ?
+> >   
+> > > +             if (fiber_ports) {
+> > > +                     regmap_update_bits(ksz_regmap_16(dev),
+> > > +                                        reg16(dev, KSZ8463_REG_CFG_CTRL),
+> > > +                                        fiber_ports << PORT_COPPER_MODE_S,
+> > > +                                        0);
+> > > +                     regmap_update_bits(ksz_regmap_16(dev),
+> > > +                                        reg16(dev, KSZ8463_REG_DSP_CTRL_6),
+> > > +                                        COPPER_RECEIVE_ADJUSTMENT, 0);
+> > > +             }
+> > > +
+> > > +             /* Turn off PTP function as the switch's proprietary way of
+> > > +              * handling timestamp is not supported in current Linux PTP
+> > > +              * stack implementation.
+> > > +              */
+> > > +             regmap_update_bits(ksz_regmap_16(dev),
+> > > +                                reg16(dev, KSZ8463_PTP_MSG_CONF1),
+> > > +                                PTP_ENABLE, 0);
+> > > +             regmap_update_bits(ksz_regmap_16(dev),
+> > > +                                reg16(dev, KSZ8463_PTP_CLK_CTRL),
+> > > +                                PTP_CLK_ENABLE, 0);
+> > >       }
+> > >  }
+> > >
+> > > diff --git a/drivers/net/dsa/microchip/ksz_common.c  
+> > b/drivers/net/dsa/microchip/ksz_common.c  
+> > > index c08e6578a0df..b3153b45ced9 100644
+> > > --- a/drivers/net/dsa/microchip/ksz_common.c
+> > > +++ b/drivers/net/dsa/microchip/ksz_common.c
+> > > @@ -5441,6 +5441,9 @@ int ksz_switch_register(struct ksz_device *dev)
+> > >                                               &dev->ports[port_num].interface);
+> > >
+> > >                               ksz_parse_rgmii_delay(dev, port_num, port);
+> > > +                             dev->ports[port_num].fiber =
+> > > +                                     of_property_read_bool(port,
+> > > +                                                           "micrel,fiber-mode");  
+> > 
+> > Shouldn't this be described in the binding ?
+> >   
+> > >                       }
+> > >                       of_node_put(ports);
+> > >               }  
 > 
-> Why is the same expression just repeated over and over? Looks like this 
-> needs some refactoring.
+> The "micrel,fiber-mode" is described in Documentation/devicetree/
+> bindings/net/micrel.txt.
 > 
-
-Is the comment wrt having another common macro (for better code reuse)
-for the right hand side here?
-
-Or is the comment wrt having differently named macros for each SoCs?
-Having per SoC macro is intentional so to avoid backward compatibility
-issues when these SoC macros deviate in future
-
-
--- 
-Regards
-Vignesh
-https://ti.com/opensource
+> Some old KSZ88XX switches have option of using fiber in a port running
+> 100base-fx.  Typically they have a register indicating that configuration
+> and the driver just treats the port as having a PHY and reads the link
+> status and speed as normal except there is no write to those PHY related
+> registers.  KSZ8463 does not have that option so the driver needs to be
+> told.
+> 
 
 
