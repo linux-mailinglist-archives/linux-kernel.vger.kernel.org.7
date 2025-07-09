@@ -1,122 +1,130 @@
-Return-Path: <linux-kernel+bounces-722849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EE10AFDFBD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:00:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5F5BAFDFC9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21E234E7917
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:59:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A3421C25ADC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367B926B2C5;
-	Wed,  9 Jul 2025 05:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D8726B74E;
+	Wed,  9 Jul 2025 06:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W2L8ieow"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SkyFYlyJ"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5A71B6D08;
-	Wed,  9 Jul 2025 05:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A44156678;
+	Wed,  9 Jul 2025 06:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752040796; cv=none; b=i4AgIrM4/s/Cu5Np+pF0VxzzMtTBotLNT3vb1o/+GRN2jP5EE4pyjbs0npehGl/lQ5cfTWzwGIteUY1NPAF5nMCRoKilS3gh+yNzBPQvqFimVjdcXmebxxolEkwlXtXIoCqChgE4tT4ZrHSgCwYlMtO+vLGKnt/MSBojjkZNkD8=
+	t=1752041108; cv=none; b=CGU134pwfzuJ5t4JTheYs/yfHcyYzqjLh30PWfNwQD5xv4pzgimOAOyK7wq7Q3csYlw3z2eu9HPQ1sIMFe90YGUovDvVme/W9f060LVIZzuXenbxbDwOAuwbrQjnK0traDW98HYigwtLfCcwnOLMLHwT9hiTSiG7seimivceYTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752040796; c=relaxed/simple;
-	bh=LzYB6pw/2+1lvLXdkdXCIJm1qBGvJhF76UZJym27mtI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aSiOAF8DXK2fPw6SAaM9CQS3qh/Mlovee/3R7TuUCZItPo8GJUs87M+QcQDXC2X6XTYTElQI1GNRMzHuTE9m51RdvYI15EhTYc9cE4qLDPnjqtIDdisZw1lAulxiZJ2x81z4rZNFcVeVA+UXxuefAhyFWKGkQctDaw62lWGm9/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W2L8ieow; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752040794; x=1783576794;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LzYB6pw/2+1lvLXdkdXCIJm1qBGvJhF76UZJym27mtI=;
-  b=W2L8ieowE66nAGiudrY1KzZNbz5+EKIfkXbRRjilRDRP9YKFDfGfse8z
-   0IDapfgfVIEfUpA04CQMunCAwkgR2ERFW3qz31PTkQQsJjlbd5Z1ltnGL
-   Qi7PRdGmSWshlioGE8e0gR/duWZjf6Yn9fd+8HlrFvQ6CY13IphRXDWna
-   n/LCYsdIDsgTbDiBd5hACSbkkyTuwOGAcGt2K+k6hjt/gMIA5gREjxVKW
-   TSBg5VQPAbJN1th3hJwVt72ggEIltbEQh498ki23Cn6krKvQu+1M+6afN
-   +ncX7Tkq/FexLX+aTEBNxDph7xYVDqBGEYi/IU0cp2mAgXsvJ/UjfA12K
-   g==;
-X-CSE-ConnectionGUID: hXuzE9aFSbm43FeQHlOoxA==
-X-CSE-MsgGUID: ZFo3x4fFQSS3kdNuBH2wGA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54009937"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="54009937"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 22:59:50 -0700
-X-CSE-ConnectionGUID: A6UhJEe2QCS4oMRU34mFqw==
-X-CSE-MsgGUID: L/VUNKizQfG5E89QG7KNzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="156414304"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 08 Jul 2025 22:59:47 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uZNqL-00039P-06;
-	Wed, 09 Jul 2025 05:59:45 +0000
-Date: Wed, 9 Jul 2025 13:59:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Dafna Hirschfeld <dafna@fastmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Keke Li <keke.li@amlogic.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Dan Scally <dan.scally@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Subject: Re: [PATCH 1/8] media: uapi: Introduce V4L2 extensible params
-Message-ID: <202507091305.hPkKkWZJ-lkp@intel.com>
-References: <20250708-extensible-parameters-validation-v1-1-9fc27c9c728c@ideasonboard.com>
+	s=arc-20240116; t=1752041108; c=relaxed/simple;
+	bh=vy/DxLLlBv73YYntcTpcNlvYRslRUHxSeYnYnaMFcuk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AQi/AIsglZ2iZHC0MgJQrcPtGd1/ptEzbcdTGJ1kYxQw0KnSoybiR9YkoxKOdyWKgKGvEoCG8HoSn8EOSn3l6Y8xMUrx4TVDiszVXxdksn9Qjj961aH9icpSpG3aARv+WoCQeVKwSHywuNdqrTEkwgVL7moeerGIbWwqMEErPfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=SkyFYlyJ; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752041036;
+	bh=UtyfWyspUxfYp0JpUE65iqJngGZN/Z3HbFphQvQSFGo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=SkyFYlyJTjMe+KeKJBktthBTR2smy0NmhPIdWoe6YjXl8dpEZZvkSoH6KRLcnOnLx
+	 DIaFNpS9DTcX5x9Ejw8T/8WLVHsmWYelAVU+zD2NJnefYPszEobvY4pqpS/OkV2BfD
+	 bywqNWpsxB7a0roioBaGvdrMz7Yy6Mk2p8lUA/+TMg7x1pYdaDHG2RLSNyuMIRaqZp
+	 PFIPexwpTaiTdXfa2gDEA9hZfOywm0RQ5PAEZ9EKzDhdQ/hvg3BjoMVi43itMgFuNO
+	 0fLpK2wMk6og74e4+Z+5De/ldimQv1dEDHeAaZWKP6Nv2RbcHswcER496/oL4uTfGI
+	 1MUswC1jyE37A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bcS8q16Hxz4w2H;
+	Wed,  9 Jul 2025 16:03:55 +1000 (AEST)
+Date: Wed, 9 Jul 2025 16:04:56 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Sean Christopherson <seanjc@google.com>
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the kvm-x86 tree with Linus' tree
+Message-ID: <20250709160456.12aabc8b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250708-extensible-parameters-validation-v1-1-9fc27c9c728c@ideasonboard.com>
+Content-Type: multipart/signed; boundary="Sig_/aG3Odpe9u=Wvas08u+AMVVI";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Jacopo,
+--Sig_/aG3Odpe9u=Wvas08u+AMVVI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-kernel test robot noticed the following build errors:
+Hi all,
 
-[auto build test ERROR on a8598c7de1bcd94461ca54c972efa9b4ea501fb9]
+Today's linux-next merge of the kvm-x86 tree got a conflict in:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jacopo-Mondi/media-uapi-Introduce-V4L2-extensible-params/20250708-184651
-base:   a8598c7de1bcd94461ca54c972efa9b4ea501fb9
-patch link:    https://lore.kernel.org/r/20250708-extensible-parameters-validation-v1-1-9fc27c9c728c%40ideasonboard.com
-patch subject: [PATCH 1/8] media: uapi: Introduce V4L2 extensible params
-config: i386-buildonly-randconfig-003-20250709 (https://download.01.org/0day-ci/archive/20250709/202507091305.hPkKkWZJ-lkp@intel.com/config)
-compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146a88f60492b520a36f8f8f3231e15f3cc6082)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250709/202507091305.hPkKkWZJ-lkp@intel.com/reproduce)
+  arch/x86/kvm/vmx/vmx.c
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507091305.hPkKkWZJ-lkp@intel.com/
+between commit:
 
-All errors (new ones prefixed by >>):
+  f9af88a3d384 ("x86/bugs: Rename MDS machinery to something more generic")
 
-   In file included from <built-in>:1:
->> ./usr/include/linux/media/v4l2-extensible-params.h:23:2: error: "This file should not be included directly by applications"
-      23 | #error "This file should not be included directly by applications"
-         |  ^
-   1 error generated.
+from Linus' tree and commit:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+  83ebe7157483 ("KVM: VMX: Apply MMIO Stale Data mitigation if KVM maps MMI=
+O into the guest")
+
+from the kvm-x86 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/x86/kvm/vmx/vmx.c
+index 191a9ed0da22,65949882afa9..000000000000
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@@ -7290,8 -7210,8 +7210,7 @@@ static noinstr void vmx_vcpu_enter_exit
+  	if (static_branch_unlikely(&vmx_l1d_should_flush))
+  		vmx_l1d_flush(vcpu);
+  	else if (static_branch_unlikely(&cpu_buf_vm_clear) &&
+- 		 kvm_arch_has_assigned_device(vcpu->kvm))
+ -		 (flags & VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO))
+ -		mds_clear_cpu_buffers();
+ +		x86_clear_cpu_buffers();
+ =20
+  	vmx_disable_fb_clear(vmx);
+ =20
+
+--Sig_/aG3Odpe9u=Wvas08u+AMVVI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhuBogACgkQAVBC80lX
+0GyyUwf+PPPRkMkevTL7YlN8qHkrsrO5sb5+g6EL7D63s5antBz19xdelk/bY84b
+KUeWkuJhc0ekLacTrHaBlDZ6BD+CNIAxWmu+HsrTiGsPDan6YsmEZuTn5vxw368b
+n/VUK9GgxcVZ37xGA5UX0pl+mDh0RIj3KqBmlf8EhUrn5rae5bkiNHyvP2ij97DC
+BR86XlZWpsgDizIGnWpxl+3NbJc6lGfFB3u2QYexw6MOdrFK8Nz8jyoBTEH9dC2i
+hAD0LuQSZPVU1+tQImle5VAxR5nN//zaCg++A2wKGYaPWoyQe5QMOepAbdFOMg8J
+lRhvE9+EYNWblDGHabjvznrqXGtxkA==
+=qdFk
+-----END PGP SIGNATURE-----
+
+--Sig_/aG3Odpe9u=Wvas08u+AMVVI--
 
