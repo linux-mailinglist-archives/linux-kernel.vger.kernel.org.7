@@ -1,223 +1,258 @@
-Return-Path: <linux-kernel+bounces-723923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21998AFEC7C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:48:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F74AFEC78
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E865C4A271B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:46:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A33A1888A57
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28422DFA4D;
-	Wed,  9 Jul 2025 14:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA842E54DE;
+	Wed,  9 Jul 2025 14:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ll5bvQaN"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2052.outbound.protection.outlook.com [40.107.92.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WrWGlr+d"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A92293B5A;
-	Wed,  9 Jul 2025 14:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752072377; cv=fail; b=MmzkEBUp34qwQa78T96YTcRTGyPBBAfvdickwrKHFAWaexqBfNOEolilequWwC/ewiVE7s/g7ixxlQ95+HcBjRiKtaQsJ6ObQ1uRqtcPT1ynZwIkrQUkcnb47lWQHcu01vl6y9WQIkxbALRIBtUI8WjQK37KAW3wZar00N7IRok=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752072377; c=relaxed/simple;
-	bh=bjvNJOLq70ErX48FiPARYd2gIS5MBDqyBj1tKu4N9Fc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uAMh7h4Gn8nl0bb7kEjwRJFyVjVJxnlm+5FXei0sbf+SzjR9Cs3DvpChwnxSTm8AtXBSx/SoBacl9PMlTngny/GG8ujr8MrECmM5w4G5FLYjkf9KtkvjvcEbjT45VYpH+WEcPQH4UP2VtA7xUthlh6n4VeJ/uOZ6XJZwPVixHDY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ll5bvQaN; arc=fail smtp.client-ip=40.107.92.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=doUkkP8Ulu+AngyQLTubx8f8cOqjMChTrL20YtqCR0V/IsktvUl0+Nhmlk9F4B9Fx9mM9XtdQs454dIs1SNwAmApMM2Bp1Eac1UYuFACP+t+ljO8qB32bi3dUXsbn5xAj5AvuPI4cIck+gm+/Tfs3Y2a3cILoWZ9rWq8JN1aGv5o4JA6XcEwoFrkYB8SUhKtELnCSdpS8l7TeIDpDroLFSP38A0oeeBZj7kie/8FGKBzUzJY1JMfTQH7MFJt8sDOMpbI2ZD5zqgu7WxSiG+EFJ9vzjr6j+2JkvtEikVznWgm9H7jA+1Wu5eBTz+4L3x37k/CNMbZqA/BM815wSRpdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c3AEPTaq6IFG+7M+vtp2y2lsvAnrd0IZ2rsNH9EKaM0=;
- b=eEFThcFU1egEoEdmmjPkKb3zUg0xkxchKiLm60FKJ40UHKCnglSNwUrHcGeseL2+GXHDP3g6wlowJMlt3XnsGzpki+IJ3ZLbTwZCCnC1VikRZnMVXkJCaDZDaZf6UVXSJOtVPJxi3yVy0ozH7Kn5b6uVp6oWMlJSNvUlh4/+nuSGe0dZKnUYVg0aevK9HgdJTlK5YNnaAVOQauCZzng1zAuta60POEdYGZkGcn6GtAHZzsjJvVD/OGKkcS7uCTLXq/7sxSMlTkvp/V3PLwLxXHaUQOLVrKCF/40/FhGdGB1PWc42+/swCNmFtq8hfHRPAjFi3oOd+RyPs/zeqAyEGw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c3AEPTaq6IFG+7M+vtp2y2lsvAnrd0IZ2rsNH9EKaM0=;
- b=ll5bvQaNftF34D24WiqYTCruY9dUGsCuz/jToLS61z4TOR1XsyWwAaReY9bzJ+U2SaaDX9/WxIZ9hUTr1kM5D92g5s7LcqxUV2G1s+7e/C0MJM4LbicZeEM1o0PFrzC5OhT4/LhQLYydDvECA+7adHVhyP9k/vTIsJf47R7MrMjcmBG/tG3v/Vqq140XUGgWRInzdYgEvWmfTDPlNjyj1xy8Xuwpwr3dTJDncV+yuFeeaIJhOnJRybogsi8M2AwIRL2BM+UuMP1CqAulahKmhLM42ZsQcdIG+jCZybDIN+nZJlB0GwWfrWaNew46R4bybpUcAwsYmMXb09PSHnBrzA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- PH7PR12MB7257.namprd12.prod.outlook.com (2603:10b6:510:205::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.30; Wed, 9 Jul
- 2025 14:46:10 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.8901.024; Wed, 9 Jul 2025
- 14:46:10 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: wang lian <lianux.mm@gmail.com>
-Cc: Liam.Howlett@oracle.com, akpm@linux-foundation.org, brauner@kernel.org,
- david@redhat.com, gkwang@linx-info.com, jannh@google.com,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org, lorenzo.stoakes@oracle.com, p1ucky0923@gmail.com,
- ryncsn@gmail.com, shuah@kernel.org, sj@kernel.org, vbabka@suse.cz,
- zijing.zhang@proton.me
-Subject: Re: [PATCH v3] selftests/mm: add process_madvise() tests
-Date: Wed, 09 Jul 2025 10:46:07 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <A1603D53-03B1-412F-8FE8-851A37E4C08C@nvidia.com>
-In-Reply-To: <20250709123224.6593-1-lianux.mm@gmail.com>
-References: <48D7AAD0-07C9-4E2D-9171-081A503B47AF@nvidia.com>
- <20250709123224.6593-1-lianux.mm@gmail.com>
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BLAPR03CA0094.namprd03.prod.outlook.com
- (2603:10b6:208:32a::9) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D60B2E4252
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752072444; cv=none; b=LEIebf7t4GnlIuW8Z80aI+BRKFwhWHEaSJ9STC1nwxrhkdxkBfyUvt84W0pDST/bSsU5ocXlVRq3t/7zkTrhUZCnQpPi5m2IhoHGAkV8MhvoZa36juaAGJ/xnYHsUa1z2ztyzKSRyBshRHe/4LIN3EtdetXElei7JnKdnMeeniI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752072444; c=relaxed/simple;
+	bh=2y9TLBtmYiq/ol8HOFbrUlXzZccEQFXCKvLP2xlDRuU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jZqaTaHo0wEnWIhAlfzp+TBXIoLZqTpJaLhFgIMrzmu873fdJfUJ9gmlkGbSUMGzRsS6xDhRxMov5/UuCkgq7BhrN6dC3cq8TD9WpO+UK/4zQzCRWxyX0eUIh1/zvLu+jwRb6oYMoCHTSQJbIXgc6u4nxtEFJxo6n2Hrs5WqN7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WrWGlr+d; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e7569ccf04cso4667855276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 07:47:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752072442; x=1752677242; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U8h6N8ymdvLxrPdThRLNevh87P5TYtoxTMzmRdyKUHE=;
+        b=WrWGlr+dXnlRLw9lLKSQBSe+X6Pl8zvEzg5gItxkUX1/AIXgaFPx/q9xViqcqgKo9Z
+         beEXnPzBa7+Syzfp/LZWkYizI9oABMzJ9jjl0ggv34M2/xah9huUCRMAs2RRjnhzMG/n
+         t/YsmyK5r9wv37Z9m6CRxPCb9nzkrTPlTIAmp/SN75W//N0nq+dtQOCkvMPOnDfuMvGr
+         PUsbCevXmdua1qTQHm338A/YdBa59bMoH4vtuNAGsbfYmWJDmv+NE1hlwvKrtYdzVU1S
+         PdRDOhqxK5uOUIfppWItHxJdrbaRnjlfZ85lPUxZj4p2P9r+DUI4T19D1pz1rIQo5igj
+         WLpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752072442; x=1752677242;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U8h6N8ymdvLxrPdThRLNevh87P5TYtoxTMzmRdyKUHE=;
+        b=I4xFIaaVquTBFgJ11vh4Tp2bQbrmMEOntA6voqB4fS6xgabU1lLZWyOvrilLVy8Y3r
+         kuNAl7ZLihJdxiftVrW4zGUiMocN+2c/ttR+SAxyQ0R6TTocKK+b+o8fiO59cq5WPGRn
+         nhGAmLC/Y6vZOLhrh1EROOJSrHVAuM0R+1Bb1/K4niD0frfpJ8Jin11ThzWboVPXE73y
+         18sdVa9R0qeEQLpBvyzj6PjLS7mQPd14cdFG0/JWfdc6Pyr9qCtVRL9BEl/xmeEDBs15
+         EOnaRxxPDo4fgI69tTl5wljnotAM/MDznma9gf0d025Lw8/5TYaG/9z4/0I/2NmRCTNQ
+         FwMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNQdPaV+1YVFlsMJYdzSJR7WM3oUHnFLjPovmknYHU2keR3hO9rJvbo8KoTd0D1sMMsp6xz7Qp3/hbjSc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSp9DrCLZ0x1QBHZ2LDZ+u/Ccda/bkqFs3E2p8Ja/t4SFaVppK
+	2/eYLhBCMsiIMmXc+dm5KdSsepIpWvQkwCKFkv1NdZeDnpF1u7WR8ntzNd8JZKDe0Kg+ILX47k1
+	6bLdIIzRc2qyoHoYirMaCHPXLUmnMRDT4mtDKMoM17Q==
+X-Gm-Gg: ASbGnctIhom4wgkx2sTcYfKvsNRRyNyQDYrG87MdpZ1J7IRn23T5YFJNcGziWbe2T1E
+	0PTLSc7MiTgfX3MhFpLQY1jqIVRq7GZEqSTF57hYLaTOtuXActpdu+Vv8sPNYosfn1iYbtQ0t/3
+	GNQ700l5K9AZZNWSwrwYvET72iNBPhDzWtS4ywRcwGUjxj
+X-Google-Smtp-Source: AGHT+IHm50Q/Wpaz874mY4jdAmqECDmpXqUtZjcjDmDE66JzxsRL46uGd0Mc+kTBorrd8AfqMgZxO/JQZMz1b8Hsw+Y=
+X-Received: by 2002:a05:690c:3347:b0:70d:f3f9:1898 with SMTP id
+ 00721157ae682-717b1a16f3fmr44393627b3.35.1752072441484; Wed, 09 Jul 2025
+ 07:47:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|PH7PR12MB7257:EE_
-X-MS-Office365-Filtering-Correlation-Id: 74a732a1-f99c-412b-c7f7-08ddbef7583f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FsO/0/NueL2PAh+OZnrmF5us0cJIFw9sOLz9ZvXtjv/9peyFP23jrLU8RnL+?=
- =?us-ascii?Q?19Tx7JU9B1FpDbTnn/Bfno1wrCokSnr0cI2xFwRs+oBMmCdVZ6Zcm6bzNycs?=
- =?us-ascii?Q?bCwIpI3ttb9X0MezTDP1n0N7tj3k5oYOLitbIO8pq+HPg1wlVulFaLCJmfND?=
- =?us-ascii?Q?j/I63z+JI/yJRvhV03LGSVAJ9cDJvBwjHbWeVveNUMt8oFuH1eJRrXCV/wO6?=
- =?us-ascii?Q?Mrf2pQU7zk/w/SWPcv+jsCBduNIx0FFY11oPeehNi5al2B5YbjlTs0AujGyk?=
- =?us-ascii?Q?V/UIU43EBj1k8OxbN+UVWijXBBxwQ9vXd8sBnxe6Cn3VtdVqzOwQ45ApOrlk?=
- =?us-ascii?Q?Ay0m72F07iqo9rFpiatJubfd7/0n5ozb/gGuPMU6pOcJJfTlBSVvcvDfWjPx?=
- =?us-ascii?Q?nrXSX8X/D2oZ8j+mbnv7c8I73hlr0S+vJBa7rhinCq8f3AdjHl6WmJYV+AwC?=
- =?us-ascii?Q?X3mPdwNwmKFLWAbH2N2YskPT9RwpdkwQKNhO0Trbit1uiK1sqGd3L/dVhgRl?=
- =?us-ascii?Q?lXAEsHlBiQJLVUdEAoF5MR0vjK3hwHjasoG1LaVg5j0vPzvrB6Yiklj/466H?=
- =?us-ascii?Q?TPxexuXFdasjFxXcg2kgYv+geGPd8fwirSUIrQ5yNHobXU3M7OHNGMSWYjto?=
- =?us-ascii?Q?xtlXnuOPimGM+fcm7SyKhHI3BjcY/IjAp0mxznLaE0cYePUw6XsR8HEZ0vhD?=
- =?us-ascii?Q?4pGsho7EXv0pxsCrfqp6FNh7yg+HXHFjPhae5F2Fj77tNvnThKet4IYtB+V8?=
- =?us-ascii?Q?m0SQU7id3Y78rLs9nv4bRLgaGf36EfLS8VyonICfQFsenHm/mWDPgz7olv/5?=
- =?us-ascii?Q?ih1wad/wOhktMqti3pCpQG8l+yyvjva8HGmCtaqdAShYYS+Ny6RC0qHcDxuJ?=
- =?us-ascii?Q?EkLFSiiufFSQztMIaYSZ/ZmIkV7PXbOpfmv7XbpGqW/iFvCg/QEmJAe1xJkZ?=
- =?us-ascii?Q?dTkF9Xa/vT5R9bjQviwpGtsNytLK0JFNB5a7LJl4C7rIrQkkSguS5b9ZeP52?=
- =?us-ascii?Q?yNFakoGrDyV31d6moHIOJkdeWXK//mFO2TTcH2JlvWmqEEV9ZHGA+wrIwc21?=
- =?us-ascii?Q?b/eFajGBzigdWlzHj0f8WSlUQYx22uEQzskXmo+6tUM2oM82HF/lMcAZ7REY?=
- =?us-ascii?Q?pMQhSPK/eGR24gsNWu0UBjsWBcDwzW9Xer3sege9F1fGirb3tl3iZVbwJonE?=
- =?us-ascii?Q?TIhTD1uzpEeiy8NWAR4HJm0oDQiifJKAhUx05ywOL6LRIyN3N+w1SgBzsKyY?=
- =?us-ascii?Q?9b69SJBxf7pJp4wJ5stDiRDggZp7/YB3PDB9NUpaGzAObJNl5t4e+s+NcU0J?=
- =?us-ascii?Q?FzLeG5XKU9Req45EUDsS8hHMZAkXfdQK38APl2C/tcKDcOdUHNgET234AjRk?=
- =?us-ascii?Q?xD9e98t6aE3ignrLUqEEaSnsTLGUK/uge7n6+PypTuDGFsoe9ZlGYbYAac9S?=
- =?us-ascii?Q?zDvamvyhQdw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?+4ThbpHX0y4N4DBQWtuHKSAt0YXmFVjIogKDqWAxFb7fOQ5stK00cBzwYxL8?=
- =?us-ascii?Q?wSAhfA3nu1gzxdjWRaNHVEH4fkymQZjZRZ3SPKQM/9bKkQV4+/ydaulzu420?=
- =?us-ascii?Q?/To0oc5DXQDMXGcbM7neVkllhLdIIqAPNgZzts4G+3dnGm3yiat2It4mwMzx?=
- =?us-ascii?Q?YcSdPaieL38QHqkAy2hFP3JfdbxLLqRNkQv16u2B84Nw43FenVPSgGUMWq6c?=
- =?us-ascii?Q?glFv3QgcLATOW7t1XhsZo8Tq/T5yZuxW+latq4eEHDvQOPrkoZMH6TmHjEZU?=
- =?us-ascii?Q?kBHkDfRubSnZzLtW7yp9pRHmqVbQXmqMHsF25WO+iPnLL+LnWlxarYANSexB?=
- =?us-ascii?Q?HY1GGRm3fdwAo1U4dCgCmxqF8MHPgol9W7MVCGWe5E28wK5GU6+HwqeUzPyR?=
- =?us-ascii?Q?ST32eD1cMw6bKQKq3k49tf2PWTsJW8KeC8mJkcnVmoHY/zido6PFiHjsOZyk?=
- =?us-ascii?Q?QqF6MgBg7mrlGBLKauK7N3HzW9ZvCFFaCi2JYcXRVWWmLRMYrnx1ZVYrnWDb?=
- =?us-ascii?Q?AVKXkA0nqBiGTUs7Aszst5w9TsEWY6NxcSpPI9IT+kMjEJ0/moaQPtSO/yxy?=
- =?us-ascii?Q?Eu3JjcJKAbFfUdIIH4j8n42B+OgKbGOLKUGX4ESdLifbGlz02NEwb4V+ZM13?=
- =?us-ascii?Q?hGqlTY2rOTYbxZTf1BqNezia2D9nGJDwRcVYjozWnGq5Wxz5cJCiB2lyLTTv?=
- =?us-ascii?Q?U1QTBYKlhsHq5LqOBx37JAIsfXe3DYMBvhwnM3eKvAjTbqza19q125Z6OSqT?=
- =?us-ascii?Q?4PsXwiAFmAZy+6ag9XdZzvU4jSLOXNM6IjZfiokzN4ZRlsgwjtJtXkZVH3Vc?=
- =?us-ascii?Q?x8S3X4y4f/AB6A2uwoXDOIpqhlbX4+XTNFRwLhPbDf3vo5AXuf4Wf6blfARe?=
- =?us-ascii?Q?WzevCHCu1Kgsq3WAwCdIsvz7yOV4n57xosEmHUJ6v0o47KFT18ddu80iW5ln?=
- =?us-ascii?Q?feLbzD1qMTkOLiGzmJi+OdP8Y+1gAf1HfTAH6R1heBW5PXPeJLZlFF2orYyL?=
- =?us-ascii?Q?L5F7c3hNq8rfQKilWKaE4GTD/we3gH/stjAk4e57MZ7DHcOnMLpYJlm8RWw9?=
- =?us-ascii?Q?d1bGW6Pyoi2DOwNUzjMPQ9ruRFfEtQJhSteMvnSio1H6ydyMUKBRgln8DQHZ?=
- =?us-ascii?Q?RE2xz69F6kgv8Siq2uC9SNCHW/jGSi4Az6WesfzyKQMjSWnbDK8N7ouvtVHC?=
- =?us-ascii?Q?1jtI94mkDF6R2gPqInwfzhpDJh1vIz72kMIfv620Vut16UFqRHiDKxzPh1Jv?=
- =?us-ascii?Q?9GP8WOb62Ax3HIvbF++/8tqdxd/fCGaLe2GnZwhybIvjnjfrHwzAbZ8gFTXC?=
- =?us-ascii?Q?XO5m8ZmgzU4x2TUo5zmJ6JD11rMto7MNLANSxWZeQUpXOjgzS/+uWoyrA+/l?=
- =?us-ascii?Q?VIHcMRmnjCobQ1ylL6bdAVvtbzkMz0FMUzirOSom+KMmOAC82A2fTJXCl0qF?=
- =?us-ascii?Q?7I7zbqPyddst7b8WnIZ/H6ueGwgVeQjnnQjc9VOcIfhT8/4oLeHIZNxP+dAC?=
- =?us-ascii?Q?Q8BmCU9XzOg33Ub+nymrcXDZ/Gbub+ncYq1rd8TpNu9X4gcNneMK2RFMMmdJ?=
- =?us-ascii?Q?a2P+SvWntJndaIaB8RkCvB3Q0WZ8Fe76XfXfeWUA?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74a732a1-f99c-412b-c7f7-08ddbef7583f
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 14:46:10.4354
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OFgw6ra134NtRlACPfkoCzijbeg2QiGkKqJte44aru4qJ35QvCvLQCaVop/whjRg
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7257
+References: <cover.1751898225.git.benoit.monin@bootlin.com> <346c422139b658b2ba6272f7ba7b07374008760f.1751898225.git.benoit.monin@bootlin.com>
+In-Reply-To: <346c422139b658b2ba6272f7ba7b07374008760f.1751898225.git.benoit.monin@bootlin.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 9 Jul 2025 16:46:45 +0200
+X-Gm-Features: Ac12FXyoOH3Cz2x3GZX3zU25hhNwfDgVI-X6k3TawPF3ZhvpR4wWP9rJxod6_uY
+Message-ID: <CAPDyKFp=fvyUhkeiw5TmYbELM+MiC8Do20afrainOyq_pLvSHw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] mmc: core: add mmc_read_blocks to mmc_ops
+To: =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9 Jul 2025, at 8:32, wang lian wrote:
+On Mon, 7 Jul 2025 at 17:24, Beno=C3=AEt Monin <benoit.monin@bootlin.com> w=
+rote:
+>
+> Add a generic function to read some blocks of data from the MMC, to be
+> used by drivers as part of their tuning.
+>
+> Signed-off-by: Beno=C3=AEt Monin <benoit.monin@bootlin.com>
+> ---
+>  drivers/mmc/core/card.h    | 10 ++++++
+>  drivers/mmc/core/mmc_ops.c | 69 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/mmc/host.h   |  3 ++
+>  3 files changed, 82 insertions(+)
+>
+> diff --git a/drivers/mmc/core/card.h b/drivers/mmc/core/card.h
+> index 9cbdd240c3a7d..93fd502c1f5fc 100644
+> --- a/drivers/mmc/core/card.h
+> +++ b/drivers/mmc/core/card.h
+> @@ -11,6 +11,7 @@
+>  #define _MMC_CORE_CARD_H
+>
+>  #include <linux/mmc/card.h>
+> +#include <linux/mmc/mmc.h>
+>
+>  #define mmc_card_name(c)       ((c)->cid.prod_name)
+>  #define mmc_card_id(c)         (dev_name(&(c)->dev))
+> @@ -300,4 +301,13 @@ static inline int mmc_card_no_uhs_ddr50_tuning(const=
+ struct mmc_card *c)
+>         return c->quirks & MMC_QUIRK_NO_UHS_DDR50_TUNING;
+>  }
+>
+> +static inline bool mmc_card_can_cmd23(struct mmc_card *card)
+> +{
+> +       return ((mmc_card_mmc(card) &&
+> +                card->csd.mmca_vsn >=3D CSD_SPEC_VER_3) ||
+> +               (mmc_card_sd(card) && !mmc_card_ult_capacity(card) &&
+> +                card->scr.cmds & SD_SCR_CMD23_SUPPORT)) &&
+> +               !(card->quirks & MMC_QUIRK_BLK_NO_CMD23);
 
-> Hi Zi Yan,
-> Thanks for testing the patch and reporting this build failure.
-> I don't have an arm64 environment readily available for testing, so I
-> appreciate you catching this. I suspect this is caused by missing or
-> older userspace headers in the cross-compilation toolchain.
+First, please make the above part a separate patch. It makes sense to
+add a helper for this, as you show in patch3 and patch4. I also
+recommend that these patches should also be re-ordered so they come
+first in the series.
 
-Right. My /usr/include/sys does not have pidfd.h. IMHO selftests
-should not rely on userspace headers, otherwise we cannot test
-latest kernel changes.
+Second, I don't think we should mix mmc_card_can* functions with the
+card-quirks. Better to have two separate helpers, especially since
+CMD23 is used for other things too, like RPMB and reliable writes, for
+example. Thus I suggest we add:
 
-> I will try to fix this in the next version. If the problem persists, a
-> good solution would be to manually define the syscall wrapper to avoid
-> the dependency on <sys/pidfd.h>.
+mmc_card_can_cmd23() - which looks at what the card supports, similar
+to above without MMC_QUIRK_BLK_NO_CMD23. Put the definition in
+drivers/mmc/core/core.h and export the symbols, similar to what we do
+for mmc_card_can_erase() and friends.
 
-Based on what I see in other mm tests, the following patch fixes my
-compilation issue.
+mmc_card_broken_blk_cmd23() - which should only check
+MMC_QUIRK_BLK_NO_CMD23. This belongs in drivers/mmc/core/card.h.
 
-diff --git a/tools/testing/selftests/mm/process_madv.c b/tools/testing/se=
-lftests/mm/process_madv.c
-index 3d26105b4781..8bf11433d6e6 100644
---- a/tools/testing/selftests/mm/process_madv.c
-+++ b/tools/testing/selftests/mm/process_madv.c
-@@ -10,13 +10,14 @@
- #include <stdlib.h>
- #include <string.h>
- #include <sys/mman.h>
-+#include <linux/mman.h>
- #include <sys/syscall.h>
- #include <unistd.h>
- #include <sched.h>
--#include <sys/pidfd.h>
-+#include <linux/pidfd.h>
-+#include <linux/uio.h>
- #include "vm_util.h"
+> +}
+> +
+>  #endif
+> diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
+> index 66283825513cb..848d8aa3ff2b5 100644
+> --- a/drivers/mmc/core/mmc_ops.c
+> +++ b/drivers/mmc/core/mmc_ops.c
+> @@ -1077,3 +1077,72 @@ int mmc_sanitize(struct mmc_card *card, unsigned i=
+nt timeout_ms)
+>         return err;
+>  }
+>  EXPORT_SYMBOL_GPL(mmc_sanitize);
+> +
+> +/**
+> + * mmc_read_blocks() - read data blocks from the mmc
+> + * @card: mmc card to read from, can be NULL
+> + * @host: mmc host doing the read
+> + * @blksz: data block size
+> + * @blocks: number of blocks to read
+> + * @blk_addr: first block address
+> + * @buf: output buffer
+> + * @len: size of the buffer
+> + *
+> + * Read one or more blocks of data from the mmc. This is a low-level hel=
+per for
+> + * tuning operation. If card is NULL, it is assumed that CMD23 can be us=
+ed for
+> + * multi-block read.
+> + *
+> + * Return: 0 in case of success, otherwise -EIO
+> + */
+> +int mmc_read_blocks(struct mmc_card *card, struct mmc_host *host,
+> +                   unsigned int blksz, unsigned int blocks,
+> +                   unsigned int blk_addr, void *buf, unsigned int len)
+> +{
+> +       struct mmc_request mrq =3D {};
+> +       struct mmc_command sbc =3D {};
+> +       struct mmc_command cmd =3D {};
+> +       struct mmc_command stop =3D {};
+> +       struct mmc_data data =3D {};
+> +       struct scatterlist sg;
+> +
+> +       if (blocks > 1) {
+> +               if (mmc_host_can_cmd23(host) &&
+> +                   (!card || mmc_card_can_cmd23(card))) {
+> +                       mrq.sbc =3D &sbc;
+> +                       sbc.opcode =3D MMC_SET_BLOCK_COUNT;
+> +                       sbc.arg =3D blocks;
+> +                       sbc.flags =3D MMC_RSP_R1 | MMC_CMD_AC;
+> +               }
+> +               cmd.opcode =3D MMC_READ_MULTIPLE_BLOCK;
+> +               mrq.stop =3D &stop;
+> +               stop.opcode =3D MMC_STOP_TRANSMISSION;
+> +               stop.flags =3D MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_AC;
+> +       } else {
+> +               cmd.opcode =3D MMC_READ_SINGLE_BLOCK;
+> +       }
+> +
+> +       mrq.cmd =3D &cmd;
+> +       cmd.flags =3D MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_ADTC;
+> +
+> +       mrq.data =3D &data;
+> +       data.flags =3D MMC_DATA_READ;
+> +       data.blksz =3D blksz;
+> +       data.blocks =3D blocks;
+> +       data.blk_addr =3D blk_addr;
+> +       data.sg =3D &sg;
+> +       data.sg_len =3D 1;
+> +       if (card)
+> +               mmc_set_data_timeout(&data, card);
+> +       else
+> +               data.timeout_ns =3D 1000000000;
+> +
+> +       sg_init_one(&sg, buf, len);
+> +
+> +       mmc_wait_for_req(host, &mrq);
+> +
+> +       if (sbc.error || cmd.error || data.error)
+> +               return -EIO;
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(mmc_read_blocks);
+> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+> index 68f09a955a902..72196817a6f0f 100644
+> --- a/include/linux/mmc/host.h
+> +++ b/include/linux/mmc/host.h
+> @@ -743,5 +743,8 @@ int mmc_send_status(struct mmc_card *card, u32 *statu=
+s);
+>  int mmc_send_tuning(struct mmc_host *host, u32 opcode, int *cmd_error);
+>  int mmc_send_abort_tuning(struct mmc_host *host, u32 opcode);
+>  int mmc_get_ext_csd(struct mmc_card *card, u8 **new_ext_csd);
+> +int mmc_read_blocks(struct mmc_card *card, struct mmc_host *host,
+> +                   unsigned int blksz, unsigned int blocks,
+> +                   unsigned int blk_addr, void *buf, unsigned int len);
 
--#include "../pidfd/pidfd.h"
+I really think we must avoid exporting such a generic function. This
+becomes visible outside the mmc subsystem and I am worried that it
+will be abused.
 
- FIXTURE(process_madvise)
- {
-@@ -240,7 +241,7 @@ TEST_F(process_madvise, remote_collapse)
- 	close(pipe_info[0]);
- 	child_pid =3D info.pid;
+Can we perhaps make it harder to integrate with the tuning support on
+the core, somehow? I haven't thought much about it, but maybe you can
+propose something along those lines - otherwise I will try to think of
+another way to do it.
 
--	pidfd =3D pidfd_open(child_pid, 0);
-+	pidfd =3D syscall(__NR_pidfd_open, child_pid, 0);
- 	ASSERT_GE(pidfd, 0);
+>
+>  #endif /* LINUX_MMC_HOST_H */
 
- 	/* Baseline Check from Parent's perspective */
-@@ -312,7 +313,7 @@ TEST_F(process_madvise, invalid_pidfd)
- 	if (child_pid =3D=3D 0)
- 		exit(0);
-
--	pidfd =3D pidfd_open(child_pid, 0);
-+	pidfd =3D syscall(__NR_pidfd_open, child_pid, 0);
- 	ASSERT_GE(pidfd, 0);
-
- 	/* Wait for the child to ensure it has terminated. */
-
-
-Best Regards,
-Yan, Zi
+Kind regards
+Uffe
 
