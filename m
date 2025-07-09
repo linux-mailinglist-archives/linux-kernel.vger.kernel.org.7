@@ -1,139 +1,116 @@
-Return-Path: <linux-kernel+bounces-723337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 647D4AFE5F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:39:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 449C7AFE600
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D2883A7B65
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:39:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 966245853BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D3E28DB49;
-	Wed,  9 Jul 2025 10:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F3F28E572;
+	Wed,  9 Jul 2025 10:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="PRjN93NO"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c/nw7HwW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F653265292;
-	Wed,  9 Jul 2025 10:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC3E28D8D6;
+	Wed,  9 Jul 2025 10:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752057564; cv=none; b=BR3IQJR11hyfzPk6GFmI1fayEYJw5MWun5YvRmoWaK7hlLUaF07Uy+Rbwq4ckGYEbkWUThM3kK1fanuLzj1IUh3f22PECWTgKtH7c5Vm686BcjyfB2uzSBZWNGbM34iXX6huY0DrKudpSanAGRvfggjrboh7CEZ8VdiNQaTiRcY=
+	t=1752057608; cv=none; b=LahkubHF/pY8o6N/NmC4Y9i/96gyl/rmwOtM18xxJKnCqPAVUx27RihVZGCCwwL9QYZQ+ZhB+wKcTnTqmCoSXyzCH4tcADZ32Y2F1okD0dY9Rbv4zR3HhrtJNJu+TPS6dAcWQIhsScidX5aszzOLtYViTSOY8ZGf/XjQZQy03hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752057564; c=relaxed/simple;
-	bh=NifevKX03FvbQZtxsg/oKHi2t2U7YN62ml/hqwFv1So=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PT73VP9KbpI3VwCK2ufNKa3z2gDaz0kPHgTImvOB+ywSVVy5Nh1Z+pXR3ma3n4PXxh+X9NuWudP0OOCUnKbQRR6H25oCotfY38FpfgeuMWvSlBFuQEUtZFG5vBvEXMXF7UvIXY4hNw4duR9Zjy920eztbxZ3ksPxLgWY/aoJjRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=PRjN93NO; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=C7nZ3M+syfM61I7byhhVKRhaJsF+1QENEjv09HSZRQU=; b=PRjN93NOb2tlfYFOlwfmeDssOA
-	GafrBTEBOTAUDuGKcqFLWn3JcN3Niwjsb81sMFPmxhDXHNQQmAtbKZUC/h/eLkInfTZlRb8P/w73c
-	GKNGP1JpYvpvLK/0zFhlnKymaNm9GruitjtoDq+yw6/ySXXS8g1kyI5lwZf/zWxGa2Iz03xabeAwX
-	62OpRJgOgEJNr8YSwAcc5JOzFYQl/VedCu8jpBa6Xmww5K4GEKyfKA+y8zV/NqklrKKxkrBkvgeR6
-	1mHXp6s/F1YjDCr8MUWNy7y1j7GmzLFBY5HkcTlGNWdKSWOJarND+dYeNqKUgMDQCKVGPJO3Jusrz
-	4qOgVDCw==;
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1uZSCl-000HJ5-1S;
-	Wed, 09 Jul 2025 12:39:11 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1uZSCj-000F68-2U;
-	Wed, 09 Jul 2025 12:39:09 +0200
-Message-ID: <d02100f8-5ecd-45f6-b9ad-00dfc991b772@iogearbox.net>
-Date: Wed, 9 Jul 2025 12:39:08 +0200
+	s=arc-20240116; t=1752057608; c=relaxed/simple;
+	bh=Vx5swSkJc6lENCnzFmEdVW2ZusvksdSbXWKBGrAa3HA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=D3ikV1JCvfHpKuhdUGlIPRtV25kZwZyiZe7vI6vQKQQILyBuN3vyyKO71s3Aig8heoFhaEqAjNkIZ4R9Makrjpc2kT9//RZDE/d2dJcBlGylsd4etkvaFFmMksOoiHSGmoaXttajWCOWUa87Nn7J6+Qt+NrSENs0n82y+hwWd8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c/nw7HwW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F68BC4CEEF;
+	Wed,  9 Jul 2025 10:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752057607;
+	bh=Vx5swSkJc6lENCnzFmEdVW2ZusvksdSbXWKBGrAa3HA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=c/nw7HwWoVJrRSvzPBWsvVZEoxDFcSbVtBxT7qHlYOxIb3dgaBlj0KgE5KTaG05E8
+	 wFrBKy+QSf9S86EpaVGoe+ZMCV5lKvvGgWKYy0VFJPU2DGPnD4gTInoMW9Y8g6IpPm
+	 O+i9w65WNtcVc8cfYxVwWtw7w2EiH+7q8DwiUxf8DnoJKyTKsrx3cpdEjqTjHbRV5C
+	 xusTg5k7u5jiZTI2ffkjLjHq/nsFXjmJUXJ8u426lJbGFG+hCHqdXMTb8FIKqTrgYN
+	 MuOAcXaT1Qlz9C5v1xva38yw4ERA6jpuxwr9GOQEBpB228OI4uPPaLDjj730JdvqTJ
+	 YbG3ScL/ng/Lw==
+From: neeraj.upadhyay@kernel.org
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	paulmck@kernel.org,
+	joelagnelf@nvidia.com,
+	frederic@kernel.org,
+	boqun.feng@gmail.com,
+	urezki@gmail.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com,
+	qiang.zhang1211@gmail.com,
+	neeraj.iitr10@gmail.com,
+	neeraj.upadhyay@amd.com,
+	"Neeraj Upadhyay (AMD)" <neeraj.upadhyay@kernel.org>
+Subject: [PATCH rcu 4/5] rcu/exp: Warn on QS requested on dying CPU
+Date: Wed,  9 Jul 2025 16:09:08 +0530
+Message-Id: <20250709103909.15498-5-neeraj.upadhyay@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20250709103909.15498-1-neeraj.upadhyay@kernel.org>
+References: <20250709103909.15498-1-neeraj.upadhyay@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v3 4/7] bpf: Remove location field in tcx_link
-To: Tao Chen <chen.dylane@linux.dev>, razor@blackwall.org,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, ast@kernel.org, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
- mattbobrowski@google.com, rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, horms@kernel.org, willemb@google.com,
- jakub@cloudflare.com, pablo@netfilter.org, kadlec@netfilter.org,
- hawk@kernel.org
-Cc: bpf@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- netfilter-devel@vger.kernel.org, coreteam@netfilter.org
-References: <20250709030802.850175-1-chen.dylane@linux.dev>
- <20250709030802.850175-5-chen.dylane@linux.dev>
-Content-Language: en-US
-From: Daniel Borkmann <daniel@iogearbox.net>
-Autocrypt: addr=daniel@iogearbox.net; keydata=
- xsFNBGNAkI0BEADiPFmKwpD3+vG5nsOznvJgrxUPJhFE46hARXWYbCxLxpbf2nehmtgnYpAN
- 2HY+OJmdspBntWzGX8lnXF6eFUYLOoQpugoJHbehn9c0Dcictj8tc28MGMzxh4aK02H99KA8
- VaRBIDhmR7NJxLWAg9PgneTFzl2lRnycv8vSzj35L+W6XT7wDKoV4KtMr3Szu3g68OBbp1TV
- HbJH8qe2rl2QKOkysTFRXgpu/haWGs1BPpzKH/ua59+lVQt3ZupePpmzBEkevJK3iwR95TYF
- 06Ltpw9ArW/g3KF0kFUQkGXYXe/icyzHrH1Yxqar/hsJhYImqoGRSKs1VLA5WkRI6KebfpJ+
- RK7Jxrt02AxZkivjAdIifFvarPPu0ydxxDAmgCq5mYJ5I/+BY0DdCAaZezKQvKw+RUEvXmbL
- 94IfAwTFA1RAAuZw3Rz5SNVz7p4FzD54G4pWr3mUv7l6dV7W5DnnuohG1x6qCp+/3O619R26
- 1a7Zh2HlrcNZfUmUUcpaRPP7sPkBBLhJfqjUzc2oHRNpK/1mQ/+mD9CjVFNz9OAGD0xFzNUo
- yOFu/N8EQfYD9lwntxM0dl+QPjYsH81H6zw6ofq+jVKcEMI/JAgFMU0EnxrtQKH7WXxhO4hx
- 3DFM7Ui90hbExlFrXELyl/ahlll8gfrXY2cevtQsoJDvQLbv7QARAQABzSZEYW5pZWwgQm9y
- a21hbm4gPGRhbmllbEBpb2dlYXJib3gubmV0PsLBkQQTAQoAOxYhBCrUdtCTcZyapV2h+93z
- cY/jfzlXBQJjQJCNAhsDBQkHhM4ACAsJCAcNDAsKBRUKCQgLAh4BAheAAAoJEN3zcY/jfzlX
- dkUQAIFayRgjML1jnwKs7kvfbRxf11VI57EAG8a0IvxDlNKDcz74mH66HMyhMhPqCPBqphB5
- ZUjN4N5I7iMYB/oWUeohbuudH4+v6ebzzmgx/EO+jWksP3gBPmBeeaPv7xOvN/pPDSe/0Ywp
- dHpl3Np2dS6uVOMnyIsvmUGyclqWpJgPoVaXrVGgyuer5RpE/a3HJWlCBvFUnk19pwDMMZ8t
- 0fk9O47HmGh9Ts3O8pGibfdREcPYeGGqRKRbaXvcRO1g5n5x8cmTm0sQYr2xhB01RJqWrgcj
- ve1TxcBG/eVMmBJefgCCkSs1suriihfjjLmJDCp9XI/FpXGiVoDS54TTQiKQinqtzP0jv+TH
- 1Ku+6x7EjLoLH24ISGyHRmtXJrR/1Ou22t0qhCbtcT1gKmDbTj5TcqbnNMGWhRRTxgOCYvG0
- 0P2U6+wNj3HFZ7DePRNQ08bM38t8MUpQw4Z2SkM+jdqrPC4f/5S8JzodCu4x80YHfcYSt+Jj
- ipu1Ve5/ftGlrSECvy80ZTKinwxj6lC3tei1bkI8RgWZClRnr06pirlvimJ4R0IghnvifGQb
- M1HwVbht8oyUEkOtUR0i0DMjk3M2NoZ0A3tTWAlAH8Y3y2H8yzRrKOsIuiyKye9pWZQbCDu4
- ZDKELR2+8LUh+ja1RVLMvtFxfh07w9Ha46LmRhpCzsFNBGNAkI0BEADJh65bNBGNPLM7cFVS
- nYG8tqT+hIxtR4Z8HQEGseAbqNDjCpKA8wsxQIp0dpaLyvrx4TAb/vWIlLCxNu8Wv4W1JOST
- wI+PIUCbO/UFxRy3hTNlb3zzmeKpd0detH49bP/Ag6F7iHTwQQRwEOECKKaOH52tiJeNvvyJ
- pPKSKRhmUuFKMhyRVK57ryUDgowlG/SPgxK9/Jto1SHS1VfQYKhzMn4pWFu0ILEQ5x8a0RoX
- k9p9XkwmXRYcENhC1P3nW4q1xHHlCkiqvrjmWSbSVFYRHHkbeUbh6GYuCuhqLe6SEJtqJW2l
- EVhf5AOp7eguba23h82M8PC4cYFl5moLAaNcPHsdBaQZznZ6NndTtmUENPiQc2EHjHrrZI5l
- kRx9hvDcV3Xnk7ie0eAZDmDEbMLvI13AvjqoabONZxra5YcPqxV2Biv0OYp+OiqavBwmk48Z
- P63kTxLddd7qSWbAArBoOd0wxZGZ6mV8Ci/ob8tV4rLSR/UOUi+9QnkxnJor14OfYkJKxot5
- hWdJ3MYXjmcHjImBWplOyRiB81JbVf567MQlanforHd1r0ITzMHYONmRghrQvzlaMQrs0V0H
- 5/sIufaiDh7rLeZSimeVyoFvwvQPx5sXhjViaHa+zHZExP9jhS/WWfFE881fNK9qqV8pi+li
- 2uov8g5yD6hh+EPH6wARAQABwsF8BBgBCgAmFiEEKtR20JNxnJqlXaH73fNxj+N/OVcFAmNA
- kI0CGwwFCQeEzgAACgkQ3fNxj+N/OVfFMhAA2zXBUzMLWgTm6iHKAPfz3xEmjtwCF2Qv/TT3
- KqNUfU3/0VN2HjMABNZR+q3apm+jq76y0iWroTun8Lxo7g89/VDPLSCT0Nb7+VSuVR/nXfk8
- R+OoXQgXFRimYMqtP+LmyYM5V0VsuSsJTSnLbJTyCJVu8lvk3T9B0BywVmSFddumv3/pLZGn
- 17EoKEWg4lraXjPXnV/zaaLdV5c3Olmnj8vh+14HnU5Cnw/dLS8/e8DHozkhcEftOf+puCIl
- Awo8txxtLq3H7KtA0c9kbSDpS+z/oT2S+WtRfucI+WN9XhvKmHkDV6+zNSH1FrZbP9FbLtoE
- T8qBdyk//d0GrGnOrPA3Yyka8epd/bXA0js9EuNknyNsHwaFrW4jpGAaIl62iYgb0jCtmoK/
- rCsv2dqS6Hi8w0s23IGjz51cdhdHzkFwuc8/WxI1ewacNNtfGnorXMh6N0g7E/r21pPeMDFs
- rUD9YI1Je/WifL/HbIubHCCdK8/N7rblgUrZJMG3W+7vAvZsOh/6VTZeP4wCe7Gs/cJhE2gI
- DmGcR+7rQvbFQC4zQxEjo8fNaTwjpzLM9NIp4vG9SDIqAm20MXzLBAeVkofixCsosUWUODxP
- owLbpg7pFRJGL9YyEHpS7MGPb3jSLzucMAFXgoI8rVqoq6si2sxr2l0VsNH5o3NgoAgJNIg=
-In-Reply-To: <20250709030802.850175-5-chen.dylane@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27694/Wed Jul  9 10:42:34 2025)
+Content-Transfer-Encoding: 8bit
 
-On 7/9/25 5:07 AM, Tao Chen wrote:
-> Use attach_type in bpf_link to replace the location filed, and
-> remove location field in tcx_link.
-> 
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
-> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+From: Frederic Weisbecker <frederic@kernel.org>
 
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+It is not possible to send an IPI to a dying CPU that has passed the
+CPUHP_TEARDOWN_CPU stage. Remaining unhandled IPIs are handled later at
+CPUHP_AP_SMPCFD_DYING stage by stop machine. This is the last
+opportunity for RCU exp handler to request an expedited quiescent state.
+And the upcoming final context switch between stop machine and idle must
+have reported the requested context switch.
+
+Therefore, it should not be possible to observe a pending requested
+expedited quiescent state when RCU finally stops watching the outgoing
+CPU. Once IPIs aren't possible anymore, the QS for the target CPU will
+be reported on its behalf by the RCU exp kworker.
+
+Provide an assertion to verify those expectations.
+
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+Signed-off-by: Neeraj Upadhyay (AMD) <neeraj.upadhyay@kernel.org>
+---
+ kernel/rcu/tree.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 0bda23fec690..00c182b3f978 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -4356,6 +4356,12 @@ void rcutree_report_cpu_dead(void)
+ 	 * may introduce a new READ-side while it is actually off the QS masks.
+ 	 */
+ 	lockdep_assert_irqs_disabled();
++	/*
++	 * CPUHP_AP_SMPCFD_DYING was the last call for rcu_exp_handler() execution.
++	 * The requested QS must have been reported on the last context switch
++	 * from stop machine to idle.
++	 */
++	WARN_ON_ONCE(rdp->cpu_no_qs.b.exp);
+ 	// Do any dangling deferred wakeups.
+ 	do_nocb_deferred_wakeup(rdp);
+ 
+-- 
+2.40.1
+
 
