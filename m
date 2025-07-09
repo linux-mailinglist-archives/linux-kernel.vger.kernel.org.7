@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-724435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25B58AFF2E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:21:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A701DAFF2E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBB433A6636
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:20:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A80451C212D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB5D243954;
-	Wed,  9 Jul 2025 20:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96C724336B;
+	Wed,  9 Jul 2025 20:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bChUWIyZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nOXlium6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64737223338;
-	Wed,  9 Jul 2025 20:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387E31E5B6A;
+	Wed,  9 Jul 2025 20:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752092463; cv=none; b=BoCGo716k4o2CWPL76tGta50X/ljcUuEuDjOMo+zm+lJkEdEK/drjMLrrjUcpSTr8O2U2+ouJ3W5WKNXWgaoQ8PlRoGa0QaoB1emaacj5hNNoXwqT5xsV0DS9yn8KkWOLnc3bwpgaD1ZXJNcg1Q6aLVUQAwt+NRJl5pf6df5NXc=
+	t=1752092530; cv=none; b=p5W2FTIT6VQBxfMN3o1Z+JPd3Xk0F7qLDnlgCVvBV/l3ZYc82Jzx9lczlnEDBltLzVw5QClK5VohRoillOMPbn+ArGjxLkJkzCrYOYw8OEWrg1J7TxM5xRER3+9YlnB55+E+6mOpHfve/PqdmR+butvmP0YlkjYN+ttVcoOJlPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752092463; c=relaxed/simple;
-	bh=quTcM77+JwIDAwk/mszow6YJfzgDAsI1Ebx3aEw25ho=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=b5ANWgDUt8mCQ61AMcdasf7enVQC6qrlP3K45h/Aq1uKGgcX3faR9ROuWkYvFlB13AGIe0GeVAXkAl0M1RehjlNCyzK+KBHbzesH6bozKQSL/mSjl59qBF0w6mGO7dQxLmLKA7GfqsGFevVhN4UDf3IwFhq5IiG0HV94BF4i37Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bChUWIyZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E11FEC4CEEF;
-	Wed,  9 Jul 2025 20:20:55 +0000 (UTC)
+	s=arc-20240116; t=1752092530; c=relaxed/simple;
+	bh=r4ykqC1BMysn26mbzqOJLBLUnrVxJa0A43xHGpGB23s=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=k/r/oAXIdLc9z358zA1bznpImpYB525kU4DNaBdIJkL/KMuo2qnNWRicM0enwxSUH0QDCCzLY3kwt9BrYdCxdc7sMuRNkFAUTEYlsCBoJomkn9nVjJP7v3jul0kEw3cwqUEbpy1rd8moccTZ5Q///WvQgi32+rdHY63EfCcsJKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nOXlium6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3226C4CEEF;
+	Wed,  9 Jul 2025 20:22:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752092462;
-	bh=quTcM77+JwIDAwk/mszow6YJfzgDAsI1Ebx3aEw25ho=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=bChUWIyZAu8N9v9iqcGEu+8pPx7QPo/j7e1LSNTHfMCR1ybTS2EfBKpaX0Xe9qljU
-	 jzJCfu4BGEGgzvoeS3AXrq/n6oCJwewWKx9LHwtZBbN3JfQ7Y/f3ECH+6b23epdgzw
-	 /hT6TLrb8CWQjBayEVsq/8lTsN77CseuGy/SAYgycxdoKjD4iOhkBaDlsJBQffmyfb
-	 T/b3pq0pL1wMggdFEYxPUB+VVWMYWsD8OXQ74ZYGCWq179+lyUCBycizDOTvaJvzFM
-	 5gT7xA1RNXVyX0UQ54FTSnDQ3xci+jrqgG7USlBxP6VumKhnpFIEUypJ8FQqpJhk0m
-	 VibIefCIzfJhQ==
+	s=k20201202; t=1752092530;
+	bh=r4ykqC1BMysn26mbzqOJLBLUnrVxJa0A43xHGpGB23s=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=nOXlium6yxzsnqoZeyAjnDBVr/+4EAnUE+lmZvPg5Z+OM32PXPh/cRQ+GaGFder7y
+	 y8n9ZPKr0LOMuYcKxURkwr57y50XEx6hDVrmZ96SyOxk44EBOcJt82SYetvZDSCFmD
+	 7WiYT/+YnKR2UQ7a6GOD9WBibY3MoKQnHmPOnqG13O2NX/7lxZ2ocRLBqyLez2iFUd
+	 3rBDMJ3Ws0xLrcckEEwddXVJpz/zYcNINhNAAaXPGWhYjGxJRIy0oa85+FkGWB5WIk
+	 lKEeh13grD6hLkoemvRumEeWOMS0fc+q9BxUNcDFXMyhSIGtp5ii9DO7ciJVVvwwjz
+	 YEv3+Ne4s9Cdw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,82 +48,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 09 Jul 2025 22:20:54 +0200
-Message-Id: <DB7SXTRZ1VKL.VONQAEWAV9TX@kernel.org>
-Cc: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-pm@vger.kernel.org>,
- <linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
- <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 00/10] rust: use `core::ffi::CStr` method names
+Date: Wed, 09 Jul 2025 22:22:04 +0200
+Message-Id: <DB7SYPUAUBUS.30DITWX21NJ96@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+Cc: "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Masahiro
+ Yamada" <masahiroy@kernel.org>, "Nathan Chancellor" <nathan@kernel.org>,
+ "Luis Chamberlain" <mcgrof@kernel.org>, "Danilo Krummrich"
+ <dakr@kernel.org>, "Nicolas Schier" <nicolas.schier@linux.dev>, "Trevor
+ Gross" <tmgross@umich.edu>, "Adam Bratschi-Kaye" <ark.email@gmail.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-kbuild@vger.kernel.org>, "Petr Pavlu" <petr.pavlu@suse.com>, "Sami
+ Tolvanen" <samitolvanen@google.com>, "Daniel Gomez" <da.gomez@samsung.com>,
+ "Simona Vetter" <simona.vetter@ffwll.ch>, "Greg KH"
+ <gregkh@linuxfoundation.org>, "Fiona Behrens" <me@kloenk.dev>, "Daniel
+ Almeida" <daniel.almeida@collabora.com>, <linux-modules@vger.kernel.org>
+Subject: Re: [PATCH v15 1/7] rust: sync: add `SetOnce`
 From: "Benno Lossin" <lossin@kernel.org>
-To: "Tamir Duberstein" <tamird@gmail.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Dave Ertman"
- <david.m.ertman@intel.com>, "Ira Weiny" <ira.weiny@intel.com>, "Leon
- Romanovsky" <leon@kernel.org>, "Breno Leitao" <leitao@debian.org>, "Rafael
- J. Wysocki" <rafael@kernel.org>, "Viresh Kumar" <viresh.kumar@linaro.org>,
- "Luis Chamberlain" <mcgrof@kernel.org>, "Russ Weight"
- <russ.weight@linux.dev>, "Brendan Higgins" <brendan.higgins@linux.dev>,
- "David Gow" <davidgow@google.com>, "Rae Moar" <rmoar@google.com>, "FUJITA
- Tomonori" <fujita.tomonori@gmail.com>, "Rob Herring" <robh@kernel.org>,
- "Saravana Kannan" <saravanak@google.com>
 X-Mailer: aerc 0.20.1
-References: <20250709-core-cstr-fanout-1-v1-0-fd793b3e58a2@gmail.com>
-In-Reply-To: <20250709-core-cstr-fanout-1-v1-0-fd793b3e58a2@gmail.com>
+References: <20250707-module-params-v3-v15-0-c1f4269a57b9@kernel.org>
+ <20250707-module-params-v3-v15-1-c1f4269a57b9@kernel.org>
+ <CAH5fLgiKo=jN_V5cAe_AJqxxp7mQWqhKx7knkEj6js3yiU9sqA@mail.gmail.com>
+ <KNYMPkLfLvLb8ocrLqSmk-5hRGhRaaPQ2sDHN5JoPAUxYJWlHNiOW4HRmtDDGkoMRfNwpziT8mkRzlPkdxDVaQ==@protonmail.internalid> <aGvkFbs5caxLSQxa@Mac.home> <877c0joyfo.fsf@kernel.org> <lsO9eeoR7qtPcjbhow9WfkrujYbxWh9JwZCHDO9K4VU6gtpl4pNYJisLImSI7OrRxW7qu-soEy9zjF_3snXZGQ==@protonmail.internalid> <DB6JZBUSWGKX.3M3M5TSWPLLFN@kernel.org> <87ple9lkjr.fsf@kernel.org> <DB7QEZNTH2SB.SSRG5H7TXZZT@kernel.org> <aG7NFizFGeFBSXY-@tardis.local>
+In-Reply-To: <aG7NFizFGeFBSXY-@tardis.local>
 
-On Wed Jul 9, 2025 at 9:58 PM CEST, Tamir Duberstein wrote:
-> This is series 2b/5 of the migration to `core::ffi::CStr`[0].
-> 20250704-core-cstr-prepare-v1-0-a91524037783@gmail.com.
+On Wed Jul 9, 2025 at 10:12 PM CEST, Boqun Feng wrote:
+> On Wed, Jul 09, 2025 at 08:22:16PM +0200, Benno Lossin wrote:
+>> On Wed Jul 9, 2025 at 12:34 PM CEST, Andreas Hindborg wrote:
+>> > "Benno Lossin" <lossin@kernel.org> writes:
+>> >> On Tue Jul 8, 2025 at 10:54 AM CEST, Andreas Hindborg wrote:
+>> >>> "Boqun Feng" <boqun.feng@gmail.com> writes:
+>> >>>> On Mon, Jul 07, 2025 at 03:38:58PM +0200, Alice Ryhl wrote:
+>> >>>>> On Mon, Jul 7, 2025 at 3:32=E2=80=AFPM Andreas Hindborg <a.hindbor=
+g@kernel.org> wrote:
+>> >>>>> >
+>> >>>>> > Introduce the `SetOnce` type, a container that can only be writt=
+en once.
+>> >>>>> > The container uses an internal atomic to synchronize writes to t=
+he internal
+>> >>>>> > value.
+>> >>>>> >
+>> >>>>> > Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> >>>>>
+>> >>>>> LGTM:
+>> >>>>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+>> >>>>>
+>> >>>>> > +impl<T> Drop for SetOnce<T> {
+>> >>>>> > +    fn drop(&mut self) {
+>> >>>>> > +        if self.init.load(Acquire) =3D=3D 2 {
+>> >>>>> > +            // SAFETY: By the type invariants of `Self`, `self.=
+init =3D=3D 2` means that `self.value`
+>> >>>>> > +            // contains a valid value. We have exclusive access=
+, as we hold a `mut` reference to
+>> >>>>> > +            // `self`.
+>> >>>>> > +            unsafe { drop_in_place(self.value.get()) };
+>> >>>>>
+>> >>>>> This load does not need to be Acquire. It can be a Relaxed load or
+>> >>>>> even an unsynchronized one since the access is exclusive.
+>> >>>>
+>> >>>> Right, I think we can do the similar as Revocable here:
+>> >>>>
+>> >>>>         if *self.init.get_mut() =3D=3D 2 { }
+>> >
+>> > Ok, now I got it. You are saying I don't need to use the atomic load
+>> > method, because I have mutable access. Sounds good.
+>> >
+>> > But I guess a relaxed load and access through a mutable reference shou=
+ld
+>> > result in the same code generation on most (all?) platforms?
+>>=20
+>> AFAIK it is not the same on arm.
+>>=20
 >
-> This series depends on the prior series[0] and is intended to go through
-> the rust tree to reduce the number of release cycles required to
-> complete the work.
->
-> Subsystem maintainers: I would appreciate your `Acked-by`s so that this
-> can be taken through Miguel's tree (where the other series must go).
->
-> [0] https://lore.kernel.org/all/20250704-core-cstr-prepare-v1-0-a91524037=
-783@gmail.com/
->
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
-> Tamir Duberstein (10):
->       gpu: nova-core: use `core::ffi::CStr` method names
->       rust: auxiliary: use `core::ffi::CStr` method names
->       rust: configfs: use `core::ffi::CStr` method names
->       rust: cpufreq: use `core::ffi::CStr` method names
->       rust: drm: use `core::ffi::CStr` method names
->       rust: firmware: use `core::ffi::CStr` method names
->       rust: kunit: use `core::ffi::CStr` method names
->       rust: miscdevice: use `core::ffi::CStr` method names
->       rust: net: use `core::ffi::CStr` method names
->       rust: of: use `core::ffi::CStr` method names
->
->  drivers/gpu/drm/drm_panic_qr.rs | 2 +-
->  rust/kernel/auxiliary.rs        | 4 ++--
->  rust/kernel/configfs.rs         | 4 ++--
->  rust/kernel/cpufreq.rs          | 2 +-
->  rust/kernel/drm/device.rs       | 4 ++--
->  rust/kernel/firmware.rs         | 2 +-
->  rust/kernel/kunit.rs            | 6 +++---
->  rust/kernel/miscdevice.rs       | 2 +-
->  rust/kernel/net/phy.rs          | 2 +-
->  rust/kernel/of.rs               | 2 +-
->  samples/rust/rust_configfs.rs   | 2 +-
->  11 files changed, 16 insertions(+), 16 deletions(-)
+> Right, when LTO=3Dy, arm64 use acquire load to implement
+> READ_ONCE()/atomic_read().
 
-For the entire series:
-
-Reviewed-by: Benno Lossin <lossin@kernel.org>
-
-Thanks a lot for splitting it up into these tiny pieces!
+But Andreas was talking about relaxed load vs mutable reference (=3D
+normal unsynchronized write)?
 
 ---
 Cheers,
