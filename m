@@ -1,149 +1,174 @@
-Return-Path: <linux-kernel+bounces-723076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07751AFE28B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:26:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB9FFAFE272
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06EB47BBB6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:21:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28F73169370
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8AC26CE07;
-	Wed,  9 Jul 2025 08:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA1E273D89;
+	Wed,  9 Jul 2025 08:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sz3KIhs6"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FLvZ3KjU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E6023C4F4;
-	Wed,  9 Jul 2025 08:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083AF272808;
+	Wed,  9 Jul 2025 08:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752049384; cv=none; b=N7hD1XHdjo5VyalAXln509wHtVdOQP9F8C+1jcKmWuta7vBO0/9p7xljnYz+CsBW9gI1chdniGioUt3vdQp7lsZ61rK6zTDP7eddDI99FIr+MurYjqMNTPwITtAmZiLgeTlI5XN/rADBq1sVTT18fORktcNjJQMhjjw5MsmYwVU=
+	t=1752049446; cv=none; b=fqVtAAK1WM/Glb5myVQltzrFhxrTp17dv/tHnPB/hEwCoS8X9QxT1Y9VoENhxa6r6SIeb0eJxesMUHEkFQ4RpaWZi6RPsw8D/zL/AsyaGHt6nQhDyHhy4Ly85eNvvcD3eS+p2q2qmlkskS98WbHNVcYHTSZajcE5PBekll4uYoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752049384; c=relaxed/simple;
-	bh=zU87l0EITnp9g2Yi4D3PMimHE11g+TG8aeBX8Ho0RJ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UJgjitxinU3/ZXTIC7XdESCQgUVnWnRf6RzVb5BLbZ7OK0GPQW43jG+1fZED+Zdltp0eIHovkW8a/Vqr02DEj0OXouHl10nT0ngNu+trj8HAU3BCEG3Nqgy1XXK0JaawMxVqCmUWJERd3p+XU6RfdraK3IMNOy6YNnVMaqUFHeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sz3KIhs6; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a6e8b1fa37so4197617f8f.2;
-        Wed, 09 Jul 2025 01:23:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752049381; x=1752654181; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IzxIUE4gQTBu7/qvcfY6nYe83AP1dKFA917cFV2PnZI=;
-        b=Sz3KIhs6w/AKKpHjcxrxj0/4dYngG++DnEX0+7p8aXQGMzYt59O17d7y5ltMXJk5Zg
-         ExmdCqOecDoHtEz+1Wc5y0J9Wtw4EruBX4Mt0owMeszfZjEYkJxg9CtIP0D32M0V/VTq
-         lxc2JrIYFwW1ko46VrmR0fdMYbIpFc4G2KkuoKRmTxhgjf0Wrm1xzE6dsnE7uo1msf+I
-         Ys+yA6QpTLBK2pt5t8RgKkqLjlhX/OhI8qKMCYZsnJvBNFd+JF/xltwEV9PPANa4Gy/X
-         FZepyPWazY6ups1ZcYanmt+R5C4elTZl/V35LNAvD7RJV61DS6GP3/Cil0lYZqi420es
-         hEpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752049381; x=1752654181;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IzxIUE4gQTBu7/qvcfY6nYe83AP1dKFA917cFV2PnZI=;
-        b=UT/746ism8jcSGC5/ufowxFiBqqkJsPdFEoynAEoFnaVDXAdqQTm0IwKI1p+EbYE1M
-         5s05cpTA4wfBXP3A6r+49/OXjcN24l3LbTEBJxZJGU1NXwS3CU72R4rVNMXOYzkxFC4y
-         Bk2Wb/ms8txdFJg6rF+4xxe4tIi5UVlwb34yTf81BrimaZRpTCbENpvl+RFqoch/ui0Q
-         1ImJxY1pXgJWC1RJ3yI3Q4zR9VBCnU5GyhLLqB1SvlS+wuPdNcCVsbkQ9cPNRyLBIV9Q
-         Kzurw6jsLdIVO5DCfxo6djoS+pHkG85BeH5iPaYnFnzW6ZlDnhSXBKWSNy40zR0D8pgE
-         CWJw==
-X-Forwarded-Encrypted: i=1; AJvYcCV//QOE8EH3PZGghkF/GIKzoQtrPynr0khdphIUCYWVPfVTPcRwEfoOGqChX4kcoEJPuA5LHdcvD9S4MNA=@vger.kernel.org, AJvYcCWMJXerEaOiKvojK0pZkWd8zx377uf3shx3AUaJLE1ESVUZXbLf7r2dZXGuDYhx3XyFN4FWGbQHVhbZ8h4/OQqWWF2b@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPAx8gPBveARwgYiafoyzuzH0j2XCcrWADKo7nv2Ek4Lc27MJ9
-	4k+XOHlXiFwLBjm8ykP8+tdnqvVZwYEJU61xjqiYqoAax+P4UYtcXKcu
-X-Gm-Gg: ASbGncssuwCaiTT7VpgG6a4VFC5SP+j7WLyQSxSyxlk9WXyMZY8c9uTvT0vf4rQSQdY
-	hBTl/W/8Hztb+U3FxbNmTpliqMd8Qe4fZVxJF4diu1LoC/K+/eRrU/GzmHYsPDUuTqihEFrEnXY
-	wVxDh5bT2lIsObb/btAjygI15Xo/VvfKYokPzmA2hghoqXugxWjp/jQ+CJDSOcRXIH+k7We0O9X
-	MgYRjMvbQiWG2Oh7XkGfLJkroUfuu2E1rA61sF9CGoE9fHU37as2enaq6Oghn7uwXRqtBaN/84C
-	N/ZXzbhgS9uhcj62T5BIRoD1bQjmFwvR2iD4CyVsSn6Zb1g4yUOmZwN46t92MOkKdd/81lz/N29
-	QB9kUpFLmRIepPLhDjw==
-X-Google-Smtp-Source: AGHT+IFXf2JEwQ31gzISHIrNFrlKjFfnf+Xl60HwTCt+wrPxOekzSySyQCE1sMt5QvRmOYoYm5GxtQ==
-X-Received: by 2002:a05:6000:4a08:b0:3a4:bfda:1e9 with SMTP id ffacd0b85a97d-3b5e452e4cdmr1052250f8f.46.1752049380896;
-        Wed, 09 Jul 2025 01:23:00 -0700 (PDT)
-Received: from pumpkin (host-92-21-58-28.as13285.net. [92.21.58.28])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47225afefsm14948384f8f.82.2025.07.09.01.23.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 01:23:00 -0700 (PDT)
-Date: Wed, 9 Jul 2025 09:22:59 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Nam Cao <namcao@linutronix.de>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, Gabriele
- Monaco <gmonaco@redhat.com>, john.ogness@linutronix.de
-Subject: Re: [PATCH] tracing: Remove pointless memory barriers
-Message-ID: <20250709092259.791583fe@pumpkin>
-In-Reply-To: <20250626123445.5b01849d@gandalf.local.home>
-References: <20250626151940.1756398-1-namcao@linutronix.de>
-	<20250626113520.315db641@gandalf.local.home>
-	<20250626160459.soHxOROG@linutronix.de>
-	<20250626123445.5b01849d@gandalf.local.home>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1752049446; c=relaxed/simple;
+	bh=kd4fZ9hjJhejqE60Ux6jIEdKJbcKfAKqOtQDvcCmobo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kfQHeTGJUobgB3oP8e0PPyRZxGDtsNhESe2CgRb4GlEbwWdDsE5Q/ovC7BvYil1Olq2Pfrls3akvCVjYH1na2FkupXXZP1ww1OVyikdrX2WBUAPOAMGwqcfBJv/Qjb/pP8/VrqugxTSdQjaHkhXBHxJ4n0k0XCbDNf7Rjzr/OqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FLvZ3KjU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4595EC4CEEF;
+	Wed,  9 Jul 2025 08:24:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752049445;
+	bh=kd4fZ9hjJhejqE60Ux6jIEdKJbcKfAKqOtQDvcCmobo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FLvZ3KjUKCmazemAEuyodtlyTLhEpoP9m+dwEpnLbYDaOFCZqYbb48gn/E3sJMtE9
+	 9nSAUbaGKQSnH4wRpH7dGyKMqVXeqz5snzYI2kIh2Il7ZS/MRfRj0TihdekMgz3ZfR
+	 gCyLaSPPdNw367CCXnebmSGz0UPCPOSo/bVjXSm7f7LxRso0dlrJdUDs+xNYYZPOkf
+	 9M2XA5ICNM4fn4ILcWdQeHTZFbUIz6DH1NNOGMIaANYjAiqbv4rbnYLy7zbxDBGAgO
+	 8Xhkeh1/sZpBnPeHj4p3TtFDlmgYVO6je2bjYQlr7k2PycxbrJ16cT2cYn4WZE/bV4
+	 VDCapKAGrs7Yg==
+Date: Wed, 9 Jul 2025 13:53:53 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: Re: [PATCH RFC 3/3] PCI: qcom: Allow pwrctrl framework to control
+ PERST#
+Message-ID: <btxanvs4enrenhowrf47llnvu6az3jx5gjzba5mulxb5jyqgtp@e5tdobflcyxz>
+References: <20250707-pci-pwrctrl-perst-v1-0-c3c7e513e312@kernel.org>
+ <20250707-pci-pwrctrl-perst-v1-3-c3c7e513e312@kernel.org>
+ <aG3fblf5twIAitvg@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aG3fblf5twIAitvg@google.com>
 
-On Thu, 26 Jun 2025 12:34:45 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> On Thu, 26 Jun 2025 18:04:59 +0200
-> Nam Cao <namcao@linutronix.de> wrote:
+On Tue, Jul 08, 2025 at 08:18:06PM GMT, Brian Norris wrote:
+> Hi,
 > 
-> > I think you have it inverted? I assume you meant:
+> On Mon, Jul 07, 2025 at 11:48:40PM +0530, Manivannan Sadhasivam wrote:
+> > Since the Qcom platforms rely on pwrctrl framework to control the power
+> > supplies, allow it to control PERST# also. PERST# should be toggled during
+> > the power-on and power-off scenarios.
 > > 
-> > "Without the barriers, the tr->buffer_disabled = 1 can be set on one CPU,
-> > and the other CPU can think the buffer is still enabled and do work that
-> > will end up doing nothing."
+> > But the controller driver still need to assert PERST# during the controller
+> > initialization. So only skip the deassert if pwrctrl usage is detected. The
+> > pwrctrl framework will deassert PERST# after turning on the supplies.
 > > 
-> > Your scenario can still happen despite the memory barrier:  
+> > The usage of pwrctrl framework is detected based on the new DT binding
+> > i.e., with the presence of PERST# and PHY properties in the Root Port node
+> > instead of the host bridge node.
+> > 
+> > When the legacy binding is used, PERST# is only controlled by the
+> > controller driver since it is not reliable to detect whether pwrctrl is
+> > used or not. So the legacy platforms are untouched by this commit.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <mani@kernel.org>
+> > ---
+> >  drivers/pci/controller/dwc/pcie-designware-host.c |  1 +
+> >  drivers/pci/controller/dwc/pcie-designware.h      |  1 +
+> >  drivers/pci/controller/dwc/pcie-qcom.c            | 26 ++++++++++++++++++++++-
+> >  3 files changed, 27 insertions(+), 1 deletion(-)
 > 
-> Yes, but the point isn't really to prevent the race. It's more about making
-> the race window smaller.
+> > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> > index 620ac7cf09472b84c37e83ee3ce40e94a1d9d878..61e1d0d6469030c549328ab4d8c65d5377d525e3 100644
+> > --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
 > 
-> When we disable it, if something is currently using it then it may or may
-> not get in. That's fine as this isn't critical.
+> > @@ -1724,6 +1730,12 @@ static int qcom_pcie_parse_port(struct qcom_pcie *pcie, struct device_node *node
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > +	devfn = of_pci_get_devfn(node);
+> > +	if (devfn < 0)
+> > +		return -ENOENT;
+> > +
+> > +	pp->perst[PCI_SLOT(devfn)] = reset;
 > 
-> But from my understanding, without the barriers, some architectures may
-> never see the update. That is, the write from one CPU may not get to memory
-> for a long time and new incoming readers will still see the old data. I'm
-> more concerned with new readers than ones that are currently racing with
-> the updates.
+> It seems like you assume a well-written device tree, such that this
+> PCI_SLOT(devfn) doesn't overflow the perst[] array. It seems like we
+> should guard against that somehow.
+> 
 
-I'm not an expert here, but I don't think the barriers necessarily do anything
-to force writes out of the 'store buffer' (so the data gets into the cache
-from where it will be snooped).
+Sure. I will add a check.
 
-An implementation of 'wmb' might wait for the store buffer (or other scheme
-for pending writes) to empty, but it only has to use a marker to ensure
-ordering.
+> Also see my comment below, where I believe even a well-written device
+> tree could trip this up.
+> 
+> > +
+> >  	port->reset = reset;
+> >  	port->phy = phy;
+> >  	INIT_LIST_HEAD(&port->list);
+> > @@ -1734,10 +1746,20 @@ static int qcom_pcie_parse_port(struct qcom_pcie *pcie, struct device_node *node
+> >  
+> >  static int qcom_pcie_parse_ports(struct qcom_pcie *pcie)
+> >  {
+> > +	struct dw_pcie_rp *pp = &pcie->pci->pp;
+> >  	struct device *dev = pcie->pci->dev;
+> >  	struct qcom_pcie_port *port, *tmp;
+> > +	int child_cnt;
+> >  	int ret = -ENOENT;
+> >  
+> > +	child_cnt = of_get_available_child_count(dev->of_node);
+> 
+> I think you're assuming "available children" correlate precisely with a
+> 0-indexed array of ports. But what if, e.g., port 0 is disabled in the
+> device tree, and only port 1 is available? Then you'll overflow.
+> 
 
-The actual writes of data to the data cache are also likely to happen
-'in their own time' regardless of the code the cpu is executing (although
-cache line reads from main memory (for reads) may take preference over
-those for writes).
+Right. I will take care it in next version.
 
-Thinks...
-A plausible model is that write data is buffered on a cache-line basis
-waiting for the old cache line to be read from memory.
-While that is happening later writes can be written into other cache lines.
+> > +	if (!child_cnt)
+> > +		return ret;
+> > +
+> > +	pp->perst = kcalloc(child_cnt, sizeof(struct gpio_desc *), GFP_KERNEL);
+> 
+> IIUC, you kfree() this on error, but otherwise, you never free it. I
+> also see that this driver can't actually be unbound (commit f9a666008338
+> ("PCI: qcom: Make explicitly non-modular")), so technically there's no
+> way to "leak" this other than by probe errors...
+> ...but it still seems like devm_*() would fit better.
+> 
 
-So a 'wmb' might just stall the cpu that executes it without having any
-real effect on the timings of the memory updates seen by other cpu.
+Even if we use devm_(), we need to free the array when qcom_pcie_parse_port()
+fails. And as you spotted, we don't remove the driver currently. So I decided to
+use kfree(). Someone would argue that if we manually free the memory, then it
+defeats the purpose of devm_() variants.
 
-	David
+> (NB: I'm not sure I agree with commit f9a666008338 that "[driver unbind]
+> doesn't have a sensible use case anyway". That just sounds like
+> laziness. And it *can* have a useful purpose for testing.)
+> 
 
- 
+There was a whole debate on it. It is mostly due to the fact that this driver
+implements the MSI controller and the IRQCHIP drivers are not expected to go
+away during runtime. But atleast, I would like to build this driver as a module
+and not remove it. The patch is pending for some time.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
