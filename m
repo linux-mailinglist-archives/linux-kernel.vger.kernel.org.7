@@ -1,231 +1,160 @@
-Return-Path: <linux-kernel+bounces-723355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AE7EAFE61A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:43:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E267AFE627
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:44:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B5D15860D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:43:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DBE91892B34
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FD729114A;
-	Wed,  9 Jul 2025 10:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6E428DB7A;
+	Wed,  9 Jul 2025 10:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ly9XizCN"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkB7/kas"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E13828FA8A;
-	Wed,  9 Jul 2025 10:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552ED28DB63;
+	Wed,  9 Jul 2025 10:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752057700; cv=none; b=I5iAOzqOymuzfH7BqiqLrubE3g/H+Stb53EkfX2gvxN9E6v3CxA6ARe54CDV97KkMbLLKpBVkY+RyY73tjk0qfagdIPC+AnmP+rag2gD3ON/0QNUGqEJzbF4ziJprJW8iXVVu0sdIXCJDmh8CNNIz9iM+floVYcdogTsaD/Hscw=
+	t=1752057708; cv=none; b=VbDLkPBoFIJlB80mwK1dzXZdctTBv0F4TCb5+2cmcdnn8tdluDhswFgan7WWF4w5/kcxyAPzvJ9Xypn2//wce5Be4N2JjcRpblRXV4+m8n2FeEOyiTwD6O1Pz8rGoHFAnaMzAnsD8r6Z5GaWN3nazmh3PkkR2XzAVDQFBZyF/Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752057700; c=relaxed/simple;
-	bh=leLVGRpGAOvCYz0HJ/13TizpZ6EsTlcAMUCQWHk5aDM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=H8Knyyg9VUmKujkbYle+A0eBEIsHqULyt8HwWVhDi+wTXeKwuWS+bnmm2kNCZHhIrhIBxTCE883RZ5UpLqaOMTLvLl0Mc3EOA+CZ3wx2SlrkZRWI/3gMJF6NTqIWE13RGGH7CbtkFyT5maFUQF7lurvMyswKR9HXFq81qO9MUBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ly9XizCN; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5697j8Jq009159;
-	Wed, 9 Jul 2025 10:41:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:date:from:in-reply-to:message-id:references:subject:to; s=
-	qcppdkim1; bh=TbYlrtnqTvqrRHZiqDZ3OZ464UHy7JqGH3TSAiwzqiY=; b=Ly
-	9XizCNZneT/mZeHl+RZvnf8vWc5D8iB+VAHk2B4tVH1cDjP3Mj/2RDp+UiZFtEsJ
-	GI9HyYPAcHTL3CnvGFeh9iEu1mfpe1IFOJjXKP0G7sfIh26BS0z5wqXQNDaOpdis
-	zJcx+pqU/yEdq3SqsIfMqwBel60Xnx0sqDn8gh3ZwImXvTBOQ4JZSf4xzeTXMrVE
-	ULPzE4bLHP1a7ymwjItLerydqvonnY1n7kmjMWyNyinAGRrFm/C/qYX6bY9q2gNG
-	QngrbcwyaCzRsnFGhxUPTxW35ERfsdDERqBkGpMYbS7tlnw5JKeOz2rq+Wo5bcP5
-	e9Nr/9G/zIXJvU/nAQ3g==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47smafghth-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Jul 2025 10:41:25 +0000 (GMT)
-Received: from pps.filterd (NALASPPMTA04.qualcomm.com [127.0.0.1])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 569Af2OD005364;
-	Wed, 9 Jul 2025 10:41:24 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by NALASPPMTA04.qualcomm.com (PPS) with ESMTP id 47s9h16ufk-1;
-	Wed, 09 Jul 2025 10:41:24 +0000
-Received: from NALASPPMTA04.qualcomm.com (NALASPPMTA04.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 569AfO4B006174;
-	Wed, 9 Jul 2025 10:41:24 GMT
-Received: from hu-devc-lv-u18-c.qualcomm.com (hu-songchai-lv.qualcomm.com [10.81.24.255])
-	by NALASPPMTA04.qualcomm.com (PPS) with ESMTP id 569AfOVE006173;
-	Wed, 09 Jul 2025 10:41:24 +0000
-Received: by hu-devc-lv-u18-c.qualcomm.com (Postfix, from userid 4201483)
-	id E0FC25010D0; Wed,  9 Jul 2025 03:41:23 -0700 (PDT)
-From: songchai <songchai@qti.qualcomm.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, quic_songchai@quicinc.com
-Cc: linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v6 7/7] coresight-tgu: add reset node to initialize
-Date: Wed,  9 Jul 2025 03:41:14 -0700
-Message-Id: <20250709104114.22240-8-songchai@qti.qualcomm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250709104114.22240-1-songchai@qti.qualcomm.com>
-References: <20250709104114.22240-1-songchai@qti.qualcomm.com>
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=ZJ/XmW7b c=1 sm=1 tr=0 ts=686e4755 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=TW7uPGGm3D3UErKGQS8A:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: TBsb_jYgOhDEDA_BDTOlYS_8veUNln4I
-X-Proofpoint-GUID: TBsb_jYgOhDEDA_BDTOlYS_8veUNln4I
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDA5NiBTYWx0ZWRfX5IcD8deJLRDh
- Fb0D/kQbxbyBjL19tON1D6BKzeSyN3IRjajrqSeoqo3sVj0WeU3DDp5xoe/gXaFRyYytrB47F6M
- lqMvABbVqR0FN9hElL6PF6doEzNd3DG0pG36eGaGmWJuHuV/T2pr/1os43Yyap2vfNxLD3VUIDa
- B8AF9YTyJGyGKI2g6Si3s1T0zbtqDKxVe5IDZVFcOHfSKDwy+llD4h+PQni7Yb7USqevBciDntv
- KFcS2E4krJEy3Umbq/7PpohW89FyitpFz5VHrkzOeVJxxP5hkmTQ5baLoD7ofNHT0NDpQyVP1/a
- aCAHmIWfYCrB792a/EBC7+YLt0N2ZH6szPMVY9ILKkJDC+5VdDEDtu1BLqbxXIsuiodqe98EDm4
- gPibXEzaDh08Joy3W3M8tuaVyBAdopXVbU1GWLzKkRB8RtndbYKkH6XfCuiGmbGFkH4mwEx/
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-09_02,2025-07-08_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=999 impostorscore=0 spamscore=0 adultscore=0 clxscore=1015
- bulkscore=0 phishscore=0 priorityscore=1501 mlxscore=0 lowpriorityscore=0
- suspectscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507090096
+	s=arc-20240116; t=1752057708; c=relaxed/simple;
+	bh=M8ZjJ30VmwOexsmfFOpejwe1qhUqE7IeUo2Kq/99r1w=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=V+B4uXP11nyH8Tox5CHzShf2uWBwy5oq6U9KbN/tCqTrkUsJuCtbCkIXsmkOAphbBkY+HDgFNUScDvOO63jlEpTkwtGHu9PJXlhkP3iXgch1ctvqgnaFiJcWRfcGNjw3Buly3upDMqWB1xpmVnzpiJxk9OL0pPAZe+NbdvB4kPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PkB7/kas; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DEFDC4CEEF;
+	Wed,  9 Jul 2025 10:41:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752057707;
+	bh=M8ZjJ30VmwOexsmfFOpejwe1qhUqE7IeUo2Kq/99r1w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PkB7/kasasKhTB/oXK19iJExNC4RuTeV6UDF5Tne9TWO8EYbXimp70tKs4ZXpqcTB
+	 R9Wl9k8CjYRlY/Wbmwzc74e0dSA8V0yHXRn4MS/ZFs/clxBkQoOuLX9OFZPUkOXEkh
+	 I4xjacRrVYzqbqcARgtpCT96cExVjk6di1WueP/7kBONyPuvDLNG/B1ZRnosnDVkz8
+	 hFqCUCuAW7GgbvsCD4M5qmEbZprdArU+CXAhnMS4o28jDEXN6kKVAt/v7wN9EB9rGy
+	 qrjjTNSUSvW3aFWXgecqTl5HAxWZOEXovc+gXLEcpwxRjIv0mSkuh99eg/jkj8jqtu
+	 DuVitPe53ISmg==
+From: neeraj.upadhyay@kernel.org
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	paulmck@kernel.org,
+	joelagnelf@nvidia.com,
+	frederic@kernel.org,
+	boqun.feng@gmail.com,
+	urezki@gmail.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com,
+	qiang.zhang1211@gmail.com,
+	neeraj.iitr10@gmail.com,
+	neeraj.upadhyay@amd.com,
+	"Neeraj Upadhyay (AMD)" <neeraj.upadhyay@kernel.org>
+Subject: [PATCH rcu 2/5] rcu: Protect ->defer_qs_iw_pending from data race
+Date: Wed,  9 Jul 2025 16:11:15 +0530
+Message-Id: <20250709104118.15532-3-neeraj.upadhyay@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20250709104118.15532-1-neeraj.upadhyay@kernel.org>
+References: <20250709104118.15532-1-neeraj.upadhyay@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-From: Songwei Chai <quic_songchai@quicinc.com>
+From: "Paul E. McKenney" <paulmck@kernel.org>
 
-Add reset node to initialize the value of
-priority/condition_decode/condition_select/timer/counter nodes.
+On kernels built with CONFIG_IRQ_WORK=y, when rcu_read_unlock() is
+invoked within an interrupts-disabled region of code [1], it will invoke
+rcu_read_unlock_special(), which uses an irq-work handler to force the
+system to notice when the RCU read-side critical section actually ends.
+That end won't happen until interrupts are enabled at the soonest.
 
-Signed-off-by: Songwei Chai <quic_songchai@quicinc.com>
+In some kernels, such as those booted with rcutree.use_softirq=y, the
+irq-work handler is used unconditionally.
+
+The per-CPU rcu_data structure's ->defer_qs_iw_pending field is
+updated by the irq-work handler and is both read and updated by
+rcu_read_unlock_special().  This resulted in the following KCSAN splat:
+
+------------------------------------------------------------------------
+
+BUG: KCSAN: data-race in rcu_preempt_deferred_qs_handler / rcu_read_unlock_special
+
+read to 0xffff96b95f42d8d8 of 1 bytes by task 90 on cpu 8:
+ rcu_read_unlock_special+0x175/0x260
+ __rcu_read_unlock+0x92/0xa0
+ rt_spin_unlock+0x9b/0xc0
+ __local_bh_enable+0x10d/0x170
+ __local_bh_enable_ip+0xfb/0x150
+ rcu_do_batch+0x595/0xc40
+ rcu_cpu_kthread+0x4e9/0x830
+ smpboot_thread_fn+0x24d/0x3b0
+ kthread+0x3bd/0x410
+ ret_from_fork+0x35/0x40
+ ret_from_fork_asm+0x1a/0x30
+
+write to 0xffff96b95f42d8d8 of 1 bytes by task 88 on cpu 8:
+ rcu_preempt_deferred_qs_handler+0x1e/0x30
+ irq_work_single+0xaf/0x160
+ run_irq_workd+0x91/0xc0
+ smpboot_thread_fn+0x24d/0x3b0
+ kthread+0x3bd/0x410
+ ret_from_fork+0x35/0x40
+ ret_from_fork_asm+0x1a/0x30
+
+no locks held by irq_work/8/88.
+irq event stamp: 200272
+hardirqs last  enabled at (200272): [<ffffffffb0f56121>] finish_task_switch+0x131/0x320
+hardirqs last disabled at (200271): [<ffffffffb25c7859>] __schedule+0x129/0xd70
+softirqs last  enabled at (0): [<ffffffffb0ee093f>] copy_process+0x4df/0x1cc0
+softirqs last disabled at (0): [<0000000000000000>] 0x0
+
+------------------------------------------------------------------------
+
+The problem is that irq-work handlers run with interrupts enabled, which
+means that rcu_preempt_deferred_qs_handler() could be interrupted,
+and that interrupt handler might contain an RCU read-side critical
+section, which might invoke rcu_read_unlock_special().  In the strict
+KCSAN mode of operation used by RCU, this constitutes a data race on
+the ->defer_qs_iw_pending field.
+
+This commit therefore disables interrupts across the portion of the
+rcu_preempt_deferred_qs_handler() that updates the ->defer_qs_iw_pending
+field.  This suffices because this handler is not a fast path.
+
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Signed-off-by: Neeraj Upadhyay (AMD) <neeraj.upadhyay@kernel.org>
 ---
- .../testing/sysfs-bus-coresight-devices-tgu   |  7 ++
- drivers/hwtracing/coresight/coresight-tgu.c   | 75 +++++++++++++++++++
- 2 files changed, 82 insertions(+)
+ kernel/rcu/tree_plugin.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
-index f0d7db72b61c..4ff5ec9be733 100644
---- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
-+++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
-@@ -42,3 +42,10 @@ KernelVersion	6.16
- Contact:	Jinlong Mao (QUIC) <quic_jinlmao@quicinc.com>, Songwei Chai (QUIC) <quic_songchai@quicinc.com>
- Description:
- 		(RW) Set/Get the counter value with specific step for TGU.
-+
-+What:		/sys/bus/coresight/devices/<tgu-name>/reset_tgu
-+Date:		July 2025
-+KernelVersion	6.16
-+Contact:	Jinlong Mao (QUIC) <quic_jinlmao@quicinc.com>, Songwei Chai (QUIC) <quic_songchai@quicinc.com>
-+Description:
-+		(Write) Write 1 to reset the dataset for TGU.
-diff --git a/drivers/hwtracing/coresight/coresight-tgu.c b/drivers/hwtracing/coresight/coresight-tgu.c
-index 303698a9d5ab..35c97f31639e 100644
---- a/drivers/hwtracing/coresight/coresight-tgu.c
-+++ b/drivers/hwtracing/coresight/coresight-tgu.c
-@@ -473,6 +473,80 @@ static ssize_t enable_tgu_store(struct device *dev,
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 0b0f56f6abc8..a91b2322a0cd 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -624,10 +624,13 @@ notrace void rcu_preempt_deferred_qs(struct task_struct *t)
+  */
+ static void rcu_preempt_deferred_qs_handler(struct irq_work *iwp)
+ {
++	unsigned long flags;
+ 	struct rcu_data *rdp;
+ 
+ 	rdp = container_of(iwp, struct rcu_data, defer_qs_iw);
++	local_irq_save(flags);
+ 	rdp->defer_qs_iw_pending = false;
++	local_irq_restore(flags);
  }
- static DEVICE_ATTR_RW(enable_tgu);
  
-+/* reset_tgu_store - Reset Trace and Gating Unit (TGU) configuration. */
-+static ssize_t reset_tgu_store(struct device *dev,
-+			       struct device_attribute *attr, const char *buf,
-+			       size_t size)
-+{
-+	unsigned long value;
-+	struct tgu_drvdata *drvdata = dev_get_drvdata(dev->parent);
-+	int i, j, ret;
-+
-+	if (kstrtoul(buf, 0, &value) || value == 0)
-+		return -EINVAL;
-+
-+	if (!drvdata->enable) {
-+		ret = pm_runtime_get_sync(drvdata->dev);
-+		if (ret < 0) {
-+			pm_runtime_put(drvdata->dev);
-+			return ret;
-+		}
-+	}
-+
-+	spin_lock(&drvdata->spinlock);
-+	CS_UNLOCK(drvdata->base);
-+
-+	tgu_writel(drvdata, 0, TGU_CONTROL);
-+
-+	if (drvdata->value_table->priority)
-+		memset(drvdata->value_table->priority, 0,
-+			    MAX_PRIORITY * drvdata->max_step *
-+				drvdata->max_reg * sizeof(unsigned int));
-+
-+	if (drvdata->value_table->condition_decode)
-+		memset(drvdata->value_table->condition_decode, 0,
-+			    drvdata->max_condition_decode * drvdata->max_step *
-+				sizeof(unsigned int));
-+
-+		/* Initialize all condition registers to NOT(value=0x1000000) */
-+	for (i = 0; i < drvdata->max_step; i++) {
-+		for (j = 0; j < drvdata->max_condition_decode; j++) {
-+			drvdata->value_table
-+			->condition_decode[calculate_array_location(
-+			drvdata, i, TGU_CONDITION_DECODE, j)] =
-+			0x1000000;
-+		}
-+	}
-+
-+	if (drvdata->value_table->condition_select)
-+		memset(drvdata->value_table->condition_select, 0,
-+				drvdata->max_condition_select * drvdata->max_step *
-+				sizeof(unsigned int));
-+
-+	if (drvdata->value_table->timer)
-+		memset(drvdata->value_table->timer, 0,
-+			    (drvdata->max_step) *
-+				(drvdata->max_timer) *
-+				sizeof(unsigned int));
-+
-+	if (drvdata->value_table->counter)
-+		memset(drvdata->value_table->counter, 0,
-+			    (drvdata->max_step) *
-+				(drvdata->max_counter) *
-+				sizeof(unsigned int));
-+
-+	dev_dbg(dev, "Coresight-TGU reset complete\n");
-+
-+	CS_LOCK(drvdata->base);
-+
-+	drvdata->enable = false;
-+	spin_unlock(&drvdata->spinlock);
-+	pm_runtime_put(drvdata->dev);
-+
-+	return size;
-+}
-+static DEVICE_ATTR_WO(reset_tgu);
-+
- static const struct coresight_ops_helper tgu_helper_ops = {
- 	.enable = tgu_enable,
- 	.disable = tgu_disable,
-@@ -484,6 +558,7 @@ static const struct coresight_ops tgu_ops = {
- 
- static struct attribute *tgu_common_attrs[] = {
- 	&dev_attr_enable_tgu.attr,
-+	&dev_attr_reset_tgu.attr,
- 	NULL,
- };
- 
+ /*
+-- 
+2.40.1
 
 
