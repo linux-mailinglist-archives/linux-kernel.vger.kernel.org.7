@@ -1,129 +1,128 @@
-Return-Path: <linux-kernel+bounces-723220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76FABAFE495
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:52:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E179DAFE49A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 278CC7AAAB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:50:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95633189570C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A102877DD;
-	Wed,  9 Jul 2025 09:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E661D2877F6;
+	Wed,  9 Jul 2025 09:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="w35Zphu0"
-Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iVuRh+OE"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B6F2877C4
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 09:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE45D2877E2;
+	Wed,  9 Jul 2025 09:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752054737; cv=none; b=kksfCXj8HH2ydDe8QWJjB1OhqPZL+W+4j9hmj1ogRWTDEEo7URjykWbqxjF3+FrkjO+LR4ffUN5R1iaIDnPIBEnaOii9gq8t3N6A2zUKQQwhaG04qLSFRsyI6igMnpled0zyJQ/ts3oyPYmda9P0DCj03bzaZAA9W3h/GT7KlS0=
+	t=1752054848; cv=none; b=gxBoMaRs9C14hVFbAOibVdXFFrxhD6X5KfL8atxRKSDbutLmz5pRDVpPbF0B022G6ZyLldHxATrCT7KNK9hC4d6yMevgKJo+SE+88ZbAJAxrhKr9waKedtsJvVABXnxZdpPGqdELiHWcv2RDeeC+T5RbM6M3ilbqIPPeNk6WzEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752054737; c=relaxed/simple;
-	bh=A9YwGZZdokPFbQ7Vzo0hhFyvQF6XeBycydFK7Nnf9Us=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DHeauakMAr0amrgaSIUs7B1oWWLGsWQbnvnsqK7T6M0uCiGxMshTwXnVTKBPrg5WVk77aYIoc1EYL8Fby3Ceoo5ay6oQ8N847TBE2Bbws/mmu/lFdB3UpQPQPDAV35v4wYDLwM7NnjcY6UWNNBoRnsU/7kXB+nIT2UglLhp6xho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=w35Zphu0; arc=none smtp.client-ip=44.202.169.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
-	by cmsmtp with ESMTPS
-	id Yx18uxSw6XshwZRTFuWNc8; Wed, 09 Jul 2025 09:52:09 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id ZRTEu3pagVUGgZRTEuiq36; Wed, 09 Jul 2025 09:52:09 +0000
-X-Authority-Analysis: v=2.4 cv=KrNL23WN c=1 sm=1 tr=0 ts=686e3bc9
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=utcWr1KM/dmcMHpzs+cyHVz1H+ASbPEmF9dp1y+cR+U=; b=w35Zphu0n9ZOaY4v89CJj2NS/n
-	tqoQDSPIN3oO0aJJEJelRqzSG6lzNGXW3PPK915lifQ6bEVao13xJCIH1AeXoppLCK6i5vmBu8jCa
-	12mQJWd4XQPbLMYnCtgzaJGSXepvjBYOWMyu/+rHFriCkbVEMGR+bjaklI6JmeHrbheId/l9jI8AL
-	zjdkenW9zLgMoUNap6LcpmW2ejU3EEPXJFrOXXJAIda4zLWkXX2AePzkE3aHZAmSNN0yQSf1LGQRM
-	MBySimmqf//MwD0a12pnWh5V0Img8EJdiIePu4lU22LwcJy88oVvh4sSUMjai0QEYPLVzpnIQC10k
-	GxcK42Fg==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:46102 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1uZRTB-00000003NoC-48dC;
-	Wed, 09 Jul 2025 03:52:06 -0600
-Message-ID: <0a02f7c8-cd0b-4e69-af61-ab20d2c37c63@w6rz.net>
-Date: Wed, 9 Jul 2025 02:51:57 -0700
+	s=arc-20240116; t=1752054848; c=relaxed/simple;
+	bh=VUc7ASKV7a/DitzLj+EgNpv5KmlgCFGx5YqSPWgeSfs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MzCEiJZV0o6u3Fpxtv7yl4WHLmztG0pFZ84a0hgNLFyXDyUeG7MpbvpdBV1GExD1sntnKL26A+Ogvv/7aGWCWcCBT5klXcHhVmR8uh/9j0iRuEgb3XisOgRX1xxMNHvUfk8VofS8jnQWTw1DrpzQP3xmUCNEFBi6fcOY5KWOJmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iVuRh+OE; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so8595573a12.3;
+        Wed, 09 Jul 2025 02:54:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752054845; x=1752659645; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=E0kHpP5i2ngSA3Sw3J1NI+quQCnNlgoAbETX3ByAGJI=;
+        b=iVuRh+OE+PwXdlKlycdxFC/EIGnEvb75idFbfKUCiuoATdSNBT3hTyqW33ChcsOFas
+         JOJ+RwfluA5Jxr2KedVWMBXr2+Rc2BaKITVLgj2XkAHU/tXofYL5YWVfluF4/3AfZ+ob
+         wBOSnJBr5p4BVpHEJ48NPXNjESPlSJqUm5PWz8CYXFlPpm6auBP+tsLqSN5xysPEe5Ul
+         0ydWnY5GTNNBCU8/gJ/T9zkW4YGLP81WCEgZosO7F1qLjufqu9E5ENvoqq993IRQC7Py
+         WLGaMA4Sgm+/YLr7sg7vO5TcN0kkN8fcY7GjhadEe76kDIKV4wBIPr02utQ+ou9gz825
+         204Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752054845; x=1752659645;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E0kHpP5i2ngSA3Sw3J1NI+quQCnNlgoAbETX3ByAGJI=;
+        b=iiO+4isfKByjVeSScBdhBncHZdZ0EmKQwGX07AcSjB/IWcg1RLcY7jzIaQh8cecuyp
+         XdjKsI1qNpDmaHSIvspExQEySfu0Rojv5+O1D4MOeWi6RFJoyCarD0UDAcm0NXPcXT+3
+         hyxIYqdyZot0MUBaUgtABnjMb7xsinsirR1unLKj11B3q79Nw6JdGSoSi19EuNai6uJT
+         ZlM7LhCg6iCWzhUwPal6WOrE13LNnyQbujn70Vxx35OeZDyZK0tU36zqbGibmf0xja+X
+         VGGsn/WBzvZXYEeL4pN410bXoVeUmBC4KZXbSgYZFVlUR2KmNlPApPNBeXXr+QP6MV3T
+         RlRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfRDxAciBpzqPy0v7OD/TiwtQBKL5seZRsuXcVeuMPwyYMEnha8cJeKyjuyQP/z0VXZMCBTvm0qPbpc3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHK0eRGG2bYQKrHd/RAoI4rpOrsbu39eyiUfcWwvkW6elosrar
+	1CsQ11C65Q92EBIZ3j72QAa0Bk79aKOH0WY30+A9dQSNNQi9hlgjtYyW
+X-Gm-Gg: ASbGncvS8/b2irlicDOCA7qGH8HZSq0fSJWB/VnXE2G2BhNY+E9ty6ufNYkQFkWp7k+
+	6AQxXxeKSwu9SLxTI11+UZ3aQVJwsWIeTjwwMHby7qQPXwygrQRXqNeduoGIlGlatyEWZXjRpXH
+	7ww0j7BZ98IbwFWyYsODmufkIcdou+AjFOQNYCqw0AfnWIimOrhNwewvg3zQPAzX/b2S0+8NTHj
+	vOLBPV3qc9jwXv6z7iGXCYXVc0HtJAZvo2iGElWnwp0xdAL1sBqXFYyIPmmf5zK0rvZhMnszin1
+	g4ZCJaP0+IRE7Uun2xLZWcaX+BYzbQ/kdmbCdgu6iq/ZCkIMgBzB59i6cceP9puE0Ay/sGp1IGV
+	H8jX/OjhT0K8KP87P91e7xh8uw6cPXUCL62KDMFEWiO1c6F8URwFanLxKjX7rtnlD7REzW8yCmG
+	jmToVKpBVY8ebH
+X-Google-Smtp-Source: AGHT+IGjd7FZzn2E4+1+r3KAfN0fmCjMp6g2KB2CfdNSgBMVIEYmZJPa8CZAYUipGL+5OBEmOiH7Mg==
+X-Received: by 2002:a17:907:84a:b0:ae3:24c:6a21 with SMTP id a640c23a62f3a-ae6cf6035b4mr181071566b.26.1752054844679;
+        Wed, 09 Jul 2025 02:54:04 -0700 (PDT)
+Received: from kubuntu-e14.homenet.telecomitalia.it (host-87-21-242-88.retail.telecomitalia.it. [87.21.242.88])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6949cb2sm1074172266b.67.2025.07.09.02.54.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 02:54:04 -0700 (PDT)
+From: Giovanni Di Santi <giovanni.disanti.lkl@gmail.com>
+To: tzimmermann@suse.de,
+	deller@gmx.de
+Cc: linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Giovanni Di Santi <giovanni.disanti.lkl@gmail.com>
+Subject: [PATCH v3 0/3] fbdev: kyro: Convert to managed device resources
+Date: Wed,  9 Jul 2025 11:53:51 +0200
+Message-ID: <20250709095354.931589-1-giovanni.disanti.lkl@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/130] 6.6.97-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250708183253.753837521@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250708183253.753837521@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1uZRTB-00000003NoC-48dC
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:46102
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 55
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfKqscCdE0Jv0mlSXgj4Valc04pdgszmoRmS2ED+dOLqRIv3c9ispuc/BBhomYV4QWxHr/kRXrLye+5gzJoAJPrLII+1yEHQA22ghfxzk3WEouBWPv6dg
- XV60KuQpMRARRHLjnRkR5pjJf4uLOnJsPNAZmRH3uEIA3fgEISCYOEilarqhT7IwjOAfjC4rkN8l0dFMZYFi1m4QL1CzI+ynyco=
+Content-Transfer-Encoding: 8bit
 
-On 7/8/25 11:33, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.97 release.
-> There are 130 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 10 Jul 2025 18:32:37 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.97-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+This series aims to address the TODO item "Request memory regions in all
+fbdev drivers" from Documentation/gpu/todo.rst.
+Additionally, it also converts the kyro framebuffer driver to use managed device
+functions.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+In summary, it converts the driver to use:
+1. Managed PCI device enable and region request functions
+2. Managed ioremap for MMIO registers  
+3. Managed ioremap_wc for screen memory
 
-Tested-by: Ron Economos <re@w6rz.net>
+This simplifies error handling and removes the need for manual cleanup
+in the remove function.
+
+Changes in v3:
+- Split into a patch series as suggested by Thomas Zimmermann [1]
+- Convert ioremap calls to devm_ variants
+
+Changes in v2:
+- Use pcim_enable_device() instead of pci_enable_device()
+- Use pcim_request_all_regions() instead of pci_request_regions()
+- Removed manual cleanup code as it's now automatic
+
+[1] https://lore.kernel.org/lkml/fd6403d7-93f4-4fa4-ad0d-3ab91cba8183@suse.de/
+
+Giovanni Di Santi (3):
+  fbdev: kyro: Add missing PCI memory region request
+  fbdev: kyro: Use devm_ioremap() for mmio registers
+  fbdev: kyro: Use devm_ioremap_wc() for screen mem
+
+ drivers/video/fbdev/kyro/fbdev.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+-- 
+2.43.0
 
 
