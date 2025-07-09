@@ -1,108 +1,216 @@
-Return-Path: <linux-kernel+bounces-723853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3135EAFEBA1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:19:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68D11AFEBB5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07AAB568000
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:13:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7EC616A0EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C702E718F;
-	Wed,  9 Jul 2025 14:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5F32E7655;
+	Wed,  9 Jul 2025 14:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qWX5KHiX"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tua7tl5C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E0E290092;
-	Wed,  9 Jul 2025 14:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D221290092;
+	Wed,  9 Jul 2025 14:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752070259; cv=none; b=lKAC73NLIQv36pXijpT88JafQmG4Jr6wwr5sZixm7Aj2pwL13WMaoAwH5xiGYugT3oHV5DADI65yXwICztxab2H14uu+wjE15NQf5C8bdMONvS9pqTet4+CUlc0e7oBwzk/usXzxWyBX8k5Fs/v/D4NVjW/3JymOQ2szh4PderU=
+	t=1752070318; cv=none; b=dtsMqOLb8oCjfpo6cTTzHG4SEEBYjBZ4A6BzYQPhv5y+G/cCgDhehzrE2wPiqh+E+OxOie5psJneNDhKn/wQf3vslxPSsFPvrv6w70lKOpe9DGSfcOyEGc61aMtEYtuQQKIN0UmXwes8SNpC+U1P9cmtPlOO7iqWkac0B6KkY7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752070259; c=relaxed/simple;
-	bh=+EexfIvgNZ+SVSR5duijOb51awN3SmpaycjndmOrpLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ixb51LBizR9jKxn3bmapMwM4X458NalRLEiVu74PiEh4YMsUdIH2rqKgVqheU++jasg3PvJQNoGtZafNuF8UxOOq0b8LEOA4xQCo6PFBGMaK8pZdiVT5zxhZ6i3QQ9GwIGQt1YhcnhHup1qapajQkZlsTLb0cRAMyf8qBQylEFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qWX5KHiX; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=DQqwHHKBZrRtmb4tOj3kH60Q18wJibg93eVRqot5J8w=; b=qWX5KHiXuay3OsOuQ27rw7rUJo
-	hRGFMn6hYvbJrXuoah8GPpYwFdO7TRaJGTOH60vBLXnCmAfoWjXDXRs4DiFepQd/MwFIEHD7KKrAX
-	XHFULLBunpBIpAXcQe9/90hzKftKFA5vS8V6z6wglVdSoCArBvNM/w67zU1T93Dx/h/I=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uZVVY-000wvo-EL; Wed, 09 Jul 2025 16:10:48 +0200
-Date: Wed, 9 Jul 2025 16:10:48 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	Andre Edich <andre.edich@microchip.com>,
-	Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH net v2 2/3] net: phy: allow drivers to disable polling
- via get_next_update_time()
-Message-ID: <e0b00f28-051e-4af6-afcb-7cdb5dc76549@lunn.ch>
-References: <20250709104210.3807203-1-o.rempel@pengutronix.de>
- <20250709104210.3807203-3-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1752070318; c=relaxed/simple;
+	bh=MP8y7OgpetDh3M79PleMX8TjA4AwgjOhJ4DgQjJGgRM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=utehtC1o9QLpb9I4B8if5lTjy2hBiy0JjeYA0DEd+/uR82DjQA00ndrKwEkicuQFo8GcF8uvE9NqGzYIrjzR1fu8/I9irR0nxUnxFjN7xkGeqQpcXuKxWuryhMndXaAeUTSj8kGDOjNNqWNz7426nZEYcaARHXVwlLiZey7/XEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tua7tl5C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE546C4CEEF;
+	Wed,  9 Jul 2025 14:11:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752070317;
+	bh=MP8y7OgpetDh3M79PleMX8TjA4AwgjOhJ4DgQjJGgRM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tua7tl5CR2shKodoU+r6z3cIdXQWuEXLopgPRh9M7/cSvu8WZsSysvpY3RIWew0hZ
+	 BhkS02BGy3Xm5tojLWZB0fTzLFtPtw0fgkNtAbNbzX4FMF5Y16IKAbD217aXUSeLq8
+	 4roJ/cR+jQqWrcx4JcSg9mpL4+A/grmBIpmXjnGAntcgloJROFXXMnq04hVJeG4jIf
+	 7T26wA6gI0HXvt5snzYdiL8dZuBs+61LtxRkFIA6Ln3tOLC82njLLnIrWa/6CfHjIX
+	 d1QnjLe0C+Mt59ze3U45rzdTNh1VMIeDKVZF2r7h6EDrNToReb9p+gN3lNGC9O9qEj
+	 kKyFB5JK0PI+w==
+Message-ID: <7311e4b6-8832-46fc-94b8-4ebcb2592926@kernel.org>
+Date: Wed, 9 Jul 2025 16:11:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250709104210.3807203-3-o.rempel@pengutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/9] dt-bindings: gpio: add bindings for the QIXIS FPGA
+ based GPIO controller
+To: Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>,
+ Lee Jones <lee@kernel.org>, Frank Li <Frank.Li@nxp.com>
+References: <20250709112658.1987608-1-ioana.ciornei@nxp.com>
+ <20250709112658.1987608-2-ioana.ciornei@nxp.com>
+ <9aff4894-a8aa-47d2-8800-62959e064254@kernel.org>
+ <lv55xheu2glgsgey2wdupqp3cvem27afhrs3ibhzqgglf4ql6a@tzy7uwule7z4>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <lv55xheu2glgsgey2wdupqp3cvem27afhrs3ibhzqgglf4ql6a@tzy7uwule7z4>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
->  	/* Only re-schedule a PHY state machine change if we are polling the
-> -	 * PHY, if PHY_MAC_INTERRUPT is set, then we will be moving
-> -	 * between states from phy_mac_interrupt().
-> +	 * PHY. If PHY_MAC_INTERRUPT is set or get_next_update_time() returns
-> +	 * PHY_STATE_IRQ, then we rely on interrupts for state changes.
->  	 *
->  	 * In state PHY_HALTED the PHY gets suspended, so rescheduling the
->  	 * state machine would be pointless and possibly error prone when
->  	 * called from phy_disconnect() synchronously.
->  	 */
-> -	if (phy_polling_mode(phydev) && phy_is_started(phydev))
-> -		phy_queue_state_machine(phydev,
-> -					phy_get_next_update_time(phydev));
-> +	if (phy_polling_mode(phydev) && phy_is_started(phydev)) {
-> +		unsigned int next_time = phy_get_next_update_time(phydev);
-> +
-> +		/* Drivers returning PHY_STATE_IRQ opt out of polling.
-> +		 * Use IRQ-only mode by not re-queuing the state machine.
-> +		 */
-> +		if (next_time != PHY_STATE_IRQ)
-> +			phy_queue_state_machine(phydev, next_time);
-> +	}
+On 09/07/2025 15:55, Ioana Ciornei wrote:
+> On Wed, Jul 09, 2025 at 02:14:47PM +0200, Krzysztof Kozlowski wrote:
+>> On 09/07/2025 13:26, Ioana Ciornei wrote:
+>>> Add a device tree binding for the QIXIS FPGA based GPIO controller.
+>>> Depending on the board, the QIXIS FPGA exposes registers which act as a
+>>> GPIO controller, each with 8 GPIO lines of fixed direction.
+>>>
+>>> Since each QIXIS FPGA layout has its particularities, add a separate
+>>> compatible string for each board/GPIO register combination supported.
+>>>
+>>> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+>>
+>> Your changelog explains patches, which is kind of redundant - we see
+>> that - but does not explain the dependency you have here between patches.
+>>
+> 
+> Do you mean the logical dependency between all the components like
+> FPGAs, GPIOs etc? I can expand on that, sure. I will also update the
+> cover letter with some of the information below.
+> If this is not what you are looking for, please let me know.
 
-How does this interact with update_stats()?
+I meant here cover letter, not changelog. It does not explain
+dependencies between patches. You just explain what each patch is doing
+- this is completely redundant cover letter.
 
-phy_polling_mode() returns true because the update_stats() op is
-implemented. phy_get_next_update_time() returns PHY_STATE_IRQ, because
-the PHY is in a state where interrupts works, and then the statistics
-overflow.
+> 
+> Layerscape boards such as those that I update here have a QIXIS FPGA
+> accessible through I2C. This FPGA exposes a set of registers which can
+> be used to monitor the status of different components, configure muxing,
+> act as GPIO controllers etc.
+> 
+> Since the register layout that this device exposes is different on a per
+> board basis, each board has a different compatible string such as the
+> one that patch 2/9 adds - fsl,lx2160ardb-fpga.
+> 
+> Going deeper, some of these registers are acting as GPIO controllers
+> exposing status/control of different SFP cages on the board. For these
+> kind of registers the new gpio-regmap driver is added.
+> 
+>> A nit, subject: drop second/last, redundant "bindings". The
+>> "dt-bindings" prefix is already stating that these are bindings.
+>> See also:
+>> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+>>
+> 
+> Sure. Will fix.
+> 
+>>> ---
+>>>  .../bindings/gpio/fsl,fpga-gpio.yaml          | 44 +++++++++++++++++++
+>>>  1 file changed, 44 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml b/Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml
+>>> new file mode 100644
+>>> index 000000000000..dc7b6c0d9b40
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/gpio/fsl,fpga-gpio.yaml
+>>> @@ -0,0 +1,44 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/gpio/fsl,fpga-gpio.yaml
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml
+>>> +
+>>> +title: GPIO controller embedded in the NXP QIXIS FPGA
+>>> +
+>>> +maintainers:
+>>> +  - Ioana Ciornei <ioana.ciornei@nxp.com>
+>>> +
+>>> +description: |
+>>> +  This module is part of the QIXIS FPGA found on some Layerscape boards such as
+>>> +  LX2160ARDB and LS1046AQDS. For more details see
+>>> +  ../board/fsl,fpga-qixis-i2c.yaml.
+>>
+>> There are no "board" bindings, so this does not feel like correct path.
+> 
+> As you have seen already in patch 2/9 there is already a dt-binding in
+> the board/ folder.
+> 
+>>
+>>> +
+>>> +  Each controller supports a maximum of 8 GPIO lines and each line has a fixed
+>>> +  direction which cannot be changed using a direction register.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    enum:
+>>> +      - fsl,lx2160ardb-fpga-gpio-sfp2
+>>> +      - fsl,lx2160ardb-fpga-gpio-sfp3
+>>
+>> What is the difference between these?
+> 
+> The layout of the registers backing these two GPIO controllers is the
+> same but they each expose status/control of different SFP cages.
 
-It seems like this code needs to be somehow made part of
-phy_polling_mode(), so that it has the full picture of why polling is
-being used.
+So same devices? Why do they need separate compatibles?
 
-    Andrew
 
----
-pw-bot: cr
+
+Best regards,
+Krzysztof
 
