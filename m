@@ -1,120 +1,109 @@
-Return-Path: <linux-kernel+bounces-724199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 579EDAFEFDC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:28:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD8CAFEFE3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2FA21C80DB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:29:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F00D7B8BBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B8D229B2A;
-	Wed,  9 Jul 2025 17:28:47 +0000 (UTC)
-Received: from smtp.blochl.de (mail.blochl.de [151.80.40.192])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2D822A4E5;
+	Wed,  9 Jul 2025 17:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIKG/3eG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C2621171D;
-	Wed,  9 Jul 2025 17:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=151.80.40.192
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0409CFC1D;
+	Wed,  9 Jul 2025 17:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752082127; cv=none; b=HfUvwoOHHlWKQkSREcp70nPIZd6q/wBh1xhdjMyU5/ygP2ETV3qEd1xXXZLq0mFy3LTX6OQPX4QzdqkxaEegLwAecKnU/ybYQTSPgpYs+57aIK0I0Ped64wn9o/9pfUH3A0QAgoIGXB1jKVV5sEsLyO00AtWpyKFA2KpvskpT+8=
+	t=1752082281; cv=none; b=DjfZPmJUqU+NjYyk/Y5MYguNWrhqNq5bUftoyXIYES0IgQtZ0KW3WHVw9Vfjq/duZSyjBA8tNLVuhY3cJOcJXkX4sqprGOO0AKgXdLoHASgw1WkY2z55oxbqXgx6TqB6Mh0HqhAoJK1Mlrr893EAmiAUSw3Y1ydKtYfcrYFoGG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752082127; c=relaxed/simple;
-	bh=GbbM/FhvQTBzWvNQNRBKpegqobekpqTyrcqSYpz/s38=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UeeKtWU8A4a62yxU1j1MKoduE1wycgVJqlgiylahloUBKgmtv6ivmQFynYmZINRdmB/pcVp9qpSSlH0GW5XCEXg9UYYEH4xHdBGm9DDF33KwmD8uhFHAHadRfBn1wm1uOhCsWNzg5rGeJIpUgAIwbLjbHKYNnSHa1Gf2yjoxrdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blochl.de; spf=pass smtp.mailfrom=blochl.de; arc=none smtp.client-ip=151.80.40.192
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blochl.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blochl.de
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.blochl.de A45374466472
-Authentication-Results: mail.blochl.de; dmarc=none (p=none dis=none) header.from=blochl.de
-Authentication-Results: mail.blochl.de; spf=fail smtp.mailfrom=blochl.de
-Received: from workknecht.fritz.box (ppp-93-104-0-143.dynamic.mnet-online.de [93.104.0.143])
-	by smtp.blochl.de (Postfix) with ESMTPSA id A45374466472;
-	Wed, 09 Jul 2025 17:28:37 +0000 (UTC)
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 1.4.2 at 472b552e6fe8
-From: =?utf-8?q?Markus_Bl=C3=B6chl?= <markus@blochl.de>
-Date: Wed, 09 Jul 2025 19:28:07 +0200
-Subject: [PATCH v2] e1000e: Populate entire system_counterval_t in
- get_time_fn() callback
+	s=arc-20240116; t=1752082281; c=relaxed/simple;
+	bh=nEAZeGARqGzJQhxm4s2rG9HkgzS2kOIUSL1iaCVzm3g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TnkW3zHqwhOF7h6DF9VxW8dp9w3yNYMXmEbDmMyQOTOqp0I8nbY6cWKf599lOYu+zM8q9DdvBsCpyWLn8OMSAmss4gbXMYumyhWilEnjzo787RT+uibA7mm8rwtA7pGvdi4Fk1ZMQe0PhjMrZRHLQxQf4Lzb49mbitZmtEUWAvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIKG/3eG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E38BBC4CEF6;
+	Wed,  9 Jul 2025 17:31:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752082280;
+	bh=nEAZeGARqGzJQhxm4s2rG9HkgzS2kOIUSL1iaCVzm3g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fIKG/3eGKzZNhhdOns11GXctZ0COMjvT8x2A1EgUd5DN1gEZhVckYa4HOVNkXqfsD
+	 1ET3VfNxoUKU3jdOD9XLZX5RpyTZynWqBlRLOfa1YzPC+44B4vY+Wz/PHMrxitJU66
+	 pxklV3wf2bRIPmiShv6T+SqTgt2atmjrd/tVikPPQrdeS//TIpCsQOxz7pmK8CtHe/
+	 AoEhgip5KDSNwxUVpxFiSUQcKuQK+FU146/nofRef2XUAv8GCZEKEQ/imoB4pkXAHn
+	 lQbJP2nBFB/mAompV/nbHmPq9yHrhWY5Yu3yEN+C6MI1Ht4mtp5AFIpcH/sbpooocq
+	 2A/w1XcY0KGRA==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@kernel.org>,
+ Len Brown <lenb@kernel.org>
+Subject:
+ [PATCH v1] PM: sleep: Clean up MAINTAINERS entries for suspend and
+ hibernation
+Date: Wed, 09 Jul 2025 19:31:07 +0200
+Message-ID: <2798682.mvXUDI8C0e@rjwysocki.net>
+Organization: Linux Kernel Development
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250709-e1000e_crossts-v2-1-2aae94384c59@blochl.de>
-X-B4-Tracking: v=1; b=H4sIAKambmgC/3XMQQrCMBCF4auUWRuZhLZJXXkPKRLTiQ2URjIlK
- CV3N3bv8n/wvh2YUiCGS7NDohw4xLWGOjXgZrs+SYSpNihUHWocBElEpLtLkXljoXXb9br1vVE
- W6umVyIf3Ad7G2nPgLabP4Wf5W/9SWQopvLEGnR4Utf76WKKbl/NEMJZSvthCBrSsAAAA
-X-Change-ID: 20250709-e1000e_crossts-7745674f682a
-To: Tony Nguyen <anthony.l.nguyen@intel.com>, 
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Thomas Gleixner <tglx@linutronix.de>
-Cc: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- markus.bloechl@ipetronik.com, John Stultz <jstultz@google.com>, 
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Markus_Bl=C3=B6chl?= <markus@blochl.de>
-X-Mailer: b4 0.14.2
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.4 (smtp.blochl.de [0.0.0.0]); Wed, 09 Jul 2025 17:28:38 +0000 (UTC)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-get_time_fn() callback implementations are expected to fill out the
-entire system_counterval_t struct as it may be initially uninitialized.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-This broke with the removal of convert_art_to_tsc() helper functions
-which left use_nsecs uninitialized.
+Since Pavel Machek and Len Brown do not actually maintain the system
+suspend and hibernation code, change their records in the relevant
+MAINTAINERS entries into reviewers.
 
-Assign the entire struct again.
+While at it, use the Len Brown's kernel.org address in the suspend-to-RAM
+MAINTAINERS record.
 
-Fixes: bd48b50be50a ("e1000e: Replace convert_art_to_tsc()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Markus Blöchl <markus@blochl.de>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
-Notes:
-    Related-To: <https://lore.kernel.org/lkml/txyrr26hxe3xpq3ebqb5ewkgvhvp7xalotaouwludjtjifnah2@7tmgczln4aoo/>
+ MAINTAINERS |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Changes in v2:
-- Add Lakshmi in Cc:
-- Add Signed-off-by: trailer which was lost in b4 workflow
-- Link to v1: https://lore.kernel.org/r/20250709-e1000e_crossts-v1-1-f8a80c792e4f@blochl.de
----
- drivers/net/ethernet/intel/e1000e/ptp.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/intel/e1000e/ptp.c b/drivers/net/ethernet/intel/e1000e/ptp.c
-index ea3c3eb2ef2020d513d49c1368679f27d17edb04..f01506504ee3a11822930115e9ed07661d81532c 100644
---- a/drivers/net/ethernet/intel/e1000e/ptp.c
-+++ b/drivers/net/ethernet/intel/e1000e/ptp.c
-@@ -124,8 +124,11 @@ static int e1000e_phc_get_syncdevicetime(ktime_t *device,
- 	sys_cycles = er32(PLTSTMPH);
- 	sys_cycles <<= 32;
- 	sys_cycles |= er32(PLTSTMPL);
--	system->cycles = sys_cycles;
--	system->cs_id = CSID_X86_ART;
-+	*system = (struct system_counterval_t) {
-+		.cycles = sys_cycles,
-+		.cs_id = CSID_X86_ART,
-+		.use_nsecs = false,
-+	};
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9785,7 +9785,7 @@
  
- 	return 0;
- }
+ FREEZER
+ M:	"Rafael J. Wysocki" <rafael@kernel.org>
+-M:	Pavel Machek <pavel@kernel.org>
++R:	Pavel Machek <pavel@kernel.org>
+ L:	linux-pm@vger.kernel.org
+ S:	Supported
+ F:	Documentation/power/freezing-of-tasks.rst
+@@ -10661,7 +10661,7 @@
+ 
+ HIBERNATION (aka Software Suspend, aka swsusp)
+ M:	"Rafael J. Wysocki" <rafael@kernel.org>
+-M:	Pavel Machek <pavel@kernel.org>
++R:	Pavel Machek <pavel@kernel.org>
+ L:	linux-pm@vger.kernel.org
+ S:	Supported
+ B:	https://bugzilla.kernel.org
+@@ -23943,8 +23943,8 @@
+ 
+ SUSPEND TO RAM
+ M:	"Rafael J. Wysocki" <rafael@kernel.org>
+-M:	Len Brown <len.brown@intel.com>
+-M:	Pavel Machek <pavel@kernel.org>
++R:	Len Brown <lenb@kernel.org>
++R:	Pavel Machek <pavel@kernel.org>
+ L:	linux-pm@vger.kernel.org
+ S:	Supported
+ B:	https://bugzilla.kernel.org
 
----
-base-commit: 733923397fd95405a48f165c9b1fbc8c4b0a4681
-change-id: 20250709-e1000e_crossts-7745674f682a
 
-Best regards,
--- 
-Markus Blöchl <markus@blochl.de>
 
 
