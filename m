@@ -1,90 +1,178 @@
-Return-Path: <linux-kernel+bounces-723445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F48AFE6E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:06:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 607F3AFE6E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 495F41632B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:06:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29FE0188BF43
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A678287275;
-	Wed,  9 Jul 2025 11:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447C028C840;
+	Wed,  9 Jul 2025 11:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lCwwm8v7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WG9c5w91"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B4C2580D7;
-	Wed,  9 Jul 2025 11:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E473280CD5;
+	Wed,  9 Jul 2025 11:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752059165; cv=none; b=YL6aV8BjBLMFRprR3StsqwjD4CtxeueV+S0nGBJYZRRZ3arb2bIanUbxOvyLzCeKSk83UwYNS3BQi3RlEvH+OCdtYSDrqZ78zP/GFkBt2iUr2FDfOIf6/O1FfYRIPossVBfTm0PuauXa91VZM+YdgrYuqvtp6TRFqCpciDK1Evg=
+	t=1752059211; cv=none; b=CVXWOScwMv1kYY+TVM9hCVkFGPCh4wtBOKvKH7goGUZkP2PB6f48wQSgdEADWg0n9s1UHQe2hUaAQCItHfHxrBi350Xs+wSaRueOnBjJOVkjMoDTiF8GAXXrjTJcYRIVzrAAto3rI9u7b2lGirviDzNtr1QTYpgqXg/jqvaFhpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752059165; c=relaxed/simple;
-	bh=4VoxDg+122c2K2gnuT4+FeK7BlVbqegWDVw05YJfIjI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VvzdfCknp/En2CotvkUUOrpDwgmHT8Ywr9DYXEXODyNAWeBzFx9D3T1bd3ZpupqggwWRcVouTwIG6fHXhIQ1otEBenRMG2ok9k3N3npePxIsO/VvzC85q+tnDTa+kdNZTX6ZQ3pnp+yRhuPHCcuIUXJs9eBiuaYPEt6L1NasW90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lCwwm8v7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4BC4C4CEEF;
-	Wed,  9 Jul 2025 11:06:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752059165;
-	bh=4VoxDg+122c2K2gnuT4+FeK7BlVbqegWDVw05YJfIjI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lCwwm8v7AaLG0lBfKR7hY5JLAXUr3d1tjQ2lGfk/DmpaPbsoaHSXkpVWImTdoIaQ8
-	 z9f5lJWUvtfpGfyU+SvbCysgrkJjJMaJZ9/nMgD9SfcU9CQHKGsdWpBumYF+kkro8I
-	 p9kQEHbzjmQPHR/i0q3tjVfY5NcgHrlfQvhC9Loc=
-Date: Wed, 9 Jul 2025 13:06:01 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Emre Cecanpunar <emreleno@gmail.com>
-Cc: linux-staging@lists.linux.dev, linux-tegra@vger.kernel.org,
-	marvin24@gmx.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: nvec: silence macro argument warnings in
- NVEC_PHD()
-Message-ID: <2025070914-repave-feisty-b44a@gregkh>
-References: <20250704152737.14315-1-emreleno@gmail.com>
+	s=arc-20240116; t=1752059211; c=relaxed/simple;
+	bh=XMXplijwP1E5Q0AZ8hTKIOCASc0BkQCBS9592DqXXSg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=JU4csA02JxB0/yfXOgxafMbUIOrTtByz4d5nVsSPE1+nxFb3yfg5KDmTT6fRKgIVbISBvhF3/MPu0B9QkK9wrenmOtedq1oX1urhYwcMYjtYEAma6n/6y+Zjnp3tekvbdxkdZz4sebpErUnnBRjSIPaxGEcrdPXIe/UtmKda76M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WG9c5w91; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4A09C4CEF4;
+	Wed,  9 Jul 2025 11:06:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752059211;
+	bh=XMXplijwP1E5Q0AZ8hTKIOCASc0BkQCBS9592DqXXSg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WG9c5w91Xj9toKF14iz+X2qGi5u9CRRQOmR6lu2mxx5TuJIFaVwaCetwWmeDI6YVi
+	 0xTpTt6ohizOVyQYLwtOh7ADphUTBEIj0YZ3lp/DtzW5ElG5XqogRtB112Z28gZJAb
+	 bHRUDlTXW/IH+s3+gS5gUFg7D+8q26Skr90xvhwsckCh193AhxZmvNzwZgWGpjJSGg
+	 Eh6dj2RVqiwMWHGLGNt5UPqatow2HhT2m8Neucpgv17o9D7GnJP1vfcLj6pVwEs58s
+	 5GihYGGew0d66otqRtaejJQ0udjg8NvyqJ8a6abdAZWx7lH5BW2DeOKOBhRiGqYTJB
+	 T9in802m7wd4w==
+From: SeongJae Park <sj@kernel.org>
+To: Bijan Tabatabai <bijan311@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	akpm@linux-foundation.org,
+	corbet@lwn.net,
+	bijantabatab@micron.com,
+	venkataravis@micron.com,
+	emirakhur@micron.com,
+	vtavarespetr@micron.com,
+	ajayjoshi@micron.com,
+	bijan <bijan@node0.bijan-262664.superpages-pg0.wisc.cloudlab.us>
+Subject: Re: [PATCH v4 00/13] mm/damon/vaddr: Allow interleaving in migrate_{hot,cold} actions
+Date: Wed,  9 Jul 2025 04:06:48 -0700
+Message-Id: <20250709110648.52688-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250709005952.17776-1-bijan311@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250704152737.14315-1-emreleno@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 04, 2025 at 06:27:37PM +0300, Emre Cecanpunar wrote:
-> checkpatch.pl warns that the NVEC_PHD macro defines unused arguments.
-> Use (void) casts to prevent unused argument warnings when the macro is disabled.
+On Tue,  8 Jul 2025 19:59:30 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
+
+> From: bijan <bijan@node0.bijan-262664.superpages-pg0.wisc.cloudlab.us>
+
+Maybe this is not an intended part but something from misconfiguration?  I show
+Andrew merged this series into mm-new after removing this, but headsup for a
+case that we might do rebase.
+
 > 
-> Signed-off-by: Emre Cecanpunar <emreleno@gmail.com>
-> ---
->  drivers/staging/nvec/nvec_ps2.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+> A recent patch set automatically sets the interleave weight for each node
+> according to the node's maximum bandwidth [1]. In another thread, the patch
+> set's author, Joshua Hahn, wondered if/how thes weights should be changed
+> if the bandwidth utilization of the system changes [2].
 > 
-> diff --git a/drivers/staging/nvec/nvec_ps2.c b/drivers/staging/nvec/nvec_ps2.c
-> index 575233fa1677..38e736b3761e 100644
-> --- a/drivers/staging/nvec/nvec_ps2.c
-> +++ b/drivers/staging/nvec/nvec_ps2.c
-> @@ -28,7 +28,11 @@
->  	print_hex_dump(KERN_DEBUG, str, DUMP_PREFIX_NONE, \
->  			16, 1, buf, len, false)
->  #else
-> -#define NVEC_PHD(str, buf, len) do { } while (0)
-> +#define NVEC_PHD(str, buf, len) do { \
-> +	(void)(str); \
-> +	(void)(buf); \
-> +	(void)(len); \
-> +} while (0)
+> This patch set adds the mechanism for dynamically changing how application
+> data is interleaved across nodes while leaving the policy of what the
+> interleave weights should be to userspace. It does this by having the
+> migrate_{hot,cold} operating schemes interleave application data according
+> to the list of migration nodes and weights passed in via the DAMON sysfs
+> interface. This functionality can be used to dynamically adjust how folios
+> are interleaved by having a userspace process adjust those weights. If no
+> specific destination nodes or weights are provided, the migrate_{hot,cold}
+> actions will only migrate folios to damos->target_nid as before.
+> 
+> The algorithm used to interleave the folios is similar to the one used for
+> the weighted interleave mempolicy [3]. It uses the offset from which a
+> folio is mapped into a VMA to determine the node the folio should be placed
+> in. This method is convenient because for a given set of interleave
+> weights, a folio has only one valid node it can be placed in, limitng the
+> amount of unnecessary data movement. However, finding out how a folio is
+> mapped inside of a VMA requires a costly rmap walk when using a paddr
+> scheme. As such, we have decided that this functionality makes more sense
+> as a vaddr scheme [4]. To this end, this patch set also adds vaddr versions
+> of the migrate_{hot,cold}.
+[...]
+> Revision History
+> ================
+> Changes from v3 [10]:
+> - Fix bug where huge pages would be split
 
-This is really not needed at all, sorry.  Especially for a define that
-will never even be used.  Can you work to remove NVEC_PS2_DEBUG instead,
-as that's not a good idea.
+Maybe "walk->action = ACTION_CONTINUE;" of ninth patch?  Nice finding!
 
-thanks,
+Nontheless, since this was found by you and didn't discussed in public before,
+it would be nice to add a short additional clarifications like above, if we
+(unlikely) do rebase.
 
-greg k-h
+> - Fix code nits/issues SJ pointed out
+> - Added SJ's Reviewed-by tag where appropriate
+
+Thank you for revisioning :)
+
+> 
+> Changes from v2 [11]:
+> - Implement interleaving using vaddr instead of paddr
+> - Add vaddr implementation of migrate_{hot,cold}
+> - Use DAMON specific interleave weights instead of mempolicy weights
+> 
+> Changes from v1 [12]:
+> - Reuse migrate_{hot,cold} actions instead of creating a new action
+> - Remove vaddr implementation
+> - Remove most of the use of mempolicy, instead duplicate the interleave
+>   logic and access interleave weights directly
+> - Write more about the use case in the cover letter
+> - Write about why DAMON was used for this in the cover letter
+> - Add correctness test to the cover letter
+> - Add performance test
+> 
+> [1] https://lore.kernel.org/linux-mm/20250520141236.2987309-1-joshua.hahnjy@gmail.com/
+> [2] https://lore.kernel.org/linux-mm/20250313155705.1943522-1-joshua.hahnjy@gmail.com/
+> [3] https://elixir.bootlin.com/linux/v6.15.4/source/mm/mempolicy.c#L2015
+> [4] https://lore.kernel.org/damon/20250624223310.55786-1-sj@kernel.org/
+> [5] https://lore.kernel.org/linux-mm/20250314151137.892379-1-joshua.hahnjy@gmail.com/
+> [6] https://lore.kernel.org/linux-mm/87frjfx6u4.fsf@DESKTOP-5N7EMDA/
+> [7] https://github.com/SNU-ARC/MERCI
+> [8] https://lore.kernel.org/damon/20250702051558.54138-1-sj@kernel.org/
+> [9] https://lore.kernel.org/damon/20250709004729.17252-1-bijan311@gmail.com/
+> [10] https://lore.kernel.org/damon/20250702201337.5780-1-bijan311@gmail.com/
+> [11] https://lore.kernel.org/damon/20250620180458.5041-1-bijan311@gmail.com/
+> [12] https://lore.kernel.org/linux-mm/20250612181330.31236-1-bijan311@gmail.com/
+> 
+> Bijan Tabatabai (7):
+>   mm/damon/core: Commit damos->migrate_dests
+>   mm/damon: Move migration helpers from paddr to ops-common
+>   mm/damon/vaddr: Add vaddr versions of migrate_{hot,cold}
+>   Docs/mm/damon/design: Document vaddr support for migrate_{hot,cold}
+>   mm/damon/vaddr: Use damos->migrate_dests in migrate_{hot,cold}
+>   mm/damon: Move folio filtering from paddr to ops-common
+>   mm/damon/vaddr: Apply filters in migrate_{hot/cold}
+> 
+> SeongJae Park (6):
+>   mm/damon: add struct damos_migrate_dests
+>   mm/damon/core: add damos->migrate_dests field
+>   mm/damon/sysfs-schemes: implement DAMOS action destinations directory
+>   mm/damon/sysfs-schemes: set damos->migrate_dests
+>   Docs/ABI/damon: document schemes dests directory
+>   Docs/admin-guide/mm/damon/usage: document dests directory
+
+For the entire series,
+
+Reviewed-by: SeongJae Park <sj@kernel.org>
+
+
+Thanks,
+SJ
+
+[...]
 
