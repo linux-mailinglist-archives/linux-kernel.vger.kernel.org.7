@@ -1,79 +1,72 @@
-Return-Path: <linux-kernel+bounces-722769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D22AFDE9F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:58:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AC18AFDEA7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 336EB17742E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:58:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85AB51898BAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D33A23AE66;
-	Wed,  9 Jul 2025 03:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E94425FA0F;
+	Wed,  9 Jul 2025 04:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="BSfZ9d8H"
-Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="XLoNoxa1"
+Received: from out203-205-221-191.mail.qq.com (out203-205-221-191.mail.qq.com [203.205.221.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378CC3208;
-	Wed,  9 Jul 2025 03:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3651313D2B2;
+	Wed,  9 Jul 2025 04:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752033498; cv=none; b=ktTwiPUOy4iaw5gQppaVnFyhXvdjZeOwNIvKX4xs/zezEd09rifPd4e5hSdV2XYbokAAI6jCLfrPWjyJubghhsjhT3B/ojpF4/a4oK1VrBM129wKEn7A3HHLAt1XozJ7qcrW5Tw0Xi+Kf5FLQAd7HjcnSKOXDMrZxZRkBog0dmw=
+	t=1752033650; cv=none; b=HnnA+Am8kfrhp9ITV2Qoh+PFaTayGPx0Yj8WYbXllNjTTyw6BpLgfsG1o0ShvoLwHvO7UQnJSVuXIRP7v4aepD8QvfJUVf2vfJ4Tn7CUARjYUZmcYCXdv60gNMZ0up0b81NeG4jMLqBDzXTDLnwAyV2onTP9Puk9QLFM9a+79jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752033498; c=relaxed/simple;
-	bh=sGCCkkKJBfNJAqH361usUURY9F6NRDwevuWl//frjwE=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=BJBzTRJ7n3OZWqvYejerneoFg5cxvtLKVA905zucsnEe7Dkg58WG4RMyq3s7hJJiwl3WEHjlmFsbmB1tMP8eIPRw5zwGwHPBzhi4BW1RLufcJl5H+/j/tKHF/FMFglj5dmfhML11FUfRt7lkdad20WbkgoeVy1Cbx89blUWMSvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=BSfZ9d8H; arc=none smtp.client-ip=203.205.221.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1752033182;
-	bh=OfWCbJnUHkYMrgQBuEc+vQsMymRVSQZY/QYP2G5dMyc=;
+	s=arc-20240116; t=1752033650; c=relaxed/simple;
+	bh=dSmH3YdSMwNCOvQhUp1z3YXco7w2Pd/mH6NlzP23Rn0=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=uLijOFMDftUtNpFZy34/F7BeD7AQ6ytw2CCl9qBKhkzaEGbl5p8juemxR1Gv60qL7XJ9GJU6sJ5JSAbkS3fIfA7I19gvujUjYQ/01fj5Wz88z7twZTVj0R0miTkHF5qhMaPVo7M4zr/bb3CNCjzmJm3DcREx2A9FpAqQLBgDgeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=XLoNoxa1; arc=none smtp.client-ip=203.205.221.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1752033337; bh=J//NFXkKWW4mxlFccCxfnS5IzGCIuTinEyv6FNfY3yE=;
 	h=From:To:Cc:Subject:Date;
-	b=BSfZ9d8HmgMuK16zekPEMd4Dmc0LJ+fCCAMi+0rikGaNusxKCbRuriTARjfFwCKHl
-	 7M725R4tDueed9omYWqePaN/BCh9i5xrVUlQFe/vMJMXvdCJppzPw7ieksb7bTkj7m
-	 OCFryoNNj5pBzWX0wrX0SVUHdR0Bz4W+we+Y7VhU=
-Received: from syzkaller.mshome.net ([183.192.14.250])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id D363D23B; Wed, 09 Jul 2025 11:52:54 +0800
-X-QQ-mid: xmsmtpt1752033174t8d37g693
-Message-ID: <tencent_E1A26771CDAB389A0396D1681A90A49E5D09@qq.com>
-X-QQ-XMAILINFO: NnYhxYSyuBnLQ17IAXwPkP52iNtESB5hKcOl3YXG7ztah5ip05U5RKqK+epaQO
-	 7OdrpZn2lPn2e3Pmzk7WmzRFvw6QEaeuuP0mVGtGG87OmG8CM+B3qEdjOwl79Qvlm2Qvp0WpRO/f
-	 cYcRYL/SGn/M4lQVJpodp70J1tPYS3/0OC1Y5Nc9A3t5AX66UKhqlPxC5LeK14j9qxrEVfnYu12I
-	 A2MfiP0M+uAXardUW7mSScr4wWMz2gBiJh4JHsrNDZylHZOjMeFwNHWhQkFQ3E+GaLzrnmXD2gR2
-	 aCNBvXH7cyBDqfIK6oAueZ8ztLkFD3IpqBHnYEb2A2/V+4vYCyZLb2Kf66njH08UQkNjfOzfirrV
-	 U6FDagPTB6ER6DiwWildeMTis2cuvGS4QbX0spHmWz9wwGuqRsvlt28VG0aqQkCzWyPAYAUimrvL
-	 QXhMeA3/dSM8Bgs8xkGEh6xBZUy2VnRY2xN+xnsuLOCT+NsNPjoco066ShswHA3jwN43pOHqCV3X
-	 0fer9/BaJ4Azsy9K5QD1jFdXxSuJ1vKvtwO15zT0bjRcPUVefaQac2p5DmMk7OZQAe05KvBHdWQ4
-	 +Xual3oek+rmy3fC3SMAaQQJKVfr7RdjHQ6yT07Ug8fABh+CF6GFdBpX6bkxhuhgolr3HSWsK7vi
-	 zghcWeRyhC/WiyFRy/eoNHQkLWpSFYCs68aRueHkWA4Hvf2VsaTwGGLQhQMSGg29fvDu7ijTINlL
-	 1k0pMFTrlPrFECYwFTY04GDOWAtgF/8bpBH3Et29lJqSU/tZ9v5b5KaQhu8IYWaFloVHyxHPu9vL
-	 kFa1Yy8UFSYPD32RlaWx6O1wh+DeXd2kG4H5duyriB6ywliR8EETq9JtwjDsM90H6rWAs94oqGwy
-	 5HfRpIEDHRjr9nEoCsLwYkVkZegCpMDi4y2unFKrPVDUT86ustBqpZSUwWsi1VdJPD83IcH03hAq
-	 DRIjoUO3F+QRDxQlVeX4bLBzmNKbuuI88raxJu/lPXi3aAYHUGSYMYX80dO4iovGRvvk0bKVHlca
-	 uDN2bfGQge7mRQuGnJx1DsAiqCrEfzRBVaqD44BSSWsMXZdNlpRZHqIW8Qb6WOEAli3EekbRyNWb
-	 8gpNPB
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: veritas501@foxmail.com
-To: davem@davemloft.net
-Cc: Kito Xu <veritas501@foxmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] net: appletalk: Fix device refcount leak in atrtr_create()
-Date: Wed,  9 Jul 2025 03:52:51 +0000
-X-OQ-MSGID: <20250709035253.492806-1-veritas501@foxmail.com>
-X-Mailer: git-send-email 2.34.1
+	b=XLoNoxa1dW4JxXyHpeT0I7sUHaAjeCr7Mahr+vc2BvNhHJoY/ijergWVN8ysITDJS
+	 MnKrnwVs247ROtwYt92oW0dn+TV94WvBtpEpX3p2Bo9sdvqfk1wVUl42T3JOwQGR4R
+	 KfBFkMUTZpq3X3L57vJ9N16w6rHctW+ZRyM8ySG4=
+Received: from KATIEELIU-MC3.tencent.com ([113.108.77.50])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id DE382630; Wed, 09 Jul 2025 11:55:35 +0800
+X-QQ-mid: xmsmtpt1752033335tx462qqc8
+Message-ID: <tencent_B1C9481688D0E95E7362AB2E999DE8048207@qq.com>
+X-QQ-XMAILINFO: NOHu7IGFswkwv04j6qiELNyEiK/LV2P6eLX/DSo667V8836AtJL9lvnDkm2XOB
+	 Jn+4YN4E4bALMyf8oaPYdM7D3X2svjWDtzglyqSNtsfEzXcD3OWWA5xTYFYrV7hBG1+PTkY1HTMl
+	 uJSoTxesRKj9Rv6my4I0npJd/rc+vc5p7GIPtguoMccwFXuvO1Lop2OsqsofRGwRQKzqixdMESIn
+	 DuPJE5S6KIpyivebv5Bq39Y5ybT7XXZaZbLg0qqSByj/vL/W6d8VCrjsOH26tpacJNXXe0h9LLsY
+	 Ke8eu7q5X97wF+BVKex6rrwh1nyCKmIo+FLmb0/oRGqY17fGlesjWlzqUO/e6jRF1MsTd+9GEw3e
+	 k8/Q9WceYirFlP3Hb9K/E6yBPX/oHz1elIovnFOk0JVQsVS7EfSupMxNvHFldH5KzSbLiRRwGDwJ
+	 0PXQld1ziHpBDmg1lq/P0/wuBRKRlIuxVS3J+wu9RyNWU3GdSIG1NsnsamdtmgKDgJ9sYgi2ea2Y
+	 ASJrcA9A4gY1Kvk7SObb7BUB0M6YW4LsYXXiZRhTOle26yn1Y5+wYI51LyqhFthbylXY9iAGskBs
+	 6Su+/x+OyUaAfRHlSFEi7TyHe/PVG+Ynz9yJ9KWTUurSBI09J3TFdRbFrXD5lopb5MKt3YaGjTs5
+	 LBUizMi5xoIrYMDMgOaziv8gwRoApI92giuarhr3Gh7UGX5R6Knkl7b4sVdwLXqwJMmRHRarCYf7
+	 8ogSCMzisd/kldDWPmfIE0hgt4oYtoGd7J2IZ5NhAK5H6OUIw7tsIiGsJUquPat9zRaBfXMBBNek
+	 QumCdir5SG67jJCVnzE6GG/4J7g7z+120MDBLlWP+LNVX/dvzcfEbLrZDjUUX8rZ7b3Vz58C6sN3
+	 v0b/7ZUcRpPIUWHLlaT75NMqH68XDy7eXIPizQMqb9YCaFXHguv3uc5vPCXbwOzOYrt9wc1Jsizo
+	 45aSl6j6HpcZFSywuyuoCYPCTo3G1cWWR06bSaCLfGWI6PlSY7/wVXHkgfl0DZAFO1VCEN4Ze0Ur
+	 XJN3YbFo355m37xQSyd3FtV21utIGlYIjeP8jMNBQgcX9JPURr+S+wevr1pGk=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Xinyu Liu <1171169449@qq.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	katieeliu@tencent.com,
+	security@tencent.com,
+	Xinyu Liu <1171169449@qq.com>
+Subject: [PATCH] usb: gadget: configfs: Fix OOB read on empty string write
+Date: Wed,  9 Jul 2025 11:55:33 +0800
+X-OQ-MSGID: <20250709035533.75050-1-1171169449@qq.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,32 +75,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Kito Xu <veritas501@foxmail.com>
+When writing an empty string to either 'qw_sign' or 'landingPage'
+sysfs attributes, the store functions attempt to access page[l - 1]
+before validating that the length 'l' is greater than zero.
 
-When updating an existing route entry in atrtr_create(), the old device
-reference was not being released before assigning the new device,
-leading to a device refcount leak. Fix this by calling dev_put() to
-release the old device reference before holding the new one.
+This patch fixes the vulnerability by adding a check at the beginning
+of os_desc_qw_sign_store() and webusb_landingPage_store() to handle
+the zero-length input case gracefully by returning immediately.
 
-Fixes: c7f905f0f6d4 ("[ATALK]: Add missing dev_hold() to atrtr_create().")
-Signed-off-by: Kito Xu <veritas501@foxmail.com>
+Signed-off-by: Xinyu Liu <katieeliu@tencent.com>
 ---
- net/appletalk/ddp.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/gadget/configfs.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/net/appletalk/ddp.c b/net/appletalk/ddp.c
-index 73ea7e67f05a..30242fe10341 100644
---- a/net/appletalk/ddp.c
-+++ b/net/appletalk/ddp.c
-@@ -576,6 +576,7 @@ static int atrtr_create(struct rtentry *r, struct net_device *devhint)
- 
- 	/* Fill in the routing entry */
- 	rt->target  = ta->sat_addr;
-+	dev_put(rt->dev); /* Release old device */
- 	dev_hold(devhint);
- 	rt->dev     = devhint;
- 	rt->flags   = r->rt_flags;
+diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
+index fba2a56dae97..1bb32d6be9b3 100644
+--- a/drivers/usb/gadget/configfs.c
++++ b/drivers/usb/gadget/configfs.c
+@@ -1064,7 +1064,8 @@ static ssize_t webusb_landingPage_store(struct config_item *item, const char *pa
+ 	struct gadget_info *gi = webusb_item_to_gadget_info(item);
+ 	unsigned int bytes_to_strip = 0;
+ 	int l = len;
+-
++	if (!len)
++		return len;
+ 	if (page[l - 1] == '\n') {
+ 		--l;
+ 		++bytes_to_strip;
+@@ -1187,7 +1188,8 @@ static ssize_t os_desc_qw_sign_store(struct config_item *item, const char *page,
+ {
+ 	struct gadget_info *gi = os_desc_item_to_gadget_info(item);
+ 	int res, l;
+-
++	if (!len)
++		return len;
+ 	l = min_t(int, len, OS_STRING_QW_SIGN_LEN >> 1);
+ 	if (page[l - 1] == '\n')
+ 		--l;
 -- 
-2.34.1
+2.39.5 (Apple Git-154)
 
 
