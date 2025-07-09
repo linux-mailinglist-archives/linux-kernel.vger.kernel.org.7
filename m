@@ -1,130 +1,139 @@
-Return-Path: <linux-kernel+bounces-722949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D799EAFE108
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:13:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF15EAFE10B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:14:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8322A188E982
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:14:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4D0C541CDF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062B926FA46;
-	Wed,  9 Jul 2025 07:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0613623D2A8;
+	Wed,  9 Jul 2025 07:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="Qg8gTY2z"
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+hJGiJM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80ED23D2A8;
-	Wed,  9 Jul 2025 07:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752045212; cv=pass; b=BZHiSitteqgs6w8QuBuAGWkqEbDZ7lUWOusYzhTFtGVtCwttZABPExPEEtd0z10A5KBk97Rp0TeYhnuyOyvBleHl5BH3evvSH72lvxyS4S/1L6gOQOvDtW6EgNzVUYHN13x0IbcdaVkmdUPDuBAodgr2BJYfiwwBk7UgESB/0aA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752045212; c=relaxed/simple;
-	bh=q+8kEUFKOe/AKuTRv4NGUZZO/epcQtr/DUmBVoSmhpk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DGmTJ1SR3Crkbx9g/UHY9dK58cCX0snNYzyVkiCne7xtiTGlgqmpcGNcCpbpRyQBlurULTk95Py54XoXDsszzzmeO7JDHwnF1Lt+cCQ+RHAOAIOsXeq9uNyFkuZLnRQBozejIBU89ye2tvNCfwIs3TiR0HJ9fLuP1qQQVABjNv4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=Qg8gTY2z; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752045197; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=VrGL00rSnZWsEe4N7esptw4fm+gl31/S0FzTLFCOR7MyIMpnwcp8mQZ2vlIb6mGT3RY9kp/1HdycGRGoveSGm40MsbZCPSVp9Sq8dWeumEB5t/l4JCk4g/I6Nkkckr0AhjNgzE4bpDAcX3jxJYfyRQVK1qNAPkojiMZkls1l1J4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752045197; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=wHiqZyuTgPxzdXyYfuv3UPD8orqV8Nu2TK8I32/j/G8=; 
-	b=K1r2LKszC0dAZi/YRoSK5vjSb8+Gm8wQqUtkunGJpD1IChSZ6Q6TwZBDyvSURCOEZX2NmwGnxSSLowUDq7H+Mm/piIETu6RkGXClEWwj7UcCemiEQLNNUtjFNbPlujG0GDnkayHmqmpKdzSDBx9zPF3oQkqU6vnkyTPy//M4ZII=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752045197;
-	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=wHiqZyuTgPxzdXyYfuv3UPD8orqV8Nu2TK8I32/j/G8=;
-	b=Qg8gTY2z/Vt6feMcSXrbJ7RW+BSLDsvL5o3dVtthTAHkEo5xOQUTMyQ+5qomvqLp
-	GCHDTCEmbbxyCjfetqJCpHmmR6K2MeJT7wF8ZeSgm85v+BkMk5/lB1+nI9tKYSN9nd4
-	W8FYoQZjTJ5JHP1O2/n0YgAsDVfYgN654uxUpDjE=
-Received: by mx.zohomail.com with SMTPS id 1752045195118841.5038900262972;
-	Wed, 9 Jul 2025 00:13:15 -0700 (PDT)
-Message-ID: <86bcfb22-f9e7-4b2a-a51b-d8d63d423fcc@zohomail.com>
-Date: Wed, 9 Jul 2025 15:13:09 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5E126E6F6;
+	Wed,  9 Jul 2025 07:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752045241; cv=none; b=YIqXCtxr2tSfTgllM0sIUWX+CftnJjYwAdezAylFuas1+cM1RhQSWs0Jj2Np3HK9C9qS7quj/8EIzsGrIim0PVNQHODlKNRPnW7DxKcQbIIntbrRGmB7322VbUHhe/BxxYtQOca9mydvsARGyDKn8YQ8KHGEyH/cAlSIGFh5De0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752045241; c=relaxed/simple;
+	bh=J76AGjtuh6R11kYnmJzRbYHT82Z1gW9iVpQmqPtKFU4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tBEhtU9MpYlKBGBCRHDlAPJjMXOIGqNsFZ8KlBZbeFz1aCq0tk94hGW54xxmT54MCZWWdO9ey8UD1dtkALchiBoxmBxKRD+eMZDnFXWqLTAia0wzgD+K3MK9EJIifiWg7EbSuqbfE5+r2Cn2U5kRCqf8x7hM7Tkhncz+nMJ07J4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+hJGiJM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF79DC4CEF8;
+	Wed,  9 Jul 2025 07:14:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752045240;
+	bh=J76AGjtuh6R11kYnmJzRbYHT82Z1gW9iVpQmqPtKFU4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=T+hJGiJMwbIatP4gi1aY/LeMighFT2sidAiqtotJemce7yn35/uoswKA2LXDckfEh
+	 ZTa++ASbo/hfi8vyB1uWSd0B9mATBVHsaFj6wDdDOFv6PQK5++aLwIz3eWwBxDUB+c
+	 ONCTnpPukSdHCa66ZnrARIouPHXxyG/KrGr1VkUf3Bnd/c9lNcWtV0JeUNvrrVLLDl
+	 sbD3qkF405bW1nS3OHF8uEnq2QlIEJXgCUg0W7Tf6PAIu/KdrN7fj1IPdyle1UVHXM
+	 ARYs6geXwIiTQbxdsAEZKnUBWQ7scfButM+T6FTFuzBwiAr3cT9zhtJfEmTnNuL/Je
+	 EmJdlSSuGRWUA==
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-613a6e39f52so1449666eaf.3;
+        Wed, 09 Jul 2025 00:14:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWFCprHoEq27aLF8+Oa/mXRYGbWZ2C6QQT9cVwUajay5N4Xp9N7FsGcZy8BjbnQ3kl5ruo3AnMwfq8rmpY=@vger.kernel.org, AJvYcCX5f6kApRDhX3hNxhFcJR8PYPGpEHIMoDKgVn7RtKSOfNuAbHokR5sSWbLHDzpwQ4E954q26YYhpVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwViLl3tSGHHtvs15Cay/zpOsc6b31I0rfdyscn6aij7Qbh6HxZ
+	cido4QnFc0QtUJIhct66dpfsZTV3dPc959IAoSC4f6mbOmjxr4KtvvVB9+gOjuL07aAfF+cgAJN
+	drJVIKqBftbzTivQR7PDCX1dk8cAz19I=
+X-Google-Smtp-Source: AGHT+IEskKLtdnCJNubzh7Cv2QywfY12LAjcDNXgB1nerfn1NA3+BNnJyGqJuYGQA0goXWDl19YnXJjYrQ6XWocHf6c=
+X-Received: by 2002:a05:6820:3085:b0:611:75a8:f6ca with SMTP id
+ 006d021491bc7-613ccf31355mr832520eaf.6.1752045240045; Wed, 09 Jul 2025
+ 00:14:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] cxl/edac: Fix wrong dpa checking for PPR operation
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
- shiju.jose@huawei.com, andriy.shevchenko@linux.intel.com,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250708051536.92119-1-ming.li@zohomail.com>
- <20250708051536.92119-3-ming.li@zohomail.com>
- <aG3I9ooPm0eJnMPn@aschofie-mobl2.lan>
-From: Li Ming <ming.li@zohomail.com>
-In-Reply-To: <aG3I9ooPm0eJnMPn@aschofie-mobl2.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Feedback-ID: rr080112276557fa28b7021264f2e8d91000004c12bdf5733af7bb711d0b54f5dd71f5d2f6b8c8fd28096c90:zu08011227b142ed5d17c63be61cf5659600003121704cbb81ca4af9ae61ba2ee5d273286914cd85c86b2e8f:rf0801122d3604bdcbcb47a2d032448b100000e7f69e1d853b41f2ab6ac607679ef88887ab7517ea8b7b95651c0467b58c63:ZohoMail
-X-ZohoMailClient: External
+References: <20250709064404.839975-1-guoqing.zhang@amd.com> <20250709064404.839975-6-guoqing.zhang@amd.com>
+In-Reply-To: <20250709064404.839975-6-guoqing.zhang@amd.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 9 Jul 2025 09:13:48 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ibK49=fbXH2oy6jVSEo6iFD9EvYR8ivHCUpP3iaU=8=A@mail.gmail.com>
+X-Gm-Features: Ac12FXyIZd8T-A7UNwtDMfu3w-N8qETo7FMixPqescOOM5nC0bPObGEfy2_bAJI
+Message-ID: <CAJZ5v0ibK49=fbXH2oy6jVSEo6iFD9EvYR8ivHCUpP3iaU=8=A@mail.gmail.com>
+Subject: Re: [PATCH v4 5/5] drm/amdgpu: do not resume device in thaw for
+ normal hibernation
+To: Samuel Zhang <guoqing.zhang@amd.com>
+Cc: alexander.deucher@amd.com, christian.koenig@amd.com, rafael@kernel.org, 
+	len.brown@intel.com, pavel@kernel.org, gregkh@linuxfoundation.org, 
+	dakr@kernel.org, airlied@gmail.com, simona@ffwll.ch, ray.huang@amd.com, 
+	matthew.auld@intel.com, matthew.brost@intel.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	mario.limonciello@amd.com, lijo.lazar@amd.com, victor.zhao@amd.com, 
+	haijun.chang@amd.com, Qing.Ma@amd.com, Owen.Zhang2@amd.com, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/9/2025 9:42 AM, Alison Schofield wrote:
-> On Tue, Jul 08, 2025 at 01:15:35PM +0800, Li Ming wrote:
->> DPA 0 is considered invalid in cxl_do_ppr(), but per Table 8-143. "Get
->> Partition Info Output Payload" in CXL r3.2 section 8.2.10.9.2.1 "Get
->> Partition Info(Opcode 4100h)", it mentions that DPA 0 is a valid address
->> of a CXL device. So the correct implementation should be checking if the
->> DPA is in the DPA range of the CXL device rather than checking if the
->> DPA is equal to 0.
->>
-> If it needs a fixes tag, doesn't it also need a user visible impact
-> statement? I get that the PPR won't happen. What does that look like
-> to the user? Is there a user level error message we can add to the
-> commit log?
+On Wed, Jul 9, 2025 at 8:44=E2=80=AFAM Samuel Zhang <guoqing.zhang@amd.com>=
+ wrote:
 >
-> With that, you can add:
-> Reviewed-by: Alison Schofield <alison.schofield@intel.com>
+> For normal hibernation, GPU do not need to be resumed in thaw since it is
+> not involved in writing the hibernation image. Skip resume in this case
+> can reduce the hibernation time.
 >
-Will do. Thanks.
-
-
-Ming
-
+> On VM with 8 * 192GB VRAM dGPUs, 98% VRAM usage and 1.7TB system memory,
+> this can save 50 minutes.
 >
->> Fixes: be9b359e056a ("cxl/edac: Add CXL memory device soft PPR control feature")
->> Signed-off-by: Li Ming <ming.li@zohomail.com>
->> Tested-by: Shiju Jose <shiju.jose@huawei.com>
->> Reviewed-by: Shiju Jose <shiju.jose@huawei.com>
->> ---
->>  drivers/cxl/core/edac.c | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/cxl/core/edac.c b/drivers/cxl/core/edac.c
->> index 623aaa4439c4..1cf65b1538b9 100644
->> --- a/drivers/cxl/core/edac.c
->> +++ b/drivers/cxl/core/edac.c
->> @@ -1923,8 +1923,11 @@ static int cxl_ppr_set_nibble_mask(struct device *dev, void *drv_data,
->>  static int cxl_do_ppr(struct device *dev, void *drv_data, u32 val)
->>  {
->>  	struct cxl_ppr_context *cxl_ppr_ctx = drv_data;
->> +	struct cxl_memdev *cxlmd = cxl_ppr_ctx->cxlmd;
->> +	struct cxl_dev_state *cxlds = cxlmd->cxlds;
->>  
->> -	if (!cxl_ppr_ctx->dpa || val != EDAC_DO_MEM_REPAIR)
->> +	if (!resource_contains_addr(&cxlds->dpa_res, cxl_ppr_ctx->dpa) ||
->> +	    val != EDAC_DO_MEM_REPAIR)
->>  		return -EINVAL;
->>  
->>  	return cxl_mem_perform_ppr(cxl_ppr_ctx);
->> -- 
->> 2.34.1
->>
+> Signed-off-by: Samuel Zhang <guoqing.zhang@amd.com>
+> Reviewed-by: Lijo Lazar <lijo.lazar@amd.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/am=
+d/amdgpu/amdgpu_drv.c
+> index 4f8632737574..c37285a8b2c5 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> @@ -2541,6 +2541,10 @@ amdgpu_pci_shutdown(struct pci_dev *pdev)
+>         if (amdgpu_ras_intr_triggered())
+>                 return;
+>
+> +       /* device maybe not resumed here, return immediately in this case=
+ */
+> +       if (adev->in_s4 && adev->in_suspend)
+> +               return;
+> +
 
+You need to do analogous things in amdgpu_pmops_prepare() and
+amdgpu_pmops_poweroff() AFAICS in case hibernation is carried out in
+the "platform" mode.
+
+>         /* if we are running in a VM, make sure the device
+>          * torn down properly on reboot/shutdown.
+>          * unfortunately we can't detect certain
+> @@ -2654,8 +2658,17 @@ static int amdgpu_pmops_freeze(struct device *dev)
+>  static int amdgpu_pmops_thaw(struct device *dev)
+>  {
+>         struct drm_device *drm_dev =3D dev_get_drvdata(dev);
+> +       int event =3D pm_transition_event();
+>
+> -       return amdgpu_device_resume(drm_dev, true);
+> +       switch (event) {
+> +       case PM_EVENT_THAW: /* normal case */
+> +               return 0;
+> +       case PM_EVENT_RECOVER: /* error case */
+> +               return amdgpu_device_resume(drm_dev, true);
+> +       default:
+> +               dev_err(dev, "unknown pm_transition_event %d\n", event);
+> +               return -EOPNOTSUPP;
+> +       }
+>  }
+>
+>  static int amdgpu_pmops_poweroff(struct device *dev)
+> --
 
