@@ -1,204 +1,143 @@
-Return-Path: <linux-kernel+bounces-724292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14F55AFF0DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:26:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD23BAFF0E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09A265A60A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:26:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF6803ABEB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCF38F40;
-	Wed,  9 Jul 2025 18:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F06239E68;
+	Wed,  9 Jul 2025 18:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NqpX7s1M"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QWBeZQxw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E98238C0F
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 18:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5150B145A1F;
+	Wed,  9 Jul 2025 18:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752085568; cv=none; b=Hy4WW1Dt285tazX68xgNkKeZediX5palnOJAdyORSKUZrhzUiCO+IKWeXrH2hO3uj047R9SiSWYe94FMArszE+g/z901iJOmhSdgFA2z/JwTjMeQCwRQ7CZFHXyWrV+z8Jd85JqnSxCuEH8w696GwHUGUUU+Mc77SVvDqUqV+Ao=
+	t=1752085625; cv=none; b=eU+s6ixNUt8dXTFRuYLVSDFxbYIrjlW93LFkR7EGAyE+bN7TrNnAO90dB2B9rQoX0wJ+g7BBTYz1fI44GQKy4iCiU9xrtFHMmff803EoMs8LmdXU0lTr8cNjOXLRBOH7+xdnvXsyQDX72jxTApr7njRRZIk51PrEGrhA2S4wnsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752085568; c=relaxed/simple;
-	bh=eOxaD0xP66sLnf7EJXIhw08t6rlYKB5w+krSS59aIiY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JdE6N/JFZw34Xgak4K77UlXLn7Uja1fP31keba30xDcxc85Q1+NeGX0Y49d2cASzvVOo6pqGXiLSdTskhnaKtD2Jfqq83JTt8rkzpUfYEvdtUytZx6qMZOewzRZlbn+owMFQk87WWFxfb3qpmbjHUJsw+bSRHhhjRo7BU4St6x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NqpX7s1M; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4a7fc24ed5cso43711cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 11:26:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752085566; x=1752690366; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Jw0U0pt810CrvcEtnpGnkQ1gm1d+fCbUdzB2KqcB6I=;
-        b=NqpX7s1MkZfX+v5w6s1O7s0bYCyFicZbuF9ckvF/O66BdInNRRce2NkBBUCV/B0vB7
-         Z5936Fhq0sascsB/9Kbzgr+MGpK8QHUQEcEIhCaLVg3rUbk+e3mnLGX7tlTVVWfnlAgJ
-         jDGxV959OJuWC4VNEfZrIt7wRpphhXzRxhFF5/5KXl3hqAAMWXeZQ6fB1N0VQh/AHu6D
-         7wRJwtQ7qfcyRmWaFBq5dJChO2IDgE8kU8w79hWBegBoz6g3N/ACfiyP66jybvmVvLyZ
-         0I9an/WXK5JVTxzGbrBoH/lgPKJ5O9jECIPnWUF8JBhqS54llOsq5ZEbGTqfb6wjSBWP
-         oLGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752085566; x=1752690366;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6Jw0U0pt810CrvcEtnpGnkQ1gm1d+fCbUdzB2KqcB6I=;
-        b=Fa3rc0qO3N4MbfTjrQwfvJzf7o+rhacxsxDH1O/QWhgb4N2+SVpeeWFVg1/nbiHDeN
-         d2u/ifqrOiXti5fAx9yeByKI7gt3njgkatf3T8qkCOQCPSKae43IPJWZmcNLsfBkDL7s
-         bTxjbmIzeEik78bfDXKkN0ysSjOGwfPc9wn77xLVNY6KmYx5opgfm+aWdCMsGVksyfi7
-         V0UtlMEQG5Dcp5J1bmFNXzH3Vx1fChB4z1YZrSCstvxXRvYa42DassXV68TSRpgowDEI
-         lUuW2qIFfcs5bfTnfClBBEu0nKaLS3k+jVTIIpD7U4t4QuXHDHrl83lFSZqsDncdChTe
-         JnOA==
-X-Forwarded-Encrypted: i=1; AJvYcCW21pyo6PT66zpkfBHCLxBeTHux8gh/49KrxnoiXprtNKcJ7HpT4AZvWPOFxas8k6aE6cqbzz1SWz55wy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUXbFOOfgcP8MUvvRgTh6hlsus9b6ohBC08XhB3T6Ji44HMeC2
-	tnE3gJTjguRKNlsNjM79qWM4aIhUsZD1NBRz9veTsjzo9uVpMp+SoHy2oaOkBa79H1onjsgvuDd
-	QJTWTYwqt131c4hJhc2eeQ3yc059Ywe2BEQvZ/uv4
-X-Gm-Gg: ASbGncsD7bpag+ae8NG3pG4IDCWTAiH1d93qTH9qUtnkEjGDuKVwKMjPxLXr31FrqaW
-	YSyjwq+V1Kx1bdiKsTtGggaCC+nek/x7I5kRDqK2+W1UKBzQ5vaEjcujQhrsxLm9L3LeUdmFuNT
-	dcab8nUlLStOoi7tKYijU9yUSbTVknEwmvd+QIE0Dsu6XUr6b9+8RtWEXx5MEjBBZutZS6xwN7L
-	ob0qmo7vjTO0ss=
-X-Google-Smtp-Source: AGHT+IE/UXmHmew6r4eZ0wcZsjs4AYXpci7aKhDdA2pi8AQ9I7IXluLXGjerSI4MA3Fh0XCat49I3fNXfnWQVQZ7uAc=
-X-Received: by 2002:a05:622a:1309:b0:4a5:9b0f:a150 with SMTP id
- d75a77b69052e-4a9eb161d2cmr334831cf.16.1752085565703; Wed, 09 Jul 2025
- 11:26:05 -0700 (PDT)
+	s=arc-20240116; t=1752085625; c=relaxed/simple;
+	bh=UB7QIkBRdueZ/ucMHH1IuDHFg0K94C/+SQoeb+QY6ho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=diQ0dInBFU1MZxDXfqkqECoqOArsTUA10hYdyZvuvHftumFgFVfznHkAx/z0EvKgyfzDVn3X1wQ8XaSLgeKrgtDw87348zulWljt696Mw7mXgocw2YyOyagxdayvrlY7Cw5xcm7Cwigd8owEY5F2mBLgQal58shrQtZwemMvYf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QWBeZQxw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D32A9C4CEEF;
+	Wed,  9 Jul 2025 18:27:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752085624;
+	bh=UB7QIkBRdueZ/ucMHH1IuDHFg0K94C/+SQoeb+QY6ho=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QWBeZQxwZASERzxDIwjW5W+0P6+iLI1k64l0zYRHwNnYQEyqvany0TzwBe5etHkK8
+	 EQfb67UbXa1cHhp0QpqVISRlJrkyKPY26krioFaIDKy8AguRRqVXwqV3ACZFW6OZNC
+	 bjKKlqE3SeC3Na6ph8iwGQRWQPqPV5OtJcR5uVoN2XTfWu7qne9QM9dLjzpmXRvnVZ
+	 hTbfA+B290u0dFvcDpa16udiwh5XG9PTW+IfFldFbNsCQcU6YopDMrhjWXvNR+H+8O
+	 EVyVsfXThD3DVnVnVTfUY0nYJBO7MbEnE43/9+eHPx7QcwVBqQQPOkXXajJJGjmays
+	 tddA4Cnc3wn4w==
+Message-ID: <e016efd6-891b-467e-8a4e-9ea53b7006a9@kernel.org>
+Date: Wed, 9 Jul 2025 20:27:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFbbpayW+y8s3i4qxzHcoY0Yz5qeAhb7ziey=FayDiZbC_mm7w@mail.gmail.com>
- <20250613220950.GA986935@bhelgaas>
-In-Reply-To: <20250613220950.GA986935@bhelgaas>
-From: Ammar Qadri <ammarq@google.com>
-Date: Wed, 9 Jul 2025 11:25:54 -0700
-X-Gm-Features: Ac12FXx8x6b8gR53M7MJ4PEwsP40NUglknMl5orGHNNKeJ1xjT1ATDEIWhdsCAs
-Message-ID: <CAFbbpazQU6S4MDAGcHDKG79T2GOaxz9Ezg2Ls6hhPDCTVLrdEA@mail.gmail.com>
-Subject: Re: [PATCH] PCI: Reduce verbosity of device enable messages
-To: Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/2] dt-bindings: memory: add jedec,ddr[3-4]-channel
+ binding
+To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20250626-ddr-bindings-v1-0-cae30933c54c@foss.st.com>
+ <20250626-ddr-bindings-v1-1-cae30933c54c@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250626-ddr-bindings-v1-1-cae30933c54c@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-This is the only message I can see being consistently printed as a
-result of the open/close of the devices.
+On 26/06/2025 21:48, Clément Le Goffic wrote:
+> Introduce as per jdec,lpddrX-channel binding, jdec,ddr[3-4]-channel
 
-I am not opposed to carrying this out of tree at all, but for the sake
-of exhausting options people would be comfortable with, would you
-be okay with moving this to dev_dbg, or would you have the same
-hesitations, Mani (et al)? Or is there some alternative flag-controlled
-behavior you'd recommend?
+s/jdec/jedec/
+
+> binding.
+> 
+> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+> ---
 
 
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    ddr_channel: ddr3-channel@0 {
+> +        compatible = "jedec,ddr3-channel";
+> +        io-width = <16>;
 
-On Fri, Jun 13, 2025 at 3:09=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> =
-wrote:
->
-> On Fri, Jun 13, 2025 at 02:40:40PM -0700, Ammar Qadri wrote:
-> > Hi Mani,
-> >
-> > The issue we are experiencing is not caused from
-> > removing/reattaching the device driver, so the other messages have
-> > not been problematic.
-> >
-> > The vfio-pci driver is attached to each VF once. Clients in our
-> > system call open and close on the vfio-pci driver, respectively, at
-> > the start and end of their use, with fairly short-term tenancy,
-> > which ends up triggering these enable messages.  This message is
-> > proving challenging not only because they are not particularly
-> > useful,  but because they are causing log files to rotate once every
-> > 30 minutes or so, and we lose a lot of other more valuable logging
-> > as a consequence.  I'm open to other solutions, but in my opinion
-> > this preserves the message, without over-engineering and introducing
-> > throttling or other behaviour.
->
-> Are there any other messages associated with the open/close?  I assume
-> probably not, or you would want to demote those as well.
->
-> I did happen to find some value in this particular message just the
-> other day because it showed that a config read was successful after
-> previous ones had failed.
->
-> But I agree in general that it's fairly low value and at least the
-> uninterpreted "%04x -> %04x" part is not really user-friendly.
->
-> If people think there's enough value in retaining it at KERN_INFO, I
-> suppose there's always the option of carrying an out-of-tree patch to
-> demote it?
->
-> > On Thu, Jun 12, 2025 at 11:12=E2=80=AFPM Manivannan Sadhasivam <mani@ke=
-rnel.org> wrote:
-> > >
-> > > On Wed, May 07, 2025 at 11:29:19PM +0000, Ammar Qadri wrote:
-> > > > Excessive logging of PCIe device enable operations can create signi=
-ficant
-> > > > noise in system logs, especially in environments with a high number=
- of
-> > > > such devices, especially VFs.
-> > > >
-> > > > High-rate logging can cause log files to rotate too quickly, losing
-> > > > valuable information from other system components.This commit addre=
-sses
-> > > > this issue by downgrading the logging level of "enabling device" me=
-ssages
-> > > > from `info` to `dbg`.
-> > > >
-> > >
-> > > While I generally prefer reduced verbosity of the device drivers, dem=
-oting an
-> > > existing log to debug might surprise users. Especially in this case, =
-the message
-> > > is widely used to identify the enablement of a PCI device. So I don't=
- think it
-> > > is a good idea to demote it to a debug log.
-> > >
-> > > But I'm surprised that this single message is creating much overhead =
-in the
-> > > logging. I understand that you might have 100s of VFs in cloud enviro=
-nments, but
-> > > when a VF is added, a bunch of other messages would also get printed =
-(resource,
-> > > IRQ, device driver etc...). Or you considered that this message is no=
-t that
-> > > important compared to the rest?
-> > >
-> > > - Mani
-> > >
-> > > > Signed-off-by: Ammar Qadri <ammarq@google.com>
-> > > > ---
-> > > >  drivers/pci/setup-res.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/pci/setup-res.c b/drivers/pci/setup-res.c
-> > > > index c6657cdd06f67..be669ff6ca240 100644
-> > > > --- a/drivers/pci/setup-res.c
-> > > > +++ b/drivers/pci/setup-res.c
-> > > > @@ -516,7 +516,7 @@ int pci_enable_resources(struct pci_dev *dev, i=
-nt mask)
-> > > >       }
-> > > >
-> > > >       if (cmd !=3D old_cmd) {
-> > > > -             pci_info(dev, "enabling device (%04x -> %04x)\n", old=
-_cmd, cmd);
-> > > > +             pci_dbg(dev, "enabling device (%04x -> %04x)\n", old_=
-cmd, cmd);
-> > > >               pci_write_config_word(dev, PCI_COMMAND, cmd);
-> > > >       }
-> > > >       return 0;
-> > > > --
-> > > > 2.49.0.987.g0cc8ee98dc-goog
-> > > >
-> > >
-> > > --
-> > > =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=
-=A9=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=
-=AE=E0=AF=8D
+Missing reg... or not? What was your intention
+
+
+> +    };
+> 
+
+
+Best regards,
+Krzysztof
 
