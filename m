@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-724262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F4EAFF09D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:11:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F6D5AFF09C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A51095603FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:10:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50DC41C85393
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894F5242D89;
-	Wed,  9 Jul 2025 18:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E586823958F;
+	Wed,  9 Jul 2025 18:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MA7ya+4d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LKretA3q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E2F242D7B
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 18:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52026243379
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 18:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752084602; cv=none; b=ANZIf4JlQWaMMZWKGkalTHQY8A0h535z8r3Qyyokq/CXdnyoKOevS5TmjGXX085d86l9AmYfEO6uDTkDc1pgqpkMr9EzmF1MO10ubuBp0llpxW9GbjFZMBNH0cVzuEX6RtFOuWBifEUo69BPkPvwtzrq027AiCmdMX4ptcVp5io=
+	t=1752084604; cv=none; b=uhpiYZ4blit6vhSkd/TlIWjgfiqSFzoA7U8Dehj4pptih3Ub8UqvQAdt+8+FyvvI+aFOWQUBD9lGtALV5BDgTYKiAAMGu04PsdQEDrBDDej8UrbHFBZCq/VIs3XPn40czyyDUHUEdR1q51Z0vVNko/W3RIgdZTcZgQsIRqxFbgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752084602; c=relaxed/simple;
-	bh=cRd5nDEBswJD9NlbHfNeBwVC3wA153yJFbPNFqRPhRs=;
+	s=arc-20240116; t=1752084604; c=relaxed/simple;
+	bh=VPulh4P6ISLOw+0LS9hmPcv2Gf3kN/vqdjjmzU80hbk=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=WHbk69iTgG4tUsXaaBJr0ajBughAlckCL56O6LVZ2JhtcVrSnkQTh2hPI2gFL9KQnfdO/L5jLvTZOjre74MXlgRHT1ZGriKQKoF2KudUW/UEgdOaYecgCfl6MJ+XV+BxEC+pyfJUdq8X1LxFdPRSJikXUaXvtNoh33NVJJO3xNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MA7ya+4d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A86B1C4CEEF;
-	Wed,  9 Jul 2025 18:10:02 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=lvUkeIbTDS4aemHyUBvUfiOP6BgpbxgxKYIvHjVenUn3oeFC7A5OpVLARCbxuX726x5y+WI6t09X1pJKI7DnimS9HrG8tKx9BUhOJtuHwmV3Kwj177+JDEHS7jFV6IQeSAlElr4yRTs7sTpA4Yp9gGruzKsf7z19aiej6dht1lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LKretA3q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30E90C4CEEF;
+	Wed,  9 Jul 2025 18:10:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752084602;
-	bh=cRd5nDEBswJD9NlbHfNeBwVC3wA153yJFbPNFqRPhRs=;
+	s=k20201202; t=1752084604;
+	bh=VPulh4P6ISLOw+0LS9hmPcv2Gf3kN/vqdjjmzU80hbk=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=MA7ya+4d4pfK2Fi8Nb2pLvO9mIA2gA2618IYFXoapepeV1QN1QVBJvP3tsv/gDj5p
-	 D8crhBu5PsCUpWTghsYhlUMn9g4bMqqUnMQajH73bFIXPtwPjbJX/g5UqPJ+G8wTqh
-	 w7DOVUVhOxDutaE3HqmaZqT7QAQwL/E8bnNk47qUd8YUyn2/m1JDOpo7k9lcepS93x
-	 Y6V5k+x2/7O1RSgeeSautuf2kZh3TwV6WQq3Fc4qyQt5kJ+n4q9SGLQNzITfJ+zZ1U
-	 9U//y5Y+ElV9b+3iF8M+Pbr991IJvotZD9nk9qlZKOpl6CPdWUSuYBU+FnECiuBdNV
-	 0ntRgp9l+zVVQ==
+	b=LKretA3qVgCzvvPFFissribziz+b9vNXf+no6dJtsc7lKvhZNjNqqhoWp/TFbXJGS
+	 2qUtja0l6RxJgWqCdPwDRq8LhKhwf7Tj6vAaEqfsFKW2nvGFJv0lFUjpMC/8KCAo8n
+	 YozBBZIGK1XIwuk9ktONfk8035ZICt1gP3zbR80ddzkGoAQwMqS5Z3UrES3ZH5AaJU
+	 2ZwI2qbzSxLjc6jcwHH57QE5YNvzD0HHbnI0YIW6LVmfQoWTNibU1iLeJhMmYpLapF
+	 pM0DEdh3ZzAPd6bRlfEOI87Ppavxu8wcghSEKxsJToQL84At+ptV+EyZPAKq6Wut5v
+	 cEGW8aBtvEBSA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 714D2380DBEE;
-	Wed,  9 Jul 2025 18:10:26 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB48B380DBEE;
+	Wed,  9 Jul 2025 18:10:27 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,39 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to avoid panic in
- f2fs_evict_inode
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix to check upper boundary for
+ gc_valid_thresh_ratio
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <175208462500.806926.7768132731103945108.git-patchwork-notify@kernel.org>
-Date: Wed, 09 Jul 2025 18:10:25 +0000
-References: <20250708095657.3081188-1-chao@kernel.org>
-In-Reply-To: <20250708095657.3081188-1-chao@kernel.org>
+ <175208462650.806926.161695644855019722.git-patchwork-notify@kernel.org>
+Date: Wed, 09 Jul 2025 18:10:26 +0000
+References: <20250627023818.146534-1-chao@kernel.org>
+In-Reply-To: <20250627023818.146534-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+Cc: jaegeuk@kernel.org, daehojeong@google.com, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
+This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue,  8 Jul 2025 17:56:57 +0800 you wrote:
-> As syzbot [1] reported as below:
+On Fri, 27 Jun 2025 10:38:17 +0800 you wrote:
+> This patch adds missing upper boundary check while setting
+> gc_valid_thresh_ratio via sysfs.
 > 
-> R10: 0000000000000100 R11: 0000000000000206 R12: 00007ffe17473450
-> R13: 00007f28b1c10854 R14: 000000000000dae5 R15: 00007ffe17474520
->  </TASK>
-> ---[ end trace 0000000000000000 ]---
-> ==================================================================
-> BUG: KASAN: use-after-free in __list_del_entry_valid+0xa6/0x130 lib/list_debug.c:62
-> Read of size 8 at addr ffff88812d962278 by task syz-executor/564
+> Fixes: e791d00bd06c ("f2fs: add valid block ratio not to do excessive GC for one time GC")
+> Cc: Daeho Jeong <daehojeong@google.com>
+> Signed-off-by: Chao Yu <chao@kernel.org>
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: fix to avoid panic in f2fs_evict_inode
-    https://git.kernel.org/jaegeuk/f2fs/c/a509a55f8eec
+  - [f2fs-dev,1/2] f2fs: fix to check upper boundary for gc_valid_thresh_ratio
+    https://git.kernel.org/jaegeuk/f2fs/c/7a96d1d73ce9
+  - [f2fs-dev,2/2] f2fs: fix to check upper boundary for gc_no_zoned_gc_percent
+    https://git.kernel.org/jaegeuk/f2fs/c/a919ae794ad2
 
 You are awesome, thank you!
 -- 
