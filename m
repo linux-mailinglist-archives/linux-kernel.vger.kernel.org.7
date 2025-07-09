@@ -1,146 +1,109 @@
-Return-Path: <linux-kernel+bounces-722595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B9C5AFDCB1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:02:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50A0FAFDCAE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88E7558277D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:02:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14B3E582648
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B828A1DE2C2;
-	Wed,  9 Jul 2025 01:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4B61E1C1A;
+	Wed,  9 Jul 2025 01:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="siR4dsf+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LZJGLBA7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F401E25F2;
-	Wed,  9 Jul 2025 01:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9C619066D;
+	Wed,  9 Jul 2025 01:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752022871; cv=none; b=mbseJeF1pl4rm9/JhR58hu+aNO6xXzooX5F18pv09Fbi370IUtf4Pb2e7NReSVtQOxUujtgWGJAT5Jp8UwZ6X4kgU3DSmU4rG9HTxG6hw4LpYBO2JPJItswZt5lNPw1u9c1XW6s7xM6dRWQjVbrjD3wQG9h1HJ1PrZGVmlm/7UY=
+	t=1752022870; cv=none; b=PZrvAQuN1U+NaAneQ7/d1TBVnGCwXGsmTDjFqoVUYu+2sLhn08u4pqJIdUiElo2Tl2YZzj4YVMZR+YGOtJ9meqBZBMyHhRDlrhYdqBsdyvwlMCnr8rwLS3UBZLjpQV8UIlYzGX8ie7T2p3g58xjFCen/ZF/vP97xCiryJWRqt/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752022871; c=relaxed/simple;
-	bh=p+1ebn6vNh2rTReGQh5//ZEGguo2HhmtUqjfNBzIbsA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ek9Ifmsp9L6dIBtSAeS2PYmxQgkInfQKPrJgUSxi4Q2GROFJ901HjxoorrtHlFatxinaSnZ4/4ERebdZNDH9MdDFSpUTLZAUrXzQLg3zso9JDE3C4a2wyX2RVkkcLpam6o4L6KD6Vl70KQwKZWwJOsLXNDbBk3SOSQj4DXp/GTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=siR4dsf+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 847C2C4CEED;
-	Wed,  9 Jul 2025 01:01:10 +0000 (UTC)
+	s=arc-20240116; t=1752022870; c=relaxed/simple;
+	bh=K1gtEVcxaVd2y4FMGLAeW2csYcsmmqWlWQd+W6jNQC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t4PxXjYxajos9Rvuzn9Oe5wB1g7gpAa+dtJoakhTSW4Gu7vD2s7t9CYTN1/F8W7Pt8oglmwMCcLXOzyp3+Q9B6p2+koALt1plBOI28H1XyWWo41x2DDzsyQAhvQa+/z5qgDBuNuAqHw3Szp85/MC+veHhzDpPSgAaPqwijXL3nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LZJGLBA7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 282BDC4CEED;
+	Wed,  9 Jul 2025 01:01:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752022870;
-	bh=p+1ebn6vNh2rTReGQh5//ZEGguo2HhmtUqjfNBzIbsA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=siR4dsf+Qg4aH582lCEJSjNPrARp+yxvfN1ZWSiE0VArxrV7Wg0rvVbVzk3aAmR2C
-	 fW0UvCJqV75pNUXKVLcMcnxxSbboD4E2OqJj1Ye/tjG+2f3SY7iy6ZRHxtdavW7rE7
-	 w+FvKz4JzaB9I6sSneEhICDNVFWj9JT56JnbUPzCpCZ2437l3qvgyRY97HHOhJpwlB
-	 EosXTkedkaLlnJKhgJCXeAOLLkSuSr4+FmMRT4hdgbR4jhQ7ZanxXiAtA6peZVEdyQ
-	 FxY++8pR0lW+OzcFoQBLsk5cRFSn+hX4kmKnjL6QWEigl7j3PgY52G48MTw2gfqx8O
-	 gQLXARE5hYghA==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Suman Kumar Chakraborty <suman.kumar.chakraborty@intel.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] crypto: acomp - Fix CFI failure due to type punning
-Date: Tue,  8 Jul 2025 17:59:54 -0700
-Message-ID: <20250709005954.155842-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	s=k20201202; t=1752022869;
+	bh=K1gtEVcxaVd2y4FMGLAeW2csYcsmmqWlWQd+W6jNQC4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LZJGLBA7gOIUXO/NWjGr7suEmwSrwlz17LMRANZmRa8WisuRO6amGUtqRa8bxE8Jj
+	 B3mbjISZnBLf0eBNLoKDcDiLLUOGtGWaTi4cjRdX5v0oSlEZTAMu0qyHbCZqtlkbU7
+	 sftbBIqDNNAcVRlBVhqBJeOJfKBOW/I15/3vtTZfcgBinn9x+YiAVJ3Vm7xij9rgLK
+	 tpLFC7gaVV3fgQLJIw3Dfpwbk+MuA7+3HK/6j0HUXosPFdKWEnAPmd4/I4qrPYypZ+
+	 Zley5r/mZUxpJ8lz34h+OcB0NWXOs+StSoVo6J80QB7qPZdsYcV1jgt1wSuYa4vwdO
+	 fNEU0kuqVJWUQ==
+Date: Tue, 8 Jul 2025 18:01:07 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Parvathi Pudi <parvathi@couthit.com>
+Cc: danishanwar@ti.com, rogerq@kernel.org, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ ssantosh@kernel.org, richardcochran@gmail.com, s.hauer@pengutronix.de,
+ m-karicheri2@ti.com, glaroque@baylibre.com, afd@ti.com,
+ saikrishnag@marvell.com, m-malladi@ti.com, jacob.e.keller@intel.com,
+ diogo.ivo@siemens.com, javier.carrasco.cruz@gmail.com, horms@kernel.org,
+ s-anna@ti.com, basharath@couthit.com, linux-arm-kernel@lists.infradead.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, vadim.fedorenko@linux.dev, pratheesh@ti.com,
+ prajith@ti.com, vigneshr@ti.com, praneeth@ti.com, srk@ti.com,
+ rogerq@ti.com, krishna@couthit.com, pmohan@couthit.com, mohan@couthit.com
+Subject: Re: [PATCH net-next v10 04/11] net: ti: prueth: Adds link
+ detection, RX and TX support.
+Message-ID: <20250708180107.7886ea41@kernel.org>
+In-Reply-To: <20250702151756.1656470-5-parvathi@couthit.com>
+References: <20250702140633.1612269-1-parvathi@couthit.com>
+	<20250702151756.1656470-5-parvathi@couthit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-To avoid a crash when control flow integrity is enabled, make the
-workspace ("stream") free function use a consistent type, and call it
-through a function pointer that has that same type.
+On Wed,  2 Jul 2025 20:47:49 +0530 Parvathi Pudi wrote:
+> +			if (emac->port_id) {
+> +				regmap_update_bits
+> +					(prueth->mii_rt,
+> +					 PRUSS_MII_RT_TXCFG1,
+> +					 PRUSS_MII_RT_TXCFG_TX_CLK_DELAY_MASK,
+> +					 delay);
 
-Fixes: 42d9f6c77479 ("crypto: acomp - Move scomp stream allocation code into acomp")
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
- crypto/deflate.c                    | 7 ++++++-
- crypto/zstd.c                       | 7 ++++++-
- include/crypto/internal/acompress.h | 5 +----
- 3 files changed, 13 insertions(+), 6 deletions(-)
+Instead of breaking the lines up like this you should factor the code
+out or find some other way to reduce the indentation.
 
-diff --git a/crypto/deflate.c b/crypto/deflate.c
-index fe8e4ad0fee10..21404515dc77e 100644
---- a/crypto/deflate.c
-+++ b/crypto/deflate.c
-@@ -46,13 +46,18 @@ static void *deflate_alloc_stream(void)
- 	ctx->stream.workspace = ctx->workspace;
- 
- 	return ctx;
- }
- 
-+static void deflate_free_stream(void *ctx)
-+{
-+	kvfree(ctx);
-+}
-+
- static struct crypto_acomp_streams deflate_streams = {
- 	.alloc_ctx = deflate_alloc_stream,
--	.cfree_ctx = kvfree,
-+	.free_ctx = deflate_free_stream,
- };
- 
- static int deflate_compress_one(struct acomp_req *req,
- 				struct deflate_stream *ds)
- {
-diff --git a/crypto/zstd.c b/crypto/zstd.c
-index 657e0cf7b9524..ff5f596a4ea7e 100644
---- a/crypto/zstd.c
-+++ b/crypto/zstd.c
-@@ -52,13 +52,18 @@ static void *zstd_alloc_stream(void)
- 	ctx->wksp_size = wksp_size;
- 
- 	return ctx;
- }
- 
-+static void zstd_free_stream(void *ctx)
-+{
-+	kvfree(ctx);
-+}
-+
- static struct crypto_acomp_streams zstd_streams = {
- 	.alloc_ctx = zstd_alloc_stream,
--	.cfree_ctx = kvfree,
-+	.free_ctx = zstd_free_stream,
- };
- 
- static int zstd_init(struct crypto_acomp *acomp_tfm)
- {
- 	int ret = 0;
-diff --git a/include/crypto/internal/acompress.h b/include/crypto/internal/acompress.h
-index ffffd88bbbad3..2d97440028ffd 100644
---- a/include/crypto/internal/acompress.h
-+++ b/include/crypto/internal/acompress.h
-@@ -61,14 +61,11 @@ struct crypto_acomp_stream {
- };
- 
- struct crypto_acomp_streams {
- 	/* These must come first because of struct scomp_alg. */
- 	void *(*alloc_ctx)(void);
--	union {
--		void (*free_ctx)(void *);
--		void (*cfree_ctx)(const void *);
--	};
-+	void (*free_ctx)(void *);
- 
- 	struct crypto_acomp_stream __percpu *streams;
- 	struct work_struct stream_work;
- 	cpumask_t stream_want;
- };
+> +	qid = icssm_prueth_get_tx_queue_id(emac->prueth, skb);
+> +	ret = icssm_prueth_tx_enqueue(emac, skb, qid);
+> +	if (ret) {
+> +		if (ret != -ENOBUFS && netif_msg_tx_err(emac) &&
+> +		    net_ratelimit())
+> +			netdev_err(ndev, "packet queue failed: %d\n", ret);
+> +		goto fail_tx;
+> +	}
 
-base-commit: 181698af38d3f93381229ad89c09b5bd0496661a
--- 
-2.50.1
+> +	if (ret == -ENOBUFS) {
+> +		ret = NETDEV_TX_BUSY;
 
+
+Something needs to stop the queue, right? Otherwise the stack will 
+send the frame right back to the driver.
+
+> +static inline void icssm_emac_finish_napi(struct prueth_emac *emac,
+> +					  struct napi_struct *napi,
+> +					  int irq)
+> +{
+> +	napi_complete(napi);
+> +	enable_irq(irq);
+
+This helper has a single caller, just put the two lines of code directly
+there. And use napi_complete_done(), please.
 
