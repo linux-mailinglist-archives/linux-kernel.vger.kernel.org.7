@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-724139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DABA1AFEF25
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:49:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 819B2AFEF27
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:50:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FA6B1882EC4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:49:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4CFF188599B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A0F224898;
-	Wed,  9 Jul 2025 16:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5229022687C;
+	Wed,  9 Jul 2025 16:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VNm8gdbL"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kzo37hbI"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E16221FDE;
-	Wed,  9 Jul 2025 16:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C992223338;
+	Wed,  9 Jul 2025 16:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752079719; cv=none; b=ED/hXz2kUeCJJT+0ElzUl06YVqGputsH4jPvJvMb/nCd9N5icGqO2eh01NQ8yvA/8l8flnQvA8cNwey/vFdVt/5TREQIGqAGyTDOscxEia5w02ARW9rAYzfGBaV1LzzQK2DmwbpiUMUcxEAkmucDbYTjtOcDk9pYiKuCJfqmQ1k=
+	t=1752079721; cv=none; b=DdrTjiitaDlK2iFotqfGPf5VEotlV7U0g+2KylbnnGwykX47vRDTX1nbyQSeVY357Z6g9UieSk2mOl/nAWMQg/vPOZHWtl1NNE17uZYX6VxRMgosGfPU+kuifywotzFaW701TfYqBPg9GVGPsN5uTFBqLKl5CRVyGny4Pwdj3YM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752079719; c=relaxed/simple;
-	bh=4B3ke6gHsIh+dcBfkcHV8Tx4Nx1vxSrvf5z8cq2y0Cg=;
+	s=arc-20240116; t=1752079721; c=relaxed/simple;
+	bh=RxNYHRjvRwbxissHn18e450qA3JeC6FShWF2D/8oXRc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ns4HX5GJqkfWJV/+GpWbxt33b1acM5RjMcp4mxGTCAJJ8G5O3w0l6auzcRQGsz07nip1YXT5fnbzaZvkHusQxW5FuqVWPhslhbU0JnFDnd68prvdLs3feC+X8xHuanLEGPPOrep21lFSq9UNmQiQ0lUayIr7F07KD3omLJ6O2Ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VNm8gdbL; arc=none smtp.client-ip=209.85.128.47
+	 MIME-Version:Content-Type; b=gXwoDmruWs/cGh4VaXXPPdRj2BwyX+Fau6nrO0VXsEo9KMlet81mJCEVsl6yfOH2f5bKlylG7arMzeiL0yLFA+9Wmf2/tGLdrdoQ1S7H4SZUc/Ej32Ka5pCk11CIiQ6RRK7eXMd89qPSjZB1sxmL5Hjtwf3nB8uivl7pFLvAAnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kzo37hbI; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-450ce3a2dd5so603855e9.3;
-        Wed, 09 Jul 2025 09:48:37 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-451d54214adso471875e9.3;
+        Wed, 09 Jul 2025 09:48:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752079716; x=1752684516; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752079718; x=1752684518; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UM1sQgyzQVuS7DSOaoE99H993YRDLfxU8AAzZJx9mZI=;
-        b=VNm8gdbL3bNCG6UpcaCqA2MZJReZMVU6MTg6LM3xGoFVoYeToIT5JMhTa9KR/V1AjV
-         qIiLgToiq+rZTdeNDs4JnbrEmgEP63av+o3OQChs64pXpXRyvPZi9KykqltbNkfleVgV
-         dbQsd0ZYMypxjkOosBDTJDX3ru5xzPqEa55zayBMkqMHq7RVwDWISOx4VU4Qc0b7tyXc
-         i1rz2Beq1XWlTF348CyogLon2Tm6QvxofkIIeT15pT+M//rgtnKiR/FsSeYO4Vzb3XLN
-         zmb/x+0uXlI7Glk50RSVF3WwXZ8pvH/RiM0+0VQeiT6VK1Y8QD7T3sUxkHmULRUkQCbq
-         fS3Q==
+        bh=aW+6pvesmNnQet8sOGIglZFbJFOJ9GWYSbg9Z1nNP3U=;
+        b=kzo37hbI7TwzsHQy/uGC036cd528dgJBkXaFHtlD3av2coC/v1qVCRPPodLbLUtlzo
+         3l3wJfPdAShhPm7187kwsI7ZOQshzk7eQWd2yb3YAZfdrAfCTt8qZyP8EBCefiF/Oh4U
+         t2PtjjhnAeBqMXwS744IHrQuTPDU0YS4SupvAq6qd/I284BfL4mLJCM9RZO8Zu8TShGz
+         moTnHFm6n/FZIG4IKg/KgMIQ/3+/I6Me8cscxD70fHxYganxCYCS91MTJO52T9uanZOY
+         e2za6uENwlG1pAjiw9Ue03dDOCjClNc+Y8m3HQD8A2Zy9BcTcItFDeAv3OVmX7gr1l53
+         TlCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752079716; x=1752684516;
+        d=1e100.net; s=20230601; t=1752079718; x=1752684518;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UM1sQgyzQVuS7DSOaoE99H993YRDLfxU8AAzZJx9mZI=;
-        b=CSXIOiJaHO+2t9fl6xJ/IFDo6q8pKpvH836NIbgUfKv8IYISbeXkEk/mCILX3yYJnW
-         c/sT1YhaUPQxsiJLz/EM5mtnjZlgU719wAa0RhkcioZoDHpTVgj0EdE+/KyiGfgfUTrx
-         5ffGxDhw710NxpRmas6pyUkvF7wtCN7kkBxYxVVQtg+ouOP9VV3Cn2XoYn6G8hC3McgI
-         2A4Siqx/82s1VkbKMf5bS/7KWMkosA0jxyOxuG1lvoN8/8jnSKeA0GAd828wsf7lP8OV
-         38GXeEQKmBvwd28Cpau7CR0CKkTreLUZ9z17yzI4/Fg8XXVUgaJmZW/6gI9L7LNyYBaD
-         tYPg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6HcvkaVIMh3PxHOnR0lgt0g3j9PNVYl4ywcHfDjTMwHIjn3sJpb5U12ei1jhc+VI/wKI1Jmreczgk@vger.kernel.org, AJvYcCUByUUJSbgm2+92+nOQIIb7XD2UQotOLjkucwKREoBf8a8Dirs52NjHZcx1DyQKYZP1ptQs5swZyo8f@vger.kernel.org, AJvYcCUksHXBFt/PrGFIjpErA9V+QHbY16C/MaLNbioa58uttijlgpS5GmZyRuNcX86o1+Xi14p6C2K8EXa+f0I=@vger.kernel.org, AJvYcCX9f/r0l4UFpoyz32KBAjcuYXn7z1qFVuUrtW3m3mHT1EbXMBHQkf61VlLXZX3jILfo24Ul9BTVeqdeWvSt@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHHt5q3HLFPR9NtNbGZBJyEgrXwnDEDtfipfc3DBebkN51e76e
-	5K6MWJGS3/R2JD2ksDdkmeunqe+S/tbyB6gH/670J5RYzJvo7Kk/fTZE
-X-Gm-Gg: ASbGncvWWSqZjvP1SZhZ4ZtQElTDfYA/T+zA4q/AdEHA00fTTM5k5uDIECu+vmyCjvP
-	OTgTvuFEeWXzsJqCGoVlQQzbQfGC9SoUJDC3vsT3DVqQYoQN+SCd//IL7SAd+r8cAHiskCdNTqE
-	yto85yc5qUmrsS0SNAU95FfHzJHPeZPTSviva+4PzDfg/xXw5huk/byuvJDzeWa++ysO7eMC9XF
-	08A8PFG9OVOiCtcvvPDbVZr8Hx503EOPlk590J0G3WeEF4srfPwf1Ur+EF+j1+5m0WBMx3DKpS1
-	tyZqjlIywAqedt5Kdk4qCzvCprU7vx5YXlxZN1g45HkIwfvzdlYg8M22Kis9L+ijkqPrj7shy0D
-	3kJAntTAtHlWU0fI8CWTJAiAkLbytXQATO9Q0U1l7eyT3cuRVpXaR+YdwCLUY7JI=
-X-Google-Smtp-Source: AGHT+IEu+HMu6WZv/81rFvILzebsCFW6MqzVp/YWaGe5xSfgMvDm9s0bhVMfD4+35uTgph3vOVk62Q==
-X-Received: by 2002:a05:600c:1e0d:b0:453:483b:626c with SMTP id 5b1f17b1804b1-454d53bda78mr28493545e9.23.1752079715939;
-        Wed, 09 Jul 2025 09:48:35 -0700 (PDT)
+        bh=aW+6pvesmNnQet8sOGIglZFbJFOJ9GWYSbg9Z1nNP3U=;
+        b=HoeDr9dcqLRQ0ziKHqP/2plj96NE69QrfuJPYgIUmmfuUTrRsplPBSOXYjCIpunoCb
+         CAaOXPmQLLJv6QL1gpMOdSgo6v9kc9QeJAG0FzN2+0KYYWJoqAmpGMa21FHUdJft6zsC
+         xRhWNVhlVXJMaoZksbsy9pSzYODgWD/QJLPtaW31qaNAR8HC/uow4+mNifCk/EsMRFcd
+         hKGo92lEWabu2wg3qfXpdMTb2Dy2oTv7BneNLJjGXEoMrv5aXEACLf0PQSTJt3et9HML
+         jqrXaZ9TlhxwTK7/5hB4Sl2exCa3w6y9QisZMHixP7F1WVPCYedhNT3nvZfJjdk7Q8az
+         V41w==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ6RsW0KflZbFi3rJRb0lzoju/OcKcOJg8d/DIc349zLdpcCAa4WaERN7SOHbYjr+3vsn9X+0K9bTh@vger.kernel.org, AJvYcCXNS0JhH3GQLzI5nylGpxx3E1m/glDEFEskbnPgzh+LbZNSnLs3UImy7uUU7geIjG/Lmb1Nu9M88dFu7zE=@vger.kernel.org, AJvYcCXWtFHrF06YAsx7Im3eblCBjP8+0ttzbdeCKAwpzM4Qh2ufL4cnRJtIuJJHQOcXxImohqKSPpsI+xeM@vger.kernel.org, AJvYcCXa04e6urGQKxFb2Gl3Q8Wa7BEfZjT/69XGxzdyuMkICajAAUp8HMhPhRSHxH1RXcftQsuWPFILYkgNl4H2@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOONRoR1bS5YCmVgZ4g2nB6hG3bguzwHA/dgewCoFdV0NqlBXZ
+	y1IP6VPrBNVXFd5D4DefFyTkgUFCs7FKqe0h2BE4qtH2IFGP4FD7MfgR
+X-Gm-Gg: ASbGncsXSNelqFFqSKQaIQXQ98EwUObCDS3X2TO3ETw+HkRQ2T4ByGLigGzG71DLqTA
+	FHEQ/BWpge54csm+FBw3D3xlcV9frFuXD0RrOCuWBnndgFv/cyK0ORDy9MEjDklnun7VLY0Hh8b
+	osTzUjX2/iUIp5GAhrXAiDNpPBEtLrYEyH0JFcpgBPGFSVkQkL8gOU2Eg8zQB4UeLure7SSSNPt
+	idRY8GWG67RrLOm8xJt2v8nWE7Q+B052dF5zgIZBsvG4HWJcE3l6hhA82q8Ot4KdhDcMoNuJM/w
+	4orx97392iR2aLtN7f8T+lujho0Nj6Z1899jJ1B8mgflvZ0130xZCHQynVg15VERgfCjAq3ZSq6
+	E5PlPve2QExRD6oefYceAzo4CnQUitw2ppyDAU7pjU5CpvzwHOsHXtFB9iWQ/y68=
+X-Google-Smtp-Source: AGHT+IHPW4nSqrMdmS43S2i2mtnBvt8UJAQyIY46BMAdgXyyUAUKk6tePIGQqYWemQlnRednj5ONfQ==
+X-Received: by 2002:a05:6000:4023:b0:3a4:e387:c0bb with SMTP id ffacd0b85a97d-3b5e455b399mr2535466f8f.59.1752079718115;
+        Wed, 09 Jul 2025 09:48:38 -0700 (PDT)
 Received: from skynet.lan (2a02-9142-4580-2e00-0000-0000-0000-0008.red-2a02-914.customerbaf.ipv6.rima-tde.net. [2a02:9142:4580:2e00::8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d50df125sm30634915e9.19.2025.07.09.09.48.34
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d50df125sm30634915e9.19.2025.07.09.09.48.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 09:48:34 -0700 (PDT)
+        Wed, 09 Jul 2025 09:48:36 -0700 (PDT)
 From: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
 To: jdelvare@suse.com,
 	linux@roeck-us.net,
@@ -84,9 +84,9 @@ To: jdelvare@suse.com,
 	linux-kernel@vger.kernel.org,
 	linux-doc@vger.kernel.org
 Cc: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
-Subject: [PATCH v3 1/3] docs: hwmon: add emc2101.rst to docs
-Date: Wed,  9 Jul 2025 18:48:27 +0200
-Message-Id: <20250709164829.3072944-2-noltari@gmail.com>
+Subject: [PATCH v3 2/3] dt-bindings: hwmon: Add Microchip EMC2101 support
+Date: Wed,  9 Jul 2025 18:48:28 +0200
+Message-Id: <20250709164829.3072944-3-noltari@gmail.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250709164829.3072944-1-noltari@gmail.com>
 References: <20250709164829.3072944-1-noltari@gmail.com>
@@ -99,98 +99,84 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add description of emc2101 driver.
+Introduce yaml schema for Microchip emc2101 pwm fan controller with
+temperature monitoring.
 
 Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
 ---
- Documentation/hwmon/emc2101.rst | 61 +++++++++++++++++++++++++++++++++
- Documentation/hwmon/index.rst   |  1 +
- 2 files changed, 62 insertions(+)
- create mode 100644 Documentation/hwmon/emc2101.rst
+ .../bindings/hwmon/microchip,emc2101.yaml     | 59 +++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/microchip,emc2101.yaml
 
- v3: drop emc2101-r (same chip, loads config from EEPROM).
+ v3: fix errors, remove patternProperties and drop emc2101-r.
 
- v2: add emc2101 to index.rst
+ v2: add missing properties.
 
-diff --git a/Documentation/hwmon/emc2101.rst b/Documentation/hwmon/emc2101.rst
+diff --git a/Documentation/devicetree/bindings/hwmon/microchip,emc2101.yaml b/Documentation/devicetree/bindings/hwmon/microchip,emc2101.yaml
 new file mode 100644
-index 000000000000..3a8d61fc9de3
+index 000000000000..10167747f748
 --- /dev/null
-+++ b/Documentation/hwmon/emc2101.rst
-@@ -0,0 +1,61 @@
-+.. SPDX-License-Identifier: GPL-2.0-or-later
++++ b/Documentation/devicetree/bindings/hwmon/microchip,emc2101.yaml
+@@ -0,0 +1,59 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/hwmon/microchip,emc2101.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+Kernel driver emc2101
-+=====================
++title: Microchip EMC2101 SMBus compliant PWM fan controller
 +
-+Supported chips:
-+   Microchip EMC2101
++maintainers:
++  - Álvaro Fernández Rojas <noltari@gmail.com>
 +
-+   Addresses scanned: I2C 0x4c
++description:
++  Microchip EMC2101 pwm controller which supports up to 1 fan, 1 internal
++  temperature sensor, 1 external temperature sensor and an 8 entry look
++  up table to create a programmable temperature response.
 +
-+   Prefix: 'emc2101'
++properties:
++  compatible:
++    enum:
++      - microchip,emc2101
 +
-+   Datasheet: Publicly available at the Microchip website :
-+      https://www.microchip.com/en-us/product/EMC2101
++  reg:
++    maxItems: 1
 +
-+Description:
-+------------
-+This driver implements support for Microchip EMC2101 RPM-based PWM Fan Controller.
-+The EMC2101 Fan Controller supports up to 1 controlled PWM fan based on an
-+external temperature diode.
-+Fan rotation speed is reported in RPM.
-+The driver supports the eight entries temperature look up table to automatically
-+adjust the fan speed.
++  fan:
++    $ref: fan-common.yaml#
++    unevaluatedProperties: false
 +
-+The driver provides the following sysfs interfaces in hwmon subsystem:
++  '#pwm-cells':
++    const: 2
++    description: |
++      Number of cells in a PWM specifier.
++      - cell 0: The PWM frequency
++      - cell 1: The PWM polarity: 0 or PWM_POLARITY_INVERTED
 +
-+========================= == ===================================================
-+fan1_div                  RW file for fan target duty cycle divider (0..255)
-+fan1_input                RO file for TACH1 input (in RPM)
-+fan1_min                  RW file for TACH1 min RPM
-+fan1_min_alarm            RO file for TACH1 min RPM alarm indication
-+fan1_spin_up_abort        RW file for fan spin up abort on low RPM
-+fan1_spin_up_power        RW file for fan spin up power (in percentage)
-+fan1_spin_up_time         RW file for fan spin up time (in ms)
-+fan1_standby              RW file for fan standby mode
-+pwm1                      RW file for fan target duty cycle (0..63)
-+pwm1_auto_channels_temp   RW file for fan temperature sensor (external, force)
-+pwm1_auto_point[1-8]_pwm  RW files for look up table fan speed
-+pwm1_auto_point[1-8]_temp RW files for look up table temperature
-+pwm1_auto_point_temp_hyst RW file for look up table temperature hysteresis
-+pwm1_enable               RW file for fan config (manual, look up table)
-+pwm1_freq                 RW file for fan target frequency
-+pwm1_mode                 RW file for pwm mode (DAC, PWM)
-+pwm1_polarity_invert      RW file for fan polarity inversion
-+temp[1-3]_label           RO files for temperature labels
-+temp1_input               RO file for internal temperature
-+temp1_max                 RW file for max internal temperature
-+temp1_max_alarm           RO file for max internal temperature alarm indication
-+temp2_crit                RW file for crit external temperature
-+temp2_crit_alarm          RO file for crit external temperature alarm indication
-+temp2_crit_hyst           RW file for crit external temperature hysteresis
-+temp2_fault               RO file for external temperature failure indication
-+temp2_input               RO file for external temperature
-+temp2_max                 RW file for max external temperature
-+temp2_max_alarm           RO file for max external temperature alarm indication
-+temp2_min                 RW file for min external temperature
-+temp2_min_alarm           RO file for min external temperature alarm indication
-+temp2_type                RW file for external temperature type (CPU, 2N3904)
-+temp3                     RW file for forced temperature
-+update_interval           RW file for temperature sensor update interval
-+========================= == ===================================================
-diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
-index b45bfb4ebf30..c068462764d0 100644
---- a/Documentation/hwmon/index.rst
-+++ b/Documentation/hwmon/index.rst
-@@ -69,6 +69,7 @@ Hardware Monitoring Kernel Drivers
-    ds1621
-    ds620
-    emc1403
-+   emc2101
-    emc2103
-    emc2305
-    emc6w201
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        fan_controller: fan-controller@4c {
++            compatible = "microchip,emc2101";
++            reg = <0x4c>;
++
++            #pwm-cells = <2>;
++
++            fan {
++                pwms = <&fan_controller 5806 0>;
++            };
++        };
++    };
++...
 -- 
 2.39.5
 
