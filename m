@@ -1,157 +1,99 @@
-Return-Path: <linux-kernel+bounces-724039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9003AFEDD8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:35:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF319AFEDDD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAC3CB411FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:33:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAFEC3B7329
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B2A2E8E00;
-	Wed,  9 Jul 2025 15:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874CB2E888D;
+	Wed,  9 Jul 2025 15:36:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hdrhrda1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJaOkhdx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE81E2E6127;
-	Wed,  9 Jul 2025 15:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63192E7655;
+	Wed,  9 Jul 2025 15:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752075289; cv=none; b=c8+5DSZwFPbA8MI1Mnfapzv+38DZHoJgEL19Bh0lusox12zfGmCrf/rqD5J4h4HunYMdjz4W23+sRYGNPGSeKfSZ1hZCbFDs+bHSbFmSwOw/7XWavw4kKxrxJ9DvEPlZrp7/1vcpCD3UW006k9p1fh3CU96mtLLPw9/FD8cL+6c=
+	t=1752075369; cv=none; b=rG1kip9i0GosiFOh+tiOQGnpK53fHk4/rm+n+gzmc59gbVvt8fBWWQE1/413qDUKMU6bEy0M8hZPi0HXLGRlWsUKr7sWw45CZ/5KC+0hH1zaLwe9tO13CqIx5vJqI690rnYIe4CtU39Oqgi+qb6Rwdw7MxJD9NmmEh+3WLch8Og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752075289; c=relaxed/simple;
-	bh=GARUNpM9H4+xNBBzYx9lXk4Njm6ZssGnZSUDn36uSlA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=byjfYtWTtKOkToDhSfua3rcHGvtY/s2I3eX/dsVltQfM+VIMKrE59cW30EysIJEdkfXIW/A0uIpA7zYUV5dEJmSiS5tFDjeSY/NtT6uj5zTjXRxK808l596+L6mIvNNtNMDPqvchxfIiAMPvz6gueecPDaFmp3vWqaCnIuUbTO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hdrhrda1; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752075288; x=1783611288;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GARUNpM9H4+xNBBzYx9lXk4Njm6ZssGnZSUDn36uSlA=;
-  b=hdrhrda1s34kQjgqYmZP03FcF2UzeFE3re6yCZ/kWKcqTMrcuExT/fbQ
-   4Fa72c1SYZCof+KRpRLPAP28sV45OkhAC9bw85kL8skPyGmtLoT5Hn1sc
-   GPDE2dQhlzyuskRd8vFZ4asbnoFTU9Bx0Z9IzYN5EE6px4UZysLeXymg0
-   d2Vpv8+wX916HojHr3e6WSZocVl05qTr9Vxbpt/A7GkyX4fwaXkWehTRo
-   1COZHip72X6p2MtlKFgJPRXoO5lpttDU/P98BZgm9m7yWlsbqc3j8eZ8I
-   MMwPiv94VtFAa8cyUCnDZzAqQeEaTfiSwf68yUiwRuSvMS62uzWgGn97B
-   g==;
-X-CSE-ConnectionGUID: KSfqR9XYSQKIx/uj2/dNzw==
-X-CSE-MsgGUID: V0fvVmtgRBOBTm4tha6CIQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54312170"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="54312170"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 08:34:47 -0700
-X-CSE-ConnectionGUID: mY03xM4IRxauD+4+tnfP1w==
-X-CSE-MsgGUID: qXLM07ZQRV2rU23uJAT5NA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="159836384"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 09 Jul 2025 08:34:43 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uZWoi-0003g7-2m;
-	Wed, 09 Jul 2025 15:34:40 +0000
-Date: Wed, 9 Jul 2025 23:34:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Rosen Penev <rosenp@gmail.com>, linux-wireless@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Stanislaw Gruszka <stf_xl@wp.pl>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-Subject: Re: [PATCHv2 wireless-next 5/7] wifi: rt2x00: soc: modernize probe
-Message-ID: <202507092348.YnsHKi8x-lkp@intel.com>
-References: <20250708201745.5900-6-rosenp@gmail.com>
+	s=arc-20240116; t=1752075369; c=relaxed/simple;
+	bh=z5R0g5bRaFcE+byBEvAYFxwzxwtN+sL10BzKO0308UM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=rFXG5lCbSCsVVyf+bZaAAGkQnFJg6m8QY9a+0LMBctljsbG/JZpzkQG9iMgLdjJd3WhqgPphesLsywgowL9i9mAFt0sZFCRqIIqIsIJoxiMzbmEJV3QofgRUa45SXGzqF8QerVAhayOclxUe3LwuZZhMlwxDihIxdB7mH29o+Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJaOkhdx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85F52C4CEEF;
+	Wed,  9 Jul 2025 15:36:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752075368;
+	bh=z5R0g5bRaFcE+byBEvAYFxwzxwtN+sL10BzKO0308UM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=kJaOkhdxWi9qV5vWcFnJ+JHTiQSlubZYl18mUsLG/pSBYdw+T1NKtWF5028TxIiFZ
+	 wZfpISsYz6qDXmz2TI9Vt2XUjIKX936nTToXVpxLwiDoaCgB6R4T9SzqBhHgJFfpBd
+	 DUjk1wdx3vSPwyZIM2EFvrhSQPqiWhpnXIU+dEh09EHx2ZObNI3mOIZsCcG9pdYe8q
+	 BC4Z5NY1XOLoQTFEXD6LRKGjWkLN/mitCQSJ4wZRDpY40o5N+wT3fnKdwgpqCDUsHx
+	 JG9DsmlWMhj+0erNX6r8khQZ4MuvF5NJtd+TeRO4St5FF7gaDqAbNdZh8u/V4dEqHi
+	 8bPTgLe8qW+Og==
+From: Mark Brown <broonie@kernel.org>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250709021638.2047365-1-robh@kernel.org>
+References: <20250709021638.2047365-1-robh@kernel.org>
+Subject: Re: [PATCH v2] spi: stm32-ospi: Use
+ of_reserved_mem_region_to_resource() for "memory-region"
+Message-Id: <175207536585.695960.5730567147905543825.b4-ty@kernel.org>
+Date: Wed, 09 Jul 2025 16:36:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250708201745.5900-6-rosenp@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-07fe9
 
-Hi Rosen,
+On Tue, 08 Jul 2025 21:16:37 -0500, Rob Herring (Arm) wrote:
+> Use the newly added of_reserved_mem_region_to_resource() function to
+> handle "memory-region" properties.
+> 
+> 
 
-kernel test robot noticed the following build errors:
+Applied to
 
-[auto build test ERROR on wireless/main]
-[also build test ERROR on next-20250709]
-[cannot apply to wireless-next/main robh/for-next linus/master v6.16-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/wifi-rt2x00-add-COMPILE_TEST/20250709-042051
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless.git main
-patch link:    https://lore.kernel.org/r/20250708201745.5900-6-rosenp%40gmail.com
-patch subject: [PATCHv2 wireless-next 5/7] wifi: rt2x00: soc: modernize probe
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20250709/202507092348.YnsHKi8x-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250709/202507092348.YnsHKi8x-lkp@intel.com/reproduce)
+Thanks!
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507092348.YnsHKi8x-lkp@intel.com/
+[1/1] spi: stm32-ospi: Use of_reserved_mem_region_to_resource() for "memory-region"
+      commit: defe01abfb7f5c5bd53c723b8577d4fcd64faa5a
 
-All errors (new ones prefixed by >>):
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-   drivers/net/wireless/ralink/rt2x00/rt2800soc.c:347:13: error: use of undeclared identifier 'rt2x00soc_suspend'; did you mean 'rt2x00lib_suspend'?
-     347 |         .suspend        = rt2x00soc_suspend,
-         |                           ^~~~~~~~~~~~~~~~~
-         |                           rt2x00lib_suspend
-   drivers/net/wireless/ralink/rt2x00/rt2x00.h:1504:5: note: 'rt2x00lib_suspend' declared here
-    1504 | int rt2x00lib_suspend(struct rt2x00_dev *rt2x00dev);
-         |     ^
-   drivers/net/wireless/ralink/rt2x00/rt2800soc.c:348:13: error: use of undeclared identifier 'rt2x00soc_resume'; did you mean 'rt2x00lib_resume'?
-     348 |         .resume         = rt2x00soc_resume,
-         |                           ^~~~~~~~~~~~~~~~
-         |                           rt2x00lib_resume
-   drivers/net/wireless/ralink/rt2x00/rt2x00.h:1505:5: note: 'rt2x00lib_resume' declared here
-    1505 | int rt2x00lib_resume(struct rt2x00_dev *rt2x00dev);
-         |     ^
->> drivers/net/wireless/ralink/rt2x00/rt2800soc.c:347:13: error: incompatible function pointer types initializing 'int (*)(struct platform_device *, pm_message_t)' (aka 'int (*)(struct platform_device *, struct pm_message)') with an expression of type 'int (struct rt2x00_dev *)' [-Wincompatible-function-pointer-types]
-     347 |         .suspend        = rt2x00soc_suspend,
-         |                           ^~~~~~~~~~~~~~~~~
->> drivers/net/wireless/ralink/rt2x00/rt2800soc.c:348:13: error: incompatible function pointer types initializing 'int (*)(struct platform_device *)' with an expression of type 'int (struct rt2x00_dev *)' [-Wincompatible-function-pointer-types]
-     348 |         .resume         = rt2x00soc_resume,
-         |                           ^~~~~~~~~~~~~~~~
-   4 errors generated.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-vim +347 drivers/net/wireless/ralink/rt2x00/rt2800soc.c
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-90ce325a735fa7 drivers/net/wireless/ralink/rt2x00/rt2800soc.c Rosen Penev 2025-07-08  339  
-fe7ef7c60c33fd drivers/net/wireless/rt2x00/rt2800soc.c        Gabor Juhos 2013-10-17  340  static struct platform_driver rt2800soc_driver = {
-fe7ef7c60c33fd drivers/net/wireless/rt2x00/rt2800soc.c        Gabor Juhos 2013-10-17  341  	.driver		= {
-fe7ef7c60c33fd drivers/net/wireless/rt2x00/rt2800soc.c        Gabor Juhos 2013-10-17  342  		.name		= "rt2800_wmac",
-90ce325a735fa7 drivers/net/wireless/ralink/rt2x00/rt2800soc.c Rosen Penev 2025-07-08  343  		.of_match_table = rt2880_wmac_match,
-fe7ef7c60c33fd drivers/net/wireless/rt2x00/rt2800soc.c        Gabor Juhos 2013-10-17  344  	},
-fe7ef7c60c33fd drivers/net/wireless/rt2x00/rt2800soc.c        Gabor Juhos 2013-10-17  345  	.probe		= rt2800soc_probe,
-115321558169cc drivers/net/wireless/ralink/rt2x00/rt2800soc.c Rosen Penev 2025-07-08  346  	.remove		= rt2800soc_remove,
-fe7ef7c60c33fd drivers/net/wireless/rt2x00/rt2800soc.c        Gabor Juhos 2013-10-17 @347  	.suspend	= rt2x00soc_suspend,
-fe7ef7c60c33fd drivers/net/wireless/rt2x00/rt2800soc.c        Gabor Juhos 2013-10-17 @348  	.resume		= rt2x00soc_resume,
-fe7ef7c60c33fd drivers/net/wireless/rt2x00/rt2800soc.c        Gabor Juhos 2013-10-17  349  };
-fe7ef7c60c33fd drivers/net/wireless/rt2x00/rt2800soc.c        Gabor Juhos 2013-10-17  350  
+Thanks,
+Mark
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
