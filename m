@@ -1,218 +1,102 @@
-Return-Path: <linux-kernel+bounces-723292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86107AFE586
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:17:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9ADEAFE589
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:18:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E91E4547AF2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:12:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A46E4543C22
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7251289835;
-	Wed,  9 Jul 2025 10:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067D028A714;
+	Wed,  9 Jul 2025 10:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c2RYeiIT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SxP762nW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245FB2882CA
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 10:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435DC1C84D5;
+	Wed,  9 Jul 2025 10:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752055890; cv=none; b=E/cjcMarEPsDe4KFMQ8G/6mjhCr885ApBTNkCJDqT5cQ2R79pQ8DrGbXHEkSTsF8/Wr7CVAkJXDXfCR5apX6f13wuRVSev+XSwGUj0vnjP+iFuDgMlNKjY+9MBQtH9EOHs3CoJgGa8mISQECH8/VZpc/oypr75BY0Pb7Bbdhfu0=
+	t=1752055968; cv=none; b=qUh3TTNmHp10jwt3Urix7DOOddeBbzikMX3oJDylxvLNcH94IkwurRbd2TkcR0udk0hwSFwG5RwtDmDHGXOy7FI/7U1i5E43p046PceaqXDLvgrrKJycXGApgh5N1HqCUllPW13Uk0TmsPppdZG2EY/O2q2HOVpycfDXk4L2nYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752055890; c=relaxed/simple;
-	bh=mOPkOrukG2Y239oOCufTagRLKNb8LP2t1L+ciZ22zGc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MgBLp3BhmtKdELhURyFuQheEOHEjsdMFAdNShNnEm0Emoh2cQtMxtDw5m/G7ZbR50WQ5roLuu+eGDHPg+bwJxD3FUx0GJeTbNlCZ389pu6Xevq8ZfoMlXedDM2tAzcVSvFQGt5bk1JT7rMkFYa40bOdmDz+UyWoxx5/yGU/HXCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c2RYeiIT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752055887;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=F0LwotVAg6dvlb2u4HLohnwHaSnFFiXlXs6Bup/zLbc=;
-	b=c2RYeiITFHVZPI09dXimD/y4cwlYII/INE2Mr3fqFL1bfVscKN3NFl5q+OpXXyl1ckQ7KD
-	B7ou4wwunT2e+rdsFXfcOyQ/TXWM9W3PNAGPLqxbyOALUM1dSU74xnaPKFvSO3mF98Cvex
-	uEw6dCKwRVH+c4CpgOMgNSx1bdIHd04=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-339-_TuCxKyFOXOplWYcqt9etg-1; Wed,
- 09 Jul 2025 06:11:23 -0400
-X-MC-Unique: _TuCxKyFOXOplWYcqt9etg-1
-X-Mimecast-MFC-AGG-ID: _TuCxKyFOXOplWYcqt9etg_1752055883
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DB3A8193F05B;
-	Wed,  9 Jul 2025 10:11:22 +0000 (UTC)
-Received: from sirius.home.kraxel.org (unknown [10.45.224.100])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 19B373000198;
-	Wed,  9 Jul 2025 10:11:22 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-	id 7504218000B2; Wed, 09 Jul 2025 12:11:19 +0200 (CEST)
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: linux-efi@vger.kernel.org
-Cc: Gerd Hoffmann <kraxel@redhat.com>,
-	kernel test robot <lkp@intel.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] efi: remove modular option for ovmf-debug-log
-Date: Wed,  9 Jul 2025 12:11:18 +0200
-Message-ID: <20250709101119.927808-1-kraxel@redhat.com>
+	s=arc-20240116; t=1752055968; c=relaxed/simple;
+	bh=m0kYMK0yCrqfQlb4xvdKgoherQ8t98N5/gOCQakTYm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JDTZ++y/ipz2LSNwn3qijHG+bMEe4KL7OwkFRaht5a5Xu1wasgpBE2s42iUm6JIblPmlexud/n0hRpF1xzrRuwUaqw5c+a3BIWQO7VjV6iUSK3hPeYqQnZrkMObMABwVjnvV/j6ldhYnbP439MsVxV6z37GniR+P9o/q4KmorGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SxP762nW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46981C4CEF0;
+	Wed,  9 Jul 2025 10:12:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752055967;
+	bh=m0kYMK0yCrqfQlb4xvdKgoherQ8t98N5/gOCQakTYm8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SxP762nWXfF/1YFF0BUywJwgj0icoVdmnhopJoF6KsWbx+2jnKUxHs5ollJrZIVQy
+	 CWp2/4dsgOYmsaU4IvbHmkIakqfjDMpnnrFQnZS77FT9Ub1YJlVe2he22DeYUz0owL
+	 YcC+n01eE3VMNnp0ugeYhyuEw5031bwaX13EOUCo=
+Date: Wed, 9 Jul 2025 12:12:45 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Hans de Goede <hansg@kernel.org>
+Cc: Xu Yang <xu.yang_2@nxp.com>, ezequiel@vanguardiasur.com.ar,
+	mchehab@kernel.org, laurent.pinchart@ideasonboard.com,
+	hdegoede@redhat.com, mingo@kernel.org, tglx@linutronix.de,
+	andriy.shevchenko@linux.intel.com, viro@zeniv.linux.org.uk,
+	thomas.weissschuh@linutronix.de, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	imx@lists.linux.dev, jun.li@nxp.com
+Subject: Re: [PATCH v5 0/3] add dma noncoherent API
+Message-ID: <2025070932-stifle-squabble-6042@gregkh>
+References: <20250704095751.73765-1-xu.yang_2@nxp.com>
+ <78b86f34-6477-436a-b59c-b0ae5371f581@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <78b86f34-6477-436a-b59c-b0ae5371f581@kernel.org>
 
-Flip the driver from tristate to bool, so it can not be built modular
-any more.  Also drop the platform device boilerplate, simply call the
-probe function directly instead.
+On Mon, Jul 07, 2025 at 12:02:41PM +0200, Hans de Goede wrote:
+> Hi all,
+> 
+> On 4-Jul-25 11:57, Xu Yang wrote:
+> > On architectures where there is no coherent caching such as ARM it's
+> > proved that using dma_alloc_noncontiguous API and handling manually
+> > the cache flushing will significantly improve performance.
+> > 
+> > Refer to:
+> > commit 20e1dbf2bbe2 ("media: uvcvideo: Use dma_alloc_noncontiguous API")
+> > commit 68d0c3311ec1 ("media: stk1160: use dma_alloc_noncontiguous API")
+> > 
+> > However, it's obvious that there is significant code duplication between
+> > these two commits. Besides, a potential user USB Monitor may read outdated
+> > data before the driver do DMA sync for CPU which will make the data
+> > unreliable.
+> > 
+> > To reduce code duplication and avoid USB Monitor result unreliable, this
+> > series will introduce DMA noncoherent API to USB core. And the USB core
+> > layer will manage synchronization itself.
+> > 
+> > Then the last 2 patches have used the API.
+> > 
+> > I have tested uvcvideo driver. But I haven't tested stk1160 driver as I
+> > don't have such boards. @Ezequiel Garcia, @Dafna Hirschfeld do you have
+> > time to test it? Your support on this would be greatly appreciated.
+> 
+> It seems that patches 1 + 2 are ready for merging now
+> (for patch 3 we should probably wait for testing).
+> 
+> I think that it would be best for both patches 1 + 2 to
+> be merged through the USB tree. The changed code in the UVC
+> driver is not touched that often so I do not expect any
+> conflicts.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202507091432.rbbrjGoU-lkp@intel.com/
-Suggested-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- include/linux/efi.h                   |  2 ++
- drivers/firmware/efi/efi.c            |  2 +-
- drivers/firmware/efi/ovmf-debug-log.c | 43 ++++++---------------------
- drivers/firmware/efi/Kconfig          |  2 +-
- 4 files changed, 13 insertions(+), 36 deletions(-)
+Ok, thanks, I'll take them through the USB tree now.
 
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index a71830608422..f6da5c226fda 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1346,6 +1346,8 @@ bool efi_config_table_is_usable(const efi_guid_t *guid, unsigned long table)
- 
- umode_t efi_attr_is_visible(struct kobject *kobj, struct attribute *attr, int n);
- 
-+int ovmf_log_probe(unsigned long ovmf_debug_log_table);
-+
- /*
-  * efivar ops event type
-  */
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 3161f918ce53..1ce428e2ac8a 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -476,7 +476,7 @@ static int __init efisubsys_init(void)
- 
- 	if (IS_ENABLED(CONFIG_OVMF_DEBUG_LOG) &&
- 	    efi.ovmf_debug_log != EFI_INVALID_TABLE_ADDR)
--		platform_device_register_simple("ovmf_debug_log", 0, NULL, 0);
-+		ovmf_log_probe(efi.ovmf_debug_log);
- 
- 	return 0;
- 
-diff --git a/drivers/firmware/efi/ovmf-debug-log.c b/drivers/firmware/efi/ovmf-debug-log.c
-index d4fec178fa9f..b292f35109b6 100644
---- a/drivers/firmware/efi/ovmf-debug-log.c
-+++ b/drivers/firmware/efi/ovmf-debug-log.c
-@@ -64,38 +64,33 @@ static struct bin_attribute ovmf_log_bin_attr = {
- 	.read = ovmf_log_read,
- };
- 
--static int ovmf_log_probe(struct platform_device *dev)
-+__init int ovmf_log_probe(unsigned long ovmf_debug_log_table)
- {
- 	u64 size;
- 	int ret = -EINVAL;
- 
--	if (efi.ovmf_debug_log == EFI_INVALID_TABLE_ADDR) {
--		dev_err(&dev->dev, "OVMF debug log: not available\n");
--		return -EINVAL;
--	}
--
- 	/* map + verify header */
--	hdr = memremap(efi.ovmf_debug_log, sizeof(*hdr), MEMREMAP_WB);
-+	hdr = memremap(ovmf_debug_log_table, sizeof(*hdr), MEMREMAP_WB);
- 	if (!hdr) {
--		dev_err(&dev->dev, "OVMF debug log: header map failed\n");
-+		printk(KERN_ERR "OVMF debug log: header map failed\n");
- 		return -EINVAL;
- 	}
- 
- 	if (hdr->magic1 != OVMF_DEBUG_LOG_MAGIC1 ||
- 	    hdr->magic2 != OVMF_DEBUG_LOG_MAGIC2) {
--		dev_err(&dev->dev, "OVMF debug log: magic mismatch\n");
-+		printk(KERN_ERR "OVMF debug log: magic mismatch\n");
- 		goto err_unmap;
- 	}
- 
- 	size = hdr->hdr_size + hdr->log_size;
--	dev_info(&dev->dev, "firmware version: \"%s\"\n", hdr->fw_version);
--	dev_info(&dev->dev, "log buffer size: %lluk\n", size / 1024);
-+	printk(KERN_INFO "OVMF debug log: firmware version: \"%s\"\n", hdr->fw_version);
-+	printk(KERN_INFO "OVMF debug log: buffer size: %lluk\n", size / 1024);
- 
- 	/* map complete log buffer */
- 	memunmap(hdr);
--	hdr = memremap(efi.ovmf_debug_log, size, MEMREMAP_WB);
-+	hdr = memremap(ovmf_debug_log_table, size, MEMREMAP_WB);
- 	if (!hdr) {
--		dev_err(&dev->dev, "OVMF debug log: buffer map failed\n");
-+		printk(KERN_ERR "OVMF debug log: buffer map failed\n");
- 		return -EINVAL;
- 	}
- 	logbuf = (void *)hdr + hdr->hdr_size;
-@@ -104,7 +99,7 @@ static int ovmf_log_probe(struct platform_device *dev)
- 	ovmf_log_bin_attr.size = size;
- 	ret = sysfs_create_bin_file(efi_kobj, &ovmf_log_bin_attr);
- 	if (ret != 0) {
--		dev_err(&dev->dev, "OVMF debug log: sysfs register failed\n");
-+		printk(KERN_ERR "OVMF debug log: sysfs register failed\n");
- 		goto err_unmap;
- 	}
- 
-@@ -114,23 +109,3 @@ static int ovmf_log_probe(struct platform_device *dev)
- 	memunmap(hdr);
- 	return ret;
- }
--
--static void ovmf_log_remove(struct platform_device *dev)
--{
--	memunmap(hdr);
--}
--
--static struct platform_driver ovmf_log_driver = {
--	.probe = ovmf_log_probe,
--	.remove = ovmf_log_remove,
--	.driver = {
--		.name = "ovmf_debug_log",
--	},
--};
--
--module_platform_driver(ovmf_log_driver);
--
--MODULE_DESCRIPTION("OVMF debug log");
--MODULE_AUTHOR("Gerd Hoffmann <kraxel@redhat.com>");
--MODULE_LICENSE("GPL");
--MODULE_ALIAS("platform:ovmf_debug_log");
-diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
-index ac0a03ec3452..eb1bff6968a5 100644
---- a/drivers/firmware/efi/Kconfig
-+++ b/drivers/firmware/efi/Kconfig
-@@ -264,7 +264,7 @@ config EFI_COCO_SECRET
- 	  allows userspace programs to access the injected secrets.
- 
- config OVMF_DEBUG_LOG
--	tristate "Expose OVMF firmware debug log via sysfs"
-+	bool "Expose OVMF firmware debug log via sysfs"
- 	depends on EFI
- 	help
- 	  Recent OVMF versions (edk2-stable202508 + newer) can write
--- 
-2.50.0
-
+greg k-h
 
