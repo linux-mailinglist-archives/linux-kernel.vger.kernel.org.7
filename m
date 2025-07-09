@@ -1,124 +1,198 @@
-Return-Path: <linux-kernel+bounces-723482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A782AFE770
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B6EAFE772
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B73375A42D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:17:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACACC17284A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2E729C323;
-	Wed,  9 Jul 2025 11:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBEF2BE626;
+	Wed,  9 Jul 2025 11:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XC6lacEi"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="EQPCISu9"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E6D298CD2;
-	Wed,  9 Jul 2025 11:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC0928EC15;
+	Wed,  9 Jul 2025 11:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752059710; cv=none; b=KUFRtO+dL8Bo2YEA3dMUCgZLvIB3Dt0oE+7UFCymGUFOboos5AZ9nPtVw+iD15toiFjXilKgU2DK14y+Kz7z3503vBTJTbdesLzsbDqzqF6tFT38dX+G0vhEd0n6aBPChhtdfIFIDkyCbezSMubdIGyfHDrHr2qHL1IgSN4FiCg=
+	t=1752059823; cv=none; b=htG3ZgZn+lwSjQ5VkAP/FpQHtpPLx0wVlb9pe9qruCOI80oATPKfjf9bD8xuZrvT7+aXvdzYDbXFZ0qu6WhFLghhRwzlBjbGlI7MD1G+F8OO/RXcpBvLCztj7MnRLo1H33ECxxIuELpDnOaAUozSsCmN0uokbPHEFXGGetW47sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752059710; c=relaxed/simple;
-	bh=a8DMwP9O0e1/Ks1uaUvyjR9ZwVN8Yzfcz4uS0h2kHS0=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gyAjXx0YO1/46B0U2HSYX29VXZilrL7RmvdM3sjj+5GIxXy0ioedioQCZtKIUGzA9Pr3+BveUxC0UetmV3iKgBhi/eqVfZxfHArhtSD3ZIjCG1L5YMBmlCFsz/4fmudgOSSNWUU3bf9zIa0yQyUPlSni3uzX5RErq3cycnDqagg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XC6lacEi; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553e5df44f8so4754343e87.3;
-        Wed, 09 Jul 2025 04:15:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752059706; x=1752664506; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZtDkh085fWauG5Pjux6pyT6Ge2pLuEpYKgqPvj2je3A=;
-        b=XC6lacEiZahMApqR04NRXQJdaadZaOGIhlrVeX17+4ZPyBFx5PN7uERLS+RCGDHCFZ
-         glHpm4fst90HrtRDeNuJF+d8TvlqOgv17eOpbu1+Psl60LZ6gH2KuHUYYxVFOhq78855
-         Gn5w8pBuriXmVA2sES2a8UE4fjsf93GSd72SKzW2IkDxD0QV2VeorM/ng5MSPMa8kXJ4
-         XgyCYmkMdL0DDz+L9eIh1lLQbLP59OaDf43eKA1vEsxJqBHDJq6dzZ93Hhy+o9aXE3jJ
-         G9pTcMBWeLHaIxJ4ogan2AFHA2XCNTf/uYZWEl7I5jmN3PaFO2fB7jmVxgAJKqPNBg1m
-         hWTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752059706; x=1752664506;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZtDkh085fWauG5Pjux6pyT6Ge2pLuEpYKgqPvj2je3A=;
-        b=EgequrUMYlG2UV0voCjlRAEmfFgOigYPiid3KD0WI1YJpaggyML48dbWjqmv5wcDGG
-         9mtUInXSb5eJx1wb9ERlMhzAdrljpeEzshV1YM8ID672Zg4EQjIBn5fOT8MHn3XpVVjt
-         96sLdf9w7G4ed1QVsHwMTidDDeKgX7y0u5OsCerGHTb9Y85DkN6N6h1NRWHXHuacDl3w
-         HNVIuweusAd2lC9kqiB3BJoidB3Tip3jFTY/idvenYJtK/cLW1xxJHGfcVH9KqdtM0rc
-         ZNdZ1qo0rgf8zD/XA/dhv5y7EpgQSh5MNJxhZLCTt/6ehZFJdkdskRcUt3iGGz8XmPlP
-         fF2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWGx9BZRngll9gtsCvqi4bYZeUt7dYOOQSJXvATjNQUUUhKTTqGD5dPAUP1pm+BbLQTxgs2VDzhANFcFRLsI4k=@vger.kernel.org, AJvYcCXPhsIzPUPimf4ovUCyLAKFk9jBEs7EzxGUSBM0Lz5iZxb/fl8LjO+FHD6WyNZAalbxjMkiNEsBmyyNyA8=@vger.kernel.org, AJvYcCXc7JdKJyoUGkLKL8VmkMOH/gqbnmQWmg6WNwJVbH1QH+vJG62Na9zpascvLayGkJvcnmRXm1Xw+v2B@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1O45bpNISX0mmfugbnmfZW8JdsTH6fjKxwlW4MUoySMgrgmQg
-	a2l/Rb/uPEajNoIFxOSfLbjwU1dVHisk/tFPdv5Q3j/uHAiFsInWIr/0
-X-Gm-Gg: ASbGnctRRTYfFIqbcCwzxie2PGpJcK0sR3UkARBSHQqT19YNK5S3L3co74Ht/IvCDCQ
-	XamQYl03LynIjB1Ri0Rxr1/rDW5lWSqCY6DqbGdk0TDtJ96YcTFyYNq1HjkvjKHjuulpCFvdxbl
-	3DX1yIlWrtlFjKHIPvBF9TEbvJztcf6DV6GxCGtr4ygDN5n0hJ1EQbUay6BwbtAQ21nrRH8RMDp
-	XvcsarzELE4oMFewdCy0dopubD3k0I1niJcjju5aTBec6k1+2tkwXp6KzL8BWWqu6Jkt+ciAJLF
-	gALPhaervVBaUlP1nyBLrFlv0IVeEW9l/RuIBiN+mPvFFgzRU/As9+q0CtdD10YmpQPFCOc0j6l
-	2MAqEOmywyUW/R56L
-X-Google-Smtp-Source: AGHT+IFDmGVILm6QvnmVsRRbSuqd61cRV/xvyf97TV77g1DEUM9cN9dTUuaPpm2HVcKr88VWPuNZAw==
-X-Received: by 2002:a05:6512:b8e:b0:553:2dce:3aab with SMTP id 2adb3069b0e04-558fa909857mr689591e87.40.1752059705735;
-        Wed, 09 Jul 2025 04:15:05 -0700 (PDT)
-Received: from pc636 (host-90-233-203-201.mobileonline.telia.com. [90.233.203.201])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-556383bb3fdsm1948129e87.44.2025.07.09.04.15.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 04:15:04 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 9 Jul 2025 13:15:03 +0200
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Uladzislau Rezki <urezki@gmail.com>, rust-for-linux@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: add mm folks as reviewers to rust alloc
-Message-ID: <aG5PN42vPXbeNyn1@pc636>
-References: <20250708183747.104286-1-lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1752059823; c=relaxed/simple;
+	bh=4kWrX6sfCJUuN2vXbr68Zhu993cH/l/81QTPNlOuOAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DIC+pddwuuFSQJ1jtwpBuYXaZnTVjTv+UoYgAr4o1DtiMG31s72W4Inj34mB82kGQoelHftv2eSfB9WwECXuUuTBY56rN/09qEwGJJpc+PdJl/8tY/YIZT1Us6upQ1zVlXb2MFcc3LobxFtollq9JaV2VKINpePgfH34ISNJwyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=EQPCISu9; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4A026103972A7;
+	Wed,  9 Jul 2025 13:16:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1752059818; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=ZlieK/cQd1tQM5wheLqNTa+x9MmB1DmBV4uYwDd6FPY=;
+	b=EQPCISu9IUIpn41IpH56igNNxb+zl7xu3O7CJcvRfljgmmuBw+zQp1ve/8sHhWLw2tC9aP
+	qRLIyULgMRqX8uUG4Vzi5bpQpuab/7cM87KkCck2PnSYJynqDrJSeZgD4fH/+vxzObIYZ/
+	9IA+6yabN2KYvRhdZmQOSKm3xbHTBHLrjNejYPkmTAjp4/bcGXZ7rbBQZCRpR9quD/SOC/
+	TMl1zqcsgmXbxA6Zj4FLTJtkEk5nnEHbGqMWXRjWLkLz7/1aqAXMIYxfDSzD2aUuJTqsGm
+	Rm79++WpyhFB+Gkt5+RlxDjhK1vkTdMOB/5iFvWI0lOm7Og7w7KlUBpX0mDzUQ==
+Date: Wed, 9 Jul 2025 13:16:51 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Richard Cochran
+ <richardcochran@gmail.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
+ <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>, Andrew Lunn
+ <andrew@lunn.ch>
+Subject: Re: [net-next v14 04/12] net: mtip: The L2 switch driver for imx287
+Message-ID: <20250709131651.391e11c5@wsk>
+In-Reply-To: <617d064e-99e4-491c-8fe7-d74d8174d9fb@redhat.com>
+References: <20250701114957.2492486-1-lukma@denx.de>
+	<20250701114957.2492486-5-lukma@denx.de>
+	<617d064e-99e4-491c-8fe7-d74d8174d9fb@redhat.com>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250708183747.104286-1-lorenzo.stoakes@oracle.com>
+Content-Type: multipart/signed; boundary="Sig_/mg/nfqRTFJ+kss8tYJWDWg=";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Jul 08, 2025 at 07:37:47PM +0100, Lorenzo Stoakes wrote:
-> The alloc implementation is a thin wrapper over slab/vmalloc, so to help
-> out on the mm side of things and to be cc'd on changes, add some mm people
-> as reviewers.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  MAINTAINERS | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 71599ab6bd56..54dd937160ac 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -21751,6 +21751,10 @@ K:	\b(?i:rust)\b
->  
->  RUST [ALLOC]
->  M:	Danilo Krummrich <dakr@kernel.org>
-> +R:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> +R:	Vlastimil Babka <vbabka@suse.cz>
-> +R:	Liam R. Howlett <Liam.Howlett@oracle.com>
-> +R:	Uladzislau Rezki <urezki@gmail.com>
->  L:	rust-for-linux@vger.kernel.org
->  S:	Maintained
->  T:	git https://github.com/Rust-for-Linux/linux.git alloc-next
-> -- 
-> 2.50.0
-> 
-Acked-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+--Sig_/mg/nfqRTFJ+kss8tYJWDWg=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Paolo,
+
+> On 7/1/25 1:49 PM, Lukasz Majewski wrote:
+> > Changes for v14:
+> > - Increase the maximal received frame size to 1536 (for VLAN)
+> > - Use spin_{un}lock_irq{save|restore} when altering dynamic table
+> > of the switch and mtip_adjust_link() as both cannot be done when
+> > switch IRQ is potentially enabled =20
+>=20
+> Why?
+>=20
+>  (the previous one alters entries in switching table
+> >   the latter one may reset the whole IP block) =20
+>=20
+> What really matters is the scope (process/atomic, bh, hardirq) of the
+> relevant callers (the functions that do acquire the given locks).
+>=20
+
+Maybe I will explain the problem here case (function) by case:
+- mtip_adjust_link()
+  This function is called when link change is detected (speed, duplex,
+  up/down link).
+
+  The problem here is that:
+	1. It is called for both MTIP ports (as both are managed by
+	this driver)
+
+	2. NXP's "legacy" driver advises reset of the whole IP block
+	when such change is detected.=20
+
+	Considering the above - interrupts shall be disabled as we may
+	end up in undefined state of the IP block - especially that
+	re-configuration of switch requires interrupts initialization.
+
+
+- mtip_atable_dynamicms_learn_migration() - update of the switching
+  table
+
+	Can be called from:
+	1. function triggered when timer fires (once per 100ms)
+
+	2. mtip_switch_rx() which is called from mtip_rx_napi() callback
+	  (which is protected by net core).
+
+	It looks like the _irqsave/_irqrestore is an overkill here.
+	Both above contexts seems to not require IRQs disabled. I can
+	confirm that use of plain spin_{un}lock() functions works.
+
+>=20
+> > +/* dynamicms MAC address table learn and migration */
+> > +static void
+> > +mtip_atable_dynamicms_learn_migration(struct switch_enet_private
+> > *fep,
+> > +				      int curr_time, unsigned char
+> > *mac,
+> > +				      u8 *rx_port)
+> > +{
+> > +	u8 port =3D MTIP_PORT_FORWARDING_INIT;
+> > +	struct mtip_port_info *port_info;
+> > +	u32 rx_mac_lo =3D 0, rx_mac_hi =3D 0;
+> > +	unsigned long flags;
+> > +	int index;
+> > +
+> > +	spin_lock_irqsave(&fep->learn_lock, flags); =20
+>=20
+> If the _irqsave() part is needed (and I don't see why??!) than all the
+> other `learn_lock` users should also use such variant, unless already
+> in hardirq scope.
+>=20
+> [...]
+> > +static void mtip_adjust_link(struct net_device *dev)
+> > +{
+> > +	struct mtip_ndev_priv *priv =3D netdev_priv(dev);
+> > +	struct switch_enet_private *fep =3D priv->fep;
+> > +	struct phy_device *phy_dev;
+> > +	int status_change =3D 0, idx;
+> > +	unsigned long flags;
+> > +
+> > +	spin_lock_irqsave(&fep->hw_lock, flags); =20
+>=20
+> Same here.
+
+Please see the explanation above.
+
+>=20
+> /P
+>=20
+
+
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH, Managing Director: Johanna Denk,
+Tabea Lutz HRB 165235 Munich, Office: Kirchenstr.5, D-82194
+Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/mg/nfqRTFJ+kss8tYJWDWg=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmhuT6MACgkQAR8vZIA0
+zr2sMQgAmeWdQ83p6ZlFKroGNRoittaX6hv52A6/sPC741/r5Bs6bSXR0SiYIWIQ
+oLqi0K6s1yin/VW7PCgSlxjez6pG1ZLVU0VbdU32bBZPO7cZN/gwP/9SkitR8gkB
+2LViAZYDJpPSl98Z0CL+YEgPeZ6t7si0/xJTGs0sogpDqKnCZXhebCGmWAxfKPV2
+jtf5EtJwnPezHuv1g5vLxpmZQku3LDXR6seg7M2pIOcMXWjMjulvSySvhWEjFsRx
+KHZf5seGJqEj5KXSx3LAOrzf8kGqUpXzXLzPJnnsbnLVFbRJftYLKiBPfWztFr7a
+1NJjD6ATeHM08A+mASs69xXk4XxveA==
+=fJbi
+-----END PGP SIGNATURE-----
+
+--Sig_/mg/nfqRTFJ+kss8tYJWDWg=--
 
