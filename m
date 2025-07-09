@@ -1,150 +1,144 @@
-Return-Path: <linux-kernel+bounces-722984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14AA3AFE160
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:34:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E2EEAFE164
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7337C561F4D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:34:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0427616B0D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2C72701DF;
-	Wed,  9 Jul 2025 07:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369AA270575;
+	Wed,  9 Jul 2025 07:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PKzHusUQ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yl+jodkn"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gWL0ZbRz"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A88B26A1A8;
-	Wed,  9 Jul 2025 07:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E874626E703;
+	Wed,  9 Jul 2025 07:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752046471; cv=none; b=T1/wlmEuogvB3wvjHqG+PMj1rqvgU/Cu/Y+u71biAvCCBr+E/eqv2iOZ7e40gZ3yXOdHK2UzgYPzDFxQvDhZut/ZjLrqJieMEhlBP0z8qj8uGI9f9eqJnjuvxRCPd6AUuHgRKo2l1sulFDOTUKYpOrfHvW3kYBZ4Eha9X5lNMbE=
+	t=1752046510; cv=none; b=iL2HHAVaonbnYya/DvPQw3z1g13v4WtTf3lP4+L+80aKhdVgMmB9JjoulnYP6GQauimtTo4rqEayc8u6+3SSnsa7p1pfpfZaCiw2JPvhyahiDFh+hcnqW/DnpnZ09O0vCV9DqDWvtBwsqzUEEvtmzvkakpknRG4i4TVfSoNK+4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752046471; c=relaxed/simple;
-	bh=9whL7fZ7QNpBHrXMf0gaj/yMX5MMOUjvUSZtUHBR0qE=;
+	s=arc-20240116; t=1752046510; c=relaxed/simple;
+	bh=apSbOoS9U6mfq0x0t2Vyc3+pyxqm4tbUjGVu9pXo85w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HVZ22uRolXi/T0wIDTX9l9b6I1vJZ8TBPFJYLjg1knmpWJy1h/vHfb1QX+G4zZeg76wXNGyRmBg5Ky2B3jLi0eogiS6HXQix98RctgefY+qPT0jf0LJ9fZ3guJV1XMCvnzvkMJaaBSM1MJ6AZhQRx0gJXPhot1Q9gewjyxqTLOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PKzHusUQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yl+jodkn; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 9 Jul 2025 09:34:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752046467;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6rJt4heSROgDS1eV9ocRaQHZQ3lJ1qX0A+5cng2rs84=;
-	b=PKzHusUQs+w0o4p0sZCP9FjgK6pS2tok18H/l9wBTus+Fnd2mt8mIxmot+O55FNVBY0l74
-	kKPUYZNYjrw4yYxpMExxG5gh3hWMKhBjOfDxeR55mTI5XnN2VO5dPHoHIf+menq6THLNua
-	4ZW4Ag/C7e5TYAEFHrHwm+NwKsEFgS1nr9J6i5u0x+p/AhaXLZHq8t+4xx5oht0FMmkI9X
-	YetbSJVb74Yl4W9Jv1SEoepeZD7p3OZm0Qvs3EMywvT3D9DSgGjkxtaFdGfCQf6sS6sAPP
-	vOv8o0ILi7wL1QghNp3NTFlbn/L+3JiMFRFEqxtZcmsIa11x1uERp4a4/6phHw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752046467;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6rJt4heSROgDS1eV9ocRaQHZQ3lJ1qX0A+5cng2rs84=;
-	b=yl+jodkn7KTLjpkGEy0Z/8kw3gAECyIK38lKFA1jDazOKrm6eOGWMbFhBFgaijK22nfLfD
-	twbjIvJAWKpLYQBw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, Shuah Khan <shuah@kernel.org>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org, 
-	Richard Cochran <richardcochran@gmail.com>, Christopher Hall <christopher.s.hall@intel.com>, 
-	Miroslav Lichvar <mlichvar@redhat.com>, Werner Abt <werner.abt@meinberg-usa.com>, 
-	David Woodhouse <dwmw2@infradead.org>, Kurt Kanzenbach <kurt@linutronix.de>, 
-	Nam Cao <namcao@linutronix.de>, Antoine Tenart <atenart@kernel.org>
-Subject: Re: [PATCH 06/14] vdso/gettimeofday: Return bool from
- clock_gettime() helpers
-Message-ID: <20250709092958-37148883-ed89-40fe-8cd5-ded5dd60957e@linutronix.de>
-References: <20250701-vdso-auxclock-v1-0-df7d9f87b9b8@linutronix.de>
- <20250701-vdso-auxclock-v1-6-df7d9f87b9b8@linutronix.de>
- <02bcd954-5323-4663-a766-f53c67c5a18f@samsung.com>
- <CGME20250708154921eucas1p1fd8fa4374610a991ca5c67bd612ca0c2@eucas1p1.samsung.com>
- <e8c6b9a7-eaa6-4947-98e1-9d6fecc958d4@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=onBXhk7bKetRntPKmXKE5KbVy4nWcHwGzxi5aCg5xBYhBBaDqLp7dD3mSa5VUlY8cTMBWnM4euXVLeevICwrbRETPsyf//qooaGf1d4FryFxkL0gPH84j6JuHQEwlKG0n6NI6FOgJwtbXZNoQQ26AX0qRar2Cwr9Ib7nVLmCqvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gWL0ZbRz; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ae3a4b3fa38so68648266b.1;
+        Wed, 09 Jul 2025 00:35:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752046507; x=1752651307; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9KDScy/49LwB4Dsg3PbSQr/zqgdUQnfyUC8yK70O68Y=;
+        b=gWL0ZbRzTf5pR7g5Hi05Z/vPHfCQmM0u15w6rDeEVRZPgea9hHhbeS5Rs02jgwntZS
+         RNdm6wTI7P/hw21RjRu6ctX/tFCiHXDvigCBoLmCJUpYQm1z2cBSVzmk4AF9PX86K919
+         JyEPkZ/IzHQ8mUizmG0lw93YSrXEJB2k9QVMxKl+BpAetFL8iChvQQq1FSI1YL//tcu5
+         i+1lcXSB440eFZT2SEcerBqhuCGZhXzKK473d4CtGVRQjbewyAB/h5fYMnIgbBvpVhMo
+         mgVfoFhcTRXu7WEsR3IzsLY16+W4T1dst446+GfLPRGXgETJI5XRiN0OoOayx2TKdO5g
+         49Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752046507; x=1752651307;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9KDScy/49LwB4Dsg3PbSQr/zqgdUQnfyUC8yK70O68Y=;
+        b=OxU7OQz89CpCh11USXKp0LH2v7Hm7BNwBbTj2Y3kMqnB+O4q0DMFgaZuAS36mN8osU
+         w3fwKEu2Bvv5tCrP4l7zdXYrFSeUgcFbdAmiYU8pytBkcpJ/fjfAZTbt5yL/pUX+dKDF
+         0iFxt5/0naP6vnjRTHg8qljA0DZbG5omjMxdsIIXrdT/BLPl4GFgs2xSNyhJCEKUCFSS
+         dxaPOO2bpCynxFgxtsweaLKUSl+NVXMEwW4iyk/YPgQ0jniokQ1P7Atzz3mygSzA7UO3
+         /rH5W+W6DDPl1v0SEKd9XtSAXPZrkBLFrKsaVPjm8ffmGy9kN+hA3tKZ1NWH/Vqv426t
+         SnEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVi+BXQwgSQGozQPaJlNYjT3BIDftAjgLPZFf6cW5z4eN8NmwZrZCRhkWybSDijJxCR/brdhpho7A6s@vger.kernel.org, AJvYcCWJccXi7919jYalHjAFiKFcM3H1sA2M56cXe8lzy1GW85y1XEyewsmII1CrivxLOdqa4qUduU7+@vger.kernel.org, AJvYcCXWc9hilS6vyIQHwO0rH+YVSW0YUXATOiWw0pfUX8PyUxCiR8DwPlJrtMXmC6VjVRRw+pZgTsgY8Vv4rxuy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5lTmhf4bFGFPOyxEKfSaEhi8HC6KWH3dy5iMjtilEpTkzEnzT
+	xoRVV0/7PZ5iz3FqUhhFgHw0xutyUXTzJMX7P81WtBtkOuRkF3lTVuJM
+X-Gm-Gg: ASbGncsKsE07DxoK4xJ3xTjiDI1k+Y8OzPkpf4O11RhQOO4CvewQGEPKuA9zEBEVlqq
+	quJs6NKSmORihTz43TJ2BfH0vWlh+DNLWLb78hgSu7dpjIzRRExHLXfHaNuCWKEDs0xQhGD9C9L
+	BZOSsUytEb/pfFtn3wHDoQN+o5adAROHPt/UYq345oJKPqSQGl8aNM8FcmmAIMCFrC859sm1DdQ
+	ty/LB054Em/aUtZ/oMgAccl5oDEbPHxfYPNa4kc+O9rsl+n/Ee8L8Qull7QRGtAVjNUl3BWrqup
+	jIZFBLQ8oX6hLFgY7+xEi5AZbcjTkOyBQBCLgeultI7urOO+z8/uj4o=
+X-Google-Smtp-Source: AGHT+IFK2ruiZ/YJPfCJE6QxsWuKBs9DtR+PyUvZgj9x+C9sJRGNUi0eRNGf4iftXnn2Vv94aD5JKA==
+X-Received: by 2002:a17:907:7b88:b0:ad8:9207:b436 with SMTP id a640c23a62f3a-ae6cf74d055mr48381066b.5.1752046506830;
+        Wed, 09 Jul 2025 00:35:06 -0700 (PDT)
+Received: from skbuf ([2a02:2f04:d00b:9d00:b62e:9c53:a189:bb64])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6ac5fd7sm1053891966b.103.2025.07.09.00.35.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 00:35:06 -0700 (PDT)
+Date: Wed, 9 Jul 2025 10:35:03 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Tristram.Ha@microchip.com
+Cc: Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Marek Vasut <marex@denx.de>, UNGLinuxDriver@microchip.com,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 7/7] net: dsa: microchip: Disable PTP
+ function of KSZ8463
+Message-ID: <20250709073503.kffxy4jlezoobqpf@skbuf>
+References: <20250709003234.50088-1-Tristram.Ha@microchip.com>
+ <20250709003234.50088-8-Tristram.Ha@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e8c6b9a7-eaa6-4947-98e1-9d6fecc958d4@samsung.com>
+In-Reply-To: <20250709003234.50088-8-Tristram.Ha@microchip.com>
 
-Hi Marek,
-
-On Tue, Jul 08, 2025 at 05:49:18PM +0200, Marek Szyprowski wrote:
-> On 08.07.2025 17:17, Marek Szyprowski wrote:
-> > On 01.07.2025 10:58, Thomas Weiﬂschuh wrote:
-> >> The internal helpers are effectively using boolean results,
-> >> while pretending to use error numbers.
-> >>
-> >> Switch the return type to bool for more clarity.
-> >>
-> >> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> >> ---
-> >> † lib/vdso/gettimeofday.c | 58 
-> >> +++++++++++++++++++++++++------------------------
-> >> † 1 file changed, 30 insertions(+), 28 deletions(-)
-> >
-> > This patch landed in today's linux-next as commit fcc8e46f768f 
-> > ("vdso/gettimeofday: Return bool from clock_gettime() helpers"). In my 
-> > tests I found that it causes serious problem with hwclock operation on 
-> > some of my ARM 32bit test boards. I observe that calling "hwclock -w 
-> > -f /dev/rtc0" never ends on those boards. Disabling vdso support (by 
-> > removing ARM architected timer) fixes this issue.
+On Tue, Jul 08, 2025 at 05:32:33PM -0700, Tristram.Ha@microchip.com wrote:
+> From: Tristram Ha <tristram.ha@microchip.com>
 > 
-> I spent some time analyzing the code refactored in this patch and it 
-> looks that the following change is missing:
-
-Thanks for the report and investigation!
-
-> diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
-> index c5266532a097..7e79b02839b0 100644
-> --- a/lib/vdso/gettimeofday.c
-> +++ b/lib/vdso/gettimeofday.c
-> @@ -344,7 +344,7 @@ __cvdso_gettimeofday_data(const struct 
-> vdso_time_data *vd,
->  ††††††† if (likely(tv != NULL)) {
->  ††††††††††††††† struct __kernel_timespec ts;
+> The PTP function of KSZ8463 is on by default.  However, its proprietary
+> way of storing timestamp directly in a reserved field inside the PTP
+> message header is not suitable for use with the current Linux PTP stack
+> implementation.  It is necessary to disable the PTP function to not
+> interfere the normal operation of the MAC.
 > 
-> -†††††††††††††† if (do_hres(vd, &vc[CS_HRES_COARSE], CLOCK_REALTIME, &ts))
-> +†††††††††††††† if (!do_hres(vd, &vc[CS_HRES_COARSE], CLOCK_REALTIME, &ts))
->  ††††††††††††††††††††††† return gettimeofday_fallback(tv, tz);
+> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+> ---
+>  drivers/net/dsa/microchip/ksz8.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 > 
->  ††††††††††††††† tv->tv_sec = ts.tv_sec;
+> diff --git a/drivers/net/dsa/microchip/ksz8.c b/drivers/net/dsa/microchip/ksz8.c
+> index ddbd05c44ce5..fd4a000487d6 100644
+> --- a/drivers/net/dsa/microchip/ksz8.c
+> +++ b/drivers/net/dsa/microchip/ksz8.c
+> @@ -1761,6 +1761,17 @@ void ksz8_config_cpu_port(struct dsa_switch *ds)
+>  					   reg16(dev, KSZ8463_REG_DSP_CTRL_6),
+>  					   COPPER_RECEIVE_ADJUSTMENT, 0);
+>  		}
+> +
+> +		/* Turn off PTP function as the switch's proprietary way of
+> +		 * handling timestamp is not supported in current Linux PTP
+> +		 * stack implementation.
+> +		 */
+> +		regmap_update_bits(ksz_regmap_16(dev),
+> +				   reg16(dev, KSZ8463_PTP_MSG_CONF1),
+> +				   PTP_ENABLE, 0);
+> +		regmap_update_bits(ksz_regmap_16(dev),
+> +				   reg16(dev, KSZ8463_PTP_CLK_CTRL),
+> +				   PTP_CLK_ENABLE, 0);
+>  	}
+>  }
+>  
+> -- 
+> 2.34.1
 > 
-> 
-> In my tests this fixed the hwclock issue on the mentioned boards.
 
-This fix looks correct to me.
-
-
-tglx:
-
-Are you going to fold the fix into the commit or do you want a proper patch?
-
-
-Marek:
-
-If a new patch is required, do you want to send it? You found and fixed the
-issue after all. If not, I'll take care of it.
-
-
-Thomas
+What prevents the user from later enabling this through
+ksz_set_hwtstamp_config(HWTSTAMP_TX_ONESTEP_P2P)?
 
