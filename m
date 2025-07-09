@@ -1,111 +1,114 @@
-Return-Path: <linux-kernel+bounces-722639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC0C0AFDD4A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:13:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81332AFDD4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECCB84E4A6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:12:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5698568044
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9AF1A3165;
-	Wed,  9 Jul 2025 02:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368A01A315C;
+	Wed,  9 Jul 2025 02:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LbWNujdX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="RZMF+Z3f"
+Received: from mail3-167.sinamail.sina.com.cn (mail3-167.sinamail.sina.com.cn [202.108.3.167])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33567149C41;
-	Wed,  9 Jul 2025 02:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7410F149C41
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 02:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.167
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752027177; cv=none; b=CaRRgvMRx5XEcJXoqo+GVc2cTIJXiM30SEGKE3WwHr5kIZ9VtYDbyhKQn57/vhR31BYrp8F1mBOAL1Ve3S7dMlmwrEe4plVQoWwqXVI0TWTcttYj9p8f0W/ywc0Cdj0r6T+4s4+NxuUlsSrn+5MljhG+yUnN7ZjINlJGS2sTkXQ=
+	t=1752027225; cv=none; b=DEypn5UYP+ebYM85GBfarC7odKxJt2xRzPMVvtSpL92sOgiT7yukGIpKk83WvIPUshn/9uyelFivk1VUFIubpPLj3TXU4rX3Vb39KE6gSPH3YCZWmy31nVdxmmCS2lB5JDJYDPIiLTniKIfQ5AYad62CL+j4WkZPk80wAU6Irao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752027177; c=relaxed/simple;
-	bh=+FIfxC/8IGst/T4gMAFlP74yh/DdL1C4DT5sZ1mSO9s=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=fxZTF8Ico9toHCC/TJZZktcUSPIlyPDlycwh0AbEKXHB/vNy58ShBEsrWtG0UxeM8I3uUFPNHsxK67va12WU0ANP+9fOjSuhPdZVisUpwGjozTFCqBgheDXLUgnPF6BmGAeRx4hWaEtglYQ3nO1jGGVM75NSroHHkZJYD6WUkK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LbWNujdX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56D36C4CEED;
-	Wed,  9 Jul 2025 02:12:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752027177;
-	bh=+FIfxC/8IGst/T4gMAFlP74yh/DdL1C4DT5sZ1mSO9s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LbWNujdXc5jYrJBRheZq1vULbJVIMIksrsZeTGL+zzJuRCJ0uOhVth7OuXcc+l03q
-	 xDoNZ6e6ev30CKidTV6QGtT5dOXcHmFzla1Mjfk17GJopHl7Lp8dK3Lr83rhrqiydB
-	 4/P6HpofUPI182G6mSUCQFX1gEyG9bpkmiJvgow/SsFvDMkzDfLTihkf6VmB8ayNR7
-	 3al17PI7nHZsGr2ZGIQs8lw9V8bXndkQJMHG+evJKn4XkULAx2eMA0kBfVItxXepn0
-	 O56S6MwDMuBIorSUqKn96ycL9LnmMuhCh+7YGgJmv2I9ms7O5dIeHSBlv/3cu2wCsL
-	 4IhftIN1jcX9g==
-Date: Wed, 9 Jul 2025 11:12:54 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Bhaskar Chowdhury <unixbhaskar@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools: bootconfig:  Regex brackets need escape
-Message-Id: <20250709111254.e85d0238a0e286dec33a3e46@kernel.org>
-In-Reply-To: <20250708092204.1558-1-unixbhaskar@gmail.com>
-References: <20250708092204.1558-1-unixbhaskar@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752027225; c=relaxed/simple;
+	bh=DAbAPJqTk4RLxhR5u/dfbhKYuppSUwvMFxKfYMlzCpU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=icL1H2fNSbzVOQ1C1KmUXsFQKK9CO7n/h2D8oL6SvEdvoFLSInNohsR24AioMvoBCbItuCYj47BkIimIxT+sqy2okUfre/szd506im7KCQGTt3hDpSD9k3QgIYn0nPEnZ6L99l70f79Em1PNGUD5R7Cov17uz7t62g+86GTz8HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=RZMF+Z3f; arc=none smtp.client-ip=202.108.3.167
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1752027220;
+	bh=f6Sw4qdPunDUVwAwItmHtx7NFCD0Zv9o7/bvQ+7zaxo=;
+	h=From:Subject:Date:Message-ID;
+	b=RZMF+Z3fXLpaj1ibnN9hIIQ8lpz5uV7WoY6zsypgOjTT0yH1Dw0EfCNbOknr4PBFq
+	 4kDFnOZViKzQsZ35gujL8NmN7I0by22vwiiZkGsVY5yZK22SUsjRs0miUBw0fe0pfD
+	 5JbQo639LjugB4vSZCqbIb1XkJWQBxBtCoLp4rCc=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.33) with ESMTP
+	id 686DD04800006183; Wed, 9 Jul 2025 10:13:30 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 4062766685210
+X-SMAIL-UIID: 469CE6DAAC734DBDB594369FB1033FDB-20250709-101330-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+3f89ec3d1d0842e95d50@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [usb?] WARNING in usbnet_status_start
+Date: Wed,  9 Jul 2025 10:13:17 +0800
+Message-ID: <20250709021318.3100-1-hdanton@sina.com>
+In-Reply-To: <686d5a9f.050a0220.1ffab7.0017.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Bhaskar,
-
-On Tue,  8 Jul 2025 14:46:08 +0530
-Bhaskar Chowdhury <unixbhaskar@gmail.com> wrote:
-
-> It was showing malformed syntax colors below those lines,escaping the posix
-> class brackets bring back the syntatic reference back.
+> Date: Tue, 08 Jul 2025 10:51:27 -0700
+> Hello,
 > 
-> Oh, malformed syntax colors means,(in a editor,in this case Vim, where syntax
-> highlight is on). In essence, it might complain while running the script.
-
-Hmm, that means your editor's parser's bug, right?
-
+> syzbot found the following issue on:
 > 
-> Hence, this trivialities.
-> 
-> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
-> ---
->  tools/bootconfig/test-bootconfig.sh | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/bootconfig/test-bootconfig.sh b/tools/bootconfig/test-bootconfig.sh
-> index a2c484c243f5..211409539737 100755
-> --- a/tools/bootconfig/test-bootconfig.sh
-> +++ b/tools/bootconfig/test-bootconfig.sh
-> @@ -167,8 +167,8 @@ echo > $INITRD
-> 
->  xpass $BOOTCONF -a $TEMPCONF $INITRD
->  $BOOTCONF $INITRD > $OUTFILE
-> -xfail grep -q val[[:space:]] $OUTFILE
-> -xpass grep -q val2[[:space:]] $OUTFILE
-> +xfail grep -q val\[\[:space:\]\] $OUTFILE
-> +xpass grep -q val2\[\[:space:\]\] $OUTFILE
+> HEAD commit:    d1b07cc0868f arm64: dts: s32g: Add USB device tree informa..
+> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1554d582580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=28729dff5d03ad1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3f89ec3d1d0842e95d50
+> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11680a8c580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14c9abd4580000
 
-Can you escape it by quotations? In that case, it is acceptable
-as a cleanup. e.g. 'val[[:space:]]'.
+#syz test
 
-Thank you,
-
-
-> 
->  echo "=== expected failure cases ==="
->  for i in samples/bad-* ; do
-> --
-> 2.49.0
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+--- x/drivers/net/usb/usbnet.c
++++ y/drivers/net/usb/usbnet.c
+@@ -231,6 +231,8 @@ static int init_status (struct usbnet *d
+ 	if (!dev->driver_info->status)
+ 		return 0;
+ 
++	if (!dev->status)
++		return -EINVAL;
+ 	pipe = usb_rcvintpipe (dev->udev,
+ 			dev->status->desc.bEndpointAddress
+ 				& USB_ENDPOINT_NUMBER_MASK);
+@@ -254,6 +256,8 @@ static int init_status (struct usbnet *d
+ 				"status ep%din, %d bytes period %d\n",
+ 				usb_pipeendpoint(pipe), maxp, period);
+ 		}
++	} else {
++		return -ENOMEM;
+ 	}
+ 	return 0;
+ }
+@@ -1812,7 +1816,7 @@ usbnet_probe (struct usb_interface *udev
+ 		if (status == 0 && !usb_check_bulk_endpoints(udev, ep_addrs))
+ 			status = -EINVAL;
+ 	}
+-	if (status >= 0 && dev->status)
++	if (status >= 0)
+ 		status = init_status (dev, udev);
+ 	if (status < 0)
+ 		goto out3;
+--
 
