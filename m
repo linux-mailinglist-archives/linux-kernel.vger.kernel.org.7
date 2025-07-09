@@ -1,109 +1,120 @@
-Return-Path: <linux-kernel+bounces-724648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58834AFF567
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:30:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84F84AFF569
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 522871C465F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:30:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83AF67A3222
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16D82609D9;
-	Wed,  9 Jul 2025 23:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3419253F3D;
+	Wed,  9 Jul 2025 23:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cirGtbSo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m9965+75"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472D733993;
-	Wed,  9 Jul 2025 23:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB902459FE;
+	Wed,  9 Jul 2025 23:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752103835; cv=none; b=Kt+NUV68O5iqWttNbeODPeb+KwwUEC3PlqsUkMlB01/aJDsRMM7LWCq2vXz0KmUOChb3skPDXyxIWv1yW2a4kvC+nmGZYUauG5eomdD0fcKIMoAPCLycQPIzuxq1yvQfPwO+YaW4omV+gpuQe+r7J/G5IfzakBiVyssTipgJOpk=
+	t=1752104018; cv=none; b=h75W9+nL7fdEl31DU9uHEM4rbe/0WKSmrnwM5fr51gbQOccuXZ38XRaeCrju+/oLk61KezVRA3vcMQPZylOGfcW44oDWpLHOHRYpYYMsYxvNsWw7h5dLE+36TRQtCu/yTxWiXn1Ed4kgBudrJysxtdoScKOGkxZAv+5+wsYZFYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752103835; c=relaxed/simple;
-	bh=XuaRcAgoN0AxdCzQdQl12wDD/O9qp7Ie+TcWhj5ipYw=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=ZUAcgAN2F/YvMRyMPtTxaM7g8DLTi9gj2IXtWTBT0DDq7VE8E3h4FXevGSwwhLaXCN5VllYW0F9/oEuEEENK/cUrYy1EA1J38h3Q3a1qvihU7lJnbvdjzHJ+eUpEx5LAUE5x93MRV9Lfb7mdXazJRLDIsjvJJ2yrp3piw7/cmSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cirGtbSo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9515BC4CEEF;
-	Wed,  9 Jul 2025 23:30:34 +0000 (UTC)
+	s=arc-20240116; t=1752104018; c=relaxed/simple;
+	bh=KN3ryJg70miFlqFy4in/+8Iwbx0iP26bdXxXVbvfJiA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cgcF70kYUx918Ul4oWwXyahRxv5Pk8uIrYjeWk7UMSQXS748lZViihXji2ZoUDS7osgQbE0U2AQEvGynfd8thN7E4jestEOSEYt2cSEUvF07A5sfGYW8f/UXy+UExU8ucAOAij8Ult2Mw7dDlxogGfBCs+rXDnxPO6EKYyrrJ8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m9965+75; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87C6CC4CEF5;
+	Wed,  9 Jul 2025 23:33:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752103834;
-	bh=XuaRcAgoN0AxdCzQdQl12wDD/O9qp7Ie+TcWhj5ipYw=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=cirGtbSoLuEJcfpwna9P4x6JMFaId24y2UJdczDxKpWwiCg9WqZ666J9+JNccM45J
-	 waVTWcURXNCjfngjTk4gERXXI/gNIRb9I/XblhDlq2fv1ZZIpe9/5cfXKX/L0RlGCy
-	 +wdRWgeFANN2xogqpl89vQFMkucl4aWeOSL9eObhap39QBpWUMbjlYWJeSsOxnM/yc
-	 qnyb/hE1YuFc/qQGeoB1GibvoGF+ZEiyWxbiwcuW65Hy6qCq6wCFOOEBzQzLMrY0uw
-	 KnVO3f9r2kd1EXumnByvoEdjXafq0VTJXKOPWAAi+5seFWbN+swkgmT9sW4y+/8/Br
-	 524ltuSgdFGtA==
-Date: Wed, 09 Jul 2025 18:30:33 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1752104015;
+	bh=KN3ryJg70miFlqFy4in/+8Iwbx0iP26bdXxXVbvfJiA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=m9965+75QTQOSB8vZmrlz0cbC//HVhXjXIlOCV2/k3QNLLKe7fTCl3Y6SR9Ir42A2
+	 cZI5xIztK4ejolTd0zN3ftwV6bU7LwlIzUb0qvzemQCFQkKcOXsjPMoxnZpk3b9bfA
+	 gOW2uFqNVzjPcvp5x4GEhNmnOia8LSn0Ii0PjXVe+U55ztdn0DSW0jGHD791QqJS24
+	 dVMOXrednkT4HOIfMl/kn99biebe88o6qkJJeytnUGmJgQtLXVXOsKaomuhZusMGv6
+	 uFjIW876en03Zh3KzBnkgGm6DfkQt3DrF5aF6L84n3FX9/xKNyD83lVN+VNFM4JB10
+	 pTPR11rAQ/lRA==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-558fa0b2c99so266820e87.2;
+        Wed, 09 Jul 2025 16:33:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVMGCpwodMEvSvM5Y0JJ8aypQmYmATRoaLlI1L7NxkHh+yplOJlwnK/1yeZxXftgym6P1G15830+f1KDpM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQYqPkUgAg4QNubYP3LUJ1UCP6U81/Jzy07eGDmyWiILv2g1vA
+	FwBrnsaQqhcEhRD3vLLah9gPcuCQmUrHve63IVeRea2UWsWbl7Enxww6xX/JtoU02K34WjTy1rI
+	3tzyWGMoGyNoJGIpo8cPetrwcDOKOoh4=
+X-Google-Smtp-Source: AGHT+IGHJkzs08j74d/j571QvtjzCViOCskOj13okKejdpeyF1bSvgeJBx7+yiT0JyYy7J7Rs2KQLYjnijAh2Kd0S2A=
+X-Received: by 2002:a05:6512:ba1:b0:553:ab9a:c94 with SMTP id
+ 2adb3069b0e04-558fa877660mr1419512e87.6.1752104013886; Wed, 09 Jul 2025
+ 16:33:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: vkoul@kernel.org, linux-phy@lists.infradead.org, conor+dt@kernel.org, 
- jyxiong@amazon.com, devicetree@vger.kernel.org, anishkmr@amazon.com, 
- kishon@kernel.org, linux-kernel@vger.kernel.org, miguel.lopes@synopsys.com, 
- krzk+dt@kernel.org
-To: Karthik Poduval <kpoduval@lab126.com>
-In-Reply-To: <20250709221724.1276428-2-kpoduval@lab126.com>
-References: <20250709221724.1276428-1-kpoduval@lab126.com>
- <20250709221724.1276428-2-kpoduval@lab126.com>
-Message-Id: <175210383317.4144520.12202639911629037597.robh@kernel.org>
-Subject: Re: [PATCH 2/2] phy: dw-dphy-rx: Add dt bindings for Synopsys MIPI
- D-PHY RX
+References: <20250709103541.7268-1-feng.tang@linux.alibaba.com>
+ <CAMj1kXEvxPjFsqoMzZnb2zxSf9uyLVzuzKEeKD4fLEux3NbUhw@mail.gmail.com> <aG5Lod-McOlBmt7_@U-2FWC9VHC-2323.local>
+In-Reply-To: <aG5Lod-McOlBmt7_@U-2FWC9VHC-2323.local>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 10 Jul 2025 09:33:19 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXEkzXsjm0dPhzxB+KdtzqADd4NmafKmw2rKw7mAPBrgdA@mail.gmail.com>
+X-Gm-Features: Ac12FXxBeMvD2NKHHndGU-JJq4Rqs2AwOFrTJ8lHL8syscDtxlFOmBHaX_PcbyI
+Message-ID: <CAMj1kXEkzXsjm0dPhzxB+KdtzqADd4NmafKmw2rKw7mAPBrgdA@mail.gmail.com>
+Subject: Re: [PATCH] efi: remove the rtc-wakeup capability from default value
+To: Feng Tang <feng.tang@linux.alibaba.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 9 Jul 2025 at 21:00, Feng Tang <feng.tang@linux.alibaba.com> wrote:
+>
+> On Wed, Jul 09, 2025 at 08:42:24PM +1000, Ard Biesheuvel wrote:
+> > On Wed, 9 Jul 2025 at 20:35, Feng Tang <feng.tang@linux.alibaba.com> wrote:
+> > >
+> > > The kernel selftest of rtc reported a error on an ARM server:
+> > >
+> > >         RUN           rtc.alarm_alm_set ...
+> > >         rtctest.c:262:alarm_alm_set:Alarm time now set to 17:31:36.
+> > >         rtctest.c:267:alarm_alm_set:Expected -1 (-1) != rc (-1)
+> > >         alarm_alm_set: Test terminated by assertion
+> > >                  FAIL  rtc.alarm_alm_set
+> > >         not ok 5 rtc.alarm_alm_set
+> > >
+> > > The root cause is, the unerlying EFI firmware doesn't support wakeup
+> > > service (get/set alarm), while it doesn't have the efi 'RT_PROP'
+> > > table either. The current code logic will claim efi supports these
+> > > runtime service capability by default, and let following 'RT_PROP'
+> > > table parsing to correct it, if that table exists.
+> > >
+> > > This issue was reproduced on ARM server from another verndor, and not
+> > > reproudce on one x86 server (Icelake). All these 3 platforms don't have
+> > > 'RT_PROP' tables, so they are all claimed to support alarm service,
+> > > but x86 server uses real CMOS RTC device instead rtc-efi device, and
+> > > passes the test.
+> > >
+> > > So remove the wakeup/alarm capability from default value, and setup
+> > > the capability bits according to the 'RT_PROP' table parsing.
+> > >
+> >
+> > What does this achieve? The test result is accurate, as the platform
+> > violates the spec by not implementing the RTC wakeup services, and not
+> > setting the RT_PROP table bits accordingly.
+> >
+> > What do we gain by pretending that the platform is not broken, and
+> > lying about it?
+>
+> I don't have much experience with EFI, so I might be totally wrong. I
+> don't think not providing the RT_PROP table is 'broken', that's why I
+> tried to borrow platforms from different vendors to do the check, which
+> all have no this table.
+>
+> For platform which have no 'RT_PROP' tables (seems to be not a rare case),
+> claiming them support all efi runtime service may be kind of risky.
+>
 
-On Wed, 09 Jul 2025 15:17:24 -0700, Karthik Poduval wrote:
-> Add DT Bindings for Synopsys D-PHY RX, presently tested on version 1.2
-> 
-> Signed-off-by: Karthik Poduval <kpoduval@lab126.com>
-> ---
->  .../bindings/phy/snps,dw-dphy-rx.yaml         | 44 +++++++++++++++++++
->  MAINTAINERS                                   |  7 +++
->  2 files changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/snps,dw-dphy-rx.yaml
-> 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/snps,dw-dphy-rx.yaml: ignoring, error in schema: properties: reg
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/snps,dw-dphy-rx.yaml: properties:reg: [{'minItems': 2}, {'maxItems': 2}] is not of type 'object', 'boolean'
-	from schema $id: http://json-schema.org/draft-07/schema#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/snps,dw-dphy-rx.yaml: properties:reg: [{'minItems': 2}, {'maxItems': 2}] is not of type 'object', 'boolean'
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/snps,dw-dphy-rx.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
- 	 $id: http://devicetree.org/schemas/phy/snps,mipi-dphy-rx.yaml
- 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/snps,dw-dphy-rx.yaml
-Documentation/devicetree/bindings/phy/snps,dw-dphy-rx.example.dtb: /example-0/dw-dphy@900000040: failed to match any schema with compatible: ['snps,dw-dphy-1p2']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250709221724.1276428-2-kpoduval@lab126.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+It is the other way around. The UEFI spec mandates that all runtime
+services are implemented, unless a RT_PROP table is provided.
 
