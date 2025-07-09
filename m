@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-722917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00F71AFE0A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:57:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E66D0AFE0A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D8FE3B7262
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:57:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D65211C271E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0AB26CE18;
-	Wed,  9 Jul 2025 06:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC7D26CE15;
+	Wed,  9 Jul 2025 06:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pUR2g5Ak"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bpIWlexs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1945326B750;
-	Wed,  9 Jul 2025 06:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99B378F36;
+	Wed,  9 Jul 2025 06:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752044253; cv=none; b=u8DARMv9e7BfAr4s6vPBPPnWoJOeFaKWE9eJ8IRMQ7sCmf00AXf92AgeB4h3We/2P1GuKBT8qjLhZVF29QrlsxpG8qI1fQ6ekNby5gdi/aL4RbM+BNzwn1RCfdwnXPxPTmIf5ULpR3Cy8DaDBp8sAIStLXXfqcSjydxpRU9C7LM=
+	t=1752044379; cv=none; b=XljwSP6bmFOu3c8Qfgk4VlcHga1bVAmUiireYZD+tb8lbbQscQP2B6HseglSGl9nkb1Hw+5cCFw9UToWmoukrmsn4Vfh7DuWf3GvgaXX7RQLd5wZOa6jRfWXJOzwgRWoZABGRFNSsF3rwhchF066JM9Mk0bfwGyXKXSvTwZ2+jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752044253; c=relaxed/simple;
-	bh=rtYRw+LTgfTwBVULhsU7xwpSnhKJzHyXcNVWLIZtrmU=;
+	s=arc-20240116; t=1752044379; c=relaxed/simple;
+	bh=YlqJmXdkohNFHXYMBpBaX+PVFLgGz8jmw+qFDTmc/nM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dwBb12OIP9llRwS3oI3mk41NtaY07TtBIM1B6ePY5Vaci3mQFplb37BrHEn/QMlRbfmD88S71krTQ8A8T7r1LCsZDdNP5fhy/thZNOQOa9lyXpXyTTZQ0Rfr/Zr1klJYAi2UbjfHJpdprEf3U+UVg6vrd2SnnorCt+TcYSOKYkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pUR2g5Ak; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A08D7C4CEF0;
-	Wed,  9 Jul 2025 06:57:27 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=r5ITyxSRUF5RsCFdHTWplxpcRf4xfqSzlKlIJz7baeApAq3dA7JpMj/Ncws83pfeCIis4TaS3qLPhr11dMCy0qNbnKKTAzJOKhlC8mT+88b+IowVwE34KHVdjr6rYeE1MtfghTo//QbzrWcwDSAaELLZKf3YFkNICN0EiWepW2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bpIWlexs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BB3EC4CEF0;
+	Wed,  9 Jul 2025 06:59:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752044252;
-	bh=rtYRw+LTgfTwBVULhsU7xwpSnhKJzHyXcNVWLIZtrmU=;
+	s=k20201202; t=1752044379;
+	bh=YlqJmXdkohNFHXYMBpBaX+PVFLgGz8jmw+qFDTmc/nM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pUR2g5AkzJwUSMAEYZF+t+qEIU17RWnTIFcNOnRVSaWdF4EaAsafrtQ36Vc2AV0bx
-	 TioOSo2xa/1NuJWIjoilvtYw4HDyIYr8F8CXrYVpMOQlgAWg6jMSA3UA/xL3pVwDK9
-	 VKGi882MfVzRCwVXWbqHFvqf2vWsMypk1nH3c7VqAk5uvN6SgckPu2DcRjzUl3RL1x
-	 FljHl9lz/RyWZcmP+XVbr4b6rc6PqzEf3cI5KkRQi3Yx8EZewsbXtRYtbz8ofv7OMD
-	 0CebwbpsFDSvx7zf+c4lSCcC71OxMgEmmTkP7UmDWtg/7U+lpb5AJHE3D0GtKTkJAS
-	 XZ6hf0x9SiJaA==
-Message-ID: <738c1951-afbc-4cda-a16e-54a5055ca7c8@kernel.org>
-Date: Wed, 9 Jul 2025 08:57:26 +0200
+	b=bpIWlexsjygi5fpwUefLkBJCyw8+pGqTQavsSu3PUnNkQ7DAAkww/DXagNBPRSvCX
+	 EmSylVEJpycqIGB34dJJGmpoU2deRhRAC/PmTVSgAt14BiZ0K88IfviaX0U0vOaEb3
+	 4hD9Fsuk7lTnZCjOgsmf4UgcZRRkZoDW5l7kO2Qyir1Afxjvp2Lb1D68hotDPW9181
+	 uFxlULKicrO+nlngPaQL1A8h0upF9Ndzwzbglv2zUzInxDfEOdX6Hrk/X6ZLieMrbl
+	 hPeSlF2Y0gU6l6jWySsmKr9Wq2/Dxh+8KpxwgZUhuX5HIb46bkdo0jJn4+W4IIT4P9
+	 SNQvHFzTB8Vjg==
+Message-ID: <fa1b8e02-deee-44e5-a6c6-52394fc071a4@kernel.org>
+Date: Wed, 9 Jul 2025 08:59:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,8 +80,7 @@ References: <20250703075632.20758-1-hailong.fan@mediatek.com>
  <20250703075632.20758-2-hailong.fan@mediatek.com>
  <defd70cb-4351-4b0b-b4d0-dd1ff831615c@kernel.org>
  <61784658-c71d-458b-8934-5f5db2330bc0@collabora.com>
- <8b8a58f0-9e18-47d6-8382-1d16d630ea15@kernel.org>
- <dff1a4d6d97d7d3d55c4bd409780d2857ae070ca.camel@mediatek.com>
+ <85ca4ceb29caec9acbe77a3d67e3bc57b0b0aeb5.camel@mediatek.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -127,54 +126,88 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <dff1a4d6d97d7d3d55c4bd409780d2857ae070ca.camel@mediatek.com>
+In-Reply-To: <85ca4ceb29caec9acbe77a3d67e3bc57b0b0aeb5.camel@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 09/07/2025 08:05, Hailong Fan (范海龙) wrote:
->>
->> OK, this is a valid argument, however we still try to unify the
->> inputs
->> so bindings can share such pieces. It is discouraged to have similar
->> devices with different bindings in only one place: clk26m -> clk27m
->> or
->> whatever other number.
->>
->> Common is also to name the clock input based on the purpose (like
->> bus, ref).
+On 09/07/2025 08:34, Hailong Fan (范海龙) wrote:
+> On Thu, 2025-07-03 at 11:05 +0200, AngeloGioacchino Del Regno wrote:
+>> External email : Please do not click links or open attachments until
+>> you have verified the sender or the content.
 >>
 >>
->> Best regards,
->> Krzysztof
-> 
-> On the MediaTek platform, the main SoC clock sources are typically 32K,
-> 13M, and 26M. This is why the terms clk32k, clk13m, and clk26m are
-> used.
-> Specifically, clk26m refers to the system’s 26 MHz clock source.
-> The clkxxx naming convention is intended to indicate that these are SoC
+>> Il 03/07/25 10:08, Krzysztof Kozlowski ha scritto:
+>>> On 03/07/2025 09:56, hailong.fan wrote:
+>>>> From: Hailong Fan <hailong.fan@mediatek.com>
+>>>>
+>>>> This patch adds mt8196 dsp document. The dsp is used for Sound
+>>>> Open
+>>>
+>>> Please do not use "This commit/patch/change", but imperative mood.
+>>> See
+>>> longer explanation here:
+>>>
+> https://urldefense.com/v3/__https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst*L95__;Iw!!CTRNKA9wMg0ARbw!g39q48fUCsDJ5PETUtQ0PK0Bkwf0Ce1F_ZzJiEiWMzuybWQ0dSPzblvLlJ-4saWTSoJWuS5imsXbpdgLBvUy4wxw9C5w7B4m$
+>>>
 
-But it should nnot.
+Fix your email client not to produce such junk like above ^.
 
-> clock sources, while also distinguishing between different clock
-> frequencies.
+>>>> Firmware driver node. It includes registers,  clocks, memory
+>>>> regions,
+>>>> and mailbox for dsp.
+>>>>
+>>>> Signed-off-by: Hailong Fan <hailong.fan@mediatek.com>
+>>>> ---
+>>>>   .../bindings/sound/mediatek,mt8196-dsp.yaml   | 95
+>>>> +++++++++++++++++++
+>>>>   1 file changed, 95 insertions(+)
+>>>>   create mode 100644
+>>>> Documentation/devicetree/bindings/sound/mediatek,mt8196-dsp.yaml
+>>>>
+>>>> diff --git
+>>>> a/Documentation/devicetree/bindings/sound/mediatek,mt8196-
+>>>> dsp.yaml
+>>>> b/Documentation/devicetree/bindings/sound/mediatek,mt8196-
+>>>> dsp.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..68f594f476e8
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/sound/mediatek,mt8196-
+>>>> dsp.yaml
+>>
+>> Wrong folder; this should go to dsp/mediatek,mt8196-dsp.yaml ....
+>>
+>> ...but then I don't get why MT8196 wasn't simply added to
+>> mediatek,mt8186-dsp.yaml.
+>>
+> Yes, the first version was written this way, but the maintainer
+> suggested the following, so I'm not sure which approach is more
+> appropriate. Could you please provide a final recommendation?
 >  
-> Therefore, using other terms could potentially cause confusion.
+> v1 link: 
+> https://lore.kernel.org/all/a72988212d0d95bfe76eb9c53bbdb8c57c989377.camel@mediatek.com/
 
-No, you don't understand. This device receives some main PLL or ref
-clock. That's the only important information in the name, not its
-frequency..
+You linked to your reply. What does it prove? You are the maintainer and
+you gave this recommendation for your own patch?
 
 >  
-> For example, the ADSP clock sources are ADSPPLL(800MHz) and
-> clk26m(26MHz).
-> On other platforms, the definition of clk26m in the Device Tree Source
-> (DTS) is as follows:
+> comment:
+>>
+>>> ---
+>>>  .../bindings/dsp/mediatek,mt8196-dsp.yaml     | 96
+>>> +++++++++++++++++++
+>>
+>> Don't grow dsp directory. Either this is remoteproc or some sound
+>> component, so place it accordingly.
+> This is a reference to the approach used in a previous MediaTek
+> project:
+>  
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/mediatek/mt8188.dtsi#n328
-> The mt8196 platform uses the same design.
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/dsp
+> Do we need to move all the files under the DSP directory to the sound
+> directory?
 
-So you add poor code, because previously Mediatek added more poor code?
-What sort of argument is that?
+No.
 
 
 Best regards,
