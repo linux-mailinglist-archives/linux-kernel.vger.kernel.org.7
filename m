@@ -1,169 +1,125 @@
-Return-Path: <linux-kernel+bounces-723511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 615E1AFE7C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:31:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02AFEAFE7D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34AC616C2EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:31:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28CE46E0690
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FC22D8371;
-	Wed,  9 Jul 2025 11:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0B62D6415;
+	Wed,  9 Jul 2025 11:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EN7jCNpm"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d4zvvMFw"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B335F2D77F9
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 11:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CEC2D6635
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 11:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752060687; cv=none; b=s1qO+8GBQnwqKUYKl8SAsdZkTU1p0KsPiDAMWEPJcCwk82IHfpvfumhu55ISgWvVDK8Ok3JI5uQjfo0GicGEr7E+FnZNCKnBtu8U7vX0wzc56Zy+Gnj7IJxf5q/9FcdZaDV56+mlSQQvXrKXhtn26swgzShVQCd85ycYDt7vgw0=
+	t=1752060692; cv=none; b=U/KLVRWWE+0xh4jpzrzodox1aSQ/z1Ky9O1aWcr05+0ALSE+4Sh4ruGHvpeo1Y5OaIAmKgZ5YxWetlAn6zgnItp0tgpYqypQxKhZGESQuM/Bn/o3iuRtz1gtEjLSviw9/0/0Q6QtLSApBbaI07wg/vnT06eZgm95JxwGXuWN7yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752060687; c=relaxed/simple;
-	bh=N8QY2YLbLqwZxs7VhmrGcUAii95hVfhe2zG9GwU9b2U=;
+	s=arc-20240116; t=1752060692; c=relaxed/simple;
+	bh=KC3Z6R9qM6d7cSIbmQ52PjX+ds9juhkme3cOPH/FE0Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CERMp6FWMeCvIhemHcedjOXPbnJdviSJ1oNcd7BEVETJFjiMK+cLW6bgTIBkAk/wh22RaC9DEkZfijq5km10fRFLlFPGDHtVrrmIuSqZEB6QwjoUpMwK88CdIurPptnokDXcjlo9t6oRU7CUaCmgcgoxhkhferMoosiVSUSuiP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EN7jCNpm; arc=none smtp.client-ip=209.85.128.182
+	 To:Cc:Content-Type; b=GZ/I4e7kB5UXbXwvNh0Z4Az7RYws83b72hgMzlQVFNT/9URndmytyjrMLpxVXReUB14hCbdLDO6HEaPfl8Ak64Q0D1COedWOCEZNnO1s1Ld3U+3fed/v+0wFCPlW6vAYydNvfCr1EyWRP9fUkdOnY2jnHRztMVoNfCovZIly49o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d4zvvMFw; arc=none smtp.client-ip=209.85.219.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-712be7e034cso47999617b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 04:31:25 -0700 (PDT)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e8276224c65so4662394276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 04:31:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752060685; x=1752665485; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1752060690; x=1752665490; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CDvxz8anR+BJ4sHLfVXzhIbmkKQRFf6UUA1osiYchOg=;
-        b=EN7jCNpmkIWhW6NN7O6gwnZKkXTKemOAomy/L64yPJHPV3EnFX1yqI9KsR1XHxnawc
-         yra7yuFEYDnxRkZMcqzk8jnWcix/jf2MxDibQKNVy7CP1oR97d3Lmch6g/KpZQPLeL0M
-         2EGvqk0wHv64xqxcTHKQlRiZLt+0U7cI/e0JGTr9dkxBs6JwwYwregd0rWS+Go5QsVga
-         Gqa5fby62A1KAkPl2UhNE2wMJz2BQyOdHrdlxlwJK1jyyryjcylrKUSns//xIc8le4ET
-         6qYDzpo13i2DkeJJhp7/R2z9kU6vPNEu01PHCGdDbkFfIbVEtc2nySE/ri9k0udNFQSh
-         x5JA==
+        bh=H4qDIkCxD7aqIeJI126uepcAwUwJhAjQhx18iyCLj3I=;
+        b=d4zvvMFwQWq5AtwhSFVZlEp2VsvEL4yY6W4uvGlxWtC4VC5WEd916YWS+qtBYC4505
+         nJbWun+f95puMGOb8sVtFFdXWhQ+BzYzbxg16VSS8+ZaEfmNWCEwa9GGtOagKTz24KKC
+         HsraMdu6Mh4VNXMALvfa0I3NuThWMsEQjdK35pKEmf89rfWM6OphJFs6HVc8zyP7CS04
+         FNqUgHOQ6QJ0WG23eVrr6jvL6bYgiTea4NCdQtq6DfUng4s4AjKrhHtDWpjDz7pHZXSr
+         P5RiYoAYwNGHLyhWmNOaaNXTNBLu3pYnTovmikJVUehgGPUx8ld4nY8KZfYEnuKEaPgN
+         rBSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752060685; x=1752665485;
+        d=1e100.net; s=20230601; t=1752060690; x=1752665490;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CDvxz8anR+BJ4sHLfVXzhIbmkKQRFf6UUA1osiYchOg=;
-        b=lhlVOZNjfr0hxkDqoA82NHB6lx1jlzRJHZaZCaqA0tMwDloIjv3IkePS7dboDxjGnU
-         yFzx25kJzsi/ih1NlmbIPXFtBvp8ghITm1DCtE8zA/PB095u4f3QOwwopFu/zgvYPGrP
-         L2rRvCGK5gE/qryuCvwR4woiLM0PbDNDUfO1+AdZv7+B70+DeFZ5GJNIFI5Yunli1/E1
-         iOFoLVBjedUyAtq+z3gDuV+5W4SxHayGGZlR9KEUZp/toPXvQiup1lTvNLXV/R1qXl6e
-         gyj8y9DKxYIa/8lVvOUtyVQr26muz60uq9wCnRwfU3Rs0Y5N++Q7CO4nqnnW6qhMP742
-         PLWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbKUIHeLS9JavCzvBDwHIaoAteX/46pSHwuaPAf6XsX5IrfUseP+auKN/fceGWbLR1VRZHuriZVT828pM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwswUJxAgcs2XjGuDk49a1vDpKFSLyBrxyWA1d0t4DIp8JOnQNR
-	WnDqS81FkOpKVxqS2FA9vBkIDU6xYjMDM8PBXkXlAKUAYa8AlLwR7djKpKQNII8d2K1TCZ3c6/H
-	l1xBEVJocvCOx/yBZ49PSRKk0c05AvOFc6LwABhnKaw==
-X-Gm-Gg: ASbGncuKWPzhjRwA8fcVpGx4K6hIygKcmqfVjF/6yKjhgR27OE8XFxbLrjCH7+p2lVh
-	5SU62qcH/z4ShsH3Lm2wz6HlyDf9rM5cEV0Y5dQZ6mP2Z9mczff9d2F1pTuz6JUMo3fYw+si6pz
-	cU7tNiDm8yd5NuC0Duq/WY+zg6SaSiEului5oBNlxiuqAPejpLnwKRvNE=
-X-Google-Smtp-Source: AGHT+IGU+pji3u6/G/drrXD9f6hzZ57lAuY7UQylTxtmRHqJxsYBUBEDT5Y4GQThZIBDfvEDAxWsUuXsGoMFEvARnXI=
-X-Received: by 2002:a05:690c:6901:b0:70e:2c7f:2ed4 with SMTP id
- 00721157ae682-717b13c163fmr32649447b3.0.1752060684637; Wed, 09 Jul 2025
- 04:31:24 -0700 (PDT)
+        bh=H4qDIkCxD7aqIeJI126uepcAwUwJhAjQhx18iyCLj3I=;
+        b=czJsb+7uvPNjXupZ8Ve4wF4g0pqupyWj+sVFAc0MlDG5dWv+xodzNjPE845CBtM86s
+         TTl/nAWtVFsv/JHmg5q1kR3LscMkzkNyz1w3kyEvvXrpnN75A+fiuVQv7uTb6We/wWqx
+         s3BgfTLDYhvrTxDllKSfuKURQNQgrRV3IJ4IYrAn2Jv8pe7hQV79aME3mxl/t/RpBUmH
+         jlVN/M2/zMVnYrkqHkzLTsERKLKrNhmxLQVMMQIJU24IqRpLR3NzCWx1RnHuqwnPiNjx
+         mwqmIM8PoACzTwFe2UDjSy0/bXyFDjz0ivSItufQG0FZDEdmTt9eV27zvN36Nr5JF/61
+         jfWg==
+X-Forwarded-Encrypted: i=1; AJvYcCXTpk56aY/sLNACLe59ApZQJz+tb3RtDkJbt9lzAHihSDEnt5TNDKLQIPm4HSl9ve3ibWz9G3KnarvYGBU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzB4WkZ7JXueYbi0lLbjNhhfkYVe4JvsqrNLxZbQG/urVDFTn35
+	lVMGrKTMdo4Z8OOqX9ndTmLnIcIfvqGqzw+4oCxifl7Hs3X7zZ2igHiwxks4yg861uxAhIiDT6/
+	2tEJu+CuypCHmvA7643X5xZ0YXbV+4w8/S+ipQ4yFeQ==
+X-Gm-Gg: ASbGncs/87M+6EwisOUR/HuSHCUuX1RNyavx26/fac4X3kpy0wT5W0g38YbP/qb3dHF
+	dZ2GR0M0AjDHgEutQa0wDRqXUj6CngwCtLi0KpljBpLFUscCa+p72b/dUhGBSDEke2No5JM9/ib
+	arFy1oBe2UDuZ2LbnkK1kKeHz+Q5N0fYF1GcNbylqfhF/R
+X-Google-Smtp-Source: AGHT+IGEJ4mmuKS7rt1MFlUz2bfdy5YmSqNFhku/Q0Up5ig+Hhd1s6mTWPeVIQL/2Z6ktbTHNLkVtt8rYKM0Ty9sofo=
+X-Received: by 2002:a05:690c:34c1:b0:70f:83ef:ddf7 with SMTP id
+ 00721157ae682-717b1ba3c3emr33058457b3.13.1752060689721; Wed, 09 Jul 2025
+ 04:31:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <e71abd8d75dd842690e5a11e38037bcf5feac189.1751816732.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <e71abd8d75dd842690e5a11e38037bcf5feac189.1751816732.git.christophe.jaillet@wanadoo.fr>
+References: <20250707-sm7635-rpmhpd-v2-0-b4aa37acb065@fairphone.com>
+In-Reply-To: <20250707-sm7635-rpmhpd-v2-0-b4aa37acb065@fairphone.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 9 Jul 2025 13:30:48 +0200
-X-Gm-Features: Ac12FXwjFFHXtdaaUqyy9FfmUbPYblM-fvRv4hnhCWqr-KyPAgwmhH4mdvxEDsE
-Message-ID: <CAPDyKFr2VPbQRRx6hYp4e6by1O4LvpD=WwwP2gb2KCMTB8uQGQ@mail.gmail.com>
-Subject: Re: [PATCH] pmdomain: amlogic: Constify struct meson_secure_pwrc_domain_data
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
+Date: Wed, 9 Jul 2025 13:30:52 +0200
+X-Gm-Features: Ac12FXxRo-xD5eCPtXLrowuQGz-kjsQVt_Zu_iyEtrGYNOPit2r7unOQDND3zzc
+Message-ID: <CAPDyKFonLENQbafjo621hHPkoWjMNoQ5GRNeNndpezMNnM1=sA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] Add Milos RPMHPD power domains
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 6 Jul 2025 at 17:45, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+On Mon, 7 Jul 2025 at 12:18, Luca Weiss <luca.weiss@fairphone.com> wrote:
 >
-> 'struct meson_secure_pwrc_domain_data' are not modified in these drivers.
+> Add support for the rpmhpd power domains in the Milos SoC.
 >
-> Constifying these structures moves some data to a read-only section, so
-> increases overall security.
->
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->    text    data     bss     dec     hex filename
->    9248     408       0    9656    25b8 drivers/pmdomain/amlogic/meson-secure-pwrc.o
->
-> After:
-> =====
->    text    data     bss     dec     hex filename
->    9344     304       0    9648    25b0 drivers/pmdomain/amlogic/meson-secure-pwrc.o
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 
-Applied for next, thanks!
+The series applied for next (with a minor update to the commit message
+for patch1, according to suggestions from Krzysztof), thanks!
 
 Kind regards
 Uffe
 
 
+
 > ---
-> Compile tested only
+> Changes in v2:
+> - Rebrand SM7635 to Milos as requested: https://lore.kernel.org/linux-arm-msm/aGMI1Zv6D+K+vWZL@hu-bjorande-lv.qualcomm.com/
+> - Link to v1: https://lore.kernel.org/r/20250625-sm7635-rpmhpd-v1-0-92d3cb32dd7e@fairphone.com
+>
 > ---
->  drivers/pmdomain/amlogic/meson-secure-pwrc.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+> Luca Weiss (2):
+>       dt-bindings: power: qcom,rpmpd: document the Milos RPMh Power Domains
+>       pmdomain: qcom: rpmhpd: Add Milos power domains
 >
-> diff --git a/drivers/pmdomain/amlogic/meson-secure-pwrc.c b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-> index ff76ea36835e..e8bda60078c4 100644
-> --- a/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-> +++ b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-> @@ -342,32 +342,32 @@ static int meson_secure_pwrc_probe(struct platform_device *pdev)
->         return of_genpd_add_provider_onecell(pdev->dev.of_node, &pwrc->xlate);
->  }
+>  .../devicetree/bindings/power/qcom,rpmpd.yaml         |  1 +
+>  drivers/pmdomain/qcom/rpmhpd.c                        | 19 +++++++++++++++++++
+>  2 files changed, 20 insertions(+)
+> ---
+> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+> change-id: 20250620-sm7635-rpmhpd-dcb5dc066ce2
 >
-> -static struct meson_secure_pwrc_domain_data meson_secure_a1_pwrc_data = {
-> +static const struct meson_secure_pwrc_domain_data meson_secure_a1_pwrc_data = {
->         .domains = a1_pwrc_domains,
->         .count = ARRAY_SIZE(a1_pwrc_domains),
->  };
->
-> -static struct meson_secure_pwrc_domain_data amlogic_secure_a4_pwrc_data = {
-> +static const struct meson_secure_pwrc_domain_data amlogic_secure_a4_pwrc_data = {
->         .domains = a4_pwrc_domains,
->         .count = ARRAY_SIZE(a4_pwrc_domains),
->  };
->
-> -static struct meson_secure_pwrc_domain_data amlogic_secure_a5_pwrc_data = {
-> +static const struct meson_secure_pwrc_domain_data amlogic_secure_a5_pwrc_data = {
->         .domains = a5_pwrc_domains,
->         .count = ARRAY_SIZE(a5_pwrc_domains),
->  };
->
-> -static struct meson_secure_pwrc_domain_data amlogic_secure_c3_pwrc_data = {
-> +static const struct meson_secure_pwrc_domain_data amlogic_secure_c3_pwrc_data = {
->         .domains = c3_pwrc_domains,
->         .count = ARRAY_SIZE(c3_pwrc_domains),
->  };
->
-> -static struct meson_secure_pwrc_domain_data meson_secure_s4_pwrc_data = {
-> +static const struct meson_secure_pwrc_domain_data meson_secure_s4_pwrc_data = {
->         .domains = s4_pwrc_domains,
->         .count = ARRAY_SIZE(s4_pwrc_domains),
->  };
->
-> -static struct meson_secure_pwrc_domain_data amlogic_secure_t7_pwrc_data = {
-> +static const struct meson_secure_pwrc_domain_data amlogic_secure_t7_pwrc_data = {
->         .domains = t7_pwrc_domains,
->         .count = ARRAY_SIZE(t7_pwrc_domains),
->  };
+> Best regards,
 > --
-> 2.50.0
+> Luca Weiss <luca.weiss@fairphone.com>
 >
 
