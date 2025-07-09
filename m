@@ -1,132 +1,130 @@
-Return-Path: <linux-kernel+bounces-724419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1333AFF28D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:06:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9506EAFF29C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B8CB5C034B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:06:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AB3C3A8560
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931F7242D7B;
-	Wed,  9 Jul 2025 20:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B051A2459FE;
+	Wed,  9 Jul 2025 20:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h+z0CUMq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p4WoHZa5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5114B25A2CC
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 20:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1842A24501B;
+	Wed,  9 Jul 2025 20:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752091240; cv=none; b=js3xcCahDpft5LCpdqmUVyBVcmGaOS38ZjUBXytIuK5RtCL9JL+NVQOFs/nxK4j5khp6BOuKHudGJWNx1VemXR9Lv8ninPK9sV1gDyN7nDyqZ29vFF0WuHbAoncUXVUTWLeOsKn3bagW5vDZ23a5nAUp9GkkouReo66c8sTzV1w=
+	t=1752091486; cv=none; b=VAR30ormGk568EaWGsRevHxEJCD7ONKj34W83fUGOLQa+zZrMYf1sdjoMy1eiahyV2V8vlAynsJ6Em0vmvaHXrfcdA5bWKSUufuOq/WCpyxtP5UCUme+9/XRFKiPvRRaHF7NcHviLeJD7O9sLk1AiSnNvDi8gCXRHqj0cKTls0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752091240; c=relaxed/simple;
-	bh=XRgcaPUjA2xmhy8xzFx9Agw0cbTX49MkDneqWPcRbns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eDIBUyltkZer5yVc19HjZMxZeXsMw/T3xRU0ZJrcmYpzIrn47jRns9jqxfqXlM6twavfY0OAyzxUkMnaa6AsRVZI1egNDVU4376Fkv517Y4TKWw0HWXUKNa9pZKc+fPUYOOatdrg4Vu9FMHXQoOjSh8MepgGgWklWiR8sIEaK1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h+z0CUMq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752091237;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KEO+y01DHcpAzZ1glkzdPAC2WZqiXMak0HQsMG2O0i0=;
-	b=h+z0CUMqZkwLeJgmke2d2RmrjTr9TRaK65meoTE3H5CvCs1yBbxT5+ELCFjw77YRr3e5x3
-	EZbvaN+ZbwVsv+Z9RasVXykUAPDzzrRYqdd7UzfL6vGx0FJyavcMWFac6+URQ85WIp/Ni8
-	MCBoRjgy6bWqBGC1bFI0Z62ZPXhfnY4=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-573-lWP3931EM7O4_MeXEeIwYQ-1; Wed, 09 Jul 2025 16:00:33 -0400
-X-MC-Unique: lWP3931EM7O4_MeXEeIwYQ-1
-X-Mimecast-MFC-AGG-ID: lWP3931EM7O4_MeXEeIwYQ_1752091231
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4539b44e7b1so943075e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 13:00:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752091231; x=1752696031;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KEO+y01DHcpAzZ1glkzdPAC2WZqiXMak0HQsMG2O0i0=;
-        b=f7IEyRWkvyZaECF2pkXSZJvUKxKlcqq1262QX5yRttdK/mZ4JERbVvvSPvLctPzo8L
-         RdZVgJ07J5IZ6G/nIvSnK4hDaVA5bnHQhfVYWlyzEJ6wqda1Vd/oxJCLqVfSFaIzPZfc
-         3B8GHFdhIYKUwntfR7L7eu9LG9ck8mMNJEbRb9Xzg/Zb8te+kSLhT4SNhSIkbeZN32ZM
-         lK/Cxxwg2WuGztbyZhi6Qzdskx+iA2ddmmxmkVNwsMCWI0miTeYmcKYqnSM0zIVb0PRl
-         S4M9xvtl1nc0mfkGkLi9UHGNOR+HWNIr2rsVGAStCeMZLonHt2vwNkwGt2Ty4Wq1pvKS
-         TeHg==
-X-Gm-Message-State: AOJu0Yzhn3OD7UVrrHG/z1kZgo1CHfVbEVGv1j5MSRZ4lJ6z6U61iw+0
-	UIZ7oVb9Jg82zvSMlg8dU9QeWP02SFemsBiObJjJt8ZBbw1E7hhm/nhlkih/gxQUr6V8vP/wHFO
-	OoJcp0NOMNsbCpLRTblQ43O5/cxHBS96q3IL9yzBIKiOW8hbKMAnS8gboC8C2XXpmpQ==
-X-Gm-Gg: ASbGncsMzWoaKBhIHDpYjK9oSf5I3WUN6BdGcUPna2n3t1j88ckgbjkj0d0oa5hLQ28
-	CVCNPaFoGTpZ+JR7kc7L7DJaXu8uAtltyND40sd5CIYrdraslo0exagzAXvvgJkBTae9KLa2qtF
-	1n+OaTLYM7gfMcyKM69nsgFrkUPzdDHhXggO6cqFug4oOWMDLlqjoHxbqvMH+zM/BBMEHXY+PLU
-	k5ykTsELa7iIgdW4zkFfiNxgLyzOdcz73EJMEPZ4ce/j9KYw+aV1AVgJgm5k5S7vhGGH06VsMJQ
-	JHWWnBpvRYxea/g=
-X-Received: by 2002:a05:600c:35ca:b0:43e:bdf7:7975 with SMTP id 5b1f17b1804b1-454db8307c1mr8031615e9.32.1752091231101;
-        Wed, 09 Jul 2025 13:00:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG6EqizbffultQ5UtCg8NuiwKwoWE+lK/p3pWMASqoLLv09C1oxwgfQ7sLGmuyt4kakXife3g==
-X-Received: by 2002:a05:600c:35ca:b0:43e:bdf7:7975 with SMTP id 5b1f17b1804b1-454db8307c1mr8031375e9.32.1752091230750;
-        Wed, 09 Jul 2025 13:00:30 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:150d:fc00:de3:4725:47c6:6809])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b472446fddsm17151822f8f.66.2025.07.09.13.00.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 13:00:30 -0700 (PDT)
-Date: Wed, 9 Jul 2025 16:00:27 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vhost tree
-Message-ID: <20250709155616-mutt-send-email-mst@kernel.org>
-References: <20250709221905.61e77ab8@canb.auug.org.au>
+	s=arc-20240116; t=1752091486; c=relaxed/simple;
+	bh=0NJERX4km1ihHYR1feEIlLuY/ZLgfdKUXk/dQ3OI0g0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f4N5thYNxHdWNo3LSPGaClQ2fRy6IlWyEEIAo/SFVAIbbDWYDU7Be/RfNyAIFGxGTmgpa7ekLcXVxCWnTmMfJCFbW3L5KARIFaJNJzSTfZeMBtjgFquv6ctGllHiCp7KG7AHyIeYD3URFgBs7GQpGmA2HwTg1S0DIeccRxj11Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p4WoHZa5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 605B9C4CEEF;
+	Wed,  9 Jul 2025 20:04:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752091485;
+	bh=0NJERX4km1ihHYR1feEIlLuY/ZLgfdKUXk/dQ3OI0g0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=p4WoHZa5UC0MsN/SeCSzFr75TE/n9xB3aybvUA11e3nKSEnkXyFrtAvwbMWtpfuqu
+	 Uji53J/KSwGtVggCIzSiMK3G8Ex/PK/ZgMznebBmfIANaEksX2FBQuI/f3EzMgGI4a
+	 rHrXkSJnOPqSULrHMZIpUw1PGGuADw3yIzXnWUmJFhY+KmmD4vsjexykteRF2AYqMR
+	 e1jQLVf3kDYq0izhLrIjqa8B1+QZIwnE43wMMsJXOoXOY4hxgVLn4RHb07MjvvDwA7
+	 w1/ViaGCLxFdHuA6Ys8OYE9tyXilJdN8KIiT0/L/1EzRqF1aBZ6eMegOWQAA7umDEU
+	 1qBDa5Y+1DoMw==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH v5 0/4] KUnit tests for SHA-2 and Poly1305
+Date: Wed,  9 Jul 2025 13:01:08 -0700
+Message-ID: <20250709200112.258500-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250709221905.61e77ab8@canb.auug.org.au>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 09, 2025 at 10:19:05PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the vhost tree, today's linux-next build (x86_64
-> allnoconfig) failed like this:
-> 
-> In file included from /home/sfr/next/next/arch/x86/events/amd/ibs.c:12:
-> /home/sfr/next/next/include/linux/pci.h: In function 'pci_set_disconnect_work':
-> /home/sfr/next/next/include/linux/pci.h:2738:14: error: implicit declaration of function 'pci_device_is_present'; did you mean 'pci_dev_present'? [-Wimplicit-function-declaration]
->  2738 |         if (!pci_device_is_present(pdev))
->       |              ^~~~~~~~~~~~~~~~~~~~~
->       |              pci_dev_present
-> 
-> Caused by commit
-> 
->   b7468115b604 ("pci: report surprise removal event")
-> 
-> I have reverted that commit and the 4 following ones (just in case).
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+This series is also available at:
 
+    git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git libcrypto-kunit-v5
 
+This series adds the first KUnit tests for lib/crypto/, including tests
+for SHA-2 and Poly1305.
 
-Weird:
-$ git grep pci_device_is_present include/linux/pci.h 
-include/linux/pci.h:bool pci_device_is_present(struct pci_dev *pdev);
-include/linux/pci.h:    if (!pci_device_is_present(pdev))
+Changed in v5:
+- Moved hash_irq_test2_state from stack to heap
+  (fixes https://lore.kernel.org/r/202507081257.9sV2D0Ys-lkp@intel.com)
+- Replaced HRTIMER_MODE_REL with HRTIMER_MODE_REL_HARD to make hardirq
+  context be used on CONFIG_PREEMPT_RT (fixes a WARN_ON_ONCE).
+- Removed an unnecessary initialization in hash_irq_test2_func()
+- Added comments that explain kconfig option naming
+- Added link to Poly1305 paper
 
-and of course I did build it ... which commit should I test?
+Changed in v4:
+- Added Poly1305 tests.
+- Split the addition of hash-test-template.h and gen-hash-testvecs.py
+  into a separate patch.
+- Added two more test cases to hash-test-template.h
+  (test_hash_all_lens_up_to_4096 and test_hash_interrupt_context_2).
+- Simplified test_hmac to use a single consolidated test vector.
+- Lots of other cleanups.
+
+Changed in v3:
+- Split from SHA-512 and SHA-256 series, as per the request from Linus
+  that the tests be kept last on the branch.
+
+Eric Biggers (4):
+  lib/crypto: tests: Add hash-test-template.h and gen-hash-testvecs.py
+  lib/crypto: tests: Add KUnit tests for SHA-224 and SHA-256
+  lib/crypto: tests: Add KUnit tests for SHA-384 and SHA-512
+  lib/crypto: tests: Add KUnit tests for Poly1305
+
+ lib/crypto/Kconfig                    |   2 +
+ lib/crypto/Makefile                   |   2 +
+ lib/crypto/tests/Kconfig              |  50 ++
+ lib/crypto/tests/Makefile             |   5 +
+ lib/crypto/tests/hash-test-template.h | 683 ++++++++++++++++++++++++++
+ lib/crypto/tests/poly1305-testvecs.h  | 186 +++++++
+ lib/crypto/tests/poly1305_kunit.c     | 165 +++++++
+ lib/crypto/tests/sha224-testvecs.h    | 238 +++++++++
+ lib/crypto/tests/sha224_kunit.c       |  39 ++
+ lib/crypto/tests/sha256-testvecs.h    | 238 +++++++++
+ lib/crypto/tests/sha256_kunit.c       |  39 ++
+ lib/crypto/tests/sha384-testvecs.h    | 290 +++++++++++
+ lib/crypto/tests/sha384_kunit.c       |  39 ++
+ lib/crypto/tests/sha512-testvecs.h    | 342 +++++++++++++
+ lib/crypto/tests/sha512_kunit.c       |  39 ++
+ scripts/crypto/gen-hash-testvecs.py   | 147 ++++++
+ 16 files changed, 2504 insertions(+)
+ create mode 100644 lib/crypto/tests/Kconfig
+ create mode 100644 lib/crypto/tests/Makefile
+ create mode 100644 lib/crypto/tests/hash-test-template.h
+ create mode 100644 lib/crypto/tests/poly1305-testvecs.h
+ create mode 100644 lib/crypto/tests/poly1305_kunit.c
+ create mode 100644 lib/crypto/tests/sha224-testvecs.h
+ create mode 100644 lib/crypto/tests/sha224_kunit.c
+ create mode 100644 lib/crypto/tests/sha256-testvecs.h
+ create mode 100644 lib/crypto/tests/sha256_kunit.c
+ create mode 100644 lib/crypto/tests/sha384-testvecs.h
+ create mode 100644 lib/crypto/tests/sha384_kunit.c
+ create mode 100644 lib/crypto/tests/sha512-testvecs.h
+ create mode 100644 lib/crypto/tests/sha512_kunit.c
+ create mode 100755 scripts/crypto/gen-hash-testvecs.py
 
 -- 
-MST
+2.50.1
 
 
