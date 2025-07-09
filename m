@@ -1,123 +1,423 @@
-Return-Path: <linux-kernel+bounces-723890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23D18AFEC17
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:35:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EF30AFEC12
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6D884A4641
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:32:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3865188FCFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26FD32E6106;
-	Wed,  9 Jul 2025 14:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F36B2E54A6;
+	Wed,  9 Jul 2025 14:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AXXQtT1s"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3dJ8bDSj"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD382E54B5
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F44A2E5411
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752071525; cv=none; b=p2xFOVlpweEGf2HH1t+K59heHoQwgF76xuNWoYaAlInWbcpuMD7wIxrkyOOdshVioJQCzeJMnTYKDDJNimNFCcNppvnzJSPHzQD8wsjntIfHO3pNMVo+PgK/virA7l8JrIxgYzbZB1ZkP5wsQ9/c+VIYuQA6F4ApN82+oQC7rBE=
+	t=1752071577; cv=none; b=rA/b83VoW/IrnREmRN5ctcGMAz+0rimAHyc6zll7lsL4LY8IDbL1cIogFoQfj1mqA2VcOGOWjHLIfQTxHATS1DQptH/hVa2XJ5/Ylamh6gtOlSJjzCS7itb7oZXIUXKk6lQz2CGia9YFrKdOq1IOgV9DQAjj7FIMQmzVhb7PadE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752071525; c=relaxed/simple;
-	bh=JQFCOM0gh2eJ78Qz2VCNyFntdnwTzz+cRk1BMrePsOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N3qUDdFLli4OnyWTSbDHkpgbCQztS0WAOACiO7cLj5g2Rx4mVrKTWELwSYv9JYj9WPsgMmANXabUFOxflsNw15Zek8/mfUMlG9mPLAAnnMEWPiLj1V0E17hpgkZklbtT4BvQjTZFW8Xcxa+WfGk+N5eQl3yWCLIz6H8/WNIZDvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AXXQtT1s; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752071523;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NrwyNCr3bkuUWptfYFMDgj7WANqDCa1hc7XB3EIA9aU=;
-	b=AXXQtT1sRAOdhD/zdyRFRLznh9yvaQOCYXzux6Fe9/CogM0NeTis1g5QMvoVV1ONJq3g4K
-	Pe1H79ZgM0IrxmwYaA0+3gr1YkXh3wQysKxvZmWYYjrrjCe9P+qTYtJcJyi9sXQnb4Ua8D
-	y501jiuGx8UWXc+9jvLaYIVNttiI0b4=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-677-2TkPCWOePuyHdjrTfn3O6g-1; Wed,
- 09 Jul 2025 10:32:01 -0400
-X-MC-Unique: 2TkPCWOePuyHdjrTfn3O6g-1
-X-Mimecast-MFC-AGG-ID: 2TkPCWOePuyHdjrTfn3O6g_1752071520
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A868E1954237;
-	Wed,  9 Jul 2025 14:32:00 +0000 (UTC)
-Received: from sirius.home.kraxel.org (unknown [10.45.224.100])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 45B1319560A0;
-	Wed,  9 Jul 2025 14:32:00 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-	id E719618000B2; Wed, 09 Jul 2025 16:31:57 +0200 (CEST)
-Date: Wed, 9 Jul 2025 16:31:57 +0200
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-efi@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] efi: add ovmf debug log driver
-Message-ID: <4cix3k4h32wozt3nxic5un7jyzfjrmqmzbzmtr3ivw5b2bz363@mw6bke7w4oaq>
-References: <20250708125624.734132-1-kraxel@redhat.com>
- <6edfa099-ab0c-41f6-89ea-0fd67666dd05@kernel.org>
- <2mn65slwkwmjpeilma2isw7zgabdmda4rhpqjiutwdwqno2wrh@zghymlce2fiy>
- <8621135e-445a-42dd-89e0-bf8fc3e2b6b7@kernel.org>
+	s=arc-20240116; t=1752071577; c=relaxed/simple;
+	bh=ovqkVli+b/UQep+PHBkOGaOJ07QyXkcoNYybF+DsujA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=e5wf011dSD0H6K9LXj+2r9gkp+lELVQ3y476OPVd97I/FWdHCJvUhjDiQAbPJV3Gec20tTKwcyc2hg8OAOEDIVFkU/NU/DHWKZOWRZVN/DqxDx0OOdT5QA7RFOaxv/hSRCdaLmn7QpXoPsShQv5Ny+JdySnw9awb+V8AwS5rsNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3dJ8bDSj; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b31ca4b6a8eso3531402a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 07:32:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752071575; x=1752676375; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=C9/xhJmjy2rLIZxKKzW6ro2FkPNU0oPIzYtGesYW088=;
+        b=3dJ8bDSjSWITbw6nyp6LfD4sHXsqCnZZ5xZCqN1KQiLSVnYBpkKGENxln1QrIOjU+p
+         iaqju9ztqna7pCjMENE1F1yI/48C5r1G4LVeeLcUNXlpJ7agKsPS8I9An7qvWEcmpws1
+         kJSt4sQSEOExjM2KjhkKM+MzTlZztD1mz6+kOG3B9MtmVIEuStjUgcNPxHWQWSvOmGDC
+         I6Wo+k2aXZC0oymtxmHw9JoBtpKzK18QTH/co9u0pOfDBXvgoTGbU/UJ4ZjtPZH7Vvr1
+         lL4Jko7wPZsjc93uD3HpHXlmI9dkeodM+dItd3ypEEb3S6WcDunKf/Ks2LC7AehPeyf3
+         HYCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752071575; x=1752676375;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C9/xhJmjy2rLIZxKKzW6ro2FkPNU0oPIzYtGesYW088=;
+        b=GWquKE/0BmIDSB88EH7ac3BhnG/ktPX3fMSKpnfUxMUndWcLutpHV37MrM0+gUJVsp
+         qXvKdyAFknCgaMJXyjlSwd73qSlugzEMj+k7ii9dTgM88PlEvxzd5kuW7qxM+msLJ1au
+         bGetpzYculeqV2NjJw3hK8nHSPRToI4rKTMD3wrsfGwzAItn+H+967D+ChbRRevikvus
+         nuyin1yfG3I26wbuzxIBxU/I/KDunqRmJ5X61KUiSw6Hx+bmliKSj1ezWWRhG93+CPkG
+         PeNHqXtSCbvpei1ijiKfsdz1L6C2/zyqWNQQ2yL9L+H0jJ55CghKstrNGAKD+Es8XIOc
+         STSw==
+X-Gm-Message-State: AOJu0Yz1pjIxdJfqKfoZ3coRiOz+VpyG8fIXylog7IJiu0Z+HPMfoMED
+	I6osqaSym9BxGky75dtLLOapsBUv0MivWpd9gEvHZz+n6/FCbOyIG5FMd1PBVAZnH3j+RUsblh4
+	3skhT9A==
+X-Google-Smtp-Source: AGHT+IFKuOE5lgwdlGHNy1lCZ7TwQDn1+bdhSNR81ksxO40QnKs9T785BesYEgmtMl+0X/8qr3Jk0zEtI+w=
+X-Received: from pjtd3.prod.google.com ([2002:a17:90b:43:b0:312:18d4:6d5e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1652:b0:312:e744:5b76
+ with SMTP id 98e67ed59e1d1-31c3c30b03fmr191979a91.33.1752071574877; Wed, 09
+ Jul 2025 07:32:54 -0700 (PDT)
+Date: Wed, 9 Jul 2025 07:32:53 -0700
+In-Reply-To: <20250709033242.267892-16-Neeraj.Upadhyay@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8621135e-445a-42dd-89e0-bf8fc3e2b6b7@kernel.org>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Mime-Version: 1.0
+References: <20250709033242.267892-1-Neeraj.Upadhyay@amd.com> <20250709033242.267892-16-Neeraj.Upadhyay@amd.com>
+Message-ID: <aG59lcEc3ZBq8aHZ@google.com>
+Subject: Re: [RFC PATCH v8 15/35] x86/apic: Unionize apic regs for 32bit/64bit
+ access w/o type casting
+From: Sean Christopherson <seanjc@google.com>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: linux-kernel@vger.kernel.org, bp@alien8.de, tglx@linutronix.de, 
+	mingo@redhat.com, dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, 
+	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com, 
+	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org, 
+	hpa@zytor.com, peterz@infradead.org, pbonzini@redhat.com, kvm@vger.kernel.org, 
+	kirill.shutemov@linux.intel.com, huibo.wang@amd.com, naveen.rao@amd.com, 
+	kai.huang@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Jul 09, 2025 at 04:20:49PM +0200, Krzysztof Kozlowski wrote:
-> On 09/07/2025 16:17, Gerd Hoffmann wrote:
-> > On Wed, Jul 09, 2025 at 03:58:58PM +0200, Krzysztof Kozlowski wrote:
-> >> On 08/07/2025 14:56, Gerd Hoffmann wrote:
-> >>> +MODULE_DESCRIPTION("OVMF debug log");
-> >>> +MODULE_AUTHOR("Gerd Hoffmann <kraxel@redhat.com>");
-> >>> +MODULE_LICENSE("GPL");
-> >>> +MODULE_ALIAS("platform:ovmf_debug_log");
-> >>> diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
-> >>> index db8c5c03d3a2..ac0a03ec3452 100644
-> >>> --- a/drivers/firmware/efi/Kconfig
-> >>> +++ b/drivers/firmware/efi/Kconfig
-> >>> @@ -263,6 +263,14 @@ config EFI_COCO_SECRET
-> >>>  	  virt/coco/efi_secret module to access the secrets, which in turn
-> >>>  	  allows userspace programs to access the injected secrets.
-> >>>  
-> >>> +config OVMF_DEBUG_LOG
-> >>> +	tristate "Expose OVMF firmware debug log via sysfs"
-> >>> +	depends on EFI
-> >>> +	help
-> >>> +	  Recent OVMF versions (edk2-stable202508 + newer) can write
-> >>> +	  their debug log to a memory buffer.  This driver exposes the
-> >>> +	  log content via sysfs (/sys/firmware/efi/ovmf_debug_log).
-> >>
-> >> Where did you document new ABI?
-> > 
-> > The log buffer header struct is documented in the header file for the
-> > edk2 code:
-> > https://github.com/tianocore/edk2/blob/master/OvmfPkg/Include/Library/MemDebugLogLib.h
+On Wed, Jul 09, 2025, Neeraj Upadhyay wrote:
+> Define apic_page construct to unionize APIC register 32bit/64bit
+> accesses and use it in apic_{get|set}*() to avoid using type
+> casting.
 > 
-> You added a new sysfs interface. I meant documentation for this.
+> As Secure AVIC APIC driver requires accessing APIC page at byte
 
-The sysfs file contains the log and you can simply use
-'cat /sys/firmware/efi/ovmf_debug_log' to read it.
+No, it does not.  Literally all two callers of get_reg_bitmap(), the only user
+of ->bytes, immediately cast the return to a "void *".
 
-In case the firmware does not have a log buffer the
-sysfs file is not present.
+And you most definitely don't need a common, unionized struct to be able to reference
+a byte offset, just define a "struct secure_apic_page".
 
-take care,
-  Gerd
+> offsets (to get an APIC register's bitmap start address), support
+> byte access granularity in apic_page (in addition to 32-bit and
+> 64-bit accesses).
+> 
+> One caveat of this change is that the generated code is slighly
+> larger. Below is the code generation for apic_get_reg() using
+> gcc-14.2:
+> 
+> - Without change:
+> 
+> apic_get_reg:
+> 
+> 89 f6       mov    %esi,%esi
+> 8b 04 37    mov    (%rdi,%rsi,1),%eax
+> c3          ret
+> 
+> - With change:
+> 
+> apic_get_reg:
+> 
+> c1 ee 02    shr    $0x2,%esi
+> 8b 04 b7    mov    (%rdi,%rsi,4),%eax
+> c3          ret
+> 
+> lapic.o text size change is shown below:
+> 
+> Obj        Old-size      New-size
+> 
+> lapic.o    28800         28832
+> 
+> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> ---
+> Changes since v7:
+>  - Commit log update.
+> 
+>  arch/x86/include/asm/apic.h | 25 +++++++++++++++++++++----
+>  1 file changed, 21 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
+> index 07ba4935e873..b7cbe9ba363e 100644
+> --- a/arch/x86/include/asm/apic.h
+> +++ b/arch/x86/include/asm/apic.h
+> @@ -525,26 +525,43 @@ static inline int apic_find_highest_vector(void *bitmap)
+>  	return -1;
+>  }
+>  
+> +struct apic_page {
+> +	union {
+> +		u64     regs64[PAGE_SIZE / 8];
+> +		u32     regs[PAGE_SIZE / 4];
+> +		u8      bytes[PAGE_SIZE];
+> +	};
+> +} __aligned(PAGE_SIZE);
+> +
+>  static inline u32 apic_get_reg(void *regs, int reg)
+>  {
+> -	return *((u32 *) (regs + reg));
+> +	struct apic_page *ap = regs;
+> +
+> +	return ap->regs[reg / 4];
+>  }
 
+NAK.
+
+I really, *really* don't like this patch.  IMO, the casting code is more "obvious"
+and thus easier to follow.  And there is still casting going on, i.e. to a
+"struct apic_page".
+
+_If_ we want to go this route, then all of the open coded literals need to be
+replaced with sizeof().  But I'd still very strongly prefer we not do this in
+the first place.
+
+Jumping ahead a bit, I also recommend the secure AVIC stuff name its global
+varaible "secure_apic_page", because just "apic_page" could result in avoidable
+collisions.
+
+There are also a number of extraneous local variables in x2apic_savic.c, some of
+which are actively dangerous.  E.g. using a local "bitmap" in savic_eoi() makes
+it possible to reuse a pointer and access the wrong bitmap.
+
+E.g.
+
+---
+ arch/x86/include/asm/apic.h         | 40 ++++--------------
+ arch/x86/kernel/apic/x2apic_savic.c | 65 +++++++++++------------------
+ 2 files changed, 32 insertions(+), 73 deletions(-)
+
+diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
+index e8a32a3eea86..a26e66d66444 100644
+--- a/arch/x86/include/asm/apic.h
++++ b/arch/x86/include/asm/apic.h
+@@ -536,67 +536,41 @@ static inline int apic_find_highest_vector(void *bitmap)
+ 	return -1;
+ }
+ 
+-struct apic_page {
+-	union {
+-		u64     regs64[PAGE_SIZE / 8];
+-		u32     regs[PAGE_SIZE / 4];
+-		u8      bytes[PAGE_SIZE];
+-	};
+-} __aligned(PAGE_SIZE);
+-
+ static inline u32 apic_get_reg(void *regs, int reg)
+ {
+-	struct apic_page *ap = regs;
+-
+-	return ap->regs[reg / 4];
++	return *((u32 *) (regs + reg));
+ }
+ 
+ static inline void apic_set_reg(void *regs, int reg, u32 val)
+ {
+-	struct apic_page *ap = regs;
+-
+-	ap->regs[reg / 4] = val;
++	*((u32 *) (regs + reg)) = val;
+ }
+ 
+ static __always_inline u64 apic_get_reg64(void *regs, int reg)
+ {
+-	struct apic_page *ap = regs;
+-
+ 	BUILD_BUG_ON(reg != APIC_ICR);
+-
+-	return ap->regs64[reg / 8];
++	return *((u64 *) (regs + reg));
+ }
+ 
+ static __always_inline void apic_set_reg64(void *regs, int reg, u64 val)
+ {
+-	struct apic_page *ap = regs;
+-
+ 	BUILD_BUG_ON(reg != APIC_ICR);
+-	ap->regs64[reg / 8] = val;
+-}
+-
+-static inline unsigned int get_vec_bit(unsigned int vec)
+-{
+-	/*
+-	 * The registers are 32-bit wide and 16-byte aligned.
+-	 * Compensate for the resulting bit number spacing.
+-	 */
+-	return vec + 96 * (vec / 32);
++	*((u64 *) (regs + reg)) = val;
+ }
+ 
+ static inline void apic_clear_vector(int vec, void *bitmap)
+ {
+-	clear_bit(get_vec_bit(vec), bitmap);
++	clear_bit(APIC_VECTOR_TO_BIT_NUMBER(vec), bitmap + APIC_VECTOR_TO_REG_OFFSET(vec));
+ }
+ 
+ static inline void apic_set_vector(int vec, void *bitmap)
+ {
+-	set_bit(get_vec_bit(vec), bitmap);
++	set_bit(APIC_VECTOR_TO_BIT_NUMBER(vec), bitmap + APIC_VECTOR_TO_REG_OFFSET(vec));
+ }
+ 
+ static inline int apic_test_vector(int vec, void *bitmap)
+ {
+-	return test_bit(get_vec_bit(vec), bitmap);
++	return test_bit(APIC_VECTOR_TO_BIT_NUMBER(vec), bitmap + APIC_VECTOR_TO_REG_OFFSET(vec));
+ }
+ 
+ /*
+diff --git a/arch/x86/kernel/apic/x2apic_savic.c b/arch/x86/kernel/apic/x2apic_savic.c
+index 2849f2354bf9..99d5f6104bc2 100644
+--- a/arch/x86/kernel/apic/x2apic_savic.c
++++ b/arch/x86/kernel/apic/x2apic_savic.c
+@@ -17,7 +17,11 @@
+ 
+ #include "local.h"
+ 
+-static struct apic_page __percpu *apic_page __ro_after_init;
++struct secure_apic_page {
++	u8 *regs[PAGE_SIZE];
++} __aligned(PAGE_SIZE);
++
++static struct secure_apic_page __percpu *secure_apic_page __ro_after_init;
+ 
+ static inline void savic_wr_control_msr(u64 val)
+ {
+@@ -31,9 +35,7 @@ static int savic_acpi_madt_oem_check(char *oem_id, char *oem_table_id)
+ 
+ static inline void *get_reg_bitmap(unsigned int cpu, unsigned int offset)
+ {
+-	struct apic_page *ap = per_cpu_ptr(apic_page, cpu);
+-
+-	return &ap->bytes[offset];
++	return &per_cpu_ptr(secure_apic_page, cpu)->regs[offset];
+ }
+ 
+ static inline void update_vector(unsigned int cpu, unsigned int offset,
+@@ -51,7 +53,7 @@ static inline void update_vector(unsigned int cpu, unsigned int offset,
+ 
+ static u32 savic_read(u32 reg)
+ {
+-	struct apic_page *ap = this_cpu_ptr(apic_page);
++	void *ap = this_cpu_ptr(secure_apic_page);
+ 
+ 	/*
+ 	 * When Secure AVIC is enabled, rdmsr/wrmsr of APIC registers
+@@ -129,14 +131,10 @@ static inline void self_ipi_reg_write(unsigned int vector)
+ 
+ static void send_ipi_dest(unsigned int cpu, unsigned int vector, bool nmi)
+ {
+-	if (nmi) {
+-		struct apic_page *ap = per_cpu_ptr(apic_page, cpu);
+-
+-		apic_set_reg(ap, SAVIC_NMI_REQ, 1);
+-		return;
+-	}
+-
+-	update_vector(cpu, APIC_IRR, vector, true);
++	if (nmi)
++		apic_set_reg(per_cpu_ptr(secure_apic_page, cpu), SAVIC_NMI_REQ, 1);
++	else
++		update_vector(cpu, APIC_IRR, vector, true);
+ }
+ 
+ static void send_ipi_allbut(unsigned int vector, bool nmi)
+@@ -166,7 +164,6 @@ static inline void self_ipi(unsigned int vector, bool nmi)
+ 
+ static void savic_icr_write(u32 icr_low, u32 icr_high)
+ {
+-	struct apic_page *ap = this_cpu_ptr(apic_page);
+ 	unsigned int dsh, vector;
+ 	u64 icr_data;
+ 	bool nmi;
+@@ -193,12 +190,12 @@ static void savic_icr_write(u32 icr_low, u32 icr_high)
+ 	icr_data = ((u64)icr_high) << 32 | icr_low;
+ 	if (dsh != APIC_DEST_SELF)
+ 		savic_ghcb_msr_write(APIC_ICR, icr_data);
+-	apic_set_reg64(ap, APIC_ICR, icr_data);
++	apic_set_reg64(this_cpu_ptr(secure_apic_page), APIC_ICR, icr_data);
+ }
+ 
+ static void savic_write(u32 reg, u32 data)
+ {
+-	struct apic_page *ap = this_cpu_ptr(apic_page);
++	struct secure_apic_page *ap = this_cpu_ptr(secure_apic_page);
+ 
+ 	switch (reg) {
+ 	case APIC_LVTT:
+@@ -303,19 +300,15 @@ static void savic_update_vector(unsigned int cpu, unsigned int vector, bool set)
+ static void savic_eoi(void)
+ {
+ 	unsigned int cpu;
+-	void *bitmap;
+ 	int vec;
+ 
+ 	cpu = raw_smp_processor_id();
+-	bitmap = get_reg_bitmap(cpu, APIC_ISR);
+-	vec = apic_find_highest_vector(bitmap);
++	vec = apic_find_highest_vector(get_reg_bitmap(cpu, APIC_ISR));
+ 	if (WARN_ONCE(vec == -1, "EOI write while no active interrupt in APIC_ISR"))
+ 		return;
+ 
+-	bitmap = get_reg_bitmap(cpu, APIC_TMR);
+-
+ 	/* Is level-triggered interrupt? */
+-	if (apic_test_vector(vec, bitmap)) {
++	if (apic_test_vector(vec, get_reg_bitmap(cpu, APIC_TMR))) {
+ 		update_vector(cpu, APIC_ISR, vec, false);
+ 		/*
+ 		 * Propagate the EOI write to hv for level-triggered interrupts.
+@@ -333,18 +326,6 @@ static void savic_eoi(void)
+ 	}
+ }
+ 
+-static void init_apic_page(struct apic_page *ap)
+-{
+-	u32 apic_id;
+-
+-	/*
+-	 * Before Secure AVIC is enabled, APIC msr reads are intercepted.
+-	 * APIC_ID msr read returns the value from the Hypervisor.
+-	 */
+-	apic_id = native_apic_msr_read(APIC_ID);
+-	apic_set_reg(ap, APIC_ID, apic_id);
+-}
+-
+ static void savic_teardown(void)
+ {
+ 	/* Disable Secure AVIC */
+@@ -354,13 +335,17 @@ static void savic_teardown(void)
+ 
+ static void savic_setup(void)
+ {
+-	void *backing_page;
++	struct secure_apic_page *ap = this_cpu_ptr(secure_apic_page);
+ 	enum es_result res;
+ 	unsigned long gpa;
+ 
+-	backing_page = this_cpu_ptr(apic_page);
+-	init_apic_page(backing_page);
+-	gpa = __pa(backing_page);
++	/*
++	 * Before Secure AVIC is enabled, APIC msr reads are intercepted.
++	 * APIC_ID msr read returns the value from the Hypervisor.
++	 */
++	apic_set_reg(ap, APIC_ID, native_apic_msr_read(APIC_ID));
++
++	gpa = __pa(ap);
+ 
+ 	/*
+ 	 * The NPT entry for a vCPU's APIC backing page must always be
+@@ -389,8 +374,8 @@ static int savic_probe(void)
+ 		/* unreachable */
+ 	}
+ 
+-	apic_page = alloc_percpu(struct apic_page);
+-	if (!apic_page)
++	secure_apic_page = alloc_percpu(struct secure_apic_page);
++	if (!secure_apic_page)
+ 		snp_abort();
+ 
+ 	return 1;
+
+base-commit: 620bd94fb00da8482556057cea765656b8263b71
+--
 
