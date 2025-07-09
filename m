@@ -1,106 +1,149 @@
-Return-Path: <linux-kernel+bounces-723070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E26C4AFE25C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:20:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE320AFE265
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:22:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DEB517BAB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:20:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB3721C42751
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCEA23D2A8;
-	Wed,  9 Jul 2025 08:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198EA26B0A9;
+	Wed,  9 Jul 2025 08:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxmgDdfC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8476C223DD1;
-	Wed,  9 Jul 2025 08:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NRUohGkU"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152E023B617;
+	Wed,  9 Jul 2025 08:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752049195; cv=none; b=hFg7GiN5dGEksLyGFLMTZCcWozkcAMXryWNOIOU3h4jGEPqLHTJQ6+iqzQqxg+g0xYvTKF7NscVp2PbqIRp4GpRQBUzCViTmYpOoxu+7je8X1pUy6Sb9ShEq+d43sgsf9N68rtwOv17OTJUffwe7Wrtj67qrc4BXa1TcOvUOncw=
+	t=1752049312; cv=none; b=XZI0J9s53Qsr2GUx3Bn1muZheAjmVsk3+nmeWe5J7YKUAKzRYOrjIu0/PaPRF4d1yPPrNOOeB8y3B6Zc0YV6Q8c3ENzY5W0SxQMYg3LxDvEcadG5g+A2DCfEUWsuTNubrwf+Wvw6yckxDHFf/BiJWStLngWSCZq7+Vc/a9zxPcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752049195; c=relaxed/simple;
-	bh=BcvrMfYZtnEUkz7cacL+9zuwYHrjh3Y1ilcma9tcCvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tKYEIL+xWs0dwAagPoHAzt11fxZcQpASU2yFbIZQP944C6XC6P6PWIYxHhQvA5ujZHnBCTLz7+lqlcfAkwPUyrsYH4HfDhmbO2Zg6zs3E9U8HLs4ZMHjrGVlHHDn70LENMAslB8vwiO+Be5Mz3hFoze4s/EepuGJ1zkr2+ko+IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxmgDdfC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B85C8C4CEEF;
-	Wed,  9 Jul 2025 08:19:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752049195;
-	bh=BcvrMfYZtnEUkz7cacL+9zuwYHrjh3Y1ilcma9tcCvM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sxmgDdfCUypYhl/cQS2tebecCGpki5R3ZqQBeYcqmjmszibWnzLrpKrm9ApzCknTy
-	 JUi3nW22/gtDPaXwfz31J+y+pJKblHs/rLdAvuhYyaZAKH73Jup432d8LBA4PUghGF
-	 utx4zVdiqKwD5XIgcbhtln7I3QsLP0S1EyISrUv4Zn2wt+UM/VwdL+3hQ4D8dRDCGb
-	 zFtGrfyqbj76Cl7/cxdSuZaq5UJxMveUI7CBGXyYEf/ME1QUcs2jHvn+XYDizrdhao
-	 HkdTqNwOIpGM+HrSJItN7DRpHMA2zpRHqaueVIkqEXTjWw7lP9iHLzcLd8mRDhrUhR
-	 3SnDwr3IOymuQ==
-Date: Wed, 9 Jul 2025 10:19:52 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] dt-bindings: leds: issi,is31fl3236: add
- issi,22kHz-pwm property
-Message-ID: <20250709-beagle-of-algebraic-enterprise-e9bec1@krzk-bin>
-References: <20250708-leds-is31fl3236a-v3-0-d68979b042dd@thegoodpenguin.co.uk>
- <20250708-leds-is31fl3236a-v3-3-d68979b042dd@thegoodpenguin.co.uk>
+	s=arc-20240116; t=1752049312; c=relaxed/simple;
+	bh=fxdYfuHbUSY1YccG+Ky4lNz5iZeGY6rLjPTXrtRR0Mc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eXY3P9e5hvHgQvqByLMpOQto5knYf0AXXWspYygQ7jeGH39VfOqz0RLrbRwgBBoB1MzoVe09LQ3S3hcy+ErtxPEiQEQLzezW/5EVInHDqxP4ffW4tRnu7hKykSOkoc7uEIVxh95AgQELCkDSLy/yD8wRjeRM2rJCI6hTQwujgdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NRUohGkU; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=ph
+	GeD/kctk/OQIfTnacFO2E//+JNX8HZT1+i9hPFOPc=; b=NRUohGkUuVWxp2JoSJ
+	sQWbCxGp3H1YiuIt0ziJTmgyiRdfl1g97SoJQuWRnRaYsh7ed/A5UNV/cvV6/eAq
+	hMAQdAPe04Zb1i2VR16MjTGib4qYhPB8RBkYbGXnMevwPu3MQVlBp+jHGZHqRiw1
+	/oyuui57E7q5/xmhaOXwg6gBc=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDHukpWJm5oDyoSDg--.32703S2;
+	Wed, 09 Jul 2025 16:20:39 +0800 (CST)
+From: Feng Yang <yangfeng59949@163.com>
+To: martin.lau@linux.dev,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	mattbobrowski@google.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH bpf-next] bpf: Clean up individual BTF_ID code
+Date: Wed,  9 Jul 2025 16:20:38 +0800
+Message-Id: <20250709082038.103249-1-yangfeng59949@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250708-leds-is31fl3236a-v3-3-d68979b042dd@thegoodpenguin.co.uk>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDHukpWJm5oDyoSDg--.32703S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ZryDJr48AFykZryDCF47XFb_yoW5JFy5pa
+	yDZ3srCr40gw4YvF1UJr45uryaga10g3y3CF4DJw4fKr1UXw1kWF12gr13AF1aqryDKr9a
+	qw109r9xtw4xurDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jnYFAUUUUU=
+X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiYwiEeGhswHxPXwABs+
 
-On Tue, Jul 08, 2025 at 03:59:47PM +0100, Pawel Zalewski wrote:
-> Add an additional and optional control property for setting
-> the output PWM frequency to 22kHz. The default is 3kHz and
-> this option puts the operational frequency outside of the
-> audible range.
-> 
-> Signed-off-by: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
-> ---
->  Documentation/devicetree/bindings/leds/issi,is31fl3236.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/issi,is31fl3236.yaml b/Documentation/devicetree/bindings/leds/issi,is31fl3236.yaml
-> index d0f9add5af01ac06c4bb87b0cd0faec71d0ef37c..5bce0fc48f84c7ae804e6522e312c51ed2d77bc5 100644
-> --- a/Documentation/devicetree/bindings/leds/issi,is31fl3236.yaml
-> +++ b/Documentation/devicetree/bindings/leds/issi,is31fl3236.yaml
-> @@ -42,6 +42,12 @@ properties:
->    "#size-cells":
->      const: 0
->  
-> +  issi,22kHz-pwm:
-> +    type: boolean
-> +    description:
-> +      When present, the chip's PWM will operate at ~22kHz as opposed
-> +      to ~3kHz to move the operating frequency out of the audible range.
-> +
+From: Feng Yang <yangfeng@kylinos.cn>
 
-According to your driver this is not applicable to every device, so you
-need allOf:if:then: block at the end, before additionalProperties,
-restricting it per variant:
+Use BTF_ID_LIST_SINGLE(a, b, c) instead of
+BTF_ID_LIST(a)
+BTF_ID(b, c)
 
-.....
-  then:
-    properties:
-      issi,22kHz-pwm: false
+Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
+---
+ kernel/bpf/btf.c         | 3 +--
+ kernel/bpf/link_iter.c   | 3 +--
+ kernel/bpf/prog_iter.c   | 3 +--
+ kernel/trace/bpf_trace.c | 3 +--
+ 4 files changed, 4 insertions(+), 8 deletions(-)
 
-If that's not true, then commit msg should explain that - from the
-hardware perspective.
-
-Best regards,
-Krzysztof
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 2dd13eea7b0e..0aff814cb53a 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -6200,8 +6200,7 @@ int get_kern_ctx_btf_id(struct bpf_verifier_log *log, enum bpf_prog_type prog_ty
+ 	return kctx_type_id;
+ }
+ 
+-BTF_ID_LIST(bpf_ctx_convert_btf_id)
+-BTF_ID(struct, bpf_ctx_convert)
++BTF_ID_LIST_SINGLE(bpf_ctx_convert_btf_id, struct, bpf_ctx_convert)
+ 
+ static struct btf *btf_parse_base(struct btf_verifier_env *env, const char *name,
+ 				  void *data, unsigned int data_size)
+diff --git a/kernel/bpf/link_iter.c b/kernel/bpf/link_iter.c
+index fec8005a121c..8158e9c1af7b 100644
+--- a/kernel/bpf/link_iter.c
++++ b/kernel/bpf/link_iter.c
+@@ -78,8 +78,7 @@ static const struct seq_operations bpf_link_seq_ops = {
+ 	.show	= bpf_link_seq_show,
+ };
+ 
+-BTF_ID_LIST(btf_bpf_link_id)
+-BTF_ID(struct, bpf_link)
++BTF_ID_LIST_SINGLE(btf_bpf_link_id, struct, bpf_link)
+ 
+ static const struct bpf_iter_seq_info bpf_link_seq_info = {
+ 	.seq_ops		= &bpf_link_seq_ops,
+diff --git a/kernel/bpf/prog_iter.c b/kernel/bpf/prog_iter.c
+index 53a73c841c13..85d8fcb56fb7 100644
+--- a/kernel/bpf/prog_iter.c
++++ b/kernel/bpf/prog_iter.c
+@@ -78,8 +78,7 @@ static const struct seq_operations bpf_prog_seq_ops = {
+ 	.show	= bpf_prog_seq_show,
+ };
+ 
+-BTF_ID_LIST(btf_bpf_prog_id)
+-BTF_ID(struct, bpf_prog)
++BTF_ID_LIST_SINGLE(btf_bpf_prog_id, struct, bpf_prog)
+ 
+ static const struct bpf_iter_seq_info bpf_prog_seq_info = {
+ 	.seq_ops		= &bpf_prog_seq_ops,
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index e7f97a9a8bbd..c8162dc89dc3 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -781,8 +781,7 @@ BPF_CALL_1(bpf_task_pt_regs, struct task_struct *, task)
+ 	return (unsigned long) task_pt_regs(task);
+ }
+ 
+-BTF_ID_LIST(bpf_task_pt_regs_ids)
+-BTF_ID(struct, pt_regs)
++BTF_ID_LIST_SINGLE(bpf_task_pt_regs_ids, struct, pt_regs)
+ 
+ const struct bpf_func_proto bpf_task_pt_regs_proto = {
+ 	.func		= bpf_task_pt_regs,
+-- 
+2.43.0
 
 
