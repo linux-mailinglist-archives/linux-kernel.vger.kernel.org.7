@@ -1,98 +1,144 @@
-Return-Path: <linux-kernel+bounces-723839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82DCAFEB83
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:16:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5CE6AFEB90
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02060188D7F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:10:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A65F5C736D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649A02E7657;
-	Wed,  9 Jul 2025 14:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E852EA15B;
+	Wed,  9 Jul 2025 14:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PTxIKlRN"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U84/UUO+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4C42E7174
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A522E7BB8;
+	Wed,  9 Jul 2025 14:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752069985; cv=none; b=k68QHRzlzUWDtIOX+EGZIPfG0ntQOfh/uJFm8c8b1SuQLiBAse35Qymewp/h9c+lkcz4EYa+IkRfxxyWsnz7TwdN8cz+kfnEZdRYyQH0ssi21eJ3tp+QywA7AD+FIgdZ9H3OOQbdfMMbfEt4J+ncGo5UM96e/KrwXfdjl1+oB1U=
+	t=1752069997; cv=none; b=kVUuDcE+qWUA6NfCqehAIqBMoQBXi+NKw3FYxjT612yB1/zBDlYHvnOr3wZCGBTXrG8M6znwjAZ7X425lNS0qewH6P7xY3wjJM1EpSTwlpLoWQ0tKsx97CRpmDWKwGrmWal6ozznpX2GZE01MpBnCpq42JX1EBNNx6/oXmibZrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752069985; c=relaxed/simple;
-	bh=WDjc3gj4jQOgT0wQPLLNSrhraX36b/fAJ5t6OlsrilA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jr1hWVdxxc369sjzZ5awlRBRqWVSLD4Arc7J+HoRTy4rWRX4wemtAQ+Za8/CyTLZTzaJQ/uvap1AX6ajKGjNMHW3SvT/CEJ2+zxMhosRqaLyOWoH9K/vkhWuQgp0TJqAPZ7bq6IIY4ea1BO/p6DAlH71m2ErZqx1CeWeIRaJFhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PTxIKlRN; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-311ef4fb5fdso5677811a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 07:06:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752069984; x=1752674784; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rpVhcnqQ4QopgzrrBAwITtPwYaxzjuUgzAB3u2opJd4=;
-        b=PTxIKlRNhS77rr8ToV4HuRPyqWpMY/EmYGAPmXSorPzFKYUnwZsQvvhBCZgffqcokS
-         NFPRg/mupUHnQHeYk5CrsiqJnTDWFIe4fDuqteT3bW52osTMz+ofoL0+VTy52Gad1MME
-         ZrzM2zid9A+TBdu65grxfZOI09u+Pe3NB2uwvFJPhppjlhU1VNmyX7Ry/hSZqKL+CMnw
-         jC8jVly32lmzQpe3dhMrokfbymI16uQNV7d6kb1EHI4yCfEc4K7vxL9uRbn6c4Qy8OYQ
-         SPd0/yChiVrd3Gn/d2WcHeZYQKN4TYfrFl0IS+4quLhnddgq2/mWkmWuujFmxyqh1mPg
-         2h0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752069984; x=1752674784;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rpVhcnqQ4QopgzrrBAwITtPwYaxzjuUgzAB3u2opJd4=;
-        b=pkYGveNcbu5vg2RFhsWdQrYLEqqsDtU1I3XFQefuEGDCdF3tDx9Ef1X6lgiZxMBKq+
-         yBm7JsIzIManzuEKWL4Csf3Zvf6b2GIYXTHJwpDckzqq27GuBp+3Jdm3I8WhtQd67UL6
-         Ema41WeFgp1fFlExVuEbXL2iDZna/2/y7tw+sk0M22fzkt/w7jX2mGn+utmE25xe1VLq
-         B+YLR5jSCvvP1ZZI5398XCF6Tg3qws8U92Tly8MOWO6AhQDf2hsnfc/Z4P+Im4umvV/x
-         yynQdY8yb/fMtm8gqDtAuI45x+BHK1FqNaFRQ1EBAPXfZX4AC6nD8F3TmxcAefjka7Y3
-         yYqQ==
-X-Gm-Message-State: AOJu0YzfpUDDh2NGNy0Sgqz6zsFXgf7UjzJma8kH7b1EbKQTflPg2zlv
-	B9ye9UplEOSjxFkVABFbTNDnzM/hFsmGyNMcZ71KjgF6nmwjf8U+A6SAw4YBL+deAxOcrCn9x4Z
-	APwItVA==
-X-Google-Smtp-Source: AGHT+IGHAf/W0Pdlaq5GH+DDJpvg9O5Pkb7w1Gmd8Aste4OllMRWIMmZLxVBD8UYx6G+uWRoqyjy3+F9l2g=
-X-Received: from pjbnk16.prod.google.com ([2002:a17:90b:1950:b0:31c:2fe4:33bf])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a8c:b0:313:d6d9:8891
- with SMTP id 98e67ed59e1d1-31c2fccddadmr3702955a91.3.1752069983670; Wed, 09
- Jul 2025 07:06:23 -0700 (PDT)
-Date: Wed, 9 Jul 2025 07:06:22 -0700
-In-Reply-To: <20250709033242.267892-9-Neeraj.Upadhyay@amd.com>
+	s=arc-20240116; t=1752069997; c=relaxed/simple;
+	bh=zsceZ3e3Q3uizdRPkkkTw9psNWaSicRPXttwuALsa1A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RhuCNwTD8DdYDYsLnoxsly+SCFLjSblFocaw0WGPDNkuxeZczOuL23YjeNcXpLaQJn5pMPmGX1SlkyFGFIHITix7lIl0N7smU3wie9F4QuSmQ9ytkeOWd0P9rX8pag7BkOMO6JFjAogIbRGf/LLc7esQl2wrZma2zk/FXF2ulaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U84/UUO+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CF21C4CEEF;
+	Wed,  9 Jul 2025 14:06:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752069995;
+	bh=zsceZ3e3Q3uizdRPkkkTw9psNWaSicRPXttwuALsa1A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=U84/UUO+lgsVFLJlzZp03T/UT2e5GfDEdigFWYyz8Aa0IXeeiU6gi2ndzt93Gtb8z
+	 5oEuGUAtzIHe9BAv63MuxP/z/xb4sW8h2dyKO0PE94xGqFUUM6xryUn7psq2WqraJt
+	 gk3DtyiTRCW9SM8zu50aop8dr7LPgfXLv0lZ8iGbXBWsDyZCryy++UV4BzUdZMfj1o
+	 fze80VK+y1N25SgMAUsO97cGqmTmpMME0cnex7QyLjGwsCc5IMjR1uXP+wSJapz8vs
+	 7+YrrqHp5Q0QrRGVVyQf/8OXeVZht7yFdyapTHTzhHozjm1LlJnLguO9F1NY/YQpt2
+	 EaD6SbFrpXseg==
+Message-ID: <58851e92-6a06-4074-88fa-fb4f7ead2596@kernel.org>
+Date: Wed, 9 Jul 2025 16:06:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250709033242.267892-1-Neeraj.Upadhyay@amd.com> <20250709033242.267892-9-Neeraj.Upadhyay@amd.com>
-Message-ID: <aG53XtIe_FPwi7Aa@google.com>
-Subject: Re: [RFC PATCH v8 08/35] KVM: x86: Rename lapic get/set_reg64() helpers
-From: Sean Christopherson <seanjc@google.com>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: linux-kernel@vger.kernel.org, bp@alien8.de, tglx@linutronix.de, 
-	mingo@redhat.com, dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, 
-	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com, 
-	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org, 
-	hpa@zytor.com, peterz@infradead.org, pbonzini@redhat.com, kvm@vger.kernel.org, 
-	kirill.shutemov@linux.intel.com, huibo.wang@amd.com, naveen.rao@amd.com, 
-	kai.huang@intel.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] MAINTAINERS: Add maintainers for Samsung PPMU driver
+To: Vivek Yadav <vivek.2311@samsung.com>, pankaj.dubey@samsung.com,
+ ravi.patel@samsung.com, shradha.t@samsung.com, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ will@kernel.org, mark.rutland@arm.com, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, linux-fsd@tesla.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+References: <20250708103208.79444-1-vivek.2311@samsung.com>
+ <CGME20250708103246epcas5p47b446ec342f9d49361c0a9a3929bcdd2@epcas5p4.samsung.com>
+ <20250708103208.79444-7-vivek.2311@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250708103208.79444-7-vivek.2311@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 09, 2025, Neeraj Upadhyay wrote:
-> In preparation for moving kvm-internal __kvm_lapic_set_reg64(),
-> __kvm_lapic_get_reg64() to apic.h for use in Secure AVIC APIC driver,
-> rename them as part of the APIC API.
+On 08/07/2025 12:32, Vivek Yadav wrote:
+> Add maintainers entry for Samsung PPMU driver
 > 
-> No functional change intended.
-> 
-> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+> Signed-off-by: Vivek Yadav <vivek.2311@samsung.com>
 > ---
+>  MAINTAINERS | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index ca11a553d412..5895b4e70c9e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21023,6 +21023,13 @@ F:	drivers/regulator/s5m*.c
+>  F:	drivers/rtc/rtc-s5m.c
+>  F:	include/linux/mfd/samsung/
+>  
+> +SAMSUNG PPMU DRIVER
 
-Acked-by: Sean Christopherson <seanjc@google.com>
+PPMU for what? Exynos? Then add it in the name.
+
+> +M:	Vivek Yadav <vivek.2311@samsung.com>
+> +M:	Ravi Patel <ravi.patel@samsung.com>
+> +S:	Supported
+> +F:	Documentation/devicetree/bindings/perf/samsung,ppmu-v2.yaml
+> +F:	drivers/perf/samsung/
+
+Also, this should be added to Samsung SoC maintainer entry as well.
+
+Best regards,
+Krzysztof
 
