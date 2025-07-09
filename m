@@ -1,137 +1,139 @@
-Return-Path: <linux-kernel+bounces-722947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17768AFE0FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:10:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D0A7AFE101
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:11:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB659542975
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:09:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 851653A2DB3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6251A274FDB;
-	Wed,  9 Jul 2025 07:08:30 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D59D26E6FB;
+	Wed,  9 Jul 2025 07:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="phCH0oY7"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4145A273D8E;
-	Wed,  9 Jul 2025 07:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153BB26CE3F;
+	Wed,  9 Jul 2025 07:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752044909; cv=none; b=AUhDdj+oDab2csaRC0s0vuCc/AhERK7zLE+FPlND4u3Ig5KrYjrkk07u3+NSVXTIJuzx9J1lBfMEGA94rvGWhuZpt71GefxYMuK+37CsTGZkLvyY84Yts+68eYmbJAkfJ9QW5gs6xu/xegX23Q2mSwm60V1jlvud4CwwMFO6uEU=
+	t=1752045086; cv=none; b=W2FrnOAlS4nMecltqaEu7YaJbvUmeHmIyHBpPBNft3UId2ENEo02OO4gDNAhL/MjiYr4BqXll6jXSxAcnqxzooaPltBmCJr4W7Lnhxi0Smn1KxGhu424fwwRVChQcNq5NF27YrKfoyM9jHBWbc7OYVUFulUy7ExVn73hRHiMlwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752044909; c=relaxed/simple;
-	bh=0LtjXvqsRruXDJtU07Ulf5ytfTnCk8K7EwtmbcFBh/M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SNlvZ7HL1/OLPRvmL+RCVtx2hnZ7WpHt5P5IfSMuELD0DtYjFuGEupRxFP140fRHyQKYUOvBPe+F1x/4SvBbOnS9nDw8gZHZ5rlJOVVBj2buxayuCvYXqLPKOHEFF+MvP4qiVviZkBHfptomYNj6wVXVAZJD67UsHkLcjJmL5mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 9 Jul
- 2025 15:08:10 +0800
-Received: from mail.aspeedtech.com (192.168.10.13) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Wed, 9 Jul 2025 15:08:10 +0800
-From: Jacky Chou <jacky_chou@aspeedtech.com>
-To: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
-	<andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <joel@jms.id.au>,
-	<andrew@codeconstruct.com.au>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<p.zabel@pengutronix.de>, <horms@kernel.org>, <jacob.e.keller@intel.com>,
-	<u.kleine-koenig@baylibre.com>, <hkallweit1@gmail.com>
-CC: <BMC-SW@aspeedtech.com>
-Subject: [net-next v4 4/4] net: ftgmac100: Add optional reset control for RMII mode on Aspeed SoCs
-Date: Wed, 9 Jul 2025 15:08:09 +0800
-Message-ID: <20250709070809.2560688-5-jacky_chou@aspeedtech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250709070809.2560688-1-jacky_chou@aspeedtech.com>
-References: <20250709070809.2560688-1-jacky_chou@aspeedtech.com>
+	s=arc-20240116; t=1752045086; c=relaxed/simple;
+	bh=Zg2yqmIawAcjnUxWeIFtD+iLiMBKl+ttmTor+a9wJDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=URFlalwX+FFhPBChik4g99AwtHURdjgGGgkXn2opANCAAZMO1Rq5U65+glZ1TL406ZiRWusMFIvepmbrMJ9SzUJno+oZrQWeKxzQQNybWt9ZISD5ZQX13EB1MNRi/xaTuSe8TMQt1H93hVJ9D4yZmslMqQBkv+34ZnKmMVeSOns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=phCH0oY7; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752045011;
+	bh=rIjr5BfAbU/6+iVf8dDKK9BX4rSnCeVITcK5Ap37SY0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=phCH0oY7h/aDf3AnUoQ+FvjShix8v0suvoCTPX0E/kDUFHT0jzscWD4LOVsRBNIm4
+	 RPUIyUDpDMRB/4C6EsG2j9b7w1SU0gjluBFx9E5vjbERV+ylEwsgMWl28v6Mz1C/aO
+	 +ssqKw9FzDBxvoMDzaJLEto8/fAYA0AbQLKIkZ+7eYgmCmXX3K1Kqjt8fqbbNYCE4L
+	 vJqkBW3iyE9eY8r5tcLj4q2780xRmTFrR/ugCxCDJiUUKnbf39R+VDI26JLItooJkL
+	 1i86zQEzNVhrhoTqBsQj8H8vxayPKPxxcg3EtLuDiWNgyqUySfk3wRTJ50gxduNmYi
+	 o89Pkggt+i/+w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bcTdH5f3Mz4wb0;
+	Wed,  9 Jul 2025 17:10:11 +1000 (AEST)
+Date: Wed, 9 Jul 2025 17:11:15 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Sean Christopherson <seanjc@google.com>
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the kvm-x86 tree with Linus' tree
+Message-ID: <20250709171115.7556c98c@canb.auug.org.au>
+In-Reply-To: <20250709160456.12aabc8b@canb.auug.org.au>
+References: <20250709160456.12aabc8b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: multipart/signed; boundary="Sig_/stMZzDaa9fPajp_8DWqLJ9o";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Aspeed SoCs, the internal MAC reset is insufficient to fully reset the
-RMII interface; only the SoC-level reset line can properly reset the RMII
-logic. This patch adds support for an optional "resets" property in the
-device tree, allowing the driver to assert and deassert the SoC reset line
-when operating in RMII mode. This ensures the MAC and RMII interface are
-correctly reset and initialized.
+--Sig_/stMZzDaa9fPajp_8DWqLJ9o
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
----
- drivers/net/ethernet/faraday/ftgmac100.c | 26 ++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+Hi all,
 
-diff --git a/drivers/net/ethernet/faraday/ftgmac100.c b/drivers/net/ethernet/faraday/ftgmac100.c
-index a98d5af3f9e3..05b8e3743a79 100644
---- a/drivers/net/ethernet/faraday/ftgmac100.c
-+++ b/drivers/net/ethernet/faraday/ftgmac100.c
-@@ -9,6 +9,7 @@
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
- #include <linux/clk.h>
-+#include <linux/reset.h>
- #include <linux/dma-mapping.h>
- #include <linux/etherdevice.h>
- #include <linux/ethtool.h>
-@@ -101,6 +102,8 @@ struct ftgmac100 {
- 
- 	/* AST2500/AST2600 RMII ref clock gate */
- 	struct clk *rclk;
-+	/* Aspeed reset control */
-+	struct reset_control *rst;
- 
- 	/* Link management */
- 	int cur_speed;
-@@ -148,6 +151,23 @@ static int ftgmac100_reset_and_config_mac(struct ftgmac100 *priv)
- {
- 	u32 maccr = 0;
- 
-+	/* Aspeed RMII needs SCU reset to clear status */
-+	if (priv->is_aspeed && priv->netdev->phydev->interface == PHY_INTERFACE_MODE_RMII) {
-+		int err;
-+
-+		err = reset_control_assert(priv->rst);
-+		if (err) {
-+			dev_err(priv->dev, "Failed to reset mac (%d)\n", err);
-+			return err;
-+		}
-+		usleep_range(10000, 20000);
-+		err = reset_control_deassert(priv->rst);
-+		if (err) {
-+			dev_err(priv->dev, "Failed to deassert mac reset (%d)\n", err);
-+			return err;
-+		}
-+	}
-+
- 	switch (priv->cur_speed) {
- 	case SPEED_10:
- 	case 0: /* no link */
-@@ -1968,6 +1988,12 @@ static int ftgmac100_probe(struct platform_device *pdev)
- 
- 	}
- 
-+	priv->rst = devm_reset_control_get_optional_exclusive(priv->dev, NULL);
-+	if (IS_ERR(priv->rst)) {
-+		err = PTR_ERR(priv->rst);
-+		goto err_phy_connect;
-+	}
-+
- 	if (priv->is_aspeed) {
- 		err = ftgmac100_setup_clk(priv);
- 		if (err)
--- 
-2.34.1
+On Wed, 9 Jul 2025 16:04:56 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the kvm-x86 tree got a conflict in:
+>=20
+>   arch/x86/kvm/vmx/vmx.c
+>=20
+> between commit:
+>=20
+>   f9af88a3d384 ("x86/bugs: Rename MDS machinery to something more generic=
+")
+>=20
+> from Linus' tree and commit:
+>=20
+>   83ebe7157483 ("KVM: VMX: Apply MMIO Stale Data mitigation if KVM maps M=
+MIO into the guest")
+>=20
+> from the kvm-x86 tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
+Actually, the resolution is below.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/x86/kvm/vmx/vmx.c
+index 191a9ed0da22,65949882afa9..47019c9af671
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@@ -7290,8 -7210,8 +7210,8 @@@ static noinstr void vmx_vcpu_enter_exit
+  	if (static_branch_unlikely(&vmx_l1d_should_flush))
+  		vmx_l1d_flush(vcpu);
+  	else if (static_branch_unlikely(&cpu_buf_vm_clear) &&
+- 		 kvm_arch_has_assigned_device(vcpu->kvm))
++ 		 (flags & VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO))
+ -		mds_clear_cpu_buffers();
+ +		x86_clear_cpu_buffers();
+ =20
+  	vmx_disable_fb_clear(vmx);
+ =20
+
+--Sig_/stMZzDaa9fPajp_8DWqLJ9o
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhuFhMACgkQAVBC80lX
+0Gy6mAf/ZObl47K40W/UD9AP4MjdwrmrE2mz8balXdSNazAU7aZD+1GLU/XgjABX
+hmgdXaJ5MRbAzC89OrUOiwhIKqC0QJQnDSTUNIP1jkDdv+BqJ2fBY2GolnBa3jLJ
+S4buNQM2R84/6XJfc71BLUmBjvC05I0WkVLAu32p1ELMvI9VFCUxhF49YTzlWmC/
+tx3Cj0jKdgFI2aHXqHw/+q5GhI5tyZZ66GSbAC4ncYv52IQ0sENct4oo4UZhC0tZ
+Q9ipMnSREjIj4oG0uT16ySRlival1S0d8qFqnL6MetaPHM4yre6Dg1S+a4asYbXN
+g36gzzWU1fqoEMu2ZdM4EnfMOQC+dg==
+=paZS
+-----END PGP SIGNATURE-----
+
+--Sig_/stMZzDaa9fPajp_8DWqLJ9o--
 
