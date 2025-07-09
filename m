@@ -1,129 +1,127 @@
-Return-Path: <linux-kernel+bounces-723242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B11B9AFE4C8
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9877AFE4C9
 	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58083546112
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:59:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 242911C4365A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8039A2882C6;
-	Wed,  9 Jul 2025 09:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E2B288C80;
+	Wed,  9 Jul 2025 09:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="WrH7QZl3"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="iMW6PKHA"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929D82877FB
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 09:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1830424B26;
+	Wed,  9 Jul 2025 09:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752055125; cv=none; b=UVKyvUMEtTmR4qOHp1DlzpKNK06rR8rJF60JUwi/3I4OCzpZ8IrQrZgndr3SBZDLCA/EtwsL0h4RqgKRGCS3k8BcU9SbJQ/X5NxnezfZbcGj1Ubf+4qjI3RTTqCsn/qop1A4JcPiqgR5cKO11ict1i97f2f+apqxBZsGI7dA6rw=
+	t=1752055158; cv=none; b=gsIxtMA9oNxoHryeb/2AeP9WHK9py2TcW5sDGhX7WL8DnJcnjzsksJQU4f/25ICigOnMf6YZXIm14pAhXv+LuHCG3nUiRC3m6ucHESweZyw7OPvaVUDAFgW1xZHVJMPJwCcISFIXZ8+XqwXLpYGEtyreJQDtSkLu1LF2Km0lbj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752055125; c=relaxed/simple;
-	bh=8nWTb81n0h18DwoRgCOwtdmkDH8pEICyg/BCNT06z0E=;
+	s=arc-20240116; t=1752055158; c=relaxed/simple;
+	bh=V3I5hLDpVu9hQyAkfXoHs+QWYvl3bUpi55121rBny4I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S535kQH86k2GZg3wA8C9cod2kK9CEhQCo2veOdtrO+SB2kf+MUYWxYNlGVc5XU8CVLwu2pL1uFHrMrIZqtMl8+TM328TCF5Fwa4y2rhT04xMBL4c2WU0+bvlPeeaJshH7YVStl7nE18p+XmE+S2Q6tESwndDYLc2uS7e7HF58YE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=WrH7QZl3; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5006a.ext.cloudfilter.net ([10.0.29.179])
-	by cmsmtp with ESMTPS
-	id ZQJMueVIkMETlZRZbuhNiW; Wed, 09 Jul 2025 09:58:43 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id ZRZaudvPH68lZZRZaubUuH; Wed, 09 Jul 2025 09:58:42 +0000
-X-Authority-Analysis: v=2.4 cv=QpdY30yd c=1 sm=1 tr=0 ts=686e3d52
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=I+dNN6fbWA0KEUvI2+owr1v2I2NCE+eWihtrSeVVg3k=; b=WrH7QZl3uUJ6FowIY2Lw7UjMTM
-	llDdSBIsQ2ZgzTq8k70IMmgPynC6f6Q9nrD87ApFMQ8Z1w8bbq3N/L/pyV9hiayyv79VOaqs1fzph
-	HTv1YZt/bw6vXys0wKCo8lh4/ECIz48azKpRq4qntiEWsnROKB6EVmyTgVY54sxqfQfcMKhN/LMVj
-	Mam6QiULl2OJN0bEJ0g6Ng/4+VEBYIzmc6no5UJGlid2BpkdASkKwfCiKh+Yz6EZZ6O8slwkfzxm5
-	sB3oItnvZscwg6oGMNpk6IkZMvRXFhow+GaUJ+UbZqCtHW0bXl6/Ntd071JeyXj5UuyllxMTrhKez
-	6dQigySQ==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:60910 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1uZRZX-00000003RYj-2sON;
-	Wed, 09 Jul 2025 03:58:39 -0600
-Message-ID: <fe87e12e-7e5e-497c-bfa3-c727e7f3a18f@w6rz.net>
-Date: Wed, 9 Jul 2025 02:58:31 -0700
+	 In-Reply-To:Content-Type; b=YC7M1VQRBnSnsYFnZ+xmEFOEjAxNy6OMXIhAlNCaCazqlHeTullCxw59W/4NkJCWND0cYKLTwKvBgIj+gy1AQZpUz524omaYQmBJTJlSXcg/tF3vTBLhZkBTTgFEkVF9d4rPlGhZGpTfPJrG2cUk6TZX3LK+wXQWztvt0M7abIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=iMW6PKHA; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bcYNJ6s2Wz9sSf;
+	Wed,  9 Jul 2025 11:59:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1752055153;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MaNm/Rqy67eO1HZemeROtIk1IORMMZeTew+oRtrvGkQ=;
+	b=iMW6PKHALmPyYY17kX+7z/UasELzVAlOwMHkXhfmMfYQ/HGql/rTF8RnQV/PY/RKU2dbTv
+	Q1wW0tPyR4pJpPZukYuAdQh7+xBhk+xD18a/CmM7ZQf1WuimGQjMXFOVqCLMCIptjtbVat
+	NM9TO+Vu4oJiQDPY6wTAbYUO3uWnNXxqlsxu6CY5Mi7Wm3KcYBnb5jjtoU4s5bojivYl6d
+	au6Jm0/uFu4tf9hZPt5U/AyAyhzkpH/XE0Fq7fEGRjMd/NnirMwGNMKOAUNX/b/3sBuWaV
+	Dyytuh906m1aINvPOuiJvUzah44GbnrgicnGClNOIJaF4X4YJfRO/swAnCxFbQ==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
+Message-ID: <3ed1e744-5536-4b47-a5ab-66cd300ded67@pankajraghav.com>
+Date: Wed, 9 Jul 2025 11:59:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 00/81] 6.1.144-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250708180901.558453595@linuxfoundation.org>
+Subject: Re: [PATCH v2 0/5] add static PMD zero page support
+To: Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
+ Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
+ Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>,
+ linux-kernel@vger.kernel.org, willy@infradead.org, linux-mm@kvack.org,
+ x86@kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
+ gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
+References: <20250707142319.319642-1-kernel@pankajraghav.com>
+ <20250707153844.d868f7cfe16830cce66f3929@linux-foundation.org>
 Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250708180901.558453595@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Pankaj Raghav <kernel@pankajraghav.com>
+In-Reply-To: <20250707153844.d868f7cfe16830cce66f3929@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1uZRZX-00000003RYj-2sON
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:60910
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 74
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfNUVjUx4/it3NSYXnQTGHPto7M54N2BwuQKei6dlU2QBjy2JWhc2ZfOHZb/TD9A+v2Y+H3UF2qG8RNZNXuBS4h5odKjV6KfRd6zOcb5oS+i2y2C2Cy1x
- 3Ogr0hiGpvhxyKdWT459zqDesLgFzLYM2KI8wqiWKVEf9zyxezws99dhS5pMA0P+n1RMpOtpKQnghX59Puhnmo1SilCLcLbXtG4=
+X-Rspamd-Queue-Id: 4bcYNJ6s2Wz9sSf
 
-On 7/8/25 11:10, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.144 release.
-> There are 81 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 10 Jul 2025 18:08:50 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.144-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hi Andrew,
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+>> We already have huge_zero_folio that is allocated on demand, and it will be
+>> deallocated by the shrinker if there are no users of it left.
+>>
+>> At moment, huge_zero_folio infrastructure refcount is tied to the process
+>> lifetime that created it. This might not work for bio layer as the completions
+>> can be async and the process that created the huge_zero_folio might no
+>> longer be alive.
+> 
+> Can we change that?  Alter the refcounting model so that dropping the
+> final reference at interrupt time works as expected?
+> 
 
-Tested-by: Ron Economos <re@w6rz.net>
+That is an interesting point. I did not try it. At the moment, we always drop the reference in
+__mmput().
 
+Going back to the discussion before this work started, one of the main thing that people wanted was
+to use some sort of a **drop in replacement** for ZERO_PAGE that can be bigger than PAGE_SIZE[1].
+
+And, during the RFCs of these patches, one of the feedback I got from David was in big server
+systems, 2M (in the case of 4k page size) should not be a problem and we don't need any unnecessary
+refcounting for them.
+
+Also when I had a chat with David, he also wants to make changes to the existing mm_huge_zero_folio
+infrastructure to get rid of shrinker if possible. So we decided that it is better to have opt-in
+static allocation and keep the existing dynamic allocation path.
+
+So that is why I went with this approach of having a static PMD allocation.
+
+I hope this clarifies the motivation a bit.
+
+Let me know if you have more questions.
+
+> And if we were to do this, what sort of benefit might it produce?
+> 
+>> Add a config option STATIC_PMD_ZERO_PAGE that will always allocate
+>> the huge_zero_folio via memblock, and it will never be freed.
+[1] https://lore.kernel.org/linux-xfs/20231027051847.GA7885@lst.de/
 
