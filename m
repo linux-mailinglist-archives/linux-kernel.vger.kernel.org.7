@@ -1,133 +1,81 @@
-Return-Path: <linux-kernel+bounces-723762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DCBEAFEAC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:52:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F9D5AFEAB3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3806D5C05BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:51:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49E841C48117
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEB22E7183;
-	Wed,  9 Jul 2025 13:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BED128EBE0;
+	Wed,  9 Jul 2025 13:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="trlDt64N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OvPiI1RO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931D02DFA39;
-	Wed,  9 Jul 2025 13:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A02E272E7C;
+	Wed,  9 Jul 2025 13:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752069031; cv=none; b=NsUdLYoG2j6k+5RNLND9f8IZGi3+bVnqfDn1dkg6u19bpz+FYkuv3nN6sU8bE4LLfMHUtvAUhlmtGzBT73TsWKAYjGZd/v4RaHwqPEW6u4oGfjPzRU5H74aXzxY0UK5esw71bspEBcJICVxubU3U58BcRC5+D0fpunp77cbvTgg=
+	t=1752068981; cv=none; b=Ijmsb4uJBKprg//U2QeuUdrsBjq9KIaJnL3UhXm/m3d5Deo9uBk42xM8BqQNHzrsowdwf7NHuLv8uUFHBkHiSCszkpUg6SEsNitP3ZrWro95mxb80V1a6pxCLPmjDRr+6cTnbjqspiNhbkx6DDcz5gazMnrdT7Xaf6JEEEmmLNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752069031; c=relaxed/simple;
-	bh=N93fx/HWGQ9/7LBI0Q5dx377OnCZ8CrZ/OhiD9v/Z/8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OrlEDxYnn+0hrkxHutY8QWedbJtYI/XF/S4dvnVtFuZH2zVgXhdjdYRxjANc5gmPD0li+EeAfZo14kjOgv4AAkBP/7ksFUMRC9/nvVdJT7/T45OjXLaWpuBP2Hj607pfzolD4JkeLf1ZicYVXsVzDsfr3eM5IqufRLl0Th5W3sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=trlDt64N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1C52C4CEF1;
-	Wed,  9 Jul 2025 13:50:25 +0000 (UTC)
+	s=arc-20240116; t=1752068981; c=relaxed/simple;
+	bh=aCprawoDSLPBBi2Eo9Ssh/Z6RI7VTvcZxxrfDFZi8cE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=tjKOwq6fiQsLt+38bNzb5W1cZZYVsR9qePgOhxKbQnlkk/8LWXfKino2v5LCyLiFt3gBLBx5Iw2isJ9EGiAEqJruJL9NVce9T1y7zBLXfehBtHz8Owfa+kPd7Jdvbw+sN//XAsK9FMyDtNLESuCXbgkIcZA52VSFV7up8DwQhsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OvPiI1RO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14479C4CEF1;
+	Wed,  9 Jul 2025 13:49:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752069031;
-	bh=N93fx/HWGQ9/7LBI0Q5dx377OnCZ8CrZ/OhiD9v/Z/8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=trlDt64NjQr+YNI3YqHEnv8JUfRpoVlxLzQ/crT9viR4cVybY711yJ93jqAp8di1r
-	 4ZnpoAlyw6iExKdqKuy6yItzaWCvmRURcnmZmz3E50KG1GeHIvoZYn/P1QLqb2tcT0
-	 cURqdVH3el7dcyxuJ5ThweDaFxa+HNBfnY4351EyKawHIpbmZEEP/XZvM7wWf+4R8i
-	 VPYsSyZiuU0050BIqiaeeE0xywTbJbJhD3aOv0l4iGMFrPZ7arogY31V7FBlNqmsGx
-	 T2DjoS9fr0aqMNeafd/Rg9OkMwU4+KLfFx8b1dEl6oiYW5gH3ATdab8I/QR5+raALt
-	 5PuN3SQtLb2ww==
-From: Mike Rapoport <rppt@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Yann Ylavic <ylavic.dev@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-modules@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org
-Subject: [PATCH v2 8/8] x86/ftrace: enable EXECMEM_ROX_CACHE for ftrace allocations
-Date: Wed,  9 Jul 2025 16:49:33 +0300
-Message-ID: <20250709134933.3848895-9-rppt@kernel.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250709134933.3848895-1-rppt@kernel.org>
-References: <20250709134933.3848895-1-rppt@kernel.org>
+	s=k20201202; t=1752068981;
+	bh=aCprawoDSLPBBi2Eo9Ssh/Z6RI7VTvcZxxrfDFZi8cE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=OvPiI1ROrxSnV3OQKbl6bBg8FyQswwjy22V8EFUUMFal1NUz1TcTSNIr2f1mePF5r
+	 wear7KgcqE2Uwbh4z+GVj+AJcdZEi7d5S/bUJJEC2Cc4Q9Tu+n6hVVHFO5p50093PC
+	 TgD1baifyxJ5LU6WgcwZ1MZc6uIlnsfeF+zdJ22naA5csKq2TR+G38G1Y60n7UqLRk
+	 1qvl2j7zqU+uD/aNh5vHoCNl5NqemBjr1Log2xa3R93OiuPuPX+BToXQB24RIhIDUI
+	 jAEN1LiI0lQFS72iDpnk2+WoYmjYCncUwPFlKVXDNCUtDUri7HOPFxmcJAG+rbfuEp
+	 w5gTMYXNDDr7A==
+From: Niklas Cassel <cassel@kernel.org>
+To: dlemoal@kernel.org, Jonathan Velez <jonvelez12345@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org, 
+ shuah@kernel.org
+In-Reply-To: <20250709133330.3546-1-jonvelez12345@gmail.com>
+References: <20250709133330.3546-1-jonvelez12345@gmail.com>
+Subject: Re: [PATCH] ata: libata-transport: replace scnprintf with
+ sysfs_emit for simple attributes
+Message-Id: <175206897980.965177.5326786325935383585.b4-ty@kernel.org>
+Date: Wed, 09 Jul 2025 15:49:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+On Wed, 09 Jul 2025 13:33:30 +0000, Jonathan Velez wrote:
+> sprintf, snprintf, and scnprintf do not consider the PAGE_SIZE maximum
+> of the temporary buffer used for outputting sysfs content and they may
+> overrun the PAGE_SIZE buffer length.
+> 
+> To avoid output defects with the ATA transport class simple attributes,
+> use sysfs_emit instead of scnprintf().
+> 
+> [...]
 
-For the most part ftrace uses text poking and can handle ROX memory.
-The only place that requires writable memory is create_trampoline() that
-updates the allocated memory and in the end makes it ROX.
+Applied to libata/linux.git (for-6.17), thanks!
 
-Use execmem_alloc_rw() in x86::ftrace::alloc_tramp() and enable ROX cache
-for EXECMEM_FTRACE when configuration and CPU features allow that.
+[1/1] ata: libata-transport: replace scnprintf with sysfs_emit for simple attributes
+      https://git.kernel.org/libata/linux/c/48925ba7
 
-Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
----
- arch/x86/kernel/ftrace.c | 2 +-
- arch/x86/mm/init.c       | 9 ++++++++-
- 2 files changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
-index 252e82bcfd2f..4450acec9390 100644
---- a/arch/x86/kernel/ftrace.c
-+++ b/arch/x86/kernel/ftrace.c
-@@ -263,7 +263,7 @@ void arch_ftrace_update_code(int command)
- 
- static inline void *alloc_tramp(unsigned long size)
- {
--	return execmem_alloc(EXECMEM_FTRACE, size);
-+	return execmem_alloc_rw(EXECMEM_FTRACE, size);
- }
- static inline void tramp_free(void *tramp)
- {
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index 442fafd8ff52..bb57e93b4caf 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -1105,7 +1105,14 @@ struct execmem_info __init *execmem_arch_setup(void)
- 				.pgprot	= PAGE_KERNEL_ROX,
- 				.alignment = MODULE_ALIGN,
- 			},
--			[EXECMEM_FTRACE ... EXECMEM_BPF] = {
-+			[EXECMEM_FTRACE] = {
-+				.flags	= flags,
-+				.start	= start,
-+				.end	= MODULES_END,
-+				.pgprot	= pgprot,
-+				.alignment = MODULE_ALIGN,
-+			},
-+			[EXECMEM_BPF] = {
- 				.flags	= EXECMEM_KASAN_SHADOW,
- 				.start	= start,
- 				.end	= MODULES_END,
--- 
-2.47.2
+Kind regards,
+Niklas
 
 
