@@ -1,329 +1,264 @@
-Return-Path: <linux-kernel+bounces-724577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD32AFF481
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:15:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C8D1AFF483
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:16:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6E323A8035
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:14:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE6D75A0EB6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915DF22F77E;
-	Wed,  9 Jul 2025 22:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5940323B61D;
+	Wed,  9 Jul 2025 22:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OHTxLL9A"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="U8KtgA7f"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2956623AB86
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 22:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752099315; cv=fail; b=jAbuvZxP4J49NqDrgLzIK1rez1PTOHvc2BsqdIVPpCowXKlkNOZnzinYl7B6UL4EFuiu9UvQ4kALyago4wI05HLJWk9WYSxx4Wl9CUXNrW01jZPLv+vFXLKMIlHgydwgtCHOrHcCGbpSNC6nxb81gYuDdQbXzF0L/JVfgl/Qt8c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752099315; c=relaxed/simple;
-	bh=xaJZyCYsXctxvWWJA5SeOmvk4Pn0fbCvITYQYZdVqL8=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Z33dEbf72nmwLioYzaxNhHWuIPBhKb/l6GgiQhDPl6mGMY6nW1H3AgUNZvlTor/8t/v9ew+1Gry/M8LyVGFLCIkmoZpWdktpw7rnIBX3l1nFo0KFvba6p9ndd9UmKHkoip9IO+iSP7u59lWDSUv8KbI2DApFU346cnav/4s0zQA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OHTxLL9A; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752099314; x=1783635314;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=xaJZyCYsXctxvWWJA5SeOmvk4Pn0fbCvITYQYZdVqL8=;
-  b=OHTxLL9Abhm7EmpXBS6z31xub4s4VpuOcUQKHU2pJ+qDb/djnC8b0dln
-   V9yTmGS+KC9eFmkjEW9z388pFgQtBns1I53EnK9HxwH/WgVqg0OvuQGDV
-   gN5GKOjNY85xwgGJvMFbgIRHPI+yEL0yRYK3Lb3CEO/O8v/rnexg9h6Zf
-   Fx4Ae9eCMb5fCq4uO0zbefqa/hiINZviZb+y8B/aY0GMTKm5hwXur0zyU
-   XLVqzz6hK/647PO2Pss2rcFI6l6flEr3lDMywUZnw99THn1RMFTO9uFYX
-   ecuXGQiKdnZknSWFR990SVrEHx30yjemFdZXMUIfHU2uFTn9HtrapheG6
-   g==;
-X-CSE-ConnectionGUID: K6YJoqrmQ3uvTPO1+8W1mA==
-X-CSE-MsgGUID: RiU+zMlSRoqbwcrl8e+O+w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54501014"
-X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
-   d="scan'208";a="54501014"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 15:15:12 -0700
-X-CSE-ConnectionGUID: dcUfPk4YRhWBwoThjXqNdA==
-X-CSE-MsgGUID: HKhJ5yiXReiLoBJcXgzE5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
-   d="scan'208";a="156626903"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 15:15:11 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 9 Jul 2025 15:15:10 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Wed, 9 Jul 2025 15:15:10 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.40)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 9 Jul 2025 15:15:09 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N/7r05bmfiW8mhmPYaHLYbN+HrWETzQ0F9D8Lqg+o0uj2h+hjFo3+lUZ+52mUDknnJDJ+eZRweeN5WYOedInDdGeEZO8wk/6eo4PCsTj8sLg97nRXR00TFC8YHDVl8czcKkazkVbYYvjHYvyDVbGIKRdOMMGBg6K1SJTujMVdGZ68xYnav+UR5Qo0WhVCY+55mlCtK5u/iMcviyigK33Xywr+HZMDMuuiNQ6To/8bLsqpYB1V9RF59FVG6Bp3O7FesqoIV8EJCUhdDup6lhxroTnNwNO80hQ0piFFYzr1C1l2B8i1Vp4knNVyQWDGTkgJaQjpP7wD7YaQnlUQ4J4yg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uWBvm72DI2Y/6wSc+WiDRS4yfUQ4QbBud+Oi4fOK1OQ=;
- b=aSCno3r6JJqs1zYuYKkzb+8ky24sVfSamKsS4rMz7JKqZV4XOa6QQdhfw/N3mTolmBBMcYClfgX/Ukm1xACTPN3ws4J46E6MFPi6aZ8kx3rU//Lm7FTrRNlwWSCTVUsaQuPTS3qpFVCCLuionc7KQ7BENLfSPRYLHJbv6ce8qabJQ0KDkUrPLW30L+bNM5r/TZebWP2m9v15qDuev9E72zuwSlIP6kZXCmjOeySavPN4ov3Ww10SEu4r6qEPNfE9hDxglgu2pbQTlMzDgMNFcZsBM1GkT9DGKVvX/FGNjB6MutJjvR4w6NpX7pBatyPiA0Gk+ju6dDW/XKhd6OMOpg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by SJ0PR11MB6791.namprd11.prod.outlook.com (2603:10b6:a03:484::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Wed, 9 Jul
- 2025 22:14:54 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%6]) with mapi id 15.20.8901.018; Wed, 9 Jul 2025
- 22:14:54 +0000
-Message-ID: <f95e4868-0f87-4b58-b4a8-4fd18dcbf6ad@intel.com>
-Date: Wed, 9 Jul 2025 15:14:52 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 24/30] x86/resctrl: Add energy/perf choices to rdt boot
- option
-To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
- Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
-	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
-	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
-	<Dave.Martin@arm.com>, Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	Chen Yu <yu.c.chen@intel.com>
-CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<patches@lists.linux.dev>
-References: <20250626164941.106341-1-tony.luck@intel.com>
- <20250626164941.106341-25-tony.luck@intel.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <20250626164941.106341-25-tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0150.namprd04.prod.outlook.com
- (2603:10b6:303:84::35) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261A6801
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 22:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752099400; cv=none; b=jGYg8l14MUOtnhn2khhznvDCB3XGPEGAWiQAXY+OBpihmn/tft8QosE73ET9bow4ZeWPQFn8W+bLNrmeGah66iwAQ3Aca/oZ9FBTZirw8l4Mafx9AusJil/cVHGDHNpO7U2BC9/jZYwhXB78Z3Wln35cLnhxdxndpimXDR3cOxc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752099400; c=relaxed/simple;
+	bh=8zdAVsojbnQtCEVi9cTOyfUNw8mbMpmwW+XR6xMrJEw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BWVroLTDFQ4T1uw/qz/foU7QaHk+3EdPOMg531zU+i6bC6u/aP4JMjBHWhMFZ7cxYkM2EO+WvEoHhkCpAEu2GNWUcE8mNYX/wE7tBbU3GE8tIKt1VWrYxHOFQQuAebOTaP5r+RE+TzApY+AQKi4mRxV2jQ7bGj566fsJpsCR+4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=U8KtgA7f; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 569MGKFP1326375;
+	Wed, 9 Jul 2025 17:16:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752099380;
+	bh=JIbyMx4pUQJaQizBCeoW8CblQcIuSEi6aEA0o/7zXuo=;
+	h=From:To:CC:Subject:Date;
+	b=U8KtgA7f0G7/Q5k60eGmmtYwDl/dSwlZeQt7UoYwuDwgLDO2fv4ctxpiOIX2KqO3F
+	 mVYDjZZJ9NqtZQJP8uCH9N2w6CjEDY5dtRyADMVEU+5cDbIlAGOwoNS3p++sK0pR/m
+	 sFykixi1k3aX3DmGfA0RuSDl0VHwJAuvynKW7Qww=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 569MGKxe555986
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 9 Jul 2025 17:16:20 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 9
+ Jul 2025 17:16:19 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 9 Jul 2025 17:16:19 -0500
+Received: from uda0506412.dhcp.ti.com (uda0506412.dhcp.ti.com [128.247.81.19])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 569MGJuI207024;
+	Wed, 9 Jul 2025 17:16:19 -0500
+From: Kendall Willis <k-willis@ti.com>
+To: <nm@ti.com>, <kristo@kernel.org>, <ssantosh@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <ulf.hansson@linaro.org>, <vigneshr@ti.com>, <d-gole@ti.com>,
+        <vishalm@ti.com>, <sebin.francis@ti.com>, <msp@baylibre.com>,
+        <khilman@baylibre.com>, <k-willis@ti.com>
+Subject: [PATCH v3] firmware: ti_sci: Enable abort handling of entry to LPM
+Date: Wed, 9 Jul 2025 17:16:19 -0500
+Message-ID: <20250709221619.2237699-1-k-willis@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SJ0PR11MB6791:EE_
-X-MS-Office365-Filtering-Correlation-Id: 006f2990-b881-441f-925b-08ddbf36083b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?cmJtdUFsQTRDc1FreWFLeXc1L1NPRVVQendWSy9sYjN1M01BZTFDOEFCb2xX?=
- =?utf-8?B?ZTJwenpUZkVFTHBqOG1mNkxPdU9JV3ltTm1FeldvYXpRZFR3N1hZTjBQVGtp?=
- =?utf-8?B?QVgxc0ttU1V5akJBRTkrV0hBYzJPSGp2Mmlhb2V2WUE4dFkzTlFVN2NzcFFN?=
- =?utf-8?B?bmMxcjFsZksxUHA3endXZG1iSU1qakdYQnBOakdYeEsyL3NjQWlrRWVYT3Vw?=
- =?utf-8?B?WlZPUHRqVkRkUXBhTnh3c3F2S1ZPcGFpU3NqMGIyNTFCVkVtcTd0WWpQVGdX?=
- =?utf-8?B?WnEwdlRGc3ZOMWRoam43aXlpbTUyWGpseDNwZDVHQ3gvai8zSVdRS1BRV1h2?=
- =?utf-8?B?VEJXVTZYZm54RXJrRnErak1hN0VDZ1lVaEkzbU9YNWNUQUhPS2I3TDFzWXZw?=
- =?utf-8?B?cERzTVdJcWc4TUNrV0s1SHdUM2hEbDNiNUpiTmpqOWVGakxWWnZBelVYRjhG?=
- =?utf-8?B?Tmo0NHI3TWZkSTFxUzE0bHgzQlFUcjJndThCVi9XT0p0NVJVS3luRFRtSENU?=
- =?utf-8?B?Z3ZSUHNuUlhnS1pSelFqMC9LdzgzOVNicXhFQUw3aDVEajJnTWczenZnWGdv?=
- =?utf-8?B?c3YwbGdpeHBnQlg2Njh0OXF6VDFSY3hXTG9TNDBmMXBIVm4xdDVEZktRUkJY?=
- =?utf-8?B?RlpZTGtaN2s0OEthcW42U2E4NlNLRUNuVUtNWExHanpZSFdITjFqMUw0dExF?=
- =?utf-8?B?c1FlNURiTVBMb3E3N2ZkV2VmUzNmRGc0d21zZ2RnSEFSRjBlQXlLUEkrNUVW?=
- =?utf-8?B?WExEOHEzL3h5VTZVY2p0YjNDYndlNDRkQWVpKzlCMnFGR0ZHYlJtVUwvZkU2?=
- =?utf-8?B?ZzNBOHVGS3RxQnVQWmErckoxVWZ1d1BiQ0ZuV2xGSXBCRldvZ1VNQWxrNjlC?=
- =?utf-8?B?MEV1eUt2YUthbG1OMVdkSHFrNlYzcUdYNUs0UFdyRE5VT043K0ZsN1ErV0xO?=
- =?utf-8?B?K3V1a3l5QWhSdmhNOERjbkZWbWQ5QUhSMDlvZTU0eG50OFg1Vlg5ekdCTG82?=
- =?utf-8?B?ZVFSVk5DRGhVcmhOWnhkUnh2Wk9nS1dIRVNyaWJvdi9LSm5DczZYQU8zd0FE?=
- =?utf-8?B?VGppTHJJVWJHRjk0THpmbmJ0Q3R6K1IwNXZERkpkZHFoU3dkNVA5Rm9Xbys5?=
- =?utf-8?B?UHlmRnpuamUvWFhtNHdhajBZaE5PUDd4cnhvcTkxK1N1S1hxK3ZTTGkwT0x1?=
- =?utf-8?B?Q0RudmlJaEJxeVZ3bGswRFFKc0haTlNobEpLaUhjZDRwWDJTaUVGQXJCUCtt?=
- =?utf-8?B?RWhMN1Q1WFZUaklhUEtKQ05kSjJ5ZmZ2UllOOTNyTThlUWQ5aDlhWXVpcDkw?=
- =?utf-8?B?WXN0cXF5aWlsYzZuNndML0NlYUlPajg4YkhYOGwyVUZlSVowZEhyVkF1Nmk1?=
- =?utf-8?B?TzR2WFhseStmdExwYmJTZ2dEZnRsdEYwSWVDMXlvRkw2eW5ad05meGNjcGdU?=
- =?utf-8?B?K0t0SFVnOVNGeUl2aEdmTzJ2TlJtclNrcUJpYWhMajN0SE45NFlQMzBPb25C?=
- =?utf-8?B?SkxhWGJWblV6bmtCbzBxUGx3eWFOanE0eUwwVTZUL0REYUZKOWQvejRIYnVE?=
- =?utf-8?B?RmlGbGFXWHhRSzRhcmc0UjRZT3pzWnRCK3BDalkrQ1Y5dTgveEd4TzJ0NHVz?=
- =?utf-8?B?eFA1MmpJeWM2Mi9DZWIvdjhuZmxqWXNiSkwxcjBBRVIxczhIbTBCcjJPOFlB?=
- =?utf-8?B?YVpqeUc3c3dUVFpOWGhCVi9PL0l3cVd6eVVkM2ZGdktKNTkzTTBqbTVaY3Zq?=
- =?utf-8?B?OXcwK1pHZlNpVlRSZHpjYjZtNTlaZTJMVnROeDBwemYvOGI0dXVEbytyUHEv?=
- =?utf-8?B?OE56VnVXZ0x0M1ArS0JGbkRFbDU0V1c2WDFCQkF0cHAySlV5NGcvbjlXNTY3?=
- =?utf-8?B?TUZSSU1CdnJvUDlIUEk4czhSWXZ5N3JoS2NWbnlBK0c0WjFNZjZVRi9tS1Vl?=
- =?utf-8?B?TXcwd2ZHME1ZakJua2lIaEtnQ3c3V2RGWXNweFlWMHRmNmdYRDhkLytYY3NO?=
- =?utf-8?B?dW9YajFFdVhnPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aVlTaVVYZVVBV2hIaTdhR3A4ZzViZytWalRMek1GcmhEMkNwUldUeUNqdUZS?=
- =?utf-8?B?TzBRa29yblZmdVc0SDl1YnA5RjhmSmFMK01FdzBWd3p2Y2ozRGRsZFNSVVBo?=
- =?utf-8?B?RlRlVitQK1YvV1VaY2RuZU5CL1p2WlhDN2cveEtZeTVVS3oxejlIeFJrUEtP?=
- =?utf-8?B?UGFETkZOQ3BXSXViTHZqbXArTzBhR2pod2xKS2gwWXU0Sy9FZnppclJheXBo?=
- =?utf-8?B?Z2NON211M2hlbGJ0dWlEYmdCYjFHS1lZN2psbjZBYVkvTGlUU0N5T05jMEZK?=
- =?utf-8?B?S2pEa0w0c0RERVdETHRLUTBOMUM5Z3ZiQlRDZkFxVFlzUkwyNkZqY3Y5c0Qz?=
- =?utf-8?B?MXJYb0xzemp2K1l2M01LaiszdW5pc01hVDFZTlVGc3RrREgxcDYyaWdNa0VD?=
- =?utf-8?B?K29Zd2hPa1ZEbEo3Smk1cU8xV1hYTFp5MUpESGsrNEZoS1dhdnllNlovTEhH?=
- =?utf-8?B?TmZiL3V4K0JvK1p1dTlZc3VHclNONVpEbXA2U2VUWWRIV25tWFB1andDKzZo?=
- =?utf-8?B?TFNQb0JzWWxCSEEvam1pOTl3OGQ1QktDOFNyYjFuUm9NQXpoQ1duSlFTMHNZ?=
- =?utf-8?B?SVl2RnNqN1JGd3lKdTVmK3g0NW52bjhBRzlQYWFkMzY4bjdudjI2d2lZQ0dX?=
- =?utf-8?B?MFNzTzNXN2pDU0lUdDYwQ2FZazM5NVhrUWZiTXY1RXFUSGl0cDBLZWlMaitI?=
- =?utf-8?B?QzZGM2hyakdiOHVLb0J2UTQ4THQ0SjlqZHNSVHFJaW0wU1RWN2ExdjdjL1ZR?=
- =?utf-8?B?T01XcDI5bDY1dGZmZmZERlZvZ0pyZHVDVXI1aDBqR2dmRFFQYjlkUGQvZDN6?=
- =?utf-8?B?bW5nQTZSeSt4Lzl0V0pRS0F3SzUra3k4U0w5eWNJQ1QzMmhPTG4wZ3ZYMy90?=
- =?utf-8?B?WlhlMGIvMHMrK1VUQlBnTytTSmF4NHcxSnh1b0hOdjF1Y1lxTitYb20zSkl0?=
- =?utf-8?B?ZFYvR3djdlgvMlowcTliekZHVExGZGVpU0xsMWU0cityaTJ1cHJHU2Z1TUVE?=
- =?utf-8?B?c1VoU1M4ZCtzOXFCcEVYNWNQaXZ0dC93UldLc3pHQ2VCbk5acDVpZzNLSVdX?=
- =?utf-8?B?UkVSbkFIL0JvRW42dXoxUWtvcHg2bEpQNHFHaGtDdHFKRlI5TjJFaTlCNnEw?=
- =?utf-8?B?YWVGMG9VOGlqa3hJbEdBUGtqUXRWaEJFUVF3QXZuNkpPMC9LRGhzVHg4UmJF?=
- =?utf-8?B?YlVQR1Vqa3RCZGp1b2ZaWEZoRnFQSXdwM3JZUUtlZmdoT0RwSlNqVkVKeXRi?=
- =?utf-8?B?enFlSTBOQmlTQzl3TkgxdGFPcWV6cS82dTNiTVBLbTR2Y3ovMmRYS0tsWGFT?=
- =?utf-8?B?blo2ZnBVNEtXQnR1dE1LZXh6OG9vYjluNnhWMUhwSXM2UlN0WjloeTUzWTZV?=
- =?utf-8?B?SHl5S2RKdk0vR081dm5MWkhnYkUybW9VRzFtM09jbUs5czl4ODZua2xweWIv?=
- =?utf-8?B?SGYwZFAwME5ibWRGWmsrNjZoN00zN1ZpUkE2KzlYMjdReXlrMGNyTW1pckti?=
- =?utf-8?B?OVJpKzdTZDF5NjhWL3JYaVEzUkdzbklwV01XcmRXaE9jKzRCcklYbE5URisz?=
- =?utf-8?B?ZkZLNUZjOSsyWVNqWStDMmxWd1d2VnBKZ2grVWhJdUM4ZTBFWE9HZitpWDFx?=
- =?utf-8?B?cWFxVFFkNWtKeXNJUmpIRjRnVis0dTBBU0RBV1YrYVFSR0hQazFKcFFTMG52?=
- =?utf-8?B?MGZUaDE4Q3pWTEtYYmxtSEFNOTBzbExyYTZFUUEvck1tbVFSaHB1eTZTa0l6?=
- =?utf-8?B?UGNsTi9NNXd0Y2ZiNmUyWS9TeEw4TmwvYzJIdUw0SmZjamZucVRHYkxPOUFB?=
- =?utf-8?B?anJTYy9zMG9xZGhJbktSSkhBK2R1VVU3R2hwRDNPREt6bjZBRElzRHNBN3lt?=
- =?utf-8?B?eUM5VDRWTEtKTVc0aXVvMkkxazQ3dy9DOE5sVXNCQ1VHeFo5M2JzWUxWRTJj?=
- =?utf-8?B?Y3ZoaUdjODBiMnhrMGhBRG4xcUdkbjZSUmJmVmd6UkFMZDBVeTNackZtajZF?=
- =?utf-8?B?cTlSRHliRVNqMzVFcEw0R3hFVE1aQ0c2Tnl1OUxhb0U3ZTU1bzVxRnl3R1hr?=
- =?utf-8?B?VU4rOU50VzE1SGZaRnl6K3B6L2dZNVE4WlJGODl4TmI0OEhad1pHd3Q5citB?=
- =?utf-8?B?TURHQkEwUndRZGNWSWIrSUNhUEg0NlhxQ3MyRk80dW5xU1l1bjY4YVZUbW9m?=
- =?utf-8?B?NWc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 006f2990-b881-441f-925b-08ddbf36083b
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 22:14:54.5260
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7hDO+YDpDFY/gsEc22wwZK5MbGtwJX/WSfIuxwsZ+x9nMwhNu6xxf+pkgD3kUPQTndM6k5h88R/rdxtkK5EB0ootHoRyllXGZxY+nv8gsQ0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB6791
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Tony,
+The PM co-processor (device manager or DM) adds the ability to abort
+entry to a low power mode by clearing the mode selection in the
+latest version of its firmware (11.x). The following power management
+operation defined in the TISCI Low Power Mode API [1] is implemented to
+enable aborting entry to LPM:
 
-On 6/26/25 9:49 AM, Tony Luck wrote:
-> Hardware backed resctrl features are enumerated by X86_FEATURE_*
-> flags. These may be overridden by quirks to disable features in the case
-> of errata.
-> 
-> Users can use kernel command line options to either disable a feature,
-> or to force enable a feature that was disabled by a quirk.
-> 
-> Provide similar functionality for software defined features that do not
-> have an X86_FEATURE_* flag.
-> 
-> Unlike other options that are tied to X86_FEATURE_* flags, these must be
-> queried by name. Add rdt_is_software_feature_enabled() to check whether
-> quirks or kernel command line have disabled a feature. Just like the
-> hardware feature options the command line enable overrides quirk disable.
+TISCI_MSG_LPM_ABORT
+Abort the current low power mode entry by clearing the current mode
+selection.
 
-Referring to "Intel Application Energy Telemetry" as a software feature does
-not sound right. It is a hardware feature, no? Perhaps just "a hardware feature
-that does not have a X86_FEATURE_* flag"? With this rdt_is_software_feature_enabled()
-could perhaps just be rdt_is_feature_enabled() (open to other ideas)?
+Introduce LPM abort call that enables the ti_sci driver to support abort
+by clearing the low power mode selection of the DM. This fixes behavior
+from the DM where if system suspend failed, the next time system suspend
+is entered, it will fail because DM did not have the low power mode
+selection cleared. Instead of this behavior, the low power mode selection
+will be cleared after Linux resume which will allow subsequent system
+suspends to work correctly.
 
-The idea that a "software feature" may have a "quirk" also sounds wrong ...
-to me that sounds like a different way of saying a "software bug" and we do not
-handle software bugs with quirks. Referring to it as a "software feature" just
-does not sound right.
+When Linux suspends, the TI SCI ->suspend() call will send a prepare_sleep
+message to the DM. The DM will choose what low power mode to enter once
+Linux is suspended based on constraints given by devices in the TI SCI PM
+domain. After system suspend completes, regardless of if system suspend
+succeeds or fails, the ->complete() hook in TI SCI will be called. In the
+->complete() hook, a message will be sent to the DM to clear the current
+low power mode selection. This is necessary because if suspend fails, the
+low power mode selection in the DM is not cleared and the next system
+suspend will fail due to the low power mode not having been cleared from
+the previous failed system suspend.
 
-> 
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> ---
->  .../admin-guide/kernel-parameters.txt         |  2 +-
->  arch/x86/kernel/cpu/resctrl/internal.h        |  2 ++
->  arch/x86/kernel/cpu/resctrl/core.c            | 30 +++++++++++++++++++
->  arch/x86/kernel/cpu/resctrl/intel_aet.c       |  7 +++++
->  4 files changed, 40 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index f1f2c0874da9..4c12159f3ea0 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -6066,7 +6066,7 @@
->  	rdt=		[HW,X86,RDT]
->  			Turn on/off individual RDT features. List is:
->  			cmt, mbmtotal, mbmlocal, l3cat, l3cdp, l2cat, l2cdp,
-> -			mba, smba, bmec.
-> +			mba, smba, bmec, energy, perf.
->  			E.g. to turn on cmt and turn off mba use:
->  				rdt=cmt,!mba
->  
-> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-> index e8d2a754bc0c..ee1c6204722e 100644
-> --- a/arch/x86/kernel/cpu/resctrl/internal.h
-> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
-> @@ -169,6 +169,8 @@ void __init intel_rdt_mbm_apply_quirk(void);
->  
->  void rdt_domain_reconfigure_cdp(struct rdt_resource *r);
->  
-> +bool rdt_is_software_feature_enabled(char *option);
-> +
->  bool intel_aet_get_events(void);
->  void __exit intel_aet_exit(void);
->  int intel_aet_read_event(int domid, int rmid, enum resctrl_event_id evtid,
-> diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-> index f857f92e7b8b..f9f3bc58290e 100644
-> --- a/arch/x86/kernel/cpu/resctrl/core.c
-> +++ b/arch/x86/kernel/cpu/resctrl/core.c
-> @@ -791,6 +791,8 @@ enum {
->  	RDT_FLAG_MBA,
->  	RDT_FLAG_SMBA,
->  	RDT_FLAG_BMEC,
-> +	RDT_FLAG_ENERGY,
-> +	RDT_FLAG_PERF,
->  };
->  
->  #define RDT_OPT(idx, n, f)	\
-> @@ -816,6 +818,8 @@ static struct rdt_options rdt_options[]  __ro_after_init = {
->  	RDT_OPT(RDT_FLAG_MBA,	    "mba",	X86_FEATURE_MBA),
->  	RDT_OPT(RDT_FLAG_SMBA,	    "smba",	X86_FEATURE_SMBA),
->  	RDT_OPT(RDT_FLAG_BMEC,	    "bmec",	X86_FEATURE_BMEC),
-> +	RDT_OPT(RDT_FLAG_ENERGY,    "energy",	0),
-> +	RDT_OPT(RDT_FLAG_PERF,	    "perf",	0),
->  };
->  #define NUM_RDT_OPTIONS ARRAY_SIZE(rdt_options)
->  
-> @@ -865,6 +869,32 @@ bool rdt_cpu_has(int flag)
->  	return ret;
->  }
->  
-> +/*
-> + * Software options that are not based on X86_FEATURE_* bits.
+Clearing the mode selection unconditionally acts as a cleanup from sending
+the prepare_sleep message in ->suspend(). The DM already clears the low
+power selection automatically when resuming from system suspend. If
+suspend/resume executed without failure, clearing the low power mode
+selection will not cause an error in the DM.
 
-"Hardware features that do not have X86_FEATURE_* bits"?
+The flow for the abort sequence is the following:
+   1. User sends a command to enter sleep
+   2. Linux starts to suspend drivers
+   3. TI SCI suspends and sends prepare_sleep message to DM
+   4. A driver fails to suspend
+   5. Linux resumes the drivers that have already suspended
+   6. Linux sends DM to clear the current low power mode selection from
+      TI SCI ->complete() hook
+   7. DM aborts LPM entry by clearing the current mode selection
+   8. Linux works as normal
 
-> + * There is no "h/w does not support this at all" case.
-> + * Assume that the caller has already determined that s/w
+[1] https://software-dl.ti.com/tisci/esd/latest/2_tisci_msgs/pm/lpm.html
 
-(please expand h/w to hardware, s/w to software)
+Signed-off-by: Kendall Willis <k-willis@ti.com>
+---
+Series has been tested on an SK-AM62B-P1 board. Normal suspend/resume
+has been verified. Abort was tested by adding an error into the TI SCI
+suspend hook.
 
-> + * support is present and just needs to check if the option has been
+Link to v2:
+https://lore.kernel.org/all/20250709205332.2235072-1-k-willis@ti.com/
+Link to v1:
+https://lore.kernel.org/all/20250627204821.1150459-1-k-willis@ti.com/
 
-Looking at how this function is used I rather interpret
-intel_pmt_get_regions_by_feature() as determining that hardware
-support is present.
+Changes from v2 to v3:
+  - added links to previous series and the changes between them
 
-> + * disabled by a quirk that has not been overridden * by a command
+Changes from v1 to v2:
+   - rebase on linux-next
+   - drop the following patch:
+     pmdomain: ti_sci: Add LPM abort sequence to suspend path
+   - remove lpm_abort from ti_sci_pm_ops
+   - add ->complete() hook with ti_sci_cmd_lpm_abort to be called
+     unconditionally within it
+   - remove ti_sci_cmd_lpm_abort from the ->suspend() and
+     ->suspend_noirq() hooks
+   - reword commit message
+---
+ drivers/firmware/ti_sci.c | 61 +++++++++++++++++++++++++++++++++++++++
+ drivers/firmware/ti_sci.h |  3 +-
+ 2 files changed, 63 insertions(+), 1 deletion(-)
 
-(stray *)
+diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+index ae5fd1936ad32..63c405f7037f0 100644
+--- a/drivers/firmware/ti_sci.c
++++ b/drivers/firmware/ti_sci.c
+@@ -2015,6 +2015,58 @@ static int ti_sci_cmd_set_latency_constraint(const struct ti_sci_handle *handle,
+ 	return ret;
+ }
+ 
++/**
++ * ti_sci_cmd_lpm_abort() - Abort entry to LPM by clearing selection of LPM to enter
++ * @handle:     pointer to TI SCI handle
++ *
++ * Return: 0 if all went well, else returns appropriate error value.
++ */
++static int ti_sci_cmd_lpm_abort(const struct ti_sci_handle *handle)
++{
++	struct ti_sci_info *info;
++	struct ti_sci_msg_hdr *req;
++	struct ti_sci_msg_hdr *resp;
++	struct ti_sci_xfer *xfer;
++	struct device *dev;
++	int ret = 0;
++
++	if (IS_ERR(handle))
++		return PTR_ERR(handle);
++	if (!handle)
++		return -EINVAL;
++
++	info = handle_to_ti_sci_info(handle);
++	dev = info->dev;
++
++	xfer = ti_sci_get_one_xfer(info, TI_SCI_MSG_LPM_ABORT,
++				   TI_SCI_FLAG_REQ_ACK_ON_PROCESSED,
++				   sizeof(*req), sizeof(*resp));
++	if (IS_ERR(xfer)) {
++		ret = PTR_ERR(xfer);
++		dev_err(dev, "Message alloc failed(%d)\n", ret);
++		return ret;
++	}
++	req = (struct ti_sci_msg_hdr *)xfer->xfer_buf;
++
++	ret = ti_sci_do_xfer(info, xfer);
++	if (ret) {
++		dev_err(dev, "Mbox send fail %d\n", ret);
++		goto fail;
++	}
++
++	resp = (struct ti_sci_msg_hdr *)xfer->xfer_buf;
++
++	if (!ti_sci_is_response_ack(resp))
++		ret = -ENODEV;
++	else
++		ret = 0;
++
++fail:
++	ti_sci_put_one_xfer(&info->minfo, xfer);
++
++	return ret;
++}
++
+ static int ti_sci_cmd_core_reboot(const struct ti_sci_handle *handle)
+ {
+ 	struct ti_sci_info *info;
+@@ -3739,11 +3791,20 @@ static int __maybe_unused ti_sci_resume_noirq(struct device *dev)
+ 	return 0;
+ }
+ 
++static void __maybe_unused ti_sci_complete(struct device *dev)
++{
++	struct ti_sci_info *info = dev_get_drvdata(dev);
++
++	if (ti_sci_cmd_lpm_abort(&info->handle))
++		dev_err(dev, "LPM clear selection failed.\n");
++}
++
+ static const struct dev_pm_ops ti_sci_pm_ops = {
+ #ifdef CONFIG_PM_SLEEP
+ 	.suspend = ti_sci_suspend,
+ 	.suspend_noirq = ti_sci_suspend_noirq,
+ 	.resume_noirq = ti_sci_resume_noirq,
++	.complete = ti_sci_complete,
+ #endif
+ };
+ 
+diff --git a/drivers/firmware/ti_sci.h b/drivers/firmware/ti_sci.h
+index 053387d7baa06..51d77f90a32cc 100644
+--- a/drivers/firmware/ti_sci.h
++++ b/drivers/firmware/ti_sci.h
+@@ -6,7 +6,7 @@
+  * The system works in a message response protocol
+  * See: https://software-dl.ti.com/tisci/esd/latest/index.html for details
+  *
+- * Copyright (C)  2015-2024 Texas Instruments Incorporated - https://www.ti.com/
++ * Copyright (C)  2015-2025 Texas Instruments Incorporated - https://www.ti.com/
+  */
+ 
+ #ifndef __TI_SCI_H
+@@ -42,6 +42,7 @@
+ #define TI_SCI_MSG_SET_IO_ISOLATION	0x0307
+ #define TI_SCI_MSG_LPM_SET_DEVICE_CONSTRAINT	0x0309
+ #define TI_SCI_MSG_LPM_SET_LATENCY_CONSTRAINT	0x030A
++#define TI_SCI_MSG_LPM_ABORT	0x0311
+ 
+ /* Resource Management Requests */
+ #define TI_SCI_MSG_GET_RESOURCE_RANGE	0x1500
 
-> + * line option.
-> + */
-> +bool rdt_is_software_feature_enabled(char *name)
-> +{
-
-Reinette
+base-commit: 835244aba90de290b4b0b1fa92b6734f3ee7b3d9
+-- 
+2.34.1
 
 
