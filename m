@@ -1,199 +1,209 @@
-Return-Path: <linux-kernel+bounces-724112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE08AFEEC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:14:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38B97AFEEC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D49893ACB76
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:13:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF9453B29EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0463328F955;
-	Wed,  9 Jul 2025 16:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2801204C3B;
+	Wed,  9 Jul 2025 16:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="JKzN20Rq"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2045.outbound.protection.outlook.com [40.107.212.45])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="M0zqQns2"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1148F40;
-	Wed,  9 Jul 2025 16:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752077643; cv=fail; b=Th0ZSNGm7bKbxzMmWZoFuOdcDwPn/AzwrkGA72F0X5TYBTxrkslTXbFaCGQL3JWGOwMCjGepIQdHIzw2UGszb3xy/XieryuvFEXy68fZv91ClIYHhZMl7701v3dBreS9WXanHkI3P9mmG5y2jy3o/4zeAh/O5M3xdQoeGwGheW8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752077643; c=relaxed/simple;
-	bh=m8qzZceCDpsqgJdupZOrMfDu5EsKAvUIh/y9kZ4jnuU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OmPae6Bz0GU1DaeH/dlAv3rCflrqmG4cl8rkedbk4Kz4EjqShpdTwRG3hxb8TPi7ItY+qLfeHrnz7yj5FPFD3/4JpUEPgyCcOKpC0B2IGl4xXa4dGIHK+zJPGqaF0XToKKFuDD4OeUSMQ/dqVJMCij7Db0PRpUaISUshnaKbnvo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=JKzN20Rq; arc=fail smtp.client-ip=40.107.212.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sxtnJbeDFrDHb931yG/Hv+TsSiQgm4vlbivMYiDt0mpYjdRZAafAgVAc+DU8HYmPeZJ2HT0604noIAzht0rwOOXUzJeLTNPZHAbPjcyw72EDBApVbAS1WFpvx8TnLr6yv9PaVwQyTea3eORjCiVjONOtYRc8sdXurismKQb8uXukajEKCoXo/JpHqKxzXMK+6MlMqSz9tllln4d3xsSHvIcO8TkuIY5m+K9RdKx2Cek+EvlI4mWibsFM2iwfGRkC91ElilDln3Zl6AfL4+Ciw/Nbj+azQwTHAgt0/t/E/vjMf+gzm2wxPK+PszVHiIJ5tKjex7lYW3GKRVQ/MxhKxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xuTAVHuyh3Fbbb9ubeado/2N95hCRAcCDjHeN0R1J5M=;
- b=SiyArpUSziatRNRpCDn7hmstKnwAWqbda075mE4DjQ92AWYV8NuQTB76Q6yS403RBzldD++b251rGuMRQ5Toq2SKjFYuwR3BxuEjzN/0GXlzuJoff9sV4jvLydbHnWb4OlnXhchbcOz7cOVdDx65Y3pUA1HlFTJP2UWEsVaFzmn3IlMUp56W+Ez5QFzMwTDtKCm3lybQoZNs4dEsctMn/pg6NEqFH9cpqkrN5mnrd89iGVYxP7vT3fKUqQ4dVGFvhGPoCnqf7LPWwAbFVIDsxhXgMyNiCGLROMaeTfV6UnGTiEgL/tMBcVLCFKO4aGgCT8UX+A+C7ZFITw/5A0NQvQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xuTAVHuyh3Fbbb9ubeado/2N95hCRAcCDjHeN0R1J5M=;
- b=JKzN20RqrEeADz8PhGnKwEPuTtbtXc8ae0WxZs7vdw9lUcP10opFBnf/Yi+M3ruNdt/y3Kq5P3nA8rxteuIkIlG2yVhryI1hbw9RSTXhnprTiaxf3oLRTeZxo+ltxNZVDTIPlZqn6TMYkZZ/Bz7gT5yETwvT60r+MMK7Ed5j8iI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by CH3PR12MB7570.namprd12.prod.outlook.com (2603:10b6:610:149::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Wed, 9 Jul
- 2025 16:13:58 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%7]) with mapi id 15.20.8901.023; Wed, 9 Jul 2025
- 16:13:58 +0000
-Message-ID: <4b50e347-fedc-d94a-9670-a5003220db57@amd.com>
-Date: Wed, 9 Jul 2025 11:13:55 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v4 04/24] x86/sev: Run RMPADJUST on SVSM calling area page
- to test VMPL
-Content-Language: en-US
-To: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org
-Cc: linux-efi@vger.kernel.org, x86@kernel.org,
- Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@kernel.org>, Dionna Amalie Glaze
- <dionnaglaze@google.com>, Kevin Loughlin <kevinloughlin@google.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-References: <20250709080840.2233208-26-ardb+git@google.com>
- <20250709080840.2233208-30-ardb+git@google.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <20250709080840.2233208-30-ardb+git@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1PR04CA0011.namprd04.prod.outlook.com
- (2603:10b6:806:2ce::18) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B5723BF9E;
+	Wed,  9 Jul 2025 16:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752077707; cv=none; b=t+PAouwSNPppvPArHaCdiD8TdTufY8jUmVevtiohZHhJWdWxdMXZYUJowsi77iDZKFz7Z+HLkXshcV69AbWzjzrCgDQG27fj/2h7YZwBwKDbn0sorwYe6ixAPGQU2MNeabXR0TN1NPfDZ9pQVsPRNQdfr84Wq1kQgTOZmILWTNU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752077707; c=relaxed/simple;
+	bh=q5MJlvVs0BYsHH8IXQqVqnQryijutImO2s+0pCrIfBw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oYZRTKS+VQ/v5Hbcz+XMxc6Ft0+CY5zzjL45cWMtEbx31niebidW/ErJVbVLJ42CrAYTPYtoNNjEGJRp9LH6BuC3MIFK/9hyStQsDcWS8rtca8h8cayzjObxHPlXSSDZV6/TNlUCWovY1eaUsYmsA1eCLf6UU4zNi1vasQNCpf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=M0zqQns2; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 569GEc6i866973;
+	Wed, 9 Jul 2025 11:14:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752077678;
+	bh=qkPRxiZdgjK9MgB5IvFZmTDsVI/VU2ccmWoC4LVxJFE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=M0zqQns2DKphNA2swG9UqaIo7IoYKntrIGmkvc2iUARrXbP6sSF4SVaPLcI6bmHpq
+	 KQsoW6yYS/2xRJ0gCdSyZGMiLyN9HyBChbctipR+tWT94oOGuy+5NBm2z/fqSS+TKY
+	 lMC9jwXI/mEzWLNQRq8SzR9Ftci4vfIMKVhatzV0=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 569GEcTr296137
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 9 Jul 2025 11:14:38 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 9
+ Jul 2025 11:14:37 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 9 Jul 2025 11:14:37 -0500
+Received: from [10.250.35.60] ([10.250.35.60])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 569GEbe1052300;
+	Wed, 9 Jul 2025 11:14:37 -0500
+Message-ID: <6045bcfb-35ef-410b-bd7c-0ca7c5c589c4@ti.com>
+Date: Wed, 9 Jul 2025 11:14:37 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|CH3PR12MB7570:EE_
-X-MS-Office365-Filtering-Correlation-Id: f69b5ee1-eb47-4ce5-9d52-08ddbf039c14
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dzBOWGtYbTBad29ocmpyY2l3c0Vhbjgrbm00SWN4dzVFYVIzQkZ3cjE3eUpX?=
- =?utf-8?B?UnlVNGVDNUdlSWYyNzhnMUFiRGc5bWxDeUx0UnFCVEdEdVZoZUlwcE5zRDlw?=
- =?utf-8?B?TTljdzZsT1Q3NDR2b2FOYUJLTThRdUZxcTQwa3JWTHU1Z0lDVGpRLy90SmV6?=
- =?utf-8?B?TUNBb2tFd2x0WDRuSGx5UGZGcHpKN3NQbUc1ZEpuSlNDbXdoYittT1hScnRD?=
- =?utf-8?B?dFE2cTllNWpWQ0pyZFVwR2Rac2dpV3JYSmpTR3BuSG1leFBnTUlwRTNRM2dJ?=
- =?utf-8?B?TzRqSVc2LzRnY0RiNmxtbXpIcEYzcjcyb3ZXcVN3YVQ2c090ZWJSZVRUQjBY?=
- =?utf-8?B?MngvUTdoamsvM3BzR3FNVE5RVGxmMS9xM3hQOHlMSmJLUUpUYzhZcDUrMEZv?=
- =?utf-8?B?U1YzNmg0SkNVa0VtUGw1UXVjVEcyTzNGMWVhSkFJaFhIcFdKSXBibVZDY3lB?=
- =?utf-8?B?TXA4VHhZNldjUFFqRlBkbWo5ZEk3b21IYmdwTEh3TWFWbjE1em9qSVpPUGxr?=
- =?utf-8?B?OWoySDdaWUVYODBraU5vNHRhSlJZQkNWNnVrQldyWWNmQnF5TGh6UHp3L2NV?=
- =?utf-8?B?WGZENkF3SjgwR0RBek5KcnRaNXZlRkZaaUV0bDVCSk8vMDVqalU1QjNodWNO?=
- =?utf-8?B?aDdpWGlvaGZNZFNjaWh5MWNDNU9vMzhkejUxZ0NZYjQ3RnhoLzVhb0hIcWNI?=
- =?utf-8?B?NnhyK0ViNGlYbTUyd1NsS2lyS0YvWVJBbEZWb1VRNWhjQS9WczJGczhPYnFh?=
- =?utf-8?B?RStOWFByS1kwZFhQeEh5djhCWVAxekNBRGtoakgxRUZlVTVRZS9McE5XeTJF?=
- =?utf-8?B?REhYdGNLUUdvNUpoTWhoajhqTjFmclgzL3oxemlGVU92eGNlaVJrb1cxMVJw?=
- =?utf-8?B?THNrZ3p1ZkQ0QjVNSnh4NVFSOXVvald6K0RZVEc1eURpNllHRk1rV1JZbGpW?=
- =?utf-8?B?ZWNickhCcURnVGJQbmlNMG0zNUNweGNpVHQwcEY1MjljZzJLcmFwbXdlNFRB?=
- =?utf-8?B?R3MrRVZPRkJjVjdkcDZJWGlobnd3RUNqcVFSZDlZNGFGUHREWi9SVXNBZHR5?=
- =?utf-8?B?enB1SExSY1NtUllnRU54ZWoyenRHa3JpWGpFcmVVdHIvL0ZpVHh1Q2gvTWdK?=
- =?utf-8?B?b2RiN0lwN08rT2gySmhEOFl0b2h4YXAxbElDb1RzeHE1YjVvMW91bnc5MFVa?=
- =?utf-8?B?YzM2dzI2RUx0WGtQdU1qTDIwRGVzL29vUFdTMWJLNWlXbXBTMTkxOTJ4QkNX?=
- =?utf-8?B?dnBDUC9FZDE4bVROdG13YWRiWCtYR1M2MFAvRjlNZ3I4bFB5K0hzK2RZaVlN?=
- =?utf-8?B?NEhjdnZTaUFndUhaOFE1cVZhSVJWTllhSWdGZ3VZOHVLa2lqenZLN0djbkhM?=
- =?utf-8?B?ZmFxbjdieDI1MUgzWnM1WFNzRHkrUlc0TDRkVnE5bnFBNHp1UFp6NmdMcjIz?=
- =?utf-8?B?SXA5UTZPOUZYMEhKS3MzK1BYQWJmaFhXdDlLRW5NclM3NENBNWVKUlJnQVJO?=
- =?utf-8?B?dDk3WjAwV2htcjNpUityZHhPZldKTUdVOUg3elJvTHJ4K2o5V1FWU2VVSTFs?=
- =?utf-8?B?YTVLNnpiNnFCbGZzSVJuNHNMR1QzSjRueWdGaldnc3BVeVJmYmVxK015ckZn?=
- =?utf-8?B?c09Wc0wyUFlZZGx0RVJzU1VBTGJoQVJyVk5TZE4wZk1HdCtvL24zTTdRYzEx?=
- =?utf-8?B?RkQzTDZxMCtxL0pmQVFlcVNuanRGY29EYUI2c1B4SHVaQWV0MWJyaldqcTdk?=
- =?utf-8?B?K01VQTU5dXBKblZhRDNxS2xBL012MWROT2ttN003UDBkbjMzdXNCVFdLQVR1?=
- =?utf-8?B?QytyeHhKcFVUeTVGN1ZCZ1hsaHczajNCUWxadkhTSmdUU1hqMFB6K1h5VVVW?=
- =?utf-8?B?d2FHZDkreFh2TDVjeGp0MXJLRS9ZR1l0NkkrZkpXQUlzTWc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZG9tMjEvYlFFWkM2NHVCbjdwUnI0M3hROC94ekQwVllRZHVpWmxQN3M4TzNx?=
- =?utf-8?B?Z09WaVVLZHh1WktXV0pNcUVaeUlrZ2xyUTB3aThDdFovdnhmN2N5WjM3Z0lo?=
- =?utf-8?B?ckROOU1wRnVkMW8vQkpBQ3J2UytrNUtBMmdvT2E1TUhiUElQWlcvdk5NWXht?=
- =?utf-8?B?WEdUSFMxNW4xRkNaaFQ3dVZwYjlPVVk2VG9DMkZQU0lQNGhTOGlJR2tWWkRQ?=
- =?utf-8?B?S1RURm11N3VXYlcvZTZ5RGdtTVk5SDhoYmphaGFTNkJvRS9maWlhaXp1TzN1?=
- =?utf-8?B?V0lBb3d5dzFYOFJzblpGWjRmNEZmNXdYVGZlM0lZUVZVTUs3bElzcUhHeVRy?=
- =?utf-8?B?OUE5bFAwZWhoUUoxWGhpa2hLY1phVEZBL0FaVURJTHVCWDRpeDhZWXBDc0d6?=
- =?utf-8?B?aDZlUmkrRVE4em1hUk9rQndadzJBbldPQktLQzFieHFSTTRLNm5OWjZYd1FQ?=
- =?utf-8?B?UzlIQzBudzNNcU5JTEMvQ2ltQlkxYjJJTmVyaDlHVUJnc1hrcWF5MnF0Tk1i?=
- =?utf-8?B?ZUdubFh1RGlLSXVRYWYreXFOVEE0SUc3L1V5b3d3YnZQZFZNSXV2RG1vSDh1?=
- =?utf-8?B?ZFI3WG15Vkl6cThGLzE4S0VQQjRacVFvdm5qM250alNpQWV5YWREYUNkcmwv?=
- =?utf-8?B?enBZUU9pbFZheThaa29hOTg5NjQvaDI0TWdJV08rWk1LNG5mU2JoVEJYNFdE?=
- =?utf-8?B?OTVpZTdKQUpuSGtWZzEzVjA5QWYwSG9acUVBSGdXRDVJVjc5S2tYL1BJUUls?=
- =?utf-8?B?U2JDSjVaTHpPRTlaR25zN0RaOXAzTnRXQklzOU5POStWc2pWdXdhWFd1U3Na?=
- =?utf-8?B?d1hxc3VXbmxPM0dBSXJnQWlCZUpzNitYTjR0NVFSWDBzbDR5Y3FQdGNxWGlV?=
- =?utf-8?B?MWh0WlVHc3hqSURYdWcxY21Fc2RSRzBrZGRFRG01cVVsYlIvZGk0RWpTOXd2?=
- =?utf-8?B?Qy81WjByTUZydWNpQUNvVlFHRTJJeEREZFNDR0diZERTRFhXMlNZWmJrcjRX?=
- =?utf-8?B?QlZJOFJIY3RXM0ZKZzJqVmpweFVVU29iWWFpUGZQbkk5Y3dVOGExZXFzTjFv?=
- =?utf-8?B?d2xSMUxFdVdVRmxzUkVJQ05KMVdMOFBQTzRnRjdZSi9veWd3bkIySlV2UDIx?=
- =?utf-8?B?MXoyZ2Q0bmxFcWFyU2VqSHBwaUR4VUdRclJ4enBjWldyaGhKT29BS3Nac2NB?=
- =?utf-8?B?MXE0ZEpxUVFYZ0ZTblZ4ME94L0RYZENEVmxIckpBK1pxaXg3ZmNkTCtuRUYv?=
- =?utf-8?B?K2s1UGlDTlM0T3ZWcVVkb1hEUFlDY01kRFNPeTVFUXVQL0FhVlkyNVdmc3JN?=
- =?utf-8?B?UUZKK3hxODQ3NFN6TkR2d1lWSVk0Z1U5NlZ2a25tRVg1YTlYWTQyeXpxcWZD?=
- =?utf-8?B?UmtWNDNMemFlQ3p5NFI5c0ptaWQxQ2ZHeUVoZWlCWkhlMEh4Qkd2cnFZRWhm?=
- =?utf-8?B?OGhGUCt2UWRQSzRuOHM1T1JDN2xtdlNzbkFtWkRtSW9vTjFEUU1ST0t3clJm?=
- =?utf-8?B?Q3hRU1VvNHk0YVlkM3FITEVsd1ZnbDhiMkcxYWlqdVBSVTh4QWpqSW51bnc4?=
- =?utf-8?B?T3M0MWVsbEw2Z1djZEU4ZS90SnRFZWNwVEhscE13SEs1b1NJaUZkOE9sYS9P?=
- =?utf-8?B?bHZoNGs4VHZHazZzYnhnOVN4UG1wTHNpUzZxaHEvVVlFL1lKMEdyZTQrRVhS?=
- =?utf-8?B?S3Rac093cExmY0phT2RhZEV3YzVsUi82UTZjNTFHWEJIcTNCZDNhYlJMUFpG?=
- =?utf-8?B?bHQrZkRQcDJDclh4bE43QlYxSTNSbk9Db1ppSGg1T1ZmL1N6WnlXTnN0RjJU?=
- =?utf-8?B?L25ZeW5jbVlreERmdzI3ekNRL29GM08rdlpzM3R4Z0NTQlpMalI5L3FrQnFU?=
- =?utf-8?B?M0tSSkd4cXJhMTl2K2FjUmNmb0dOckVjY0lzaldsdkUyR2NBSDJpejR1d01p?=
- =?utf-8?B?Ym1VMHE0cFdBQWVRa3RBMnlGeDdaSzJLNVJ4SEQ0L053UkpOS0hGUXI2UDZy?=
- =?utf-8?B?cDJNclIyOUU5ekVrVHlSK0svdG5sYkVEQWVhQ2lZSmZ5Qk5uVUxTN0VOSDVY?=
- =?utf-8?B?S09hTGFVMFIvMVFCckFuMjAxRG04eEtLRXZOQkNzWTNiYW1IOUFEV2lJZERh?=
- =?utf-8?Q?vYqyuFTHHblYBW6GVv6JV3i4v?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f69b5ee1-eb47-4ce5-9d52-08ddbf039c14
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 16:13:58.2403
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KgGp3rCCcF0Hyt73otl5WprJLC7ju/Po1BoofP0d4XK8ngV5JrUnPdCY/vYfj4qwaOJ+UXh68/yTMKnmy1eRmQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7570
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] dma-buf: heaps: cma: Create CMA heap for each CMA
+ reserved region
+To: Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Sumit Semwal
+	<sumit.semwal@linaro.org>,
+        Benjamin Gaignard
+	<benjamin.gaignard@collabora.com>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        John Stultz <jstultz@google.com>,
+        "T.J. Mercier" <tjmercier@google.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Marek
+ Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>
+CC: Jared Kangas <jkangas@redhat.com>,
+        Mattijs Korpershoek
+	<mkorpershoek@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>, <iommu@lists.linux.dev>
+References: <20250709-dma-buf-ecc-heap-v6-0-dac9bf80f35d@kernel.org>
+ <20250709-dma-buf-ecc-heap-v6-2-dac9bf80f35d@kernel.org>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20250709-dma-buf-ecc-heap-v6-2-dac9bf80f35d@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 7/9/25 03:08, Ard Biesheuvel wrote:
-> From: Ard Biesheuvel <ardb@kernel.org>
+On 7/9/25 7:44 AM, Maxime Ripard wrote:
+> Aside from the main CMA region, it can be useful to allow userspace to
+> allocate from the other CMA reserved regions.
 > 
-> Determining the VMPL at which the kernel runs involves performing a
-> RMPADJUST operation on an arbitrary page of memory, and observing whether
-> it succeeds.
+> Indeed, those regions can have specific properties that can be useful to
+> a specific us-case.
 > 
-> The use of boot_ghcb_page in the core kernel in this case is completely
-> arbitrary, but results in the need to provide a PIC alias for it. So use
-> boot_svsm_ca_page instead, which already needs this alias for other
-> reasons.
+> For example, one of them platform I've been with has ECC enabled on the
+> entire memory but for a specific region. Using that region to allocate
+> framebuffers can be particular beneficial because enabling the ECC has a
+> performance and memory footprint cost.
 > 
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-
+> Thus, exposing these regions as heaps user-space can allocate from and
+> import wherever needed allows to cover that use-case.
+> 
+> For now, only shared-dma-pools regions with the reusable property (ie,
+> backed by CMA) are supported, but eventually we'll want to support other
+> DMA pools types.
+> 
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
 > ---
->  arch/x86/boot/compressed/sev.c      | 2 +-
->  arch/x86/boot/startup/sev-shared.c  | 5 +++--
->  arch/x86/boot/startup/sev-startup.c | 2 +-
->  3 files changed, 5 insertions(+), 4 deletions(-)
+>   drivers/dma-buf/heaps/cma_heap.c | 52 +++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 51 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma-buf/heaps/cma_heap.c b/drivers/dma-buf/heaps/cma_heap.c
+> index 0df007111975447d555714d61ead9699287fd65a..31a18683ee25788a800f3f878fd958718a930ff7 100644
+> --- a/drivers/dma-buf/heaps/cma_heap.c
+> +++ b/drivers/dma-buf/heaps/cma_heap.c
+> @@ -19,10 +19,12 @@
+>   #include <linux/err.h>
+>   #include <linux/highmem.h>
+>   #include <linux/io.h>
+>   #include <linux/mm.h>
+>   #include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_reserved_mem.h>
+>   #include <linux/scatterlist.h>
+>   #include <linux/slab.h>
+>   #include <linux/vmalloc.h>
+>   
+>   #define DEFAULT_CMA_NAME "default_cma_region"
+> @@ -421,7 +423,55 @@ static int __init add_default_cma_heap(void)
+>   				ERR_PTR(ret));
+>   	}
+>   
+>   	return 0;
+>   }
+> -module_init(add_default_cma_heap);
+> +
+> +static int __init add_cma_heaps(void)
+> +{
+> +	struct device_node *rmem_node;
+> +	struct device_node *node;
+> +	int ret;
+> +
+> +	ret = add_default_cma_heap();
+
+Will this double add the default CMA region if it was declared
+using DT (reserved-memory) when all those nodes are again scanned
+through below? Might need a check in that loop for linux,cma-default.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	rmem_node = of_find_node_by_path("/reserved-memory");
+> +	if (!rmem_node)
+> +		goto out;
+
+Can just return here, "out" path doesn't need to put a NULL node.
+
+Andrew
+
+> +
+> +	for_each_child_of_node(rmem_node, node) {
+> +		struct reserved_mem *rmem;
+> +		struct cma *cma;
+> +
+> +		rmem = of_reserved_mem_lookup(node);
+> +		if (!rmem) {
+> +			ret = -EINVAL;
+> +			goto err_put_node;
+> +		}
+> +
+> +		if (!of_reserved_mem_is_contiguous(rmem))
+> +			continue;
+> +
+> +		cma = rmem->priv;
+> +		if (!cma) {
+> +			ret = -EINVAL;
+> +			goto err_put_node;
+> +		}
+> +
+> +		ret = __add_cma_heap(cma, of_node_full_name(node));
+> +		if (ret)
+> +			goto err_put_node;
+> +	}
+> +
+> +out:
+> +	of_node_put(rmem_node);
+> +	return 0;
+> +
+> +err_put_node:
+> +	of_node_put(rmem_node);
+> +	return ret;
+> +}
+> +
+> +module_init(add_cma_heaps);
+>   MODULE_DESCRIPTION("DMA-BUF CMA Heap");
 > 
 
