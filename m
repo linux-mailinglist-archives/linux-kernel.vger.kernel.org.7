@@ -1,312 +1,213 @@
-Return-Path: <linux-kernel+bounces-724650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A76CFAFF56C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:35:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C25AFF56E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 553F94E410C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:34:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AE43483493
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32F5269B08;
-	Wed,  9 Jul 2025 23:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0482E26A0F8;
+	Wed,  9 Jul 2025 23:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RNtO0uGB"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLH+iYGl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186FD244EA1
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 23:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 523F521D001;
+	Wed,  9 Jul 2025 23:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752104116; cv=none; b=j4kf9z2I7R2imma0tBdLHyqED39JwTmFw6Kjpmdi1yuYT8Gh4Vv0tAmZjfYJf0eHFntp6EudJOSDIQW5kN+QACqxfgPfSwlv4MrQm0BPNJlNoT5POFSYOduzb8wmB8Qm4EAUo/OTEbb/VmetnKVGOj4+sk2/70qNVOXygjDiRgQ=
+	t=1752104302; cv=none; b=BpJjt4LIER3yam0kXm4cuapCq4r7wUiEpDRdDSpRImCqMoly4WeAissQOZkaeQM8yrVXOcvLqVICCSKsKkzDwGIRSdn/l/2aZ+k/OFDQ5dGEk3b8Eq9H9NJZ6rPebz0MZC609G47YGd96ncYN1tm7gScAI+29lcjS3BOOX0cSX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752104116; c=relaxed/simple;
-	bh=RU+jpcm+3jXM/R7Egs0R1XENSwJ50dX2hnvkpkYnVbM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tRUqGDH+RaW0MgbrWLRn30ZL2bBWTtB9fVp5vkL3MMSWCXy/b6wW1MGwEdbMhs9ANdOg85iMaTEsWt22m9+s/ZgaaG3LYYyHHfgNmOEelTzdE5zV+SpsXszhm/dsxTb0JyR9IWF1nN51/SXMIYDs12Tg2o5NBSlAyuSJ1AlsoGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RNtO0uGB; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-60b86fc4b47so2597a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 16:35:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752104113; x=1752708913; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qWiQAnEYHLFkU6hDE5kp2rvy2g/eJ5uVlEd2bJU+LVA=;
-        b=RNtO0uGBGOfgAhWpXBF7brQ0UgH04LsBUvaaEoOaYvO7uxgOaseU5AGBgB3BJBsBNo
-         P8EtHqxaa8567nXuEbHmvAKJki76wh39JIffhjvKx7L2X7NxDyinW2Vi56y30Sda6uPR
-         dW4Fp9J9ErvnEPrqLpJdFnpIfY3BY6ofAPEIfcD+Fm/HinsxpaChduunSJ6YjeDlz19R
-         fYv5FKTaDvwUW6J5MTbmIM6nMMzk5etIV23cCwPpiwsRn3OjrxoVbIzoHzSWS+Efbg6b
-         05yBg83b3upmHZK6qluWL5DnskUTu1heXjwN+QMcEjQCZiAao9vi9Vj/UukA2LLPTVK1
-         9xRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752104113; x=1752708913;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qWiQAnEYHLFkU6hDE5kp2rvy2g/eJ5uVlEd2bJU+LVA=;
-        b=dJHvJ1xx18rW92DSqEjFwOxHekQE/XVJP/A1Ngv0nzjceQehff16j4d3hKuoQRiPxD
-         v6+RqDtXNJj4ZC/uI1gvcrK7ZrWfzfRiFLHxwJXxNNIVNsabUCKWnsyxzvT4XwZ3LZfo
-         XP7/wiNDm6Ed2X8nWrIa1mFITBwRbOAw3JKhIM8mz9Htz+8SGp9j1z0mewU6ap+5t39u
-         sNe76wv5/kB0sEjTlC63Q072D+s6abykgEJvhBPOeLef+yuuIQHGH1gtGfYOwqRoKcBn
-         jwziXYd5/12clFqmAViZyLYj9+Ex6D+w7ZAbDDMpk8nD3vGckk1Jm+cyFQ9agWQ9nULf
-         EcpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVa8m6clX2b8U+I3uKl3C25oQ2GW7YWYvN+kEX5wrWSbRPHVrlqqC4IkGI8I35/bDtNO8S+p7L+JgXWrBM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj25zRas2M0IgkAwo5ycE4ARPABv5/pZ9Ayfhe2bJDr3ycdEgE
-	DfDAe9jC+gqpMDT5Edb7Xy38bzfzU9Jz7pIYx2PhzfTved5eR2T8Gj/2IoLAPZR0al6G5wnpk3q
-	lhritKorwiXufV31YLgf9EoL4RmTeC1tgGGihZFEZ
-X-Gm-Gg: ASbGnctA/Zp+E85lX1tY6tETCQQi6QpcXHZvM3i8s8E9AmrGbzFkip6Tyr1iyGl9mYB
-	OTMJs8FGKCC6BiiX6qgjP1scwULo7Fl2cRIK0NZ5JPGQymOG5PrdV/TzWBjQnefirWs0nAGqq9y
-	t+skUrzVEC9k89bSraUjILIJexVS23pFoWxFl7FhytrKKok/MU4wudqeS81Q64uZsOdkfn1etzq
-	Q==
-X-Google-Smtp-Source: AGHT+IErSijasHaWxDAZKcdHGb84rFn+l/GYYHyMQqn288AUdzH6phbsB4mInaNJVVJxb6AFKXy5iSFSf9XNB5OZfY8=
-X-Received: by 2002:a50:d742:0:b0:606:b6da:5028 with SMTP id
- 4fb4d7f45d1cf-611c37eb47bmr35750a12.0.1752104113044; Wed, 09 Jul 2025
- 16:35:13 -0700 (PDT)
+	s=arc-20240116; t=1752104302; c=relaxed/simple;
+	bh=+saq+jsUrUpBT+5osqmmx0pEvV9D8xuRp7bJmqNCkdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=NlgTzA/AfW3xNVBy9qT2gLjxzM/Yhunnjo8tlewy90JrzUqMymP8Jt2RzMxqqVthLayg5DmXzybThmkk89zpJgDXbxev1OSBpRR2Ajij2v0X9tUD+1yLfhoqVZD/GFaRDWErcPff4oPDYlaSa1ttNi5T8MBn5BwmNU5GxqUv3c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XLH+iYGl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BA26C4CEEF;
+	Wed,  9 Jul 2025 23:38:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752104301;
+	bh=+saq+jsUrUpBT+5osqmmx0pEvV9D8xuRp7bJmqNCkdU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=XLH+iYGlSou+fshL81YHTKEnxmlfMB6lVH85uc/p0EZX1I1zxgzeaVyZGQA91E6xT
+	 kx1i1Xy7R/9kAwl9S7BhzVsQflbYiJ119OPziCYFCSsZJgjQWECEqwD109ONcrA5vW
+	 SpxdjzjpbsbqMt4gvRcaRz8tMhVjkYZBsUJpXmO35uJQAsAqtOTj3uOL+u6VF4Bxrv
+	 CY6BCcEBZ58Ow3bRCR8E/SJVmJ5END48v6ecEfesE9G0qPcl6TygvhcYfnPHb2wL1D
+	 4yK56gFhx1qLwb9ZTrOTDSM9lf9cjd7VX1XYONI4Q8B3vj4nOPoe4rx/ajVBh+azkK
+	 XfeGs4jqOTyJw==
+Date: Wed, 9 Jul 2025 18:38:20 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+	Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Parav Pandit <parav@nvidia.com>, virtualization@lists.linux.dev,
+	stefanha@redhat.com, alok.a.tiwari@oracle.com,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH RFC v5 1/5] pci: report surprise removal event
+Message-ID: <20250709233820.GA2212185@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709-debugfs-rust-v9-0-92b9eab5a951@google.com>
- <20250709-debugfs-rust-v9-5-92b9eab5a951@google.com> <DB7UZCKSQ4G2.ZZBIWS6YJAOF@kernel.org>
-In-Reply-To: <DB7UZCKSQ4G2.ZZBIWS6YJAOF@kernel.org>
-From: Matthew Maurer <mmaurer@google.com>
-Date: Wed, 9 Jul 2025 16:35:01 -0700
-X-Gm-Features: Ac12FXxgGdYztUUvA1n-trl8yVSQzZP_PVMiUKzdW3gk35OQT4rrxcNTt1vvdQQ
-Message-ID: <CAGSQo02rWt1nDOMeMXR1+nB9we59O-VR4annwrtOQSA+mWoDeA@mail.gmail.com>
-Subject: Re: [PATCH v9 5/5] rust: samples: Add debugfs sample
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
-	Timur Tabi <ttabi@nvidia.com>, Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fba3d235e38c1c6fcef2a30ed083ad9e25b20fa3.1752094439.git.mst@redhat.com>
 
-> Keep it simple, Create some driver private data in probe() and export a couple
-> of fields of this driver private data through debugfs.
->
-> If you really want to showcase that those values can change, queue some work and
-> modify the counter and / or the Inner type that is protected by a mutex.
+Housekeeping: Note subject line convention. Indent with spaces in
+commit log.  Remove spurious plus signs.
 
-I've included an example of what a simplified sample of the sort you
-asked for might look like below. I'll include it in the updated series
-unless someone wants the original functionality.
+On Wed, Jul 09, 2025 at 04:55:26PM -0400, Michael S. Tsirkin wrote:
+> At the moment, in case of a surprise removal, the regular remove
+> callback is invoked, exclusively.  This works well, because mostly, the
+> cleanup would be the same.
+> 
+> However, there's a race: imagine device removal was initiated by a user
+> action, such as driver unbind, and it in turn initiated some cleanup and
+> is now waiting for an interrupt from the device. If the device is now
+> surprise-removed, that never arrives and the remove callback hangs
+> forever.
+> 
+> For example, this was reported for virtio-blk:
+> 
+> 	1. the graceful removal is ongoing in the remove() callback, where disk
+> 	   deletion del_gendisk() is ongoing, which waits for the requests +to
+> 	   complete,
+> 
+> 	2. Now few requests are yet to complete, and surprise removal started.
+> 
+> 	At this point, virtio block driver will not get notified by the driver
+> 	core layer, because it is likely serializing remove() happening by
+> 	+user/driver unload and PCI hotplug driver-initiated device removal.  So
+> 	vblk driver doesn't know that device is removed, block layer is waiting
+> 	for requests completions to arrive which it never gets.  So
+> 	del_gendisk() gets stuck.
+> 
+> Drivers can artificially add timeouts to handle that, but it can be
+> flaky.
+> 
+> Instead, let's add a way for the driver to be notified about the
+> disconnect. It can then do any necessary cleanup, knowing that the
+> device is inactive.
 
-Provides an example of using the Rust DebugFS bindings.
+This relies on somebody (typically pciehp, I guess) calling
+pci_dev_set_disconnected() when a surprise remove happens.
 
-Signed-off-by: Matthew Maurer <mmaurer@google.com>
----
- MAINTAINERS                  |   1 +
- samples/rust/Kconfig         |  11 +++
- samples/rust/Makefile        |   1 +
- samples/rust/rust_debugfs.rs | 136 +++++++++++++++++++++++++++++++++++
- 4 files changed, 149 insertions(+)
- create mode 100644 samples/rust/rust_debugfs.rs
+Do you think it would be practical for the driver's .remove() method
+to recognize that the device may stop responding at any point, even if
+no hotplug driver is present to call pci_dev_set_disconnected()?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1427af9d9779..0d9cb77b54b4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7376,6 +7376,7 @@ F:        rust/kernel/devres.rs
- F:     rust/kernel/driver.rs
- F:     rust/kernel/faux.rs
- F:     rust/kernel/platform.rs
-+F:     samples/rust/rust_debugfs.rs
- F:     samples/rust/rust_driver_platform.rs
- F:     samples/rust/rust_driver_faux.rs
+Waiting forever for an interrupt seems kind of vulnerable in general.
+Maybe "artificially adding timeouts" is alluding to *not* waiting
+forever for interrupts?  That doesn't seem artificial to me because
+it's just a fact of life that devices can disappear at arbitrary
+times.
 
-diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
-index 7f7371a004ee..01101db41ae3 100644
---- a/samples/rust/Kconfig
-+++ b/samples/rust/Kconfig
-@@ -62,6 +62,17 @@ config SAMPLE_RUST_DMA
+It seems a little fragile to me to depend on some other part of the
+system to notice the surprise removal and tell you about it or
+schedule your work function.  I think it would be more robust for the
+driver to check directly, i.e., assume writes to the device may be
+lost, check for PCI_POSSIBLE_ERROR() after reads from the device, and
+never wait for an interrupt without a timeout.
 
-          If unsure, say N.
-
-+config SAMPLE_RUST_DEBUGFS
-+       tristate "DebugFS Test Module"
-+       depends on DEBUG_FS
-+       help
-+         This option builds the Rust DebugFS Test module sample.
-+
-+         To compile this as a module, choose M here:
-+         the module will be called rust_debugfs.
-+
-+         If unsure, say N.
-+
- config SAMPLE_RUST_DRIVER_PCI
-        tristate "PCI Driver"
-        depends on PCI
-diff --git a/samples/rust/Makefile b/samples/rust/Makefile
-index bd2faad63b4f..61276222a99f 100644
---- a/samples/rust/Makefile
-+++ b/samples/rust/Makefile
-@@ -4,6 +4,7 @@ ccflags-y += -I$(src)                           #
-needed for trace events
- obj-$(CONFIG_SAMPLE_RUST_MINIMAL)              += rust_minimal.o
- obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)          += rust_misc_device.o
- obj-$(CONFIG_SAMPLE_RUST_PRINT)                        += rust_print.o
-+obj-$(CONFIG_SAMPLE_RUST_DEBUGFS)              += rust_debugfs.o
- obj-$(CONFIG_SAMPLE_RUST_DMA)                  += rust_dma.o
- obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)           += rust_driver_pci.o
- obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)      += rust_driver_platform.o
-diff --git a/samples/rust/rust_debugfs.rs b/samples/rust/rust_debugfs.rs
-new file mode 100644
-index 000000000000..47b337f2e960
---- /dev/null
-+++ b/samples/rust/rust_debugfs.rs
-@@ -0,0 +1,136 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+// Copyright (C) 2025 Google LLC.
-+
-+//! Sample DebugFS exporting platform driver
-+//!
-+//! To successfully probe this driver with ACPI, use an ssdt that looks like
-+//!
-+//! ```dsl
-+//! DefinitionBlock ("", "SSDT", 2, "TEST", "VIRTACPI", 0x00000001)
-+//! {
-+//!    Scope (\_SB)
-+//!    {
-+//!        Device (T432)
-+//!        {
-+//!            Name (_HID, "LNUXDEBF")  // ACPI hardware ID to match
-+//!            Name (_UID, 1)
-+//!            Name (_STA, 0x0F)        // Device present, enabled
-+//!            Name (_DSD, Package () { // Sample attribute
-+//!                ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-+//!                Package() {
-+//!                    Package(2) {"compatible", "sample-debugfs"}
-+//!                }
-+//!            })
-+//!            Name (_CRS, ResourceTemplate ()
-+//!            {
-+//!                Memory32Fixed (ReadWrite, 0xFED00000, 0x1000)
-+//!            })
-+//!        }
-+//!    }
-+//! }
-+//! ```
-+
-+use core::sync::atomic::AtomicUsize;
-+use core::sync::atomic::Ordering;
-+use kernel::c_str;
-+use kernel::debugfs::{Dir, File};
-+use kernel::new_mutex;
-+use kernel::prelude::*;
-+use kernel::sync::Mutex;
-+
-+use kernel::{acpi, device::Core, of, platform, str::CString, types::ARef};
-+
-+kernel::module_platform_driver! {
-+    type: RustDebugFs,
-+    name: "rust_debugfs",
-+    authors: ["Matthew Maurer"],
-+    description: "Rust DebugFS usage sample",
-+    license: "GPL",
-+}
-+
-+#[pin_data]
-+struct RustDebugFs {
-+    pdev: ARef<platform::Device>,
-+    // As we only hold these for drop effect (to remove the
-directory/files) we have a leading
-+    // underscore to indicate to the compiler that we don't expect to
-use this field directly.
-+    _debugfs: Dir,
-+    #[pin]
-+    _compatible: File<CString>,
-+    #[pin]
-+    counter: File<AtomicUsize>,
-+    #[pin]
-+    inner: File<Mutex<Inner>>,
-+}
-+
-+#[derive(Debug)]
-+struct Inner {
-+    x: u32,
-+    y: u32,
-+}
-+
-+kernel::acpi_device_table!(
-+    ACPI_TABLE,
-+    MODULE_ACPI_TABLE,
-+    <RustDebugFs as platform::Driver>::IdInfo,
-+    [(acpi::DeviceId::new(c_str!("LNUXDEBF")), ())]
-+);
-+
-+impl platform::Driver for RustDebugFs {
-+    type IdInfo = ();
-+    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = None;
-+    const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> =
-Some(&ACPI_TABLE);
-+
-+    fn probe(
-+        pdev: &platform::Device<Core>,
-+        _info: Option<&Self::IdInfo>,
-+    ) -> Result<Pin<KBox<Self>>> {
-+        let result = KBox::try_pin_init(RustDebugFs::new(pdev), GFP_KERNEL)?;
-+        // We can still mutate fields through the files which are
-atomic or mutexed:
-+        result.counter.store(91, Ordering::Relaxed);
-+        {
-+            let mut guard = result.inner.lock();
-+            guard.x = guard.y;
-+            guard.y = 42;
-+        }
-+        Ok(result)
-+    }
-+}
-+
-+impl RustDebugFs {
-+    fn build_counter(dir: &Dir) -> impl PinInit<File<AtomicUsize>> + use<'_> {
-+        dir.fmt_file(c_str!("counter"), AtomicUsize::new(0), &|counter, fmt| {
-+            writeln!(fmt, "{}", counter.load(Ordering::Relaxed))
-+        })
-+    }
-+
-+    fn build_inner(dir: &Dir) -> impl PinInit<File<Mutex<Inner>>> + use<'_> {
-+        dir.fmt_file(
-+            c_str!("pair"),
-+            new_mutex!(Inner { x: 3, y: 10 }),
-+            &|i, fmt| writeln!(fmt, "{:?}", *i.lock()),
-+        )
-+    }
-+
-+    fn new(pdev: &platform::Device<Core>) -> impl PinInit<Self,
-Error> + use<'_> {
-+        let debugfs = Dir::new(c_str!("sample_debugfs"));
-+        let dev = pdev.as_ref();
-+
-+        try_pin_init! {
-+            Self {
-+                _compatible <- debugfs.fmt_file(
-+                    c_str!("compatible"),
-+                    dev.fwnode()
-+                        .ok_or(ENOENT)?
-+                        .property_read::<CString>(c_str!("compatible"))
-+                        .required_by(dev)?,
-+                    &|cs, w| writeln!(w, "{cs:?}"),
-+                ),
-+                counter <- Self::build_counter(&debugfs),
-+                inner <- Self::build_inner(&debugfs),
-+                _debugfs: debugfs,
-+                pdev: pdev.into(),
-+            }
-+        }
-+    }
-+}
--- 
-2.50.0.727.gbf7dc18ff4-goog
+> Since cleanups can take a long time, this takes an approach
+> of a work struct that the driver initiates and enables
+> on probe, and tears down on remove.
+> 
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> ---
+>  drivers/pci/pci.h   |  6 ++++++
+>  include/linux/pci.h | 45 +++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 51 insertions(+)
+> 
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 12215ee72afb..3ca4ebfd46be 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -553,6 +553,12 @@ static inline int pci_dev_set_disconnected(struct pci_dev *dev, void *unused)
+>  	pci_dev_set_io_state(dev, pci_channel_io_perm_failure);
+>  	pci_doe_disconnected(dev);
+>  
+> +	if (READ_ONCE(dev->disconnect_work_enable)) {
+> +		/* Make sure work is up to date. */
+> +		smp_rmb();
+> +		schedule_work(&dev->disconnect_work);
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 05e68f35f392..723b17145b62 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -548,6 +548,10 @@ struct pci_dev {
+>  	/* These methods index pci_reset_fn_methods[] */
+>  	u8 reset_methods[PCI_NUM_RESET_METHODS]; /* In priority order */
+>  
+> +	/* Report disconnect events. 0x0 - disable, 0x1 - enable */
+> +	u8 disconnect_work_enable;
+> +	struct work_struct disconnect_work;
+> +
+>  #ifdef CONFIG_PCIE_TPH
+>  	u16		tph_cap;	/* TPH capability offset */
+>  	u8		tph_mode;	/* TPH mode */
+> @@ -1993,6 +1997,47 @@ pci_release_mem_regions(struct pci_dev *pdev)
+>  			    pci_select_bars(pdev, IORESOURCE_MEM));
+>  }
+>  
+> +/*
+> + * Run this first thing after getting a disconnect work, to prevent it from
+> + * running multiple times.
+> + * Returns: true if disconnect was enabled, proceed. false if disabled, abort.
+> + */
+> +static inline bool pci_test_and_clear_disconnect_enable(struct pci_dev *pdev)
+> +{
+> +	u8 enable = 0x1;
+> +	u8 disable = 0x0;
+> +	return try_cmpxchg(&pdev->disconnect_work_enable, &enable, disable);
+> +}
+> +
+> +/*
+> + * Caller must initialize @pdev->disconnect_work before invoking this.
+> + * The work function must run and check pci_test_and_clear_disconnect_enable.
+> + * Note that device can go away right after this call.
+> + */
+> +static inline void pci_set_disconnect_work(struct pci_dev *pdev)
+> +{
+> +	/* Make sure WQ has been initialized already */
+> +	smp_wmb();
+> +
+> +	WRITE_ONCE(pdev->disconnect_work_enable, 0x1);
+> +
+> +	/* check the device did not go away meanwhile. */
+> +	mb();
+> +
+> +	if (!pci_device_is_present(pdev))
+> +		schedule_work(&pdev->disconnect_work);
+> +}
+> +
+> +static inline void pci_clear_disconnect_work(struct pci_dev *pdev)
+> +{
+> +	WRITE_ONCE(pdev->disconnect_work_enable, 0x0);
+> +
+> +	/* Make sure to stop using work from now on. */
+> +	smp_wmb();
+> +
+> +	cancel_work_sync(&pdev->disconnect_work);
+> +}
+> +
+>  #else /* CONFIG_PCI is not enabled */
+>  
+>  static inline void pci_set_flags(int flags) { }
+> -- 
+> MST
+> 
 
