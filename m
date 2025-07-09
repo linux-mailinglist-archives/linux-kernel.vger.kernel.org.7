@@ -1,116 +1,102 @@
-Return-Path: <linux-kernel+bounces-722615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3FCCAFDCE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:27:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0455AFDCE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:27:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ED864E097E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:27:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7D681BC8020
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4A7185B48;
-	Wed,  9 Jul 2025 01:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C561186295;
+	Wed,  9 Jul 2025 01:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xc3tmFaA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jmpbkE8O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2E9156F4A;
-	Wed,  9 Jul 2025 01:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66385156F4A;
+	Wed,  9 Jul 2025 01:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752024450; cv=none; b=BEicd3gZx52QZjuz8w2dxuKdylOeNiT73nkVI0o4Kia1zcNPEJOTU0IaILisJ1JEkfF0IkU7pYfxjwlGV+8THe/ns1ZkW+bJMpZvxaTBZUt+O7iWmqeROlsxdjU1hSFmwmQlUnHu+jk+eIUgXyNjG+coFNueIHynIPK8UDIxp8M=
+	t=1752024440; cv=none; b=X8YZ+/3Rxm3jHuM8eaLJ39GW7+CnvSGh6NTgVWHfaTltumlu3mnWZ20EBuMmQLi/CZvr+++lPjxZa3BabCiDAaVgsV5NIi+Ioj3KAi7JBNJEiiWhM5lQOAHdpS9mpUUFSJmB30Ub6IGhhaevKZtqwICcLeCZ7QWNpOCRoQ7bJkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752024450; c=relaxed/simple;
-	bh=Mtu3ryYM7nbSc66VaKGc/UqsJYQrmCDah4qStzUswrc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uINmBFyqmqnRwhr99jjhmYhMzENmo10CAX+x/+eUtx1FQEK+70WSmuKF4bLiCpvbcJCh+4xxyZD6d/a2NelMX4ALeVZ+Z/53m16J00zWRjJcN5uBexZdbZ5Jf13anY1UeTCevyZhi8y9sqi/W5Aj/fVqnIf+kEoDbzyOkrS67Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xc3tmFaA; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752024449; x=1783560449;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Mtu3ryYM7nbSc66VaKGc/UqsJYQrmCDah4qStzUswrc=;
-  b=Xc3tmFaAd0sBkIzRRITNRCDZHNOgunSYoU+1lvWQPEm3M80Zzf88Xdlg
-   uMqdApSRiG3nz/PjC0W+oKFBa/DQdNCQ4SZJMWYjmplldLwxbJ4SqN6JQ
-   nIxS2MUMYpFCKbycmv3p7tDgTil0HLLibdRf30cn3yPvbFmtYzOXsXT28
-   pW+B0KwQpxLIe7F1LF/qg39gcY7Q25TeP88dI0/uU0l1th4SBQU4MWTJP
-   9b6s5jethRX5urxDIU7r0l17SrEjqRuUsP8qWOZjJpsivo/eI/mPlIljY
-   6DPNSFQgaZ8AJjOL19FiJ52OcBFh87iBjmKBeGC2SFcjTMUW1WtSeeLH/
-   A==;
-X-CSE-ConnectionGUID: H3c1VB/1ReOcFFSIFnomvA==
-X-CSE-MsgGUID: m6xmqTVMRC+8ADqkaxJNpg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="71723356"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="71723356"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 18:27:28 -0700
-X-CSE-ConnectionGUID: bn+3Qc0+S0mV/AlaNPSL+A==
-X-CSE-MsgGUID: lu07r9b4T+mrbZrwXkPw/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="159670990"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 18:27:24 -0700
-Message-ID: <41dd5505-8a3a-4718-b906-936059620940@linux.intel.com>
-Date: Wed, 9 Jul 2025 09:25:46 +0800
+	s=arc-20240116; t=1752024440; c=relaxed/simple;
+	bh=3qKp4OirmL5iiTHmB7o2DL/lL8+uVoiwE9iUiN7HcyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oRKOSP/tGmTl0MFggughVk6vPS8x5t0UZQIVTSHKzDtzLAggzigrddlyu5IeJOAUypVdhNvd3UgHCAnHpcAfoqzhVpGtbDMZz1wi1bnBwpw/Ya1uvWpVFcTM78gKa/AiplIBcGUQYOaXYjWIgl0fpjThFvpeiO04dHAKrzi9UeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jmpbkE8O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 835DCC4CEED;
+	Wed,  9 Jul 2025 01:27:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752024439;
+	bh=3qKp4OirmL5iiTHmB7o2DL/lL8+uVoiwE9iUiN7HcyM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jmpbkE8OuvMIXr3Luz3KunGgMdw2sOg9q2FfyO+Rood1K9G4geaLE+RuOjwG3eGXH
+	 cLwHtN5JC3BIqChLgciwTZ8q2+LU6EuyubeHIykfKpUCyGpX8HQZNIh4+7ZKeoO2wi
+	 IJZjdkXRp9PoJITRFsdzCodkQWBoy4VyDDYzomhgi7sEHr1hbymBLo/r3Qyc78MiuN
+	 rIJal/8yrVu3RKU4Xf2ukN88/KYoNPsE+XewdQ44qiz8NWg56hM80SKI6Ax/RUbrLM
+	 1PGjbfEvtWdnExGmd6wAmFemzVVN7wUXh49h/kens2lx3i+E5P3YL3Vu4po4sA751I
+	 efu9loIB0NeKA==
+Date: Tue, 8 Jul 2025 18:27:18 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-team@meta.com, dw@davidwei.uk
+Subject: Re: [PATCH net-next v2] netdevsim: implement peer queue flow
+ control
+Message-ID: <20250708182718.29c4ae45@kernel.org>
+In-Reply-To: <20250703-netdev_flow_control-v2-1-ab00341c9cc1@debian.org>
+References: <20250703-netdev_flow_control-v2-1-ab00341c9cc1@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] iommu/sva: Invalidate KVA range on kernel TLB flush
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
- Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
- Dave Hansen <dave.hansen@intel.com>, Alistair Popple <apopple@nvidia.com>,
- Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
- iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250704133056.4023816-1-baolu.lu@linux.intel.com>
- <0c6f6b3e-d68d-4deb-963e-6074944afff7@linux.intel.com>
- <20250708122755.GV1410929@nvidia.com> <20250708140629.GQ904431@ziepe.ca>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250708140629.GQ904431@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 7/8/25 22:06, Jason Gunthorpe wrote:
-> On Tue, Jul 08, 2025 at 09:27:55AM -0300, Jason Gunthorpe wrote:
->> On Tue, Jul 08, 2025 at 01:42:53PM +0800, Baolu Lu wrote:
->>>> +void iommu_sva_invalidate_kva_range(unsigned long start, unsigned long end)
->>>> +{
->>>> +	struct iommu_mm_data *iommu_mm;
->>>> +
->>>> +	might_sleep();
->>>
->>> Yi Lai <yi1.lai@intel.com> reported an issue here. This interface could
->>> potentially be called in a non-sleepable context.
->>
->> Oh thats really bad, the notifiers inside the iommu driver are not
->> required to be called in a sleepable context either and I don't really
->> want to change that requirement.
-> 
-> Actually, I have got confused here with the hmm use of notifiers.
-> 
-> The iommu drivers use arch_invalidate_secondary_tlbs so they are
-> already in atomic contexts.
-> 
-> So your idea to use a spinlock seems correct.
+On Thu, 03 Jul 2025 06:09:31 -0700 Breno Leitao wrote:
+> +static int nsim_napi_rx(struct net_device *dev, struct nsim_rq *rq,
+> +			struct sk_buff *skb)
+>  {
+>  	if (skb_queue_len(&rq->skb_queue) > NSIM_RING_SIZE) {
+> +		nsim_stop_peer_tx_queue(dev, rq, skb_get_queue_mapping(skb));
+>  		dev_kfree_skb_any(skb);
+>  		return NET_RX_DROP;
+>  	}
 
-Okay, then let me post an updated version.
+we should probably add:
 
-Thanks,
-baolu
+	if (skb_queue_len(&rq->skb_queue) > NSIM_RING_SIZE)
+		nsim_stop_tx_queue(dev, rq, skb_get_queue_mapping(skb));
+
+after enqueuing the skb, so that we stop the queue before any drops
+happen
+
+> @@ -51,7 +109,7 @@ static int nsim_napi_rx(struct nsim_rq *rq, struct sk_buff *skb)
+>  static int nsim_forward_skb(struct net_device *dev, struct sk_buff *skb,
+>  			    struct nsim_rq *rq)
+>  {
+> -	return __dev_forward_skb(dev, skb) ?: nsim_napi_rx(rq, skb);
+> +	return __dev_forward_skb(dev, skb) ?: nsim_napi_rx(dev, rq, skb);
+>  }
+>  
+>  static netdev_tx_t nsim_start_xmit(struct sk_buff *skb, struct net_device *dev)
+
+nsim_start_xmit() has both dev and peer_dev, pass them all the way to
+nsim_stop_peer_tx_queue() so that you don't have to try to dereference
+the peer again.
+
+> +	if (dev->real_num_tx_queues != peer_dev->num_rx_queues)
+
+given that we compare real_num_tx_queues I think we should also kick
+the queues in nsim_set_channels(), like we do in unlink_device_store()
+-- 
+pw-bot: cr
 
