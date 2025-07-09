@@ -1,101 +1,132 @@
-Return-Path: <linux-kernel+bounces-724389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CFEAFF1FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:43:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DECAFF204
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C25C1BC7E03
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:44:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A54491BC83D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3660624167E;
-	Wed,  9 Jul 2025 19:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41CF423F40F;
+	Wed,  9 Jul 2025 19:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ETebFBcz"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="CYaOezZ2"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269F78479;
-	Wed,  9 Jul 2025 19:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0158A111A8;
+	Wed,  9 Jul 2025 19:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752090217; cv=none; b=VcIuX9GuhuHfzQe+1xd7ObDG0lo6Dq+gflPaotR/WrdSjD7Quv1FsxGrQSk2YV+uafnUkhpZ0/MfcoLhtajbmsAoJQIBOPu2D1NB5eRVZEAAK5JBOWkHOHdss3urjLPjNvAZDZSPlsVKPVzt7LdztgVQ40SAvhZPS1TdmTCZGYs=
+	t=1752090580; cv=none; b=n4ARwB42RRN8xMaQ+pOkToVYDueSvvC3MWw8BOQSllYrpTxEpzbiw+cnHtDX53Xz2HqDG3Pe+a6aZna0BirItpQzcOUjMjRYW9a47LndlFUcNs7cM+QadwbkMcxHPs6FaJGQjFKP0K5yDCCQcEHV7PvhXFvIbVLlmfi+3MlFQAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752090217; c=relaxed/simple;
-	bh=9FdHIzmQOhgEBuP+679MDUnwv+s9R3D29PH+ku7jcqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ivJRfsMSmyu51CZQnKvWWYvuH43Eeq3vPQLoB/BXLj44D7HU4/cwauaQjd4arEArC5oQp69HADeP3skxooYnO9/q0gXbLI1pQRElzfRzrIyMwYiinXUyac2HZ8JNR0l0ANUA5LEULVoX4C6hfZSqNPB7i2Mv4X8zVGJUN3lRDFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ETebFBcz; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0C3E040E0215;
-	Wed,  9 Jul 2025 19:43:33 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id fWbZKreNMUv3; Wed,  9 Jul 2025 19:43:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1752090209; bh=9lov93nQ3Bm7COc4aN0CE+lco3dcqFGG+1042ffeQHs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ETebFBczAOGDOhMAVY0BQN44cRINYsG6exdq1ZOo6NA6AypfWj8Zdi7x9Wcsb2Oht
-	 v9zwH+D778Q/DD7m3ZwOBd2TFeHxnQ/c7fE+PQmogJXf0UotvTIVqtRSv+nkqKozs9
-	 2gI0fQ9JOOar9uUOL4T8qtuvVBuJ7G/FiPzkPXLHpew2KL2xvLCncRuFHiKgsTlrgr
-	 HeJaRKyFtX8x2j2ubfJGp/hB3hbLlr2w0YDmKQMrHNjBmFaIcPjZSSE0EAVCVJgxSK
-	 aZjzpFlU1tLI+8SeEY6+AJ/C0UVPICTYi2j1nZeTTcNtClW3I/Q0bSe9iS28uDvhWO
-	 oeevAu9E69y14we5VGAa6jLMcSrUBZgmj+0rfllFAA7tSpP/T6uEeHlDstLt/GXPAB
-	 ex+1XcRZL0gzRaMKKMOlGOxnrHesvA/mG7Qp4ImFcLOkwzGutH6fUeO4SaL/5uxF3G
-	 no5O9pIrvr0a0eQ6rThMy7Ouy7SZ6zHQaYZa7AgJxWpasSKNO8oY92200aK76JUPkG
-	 VDhwQSylvzRvFZY2/rgsHX9PqEQvNVdXwVfmla+MrqFLzXgxHWtgrDOF2l5lfs9Tnr
-	 g70YVoybOr1WoRUl7tRbP5PEHgAG82NmbjPqUXYXoi7x5E5ikQ8kgnrf508bxkdPls
-	 KVS/sqdHWiJNx88ApMRwGoWk=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B842740E01FD;
-	Wed,  9 Jul 2025 19:43:21 +0000 (UTC)
-Date: Wed, 9 Jul 2025 21:43:14 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the tip tree
-Message-ID: <20250709194314.GEaG7GUpefEArfshxW@fat_crate.local>
-References: <20250708160037.2ac0b55e@canb.auug.org.au>
- <20250707234817.d09fc28a3510b23c31c461b4@linux-foundation.org>
- <20250709091702.GAaG4zjs-otcGsMyY2@fat_crate.local>
- <20250709121203.d8edc8d05253bdf04ce580c6@linux-foundation.org>
+	s=arc-20240116; t=1752090580; c=relaxed/simple;
+	bh=D8hzbH3J6aPhKgPwuIBszEfcuQCCcAAJZgNWUTLbKt8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GHjroPQO/lGMjzEpDsghKRKV2zwCNsT7XzrGFNLJ73xrhJn76ZQMfcik1kZcLK0ay5IQlmP7RwyP/4FS/dDYAT6EiqDm/aq8tiv0MwDBpFnj0Ms08qJtO2QRdFgeMj0dV8tUh+HDMEAWywTAZXJxNbgU7tUVWXTvMwB2W5exiRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=CYaOezZ2; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=JIrfiZ2BvOoCvUQBun7pn9xaoeAsHVtLpdKutL1I700=; b=CYaOezZ2zf79ThbGUEfeCg/ZYK
+	fyz1Q/S7whHftG34Ca7W6SmF0aaoMjP4uPegf8BVthOr/hy7RVIUy/m70HQJfxYWFv9XXIw/RkUAk
+	YEw4yM0kldmAjkumF7qsOoir9y8WqDkJedWcUApj+A6caFajlTWsJNr50zBoPGrI3WTvmdKvYFy4q
+	NLxnvmcC0eXCmz5ahWpQL1a9Rj+chKfU/DLRmhv4GNcdZrXHjHF6BSvfL5Gak9539f2BF69lpzTcK
+	gwupUSokTidAC8Gd+AaqFl+ZGoq6TazEJSPspX2fd/TBLsrIkstZtjbUL1Xa6lJir+qDMiI+B6TQV
+	NNpTO15Q==;
+Received: from i53875a79.versanet.de ([83.135.90.121] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uZan1-0006Vl-RU; Wed, 09 Jul 2025 21:49:11 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Diederik de Haas <didi.debian@cknow.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: Add reset button to NanoPi R5S
+Date: Wed, 09 Jul 2025 21:49:11 +0200
+Message-ID: <11937120.2WqB4rESCP@diego>
+In-Reply-To: <DB7OENOUTHGM.2JPD73SZQ9P0P@cknow.org>
+References:
+ <20250709105715.119771-1-didi.debian@cknow.org>
+ <ea6f2815-5882-4fab-8372-1c252a87e09a@kernel.org>
+ <DB7OENOUTHGM.2JPD73SZQ9P0P@cknow.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250709121203.d8edc8d05253bdf04ce580c6@linux-foundation.org>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Jul 09, 2025 at 12:12:03PM -0700, Andrew Morton wrote:
-> > So can you pls send it to Linus so that we can drop it from tip?
-> 
-> Yup.  Tomorrow seems likely.
+Am Mittwoch, 9. Juli 2025, 18:47:47 Mitteleurop=C3=A4ische Sommerzeit schri=
+eb Diederik de Haas:
+> On Wed Jul 9, 2025 at 4:18 PM CEST, Krzysztof Kozlowski wrote:
+> > On 09/07/2025 13:17, Diederik de Haas wrote:
+> >>>>  		compatible =3D "gpio-leds";
+> >>>>  		pinctrl-names =3D "default";
+> >>>> @@ -127,6 +140,12 @@ eth_phy0_reset_pin: eth-phy0-reset-pin {
+> >>>>  		};
+> >>>>  	};
+> >>>> =20
+> >>>> +	gpio-keys {
+> >>>> +		gpio4_a0_k1: gpio4-a0-k1 {
+> >>>
+> >>> Are you sure that this passes checks?
+> >>=20
+> >> If it's about the 'weird' name/label, it is what is used in the
+> >> schematic document I have and I asked Heiko (on IRC) if using
+> >> ``reset_button_pin: gpio4-a0-k1`` would not be better. That would make
+> >> it more descriptive while also having the schematic traceability in it.
+> >> The answer was no, use the form I used in this patch.
+> >>=20
+> >> Am I missing checks I should've done as well?
+> > I meant that usually nodes, including pin controller mux/config nodes,
+> > have specific prefixes or suffixes. Other cases have here as well. Your
+> > does not.
+>=20
+> I agree I've done it inconsistent with how I did the other pinctrl
+> nodes, so I should've added the '-pin' suffix. For consistency.
 
-Cool. I'll drop it once it lands in his tree and we should be good.
+Also fine by me :-) .
 
-Thx.
 
--- 
-Regards/Gruss,
-    Boris.
+> I've been wondering whether there are rules for naming [1], both for the
+> grouping and the node names. Some DTS files use a '-pin' suffix, others
+> don't. And it's not uncommon to see both variants in the same dts file.
+>=20
+> One of the examples I looked at was ``rk3568-qnap-ts433.dts``. While it
+> uses 'keys' as grouping node, I went with 'gpio-keys' as that was used
+> more often (in other files). While the gmac0/keys/leds subnodes under
+> ``&pinctrl`` use the '-pin' suffix, the pmic/usb subnodes do not.
+> (and I just noticed 'hdd4_led-pin' should be 'hdd4-led-pin')
 
-https://people.kernel.org/tglx/notes-about-netiquette
+The TS433 suffers from that "no schematics" thing I mentioned in the
+other mail, so the device-specific pins are named after their functon.
+As I was assuming the TS433 will follow the reference design, those
+pins are named after how other boards do it
+
+But I think I'm just making sense of my subconscious choices
+retrocactively right now and all the above sort of happened without
+me thinking to much about that.
+
+
+> I'd love to know/learn if there are actual rules for these things, but
+> I don't know them.
+
+=46rom looking at pinctrl bindings, it seems patterns are set per controller
+with no global rules. Which makes sense in a way, because they do
+represent pin(-groups) differently each.
+
+
+
+
 
