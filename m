@@ -1,133 +1,149 @@
-Return-Path: <linux-kernel+bounces-723075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7539AFE26B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:22:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07751AFE28B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D461F1C42839
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:23:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06EB47BBB6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F22D273D8B;
-	Wed,  9 Jul 2025 08:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8AC26CE07;
+	Wed,  9 Jul 2025 08:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="DXGtTvLo"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sz3KIhs6"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7C326CE2A
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 08:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E6023C4F4;
+	Wed,  9 Jul 2025 08:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752049335; cv=none; b=KJnoyrotW5ZhhJLJCxYiK8en/Ov9VOQPPsXHA/+M99pjwjnahaaD4XPyrQYdMhwj1FYoPc0jw3OOVdOGBsXHlilZIPFbeo9KiH3xpivrDvcLGTeazfvpyrXeYHNGs07Bx8XAFONMWejPocvHe1/GKGiXx+Van3cH6zrjPCKmwHw=
+	t=1752049384; cv=none; b=N7hD1XHdjo5VyalAXln509wHtVdOQP9F8C+1jcKmWuta7vBO0/9p7xljnYz+CsBW9gI1chdniGioUt3vdQp7lsZ61rK6zTDP7eddDI99FIr+MurYjqMNTPwITtAmZiLgeTlI5XN/rADBq1sVTT18fORktcNjJQMhjjw5MsmYwVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752049335; c=relaxed/simple;
-	bh=bbp563xB+k02ZQyw0bOuD8J55G2HzTY7zLjAKvmY3ec=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ryQ3aWHI22xEBpkqDrkYgeSiDqpIXtUmq/1yKnQTZr14ZEUsuiKzaeV4gitAAtKoQOYPXR0ntdmhBYmvelC5HV5uuy2NOZHh70CuEA/QtNRT4e65jigd/w/zM6zCVdE5PeOH4fnD7YJdJPHj0EyCseg85oODsTqP7cYscsQrM5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=DXGtTvLo; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ae36dc91dc7so931255766b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 01:22:13 -0700 (PDT)
+	s=arc-20240116; t=1752049384; c=relaxed/simple;
+	bh=zU87l0EITnp9g2Yi4D3PMimHE11g+TG8aeBX8Ho0RJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UJgjitxinU3/ZXTIC7XdESCQgUVnWnRf6RzVb5BLbZ7OK0GPQW43jG+1fZED+Zdltp0eIHovkW8a/Vqr02DEj0OXouHl10nT0ngNu+trj8HAU3BCEG3Nqgy1XXK0JaawMxVqCmUWJERd3p+XU6RfdraK3IMNOy6YNnVMaqUFHeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sz3KIhs6; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a6e8b1fa37so4197617f8f.2;
+        Wed, 09 Jul 2025 01:23:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1752049332; x=1752654132; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bFVNmahcL9ERzknhNwHAorX1ie7KJoJM18axXvqg5HA=;
-        b=DXGtTvLoNo9ePfndqiQvjdbLT19QreUvafcDqWsaltkRvG9N7353sp3YvYuTjEKpI7
-         FRVYHtUITWrJwPC7YsdBNBNjyHq6U6l36Qp2zX5yFiCJ1LOn3K2U+Jl30ptasBSTvpKr
-         ZJ59K/Ny1Qv9OWk0znGZSGZzr4WHY0nQIs0HuPfHjFo0Tb/CtTz6Hyc8G4p760gpwS/E
-         X/s9bKxiLMMiT+zXUUVrnmNGR5LGGPxr2CKg5rAtszoydGpE7HbGvKfqYJdQ9ehIN62v
-         eqsM3YAIuOrQ2i7c8DFkWUkLSJSmT3GyE1mQv0YXumEFJWosaOjdO+0UYotKIndnqDD/
-         2nIA==
+        d=gmail.com; s=20230601; t=1752049381; x=1752654181; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IzxIUE4gQTBu7/qvcfY6nYe83AP1dKFA917cFV2PnZI=;
+        b=Sz3KIhs6w/AKKpHjcxrxj0/4dYngG++DnEX0+7p8aXQGMzYt59O17d7y5ltMXJk5Zg
+         ExmdCqOecDoHtEz+1Wc5y0J9Wtw4EruBX4Mt0owMeszfZjEYkJxg9CtIP0D32M0V/VTq
+         lxc2JrIYFwW1ko46VrmR0fdMYbIpFc4G2KkuoKRmTxhgjf0Wrm1xzE6dsnE7uo1msf+I
+         Ys+yA6QpTLBK2pt5t8RgKkqLjlhX/OhI8qKMCYZsnJvBNFd+JF/xltwEV9PPANa4Gy/X
+         FZepyPWazY6ups1ZcYanmt+R5C4elTZl/V35LNAvD7RJV61DS6GP3/Cil0lYZqi420es
+         hEpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752049332; x=1752654132;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bFVNmahcL9ERzknhNwHAorX1ie7KJoJM18axXvqg5HA=;
-        b=H1GWeXgQiDqBts1iNKqSHE81XrkD9Rgi3Jkx2x/yJr4Aq3wTxGkWHUQuVL2dxTkKJo
-         RXvfZW+6iry3DH5bUhO+bSV/vF4ifCvLfFvzloREt1q5TwkC31c2nKpGNVRTEnD4+Il8
-         a5cx5YglXkzxQ+0MwGUYlfs2+Hs9gzW3DvjaRcjUhP0xYD/9b1DzjZRpof4WWiePnR9y
-         AIfWPS7HtneYGxtY9g8nXYbelEHmQ08gzIhjYrFYk53FzCqPi2pYjUlr3u2dAGTnD9vy
-         reLGhCNYhM1esD2iCT9TxidSNjCyunSnMrYpOxHB/XolCNN2fjZcucrGaWBW6UexowN+
-         boGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQh9s0ci8sWup4pZxzhEPadxIKumnoSb/lAlGSv7AanWovre72PtVaDmumKNjwrr1ACJbyefRqA6FeFzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA8LZmhgKBY5alrJ7UwU+VxqunLzdimFJ6oUfx4fMiyFRQo7l1
-	OTMx8aJWb+qsevx5Ia4zvem458CDAO9lRwH5HEr7fRG+Q/rv6wl8QhdPOIoUpgbuKaQ=
-X-Gm-Gg: ASbGnctmIMNxzEqDa95DU5fOw0bSSHZycgRAqg1ZH4qMfc4HdJl1zB/T99t3FB7c+2w
-	rE2x6O66JN1ddrqUd7uZdI84nmd22ILTXh0669kXIHTaVQD6U46aahseNt7la4V/rz/vJDSdpaR
-	ARo5ibfUshjL3lzs7aC+NijHrjNJv2CAV5OYzKDy6AIyM3icucJ6jRVbZSBhZcu7yxPuP72j2Yh
-	BXicjxwlzay6VEv4OY0XBqTstrfV/I3OFosHHXrC0U2k58hDk5lI2CiK2kToV6cCqK1d3zO07AT
-	f6FDLsdeQQ3B4+9z7UXDlJ3KHcs/oqjT/rZCp6LkNsmVNhNa+DT8uyY=
-X-Google-Smtp-Source: AGHT+IHhjLw7axM+sfg+4JbrvZ5uzjMQFSsgDBtJdAVL88Qnq4BGK12a+lUwgHht3jMZ3xAMt8/spQ==
-X-Received: by 2002:a17:906:c116:b0:ade:450a:695a with SMTP id a640c23a62f3a-ae6cfbea8f3mr137410866b.61.1752049331750;
-        Wed, 09 Jul 2025 01:22:11 -0700 (PDT)
-Received: from cloudflare.com ([2a09:bac5:5063:2432::39b:b0])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fcb1f8856sm8372942a12.56.2025.07.09.01.22.10
+        d=1e100.net; s=20230601; t=1752049381; x=1752654181;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IzxIUE4gQTBu7/qvcfY6nYe83AP1dKFA917cFV2PnZI=;
+        b=UT/746ism8jcSGC5/ufowxFiBqqkJsPdFEoynAEoFnaVDXAdqQTm0IwKI1p+EbYE1M
+         5s05cpTA4wfBXP3A6r+49/OXjcN24l3LbTEBJxZJGU1NXwS3CU72R4rVNMXOYzkxFC4y
+         Bk2Wb/ms8txdFJg6rF+4xxe4tIi5UVlwb34yTf81BrimaZRpTCbENpvl+RFqoch/ui0Q
+         1ImJxY1pXgJWC1RJ3yI3Q4zR9VBCnU5GyhLLqB1SvlS+wuPdNcCVsbkQ9cPNRyLBIV9Q
+         Kzurw6jsLdIVO5DCfxo6djoS+pHkG85BeH5iPaYnFnzW6ZlDnhSXBKWSNy40zR0D8pgE
+         CWJw==
+X-Forwarded-Encrypted: i=1; AJvYcCV//QOE8EH3PZGghkF/GIKzoQtrPynr0khdphIUCYWVPfVTPcRwEfoOGqChX4kcoEJPuA5LHdcvD9S4MNA=@vger.kernel.org, AJvYcCWMJXerEaOiKvojK0pZkWd8zx377uf3shx3AUaJLE1ESVUZXbLf7r2dZXGuDYhx3XyFN4FWGbQHVhbZ8h4/OQqWWF2b@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPAx8gPBveARwgYiafoyzuzH0j2XCcrWADKo7nv2Ek4Lc27MJ9
+	4k+XOHlXiFwLBjm8ykP8+tdnqvVZwYEJU61xjqiYqoAax+P4UYtcXKcu
+X-Gm-Gg: ASbGncssuwCaiTT7VpgG6a4VFC5SP+j7WLyQSxSyxlk9WXyMZY8c9uTvT0vf4rQSQdY
+	hBTl/W/8Hztb+U3FxbNmTpliqMd8Qe4fZVxJF4diu1LoC/K+/eRrU/GzmHYsPDUuTqihEFrEnXY
+	wVxDh5bT2lIsObb/btAjygI15Xo/VvfKYokPzmA2hghoqXugxWjp/jQ+CJDSOcRXIH+k7We0O9X
+	MgYRjMvbQiWG2Oh7XkGfLJkroUfuu2E1rA61sF9CGoE9fHU37as2enaq6Oghn7uwXRqtBaN/84C
+	N/ZXzbhgS9uhcj62T5BIRoD1bQjmFwvR2iD4CyVsSn6Zb1g4yUOmZwN46t92MOkKdd/81lz/N29
+	QB9kUpFLmRIepPLhDjw==
+X-Google-Smtp-Source: AGHT+IFXf2JEwQ31gzISHIrNFrlKjFfnf+Xl60HwTCt+wrPxOekzSySyQCE1sMt5QvRmOYoYm5GxtQ==
+X-Received: by 2002:a05:6000:4a08:b0:3a4:bfda:1e9 with SMTP id ffacd0b85a97d-3b5e452e4cdmr1052250f8f.46.1752049380896;
+        Wed, 09 Jul 2025 01:23:00 -0700 (PDT)
+Received: from pumpkin (host-92-21-58-28.as13285.net. [92.21.58.28])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47225afefsm14948384f8f.82.2025.07.09.01.23.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 01:22:11 -0700 (PDT)
-From: Jakub Sitnicki <jakub@cloudflare.com>
-To: Tao Chen <chen.dylane@linux.dev>
-Cc: daniel@iogearbox.net,  razor@blackwall.org,  andrew+netdev@lunn.ch,
-  davem@davemloft.net,  edumazet@google.com,  kuba@kernel.org,
-  pabeni@redhat.com,  ast@kernel.org,  andrii@kernel.org,
-  martin.lau@linux.dev,  eddyz87@gmail.com,  song@kernel.org,
-  yonghong.song@linux.dev,  john.fastabend@gmail.com,  kpsingh@kernel.org,
-  sdf@fomichev.me,  haoluo@google.com,  jolsa@kernel.org,
-  mattbobrowski@google.com,  rostedt@goodmis.org,  mhiramat@kernel.org,
-  mathieu.desnoyers@efficios.com,  horms@kernel.org,  willemb@google.com,
-  pablo@netfilter.org,  kadlec@netfilter.org,  hawk@kernel.org,
-  bpf@vger.kernel.org,  netdev@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-trace-kernel@vger.kernel.org,
-  netfilter-devel@vger.kernel.org,  coreteam@netfilter.org
-Subject: Re: [PATCH bpf-next v3 0/7] Add attach_type in bpf_link
-In-Reply-To: <20250709030802.850175-1-chen.dylane@linux.dev> (Tao Chen's
-	message of "Wed, 9 Jul 2025 11:07:55 +0800")
-References: <20250709030802.850175-1-chen.dylane@linux.dev>
-Date: Wed, 09 Jul 2025 10:22:09 +0200
-Message-ID: <87zfddepu6.fsf@cloudflare.com>
+        Wed, 09 Jul 2025 01:23:00 -0700 (PDT)
+Date: Wed, 9 Jul 2025 09:22:59 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Nam Cao <namcao@linutronix.de>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, Gabriele
+ Monaco <gmonaco@redhat.com>, john.ogness@linutronix.de
+Subject: Re: [PATCH] tracing: Remove pointless memory barriers
+Message-ID: <20250709092259.791583fe@pumpkin>
+In-Reply-To: <20250626123445.5b01849d@gandalf.local.home>
+References: <20250626151940.1756398-1-namcao@linutronix.de>
+	<20250626113520.315db641@gandalf.local.home>
+	<20250626160459.soHxOROG@linutronix.de>
+	<20250626123445.5b01849d@gandalf.local.home>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 09, 2025 at 11:07 AM +08, Tao Chen wrote:
-> Andrii suggested moving the attach_type into bpf_link, the previous discussion
-> is as follows:
-> https://lore.kernel.org/bpf/CAEf4BzY7TZRjxpCJM-+LYgEqe23YFj5Uv3isb7gat2-HU4OSng@mail.gmail.com
->
-> patch1 add attach_type in bpf_link, and pass it to bpf_link_init, which
-> will init the attach_type field.
->
-> patch2-7 remove the attach_type in struct bpf_xx_link, update the info
-> with bpf_link attach_type.
->
-> There are some functions finally call bpf_link_init but do not have bpf_attr
-> from user or do not need to init attach_type from user like bpf_raw_tracepoint_open,
-> now use prog->expected_attach_type to init attach_type.
->
-> bpf_struct_ops_map_update_elem
-> bpf_raw_tracepoint_open
-> bpf_struct_ops_test_run
->
-> Feedback of any kind is welcome, thanks.
->
-> Tao Chen (7):
->   bpf: Add attach_type in bpf_link
->   bpf: Remove attach_type in bpf_cgroup_link
->   bpf: Remove attach_type in sockmap_link
->   bpf: Remove location field in tcx_link
->   bpf: Remove attach_type in bpf_netns_link
->   bpf: Remove attach_type in bpf_tracing_link
->   netkit: Remove location field in netkit_link
+On Thu, 26 Jun 2025 12:34:45 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-For the series:
+> On Thu, 26 Jun 2025 18:04:59 +0200
+> Nam Cao <namcao@linutronix.de> wrote:
+> 
+> > I think you have it inverted? I assume you meant:
+> > 
+> > "Without the barriers, the tr->buffer_disabled = 1 can be set on one CPU,
+> > and the other CPU can think the buffer is still enabled and do work that
+> > will end up doing nothing."
+> > 
+> > Your scenario can still happen despite the memory barrier:  
+> 
+> Yes, but the point isn't really to prevent the race. It's more about making
+> the race window smaller.
+> 
+> When we disable it, if something is currently using it then it may or may
+> not get in. That's fine as this isn't critical.
+> 
+> But from my understanding, without the barriers, some architectures may
+> never see the update. That is, the write from one CPU may not get to memory
+> for a long time and new incoming readers will still see the old data. I'm
+> more concerned with new readers than ones that are currently racing with
+> the updates.
 
-Reviewed-by: Jakub Sitnicki <jakub@cloudflare.com>
+I'm not an expert here, but I don't think the barriers necessarily do anything
+to force writes out of the 'store buffer' (so the data gets into the cache
+from where it will be snooped).
+
+An implementation of 'wmb' might wait for the store buffer (or other scheme
+for pending writes) to empty, but it only has to use a marker to ensure
+ordering.
+
+The actual writes of data to the data cache are also likely to happen
+'in their own time' regardless of the code the cpu is executing (although
+cache line reads from main memory (for reads) may take preference over
+those for writes).
+
+Thinks...
+A plausible model is that write data is buffered on a cache-line basis
+waiting for the old cache line to be read from memory.
+While that is happening later writes can be written into other cache lines.
+
+So a 'wmb' might just stall the cpu that executes it without having any
+real effect on the timings of the memory updates seen by other cpu.
+
+	David
+
+ 
 
