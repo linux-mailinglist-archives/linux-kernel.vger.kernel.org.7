@@ -1,95 +1,136 @@
-Return-Path: <linux-kernel+bounces-723632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7372AFE94F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:46:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 984E9AFE953
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B21EB189A458
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:47:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92B423A4B99
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D6821FF5F;
-	Wed,  9 Jul 2025 12:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E346242D62;
+	Wed,  9 Jul 2025 12:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="dfvTtYuz"
-Received: from outbound.pv.icloud.com (p-west1-cluster5-host12-snip4-10.eps.apple.com [57.103.66.231])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="r3K1GZtF"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2271DA55
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 12:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.66.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B651DA55
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 12:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752065200; cv=none; b=l3fvQw36lNCKvNw0ix80lY4V3xU1xpgoyjnkgr5WHrqHbSFnfxjnZXiXuGta2j4Er85qT69cN4gd1ZuL7xQ9bkVdTdqaz2w5m87YHIr6491sJO0Mt6G3RD+Bkism5ae3HToIj9H2fXveVluhLSx6l1mx70AQFfBQ7XFHiQixj2M=
+	t=1752065247; cv=none; b=P81RM/9//kWjM6JgdYdiY9UckqStF/bzDjSuJyJ4etdpLvgOJOB4RMlUiD0gN+crACP9guX0b6+K9LsDICJewMU5izhJ1vZFOPht4RfNxaXJK2QIIssqkSgRUT3VIQiKzDjR9Uea0HDPvJJAmM/E0W9jVB4Rlwush1RNiXvxyRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752065200; c=relaxed/simple;
-	bh=4+xGT3Syl7A8thGXdvanzH2hDRg6EZ+Z5UuHv/Cd/hQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ug5Tkzyttsqr5j3O6qSPANtWhRDlJvLiybL9rLcNZLF0SgghaghQX0I7EECSP7qkJ3mzG/KP1qQDFNRKh3kQOpR4G6NCFsnjnuizKuAFUJO0vQFodCndizu1to/4t4St5HH7oIgyebEkLobLCfRxrGFlm0GZiyQJEHg4Tek5fEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=dfvTtYuz; arc=none smtp.client-ip=57.103.66.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
-	by outbound.pv.icloud.com (Postfix) with ESMTPS id AD5E7180052C;
-	Wed,  9 Jul 2025 12:46:33 +0000 (UTC)
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=ZsQz9LKxuDXqFHNC93usmD6ksUfXLXjZxZG664JNhtw=; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme; b=dfvTtYuzrGnfWT+nNCQIVkVjV00euZzhSI/lmnqPE5Mbvyl9i1iroIwlCpAEzkXRbtqRtvem0TdJ6e1tqtfW6G9qeT87JqjPBxoXISxx1EwXHy29KoXom6DsuauGz4YFLV27nHXC0kopakv1KpyI67cgQKTv+VYVrvadQPkqkIXdfeLfS1Q/0/oWMDAQ/97ClBnJoX+FckRn3E9VZA0cCf9u7KX7oVS1OjxREiSU+8VJojhB2ObX2C+uiiTTG2croyKCKm5T6gp1VE4Z4rmtu7mM9CyFPlNWbIEb8GO7eme0dlfBIJmTsNkqe00lYU+m2MFBTPvE6950bs6tnmTf2A==
-Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
-	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 1860E18002E2;
-	Wed,  9 Jul 2025 12:46:29 +0000 (UTC)
-Message-ID: <dabb7247-1b76-407f-b22f-c1ebd9ab9dd5@icloud.com>
-Date: Wed, 9 Jul 2025 20:46:26 +0800
+	s=arc-20240116; t=1752065247; c=relaxed/simple;
+	bh=y4NrmxktK96RvpueAIOtkQgDlv4tt+9si4kpOaLhKrk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XJnX0SDhujqiTZx7IlsMEbjWvLPvX5PWtrP26Sneur13weu6Er3EHKTWb4iGB024KY7q0hRJSWMW6j7wS9o3t7y+Ux+3L6kYHEZK6F7FRCOOLsAWnp7Y33osSIjgXLIRxdtWq3lnzcgMNE034HfQUxxNRg6ELHWijeABHJARkfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=r3K1GZtF; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1752065240;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RPgHFEL7MONUQhUTsvtqoOvB09WJYipCR6ISmSzlGHg=;
+	b=r3K1GZtFCwiP0TZnff/qWHSdc3h7HujXstvuqvO3QIoxmnbpjRMSeSECMgAJ3mRlsl2TpG
+	5W3UnYfDcunr3yjcu73mqsmLjUGQFcPybd5/WbYJNxKsVZU/eeUYgGfJbWj9T5/wf0NNmx
+	uyyirOiSuSPDyCcFtM0x3p+kCctK5nw=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Philipp Stanner <phasta@kernel.org>,
+	Andres Urian Florez <andres.emb.sys@gmail.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	Takashi Iwai <tiwai@suse.de>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: echoaudio: Replace deprecated strcpy() with strscpy()
+Date: Wed,  9 Jul 2025 14:46:52 +0200
+Message-ID: <20250709124655.1195-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/8] char: misc: Does not request module for miscdevice
- with dynamic minor
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- Helge Deller <deller@gmx.de>, "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>,
- Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
- linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
- sparclinux@vger.kernel.org, Zijun Hu <zijun.hu@oss.qualcomm.com>
-References: <20250704-rfc_miscdev-v4-0-b48986112d6a@oss.qualcomm.com>
- <20250704-rfc_miscdev-v4-6-b48986112d6a@oss.qualcomm.com>
- <2025070625-voice-stuffing-e2fa@gregkh>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <2025070625-voice-stuffing-e2fa@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDExNCBTYWx0ZWRfX0zpO44pEjlU7
- NhY0P5UmCq2PDtNsnGXXOQy5TfD4oWukksNfVSj/Pjm/4ZvIahwyZRCmaqU0J+3MzsVeFz9XiXA
- IjPzLTui4NLLQxOS73TKxUk/eMP7gIWa5zsE1SJoeLWcm17GNApm2lJZb9O4bHg/e4OOrrV8qpf
- o9Fg52JAA82W1LNnVErxuH9lmkDgAmC3SUP1cJdB3+NCLpzQeyB/0mlT/SdD3YhH2N3Yn2mvxs6
- Frz3wJRoXC5uBh2k7mgkZ9bFHw3co9Mow7b5+c3wdJhXyPKQJEyTiNUzatoeaA+ortzNVvWSw=
-X-Proofpoint-GUID: 3COIk4PnPhDUNc41H6Qlada9qshWAFqe
-X-Proofpoint-ORIG-GUID: 3COIk4PnPhDUNc41H6Qlada9qshWAFqe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-09_02,2025-07-08_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
- clxscore=1015 phishscore=0 adultscore=0 mlxscore=0 bulkscore=0
- mlxlogscore=745 spamscore=0 malwarescore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.22.0-2506060001 definitions=main-2507090114
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 2025/7/6 16:55, Greg Kroah-Hartman wrote:
->> -		if (!new_fops)
->> -			goto fail;
->>  	}
->>  
->> +	if (!new_fops)
->> +		goto fail;
->> +
-> This is fine, but is it going to break any existing users that happened
-> to rely on this behaviour?
+strcpy() is deprecated; use strscpy() instead.
 
-no since there are no kernel users who register miscdevice with minor > 255.
+No functional changes intended.
+
+Link: https://github.com/KSPP/linux/issues/88
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ sound/pci/echoaudio/echoaudio.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/sound/pci/echoaudio/echoaudio.c b/sound/pci/echoaudio/echoaudio.c
+index 80d8ce75fdbb..2b33ef588ac3 100644
+--- a/sound/pci/echoaudio/echoaudio.c
++++ b/sound/pci/echoaudio/echoaudio.c
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <linux/module.h>
++#include <linux/string.h>
+ 
+ MODULE_AUTHOR("Giuliano Pochini <pochini@shiny.it>");
+ MODULE_LICENSE("GPL v2");
+@@ -916,7 +917,7 @@ static int snd_echo_new_pcm(struct echoaudio *chip)
+ 		return err;
+ 	pcm->private_data = chip;
+ 	chip->analog_pcm = pcm;
+-	strcpy(pcm->name, chip->card->shortname);
++	strscpy(pcm->name, chip->card->shortname);
+ 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK, &analog_playback_ops);
+ 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_CAPTURE, &analog_capture_ops);
+ 	snd_echo_preallocate_pages(pcm, &chip->pci->dev);
+@@ -929,7 +930,7 @@ static int snd_echo_new_pcm(struct echoaudio *chip)
+ 		return err;
+ 	pcm->private_data = chip;
+ 	chip->digital_pcm = pcm;
+-	strcpy(pcm->name, chip->card->shortname);
++	strscpy(pcm->name, chip->card->shortname);
+ 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_CAPTURE, &digital_capture_ops);
+ 	snd_echo_preallocate_pages(pcm, &chip->pci->dev);
+ #endif /* ECHOCARD_HAS_DIGITAL_IO */
+@@ -949,7 +950,7 @@ static int snd_echo_new_pcm(struct echoaudio *chip)
+ 		return err;
+ 	pcm->private_data = chip;
+ 	chip->analog_pcm = pcm;
+-	strcpy(pcm->name, chip->card->shortname);
++	strscpy(pcm->name, chip->card->shortname);
+ 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK, &analog_playback_ops);
+ 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_CAPTURE, &analog_capture_ops);
+ 	snd_echo_preallocate_pages(pcm, &chip->pci->dev);
+@@ -963,7 +964,7 @@ static int snd_echo_new_pcm(struct echoaudio *chip)
+ 		return err;
+ 	pcm->private_data = chip;
+ 	chip->digital_pcm = pcm;
+-	strcpy(pcm->name, chip->card->shortname);
++	strscpy(pcm->name, chip->card->shortname);
+ 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK, &digital_playback_ops);
+ 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_CAPTURE, &digital_capture_ops);
+ 	snd_echo_preallocate_pages(pcm, &chip->pci->dev);
+@@ -1985,8 +1986,8 @@ static int __snd_echo_probe(struct pci_dev *pci,
+ 	if (err < 0)
+ 		return err;
+ 
+-	strcpy(card->driver, "Echo_" ECHOCARD_NAME);
+-	strcpy(card->shortname, chip->card_name);
++	strscpy(card->driver, "Echo_" ECHOCARD_NAME);
++	strscpy(card->shortname, chip->card_name);
+ 
+ 	dsp = "56301";
+ 	if (pci_id->device == 0x3410)
+-- 
+2.50.0
 
 
