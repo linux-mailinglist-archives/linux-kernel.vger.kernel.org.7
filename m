@@ -1,166 +1,200 @@
-Return-Path: <linux-kernel+bounces-722902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 201F2AFE07B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:50:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F3D4AFDFFF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34F7F18879B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:50:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43E5B7AD3E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138E926B778;
-	Wed,  9 Jul 2025 06:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB5526C384;
+	Wed,  9 Jul 2025 06:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="BBevW1VN"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KRn8V0Zu"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18D628468F
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 06:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17011BE6C;
+	Wed,  9 Jul 2025 06:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752043513; cv=none; b=AtTmRutzdQ3uun9woh741Dqqc9nRjdaFzjya/5xUnG1DiQF0bt77YDGwa/pSRWR2IriUJt3hc3GvcO4tefgt1Z4Z5pdrQ7+Q9ON0GV6sE9/FNoEz8sodu5nhgk43IiAlRXQPbd87rwT9IMAwejt8Qy1WOG/CibwEebaGkc4bzjU=
+	t=1752042999; cv=none; b=eCKWV7AQsOOR0WMcWnvBBT/ItQkpTGBsdSGqiD7EkDdDC8z8H3EUBwFeblf57izHLG+4smOrJCmUxwKYpoZnIdgyU/m9XEWUdvKOftx1u55ZSZIr+L7PK/HwklEVEaNP38sJQNFXK2Md8nMAKDzwXpN45gx105DkU3HOs8NuAr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752043513; c=relaxed/simple;
-	bh=SQeZSs3fjZTm/d2JUDvde9hFjG2wrLvI3Y7DviBDdro=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ULbcTg5l3Q7mGRhxulxtCL4ptre3c9Hm493YBgQd+Yk5vWJ7fPKdWm1poEI3184vT/PEmbTjg7/Fb7G6bTx62yZbOIzbZnAp+9GNWLyx6+/vzreWWaXvGIYtoWOKQRDCSrTy+AlKaCUs6LtlFrXtbEDoOKF4MgsGzhQSlA6Ky0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=BBevW1VN; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 917873F475
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 06:36:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1752042971;
-	bh=zmTk/bLQEATrkW5ZhuNgtPLCeoO7OY3pblXNYUWXoMQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=BBevW1VNAuOl2BHRSpGcTIB4WXucGrcYA4Gno4sTV5GKDR9QB+vmyeWqyls0Jf6TF
-	 wpKyKO6IuRwsDEssfjzpJWpkLfoc1vfJEhecR4Wf8h3hFnsTb471ulcp3ZQ/qf0shs
-	 VSJCuKMuG85S+9f2HfIq3vkY+budM/7bmyjid/Dyjmr73LYnz32xcb6RAS+cRAbKDS
-	 qbW6ClZsaLg9fmUGNJrDTlgw3G2mcCV9WkR8UNQMorfMkhWBwmox3IV3UaKdt7naId
-	 BljDx7kPbPIkKnpNDD4KhdGJccLIWT0HSexT3qPBvBpSP0Ixn2FsEDUHkSMKB1kXTS
-	 KY7C7yxJQKvRg==
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-237f8d64263so50423155ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 23:36:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752042970; x=1752647770;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zmTk/bLQEATrkW5ZhuNgtPLCeoO7OY3pblXNYUWXoMQ=;
-        b=bkFnUqJd/qFAXI9RHaswo1XlzHGxJ7kGFqV2RZwNinbh1qJAzTXzVVozEt7bypqGtQ
-         0yzjzqQYi1zk0Hg4TuFVwtAeazGQKMX+VGwNc/zdghsNNA2rUvTPcu1zedID0i+WuMY2
-         lBBsZTHkdUifp+0jfJVqSiDLSYXSA8Yl0jYXsg5FAGRO3A0H8UbfFp+/Urwa56VSYxdU
-         Q1EdiKz93WC4hTuTXhjaG8QiuxGAvM+UCMzxt1NbVjPC/viJYl2SYcggdYwPWoedhyCO
-         c3EJjN0tUosb4A0SEjML5LIFM3It5djpdwO6xCGq0vP+bruUHQAQvxOsVv3W1DUPCZRr
-         KP4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXsoVsQCi/A9t2Mq/SAcLCTMAjbnVIgLnW+bNThYkyo3nPRp6jiYd9mPu7RJSMMR4TV9b5c6OvyRK5FLko=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydX4eOMOJ4MHeWn3Vl4i/uAVU7GIGc62a7MFGALzpe+rqHJoKo
-	qHW99fLs9944+ffRtnOgdvtxlaAArCPH+WbzkmjSy1bQcLyLxDtEcCylCyOFEpAONrBDTX6tsRY
-	edkqix0LFXBK/fLEmrHwtkuGKLXldvmRHDd+d2Jfx06ru9AfifRhHCeAv93vjC6ZBAjGuaoLbvG
-	tMDRQoEA==
-X-Gm-Gg: ASbGncu0pW9PtbkTGS60YIi3m5ox9UyC6szWciOZ1ot7lLhrhlZbZ/YmV4ZjlprsmKu
-	BXFHqihRyrX++nf5Hvv8VZTYTounm7+yJC18R83Csky74L0Yy/tE6U4gOf+ZK8RrcHKEzX9IWeF
-	KUvkjZzS6gIZFNhxYQsSluD6sJzSn0FIDANtbHRYM9xl1Tobbu25EUjJbVDde8lbd8V5dLCY9xv
-	62tGfeJkFlvAY4T98wEEjuX2T8So9omndNLsJmK2kLB+HlSy9FQzjcILhBgjTsXXEviB9SE7YUk
-	LUcZs1g9YQp+gLTNWrXV1BH/OFRLn6ZgVWj4qmENPszpG259ua7ZK8DGhjjuhQcRPjhtht20xkl
-	zRyUFUjU3wt96NLx75okvUAE6
-X-Received: by 2002:a17:902:ccc8:b0:236:6f7b:bf33 with SMTP id d9443c01a7336-23ddb2e6794mr24592365ad.24.1752042970064;
-        Tue, 08 Jul 2025 23:36:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHb1yK7GzVpWZ21nqMLdUIn2S5TE/zoZmGFxw6MqotPvtA6RRu0o+2eYJ78aGSZrUJzzS8CiA==
-X-Received: by 2002:a17:902:ccc8:b0:236:6f7b:bf33 with SMTP id d9443c01a7336-23ddb2e6794mr24592035ad.24.1752042969658;
-        Tue, 08 Jul 2025 23:36:09 -0700 (PDT)
-Received: from rickywu0421-ThinkPad-X1-Carbon-Gen-11.. (118-163-61-247.hinet-ip.hinet.net. [118.163.61.247])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8431a4c6sm128172265ad.46.2025.07.08.23.36.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 23:36:09 -0700 (PDT)
-From: En-Wei Wu <en-wei.wu@canonical.com>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: cegolf@ugholf.net
-Subject: [PATCH RESEND] Bluetooth: btusb: Add new VID/PID 0489/e14e for MT7925
-Date: Wed,  9 Jul 2025 14:36:06 +0800
-Message-ID: <20250709063606.25806-1-en-wei.wu@canonical.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752042999; c=relaxed/simple;
+	bh=t7TNE8T/BN5q/u1c7kQTCoIQImHkT+2oHgODk/uKb1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ab8dBbQUYcpH+WBtFc4F2MAF08/7pyDFO5209QNpiYFsr4anJrhqTI3ZVKmpy+35rXciLFrq0pWGMcwneu8AZ/0TEFik7pyDx14xw7sRVDYPAwLpasIx9tzli4QEhwqwnbM6yqsyKjRWDnogqYvnnTaC3O3NdezAs11hEVOcTVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KRn8V0Zu; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4CBC64435E;
+	Wed,  9 Jul 2025 06:36:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1752042994;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vUc1rTTw2VyF7BAekd7omjo2Z8aYGYza6CVNbqcGY2U=;
+	b=KRn8V0Zu0jfIjR28YR78LyIj8tqF3rpxEbNoc3XNnxRi4aiiY/gECZ+tae/K/8LhdGI9tD
+	UpSGuZpA8HRAJL7Upe2d7+exLpLO1ditmmG2MwmYf5tuI+EkAz4JCWrWmOCEAZ280BveNy
+	uAuDKP/tG/i+8krVn1cYjqS451yYW3M0bubz7NN1UkBgB0urhghuq+jtdJRUly0mOHD9Zz
+	KdT1ByLn3BPKYv7vu0mnLVu602OfAhMjLmjQKxtJqU2cpqfy7XWDfbxSwJQGpPZUHjC9GB
+	anUGsx253/1Obtp2OXvDkdMhT9gzxIPqjGVf8B1xqWaBrS2uxNsHCck9FVzbOw==
+Date: Wed, 9 Jul 2025 08:36:29 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Rob Herring <robh@kernel.org>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Marek
+ =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Romain Gantois
+ <romain.gantois@bootlin.com>, Daniel Golle <daniel@makrotopia.org>, Dimitri
+ Fedrau <dimitri.fedrau@liebherr.com>
+Subject: Re: [PATCH net-next v7 01/15] dt-bindings: net: Introduce the
+ ethernet-connector description
+Message-ID: <20250709083629.51c95507@fedora>
+In-Reply-To: <20250708155733.GA481837-robh@kernel.org>
+References: <20250630143315.250879-1-maxime.chevallier@bootlin.com>
+	<20250630143315.250879-2-maxime.chevallier@bootlin.com>
+	<20250708155733.GA481837-robh@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefieekiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedvudehfffgudefhfefgeeufeekkeekheeufeeiudehtdehuddtgedvvdfhueeuteenucffohhmrghinhepuggvvhhitggvthhrvggvrdhorhhgnecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeftddprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehnvghtuggvvhesv
+ hhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Add VID 0489 & PID e14e for MediaTek MT7925 USB Bluetooth chip.
+Hi Rob,
 
-The information in /sys/kernel/debug/usb/devices about the Bluetooth
-device is listed as the below.
+On Tue, 8 Jul 2025 10:57:33 -0500
+Rob Herring <robh@kernel.org> wrote:
 
-T:  Bus=01 Lev=01 Prnt=01 Port=03 Cnt=03 Dev#=  4 Spd=480  MxCh= 0
-D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=0489 ProdID=e14e Rev= 1.00
-S:  Manufacturer=MediaTek Inc.
-S:  Product=Wireless_Device
-S:  SerialNumber=000000000
-C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
-A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-I:  If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
-E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
-I:* If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
-E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
+> On Mon, Jun 30, 2025 at 04:33:00PM +0200, Maxime Chevallier wrote:
+> > The ability to describe the physical ports of Ethernet devices is useful
+> > to describe multi-port devices, as well as to remove any ambiguity with
+> > regard to the nature of the port.
+> > 
+> > Moreover, describing ports allows for a better description of features
+> > that are tied to connectors, such as PoE through the PSE-PD devices.
+> > 
+> > Introduce a binding to allow describing the ports, for now with 2
+> > attributes :
+> > 
+> >  - The number of lanes, which is a quite generic property that allows
+> >    differentating between multiple similar technologies such as BaseT1
+> >    and "regular" BaseT (which usually means BaseT4).
+> > 
+> >  - The media that can be used on that port, such as BaseT for Twisted
+> >    Copper, BaseC for coax copper, BaseS/L for Fiber, BaseK for backplane
+> >    ethernet, etc. This allows defining the nature of the port, and
+> >    therefore avoids the need for vendor-specific properties such as
+> >    "micrel,fiber-mode" or "ti,fiber-mode".
+> > 
+> > The port description lives in its own file, as it is intended in the
+> > future to allow describing the ports for phy-less devices.
+> > 
+> > Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> > ---
+> >  .../bindings/net/ethernet-connector.yaml      | 47 +++++++++++++++++++
+> >  .../devicetree/bindings/net/ethernet-phy.yaml | 18 +++++++
+> >  MAINTAINERS                                   |  1 +
+> >  3 files changed, 66 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/net/ethernet-connector.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/net/ethernet-connector.yaml b/Documentation/devicetree/bindings/net/ethernet-connector.yaml
+> > new file mode 100644
+> > index 000000000000..2aa28e6c1523
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/net/ethernet-connector.yaml
+> > @@ -0,0 +1,47 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/net/ethernet-connector.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Generic Ethernet Connector
+> > +
+> > +maintainers:
+> > +  - Maxime Chevallier <maxime.chevallier@bootlin.com>
+> > +
+> > +description:
+> > +  An Ethernet Connectr represents the output of a network component such as  
+> 
+> typo
+> 
+> > +  a PHY, an Ethernet controller with no PHY, or an SFP module.
+> > +
+> > +properties:
+> > +
+> > +  lanes:
+> > +    description:
+> > +      Defines the number of lanes on the port, that is the number of physical
+> > +      channels used to convey the data with the link partner.
+> > +    $ref: /schemas/types.yaml#/definitions/uint32  
+> 
+> maximum?
+> 
+> Or I'd guess this is power of 2 values?
 
-Signed-off-by: En-Wei Wu <en-wei.wu@canonical.com>
----
- drivers/bluetooth/btusb.c | 2 ++
- 1 file changed, 2 insertions(+)
+All values that exist so far are indeed power of 2 values, but that's
+not a strict requirement, there may be other values one day. I'll add
+all possible values (1, 2 , 4 , 8) so far.
+> 
+> > +
+> > +  media:
+> > +    description:
+> > +      The mediums, as defined in 802.3, that can be used on the port.
+> > +    items:
+> > +      enum:
+> > +        - BaseT
+> > +        - BaseK
+> > +        - BaseS
+> > +        - BaseC
+> > +        - BaseL
+> > +        - BaseD
+> > +        - BaseE
+> > +        - BaseF
+> > +        - BaseV
+> > +        - BaseMLD
+> > +        - BaseX  
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index abdb07d71be0..a2d423fd8663 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -669,6 +669,8 @@ static const struct usb_device_id quirks_table[] = {
- 						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x0489, 0xe139), .driver_info = BTUSB_MEDIATEK |
- 						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x0489, 0xe14e), .driver_info = BTUSB_MEDIATEK |
-+						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x0489, 0xe14f), .driver_info = BTUSB_MEDIATEK |
- 						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x0489, 0xe150), .driver_info = BTUSB_MEDIATEK |
--- 
-2.43.0
+Heh I need to remove BaseX
 
+> 
+> This can be multiple values? But then how does one know what is actually 
+> attached?
+
+I don't see a scenario where we would put multiple values actually. I
+need to update the code accordingly, but if we are in the case where we
+need to specify in DT which medium we use, then that means we can only
+use one.
+
+Thanks you for reviewing,
+
+Maxime
 
