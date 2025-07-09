@@ -1,75 +1,153 @@
-Return-Path: <linux-kernel+bounces-723660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9FD1AFE99E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:05:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 548DDAFE9A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30B0416FD8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:05:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 923C116F684
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C34B2DAFAF;
-	Wed,  9 Jul 2025 13:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4601B2DBF43;
+	Wed,  9 Jul 2025 13:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1TyICAW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AxWPZeAN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC45928D83A
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 13:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7FB2D8796
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 13:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752066320; cv=none; b=Rl83AQv9Hr7gw7VGcVmQ9BEz6OttNrb9qCK1Lv9r9FQBrVrqRjMfUqFogIwZI6pkY+e89/8LoO/u9NlJ//tWlBOE3mzkRa/cG2ypcmbiSlcxDbUOu7uQ27+4IJqsyTVlvhqFQ/qXAZ1GwQXmvc3xz9YlJkZ28SGkUIhgGvfdSaw=
+	t=1752066361; cv=none; b=Q7AyGL+fAXgxmNbzTn1kDR02Ah4WKVS8HJCLm0Qcjd7NadL3et+RLVmAUDXvLxDzP+79dMLd6r8IRpeOMkByhbrcqsW3EzYDXHxZkKeeiGaooYeEU5K7n367rvzqKl5Lf3cjQ6VAnYJgvDbrND5zZ12w2rhgHSCTD3jgdoYxslI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752066320; c=relaxed/simple;
-	bh=Z7p+841eYGb4XxPknQoCYIPx6Qe5ZgqRD3mqnnq/HAI=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=lVf1MUjkmmDGFBwz8AiGoICuFFELf5qTBpL3bIpeYUBSIx10IGvLFym6Fmompz5CzVCPMzHxOFh69ifQ8sVCyl8U5UWIPTqHvbAYl8bY+yJUsFM7WMYYOiG3Uscsw8Hpspkuhz84pN6rK/mEUgdXanOr3GlRAkDG0O2BlnMVH98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F1TyICAW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2741FC4CEEF;
-	Wed,  9 Jul 2025 13:05:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752066319;
-	bh=Z7p+841eYGb4XxPknQoCYIPx6Qe5ZgqRD3mqnnq/HAI=;
-	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=F1TyICAWgXYv2DYrJr4suF/35fGUquO1rd+Audoo2ieeq3HWK3NWWsovW5wPHVCLC
-	 FbYL/Q1pRYYHkk2F9+qaAmV13clIr3th+hJJE1yCUB31OVNaqMMv+j0D6KM1exPGcR
-	 Xbk1HzJClnRsxmKQ8DV6VndQYMxf20/NUE6fSGP5iiztzJa+nEl0Y+g27TqlKNSarc
-	 B++IhsaNpQV0vxR8OG6oQ97qPg9XS71FhsR9keelKtNlt4R4tK3GJvReZ6qLcXYMNK
-	 /hqDsAyocDB31YhA9z3Fy3Wi1ZCReGJE2YlidhWFezlZ7AH0M8v09QKtdnm9mMgnrx
-	 WTScCufpLeoRA==
-Message-ID: <5538fbdd17113989bfee16b7e6587907@kernel.org>
-Date: Wed, 09 Jul 2025 13:05:17 +0000
-From: "Maxime Ripard" <mripard@kernel.org>
-To: "Anusha Srivatsa" <asrivats@redhat.com>
-Subject: Re: [PATCH 6/6] drm/panel/samsung-s6e63m0: Use refcounted
- allocation in place of devm_kzalloc()
-In-Reply-To: <20250708-b4-simple-panel-api-convert-july-v1-6-630902123ea1@redhat.com>
-References: <20250708-b4-simple-panel-api-convert-july-v1-6-630902123ea1@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, "David
- Airlie" <airlied@gmail.com>, "Geert Uytterhoeven" <geert@linux-m68k.org>, "Jessica
- Zhang" <jessica.zhang@oss.qualcomm.com>, "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime
- Ripard" <mripard@kernel.org>, "Neil Armstrong" <neil.armstrong@linaro.org>, "Simona
- Vetter" <simona@ffwll.ch>, "Thomas Zimmermann" <tzimmermann@suse.de>
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1752066361; c=relaxed/simple;
+	bh=okuOq9AGi1/mlQI6ncE3VqtoSNyzETnOfaMMVNqyIDA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cff66BZZ239qcp2UEU6vIeCCK5YWdJ57tfYvpNAXFjia0d5w0TDTsUm5xgsT6uPnOSqfhGAhXI/vSGOGNYMZqq/lTwrGEnWhI4bLKtoiC3uU/VfpIjnWar/ZJD971NkchuhVIAsD1nSPjwqOTe9yhQ0j66N7Sc6AkutPk17cLPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AxWPZeAN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752066358;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+NonJB+AT1rN8fdqNhY5lbg1skZzA9cNFp04NucYZCc=;
+	b=AxWPZeANAm8RSdmkn5ZKHDXgL4dMWS3CxH6Fiok1Of3604ybFZ8hY4KBwDRna4TArHUIEf
+	EjoDeXVGo3oiACXURgHc1mQ2aOujNQ21R1pZQbeyMXKVWDc41etunGUvxwKeFFJbDbBwF5
+	yKwPbMsChrs8gzv8ShLpwdm9+zh6JyE=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-20-xooDLy4pOTWhrBoyrnN5Rw-1; Wed, 09 Jul 2025 09:05:57 -0400
+X-MC-Unique: xooDLy4pOTWhrBoyrnN5Rw-1
+X-Mimecast-MFC-AGG-ID: xooDLy4pOTWhrBoyrnN5Rw_1752066355
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45320bfc18dso5145175e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 06:05:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752066355; x=1752671155;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+NonJB+AT1rN8fdqNhY5lbg1skZzA9cNFp04NucYZCc=;
+        b=AxdR/jYjUYNT+nOmT9R7HJ8U86D00lmqUlFYZq4TfJRaKxHWcg60t9/Tid9cp8SD5t
+         k3pq1iO0tT6KgNAnYhhurD73BqoMRiBVKYYqI2gwFQE0eaChjEYWPzdk8Sls0n08IQAE
+         qnYy78pTVPEaOrLnt9nhLqk5VZvuCD4VzteJWmDs+IqtQq2Y+jKROHJbYBjaE+NnMdbv
+         cwX2UIwBIYFvVUPxwGpDmJIGPwEhq08iCjslVJ7q3lIhXlaSGDRf6ZIR6up9iRNgSWve
+         deRctkBt/Cm9bxXlUKMiYc/xd8bgzg8iYk22V69oehqtYwPnBzJ2KP2CwxEiCe/J/I6p
+         Ajyw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2qMKsxTH6ES3rtiHtuVxQhcbj9nfFaE3vsVYjYMgrCT4mS6pmu0gcR98q04D32eTHx69pWm9/DuhFP10=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxgeat88/6CcCVmzKARqcW3JRVIRoftQBTEz6d3K8brOG3JPPVn
+	kQ1wZHfZOae1yxYeUHcxXzr+MPsbEbRTio2A0mBW5zobxj9HEBz5sDTT6HSabXpZtZt21IBHVpz
+	P7cIys9j40DSsEhclmopk3zU6mcthank4Uv1+hY1Trc7HXUCN9sQy6ujfM0b40bY2nI5Hvy1Y8g
+	==
+X-Gm-Gg: ASbGncuoVxb5tPzHEYaHYXbpzicLQWtfgt2yFN406mfbOYlT6ZT8h+WUM3vo+z1rhvS
+	RDRxKfgzw9CpkEv5okxNlA7lpwqL0v2jBOuXFAauHyOy/kaUtz8SjtQBMWDp4Seu3NuUh6puaP0
+	S6D4BFyxigUXOQjZB+j3uqKuwfdf9rfFRUh3tTiOWMO9gLoDTrCnX+PLzrGR8AET7EEEW54dgsY
+	TsKhoC4oZndzQYbbHChQ+FfkUIvRxFFMTDzQZTnE3RJCaFuTZr8z/nfsGn9CztLXVWgLf2/vWDe
+	YLtkdlzbXE0M502pAszAMZyfaKbIg6o/Og27zANgYVn0kd/g5f2JPiC2HVDZw1aUSL/jjzxCU5L
+	6uSXA5fM=
+X-Received: by 2002:a05:600c:a086:b0:450:d79d:3b16 with SMTP id 5b1f17b1804b1-454d561b8d5mr26737275e9.14.1752066354840;
+        Wed, 09 Jul 2025 06:05:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGfkACLGoa7JKSlV3+O1er0ru++A9NVlT5p+EZQ4mVchPilAXVAY/Ip3wx6V03YE5N20aD+tA==
+X-Received: by 2002:a05:600c:a086:b0:450:d79d:3b16 with SMTP id 5b1f17b1804b1-454d561b8d5mr26736465e9.14.1752066354289;
+        Wed, 09 Jul 2025 06:05:54 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d50dcc84sm23696105e9.24.2025.07.09.06.05.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 06:05:53 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>, Ingo Molnar
+ <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
+ <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+ Leon Romanovsky <leon@kernel.org>, linux-kernel@vger.kernel.org
+Cc: Steve Wahl <steve.wahl@hpe.com>, Borislav Petkov <bp@alien8.de>, Dietmar
+ Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>
+Subject: Re: [PATCH v3] sched/fair: Use sched_domain_span() for
+ topology_span_sane()
+In-Reply-To: <fb527d60-f31b-4383-ab03-e17f0ba96a0c@amd.com>
+References: <20250707105302.11029-1-kprateek.nayak@amd.com>
+ <xhsmhldoyq547.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <fb527d60-f31b-4383-ab03-e17f0ba96a0c@amd.com>
+Date: Wed, 09 Jul 2025 15:05:52 +0200
+Message-ID: <xhsmhikk1pl8v.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Tue, 8 Jul 2025 15:35:18 -0500, Anusha Srivatsa wrote:
-> Move to using the new API devm_drm_panel_alloc() to allocate the
-> panel. In the call to the new API, avoid using explicit type and use
-> __typeof() for more type safety.
-> 
-> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
-> 
-> [ ... ]
+On 09/07/25 09:31, K Prateek Nayak wrote:
+>
+> How about the following instead of cpumask_empty() to avoid two cpumask
+> operation in the common case where sd is initialized:
+>
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index e682bf991ce6..e889ae012c17 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -2423,19 +2423,13 @@ static bool topology_span_sane(const struct cpumask *cpu_map)
+>                       struct cpumask *sd_span = sched_domain_span(sd);
+>                       int id;
+>
+> -			/*
+> -			 * If a child level for a CPU has already covered
+> -			 * the entire cpumap, build_sched_domain() for the
+> -			 * domains above is skipped. Use sd->private to detect
+> -			 * levels that have not been initialized in the CPU's
+> -			 * hierarchy and skip them.
+> -			 */
+> -			if (!sd->private)
+> -				continue;
+> -
+>                       /* lowest bit set in this mask is used as a unique id */
+>                       id = cpumask_first(sd_span);
+>
+> +			/* Skip if span is empty */
+> +			if (id >= nr_cpu_ids)
+> +				continue;
+> +
 
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Oh yeah, even better. Just slap a comment like the below and ship it!
 
-Thanks!
-Maxime
+/*
+ * Span can be empty if that topology level won't be used for this CPU,
+ * i.e. a lower level already fully describes the topology and
+ * build_sched_domain() stopped there.
+ */
+
+>                       if (cpumask_test_cpu(id, id_seen)) {
+>                               /* First CPU has already been seen, ensure identical sd spans */
+>                               sd = *per_cpu_ptr(sdd->sd, id);
+> ---
+>
+> --
+> Thanks and Regards,
+> Prateek
+
 
