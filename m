@@ -1,85 +1,122 @@
-Return-Path: <linux-kernel+bounces-722848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14CADAFDFB7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:55:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EE10AFDFBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6464A162A2C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:55:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21E234E7917
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7308126AA93;
-	Wed,  9 Jul 2025 05:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367B926B2C5;
+	Wed,  9 Jul 2025 05:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="N+PTKq0d"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W2L8ieow"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9AB0191484
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 05:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5A71B6D08;
+	Wed,  9 Jul 2025 05:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752040514; cv=none; b=OxpaFTosgKeteAb6pMuXhDtGkNIFrOTl0fY9eZw+WjmEKcbE5574Jo6yVIca1cZjlEDhQGxp5Mmzca+Ps8pfOgNOPHJY9/vpPztzYXC+A4NEP6EyvlLuo/s2DEmuG4u72CH27ZOm4HiWyfKWBAOwN8Hc1EtCBhks0zQX6xGd2P8=
+	t=1752040796; cv=none; b=i4AgIrM4/s/Cu5Np+pF0VxzzMtTBotLNT3vb1o/+GRN2jP5EE4pyjbs0npehGl/lQ5cfTWzwGIteUY1NPAF5nMCRoKilS3gh+yNzBPQvqFimVjdcXmebxxolEkwlXtXIoCqChgE4tT4ZrHSgCwYlMtO+vLGKnt/MSBojjkZNkD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752040514; c=relaxed/simple;
-	bh=+ct3kvHBxH5MMUjJy8jOUDeR3RbsB40gIyFDI0DbikQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TrRSB+5XMjtNuRaSOweL4/W/VsANUbZ91yoYzsmqG2TWLguTGCn9+3Gm4S2DFS5pTDwU0avRvNEtvk1d5euxFO3Gp9YAWTbFYfgN3NCokN72mteoPStGZeBAhx/GeuUMSyi/PdZRJIb/13Fbn6qVFtQXdEIS6fJ7/st0OTuXDrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=N+PTKq0d; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1752040508; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=AtmsbTFxBLE3ggp840g/o74/3MOXss/L8gwWoubJheQ=;
-	b=N+PTKq0d/iaTmW/A+G+4LwVr3oUgrepZ6YmD8L2/5TgSPyt91+F6fzp5L72sNMrrSKFmdvzpsWCQ/opXbQ+AP8sZwJf6/etgSi5Hmqp/Oeb09Le5L0qyBUSghlQ+vLMIihnmsZRD1mCDVZlcMPUuPjpUzB+4jX7Dp3XKNSTlTrY=
-Received: from 30.221.130.130(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WiWaECA_1752040507 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 09 Jul 2025 13:55:08 +0800
-Message-ID: <c7379b0e-ebe6-42d4-a779-7264e331335c@linux.alibaba.com>
-Date: Wed, 9 Jul 2025 13:55:06 +0800
+	s=arc-20240116; t=1752040796; c=relaxed/simple;
+	bh=LzYB6pw/2+1lvLXdkdXCIJm1qBGvJhF76UZJym27mtI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aSiOAF8DXK2fPw6SAaM9CQS3qh/Mlovee/3R7TuUCZItPo8GJUs87M+QcQDXC2X6XTYTElQI1GNRMzHuTE9m51RdvYI15EhTYc9cE4qLDPnjqtIDdisZw1lAulxiZJ2x81z4rZNFcVeVA+UXxuefAhyFWKGkQctDaw62lWGm9/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W2L8ieow; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752040794; x=1783576794;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LzYB6pw/2+1lvLXdkdXCIJm1qBGvJhF76UZJym27mtI=;
+  b=W2L8ieowE66nAGiudrY1KzZNbz5+EKIfkXbRRjilRDRP9YKFDfGfse8z
+   0IDapfgfVIEfUpA04CQMunCAwkgR2ERFW3qz31PTkQQsJjlbd5Z1ltnGL
+   Qi7PRdGmSWshlioGE8e0gR/duWZjf6Yn9fd+8HlrFvQ6CY13IphRXDWna
+   n/LCYsdIDsgTbDiBd5hACSbkkyTuwOGAcGt2K+k6hjt/gMIA5gREjxVKW
+   TSBg5VQPAbJN1th3hJwVt72ggEIltbEQh498ki23Cn6krKvQu+1M+6afN
+   +ncX7Tkq/FexLX+aTEBNxDph7xYVDqBGEYi/IU0cp2mAgXsvJ/UjfA12K
+   g==;
+X-CSE-ConnectionGUID: hXuzE9aFSbm43FeQHlOoxA==
+X-CSE-MsgGUID: ZFo3x4fFQSS3kdNuBH2wGA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54009937"
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="54009937"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 22:59:50 -0700
+X-CSE-ConnectionGUID: A6UhJEe2QCS4oMRU34mFqw==
+X-CSE-MsgGUID: L/VUNKizQfG5E89QG7KNzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="156414304"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 08 Jul 2025 22:59:47 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uZNqL-00039P-06;
+	Wed, 09 Jul 2025 05:59:45 +0000
+Date: Wed, 9 Jul 2025 13:59:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Dafna Hirschfeld <dafna@fastmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Keke Li <keke.li@amlogic.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Dan Scally <dan.scally@ideasonboard.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Subject: Re: [PATCH 1/8] media: uapi: Introduce V4L2 extensible params
+Message-ID: <202507091305.hPkKkWZJ-lkp@intel.com>
+References: <20250708-extensible-parameters-validation-v1-1-9fc27c9c728c@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] erofs: address D-cache aliasing
-To: Jan Kiszka <jan.kiszka@siemens.com>, linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Stefan Kerkmann <s.kerkmann@pengutronix.de>
-References: <20250709034614.2780117-1-hsiangkao@linux.alibaba.com>
- <20250709034614.2780117-2-hsiangkao@linux.alibaba.com>
- <bbe6cac3-7792-4d85-b5ec-124f7eec20c5@siemens.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <bbe6cac3-7792-4d85-b5ec-124f7eec20c5@siemens.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708-extensible-parameters-validation-v1-1-9fc27c9c728c@ideasonboard.com>
 
+Hi Jacopo,
 
+kernel test robot noticed the following build errors:
 
-On 2025/7/9 13:50, Jan Kiszka wrote:
-> On 09.07.25 05:46, Gao Xiang wrote:
+[auto build test ERROR on a8598c7de1bcd94461ca54c972efa9b4ea501fb9]
 
-...
+url:    https://github.com/intel-lab-lkp/linux/commits/Jacopo-Mondi/media-uapi-Introduce-V4L2-extensible-params/20250708-184651
+base:   a8598c7de1bcd94461ca54c972efa9b4ea501fb9
+patch link:    https://lore.kernel.org/r/20250708-extensible-parameters-validation-v1-1-9fc27c9c728c%40ideasonboard.com
+patch subject: [PATCH 1/8] media: uapi: Introduce V4L2 extensible params
+config: i386-buildonly-randconfig-003-20250709 (https://download.01.org/0day-ci/archive/20250709/202507091305.hPkKkWZJ-lkp@intel.com/config)
+compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146a88f60492b520a36f8f8f3231e15f3cc6082)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250709/202507091305.hPkKkWZJ-lkp@intel.com/reproduce)
 
-> 
-> Tested-by: Jan Kiszka <jan.kiszka@siemens.com>
-> 
-> Please make sure to address stable versions as well once this is merged.
-> I've so far only checked 6.12 (besides top of tree) where this applies
-> as-is. Other versions likely need extra effort.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507091305.hPkKkWZJ-lkp@intel.com/
 
-Yes, I will address them manually one-by-one.
+All errors (new ones prefixed by >>):
 
-Thanks,
-Gao Xiang
+   In file included from <built-in>:1:
+>> ./usr/include/linux/media/v4l2-extensible-params.h:23:2: error: "This file should not be included directly by applications"
+      23 | #error "This file should not be included directly by applications"
+         |  ^
+   1 error generated.
 
-> 
-> Jan
-> 
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
