@@ -1,110 +1,96 @@
-Return-Path: <linux-kernel+bounces-722992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C115AAFE179
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:38:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE8DDAFE180
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:39:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF7121C23C40
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:38:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E5947B3059
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A949E2749E0;
-	Wed,  9 Jul 2025 07:37:33 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE041271448;
+	Wed,  9 Jul 2025 07:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aSd8H5Ba"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A79E270571;
-	Wed,  9 Jul 2025 07:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475042701CC;
+	Wed,  9 Jul 2025 07:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752046653; cv=none; b=rBqQguLY3LOC4uLcu3Wz7klEiCxLHbkcje0E/2eVY9g4xCxgZm5fUF1lygIQy4v+0tel1bWy/MGJisowyaFN7NHQCZv+Gp7GQcw+2AFxB5+2/L6q9Z1DPOJMvDIMzdoem0VZqlr9USOLa6xqHC4pW20ybjV1xb8aG3X95/xmgIY=
+	t=1752046662; cv=none; b=ds+QbPnS7F06QjO+XRY+nwC8SfqBfNthwksNTjN/cUKD3GbUCkj90ihY4r6LYNaq/QQJdfhvIB7Dc2NGY6PnqVEQ/woQC6Kk6lrsrUUirysdPleW1n0PUd84LSD/mio+9xky0WgxUbA/AS2cjuAFnuvtXW0mEud8WfMa9zgKLME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752046653; c=relaxed/simple;
-	bh=5Hw8uxVpG1hL8S1/m9wGfNL7FjeTsp4wejtoaL7KFio=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SwboTMP76FF/AOhLlH3NnzmAAdTCCIlZ7+NFIosds84LWEndd0LpZAQ0XT88qhxYh3E3jMW+XOmpFouECRYbXN2Z7XavV35O3SpjLqdqvR+E64sutTOoyT3be6X6B2hONfo3/pxOa+BtQO3tYOe42bUGThqKIzsohYXcINCfFTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 8d86ccde5c9711f0b29709d653e92f7d-20250709
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:f5b0fa55-d4f5-4f00-b4f2-17c5ae71e058,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:20
-X-CID-META: VersionHash:6493067,CLOUDID:66fff60b5285348d44b45525df5bbab8,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:5,IP:n
-	il,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LE
-	S:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 8d86ccde5c9711f0b29709d653e92f7d-20250709
-X-User: xiaopei01@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <xiaopei01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 718022128; Wed, 09 Jul 2025 15:37:23 +0800
-From: Pei Xiao <xiaopei01@kylinos.cn>
-To: pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Pei Xiao <xiaopei01@kylinos.cn>
-Subject: [PATCH 2/2] clk: tegra: periph: Make tegra_clk_periph_ops static
-Date: Wed,  9 Jul 2025 15:37:14 +0800
-Message-Id: <bda59ad46afae6e7484edf8e2f7bf23ceafe51e9.1752046270.git.xiaopei01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1752046270.git.xiaopei01@kylinos.cn>
-References: <cover.1752046270.git.xiaopei01@kylinos.cn>
+	s=arc-20240116; t=1752046662; c=relaxed/simple;
+	bh=sN1FBorFWsdlH0wPpgViuDr0g+ntVgJSYzyFcsEEdWg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HFlqSmq525o8WCAq17TgELHFMB8M6EO7d0Dk/lkUiBJEOlzX77or9GgQGjw6aPKXvFOdCYOZXtWhb9jimCL2P6JB/SnsyW2VLvxEgdqIdSdixvi7aL+Blcr3jUcdn7bbQIaKvymT85EqZrXK7uRhlYpYL2lkC8hQ1zNu8jj1ZJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aSd8H5Ba; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F402C4CEF5;
+	Wed,  9 Jul 2025 07:37:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752046661;
+	bh=sN1FBorFWsdlH0wPpgViuDr0g+ntVgJSYzyFcsEEdWg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aSd8H5Ba4DqABFHmO/4o5mG5OEjOjmou65ScvWFU00/kp+bs9PzE+rSUqcT3NVkU5
+	 K91fpryjaASoUJzAZkHXTsJdbritRRBpAhiIU+WgPskrQ1bbnZVQR4w3a3a9i4PEYj
+	 kun0Mo32XKNjOI2OxNXvcbWUdsUctUPcj+ecG2AHQAlnW3zM8tCHoIQQ4u+DExPYjc
+	 0nrhiAHhMNMR944lxXUbEP+8t53Jvl8W0fMlwz1Lh2jJZaY9xjW2wBAAeD+ocPcMD9
+	 iSgZcBoXq6GLqfNLlZgYKMKMVgbHYqzvZoyp7S6VcUMWPn/NxeX6oIcEQZjUI644UC
+	 YvQDxsvQRBSxQ==
+Message-ID: <aade485e-0880-4c68-9b37-d8a27dc122e3@kernel.org>
+Date: Wed, 9 Jul 2025 09:37:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/gpuvm: Wrap drm_gpuvm_sm_map_exec_lock() expected
+ usage in literal code block
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Linux DRI Development <dri-devel@lists.freedesktop.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Clark <robin.clark@oss.qualcomm.com>,
+ Antonino Maniscalco <antomani103@gmail.com>,
+ =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+ Raag Jadav <raag.jadav@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+References: <20250709024501.9105-1-bagasdotme@gmail.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250709024501.9105-1-bagasdotme@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Reduce symbol visibility by converting tegra_clk_periph_ops to static.
-Removed the extern declaration from clk.h as the symbol is now locally
-scoped to clk-periph.c.
+On 7/9/25 4:45 AM, Bagas Sanjaya wrote:
+> Stephen Rothwell reports multiple indentation warnings when merging
+> drm-msm tree:
+> 
+> Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2445: ERROR: Unexpected indentation. [docutils]
+> Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2447: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
+> Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2451: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
+> Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2452: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
+> Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2456: ERROR: Unexpected indentation. [docutils]
+> Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2457: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
+> Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2458: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
+> Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2459: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
+> 
+> Fix these by wrapping drm_gpuvm_sm_map_exec_lock() expected usage
+> example in literal code block.
+> 
+> Fixes: 471920ce25d5 ("drm/gpuvm: Add locking helpers")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Closes: https://lore.kernel.org/linux-next/20250708192038.6b0fd31d@canb.auug.org.au/
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
----
- drivers/clk/tegra/clk-periph.c | 2 +-
- drivers/clk/tegra/clk.h        | 1 -
- 2 files changed, 1 insertion(+), 2 deletions(-)
+I assume this has to go through the MSM tree?
 
-diff --git a/drivers/clk/tegra/clk-periph.c b/drivers/clk/tegra/clk-periph.c
-index c9fc52a36fce..fa0cd7bb8ee6 100644
---- a/drivers/clk/tegra/clk-periph.c
-+++ b/drivers/clk/tegra/clk-periph.c
-@@ -132,7 +132,7 @@ static void clk_periph_restore_context(struct clk_hw *hw)
- 	clk_periph_set_parent(hw, parent_id);
- }
- 
--const struct clk_ops tegra_clk_periph_ops = {
-+static const struct clk_ops tegra_clk_periph_ops = {
- 	.get_parent = clk_periph_get_parent,
- 	.set_parent = clk_periph_set_parent,
- 	.recalc_rate = clk_periph_recalc_rate,
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 5d80d8b79b8e..9ea839af14bc 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -629,7 +629,6 @@ struct tegra_clk_periph {
- 
- #define TEGRA_CLK_PERIPH_MAGIC 0x18221223
- 
--extern const struct clk_ops tegra_clk_periph_ops;
- struct clk *tegra_clk_register_periph(const char *name,
- 		const char * const *parent_names, int num_parents,
- 		struct tegra_clk_periph *periph, void __iomem *clk_base,
--- 
-2.25.1
-
+Acked-by: Danilo Krummrich <dakr@kernel.org>
 
