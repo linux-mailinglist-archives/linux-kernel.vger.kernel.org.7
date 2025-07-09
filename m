@@ -1,93 +1,89 @@
-Return-Path: <linux-kernel+bounces-724330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEDC2AFF179
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:09:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0985AFF185
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7052D7B39EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:08:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D4D55A6526
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6305223D2AF;
-	Wed,  9 Jul 2025 19:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1986323E334;
+	Wed,  9 Jul 2025 19:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EaNu3jyn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zzKIZjtR"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AmD/OdWz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D72723B637;
-	Wed,  9 Jul 2025 19:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE3F2264B0;
+	Wed,  9 Jul 2025 19:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752088183; cv=none; b=KhN3a2hehbRBqxYy7aCCXeZ0F3yAB7A0Ayu/CMk5vBlMGfGUAvbvY9zOOVebdDOXt6MPjpzrtr4WdEsitRuNNEZaMFo9gpsjNmUWwGtmaChqtUMDasiFGiMx6l1PWPFx3FpP4rbdsJ9ukXKagUoP0Yu+l1mg30d1oaskxWIO7Js=
+	t=1752088324; cv=none; b=EQG4aVn+k4+ak3bHwzKGYX+E/WZ3HHcsbsQGLkxXp365dLkwJoRbK8xwaTSVeu6VElXdpGAWsFElxHRH7UczP6D6vuo8grPHbbw160EziZjjJv802Ee4YdNtNPWT1VDQ46Dzx6n5gvWaSo5rTdIv1Wa56zHzn+laZDXJ79iGa5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752088183; c=relaxed/simple;
-	bh=ty8dx0iYfVULStO7ur66hWlNQVb5KpaOASSPxta284c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gIIkcANjWS/XTwG8LaD5odTSfAiKqhZvK/QtgCiNxD54JAvv5FkZ0Z5jgXxBmkHAtJXakkPl4N87oV2JL5Nz8ykWfoBIkBL+J9rPIt5PAQ3l5r7CljFriyDuIk+7AA2+Zm0mnICHBCnJfX+j6tgwVRUyP8sLa3cemeqvzie4lUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EaNu3jyn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zzKIZjtR; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 9 Jul 2025 21:09:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752088180;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yUBFQDuqZ8GkOGjWlzXp7+zn0YDamzbquE8bBOdq0OE=;
-	b=EaNu3jyn/PxNV88DsbYBXzL8Orjct+EZzT7WD+viD9zu89YNLw/7bvkoGPqqfQ66+zHb6Z
-	0KBzwk/ShfdJ86KFheoBZDX9lsYnoTu05VLKsEA1FUVzPmTTKe9VvZSlROdv9vx+T8m4Mj
-	nt4r86sqo7fIEZAivWzbo8bnzxW9082SIMIHnDYUoKWPYTlH43nTwB/bD6IXQoGSqSQnUY
-	gspLp+cneJVUJtOnY3hQiRpErMc7P9BOh9Pig64Bc39XpvJFn6qRieAV+vLVEfm6rrha7V
-	aaWPyqRyrYGBLDFYYNiUFTJv+P5SEJTAqIIIEjK8QcFeOFQrCgYiefTxJK1bKw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752088180;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yUBFQDuqZ8GkOGjWlzXp7+zn0YDamzbquE8bBOdq0OE=;
-	b=zzKIZjtR3K5RZYjO2vVoVEVCc83Zep9JptZytN6rDVLGIrB77oZGSPglCrTGc2z1wxclyQ
-	8EDwKxaPpIMX8UAQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: John Ogness <john.ogness@linutronix.de>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Petr Mladek <pmladek@suse.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v12 02/12] printk: Make vprintk_deferred() public
-Message-ID: <20250709190938.8KErh6st@linutronix.de>
-References: <cover.1752082806.git.namcao@linutronix.de>
- <25d52fcad6d1ce8f8ac262199d3e8474e029961f.1752082806.git.namcao@linutronix.de>
- <20250709144914.6ee7199b@batman.local.home>
- <20250709185334.uFpAU2mC@linutronix.de>
- <20250709150452.6646c168@batman.local.home>
+	s=arc-20240116; t=1752088324; c=relaxed/simple;
+	bh=SvnG7N1dBZHRJ7PjsRayqq88gPZu/mE8Ot254TQ3Nu4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=BzX9EpgBYxgBpSZvYL6FUKsNIt0oPm6XYxWAjzuURUEr+W+4BVpb+IYiCW4kjOuYzoh2mUMpNSbsFDGTvr4nOrYo8v0rYJzVFakE2q3WN9wj4xXIG/qyXLQbWux2+VWVDWCsH2t0GBlW+YMnhZ8Xs8BszZKW93DfbaZph091YwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AmD/OdWz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9116EC4CEEF;
+	Wed,  9 Jul 2025 19:12:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1752088323;
+	bh=SvnG7N1dBZHRJ7PjsRayqq88gPZu/mE8Ot254TQ3Nu4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AmD/OdWzFwapWPRmkF98xkmc0ipnzVTH7vvE2veXT2AqoYj94MdWFY8TJjHmxS2V6
+	 RECyu5wRRny+OY9KF0CgMAtK1IZDnsfc8mwYEfACNhnm2z/YlYYvwMmgjA0zThMyAz
+	 T1YlkuY0T2cfidqHf3fYVXZDLszHVBjdKZFINTl8=
+Date: Wed, 9 Jul 2025 12:12:03 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin"
+ <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the tip tree
+Message-Id: <20250709121203.d8edc8d05253bdf04ce580c6@linux-foundation.org>
+In-Reply-To: <20250709091702.GAaG4zjs-otcGsMyY2@fat_crate.local>
+References: <20250708160037.2ac0b55e@canb.auug.org.au>
+	<20250707234817.d09fc28a3510b23c31c461b4@linux-foundation.org>
+	<20250709091702.GAaG4zjs-otcGsMyY2@fat_crate.local>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250709150452.6646c168@batman.local.home>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 09, 2025 at 03:04:52PM -0400, Steven Rostedt wrote:
-> I could do it, but if you send a new version, it will keep patchwork
-> automated. When I edit a patch, the status doesn't automatically get
-> updated due to the change.
+On Wed, 9 Jul 2025 11:17:02 +0200 Borislav Petkov <bp@alien8.de> wrote:
+
+> > > 
+> > > The following commit is also in the mm-hotfixes tree as a different commit
+> > > (but the same patch):
+> > > 
+> > >   f339770f60d9 ("Revert "sched/numa: add statistics of numa balance task"")
+> > > 
+> > > This is commit
+> > > 
+> > >   63afea878dc4 ("Revert "sched/numa: add statistics of numa balance task"")
+> > > 
+> > > in the mm-hotfixes tree.
+> > 
+> > Thanks, I'll drop the mm.git copy.
 > 
-> I know it's minor, but could you send a v13? Then when the patch gets
-> accepted in mainline, it should automatically turn to Accept in
-> patchwork.
+> So we actually started adding it to tip for the time being until you send it
+> to Linus so that our testing doesn't fail - it was reproducing reliably on my
+> test machines.
 
-Fine for me either way. I worked with other maintainers who prefer the
-other way, so I had to ask.
+Ah, OK.
 
-Nam
+> So can you pls send it to Linus so that we can drop it from tip?
+
+Yup.  Tomorrow seems likely.
 
