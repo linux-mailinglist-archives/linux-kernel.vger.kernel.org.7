@@ -1,124 +1,160 @@
-Return-Path: <linux-kernel+bounces-723849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55436AFEBB7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:23:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8D90AFEBA7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E211F5C5A70
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:12:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 323031C2197A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2F32E426B;
-	Wed,  9 Jul 2025 14:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974132222D4;
+	Wed,  9 Jul 2025 14:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hvw/csdQ"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="RU2Hgw1M";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="n9Q3AGEz"
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6172E424F
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA9E2E5B21;
+	Wed,  9 Jul 2025 14:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752070155; cv=none; b=HOmh5inTaY2oVzCIdabfAhBXHYI2+Hiw30V1dtaWoN72P0UDzuR//X8Fd36yW6VxrZdgItMZ+rTJqIRrsQ+JqOUIbl4mnQLZeG4MAIo0+v8QkMEEgbrXzlDFJAY0auOLFFQEAd2fQ7YMY2GMFSBoQS5yczyKEDSRsDGl3nv6Mh4=
+	t=1752070202; cv=none; b=U6uAttSt0/Qehn7OVbYSfYtbt25jkgEn24lzyiKYeeBuH1QwjaH70bUCgZyWj6b8JktfAt0A5wtiAppARBRJfnsB9VWfqyRSAO5TiwoLaqDZ8PQfzs3hnAaUFlxqhO4WGNl6p2O/WCvE8zhjLPWBs0q4E7Cx9Kkj2U9YZCJ/X2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752070155; c=relaxed/simple;
-	bh=u9ZCL26Udw7csZPMMP8KEX8jrLO4XNBGOHz68QbHy+I=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OWCa4fjR9z+Zltd4xvKw09BA2W/mC8RF89v364TiGV/cjNGVazY6RXmhcdClbNOKGWbKjeIq0uQxemu7sFkARIEFmjEOz1QD9JDMkCuofG+Ic9TdBlr3gf0uvBt3iMkAGaDvXTlbBB3vN0Ng48zxsj6D4nKh+zGp7YgI6LokO5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hvw/csdQ; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-74b185fba41so4559105b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 07:09:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752070153; x=1752674953; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=t5tpTrrg2hny9/I7I2qzQrheZCqRZ5KWbbmlizq7TnU=;
-        b=hvw/csdQcOW2edZ1v/B1i0Xk30K7Ks+5iCIa3+u/MpiwN++sSvnsE8TnSeBARb+r6k
-         8CUe12Kp9H0yvK6RsSh1gL9GgQiMUQq5gSrt29+t6s8GW3AJbDmYvi63zL3Zzdk1PkfM
-         +x1CdfYk0/oNraFjxdzx7Y19pnc66hA05dyjMO4wIG3+u6I5A1cukNXaOfvlTJfCypbc
-         JFlwdCgNlp7owLrBMXbBGK56/uFg8lXP4qauNHYv9Q1IfsLMFBQC6IRi/JRItxD9dmjq
-         VVDWdhGhZiEf1hEaYsuqLdbs3EmwiKZgDCi/olH+gFpyI8rCX6Qr44Iy1NQ9Jr46zE0e
-         ttcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752070153; x=1752674953;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t5tpTrrg2hny9/I7I2qzQrheZCqRZ5KWbbmlizq7TnU=;
-        b=bdmfgT2cvnfBrsDFgJ1aFfH1ITtJQkUdJWkzS77i3YaZrg4KLNtHgLusFscxfvk7wy
-         VcMw+wSx7q3irgWCTrKPfvrkNR/z636vYAabI/qtzpWSYrLa93BxrT+WmVCfvIjpH+yK
-         mOUDLWimvlByLREMZzyYjGdSvBTdQwXQhCnZaVGRGEMGRkfgMInw2cF4tRzkS7usuUu4
-         4Z+Mb1IlIj0ZT4zcKghyig3/Aj51gpDvJONyk0Or0JYplyk9NXPkUUXXGValneTQ9e0i
-         lGDvAGcoPGfC0pCGFi78acTlSS69ntKvtc0zlhVQotqE1ZCPcR3QiaL1mNDP2uXoEXo7
-         g96Q==
-X-Gm-Message-State: AOJu0Yyde/fGtH2WnoLQYv7h244v4aEa54CwXhQbzL8mo+zR43KVUdvf
-	cW5PLdecMndyoZmeSB3O2hozizCv3gtBL4nl3gsAvbk+vSYGT9YlPC98OVYhdiuuLIszU6CGuW8
-	HorIY8w==
-X-Google-Smtp-Source: AGHT+IHDb9Dv+1va9PvqDCQHLOYKAmeY56qPvJ4RxAeantsKZ8J12hViLyDpj1gcR3GtO9OpwmQWTNCFJms=
-X-Received: from pfbcp14.prod.google.com ([2002:a05:6a00:348e:b0:746:279c:7298])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:14d6:b0:746:298e:4ed0
- with SMTP id d2e1a72fcca58-74ea6641bd6mr4374759b3a.13.1752070153115; Wed, 09
- Jul 2025 07:09:13 -0700 (PDT)
-Date: Wed, 9 Jul 2025 07:09:11 -0700
-In-Reply-To: <20250709033242.267892-5-Neeraj.Upadhyay@amd.com>
+	s=arc-20240116; t=1752070202; c=relaxed/simple;
+	bh=m62TkjTTmCz9G9a7tBMmsOZHwwbtguD4Ia1+JlyvOro=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=VfyZBVxtwv+QeU45Vnm9fQRvU503Yov32jmb7DppX855qT/Sum6HQqIZKCuc3bwhFlht5pStb6d7TZgJvP+vSx6N6RU6PHQT35yeEsMFJ/5V1ImbYk3XgdHqTEQPFL1N7ogs7VP3kuARBlKrUUhzlb4MpGmG2HZ2AbaQ9tdgdGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=RU2Hgw1M; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=n9Q3AGEz; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id C1842EC04E8;
+	Wed,  9 Jul 2025 10:09:59 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 09 Jul 2025 10:09:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1752070199;
+	 x=1752156599; bh=OXiuJfa6GzzwWykYEMepJESwQapIIKQPPmHJ+Tf85BQ=; b=
+	RU2Hgw1MuM8b2gVsM5NxXSn7wjdJEuabk3tdZCwVd9Y5SSD1DgZOmCjZgTMeAm8/
+	Hifn/RJOq6PaGfgCl9V39D8zyZC6ZZQX3mCzllQ+njxcTYTiqcIlnC8CQ7IO2RU8
+	hpJg4w1ntaLGXOioYOH1NtXONC+94Ds2KRxYa0M7EWsKywkNKHnfkMgX8xGY+42U
+	bIddLRdDdecU3JzbvwXnvKT3OC/nmBjBJG26EV6fr0kqI3hWx5QiJOnWl23ejk9S
+	URMoM96nbPolOSo372vR+HI5eOfcN77YfC5jJyp9CxEh8cFRB4qS13tLayBXpnhG
+	5L7dmUuyTc/vldr0OwupBw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1752070199; x=
+	1752156599; bh=OXiuJfa6GzzwWykYEMepJESwQapIIKQPPmHJ+Tf85BQ=; b=n
+	9Q3AGEzMpSjTI0dCEGaf/0MZQw5OEUMcMsnLpP4IM3M5hmtgHiSXhCuzs8mJXHlX
+	H8l2Dxg6tBjeeawP/oYPW9PhFOCL08im0LkMa3FDnfHIJWV8o0k0LZl27NWi28ec
+	thIN4M6um3zt90IMcPozFNklW9dZXZoNjWHe0qm9/iUSjLCao581xHYw3X7W6OtC
+	zZcZWjmAyQsWLRJxTMtjvZEm4Ad9NtTL8QbaGXlkCGlZ5buBEJJhuZN8NT5Y1M7Q
+	geTMwiTonTMVHNPXTjgh/nvUE+avsoTbMjQx1wJorCHtIKjoDN9QvZHNBRNpaLMu
+	GlL5GAWGBRuzkRMFw5WiQ==
+X-ME-Sender: <xms:NnhuaLGNSpYSHqJVnMiULv2h0ByQ5qAww3mrZPb-KWk_64bi1PpGNQ>
+    <xme:NnhuaIV2LV44mWStCa-ZwX2laSsrhz7JvmZmRM_kFXeDSQnXgifjZoL1FFDrKtIHL
+    NQHcy9HJRrEqBAKw0k>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefjeejjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduledpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhope
+    grgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheprghnuggvrhhsrdhrohigvghllheslhhinhgrrhhord
+    horhhgpdhrtghpthhtohepsggvnhhjrghmihhnrdgtohhpvghlrghnugeslhhinhgrrhho
+    rdhorhhgpdhrtghpthhtohepuggrnhdrtggrrhhpvghnthgvrheslhhinhgrrhhordhorh
+    hgpdhrtghpthhtohepnhgrrhgvshhhrdhkrghmsghojhhusehlihhnrghrohdrohhrghdp
+    rhgtphhtthhopehlkhhfthdqthhrihgrghgvsehlihhsthhsrdhlihhnrghrohdrohhrgh
+    dprhgtphhtthhopehlthhpsehlihhsthhsrdhlihhnuhigrdhith
+X-ME-Proxy: <xmx:NnhuaOC3XXADYW-FsyPw-X5u6Qq5HKgoZ0V7N97HVOXeVgVXQTX4Jg>
+    <xmx:NnhuaOTS5gAWkDPz0h6urrY8qLKIn-AbqiOtanzEdU-op6_jB-2bDA>
+    <xmx:NnhuaPrx88Gi5Z0HpJNfzeNbDNymXSJSLp9-HwbRCkcNHIle_V6lTA>
+    <xmx:NnhuaHWK0Ke-jQEy3F6nTSgH0tvn8A5dIwt1T5okM-EGcuxc_cjyGA>
+    <xmx:N3huaFviz_ZIc3uK5VG5NJtYuRyA08PK23qjjhuZLall_bACdCY7Ixs0>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 772AB700069; Wed,  9 Jul 2025 10:09:58 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250709033242.267892-1-Neeraj.Upadhyay@amd.com> <20250709033242.267892-5-Neeraj.Upadhyay@amd.com>
-Message-ID: <aG54B8frrerb0pn4@google.com>
-Subject: Re: [RFC PATCH v8 04/35] KVM: x86: Rename VEC_POS/REG_POS macro usages
-From: Sean Christopherson <seanjc@google.com>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: linux-kernel@vger.kernel.org, bp@alien8.de, tglx@linutronix.de, 
-	mingo@redhat.com, dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, 
-	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com, 
-	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org, 
-	hpa@zytor.com, peterz@infradead.org, pbonzini@redhat.com, kvm@vger.kernel.org, 
-	kirill.shutemov@linux.intel.com, huibo.wang@amd.com, naveen.rao@amd.com, 
-	kai.huang@intel.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-ThreadId: Tc5542b2421753b41
+Date: Wed, 09 Jul 2025 16:09:38 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
+ "LTP List" <ltp@lists.linux.it>, "open list" <linux-kernel@vger.kernel.org>,
+ lkft-triage@lists.linaro.org, linux-fsdevel@vger.kernel.org,
+ linux-block <linux-block@vger.kernel.org>
+Cc: "Anders Roxell" <anders.roxell@linaro.org>,
+ "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Benjamin Copeland" <benjamin.copeland@linaro.org>,
+ "Petr Vorel" <pvorel@suse.cz>, chrubis <chrubis@suse.cz>, rbm@suse.com,
+ "Jens Axboe" <axboe@kernel.dk>, "Matthew Wilcox" <willy@infradead.org>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ "Anuj Gupta" <anuj20.g@samsung.com>, "Kanchan Joshi" <joshi.k@samsung.com>,
+ "Christoph Hellwig" <hch@lst.de>, "Christian Brauner" <brauner@kernel.org>
+Message-Id: <61787165-8559-4ad6-90db-5ab6ee5e6fd9@app.fastmail.com>
+In-Reply-To: 
+ <CA+G9fYs=3LHdf1ge1MiCoCOUpW=VjPdVWrNJX8+wi7u6N18j3Q@mail.gmail.com>
+References: 
+ <CA+G9fYvk9HHE5UJ7cdJHTcY6P5JKnp+_e+sdC5U-ZQFTP9_hqQ@mail.gmail.com>
+ <CA+G9fYs=3LHdf1ge1MiCoCOUpW=VjPdVWrNJX8+wi7u6N18j3Q@mail.gmail.com>
+Subject: Re: LTP: syscalls: TWARN ioctl(/dev/loop0, LOOP_SET_STATUS, test_dev.img)
+ failed EOPNOTSUPP (95)
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 09, 2025, Neeraj Upadhyay wrote:
-> @@ -736,12 +735,12 @@ EXPORT_SYMBOL_GPL(kvm_apic_clear_irr);
->  
->  static void *apic_vector_to_isr(int vec, struct kvm_lapic *apic)
->  {
-> -	return apic->regs + APIC_ISR + REG_POS(vec);
-> +	return apic->regs + APIC_ISR + APIC_VECTOR_TO_REG_OFFSET(vec);
->  }
->  
->  static inline void apic_set_isr(int vec, struct kvm_lapic *apic)
->  {
-> -	if (__test_and_set_bit(VEC_POS(vec), apic_vector_to_isr(vec, apic)))
-> +	if (__test_and_set_bit(APIC_VECTOR_TO_BIT_NUMBER(vec), apic_vector_to_isr(vec, apic)))
->  		return;
->  
->  	/*
-> @@ -784,7 +783,7 @@ static inline int apic_find_highest_isr(struct kvm_lapic *apic)
->  
->  static inline void apic_clear_isr(int vec, struct kvm_lapic *apic)
->  {
-> -	if (!__test_and_clear_bit(VEC_POS(vec), apic_vector_to_isr(vec, apic)))
-> +	if (!__test_and_clear_bit(APIC_VECTOR_TO_BIT_NUMBER(vec), apic_vector_to_isr(vec, apic)))
->  		return;
->  
->  	/*
+On Wed, Jul 9, 2025, at 15:48, Naresh Kamboju wrote:
+> On Tue, 8 Jul 2025 at 18:28, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>>
+>> Regressions were observed while testing LTP syscalls cachestat01 and
+>> other related tests on the next-20250702 Linux kernel across several devices.
+>>
+>> The issue appears to be related to the inability to configure /dev/loop0
+>> via the LOOP_SET_STATUS ioctl, which returned EOPNOTSUPP
+>> (Operation not supported). This results in a TBROK condition,
+>> causing the test to fail.
+>
+> Anders, bisected this down to this commit id,
+>    # first bad commit:
+>        [9eb22f7fedfc9eb1b7f431a5359abd4d15b0b0cd]
+>        fs: add ioctl to query metadata and protection info capabilities
 
-Almost forgot.  I'd prefer to wrap these two, i.e.
+I see the problem now in
 
-	if (__test_and_set_bit(APIC_VECTOR_TO_BIT_NUMBER(vec),
-			       apic_vector_to_isr(vec, apic)))
-		return;
++       if (_IOC_NR(cmd) == _IOC_NR(FS_IOC_GETLBMD_CAP))
++               return blk_get_meta_cap(bdev, cmd, argp);
++
 
-and
+This only compares _IOC_NR() but not _IOC_TYPE, so LOOP_SET_STATUS
+is treated the same as FS_IOC_GETLBMD_CAP, since both use '2' in
+the lower 8 bit.
 
-	if (!__test_and_clear_bit(APIC_VECTOR_TO_BIT_NUMBER(vec),
-				  apic_vector_to_isr(vec, apic)))
-		return;
+include/uapi/linux/fs.h:#define FS_IOC_GETLBMD_CAP              _IOWR(0x15, 2, struct logical_block_metadata_cap)
+include/uapi/linux/loop.h:#define LOOP_SET_STATUS               0x4C02
+
+I checked a couple of other drivers using _IOC_NR(), and it seems
+that they many of them have the same bug, e.g.:
+
+drivers/accel/habanalabs/common/habanalabs_ioctl.c
+drivers/block/ublk_drv.c
+drivers/dma-buf/dma-heap.c
+
+    Arnd
 
