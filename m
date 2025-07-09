@@ -1,242 +1,120 @@
-Return-Path: <linux-kernel+bounces-723600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A996AFE8F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:31:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDEB1AFE8FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 105D11C47411
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:32:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEAFE1C4734C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46332D9796;
-	Wed,  9 Jul 2025 12:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8041F2C08CF;
+	Wed,  9 Jul 2025 12:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Bl45FezI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E4G0vOHT"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABA22DAFBE
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 12:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFDD35962;
+	Wed,  9 Jul 2025 12:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752064293; cv=none; b=N/fYF4DGrqoPrVamvcTpf2XpEx7SL+teYXWCtmrZYSHKnomAaL397k9lYPnSLAzSDJib6XU2I4oFX1/pB+SZ+8S5uCBSF2AAC7LApKqkuE4qeAiDJVuEzG282CT3gsl5BNjWRtsg00ccIURfmKqNRJKxHku2jZOwBFCvI6uKcNw=
+	t=1752064368; cv=none; b=r2F73qNo7dax4g3+EmunzLddeDtJgrVxK6qoJsQqkWwljehQ5k9kTe+dpjknzJkSJ4ikbi364BaZgRXUabpQVQufL9fsZ3zQNJb4eMElazl6jHIFZyOJVmuamT3IltYi1ii/4V2POy59xiTmzKPH7ZwDb+OTCGS4NzdfhvJaHMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752064293; c=relaxed/simple;
-	bh=7yd5xrkWlkddJneP+p37SueXY9r93VYw7uJzxQg3qFw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j75NVMRBbpkxQ+KYSF+wAfn1Q5wJXdge7jVdi2M9It6aXoqxXZKg7kRcAUaxlpB267sT5IMAJ9+xZlk9Nywlu7+2leYsoNjGw0DZRAzybwg8biOKkqx9Lgc7bOznC9HVbpehT9hHuNMNIIGsIcvpiiIvuzoZ+HbhDJYTA3E5hvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Bl45FezI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5697jpVU010471
-	for <linux-kernel@vger.kernel.org>; Wed, 9 Jul 2025 12:31:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	iJx6t7w6ssrs3a9tOwEvfHFgR1eHqpcHEVJO/pfvIZY=; b=Bl45FezI+8ohQ6Fs
-	efgc2EZuyghwoIPcmAUNMZ+PWHFI9zV5bjYaxY3C3FfMrmh7bscGdS9dCnksJPMW
-	Tj1NH4oO9KP+N9Ig+rO/QCpnd8y/g4cBHOszdZ1Eb6ybxoFTAuGls5rnOESmNiDb
-	+8/HhVGyWeodCpeQ2PWfXgnI81BYFkw1DVYMYw5nGEyKjSE5VHTUKaX15tZUpgNQ
-	DTtwY9d83yAEtyHbsF/lNRBWcBiXnWiH8P9TzMnJwCPnDDu8/j70ojlLg7ulb4cq
-	3c3BJohQmGRK451I98VQuOpn6OId4aXDm9nab7HgL+US0JqaLIkB9u0zb1kyufCm
-	Q0vytQ==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47smap10ey-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 12:31:30 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2356ce55d33so74612155ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 05:31:30 -0700 (PDT)
+	s=arc-20240116; t=1752064368; c=relaxed/simple;
+	bh=vUgZWXRD5r5At8FEilhHFTYoFodE4/T0JbQ8YS6pAyM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MSVC2hpKw73HL2/qU4vu3+mRj1eCkyZhkBEas/GtEetRyfuFYxoPIoyAPPUYhWPbLfbeGF0qwVzewwUlSp1DyTq6LO+opK37qbcl/vnIGGLF1I7z2EqHFpNY1zI849zKnQ42L7+G2CMQV2lBEB+7S035YAdW0QIpz2l1kRoWm+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E4G0vOHT; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-237e6963f63so36060525ad.2;
+        Wed, 09 Jul 2025 05:32:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752064366; x=1752669166; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vUgZWXRD5r5At8FEilhHFTYoFodE4/T0JbQ8YS6pAyM=;
+        b=E4G0vOHTAqrm4VS7ADrX2Lcqy7DtNIUFkoPS57u6omdWVljVknuzGMlNYPGXyWIAKf
+         Ctb1M7OkCZs07wcmpPfdyWhOrmrGwIjZ2De4DdFDgtICAA6EttzCsX/DduKVt6bBmf1K
+         U1MgKIzjVtaJIEx7ZON72pkorq8DGX/BOQVZC1uJnD/vvPI2vRDqeC0o92AUK+GIujMq
+         zvx74Dy77YBakj/dHZgxtB6lveNDXlolvZs8X1J6ihUf99dHOsg5m57oADl2ItlSHw/N
+         rPGIeJ8qRYwZ15iZySgxOlMRM1kMNTycCf37gc84yuef1k7UGaPnMGgcCW2vdKTVpPM4
+         FMSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752064290; x=1752669090;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iJx6t7w6ssrs3a9tOwEvfHFgR1eHqpcHEVJO/pfvIZY=;
-        b=ZE7rjmATCvALCSWeDKRmr4zE5I2DfEPr1Rg5HvvfZrKbADeFi4qVgEvzzN3rfIyMrl
-         QBAYxRBcvVDT8LxfTibPXLojrfX6HxcTwNucqDXnkQ1NvQuX9/jVeeaHbbgyz3aBv+42
-         lwRVBRagBSw5pBSuEsoaOOVlR2jajSTvtu1o+/EhJmB0l+hDodxPMdrFTs8EUOgYoD9A
-         I4CN5mSYFBeMVxE3KJUj0k0ha//vvGhBR8RM5XG8otacgN7fXuIjcVU3EUFepJiJrbjM
-         hcJVH8qHd3vVWflcK5qf97QTiXIm7nRGrIYzJoVJuQRyrgSoaBPpI97vs6cCVwh3csmN
-         qxPw==
-X-Forwarded-Encrypted: i=1; AJvYcCX0iLHirH2RnkU4lnP1N8ESlJmtEcaCBVYIpEv4rfXlRI90Hhajem3fscdCVUQARSYESE5XwQB2MvHOa7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHS5eoavz/7OK7zaGpGuNtIlLv5uL8988CHI+kGj0+CN3jxHN1
-	S/iRO8DusKCddr9mVbMgVQyVevSBS3rpxn81S0agJIbXj40oLJRme437vdakiu1W1BoPnPH/lVl
-	tDm6m6ISX4GJ/mODRIla/YkXOuy4E+E5AGxNMK7a0/XPRBE1ZYbf9t2md3aO6izzuD90=
-X-Gm-Gg: ASbGnctdfkXlAHE2dPiNhsKgtpP54xKy56mbKerfIXV2FfE2uL4zGT3UmDApVsNz+en
-	8glZWLFcdaVcI6+Bo2G2sEJ4o74yt2dOJThCCUuUYsBKrgIZ8r3+udiW1x/4mdkdNpVjIn8rA6t
-	gCXANU8p6WV9BzAX4fGkNkeg0nSFRQNpG8x8yxx2GNk8NcYu3r9llRLkQ4PYjy92ztId1+fKEeF
-	4IeDexQqeUamaZIUHvD04WTryXw11Xyo/2dp8KGRNjqzxy3v1H5wJrPucCWq3FRCQmVDW9OuHXz
-	fyQRKBAQkaoS18tTEBnitwXSxzGaqGeEgdhiJsXt4qxACEfFHdOn
-X-Received: by 2002:a17:903:3c47:b0:235:5a9:976f with SMTP id d9443c01a7336-23ddb2f2db9mr46315465ad.24.1752064289667;
-        Wed, 09 Jul 2025 05:31:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHjreNNXd3+SYHL4S/oHX+L23Vo5LZefCgSCCamZIx++CFBdFw3mmJOU4Ve8ksAGPCCBqWoEg==
-X-Received: by 2002:a17:903:3c47:b0:235:5a9:976f with SMTP id d9443c01a7336-23ddb2f2db9mr46314845ad.24.1752064289178;
-        Wed, 09 Jul 2025 05:31:29 -0700 (PDT)
-Received: from [10.218.37.122] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8431e2c5sm139239055ad.39.2025.07.09.05.31.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Jul 2025 05:31:28 -0700 (PDT)
-Message-ID: <2a18cf9e-1dd2-4e09-81f4-eb1d07324c8e@oss.qualcomm.com>
-Date: Wed, 9 Jul 2025 18:01:22 +0530
+        d=1e100.net; s=20230601; t=1752064366; x=1752669166;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vUgZWXRD5r5At8FEilhHFTYoFodE4/T0JbQ8YS6pAyM=;
+        b=kedaIUuWeOM2noO82QtdUXojUndBujfi6Vyc3/YscEbV6KwOX3nsf5RGu04/HLSrTl
+         /UaZ02wwz7ONkr5LOF71/1t0pKhRgWJjipW1PBykWUS+WQiMz+8zhno+PIgEwj4hIKDq
+         3ZzBqA6o4umWuXM54zDKMEmGYy99fgkq7uLnSh7X4t5yj3rttiWBlXgD3aqCsUwvd4ml
+         pCovFzYqQEq2ZJ+LIlOfDzF0myJnzV5VaoiQf+mDt/2IMn9kZEJWN3C9IBZSYOLICjOj
+         iJ4WnI23gquPlfgWRm2m2c39rPvwAjrEIjCrWJTEoryb4qbFFHGdrjEMEtGCkjIZJztS
+         ZFZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgxtn6WrQD2y7vqZpuAVhd7gCLTpJp+qyFCHt8Ebr8cv6bJFyAnlun215Fo2E4VQGbFzVwDdoDOivXjw0=@vger.kernel.org, AJvYcCVcoyfWhUFjAKON/bjxBzky6KLQdWVPXzic2MuWo3T0k5NI0C7/6iiMJGzSi+QF8gPGcuHppBitbcUWQAWTnuas@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxlx8FEUT1QF2zMNnrcssw0s68OdKEhBsS1++Kd9tmb2hOqgOjp
+	GlzekItz6m9Hsme3PBgamRB1GgulrNH4NocRj9TQiCmm1Ah7tjX/ROevJe1sjA==
+X-Gm-Gg: ASbGncu8Z0cUd6BIRnwS7R07wzEkQXu2gahXH1RG3Q2IN1A/+NTehLRxQTTlcA/LcXq
+	yGHW1DdUX2qmVGPhQRm8OIrDEyo5g9bRNmhijrrIt05Pm16pTEwhzYxRVgTthsjFYX2y8oCZWD9
+	7tRHEzN0kOUzOqaPV/Dde04d4pefkIX7za7giMgQD86NM2i9QJlM6mG1LPp1a6VbOx/xWHF/SGK
+	OEM/5JlF6wABe2by60hnv2JLlQXRNngIgPpUaO2KTQNvgmM/i8YCMSmKq87LcQMcCu+QmswGSYp
+	hM4pUzWj3pAzN4rGGorbmqUsvgb3KNjzOUHV7qgFnH5l+3XIXxmt4aY7S/IO9ppfmFDftpu7gn3
+	yp8fAEnWX
+X-Google-Smtp-Source: AGHT+IGQEif0XEQzRRIUBjTfM8pgAviVputbdsxIMjf++GKcTd6bZgPMxBnWALMlHl3YMEXwVnVkxA==
+X-Received: by 2002:a17:902:ef47:b0:234:d431:ec6e with SMTP id d9443c01a7336-23ddb1983dfmr37348155ad.3.1752064365748;
+        Wed, 09 Jul 2025 05:32:45 -0700 (PDT)
+Received: from DESKTOP-GIED850.localdomain ([114.247.113.178])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8431a189sm136381455ad.27.2025.07.09.05.32.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 05:32:45 -0700 (PDT)
+From: wang lian <lianux.mm@gmail.com>
+To: ziy@nvidia.com
+Cc: Liam.Howlett@oracle.com,
+	akpm@linux-foundation.org,
+	brauner@kernel.org,
+	david@redhat.com,
+	gkwang@linx-info.com,
+	jannh@google.com,
+	lianux.mm@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com,
+	p1ucky0923@gmail.com,
+	ryncsn@gmail.com,
+	shuah@kernel.org,
+	sj@kernel.org,
+	vbabka@suse.cz,
+	zijing.zhang@proton.me
+Subject: Re: [PATCH v3] selftests/mm: add process_madvise() tests
+Date: Wed,  9 Jul 2025 20:32:24 +0800
+Message-ID: <20250709123224.6593-1-lianux.mm@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <48D7AAD0-07C9-4E2D-9171-081A503B47AF@nvidia.com>
+References: <48D7AAD0-07C9-4E2D-9171-081A503B47AF@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/11] PCI/ASPM: Clear aspm_disable as part of
- __pci_enable_link_state()
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Manivannan Sadhasivam <mani@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Rob Herring <robh@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev,
-        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
-        qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com,
-        quic_vpernami@quicinc.com, quic_mrana@quicinc.com,
-        Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-References: <20250609-mhi_bw_up-v4-0-3faa8fe92b05@qti.qualcomm.com>
- <20250609-mhi_bw_up-v4-6-3faa8fe92b05@qti.qualcomm.com>
- <qo6mb3qlt3xpuvhepwcv6be4wd53neee2t6buzk4tdiy22xsub@vu7lykp3rnu2>
- <226bab3a-54e5-94ad-9d84-0b82f9dc4e2f@linux.intel.com>
-Content-Language: en-US
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <226bab3a-54e5-94ad-9d84-0b82f9dc4e2f@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=Ar7u3P9P c=1 sm=1 tr=0 ts=686e6122 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=WFThVEArfCvG9L-vA9EA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-ORIG-GUID: 6vLQrgrDwfvOg-ux_wxqtCl2bxVKj1jl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDExMiBTYWx0ZWRfX+dChi8rld3NE
- IpHmpdjfpQLDmHJK73WyU5vXJRJZxNyHcqWZmiJqEDAOEzEDsfPkUiJtGWZ9ndKzGZneXf2GytX
- YEgD4Ofs/NLyzIHNNtFQFwOG8/gQnPVFt0nxUoEeRegGZjzTkOM/I4vC0gOXoPfs7nv6RCvIiN3
- wxlHHrvra3Dw8QgatDt7g/V4qdWrNhuKbV21DptohPDa46u927ocIZ/sjwKUAtSKrSW4UGI3mWY
- UUxEnIQerxSMzAt7eAcJzy4vlovokb3OI0m7+D1sgeeeQJvh1drgKtDGX1ly9btTVyRegQxIIMI
- Urt5t9vyEDdrbUnwUjF7KKZ6g1tWOun0YBr97sowGmZ9VR+TvlbGVynylDGOZIcoxNKu3W9bjNT
- unkxKPEjV8wKm0F+1qOKu/k7pJxjhFmqchCU3CJoNyyQLUXITw1lnncN4khk32aIQ7AKTUse
-X-Proofpoint-GUID: 6vLQrgrDwfvOg-ux_wxqtCl2bxVKj1jl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-09_02,2025-07-08_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
- impostorscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015 adultscore=0
- phishscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507090112
 
-
-
-On 7/9/2025 2:40 PM, Ilpo Järvinen wrote:
-> On Tue, 8 Jul 2025, Manivannan Sadhasivam wrote:
-> 
->> On Mon, Jun 09, 2025 at 04:21:27PM GMT, Krishna Chaitanya Chundru wrote:
->>> ASPM states are not being enabled back with pci_enable_link_state() when
->>> they are disabled by pci_disable_link_state(). This is because of the
->>> aspm_disable flag is not getting cleared in pci_enable_link_state(), this
->>> flag is being properly cleared when ASPM is controlled by sysfs.
->>>
->>
->> A comment in pcie_config_aspm_link() says:
->>
->>   /* Enable only the states that were not explicitly disabled */
->>
->> But the function is called from both aspm_attr_store_common() and
->> __pci_enable_link_state(). So I don't know if this is behavior is intentional
->> or wrong.
-> 
-> Hi,
-> 
-> I think it's intentional. Whether the behavior is useful is another good
-> question but the current behavior aligns with the explanation in the
-> comment.
-> 
-> My understanding of the situation is:
-> 
-> pci_disable_link_state() and pci_enable_link_state() are not symmetric
-> despite the names, never have been (this is one of those many quirks ASPM
-> driver has which should be eventually cleaned up, IMO).
-> 
-> It might be appropriate to rename pci_enable_link_state() to
-> pci_set_default_link_state() to match the name to its functionality (and
-> the function comment):
-> 
->   * pci_enable_link_state - Clear and set the default device link state
-> 
-> Note: "the default ... link state".
-> 
-> 
-> I've already raised this concern earlier! As you see, my comment are
-> not getting addressed. I'd like to see the author does one of these:
-> 
-Hi llpo,
-
-I replied to your comment on v3 patch[1], and I feel instead of having
-new function() we can use same API to our purpose.
-> 1) Renames pci_enable_link_state() to pci_set_default_link_state()
-> 
-> 1b) If pci_enable_link_state() is still needed after that, a new function
-> is added to symmetrically pair with pci_disable_link_state().
-> 
-> or alternatively,
-> 
-> 2) Changelog justifies very clearly why this change is okay with the
-> existing callers. (And obviously the function comment should be altered to
-> match the functionality in that case too).
-> 
-> If approach 2 is chosen, it should be very carefully reviewed when it
-> comes to the callers.
->
-I am in favor of approach 2 which you suggested, but lets wait for other
-reviewers feedback on this. Based up on the response i will make
-necessary changes in v5.
-
-[1] 
-https://lore.kernel.org/all/b3d818f5-942c-1761-221d-af7d7e8f3624@oss.qualcomm.com/
-
-- Krishna Chaitanya.
-> 
->>> Clear the aspm_disable flag with the requested ASPM states requested by
->>> pci_enable_link_state().
->>>
->>> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
->>
->> Fixes tag?
->>
->> - Mani
->>
->>> ---
->>>   drivers/pci/pcie/aspm.c | 1 +
->>>   1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
->>> index 94324fc0d3e650cd3ca2c0bb8c1895ca7e647b9d..0f858ef86111b43328bc7db01e6493ce67178458 100644
->>> --- a/drivers/pci/pcie/aspm.c
->>> +++ b/drivers/pci/pcie/aspm.c
->>> @@ -1453,6 +1453,7 @@ static int __pci_enable_link_state(struct pci_dev *pdev, int state, bool locked)
->>>   		down_read(&pci_bus_sem);
->>>   	mutex_lock(&aspm_lock);
->>>   	link->aspm_default = pci_calc_aspm_enable_mask(state);
->>> +	link->aspm_disable &= ~state;
->>>   	pcie_config_aspm_link(link, policy_to_aspm_state(link));
->>>   
->>>   	link->clkpm_default = (state & PCIE_LINK_STATE_CLKPM) ? 1 : 0;
->>>
->>> -- 
->>> 2.34.1
->>>
->>
->>
-> 
+Hi Zi Yan,
+Thanks for testing the patch and reporting this build failure.
+I don't have an arm64 environment readily available for testing, so I
+appreciate you catching this. I suspect this is caused by missing or
+older userspace headers in the cross-compilation toolchain.
+I will try to fix this in the next version. If the problem persists, a
+good solution would be to manually define the syscall wrapper to avoid
+the dependency on <sys/pidfd.h>.
+I'll send out a v4 with a fix.
+Thanks again for your help.
+Best regards,
+Wang Lian
 
