@@ -1,95 +1,101 @@
-Return-Path: <linux-kernel+bounces-723829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B15F0AFEB5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:10:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D729EAFEB79
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0B0C5639F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:06:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4135B56450C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989A52E8DFC;
-	Wed,  9 Jul 2025 14:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA3E2E92B8;
+	Wed,  9 Jul 2025 14:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="s5dPV0vC"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="USGXwLDN"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A8A2E8896;
-	Wed,  9 Jul 2025 14:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6E32E8DF2
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752069815; cv=none; b=KD3w55F/PZa9qw37Un0Ot0Odq0ZGt3iA7t8fnsLeXUMbmf3MCCTpsl/nLahuuW3PV2DiGD4IZHuDcY04ztTlNTN3ZkS648Y5C7p0oLgIRT6oZrqd8R+MbthiSbNQPWUnUWf2PNJ9M1R7PuoLPlUpD6UBjicXPI6ZgHkJk6wVSnI=
+	t=1752069830; cv=none; b=auGm5NwnyIzZ+76abP3+Hv4QFbcGhqvNLZ2lywL4t0KR31OZ4u/oOvT3267lQS4qjfSUzF6u6Oq55BqERehQGZyygupx+rEBvRB2FPx5UGAMAcjf8wvyB6iKyVh8ed6MmUbf1iiW0I+Xe/HPe/ywKJGehZnoXtjQ6Y70iv5YUFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752069815; c=relaxed/simple;
-	bh=xDIQZTmb2XeV6ShfW/l3uwIpfb/tWjU1GnripoW4LzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RVBkJEhHkbro1m0V5IURsqRx3uLipi8mrBNlMtUOdNTIgIvn2talVFwdmPSq14ESlqxQD7bdS883VpcinD8YOD9vccqdsbLHcUdU6wYU5Ku7HLD8ayvZex5bJlOXjWsvtoP9H1P81dmipN3a+N8FtOktFyNh/m9RA+0mTyqmvaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=s5dPV0vC; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=9Aw3J6cFGMs3YmA/HP2Vdm7P6MLIxMuJEQ+kELQ2gFI=; b=s5dPV0vCOsOqvDaWV2YJ8O8O3e
-	g5ubEgVUv+2v0ZFupAvJZzfJvdUJ6tq1AzTp13iwyb4ZnSVULP+Xe36YVDj9S2VuzpVv1JAWbfUwc
-	x01COoWCK16iIJGwfHgJgLoJx7CiQ0OORtrJnwobcjmCQeDf1IP1iIIJEgLww+AqMq9Q=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uZVOD-000wu3-QG; Wed, 09 Jul 2025 16:03:13 +0200
-Date: Wed, 9 Jul 2025 16:03:13 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	Andre Edich <andre.edich@microchip.com>,
-	Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH net v2 1/3] net: phy: enable polling when driver
- implements get_next_update_time
-Message-ID: <248bbbcf-ec7a-4ae4-a502-8f2575c18bbb@lunn.ch>
-References: <20250709104210.3807203-1-o.rempel@pengutronix.de>
- <20250709104210.3807203-2-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1752069830; c=relaxed/simple;
+	bh=B4BEBVfO43SbmgceatslkYpp7eXsXn0FMJ6j+FiP5kc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=YYSzXvXR7e+MLoNlUdpXzQaVI70OT1G8S1FpdilQIJikMu/x3/tSMSWxMaIKJ6nl+Mv/GVllSiUtWqNu+/Q2DRUNV4RsjUBKS1pXmy2sx/aTNxXvS645KL76F5v6ZnsCNmjBP7b9KaexD+GHNPmNrCcnUN9+H8sIA8uVu72vJPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=USGXwLDN; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b2fb347b3e6so6476643a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 07:03:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752069828; x=1752674628; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hykxadXvTSxtN5RusGv413qm2dHa+a46+Kml5di85rU=;
+        b=USGXwLDNlnWRprMHIWtF8fdYb1MLxe55+OrBRWiWP33kXKLqiiDNf6vgx2OwsBm/RV
+         iP3nSrXnDzAsmmf+IGaln4HkllajWlRcoXi8oRImTrhiNHjCMCsKPTEhm0fsMNvGOAku
+         9Kr5iYV5JLKviA2PmJoceUbvDSW71TL+gi9s8LlKYbZ3jbN0gxpr9Jo5YrEqVPFZcH5u
+         aUUhOTRUJB5sayCQD0S1QvCuWrI8xsZLR0nGfBsS/B3HB4ZkcFgK/vzxAmPl3I3RAoH7
+         yoqmYGRQaPG7atXtkZB+xoPC1avNzzIQVjnfgyBbT6XQbFqmBPqZi4bQO7G4oZRh1u7l
+         JLpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752069828; x=1752674628;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hykxadXvTSxtN5RusGv413qm2dHa+a46+Kml5di85rU=;
+        b=aqkw4gTa79A2o7sRRfa3aCCD1yXOQMSk1Dd8gZoKaK/yYgjpvQ5urag21Q86G3cOse
+         jSy3GDW6PZ5m1Y+dC2MnPsgAhI2gSthTTo/xWsle5RJ7qBivzyxIGiKrb5LXU7lKdHtR
+         gFgT1xG+UcYu4XZiFnr82l483egqmv23dBPtCNnvfDr2BunfITBBGcDUG2AVhqV5Onxs
+         D1xtngpm1CzC9sy8ncDmPCcl9KiURxM3XZorayz+2qnSD5xrWxv+J52btI/nItPbiBlW
+         PdiktqVKtiyYNvG/SgUZYa/BkaGDGfFnmEtgPS3td6FQdMwVVaqqJd1Xp1lrW1bzZ8Id
+         cAUg==
+X-Gm-Message-State: AOJu0YwxcOjnKF0eOUl+H4VaviGunFytl50XoO3aCzmzs1/SgoPYcW7p
+	w6FvtMpoxZdrhAm2DeSqvR1SCkz0ZH0Zsu9G0OfLNtLRW58+UIgEES+BQ/AzEk1/hz8hQNdHyt1
+	j+HX3bQ==
+X-Google-Smtp-Source: AGHT+IENVhgeJ8BB/CtSoknldCEQ//74b5hlP1X6+EAiK7+g1oePobK3Aftm1IJA21KDRMk2vShoory4ir0=
+X-Received: from pjbrs11.prod.google.com ([2002:a17:90b:2b8b:b0:301:1bf5:2f07])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:e98b:b0:312:1ae9:152b
+ with SMTP id 98e67ed59e1d1-31c2fdd0249mr2655621a91.23.1752069828232; Wed, 09
+ Jul 2025 07:03:48 -0700 (PDT)
+Date: Wed, 9 Jul 2025 07:03:46 -0700
+In-Reply-To: <20250709033242.267892-2-Neeraj.Upadhyay@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250709104210.3807203-2-o.rempel@pengutronix.de>
+Mime-Version: 1.0
+References: <20250709033242.267892-1-Neeraj.Upadhyay@amd.com> <20250709033242.267892-2-Neeraj.Upadhyay@amd.com>
+Message-ID: <aG52wupjDpEMChr7@google.com>
+Subject: Re: [RFC PATCH v8 01/35] KVM: x86: Open code setting/clearing of bits
+ in the ISR
+From: Sean Christopherson <seanjc@google.com>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: linux-kernel@vger.kernel.org, bp@alien8.de, tglx@linutronix.de, 
+	mingo@redhat.com, dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, 
+	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com, 
+	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org, 
+	hpa@zytor.com, peterz@infradead.org, pbonzini@redhat.com, kvm@vger.kernel.org, 
+	kirill.shutemov@linux.intel.com, huibo.wang@amd.com, naveen.rao@amd.com, 
+	kai.huang@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Jul 09, 2025 at 12:42:08PM +0200, Oleksij Rempel wrote:
-> Currently, phy_polling_mode() enables polling only if:
-> - the PHY is in interrupt-less mode, or
-> - the driver provides an update_stats() callback.
+On Wed, Jul 09, 2025, Neeraj Upadhyay wrote:
+> Remove __apic_test_and_set_vector() and __apic_test_and_clear_vector(),
+> because the _only_ register that's safe to modify with a non-atomic
+> operation is ISR, because KVM isn't running the vCPU, i.e. hardware can't
+> service an IRQ or process an EOI for the relevant (virtual) APIC.
 > 
-> This excludes drivers that implement get_next_update_time()
-> to support adaptive polling but do not provide update_stats().
-> As a result, the state machine timer will not run, and the
-> get_next_update_time() callback is never used.
+> No functional change intended.
 > 
-> This patch extends the polling condition to include drivers that
-> implement get_next_update_time(). This change is required to support
-> adaptive polling in the SMSC LAN9512/LAN8700 PHY family, which cannot
-> reliably use interrupts.
-> 
-> No in-tree drivers rely on this mechanism yet, so existing behavior is
-> unchanged. If any out-of-tree driver incorrectly implements
-> get_next_update_time(), enabling polling is still the correct behavior.
-> 
-> Fixes: 8bf47e4d7b87 ("net: phy: Add support for driver-specific next update time")
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> ---
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+Acked-by: Sean Christopherson <seanjc@google.com>
 
