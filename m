@@ -1,148 +1,151 @@
-Return-Path: <linux-kernel+bounces-723909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 032E9AFEC57
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:43:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8755AAFEC5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49905587349
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:41:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21CA2179387
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FEA2E9EBB;
-	Wed,  9 Jul 2025 14:39:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A352D0298;
+	Wed,  9 Jul 2025 14:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Y3Jg6bF7"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QVz7dgS/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287822E9721
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E9C1DFCE;
+	Wed,  9 Jul 2025 14:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752071963; cv=none; b=Km+jM+IcniGpzcSXrM+1bqtrGQVotSE/1qWH/j0kUsl2R0qcecVt/vih18XTSwwk3zGzCnirzwcRmkTlfy7IMkSl/4BsmmWRw5AMmtMUCmQSrlW1h+Jej36Ha+U61tx06zK4CfkWPcCzi7w8TBL5sk0x5BafqDWL1W8DYcHykYY=
+	t=1752071994; cv=none; b=uf+ZZ3BnH7mpFKYJT9grW7fBdG08q3pAR/ON27TdezzDcaYdIeD+FgpTbOPfmeDUjQdVjzTZqjIf/J4RLNHfLrMNy6pI3FzqpwHP6VjyGYFFPYRuYwk/aymhnGf0VI+va6NclaK7mub9HjZ70vELRL4PTJBfxhlERSIB2kEsse8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752071963; c=relaxed/simple;
-	bh=h9Y9QsarkpXYFnUZLolMrTl7+euN/vM4YyfIdXkl13s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JBF07AAZV1kv8+2lP/grE+M08h3aN5dpUUUPliw5oqU68ZSrZTXdELmiWnizrEXSj2aAE5ske4U2i/YOarvogurrEJ7hoOIn2S8av7x16cxPqdpqfccwvEktXzIcHIE6Bd4AnrLcVdK5hP6tkobpO56vVU0iLGhuNFZb3RMkl3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Y3Jg6bF7; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-453398e90e9so41222485e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 07:39:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1752071958; x=1752676758; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U/0cHEX1WGiZE8mwyI/JPOFvvGfe/GVd0huttz7DYHs=;
-        b=Y3Jg6bF7d7y9+byyvlbQjlO71shSz7ZezydV9BSbvJBt4i4CnIdb7ewhHx/erQKCO+
-         akb3CFTkWfU15VMUUT5T/IvpkZMOUTBO5VnhQlKz+vIfAfYTxwKlYZQ//4I7EwTwfVJb
-         aRcOGHutXleQaaJK0nKVn4Ps/yKfRtayb5O+tG32VCBaPeXnvDJ7SuyCXUIJL+kA0sD7
-         2NHhq1brPS/ABsttY525wI77y8jQ5vpnKBjdMZc9JLdH4quYar4fLP3LmYAPvfgMcCZq
-         yHlhQMN3jVEAjzkPH0LoQtNj21THyNtWrwS+z/yTb+dcI+x2GaWLP2s+OP1jpB/gyB+0
-         6yPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752071958; x=1752676758;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U/0cHEX1WGiZE8mwyI/JPOFvvGfe/GVd0huttz7DYHs=;
-        b=Cc67Pc1hT/nv6H5XIa0rxU+y/qv6G6t1ncwsQf/Ar1Tmy1pfCr4aoI0VXjmi5vUdix
-         EMRZdCEm6oInEFX5qULQjzSyw4YwiusybB86Y+gPtZda/6+AeZ8vAPc7NKkbLqtgizjw
-         C4JCmSs7ibTDt7lwwjkVnvyzonjpWdxgaRQs9lCBAHPySnpIqpo405EfnGsYVrrMIMH4
-         UZ+0n9DWdFDWWvQA4R+QmauE2CGxiAOS8W2zZskkHdhI+V8/5yMtnYzoPUXb1d6iccXi
-         Pj808JmbMT58/Aq/Ob84sWIaLt5CMMwsZy0pUiACCCbPUeDLiCLChAX1e6yM+UdLJYNY
-         KKFg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7iDFllZD0dfEQ8jENWBPV7XxUdpXuBd7qcBoCuNsishTDMohR+C7qrEr2gTG9WSjKEytstzyzPImttbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOpASZYQEoaBwO7rx/usoeFFjik2XkTYz4TFOwqRWD1CHtNwiR
-	Y5Pyg0ui6C2nXySX/zmXZlvwpiUw8/ePLhjphYgMz+BwTs2SLYOyue6zX7nz2ZpUbSw=
-X-Gm-Gg: ASbGncujlpQZqCcAUeN5ucun4izQsoGAyWsYIe7QfbXKtmBgXj+takKTLDM4W/jbqYK
-	NcpEVA8F0yglM7DJOVM+6UjMQnbBIG8AFW59qBor2aKd7A1Z8ve/cNVKa8Qe7xXljJfDAaS+BCU
-	wjx+c0NyiAl1d6ECXvPjT6XcKq3TGyaySDoWZBljWiXMIwThFNIWpqoAU7mxrdTGWxu9b5KHD2R
-	vdLktbNpKi6i+/uIU8U7rhS3HJFeasB3XXmKoapBCaZ2u7WA1G/y46u4ipKrzIptFhP3mHBK4bW
-	RLpmzYBLuIqVOeJtLK7gVa2qmPOYF9uTgDHeOsUiWt7Ne6CYpEv2uZs=
-X-Google-Smtp-Source: AGHT+IHJL3AtHw/EonyubylYUgvsAX3aEA1kWb+hfmhi4rwD64AqP18DXBVWa7fZWLEMijUB//O7/Q==
-X-Received: by 2002:a05:600d:19:b0:43d:4e9:27ff with SMTP id 5b1f17b1804b1-454d5c8ae6emr21757475e9.7.1752071958441;
-        Wed, 09 Jul 2025 07:39:18 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:b04e:cfc4:3bd9:6180])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b5dfbf56c9sm4480687f8f.79.2025.07.09.07.39.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 07:39:17 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 09 Jul 2025 16:39:08 +0200
-Subject: [PATCH v2 12/12] pinctrl: qcom: make the pinmuxing strict
+	s=arc-20240116; t=1752071994; c=relaxed/simple;
+	bh=l54NsMtGhXxYp8oNZatWnK+eHuDMVoDSH6p0tUsecMg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VCh3vbkm7SrTb8QTsXDfnx0+grLb8tv8Ci2sZJ1k5bM13jCV1opql6GpIJLzowgMVXzkHa/DD+AoHJfD6VDq+3MdCHyfZ5TUdXEdnWIi4XHTKraTnac8Za6A+ffo7VjA3f9VHR0vVepdaYXKvw8R6OaGdYnLO23tQrhfqGIyR+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QVz7dgS/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76CCEC4CEF1;
+	Wed,  9 Jul 2025 14:39:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752071993;
+	bh=l54NsMtGhXxYp8oNZatWnK+eHuDMVoDSH6p0tUsecMg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QVz7dgS/RGY5kzgDrulXPsE8IfCA2EUYdik/oFLipbxtSfFdqdaEo8lHOP0971E/L
+	 hkA4UU/gAbgdhNmplCQ1qXcsXmnleMVGIBQAJSEV9IHFfa4yo25lFdQCb1SqL3m58w
+	 Sximjdged91fuHAb6sqR6cQAePtO8gyyP0F+KgU9VINYXOlxSC4tc2S3HuybDmncYH
+	 3ohbc5FRx5bhdNs1rsNEb4FbsOvjeexTBrh8+hC96UhAhbI2ZlwIC9+UTAEFKz8AKW
+	 cq1dgXKGCXLBFV1H1vsAXmp2yU0V4J/JhCT32HRrhkn1fCDTaWGsY1Xd6hbGeeyBQ6
+	 Dz3tUJguyuumw==
+Message-ID: <5800c426-95fd-4a81-b979-c0bc2bc293dd@kernel.org>
+Date: Wed, 9 Jul 2025 16:39:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] efi: add ovmf debug log driver
+To: Gerd Hoffmann <kraxel@redhat.com>
+Cc: linux-efi@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250708125624.734132-1-kraxel@redhat.com>
+ <6edfa099-ab0c-41f6-89ea-0fd67666dd05@kernel.org>
+ <2mn65slwkwmjpeilma2isw7zgabdmda4rhpqjiutwdwqno2wrh@zghymlce2fiy>
+ <8621135e-445a-42dd-89e0-bf8fc3e2b6b7@kernel.org>
+ <4cix3k4h32wozt3nxic5un7jyzfjrmqmzbzmtr3ivw5b2bz363@mw6bke7w4oaq>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <4cix3k4h32wozt3nxic5un7jyzfjrmqmzbzmtr3ivw5b2bz363@mw6bke7w4oaq>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250709-pinctrl-gpio-pinfuncs-v2-12-b6135149c0d9@linaro.org>
-References: <20250709-pinctrl-gpio-pinfuncs-v2-0-b6135149c0d9@linaro.org>
-In-Reply-To: <20250709-pinctrl-gpio-pinfuncs-v2-0-b6135149c0d9@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Alexey Klimov <alexey.klimov@linaro.org>, 
- Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Paul Cercueil <paul@crapouillou.net>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1081;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=iQ18p+opwS51aj7kQgPPUv5KuYwgsHKMpCHQbdUzIuo=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBobn8Hh53vwVwSAhW66U/ZVT3BJ1K+Xx5actm8W
- SIfx8mfLfuJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaG5/BwAKCRARpy6gFHHX
- coG7EACGCen1sbTZOcLtihqfgfleRvxd76y5gasx5ejhY5jN73Ryz+vjJHtDwd0l8c5SrMksrB6
- t7OuK5xDmCoMqMKP5oOyeqLRRCAkG+Bmb5B2OQB1nzWC9+7adNNl5rNXdk1UlZJum3AJqNI2xaU
- HzQ2ZDMceCyhG/Rb6B4qmWtfdLKiwGQTSjKvy2FoyiKyP1Kkg9mta/0tJcbaoCJ4KIGpY35E1Bz
- vNq+LbVz1VduLsXlH77XQUw5YQApX2JOKQ6E31YI4F6oiDHonqOoshmaQi+J0BEZYUgZEJIgRGe
- U0vwdMdBK4dlY3yHw6HrK2Tnqh8kawBRgh7OeZYoldO7ICasE0MkR1/VRArAynV34jM/THvbj3H
- +plh1jmtOLBgb3t3xLuhkdAjsXU7lLuznLsCsL+cweuriClQTCPwJtO/CuPSxCxQ0O/D4BSRZu5
- cVnckT4XlctODT6EkMNWLvzHgb/PAfHS0ZpGItYuV+nSdQ0nI653/gECD1stS1bkCeVnT/tJ0nJ
- WcFn6s33bTLewA0UiRkRJa3fwOCoP8hZripGucl8phvCVzKI8bI+ueBfR9B0nZzOJjwDDtVTdjj
- Xun95s+UXln6QtpXMasLGtGzUdktTreMUdgPihMF9TwaoN0biXPnFeXfQt2JXn4vWrGO9/mcIM6
- vn/2GgtvVmDuNAw==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 09/07/2025 16:31, Gerd Hoffmann wrote:
+> On Wed, Jul 09, 2025 at 04:20:49PM +0200, Krzysztof Kozlowski wrote:
+>> On 09/07/2025 16:17, Gerd Hoffmann wrote:
+>>> On Wed, Jul 09, 2025 at 03:58:58PM +0200, Krzysztof Kozlowski wrote:
+>>>> On 08/07/2025 14:56, Gerd Hoffmann wrote:
+>>>>> +MODULE_DESCRIPTION("OVMF debug log");
+>>>>> +MODULE_AUTHOR("Gerd Hoffmann <kraxel@redhat.com>");
+>>>>> +MODULE_LICENSE("GPL");
+>>>>> +MODULE_ALIAS("platform:ovmf_debug_log");
+>>>>> diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+>>>>> index db8c5c03d3a2..ac0a03ec3452 100644
+>>>>> --- a/drivers/firmware/efi/Kconfig
+>>>>> +++ b/drivers/firmware/efi/Kconfig
+>>>>> @@ -263,6 +263,14 @@ config EFI_COCO_SECRET
+>>>>>  	  virt/coco/efi_secret module to access the secrets, which in turn
+>>>>>  	  allows userspace programs to access the injected secrets.
+>>>>>  
+>>>>> +config OVMF_DEBUG_LOG
+>>>>> +	tristate "Expose OVMF firmware debug log via sysfs"
+>>>>> +	depends on EFI
+>>>>> +	help
+>>>>> +	  Recent OVMF versions (edk2-stable202508 + newer) can write
+>>>>> +	  their debug log to a memory buffer.  This driver exposes the
+>>>>> +	  log content via sysfs (/sys/firmware/efi/ovmf_debug_log).
+>>>>
+>>>> Where did you document new ABI?
+>>>
+>>> The log buffer header struct is documented in the header file for the
+>>> edk2 code:
+>>> https://github.com/tianocore/edk2/blob/master/OvmfPkg/Include/Library/MemDebugLogLib.h
+>>
+>> You added a new sysfs interface. I meant documentation for this.
+> 
+> The sysfs file contains the log and you can simply use
+> 'cat /sys/firmware/efi/ovmf_debug_log' to read it.
 
-The strict flag in struct pinmux_ops disallows the usage of the same pin
-as a GPIO and for another function. Without it, a rouge user-space
-process with enough privileges (or even a buggy driver) can request a
-used pin as GPIO and drive it, potentially confusing devices or even
-crashing the system. Set it globally for all pinctrl-msm users.
+Don't explain how it works to me. I did not ask how it works. I asked
+where is the new ABI documented?
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/pinctrl/qcom/pinctrl-msm.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 7010be8d1ace062fcf7743e539d2065d4aed856b..ad572c923e2ab8caed134207ec02c4107d4dc2bd 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -268,6 +268,7 @@ static const struct pinmux_ops msm_pinmux_ops = {
- 	.function_is_gpio	= pinmux_generic_function_is_gpio,
- 	.gpio_request_enable	= msm_pinmux_request_gpio,
- 	.set_mux		= msm_pinmux_set_mux,
-+	.strict			= true,
- };
- 
- static int msm_config_reg(struct msm_pinctrl *pctrl,
-
--- 
-2.48.1
-
+Best regards,
+Krzysztof
 
