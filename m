@@ -1,112 +1,98 @@
-Return-Path: <linux-kernel+bounces-723838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEF58AFEB9F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:19:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAD8BAFEB95
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDE995C6FEB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:09:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A8675A5ED2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5962E7636;
-	Wed,  9 Jul 2025 14:06:19 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BC72E716B;
+	Wed,  9 Jul 2025 14:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GDa9Crzm"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFC32E7174;
-	Wed,  9 Jul 2025 14:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65622E6D01
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752069978; cv=none; b=iGQhuz5Jc43mfbTulgmklJcSofI0qbicE0z054gKYwe1S2l8C+q2gX02sKts997pmyL7z+G0wH6tE9ieAeo+KoNwZOEi2Wu7aAQPeBl3OkfAe3rAKGKB+2VmP97ZAfncbDNbDqinAgJLXlIjQiFl3qv8hipD+ltaNfr7yNq+mcg=
+	t=1752069970; cv=none; b=Xx9LOKUeXjGDgIdkUjBkWeZB5Om5wG43UvTqYJhAaHsGLTzXTVBfFy8oQDvOl5nzXS/19TIyn9sKbIqI0N6Ir3mXVb9ENJbvz08njmCytm1t2c0qIhrtVCyvJYfId/htxsTT7g5rl7pKK+k9Yc5bhJh/bHhdVwU065Le4nxHNzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752069978; c=relaxed/simple;
-	bh=pyHdC3y4fKmgbNi2AlSqhcqzsL+9Y5KZ8lmnBZtA3zU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h5O3nHoYdZGOOtvXQehfK7eh9RzpAID2pKRGq4AuoFyS1dYF+OZxG2rFN0HKHnVmwXUcMLase+SbmAzUDtRsP7twD+ytaCWjI1jrGqpcCy0W0JehIHM51+vCL6mpSXw+ncag+cxkwLjRs7tsU2HUQlMJU25Lb0fIDJkKSF+Cvec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 08E30B7316;
-	Wed,  9 Jul 2025 14:06:07 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id C32D534;
-	Wed,  9 Jul 2025 14:06:01 +0000 (UTC)
-Date: Wed, 9 Jul 2025 10:06:01 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Jens Remus <jremus@linux.ibm.com>, Steven Rostedt <rostedt@kernel.org>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa
- <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat
- <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
- Belgrave <beaub@linux.microsoft.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
- Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>, Sam
- James <sam@gentoo.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
- <gor@linux.ibm.com>
-Subject: Re: [PATCH v8 06/12] unwind_user/sframe: Wire up unwind_user to
- sframe
-Message-ID: <20250709100601.3989235d@batman.local.home>
-In-Reply-To: <7250b957-2139-4c03-9566-a6ed9713584e@efficios.com>
-References: <20250708021115.894007410@kernel.org>
-	<20250708021159.386608979@kernel.org>
-	<d7d840f6-dc79-471e-9390-a58da20b6721@efficios.com>
-	<20250708161124.23d775f4@gandalf.local.home>
-	<a52c508c-2596-49d1-bbe8-8a92599714f6@linux.ibm.com>
-	<39cf3aab-7073-443b-8876-9de65f4c315e@efficios.com>
-	<7250b957-2139-4c03-9566-a6ed9713584e@efficios.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752069970; c=relaxed/simple;
+	bh=y6xqr/wBNWhU0qZp0A/9KgmB0vwEU0Tbgf2ufBCTot0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=q9tMS3gcBSa6HFRWAdwSgPP5gFQw/62vyS+Rn2YZQXlS6lXpr1PMRa+ExpWdfDfTmCZWsi7M/hwRTYEpnw+88n/gIbKoChJQPG7jeYzBhz0HhgfT7bz7XOjaH6eYhFFBakiN3Y41LlgllBmnKDo7FO8qaw45L/2SAshTjS/IGGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GDa9Crzm; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3122368d82bso8580104a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 07:06:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752069968; x=1752674768; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IlRzbsbIQZ4T2BRMJH6FD0A9BGwUR7v2I2NL5oQaD40=;
+        b=GDa9Crzmg/tbVQWFuCN3i5y+GpNS1qCN6rnGfAryKGFwQSkps4ZRGvhK/gb4mWfZDU
+         NGEH0HqERXqBpF+gt630dZxEgoLBpxw27GMxFZ78qkiMWqtWepOHlLwi+TSkdtZvsOTA
+         ORDD6kC51qMKsuOPa7vKn+tln0AMexzWDm4z/yRS1vVI8LBlBt4jfjZy+EzxMcfYqPnk
+         6AtihbO9OTGqACYjcYTSfiphF1FtkUHhojmgzWwDAUSnpNYh0X9pGl6zOiVt5fORQDG+
+         u/CG7I935VIxoKUMWdwDsvanFiSSv3Vd3+ZS/0CGxldWqCg9EBsxuy9FWV0H2kLWhbzt
+         Pc+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752069968; x=1752674768;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IlRzbsbIQZ4T2BRMJH6FD0A9BGwUR7v2I2NL5oQaD40=;
+        b=O48PDx07wXQw2m/xXYh5xnpkTBcd5X9uDltVvluuznBwsxXK+P/XHOunYmqkFHrGyR
+         JP1HrMikzJTyvMX95H2iQLMteJg7xfnmv+v1mysnyfc6fBJgkqcyZSB8XEy7U3ryXiWv
+         bQYIZ9mWHHJf7gZEt7XS58qtSDkfb3FO/oGGLheSytR0dDevlVn9vzgVGzLvhtNKZu6v
+         s71HLfni2ZGJ5kyf2jF0lQ/gA8g6uBX0X+f6LqX74TTHw4MDpKug+c2qtlZlI8jccb8A
+         iu1Zg45K2ssyATY23RAGbhugiVD/D+NbIz/9JuJQJ9BHv2iJ334G84kunExxGeIZk2KS
+         LUXw==
+X-Gm-Message-State: AOJu0YydDLFC/GzwoGXIbz3EKUhbiS2f93cb1RK7P71lmDOFSrzwIZnE
+	pW85J4UgpWfe+/uIxxbO/gPkmziMy5BqexU9sflhBSrN1sbi6PVrxs6AJQa2edlVUqrvi4EIZpt
+	MFKoFLg==
+X-Google-Smtp-Source: AGHT+IE0oSgaxWq0fZDSOwOBPIswqkFjMD5haT9ucE9SRBQPhdVVhvHREWsvywwcFfqohS2D08NmtNBBbnI=
+X-Received: from pjblw1.prod.google.com ([2002:a17:90b:1801:b0:31c:2fe4:33b9])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5147:b0:311:c970:c9c0
+ with SMTP id 98e67ed59e1d1-31c3c2e4517mr54015a91.22.1752069968097; Wed, 09
+ Jul 2025 07:06:08 -0700 (PDT)
+Date: Wed, 9 Jul 2025 07:06:06 -0700
+In-Reply-To: <20250709033242.267892-8-Neeraj.Upadhyay@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 6i1j9f435rmijytqop4wa5k6katdqzd8
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: C32D534
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19I3O0+Bk9PUYOSqUMnBAOfjdkfqfuBrsI=
-X-HE-Tag: 1752069961-397116
-X-HE-Meta: U2FsdGVkX19D6PsXx8WhUBwhbYkQ/ZahZPLIq8mjtaaIswTJA5s9v/BdJVqFI4w5ajXqEDueo4uYgg8qndcWm7TxxaxjQYhuaO0uc5fYJo8upOVr0CE7TCMqHemi6P76yXTuOc0bWPtnNTTcDAS3sVtgGS9XWk58MrVXG6Ptfjw3hTNNpHnipSb3JkoXfPPFRKcIm/8ZkZKXNpuq642YL2cGKw3e2L9BOQteIqRGSjYgVEAXUP08xjsQnEaZnL+tfz8H0KUV822NUZZVF+4uw+EXoBZAxe8huAPH1MYOCTbm39bhC7sjL/Gz8quq0WMgtt/vK6LO9JxANXuuRvfHVkRRZS5eGWxFs+HQxSV1UHbONGoLc3eduVjWWXd4oxUV
+Mime-Version: 1.0
+References: <20250709033242.267892-1-Neeraj.Upadhyay@amd.com> <20250709033242.267892-8-Neeraj.Upadhyay@amd.com>
+Message-ID: <aG53TnZw5H3Tffb8@google.com>
+Subject: Re: [RFC PATCH v8 07/35] KVM: x86: Rename lapic get/set_reg() helpers
+From: Sean Christopherson <seanjc@google.com>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: linux-kernel@vger.kernel.org, bp@alien8.de, tglx@linutronix.de, 
+	mingo@redhat.com, dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, 
+	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com, 
+	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org, 
+	hpa@zytor.com, peterz@infradead.org, pbonzini@redhat.com, kvm@vger.kernel.org, 
+	kirill.shutemov@linux.intel.com, huibo.wang@amd.com, naveen.rao@amd.com, 
+	kai.huang@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, 9 Jul 2025 09:51:09 -0400
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+On Wed, Jul 09, 2025, Neeraj Upadhyay wrote:
+> In preparation for moving kvm-internal __kvm_lapic_set_reg(),
+> __kvm_lapic_get_reg() to apic.h for use in Secure AVIC APIC driver,
+> rename them as part of the APIC API.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> ---
 
-> One use-case for giving the "current_type" to iteration callers is to
-> let end users know whether they should trust the frame info. If it
-> comes from sframe, then it should be pretty solid. However, if it comes
-> from frame pointers used as a fallback on a system that omits frame
-> pointers, the user should consider the resulting data with a high level
-> of skepticism.
-
-That would be in the trace sent to the callback. We could add something
-like the '?' if it's not trusted.
-
-But for now, until we have a use case that we are implementing, I want
-to keep this simple, otherwise it will never get done. I don't want to
-add features for hypothetical scenarios.
-
-Currently, the traceback is just an array of addresses. But this could
-change in the future. What we are discussing right now is the internal
-functionality of the user unwind code where I have made most of theses
-functions static.
-
-The only external functions that get called during the iteration is the
-architecture specific code. If that code needs to know the difference
-between sframes and frame pointers then we can modify it, but until
-then, I rather keep this as is.
-
-Jens, is there something that the architecture code needs now? If so,
-then lets fix it, otherwise lets do it when there is something. This
-isn't user API, it can change in the future.
-
--- Steve
+Acked-by: Sean Christopherson <seanjc@google.com>
 
