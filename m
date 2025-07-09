@@ -1,111 +1,94 @@
-Return-Path: <linux-kernel+bounces-722762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 963ACAFDE8E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:46:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24FA3AFDE8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4668E7A1277
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:45:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71FE658115D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E46D517;
-	Wed,  9 Jul 2025 03:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9DE204866;
+	Wed,  9 Jul 2025 03:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="VxSD3Hvq"
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FkG5eEPo"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109595661;
-	Wed,  9 Jul 2025 03:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752032758; cv=pass; b=LCBCZFGC1NPt3EdvOBs1WpNYILJvTXBJLbzPFnszDDd3TqlsA9f9tEny7DnmkB4vFOU7sIqK5t7ouvk8Kzh1fIdS0G0o2seUWMVgngIrUTFkNA5Nf4BZRc9OxcLwCnknfKAYwuiq2FLINBinjWbpGpGBTasvunAFh4WH14P7d2U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752032758; c=relaxed/simple;
-	bh=CoqcBRDeH+ltv+XhyS/Kww+RtCdtJB9Y0YQ/df8CR/w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XBQZW2ivAmDRyhRNH4taznM7x1S0abxBOz9hccJ8MAvXoQ3xuf2enbDlDGomkWrqmINJqtOWNax8xfxMAM2eybnt57TF6zFJ14ACm8hWAEOSiVcmr/sjp47Fl8oQph8lOLKzFX+CW38TvufmIlNumnEyC55lCbYp0yHQXJGxueE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=VxSD3Hvq; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752032740; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=kFqNtl9IpdIg6IMfiO3qZJTD1z2F6jiBcJAr0f6qxn9LyUFeMhb5IBguSbCrXhk+J5ebnebKP6DeMicN/csu+RNSsVrpFg1gzBGbWRwufcThdIBU4GxHklN6Z1U2dfC9tJPUeCM4wSbMyRY2HhjfGU9GVAC4ntSaOKs40NxB+1E=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752032740; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=6h01kddoKngdD1ADu2AP8obsaEwlXaKbdKeuNkqGjN0=; 
-	b=KKNKr10OABIamJTtJEnmWHtNfP6XOpVSFZuRQs8YB/6mzgPw0vN+w3Xf+clPbj1CoHOHvxZEgQE73w+5hAScvFOs77se5H75SSIAy41HMHe0HsYM/hbO4kCrNKhJnyW0q9EbJVC/OGRpkqcUt7xYGaH3lJnhKSsTOxrXOaUKQdw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752032740;
-	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=6h01kddoKngdD1ADu2AP8obsaEwlXaKbdKeuNkqGjN0=;
-	b=VxSD3Hvqe1cMKJQa5cRqj5AUHVfoih6dQjR9gUbmHom4ywES3+p9PQaYbujDn0HM
-	4sU4nJFN00kM8oNjI6vsRb3EbPjanTz+10IebjdWGgmF0QbLHmeJjWs+dhJBsfTbc8g
-	87spp577qzzts4NrKjWT0VjiGOVLPOTJEBOk3Zt4=
-Received: by mx.zohomail.com with SMTPS id 1752032738121925.2385401013482;
-	Tue, 8 Jul 2025 20:45:38 -0700 (PDT)
-Message-ID: <d8ea29f9-6ea6-4952-8c89-853e8c8ccb1d@zohomail.com>
-Date: Wed, 9 Jul 2025 11:45:33 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B575661
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 03:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752032786; cv=none; b=PTrG9bPv7ediYi7hY5pZ96WghyVGH07PBDjmiy4cwYLcDYFjQNIZQd6LNHU0nKgHpfYyjvDDjkOZ6ahk/NtMex5UYHwI3RO1GPsLg/yQAJ+i+NXLRyx4FMJSYv/rB2gPRWf0UstNuUw7j6WhyEmF88zkLlSXMPyEZ4eYPAUNxpI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752032786; c=relaxed/simple;
+	bh=wT/gI8CBHwFxnc9HyLvkLuaYeo5O3C1wdNqHupVgmNs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gFlEUD8xF5AulRe5RkgEhycEbRn8LIhYHsrGWp+ur7/2L8uc8bHB+H7dooRiO+DAmLSNsvAvHwt8cYFNpg50iXxdprD3JOiDufsnmdtJnMQCq/vYnPdeueTcWLTC6vQfYpRxEPl875pqJxuqobEo6Choh/n9iGew5ZUaJutBxRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FkG5eEPo; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752032781; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=f3GpZHDuE3N1k7COKmMSW+fvkGwAnlSYuCB8czZV42Y=;
+	b=FkG5eEPoOJrmtbBL+tofv/StobM5ZCQ5Tbns3G7tkjC3sLsYPLB61fl6u7XrsYMxZZwXO6YBpMsbnJT7gT5Mv9sg4UCuLzy7VRO8mJLARMtsvkEzAg/SQCPympyUZSZU6M5KtO0clhUGbFCfW3k4ZZI26Gx0Gq3970rFM2cUgmI=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WiW0kHI_1752032775 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 09 Jul 2025 11:46:21 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH 1/2] erofs: use memcpy_to_folio() to replace copy_to_iter()
+Date: Wed,  9 Jul 2025 11:46:13 +0800
+Message-ID: <20250709034614.2780117-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] cxl/core: Introduce a new helper
- resource_contains_addr()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
- alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com,
- dan.j.williams@intel.com, shiju.jose@huawei.com, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250708051536.92119-1-ming.li@zohomail.com>
- <20250708051536.92119-2-ming.li@zohomail.com>
- <aG0bB2hrIZkq3Uv1@smile.fi.intel.com>
-From: Li Ming <ming.li@zohomail.com>
-In-Reply-To: <aG0bB2hrIZkq3Uv1@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Feedback-ID: rr0801122773db6b5ee53b61c587d4a66400005f73233c3b47b5c6700df9556a998810f788214fcb50701e5f:zu0801122750552c0e87a797654dc7a2870000719af2a6001f8da3535176d1593ac3b8286c721040f3298475:rf0801122d9ea494f92891d2df80261401000093f5b3ab3bf2bbd962306a9ef04b732019ec3f7244e2bee43d67f57baf086a:ZohoMail
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-On 7/8/2025 9:20 PM, Andy Shevchenko wrote:
-> On Tue, Jul 08, 2025 at 01:15:34PM +0800, Li Ming wrote:
->> In CXL subsystem, many functions need to check an address availability
->> by checking if the resource range contains the address. Providing a new
->> helper function resource_contains_addr() to check if the resource range
->> contains the input address.
-> ...
->
->> +bool resource_contains_addr(const struct resource *res, const resource_size_t addr);
-> Right, the problem is that it collides with the resource namespace. Please, add a prefix.
->
-> bool cxl_resource_contains_addr(const struct resource *res, const resource_size_t addr);
->
-> ...
->
->> +bool resource_contains_addr(const struct resource *res, const resource_size_t addr)
->> +{
->> +	if (res->flags & IORESOURCE_MEM)
-> resource_type() ?
->
->> +		return res->start <= addr && addr <= res->end;
->> +
->> +	return false;
-> I still think using DEFINE_RES_MEM() with resource_contains() is a better
-> approach.
+Using copy_to_iter() here is overkill and even messy.
 
-Will do all you mentioned, thanks
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+ fs/erofs/fileio.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-
-Ming
-
+diff --git a/fs/erofs/fileio.c b/fs/erofs/fileio.c
+index df5cc63f2c01..fe2cd2982b4b 100644
+--- a/fs/erofs/fileio.c
++++ b/fs/erofs/fileio.c
+@@ -96,8 +96,6 @@ static int erofs_fileio_scan_folio(struct erofs_fileio *io, struct folio *folio)
+ 	struct erofs_map_blocks *map = &io->map;
+ 	unsigned int cur = 0, end = folio_size(folio), len, attached = 0;
+ 	loff_t pos = folio_pos(folio), ofs;
+-	struct iov_iter iter;
+-	struct bio_vec bv;
+ 	int err = 0;
+ 
+ 	erofs_onlinefolio_init(folio);
+@@ -122,13 +120,7 @@ static int erofs_fileio_scan_folio(struct erofs_fileio *io, struct folio *folio)
+ 				err = PTR_ERR(src);
+ 				break;
+ 			}
+-			bvec_set_folio(&bv, folio, len, cur);
+-			iov_iter_bvec(&iter, ITER_DEST, &bv, 1, len);
+-			if (copy_to_iter(src, len, &iter) != len) {
+-				erofs_put_metabuf(&buf);
+-				err = -EIO;
+-				break;
+-			}
++			memcpy_to_folio(folio, cur, src, len);
+ 			erofs_put_metabuf(&buf);
+ 		} else if (!(map->m_flags & EROFS_MAP_MAPPED)) {
+ 			folio_zero_segment(folio, cur, cur + len);
+-- 
+2.43.5
 
 
