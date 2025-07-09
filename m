@@ -1,119 +1,91 @@
-Return-Path: <linux-kernel+bounces-723642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F31AFE96F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:53:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD4EAFE970
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F9CF56426B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:53:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBF253BF9B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36A02DA779;
-	Wed,  9 Jul 2025 12:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="me+mpkST";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="46CJixdF"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35291A285;
-	Wed,  9 Jul 2025 12:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240582D9ED8;
+	Wed,  9 Jul 2025 12:53:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127022DC339
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 12:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752065616; cv=none; b=Q1r11vHsY21wgcrnFy65S9jPYEp7Vv8GzkUeDaV4RJ9oXy09BJiPQDfOJmO2dLsNcdQlaqyRCJJJB6Tx+ooIjwDhC6BzqbpbrxDMCIUQmbXmU6ckG0PoHxvvCcljyPvmYAife/4EI8Bvge8NxgK8JcHOARBpO0fyYvb+09HvqIY=
+	t=1752065622; cv=none; b=ZYtsmZHsKsEMeZnlcrUmdG6WMPTSnYwuWkUL04Jt7kvmcEdZM7m/A7uP6jHXbhHkuvYfBtVdai1XT9a5m/rpMQRA5HUAp9xWd/qiUYpErn3GGrmPQ3keMOE/iLaG6KFaHrSjt0ZZ6KDuenOi8JtN3hilE+6NMEFAuqa2ZGKk8Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752065616; c=relaxed/simple;
-	bh=7ZgBSHUUgA/KGLY3mSgIuEnMmqMC3guSaL+E3cU4ijU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L/wuOJD3MbFtKUfHsjYzIJwAql4ijXpcOjwPcD9gtLdMW6ggCy4RZWURXuDy89DxXr8pP1Hel+pdv0ezPSB1UUSqxjLV4Opp1MulQ8X+ni8sa2WZ4pZcjPdHWWAmfvkMrG46cAmTAxQVBdPEpUsxs7h1i2TquPZueOEVfsws8as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=me+mpkST; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=46CJixdF; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 9 Jul 2025 14:53:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752065612;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J8clNqNVMJuj1KlbBMK3XL98FGf5ffsp4cRxWVfag48=;
-	b=me+mpkSThZKXMO7GMyF5lSe/F9EHgoLtxsq/F7rxb9Mf9/+wfAFZURIlBl4JYOjBIPMfW1
-	VyqBc1dzU/f8tQp+rJGV70XbQlI7Nix8rFQpttO0LDxuk0Qu+XSjM03PRl5AYYNgAwbLpW
-	ZU3xbRnFyWJKestgcpnavWU1u+/jRqov4VTrzaZRKTuau0L102VBOeWS4z+L6+iRDIsfY3
-	+Kw+TlAR5jHPCZfr1fFN9XFXhOBIPwLCbO7tyVaTYhpNogG4uJ0iJWr7+fplYW1vqnHKqa
-	yESehjYKvvaaMbSi7AEyRQdMO9Njw5tLoYD3iUFyZ5SByu4u9Z+FhK2HyiHObg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752065612;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J8clNqNVMJuj1KlbBMK3XL98FGf5ffsp4cRxWVfag48=;
-	b=46CJixdF0Xo5+iL9V4VxRKCnIAQDoSUJl7DA52y3DnlGnuYM/y6JNQL2wBhH2ceeRA7p1s
-	rGu9Py1gs/VinmBA==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Nathan Chancellor <nathan@kernel.org>, 
-	John Ogness <john.ogness@linutronix.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	David Gow <davidgow@google.com>, Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 2/3] printk: kunit: support offstack cpumask
-Message-ID: <20250709144706-efda2e7c-c3e4-4905-91ad-7553c46ed2e2@linutronix.de>
-References: <20250702095157.110916-1-pmladek@suse.com>
- <20250702095157.110916-3-pmladek@suse.com>
- <20250702202835.GA593751@ax162>
- <aG0qLaeAoTGaRs0n@pathway.suse.cz>
- <1217f48f-a12a-4ba1-8de5-bda4b2ad6107@app.fastmail.com>
- <aG5ULpdSoAR6nF5R@pathway.suse.cz>
+	s=arc-20240116; t=1752065622; c=relaxed/simple;
+	bh=LzXzz6/CZT/GYHVvLYx1iDwGudYqdPFmGlooDcDehm8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y8eUqs0QFQceU8jQMPR9Eg53Rr4xMXkteop60SwVIzT0rCEwN0vAL7x6/EtwHl9TJumh1Tzl+md/Jp87ZKeTzb2cProYmJaNt0OzfWbNGVi3Eg5kN2MgKuGukVI86JMMO5VEjvXnESPWwrG9dBE0CquNQ7PrWsTQOy1uNRVo/pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74C22152B;
+	Wed,  9 Jul 2025 05:53:28 -0700 (PDT)
+Received: from [10.1.32.47] (Suzukis-MBP.cambridge.arm.com [10.1.32.47])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 99A4C3F738;
+	Wed,  9 Jul 2025 05:53:38 -0700 (PDT)
+Message-ID: <1251d0ab-b0a9-4113-8e92-8f94fe9ee9d6@arm.com>
+Date: Wed, 9 Jul 2025 13:53:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aG5ULpdSoAR6nF5R@pathway.suse.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] arm64: realm: Add support for encrypted data from
+ firmware
+To: linux-arm-kernel@lists.infradead.org
+Cc: will@kernel.org, catalin.marinas@arm.com, sami.mujawar@arm.com,
+ aneesh.kumar@kernel.org, steven.price@arm.com, linux-kernel@vger.kernel.org,
+ sudeep.holla@arm.com
+References: <20250613111153.1548928-1-suzuki.poulose@arm.com>
+Content-Language: en-GB
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250613111153.1548928-1-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 09, 2025 at 01:36:14PM +0200, Petr Mladek wrote:
-> On Tue 2025-07-08 16:48:47, Arnd Bergmann wrote:
-> > On Tue, Jul 8, 2025, at 16:24, Petr Mladek wrote:
-> > > On Wed 2025-07-02 13:28:35, Nathan Chancellor wrote:
-> > >> On Wed, Jul 02, 2025 at 11:51:56AM +0200, Petr Mladek wrote:
-> > >
-> > > Thanks a lot for the nice report.
-> > >
-> > > The problem is how cpumask_var_t is defined in include/linux/cpumask_types.h:
-> > >
-> > > #ifdef CONFIG_CPUMASK_OFFSTACK
-> > > typedef struct cpumask *cpumask_var_t;
-> > > #else
-> > > typedef struct cpumask cpumask_var_t[1];
-> > > #endif /* CONFIG_CPUMASK_OFFSTACK */
-> > >
-> > > And KUNIT_DEFINE_ACTION_WRAPPER() expect that the 3rd parameter
-> > > is a pointer.
-> > >
-> > > I am going to solve this by adding a wrapper over free_cpumask_var()
-> > > which would work with a pointer to cpumask_var_t.
-> > 
-> > I'm not familiar enough with the cleanup mechanism of kunit,
-> > but can't you just move the mask allocation outside of
-> > test_readerwriter()?
+On 13/06/2025 12:11, Suzuki K Poulose wrote:
+> Confidential compute firmware may provide secret data via reserved memory regions
+> (e.g., ACPI CCEL, EFI Coco secret area). These must be ioremap'ed() as encrypted.
+> As of now, realm only maps "trusted devices" (RIPAS = RSI_RIPAS_DEV) as encrypted.
+> This series adds support for mapping areas that are protected
+> (i.e., RIPAS = RSI_RIPAS_RAM) as encrypted. Also, extrapolating that, we can map
+> anything that is not RIPAS_EMPTY as protected, as it is guaranteed to be "protected".
 > 
-> The only solution would be global variable.
+> With this in place, we can naturally map any firmware provided area based on the
+> RIPAS value. If the firmware provides a shared region (not trusted), it must have
+> set the RIPAS accordingly, before placing the data, as the transition is always
+> destructive.
+> 
+> Also enables the EFI Coco secret area support and Confidential Compute Event
+> Log (CCEL) for arm64.
+> 
+> 
+> Suzuki K Poulose (3):
+>    arm64: realm: ioremap: Allow mapping memory as encrypted
+>    arm64: Enable EFI secret area Securityfs support
+>    arm64: acpi: Enable ACPI CCEL support
+> 
+>   arch/arm64/include/asm/io.h          |  6 +++++-
+>   arch/arm64/include/asm/rsi.h         |  2 +-
+>   arch/arm64/kernel/acpi.c             |  5 +++++
+>   arch/arm64/kernel/rsi.c              | 26 ++++++++++++++++++++++----
+>   drivers/virt/coco/efi_secret/Kconfig |  2 +-
+>   5 files changed, 34 insertions(+), 7 deletions(-)
+> 
 
-When the cpumask is allocated on the stack, free_cpumask_var() is a no-op.
-So while the stack address would be leaked to another thread,
-it should be fine as nothing is ever done with it.
-For more clarity it could also be gated explicitly:
+Gentle ping
 
-if (IS_ENABLED(CONFIG_CPUMASK_OFFSTACK)) {
-	err = kunit_add_action_or_reset(test, prbtest_cpumask_cleanup, test_cpus);
-	KUNIT_ASSERT_EQ(test, err, 0);
-}
-
-<snip>
+Kind regards
+Suzuki
 
