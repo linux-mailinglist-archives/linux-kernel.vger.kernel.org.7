@@ -1,84 +1,419 @@
-Return-Path: <linux-kernel+bounces-724193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 808E2AFEFCE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:26:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26CD8AFEFCD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C81951C83A33
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:25:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 848734E8928
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14114237717;
-	Wed,  9 Jul 2025 17:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880BB23958D;
+	Wed,  9 Jul 2025 17:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhPTv66/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="wcxvNfVS";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="SF+hDDKV"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B072367C5;
-	Wed,  9 Jul 2025 17:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C0822F14C
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 17:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752081880; cv=none; b=jDzUhsoyZFSakop2FLOla9Es1UXnyN3IJ8ano/LEoRGNkEc3sG+ed5cml86AvwMVsRLXDladpmCfoyfp523o3JX+b1MxwoCqfgVmOSLGbgEtNVx0r5v/i5mpLPRWEucwTs9jSAPm58qIm2LUTVG+bbuPVJ+fwktLgaCrBZZ5Nn0=
+	t=1752081891; cv=none; b=fjr1ndkALCWd7POMJQVje2HNQuTg1yF2RBd/oE0XLxUvN3ZpPs+4mDiP2zeJhqG3hV8UsS0HBryUocLj5Ycge4F7+PoAvB4XPVv4yZ3HXPfK8dDECNZIDKMrMcGgZW/eb7kVQAkC1uExv/PrxyOapEtxOQz13LR9IoKIPcWXIgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752081880; c=relaxed/simple;
-	bh=CIOMlgRpUJugmEyrwKD0bvm4X9rssQ6N5IlGBU9Bk5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OOU2+GEou44AHqg8rcY0uF4JdkRmyljT4lygdMBs2JDW1jvLcBqgcSAuXxo0k1ZyGxkW0mFlkmw/8ZqaQmjpZyBVwuy6GEaq8v8+YCQzAfApmG5YsaHfhgT6nA7PG92XlMNPsw3RaanfIjF5jleytzj9PLGiyoJvL2VnRawllsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FhPTv66/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 121F7C4CEF0;
-	Wed,  9 Jul 2025 17:24:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752081878;
-	bh=CIOMlgRpUJugmEyrwKD0bvm4X9rssQ6N5IlGBU9Bk5A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FhPTv66/TcKB3ymCVq19PUv2mqp6JP6PDQz8rcHnVDStvcmzicoGSLjRQRtg5X0dz
-	 7qpgVe9/otyagPPNPEZyTIcuceM23C9xpIanI0CRw1fOBg5m8/2FeoZzNupXSktf6C
-	 je5mT/1pnEz/UbYgKsWarZqYviBNSfAb0pyhglObb+bT8Zm5UJY/yDjA7aoNo1MnKL
-	 wknJTiGPoJQ5TEqIx2zf+j/6FjWCgu9pjdg8KYOCkj6lczg+eA8h3CC8Hj+yrQR7tQ
-	 JMbwrdg6bPIaabE03i9A/TvK99J8f9tW2E4I7JS8lZaNMmac1/cPAokDff2OPLu8SA
-	 u7d8KUvdgRMag==
-Date: Wed, 9 Jul 2025 18:24:33 +0100
-From: Simon Horman <horms@kernel.org>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Saeed Mahameed <saeed@kernel.org>, Gal Pressman <gal@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Maor Gottlieb <maorg@nvidia.com>
-Subject: Re: [PATCH net-next 4/5] net/mlx5: Warn when write combining is not
- supported
-Message-ID: <20250709172433.GE721198@horms.kernel.org>
-References: <1752009387-13300-1-git-send-email-tariqt@nvidia.com>
- <1752009387-13300-5-git-send-email-tariqt@nvidia.com>
+	s=arc-20240116; t=1752081891; c=relaxed/simple;
+	bh=TipdswGGpClST0JDbSbUktGhU9+/o2Ji4C/NqlWZjSM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=nWYs8JOE4sLj4/j/uFoOBOQSfeMLmU9a64dOZ57zX5anRNTIfM9Ya5/1lIilNFr0laIT0soxV3mfXsr3u2lC+t2K2tqVQLTm+sz+i0tLUe4S1kYtlJu0NVb5shdFffUVqpqpi4SKEaZpcKjQ2chx6ZWfgmLwSKAfjKUhexj6p+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=wcxvNfVS; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=SF+hDDKV; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1752081888; x=1752686688;
+	d=konsulko.se; s=rsa1;
+	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
+	 subject:cc:to:from:from;
+	bh=WAU/xLqeAl43CIFNoSOqXLCnvD/HkXTZ0RwfxvW5Gr0=;
+	b=wcxvNfVSvaxRla4NgFPlNoD4NIXXauJ2JQf4tMe9oDtqlhQT8H/awlrl4Efup+m+OS8T7DracONkV
+	 3z7XUTeJry8yojTGuNKyRBLucrTeysWGigpb89NsdBjV0PXS9rdx+/2m7nyAsj/f8bG8vuSwP0rI8D
+	 2Uk/VQV464VGy+G7EFRsKzzi5MmIzjiR9XIwVnYc6o6PtAoM/OkqNq6YMtoRxiqBm6ysiVchMEjj90
+	 fQA70c286OmCiE8IaBx5dDUzXh3vfeE6r7ybjws90W1E3Zjhtd4/gh+BVeQorP7Vyhczdiv25Pjpfo
+	 1JmRCIS1/i9IrIfvFWOU5/MG5y14/eQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1752081888; x=1752686688;
+	d=konsulko.se; s=ed1;
+	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
+	 subject:cc:to:from:from;
+	bh=WAU/xLqeAl43CIFNoSOqXLCnvD/HkXTZ0RwfxvW5Gr0=;
+	b=SF+hDDKVD/BW6uTzz1HQFtQEkgnW4GvDpSk+NaHd+qFGvhSa5g4/665LCOWH7lb9y8HMnIpzH/zwZ
+	 Itj7DAIBQ==
+X-HalOne-ID: 9b3e3fac-5ce9-11f0-a52c-632fe8569f3f
+Received: from slottsdator.home (host-90-238-19-233.mobileonline.telia.com [90.238.19.233])
+	by mailrelay2.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
+	id 9b3e3fac-5ce9-11f0-a52c-632fe8569f3f;
+	Wed, 09 Jul 2025 17:24:47 +0000 (UTC)
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+To: linux-mm@kvack.org
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	rust-for-linux@vger.kernel.org,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-bcachefs@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Vitaly Wool <vitaly.wool@konsulko.se>
+Subject: [PATCH v12 2/4] mm/slub: allow to set node and align in k[v]realloc
+Date: Wed,  9 Jul 2025 19:24:41 +0200
+Message-Id: <20250709172441.1032006-1-vitaly.wool@konsulko.se>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250709172345.1031907-1-vitaly.wool@konsulko.se>
+References: <20250709172345.1031907-1-vitaly.wool@konsulko.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1752009387-13300-5-git-send-email-tariqt@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 09, 2025 at 12:16:26AM +0300, Tariq Toukan wrote:
-> From: Maor Gottlieb <maorg@nvidia.com>
-> 
-> Warn if write combining is not supported, as it can impact latency.
-> Add the warning message to be printed only when the driver actually
-> run the test and detect unsupported state, rather than when
-> inheriting parent's result for SFs.
-> 
-> Signed-off-by: Maor Gottlieb <maorg@nvidia.com>
-> Reviewed-by: Michael Guralnik <michaelgur@nvidia.com>
-> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+Reimplement k[v]realloc_node() to be able to set node and
+alignment should a user need to do so. In order to do that while
+retaining the maximal backward compatibility, add
+k[v]realloc_node_align() functions and redefine the rest of API
+using these new ones.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+While doing that, we also keep the number of  _noprof variants to a
+minimum, which implies some changes to the existing users of older
+_noprof functions, that basically being bcachefs.
+
+With that change we also provide the ability for the Rust part of
+the kernel to set node and alignment in its K[v]xxx
+[re]allocations.
+
+Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+---
+ fs/bcachefs/darray.c   |  2 +-
+ fs/bcachefs/util.h     |  2 +-
+ include/linux/bpfptr.h |  2 +-
+ include/linux/slab.h   | 38 +++++++++++++++----------
+ lib/rhashtable.c       |  4 +--
+ mm/slub.c              | 64 +++++++++++++++++++++++++++++-------------
+ 6 files changed, 72 insertions(+), 40 deletions(-)
+
+diff --git a/fs/bcachefs/darray.c b/fs/bcachefs/darray.c
+index e86d36d23e9e..928e83a1ce42 100644
+--- a/fs/bcachefs/darray.c
++++ b/fs/bcachefs/darray.c
+@@ -21,7 +21,7 @@ int __bch2_darray_resize_noprof(darray_char *d, size_t element_size, size_t new_
+ 			return -ENOMEM;
+ 
+ 		void *data = likely(bytes < INT_MAX)
+-			? kvmalloc_noprof(bytes, gfp)
++			? kvmalloc_node_align_noprof(bytes, 1, gfp, NUMA_NO_NODE)
+ 			: vmalloc_noprof(bytes);
+ 		if (!data)
+ 			return -ENOMEM;
+diff --git a/fs/bcachefs/util.h b/fs/bcachefs/util.h
+index 6488f098d140..7112fd40ee21 100644
+--- a/fs/bcachefs/util.h
++++ b/fs/bcachefs/util.h
+@@ -61,7 +61,7 @@ static inline void *bch2_kvmalloc_noprof(size_t n, gfp_t flags)
+ {
+ 	void *p = unlikely(n >= INT_MAX)
+ 		? vmalloc_noprof(n)
+-		: kvmalloc_noprof(n, flags & ~__GFP_ZERO);
++		: kvmalloc_node_align_noprof(n, 1, flags & ~__GFP_ZERO, NUMA_NO_NODE);
+ 	if (p && (flags & __GFP_ZERO))
+ 		memset(p, 0, n);
+ 	return p;
+diff --git a/include/linux/bpfptr.h b/include/linux/bpfptr.h
+index 1af241525a17..f6e0795db484 100644
+--- a/include/linux/bpfptr.h
++++ b/include/linux/bpfptr.h
+@@ -67,7 +67,7 @@ static inline int copy_to_bpfptr_offset(bpfptr_t dst, size_t offset,
+ 
+ static inline void *kvmemdup_bpfptr_noprof(bpfptr_t src, size_t len)
+ {
+-	void *p = kvmalloc_noprof(len, GFP_USER | __GFP_NOWARN);
++	void *p = kvmalloc_node_align_noprof(len, 1, GFP_USER | __GFP_NOWARN, NUMA_NO_NODE);
+ 
+ 	if (!p)
+ 		return ERR_PTR(-ENOMEM);
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index d5a8ab98035c..2877900cb9a7 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -465,9 +465,13 @@ int kmem_cache_shrink(struct kmem_cache *s);
+ /*
+  * Common kmalloc functions provided by all allocators
+  */
+-void * __must_check krealloc_noprof(const void *objp, size_t new_size,
+-				    gfp_t flags) __realloc_size(2);
+-#define krealloc(...)				alloc_hooks(krealloc_noprof(__VA_ARGS__))
++void * __must_check krealloc_node_align_noprof(const void *objp, size_t new_size,
++					       unsigned long align,
++					       gfp_t flags, int nid) __realloc_size(2);
++#define krealloc_noprof(_o, _s, _f)	krealloc_node_align_noprof(_o, _s, 1, _f, NUMA_NO_NODE)
++#define krealloc_node_align(...)	alloc_hooks(krealloc_node_align_noprof(__VA_ARGS__))
++#define krealloc_node(_o, _s, _f, _n)	krealloc_node_align(_o, _s, 1, _f, _n)
++#define krealloc(...)			krealloc_node(__VA_ARGS__, NUMA_NO_NODE)
+ 
+ void kfree(const void *objp);
+ void kfree_sensitive(const void *objp);
+@@ -1041,18 +1045,20 @@ static inline __alloc_size(1) void *kzalloc_noprof(size_t size, gfp_t flags)
+ #define kzalloc(...)				alloc_hooks(kzalloc_noprof(__VA_ARGS__))
+ #define kzalloc_node(_size, _flags, _node)	kmalloc_node(_size, (_flags)|__GFP_ZERO, _node)
+ 
+-void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), gfp_t flags, int node) __alloc_size(1);
+-#define kvmalloc_node_noprof(size, flags, node)	\
+-	__kvmalloc_node_noprof(PASS_BUCKET_PARAMS(size, NULL), flags, node)
+-#define kvmalloc_node(...)			alloc_hooks(kvmalloc_node_noprof(__VA_ARGS__))
+-
+-#define kvmalloc(_size, _flags)			kvmalloc_node(_size, _flags, NUMA_NO_NODE)
+-#define kvmalloc_noprof(_size, _flags)		kvmalloc_node_noprof(_size, _flags, NUMA_NO_NODE)
++void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), unsigned long align,
++			     gfp_t flags, int node) __alloc_size(1);
++#define kvmalloc_node_align_noprof(_size, _align, _flags, _node)	\
++	__kvmalloc_node_noprof(PASS_BUCKET_PARAMS(_size, NULL), _align, _flags, _node)
++#define kvmalloc_node_align(...)		\
++	alloc_hooks(kvmalloc_node_align_noprof(__VA_ARGS__))
++#define kvmalloc_node(_s, _f, _n)		kvmalloc_node_align(_s, 1, _f, _n)
++#define kvmalloc(...)				kvmalloc_node(__VA_ARGS__, NUMA_NO_NODE)
+ #define kvzalloc(_size, _flags)			kvmalloc(_size, (_flags)|__GFP_ZERO)
+ 
+ #define kvzalloc_node(_size, _flags, _node)	kvmalloc_node(_size, (_flags)|__GFP_ZERO, _node)
++
+ #define kmem_buckets_valloc(_b, _size, _flags)	\
+-	alloc_hooks(__kvmalloc_node_noprof(PASS_BUCKET_PARAMS(_size, _b), _flags, NUMA_NO_NODE))
++	alloc_hooks(__kvmalloc_node_noprof(PASS_BUCKET_PARAMS(_size, _b), 1, _flags, NUMA_NO_NODE))
+ 
+ static inline __alloc_size(1, 2) void *
+ kvmalloc_array_node_noprof(size_t n, size_t size, gfp_t flags, int node)
+@@ -1062,7 +1068,7 @@ kvmalloc_array_node_noprof(size_t n, size_t size, gfp_t flags, int node)
+ 	if (unlikely(check_mul_overflow(n, size, &bytes)))
+ 		return NULL;
+ 
+-	return kvmalloc_node_noprof(bytes, flags, node);
++	return kvmalloc_node_align_noprof(bytes, 1, flags, node);
+ }
+ 
+ #define kvmalloc_array_noprof(...)		kvmalloc_array_node_noprof(__VA_ARGS__, NUMA_NO_NODE)
+@@ -1073,9 +1079,11 @@ kvmalloc_array_node_noprof(size_t n, size_t size, gfp_t flags, int node)
+ #define kvcalloc_node(...)			alloc_hooks(kvcalloc_node_noprof(__VA_ARGS__))
+ #define kvcalloc(...)				alloc_hooks(kvcalloc_noprof(__VA_ARGS__))
+ 
+-void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
+-		__realloc_size(2);
+-#define kvrealloc(...)				alloc_hooks(kvrealloc_noprof(__VA_ARGS__))
++void *kvrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
++				  gfp_t flags, int nid) __realloc_size(2);
++#define kvrealloc_node_align(...)		alloc_hooks(kvrealloc_node_align_noprof(__VA_ARGS__))
++#define kvrealloc_node(_p, _s, _f, _n)		kvrealloc_node_align(_p, _s, 1, _f, _n)
++#define kvrealloc(...)				kvrealloc_node(__VA_ARGS__, NUMA_NO_NODE)
+ 
+ extern void kvfree(const void *addr);
+ DEFINE_FREE(kvfree, void *, if (!IS_ERR_OR_NULL(_T)) kvfree(_T))
+diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+index 3e555d012ed6..fde0f0e556f8 100644
+--- a/lib/rhashtable.c
++++ b/lib/rhashtable.c
+@@ -184,8 +184,8 @@ static struct bucket_table *bucket_table_alloc(struct rhashtable *ht,
+ 	static struct lock_class_key __key;
+ 
+ 	tbl = alloc_hooks_tag(ht->alloc_tag,
+-			kvmalloc_node_noprof(struct_size(tbl, buckets, nbuckets),
+-					     gfp|__GFP_ZERO, NUMA_NO_NODE));
++			kvmalloc_node_align_noprof(struct_size(tbl, buckets, nbuckets),
++					     1, gfp|__GFP_ZERO, NUMA_NO_NODE));
+ 
+ 	size = nbuckets;
+ 
+diff --git a/mm/slub.c b/mm/slub.c
+index c4b64821e680..6fad4cdea6c4 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -4845,7 +4845,7 @@ void kfree(const void *object)
+ EXPORT_SYMBOL(kfree);
+ 
+ static __always_inline __realloc_size(2) void *
+-__do_krealloc(const void *p, size_t new_size, gfp_t flags)
++__do_krealloc(const void *p, size_t new_size, unsigned long align, gfp_t flags, int nid)
+ {
+ 	void *ret;
+ 	size_t ks = 0;
+@@ -4859,6 +4859,20 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+ 	if (!kasan_check_byte(p))
+ 		return NULL;
+ 
++	/* refuse to proceed if alignment is bigger than what kmalloc() provides */
++	if (!IS_ALIGNED((unsigned long)p, align) || new_size < align)
++		return NULL;
++
++	/*
++	 * If reallocation is not necessary (e. g. the new size is less
++	 * than the current allocated size), the current allocation will be
++	 * preserved unless __GFP_THISNODE is set. In the latter case a new
++	 * allocation on the requested node will be attempted.
++	 */
++	if (unlikely(flags & __GFP_THISNODE) && nid != NUMA_NO_NODE &&
++		     nid != page_to_nid(virt_to_page(p)))
++		goto alloc_new;
++
+ 	if (is_kfence_address(p)) {
+ 		ks = orig_size = kfence_ksize(p);
+ 	} else {
+@@ -4903,7 +4917,7 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+ 	return (void *)p;
+ 
+ alloc_new:
+-	ret = kmalloc_node_track_caller_noprof(new_size, flags, NUMA_NO_NODE, _RET_IP_);
++	ret = kmalloc_node_track_caller_noprof(new_size, flags, nid, _RET_IP_);
+ 	if (ret && p) {
+ 		/* Disable KASAN checks as the object's redzone is accessed. */
+ 		kasan_disable_current();
+@@ -4915,10 +4929,12 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+ }
+ 
+ /**
+- * krealloc - reallocate memory. The contents will remain unchanged.
++ * krealloc_node_align - reallocate memory. The contents will remain unchanged.
+  * @p: object to reallocate memory for.
+  * @new_size: how many bytes of memory are required.
++ * @align: desired alignment.
+  * @flags: the type of memory to allocate.
++ * @nid: NUMA node or NUMA_NO_NODE
+  *
+  * If @p is %NULL, krealloc() behaves exactly like kmalloc().  If @new_size
+  * is 0 and @p is not a %NULL pointer, the object pointed to is freed.
+@@ -4947,7 +4963,8 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+  *
+  * Return: pointer to the allocated memory or %NULL in case of error
+  */
+-void *krealloc_noprof(const void *p, size_t new_size, gfp_t flags)
++void *krealloc_node_align_noprof(const void *p, size_t new_size, unsigned long align,
++				 gfp_t flags, int nid)
+ {
+ 	void *ret;
+ 
+@@ -4956,13 +4973,13 @@ void *krealloc_noprof(const void *p, size_t new_size, gfp_t flags)
+ 		return ZERO_SIZE_PTR;
+ 	}
+ 
+-	ret = __do_krealloc(p, new_size, flags);
++	ret = __do_krealloc(p, new_size, align, flags, nid);
+ 	if (ret && kasan_reset_tag(p) != kasan_reset_tag(ret))
+ 		kfree(p);
+ 
+ 	return ret;
+ }
+-EXPORT_SYMBOL(krealloc_noprof);
++EXPORT_SYMBOL(krealloc_node_align_noprof);
+ 
+ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
+ {
+@@ -4993,6 +5010,7 @@ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
+  * failure, fall back to non-contiguous (vmalloc) allocation.
+  * @size: size of the request.
+  * @b: which set of kmalloc buckets to allocate from.
++ * @align: desired alignment.
+  * @flags: gfp mask for the allocation - must be compatible (superset) with GFP_KERNEL.
+  * @node: numa node to allocate from
+  *
+@@ -5005,19 +5023,22 @@ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
+  *
+  * Return: pointer to the allocated memory of %NULL in case of failure
+  */
+-void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), gfp_t flags, int node)
++void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), unsigned long align,
++			     gfp_t flags, int node)
+ {
+ 	void *ret;
+ 
+ 	/*
+ 	 * It doesn't really make sense to fallback to vmalloc for sub page
+-	 * requests
++	 * requests and small alignments
+ 	 */
+-	ret = __do_kmalloc_node(size, PASS_BUCKET_PARAM(b),
+-				kmalloc_gfp_adjust(flags, size),
+-				node, _RET_IP_);
+-	if (ret || size <= PAGE_SIZE)
+-		return ret;
++	if (size >= align) {
++		ret = __do_kmalloc_node(size, PASS_BUCKET_PARAM(b),
++					kmalloc_gfp_adjust(flags, size),
++					node, _RET_IP_);
++		if (ret || size <= PAGE_SIZE)
++			return ret;
++	}
+ 
+ 	/* non-sleeping allocations are not supported by vmalloc */
+ 	if (!gfpflags_allow_blocking(flags))
+@@ -5035,7 +5056,7 @@ void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), gfp_t flags, int node)
+ 	 * about the resulting pointer, and cannot play
+ 	 * protection games.
+ 	 */
+-	return __vmalloc_node_range_noprof(size, 1, VMALLOC_START, VMALLOC_END,
++	return __vmalloc_node_range_noprof(size, align, VMALLOC_START, VMALLOC_END,
+ 			flags, PAGE_KERNEL, VM_ALLOW_HUGE_VMAP,
+ 			node, __builtin_return_address(0));
+ }
+@@ -5079,10 +5100,12 @@ void kvfree_sensitive(const void *addr, size_t len)
+ EXPORT_SYMBOL(kvfree_sensitive);
+ 
+ /**
+- * kvrealloc - reallocate memory; contents remain unchanged
++ * kvrealloc_node_align - reallocate memory; contents remain unchanged
+  * @p: object to reallocate memory for
+  * @size: the size to reallocate
++ * @align: desired alignment
+  * @flags: the flags for the page level allocator
++ * @nid: NUMA node id
+  *
+  * If @p is %NULL, kvrealloc() behaves exactly like kvmalloc(). If @size is 0
+  * and @p is not a %NULL pointer, the object pointed to is freed.
+@@ -5100,17 +5123,18 @@ EXPORT_SYMBOL(kvfree_sensitive);
+  *
+  * Return: pointer to the allocated memory or %NULL in case of error
+  */
+-void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
++void *kvrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
++				  gfp_t flags, int nid)
+ {
+ 	void *n;
+ 
+ 	if (is_vmalloc_addr(p))
+-		return vrealloc_noprof(p, size, flags);
++		return vrealloc_node_align_noprof(p, size, align, flags, nid);
+ 
+-	n = krealloc_noprof(p, size, kmalloc_gfp_adjust(flags, size));
++	n = krealloc_node_align_noprof(p, size, align, kmalloc_gfp_adjust(flags, size), nid);
+ 	if (!n) {
+ 		/* We failed to krealloc(), fall back to kvmalloc(). */
+-		n = kvmalloc_noprof(size, flags);
++		n = kvmalloc_node_align_noprof(size, align, flags, nid);
+ 		if (!n)
+ 			return NULL;
+ 
+@@ -5126,7 +5150,7 @@ void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
+ 
+ 	return n;
+ }
+-EXPORT_SYMBOL(kvrealloc_noprof);
++EXPORT_SYMBOL(kvrealloc_node_align_noprof);
+ 
+ struct detached_freelist {
+ 	struct slab *slab;
+-- 
+2.39.2
 
 
