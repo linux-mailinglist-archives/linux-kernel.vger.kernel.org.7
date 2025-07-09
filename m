@@ -1,66 +1,68 @@
-Return-Path: <linux-kernel+bounces-723381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35463AFE64E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:50:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37767AFE639
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDAB617C7EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:48:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A198E5831B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45882291C2E;
-	Wed,  9 Jul 2025 10:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+oAG77J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C882BE04B;
+	Wed,  9 Jul 2025 10:42:33 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46BF28DB5D;
-	Wed,  9 Jul 2025 10:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B2B28DB49
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 10:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752057799; cv=none; b=f+qzLwRWa5/xFrka2OQ5O9TzvXqp8cdihdeXtjeV1kUG2xINx2kFpvMV0wDoCNUxU+/vxGx9hkaZzNjPY5uTE6h9CY30d0zuvb8IcU3olFRTMi/Xch0QNKCUibrS59AUnq8piaMJgHanGaUCN7/FSPAtGMBJK4ulsW8yFc4hfWA=
+	t=1752057753; cv=none; b=lL18zy3JrtdeaofK4bimMlYrU+v72tEoyG5VJ86gXRXMYE993oYDfaejbPhcuXFKuvsQrmc8+hJMCv9ERjnXKAu0YdDOtVQcIaGg2R4v/+wDn6ja6pDq1TTdMrJDc0fMzr27lb33KJuBEJ2K2qKSRleOb7EpxbkBd77b1ay6txA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752057799; c=relaxed/simple;
-	bh=6qbMqWsJuVvvTWS+gO5LrsfTdlSB6Hd/6dmtTEFxq1U=;
+	s=arc-20240116; t=1752057753; c=relaxed/simple;
+	bh=IyPWsI1Cj47xSOp5+E79wdgdEyYTtJq4mJUYWfGQ6lk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hmh+ZSNGcq1ixGYuoUcr43aA0dX2sQfdykaf64eU6eVUKZlJPybn33SRfXbPZzhnNMlD2BkyvVYnKYozPNDy096+IYWzDOfIVVYAJqHu+bynmru6BXKst9LgA1KPv92e+r6ff5G2lPoAiXrFFlzPnfpMSLPq7U+nWxGQH/6EsPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+oAG77J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DC77C4CEEF;
-	Wed,  9 Jul 2025 10:43:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752057799;
-	bh=6qbMqWsJuVvvTWS+gO5LrsfTdlSB6Hd/6dmtTEFxq1U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=c+oAG77JmwfOmK7IRxWVcaSrZQkGT6KydkHcPzp9W1X2dYdc4UXUy1TKjlBiu6N5p
-	 dB/fpKXugYnN5ARG67To28K+FK8q9anHg2DWFqgYvv7IQAoUce1pUT/Wn5Cw1F9Y4S
-	 dtmRwvL1wtVxMt7GPOmoa8ZHbnMgdfN4BymRxQc1/+xPX+IDxoVlpaY3VWrP7buQen
-	 5+AxKP2GVBVImdrziQkCIZSkJab6JDGqUQcZcjYkAeB50OBz54sCsV2CA6ZIX9fdYC
-	 ZPhpAFnpuf4qweDkGgr2lyyL3rSOEsTzW2ctSGAY+9OXKx8+C2oonbCErOhhYFA9UD
-	 UcX7mex8U2OKQ==
-From: neeraj.upadhyay@kernel.org
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	paulmck@kernel.org,
-	joelagnelf@nvidia.com,
-	frederic@kernel.org,
-	boqun.feng@gmail.com,
-	urezki@gmail.com,
-	rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com,
-	jiangshanlai@gmail.com,
-	qiang.zhang1211@gmail.com,
-	neeraj.iitr10@gmail.com,
-	neeraj.upadhyay@amd.com,
-	"Neeraj Upadhyay (AMD)" <neeraj.upadhyay@kernel.org>
-Subject: [PATCH rcu 08/15] rcutorture: Check for no up/down readers at task level
-Date: Wed,  9 Jul 2025 16:12:08 +0530
-Message-Id: <20250709104215.15562-9-neeraj.upadhyay@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20250709104215.15562-1-neeraj.upadhyay@kernel.org>
-References: <20250709104215.15562-1-neeraj.upadhyay@kernel.org>
+	 MIME-Version; b=CpNSTnhybnudzoAxojRbVCXqr84T9JAnG8a28CTS07cRvqPN+tEXb5Hxj6mpbLMJIuie8lDoTn0xeCZV82QkTToA/yuxRXCNM3m0uSD3bcCCEuLy+oFwZGdeSHRrywz5bklvkPwmsoAJqhdn1pCZopoVDe51P8y/KJE+VOxff9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uZSFh-0004mq-8w; Wed, 09 Jul 2025 12:42:13 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uZSFf-007ZJj-2T;
+	Wed, 09 Jul 2025 12:42:11 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uZSFf-00FyRU-2D;
+	Wed, 09 Jul 2025 12:42:11 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	netdev@vger.kernel.org,
+	Andre Edich <andre.edich@microchip.com>,
+	Lukas Wunner <lukas@wunner.de>
+Subject: [PATCH net v2 1/3] net: phy: enable polling when driver implements get_next_update_time
+Date: Wed,  9 Jul 2025 12:42:08 +0200
+Message-Id: <20250709104210.3807203-2-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250709104210.3807203-1-o.rempel@pengutronix.de>
+References: <20250709104210.3807203-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,42 +70,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+Currently, phy_polling_mode() enables polling only if:
+- the PHY is in interrupt-less mode, or
+- the driver provides an update_stats() callback.
 
-The design of testing of up/down readers such as srcu_down_read()
-and srcu_up_read() assumes that these are tested only by the
-rcu_torture_updown() kthread, and never by the rcu_torture_reader()
-kthread.  Because we all know which road is paved with good intentions,
-this commit adds WARN_ON_ONCE() to verify that things are going to plan.
+This excludes drivers that implement get_next_update_time()
+to support adaptive polling but do not provide update_stats().
+As a result, the state machine timer will not run, and the
+get_next_update_time() callback is never used.
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Neeraj Upadhyay (AMD) <neeraj.upadhyay@kernel.org>
+This patch extends the polling condition to include drivers that
+implement get_next_update_time(). This change is required to support
+adaptive polling in the SMSC LAN9512/LAN8700 PHY family, which cannot
+reliably use interrupts.
+
+No in-tree drivers rely on this mechanism yet, so existing behavior is
+unchanged. If any out-of-tree driver incorrectly implements
+get_next_update_time(), enabling polling is still the correct behavior.
+
+Fixes: 8bf47e4d7b87 ("net: phy: Add support for driver-specific next update time")
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- kernel/rcu/rcutorture.c | 2 ++
- 1 file changed, 2 insertions(+)
+changes v2:
+- update commit message
+---
+ include/linux/phy.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index f773d4f8f2ae..10f3cc4861ee 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -2232,6 +2232,7 @@ rcutorture_loop_extend(int *readstate, bool insoftirq, struct torture_random_sta
- 	i = ((i | (i >> 3)) & RCUTORTURE_RDR_MAX_LOOPS) + 1;
- 	for (j = 0; j < i; j++) {
- 		mask = rcutorture_extend_mask(*readstate, trsp);
-+		WARN_ON_ONCE(mask & RCUTORTURE_RDR_UPDOWN);
- 		rcutorture_one_extend(readstate, mask, insoftirq, trsp, &rtrsp[j]);
- 	}
- 	return &rtrsp[j];
-@@ -2368,6 +2369,7 @@ static bool rcu_torture_one_read(struct torture_random_state *trsp, long myid)
- 	WARN_ON_ONCE(!rcu_is_watching());
- 	init_rcu_torture_one_read_state(&rtors, trsp);
- 	newstate = rcutorture_extend_mask(rtors.readstate, trsp);
-+	WARN_ON_ONCE(newstate & RCUTORTURE_RDR_UPDOWN);
- 	rcutorture_one_extend(&rtors.readstate, newstate, myid < 0, trsp, rtors.rtrsp++);
- 	if (!rcu_torture_one_read_start(&rtors, trsp, myid)) {
- 		rcutorture_one_extend(&rtors.readstate, 0, myid < 0, trsp, rtors.rtrsp);
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index 543a94751a6b..3d4e5c41235e 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -1632,7 +1632,7 @@ static inline bool phy_polling_mode(struct phy_device *phydev)
+ 		if (phydev->drv->flags & PHY_POLL_CABLE_TEST)
+ 			return true;
+ 
+-	if (phydev->drv->update_stats)
++	if (phydev->drv->update_stats || phydev->drv->get_next_update_time)
+ 		return true;
+ 
+ 	return phydev->irq == PHY_POLL;
 -- 
-2.40.1
+2.39.5
 
 
