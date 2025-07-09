@@ -1,164 +1,161 @@
-Return-Path: <linux-kernel+bounces-723885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AB69AFEC05
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:33:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E58AAFEC0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B571B5611CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:30:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14A234E1433
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311212E610A;
-	Wed,  9 Jul 2025 14:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF102E5437;
+	Wed,  9 Jul 2025 14:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nfen3Mtd"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QRucI/3W"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BD42DC352
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442C12E3AFC
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752071410; cv=none; b=l3Mv9/wqrlUv6Tk2HlUQow/mNb1/GcCnli6WCq5t3HA9Ce06H69Q7gjrX+m3Dfl8qaC87BMP2FCyjlqZE2IpGT53Ip9955F9I3j/ueOeAWoFRG1Hw0mqy7+P2oyw3LUD3unVdbWndk7gfHH1f8aSvvEfyn5oeUqeCcf5LDPWOYU=
+	t=1752071515; cv=none; b=EsMMnp9pEmSD/V9L/g/jOgwRA3YKEEwObJp1cSBHoPbPTjGgKYl/6XvD45BoTNNDZ5vfzTq+3TRVDSXOKtcC/6fIeOu4Vmfx2GBcpZGtpzGU2aKEdZZNtSNSxeyFoDNm0yJ+q7Rb7AFS1UQPmr87siTbaSCGCDfOV1WZClkag9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752071410; c=relaxed/simple;
-	bh=F3dvKncn2pcIja2ECCGGBTnxHyJj8FiOiGOniPMnCxk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JTvI29+7WEdiWGOk630afl7q9XDULBPBI1iXOH6d4iSZrHESX16YMGd9O4N8o5DupKK0oUkXlf+fYDf/VSCigNc76W8ygKYRO462e+rruHmRwqvilDadoErVQdbqx87m41E1vItIOVpF7CFA6cs9CJQ9Ze6jA1GkQPBV+lvKIWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nfen3Mtd; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4a9e8459f28so36511cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 07:30:08 -0700 (PDT)
+	s=arc-20240116; t=1752071515; c=relaxed/simple;
+	bh=7BtyFzEqdQqk9noBz1kWPn+TluwkrsvSZ+NX6r1NPy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X1TD/HI0hNwmlHDRY9DUf66i6T6R9iIdwoc3WQixQdDTvqz4zKFssETiEKiwJol8mgufPUsb6MSxSEoajjl+xn1JlM2jJw51pzQ+l1FAM1lHnz33R2wqhBwt95qsgcyyv2z+/Rq9vJNoQag5t6KHBr7FMl8g+q9N3A/NxFgOuUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QRucI/3W; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-235ea292956so49778575ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 07:31:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752071407; x=1752676207; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EsN2p04xZdCA9/Flow0v+8yCuT0IgoS2UP74R5FJw50=;
-        b=Nfen3MtdIh4/2DVCM2P8Mp96ie79TCp/G1m+AtJeEkd1SM148/2KFIBjvQK6aQMVvI
-         DMgYWOSA8hE5ucxA24UnReC+xomVE533UBXnJuCmaXmEFFJF8Ait1D7cYgjEP1bvhIOf
-         xZnHJXtnYk4Q3cYrJUGb8DCwRiQacMR5TQuzR08OzQ+vi/rWLkFxdn4fwYjaIWhBB2ZO
-         c0AcjoReYkQ8QSY7b3YSFKXlFGX8/mc8ck3KDC8vR0FlsSkvdmhMzKm4vKUjqZq2eUZw
-         +b9t44O50mrgZ/aTJLam+DCLziM0NpoRI08tNYKkPn2d4+ZWE3IYt9g2UiOd1qqojfxr
-         gkZw==
+        d=linaro.org; s=google; t=1752071511; x=1752676311; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8ob8aeY+0rAZIUvRDNkYhpVzGwYIQJmUrDC32TtGUBQ=;
+        b=QRucI/3WBEtNj1PSIQIauasDHPn2O4fo8LLJjA+XPGhGt+ImNgcEbisP/qnnkr0Exj
+         u+9buuKv5qJSvhF52m8zrjDddUFtQ6ZS8E+ocITf0m1FJNWJ5NirmtZOifjyn12zwQcj
+         QLE5OG+K56uose3LsboeCIZsptZ4Yt7P6DLjcdnEGP1rB+FfCyLQ9E/O0s1IbXu0io42
+         QazjadAeYA4ZOCx3ijUxAN9ejuDW4gArXMfQ7XneFXJQzGIvTR7R/l5PozeKNMLT3j93
+         PMB1tryl2ylR+gNeooe38SmImDRQT9NOB+/hisLh9w8zlhy85maDJzLFPTz4L084Ee4Z
+         fkaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752071407; x=1752676207;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EsN2p04xZdCA9/Flow0v+8yCuT0IgoS2UP74R5FJw50=;
-        b=cC2ovM68hksU9DhA2J8nGNaP5Lz8/51IC8+IXaA8GCAikrPtdM1eG+NO7StlZxU7jT
-         hin+zgK5TDpirSOCQCt75Yf9LB4J05rRq/cuxV/WoF0Y6hD+tGj88Afl0qg8oJKEUTv5
-         adr1/+l4Oc4Lk/VwUZtwok9HmrO9basxpygeifgdsBpVcOXUQ6p62zGj4a2TaFazVzVr
-         q/iq5gHrstNOS8kXcfYp+DTblAv9T0DDxuCNqPtQfZqa4Cg0NiJgk4lI24y6e4Rzz+Cb
-         FoeoBkHnYJEka/tGE4F5M74ovk2oQk8RcG5qPrV6jElXppPGFwh3A4vogPmwgOGgFFgS
-         lu0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWYpGugutOdQgaK6NQPxA+Ett5/VMdDCHxse0VyK6gEHEvZ42xe9c551K3mLFugMK0x7AAzBE/dsT648Wc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc4g7ixVsglT0mldIgj8BfPdmUOLmwacHmM2CLzd9j1Wh5rSe8
-	BhNuSGA5kg3lEOy5EctJtaMn7GFq726rMsLNN/958oDXXbt/Fx/Fj+qdrQZfQINYzkMH3qhBWnu
-	nJMhlzvHe1yiGGB5aKpWr/GbRHq/EW0qLB8+39D5o
-X-Gm-Gg: ASbGnctgRiTgkAEgxhOIBuLDktCBZeg4WABWIRijgyQEuqKchehXvRtYAxq+ZCDPyJA
-	FxCo9GW79Gqd/E9aGyipt/c4urn5U6wQj2RUWjWRDc0O0tvWdBphGjE0ACJ1jbKHE0fp45gnOif
-	48zO5coBlOj0HWaxZdyUxwYsERLAsX+qKKRgbSZaZn/JjAFHDvXHrD7O4bKqAwipuLxqpGZBeiT
-	A==
-X-Google-Smtp-Source: AGHT+IE0EP513U77FBBexFDPPbUpG+ODi1BvVoUwbY55dt+VaLPanHMoERER6Fj//NhcsOORwkZOF4XnQV0brwt/rPM=
-X-Received: by 2002:a05:622a:a7cd:b0:494:4aa0:ad5b with SMTP id
- d75a77b69052e-4a9dccbf056mr3528091cf.2.1752071406495; Wed, 09 Jul 2025
- 07:30:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752071511; x=1752676311;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8ob8aeY+0rAZIUvRDNkYhpVzGwYIQJmUrDC32TtGUBQ=;
+        b=d67CzclpucDpir/OYQh4hAvQmIDTt06ZHIZut97UGZEZqNUKgTgAQNScD6K9UIqEZ0
+         GJ9mWY28qd7vah3jFvT+bxAqdApsNRjb3MVIt0rIg4oK0MUf8ws7vUpG3F5Rn3db4C17
+         lQJB3mgRCiDOZTa4p7aJ3+C5+huzgC192LMp4U/w0RKisFDmyuyJwG2jn+e0RGEwRMm4
+         HibMmS0/JpkBJWMBLt3aXyDWvT3vrEzAvgZZPVwkU0CLwhTBNUQizcpWiJOpYO/Mp1eT
+         AfvQG1XXtg89tBWdMQtSLQtc/WUI6HCvhVRtJZyn8kO9z6nzjJwLL1AU4iwJXozY77yO
+         z07A==
+X-Forwarded-Encrypted: i=1; AJvYcCVyuZkNzZOC1OfFBBE/yTzdcWcRJdG28NS3acfbxfWzoUrQ5pz4kE3c1aZuPX2mJVWqTe1RdZnqFdmqNcA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy63ViU0c0eOmf3LnNrL5iQUnik7qZC/rQ2W3uI+wGSPA21ebox
+	UwLqA53QcgtBjdWL32tTZhz+7u2nMU7ivur8IDHSnfe7iu0Mcwb4oyQVSF//6Bj6J1Q=
+X-Gm-Gg: ASbGnctGrLB+skyCU++qWOPNatpURpeNurNZhEajvI+niVWyZsk8D/W1T8fIiebCVRz
+	qBFT+hTQ8+m0GdkoaCxEz2imw16W4nFI5ykujIZ+nagqOA8KOBheujlwkRIlCm939THI1OcN+eH
+	A3+mFgXoffLT1GG4F4Wbo2QKqG/LeS8+sdeeBYsHTqYB8rGC6UqgqNItkgnSZb9XEAfV/IP1LdD
+	wuky6/W2hIdxbPU0CmKgXonMl/d0T80ByXrY/x9QzLDDFqbQCJa8DaCXlJG2WdrWGRdag0GQSnA
+	jZ4sV9IijdjB/tovGfbr4IfbPc4nsQag4pir4kHZwrRE1av+MrvEl7e5guaCF2UK
+X-Google-Smtp-Source: AGHT+IEXpbvwTdHDHQUcQtVRwNjYawEjvuYkoQ5Xje633BngDr3uR9fCxc8nAve+MqnqlBJ1YgrlwQ==
+X-Received: by 2002:a17:902:e80d:b0:234:adce:3ece with SMTP id d9443c01a7336-23ddb199277mr35277255ad.11.1752071511405;
+        Wed, 09 Jul 2025 07:31:51 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:433:ec07:c2cb:e3e8])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c845bcf0fsm136242895ad.249.2025.07.09.07.31.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 07:31:50 -0700 (PDT)
+Date: Wed, 9 Jul 2025 08:31:48 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Iuliana Prodan <iuliana.prodan@nxp.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v3 3/5] remoteproc: imx_rproc: Add support for i.MX95
+Message-ID: <aG59VPhYY5deFo_h@p14s>
+References: <20250625-imx95-rproc-1-v3-0-699031f5926d@nxp.com>
+ <20250625-imx95-rproc-1-v3-3-699031f5926d@nxp.com>
+ <aG1J2_nK-LkLQVRj@p14s>
+ <20250709074940.GA14535@nxa18884-linux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <686d5adb.050a0220.1ffab7.0019.GAE@google.com> <CAJuCfpFjLmDRE=3E91279A+diisTgz24+a5D6c+sH8Oh7PzP6g@mail.gmail.com>
- <54d2b3a2-9314-413b-993f-19e369910fd8@suse.cz>
-In-Reply-To: <54d2b3a2-9314-413b-993f-19e369910fd8@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 9 Jul 2025 07:29:53 -0700
-X-Gm-Features: Ac12FXyMdbuUz2QgXg2UV0MB5oPekps69T0zs05LeG-iDLiUTsXFReTy7ELCPzI
-Message-ID: <CAJuCfpEjGOQYwYq+xMxTBWU9LgcjXDnc=JKOahP4FyvQn7gGNA@mail.gmail.com>
-Subject: Re: [syzbot] [mm?] WARNING: lock held when returning to user space in lock_next_vma
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: syzbot <syzbot+80011ad33eec39e6ce42@syzkaller.appspotmail.com>, 
-	Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	shakeel.butt@linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709074940.GA14535@nxa18884-linux>
 
-On Wed, Jul 9, 2025 at 3:26=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wro=
-te:
->
-> On 7/9/25 00:19, Suren Baghdasaryan wrote:
-> > On Tue, Jul 8, 2025 at 10:52=E2=80=AFAM syzbot
-> > <syzbot+80011ad33eec39e6ce42@syzkaller.appspotmail.com> wrote:
-> >>
-> >> Hello,
-> >>
-> >> syzbot found the following issue on:
-> >>
-> >> HEAD commit:    26ffb3d6f02c Add linux-next specific files for 2025070=
-4
-> >> git tree:       linux-next
-> >> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1719df7058=
-0000
-> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D1e4f88512a=
-e53408
-> >> dashboard link: https://syzkaller.appspot.com/bug?extid=3D80011ad33eec=
-39e6ce42
-> >> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f=
-6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1124abd4=
-580000
-> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1099df7058=
-0000
-> >>
-> >> Downloadable assets:
-> >> disk image: https://storage.googleapis.com/syzbot-assets/fd5569903143/=
-disk-26ffb3d6.raw.xz
-> >> vmlinux: https://storage.googleapis.com/syzbot-assets/1b0c9505c543/vml=
-inux-26ffb3d6.xz
-> >> kernel image: https://storage.googleapis.com/syzbot-assets/9d864c72bed=
-1/bzImage-26ffb3d6.xz
-> >>
-> >> IMPORTANT: if you fix the issue, please add the following tag to the c=
-ommit:
-> >> Reported-by: syzbot+80011ad33eec39e6ce42@syzkaller.appspotmail.com
-> >>
-> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >> WARNING: lock held when returning to user space!
-> >> 6.16.0-rc4-next-20250704-syzkaller #0 Not tainted
-> >> ------------------------------------------------
-> >> syz.0.22/6068 is leaving the kernel with locks still held!
-> >> 1 lock held by syz.0.22/6068:
-> >>  #0: ffff8880792a3588 (vm_lock){++++}-{0:0}, at: lock_next_vma+0x146/0=
-xdc0 mm/mmap_lock.c:220
+On Wed, Jul 09, 2025 at 03:49:40PM +0800, Peng Fan wrote:
+> Hi Mathieu,
+> 
+> On Tue, Jul 08, 2025 at 10:39:55AM -0600, Mathieu Poirier wrote:
+> >On Wed, Jun 25, 2025 at 10:23:29AM +0800, Peng Fan (OSS) wrote:
+> >> From: Peng Fan <peng.fan@nxp.com>
+> >> 
+> >> Add imx_rproc_cfg_imx95_m7 and address(TCM and DDR) mapping.
+> >> Add i.MX95 of_device_id entry.
+> >> 
+> >> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+> >> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> >> ---
+> >>  drivers/remoteproc/imx_rproc.c | 25 +++++++++++++++++++++++++
+> >>  1 file changed, 25 insertions(+)
+> >> 
+> >> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> >> index b1a117ca5e5795554b67eb7092db2a25fc7de13b..c226f78c84ad180c69804116d6cfcab19db6aaa5 100644
+> >> --- a/drivers/remoteproc/imx_rproc.c
+> >> +++ b/drivers/remoteproc/imx_rproc.c
+> >> @@ -73,6 +73,10 @@
+> >>  
+> >>  #define IMX_SC_IRQ_GROUP_REBOOTED	5
+> >>  
+> >> +/* Must align with System Manager Firmware */
+> >> +#define IMX95_M7_CPUID			1
+> >> +#define IMX95_M7_LMID			1
 > >
-> > Hmm. I must be missing an unlock_vma() somewhere but I don't see it
-> > yet. Will try the reproducer.
+> >Any reason those aren't set in the device tree?
+> 
+> Krzysztof rejected to introduce the IDs to devicetree.
+> 
+> From IRC:
+> "To me this makes no sense in current explanayton - you have 8 cores, but only
+> one can be put there, so what happens with the rest?
+> And I don't think we care about something like remote and local ID - it is
+> the same. CPUs have single number. So this looks like copy paste downstream
+> and thus solve it internally first"
+> 
+> 
+> In System Manager Firmware, CPUID is fixed and will not change.
+> LMID is also fixed as of now, we not expect customer to change LMID.
+> 
+> So with "fsl,imx95-m7", we could know the CPUID and LMID for M7, so 
+> it does not make sense to introduce new property saying "fsl,imx95-lmid"
+> and "fsl,imx95-cpuid". This should be the main concern that DT maintainers
+> reject to add properties for the IDs.
 >
-> I don't see it either. I don't also see v6 being substantially different.
-> Hopefully this (and the other report) was some consequence of the kmalloc=
-()
-> under rcu that v5 had. Maybe it can lead to sleep and when it wake ups it
-> doesn't restore the rcu lock section?
 
-I'm not sure. The report says that vm_lock is being held, so that does
-not look like an rcu-related issue. I'll try the reproducer with v6 to
-see if something fails.
-
->
-> The unhandled vma_start_read_locked() return value I pointed out could pl=
-ay
-> a role too (in the other report) but I guess only if syzbot would be able=
- to
-> saturate the refcount (I doubt?).
-
-Yes, I should handle that by falling back to mmap_lock, however I
-agree this would be highly unlikely.
+Ok
+ 
+> Thanks,
+> Peng
+> 
+> >
+> >Thanks,
+> >Mathieu
+> >
 
