@@ -1,145 +1,198 @@
-Return-Path: <linux-kernel+bounces-722871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CAD9AFE01E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:42:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F54AFE05E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73AE91BC86FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:42:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11A20484DA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6390726E17A;
-	Wed,  9 Jul 2025 06:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1E626E16F;
+	Wed,  9 Jul 2025 06:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S17CPSJn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Zerq3+Ei"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013046.outbound.protection.outlook.com [40.107.44.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6CA26B955;
-	Wed,  9 Jul 2025 06:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752043327; cv=none; b=f58XKnAja/zguEHSv5c+iOwD8CRRfKyQPNV7FzESuu0+uCz/zl585m6VzDbf6mNqngEomZc/sVu4fBO/uoP2j5+0Wg5L13tkaeyLaimipEQF0Hcyb0FFNUhUqKl1gOZ8i3DvaZBZqfzzW26f+5dyUB0tFICuxVR0T2CQ8a3TY1k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752043327; c=relaxed/simple;
-	bh=7+vCqZFN7U4lnW639qGXUMHfGK51a943czZTXZl01Rw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CD625eiXHydvSCggw/v+8upvzt0n8U0O+AxBnCz4b9tWQ1PrfS+8DpFK35CA8WH7Al5u0iemwJOdUMsAWYGPL4nViwKMd8yWiePfiKpRx1F6pX/77J6stoKzC2fu0L6Q1knLoZS3pIutWOgqYZm/rxxcSNg20HCRkt/Gdeua0jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S17CPSJn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80BCEC4CEF0;
-	Wed,  9 Jul 2025 06:42:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752043327;
-	bh=7+vCqZFN7U4lnW639qGXUMHfGK51a943czZTXZl01Rw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S17CPSJnTZsiKwFWyk3hbEFT/5JvQJaEWZfiwyG1YJJ5CWMFFeHYkiD0WEgH+1yhF
-	 FFV+trtzovMtt+RcP7nQFjQE3BIU/PubAiRXnylnSuxxNgxhs22UHNnUl74y8Sh61Q
-	 Q3dfaPuamWXn1d8vNXPC6Udygiy0450ILB3zLFpnSiB+RBsMfacwq0E4f5yc4K8C2t
-	 YnoBbvJvuJ9A9DKn/EfQVPfCfb5wEqKbGqTZnksf5iyGPs5ZNr1Mk4DKYYIo72Ppwd
-	 Q0jiQXZbXGTNkRZ7w1/tFkis6SMAlNiLU2x3UjJpD0nQxc0fBr7YEKTEY2hXTdlc7e
-	 BMhrycdhvlvTQ==
-Message-ID: <91f183dc-7294-451f-96ce-4d24c073fbbf@kernel.org>
-Date: Wed, 9 Jul 2025 08:42:02 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAD8283FE6;
+	Wed,  9 Jul 2025 06:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752043365; cv=fail; b=b6GarDBU9e3LIITtwwdcivVR3vIaVKuZoFCuHFWjnLZs7SONLohNN6wPG8nGxUPuEEOdYhPUnZ8lF1Lm9aI4IP2BPJxK/ZYQFwnK/4QPLLB4RwrSlvKtrKJsWb8SvIIEqqHf+0en+dnBDMB4JcOs9M95ZrlJ7Laaf0l2Ug+bxSk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752043365; c=relaxed/simple;
+	bh=v4qWSjtrdlzDlwfl2LYcSRuCycJ0d4fNrg8J59M+gng=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=K/lKKtLQkLRF8xGgH2bzo+mfOwIz46CRQYTpRiHHssbPvwGb0PIZ6z6eCI7kkfcqtJAb8gNKrHohmGUkvt/XfCR15hzx05l8d77nFOlHDIk+PRVjfWIiUz7j4/oU2Wj/SvIy89sk0jmMqXa7tAfLTUsb1naZJWAM0wZu4KkOrEg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Zerq3+Ei; arc=fail smtp.client-ip=40.107.44.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iyEvO0lN1gtfVAmIkT+JKLcjfTky6QtoSqPEu4Hc19PPBzCtFQAKF1Ah3oJZRt3BOF8PxQY5IcGslCT2Gpmwukjmsugp/iP5795iSX7nBJQVFVxGgMPnB66aT5EmotBogTxU9SUFg6djVG+tCdjbvLv2SkAwSuE0PtuSJu0uQ2BWUIEyJShujVyWTIO2+26y6E3kdN1vR+Oqg4KndLpRjN0rxI1dEGo461C0xeXbmSmURifPyDeyOUJi/ORkWZ/nOP9fytTnsKz4sBkrSdqi/x8gBuTPa3JU2qfe95lLqLOKl25V5mL+U+U9DbEh9IXFGbhkkGNpI0nhNRU4cVzBRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LoIHMagL7NYI3NP7n6I4tVcjPEvXk3J8aPebkBuMpO0=;
+ b=h7l9KnOHDMz+kTReXMxZkKYqP0k7mRLqxD9CLnS12jEv4i9U0A1xCR9yy0hIBvgBzStvkn7FlbcUZZ+NlvsdtK4a+4EzEoFJV3wJydy4mJbFRI8MGEwlVteJ47nJUmCCNgFcKBNuJZKvjraezAzXiViJei+w7ogZVTpTCn13kT5YICdUroymkrOAxq6Xyr5e1qgs87EDe7WnnjZmnzVkyuMsq95vX8iKfQTLRvuHxEIXtQi7SnVR+9kYCU2R5jV11u7fot35UssjJ281u61qojwFrZ2qQ45vVscq4crb2OGP3K2x8TERW3R3TQyBF40ShIRgIn2Dqzpfr3Wpk06Ukw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LoIHMagL7NYI3NP7n6I4tVcjPEvXk3J8aPebkBuMpO0=;
+ b=Zerq3+Eii7SE76FrsFvMrT9fZGSxO0jOJxzWU6zNbb0ATVK2pq6TJN8TawyYQ8Efu9Q2hwpU4YqSHHu95Gjm0tF/V+dkZiyVtu13hhahXq7fD1tgP94FEolYCMwdIFaLix2VqLhMI11dhpa769KeYxC8x5Jb8OabBwOYL9/0rz5mEwBfzIEXBrVCeYHftTnW1vRP/zdyTNyeL47tODJKR0xSzaOQFPoeakDqPqs1ICz/0dQuhJZB6iDUAlcZ8O1BtlL7KSWTQfKnvureWtR1Jek8y/ozIhW1t+ugYi59AZ/4P4isLV6sWJhQKJlx5m9Q69/oYkRQTlTQWgLdmNAI2w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ SEZPR06MB5247.apcprd06.prod.outlook.com (2603:1096:101:77::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8901.25; Wed, 9 Jul 2025 06:42:37 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.8880.024; Wed, 9 Jul 2025
+ 06:42:37 +0000
+Message-ID: <1c94956e-4105-4a01-9f47-6abd18a97ec9@vivo.com>
+Date: Wed, 9 Jul 2025 14:42:33 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/12] wifi: mwifiex: Use max() to improve code
+Content-Language: en-US
+To: Jeff Chen <jeff.chen_1@nxp.com>
+Cc: Brian Norris <briannorris@chromium.org>,
+ Francesco Dolcini <francesco@dolcini.it>,
+ Johannes Berg <johannes.berg@intel.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Kalle Valo <kvalo@kernel.org>,
+ David Lin <yu-hao.lin@nxp.com>, Aditya Kumar Singh <quic_adisi@quicinc.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ "open list:MARVELL MWIFIEX WIRELESS DRIVER"
+ <linux-wireless@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20250709022210.304030-1-rongqianfeng@vivo.com>
+ <20250709022210.304030-11-rongqianfeng@vivo.com>
+ <aG4BUWM8o8S7bR9p@nxpwireless-Inspiron-14-Plus-7440>
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+In-Reply-To: <aG4BUWM8o8S7bR9p@nxpwireless-Inspiron-14-Plus-7440>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI1PR02CA0029.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4::20) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: dt-bindings: Add samsung,abox-generic document
-To: ew kim <ew.kim@samsung.com>, broonie@kernel.org, lgirdwood@gmail.com,
- s.nawrocki@samsung.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org
-Cc: alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <CGME20250709002434epcas2p29b2368f0de6c760b17565ad7f2c37a19@epcas2p2.samsung.com>
- <20250709001239.379695-1-ew.kim@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250709001239.379695-1-ew.kim@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SEZPR06MB5247:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9c57b6d7-513a-4b47-e619-08ddbeb3cb16
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?M1IxcEs2NkVSS0FUSHhvdWpFR3BwNktsWTZtQXVYSDRVUXlhd01OcUVlb1BF?=
+ =?utf-8?B?Qi9iQmRBKzF1SzJlbU9zWDdhRzA4RlE0azNjb1o1NU9oVU51VUloU1EvYlZG?=
+ =?utf-8?B?eDI2MEc2UEhKUVFkNldkWlFLbWhvUUg1c1J1UzdRYytlTTVzSFJzc2JoWG53?=
+ =?utf-8?B?MXIxaGxQZzdUQzhyeVRzbHdQY3BWdlp0d3ZWdE1vdVRnc1FrQUFJUnFGNXlN?=
+ =?utf-8?B?YjhBS2dvMWhtekZweEl0anFFOHh4bHBOcVdVaXJlV1UvcEJvNEx0bzEyUEFm?=
+ =?utf-8?B?Z0ZOK0loVVd3V0dEcXpFN0ZZQlRxT3k5L3BQWkd4WGVPbnAzODF6OTk3cm83?=
+ =?utf-8?B?WG5OLzNLVEU3Q0xVQWJoMVQzV1hlUnFwVXl5NUlSOWkvKzFEMnhSY1lvRTRS?=
+ =?utf-8?B?Y01ENkYyRTBnVzk5NWF6WG5MVkJJWnV1akUvUjZmbU9FSTFReFYrZWFkUnZs?=
+ =?utf-8?B?bEVmQUMwNFFYUTFBWngzMmVVTlIvMmRVOE44cjFIK0YyendxL3lNZVhJWEs2?=
+ =?utf-8?B?VW52clpGMGhNRVQrTjd0MjJEeHllSEJvb1JFSHdlM1R0QXg5ODdpRDNmVUFI?=
+ =?utf-8?B?TzI1S3N5QWRYQnR3NjZ0dHRtTnoveXFpTTJuNlQrQXNIQmYweW91Q002VFVL?=
+ =?utf-8?B?NUN3Q0cvaG1rcVFuMmRZOTF2VGFNWERNNDBxMDRrZ1g4UCtNUnR0Q3YwMWZw?=
+ =?utf-8?B?dndWcS93YnJPWUgxTHJ5S2kzOE5qQVZMTFl0Ykd5djdJbnRDVzdvbnRVdVRE?=
+ =?utf-8?B?QmVicys0eG5qQnBsbXZrOGNGSXBsVkoya0lBdEY2bWtCTDh0QUpXc2laOTh3?=
+ =?utf-8?B?aElmN2lGREQwQWh1ZncwaXk0aHRDdStpaGJQSjlOL29KNTZCdjhhSElhc05m?=
+ =?utf-8?B?ejM5YzRvYzRsOWFYRmx0WmNUNDdnRmtrc3VqL29BZXhLUlpwQmhZL0tUT0Zh?=
+ =?utf-8?B?TEw3dGRjc3BXMDVZWjZ3S29BSDB3c1Nyci9jY3VIZTFaVEJITmwyV0Y1Qzl1?=
+ =?utf-8?B?dERUQ1J2VFU3QnZ0bmhjZmRyQ2szM0JrVGpzak9kY29wS0NRazBxb1ArcFlZ?=
+ =?utf-8?B?R0JlOCs3RW1VL1JMc0hKcmRKYS9BKzFieDgwZUxpOCtyRUJBRXdrTGZqNEkz?=
+ =?utf-8?B?TzFRR25oWENPdnc1V01KRWtXWmUxNzJ2Q3lMZVNyOStVU1F2ZEhQNmxKd1dx?=
+ =?utf-8?B?R3lHalJmM0RmRGladHFMWGE5dEZtS0tjU2IzT3JpakRneENuZ3RlVEUycW9S?=
+ =?utf-8?B?SzJNNVZtamVyUXZSTWtielZIUDd6enVpL0x4U2YvWHp3Y1Z1OFBrNVhRTExq?=
+ =?utf-8?B?ai81ZkRlOGJOTXhNWnBsVDNKaVViR0doWTc5dVhCaEl6aHpEbWRzTDYvZ0Zu?=
+ =?utf-8?B?Tm5ndVhucnBnUXBJc21wZ20zVFZ3b3lrbkQwQlQ1WExMdjdmVzZuaEFVYng5?=
+ =?utf-8?B?b0tSU0s3Q3JGbjZra2xPWHpyZkFqR2FNemdRSXVPb2oxaDFzL1VONGNSNG9r?=
+ =?utf-8?B?dUpmTXJmWUhBaU9ycm5XNVVISjJVdzYyUEtiSm9SSEZoaEpuWFdqd3hCc0xx?=
+ =?utf-8?B?UTZjMmpDUWw4QXZ6WXhyanZGSkFGSHBkWWdqbEF1bDhGYjg1K3BVM1lqS3RL?=
+ =?utf-8?B?dDJiNTl6bEIyRVY0UnVMY3JBU2prdDFoRGNuYkJTMHpiV1Z0ekNGSHBVK3NF?=
+ =?utf-8?B?c3lqZ2RFYnh2a0xBS2xQVjNzNGJhbW9VU1AxWU80NW4vV2h3SFRLU2tzbVgv?=
+ =?utf-8?B?eUR4TmdCOENrWjZBbWVrcG91TEk1NzRHTGVuWTlsL2tpZ0FDLzRkeVQwWWN1?=
+ =?utf-8?B?VFc3cnJISGxSN1diakx1UkE0eVpET2Z1QzBJajQxQWZ6bTNRZys1cVpXeCto?=
+ =?utf-8?B?VXdpTDhlNnVNSjNPS1NLRFl5RU83cHdNb1lhQzA3N2F6cGhkVE5LRkVhL29P?=
+ =?utf-8?Q?B7Z5nQXyRZQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TktNSThVOC9Ea2dTWjQ4OTJxNG01ZnFhRkg1U05OSGE4SitkcmE5YjhKcFBl?=
+ =?utf-8?B?SXRIOWl0NkU2aG54RzUxMVJHVEpIWUZYYytlckI4NHhEV3JNQ25vRHlPQVhU?=
+ =?utf-8?B?U09IQ2R3OE9USDRQV2V5VnczK3pwYS83TGdScEtHWmM2aWcyVWVoVEFBMUlT?=
+ =?utf-8?B?ZEgxc0wxamdhZElBTCtoVThRZlM1NmdEbGxhWEtGSTNCdExUMEFKY2VxUzhj?=
+ =?utf-8?B?VFZIOVdER2ZGQVZUWDhGUE1JQjdWUDBMWEZmMWQ2TGZ6SWM5RDN0cFR5dWk1?=
+ =?utf-8?B?UWhCQmJHOTViTHVsUUZRcnlnYSt1REU2TDQyckJGRHVkcDg2UUZIUDVGSkx5?=
+ =?utf-8?B?WHA2NGJSRFhpeTZtSnlFaGxxZDFiVXQ0dDhFR3BjVi9UalFJc1ZBOE9YZzJT?=
+ =?utf-8?B?NHJwcGlwelRVRUEvYnhscFRmeXJYd0crKzVlUzhtWXMyRlMwTWZ4ZmpRS05w?=
+ =?utf-8?B?ek9Yd3NCcUwvemNmbWNxVkl0c3FNbDg0VnpCRDJqcWdTNCtzRjhsM2c3Unpx?=
+ =?utf-8?B?Z1VBZWVPbTV4SFZKek5IUkhBaURHeTQ0UmhBWUpKRVI0M2ErYW9WWlBjUmY5?=
+ =?utf-8?B?YXRrT0YrU2txTi9PV1M3SlNtSXM2emczeTBKZ3lFT0lVYmNxaUI3ZVozNGJS?=
+ =?utf-8?B?eHk1eFYxSmJ6SXhwNzlpNUtOTExWYjV3TDhyR20zeGdZRkxoRnRqTTQxcUZ3?=
+ =?utf-8?B?dlNDQTU1Z3dnKzJ6SGJhRTBYWCtlT1FxZ3p3R1YzUmN3WHB6cG9PUVVidEp5?=
+ =?utf-8?B?aHpqTjdGdDk0M3piSmlINWZoY0Qyckh4WU1ObFhkUTJDVTlMaFJzaThyNWk2?=
+ =?utf-8?B?NEVhQytuMWJTY0I3dEg1RGdmZzRSanVpanJENXhDaXdVZnp1ZTFoOFFxK2Fj?=
+ =?utf-8?B?ZWRnN2YrRnhnVDVpd00veUwvNnJMZGtBa3Z2WmZ2TWVFcXd6ZmNjWVppME11?=
+ =?utf-8?B?NDB1Q05zTHp1U094SE1WMXNCM2hPWmJ4MHVEbEJqTGYyak9xRlJaK1N3VjdU?=
+ =?utf-8?B?Y0wzY1FIV2VjbVdMNmRvN0hTR3NxNStxZjQ5Z05sdVJJeG9USmUrZnE5V2kv?=
+ =?utf-8?B?RURRanI3a2RQN01MbnVTUTJHUFI5aXVxV29mYWEvRnRGVUI1YjlHT1JqblJV?=
+ =?utf-8?B?YmxEY2JDc3JkVzg3NnhoeE0yKy8weTN6M3hzUU95b3dSRHBncFllVkwzTERP?=
+ =?utf-8?B?T0t1Q01WWEwzTWxNVlprVC92c3pQejVEamlEUjdtN0VnaE1oSGJuWTZaa1lJ?=
+ =?utf-8?B?QzE1UUZSb01ONkw4dG91UFNML2M3cjBhR1NHUXdSREdXQVhtVXg4SWw3NEtO?=
+ =?utf-8?B?M2pTY2JHaXhDUEFoc1ZpY2g4SGxzd2RUT3V1dkJ0cGhHTWtWd2FYdVpVejBS?=
+ =?utf-8?B?T0ozQktYQlA5SCsrakJ3ZkRUd00wMStmWjdsRHhlOC9Nd1BYZENZcFo0U2wz?=
+ =?utf-8?B?WHBSdDZBQWY3dnF0aVh0L1RGRDNaS0ZNUkpuY21mV1dmYnlUb1F4QVc2ZjJO?=
+ =?utf-8?B?RzVLQ2svbmp1OFBENXUyZTZyOHlaQUQrZUN2eCszTlZjZnZ1K050TVhZMmFH?=
+ =?utf-8?B?QnU4U3pMQkRtZEhxbHJhZ2oyUXAyeUJHbUtHRlpwQzAwUUVPUzgvV1JBZHA5?=
+ =?utf-8?B?b2hXTi9TZFd0UVhXVE1Ya3lYeEE0UUI5SzRIZTQ3VklnR2p2cndiM21rSEhT?=
+ =?utf-8?B?V3BaK1ZQUEJXdDhITUJETVo3UTEyV2JRYlJRbG5FYUtkRU9FNzFNbisxa29J?=
+ =?utf-8?B?aFFjSEFtUExJWUxhUERVN2tpR3ptdlFCbklXeGRUUEM1cmxhN29yZ3V6NU9a?=
+ =?utf-8?B?ZFNEWDM1S2FpU09ZTm5sSnphcnV0NVJneXorakpVaHZCOTRsc2tvTXl6eU1Q?=
+ =?utf-8?B?U2hOcWFpMXEwWkFSSnlrR1B1bmJMcjcvbUoxWURNaEVHelI2ZDhJbUxLdGVq?=
+ =?utf-8?B?MDZ1R09sUkROcG9WL1ZrczZqbTN4WVZ3cWt2emUrdElEZzB1amNtTFp1RDh0?=
+ =?utf-8?B?QzRieVFJbmFiem5hNnFtU2hhbjZIWGFzVW14NUtGcklKVzZ3cTNUTk5sd085?=
+ =?utf-8?B?QTJ5MlFLSjhtd2ZmcDFYZ1hvOEc4bVY2a2lBRG45RzFFTzJwaXFtYkRXRmJ6?=
+ =?utf-8?Q?SJF30IzU+99m8UxVPFx0IGhK2?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c57b6d7-513a-4b47-e619-08ddbeb3cb16
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 06:42:37.3634
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8kXHtugPWRWsRw06x3Yjxfkqb5mBS7z1ZrA3YxQZm7Y6l5Jpaq0WBap3y8Qo1PKAFrY+U5Yo9mgbhuW+cBsdnQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5247
 
-On 09/07/2025 02:12, ew kim wrote:
-> Add soundcard bindings for the abox generic of exynus automotive.
-
-This wasn't ever tested, so very short review. You have typos here and
-there. But more important - this should not be a "generic" thing, but
-binding for your sound card.
-
-What's more important, there is no user of it, so anyway this cannot be
-accepted as it makes no sense without user.
-
-> 
-> Signed-off-by: ew kim <ew.kim@samsung.com>
-> ---
->  .../bindings/sound/samsung,abox-generic.yaml  | 77 +++++++++++++++++++
->  1 file changed, 77 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/samsung,abox-generic.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/samsung,abox-generic.yaml b/Documentation/devicetree/bindings/sound/samsung,abox-generic.yaml
-> new file mode 100644
-> index 000000000000..bf641a197903
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/samsung,abox-generic.yaml
-> @@ -0,0 +1,77 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/soc/samsung/abox-generic.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-
-But the quality of the patch and lack of testing makes me thinking if
-you could not get some help inside Samsung in posting a proper patch?
-
+在 2025/7/9 13:42, Jeff Chen 写道:
+> -     if (adapter->max_sta_conn > adapter->max_p2p_conn)
+> -             wiphy->max_ap_assoc_sta = adapter->max_sta_conn;
+> -     else
+> -             wiphy->max_ap_assoc_sta = adapter->max_p2p_conn;
+> +     wiphy->max_ap_assoc_sta = max(adapter->max_sta_conn,
+> +                                   adapter->max_p2p_conn);
+> adapter->max_sta_conn and adapter->max_p2p_conn are u8, and wiphy->max_ap_assoc_sta is u16.
+> To ensure type safety and maintainability, I recommend using max_t() with typeof():
+> wiphy->max_ap_assoc_sta = max_t(typeof(wiphy->max_ap_assoc_sta),
+>                                  adapter->max_sta_conn,
+>                                  adapter->max_p2p_conn);
+>
+Thanks for taking the time to reply.
+I will try to do this in the next version.
 
 Best regards,
-Krzysztof
+Qianfeng
+>
 
