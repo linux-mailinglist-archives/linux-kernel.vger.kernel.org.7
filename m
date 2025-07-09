@@ -1,124 +1,91 @@
-Return-Path: <linux-kernel+bounces-723810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D23EAFEB26
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:05:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34D89AFEB21
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:03:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FA7854694E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:01:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3D3B7BEC73
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556CC2E7181;
-	Wed,  9 Jul 2025 13:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EED62E8DF6;
+	Wed,  9 Jul 2025 13:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IzOVu1vH"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KZZ5YRcI"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53BD52E6D22
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 13:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BB32E613A;
+	Wed,  9 Jul 2025 13:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752069338; cv=none; b=Psi+oySh/jx8fnEjjpk0Xn2e40DU1Yfy4gNL2rXTa0UH8ERc0HPV253va6NsGNlW9U+WkUw1zn9vhg5YpUf60sUVE4kc+LAEWI3TjGhqqltytnYh1gZ9+3m010rYQLg8C2+Ri6tL1swvgqdxkvPmDq6nTdMn3xGbMLQnt5ld3WA=
+	t=1752069493; cv=none; b=oEEV6gYoWlzDs7AMbxQtHsJWaRNhWVNn+6OdTh7OyPMLADw7o3f3Cltoq0fZVPIJeTBaUUsAMyvyMAe5elk61YawreVUkJXObuay7By+2LBqMb9hyac29wc6p2EwXZ0tGzK2Cpuccxh1ADDiny943mOnDNVfgzO+Qq3CqVikPg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752069338; c=relaxed/simple;
-	bh=0h9vbjsgJ4KM4kpziRTulPuUJGQOT13eleRpBAru710=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=A8sVCIauD08divPigKi+EL5jKoBBtZPPGidR7VaYDJuK9Pl6pQYvR+6tf1rw/GKWq55JKXPLX6hnTzpj/G8b4gstUvvYLFwSiIh25lnTFz7JotBAdgVeImzu1nSUiigFWCaP+gsHgWUFQStXEXvqdD/nNE8n/9IASMXunspAD/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IzOVu1vH; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-315b60c19d4so4316665a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 06:55:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752069336; x=1752674136; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hB2pq64+EiT3q+LG5n2vE09OllB22A/8i32Rf86ziks=;
-        b=IzOVu1vHAiZQEW1SK9aITiCIGPOggzl8NHWRVQJBgoLcGSg2u/0on9W2TcDLu6JHny
-         Ugz1GTUMT2tGgQkTI3WJXqTCzVXvsRdVAxrObAnSaMhd3EuRXcWzffk+1eRMuZnrflg0
-         ATpR7ptMUXiAil3evEELHgLyEEn68SCHZFUsK9zV43w6C5QwBWkO+UV+9Jw9HoZnObYM
-         8QdAj8VdML8ieYhklbw9GfwqSFBfHsQX5Ef4ADBG0f2MRElJ5Xkxpu78AxA76NEad84e
-         v6OLA75Wu9vSZHwFiBdDMJyzs7+Cm3wFCtms3jO96QwWZcw9NsLmA915hMd+rRDxq7pK
-         b8+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752069337; x=1752674137;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hB2pq64+EiT3q+LG5n2vE09OllB22A/8i32Rf86ziks=;
-        b=Wh4oJO9mzY2Af/xklKde/oJ0S+CnLYi92W7rM741+QwfROatyLGluptn2rgvb/YRRu
-         HXYwWyHFZ7UM3mwtzuvjto9YY+ejp044gedyW0NcUb7HWCO7sqwYcbtP08wss/RR248e
-         ZzmAFg5R4kaOhTD4rmcOIwmUL7ay4zqMc7bTgIa3nfbhjbpah/5IBTwn7pc5WlLa9LUU
-         OnFcw1Uw3Vu4z/iNyVTvJibhBzqWRt1kOVsHKD9E880e2kPuVeuqL5PdmkX/UMtSBRf5
-         c6SQa5MxKeX5xG3tCSLpZsP9l2L38HZV8SCcCTqdnDizm3YSqQeEvCbQaJBQw6qPQ5JI
-         Uoiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUTWXi3XsU+JmcxQwL1tdtbPKmZVn42Bhh9jl7dx6tYuG9z+/G4JVUVaCUi+etT5lmGHy6cjdn7XtME0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBpNaUxjcv/kCratrbZQ1lyimEm9FHffom8uSAHI/9+a18SDX7
-	Ct+l0PtzB1E7enHHr2lRKRwivPVorftj/A8JZcdJaP6gWdeZ+KR/zCjS1mQemwFFbsQ/25Hs20G
-	BpRF1Yg==
-X-Google-Smtp-Source: AGHT+IEoqYqG05CCJJatVWyMPh8LvhP8g90wNpXynV+lVfyOqsEL9Ixv2ihGPj+7dKMNBozMlFC5A8s1AoU=
-X-Received: from pjbta13.prod.google.com ([2002:a17:90b:4ecd:b0:311:ea2a:3919])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5345:b0:31a:bc78:7fe1
- with SMTP id 98e67ed59e1d1-31c3c2d4748mr6038a91.18.1752069336491; Wed, 09 Jul
- 2025 06:55:36 -0700 (PDT)
-Date: Wed, 9 Jul 2025 06:55:35 -0700
-In-Reply-To: <aG4ph7gNK4o3+04i@intel.com>
+	s=arc-20240116; t=1752069493; c=relaxed/simple;
+	bh=NVvIf7BA+8Ypu2l7BcQ/wzXzv6n0iOiBv4S0JuQ6nhI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:
+	 References:In-Reply-To; b=c52unOMaM+b1wwZM/zl+tDJOVRAUk/V3RMmRYQ3c1MV7ybdaf8FQ1ciWAQFkE8Ya7Wixa49I5NiWx3h+Sk698nnREuaLuKLcODAME0r7Y8/qIamhUSXTOa8gPtU1HIbhFV3fNDefWTcFxC48RiHPbXdRXnCiOE2B2upjFWu9fhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KZZ5YRcI; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7597144304;
+	Wed,  9 Jul 2025 13:58:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1752069483;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NVvIf7BA+8Ypu2l7BcQ/wzXzv6n0iOiBv4S0JuQ6nhI=;
+	b=KZZ5YRcI4rugggC3oNX8cQJ6CqQVVW/XdceOdkZpApDHWpZj0R0NTALPkSr5tk4KoXbnIF
+	58Ip1dO1C+gLaMZPB35xSTfKsqt+emBF1UdCOWQ7e2tmitK3sMiuNdRmOkuyFBm6LF+r9A
+	vPGTk/cbuuki1t1xEpbToabBWhMUhxag0c6AXBQd2SlmCdypCL/xOTzYj5GmGGvM57He/u
+	XjNpRx4tClb3ADNQyz0ACcXQQlSlPBKbsrfLR8U8t6NpKSlonC2oB2YurSa+dmxLmrley2
+	oGue34ZJ4uljePhq96XSrMMTtr9IPWPOdaG+gC2tx/ZBAroGpkqNcBBR162L5A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <cover.1752038725.git.kai.huang@intel.com> <1eaa9ba08d383a7db785491a9bdf667e780a76cc.1752038726.git.kai.huang@intel.com>
- <aG4ph7gNK4o3+04i@intel.com>
-Message-ID: <aG501qKTDjmcLEyV@google.com>
-Subject: Re: [PATCH 2/2] KVM: x86: Reject KVM_SET_TSC_KHZ VM ioctl when vCPU
- has been created
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: Kai Huang <kai.huang@intel.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
-	thomas.lendacky@amd.com, nikunj@amd.com, bp@alien8.de, 
-	isaku.yamahata@intel.com, xiaoyao.li@intel.com, rick.p.edgecombe@intel.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 09 Jul 2025 15:58:02 +0200
+Message-Id: <DB7KSOGOXKMI.3357Z37QAUKQ7@bootlin.com>
+Subject: Re: [PATCH 11/12] wifi: wilc1000: Use min() to improve code
+From: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+To: "Qianfeng Rong" <rongqianfeng@vivo.com>, "Ajay Singh"
+ <ajay.kathat@microchip.com>, "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
+ "Kalle Valo" <kvalo@kernel.org>, "Marek Vasut" <marex@denx.de>, "open
+ list:MICROCHIP WILC1000 WIFI DRIVER" <linux-wireless@vger.kernel.org>,
+ "open list" <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250709022210.304030-1-rongqianfeng@vivo.com>
+ <20250709022210.304030-12-rongqianfeng@vivo.com>
+In-Reply-To: <20250709022210.304030-12-rongqianfeng@vivo.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefjeejgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfgtgffkffuhffvofhfjgesthhqredtredtjeenucfhrhhomheptehlvgigihhsucfnohhthhhorhoruceorghlvgigihhsrdhlohhthhhorhgvsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedtieektdegtdeijeehjedvvdffveeiueehfeekhffgjefhfeefiedvueelvdeuffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeekgedvkeemhegvsgeimeduvddtudemrghfugeimeeffhgssgemrggutdekmeekfhelieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemkeegvdekmeehvggsieemuddvtddumegrfhguieemfehfsggsmegrugdtkeemkehfleeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepjedprhgtphhtthhopehrohhnghhqihgrnhhfvghnghesvhhivhhordgtohhmpdhrtghpthhtoheprghjrgihrdhkrghthhgrthesmhhitghrohgthhhiphdrtghomhdprhgtphhtthhopegtlhgruhguihhur
+ dgsvgiinhgvrgesthhugihonhdruggvvhdprhgtphhtthhopehkvhgrlhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrghrvgigseguvghngidruggvpdhrtghpthhtoheplhhinhhugidqfihirhgvlhgvshhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-On Wed, Jul 09, 2025, Chao Gao wrote:
-> On Wed, Jul 09, 2025 at 05:38:00PM +1200, Kai Huang wrote:
-> >Reject the KVM_SET_TSC_KHZ VM ioctl when there's vCPU has already been
-> >created.
-> >
-> >The VM scope KVM_SET_TSC_KHZ ioctl is used to set up the default TSC
-> >frequency that all subsequent created vCPUs use.  It is only intended to
-> >be called before any vCPU is created.  Allowing it to be called after
-> >that only results in confusion but nothing good.
-> >
-> >Note this is an ABI change.  But currently in Qemu (the de facto
-> >userspace VMM) only TDX uses this VM ioctl, and it is only called once
-> >before creating any vCPU, therefore the risk of breaking userspace is
-> >pretty low.
-> >
-> >Suggested-by: Sean Christopherson <seanjc@google.com>
-> >Signed-off-by: Kai Huang <kai.huang@intel.com>
-> >---
-> > arch/x86/kvm/x86.c | 4 ++++
-> > 1 file changed, 4 insertions(+)
-> >
-> >diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> >index 699ca5e74bba..e5e55d549468 100644
-> >--- a/arch/x86/kvm/x86.c
-> >+++ b/arch/x86/kvm/x86.c
-> >@@ -7194,6 +7194,10 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
-> > 		u32 user_tsc_khz;
-> > 
-> > 		r = -EINVAL;
-> >+
-> >+		if (kvm->created_vcpus)
-> >+			goto out;
-> >+
-> 
-> shouldn't kvm->lock be held?
+On Wed Jul 9, 2025 at 4:21 AM CEST, Qianfeng Rong wrote:
+> Use min() to reduce the code and improve its readability.
+>
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 
-Yep.
+Reviewed-by: Alexis Lothor=C3=A9 <alexis.lothore@bootlin.com>
+
+Thanks,
+
+Alexis
+
+
+--=20
+Alexis Lothor=C3=A9, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
