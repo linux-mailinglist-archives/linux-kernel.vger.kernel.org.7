@@ -1,197 +1,151 @@
-Return-Path: <linux-kernel+bounces-724244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB44AFF05E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:03:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 960EAAFF06E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 771F01C83DFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:04:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98083189E656
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801262376F2;
-	Wed,  9 Jul 2025 18:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76492235055;
+	Wed,  9 Jul 2025 18:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ors1ftUb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VkHrX/iB"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB142264B0
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 18:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BADE233735
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 18:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752084217; cv=none; b=n5nDBmA+4GdE5D+qlP1oLrZAkeUtctO4lP/par5KqMNqpoMTy0AvFE6tEmfAfC8iziStoqEypaVz+AESHbUqkETuhxrl1X5PWaXksHQzU8uzx/H7itk2VPPX3vvq6e3sjzQE4ugjQ/ClqzuQ0jV6BYpv0SRGvXxcyLjICyJxtqk=
+	t=1752084283; cv=none; b=skNyQ7yXANZQh8ipQVrFgjwh61oiYqm6J+a0GPksIDYNJJA/FJVGgmB9WbnDoQi/AdzINMSyJLAzURyF97RoEtPnBxhph6wj2cFJ0zMewK3w05bbYBgY1DANMeAOzmNYuULx4FZFI0tS3cxGZ+ZRmcg8ZkJeeXo40HvK0a3Slcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752084217; c=relaxed/simple;
-	bh=/F7mjkjuohfh46YDlcOQVurzihzSdvozO8b9E8yCnhw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mbxmk+E8IUMaemvVBJjytKJ8MNjoWAAKNaju6f19ACA9l8HxyLuJQwTUIeLFUUcFO8daRJOsLo4KH9hQOMo0eIFgDy09TrbrTno82nWESTMUBbnMcHVkBfCVDHylbchkM6heQrtIIoPiwEpILZqgY6H50QcGDBW3R057pHd7sck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ors1ftUb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BA1BC4CEF7;
-	Wed,  9 Jul 2025 18:03:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752084217;
-	bh=/F7mjkjuohfh46YDlcOQVurzihzSdvozO8b9E8yCnhw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ors1ftUbxRPqDxY+5MMsyLIA9I0E23bfabFtOQkMEESM1CDPosTC5/SVcFovHGcBa
-	 rrNN1nsfSVqzAOyxoUrB1qwi6QeO4CCc0Pia9+D+CN7tRsAPMjlm0MLgp1GqAkpkzL
-	 Hi+JYSdosn70vnRFn/zimufkUSS8BIWU0Y5E+WXnq9yyvQRfZExL126XCmlIKg/yct
-	 wrPKKiPJD+IjWrVTXMHH54ePRieUSrI9otCH+o4JepLTMf8IvQUMjDkbCkL7H7c987
-	 IlTBiweYjNvjpNp1TRVxJxlZSj5HPMXRIFCUs6lB+iEwrvKiSw7HJu+9AFMIA9m3km
-	 87/kWWA0Q957w==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 1F9B2CE0C26; Wed,  9 Jul 2025 11:03:37 -0700 (PDT)
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jon Pan-Doh <pandoh@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Karolina Stolarek <karolina.stolarek@oracle.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH v6 3/3] lib: Add stress test for ratelimit
-Date: Wed,  9 Jul 2025 11:03:35 -0700
-Message-Id: <20250709180335.1716384-3-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <d1007957-97ff-4f6f-92ac-606f68c65dfa@paulmck-laptop>
-References: <d1007957-97ff-4f6f-92ac-606f68c65dfa@paulmck-laptop>
+	s=arc-20240116; t=1752084283; c=relaxed/simple;
+	bh=BwEHDnFF8g9BwbRZ7s5wgYOhw4vNQlfGkcQ79zkRIZg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CLVt8NIT9JrjNtOxQhqPamv8evARgf5Y+sJJSWo2ZQVAgeZNXIne6ISsxXArWXGpLlKcC5ob3rtOHlid6cVpx2aP52XNzMTdxnP2ZSz20gTchJkQAO4UuIwSyKHtvcltJByacVP4fQSurRrjNLTlaH/7AfNsC9bq5QkMYoJCjUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VkHrX/iB; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 569CohD5012482
+	for <linux-kernel@vger.kernel.org>; Wed, 9 Jul 2025 18:04:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	A2ietRUbMDbJ4mE4kCJF5gt9v+ZI/BJHpjh+AfLfssc=; b=VkHrX/iB1owUSxld
+	0k+fbo6IcOvwtEYGSSRlKjHpAinC0RiWd73EPPUC6SOM4iBvvYejo9Hir/sSs1M+
+	BimAHnZ5h1Bm7K6EukFdGpofuYt4/4mVpL2Pvk1zuKqdOPMAEA0hUXCuPSLOmkJI
+	uxhP+dVMdAmPY42H33WwyFKvhLTjLI7hykoi46pR/kn5Hgzte68IRcBVaBSbbEgM
+	cHTfSuCq3FFJOsKCluYO73ZuMuweN68F4RZKBYnZjt9JHLQRIPG83VqGx6D6sB7x
+	NYtuDq+MO3CE2+WCNg0do2owYKfya9Fs8n2UT5JIvD2kgG7SZnFYVVqX1VOzqctq
+	+OrFUw==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pucn5krg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 18:04:41 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7dbce38d456so3113885a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 11:04:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752084280; x=1752689080;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A2ietRUbMDbJ4mE4kCJF5gt9v+ZI/BJHpjh+AfLfssc=;
+        b=cKeSArKNg22wK4jjJHg+0+gS3o5b6LwO1ZFGwBV2Juk1tUrkxbmPJO/iBqWjzo9WF9
+         plcG3auCiiWpkTJp6co31e0cz+hJ8CirS1Qqzt5d4cO/YUTW0RkDNUUo3rBzxOG6M55f
+         bMe5qPezC47VtYNrO57SliqzbII34P6IkhCLBgiUQ1sWql0uWr/oYd+ONhvrKtTi3/Qq
+         nL1AfGdb6aLqC1h0KQAAUf6eFd1mWsRfGTbwjJ5CkAul2Cs4QBrbFdACwyFt6gft/dQf
+         fgteXGon14ExSEuPg7B0El6cQeJMwGQ1Y4EBp7gyHo8ifkz3cVd+xjUmcFhNQS5Et7cH
+         iUzw==
+X-Forwarded-Encrypted: i=1; AJvYcCX2ncrGCwPU/FzLG94KpMduSVgN/L9GV1/BtuHorYU6SSQF73F3q9Te2ZBnS+xkfoL0XsdlTcKX6XD7z+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4WTQF9jXv1aI7mzgBK7z4W5ry65n3LM/SsrxqBqJ2NBhD9OSA
+	LMNZGvughhr/g9XTrTKwB1wxG0h/oqXAVOqVx27DCSpkX0g4svUE3nrmGt0SyFQVE1yDzKtMKrD
+	zfV6oUKqtrqA8fS1njkrTP7K0amGF788DqbXCOEs6lFbs+1/IL81QiuY3voOQDBM2Kq4=
+X-Gm-Gg: ASbGncsMwOkyyKRzV9DBTwwwE7dm9vQmL2nZaaWYASfgtAuR1sJW3lVkEenh7EubD76
+	GN36PXQHMMrRoiS4nj+EktvwrLO018P25+b65xkUPKKWH9ZTU8TAuzvOTcpUnXH/hWEn+G8uJAw
+	lCUEcaQ1htU0jh/UkfNqszPD2xaEJnWbcXxVCOeHz1+9V2GUCPyElwb5T24vY9c41rh0IjTJrfF
+	rIAhrXc5PKWXDApjpgcJ4O/wJ0eo8CRYTParVJkNyWOHq1qoej0ZufvuUbFw6swdbJVTvYVY88h
+	DhiX3C555Led8H0j29GYOjJ5ojrp/byf8q5oQWykz7S0GMWUkgBaRe4u1tyWtcMosUx6o5FyXwh
+	M+VM=
+X-Received: by 2002:a05:620a:2681:b0:7db:3fbc:d71f with SMTP id af79cd13be357-7db8b3307c8mr183721685a.0.1752084279992;
+        Wed, 09 Jul 2025 11:04:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFRdyICFCZxRrKtqyaPtAi/LxAqDz5IEHfkpkf3qpn9haIG2NUFS9hpsW2SKi6yjsOjwAtEOw==
+X-Received: by 2002:a05:620a:2681:b0:7db:3fbc:d71f with SMTP id af79cd13be357-7db8b3307c8mr183718485a.0.1752084279403;
+        Wed, 09 Jul 2025 11:04:39 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f692f555sm1156700766b.60.2025.07.09.11.04.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Jul 2025 11:04:38 -0700 (PDT)
+Message-ID: <256e01fc-fdba-4006-be8b-236fbbdf9f25@oss.qualcomm.com>
+Date: Wed, 9 Jul 2025 20:04:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 10/12] pinctrl: qcom: add infrastructure for marking
+ pin functions as GPIOs
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Alexey Klimov <alexey.klimov@linaro.org>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Paul Cercueil <paul@crapouillou.net>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250709-pinctrl-gpio-pinfuncs-v2-0-b6135149c0d9@linaro.org>
+ <20250709-pinctrl-gpio-pinfuncs-v2-10-b6135149c0d9@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250709-pinctrl-gpio-pinfuncs-v2-10-b6135149c0d9@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=GdQXnRXL c=1 sm=1 tr=0 ts=686eaf39 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
+ a=NA2ShB3TTlD8ZNnRZVMA:9 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: wsI6AQA8OTvbzixIlvjQkx0oMeRMQFHv
+X-Proofpoint-ORIG-GUID: wsI6AQA8OTvbzixIlvjQkx0oMeRMQFHv
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDE2MyBTYWx0ZWRfXxEtQaAofC8TU
+ ChbQ8mlAyw31qKBGAs7rsCPANZPkAvfQP1Wmf2J++ehe/iPXv6goIv7BtVIj7ZzOkmwa+SwysSg
+ aPAfMVYCGsV794+czmJ7MfFjZeyrdintlApJ5YyG4UFB0HnI5OwalGNlfhR0Zi1PM/UuL4EOUIb
+ ReWqzx0kmftM0w2BRvySl5zV9MFboFrM8FASTelHrsCaN24mWr9zNfyfZ6CpHDx8Zp2NRLTkmez
+ +5NOA6QcwFKp5m4bwL9YjGR9LQbuPXWXnGkVtbrnG++atxB0+lXZO9pSVDDjwO0e2Nqy3GLlqBu
+ vIHMSHvgBBVvWGZJ1UWyBVkgQ3i2yF+RqchU61DQicLkOL1Z4FVSn+Y9QMCoxAVbIN37VtIeVJo
+ OAHcG/Ok4qIc8FV45fYcxnnpk7A7SO4DW7oNlHFsHoK+jU9Q5lmiXxMC2nukvi+ChSqkHfQw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-09_04,2025-07-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 clxscore=1015
+ spamscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
+ malwarescore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507090163
 
-Add a simple stress test for lib/ratelimit.c
+On 7/9/25 4:39 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Add a helper macro that wraps PINCTRL_GPIO_PINFUNCTION() for pinctrl-msm
+> pin functions and assign the .function_is_gpio() callback in pinmux_ops.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
 
-To run on x86:
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-	./tools/testing/kunit/kunit.py run --arch x86_64 --kconfig_add CONFIG_RATELIMIT_KUNIT_TEST=y --kconfig_add CONFIG_SMP=y --qemu_args "-smp 4" lib_ratelimit
-
-On a 16-CPU system, the "4" in "-smp 4" can be varied between 1 and 8.
-Larger numbers have higher probabilities of introducing delays that
-break the smoke test.  In the extreme case, increasing the number to
-larger than the number of CPUs in the underlying system is an excellent
-way to get a test failure.
-
-Link: https://lore.kernel.org/all/fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop/
-Link: https://lore.kernel.org/all/20250423115409.3425-1-spasswolf@web.de/
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Jon Pan-Doh <pandoh@google.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Karolina Stolarek <karolina.stolarek@oracle.com>
----
- lib/tests/test_ratelimit.c | 69 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 67 insertions(+), 2 deletions(-)
-
-diff --git a/lib/tests/test_ratelimit.c b/lib/tests/test_ratelimit.c
-index 5d6ec88546005..bfaeca49304a5 100644
---- a/lib/tests/test_ratelimit.c
-+++ b/lib/tests/test_ratelimit.c
-@@ -4,6 +4,8 @@
- 
- #include <linux/ratelimit.h>
- #include <linux/module.h>
-+#include <linux/kthread.h>
-+#include <linux/cpumask.h>
- 
- /* a simple boot-time regression test */
- 
-@@ -63,14 +65,77 @@ static void test_ratelimit_smoke(struct kunit *test)
- 	test_ratelimited(test, false);
- }
- 
--static struct kunit_case sort_test_cases[] = {
-+static struct ratelimit_state stressrl = RATELIMIT_STATE_INIT_FLAGS("stressrl", HZ / 10, 3,
-+								    RATELIMIT_MSG_ON_RELEASE);
-+
-+static int doneflag;
-+static const int stress_duration = 2 * HZ;
-+
-+struct stress_kthread {
-+	unsigned long nattempts;
-+	unsigned long nunlimited;
-+	unsigned long nlimited;
-+	unsigned long nmissed;
-+	struct task_struct *tp;
-+};
-+
-+static int test_ratelimit_stress_child(void *arg)
-+{
-+	struct stress_kthread *sktp = arg;
-+
-+	set_user_nice(current, MAX_NICE);
-+	WARN_ON_ONCE(!sktp->tp);
-+
-+	while (!READ_ONCE(doneflag)) {
-+		sktp->nattempts++;
-+		if (___ratelimit(&stressrl, __func__))
-+			sktp->nunlimited++;
-+		else
-+			sktp->nlimited++;
-+		cond_resched();
-+	}
-+
-+	sktp->nmissed = ratelimit_state_reset_miss(&stressrl);
-+	return 0;
-+}
-+
-+static void test_ratelimit_stress(struct kunit *test)
-+{
-+	int i;
-+	const int n_stress_kthread = cpumask_weight(cpu_online_mask);
-+	struct stress_kthread skt = { 0 };
-+	struct stress_kthread *sktp = kcalloc(n_stress_kthread, sizeof(*sktp), GFP_KERNEL);
-+
-+	KUNIT_EXPECT_NOT_NULL_MSG(test, sktp, "Memory allocation failure");
-+	for (i = 0; i < n_stress_kthread; i++) {
-+		sktp[i].tp = kthread_run(test_ratelimit_stress_child, &sktp[i], "%s/%i",
-+					 "test_ratelimit_stress_child", i);
-+		KUNIT_EXPECT_NOT_NULL_MSG(test, sktp, "kthread creation failure");
-+		pr_alert("Spawned test_ratelimit_stress_child %d\n", i);
-+	}
-+	schedule_timeout_idle(stress_duration);
-+	WRITE_ONCE(doneflag, 1);
-+	for (i = 0; i < n_stress_kthread; i++) {
-+		kthread_stop(sktp[i].tp);
-+		skt.nattempts += sktp[i].nattempts;
-+		skt.nunlimited += sktp[i].nunlimited;
-+		skt.nlimited += sktp[i].nlimited;
-+		skt.nmissed += sktp[i].nmissed;
-+	}
-+	KUNIT_ASSERT_EQ_MSG(test, skt.nunlimited + skt.nlimited, skt.nattempts,
-+			    "Outcomes not equal to attempts");
-+	KUNIT_ASSERT_EQ_MSG(test, skt.nlimited, skt.nmissed, "Misses not equal to limits");
-+}
-+
-+static struct kunit_case ratelimit_test_cases[] = {
- 	KUNIT_CASE_SLOW(test_ratelimit_smoke),
-+	KUNIT_CASE_SLOW(test_ratelimit_stress),
- 	{}
- };
- 
- static struct kunit_suite ratelimit_test_suite = {
- 	.name = "lib_ratelimit",
--	.test_cases = sort_test_cases,
-+	.test_cases = ratelimit_test_cases,
- };
- 
- kunit_test_suites(&ratelimit_test_suite);
--- 
-2.40.1
-
+Konrad
 
