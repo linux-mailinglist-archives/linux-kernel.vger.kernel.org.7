@@ -1,95 +1,59 @@
-Return-Path: <linux-kernel+bounces-723435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD436AFE6C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:03:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27421AFE6F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B49071C46ECC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:03:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB9447A547C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418C028EC1C;
-	Wed,  9 Jul 2025 11:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124DE28DB66;
+	Wed,  9 Jul 2025 11:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DwKaLuZC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dMhAddBt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1C72580D7;
-	Wed,  9 Jul 2025 11:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AC2262D0C;
+	Wed,  9 Jul 2025 11:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752058861; cv=none; b=lF+dA+gKGKLf3LWwJh6grnGTKU6+Olr5CSCipa1khf4icDsxUIYR5+ZSx49PvETXsLLryZpFPoXYD2h40q/FUGTIiMmHqUodfYQjpW/ifELYGgbuGaHNN/aDN6Izgg6R5Y2NbPWtmXTiyXGt5CrvvIpWyHAl98Z60vcjakVvQAw=
+	t=1752058919; cv=none; b=SOt0WJupVSduK2C1xM9E5BvnxQqJ+vjRBPqBPMtKCR8eilF/8n2RwX1BQlaKuRnu6EkBdY+9X7AzErn6JObRZtbqg71mSA7VHCcQwJO5U2116SdRhAeT6hkzXSWJh5VkEcPBW4UXWEdJfTwQ4ZpQuO/CDHoq4V8aTj3XbRyl76c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752058861; c=relaxed/simple;
-	bh=6TBIbA4ulMG/TLeMgkUTWPxfeTzSZcIp8A8wki7/tbM=;
+	s=arc-20240116; t=1752058919; c=relaxed/simple;
+	bh=gc4HSCuDDXMYHWvKvmPjisGfE43XmLIbYsjIXa3JOUI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HeEoMDphtDVw1VFMUhrsMp3phwyup7EnVAi/c1KW/zEW/9qF6T5VdV2jOUYq35iR4R7v2HCmFgpl7bszhiaKy6okms58QcmpYIDKzbtJm6nZuc1BSIH/+knxC5c9i8zqDzZ+5PGmovKjyO2zoPAzvmnYjLNLfjGWyUyb/O/ibT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DwKaLuZC; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752058860; x=1783594860;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6TBIbA4ulMG/TLeMgkUTWPxfeTzSZcIp8A8wki7/tbM=;
-  b=DwKaLuZC+oQSqxHlI5Fwck2Z8UYZBDxXbVQ6P19ARxgDuG3URBlogVG/
-   PMxqMzFqjkVNxKtJa/w6NsKb2s9jVwhU1jxkcMzNL9LBHZuFBeQqm1KYq
-   J3seHzVy3qF4lBRmaGaz3c4rTMhJWt78yJTNkdBqQxgqyD/yCQNRvxqM0
-   MWl+oOYzit98Mx8UyRIU/FcllzVFM2xKnuVN1gyDk4VyM/60/rHzJMJKW
-   n197KCutrQMso1B5p5Y3eB/OenkDHmDMWvpW/FtRPrpoTDrLEUney/gh5
-   6Nq+eGxmawbIVYKqb5HgzpqqPXFavT4ZC8eBlGrJmf+M0GfkG9I14YUDG
-   A==;
-X-CSE-ConnectionGUID: zTN22k08RCSsFp7ueIKM4w==
-X-CSE-MsgGUID: WqBuGawWQCeb6bggqnGpdg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54441757"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="54441757"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 04:00:59 -0700
-X-CSE-ConnectionGUID: kHqhUpj1Rbma1h24o/AiBA==
-X-CSE-MsgGUID: WflIntN1TGmJjVEMlY5zKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="156475969"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa010.fm.intel.com with ESMTP; 09 Jul 2025 04:00:46 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 8D6C11B7; Wed, 09 Jul 2025 14:00:44 +0300 (EEST)
-Date: Wed, 9 Jul 2025 14:00:44 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
-	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
-	Alexey Kardashevskiy <aik@amd.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Daniel Sneddon <daniel.sneddon@linux.intel.com>, 
-	Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Breno Leitao <leitao@debian.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
-	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
-	linux-mm@kvack.org
-Subject: Re: [PATCHv9 16/16] x86: Re-enable Linear Address Masking
-Message-ID: <icjt25k4azqzkv5xlobcmlcubulohvfjakkb35dusiqe2xutq3@6jvha7chwwxd>
-References: <20250707080317.3791624-1-kirill.shutemov@linux.intel.com>
- <20250707080317.3791624-17-kirill.shutemov@linux.intel.com>
- <b1408df7-abb4-4ac5-aff7-c04fda7dec7c@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W25ONsKL5Z0TiClGZJhpLfyqO8QQuCbQiU6SLJSvURj8F1fGAFYXCXupEO2NSfkmz8AV7ewrvHFMqbzZm7l2Lf5EnjcfTw8CLHGrXuAzGmJcb1Fb84yB8rMrmhkEy0o0b6eJRTrayjXT90ouoUFxBmeptgrrnqVMOPm3+T4sacs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dMhAddBt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12EA4C4CEEF;
+	Wed,  9 Jul 2025 11:01:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752058918;
+	bh=gc4HSCuDDXMYHWvKvmPjisGfE43XmLIbYsjIXa3JOUI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dMhAddBtYzYy7yQWFvVtz0cvZmFHy2Sl0Yn6xJDUT5n/0XRqHTD8zmpABnZZtPybY
+	 NVo6bfiHJDk2ApmVmvVTKRykrns9tj+qbPoFosT8PNZLMdBS9S792Wvv9VR+mZ4ASh
+	 GUZqVle1Qrz0kEW4G2ZqGSJCyxgbGdWJeq2M+aWY=
+Date: Wed, 9 Jul 2025 13:01:56 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: linux-serial@vger.kernel.or, open list <linux-kernel@vger.kernel.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	linux-stable <stable@vger.kernel.org>, Jiri Slaby <jslaby@suse.com>,
+	Aidan Stewart <astewart@tektelic.com>,
+	Jakub Lewalski <jakub.lewalski@nokia.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Ben Copeland <benjamin.copeland@linaro.org>
+Subject: Re: v6.16-rc5: ttys: auto login failed Login incorrect
+Message-ID: <2025070924-slurp-monetary-a53f@gregkh>
+References: <CA+G9fYtK2TLbpo-NE-KUXEp0y8+5zXNVRFkqdMjaGgcNFFG77g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,33 +62,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b1408df7-abb4-4ac5-aff7-c04fda7dec7c@intel.com>
+In-Reply-To: <CA+G9fYtK2TLbpo-NE-KUXEp0y8+5zXNVRFkqdMjaGgcNFFG77g@mail.gmail.com>
 
-On Tue, Jul 08, 2025 at 10:31:05PM -0700, Sohil Mehta wrote:
-> On 7/7/2025 1:03 AM, Kirill A. Shutemov wrote:
-> > This reverts commit 3267cb6d3a174ff83d6287dcd5b0047bbd912452.
-> > 
-> > LASS mitigates the Spectre based on LAM (SLAM) [1] and the previous
-> > commit made LAM depend on LASS, so we no longer need to disable LAM at
-> > compile time, so revert the commit that disables LAM.
-> > 
+On Wed, Jul 09, 2025 at 04:26:53PM +0530, Naresh Kamboju wrote:
+> Approximately 20% of devices are experiencing intermittent boot failures
+> with this kernel version. The issue appears to be related to auto login
+> failures, where an incorrect password is being detected on the serial
+> console during the login process.
 > 
-> Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
+> This intermittent regression is noticed on stable-rc 6.15.5-rc2 and
+> Linux mainline master v6.16-rc5. This regressions is only specific
+> to the devices not on the qemu's.
 > 
-> You may have missed my comments in the previous revision.
-> https://lore.kernel.org/all/af709ffa-eb11-4de5-9ae8-a179cb99750c@intel.com/
+> Test environments:
+>  - dragonboard-410c
+>  - dragonboard-845c
+>  - e850-96
+>  - juno-r2
+>  - rk3399-rock-pi-4b
+>  - x86
 > 
-> Mainly, x86 maintainers prefer imperative tone and references such as
-> "previous commit" can be confusing sometimes.
+> Regression Analysis:
+> - New regression? Yes
+> - Reproducibility? 20% only
+> 
+> Test regression: 6.15.5-rc2 v6.16-rc5 auto login failed Login incorrect
+> 
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> ## log in problem
+> 
+> runner-ns46nmmj-project-40964107-concurrent-0 login: #
+> Password:
+> Login incorrect
+> runner-ns46nmmj-project-40964107-concurrent-0 login:
+> 
+> ## Investigation
+> The following three patches were reverted and the system was re-tested.
+> The previously reported issues are no longer observed after applying the
+> reverts.
+> 
+> serial: imx: Restore original RXTL for console to fix data loss
+>     commit f23c52aafb1675ab1d1f46914556d8e29cbbf7b3 upstream.
+> 
+> serial: core: restore of_node information in sysfs
+>     commit d36f0e9a0002f04f4d6dd9be908d58fe5bd3a279 upstream.
+> 
+> tty: serial: uartlite: register uart driver in init
+>     [ Upstream commit 6bd697b5fc39fd24e2aa418c7b7d14469f550a93 ]
 
-Indeed, missed. My bad.
 
-I've merged last two patches and updated the commit message:
+As stated before, those are 3 totally independent changes.  Any chance
+you can nail this down to just one of the above?
 
-https://git.kernel.org/pub/scm/linux/kernel/git/kas/linux.git/commit/?h=x86/lass
+thanks,
 
-I hope it is still okay to use your Reviewed-by tag.
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+greg k-h
 
