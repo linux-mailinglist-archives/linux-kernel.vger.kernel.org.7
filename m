@@ -1,154 +1,242 @@
-Return-Path: <linux-kernel+bounces-723096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E79AFE2D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:38:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B27AFE2D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24B114E0DEF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:37:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB885189B8A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049E527FB10;
-	Wed,  9 Jul 2025 08:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6D727EC78;
+	Wed,  9 Jul 2025 08:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kvzskZy/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TVN8KMgu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A827B27FD46;
-	Wed,  9 Jul 2025 08:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C307227AC45;
+	Wed,  9 Jul 2025 08:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752050252; cv=none; b=hBtVgq7y0bb6W4c2h0JQQWUsLh9PWmuqzqs9BmjQN82A0Yy5ZyH86xN7thTVVtfTgtB0xdl0dlVEK9ksvTTRBVO941eb71srBty3geRFwZ1XGT6ksv4z96t/itwcGZ8wZbcIuolZ8/a7NETN48x6TVG9R9QjuSax6WgrPzzhonY=
+	t=1752050291; cv=none; b=UhOn4Mzw/tjhwJi3CYIrnwtPR+gRpUF0v4BXdUi5VqaVkxfQTUNTKFJJQPBFfP1SzCVwLsc4DpcVTKaut/+b7pyN0nPvdnTooIfpeIYR2AWg2aIuAKouN9wfCyqY7pv4kP75lLKKy9jLFj59UHnGlguNyZCRyvDXe4yFZ5OM6zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752050252; c=relaxed/simple;
-	bh=LLQjysnRiHtmo3Y3bXAK6ROSPC0ENAZLmFpRcnIZmHE=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=GJXmXr3UehAHTtKIT9gxW4y2roEgNhexKirjQZG8N+A6mIWXZcbC7hqIz4jn20uFp7XvY2qG1BQrqaUfxGFV/MvDN/m4t9Hrf5O0/PNCQSr0FnqIuDiIqMkaStdXRCeBP9wajoGmLsxI9efvVfsiqBstWNHQCFHXy8Spdw0ZqIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kvzskZy/; arc=none smtp.client-ip=198.175.65.13
+	s=arc-20240116; t=1752050291; c=relaxed/simple;
+	bh=pGyYIv6daCmou5xv4fwBlOVNjf+rn4iim5q/PHImEdA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X1gpP+7N1g0s3064k5Ed5Hm/pvfLU3soHyYb2J5U54pHooBSJPQtnmKVf3XUnqFjEahVTXT/bXEj2wUpoGquTxmKEw5z9vk+3Kx2v4YKrHyV36CGycQkpsgItPBffZB/+JT+kmDrPzpETOiiU5RvfTSNtMKwxbNiVXFgfD2/zpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TVN8KMgu; arc=none smtp.client-ip=198.175.65.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752050250; x=1783586250;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=LLQjysnRiHtmo3Y3bXAK6ROSPC0ENAZLmFpRcnIZmHE=;
-  b=kvzskZy/vCO0nQE7oMZLGNCpP7fZ71PPIWufEKNGxc9+ndqAVUq19qDS
-   P6ze6/WfenVCzRtgsPRUHk9S0I/1YcSRMdCYU6nP+0P4xnjcGAXxV4Mch
-   AURpCPL266Gnw+dXA+b/rcqoEDbvvsUU6nk1v6Iu6JmPpS4AFzL+OBzn8
-   jflplwPsiSboB8hHNfZbyk7lp4+PYXM8sTwvLVelL8DBHpn4lIAWu1Fi8
-   9fnHvu8fbhSj3ywkT958483YxT7B3AVkz5e7VF6yGMrLnYgRUNeDwHG3i
-   bPHDz9XKUyfdNL7RVJZcLqz5bu28gSYnKMjMpz5aex2VgFaL+xjFHpeMd
+  t=1752050290; x=1783586290;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=pGyYIv6daCmou5xv4fwBlOVNjf+rn4iim5q/PHImEdA=;
+  b=TVN8KMguJ9wNwA9ThvjHa7VLYM+9PX2JCtI7xbYsnhOEawqaGiDz2fut
+   jW/FiHNQUU3gZOXwxUm9pn1whb3ilKlQKyrEV8Jv/q38KuQwDzRjDH1oE
+   k0j4+dXEDgmzmST16yDNnNjgZExbn4JlM8wBwp8Nq+S6uBYYThTgl3jFp
+   UwI/1/Ikx0R2IAJJGetl3bKJRWn/PopPhOBzAJJc7fJ6qmZwZcU4Vap5d
+   n8Yo5zhUGEsj+ZZITVb2BbemTxI+HnE/3eKi6d/3iCFkALq91TmMAHucL
+   39CDsWO5L3ZfwRVyfkgL5u8BDDqsmlMHmaD7Em789QttWmu7FBvuKF5P0
    A==;
-X-CSE-ConnectionGUID: VuBhhhNsSmKx92VF8XWdPA==
-X-CSE-MsgGUID: 89Rd1eYpTyO5vf8whnSICw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="65365127"
+X-CSE-ConnectionGUID: WJmCh4XBTx+/jgMc08nByA==
+X-CSE-MsgGUID: +1HNKk8CTG++crEpA2EClw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54159888"
 X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="65365127"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 01:37:30 -0700
-X-CSE-ConnectionGUID: NQmxbEnLRDmW3gfDAG789g==
-X-CSE-MsgGUID: mv/DpZ6sQmCrbNkkttsY9g==
+   d="scan'208";a="54159888"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 01:38:05 -0700
+X-CSE-ConnectionGUID: RHa09Dw8SbiQm1diB87Rsw==
+X-CSE-MsgGUID: dYPAEBpbSp+36T6d7Vib8A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="160025570"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.168])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 01:37:28 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 9 Jul 2025 11:37:23 +0300 (EEST)
-To: Nathan Chancellor <nathan@kernel.org>, 
-    Randy Dunlap <rdunlap@infradead.org>
-cc: "David E. Box" <david.e.box@linux.intel.com>, 
-    Hans de Goede <hansg@kernel.org>, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] platform/x86/intel/pmt/discovery: Fix size_t specifiers
- for 32-bit
-In-Reply-To: <20250708-discovery-pmt-fix-32-bit-formats-v1-1-296a5fc9c3d4@kernel.org>
-Message-ID: <71dac82f-1809-413b-de00-fc37cb408a72@linux.intel.com>
-References: <20250708-discovery-pmt-fix-32-bit-formats-v1-1-296a5fc9c3d4@kernel.org>
+   d="scan'208";a="155138224"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 09 Jul 2025 01:38:01 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 8C99A1B7; Wed, 09 Jul 2025 11:37:59 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Shahar Shitrit <shshitrit@nvidia.com>,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Mark Bloch <mbloch@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH net-next v2 1/1] net/mlx5: Don't use "proxy" headers
+Date: Wed,  9 Jul 2025 11:37:41 +0300
+Message-ID: <20250709083757.181265-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
-On Tue, 8 Jul 2025, Nathan Chancellor wrote:
+Update header inclusions to follow IWYU (Include What You Use)
+principle.
 
-> When building i386 allmodconfig, there are two warnings in the newly
-> added discovery code:
-> 
->   drivers/platform/x86/intel/pmt/discovery.c: In function 'pmt_feature_get_feature_table':
->   drivers/platform/x86/intel/pmt/discovery.c:427:35: error: format '%ld' expects argument of type 'long int', but argument 2 has type 'size_t' {aka 'unsigned int'} [-Werror=format=]
->     427 |         if (WARN(size > res_size, "Bad table size %ld > %pa", size, &res_size))
->         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~  ~~~~
->         |                                                               |
->         |                                                               size_t {aka unsigned int}
->   ...
->   drivers/platform/x86/intel/pmt/discovery.c:427:53: note: format string is defined here
->     427 |         if (WARN(size > res_size, "Bad table size %ld > %pa", size, &res_size))
->         |                                                   ~~^
->         |                                                     |
->         |                                                     long int
->         |                                                   %d
-> 
->   drivers/platform/x86/intel/pmt/discovery-kunit.c: In function 'validate_pmt_regions':
->   include/linux/kern_levels.h:5:25: error: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'size_t' {aka 'unsigned int'} [-Werror=format=]
->   ...
->   drivers/platform/x86/intel/pmt/discovery-kunit.c:35:17: note: in expansion of macro 'kunit_info'
->      35 |                 kunit_info(test, "\t\taddr=%p, size=%lu, num_rmids=%u", region->addr, region->size,
->         |                 ^~~~~~~~~~
-> 
-> size_t is 'unsigned long' for 64-bit platforms but 'unsigned int' for
-> 32-bit platforms, so '%ld' is not correct. Use the proper size_t
-> specifier, '%zu', to resolve the warnings on 32-bit platforms while not
-> affecting 64-bit platforms.
-> 
-> Fixes: d9a078809356 ("platform/x86/intel/pmt: Add PMT Discovery driver")
-> Fixes: b9707d46a959 ("platform/x86/intel/pmt: KUNIT test for PMT Enhanced Discovery API")
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> ---
->  drivers/platform/x86/intel/pmt/discovery-kunit.c | 2 +-
->  drivers/platform/x86/intel/pmt/discovery.c       | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/intel/pmt/discovery-kunit.c b/drivers/platform/x86/intel/pmt/discovery-kunit.c
-> index b4493fb96738..f44eb41d58f6 100644
-> --- a/drivers/platform/x86/intel/pmt/discovery-kunit.c
-> +++ b/drivers/platform/x86/intel/pmt/discovery-kunit.c
-> @@ -32,7 +32,7 @@ validate_pmt_regions(struct kunit *test, struct pmt_feature_group *feature_group
->  		kunit_info(test, "\t\tbus=%u, device=%u, function=%u, guid=0x%x,",
->  			   region->plat_info.bus_number, region->plat_info.device_number,
->  			   region->plat_info.function_number, region->guid);
-> -		kunit_info(test, "\t\taddr=%p, size=%lu, num_rmids=%u", region->addr, region->size,
-> +		kunit_info(test, "\t\taddr=%p, size=%zu, num_rmids=%u", region->addr, region->size,
->  			   region->num_rmids);
->  
->  
-> diff --git a/drivers/platform/x86/intel/pmt/discovery.c b/drivers/platform/x86/intel/pmt/discovery.c
-> index e72d43b675b4..1a680a042a98 100644
-> --- a/drivers/platform/x86/intel/pmt/discovery.c
-> +++ b/drivers/platform/x86/intel/pmt/discovery.c
-> @@ -424,7 +424,7 @@ pmt_feature_get_feature_table(struct pmt_features_priv *priv,
->  	size = sizeof(*header) + FEAT_ATTR_SIZE(header->attr_size) +
->  	       PMT_GUID_SIZE(header->num_guids);
->  	res_size = resource_size(&res);
-> -	if (WARN(size > res_size, "Bad table size %ld > %pa", size, &res_size))
-> +	if (WARN(size > res_size, "Bad table size %zu > %pa", size, &res_size))
->  		return -EINVAL;
->  
->  	/* Get the feature attributes, including capability fields */
-> 
-> ---
+Note that kernel.h is discouraged to be included as it's written
+at the top of that file.
 
-Thanks for the patch, I've applied this to the for-next branch. I added 
-a few tags based on the report from Randy.
+While doing that, sort headers alphabetically.
 
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+
+v2: fixed a few compilation issues in some cases (LKP)
+
+ drivers/infiniband/hw/mlx5/mlx5_ib.h          | 17 ++++---
+ .../ethernet/mellanox/mlx5/core/mlx5_core.h   | 12 +++--
+ include/linux/mlx5/driver.h                   | 47 ++++++++++++-------
+ 3 files changed, 48 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/infiniband/hw/mlx5/mlx5_ib.h b/drivers/infiniband/hw/mlx5/mlx5_ib.h
+index a012e24d3afe..3e8c8ddda045 100644
+--- a/drivers/infiniband/hw/mlx5/mlx5_ib.h
++++ b/drivers/infiniband/hw/mlx5/mlx5_ib.h
+@@ -7,20 +7,23 @@
+ #ifndef MLX5_IB_H
+ #define MLX5_IB_H
+ 
+-#include <linux/kernel.h>
++#include <linux/mempool.h>
+ #include <linux/sched.h>
+-#include <rdma/ib_verbs.h>
+-#include <rdma/ib_umem.h>
++#include <linux/types.h>
++
+ #include <rdma/ib_smi.h>
+-#include <linux/mlx5/driver.h>
++#include <rdma/ib_umem.h>
++#include <rdma/ib_user_verbs.h>
++#include <rdma/ib_verbs.h>
++#include <rdma/uverbs_ioctl.h>
++
+ #include <linux/mlx5/cq.h>
++#include <linux/mlx5/driver.h>
+ #include <linux/mlx5/fs.h>
+ #include <linux/mlx5/qp.h>
+-#include <linux/types.h>
+ #include <linux/mlx5/transobj.h>
+-#include <rdma/ib_user_verbs.h>
++
+ #include <rdma/mlx5-abi.h>
+-#include <rdma/uverbs_ioctl.h>
+ #include <rdma/mlx5_user_ioctl_cmds.h>
+ #include <rdma/mlx5_user_ioctl_verbs.h>
+ 
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/mlx5_core.h b/drivers/net/ethernet/mellanox/mlx5/core/mlx5_core.h
+index 2e02bdea8361..0b2dd9eab6a1 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/mlx5_core.h
++++ b/drivers/net/ethernet/mellanox/mlx5/core/mlx5_core.h
+@@ -33,14 +33,18 @@
+ #ifndef __MLX5_CORE_H__
+ #define __MLX5_CORE_H__
+ 
+-#include <linux/types.h>
++#include <linux/firmware.h>
++#include <linux/if_link.h>
+ #include <linux/kernel.h>
+ #include <linux/sched.h>
+-#include <linux/if_link.h>
+-#include <linux/firmware.h>
++#include <linux/types.h>
++
++#include <net/devlink.h>
++
+ #include <linux/mlx5/cq.h>
+-#include <linux/mlx5/fs.h>
+ #include <linux/mlx5/driver.h>
++#include <linux/mlx5/fs.h>
++
+ #include "lib/devcom.h"
+ 
+ extern uint mlx5_core_debug_mask;
+diff --git a/include/linux/mlx5/driver.h b/include/linux/mlx5/driver.h
+index 3475d33c75f4..54b82d55deb6 100644
+--- a/include/linux/mlx5/driver.h
++++ b/include/linux/mlx5/driver.h
+@@ -33,28 +33,40 @@
+ #ifndef MLX5_DRIVER_H
+ #define MLX5_DRIVER_H
+ 
+-#include <linux/kernel.h>
+-#include <linux/completion.h>
+-#include <linux/pci.h>
+-#include <linux/irq.h>
+-#include <linux/spinlock_types.h>
+-#include <linux/semaphore.h>
+-#include <linux/slab.h>
+-#include <linux/vmalloc.h>
+-#include <linux/xarray.h>
+-#include <linux/workqueue.h>
+-#include <linux/mempool.h>
+-#include <linux/interrupt.h>
+-#include <linux/notifier.h>
+-#include <linux/refcount.h>
+ #include <linux/auxiliary_bus.h>
+-#include <linux/mutex.h>
++#include <linux/completion.h>
++#include <linux/idr.h>
++#include <linux/io.h>
++#include <linux/kref.h>
++#include <linux/lockdep_types.h>
++#include <linux/minmax.h>
++#include <linux/mutex_types.h>
++#include <linux/notifier.h>
++#include <linux/pci.h>
++#include <linux/printk.h>
++#include <linux/refcount.h>
++#include <linux/semaphore.h>
++#include <linux/spinlock_types.h>
++#include <linux/timer_types.h>
++#include <linux/types.h>
++#include <linux/workqueue.h>
++#include <linux/xarray.h>
++
++#include <net/devlink.h>
++
++#include <rdma/ib_verbs.h>
++
++#include <asm/page.h>
+ 
+ #include <linux/mlx5/device.h>
+ #include <linux/mlx5/doorbell.h>
+ #include <linux/mlx5/eq.h>
+-#include <linux/timecounter.h>
+-#include <net/devlink.h>
++
++struct dentry;
++struct device;
++struct dma_pool;
++struct net_device;
++struct pci_dev;
+ 
+ #define MLX5_ADEV_NAME "mlx5_core"
+ 
+@@ -243,6 +255,7 @@ struct mlx5_cmd_first {
+ 	__be32		data[4];
+ };
+ 
++struct cmd_msg_cache;
+ struct mlx5_cmd_msg {
+ 	struct list_head		list;
+ 	struct cmd_msg_cache	       *parent;
 -- 
- i.
+2.47.2
 
 
