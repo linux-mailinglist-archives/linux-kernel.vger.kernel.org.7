@@ -1,94 +1,115 @@
-Return-Path: <linux-kernel+bounces-724646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2464AAFF557
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:25:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97554AFF55F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D0795A2FBA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:25:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ECEA3B02C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F502528FD;
-	Wed,  9 Jul 2025 23:24:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F24F26A0E0;
+	Wed,  9 Jul 2025 23:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrQfy/0j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2g1Q+zI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96882E55B;
-	Wed,  9 Jul 2025 23:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5280E55B;
+	Wed,  9 Jul 2025 23:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752103496; cv=none; b=Os0GanJ2POmNbxWYjmdVDE5Lu9ldilAlAj9IUS0BTsRTtbO4jKlR0KuBZWX+LZ9sgURAB2eIQ1zBhNey+4cbLtR31L1M57h6ffDf9F9wuOrJfAc6ablqhwXdAs/OJ84msQh1Wu3o77xHgmZ7X6QLt2FJ+j3IMVPkGUAhUL6zsEI=
+	t=1752103618; cv=none; b=ATnfS/vCSPQtBs6wTdS2WGFNVi8P016N0NTPS8qMHJfedD9lAHARpvUEN1RXV0TRxfdO66gesD2HGSYCvHBxGh6n8Rfdi+pCt16ktC7qe+4cjDfIGUKLpW/cibDNZf59tWNi+1w+I8ujQdesoIDvB2PSvfDPqR9vhcRKrRfO78w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752103496; c=relaxed/simple;
-	bh=66rawdc3Mz7H+A7CTXyf5/QM2sFvP2bbZjXqhGgjzCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LqaDiVBLlb3MrUeJP8Q2yKS94Oh+y+ugr7DnVsqTK8k4+q3Aa4DuFPEhYetdAtJf2cpFowUnWcHoH/aA2MBfXd50pQAYmGkecIci4IQ6qWu36vbVeHrGMxOpY/yKUo45qoK+A8jB+XOW3+gPlH2eq5xmqTKP8OUpqhbGB06MQng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrQfy/0j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAC87C4CEEF;
-	Wed,  9 Jul 2025 23:24:54 +0000 (UTC)
+	s=arc-20240116; t=1752103618; c=relaxed/simple;
+	bh=IPEkOrMLiuYPZNTOAJdwlYClp6f/Px6JZvPwRaELaS0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=ZFtgBOjGWKfV/HlciPzMb9BdRoTH8eoRKtyq6MYxq/wRnwsDFtGCL3yAbS2/wR6VI/3lSvacWvgsAU+Pj2/lws4LZkuADwE6HAbZ71DUo3pcWKNhXCxLOw/FIaC17Zzk0DHl4rGZCymJT4i3pZKYeGjlP3OdvPuDwXaAmPz3aiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2g1Q+zI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FF2DC4CEEF;
+	Wed,  9 Jul 2025 23:26:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752103495;
-	bh=66rawdc3Mz7H+A7CTXyf5/QM2sFvP2bbZjXqhGgjzCs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jrQfy/0j1vDof7KV445cxDl9o0bXazLoAERKFPpUV3jOhOfx1yw6VyebseKopMcTN
-	 ZYyrK40JxgzhnbPSV6Cfm4OUCI2fUm6FaI8+J9bjDSHktWgcJhyYUGkTynSbOoSqS7
-	 tt7z0zdDxistEw3BdRQwHQx84RxRabnwZp6GTNbh+sx1YRykrFQ3tGn1VYFtnupBkR
-	 RZTwScnVJlc5PcASxVCG8w2ObrzH1t+2YjTKC6ZzyUVwtG5A6vmkPu2Z1RwvQhNTrb
-	 u9fSm+yiCxA5lPwJ2L/rNgW54Mto4PPQyH61dsJyFYwbKLt8UdvGlADMDz4xhIJp7C
-	 OCT1fVxfh0YJQ==
-Date: Wed, 9 Jul 2025 23:24:53 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: Naman Jain <namjain@linux.microsoft.com>, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@kernel.org,
-	namjain@microsoft.com, "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>
-Subject: Re: [PATCH] Drivers: hv: Fix the check for HYPERVISOR_CALLBACK_VECTOR
-Message-ID: <aG76RTo4aleKdqbi@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
-References: <20250707084322.1763-1-namjain@linux.microsoft.com>
- <5f3ca2ac-cf06-4c81-89bd-e8685b222aa9@linux.microsoft.com>
+	s=k20201202; t=1752103618;
+	bh=IPEkOrMLiuYPZNTOAJdwlYClp6f/Px6JZvPwRaELaS0=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=b2g1Q+zIZl/+BRBTP5p6IPueQ9i/noMS14SUk6j/a4rs6rm+xarisc4yVYbX3CvTa
+	 b/PTn9nuKDQSjB90es6LVAdiO7XZoLirdDYVav//SYbp6B6rVYx6YiVpRly0bx/1Ee
+	 uM6l57S4G/17nCoGXyASois71bPjvogxbE4JSKheGnN8PAd52n2VT5ytybnE7l54fb
+	 tiwvzwoa1E9R8juCK7Tqd0Bkx1Sm+i1IHwhvSE+Qhp5GDK0s0/50osQAnF3ZCuWVmW
+	 a+4oWt23yWtzwNE6dIGKbL9tdXh9+qNZh3r+Gsxp5ZOBjvZDEeV+iHFPidD2t5BZbv
+	 77sm08E8miyGg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5f3ca2ac-cf06-4c81-89bd-e8685b222aa9@linux.microsoft.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 10 Jul 2025 01:26:53 +0200
+Message-Id: <DB7WW886UVAJ.I58517CYL8G7@kernel.org>
+Subject: Re: [PATCH v12 1/4] mm/vmalloc: allow to set node and align in
+ vrealloc
+Cc: "Vitaly Wool" <vitaly.wool@konsulko.se>, "linux-mm"
+ <linux-mm@kvack.org>, "Andrew Morton" <akpm@linux-foundation.org>, "LKML"
+ <linux-kernel@vger.kernel.org>, "Uladzislau Rezki" <urezki@gmail.com>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Vlastimil Babka" <vbabka@suse.cz>,
+ "rust-for-linux" <rust-for-linux@vger.kernel.org>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ "Kent Overstreet" <kent.overstreet@linux.dev>,
+ <linux-bcachefs@vger.kernel.org>, "bpf" <bpf@vger.kernel.org>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>, "Jann Horn" <jannh@google.com>, "Pedro
+ Falcato" <pfalcato@suse.de>
+To: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250709172345.1031907-1-vitaly.wool@konsulko.se>
+ <20250709172416.1031970-1-vitaly.wool@konsulko.se>
+ <CAADnVQ+bikqCO7D+5_rAtiJXv3F6xn=0_hgGH5CkoTPpdi8j6Q@mail.gmail.com>
+ <14b08e7c-c2e8-435c-a1dd-bd51cfb42060@kernel.org>
+ <CAADnVQ+qCNfm3aucBrkXRXrUjjYeYQb09Oobx+pgOXNDny4s8w@mail.gmail.com>
+In-Reply-To: <CAADnVQ+qCNfm3aucBrkXRXrUjjYeYQb09Oobx+pgOXNDny4s8w@mail.gmail.com>
 
-On Mon, Jul 07, 2025 at 10:58:03AM -0700, Roman Kisel wrote:
-> 
-> 
-> On 7/7/2025 1:43 AM, Naman Jain wrote:
-> > __is_defined(HYPERVISOR_CALLBACK_VECTOR) would return 1, only if
-> > HYPERVISOR_CALLBACK_VECTOR macro is defined as 1. However its value is
-> > 0xf3 and this leads to __is_defined() returning 0. The expectation
-> > was to just check whether this MACRO is defined or not and get 1 if
-> > it's defined. Replace __is_defined with #ifdef blocks instead to
-> > fix it.
-> > 
-> > Fixes: 1dc5df133b98 ("Drivers: hv: vmbus: Get the IRQ number from DeviceTree")
-> > Cc: stable@kernel.org
-> > Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
-> > ---
-> 
-> [...]
-> 
-> Appreciate fixing that! From what I learned from you, x86 was broken.
-> Very likely I did a smoke test there only while focusing on arm64. Sorry
-> about that, thanks again!!
-> 
-> LGTM.
-> Reviewed-by: Roman Kisel <romank@linux.microsoft.com
-> 
+On Thu Jul 10, 2025 at 1:14 AM CEST, Alexei Starovoitov wrote:
+> On Wed, Jul 9, 2025 at 3:57=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
+>>
+>> On 7/10/25 12:53 AM, Alexei Starovoitov wrote:
+>> > On Wed, Jul 9, 2025 at 10:25=E2=80=AFAM Vitaly Wool <vitaly.wool@konsu=
+lko.se> wrote:
+>> >>
+>> >>
+>> >> -void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+>> >> +void *vrealloc_node_align_noprof(const void *p, size_t size, unsigne=
+d long align,
+>> >> +                                gfp_t flags, int node)
+>> >>   {
+>> >
+>> > imo this is a silly pattern to rename functions because they
+>> > got new arguments.
+>> > The names of the args are clear enough "align" and "node".
+>> > I see no point in adding the same suffixes to a function name.
+>> > In the future this function will receive another argument and
+>> > the function would be renamed again?!
+>> > "_noprof" suffix makes sense, since it's there for alloc_hooks,
+>> > but "_node_align_" is unnecessary.
+>>
+>> Do you have an alternative proposal given that we also have vrealloc() a=
+nd
+>> vrealloc_node()?
+>
+> vrealloc_node()?! There is no such thing in the tree.
+> There are various k[zm]alloc_node() which are artifacts of the past
+> when NUMA just appeared and people cared about CONFIG_NUMA vs not.
+> Nowadays NUMA is everywhere and any new code must support NUMA
+> from the start. Hence no point in carrying old baggage and obsolete names=
+.
 
-Applied to hyperv-fixes. Thanks!
+This patch adds it; do you suggest to redefine vrealloc_noprof() to take al=
+ign
+and nid? If we don't mind being inconsistent with krealloc_noprof() and
+kvrealloc_noprof() that's fine I guess.
 
+FWIW, I prefer consistency.
 
