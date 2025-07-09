@@ -1,148 +1,116 @@
-Return-Path: <linux-kernel+bounces-722768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 191F2AFDE9D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:57:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26DDBAFDEA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66A8E168F7C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:57:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E29B584D03
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF50423ABB3;
-	Wed,  9 Jul 2025 03:57:44 +0000 (UTC)
-Received: from n169-113.mail.139.com (n169-113.mail.139.com [120.232.169.113])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C2123ABBF;
+	Wed,  9 Jul 2025 03:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="t40vXlIp"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F274D3208;
-	Wed,  9 Jul 2025 03:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=120.232.169.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E453208
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 03:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752033464; cv=none; b=d+Y2OLTrdtSQvKkWtTtNVTHG2wz/3xmwE6B4VGF9UdycX0k0I+61izOdJqi2k2T8X7jqk3ELq/NoM1PGwkDSF4Vn661o9dXPmHYNq9GXFih3DoVnK1OdThtOUXgJ1E1xThrWVP8K96i2rf2NsZGNmIgsD8ymNmTbUK76vWTDD0k=
+	t=1752033509; cv=none; b=Nhux18THg7NwDp0nl1s2KTfqmYINKY6xn8xGnhKNtBRy5vPA9SJG8KezGjNMccKr5if1uNwWRWfdCKObotMyHbq4L6WvPWVkRIJtpVzWnVvt2nzCAgYMPtsTk89mhI6fIXWEKdeR0ArSOfbUb+LQ7+xRMGwhXnHHtCROILsM/wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752033464; c=relaxed/simple;
-	bh=lQwQf+B5aXKPxLLXxnKWcS15+Ho9bEWwDpexYnBX73s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MMXw/Gnb6SVFyP6DLpSLAzS0+mtrF9cd+8JZFxuhLg8ZBrFPxPcLFSAX3XtoSCocNNUCZXLwalNS4sypKvyDhiiVNBiJUQZHGmrfWDDS/2EXeEhNrNz4jA6bXDXjzg7d6OMSvvtVWJLwZqewSfaIjLs389Y/pa1zlgjd/N/QXmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com; spf=pass smtp.mailfrom=139.com; arc=none smtp.client-ip=120.232.169.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=139.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM:                                                                                        
-X-RM-SPAM-FLAG:00000000
-Received:from yoga-Lenovo-Slim-Pro-7-14APH8.lenovo.com (unknown[106.38.209.7])
-	by rmsmtp-lg-appmail-32-12046 (RichMail) with SMTP id 2f0e686de8a539c-ca1a9;
-	Wed, 09 Jul 2025 11:57:32 +0800 (CST)
-X-RM-TRANSID:2f0e686de8a539c-ca1a9
-From: Jackie Dong <xy-jackie@139.com>
-To: hansg@kernel.org,
-	ilpo.jarvinen@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dongeg1@lenovo.com,
-	Jackie Dong <xy-jackie@139.com>
-Subject: [PATCH v4] lenovo-wmi-hotkey: Fixed a kernel bug failed with error -5
-Date: Wed,  9 Jul 2025 11:57:16 +0800
-Message-ID: <20250709035716.36267-1-xy-jackie@139.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1752033509; c=relaxed/simple;
+	bh=PIQpyc+uJ3idaxC3xRUFtlN03Wy0O3PPL9yw5WLZ/1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J0E6cL0RyYIj+zJVgn2TWKCO96EDWXgsZ1DnaSRNps812Jfgv+ANCQyp3JZj20AWi+3SYCdj1yUseF9pD3hLG2NWGG/aiJ2VH5pY/mEuCcKyF3zCfZ3tCG7Ha8hePuzCeJV7G7sXfurEWm5CLZ+TQK6mtdoZ2OU4206pVDRMfxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=t40vXlIp; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1752033498; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=F+TCm5yMLaR1zaqgTfgGSGazGjr5Lt2RVsmEPGa43Bk=;
+	b=t40vXlIp2EXXaWWf5zhRfbTZ+VyjenLhQhddswQl6szukkvPtSVEV+FcmiiY1XRhwTCfIvf2LoQ7zSwBwkU/j5aH471ET7WatFerXgQtj3Lh4X+wR9yaP2SX6jfpwC61khIROWmwwB3m11SJCu5qWbeyrL1eyKw10FRH/AEFx9I=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WiWD7Ko_1752033497 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 09 Jul 2025 11:58:17 +0800
+Date: Wed, 9 Jul 2025 11:58:17 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 3/5] panic: add 'panic_sys_info' sysctl to take human
+ readable string parameter
+Message-ID: <aG3o2RFHc5iXnJef@U-2FWC9VHC-2323.local>
+References: <ndckw7vr5zxiz2olstjaxxk4a6qgrnbo65rex4242u3swnvvhm@whxmilgtgoyd>
+ <aG3hjKg81xrDHjZc@U-2FWC9VHC-2323.local>
+ <vksfx7stglvc7dvdsbu6b6eflmacg5eexnmzu47tdkak4uwscm@rm2ilr5ntriy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <vksfx7stglvc7dvdsbu6b6eflmacg5eexnmzu47tdkak4uwscm@rm2ilr5ntriy>
 
-Not all of Lenovo non-ThinkPad devices support both mic mute LED (on F4)
-and audio mute LED (on F1). Some of them only support one mute LED, some
-of them don't have any mute LED. Add a decision to judge this device
-support mute LED or not. Without this decision, not support both of mic
-mute LED and audio mute LED Lenovo non-ThinkPad brand devices (including
-Ideapad/Yoga/Xiaoxin/Gaming/ThinkBook, etc.) will report a failed message
-with error -5.
+On Wed, Jul 09, 2025 at 12:35:40PM +0900, Sergey Senozhatsky wrote:
+[...]
+> > 
+> > > Moving sys_info_avail[] inside sysctl_sys_info_handler() seems to help.
+> > 
+> > Sorry for the trouble. I assume this is clang?  I locally used gcc v10.2.1
+> 
+> No worries.  Yes, clang.
+> 
+> > Nathan Chancellor has helped to post a fix here https://lore.kernel.org/lkml/20250708-fix-clang-sys_info_avail-warning-v1-1-60d239eacd64@kernel.org/
+> 
+> Great.
+> Would __maybe_unused be better than something simpler:
 
-Signed-off-by: Jackie Dong <xy-jackie@139.com>
-Suggested-by: Hans de Goede <hansg@kernel.org>
+I'm fine with both solutions :).
 
----
-Changes in v4:
- - Simplify the logic code as (!obj || obj->type != ACPI_TYPE_INTEGER).
- - Drop "now" of the warning messages.
+One thought is, as Petr also reminded, that user may extend the needed
+sys info in future, and we added some explicit note in sys_info.c: 
 
-Changes in v3:
- - Reverse orignal logic  (obj && obj->type == ACPI_TYPE_INTEGER)
-   and add new decision for (led_version == 0).
- - Optimize the descriptions based on reviewer comments.
+	/*
+	 * When 'si_names' gets updated,  please make sure the 'sys_info_avail'
+	 * below is updated accordingly.
+	 */
+	static const struct sys_info_name  si_names[] = {
+		{ SYS_INFO_TASKS,		"tasks" },
+		{ SYS_INFO_MEM,			"mem" },
+		{ SYS_INFO_TIMERS,		"timers" },
+		
+then standing-alone sys_info_avail[] may make it more obvious.  
 
-Changes in v2:
- - Add warning message and then return 0 if the device support mute LED
-   abnormaly, based on Hans suggestion and Armin previous patch.
+Thanks,
+Feng
 
----
- .../x86/lenovo-wmi-hotkey-utilities.c         | 30 +++++++++++++------
- 1 file changed, 21 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-index 89153afd7015..7b9bad1978ff 100644
---- a/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-+++ b/drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
-@@ -122,26 +122,35 @@ static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type led_type, struct
- 		return -EIO;
- 
- 	union acpi_object *obj __free(kfree) = output.pointer;
--	if (obj && obj->type == ACPI_TYPE_INTEGER)
--		led_version = obj->integer.value;
--	else
-+	if (!obj || obj->type != ACPI_TYPE_INTEGER)
- 		return -EIO;
- 
--	wpriv->cdev[led_type].max_brightness = LED_ON;
--	wpriv->cdev[led_type].flags = LED_CORE_SUSPENDRESUME;
-+	led_version = obj->integer.value;
-+
-+	/*
-+	 * Output parameters define: 0 means mute LED is not supported, Non-zero means
-+	 * mute LED can be supported.
-+	 */
-+	if (led_version == 0)
-+		return 0;
-+
- 
- 	switch (led_type) {
- 	case MIC_MUTE:
--		if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER)
--			return -EIO;
-+		if (led_version != WMI_LUD_SUPPORT_MICMUTE_LED_VER) {
-+			pr_warn("The MIC_MUTE LED of this device isn't supported.\n");
-+			return 0;
-+		}
- 
- 		wpriv->cdev[led_type].name = "platform::micmute";
- 		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_micmute_led_set;
- 		wpriv->cdev[led_type].default_trigger = "audio-micmute";
- 		break;
- 	case AUDIO_MUTE:
--		if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER)
--			return -EIO;
-+		if (led_version != WMI_LUD_SUPPORT_AUDIOMUTE_LED_VER) {
-+			pr_warn("The AUDIO_MUTE LED of this device isn't supported.\n");
-+			return 0;
-+		}
- 
- 		wpriv->cdev[led_type].name = "platform::mute";
- 		wpriv->cdev[led_type].brightness_set_blocking = &lsh_wmi_audiomute_led_set;
-@@ -152,6 +161,9 @@ static int lenovo_super_hotkey_wmi_led_init(enum mute_led_type led_type, struct
- 		return -EINVAL;
- 	}
- 
-+	wpriv->cdev[led_type].max_brightness = LED_ON;
-+	wpriv->cdev[led_type].flags = LED_CORE_SUSPENDRESUME;
-+
- 	err = devm_led_classdev_register(dev, &wpriv->cdev[led_type]);
- 	if (err < 0) {
- 		dev_err(dev, "Could not register mute LED %d : %d\n", led_type, err);
--- 
-2.43.0
-
-
+> ---
+> 
+> diff --git a/lib/sys_info.c b/lib/sys_info.c
+> index 46d6f4f1ad2a..3bd789fe29d2 100644
+> --- a/lib/sys_info.c
+> +++ b/lib/sys_info.c
+> @@ -48,13 +48,11 @@ unsigned long sys_info_parse_param(char *str)
+>  }
+>  
+>  #ifdef CONFIG_SYSCTL
+> -
+> -static const char sys_info_avail[] = "tasks,mem,timers,locks,ftrace,all_bt,blocked_tasks";
+> -
+>  int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
+>  					  void *buffer, size_t *lenp,
+>  					  loff_t *ppos)
+>  {
+> +	static const char sys_info_avail[] = "tasks,mem,timers,locks,ftrace,all_bt,blocked_tasks";
+>  	char names[sizeof(sys_info_avail) + 1];
+>  	struct ctl_table table;
+>  	unsigned long *si_bits_global;
 
