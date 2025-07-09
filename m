@@ -1,88 +1,77 @@
-Return-Path: <linux-kernel+bounces-724615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24F62AFF4E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:45:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EAC8AFF4EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AE9817B8B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:45:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93E843AA0F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABAAB2475CD;
-	Wed,  9 Jul 2025 22:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDAB212B2B;
+	Wed,  9 Jul 2025 22:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bq4qg5VQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gq9eMn9Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152D9238C25
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 22:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7598B72610;
+	Wed,  9 Jul 2025 22:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752101097; cv=none; b=nh+zHgqwuUt30jNvbV0GtHrTQ/KcGZZZz/wqcWm23ARGUWUjHFsTwUAnbTremC7mfrJl+6rXVCWGmB5YcH5TbeDT/+MSAGsvv/FCLjqW99rDJu0FngHisxqxXINP91MDgmFVYNolcpsN1AWyoxpOhJM8IDGHeD/8AatGKGP+blo=
+	t=1752101155; cv=none; b=RxnWFMVBWQ5QaSjKgHALWNrz43mLS7UzwL4oTe38IIC0GAZ+qbHAgYl5pZ8iRpJpBcYOnNSGQ9r/g8D4MwrpYkunfI684/cb8Otx5/9SHopmjjVyYghp7x9HeinwyXG/qn88X088+NABgR+1Z3WN/nwiKEvm4vil3ej0aysteIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752101097; c=relaxed/simple;
-	bh=c2dRUcKWJ1mY5i3urKzMQzGE3xGUFXMxmS1tPCGB3Co=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=K8q1O3sbluNCg23dy/EdeBbDt/bUFGTIotGhzELpRTcCKyqj8XxoKfBdhy5hDdFKCjuiiXswd0i+e2+TljBeYVgQOOI6P4upn1SL/LPFvOxOaJa6dl8dPbBKB7ymnedXLYQnSUxN/C6UEyikUIq/XQUGjJEitdsvOIO4GWWx2dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bq4qg5VQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E71FC4CEEF;
-	Wed,  9 Jul 2025 22:44:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752101096;
-	bh=c2dRUcKWJ1mY5i3urKzMQzGE3xGUFXMxmS1tPCGB3Co=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bq4qg5VQVCh5xgUMmCJCd5e3HeRPWKP10H+U8+2qMW/vA8MCygZl54TFHX2eaFXXt
-	 Mweu9ZQEzYCCK9ucpeUdGcECo2Jcnfs8FNDhZQIdONMSC0pQXWuYPVkGLxj7nhuA6K
-	 mlO2PZP4M3XTg8xKQtfSzkbRcNpQ7ZInwHpzYXmc=
-Date: Wed, 9 Jul 2025 15:44:54 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Kuniyuki Iwashima <kuniyu@amazon.com>,
- Mateusz Guzik <mjguzik@gmail.com>, Petr Mladek <pmladek@suse.com>, Steven
- Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>,
- Sergey Senozhatsky <senozhatsky@chromium.org>, Jon Pan-Doh
- <pandoh@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Karolina Stolarek
- <karolina.stolarek@oracle.com>
-Subject: Re: [PATCH v6 2/3] lib: Make the ratelimit test more reliable
-Message-Id: <20250709154454.fb140093fa88f4d63fa0d4c5@linux-foundation.org>
-In-Reply-To: <20250709180335.1716384-2-paulmck@kernel.org>
-References: <d1007957-97ff-4f6f-92ac-606f68c65dfa@paulmck-laptop>
-	<20250709180335.1716384-2-paulmck@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752101155; c=relaxed/simple;
+	bh=GrAeSpsc9kqclAfShSt30hKBE8+ntB6SvXTTc6+lDYQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FLNrJtCzO7Ko487dpKX5XDDE/Ua/++/cfoStj/7Qv2zOnHzcU1eawcncygUCo33SUfDrQUfKO1+abirtSqSdkzOC5zEhjtSLMQhhyOJeO2mJCNd6nbncVkCfwyJwfYaaWpJlpGxtwAJt28uxoEJYv2D5BrSBP3KYUj6oWa+9VpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gq9eMn9Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3059C4CEEF;
+	Wed,  9 Jul 2025 22:45:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752101155;
+	bh=GrAeSpsc9kqclAfShSt30hKBE8+ntB6SvXTTc6+lDYQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gq9eMn9Z3kXG3KGcUPp3wCj5rpPRBjcFcngOKHc1l4IaD1S0vPrkvS+1ClsMhKR6V
+	 aoRg5vw0ULQxm9VPibb7qh/AgRSNePryFxmtJnHMXHfkpc1/hVts1MBTSonFGYjOOK
+	 7xb+TtzrUI2qyIt0Cj/qY+9RjAj52ygYjtCZWyq5M+BsUhjXvJ4sB+7g2XAoalyiXP
+	 D2Ng+DyOlAHduPaNpSN/etczu6L/sbj5SSJCuBvqi494DrLdi5+YAm2hDVDXgE5x3l
+	 T2+3oMfVSpcBoI+xHay/jDrsSWwVXfKTlK8d/8GTWG5GgfbvtIGcujehzK5G3LGeZD
+	 3hzh2pXnMEHUQ==
+Date: Wed, 9 Jul 2025 22:45:53 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Shradha Gupta <shradhagupta@linux.microsoft.com>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Naman Jain <namjain@linux.microsoft.com>,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Shradha Gupta <shradhagupta@microsoft.com>
+Subject: Re: [PATCH] hv/hv_kvp_daemon: Prevent similar logs in
+ kvp_key_add_or_modify()
+Message-ID: <aG7xIUYTMvq9McCv@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+References: <1750310761-13302-1-git-send-email-shradhagupta@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1750310761-13302-1-git-send-email-shradhagupta@linux.microsoft.com>
 
-On Wed,  9 Jul 2025 11:03:34 -0700 "Paul E. McKenney" <paulmck@kernel.org> wrote:
-
-> The selftest fails most of the times when running in qemu with
-> a kernel configured with CONFIG_HZ = 250:
+On Wed, Jun 18, 2025 at 10:26:01PM -0700, Shradha Gupta wrote:
+> When hv_kvp_daemon is started in debug mode, in function
+> kvp_key_add_or_modify() too many similar logs are logged for
+> key/value being too long.
 > 
-> >  test_ratelimit_smoke: 1 callbacks suppressed
-> >  # test_ratelimit_smoke: ASSERTION FAILED at lib/tests/test_ratelimit.c:28
-> >                    Expected ___ratelimit(&testrl, "test_ratelimit_smoke") == (false), but
-> >                        ___ratelimit(&testrl, "test_ratelimit_smoke") == 1 (0x1)
-> >                        (false) == 0 (0x0)
+> Restructured the logs to prevent this extra logging
 > 
-> Try to make the test slightly more reliable by calling the problematic
-> ratelimit in the middle of the interval.
-> 
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> ---
->  lib/tests/test_ratelimit.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+> Suggested-by: Olaf Hering <olaf@aepfle.de>
+> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
 
-Patch 1 adds test_ratelimit.c and patch 2 fixes it.
-
-Unconventional (and undesirable IMO).  Would the world end if I folded
-2 into 1?
+Applied to hyperv-next.
 
