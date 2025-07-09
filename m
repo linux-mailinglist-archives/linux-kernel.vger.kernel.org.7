@@ -1,142 +1,88 @@
-Return-Path: <linux-kernel+bounces-724503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA821AFF3BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:14:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96305AFF3BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:14:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E05F01C83A0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:14:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBB30541A01
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C441723D2B6;
-	Wed,  9 Jul 2025 21:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F189723C4E7;
+	Wed,  9 Jul 2025 21:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e/Bx1v2X"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LCZPeXzK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33E2235BE8;
-	Wed,  9 Jul 2025 21:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C95913B797;
+	Wed,  9 Jul 2025 21:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752095661; cv=none; b=kGCWJTmk/cR74GS3bk9oI4uQclfXUcf9fOipbgiAisChhOuWPejMy0Ccs0rpuc3JEm3DlKGoRb/45DYKqR2uTr1XUwDGvfV7yDTboBtm2/Z1kNWnMLcP7ozALqDi2bVQz/ukEc8+sTFM/9zoQtLrrUOne988abPsO4EFyPn5DmM=
+	t=1752095642; cv=none; b=S0l1j0jPsAwpAMlPJv7qA4x1F5XjEnHlhJb69zAZOIfxE4GK1zIFfJPd7trguS7AHBO6H1q859+oxP2x5N+myQAYKMpI5+9SmLReR8MlEZDs3TdhE60kCfhQgpmjchhIjS8kuLSFQLK7Hlz/jep4iIIES38IjNAkFeIlQrohUs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752095661; c=relaxed/simple;
-	bh=9KE00Vwfvn7smHgPqWuuB+mbXhp6z0jzNeYVhG7Ib0U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aloFTlTZ3JEQR31s/IGH88wWGrVTIZeK9tgEAtGfWVBmhDYpy1lMsNCXoQoX5VzbSXOj6bXffaGBsO/RWbCwENLQEtSMEhcGhzsLOeRVG+AhnwGwWp3/hE3JoJzAQO7BGMzTRn8mEzafS12Lu6RNDallr5fTu3YOQZwj+2CirSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e/Bx1v2X; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 569Coixn030114;
-	Wed, 9 Jul 2025 21:14:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nPCEWV4vb9msc1fgEgWqYaHAbD5KVC03zhO82vm6oK8=; b=e/Bx1v2X8pPuOnn1
-	NNAYvSR6Gvuj8mtq+vZyfg4SH86zuD7TXIE2WQJkN9E7JndA4cQ+DqykiBXlX8aw
-	Ur1TjImMMd7ogJctYoIFkBiS4W+i0FKDie29UV5MM8j7pvDZaQx6RdEofki81xRE
-	QVdO9En2auEEV9gLXkm9fj/AwBDDIE9gsjPrNErBLB/hp5Ranng60Y5bt/fyGMCl
-	zWx/QCo2iMaJhfbo+Xzr/kKTP/9uFdeopBr4+LVXlKakW+Czu4vf9hUdyTI+o8kx
-	TlGuHEcmwk3/Aa4MfK4MDBF7zPE+UErHsH7/XgUGt/dgZ/M5ZMQd31JrxdvYa5Rv
-	pUB5Ww==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47smcg2fvg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Jul 2025 21:14:08 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 569LE72t003021
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 9 Jul 2025 21:14:07 GMT
-Received: from [10.216.6.66] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 9 Jul
- 2025 14:14:04 -0700
-Message-ID: <f4654034-a94b-473b-907a-2687acf11af4@quicinc.com>
-Date: Thu, 10 Jul 2025 02:43:47 +0530
+	s=arc-20240116; t=1752095642; c=relaxed/simple;
+	bh=CYo/mZw03O+EDuqFAlXNxX6aL4BphLCE1nJ1rHmAPhI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=HoC7yjgUCrrtc3Pa5vXjWXzYwbDVAVTi7TQYAQv4UNF5/rd2aE1YA5dQBRzEfUvytGWrWQHcJMp2GTuak6LaQawus4iC11jg4M/lnuVbHtxfrB5Fgwg+DPerYE6+oaDZ+4R4gbwaITk5N6nzvii5sbkzUPYZ30heqWvO0ayv3KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LCZPeXzK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E12EC4CEEF;
+	Wed,  9 Jul 2025 21:14:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1752095641;
+	bh=CYo/mZw03O+EDuqFAlXNxX6aL4BphLCE1nJ1rHmAPhI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LCZPeXzKGK9jv8LeXI7ebkvP22Xdz4m4XGL81JBozlZA5utTRHR4ZiWKlWSSKGc/a
+	 YDmELrt7d/4U6Px8e535iiRiC2PAtZFsoZkljkI9dGmvXkyIH5//FgXcujk2OHWzsO
+	 F7/f/mnScw2LLWu57V5g6hpPNSQ5wg+6F9pN09nw=
+Date: Wed, 9 Jul 2025 14:13:59 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Andrey Ryabinin <ryabinin.a.a@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+ Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, Christoph
+ Lameter <cl@gentwo.org>, "H . Peter Anvin" <hpa@zytor.com>, Alexander
+ Potapenko <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>,
+ Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino
+ <vincenzo.frascino@arm.com>, Juergen Gross <jgross@suse.com>, Kevin Brodsky
+ <kevin.brodsky@arm.com>, Muchun Song <muchun.song@linux.dev>, Oscar
+ Salvador <osalvador@suse.de>, Joao Martins <joao.m.martins@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jane Chu
+ <jane.chu@oracle.com>, Alistair Popple <apopple@nvidia.com>, Mike Rapoport
+ <rppt@kernel.org>, Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
+ "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-mm@kvack.org, stable@vger.kernel.org
+Subject: Re: [RFC V1 PATCH mm-hotfixes 2/3] x86/mm: define
+ p*d_populate_kernel() and top-level page table sync
+Message-Id: <20250709141359.dc03e32a2319d85a25faaf32@linux-foundation.org>
+In-Reply-To: <20250709131657.5660-3-harry.yoo@oracle.com>
+References: <20250709131657.5660-1-harry.yoo@oracle.com>
+	<20250709131657.5660-3-harry.yoo@oracle.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 3/3] ufs: ufs-qcom: Enable QUnipro Internal Clock
- Gating
-To: Avri Altman <Avri.Altman@sandisk.com>,
-        "mani@kernel.org"
-	<mani@kernel.org>,
-        "James.Bottomley@HansenPartnership.com"
-	<James.Bottomley@HansenPartnership.com>,
-        "martin.petersen@oracle.com"
-	<martin.petersen@oracle.com>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "avri.altman@wdc.com" <avri.altman@wdc.com>,
-        "ebiggers@google.com"
-	<ebiggers@google.com>,
-        "neil.armstrong@linaro.org"
-	<neil.armstrong@linaro.org>,
-        "konrad.dybcio@oss.qualcomm.com"
-	<konrad.dybcio@oss.qualcomm.com>
-CC: "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-References: <20250708212534.20910-1-quic_nitirawa@quicinc.com>
- <20250708212534.20910-4-quic_nitirawa@quicinc.com>
- <PH7PR16MB6196F9B8C676FA18AAC10F3FE549A@PH7PR16MB6196.namprd16.prod.outlook.com>
-Content-Language: en-US
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-In-Reply-To: <PH7PR16MB6196F9B8C676FA18AAC10F3FE549A@PH7PR16MB6196.namprd16.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=P7o6hjAu c=1 sm=1 tr=0 ts=686edba0 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
- a=f1mw9qcMm9sB_ICStggA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: JLy08inFUPqbpea98XrFHe8GXDGAlgja
-X-Proofpoint-GUID: JLy08inFUPqbpea98XrFHe8GXDGAlgja
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDE5MCBTYWx0ZWRfX3CWdF+olAPcS
- esI5IR+C/ZhSJFZomrueeqfWaCyxQkuiiRpsbW973hxHakpr4GTTkOtobXFGnqOlsT0zB1uPKjz
- PGz00Tup3C65hkfJNqGE7XNAhJOl5oaQrd9vJliWDG4XrcaqGBjgpkKQ7doS9Cnq7PjTCk77FgY
- LlSUBP0lIWO0hVX6UWWD3B8aZCualBU/9pV+ZZ56iXF5e2MUoXs0hce73f8PdaInp+UKksEbFdB
- 6VsIr/Y3LPeqRHeeY9+qEZjS1d9x2klet0lC9s1/o5GUBteQqD0jPeLC1fy8hkY4GgCIdSxwkfx
- GFA3hZA/R08WPbn7vk0+anMSeunlcmd7XjaSK5ifEYOXjgrxe5y6ZUGwH3RIywUHY65eCZXrPgl
- KdVYmdsZ2HA+HZV4q/9PcM9SQ7oFHLwA83myLvvruKoB+eFLzjhMuUQslgVcDANpPbUR4wKI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-09_05,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 phishscore=0 bulkscore=0 mlxscore=0
- malwarescore=0 spamscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015
- adultscore=0 mlxlogscore=757 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507090190
 
+On Wed,  9 Jul 2025 22:16:56 +0900 Harry Yoo <harry.yoo@oracle.com> wrote:
 
+> Fixes: 4917f55b4ef9 ("mm/sparse-vmemmap: improve memory savings for compound devmaps")
+> Fixes: faf1c0008a33 ("x86/vmemmap: optimize for consecutive sections in partial populated PMDs")
 
-On 7/9/2025 10:46 AM, Avri Altman wrote:
->> Enable internal clock gating for QUnipro by setting the following attributes to 1
->> during host controller initialization:
->> - DL_VS_CLK_CFG
->> - PA_VS_CLK_CFG_REG
->> - DME_VS_CORE_CLK_CTRL.DME_HW_CGC_EN
->>
->> This change is necessary to support the internal clock gating mechanism in
->> Qualcomm UFS host controller. This is power saving feature and hence driver
->> can continue to function correctly despite any error in enabling these feature.
-> Does this change offloads clock gating?
-> i.e. no need to set UFSHCD_CAP_CLK_GATING ?
-No , this change does not offload sw based UFS clock gating. Host 
-controller has its own internal clock gating mechanism.
-> 
-> Thanks,
-> Avri
+Fortunately both of these appeared in 6.9-rc7, which minimizes the
+problem with having more than one Fixes:.
 
+But still, the Fixes: is a pointer telling -stable maintainers where in
+the kernel history we want them to insert the patch(es).  Giving them
+multiple insertions points is confusing!  Can we narrow this down
+to a single Fixes:?
 
