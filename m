@@ -1,145 +1,137 @@
-Return-Path: <linux-kernel+bounces-722912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95C8CAFE099
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:54:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8382EAFE09A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0706166526
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:54:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D7393A5314
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622B026C397;
-	Wed,  9 Jul 2025 06:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9EA26B748;
+	Wed,  9 Jul 2025 06:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eqrLfrxI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b="DfpC7Vf9"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08D61B4153;
-	Wed,  9 Jul 2025 06:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8CF26B2DA
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 06:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752044070; cv=none; b=AjCvZAMUUGHhrA4oJZ06nY7P+CXTdAq1QqUU9jw6+mrqKhMuB7mrpEeZRuiu5k7QWilhLSrM/vFnhMtP1oPwadc9Htxbs4flkTv6AF5kz0R/MN3Kdsv/UQYjU00u9zZGtFFNLUtgQ0rhwBJGCv3naxoWmCyvs4BPiW0VmYv5L8I=
+	t=1752044115; cv=none; b=pmcHZFYlI6JMqn7H5k980baE4UfzA51vWZFdHvhshflC85vRTXD7CIt7cFrosrFEjw4ZT4p4DwQ4Bh3BwCUJQAEIZ5LvwKxyzEC2OMjRGEVLNskRZ0fC0eiW312JkKzJdhGoN58t7ZZjn/CLaGLaFdNhew4Hz16wuPXzlUDxqFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752044070; c=relaxed/simple;
-	bh=jSkYtAbBZp35/z4jcL3yY2+kEXDrxQhSiS5zpSyzP+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Te69uJES/QI578g62g87Zy+2bQVu3/aMJbZpq/WuKt+tOQnAJyzAOPY0I/QjEqgNFl786pSHLUpwBJ2Kv3bWPXvaIl+15uoByrvGboRkwEq7hfPE2mtF06+hnVZQGb/7usvrej3GIjMrF8qJAZvw7HESLuV12Ca2a0Jionf1SVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eqrLfrxI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BC80C4CEF0;
-	Wed,  9 Jul 2025 06:54:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752044070;
-	bh=jSkYtAbBZp35/z4jcL3yY2+kEXDrxQhSiS5zpSyzP+Y=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=eqrLfrxIJhdGA2IsXhWrEJpqblQOzBS0DIG7bpfPkEFjfbv2ZgTlcmnuVLkSSvatt
-	 9cCXVUGd1akJACFXvD9uYvlvVgkGhbfjLlJg2bUoIlxyKPC6nFXuQN0TKPnLepa3LM
-	 bm2xvxXGLHIrrpv3KZGn8IntV5OwCzcZ6ssW92n+u7KEYxn93C3NqEfBEKtt8QKv0w
-	 eNAMvvSjJhkIk6O4JGBlu8hzxDqnNcE0XEqvitet6a5CR9Ax+OyoJYmFejqJdk7Cf+
-	 RlEfhyR7lN0mIcDlTTfj+dETee/zO7azwR7bbkw2XmxcsukunnEs9/EkSE2HBgz7hP
-	 +Zcb59XohjuSQ==
-Message-ID: <b752c340-bbb5-479f-bc2c-a9e8541509c3@kernel.org>
-Date: Wed, 9 Jul 2025 08:54:24 +0200
+	s=arc-20240116; t=1752044115; c=relaxed/simple;
+	bh=Llz36kufN52xm0i4d8RFpEM5cFRnEKZ/vBmybKKThBw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Un5foFa68YAVkKPIiJo7LPv7fckiy+ssCzUx+sgnlyn77WcnXd0fUe/C3nYGKvckv7E1QK5OoSC5AKuNkwVPK4bBCwSSxQ6Sc/ebY6Aw5wd3aywZEZ4hBXjgGSSLSIPMvipaOe6F3z+66CcrJo8t1hPakm4BuiY+eFHjhKZsHII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b=DfpC7Vf9; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3121aed2435so5012209a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 23:55:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=futuring-girl.com; s=google; t=1752044113; x=1752648913; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yxSHhqCIu08V3Qwag9o38Kp5WRa0opkmxc/P0igOUiI=;
+        b=DfpC7Vf9jJptE0mcyvdR89c40XpAb25s4OioClGlgdthuWEy+i5NJjX4hI1KhUcUox
+         NrOjO02EzWuATNFdxUSK0Am73fKkXxmzzMG9F7kzrMPm6c47FDyvWc+BfpVkpQ3/OUdR
+         GC6YbgXnBL/LzF6ruu8aSoRSOBLUZ4hK+Kj9ojOGA65Ewm2GDwb8xmBN7DjEiIUthoa/
+         INwzmpQwSHXUoZmoyAsCBMZAdhaP6OajoBiuhLC3ywZe/Ri/cTcE+RQQEqFepmLs9OcY
+         +z3Z1ZxwqYCypv78SwZFo/srMLrrTKtg6dR31v7+qdQHuG+8SUuCKX7HFicVX/RvQv87
+         KifA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752044113; x=1752648913;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yxSHhqCIu08V3Qwag9o38Kp5WRa0opkmxc/P0igOUiI=;
+        b=LAPm3EeG8CQG7zDBrUQpvuVMb0B8GsVZjuW6/8myO9qbWZyq/Ie3H9is61iZpr36Wj
+         IrmhJF4TPd9hSpuPvkMJUJjPKdUIX/E2RQ67/11IachwPsidgiET0SkcXk3/tJvOyHta
+         jjGmqw62oHzEjzZURNanpOPjsKFeIiAFIlr1WLJClfv6WWgeHcZu6Rpt3IYerOx/3Mf1
+         yxlDdP86l7BQxF8hMhmfRxfoVS/qenn5aY8TuFxSlz4GAcdJ+3BE57gTvGQBnOMlI+gS
+         jXFNhIIFGFIK7yIVlsrUGqlOWEEjLsBTwHzBfBCaLgv3BNdvoLMoR/o+M4NSvJb0efAv
+         FN8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXAtY9oy6esoC4DNz1n0EDn8FmNpOC6FeZAq+KsuhllJCZB4EOgxBMzc+RYyyKHzlG5kriF2BtKQ0tKvzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx01Nky1X/SxEWp+TJzSu2LNvFepxzaG2BKmZFhMYWNUs/TOrhM
+	Yg+LdFArQjclWTabOsrOoynO+JsM2W5d3PtaW7CuO2eMFTs2CimFmScjWfKhZY6I1QKmPd/BxEU
+	Wy8pB9mqylo2TgT8KStn1e+8A3Uj/onxouTgWgRVXOQ==
+X-Gm-Gg: ASbGnctTfhOnTOQocucmu8XGFsv0zG9Gsvd0LW/TSfKOvwWbMXQU8Sto08VqG+d+bQL
+	yx3qV6fcSbyFI2TSpeS3HQboDsFQuz7ulkbf1azFgzauXMLmtKLB5/nbgaPTqp4XGkiJKLQIKP4
+	3Leb47LHpbIksadI6GlUhCV5V1A/6ofMBbnJdHpa2PhrM=
+X-Google-Smtp-Source: AGHT+IF5H0//doa2nKgKyMBFHav2Tca1UhHeZa/y5+70t9CTKpzojdZBrhFAhrvWQGEyl4cbrKijcS3La+7jkZmxDZ4=
+X-Received: by 2002:a17:90b:510a:b0:313:f883:5d36 with SMTP id
+ 98e67ed59e1d1-31c2fcc389amr2109500a91.1.1752044112748; Tue, 08 Jul 2025
+ 23:55:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: net: altr,socfpga-stmmac.yaml: add minItems
- to iommus
-To: Matthew Gerlach <matthew.gerlach@altera.com>, dinguyen@kernel.org,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, maxime.chevallier@bootlin.com,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-References: <20250707154409.15527-1-matthew.gerlach@altera.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250707154409.15527-1-matthew.gerlach@altera.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250708162236.549307806@linuxfoundation.org>
+In-Reply-To: <20250708162236.549307806@linuxfoundation.org>
+From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+Date: Wed, 9 Jul 2025 15:54:55 +0900
+X-Gm-Features: Ac12FXzuUaKQ0Ks2xEiZvI9ZcmwyTtrC1KBrVsD1P6JK2q27gyC7Ngbilk0Vh6g
+Message-ID: <CAKL4bV5Q1eGnsOXbf2bL4kjcU8ZGn5W+bMPKsYzBNqp9OxY2xQ@mail.gmail.com>
+Subject: Re: [PATCH 6.15 000/178] 6.15.6-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07/07/2025 17:44, Matthew Gerlach wrote:
-> Add missing 'minItems: 1' to iommus property of the Altera SOCFPGA SoC
-> implementation of the Synopsys DWMAC.
+Hi Greg
 
-Why? Explain why you are doing thing, not what you are doing. What is
-obvious which makes entire two-line commit msg redundant and useless.
+On Wed, Jul 9, 2025 at 1:23=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.15.6 release.
+> There are 178 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 10 Jul 2025 16:22:09 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.15.6-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-Original binding had no iommus and referenced commit does not explain
-why they appeared during conversion in the first place.
+6.15.6-rc1 tested.
 
-> 
-> Fixes: 6d359cf464f4 ("dt-bindings: net: Convert socfpga-dwmac bindings to yaml")
-> Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
-> ---
->  Documentation/devicetree/bindings/net/altr,socfpga-stmmac.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/altr,socfpga-stmmac.yaml b/Documentation/devicetree/bindings/net/altr,socfpga-stmmac.yaml
-> index c5d8dfe5b801..ec34daff2aa0 100644
-> --- a/Documentation/devicetree/bindings/net/altr,socfpga-stmmac.yaml
-> +++ b/Documentation/devicetree/bindings/net/altr,socfpga-stmmac.yaml
-> @@ -59,6 +59,7 @@ properties:
->        - const: ptp_ref
->  
->    iommus:
-> +    minItems: 1
->      maxItems: 2
+Build successfully completed.
+Boot successfully completed.
+No dmesg regressions.
+Video output normal.
+Sound output normal.
 
-Why this has to be flexible on given SoC? This is weird. Same hardware
-differs somehow?
+Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
 
-Best regards,
-Krzysztof
+[    0.000000] Linux version 6.15.6-rc1rv-gb283c37b8f14
+(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 15.1.1 20250425, GNU ld (GNU
+Binutils) 2.44.0) #1 SMP PREEMPT_DYNAMIC Wed Jul  9 14:44:32 JST 2025
+
+Thanks
+
+Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
