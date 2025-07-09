@@ -1,227 +1,260 @@
-Return-Path: <linux-kernel+bounces-722799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 002F7AFDF06
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:06:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89B08AFDF14
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 459F016A11E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:06:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0ECBF7A2A03
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0EB26A0AF;
-	Wed,  9 Jul 2025 05:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1139F26A1A3;
+	Wed,  9 Jul 2025 05:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="jcstiYaX"
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011007.outbound.protection.outlook.com [40.107.74.7])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=rsg.ci.i.u-tokyo.ac.jp header.i=@rsg.ci.i.u-tokyo.ac.jp header.b="P+9TWd4x"
+Received: from www3579.sakura.ne.jp (www3579.sakura.ne.jp [49.212.243.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C372AD22;
-	Wed,  9 Jul 2025 05:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752037554; cv=fail; b=goNOe+4pskN1k4VK9gOg88T5AgdzJ09BDX1d+FcHNnRD/TfCyW2mX8FJdX86x8SxN+th2CtPwoWB7L3hv2sR9XOKJ/+CgmbrIrMOCXjHCp8Uz5HklnBOUxlonDy8AYOCfC1XVUx85FbzV5c4dnkpr6o2l9MP9dbf1WmjJa3nHx4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752037554; c=relaxed/simple;
-	bh=v1MSLGD5ViIgTD+Ev79mMZNlXRobPrkGX7NNN0xcmdE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=AHYzM/+JFi1D5Yi66KsYcIX3MaEKs4GlUvA25/cIjb+gGLnCqcBH8h8wBlI5+Pg76mXepr7oEA3HKc9J2tfUG49QlR8NWbj0BkoqXT62X0Oaho0sBsim4/O1pAAMZ0sU1tBsMfA1tupy126u192Gr1ItMuHQ2L89dzXuACnMOfQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=jcstiYaX; arc=fail smtp.client-ip=40.107.74.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UgOUpwKCGb69N9GzKwcypxJ1KAFxQoZ3VrnNzS7gGsz5mP93XORTjtZH0jpNfPvsO0BViOXmNOhmBC2D41CGhlRd6S9VFB0YVtg796Gwz6ClzXydibKdXZ/gvpfXO+mCFr1BHlC2B4pQAgcqip4cgT0sNo/sstcO/Z4IsvlLBuDZL7OJDR7jbjaURl5jRVCx6/OVVN08l6S0qF/85ERAk3f4CQinJmlfbOFg5qo4F1bh5U80ouTwZqS9nF3dEA846JpbuHPhWJyDQXqAyVLiwmyTxeShdqi6UHOMj7GButYMZPY9Mq6mj1x00iGyFm37b0w5iM1/okFntPgIhzYIow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v1MSLGD5ViIgTD+Ev79mMZNlXRobPrkGX7NNN0xcmdE=;
- b=WMpfmsVzDRBvebutH8jqVXNVaTn7uKI/mRDK4Zj9bfYzLW1W+PDNPtjJRZGowgXGeLgVo4XcP2vSBR1RrACAOOiDFMa/YjFQsMR9HEIovJB0HOQUlAO5o/SfP2Y4XTkq/GwMeD0zSgRu+7ffIYqyUj56sDVVSlLQEMhRuuFjSyXvx442qSJJWb751Ga+o/6M/mNjFwvxOxVp7IVPf02BCv8UjgU8/LREQuVfe/eS0zDUlwwpSrP3ZG8NcvQmOXe/20BAYuYiadcdjeAAe2U4ED8jgQP4Qr7I1P90q9J3C+Ofgqa4ZxidTuTx8vcHDnMeVIGLOhqDHH2L1TODg8MOcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v1MSLGD5ViIgTD+Ev79mMZNlXRobPrkGX7NNN0xcmdE=;
- b=jcstiYaXpxvk0cOa/DHE/sRDBg+xnlLikVe+7zVx8CfTvEOHRlQ2wW+EDoabtfKOJF8UEaJfohZckjfX8Jofl3IPSKOszp1dllcI+EH6ccmGvWpkWF5KH8WLUMMAv6NWV84DKWJOfdxvX2xaJUDONsEFvVF1FK2oxMDOz42RfhQ=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OSRPR01MB11598.jpnprd01.prod.outlook.com (2603:1096:604:22c::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Wed, 9 Jul
- 2025 05:05:44 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%3]) with mapi id 15.20.8901.024; Wed, 9 Jul 2025
- 05:05:44 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>, "bhelgaas@google.com"
-	<bhelgaas@google.com>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"kwilczynski@kernel.org" <kwilczynski@kernel.org>, "mani@kernel.org"
-	<mani@kernel.org>, "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"geert+renesas@glider.be" <geert+renesas@glider.be>, "magnus.damm@gmail.com"
-	<magnus.damm@gmail.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"will@kernel.org" <will@kernel.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, "lizhi.hou@amd.com"
-	<lizhi.hou@amd.com>
-CC: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, Wolfram Sang
-	<wsa+renesas@sang-engineering.com>
-Subject: RE: [PATCH v3 7/9] arm64: dts: renesas: rzg3s-smarc-som: Update
- dma-ranges for PCIe
-Thread-Topic: [PATCH v3 7/9] arm64: dts: renesas: rzg3s-smarc-som: Update
- dma-ranges for PCIe
-Thread-Index: AQHb7P8PBMpfnLgFvkWQvju7tLKMl7QmU8ewgAGzIoCAATrXgA==
-Date: Wed, 9 Jul 2025 05:05:44 +0000
-Message-ID:
- <TY3PR01MB113467C09DF7D3D0D7833A6598649A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
- <20250704161410.3931884-8-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB113464920ECAC2C3CB89DE2D5864FA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <7c8c7a25-c373-452a-9fe8-8b2d92ddd885@tuxon.dev>
-In-Reply-To: <7c8c7a25-c373-452a-9fe8-8b2d92ddd885@tuxon.dev>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OSRPR01MB11598:EE_
-x-ms-office365-filtering-correlation-id: cca0d5cf-7dc1-404d-bc82-08ddbea64239
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?S1A1Ui83MjJ0ZDNBNjBJYTFCOUtIcjBJaXdWakt0eDlNbUNLbXFRTVorcHNU?=
- =?utf-8?B?YmlLTlBpa21wNnQvR0VNOUlibnN3bTJmdzkzdk9ocXFRTlJwc1lDZU82azZp?=
- =?utf-8?B?MHdJYmNScmRsZFdWQW1WeTdjWVQrZThDZEV4UUp1ZTdUMHpGRE9vOFhGOTNk?=
- =?utf-8?B?OWE1c0xPZHg5eGJBS0xJMHJYRXFhVnJIV3YreVhZWlMwbjZnVGVERlo5c1U4?=
- =?utf-8?B?NjJzMzB2NnVLakJNZWlyU1FwR3czbUxmL0N4SDJzKzN2V2V3bnhYZ3BrUHcz?=
- =?utf-8?B?UHhZRmpDc1NNS0xrcEpLWFV6bnhUTFFOVjhFWDhmbU5CdnZxb3J4WDV0MXFu?=
- =?utf-8?B?RXNYcGxpTTF1NVY5azRaM0xzUXJhc3VIN3lqMWNqSVhORllEWVZmRi9LaExn?=
- =?utf-8?B?ZXZqNzJKOWhubmVvY0VJWXhXQzNXdWdNbU16a3hVMHZuZ1dNNlpYdXpHMCt1?=
- =?utf-8?B?ZFN6QmE4YU1wajZXZ3orL2xFdXg4N1c1UkRBVERBUHdOWUVEQks4OUllY0NX?=
- =?utf-8?B?UlRRMExwWkQ4VFRKK2NtNzgxTEUzWDJXb2Nad01CL1Jnd2U3dnl5ZlZaVTN2?=
- =?utf-8?B?cUZDWlVhOXBRbWdPaTNJeEM1Ky8wN3pJcUpUOHh6QzkwbmQ5NmFqVzhLMzVC?=
- =?utf-8?B?Ynl6TWU2Q0hQOGtLQ1RQT0YySjJRVzVQako2UnhxZXNjSGJVOEtVeFZpa1pa?=
- =?utf-8?B?Vi9aMXBwTzVEQUhSeU5PS0RFQlhpc2NDNnAvMXJlWGtmeVlMdVlzZkxPbm9j?=
- =?utf-8?B?VjY3RzljY2dKWkhZd0JRVG5DdWtpT1NpUUFFdWhPN0tCRGNtUjh5VGNQMWE1?=
- =?utf-8?B?NS85bzQ0R2ltS0ZJUktDWHdJNnh6Ykp2SkUzbDZUb3ZQN1ZqM2c4dmJqc3FQ?=
- =?utf-8?B?eFVaSTZNaXY1cGJVNytiRXlYdFljNUFWRGJyblhxc2tPTVBUVXpFaGRDQnBu?=
- =?utf-8?B?TTFRVG92RWtKb04yTTlRNk9FSFBtdmozblcrSDNmeFRUTUxyc29zMnVqQkR1?=
- =?utf-8?B?OEdRejFSVFJtYlVqNjc1dnhRbTV2d1RqZE83Mk5UbjJFRGFJcG1RR2djKytn?=
- =?utf-8?B?ZHBLUStIZ3dMR0xDVUZOMitGbVR4T1BIUzdTeklYK2dTTlg0UUlRUzhlTlFE?=
- =?utf-8?B?b1pLTWdxWVhTS1VCZzZzSlk4NWlqT3p1YmRrdmlsaTJEbEVQZDh6NkduRC8w?=
- =?utf-8?B?cXU3MXU3MlgrVnNkaktBYXFONHNFQ1UzYkU5TTU2T0pVNEZIZmlzUFpXQWJL?=
- =?utf-8?B?VEJtKzU0VW41VEs0amtzVGtqaERJTS9lRFBsUk9lVWx4dTVGVGRPOTdRQ1lr?=
- =?utf-8?B?azlMUUN2RWtpV3NsNFpZOVBjcDBNeUFMeGdYSnVDc0VScHRoYWh1WnJxRGlD?=
- =?utf-8?B?UTdxS1VxZmZMNXE3OFVyUm0xSlVUUk1Day9CTXdOcTR2bWJyNEFic1dMdmxj?=
- =?utf-8?B?T2hkOUJBWWFZLzNpZHhLSXFMYXc3ZHREQ2pCS29yaDJacXpZVm9RUHJZUlFm?=
- =?utf-8?B?VUJkbVRaS1BQTFAydWtYNi8rRC9wc0FyQnJoSXU2cGM4UWdjVzR6dDJXL3hJ?=
- =?utf-8?B?eFNyMFlCVytmdVFvNDlidnpDZG5PNC9rRkxxU1lmb0V0R0hQOGVQcWV3cjgw?=
- =?utf-8?B?d01YeDV1QlpwSXJMMFNkWEM2dnJabnltc3d4REFXWG03bVdnYmpZQVhnYklx?=
- =?utf-8?B?RWtSaHVDQUFsckt4czdIbHB1eGJHWE1senYzdEhHbFdncXdNQzZGYzYvc3R0?=
- =?utf-8?B?VEltRllDYzN0TS9WcnBQL1dYSURvY21IZjR2YTM4YkRsYnpicW01Z25ldlhO?=
- =?utf-8?B?S2o0UDJiZG0xcEJQejJZRlRQRTZEN1hTeTNIZ2g1V0R5SVNEbDFrbVZ1VGVr?=
- =?utf-8?B?R0lOM0ZDV2RkaS9QWHkxb1F1d1ZQb0NqSTVaTnBrT1RPU3ozNUhsTE9ISmE4?=
- =?utf-8?Q?Rn38qRpVbOhL82t7CS9FlOJo18l1O1US?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?SmlUbElINlhyekNzRVRIbjlyZThQYVY5NDUrWWY3enA5TDRHZ0EzSWpaQmhS?=
- =?utf-8?B?dzh0eU9SU3ZTZUhwL2ZwLzd1ay9pZ2M2YmtHbEJiWmRwbm43UmYzNzhMSXVv?=
- =?utf-8?B?QWl3cG9LZGRNdVBmOTZzLzU3dkhvcmQxeVJOV1FvNUVWKzRkNjN1S2xmSHlX?=
- =?utf-8?B?V2l5czczVkZ5OGhRT2Z5dU5MdDh5c1dCb3RpbXVsdi9XMzViQjZMa0hWZmZv?=
- =?utf-8?B?OGk0SUdqN1U3d2NPVW5zZzlZMWtKcldLZ2NNaGZVSDJPcEdUdDExMGdwemRK?=
- =?utf-8?B?d1Z5V2Uvb0hBQkRsYnJRNkNEdy8raDNyRzZpbVcvZHlMYWdQdkh2akZTODhJ?=
- =?utf-8?B?YnNZd3l0dVNyMXFuTG1lMUo3dlhiL2FzRVdobXJpQ3hrQmhGbi9FN3ZybzVj?=
- =?utf-8?B?eHNUOFBFeHhSZmdBSUQ3T0gxeWZ6MDl5M1NqRy8yNkp6S2x6TmJVeFgyZUpp?=
- =?utf-8?B?TTZqWEhFWkJEYXF6TTd5Qy9DQXJRa0xDYkVOSUQxeFM2aUZUM3dhaXExNkVx?=
- =?utf-8?B?S1NWaFdyeFBXVmRvS3JUKy9WYmN5RElOUmlqOWQvTTV6T0p3bXR1a3AzNHBK?=
- =?utf-8?B?YVFpSExpN3U1cFI0T0VDa3Q2RUNmZmZnNmkvdGUyM05BRWVyTVNYdU1FNHRT?=
- =?utf-8?B?em9nZGRlbjNrY3pUOE5JMUhORGRwYzFkR1AzaVR3MW9XNkhzSUFGd1NyWUVY?=
- =?utf-8?B?MW0rM0Z3ZHdjKzRNNVlWT0N1RWo5dXpjdGtGWHVBS1ZnWDRKdFpocmRIRGFa?=
- =?utf-8?B?a05SRDkxeUpycmxpUmlaeFEweXY5ME1tVnRGMUZBRnZnS3N2amRqc1VaYXU5?=
- =?utf-8?B?ZGdXd3Y0MDM3UUhxWUpUQm5NTlFaYWE1SnF5SWxoTXljVFYzT0IwcTFESWRC?=
- =?utf-8?B?YW5kUVZMSGVyd2JrUU5qck0rK3NpQ3daK2xXL204WmdEVGJtYjJETWUxeitW?=
- =?utf-8?B?OXcrb3dISTgrVms0RE9sdmJLNHZ4YVE5Z3pqdXRad2NRTlpQZUVNK3FYanFZ?=
- =?utf-8?B?emJ1S3JMTXMrb3JZcGdjaWplNi9tQklVdG1XcklmZVhUOUE1WWZaZlg0ZTNq?=
- =?utf-8?B?MHYwM2oxcjZsM2NCdG1Bc0JnWVVNQVdZZFVzK3ZvSHJ3RS82VWEyOGliQmhM?=
- =?utf-8?B?UEg3TzhDNnIyTlYrU1djVVdYOVgzdlRUQ2hmN042ZkR0WkwyaWM2WUEwQmxY?=
- =?utf-8?B?Q3l4NG5qamh5RjlHWXp6R2RYd1Rrdm53OTFiWlZjZWw5WVRuaDVBZ0Q5WTNQ?=
- =?utf-8?B?dmttREJtTlRaVkNXaDMvVTBNcmtkUmhKMFB5R0JJK2FMQ21jbnFnSEZVc0oy?=
- =?utf-8?B?NDcxZVY0NU5SRkMwVTQ0TmhaZm1mbHJZVnhXcXRiZkx0Ri9jc29CNTZJeHpD?=
- =?utf-8?B?ZTYxcFVZUDZJVzNkM2MrZ053TloycGYrZnVaRXBjbXpyWVFqUkpxeFhlM3dv?=
- =?utf-8?B?RlVJSVRGNW1sUWRuVm1rcjBrZEJ0REF5cE1VcDBzUzVoSlJwVHZNR0tQajlG?=
- =?utf-8?B?dUMvcVIxT3lZaVN0Ym1EcXJqbnhUSjV3c0N4UzhrL0dGQlZ4T0VhSjcxZWtN?=
- =?utf-8?B?dGMzbG1MMVlQWkR6RXEyMnl4R0pmMmZTMWxmWkowcDJ5dnhIMERrTmR5b2Jn?=
- =?utf-8?B?WERWWjVuMXFncVJjS2VPcnhCUXVMOUwxd2YrL015QkJkMk0xbHFBcmN3QVVu?=
- =?utf-8?B?Sm9sc1A5cW9CV21CNHdaeFZGNCtITS9Gai9ybytLeUErQlVSNkkvQ3lFQzd6?=
- =?utf-8?B?SFg2dUh6VG5pQXhNU1F1NklOa3J4bkJSOUNzb0xCMng5bDVaOVlYMFRFUWVj?=
- =?utf-8?B?VDFsSFEvR0YxQXFiVU93THRONU1tSVYxRkFIVnE3NmFTM0Zla2RJbVBsZXNv?=
- =?utf-8?B?NjZVOURLOFVCWjZ5Rmx6UVhlZ3VxdnF5Ykl3bVl3cmdFUE9tWk5mOWc5SmVC?=
- =?utf-8?B?Y3BTZkQrUHZZVnhHMjN6QUg3Q0NtR1lLMmtxa1ZhZWtGVlNJd3lTZVVYMll1?=
- =?utf-8?B?SDZIQjNhU3FJdEtkUDJEMERtVWNLN2FoZDkxckt6aU96ckwwaVkvRzNiOWlH?=
- =?utf-8?B?SmNObmd6Nm5pdDZHaXpRWU1ZNU0zaVZhUVV5S0Z5ckdydW1QT0RRc3lRV3Ix?=
- =?utf-8?B?RWlMajBldTJMVGRmbGZGdXN1aHBMR1RrSjBENktmR2lRenFqZWsvTGpvM1Zv?=
- =?utf-8?B?T3c9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0F174C08;
+	Wed,  9 Jul 2025 05:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.212.243.89
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752038034; cv=none; b=cYNceocUiHN7nmUHZm3xfZqQ9l+jSV8and5OxWDnUgOUb7IHSi1Sdy0XkjEBHzy5Q2m6v0uBFRd+X613+2tB9LV5xSxdwRJeaC10G0vRoseQ1XO7X2sAbSGZQfCk7YiAErXR8tEZ751T+qeSanFDNxz4acBxGvJ7NxkVApq9lMQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752038034; c=relaxed/simple;
+	bh=EN5ByLBGywGLTiCp1bK3fyTglM7Zbn5pwSVlzcDFN2s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pGaipwUU/aWjK1ythTQJVB8GAk8/oF60HBsfg6QT1XCQjprEGRFucFBWqmHYIaM3ejuBgZ/jCUyxmBwom6aUfqrJ0vh1E8NKq2nX79cFGQHyA9TWijFUzHMFWfgbCQzhY4jrJSPu8MAc6O0OLzDJm7f+MPTYH/P8/ezZAE14tFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rsg.ci.i.u-tokyo.ac.jp; spf=pass smtp.mailfrom=rsg.ci.i.u-tokyo.ac.jp; dkim=fail (0-bit key) header.d=rsg.ci.i.u-tokyo.ac.jp header.i=@rsg.ci.i.u-tokyo.ac.jp header.b=P+9TWd4x reason="key not found in DNS"; arc=none smtp.client-ip=49.212.243.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rsg.ci.i.u-tokyo.ac.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rsg.ci.i.u-tokyo.ac.jp
+Received: from [157.82.206.39] ([157.82.206.39])
+	(authenticated bits=0)
+	by www3579.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 56955rZV065688
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 9 Jul 2025 14:05:53 +0900 (JST)
+	(envelope-from odaki@rsg.ci.i.u-tokyo.ac.jp)
+DKIM-Signature: a=rsa-sha256; bh=4clTUl4sMeFn+3+ZKeZuCK2i1/1ZYbUuPzsuXuco86k=;
+        c=relaxed/relaxed; d=rsg.ci.i.u-tokyo.ac.jp;
+        h=Message-ID:Date:Subject:To:From;
+        s=rs20250326; t=1752037554; v=1;
+        b=P+9TWd4xgbOJt4IAGxHHsFZCUP5mU2LruCqB6XvGSTxPuNiG88lEdFqKSI5e8GV9
+         IZQ027gIzqE6R884yIAbqFDeeb+QV4d98ETFvdXUnoX+FYopiMFnNscVsB2zI9Wa
+         2l2RcZyKqEBQDUjGZTaMI0r6Rf5IedBu6hCBpXk/895FEVdR2zQg58ehwJmyxgfF
+         XT9yXnMK/B98pfOeSBYxC5A9B18qaCU6AclyvtM00Ovo46CMOeuPcCCb07Ssut/I
+         yGZrAOC9hnteaFT0HuEm66QoaIAFlJenYdCL8L9SlWdVr/Lxm01+5vFw0NVbVwNR
+         jKgFire83dealgPIcgL8rg==
+Message-ID: <36c0213c-6b14-4ad2-969e-3d8e356bb680@rsg.ci.i.u-tokyo.ac.jp>
+Date: Wed, 9 Jul 2025 14:05:53 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cca0d5cf-7dc1-404d-bc82-08ddbea64239
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2025 05:05:44.1019
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +/Q6JT1c4UjlIfZDbQ8P5xVtainRqFVZaxX82y/2ejb2mtu0UmRrWsof8pVR9u07XkbNDkcUuUMyaiQfXSatEWWIduOlsHFTMibu0r8O4A4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSRPR01MB11598
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/23] binfmt_elf,arch/*: Use elf.h for coredump note
+ names
+To: Dave Martin <Dave.Martin@arm.com>, linux-kernel@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin"
+ <hpa@zytor.com>,
+        "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Alexandre Ghiti <alex@ghiti.fr>, Andreas Larsson <andreas@gaisler.com>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Borislav Petkov <bp@alien8.de>, Brian Cain <bcain@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chris Zankel <chris@zankel.net>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dinh Nguyen
+ <dinguyen@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>, Guo Ren <guoren@kernel.org>,
+        Heiko Carstens <hca@linux.ibm.com>, Helge Deller <deller@gmx.de>,
+        Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Jonas Bonn <jonas@southpole.se>, Kees Cook <kees@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Max Filippov
+ <jcmvbkbc@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley
+ <paul.walmsley@sifive.com>,
+        Rich Felker <dalias@libc.org>, Richard Weinberger <richard@nod.at>,
+        Russell King <linux@armlinux.org.uk>,
+        Stafford Horne <shorne@gmail.com>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vasily Gorbik <gor@linux.ibm.com>, Vineet Gupta <vgupta@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>, Will Deacon <will@kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-um@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        loongarch@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org
+References: <20250701135616.29630-1-Dave.Martin@arm.com>
+Content-Language: en-US
+From: Akihiko Odaki <odaki@rsg.ci.i.u-tokyo.ac.jp>
+In-Reply-To: <20250701135616.29630-1-Dave.Martin@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-SGkgQ2xhdWRpdSBCZXpuZWEsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJv
-bTogQ2xhdWRpdSBCZXpuZWEgPGNsYXVkaXUuYmV6bmVhQHR1eG9uLmRldj4NCj4gU2VudDogMDgg
-SnVseSAyMDI1IDExOjEwDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjMgNy85XSBhcm02NDogZHRz
-OiByZW5lc2FzOiByemczcy1zbWFyYy1zb206IFVwZGF0ZSBkbWEtcmFuZ2VzIGZvciBQQ0llDQo+
-IA0KPiBIaSwgQmlqdSwNCj4gDQo+IE9uIDA3LjA3LjIwMjUgMTE6MTgsIEJpanUgRGFzIHdyb3Rl
-Og0KPiA+IEhpIENsYXVkaXUsDQo+ID4NCj4gPj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0N
-Cj4gPj4gRnJvbTogQ2xhdWRpdSA8Y2xhdWRpdS5iZXpuZWFAdHV4b24uZGV2Pg0KPiA+PiBTZW50
-OiAwNCBKdWx5IDIwMjUgMTc6MTQNCj4gPj4gU3ViamVjdDogW1BBVENIIHYzIDcvOV0gYXJtNjQ6
-IGR0czogcmVuZXNhczogcnpnM3Mtc21hcmMtc29tOiBVcGRhdGUNCj4gPj4gZG1hLXJhbmdlcyBm
-b3IgUENJZQ0KPiA+Pg0KPiA+PiBGcm9tOiBDbGF1ZGl1IEJlem5lYSA8Y2xhdWRpdS5iZXpuZWEu
-dWpAYnAucmVuZXNhcy5jb20+DQo+ID4+DQo+ID4+IFRoZSBmaXJzdCAxMjhNQiBvZiBtZW1vcnkg
-aXMgcmVzZXJ2ZWQgb24gdGhpcyBib2FyZCBmb3Igc2VjdXJlIGFyZWEuDQo+ID4+IFVwZGF0ZSB0
-aGUgUENJZSBkbWEtcmFuZ2VzIHByb3BlcnR5IHRvIHJlZmxlY3QgdGhpcy4NCj4gPg0KPiA+IEkg
-c2VlIFItQ2FyIFBDSWUgZG1hLXJhbmdlc1sxXSBhbmQgWzJdIG1hcHMgYWxsIHBvc3NpYmxlIERE
-UiBhcmVhIHN1cHBvcnRlZCBieSB0aGUgU29DPw0KPiA+IERvIHdlIG5lZWQgdG8gbWFrZSBib2Fy
-ZCBzcGVjaWZpYyBhcyB3ZWxsIHRoZXJlPw0KPiANCj4gSSdtIG5vdCBmYW1pbGlhciB3aXRoIFIt
-Q2FyLCBidXQgaWYgdGhlcmUgYXJlIHJhbmdlcyByZXNlcnZlZCBmb3Igb3RoZXIgcHVycG9zZXMs
-IEkgdGhpbmsgd2Ugc2hvdWxkDQo+IHJlZmxlY3QgaXQgaW4gYm9hcmQgc3BlY2lmaWMgZGV2aWNl
-IHRyZWVzLg0KDQoNCkFscmVhZHkgTGludXggaGFzIHRoaXMgRERSIGluZm9bMV0uIExpbnV4IHBy
-b3ZpZGVzIERNQSBtZW1vcnkgb25seSBmcm9tIHRoaXMgcmVnaW9uLg0KDQpJbiB5b3VyIHRlc3Rp
-bmcsIGhhdmUgeW91IGZhY2VkIGFueSBpc3N1ZSBsaWtlIHN5c3RlbSBhbGxvY2F0ZWQgRE1BIHJl
-Z2lvbiBvdGhlciB0aGFuIFsxXQ0KYW5kIHlvdSBkb24ndCB3YW50IHRvIHVzZSBpdCwgdGhlbiB0
-aGUgY2hhbmdlcyBhcmUgb2s/Pw0KDQpOb3Qgc3VyZSwgUENJZSBjYW4gd29yayBvbiBpbnRlcm5h
-bCBtZW1vcnkgc3VjaCBhcyBTUkFNPw0KDQpbMV0NCmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHVi
-L3NjbS9saW51eC9rZXJuZWwvZ2l0L25leHQvbGludXgtbmV4dC5naXQvdHJlZS9hcmNoL2FybTY0
-L2Jvb3QvZHRzL3JlbmVzYXMvcnpnM3Mtc21hcmMtc29tLmR0c2k/aD1uZXh0LTIwMjUwNzA4I24z
-MQ0KDQpDaGVlcnMsDQpCaWp1DQo=
+On 2025/07/01 22:55, Dave Martin wrote:
+> This series aims to clean up an aspect of coredump generation:
+> 
+> ELF coredumps contain a set of notes describing the state of machine
+> registers and other information about the dumped process.
+> 
+> Notes are identified by a numeric identifier n_type and a "name"
+> string, although this terminology is somewhat misleading.  Officially,
+> the "name" of a note is really an "originator" or namespace identifier
+> that indicates how to interpret n_type [1], although in practice it is
+> often used more loosely.
+> 
+> Either way, each kind of note needs _both_ a specific "name" string and
+> a specific n_type to identify it robustly.
+> 
+> To centralise this knowledge in one place and avoid the need for ad-hoc
+> code to guess the correct name for a given note, commit 7da8e4ad4df0
+> ("elf: Define note name macros") [2] added an explicit NN_<foo> #define
+> in elf.h to give the name corresponding to each named note type
+> NT_<foo>.
+> 
+> Now that the note name for each note is specified explicitly, the
+> remaining guesswork for determining the note name for common and
+> arch-specific regsets in ELF core dumps can be eliminated.
+> 
+> This series aims to do just that:
+> 
+>   * Patch 2 adds a user_regset field to specify the note name, and a
+>     helper macro to populate it correctly alongside the note type.
+> 
+>   * Patch 3 ports away the ad-hoc note names in the common coredump
+>     code.
+> 
+>   * Patches 4-22 make the arch-specific changes.  (This is pretty
+>     mechanical for most arches.)
+> 
+>   * The final patch adds a WARN() when no note name is specified,
+>     and simplifies the fallback guess.  This should only be applied
+>     when all arches have ported across.
+> 
+> See the individual patches for details.
+> 
+> 
+> Testing:
+> 
+>   * x86, arm64: Booted in a VM and triggered a core dump with no WARN(),
+>     and verified that the dumped notes are the same.
+> 
+>   * arm: Build-tested only (for now).
+> 
+>   * Other arches: not tested yet
+> 
+> Any help with testing is appreciated.  If the following generates the
+> same notes (as dumped by readelf -n core) and doesn't trigger a WARN,
+> then we are probably good.
+> 
+> $ sleep 60 &
+> $ kill -QUIT $!
+> 
+> (Register content might differ between runs, but it should be safe to
+> ignore that -- this series only deals with the note names and types.)
+> 
+> Cheers
+> ---Dave
+> 
+> 
+> [1] System V Application Binary Interface, Edition 4.1,
+> Section 5 (Program Loading and Dynamic Linking) -> "Note Section"
+> 
+> https://refspecs.linuxfoundation.org/elf/gabi41.pdf
+> 
+> [2] elf: Define note name macros
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/include/uapi/linux/elf.h?id=7da8e4ad4df0dd12f37357af62ce1b63e75ae2e6
+> 
+> 
+> Dave Martin (23):
+>    regset: Fix kerneldoc for struct regset_get() in user_regset
+>    regset: Add explicit core note name in struct user_regset
+>    binfmt_elf: Dump non-arch notes with strictly matching name and type
+>    ARC: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note names
+>    ARM: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note names
+>    arm64: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note
+>      names
+>    csky: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note names
+>    hexagon: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note
+>      names
+>    LoongArch: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note
+>      names
+>    m68k: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note names
+>    MIPS: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note names
+>    nios2: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note
+>      names
+>    openrisc: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note
+>      names
+>    parisc: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note
+>      names
+>    powerpc/ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note
+>      names
+>    riscv: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note
+>      names
+>    s390/ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note names
+>    sh: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note names
+>    sparc: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note
+>      names
+>    x86/ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note names
+>    um: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note names
+>    xtensa: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note
+>      names
+>    binfmt_elf: Warn on missing or suspicious regset note names
+> 
+>   arch/arc/kernel/ptrace.c                 |  4 +-
+>   arch/arm/kernel/ptrace.c                 |  6 +-
+>   arch/arm64/kernel/ptrace.c               | 52 ++++++++---------
+>   arch/csky/kernel/ptrace.c                |  4 +-
+>   arch/hexagon/kernel/ptrace.c             |  2 +-
+>   arch/loongarch/kernel/ptrace.c           | 16 ++---
+>   arch/m68k/kernel/ptrace.c                |  4 +-
+>   arch/mips/kernel/ptrace.c                | 20 +++----
+>   arch/nios2/kernel/ptrace.c               |  2 +-
+>   arch/openrisc/kernel/ptrace.c            |  4 +-
+>   arch/parisc/kernel/ptrace.c              |  8 +--
+>   arch/powerpc/kernel/ptrace/ptrace-view.c | 74 ++++++++++++------------
+>   arch/riscv/kernel/ptrace.c               | 12 ++--
+>   arch/s390/kernel/ptrace.c                | 42 +++++++-------
+>   arch/sh/kernel/ptrace_32.c               |  4 +-
+>   arch/sparc/kernel/ptrace_32.c            |  4 +-
+>   arch/sparc/kernel/ptrace_64.c            |  8 +--
+>   arch/x86/kernel/ptrace.c                 | 22 +++----
+>   arch/x86/um/ptrace.c                     | 10 ++--
+>   arch/xtensa/kernel/ptrace.c              |  4 +-
+>   fs/binfmt_elf.c                          | 36 +++++++-----
+>   fs/binfmt_elf_fdpic.c                    | 17 +++---
+>   include/linux/regset.h                   | 12 +++-
+>   23 files changed, 194 insertions(+), 173 deletions(-)
+> 
+> 
+> base-commit: 86731a2a651e58953fc949573895f2fa6d456841
+
+For the whole series:
+Reviewed-by: Akihiko Odaki <odaki@rsg.ci.i.u-tokyo.ac.jp>
+
+Regards,
+Akihiko Odaki
 
