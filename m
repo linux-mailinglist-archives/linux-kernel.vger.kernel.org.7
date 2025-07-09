@@ -1,168 +1,191 @@
-Return-Path: <linux-kernel+bounces-723208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 954B0AFE46B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:42:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62BB3AFE46E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9054D3B18D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:41:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AD463BF472
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A2B287246;
-	Wed,  9 Jul 2025 09:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9F1286892;
+	Wed,  9 Jul 2025 09:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="5Gjt2r3L"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="Q5jNPmyA";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="0DlI7ID3"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B798284686
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 09:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752054048; cv=none; b=NzbznW10TgYFzFBlWN0ZsDTf2oYng6jQ0Lrm6atlyO+Qc4iqje3oISKQNx1QemWuIcbCwEMncgU9EHCkN0No1KMQCeeZu8E0qi1zK9IwkgLX99In6RP6+iKYi3NWBiNjwOeNajbezhBANTrnnCnyENibsEtl8QbOLFB27bTcPQ8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752054048; c=relaxed/simple;
-	bh=0tR/3Miogl+S1zt90pDdmQ9mIVpvEnFEC8NUxBegYcA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=ewipxGuwV1kxW6hZnTauD3h+lItfCboLazahsaVifRw6hNjmXY76fvJ7CSqG8s7GG743c8Mhm/gHSKWR5RxRtIv1X4BXKN8EQYFhzYp8PfCT+ZhoHfwX2GU9LR16ATJwsl3FVFxZtKt7O3EukfaLd72HJtMw0gQKayn1XIotLnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=5Gjt2r3L; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ae0dad3a179so926476866b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 02:40:45 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C549F22331C;
+	Wed,  9 Jul 2025 09:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.152.168
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752054143; cv=fail; b=in8+28JA/kM6Sp1kkuvHcuGkaAQe3YJf+eYof1gq+YyfJUyzoH7YKJA8TssY23LkscP7QslS5HCgFQhwuniUHa9v6fe7x7zC3hTFUgiVa5g46hk54HLAJ2vu/6p3tE3cmcUJaVL8wDxSMj/F4zdEWS/vkmxrndogBetCo72b288=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752054143; c=relaxed/simple;
+	bh=KcmfLj8WOoXX04lnZZ4O8DsgLe7Vmg1ak1X3ygeALXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X7/xnWblrxckfPUQWIN5Io8X/xwgLrnBa0OyfGv/uYjC3ch+XdIkJSSeIV5D/IU5EHOmeAXgxDMQICCOlgk4y92+EG75BRmxr+Gv2H0XiUoMsOZSEwuOmFdvmxGDWsmmZaKgfFxnErNhRaY/M4YFZNjoB+r8cf0pT2CYST2zreQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=Q5jNPmyA; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=0DlI7ID3; arc=fail smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5697MTWG022282;
+	Wed, 9 Jul 2025 04:41:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=U7eTAGn9oLO7BzX3bo
+	jB6pmRJs3ZzexIgk8LPHS7cmQ=; b=Q5jNPmyAno1lsdfCRv+wZCQmFylmU9Vuda
+	0ekfM8WcgGNG9jK/iW2QQ1UafVDW8MoxcDFUh/wtahZslqPoTdFoJeB6V6McMSX9
+	FeV+15rGdH1WhE7FjYkhaCTa9vkZ2yUGhBxrWvIskZ6ELtaw0SWL0PXAyx6uHHnx
+	9u6poN1urTLa8j7o5aotY+1gWjkRi1rSBnoJX7EY7DWYPFE3ab2Zv6vOAO7nh8Fe
+	xrFDCNEgUyAZBhSnOD88Gl0lbs7QnTnSqS2gJsqv0/2ynDwq3ZuLguZbWSF01ujE
+	nT07oYHMyh+2EH86UH26PZoWWbZI/XVurvpsLNnObEeBQZW/qDFw==
+Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04on2104.outbound.protection.outlook.com [40.107.101.104])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 47skytr5uy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Jul 2025 04:41:59 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WcIPC06RfAZxDO1UhEZLsyZJwq3b3B0tW8xkvCCX16VapcC3piHlDABFqklLVY8f+mGhNi7Tg2V2SZ/rmPHRNEZEpja2J33bNGf5PyGjFQ1p/GrHb6MpNYrZsJdU2o/859SzSdq9iIgBO8Ft/6UZn8cW5ga5ff/KWLyuyTDN10Wc/EFs0l3vh1D38yOb0Plo/QncLwbZXAnsPpcNsCEztHEeS2bXOLhoPxQn1oa+BExlueq2bVSV8f4KgvopjpZuAOgglE/1Bmuyi4IRI/v6gpshkHsc2Y/Q1NGQwtqh3GSE9eixBVOzKeD4qI+RWLLtjzOc95OSZqwNjS1m7l45HA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U7eTAGn9oLO7BzX3bojB6pmRJs3ZzexIgk8LPHS7cmQ=;
+ b=Z7FxI3mhwX2EF2lAknRGdbRwXiiqlKSmDP8MsbFSY37nbjOAbgBM1AgvOz4cV69q4AnrORbkBP+QuWfz2THT1cldieAo6t99JTnGKvWTeSR85hRt7KvP4OLM3Y3kuzZbwtz8KBmGDlT08pzLkq2CkH7tAC/P1yMFP+PguDkNOI/GPsIXdG0L490loKm+8CpTmCV1Dfz+CRv8blI7zk5Of+oPlicyMWZaEskWX/gRm39JovPor/u7DOCAv4McUbJ6G/dC+jZFiIvTB0zebndTybT5fv0aE6DS93Lyp9OYkF+AJRJuIwQtukFKCWNCT19QVWjuX9td25WjuzctfBUPbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 84.19.233.75) smtp.rcpttodomain=amd.com smtp.mailfrom=opensource.cirrus.com;
+ dmarc=fail (p=reject sp=reject pct=100) action=oreject
+ header.from=opensource.cirrus.com; dkim=none (message not signed); arc=none
+ (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1752054044; x=1752658844; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IYVZhzdcLS888rj/FaoDivOZnyY0T9daEjwNUmKwLFQ=;
-        b=5Gjt2r3LoVBZofErmVkRIPDYPhnFdBxIh1EY7bMltxiVJIgazc5gMSJvf1qpVvoI0J
-         WWr4ybf841ewgYj6yLtR518ku9XFnHSrpoRvtcPH+6mH7+82Ch8V8phzyGa1QpGX1erQ
-         Y5m9Z04c+5jlZ1Q2f1g1FuyNpFXBIJ1wEGcp7bx3imh7Plh1VjGLkzxzuUjzMopiBHB/
-         sjSRVdyWFct0Yd3Wh+w3lxU1R8NC4kOHYIGORMvOqy0eTsSuPdRPn7k7xQHRNd4gMpG3
-         DYQYcv6dKzXcdDL2S5/j4JnR+aGMSW0E8QrHoreaEUvGy4T8htIsYntH2faoNGtNfpAk
-         /Azw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752054044; x=1752658844;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IYVZhzdcLS888rj/FaoDivOZnyY0T9daEjwNUmKwLFQ=;
-        b=hbIrxCuQUIrthscpvoIt5z5dR4GvpvoMS9Snwte22Et96/cz9WAV65pqAnZf63RZ5P
-         zLPw//F3tELQnJTb0fWSxtEAYsMhK6BfWZ1GXY0MSyFA9rVlq+YuEFABZu3vX/7TGIxo
-         E9VauIdnMMDOQWYWZ5Pk+Z0ilJc5cutIkalbyZncGhW2EoRYr6hWR60e1mngBvKhP2/h
-         wLq81+CBr6I9epSW1OKYzjnci40G1wyJQHckFL3vjKDyPi2IN6loDOz/kcTHlP8vnp88
-         z5XqLii/ktfyq7vjFY4b1uQksaUzLDXx/GX7rZoBx2r3y4Nrhi3Ci7oNB6fw51F1DRzS
-         GvkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKxZFaHPQRa7e0Sg6jUHUyTL1Jtpn2w6Eb8pnqXFn6lK12JMv9urU6iCihsky0teg2ZtMyKfPvJRqnb8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYrg7ZkXLfr3eInIwIN94Q7zlPAghaNvYqNXH8Miuv07mBcqHH
-	/LZTyscbhHRzE4ptNc0ImlU2+Xp/ng0wbzHe7Y0NIi8fmlRB4Bp6yGlwMdwgP81zMN0=
-X-Gm-Gg: ASbGncsws0ischVwU/wwJjLPeXEMEfFiI0nLHamJOEBTWATn0UhUf/9gwwDX82InsWn
-	SAADi7/CCjUjLPg1WI/GvELHeCew/5PN7odrXGxhZV5rtoUJ8puB5BLc5HXZPO63IChoFL8PKo1
-	/OjGont8D+1LVbzin23dfRrNK84/yEho/Ha+GT9XmWSt4kV2UYeCkePfhRUmwD5ixOTwoVnjIVs
-	8MW/jhsMT1+txxGIZ+ymFIxdKt4V5JTz6qQKpVA6VRvm7gLIXweC3oZG3078byFK5dlMOLBuSoN
-	zPjBdfEWn1ODPzIgls5B4FE+21z86KXCRIU0FVkxrekYDzNifRSwib146kl6ufd1w0APWtS0Yp1
-	x0AqJthEn/Oi53eAoXglKEdbp1kBoo08=
-X-Google-Smtp-Source: AGHT+IFcyIW8fjvyL2XXssYm6oJtrTRwvz8J6yTAl1SegjjQ9SBTzzBbPsgLtLGnPcvW3tndrf/jXw==
-X-Received: by 2002:a17:907:db14:b0:ae3:f524:b51 with SMTP id a640c23a62f3a-ae6cf549811mr183000466b.10.1752054043586;
-        Wed, 09 Jul 2025 02:40:43 -0700 (PDT)
-Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6b08568sm1069884166b.139.2025.07.09.02.40.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Jul 2025 02:40:43 -0700 (PDT)
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U7eTAGn9oLO7BzX3bojB6pmRJs3ZzexIgk8LPHS7cmQ=;
+ b=0DlI7ID3nHfFuWujTMhaH4qyzoTrMRIWBeDtZ/uJQJXki2ifiFFVs7RsHi4VCelZMH4aYIzj3LU+TIpxp/rxP2VLDyPMJt3YWBsefBL5lzr3AWmhFf3lbiR8wC/HuYIb+/o/AFTMTaAST8hPJwH4+MGATpUChjdc6Rd1tjcnsTw=
+Received: from DM6PR03CA0064.namprd03.prod.outlook.com (2603:10b6:5:100::41)
+ by BY5PR19MB3860.namprd19.prod.outlook.com (2603:10b6:a03:221::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.25; Wed, 9 Jul
+ 2025 09:41:54 +0000
+Received: from DS2PEPF00003448.namprd04.prod.outlook.com
+ (2603:10b6:5:100:cafe::83) by DM6PR03CA0064.outlook.office365.com
+ (2603:10b6:5:100::41) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.21 via Frontend Transport; Wed,
+ 9 Jul 2025 09:41:54 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
+ smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
+Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
+ does not designate 84.19.233.75 as permitted sender)
+ receiver=protection.outlook.com; client-ip=84.19.233.75;
+ helo=edirelay1.ad.cirrus.com;
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ DS2PEPF00003448.mail.protection.outlook.com (10.167.17.75) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.22
+ via Frontend Transport; Wed, 9 Jul 2025 09:41:53 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 20841406545;
+	Wed,  9 Jul 2025 09:41:52 +0000 (UTC)
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id 0739382024B;
+	Wed,  9 Jul 2025 09:41:52 +0000 (UTC)
+Date: Wed, 9 Jul 2025 10:41:50 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+        Srinivas Neeli <srinivas.neeli@amd.com>,
+        Michal Simek <michal.simek@amd.com>, Nandor Han <nandor.han@ge.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com, linux-arm-kernel@lists.infradead.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 06/19] gpio: wm831x: use new GPIO line value setter
+ callbacks
+Message-ID: <aG45XiZqc6wCfC53@opensource.cirrus.com>
+References: <20250709-gpiochip-set-rv-gpio-remaining-v1-0-b8950f69618d@linaro.org>
+ <20250709-gpiochip-set-rv-gpio-remaining-v1-6-b8950f69618d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 09 Jul 2025 11:40:42 +0200
-Message-Id: <DB7FBNQ0TYFZ.3GGPN8XXJXGRW@fairphone.com>
-Cc: "Vinod Koul" <vkoul@kernel.org>, "Kishon Vijay Abraham I"
- <kishon@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Abel Vesa"
- <abel.vesa@linaro.org>, <~postmarketos/upstreaming@lists.sr.ht>,
- <phone-devel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
- <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] dt-bindings: phy: qcom,snps-eusb2-repeater:
- Document qcom,tune-res-fsdif
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Luca Weiss" <luca.weiss@fairphone.com>, "Krzysztof Kozlowski"
- <krzk@kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250625-sm7635-eusb-repeater-v1-0-19d85541eb4c@fairphone.com>
- <20250625-sm7635-eusb-repeater-v1-1-19d85541eb4c@fairphone.com>
- <20250708-unicorn-of-ancient-excellence-e8945c@krzk-bin>
- <20250708-stoic-slim-bison-ac55ee@krzk-bin>
- <DB6J86NHFTNT.31MFYDTZ6B4O0@fairphone.com>
-In-Reply-To: <DB6J86NHFTNT.31MFYDTZ6B4O0@fairphone.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709-gpiochip-set-rv-gpio-remaining-v1-6-b8950f69618d@linaro.org>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003448:EE_|BY5PR19MB3860:EE_
+X-MS-Office365-Filtering-Correlation-Id: 649300fa-99f1-4fe5-838a-08ddbeccd66c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|61400799027|36860700013|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Nm0Ftm1j5Fb1aeeRaEU3d/m09jxt8pCelX72iUENaC6z1+67IqKz243zJV+G?=
+ =?us-ascii?Q?m2MJUhiRrhSL4zJIhLQmzHN7ZpC7LZEECCZgXMgPe4gb/EtxjU9NTNpLlDXo?=
+ =?us-ascii?Q?bYAOKyQwjJ2U9iEZGA6+Ht6GeKVWCMpF1Ap6YEZPVliYsReW9oHqVhc1XQjW?=
+ =?us-ascii?Q?cNc3YVog0xZvr9VT0iJtJzxkS4q3dhfqFAGcW/+vaymb6waQKLWd1Jr2WwKz?=
+ =?us-ascii?Q?Q2MkXnI+qwCkr/RpCboRLaxexpwe2cRCJ9CnlN6JK3CmNg7J3fJYNTDnQGwc?=
+ =?us-ascii?Q?egvLa7xWzgbj/1qiL2iZNbl4D7tbCG7awWUOC9XcOsKkOvkBoo7d32Axnnq+?=
+ =?us-ascii?Q?5TozMeTqsKC/4CcL2hTO3zkVfzbGwIVq9MTja7ge11jAokMUHzwXQYPscOwP?=
+ =?us-ascii?Q?5UlwWloVmkCQo+bf/aKPdzu3MKHCuagN+TumqUDYrIAfnwYgCy8WHhDQgSGc?=
+ =?us-ascii?Q?qC2JKEcM8wHqgtDY42IAxtuAMetLZ5sgPmMhmugwjYXeQuviVUG5HwoWNDj1?=
+ =?us-ascii?Q?9bPf9cDj817gIrWnsbwywwDXszf9ngD2nrcWq7JbJeIJcvYMALd75D8I58xh?=
+ =?us-ascii?Q?oaDg5vQFhQdQ6PfGt5BzZmRPeC7i8PnLtjkhUi0i5+fGKXS9oVX76fDLt5q0?=
+ =?us-ascii?Q?KuaROoId2mADTRSTGb/QloKuaKCn0LzR1sdMEFyRy2A9NdOqP2MHQanjoDtE?=
+ =?us-ascii?Q?YQtnrX2qxpFVz2nZPSlmp/V8KbZlrgb+aq6h6l8FnVFg2hnFep15ITrVSA2C?=
+ =?us-ascii?Q?HAevssvMdZdIFR9Spa1QRQF5biyEhbbGJc4yaFHu8wtWNhbVfBfpXCh+HHGh?=
+ =?us-ascii?Q?9vjyeya+sfkpf0xCCYkbbcQVI4dGl269UbiA1JXRtq7n1QTjEh1a8yCU8J56?=
+ =?us-ascii?Q?m1WOBuDYK4Y3/ndU7au0Ivre8QNjVJH7gLlbxJDfbctAKx3Z2Uo3ApMqXIr8?=
+ =?us-ascii?Q?LBu3nrARCLt+mBzTMw2ZvDI6akHfwWGjWmWJXNML2iNl1gt9Tm9wdzuTZr2x?=
+ =?us-ascii?Q?Zhag/YPoue78Q1u7YiOL19mqwMpDvFMYqXk9PI088ZSpEtyAIM1oNqKm5NgR?=
+ =?us-ascii?Q?srjeroBUXlPpSGFzUDQWhp2UQ9gO9AfbewSiUXoYT82eclGLdtSc3DVMiYMd?=
+ =?us-ascii?Q?ohI108mEDO+LA3hjHeolEepFhvq3r/gH9GO7UuRNbnu/083RYMxJ8d0q3xID?=
+ =?us-ascii?Q?1fXFDkmrg74MLEjfCfZyRJ7fD84gJmLsNXrmjFt68K2v8qUafqgvXDO+Ii8h?=
+ =?us-ascii?Q?JfLV7/NgzUmQGa70QFybqzTdyIjK9HPemH0Cwv7yLOlHK/WPWtRn6bQcWDYt?=
+ =?us-ascii?Q?czU8AGZB0fpiXPoPN63idA4+vajDH6NCbuWYuu3CPVku0gYRi2Bq11maAxou?=
+ =?us-ascii?Q?pP9dvO6Ox+jVSHvA7zhIGpusWPi02jgrjU9r+EclB9znQyWIMqG8kNOE1dhE?=
+ =?us-ascii?Q?h8YwZDEChkrn8dy8HUs7FPwqva6vHvN3l87sJyLAZiZNO5muPtI07fqXiXVt?=
+ =?us-ascii?Q?i+bRTkxwFUws2LEXfjq42IjUqm7WjggE5Iys?=
+X-Forefront-Antispam-Report:
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(61400799027)(36860700013)(376014)(7416014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 09:41:53.3708
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 649300fa-99f1-4fe5-838a-08ddbeccd66c
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003448.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR19MB3860
+X-Authority-Analysis: v=2.4 cv=BerY0qt2 c=1 sm=1 tr=0 ts=686e3967 cx=c_pps a=DHJt6lk1nRTjsKHDOIGIhw==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=RWc_ulEos4gA:10 a=KKAkSRfTAAAA:8 a=w1d2syhTAAAA:8 a=5zIxZziS3Tv_bW8b8BIA:9 a=CjuIK1q_8ugA:10 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: BjZW9AYLN_J7aDXlFa8en0r0_wpqMJrE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDA4NiBTYWx0ZWRfX4Xik//5alI8r UFyNTayMbgojvS8tlYlHLqKecH6JYdEL1Q4ggaDwo+xfA1sEg7avUAD33cNApkmpA8LUHSnmuXC 91Bq3g+yDl8kbYLP/tjzwqOcM96b+YbD4i4jpTOMkd1wbEUxDdC8O9sEOUqpz4V2ibuJH3A7cDN
+ FAS5lHOmVxL/g0JvpzKYfECIWb/SARvfiXc0gGh42kyapjKD4zB+ME7mc5DIIHcEvXOuCQiutOb vNVHme8AYOO5fHlDR5p2MIoA84vMGC77OT9+Y+eWXMKUKCspoOaapVLBAT8Vud3YFnxk59XloCl 9xsinbyigj8Vd8Gc2UJKixZhjlnVvfdj6S1/337wn/fUHBGu/2UadcSMUtojtXXadynVkYmPH5K
+ EB1boRnwG0Ct0gkQFd5iQXZ4eKAePbLhn767AgT309FHXuKwFAgdBgnjH0r4FsRKuSwNv3lW
+X-Proofpoint-GUID: BjZW9AYLN_J7aDXlFa8en0r0_wpqMJrE
+X-Proofpoint-Spam-Reason: safe
 
-Hi Krzysztof,
+On Wed, Jul 09, 2025 at 08:41:43AM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> struct gpio_chip now has callbacks for setting line values that return
+> an integer, allowing to indicate failures. Convert the driver to using
+> them.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
 
-On Tue Jul 8, 2025 at 10:31 AM CEST, Luca Weiss wrote:
-> On Tue Jul 8, 2025 at 10:21 AM CEST, Krzysztof Kozlowski wrote:
->> On Tue, Jul 08, 2025 at 10:13:24AM +0200, Krzysztof Kozlowski wrote:
->>> On Wed, Jun 25, 2025 at 11:14:56AM +0200, Luca Weiss wrote:
->>> > Document the FS Differential TX Output Resistance Tuning value found =
-on
->>> > the eUSB2 repeater on Qualcomm PMICs.
->>> >=20
->>> > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->>> > ---
->>> >  Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml =
-| 6 ++++++
->>> >  1 file changed, 6 insertions(+)
->>> >=20
->>> > diff --git a/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-re=
-peater.yaml b/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeate=
-r.yaml
->>> > index 27f064a71c9fb8cb60e8333fb285f0510a4af94f..6bfd11657e29927359980=
-63b3ca390e04a03930d 100644
->>> > --- a/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.=
-yaml
->>> > +++ b/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.=
-yaml
->>> > @@ -52,6 +52,12 @@ properties:
->>> >      minimum: 0
->>> >      maximum: 7
->>> > =20
->>> > +  qcom,tune-res-fsdif:
->>> > +    $ref: /schemas/types.yaml#/definitions/uint8
->>> > +    description: FS Differential TX Output Resistance Tuning
->>>=20
->>> Resistance is in Ohms, tuning could be in dB, so I wonder what are the
->>> actual units here. Neither commit msg nor this description helps me to
->>> understand that.
->>
->> I checked and the values are in Ohms.
->
-> Yes it's Ohms but not 0x00 =3D 0 ohms, and it's also an offset in ohms
-> from the nominal value according to the Hardware Register Description I
-> have, e.g. 0x7 =3D -12.1ohm from the default
->
-> I can try and create bindings using these Ohm offset values, I didn't
-> worry about it too much since the other tuning values in these bindings
-> are also just register values, presumably from before Konrad had access
-> to the docs.
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-I've taken some more looks, and checked how similar tuning is handled in
-qcom,usb-snps-femto-v2.yaml and phy-qcom-snps-femto-v2.c, and changing up
-the concept of tuning in the eUSB2-repeater bindings+driver is not a
-trivial task.
-
-Since this is adding just one more property in-line with the already
-supported properties in the bindings+driver, can we get this in as-is,
-and deprecate all 4 qcom,tune-* properties later with a replacement that
-describes the values better?
-
-We have enough people at Qualcomm by now that should be able to do that,
-and have the required resources to answer any potential questions.
-
-Regards
-Luca
+Thanks,
+Charles
 
