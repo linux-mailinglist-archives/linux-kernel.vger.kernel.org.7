@@ -1,197 +1,143 @@
-Return-Path: <linux-kernel+bounces-723568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 585E5AFE890
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:06:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F512AFE894
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 201D7188B7A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:06:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F32994861DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EE62D8DDD;
-	Wed,  9 Jul 2025 12:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C192D8380;
+	Wed,  9 Jul 2025 12:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IrwceOhK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cAxMDMb+"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E8C28DB63;
-	Wed,  9 Jul 2025 12:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A77D1C1F13;
+	Wed,  9 Jul 2025 12:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752062776; cv=none; b=HinVDDByVsrWerbCG6Br+k2XCANapacFZZcOWByRShNS+nKmmj7GKgTcU3h9iMoLc/SOAECet5ml0JybCKw1VS1XZsngJM3PXU5wBnyay71VoUUJWKPAfF3ugHmgYbGpiy6zF5gQ7oAIDieSn1/Q3GINpG8Bo5qaGXOAuIo2RMU=
+	t=1752062892; cv=none; b=AbqKM5fHhM4iCO4Pmy4fxVEFI+gsQ0lNDrI1tiebj7GzaOjGqh8ruOdYhDmgqGeBwvlgFBGrGK5WIIOByncT8qpb+BU+X5FvAmLJDOWFO7gQZn4VUChRzhRUvu/lG/LhSGw9X9CRVidiFnIWQuJ7grQQDFAH4utCcwg9pv6NHaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752062776; c=relaxed/simple;
-	bh=z4dEedgScU/YlCD+6MrgxXXsdNr/vbYWdMeF3oXSnMA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SLqJJpWvPkUb2ntK1waFwFf75WJN0jy+dYV0d1LsjqQlxeZbaeBPavevlANofmmMwrGx6UaBZ7FoNus+9AIH1cxIISurTycy+oJgXd4+wH/EqIlkAC3KbyR3TeDmRsVyLD/cFa7lQ9Uh+vxXZuXZAyQT+WEzFt3XRFcUD0/NYRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IrwceOhK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A98FAC4CEF4;
-	Wed,  9 Jul 2025 12:06:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752062775;
-	bh=z4dEedgScU/YlCD+6MrgxXXsdNr/vbYWdMeF3oXSnMA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=IrwceOhKqPRzVM2Zlb6p8jV+n0K+kX8zwnjKzPRKNLJxEV1CYWFKxG95u4IzX/S6d
-	 SRT+hdi7itRA3wpk6bmEIVTFoHhNk2PgS4qbVd1lrdQM8cXTp8DH85L5dgaAjPobkc
-	 rTZsDzpadjp2N0MiTem0UQ2WpD0CvHXffZgRBpK2FfuQD/Vcpr3dFabXR6zykEljT+
-	 AxJ+5830Xp/9F3AsBIoCXqH4/Nn5yjgspbKj8OExIcCIuQ7j4djMzTg8EP341hz7XJ
-	 ByHn9NMcFcl1cFHjuyYCqQ3D7mFXrROqrUo59JrTYWYd9mFXirHnv9Q4AwHtZsCYu8
-	 TEhOHwyEOnUHQ==
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-611f48c6e30so3024776eaf.0;
-        Wed, 09 Jul 2025 05:06:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVp1VmTCG3uJ4plN/mveeF1NrWi2IT+tuuWasigUPFNZXMwnAI1HMSOqDkq+GaFiECDg9Pa4aNcImA=@vger.kernel.org, AJvYcCXh7XUzn2kEVzR6fkDSFmaRhe33dHVoVoyLyIoNwcrn/xoa9nizXu2oZVplT1mdNUMz1+pu+mqRfCAWOoo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylZSCGH9suwE7Wz2slQ2MLA+h3sDZ/WgMcTQHItQDjYk4Z6b3P
-	T5fkmAddQmdwFiYkKigpcnwT61fYA+MVSrWWd+LjjwYewUn6ln1dTdsVUHox9Cozx1DoBtnC4j9
-	UTACsm9tU0nbuLHuf6EXV/wrmEjxIGzc=
-X-Google-Smtp-Source: AGHT+IHQ8lmhJmj/6RKKyXpl7wIV2VdST7LucNcCsLdv5I5BpinmjtFK/W5HkN7Y9rLe46Hi3/jgjiEuWn/aL42UXc8=
-X-Received: by 2002:a05:6820:6ac3:b0:611:f244:dfa5 with SMTP id
- 006d021491bc7-613ccd51bcamr1484661eaf.2.1752062774849; Wed, 09 Jul 2025
- 05:06:14 -0700 (PDT)
+	s=arc-20240116; t=1752062892; c=relaxed/simple;
+	bh=0TGwVBbfI4sy043o3QJVws4UO8A5MpgEz50iBrBsWKM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MUh/5zAzIprN1as7SYEL2SB7bSSpo0AFmHwIhoLZJqn6CQwB+8PHTDdvx/AC2p+lLlm44xmRM1DFuK9Kixrm1fyS5oNmuVGjTOL14zUaggP333ZsunwzdDZwAxWX05eQPw/KRSECRnNa++O2CWJWcJkka2BgAMIIxsRq3Vox7+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cAxMDMb+; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a4f379662cso4765734f8f.0;
+        Wed, 09 Jul 2025 05:08:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752062889; x=1752667689; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IjQPHZ9ynvxD2rS3Yf7vu4AQO0hXoaY1LtKjdEL+iyM=;
+        b=cAxMDMb+sddrYzl7Na50BgJ3H9iVEXC+49VKj+pUC6Alb/h9pDKJYm77VqKbD47ye+
+         /2Q5/ahrgJe0JJtvRkutPPxg5V6fh9kcmSjeN9Q8oxPxFyr5/ZpoHNgK7jrF99JybqE7
+         qHJ1RD5DCkynzWX4RIVhTlQ/a3gvILNRuJ3xDnIW8nNwlDalJn0868fAxQr6VVYVg8uD
+         qtBB6R8Y3j6uB2rM1Z7bq5NczWtrSecfx5IV+ggU8goZlMHZ2ZwAncTO+ppG2B+sb1IN
+         lxbjbhb6SQ/oMYg+C5IPqb20KNfEVtBRGTNgFuwoFDVhz8LyUkYzwQGEnwX4iF7zdQmw
+         mMng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752062889; x=1752667689;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IjQPHZ9ynvxD2rS3Yf7vu4AQO0hXoaY1LtKjdEL+iyM=;
+        b=l0OJfZnJcU0/EhEV9zN8HdMRMe9vel2BVuzKrtx/OCBAAxLa50SBYpNovhMm7S1orp
+         uVGH2njYNID+2Ekmn8BhYxNYl65z1OyU+EPY/ktuGfSRvs8zJ3T6VPsWEl1X7LKY5WaZ
+         YSepUfy+R1YmZyQtDpUeud1Y/qlCh3alG21vwrFcqUqL9/GD/dBEix3/KSpdkJRNGD0D
+         gcZyCFj47EtFiqDTGagJ/xvjAF+crKxo78G8XSTmi369eu9bluyQZLLg6MBwA32peFay
+         4eVqDptTrkw/0CFrQ4bxCgnw4jIWJaNZ6yvvihnzmiACQTF8A0OA9Wjlv1ORQi4XG7oQ
+         1vgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUW5xc8rfR1ZQniMHQg1LoRDrEsw9hHQKi8xTNR0D3SFNz4Py8LoFFwvcfuHeg6eWIU3O1gGL3NR7E=@vger.kernel.org, AJvYcCUemqk4R731VWpGicIhPIarxv54JPCvpj1J/5S89uw1WWecu8rBwYnWgFG/HI7i5fJXlUzR73XnW2PeZ0g=@vger.kernel.org, AJvYcCXF6OQ4qluHDBEGTlQin9CJB8mmWDw9W1/DD7ymjDKyFsm9HChcSWLcYAnbZUUQUEQfx8gGqYGNroEBaF7J@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGaCpSFzMXP3B9gOtZ0YvEDJ7uSTWXDsMrbY6DYBmhtroCoTYN
+	UH5a3eNh8r2FIQnhLXPxuXcidG4fck+Owf4Kl7NeDC1oyeoCuEo9CQ74
+X-Gm-Gg: ASbGncvvlqDJAX9WbBJ4qtRi39bFRQjiqIgd+133QHZH9PJen/aVIqrqtYuEMTE55x7
+	tZH8NXM9pB9IutJthyHECcMpu+p0MphDJRXk5haSd2/TDGjBJSJIl2jQ91X8nzYRWO94CDFEass
+	EQ2OxlzASoyooEwpFoVoqiQvWXs+BD68W2D/HjMf66AIIqrFFCCTU1P2y5eMIyYjQszBV72UWaf
+	qn/Ndt6pGPddCDvGFHLADjYYcT3XJ/pu8mn5KBjx6agD9pyrHhOSx+Qttcx5o2UyXk6MMzYFxSz
+	+yuntTKUxb2eQdzcb1e/sbCXr3KQeMoCZbb0oxyk8kbRcyS3n8wUlwm/4t9IhkJsoFbhdhxgRaG
+	0lBZhjItlEDDhUygCQbuX7rdZFpLo1QG0m6kvovUJE2GI3GBV
+X-Google-Smtp-Source: AGHT+IEA39s86i/v0pMayG6MQCNXniIC/f1IoHZeBXiCa548AvyVLpkQNHziiLzE25s483vSNV2Eiw==
+X-Received: by 2002:a05:6000:40cb:b0:3a4:f038:af74 with SMTP id ffacd0b85a97d-3b5e45311b5mr1977474f8f.51.1752062888454;
+        Wed, 09 Jul 2025 05:08:08 -0700 (PDT)
+Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b470caa1a2sm15396455f8f.42.2025.07.09.05.08.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 05:08:06 -0700 (PDT)
+Date: Wed, 9 Jul 2025 14:08:04 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Pei Xiao <xiaopei01@kylinos.cn>
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, 
+	sboyd@kernel.org, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: tegra: periph: Fix error handling and resolve
+ unsigned compare warning
+Message-ID: <jwlemmk4el6chr7fkzratg2si3s7rls3itq6ki7nbh4ssv3f4w@dxv5xnagtryr>
+References: <cover.1752046270.git.xiaopei01@kylinos.cn>
+ <79c7f01e29876c612e90d6d0157fb1572ca8b3fb.1752046270.git.xiaopei01@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12700973.O9o76ZdvQC@rjwysocki.net> <CAPDyKFpGH=ZUyQ0wbkEKVLxknm59hDX6DNm9hXpuqzHCpoe-KQ@mail.gmail.com>
-In-Reply-To: <CAPDyKFpGH=ZUyQ0wbkEKVLxknm59hDX6DNm9hXpuqzHCpoe-KQ@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 9 Jul 2025 14:06:03 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0how7VXTjuxtd533zNeqKwCqnJDVVKK=Vpww_HbQkwxKw@mail.gmail.com>
-X-Gm-Features: Ac12FXxZ7A0lgWqr6kxxSE0vDTlSWv5NCsnYwahPNyUhL3bRWdRDWxQl93kkXcc
-Message-ID: <CAJZ5v0how7VXTjuxtd533zNeqKwCqnJDVVKK=Vpww_HbQkwxKw@mail.gmail.com>
-Subject: Re: [PATCH v1] PM: runtime: Take active children into account in pm_runtime_get_if_in_use()
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Alex Elder <elder@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dwom3yesrtmpnusx"
+Content-Disposition: inline
+In-Reply-To: <79c7f01e29876c612e90d6d0157fb1572ca8b3fb.1752046270.git.xiaopei01@kylinos.cn>
+
+
+--dwom3yesrtmpnusx
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/2] clk: tegra: periph: Fix error handling and resolve
+ unsigned compare warning
+MIME-Version: 1.0
 
-On Wed, Jul 9, 2025 at 1:47=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org>=
- wrote:
->
-> On Wed, 9 Jul 2025 at 12:41, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> >
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > For all practical purposes, there is no difference between the situatio=
-n
-> > in which a given device is not ignoring children and its active child
-> > count is nonzero and the situation in which its runtime PM usage counte=
-r
-> > is nonzero.  However, pm_runtime_get_if_in_use() will only increment th=
-e
-> > device's usage counter and return 1 in the latter case.
-> >
-> > For consistency, make it do so in the former case either by adjusting
-> > pm_runtime_get_conditional() and update the related kerneldoc comments
-> > accordingly.
-> >
-> > Fixes: c0ef3df8dbae ("PM: runtime: Simplify pm_runtime_get_if_active() =
-usage")
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >  drivers/base/power/runtime.c |   27 ++++++++++++++++++---------
-> >  1 file changed, 18 insertions(+), 9 deletions(-)
-> >
-> > --- a/drivers/base/power/runtime.c
-> > +++ b/drivers/base/power/runtime.c
-> > @@ -1203,10 +1203,12 @@
-> >   *
-> >   * Return -EINVAL if runtime PM is disabled for @dev.
-> >   *
-> > - * Otherwise, if the runtime PM status of @dev is %RPM_ACTIVE and eith=
-er
-> > - * @ign_usage_count is %true or the runtime PM usage counter of @dev i=
-s not
-> > - * zero, increment the usage counter of @dev and return 1. Otherwise, =
-return 0
-> > - * without changing the usage counter.
-> > + * Otherwise, if its runtime PM status is %RPM_ACTIVE and (1) @ign_usa=
-ge_count
-> > + * is set, or (2) @dev is not ignoring children and its active child c=
-ount is
-> > + * nonero, or (3) the runtime PM usage counter of @dev is not zero, in=
-crement
-> > + * the usage counter of @dev and return 1.
-> > + *
-> > + * Otherwise, return 0 without changing the usage counter.
-> >   *
-> >   * If @ign_usage_count is %true, this function can be used to prevent =
-suspending
-> >   * the device when its runtime PM status is %RPM_ACTIVE.
-> > @@ -1228,7 +1230,8 @@
-> >                 retval =3D -EINVAL;
-> >         } else if (dev->power.runtime_status !=3D RPM_ACTIVE) {
-> >                 retval =3D 0;
-> > -       } else if (ign_usage_count) {
-> > +       } else if (ign_usage_count || (!dev->power.ignore_children &&
-> > +                  atomic_read(&dev->power.child_count) > 0)) {
->
-> I am not sure I understand why this is needed, sorry.
->
-> If someone and somehow we have "dev->power.runtime_status =3D=3D
-> RPM_ACTIVE", then the dev's parents/childrens and suppliers/consumers
-> should have been reference counted correctly already.
+On Wed, Jul 09, 2025 at 03:37:13PM +0800, Pei Xiao wrote:
+> ./drivers/clk/tegra/clk-periph.c:59:5-9: WARNING:
+> 	Unsigned expression compared with zero: rate < 0
+>=20
+> The unsigned long 'rate' variable caused:
+> - Incorrect handling of negative errors
+> - Compile warning: "Unsigned expression compared with zero"
+>=20
+> Fix by changing to long type and adding req->rate cast.
+>=20
+> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+> ---
+>  drivers/clk/tegra/clk-periph.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Sure.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-> Otherwise it should not have been possible to set the runtime_status to R=
-PM_ACTIVE
-> in the first place, right?
+--dwom3yesrtmpnusx
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Right.
+-----BEGIN PGP SIGNATURE-----
 
-runtime_status must be RPM_ACTIVE, but pm_runtime_get_if_in_use() only
-wants to bump it up if the device is in use in addition to that.
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhuW6QACgkQ3SOs138+
+s6F5ew/+Kl2vGIaJ64fB7E6Xm2JjEiObyhSy9J7weUzAGKcRzIOGaZLJkU3hijLW
+RSBiQ5X4miuf8d4l6xMxKay1zEIS1fwFktZ8hMxxO0AHLUjNF0GbL1iI3zVOEpJw
+QlC9yIr8MIaIvlC/+5IkaTKVKbPdgZHQDZoqtFCuNW5dvlSE7Hi1net3t9UVuRk3
+uDRKnfGqsacjP1JRjkLFz3z+QxpWQaJmZVNpPkxclpm7ecdGWxf6+LkbuY//aOgc
+LBA1n3aeKe3YgHMZ/IWi+F9PDix+lrj3fveJKvYvJB5FrNhLauZa7b8na7nFpv1F
+VPs3DtI9F/xQr47gDK03/y49etZr+QHIzFSxnzLnRFfPwn2skdUTsxzoz0VgDTa5
+5SuGftvnWGC+8RokvKK6s0kBQrLqKc1qq9A8IHth8EPxiAKtHyb/XXzIRlRB2kX6
+EGwvGwos1dq8tooO64hdiDpze8+Hl9RBd3m10CjDH5hLsc+MQ06CKV8cPu5nTgZw
+1Xo5W23BnsieaQ+92lmm41UYEYh+SEow/XiwE0ze2I/gPXVdCLftQkpJs9LQMXX0
+zMiKhTd1Sl9lQ9zmoZygdSC6ii6lsIo8yrSOeRJCmQEFtsgZZWIwSSJEdxs8nP5W
+J7GXaF4nOriHIapiT2l3cRlWMdbrByhhFSkXUHAg4d2BmULY8Zo=
+=FfhE
+-----END PGP SIGNATURE-----
 
-So far it's been checking the usage counter only though.
-
-Thanks!
-
->
-> >                 retval =3D 1;
-> >                 atomic_inc(&dev->power.usage_count);
-> >         } else {
-> > @@ -1261,10 +1264,16 @@
-> >   * @dev: Target device.
-> >   *
-> >   * Increment the runtime PM usage counter of @dev if its runtime PM st=
-atus is
-> > - * %RPM_ACTIVE and its runtime PM usage counter is greater than 0, in =
-which case
-> > - * it returns 1. If the device is in a different state or its usage_co=
-unt is 0,
-> > - * 0 is returned. -EINVAL is returned if runtime PM is disabled for th=
-e device,
-> > - * in which case also the usage_count will remain unmodified.
-> > + * %RPM_ACTIVE and its runtime PM usage counter is greater than 0 or i=
-t is not
-> > + * ignoring children and its active child count is nonzero.  1 is retu=
-rned in
-> > + * this case.
-> > + *
-> > + * If @dev is in a different state or it is not in use (that is, its u=
-sage
-> > + * counter is 0, or it is ignoring children, or its active child count=
- is 0),
-> > + * 0 is returned.
-> > + *
-> > + * -EINVAL is returned if runtime PM is disabled for the device, in wh=
-ich case
-> > + * also the usage counter of @dev is not updated.
-> >   */
-> >  int pm_runtime_get_if_in_use(struct device *dev)
-> >  {
-> >
-> >
-> >
->
-> Kind regards
-> Uffe
->
+--dwom3yesrtmpnusx--
 
