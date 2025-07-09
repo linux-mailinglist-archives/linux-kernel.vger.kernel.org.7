@@ -1,76 +1,77 @@
-Return-Path: <linux-kernel+bounces-724344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE8AAFF198
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:15:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC770AFF19A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07EA53B6AF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:15:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEE947B6757
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B7323F291;
-	Wed,  9 Jul 2025 19:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3770B2405E1;
+	Wed,  9 Jul 2025 19:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GGMIXGsU"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eKFNscQZ"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7A321D00D
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 19:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D063917597
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 19:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752088533; cv=none; b=KzWPRn1xF1ZJpwxtGpq3IC2B1b0mzslxCgHu5qF2wl8/+nblOCETS4EJavXlc81f9Th3HV8xvMMysrA0mHzj+RbUoAWrhr77ujeB2ku2Xze9ZB1MeH1SXNZ/Gd7nQyhj9T2LfnMC2wXFYPuQYdoZqUbR+33E+HoYHZWq6WK6Xak=
+	t=1752088534; cv=none; b=MVAHtd9x9UprBIOzZz1BR+Kax0KiWbM2s/adMIoSeW4Q1Ibb7/zicbtoh/onsklgqfh8xf5bNddExkW+jvET6/3gpTM0PzgMjoQhAiLYh/tRmEXsttfVg5SzVV0EbcwZgwJvRW6oGbLgWtjlskaiIjw0fpl4mg9noy050BfeJ2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752088533; c=relaxed/simple;
-	bh=Vg3SYFcxbZhfxzHwdzewVgAiginzpLipvsLFtGoX06g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AncCl4iP4aw60hVSgrIuvRFuhvW8+tZ6fPR7sJN84HvZHYdsbRiSFs9SjC5Op4qzJbwqnudqhP+Kt2uPZf+6WhvtAzZ8NVSAm2ucyAWg9PO0oGUAJ6wCfuBcGunmqHrga2zFNTNhn2SFQqQQrvfAYZnBwEZRviaXDPe/pUqfBj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GGMIXGsU; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1752088534; c=relaxed/simple;
+	bh=LBLtPnGLFKCmbpB+0VnZBJ/y17TkI+PJVcwVQLb1mgw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ItNh0c3bZBaaig1fueLSwH3buX+Wuh/51C6ysKtTGFgx7JxgB8OQcBObo/5tnPcYxsG4fCi4akkaSfo2jaJm5YWKGSkEhSH5BZFQIWdyXuhOZsErDgvcOyBjpDnvXLMSnziRcAkFI+1NLK3WMh8tcjkvcjH9vxXBoCHpgUvBEgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eKFNscQZ; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a4f64cdc2dso35166f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 12:15:31 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-450828af36aso201505e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 12:15:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752088530; x=1752693330; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IOUI37vOvArNOMfbDlU1r5BFH53BMkpjGIGFBJa2WR4=;
-        b=GGMIXGsUNhJI6oHDJ5ZgmWlONrkEqHZhIkZ9ufW/GC9LhM2yYdYEIoa4j+dns7QowV
-         kva0huBNSQjEvnP7JO7zlDkEX03nK/XqmTU1QK/6VnsSzBjpttrByHE99s30Y+r2XYTc
-         4oVXgkflaXx2cjZzquTu5s2K8dZ9DPt6johmdtLa06hNhjdLDVBqTBSUIvEmIXC72BNj
-         9ufzeU5eBQKGg7j/q/+H6/QSh1JxbO6deJnrlc6DDC7ZOpmlOn764hhQUgWxyCvouGcX
-         gvzTyBZ6YvYXXHNsYsWIbOS+IY8CfBL2V940Ez4G2lI1z9l1NZTagDV63uleFH19TIvB
-         qqbw==
+        d=linaro.org; s=google; t=1752088531; x=1752693331; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HsSnIgBBZ1kBciUGilPIV4WsdrkG/yK/XMLgkUNs/ME=;
+        b=eKFNscQZAO0JGj9Smy+wf6JzBAg2riV46d8nhiwbM2mvNTxacj3hNK3U8tVbtbniTE
+         mjrR60Ob2j+/apcblPyEXwXxQXSx5DMhK+greNYZozE8UOetuEtY6blK5z/rYeoERGld
+         tUTFxFrf+BO+S549OjDL+PrgWAtfA4an6xgf6WhVaN9AVTPWdPeFGb2soND6h+cHcjcb
+         PVgtud38Rfv5v8AHu1UeSE2jmvt51/2SjJJVOO+UIgeVLFG8Z0HVVcuNE7CKpfihmxqr
+         ReamdTcmlxwWHqBPAaZ20xhIK2KFLUEqt5GQv8xR5hVO5PhB4TjZKSVvyIvA5X42WnG/
+         hImQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752088530; x=1752693330;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IOUI37vOvArNOMfbDlU1r5BFH53BMkpjGIGFBJa2WR4=;
-        b=TbI/Pg0mjSVpcYmmrzQwc3I+I3ofarAkp8/2srDGZnCjScT5PFD0eeDqdf1Mbb65Wt
-         o3aJ0IX35TWR+v/sSFHj3PGlCqonGiU6UF44RpmAuNGuI+VkViJhNkmwEWoxZzEJG4b/
-         SZtiO8BQqWtf+iSdTbfai0b4gZRSUL4QAmUP2mgs0lmlPJtECUGNft94TNAHX6oVIHW7
-         5sOB8OoxuRcnT+ThDzp1kOKEdTJ0RQTc7FUYOqnLvTk3mZIMmY3bPrvFp/i7CWUJ0oQ5
-         vvrHistqgT4oUR4g0HjryMCO5tNXZDrJpdhWc6SjzQpKNGfrc8vdRb+q/MTeO69kE2Jv
-         fv/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUx1u2Q5nSFOW03kWWU+/5Lmiv2kBrVI6IA5t9z469NHhEAS+eMxwC4/bL3aSmSg96HtdxHqUOzt7iceHA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMlb7PxuhTB4k2KI/+I+Zl+sPNS7fvGuGbIhYk1lHzP2MHKhIQ
-	Hi+JIPEQc5PkW0X6+iJmmHoTerCViAnwsdqS9jeCcLfFl2PmGdOJty5lmlJYuy2epfyZ0GGo44a
-	uHldM
-X-Gm-Gg: ASbGncsX7NF+mmNsJg+d+3RiD90sbiIErJmrTz6jtmMTF2aEYa7fzp3i/Fqq7Hry5gA
-	u77ck2kwEIVIcxRotlpxIk93QFBcu8U5ZrAejJucvmaVIkyKvAmYOH6iqpzZIV4tKWs1Tt0lGxp
-	UzEgqbWQPrG2cHL/MDhk8iMtBl5iw/OL0GCey3r82FNw9iHN1HjUIP+5iSLew+sTXWPycfZnROA
-	VhOldJ8UDD14qpFRfeJiw1JzE0dg9XtZuBbxdFi0Hx3BhbjzFK6QamidXbKrsZK5jVdYTbOvD2a
-	nCRO9Hah4BYZsaA/UTy4vLC0BUtx554D7LC/J1yjcJt7Uh0G/dEb0Czs4eYKcIgk2yMKBSRSfDU
+        d=1e100.net; s=20230601; t=1752088531; x=1752693331;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HsSnIgBBZ1kBciUGilPIV4WsdrkG/yK/XMLgkUNs/ME=;
+        b=FVukuABZdHevbh9xGYUX//aVCeJNofaPLNxxq0OPpj1qXOCNhCZXWvm+cSvyluJ8LG
+         IgrgfEf4CocgbHdXNcHQFy1vD7faB+l/5K0+fEn61lXhx1OesBI+ct+XTAHX33mRJsEr
+         QdZQoD4g9b+48dDVlorLaN8tq7k3kLOCeNx765UVsJWqRcQyCYq4MjkKlI1vU6psI73U
+         G4tFiECldDDRD3OEgWXQdJKa1s96fZWejDioiZLgtmFYYeBhCnAoXU20f5rUSTCNMPdr
+         tmRvwvvxpom1xRpgQePVO24/D2pXKFvy0UuO2vbqhv5PcogxQgBOLlUj3c6QJ1ls2IPh
+         5YRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWms7RmJFhPPAajmbzBjCv941g7cBa9mQBRsrSwMRZ9V0WM2cwuXG9x6OyZi8rLoyLpP4M9Xgvazpcv7p0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7wjtYeprAQX+CHTBRNC1rJUQwc7dr9sJ3zOG+HZ9xq5SDFxX5
+	e8uLULVc5cEruRM3vj9myh3knUMgmMXD8N/Gs3nxyvDha0v+W7cBLpEYnYh7bSvD7jU=
+X-Gm-Gg: ASbGncuPeo8QEu5DEKoKt3jX0U4gAko6R3+OacioTQtVXKrLgBCDdeDNxT1oK9MuINj
+	JfaAR5QK1EkPZsKzWAfMxg817MPfZTci4LEFDAESSsxU8i3+f1yTtsbs+8V4IU3exTXi3SBraRl
+	pJZYbG/Gfn8QYDbf7iasE75ou92rMhpg3gTqBnny5fHx699oVnn6xMxJMal0EfC82ozf1Aa2wlS
+	DyRoe5ONsKT/+czlrWe2RIg9OVpxIk4Trhipaj+wQLvSV7XyfXgsrqLDGd3oJdt3U6CHlMq5DqX
+	iVIbVvF9Ze22JdhlPwLpOoMP+HPLDOj4GjOkZ3QqF1wX2jPeiiLpOqAOKC4fS0ylLuwE4V97CAQ
 	=
-X-Google-Smtp-Source: AGHT+IF5fQuSnWVC1+1FSPZh+mnfL3zRfmekTmST3Oxxmhd4JajNQiGduP450T3HuQ8hjxFtcBtDTA==
-X-Received: by 2002:a05:6000:2888:b0:3a4:d4a0:1315 with SMTP id ffacd0b85a97d-3b5e44e107cmr1444727f8f.6.1752088529780;
-        Wed, 09 Jul 2025 12:15:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEw+2/Fscn7De5ZvL2RlCEWtJ9eIRsrKn6Ngh3wy00p2fYxejGpstLQTHOXdLIlShkvStCcLQ==
+X-Received: by 2002:a05:6000:26c1:b0:3a5:8ae3:bd6 with SMTP id ffacd0b85a97d-3b5e4576314mr1192466f8f.16.1752088531010;
+        Wed, 09 Jul 2025 12:15:31 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47285dc08sm17159588f8f.98.2025.07.09.12.15.28
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47285dc08sm17159588f8f.98.2025.07.09.12.15.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 12:15:29 -0700 (PDT)
+        Wed, 09 Jul 2025 12:15:30 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Arnd Bergmann <arnd@arndb.de>,
 	soc@lists.linux.dev
@@ -81,31 +82,32 @@ Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 1/3] arm64: defconfig: for v6.17
-Date: Wed,  9 Jul 2025 21:15:20 +0200
-Message-ID: <20250709191523.171359-4-krzysztof.kozlowski@linaro.org>
+Subject: [GIT PULL 2/3] ARM: dts: samsung: dts for v6.17
+Date: Wed,  9 Jul 2025 21:15:21 +0200
+Message-ID: <20250709191523.171359-5-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250709191523.171359-4-krzysztof.kozlowski@linaro.org>
+References: <20250709191523.171359-4-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1262; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=Vg3SYFcxbZhfxzHwdzewVgAiginzpLipvsLFtGoX06g=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBobr/LrlRRiB7NlTXa7KpRiF8ppNyVSL6muQZyc
- U/nnYOJbbOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaG6/ywAKCRDBN2bmhouD
- 1631D/9+mUsRGRHWiIdpYnSIndM3CR/VSb5CpOedsp/WMUAxCfvyYm+cNPdqWe68MxqUBliQTxh
- 1luK/jO2yNlAMjmvD96Q/UOLXSlS4g7NdpSePbKoaT3isLHiX8n972jvmX1pE684SlPD+rAl8Wt
- BflVWx59w+n0qWa66Hc+lMgBw58NXoJ2daiG2t2w50XLSdskrcF/Oadi1bwI5f00HEywZMPxKnj
- QkquXmlnBi6dyHdHfFGHu3c7k/Zjg9Qcy5F7ut+IOUC4wdJkHSsnAS5xgRC9nnjB5holPin6heD
- ozlaZ5iKoM25cHC3GxOJnmDjQBaRrMbb7vIdJkEVuQlr5HAFmKbPiZHusiVlJgVYMcu9nt4Axme
- fGeQkPXLKa6wxYWeS9QI+IrZEVm/Oai3bSurC/PZeyvoJu1w6pHZebKXR3FoPsLR0klnTkGBbL4
- zenZDZRqCT6Nq0kS8FAy0rAIyPykug3COaM4NCi7WsbJWpHXhM4hlrLXG5Rqtxo63beki5kfn3K
- yOoWXlfEQ6J9zcesgUhIyAFhgqvATrlJVJG318inhKHYbiR5YgeWikUbEeJGNlwgXDb6P2kITWk
- y2Hpg1qxObvXjVB6wKFdAVf++28TEW/v9h5UVrsnsxt4X5nEidEK+72Amfzl0J6zxKZ1N1/gLw+ ol9EG7e7CPuRbbg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1574; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=LBLtPnGLFKCmbpB+0VnZBJ/y17TkI+PJVcwVQLb1mgw=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBobr/MuYhtk8c9lMPkEtPvmo+CAlmyNqzC5XKsG
+ etty9ihw6aJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaG6/zAAKCRDBN2bmhouD
+ 17IgEACQ//MMqhTUvXRVCfVpbI4nZNkn1RvBEh7W9Sj1SBLGztID8SkulO7Cf0l02iB3pzOO/Dn
+ m2bWGs228g0m0mL2VsXk3hE08J8j2weor9nT77c3WmOGpv2H56SURP3bIuJNIrvWrs0GJ9gumjB
+ 3dR5PFESdOkbgNj6WIdVikTPhHBXpGfvoMXRZq+qLGUamca+1JdzOrgsEUYjGoVmMdPBji3Kor2
+ tRYccxsqUZyw2HF28CeOMDHIU1F0voTj6U6K8Qeg92D8zN6E0UZxxFN8hxqtNicMKqiO7nZlMKA
+ nfsDALvXuTDAu0M7BBbXFlQEYhuhGuvLjMJJAk+9yjgMhz0JDplURFo6JzTHCHzJYS737Ze4zH1
+ f7K7MYgqco30pBfz8lKugotvynygJ1JAW21MPmTNnrnRszILRaw7FHBbfxYlOjU/CCm1P3pAwV7
+ /Ex1M+V+Bp/x3SYrEdc/I2XjyEd57raDmhqgSpKFB+efOEUS/alwpewpOJJQ48zcq+ywRXyUUa7
+ X6VS61wmqOXtSKLXm6UPnTpHNBd4NwiOdYyKcwZA6KGGfA0HMpfomV9Bs8LPYEEMtezmxWPl0e8
+ VBQBR0Vyq2FohU4tVyr+goz9DGutUd8JIYXTSIe6JvKhTiUlIn90Bd1eAQc7/Tco6MD4CNYSRsE EFqv2w+iKTAuMwg==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
@@ -114,31 +116,32 @@ The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-6.17
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-6.17
 
-for you to fetch changes up to a7d7aebed4005b9c287f9bd9d22c273da63c9028:
+for you to fetch changes up to a24cd2f207efa73d7ce8089ce4848aea99f48f6e:
 
-  arm64: defconfig: enable Samsung PMIC over ACPM (2025-06-30 08:03:28 +0200)
-
-----------------------------------------------------------------
-Samsung SoC defconfig changes for v6.17
-
-1. Multiple SoCs (including Samsung, Apple): switch sound to module from
-   a built-in, because it is not necessary for booting.  Also drop
-   redundant sound codec options.
-
-2. Enable PMIC drivers for Google GS101 Pixel 6 phones: MAX77759 and
-   Samsung PMIC over ACPM protocol.
+  ARM: dts: s5pv210: Align i2c-gpio node names with dtschema (2025-06-25 16:11:48 +0200)
 
 ----------------------------------------------------------------
-André Draszik (2):
-      arm64: defconfig: enable Maxim max77759 driver
-      arm64: defconfig: enable Samsung PMIC over ACPM
+Samsung DTS ARM changes for v6.17
 
+Just few cleanups based on dtbs_check.
+
+----------------------------------------------------------------
 Krzysztof Kozlowski (2):
-      arm64: defconfig: Switch SOUND to module
-      arm64: defconfig: Drop unneeded unselectable sound drivers
+      ARM: dts: exynos: Align i2c-gpio node names with dtschema
+      ARM: dts: s5pv210: Align i2c-gpio node names with dtschema
 
- arch/arm64/configs/defconfig | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ arch/arm/boot/dts/samsung/exynos3250-monk.dts       |  2 +-
+ arch/arm/boot/dts/samsung/exynos3250-rinato.dts     |  2 +-
+ arch/arm/boot/dts/samsung/exynos4210-i9100.dts      |  6 +++---
+ arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi      | 10 +++++-----
+ arch/arm/boot/dts/samsung/exynos4412-galaxy-s3.dtsi |  4 ++--
+ arch/arm/boot/dts/samsung/exynos4412-midas.dtsi     |  8 ++++----
+ arch/arm/boot/dts/samsung/exynos4412-p4note.dtsi    |  8 ++++----
+ arch/arm/boot/dts/samsung/s5pv210-aquila.dts        |  2 +-
+ arch/arm/boot/dts/samsung/s5pv210-aries.dtsi        | 16 ++++++++--------
+ arch/arm/boot/dts/samsung/s5pv210-galaxys.dts       |  2 +-
+ arch/arm/boot/dts/samsung/s5pv210-goni.dts          |  2 +-
+ 11 files changed, 31 insertions(+), 31 deletions(-)
 
