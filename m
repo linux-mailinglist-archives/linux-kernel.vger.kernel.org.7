@@ -1,88 +1,239 @@
-Return-Path: <linux-kernel+bounces-724097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E52AFEE8A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:06:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 237B9AFEE8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 600C6642637
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:04:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CD7A7B45B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7AA292B24;
-	Wed,  9 Jul 2025 16:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB101C3C04;
+	Wed,  9 Jul 2025 16:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DLPE6IEp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="PjxytSW+"
+Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8FF1F3BA4
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 16:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A546227EAA
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 16:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752077053; cv=none; b=CwAHM4PHQuc64PxEOLNqbhNq1OfZZa7J6Tk7+E1kmbbkSJbmlQH5AEZDWbqJXI70W2l1zUPBqz04rVd0Cbx3iBxa9ItVWiq7iOC07E4NzTcSvnbA9btqzFfBeJSgrzxY9tfxbMSaaBD7Km6FafOJXFPlVGeyEeNp4NvnS9J3gSA=
+	t=1752077211; cv=none; b=pZKF0wpfJ7RmI9gqavt67TiMr4X3UZYD5A+frmsS3aNedkvC2ZH8umrfNTIDb4iLbDg1902hFgRJov4mnF1+NgHicOC9Eo9FrfeuhK8jHNsy/1fcr4I1+wbx06AwEyG8Zdvy44jB50TYYXCsCdmrOzrY2gPHA3wnk2FZPR4F9A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752077053; c=relaxed/simple;
-	bh=i3ZcrxUeGN+REuzZS1FQahN/BXcB/ZZRuCI1JLJJIJQ=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=B3aeeBiDeAqfiNjOFMbxcVNw9/OK5qSXiQF1tPLJEijQzgwFBibxk5crg430znra71/r8qJyr0t5trIM8O2F5BKYDGA40g53FFnu3xzuoY8eiDhUjILJMN0tnwsKYsNTvW3pmw5MZkrJnUBvjHuEPpvFXNi7Ln71crPqdxY1iAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DLPE6IEp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752077051;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i3ZcrxUeGN+REuzZS1FQahN/BXcB/ZZRuCI1JLJJIJQ=;
-	b=DLPE6IEpJhZzTH6xqj/a8+9QqVn9bWVTz8wdC6cYt/ojorFnm4BZJzp0DeEtvPAIFoVQBi
-	xOaCJilCC3mm/+fhuflaX0J8u3ji3bIfZHKfIXT0Szpilk1BCe1PtVgXt67DXwFqVOkuTb
-	N1BGFS6m9G/6tL/D8n6rFdbMfL74SLk=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-537-HYXudR29PqKtraIOeLv7Wg-1; Wed,
- 09 Jul 2025 12:04:06 -0400
-X-MC-Unique: HYXudR29PqKtraIOeLv7Wg-1
-X-Mimecast-MFC-AGG-ID: HYXudR29PqKtraIOeLv7Wg_1752077044
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D16261955EC3;
-	Wed,  9 Jul 2025 16:04:03 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 327E719560AB;
-	Wed,  9 Jul 2025 16:03:58 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250703024418.2809353-1-wozizhi@huaweicloud.com>
-References: <20250703024418.2809353-1-wozizhi@huaweicloud.com>
-To: Zizhi Wo <wozizhi@huaweicloud.com>
-Cc: dhowells@redhat.com, netfs@lists.linux.dev, jlayton@kernel.org,
-    brauner@kernel.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org, wozizhi@huawei.com,
-    libaokun1@huawei.com, yangerkun@huawei.com, houtao1@huawei.com,
-    yukuai3@huawei.com
-Subject: Re: [PATCH] cachefiles: Fix the incorrect return value in __cachefiles_write()
+	s=arc-20240116; t=1752077211; c=relaxed/simple;
+	bh=x9sp22toYkpc4VtFP6GGbIJjLYOoiHU3v8jcNMvPaTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jZSKB0mSI2RP4iLhTGvHmFzRuHYZYVbG9kaJdI4ZuKdv+2afGKS4Nga1BbA1B2vgwrs0sLtfUGQ4SP8ynSUqHS1WAtSGoXupZsu013reETdt74w/hfmB+Kz6nPFOz6VyoXwGDDH/+zYTJqwmc13eQSCmtLiViUXbOuADzikF+rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=PjxytSW+; arc=none smtp.client-ip=45.157.188.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bcjXH6mb4zNH0;
+	Wed,  9 Jul 2025 18:06:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1752077199;
+	bh=wDp5dd28Btxni9BGX/xFdhzPZyWhhotO9GBlMsWmrcI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PjxytSW+GUIQ1kQilkQn1YBWpaBzJdiqxMlmzc3xOBGsjBG+/qilBz9fvlo4i+mDv
+	 YfU1wvFgQFgnKKP/yHlb3ycF3lo4KurXxrqPWNMakoE5gjmi4thge5h9B+jTWQ7afr
+	 f12TNiPQwhR5XaA2LjD833NmC71N3a0UtLx3UMYo=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bcjXG5rnbzwBb;
+	Wed,  9 Jul 2025 18:06:38 +0200 (CEST)
+Date: Wed, 9 Jul 2025 18:06:38 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Song Liu <songliubraving@meta.com>
+Cc: Christian Brauner <brauner@kernel.org>, NeilBrown <neil@brown.name>, 
+	Tingmao Wang <m@maowtm.org>, Song Liu <song@kernel.org>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
+	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
+	"martin.lau@linux.dev" <martin.lau@linux.dev>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
+	"jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
+	"mattbobrowski@google.com" <mattbobrowski@google.com>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v5 bpf-next 0/5] bpf path iterator
+Message-ID: <20250709.daHaek7ezame@digikod.net>
+References: <127D7BC6-1643-403B-B019-D442A89BADAB@meta.com>
+ <175097828167.2280845.5635569182786599451@noble.neil.brown.name>
+ <20250707-kneifen-zielvereinbarungen-62c1ccdbb9c6@brauner>
+ <20250707-netto-campieren-501525a7d10a@brauner>
+ <40D24586-5EC7-462A-9940-425182F2972A@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2731906.1752077037.1@warthog.procyon.org.uk>
-Date: Wed, 09 Jul 2025 17:03:57 +0100
-Message-ID: <2731907.1752077037@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <40D24586-5EC7-462A-9940-425182F2972A@meta.com>
+X-Infomaniak-Routing: alpha
 
-I think this should only affect erofs, right?
+On Mon, Jul 07, 2025 at 06:50:12PM +0000, Song Liu wrote:
+> Hi Christian, 
+> 
+> Thanks for your comments! 
+> 
+> > On Jul 7, 2025, at 4:17 AM, Christian Brauner <brauner@kernel.org> wrote:
+> 
+> [...]
+> 
+> >>> 3/ Extend vfs_walk_ancestors() to pass a "may sleep" flag to the callback.
+> >> 
+> >> I think that's fine.
+> > 
+> > Ok, sorry for the delay but there's a lot of different things going on
+> > right now and this one isn't exactly an easy thing to solve.
+> > 
+> > I mentioned this before and so did Neil: the lookup implementation
+> > supports two modes sleeping and non-sleeping. That api is abstracted
+> > away as heavily as possible by the VFS so that non-core code will not be
+> > exposed to it other than in exceptional circumstances and doesn't have
+> > to care about it.
+> > 
+> > It is a conceptual dead-end to expose these two modes via separate APIs
+> > and leak this implementation detail into non-core code. It will not
+> > happen as far as I'm concerned.
+> > 
+> > I very much understand the urge to get the refcount step-by-step thing
+> > merged asap. Everyone wants their APIs merged fast. And if it's
+> > reasonable to move fast we will (see the kernfs xattr thing).
+> > 
+> > But here are two use-cases that ask for the same thing with different
+> > constraints that closely mirror our unified approach. Merging one
+> > quickly just to have something and then later bolting the other one on
+> > top, augmenting, or replacing, possible having to deprecate the old API
+> > is just objectively nuts. That's how we end up with a spaghetthi helper
+> > collection. We want as little helper fragmentation as possible.
+> > 
+> > We need a unified API that serves both use-cases. I dislike
+> > callback-based APIs generally but we have precedent in the VFS for this
+> > for cases where the internal state handling is delicate enough that it
+> > should not be exposed (see __iterate_supers() which does exactly work
+> > like Neil suggested down to the flag argument itself I added).
+> > 
+> > So I'm open to the callback solution.
+> > 
+> > (Note for really absurd perf requirements you could even make it work
+> > with static calls I'm pretty sure.)
+> 
+> I guess we will go with Mickaël’s idea:
+> 
+> > int vfs_walk_ancestors(struct path *path,
+> >                       bool (*walk_cb)(const struct path *ancestor, void *data),
 
-David
+> >                       void *data, int flags)
+> > 
+> > The walk continue while walk_cb() returns true.  walk_cb() can then
+> > check if @ancestor is equal to a @root, or other properties.  The
+> > walk_cb() return value (if not bool) should not be returned by
+> > vfs_walk_ancestors() because a walk stop doesn't mean an error.
+> 
+> If necessary, we hide “root" inside @data. This is good. 
+> 
+> > @path would be updated with latest ancestor path (e.g. @root).
+> 
+> Update @path to the last ancestor and hold proper references. 
+> I missed this part earlier. With this feature, vfs_walk_ancestors 
+> should work usable with open-codeed bpf path iterator. 
+> 
+> I have a question about this behavior with RCU walk. IIUC, RCU 
+> walk does not hold reference to @ancestor when calling walk_cb().
 
+I think a reference to the mount should be held, but not necessarily to
+the dentry if we are still in the same mount as the original path.
+
+> If walk_cb() returns false, shall vfs_walk_ancestors() then
+> grab a reference on @ancestor? This feels a bit weird to me. 
+
+If walk_cb() checks for a root, it will return false when the path will
+match, and the caller would expect to get this root path, right?
+
+In general, it's safer to always have the same behavior when holding or
+releasing a reference.  I think the caller should then always call
+path_put() after vfs_walk_ancestors() whatever the return code is.
+
+> Maybe “updating @path to the last ancestor” should only apply to
+> LOOKUP_RCU==false case? 
+> 
+> > @flags could contain LOOKUP_RCU or not, which enables us to have
+> > walk_cb() not-RCU compatible.
+> > 
+> > When passing LOOKUP_RCU, if the first call to vfs_walk_ancestors()
+> > failed with -ECHILD, the caller can restart the walk by calling
+> > vfs_walk_ancestors() again but without LOOKUP_RCU.
+> 
+> 
+> Given we want callers to handle -ECHILD and call vfs_walk_ancestors
+> again without LOOKUP_RCU, I think we should keep @path not changed
+> With LOOKUP_RCU==true, and only update it to the last ancestor 
+> when LOOKUP_RCU==false. 
+
+As Neil said, we don't want to explicitly pass LOOKUP_RCU as a public
+flag.  Instead, walk_cb() should never sleep (and then potentially be
+called under RCU by the vfs_walk_ancestors() implementation).
+
+> 
+> With this behavior, landlock code will be like:
+> 
+> 
+> /* Assume we hold reference on “path”. 
+>  * With LOOKUP_RCU, path will not change, we don’t need 
+>  * extra reference on “path”.
+>  */
+> err = vfs_walk_ancestors(path, ll_cb, data, LOOKUP_RCU);
+> /* 
+>  * At this point, whether err is 0 or not, path is not 
+>  * changed.
+>  */
+> 
+> if (err == -ECHILD) {
+> 	struct path walk_path = *path;
+> 
+> 	/* reset any data changed by the walk */
+> 	reset_data(data);
+> 
+> 	/* get a reference on walk_path. */
+> 	path_get(&walk_path);
+> 
+> 	err = vfs_walk_ancestors(&walk_path, ll_cb, data, 0);
+> 	/* Now, walk_path might be updated */
+> 
+> 	/* Always release reference on walk_path */
+> 	path_put(&walk_path);
+> }
+> 
+> 
+> BPF path iterator sode will look like:
+> 
+> static bool bpf_cb(const struct path *ancestor, void *data)
+> {
+> 	return false;
+> }
+
+Instead of this callback, we could just always return if walk_cb is
+NULL.
+
+> 
+> struct path *bpf_iter_path_next(struct bpf_iter_path *it)
+> {
+> 	struct bpf_iter_path_kern *kit = (void *)it;
+> 
+> 	if (vfs_walk_ancestors(&kit->path, bpf_cb, NULL))
+> 		return NULL;
+> 	return &kit->path;
+> }
+> 
+> 
+> Does this sound reasonable to every body?
+> 
+> Thanks,
+> Song
+> 
 
