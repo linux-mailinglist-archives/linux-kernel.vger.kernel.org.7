@@ -1,191 +1,156 @@
-Return-Path: <linux-kernel+bounces-723513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332E0AFE7D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:32:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D8FAFE7D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6DC76E0BBF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:31:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 472B57A6C3F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8792C2D97B8;
-	Wed,  9 Jul 2025 11:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7132D780E;
+	Wed,  9 Jul 2025 11:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IQ5Tk9/i"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oIzBKjCI"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232C12D77F7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A202D9EC7
 	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 11:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752060695; cv=none; b=lqpA2UgImlKaGy1hyYLABynVbGMOCg8QZsGbaaPM4aRsoqpEl53omYZej7JOp3ejsWEHCO5ccTRav81vLHxYU7peZJ/EN1cg623oIUb1tpFGwa1qeygz0F5IzmxDwlDliE8VIih7G9/gvhVLDX9lmfe1Mws8NEtOJfdvJyPUJMo=
+	t=1752060696; cv=none; b=sFi2O64oJdH25xTwGrrt+hrit6Z2EB5Q5qoj60lvq3C+w227JkAT5HX6R3o3EfbvWX/tEHL4frykQdkYrYLgChtr2YUKneGG2YYZIJ5BGb9QqsBGTLp+q2pdUdZmfhWb2rTkxyFrW8ThbkPQT4gEotxGSROn15++O5mgWZ/jlGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752060695; c=relaxed/simple;
-	bh=eaFq9gWWTxEjM3UTumvG5t2cF6D7OUJx6+dlbUGCjxQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nLKUpM0vXa2yG5wSqC280aKNQNnwtalta3ihFXuhCwToriHeYpfTm4x4w63Tz42p2p7QgWXUmmzqru2duy262FJ9jAqdYUE2omz8xzw8uCPA2RLsDfEXmeIh88PeH64aOeQTXh63xEkT5X/d0uoJNSAjmRdq/tBzL2THqr84qPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IQ5Tk9/i; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-7111d02c777so43877967b3.3
+	s=arc-20240116; t=1752060696; c=relaxed/simple;
+	bh=l0yiT6vi8kNmvnaFH6vL9llbWszqITt9K9QRgcAtPgw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=tUkocUsLj0ROnYJZy2ocuzjcm74lGOYQyTjhrD/R4M35BExYRrRvtxU3OvpV6QuVT2I88UWFmzYv6c3KMqwu7Ty7TPQ2bguhvHGVpC6vCrZIFl2NKEwKyAh+q1D+wUSteND6VtwwM6WobAfNExczEnIQ+GkMCgyZ6Ht0v3XycE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oIzBKjCI; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-607c239c7f0so5442586a12.3
         for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 04:31:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752060693; x=1752665493; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JNiQ1+5y2VFFZCNEkl5wzPIEOOAGrk6ZMXzGD1167g8=;
-        b=IQ5Tk9/i+fJhBdfeD0E2ZeHduy403dhKzse9YTsCatOUAgVmbblFr2ouV4+ZBArH2U
-         u1fn6FzWe5RkWgyNUW0IeHvSoDT5XocZDdT8PJ9exAF+vOydSJfcwtR5Go2XR8oCXy++
-         Nuc3fEWW6/0g9xGLR6bHxpuq90lhVL9JM/Q6IPHUW/8kGm1+84tvv6ALmkEWY5G19tyZ
-         aBfHeqtElyZvW5UBSmaJlufi5qPhT1IcYXvJZteQzn3iidfx8lMd5poS5Oz6Eqdz6YRh
-         JvpskF9JQFFd1kViv/KPI0IAN4YEMcBDUhKk5VnjEHCVGJ/KT+9o9xFc0Toi7KZ/egs9
-         kfxw==
+        d=google.com; s=20230601; t=1752060693; x=1752665493; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nKz/jr4sAvlzW8F+pdFxeU0JpTncvrCm+GmYbMwH7v0=;
+        b=oIzBKjCIyT7LMBvcK8DawbzM/FsZWc051YlR55RtrS/COmsfrsOU2TMIKAhlqp9Kko
+         HwjK8+y8SZWMmyELf9hOiYUjzF3Of4HX36yeCTQjSuF/0k7Q8exJVsTEQBHg0wI8eR1S
+         TP6J7hj4XxKXvz6MeWww9niCPcskTIYAyHE0Jsbr/ZRrBRttZiQDfFVLSEYjbms2Q4Ab
+         ICp+igrpYMNJYFQQU5t2HKn07EHj116a76gYW/29HeNpe2lv2AErCJsBBhfmhNZQB/Oe
+         SGI82sWWkIoU2MYQaHkU4xrw+a/hTeImjVpLzqw9PVhPsJ4niogxAPJ+AruJPNsz3asm
+         5/2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1752060693; x=1752665493;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JNiQ1+5y2VFFZCNEkl5wzPIEOOAGrk6ZMXzGD1167g8=;
-        b=HHMvuWCbooL+k/s4vPFT9vReHLuq9uuNEPt0dGWcVbkTD1ClOCe82BzcmDUnayc9LS
-         I7gxc5b1cRKd5A0mvuxZDaifz8pAzsc00vRV4IVz63MPmOUk8x6hXbk+5c08xOr8f8I8
-         p7RFMzRqd4qWBlQAZdhZsEiwLDPLbkZSHRuKWLrBprWsnjeGBF/rXc48VOHlv5coflRn
-         wppbk8f3dxMCZdv89WD13ly4W9tXeHLBckyDNWu2stzQAS5uvu+MKsNfS+whN4DsyStb
-         dzToTiCRb+fRuWKpq2h+JcgiIRlk9jORb3lTRm9/ssV8Vq7cfom3rwGxvlDFyCFCduN4
-         fPOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdZtbza0d+vSVFzyau1grEbk+kAzfd4J7DAmP2NQDD2Re8c80TVHn6uZAcBF7jVD/aLg2dmrmgGmrWe2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrFYu5R7VpX+iolpRI3xxpJ7s2Hnr1Jr8nlDkAmeAP+VHHi5+y
-	kpy3fFmKcnX1d/gJ7d8flziO5XNe0kwXBapJlSmT3uwdGcp/4Q9lwTj6wMza2DejQOvJ9un9NaQ
-	MCv9AAc/bJytgA7Pdro5VRcPlwUfC/AFWDkZePFcf/g==
-X-Gm-Gg: ASbGncuY4QQt9WWizJY36+kMHW0vv2qB9aSxEEi3G2/CgSrT7HDmwsCfKVewcpnEduP
-	UulA5CUIScyas3QLi1zRmvadfz2rC5cM3jWlvbjnj/rHvprMYWGvpYwsuY+bwrfDTrLs7NqQCgV
-	XuG5lhxiqiCB6VouPAwnfulhDSebiGJVVYZTkaqnnOJc2J0O8x6MaTFSQ=
-X-Google-Smtp-Source: AGHT+IFsS/ASN7bZj//LEOdFtJiqcKW9aOOwexSDyjzYRjOXer6dnb2P/mGTPna4qIWw/UGl9cHvGrgqRWogtZJ+2Ik=
-X-Received: by 2002:a05:690c:6b0e:b0:70f:8884:17af with SMTP id
- 00721157ae682-717b16723f0mr33351387b3.6.1752060693143; Wed, 09 Jul 2025
- 04:31:33 -0700 (PDT)
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nKz/jr4sAvlzW8F+pdFxeU0JpTncvrCm+GmYbMwH7v0=;
+        b=YAbqpP1JUgWw/NG9mRLPqtGCWA6g9+svhA+0Ue0WQwteAh5dQclqlCAysXUpLjSVBB
+         MU6HIMJyeJ7KyJucCIFNKyds2OrmYEXwNaOS7j/QWkvA+scDTod5oQ0bJPq0e/fPSzwE
+         EigMzwFKzscIz+5WqnbHArWppIEcWt1isqMRD4DgKIUDd4K2skbbuS3dgZNw2dP0R+3C
+         vAzeKDeXS/NfqbNdlSF8RFMnFPeqtDYek5hm4UxfSyBfLQTd+/fHp8FeCtbr3K8bentF
+         rOuY0jeebGdVzu+BtN7iDH6xo9d4jjV3vrY7g7fqw2SMdae1hjvrG8kZvWGG7/Ht8zyT
+         H9kA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMupLm54DnmcoDjcI/no/5HI8CmwATH6M+XQIDOMMo+qz1qeHTiV8MIEULeM8kKBnnoMx7AtlaKyyO21g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl+OuUnp5BS9wIiH3ENALwKdqFsaraZrksYXCXahSpU4tx5LxH
+	H+OlXZNqek6AncLuDqBphnrh2khwQonZnC0R4NrM4tMzQB3MT8fJSGIIZgWva0wDhHeBA2iani/
+	LnlmtP3oQdUXAG1MhsA==
+X-Google-Smtp-Source: AGHT+IFLvrS3jBzSiTmt44t7b5t9NsWfnRbSj5JtycWej5ry/u4kAdaGE1886+VS9sRjahoYLkPT0J9aqR8+j/0=
+X-Received: from edji11.prod.google.com ([2002:a50:d74b:0:b0:609:464e:83f8])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6402:2745:b0:604:e85d:8bb4 with SMTP id 4fb4d7f45d1cf-611a714c11fmr1541664a12.21.1752060692970;
+ Wed, 09 Jul 2025 04:31:32 -0700 (PDT)
+Date: Wed, 9 Jul 2025 11:31:31 +0000
+In-Reply-To: <54fc10ce-c3b6-4571-93e7-eebfc538d0c7@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250701114733.636510-1-ulf.hansson@linaro.org>
-In-Reply-To: <20250701114733.636510-1-ulf.hansson@linaro.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 9 Jul 2025 13:30:57 +0200
-X-Gm-Features: Ac12FXwPPsq7QQFWnJjGj5aeIXDZuRVVIUPoQyxowJKYffEpQh6cBhizErrlUZ0
-Message-ID: <CAPDyKFr=u0u2ijczExkntHK1miWZ6hRrEWBMiyUwShS3m6c29g@mail.gmail.com>
-Subject: Re: [PATCH v3 00/24] pmdomain: Add generic ->sync_state() support to genpd
-To: Saravana Kannan <saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
-	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Hiago De Franco <hiago.franco@toradex.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20250707164755.631374-1-vitaly.wool@konsulko.se>
+ <824065ea-1f5c-4cd4-9917-4b7a91882af8@lucifer.local> <aG0HJte0Xw55z_y4@pollux>
+ <54fc10ce-c3b6-4571-93e7-eebfc538d0c7@lucifer.local>
+Message-ID: <aG5TE3oq1w1cSdOy@google.com>
+Subject: Re: [PATCH v11 0/4] support large align and nid in Rust allocators
+From: Alice Ryhl <aliceryhl@google.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Vitaly Wool <vitaly.wool@konsulko.se>, linux-mm@kvack.org, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	Uladzislau Rezki <urezki@gmail.com>, Vlastimil Babka <vbabka@suse.cz>, rust-for-linux@vger.kernel.org, 
+	Liam Howlett <liam.howlett@oracle.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, 1 Jul 2025 at 13:47, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
-> Changes in v3:
->         - Added a couple of patches to adress problems on some Renesas
->         platforms. Thanks Geert and Tomi for helping out!
->         - Adressed a few comments from Saravanna and Konrad.
->         - Added some tested-by tags.
+On Tue, Jul 08, 2025 at 02:19:38PM +0100, Lorenzo Stoakes wrote:
+> On Tue, Jul 08, 2025 at 01:55:18PM +0200, Danilo Krummrich wrote:
+> > On Tue, Jul 08, 2025 at 11:58:06AM +0100, Lorenzo Stoakes wrote:
+> > > +cc Liam
+> > >
+> > > Hi guys,
+> > >
+> > > We have a section in MAINTAINERS for mm rust (MEMORY MANAGEMENT - RUST), so
+> > > it's slightly concerning to find a series (at v11!) like this that changes
+> > > mm-related stuff and it involves files not listed there and nobody bothered
+> > > to cc- the people listed there.
+> >
+> > What files are you referring to? Are you referring to:
+> >
+> > 	rust/kernel/alloc.rs
+> > 	rust/kernel/alloc/*
+> >
+> > If so, they're indeed not under the "MEMORY MANAGEMENT - RUST" entry, which
+> > so far seems correct.
+> 
+> Looking at these, they seem to be intended to be the primary means by which
+> slab/vmalloc allocations will be managed in rust kernel code correct?
+> 
+> There's also stuff relating to NUMA etc.
+> 
+> I really do wonder where the line between this and the mm stuff is. Because
+> if the idea is 'well this is just a wrapper around slab/vmalloc' surely the
+> same can be said of what's in rust/kernel/mm.rs re: VMAs?
+> 
+> So if this is the rust equivalent of include/linux/slab.h and mm/slub.c
+> then that does seem to me to suggest this should be considered an mm/rust
+> thing right?
+> 
+> It'd be good to know exactly what is considered mm rust and should go
+> through the mm tree and what isn't.
+> 
+> Maybe Alice has some insights on this?
 
-I decided it was time to give this a try, so I have queued this up for
-v6.17 via the next branch at my pmdomain tree.
+The Rust standard library has three pieces:
 
-If you encounter any issues, please let me know so I can help to fix them.
+- core. Defines standard types that can work anywhere. (such as ints)
+- alloc. Defines standard types that require an allocator. (such as vectors)
+- std. Defines standard types that require an OS. (such as File or TcpStream)
 
-Kind regards
-Uffe
+In the kernel we used to use both core and alloc, but we switched away
+from alloc because it doesn't support GFP flags well. The 'RUST [ALLOC]'
+subsystem originates from that transition from the Rust stdlib alloc to
+our own implementation. It contains essentially three pieces:
 
+- Two data structures Vec and Box.
+  - The Box data structure is the simplest possible user of allocation:
+    A Box<T> stores a single instance of the struct T in its own
+    allocation.
+  - The Vec data structure stores a resizable array and maintains a
+    pointer, length, capacity triplet. There is a bunch of logic to
+    manipulate these to correctly keep track of which parts of the
+    vector are in use.
+- The Allocator trait.
+  - This trait defines what functions an allocator must provide.
+  - The data structures Box or Vec require you to specify an allocator,
+    and internally it calls into the allocator to manage the backing
+    memory for its data.
+- Three concrete implementations of the Allocator trait.
+  - These are kmalloc, vmalloc, and kvmalloc respectively.
 
->
-> Changes in v2:
->         - Well, quite a lot as I discovered various problems when doing
->         additional testing of corner-case. I suggest re-review from scratch,
->         even if I decided to keep some reviewed-by tags.
->         - Added patches to allow some drivers that needs to align or opt-out
->         from the new common behaviour in genpd.
->
-> If a PM domain (genpd) is powered-on during boot, there is probably a good
-> reason for it. Therefore it's known to be a bad idea to allow such genpd to be
-> powered-off before all of its consumer devices have been probed. This series
-> intends to fix this problem.
->
-> We have been discussing these issues at LKML and at various Linux-conferences
-> in the past. I have therefore tried to include the people I can recall being
-> involved, but I may have forgotten some (my apologies), feel free to loop them
-> in.
->
-> I have tested this with QEMU with a bunch of local test-drivers and DT nodes.
-> Let me know if you want me to share this code too.
->
-> Please help review and test!
-> Finally, a big thanks to Saravana for all the support!
->
-> Kind regards
-> Ulf Hansson
->
->
-> Saravana Kannan (1):
->   driver core: Add dev_set_drv_sync_state()
->
-> Ulf Hansson (23):
->   pmdomain: renesas: rcar-sysc: Add genpd OF provider at
->     postcore_initcall
->   pmdomain: renesas: rmobile-sysc: Move init to postcore_initcall
->   pmdomain: renesas: rcar-gen4-sysc: Move init to postcore_initcall
->   pmdomain: core: Prevent registering devices before the bus
->   pmdomain: core: Add a bus and a driver for genpd providers
->   pmdomain: core: Add the genpd->dev to the genpd provider bus
->   pmdomain: core: Export a common ->sync_state() helper for genpd
->     providers
->   pmdomain: core: Prepare to add the common ->sync_state() support
->   soc/tegra: pmc: Opt-out from genpd's common ->sync_state() support
->   cpuidle: psci: Opt-out from genpd's common ->sync_state() support
->   cpuidle: riscv-sbi: Opt-out from genpd's common ->sync_state() support
->   pmdomain: qcom: rpmpd: Use of_genpd_sync_state()
->   pmdomain: qcom: rpmhpd: Use of_genpd_sync_state()
->   firmware/pmdomain: xilinx: Move ->sync_state() support to firmware
->     driver
->   firmware: xilinx: Don't share zynqmp_pm_init_finalize()
->   firmware: xilinx: Use of_genpd_sync_state()
->   driver core: Export get_dev_from_fwnode()
->   pmdomain: core: Add common ->sync_state() support for genpd providers
->   pmdomain: core: Default to use of_genpd_sync_state() for genpd
->     providers
->   pmdomain: core: Leave powered-on genpds on until late_initcall_sync
->   pmdomain: core: Leave powered-on genpds on until sync_state
->   cpuidle: psci: Drop redundant sync_state support
->   cpuidle: riscv-sbi: Drop redundant sync_state support
->
->  drivers/base/core.c                         |   8 +-
->  drivers/cpuidle/cpuidle-psci-domain.c       |  14 --
->  drivers/cpuidle/cpuidle-riscv-sbi.c         |  14 --
->  drivers/firmware/xilinx/zynqmp.c            |  18 +-
->  drivers/pmdomain/core.c                     | 211 ++++++++++++++++++--
->  drivers/pmdomain/qcom/rpmhpd.c              |   2 +
->  drivers/pmdomain/qcom/rpmpd.c               |   2 +
->  drivers/pmdomain/renesas/rcar-gen4-sysc.c   |   2 +-
->  drivers/pmdomain/renesas/rcar-sysc.c        |  19 +-
->  drivers/pmdomain/renesas/rmobile-sysc.c     |   3 +-
->  drivers/pmdomain/xilinx/zynqmp-pm-domains.c |  16 --
->  drivers/soc/tegra/pmc.c                     |  26 ++-
->  include/linux/device.h                      |  13 ++
->  include/linux/firmware/xlnx-zynqmp.h        |   6 -
->  include/linux/pm_domain.h                   |  17 ++
->  15 files changed, 291 insertions(+), 80 deletions(-)
->
-> --
-> 2.43.0
->
+In my eyes, the further down this list you get, the more likely it is
+that the patch needs to go through the MM tree.
+
+Alice
 
