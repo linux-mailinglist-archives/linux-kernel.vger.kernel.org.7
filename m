@@ -1,99 +1,139 @@
-Return-Path: <linux-kernel+bounces-722827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 348C9AFDF7A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:46:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13698AFDF82
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:48:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 604451C269FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:46:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35DB47B8BFC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B74E26B95B;
-	Wed,  9 Jul 2025 05:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466EE26A1B8;
+	Wed,  9 Jul 2025 05:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EMZROY+c"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VRWy+G5E"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C833C1F;
-	Wed,  9 Jul 2025 05:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454023C1F;
+	Wed,  9 Jul 2025 05:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752039932; cv=none; b=VOBAPbgOnp9Rr+oomBAgDU62CoKnJIc2ivM+soKcaTsK1CizWrNLdgVRIIq3h8rKdvLKft0g8k4Mp3BD5MTfFcYTTjNgN+8sDDTP0fPzNTDgh7t45RzUZd4rnXgM2pqIjkkYecqkXfE5932L0clQQZ0foLx8/88RokEXeewrc30=
+	t=1752040071; cv=none; b=Bpj74hoGJ/PnX5rd903Wvh8ajnmFP1avgtbNLnfCsqla3rge32HWi595Zr3e/SX2HF4SRbokiDogJLYEXpXTp8Ard8pMU2cdMUxd6z5HOaQ75GJYikoyoNlPjd7Kf0Lp40vOwVF1bNo5GTN1F6GbNFcXzLjM5ZLAVtBJ1iMpDt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752039932; c=relaxed/simple;
-	bh=f2Z1GFXFa+5adit/CK1It0cP9CeCIaTidgcNffYtDK0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cws/mjSovkGykVBi9zZ47DWfx2LbH4pG33uttMDeU2Uld0v3h4H+VsgPg8U+p+csLpOzadGHG/rAR2ORdTt9QxWByh1HdoPVEWLNDI+hQ7gxnNIDSsfq5eMKF1Jk6pc23PxApmUZrpFWXSCjJqd0TMGbYPMjkNmmJz7qlkAiy5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EMZROY+c; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=PZ3unkvyTag4Y/CBcyqciL29HjyiOpFmVRrBE+OVi2c=; b=EMZROY+cQcSkvwgS3GGu1cKiW/
-	mB5oRbodBPk9JQPsnaOAh+BR9erFE4k4SgRElIq3t3Z/lMZiiXWghUwbX+H+GTSEZEFuyb5j+R8jm
-	4KPbM/cHm1WTO+UX9KHH2lHCG/lDAjFca4voaRu0i6fGTleMMXG91x5pELIXyInLs2zVH8RS53DzN
-	ar55Vsys7r6aHE+O7PtIB+PxEofe8b3a3HF2dZtWtfC7kLCo08tKa+L1xUlMhDUdrjAKwOXovQhIQ
-	MQWB+3+69oHMte8p7jiEzO8D/MrCQvf1/46YfOLquBGcLtF92xLrCusfabvmQm26RqYxdB/hJ/x5h
-	0g6a4QWg==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uZNcW-00000002f2t-2eWn;
-	Wed, 09 Jul 2025 05:45:28 +0000
-Message-ID: <42685583-4374-49be-9ed1-709afe2e5fd6@infradead.org>
-Date: Tue, 8 Jul 2025 22:45:25 -0700
+	s=arc-20240116; t=1752040071; c=relaxed/simple;
+	bh=U9kmBfYKwdAZZB2cV9sC6/+HBIK1/NBS6CuxjBv1OIU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rxwtWpr9lV4/TFuCbm0OM8Y4R69OqTQmA80Brn0n9HFbP1Vf3lwijrec72grU5DuB3LPQRw/XDm49sLLMHO0yvjMvMveZ3jK4RGej7oTrtOv23BjoWTuPNpet9ufRUGtkT3Hw7CXi3eem1DYF7sBIMGsTTCUIqL8Cet99IkHqyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VRWy+G5E; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568I5YVg027587;
+	Wed, 9 Jul 2025 05:47:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=yZcSV9X2Ruy1ATU2ZuJnzw
+	AVFrN/W5nm9mn0ydygTVI=; b=VRWy+G5El24hRDOuB6ZeuFldQZ06FQL+MwsY56
+	bws+vvaSNd8AQNJtGkC01BI+dJ5WqtlxSPrqUafCOaW7GFUQVp/JQbmUjb8wIXG+
+	Terc5NcXvPe7zVy8RBMo9ZG/KKbdWzi6+BKwlm5lG2AcSFCDc+wzYDg1ADIgCFZI
+	59hsjSVj5WVNxWFOnXrxulppYjMa27ICrS7wZKO+BspPTWTYJtMliBcSBJVcQiG6
+	Z385k1hoBxf5vf6PNpqZZvGgL5FyzWs4jPNhyN0pFb6X0zUl4hy04V62ZuYMgmqx
+	RmlEA6ypCv70vBUnMUDe+SJuTUF4rmhBdFctNr4R7YOzP6sw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pv4y3gjr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Jul 2025 05:47:43 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5695lgHY009744
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 9 Jul 2025 05:47:42 GMT
+Received: from hu-lxu5-sha.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Tue, 8 Jul 2025 22:47:39 -0700
+From: Ling Xu <quic_lxu5@quicinc.com>
+To: <srini@kernel.org>, <amahesh@qti.qualcomm.com>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>
+CC: <quic_kuiw@quicinc.com>, <ekansh.gupta@oss.qualcomm.com>,
+        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Ling Xu
+	<quic_lxu5@quicinc.com>
+Subject: [PATCH v6 0/4] Add support for gdsp remoteproc on sa8775p
+Date: Wed, 9 Jul 2025 11:17:24 +0530
+Message-ID: <20250709054728.1272480-1-quic_lxu5@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] drm/doc: Fix title underline for "Task
- information"
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Next Mailing List <linux-next@vger.kernel.org>, airlied@gmail.com,
- simona@ffwll.ch, Raag Jadav <raag.jadav@intel.com>,
- Krzysztof Karas <krzysztof.karas@intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-dev@igalia.com
-References: <20250704190724.1159416-1-andrealmeid@igalia.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250704190724.1159416-1-andrealmeid@igalia.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDA0OSBTYWx0ZWRfX/wS6nTLRKRzT
+ 8M1Cqle77AaUjxC44Qs0MK1K13BLsJKmy6XwmLQyIN2jkUchFvxSZTVZ4AzwNWxmd3VoBxGv2UZ
+ J+rBBSlbMBwfaJkwFXZuekJTVOuBOVaqmbJBmZhXkVYpV8lXDd5zUcLXaA8lOmxOyGgcP6tPGHM
+ klzEbc39mvrtn2SdFGPJ1Xm9iUx6OoADbxRyXWCBBeDpMiPsg0NwK4C+IiMeEaYhpO/9f+EM9gj
+ 2q2q4qAdcSZtKhAjH/duCi04V1b984kKXMVjp5iU2tfHaDsILRPcVSQEczMmoHvGe0MkXBFpjGp
+ UN35PE55d5FUG/me29zKEwcQWAQk9BZf4OhhWcFWl5B/okCxbCCuzVEEJ4TtjURsUgOi+FfRr16
+ 1AO7rlv2kbKuQN4pl4wACYRkJKo7wS1V+nK2sIOUS7wYyzIXFihylUIhvloyZAAmdw++u6Ld
+X-Proofpoint-ORIG-GUID: qcOk-9ndvwF4eKPsXUWJHR7fB-3p_W0o
+X-Authority-Analysis: v=2.4 cv=DNCP4zNb c=1 sm=1 tr=0 ts=686e027f cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=qgJfyGv91k1fQCYRv54A:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: qcOk-9ndvwF4eKPsXUWJHR7fB-3p_W0o
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-09_01,2025-07-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 adultscore=0 spamscore=0 clxscore=1015 phishscore=0
+ malwarescore=0 mlxlogscore=610 mlxscore=0 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507090049
 
+The fastrpc driver has support for 5 types of remoteprocs. There are
+some products which support GDSP remoteprocs. GDSP is General Purpose
+DSP where tasks can be offloaded. Add fastrpc nodes and task offload
+support for GDSP. Also strict domain IDs for domain.
+Patch [v5]: https://lore.kernel.org/linux-arm-msm/20250702025341.1473332-1-quic_lxu5@quicinc.com/
 
+Changes in v6:
+  - Edit commit message.
+  - Remove unused definition.
+Changes in v5:
+  - Edit commit message and add sapce before comment end.
+  - Move domain definitions back to driver.
+Changes in v4:
+  - Split patch and change to common syntax.
+Changes in v3:
+  - Restrict domain IDs to represent a domain.
+Changes in v2:
+  - Add GPDSP labels in dt-bindings.
 
-On 7/4/25 12:07 PM, André Almeida wrote:
-> Fix the following warning:
-> 
-> Documentation/gpu/drm-uapi.rst:450: WARNING: Title underline too short.
-> 
-> Task information
-> --------------- [docutils]
-> 
-> Fixes: cd37124b4093 ("drm/doc: Add a section about "Task information" for the wedge API")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Closes: https://lore.kernel.org/lkml/20250618150333.5ded99a0@canb.auug.org.au/
-> Reviewed-by: Raag Jadav <raag.jadav@intel.com>
-> Signed-off-by: André Almeida <andrealmeid@igalia.com>
-> ---
-> v4: Drop new line at the end of file
-> v2: Add Reported-by tag
-> ---
-> ---
+Ling Xu (4):
+  dt-bindings: misc: qcom,fastrpc: Add GDSP label
+  arm64: dts: qcom: sa8775p: add GDSP fastrpc-compute-cb nodes
+  misc: fastrpc: Cleanup the domain names
+  misc: fastrpc: add support for gdsp remoteproc
 
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+ .../bindings/misc/qcom,fastrpc.yaml           |  2 +
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 57 +++++++++++++++++++
+ drivers/misc/fastrpc.c                        | 54 ++++++++----------
+ include/uapi/misc/fastrpc.h                   |  2 +-
+ 4 files changed, 85 insertions(+), 30 deletions(-)
 
 -- 
-~Randy
+2.34.1
+
 
