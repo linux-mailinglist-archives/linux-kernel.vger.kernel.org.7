@@ -1,111 +1,180 @@
-Return-Path: <linux-kernel+bounces-724597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62EAEAFF4B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:30:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF22AFF4B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B55777B30E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:28:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B7A058847A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD1C24888C;
-	Wed,  9 Jul 2025 22:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E0C246BB4;
+	Wed,  9 Jul 2025 22:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PTOuyLPK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QPT5pmnV"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F641CAA85;
-	Wed,  9 Jul 2025 22:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FDF218821;
+	Wed,  9 Jul 2025 22:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752100211; cv=none; b=F6zSmKfNjhJQgkJGmBKIDMJIAaVF6FlOPX6I1jU4Y4il3RMNd0hkKsWtilnkvDOIq+oTEF3oWQDK9ET4Yx81YVhWdrc5h2PNqrmIH3Yxq28gStZOeg35fHGIYBRgPC4aWbRaYC+T5bQKR65Y38/QuX2zz7+OQdRH8mT4jWMDKxU=
+	t=1752100326; cv=none; b=CBvf5/dWighMgPySmPNI8TxB3LGdvRaNID3HMSQcU9RQ16CqvhfGF/dRrDuGm/4RqpdBg2EKzfHIul7hG6Hbf8iESkYFXVA3npQdwQ6+/t4ZBSPR53EF76lDn1EWHvjZu8mOFz5AUeACLCDF6uhfFgi5cCYfkAiWcrZKoLA9FeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752100211; c=relaxed/simple;
-	bh=xHr0SxcTTGeDN1ue6d/qY2D0xz+OPv9AcKajs1DQq90=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=gRrEJ3WDlKeYV+rAtOJCgKVYxaxwg47oXfkuvOdAyw133MDXVn5lElnhzwLTfKCdRo2rnssZx4XGf+24E4wD0fr9zLuaZDT7K1/YTEvFCO1Kr3NyotQOQXp0XIWtBL3GNa7Ugav1k5ml765fPAnej6UIil3QO0z/7Z22zB5rnjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PTOuyLPK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04E3CC4CEEF;
-	Wed,  9 Jul 2025 22:30:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752100211;
-	bh=xHr0SxcTTGeDN1ue6d/qY2D0xz+OPv9AcKajs1DQq90=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=PTOuyLPKEIvUR+suT8k+/1Ck2XqWrdas0m70vsOe6FMm5Og/ahHF0rQRSrcb14SnJ
-	 LMBvT+0iqFIbwI4vjH6c4giXZi8haH2E0bFdv+gbTkXsSrGlCmDMFW6ybv19i8+YYJ
-	 Zz9CDrMlNjkbBeep5UpnjlL2BuetozjIU0RZtYydCuwZnRQeGoAC8HuqAjUxfp+rt+
-	 B8kt3zUnn5ks84mSONbOczsJ38ndSunhqfdgTZ65h3ZrUWFHCLM9CCnjDpy9qgPFq/
-	 a7aOX4rEyyv3gzQ7UYzoxrvPAQBLn9nPjTvJXJj/SYCliMq6ctrBKHFLn/n9EPoeHU
-	 KX/MlRxnUQbqQ==
-Date: Wed, 09 Jul 2025 17:30:10 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1752100326; c=relaxed/simple;
+	bh=1McGgLdm606Z00KEINY5kt1JkZk/Tuk74qM5f1qRaKw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C3hANrzdpnyWIBsq/NOHJ2TGGHGegV3Is1ArKT7qR3a8ZazJgGHOvk8ZUkt2LgZbyaVwfRmoZmBI+WeBgJIqZ7YII+LmpQIQ2g0VHGeCAkNmohuVeTmMzyNyPKFBJIZvVb4S4WrBPhBTpm0/lPBLVMF5DjSiZhch5EJiNilNxMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QPT5pmnV; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-32b3b250621so2827831fa.2;
+        Wed, 09 Jul 2025 15:32:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752100323; x=1752705123; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X0vCCNe1kaK9nYgw+uNh0fKsxB1qET3iJlussJtaUx4=;
+        b=QPT5pmnVDtrDKGyUkeJZtwQZM3igtVNQyef8/2Z1LkADW2RPQgy77bQd4IQUnzxeeb
+         wkInlVEPl3d0dabY7a6BV767AKj5qhbQD6dN4re+NkBnONczoVL74e+VarvO48VBhcKr
+         peMFQMSyovAjNUSZnfFV7cZ3YdpQgsZyEUykvR0/TnAs7IuQfm8l/IFTNRt8AWaBvgZV
+         rpNEW/l0UYwtDt9lhM73HQjZGPi4gAfGumQ084C0Ouo6X6vJIOPxNBFrhipgduYdpWVa
+         Kj0vExZaWNShNCtJsRxciImX/yxI61vcnIiwqh/KR1SGT4ovaw99ixeD0HemQc/ezcx4
+         3aOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752100323; x=1752705123;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X0vCCNe1kaK9nYgw+uNh0fKsxB1qET3iJlussJtaUx4=;
+        b=cImBXuqBnik6nn6ZwOpV633klfwWAgzsptVEJo8KE5Hq91Of7sW8F4+SnTrmHMRHai
+         5smrqiUBTnaBfDhKAvqOOAzfdbu9YOH1VYSfEfN2zNfZyAwSAOuRy6DjVrNWWyWwuE9W
+         UyqNGRlfXb/7GTRO0TdCF/npNxMMK//6l4AkzJhP56rHQPmSomb8T4w0iLYNyIUNQKtK
+         eqKIdvMb5QioaR2DGKtd6A/HK+R5My4c7UrUDb7q7Gsb0LnDZbXsjK1IjqBNuDnjoW8A
+         xxNleGnaK1BORmBvoBgqZY/B7pdG0W0MAC3W0wRJJjZIUbbdV4/5GEVTi1I65Zz/eSh1
+         AavA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQaIa2vRyHM2VS06cAIMCC6U6Db2a8i5aJsvyXEvH4KQuPseI7iGyxUdAzL+a/07V0Iq1k/5/And2bdVE=@vger.kernel.org, AJvYcCX7kq3CY6Lmg71hhtIgZG46tEFiwlAupX6Gwd8AQT0R0nKbLCUCh7WbNruF/rnb8oNsZnndltrgAu10BcFg@vger.kernel.org, AJvYcCXTsbQUBEcO8siKK5cXtWs2E6L+zJPI0bE9+TNVec1U3+X5YRPp/E5l3lCTGAZ/lzYrE0ANRlhQL1ZSNhx5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5sj8D5a4/VrXJnq3h5zXbqfSpr3zg4XnnDpRF7vwnMZ+OG9EK
+	S7IT4TJCoLIPB3xZBmoCHp/F9/AKA3ZdqdVvxa8IE8eEgyI9TVOan4+DnTbZvoIiBKKGjIX5eTk
+	vzrEXJhzVbcbKk4TEFKoCxrSiXDX1DJs=
+X-Gm-Gg: ASbGncvCth3dfcpXFr2AiMohEkMovqyGDejQ9V1J4beFvMhYfJ5e6NX0BhA0rZ5qaJg
+	5XXw/m21DZVTLqqix6iEtg80pKdDAOfq8Qs6g4MMLcnu8RBptiU6iB/G36gJQ5ecKQQJmmx1mz+
+	x7I1Q9I8qe5W2M2vUIvJ9KLr/CWlXO5EcXuUXxlCxAKfaizm3pPkixfKmIKM4OZ9Ix5yEVDds8A
+	oIm
+X-Google-Smtp-Source: AGHT+IFbXOlgT4ROOR21178XUwTpOomY4dhNIM2pkgyDfppMb4TnPhF1NlbJSd0RbHs++YsgJzW/IrfJpyvZLzydKWc=
+X-Received: by 2002:a2e:a917:0:b0:32a:7dd7:ff47 with SMTP id
+ 38308e7fff4ca-32f485853d4mr15492511fa.30.1752100322919; Wed, 09 Jul 2025
+ 15:32:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, linux-remoteproc@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- phone-devel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- ~postmarketos/upstreaming@lists.sr.ht
-To: Luca Weiss <luca.weiss@fairphone.com>
-In-Reply-To: <20250709-sm7635-remoteprocs-v3-1-c943be976180@fairphone.com>
-References: <20250709-sm7635-remoteprocs-v3-0-c943be976180@fairphone.com>
- <20250709-sm7635-remoteprocs-v3-1-c943be976180@fairphone.com>
-Message-Id: <175210021011.3927964.2963774922041119366.robh@kernel.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: remoteproc: qcom,milos-pas:
- Document remoteprocs
+References: <686d5a9f.050a0220.1ffab7.0015.GAE@google.com> <xrpmf6yj32iirfaumpbal6qxph7mkmgwtra7p4hpbvzozlp4zr@2bzl4p5ejgfj>
+In-Reply-To: <xrpmf6yj32iirfaumpbal6qxph7mkmgwtra7p4hpbvzozlp4zr@2bzl4p5ejgfj>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Thu, 10 Jul 2025 07:31:46 +0900
+X-Gm-Features: Ac12FXw4eCeHGhJ1kXZFIcDPr8OZWRZX-aSMKBRl9njt_so4dWb4RcvDCVUSRDA
+Message-ID: <CAKFNMomH8Ur3gOvps_vdbs3BU4C6UZBL7tDYxjPUG_29_Bo-8w@mail.gmail.com>
+Subject: Re: [syzbot] [nilfs?] kernel BUG in may_open (2)
+To: Jan Kara <jack@suse.cz>
+Cc: syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>, 
+	brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org, mjguzik@gmail.com, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, ntfs3@lists.linux.dev, 
+	Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jul 9, 2025 at 5:30=E2=80=AFPM Jan Kara wrote:
+>
+> Hi!
+>
+> On Tue 08-07-25 10:51:27, syzbot wrote:
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    d7b8f8e20813 Linux 6.16-rc5
+> > git tree:       upstream
+> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D107e728c580=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D72aa0474e3c=
+3b9ac
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D895c23f6917da=
+440ed0d
+> > compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6=
+049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D113055825=
+80000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D10952bd4580=
+000
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/605b3edeb031/d=
+isk-d7b8f8e2.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/a3cb6f3ea4a9/vmli=
+nux-d7b8f8e2.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/cd9e0c6a9926=
+/bzImage-d7b8f8e2.xz
+> > mounted in repro: https://storage.googleapis.com/syzbot-assets/2a7ab270=
+a8da/mount_0.gz
+> >
+> > The issue was bisected to:
+> >
+> > commit af153bb63a336a7ca0d9c8ef4ca98119c5020030
+> > Author: Mateusz Guzik <mjguzik@gmail.com>
+> > Date:   Sun Feb 9 18:55:21 2025 +0000
+> >
+> >     vfs: catch invalid modes in may_open()
+> >
+> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D17f94a8c=
+580000
+> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D14054a8c=
+580000
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D10054a8c580=
+000
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the co=
+mmit:
+> > Reported-by: syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com
+> > Fixes: af153bb63a33 ("vfs: catch invalid modes in may_open()")
+> >
+> > VFS_BUG_ON_INODE(!IS_ANON_FILE(inode)) encountered for inode ffff888072=
+4735b8
+>
+> FWIW the reproducer just mounts a filesystem image and opens a file there
+> which crashes because the inode type is invalid. Which suggests there's
+> insufficient validation of inode metadata (in particular the inode mode)
+> being loaded from the disk... There are reproducers in the syzbot dashboa=
+rd
+> for nilfs2, ntfs3, isofs, jfs. I'll take care of isofs, added other
+> filesystem maintainers to CC.
+>
+>                                                                 Honza
 
-On Wed, 09 Jul 2025 13:13:07 +0200, Luca Weiss wrote:
-> Document the bindings for the ADSP, CDSP, MPSS and WPSS PAS on the Milos
-> (e.g. SM7635) SoC.
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  .../bindings/remoteproc/qcom,milos-pas.yaml        | 201 +++++++++++++++++++++
->  1 file changed, 201 insertions(+)
-> 
+Thank you for taking the initiative!
+I'll deal with the nilfs2 issue.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+For convenience, the correspondence between the reproducers and file
+systems listed in the syzbot dashboard at the moment is as follows:
 
-yamllint warnings/errors:
+Detection time      Filesystem
+2025/07/08 13:03    iso9660
+2025/07/08 12:34    ntfs3
+2025/07/08 12:04    nilfs2
+2025/07/08 04:06    nilfs2
+2025/07/08 02:39    ntfs3
+2025/07/08 01:41    jfs
+2025/07/08 01:56    nilfs2
+2025/07/08 01:21    nilfs2
+2025/07/08 01:57    iso9660
+2025/07/08 02:15    jfs
+2025/07/08 01:34    ntfs3
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/remoteproc/qcom,milos-pas.example.dts:20:18: fatal error: dt-bindings/interconnect/qcom,milos-rpmh.h: No such file or directory
-   20 |         #include <dt-bindings/interconnect/qcom,milos-rpmh.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/remoteproc/qcom,milos-pas.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1519: dt_binding_check] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250709-sm7635-remoteprocs-v3-1-c943be976180@fairphone.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Thanks,
+Ryusuke Konishi
 
