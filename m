@@ -1,255 +1,146 @@
-Return-Path: <linux-kernel+bounces-723613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 511D9AFE917
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:37:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9D7AFE919
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:37:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 962AA7B8B6F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:35:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39FF85A64FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368E02D320E;
-	Wed,  9 Jul 2025 12:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038BB2DC34E;
+	Wed,  9 Jul 2025 12:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iJawIXL5"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P5G3/sZs"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C0828A71D
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 12:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC762DA74C;
+	Wed,  9 Jul 2025 12:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752064562; cv=none; b=nakBLQ+T78OUrpt/ac3KZuXonaGXRdXOQdTgAB+ZlT8/dYtioUFM7bkxX6ioiqCY8stVqrgtszd98wQ+Oe/qRYtwDYfrhh8JraLzLJxHpcIgY3mFllMlP5B8AuiywG+uXSdv/+zkgh0yLsEWL0dwUA01nFg1Ec95T+76rNC9yKM=
+	t=1752064580; cv=none; b=qzBzCDMxKAwwSuAtXEvG+vQLhnMF4ruHQMqEHmLTgzx9fn5TgAcZm/Lyyy1iQ7vH674mxWqBtlY9OSYzY8q7oOrjuNHz989Zpty79DVHvQDno/X+Zr9+C8OdbfYT1wAC9/duHzHay6idTLglvrpm1Z5zUh5zy3jTH3wfd20WQQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752064562; c=relaxed/simple;
-	bh=wd/qNz7WyhKf3bMX6G1qHHU6RUMyYpRH/AnK/WBT+CA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=L0XTtFsXRGfopkuI9YULjbUGU18XimI55PWuCEbGaaDRv3YgzhIHgOTlnMzfrjcN90G2h/SHYFMeb4b3lUFMUiy9lUBW3TBJclKlxediZr+D1ySZ405AcV3S6EJbG43PEp+QnGM8lWqjz+kUpIWfkzRf8gbeUBJmcdYz2/h6ykc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iJawIXL5; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3a4f858bc5eso3784082f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 05:36:00 -0700 (PDT)
+	s=arc-20240116; t=1752064580; c=relaxed/simple;
+	bh=OH9RJ22f6HnRZKb1/JJVgz3oFFeduxOoMrFvKyaX/gA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C4js3QpFM5z/DjrkVwRytt64jHhm7FL8WFmEOyq3J9DuYA5VefBAnrMkzxfI1BltoOICZcb59GfM7/0o/KZA5dbQfJ8tCKIbktwiZx9qsaoce8EfiiPwKuxtW7L117/BPIB246L+YIDLtvv7FhS0gfjk7CLbtSAuxp6qEJaF7W4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P5G3/sZs; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a536ecbf6fso3005733f8f.2;
+        Wed, 09 Jul 2025 05:36:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752064559; x=1752669359; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PzMQHSy9JLo2QGlJbPTZapiM88FLqMBKfBHKtJNkziE=;
-        b=iJawIXL5eL8EmjCw2sX4Aizqi8/9LP/cj2GNwkh6dhbWpy/6oN5zKVpj4ChRGxTgFO
-         bUKADbIR+Zq2nYnJt+LMG/tR0L05rdussEFd26ib0y9SQz+jLXJEfwq10pQjUNThoEJ8
-         r0rnbldGIqGuwcPa5g/LLJx3XZ8+OYAFW0kxMPR1Kcgusa3GH5B/BFmsv7Zhy9Ipy1NZ
-         zRnoHiHtwwJM/WFn0Xsl0voTrM31+LAKm7SO8947GLaWBiGa2wc5AQ8xCYGNUQvtu6g/
-         S+asP1aLtoPKXTowWg9p0Vx96fEVqaiR+MIsp+qsKnKETCOVHHAtze9aUicKbC5bW988
-         SZiQ==
+        d=gmail.com; s=20230601; t=1752064577; x=1752669377; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=F7pXgh+7Em51b3M0K4QNjuqFHVDfsI4ix4PKTFQyaqo=;
+        b=P5G3/sZsW3N/vWpx0k0hJ+NtS9yI2xewausCl9tU8td/7uKQ1Il1W+H/czBgvlopnj
+         jWc4usGby0mewOtdiZxKcyZ0aOdpvwyr3AEBuxFoULIx/7sFpzvE26vEQBapec+ZDw0K
+         zMBvzBDkE+LuonZ8C5/7ebgQoLuGZCa04XSN2vUJ4B3fDxOs29QD3j5lpTcckfv6SoEK
+         u1+K1ESQB8QxTZW+6l92T+01p5HWyDJtxLkwo2xfWDFX+DbBrgrOJn68rKXuOBReBJkR
+         TR1eC1i1RHPdU+ZtYdc8VI/j9O+BLHDjto0g/AQev1cVp3btnXdk5QSBWpKVwUQ5F4HP
+         cEYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752064559; x=1752669359;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PzMQHSy9JLo2QGlJbPTZapiM88FLqMBKfBHKtJNkziE=;
-        b=lCEMW2hcxrZlLJt8hHM5p4zVLn8RbJ6FU7y27CsQZyjaN+MW3uqH3jXXBz9zvCkhoW
-         vy2XlIo4iFnZ4zX4kTc8OQOM0DGlpdjWqbRpopuNGFFZkqHYnjYRFpTINnE6Hz7dU9tH
-         fW942OUN8qMC6tjfF/P9md7dXuYa2tD2opD0AacyoxtEXUHWDjBsyVIYtOB2mxkf7Gqs
-         gjJohelvCtL9vPbkbZTpxwwEiEePdN0Dmc3Xh4SRcJJduylmiP8QfbJJkl86oIiL+Suw
-         6Oe6pzMRO9MaBYmKlsqWiGNwAadXBIkQQAr7TcNwx7R1RWEwAva66FietrFw7t5LCkrE
-         F9TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVq3I7rWnoPs5ZL5MnV6g3pvKBlWpJfmVuTRwu0BScZhgk5/d6yms4fS6ccAE2GGyrPkEXdt1nAK/d/+pM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVIwqRjggOcmuQsBP6G6kuokHMFLUt2DIBV/F2vmu05s5Ppayg
-	iq0vstSdISGhGsENKB0bvLHm7jmTRzggc7fnCxZSeL7gkRuP85XuT76doJUg8B4NVeu/Mi7+YvX
-	G9TIdfPQNK+feqk/Dug==
-X-Google-Smtp-Source: AGHT+IF7QHhjUXjHwJksOrL/orpdHi4Kes3SJuAJrzIJBlL3WdIgqqtU+4Lgj0bT7jgo2Q+FCveakmLmMeOH064=
-X-Received: from wmbes22.prod.google.com ([2002:a05:600c:8116:b0:453:8a72:e19e])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a5d:588c:0:b0:3a4:d6ed:8e00 with SMTP id ffacd0b85a97d-3b5e4537e82mr1931665f8f.33.1752064558922;
- Wed, 09 Jul 2025 05:35:58 -0700 (PDT)
-Date: Wed, 9 Jul 2025 12:35:58 +0000
-In-Reply-To: <87ecuplgqy.fsf@kernel.org>
+        d=1e100.net; s=20230601; t=1752064577; x=1752669377;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F7pXgh+7Em51b3M0K4QNjuqFHVDfsI4ix4PKTFQyaqo=;
+        b=XV0oH7hO0absI454Eb1JvA90S/sZJl3tEWTx1LaMLCNFV1LILWpNYS35bXz5JMpgTb
+         w6G4QB6s2Pi9aQWFJrEZ3fmdFe86lr3K29pGKDLfPFT0SpnXn1I/t5yrgWh5l+hYz6q0
+         T7an/YhNo7zGubKp3HDF3Yw0YGrVbXHZWD1hFnECwAgiduF94QLF1Cg3UIdblq5GhZmF
+         h2klTu/Cdey8tRhotCWL1OCHaoklys3EnFyB00yetMCSPYy6q5DG81Xaa0i36X5piTT3
+         os4+Z7eBnOvpvp4J+nujFbp+TOZtX/Th5+rl0QzHzWGSXvVoHu9F7hsuheKMOoHm6iWH
+         OsHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6opr6Pj4KSj3ddPBnlLo0/G+Q5mF8F2Nqp8oi99+p3RcNe7lIwr7T/6cY9dy+SR1XKqyhIQGG1KJCwWM=@vger.kernel.org, AJvYcCURKxr5E26lBQLYctThgFEeOVzJ8InNTGQanXpFVF9nRqTPqLU4s4s9niFDweMjNmbPRnJYzp8DLoL6@vger.kernel.org, AJvYcCWeKNmftCSuY+hpYvO3cAfsnH2PiHmYeWOTbnOuwcFA7T1wmiLtswPfEB2wrdcryU0LO6aEUle8lTXt5naz@vger.kernel.org
+X-Gm-Message-State: AOJu0YzevOg0ZmhsK+1ks8AkF52CF2DfeINtScXbuW1ZWM0twoExJBRC
+	Rim9zSNq+4A9MEN+tLGl/huVWEsAneaJH46AcOhv024iFU+DamRP0kqu
+X-Gm-Gg: ASbGnct9/2V1pOY8WGMXn5TywO4DA7YB0yMM5aVMF8XUCBpP5T+L8o1mhgpFAsdude4
+	TRUF1Q3CewM11HsOrVnKw43eFP/sPYYFxbVk1aNdPhCDskuJ7VVirElLL4H1af91dK+B7FY5iWA
+	u6Lz8V0dfxneq9AKihOVuspupCzPTx1nXr/uaSQuWPPQUS0aKnFSR3op15LbQpYkdgU7NdVpcqY
+	fR83nY2GtZLa42VXQT/0nR5fob7LiFTsuhEn41ElazqQiL0mtHUlO20DauUsiqKjWdEnPcsaWrU
+	uj8ZZAA7/QdIToccBeaDE/qS6BYiN7Jm4zZ4vp5eYUdCjvR4a97IF4nOgMufFt/ueL1k5DSV4eE
+	hQeV6re3cjIeRIlYEDQYxEMO+Y23au10l968NTOzxpGcTRcsMTO067NgrIvo=
+X-Google-Smtp-Source: AGHT+IF4JfTBcT8gzEYg4AtRTRbQJ48L53vM7WFCoOTGs9IyCVESFFaJ77r8MiezEnYK/dxMRlp9bw==
+X-Received: by 2002:a05:6000:4a0a:b0:3a4:e2d8:75e2 with SMTP id ffacd0b85a97d-3b5e4540b24mr2049528f8f.50.1752064576971;
+        Wed, 09 Jul 2025 05:36:16 -0700 (PDT)
+Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b4709c6e28sm15774029f8f.39.2025.07.09.05.36.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 05:36:15 -0700 (PDT)
+Date: Wed, 9 Jul 2025 14:36:13 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	David Heidelberg <david@ixit.cz>, Ion Agorria <ion@agorria.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] ARM: tegra: Add device-tree for ASUS VivoTab RT
+ TF600T
+Message-ID: <u3q2aphdsmc4toqxzicgk5sjrkcyukksa5nuwccllbmm6jptj2@ld26fmpsyweh>
+References: <20250617070320.9153-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250704-iov-iter-v2-0-e69aa7c1f40e@google.com>
- <U16UjMBBh1b7dLeO-Nhqw__nw_JwypctB1ze_G44BtsX0l_eVK6Sp-efbobmnuF44J0wQNgnK7b8nCmBX0KS_Q==@protonmail.internalid>
- <20250704-iov-iter-v2-1-e69aa7c1f40e@google.com> <878qkyoi6d.fsf@kernel.org>
- <0Y9Bjahrc6dbxzIFtBKXUxv-jQtuvM2UWShaaSUsjKBuC1KKeGIpBFTC4a89oNrOLBP66SXtC7kQx1gtt04CMg==@protonmail.internalid>
- <aG5NdqmUdvUHqUju@google.com> <87ecuplgqy.fsf@kernel.org>
-Message-ID: <aG5iLiUJg_cHtB8r@google.com>
-Subject: Re: [PATCH v2 1/4] rust: iov: add iov_iter abstractions for ITER_SOURCE
-From: Alice Ryhl <aliceryhl@google.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, Lee Jones <lee@kernel.org>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Benno Lossin <lossin@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hkv6it553fkcsq2y"
+Content-Disposition: inline
+In-Reply-To: <20250617070320.9153-1-clamor95@gmail.com>
 
-On Wed, Jul 09, 2025 at 01:56:37PM +0200, Andreas Hindborg wrote:
-> "Alice Ryhl" <aliceryhl@google.com> writes:
-> 
-> > On Tue, Jul 08, 2025 at 04:45:14PM +0200, Andreas Hindborg wrote:
-> >> "Alice Ryhl" <aliceryhl@google.com> writes:
-> >> > +/// # Invariants
-> >> > +///
-> >> > +/// Must hold a valid `struct iov_iter` with `data_source` set to `ITER_SOURCE`. For the duration
-> >> > +/// of `'data`, it must be safe to read the data in this IO vector.
-> >>
-> >> In my opinion, the phrasing you had in v1 was better:
-> >>
-> >>   The buffers referenced by the IO vector must be valid for reading for
-> >>   the duration of `'data`.
-> >>
-> >> That is, I would prefer "must be valid for reading" over "it must be
-> >> safe to read ...".
-> >
-> > If it's backed by userspace data, then technically there aren't any
-> > buffers that are valid for reading in the usual sense. We need to call
-> > into special assembly to read it, and a normal pointer dereference would
-> > be illegal.
-> 
-> If you go with "safe to read" for this reason, I think you should expand
-> the statement along the lines you used here.
-> 
-> What is the special assembly that is used to read this data? From a
-> quick scan it looks like that if `CONFIG_UACCESS_MEMCPY` is enabled, a
-> regular `memcpy` call is used.
 
-When reading from userspace, you're given an arbitrary untrusted address
-that could point anywhere. The memory could be swapped out and need to
-be loaded back from disk. The memory could correspond to an mmap region
-for a file on a NFS mount and reading it could involve a network call.
-The address could be dangling, which must be properly handled and turned
-into an EFAULT error instead of UB. Every architecture has its own asm
-for handling all of this safely so that behavior is safe no matter what
-pointer we are given from userspace.
+--hkv6it553fkcsq2y
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 0/2] ARM: tegra: Add device-tree for ASUS VivoTab RT
+ TF600T
+MIME-Version: 1.0
 
-As for CONFIG_UACCESS_MEMCPY, I don't think it is used on any real
-system today. It would require you to be on a NOMMU system where the
-userspace and the kernel are in the same address space.
+On Tue, Jun 17, 2025 at 10:03:18AM +0300, Svyatoslav Ryhel wrote:
+> Add device-tree for ASUS VivoTab RT TF600T, which is NVIDIA Tegra30-based
+> tablet device with Windows RT.
+>=20
+> Maxim Schwalm (1):
+>   dt-bindings: arm: tegra: Add Asus VivoTab RT TF600T
+>=20
+> Svyatoslav Ryhel (1):
+>   ARM: tegra: Add device-tree for ASUS VivoTab RT TF600T
+>=20
+>  .../devicetree/bindings/arm/tegra.yaml        |    4 +
+>  arch/arm/boot/dts/nvidia/Makefile             |    1 +
+>  .../boot/dts/nvidia/tegra30-asus-tf600t.dts   | 2500 +++++++++++++++++
+>  3 files changed, 2505 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dts
 
-> >> > +    /// Returns the number of bytes available in this IO vector.
-> >> > +    ///
-> >> > +    /// Note that this may overestimate the number of bytes. For example, reading from userspace
-> >> > +    /// memory could fail with `EFAULT`, which will be treated as the end of the IO vector.
-> >> > +    #[inline]
-> >> > +    pub fn len(&self) -> usize {
-> >> > +        // SAFETY: It is safe to access the `count` field.
-> >>
-> >> Reiterating my comment from v1: Why?
-> >
-> > It's the same reason as why this is safe:
-> >
-> > struct HasLength {
-> >     length: usize,
-> > }
-> > impl HasLength {
-> >     fn len(&self) -> usize {
-> >         // why is this safe?
-> >         self.length
-> >     }
-> > }
-> >
-> > I'm not sure how to say it concisely. I guess it's because all access to
-> > the iov_iter goes through the &IovIterSource.
-> 
-> So "By existence of a shared reference to `self`, `count` is valid for read."?
-> 
-> >
-> >> > +        unsafe {
-> >> > +            (*self.iov.get())
-> >> > +                .__bindgen_anon_1
-> >> > +                .__bindgen_anon_1
-> >> > +                .as_ref()
-> >> > +                .count
-> >> > +        }
-> >> > +    }
-> >> > +
-> >> > +    /// Returns whether there are any bytes left in this IO vector.
-> >> > +    ///
-> >> > +    /// This may return `true` even if there are no more bytes available. For example, reading from
-> >> > +    /// userspace memory could fail with `EFAULT`, which will be treated as the end of the IO vector.
-> >> > +    #[inline]
-> >> > +    pub fn is_empty(&self) -> bool {
-> >> > +        self.len() == 0
-> >> > +    }
-> >> > +
-> >> > +    /// Advance this IO vector by `bytes` bytes.
-> >> > +    ///
-> >> > +    /// If `bytes` is larger than the size of this IO vector, it is advanced to the end.
-> >> > +    #[inline]
-> >> > +    pub fn advance(&mut self, bytes: usize) {
-> >> > +        // SAFETY: `self.iov` is a valid IO vector.
-> >> > +        unsafe { bindings::iov_iter_advance(self.as_raw(), bytes) };
-> >> > +    }
-> >> > +
-> >> > +    /// Advance this IO vector backwards by `bytes` bytes.
-> >> > +    ///
-> >> > +    /// # Safety
-> >> > +    ///
-> >> > +    /// The IO vector must not be reverted to before its beginning.
-> >> > +    #[inline]
-> >> > +    pub unsafe fn revert(&mut self, bytes: usize) {
-> >> > +        // SAFETY: `self.iov` is a valid IO vector, and `bytes` is in bounds.
-> >> > +        unsafe { bindings::iov_iter_revert(self.as_raw(), bytes) };
-> >> > +    }
-> >> > +
-> >> > +    /// Read data from this IO vector.
-> >> > +    ///
-> >> > +    /// Returns the number of bytes that have been copied.
-> >> > +    #[inline]
-> >> > +    pub fn copy_from_iter(&mut self, out: &mut [u8]) -> usize {
-> >> > +        // SAFETY: We will not write uninitialized bytes to `out`.
-> >>
-> >> Can you provide something to back this claim?
-> >
-> > I guess the logic could go along these lines:
-> >
-> > * If the iov_iter reads from userspace, then it's because we always
-> >   consider such reads to produce initialized data.
-> 
-> I don't think it is enough to just state that we consider the reads to
-> produce initialized data.
+Applied, thanks.
 
-See above re userspace.
+Thierry
 
-> > * If the iov_iter reads from a kernel buffer, then the creator of the
-> >   iov_iter must provide an initialized buffer.
-> >
-> > Ultimately, if we don't know that the bytes are initialized, then it's
-> > impossible to use the API correctly because you can never inspect the
-> > bytes in any way. I.e., any implementation of copy_from_iter that
-> > produces uninit data is necessarily buggy.
-> 
-> I would agree. How do we fix that? You are more knowledgeable than me in
-> this field, so you probably have a better shot than me, at finding a
-> solution.
+--hkv6it553fkcsq2y
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I think there is nothing to fix. If there exists a callsite on the C
-side that creates an iov_iter that reads from an uninitialized kernel
-buffer, then we can fix that specific call-site. I don't think anything
-else needs to be done.
+-----BEGIN PGP SIGNATURE-----
 
-> As far as I can tell, we need to read from a place unknown to the rust
-> abstract machine, and we need to be able to have the abstract machine
-> consider the data initialized after the read.
-> 
-> Is this volatile memcpy [1], or would that only solve the data race
-> problem, not uninitialized data problem?
-> 
-> [1] https://lore.kernel.org/all/25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhuYj0ACgkQ3SOs138+
+s6EDjxAAi7QmKcrIYPm3Flr756hbDKinhzsdxxiZ+ZCEy97lFjTc2/DQyD3y/8Kf
+VdrgfzUeC2HhheMSoBhhUJFbcv0j/OjGcyN33mCr+cPEUGemeY4+ESDeuVN4lT0Y
+QeOezLzRfDR1Avvt6lfe1mkOlFLh7aR82QBWy+zSQLXuCclXrecllnd3dkQ+1+Gu
+mD7f+MVIatEGlo93u2D0gQ+WycTsrgwjLUtzrE1CJ6X2b2SlDcX+wgsdpDxxWYkg
+joJNQLwKFrlwld2UPb4zbkeBzlBiqPYZEc7I1aWjgGe1Vw9Mq2UNaWQm+0GKvtp2
+AkprFuZAmcsqCWGh0VSXC6/vimhNiZCF1TGwZP/WxTgZcka/WxBAyEyuGhUHFUAg
+PYf0uCap1tkTB1g8diRJPelLsw2tWK2Fuzy8FRY3x65x6x92em1r2sjGsqh2cjAr
+s+0pPVofYLJwV+gNd+uIB71GNIP5V9qyttTBm7iCDf94vI+kjuQfSq/uEvPwPHm2
+My6zO4UuxnQqjmlI+wcQ79B79uqUfHaSJ+LBpOx3Z5WgODkzHGfLsR48FPmZAYcd
+MAmLIL8k+lk29+HvmUk5zvaoPceFuy1paHwkkKLM2P/a9zDJavtGxFnV5Lusfenu
+QteHogap3WnZ1P7ZAHB4ZSAtg8DrRyEs8QAyhXex0D5N1Ye+ECs=
+=uTw2
+-----END PGP SIGNATURE-----
 
-Volatile memcpy deals with data races.
-
-In general, we can argue all we want about wording of these safety
-comments, but calling copy_from_iter is the right way to read from an
-iov_iter. If there is a problem, the problem is specific call-sites that
-construct an iov_iter with an uninit buffer. I don't know whether such
-call-sites exist.
-
-Alice
+--hkv6it553fkcsq2y--
 
