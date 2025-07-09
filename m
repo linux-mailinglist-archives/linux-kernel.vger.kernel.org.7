@@ -1,110 +1,115 @@
-Return-Path: <linux-kernel+bounces-723577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93418AFE8B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:19:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FDC2AFE8B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDA4A16D293
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:19:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 035D416A6AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B592D9489;
-	Wed,  9 Jul 2025 12:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0432D9489;
+	Wed,  9 Jul 2025 12:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pUyU/sZS"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d8iMRGjl"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9612A274B3B;
-	Wed,  9 Jul 2025 12:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A91A272E7C;
+	Wed,  9 Jul 2025 12:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752063554; cv=none; b=e04O2GVqgUYiLCZaiJyVvSs1PJRHrxdaJlX/ksXd0jj29Pg/p/5FZc82SIwv7lvQ3l5JRCyvCtT8otdFx5R4J0SiD9yCqqrPHL+rIK1yuN+vtsKItSPfejdeyNScS7mzU2xhVCZvyHu7yQlKVL1zQdfLg2uy1Rptflq5ZOM1qSI=
+	t=1752063627; cv=none; b=AcQ+voS85H6CdeHNZSDC9Je2fCc05MCKkQXXt9lN3RQwVZJepmvGuhJzMoL+DmLAhJZf6Utn8RJc0t+6i9KOebdCYZl1PU6+AT7xAqETGDSoczOX2KPvepCl57r8YsT7WAtAtyxkSwc4ax4ripoixVA8z3+Q9RQL2uxLO6kRYm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752063554; c=relaxed/simple;
-	bh=t2BbGWEcPww9/zrhtw02Ren5jeVGKUgVNeFA8j+G1hQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qIU+XhMElrWqBVFIJpTtiCTwLgbOqc3SR4PUrdKfhhtg6NI8WicpXmUkUJV0wpUDAWEukIJM9eq8MR58ByGMOFh1NuNIE2NvPS5sKHe2wDvHdtjLxFPkoWUS8ClMdhtF3KP78kIKdIsU7lhvAg5z5YvjaTb40kYnvy30wp1GAKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=pUyU/sZS; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752063480;
-	bh=Si/UIBGqjtn/1epVGgHhJMdqwD159C/BVyCBGc8mYo0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=pUyU/sZSPyxGGH3rnVXeW82rXhE15et2nuO1LIFdf0Bk3SZ38MbqbQ63gB7cvzc5o
-	 vTf3ULofnN/9GGAmfdQgVJMoleLaoDNmvU6skuslHOBlTy8MzSF7ArACIKwVJ9IKPG
-	 oljk5SvoR16fGfHROT5uIQUK2dI+x+iBPYFad0Mu2Jz8BOAoq852Xx8qFYH1nvPWj8
-	 D4yzQJPvx/L2GRyCYRoX7OUEdm1BEZ5jL2hLraKoyOKHwA1iR8zhR7z5zMyL7w1AAR
-	 GhCKsSd5Xtphq2xlLPCDZuMLYA6ULNPJ7sDMllOw0dmarJKbER/vX/FjqKTk3O7/fQ
-	 d9GLDbzXQVV3Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bccSS5dmGz4wbb;
-	Wed,  9 Jul 2025 22:18:00 +1000 (AEST)
-Date: Wed, 9 Jul 2025 22:19:05 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the vhost tree
-Message-ID: <20250709221905.61e77ab8@canb.auug.org.au>
+	s=arc-20240116; t=1752063627; c=relaxed/simple;
+	bh=vTxSr4OcEFLxV9myZXbp9oq5itZ0+F6vLpEgCoNxz0c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eh5XRydl6DEAR87nDzuc93e9Kxl1eb+Mei+6hCU1DR6ZBkbOnrEJDyDbyqtauKTrtK0HHBw2AJEBiQkD+HoCKGkMPLy0bEZi7MmK/I3neDFv9kFIVYl1z1Ar2rJmL8+vqrmLz6kNRZkkK/jXukHLSQDdv21ZGWIrpr4v3lxaGaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d8iMRGjl; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-453608ed113so60052305e9.0;
+        Wed, 09 Jul 2025 05:20:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752063624; x=1752668424; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cz5QQgif2TZ+psnMb6iWbzxnGr67pPa/3dM5Lbz5MrE=;
+        b=d8iMRGjlpsoQSYGNCgiS70Fl3oETvYM/A7xkTiNhtIR4LkY6pJH3iEFEjcXC93y+1+
+         xHLr59PESgkT9Fh8hDuwmxbNiMT1I66491NBjZnu5s58Mwat041cfhJif2f39VtQifE6
+         gndJcFbh4qRc+P8HraWHXVO8cz1SsLanPHMnI5YbuCl1n2u+Y1ui/muziyLvHN97nkm5
+         gXfbLCr714SGnWlJWfszS6RCbvVP4xqqF1cmA00/G/mb6/SZxoZ0DLqjbvIRVs4I8fB/
+         VqlVmjrUG6sYoIhorO6C/dA9RhnB6j4sZQz7KRf508BQura1tuxCTciMRPeS46R6j+FU
+         sTLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752063624; x=1752668424;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Cz5QQgif2TZ+psnMb6iWbzxnGr67pPa/3dM5Lbz5MrE=;
+        b=OUQOwAZeIeXiLg7Jt9vxR4LhRfgo6JxRT9Z6D8+spPIjEM5g8cpZvvQtOIivZbIZuq
+         mY855Zxv7NyYY85kVoMo7clsQOik4thtFMSLf6x9y0CXOOvIRzKGlUHDWRJfwSLBpvCr
+         bYZnjUFoli4C+uo7Iy8ocKpp3nQVkE2pV0QM2t0Ka/0qbOq3W1xJ7VfLZdzUF9vvDHPz
+         wDSeoo+XnLzdgRLQmGwAVadnkZyO/NSgkvtEvnB9Jb6NFcJcddM1SfXKs2+VN+fe9eK4
+         fBCPjZa3ukY5DFLPgp2M4pD7HtgcdhhFvzvMpV3lkzQVSHFOWY+/TUf1A3q/Vs8z3zeN
+         vnZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsWPUeKMBtcJF0MnFhW2dsYX1yn6dLr/GTBYkG2aZHD3yyflSCwKfMEWH/S3NJgEh98sLp0OtVH2fF/Io=@vger.kernel.org, AJvYcCVpB23B9Cshd3+3PX9weIP4QpVy2piFqvVRRSQlGcDQV3g2ADfIWwGW+E8wR80Pdi4Bg+e/lNwYtAjBxHM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsJmDNPr+VBBpI/ZVTSLxKYLqdyIncNJDqxqtKE6z6wJXCH8lO
+	NLwCcHzq5WCQeWNc5Mk5i2G3FoybiMW/+yJ36diAJzdOaxjLS31M+pNN
+X-Gm-Gg: ASbGncv9aiBxww/ZxmAznbYYdggLNjIFNp9OOgSM76X2ZBEbNDLHp/NtOTSDCZzMd/Q
+	cMteN3Ohf6KTOB43VdWJ3Uc4GBqE9HKWbDCDvkbsk8CCf70i5YUI0d0He6ep/TZ4cRt1FcbOP8G
+	lChBbFDStf9IZwMKB2WtpEfq6RSD2WWLr8yFVqd5OqMbKx4y713oXbETeJqQnY46IeS8ZUdTrcw
+	IhkP1D51OPIJTI8xs0x/PRsUhv9Dsl3i4CwckT+gsp1PFofGRr9U+HqMFbdO04wwJy83GO89hZb
+	Ovq1d/byjuJSItbVICFw90FOyHgz5WQynGKY653SWT4PYdsAr03Bf67uQX//5k9MtD8/gFz0fIo
+	iFnROdJa+9HCZt0gKNeE280U3x1J7eDy8q1yCrF01h3IUooNpo2zb9A==
+X-Google-Smtp-Source: AGHT+IH6QLMupQyvz6K1xZUyeINn+lP3CNsWV0TExX1rWT3sPHY0i+kJ1Ij7hqhRt1VAgldCxPijDA==
+X-Received: by 2002:a05:6000:2087:b0:3a6:f30b:2dd6 with SMTP id ffacd0b85a97d-3b5e44f5a13mr1981376f8f.26.1752063623787;
+        Wed, 09 Jul 2025 05:20:23 -0700 (PDT)
+Received: from localhost (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b4708d0aa0sm16013292f8f.34.2025.07.09.05.20.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 05:20:22 -0700 (PDT)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Russell King <linux@armlinux.org.uk>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Aaron Kling <webgeek1234@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: tegra: Use io memcpy to write to iram
+Date: Wed,  9 Jul 2025 14:20:20 +0200
+Message-ID: <175206361431.1595082.8917361083602390778.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250522-mach-tegra-kasan-v1-1-419041b8addb@gmail.com>
+References: <20250522-mach-tegra-kasan-v1-1-419041b8addb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/MgQgRtSdtlaOfCMR5VyZIVa";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
---Sig_/MgQgRtSdtlaOfCMR5VyZIVa
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Thierry Reding <treding@nvidia.com>
 
-Hi all,
 
-After merging the vhost tree, today's linux-next build (x86_64
-allnoconfig) failed like this:
+On Thu, 22 May 2025 11:11:24 -0500, Aaron Kling wrote:
+> Kasan crashes the kernel trying to check boundaries when using the
+> normal memcpy.
+> 
+> 
 
-In file included from /home/sfr/next/next/arch/x86/events/amd/ibs.c:12:
-/home/sfr/next/next/include/linux/pci.h: In function 'pci_set_disconnect_wo=
-rk':
-/home/sfr/next/next/include/linux/pci.h:2738:14: error: implicit declaratio=
-n of function 'pci_device_is_present'; did you mean 'pci_dev_present'? [-Wi=
-mplicit-function-declaration]
- 2738 |         if (!pci_device_is_present(pdev))
-      |              ^~~~~~~~~~~~~~~~~~~~~
-      |              pci_dev_present
+Applied, thanks!
 
-Caused by commit
+[1/1] ARM: tegra: Use io memcpy to write to iram
+      commit: 4110a4d95bf0bebd8ccaaeb93988dc9c08bd7d6a
 
-  b7468115b604 ("pci: report surprise removal event")
-
-I have reverted that commit and the 4 following ones (just in case).
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/MgQgRtSdtlaOfCMR5VyZIVa
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhuXjkACgkQAVBC80lX
-0GzFuAf9HFoPx7fRWZDz1lrpKHiYA/e7niXJbm+aw9BxatzbUkKsAW3oFff0Ny5H
-YdsJ7lHfsqmDzDAqH4A6s4jB9BYmXvJi0KXLqaAXDm0gtyABNvFbM7WEG00CD0uR
-CuskQu3XnmiTHS5jTuxbkMwWTolvqcjeI26R7ELJ9Rr+m6s7dE42uytLMwkOuq1F
-5quBR43KkO1QXb5hQXuR1l/B8a83vGH3HS4+Z4YZb4bFgPnpFcuqH1mS1uUVJvft
-BZjtZMOA6DU4RG1hbzcQbzQg2DWEizaVUtPQ8py1i/IRF9fV1+lNIljZbIwS5Spt
-dX02KvgN4GDo8yKFxK2C25nGbq/qcw==
-=5rhw
------END PGP SIGNATURE-----
-
---Sig_/MgQgRtSdtlaOfCMR5VyZIVa--
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
 
