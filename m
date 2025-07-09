@@ -1,119 +1,101 @@
-Return-Path: <linux-kernel+bounces-724036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F35ACAFEDCD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:32:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 084F1AFEDD2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:33:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50661168FC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:32:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4AFE1BC071C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11252E7BB6;
-	Wed,  9 Jul 2025 15:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JWDX3g7w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC252E7BAB;
+	Wed,  9 Jul 2025 15:33:41 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09330A920;
-	Wed,  9 Jul 2025 15:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A370B17578;
+	Wed,  9 Jul 2025 15:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752075156; cv=none; b=N5xkIXF5glryyznv7USvtOg89gapTAS9y/IJX1nQRyWjjyYr4Az1Q22mfaH0G4OuGhso+5oF7XBPd2UXvC8+r/VxPLLQS6ejKbIl7ooxeK1dBPKEPayl0bJSKWWt6bQn82VRI8Kgwqx7QfjkmJwZs6+vUj0UsWjbzH7u5mVf+aw=
+	t=1752075221; cv=none; b=eV0PmC7DXBQOV81JRPAl6F4AkaWkNijw69am+GAlwdUb/I3GqqSuf+q5d/vpAaZxw0JIlGt2lV2fHxXxhbUVSmCvGiVPeItSPOH/Mlp1ECZsgTvmKLSGnfSIhwff0NosudtV4veoC+Kk8prMhbfGzkEP5uZ4gRg8+XY4wddQF9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752075156; c=relaxed/simple;
-	bh=kcvivhZy27k1X84bIalCvwMRvuKqZj+zcGFUwVqQar0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=E9unOkWBp616jGXX++heVDd2pDnanrqxE0yqtDoHcrwFesJ6jGaDotdU0CIxXRPF9ZoT2iBjYaWuHQvWp6BU/cknc9VbDGzCSupyGOOkHx3zOB6V8kZos/RetResc0dJB6pvSHSVD/YM0+pbGv9cBQNMn9M67Bt3wHxHJt3lFI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JWDX3g7w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5BA1C4CEEF;
-	Wed,  9 Jul 2025 15:32:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752075155;
-	bh=kcvivhZy27k1X84bIalCvwMRvuKqZj+zcGFUwVqQar0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=JWDX3g7wylmHQW3/6AqwqbIM8VhJY2PNbjGM6/7xoXS1Z3s9d+8AFAkfuFoAAG5Hr
-	 VtylhNHTumNz/L250F07hrTJH4RBYHx7RPt2QiWCcVZbhR3a0G8wO5yQht5PB/08kz
-	 5UlRlFlK4eFF/kqE4T1PdlO8oKE5RNBFIMitd5M+x0RcUGloo8mwoYk6eRW2DfNNx2
-	 HlReH+SwhlghrP4Eh8DyyFS3EHjyf38+pihtJEMRF71S2zv+G/ZGG+BBux4GEwzWoY
-	 1oeYrgY7T+l4NUuHlSBYxtmzVj/5USDLbeiqADXiqJzWg+ET9aH8/wYmXPnJ4JpBfS
-	 0cMoAsge8DMHA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net: pse-pd: pd692x0: reduce stack usage in pd692x0_setup_pi_matrix
-Date: Wed,  9 Jul 2025 17:32:04 +0200
-Message-Id: <20250709153210.1920125-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1752075221; c=relaxed/simple;
+	bh=gQPhTpdl+CKVNNZyGf/LjflYEbCr0MV5RVav6zgi9B8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HfiVhPjQisFghZcaPkMi6UZNTm8Q0y1y+rqu0h30eT5aRMASNYBYl4i+T/xVlRou+ELdYbcINqRzo5Q8YlnvVAR87Cnf5+h4XEDByXQfdXr0b8u7aALBEiHL29oNk/1zspU5AqI4LueAbB9/5rmwbfXasv0ib+iapskSFfP4XLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 569FX4eq082756;
+	Thu, 10 Jul 2025 00:33:04 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 569FX433082753
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 10 Jul 2025 00:33:04 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <43189e93-2cad-429a-a604-15bf5cc95e43@I-love.SAKURA.ne.jp>
+Date: Thu, 10 Jul 2025 00:33:00 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [kernel?] INFO: task hung in uevent_show (2)
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: syzbot <syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        USB list <linux-usb@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <686e7698.050a0220.c28f5.0006.GAE@google.com>
+ <79f634db-c149-4220-b8d4-0fff2c6b6a01@I-love.SAKURA.ne.jp>
+ <e064a3e4-ae70-4a24-ba5e-1bb8c7971f23@rowland.harvard.edu>
+ <39f312fa-d461-4377-b809-50c8a7188f6b@I-love.SAKURA.ne.jp>
+ <dd932df4-2a13-4a5c-a531-376065f87391@rowland.harvard.edu>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <dd932df4-2a13-4a5c-a531-376065f87391@rowland.harvard.edu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav401.rs.sakura.ne.jp
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 2025/07/10 0:19, Alan Stern wrote:
+> On Wed, Jul 09, 2025 at 11:44:46PM +0900, Tetsuo Handa wrote:
+>> On 2025/07/09 23:27, Alan Stern wrote:
+>>> Which of these three BUG_ON's did you hit, and where did you hit it?
+>>
+>> kernel BUG at ./include/linux/usb.h:1990!
+>>
+>> matches the BUG_ON(endpoint > 0xF) line. The location is shown below.
+>>
+>> Call Trace:
+>>  <TASK>
+>>  hub_configure drivers/usb/core/hub.c:1717 [inline]
+>>  hub_probe+0x2300/0x3840 drivers/usb/core/hub.c:2005
+> 
+> Those line numbers are completely different from the code I have.  For 
+> example, line 2005 in hub.c is part of the hub_ioctl() function, not 
+> hub_probe().
+> 
+> Exactly what version of the kernel source are you using for your test?
 
-The pd692x0_manager array in this function is really too big to fit on the
-stack, though this never triggered a warning until a recent patch made
-it slightly bigger:
+It is current linux.git tree.
 
-drivers/net/pse-pd/pd692x0.c: In function 'pd692x0_setup_pi_matrix':
-drivers/net/pse-pd/pd692x0.c:1210:1: error: the frame size of 1584 bytes is larger than 1536 bytes [-Werror=frame-larger-than=]
+  https://elixir.bootlin.com/linux/v6.16-rc5/source/drivers/usb/core/hub.c#L1717
+  https://elixir.bootlin.com/linux/v6.16-rc5/source/drivers/usb/core/hub.c#L2005
 
-Change the function to dynamically allocate the array here.
-
-Fixes: 359754013e6a ("net: pse-pd: pd692x0: Add support for PSE PI priority feature")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/net/pse-pd/pd692x0.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
-index 4de004813560..399ce9febda4 100644
---- a/drivers/net/pse-pd/pd692x0.c
-+++ b/drivers/net/pse-pd/pd692x0.c
-@@ -860,7 +860,7 @@ pd692x0_of_get_ports_manager(struct pd692x0_priv *priv,
- 
- static int
- pd692x0_of_get_managers(struct pd692x0_priv *priv,
--			struct pd692x0_manager manager[PD692X0_MAX_MANAGERS])
-+			struct pd692x0_manager *manager)
- {
- 	struct device_node *managers_node, *node;
- 	int ret, nmanagers, i, j;
-@@ -1164,7 +1164,7 @@ pd692x0_write_ports_matrix(struct pd692x0_priv *priv,
- 
- static int pd692x0_setup_pi_matrix(struct pse_controller_dev *pcdev)
- {
--	struct pd692x0_manager manager[PD692X0_MAX_MANAGERS] = {0};
-+	struct pd692x0_manager *manager __free(kfree) = NULL;
- 	struct pd692x0_priv *priv = to_pd692x0_priv(pcdev);
- 	struct pd692x0_matrix port_matrix[PD692X0_MAX_PIS];
- 	int ret, i, j, nmanagers;
-@@ -1174,6 +1174,10 @@ static int pd692x0_setup_pi_matrix(struct pse_controller_dev *pcdev)
- 	    priv->fw_state != PD692X0_FW_COMPLETE)
- 		return 0;
- 
-+	manager = kcalloc(PD692X0_MAX_MANAGERS, sizeof(*manager), GFP_KERNEL);
-+	if (!manager)
-+		return -ENOMEM;
-+
- 	ret = pd692x0_of_get_managers(priv, manager);
- 	if (ret < 0)
- 		return ret;
--- 
-2.39.5
+commit:         73392339 Merge tag 'pwm/for-6.16-rc6-fixes' of git://g..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f481202e4ff2d138
+dashboard link: https://syzkaller.appspot.com/bug?extid=592e2ab8775dbe0bf09a
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13f27f70580000
 
 
