@@ -1,178 +1,144 @@
-Return-Path: <linux-kernel+bounces-724599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03CAFAFF4BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:33:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E09AFF4C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F00C71C8445B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:34:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04BE21C8440B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BC424678A;
-	Wed,  9 Jul 2025 22:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443A125484A;
+	Wed,  9 Jul 2025 22:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LUo0ltWy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TuABHA1h"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBFD156237;
-	Wed,  9 Jul 2025 22:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F0E156237;
+	Wed,  9 Jul 2025 22:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752100416; cv=none; b=WBNpEI12rcr+8xj9a7LsG/Jg7sgiSZ73izxWi86jHcjTdaRKI7Ux/325Hfl4CLj4GvisJ24heYEqJtXHKxut1urn+GeZR+weFCLzpb+9rPNU00XJ40PO2ajo96a5WsNu6q4RnCSBh5HNChkqUhHz2Ex0YtkB9MWCxtClwa32xtg=
+	t=1752100484; cv=none; b=iqobT9mAmr5/u6+ifRjvWRA/+7AUqseiOpa42s9zjk90AK3S7oiDrM4xDIYpEJnz1V5llM/MX2OB9QplLfR7AOea7A//EuZmrGcF0o7a+m1oXHDOE7bG25TdHopyHPVRM2j1jQNV5lO6+QFhUz/Et7cO1nCRv3Hb1GBVblBn6Uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752100416; c=relaxed/simple;
-	bh=U3km29Q/NJDG7e5XJLagfOZZXN2bf/She7Au+nmm4IY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=T0TbkRYsn6HIgG1txcILsK7COu86Kx/Vd7aWY2O8r0HzNLTpLwW1Ci281Ac7Ic9Un/Sn1ogRahAUFV6k0ehJjg2wIr2uhdDfwIMfo2QBThsj+JCB8emhdvaDWCA5b64LrTUuibnuhDUDfcb53U/yF7OA4k9C5EvguKEO9rBwqLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LUo0ltWy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A141C4CEEF;
-	Wed,  9 Jul 2025 22:33:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752100416;
-	bh=U3km29Q/NJDG7e5XJLagfOZZXN2bf/She7Au+nmm4IY=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
-	b=LUo0ltWyp2WYwSdXjauPSyK+N8T+2mb2yal0wV9ovydzkuRXeIdaQbkQXm9sxvjjd
-	 kP0nxFf5CID+wfy2eQ4lvjuiqX7d6w+E8rpHqt4ujz8RgO+xXAtvJR3I+taVtK4Fp2
-	 SPio/dBM+hcwdsI23v1AAIHYi2j7uvdlKLGq7fQ2jwp5qc84jnMqGMzIFeIm7iCz8W
-	 MFb/8SoOTSvorOt9O0m9G+aZyS3PXonU2CRtF5k13dc+KeoKhq60WGz7FzVavDoS9o
-	 6Fy42XyO6PiBZrmwn3U9UfChApHoO6f8G3vC/WIqmsthPTdDCV76wBwHW/FKth4QLv
-	 Yc0Oar5gmqqEQ==
+	s=arc-20240116; t=1752100484; c=relaxed/simple;
+	bh=CLTu8BXlPBActcHgBi7NMR/ZJnqvRtAOzOb+cfc/to4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Oh/DT78iIovCFa2iJ5RxeUWtwrDcTjlGKrOqv/o8qhEROPIl+KoGbqG3VsM417EJguRDQgqIaAQ+g2U5seASSa6zplG8vxr7AhsIVsgHnPOVsdrNPayEgAP8HSPM8HsQotfUb/kKUdvHbBLHE9DHbX5vdg2CHPv/SzEHrLKwPT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TuABHA1h; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7d094ef02e5so181974085a.1;
+        Wed, 09 Jul 2025 15:34:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752100482; x=1752705282; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xxMpaLnvpar1TOoyObF1yy5rb3DAuYrSwv8+89Yn05s=;
+        b=TuABHA1hs9NxxwuzeRytLibGV4i79zb9ArZIYHleEhFj7i/surfLQiDAmMF8hN+wyG
+         XucPBsYbru29F+JHNbAgnbdcMej/tewCqjoLuym30r9xUQOJt/ITDD6fytbJvoz9NKGr
+         /d90iYSCflEHFMM6TpQYgud13igolwodhNFyfgQ11NfDw1u8SRl78DFaLLuh7pCj6RlX
+         Q3QiRS88mE0FZWT4hO48rbihm4zJhoAApI2/ijgmyg6/YSFnVxIvVHSPEpxChq1wfa7N
+         5+pMAHmd7+jgwjZf2Xb2wyF6Qd/zVe4AZko0ii5sSeEyZ/VTPaB2Ap+vGSiWg+AAi6b6
+         RdWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752100482; x=1752705282;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xxMpaLnvpar1TOoyObF1yy5rb3DAuYrSwv8+89Yn05s=;
+        b=pXA1Yar9LKZNxQnieduGDaXb+Z+iPwhbrNkixBzl+yE11vzEzfoh54bqp0WMWIwLKO
+         p77P3wu8KTB0GS/xZHFiU++ZgO+LuRWV+OMiy5SEsjSIYEhg/JqDuTC9YJOQqS133NJ8
+         ieCfvz1cnNPF2BVwI+urAHx2r+k0zhIvp1X/4S/vqG7CkrX0shWNbQ/N8ZUJi4RR/nbh
+         4bWNt7JGituSTUuNL/zXEpTCRMXtP6wx9ENK1VTSfFvVlSPkxZQBnGt+0OlkMXCsQeSk
+         GYL1tA7yz73EVs7fVqYBeJpkeKArZDU6aavOzQB+v+2ojyllnnylC3V1fAfY98m0/Cwt
+         2gsw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9icbjK9i960ty9eSOujUqWhCZS3W3UvYsoNfS44/3PsVGi3nA0v4pT3zOLVtkj3mRmzSzpnnDbEQms5Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzqiPCnOanKecruSYv2q1VFjsUp+o5ntDWnFI6NqrxpRbyUDhm
+	ljSz4+wB2kI0S0frGdPnp1ItxcHi1sqhzmwPqbD9BkqE9hBRqYXMo64c2EgyAT4n0POrQQ==
+X-Gm-Gg: ASbGncs61nzPU5SUcbD7zP2FSGuC0f0QJsEcvQnjymAsOJ2/2yiR7Tzlr1QJ90LOjU4
+	QNV1j9BX+xaPuMnHuJIuCsq4yY+ArMQsc8gx1B/bwkRlbgMQDeop0hfgQ5ur3Q1UQYP8gdMHvo6
+	bPJlDcp8jWL7Wsi4htFERPr/OEWMSHbLpTaYXhxnlcvgdY8QSxXr20VfpQ/c9UB2Z01EvBFf8is
+	PIq8cglSnQF05ZtFGNDk8toTk1Tl6O44FNbXbDK+vAHLFNmwg9BQg8363jKrHhkU8IHYCWF+IlP
+	07+1hORs2/ptlxAZxOEFdaM+V8pp9myZyuPrX7dOpd0B83Z2GqcOD8AuXvLOLYtNn4V3rc496Tt
+	CM8k=
+X-Google-Smtp-Source: AGHT+IFcb2vNf7yZgHMKGGNNF4J6NldMFWB8MAdiPL7GzLxU+rWdX4QchWtF7JPYiQIxjdXntVro4w==
+X-Received: by 2002:a05:620a:880d:b0:7c0:af6d:a52a with SMTP id af79cd13be357-7dc9aa3b9b8mr172468585a.26.1752100481427;
+        Wed, 09 Jul 2025 15:34:41 -0700 (PDT)
+Received: from [192.168.1.156] ([2600:4041:5c29:e400:5085:1d69:8814:72d4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7dcde9f18cfsm12493585a.100.2025.07.09.15.34.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 15:34:41 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 09 Jul 2025 18:34:33 -0400
+Subject: [PATCH] rust: init: remove old workaround
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 10 Jul 2025 00:33:31 +0200
-Message-Id: <DB7VRDBZWQ7Y.2IH7SNLUDH5FG@kernel.org>
-To: "Matthew Maurer" <mmaurer@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v9 0/5] rust: DebugFS Bindings
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
- Tabi" <ttabi@nvidia.com>, "Benno Lossin" <lossin@kernel.org>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-References: <20250709-debugfs-rust-v9-0-92b9eab5a951@google.com>
- <DB7US8G7ISG0.20430M3P7I0K0@kernel.org>
- <CAGSQo01hORWAtrGaYp-_xxrAiN47JkJg=jiqnqdpw87QKzt9jg@mail.gmail.com>
- <DB7V19QE6KFB.3MR0BAOWXT7M7@kernel.org>
- <CAGSQo01drZoy1-j-+Y-BHHOX5AzCG4A5KiUOu5TJ40JOdfcB0g@mail.gmail.com>
- <aG7pP1BTLQKInFrl@cassiopeiae>
- <CAGSQo01ge5QvhRtq9razpmrMNSPJuT3+q9Cafd1Hd=wmEjXfBQ@mail.gmail.com>
-In-Reply-To: <CAGSQo01ge5QvhRtq9razpmrMNSPJuT3+q9Cafd1Hd=wmEjXfBQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250709-init-remove-old-workaround-v1-1-a922d32338d2@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAHjubmgC/x3MwQqCQBAG4FeROTcwLqTYq0SHxf2tId2J2bJAf
+ HeXjt/l26jAFYUuzUaOVYtarmhPDY2PmO9gTdUUJJyll4E165sdi61gmxN/zZ/R7ZMTxw5j1w8
+ B0grV4OWY9PfPr7d9PwDS3drJbAAAAA==
+X-Change-ID: 20250709-init-remove-old-workaround-a6ec6792e010
+To: Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Tamir Duberstein <tamird@gmail.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openssh-sha256; t=1752100480; l=1199;
+ i=tamird@gmail.com; h=from:subject:message-id;
+ bh=CLTu8BXlPBActcHgBi7NMR/ZJnqvRtAOzOb+cfc/to4=;
+ b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
+ MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
+ QJJlcp0la5ilnuXn8m/U8lxvOx5rJuSksymhikJiK0IueKlNmtSPM1N3h9j0gQxsYi3as1l4mSm
+ W9QX6nCNdoQs=
+X-Developer-Key: i=tamird@gmail.com; a=openssh;
+ fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
-On Thu Jul 10, 2025 at 12:21 AM CEST, Matthew Maurer wrote:
-> On Wed, Jul 9, 2025 at 3:12=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
- wrote:
->>
->> On Wed, Jul 09, 2025 at 03:04:51PM -0700, Matthew Maurer wrote:
->> > On Wed, Jul 9, 2025 at 2:59=E2=80=AFPM Danilo Krummrich <dakr@kernel.o=
-rg> wrote:
->> > >
->> > > On Wed Jul 9, 2025 at 11:53 PM CEST, Matthew Maurer wrote:
->> > > > On Wed, Jul 9, 2025 at 2:47=E2=80=AFPM Danilo Krummrich <dakr@kern=
-el.org> wrote:
->> > > >>
->> > > >> On Wed Jul 9, 2025 at 9:09 PM CEST, Matthew Maurer wrote:
->> > > >> > This series provides safe DebugFS bindings for Rust, with a sam=
-ple
->> > > >> > module using them.
->> > > >> >
->> > > >> > Example interaction with the sample driver:
->> > > >>
->> > > >> I understand what you're trying to do here, i.e. showcase that va=
-lues exported
->> > > >> via debugfs can be altered.
->> > > >>
->> > > >> The problem is that the current abstractions only implement read(=
-), but not
->> > > >> write().
->> > > >
->> > > > I was trying to keep the initial bindings simple. Adding `write` i=
-s
->> > > > definitely something we could do, but I thought maybe that could b=
-e in
->> > > > a subsequent patch.
->> > >
->> > > Absolutely, yes! I didn't mean to ask to add it now. :)
->> > >
->> > > >> If you really want to showcase changing values, you can, for inst=
-ance, create a
->> > > >> workqueue inside the sample driver and modify the counter periodi=
-cally.
->> > > >
->> > > > This is supposed to be sample code, so ideally it should be as nar=
-row
->> > > > as is reasonable in what subsystems it touches, no? If people woul=
-d
->> > > > really prefer the sample schedule a ticking counter I can do that,=
- but
->> > > > it already felt weird to be registering a platform driver in a deb=
-ugfs
->> > > > sample.
->> > >
->> > > I'm not asking to do that. If the values don't change for now, becau=
-se
->> > > there's no write() yet, that's perfectly fine with me. :)
->> >
->> > Potentially I misinterpreted Greg[1], I thought he wanted to see how
->> > mutation would work.
->> > If we don't need mutation, I'm fine simplifying the driver to not have
->> > any mutation triggers and just export a few random things.
->>
->> I mean, the most simple way would be to create the debugfs entries in pr=
-obe()
->> and mutate them - still in probe() - right afterwards once. I think we s=
-hould
->> do in any case. And AFAICT, this also covers [1].
->
-> That's what I did with my `InPlaceModule` before and it evidently
-> didn't count? I don't see how the constructor being `probe` rather
-> than `init` would have been the issue - the only change that causes is
-> calling `KBox::pin_init` on the value you would have returned.
+`Error::from_errno` is `pub` since commit 5ed147473458 ("rust: error:
+make conversion functions public"), thus remove this workaround which is
+no longer needed.
 
-Who said this didn't count? It makes no difference from where you mutate it=
-, the
-importent part is that you show that you can, and that is clearly covered.
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+ rust/kernel/init.rs | 7 -------
+ 1 file changed, 7 deletions(-)
 
-The discussion you're linking to in [1] has a different context. It was abo=
-ut
-exporting multiple values that are behind a single lock individually. And w=
-e
-concluded that for the reasons mentioned in [2] it's not desirable.
+diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
+index 8d228c237954..be3a25932342 100644
+--- a/rust/kernel/init.rs
++++ b/rust/kernel/init.rs
+@@ -77,13 +77,6 @@
+ //! #     pub unsafe fn destroy_foo(_ptr: *mut foo) {}
+ //! #     pub unsafe fn enable_foo(_ptr: *mut foo, _flags: u32) -> i32 { 0 }
+ //! # }
+-//! # // `Error::from_errno` is `pub(crate)` in the `kernel` crate, thus provide a workaround.
+-//! # trait FromErrno {
+-//! #     fn from_errno(errno: core::ffi::c_int) -> Error {
+-//! #         // Dummy error that can be constructed outside the `kernel` crate.
+-//! #         Error::from(core::fmt::Error)
+-//! #     }
+-//! # }
+ //! # impl FromErrno for Error {}
+ //! /// # Invariants
+ //! ///
 
-[2] https://lore.kernel.org/lkml/aGZ3q0PEmZ7lV4I-@pollux/
+---
+base-commit: 2009a2d5696944d85c34d75e691a6f3884e787c0
+change-id: 20250709-init-remove-old-workaround-a6ec6792e010
 
->> > [1]: https://lore.kernel.org/all/2025070349-tricky-arguable-5362@gregk=
-h/
->> >
->> > >
->> > > >>
->> > > >> We really should not teach people to modify values by read() inst=
-ead of write().
->> > > >> Also, without this workaround there shouldn't be a reason to expo=
-rt the exact
->> > > >> same value twice, i.e. no need for File<File<AtomicUsize>>.
->> > > >>
->> > > >> - Danilo
->> > > >
->> > > > How do you feel about the `Wrapper` struct, intended to simulate t=
-he
->> > > > driver doing its actual job and show how that would look? Is that
->> > > > similarly verboten, even though there's a comment on it saying thi=
-s
->> > > > isn't how one should do things?
->> > >
->> > > Yeah, let's not do that -- don't give people ideas. :)
+Best regards,
+--  
+Tamir Duberstein <tamird@gmail.com>
 
 
