@@ -1,152 +1,129 @@
-Return-Path: <linux-kernel+bounces-723219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7FC0AFE493
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:52:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76FABAFE495
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:52:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1713E583C00
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:52:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 278CC7AAAB6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7600F2877DD;
-	Wed,  9 Jul 2025 09:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A102877DD;
+	Wed,  9 Jul 2025 09:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H3usV7+0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="w35Zphu0"
+Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F44023CE;
-	Wed,  9 Jul 2025 09:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B6F2877C4
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 09:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752054723; cv=none; b=AHY0hF9ZXw4Z1HVfFi3bJe1HyFmAMmVKXN6SbCQMrn1MFYAe30f4XXPuSE1wLdOXMbkgYxDEz3NXk/nnYmVjEXWbvdXQ1fjh/aVQFbuk2KsOHBfY0opNwnTae3/+BLa6Qt9j/fINtD6jHh0TGYZZnTDDhyOT8Ns/cG32PG5tPkU=
+	t=1752054737; cv=none; b=kksfCXj8HH2ydDe8QWJjB1OhqPZL+W+4j9hmj1ogRWTDEEo7URjykWbqxjF3+FrkjO+LR4ffUN5R1iaIDnPIBEnaOii9gq8t3N6A2zUKQQwhaG04qLSFRsyI6igMnpled0zyJQ/ts3oyPYmda9P0DCj03bzaZAA9W3h/GT7KlS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752054723; c=relaxed/simple;
-	bh=VBcLNsfeXZegl7COkVWcleDsuUcTK+n6RSJLnd/zTo8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DIE5d8++SvqxFAxotulzET0V+cDtTVcjhcRD7ZF4TELvFEUi2ksuMylW9uWJwu8jxq4f5eMPuc3hxjznoJBoZtAp3IGQqBUFaT7hEw28D0WyR/jvBjDxKOxy0Y1jWYZAo3hzbmSYDejuDeFIhL8HVNrAzkrMFXfoqxZpjSu26ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H3usV7+0; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752054721; x=1783590721;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VBcLNsfeXZegl7COkVWcleDsuUcTK+n6RSJLnd/zTo8=;
-  b=H3usV7+0kyS64ieFckWiVYGF7Cs/conVj3vaGKi0uGzUSvdE3WG6/hJh
-   Blgs+uD4B05Diic+rtPRJ6VVe8cjjQcpIi/Er0RcoU8W0TM9wqFzXSSmn
-   /MctuIN+PHPKkmdkd7cNR3ys6YfIuZEiHietjQXlgTTPytvMMDOpzOKXr
-   GwyVedqaCbPJh4lDH5Bzq51wOIvcV0TDxHapC/BRDpv50t25GVjQBPjRW
-   IfU9eM/IeGC7zy1sJQPO1h4qmGinzJLmbH0Vc1NLzW4PQbAaMDk7oDxdj
-   bhpJsM4yAHR+f2d68hv4HmAvRologA4jhWuPSOiEJ0NrUbPY/IEfs1Mz1
-   A==;
-X-CSE-ConnectionGUID: phrD3qKvRlWTsLBXQJ7apg==
-X-CSE-MsgGUID: 5yMJfAOjS0Sb+Nvf0/7pTw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="76856416"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="76856416"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 02:52:00 -0700
-X-CSE-ConnectionGUID: 3utUuKnLRke5/wsgphZJPA==
-X-CSE-MsgGUID: lU1aHZW8SnK6zQVMF9uggw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="156061509"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP; 09 Jul 2025 02:51:50 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 75AB71B7; Wed, 09 Jul 2025 12:51:48 +0300 (EEST)
-Date: Wed, 9 Jul 2025 12:51:48 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Sohil Mehta <sohil.mehta@intel.com>, Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
-	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
-	Alexey Kardashevskiy <aik@amd.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Daniel Sneddon <daniel.sneddon@linux.intel.com>, 
-	Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Breno Leitao <leitao@debian.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
-	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
-	linux-mm@kvack.org
-Subject: Re: [PATCHv9 11/16] x86/traps: Communicate a LASS violation in #GP
- message
-Message-ID: <iauggare2iigoy5t4n73p2adtyk4htv4w7zp4lpgwgwxpamaud@zoi2cxzxywpf>
-References: <20250707080317.3791624-1-kirill.shutemov@linux.intel.com>
- <20250707080317.3791624-12-kirill.shutemov@linux.intel.com>
- <a14155b7-65ff-4686-b6ba-a6900549864c@intel.com>
- <xy2ocwstdf44diw5p5hisjwvx467fyhm7bljz5xg72cmnhdfok@7pe3vmht6vcq>
- <CAMuHMdXpW0re633tW9MsN-+A521Xytoicd-T0L7r7PAwJ-B0+Q@mail.gmail.com>
+	s=arc-20240116; t=1752054737; c=relaxed/simple;
+	bh=A9YwGZZdokPFbQ7Vzo0hhFyvQF6XeBycydFK7Nnf9Us=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DHeauakMAr0amrgaSIUs7B1oWWLGsWQbnvnsqK7T6M0uCiGxMshTwXnVTKBPrg5WVk77aYIoc1EYL8Fby3Ceoo5ay6oQ8N847TBE2Bbws/mmu/lFdB3UpQPQPDAV35v4wYDLwM7NnjcY6UWNNBoRnsU/7kXB+nIT2UglLhp6xho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=w35Zphu0; arc=none smtp.client-ip=44.202.169.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
+	by cmsmtp with ESMTPS
+	id Yx18uxSw6XshwZRTFuWNc8; Wed, 09 Jul 2025 09:52:09 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id ZRTEu3pagVUGgZRTEuiq36; Wed, 09 Jul 2025 09:52:09 +0000
+X-Authority-Analysis: v=2.4 cv=KrNL23WN c=1 sm=1 tr=0 ts=686e3bc9
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=utcWr1KM/dmcMHpzs+cyHVz1H+ASbPEmF9dp1y+cR+U=; b=w35Zphu0n9ZOaY4v89CJj2NS/n
+	tqoQDSPIN3oO0aJJEJelRqzSG6lzNGXW3PPK915lifQ6bEVao13xJCIH1AeXoppLCK6i5vmBu8jCa
+	12mQJWd4XQPbLMYnCtgzaJGSXepvjBYOWMyu/+rHFriCkbVEMGR+bjaklI6JmeHrbheId/l9jI8AL
+	zjdkenW9zLgMoUNap6LcpmW2ejU3EEPXJFrOXXJAIda4zLWkXX2AePzkE3aHZAmSNN0yQSf1LGQRM
+	MBySimmqf//MwD0a12pnWh5V0Img8EJdiIePu4lU22LwcJy88oVvh4sSUMjai0QEYPLVzpnIQC10k
+	GxcK42Fg==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:46102 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1uZRTB-00000003NoC-48dC;
+	Wed, 09 Jul 2025 03:52:06 -0600
+Message-ID: <0a02f7c8-cd0b-4e69-af61-ab20d2c37c63@w6rz.net>
+Date: Wed, 9 Jul 2025 02:51:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXpW0re633tW9MsN-+A521Xytoicd-T0L7r7PAwJ-B0+Q@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/130] 6.6.97-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250708183253.753837521@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250708183253.753837521@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1uZRTB-00000003NoC-48dC
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:46102
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 55
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfKqscCdE0Jv0mlSXgj4Valc04pdgszmoRmS2ED+dOLqRIv3c9ispuc/BBhomYV4QWxHr/kRXrLye+5gzJoAJPrLII+1yEHQA22ghfxzk3WEouBWPv6dg
+ XV60KuQpMRARRHLjnRkR5pjJf4uLOnJsPNAZmRH3uEIA3fgEISCYOEilarqhT7IwjOAfjC4rkN8l0dFMZYFi1m4QL1CzI+ynyco=
 
-On Wed, Jul 09, 2025 at 11:36:27AM +0200, Geert Uytterhoeven wrote:
-> Hi Kirill,
-> 
-> On Wed, 9 Jul 2025 at 11:31, Kirill A. Shutemov
-> <kirill.shutemov@linux.intel.com> wrote:
-> > On Tue, Jul 08, 2025 at 07:40:35PM -0700, Sohil Mehta wrote:
-> > > > @@ -664,14 +673,23 @@ static enum kernel_gp_hint get_kernel_gp_address(struct pt_regs *regs,
-> > > >             return GP_NO_HINT;
-> > > >
-> > > >  #ifdef CONFIG_X86_64
-> > >
-> > > Might as well get rid of the #ifdef in C code, if possible.
-> > >
-> > > if (!IS_ENABLED(CONFIG_X86_64)
-> > >       return GP_CANONICAL;
-> > >
-> > > or combine it with the next check.
-> >
-> > I tried this before. It triggers compiler error on 32-bit:
-> >
-> > arch/x86/kernel/traps.c:673:16: error: shift count >= width of type [-Werror,-Wshift-count-overflow]
-> >   673 |         if (*addr >= ~__VIRTUAL_MASK)
-> >       |                       ^~~~~~~~~~~~~~
-> >
-> > __VIRTUAL_MASK is not usable on 32-bit configs.
-> 
-> arch/x86/include/asm/page_32_types.h:#define __VIRTUAL_MASK_SHIFT       32
-> arch/x86/include/asm/page_32_types.h:#define __VIRTUAL_MASK_SHIFT       32
-> arch/x86/include/asm/page_64_types.h:#define __VIRTUAL_MASK_SHIFT
->  (pgtable_l5_enabled() ? 56 : 47)
-> arch/x86/include/asm/page_types.h:#define __VIRTUAL_MASK
->  ((1UL << __VIRTUAL_MASK_SHIFT) - 1)
-> 
-> Given __VIRTUAL_MASK_SHIFT is 32 on 32-bit platforms, perhaps
-> __VIRTUAL_MASK should just be changed to shift 1ULL instead?
-> Or better, use GENMASK(__VIRTUAL_MASK_SHIFT - 1, 0), so the
-> resulting type is still unsigned long.
+On 7/8/25 11:33, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.97 release.
+> There are 130 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 10 Jul 2025 18:32:37 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.97-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Making __VIRTUAL_MASK unsigned long long is no-go. Virtual address are
-unsigned long. I guess GENMASK() would work.
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-I think re-defining __VIRTUAL_MASK is out-of-scope for the patchset. Feel
-free to prepare a separate patch to do it.
+Tested-by: Ron Economos <re@w6rz.net>
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
 
