@@ -1,124 +1,113 @@
-Return-Path: <linux-kernel+bounces-722766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FD8AAFDE98
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:53:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D22AFDE9F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 05:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAA04163751
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:53:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 336EB17742E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7728C1FBC91;
-	Wed,  9 Jul 2025 03:53:00 +0000 (UTC)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D33A23AE66;
+	Wed,  9 Jul 2025 03:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="BSfZ9d8H"
+Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1661A23B1;
-	Wed,  9 Jul 2025 03:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378CC3208;
+	Wed,  9 Jul 2025 03:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752033180; cv=none; b=f21JKdoc0+3zLRIc1Ux46OsB9tr4X8QP1UirqH8h62md661h9PmSNOsTAVGQDj3nG+MV1rJgL++noH+gG7hgwN/QlnETKG2KvzdGv14HUcTsUZ+8pulJu0S3Udmpv7S1w0Pk4XjB52Yoe2dEeOAdEO4i73NkRc/ykGJC/6hj4zo=
+	t=1752033498; cv=none; b=ktTwiPUOy4iaw5gQppaVnFyhXvdjZeOwNIvKX4xs/zezEd09rifPd4e5hSdV2XYbokAAI6jCLfrPWjyJubghhsjhT3B/ojpF4/a4oK1VrBM129wKEn7A3HHLAt1XozJ7qcrW5Tw0Xi+Kf5FLQAd7HjcnSKOXDMrZxZRkBog0dmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752033180; c=relaxed/simple;
-	bh=zgBiysRO3o5cVKKfxc6QqBibR6ZB227VIaKeujFCzLk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FTdjrXqMGZt36j7alW9M1iEYbC0PEuD9PZlLD0Bm5a+DOOARVXGKNmlR/4lmYDdYhHPcderTTrUSiBqpmT8joE6rjoY0Iw+um/ZfUMW7vM+Zu+t5/IezRjx1/sKnfULDG0gudaDl/g/qNwxx5kmhVu7j5jYBbSj7zWjDA36Yrwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55622414cf4so4711843e87.3;
-        Tue, 08 Jul 2025 20:52:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752033173; x=1752637973;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2WLrs8UFl83Bka6HJdVR44cmF3Cl8IJgCemJs93MWgM=;
-        b=VDWFZPnQfdHCaunqroaw2p/HgKFS/+veBfI/3QBKLqfJjbwmn+CA1OQIzibDV1Gf1x
-         TlvYJBEXHrFmvOEZY+nsWaBSbfeh+aDjQ/eff08AZO5PJXc+q5OruF0oLvvI4DlLyjeR
-         VpUjU5cmVXPaF8yUg464773OeBY2ZzTMQ/XhJfR1pDHgeU2pj/dMq/a0HEjpPSpMxG3b
-         9nQRQQ44MCmXgZezcGL9BRFF3ZgWUPXXdfiy44BZu66CGWPa8Y214cCr9fii8gNSZtRc
-         RwjHpR8P5bVcNiZQOeciDTU3S25nZvCqvOIjK8tRFb6zNUbTyCXZn3XkfoNa2PpFLqfd
-         pbfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOAJPuSWvfm4IVWcsFjmJLOvTdXMCbn0sDLuenrm9eNoUefhCba0mRdfLwAtNu6hOe4tMpIcSNjKM=@vger.kernel.org, AJvYcCWMW1EejySIgpuYfF/9KlYAjZwVN7jwfH8ONpzU/bQC1dD9717RGg/N3/68esqAm+rAHnMUHfcsAG7E2xOd@vger.kernel.org, AJvYcCWhbxXGwm5061WxCzEAt3eafW3OJo4MX38v/x2aTv7mr2hXWb1AYPYtHDiGpCCMtgY4kFYki2jR1KShN+XPKNTZvBI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqIHFJyfq7aE+HXLg9Qz512kemk+T41Wtuzpzds9IyLy7xEVCI
-	PWC4/qCOBdPULTqdLRdCD94TIxHkpC0wcyLi+cVLYcFlu6GwVTDc28hPXbRSFsu0JnY5ow==
-X-Gm-Gg: ASbGncsgnUlPVG5zVtr6GhgB64OCZcduEE8rFjqIy2a+uudcjzuoJB2HplC1Iju/WNs
-	15gmUPno9OK3MiKtKk2chL/TzYBr3CE6WJR1HHrUkmjbpjoq30VHB5h2z1SN4VChCXnL2xzmFj/
-	Y6eP5VxuhNswhNZ3Y2O485Zr3Acd1hU6PX2lTZL9c8Ioxt34cfxAu/TUEokivekcDGsd1SJ9E7z
-	ZxybTuhSU9deZLBHsPsAcLXt531R7kv+dd0SYP9ZGMtw2N8c46BofbIyfj+g0feT5Josg4wKwxa
-	yqChZXZCIOGXKWId55MdxO4GLeDj+3+cwMALXUwiouI0EKvIMYhwOT+hc7+y4IZctC6Jj9A4py/
-	2VGkl3+B4r11q0qvKgkU=
-X-Google-Smtp-Source: AGHT+IF8UObNFFX0glrD6YM+OFN0vS2+nUL/LpgdQPxcmKgcebs1YA6pVJCf3sjf7D8d/oOqhKv9Cw==
-X-Received: by 2002:a05:6512:1102:b0:553:241a:b93a with SMTP id 2adb3069b0e04-558fa8fae21mr266231e87.31.1752033172914;
-        Tue, 08 Jul 2025 20:52:52 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-556384c485esm1838590e87.232.2025.07.08.20.52.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Jul 2025 20:52:52 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-32f1df5b089so35629531fa.3;
-        Tue, 08 Jul 2025 20:52:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVzzVUAqwwUUl4LVNtM0OW6otth4k2wEToL+Ry3qTEsGDJDJe6/+Q1hbsomGQIrxL1s0mgBNyIQ/OsohloP@vger.kernel.org, AJvYcCW4QZv22aXfVYTVVoJ7Vu/WhlMbWghdpsc+9aEP4wEDc15Fa8d3Lh1frfq3OofIFXp05y2Ith5Y7896sy+VF+XN7No=@vger.kernel.org, AJvYcCWK229Ask4wXRvIQZn+TnZOyzZ0aOxDRd2qSwlbVZ0p6NPSMJDYFi54864akQffgO44pWg9tFexPM0=@vger.kernel.org
-X-Received: by 2002:a05:651c:221c:b0:32a:888e:b30f with SMTP id
- 38308e7fff4ca-32f48421a2emr1518491fa.6.1752033172370; Tue, 08 Jul 2025
- 20:52:52 -0700 (PDT)
+	s=arc-20240116; t=1752033498; c=relaxed/simple;
+	bh=sGCCkkKJBfNJAqH361usUURY9F6NRDwevuWl//frjwE=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=BJBzTRJ7n3OZWqvYejerneoFg5cxvtLKVA905zucsnEe7Dkg58WG4RMyq3s7hJJiwl3WEHjlmFsbmB1tMP8eIPRw5zwGwHPBzhi4BW1RLufcJl5H+/j/tKHF/FMFglj5dmfhML11FUfRt7lkdad20WbkgoeVy1Cbx89blUWMSvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=BSfZ9d8H; arc=none smtp.client-ip=203.205.221.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1752033182;
+	bh=OfWCbJnUHkYMrgQBuEc+vQsMymRVSQZY/QYP2G5dMyc=;
+	h=From:To:Cc:Subject:Date;
+	b=BSfZ9d8HmgMuK16zekPEMd4Dmc0LJ+fCCAMi+0rikGaNusxKCbRuriTARjfFwCKHl
+	 7M725R4tDueed9omYWqePaN/BCh9i5xrVUlQFe/vMJMXvdCJppzPw7ieksb7bTkj7m
+	 OCFryoNNj5pBzWX0wrX0SVUHdR0Bz4W+we+Y7VhU=
+Received: from syzkaller.mshome.net ([183.192.14.250])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id D363D23B; Wed, 09 Jul 2025 11:52:54 +0800
+X-QQ-mid: xmsmtpt1752033174t8d37g693
+Message-ID: <tencent_E1A26771CDAB389A0396D1681A90A49E5D09@qq.com>
+X-QQ-XMAILINFO: NnYhxYSyuBnLQ17IAXwPkP52iNtESB5hKcOl3YXG7ztah5ip05U5RKqK+epaQO
+	 7OdrpZn2lPn2e3Pmzk7WmzRFvw6QEaeuuP0mVGtGG87OmG8CM+B3qEdjOwl79Qvlm2Qvp0WpRO/f
+	 cYcRYL/SGn/M4lQVJpodp70J1tPYS3/0OC1Y5Nc9A3t5AX66UKhqlPxC5LeK14j9qxrEVfnYu12I
+	 A2MfiP0M+uAXardUW7mSScr4wWMz2gBiJh4JHsrNDZylHZOjMeFwNHWhQkFQ3E+GaLzrnmXD2gR2
+	 aCNBvXH7cyBDqfIK6oAueZ8ztLkFD3IpqBHnYEb2A2/V+4vYCyZLb2Kf66njH08UQkNjfOzfirrV
+	 U6FDagPTB6ER6DiwWildeMTis2cuvGS4QbX0spHmWz9wwGuqRsvlt28VG0aqQkCzWyPAYAUimrvL
+	 QXhMeA3/dSM8Bgs8xkGEh6xBZUy2VnRY2xN+xnsuLOCT+NsNPjoco066ShswHA3jwN43pOHqCV3X
+	 0fer9/BaJ4Azsy9K5QD1jFdXxSuJ1vKvtwO15zT0bjRcPUVefaQac2p5DmMk7OZQAe05KvBHdWQ4
+	 +Xual3oek+rmy3fC3SMAaQQJKVfr7RdjHQ6yT07Ug8fABh+CF6GFdBpX6bkxhuhgolr3HSWsK7vi
+	 zghcWeRyhC/WiyFRy/eoNHQkLWpSFYCs68aRueHkWA4Hvf2VsaTwGGLQhQMSGg29fvDu7ijTINlL
+	 1k0pMFTrlPrFECYwFTY04GDOWAtgF/8bpBH3Et29lJqSU/tZ9v5b5KaQhu8IYWaFloVHyxHPu9vL
+	 kFa1Yy8UFSYPD32RlaWx6O1wh+DeXd2kG4H5duyriB6ywliR8EETq9JtwjDsM90H6rWAs94oqGwy
+	 5HfRpIEDHRjr9nEoCsLwYkVkZegCpMDi4y2unFKrPVDUT86ustBqpZSUwWsi1VdJPD83IcH03hAq
+	 DRIjoUO3F+QRDxQlVeX4bLBzmNKbuuI88raxJu/lPXi3aAYHUGSYMYX80dO4iovGRvvk0bKVHlca
+	 uDN2bfGQge7mRQuGnJx1DsAiqCrEfzRBVaqD44BSSWsMXZdNlpRZHqIW8Qb6WOEAli3EekbRyNWb
+	 8gpNPB
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: veritas501@foxmail.com
+To: davem@davemloft.net
+Cc: Kito Xu <veritas501@foxmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] net: appletalk: Fix device refcount leak in atrtr_create()
+Date: Wed,  9 Jul 2025 03:52:51 +0000
+X-OQ-MSGID: <20250709035253.492806-1-veritas501@foxmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250708231144.971170-1-sakari.ailus@linux.intel.com> <20250708231152.971398-1-sakari.ailus@linux.intel.com>
-In-Reply-To: <20250708231152.971398-1-sakari.ailus@linux.intel.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 9 Jul 2025 11:52:39 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67zSf6X5B0rvkKPb1sOna+EW7f5JzqduO1rt1hSUo3p8w@mail.gmail.com>
-X-Gm-Features: Ac12FXwreyUxlabds-QeysMrnIp1a5yDkx7pVnlh5FRhGlmU6_2tIIE3jiUb5cg
-Message-ID: <CAGb2v67zSf6X5B0rvkKPb1sOna+EW7f5JzqduO1rt1hSUo3p8w@mail.gmail.com>
-Subject: Re: [PATCH v2 02/12] iio: adc: Remove redundant pm_runtime_mark_last_busy()
- calls
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Eugen Hristev <eugen.hristev@linaro.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Cai Huoqing <cai.huoqing@linux.dev>, Haibo Chen <haibo.chen@nxp.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Marek Vasut <marek.vasut@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Francesco Dolcini <francesco@dolcini.it>, 
-	=?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>, 
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Fabrice Gasnier <fabrice.gasnier@foss.st.com>, 
-	"Rob Herring (Arm)" <robh@kernel.org>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
-	Julien Stephan <jstephan@baylibre.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-renesas-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-sunxi@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 9, 2025 at 7:12=E2=80=AFAM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> pm_runtime_mark_last_busy().
->
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
+From: Kito Xu <veritas501@foxmail.com>
 
->  drivers/iio/adc/sun4i-gpadc-iio.c  |  2 --
+When updating an existing route entry in atrtr_create(), the old device
+reference was not being released before assigning the new device,
+leading to a device refcount leak. Fix this by calling dev_put() to
+release the old device reference before holding the new one.
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Fixes: c7f905f0f6d4 ("[ATALK]: Add missing dev_hold() to atrtr_create().")
+Signed-off-by: Kito Xu <veritas501@foxmail.com>
+---
+ net/appletalk/ddp.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/appletalk/ddp.c b/net/appletalk/ddp.c
+index 73ea7e67f05a..30242fe10341 100644
+--- a/net/appletalk/ddp.c
++++ b/net/appletalk/ddp.c
+@@ -576,6 +576,7 @@ static int atrtr_create(struct rtentry *r, struct net_device *devhint)
+ 
+ 	/* Fill in the routing entry */
+ 	rt->target  = ta->sat_addr;
++	dev_put(rt->dev); /* Release old device */
+ 	dev_hold(devhint);
+ 	rt->dev     = devhint;
+ 	rt->flags   = r->rt_flags;
+-- 
+2.34.1
+
 
