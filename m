@@ -1,134 +1,243 @@
-Return-Path: <linux-kernel+bounces-723104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2261AFE2FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:42:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48095AFE2FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D04FF1C43076
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:43:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1796F1C43005
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C0927D77B;
-	Wed,  9 Jul 2025 08:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9484227E05B;
+	Wed,  9 Jul 2025 08:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHILO/Pu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pc7+bpuF"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A70237713;
-	Wed,  9 Jul 2025 08:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A653C26B763;
+	Wed,  9 Jul 2025 08:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752050569; cv=none; b=hF6rxtBMZZF6H7Ij80tHXSMWEgH1XYWMRWyCYsDVv8QGoHOLIeyVoNjkZbALLUYtrVaOvD2JE6VOj84SYrvr5FvjJ7fcZx89QjSGY2tN53jAYGHKANe8/FHTWCcdlWtGExfQgRYZIr/Y6cs5qNqQPNiWjhqPGqaMZJAnLJm/EYI=
+	t=1752050601; cv=none; b=sbnQCNz1DSBen8jar2gsbKfVzvXXU4PrZtTY2Wo3i+3NYtKOQS8i8scosQLQmKCjF5aoEO5h49A2j4reHIjcT46VP38CeC4hz6s0+AgkuqKTyqwC21gzzGA0XMEGE1VA3Bmu+SY1hP29JoPXxMypVFWIlKbgD1V7RJc3iiFuXoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752050569; c=relaxed/simple;
-	bh=ZZFvlmSG8DdeZdpkA8RVUggjrKV4E9t8w9rXo+qb1SE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K8O6RoheX1hL8lKA3c+ngz3TlLxmig5d+DWFly4l3BzUAH2mKumOP3qTBPEsx37+yuUDsjsjk+D0kFXalH0gxNDeJJMvC0QkIxQvbQ2bMAQjgh9PF46YpWtTA8nq5rg9aVQie+lE5d+03T7NlqlJH31+guaMyxs2RxZr0bUrDGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DHILO/Pu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AA41C4CEEF;
-	Wed,  9 Jul 2025 08:42:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752050569;
-	bh=ZZFvlmSG8DdeZdpkA8RVUggjrKV4E9t8w9rXo+qb1SE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DHILO/PuOe8yVH6FW2fDNERUXe1W0Z57mBbHXlFK8cK21M4Zgda5LqYnhGOV5qWUl
-	 vePhTbcOClHTs79iMv9cstP3EVQHBHRXV1oV2lBO1oLnZ6yk4DWuM+vpc8ITdnE1lr
-	 Ugy19pr70gnFgVPMxcnkhZIDWcJt7fKygTLjUQkxcG4kofeS1/27rWU9Z1uagGs0sz
-	 EffQ6RwXeVAD+OxCEcdGdeYGDSpSC8LiKzjkFBo67cqt3TUQSYt7b65nwkydUGnDcR
-	 XI+fSOD4R31tB4wwhzdHTH6o2sfuSpbS1ymaIKE0cfIrqxMMbdtB0nTZ5dICOfsnyu
-	 Ao1h1anqm6O4w==
-Message-ID: <6b69c2b6-39ff-4f56-b5bb-2d1bfd8f1bc6@kernel.org>
-Date: Wed, 9 Jul 2025 10:42:45 +0200
+	s=arc-20240116; t=1752050601; c=relaxed/simple;
+	bh=Cs6JjLSPsTFLJj4H5Z6R6MrU1Qqzt2zZkRBKKWUvFLo=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EjD2uTUWtoe661ZjUdqPaCiC6G9IHfFEEfwdN+tAHt/LKncrdnehT6XUABS0VMNDO98EoN9YVPy5hcTkmYT9iJMO8jrAZwCQAB8Y/g0YnDbFdFeCeDMEjyqvDl4q1tHbetkeLBdvBDBUONGw8I7E8sJRR5kcAl0/XSoKJaVtdTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pc7+bpuF; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-60c93c23b08so10426128a12.3;
+        Wed, 09 Jul 2025 01:43:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752050597; x=1752655397; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9Xdlzo8mlFP5VJmSLNkxHKCX30v3KVlncbbCZk7gPQs=;
+        b=Pc7+bpuFhD8krPW7IzKZqA5Z0x0EKdn9y80VN8HwY3fUsxbIbg1IocEMVux1XpfUdl
+         5sQvuXAUjZnOdxmsOO7yoVg3HlacJcHnO+al8UmvJ8tlez92p0xCKy6Gr2o30MFveZIM
+         ZUE0vS8nuLJql7TUscJYqrU3VONYi/7Ff+EZYuNCRaBqjRoSC95YKS3zl9Md3+JNVcBf
+         WRCDy2JJp4K/etfEX6j7enVGDH2JELsY5ysK648/SDGXuVMAqo5qbcDsfZ4ZuylBmW/L
+         QH+WrJwE1ZIkioQ1hs2IsJOrHeeMolMnSMQAP+h2xZFOOf+uXuVXYhN6wUIC5El1zKpW
+         ocfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752050597; x=1752655397;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9Xdlzo8mlFP5VJmSLNkxHKCX30v3KVlncbbCZk7gPQs=;
+        b=cpiammEnBXNSRGUf9AxvEG7kr7X1ZKpO8g9EnGOtiW564YlUz/FiHX85opv8CgAzq8
+         I+y5fvqRMHgyDfvhV1PwLsUGvPqWs8cHzlwk0ve6dFw1v+XFo0dwpibh1kdSoVMUFgVP
+         qFkX/BuQirJ61L4otqpfT63H9Ch7vfq4uualuH0lv0cbzZQ28GU8KwXdYY0zuyWACI1d
+         9+xhmQHaQF6pnLgCEa2zQCxq5iQi7+6OQWT4GfRzj/Fi7WMNZFfHNft7wwTIu30cE45U
+         iPrJWnNCrdIcYurTDqvwB2/kArqDbJ8XWI0LzEnYH/KXCFR0gIQ8qxPfNmhf60DwIbdO
+         HeMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHMyH08u2U1sD2xN4hgi39otxwBj9UShYfKzhzClt+2clNPjesWe0yD8IGpMd+uGhCPhI=@vger.kernel.org, AJvYcCWOzgOAKacEcJD8/C7DmUiRCIdSD2apHmmMwc+IRSWUajYm02cMMQdAreD9pKtVjAEI85srgPR+coFGHMfr@vger.kernel.org
+X-Gm-Message-State: AOJu0YxODs+ROY5hpCQGzT9vL21hLEGs5exuKVzk/vN/bSIzxRI4Z8r1
+	dkECwYmg3fTZPe2+D+2xZmCjm5LbT9byRBdMwQWpRVzDwtECdKx2XQT+
+X-Gm-Gg: ASbGnctQrYUiYwM8DoHnGMQCNlDgozoQE9kl97u7hY6+QYbsd5nbcCj6tvWMtqiLJGS
+	WV0nczSftLUxPQh5/SVu0GKvsJqLKVIEkRlMo/NW3yZ9C8oDgpHitDmNItehOV4fwc94wN5FxXh
+	sx7g+S5xaAMbZsOZ7eWeZS81dkD7Kc88WeIwgMJsNl6t6ZOnr0HdaCgT8vymwuV2am1V9GctG8S
+	VYRpLaGir+YZynIZhCUN66wzY+TTN+zcLGjBXuf6gkAzsY1P9sk0nopowQ5VL9rRA8S3MFpX1o/
+	Hn4X7btOSFZ6s+z7iT0j/waiVzONeaWO9p3y9ox6AjpiKXdh
+X-Google-Smtp-Source: AGHT+IFl1+1FOYlrpDcn9VUhVaoJ43veqLZ6vLPtd0eGG2eIlWocyufPSPJVqBo5GtjMTwGE10wG1A==
+X-Received: by 2002:a17:907:268d:b0:ae6:d968:4aff with SMTP id a640c23a62f3a-ae6d96854dfmr45055666b.47.1752050596717;
+        Wed, 09 Jul 2025 01:43:16 -0700 (PDT)
+Received: from krava ([173.38.220.54])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fca78fd37sm8426099a12.23.2025.07.09.01.43.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 01:43:16 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 9 Jul 2025 10:43:14 +0200
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
+	song@kernel.org, yonghong.song@linux.dev, kpsingh@kernel.org,
+	sdf@fomichev.me, haoluo@google.com, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Menglong Dong <dongml2@chinatelecom.cn>
+Subject: Re: [PATCH bpf-next v2] bpf: make the attach target more accurate
+Message-ID: <aG4roiqyzNFOvu2R@krava>
+References: <20250708072140.945296-1-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] arm64: dts: qcom: x1-hp-x14: Add support for
- X1P42100 HP Omnibook X14
-To: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250708-hp-x14-x1p-v5-0-44c916efa973@oldschoolsolutions.biz>
- <20250708-hp-x14-x1p-v5-3-44c916efa973@oldschoolsolutions.biz>
- <20250709-arboreal-basilisk-of-opportunity-bafaf1@krzk-bin>
- <52b68d5e-b051-4c59-9186-eda9071c9303@oldschoolsolutions.biz>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <52b68d5e-b051-4c59-9186-eda9071c9303@oldschoolsolutions.biz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708072140.945296-1-dongml2@chinatelecom.cn>
 
-On 09/07/2025 10:09, Jens Glathe wrote:
-> Hi Krzysztof,
+On Tue, Jul 08, 2025 at 03:21:40PM +0800, Menglong Dong wrote:
+> For now, we lookup the address of the attach target in
+> bpf_check_attach_target() with find_kallsyms_symbol_value or
+> kallsyms_lookup_name, which is not accurate in some cases.
 > 
-> On 09.07.25 09:39, Krzysztof Kozlowski wrote:
->> On Tue, Jul 08, 2025 at 10:34:08PM +0200, Jens Glathe wrote:
->>> +// SPDX-License-Identifier: BSD-3-Clause
->>> +/*
->>> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
->> Odd copyrights. How could this file be published in 2023? Before the
->> laptop was even made? And by Qualcomm? Qualcomm did nothing for this
->> laptop on Linux - it's a Windows platform for them.
+> For example, we want to attach to the target "t_next", but there are
+> multiple symbols with the name "t_next" exist in the kallsyms. The one
+> that kallsyms_lookup_name() returned may have no ftrace record, which
+> makes the attach target not available. So we want the one that has ftrace
+> record to be returned.
 > 
-> Ok understood, only license identifier. But I do copy from other dts(i) 
-> files, there may be unchanged portions.
+> Meanwhile, there may be multiple symbols with the name "t_next" in ftrace
+> record. In this case, the attach target is ambiguous, so the attach should
+> fail.
+
+could you reproduce this somehow (bpftrace/selftest) for some symbol?
+I'd think pahole now filters all such symbols out of BTF and you need
+BTF func record to load the program in the first place
+
+jirka
 
 
-Then it is fine, although I really don't see much of a copy here. Every
-property is different.
-
-Best regards,
-Krzysztof
+> 
+> Introduce the function bpf_lookup_attach_addr() to do the address lookup,
+> which is able to solve this problem.
+> 
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> ---
+> v2:
+> - Lookup both vmlinux and modules symbols when mod is NULL, just like
+>   kallsyms_lookup_name().
+> 
+>   If the btf is not a modules, shouldn't we lookup on the vmlinux only?
+>   I'm not sure if we should keep the same logic with
+>   kallsyms_lookup_name().
+> 
+> - Return the kernel symbol that don't have ftrace location if the symbols
+>   with ftrace location are not available
+> ---
+>  kernel/bpf/verifier.c | 77 ++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 72 insertions(+), 5 deletions(-)
+> 
+> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> index 53007182b46b..4bacd0abf207 100644
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -23476,6 +23476,73 @@ static int check_non_sleepable_error_inject(u32 btf_id)
+>  	return btf_id_set_contains(&btf_non_sleepable_error_inject, btf_id);
+>  }
+>  
+> +struct symbol_lookup_ctx {
+> +	const char *name;
+> +	unsigned long addr;
+> +	bool ftrace_addr;
+> +};
+> +
+> +static int symbol_callback(void *data, unsigned long addr)
+> +{
+> +	struct symbol_lookup_ctx *ctx = data;
+> +
+> +	ctx->addr = addr;
+> +	if (!ftrace_location(addr))
+> +		return 0;
+> +
+> +	if (ctx->ftrace_addr)
+> +		return -EADDRNOTAVAIL;
+> +	ctx->ftrace_addr = true;
+> +
+> +	return 0;
+> +}
+> +
+> +static int symbol_mod_callback(void *data, const char *name, unsigned long addr)
+> +{
+> +	if (strcmp(((struct symbol_lookup_ctx *)data)->name, name) != 0)
+> +		return 0;
+> +
+> +	return symbol_callback(data, addr);
+> +}
+> +
+> +/**
+> + * bpf_lookup_attach_addr: Lookup address for a symbol
+> + *
+> + * @mod: kernel module to lookup the symbol, NULL means to lookup both vmlinux
+> + * and modules symbols
+> + * @sym: the symbol to resolve
+> + * @addr: pointer to store the result
+> + *
+> + * Lookup the address of the symbol @sym. If multiple symbols with the name
+> + * @sym exist, the one that has ftrace location is preferred. If more
+> + * than 1 has ftrace location, -EADDRNOTAVAIL will be returned.
+> + *
+> + * Returns: 0 on success, -errno otherwise.
+> + */
+> +static int bpf_lookup_attach_addr(const struct module *mod, const char *sym,
+> +				  unsigned long *addr)
+> +{
+> +	struct symbol_lookup_ctx ctx = { .addr = 0, .name = sym };
+> +	const char *mod_name = NULL;
+> +	int err = 0;
+> +
+> +#ifdef CONFIG_MODULES
+> +	mod_name = mod ? mod->name : NULL;
+> +#endif
+> +	if (!mod_name)
+> +		err = kallsyms_on_each_match_symbol(symbol_callback, sym, &ctx);
+> +
+> +	if (!err && !ctx.addr)
+> +		err = module_kallsyms_on_each_symbol(mod_name, symbol_mod_callback,
+> +						     &ctx);
+> +
+> +	if (!ctx.addr)
+> +		err = -ENOENT;
+> +	*addr = err ? 0 : ctx.addr;
+> +
+> +	return err;
+> +}
+> +
+>  int bpf_check_attach_target(struct bpf_verifier_log *log,
+>  			    const struct bpf_prog *prog,
+>  			    const struct bpf_prog *tgt_prog,
+> @@ -23729,18 +23796,18 @@ int bpf_check_attach_target(struct bpf_verifier_log *log,
+>  			if (btf_is_module(btf)) {
+>  				mod = btf_try_get_module(btf);
+>  				if (mod)
+> -					addr = find_kallsyms_symbol_value(mod, tname);
+> +					ret = bpf_lookup_attach_addr(mod, tname, &addr);
+>  				else
+> -					addr = 0;
+> +					ret = -ENOENT;
+>  			} else {
+> -				addr = kallsyms_lookup_name(tname);
+> +				ret = bpf_lookup_attach_addr(NULL, tname, &addr);
+>  			}
+> -			if (!addr) {
+> +			if (ret) {
+>  				module_put(mod);
+>  				bpf_log(log,
+>  					"The address of function %s cannot be found\n",
+>  					tname);
+> -				return -ENOENT;
+> +				return ret;
+>  			}
+>  		}
+>  
+> -- 
+> 2.39.5
+> 
 
