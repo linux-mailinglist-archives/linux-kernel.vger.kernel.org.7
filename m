@@ -1,150 +1,88 @@
-Return-Path: <linux-kernel+bounces-723874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69EB6AFEBE0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:27:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD2DAFEBEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBD171C868A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:21:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2634E16F1A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F872E267A;
-	Wed,  9 Jul 2025 14:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D352E3B0E;
+	Wed,  9 Jul 2025 14:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y7s908IO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NamG7SQz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B702E0930;
-	Wed,  9 Jul 2025 14:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12CB292900;
+	Wed,  9 Jul 2025 14:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752070864; cv=none; b=DnLhMETAmvtydlR5hOcJMJUbZC3zzxTRPTGgsJKQETknu6p6nUmOrZ1avXopUisamvAjtR0b18S16F2w7F7nlCDnlNb67RCs1cUYZR/Qw2T0je3l83tyPMImxAV41kUXvaQiQ4OdJFoYnfRGJFMZA8R3Ga+Gf9kyFddTNV4Z8j4=
+	t=1752070952; cv=none; b=WU+Aua635kR6v4Jl7x3Gq3S5TooZvs9q9h5FimqyrgSFPFx4Qbl4svzHYsxVuf92ncf7iIERUWT4bjMqGsd1cPnIks1Ri995nq/MNF+MoiXtor/GkFPW2wxSfAvP3zC19SO39KjwEgbnQJzITgs0qvNWc9DGTF2e/ksmG0QlESA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752070864; c=relaxed/simple;
-	bh=CHnl2dn+aVri4wo5LCKGLJbuGJ6Wteg3asFoEH+a+Pk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m4oxagdeKCwZaXI3ykjeFLyjJWBwqc6OLRQVf3va2r+O4rsJOWDbo1+shT+xz4ysHWbtfA8PtM1iffxBTFyXsmzVhMn3TBwTUmHaIQ3kJaKcPjOxs6ZmxktoVIPTcnGcf96C1NBi9P9jh6jTsWPiVgAhWTChXOpoNWjgNk0IUHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y7s908IO; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752070863; x=1783606863;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=CHnl2dn+aVri4wo5LCKGLJbuGJ6Wteg3asFoEH+a+Pk=;
-  b=Y7s908IOFlF9gPkVyv7AeyIimxG4oKz9d+O7vW46Cpg0rw/rvGkyQpTo
-   DhvJ39GXorGIg26YyW1oWUqBYmDNtvkOHZRlSVMLMYVCq8jE2O+SFJLsI
-   BoTbQtEtlm9pCfBNy6vAV3O06NLwG6aGKrkHR4xatfU/4EMkupEJZxKIp
-   aV855ezOmBDLdpz/b2rmDhjrJEpfw9oWPRNLacmj5uphx7i3kWRfGcZUF
-   e34HWyq9Dv6cXgioQfWQl/cm3C5+xchiqf8RjCvPDXXdXzKLl3ce++vXj
-   e2S5s1J1YmjVwteOWBHfv8WsY3w8AthfnHQoxSk5/j5ZF3KJzCG1O0lnp
-   A==;
-X-CSE-ConnectionGUID: RIxYnQYRR46K4PUWN5o6yQ==
-X-CSE-MsgGUID: MDP1A7a8SEySNy9+JE+fdQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54478768"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="54478768"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 07:21:03 -0700
-X-CSE-ConnectionGUID: h++JGzHmRkuyD3PTYHa4uA==
-X-CSE-MsgGUID: x04SK+l3TlOOOFtScIictg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="156273334"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 07:21:03 -0700
-Received: from [10.124.221.108] (unknown [10.124.221.108])
-	by linux.intel.com (Postfix) with ESMTP id 9123A20B571C;
-	Wed,  9 Jul 2025 07:21:01 -0700 (PDT)
-Message-ID: <ec773987-b6d8-4fe9-bca9-a41009f27d80@linux.intel.com>
-Date: Wed, 9 Jul 2025 07:21:01 -0700
+	s=arc-20240116; t=1752070952; c=relaxed/simple;
+	bh=RuYtf+o/prZlkiX+R1ATPE24ug38zrQkLBU6YbtB9gk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T9zk87HtSuVoPOsbDKzbBBm0qpzqHlTDVslQbbIm6ysmFpvaCsRBisc1oa4bx1xTXj2JCqVo6af1nQBgVlbAV9o9bHBmQ++/FjGZwqvCjhpGgNV/S5bonYofS0a9o6HhAEDB16uJVpvFNlxKg8dL8vqnIo56HX9ijPD0KRHNz4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NamG7SQz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6623FC4CEEF;
+	Wed,  9 Jul 2025 14:22:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752070952;
+	bh=RuYtf+o/prZlkiX+R1ATPE24ug38zrQkLBU6YbtB9gk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NamG7SQzyQWJ5KWdWWQHeVwsQhVqWV9f1070NVbepNAVaJWziLWvw4WxtupUVj5AY
+	 nuKJgYBWeMXoAm/HtGW1fkcZLHjaGk6CQsHImC0C5QwSHqsmT/sknOo5FNWalDWTl4
+	 RoIWCU5yClKHjTKMGDEfc4wzk6g+wccEpjZe4+bz0dsQeolEG7j3eZioyxg9MPKdZm
+	 9vAPQZ6b0De2Rp/z8XNoJe6moCn5k7qm+d72v7Zl3yIKew+sB6/nEvwPefnoC3jmBi
+	 xwwD6e2JbKdag1hgELjSnKJd6l/L+HPlswWndrbN71xXbznIqSyMhHFdlp5tRoZH/a
+	 wh0WrBv/dDi3Q==
+Date: Wed, 9 Jul 2025 16:22:27 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: =?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clement.legoffic@foss.st.com>
+Cc: Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, M'boumba Cedric Madianga <cedric.madianga@gmail.com>, 
+	Wolfram Sang <wsa@kernel.org>, Pierre-Yves MORDRET <pierre-yves.mordret@st.com>, 
+	linux-i2c@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v4 0/3] Fix STM32 I2C dma operations
+Message-ID: <2o7ptcsi2akaphtofm57ok7te7qdxrchygpeqmdjaiushfjffs@5k47ncrcrgxk>
+References: <20250704-i2c-upstream-v4-0-84a095a2c728@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/19] gpio: wcove: use new GPIO line value setter
- callbacks
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy@kernel.org>,
- Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
- Srinivas Neeli <srinivas.neeli@amd.com>, Michal Simek
- <michal.simek@amd.com>, Nandor Han <nandor.han@ge.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- patches@opensource.cirrus.com, linux-arm-kernel@lists.infradead.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20250709-gpiochip-set-rv-gpio-remaining-v1-0-b8950f69618d@linaro.org>
- <20250709-gpiochip-set-rv-gpio-remaining-v1-4-b8950f69618d@linaro.org>
-Content-Language: en-US
-From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <20250709-gpiochip-set-rv-gpio-remaining-v1-4-b8950f69618d@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250704-i2c-upstream-v4-0-84a095a2c728@foss.st.com>
 
+Hi Clement,
 
-On 7/8/25 11:41 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> struct gpio_chip now has callbacks for setting line values that return
-> an integer, allowing to indicate failures. Convert the driver to using
-> them.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
+Thanks for following up on the reviews.
 
-Looks good.
+> Clément Le Goffic (3):
+>       i2c: stm32: fix the device used for the DMA map
+>       i2c: stm32f7: unmap DMA mapped buffer
 
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+I applied the two above in i2c/i2c-host-fixes. I'm not sure we
+need the "Fixes:" tag in the first patch, though, as we are not
+fixing a real bug. But I'm keeping it there for the time being.
 
->   drivers/gpio/gpio-wcove.c | 12 ++++++------
->   1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-wcove.c b/drivers/gpio/gpio-wcove.c
-> index 1ec24f6f9300f33f5b3f0f8deb539e08392b8188..c50b74ced6364e3c3cfbe9ed385d21c80a2bb2e7 100644
-> --- a/drivers/gpio/gpio-wcove.c
-> +++ b/drivers/gpio/gpio-wcove.c
-> @@ -200,18 +200,18 @@ static int wcove_gpio_get(struct gpio_chip *chip, unsigned int gpio)
->   	return val & 0x1;
->   }
->   
-> -static void wcove_gpio_set(struct gpio_chip *chip, unsigned int gpio, int value)
-> +static int wcove_gpio_set(struct gpio_chip *chip, unsigned int gpio, int value)
->   {
->   	struct wcove_gpio *wg = gpiochip_get_data(chip);
->   	int reg = to_reg(gpio, CTRL_OUT);
->   
->   	if (reg < 0)
-> -		return;
-> +		return 0;
->   
->   	if (value)
-> -		regmap_set_bits(wg->regmap, reg, 1);
-> -	else
-> -		regmap_clear_bits(wg->regmap, reg, 1);
-> +		return regmap_set_bits(wg->regmap, reg, 1);
-> +
-> +	return regmap_clear_bits(wg->regmap, reg, 1);
->   }
->   
->   static int wcove_gpio_set_config(struct gpio_chip *chip, unsigned int gpio,
-> @@ -442,7 +442,7 @@ static int wcove_gpio_probe(struct platform_device *pdev)
->   	wg->chip.direction_output = wcove_gpio_dir_out;
->   	wg->chip.get_direction = wcove_gpio_get_direction;
->   	wg->chip.get = wcove_gpio_get;
-> -	wg->chip.set = wcove_gpio_set;
-> +	wg->chip.set_rv = wcove_gpio_set;
->   	wg->chip.set_config = wcove_gpio_set_config;
->   	wg->chip.base = -1;
->   	wg->chip.ngpio = WCOVE_VGPIO_NUM;
->
--- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
+>       i2c: stm32f7: support i2c_*_dma_safe_msg_buf APIs
 
+This one depends on the previous two to be appliex, so that for
+now I added it in i2c/i2c-host-next. I will place it in the
+proper branch after the weekly pull request.
+
+Thanks,
+Andi
 
