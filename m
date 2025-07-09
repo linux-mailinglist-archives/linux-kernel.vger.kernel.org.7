@@ -1,93 +1,80 @@
-Return-Path: <linux-kernel+bounces-722633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0765BAFDD26
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:54:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23DE4AFDD29
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07FBC540A40
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:53:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 721B116BE55
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B404E191F72;
-	Wed,  9 Jul 2025 01:54:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DDB199FB2;
+	Wed,  9 Jul 2025 01:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5pWlTw/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A0916DEB3
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 01:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D1380C1C;
+	Wed,  9 Jul 2025 01:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752026046; cv=none; b=ZY7itVBZ5elr7sz95dXu30VXwRf7ITTMyR1QJlDeqPJKSYRvPpucifo0FnsKC0ffTWJasxmifhyrze8MWlfxbTPl87QD0BXS5t1wjdaJ56UqZqRUXlDFIMPqUPmK655TufBYBH6FGRWBz8JtZZQAqw76MY0FbNlKEe77KllIkGw=
+	t=1752026072; cv=none; b=i+e1VutDjEz/OwmEZRLf9xwezO6ZNcGljLs7uX4J5qzq8UkawDj8uafAdJvLzzBUKRmNzJccdmHRulA0CWUyVt3b/JfBz0gVR//YjqAaFCh2YQKL6o17psEavA6uNNKjSZ2kRaTHACxTNsNW9TFFHMj88EJdtcJ6BV9gAje/bD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752026046; c=relaxed/simple;
-	bh=tirYke7pWKcAPYnNrT6FUsmBFoBHqMsotPOGqaal/B8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=CmyC1mvbl94qPyvAkAg+2ftLWn9btTOd9kzVLlg5E5xOIfF4eof66Yaz6962HzKCIirr0X2b/eM1Mu/1R84Gpu2P0vbjtbHLJjiWlMOGhsyu8CMk2EukJPhxPxj+xTTk8ZNxToDOtjegUM4YG6Qz0aarEuR81zHEuD3gSh3TV0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-86d07944f29so1025124939f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 18:54:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752026044; x=1752630844;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eQ0A60G6oa/Kw1lEvyxzPPc2EZxzUMc70M30T8nvIY8=;
-        b=bva9oUs0ywijrK3CRfWkSQQGjcOEKX82oPI3RMyTwu4QM2PzjqQ+5PJGSGMbwMpNfB
-         sAb9oCctH1WQJ7ui2Jdj3kSGdeo4vFQz+OcnoBfO6F+hWZ9XJqO+qBbHfBQ1//pzTgln
-         TjVDmrOBLAbqOb0zBTOa84YYeUnwkVr+aaEUwWEEvBDxI11/MpW0h5RCH+lVe6QQ+OP/
-         fgitQzkWm2SI/ZxygLyw8WMR262knDwJ4ll9+slXEbSE5qdCHmKF7gl+G1f8+mVlI9CV
-         zCfo4cKv6+77rBbxkWkczXLKkRXm7Tilv7h4DwouKDac/ZSk47QXso7CJ51PBSwth5nm
-         AigA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQbxM4q0gL7Ncq5InPcljbst1XW60MnWc+6AOx4IC8p5J5S23oENTx5AajKIYrSvnCrNg6vn/V/JHJOu0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEHWi0hpn8lFTsCQSLYNdT+iEAAGb8Q41TAZ0UfwbZ9LTF8B+l
-	YwZvXGMIt9e9ekznw4JI97Kjj3r1yuXQ+aZ+JHpdfR0+u0b1vUfSRgigxHQgEaDqkwon4WGJd3T
-	+ptciwWRdJGvSr6HFQ5b3csy/zoBV+P4fUex+kncu4tHKpDhIwd8fD69XSQI=
-X-Google-Smtp-Source: AGHT+IEGK1F13IGVCd6u2oUgZb9vgWq3tU1Tg1Cah9eRSzdOxwJEcN/LoYVynH1vVGyqHVKcXDPt7tz43YOyFXwMxn2MutEiXBlX
+	s=arc-20240116; t=1752026072; c=relaxed/simple;
+	bh=asWLqyRRMNPGhcUWpVSdiagdrtMDgHVRskAAx1fw/W4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NVoUXWyBobp/kBhxbLPY4xaj9XIPW6sZJuy0SBNzbzhbaElJMeMq1HJp+cvaRvSIUplKFloNyo2nbmma6TmlnCYOYAmE3WufI4QeP8E0REXlumWmfYNGo3+N7kqqeVzMGnO+AiJkJ7/mxoxzibclwjp6vto7VrNWpIKcoLtZjKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5pWlTw/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D81F0C4CEED;
+	Wed,  9 Jul 2025 01:54:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752026072;
+	bh=asWLqyRRMNPGhcUWpVSdiagdrtMDgHVRskAAx1fw/W4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=f5pWlTw/XS/MtkpZGkvojs/wlxNHQ374pCmvZoTBYkgzKTGRKxx8S4aigC+tZtIYq
+	 1K+n+XNxqkCMM7LmH3saBti/33iSCu8B6xT842NyWauJLSbxnkXlGIhWSnx9gIWZv2
+	 TPpgt2fl63wKz8DWtfRCR6o71ySjgf2UsqStZDPbD1VcKH31tCIAChlm3HMN3Pc0sU
+	 3qUORESptCEgGTOp50OzHsrvX0FewvuBoR93QoB7APmF0iyV4zbto92rLKXwIGjmhK
+	 RV/4jccssWqzTrBcVs5WxzNybyEl6TPmZmc9jIjoW1RdLShx5f/s08wRsUC7LF6jQZ
+	 Ih/qc54cmMhpA==
+Date: Tue, 8 Jul 2025 18:54:30 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Oscar Maes <oscmaes92@gmail.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, dsahern@kernel.org,
+ edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
+ stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v2 1/2] net: ipv4: fix incorrect MTU in broadcast
+ routes
+Message-ID: <20250708185430.68f143a2@kernel.org>
+In-Reply-To: <20250703152838.2993-1-oscmaes92@gmail.com>
+References: <20250703152838.2993-1-oscmaes92@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6429:b0:876:8bf2:e4d2 with SMTP id
- ca18e2360f4ac-8795b08dcb2mr94479339f.2.1752026043914; Tue, 08 Jul 2025
- 18:54:03 -0700 (PDT)
-Date: Tue, 08 Jul 2025 18:54:03 -0700
-In-Reply-To: <686d5adb.050a0220.1ffab7.0019.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686dcbbb.050a0220.1ffab7.002a.GAE@google.com>
-Subject: Re: [syzbot] [mm?] WARNING: lock held when returning to user space in lock_next_vma
-From: syzbot <syzbot+80011ad33eec39e6ce42@syzkaller.appspotmail.com>
-To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, andrii@kernel.org, 
-	anna.luese@v-bien.de, liam.howlett@oracle.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, lorenzo.stoakes@oracle.com, shakeel.butt@linux.dev, 
-	surenb@google.com, syzkaller-bugs@googlegroups.com, vbabka@suse.cz
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-syzbot has bisected this issue to:
+On Thu,  3 Jul 2025 17:28:37 +0200 Oscar Maes wrote:
+>  	if (type == RTN_BROADCAST) {
+>  		flags |= RTCF_BROADCAST | RTCF_LOCAL;
+> -		fi = NULL;
+>  	} else if (type == RTN_MULTICAST) {
+>  		flags |= RTCF_MULTICAST | RTCF_LOCAL;
+>  		if (!ip_check_mc_rcu(in_dev, fl4->daddr, fl4->saddr,
 
-commit 6772c457a86536f3496bf5b3716f34a5ac125783
-Author: Suren Baghdasaryan <surenb@google.com>
-Date:   Tue Jun 24 19:33:59 2025 +0000
+Not super familiar with this code, but do we not need to set 
+do_cache = false; ? I'm guessing cache interactions may have
+been the reason fib_info was originally cleared, not sure if
+that's still relevant..
 
-    fs/proc/task_mmu:: execute PROCMAP_QUERY ioctl under per-vma locks
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=158fca8c580000
-start commit:   26ffb3d6f02c Add linux-next specific files for 20250704
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=178fca8c580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=138fca8c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1e4f88512ae53408
-dashboard link: https://syzkaller.appspot.com/bug?extid=80011ad33eec39e6ce42
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1124abd4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1099df70580000
-
-Reported-by: syzbot+80011ad33eec39e6ce42@syzkaller.appspotmail.com
-Fixes: 6772c457a865 ("fs/proc/task_mmu:: execute PROCMAP_QUERY ioctl under per-vma locks")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+I'd also target this at net-next, unless you can pinpoint
+some kernel version where MTU on bcast routes worked..
+-- 
+pw-bot: cr
 
