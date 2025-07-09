@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-723771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E176BAFEAFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:56:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45AD9AFEB13
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:59:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 066921888B19
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:54:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0A3C173BEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC9B2E8DFB;
-	Wed,  9 Jul 2025 13:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C8F2E54AF;
+	Wed,  9 Jul 2025 13:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzgMQhH4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uMp+20Ak"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D70B2E265B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8EB02E610F;
 	Wed,  9 Jul 2025 13:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752069141; cv=none; b=Vo3rglxV4Qf3E6UWBVBaOzJ8srDntLHpYAxmm6gtp34BuVlxNx+cVTJLk5d9EsYwXiPYxh79ghSomtS4m/qu1rGy6oYsKk5iibaic/z1V09oM6S4bVfCJuuHPE7041HEA5CvTGcTDKBNhFF4e1wZDpK20xaAi0Y1UbVYNkDNC6o=
+	t=1752069141; cv=none; b=GNc0bQf5+74sy0oeAgpB+Pm/atru50wP64GwsP3Q4zNk9J68Cwr3OGWkID6tArPxnlhGfnP4Xxx43ub8hq4R+A/+peQXIBp2C1JEjScTzs3ZQp/8YHa7YfNP2VFKtijK+7cepIwz4eazb1jj3plfYOAINPGe0KJKxULlojb6dYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1752069141; c=relaxed/simple;
-	bh=xFZLNwkdYKL1EU7gu8VeeFOwcLL2l6SYNOrdu6yu8Lg=;
+	bh=SIQGNNtDKtOVtNJm5iIXTjHrV+UsTcmQyxIm4APuQlI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OKVwCR6XvkOuIeWUMFkFgZ7BWxSD61zNt7bInW8ZP+CXsegoDzuhK28J9ws9l9goULEGQ15BLmx1/2Y+t0KklRSO5IUbEP9zLp+mJBInikvJ4Q8RqAFA7YcelEBEqw5JCjLOrsU3fmBouU8gnj2vdQW0IBrPPERMZF+trOdS7P8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzgMQhH4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8EC1C4CEFD;
-	Wed,  9 Jul 2025 13:52:20 +0000 (UTC)
+	 MIME-Version; b=H077uK4RNGRq4ol5xeXH/HMo9BQ2pSVJCpNmtpLpaQXM65NnamlAjjLnC7OowLn6y4Yg9p0P9Eh1pq7c86gpGuMwTyYGeNB6YhQlSykpbATdCbMYawH4jFk+I2RlymqC/szJ4kamAjpxLSwuIdPGCgkLxtoDi5pqobXfBjYBQRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uMp+20Ak; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DC0BC4CEF8;
+	Wed,  9 Jul 2025 13:52:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752069140;
-	bh=xFZLNwkdYKL1EU7gu8VeeFOwcLL2l6SYNOrdu6yu8Lg=;
+	s=k20201202; t=1752069141;
+	bh=SIQGNNtDKtOVtNJm5iIXTjHrV+UsTcmQyxIm4APuQlI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lzgMQhH4JoiZn1WOmnEvdnea7AIYUF1l83VRxelysw25y4ouXjVCr59+FwZ9diOW0
-	 JT8yYoxqmhNTBCuehdql+3BLfS0rrhs5wa/kKCdpyy7OeTs1JwWEwiYXe8DDStNXHI
-	 EFSeYGzqpbPt5eR3ITZEmsTEcXWTr/u34sfRcVQhbSYstpVcVPiO8Cc6qNkyIWatzt
-	 MLm12olIOyGoqT9FLl2aJiVZpOFoHEPSC4cMM3XMiP1f9n6elXkwZDHtJQPzICX2sS
-	 rCSfhIcFm3Q/p5VbYy/4LSZu2gjV5Dy49byqWTdO6rf1i+3W70JHSwDEkyXbAhPNpF
-	 fOe5FLFbQt0xw==
+	b=uMp+20AknU9MieLwiXUWCCqP3t253MruWII0bi690Xd7WJjyQabW+CuJrz+6Pm3nC
+	 qqthpByH6uzDo3/37KdDImm129X4Svqrp7fHki49VWXVBNEKk1qGhIP3ZgKKZZEJiK
+	 0gIwLhQKM90FIjdp8Cpp2JTfKE9H6FJx2LvkpiHM4gMpmsVpT6m57R3joDlQXi1Fjq
+	 TzSthuTv/8fW6KCIf3eOFJUjfKvnoel4jrF3o9WFdNKeC4ZGzkZW7mdueZ2VfIPg1D
+	 RDyMVKbIbcWW8Bq6CWL71rS+oi8ygIvvmDTgeCmVj31gydbHEDcguDFirACwHgDG0t
+	 BxVnqQAMp4QdQ==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab@kernel.org>)
-	id 1uZVDd-00000000ECj-1jQA;
+	id 1uZVDd-00000000ECm-1oUy;
 	Wed, 09 Jul 2025 15:52:17 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
@@ -51,9 +51,9 @@ Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Akira Yokosawa" <akiyks@gmail.com>,
 	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 13/39] scripts: sphinx-pre-install: cleanup rhel support
-Date: Wed,  9 Jul 2025 15:51:45 +0200
-Message-ID: <65ae48c45bf7aada8b90a7bdb8d97bc661ead4f8.1752067814.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 14/39] scripts: sphinx-pre-install: output Python and docutils version
+Date: Wed,  9 Jul 2025 15:51:46 +0200
+Message-ID: <5c041bd36c3a9f86e6d4d3cf98200100cefdaec6.1752067814.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1752067814.git.mchehab+huawei@kernel.org>
 References: <cover.1752067814.git.mchehab+huawei@kernel.org>
@@ -66,58 +66,39 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-Rhel < 8.0 is not supported anymore. Drop support for it.
-
-Rhel 8 is problematic: at least on the tests I did with a
-docker repo, it didn't work, but it could be due to the issue
-that it is actually different than a real One.
+Specially when debugging issues, knowing the versions is
+important. Add it to the script output.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- scripts/sphinx-pre-install.py | 26 +++++++++++++++++++++-----
- 1 file changed, 21 insertions(+), 5 deletions(-)
+ scripts/sphinx-pre-install.py | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
 diff --git a/scripts/sphinx-pre-install.py b/scripts/sphinx-pre-install.py
-index 808d31bfa790..42f55e67256d 100755
+index 42f55e67256d..de5bcfd052b5 100755
 --- a/scripts/sphinx-pre-install.py
 +++ b/scripts/sphinx-pre-install.py
-@@ -487,15 +487,31 @@ class SphinxDependencyChecker:
+@@ -154,6 +154,20 @@ class SphinxDependencyChecker:
  
-             progs["virtualenv"] = "python-virtualenv"
- 
--            if rel and rel < 8:
-+            if not rel or rel < 8:
-                 old = 1
-                 self.pdf = False
- 
--                # RHEL 7 is in ELS, currently up to Jun, 2026
-+                print("ERROR: Distro not supported. Too old?")
-+                return
+         cur_ver = sys.version_info[:3]
+         if cur_ver >= MIN_PYTHON_VERSION:
++            ver = ver_str(cur_ver)
++            print(f"Python version: {ver}")
 +
-+            # TODO: check if RHEL8 still works.
-+            # On my tests with  docker "redhat/ubi8" image, there's no
-+            # python3-sphinx (or similar) package. It comes with Python 3.6,
-+            # but there are other python packages over there, so it may be
-+            # possible to work with venv.
++            # This could be useful for debugging purposes
++            if SphinxDependencyChecker.which("docutils"):
++                result = SphinxDependencyChecker.run(["docutils", "--version"],
++                                                    capture_output=True, text=True)
++                ver = result.stdout.strip()
++                match = re.search(r"(\d+\.\d+\.\d+)", ver)
++                if match:
++                    ver = match.group(1)
 +
-+            if self.first_hint:
-+                print("Note: RHEL-based distros typically require extra repositories.\n" \
-+                      "For most, enabling epel and crb are enough:\n" \
-+                      "\tsudo dnf install -y epel-release", \
-+                      "\tsudo dnf config-manager --set-enabled crb\n" \
-+                      "Yet, some may have other required repositories. Those commands could be useful:" \
-+                      "\tsudo dnf repolist all" \
-+                      "\tsudo repoquery --available --info <pkgs>",
-+                      "\tsudo dnf config-manager --set-enabled '*' # enable all - probably not what you want")
++                print(f"Docutils version: {ver}")
 +
-+                self.first_hint = False
+             return
  
--                print("Note: texlive packages on RHEL/CENTOS <= 7 are incomplete. Can't support PDF output")
--                print("If you want to build PDF, please read:")
--                print("\thttps://www.systutorials.com/241660/how-to-install-tex-live-on-centos-7-linux/")
- 
-         if self.pdf:
-             pdf_pkgs = [
+         python_ver = ver_str(cur_ver)
 -- 
 2.49.0
 
