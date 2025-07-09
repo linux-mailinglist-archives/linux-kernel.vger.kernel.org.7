@@ -1,187 +1,134 @@
-Return-Path: <linux-kernel+bounces-723692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ECFDAFEA01
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:23:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCADAFEA15
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2744B3A81FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:22:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FE687B3291
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D211C2DCF5B;
-	Wed,  9 Jul 2025 13:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24152DFF22;
+	Wed,  9 Jul 2025 13:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KIifaTmK"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="FCLOXDdn"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899C9276025
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 13:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5006A2E6D22;
+	Wed,  9 Jul 2025 13:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752067390; cv=none; b=hG6nr1ae0li2GoKY6lAA4gMAgQJe5CTOHq4Z2SUPb0sORXtzdQqkHqSZt+Jcu+jOSxYSejUloeM7jgVCKpL+GRnX0eS3Vtd1mY5j9ub96iopMgeAxl+dspCxXLAaIxPA5epVHuW4s0guRmBoBABflTd47XXp7TMXfgBOcQAQXrM=
+	t=1752067433; cv=none; b=qx/Kq7iUVuxQl6LxjJMpIAtbzHJO/kE/k5d8jY7+3u4KWNTol4bnqGLAHUVOAs3etJkZF8Fvz4sWQwwCo4m6xTbTlwByvyw8OquOi5+RJz8tXobrkFWVD2qjMG6TXSY48Ty7Ov7ajYiXAXjHVZrXNu0MYJMKi/04x6fSs3w4GHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752067390; c=relaxed/simple;
-	bh=oLihLmGKr765QwW6yOTYbdJj4ra7Xr28+HppMym6oZ0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=p1cXnaib2xq1hWCtcN6F0Z9OcM/VIDstVIfkqcTIgW2hra7v5MJDT7QF0DNOiTJ+GsycNjo+O7AOvlEvQtt9prSU6UKkPjo0/OxH3n86EpJE2YjWfupw5u2QDYdAp84pPPcORHp5EDndQ1D9U5FTkhvl7eFyUiIifABEa4cD0yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KIifaTmK; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-451d30992bcso41040895e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 06:23:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752067387; x=1752672187; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kgEZMQ9Ie8rjRKEQijQn/j/EhVux9NWCg6JTzmKrPW0=;
-        b=KIifaTmKkAz5cVAvvU0Cq9tTSVHCVLmxg0mVRHamICmO/nVY8Bu/IZV0jDH2Krrb8X
-         tlU3bH3Wb6BqEswLmI4LGro6LZwLOOUX6vHDvTapdUHCxQQlBZ0ljsDprQvmuep4fMFZ
-         1A7a6344CStfafQaDgh3P3h5D8cUhMD2yE0XQuUOcrSuzDO8Hj/QOEDDq8VYQv0xQL8a
-         6q7ooquVYGC5aZP8QJHuhBKKxuQ8OjwxKH6eWbFXYTTnXRAD5JsUTfN1PrZXYqG9x7HG
-         iWG7hemQ77wWclhBtHod5HeoksxREHSX7VABBGqMz8dw79E3ruKVM9SXqMM6+F5YR811
-         WWNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752067387; x=1752672187;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kgEZMQ9Ie8rjRKEQijQn/j/EhVux9NWCg6JTzmKrPW0=;
-        b=GHGnWeF3u2SP1NRDzCvOVbVNLbt3cGGZk/xleJ2cSxCYcEvkzVe7L9FCfcfV6BCStJ
-         +AYnf9IuZ8AhcMrpMnV4HqJnikrWnO0ORLhCKJzhLubONuHEZ0kf07293BahdVggK3Es
-         fbiNf3ZdRoUFhuKi44aBNZ/tWKXknsyPw0hH1Mt4YJMTo8aDEksDr7FF5BO6rpQ80QAl
-         Sjokgnwm+yh8PbH4AK1xapA21O+zx82taqDdsVBDf9cD5wULQxMxE17Dxyg0kaxRPy5o
-         xTq2Z9FwZ4e4nfl25SkT1AMeyriyFX0YicS+IzBiFgGA3mCCkFT7BR8q+Fg5WHmh5S1v
-         ZitQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWj12lXdbIySwtoXd5Qxr2lffcGtKVu6/YgHRHsgJYnwYOqnD0rn5a1TeArZtB8IHXoTx8vGH/Nt8W5K/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0xqwup7S1tKfMiWyvgTESMkdA6BsUdRV+V+OTEfi6nPlTibQt
-	s5WU1JDW2WOpfmzJEcsXL27XRyETKq+/WBQcDP59pDIrwciCA8qk8T2jWJUnxdgiOJ8RrhRg6xn
-	Ag50N1ON8EP9zXRIrOg==
-X-Google-Smtp-Source: AGHT+IHb5fOkVKQdzNuZzdCQyevCzD2sZ596OHAKOrb01PKV0SZTCwDTR8YFS/+ZmLNpsMuKr3dLp1O8HwuNHMI=
-X-Received: from wmbez5.prod.google.com ([2002:a05:600c:83c5:b0:453:ec2:c7bd])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:314c:b0:43c:f44c:72a6 with SMTP id 5b1f17b1804b1-454d5311363mr24682575e9.2.1752067386947;
- Wed, 09 Jul 2025 06:23:06 -0700 (PDT)
-Date: Wed, 9 Jul 2025 13:23:05 +0000
-In-Reply-To: <20250708-rnull-up-v6-16-v2-3-ab93c0ff429b@kernel.org>
+	s=arc-20240116; t=1752067433; c=relaxed/simple;
+	bh=U9IP5C7MLF//jo92LrBiXQE5SHZdtYV8h60M8KNrBaU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KRXgITdcTsM8+ZwBL9H07yefE9dz64gZE0TKFNty3jA4mDh6GVICl4A1NCq8ZlRzgLo5Je0LjWp6dqcVMmoJ+ac167E2twOxqfqmAr4ACSba8lwAwsCLj1vyOlzFcGxhVhrGNpxM0CGsOwJ56UAIVJaI+C7CicyIi7rRj9rwHfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=FCLOXDdn; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=vN0UQyHmBDa84FvfCJXdkkuyplqKTnh+HaZ5ci/Ai2k=; b=FCLOXDdnN6hgoSu+jmJ3QMxoD+
+	2+nEBMY4G0bhDl3957aiG2RDSF3XKqMWsU7MrIxJvnUpxZMvaX30gO+3DLwq7jmTBtkg1chbzVXD1
+	PAndGZNYQrZPkiITtz6YzuvVsCgbCsbeWcs9clAEEsIywdyWp6XG2P+RM6lQFfKBN5go5DKgypQOV
+	1xLFKJjZLxWT8WULyhqmjR/mlkLL1cAWnEO4+v0D6ETYEbFPPjMUUvdKmaPga9dYKs9l9RPxMbT4m
+	4akxH32ASL2MNgQcN77sGkpN/eFyo+WNDtDuNJQjLLon7zWJkgveydjXhXusqxAFoo7MRJVMZaVlx
+	giFk2pyg==;
+Received: from 179-125-86-110-dinamico.pombonet.net.br ([179.125.86.110] helo=quatroqueijos.cascardo.eti.br)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uZUm1-00ETva-3g; Wed, 09 Jul 2025 15:23:45 +0200
+Date: Wed, 9 Jul 2025 10:23:38 -0300
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dirk VanDerMerwe <dirk.vandermerwe@sophos.com>,
+	Vimal Agrawal <vimal.agrawal@sophos.com>, kernel-dev@igalia.com
+Subject: Re: [PATCH v5] char: misc: add test cases
+Message-ID: <aG5tWs2rm1b8hE3f@quatroqueijos.cascardo.eti.br>
+References: <20250612-misc-dynrange-v5-1-6f35048f7273@igalia.com>
+ <202507091056.5d48c1a2-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250708-rnull-up-v6-16-v2-0-ab93c0ff429b@kernel.org> <20250708-rnull-up-v6-16-v2-3-ab93c0ff429b@kernel.org>
-Message-ID: <aG5tObucycBg9dP1@google.com>
-Subject: Re: [PATCH v2 03/14] rust: str: introduce `NullBorrowFormatter`
-From: Alice Ryhl <aliceryhl@google.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202507091056.5d48c1a2-lkp@intel.com>
 
-On Tue, Jul 08, 2025 at 09:44:58PM +0200, Andreas Hindborg wrote:
-> Add `NullBorrowFormatter`, a formatter that writes a null terminated string
-> to an array or slice buffer. Because this type needs to manage the trailing
-> null marker, the existing formatters cannot be used to implement this type.
+On Wed, Jul 09, 2025 at 09:14:04PM +0800, kernel test robot wrote:
+> Hello,
 > 
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-> ---
->  rust/kernel/str.rs | 59 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 59 insertions(+)
+> kernel test robot noticed "sysfs:cannot_create_duplicate_filename" on:
 > 
-> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-> index 78b2f95eb3171..05d79cf40c201 100644
-> --- a/rust/kernel/str.rs
-> +++ b/rust/kernel/str.rs
-> @@ -860,6 +860,65 @@ fn deref_mut(&mut self) -> &mut Self::Target {
->      }
->  }
->  
-> +/// A mutable reference to a byte buffer where a string can be written into.
-> +///
-> +/// The buffer will be automatically null terminated after the last written character.
-> +///
-> +/// # Invariants
-> +///
-> +/// `buffer` is always null terminated.
-> +pub(crate) struct NullBorrowFormatter<'a> {
-> +    buffer: &'a mut [u8],
-> +    pos: usize,
-> +}
-
-Do you need `pos`? Often I see this kind of code subslice `buffer`
-instead.
-
-> +impl<'a> NullBorrowFormatter<'a> {
-> +    /// Create a new [`Self`] instance.
-> +    pub(crate) fn new(buffer: &'a mut [u8]) -> Result<NullBorrowFormatter<'a>> {
-> +        *(buffer.first_mut().ok_or(EINVAL)?) = 0;
-> +
-> +        // INVARIANT: We null terminated the buffer above.
-> +        Ok(Self { buffer, pos: 0 })
-> +    }
-
-I would probably just use an Option for this constructor.
-
-> +    #[expect(dead_code)]
-> +    pub(crate) fn from_array<const N: usize>(
-> +        a: &'a mut [crate::ffi::c_char; N],
-> +    ) -> Result<NullBorrowFormatter<'a>> {
-> +        Self::new(
-> +            // SAFETY: the buffer of `a` is valid for read and write as `u8` for
-> +            // at least `N` bytes.
-> +            unsafe { core::slice::from_raw_parts_mut(a.as_mut_ptr().cast::<u8>(), N) },
-> +        )
-> +    }
-
-Arrays automatically coerce to slices, so I don't think this is
-necessary. You can just call `new`.
-
-> +    /// Return the position of the write pointer in the underlying buffer.
-> +    #[expect(dead_code)]
-> +    pub(crate) fn pos(&self) -> usize {
-> +        self.pos
-> +    }
-
-You delete this function in one of the later patches, so it makes more
-sense not to add it.
-
-> +}
-> +
-> +impl Write for NullBorrowFormatter<'_> {
-> +    fn write_str(&mut self, s: &str) -> fmt::Result {
-> +        let bytes = s.as_bytes();
-> +        let len = bytes.len();
-> +
-> +        // We want space for a null terminator
-> +        if self.pos + len > self.buffer.len() - 1 {
-
-Integer overflow?
-
-> +            return Err(fmt::Error);
-> +        }
-> +
-> +        self.buffer[self.pos..self.pos + len].copy_from_slice(bytes);
-> +        self.pos += len;
-> +
-> +        // INVARIANT: The buffer is null terminated.
-> +        self.buffer[self.pos] = 0;
-> +
-> +        Ok(())
-> +    }
-> +}
-> +
->  /// An owned string that is guaranteed to have exactly one `NUL` byte, which is at the end.
->  ///
->  /// Used for interoperability with kernel APIs that take C strings.
+> commit: 127b049d35f10765f429aa2a97aa649ea9ac0b2f ("[PATCH v5] char: misc: add test cases")
+> url: https://github.com/intel-lab-lkp/linux/commits/Thadeu-Lima-de-Souza-Cascardo/char-misc-add-test-cases/20250613-013440
+> patch link: https://lore.kernel.org/all/20250612-misc-dynrange-v5-1-6f35048f7273@igalia.com/
+> patch subject: [PATCH v5] char: misc: add test cases
+> 
+> in testcase: kunit
+> version: 
+> with following parameters:
+> 
+> 	group: group-00
+> 
+> 
+> 
+> config: x86_64-rhel-9.4-kunit
+> compiler: gcc-12
+> test machine: 8 threads 1 sockets Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz (Haswell) with 16G memory
+> 
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+> 
+> 
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202507091056.5d48c1a2-lkp@intel.com
+> 
+> 
+> [  112.908177][    T1]         ok 2 upper static range, bottom
+> [  112.914070][    T1]         ok 3 lower static range, bottom
+> [  112.920216][    T1]         ok 4 upper static range, top
+> [  112.925861][    T1]     # miscdev_test_duplicate_minor: pass:4 fail:0 skip:0 total:4
+> [  112.931240][    T1]     ok 5 miscdev_test_duplicate_minor
+> [  112.939321][ T2928] sysfs: cannot create duplicate filename '/devices/virtual/misc/misc1'
+> [  112.953103][ T2928] CPU: 0 UID: 0 PID: 2928 Comm: kunit_try_catch Tainted: G S               N  6.16.0-rc1-00001-g127b049d35f1 #1 PREEMPT(voluntary)
+> [  112.953110][ T2928] Tainted: [S]=CPU_OUT_OF_SPEC, [N]=TEST
+> [  112.953111][ T2928] Hardware name: Dell Inc. OptiPlex 9020/0DNKMN, BIOS A05 12/05/2013
+> [  112.953113][ T2928] Call Trace:
+> [  112.953115][ T2928]  <TASK>
+> [ 112.953117][ T2928] dump_stack_lvl (kbuild/src/consumer/lib/dump_stack.c:123 (discriminator 1)) 
+> [ 112.953124][ T2928] sysfs_warn_dup (kbuild/src/consumer/fs/sysfs/dir.c:32 (discriminator 1)) 
+> [ 112.953129][ T2928] sysfs_create_dir_ns (kbuild/src/consumer/fs/sysfs/dir.c:63) 
+> [ 112.953133][ T2928] ? __pfx_sysfs_create_dir_ns (kbuild/src/consumer/fs/sysfs/dir.c:41) 
+> 
+> 
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20250709/202507091056.5d48c1a2-lkp@intel.com
+> 
 > 
 > -- 
-> 2.47.2
-> 
-> 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+
+This failure is intentional, it is part of the test. How can we make the
+robot ignore it in this specific instance?
+
+Regards.
+Cascardo.
 
