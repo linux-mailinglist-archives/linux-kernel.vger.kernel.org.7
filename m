@@ -1,205 +1,340 @@
-Return-Path: <linux-kernel+bounces-723763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6511AFEAC4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:52:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C39EAFEB0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE70B7BC3BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:50:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 629931888E4A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77182E3B17;
-	Wed,  9 Jul 2025 13:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB33E2EAB6B;
+	Wed,  9 Jul 2025 13:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qvcq9pcz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bEGh1WOy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D1D2E1C7C;
-	Wed,  9 Jul 2025 13:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DA62E5B32;
+	Wed,  9 Jul 2025 13:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752069076; cv=none; b=ev3TENt2/P0t1BV11JBLsBDtGhmTFXOd25PHr823MkCOgYY8gkr4qLclg+aU68+UiIdjbFOdLLWbGdilYbJJ6VzrD2GmZC1V28cmj9zUTaxOKNbDdxhWtrMk9mcRbJY8J/dwcC+1P0gqQ/O1T70xNE1YZXZkVRKZd7sZ/n2DHNo=
+	t=1752069141; cv=none; b=NyiimrtwUsnuZW/w+A8y2UIEOnVSL3IN/T8WqhDXUZ9kgMs+eBl8xc+0qRcYJ8DU0E/NxVU5IZQh84KLzs9DnFyDDFeahD/GYhOcVjgiG9wC9AP8y+AemDg+q0Ce41C+dnPqG1NKe6GwgC5SkWhkUTdD5b7c5ntXPiyZ44bXwno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752069076; c=relaxed/simple;
-	bh=7fDy/IDtzY+P10jh2FH05bGuxkbANfM+VBCgF1upyb0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zsq3tDrsfKNDFyoDG3hoiWk23JcFO612FTRj5qOwxk6QIyezlP8gdSjI/yXnNguo98pEk9xaVjmgQPXPeguimhe/In9IZRCfvawXurwZtqL6FGG1AuNQifxN7z4ZrejJpNoOtXiRS9Izgu8qHwJcpAIm84SxfxqrUy8gi8xmdUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qvcq9pcz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96B24C4CEEF;
-	Wed,  9 Jul 2025 13:51:12 +0000 (UTC)
+	s=arc-20240116; t=1752069141; c=relaxed/simple;
+	bh=CMhF09FFFMGUc6L5nWI64rBCiTAHL7tLnu8zhdqkCMI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=drzOECAv5XnO1MQ7HqQb3FDGpIXjxaFOWpmC9qCzIrcqrb06JntTRRBoLlOTC/NHzMG0rkPGzgzsTRrHREqiYd7gf1RA7cPSGU/D6HNbmf6Wz1GMB9QU79AcawWS1EPUTFhtqJ3A7gkVo608fwbppKfu7jtl5GFyuRWOQTCODQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bEGh1WOy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F5E5C116B1;
+	Wed,  9 Jul 2025 13:52:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752069076;
-	bh=7fDy/IDtzY+P10jh2FH05bGuxkbANfM+VBCgF1upyb0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Qvcq9pczvwZs/pgT3fBuh6JlQaf/4U/OlntMStbs5+RnniDq9sAMJ0yG2swfAxW39
-	 y8Ewv6JQ0cKwsYiM5F5CFarb2VMl1A4Zz9KOnwbrN6g4zlxdy8SMvF0tZHkYUBIY9o
-	 T49meZ/NxJJH4QX6FgjKQYG/APVEpS2B+Ra3KZvbSBjQ/tupkP1RJ8w7ENyy3dt091
-	 iZc/Xmsg/6I7DASsMa+V8/BbXXEWCcvEKGG0dY9VvrSyEouwfma5wrA0tZQejNbXaY
-	 SuOk9fsXN/Ixn+BtgZQnMpWD1yOioXiEdNUuJ9UCjVttI4b7Za77oLNX+nUAh27cLe
-	 DJjV2polVNeKQ==
-Message-ID: <eda9bf92-c5f7-4f3f-92e9-9749fbb67493@kernel.org>
-Date: Wed, 9 Jul 2025 15:51:10 +0200
+	s=k20201202; t=1752069141;
+	bh=CMhF09FFFMGUc6L5nWI64rBCiTAHL7tLnu8zhdqkCMI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bEGh1WOyCQcywe9cEiH/++df4CkD7AaLzTbr9z7iIteEcKZZwp+TZqOdy4BymQFxr
+	 MDGdBpm997QXtUvq2M0Eo2skweyzTW8f7vFbZi5rOBWowEOd7vBQfzdxUK8tmT6O+u
+	 kfARSzJzSdc7XJ6lUJE+E1J7GAUc5XA1YZubKgtRo8LOZskLtkeD488anKrfUTO1/a
+	 zQsjA4MIUX0EHkIoM2QH3LXUQOBFX0+xApg/dKL3ISIOmSK+3OBS2eVVOdvXSzGj7E
+	 mer8FW/5QvIzxOISc0/uZQHa0O7fp+v44YXqQihagKr9I6xWFTUU4cmBP36/irxsEW
+	 6nagl+84OxdWA==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab@kernel.org>)
+	id 1uZVDd-00000000EC6-0TD9;
+	Wed, 09 Jul 2025 15:52:17 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	llvm@lists.linux.dev
+Subject: [PATCH v2 00/39] Translate sphinx-pre-install to Python
+Date: Wed,  9 Jul 2025 15:51:32 +0200
+Message-ID: <cover.1752067814.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: phy: qcom,snps-eusb2-repeater: Document
- qcom,tune-res-fsdif
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
- ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250625-sm7635-eusb-repeater-v1-0-19d85541eb4c@fairphone.com>
- <20250625-sm7635-eusb-repeater-v1-1-19d85541eb4c@fairphone.com>
- <20250708-unicorn-of-ancient-excellence-e8945c@krzk-bin>
- <20250708-stoic-slim-bison-ac55ee@krzk-bin>
- <DB6J86NHFTNT.31MFYDTZ6B4O0@fairphone.com>
- <DB7FBNQ0TYFZ.3GGPN8XXJXGRW@fairphone.com>
- <1c7fdeca-d531-4f90-9e4c-4d8bfac67fae@kernel.org>
- <DB7IRWJ1AFCT.2CVF97683XYEO@fairphone.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <DB7IRWJ1AFCT.2CVF97683XYEO@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-On 09/07/2025 14:22, Luca Weiss wrote:
-> On Wed Jul 9, 2025 at 12:16 PM CEST, Krzysztof Kozlowski wrote:
->> On 09/07/2025 11:40, Luca Weiss wrote:
->>> Hi Krzysztof,
->>>
->>> On Tue Jul 8, 2025 at 10:31 AM CEST, Luca Weiss wrote:
->>>> On Tue Jul 8, 2025 at 10:21 AM CEST, Krzysztof Kozlowski wrote:
->>>>> On Tue, Jul 08, 2025 at 10:13:24AM +0200, Krzysztof Kozlowski wrote:
->>>>>> On Wed, Jun 25, 2025 at 11:14:56AM +0200, Luca Weiss wrote:
->>>>>>> Document the FS Differential TX Output Resistance Tuning value found on
->>>>>>> the eUSB2 repeater on Qualcomm PMICs.
->>>>>>>
->>>>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->>>>>>> ---
->>>>>>>  Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml | 6 ++++++
->>>>>>>  1 file changed, 6 insertions(+)
->>>>>>>
->>>>>>> diff --git a/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml b/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml
->>>>>>> index 27f064a71c9fb8cb60e8333fb285f0510a4af94f..6bfd11657e2992735998063b3ca390e04a03930d 100644
->>>>>>> --- a/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml
->>>>>>> +++ b/Documentation/devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml
->>>>>>> @@ -52,6 +52,12 @@ properties:
->>>>>>>      minimum: 0
->>>>>>>      maximum: 7
->>>>>>>  
->>>>>>> +  qcom,tune-res-fsdif:
->>>>>>> +    $ref: /schemas/types.yaml#/definitions/uint8
->>>>>>> +    description: FS Differential TX Output Resistance Tuning
->>>>>>
->>>>>> Resistance is in Ohms, tuning could be in dB, so I wonder what are the
->>>>>> actual units here. Neither commit msg nor this description helps me to
->>>>>> understand that.
->>>>>
->>>>> I checked and the values are in Ohms.
->>>>
->>>> Yes it's Ohms but not 0x00 = 0 ohms, and it's also an offset in ohms
->>>> from the nominal value according to the Hardware Register Description I
->>>> have, e.g. 0x7 = -12.1ohm from the default
->>>>
->>>> I can try and create bindings using these Ohm offset values, I didn't
->>>> worry about it too much since the other tuning values in these bindings
->>>> are also just register values, presumably from before Konrad had access
->>>> to the docs.
->>>
->>> I've taken some more looks, and checked how similar tuning is handled in
->>> qcom,usb-snps-femto-v2.yaml and phy-qcom-snps-femto-v2.c, and changing up
->>> the concept of tuning in the eUSB2-repeater bindings+driver is not a
->>> trivial task.
->>>
->>> Since this is adding just one more property in-line with the already
->>> supported properties in the bindings+driver, can we get this in as-is,
->>> and deprecate all 4 qcom,tune-* properties later with a replacement that
->>> describes the values better?
->>
->> This is a new property, so other existing properties do not matter here.
->> We cannot take new code which you already think should be deprecated.
->>
->> register-like values are acceptable for vendor properties, but that does
->> not make them usually more readable. The question is whether this should
->> be more readable for hardware engineers or anyone writing/validating
->> DTS. Is the actual resistance important or no one ever cares because you
->> paste whatever qcom told you and you do not know what should be actually
->> there?
->>
->> I can imagine the first - that some document explains you should have
->> resistance of foo because of bar, which would mean the property should
->> be more readable. But I can also imagine the second. Make your claim in
->> commit msg.
-> 
-> Would this text in the commit message work for you?
-> 
-> ---
-> Document the FS Differential TX Output Resistance Tuning value found on
-> the eUSB2 repeater on Qualcomm PMICs. The tuning values have special
-> meanings, being different offsets of the resistance to the default value
-> in Ohms but the exact meaning is not relevant here, as the correct
-> tuning is determined by hardware engineers to make sure the electrical
-> properties are as expected.
-> ---
-> 
-> I'm trying to avoid resending the whole series if we're not yet aligned
-> on the wording.
-Sounds fine.
+Hi Jon,
 
-Best regards,
-Krzysztof
+That's the new version of my series. It got a little bit bigger
+(almost twice the size) of the previous verson, as I did lots of
+tests to ensure that the script behaves well with several different
+versions. The minimal requirement to run the script is Python 3.6.
+
+As this is not compatible with our current build, the script checks
+for its python version and re-run with the newest one (if found).
+It also provides a mechanism to request a newest Python version,
+which was tested with RHEL8-based distros and with OpenSUSE
+Leap.
+
+This series port scripts/sphinx-pre-install to Python. It started as
+a bug-compatible version with the old logic. I did several cleanups
+later on, and better structured its source. 
+
+While testing it with lxc and some Docker images, I opted
+to also drop legacy logic from it and to add support for some
+additional variants compatible with existing detection logic.
+
+It also fixes some issues that were present at the proposed
+install procedures that don't work anymore with new distro
+versions.
+
+The tests were done with those containers, obtained from
+lxc download templates or via podman run.  I tested with 18
+different distributions.
+
+With all of them, at least one version of Sphinx was properly
+installed. There are only three partial failures:
+
+OpenMandriva Lx 4:
+- python-virtualenv is currently broken at the docker image:
+  it doesn't have ensurepip, required for pip to work on venv.
+- native package installed fine.
+
+RHEL8-based distros (tested with 2 variants):
+ - Python Sphinx native package is version 1.7.x, running with
+   Python version 3.6.
+- venv installed fine.
+
+one RHEL 9.2-based distro had a problem with ImageMagick
+broken dependencies.  Sphinx installed fine. So, only PDF
+generation would likely fail there.
+
+For the rest, both venv and native install worked properly.
+
+Please notice that my goal here is to test just this tool.
+I didn't try to actually build the docs on every distro. Yet,
+I added a couple of hints for some known issues with some
+distros.
+
+IMO, the overall picture is that several things got improved
+from what we had on Perl. The only drawback is that, when
+using Container images, all of the tested ones had perl
+installed by default, but a couple of them didn't have Python.
+
+I don't think this is a problem in real life, and anyone that
+has a bare minimal development knowledge should be able
+to manually install python if needed.
+
+-
+
+Those are the test summary:
+
+AlmaLinux release 9.6 (Sage Margay):
+------------------------------------
+  PASSED 1 - OS: AlmaLinux release 9.6 (Sage Margay), Python: 3.9.21, hostname: almalinux-test
+  PASSED 2 - System packages: Packages installed.
+  PASSED 3 - Sphinx on venv: Sphinx Sphinx 7.4.7, Docutils 0.21.2
+  PASSED 4 - Sphinx package: Sphinx Sphinx 3.4.3, Docutils 0.16
+
+Arch Linux:
+-----------
+  PASSED 1 - OS: Arch Linux, Python: 3.13.5
+  PASSED 2 - System packages: Packages installed.
+  PASSED 3 - Sphinx on venv: Sphinx Sphinx 8.2.3, Docutils 0.21.2
+  PASSED 4 - Sphinx package: Sphinx Sphinx 8.2.3, Docutils 0.21.2
+
+CentOS Stream release 9:
+------------------------
+  PASSED 1 - OS: CentOS Stream release 9, Python: 3.9.23, hostname: centos-test
+  PASSED 2 - System packages: Packages installed.
+  PASSED 3 - Sphinx on venv: Sphinx Sphinx 7.4.7, Docutils 0.21.2
+  PASSED 4 - Sphinx package: Sphinx Sphinx 3.4.3, Docutils 0.16
+
+Debian GNU/Linux 12:
+--------------------
+  PASSED 1 - OS: Debian GNU/Linux 12, Python: 3.11.2, hostname: debian-test
+  PASSED 2 - System packages: Packages installed.
+  PASSED 3 - Sphinx on venv: Sphinx Sphinx 8.2.3, Docutils 0.21.2
+  PASSED 4 - Sphinx package: Sphinx Sphinx 5.3.0, Docutils 0.19
+
+Devuan GNU/Linux 5:
+-------------------
+  PASSED 1 - OS: Devuan GNU/Linux 5, Python: 3.11.2, hostname: devuan-test
+  PASSED 2 - System packages: Packages installed.
+  PASSED 3 - Sphinx on venv: Sphinx Sphinx 8.2.3, Docutils 0.21.2
+  PASSED 4 - Sphinx package: Sphinx Sphinx 5.3.0, Docutils 0.19
+
+Fedora release 42 (Adams):
+--------------------------
+  PASSED 1 - OS: Fedora release 42 (Adams), Python: 3.13.5
+  PASSED 2 - System packages: Packages installed.
+  PASSED 3 - Sphinx on venv: Sphinx Sphinx 8.2.3, Docutils 0.21.2
+  PASSED 4 - Sphinx package: Sphinx Sphinx 8.1.3, Docutils 0.21.2
+
+Gentoo Base System release 2.17:
+--------------------------------
+  PASSED 1 - OS: Gentoo Base System release 2.17, Python: 3.13.3
+  PASSED 2 - System packages: Packages installed.
+  PASSED 3 - Sphinx on venv: Sphinx Sphinx 8.2.3, Docutils 0.21.2
+  PASSED 4 - Sphinx package: Sphinx Sphinx 8.2.3, Docutils 0.21.2
+
+Kali GNU/Linux 2025.2:
+----------------------
+  PASSED 1 - OS: Kali GNU/Linux 2025.2, Python: 3.13.3, hostname: kali-test
+  PASSED 2 - System packages: Packages installed.
+  PASSED 3 - Sphinx on venv: Sphinx Sphinx 8.2.3, Docutils 0.21.2
+  PASSED 4 - Sphinx package: Sphinx Sphinx 8.1.3, Docutils 0.21.2
+
+Mageia 9:
+---------
+  PASSED 1 - OS: Mageia 9, Python: 3.10.11, hostname: mageia-test
+  PASSED 2 - System packages: Packages installed.
+  PASSED 3 - Sphinx on venv: Sphinx Sphinx 8.1.3, Docutils 0.21.2
+  PASSED 4 - Sphinx package: Sphinx Sphinx 6.1.3, Docutils 0.19
+
+Linux Mint 22:
+--------------
+  PASSED 1 - OS: Linux Mint 22, Python: 3.10.12, hostname: mint-test
+  PASSED 2 - System packages: Packages installed.
+  PASSED 3 - Sphinx on venv: Sphinx Sphinx 8.1.3, Docutils 0.21.2
+  PASSED 4 - Sphinx package: Sphinx Sphinx 4.3.2, Docutils 0.17.1
+
+openEuler release 25.03:
+------------------------
+  PASSED 1 - OS: openEuler release 25.03, Python: 3.11.11, hostname: openeuler-test
+  PASSED 2 - System packages: Packages installed.
+  PASSED 3 - Sphinx on venv: Sphinx Sphinx 8.2.3, Docutils 0.21.2
+  PASSED 4 - Sphinx package: Sphinx Sphinx 8.1.3, Docutils 0.21.2
+
+OpenMandriva Lx 4.3:
+--------------------
+  PASSED 1 - OS: OpenMandriva Lx 4.3, Python: 3.9.8, hostname: openmandriva-test
+  FAILED 2 - System packages:  Error: Unable to find a match: ensurepip
+  FAILED 3 - Sphinx on venv
+  PASSED 4 - Sphinx package: Sphinx Sphinx 4.3.2, Docutils 0.17
+
+openSUSE Tumbleweed:
+--------------------
+  PASSED 1 - OS: openSUSE Tumbleweed, Python: 3.13.5, hostname: opensuse-test
+  PASSED 2 - System packages: Packages installed.
+  PASSED 3 - Sphinx on venv: Sphinx Sphinx 8.2.3, Docutils 0.21.2
+  PASSED 4 - Sphinx package: Sphinx Sphinx 8.2.3, Docutils 0.21.2
+
+Rocky Linux release 8.9 (Green Obsidian):
+-----------------------------------------
+  PASSED 1 - OS: Rocky Linux release 8.9 (Green Obsidian), Python: 3.6.8, hostname: rockylinux8-test
+  PASSED 2 - System packages: Packages installed.
+  PASSED 3 - Sphinx on venv: Sphinx Sphinx 7.4.7, Docutils 0.21.2, Python3.9.20
+  FAILED 4 - Sphinx package:  No Sphinx version!
+
+Rocky Linux release 9.6 (Blue Onyx):
+------------------------------------
+  PASSED 1 - OS: Rocky Linux release 9.6 (Blue Onyx), Python: 3.9.21, hostname: rockylinux-test
+  PASSED 2 - System packages: Packages installed.
+  PASSED 3 - Sphinx on venv: Sphinx Sphinx 7.4.7, Docutils 0.21.2
+  PASSED 4 - Sphinx package: Sphinx Sphinx 3.4.3, Docutils 0.16
+
+Springdale Open Enterprise Linux release 9.2 (Parma):
+-----------------------------------------------------
+  PASSED 1 - OS: Springdale Open Enterprise Linux release 9.2 (Parma), Python: 3.9.16, hostname: springdalelinux-test
+  FAILED 2 - System packages:  Error:   Problem: package ImageMagick-6.9.13.25-1.el9.x86_64 requires libMagickCore-6.Q16.so.7()(64bit), but none of the providers can be installed   - package ImageMagick-6.9.13.25-1.el9.x86_64 requires libMagickWand-6.Q16.so.7()(64bit), but none of the providers can be installed   - package ImageMagick-6.9.13.25-1.el9.x86_64 requires ImageMagick-libs(x86-64) = 6.9.13.25-1.el9, but none of the providers can be installed   - conflicting requests   - nothing provides libraw_r.so.23()(64bit) needed by ImageMagick-libs-6.9.13.25-1.el9.x86_64
+  PASSED 3 - Sphinx on venv: Sphinx Sphinx 7.4.7, Docutils 0.21.2
+  PASSED 4 - Sphinx package: Sphinx Sphinx 3.4.3, Docutils 0.16
+
+Ubuntu 24.04.2 LTS:
+-------------------
+  PASSED 1 - OS: Ubuntu 24.04.2 LTS, Python: 3.12.3, hostname: ubuntu-lts-test
+  PASSED 2 - System packages: Packages installed.
+  PASSED 3 - Sphinx on venv: Sphinx Sphinx 8.2.3, Docutils 0.21.2
+  PASSED 4 - Sphinx package: Sphinx Sphinx 7.2.6, Docutils 0.20.1
+
+Ubuntu 25.04:
+-------------
+  PASSED 1 - OS: Ubuntu 25.04, Python: 3.13.3, hostname: ubuntu-test
+  PASSED 2 - System packages: Packages installed.
+  PASSED 3 - Sphinx on venv: Sphinx Sphinx 8.2.3, Docutils 0.21.2
+  PASSED 4 - Sphinx package: Sphinx Sphinx 8.1.3, Docutils 0.21.2
+
+Summary
+=======
+
+  PASSED: AlmaLinux release 9.6 (Sage Margay) (4 passed, 0 failed, 0 skipped)
+  PASSED: Arch Linux (4 passed, 0 failed, 0 skipped)
+  PASSED: CentOS Stream release 9 (4 passed, 0 failed, 0 skipped)
+  PASSED: Debian GNU/Linux 12 (4 passed, 0 failed, 0 skipped)
+  PASSED: Devuan GNU/Linux 5 (4 passed, 0 failed, 0 skipped)
+  PASSED: Fedora release 42 (Adams) (4 passed, 0 failed, 0 skipped)
+  PASSED: Gentoo Base System release 2.17 (4 passed, 0 failed, 0 skipped)
+  PASSED: Kali GNU/Linux 2025.2 (4 passed, 0 failed, 0 skipped)
+  PASSED: Mageia 9 (4 passed, 0 failed, 0 skipped)
+  PASSED: Linux Mint 22 (4 passed, 0 failed, 0 skipped)
+  PASSED: openEuler release 25.03 (4 passed, 0 failed, 0 skipped)
+  PARTIAL: OpenMandriva Lx 4.3 (2 passed, 2 failed, 0 skipped)
+  PASSED: openSUSE Tumbleweed (4 passed, 0 failed, 0 skipped)
+  PARTIAL: Rocky Linux release 8.9 (Green Obsidian) (3 passed, 1 failed, 0 skipped)
+  PASSED: Rocky Linux release 9.6 (Blue Onyx) (4 passed, 0 failed, 0 skipped)
+  PARTIAL: Springdale Open Enterprise Linux release 9.2 (Parma) (3 passed, 1 failed, 0 skipped)
+  PASSED: Ubuntu 24.04.2 LTS (4 passed, 0 failed, 0 skipped)
+  PASSED: Ubuntu 25.04 (4 passed, 0 failed, 0 skipped)
+
+
+
+
+Mauro Carvalho Chehab (39):
+  scripts: sphinx-pre-install: fix version check for Fedora
+  scripts: sphinx-pre-install: rename it to
+    scripts/sphinx-pre-install.pl
+  scripts: sphinx-pre-install: Convert script to Python
+  scripts: sphinx-pre-install: Make it compatible with Python 3.6
+  scripts: sphinx-pre-install: run on a supported version
+  scripts: sphinx-pre-install: drop obsolete routines
+  scripts: sphinx-pre-install: drop support for old virtualenv
+  scripts: sphinx-pre-install: Address issues with OpenSUSE Leap 15.x
+  scripts: sphinx-pre-install: fix opensuse Leap hint for PyYAML
+  scripts: sphinx-pre-install: fix support for gentoo
+  scripts: sphinx-pre-install: Address issues with OpenSUSE Tumbleweed
+  scripts: sphinx-pre-install: only show portage hints once
+  scripts: sphinx-pre-install: cleanup rhel support
+  scripts: sphinx-pre-install: output Python and docutils version
+  scripts: sphinx-pre-install: add a missing f-string marker
+  scripts: sphinx-pre-install: fix Leap support for rsvg-convert
+  scripts: sphinx-pre-install: fix rhel recomendations
+  scripts: sphinx-pre-install: remove Scientific Linux
+  scripts: sphinx-pre-install: improve Gentoo package deps logic
+  scripts: sphinx-pre-install: fix OpenMandriva support
+  scripts: sphinx-pre-install: move package instructions to a new func
+  scripts: sphinx-pre-install: adjust a warning message
+  scripts: sphinx-pre-install: better handle Python min version
+  scripts: sphinx-pre-install: convert is_optional to a class
+  scripts: sphinx-pre-install: better handle RHEL-based distros
+  scripts: sphinx-pre-install: move missing logic to a separate class
+  scripts: sphinx-pre-install: move ancillary checkers to a separate
+    class
+  scripts: sphinx-pre-install: add more generic checkers on a class
+  scripts: sphinx-pre-install: move get_system_release()
+  scripts: sphinx-pre-install: add documentation for the ancillary
+    classes.
+  scripts: sphinx-pre-install: add docstring documentation
+  scripts: sphinx-pre-install: fix several codingstyle issues
+  scripts: sphinx-pre-install: rework install command logic
+  scripts: sphinx-pre-install: update mandatory system deps
+  scripts: sphinx-pre-install: add support for RHEL8-based distros
+  scripts: sphinx-pre-install: add a warning for Debian-based distros
+  scripts: sphinx-pre-install: some adjustments related to venv
+  docs: Makefile: switch to the new scripts/sphinx-pre-install.py
+  scripts: sphinx-pre-install.pl: get rid of the old script
+
+ scripts/sphinx-pre-install | 2641 ++++++++++++++++++++++--------------
+ test_script.py             |    4 +-
+ 2 files changed, 1591 insertions(+), 1054 deletions(-)
+
+-- 
+2.49.0
+
+
 
