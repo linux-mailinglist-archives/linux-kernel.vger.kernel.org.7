@@ -1,201 +1,120 @@
-Return-Path: <linux-kernel+bounces-722853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD16AAFDFD5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:12:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D403CAFDFDC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91BB87A6CE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:11:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8E1E3AE7E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E65126B75C;
-	Wed,  9 Jul 2025 06:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D093826B756;
+	Wed,  9 Jul 2025 06:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="N1V6uSds"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B98YZ77j"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BCF1E7C27;
-	Wed,  9 Jul 2025 06:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E4878C91;
+	Wed,  9 Jul 2025 06:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752041546; cv=none; b=UKDRZHU9tPmlWTWQ1VogFk/JygT6qAMjt769mGb1uXIdqxdUTZeOl624did26vrAxM90YysL3jeJJPCxDs8KbAfY8BnEwuz1Y31H453LMZ8X9ggoBi53ZYx+fUNv+E9jPhymBNhbulWdNoZazC8Flxjc+BeCw5tDOOpQUFPY4Xo=
+	t=1752042056; cv=none; b=n//L8qPwG4xbI4Uc2gNtqyTZoK/PoMGRY1mlyDTbHC+qg4ofhyUbcp00+FydU2xvLpQcnGtyRwXxa/rFbaBmokRq7TLhYG2YnLEk5lJI6cU6oIxDSACbYeY0mK51+f9mGiRSCkqdDa1j0HA7t66WRWSNI4773faMJoreQDFO5dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752041546; c=relaxed/simple;
-	bh=b6fHflmKbdoQM8mgBF82jn0LzwgDIvXGI4ngEOI9Kho=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RrkYAehLCrFCtVyHziVwBzX6B3pkV6kwKafcuxNVH24AvwMbaaCX+NtKldr9EkqmCZP2c1bIkmOXHmGTP3Gq850oTlymFWB7Gb4G2c5Ev3GZ9BWf+kabKGkNOK24TR/hZnoHhJ4qPvSxBErvbuyCpy4yxrrcQlN3jr1mqyjVQNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=N1V6uSds; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B1A661FCF0;
-	Wed,  9 Jul 2025 06:12:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1752041541;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4KsS1Bbbca9XQYHQZD5JFcdb0dmQjAJZfp72T1bNefM=;
-	b=N1V6uSdsMSier0lYnfeBmwUGUxNP++lSOFVGh8ovo3TyUfJyrOMJWiFxiVxH8vJSJq1Trv
-	3sDyDQTjtNBBg2Jlyi77dJpiaOZrpzE5v/tGuXhA+Kyc7MXwqdtz9Ff0WtMhaKm4/PAPsn
-	zDwoY2Bt6stQZTDWS2YNg+Hui7CeGr0UxeNJH1k5oB49ADbef7NZfWNRRgD8c4e8DXWC9U
-	Rw7z24mcaiQp35pHC7rEZFfgNTWE01B6/5nkd0AIihjMpgcnmIsurJ+5a6AcLUhDPBVOnT
-	+xFv01g+7556/0rl/xHhBOwct960Rk6hXKlam+YPtJxLzC/EaHP+0p0Gy9hqkQ==
-Date: Wed, 9 Jul 2025 08:12:17 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: <Tristram.Ha@microchip.com>
-Cc: <Woojung.Huh@microchip.com>, <andrew@lunn.ch>, <olteanv@gmail.com>,
- <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
- <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
- <pabeni@redhat.com>, <marex@denx.de>, <UNGLinuxDriver@microchip.com>,
- <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 6/6 v2] net: dsa: microchip: Setup fiber ports
- for KSZ8463
-Message-ID: <20250709081217.368e1f7d@fedora>
-In-Reply-To: <DM3PR11MB8736DE8A01523BD67AF73766EC4EA@DM3PR11MB8736.namprd11.prod.outlook.com>
-References: <20250708031648.6703-1-Tristram.Ha@microchip.com>
-	<20250708031648.6703-7-Tristram.Ha@microchip.com>
-	<20250708122237.08f4dd7c@device-24.home>
-	<DM3PR11MB8736DE8A01523BD67AF73766EC4EA@DM3PR11MB8736.namprd11.prod.outlook.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1752042056; c=relaxed/simple;
+	bh=jpf7GN1ILP/Fhm7204GJfAH89v4Oue2jmt399gQml9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K5H/hEjmveJeMrvMca221uQlSWj8VWJgKgReP1I3+J3iyzdC+iulAXXOcycwO3xGe74scHicHFBVJ+GotRaVQNmIU1B6I0cS8/ZiyQvC1PWL+lAG/TiFSema/9c/AwFFStekzf9tioIjaaDwHvETl4TyZreUN2Ex6DoR43VHsOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B98YZ77j; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752042054; x=1783578054;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jpf7GN1ILP/Fhm7204GJfAH89v4Oue2jmt399gQml9w=;
+  b=B98YZ77jE0v8jXhF2YMd7WGI36+kE8REeiWollu17pGbAbpGFHg2iy7v
+   dLhvagz2OFMUWPHERUfcUQu37yIiTHHbOfRbYTs6d4skVsqBg7SvLnZ8W
+   2LR5C/ISocjMiPOQQVtiW5O493DJUv6KA8iddoYnm5Eb3xSEYWF5PG06w
+   8Rhjg2IJZrjKHKh58HXniU1BDUgtdPRoi6ULhXdOAVo/2AMl+fPj4HfQn
+   sSJi+qrFMnkF+5Whg3nWB6iyznT+PSnR1jBgkmI16jVASBzPWpdZ6hNjK
+   kDeEI2z/UICHHcp/7NMRXsfS+ke085e1+S4v71/Dw0NCbLyayFaIKJHsF
+   Q==;
+X-CSE-ConnectionGUID: PsMzEh+ASsOr3fdoa7auCQ==
+X-CSE-MsgGUID: P95tzP4HSF+qQ/qQwCwqfQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="65744598"
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="65744598"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 23:20:53 -0700
+X-CSE-ConnectionGUID: r0xqCEgwRhurC5eP5ba1jQ==
+X-CSE-MsgGUID: AXwoEScWRV6uHZc8eOhWXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="179366208"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 08 Jul 2025 23:20:50 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uZOAh-0003BD-25;
+	Wed, 09 Jul 2025 06:20:47 +0000
+Date: Wed, 9 Jul 2025 14:20:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Dafna Hirschfeld <dafna@fastmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Keke Li <keke.li@amlogic.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Dan Scally <dan.scally@ideasonboard.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Subject: Re: [PATCH 5/8] media: v4l2-common: Introduce v4l2-params.c
+Message-ID: <202507091324.p3wVWAxc-lkp@intel.com>
+References: <20250708-extensible-parameters-validation-v1-5-9fc27c9c728c@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: 0
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefieektdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduiedprhgtphhtthhopefvrhhishhtrhgrmhdrjfgrsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtohephghoohhjuhhnghdrjfhuhhesmhhitghrohgthhhiphdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopeholhhtvggrnhhvsehgmhgri
- hhlrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvth
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708-extensible-parameters-validation-v1-5-9fc27c9c728c@ideasonboard.com>
 
-Hi Tristram
+Hi Jacopo,
 
-On Tue, 8 Jul 2025 19:45:44 +0000
-<Tristram.Ha@microchip.com> wrote:
+kernel test robot noticed the following build errors:
 
-> > Hi Tristram,
-> > 
-> > On Mon, 7 Jul 2025 20:16:48 -0700
-> > <Tristram.Ha@microchip.com> wrote:
-> >   
-> > > From: Tristram Ha <tristram.ha@microchip.com>
-> > >
-> > > The fiber ports in KSZ8463 cannot be detected internally, so it requires
-> > > specifying that condition in the device tree.  Like the one used in
-> > > Micrel PHY the port link can only be read and there is no write to the
-> > > PHY.  The driver programs registers to operate fiber ports correctly.
-> > >
-> > > The PTP function of the switch is also turned off as it may interfere the
-> > > normal operation of the MAC.
-> > >
-> > > Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
-> > > ---
-> > >  drivers/net/dsa/microchip/ksz8.c       | 26 ++++++++++++++++++++++++++
-> > >  drivers/net/dsa/microchip/ksz_common.c |  3 +++
-> > >  2 files changed, 29 insertions(+)
-> > >
-> > > diff --git a/drivers/net/dsa/microchip/ksz8.c b/drivers/net/dsa/microchip/ksz8.c
-> > > index 904db68e11f3..1207879ef80c 100644
-> > > --- a/drivers/net/dsa/microchip/ksz8.c
-> > > +++ b/drivers/net/dsa/microchip/ksz8.c
-> > > @@ -1715,6 +1715,7 @@ void ksz8_config_cpu_port(struct dsa_switch *ds)
-> > >       const u32 *masks;
-> > >       const u16 *regs;
-> > >       u8 remote;
-> > > +     u8 fiber_ports = 0;
-> > >       int i;
-> > >
-> > >       masks = dev->info->masks;
-> > > @@ -1745,6 +1746,31 @@ void ksz8_config_cpu_port(struct dsa_switch *ds)
-> > >               else
-> > >                       ksz_port_cfg(dev, i, regs[P_STP_CTRL],
-> > >                                    PORT_FORCE_FLOW_CTRL, false);
-> > > +             if (p->fiber)
-> > > +                     fiber_ports |= (1 << i);
-> > > +     }
-> > > +     if (ksz_is_ksz8463(dev)) {
-> > > +             /* Setup fiber ports. */  
-> > 
-> > What does fiber port mean ? Is it 100BaseFX ? As this configuration is
-> > done only for the CPU port (it seems), looks like this mode is planned
-> > to be used as the MAC to MAC mode on the DSA conduit. So, instead of
-> > using this property maybe you should implement that as handling the
-> > "100base-x" phy-mode ?
-> >   
-> > > +             if (fiber_ports) {
-> > > +                     regmap_update_bits(ksz_regmap_16(dev),
-> > > +                                        reg16(dev, KSZ8463_REG_CFG_CTRL),
-> > > +                                        fiber_ports << PORT_COPPER_MODE_S,
-> > > +                                        0);
-> > > +                     regmap_update_bits(ksz_regmap_16(dev),
-> > > +                                        reg16(dev, KSZ8463_REG_DSP_CTRL_6),
-> > > +                                        COPPER_RECEIVE_ADJUSTMENT, 0);
-> > > +             }
-> > > +
-> > > +             /* Turn off PTP function as the switch's proprietary way of
-> > > +              * handling timestamp is not supported in current Linux PTP
-> > > +              * stack implementation.
-> > > +              */
-> > > +             regmap_update_bits(ksz_regmap_16(dev),
-> > > +                                reg16(dev, KSZ8463_PTP_MSG_CONF1),
-> > > +                                PTP_ENABLE, 0);
-> > > +             regmap_update_bits(ksz_regmap_16(dev),
-> > > +                                reg16(dev, KSZ8463_PTP_CLK_CTRL),
-> > > +                                PTP_CLK_ENABLE, 0);
-> > >       }
-> > >  }
-> > >
-> > > diff --git a/drivers/net/dsa/microchip/ksz_common.c  
-> > b/drivers/net/dsa/microchip/ksz_common.c  
-> > > index c08e6578a0df..b3153b45ced9 100644
-> > > --- a/drivers/net/dsa/microchip/ksz_common.c
-> > > +++ b/drivers/net/dsa/microchip/ksz_common.c
-> > > @@ -5441,6 +5441,9 @@ int ksz_switch_register(struct ksz_device *dev)
-> > >                                               &dev->ports[port_num].interface);
-> > >
-> > >                               ksz_parse_rgmii_delay(dev, port_num, port);
-> > > +                             dev->ports[port_num].fiber =
-> > > +                                     of_property_read_bool(port,
-> > > +                                                           "micrel,fiber-mode");  
-> > 
-> > Shouldn't this be described in the binding ?
-> >   
-> > >                       }
-> > >                       of_node_put(ports);
-> > >               }  
-> 
-> The "micrel,fiber-mode" is described in Documentation/devicetree/
-> bindings/net/micrel.txt.
+[auto build test ERROR on a8598c7de1bcd94461ca54c972efa9b4ea501fb9]
 
-Yes but that's for PHYs right ? Yours is under the DSA "ports"
-node.
+url:    https://github.com/intel-lab-lkp/linux/commits/Jacopo-Mondi/media-uapi-Introduce-V4L2-extensible-params/20250708-184651
+base:   a8598c7de1bcd94461ca54c972efa9b4ea501fb9
+patch link:    https://lore.kernel.org/r/20250708-extensible-parameters-validation-v1-5-9fc27c9c728c%40ideasonboard.com
+patch subject: [PATCH 5/8] media: v4l2-common: Introduce v4l2-params.c
+config: i386-buildonly-randconfig-002-20250709 (https://download.01.org/0day-ci/archive/20250709/202507091324.p3wVWAxc-lkp@intel.com/config)
+compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146a88f60492b520a36f8f8f3231e15f3cc6082)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250709/202507091324.p3wVWAxc-lkp@intel.com/reproduce)
 
-> 
-> Some old KSZ88XX switches have option of using fiber in a port running
-> 100base-fx.  Typically they have a register indicating that configuration
-> and the driver just treats the port as having a PHY and reads the link
-> status and speed as normal except there is no write to those PHY related
-> registers.  KSZ8463 does not have that option so the driver needs to be
-> told.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507091324.p3wVWAxc-lkp@intel.com/
 
-That's what I understood from your comments indeed, what thew me off
-guard is that all ports's fiber mode is configured in the
-config_cpu_port() callback.
+All errors (new ones prefixed by >>):
 
-I'd like to one day be able to deprecate these
-micrel,fiber-mode/ti,fiber-mode properties in favor of the ports API
-that's being worked on, but I guess we can roll with it for now.
+>> ld.lld: error: undefined symbol: vb2_plane_vaddr
+   >>> referenced by v4l2-params.c
+   >>>               drivers/media/v4l2-core/v4l2-params.o:(v4l2_params_buffer_validate) in archive vmlinux.a
 
-Maxime
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
