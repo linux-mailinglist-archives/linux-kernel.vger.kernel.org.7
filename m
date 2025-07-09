@@ -1,103 +1,159 @@
-Return-Path: <linux-kernel+bounces-723130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70392AFE346
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:55:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1FCFAFE4D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D3D11C432EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:55:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF6171C450F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB8228504D;
-	Wed,  9 Jul 2025 08:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BF7288C8D;
+	Wed,  9 Jul 2025 10:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="m3hO8Z/H"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dSN2X7Wc"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30634283FD5;
-	Wed,  9 Jul 2025 08:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C29288518
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 10:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752051229; cv=none; b=f8bgg2ovmXvKugCNdMcSk4B5s2u6TGO1nsp+llcqMqQnJjnQ0LII7uL1PD2cyW3SYET9n256bwLW1f1SkcHdaZioxgpJP/VXVsQc0Ya4DegP98Pe6LIIgNDdjcmRmLPdYisz09CAMVB7cZM6CzateqNX7Mo68wuFvQcLRrA+Ov4=
+	t=1752055259; cv=none; b=P8Y0Fkk37VNhg1M8xy0ifFtKzdcvrGvj+BhOJ/sfR8mNXLGZBBx++6DaEbdwVQE6P7agtTSUiIG0CBHG4ajeFZYk5K9/SCleJvUlE9dx81OXTm2N+cM2krq9amPpVpqkE+BhHwvYkQXcMu48R9A2Oia27d39xnh6QqKwcxQVKzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752051229; c=relaxed/simple;
-	bh=QYXHcCL2Vs79N2X0jF3tLL5lpOOl+YSA52sVaeKfUeo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d6SPlzMoSykr5Ye9CPQfkm1VdC3uRjJtXYQmjWBSVqPF1pNK5ruklkZIzlbNY1+edSe8K6ZYKvi7FOsm0YXHhwdwsa0zJ59ntCPV128k23fipdVKRL8jrwLR/wIkyKiFMq3o98ubsi+zycQrbbE95o0gyIkdKzuAOaKS68hHFs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=m3hO8Z/H; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1752051225;
-	bh=QYXHcCL2Vs79N2X0jF3tLL5lpOOl+YSA52sVaeKfUeo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=m3hO8Z/Hm/WU0S2/37/px10JjlMVhXiD/fzyJW0SGXHoI8NvJNx04URZMYlnuna0q
-	 4W7Jk3s0WDiWqE3t/HabB5kpht0mAhHhQE3FBsb40PNpaNyWLfpmxiRQMvVTr9+HRq
-	 aJn3FnC1s3VbAraASXGMoNm9b6ATG8WZXnk3zs0+gRnlczo+7ykdEt+EzjE1WmfzRC
-	 yzuXt08zNRT8Srax5ietcZ39lylFVwNwpxA98mlmA/WDU2vdGbbGHCarb/70Me85vv
-	 JnpSwi2Kw62X7rfrcXp60jDfAXzv0M4q+Zb0sTZmdzvW40ca8Xsw6C3xB29aCY68Bx
-	 Yy6b1u24sghSA==
-Received: from benjamin-XPS-13-9310.. (unknown [IPv6:2a01:e0a:120:3210:8d6b:4a4d:ad13:46c1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: benjamin.gaignard)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 41E4217E1110;
-	Wed,  9 Jul 2025 10:53:45 +0200 (CEST)
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-To: joro@8bytes.org,
-	will@kernel.org,
-	robin.murphy@arm.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de,
-	nicolas.dufresne@collabora.com,
-	jgg@ziepe.ca
-Cc: iommu@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	kernel@collabora.com,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Subject: [PATCH v5 5/5] arm64: defconfig: enable Verisilicon IOMMU
-Date: Wed,  9 Jul 2025 10:53:30 +0200
-Message-ID: <20250709085337.53697-6-benjamin.gaignard@collabora.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250709085337.53697-1-benjamin.gaignard@collabora.com>
-References: <20250709085337.53697-1-benjamin.gaignard@collabora.com>
+	s=arc-20240116; t=1752055259; c=relaxed/simple;
+	bh=cimesBusUUV91WuSukFwoB37riuMSdtT5ntRgk2rp3U=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=jBfmktDnaj0Fxd3zNGLbhce55JT8yzzhbt4zNhj0jHYtqCw5iDcLpwDU90J3oj5ylWFt8Q3Kzgb7R+YLCCu6Mfv8GedpJkhmAoMQlDaxZnefZF8LIb2Op/HqGfccfzkQzZJUJs1YlPqyFWrAIMdjYPSQSXHNnw4a18fMZdqs3+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dSN2X7Wc; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250709100056epoutp02237618cca9e4eac43e153f9f02846720~QjPkC5pD20977909779epoutp02H
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 10:00:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250709100056epoutp02237618cca9e4eac43e153f9f02846720~QjPkC5pD20977909779epoutp02H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1752055256;
+	bh=cimesBusUUV91WuSukFwoB37riuMSdtT5ntRgk2rp3U=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=dSN2X7WclO21MRD+00fqzdIAQPqNkJqga/ywHIIPNAMFno11BpKrnoXp36kv2NYYz
+	 a3tOUk3tT59L5FmIeT3FGktatot/mLzC3+UiRuOAOzWmHHOFOGzaKt/YO9mWcz9Efw
+	 vI4OPWf7/Jg4PxLi//yPzDdrcyUerCIXZMztNFdk=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250709100055epcas5p278a3a0658d2407780cbf48dc11bb00de~QjPjdukHC2819328193epcas5p2U;
+	Wed,  9 Jul 2025 10:00:55 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4bcYQF3P8Qz6B9m5; Wed,  9 Jul
+	2025 10:00:53 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250709085353epcas5p3e1e989544692330277c3096f40df8369~QiVBscay_1273512735epcas5p3n;
+	Wed,  9 Jul 2025 08:53:53 +0000 (GMT)
+Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250709085350epsmtip25f40e8338ed740108c76c2bec86ac6d7~QiU_rvWW-2672826728epsmtip2M;
+	Wed,  9 Jul 2025 08:53:50 +0000 (GMT)
+From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
+Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
+	<neil.armstrong@linaro.org>, <kauschluss@disroot.org>,
+	<ivo.ivanov.ivanov1@gmail.com>, <m.szyprowski@samsung.com>,
+	<s.nawrocki@samsung.com>, <linux-phy@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <20250706-diamond-crab-of-will-72205e@krzk-bin>
+Subject: RE: [PATCH v4 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 combo SS phy
+Date: Wed, 9 Jul 2025 14:23:49 +0530
+Message-ID: <07d501dbf0ae$ff2126a0$fd6373e0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJAgQZ9LFXBZrDskwNBYris6jFv1AJ630FZAevjVggA58dhDrM15xjg
+Content-Language: en-in
+X-CMS-MailID: 20250709085353epcas5p3e1e989544692330277c3096f40df8369
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250701120009epcas5p46bc2870446c499f9c0008c1d396650bb
+References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
+	<CGME20250701120009epcas5p46bc2870446c499f9c0008c1d396650bb@epcas5p4.samsung.com>
+	<20250701120706.2219355-6-pritam.sutar@samsung.com>
+	<20250706-diamond-crab-of-will-72205e@krzk-bin>
 
-Enable Verisilicon IOMMU used by RK3588 AV1 hardware codec.
+Hi Krzysztof,
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: 06 July 2025 03:14 PM
+> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com;
+> andre.draszik=40linaro.org; peter.griffin=40linaro.org; neil.armstrong=40=
+linaro.org;
+> kauschluss=40disroot.org; ivo.ivanov.ivanov1=40gmail.com;
+> m.szyprowski=40samsung.com; s.nawrocki=40samsung.com; linux-
+> phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-s=
+amsung-
+> soc=40vger.kernel.org; rosa.pila=40samsung.com; dev.tailor=40samsung.com;
+> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
+> selvarasu.g=40samsung.com
+> Subject: Re: =5BPATCH v4 5/6=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
+dd
+> ExynosAutov920 combo SS phy
+>=20
+> On Tue, Jul 01, 2025 at 05:37:05PM +0530, Pritam Manohar Sutar wrote:
+> > This phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
+>=20
+> Agian, this?
+>=20
+> > compatible to the USB3.0 SS(5Gbps). 'Add-on USB2.0' phy is required to
+> > support USB2.0 HS(480Mbps), FS(12Mbps) and LS(1.5Mbps) data rates.
+> > These two phys are combined to form a combo phy.
+> >
+> > Add a dedicated compatible string for USB combo SS phy found in this
+> > SoC. The SoC requires two clocks, named =22phy=22 and =22ref=22 and var=
+ious
+> > power supplies (regulators) for the internal circuitry to work.
+> > The required voltages are:
+> > * avdd075_usb - 0.75v
+> > * avdd18_usb20 - 1.8v
+> > * avdd33_usb20 - 3.3v
+>=20
+> One more commitm message completely copy-pasted and completely
+> uninforming. The voltages are irrelevant. Explain the architecture. This =
+should be
+> just one patch with proper full description.
+>=20
+> >
+> > Add schema only for 'USB3.1 SSP+' SS phy in this commit.
+>=20
+> Why only? Add everything, describe everything, but not what voltages you =
+have
+> there but the architecture of the PHY.
+>=20
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 7e04a2905ce4..a639388298e7 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1451,6 +1451,7 @@ CONFIG_ARM_SMMU=y
- CONFIG_ARM_SMMU_V3=y
- CONFIG_MTK_IOMMU=y
- CONFIG_QCOM_IOMMU=y
-+CONFIG_VSI_IOMMU=m
- CONFIG_REMOTEPROC=y
- CONFIG_IMX_REMOTEPROC=y
- CONFIG_MTK_SCP=m
--- 
-2.43.0
+Will combine patch 3 (combo HS phy) & 5(combo SS phy) to describe combo phy=
+ and even will add some details as mentioned in cover letter.
+
+> Best regards,
+> Krzysztof
+
 
 
