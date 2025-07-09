@@ -1,115 +1,210 @@
-Return-Path: <linux-kernel+bounces-723578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FDC2AFE8B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:20:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95340AFE8B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 035D416A6AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:20:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9492170F5D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0432D9489;
-	Wed,  9 Jul 2025 12:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68FFD2D9EF2;
+	Wed,  9 Jul 2025 12:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d8iMRGjl"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GFpa7akL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A91A272E7C;
-	Wed,  9 Jul 2025 12:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61672D6631;
+	Wed,  9 Jul 2025 12:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752063627; cv=none; b=AcQ+voS85H6CdeHNZSDC9Je2fCc05MCKkQXXt9lN3RQwVZJepmvGuhJzMoL+DmLAhJZf6Utn8RJc0t+6i9KOebdCYZl1PU6+AT7xAqETGDSoczOX2KPvepCl57r8YsT7WAtAtyxkSwc4ax4ripoixVA8z3+Q9RQL2uxLO6kRYm8=
+	t=1752063644; cv=none; b=R2HdirCgKcck64kaCmw47o0TzR1egxR38F7ZFjc8f+znHJh341CphIN+3XxWVhJ/U5UuHTXUGMLSJPlEUJWgsbwB+XCfJgC+SuMhAaIqUMv0ReJ2SQgcGyPdFKsbg7TjFA8vBCUnnqGSPy0BgKXkxl2iUo5GVmjGmjepYQhf7tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752063627; c=relaxed/simple;
-	bh=vTxSr4OcEFLxV9myZXbp9oq5itZ0+F6vLpEgCoNxz0c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eh5XRydl6DEAR87nDzuc93e9Kxl1eb+Mei+6hCU1DR6ZBkbOnrEJDyDbyqtauKTrtK0HHBw2AJEBiQkD+HoCKGkMPLy0bEZi7MmK/I3neDFv9kFIVYl1z1Ar2rJmL8+vqrmLz6kNRZkkK/jXukHLSQDdv21ZGWIrpr4v3lxaGaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d8iMRGjl; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-453608ed113so60052305e9.0;
-        Wed, 09 Jul 2025 05:20:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752063624; x=1752668424; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cz5QQgif2TZ+psnMb6iWbzxnGr67pPa/3dM5Lbz5MrE=;
-        b=d8iMRGjlpsoQSYGNCgiS70Fl3oETvYM/A7xkTiNhtIR4LkY6pJH3iEFEjcXC93y+1+
-         xHLr59PESgkT9Fh8hDuwmxbNiMT1I66491NBjZnu5s58Mwat041cfhJif2f39VtQifE6
-         gndJcFbh4qRc+P8HraWHXVO8cz1SsLanPHMnI5YbuCl1n2u+Y1ui/muziyLvHN97nkm5
-         gXfbLCr714SGnWlJWfszS6RCbvVP4xqqF1cmA00/G/mb6/SZxoZ0DLqjbvIRVs4I8fB/
-         VqlVmjrUG6sYoIhorO6C/dA9RhnB6j4sZQz7KRf508BQura1tuxCTciMRPeS46R6j+FU
-         sTLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752063624; x=1752668424;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cz5QQgif2TZ+psnMb6iWbzxnGr67pPa/3dM5Lbz5MrE=;
-        b=OUQOwAZeIeXiLg7Jt9vxR4LhRfgo6JxRT9Z6D8+spPIjEM5g8cpZvvQtOIivZbIZuq
-         mY855Zxv7NyYY85kVoMo7clsQOik4thtFMSLf6x9y0CXOOvIRzKGlUHDWRJfwSLBpvCr
-         bYZnjUFoli4C+uo7Iy8ocKpp3nQVkE2pV0QM2t0Ka/0qbOq3W1xJ7VfLZdzUF9vvDHPz
-         wDSeoo+XnLzdgRLQmGwAVadnkZyO/NSgkvtEvnB9Jb6NFcJcddM1SfXKs2+VN+fe9eK4
-         fBCPjZa3ukY5DFLPgp2M4pD7HtgcdhhFvzvMpV3lkzQVSHFOWY+/TUf1A3q/Vs8z3zeN
-         vnZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsWPUeKMBtcJF0MnFhW2dsYX1yn6dLr/GTBYkG2aZHD3yyflSCwKfMEWH/S3NJgEh98sLp0OtVH2fF/Io=@vger.kernel.org, AJvYcCVpB23B9Cshd3+3PX9weIP4QpVy2piFqvVRRSQlGcDQV3g2ADfIWwGW+E8wR80Pdi4Bg+e/lNwYtAjBxHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsJmDNPr+VBBpI/ZVTSLxKYLqdyIncNJDqxqtKE6z6wJXCH8lO
-	NLwCcHzq5WCQeWNc5Mk5i2G3FoybiMW/+yJ36diAJzdOaxjLS31M+pNN
-X-Gm-Gg: ASbGncv9aiBxww/ZxmAznbYYdggLNjIFNp9OOgSM76X2ZBEbNDLHp/NtOTSDCZzMd/Q
-	cMteN3Ohf6KTOB43VdWJ3Uc4GBqE9HKWbDCDvkbsk8CCf70i5YUI0d0He6ep/TZ4cRt1FcbOP8G
-	lChBbFDStf9IZwMKB2WtpEfq6RSD2WWLr8yFVqd5OqMbKx4y713oXbETeJqQnY46IeS8ZUdTrcw
-	IhkP1D51OPIJTI8xs0x/PRsUhv9Dsl3i4CwckT+gsp1PFofGRr9U+HqMFbdO04wwJy83GO89hZb
-	Ovq1d/byjuJSItbVICFw90FOyHgz5WQynGKY653SWT4PYdsAr03Bf67uQX//5k9MtD8/gFz0fIo
-	iFnROdJa+9HCZt0gKNeE280U3x1J7eDy8q1yCrF01h3IUooNpo2zb9A==
-X-Google-Smtp-Source: AGHT+IH6QLMupQyvz6K1xZUyeINn+lP3CNsWV0TExX1rWT3sPHY0i+kJ1Ij7hqhRt1VAgldCxPijDA==
-X-Received: by 2002:a05:6000:2087:b0:3a6:f30b:2dd6 with SMTP id ffacd0b85a97d-3b5e44f5a13mr1981376f8f.26.1752063623787;
-        Wed, 09 Jul 2025 05:20:23 -0700 (PDT)
-Received: from localhost (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b4708d0aa0sm16013292f8f.34.2025.07.09.05.20.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 05:20:22 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Russell King <linux@armlinux.org.uk>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Aaron Kling <webgeek1234@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: tegra: Use io memcpy to write to iram
-Date: Wed,  9 Jul 2025 14:20:20 +0200
-Message-ID: <175206361431.1595082.8917361083602390778.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250522-mach-tegra-kasan-v1-1-419041b8addb@gmail.com>
-References: <20250522-mach-tegra-kasan-v1-1-419041b8addb@gmail.com>
+	s=arc-20240116; t=1752063644; c=relaxed/simple;
+	bh=UNteH8MyHXiNBHTEmoU7+5E+nqt7sFjow0ifKuy1UtE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=XwyKBtpRg+zZTJSIoNBTYe2hQp6TUHDlPwBAZJUxRZRTmGH6sfy46Y255Jr6PcPoNnhNWCqgJNBaADKb2k9hF9NqZPaASUf89Xioyzr62XE3UFSSmM3c2Woh2cXAjHzpLWwa3h01A1jg76c4sfh3oaqxNq4qwFgjsjqhtCZotgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GFpa7akL; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752063643; x=1783599643;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=UNteH8MyHXiNBHTEmoU7+5E+nqt7sFjow0ifKuy1UtE=;
+  b=GFpa7akLw/nvC2a9JeIdOMr1U+PrHI+I/c+h56dwCCqC7EYWCX6VWQRg
+   RtE6pAtEcQFsiB8b6glV7Wg4lii8E26cbsiqaJRLEtySVGTfaqPmaUnyh
+   Xi2P57usOPTHR3D8dkXvxgzkoJJx4V9gBT1W70Rr2zqkJdblVzhON2U7L
+   wS+C3xbvHJRGMnawmOsvcS9tVSgCd9mbB87w9Zu/Ypkq82/82ubmNefQ5
+   O0SD/g4EmoW1lKU7Ch7vV+ymbPX4AWHivp2jXB3OZFbV7BUReX7XRuiZh
+   quz/byeoKaM/BOBJXlYJi1syUONOZfQsURg2Ib55xsi529XCm92mttaAJ
+   Q==;
+X-CSE-ConnectionGUID: bOlQhXwDRL69kJPlJiqHJA==
+X-CSE-MsgGUID: 2gOY0nqfTjeIHJLwGgAObQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="71907248"
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="71907248"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 05:20:42 -0700
+X-CSE-ConnectionGUID: 91ZRmtK3R1Ww85xwUSkIDw==
+X-CSE-MsgGUID: JL+YOArQQcKFgvjLdZ5K7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="160029712"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.168])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 05:20:35 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 9 Jul 2025 15:20:32 +0300 (EEST)
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+cc: Manivannan Sadhasivam <mani@kernel.org>, 
+    Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
+    Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
+    Jeff Johnson <jjohnson@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kwilczynski@kernel.org>, 
+    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev, 
+    linux-wireless@vger.kernel.org, ath11k@lists.infradead.org, 
+    qiang.yu@oss.qualcomm.com, quic_vbadigan@quicinc.com, 
+    quic_vpernami@quicinc.com, quic_mrana@quicinc.com, 
+    Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Subject: Re: [PATCH v4 03/11] bus: mhi: host: Add support to read MHI
+ capabilities
+In-Reply-To: <5625ffa1-f952-4646-a17a-fbbfffcdba2a@oss.qualcomm.com>
+Message-ID: <4c68074e-5809-bc4c-185a-88ddcb81f31b@linux.intel.com>
+References: <20250609-mhi_bw_up-v4-0-3faa8fe92b05@qti.qualcomm.com> <20250609-mhi_bw_up-v4-3-3faa8fe92b05@qti.qualcomm.com> <ttjbjmixxbzatcfthaucuy3j4hosu4azpizes6ptxjnkzsawa5@5axodfdyjff2> <5625ffa1-f952-4646-a17a-fbbfffcdba2a@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-From: Thierry Reding <treding@nvidia.com>
+On Wed, 9 Jul 2025, Krishna Chaitanya Chundru wrote:
+> On 7/8/2025 10:06 PM, Manivannan Sadhasivam wrote:
+> > On Mon, Jun 09, 2025 at 04:21:24PM GMT, Krishna Chaitanya Chundru wrote:
+> > > From: Vivek Pernamitta <quic_vpernami@quicinc.com>
+> > > 
+> > > As per MHI spec v1.2,sec 6.6, MHI has capability registers which are
+> > > located after the ERDB array. The location of this group of registers is
+> > > indicated by the MISCOFF register. Each capability has a capability ID to
+> > > determine which functionality is supported and each capability will point
+> > > to the next capability supported.
+> > > 
+> > > Add a basic function to read those capabilities offsets.
+> > > 
+> > > Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+> > > Signed-off-by: Krishna Chaitanya Chundru
+> > > <krishna.chundru@oss.qualcomm.com>
+> > > ---
+> > >   drivers/bus/mhi/common.h    | 13 +++++++++++++
+> > >   drivers/bus/mhi/host/init.c | 34 ++++++++++++++++++++++++++++++++++
+> > >   2 files changed, 47 insertions(+)
+> > > 
+> > > diff --git a/drivers/bus/mhi/common.h b/drivers/bus/mhi/common.h
+> > > index
+> > > dda340aaed95a5573a2ec776ca712e11a1ed0b52..58f27c6ba63e3e6fa28ca48d6d1065684ed6e1dd
+> > > 100644
+> > > --- a/drivers/bus/mhi/common.h
+> > > +++ b/drivers/bus/mhi/common.h
+> > > @@ -16,6 +16,7 @@
+> > >   #define MHICFG				0x10
+> > >   #define CHDBOFF				0x18
+> > >   #define ERDBOFF				0x20
+> > > +#define MISCOFF				0x24
+> > >   #define BHIOFF				0x28
+> > >   #define BHIEOFF				0x2c
+> > >   #define DEBUGOFF			0x30
+> > > @@ -113,6 +114,9 @@
+> > >   #define MHISTATUS_MHISTATE_MASK		GENMASK(15, 8)
+> > >   #define MHISTATUS_SYSERR_MASK		BIT(2)
+> > >   #define MHISTATUS_READY_MASK		BIT(0)
+> > > +#define MISC_CAP_MASK			GENMASK(31, 0)
+> > > +#define CAP_CAPID_MASK			GENMASK(31, 24)
+> > > +#define CAP_NEXT_CAP_MASK		GENMASK(23, 12)
+> > >     /* Command Ring Element macros */
+> > >   /* No operation command */
+> > > @@ -204,6 +208,15 @@
+> > >   #define MHI_RSCTRE_DATA_DWORD1
+> > > cpu_to_le32(FIELD_PREP(GENMASK(23, 16), \
+> > >   							       MHI_PKT_TYPE_COALESCING))
+> > >   +enum mhi_capability_type {
+> > > +	MHI_CAP_ID_INTX = 0x1,
+> > > +	MHI_CAP_ID_TIME_SYNC = 0x2,
+> > > +	MHI_CAP_ID_BW_SCALE = 0x3,
+> > > +	MHI_CAP_ID_TSC_TIME_SYNC = 0x4,
+> > > +	MHI_CAP_ID_MAX_TRB_LEN = 0x5,
+> > > +	MHI_CAP_ID_MAX,
+> > > +};
+> > > +
+> > >   enum mhi_pkt_type {
+> > >   	MHI_PKT_TYPE_INVALID = 0x0,
+> > >   	MHI_PKT_TYPE_NOOP_CMD = 0x1,
+> > > diff --git a/drivers/bus/mhi/host/init.c b/drivers/bus/mhi/host/init.c
+> > > index
+> > > 13e7a55f54ff45b83b3f18b97e2cdd83d4836fe3..9102ce13a2059f599b46d25ef631f643142642be
+> > > 100644
+> > > --- a/drivers/bus/mhi/host/init.c
+> > > +++ b/drivers/bus/mhi/host/init.c
+> > > @@ -467,6 +467,40 @@ int mhi_init_dev_ctxt(struct mhi_controller
+> > > *mhi_cntrl)
+> > >   	return ret;
+> > >   }
+> > >   +static int mhi_find_capability(struct mhi_controller *mhi_cntrl, u32
+> > > capability, u32 *offset)
+> > > +{
+> > > +	u32 val, cur_cap, next_offset;
+> > > +	int ret;
+> > > +
+> > > +	/* Get the first supported capability offset */
+> > > +	ret = mhi_read_reg_field(mhi_cntrl, mhi_cntrl->regs, MISCOFF,
+> > > MISC_CAP_MASK, offset);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	*offset = (__force u32)le32_to_cpu(*offset);
+> > 
+> > Why do you need __force attribute? What does it suppress? Is it because the
+> > pointer is not le32?
+> > 
+> yes to suppress warnings.
+
+I'm pretty sure sparce with endianness checking won't be happy with that 
+construct as you pass u32 where le32_to_cpu() expects __le32. Have you 
+checked this with sparse? (It might not check endianness with default args.)
+
+> > > +	do {
+> > > +		if (*offset >= mhi_cntrl->reg_len)
+> > > +			return -ENXIO;
+> > > +
+> > > +		ret = mhi_read_reg(mhi_cntrl, mhi_cntrl->regs, *offset, &val);
+> > > +		if (ret)
+> > > +			return ret;
+> > > +
+> > > +		val = (__force u32)le32_to_cpu(val);
+> > > +		cur_cap = FIELD_GET(CAP_CAPID_MASK, val);
+> > > +		next_offset = FIELD_GET(CAP_NEXT_CAP_MASK, val);
+> > > +		if (cur_cap >= MHI_CAP_ID_MAX)
+> > > +			return -ENXIO;
+> > > +
+> > > +		if (cur_cap == capability)
+> > > +			return 0;
+> > > +
+> > > +		*offset = next_offset;
+> > > +	} while (next_offset);
+> > > +
+> > > +	return -ENXIO;
+> > > +}
+
+There's a generalization of capability search in Hans Zhang's series, 
+can it be used here too?
 
 
-On Thu, 22 May 2025 11:11:24 -0500, Aaron Kling wrote:
-> Kasan crashes the kernel trying to check boundaries when using the
-> normal memcpy.
-> 
-> 
-
-Applied, thanks!
-
-[1/1] ARM: tegra: Use io memcpy to write to iram
-      commit: 4110a4d95bf0bebd8ccaaeb93988dc9c08bd7d6a
-
-Best regards,
 -- 
-Thierry Reding <treding@nvidia.com>
+ i.
+
 
