@@ -1,212 +1,92 @@
-Return-Path: <linux-kernel+bounces-722979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44ED2AFE154
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:31:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B215AFE157
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A418B3AD805
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:31:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D4AB3B7A07
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525252701C3;
-	Wed,  9 Jul 2025 07:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE2F270559;
+	Wed,  9 Jul 2025 07:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="IfPVUmc5"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R9O01RLa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A5B22154D;
-	Wed,  9 Jul 2025 07:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031FB1E50E;
+	Wed,  9 Jul 2025 07:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752046301; cv=none; b=SNAHONl5j+3PsZbb2hkQVPM4RRRQ4Dhw4JstiUhPRi1zjw7XEL1o5V1N4twrWud5VEyouxm33KyOX/jHsktfL+x+XWK4x2Bo5oz5X75vdBMX+1NdvShG9uZVAmqdgRsBnx2jifoBTZswt6TKZqBhnmZ0lvJU59PQwwOXH1LEqDs=
+	t=1752046330; cv=none; b=l14/Ng1mQW2+RCpsZsrg9SORKbllUesT4rZCGpvQ0jgUIF/DV5WwfIuxWU4HeMynVwgdSMk1LPDbbRi5LpZd3hwvuiBSP/d6slLhMRmsjoxB/xxYghvgsLgZepbQ8S3tPADRCdfe9eUUNfaxCy2lvV1ei3rvQZ9V77l08L0NKew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752046301; c=relaxed/simple;
-	bh=0WJSDopx5bvByfhztE14V1M7f3ua8wtGYEXx6Hjwh0c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=u+6wVQYYFBIs2w4mwgCFNE1Tm3UtHPBMjX9q0frdKIYBENMLhyZ5P1Hqhvt0Xut7hOa9hsXDmljXgDb7h9lBcPnS3bij9AV+DlTAE6XZirOEfEvrprQ3xhDveO39aL30XU8KgeHAml7+Rdjt2u6Mg+GheJzvjf3TygA+kKktzLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=IfPVUmc5; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 57D28A09FF;
-	Wed,  9 Jul 2025 09:31:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=BE4ao5MP8rbHBjdHtNFtYJxy5/GgWgE6oAwjYaQQuHw=; b=
-	IfPVUmc5nGkKUJ2/gUmLmw3mXJbQ6DsJ5mv4G1Ejbj65lMP/J0EActDUHgNqCIqg
-	5+aM9MFTqnsA0rETeAu0b4GajsZV1qBbBfL0qLoPMKmVgklLgIhEY+5HSgr6eE6o
-	VPX0I6T4/Vxoc56sIcbVoQbQ+plNBlEO/igUUS8hKdoF+4BIiRrvX3uif/AJdcvV
-	BuLjVCRPOuIRUVVsf4OzS0iS4smZHvHfAPcVfkcQXqn5eOy3BEZC4AFJKM0y08S6
-	gwnsqEI3GOG6mFsPRYe6/8iQPQl22WDdMp9n2XSMqqlGUSRFeag88CCr2WDbNxLt
-	u9P2A8Rl/QB0XxrLANVV/2PdUfFlfLA9Javbf642waryKTGE5Zbs5GPUs64dZxNx
-	Ni9u4z3nKb+IrShp7zAzQJKYwrzN7lsEBi8NdJQ6SMpDqyIkMw9Pu/zppo//gpWw
-	H3tfDc40xOBePIdhgL6uivqJOjFNwiAm8m0xwFDQwldOQcmBECq4oK0eq9FcpS+q
-	qw4Z68oLrwcCYXJ5LmSAbPqoYxqCAjZR4kkpFAQB6DeHNN6zkm5n3vgPbzBxPqyO
-	cTl9TxWvSUNWlNxn9ja8EMOblozrJAoORU4HJHaxKwlXPl1k2SaeBd1Mt4cjcp7i
-	A6NVvoTETjj+JvnlwpauMEHES5CNKbDLCzg509GV9nU=
-From: =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
-Date: Wed, 9 Jul 2025 09:31:31 +0200
-Subject: [PATCH v2] ARM: dts: imx6-litesom: Replace license text comment
- with SPDX identifier
+	s=arc-20240116; t=1752046330; c=relaxed/simple;
+	bh=9O4wep8X80DnfmVYqTYuUTz8kwz/OoeOVVejGNflgW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gcc4+b4QLVsl6M3J5fQdzO+QQsHZKhqYSGqkqXQBsltizWbpe6Yc3IrZZK2OVP29RELhRo/4BQ0prcAI8UYEzmlRuChySA0mP6aQIrPEaynKiX3S6WAw75QdRWMH1b7dvcp08R/GOFUAmyOhECyXIKq3P7XMAyd6JKQnfnWJNPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R9O01RLa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAA84C4CEF0;
+	Wed,  9 Jul 2025 07:32:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752046329;
+	bh=9O4wep8X80DnfmVYqTYuUTz8kwz/OoeOVVejGNflgW4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R9O01RLaIusvUqR/F5/lKlhbtGKqEdItzKwGaL4hISRhsf5Mhy3vHF/+UjRds0xZl
+	 1GVNVlK5DEPm9psaU5Od/+qxB5DQWtYbxVInihuL8082el1hqwNRIMfuqCebnTU8pZ
+	 aQA3wzK15XNOK1tVpfE3d01Wd+5+o1YyWeRZ+AKYTBrvFK5JnpfeURHIPyzRmN7kG3
+	 CJJkwskmrqm2FW5P1fKNIbps2BKuIBU+aG4+aBkYWjrPVTOWWSGwSLi8mV1810tPJL
+	 c87u/Phg/PE28r5b+PmWxGbdpB7JqrKJaydOEqQxx/GuqXP/kMotgvr3H7zAjn7hDg
+	 DnzEBVDT/xRCA==
+Date: Wed, 9 Jul 2025 09:32:06 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Lubomir Rintel <lkundrak@v3.sk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
+	Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-hardening@vger.kernel.org, phone-devel@vger.kernel.org, 
+	~postmarketos/upstreaming@lists.sr.ht, soc@lists.linux.dev, linux-mmc@vger.kernel.org
+Subject: Re: [PATCH v16 1/5] dt-bindings: mmc: sdhci-pxa: restrict pinctrl to
+ pxav1
+Message-ID: <20250709-spectacular-goat-of-tenacity-ced55a@krzk-bin>
+References: <20250708-pxa1908-lkml-v16-0-b4392c484180@dujemihanovic.xyz>
+ <20250708-pxa1908-lkml-v16-1-b4392c484180@dujemihanovic.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20250709-litesom-dts-lic-v2-1-b907084ced96@prolan.hu>
-X-B4-Tracking: v=1; b=H4sIANIabmgC/3WNwQ7CIBBEf6XZs2sAMY2e/A/TA5StkLTQsNhom
- v67tHdv85KZeSsw5UAM92aFTEvgkGIFdWqg9ya+CIOrDEqoq2iFwjEU4jShK1xzj8bd2laTdXR
- xUFdzpiF8jsdnV9kaJrTZxN7vP5PhQnkv+sAl5e9hXuRe/y9ZJErUQpJ2Uks7iMec02ji2b+h2
- 7btB2ePFS3HAAAA
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, "Sascha
- Hauer" <s.hauer@pengutronix.de>, Pengutronix Kernel Team
-	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
-CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Marcin Niestroj <m.niestroj@grinn-global.com>,
-	=?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
-X-Mailer: b4 0.13.0
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1752046297;VERSION=7994;MC=3525334923;ID=156592;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A296767155E657160
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250708-pxa1908-lkml-v16-1-b4392c484180@dujemihanovic.xyz>
 
-Replace verbatim license text with a `SPDX-License-Identifier`.
+On Tue, Jul 08, 2025 at 07:09:46PM +0200, Duje Mihanovi=C4=87 wrote:
+> The current pinctrl properties apply only to the pxav1 controller.
 
-The comment header mis-attributes this license to be "X11", but the
-license text does not include the last line "Except as contained in this
-notice, the name of the X Consortium shall not be used in advertising or
-otherwise to promote the sale, use or other dealings in this Software
-without prior written authorization from the X Consortium.". Therefore,
-this license is actually equivalent to the SPDX "MIT" license (confirmed
-by text diffing).
+Why they are not applicable for pxav3?
 
-Cc: Marcin Niestroj <m.niestroj@grinn-global.com>
-Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
----
-Changes in v2:
-- Fix msg
-- Link to v1: https://lore.kernel.org/r/20250702-litesom-dts-lic-v1-1-401e4d141bf0@prolan.hu
----
- arch/arm/boot/dts/nxp/imx/imx6ul-liteboard.dts | 38 +-------------------------
- arch/arm/boot/dts/nxp/imx/imx6ul-litesom.dtsi  | 38 +-------------------------
- 2 files changed, 2 insertions(+), 74 deletions(-)
+> Adding one default pinctrl node to a pxav3 controller therefore causes
+> a schema warning.
+>=20
+> Check the existing properties only on pxav1. pxav2 and pxav3 may add
+> their own set of pinctrl properties if and when needed.
 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6ul-liteboard.dts b/arch/arm/boot/dts/nxp/imx/imx6ul-liteboard.dts
-index 5e62272acfba..7a4127670a6f 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6ul-liteboard.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6ul-liteboard.dts
-@@ -1,44 +1,8 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright 2016 Grinn
-  *
-  * Author: Marcin Niestroj <m.niestroj@grinn-global.com>
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6ul-litesom.dtsi b/arch/arm/boot/dts/nxp/imx/imx6ul-litesom.dtsi
-index 8d6893210842..c387753f833b 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6ul-litesom.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6ul-litesom.dtsi
-@@ -1,44 +1,8 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright 2016 Grinn
-  *
-  * Author: Marcin Niestroj <m.niestroj@grinn-global.com>
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- #include "imx6ul.dtsi"
-
----
-base-commit: 66701750d5565c574af42bef0b789ce0203e3071
-change-id: 20250702-litesom-dts-lic-ad9774ebde3d
+This should be rather made complete here, because properties should be
+defined in top-level, not in allOf: block. Strictly speaking pinctrl-xxx
+are defined in core schema, but still the binding should follow same
+rule - define them in top.
 
 Best regards,
--- 
-Bence Csókás <csokas.bence@prolan.hu>
-
+Krzysztof
 
 
