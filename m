@@ -1,144 +1,200 @@
-Return-Path: <linux-kernel+bounces-723706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2883CAFEA26
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:28:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7496BAFEA59
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B8B25C0529
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:26:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8E864E0E8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CAAE2E3399;
-	Wed,  9 Jul 2025 13:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DEA2E5B09;
+	Wed,  9 Jul 2025 13:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="YImFyduj"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f0f0VZPw"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D3992D3EFF;
-	Wed,  9 Jul 2025 13:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72FA2DECA7
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 13:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752067479; cv=none; b=Ismg3FGoYPaTtBrZ5YN3RzkXt2Jk6syhLBrjgS7t+1LCaDz86LWY3XJV4MgAFN4Cc+HvZJ1y+9OEf9lLB7pxqvexut7om3DvH3e5z+bxNTKyETBE2PHo9zIRDn3XV5/nOrdPZ0rsGabpYvDo+tOTcQH9XyNl3sUik74Um5zjfvA=
+	t=1752067528; cv=none; b=hwWGLNtOx1hqOVLyrWyzGRAcLc01/VDLYT21xApB1iHyWxk/GlDtIx9zDqfrjN5SgkIRM6S/t0yiPKp5n8Uj2dgsTDi1HEWnXXrMUtXg7BaspkGjvuknbKj1ozpi0h5mOa/L/+0fBgg3zcuWe5otD4txDQrBEmh9wYBECMZeQxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752067479; c=relaxed/simple;
-	bh=0CMdkCD+Gnywy5WXpjLIkPQlIGWoX/ynYgGIfUb18p8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q79kxO1B4iDeVlVAAVtv3bLShDHTAJmuNzloepxg4YGlUtVPcPKDGJA4ouIAgg+EUlufP9QFAvgKVNmpliVXJ0JAA9TRQ9ot1Tfu02ne5+2WlHqJud3sjUdqlqp7ISwBIc+QEJ3ajMZhYXgJluhoZUrmNoj0RSReA6bEntXI7L8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=YImFyduj; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 72C56A0AE6;
-	Wed,  9 Jul 2025 15:24:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=ap4l4ZavPRJIIz6XqI8DVedkNK/Oh8jJblcsWkIXeaA=; b=
-	YImFydujvVhzIRpuYPB2JO77dDnXelj6Wz1sn7SNulXld3XrIhx6bwb6YKbPvvug
-	K75YLYhYuJoh6cgZYowtbiOxlWf83naBguACkX+4d8Utdj3XuoukUjWsaMi+NT43
-	8iluuKo7kWH7YuvKH9UwIAi31iv13+iel1vfVAPykBd5c08LEdkh/7AsXwxJUXl/
-	gaPFKDqrTO/a5mMqjco1WvInlcRCaP/T3K0wm+N/wC81L/9KkNiYoZGWcTGImI92
-	Rp+yaP6ri5ZbvGmvhUb0oAyrGFNdfYvJ+pe/xgbTzee8EUwXOiv0iVehls/oklXK
-	Jw2t5jCHhkP1Q413QXmK+5dYB+uMsphiSLAB/nexHmWcrnpGcWaXrywvsaKz0Si/
-	Tm4L1HnnoDuucOyoZp2dGXHW9bCHFelVXcugWX2O7MXjzSAUnrPdbFLGdiFW+SpX
-	9ntuMwnCEQvhP171MncHzWW9tlxlzrHWDJTN3RwkXSZcH0HJlGtSkKq1H1keG/ZU
-	NFrbghnnrmWlaHAyA3ZdWB5Fb55XM5f7Cv9eltduxcIetD/ops2lcN28bvpMS9Fr
-	ix0MFgOBpdG8Wbux9/DOFnS57BgFU7jUlFU3JBTLK8ik3HXP7aYwvvgKO3tn2nnn
-	gIxQbR88WduuwxRMYWx1xAgLggbzogSKuOLvlJHwbIY=
-From: Buday Csaba <buday.csaba@prolan.hu>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Buday Csaba <buday.csaba@prolan.hu>, Andrew Lunn <andrew@lunn.ch>, "Heiner
- Kallweit" <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	"Jakub Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH] net: mdio: reset PHY before attempting to access registers in fwnode_mdiobus_register_phy
-Date: Wed, 9 Jul 2025 15:24:24 +0200
-Message-ID: <20250709132425.48631-1-buday.csaba@prolan.hu>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1752067528; c=relaxed/simple;
+	bh=0Kt7fyGJ9S5hVGnqLvyQoR9maETa92oP1ICT/52AnNc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u10QPkjYPYCq89aHdcOYzJYpnAn/ux6GQ1NO2zYa0wzgj62+zM1rQeJw/LahpkhvFxi2Z8gBNJgO6UA9Iqi8O7xrWGLoyCJHWazGdicvUEUTUKAUzLi0tjRgVDSnebvI43k1JiB6gbaRPzgH09QXj23hjnPAIAaY6tkjrUdH4qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f0f0VZPw; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e8600c87293so4304867276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 06:25:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752067526; x=1752672326; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oa3/IrQyBvmTYTtNd/N8HxLuoVeEFku8rfsBSVlEkKw=;
+        b=f0f0VZPw7Xnel890WbvozB62aRFc70t+As4Ax+TzgKKzvK0qY0BnjGxMdxSCq+CbxN
+         NN8fWW7JZnnmX/ZA8tlz5nmAsMA3HCOBZ66CZS6sYtLm1DT5NRLEaxpLO9TdEa4jZbh/
+         zAofpTNUMIHwDXhRfpWVEotlxp+AkI2WeH7GkvKSBHgvfRcWIkf9yTTWgGYYMVbbzMA1
+         Luw7mIDQjKcpxMagYjfmzKwOcyZMikP5lR/0KRXEnZ5EYilzBK1w3xp/7mUH72H3RCvg
+         nxkpNDonuVtdx6DJjLjodMjkt7pcDMVvZIPnV5SKnImaODdaE4B2mz2jpC+9IlKpG11i
+         N8cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752067526; x=1752672326;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oa3/IrQyBvmTYTtNd/N8HxLuoVeEFku8rfsBSVlEkKw=;
+        b=Wc7m7GJJdsi0a4TkzZpC2GlFBjEetHWUi65BIBGirOF64f1chzuzmFMs5fpyPt0IL/
+         fAIyDy6kltNjZVm3NlSGj9Ca/Zb9XCdzH2GNhAh8ojb8syHaeJx5k8+E25cUJrOz3NlA
+         J5AyV945eY1GT4lZFhrX8ExauV1BUrH1VVaW4yLKiVqRa0GvpP87RoZ/jJWOM29YHtNd
+         jA2m/hid9TvNNXZwOjAAc257Q1W8GSr+3i05UPxb+Kq+p61is4mF0zsXo4fLk1DHwHJ+
+         0c5+Xulg/0+9xX0CdbrrnBVmxra7GPNG+rA9CPvSwh5M/8kHJzlk5/J+YuLb7FKrvfU/
+         KchQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYdvH8hW5nHIDdyk9jWk8fjRd4j6hLX2KOvxzhXlcHZa+Yq/ecWM7p37rBXKnv7XVKiz4mKHdcik0Paxs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0d/k2xlqV7tHqX6SUAX30hBpnHKGJrx4UcoSMI4vnSQbjTHH/
+	j7bDfxRrlPUA7w47XU8Y3FCYpGBZE5gtGTOwgwrXoC33RkwcyJ29900hrRyH2KwZ64C0B70SBX+
+	CArLnv0uVXl7/j7TlqAVkwRiZt3ZFq7XlNdoDWXY5eg==
+X-Gm-Gg: ASbGncujekXNARYm0rd6l2/MUIFw7Nvcq8nKkZTzqyZtP4dIHHuJsdzjrRROxF9GfzO
+	RCjyanLk9lmNgYyd5WZvZnpjtzBveCBgadzZFpvGPAr8HX5y1aOLaEQRZa2mza+j8GNEuNn/Byk
+	GxkCgoIah/9kxRV+oYAdgHKw3Rm4hGaScEKVgQbMXpuJcf
+X-Google-Smtp-Source: AGHT+IFUQ6txa1Y8SDWT8eyNJEl2lGsRx5T0N8Gh9XBD/67jrCyb9nnoly91e6q8APx5gOkc74rwLzNts7Vy+2o7WLA=
+X-Received: by 2002:a05:690c:3349:b0:70c:c013:f2f with SMTP id
+ 00721157ae682-717b1a2758amr39801867b3.35.1752067525556; Wed, 09 Jul 2025
+ 06:25:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1752067471;VERSION=7994;MC=1675866844;ID=104516;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2998FD515E657164
+References: <12700973.O9o76ZdvQC@rjwysocki.net> <CAPDyKFpGH=ZUyQ0wbkEKVLxknm59hDX6DNm9hXpuqzHCpoe-KQ@mail.gmail.com>
+ <CAJZ5v0how7VXTjuxtd533zNeqKwCqnJDVVKK=Vpww_HbQkwxKw@mail.gmail.com> <CAJZ5v0isuV-HDyGCrLeFp0WFcCQoQpi9dMEbJnWrsOdvk4Bf1A@mail.gmail.com>
+In-Reply-To: <CAJZ5v0isuV-HDyGCrLeFp0WFcCQoQpi9dMEbJnWrsOdvk4Bf1A@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 9 Jul 2025 15:24:49 +0200
+X-Gm-Features: Ac12FXwgWJz7GdJwpPBaSqY2rwe7dkrPOkMHFV_ripKLsw4BjkwqjZLt2vHONYE
+Message-ID: <CAPDyKFooD2z9J0vYC0GzcoyQBsEv1PEM4tG9RiQktDGt94sAPA@mail.gmail.com>
+Subject: Re: [PATCH v1] PM: runtime: Take active children into account in pm_runtime_get_if_in_use()
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Alex Elder <elder@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Some PHYs (e.g. LAN8710A) require a reset after power-on,even for
-MDIO register access.
-The current implementation of fwnode_mdiobus_register_phy() and
-get_phy_device() attempt to read the id registers without ensuring
-that the PHY had a reset before, which can fail on these devices.
+On Wed, 9 Jul 2025 at 14:48, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Wed, Jul 9, 2025 at 2:06=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.o=
+rg> wrote:
+> >
+> > On Wed, Jul 9, 2025 at 1:47=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.=
+org> wrote:
+> > >
+> > > On Wed, 9 Jul 2025 at 12:41, Rafael J. Wysocki <rjw@rjwysocki.net> wr=
+ote:
+> > > >
+> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > >
+> > > > For all practical purposes, there is no difference between the situ=
+ation
+> > > > in which a given device is not ignoring children and its active chi=
+ld
+> > > > count is nonzero and the situation in which its runtime PM usage co=
+unter
+> > > > is nonzero.  However, pm_runtime_get_if_in_use() will only incremen=
+t the
+> > > > device's usage counter and return 1 in the latter case.
+> > > >
+> > > > For consistency, make it do so in the former case either by adjusti=
+ng
+> > > > pm_runtime_get_conditional() and update the related kerneldoc comme=
+nts
+> > > > accordingly.
+> > > >
+> > > > Fixes: c0ef3df8dbae ("PM: runtime: Simplify pm_runtime_get_if_activ=
+e() usage")
+> > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > ---
+> > > >  drivers/base/power/runtime.c |   27 ++++++++++++++++++---------
+> > > >  1 file changed, 18 insertions(+), 9 deletions(-)
+> > > >
+> > > > --- a/drivers/base/power/runtime.c
+> > > > +++ b/drivers/base/power/runtime.c
+> > > > @@ -1203,10 +1203,12 @@
+> > > >   *
+> > > >   * Return -EINVAL if runtime PM is disabled for @dev.
+> > > >   *
+> > > > - * Otherwise, if the runtime PM status of @dev is %RPM_ACTIVE and =
+either
+> > > > - * @ign_usage_count is %true or the runtime PM usage counter of @d=
+ev is not
+> > > > - * zero, increment the usage counter of @dev and return 1. Otherwi=
+se, return 0
+> > > > - * without changing the usage counter.
+> > > > + * Otherwise, if its runtime PM status is %RPM_ACTIVE and (1) @ign=
+_usage_count
+> > > > + * is set, or (2) @dev is not ignoring children and its active chi=
+ld count is
+> > > > + * nonero, or (3) the runtime PM usage counter of @dev is not zero=
+, increment
+> > > > + * the usage counter of @dev and return 1.
+> > > > + *
+> > > > + * Otherwise, return 0 without changing the usage counter.
+> > > >   *
+> > > >   * If @ign_usage_count is %true, this function can be used to prev=
+ent suspending
+> > > >   * the device when its runtime PM status is %RPM_ACTIVE.
+> > > > @@ -1228,7 +1230,8 @@
+> > > >                 retval =3D -EINVAL;
+> > > >         } else if (dev->power.runtime_status !=3D RPM_ACTIVE) {
+> > > >                 retval =3D 0;
+> > > > -       } else if (ign_usage_count) {
+> > > > +       } else if (ign_usage_count || (!dev->power.ignore_children =
+&&
+> > > > +                  atomic_read(&dev->power.child_count) > 0)) {
+> > >
+> > > I am not sure I understand why this is needed, sorry.
+> > >
+> > > If someone and somehow we have "dev->power.runtime_status =3D=3D
+> > > RPM_ACTIVE", then the dev's parents/childrens and suppliers/consumers
+> > > should have been reference counted correctly already.
+> >
+> > Sure.
+> >
+> > > Otherwise it should not have been possible to set the runtime_status =
+to RPM_ACTIVE
+> > > in the first place, right?
+> >
+> > Right.
+> >
+> > runtime_status must be RPM_ACTIVE, but pm_runtime_get_if_in_use() only
+> > wants to bump it up if the device is in use in addition to that.
+>
+> I mean pm_runtime_get_if_in_use() only wants to bump up the device's
+> usage counter if it is in use already.
+>
+> > So far it's been checking the usage counter only though.
+>
+> And the above is correct.
 
-This patch addresses that shortcoming, by always resetting the PHY
-(when such property is given in the device tree). To keep the code
-impact minimal, a change was also needed in phy_device_remove() to
-prevent asserting the reset on device removal.
+Aha, I understand your point now.
 
-According to the documentation of phy_device_remove(), it should
-reverse the effect of phy_device_register(). Since the reset GPIO
-is in undefined state before that, it should be acceptable to leave
-it unchanged during removal.
+Comparing how a runtime resume of consumer-device-link works (it bumps
+the provider's usage count), your change makes perfect sense as it
+aligns the behaviour for child devices.
 
-Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
----
- drivers/net/mdio/fwnode_mdio.c | 20 ++++++++++++++++++--
- drivers/net/phy/phy_device.c   |  3 ---
- 2 files changed, 18 insertions(+), 5 deletions(-)
+[...]
 
-diff --git a/drivers/net/mdio/fwnode_mdio.c b/drivers/net/mdio/fwnode_mdio.c
-index aea0f03575689..36b60544327b6 100644
---- a/drivers/net/mdio/fwnode_mdio.c
-+++ b/drivers/net/mdio/fwnode_mdio.c
-@@ -139,8 +139,24 @@ int fwnode_mdiobus_register_phy(struct mii_bus *bus,
- 	}
- 
- 	is_c45 = fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45");
--	if (is_c45 || fwnode_get_phy_id(child, &phy_id))
--		phy = get_phy_device(bus, addr, is_c45);
-+	if (is_c45 || fwnode_get_phy_id(child, &phy_id)) {
-+		/* get_phy_device is NOT SAFE HERE, since the PHY may need a HW RESET.
-+		 * First create a dummy PHY device, reset the PHY, then call
-+		 * get_phy_device.
-+		 */
-+		phy = phy_device_create(bus, addr, 0, 0, NULL);
-+		if (!IS_ERR(phy)) {
-+			if (is_of_node(child)) {
-+				/* fwnode_mdiobus_phy_device_register performs the reset */
-+				rc = fwnode_mdiobus_phy_device_register(bus, phy, child, addr);
-+				if (!rc)
-+					phy_device_remove(phy);
-+				/* PHY has been reset at this point. */
-+			}
-+			phy_device_free(phy);
-+			phy = get_phy_device(bus, addr, is_c45);
-+		}
-+	}
- 	else
- 		phy = phy_device_create(bus, addr, phy_id, 0, NULL);
- 	if (IS_ERR(phy)) {
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index 13dea33d86ffa..da4ddce04e5fb 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -1102,9 +1102,6 @@ void phy_device_remove(struct phy_device *phydev)
- 
- 	device_del(&phydev->mdio.dev);
- 
--	/* Assert the reset signal */
--	phy_device_reset(phydev, 1);
--
- 	mdiobus_unregister_device(&phydev->mdio);
- }
- EXPORT_SYMBOL(phy_device_remove);
--- 
-2.39.5
+That said, please add:
 
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
+Kind regards
+Uffe
 
