@@ -1,117 +1,117 @@
-Return-Path: <linux-kernel+bounces-722672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A44AFDD98
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:42:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A63ADAFDD9F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67CFF1C24ADD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:42:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F09217F563
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7354B1DAC95;
-	Wed,  9 Jul 2025 02:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A0C1DDC2C;
+	Wed,  9 Jul 2025 02:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XiaZ0XsF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="YeGZXVxu"
+Received: from lovable-gwydion.relay-egress.a.mail.umich.edu (relay-egress-host.us-east-2.a.mail.umich.edu [18.216.144.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1251C32FF;
-	Wed,  9 Jul 2025 02:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951511D54F7;
+	Wed,  9 Jul 2025 02:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.216.144.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752028952; cv=none; b=Vep14L8kszlLu+mhxCY9eEPAytP0sGEF5QkCLmoREdViu990W2Ctu/QMKqCgsFoRERFRvd/Ir2/ra3fS8j/ZoA+LWKvQ2/NiQwwPGzuBqAAa8QtIzXc57E0dDgqUe02JwEVHnPjJIbTkIFIkUsljyi+wZnvahWDArTzjUiR7Ja0=
+	t=1752029095; cv=none; b=eU6/avF1LEI4D3Czi2wU9hNAg4MI7usd8KnGCUZ4Ok3mG4QKBb6Xmf8LjGR+thJL1/ee0NdY4FqCcGoBGAw3gELORjd4rrrwxzZf+A8uPrAL3OHAEhr7Cj2qF0ET8UOV/WliXOnQ55zTxwuyU86daqjHvv2DD9HiEfKBuUJIx3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752028952; c=relaxed/simple;
-	bh=xglNHnUKEdCNHWEZUbyP1kgYRLDTNgnIgCGRAbmV9TY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FVX8+WMklpTv+UGAWdz0hEA5qTnOhTrgDKXl3rgxTQ9qYctCnG3WLa6jD57QKvd5qLx1qyhmGQfJngYNq5V/wJkGrIHHGRJUg733mbyppElJomVhoPSR7KtV14jva2kPhr3kZKsXOGm2UUfB+PHJPsN31hk0aRpmwv47cgJGDsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XiaZ0XsF; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752028951; x=1783564951;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xglNHnUKEdCNHWEZUbyP1kgYRLDTNgnIgCGRAbmV9TY=;
-  b=XiaZ0XsFlZdrVXZKf6axemcA1BeWynOkjxaDjNcXA26aqWZBeaS5rqsh
-   5hvY3VCx2Agsj+rlvGSDDaxFcuv5TuN7R51mvp/ZAUQ5wwgsG478Z4nfn
-   1FR48p+t+DlbUJjBMJlx92MFJzO6XWIA9I+rMTtoorxZF6sdn25Xmrdcx
-   SjW1Z0MrZza2ok7hYfZFQ5Koip6n5VaiSVa8GcFDKQ86cHJwuGFp+F/AZ
-   wOcQ5wBUK0oQzmC7hphMdKY+09myTPpM9n/kXjdROOmaIFFVAxf27TQTt
-   aNEMxxXBM1c59i/4XgOFCEob+TcmmkwDuUgrKNAUUqJkooJhQPHjyJ1fv
-   Q==;
-X-CSE-ConnectionGUID: DXkI2VHrTAqqoZ8WFmJprQ==
-X-CSE-MsgGUID: nQ/0cMemRyG3SLd9qhqrNQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="71861557"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="71861557"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2025 19:42:30 -0700
-X-CSE-ConnectionGUID: tytLHidlQRG86rBxSg+7Kw==
-X-CSE-MsgGUID: TUVthDdhTX+U4YWnIEJPfw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="161204389"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 08 Jul 2025 19:42:27 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uZKlN-0002zX-0w;
-	Wed, 09 Jul 2025 02:42:25 +0000
-Date: Wed, 9 Jul 2025 10:42:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yuwen Chen <ywen.chen@foxmail.com>, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jaegeuk@kernel.org, chao@kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, Yuwen Chen <ywen.chen@foxmail.com>
-Subject: Re: [PATCH] f2fs: improve the performance of f2fs_lookup
-Message-ID: <202507091026.yb48YXt5-lkp@intel.com>
-References: <tencent_0D8BB6ABAB0880DB7BFCCE35EDBC3DCFF505@qq.com>
+	s=arc-20240116; t=1752029095; c=relaxed/simple;
+	bh=AUjRfsmtfEtzEUulCJjdYlIztPE4v3RWoPJHKXE92Ng=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=OLusSkPk4z85dCjGKTmbJxnkWkCHse11wBGQrf9g3DXxE2bJ0bqyJx0LDWXNPVuIDKzUJYKHayURDHdQXUTCr0sDhMUgzcTl/4qGi3sIL6WV5qvRpdUnwVewJUsZ5vM2mW4KGaKBm25/Wt7N0ILHf61WKswdsebcc47q1pXX/9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=YeGZXVxu; arc=none smtp.client-ip=18.216.144.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
+Received: from inspiring-wechuge.authn-relay.a.mail.umich.edu (ip-10-0-74-32.us-east-2.compute.internal [10.0.74.32])
+	by lovable-gwydion.relay-egress.a.mail.umich.edu with ESMTPS
+	id 686DD72E.389596A4.14DF24C4.1013114;
+	Tue, 08 Jul 2025 22:42:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=umich.edu;
+	s=relay-1; t=1752028969;
+	bh=FgUb7F7hDUYl370c9CJvKvlQkXQ8nsxDnF74XDbF674=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To;
+	b=YeGZXVxuyGbgnA5hJR3YYD5GgOmJAEkFshCKTJkA6QLLJGoV6urMLLfeljiubUtbS
+	 Ps+8nfF5ctnEW18BAh67ei9JQ3gpZbz7UFfhIokAicR4nVTpRcanI7CT0rAfOitNWs
+	 ZZUcq7cmcasPl3wzf4gEc8JE4/Q1oGHbgVqrvt2Sm4aJrGHQjiAgg74wlhTyJjUCXk
+	 v8IuP3j2nERJXv+29iU31Ac4CoaUpuAYgrdpHofQptIqzps8yB077puK8mXJ5aTCi/
+	 ZPBZa6XI5JpxmBOGMq/yuB0ai6JN/rGYpyS7FcNLKI7g5tRPCB0Yyanp/hzXK9jB7y
+	 /VwIdg2BZ817g==
+Authentication-Results: inspiring-wechuge.authn-relay.a.mail.umich.edu; 
+	iprev=pass policy.iprev=185.104.139.75 (ip-185-104-139-75.ptr.icomera.net);
+	auth=pass smtp.auth=tmgross
+Received: from localhost (ip-185-104-139-75.ptr.icomera.net [185.104.139.75])
+	by inspiring-wechuge.authn-relay.a.mail.umich.edu with ESMTPSA
+	id 686DD726.2E0AACB5.716CEEF3.1030639;
+	Tue, 08 Jul 2025 22:42:49 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_0D8BB6ABAB0880DB7BFCCE35EDBC3DCFF505@qq.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 08 Jul 2025 22:42:45 -0400
+Message-Id: <DB76FN8WH6HK.1LST75877I45J@umich.edu>
+Cc: <airlied@gmail.com>, <simona@ffwll.ch>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+ <gregkh@linuxfoundation.org>, <maarten.lankhorst@linux.intel.com>,
+ <mripard@kernel.org>, <tzimmermann@suse.de>, <davidgow@google.com>,
+ <nm@ti.com>
+Subject: Re: [PATCH v4 3/6] drivers: gpu: switch to `#[expect(...)]` in
+ nova-core/regs.rs
+From: "Trevor Gross" <tmgross@umich.edu>
+To: =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-pm@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+ <kunit-dev@googlegroups.com>
+X-Mailer: aerc 0.20.1
+References: <20250701053557.20859-1-work@onurozkan.dev>
+ <20250701053557.20859-4-work@onurozkan.dev>
+In-Reply-To: <20250701053557.20859-4-work@onurozkan.dev>
 
-Hi Yuwen,
+On Tue Jul 1, 2025 at 1:35 AM EDT, Onur =C3=96zkan wrote:
+> This makes it clear that the warning is expected not just
+> ignored, so we don't end up having various unnecessary
+> linting rules in the codebase.
+>
+> Some parts of the codebase already use this approach, this
+> patch just applies it more broadly.
+>
+> No functional changes.
+>
+> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
+> ---
+>  drivers/gpu/nova-core/regs.rs | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.r=
+s
+> index 5a1273230306..87e5963f1ebb 100644
+> --- a/drivers/gpu/nova-core/regs.rs
+> +++ b/drivers/gpu/nova-core/regs.rs
+> @@ -2,7 +2,7 @@
+>
+>  // Required to retain the original register names used by OpenRM, which =
+are all capital snake case
+>  // but are mapped to types.
+> -#![allow(non_camel_case_types)]
+> +#![expect(non_camel_case_types)]
+>
+>  #[macro_use]
+>  mod macros;
+> --
+> 2.50.0
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on jaegeuk-f2fs/dev-test]
-[also build test WARNING on jaegeuk-f2fs/dev brauner-vfs/vfs.all linus/master v6.16-rc5 next-20250708]
-[cannot apply to tytso-ext4/dev]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Yuwen-Chen/f2fs-improve-the-performance-of-f2fs_lookup/20250708-184528
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
-patch link:    https://lore.kernel.org/r/tencent_0D8BB6ABAB0880DB7BFCCE35EDBC3DCFF505%40qq.com
-patch subject: [PATCH] f2fs: improve the performance of f2fs_lookup
-config: arc-randconfig-001-20250709 (https://download.01.org/0day-ci/archive/20250709/202507091026.yb48YXt5-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250709/202507091026.yb48YXt5-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507091026.yb48YXt5-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> Warning: fs/libfs.c:1908 function parameter 'prealloc' not described in 'generic_ci_match'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reviewed-by: Trevor Gross <tmgross@umich.edu>
 
