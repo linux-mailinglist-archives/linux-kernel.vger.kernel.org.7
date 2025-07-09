@@ -1,267 +1,132 @@
-Return-Path: <linux-kernel+bounces-722964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 227DBAFE12F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:21:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78FD9AFE132
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 686E13A6D01
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:21:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72F58188EEAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A8626F45A;
-	Wed,  9 Jul 2025 07:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9D926F45A;
+	Wed,  9 Jul 2025 07:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="E3ShT38r"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="u+O8eUBe"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E1A8479;
-	Wed,  9 Jul 2025 07:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF9E33997
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 07:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752045705; cv=none; b=DOkmV8Y0BNZtEqBdJ749Umg6TpOHLZ9Sv2guZleLrAdwTYfcP3Mm9wtKiVo4aXL7bVYXp0pqQKNbSO0BYtWUS4KH3JptNpKihBfPpQO+4a/C6hVI9SVuqaDKnmlXoNHHJrG0MAma/HU2R/O0M4+XYM+7XxfO7pLCMiyKJl68WrU=
+	t=1752045771; cv=none; b=dfKHz1a50VmmC+nEFFBI2qyBHmMcOgqlJiRQx1Ekhp5O+l/cMtfS3DtwxkJdhHBZ/MPl+GJTuXL4Q7pJ87lZUTVTgHNYU1ZuVkwUSevUinOlooBqurOnV0kOfirzdYJqXoyGJ7t1V/YFmR1YDEJx7Fg+YcbMqdmyVDXh35RGzqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752045705; c=relaxed/simple;
-	bh=pEcl3vC69AF0Tv/5/88fWW5Hw/Y4TZSFwrX6fmLotzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gOAKlpgEThVTcPQbnZ0GfOXAjnkcFwbzhbb6Nqvpy6rdEaieeIhVGFyCnD39H4oYiYL19+uHObn6OZemCoPQxoFRu3P7k9ayiYuzc4UAE2mofiNjVIFCeJNui0EzqUTzS+yV0B+NaZNLpkrlc+/6rwPvsHy/bdPG8PQi98WhJrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=E3ShT38r; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1752045634;
-	bh=GoIFS/oT809niQxBcniSLqIMIRGY6NhO7yYAKbDXQxA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=E3ShT38rOzC+7jBiqAuA5CotSFoBLdMhQyI9kPfi6g9ANxNrFTcMCmzva0R3zJogO
-	 UspAXBdyOTU4vYKj0BV3Z/TDz/xXyxC5htHQG8pRtW6brk/HL3RQ88SYLRQYpMIzY8
-	 X4TNHmu0ReBJ7Tp7tGhWASXIzwB7ZCU26PBWBQdvg3lxwMGRFsNBPFNxg0m4nb7qao
-	 TadQU2ckrpK4fsSHKy1aNZHj9v0B5xXjoLINiI+1GGJPfISbO6YGt71dcQYyKOmCR0
-	 Nz7EtzA8H+03ZnZ9pcP/ntDSHnnC+gDFWQVnsrZwJQhSjcw+hmHWvCuvOuNExrULXp
-	 NEULHIpYmT6Hw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bcTsG3nCVz4wxh;
-	Wed,  9 Jul 2025 17:20:34 +1000 (AEST)
-Date: Wed, 9 Jul 2025 17:21:38 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg KH <greg@kroah.com>, Shawn Guo <shawnguo@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, James Clark <james.clark@linaro.org>, Larisa
- Grigore <Larisa.Grigore@nxp.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, "Radu Pirea (NXP OSS)"
- <radu-nicolae.pirea@oss.nxp.com>
-Subject: linux-next: manual merge of the usb tree with the imx-mxs tree
-Message-ID: <20250709172138.34ffb49f@canb.auug.org.au>
+	s=arc-20240116; t=1752045771; c=relaxed/simple;
+	bh=AJRk+myXB/Ct0dNapM9Txaj2/oHKv4lFWeN4J4Yd0o4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=in+w6vd8fGBtX2KuWaX7sO9Ekk/ORbEa7TZFLty48nSS6W/hXdivqPjU8069FUBodtHQr5DM7DR4AqgPDFtFc2xTzFYZxIzlzm4UObRflRKAUHF2KcTh6BK8H3Uew8b259DpIkk0kHQZ+h2GVg+Q/3GxSadP/xwaBfkftwkMsWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=u+O8eUBe; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250709072246euoutp021dc99b64bd888af2494d4bada90d21cf~QhFeOzxFK0658606586euoutp02z
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 07:22:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250709072246euoutp021dc99b64bd888af2494d4bada90d21cf~QhFeOzxFK0658606586euoutp02z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1752045766;
+	bh=qIHbeL0LG8G55ANYGcdpujwUfCstWXCxAhnRkcjxSxo=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=u+O8eUBejQ0U3lDJSuGDT7O5A/2mhQfjdEr38ZnnSm3Z8lCrRXk6b+nevytM15awo
+	 25r7QXh3IEnRHwfD96bFEDkSZQ3ByBaTuHMeYQrrxorgL8Y3By2iGo6nYl2vAjLAM5
+	 n0Mdgya150E1spOOOyzKUWIQ1LJBxrPnGh+Tabqg=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250709072246eucas1p1d64e4c09a83c92497d76cb3efeaf6509~QhFdx5tSY0368803688eucas1p1I;
+	Wed,  9 Jul 2025 07:22:46 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250709072243eusmtip29880f65c5964c8e0828e1df05a890579~QhFbeaA3i1291112911eusmtip2E;
+	Wed,  9 Jul 2025 07:22:43 +0000 (GMT)
+Message-ID: <4eb09ec9-bb7b-4266-8771-26b4819f47db@samsung.com>
+Date: Wed, 9 Jul 2025 09:22:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/iAbvfqnFyAm+22lccuJ0=SE";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/12] Apply drm_bridge_connector helper for the
+ Analogix DP driver
+To: Damon Ding <damon.ding@rock-chips.com>, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
+	dianders@chromium.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250709070139.3130635-1-damon.ding@rock-chips.com>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250709072246eucas1p1d64e4c09a83c92497d76cb3efeaf6509
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250709070241eucas1p1351e2b508cc648d1fafd93640b471e7b
+X-EPHeader: CA
+X-CMS-RootMailID: 20250709070241eucas1p1351e2b508cc648d1fafd93640b471e7b
+References: <CGME20250709070241eucas1p1351e2b508cc648d1fafd93640b471e7b@eucas1p1.samsung.com>
+	<20250709070139.3130635-1-damon.ding@rock-chips.com>
 
---Sig_/iAbvfqnFyAm+22lccuJ0=SE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 09.07.2025 09:01, Damon Ding wrote:
+> PATCH 1 is a small format optimization for struct analogid_dp_device.
+> PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
+> PATCH 3-8 are preparations for the movement of the panel/bridge parsing.
+> PATCH 9 is to apply a better API for the encoder initialization.
+> PATCH 10-11 are to apply the newly added API to find panel or bridge.
+> PATCH 12 is to apply the drm_bridge_connector helper.
 
-Hi all,
+This patchset conflicts with my recent fix for Analogix DP driver 
+applied to drm-misc-fixes:
 
-Today's linux-next merge of the usb tree got conflicts in:
+https://lore.kernel.org/all/20250627165652.580798-1-m.szyprowski@samsung.com/
 
-  arch/arm64/boot/dts/freescale/s32g2.dtsi
-  arch/arm64/boot/dts/freescale/s32g3.dtsi
 
-between commit:
+> Damon Ding (12):
+>    drm/bridge: analogix_dp: Formalize the struct analogix_dp_device
+>    drm/bridge: analogix_dp: Move &drm_bridge_funcs.mode_set to
+>      &drm_bridge_funcs.atomic_enable
+>    drm/bridge: analogix_dp: Add &analogix_dp_plat_data.bridge
+>    drm/exynos: exynos_dp: Remove &exynos_dp_device.ptn_bridge
+>    drm/exynos: exynos_dp: Remove redundant
+>      &analogix_dp_plat_data.skip_connector
+>    drm/bridge: analogix_dp: Remove redundant
+>      &analogix_dp_plat_data.skip_connector
+>    drm/bridge: analogix_dp: Add support to find panel or bridge
+>    drm/rockchip: analogix_dp: Apply drmm_encoder_init() instead of
+>      drm_simple_encoder_init()
+>    drm/rockchip: analogix_dp: Apply analogix_dp_find_panel_or_bridge()
+>    drm/exynos: exynos_dp: Apply analogix_dp_find_panel_or_bridge()
+>    drm/bridge: analogix_dp: Remove unused APIs for AUX bus
+>    drm/bridge: analogix_dp: Apply drm_bridge_connector helper
+>
+>   .../drm/bridge/analogix/analogix_dp_core.c    | 370 ++++++++++--------
+>   .../drm/bridge/analogix/analogix_dp_core.h    |   8 +-
+>   drivers/gpu/drm/exynos/exynos_dp.c            |  27 +-
+>   .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  42 +-
+>   include/drm/bridge/analogix_dp.h              |   6 +-
+>   5 files changed, 217 insertions(+), 236 deletions(-)
+>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-  06ee2f0e2180 ("arm64: dts: Add DSPI entries for S32G platforms")
-
-from the imx-mxs tree and commit:
-
-  d1b07cc0868f ("arm64: dts: s32g: Add USB device tree information for s32g=
-2/s32g3")
-
-from the usb tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm64/boot/dts/freescale/s32g2.dtsi
-index da79bb9daa35,4be6534ed01d..000000000000
---- a/arch/arm64/boot/dts/freescale/s32g2.dtsi
-+++ b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-@@@ -384,45 -376,29 +384,68 @@@
-  			status =3D "disabled";
-  		};
- =20
- +		spi0: spi@401d4000 {
- +			compatible =3D "nxp,s32g2-dspi";
- +			reg =3D <0x401d4000 0x1000>;
- +			interrupts =3D <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
- +			clocks =3D <&clks 26>;
- +			clock-names =3D "dspi";
- +			spi-num-chipselects =3D <8>;
- +			bus-num =3D <0>;
- +			dmas =3D <&edma0 0 7>, <&edma0 0 8>;
- +			dma-names =3D "tx", "rx";
- +			status =3D "disabled";
- +		};
- +
- +		spi1: spi@401d8000 {
- +			compatible =3D "nxp,s32g2-dspi";
- +			reg =3D <0x401d8000 0x1000>;
- +			interrupts =3D <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
- +			clocks =3D <&clks 26>;
- +			clock-names =3D "dspi";
- +			spi-num-chipselects =3D <5>;
- +			bus-num =3D <1>;
- +			dmas =3D <&edma0 0 10>, <&edma0 0 11>;
- +			dma-names =3D "tx", "rx";
- +			status =3D "disabled";
- +		};
- +
- +		spi2: spi@401dc000 {
- +			compatible =3D "nxp,s32g2-dspi";
- +			reg =3D <0x401dc000 0x1000>;
- +			interrupts =3D <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
- +			clocks =3D <&clks 26>;
- +			clock-names =3D "dspi";
- +			spi-num-chipselects =3D <5>;
- +			bus-num =3D <2>;
- +			dmas =3D <&edma0 0 13>, <&edma0 0 14>;
- +			dma-names =3D "tx", "rx";
- +			status =3D "disabled";
- +		};
- +
-+ 		usbmisc: usbmisc@44064200 {
-+ 			#index-cells =3D <1>;
-+ 			compatible =3D "nxp,s32g2-usbmisc";
-+ 			reg =3D <0x44064200 0x200>;
-+ 		};
-+=20
-+ 		usbotg: usb@44064000 {
-+ 			compatible =3D "nxp,s32g2-usb";
-+ 			reg =3D <0x44064000 0x200>;
-+ 			interrupt-parent =3D <&gic>;
-+ 			interrupts =3D <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>, /* OTG Core */
-+ 					 <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>; /* OTG Wakeup */
-+ 			clocks =3D <&clks 94>, <&clks 95>;
-+ 			fsl,usbmisc =3D <&usbmisc 0>;
-+ 			ahb-burst-config =3D <0x3>;
-+ 			tx-burst-size-dword =3D <0x10>;
-+ 			rx-burst-size-dword =3D <0x10>;
-+ 			phy_type =3D "ulpi";
-+ 			dr_mode =3D "host";
-+ 			maximum-speed =3D "high-speed";
-+ 			status =3D "disabled";
-+ 		};
-+=20
-  		i2c0: i2c@401e4000 {
-  			compatible =3D "nxp,s32g2-i2c";
-  			reg =3D <0x401e4000 0x1000>;
-diff --cc arch/arm64/boot/dts/freescale/s32g3.dtsi
-index 9af35e82fdc9,191d2dab4254..000000000000
---- a/arch/arm64/boot/dts/freescale/s32g3.dtsi
-+++ b/arch/arm64/boot/dts/freescale/s32g3.dtsi
-@@@ -444,45 -435,29 +444,68 @@@
-  			status =3D "disabled";
-  		};
- =20
- +		spi0: spi@401d4000 {
- +			compatible =3D "nxp,s32g3-dspi", "nxp,s32g2-dspi";
- +			reg =3D <0x401d4000 0x1000>;
- +			interrupts =3D <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
- +			clocks =3D <&clks 26>;
- +			clock-names =3D "dspi";
- +			spi-num-chipselects =3D <8>;
- +			bus-num =3D <0>;
- +			dmas =3D <&edma0 0 7>, <&edma0 0 8>;
- +			dma-names =3D "tx", "rx";
- +			status =3D "disabled";
- +		};
- +
- +		spi1: spi@401d8000 {
- +			compatible =3D "nxp,s32g3-dspi", "nxp,s32g2-dspi";
- +			reg =3D <0x401d8000 0x1000>;
- +			interrupts =3D <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
- +			clocks =3D <&clks 26>;
- +			clock-names =3D "dspi";
- +			spi-num-chipselects =3D <5>;
- +			bus-num =3D <1>;
- +			dmas =3D <&edma0 0 10>, <&edma0 0 11>;
- +			dma-names =3D "tx", "rx";
- +			status =3D "disabled";
- +		};
- +
- +		spi2: spi@401dc000 {
- +			compatible =3D "nxp,s32g3-dspi", "nxp,s32g2-dspi";
- +			reg =3D <0x401dc000 0x1000>;
- +			interrupts =3D <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
- +			clocks =3D <&clks 26>;
- +			clock-names =3D "dspi";
- +			spi-num-chipselects =3D <5>;
- +			bus-num =3D <2>;
- +			dmas =3D <&edma0 0 13>, <&edma0 0 14>;
- +			dma-names =3D "tx", "rx";
- +			status =3D "disabled";
- +		};
- +
-+ 		usbmisc: usbmisc@44064200 {
-+ 			#index-cells =3D <1>;
-+ 			compatible =3D "nxp,s32g3-usbmisc";
-+ 			reg =3D <0x44064200 0x200>;
-+ 		};
-+=20
-+                 usbotg: usb@44064000 {
-+                         compatible =3D "nxp,s32g3-usb", "nxp,s32g2-usb";
-+                         reg =3D <0x44064000 0x200>;
-+                         interrupt-parent =3D <&gic>;
-+                         interrupts =3D <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>,=
- /* OTG Core */
-+                                      <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>; /=
-* OTG Wakeup */
-+                         clocks =3D <&clks 94>, <&clks 95>;
-+                         fsl,usbmisc =3D <&usbmisc 0>;
-+                         ahb-burst-config =3D <0x3>;
-+                         tx-burst-size-dword =3D <0x10>;
-+                         rx-burst-size-dword =3D <0x10>;
-+                         phy_type =3D "ulpi";
-+                         dr_mode =3D "host";
-+                         maximum-speed =3D "high-speed";
-+                         status =3D "disabled";
-+                 };
-+=20
-  		i2c0: i2c@401e4000 {
-  			compatible =3D "nxp,s32g3-i2c",
-  				     "nxp,s32g2-i2c";
-
---Sig_/iAbvfqnFyAm+22lccuJ0=SE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhuGIIACgkQAVBC80lX
-0GyZlQf/YLJ63e6cg8K/8eDtR65oQ5ZyTeho4GjU3/xVwgBOTZZRZ1CglGc6fcgR
-mIAlT0qoQGZwLSdabP+nE45HvX6CYo56IcufInF3v9pzvHJZetwLbMydOn2yQJ5y
-dTXyLaR3TZZ0VkVKuho2uyjt2LiKYGVrgZg/Gd7/OYvNAh2qRdn7HUmscmyPPI0B
-IBIDxEINidoB0GtFs60zO1oW315aS1/zqYZgkIiBGlHEIOXzipSKyOnu8E56zLgS
-FCcXR7FKRVOae5NWJDFtgZIfgQIF8sgTJDZ+3z8nmvuLrbciWYfYGh8nMbrvT72/
-LtcCUJQ0Kdl4UuFn+N5hqWfc9wvT+A==
-=k1xX
------END PGP SIGNATURE-----
-
---Sig_/iAbvfqnFyAm+22lccuJ0=SE--
 
