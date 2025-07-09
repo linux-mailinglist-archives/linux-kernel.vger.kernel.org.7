@@ -1,173 +1,154 @@
-Return-Path: <linux-kernel+bounces-723961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7BA8AFECFE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:04:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A7BAFED0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC2A71C22F2B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:00:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 833765A2F6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6348C2E54DE;
-	Wed,  9 Jul 2025 15:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF083299ABD;
+	Wed,  9 Jul 2025 15:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MfyKwjx3"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XB3b0WVk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8B52E5421
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 15:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA7A81749
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 15:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752073208; cv=none; b=Xkbz/mZvwlIZl7Y79pDZG5zdcfHsxMGtHZ6JfG2X2vP3jjqLenTvYdEeQQltC876VKbWwxrSnuVZYpZ8ra2d0nWirV1kVWDorSUX8kVuZvRxlTHMhytL2K0CfzLD074nNXp04C5H3La/m/tpbRDFTbm7McIuFpVTvJUHpGyTaW4=
+	t=1752073269; cv=none; b=IijiPX/LPwlXURFnbq3ySi7RHBShXBfwfRUSiJCoY8I0ag/lkrcwq6RtCLSvT+U1EJ7wkIsAghKwgFNd106jThuvF5cD4aq5RXdYKooT7Q1y90Jz9dVFDdXO3YxSWWc7l19MCjJp42DCx7qDIbe1dusP1TyZhVVRgMi2D5jnvIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752073208; c=relaxed/simple;
-	bh=B9Oiu1rYO7kb4Rbx/R2PzIjG/vjXHDSn58ZvxIx3Eng=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BpFfgD5A7gd++UoGKJ1IGKRzVh3q92yjWt3PMvkSawi3XhbSxQOoSULbJaW+dZk1qkWbEx7vdUeEuk6L9tfysfWowl5ZpfXK3OrAgZoq51ZYKGBXf/X5dKa/YVXFKAMjiknDXE+EhJpXN3ihPs1lizrEClG1DHkpCdYIv47Y1W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MfyKwjx3; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2356ce66d7cso90333425ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 08:00:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752073206; x=1752678006; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EgTnAwf0t/6F9APa2rh1DyKxauhomMCkahh2HJItwX0=;
-        b=MfyKwjx3nX24F99iC2py8lcZG7sdzQhK02cBPPcFo7Hso0DPH0GbdpYt+irMdF8l2z
-         NCR0bAGeK2BozuZaO/bAfffrGPfwV4SKXU+/3Oc7RgfxUU/lk6so04f0uE6Noc3DhEpr
-         9njwESzWnkeWVBrZXvzKpKzyqrOkOLhh3SFY7C17iNzpI+iWHL4VOLT8AKfXS9jQ1F7u
-         mE0Ip19mGChe1OWQAT/adAIbGZolaugq47z+rn9QLtngPRy7Da5UbyJ/8Zv0g+QRwZhQ
-         cklJwMJlgRKVY0dU/JVDh7jV/5thD7xKAZigJF+rpGfO2Ah40u10BihxMhbHu5GW4H6m
-         xmpw==
+	s=arc-20240116; t=1752073269; c=relaxed/simple;
+	bh=Y9ykHGirYpNqtGJXkqW0tDJEz7IdqI8cXIVyGrNiyQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g97Abyc2JkZgzrNJk8FzT1GO/ivT7GTn5cAblSMRwUvYP2SbcQWkTFU7cNqBm1R9nSYhjNoJvI9jllsu0c8Th1R03fRH2fVmjwY8NQ6KscKw+VwSkbSPBbh/PU+JGjKA6L16bpun7MxBuMO+GLp/M6Sls9i586FuViv1nMKk+d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XB3b0WVk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752073266;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B+y5Mc7Ku9xFduFSvneUFDHlNdHuhrWh+oYLysJt700=;
+	b=XB3b0WVk5QsQOFrfvT25/xBdWBT59dVu3Syc+WMacPX9ZbAZJTYX9K1kyqdM9VQb5TflQM
+	9Z963Zz/0Qp2evzWki5f/x7te2/RjqhuLwrGGL4rAVw+Of/Iwkd9EqWN31uV9Leq7O3NWC
+	ckfJ82XFY+XYc5axN5PzJHNbrtilH2E=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-433-avM8L4paOzOEGocv9Fniew-1; Wed, 09 Jul 2025 11:01:05 -0400
+X-MC-Unique: avM8L4paOzOEGocv9Fniew-1
+X-Mimecast-MFC-AGG-ID: avM8L4paOzOEGocv9Fniew_1752073264
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43e9b0fd00cso202415e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 08:01:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752073206; x=1752678006;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EgTnAwf0t/6F9APa2rh1DyKxauhomMCkahh2HJItwX0=;
-        b=XCFWb4fLsy/6FcRdjz005e4y5YlR9zBagYd87VS6M/lLDxLfJG7ekfZTesZTsIHxrT
-         ktXh8TKfKTKaQQp2xr42raKb4wqkEMMFllf6GwrhY/ozQbTSZKm6CCC5Y+khd8aQVtjk
-         OlQtpKwtqVFKU1jqcx64xJfNsoGg3IKboQXUtbhezz0iyWV1EIemRHtbez2H+mVINPqN
-         Twxt/ck3jd7nMEBPpdaxxGgPjqY/v0qY2/UJqYsUHQtxoxEITVbTSA1v3RhW4AvXxtRC
-         SFPy+9iy5ehekMJzdBuH6o7WKcEqPW6Cd29i+TFP6yyFbzd+El/a0167jcSi02XaFtUB
-         KpoA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPlVoQko89G9aHq9zKL0re+dKtYOtwdrAx0zZEcWRzpCF1jkBxcp8Q5tT2E1wi13CEPDiE9efkfIn35XI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8p1YB+wakrH2gLOlmAfYJFXoLiGotcF41QrDwq8R3AHHGYYCz
-	4DiFZcDr7VCuPCEkvWwAMwfF3zeQRTTQ/0unnAx3gUUM8y22tj2Sno+0+Wf1bufUMUVLvnN/w0y
-	+9YF7WQ==
-X-Google-Smtp-Source: AGHT+IGIxCNWDvTXdGWXukQOWTlHDKHcqKhvDakCv68J774ZGhWIyAsbzsp2bcmyGLtmMTkKs6eBKiZcgtc=
-X-Received: from plvv2.prod.google.com ([2002:a17:902:d082:b0:234:3f28:4851])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2f87:b0:235:e96b:191c
- with SMTP id d9443c01a7336-23ddb34fa56mr52368805ad.29.1752073205780; Wed, 09
- Jul 2025 08:00:05 -0700 (PDT)
-Date: Wed, 9 Jul 2025 08:00:04 -0700
-In-Reply-To: <CAGtprH86N7XgEXq0UyOexjVRXYV1KdOguURVOYXTnQzsTHPrJQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1752073264; x=1752678064;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B+y5Mc7Ku9xFduFSvneUFDHlNdHuhrWh+oYLysJt700=;
+        b=b2DLqy7SSVjG5RPkZc+q/M7LLE5m2QTYGpLQt5PMuSzBLa4fpEXUBWGHSQaghiD/Rh
+         hcIL3Z9y1Mn1uoq57ikXMmFyVKTJDJeazQ7O5CvdOVoLcmZVyM0yxQg39VsdLj46UIa+
+         Yb6rEmwz+IL8SJ2HdIlmcPYhrG0EIzxU/V3bGbzjSECSaIroaYE7gvEzbcl5ZzU2sUnO
+         pX3D8o61NLVZ9PzKGD+7wqZPqqjJN6pQBUl92VCGVJGzr/0ilAC4LCk+rpuZvTZeVeWj
+         JnFsVdOpujSD1eBBIMiM3oZvJkZofkrBA7B+tzeHk9hLqfACgPb634aBv3Jg0wYipfKm
+         Hazg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ6oFgr+fmsROIAiN0tV6KBP4KehnC3hWOAcEKKnMy0EKO2wFxuc66Eu2nCvP7NvyD4urlYivCNtG4pkI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvxC3NReFKOhf9ZXSHzrtfhTWE3DPU62qW/clMifZsFWRPVHMZ
+	WQu8RGTJ9xWOy6jclp5oSJTCAVSlS2d3yF7bbqpfowfMNt8/+BGYODjjCAGdx7cLPKX+Rx54033
+	hsxaem3AE+wKHsmQS+mJNVcGiqmO028Rhi6r6g9BaQoqw0cGz5vpX5M9wwN/2yg4FZA==
+X-Gm-Gg: ASbGncsi5RCBIxQpwqNlPdOFl4QaDIDB7ogW+2tL88oLd85weX5iXsinxS8FbyBwUmb
+	/x+IU5qISXEC8HxXZYJ1oxuKjj4MoTp+FKiWSHvqc2zgjdyNBG/Qz0KsD28bMgIUYhJxG+fD+pG
+	SiXeqruF91d9ZfrDKb5saSMnesSFXzmmaU5OIweqYAmSYRHKNArOnyPHktrRUJkaQu18rE8XMNr
+	gLch0RifbUZ1MwMVrz69QVIlpINqUs7jZxKnnuaR9GtkG5wyKrsLU/nunXJoQQ/dVL5cjXXtIpF
+	EK0xyeIJ1bMPe8e6dHnEkvkFk2E=
+X-Received: by 2002:a05:600c:37ca:b0:453:5c7e:a806 with SMTP id 5b1f17b1804b1-454cd646fb2mr72509325e9.8.1752073262670;
+        Wed, 09 Jul 2025 08:01:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGxFA3JrFBZwnjsmUsRBbJZ6PJIlFVkCWBmo9J2d0qr9LD4rFkvuvX6RsAssbfW4rug3RVliA==
+X-Received: by 2002:a05:600c:37ca:b0:453:5c7e:a806 with SMTP id 5b1f17b1804b1-454cd646fb2mr72507625e9.8.1752073261100;
+        Wed, 09 Jul 2025 08:01:01 -0700 (PDT)
+Received: from leonardi-redhat ([176.206.17.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454d511cb48sm26116305e9.36.2025.07.09.08.01.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 08:01:00 -0700 (PDT)
+Date: Wed, 9 Jul 2025 17:00:58 +0200
+From: Luigi Leonardi <leonardi@redhat.com>
+To: Xuewei Niu <niuxuewei.nxw@antgroup.com>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
+	Stefano Garzarella <sgarzare@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, linux-hyperv@vger.kernel.org, 
+	virtualization@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	niuxuewei97@gmail.com
+Subject: Re: [PATCH net-next v6 2/4] vsock: Add support for SIOCINQ ioctl
+Message-ID: <h44zrd5qem6vzcmoc45kccx2xaex2lnx6ybf63h5tzc23yfppv@toywbfazwjri>
+References: <20250708-siocinq-v6-0-3775f9a9e359@antgroup.com>
+ <20250708-siocinq-v6-2-3775f9a9e359@antgroup.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <aG0pNijVpl0czqXu@google.com> <a0129a912e21c5f3219b382f2f51571ab2709460.camel@intel.com>
- <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com>
- <eeb8f4b8308b5160f913294c4373290a64e736b8.camel@intel.com>
- <CAGtprH8cg1HwuYG0mrkTbpnZfHoKJDd63CAQGEScCDA-9Qbsqw@mail.gmail.com>
- <b1348c229c67e2bad24e273ec9a7fc29771e18c5.camel@intel.com>
- <aG1dbD2Xnpi_Cqf_@google.com> <5decd42b3239d665d5e6c5c23e58c16c86488ca8.camel@intel.com>
- <aG1ps4uC4jyr8ED1@google.com> <CAGtprH86N7XgEXq0UyOexjVRXYV1KdOguURVOYXTnQzsTHPrJQ@mail.gmail.com>
-Message-ID: <aG6D9NqG0r6iKPL0@google.com>
-Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
-From: Sean Christopherson <seanjc@google.com>
-To: Vishal Annapurve <vannapurve@google.com>
-Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "pvorel@suse.cz" <pvorel@suse.cz>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
-	Jun Miao <jun.miao@intel.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
-	"pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, "vbabka@suse.cz" <vbabka@suse.cz>, 
-	"peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"amoorthy@google.com" <amoorthy@google.com>, "tabba@google.com" <tabba@google.com>, 
-	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "maz@kernel.org" <maz@kernel.org>, 
-	"vkuznets@redhat.com" <vkuznets@redhat.com>, 
-	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, 
-	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, 
-	"quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, Wei W Wang <wei.w.wang@intel.com>, 
-	Fan Du <fan.du@intel.com>, 
-	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, Dave Hansen <dave.hansen@intel.com>, 
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, 
-	"quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "aik@amd.com" <aik@amd.com>, 
-	"usama.arif@bytedance.com" <usama.arif@bytedance.com>, "fvdl@google.com" <fvdl@google.com>, 
-	"jack@suse.cz" <jack@suse.cz>, "quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, 
-	Kirill Shutemov <kirill.shutemov@intel.com>, "willy@infradead.org" <willy@infradead.org>, 
-	"steven.price@arm.com" <steven.price@arm.com>, "anup@brainfault.org" <anup@brainfault.org>, 
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "keirf@google.com" <keirf@google.com>, 
-	"mic@digikod.net" <mic@digikod.net>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "nsaenz@amazon.es" <nsaenz@amazon.es>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "muchun.song@linux.dev" <muchun.song@linux.dev>, 
-	Zhiquan1 Li <zhiquan1.li@intel.com>, "rientjes@google.com" <rientjes@google.com>, 
-	Erdem Aktas <erdemaktas@google.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>, 
-	"david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, "hughd@google.com" <hughd@google.com>, 
-	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, Haibo1 Xu <haibo1.xu@intel.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
-	"rppt@kernel.org" <rppt@kernel.org>, "steven.sistare@oracle.com" <steven.sistare@oracle.com>, 
-	"jarkko@kernel.org" <jarkko@kernel.org>, "quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, 
-	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, Kai Huang <kai.huang@intel.com>, 
-	"shuah@kernel.org" <shuah@kernel.org>, "bfoster@redhat.com" <bfoster@redhat.com>, 
-	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, Chao P Peng <chao.p.peng@intel.com>, 
-	"pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, Alexander Graf <graf@amazon.com>, 
-	"nikunj@amd.com" <nikunj@amd.com>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "yuzenghui@huawei.com" <yuzenghui@huawei.com>, 
-	"jroedel@suse.de" <jroedel@suse.de>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
-	"jgowans@amazon.com" <jgowans@amazon.com>, Yilun Xu <yilun.xu@intel.com>, 
-	"liam.merwick@oracle.com" <liam.merwick@oracle.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
-	"quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Ira Weiny <ira.weiny@intel.com>, 
-	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
-	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "qperret@google.com" <qperret@google.com>, 
-	"dmatlack@google.com" <dmatlack@google.com>, "james.morse@arm.com" <james.morse@arm.com>, 
-	"brauner@kernel.org" <brauner@kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>, "pgonda@google.com" <pgonda@google.com>, 
-	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "roypat@amazon.co.uk" <roypat@amazon.co.uk>, 
-	"hch@infradead.org" <hch@infradead.org>, "will@kernel.org" <will@kernel.org>, 
-	"linux-mm@kvack.org" <linux-mm@kvack.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250708-siocinq-v6-2-3775f9a9e359@antgroup.com>
 
-On Wed, Jul 09, 2025, Vishal Annapurve wrote:
-> I think we can simplify the role of guest_memfd in line with discussion [1]:
+On Tue, Jul 08, 2025 at 02:36:12PM +0800, Xuewei Niu wrote:
+>Add support for SIOCINQ ioctl, indicating the length of bytes unread in the
+>socket. The value is obtained from `vsock_stream_has_data()`.
+>
+>Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
+>---
+> net/vmw_vsock/af_vsock.c | 22 ++++++++++++++++++++++
+> 1 file changed, 22 insertions(+)
+>
+>diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+>index 2e7a3034e965db30b6ee295370d866e6d8b1c341..bae6b89bb5fb7dd7a3a378f92097561a98a0c814 100644
+>--- a/net/vmw_vsock/af_vsock.c
+>+++ b/net/vmw_vsock/af_vsock.c
+>@@ -1389,6 +1389,28 @@ static int vsock_do_ioctl(struct socket *sock, unsigned int cmd,
+> 	vsk = vsock_sk(sk);
+>
+> 	switch (cmd) {
+>+	case SIOCINQ: {
+>+		ssize_t n_bytes;
+>+
+>+		if (!vsk->transport) {
+>+			ret = -EOPNOTSUPP;
+>+			break;
+>+		}
+>+
+>+		if (sock_type_connectible(sk->sk_type) &&
+>+		    sk->sk_state == TCP_LISTEN) {
+>+			ret = -EINVAL;
+>+			break;
+>+		}
+>+
+>+		n_bytes = vsock_stream_has_data(vsk);
+>+		if (n_bytes < 0) {
+>+			ret = n_bytes;
+>+			break;
+>+		}
+>+		ret = put_user(n_bytes, arg);
+>+		break;
+>+	}
+> 	case SIOCOUTQ: {
+> 		ssize_t n_bytes;
+>
+>
+>-- 2.34.1
+>
 
-I genuinely don't understand what you're trying to "simplify".  We need to define
-an ABI that is flexible and robust, but beyond that most of these guidelines boil
-down to "don't write bad code".
+LGTM!
 
-> 1) guest_memfd is a memory provider for userspace, KVM, IOMMU.
+Reviewed-by: Luigi Leonardi <leonardi@redhat.com>
 
-No, guest_memfd is a memory provider for KVM guests.  That memory *might* be
-mapped by userspace and/or into IOMMU page tables in order out of functional
-necessity, but guest_memfd exists solely to serve memory to KVM guests, full stop.
-
-> 3) KVM should ideally associate the lifetime of backing
-> pagetables/protection tables/RMP tables with the lifetime of the
-> binding of memslots with guest_memfd.
-
-Again, please align your indentation.
-
->          - Today KVM SNP logic ties RMP table entry lifetimes with how
->            long the folios are mapped in guest_memfd, which I think should be
->            revisited.
-
-Why?  Memslots are ephemeral per-"struct kvm" mappings.  RMP entries and guest_memfd
-inodes are tied to the Virtual Machine, not to the "struct kvm" instance.
-
-> Some very early thoughts on how guest_memfd could be laid out for the long term:
-> 1) guest_memfd code ideally should be built-in to the kernel.
-
-Why?  How is this at all relevant?  If we need to bake some parts of guest_memfd
-into the kernel in order to avoid nasty exports and/or ordering dependencies, then
-we can do so.  But that is 100% an implementation detail and in no way a design
-goal.
 
