@@ -1,135 +1,92 @@
-Return-Path: <linux-kernel+bounces-723336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD6DAFE5F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:39:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD7CAFE5FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DE3F188E452
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:39:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F92E5852B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF49928D8D2;
-	Wed,  9 Jul 2025 10:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3E028D8EB;
+	Wed,  9 Jul 2025 10:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OOP8+wbi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOW09LQb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B266D2749F1;
-	Wed,  9 Jul 2025 10:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C7928D85A;
+	Wed,  9 Jul 2025 10:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752057545; cv=none; b=HHP2sJdFPaQ3WpZ9VjkaI5Z9wXyifizQBEzSAjknpQnGX3SiO8G2ghvzaACPVfGzh4S9X9UZ+omCgSUoIQ8G079l3SmnA5zibUw4Chdox1k5dJz3ImTYUntyAisN3Owjl8AZGjPjAM/QwU0yw5zSaCgOZDW04vFSUlLGravByoE=
+	t=1752057574; cv=none; b=mhHcAqh0rJUEXy67M4FM73AKFuX8VXNqRxI2olElCZ4uG+WQ7qgwMzF8x0A+yLXwo9cjxqVjoLlraxMxqoR+q1U1ZXyUjSmLZUGdjs00CPFcKqlQmt+uB3HiZpDGZwLg74dK/2YAr2mXNCSVac9Ns02reAieCGvkMa8xoZnBwOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752057545; c=relaxed/simple;
-	bh=paNdGmMvXYKesKr9lHKdIn0w6u/c7Qg2bSBDUVpg9kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U+xOaPELu1ZyxIDpc6o3zm2Yo861zXGCooiuv5tGWbrsUQV/hFWS0JdmP0noVdz36G5ovnHzX59xHabw1ZBTifxt0EzYv3Ptj0OVyERKoNCWzfzVRK9FqRQ5Ee/yugDCTWacRSsVy06d+WJvhzFHE611v7UX+6z1zS6QESLswMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OOP8+wbi; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752057544; x=1783593544;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=paNdGmMvXYKesKr9lHKdIn0w6u/c7Qg2bSBDUVpg9kc=;
-  b=OOP8+wbidhXynzV57CiNYToKK6d4edfaqjoviBH7G58BY3i+Cpwv8ff3
-   ypzS8z3yCjt0x+7GiMU3OhJ5Ovx2OWIwbYXX2oJCeVldL+rVIuAzJdXmO
-   U8CAhWuriSNSo2/n9kDJrUtYyaRCz+1J173fvuEE8cEYqbeLNcavBxtBW
-   gLGGMBgbHt+X4uZJGpwcETe2TFNaguxf9GkniPVPy0cGi4Ig6XmtAsgCD
-   nT2qFvD4hq5Bt88X20wKCq/dXACw3s8qI5RA9Nmtcn2/KR1FMWZX8CzlV
-   ads/50lIdPzKgRu0mYM8HkmfajWjv201hLpphE/k29pwx1fLlVBAsvmes
-   A==;
-X-CSE-ConnectionGUID: UG8RRdClSaeweqTrD6Wnqg==
-X-CSE-MsgGUID: 1o4Qsv0tQI2da9QsiLs3UA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="71898553"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="71898553"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 03:39:03 -0700
-X-CSE-ConnectionGUID: DKLMS5x4S+qHUf1zKmtxkQ==
-X-CSE-MsgGUID: GI4OZrhPQGG8QCZqg4GF9Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="155869422"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP; 09 Jul 2025 03:38:50 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 231611B7; Wed, 09 Jul 2025 13:38:49 +0300 (EEST)
-Date: Wed, 9 Jul 2025 13:38:49 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
-	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
-	Alexey Kardashevskiy <aik@amd.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Daniel Sneddon <daniel.sneddon@linux.intel.com>, 
-	Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Breno Leitao <leitao@debian.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
-	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
-	linux-mm@kvack.org
-Subject: Re: [PATCHv9 13/16] x86/traps: Handle LASS thrown #SS
-Message-ID: <j76lggwdlxv3lbs7iaqny42ay3m4qqwjnf6vqgesaykpozciaj@a2azdryhmaig>
-References: <20250707080317.3791624-1-kirill.shutemov@linux.intel.com>
- <20250707080317.3791624-14-kirill.shutemov@linux.intel.com>
- <1a2f6b4a-114b-4c27-83f9-1aac46f2e7c0@intel.com>
+	s=arc-20240116; t=1752057574; c=relaxed/simple;
+	bh=bgnOqIsaKdvrhLSAXS+Qh617bRsj8kZXkOFBQC3gxy8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tLa4/JXTrvX6iWz/Pckv7CU7r8NPInqxDgiASTIyORnTYAxuqrVIItemFbvWra3z9yma15ryAzdz8x18qNsezoHw0tlqwQLqte9aU23xbi3KzkXgkRUHS6p7tqrsFXxxBhYm2z7GSJRvOSTEM0c0H/QOpEkxG2Sxx2vRSKXK+kY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KOW09LQb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECF4CC4CEF4;
+	Wed,  9 Jul 2025 10:39:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752057574;
+	bh=bgnOqIsaKdvrhLSAXS+Qh617bRsj8kZXkOFBQC3gxy8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KOW09LQbBFg9693+YvdTxAukZCjesUj+nLFIiwkQJh1s8SJRdeS9xVPI8XBVRMFBq
+	 Obs8AoxILT2+BfyYKsFpzRrhhvn8bzO4k8gudv7mdWw8glgfQVZ9B7+ufEn9wRxX/Q
+	 7IJDTqjnlTzyihzIix+kaRQsbGdFjyx9ZIDZEAyuXfJt0OAyaihYJjEndaR2yOWDh6
+	 T7QZ/g4ESwEvDw0iRSCmB/b7Mqy6wabhnhTVeV9Y7A8CGOzvhi6Bmi8ma+pGmLSdGC
+	 LCt4tEIZ/Fapyq6PHwS86IErrR8y6oumVnY1hs1jGVCeEGgdAGB5XqfYemjGLYZRlE
+	 tJSgyFJfpRJUw==
+From: neeraj.upadhyay@kernel.org
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	paulmck@kernel.org,
+	joelagnelf@nvidia.com,
+	frederic@kernel.org,
+	boqun.feng@gmail.com,
+	urezki@gmail.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com,
+	qiang.zhang1211@gmail.com,
+	neeraj.iitr10@gmail.com,
+	neeraj.upadhyay@amd.com,
+	"Neeraj Upadhyay (AMD)" <neeraj.upadhyay@kernel.org>
+Subject: [PATCH rcu 0/5] Expedited RCU changes for v6.17
+Date: Wed,  9 Jul 2025 16:09:04 +0530
+Message-Id: <20250709103909.15498-1-neeraj.upadhyay@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1a2f6b4a-114b-4c27-83f9-1aac46f2e7c0@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 08, 2025 at 10:12:28PM -0700, Sohil Mehta wrote:
-> On 7/7/2025 1:03 AM, Kirill A. Shutemov wrote:
-> 
-> > +	hint = get_kernel_exc_address(regs, &exc_addr);
-> > +	if (hint != EXC_NO_HINT)
-> > +		printk(SSFSTR ", %s 0x%lx", kernel_exc_hint_help[hint], exc_addr);
-> > +
-> > +	if (hint != EXC_NON_CANONICAL)
-> > +		exc_addr = 0;
-> > +
-> > +	die_addr(SSFSTR, regs, error_code, exc_addr);
-> 
-> I see a slight difference between the #GP handling and the #SS handling
-> here. For the #GP case, we seem to pass the hint string to die_addr().
-> 
-> However, for the #SS, the hint is printed above and only SSFSTR gets
-> passed onto die_addr(). I am curious about the reasoning.
+From: "Neeraj Upadhyay (AMD)" <neeraj.upadhyay@kernel.org>
 
-I hate how 'desc' size is defined in #GP handler:
+Hello,
 
-	char desc[sizeof(GPFSTR) + 50 + 2*sizeof(unsigned long) + 1] = GPFSTR;
+This patch series contains following updates to the expedited RCU
+code (rebased on v6.16-rc3):
 
-Too much voodoo to my liking. And it will overflow if any hint string is
-going to be longer than 50.
+Frederic Weisbecker (5):
+  rcu/exp: Protect against early QS report
+  rcu/exp: Remove confusing needless full barrier on task unblock
+  rcu/exp: Remove needless CPU up quiescent state report
+  rcu/exp: Warn on QS requested on dying CPU
+  rcu/exp: Warn on CPU lagging for too long within hotplug IPI's
+    blindspot
 
-I don't want to repeat this magic for #SS.
-
-I would argue we need to print directly in #GP handler as I do in #SS.
-But, IMO, it is outside of the scope of this patchset.
+ kernel/rcu/tree.c        |  8 +++--
+ kernel/rcu/tree_exp.h    | 69 +++++++++++-----------------------------
+ kernel/rcu/tree_plugin.h |  1 -
+ 3 files changed, 25 insertions(+), 53 deletions(-)
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.40.1
+
 
