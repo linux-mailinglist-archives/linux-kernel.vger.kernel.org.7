@@ -1,223 +1,483 @@
-Return-Path: <linux-kernel+bounces-722864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D1C4AFE008
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:39:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10FDDAFE19F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55CF67A550E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:38:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99CB67A4FFC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ABD626C3B2;
-	Wed,  9 Jul 2025 06:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D164271464;
+	Wed,  9 Jul 2025 07:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="FfQ4jwzZ"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011017.outbound.protection.outlook.com [40.107.130.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fl3ECfGW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F30526B747;
-	Wed,  9 Jul 2025 06:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752043180; cv=fail; b=S1uk+6cD9flH3nmxhL3gdO2OauEWmXoo/Ddq6yRDSQWxnVDhUlmldZS9RwsQ4wdhdI9zi62EFBkUPpesb+3MGLO7eIX/O45RVf3jrb5eoym4Qp9cQLkaamKzhhz+fwke9o1QHD0Pb6nnNSywUMRSCOIVqNM1AYPa9nnJh4bR7zc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752043180; c=relaxed/simple;
-	bh=rRqHoD4+jWn/weHGl7+eVHD1YdVT8Pikrhq//JPEwx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=il9znrwgnvk8YCleTPADU1I8PMRFjiA2R5XL+zI+c0jZJ1OAlQiHCUV+FQVv4HqZXswO1B6ef8LTR9qQOnsNJQgaA94o7SSKmksImjsYxdjIf2Fzwl5ZDXtkX8qkHi5d0JnD9gb5QPvnNZGVA9dIFvWxscGGUllOiYAqHMTu2lA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=FfQ4jwzZ; arc=fail smtp.client-ip=40.107.130.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gNm68ofDpMkTzJ2jLRoL3a+ItFIsrA9aYXVe59Vy6S4FskmTHYSeJDE9kOJ2lSb5pDMj+Bw7Jsj5foGDUJO93BafZaILuz4JEEyID16VKHSMhUTk35Td89KK8oz/SZ86eTod/8nsF6ytzGO4yybgnPAXDnpgeEZTDvPyAijofA3pSqjaZIMg+pgyVH8BxEplUq09wULaKIpLKMMMzWe2DeMpfgN7cpdmTSoiPnVFMjeMdrRFDrsjtjNcthKKPoDW6BK24kSUadKJ1xvUPT26qFrQqUdqmGvHl/TmiJnXVKDR9kLASeSyWxDQBWamOhqE88529wFMBOgRZibSP9jAWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8d8g0SYKmOr4v166dBx5Whp4pPSDxdmFAdP9l6JJIss=;
- b=mUyVxoovKJdUunDdfGiGqx6qgr9buKMTgcHUjJ33IogG/w2E1sOIiFlqQJkxv0yTDQNHxmPnraQVtdXlHOzX57gbhlCsVRKrS0/a2k0q43BG6CJvoZPHDZg9IDd3Fho+ahdpATHRGp+J551qZKwa0bB3Pk2DH7kFVZK5FqgLo+JzGgn8G83DmZvLe9wna3uigXSEH4p43MiZrJLxPLAq06S0r2R/Y9hrMgKRMwN45zuMF4ZrD/A1xRDMpPOrYK16KQW1W5atpkKyIa1Sa0PEoL4Ba3FR09voVvBIdQXp9qA0NkKA/q9Ag9WzicGu+xl5WU/3pC/KuQiqViokFs7/zw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8d8g0SYKmOr4v166dBx5Whp4pPSDxdmFAdP9l6JJIss=;
- b=FfQ4jwzZbLI8w/3uu0UYk8h87GmGeWnjz9oKs5HavTz8DTW1yVbx5q2W/daFvqucP8SBY25d87JDgc36G3h8kgz6eb3XdiRjSegIqm9UGN37N3E3PRttZjQa/pl5PPEY1F3xXtMahsCzHwiJO8UtfmZqytimpwEm+cMSbXtlHACLt0jCeoEFrLy/Qjgq1aoDniXsZd9HfFobnBYWDH/jt4IY9uk9YBh/erSz+WjVJTx+mN0IJ0FuUlL19W3gxjAcHrAFV6gf+yJIDXjhB/PatUw1xsiYg3tKXqvYZr69l5VYNL5cDeRX+tkGhv83tVglFc6FK/ZasvsBRin1VQv68g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DB9PR04MB8461.eurprd04.prod.outlook.com (2603:10a6:10:2cf::20)
- by GVXPR04MB9736.eurprd04.prod.outlook.com (2603:10a6:150:11c::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Wed, 9 Jul
- 2025 06:39:34 +0000
-Received: from DB9PR04MB8461.eurprd04.prod.outlook.com
- ([fe80::b1b9:faa9:901b:c197]) by DB9PR04MB8461.eurprd04.prod.outlook.com
- ([fe80::b1b9:faa9:901b:c197%5]) with mapi id 15.20.8901.024; Wed, 9 Jul 2025
- 06:39:34 +0000
-Date: Wed, 9 Jul 2025 15:49:40 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v3 3/5] remoteproc: imx_rproc: Add support for i.MX95
-Message-ID: <20250709074940.GA14535@nxa18884-linux>
-References: <20250625-imx95-rproc-1-v3-0-699031f5926d@nxp.com>
- <20250625-imx95-rproc-1-v3-3-699031f5926d@nxp.com>
- <aG1J2_nK-LkLQVRj@p14s>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aG1J2_nK-LkLQVRj@p14s>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: MA0PR01CA0018.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:80::18) To DB9PR04MB8461.eurprd04.prod.outlook.com
- (2603:10a6:10:2cf::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3217E5383
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 07:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752047533; cv=none; b=JsizZcAe2iLizThSTg9dYj7dfWve3bwQXPnHljnwaMA0ySQfH0Mt0pArk7GqD5xcJQzh571RyCHp4Ym2IbZNsC21fSu8/llhKzo0QeRA9WwZEdnd3tDg13c2WflgPPtFfJG2BMx/SH5/zfWdTBofD1ecfRCqCnt/f38M+mCNS5Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752047533; c=relaxed/simple;
+	bh=1qcahQrEZdkGmEiE1qu5yomcfeYsv/Vi1NgI8r1D8bg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bNde0J4C7NR0WznXlYNYaHTXdGd0fhUmMHjLhcU7bq06HvGsOeTF6DI/DlK7bTumZ1f0nQjoBDj2bxFxadAWScAVpxRkmU61Zavg3l2/QsxJC2ATCQGeYCyl5BmQ7Jk/XxlFoXpPet/9TX3SgQp+8jEr8OHLdlX9q0AMa4txnP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fl3ECfGW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7C0AC4CEF7
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 07:52:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752047532;
+	bh=1qcahQrEZdkGmEiE1qu5yomcfeYsv/Vi1NgI8r1D8bg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Fl3ECfGWuZjd3wtF/dZsbr8XKiuhP5DZroBpXzRCr42dmTORgk7Ac1NVDogtzQP3R
+	 M9+yf7/7VVuGTr7b5V0+PMW6wU5F8o0soRMNan7MrwyWSi1pog3ssWIIDBgKPN/1iI
+	 tJ6z9cTqQS+/Z7356peJgo0CAkPEooh29VOUQ7Maw2CCJKhMl9zM5E4Ki4+93U6YrX
+	 KMLnkviLHWkzLjIHJDJQA9dEKHKwuWPLkGZm1JO63Mj3cWBUmkxax86GJSl8ND/VXm
+	 H+Lei32v9KBu5glc9dY0jjva4GsmSwR4vAV9xO2qNwDn7s024rD2GpAjRTqdedzjNQ
+	 r+gcc4kV/w2Nw==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55628eaec6cso4779480e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 00:52:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX7E7ezl0E5WRJ+mXzFPE69wziLITzV3WHrFyYsidxw+M08afajC3pIXCwPb5fh0eMsa0FleHjIjE6bsOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCpNtLdCrGPhRumHmjYX2brdDNui4DvVDnmBx4ARxM8FUPbs8T
+	3J9asRY6cufbXE1EiDyZ0Vg6WAZbB3uhKWKsDCKDPSsQ5KJCBaSmJqQEYzvaISZ4pNNdHxDtvZR
+	TD+SpPMHITOPQBLEw55qWRmSWnbybKNY=
+X-Google-Smtp-Source: AGHT+IFew6oNe6UetkXdBVhkDLby9toS3IGot9N7zhkQ86BJQtOMm/DwDtFSIZ2V2ubepSuyij5NUNh2FqLHtLv6NmM=
+X-Received: by 2002:a05:651c:2117:b0:32b:3689:8d80 with SMTP id
+ 38308e7fff4ca-32f48519358mr4045411fa.18.1752047530973; Wed, 09 Jul 2025
+ 00:52:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB8461:EE_|GVXPR04MB9736:EE_
-X-MS-Office365-Filtering-Correlation-Id: de55fc6c-45e4-4a03-9eae-08ddbeb35e04
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|19092799006|7416014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bkTqu2QBkCCY+shdRyeWCFv/uWa0hDsjZqB2zi1335hGxXGxYaEgJOQVrub9?=
- =?us-ascii?Q?Xi6qqi4459Mot2NXTgo4FgEj8faAHc3MpPRc8I+VvT/ey14szl/NHV/kQgIu?=
- =?us-ascii?Q?3iCsfKDcrPE4A7WEbu5ifG4qulo0umNLQ5s2S1iIjoyDw66X3q11tInZ/W3K?=
- =?us-ascii?Q?50t+3RCtv/AiVpxgO8MBsyH9SfD0x66LRrkQQvWgEnQVu1jFHVRSFfD3D8kY?=
- =?us-ascii?Q?CJqgaofCOKv3xC11SPsxTpz1GzzZAjqFpFoVjiW6K/Z2It4J+H1bjlD8N/CV?=
- =?us-ascii?Q?5tT8DZSAuVCZiYej9MKCrS1UupZ6WOleUWaKmZd+Hu64WKdG/GAhdjnQLNm5?=
- =?us-ascii?Q?JJCtLzKFIUg6Lv0RhILWU/SDmMdI8MddtLpk+hbrHFwDYGl6ApfqmkY8pBKf?=
- =?us-ascii?Q?5O39r9OICY020MKgfR8uDaUyxcyLdIp4+lt1COmdEjGvjNLqsxvFFULUg37F?=
- =?us-ascii?Q?9DnSaCOu6l5wcWlzf2Cw+Zui+C0KGyrp/sdFCcZvvCdx9PjeKHSkSelYEl41?=
- =?us-ascii?Q?JzMQWyCbd7zpECmZIdTioM7WEhRU+OEQGyfX+gscUXEF+Isku07mtKB32G7T?=
- =?us-ascii?Q?LrQ9gewPX/xHhFGd/In1IQG4uqip8fpnNIrGGJwcq4kBBN4MiQc3ocz3TqjW?=
- =?us-ascii?Q?pzld2Qo7sBAfGyooZPIYk9bB/70ORKXCt2fsQFtmlCj2KjmRjhltnvhfhjSu?=
- =?us-ascii?Q?MUdy1ypIAzjjg6K+zWj9+TCVyTIYiIJLeVhCqLr5N3scNnbiu8qYNGRrSCyW?=
- =?us-ascii?Q?9K/fyK331zSgevAhV3WLtnVYIvpkoymABviKUdp1tStUZz3vDngjtvsm9ntl?=
- =?us-ascii?Q?ZdoxOQwsYynz+W59A4iCuqwiDQe2aKxtdGHt5Chl0WAonfowZwfUDaAOtxH1?=
- =?us-ascii?Q?H8748IVx5gNg3KKURgjqpShBTcP8zKcFjXP4aCH6cOW6JdxQQcqEbuWnFNlK?=
- =?us-ascii?Q?8emEIaSFS5rxhd9R/BwesCv28Fr17vrulMaxbFe1Dcg20wX28v7sT1hXVwVF?=
- =?us-ascii?Q?fFIUtBgNuKpWVUHT2/nI6/HDzcyCeHd/jbUbxIsdCVubCa4iFYAWtEZl2+Hp?=
- =?us-ascii?Q?wLdZ/bj4vCNX6oaL068aAElX/zc0rRvnk5XVP2Lm3C3QF18uFjnB8ulMIKhm?=
- =?us-ascii?Q?744jZd+V+9sc5uq9+9uTWle/BxhWCNGJJE1T6R3oRvfox63cnY6n7QTr9MVx?=
- =?us-ascii?Q?FKke1LaLPX+MOBIORyMF54ooPNXTp1XC0CjXbfRa/qzB8LcqPcnHrZiS/gHB?=
- =?us-ascii?Q?wcb3IyLAgAvKS4fA+YuQ084cOuOAnQTynCFJHkogQLrDXu+gjhmVxON22BQ0?=
- =?us-ascii?Q?8WmS8/7YoSQcW+3/U6t95PKIdaXUsYDqeQ2JgQ+xW8acQAkO4A/S2ByQc0Dw?=
- =?us-ascii?Q?8R1qP9hQdURLWAhUCuUsDeNfp7dzdrPa4PovKEA3dd3WI2nbQmLsJy7VIrsD?=
- =?us-ascii?Q?r8Sp0Xdo/1Imp8FdfcoeXZF1P1ZKfB1Qi2DHA5zUaynmQijtG8uOsA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8461.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(19092799006)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?eVUyc3G8p8hGUoHpJV5Xw1xE5lAj6NYpzZpJ88hzgaqfpeAoiRALa/XcR6UP?=
- =?us-ascii?Q?oZfLem/Coxvaqh3eACUcw1agJxg6VlhugqrD6wAECZl1CgEEo3WLOOl1e/VB?=
- =?us-ascii?Q?THllu0FTsl3wZWa1QnY75sRNSM86aTkbcCxjL2DBVTdI07ks4ImjhiAK8fmd?=
- =?us-ascii?Q?Tck2/JniFoKu9UJmoec9QAaHKBokgfXLMaM8SjZ0BS4WNxl5fY80FCCxcufL?=
- =?us-ascii?Q?4oEoKenaEnCk+UKrSHtDtUcbCAaj8w3rc/oK4CggGcy1VPRyJ92Q6zCr+emC?=
- =?us-ascii?Q?yB3NkxJQRAeInPayU9TquE3L2/eCdAKBFMGCbk8fktgbyB/gC1aavT72WfA9?=
- =?us-ascii?Q?90IFy/9daBEuvmOIrMbj5BN6m1fUAolWexo1i4AMcP6Elr7hEOFX/XC32LQ8?=
- =?us-ascii?Q?ISinZw7tqTUw1/2KcWgKJ7H3tvpvKDo+gkZy2YT3z4eSErKJ9Ws7FcgDwYK2?=
- =?us-ascii?Q?j0J83QjhFky3hkh1kziHwbhPzJsXJGE1QO17uKSYl/lRue5yi1ivG1QyGbx3?=
- =?us-ascii?Q?3djarnb9LoFuNJMo29NwF0z5RTg+N2kDnerjgiPEiCTa1e9BSeYF2BPyFwSB?=
- =?us-ascii?Q?84rqXx7OnwnhTZ10FLeWYUHbWJJt+BHY3D43qRkBkOIh/EXo1/rJvO3akPMk?=
- =?us-ascii?Q?7ibOAPlzXB+IRDJahmWV911HAS61GBKtFTceAq84LpRQKQoR9rLDuVO7zWcn?=
- =?us-ascii?Q?j47+GC8NVetJQOxkqcBCjQrKNW50S2DajbkD9qVdZGrOUwayIAjsXKQJDQk+?=
- =?us-ascii?Q?+5M7Xbfs7m82pOqrKmvbWL1uh+Q3FNa1TVrJ6l6UpHd4JyrDHyAC5fXqhr6m?=
- =?us-ascii?Q?aPBNTgiVSckKkOmwE6vn2qZVFLmb6I6D4ppfb6b9cI6v9jRtuuFhLg+rM6mX?=
- =?us-ascii?Q?O3Mv/KiGCmS6qncZZE/kO7ThYEJ9HpB78Xr1hIg3tSHw368kNST9xdJwG8zi?=
- =?us-ascii?Q?C5ghVmIYz+8Ympfe+JMhG9emactwQsNYpZv+9mDGxik7HWQeqI48/8gEbnYp?=
- =?us-ascii?Q?DeXXJLGdSA2/CxUi9yGOa/4FRuSOwviCU92NC+V+Hs1ZoVsOgoHKoouCBIWk?=
- =?us-ascii?Q?UIIuz0dH2lxJ7yWKDyQf9JZf8If78d7pR/x4YLNPhSRgxZdhtV9kwWEGp93p?=
- =?us-ascii?Q?WcFk0Ok+o7gLxlKtnxs4MXxm3byGBXU8ex45J1t/3vFZL6uOd720P1pR2CU+?=
- =?us-ascii?Q?U+7H22FHUi4Va/3mSYiQRfJAIOnCVRzgfk6Vs8pH01z7lHomVfmj1UfoEX8k?=
- =?us-ascii?Q?ljH7ji74AcwsfBzhVDQrN3iH5PQY19iyKLaGWuk/DWvgFr+ANU8KYIv2tCY4?=
- =?us-ascii?Q?2H922rBKizEcmOLmQmtXEmyQa0VX0ChT03D2ice0gCEpUorxbpZGaxuQdXW7?=
- =?us-ascii?Q?zoJkxjrgRWKS0t3UUmVi2I/vuDxVdLFXu1kKyqATAess8b3pvCALwaq0lNT7?=
- =?us-ascii?Q?40wBBdLMLqNGHubVGhgHe2vs/6PT8rXb46eAZ8Sack4ThTVazCNRNyjawEtg?=
- =?us-ascii?Q?q8asmkz1POBYT2M5a0/XzTnFDvQNSMXxOZq9RHTFQGfbkarIFL59qe5pZ/Lg?=
- =?us-ascii?Q?f9DDq4nSYgJPcaZzb7y9zzfvvF4P/wi4LqSfNyAI?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: de55fc6c-45e4-4a03-9eae-08ddbeb35e04
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8461.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 06:39:34.5709
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Gqk4Gzk54ZCgyoC5rGMnFg0EY4dDSfi9qfDtyDMU79sfLIIRIln9bujWkkcWXGSInzjPAQlepE9QcbFFnY379A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB9736
+References: <20250709064512.67551-1-ebiggers@kernel.org>
+In-Reply-To: <20250709064512.67551-1-ebiggers@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 9 Jul 2025 17:51:58 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXGWzceNGV9OfML2NL5f3iyFktX+yhJGri00MdGX=QJJ=g@mail.gmail.com>
+X-Gm-Features: Ac12FXxHO3hjM5wYWe7n9ZGh0uTFGWM0aUMcUWrPE0JR4eq0iZKgmLILJlTHjS4
+Message-ID: <CAMj1kXGWzceNGV9OfML2NL5f3iyFktX+yhJGri00MdGX=QJJ=g@mail.gmail.com>
+Subject: Re: [PATCH] dm-verity: remove support for asynchronous hashes
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: dm-devel@lists.linux.dev, Alasdair Kergon <agk@redhat.com>, 
+	Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>, linux-kernel@vger.kernel.org, 
+	Gilad Ben-Yossef <gilad@benyossef.com>, "Jason A . Donenfeld" <Jason@zx2c4.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Mathieu,
-
-On Tue, Jul 08, 2025 at 10:39:55AM -0600, Mathieu Poirier wrote:
->On Wed, Jun 25, 2025 at 10:23:29AM +0800, Peng Fan (OSS) wrote:
->> From: Peng Fan <peng.fan@nxp.com>
->> 
->> Add imx_rproc_cfg_imx95_m7 and address(TCM and DDR) mapping.
->> Add i.MX95 of_device_id entry.
->> 
->> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
->> Signed-off-by: Peng Fan <peng.fan@nxp.com>
->> ---
->>  drivers/remoteproc/imx_rproc.c | 25 +++++++++++++++++++++++++
->>  1 file changed, 25 insertions(+)
->> 
->> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
->> index b1a117ca5e5795554b67eb7092db2a25fc7de13b..c226f78c84ad180c69804116d6cfcab19db6aaa5 100644
->> --- a/drivers/remoteproc/imx_rproc.c
->> +++ b/drivers/remoteproc/imx_rproc.c
->> @@ -73,6 +73,10 @@
->>  
->>  #define IMX_SC_IRQ_GROUP_REBOOTED	5
->>  
->> +/* Must align with System Manager Firmware */
->> +#define IMX95_M7_CPUID			1
->> +#define IMX95_M7_LMID			1
+On Wed, 9 Jul 2025 at 16:48, Eric Biggers <ebiggers@kernel.org> wrote:
 >
->Any reason those aren't set in the device tree?
-
-Krzysztof rejected to introduce the IDs to devicetree.
-
-From IRC:
-"To me this makes no sense in current explanayton - you have 8 cores, but only
-one can be put there, so what happens with the rest?
-And I don't think we care about something like remote and local ID - it is
-the same. CPUs have single number. So this looks like copy paste downstream
-and thus solve it internally first"
-
-
-In System Manager Firmware, CPUID is fixed and will not change.
-LMID is also fixed as of now, we not expect customer to change LMID.
-
-So with "fsl,imx95-m7", we could know the CPUID and LMID for M7, so 
-it does not make sense to introduce new property saying "fsl,imx95-lmid"
-and "fsl,imx95-cpuid". This should be the main concern that DT maintainers
-reject to add properties for the IDs.
-
-Thanks,
-Peng
-
+> The support for asynchronous hashes in dm-verity has outlived its
+> usefulness.  It adds significant code complexity and opportunity for
+> bugs.  I don't know of anyone using it practice.  (The original
+> submitter of the code possibly was, but that was 8 years ago.)  Data I
+> recently collected for en/decryption shows that using off-CPU crypto
+> "accelerators" is consistently much slower than the CPU
+> (https://lore.kernel.org/r/20250704070322.20692-1-ebiggers@kernel.org/),
+> even on CPUs that lack dedicated cryptographic instructions.  Similar
+> results are likely to be seen for hashing.
 >
->Thanks,
->Mathieu
+> I already removed support for asynchronous hashes from fsverity two
+> years ago, and no one ever complained.
+>
+> Moreover, neither dm-verity, fsverity, nor fscrypt has ever actually
+> used the asynchronous crypto algorithms in a truly asynchronous manner.
+> The lack of interest in such optimizations provides further evidence
+> that it's only the CPU-based crypto that actually matters.
+>
+> Historically, it's also been common for people to forget to enable the
+> optimized SHA-256 code, which could contribute to an off-CPU crypto
+> engine being perceived as more useful than it really is.  In 6.16 I
+> fixed that: the optimized SHA-256 code is now enabled by default.
+>
+> Therefore, let's drop the support for asynchronous hashes in dm-verity.
+>
+> Tested with verity-compat-test.
+>
+> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> ---
+>  drivers/md/dm-verity-target.c | 175 +++++-----------------------------
+>  drivers/md/dm-verity.h        |  20 ++--
+>  2 files changed, 30 insertions(+), 165 deletions(-)
+>
+
+The diffstat speaks for itself
+
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
+
+> diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+> index 81186bded1ce7..f94d0b6bd6ba0 100644
+> --- a/drivers/md/dm-verity-target.c
+> +++ b/drivers/md/dm-verity-target.c
+> @@ -17,11 +17,10 @@
+>  #include "dm-verity-fec.h"
+>  #include "dm-verity-verify-sig.h"
+>  #include "dm-audit.h"
+>  #include <linux/module.h>
+>  #include <linux/reboot.h>
+> -#include <linux/scatterlist.h>
+>  #include <linux/string.h>
+>  #include <linux/jump_label.h>
+>  #include <linux/security.h>
+>
+>  #define DM_MSG_PREFIX                  "verity"
+> @@ -59,13 +58,10 @@ static unsigned int dm_verity_use_bh_bytes[4] = {
+>
+>  module_param_array_named(use_bh_bytes, dm_verity_use_bh_bytes, uint, NULL, 0644);
+>
+>  static DEFINE_STATIC_KEY_FALSE(use_bh_wq_enabled);
+>
+> -/* Is at least one dm-verity instance using ahash_tfm instead of shash_tfm? */
+> -static DEFINE_STATIC_KEY_FALSE(ahash_enabled);
+> -
+>  struct dm_verity_prefetch_work {
+>         struct work_struct work;
+>         struct dm_verity *v;
+>         unsigned short ioprio;
+>         sector_t block;
+> @@ -116,104 +112,25 @@ static sector_t verity_position_at_level(struct dm_verity *v, sector_t block,
+>                                          int level)
+>  {
+>         return block >> (level * v->hash_per_block_bits);
+>  }
+>
+> -static int verity_ahash_update(struct dm_verity *v, struct ahash_request *req,
+> -                               const u8 *data, size_t len,
+> -                               struct crypto_wait *wait)
+> -{
+> -       struct scatterlist sg;
+> -
+> -       if (likely(!is_vmalloc_addr(data))) {
+> -               sg_init_one(&sg, data, len);
+> -               ahash_request_set_crypt(req, &sg, NULL, len);
+> -               return crypto_wait_req(crypto_ahash_update(req), wait);
+> -       }
+> -
+> -       do {
+> -               int r;
+> -               size_t this_step = min_t(size_t, len, PAGE_SIZE - offset_in_page(data));
+> -
+> -               flush_kernel_vmap_range((void *)data, this_step);
+> -               sg_init_table(&sg, 1);
+> -               sg_set_page(&sg, vmalloc_to_page(data), this_step, offset_in_page(data));
+> -               ahash_request_set_crypt(req, &sg, NULL, this_step);
+> -               r = crypto_wait_req(crypto_ahash_update(req), wait);
+> -               if (unlikely(r))
+> -                       return r;
+> -               data += this_step;
+> -               len -= this_step;
+> -       } while (len);
+> -
+> -       return 0;
+> -}
+> -
+> -/*
+> - * Wrapper for crypto_ahash_init, which handles verity salting.
+> - */
+> -static int verity_ahash_init(struct dm_verity *v, struct ahash_request *req,
+> -                               struct crypto_wait *wait, bool may_sleep)
+> -{
+> -       int r;
+> -
+> -       ahash_request_set_tfm(req, v->ahash_tfm);
+> -       ahash_request_set_callback(req,
+> -               may_sleep ? CRYPTO_TFM_REQ_MAY_SLEEP | CRYPTO_TFM_REQ_MAY_BACKLOG : 0,
+> -               crypto_req_done, (void *)wait);
+> -       crypto_init_wait(wait);
+> -
+> -       r = crypto_wait_req(crypto_ahash_init(req), wait);
+> -
+> -       if (unlikely(r < 0)) {
+> -               if (r != -ENOMEM)
+> -                       DMERR("crypto_ahash_init failed: %d", r);
+> -               return r;
+> -       }
+> -
+> -       if (likely(v->salt_size && (v->version >= 1)))
+> -               r = verity_ahash_update(v, req, v->salt, v->salt_size, wait);
+> -
+> -       return r;
+> -}
+> -
+> -static int verity_ahash_final(struct dm_verity *v, struct ahash_request *req,
+> -                             u8 *digest, struct crypto_wait *wait)
+> -{
+> -       int r;
+> -
+> -       if (unlikely(v->salt_size && (!v->version))) {
+> -               r = verity_ahash_update(v, req, v->salt, v->salt_size, wait);
+> -
+> -               if (r < 0) {
+> -                       DMERR("%s failed updating salt: %d", __func__, r);
+> -                       goto out;
+> -               }
+> -       }
+> -
+> -       ahash_request_set_crypt(req, NULL, digest, 0);
+> -       r = crypto_wait_req(crypto_ahash_final(req), wait);
+> -out:
+> -       return r;
+> -}
+> -
+>  int verity_hash(struct dm_verity *v, struct dm_verity_io *io,
+>                 const u8 *data, size_t len, u8 *digest, bool may_sleep)
+>  {
+> +       struct shash_desc *desc = &io->hash_desc;
+>         int r;
+>
+> -       if (static_branch_unlikely(&ahash_enabled) && !v->shash_tfm) {
+> -               struct ahash_request *req = verity_io_hash_req(v, io);
+> -               struct crypto_wait wait;
+> -
+> -               r = verity_ahash_init(v, req, &wait, may_sleep) ?:
+> -                   verity_ahash_update(v, req, data, len, &wait) ?:
+> -                   verity_ahash_final(v, req, digest, &wait);
+> +       desc->tfm = v->shash_tfm;
+> +       if (unlikely(v->initial_hashstate == NULL)) {
+> +               /* version 0: salt at end */
+> +               r = crypto_shash_init(desc) ?:
+> +                   crypto_shash_update(desc, data, len) ?:
+> +                   crypto_shash_update(desc, v->salt, v->salt_size) ?:
+> +                   crypto_shash_final(desc, digest);
+>         } else {
+> -               struct shash_desc *desc = verity_io_hash_req(v, io);
+> -
+> -               desc->tfm = v->shash_tfm;
+> +               /* version 1: salt at beginning */
+>                 r = crypto_shash_import(desc, v->initial_hashstate) ?:
+>                     crypto_shash_finup(desc, data, len, digest);
+>         }
+>         if (unlikely(r))
+>                 DMERR("Error hashing block: %d", r);
+> @@ -1090,16 +1007,11 @@ static void verity_dtr(struct dm_target *ti)
+>         kfree(v->initial_hashstate);
+>         kfree(v->root_digest);
+>         kfree(v->zero_digest);
+>         verity_free_sig(v);
+>
+> -       if (v->ahash_tfm) {
+> -               static_branch_dec(&ahash_enabled);
+> -               crypto_free_ahash(v->ahash_tfm);
+> -       } else {
+> -               crypto_free_shash(v->shash_tfm);
+> -       }
+> +       crypto_free_shash(v->shash_tfm);
+>
+>         kfree(v->alg_name);
+>
+>         if (v->hash_dev)
+>                 dm_put_device(ti, v->hash_dev);
+> @@ -1155,11 +1067,12 @@ static int verity_alloc_zero_digest(struct dm_verity *v)
+>         v->zero_digest = kmalloc(v->digest_size, GFP_KERNEL);
+>
+>         if (!v->zero_digest)
+>                 return r;
+>
+> -       io = kmalloc(sizeof(*io) + v->hash_reqsize, GFP_KERNEL);
+> +       io = kmalloc(sizeof(*io) + crypto_shash_descsize(v->shash_tfm),
+> +                    GFP_KERNEL);
+>
+>         if (!io)
+>                 return r; /* verity_dtr will free zero_digest */
+>
+>         zero_data = kzalloc(1 << v->data_dev_block_bits, GFP_KERNEL);
+> @@ -1322,74 +1235,37 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
+>  }
+>
+>  static int verity_setup_hash_alg(struct dm_verity *v, const char *alg_name)
+>  {
+>         struct dm_target *ti = v->ti;
+> -       struct crypto_ahash *ahash;
+> -       struct crypto_shash *shash = NULL;
+> -       const char *driver_name;
+> +       struct crypto_shash *shash;
+>
+>         v->alg_name = kstrdup(alg_name, GFP_KERNEL);
+>         if (!v->alg_name) {
+>                 ti->error = "Cannot allocate algorithm name";
+>                 return -ENOMEM;
+>         }
+>
+> -       /*
+> -        * Allocate the hash transformation object that this dm-verity instance
+> -        * will use.  The vast majority of dm-verity users use CPU-based
+> -        * hashing, so when possible use the shash API to minimize the crypto
+> -        * API overhead.  If the ahash API resolves to a different driver
+> -        * (likely an off-CPU hardware offload), use ahash instead.  Also use
+> -        * ahash if the obsolete dm-verity format with the appended salt is
+> -        * being used, so that quirk only needs to be handled in one place.
+> -        */
+> -       ahash = crypto_alloc_ahash(alg_name, 0,
+> -                                  v->use_bh_wq ? CRYPTO_ALG_ASYNC : 0);
+> -       if (IS_ERR(ahash)) {
+> +       shash = crypto_alloc_shash(alg_name, 0, 0);
+> +       if (IS_ERR(shash)) {
+>                 ti->error = "Cannot initialize hash function";
+> -               return PTR_ERR(ahash);
+> -       }
+> -       driver_name = crypto_ahash_driver_name(ahash);
+> -       if (v->version >= 1 /* salt prepended, not appended? */) {
+> -               shash = crypto_alloc_shash(alg_name, 0, 0);
+> -               if (!IS_ERR(shash) &&
+> -                   strcmp(crypto_shash_driver_name(shash), driver_name) != 0) {
+> -                       /*
+> -                        * ahash gave a different driver than shash, so probably
+> -                        * this is a case of real hardware offload.  Use ahash.
+> -                        */
+> -                       crypto_free_shash(shash);
+> -                       shash = NULL;
+> -               }
+> -       }
+> -       if (!IS_ERR_OR_NULL(shash)) {
+> -               crypto_free_ahash(ahash);
+> -               ahash = NULL;
+> -               v->shash_tfm = shash;
+> -               v->digest_size = crypto_shash_digestsize(shash);
+> -               v->hash_reqsize = sizeof(struct shash_desc) +
+> -                                 crypto_shash_descsize(shash);
+> -               DMINFO("%s using shash \"%s\"", alg_name, driver_name);
+> -       } else {
+> -               v->ahash_tfm = ahash;
+> -               static_branch_inc(&ahash_enabled);
+> -               v->digest_size = crypto_ahash_digestsize(ahash);
+> -               v->hash_reqsize = sizeof(struct ahash_request) +
+> -                                 crypto_ahash_reqsize(ahash);
+> -               DMINFO("%s using ahash \"%s\"", alg_name, driver_name);
+> +               return PTR_ERR(shash);
+>         }
+> +       v->shash_tfm = shash;
+> +       v->digest_size = crypto_shash_digestsize(shash);
+> +       DMINFO("%s using \"%s\"", alg_name, crypto_shash_driver_name(shash));
+>         if ((1 << v->hash_dev_block_bits) < v->digest_size * 2) {
+>                 ti->error = "Digest size too big";
+>                 return -EINVAL;
+>         }
+>         return 0;
+>  }
+>
+>  static int verity_setup_salt_and_hashstate(struct dm_verity *v, const char *arg)
+>  {
+>         struct dm_target *ti = v->ti;
+> +       SHASH_DESC_ON_STACK(desc, v->shash_tfm);
+>
+>         if (strcmp(arg, "-") != 0) {
+>                 v->salt_size = strlen(arg) / 2;
+>                 v->salt = kmalloc(v->salt_size, GFP_KERNEL);
+>                 if (!v->salt) {
+> @@ -1400,12 +1276,11 @@ static int verity_setup_salt_and_hashstate(struct dm_verity *v, const char *arg)
+>                     hex2bin(v->salt, arg, v->salt_size)) {
+>                         ti->error = "Invalid salt";
+>                         return -EINVAL;
+>                 }
+>         }
+> -       if (v->shash_tfm) {
+> -               SHASH_DESC_ON_STACK(desc, v->shash_tfm);
+> +       if (v->version) {
+>                 int r;
+>
+>                 /*
+>                  * Compute the pre-salted hash state that can be passed to
+>                  * crypto_shash_import() for each block later.
+> @@ -1679,11 +1554,12 @@ static int verity_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+>                 ti->error = "Cannot allocate workqueue";
+>                 r = -ENOMEM;
+>                 goto bad;
+>         }
+>
+> -       ti->per_io_data_size = sizeof(struct dm_verity_io) + v->hash_reqsize;
+> +       ti->per_io_data_size = sizeof(struct dm_verity_io) +
+> +                              crypto_shash_descsize(v->shash_tfm);
+>
+>         r = verity_fec_ctr(v);
+>         if (r)
+>                 goto bad;
+>
+> @@ -1786,14 +1662,11 @@ static int verity_preresume(struct dm_target *ti)
+>
+>         v = ti->private;
+>         bdev = dm_disk(dm_table_get_md(ti->table))->part0;
+>         root_digest.digest = v->root_digest;
+>         root_digest.digest_len = v->digest_size;
+> -       if (static_branch_unlikely(&ahash_enabled) && !v->shash_tfm)
+> -               root_digest.alg = crypto_ahash_alg_name(v->ahash_tfm);
+> -       else
+> -               root_digest.alg = crypto_shash_alg_name(v->shash_tfm);
+> +       root_digest.alg = crypto_shash_alg_name(v->shash_tfm);
+>
+>         r = security_bdev_setintegrity(bdev, LSM_INT_DMVERITY_ROOTHASH, &root_digest,
+>                                        sizeof(root_digest));
+>         if (r)
+>                 return r;
+> diff --git a/drivers/md/dm-verity.h b/drivers/md/dm-verity.h
+> index 8cbb57862ae19..d6a0e912f2e18 100644
+> --- a/drivers/md/dm-verity.h
+> +++ b/drivers/md/dm-verity.h
+> @@ -37,15 +37,14 @@ struct dm_verity {
+>         struct dm_dev *data_dev;
+>         struct dm_dev *hash_dev;
+>         struct dm_target *ti;
+>         struct dm_bufio_client *bufio;
+>         char *alg_name;
+> -       struct crypto_ahash *ahash_tfm; /* either this or shash_tfm is set */
+> -       struct crypto_shash *shash_tfm; /* either this or ahash_tfm is set */
+> +       struct crypto_shash *shash_tfm;
+>         u8 *root_digest;        /* digest of the root block */
+>         u8 *salt;               /* salt: its size is salt_size */
+> -       u8 *initial_hashstate;  /* salted initial state, if shash_tfm is set */
+> +       u8 *initial_hashstate;  /* salted initial state, if version >= 1 */
+>         u8 *zero_digest;        /* digest for a zero block */
+>  #ifdef CONFIG_SECURITY
+>         u8 *root_digest_sig;    /* signature of the root digest */
+>         unsigned int sig_size;  /* root digest signature size */
+>  #endif /* CONFIG_SECURITY */
+> @@ -59,11 +58,10 @@ struct dm_verity {
+>         unsigned char levels;   /* the number of tree levels */
+>         unsigned char version;
+>         bool hash_failed:1;     /* set if hash of any block failed */
+>         bool use_bh_wq:1;       /* try to verify in BH wq before normal work-queue */
+>         unsigned int digest_size;       /* digest size for the current hash algorithm */
+> -       unsigned int hash_reqsize; /* the size of temporary space for crypto */
+>         enum verity_mode mode;  /* mode for handling verification errors */
+>         enum verity_mode error_mode;/* mode for handling I/O errors */
+>         unsigned int corrupted_errs;/* Number of errors for corrupted blocks */
+>
+>         struct workqueue_struct *verify_wq;
+> @@ -98,23 +96,17 @@ struct dm_verity_io {
+>
+>         u8 real_digest[HASH_MAX_DIGESTSIZE];
+>         u8 want_digest[HASH_MAX_DIGESTSIZE];
+>
+>         /*
+> -        * This struct is followed by a variable-sized hash request of size
+> -        * v->hash_reqsize, either a struct ahash_request or a struct shash_desc
+> -        * (depending on whether ahash_tfm or shash_tfm is being used).  To
+> -        * access it, use verity_io_hash_req().
+> +        * Temporary space for hashing.  This is variable-length and must be at
+> +        * the end of the struct.  struct shash_desc is just the fixed part;
+> +        * it's followed by a context of size crypto_shash_descsize(shash_tfm).
+>          */
+> +       struct shash_desc hash_desc;
+>  };
+>
+> -static inline void *verity_io_hash_req(struct dm_verity *v,
+> -                                      struct dm_verity_io *io)
+> -{
+> -       return io + 1;
+> -}
+> -
+>  static inline u8 *verity_io_real_digest(struct dm_verity *v,
+>                                         struct dm_verity_io *io)
+>  {
+>         return io->real_digest;
+>  }
+>
+> base-commit: 846e9e999dd36ce5898d302d674e441e72c3a8cf
+> --
+> 2.50.1
 >
 
