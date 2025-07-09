@@ -1,109 +1,114 @@
-Return-Path: <linux-kernel+bounces-724446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2EA6AFF2FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:28:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD95AFF2FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4B6C641477
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:27:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5461D3B422F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E32243399;
-	Wed,  9 Jul 2025 20:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D415D24467A;
+	Wed,  9 Jul 2025 20:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Emcnzhco";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="830KHWrm"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o3t2jKeH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191492459FE
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 20:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EA7230D1E;
+	Wed,  9 Jul 2025 20:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752092862; cv=none; b=ErgzEAuwxFz9nYRxFwb2hPDGEpaFiYuP7EHfS1uzar8ApTd80teJIyqI6Mw/wYnZwdIImvvDGE5KEF25vmdqF2bPjxpwqy53w+Lx722rwIRPSgY+EZjURzBtQ+zMVCRAxcUoKJNvHJngQ5dIcbmgFaF1LsmJrpZ+pfdnBTU+GQ8=
+	t=1752093006; cv=none; b=o2WVQk2j48spv8LLWeWeq6D9Nyk0U3Xb0bsFAeMf2oXa1bLxAB4m3gP3M98s93ErJQI7kG7d1clk5fo13ZRD+ppHtCK2ntz5imDO25/HdZFN+Yjr+4A19HfnkvUByEQLE4gexPP7q+9Y7ru/cUJ5PVoaWedps66edQd4Uu1bhRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752092862; c=relaxed/simple;
-	bh=ZdY+cMju7XjfyLPGquSDZy/E5RM93XsArXwgZNl5ar8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mkgde/l/HUXLOcANIZKEuSxVfT07oB9sSk4FOPftwHB4d1A+5U5cdyAgkyUpckjdAwApSAfOrOJ2Bsxb/oIQlYm9UcIGgACtdswajBWh6r/J94fuDsg+ovSG3rTf50neJVjHoRLZxCQ5eX7jDf8lyR939sSgTmzbOAMFUwSlAJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Emcnzhco; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=830KHWrm; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752092859;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LKia7v+pqE/QvyMWvuUTMQRfRRiIr8Kp1yEYerm0uTo=;
-	b=Emcnzhco8lgF/YjV/LgDrfnYis2Q41j89upLzXjP7Jd19JnlpaPFvABVVbDqG1Nd7BosFw
-	JCCNiWV5/04L1y4+qxg+IIGSxPAYkI1qNBROAJesIm8M37g1tQbVOaxwAsenyxOtQhvjEL
-	lhT8dVZvibKDbbacDi0AGlKjY/IPETZX/77P3748nu9DwlHOGJ7uij0raRSiR5uu0m46UA
-	q9lLqZ7ZUTQPg7O2XP2pMiRcHw80n39sD6PtjJnFtfgCHsWNawfvO3nw38S5qAT+u6vq+1
-	htmXSw1Dqdiiggxkp39rkuLFgUqydQULvNL4JsdjRCZrWWi+mVGVcmqvWr1ncg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752092859;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LKia7v+pqE/QvyMWvuUTMQRfRRiIr8Kp1yEYerm0uTo=;
-	b=830KHWrm1urOHnVlNwdTw53aAx0X2HcSbXekePzlBwT0p3qWSGdHu1nVs4ukcDgZfGlmk4
-	O+E5Hez2NGkfHwDQ==
-To: Borislav Petkov <bp@alien8.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	x86@kernel.org,
-	x86-cpuid@lists.linux.dev,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v2 6/6] x86/cpu: <asm/processor.h>: Do not include CPUID API header
-Date: Wed,  9 Jul 2025 22:26:33 +0200
-Message-ID: <20250709202635.89791-7-darwi@linutronix.de>
-In-Reply-To: <20250709202635.89791-1-darwi@linutronix.de>
-References: <20250612234010.572636-1-darwi@linutronix.de>
- <20250709202635.89791-1-darwi@linutronix.de>
+	s=arc-20240116; t=1752093006; c=relaxed/simple;
+	bh=9Q96tyvmm/n832GH6zIRTtNun3XU6jZzOe2zJCOpOjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PYgnp/CWihXalzS0s/jFXeYpxVprhTOHPMqzt2moKIPZo5YscGr8Vh3mWekeMWlPSPUAletYGkx95W0Z7Oyg8BbN45RUWiI8rnwis7OCo0fl0Mof3rohkV/ziyzLc9OFyBpUBSTVKZk+q/qsZM2HPN9KNASKWnAoSU0BM8IHMOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o3t2jKeH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48B8EC4CEEF;
+	Wed,  9 Jul 2025 20:30:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752093005;
+	bh=9Q96tyvmm/n832GH6zIRTtNun3XU6jZzOe2zJCOpOjY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o3t2jKeHbZuG7Nf2jb48r87sW/ovq5oI0hQqRvXSzVBenc+MhgjDPuZwFeNPhCNTQ
+	 ZB8pBdcNfn7V/cqJfGyRxiysWM2GluEVqtxIk1SqRNqbAI6ATQqTS/cnxEEJZLzZy/
+	 GHmJuPAQ+nK4kE6WyEkibLwKq3jm2KexhTxlVpo8JvcxrjZl/e+K00Wf6LxJBgVH4D
+	 woliFppHMtlHfXNNGu3q6h44jB8yBm/5uGVjl3XRLgbVnoQQrw170iEHExLiZHr8Ho
+	 qOoh1Pubd+oO21Vpze5Yisjr463TADW/M+3LC60egjb8qRN7siN45tnsQ0FkNHFbqd
+	 KTtK7EPOR6PvA==
+Date: Wed, 9 Jul 2025 13:29:21 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: fsverity@lists.linux.dev
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	linux-btrfs@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH 0/2] Convert fs/verity/ to use SHA-2 library API
+Message-ID: <20250709202921.GC28537@sol>
+References: <20250630172224.46909-1-ebiggers@kernel.org>
+ <20250709192650.GB28537@sol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709192650.GB28537@sol>
 
-<asm/processor.h> includes the CPUID API header <asm/cpuid/api.h> but it
-does not need it.
+On Wed, Jul 09, 2025 at 12:26:50PM -0700, Eric Biggers wrote:
+> On Mon, Jun 30, 2025 at 10:22:22AM -0700, Eric Biggers wrote:
+> > This series, including all its prerequisites, is also available at:
+> > 
+> >     git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git fsverity-libcrypto-v1
+> > 
+> > This series makes fs/verity/ use the SHA-2 library API instead of the
+> > old-school crypto API.  This is simpler and more efficient.
+> > 
+> > This depends on my SHA-2 library improvements for 6.17 (many patches),
+> > so this patchset might need to wait until 6.18.  But I'm also thinking
+> > about just basing the fsverity tree on libcrypto-next for 6.17.
+> > 
+> > Eric Biggers (2):
+> >   lib/crypto: hash_info: Move hash_info.c into lib/crypto/
+> >   fsverity: Switch from crypto_shash to SHA-2 library
+> 
+> FYI, I've applied this series to
+> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=libcrypto-next
+> so that it gets linux-next coverage.
+> 
+> As mentioned, it depends on the SHA-256 and SHA-512 improvements in
+> lib/crypto/.  But Linus has also expressed a preference to not put too
+> much in one pull request.
+> 
+> My current plan is to do 3 pull requests:
+> 
+>     1. "Crypto library updates" - most patches, mainly SHA-256 and
+>        SHA-512 library improvements
+> 
+>     2. "Crypto library tests" - based on (1) but adds:
+>         lib/crypto: tests: Add hash-test-template.h and gen-hash-testvecs.py
+>         lib/crypto: tests: Add KUnit tests for SHA-224 and SHA-256
+>         lib/crypto: tests: Add KUnit tests for SHA-384 and SHA-512
+>         lib/crypto: tests: Add KUnit tests for Poly1305
+> 
+>     3. "Crypto library conversions" - based on (1) but adds:
+>         apparmor: use SHA-256 library API instead of crypto_shash API
+>         fsverity: Explicitly include <linux/export.h>
+>         fsverity: Switch from crypto_shash to SHA-2 library
+> 
+> I'll put all of these in libcrypto-next for linux-next coverage, but (3)
+> will have a slightly different base commit in the final version.
 
-Remove the CPUID API header include.
+Correction: everything can have the same commit ID in libcrypto-next as
+in the final pull requests, if I put (2) and (3) on their own branches
+and merge them together.  I've done that.
 
-This allows the CPUID API header to include <asm/processor.h> without
-introducing a circular dependency, which is needed for the upcoming CPUID
-model and parser.
-
-Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
----
- arch/x86/include/asm/processor.h | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index bde58f6510ac..910e36b0c00d 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -16,7 +16,6 @@ struct vm86;
- #include <uapi/asm/sigcontext.h>
- #include <asm/current.h>
- #include <asm/cpufeatures.h>
--#include <asm/cpuid/api.h>
- #include <asm/page.h>
- #include <asm/pgtable_types.h>
- #include <asm/percpu.h>
--- 
-2.49.0
-
+- Eric
 
