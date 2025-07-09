@@ -1,144 +1,102 @@
-Return-Path: <linux-kernel+bounces-723555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D372AFE86F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:56:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 645EBAFE874
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 13:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8139585759
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:56:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CED861C41E98
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 11:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7119B2BD5BC;
-	Wed,  9 Jul 2025 11:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89982D97BF;
+	Wed,  9 Jul 2025 11:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="Nk5LU/un"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hztD9qzG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7A32C2AA5
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 11:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7342957CE;
+	Wed,  9 Jul 2025 11:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752062173; cv=none; b=drBt8mTQT8PybzyP1A8HkFchg20FBGCj0ciwIfJX2PFgORoyKRM6wNyGLpm7n8rNRujp9/Ty59KrSEVdIH7kYQUnV4zpoAPovroRyCtxujonEjiztIHpBDK16y/fnVViNYq6+e4QOrQKJgNBhwHxdJNbnFrp5JHuHc5cZ5ZFW4M=
+	t=1752062181; cv=none; b=iI7ck2e33u3T4FZOTg+rP9eFuH39SZyX/964r23hn/3KzSiKmjVVH6UsU2MNjUwIbMdBcDGI07sjC23SxM+DBfl/DmMZUDl/63X+qkWQ1E7vPSb9JhoIFhngW3t9D6lnik92crVcng/Qo8CCgYxqSY4REf8RcRMhhF41CYLhhAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752062173; c=relaxed/simple;
-	bh=vq5TdR2eOaZQq4wzgDb/MUODx9FACB9AhF7YRu/UXj8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=dpMiIxPcvheGqYrxe9yLYmTEI0AlMrjgqqtXFJ5MqBzuBnt8bfcVtFKi4ZNHk801/RosR/dlowqzmqjxMVJhywxkJ5Y5yQ8I0RJlUb4qnzgr8dlPWqFfUSf/A+hW0Wuwew3DVA84ow6Y3ZFMWUnYywZEBaBkBgkWoCihNV4t3rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=Nk5LU/un; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ae3703c2a8bso1078294066b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 04:56:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1752062170; x=1752666970; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vq5TdR2eOaZQq4wzgDb/MUODx9FACB9AhF7YRu/UXj8=;
-        b=Nk5LU/unA3B4/PoWsjaeQ0G84+QYetFfFXNnyM2xLEPwM5f44Ekf3SBvG97fEPruyw
-         D+RMfYu3yYQf5yl1InGmEwWF86oEw96mDQaHWLPDCrt3GwThX64lC/hG9HX3ke/nRj4k
-         JafEfprqmZRDsoRsQOD1orvsXmm85bKd/xZUHELyC9kjAMVsfx6SW1jYi89wiQO8ePp5
-         BuJG0Zb6RGPSz0+b7jLlZ93sJ0oAOpel6SDgiRlApvgYII1KBqQh+zvwIqrRB19Uocs0
-         2l6jMoFTI+wV/9XHm5PZW/mHKi6aDUFBMkk5Vh8xwfPPh0tDebuyjsnCvmakbZ++iWrJ
-         4GiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752062170; x=1752666970;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vq5TdR2eOaZQq4wzgDb/MUODx9FACB9AhF7YRu/UXj8=;
-        b=KctVRCRwRqnBnRLjsRW4vOsZiFSgifHyCuNbz4Weo30yn4LR7+ghxkR0i3Si8UUO7H
-         jGUO9rjAvIqDxdKlEmsML3Oae7X1C/1DQPCOOve8d2Cmgv8rb0+Aj6vLPNy3k+WPMjDf
-         Kr910KXUVQvFKhfdqTPYxfija7DRH9S06vlwsZkqxAsJE/j+wRL1wFKo50GlrpQ1P7wM
-         Lw8CItlrGudLz4/+SoPdACIyZ+yG8zK577UNQPpuIdmKTEvSopEwerB5PUWoSRib9jtB
-         HcJVg6eslCSMbsVZNZfk5t7v2b2ME2E4w7d3ovs5Ldh2vwPJ/NXXX7qVDZWM21zPg+3C
-         8ocA==
-X-Forwarded-Encrypted: i=1; AJvYcCXF6tEVY4iw7M2vl1ywALra4yY1CveiJGr07HWh0VQAweBSmT8GUqnbxON7UepGqJOQ5B1GmrrVerydps8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVsRFRGqzIA4m9UdRiCriEiYz1BeMPIT39yVGAZjqgKMkuP7hZ
-	jeZnArvjNvKijJ/elb+CljEb0+Mj33Z8C1hN3Mczvm6sjMDCB3qJDGggUh7oM8815bU=
-X-Gm-Gg: ASbGncvZ/T68qZ2EkXfsUOHzm/rkTWPr1qdctNSev4l/yXd4+tLCS1QvyA1JgNqlLFT
-	i6+Kjt/vODHzzVigOn4b8RaQtEMTCnlCu+yioa+mXALIMVh6Nffnm4gbuTDS1M3kgrXiH2j/6kY
-	ScEjFafCpdjOUmM50CaxM7TjO6A4iBtp0SlyrngZDLSfNJc6XyyywOvkJewbyvksvbiIxm4Mx82
-	dULuurLplhMa6WfVG/YqM1OwzJ48lCGEqvpOTH6WBqv7zeC0g5cEVUBB9OnwMuur0UoaFXm7D3z
-	IwF9W2ns8hRrzbMuglBe1wMaLixf5FscbOvo6L8etdZgIu3gQZiRIK93SNmbcO5DPbTdtQRmDpI
-	5gFGeexwr/QfYbLey2C7rmtjnFLSPL8o=
-X-Google-Smtp-Source: AGHT+IE2lZBOcPVAhbCa9Rpom0DV95oxei90z5HkhH9xsj7T1YUJ++qd0fI4HdkMjuB4B5bxAz52+A==
-X-Received: by 2002:a17:906:c152:b0:adb:2e9f:5d11 with SMTP id a640c23a62f3a-ae6cfbe874bmr232648366b.37.1752062170333;
-        Wed, 09 Jul 2025 04:56:10 -0700 (PDT)
-Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6ac460dsm1094703366b.106.2025.07.09.04.56.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Jul 2025 04:56:10 -0700 (PDT)
+	s=arc-20240116; t=1752062181; c=relaxed/simple;
+	bh=o+MtEkPq/X8r9M1iAcEaJnSltLhc2qpekc45r2tDwbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rtwxEY3r31Yf/cQXzaeIGRHUkK0yFwhSh6QjdDSUyaxjTMev6Qgi+0AniaBS/4cy3IHagldyJRsqDY+qMZmRfc5sN1kzl9HCFMhFzmHMDaW7xX/sPmTLLJpRDY4ox35g8ZhRCZD4ZoBH71JM/7F32s0afEoXTJ3L9SCfqcUACwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hztD9qzG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F274CC4CEEF;
+	Wed,  9 Jul 2025 11:56:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752062180;
+	bh=o+MtEkPq/X8r9M1iAcEaJnSltLhc2qpekc45r2tDwbU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hztD9qzGvemcgRvJgL4sNnAIXxx3DNEO3unSKn7rgeAOlmv1TwekB7npR1HJRtWlB
+	 9dbqgjBtm8hFdx3VvWYGSlBb4u0vRfrwx+xw98VREv1DEI/1+MFRx8UK/xHoazx+r7
+	 n9JVJSg2WheIReKSRBSNgkjILmudujDjCnIe3mGWYEVYLkqhtAaP8RH9/jjkvR3JmT
+	 ufzWQwebsPofqDsIs9s4PkZQWFQ9LXijzI7wGC9AllSHd0uY9ElBuuC6T04dULJaUw
+	 fSfhQ1o8XDQC25MyWmulJzHbC2qStvkSVpCRdZ79KLOOC/Co6Mi8XSo0guTgm7CRYE
+	 PoagvLyLpHhxw==
+Date: Wed, 9 Jul 2025 12:56:14 +0100
+From: Simon Horman <horms@kernel.org>
+To: Gur Stavi <gur.stavi@huawei.com>
+Cc: vadim.fedorenko@linux.dev, andrew+netdev@lunn.ch,
+	christophe.jaillet@wanadoo.fr, corbet@lwn.net, davem@davemloft.net,
+	edumazet@google.com, gongfan1@huawei.com, guoxin09@huawei.com,
+	helgaas@kernel.org, jdamato@fastly.com, kuba@kernel.org,
+	lee@trager.us, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, luosifu@huawei.com,
+	meny.yossefi@huawei.com, mpe@ellerman.id.au, netdev@vger.kernel.org,
+	pabeni@redhat.com, przemyslaw.kitszel@intel.com,
+	shenchenyang1@hisilicon.com, shijing34@huawei.com,
+	sumang@marvell.com, wulike1@huawei.com, zhoushuai28@huawei.com,
+	zhuyikai1@h-partners.com
+Subject: Re: [PATCH net-next v06 5/8] hinic3: TX & RX Queue coalesce
+ interfaces
+Message-ID: <20250709115614.GZ452973@horms.kernel.org>
+References: <ef88247b-e726-4f8b-9aec-b3601e44390f@linux.dev>
+ <20250709082620.1015213-1-gur.stavi@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 09 Jul 2025 13:56:09 +0200
-Message-Id: <DB7I7D3P01FF.3T5WRSTJIWLVK@fairphone.com>
-Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
- "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
- <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 4/4] regulator: qcom-rpmh: add support for pm7550
- regulators
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>, "Liam Girdwood"
- <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Bjorn Andersson" <andersson@kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250625-pm7550-pmr735b-rpmh-regs-v1-0-cab8ef2e5c92@fairphone.com> <20250625-pm7550-pmr735b-rpmh-regs-v1-4-cab8ef2e5c92@fairphone.com> <bc27209a-e0f8-40bf-979f-3d747c501ae8@oss.qualcomm.com> <23ae6ddb-682a-4c4a-bd63-f0a1adb6f4f8@oss.qualcomm.com>
-In-Reply-To: <23ae6ddb-682a-4c4a-bd63-f0a1adb6f4f8@oss.qualcomm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709082620.1015213-1-gur.stavi@huawei.com>
 
-On Wed Jun 25, 2025 at 4:20 PM CEST, Konrad Dybcio wrote:
-> On 6/25/25 4:10 PM, Konrad Dybcio wrote:
->> On 6/25/25 11:18 AM, Luca Weiss wrote:
->>> Add RPMH regulators exposed by Qualcomm Technologies, Inc. PM7550 PMIC.
->>> It has 6 FTS525 (FT-SMPS) and 23 LDOs with 3 different types.
->>> L1-L11 are LDO515 LV NMOS, L12-L13 are LDO515 MV PMOS, L14-L23 are
->>> LDO512 MV PMOS.
->>>
->>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->>> ---
->>=20
->> FWIW everything you said in the commit message is correct, but I'm not
->> 100% sure how to map these LDO types to the existing definitions
->
-> OK so found another page (also made sure that the supply maps are
-> indeed OK)
->
-> SMPS is OK
-> L1-L11 is OK
-> L14-23 is OK
->
-> L12/13 -> pmic5_pldo515_mv
+On Wed, Jul 09, 2025 at 11:26:20AM +0300, Gur Stavi wrote:
+> > On 27/06/2025 07:12, Fan Gong wrote:
+> > > Add TX RX queue coalesce interfaces initialization.
+> > > It configures the parameters of tx & tx msix coalesce.
+> > >
+> > > Co-developed-by: Xin Guo <guoxin09@huawei.com>
+> > > Signed-off-by: Xin Guo <guoxin09@huawei.com>
+> > > Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
+> > > Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
+> > > Signed-off-by: Fan Gong <gongfan1@huawei.com>
+> > > ---
+> > >   .../net/ethernet/huawei/hinic3/hinic3_main.c  | 61 +++++++++++++++++--
+> > >   .../ethernet/huawei/hinic3/hinic3_nic_dev.h   | 10 +++
+> > >   2 files changed, 66 insertions(+), 5 deletions(-)
+> > >
+> >
+> > Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> 
+> Procedural question about submissions:
+> Are we allowed (or expected) to copy the "Reviewed-by" above to future
+> submissions as long as we do not modify this specific patch?
 
-Based on what are you saying that?
+Vadim is free to offer his own guidance, as it's his tag.
 
-Based on 80-62408-1 Rev. AG for the LDO515, the Output voltage range for
-MV PMOS is "programmable range 1.504-3.544" which matches "pmic5_pldo".
+But in principle tags should be carried forward into future submissions
+unless there is a material change. In this case I think that would
+mean a material change this patch.
 
-But yes, in the table next to it, it's saying 1.8-3.3V, which matches
-"pmic5_pldo515_mv".
-
-If you're sure, I can update it but the datasheet is a bit confusing.
-Let me know!
-
-Regards
-Luca
-
->
-> so please update that and add:
->
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->
-> Konrad
-
+But if in doubt, please ask.
+Thanks for doing so.
 
