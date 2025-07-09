@@ -1,124 +1,123 @@
-Return-Path: <linux-kernel+bounces-724641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4327AFF54A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:15:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3C86AFF547
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:14:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7181E54861F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:14:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE6815A3CCA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784C426D4C9;
-	Wed,  9 Jul 2025 23:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D4626A0F8;
+	Wed,  9 Jul 2025 23:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p4XJA3Nt"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j2ptSw3Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9F926B2AD
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 23:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64DD25F97E;
+	Wed,  9 Jul 2025 23:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752102901; cv=none; b=WFpWC9ck4byWUbTJFODR+y0RhBVILJM8BliL3HO0005sOZah597IHYs2DUBT1HgDBnvLLbZjmFRcaPzUSyyfbAVusKTIVX/q9ghHXLV/TlmWxcpPdsSVUP4TJBxyjwNV/BhWs69aZWfB4Nf6VleSxojg6fonKHFs0OhQTWCkVjc=
+	t=1752102885; cv=none; b=C+zLC631L5++vJr2SvycLQJR93iveaAilN07gk+gR3fWIus3hTqGe5/f8aEPZT57sKKqx4BKGG3P9VLKOWywZtf8r6olBbnIJTxCCzV9KDVoOTeCwXVKaebnCqlwhMCnuFv3sbBOt70vRDP3LE9B9rYq8elJiToqDtr6y9A9dxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752102901; c=relaxed/simple;
-	bh=sARTWO+1dgLX09VHRQZHHDCKUYF3wgFz7Pen6Ocb7EY=;
+	s=arc-20240116; t=1752102885; c=relaxed/simple;
+	bh=U6hkilTY+kcQBVwtX5w7FZM3TYBRLU4tcKO0rz3aQyE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G5y/jW6xzoGan9xk1l89ZrSc4Psuae+t+pM1W+TQtMZed2ZrMINhhl74hs94UQrZgmA0Wqu2aXdDfBrRht3is7dJ6YtspH/pz/ZqGnzQ8ptKYMce0cdVAlvKZFlbhW0Q4iqr4GM+yU0yNIGK/uFmY0aDoJOIYx49WadJO3lHDms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p4XJA3Nt; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2ea34731c5dso236162fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 16:15:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752102899; x=1752707699; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cvN5sQS4Hc8yxkAu/k1pA/cn0ECnEOzcsV+Wnx5E3Eg=;
-        b=p4XJA3NtCMUjrmRzVIJl67N4MT9rIm3oDyxl88SFL5ebrU/jTiIn3kt98HfDYBVoxk
-         1iFBsLl2y26DbKfEvHHL3ZrMrTYOPuMmyDKumyuemxCu9PEt5I5FqtbTm92ZMjqACXyN
-         e9oC1XI8lGsuoUEr+Q5Avm/BV0zyvuNBn2bCEwyER4ymtDsDHAGI3ycMa5Q8EgwcAe3e
-         tjvbX5uHzoZjjQYTpvC4OayBygrK1l8pGxg8MEnblPzyz/r58/uWRIl/DMOSqlvkZReP
-         jcpZuivmEYLvRwi5933yK9wr1CD4OHi5qDCSCSNb8WK+UJIQ9bLONSjnVjFFFJFnv78i
-         RypQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752102899; x=1752707699;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cvN5sQS4Hc8yxkAu/k1pA/cn0ECnEOzcsV+Wnx5E3Eg=;
-        b=ryWD5QElBw9k7IxenumvFMEtjSDhdIPsCr6VEnn/enCrnhyNJVpAYFzeT28qPyw3HY
-         OfLRqphhLmALjFBUM/wta2pCvZnlPeYEZoWpz2g/9FBCb/Gi86/QZnTIKl25CqDaMNHl
-         QScHInL0E9vK2GaALlu+5VGpfY/t2KBrfT4QcXyACJfQLBu/WvZYzEPUQBxFbkdejDeQ
-         fc0haIY66jYa/Vg7X9zS+biINIO2GWMmmzAQ9hUcirYk1+UhA7ZttlWGn9Eczv+K3upn
-         IqYvY8vOZNHghcpsQbd/V/3nKpVo1HBVRHoIH+yXVXTQwOH88sbd540Dl9Kwu3lNGA5S
-         8/wg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwIMp5eqEMcsMQSGZvJQN6KvelyxV02p9J3Kl31iIdWzSGqCYsn6LflLUTEMERCW1hDEUdeAs148/iass=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTa9TussnCl58Od/WJwWh7PzS1Rt/0bY8iiwKZx/ilPEF+FH0X
-	ED1JVgaNCddBF5Aoia9C60bz4XUuA446mZ0/l+qU2F+k162JN/Ua07OKJsJm51RRlAa+UBirbbO
-	QG4B8avgAfTrW08FXlcnfgNs5aF0TPxKz+Dyy8O/8
-X-Gm-Gg: ASbGncsMgj3CvpzEI/r3o7EZMz7/nXYxSkr17A6ki6alFHG5Dm9GeOs7XQW2NMwIHOy
-	8LS813cm5EeVpHtJe701goHbWlizioKZmHaBCt52OgJSVz5wOfO2bRoblRXlYkeNOFc/9BY9Nbd
-	TCuz/5Sk724mzsdJUYjlatqHluOVpSMKhoW8A99ygpd3fpRAWay59Opf+LU2JjS1O2k/llKaPcD
-	w==
-X-Google-Smtp-Source: AGHT+IE7W6eGMT5CWDcvvySCktSztip1TX8LPNF1gqKQssp5awnVk41oi32AcQo3aBMpnFQOZIFFSHwebOE9f4YfoBw=
-X-Received: by 2002:a05:6870:37d5:b0:2ea:736c:2b08 with SMTP id
- 586e51a60fabf-2ff0b9f1007mr1384099fac.29.1752102899263; Wed, 09 Jul 2025
- 16:14:59 -0700 (PDT)
+	 To:Cc:Content-Type; b=JyOdEitGbvKz/WcO5LG/g6B3gUa+RWInSQ5k9w85/3nIekJ9OS2auRWH+WohJXDTr7Eh5PiEMNq8btHhlpyOZBkR4xYharbrT+OO5n3Xik3nz8Xbm+mJajyTSYC9H07eycrEEOiz4qa/FgZQiDyhwA3FxNcEbbrCAEDsfudQW5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j2ptSw3Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54E56C4CEEF;
+	Wed,  9 Jul 2025 23:14:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752102885;
+	bh=U6hkilTY+kcQBVwtX5w7FZM3TYBRLU4tcKO0rz3aQyE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=j2ptSw3QmEZyCPaGLmFnV1gLVCfwSVApFFyHgtzYe2JtR2QrMFTcUJgWFztqs3bhX
+	 rR0pRxEV8YVkHdJAZsE+gjKhsepi/k6hWLXBw7L+65NzmlwO32e0GlJKATdipDf2Zq
+	 Ket0iQCqaSxlGnTpjFWIhUCNY9llSDw0VeP6sF2aYWw1Ai+B/pJNTg9nR6hnl5NEv/
+	 uF/Y3awwwsM8IBi+sc2rxZrC//weymwbp65ARSzpamm+pxPITYffkFU5YCrP2lX0nL
+	 1+dnqm/L8ssXSqt9TSOBO7WcYHLCx/mWinGLuSwXqvT9ZLBywBlffkSl/k3SEsaVw5
+	 yIt1ahhGt5WDw==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5550dca1241so332915e87.0;
+        Wed, 09 Jul 2025 16:14:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUr60MZFL3cSP+hcJvkig3k4kR4//1W7hSqAUweJL/Gf0x5dkd+clN75w6zJoCp/RJWUXSbIiaqOYw=@vger.kernel.org, AJvYcCX7aybfbvZVU9zdWWPTANcDAbAdezDlrh2TD3ckzQQ2pVR4KDmOJqYqYpQLitb/w2KXUhkGl4uvfrbARc/z@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuypF+EXo85A4qe7Q5QmHFZBiOLCyBRVQ0A292dFV+r9ILHx4x
+	EdaJKazJ6yPwM6rdy8/1WRRWVRuTgYy99bvJYk7ZDP3/SKqhopfB7IdhT9N0YAR/pohVkbhVdl1
+	ClPqYUs8Otel9bBX4ST0gF9Pox8M8lWA=
+X-Google-Smtp-Source: AGHT+IHlpfZ2cTZvvxeO3QEicqir+rzdQ9BBQ+VgBN4VigkX2VElmupxy1ONvrrdAcLWXUxoqsNlWePBsqKjtdHhNF4=
+X-Received: by 2002:a05:6512:3a91:b0:553:653f:1b21 with SMTP id
+ 2adb3069b0e04-559000c6cbamr534593e87.37.1752102883717; Wed, 09 Jul 2025
+ 16:14:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707-max77759-irq-wake-v1-0-d367f633e4bc@linaro.org> <20250707-max77759-irq-wake-v1-3-d367f633e4bc@linaro.org>
-In-Reply-To: <20250707-max77759-irq-wake-v1-3-d367f633e4bc@linaro.org>
-From: Badhri Jagan Sridharan <badhri@google.com>
-Date: Wed, 9 Jul 2025 16:14:22 -0700
-X-Gm-Features: Ac12FXzoWFA0HR0Nj86tAaqGMMfJZ8tIsMkToWl6-YsKjt6ZV07ScHAG-Z98oxg
-Message-ID: <CAPTae5J698vbHbhza4zMr-ZnHL7bR4M18F22VyvaR7xNbqG6=Q@mail.gmail.com>
-Subject: Re: [PATCH 3/3] usb: typec: tcpm/tcpci_maxim: enable PROBE_PREFER_ASYNCHRONOUS
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Amit Sunil Dhamne <amitsd@google.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250708125624.734132-1-kraxel@redhat.com> <6edfa099-ab0c-41f6-89ea-0fd67666dd05@kernel.org>
+ <2mn65slwkwmjpeilma2isw7zgabdmda4rhpqjiutwdwqno2wrh@zghymlce2fiy>
+ <8621135e-445a-42dd-89e0-bf8fc3e2b6b7@kernel.org> <4cix3k4h32wozt3nxic5un7jyzfjrmqmzbzmtr3ivw5b2bz363@mw6bke7w4oaq>
+ <5800c426-95fd-4a81-b979-c0bc2bc293dd@kernel.org>
+In-Reply-To: <5800c426-95fd-4a81-b979-c0bc2bc293dd@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 10 Jul 2025 09:14:30 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXFvMVmxesoqaW254z85ZMRO4U+S3Cr7oyu4K-m-jiKVTg@mail.gmail.com>
+X-Gm-Features: Ac12FXwpbrLehPhLTUsuXBLWMnoTdRML-ZAvyYBvg7-8VCnPBDcFaM8Uz_rPpoQ
+Message-ID: <CAMj1kXFvMVmxesoqaW254z85ZMRO4U+S3Cr7oyu4K-m-jiKVTg@mail.gmail.com>
+Subject: Re: [PATCH v2] efi: add ovmf debug log driver
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Gerd Hoffmann <kraxel@redhat.com>, linux-efi@vger.kernel.org, 
+	open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 7, 2025 at 3:50=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@li=
-naro.org> wrote:
+On Thu, 10 Jul 2025 at 00:39, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> This driver works fine with asynchronous probe.
+> On 09/07/2025 16:31, Gerd Hoffmann wrote:
+> > On Wed, Jul 09, 2025 at 04:20:49PM +0200, Krzysztof Kozlowski wrote:
+> >> On 09/07/2025 16:17, Gerd Hoffmann wrote:
+> >>> On Wed, Jul 09, 2025 at 03:58:58PM +0200, Krzysztof Kozlowski wrote:
+> >>>> On 08/07/2025 14:56, Gerd Hoffmann wrote:
+> >>>>> +MODULE_DESCRIPTION("OVMF debug log");
+> >>>>> +MODULE_AUTHOR("Gerd Hoffmann <kraxel@redhat.com>");
+> >>>>> +MODULE_LICENSE("GPL");
+> >>>>> +MODULE_ALIAS("platform:ovmf_debug_log");
+> >>>>> diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+> >>>>> index db8c5c03d3a2..ac0a03ec3452 100644
+> >>>>> --- a/drivers/firmware/efi/Kconfig
+> >>>>> +++ b/drivers/firmware/efi/Kconfig
+> >>>>> @@ -263,6 +263,14 @@ config EFI_COCO_SECRET
+> >>>>>     virt/coco/efi_secret module to access the secrets, which in turn
+> >>>>>     allows userspace programs to access the injected secrets.
+> >>>>>
+> >>>>> +config OVMF_DEBUG_LOG
+> >>>>> + tristate "Expose OVMF firmware debug log via sysfs"
+> >>>>> + depends on EFI
+> >>>>> + help
+> >>>>> +   Recent OVMF versions (edk2-stable202508 + newer) can write
+> >>>>> +   their debug log to a memory buffer.  This driver exposes the
+> >>>>> +   log content via sysfs (/sys/firmware/efi/ovmf_debug_log).
+> >>>>
+> >>>> Where did you document new ABI?
+> >>>
+> >>> The log buffer header struct is documented in the header file for the
+> >>> edk2 code:
+> >>> https://github.com/tianocore/edk2/blob/master/OvmfPkg/Include/Library/MemDebugLogLib.h
+> >>
+> >> You added a new sysfs interface. I meant documentation for this.
+> >
+> > The sysfs file contains the log and you can simply use
+> > 'cat /sys/firmware/efi/ovmf_debug_log' to read it.
 >
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> Don't explain how it works to me. I did not ask how it works. I asked
+> where is the new ABI documented?
+>
 
-Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
+Please drop the condescending tone, and don't make people guess at
+what you are trying to say.
 
-> ---
->  drivers/usb/typec/tcpm/tcpci_maxim_core.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/usb/typec/tcpm/tcpci_maxim_core.c b/drivers/usb/type=
-c/tcpm/tcpci_maxim_core.c
-> index 43b0ec2d12ba6d4c1cfccbfd355af3e5d9ce1385..19f63865079658fb2a446dc39=
-0262d141b940e9a 100644
-> --- a/drivers/usb/typec/tcpm/tcpci_maxim_core.c
-> +++ b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
-> @@ -572,6 +572,7 @@ MODULE_DEVICE_TABLE(of, max_tcpci_of_match);
->  static struct i2c_driver max_tcpci_i2c_driver =3D {
->         .driver =3D {
->                 .name =3D "maxtcpc",
-> +               .probe_type =3D PROBE_PREFER_ASYNCHRONOUS,
->                 .of_match_table =3D max_tcpci_of_match,
->                 .pm =3D &max_tcpci_pm_ops,
->         },
->
-> --
-> 2.50.0.727.gbf7dc18ff4-goog
->
+If you meant to say that the patch lacks an ABI description in
+Documentation/ABI, then you are absolutely right, and you can just say
+so.
 
