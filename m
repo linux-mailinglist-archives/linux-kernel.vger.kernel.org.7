@@ -1,221 +1,335 @@
-Return-Path: <linux-kernel+bounces-724178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 378D7AFEF7A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:13:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C323AFEF95
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A476563706
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:12:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46D741898DCA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1006A224B04;
-	Wed,  9 Jul 2025 17:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEABD2253AB;
+	Wed,  9 Jul 2025 17:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R2bcq/X/"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qE4XlDl7"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48D21F0E50
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 17:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD261F0E50
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 17:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752081187; cv=none; b=LDNK1FlosZh48YyEgUyYU/Ka/NaR5ILBOrZbtSRYSXNOsVIrGdtYVBhKsJEkfl2LwmW6oFheprt8yJ3n2Qnb6OucQthtttvT/77NQX/im6TecInBvisAXiMf2/at7bah1cbggzEIUTdrdfJqZeOKpIqph7V9VS4MYkWzKhLosa0=
+	t=1752081239; cv=none; b=H3JxVGo4fL6Nj0rtETBdXpRuJMTvIZ3/xDsTunXifWkCF9LDeHipH5YsDo2mhXm6ezJvQBBrZ8i95TnJ6+0oGHC06hSSpECz3ynRfsNmE5FI4lG6+zeogAOftLcT6prptk/uDL9Ub+GEJ+FqHjpzCDK25d6Va7WNi0MOkDcIL+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752081187; c=relaxed/simple;
-	bh=O2YQhZBU1ofBekN2KwRZdHuhqsC4q7S/ZNAWBEom2CU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OkkHFPgJqGV+ZNFs2KSu5GzBgEG17bIg5wZHNOE6JZMiA0911kH0Jugi2HYVTsjUQZqlte+ROY6RBNIUPEVadK5XTBKkJLNtXsvJvzRhCAS2fG5c3A1x8bKFw3//WaicDZXXrdG5kxke4ZZxLzz/PAIw9sMs//vWd80COt1ROoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R2bcq/X/; arc=none smtp.client-ip=209.85.216.74
+	s=arc-20240116; t=1752081239; c=relaxed/simple;
+	bh=cT8+FgW6ZfYFqv8uJcUWXHg3VHiYw8NAM4z0R9Iify8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WfeGx5i5wSxGLkXl442ojTBJNYMpvUyjusXnX6rZQYQ5aCFcYzuMLs49r15J2MUujT61gnn3qiHwA/tLNYxEqO82KW9jVnXM5FKPv6SRLyM0wHSv1b7pfctYbb7tibvi68caBRYkDdMSRWtynO43t2vydwa4ft+dopOnW262Ls0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qE4XlDl7; arc=none smtp.client-ip=209.85.166.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-313fb0ec33bso147101a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 10:13:05 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3df2fa612c4so8345ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 10:13:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1752081185; x=1752685985; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MFdwR3lAJd7vdYwnOv4iE7Hy18jXCV9dXILHs2CzgU0=;
-        b=R2bcq/X/b7C2Gj1ru81iM0XLOZ78/WgyxeH+4CJeMByOuRNjzd3KZ52mKYIjCMzu4T
-         xChKKGZ2x/cCapjx9RXsJB145VTrBnUCp4Okn0loLhkgYte76do0yWx9LW72s0goCsFF
-         ueNBLtJ7R/CDyqdup3BpH2HFJZvoZnK0Y7qG23iOc21cPSIRkbsbeYCGmnnqcYfKaTiC
-         ciaJonkXZqCHuqq0ryi92uYC//E51HJd/Sp0I7idKptTSa8eL9wpAYL60W8x2WQSLTqV
-         VsFz4EqP2IfyIsRBCLB3Tb+UG6aAvzqJekU1UrpI/04we99S3C3Y3nXh9THQus0U5a2a
-         bVvQ==
+        d=google.com; s=20230601; t=1752081237; x=1752686037; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h4qqGL9BSDdSYChXoVa4eOs0E836UaY7CUQoXn4JW+g=;
+        b=qE4XlDl7bKo8Pj/W06+KnSdNI58P8v3+adusw+Db2USEAxiGgjr601W6+NB2PaCB9Z
+         +7wsDDHHEHsu7rY8p1/30zkrnMefBweggF9NoV68fO00QJFdEXO5ctj3Z/gdF4rNM1fa
+         HleyJkTl59/o9twaK6NTzL16XfXqQb8pMKBrEc6GB/grhbp0zzDa8J7+89KkedPTEons
+         YS+PbjAWHoCRzhqys/drbRgeWKKrd7bkWhsxFAbBDC9jqNWmBA6+dAtnPCvGN/mkyFAk
+         yAfeMOdbiEyqPh5EGOp90Xk5qIErGezFjqSklxiY7LJZJ82LxDsBtFDWle9bsId7LSGd
+         t3rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752081185; x=1752685985;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MFdwR3lAJd7vdYwnOv4iE7Hy18jXCV9dXILHs2CzgU0=;
-        b=s3R62U23BWaghu5MwR/fLaCyT3DRD5bh1LHPdqYWm+ozj70G+oyEWSamNPOrJfQwKs
-         5Ap4vu/pb0WBuIUIBmCtXg5BCMMbBYvN5E3cVL0uGIlQ49SQiYvmGzNxmP58WH62CPpd
-         eArnx0haUh3CQft03MpxsgVNJGhecqzL8Dxu3TS/6CdzeIoH2Hr3reDL47qoUSl5Atwk
-         8JLtmtLPB2HyvsFQPuUnrG7jeSbscHdi7e81z3iM/dRpRdoWJItS9JmT5N/TQJ+SQIwF
-         s3IHfZE++f2lGe/SdIVIvPzHGSghecl1nz/VRIsUYfpSTZs0dw/aWSQh2XiGRR6O9Gu+
-         xoXA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjzrCZC3W2cVRFbaYJWwJhJURsqY06StS3GbNTmXTZCF9tILNCRbGT5N6aX5pgUVEy12QjSeyUUZlvIFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq13NqaSrBj04X41MnOwv4hkN3adCeWl3OkoDo0+b+P3A1j5WK
-	winev7GtL8k7M1tcM2aqe+h7U0hd5PxK77HUrK8eBXvVayV6YbQhL1H43jkUf6sYEqlZU4lDL1f
-	IMv0lLA==
-X-Google-Smtp-Source: AGHT+IF4KmprglJhQcCJjAzzWMjja6iK8iRcdlNEdxxLpwXx5M10tRiFlzyYJ7m3VJ2DYG0UO1IJjLbBGog=
-X-Received: from pjbsz11.prod.google.com ([2002:a17:90b:2d4b:b0:311:b3fb:9f74])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4ec4:b0:312:e9bd:5d37
- with SMTP id 98e67ed59e1d1-31c3c269ae4mr1071299a91.6.1752081185093; Wed, 09
- Jul 2025 10:13:05 -0700 (PDT)
-Date: Wed, 9 Jul 2025 10:13:03 -0700
-In-Reply-To: <20250709170454.74854-1-darwi@linutronix.de>
+        d=1e100.net; s=20230601; t=1752081237; x=1752686037;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h4qqGL9BSDdSYChXoVa4eOs0E836UaY7CUQoXn4JW+g=;
+        b=WLE2k3LGmDZf5r+oyszsq1KRg1XyPrpeRgoluOSrmIIMWciKJ0NEieeFc2FlqaaQJS
+         IYS+0Ehhq1HTk1JiI6SgLCv6nP0nLvwugT6AirBa93VZWF0of/na4spFcrwVqxbXDNDf
+         K81V6g+KOFVZWW++AtcYazNG9j9iBJ4ikT6jHWmmwrmrrlOdeWyshXbc0k3nSsScAFWt
+         3A/xBeEhPNIPVIax526/AXS30UhZKRQ/cPsLu7wqI7JzQy4K2XgWuKpHY21eZJZqw3eu
+         ktHhETnEknt6tGicbdh2R3H/ac8sM0q3vGIbsR8EpnOICFmPX5lpzhbC7Cah3sn4gLdv
+         at4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVbpUpVfsrSsIsdqUBcroE3KtJHYN+evyq7BsBtcMsjsR4RQbYTLJeKG72/GxsW55PHSOmNJADLloCsvFk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlVhhqOS6KG4aoPmc33LRnvBoN2L6VHo0gRGCYFDJRM88hIXm6
+	lYiTKj6/7s31TMnXJcbv2sUtr6cFPmo7bPAUkb0/PDMjWwqLKFVjimDDGS0Wgbj0JK17TP6zY5S
+	ncLB7w2mJ5PZKkUlkNaMN6lmNwGEDWhBTY2X70qt2
+X-Gm-Gg: ASbGnctswnGq9jISSo16YzUUcqvUGR+G9f+uO4JH1tB5Dm8V/HRjer2c8XUFe8973m4
+	QMtJm8to6XnSZqwT7QPxYGgG0uaEO/8AxsRvrywH1OzmSC+aRJ38U8IpY12gK7KPh5jrTbj24XZ
+	VJIllNnon9zHWLXod6FRNY341AFkMiREYUDp0qkfIfUIYlf62hV8lLSXWfhQJSXKM6LR1Arwh4
+X-Google-Smtp-Source: AGHT+IEy1cLtKVuAX9KJtyOOOK/BbSrWBMSEJwSphhcyL/XDz04YiBfmg7x3q1HtBxOn0eTmHkLK5jbEKLPjj2MetD0=
+X-Received: by 2002:a05:6e02:2593:b0:3dc:7c30:c6de with SMTP id
+ e9e14a558f8ab-3e166276c8amr4612125ab.28.1752081236625; Wed, 09 Jul 2025
+ 10:13:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250709170454.74854-1-darwi@linutronix.de>
-Message-ID: <aG6jH9ZHWiTxfFM3@google.com>
-Subject: Re: [PATCH v1 0/7] x86: Disentangle <asm/processor.h> dependency on
- CPUID APIs
-From: Sean Christopherson <seanjc@google.com>
-To: "Ahmed S. Darwish" <darwi@linutronix.de>
-Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Andrew Cooper <andrew.cooper3@citrix.com>, John Ogness <john.ogness@linutronix.de>, x86@kernel.org, 
-	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250628000929.230406-1-irogers@google.com> <aG6aSX0Ws1cioo5T@google.com>
+In-Reply-To: <aG6aSX0Ws1cioo5T@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 9 Jul 2025 10:13:45 -0700
+X-Gm-Features: Ac12FXx3Z1YwO31lxDgkQqNdHK5K-85e1dCmAGHoYPEa7KIWIc5yasWW6lutK9I
+Message-ID: <CAP-5=fXJdSyCqBVuo6ampD57LoOvBBDoEHiEaDDXuTL6ve7hiw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/15] New perf ilist app
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
+	John Garry <john.g.garry@oracle.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Howard Chu <howardchu95@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Andi Kleen <ak@linux.intel.com>, 
+	Tiezhu Yang <yangtiezhu@loongson.cn>, Gautam Menghani <gautam@linux.ibm.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 09, 2025, Ahmed S. Darwish wrote:
-> Hi,
->=20
-> This series avoids including the full CPUID API from <asm/processor.h>.
-> That header only needs the CPUID data types and not the full API.
->=20
-> Replace the <asm/cpuid/api.h> inclusion in <asm/processor.h> with an
-> include of <asm/cpuid/types.h>.
->=20
-> Modify all CPUID call sites which implicitly included the CPUID API
-> though <asm/processor.h> to explicitly include <asm/cpuid/api.h> instead.
->=20
-> This work prepares for an upcoming v4 of the CPUID model:
->=20
->     [PATCH v3 00/44] x86: Introduce a centralized CPUID data model
->     https://lore.kernel.org/lkml/20250612234010.572636-1-darwi@linutronix=
-.de
->=20
-> where <asm/cpuid/api.h> needs to include <asm/processor.h>, thus creating
-> a circular dependency if not resolved beforehand=E2=80=A6  Patches 1->19 =
-of the
-> v3 above had parts of this series circular dependency disentanglement.
->=20
-> Per Boris' remarks above, merge the header includes reorderings into two
-> patches only: one patch for x86 and one for drivers.
->=20
-> The 0-day bot x86-32 compilation error:
->=20
->     Re: [PATCH v3 41/44] x86/cpu: <asm/processor.h>: Do not include CPUID=
-=E2=80=A6
->     https://lore.kernel.org/lkml/202506132039.imS2Pflx-lkp@intel.com
->=20
-> is also fixed in this series.
->=20
-> Beside the call sites converted at CPUID model v3 above, this series also
-> switches below files:
->=20
->     arch/x86/kernel/cpu/microcode/core.c
->     arch/x86/kernel/cpu/microcode/intel.c
->     arch/x86/kernel/cpu/mshyperv.c
->     arch/x86/kvm/lapic.c
->     arch/x86/kvm/svm/sev.c
+On Wed, Jul 9, 2025 at 9:35=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> w=
+rote:
+>
+> Hi Ian,
+>
+> Sorry for the delay.
+>
+> On Fri, Jun 27, 2025 at 05:09:14PM -0700, Ian Rogers wrote:
+> > This patch series builds up to the addition of a new ilist app written
+> > in python using textual [1] for the UI. The app presents perf PMUs and
+> > events, displays the event information as in `perf list` while at the
+> > bottom of the console showing recent activity of the event in total
+> > and across all CPUs.
+> >
+> > The first part of the patches are a few perf and perf python C API
+> > fixes, most importantly the counter reading in python supports tool
+> > PMUs.
+>
+> The first part looks ok.  It'd be nice if you can send it separately.
 
-I'm officially confused.  Neither lapic.c nor svm/sev.c are modified in thi=
-s series.
-Does "this series" actually mean something other than _this_ seris?
+Thanks Namhyung!
 
->     drivers/acpi/acpi_processor.c
->     drivers/acpi/processor_core.c
->     drivers/cpufreq/longrun.c
->     drivers/cpufreq/powernow-k7.c
->     drivers/cpufreq/powernow-k8.c
->     drivers/hwtracing/coresight/coresight-platform.c
->     drivers/xen/xen-acpi-processor.c
->=20
-> to explicitly include <asm/cpuid/api.h>.
->=20
-> Based on v6.16-rc5.
->=20
-> Note, the last patch is a CPUID API naming change in preparation for the
-> model as well.  It can be skipped if merging it is not desired at this
-> stage.
->=20
-> Thanks!
->=20
-> 8<-----
->=20
-> Ahmed S. Darwish (7):
->   x86/cpuid: Remove transitional <asm/cpuid.h> header
->   ASoC: Intel: avs: Include CPUID header at file scope
->   x86: Reorder headers alphabetically
->   drivers: Reorder headers alphabetically
->   treewide: Explicitly include <asm/cpuid/api.h>
->   x86/cpu: <asm/processor.h>: Do not include CPUID API header
->   x86/cpuid: Rename cpuid_leaf()/cpuid_subleaf() APIs
->=20
->  arch/x86/boot/compressed/pgtable_64.c        |  1 +
->  arch/x86/boot/startup/sme.c                  |  9 +--
->  arch/x86/coco/tdx/tdx.c                      |  6 +-
->  arch/x86/events/amd/core.c                   |  2 +
->  arch/x86/events/amd/ibs.c                    |  1 +
->  arch/x86/events/amd/lbr.c                    |  2 +
->  arch/x86/events/amd/power.c                  |  3 +
->  arch/x86/events/amd/uncore.c                 | 15 ++---
->  arch/x86/events/intel/core.c                 |  1 +
->  arch/x86/events/intel/lbr.c                  |  1 +
->  arch/x86/events/zhaoxin/core.c               | 12 ++--
->  arch/x86/include/asm/acrn.h                  |  2 +
->  arch/x86/include/asm/cpuid.h                 |  8 ---
->  arch/x86/include/asm/cpuid/api.h             |  6 +-
->  arch/x86/include/asm/microcode.h             |  1 +
->  arch/x86/include/asm/processor.h             |  2 +-
->  arch/x86/include/asm/xen/hypervisor.h        |  1 +
->  arch/x86/kernel/cpu/amd.c                    | 26 ++++----
->  arch/x86/kernel/cpu/centaur.c                |  1 +
->  arch/x86/kernel/cpu/hygon.c                  |  1 +
->  arch/x86/kernel/cpu/mce/core.c               | 63 ++++++++++----------
->  arch/x86/kernel/cpu/mce/inject.c             |  1 +
->  arch/x86/kernel/cpu/microcode/core.c         | 23 +++----
->  arch/x86/kernel/cpu/microcode/intel.c        | 12 ++--
->  arch/x86/kernel/cpu/mshyperv.c               | 29 +++++----
->  arch/x86/kernel/cpu/resctrl/core.c           |  6 +-
->  arch/x86/kernel/cpu/resctrl/monitor.c        |  1 +
->  arch/x86/kernel/cpu/scattered.c              |  3 +-
->  arch/x86/kernel/cpu/sgx/main.c               |  3 +
->  arch/x86/kernel/cpu/topology_amd.c           |  3 +-
->  arch/x86/kernel/cpu/topology_common.c        |  3 +-
->  arch/x86/kernel/cpu/topology_ext.c           |  3 +-
->  arch/x86/kernel/cpu/transmeta.c              |  3 +
->  arch/x86/kernel/cpu/zhaoxin.c                |  1 +
->  arch/x86/kernel/cpuid.c                      |  6 +-
->  arch/x86/kernel/paravirt.c                   | 29 ++++-----
->  arch/x86/kvm/cpuid.h                         |  3 +
->  arch/x86/kvm/mmu/spte.c                      |  1 +
->  drivers/cpufreq/longrun.c                    |  7 ++-
->  drivers/cpufreq/powernow-k7.c                | 14 ++---
->  drivers/cpufreq/powernow-k8.c                | 17 +++---
->  drivers/cpufreq/speedstep-lib.c              |  6 +-
->  drivers/firmware/efi/libstub/x86-5lvl.c      |  1 +
->  drivers/hwmon/fam15h_power.c                 | 14 +++--
->  drivers/hwmon/k10temp.c                      |  2 +
->  drivers/hwmon/k8temp.c                       | 12 ++--
->  drivers/thermal/intel/intel_hfi.c            |  1 +
->  drivers/thermal/intel/x86_pkg_temp_thermal.c | 15 ++---
->  sound/soc/intel/avs/tgl.c                    | 25 +++++---
->  49 files changed, 235 insertions(+), 173 deletions(-)
->  delete mode 100644 arch/x86/include/asm/cpuid.h
->=20
-> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-> --=20
-> 2.49.0
->=20
+I'm working on a longer series to add metrics to the display. Breaking
+up this series I have:
+
+Fixes/cleanup:
+  perf hwmon_pmu: Avoid shortening hwmon PMU name
+  perf parse-events: Minor tidy up of event_type helper
+  perf python: In str(evsel) use the evsel__pmu_name helper
+  perf python: Fix thread check in pyrf_evsel__read
+  perf python: Correct pyrf_evsel__read for tool PMUs
+
+New python PMU/PMUs abstractions:
+  perf python: Add basic PMU abstraction and pmus sequence
+  perf python: Add function returning dictionary of all events on a PMU
+
+jevents changes and a proper "software" PMU:
+  perf jevents: If the long_desc and desc are identical then drop the
+    long_desc
+  perf jevents: Add common software event json
+  perf pmu: Tolerate failure to read the type for wellknown PMUs
+  perf parse-events: Remove non-json software events
+
+tracepoint PMU:
+  perf tp_pmu: Factor existing tracepoint logic to new file
+  perf tp_pmu: Add event APIs
+  perf list: Remove tracepoint printing code
+
+ilist app:
+  perf ilist: Add new python ilist command
+
+I'll resend the fixes/cleanup to start with.
+
+> >
+> > The second part of the patches adds event json for the software PMU
+> > and makes the tracepoint PMU support iteration of events and the
+> > like. Without these improvements the tracepoint and software PMUs will
+> > appear to have no events in the ilist app. As the software PMU moves
+> > parsing to json, the legacy hard coded parsing is removed. This has
+> > proven controversial for hardware events and so that cleanup isn't
+> > done here.
+>
+> I think it's ok to move hardware events to JSON as well.  Then we can
+> probably remove the hard coded parsing code.
+
+A complication here is that in the json we have a "Unit" entry that
+maps to a named PMU. For "software" the
+`/sys/bus/event_source/devices/software` exists, similarly for
+tracepoint, but for legacy hardware and hardware cache we may need to
+keep the legacy type and not use the PMU type, the naming of the PMU
+isn't consistent, etc.
+
+> The tricky part is the hybrid machines.  Would it be possible to define
+> common hardware with standard (legacy) encoding and to mark it "weak" or
+> overridable by arch-specific events with the same name?
+
+My thought is that eventually things could work like unionfs. The code
+looks for a PMU/events in one place, then if that misses look in the
+next, etc. This way we could allow users to have a directory where
+they define things like events and metrics, expanding perf's
+capabilities. We could also compress the event/metric data which may
+be able to half the perf binary size (beyond the pretty simple
+reuse/offset optimizations jevents.py tries today). With the unionfs
+approach there would be a default prioritization of where to look
+probably matching:
+https://lore.kernel.org/lkml/20250416045117.876775-1-irogers@google.com/
+(maybe we need to treat cycles as a special case given ARM). We can
+then have a config setting to make the order different. There are two
+issues though, the event encoding/description/.. legacy vs
+sysfs/json/user encoding and the behavior of
+wildcarding/case-sensitivity/.. the non-legacy stuff inherently
+supports wildcarding and case insensitivity, but this may surprise
+people.
+
+> > The final patch adds the ilist command. To run it you need the updated
+> > perf.cpython.so in your PYTHONPATH and then execute the
+> > script. Expanding PMUs and then selecting events will cause event
+> > informatin to be displayed in the top-right and the counters values to
+> > be displayed as sparklines and counts in the bottom half of the
+> > screen.
+> >
+> > Some thoughts on the series:
+> >
+> >  - The PMU changes will conflict with the addition of the DRM PMU:
+> >    https://lore.kernel.org/lkml/20250403202439.57791-1-irogers@google.c=
+om/
+> >    when these two are merged together ilist will show yet more
+> >    counters. It'd be nice if the DRM stuff could land and then I can
+> >    rebase these patches.
+>
+> Yep, it's merged now.  Please rebase the series.
+
+Ack. Thanks!
+
+> >
+> >  - The parse-events clean up of the software and tracepoint PMU. The
+> >    software PMU hard coding to be legacy first has similar issues and
+> >    will conflict with the clean up in:
+> >    https://lore.kernel.org/lkml/20250416045117.876775-1-irogers@google.=
+com/
+> >    Moving the software work to json means we don't need special parse
+> >    events terms for software events, etc. We can just treat things
+> >    like regular PMUs with json, etc. I'd much rather we had less
+> >    special case logic so that series is best rebased on top of this
+> >    work and it should drop the changes for software terms, etc. which
+> >    this series removes. Maybe one day the whole event parsing can be
+> >    much more regular in how PMUs are treated but there's always
+> >    "cycles".
+>
+> As I said, moving the hardware events would be a solution as long as it
+> can handle complexities in hybrid.
+>
+> >
+> >  - Should python libraries have feature tests? How does this get
+> >    packaged outside the kernel tree? I think these are open
+> >    questions. Clearly textual is kind of a big dependency and we've
+> >    largely been moving in the direction of fewer dependencies
+> >    recently. Hopefully the app makes it clear why I think this one is
+> >    worth carrying. We carry libslang as a dependency and I think
+> >    textual clearly far surpasses it.
+>
+> Hmm.. I think it can be checked at runtime.  And maybe it can ask users
+> to install the required packages.
+
+Yeah, rather than:
+```
+import textual
+```
+we can do something like:
+```
+import importlib
+try:
+  textual =3D importlib.import_module('textual')
+except ModuleNotFoundError:
+  print("The textual library isn't found. Please install with pip, uv
+or your distributions package manager")
+  exit(1)
+```
+I'll add it to the patch with the app in it.
+
+> >  - How to launch? Currently I run tools/perf/python/ilist.py but it
+> >    would be much nicer if we could do `perf ilist` much as we do for
+> >    perf-archive.sh. There are probably other scripts that should be
+> >    perf commands like flamegraph and gecko. It'd be nice to follow up
+> >    the series with something to make using these commands easy.
+>
+> Sounds good.
+
+Thanks,
+Ian
+
+> Thanks,
+> Namhyung
+>
+> >
+> >  - Additional thoughts were captured on the mailing list:
+> >    https://lore.kernel.org/lkml/CAP-5=3DfWC+doaVd5rEMWJXSQi_db_Wu2tyAe5=
+Lm6jnQjcwXkF+w@mail.gmail.com/
+> >
+> > [1] https://textual.textualize.io/
+> >
+> > v4: No conflict rebase. Picks up perf-tools-next DRM PMU which
+> >     displays as expected.
+> >
+> > v3: Add a search dialog to the ilist app with 'n'ext and 'p'revious
+> >     keys. No changes in the ground work first 14 patches.
+> >
+> > v2: In the jevents event description duplication, some minor changes
+> >     accidentally missed from v1 meaning that in v1 the descriptions
+> >     were still duplicated. Expand the cover letter with some thoughts
+> >     on the series.
+> >
+> > Ian Rogers (15):
+> >   perf hwmon_pmu: Avoid shortening hwmon PMU name
+> >   perf parse-events: Minor tidy up of event_type helper
+> >   perf python: In str(evsel) use the evsel__pmu_name helper
+> >   perf python: Fix thread check in pyrf_evsel__read
+> >   perf python: Correct pyrf_evsel__read for tool PMUs
+> >   perf python: Add basic PMU abstraction and pmus sequence
+> >   perf python: Add function returning dictionary of all events on a PMU
+> >   perf jevents: If the long_desc and desc are identical then drop the
+> >     long_desc
+> >   perf jevents: Add common software event json
+> >   perf pmu: Tolerate failure to read the type for wellknown PMUs
+> >   perf parse-events: Remove non-json software events
+> >   perf tp_pmu: Factor existing tracepoint logic to new file
+> >   perf tp_pmu: Add event APIs
+> >   perf list: Remove tracepoint printing code
+> >   perf ilist: Add new python ilist command
+> >
+> >  tools/perf/builtin-list.c                     |  47 ++-
+> >  .../arch/common/common/software.json          |  92 +++++
+> >  tools/perf/pmu-events/empty-pmu-events.c      | 266 ++++++++-----
+> >  tools/perf/pmu-events/jevents.py              |  18 +-
+> >  tools/perf/python/ilist.py                    | 376 ++++++++++++++++++
+> >  tools/perf/util/Build                         |   1 +
+> >  tools/perf/util/evsel.c                       |  21 +-
+> >  tools/perf/util/hwmon_pmu.c                   |   2 +-
+> >  tools/perf/util/parse-events.c                | 225 ++++-------
+> >  tools/perf/util/parse-events.h                |   3 +-
+> >  tools/perf/util/parse-events.l                |  38 +-
+> >  tools/perf/util/parse-events.y                |  29 +-
+> >  tools/perf/util/pmu.c                         |  44 +-
+> >  tools/perf/util/print-events.c                |  95 -----
+> >  tools/perf/util/print-events.h                |   1 -
+> >  tools/perf/util/python.c                      | 248 +++++++++++-
+> >  tools/perf/util/tp_pmu.c                      | 209 ++++++++++
+> >  tools/perf/util/tp_pmu.h                      |  19 +
+> >  18 files changed, 1282 insertions(+), 452 deletions(-)
+> >  create mode 100644 tools/perf/pmu-events/arch/common/common/software.j=
+son
+> >  create mode 100755 tools/perf/python/ilist.py
+> >  create mode 100644 tools/perf/util/tp_pmu.c
+> >  create mode 100644 tools/perf/util/tp_pmu.h
+> >
+> > --
+> > 2.50.0.727.gbf7dc18ff4-goog
+> >
 
