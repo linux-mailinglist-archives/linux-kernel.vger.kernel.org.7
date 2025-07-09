@@ -1,111 +1,267 @@
-Return-Path: <linux-kernel+bounces-722963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578F0AFE12C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:19:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227DBAFE12F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 09:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4ABE165504
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:19:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 686E13A6D01
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 07:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64DB26FA4B;
-	Wed,  9 Jul 2025 07:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A8626F45A;
+	Wed,  9 Jul 2025 07:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNHNUYlS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="E3ShT38r"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34343194A44;
-	Wed,  9 Jul 2025 07:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E1A8479;
+	Wed,  9 Jul 2025 07:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752045570; cv=none; b=tKMHeZcD4vbN9hcBt+Z5X79/dSaziUZKREn+DoK9SpLDGKmuh3e6SMECzeOdcjdpMcJJ5SmmxM0h1Jl42yLfYNzVp+M0TqmAA2oWbFasDMqRXdZbLhcBrcdiw62o2MIMVnR9g6M62be8xzHMAyJMutxPBb/kaelxObqKw9pxRzM=
+	t=1752045705; cv=none; b=DOkmV8Y0BNZtEqBdJ749Umg6TpOHLZ9Sv2guZleLrAdwTYfcP3Mm9wtKiVo4aXL7bVYXp0pqQKNbSO0BYtWUS4KH3JptNpKihBfPpQO+4a/C6hVI9SVuqaDKnmlXoNHHJrG0MAma/HU2R/O0M4+XYM+7XxfO7pLCMiyKJl68WrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752045570; c=relaxed/simple;
-	bh=+FdXl/ZUySz07xGC7GHXbM2oS9c+ddkk471S2TEye3U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m0yukm1q1+H+bEG9wzgfwnjyzvIEHPWpvoyNoGOGQlzL1TcTpf5vZCPmeboT5PY2t+kom8HCD78gLGF/Kdrbws+Lgd6LPbRvQ3Hw2Xs9nA/Tonva69javlXnbYHK2MHx99Eg9S70IokMN1WUle+e+3b60XahpT6knEnbvgxPeqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNHNUYlS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4E7DC4AF0B;
-	Wed,  9 Jul 2025 07:19:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752045569;
-	bh=+FdXl/ZUySz07xGC7GHXbM2oS9c+ddkk471S2TEye3U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tNHNUYlS0Dno8NlxGiVtmf+nX9FCL9PqikVT7Ggh48NCRYiRp7DnkwPSOSBDiQ0Tn
-	 nlph1Co3ANHylobkj8OO6qaF5BPzIByJlae3jKvQV7XVUO1Qe/5/uh19SCzgc1qMJa
-	 /fkFRdkkXpxH7tvtxo6uOrRytzjrzgapE2y6BHSUAxhWs7vexg71KMTjq2YSnWGUgz
-	 dh+MF8Q8iSdvcbx1P1KxydlAp5sefNjH320lMOysA6VVfirS+6eyQQOPsxRVMrOnQD
-	 G2YjLfHXdEGwGe79wcTsfwGsO8fYKB03oAQ+6fJfK2DAK/x1etLez17UAAZi5wQp/r
-	 LL0r5E/NK0Guw==
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-72c09f8369cso1736096a34.3;
-        Wed, 09 Jul 2025 00:19:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUZmbqhWdshGqrYwN05NNtoE/qT9hET05H/rpxNp54IfuG/pb31wse2NgnhVn+YVEua5vevDhQIa/M=@vger.kernel.org, AJvYcCUikZ3dsiZtK71K5n6KWeGYWZG2hcKkLftd/hIE26hf0d7c1P115LUci6s4+sf2m9Jc0YNsBO1QoyRZEY4=@vger.kernel.org, AJvYcCWZQb77GtTKfdweU8DP2gkSllROT7TS23BIiDfimRgZetTQKgoPiPk7EW+W2bgJPXU1A8JfFbUEKurTCTk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVRVviV1QOFqOmsQUg9gBV3j4XnopWLXkZDOxnlxAakWYIiYRi
-	ZNvieArzL3DbJnv8uB6W/bjjEv+UQp8ts8lWBNd2EivaSJQbpxl0XyoZo36BaqFUNi8TABchao4
-	fomxqkttAaggfeeKDn9p18fMwSp+R8rw=
-X-Google-Smtp-Source: AGHT+IFxc2jjH4fZ/YiHTM/JJ7mtVD0WJzVbdnfdT9Jxzbb+gc/4LF1PBuGm4dK3onCF9pnZwyZmwK1temDraGP9tUI=
-X-Received: by 2002:a05:6830:2d84:b0:73b:1efa:5f5b with SMTP id
- 46e09a7af769-73ce65b7ddemr786127a34.28.1752045569014; Wed, 09 Jul 2025
- 00:19:29 -0700 (PDT)
+	s=arc-20240116; t=1752045705; c=relaxed/simple;
+	bh=pEcl3vC69AF0Tv/5/88fWW5Hw/Y4TZSFwrX6fmLotzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gOAKlpgEThVTcPQbnZ0GfOXAjnkcFwbzhbb6Nqvpy6rdEaieeIhVGFyCnD39H4oYiYL19+uHObn6OZemCoPQxoFRu3P7k9ayiYuzc4UAE2mofiNjVIFCeJNui0EzqUTzS+yV0B+NaZNLpkrlc+/6rwPvsHy/bdPG8PQi98WhJrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=E3ShT38r; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752045634;
+	bh=GoIFS/oT809niQxBcniSLqIMIRGY6NhO7yYAKbDXQxA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=E3ShT38rOzC+7jBiqAuA5CotSFoBLdMhQyI9kPfi6g9ANxNrFTcMCmzva0R3zJogO
+	 UspAXBdyOTU4vYKj0BV3Z/TDz/xXyxC5htHQG8pRtW6brk/HL3RQ88SYLRQYpMIzY8
+	 X4TNHmu0ReBJ7Tp7tGhWASXIzwB7ZCU26PBWBQdvg3lxwMGRFsNBPFNxg0m4nb7qao
+	 TadQU2ckrpK4fsSHKy1aNZHj9v0B5xXjoLINiI+1GGJPfISbO6YGt71dcQYyKOmCR0
+	 Nz7EtzA8H+03ZnZ9pcP/ntDSHnnC+gDFWQVnsrZwJQhSjcw+hmHWvCuvOuNExrULXp
+	 NEULHIpYmT6Hw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bcTsG3nCVz4wxh;
+	Wed,  9 Jul 2025 17:20:34 +1000 (AEST)
+Date: Wed, 9 Jul 2025 17:21:38 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>, Shawn Guo <shawnguo@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, James Clark <james.clark@linaro.org>, Larisa
+ Grigore <Larisa.Grigore@nxp.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, "Radu Pirea (NXP OSS)"
+ <radu-nicolae.pirea@oss.nxp.com>
+Subject: linux-next: manual merge of the usb tree with the imx-mxs tree
+Message-ID: <20250709172138.34ffb49f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707-tegra124-cpufreq-v6-0-fe69c0f9bbab@gmail.com> <20250707-tegra124-cpufreq-v6-1-fe69c0f9bbab@gmail.com>
-In-Reply-To: <20250707-tegra124-cpufreq-v6-1-fe69c0f9bbab@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 9 Jul 2025 09:19:17 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gAGTx7cpesJfhz2q+CzHQh6OJfA2bzC1BB-QOL6QWpEg@mail.gmail.com>
-X-Gm-Features: Ac12FXzE54UiOt_Hcf4GJ9n7Sh3G5Qxpxjz126toJvIu-R91hcvgLxTDWb0sq4w
-Message-ID: <CAJZ5v0gAGTx7cpesJfhz2q+CzHQh6OJfA2bzC1BB-QOL6QWpEg@mail.gmail.com>
-Subject: Re: [PATCH v6 1/3] cpufreq: Export disable_cpufreq()
-To: webgeek1234@gmail.com
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/iAbvfqnFyAm+22lccuJ0=SE";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/iAbvfqnFyAm+22lccuJ0=SE
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 7, 2025 at 11:17=E2=80=AFPM Aaron Kling via B4 Relay
-<devnull+webgeek1234.gmail.com@kernel.org> wrote:
->
-> From: Aaron Kling <webgeek1234@gmail.com>
->
-> This is used by the tegra124-cpufreq driver.
->
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  drivers/cpufreq/cpufreq.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index 0cf5a320bb5e864709b259249fb1af8bfbc0b04b..78cddc78ee98630f99ccc332c=
-64c94f437297177 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -109,6 +109,7 @@ void disable_cpufreq(void)
->  {
->         off =3D 1;
->  }
-> +EXPORT_SYMBOL_GPL(disable_cpufreq);
+Hi all,
 
-Please add an empty line here.
+Today's linux-next merge of the usb tree got conflicts in:
 
-With that, feel free to add
+  arch/arm64/boot/dts/freescale/s32g2.dtsi
+  arch/arm64/boot/dts/freescale/s32g3.dtsi
 
-Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+between commit:
 
-to this patch.
+  06ee2f0e2180 ("arm64: dts: Add DSPI entries for S32G platforms")
 
->  static DEFINE_MUTEX(cpufreq_governor_mutex);
->
->  bool have_governor_per_policy(void)
->
-> --
+from the imx-mxs tree and commit:
+
+  d1b07cc0868f ("arm64: dts: s32g: Add USB device tree information for s32g=
+2/s32g3")
+
+from the usb tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm64/boot/dts/freescale/s32g2.dtsi
+index da79bb9daa35,4be6534ed01d..000000000000
+--- a/arch/arm64/boot/dts/freescale/s32g2.dtsi
++++ b/arch/arm64/boot/dts/freescale/s32g2.dtsi
+@@@ -384,45 -376,29 +384,68 @@@
+  			status =3D "disabled";
+  		};
+ =20
+ +		spi0: spi@401d4000 {
+ +			compatible =3D "nxp,s32g2-dspi";
+ +			reg =3D <0x401d4000 0x1000>;
+ +			interrupts =3D <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
+ +			clocks =3D <&clks 26>;
+ +			clock-names =3D "dspi";
+ +			spi-num-chipselects =3D <8>;
+ +			bus-num =3D <0>;
+ +			dmas =3D <&edma0 0 7>, <&edma0 0 8>;
+ +			dma-names =3D "tx", "rx";
+ +			status =3D "disabled";
+ +		};
+ +
+ +		spi1: spi@401d8000 {
+ +			compatible =3D "nxp,s32g2-dspi";
+ +			reg =3D <0x401d8000 0x1000>;
+ +			interrupts =3D <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+ +			clocks =3D <&clks 26>;
+ +			clock-names =3D "dspi";
+ +			spi-num-chipselects =3D <5>;
+ +			bus-num =3D <1>;
+ +			dmas =3D <&edma0 0 10>, <&edma0 0 11>;
+ +			dma-names =3D "tx", "rx";
+ +			status =3D "disabled";
+ +		};
+ +
+ +		spi2: spi@401dc000 {
+ +			compatible =3D "nxp,s32g2-dspi";
+ +			reg =3D <0x401dc000 0x1000>;
+ +			interrupts =3D <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
+ +			clocks =3D <&clks 26>;
+ +			clock-names =3D "dspi";
+ +			spi-num-chipselects =3D <5>;
+ +			bus-num =3D <2>;
+ +			dmas =3D <&edma0 0 13>, <&edma0 0 14>;
+ +			dma-names =3D "tx", "rx";
+ +			status =3D "disabled";
+ +		};
+ +
++ 		usbmisc: usbmisc@44064200 {
++ 			#index-cells =3D <1>;
++ 			compatible =3D "nxp,s32g2-usbmisc";
++ 			reg =3D <0x44064200 0x200>;
++ 		};
++=20
++ 		usbotg: usb@44064000 {
++ 			compatible =3D "nxp,s32g2-usb";
++ 			reg =3D <0x44064000 0x200>;
++ 			interrupt-parent =3D <&gic>;
++ 			interrupts =3D <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>, /* OTG Core */
++ 					 <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>; /* OTG Wakeup */
++ 			clocks =3D <&clks 94>, <&clks 95>;
++ 			fsl,usbmisc =3D <&usbmisc 0>;
++ 			ahb-burst-config =3D <0x3>;
++ 			tx-burst-size-dword =3D <0x10>;
++ 			rx-burst-size-dword =3D <0x10>;
++ 			phy_type =3D "ulpi";
++ 			dr_mode =3D "host";
++ 			maximum-speed =3D "high-speed";
++ 			status =3D "disabled";
++ 		};
++=20
+  		i2c0: i2c@401e4000 {
+  			compatible =3D "nxp,s32g2-i2c";
+  			reg =3D <0x401e4000 0x1000>;
+diff --cc arch/arm64/boot/dts/freescale/s32g3.dtsi
+index 9af35e82fdc9,191d2dab4254..000000000000
+--- a/arch/arm64/boot/dts/freescale/s32g3.dtsi
++++ b/arch/arm64/boot/dts/freescale/s32g3.dtsi
+@@@ -444,45 -435,29 +444,68 @@@
+  			status =3D "disabled";
+  		};
+ =20
+ +		spi0: spi@401d4000 {
+ +			compatible =3D "nxp,s32g3-dspi", "nxp,s32g2-dspi";
+ +			reg =3D <0x401d4000 0x1000>;
+ +			interrupts =3D <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
+ +			clocks =3D <&clks 26>;
+ +			clock-names =3D "dspi";
+ +			spi-num-chipselects =3D <8>;
+ +			bus-num =3D <0>;
+ +			dmas =3D <&edma0 0 7>, <&edma0 0 8>;
+ +			dma-names =3D "tx", "rx";
+ +			status =3D "disabled";
+ +		};
+ +
+ +		spi1: spi@401d8000 {
+ +			compatible =3D "nxp,s32g3-dspi", "nxp,s32g2-dspi";
+ +			reg =3D <0x401d8000 0x1000>;
+ +			interrupts =3D <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+ +			clocks =3D <&clks 26>;
+ +			clock-names =3D "dspi";
+ +			spi-num-chipselects =3D <5>;
+ +			bus-num =3D <1>;
+ +			dmas =3D <&edma0 0 10>, <&edma0 0 11>;
+ +			dma-names =3D "tx", "rx";
+ +			status =3D "disabled";
+ +		};
+ +
+ +		spi2: spi@401dc000 {
+ +			compatible =3D "nxp,s32g3-dspi", "nxp,s32g2-dspi";
+ +			reg =3D <0x401dc000 0x1000>;
+ +			interrupts =3D <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
+ +			clocks =3D <&clks 26>;
+ +			clock-names =3D "dspi";
+ +			spi-num-chipselects =3D <5>;
+ +			bus-num =3D <2>;
+ +			dmas =3D <&edma0 0 13>, <&edma0 0 14>;
+ +			dma-names =3D "tx", "rx";
+ +			status =3D "disabled";
+ +		};
+ +
++ 		usbmisc: usbmisc@44064200 {
++ 			#index-cells =3D <1>;
++ 			compatible =3D "nxp,s32g3-usbmisc";
++ 			reg =3D <0x44064200 0x200>;
++ 		};
++=20
++                 usbotg: usb@44064000 {
++                         compatible =3D "nxp,s32g3-usb", "nxp,s32g2-usb";
++                         reg =3D <0x44064000 0x200>;
++                         interrupt-parent =3D <&gic>;
++                         interrupts =3D <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>,=
+ /* OTG Core */
++                                      <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>; /=
+* OTG Wakeup */
++                         clocks =3D <&clks 94>, <&clks 95>;
++                         fsl,usbmisc =3D <&usbmisc 0>;
++                         ahb-burst-config =3D <0x3>;
++                         tx-burst-size-dword =3D <0x10>;
++                         rx-burst-size-dword =3D <0x10>;
++                         phy_type =3D "ulpi";
++                         dr_mode =3D "host";
++                         maximum-speed =3D "high-speed";
++                         status =3D "disabled";
++                 };
++=20
+  		i2c0: i2c@401e4000 {
+  			compatible =3D "nxp,s32g3-i2c",
+  				     "nxp,s32g2-i2c";
+
+--Sig_/iAbvfqnFyAm+22lccuJ0=SE
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhuGIIACgkQAVBC80lX
+0GyZlQf/YLJ63e6cg8K/8eDtR65oQ5ZyTeho4GjU3/xVwgBOTZZRZ1CglGc6fcgR
+mIAlT0qoQGZwLSdabP+nE45HvX6CYo56IcufInF3v9pzvHJZetwLbMydOn2yQJ5y
+dTXyLaR3TZZ0VkVKuho2uyjt2LiKYGVrgZg/Gd7/OYvNAh2qRdn7HUmscmyPPI0B
+IBIDxEINidoB0GtFs60zO1oW315aS1/zqYZgkIiBGlHEIOXzipSKyOnu8E56zLgS
+FCcXR7FKRVOae5NWJDFtgZIfgQIF8sgTJDZ+3z8nmvuLrbciWYfYGh8nMbrvT72/
+LtcCUJQ0Kdl4UuFn+N5hqWfc9wvT+A==
+=k1xX
+-----END PGP SIGNATURE-----
+
+--Sig_/iAbvfqnFyAm+22lccuJ0=SE--
 
