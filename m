@@ -1,123 +1,155 @@
-Return-Path: <linux-kernel+bounces-723103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9912DAFE2F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:42:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA0C9AFE32D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:50:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87A9B1C42FB4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:42:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAEAE3AEFBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B992C27C16A;
-	Wed,  9 Jul 2025 08:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED39A27F75C;
+	Wed,  9 Jul 2025 08:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SbHRs5qQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nY9o6Ybb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A0D23C4F4;
-	Wed,  9 Jul 2025 08:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9DF272E63;
+	Wed,  9 Jul 2025 08:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752050529; cv=none; b=M/muMeHg9lB+cyf07d40IUTycJ0ML4ypFBOSsdBByhkRyCJr5LJm3N4kJgx51lHHqKwo8ZQIumHCvaG950Fdi3bysq6olqnDIcI/HurtI+FqTf+gywaSFDdttuQGzxrBHm7mweYq7Nmp3JRm4FdFVhyf0P65clJwfvs/BG91rD0=
+	t=1752051032; cv=none; b=L5R6MqDtegJlBLDiWZOzzE1QiQkCyFAiKlRQ0prYuYs7s3NY1Rh+SnVw66a5Kzth9XZiRtJvGGE5oJEI98np032K7jSRtd8bwHvyEGV/IqHDUQpDqRqQ4PSkaFNdPFHHYZwHYyXO0CHf0cXlTVJ9B+ly8t4L9Fjmfkan6HuNizI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752050529; c=relaxed/simple;
-	bh=3XPMV1lacpivhZnrO2POSB/TElhb4nz0PFA3nyPNTak=;
+	s=arc-20240116; t=1752051032; c=relaxed/simple;
+	bh=PmijWoo8arFesx63Y/hi1iglL6Yr53cGkDtSDwK7P+o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XDJ+qbVMyDJgGkGYGcyPXzb58ga7kjyBEUHuAcWd+Vb6mVjaqE0tiO4wzcasdiQAkXRAxS5G8X0B2OF4VJiISZNFj0g0Lm62UCd9TjTraiM2SlKx9OqXxk0YRKnN3C37j8GYc7fMKCJUy4ePW3p0Bhfcd2OQCXNE8okJ+R8beWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SbHRs5qQ; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=b1lXO31uAED9EurQES/ETGIkX4ArggqLXb95EPPAiL3+V8Y0fNSvuui09jpkmnEolqyYRbNzlySbUys6qWdaIlM3c9Q07VeiFgz+3HPl+WWFWEjQBg0s7P2oFvMeLy5Ul5KAsMnJxhzO4/CViFuD7H1ofwHN2aXiuc4H5wXx6CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nY9o6Ybb; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752050527; x=1783586527;
+  t=1752051031; x=1783587031;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=3XPMV1lacpivhZnrO2POSB/TElhb4nz0PFA3nyPNTak=;
-  b=SbHRs5qQeDm076gqiiZKO/OY2asxUZInrioYdatb1MihONOK3TGzlAFN
-   I4rPntGAcehmQNQPOozr/QQEy3ynsPSyxYqRrcrBDIv90w7Q8wb5Jwq9C
-   Vw3zASe0fN9URxx2hi0sn7p+C8mZ9r7gW83ytaYteGqg19hiKlbmShsWQ
-   Cf3ijO5Hnqk6Ltg5wCmkX8DV95iquDkgY6+1TYFtsWkuwFLj2qR+Az2NY
-   Vw/jPyAfk2lJRploFjtYiJtTJUMvpc6hjVXFnS2hwC7hqsfNY+my6retl
-   j3lHimsFjo/UmvXUrCkAbj6q5SJgSL5XyrPmWKL7CLNZ4JB7k2wyvhE8e
-   w==;
-X-CSE-ConnectionGUID: AjFyBZOqSBavrPXpDs1wSQ==
-X-CSE-MsgGUID: 64M59SjcTPmpIjy+llQiBA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="65365749"
+   mime-version:in-reply-to;
+  bh=PmijWoo8arFesx63Y/hi1iglL6Yr53cGkDtSDwK7P+o=;
+  b=nY9o6Ybbpbu9U4QkEZLYjvy9NLHViqN+AlwtDTrSw4FD8mi7gNuQ4/O0
+   YLSP35Cu1aH4kZ6aplVVOyMuIQZlhVCurFHIG6n5twTG+/keDcYrw7XCM
+   7XbJP3uVOnsJokn9keb+Eoh4Sg977rmoKX8x+u8xV4tNKw24LOQfxXg6d
+   Z4DH/hC+NeWO/SS7BxIa4hskBm/1nsHvFZRyoZwE07lrS72KN2waaGATH
+   +A763OsGg7HD1M3Q8IgldUaZ2JgXZO1AAZCIf54E39IUgtinohZSLFMvF
+   eNydcTAbfkRl1re0rRZdEbIV7wFM0EZ1ePypJmKapXZqYGrKoYECmmTx3
+   A==;
+X-CSE-ConnectionGUID: cOfw2RvoRD6YwKI2Y3hATA==
+X-CSE-MsgGUID: KJJcB5XYSsem96kXVQIMqA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="58110196"
 X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="65365749"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 01:42:05 -0700
-X-CSE-ConnectionGUID: Y26OhDB7R8WrLKKzVJ3KEw==
-X-CSE-MsgGUID: Q5veKF8tRZCRNUSvKVy+HQ==
+   d="scan'208";a="58110196"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 01:50:30 -0700
+X-CSE-ConnectionGUID: VHTXJY2tQ+6+fRGT39xP7w==
+X-CSE-MsgGUID: 0wOOL00WTG+9kuIJiQNzNA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="192906534"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 01:42:01 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uZQNJ-0000000DoM8-2nVm;
-	Wed, 09 Jul 2025 11:41:57 +0300
-Date: Wed, 9 Jul 2025 11:41:57 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	Srinivas Neeli <srinivas.neeli@amd.com>,
-	Michal Simek <michal.simek@amd.com>, Nandor Han <nandor.han@ge.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com, linux-arm-kernel@lists.infradead.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 04/19] gpio: wcove: use new GPIO line value setter
- callbacks
-Message-ID: <aG4rVW5m6HSnSJnv@smile.fi.intel.com>
-References: <20250709-gpiochip-set-rv-gpio-remaining-v1-0-b8950f69618d@linaro.org>
- <20250709-gpiochip-set-rv-gpio-remaining-v1-4-b8950f69618d@linaro.org>
- <CAHp75VckSCyDiAtP+q8nGGiJBuMFi3Nke7Puh0SE9nBX4vUX+w@mail.gmail.com>
+   d="scan'208";a="186688596"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa001.fm.intel.com with ESMTP; 09 Jul 2025 01:50:29 -0700
+Date: Wed, 9 Jul 2025 16:42:12 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Xu Yilun <yilun.xu@intel.com>, linux-fpga@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Moritz Fischer <mdf@kernel.org>,
+	Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>
+Subject: Re: [PATCH v2 1/1] fpga: altera-cvp: Use pci_find_vsec_capability()
+ when probing FPGA device
+Message-ID: <aG4rZNGgROrXXy+F@yilunxu-OptiPlex-7050>
+References: <20250627112635.789872-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VckSCyDiAtP+q8nGGiJBuMFi3Nke7Puh0SE9nBX4vUX+w@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250627112635.789872-1-andriy.shevchenko@linux.intel.com>
 
-On Wed, Jul 09, 2025 at 11:32:40AM +0300, Andy Shevchenko wrote:
-> On Wed, Jul 9, 2025 at 9:42 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-
-...
-
-> >         if (value)
-> > -               regmap_set_bits(wg->regmap, reg, 1);
-> > -       else
-> > -               regmap_clear_bits(wg->regmap, reg, 1);
-> > +               return regmap_set_bits(wg->regmap, reg, 1);
-> > +
-> > +       return regmap_clear_bits(wg->regmap, reg, 1);
+On Fri, Jun 27, 2025 at 02:26:22PM +0300, Andy Shevchenko wrote:
+> Currently altera_cvp_probe() open-codes pci_find_vsec_capability().
+> Refactor the former to use the latter. No functional change intended.
 > 
-> return regmap_assign_bits(...);
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> 
+> v2: removed unused variable (LKP)
+> 
+>  drivers/fpga/altera-cvp.c | 20 +++++---------------
+>  1 file changed, 5 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+> index 5af0bd33890c..514d2ac18e5f 100644
+> --- a/drivers/fpga/altera-cvp.c
+> +++ b/drivers/fpga/altera-cvp.c
+> @@ -22,9 +22,6 @@
+>  #define TIMEOUT_US	2000	/* CVP STATUS timeout for USERMODE polling */
+>  
+>  /* Vendor Specific Extended Capability Registers */
+> -#define VSE_PCIE_EXT_CAP_ID		0x0
+> -#define VSE_PCIE_EXT_CAP_ID_VAL		0x000b	/* 16bit */
+> -
+>  #define VSE_CVP_STATUS			0x1c	/* 32bit */
+>  #define VSE_CVP_STATUS_CFG_RDY		BIT(18)	/* CVP_CONFIG_READY */
+>  #define VSE_CVP_STATUS_CFG_ERR		BIT(19)	/* CVP_CONFIG_ERROR */
+> @@ -577,25 +574,18 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+>  {
+>  	struct altera_cvp_conf *conf;
+>  	struct fpga_manager *mgr;
+> -	int ret, offset;
+> -	u16 cmd, val;
+> +	u16 cmd, offset;
+>  	u32 regval;
+> -
+> -	/* Discover the Vendor Specific Offset for this device */
+> -	offset = pci_find_next_ext_capability(pdev, 0, PCI_EXT_CAP_ID_VNDR);
+> -	if (!offset) {
+> -		dev_err(&pdev->dev, "No Vendor Specific Offset.\n");
+> -		return -ENODEV;
+> -	}
+> +	int ret;
+>  
+>  	/*
+>  	 * First check if this is the expected FPGA device. PCI config
+>  	 * space access works without enabling the PCI device, memory
+>  	 * space access is enabled further down.
+>  	 */
+> -	pci_read_config_word(pdev, offset + VSE_PCIE_EXT_CAP_ID, &val);
+> -	if (val != VSE_PCIE_EXT_CAP_ID_VAL) {
+> -		dev_err(&pdev->dev, "Wrong EXT_CAP_ID value 0x%x\n", val);
+> +	offset = pci_find_vsec_capability(pdev, PCI_VENDOR_ID_ALTERA, 0);
 
-Btw, since you are doing sometimes two patches, it might worth to have
-a prerequisite that changes set/clear to assign and then your patch will
-be cleaner.
+Mm.. the original code seems broken. It doesn't check the VSEC ID. And
+you filled '0'. Is '0' specified in any SPEC? I didn't see it as a
+wildcard.
 
-> Otherwise LGTM,
-> Reviewed-by: Andy Shevchenko <andy@kernel.org>
+Anyway, we should describe the change and remove "No functional change
+intended".
 
--- 
-With Best Regards,
-Andy Shevchenko
+> +	if (!offset) {
+> +		dev_err(&pdev->dev, "Wrong EXT_CAP_ID value\n");
 
+Should be "VSEC ID not found"
 
+Thanks,
+Yilun
+
+>  		return -ENODEV;
+>  	}
+>  
+> -- 
+> 2.47.2
+> 
+> 
 
