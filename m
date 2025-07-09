@@ -1,112 +1,163 @@
-Return-Path: <linux-kernel+bounces-724285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 125C7AFF0CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:22:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7B3AFF0CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:22:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1327B1C83B1A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:22:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C3575604C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3743B239561;
-	Wed,  9 Jul 2025 18:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="O25iQmHV"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3724323AE60;
+	Wed,  9 Jul 2025 18:22:24 +0000 (UTC)
+Received: from maynard.decadent.org.uk (maynard.decadent.org.uk [65.21.191.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE98A23770D
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 18:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548BB23958F;
+	Wed,  9 Jul 2025 18:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.21.191.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752085338; cv=none; b=XvhCkdTo/nerJahqzR7B5lTRTWIc9lmFOtjOfLzdq8eAgPPcfStMHonXD2QXV9Ig01YIQa02FW7+rhFkAHvko1e4a60hOKJwFxY/5snD8SwPgw7tVaFdEAX9nXn6MAjkCUwMHe5R1I/cDPxziG7e4EnCald0SgxIopPJo/45r3c=
+	t=1752085343; cv=none; b=SQaC49TAoMFYEV3ptbEGpplzrYsi6BLVBuy0eX001ZdXJV9iyiDBJHyCHzpQnP5eKMYh8YZs6535YHxX8tDns6NdoD6lbmLj8wbqREzbgfikS1v0gHv+GpjA8lKOcS9Cn4uslIrJMWbMgz0nq3ffLTP1dl+IjQC/ke7Eexj0Ru4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752085338; c=relaxed/simple;
-	bh=DHJISF5PClkUJdlEi0cvLH7QxOFYVlfzk8dRf+9bYpA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GMGhPocnTbHqNTD+/4jxdBi11WjYn8TYhNAjXDuWoj86gxVQ8UKcu21riHOSElry9vPdUO03j9DRieVJoWemzyRgz7CUezk1MecJmPvMFphU9nYw133M3MFb4nhMs5ZVVAQoSAWp543vHcpdt/SLO6SLllFatbo+CS7Am9qhgQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=O25iQmHV; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae0d7b32322so18174766b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 11:22:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1752085335; x=1752690135; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=USgUKs43X1RXi7eBmcZt6DCdTGCOb+krmsvl5A1pYq0=;
-        b=O25iQmHVkfAv1KtnCf7RWAn1wEiemrjIhDniWIDgWqQj1Oyn0abWFoQjODuEtqiwPZ
-         GLh6GWv8LpJWwc5c1oXh/gPZrpgv9RxmX4/BjjPWnEbgX+ZIYrDXeCOZSY5EOoynaBcE
-         lgMsT4wlcF0Za1vUYq7qn7YMxzoidHLYJb1Wc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752085335; x=1752690135;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=USgUKs43X1RXi7eBmcZt6DCdTGCOb+krmsvl5A1pYq0=;
-        b=M2r2pVLDvFnhb3FLP/U8wcUXTaRkqIWGtUP67iuXkYi8KGpWx/mHm3FcFn/CZ/HN7w
-         bFnw/ObZOqC9xTXwqiP5XSA+UXZhPQQhIman1tijuND0D8u9dhlwEPBiOnvkdspSyqvM
-         mZL4s6wYfsiL58esh+w2nqOXR0JCjr4qTANUz57914ipQLRm4QL/1OTYwQeg99gAtruD
-         yYs1PJRYlX0wfYlqg7xiOkaUoEW1v6gWOROqOZB2I+h5IOiIKvQkYfO44UImrxV0QV6Q
-         pVfqZmhenZDYbwk3IuQ+6L0iPAA0nPBP6q2bbu8gEw7xb4IiIYn8H532LNpaXhtsl/P5
-         LrHg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8LUcdkYtkT3KvX3/pcuPl6fjA235Rv7Aet7s3Go+UfO/Qz9jJC8LyF050SXtQYIS48LZfQ3uV6J6xtMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynxTQQRQc9sYWb4MnHNdQi4VTUTSd2qlu0CdFCpwu974ev+8m2
-	LQLYW+rvmN4a1iqao6fH4g1cc+kTByiDI3oOTPv12Bo+h78yw3UoREt9u4/EX3x2wc4hSCN7kV7
-	sYhethKU=
-X-Gm-Gg: ASbGncucnMz94YR5D9TNx+/lHP5DrqpKk2j8uvzdr7ST3sgigJQ757O5fURfLastuP2
-	peoxBcDMh6lOMassK6QU9HLZJb6B5CdqIntvFXyczltiHQfatpoOGipTjwQlgpPV1uSeTPVlpHS
-	7iQ2ra0DcJ5NkDA8biHlQPQLfe/PiEzq596Q8FmhLVe2eel0MFx4y1Sh9jDOXy9ultsNIU2AoMo
-	wswjNaIeNwBIgj+SLhFvW/4j+pBuWWDrfVKH4CdK2puEbunmAcr5I6fTfaZpVHj4KFbJNQe9lxZ
-	uR2ukaRlqPN+s7f1XWKU2P/tOvHl7VOcZrdvTDBQ92/ho5FpYpFMMGTNtFqKYyphdbtf2mzj/2l
-	V9yYfRIJD8f8ALsM3TecB8K9WvAXzQthoj89fc033MkWxRok=
-X-Google-Smtp-Source: AGHT+IH8+tJdMHJiYGobqCWw9PtVA9nYtZpdSgxhoo5479n0vOhcNXmhflh8wkIRKp+cmMsgw2CH4g==
-X-Received: by 2002:a17:907:724a:b0:ae0:d1f3:f7f4 with SMTP id a640c23a62f3a-ae6cf5c6031mr365809566b.13.1752085334761;
-        Wed, 09 Jul 2025 11:22:14 -0700 (PDT)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6b031e6sm1132583166b.123.2025.07.09.11.22.13
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Jul 2025 11:22:14 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-607cc1a2bd8so142869a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 11:22:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUFYMYEiaWT7HxHQEBo4KvRNI4Hwcc3l6iNv42m0EBR+xlGYpBzZspqltuNgTGu1L4kQfvnNQfqCssCglE=@vger.kernel.org
-X-Received: by 2002:a05:6402:2554:b0:607:206f:a19 with SMTP id
- 4fb4d7f45d1cf-611a704da42mr3019019a12.25.1752085333606; Wed, 09 Jul 2025
- 11:22:13 -0700 (PDT)
+	s=arc-20240116; t=1752085343; c=relaxed/simple;
+	bh=LYlalR3RLd6f+/Ka8VLwgGoSqq6pp8Fap9inGG3QKg8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VicAETDXTBzMC/mHY/ZkD4lhm3Kdel2tSimUTpPq/6XWxX+ngtie4Dcz2g3TC5hosp7U20rIsZODW5HtsnYysPm6i0SXZT929MUD6jBthGcofK4wgNF6kSdSr5QTTEnEaPD/dkrYxJl+sUpcPqSr++Osn0pLxq6QnaBOfOzN6Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk; spf=pass smtp.mailfrom=decadent.org.uk; arc=none smtp.client-ip=65.21.191.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=decadent.org.uk
+Received: from [89.234.162.240] (helo=deadeye)
+	by maynard with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ben@decadent.org.uk>)
+	id 1uZZQv-004kJU-1J;
+	Wed, 09 Jul 2025 18:22:16 +0000
+Received: from ben by deadeye with local (Exim 4.98.2)
+	(envelope-from <ben@decadent.org.uk>)
+	id 1uZZQt-0000000Ansu-2wDp;
+	Wed, 09 Jul 2025 20:22:15 +0200
+Message-ID: <b26b60b7d0d2a5ecfd2f3c45f95f32922ed24686.camel@decadent.org.uk>
+Subject: Re: [PATCH 4/4] cgroup: Do not report unavailable v1 controllers in
+ /proc/cgroups
+From: Ben Hutchings <ben@decadent.org.uk>
+To: Michal =?ISO-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, Johannes
+ Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, Roman
+ Gushchin	 <roman.gushchin@linux.dev>, Shakeel Butt
+ <shakeel.butt@linux.dev>, Muchun Song	 <muchun.song@linux.dev>, Andrew
+ Morton <akpm@linux-foundation.org>, Chen Ridong	 <chenridong@huawei.com>,
+ 1108294@bugs.debian.org
+Date: Wed, 09 Jul 2025 20:22:09 +0200
+In-Reply-To: <20240909163223.3693529-5-mkoutny@suse.com>
+References: <20240909163223.3693529-1-mkoutny@suse.com>
+	 <20240909163223.3693529-5-mkoutny@suse.com>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-Mdj+QvgzK/UNDkneOc1n"
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709180550.147205-1-longman@redhat.com> <CAHk-=wimw8A1ReDPMyAVPrB3rEzenkk-u21RN123BGmnGBwjiQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wimw8A1ReDPMyAVPrB3rEzenkk-u21RN123BGmnGBwjiQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 9 Jul 2025 11:21:57 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whVBKwK83R_7+52qzZb3DpFWGG8L=V5bDG6VS44e3=1-A@mail.gmail.com>
-X-Gm-Features: Ac12FXyLTcQ7P0XGQBPOF7RxDx6sFsCFMXmRrzQJhAQpr3v5UDxqSxmKlrZTPdw
-Message-ID: <CAHk-=whVBKwK83R_7+52qzZb3DpFWGG8L=V5bDG6VS44e3=1-A@mail.gmail.com>
-Subject: Re: [PATCH] locking/mutex: Disable preemption in __mutex_unlock_slowpath()
-To: Waiman Long <longman@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>
+X-SA-Exim-Connect-IP: 89.234.162.240
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on maynard); SAEximRunCond expanded to false
+
+
+--=-Mdj+QvgzK/UNDkneOc1n
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 9 Jul 2025 at 11:19, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> I absolutely detest the notion of "let's make locking be tied to
-> object lifetimes".
+On Mon, 2024-09-09 at 18:32 +0200, Michal Koutn=C3=BD wrote:
+> This is a followup to CONFIG-urability of cpuset and memory controllers
+> for v1 hierarchies. Make the output in /proc/cgroups reflect that
+> !CONFIG_CPUSETS_V1 is like !CONFIG_CPUSETS and
+> !CONFIG_MEMCG_V1 is like !CONFIG_MEMCG.
+>=20
+> The intended effect is that hiding the unavailable controllers will hint
+> users not to try mounting them on v1.
 
-Side note: I wonder if there's any way to detect this kind of race in general.
+This change can cause problems for the OpenJDK JVM, as reported in
+<https://bugs.debian.org/1108294>.
 
-And I suspect it would involve the exact *opposite* of your patch:
-make mutex_unlock() actively cause preemption after it has released
-the lock but before it has done the final accesses.
+Since OpenJDK version 11, the JVM can detect and adapt to cpuset and
+memory limits.  It supports both the cgroups v1 and v2 API, but before
+version 25 it always relied on /proc/cgroups to detect whether those
+controllers were enabled.
 
-                 Linus
+The result of this patch is that if CONFIG_MEMCG_V1 is disabled the JVM
+can easily trigger OOM when otherwise it would trim its memory usage
+through garbage collection.  (For cpusets, I'm not sure of the impact
+but I think it might make bad decisions about the size of thread pools.)
+
+Although the fix in OpenJDK 25 can probably be backported to older
+versions, this issue primarily affects container workloads so fixing
+this in distribution packages would not be sufficient.
+
+The obvious compatibility fix for this at the kernel level is to enable
+CONFIG_{CPUSETS,MEMCG}_V1.  But since the v1 API has long been
+deprecated and is not actually needed by OpenJDK, I would prefer not to
+do that.
+
+Would you consider reverting this change for the sake of compatibility?
+
+Ben.
+
+> Signed-off-by: Michal Koutn=C3=BD <mkoutny@suse.com>
+> ---
+>  kernel/cgroup/cgroup-v1.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
+> index 784337694a4be..e28d5f0d20ed0 100644
+> --- a/kernel/cgroup/cgroup-v1.c
+> +++ b/kernel/cgroup/cgroup-v1.c
+> @@ -681,11 +681,14 @@ int proc_cgroupstats_show(struct seq_file *m, void =
+*v)
+>  	 * cgroup_mutex contention.
+>  	 */
+> =20
+> -	for_each_subsys(ss, i)
+> +	for_each_subsys(ss, i) {
+> +		if (cgroup1_subsys_absent(ss))
+> +			continue;
+>  		seq_printf(m, "%s\t%d\t%d\t%d\n",
+>  			   ss->legacy_name, ss->root->hierarchy_id,
+>  			   atomic_read(&ss->root->nr_cgrps),
+>  			   cgroup_ssid_enabled(i));
+> +	}
+> =20
+>  	return 0;
+>  }
+
+--=20
+Ben Hutchings
+73.46% of all statistics are made up.
+
+--=-Mdj+QvgzK/UNDkneOc1n
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAmhus1EACgkQ57/I7JWG
+EQlMxg//Zu5qojY6j83XeXXdP+Nfmb6fFI9BIxkDydDpUDo+nVbaocvUlKBmssLq
+gT92YpjnemhmsHM9iTlGrMJ7A+PfqmYCUzRGYWHI/grx6GiO/PMxC4Qs5PfMAdRC
+SZsldb1qzQWB+8fh0NBwmAOX0UiYyx38yZe3jzz47pCoLAlold4U84x02ayPsvw5
+vHCwbCoCwtBFl1mStS0alqPozuLeiJFocONjE4jgyDKCnNv0S5NLwbfdFFbA60nh
+WolGPvsTtkUP1HRjXoGnpnNVseb5ZQ9H2d1Z2itvH6/mumnLFttdecJm3QiPg6LG
+Npis/j2LIqiR82DpQqg7Yi4H658Roo0j2cN//Gjij/6wET2Mwk4S1AV6Qk3IevJ9
+lzqRO7xvTe+VjUvtfhLQYvAlYaIL2oJBL9d6ofTBtIhA+3xdeaRrMRHi5ah55pre
+Rq4px/nQAaU9fao8B9HvA/TDYAtCLOmwe12jvjthhuK0crqH4RvhGUD6/sCT2u51
+2DNeCeJUyUeGZWEYXhyloeI8x4alJxeGCW0bGhxLj8Im8T95RUNWG+V82QEz9Q5L
+l3IHyTEFC/yQeP7yMflCInl4oe8kUFZT4J9fN5Z/wPXN2JYe7QiT/HvtmtQoQQT9
+FBNrT4PbC4PW8Cf6WLMnNk620qsg8ErGzsQx00tjMYwVK0VJLug=
+=Ws1Z
+-----END PGP SIGNATURE-----
+
+--=-Mdj+QvgzK/UNDkneOc1n--
 
