@@ -1,159 +1,173 @@
-Return-Path: <linux-kernel+bounces-723960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D09AFECF5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:02:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7BA8AFECFE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4C557B8CD8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:58:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC2A71C22F2B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BED2E5B13;
-	Wed,  9 Jul 2025 15:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6348C2E54DE;
+	Wed,  9 Jul 2025 15:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="i4rtFqx7"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MfyKwjx3"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F2928A1C6;
-	Wed,  9 Jul 2025 15:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8B52E5421
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 15:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752073205; cv=none; b=rtOGy/96XGhNzgJW7u5HmYN52/fXgfOa0Z4DIfgqE7wrSymQwrAxsL8e/349h16MsvH7zWC3VeVYqSNisJlgbcQbD2WGLyUu+iIakz6sYIYN3NejxPXkFCgWCzsnBmEVnBZ6WiwB19xcHjewZQardh9JQaUN/ux0zrQpgAW/y1E=
+	t=1752073208; cv=none; b=Xkbz/mZvwlIZl7Y79pDZG5zdcfHsxMGtHZ6JfG2X2vP3jjqLenTvYdEeQQltC876VKbWwxrSnuVZYpZ8ra2d0nWirV1kVWDorSUX8kVuZvRxlTHMhytL2K0CfzLD074nNXp04C5H3La/m/tpbRDFTbm7McIuFpVTvJUHpGyTaW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752073205; c=relaxed/simple;
-	bh=70+HH0qUiNOEaO3gS3T7k1FtJ3e1wN285QRUHdn/ikQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fHcLSOQ+vp++86qjnJYvGol/J9J1LlGlJYV7yKuAEfdjrWCFlDTiS/ckH/EhO5S645tKDMmcf95msl1ZcZV2ElaGfTWCEfWansrrAr2K88sXmbaBLzB7XDAvAq1koJwqB/H60tdVXfxuo+TYpBP2hZscSb7KiQjH6XpaqotGyio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=i4rtFqx7; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7A65D78E;
-	Wed,  9 Jul 2025 16:59:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1752073172;
-	bh=70+HH0qUiNOEaO3gS3T7k1FtJ3e1wN285QRUHdn/ikQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i4rtFqx73Cr5S7Q+DPAi4NfRQnbToVJYIlvDS6Ol0ihP3VbTMMcnvWPXvKHftdXYD
-	 2q9omjYMUg+qkRDOvlnWmLHY+75QhvKPK3ZA5TUaXlXDQMnn+gHS0whntLYQTkkIz4
-	 yaCBk2OpIfrBgQjt1+fQ02208y8VHgy8od1eTGcI=
-Message-ID: <48c88960-9bd4-41b4-99a9-29bf2ac2a581@ideasonboard.com>
-Date: Wed, 9 Jul 2025 15:59:58 +0100
+	s=arc-20240116; t=1752073208; c=relaxed/simple;
+	bh=B9Oiu1rYO7kb4Rbx/R2PzIjG/vjXHDSn58ZvxIx3Eng=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=BpFfgD5A7gd++UoGKJ1IGKRzVh3q92yjWt3PMvkSawi3XhbSxQOoSULbJaW+dZk1qkWbEx7vdUeEuk6L9tfysfWowl5ZpfXK3OrAgZoq51ZYKGBXf/X5dKa/YVXFKAMjiknDXE+EhJpXN3ihPs1lizrEClG1DHkpCdYIv47Y1W4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MfyKwjx3; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2356ce66d7cso90333425ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 08:00:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752073206; x=1752678006; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EgTnAwf0t/6F9APa2rh1DyKxauhomMCkahh2HJItwX0=;
+        b=MfyKwjx3nX24F99iC2py8lcZG7sdzQhK02cBPPcFo7Hso0DPH0GbdpYt+irMdF8l2z
+         NCR0bAGeK2BozuZaO/bAfffrGPfwV4SKXU+/3Oc7RgfxUU/lk6so04f0uE6Noc3DhEpr
+         9njwESzWnkeWVBrZXvzKpKzyqrOkOLhh3SFY7C17iNzpI+iWHL4VOLT8AKfXS9jQ1F7u
+         mE0Ip19mGChe1OWQAT/adAIbGZolaugq47z+rn9QLtngPRy7Da5UbyJ/8Zv0g+QRwZhQ
+         cklJwMJlgRKVY0dU/JVDh7jV/5thD7xKAZigJF+rpGfO2Ah40u10BihxMhbHu5GW4H6m
+         xmpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752073206; x=1752678006;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EgTnAwf0t/6F9APa2rh1DyKxauhomMCkahh2HJItwX0=;
+        b=XCFWb4fLsy/6FcRdjz005e4y5YlR9zBagYd87VS6M/lLDxLfJG7ekfZTesZTsIHxrT
+         ktXh8TKfKTKaQQp2xr42raKb4wqkEMMFllf6GwrhY/ozQbTSZKm6CCC5Y+khd8aQVtjk
+         OlQtpKwtqVFKU1jqcx64xJfNsoGg3IKboQXUtbhezz0iyWV1EIemRHtbez2H+mVINPqN
+         Twxt/ck3jd7nMEBPpdaxxGgPjqY/v0qY2/UJqYsUHQtxoxEITVbTSA1v3RhW4AvXxtRC
+         SFPy+9iy5ehekMJzdBuH6o7WKcEqPW6Cd29i+TFP6yyFbzd+El/a0167jcSi02XaFtUB
+         KpoA==
+X-Forwarded-Encrypted: i=1; AJvYcCWPlVoQko89G9aHq9zKL0re+dKtYOtwdrAx0zZEcWRzpCF1jkBxcp8Q5tT2E1wi13CEPDiE9efkfIn35XI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8p1YB+wakrH2gLOlmAfYJFXoLiGotcF41QrDwq8R3AHHGYYCz
+	4DiFZcDr7VCuPCEkvWwAMwfF3zeQRTTQ/0unnAx3gUUM8y22tj2Sno+0+Wf1bufUMUVLvnN/w0y
+	+9YF7WQ==
+X-Google-Smtp-Source: AGHT+IGIxCNWDvTXdGWXukQOWTlHDKHcqKhvDakCv68J774ZGhWIyAsbzsp2bcmyGLtmMTkKs6eBKiZcgtc=
+X-Received: from plvv2.prod.google.com ([2002:a17:902:d082:b0:234:3f28:4851])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2f87:b0:235:e96b:191c
+ with SMTP id d9443c01a7336-23ddb34fa56mr52368805ad.29.1752073205780; Wed, 09
+ Jul 2025 08:00:05 -0700 (PDT)
+Date: Wed, 9 Jul 2025 08:00:04 -0700
+In-Reply-To: <CAGtprH86N7XgEXq0UyOexjVRXYV1KdOguURVOYXTnQzsTHPrJQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/8] media: Documentation: kapi: Add v4l2 extensible
- parameters
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Dafna Hirschfeld <dafna@fastmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20250708-extensible-parameters-validation-v1-0-9fc27c9c728c@ideasonboard.com>
- <20250708-extensible-parameters-validation-v1-8-9fc27c9c728c@ideasonboard.com>
-Content-Language: en-US
-From: Dan Scally <dan.scally@ideasonboard.com>
-Autocrypt: addr=dan.scally@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20250708-extensible-parameters-validation-v1-8-9fc27c9c728c@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <aG0pNijVpl0czqXu@google.com> <a0129a912e21c5f3219b382f2f51571ab2709460.camel@intel.com>
+ <CAGtprH8ozWpFLa2TSRLci-SgXRfJxcW7BsJSYOxa4Lgud+76qQ@mail.gmail.com>
+ <eeb8f4b8308b5160f913294c4373290a64e736b8.camel@intel.com>
+ <CAGtprH8cg1HwuYG0mrkTbpnZfHoKJDd63CAQGEScCDA-9Qbsqw@mail.gmail.com>
+ <b1348c229c67e2bad24e273ec9a7fc29771e18c5.camel@intel.com>
+ <aG1dbD2Xnpi_Cqf_@google.com> <5decd42b3239d665d5e6c5c23e58c16c86488ca8.camel@intel.com>
+ <aG1ps4uC4jyr8ED1@google.com> <CAGtprH86N7XgEXq0UyOexjVRXYV1KdOguURVOYXTnQzsTHPrJQ@mail.gmail.com>
+Message-ID: <aG6D9NqG0r6iKPL0@google.com>
+Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
+From: Sean Christopherson <seanjc@google.com>
+To: Vishal Annapurve <vannapurve@google.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "pvorel@suse.cz" <pvorel@suse.cz>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
+	Jun Miao <jun.miao@intel.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
+	"pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, "vbabka@suse.cz" <vbabka@suse.cz>, 
+	"peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"amoorthy@google.com" <amoorthy@google.com>, "tabba@google.com" <tabba@google.com>, 
+	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "maz@kernel.org" <maz@kernel.org>, 
+	"vkuznets@redhat.com" <vkuznets@redhat.com>, 
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, 
+	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, 
+	"quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, Wei W Wang <wei.w.wang@intel.com>, 
+	Fan Du <fan.du@intel.com>, 
+	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, Dave Hansen <dave.hansen@intel.com>, 
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, 
+	"quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "aik@amd.com" <aik@amd.com>, 
+	"usama.arif@bytedance.com" <usama.arif@bytedance.com>, "fvdl@google.com" <fvdl@google.com>, 
+	"jack@suse.cz" <jack@suse.cz>, "quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, 
+	Kirill Shutemov <kirill.shutemov@intel.com>, "willy@infradead.org" <willy@infradead.org>, 
+	"steven.price@arm.com" <steven.price@arm.com>, "anup@brainfault.org" <anup@brainfault.org>, 
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "keirf@google.com" <keirf@google.com>, 
+	"mic@digikod.net" <mic@digikod.net>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "nsaenz@amazon.es" <nsaenz@amazon.es>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "muchun.song@linux.dev" <muchun.song@linux.dev>, 
+	Zhiquan1 Li <zhiquan1.li@intel.com>, "rientjes@google.com" <rientjes@google.com>, 
+	Erdem Aktas <erdemaktas@google.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>, 
+	"david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, "hughd@google.com" <hughd@google.com>, 
+	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, Haibo1 Xu <haibo1.xu@intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
+	"rppt@kernel.org" <rppt@kernel.org>, "steven.sistare@oracle.com" <steven.sistare@oracle.com>, 
+	"jarkko@kernel.org" <jarkko@kernel.org>, "quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, 
+	"chenhuacai@kernel.org" <chenhuacai@kernel.org>, Kai Huang <kai.huang@intel.com>, 
+	"shuah@kernel.org" <shuah@kernel.org>, "bfoster@redhat.com" <bfoster@redhat.com>, 
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, Chao P Peng <chao.p.peng@intel.com>, 
+	"pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, Alexander Graf <graf@amazon.com>, 
+	"nikunj@amd.com" <nikunj@amd.com>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "yuzenghui@huawei.com" <yuzenghui@huawei.com>, 
+	"jroedel@suse.de" <jroedel@suse.de>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
+	"jgowans@amazon.com" <jgowans@amazon.com>, Yilun Xu <yilun.xu@intel.com>, 
+	"liam.merwick@oracle.com" <liam.merwick@oracle.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
+	"quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Ira Weiny <ira.weiny@intel.com>, 
+	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, 
+	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "qperret@google.com" <qperret@google.com>, 
+	"dmatlack@google.com" <dmatlack@google.com>, "james.morse@arm.com" <james.morse@arm.com>, 
+	"brauner@kernel.org" <brauner@kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>, "pgonda@google.com" <pgonda@google.com>, 
+	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "roypat@amazon.co.uk" <roypat@amazon.co.uk>, 
+	"hch@infradead.org" <hch@infradead.org>, "will@kernel.org" <will@kernel.org>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Jacopo
+On Wed, Jul 09, 2025, Vishal Annapurve wrote:
+> I think we can simplify the role of guest_memfd in line with discussion [1]:
 
-On 08/07/2025 11:40, Jacopo Mondi wrote:
-> Add to the driver-api documentation the v4l2-params.h types and
-> helpers documentation.
->
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
-> ---
->   Documentation/driver-api/media/v4l2-core.rst   | 1 +
->   Documentation/driver-api/media/v4l2-params.rst | 5 +++++
->   MAINTAINERS                                    | 1 +
->   3 files changed, 7 insertions(+)
->
-> diff --git a/Documentation/driver-api/media/v4l2-core.rst b/Documentation/driver-api/media/v4l2-core.rst
-> index ad987c34ad2a8460bb95e97adc4d850d624e0b81..2d7793298c6a2046bdd59b185a411e092b659d52 100644
-> --- a/Documentation/driver-api/media/v4l2-core.rst
-> +++ b/Documentation/driver-api/media/v4l2-core.rst
-> @@ -27,3 +27,4 @@ Video4Linux devices
->       v4l2-common
->       v4l2-tveeprom
->       v4l2-jpeg
-> +    v4l2-params
-> diff --git a/Documentation/driver-api/media/v4l2-params.rst b/Documentation/driver-api/media/v4l2-params.rst
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..8d2a5f004d21dfc3a81255cabbc6b7cce588db71
-> --- /dev/null
-> +++ b/Documentation/driver-api/media/v4l2-params.rst
-> @@ -0,0 +1,5 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +V4L2 extensible parameters kAPI
-> +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> +.. kernel-doc:: include/media/v4l2-params.h
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 3d9a8e06c59eb08360d1e8eea85e450a15ee95af..f03c10092a891a06052484b691409f0c459de87d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -25972,6 +25972,7 @@ V4L2 EXTENSIBLE PARAMETERS FORMAT
->   M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
->   L:	linux-media@vger.kernel.org
->   S:	Maintained
-> +F:	Documentation/driver-api/media/v4l2-params.rst
->   F:	Documentation/userspace-api/media/v4l/extensible-parameters.rst
->   F:	drivers/media/v4l2-core/v4l2-params.c
->   F:	include/media/v4l2-params.h
->
+I genuinely don't understand what you're trying to "simplify".  We need to define
+an ABI that is flexible and robust, but beyond that most of these guidelines boil
+down to "don't write bad code".
+
+> 1) guest_memfd is a memory provider for userspace, KVM, IOMMU.
+
+No, guest_memfd is a memory provider for KVM guests.  That memory *might* be
+mapped by userspace and/or into IOMMU page tables in order out of functional
+necessity, but guest_memfd exists solely to serve memory to KVM guests, full stop.
+
+> 3) KVM should ideally associate the lifetime of backing
+> pagetables/protection tables/RMP tables with the lifetime of the
+> binding of memslots with guest_memfd.
+
+Again, please align your indentation.
+
+>          - Today KVM SNP logic ties RMP table entry lifetimes with how
+>            long the folios are mapped in guest_memfd, which I think should be
+>            revisited.
+
+Why?  Memslots are ephemeral per-"struct kvm" mappings.  RMP entries and guest_memfd
+inodes are tied to the Virtual Machine, not to the "struct kvm" instance.
+
+> Some very early thoughts on how guest_memfd could be laid out for the long term:
+> 1) guest_memfd code ideally should be built-in to the kernel.
+
+Why?  How is this at all relevant?  If we need to bake some parts of guest_memfd
+into the kernel in order to avoid nasty exports and/or ordering dependencies, then
+we can do so.  But that is 100% an implementation detail and in no way a design
+goal.
 
