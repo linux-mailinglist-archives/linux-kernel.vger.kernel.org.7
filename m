@@ -1,96 +1,102 @@
-Return-Path: <linux-kernel+bounces-724009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0817AFED82
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:18:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA183AFED80
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 780CDB412D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:16:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3568B648115
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C2E2E88A3;
-	Wed,  9 Jul 2025 15:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714D52E7F13;
+	Wed,  9 Jul 2025 15:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKEhwY/W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="y8wzZTnp"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79F935958;
-	Wed,  9 Jul 2025 15:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7037535958;
+	Wed,  9 Jul 2025 15:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752074247; cv=none; b=uAWpr7WdCjKX1AlxQm67f065XvgJznXC3HGORMdP2Mv8LmUaE9VibGcM/r+SNPj6ukfEistCvCQugQBTYTUBnTmHOoGhXyjCS8E7srjOSbLLAOURJnWXhtXuKyK98HiyHzq+5c54H5N/1w/guAviC4bimbe0P03M/yvcqkdHPDA=
+	t=1752074241; cv=none; b=SSBjq4K2pxyybWNZRXXpSYMnFFMlovD9eZ0HpsoABzX9WkhggrGwO+E0uNjBsV04tEj/72+Kju8M9io6x0zU7+EAKUTFTeiAFwRjoeJ2115v0KpnOXYH3fWe4TJcbtAMTzrqVfDWTRy0InLVJu8l4SEIDMCbDJ8d8cRO3Suwb/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752074247; c=relaxed/simple;
-	bh=18qqlA5kt168isuNMXAGggkZU+AzFupJfjPwjcie+tU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=clklr8ABI+K1wXGkJ4souy4ZRp6/G25F8CHYqTDsUASRk1E0h2TeuKO6V/hzG8uSFhy4I/4l0EsC9db9M0JVzBwDNbahO1KQ17M3dAM8SqzUqKZNyRTBadx1PtT7iW//NvfEjFyY8Ov+hpyGzM2TX7in4eeMIdA94s23s9OvY/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oKEhwY/W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D861EC4CEEF;
-	Wed,  9 Jul 2025 15:17:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752074247;
-	bh=18qqlA5kt168isuNMXAGggkZU+AzFupJfjPwjcie+tU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oKEhwY/WIIUKIjTV2SWvqlxCxyPGjMCefCHs/zvJKFROzsJDlKHEtyOnoD0ncXI6f
-	 E7tHt98qiA4JKZYxIBCCVO6mJl3gkV+zvVpdLelnCYj41eiOgxbaPT6+qOvzL78Le9
-	 CnxftMfk3OID0FcSEdHjK50c722BcaBIIvG/GBMt43UYU3Do08hwDd96WLzK2yVF2O
-	 7esnj0eIwRiW3K9vJDZE04Vh1RbUoohMrnjsOnvGgx36URrD5sKX1bj84z29UHaM71
-	 SbaxuReK+toszWiUVI5q7aM7w+9p/OT6SrT8luyccvztDYrOTqsv0RYcrcypUPJpAc
-	 W+yKegWP9w5+Q==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	hargar@microsoft.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	srw@sladewatkins.net,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org,
-	Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: [PATCH 6.15 000/178] 6.15.6-rc1 review
-Date: Wed,  9 Jul 2025 17:17:15 +0200
-Message-ID: <20250709151715.840970-1-ojeda@kernel.org>
-In-Reply-To: <20250708162236.549307806@linuxfoundation.org>
-References: <20250708162236.549307806@linuxfoundation.org>
+	s=arc-20240116; t=1752074241; c=relaxed/simple;
+	bh=fW+9x2s6lvNsCTljHhcU4z5uUSJOFa9JnhC+Ifk1fVQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A4I6Q45NVNuQwL1Eu+RVVCqTv0NKDoFam30i19amkVSOrPrdytOvZxJcmfEqEforFXVSksTNm8NU9of/JAIR1Q++nWiy3GeHWlKynktVyKopuBtOhn0AbxBxrPhJM3LYX/BN2qp1LPT7SmM0Fgc9kAo15Hzl0sn2+w63mPw+JgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=y8wzZTnp; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=xOjCg4XbxOkhT8S8sZPEP73rpNtOVJZ5nJWx075Q+eE=; b=y8wzZTnpsTg0FnFL3ruJPMnfCs
+	4SAUf9W1zsjwJ9bwsBAqpEkCDCK441+3WUMr+3M5HjRS4r68s07b7M1DCm5fZoyBxTp4uZ+ORdJlx
+	IrKAcri0wEJcSe6UuHU3ZWu9cftE4qz4TnB/+agXCAzn35OfwCx3AL9UFzvN2o1BmIBQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uZWXu-000xJZ-3C; Wed, 09 Jul 2025 17:17:18 +0200
+Date: Wed, 9 Jul 2025 17:17:18 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>,
+	Lee Jones <lee@kernel.org>, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH 5/9] drivers: gpio: add QIXIS FPGA GPIO controller
+Message-ID: <898af9ea-9b90-4d1f-8e0d-a8e0686d72a7@lunn.ch>
+References: <20250709112658.1987608-1-ioana.ciornei@nxp.com>
+ <20250709112658.1987608-6-ioana.ciornei@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250709112658.1987608-6-ioana.ciornei@nxp.com>
 
-On Tue, 08 Jul 2025 18:20:37 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.15.6 release.
-> There are 178 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 10 Jul 2025 16:22:09 +0000.
-> Anything received after that time might be too late.
+> A GPIO controller has a maximum of 8 lines (all found in the same
+> register). Even within the same controller, the GPIO lines' direction is
+> fixed, either output or input, without the possibility to change it.
 
-Boot-tested under QEMU for Rust x86_64, arm64 and riscv64; built-tested
-for loongarch64:
+Since this is an FPGA, not silicon, is the selection of output or
+input a syntheses option?
 
-Tested-by: Miguel Ojeda <ojeda@kernel.org>
+> +static const struct of_device_id qixis_cpld_gpio_of_match[] = {
+> +	{
+> +		.compatible = "fsl,lx2160ardb-fpga-gpio-sfp2",
+> +		.data = &lx2160ardb_sfp2_cfg,
+> +	},
+> +	{
+> +		.compatible = "fsl,lx2160ardb-fpga-gpio-sfp3",
+> +		.data = &lx2160ardb_sfp3_cfg,
+> +	},
+> +	{
+> +		.compatible = "fsl,ls1046aqds-fpga-gpio-stat-pres2",
+> +		.data = &ls1046aqds_stat_pres2_cfg,
+> +	},
 
-Thanks!
+Does the FPGA have an ID register you can read to confirm it is what
+you think it is?
 
-Cheers,
-Miguel
+Or is the bitstream downloaded at boot by another driver? Can you ask
+that driver what bitstream it downloaded?
+
+Given how similar these devices are, it seems like a typ0 could give a
+mostly working device which passes testing, so doing some validation
+of the compatible against the actual FPGA would be nice.
+
+	Andrew
 
