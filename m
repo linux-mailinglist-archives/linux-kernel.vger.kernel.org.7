@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-722587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D3AAFDC9F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:01:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D078CAFDCA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 03:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A77D758227B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:01:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96AB67B79B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 01:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831D22AD2F;
-	Wed,  9 Jul 2025 01:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2F6153BF0;
+	Wed,  9 Jul 2025 01:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzWc4BSr"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bFggfCmZ"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DBF18F2FC;
-	Wed,  9 Jul 2025 01:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50EB944F;
+	Wed,  9 Jul 2025 01:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752022833; cv=none; b=JpPyTsXE4UcDOvmN2MLtEG+h4hQqxzTnRrhVNqB0LpBHuiG4aJbhLPXo6p7LbqvD07quqKSz1DrivMWCZJ/tmNBbGpAFG46K7kGaWLe891sEhJSmPaxfYjSpwc+DH/UHSdN+jrrrCKYTbpJv9jABuNMaEjixQ36bsGtBDt0GmA8=
+	t=1752022841; cv=none; b=WOTS9WKRfGz/xkp1B68Y61OcZ/Fc7PTJ8zCpIsbSfq70Dec0MwtQfYfzY1b5PKNTzmN7DgvCZx7S8uD60GnpXEqrbfJ60siJlnw3x7mzFrdb4QeJ3/vgZzR43THZCoqjxdF7rzMDidm2YcvemhIz4GwLZxnkOi14OyVOdIN7WVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752022833; c=relaxed/simple;
-	bh=kBGVCYlBO0JURIWpfIht3mgfCTHSB2GXv7bsD1cphHE=;
+	s=arc-20240116; t=1752022841; c=relaxed/simple;
+	bh=2noVsCQNVQLRiGq6reRkE5gM+8BX0pVDlcLEQw236uo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BdtVcJLYvT5jEgqTs4R76d9OE1CxriI8ex9AFFV3TapyVcZikiH9HRSPL0/guIjsFQs7JG/ApjZkmqFwhdw1Cn9/b4dCIOURRHNJSFpu+NpFRMBQ4GJfaptYbGczjwaudTWurBZFIxtEZXc1jmxuyPYLxLqoDdQZqw5iK/gdDAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzWc4BSr; arc=none smtp.client-ip=209.85.219.181
+	 MIME-Version; b=O7vrRdzi12QXNcprN0Uaj8z1vhBBceCBw5cWHOgLiIHmIXrt71Udb8Z/ikQncq5YPUk7QTNrkPBwzuLXZ7nfwSm4fUr/QixTxGN1MBkMt4Yhw5ghkwiSj/+evvse1a1QBtTLwUrMjkR/U/Lf44N/HKuZ/g48bPt4z1yf/hGBt9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bFggfCmZ; arc=none smtp.client-ip=209.85.219.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e898de36cfbso4273306276.1;
-        Tue, 08 Jul 2025 18:00:32 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e7311e66a8eso4535676276.2;
+        Tue, 08 Jul 2025 18:00:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752022831; x=1752627631; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752022836; x=1752627636; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VRqZ7kP81Zaq1arwauUEMN4RtZnPWf0LKmXEbv9bw+8=;
-        b=RzWc4BSry9ffeFjy8MbvRLPy+2nNcqR8GIQCZv4Zmo7y6myXdbaCq3I3EhFR2M68/3
-         jIRO1FBz25s6b8TBy6XVPy85cIevPlNvGhUFnqjztGor/m4tSCyaOlI5I+7GUFtmHS0W
-         UTr92mrLL6WWFzDqy73RG3vfkOVTPyrVp5qu4skJmk6iyoF2nhXNSua6qdBqwLnO494G
-         wPq8CjB+PS1IOYVxGVq6MYaYPcJ2sz7KlDEf4lChSshAq0rC6HqqJW1P98KV9ISW/q0/
-         /RpZJXu/Zt0wXq5lbBrUSc06cA0gGv2CmWXUoZY3z4rOshzFvXrRK+wlnL/wPxYa2Tx7
-         nYmw==
+        bh=T0AEBACIj7iufFFEjwK+DXtNtO5oq6pBK1Svk06pLxI=;
+        b=bFggfCmZ1Z7GUsxha4gTXpZmi/YNN/hmWHxtnqjw8TLfIn+PPW+zmUZXhxo8GaejcL
+         WNKumoC4ZEeMSZTBJEFdpGr2SAdQUvTOkMb9K2dLEKJrX9fojUMz2mFfiN8pxlAVPpYN
+         Fxg0j37pbHYGlsz+3WA8KwTpcijZjrEyN/umVxNBPTtYc+9SsuQ06bY1fdi3fj9H7wRA
+         Retr4gvLHCL+oNE95L22ay+JUH5m/NStY/g5GR9k3n5D/vqPGKfsfjBgyIw5hzMJEzpu
+         rp50WxLsxJOxErQ6eXSz2xU2uKVlKN/CRPn4XC1vEPcgxBLe23Mgjaf6e9orokT3AFjf
+         UTjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752022831; x=1752627631;
+        d=1e100.net; s=20230601; t=1752022836; x=1752627636;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VRqZ7kP81Zaq1arwauUEMN4RtZnPWf0LKmXEbv9bw+8=;
-        b=DocxukEeSWCG44H9ps0K1f4UCuCxolvraukRthJMRwpDggC6HCZxfy3ACpr79gYSdm
-         V0+3wk8J8YSt51mrYgZyC2Lb9h7XfwDLK24HfkhpQmuBsbVjaPXopKM61/4IhyCw0H5T
-         WLrPw1cz7wsXMTwWoSpYXClNynVi1kWFO6bNm8EayDqEzkVVNsTx+QHQgGLS3VeB2SpS
-         ESCBMZ62gXwLjuCyKByszDO6DZ6fbE2bJp9nC4leCaH6ytknK0NglBfznPJ0WFkTCdZj
-         gmAF4/9PUvIpOKGIl8CcYGHR9+ahFi0+kCTDHulViXqtMzlai0jATyTZ3lvQNGGh2eNs
-         YXQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnnSPMT0S+VZDFf+JpOI2NznyoYJvQKJzhC7U/H1AI17MxSQ0fkTpVDGCAvEUT0vu/FnZV+L1hB1qr8kR+@vger.kernel.org, AJvYcCXKxsJ8C4xQohJY4N07GPW/NlrxUiH2TiP6bKF+DdcaWmfR9/lNFTzpa8Y6uNjOPmNFbddGV9UfIlc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxivxAltzrHxMaJdeRr/iu2Y2Vucd1EY/mZp2xXqa0IJuZRwXz
-	NrKXbOCxdU476RU/SzuoGsDgurSCPANhPbTT5nxSVu9NLkjtLMF37k2n
-X-Gm-Gg: ASbGncuc7/kL7zb4BHBuA9BRf6aSbQdmzzOuIgb5gYTxbvw9kE6vlyZIfI7+GWWeIBw
-	FAccQGvS4TB8sAAvXdAaseJtvbzaAeYIKEOF3s26qpRMrbt5AHNzb8DamalbSeK4KqDCuFqUwRq
-	vt74VBw9YBgsnzB2zxyvluF/0C/dbR3YsOK1QqDuNXZgMYb9u9AV+ehwiGeM6t7I60Aei7MZ7ML
-	TVJVIAHNcTc7ThLdy0NUaApuSff50/e/L4NOwXllbtHLLfHwQ8P40O2DIff1ukPNWPEJswz5n3F
-	djC0Am/gWBO4anXXjLkiLHHzi8K1MDaahmwYiUdr2KEMtXzjYqfZu5xPYg2rLuj0ldsYTnWL4EF
-	duiWh67OmoPcJfAzASA==
-X-Google-Smtp-Source: AGHT+IFFk12vBHKfYShm0xwUy70JkBS9iNu9v3bAoNdevYxQvMw6G4nHxm7r8pPOOSVJOc1J+GaBlQ==
-X-Received: by 2002:a05:6902:2846:b0:e84:3769:d7e1 with SMTP id 3f1490d57ef6-e8b6e0dfd76mr1151677276.8.1752022831313;
-        Tue, 08 Jul 2025 18:00:31 -0700 (PDT)
+        bh=T0AEBACIj7iufFFEjwK+DXtNtO5oq6pBK1Svk06pLxI=;
+        b=c9AbaExLhV7ufjufUy9h4PGvT+RIAGcIb/ASyfkqH9vRIl7sNSsfPt7rWhAFBruCcF
+         QYnk5KCfwjTRBBW72tDV6M1eH1ZhQS3V9bENjNqguWyikYw410S1LfdoC/9EFxYOYcVE
+         +UGpkeEdKvlS73m8WuEMva4RUs66X9jdr6tUvYSFEIszzATixNIUhKnqb0ThWACy6UPX
+         WRVuytACiWXN7i6JzL0Kt1k7iABYxe2+CwvDOv6lJG9C5K+N9zb5/FVuFLaMN3sodaAe
+         zL19zJPT3DLgE8L6KqemIsCquPYxy2frCGx5MBakBk07mFEzVK2xT1PL7JmyR9qASOUN
+         u1Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ4HERkVCek5VZuzCg+csCOnFotCDNUG+l+yc7i1fFqx9QTBPhDLW1AI6pFa70av7ddY/H9gWQ1dt3fmxT@vger.kernel.org, AJvYcCWi1HEcTl33AV3t+LoZLel760HnZ6cjVEZmBa1rY+4FrKEqmvVEa/ic/tUUaNgeyKB1SFDAj0HZtho=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy798UMs7bz0FtJVyGwq5ghLJFgKldg/CcmvSg9mb+IBF9fvW+y
+	KUVG0i1kp69ech0W8ZQE127zSPWDnfPYQhrEWxZmFFDDnZIZt0efrZHdVTFNq/4XC5E=
+X-Gm-Gg: ASbGnctxKYMJDkTRCJDxdlVA8SFeLnl5L3n5d0VGFsBviIDGxCUKTCE9xn082TT6yFA
+	bEKYPhqUDJA/YVBM6V4w+FXwPodR0XNeAK9LwawRKK0DhhR20Ay89RjTBxK1N0kMQHvV57k4FvG
+	qPAjpT/NoyC5E5ZfvVxs1wOX6Sia85v2CY+ZIwpKTvR458lPmdqMa/a0MOIkXYCMCCA8usD1sB+
+	67S5V1Ktmmsf9XGVVT88YCBmpCk2cDUuWLagGPaaq0BCjfsw9WpAetlhUYS3LThBp5i0gBDmoXf
+	i6XP+MaOzUzmg/FflrTQnEv25RJjaOl+sXvTodG4x02oQUMJTLvxzi8LPRc/IzLrBwMLB9ofetF
+	FW8hyZOY=
+X-Google-Smtp-Source: AGHT+IGDozJUCJpVBxPfjv9ILiQSL1R6miXqzbkK4caVqVpgbl+9ZhuvLHM+DyHUEdodqwUQX37wGw==
+X-Received: by 2002:a05:6902:986:b0:e81:9b39:e46 with SMTP id 3f1490d57ef6-e8b6e102b32mr1051961276.18.1752022835632;
+        Tue, 08 Jul 2025 18:00:35 -0700 (PDT)
 Received: from bijan-laptop.attlocal.net ([2600:1700:680e:c000:235f:99bb:f36e:a060])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e899c43ed8asm3656043276.26.2025.07.08.18.00.27
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e899c43ed8asm3656043276.26.2025.07.08.18.00.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 18:00:31 -0700 (PDT)
+        Tue, 08 Jul 2025 18:00:35 -0700 (PDT)
 From: Bijan Tabatabai <bijan311@gmail.com>
 To: damon@lists.linux.dev,
 	linux-mm@kvack.org,
@@ -85,9 +85,9 @@ Cc: sj@kernel.org,
 	emirakhur@micron.com,
 	vtavarespetr@micron.com,
 	ajayjoshi@micron.com
-Subject: [PATCH v4 04/13] mm/damon/sysfs-schemes: set damos->migrate_dests
-Date: Tue,  8 Jul 2025 19:59:34 -0500
-Message-ID: <20250709005952.17776-5-bijan311@gmail.com>
+Subject: [PATCH v4 05/13] Docs/ABI/damon: document schemes dests directory
+Date: Tue,  8 Jul 2025 19:59:35 -0500
+Message-ID: <20250709005952.17776-6-bijan311@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250709005952.17776-1-bijan311@gmail.com>
 References: <20250709005952.17776-1-bijan311@gmail.com>
@@ -101,61 +101,46 @@ Content-Transfer-Encoding: 8bit
 
 From: SeongJae Park <sj@kernel.org>
 
-Pass user-specified multiple DAMOS action destinations and their weights
-to DAMON core API, so that user requests can really work.
+Document the new DAMOS action destinations sysfs directories on ABI doc.
 
 Signed-off-by: SeongJae Park <sj@kernel.org>
-Signed-off-by: Bijan Tabatabai <bijantabatab@micron.com>
 ---
- mm/damon/sysfs-schemes.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ .../ABI/testing/sysfs-kernel-mm-damon         | 22 +++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
-index b9434cdaacdc..74056bcd6a2c 100644
---- a/mm/damon/sysfs-schemes.c
-+++ b/mm/damon/sysfs-schemes.c
-@@ -2576,6 +2576,29 @@ void damos_sysfs_update_effective_quotas(
- 	}
- }
+diff --git a/Documentation/ABI/testing/sysfs-kernel-mm-damon b/Documentation/ABI/testing/sysfs-kernel-mm-damon
+index 5697ab154c1f..e98974dfac7a 100644
+--- a/Documentation/ABI/testing/sysfs-kernel-mm-damon
++++ b/Documentation/ABI/testing/sysfs-kernel-mm-damon
+@@ -431,6 +431,28 @@ Description:	Directory for DAMON operations set layer-handled DAMOS filters.
+ 		/sys/kernel/mm/damon/admin/kdamonds/<K>/contexts/<C>/schemes/<S>/filters
+ 		directory.
  
-+static int damos_sysfs_add_migrate_dest(struct damos *scheme,
-+		struct damos_sysfs_dests *sysfs_dests)
-+{
-+	struct damos_migrate_dests *dests = &scheme->migrate_dests;
-+	int i;
++What:		/sys/kernel/mm/damon/admin/kdamonds/<K>/contexts/<C>/schemes/<S>/dests/nr_dests
++Date:		Jul 2025
++Contact:	SeongJae Park <sj@kernel.org>
++Description:	Writing a number 'N' to this file creates the number of
++		directories for setting action destinations of the scheme named
++		'0' to 'N-1' under the dests/ directory.
 +
-+	dests->node_id_arr = kmalloc_array(sysfs_dests->nr,
-+			sizeof(*dests->node_id_arr), GFP_KERNEL);
-+	if (!dests->node_id_arr)
-+		return -ENOMEM;
-+	dests->weight_arr = kmalloc_array(sysfs_dests->nr,
-+			sizeof(*dests->weight_arr), GFP_KERNEL);
-+	if (!dests->weight_arr)
-+		/* ->node_id_arr will be freed by scheme destruction */
-+		return -ENOMEM;
-+	for (i = 0; i < sysfs_dests->nr; i++) {
-+		dests->node_id_arr[i] = sysfs_dests->dests_arr[i]->id;
-+		dests->weight_arr[i] = sysfs_dests->dests_arr[i]->weight;
-+	}
-+	dests->nr_dests = sysfs_dests->nr;
-+	return 0;
-+}
++What:		/sys/kernel/mm/damon/admin/kdamonds/<K>/contexts/<C>/schemes/<S>/dests/<D>/id
++Date:		Jul 2025
++Contact:	SeongJae Park <sj@kernel.org>
++Description:	Writing to and reading from this file sets and gets the id of
++		the DAMOS action destination.  For DAMOS_MIGRATE_{HOT,COLD}
++		actions, the destination node's node id can be written and
++		read.
 +
- static struct damos *damon_sysfs_mk_scheme(
- 		struct damon_sysfs_scheme *sysfs_scheme)
- {
-@@ -2638,6 +2661,11 @@ static struct damos *damon_sysfs_mk_scheme(
- 		damon_destroy_scheme(scheme);
- 		return NULL;
- 	}
-+	err = damos_sysfs_add_migrate_dest(scheme, sysfs_scheme->dests);
-+	if (err) {
-+		damon_destroy_scheme(scheme);
-+		return NULL;
-+	}
- 	return scheme;
- }
- 
++What:		/sys/kernel/mm/damon/admin/kdamonds/<K>/contexts/<C>/schemes/<S>/dests/<D>/weight
++Date:		Jul 2025
++Contact:	SeongJae Park <sj@kernel.org>
++Description:	Writing to and reading from this file sets and gets the weight
++		of the DAMOS action destination to select as the destination of
++		each action among the destinations.
++
+ What:		/sys/kernel/mm/damon/admin/kdamonds/<K>/contexts/<C>/schemes/<S>/stats/nr_tried
+ Date:		Mar 2022
+ Contact:	SeongJae Park <sj@kernel.org>
 -- 
 2.43.0
 
