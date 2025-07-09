@@ -1,116 +1,142 @@
-Return-Path: <linux-kernel+bounces-723944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05B40AFECD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:58:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 510F9AFECC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 626845A6831
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:56:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2665D4E160A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC4D2E7173;
-	Wed,  9 Jul 2025 14:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171042E765F;
+	Wed,  9 Jul 2025 14:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sL9AKewi"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="E1BwbKxT"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC44B2E5439;
-	Wed,  9 Jul 2025 14:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3822D1F5E
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752072855; cv=none; b=D/IMoMdmn9FgCaK0q4ITf+i3qdQLTcJ35bFKQ1Hg6m9XHiHi2ya+8w+gbt7q5gdIH/ya3PuDOAOXS6LRA9vs8DUFC+7qUgxYvy7NAak2092epTwQCmlYQ6XTfbsdfChs2qik7p4KapD5N4njtBHVvTF2USw2LniecGJqw83PmVc=
+	t=1752072928; cv=none; b=OMD10UNMOCt/3jrW03B94prHDMBX5lKM2bV7tRao4JPGpVp1keZqV1MvXdQrGrrrLOUJA585rnfIVyLvNBt32nf4r68raioQX0GZ+oj+QHsW/GC+bPpivvdOXTuuSS7C0t7IX+v9YSsMnX/IQRJa9U6hQPY+lH5iZo7RRlHuTgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752072855; c=relaxed/simple;
-	bh=dNLzjC5cbAtc+WGHoz2N9GM8DGnG4GAdrFbTM0MLisk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=N6dP1CxXLkDNWT0prVutTsVku2HMEK623mF630SLnXLTm12YTqHwcKysXkIOg5pWIEXYMEVCgwjGGbSkD9klFNSBz4QSjdx60OOztimv09lX74oAz4oBF4PnFgbDgx04gHPIzQuZ8t9CeS2WduvMBB1sPqkREf97NONBubMoGAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sL9AKewi; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 569EibIG002270;
-	Wed, 9 Jul 2025 14:54:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=prlAiOpLaURH0Js5JeA28ZU+M2LH
-	gadfDLjNoT5X4Iw=; b=sL9AKewi7GvexNKYRtU8mynQ8lRMcNUsw4hBgkAUkZtw
-	XQZayr5WaSMJG63vem7J9G+ozQ0AaDaQGHzg6ODOaiHZTKYV/bnNr9896Rvj/OAk
-	T9XAXhZhYKofixWn7OqMdE/9hPMypuOIjgFDaCjLXK7LwwRbdkchYND1jPo/K0Uj
-	qa+sBx0LBX24vTpeDMw0QZ6XiF5eXTrL1UKcR2mFPxYHICTKaEZpBbBkX+YBR8Mn
-	OIQVT0oD9lzZ8W9BptvxAOO5sYrz0hZqXS9l8mDCTRF7QEdHNcOnLnRI1dL1+1rW
-	jWSMmNfXr/wsiXFuIprShDqQ12hDpohBYc/rkWBgZQ==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47pur76xad-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Jul 2025 14:54:05 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 569C50fc024353;
-	Wed, 9 Jul 2025 14:54:04 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 47qh32gcj4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Jul 2025 14:54:04 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 569Es3wX23528096
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 9 Jul 2025 14:54:04 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DCDDF58058;
-	Wed,  9 Jul 2025 14:54:03 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B0B3058057;
-	Wed,  9 Jul 2025 14:54:03 +0000 (GMT)
-Received: from [9.41.105.251] (unknown [9.41.105.251])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  9 Jul 2025 14:54:03 +0000 (GMT)
-Message-ID: <472a5d43-4905-4fa4-8750-733bb848410d@linux.ibm.com>
-Date: Wed, 9 Jul 2025 09:54:03 -0500
+	s=arc-20240116; t=1752072928; c=relaxed/simple;
+	bh=+2bfuo/XxdFtjNlpBnRSz55oWsfelV2bXIgIhY/HOGo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P2Eo4/Y0L1GTqAwlO4cCuXfNMc07LqwezIgHN/z6/2gM9RGBc5DsKm9oe7sw4rAeD0XiX8ugjrpNvvFjnFTx83zscaIS6aicGFGBRP5awhdSj2EGFriu6kr2Bsv8tQsT+bZO+OjYx6ZwMHya81SRsafBxyOMWUOPVv7YU4tKLL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=E1BwbKxT; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-60c3aafae23so2363067a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 07:55:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1752072924; x=1752677724; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xsudQgPEXLO/8rlrHg7A+VcqH4UVc0XGQUOkZdmkbM4=;
+        b=E1BwbKxTcKBCaV5Ij/+rHcE8p3g0bwuFB75skGhRurqQLpG69++LXi8ntlEKOZSY1i
+         S5aVNip+/zOF0yFON+7v6uW/QmZUjR6in5NOtAwEo2YcLk95LUCBteD6HZ4EtbMlJ+sN
+         LthDYz5Fe6VW3RDlMiNG0wC/d34MDA1fQpNWITEGQtf3XfQSu65mcQIHAEzOd3YKhUIv
+         FHxt/+J9G6mPvm6I/xMByj1BmBCVE6yeB75OwzYdL72YkoLNo+AHcOej809fHjzMXUJX
+         k8FvTVqDtd4Jtxutjwa39PJawUcE9Sdxe7Y2fEM7gRk4vTyPJV2VusGZ94a+5SKHDJVU
+         LivQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752072924; x=1752677724;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xsudQgPEXLO/8rlrHg7A+VcqH4UVc0XGQUOkZdmkbM4=;
+        b=IlyOyUHeVYilkb4tk38zbf8QdB8l19WR3NGvTO318NsuPR/V0wDR7KZq6YekUA88Iv
+         FyTcPAAC95pSl9plFJ8x/R4WhUrKSzbO1wSRdiPTRUOEzZh/m7G0GN8lCeDtl5O10a47
+         klSkQ2YFpvL+t7IdVQoBCm8JiznF+2F5pIiE0TBq9Mb3LvR3Oj2c3l5QesRL2cLRMyD0
+         BjX8l+WtaSvMFYtcTfD3FJqqbBUOWoxBXlRSt7pSVyL16LeFlfeF02J0+jRgv32j25W9
+         2/9a7Lx9nX4qUd+k8rhpXVj037DRQKgk2aXmQGZqkgf2HDEXm8sgmGaCR929kdSa/eAk
+         tSKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDF/5+U696+4ICMxSIwP7Z+zioJGFTHhSjwlN62nEwbJT9ipRw51x0wa+43lio3FfqlWNHS1pnGdMtPVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWLAZmFN4BXgl5W3ObEZqSQezUpiOH8tG58mA0W/3UHUwzBg0x
+	TEkr5XswUQBKsT4dwDol9CHH6dilH9gu3dXrhJ4UE2tgyPRQ5Ho0kqpl4LhyJc1oY8M=
+X-Gm-Gg: ASbGncshI1OE5MkRkQKIRDMj378lG2VpB5ofm7mKW8RmihQL874yw0Kn3B2HdcZcUf7
+	x3CZlGzMoOZEEotHt8GxpQ7vlsrewDbOJqIyCZqEmpgaGdfLdAyM0IOBorhWTYa1KPpyYjUp0PN
+	zIDmoyptGqVigT8vHToxF0sKxFUjIRVm9xuiMql7Rx2BhdO2Byb3xsmVOFzZoUlKgqrQXg9aQ8G
+	Q0zIxgnKL5h6ZKDh1YwU9gaRWHnTAsD7qYjsuzLvqNcfMHNwOpZLMCLei1PWJRKqNUBiJWPvGkA
+	qTZrkR9QIAQ0EJMuL4QovH5l03ySzPBsnaXJnKknpovMvyEeZH0d/tj/o8vVF+Un/C1y2fkwima
+	IEAzZby4FrscAnQLtsnD6MSDuJ5D91rqa08Z56lbW4aM=
+X-Google-Smtp-Source: AGHT+IEJi9D3i6knXbAjsckZ7Ciww/QJ7BLM67HvKfXZJLKXPgCmFN58CA6mh9SyrO15bCmZYpI2PQ==
+X-Received: by 2002:a17:907:3c88:b0:ae3:ee3a:56ee with SMTP id a640c23a62f3a-ae6d1266a1bmr305624866b.3.1752072924078;
+        Wed, 09 Jul 2025 07:55:24 -0700 (PDT)
+Received: from otso.local (144-178-202-139.static.ef-service.nl. [144.178.202.139])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6b600ddsm1116795766b.158.2025.07.09.07.55.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 07:55:23 -0700 (PDT)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Subject: [PATCH v2 0/4] Add support for eUSB2 repeater on PMIV0104
+Date: Wed, 09 Jul 2025 16:55:13 +0200
+Message-Id: <20250709-sm7635-eusb-repeater-v2-0-b6eff075c097@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-From: Konstantin Shkolnyy <kshk@linux.ibm.com>
-Subject: RE: [PATCH net-next v4] vsock/test: Add test for null ptr deref when
- transport changes
-To: mhal@rbox.co, sgarzare@redhat.com
-Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, v4bel@theori.io, leonardi@redhat.com
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDEzMyBTYWx0ZWRfX53N/PUiiBrFU MaQgG2KYArLUO/pTwJVwCcpcxwFX40XiQkl5qcyc54T1nPARhzyQlL6XPtMOdF9BC2NY7iXJWUJ euYTfsfufS4/JT6464Ws5ppuUjIqlvx20vkjA+SOwvHc944xh3oIEWkOxVWL4d8sVBCtQ6bFrjb
- hWVtaIK1QCk7ZiV/4pIuepwDYnyqDR7XdYZ8JA76jzSP2AGQXg0ImXkbDXijKJHgYC012O3ksHX SYjFMGrVAYR9uoD3lAcHFAuHJZssiCyuKwdy1vX0UEDrlNABePoeoxG+bKIlTO0a+5fVh8z7MTb fydCQzgq+7jBEGw8VeN6a6Qt0++LL4CjHGEviV6JBuJ9rMC6OaZEJtOxW5npf47uj2uCbedVPxi
- 2U4OZSsowXe3kxp7pj2jFdcqQ4yuoOybvI3x9174e2u12S4k7HwvPkW/nghQIbhGBY8qFHp5
-X-Proofpoint-GUID: kpQOMYYazyKyewxIir8QAhgrx-roNt3U
-X-Proofpoint-ORIG-GUID: kpQOMYYazyKyewxIir8QAhgrx-roNt3U
-X-Authority-Analysis: v=2.4 cv=W/M4VQWk c=1 sm=1 tr=0 ts=686e828d cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=hBMHHm5UMeqtWk0fnh8A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-09_03,2025-07-08_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- mlxscore=0 priorityscore=1501 adultscore=0 clxscore=1011 suspectscore=0
- spamscore=0 lowpriorityscore=0 mlxlogscore=754 bulkscore=0 impostorscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507090133
+X-B4-Tracking: v=1; b=H4sIANGCbmgC/22Pwa7CIBBFf6WZtWOACtWu3n+8uKB0sCxKK1CiM
+ f33h/UlunB5ZzL3nHlApOAoQls9IFB20U2+BLGrwAzaXwhdXzIIJiRTgmEcG1VLpCV2GGgmnSg
+ g65ujlbIRJ2ahnM6BrLtttb/nVw50XUp7eg2h05HQTOPoUltltecKg+HwiS0WG7SsnjTxxqXFO
+ 39BK1Vdc6M6bnWbBTxJg4tpCvftn8w31L+6/K6eOTLkp/4o5YFTdzA/VrswD5OnffGD87quf4d
+ lDUsmAQAA
+X-Change-ID: 20250620-sm7635-eusb-repeater-0d78f557290f
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Abel Vesa <abel.vesa@linaro.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Weiss <luca.weiss@fairphone.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1752072923; l=1322;
+ i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
+ bh=+2bfuo/XxdFtjNlpBnRSz55oWsfelV2bXIgIhY/HOGo=;
+ b=xWvHS2PiKGx9o1Y75d8aHnX5JAyJpQ/n8m6U4OfOHpTGyPApAs6B48YmWcriEDLmsi3xk8qVe
+ PPsYGLmQPflDDpV6LeYtlYy1puVL7D8jpEP5qSk6tv1ji9/vpUFkq2+
+X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
+ pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-I'm seeing a problem on s390 with the new "SOCK_STREAM transport change 
-null-ptr-deref" test. Here is how it appears to happen:
+Add a new property qcom,tune-res-fsdif for the eUSB2 repeater and add
+the compatible for the repeater on the PMIV0104 PMIC.
 
-test_stream_transport_change_client() spins for 2s and sends 70K+ 
-CONTROL_CONTINUE messages to the "control" socket.
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+Changes in v2:
+- Expand the dt-bindings qcom,tune-res-fsdif commit message regarding
+  the register value in dt.
+- Pick up tags
+- Link to v1: https://lore.kernel.org/r/20250625-sm7635-eusb-repeater-v1-0-19d85541eb4c@fairphone.com
 
-test_stream_transport_change_server() spins calling accept() because it 
-keeps receiving CONTROL_CONTINUE.
+---
+Luca Weiss (4):
+      dt-bindings: phy: qcom,snps-eusb2-repeater: Document qcom,tune-res-fsdif
+      phy: qualcomm: phy-qcom-eusb2-repeater: Support tune-res-fsdif prop
+      dt-bindings: phy: qcom,snps-eusb2-repeater: Add compatible for PMIV0104
+      phy: qualcomm: phy-qcom-eusb2-repeater: Add support for PMIV0104
 
-When the client exits, the server has received just under 1K of those 
-70K CONTROL_CONTINUE, so it calls accept() again but the client has 
-exited, so accept() never returns and the server never exits.
+ .../devicetree/bindings/phy/qcom,snps-eusb2-repeater.yaml |  7 +++++++
+ drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c            | 15 +++++++++++++++
+ 2 files changed, 22 insertions(+)
+---
+base-commit: d9946fe286439c2aeaa7953b8c316efe5b83d515
+change-id: 20250620-sm7635-eusb-repeater-0d78f557290f
+prerequisite-change-id: 20250616-eusb2-repeater-tuning-f56331c6b1fa:v2
+prerequisite-patch-id: 5c504d171a4d1acd9ec376e01e0dd0fddbad92b8
+prerequisite-patch-id: 0c97dcf5472fbed8ef4cffbd482f3169fe1e972d
+
+Best regards,
+-- 
+Luca Weiss <luca.weiss@fairphone.com>
 
 
