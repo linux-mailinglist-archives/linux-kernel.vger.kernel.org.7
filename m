@@ -1,404 +1,131 @@
-Return-Path: <linux-kernel+bounces-724587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E027AFF494
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:22:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96D39AFF498
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 449C87A924D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:20:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B4623BF44E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA8724679E;
-	Wed,  9 Jul 2025 22:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002DE256C9F;
+	Wed,  9 Jul 2025 22:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQp156Fa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fKjDe8jF"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A66243399;
-	Wed,  9 Jul 2025 22:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8F0238C3D;
+	Wed,  9 Jul 2025 22:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752099710; cv=none; b=GQxW1twuCTmW7C+kkokl1QAtM2uah/Xvog+rXUeVZ95xujM91HzYBi4hK1piQEQmuPg+MggMs08509MkIJmwLmGDVLy4uyJ6rcqRekgRcBlJmrymsdgJGb054HQOq3W3eCyj3HN7Fgr9Chj4E747w2F96gbpHTXHyKgJWiLpXnI=
+	t=1752099717; cv=none; b=IJCo58wiyVid1Ftmu2j8GujBvQX9DS5F+24wQrq4PkzAbuxPx08hPqr72d/nkVlkR98SFTZisvw84B5Nrl0yWbQMWspY2PNxwm1SGsUVIx9s3ozn/x4OORdaa3Z7w71y4d4842bdUdxnB0SSzFvlTlCs8ZBUgoPpNQS5IwRVHqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752099710; c=relaxed/simple;
-	bh=vMk63BU6vPbeqFxykHtTw4kWX4uzQsf8eR4cINkk+II=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EOEOGo62/aRgN7ZmMyY6ksZSWXB4/w7ykEHYvVo6SjkfciwxrWWqHdCauLOIPrn27/RbC8kJGG+ij6/lgqHa5K3m37vCaulAORQ0aPd9O2TFT/Bg3A4yRgyonpfORtezdi9fLTHqpBNKZdVhSbpAR/JnDwxoHXjtjQiwoEAqgrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQp156Fa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BA478C4CEF6;
-	Wed,  9 Jul 2025 22:21:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752099709;
-	bh=vMk63BU6vPbeqFxykHtTw4kWX4uzQsf8eR4cINkk+II=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=BQp156FaVaIuhLwdDKT/s4ziB7FJaKv9qdeDnwAj8of0sp5+9DlNSqzSWm4kUB6a1
-	 LB0wJd7jaijSGvTLWbFijHDySGHw9OpV04kAPd6EzzyvbqrHf5AWvVCl2wQiQ+0StO
-	 TDQFyukHn2jCiz7yXNeRxO4Xh1P93IEcgFj6AbLhPnpnaec6HwiNAGlJXTamv5Ndpr
-	 wBkTTv1a0XFx+OWDUA89ibH3hl87VObQFogiuJNGF9pW0q89X7+OrtoCeq9Uc4SdHQ
-	 nitePk+C/KMow9cAfTdO1JH1RFQlY4ZIKDtw7q/AUh1GWB/u2KPep62gDkjkE60Ruy
-	 y1ZG/AQnRzc1g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC5F2C83F18;
-	Wed,  9 Jul 2025 22:21:49 +0000 (UTC)
-From: Sasha Finkelstein via B4 Relay <devnull+fnkl.kernel.gmail.com@kernel.org>
+	s=arc-20240116; t=1752099717; c=relaxed/simple;
+	bh=7mpZCRqoRfCg8BZ5xo2NGCZ91F7yFHgpqNPru4vmBDk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GxTwzUqln0nW2+hg3GbIuRS1o0fxi0toZdcUJuRNfDoM0GMP6+BIX984jPo94aDpZQs6b8xmNxSrRHfPW4eu/QLDzQT6B0Cca7Ta+U9FUvJhV1ccsiFeiElW0wGLnlWytE6BmqDRjmPwc/lIys03rFzIg2Fm6c+OIQPofLRQ58E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fKjDe8jF; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a510432236so319412f8f.0;
+        Wed, 09 Jul 2025 15:21:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752099714; x=1752704514; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+FxZUJdA42/PhnEXKvZqgsEn+PSa0lrVbiYJEuvgjqw=;
+        b=fKjDe8jFkabyp4Z4W+5sjcZpHQMmYv4IwN6yEk6HEkyFRLg2kOjfVxheh3tTb9uGDY
+         24N/AgKfai7bjfQFdOgWJvYi04fCnI8X3QTO4Mqc3g0FPjobQy19AhJOuGpZfsWwOayr
+         bqgzuUNfzDVP4mes3RLQdmHJ7lrNjYJiVFcz4di+6Se9xJ7DB9sIQ5jCjhhZk+mP31tI
+         FFZ29fQNN/uXd92TTLzZThF7HHGBEsaQeQO42OljcyMDsl18EXuxgrnC+A3P7dhJjE82
+         4PtUXXLvVhRIKL+8y/nOcgI7PzcKCm7uTjEQPmL7pd8Hq52LKMLMgt06C0WdDnQva3ai
+         ypLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752099714; x=1752704514;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+FxZUJdA42/PhnEXKvZqgsEn+PSa0lrVbiYJEuvgjqw=;
+        b=icWB4jkLUmN8Oy80r7y8eq+lqwjV1C+uSr2sthuB9dDRzWcmgswmy3GgqSEiAquXBR
+         NSDqFjPjUVQJMQz/+OJwJkVcKRpmtZifHPGXVAA9X9NvJT053bNJgUjOrXSeczLKkpki
+         W5urFKYxuqkQXUbfXXKfyJU5EfLzlGWXcprBFuW5qGffBAsXXl25APuVpn4qaH+xTs2n
+         Xo9KKeRfJKupyuWoiB7w9AcQ6Xw5uNZQ0ofrKXPR9FhFIQ06viX6tLP/5G9aNkCa/KLO
+         8DkD4XcRxfiZIQ9YzUOhjp6mjonHgT0rWQCl5x+/WWLwMEisjsbjm9YR9UF2D51K84k4
+         6ypg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0GzgFA44WsyYzjJjpXgmsmb0u6cCBh69INb03YKJcjF1rMmdLjg9GXDukAfNd2JTjcn3cizCzHLIGZSY=@vger.kernel.org, AJvYcCVPQbwWFoJBcxaenNKO3VCClHMJMUsa2cbLX6IDkwZx4mRzaOWujuAZM6ZrwmfoFYxI/irerh4iic80@vger.kernel.org, AJvYcCXv5ZFpulGuQiGsyCtS+A0+tRHIOCOE1v/BWdrLey4FSkpwsrkO9eMSbyvnkpYofIkCusCf/SancVb3i86i@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywjx1LDnKHHZKfdO5y2ZlNZnchHInNwfkVMyxYbv/sxV8IE4oS8
+	XkLZp4hI5hi27tuqNf2/qn69YyQa8RTp0EV1edcCzD3XbgPKLxi/ny4s
+X-Gm-Gg: ASbGncv7v9h6iyH7+5m1S+jfG/EeNb3Tc+vZMT7F5xZHCmXB9gY0Ez49bZJeHsevyIP
+	45sAEKeQfR0ChMjq9YUuPz/o52rfblXKEagZnQyb5ssquXd3UXULYFGAJaCZ+QrSd+j830FU7ZX
+	0RJNqyi7oc2ynq5mCvm6f/TTP80sZw3yTHPaKlsCZPxEm99yTCmq5Rc+JaEnNed4bSO7FZllD2/
+	2y72G+yIy6o/qI49QJRKu/jF8oMkSOQjhsiE2Ym8AJaUGV7PZFO5moVOOmHUi/gu5hdSZf+Q74p
+	VUwv1FyRl6Ebik5Ow6/d7tHyDTwU1mqTqK1EysVGb3EpbTcOAqx0Mr2vG2vmB1KOCTB0TOPrtKE
+	1kPR3Olg8z9xYokpETqcIr1iCtTcL90ATyuvP3EgskFRtCZy/E7vubA==
+X-Google-Smtp-Source: AGHT+IFJ77g60sJdBslv4i3acOTnQdrC0ON+RQ3E5pwWCZp48aJPe43eA5mQSpqLouCk8epCGwMFUg==
+X-Received: by 2002:a05:6000:41ce:b0:3a5:88cf:479e with SMTP id ffacd0b85a97d-3b5e86de861mr314847f8f.48.1752099713887;
+        Wed, 09 Jul 2025 15:21:53 -0700 (PDT)
+Received: from localhost (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b5e8bd1924sm106305f8f.16.2025.07.09.15.21.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 15:21:52 -0700 (PDT)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] memory: tegra: Add Tegra264 support
 Date: Thu, 10 Jul 2025 00:21:45 +0200
-Subject: [PATCH v3 2/2] arm64: dts: Add Apple SoC GPU
+Message-ID: <20250709222147.3758356-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250710-sgx-dt-v3-2-299bb3a65109@gmail.com>
-References: <20250710-sgx-dt-v3-0-299bb3a65109@gmail.com>
-In-Reply-To: <20250710-sgx-dt-v3-0-299bb3a65109@gmail.com>
-To: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Sasha Finkelstein <fnkl.kernel@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752099708; l=9228;
- i=fnkl.kernel@gmail.com; s=20241124; h=from:subject:message-id;
- bh=K6K14UmmEMDGmK5+9wuNs1Mi4fwHRoanhZcBO8g9SnA=;
- b=lGoxzSJqwgctVwWzlLIVAN1JTfGOcYn2TGjIbCwp8FjHilhP80NzOlPsQ1KiyqwZQ3qZd7y//
- XJUh3SYHIiLAlyuXqOC3zHsrWeQMRIDozJbiEB0a+qvI5Qb3vpa+T/V
-X-Developer-Key: i=fnkl.kernel@gmail.com; a=ed25519;
- pk=aSkp1PdZ+eF4jpMO6oLvz/YfT5XkBUneWwyhQrOgmsU=
-X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
- auth_id=283
-X-Original-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Reply-To: fnkl.kernel@gmail.com
+Content-Transfer-Encoding: 8bit
 
-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+From: Thierry Reding <treding@nvidia.com>
 
-Add device tree entries for GPUs in M-series SoCs
+This set of patches extends the DT bindings for the memory controller
+and external memory controller for Tegra264 and add the necessary DT
+headers with memory client and stream ID definitions.
 
-Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-Reviewed-by: Sven Peter <sven@kernel.org>
-Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
----
- arch/arm64/boot/dts/apple/t6000.dtsi        |  4 ++++
- arch/arm64/boot/dts/apple/t6001.dtsi        |  4 ++++
- arch/arm64/boot/dts/apple/t6002.dtsi        |  4 ++++
- arch/arm64/boot/dts/apple/t600x-common.dtsi | 34 ++++++++++++++++++++++++++++++++++
- arch/arm64/boot/dts/apple/t600x-die0.dtsi   | 28 ++++++++++++++++++++++++++++
- arch/arm64/boot/dts/apple/t8103.dtsi        | 62 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- arch/arm64/boot/dts/apple/t8112.dtsi        | 62 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 7 files changed, 198 insertions(+)
+The driver changes in patch 4 are mostly an extension of existing code
+and the bulk consists of the memory client table for the new chip as
+well as the bandwidth manager calculations.
 
-diff --git a/arch/arm64/boot/dts/apple/t6000.dtsi b/arch/arm64/boot/dts/apple/t6000.dtsi
-index 89c3b211b116e96ee0a5ea0c923c3ab824008307..0ad77c98073fe65ddde7736acaece9acd5f3111e 100644
---- a/arch/arm64/boot/dts/apple/t6000.dtsi
-+++ b/arch/arm64/boot/dts/apple/t6000.dtsi
-@@ -16,3 +16,7 @@ / {
- };
- 
- /delete-node/ &pmgr_south;
-+
-+&gpu {
-+	compatible = "apple,agx-g13s";
-+};
-diff --git a/arch/arm64/boot/dts/apple/t6001.dtsi b/arch/arm64/boot/dts/apple/t6001.dtsi
-index d2cf81926f284ccf7627701cc82edff31d4d72d6..ffbe823b71bc8d9c0975524aa04efa9bf520a89e 100644
---- a/arch/arm64/boot/dts/apple/t6001.dtsi
-+++ b/arch/arm64/boot/dts/apple/t6001.dtsi
-@@ -62,3 +62,7 @@ p-core-pmu-affinity {
- 		};
- 	};
- };
-+
-+&gpu {
-+	compatible = "apple,agx-g13c", "apple,agx-g13s";
-+};
-diff --git a/arch/arm64/boot/dts/apple/t6002.dtsi b/arch/arm64/boot/dts/apple/t6002.dtsi
-index e36f422d257d8fe3a62bfa6e0f0e0dc6c34608a4..8fb648836b538bbd9efdccd6cec5d08d868a0d39 100644
---- a/arch/arm64/boot/dts/apple/t6002.dtsi
-+++ b/arch/arm64/boot/dts/apple/t6002.dtsi
-@@ -300,3 +300,7 @@ &ps_gfx {
- 	// On t6002, the die0 GPU power domain needs both AFR power domains
- 	power-domains = <&ps_afr>, <&ps_afr_die1>;
- };
-+
-+&gpu {
-+	compatible = "apple,agx-g13d", "apple,agx-g13s";
-+};
-diff --git a/arch/arm64/boot/dts/apple/t600x-common.dtsi b/arch/arm64/boot/dts/apple/t600x-common.dtsi
-index 87dfc13d74171f62bf3087401918d9d41eaac560..e20234ef213538f851d9da0dbd11b318831668b1 100644
---- a/arch/arm64/boot/dts/apple/t600x-common.dtsi
-+++ b/arch/arm64/boot/dts/apple/t600x-common.dtsi
-@@ -11,6 +11,10 @@ / {
- 	#address-cells = <2>;
- 	#size-cells = <2>;
- 
-+	aliases {
-+		gpu = &gpu;
-+	};
-+
- 	cpus {
- 		#address-cells = <2>;
- 		#size-cells = <0>;
-@@ -378,4 +382,34 @@ nco_clkref: clock-ref-nco {
- 		#clock-cells = <0>;
- 		clock-output-names = "nco_ref";
- 	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		gpu_globals: globals {
-+			status = "disabled";
-+		};
-+
-+		gpu_hw_cal_a: hw-cal-a {
-+			status = "disabled";
-+		};
-+
-+		gpu_hw_cal_b: hw-cal-b {
-+			status = "disabled";
-+		};
-+
-+		uat_handoff: uat-handoff {
-+			status = "disabled";
-+		};
-+
-+		uat_pagetables: uat-pagetables {
-+			status = "disabled";
-+		};
-+
-+		uat_ttbs: uat-ttbs {
-+			status = "disabled";
-+		};
-+	};
- };
-diff --git a/arch/arm64/boot/dts/apple/t600x-die0.dtsi b/arch/arm64/boot/dts/apple/t600x-die0.dtsi
-index 110bc6719512e334e04b496fb157cb4368679957..341307330bfaa17b276d9c23a87931dbe71bd186 100644
---- a/arch/arm64/boot/dts/apple/t600x-die0.dtsi
-+++ b/arch/arm64/boot/dts/apple/t600x-die0.dtsi
-@@ -302,6 +302,34 @@ mca: mca@39b600000 {
- 		#sound-dai-cells = <1>;
- 	};
- 
-+	gpu: gpu@406400000 {
-+		compatible = "apple,agx-g13s";
-+		reg = <0x4 0x6400000 0 0x40000>,
-+			<0x4 0x4000000 0 0x1000000>;
-+		reg-names = "asc", "sgx";
-+		mboxes = <&agx_mbox>;
-+		power-domains = <&ps_gfx>;
-+		memory-region = <&uat_ttbs>, <&uat_pagetables>, <&uat_handoff>,
-+				<&gpu_hw_cal_a>, <&gpu_hw_cal_b>, <&gpu_globals>;
-+		memory-region-names = "ttbs", "pagetables", "handoff",
-+				      "hw-cal-a", "hw-cal-b", "globals";
-+
-+		apple,firmware-abi = <0 0 0>;
-+	};
-+
-+	agx_mbox: mbox@406408000 {
-+		compatible = "apple,t6000-asc-mailbox", "apple,asc-mailbox-v4";
-+		reg = <0x4 0x6408000 0x0 0x4000>;
-+		interrupt-parent = <&aic>;
-+		interrupts = <AIC_IRQ 0 1059 IRQ_TYPE_LEVEL_HIGH>,
-+			<AIC_IRQ 0 1060 IRQ_TYPE_LEVEL_HIGH>,
-+			<AIC_IRQ 0 1061 IRQ_TYPE_LEVEL_HIGH>,
-+			<AIC_IRQ 0 1062 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "send-empty", "send-not-empty",
-+			"recv-empty", "recv-not-empty";
-+		#mbox-cells = <0>;
-+	};
-+
- 	pcie0_dart_0: iommu@581008000 {
- 		compatible = "apple,t6000-dart";
- 		reg = <0x5 0x81008000 0x0 0x4000>;
-diff --git a/arch/arm64/boot/dts/apple/t8103.dtsi b/arch/arm64/boot/dts/apple/t8103.dtsi
-index 20faf0c0d80927b2e18dd966a61b5507b322c72f..531cfcd463ae6d8701dec67cde8c953b8865eef6 100644
---- a/arch/arm64/boot/dts/apple/t8103.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8103.dtsi
-@@ -19,6 +19,10 @@ / {
- 	#address-cells = <2>;
- 	#size-cells = <2>;
- 
-+	aliases {
-+		gpu = &gpu;
-+	};
-+
- 	cpus {
- 		#address-cells = <2>;
- 		#size-cells = <0>;
-@@ -351,6 +355,36 @@ nco_clkref: clock-ref-nco {
- 		clock-output-names = "nco_ref";
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		gpu_globals: globals {
-+			status = "disabled";
-+		};
-+
-+		gpu_hw_cal_a: hw-cal-a {
-+			status = "disabled";
-+		};
-+
-+		gpu_hw_cal_b: hw-cal-b {
-+			status = "disabled";
-+		};
-+
-+		uat_handoff: uat-handoff {
-+			status = "disabled";
-+		};
-+
-+		uat_pagetables: uat-pagetables {
-+			status = "disabled";
-+		};
-+
-+		uat_ttbs: uat-ttbs {
-+			status = "disabled";
-+		};
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
-@@ -359,6 +393,34 @@ soc {
- 		ranges;
- 		nonposted-mmio;
- 
-+		gpu: gpu@206400000 {
-+			compatible = "apple,agx-g13g";
-+			reg = <0x2 0x6400000 0 0x40000>,
-+				<0x2 0x4000000 0 0x1000000>;
-+			reg-names = "asc", "sgx";
-+			mboxes = <&agx_mbox>;
-+			power-domains = <&ps_gfx>;
-+			memory-region = <&uat_ttbs>, <&uat_pagetables>, <&uat_handoff>,
-+					<&gpu_hw_cal_a>, <&gpu_hw_cal_b>, <&gpu_globals>;
-+			memory-region-names = "ttbs", "pagetables", "handoff",
-+					      "hw-cal-a", "hw-cal-b", "globals";
-+
-+			apple,firmware-abi = <0 0 0>;
-+		};
-+
-+		agx_mbox: mbox@206408000 {
-+			compatible = "apple,t8103-asc-mailbox", "apple,asc-mailbox-v4";
-+			reg = <0x2 0x6408000 0x0 0x4000>;
-+			interrupt-parent = <&aic>;
-+			interrupts = <AIC_IRQ 575 IRQ_TYPE_LEVEL_HIGH>,
-+				<AIC_IRQ 576 IRQ_TYPE_LEVEL_HIGH>,
-+				<AIC_IRQ 577 IRQ_TYPE_LEVEL_HIGH>,
-+				<AIC_IRQ 578 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "send-empty", "send-not-empty",
-+				"recv-empty", "recv-not-empty";
-+			#mbox-cells = <0>;
-+		};
-+
- 		cpufreq_e: performance-controller@210e20000 {
- 			compatible = "apple,t8103-cluster-cpufreq", "apple,cluster-cpufreq";
- 			reg = <0x2 0x10e20000 0 0x1000>;
-diff --git a/arch/arm64/boot/dts/apple/t8112.dtsi b/arch/arm64/boot/dts/apple/t8112.dtsi
-index e95711d8337f6cea898e88a3d564caf2c4f94404..b41b9f8fa122b13b9bf20dcb7135049e11e1819f 100644
---- a/arch/arm64/boot/dts/apple/t8112.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8112.dtsi
-@@ -19,6 +19,10 @@ / {
- 	#address-cells = <2>;
- 	#size-cells = <2>;
- 
-+	aliases {
-+		gpu = &gpu;
-+	};
-+
- 	cpus {
- 		#address-cells = <2>;
- 		#size-cells = <0>;
-@@ -366,6 +370,36 @@ nco_clkref: clock-ref-nco {
- 		clock-output-names = "nco_ref";
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		gpu_globals: globals {
-+			status = "disabled";
-+		};
-+
-+		gpu_hw_cal_a: hw-cal-a {
-+			status = "disabled";
-+		};
-+
-+		gpu_hw_cal_b: hw-cal-b {
-+			status = "disabled";
-+		};
-+
-+		uat_handoff: uat-handoff {
-+			status = "disabled";
-+		};
-+
-+		uat_pagetables: uat-pagetables {
-+			status = "disabled";
-+		};
-+
-+		uat_ttbs: uat-ttbs {
-+			status = "disabled";
-+		};
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
-@@ -374,6 +408,34 @@ soc {
- 		ranges;
- 		nonposted-mmio;
- 
-+		gpu: gpu@206400000 {
-+			compatible = "apple,agx-g14g";
-+			reg = <0x2 0x6400000 0 0x40000>,
-+				<0x2 0x4000000 0 0x1000000>;
-+			reg-names = "asc", "sgx";
-+			mboxes = <&agx_mbox>;
-+			power-domains = <&ps_gfx>;
-+			memory-region = <&uat_ttbs>, <&uat_pagetables>, <&uat_handoff>,
-+					<&gpu_hw_cal_a>, <&gpu_hw_cal_b>, <&gpu_globals>;
-+			memory-region-names = "ttbs", "pagetables", "handoff",
-+					      "hw-cal-a", "hw-cal-b", "globals";
-+
-+			apple,firmware-abi = <0 0 0>;
-+		};
-+
-+		agx_mbox: mbox@206408000 {
-+			compatible = "apple,t8103-asc-mailbox", "apple,asc-mailbox-v4";
-+			reg = <0x2 0x6408000 0x0 0x4000>;
-+			interrupt-parent = <&aic>;
-+			interrupts = <AIC_IRQ 709 IRQ_TYPE_LEVEL_HIGH>,
-+				<AIC_IRQ 710 IRQ_TYPE_LEVEL_HIGH>,
-+				<AIC_IRQ 711 IRQ_TYPE_LEVEL_HIGH>,
-+				<AIC_IRQ 712 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "send-empty", "send-not-empty",
-+				"recv-empty", "recv-not-empty";
-+			#mbox-cells = <0>;
-+		};
-+
- 		cpufreq_e: cpufreq@210e20000 {
- 			compatible = "apple,t8112-cluster-cpufreq", "apple,cluster-cpufreq";
- 			reg = <0x2 0x10e20000 0 0x1000>;
+Changes in v2:
+- squash DT bindings patches into a single patch
+- address review comments for bindings
+- add Acked-by on patch 2
+
+Thierry
+
+Sumit Gupta (2):
+  dt-bindings: memory: tegra: Add Tegra264 support
+  memory: tegra: Add Tegra264 MC and EMC support
+
+ .../nvidia,tegra186-mc.yaml                   |  84 ++++-
+ drivers/memory/tegra/Makefile                 |   2 +
+ drivers/memory/tegra/mc.c                     |   5 +-
+ drivers/memory/tegra/mc.h                     |   9 +-
+ drivers/memory/tegra/tegra186-emc.c           |   5 +-
+ drivers/memory/tegra/tegra186.c               |  17 +-
+ drivers/memory/tegra/tegra264-bwmgr.h         |  50 +++
+ drivers/memory/tegra/tegra264.c               | 313 ++++++++++++++++++
+ include/dt-bindings/memory/nvidia,tegra264.h  | 136 ++++++++
+ 9 files changed, 613 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/memory/tegra/tegra264-bwmgr.h
+ create mode 100644 drivers/memory/tegra/tegra264.c
+ create mode 100644 include/dt-bindings/memory/nvidia,tegra264.h
 
 -- 
-2.50.1
-
+2.50.0
 
 
