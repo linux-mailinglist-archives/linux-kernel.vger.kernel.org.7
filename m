@@ -1,39 +1,64 @@
-Return-Path: <linux-kernel+bounces-724035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF6C5AFEDC7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:30:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A1B2AFEDAE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A567317DA0B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:30:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C30E3A1999
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414E52E8DF6;
-	Wed,  9 Jul 2025 15:29:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BC9156F4A;
-	Wed,  9 Jul 2025 15:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7F32E7F00;
+	Wed,  9 Jul 2025 15:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h4VtvaGa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B265D5383;
+	Wed,  9 Jul 2025 15:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752074988; cv=none; b=YGdMUPiHyU2Wivq3zgCKZxiqcrqGzAVaDiXKXALldTVCiKrvnXzRaTAe21jbVLreW4chQHHHPOzMpyLprwWQdvo3SKlwdPLmmcvsI+9rF8lycxxdN5YaXsuak+XTtydLKyONLHuClBeMdRIJICedMTbAWGJmxlTXk3DLMujlSBo=
+	t=1752074785; cv=none; b=LVEr26Adw4lICpYv4u1lDRUvqj1m4NttpZ0IS3ShGrG8Qtt/a1iSXIYUTZLCLQ46ymFYKs9jfFYcTk4t+IDu7bK954V2egUgV+v5zNb1j3//MuGaf8tDS5pY+qOqaM4VSL+w7eI30IcPmHXEulKCowdh+QZv4/ZNHX7fBcxYJ/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752074988; c=relaxed/simple;
-	bh=hxwENio9vqhZJqqfY5hcdmYC9aTUCi3OKuArnu64jOQ=;
+	s=arc-20240116; t=1752074785; c=relaxed/simple;
+	bh=I58dVPo5Wh3ABbjQx+DKjLaTOmLE+HHk0PL8WqsGQZ8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AY5FeSU84LazKzskLD4FmoiLcDPOtbGh/d0oziIUfuKe1W3Ur1SvSvBaNRxpCElzQKm7A2lk2WPrHJoqUxrKbOMm0sw5LjNQ9MN1it14Ea6mMEHEqrqJZJPijRG4yQnI/AD3PHiR4Eq2vm3Q2nYKooFNRN3m9PoKHXyW0VpcE40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1CE521424;
-	Wed,  9 Jul 2025 08:29:34 -0700 (PDT)
-Received: from [10.57.86.38] (unknown [10.57.86.38])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E72943F738;
-	Wed,  9 Jul 2025 08:29:41 -0700 (PDT)
-Message-ID: <8757342e-26e6-467c-a469-0ac1120bcdd9@arm.com>
-Date: Wed, 9 Jul 2025 16:29:39 +0100
+	 In-Reply-To:Content-Type; b=aG8JZTxER32UZ0gBPqIKgbWoYi0TOFY3EPIIQgB9xDJHDg87wOFrjJAmPSuhWmmll2zmxI+W8g/qxzlQZWOVbDE5uY2cegjsSyb5bLl83qp69yrkpprGvE/D8tz7UsbEQHiAR0DdeP1n/KVn/PNWCOCwTW5kVXkwtZrzldAp03w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h4VtvaGa; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752074783; x=1783610783;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=I58dVPo5Wh3ABbjQx+DKjLaTOmLE+HHk0PL8WqsGQZ8=;
+  b=h4VtvaGaq5Mxiiyjtv/eH/AeDdTp8ndxlFjzFp3rsxDZxhX73FLQmyWU
+   QYb54HZ4/0pAEZAzOwoFGI3V+qvxfmRQ7Ah0lhxNKiWKkd+H6DuTsqtAq
+   HDP7gZTfPL6iHh41tLrjEjMjf5a3T0mY95kGbuX8svsnk5ILxKKpGh92n
+   JcnBo8AlNJZ6Esp97mN/MXm71rDj7B788W5I9j1Ko0aQznYYg2jhVPrqu
+   1YXzbQ+9V/kpnyrl0LQH5wpv1CGtobycVgpI2LIQ3AaWrqzQ3yIuF6yb7
+   82eaqetQaaadv8hUbEko3M5/NRweF9o2g4FwYMd9fSZENqm9GJAg3x4mU
+   Q==;
+X-CSE-ConnectionGUID: +v9JfkZ/RTCUgfYOA5Jueg==
+X-CSE-MsgGUID: gMRDtlp9T/eoMhs+0JUs3Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="58006799"
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="58006799"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 08:26:22 -0700
+X-CSE-ConnectionGUID: yinaxIZjTniveTWTvfRBgg==
+X-CSE-MsgGUID: N81UnTO1TJ6iwQMtIin03A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="156370755"
+Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.110.190]) ([10.125.110.190])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 08:26:21 -0700
+Message-ID: <ee7585bd-d87c-4f93-9c8e-b8c1d649cdfe@intel.com>
+Date: Wed, 9 Jul 2025 08:29:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,221 +66,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 14/43] KVM: arm64: Support timers in realm RECs
-To: Joey Gouly <joey.gouly@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
- <aneesh.kumar@kernel.org>, Emi Kisanuki <fj0570is@fujitsu.com>
-References: <20250611104844.245235-1-steven.price@arm.com>
- <20250611104844.245235-15-steven.price@arm.com>
- <20250709144939.GA2753450@e124191.cambridge.arm.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250709144939.GA2753450@e124191.cambridge.arm.com>
+Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+ Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ Alistair Popple <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, "Tested-by : Yi Lai" <yi1.lai@intel.com>
+Cc: iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250709062800.651521-1-baolu.lu@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Joey,
+On 7/8/25 23:28, Lu Baolu wrote:
+> Modern IOMMUs often cache page table entries to optimize walk performance,
+> even for intermediate page table levels. If kernel page table mappings are
+> changed (e.g., by vfree()), but the IOMMU's internal caches retain stale
+> entries, Use-After-Free (UAF) vulnerability condition arises. If these
+> freed page table pages are reallocated for a different purpose, potentially
+> by an attacker, the IOMMU could misinterpret the new data as valid page
+> table entries. This allows the IOMMU to walk into attacker-controlled
+> memory, leading to arbitrary physical memory DMA access or privilege
+> escalation.
 
-On 09/07/2025 15:49, Joey Gouly wrote:
-> Hi Steven,
-> 
-> On Wed, Jun 11, 2025 at 11:48:11AM +0100, Steven Price wrote:
->> The RMM keeps track of the timer while the realm REC is running, but on
->> exit to the normal world KVM is responsible for handling the timers.
->>
->> The RMM doesn't provide a mechanism to set the counter offset, so don't
->> expose KVM_CAP_COUNTER_OFFSET for a realm VM.
->>
->> A later patch adds the support for propagating the timer values from the
->> exit data structure and calling kvm_realm_timers_update().
->>
->> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->> Changes since v7:
->>  * Hide KVM_CAP_COUNTER_OFFSET for realm guests.
->> ---
->>  arch/arm64/kvm/arch_timer.c  | 48 +++++++++++++++++++++++++++++++++---
->>  arch/arm64/kvm/arm.c         |  2 +-
->>  include/kvm/arm_arch_timer.h |  2 ++
->>  3 files changed, 47 insertions(+), 5 deletions(-)
->>
->> diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
->> index fdbc8beec930..7f8705d6fdf5 100644
->> --- a/arch/arm64/kvm/arch_timer.c
->> +++ b/arch/arm64/kvm/arch_timer.c
->> @@ -148,6 +148,13 @@ static void timer_set_cval(struct arch_timer_context *ctxt, u64 cval)
->>  
->>  static void timer_set_offset(struct arch_timer_context *ctxt, u64 offset)
->>  {
->> +	struct kvm_vcpu *vcpu = ctxt->vcpu;
->> +
->> +	if (kvm_is_realm(vcpu->kvm)) {
->> +		WARN_ON(offset);
->> +		return;
->> +	}
->> +
->>  	if (!ctxt->offset.vm_offset) {
->>  		WARN(offset, "timer %ld\n", arch_timer_ctx_index(ctxt));
->>  		return;
->> @@ -462,6 +469,21 @@ static void kvm_timer_update_irq(struct kvm_vcpu *vcpu, bool new_level,
->>  			    timer_ctx);
->>  }
->>  
->> +void kvm_realm_timers_update(struct kvm_vcpu *vcpu)
->> +{
->> +	struct arch_timer_cpu *arch_timer = &vcpu->arch.timer_cpu;
->> +	int i;
->> +
->> +	for (i = 0; i < NR_KVM_EL0_TIMERS; i++) {
->> +		struct arch_timer_context *timer = &arch_timer->timers[i];
->> +		bool status = timer_get_ctl(timer) & ARCH_TIMER_CTRL_IT_STAT;
->> +		bool level = kvm_timer_irq_can_fire(timer) && status;
->> +
->> +		if (level != timer->irq.level)
->> +			kvm_timer_update_irq(vcpu, level, timer);
->> +	}
->> +}
->> +
->>  /* Only called for a fully emulated timer */
->>  static void timer_emulate(struct arch_timer_context *ctx)
->>  {
->> @@ -870,6 +892,8 @@ void kvm_timer_vcpu_load(struct kvm_vcpu *vcpu)
->>  	if (unlikely(!timer->enabled))
->>  		return;
->>  
->> +	kvm_timer_unblocking(vcpu);
->> +
->>  	get_timer_map(vcpu, &map);
->>  
->>  	if (static_branch_likely(&has_gic_active_state)) {
->> @@ -883,8 +907,6 @@ void kvm_timer_vcpu_load(struct kvm_vcpu *vcpu)
->>  		kvm_timer_vcpu_load_nogic(vcpu);
->>  	}
->>  
->> -	kvm_timer_unblocking(vcpu);
->> -
-> 
-> The change here to move kvm_timer_unblocking() looks unnecessary, as the change
-> to add an early return in kvm_timer_enable() causes timer->enable to never be
-> set to 1.  Since it is never set, kvm_timer_vcpu_load() will return early
-> before this call to kvm_timer_unblocking().
+The approach here is certainly conservative and simple. It's also not
+going to cause big problems on systems without fancy IOMMUs.
 
-Good spot.
+But I am a _bit_ worried that it's _too_ conservative. The changelog
+talks about page table page freeing, but the actual code:
 
-Looking through the code it makes sense keeping the timer disabled
-because that also disables all the code for loading/unloading the timer
-state which we don't want for realms (because the RMM deals with that).
-So I think just reverting the above change to move
-kvm_timer_unblocking() is the correct approach.
+> @@ -1540,6 +1541,7 @@ void flush_tlb_kernel_range(unsigned long start, unsigned long end)
+>  		kernel_tlb_flush_range(info);
+>  
+>  	put_flush_tlb_info();
+> +	iommu_sva_invalidate_kva_range(start, end);
+>  }
 
-Thanks,
-Steve
+is in a very generic TLB flushing spot that's used for a lot more than
+just freeing page tables.
 
-> Thanks,
-> Joey
-> 
->>  	timer_restore_state(map.direct_vtimer);
->>  	if (map.direct_ptimer)
->>  		timer_restore_state(map.direct_ptimer);
->> @@ -1065,7 +1087,9 @@ static void timer_context_init(struct kvm_vcpu *vcpu, int timerid)
->>  
->>  	ctxt->vcpu = vcpu;
->>  
->> -	if (timerid == TIMER_VTIMER)
->> +	if (kvm_is_realm(vcpu->kvm))
->> +		ctxt->offset.vm_offset = NULL;
->> +	else if (timerid == TIMER_VTIMER)
->>  		ctxt->offset.vm_offset = &kvm->arch.timer_data.voffset;
->>  	else
->>  		ctxt->offset.vm_offset = &kvm->arch.timer_data.poffset;
->> @@ -1087,13 +1111,19 @@ static void timer_context_init(struct kvm_vcpu *vcpu, int timerid)
->>  void kvm_timer_vcpu_init(struct kvm_vcpu *vcpu)
->>  {
->>  	struct arch_timer_cpu *timer = vcpu_timer(vcpu);
->> +	u64 cntvoff;
->>  
->>  	for (int i = 0; i < NR_KVM_TIMERS; i++)
->>  		timer_context_init(vcpu, i);
->>  
->> +	if (kvm_is_realm(vcpu->kvm))
->> +		cntvoff = 0;
->> +	else
->> +		cntvoff = kvm_phys_timer_read();
->> +
->>  	/* Synchronize offsets across timers of a VM if not already provided */
->>  	if (!test_bit(KVM_ARCH_FLAG_VM_COUNTER_OFFSET, &vcpu->kvm->arch.flags)) {
->> -		timer_set_offset(vcpu_vtimer(vcpu), kvm_phys_timer_read());
->> +		timer_set_offset(vcpu_vtimer(vcpu), cntvoff);
->>  		timer_set_offset(vcpu_ptimer(vcpu), 0);
->>  	}
->>  
->> @@ -1633,6 +1663,13 @@ int kvm_timer_enable(struct kvm_vcpu *vcpu)
->>  		return -EINVAL;
->>  	}
->>  
->> +	/*
->> +	 * We don't use mapped IRQs for Realms because the RMI doesn't allow
->> +	 * us setting the LR.HW bit in the VGIC.
->> +	 */
->> +	if (vcpu_is_rec(vcpu))
->> +		return 0;
->> +
->>  	get_timer_map(vcpu, &map);
->>  
->>  	ret = kvm_vgic_map_phys_irq(vcpu,
->> @@ -1764,6 +1801,9 @@ int kvm_vm_ioctl_set_counter_offset(struct kvm *kvm,
->>  	if (offset->reserved)
->>  		return -EINVAL;
->>  
->> +	if (kvm_is_realm(kvm))
->> +		return -EINVAL;
->> +
->>  	mutex_lock(&kvm->lock);
->>  
->>  	if (!kvm_trylock_all_vcpus(kvm)) {
->> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
->> index 0cdcc2ca4a88..6a5c9be4af2d 100644
->> --- a/arch/arm64/kvm/arm.c
->> +++ b/arch/arm64/kvm/arm.c
->> @@ -350,10 +350,10 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
->>  	case KVM_CAP_PTP_KVM:
->>  	case KVM_CAP_ARM_SYSTEM_SUSPEND:
->>  	case KVM_CAP_IRQFD_RESAMPLE:
->> -	case KVM_CAP_COUNTER_OFFSET:
->>  	case KVM_CAP_ARM_WRITABLE_IMP_ID_REGS:
->>  		r = 1;
->>  		break;
->> +	case KVM_CAP_COUNTER_OFFSET:
->>  	case KVM_CAP_SET_GUEST_DEBUG:
->>  		r = !kvm_is_realm(kvm);
->>  		break;
->> diff --git a/include/kvm/arm_arch_timer.h b/include/kvm/arm_arch_timer.h
->> index 681cf0c8b9df..f64e317c091b 100644
->> --- a/include/kvm/arm_arch_timer.h
->> +++ b/include/kvm/arm_arch_timer.h
->> @@ -113,6 +113,8 @@ int kvm_arm_timer_set_attr(struct kvm_vcpu *vcpu, struct kvm_device_attr *attr);
->>  int kvm_arm_timer_get_attr(struct kvm_vcpu *vcpu, struct kvm_device_attr *attr);
->>  int kvm_arm_timer_has_attr(struct kvm_vcpu *vcpu, struct kvm_device_attr *attr);
->>  
->> +void kvm_realm_timers_update(struct kvm_vcpu *vcpu);
->> +
->>  u64 kvm_phys_timer_read(void);
->>  
->>  void kvm_timer_vcpu_load(struct kvm_vcpu *vcpu);
->> -- 
->> 2.43.0
->>
-
+If the problem is truly limited to freeing page tables, it needs to be
+commented appropriately.
 
