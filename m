@@ -1,170 +1,158 @@
-Return-Path: <linux-kernel+bounces-724618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A3FAFF4EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:48:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A0EBAFF4F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D88333AC3EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:48:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ACE53A86E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099B121B1AA;
-	Wed,  9 Jul 2025 22:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210352248A0;
+	Wed,  9 Jul 2025 22:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iU3kiWvc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IpghOC1S"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5D020D51A
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 22:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0135CA92E
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 22:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752101320; cv=none; b=iE8N/OV+vKR3tt2SBb8lVEff2QKnSFtcV36JlYfl6KUe7lHF89rDI1b9n1NKh0bHQsXTro2mXKkyR70roEoFIWtLaMFGYQbghGaJ/3d7gxkxExfdo/I6CmcgIBOEgtsINGvW/cnSwOEvOvI2cyIdDZeAH08/EyHJFN1Sa/0jfXI=
+	t=1752101358; cv=none; b=LGZFKQcTvicGGWKpttIOpTZ45vlibfKjIicVC2zZbQMNM9XSecuOCIEqcgox8A5HwWAALRqbIWVFT123gU+rQFW2l32b2Bl9F117QS2H+njGqJPNmlE1ueZ4qMURHOJkI92REZkpNfN947tZGPu3+n2zIuk4l6BKum6yWX7JTz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752101320; c=relaxed/simple;
-	bh=HFbiJ2A2Xz5p0qQ5IF/YRWPs2zn55kHge0Qr75pRJ0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Skm9p+RLn8ScPkADsSLACejMhcIo4+CdI9BtotXBoZs2CTqQTjX3AXdPnV5bRn3iA8CYjfp3rygdoEsCvfreQE78wkFcitjxRzexuK+6UIegin8Pf4F3mSA6RoCDPpwKYdb+t0burTi+4RyhJAPyPW5A5T1O3Gj625nERgLhONA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iU3kiWvc; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752101319; x=1783637319;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HFbiJ2A2Xz5p0qQ5IF/YRWPs2zn55kHge0Qr75pRJ0s=;
-  b=iU3kiWvco94ecrXZrA8cfnehBq+BgjVcjVTmvRPMHCDY/hRQNRDwnI1H
-   aLrbWvKyrkGcIb58rPPSsw/2pPoJm7VxM5Eg1/NOAqT8lpJ8NTArfA1tv
-   KCWsoJYzD19Bzszr8vxy/1rsb5ifcMHqlZDx9k0EA1s7bqhNJzNnvcZkh
-   ClieXcN/POBsAgO59fGWTtWy5CraPpho4qtB/wSguUoZ+IfsE4Ur9T0dD
-   R+hgflLQAiU0QsHG9CPVWtp6oC8Ws4D49D5clRBCqbKCj1j7iIZ9H/3e2
-   BCMpITRFudCry5a1DM3GC4tyRwzml0Y60SfYhkKoQw2y9xW1jO8jQf4zi
-   g==;
-X-CSE-ConnectionGUID: ov53j6cIS3uzYXHtdvu7AQ==
-X-CSE-MsgGUID: XFdxvVhxR1G1qfuUDBmpPw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="58179320"
-X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
-   d="scan'208";a="58179320"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 15:48:37 -0700
-X-CSE-ConnectionGUID: jNcmKpYlSbKbYEEiOcHENA==
-X-CSE-MsgGUID: ThRvWv04TzyrNTCx7yEY2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
-   d="scan'208";a="186871858"
-Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.103.51])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 15:48:37 -0700
-Date: Wed, 9 Jul 2025 15:48:36 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Fenghua Yu <fenghuay@nvidia.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	Chen Yu <yu.c.chen@intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH v6 18/30] x86/resctrl: Count valid telemetry aggregators
- per package
-Message-ID: <aG7xxIzTZ2hAVrxP@agluck-desk3>
-References: <20250626164941.106341-1-tony.luck@intel.com>
- <20250626164941.106341-19-tony.luck@intel.com>
- <69f18b65-4e20-4383-a559-46fe1eda7db0@intel.com>
- <aG6xGGiOy3xKL-t4@agluck-desk3>
- <74a1e5f0-5484-4952-9a61-7a4e5b96b707@intel.com>
+	s=arc-20240116; t=1752101358; c=relaxed/simple;
+	bh=CC0bgrIdwksXWNPIPQdnL8jTNyJeVQOtatiTQcgZTPA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c5KXkFBZLF5MCFk/Wvvu/eWnlkN+sibnm1H0dHzjvBgJq4sR6ZdhPxXwvYyXNljJGqNvrdKA3TGrGDO6qI5pXDSEeLOu/8sNmNmosCx24Z4I1yho9BHgdpuvFgc4zuMLC2Gsa3zdK9cWcvhRbebwfVKpe2D3agyAFUbsVEbxJqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IpghOC1S; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4a58197794eso36641cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 15:49:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752101356; x=1752706156; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=I6WjSQwUs71DxN/QS/li8qkFp059A9PRc4gKLJpYF90=;
+        b=IpghOC1Sj9TaqB9M/SRzgh99hkxn/rCaWa5/Dj/ffeo5o4sYkSOB5iOvfJGX6L302r
+         s1fp3SXXIgcsY4DfQqP0tdKYBGK2exlWZJJCQLgHYlSGPeIIMDkstqNEglasmk7gRfp7
+         mfn3DDe4pMKbPJTGoMAIhDUesXPNXw1DAQscoGu+mrnyjDabk2PWiVErQD78TiAywsif
+         hPV1bMDJZy9byidiw9/yBKtMWxTjajO/dAMHeF+JOpX5ezOYKaW3ldPTDNyEh12/dtyG
+         LyrQswf4wLX03zAIe5tyk5yXOT1fAfTfXn13Yd57g6BVmYY0xJf659jCDUlMWZURj/it
+         YQgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752101356; x=1752706156;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I6WjSQwUs71DxN/QS/li8qkFp059A9PRc4gKLJpYF90=;
+        b=O7O8l2Is0anhDReOrYETe41RMy5Xx1g0e1OEYw6BRdgcKmmkED9m+tRwZSRWnwNzc6
+         C50OUiAoM1rGygxyeXIj4KKVbIyJJanud5ZbEQnFyab2fuDYv/SPzCNwZBVMIcTG3EUk
+         pqwGki6webLRjiSmVIg1nEgd0D8KOoit96jA8mp6gZWS23B7ChaoO1ewqUMSdLD4uOUD
+         thYzWzgDz+61Vlmi0bTWgALiSmc4754rcYS1AGt5x+zm2AhYYHDGmKjqvo4bAmH3i9l0
+         pnGTb3foY3v0rNl0rkNaxGUsqW3PGY51dat4tim7FItht/oaXeC1+51p8Wr5tEy2vaYV
+         m6Og==
+X-Forwarded-Encrypted: i=1; AJvYcCXwPWIX5yVLSb3wLn7U0Q6cE2XTXLTZ5uJ+45GBdsxWjYkwOyoojGJOXpjC8KDZsPHGRjmZsguSXFHjWzE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4ix5Tfai5Wf04MHAT9ZGmA1XcsQ0nJlDWaporYAT4cThUAMZe
+	2kiKAboZiL6tJty6d84CA9l1iiDf0nelSZmsXKAnmSIbhpApDGyxNEimIPmWc/E4HMUo2Mx5Xa3
+	JJMvmBdT0jbomF2sg4laXgokdqrvwYWjV3/9rkTXq
+X-Gm-Gg: ASbGncu6EArcM30q1ThgfBQX6Ot8HKMuGdY1cWWSiqU3trAfMQWRJokRn275rkis4bQ
+	0+sSAUq4/rpkbzbNy5pObV56s+d4OhLx8Xq5nAhPGhMLP68A29ubXWLWAVXJjtEsiDhOABBBhaO
+	ibNJrtW98GCC/NQbevI5zOI94pjq1E4PkohS77mWJ1M0F4dqrT8Z2Djm7GdX1JHQNEHXX2HhI=
+X-Google-Smtp-Source: AGHT+IEoLIbt2irsqaGFGtwHQ7Zx3lleok1hVEoxG8Q0E/4zF2n2wGHgWR3nGN/o+VcFI1aZOZtarTXQzy3HLGYP+Sc=
+X-Received: by 2002:a05:622a:15c3:b0:4a9:e17a:6288 with SMTP id
+ d75a77b69052e-4a9ec83be88mr661451cf.13.1752101355509; Wed, 09 Jul 2025
+ 15:49:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <74a1e5f0-5484-4952-9a61-7a4e5b96b707@intel.com>
+References: <20250619000925.415528-1-pmalani@google.com> <20250619000925.415528-3-pmalani@google.com>
+ <ff65b997-eb14-798f-1d2f-c375bf763e71@hisilicon.com> <CAFivqm+hjfDwPJCiHavnZSg2D+OaP5xbQnidmwxQ3HD32ic6EA@mail.gmail.com>
+ <ef3f933a-742c-9e8e-9da4-762b33f2de94@hisilicon.com> <CAFivqmLCW2waDnJ0nGbjBd5gs+w+DeszPKe0be3VRLVu06-Ytg@mail.gmail.com>
+ <CAFivqm+D9mbGku-nZKSUEMcQV5XK_ayarxL9gpV5JyfmhirsPw@mail.gmail.com>
+ <aGuGLu2u7iKxR3ul@arm.com> <CAFivqmJL90xsELhz4tPtkYA9vMzS9C=V__nwo=kWJKjKS=mE_Q@mail.gmail.com>
+In-Reply-To: <CAFivqmJL90xsELhz4tPtkYA9vMzS9C=V__nwo=kWJKjKS=mE_Q@mail.gmail.com>
+From: Prashant Malani <pmalani@google.com>
+Date: Wed, 9 Jul 2025 15:49:03 -0700
+X-Gm-Features: Ac12FXxtleLMdf-VJ5bhxQFtWFvonHrcLTRu8uMMp_CtpDUSsgekTEVB0oyKmNM
+Message-ID: <CAFivqmKBgYVa6JUh82TS2pO915PUDYZMH+k-5=-0u1-K9-gMMw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] cpufreq: CPPC: Dont read counters for idle CPUs
+To: Beata Michalska <beata.michalska@arm.com>
+Cc: Jie Zhan <zhanjie9@hisilicon.com>, Ionela Voinescu <ionela.voinescu@arm.com>, 
+	Ben Segall <bsegall@google.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>, Mel Gorman <mgorman@suse.de>, 
+	Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Valentin Schneider <vschneid@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	z00813676 <zhenglifeng1@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 09, 2025 at 03:13:20PM -0700, Reinette Chatre wrote:
-> Hi Tony,
-> 
-> On 7/9/25 11:12 AM, Luck, Tony wrote:
-> > On Tue, Jul 08, 2025 at 07:20:35PM -0700, Reinette Chatre wrote:
-> >> As I understand there is 1:1 relationship between struct event_group and struct pmt_feature_group.
-> >> It thus seems unnecessary to loop through all the telemetry regions of a struct pmt_feature_group
-> >> if it is known to not be associated with the "event group"?
-> >> Could it be helpful to add a new (hardcoded) event_group::id that is of type enum pmt_feature_id
-> >> that can be used to ensure that only relevant struct pmt_feature_group is used to discover events
-> >> for a particular struct event_group?
-> >>
-> >> Another consideration is that this implementation seems to require that guids are unique across
-> >> all telemetry regions of all RMID telemetry features, is this guaranteed?
-> > 
-> > The guids are unique. The XML file tags them like this:
-> > 
-> > 	<TELEM:uniqueid>26557651</TELEM:uniqueid>
-> 
-> I interpret above that guid is expected to be unique for one
-> telemetry feature. It is not clear to me that it implies that the guid
-> is unique across all telemetry features. For example, what prevents
-> a platform from using the same guid for all the telemetry features it
-> supports?
+On Wed, 9 Jul 2025 at 10:25, Prashant Malani <pmalani@google.com> wrote:
+>
+> Hi Beata,
+>
+> Thanks for taking a look.
+>
+> On Mon, 7 Jul 2025 at 01:33, Beata Michalska <beata.michalska@arm.com> wrote:
+> >
+> > Hi Prashant,
+> >
+> > On Wed, Jul 02, 2025 at 11:38:11AM -0700, Prashant Malani wrote:
+> > > Hi All,
+> > >
+> > > Ionela, Beata, could you kindly review ?
+> > >
+> > > On Fri, 27 Jun 2025 at 10:07, Prashant Malani <pmalani@google.com> wrote:
+> > > >
+> > >
+> > > I think it is pertinent to note: the actual act of reading the CPPC counters
+> > > will (at least for ACPI_ADR_SPACE_FIXED_HARDWARE counters)
+> > > wake the CPU up, so even if a CPU *was* idle, the reading of the counters
+> > > calls cpc_read_ffh() [1] which does an IPI on the target CPU [2] thus waking
+> > > it up from WFI.
+> > >
+> > > And that brings us back to the original assertion made in this patch:
+> > > the counter values are quite unreliable when the CPU is in this
+> > > idle (or rather I should correct that to, waking from WFI) state.
+> > >
+> > I'd say that's very platform specific, and as such playing with the delay makes
+> > little sense. I'd need to do more deliberate testing, but I haven't noticed
+> > (yet) any discrepancies in AMU counters on waking up.
+> > Aside, you have mentioned that you've observed the frequency reported to be
+> > above max one (4GHz vs 3.5HZ if I recall correctly) - shouldn't that be clamped
+> > by the driver if the values are outside of supported range ?
+> >
+> > Verifying whether the CPU is idle before poking it just to get a counters
+> > reading to derive current frequency from those does feel rather like an
+> > appealing idea.
+>
+> That's good to hear. What can we do to refine this series further?
+>
+> > Narrowing the scope for ACPI_ADR_SPACE_FIXED_HARDWARE cases
+> > could be solved by providing a query for the address space. Though I am not an
+> > expert here so would be good to get some input from someone who is
+> > (on both).
+>
+> Who would be the expert here (are they on this mailing list)?
+>
+> Could you point me to an example for the query for the address space? Then
+> I can respin this series to use that query and narrow the scope.
 
-There are several non-RMID based telemetry MMIO regions in addition to
-the two used by this patch series.
+Actually, if the idea of this optimization (the idle_cpu check) sounds
+good to you,
+I don't see why we should limit it to ACPI_ADR_SPACE_FIXED_HARDWARE.
+IOW, the patch can remain in its current form.
 
-Think of the uniqueid as a signature for the format of the region.
-Which event counters are present, in which order? How many total
-counters? What is the binary format of each counter?
+Best regards,
 
-Or think of it as a key. Usermode telemetry tools that access these MMIO
-regions use the uniqueid to choose which XML file to use to interpret
-the data. I'm effectively doing this, but without including an XML
-parser in the kernel. Just distilling each XML file to the basic
-essence described in the event_group structure.
-
-It would be a catastrophic failure if Intel assigned the same uniqueid
-to regions that had different formats.
-
-> 
-> > 
-> > the "guid" naming of the value comes from the Intel PMT_DISCOVERY driver.
-> > 
-> > An alternative to adding the new event_group::id field would be to
-> > separate the arrays of known event groups. I.e. change from:
-> > 
-> > static struct event_group *known_event_groups[] = {
-> >         &energy_0x26696143,
-> >         &perf_0x26557651,
-> > };
-> > 
-> > to
-> > 
-> > static struct event_group *known_energy_event_groups[] = {
-> >         &energy_0x26696143,
-> > };
-> > 
-> > static struct event_group *known_perf_event_groups[] = {
-> >         &perf_0x26557651,
-> > };
-> > 
-> > then only scan the appropriate array that matches the
-> > enum pmt_feature_id passed to get_pmt_feature().
-> > 
-> > 
-> > With only one option in each array today this looks
-> > like extra infrasctruture. But I already have a patch
-> > for the next generation system that adds another guid.
-> 
-> This also sounds good. Thank you.
-
-Ok. Thanks. I'll put this idea into code in the next version.
-
-> 
-> Reinette
-> 
-
--Tony
+-- 
+-Prashant
 
