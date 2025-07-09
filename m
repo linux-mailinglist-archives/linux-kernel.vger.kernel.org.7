@@ -1,114 +1,97 @@
-Return-Path: <linux-kernel+bounces-723879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEEA3AFEBED
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:29:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79000AFEBF4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B21A41888661
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:26:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11441179244
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141F92E427B;
-	Wed,  9 Jul 2025 14:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC522E5419;
+	Wed,  9 Jul 2025 14:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Can1a5AL"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ATCuB4OP"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E176E17A586;
-	Wed,  9 Jul 2025 14:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7ACF2E0B4B
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752071191; cv=none; b=qduOsGqk59wgrNhIeQ0GAHnT0p9IoznhYgWuljdjWpqT6opmxotb6FV5Bw39f3nV9IS8XpS+TPj+EV86RrWOsIh6CnaXQVhEbDBoZIsfqUip0VQ0f6p1+ZE8vG/aPaMJ8HroaLbEQeYCnYmAdlxgJKmJbhQNexU9y+Q1FkvE63s=
+	t=1752071245; cv=none; b=lZfVEdPP/Odx+hdAoLvK1OKTzPcSbQQAU3sUAyGchDp4cGV29j/fxY1OQChMrNZSoXn/xyP5GTa/Xv0uvlCK5IO0l9SR/FIxamiPBEMwKQLMKl6r6ca9nIfOh7l2V396wDINsxKA4fjyPtS9vJHpovbbOQf8pPQXoh3ju/D5Cb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752071191; c=relaxed/simple;
-	bh=IJln6G3ZCu9vYhzKziG/cL2PCmTeVmdoUdECABOym3k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HGAWlf9PtrX68pOBpFk+q7IigE97ctcX+2WS0+WDtBv42LfqJdKX2X0WtJfpMzlyrfp96uTvLwsdUWIzqf3ny9obO4agNZbhqRYNf20JfYFwsZ/ePpz4oNgaQ3g5NBs+psEv1MVTNZdW5X+fON1IECOUcIdzeJ7+04FC+dmtT2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Can1a5AL; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-450cfb79177so31878255e9.0;
-        Wed, 09 Jul 2025 07:26:29 -0700 (PDT)
+	s=arc-20240116; t=1752071245; c=relaxed/simple;
+	bh=pvkwBrcqCz/q7TbAy/707f2NDn31fDmeAF6bySTr6Ic=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=J17Ll3x2ZW2ADAUtdOqOy/PtCKCYVi8gftGXh8DZFxF+sbf3tELyx62I5dQmt/0Vn3ufbC4vB4UfNf+0VeoYYS3zeCbWn8hrNLYm2oIce2UBLBij3yD1bsZY8KT7NQNSY8XUXH9qPyuYA8xhc/DDNzKQKgY4BVMAaIH3bNkvpLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ATCuB4OP; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b3216490a11so6812867a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 07:27:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752071188; x=1752675988; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jtytgNItlJgFy4oYQcn83LUARt7I0zsU6TFkZ3Z41Jc=;
-        b=Can1a5ALBnQJLaWpRt/XroWTUuCO7IdJ09DHEH93hnzgLO2xKVsKgecvGpxdyZQMg7
-         rSi20CWqj//ii03UWpVV1/DKzNK+NN+LZ/z1O1pgqGSI3y+QTr4kCPOOFdqWzyz3mf2v
-         zgVJosoGcw0jbISzwhBGChUT/i6TFoFdMhsyCHbhuyczoemlP7eT3J3/wqZN+uZ3dbo+
-         ckl1kYKL2AFmH7CA6taFk32vuYpD1pXcqQBEuBJ7lv6gLq3nVQHE6wGW0WmI/w8PaCZx
-         mUGrjZJBeCrh7zlVXuFSNKT3utnhpzTgVo4MfBOFVWbH9J/7ba2EG5WH0ccXa/RIMn5U
-         GCVQ==
+        d=google.com; s=20230601; t=1752071243; x=1752676043; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2ny4OheUvtoLgeKPBXu3zvqh0EKHCtc/bq+iQEnC2Ww=;
+        b=ATCuB4OPm2JrQ8VZzrN+rTJK57JI3Do2WfSxO9+7NP+yKclh6m6DasSc4CCB9AelNx
+         sgO0GxHZW19n+O9RWJrWyHRcA9y39o+wuftkVC9F6fOKMXOWqq+N/VMAs7PgZbv8kYBG
+         NhGrXvMxDDfzM5cU7NO3iA6q+DmU0Z8Gx7hArtaB01OrWflXWb4+oa2DvV4rvhb95tnT
+         zwwsGYLRePAku6o7KIH7RUOXDXqQh6vd90IspzWg/7DOLfBsMYDc6agGs23Vv3f/jcRN
+         fKmJiv7VpgvO90qOzKNS4JsqU+2O6SmZfDjzQ78lhJDykSWAJhWtyVQxh01y6NwWwcLw
+         UBuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752071188; x=1752675988;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jtytgNItlJgFy4oYQcn83LUARt7I0zsU6TFkZ3Z41Jc=;
-        b=wXXyORTix98EpPG4tdCaxP5vi8MDYEbpjUuiMHoy/TATIu14FTpnqkSsMam8J31fWT
-         6Wy3DnRJC32Jwi3+ifWNYuuP0WQgtMoE+My95g5c1aAGgCwfcM9derFDG6QcYT3Zqe/Y
-         tc5UVrCqeJGx5sL8a5uEFSaogs2mZKdSpVGjJgEOx/2WqawvvevfNzXU9LKqWpgBgcZP
-         986j6ac4VVqupspIxESB+VWAw2CxC80qwNEJNk0lrHsYcZQMeSCSfGCzWNP7dbTIzWrR
-         pbxosBFmjErymYDWIh17EUBuHNp9yPk1w2R522a5FCHK5uxboJEJSKNTCuFK34WFuhRo
-         Wj1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWx7qrO5l1OKwd8a0MHTo0szR+hQhm8/G8BeDG4usFcMl9tNnZ7aX/UYHFIDYEHieZWb/8pDeaVJH3KGsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOXjPuqMr0VcpkQ/LQBnjf+KSfZ6+Baw6CnDlDa2aVTsyVMLnd
-	XvqJvN+O6KokFKEFpQ9/GE5yPcpuqHFVu8LmCl+k0wNYlVDnr9O2kzpM
-X-Gm-Gg: ASbGncs8hF6bZCGbFC+OxA28MkGoWkaHqKg+vTTaNOTrS9a8KeeLTmFPf2NjaZ6DzwG
-	RDr+mEkzBzDe8EHPR8Taj7yZ0w0GXtYGFAWhqhak6BLUuz8O5WYygrjgDF/Ya4jvgSUE8FHqXfM
-	ccQL28jNI/e23PX3U3uaYWlpU+qSD5G5Z9BpNqXb+n+IJQkP8s3UFrXOfwWVugZWMf/aX3ZrL0m
-	UwxFdWTxU94qfDcRKs+RHMpXhv/mbMmFcqvkWZkNP05HF5TQy3pnfWKTMz3OE43cB6JjQ0ax0Bl
-	98/yDn9u452B9Oy/7gU1IjRF90a8so34DMTmrWz4MnVQnEZ0HTBOQFG7ki6D
-X-Google-Smtp-Source: AGHT+IFKMjL8yZjoTHKhlMwGjBnA9oWE7US7cP8cCvq33CCZA8+5Z7xIu2VBWIJ+Dut2TX5qYxxQ5A==
-X-Received: by 2002:a05:600c:4f11:b0:43d:9d5:474d with SMTP id 5b1f17b1804b1-454d522d0d0mr29893125e9.0.1752071187906;
-        Wed, 09 Jul 2025 07:26:27 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454cdb31d21sm46723505e9.1.2025.07.09.07.26.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 07:26:27 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Marc Zyngier <maz@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] irqchip/gic-v5: Fix spelling mistake "ouside" -> "outside"
-Date: Wed,  9 Jul 2025 15:25:59 +0100
-Message-ID: <20250709142559.2154255-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+        d=1e100.net; s=20230601; t=1752071243; x=1752676043;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2ny4OheUvtoLgeKPBXu3zvqh0EKHCtc/bq+iQEnC2Ww=;
+        b=f2NbV78X5+D73lHWCefvQQmcr4Tb6/tiXgB5iUL4ZT9buwp4HzKOJMdDX2xmiNtG7C
+         iNQZVnRi5xxAnDJwXv0iiokkVgxDH2bqc9VGI2mDiYFdSLmYDl63/rrNfEKorU/yuTf0
+         hbPAdU4l+MLrfYJr7nDSRle9PNBqqhpOdDH+jFHlTHT60k14HvU4FvuzdnNctXcIBJ2x
+         IMcly9wuk6kcO/coFlIhiVZqvO3rxjW2DjCF087FyTxaEg7Aff7YKWWfDE1TXFLJT5s0
+         ACju83/KGQ/XZtN8zoquGB183BxiIr2Y7I3KhNXqLLygmyLX0N2Rxdx7ebJTj+OMr7w8
+         Yw8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXX15J3nEdMmyMqzlB5M6aN9K/mcy02atCg4x/KfuazpRGzQQGyLr3+j+J6myD2JbEGwgzxcTWbNfVafzo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsoX/EOBza5XpZnsuUGMM+smDw1cnr7CGoXP1C+UvnFl0h1aeO
+	I2Viakkn2Tx/skrteCfbthYFRjixs9x2Mxra5BcJD7gOE2In2q3NCod30Mn71bzua0dxl8oDyt5
+	SS83fWg==
+X-Google-Smtp-Source: AGHT+IGcOXxhoDOk+P/ex+nqUAh1f+wKkBdBcrVKVPPMAEpZzWU3sIlfK65sSX3bA5bYd6D9J3w71Pwer9Y=
+X-Received: from pgbcj11.prod.google.com ([2002:a05:6a02:208b:b0:b38:f5cc:7771])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:734b:b0:1ee:d418:f764
+ with SMTP id adf61e73a8af0-22cdaad6959mr4171366637.38.1752071243305; Wed, 09
+ Jul 2025 07:27:23 -0700 (PDT)
+Date: Wed, 9 Jul 2025 07:27:21 -0700
+In-Reply-To: <20250709141035.70299-1-xiaoyao.li@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250709141035.70299-1-xiaoyao.li@intel.com>
+Message-ID: <aG58SdS7HibYuoW-@google.com>
+Subject: Re: [PATCH] MAINTAINERS: Add KVM mail list to the TDX entry
+From: Sean Christopherson <seanjc@google.com>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev
+Content-Type: text/plain; charset="us-ascii"
 
-There is a spelling mistake in a pr_err error message. Fix it.
+On Wed, Jul 09, 2025, Xiaoyao Li wrote:
+> KVM is the primary user of TDX within the kernel, and it is KVM that
+> provides support for running TDX guests.
+> 
+> Add the KVM mailing list to the TDX entry so that KVM people can be
+> informed of proposed changes and updates related to TDX.
+> 
+> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> ---
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/irqchip/irq-gic-v5-its.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/irqchip/irq-gic-v5-its.c b/drivers/irqchip/irq-gic-v5-its.c
-index 340640fdbdf6..fd93796f1fce 100644
---- a/drivers/irqchip/irq-gic-v5-its.c
-+++ b/drivers/irqchip/irq-gic-v5-its.c
-@@ -902,7 +902,7 @@ static int gicv5_its_alloc_eventid(struct gicv5_its_dev *its_dev, msi_alloc_info
- 		event_id_base = info->hwirq;
- 
- 		if (event_id_base >= its_dev->num_events) {
--			pr_err("EventID ouside of ITT range; cannot allocate an ITT entry!\n");
-+			pr_err("EventID outside of ITT range; cannot allocate an ITT entry!\n");
- 
- 			return -EINVAL;
- 		}
--- 
-2.50.0
-
+Acked-by: Sean Christopherson <seanjc@google.com>
 
