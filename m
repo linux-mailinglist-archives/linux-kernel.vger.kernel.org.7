@@ -1,132 +1,85 @@
-Return-Path: <linux-kernel+bounces-724328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2882EAFF169
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:04:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D80ADAFF16E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 21:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 121751C84CA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:05:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AAB15A6F2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 19:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D74A228C9D;
-	Wed,  9 Jul 2025 19:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="gNSh2cAx"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBFB23D28E;
+	Wed,  9 Jul 2025 19:05:01 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C75623C8C9
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 19:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE448228C9D;
+	Wed,  9 Jul 2025 19:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752087888; cv=none; b=MFVBQXNPBWYEoZYVC9700X8ZDe1lRE2ItxrcNieraJl4n7IkSVdohnLnLbJ58Srzeg1Q3rocSk5j2UL25Z/no8w1aiqDbmSiRvePPwdY0e+6PPqXcFu9wKh8/moKCagjmetQPErV7pI6aeTGQpAGMYLCE60F3VdkpB6+RsvcB9g=
+	t=1752087901; cv=none; b=k9B1G4IbHzfPhSVkcB46+W62wlHM27CzNFNgn1oBYsiRCb2aGkYRQXYS+WxduhPuAqfD+gWfYOnUGima46+kwXgXpHO9rgwxnjjfJCvUEcIpsdlq99sZb9sLm0daSmVk78s44vq+vv/WVpLPSo1JS9G9MKTdzfLTw2+AOeKnyXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752087888; c=relaxed/simple;
-	bh=oRGJxOoY6Sb9QvNhIjZ1ZJhSnfSKCQdsXzj4pLtR8xc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IFpdQNqOOUX+LhbD/VhU4PwJgRK/t+yczcZNN+cBY2DuhXRO9bheYM7VOuTV6+BjPjEw1QOFgzl82HHvoF5qsjRapU6OsLlOtraMrvUbb75lcIz4wP1052v0IWan7hIfHEGuPHfTb9M8wIZuAUQGhj7GX7vS7LUi5PSorP639CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=gNSh2cAx; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-60c9d8a169bso234640a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 12:04:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1752087885; x=1752692685; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3oMoCHTAV5NeIpZMq+DMEKC+TktfxuQeI3NG81ytBeE=;
-        b=gNSh2cAxDTBJoHztwizWyZZ3DiFKTi3wxKyznQsDnWmd1QbZGN06zsxFOINFhEp7IB
-         yfLbtqYSVkGMDhyxZGxjcQN0jFYGzFPHVc2AZqXty9tL0Ju71UroMih9Mr3iu6qqV7nj
-         lw3c1trpU/sgXaZdW46x5q3VycvC+Kx/pxnQQXN9w6q3xMS7sKadXvuhVHVnzfWr63rJ
-         u3NymWMMO1a7A8hAtX4WzUdkDKBocrk80U9+CLlbQYfVpTVOE9lLlTSmGtusmKB//WrA
-         AnSkmEGx+FU8/5DPnl1aVOIkMS+Pl+t1jRpA/y/1wOVURm5tvoZL7W7LiTNKp7/jsU5m
-         hanw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752087885; x=1752692685;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3oMoCHTAV5NeIpZMq+DMEKC+TktfxuQeI3NG81ytBeE=;
-        b=XhTSI1o3c0+4FZkBcGgJYEPoL/55Mj5bV7XgvyV+t38s6hVWpuDuicz/FdvV517W9u
-         ZV2HRvySoaGUah0agPdLSibJrWkLZqM/yicM3rpgmJnvuLACysuw0wt9uhSkhQVtyLkr
-         coWO4fyOwXnvLVC77YZfHKsKIvpkkRdJNRxnaxR6jCh/3vN+yhrfLlmIgr+emh5cjgUd
-         f2ibHKHobkV5KJ7LpTC0xpbuYZPss7XobewUIjFa9ni7ZbvyGld/MUuwse45cQh/grZ1
-         HelJBCP/Iy24IAZi1DFL4enm7JOOi9QMzT63r8yLZtGGzyNE7/CLlOYmFn5G8aQ/K0zU
-         ylyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtxjwCwyp1vYKoxJ7n3W13ORjlvSJT0D7kGvVLYcKQvaSBnDoqK6Oou1oSW9MZWToJCHxOuljK0fzp6z4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhWhqoa0psOhlwkYrVEWzZUzQ/FiESeMkfceQov6218geZSV98
-	3Qohhtj3ERh2I8jPSczCZ89lWNlqq/I5OEeyei4vcmpsdJTJHb790c24HmQrWa8tKpahwty2gjW
-	E0a97s5tsXoq9VoNwlk7fmYgTei8KrhaoHHach6OEUQ==
-X-Gm-Gg: ASbGncvLcaikBGIdbw9jOSaZuGMyaOStlAnlddt9yX68FixEfXs+c6xT7bqS6uRCyKv
-	nlyIpbaz7RAW3bg5nElvruEORWrzryyhasfmEMKFhojHdGP3ApTwmEI7XXDZpK90WnLgyIwhD8z
-	BxF8Qqdj/Xo9JvE1idZJUjRItx5D4b1Cauwb6UwsBzMIiDSKw/7xZbsBvtC2LiiAWq616hDZ8lp
-	7MhUzTISg==
-X-Google-Smtp-Source: AGHT+IHHFatUYcYPUIaiNLDpnLA9ZJlzI11FgOes6AgoJS9tnoz2rAKkdasV4aiimfA44DVTmm7JJ+DkAfN2TlJGB04=
-X-Received: by 2002:a17:906:c116:b0:ade:450a:695a with SMTP id
- a640c23a62f3a-ae6cfbea8f3mr343461166b.61.1752087884599; Wed, 09 Jul 2025
- 12:04:44 -0700 (PDT)
+	s=arc-20240116; t=1752087901; c=relaxed/simple;
+	bh=r0lOyUbpWc0rtlhYz5PnfIZ1AmjEqv5KoTd7rH9rLSk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TIrkL3XpoNVpFUgTTLnFPzwRkYjDqSc2lIdVzrBLlIRwAw+4PKmoJWznzqxNmXlAtC6duvO9cUr4qHGaeYsrX7U5LhDiAkuoVCDtzd0jMm0gdT4W79QKpss7dvtwmbUZRyl7i6NU31X1eCwPq4DxQCZXjc6m67X6qnoCMEQIueA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id 4E7761A0224;
+	Wed,  9 Jul 2025 19:04:56 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id 1851E80012;
+	Wed,  9 Jul 2025 19:04:54 +0000 (UTC)
+Date: Wed, 9 Jul 2025 15:04:52 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: John Ogness <john.ogness@linutronix.de>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Gabriele Monaco <gmonaco@redhat.com>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v12 02/12] printk: Make vprintk_deferred() public
+Message-ID: <20250709150452.6646c168@batman.local.home>
+In-Reply-To: <20250709185334.uFpAU2mC@linutronix.de>
+References: <cover.1752082806.git.namcao@linutronix.de>
+	<25d52fcad6d1ce8f8ac262199d3e8474e029961f.1752082806.git.namcao@linutronix.de>
+	<20250709144914.6ee7199b@batman.local.home>
+	<20250709185334.uFpAU2mC@linutronix.de>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701163852.2171681-1-dhowells@redhat.com> <CAKPOu+8z_ijTLHdiCYGU_Uk7yYD=shxyGLwfe-L7AV3DhebS3w@mail.gmail.com>
- <2724318.1752066097@warthog.procyon.org.uk>
-In-Reply-To: <2724318.1752066097@warthog.procyon.org.uk>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Wed, 9 Jul 2025 21:04:31 +0200
-X-Gm-Features: Ac12FXxBjj4Q8rQSAFMTvxq4Dux5Rk-Aycgaq2Qj_9vYK8pVlc0gHVgIsMegDWo
-Message-ID: <CAKPOu+_ZXJqftqFj6fZ=hErPMOuEEtjhnQ3pxMr9OAtu+sw=KQ@mail.gmail.com>
-Subject: Re: [PATCH 00/13] netfs, cifs: Fixes to retry-related code
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>, Steve French <sfrench@samba.org>, 
-	Paulo Alcantara <pc@manguebit.com>, netfs@lists.linux.dev, linux-afs@lists.infradead.org, 
-	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	ceph-devel@vger.kernel.org, v9fs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 1851E80012
+X-Rspamd-Server: rspamout02
+X-Stat-Signature: xkf5qr1durkkqug3hp3is8e56txxwxyo
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18lQA5kkoza9HJF80AqtAcSY7AqKgPtBts=
+X-HE-Tag: 1752087894-5445
+X-HE-Meta: U2FsdGVkX18CW1+bT/y1f9Xqz57uIRkzD3Np354PYqbiAvan7exEMOEeZenKpJgbdk0uIWZFgyUvnca0V0DXFZ3naqzUG+9uTamIMZpGFKbHB09dOTMYEswcBxsWUi3Uh4cZDqf4BVkdL3F+/a81hCpZf803kQJrCX9+P3n/mgkSPJdtzEvJzTi/rGdkr2H1rBabZHEdTWZbh9Umex33j+HR0W8Mw2JOLRvorL9JENxVEghRxvDnJaScMkNM4KCUf5K3aKBvI6oergydx7gwVurQ4TEwMKTV4mpMOwLBE1L50ib2y+KILKIbwPqxwMxK
 
-On Wed, Jul 9, 2025 at 3:01=E2=80=AFPM David Howells <dhowells@redhat.com> =
-wrote:
-> If you keep an eye on /proc/fs/netfs/requests you should be able to see a=
-ny
-> tasks in there that get stuck.  If one gets stuck, then:
+On Wed, 9 Jul 2025 20:53:34 +0200
+Nam Cao <namcao@linutronix.de> wrote:
 
-After one got stuck, this is what I see in /proc/fs/netfs/requests:
+> It is possible that you make this amendment when/if you apply the patch, or
+> do you prefer me sending a new version?
 
-REQUEST  OR REF FL ERR  OPS COVERAGE
-=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D =3D=3D=3D =3D=3D =3D=3D=3D=3D =3D=3D=3D =3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
-00000065 2C   2 80002020    0   0 @0000 0/0
+I could do it, but if you send a new version, it will keep patchwork
+automated. When I edit a patch, the status doesn't automatically get
+updated due to the change.
 
-> Looking in /proc/fs/netfs/requests, you should be able to see the debug I=
-D of
-> the stuck request.  If you can try grepping the trace log for that:
->
-> grep "R=3D<8-digit-hex-id>" /sys/kernel/debug/tracing/trace
+I know it's minor, but could you send a v13? Then when the patch gets
+accepted in mainline, it should automatically turn to Accept in
+patchwork.
 
-   kworker/u96:4-455     [008] ...1.   107.145222: netfs_sreq:
-R=3D00000065[1] WRIT PREP  f=3D00 s=3D0 0/0 s=3D0 e=3D0
-   kworker/u96:4-455     [008] ...1.   107.145292: netfs_sreq:
-R=3D00000065[1] WRIT SUBMT f=3D100 s=3D0 0/29e1 s=3D0 e=3D0
-   kworker/u96:4-455     [008] ...1.   107.145311: netfs_sreq:
-R=3D00000065[1] WRIT CA-PR f=3D100 s=3D0 0/3000 s=3D0 e=3D0
-   kworker/u96:4-455     [008] ...1.   107.145457: netfs_sreq:
-R=3D00000065[1] WRIT CA-WR f=3D100 s=3D0 0/3000 s=3D0 e=3D0
-     kworker/8:1-437     [008] ...1.   107.149530: netfs_sreq:
-R=3D00000065[1] WRIT TERM  f=3D100 s=3D0 3000/3000 s=3D2 e=3D0
-     kworker/8:1-437     [008] ...1.   107.149531: netfs_rreq:
-R=3D00000065 2C WAKE-Q  f=3D80002020
+Thanks,
 
-I can reproduce this easily - it happens every time I log out of that
-machine when bash tries to write the bash_history file - the write()
-always gets stuck.
-
-(The above was 6.15.5 plus all patches in this PR.)
+-- Steve
 
