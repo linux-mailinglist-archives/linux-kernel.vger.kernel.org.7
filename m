@@ -1,430 +1,177 @@
-Return-Path: <linux-kernel+bounces-722788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 668ACAFDECD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:27:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A686AFDED0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 695AF7B285D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:26:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 187897A178B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E264B26A1B8;
-	Wed,  9 Jul 2025 04:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CCBD2676C5;
+	Wed,  9 Jul 2025 04:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FHdJYdpq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Q7eXCplE"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099643208;
-	Wed,  9 Jul 2025 04:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F6E1865EE
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 04:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752035235; cv=none; b=ZdYvbTDtvFZ9AZyNCDKaqYj8hQgI0Fl3UpEwD3NceEmLKxiQwLgVyET16Sf1YOE6q/AxbRCenShCC2V1fvAAU2H1i1FjMApNi/NbR0u32e+wS5qvHyT1Eo+N6h2QjTuu8myUh32ng8RdLltvzdMug3YaGPZqn+VKqaUpAswTv6E=
+	t=1752035319; cv=none; b=Uss+j4LWFFprbKPgwLx3g40hknvPgmsKIW6GNBdGLSCJZbYmMygURztpRltGEVzi30vKHxu1OB/d8sGR76wYXGgY9vTzNTXYO+CuV5s4qdIupLHZWIBU6y2QWDFjwNpqTEuXoiA8N/tAx018Ok1IGdV2YlW0JEByg81SGOggKVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752035235; c=relaxed/simple;
-	bh=EBr1lkE8sHUohfFNAoRCnwD9j/iidGX0VlvLabJZgIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fb208eDAsZVAniHQf/BbhgyXtJLyQk7hyktKvfT69j9RL4dTqspADjiJPwvsbBo1eQrIG4w/cJCkpuHBICdQflYa1J0ozcXsVXy8H2EnGygNn4Y3vXjzQQMV1PCfidQqD9aEtKx3n8AKnEmYfrRm9IbME2lLZZl5CBvSpdzzeHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FHdJYdpq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E19BC4CEF1;
-	Wed,  9 Jul 2025 04:27:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752035234;
-	bh=EBr1lkE8sHUohfFNAoRCnwD9j/iidGX0VlvLabJZgIk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FHdJYdpqgojht7/gdGR24KNevf5ZfGr5bZpWgUNlliCFFv6fFqMTIIFN6+aZG+xmI
-	 /BH5wiK1FNwAD6ibzMXEZYsJDBsqub/8sP7HslCT3so9GhiszHOcJM9pJdAFyvXfOT
-	 /luOV+BaVn806RFro+v6ZkkXugFymWIgovKY4ra4nkCaP8QlGWsYLRjnxMXBJFa6wt
-	 +aH2Vyq+o3OVVv1r+HNGyTlkvJeL/58TX64ELE4h2yjlPSFZ5eCQc47/JJnAMd/xNQ
-	 sT7+qSfZyaznmKJp/JhQCJk+TDo9bfal8rbYAPssedlEWPmUYCw7esLxAmnJMu9oip
-	 8IBuko67Kg07g==
-Date: Tue, 8 Jul 2025 21:27:13 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Groves <John@groves.net>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Miklos Szeredi <miklos@szeredb.hu>,
-	Bernd Schubert <bschubert@ddn.com>,
-	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Stefan Hajnoczi <shajnocz@redhat.com>,
-	Joanne Koong <joannelkoong@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Aravind Ramesh <arramesh@micron.com>,
-	Ajay Joshi <ajayjoshi@micron.com>
-Subject: Re: [RFC V2 12/18] famfs_fuse: Plumb the GET_FMAP message/response
-Message-ID: <20250709042713.GF2672029@frogsfrogsfrogs>
-References: <20250703185032.46568-1-john@groves.net>
- <20250703185032.46568-13-john@groves.net>
+	s=arc-20240116; t=1752035319; c=relaxed/simple;
+	bh=nGDSMdGiSbt3wON2yfyjNDeV5z0MkUjSja5IO9PLcNE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k73ouBLyKFWUfcIncb0GFgAsyM3LeH/OtJXHqCsMH6FSRI9INq+aT3ZmA8THNCjooGXJu/1jb0fkg91AeeECuVEo5LtGGFeGytUwWa+e/DKRbNcB4njfNF2INEkr//TK5t+ysCbHBZGcLvVS7H2iyVNZJYht70EJF0GRwWeKqGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Q7eXCplE; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 568J5Ul2031720
+	for <linux-kernel@vger.kernel.org>; Wed, 9 Jul 2025 04:28:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	46kHjVSek0uSdgdCzU896+4gvfYavkSNrHpJbnFkc+o=; b=Q7eXCplEJXdX5i8l
+	4a7Wyd5WNQCCewVOASQfUiqhZcdsGIC9z8qF+5UWBZgeSULL99PaPpqPfIBuIoYF
+	2EZZ+0MH3R+eJa1BhedIWQpdNBOANg/TKEX+RHfIJGKEm1iGSfqkDlMHuW/hJReh
+	kqggoXl9ZosLkTwnaIZ+a5R4R0qqe7oa+7APFhUiBQGMddEHrjoSbLurzJCRdnFT
+	K0lq9i6jq76Zho9H+ebCcjmiGoIjP9lZgivfrKlTQYboqzdaKiHBJ2CMdX+4Xrum
+	WDlPv+seXzcoC994pH9piuE8q3ylyFx3vdVKRQf7AggFNzOXNHLk7CxnbZcirwBB
+	ft7F1Q==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pw7qt7mg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 04:28:37 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-749177ad09fso2040009b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jul 2025 21:28:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752035316; x=1752640116;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=46kHjVSek0uSdgdCzU896+4gvfYavkSNrHpJbnFkc+o=;
+        b=iWuIUTvfIcL/dacWXj4r/FSe6xky8clZUu5m80yo0Q0U1w9KsUnOPxoBnZvahcllOH
+         i8ambi4r+IbNXl0uv0XabRILBv8NLZ1HrDKMDSe3VDRGtnXfKUAI6De2nsNuFSwNmmEW
+         MMvmQV+OmN/itghC0lexrvgV9aZzZDMhItg3pRIWVpfCRNyXkEDj9rPpp6Fg4RsOVtT9
+         eagfSdyqu9aFfL1hRXTtL4tuvV/wFqpm2SAZyu1Sv7ogu0BCg6Nbb18w9qdZgrSnoYJ5
+         njmiVtOgv2Sf4krtkR9OJMni/UuXcmQpQY02MM0Ma/StcVjKV8HmdXik4T1NG2Sa5ycv
+         6OEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXYlq+J5s5nal+UVVVEHBUU/bFSbgHELjeTQMPN0T9jiu4VnHSmHuP02581ucyzacFvvqU93gmRYdi7I40=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcBPgRJRIxrXqnXwRfbjCedlF76hrRUbIkdJOOHCxUfoTliPzH
+	KUcGM9bbJn4QbX0TeQOjmJjuonwe8NbYQegRT9erPQ03TCg+s1521dLlwIfqIJbIOX1xsI2I0Ut
+	WQfgmrm4G61ZzXARHefhKZ/yT6smiJZqRaIIzbXh826O4rHoxR6Y4sXKiVFv5cFa6Vw4=
+X-Gm-Gg: ASbGncv7g/tAyPK68wI0bnosuZ2GzX2fSHn4hT5nHJTNbzJlymkti4vKA9pXX8RcjBu
+	xcAKS4PIkZv9xRr2xNpiVkDO6FTucUYMLXi9ihBFx+s/Wiu7fy2GqSp5kZ5i61NDhSR8Tu/ofdz
+	ybZTjNTiWcB4h00f83s9UxR1YNZa367xPXzKbM6MnCVZiIUAJfq8m2VRekVzJHytGZML2TMKAxF
+	9bm7OX55UDEFmUQBfG3JlddhH4w2HV6TSn5KgdTxgixCKbv1GhEgi/jBPxfacSovc6WwK0Bx2/B
+	FfrBmL/0MxaVf8V56sq1Ub8cKYtIeRpG6vlNhg7v8aO2zRlfpyz9wJSlaxRoLeI=
+X-Received: by 2002:a05:6a20:ce4d:b0:215:df90:b298 with SMTP id adf61e73a8af0-22cd865ae90mr1458530637.26.1752035316358;
+        Tue, 08 Jul 2025 21:28:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH1XrTBoe3AdLJKGcotRecgsSopH6Gfr07q95OqUr4/vqz2YgYImVe+KEbGNSUtTurtM2DibA==
+X-Received: by 2002:a05:6a20:ce4d:b0:215:df90:b298 with SMTP id adf61e73a8af0-22cd865ae90mr1458495637.26.1752035315826;
+        Tue, 08 Jul 2025 21:28:35 -0700 (PDT)
+Received: from [10.151.37.217] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b38ee450dcfsm13036210a12.2.2025.07.08.21.28.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Jul 2025 21:28:34 -0700 (PDT)
+Message-ID: <dd2fab47-d451-43d2-b2d5-36d957c5aa46@oss.qualcomm.com>
+Date: Wed, 9 Jul 2025 09:58:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250703185032.46568-13-john@groves.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/6] arm64: dts: qcom: ipq6018: Add the IMEM node
+Content-Language: en-US
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250708-imem-v2-0-692eb92b228e@oss.qualcomm.com>
+ <20250708-imem-v2-3-692eb92b228e@oss.qualcomm.com>
+ <bdb5e19c-dbab-4ea3-9a6d-a4ac795fb43a@oss.qualcomm.com>
+From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+In-Reply-To: <bdb5e19c-dbab-4ea3-9a6d-a4ac795fb43a@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA5MDAzNiBTYWx0ZWRfX5XVGpNhx6i7s
+ 4mw2c2YQX7ly40TK0GWeANzBPBYqSdQEl6EWdmY9uWQJFT9vUBTETrTA7Sn08SFXcYRYjEf5KYk
+ DlcoEZKG+s/MPMu297EqihiUelKkc2qQjB8bYrM5Z1QQxFH5UJK5e3kOwDv2d2GKM8ZzthIgjhX
+ /6SNPB/OFrSEown3BaxR85kuTiQzZbPagGH6Gp8a7JaK2w0UObsbWiDLVNh8WSGn41hrgrZ3/Yu
+ BM1dzkuJiKBcSHQrp9E2QSGm2CftgaEAENlHJi3iok1AcNBSxGd+SBAbXIvPS6+JIvOCW3W9ohM
+ dk9HwXvcb2MxDAZxmPtkT0tIQaxFIOgDEdQwUjK4O7CjMneswIgAtjNivbmGLyZrdlY5vSsVV8a
+ SM/5awE6qOc/985rcPDf5vSg5asyvdlyDhsOKkYyD+E4aWzWa66/OsFENn8KNgcQ1ESeBmVB
+X-Proofpoint-GUID: cjllhNAyD1VT_uw-U_EPsPaGsUGIDMw2
+X-Proofpoint-ORIG-GUID: cjllhNAyD1VT_uw-U_EPsPaGsUGIDMw2
+X-Authority-Analysis: v=2.4 cv=SOBCVPvH c=1 sm=1 tr=0 ts=686deff5 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=CWjMFFrlLJj86FlfhvIA:9
+ a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-09_01,2025-07-08_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 mlxlogscore=922 mlxscore=0 phishscore=0 malwarescore=0
+ adultscore=0 suspectscore=0 spamscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507090036
 
-On Thu, Jul 03, 2025 at 01:50:26PM -0500, John Groves wrote:
-> Upon completion of an OPEN, if we're in famfs-mode we do a GET_FMAP to
-> retrieve and cache up the file-to-dax map in the kernel. If this
-> succeeds, read/write/mmap are resolved direct-to-dax with no upcalls.
-> 
-> GET_FMAP has a variable-size response payload, and the allocated size
-> is sent in the in_args[0].size field. If the fmap would overflow the
-> message, the fuse server sends a reply of size 'sizeof(uint32_t)' which
-> specifies the size of the fmap message. Then the kernel can realloc a
-> large enough buffer and try again.
-> 
-> Signed-off-by: John Groves <john@groves.net>
-> ---
->  fs/fuse/file.c            | 84 +++++++++++++++++++++++++++++++++++++++
->  fs/fuse/fuse_i.h          | 36 ++++++++++++++++-
->  fs/fuse/inode.c           | 19 +++++++--
->  fs/fuse/iomode.c          |  2 +-
->  include/uapi/linux/fuse.h | 18 +++++++++
->  5 files changed, 154 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 93b82660f0c8..8616fb0a6d61 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -230,6 +230,77 @@ static void fuse_truncate_update_attr(struct inode *inode, struct file *file)
->  	fuse_invalidate_attr_mask(inode, FUSE_STATX_MODSIZE);
->  }
->  
-> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
-> +
-> +#define FMAP_BUFSIZE 4096
 
-PAGE_SIZE ?
+On 7/8/2025 7:49 PM, Konrad Dybcio wrote:
+> On 7/8/25 7:39 AM, Kathiravan Thirumoorthy wrote:
+>> Add the IMEM node to the device tree to extract debugging information
+>> like system restart reason, which is populated via IMEM. Define the
+>> IMEM region to enable this functionality.
+>>
+>> As described, overall IMEM region is 32KB but only initial 4KB is
+>> accessible by all masters in the SoC.
+>>
+>> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+>> ---
+>> Changes in v2:
+>> - Rounded off the size to 0x8000 (Konrad)
+>> - Represent the reg's address space in hexadecimal format (Krzysztof)
+>> ---
+>> In 'ranges' property 0 is used instead of 0x0 to align with the existing
+>> format.
+>> ---
+>>   arch/arm64/boot/dts/qcom/ipq6018.dtsi | 9 +++++++++
+>>   1 file changed, 9 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+>> index bfe59b0208415902c69fd0c0c7565d97997d4207..3b9e40045906b26b94e2d2510b0570d3eaf084ce 100644
+>> --- a/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+>> @@ -659,6 +659,15 @@ qpic_nand: nand-controller@79b0000 {
+>>   			status = "disabled";
+>>   		};
+>>   
+>> +		sram@8600000 {
+>> +			compatible = "qcom,ipq6018-imem", "syscon", "simple-mfd";
+>> +			reg = <0x0 0x08600000 0x0 0x8000>;
+>> +			ranges = <0 0 0x08600000 0x8000>;
+>> +
+>> +			#address-cells = <1>;
+>> +			#size-cells = <1>;
+>> +		};
+> On this platform, shouldn't it be 0x6860_0000?
 
-> +
-> +static int
-> +fuse_get_fmap(struct fuse_mount *fm, struct inode *inode, u64 nodeid)
-> +{
-> +	struct fuse_get_fmap_in inarg = { 0 };
-> +	size_t fmap_bufsize = FMAP_BUFSIZE;
-> +	ssize_t fmap_size;
-> +	int retries = 1;
-> +	void *fmap_buf;
-> +	int rc;
-> +
-> +	FUSE_ARGS(args);
-> +
-> +	fmap_buf = kcalloc(1, FMAP_BUFSIZE, GFP_KERNEL);
-> +	if (!fmap_buf)
-> +		return -EIO;
-> +
-> + retry_once:
-> +	inarg.size = fmap_bufsize;
-> +
-> +	args.opcode = FUSE_GET_FMAP;
-> +	args.nodeid = nodeid;
-> +
-> +	args.in_numargs = 1;
-> +	args.in_args[0].size = sizeof(inarg);
-> +	args.in_args[0].value = &inarg;
-> +
-> +	/* Variable-sized output buffer
-> +	 * this causes fuse_simple_request() to return the size of the
-> +	 * output payload
-> +	 */
-> +	args.out_argvar = true;
-> +	args.out_numargs = 1;
-> +	args.out_args[0].size = fmap_bufsize;
-> +	args.out_args[0].value = fmap_buf;
-> +
-> +	/* Send GET_FMAP command */
-> +	rc = fuse_simple_request(fm, &args);
-> +	if (rc < 0) {
-> +		pr_err("%s: err=%d from fuse_simple_request()\n",
-> +		       __func__, rc);
-> +		return rc;
-> +	}
-> +	fmap_size = rc;
-> +
-> +	if (retries && fmap_size == sizeof(uint32_t)) {
-> +		/* fmap size exceeded fmap_bufsize;
-> +		 * actual fmap size returned in fmap_buf;
-> +		 * realloc and retry once
-> +		 */
-> +		fmap_bufsize = *((uint32_t *)fmap_buf);
-> +
-> +		--retries;
-> +		kfree(fmap_buf);
-> +		fmap_buf = kcalloc(1, fmap_bufsize, GFP_KERNEL);
-> +		if (!fmap_buf)
-> +			return -EIO;
-> +
-> +		goto retry_once;
-> +	}
-> +
-> +	/* Will call famfs_file_init_dax() when that gets added */
+Actually, that's from the RPM perspective. From the ARM side, the 
+address is 0x0860_0000. The hardware docs show the RPM view by default, 
+so please switch to the ARM view.
 
-Hard to say what this does without looking further down in the patchset.
-:)
-
-> +	kfree(fmap_buf);
-> +	return 0;
-> +}
-> +#endif
-> +
->  static int fuse_open(struct inode *inode, struct file *file)
->  {
->  	struct fuse_mount *fm = get_fuse_mount(inode);
-> @@ -263,6 +334,19 @@ static int fuse_open(struct inode *inode, struct file *file)
->  
->  	err = fuse_do_open(fm, get_node_id(inode), file, false);
->  	if (!err) {
-> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
-> +		if (fm->fc->famfs_iomap) {
-> +			if (S_ISREG(inode->i_mode)) {
-
-/me wonders if you want to turn this into a dumb helper to reduce the
-indenting levels?
-
-#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
-static inline bool fuse_is_famfs_file(struct inode *inode)
-{
-	return fm->fc->famfs_iomap && S_ISREG(inode->i_mode);
-}
-#else
-# define fuse_is_famfs_file(...)	(false)
-#endif
-
-	if (!err) {
-		if (fuse_is_famfs_file(inode)) {
-			rc = fuse_get_fmap(fm, inode);
-			...
-		}
-	}
-
-> +				int rc;
-> +				/* Get the famfs fmap */
-> +				rc = fuse_get_fmap(fm, inode,
-> +						   get_node_id(inode));
-
-Just get_node_id inside fuse_get_fmap to reduce the parameter count.
-
-> +				if (rc)
-> +					pr_err("%s: fuse_get_fmap err=%d\n",
-> +					       __func__, rc);
-> +			}
-> +		}
-> +#endif
->  		ff = file->private_data;
->  		err = fuse_finish_open(inode, file);
->  		if (err)
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index f4ee61046578..e01d6e5c6e93 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -193,6 +193,10 @@ struct fuse_inode {
->  	/** Reference to backing file in passthrough mode */
->  	struct fuse_backing *fb;
->  #endif
-> +
-> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
-> +	void *famfs_meta;
-> +#endif
-
-What gets stored in here?
-
->  };
->  
->  /** FUSE inode state bits */
-> @@ -945,6 +949,8 @@ struct fuse_conn {
->  #endif
->  
->  #if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
-> +	struct rw_semaphore famfs_devlist_sem;
-> +	struct famfs_dax_devlist *dax_devlist;
->  	char *shadow;
->  #endif
->  };
-> @@ -1435,11 +1441,14 @@ void fuse_free_conn(struct fuse_conn *fc);
->  
->  /* dax.c */
->  
-> +static inline int fuse_file_famfs(struct fuse_inode *fi); /* forward */
-> +
->  /* This macro is used by virtio_fs, but now it also needs to filter for
->   * "not famfs"
->   */
->  #define FUSE_IS_VIRTIO_DAX(fuse_inode) (IS_ENABLED(CONFIG_FUSE_DAX)	\
-> -					&& IS_DAX(&fuse_inode->inode))
-> +					&& IS_DAX(&fuse_inode->inode)	\
-> +					&& !fuse_file_famfs(fuse_inode))
->  
->  ssize_t fuse_dax_read_iter(struct kiocb *iocb, struct iov_iter *to);
->  ssize_t fuse_dax_write_iter(struct kiocb *iocb, struct iov_iter *from);
-> @@ -1550,4 +1559,29 @@ extern void fuse_sysctl_unregister(void);
->  #define fuse_sysctl_unregister()	do { } while (0)
->  #endif /* CONFIG_SYSCTL */
->  
-> +/* famfs.c */
-> +static inline struct fuse_backing *famfs_meta_set(struct fuse_inode *fi,
-> +						       void *meta)
-> +{
-> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
-> +	return xchg(&fi->famfs_meta, meta);
-> +#else
-> +	return NULL;
-> +#endif
-> +}
-> +
-> +static inline void famfs_meta_free(struct fuse_inode *fi)
-> +{
-> +	/* Stub wil be connected in a subsequent commit */
-> +}
-> +
-> +static inline int fuse_file_famfs(struct fuse_inode *fi)
-> +{
-> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
-> +	return (READ_ONCE(fi->famfs_meta) != NULL);
-> +#else
-> +	return 0;
-> +#endif
-> +}
-
-...or maybe this is the predicate you want to see if you really need to
-fmapping related stuff?
-
-> +
->  #endif /* _FS_FUSE_I_H */
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index a7e1cf8257b0..b071d16f7d04 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -117,6 +117,9 @@ static struct inode *fuse_alloc_inode(struct super_block *sb)
->  	if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
->  		fuse_inode_backing_set(fi, NULL);
->  
-> +	if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX))
-> +		famfs_meta_set(fi, NULL);
-> +
->  	return &fi->inode;
->  
->  out_free_forget:
-> @@ -138,6 +141,13 @@ static void fuse_free_inode(struct inode *inode)
->  	if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
->  		fuse_backing_put(fuse_inode_backing(fi));
->  
-> +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
-> +	if (S_ISREG(inode->i_mode) && fi->famfs_meta) {
-> +		famfs_meta_free(fi);
-> +		famfs_meta_set(fi, NULL);
-
-_free should null out the pointer, no?
-
---D
-
-> +	}
-> +#endif
-> +
->  	kmem_cache_free(fuse_inode_cachep, fi);
->  }
->  
-> @@ -1002,6 +1012,9 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
->  	if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
->  		fuse_backing_files_init(fc);
->  
-> +	if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX))
-> +		pr_notice("%s: Kernel is FUSE_FAMFS_DAX capable\n", __func__);
-> +
->  	INIT_LIST_HEAD(&fc->mounts);
->  	list_add(&fm->fc_entry, &fc->mounts);
->  	fm->fc = fc;
-> @@ -1036,9 +1049,8 @@ void fuse_conn_put(struct fuse_conn *fc)
->  		}
->  		if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
->  			fuse_backing_files_free(fc);
-> -#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
-> -		kfree(fc->shadow);
-> -#endif
-> +		if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX))
-> +			kfree(fc->shadow);
->  		call_rcu(&fc->rcu, delayed_release);
->  	}
->  }
-> @@ -1425,6 +1437,7 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
->  				 * those capabilities, they are held here).
->  				 */
->  				fc->famfs_iomap = 1;
-> +				init_rwsem(&fc->famfs_devlist_sem);
->  			}
->  		} else {
->  			ra_pages = fc->max_read / PAGE_SIZE;
-> diff --git a/fs/fuse/iomode.c b/fs/fuse/iomode.c
-> index aec4aecb5d79..443b337b0c05 100644
-> --- a/fs/fuse/iomode.c
-> +++ b/fs/fuse/iomode.c
-> @@ -204,7 +204,7 @@ int fuse_file_io_open(struct file *file, struct inode *inode)
->  	 * io modes are not relevant with DAX and with server that does not
->  	 * implement open.
->  	 */
-> -	if (FUSE_IS_VIRTIO_DAX(fi) || !ff->args)
-> +	if (FUSE_IS_VIRTIO_DAX(fi) || fuse_file_famfs(fi) || !ff->args)
->  		return 0;
->  
->  	/*
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index 6c384640c79b..dff5aa62543e 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -654,6 +654,10 @@ enum fuse_opcode {
->  	FUSE_TMPFILE		= 51,
->  	FUSE_STATX		= 52,
->  
-> +	/* Famfs / devdax opcodes */
-> +	FUSE_GET_FMAP           = 53,
-> +	FUSE_GET_DAXDEV         = 54,
-> +
->  	/* CUSE specific operations */
->  	CUSE_INIT		= 4096,
->  
-> @@ -888,6 +892,16 @@ struct fuse_access_in {
->  	uint32_t	padding;
->  };
->  
-> +struct fuse_get_fmap_in {
-> +	uint32_t	size;
-> +	uint32_t	padding;
-> +};
-> +
-> +struct fuse_get_fmap_out {
-> +	uint32_t	size;
-> +	uint32_t	padding;
-> +};
-> +
->  struct fuse_init_in {
->  	uint32_t	major;
->  	uint32_t	minor;
-> @@ -1284,4 +1298,8 @@ struct fuse_uring_cmd_req {
->  	uint8_t padding[6];
->  };
->  
-> +/* Famfs fmap message components */
-> +
-> +#define FAMFS_FMAP_MAX 32768 /* Largest supported fmap message */
-> +
->  #endif /* _LINUX_FUSE_H */
-> -- 
-> 2.49.0
-> 
-> 
+>
+> Konrad
 
