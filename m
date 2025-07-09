@@ -1,112 +1,113 @@
-Return-Path: <linux-kernel+bounces-724653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4674AFF576
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:46:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FDD1AFF579
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 930401C82E40
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:46:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B5185A833B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A957723B631;
-	Wed,  9 Jul 2025 23:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C82421CC51;
+	Wed,  9 Jul 2025 23:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lcefPN/G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CRqBPvvR"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22A815A8;
-	Wed,  9 Jul 2025 23:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8353BB672;
+	Wed,  9 Jul 2025 23:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752104764; cv=none; b=C3jWHsY51JoF5MeJ2B5dZWKFo38tEcAe880TpYjA5ZmIP1lbAw+F5lxLsup166OTUFg92wlAP4h7b+GHTxjL5I//lV08mXG42eXNkWQ3gZV9SKa3Eca0RagD65/BCcHZa5uc7l5ki/vM+UO/6Q3ql06NC+qppr35LSUuZryb7Zo=
+	t=1752104783; cv=none; b=fR4Uzrn0gbAzd739aFYeTYRiJkeOZgaEA32i64MgzOj0lTza/OKg8n85yTeDbUbT6/OFBrRqVTRx0PvfJMboPXPqIZYIM8ZmkZlLDsf8PUv+33SYrkeEa6BgiH3SYpaxeLV/wyB1QzN63bF+kLZhYVfvNpOXk+6+IMkE4C8o4dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752104764; c=relaxed/simple;
-	bh=axC2a76eS0Ecj+bULnHkaTLKbCu8wx/KQo/SFlcpOZc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=naN0njqTM80JRb/w5T7ldLtvFrh20rOzgDzEk2AVoevAZj69ZBVbu+TzVuexRj3CACRFhTv+vZvhWFwEEpm9N9GVlaRPCe2aAUKganxY72q2Em1rkFfTyjcaR/LuLdrslh7PDp6rBuz6Gko2vJwURxOphJCqTiYCzMRSuLmqTEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lcefPN/G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 037D3C4CEEF;
-	Wed,  9 Jul 2025 23:46:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752104763;
-	bh=axC2a76eS0Ecj+bULnHkaTLKbCu8wx/KQo/SFlcpOZc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lcefPN/GN20LhehDFn6H2UPmeiSGsyhpTVr7kO6OD2/HbaSNwgpJ3E2b9KWH67nyX
-	 xb+G1xge9Jf5VA7Icio2NhPU00Ru8z4E/VFtr61miV8+Z3E0e9RddIKkiAOT2oXUYu
-	 qTOwBLK6jkY/+ACDo+119X0K8A6QWugk/ZyMGSAUTAeUTCvyGrMZX3ztlXQr3lpXm6
-	 w2s9GZu4hhrJAEC7Thi8wzHgkM/4TRdEiuei4U/g7F2qkyQmXuZC1A1LPOiEccBpXh
-	 PtgrWJuAPC/RFsPIuj6Bwx4oZ7ERw7GvRMUNwwtEhAWaTFJH/mm79bOGBWtLXj1JwS
-	 /DWWMpHLKhP+Q==
-Date: Wed, 9 Jul 2025 23:46:00 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Naman Jain <namjain@linux.microsoft.com>
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Leon Romanovsky <leon@kernel.org>, Long Li <longli@microsoft.com>,
-	Shiraz Saleem <shirazsaleem@microsoft.com>,
-	Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	Maxim Levitsky <mlevitsk@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH 0/6] Fix warning for missing export.h in Hyper-V drivers
-Message-ID: <aG7_OCR9jN8j8lFp@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
-References: <20250611100459.92900-1-namjain@linux.microsoft.com>
+	s=arc-20240116; t=1752104783; c=relaxed/simple;
+	bh=wqvXm9CwNJYSLXBBFuFuzKqsz+QHu9VuvP0QJTSEt3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kbs85UYdPACeAD4zLkKH3G1DZ6+H1hpWqrdj/igephXG4uj/qHKcsQi9cxql7uMySO2xX+wjA5N3qZ/ewrQpysihw2MpnxXMHSmKKsAzM7Hpe84/Tgd5t4Ys2eRAF2M7/Z2QNb96lNY9pSRvSzh1gTbYgKgL4/MsVbO/suwrsRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=CRqBPvvR; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1752104703;
+	bh=S9E9vuuIIJkua/f5Akf5/Ug81XFvp17MeW/56rpAyA0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CRqBPvvRynJp5xjA+VQX3fIJKXlhcGZ3/wArjJDs2vW6SsMYL7ndqsczXAuAwYUjm
+	 4syJzjawlNYyxYyX0+7NNmlLfVdx84k4BRtY/5rVfGvXG2OSoWmJ/pHqumvvJTCQ0z
+	 6KR9UKSVsf4Mj0pS88sC4yE0uBaDCVHghJq3TGTDnc6Qo0xZ0HZHQPrQ/NVAhmwrAP
+	 +Gt56Tw5VqWPI9Uuo3z9omwxRi1H3y4PEt/Lleaofmrd2kcI3TIXfwJHgUZe+tWJG6
+	 T5mikoyOlFuuKNbJGYyIKijhe81rxl/meLD8fTUjS2ZNLS5jf7tCLa1V976nqGw38x
+	 NB4F2wTSJQfXg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bcvjB6YM0z4wyk;
+	Thu, 10 Jul 2025 09:45:02 +1000 (AEST)
+Date: Thu, 10 Jul 2025 09:46:12 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Jason
+ Gunthorpe <jgg@nvidia.com>
+Subject: Re: linux-next: boot failure after merge of the dma-mapping tree
+Message-ID: <20250710094612.53f2d85b@canb.auug.org.au>
+In-Reply-To: <20250709174108.GH592765@unreal>
+References: <20250709233953.7afb7a8a@canb.auug.org.au>
+	<20250709174108.GH592765@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250611100459.92900-1-namjain@linux.microsoft.com>
+Content-Type: multipart/signed; boundary="Sig_/9y.fPzP1YhNuUk6=baXl.T7";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Jun 11, 2025 at 03:34:53PM +0530, Naman Jain wrote:
-> When the kernel is compiled with W=1 option, a warning is reported
-> if a .c file exports a symbol but does not include export.h header
-> file. This warning was added in below patch, which merged recently:
-> commit a934a57a42f6 ("scripts/misc-check: check missing #include <linux/export.h> when W=1")
-> 
-> Fix this issue in Hyper-V drivers. This does not bring any
-> functional changes.
-> 
-> The one in drivers/hv/vmbus_drv.c is going to be fixed with 
-> https://lore.kernel.org/all/20250611072704.83199-2-namjain@linux.microsoft.com/
-> so it is not included in this series.
-> 
-> Naman Jain (6):
->   Drivers: hv: Fix warnings for missing export.h header inclusion
->   x86/hyperv: Fix warnings for missing export.h header inclusion
->   KVM: x86: hyper-v: Fix warnings for missing export.h header inclusion
->   clocksource: hyper-v: Fix warnings for missing export.h header
->     inclusion
->   PCI: hv: Fix warnings for missing export.h header inclusion
->   net: mana: Fix warnings for missing export.h header inclusion
+--Sig_/9y.fPzP1YhNuUk6=baXl.T7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I applied all patches expect the KVM one to hyperv-fixes. Thanks.
+Hi Leon,
+
+On Wed, 9 Jul 2025 20:41:08 +0300 Leon Romanovsky <leon@kernel.org> wrote:
+>
+> Can you please provide the kernel command line to determine which DMA
+> path is taken?
+
+Sorry I did not respond earlier (your email arrived at 3:41am my time
+:-)) but you seem to have figured it out, thanks.  I will let you know
+this evening if it has not worked.
+
+For reference the qemu command line was
+
+qemu-system-ppc64 -M pseries,cap-hpt-max-page-size=3D4k,accel=3Dkvm -m 2G -=
+vga none -nographic -enable-kvm -kernel $vmlinux -initrd $initrd
+
+The kernel was a powercp pseries_le_defconfig build (but setting
+CONFIG_PPC_4K_PAGES=3Dy instead of CONFIG_PPC_64K_PAGES=3Dy).
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/9y.fPzP1YhNuUk6=baXl.T7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhu/0QACgkQAVBC80lX
+0GxWnQf9ExNSwlwSMeyaqW9rCST2FE/IAj+lqa+aG7neelPFfaK3ALzTgy6+5fUF
+hYa5kX8w0DoLc8XElWtwW2JoI9Tzhvs2APZrE1MYTcir9zRRcX66f8U6udOfnoE+
+U+OfoRFV1LEUhATj82NyP1wqguKMFRSP9HhwlcH54pWQlW9ZdNw2zae22ZiQlLhz
+X+GEjR9w4Qb+KyNRcSoZSeHuUItFj5Uwa3wI7SPT3Eau6MBv/weTQ/mibCSY/fwh
+bPp6QYFgc4ffJrd6WPssyg9lYqCyoWwibcn/zGLG3cL/ZPVfpGUStDTWQ3j3hCYP
+chyvkQLpaiMc2YHaDcxt0nJOijxm8g==
+=qXGz
+-----END PGP SIGNATURE-----
+
+--Sig_/9y.fPzP1YhNuUk6=baXl.T7--
 
