@@ -1,105 +1,232 @@
-Return-Path: <linux-kernel+bounces-722894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D12AAFE063
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:48:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8586AAFE06C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 218C8487BEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:47:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1FE01C40C4E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 06:48:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A6E2701C3;
-	Wed,  9 Jul 2025 06:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F036272E46;
+	Wed,  9 Jul 2025 06:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="POWaOFQ4"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="i/6JhMX+"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2064.outbound.protection.outlook.com [40.107.236.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6075D26CE29;
-	Wed,  9 Jul 2025 06:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752043434; cv=none; b=KUzzkOkOf42mTNRkKGGitNnFSS8zcEWuKtUJ+KoHYPL1SJZSOXeBJ58FhUPNtcALfQA/2QQ9sR8v/D/V1MRVZSWs2FOw8Ft8aL3FBj+fK9wd3fh8XEG4ZOCI2ZBog3UlyPhYCLt6RcAbpoCji4yRrcdgbYqzg9A7fkm780H7t+s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752043434; c=relaxed/simple;
-	bh=VPPVvdO772kTLlb0Nmna+opvHwYb5mesK0BD78Xwgcw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K03tsWXrhMy6JNbDwqNZ0IYJipGiIkFVrMRT3Sea6j63kpA2kQdAR9SxzV/mxsplwcq0N82gwpu6sh62VDTRE4dqePxmQpUOVifF+UgLZEan5jvVHszZE2W0Nf1cTCZagi1ua6gHEC8Ehqhvmcs1rAVF+Y4955oBnGA9Dwpky54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=POWaOFQ4; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AD084103972A7;
-	Wed,  9 Jul 2025 08:43:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1752043431; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=g0WbzYUow2PtbidrSfvCcHw5BM6PU6Qj1La3W8DDtpk=;
-	b=POWaOFQ41g2CuqJxxBw1LycHYxlXEF1VdzuqEAMcGxFmRJ6eDzxN05wToOgwzgcaIb4swe
-	YqpoDExKZaeLB5/xP5ALV+A6hjSBSsA3B8MD0ABzLCFUly8vOauBwTV3a42i/bHKt81SAG
-	chNdYJmd/LX/t3WtTw2Vz44a///Fruo92Lbt35vmFvaSYeIIvEqTbfnS6h01oRwnRM61hr
-	Jgg/cVybDJ5i5Mjq2TR8VEsZDuWS9s4qUK1cVgKSDlygk5NjxcS691/Dv8FWqp6RHZGX9k
-	D1TPp+5Y8nd4rvA5T6auYMC6+1B9CsEUSQbzhnRmDqDoa6GIxBzUGTjwj+kLSg==
-Date: Wed, 9 Jul 2025 08:43:44 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 00/81] 6.1.144-rc2 review
-Message-ID: <aG4PoPRuSsuOGlXf@duo.ucw.cz>
-References: <20250708180901.558453595@linuxfoundation.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48213B7A8;
+	Wed,  9 Jul 2025 06:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752043466; cv=fail; b=E/teFq0K9cFgfKj5+/q/t5boHT8E13hPjBVvj+9/9rS7rP09n1fsGXyBfCgAagqqq83skhm493N6jPN80J9ZIi3TJ7CHST9mZQaRDS/w1UVV9Esuw6yrnLjPLENU/2mLyoxNqa1M/052szwbTAHwIHENGpVcFwSnI7IQfESM77Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752043466; c=relaxed/simple;
+	bh=12Iw4yEcUHqc0IU5Xh8ik3tIkpSl7GMNdECmuWAsyns=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eQZib9trrYlBG/xPpCYXA6/unaqg51ESYFXTY0IjerphydZVCYTo1pA+/xyoHFYJnZK2QeaZtsC0Zl5TPGFq3gkR/fgGybyJ+dZkvpAEA7+0KsvEjE7jy/aUddnOFE7XxtZcaNja+T4MNw5tY0ZcHycyNsIueqS4ne/iiRYqvTE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=i/6JhMX+; arc=fail smtp.client-ip=40.107.236.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=C7KzF3AIdoK8tUKtCNOI7+fiLRXc7VwFHCnuJCqjspkX4FrwW+yvDaG05ITn5gobVWi71QP7rOiM/POQ9buNGiKlRxgVKsJJQXI760NWHK2NksFoeZKfAlqGTXu5uWW5b3n9owKxVxvDMpyL6u26L7SFvVxxuC5sxH46A6aHwBforcv/JL8lwS49YV//6GClbDXBnIbbIzAF4KfYv15S3zJ0APw3AwoPoVfrss7+KrzkCbTR0PUsEElbGVmY528HSo47VpT0gkbP7WNYTcQXm9Xx198SMTCTl7RcrhL9E9a475jA7IfmXIUxHH1+AWfofY3X0IlTq6fncZFqMFBvxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=njE8vYwmLH3CNoTfEI4Lp3NFk9KBVseNiZBs63m/8x8=;
+ b=PgR4QKI32jn8Pt3/pT2Ebr+9av6mYxSq7ll8fq3fvnAIWiqNA4/JXx3iaAHrHC7AZEAE813ZhvFI1DpDMct2T27QbICrwoG1eQ6SdDQQmalskGsH+rjNMn3pu7E4FDqNEs00C4a5fQfC0uR3a0P9NeIO5AKiS3YHaJYz9qwnVF3Rv9z18zHwY0cJd3EQ2MJy3LLkZ8TIWsEasG8mqNTT8laSaLP94wlW9aDXgHnW3aQQF7FuxtvUYZfcvoM4NPSMohe3R0jUgqJqseUPrdZ3PXzyE+Ep814eYwdSU+Xj4u0zzZ13wVAVe4TlDPg1A8FivgCQUoBBNbgCJB8npMa55A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=njE8vYwmLH3CNoTfEI4Lp3NFk9KBVseNiZBs63m/8x8=;
+ b=i/6JhMX+NSiiYoOyWMbLrtJrZtANhfCB+oSASRaAShpEZZXeV5WM2E09RWhJrLNATAc0gPoMJvkmcA0lgQ+V70qxZe4Sxm3zP3EYSbswoYihxGsxbN7sM5K0YvaQNvXIOkxg56s7fm6a1LQ3O07lGX/ZkHXCJlvfy7Ze3H7Etbo=
+Received: from BL0PR0102CA0024.prod.exchangelabs.com (2603:10b6:207:18::37) by
+ LV3PR12MB9257.namprd12.prod.outlook.com (2603:10b6:408:1b7::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.20; Wed, 9 Jul
+ 2025 06:44:20 +0000
+Received: from BN2PEPF0000449D.namprd02.prod.outlook.com
+ (2603:10b6:207:18:cafe::41) by BL0PR0102CA0024.outlook.office365.com
+ (2603:10b6:207:18::37) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.22 via Frontend Transport; Wed,
+ 9 Jul 2025 06:44:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN2PEPF0000449D.mail.protection.outlook.com (10.167.243.148) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8901.15 via Frontend Transport; Wed, 9 Jul 2025 06:44:20 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Jul
+ 2025 01:44:17 -0500
+Received: from hjbog-srdc-41.amd.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 9 Jul 2025 01:44:11 -0500
+From: Samuel Zhang <guoqing.zhang@amd.com>
+To: <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
+	<rafael@kernel.org>, <len.brown@intel.com>, <pavel@kernel.org>,
+	<gregkh@linuxfoundation.org>, <dakr@kernel.org>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <ray.huang@amd.com>, <matthew.auld@intel.com>,
+	<matthew.brost@intel.com>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>
+CC: <mario.limonciello@amd.com>, <lijo.lazar@amd.com>, <victor.zhao@amd.com>,
+	<haijun.chang@amd.com>, <Qing.Ma@amd.com>, <Owen.Zhang2@amd.com>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>, "Samuel
+ Zhang" <guoqing.zhang@amd.com>
+Subject: [PATCH v4 0/5] reduce system memory requirement for hibernation
+Date: Wed, 9 Jul 2025 14:43:59 +0800
+Message-ID: <20250709064404.839975-1-guoqing.zhang@amd.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+6FlrIFhK+31E2Mx"
-Content-Disposition: inline
-In-Reply-To: <20250708180901.558453595@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB04.amd.com: guoqing.zhang@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF0000449D:EE_|LV3PR12MB9257:EE_
+X-MS-Office365-Filtering-Correlation-Id: b93ba5b0-0a9d-43c3-3e65-08ddbeb40864
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|376014|1800799024|82310400026|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aHRFNlo4Y0lva3JGVzhhclFzVE1adWw0c0xUUytmVWUyZXN3WTRNNC9GcjZO?=
+ =?utf-8?B?YkZMK0JxY2Q5YlZWQ0FsV1lGKzhqTUZRN3NzSzhOWFFPd21sUEJSSUFyTHVj?=
+ =?utf-8?B?cmhlTkF3MVp1ajFrZXMyQjRmTGxPalJGMGJVejFhMGY1TlBUVTVXSmxCbkdV?=
+ =?utf-8?B?M0k4QTR0VzBEdFo2MG5sT05XQjNuVnBvZzQ1bnplUW1yMmJzV01Ra1BFYVM3?=
+ =?utf-8?B?VHhtWTJQSHRyUkFOYXY2Kzg5RlhxQTh4aW5zYnk5eDJaaVRsVmlPV09lRXBK?=
+ =?utf-8?B?VEcyMXE0VGk5dFFMZFJFQkhkL3hUcWVpUFp1dGNOakFNQjZIaW9jamx4T3Mr?=
+ =?utf-8?B?aDRUdkFSTFhlOEwyYmdxN2czdmlWcVdkUE9aR1VIK1BhOFVTOTQrTXk2WGhM?=
+ =?utf-8?B?UWpYMmxpQzIyQ3lsL0tpQ1ZONDl6SWtwSFRiTnMwU3dJQVBEZXdXYVNwcWZz?=
+ =?utf-8?B?R3RqOVRiRFQrRko0NDhwK3pkaHhGRmdrQVVxbk5Lcnk4dVc4ZXVkTVB1eDR3?=
+ =?utf-8?B?M0hFcEsxYVRXcXp5REJLTGRzSm5iQ3pRTllLVmZFdUw0RnJhU0cvRmxxK1Bj?=
+ =?utf-8?B?eDlnK1U0Vk11clhoYUJ0bk1oUUJNSW40V1J0MTVHWlJLb1VaZDhiNlI3Ykll?=
+ =?utf-8?B?dHRqR2U0TmFYcVJXZmNPMHNWL056bUZJYXFsUFh4OWpZUnh1Y0tXNnV6MDdL?=
+ =?utf-8?B?cGV0djFEL2dyR0xPWVFvOEg1Slh5ZUxJMTQ4SXJrZWl0SmJPOXR1M2lrcVli?=
+ =?utf-8?B?VjFkVlA1WG1aSXN0LzZVTEQ1ZGRKcWx0b2dTWXNreUtEVDdJU05OWDMzSXQy?=
+ =?utf-8?B?ekMyako2aG9HUGwwM0l6RFF5dDZndzJWRUdTME42cWtHZEtjc0plN0RGY045?=
+ =?utf-8?B?ZmgwSnphSHFIbTR5VlR4SlR5b09keDV5cFhvTHBrYnFkemUrSjBMRkYzSTVO?=
+ =?utf-8?B?anF4dEUrZjNHdFBmVzRVajZMd1pBRzA0aVlZYUxxei9KZ1ZKU0c4RjRMWlEz?=
+ =?utf-8?B?eXdnemprL2U5bVVLSlJneWxkMlJCSnJTL0dtRE1BQjZlaWt0aGplTU9iTUVX?=
+ =?utf-8?B?ZW5EdkU2ZXBjQnkvVjBuMGlVdFdwaFVhcy9pZE5PU2pYRmFvTmFQdm8xaEtD?=
+ =?utf-8?B?Qnh5K1BJT042R3NwbnJtNFF4TlZlU3VVM3cxK2JKRkMrSEhtMjlEeEh6dnBJ?=
+ =?utf-8?B?RDZ4eENKT1JRdzNWOThmSkFpZG9IUFZXQmtuVzVTdEUreHVKZkZxZC9wSExJ?=
+ =?utf-8?B?d3l0RkNoZjgvbmZ1NDMzOWsrZUhJZ0FRNWxrNC9OdkJVVXNIb2RMcmM4WmF4?=
+ =?utf-8?B?YUIwUGN6VjNqNGYxM0pZdHRwcGRlREQ3c1VJaW5neUZpWVljaTVqb1hpYnA2?=
+ =?utf-8?B?RlJ2OS9xMzZleHVIbzBYNFdwWnZuSk52cncreEJldUxEZTZYS0VNQTAvTWM2?=
+ =?utf-8?B?SEpoTmJxcWw0NHM4UTZOOFVXL21BM3NFeEVFVzI5VjJRWVFRSTFlRHladHRk?=
+ =?utf-8?B?dzR0Q05RQ2dobjhLRGx0bWdNT1J0dHdsTk1RRmN5eXp5WkplcmNxdlpJMVND?=
+ =?utf-8?B?enBpOW1Cc2xyTUtKSTJzbUdSLzZQOU12dHBicStMT3BSN1MxTnZwdGRIdC9O?=
+ =?utf-8?B?cnl3MlBKRGVTY1JIMTlKcVhQaDJwZFJ3dWZVdDcvU0h0NXhBajZPK1o2dFJG?=
+ =?utf-8?B?S1haK2hGS1UxVkFXYi80L0lBay95ellzRlhIK25wTjBLRnU2ak8rOXBOcjhW?=
+ =?utf-8?B?WmpCVXo4cXJaNXZRekxERGpKYUh2NTNkTkROZ2svNEZMeVVGbytHU1N1WkI5?=
+ =?utf-8?B?eHA3N0NMYyt1bEwxRG9jNldkRlRiS0hKR1M0cWpTODljTHZiczJMOUVMb1ov?=
+ =?utf-8?B?L1Npc0hoRHg2T1kydEhzM1NrR0Y4TWhzWHRIVVIrWXpyMUZkOVJmTnZocElC?=
+ =?utf-8?B?blNzRnlYUkswQlU4SzNQMWNXSmlmN3FuZnFYY2Y3MGZiUEp4aU8wSWdGNEIw?=
+ =?utf-8?B?MVcySWJXU1RreURmWnNkZkZPLzNhSnZWbWM4bFNLQjloWnBGMitLK3YxLy81?=
+ =?utf-8?B?NTNGL2IrV3BxbDRsMjhoMEtaQThKbEY5am1TZz09?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(1800799024)(82310400026)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2025 06:44:20.0225
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b93ba5b0-0a9d-43c3-3e65-08ddbeb40864
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF0000449D.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9257
+
+Modern data center dGPUs are usually equipped with very large VRAM. On
+server with such dGPUs(192GB VRAM * 8) and 2TB system memory, hibernate
+will fail due to no enough free memory.
+
+The root cause is that during hibernation all VRAM memory get evicted to
+GTT or shmem. In both case, it is in system memory and kernel will try to 
+copy the pages to hibernation image. In the worst case, this causes 2 
+copies of VRAM memory in system memory, 2TB is not enough for the 
+hibernation image. 192GB * 8 * 2 = 3TB > 2TB.
+
+The fix includes following changes. With these changes, there's much less
+pages needed to be copied to hibernate image and hibernation can succeed.
+* patch 1 and 2: move GTT to shmem after evicting VRAM. so that the GTT 
+  pages can be freed.
+* patch 3: force write shmem pages to swap disk and free shmem pages.
 
 
---+6FlrIFhK+31E2Mx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+After swapout GTT to shmem in hibernation prepare stage, the GPU will be
+resumed again in thaw stage. The swapin and restore BOs of resume takes
+lots of time (50 mintues observed for 8 dGPUs). And it's unnecessary since
+writing hibernation image do not need GPU for hibernate successful case.
+* patch 4 and 5: skip resume of device in thaw stage for successful
+  hibernation case to reduce the hibernation time.
 
-Hi!
 
-> This is the start of the stable review cycle for the 6.1.144 release.
-> There are 81 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+v2:
+* split first patch to 2 patches, 1 for ttm, 1 for amdgpu
+* refined the new ttm api
+* add more comments for shrink_shmem_memory() and its callsite
+* export variable pm_transition in kernel
+* skip resume in thaw() for successful hibernation case
+v3:
+* refined ttm_device_prepare_hibernation() to accept device argument
+* use guard(mutex) to replace mutex_lock and mutex_unlock
+* move ttm_device_prepare_hibernation call to amdgpu_device_evict_resources()
+* add pm_transition_event(), instead of exporting pm_transition variable
+* refined amdgpu_pmops_thaw(), use switch-case for more clarity
+v4:
+* remove guard(mutex) and fix kdoc for ttm_device_prepare_hibernation
+* refined kdoc for pm_transition_event() and PM_EVENT_ messages
+* use dev_err in amdgpu_pmops_thaw()
+* add Reviewed-by and Acked-by for patch 2 3 and 5
 
-CIP testing did not find any problems here:
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.1.y
+The merge options are either:
+* the linux-pm changes go to linux-pm and an immutable branch for drm to 
+merge
+* everything goes through amd-staging-drm-next (and an amdgpu PR to drm 
+later)
+* everything goes through drm-misc-next
 
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+Mario Limonciello think everything through drm-misc-next makes most sense
+if everyone is amenable.
 
-Best regards,
-                                                                Pavel
---=20
-In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
-Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---+6FlrIFhK+31E2Mx
-Content-Type: application/pgp-signature; name="signature.asc"
+Samuel Zhang (5):
+1. drm/ttm: add new api ttm_device_prepare_hibernation()
+2. drm/amdgpu: move GTT to shmem after eviction for hibernation
+3. PM: hibernate: shrink shmem pages after dev_pm_ops.prepare()
+4. PM: hibernate: add new api pm_transition_event()
+5. drm/amdgpu: do not resume device in thaw for normal hibernation
 
------BEGIN PGP SIGNATURE-----
+ drivers/base/power/main.c                  |  5 ++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 10 ++-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c    | 15 +++-
+ drivers/gpu/drm/ttm/ttm_device.c           | 23 ++++++
+ include/drm/ttm/ttm_device.h               |  1 +
+ include/linux/pm.h                         | 87 +++++++++++++---------
+ kernel/power/hibernate.c                   | 26 +++++++
+ 7 files changed, 130 insertions(+), 37 deletions(-)
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaG4PoAAKCRAw5/Bqldv6
-8r66AKC9wmTIPrnE4hF9x0PVu/S1Ac/uYQCfTnSmidrUK7FcuuHvNhXpcDxkp5k=
-=T0M7
------END PGP SIGNATURE-----
+-- 
+2.43.5
 
---+6FlrIFhK+31E2Mx--
 
