@@ -1,160 +1,137 @@
-Return-Path: <linux-kernel+bounces-724042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3948AFEDE6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:38:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D297AAFEDEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAA453BF576
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:37:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 290D416CA09
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E078D2E5B08;
-	Wed,  9 Jul 2025 15:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FCA2E7163;
+	Wed,  9 Jul 2025 15:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uYdDGgmo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="hOgMkyJ8"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2452E8DF9;
-	Wed,  9 Jul 2025 15:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9806A272E7C
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 15:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752075493; cv=none; b=lUaBiNqbD/kMpIWjY7nAHwunvq+/HmAVrjAFbJ7oik+HCj1z1nQnJVigoLfJl7QSzfZLGZmxPzKqL26aGb1eIR/EopDXRxHyQ8fkXHVB3YvPSLtgL0MfTljRmyjA8OjlooJx4Z+G6ucBTTQWfryCxv9rpS8sxiqZGPOGcMTVvog=
+	t=1752075692; cv=none; b=I7BtuJCrJxNKTWeO35zcYgGWf9sbcVO8Cq35/mhcdTR8yZA0tEp6UTLgpccSZXSjDoT8nwYVlKii6xJOArUKcX1FyOYtyS/B0h/kUFHZ8AITmKGQFUCrpgx4AfFUdtKEo7ei1pIpyzZ3408XI3IR63ZWHmR8/PeSwymYSJFAV3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752075493; c=relaxed/simple;
-	bh=Xl25DKWUzLXWpg5KhyYoRSsxahTDR5DpYlzJd9W9CaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fyHtDB+h+A/7RS4zSzAET0uWqAf1JtXMqbJ/JGJly5koUjQh7+gwKxeg6RfVaCGdAeRzxI2hu/8vKG31D5MZZQNh8Z7vl3MRDJCl1Zr2hvbzZGl0THmlDixsMjDYBA8TSlU0CwQBNbFizvhIB158vKq50KUma5rtekxy4HQTE5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uYdDGgmo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1C79C4CEEF;
-	Wed,  9 Jul 2025 15:38:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752075492;
-	bh=Xl25DKWUzLXWpg5KhyYoRSsxahTDR5DpYlzJd9W9CaA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uYdDGgmoD68kb2rNpNP/hz5SiwAXDsyvezTzMSDMKDb2YClMAF2yt/AxOjTPs7sNl
-	 ZTOE8jKrng1ejwdimLIcfCR+DZXhizhMc2qXzwb7YBRhhYhR+Xnf7h120quqvHtuXQ
-	 vwH5eiko3xNTUaDORSLeGHicywXRuFhftgO6XszyBy6kDg/HN0KkQYjiYK9KT3zzls
-	 T5Wx4zQYlggDBTLa0AXA3d8QhmsyQveEUAZY1P8m2i8gSq2eYriSLniXhAiyw5Yn+g
-	 o8IjE8LQibgIjGnYjnHpSjOCrrGvcXASgZXGde0dgcLjH93VVyf4X6KUiYxOt+Ess8
-	 Oo5M4FmCysnGA==
-Date: Wed, 9 Jul 2025 16:37:56 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Eugen Hristev <eugen.hristev@linaro.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Cai Huoqing <cai.huoqing@linux.dev>, Haibo Chen <haibo.chen@nxp.com>, Shawn
- Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
- <festevam@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
- <magnus.damm@gmail.com>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@csie.org>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- Francesco Dolcini <francesco@dolcini.it>, =?UTF-8?B?Sm/Do28=?= Paulo
- =?UTF-8?B?R29uw6dhbHZlcw==?= <jpaulo.silvagoncalves@gmail.com>, "Jiri Slaby
- (SUSE)" <jirislaby@kernel.org>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <u.kleine-koenig@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>,
- Fabrice Gasnier <fabrice.gasnier@foss.st.com>, "Rob Herring (Arm)"
- <robh@kernel.org>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Julien Stephan <jstephan@baylibre.com>,
- linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-renesas-soc@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v2 02/12] iio: adc: Remove redundant
- pm_runtime_mark_last_busy() calls
-Message-ID: <20250709163756.32b0e1d1@jic23-huawei>
-In-Reply-To: <20250708231152.971398-1-sakari.ailus@linux.intel.com>
-References: <20250708231144.971170-1-sakari.ailus@linux.intel.com>
-	<20250708231152.971398-1-sakari.ailus@linux.intel.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752075692; c=relaxed/simple;
+	bh=l1IMqQamnOSUMauOz72BUd8fZaqfC+kM2xLZw+/ZgnI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SFpZVykeCrirnwqGIuvAyHeeaTPYXY2fpJKkRyhDyvmNjUAhembTk0qe7lGAgCOQALXbB/dNQrXM1bN91UsCqnA0RQxWjQoS490NSqX5pH7lkl36bzgADV00SOqvTbiYhoymXmCrFwqOf0o6bo8nf7K/ZQnDEmTJclniWVVyXQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=hOgMkyJ8; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6fa980d05a8so252226d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 08:41:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1752075689; x=1752680489; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7+8lINShdvup+8jB4CEo5zDF19kEcona9FuXtnWhTyA=;
+        b=hOgMkyJ8ZDRxXFyR1Al8/ogDzxRuxjEYlso9jmZIX7W7SLF+5gY+8Oef25Ah1cnYuG
+         ja6MumEPbmN5MRGfhz4GKAlRKn8zpCrG7EYxEvxzOQ/AUwycRdAN2N3XzEokCBDap+7e
+         w+LiX7zOb2+j0gqxNjMDLDf/FuKcrT8BQOoOdypjcPbwp6GSgfTZFQkqz7icgg0h09iF
+         fUkT/idtzpx5e4HS2sRyAvRxa8peJ+yAO7dY/u6n2RQP4bHqI5CyBfkw8fP5ZAo0/Lgi
+         tn9U+nHcuWOoh0vb7dkrcyqqf7qsObOd7HRshbGXaWLjj1bvf/h1rcW5SWul8RnFUDjf
+         TxKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752075689; x=1752680489;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7+8lINShdvup+8jB4CEo5zDF19kEcona9FuXtnWhTyA=;
+        b=BK25mJW04ac63tJBaOez7ewEVGG3W+sX+XnsgQ2VNFX9CPISg/qthDGMUOpXDc5J7j
+         2idzH7qKlYBiTKt3WkbFjE4Irhu9x42l20r4FwvI4v+cboDv15QMAlUJueE4xndQJpou
+         aHrSqTbnAM2OaFZOGqAngvT5AUlh2GYjQyFMVDbhgwcm4Sq6BpwDqedHyJJuTO7C6JtQ
+         3SPJWSJPxI4+9KxuVUOr5KlxCU4gxnX0+nNPlsiOrpkczkpYOaMCwjZNDCyE9A7YvR9O
+         /ckTXddOZdx/9iCpHnVLHBRwa+h1CNnjC12Bcl60fSrm3ldq/H9CIDqn4xcA1BaB7qYk
+         XH3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUyTUM9+Ra8tjFE1EUYD6UwVK/YYFxTln7VtSSA53c+GSS3xd/QUpwPa2jNACNIfyfqR9ld/+BnTU6iqV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnoHHVUv1wPlpKmFfdNNcUGYiFbq9pZeC2LwsckaNGroOjKBBP
+	5C5WO5VEVbILUbQQdsz/ridXCiUNktJFkuxGz5QTU5oMqZ31kXqWf3VOlZBd3fNpKZsXkwtYuRZ
+	2jsI=
+X-Gm-Gg: ASbGnctJaoSc22zu5l5Hr0BE2UNrG6nCZPP5ePvt7SlbSnjmXmaiy5tJqeXKObbWEDk
+	U/xDm9YR2zzTnK89DJ1+r04scW4QM1+pScqCxPbRep/iscbTsqZwhr1EPjvtnrvZyVjMEh5VVMh
+	HbRAb80fZElc6Zj78Dy3SYjpwrZa5tL6/Xh5/FFDAYVx90zJZz6J/NLEcz6e/h6daO8RJ6u+QYC
+	/dJXOZdtHtz1ND06BVH4sb+3xcxxTctwJ7BNw/U0jI8h32I55vtDkPOc6QD8zKj672NlkEbZUKw
+	bN27HD7YFRG+PVIixhMN0qInXddCoFbyjSKahxtgUv9xKp/Q7wTsP0W++gbRWTBw2q3FEUojCtW
+	XuSYvskxrTaT5Odc=
+X-Google-Smtp-Source: AGHT+IFQ8reysvGiDHB9SlFWV74GS4KL17/ACFp3PeDv69dK0w4A50NNV0ufOCxkqgR1vs+8lKQAmg==
+X-Received: by 2002:a05:6214:3d01:b0:702:c150:46c2 with SMTP id 6a1803df08f44-7048b8d8da6mr44190726d6.10.1752075689343;
+        Wed, 09 Jul 2025 08:41:29 -0700 (PDT)
+Received: from rowland.harvard.edu ([140.247.181.15])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-704831532b6sm23936286d6.101.2025.07.09.08.41.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Jul 2025 08:41:28 -0700 (PDT)
+Date: Wed, 9 Jul 2025 11:41:26 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: syzbot <syzbot+592e2ab8775dbe0bf09a@syzkaller.appspotmail.com>,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	USB list <linux-usb@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [syzbot] [kernel?] INFO: task hung in uevent_show (2)
+Message-ID: <1d471e25-6671-4cb2-a2c9-af96c2b4e13d@rowland.harvard.edu>
+References: <686e7698.050a0220.c28f5.0006.GAE@google.com>
+ <79f634db-c149-4220-b8d4-0fff2c6b6a01@I-love.SAKURA.ne.jp>
+ <e064a3e4-ae70-4a24-ba5e-1bb8c7971f23@rowland.harvard.edu>
+ <39f312fa-d461-4377-b809-50c8a7188f6b@I-love.SAKURA.ne.jp>
+ <dd932df4-2a13-4a5c-a531-376065f87391@rowland.harvard.edu>
+ <43189e93-2cad-429a-a604-15bf5cc95e43@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <43189e93-2cad-429a-a604-15bf5cc95e43@I-love.SAKURA.ne.jp>
 
-On Wed,  9 Jul 2025 02:11:52 +0300
-Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
-
-> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> pm_runtime_mark_last_busy().
+On Thu, Jul 10, 2025 at 12:33:00AM +0900, Tetsuo Handa wrote:
+> On 2025/07/10 0:19, Alan Stern wrote:
+> > On Wed, Jul 09, 2025 at 11:44:46PM +0900, Tetsuo Handa wrote:
+> >> On 2025/07/09 23:27, Alan Stern wrote:
+> >>> Which of these three BUG_ON's did you hit, and where did you hit it?
+> >>
+> >> kernel BUG at ./include/linux/usb.h:1990!
+> >>
+> >> matches the BUG_ON(endpoint > 0xF) line. The location is shown below.
+> >>
+> >> Call Trace:
+> >>  <TASK>
+> >>  hub_configure drivers/usb/core/hub.c:1717 [inline]
+> >>  hub_probe+0x2300/0x3840 drivers/usb/core/hub.c:2005
+> > 
+> > Those line numbers are completely different from the code I have.  For 
+> > example, line 2005 in hub.c is part of the hub_ioctl() function, not 
+> > hub_probe().
+> > 
+> > Exactly what version of the kernel source are you using for your test?
 > 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> It is current linux.git tree.
+> 
+>   https://elixir.bootlin.com/linux/v6.16-rc5/source/drivers/usb/core/hub.c#L1717
+>   https://elixir.bootlin.com/linux/v6.16-rc5/source/drivers/usb/core/hub.c#L2005
 
-Some comments for the future as more about what can be improved on the back
-of this than what you have here.
+Okay, I see what your problem is.
 
->
-> diff --git a/drivers/iio/adc/rcar-gyroadc.c b/drivers/iio/adc/rcar-gyroadc.c
-> index cc326f21d398..3a17b3898bf6 100644
-> --- a/drivers/iio/adc/rcar-gyroadc.c
-> +++ b/drivers/iio/adc/rcar-gyroadc.c
-> @@ -163,12 +163,10 @@ static int rcar_gyroadc_set_power(struct rcar_gyroadc *priv, bool on)
->  {
->  	struct device *dev = priv->dev;
->  
-This is a very clear example of where the *_set_power() pattern is a bad idea.
-There are two calls of this function, one with it hard coded as on and one with it
-hard coded as off.  We can just push the pm_runtime_resume_and_get()
-to the on case etc.
+The bEndpointAddress field of the endpoint descriptor is not just the 
+endpoint's number.  It also includes the endpoint's direction in bit 7 
+(0 for OUT, 1 for IN).
 
-I don't mind that much if we do so as a follow up patch so this one can
-be the mechanical change and then we follow up with the enabled simplification.
+__create_pipe() doesn't bother to mask out the direction bit because bit 
+22 of the pipe value (where the direction bit ends up after it has been  
+shifted left by 15) isn't used for anything.
 
-> -	if (on) {
-> +	if (on)
->  		return pm_runtime_resume_and_get(dev);
-> -	} else {
-> -		pm_runtime_mark_last_busy(dev);
-> -		return pm_runtime_put_autosuspend(dev);
-> -	}
-> +
-> +	return pm_runtime_put_autosuspend(dev);
->  }
->  
->  static int rcar_gyroadc_read_raw(struct iio_dev *indio_dev,
->> diff --git a/drivers/iio/adc/ti-ads1015.c b/drivers/iio/adc/ti-ads1015.c
-> index 48549d617e5f..f2a93c63ca14 100644
-> --- a/drivers/iio/adc/ti-ads1015.c
-> +++ b/drivers/iio/adc/ti-ads1015.c
-> @@ -374,12 +374,10 @@ static int ads1015_set_power_state(struct ads1015_data *data, bool on)
->  	int ret;
->  	struct device *dev = regmap_get_device(data->regmap);
->  
-> -	if (on) {
-> +	if (on)
->  		ret = pm_runtime_resume_and_get(dev);
-> -	} else {
-> -		pm_runtime_mark_last_busy(dev);
-> +	else
->  		ret = pm_runtime_put_autosuspend(dev);
-> -	}
->  
->  	return ret < 0 ? ret : 0;
-So this one has a stub version which only brings benefits because
-we have checks on the pm_runtime_put_autosuspend() path failing
-(which it does if we have !CONFIG_PM).
-
-I think the right option there is check the return value is < 0
-for the resume_and_get() and don't check the _put_autosuspend()
-return value at all.  Then we can just push this down to the
-call sites as all of them hard code the bool value.
-
->  }
-
+Alan Stern
 
