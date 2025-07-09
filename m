@@ -1,124 +1,147 @@
-Return-Path: <linux-kernel+bounces-724286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99173AFF0D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:22:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96994AFF0BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 20:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82CF8560884
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:22:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C0197B4E6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 18:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5680723B629;
-	Wed,  9 Jul 2025 18:22:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FF4237708;
+	Wed,  9 Jul 2025 18:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pfS/aFI9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hvBSNj5c"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5FEE23770D;
-	Wed,  9 Jul 2025 18:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F1F22FDFF;
+	Wed,  9 Jul 2025 18:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752085343; cv=none; b=c/Cmg77+rbBd7Hs78sC26ZSky3vop0KTXLxKc52wxw6ZRmK49t6zBHxPMP6SAT6ApxnAy69kL5lbxh3x/HsH2kmVGf+9im0/bfcAlUAM0U+btpiT0oizPm9FcPki9NuA+WPrHB7SWQ4Yx5nz4Hsto4xhP5QwDY9w2nOvoAH6qVE=
+	t=1752085136; cv=none; b=gF0raYYXdIpHwmafxVPZqlYeMVom2LZg9ZAtJaZxMOAlZTJfWxglbEXpXIf2v80hQ0powRLTD6G7IJs9nLjqWEJKfyIixWfc+7LFCFxfSvCASt81X0575Av9BA0Q7AEAVSDRdZ0So+jKEpOf53Ye+SVlyI2GjwpSqU3c1QX+CMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752085343; c=relaxed/simple;
-	bh=5CLAa7B3mPRRniciO0gLisy8WVRITPjA7SLk6e8ROHk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Jkq2xjiC/q7w8GogUe46XOFIuvIN47Q9Ijknsf5n7ljC5GfFlLRsUm1MK6c/WP2o18QRVrLNrpSsUR+m/UzEWXjG+B1Lt3QN4WiOq0Lq0JhTIaBjg1eIMfCzDnErhEaEk9e27ka/+fMizHTx6+txARA0eEerFioYs8Iku333xsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pfS/aFI9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 892DDC4CEEF;
-	Wed,  9 Jul 2025 18:22:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752085343;
-	bh=5CLAa7B3mPRRniciO0gLisy8WVRITPjA7SLk6e8ROHk=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=pfS/aFI9iB0IO4L8LVGX6W06JqphTp4Lxw79qYY49GgGIB38Oy0WZcMin9enqTSBT
-	 emzKnZjXoCjbZAh7x3/2UmFbFZSdU7jTJLoHx8ydf0OwO/mA5MwQJKl5fXvi03ztA8
-	 Pa4emYLgCs7oFecZgD0imV2R0eXbigzLpyBKfQQ/oaZReheIQDhbePnbaegs5ODSOV
-	 7pZoKyglDVwZelrKKJTYz+bpzzoN2VGPaQAbneiM0SpXeMKOvI0DDG7u1Mm5ogFlj/
-	 pO2BFBjGWWscoHwHn/v66QhcSMef/FPZjfShVzSnAdG80V0XPCz/bjYmpQz88w59ac
-	 1dCRiuCXP0m3w==
+	s=arc-20240116; t=1752085136; c=relaxed/simple;
+	bh=bXcdnKFMQTYFHF8CEwbWtpp87D60Ysyu7KgQfN5OFEA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A6jq/CfmnpgooRBeahhqp41J/Sv5Fl9uZde6S5uWI51Fhg5LNF76D2lZoMacMPKPqhtV2nbrITPqXZ/0vF0igA9ThR1tcLqV0MlAqG5f4IfFf87b7GVewOF3nBfIkB4FLAVN+rNaZ5VjEzMRukXheuz2/GsiC9RvprwzL1FCeVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hvBSNj5c; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752085134; x=1783621134;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=bXcdnKFMQTYFHF8CEwbWtpp87D60Ysyu7KgQfN5OFEA=;
+  b=hvBSNj5c8rY7ZAK9V6tLcdEYBEwYnra7JHq89wfcjnUCtQGMM7cfuMzg
+   EerWRu0CvsfRXL48AsrXg/kqOb5vd5wLdg0jKGxlY/NvfQaNCQlCksGLp
+   2zC0/MLAPJ+vwu1SpAx1Z6uNH0BeWcOguWts14OF3u7slMb+O29v7nV3J
+   Zx6nC4LYe5WlSDqNPL/fonMky9T31NspkZ7+XXEqW6w7ao6JGzsl67n4S
+   K5NHaq+jKCoB3HIfQSOdJfuHIdEplJkErJfptq/G5hwGfLSx/EASJFDEy
+   d7iTlw29C6zTVOohcwPDpKV4GKUnapcNwKCI2TdcalxGzXmnWA8rLiapp
+   g==;
+X-CSE-ConnectionGUID: K3VezZpLT/6cXy/nD3alvA==
+X-CSE-MsgGUID: hkXbfmjwQKqhLJEOeJGb6g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="53570211"
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="53570211"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 11:18:53 -0700
+X-CSE-ConnectionGUID: INbFRu0pR9y8/Acc/FA0xQ==
+X-CSE-MsgGUID: CUjU2EAQTGOvDy+TdwWGnw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
+   d="scan'208";a="160379160"
+Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.110.190]) ([10.125.110.190])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 11:18:53 -0700
+Message-ID: <42c500b8-6ffb-4793-85c0-d3fbae0116f1@intel.com>
+Date: Wed, 9 Jul 2025 11:22:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] iommu/sva: Invalidate KVA range on kernel TLB flush
+To: jacob.pan@linux.microsoft.com, Jason Gunthorpe <jgg@nvidia.com>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, Jann Horn <jannh@google.com>,
+ Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>,
+ Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, iommu@lists.linux.dev,
+ security@kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250704133056.4023816-1-baolu.lu@linux.intel.com>
+ <20250709085158.0f050630@DESKTOP-0403QTC.>
+ <20250709162724.GE1599700@nvidia.com>
+ <20250709111527.5ba9bc31@DESKTOP-0403QTC.>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250709111527.5ba9bc31@DESKTOP-0403QTC.>
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 09 Jul 2025 20:22:16 +0200
-Message-Id: <DB7QEZNTH2SB.SSRG5H7TXZZT@kernel.org>
-Cc: "Boqun Feng" <boqun.feng@gmail.com>, "Alice Ryhl"
- <aliceryhl@google.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Masahiro
- Yamada" <masahiroy@kernel.org>, "Nathan Chancellor" <nathan@kernel.org>,
- "Luis Chamberlain" <mcgrof@kernel.org>, "Danilo Krummrich"
- <dakr@kernel.org>, "Nicolas Schier" <nicolas.schier@linux.dev>, "Trevor
- Gross" <tmgross@umich.edu>, "Adam Bratschi-Kaye" <ark.email@gmail.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-kbuild@vger.kernel.org>, "Petr Pavlu" <petr.pavlu@suse.com>, "Sami
- Tolvanen" <samitolvanen@google.com>, "Daniel Gomez" <da.gomez@samsung.com>,
- "Simona Vetter" <simona.vetter@ffwll.ch>, "Greg KH"
- <gregkh@linuxfoundation.org>, "Fiona Behrens" <me@kloenk.dev>, "Daniel
- Almeida" <daniel.almeida@collabora.com>, <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v15 1/7] rust: sync: add `SetOnce`
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Andreas Hindborg" <a.hindborg@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250707-module-params-v3-v15-0-c1f4269a57b9@kernel.org>
- <20250707-module-params-v3-v15-1-c1f4269a57b9@kernel.org>
- <CAH5fLgiKo=jN_V5cAe_AJqxxp7mQWqhKx7knkEj6js3yiU9sqA@mail.gmail.com>
- <KNYMPkLfLvLb8ocrLqSmk-5hRGhRaaPQ2sDHN5JoPAUxYJWlHNiOW4HRmtDDGkoMRfNwpziT8mkRzlPkdxDVaQ==@protonmail.internalid> <aGvkFbs5caxLSQxa@Mac.home> <877c0joyfo.fsf@kernel.org> <lsO9eeoR7qtPcjbhow9WfkrujYbxWh9JwZCHDO9K4VU6gtpl4pNYJisLImSI7OrRxW7qu-soEy9zjF_3snXZGQ==@protonmail.internalid> <DB6JZBUSWGKX.3M3M5TSWPLLFN@kernel.org> <87ple9lkjr.fsf@kernel.org>
-In-Reply-To: <87ple9lkjr.fsf@kernel.org>
+Content-Transfer-Encoding: 7bit
 
-On Wed Jul 9, 2025 at 12:34 PM CEST, Andreas Hindborg wrote:
-> "Benno Lossin" <lossin@kernel.org> writes:
->> On Tue Jul 8, 2025 at 10:54 AM CEST, Andreas Hindborg wrote:
->>> "Boqun Feng" <boqun.feng@gmail.com> writes:
->>>> On Mon, Jul 07, 2025 at 03:38:58PM +0200, Alice Ryhl wrote:
->>>>> On Mon, Jul 7, 2025 at 3:32=E2=80=AFPM Andreas Hindborg <a.hindborg@k=
-ernel.org> wrote:
->>>>> >
->>>>> > Introduce the `SetOnce` type, a container that can only be written =
-once.
->>>>> > The container uses an internal atomic to synchronize writes to the =
-internal
->>>>> > value.
->>>>> >
->>>>> > Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->>>>>
->>>>> LGTM:
->>>>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->>>>>
->>>>> > +impl<T> Drop for SetOnce<T> {
->>>>> > +    fn drop(&mut self) {
->>>>> > +        if self.init.load(Acquire) =3D=3D 2 {
->>>>> > +            // SAFETY: By the type invariants of `Self`, `self.ini=
-t =3D=3D 2` means that `self.value`
->>>>> > +            // contains a valid value. We have exclusive access, a=
-s we hold a `mut` reference to
->>>>> > +            // `self`.
->>>>> > +            unsafe { drop_in_place(self.value.get()) };
->>>>>
->>>>> This load does not need to be Acquire. It can be a Relaxed load or
->>>>> even an unsynchronized one since the access is exclusive.
->>>>
->>>> Right, I think we can do the similar as Revocable here:
->>>>
->>>>         if *self.init.get_mut() =3D=3D 2 { }
->
-> Ok, now I got it. You are saying I don't need to use the atomic load
-> method, because I have mutable access. Sounds good.
->
-> But I guess a relaxed load and access through a mutable reference should
-> result in the same code generation on most (all?) platforms?
+On 7/9/25 11:15, Jacob Pan wrote:
+>>> Is there a use case where a SVA user can access kernel memory in the
+>>> first place?  
+>> No. It should be fully blocked.
+>>
+> Then I don't understand what is the "vulnerability condition" being
+> addressed here. We are talking about KVA range here.
 
-AFAIK it is not the same on arm.
+SVA users can't access kernel memory, but they can compel walks of
+kernel page tables, which the IOMMU caches. The trouble starts if the
+kernel happens to free that page table page and the IOMMU is using the
+cache after the page is freed.
 
----
-Cheers,
-Benno
+That was covered in the changelog, but I guess it could be made a bit
+more succinct.
 
