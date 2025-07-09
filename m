@@ -1,375 +1,164 @@
-Return-Path: <linux-kernel+bounces-723886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76165AFEC08
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:33:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AB69AFEC05
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91AAD562DD5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:30:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B571B5611CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8622E54DA;
-	Wed,  9 Jul 2025 14:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CftVFqir"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F392E6110;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311212E610A;
 	Wed,  9 Jul 2025 14:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nfen3Mtd"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BD42DC352
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752071413; cv=none; b=Hrs+oHyDRbWhtp3qSUEduLTu6+oFH6ryY8kAz65Ro/qgGa1leK/VAbw+kUKbqlvi0387iEKQZcsOpm3iHXLp2FZNcFv0Zd3MqGa6ogY4+QwLRP8sAuie9vQx6hqTgcg9+0N/4tfn3oKu8eZTQo3qhMDRjNUsK6Io9aGGLcQ5TX4=
+	t=1752071410; cv=none; b=l3Mv9/wqrlUv6Tk2HlUQow/mNb1/GcCnli6WCq5t3HA9Ce06H69Q7gjrX+m3Dfl8qaC87BMP2FCyjlqZE2IpGT53Ip9955F9I3j/ueOeAWoFRG1Hw0mqy7+P2oyw3LUD3unVdbWndk7gfHH1f8aSvvEfyn5oeUqeCcf5LDPWOYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752071413; c=relaxed/simple;
-	bh=/BtTSH93VrIIZBv/TtRzPdF9xB2kfbOMw8pxnsx3XcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u9z2cJcLhIsVKlKXI/4/RwUWyyOdCOx6x/UNMf/0mKdwWPENdZbZAq3ch6o7Rot5XRrCK07ar6RWqdkKASzaurVVIZUbnwksuLmDwM0Jxmt3tZnfHz+nSaFazwjfIFoYvG+tZlcXs9C3pbR1aQz7JK47aDH9no3NhglXusf674Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CftVFqir; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752071412; x=1783607412;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/BtTSH93VrIIZBv/TtRzPdF9xB2kfbOMw8pxnsx3XcU=;
-  b=CftVFqir3pPfZH0bgl0Am7vE7mTHtX0y/ZhNyjpnDfDh/rCLYuJwSODk
-   bMB1cjax9lluMytEsTn1FKVZcXDv8ih1atNpnp26cDIHuD681KuDzGoZz
-   m4QotltiPmAmn+ysyrjl0w1/dNAC8ZI9L2NwehC0nBgWhzgFkI5GGvoxu
-   urmhYQ3/t6qJ+X9pRPbJAvpFNkGU0Dw3cdDWEDg8PXj5irFeJUBf2cPwB
-   3NwGr3Ezqkx4vu2RgwTEGVjf9o0lug4HBr8KfwE2fop+O3reqr+ufPm2H
-   nBREUywb0KNWjTE6KETeVvS3t0GXxa6iFlK8sDpKQPELHL18Q91TWdRbd
-   A==;
-X-CSE-ConnectionGUID: HWVdBX9cSMe4cXI5geqqzQ==
-X-CSE-MsgGUID: u1okw+R3QmuZp4ln73VkHA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="54214375"
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="54214375"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 07:30:11 -0700
-X-CSE-ConnectionGUID: SP5P3WgvSMeaEBInRkzzuQ==
-X-CSE-MsgGUID: EECYl+1LRXONC+ta8D+JfA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,298,1744095600"; 
-   d="scan'208";a="160328742"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 09 Jul 2025 07:29:51 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 2A91D1B7; Wed, 09 Jul 2025 17:29:49 +0300 (EEST)
-Date: Wed, 9 Jul 2025 17:29:49 +0300
-From: "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"seanjc@google.com" <seanjc@google.com>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, 
-	"Gao, Chao" <chao.gao@intel.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"Huang, Kai" <kai.huang@intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"mingo@redhat.com" <mingo@redhat.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv2 08/12] KVM: TDX: Handle PAMT allocation in fault path
-Message-ID: <nlnio65utrbd4t3vgkcibmwwmtkfhso6gz7lkqqnwhn5ialu7h@azdndahrdr3f>
-References: <20250609191340.2051741-1-kirill.shutemov@linux.intel.com>
- <20250609191340.2051741-9-kirill.shutemov@linux.intel.com>
- <aba17e84f56f2a51e7d3cf0e286a898adf66dc46.camel@intel.com>
+	s=arc-20240116; t=1752071410; c=relaxed/simple;
+	bh=F3dvKncn2pcIja2ECCGGBTnxHyJj8FiOiGOniPMnCxk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JTvI29+7WEdiWGOk630afl7q9XDULBPBI1iXOH6d4iSZrHESX16YMGd9O4N8o5DupKK0oUkXlf+fYDf/VSCigNc76W8ygKYRO462e+rruHmRwqvilDadoErVQdbqx87m41E1vItIOVpF7CFA6cs9CJQ9Ze6jA1GkQPBV+lvKIWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nfen3Mtd; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4a9e8459f28so36511cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 07:30:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1752071407; x=1752676207; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EsN2p04xZdCA9/Flow0v+8yCuT0IgoS2UP74R5FJw50=;
+        b=Nfen3MtdIh4/2DVCM2P8Mp96ie79TCp/G1m+AtJeEkd1SM148/2KFIBjvQK6aQMVvI
+         DMgYWOSA8hE5ucxA24UnReC+xomVE533UBXnJuCmaXmEFFJF8Ait1D7cYgjEP1bvhIOf
+         xZnHJXtnYk4Q3cYrJUGb8DCwRiQacMR5TQuzR08OzQ+vi/rWLkFxdn4fwYjaIWhBB2ZO
+         c0AcjoReYkQ8QSY7b3YSFKXlFGX8/mc8ck3KDC8vR0FlsSkvdmhMzKm4vKUjqZq2eUZw
+         +b9t44O50mrgZ/aTJLam+DCLziM0NpoRI08tNYKkPn2d4+ZWE3IYt9g2UiOd1qqojfxr
+         gkZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752071407; x=1752676207;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EsN2p04xZdCA9/Flow0v+8yCuT0IgoS2UP74R5FJw50=;
+        b=cC2ovM68hksU9DhA2J8nGNaP5Lz8/51IC8+IXaA8GCAikrPtdM1eG+NO7StlZxU7jT
+         hin+zgK5TDpirSOCQCt75Yf9LB4J05rRq/cuxV/WoF0Y6hD+tGj88Afl0qg8oJKEUTv5
+         adr1/+l4Oc4Lk/VwUZtwok9HmrO9basxpygeifgdsBpVcOXUQ6p62zGj4a2TaFazVzVr
+         q/iq5gHrstNOS8kXcfYp+DTblAv9T0DDxuCNqPtQfZqa4Cg0NiJgk4lI24y6e4Rzz+Cb
+         FoeoBkHnYJEka/tGE4F5M74ovk2oQk8RcG5qPrV6jElXppPGFwh3A4vogPmwgOGgFFgS
+         lu0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWYpGugutOdQgaK6NQPxA+Ett5/VMdDCHxse0VyK6gEHEvZ42xe9c551K3mLFugMK0x7AAzBE/dsT648Wc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc4g7ixVsglT0mldIgj8BfPdmUOLmwacHmM2CLzd9j1Wh5rSe8
+	BhNuSGA5kg3lEOy5EctJtaMn7GFq726rMsLNN/958oDXXbt/Fx/Fj+qdrQZfQINYzkMH3qhBWnu
+	nJMhlzvHe1yiGGB5aKpWr/GbRHq/EW0qLB8+39D5o
+X-Gm-Gg: ASbGnctgRiTgkAEgxhOIBuLDktCBZeg4WABWIRijgyQEuqKchehXvRtYAxq+ZCDPyJA
+	FxCo9GW79Gqd/E9aGyipt/c4urn5U6wQj2RUWjWRDc0O0tvWdBphGjE0ACJ1jbKHE0fp45gnOif
+	48zO5coBlOj0HWaxZdyUxwYsERLAsX+qKKRgbSZaZn/JjAFHDvXHrD7O4bKqAwipuLxqpGZBeiT
+	A==
+X-Google-Smtp-Source: AGHT+IE0EP513U77FBBexFDPPbUpG+ODi1BvVoUwbY55dt+VaLPanHMoERER6Fj//NhcsOORwkZOF4XnQV0brwt/rPM=
+X-Received: by 2002:a05:622a:a7cd:b0:494:4aa0:ad5b with SMTP id
+ d75a77b69052e-4a9dccbf056mr3528091cf.2.1752071406495; Wed, 09 Jul 2025
+ 07:30:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aba17e84f56f2a51e7d3cf0e286a898adf66dc46.camel@intel.com>
+References: <686d5adb.050a0220.1ffab7.0019.GAE@google.com> <CAJuCfpFjLmDRE=3E91279A+diisTgz24+a5D6c+sH8Oh7PzP6g@mail.gmail.com>
+ <54d2b3a2-9314-413b-993f-19e369910fd8@suse.cz>
+In-Reply-To: <54d2b3a2-9314-413b-993f-19e369910fd8@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 9 Jul 2025 07:29:53 -0700
+X-Gm-Features: Ac12FXyMdbuUz2QgXg2UV0MB5oPekps69T0zs05LeG-iDLiUTsXFReTy7ELCPzI
+Message-ID: <CAJuCfpEjGOQYwYq+xMxTBWU9LgcjXDnc=JKOahP4FyvQn7gGNA@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] WARNING: lock held when returning to user space in lock_next_vma
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: syzbot <syzbot+80011ad33eec39e6ce42@syzkaller.appspotmail.com>, 
+	Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+	shakeel.butt@linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 25, 2025 at 10:38:42PM +0000, Edgecombe, Rick P wrote:
-> On Mon, 2025-06-09 at 22:13 +0300, Kirill A. Shutemov wrote:
-> > There are two distinct cases when the kernel needs to allocate PAMT
-> > memory in the fault path: for SEPT page tables in tdx_sept_link_private_spt()
-> > and for leaf pages in tdx_sept_set_private_spte().
-> > 
-> > These code paths run in atomic context. Use a pre-allocated per-VCPU
-> > pool for memory allocations.
-> 
-> This log is way to thin. It should explain the design, justify the function
-> pointer, excuse the export, etc.
+On Wed, Jul 9, 2025 at 3:26=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wro=
+te:
+>
+> On 7/9/25 00:19, Suren Baghdasaryan wrote:
+> > On Tue, Jul 8, 2025 at 10:52=E2=80=AFAM syzbot
+> > <syzbot+80011ad33eec39e6ce42@syzkaller.appspotmail.com> wrote:
+> >>
+> >> Hello,
+> >>
+> >> syzbot found the following issue on:
+> >>
+> >> HEAD commit:    26ffb3d6f02c Add linux-next specific files for 2025070=
+4
+> >> git tree:       linux-next
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1719df7058=
+0000
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D1e4f88512a=
+e53408
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=3D80011ad33eec=
+39e6ce42
+> >> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f=
+6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1124abd4=
+580000
+> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1099df7058=
+0000
+> >>
+> >> Downloadable assets:
+> >> disk image: https://storage.googleapis.com/syzbot-assets/fd5569903143/=
+disk-26ffb3d6.raw.xz
+> >> vmlinux: https://storage.googleapis.com/syzbot-assets/1b0c9505c543/vml=
+inux-26ffb3d6.xz
+> >> kernel image: https://storage.googleapis.com/syzbot-assets/9d864c72bed=
+1/bzImage-26ffb3d6.xz
+> >>
+> >> IMPORTANT: if you fix the issue, please add the following tag to the c=
+ommit:
+> >> Reported-by: syzbot+80011ad33eec39e6ce42@syzkaller.appspotmail.com
+> >>
+> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >> WARNING: lock held when returning to user space!
+> >> 6.16.0-rc4-next-20250704-syzkaller #0 Not tainted
+> >> ------------------------------------------------
+> >> syz.0.22/6068 is leaving the kernel with locks still held!
+> >> 1 lock held by syz.0.22/6068:
+> >>  #0: ffff8880792a3588 (vm_lock){++++}-{0:0}, at: lock_next_vma+0x146/0=
+xdc0 mm/mmap_lock.c:220
+> >
+> > Hmm. I must be missing an unlock_vma() somewhere but I don't see it
+> > yet. Will try the reproducer.
+>
+> I don't see it either. I don't also see v6 being substantially different.
+> Hopefully this (and the other report) was some consequence of the kmalloc=
+()
+> under rcu that v5 had. Maybe it can lead to sleep and when it wake ups it
+> doesn't restore the rcu lock section?
 
-Ack.
+I'm not sure. The report says that vm_lock is being held, so that does
+not look like an rcu-related issue. I'll try the reproducer with v6 to
+see if something fails.
 
-> > 
-> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > ---
-> >  arch/x86/include/asm/tdx.h  |  4 ++++
-> >  arch/x86/kvm/vmx/tdx.c      | 40 ++++++++++++++++++++++++++++++++-----
-> >  arch/x86/virt/vmx/tdx/tdx.c | 21 +++++++++++++------
-> >  virt/kvm/kvm_main.c         |  1 +
-> >  4 files changed, 55 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
-> > index 47092eb13eb3..39f8dd7e0f06 100644
-> > --- a/arch/x86/include/asm/tdx.h
-> > +++ b/arch/x86/include/asm/tdx.h
-> > @@ -116,6 +116,10 @@ u32 tdx_get_nr_guest_keyids(void);
-> >  void tdx_guest_keyid_free(unsigned int keyid);
-> >  
-> >  int tdx_nr_pamt_pages(void);
-> > +int tdx_pamt_get(struct page *page, enum pg_level level,
-> > +		 struct page *(alloc)(void *data), void *data);
-> > +void tdx_pamt_put(struct page *page, enum pg_level level);
-> > +
-> >  struct page *tdx_alloc_page(void);
-> >  void tdx_free_page(struct page *page);
-> >  
-> > diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> > index 36c3c9f8a62c..bc9bc393f866 100644
-> > --- a/arch/x86/kvm/vmx/tdx.c
-> > +++ b/arch/x86/kvm/vmx/tdx.c
-> > @@ -1537,11 +1537,26 @@ static int tdx_mem_page_record_premap_cnt(struct kvm *kvm, gfn_t gfn,
-> >  	return 0;
-> >  }
-> >  
-> > +static struct page *tdx_alloc_pamt_page_atomic(void *data)
-> > +{
-> > +	struct kvm_vcpu *vcpu = data;
-> > +	void *p;
-> > +
-> > +	p = kvm_mmu_memory_cache_alloc(&vcpu->arch.pamt_page_cache);
-> > +	return virt_to_page(p);
-> > +}
-> > +
-> >  int tdx_sept_set_private_spte(struct kvm *kvm, gfn_t gfn,
-> >  			      enum pg_level level, kvm_pfn_t pfn)
-> >  {
-> > +	struct kvm_vcpu *vcpu = kvm_get_running_vcpu();
-> >  	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
-> >  	struct page *page = pfn_to_page(pfn);
-> > +	int ret;
-> > +
-> > +	ret = tdx_pamt_get(page, level, tdx_alloc_pamt_page_atomic, vcpu);
-> > +	if (ret)
-> > +		return ret;
-> >  
-> >  	/* TODO: handle large pages. */
-> >  	if (KVM_BUG_ON(level != PG_LEVEL_4K, kvm))
-> 
-> level is known to be PG_LEVEL_4K if you swap the order of these. I'm guessing
-> left over from order swap.
+>
+> The unhandled vma_start_read_locked() return value I pointed out could pl=
+ay
+> a role too (in the other report) but I guess only if syzbot would be able=
+ to
+> saturate the refcount (I doubt?).
 
-We would need to pass actual level when huge pages are supported. It is
-better to keep it this way to avoid patching in the future.
-
-> 
-> > @@ -1562,10 +1577,16 @@ int tdx_sept_set_private_spte(struct kvm *kvm, gfn_t gfn,
-> >  	 * barrier in tdx_td_finalize().
-> >  	 */
-> >  	smp_rmb();
-> > -	if (likely(kvm_tdx->state == TD_STATE_RUNNABLE))
-> > -		return tdx_mem_page_aug(kvm, gfn, level, page);
-> >  
-> > -	return tdx_mem_page_record_premap_cnt(kvm, gfn, level, pfn);
-> > +	if (likely(kvm_tdx->state == TD_STATE_RUNNABLE))
-> > +		ret = tdx_mem_page_aug(kvm, gfn, level, page);
-> > +	else
-> > +		ret = tdx_mem_page_record_premap_cnt(kvm, gfn, level, pfn);
-> 
-> tdx_mem_page_record_premap_cnt() doesn't need tdx_pamt_get(). I think it could
-> be skipped if the order is re-arranged.
-
-We need to deposit PAMT memory for PAGE.ADD at some point. I think having
-it consolidated here for both PAGE.ADD and PAGE.AUG is better.
-
-> > +
-> > +	if (ret)
-> > +		tdx_pamt_put(page, level);
-> > +
-> > +	return ret;
-> >  }
-> >  
-> >  static int tdx_sept_drop_private_spte(struct kvm *kvm, gfn_t gfn,
-> > @@ -1622,17 +1643,26 @@ int tdx_sept_link_private_spt(struct kvm *kvm, gfn_t gfn,
-> >  			      enum pg_level level, void *private_spt)
-> >  {
-> >  	int tdx_level = pg_level_to_tdx_sept_level(level);
-> > -	gpa_t gpa = gfn_to_gpa(gfn);
-> > +	struct kvm_vcpu *vcpu = kvm_get_running_vcpu();
-> >  	struct page *page = virt_to_page(private_spt);
-> > +	gpa_t gpa = gfn_to_gpa(gfn);
-> >  	u64 err, entry, level_state;
-> > +	int ret;
-> > +
-> > +	ret = tdx_pamt_get(page, PG_LEVEL_4K, tdx_alloc_pamt_page_atomic, vcpu);
-> > +	if (ret)
-> > +		return ret;
-> >  
-> >  	err = tdh_mem_sept_add(&to_kvm_tdx(kvm)->td, gpa, tdx_level, page, &entry,
-> >  			       &level_state);
-> > -	if (unlikely(tdx_operand_busy(err)))
-> > +	if (unlikely(tdx_operand_busy(err))) {
-> > +		tdx_pamt_put(page, PG_LEVEL_4K);
-> >  		return -EBUSY;
-> > +	}
-> >  
-> >  	if (KVM_BUG_ON(err, kvm)) {
-> >  		pr_tdx_error_2(TDH_MEM_SEPT_ADD, err, entry, level_state);
-> > +		tdx_pamt_put(page, PG_LEVEL_4K);
-> >  		return -EIO;
-> >  	}
-> >  
-> > diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-> > index 4f9eaba4af4a..d4b50b6428fa 100644
-> > --- a/arch/x86/virt/vmx/tdx/tdx.c
-> > +++ b/arch/x86/virt/vmx/tdx/tdx.c
-> > @@ -2067,10 +2067,16 @@ static void tdx_free_pamt_pages(struct list_head *pamt_pages)
-> >  	}
-> >  }
-> >  
-> > -static int tdx_alloc_pamt_pages(struct list_head *pamt_pages)
-> > +static int tdx_alloc_pamt_pages(struct list_head *pamt_pages,
-> > +				 struct page *(alloc)(void *data), void *data)
-> >  {
-> >  	for (int i = 0; i < tdx_nr_pamt_pages(); i++) {
-> > -		struct page *page = alloc_page(GFP_KERNEL);
-> > +		struct page *page;
-> > +
-> > +		if (alloc)
-> > +			page = alloc(data);
-> > +		else
-> > +			page = alloc_page(GFP_KERNEL);
-> 
-> It's not great I think. A branch between a function pointer and alloc_page,
-> where there is only ever one value for the function pointer. There has to be a
-> better way?
-
-I guess we can do something like this (but I am not sure it is better):
-
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index baa791ea5fd7..58a3066be6fc 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -2141,11 +2141,7 @@ static int tdx_alloc_pamt_pages(struct list_head *pamt_pages,
- 	for (int i = 0; i < tdx_nr_pamt_pages(); i++) {
- 		struct page *page;
- 
--		if (alloc)
--			page = alloc(data);
--		else
--			page = alloc_page(GFP_KERNEL);
--
-+		page = alloc(data);
- 		if (!page) {
- 			tdx_free_pamt_pages(pamt_pages);
- 			return -ENOMEM;
-@@ -2208,6 +2204,11 @@ static int tdx_pamt_add(atomic_t *pamt_refcount, unsigned long hpa,
- 	return 0;
- }
- 
-+static struct page *alloc_kernel_page(void *dummy)
-+{
-+	return alloc_page(GFP_KERNEL);
-+}
-+
- /* Bump PAMT refcount for the given page and allocate PAMT memory if needed */
- int tdx_pamt_get(struct page *page, enum pg_level level,
- 		 struct page *(alloc)(void *data), void *data)
-@@ -2233,6 +2234,9 @@ int tdx_pamt_get(struct page *page, enum pg_level level,
- 	if (atomic_inc_not_zero(pamt_refcount))
- 		return 0;
- 
-+	if (!alloc)
-+		alloc = alloc_kernel_page;
-+
- 	if (tdx_alloc_pamt_pages(&pamt_pages, alloc, data))
- 		return -ENOMEM;
- 
-> 
-> >  		if (!page)
-> >  			goto fail;
-> >  		list_add(&page->lru, pamt_pages);
-> > @@ -2115,7 +2121,8 @@ static int tdx_pamt_add(atomic_t *pamt_refcount, unsigned long hpa,
-> >  	return 0;
-> >  }
-> >  
-> > -static int tdx_pamt_get(struct page *page, enum pg_level level)
-> > +int tdx_pamt_get(struct page *page, enum pg_level level,
-> > +		 struct page *(alloc)(void *data), void *data)
-> >  {
-> >  	unsigned long hpa = page_to_phys(page);
-> >  	atomic_t *pamt_refcount;
-> > @@ -2134,7 +2141,7 @@ static int tdx_pamt_get(struct page *page, enum pg_level level)
-> >  	if (atomic_inc_not_zero(pamt_refcount))
-> >  		return 0;
-> >  
-> > -	if (tdx_alloc_pamt_pages(&pamt_pages))
-> > +	if (tdx_alloc_pamt_pages(&pamt_pages, alloc, data))
-> >  		return -ENOMEM;
-> >  
-> >  	ret = tdx_pamt_add(pamt_refcount, hpa, &pamt_pages);
-> > @@ -2143,8 +2150,9 @@ static int tdx_pamt_get(struct page *page, enum pg_level level)
-> >  
-> >  	return ret >= 0 ? 0 : ret;
-> >  }
-> > +EXPORT_SYMBOL_GPL(tdx_pamt_get);
-> >  
-> > -static void tdx_pamt_put(struct page *page, enum pg_level level)
-> > +void tdx_pamt_put(struct page *page, enum pg_level level)
-> >  {
-> >  	unsigned long hpa = page_to_phys(page);
-> >  	atomic_t *pamt_refcount;
-> > @@ -2179,6 +2187,7 @@ static void tdx_pamt_put(struct page *page, enum pg_level level)
-> >  
-> >  	tdx_free_pamt_pages(&pamt_pages);
-> >  }
-> > +EXPORT_SYMBOL_GPL(tdx_pamt_put);
-> >  
-> >  struct page *tdx_alloc_page(void)
-> >  {
-> > @@ -2188,7 +2197,7 @@ struct page *tdx_alloc_page(void)
-> >  	if (!page)
-> >  		return NULL;
-> >  
-> > -	if (tdx_pamt_get(page, PG_LEVEL_4K)) {
-> > +	if (tdx_pamt_get(page, PG_LEVEL_4K, NULL, NULL)) {
-> >  		__free_page(page);
-> >  		return NULL;
-> >  	}
-> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> > index eec82775c5bf..6add012532a0 100644
-> > --- a/virt/kvm/kvm_main.c
-> > +++ b/virt/kvm/kvm_main.c
-> > @@ -436,6 +436,7 @@ void *kvm_mmu_memory_cache_alloc(struct kvm_mmu_memory_cache *mc)
-> >  	BUG_ON(!p);
-> >  	return p;
-> >  }
-> > +EXPORT_SYMBOL_GPL(kvm_mmu_memory_cache_alloc);
-> 
-> Did you consider pre-allocating a page and returning it to the cache if it's not
-> needed.
-
-I am not sure how returning object back to pool helps anything.
-
-Or do you mean to invent a new memory pool mechanism just for PAMT. Seems
-excessive.
-
-
-> Or moving kvm_mmu_memory_cache_alloc() to a static inline in a header
-> that core x86 can use.
-
-mmu_memory_cache_alloc_obj() need to be pulled into header too. At this
-point we might as well pull all KVM_ARCH_NR_OBJS_PER_MEMORY_CACHE stuff
-there. 
-
-It seems too extreme to avoid export.
-
-> They all seem bad in different ways.
-> 
-> >  #endif
-> >  
-> >  static void kvm_vcpu_init(struct kvm_vcpu *vcpu, struct kvm *kvm, unsigned id)
-> 
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Yes, I should handle that by falling back to mmap_lock, however I
+agree this would be highly unlikely.
 
