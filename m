@@ -1,131 +1,109 @@
-Return-Path: <linux-kernel+bounces-722665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-722667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 742E7AFDD85
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:37:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4432DAFDD8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 04:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62E383AF5A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:36:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1945E1AA6C13
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 02:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800511BD9CE;
-	Wed,  9 Jul 2025 02:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551791CD1E1;
+	Wed,  9 Jul 2025 02:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VcCO9AAl"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="HTWySZpt"
+Received: from epicurean-pwyll.relay-egress.a.mail.umich.edu (relay-egress-host.us-east-2.a.mail.umich.edu [18.217.159.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F32C1C36;
-	Wed,  9 Jul 2025 02:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D2B1A9B53;
+	Wed,  9 Jul 2025 02:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.217.159.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752028620; cv=none; b=E4xYja8FecDbC7OE4StdANb+EgthvjVL5tqTeFZfXwHpCbpCFpQengV+RI+n7/rHh59LWLMd3Ykm2X0xBmnWJLVsWFePFVU9omn4447EVchhSJ5WblR1l0fmloXtRPBPXJKSJQaLzqz4+Lo4Paklf462VxyfNb/gPyMt+rDUuwU=
+	t=1752028654; cv=none; b=rNzVtOtiuQmLYD3sTN1YFJIcPjXFfDmQm1M1KVgnVmInJjQAk4nEQ9d5pBhmzMOJJ0yV6D2P94v0ycCE/th2r8pXK0dCFdAsGGZEPhbVFXNfq5sDoxqJEIm6rSdMI4CtFqJJab4ofyDF1/tVuQ21zJ1dG2dJ9HanL3y4s9kweAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752028620; c=relaxed/simple;
-	bh=7YJZljkDk48VpGjfw7srEnqzVo+ciJWtnRlO0F8qyqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HxPhGzBOhgeWuhy522zrelbmU81lsCpI5O2CK+tKd6TdcNGJQeZG7DJ9cFE67D8LTe4R0mK7K32DtyVqbCyQHGgStxMB5DFkhU+rC5R59FGGUwBvFl2MWQBpmOgWf19DGTH5zxVrv2tsJgoQQANuYsXoZpfSKkxaT1tK7h89kTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VcCO9AAl; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7fd581c2bf4so4528264a12.3;
-        Tue, 08 Jul 2025 19:36:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752028619; x=1752633419; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HQy46u3MyUevid/JqcuEb31XzqKEb+o9x+MJnYqqpKg=;
-        b=VcCO9AAl4lUbGH9IjhBlpu3bZygvCRKq6vQgh7heTnnKoq+tkSs80ydASpBYpHkr2o
-         LyKDLxczOIaIj6ywvcaNISe4OOCacVGOWpqhci/S8u6Tv/gG/WaXXgXhmrlh3O2o68Q1
-         t/dhhDTYK8323NU0LY4NExYKTY9T9+o70ImGhjNP5GISKrs9c6mjTVkYXDNxB68wIkwj
-         agY3Hw9e/QDegrRnUFkYQ8GAcmZycUASGFrQBgIZS6nuOfRv4vIZcQm0GTtRc7mYsEVd
-         CZAx3/1aYpZG68/5Jv06i5VUj1pRECpJdt1pxpxr6jzr11849dBMNj4Lnr/dX9pSQbNL
-         07kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752028619; x=1752633419;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HQy46u3MyUevid/JqcuEb31XzqKEb+o9x+MJnYqqpKg=;
-        b=CpfP/5bHM7L1dwefp/lGh0CWzYQl8e6//dF/dA/I5lk75aNDf72QP7mHfsxmGngoyE
-         cSTJlsYEWP7dcxSk3ZibdsDeJsbBqOZQAeJAF8jsZ7SlCTUCR6TMSOW1nZsAYbtVFYfw
-         7MPGYaT5dkBfF75vI/i7MIzfe5y/z6/+wTiRq4NvtglqcqLjW/FEm/FJlrDONAVkAcMz
-         wYsRW4ef57bzGes2Z4OpjugIMCPtTKT//yMgwCwPqap3gneyOC2KGPKvlbTRYbIhatR7
-         C7aVlXFSxrbBFg54Tmk2EK1pDFQVIzI7hvwURbNjYyapR2wREPdl/bOpBQoRqXNwgvie
-         xbNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpGUeCaBgdny+XvU2uyk25rWnmZdmRGHBkPTiO7fuSX2PUmFhz4F7VmiTkccgtRBE8yR97NLEtrdKamNE=@vger.kernel.org, AJvYcCVca+G9EC+dlmxRrB2zGKPc3aqDdlgXAhcCuF/Hal18V0FapWiTvIjpse0BCHKLvqy6uwyq+XEJ+dwTLw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwosicLKHpeIPY78aExXWtpfdd7UhmSksHZsZDCMZxNrKqXvwZk
-	k/JcIfSfXcVP9TA4VCkdHqV3wjOMARNT8S3/ZsHpGVHB4V/bSJQARWOxPonRWg==
-X-Gm-Gg: ASbGnctcjdzX1rvy0OxeTH3xQj7f5YyhJMfESPq8BpX2e6hjDcKh/Yffof6c9saCJoU
-	lOs6Tcrn/kwWFthsuR6RIQBw+AMEWX989w0Kh4s90RTdQ1/vA8HgBkduU8JpmFR1B+PJgM7W5Ox
-	ipaMIK6cmyeBDN6oGeZblApSx8EoI1JRwT8OO1xp7riCysoHysD3f92HGG5OzjJWn8VEvvyKRvD
-	NA+sk7QERI0hU/FUmf0BVfdj8C+raBnIFTc9oHNsfSWBVqVKm0pFFtiMDjjiBXY6w1HTMIVCmku
-	c5Uh8LhwCJ5rKKvsKOhG797TPp142HGNOaC0K1kciDKI9Ecs4m0/umwafVpRUw==
-X-Google-Smtp-Source: AGHT+IFu611+OS2OJWmiueYge4xL9xXDv/cgxhH3RKbqIXjWA2QveArwFAqLTIWh0x/PHAU9cF8RVA==
-X-Received: by 2002:a17:90b:4d0d:b0:313:fab4:1df6 with SMTP id 98e67ed59e1d1-31c2fdfe552mr1088851a91.32.1752028618581;
-        Tue, 08 Jul 2025 19:36:58 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c30068d50sm536038a91.15.2025.07.08.19.36.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 19:36:57 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id DD0D1410194B; Wed, 09 Jul 2025 09:36:54 +0700 (WIB)
-Date: Wed, 9 Jul 2025 09:36:54 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	airlied@gmail.com, simona@ffwll.ch,
-	Raag Jadav <raag.jadav@intel.com>,
-	Krzysztof Karas <krzysztof.karas@intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com
-Subject: Re: [PATCH v4 1/3] drm/doc: Fix title underline for "Task
- information"
-Message-ID: <aG3Vxt8tc0HYRNbe@archie.me>
-References: <20250704190724.1159416-1-andrealmeid@igalia.com>
+	s=arc-20240116; t=1752028654; c=relaxed/simple;
+	bh=VTakTpbD+/ck8WoyE/AJFOUOdGMd9ulSB3DN9NmElJQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=rE8xqDaBVCLgxRrBH1FcING2sF2IwT5sMV9pc5j2VdWBOvgrflx7S0ljMgebOtSPiAajoPqOkdJx+xxOPejWYGNQNzCF2RvlWh2HWFIeK+3tEv3avi56r9dnVWu2pOXAjsgNDzWJbwbLCD/9YXIjHuHTbTt50z6QlfqmU+X5uVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=HTWySZpt; arc=none smtp.client-ip=18.217.159.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
+Received: from inspiring-wechuge.authn-relay.a.mail.umich.edu (ip-10-0-74-32.us-east-2.compute.internal [10.0.74.32])
+	by epicurean-pwyll.relay-egress.a.mail.umich.edu with ESMTPS
+	id 686DD5D2.13EDAD5C.57D01473.3894664;
+	Tue, 08 Jul 2025 22:37:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=umich.edu;
+	s=relay-1; t=1752028626;
+	bh=T7eoNy6cEsEjh+BNoMcOqnD0AF+jHSHZHYV7ZlywU6M=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To;
+	b=HTWySZptBk1BzDPVADcoGedBuWDkfthsHx0rJwSb82h3kP9/gPQ6ZUkVnaEnFRWWV
+	 uSdw47Iv3BT740DQ1dG2pM3C1vflyazI5JVfzPeYZm1W/Tq71aKad1lMoZ2/jTSQXU
+	 vfidSoOjsyvYWIXlrHGyjGr6J4uVwqR7H0jn9MkRoQ3+k3UEkAu26FdZZF3JLgu4p1
+	 bibUVuxfJM49eWnW2emvbDwB63BdH42lAiwKoC684hTMTVezhSBY/LV49CZsPpKLIB
+	 DRuqqnAqgo3GvmawYVw2CmtGHw6rex0e/OZDRDyXABwWBFGgdjOveoWhYMDH3Nv7el
+	 pes9sYt08dY0w==
+Authentication-Results: inspiring-wechuge.authn-relay.a.mail.umich.edu; 
+	iprev=pass policy.iprev=185.104.139.75 (ip-185-104-139-75.ptr.icomera.net);
+	auth=pass smtp.auth=tmgross
+Received: from localhost (ip-185-104-139-75.ptr.icomera.net [185.104.139.75])
+	by inspiring-wechuge.authn-relay.a.mail.umich.edu with ESMTPSA
+	id 686DD5CF.15A3D811.3754A1D1.1028157;
+	Tue, 08 Jul 2025 22:37:05 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="haaEsPDVn1u79Kw7"
-Content-Disposition: inline
-In-Reply-To: <20250704190724.1159416-1-andrealmeid@igalia.com>
-
-
---haaEsPDVn1u79Kw7
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 08 Jul 2025 21:37:01 -0500
+Message-Id: <DB76B96DHB88.1ASN4O1SLKNAS@umich.edu>
+Cc: <airlied@gmail.com>, <simona@ffwll.ch>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+ <gregkh@linuxfoundation.org>, <maarten.lankhorst@linux.intel.com>,
+ <mripard@kernel.org>, <tzimmermann@suse.de>, <davidgow@google.com>,
+ <nm@ti.com>
+Subject: Re: [PATCH v4 5/6] rust: remove
+ `#[allow(clippy::unnecessary_cast)]`
+From: "Trevor Gross" <tmgross@umich.edu>
+To: =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-pm@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+ <kunit-dev@googlegroups.com>
+X-Mailer: aerc 0.20.1
+References: <20250701053557.20859-1-work@onurozkan.dev>
+ <20250701053557.20859-6-work@onurozkan.dev>
+In-Reply-To: <20250701053557.20859-6-work@onurozkan.dev>
 
-On Fri, Jul 04, 2025 at 04:07:22PM -0300, Andr=C3=A9 Almeida wrote:
->  Task information
-> ----------------
-> +----------------
-> =20
+On Tue Jul 1, 2025 at 12:35 AM CDT, Onur =C3=96zkan wrote:
+> This isn't needed anymore since `kernel::ffi::c_int` type
+> is always `i32` which differs from `err` (isize).
+>
+> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
+> ---
+>  rust/kernel/error.rs | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
+> index a59613918d4c..05c6e71c0afb 100644
+> --- a/rust/kernel/error.rs
+> +++ b/rust/kernel/error.rs
+> @@ -413,7 +413,6 @@ pub fn from_err_ptr<T>(ptr: *mut T) -> Result<*mut T>=
+ {
+>          // SAFETY: The FFI function does not deref the pointer.
+>          let err =3D unsafe { bindings::PTR_ERR(const_ptr) };
+>
+> -        #[allow(clippy::unnecessary_cast)]
+>          // CAST: If `IS_ERR()` returns `true`,
+>          // then `PTR_ERR()` is guaranteed to return a
+>          // negative value greater-or-equal to `-bindings::MAX_ERRNO`,
+> --
+> 2.50.0
 
-LGTM, thanks!
-
-Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---haaEsPDVn1u79Kw7
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaG3VwgAKCRD2uYlJVVFO
-o1MLAP9FVqHMlgBgrBCNQWQ5Wy/3bHSvsDX+VYwBBA8Dn1HcXAEAupzs6l34AlqP
-JH4vmBESL3jhhoqwa48adXKPCQna3wg=
-=jpJw
------END PGP SIGNATURE-----
-
---haaEsPDVn1u79Kw7--
+Reviewed-by: Trevor Gross <tmgross@umich.edu>
 
