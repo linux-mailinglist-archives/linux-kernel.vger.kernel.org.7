@@ -1,110 +1,140 @@
-Return-Path: <linux-kernel+bounces-723066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60893AFE24E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:18:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EEF4AFE253
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23565188E1E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:18:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 077AC587A9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9385238C21;
-	Wed,  9 Jul 2025 08:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE1D23B636;
+	Wed,  9 Jul 2025 08:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="TrccRNe4"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="K3uPXDRV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="P55Cnqb6"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805A12248B3;
-	Wed,  9 Jul 2025 08:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A7223B61B;
+	Wed,  9 Jul 2025 08:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752049094; cv=none; b=YyHVxbZaB943CsjgnsUzRmV9Hgy/7GRxf32/KpB8GxMI5rXYPfSyaknd/SRvosgN/9j3kxrQ4O4UNM4yjSFl1DIIjDFbFd7RckIjFP9aPh7xIkAdcHdPhBFMBGiAM/geDAeWta04epIE6zDedYC9i/w6Pdkw0zOS9CNruoKe5GU=
+	t=1752049099; cv=none; b=ozV3HkXv5y6RfGYIHZGCtfUF8R08VlMoHz2QC76lBjj9hFs1y4OTZiml1ui7XtO9SFrgBVPaOaUti2wVbQzpmkZOzRnPI+nWXNKr/nRnVt5MaBImLb4VazAnNV1/D9pIaI3u3neLTJhvv3185aDnXIAYofM8xU+6PSzVbmMjyUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752049094; c=relaxed/simple;
-	bh=9f/r6c0nBHbv8Dl8S+J8eeQaQPACDkzTRLiALBmX67g=;
+	s=arc-20240116; t=1752049099; c=relaxed/simple;
+	bh=qdmnmV4uNW0XHO9h6+yYMKBXbFkFRSmQBe0AP4s7ZHI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ii5SoPCo3c9vspucqPRDqxEhmaaclvJjaHgMY7HMMBRk1k7NuTTC7eQyRlMsuyC/BYHLEQEbboueS93W5FE527cmy9whwe8SirP8Gx3eV2K3wZZEPeh8WNxv4waLw4gUzgc0I2p3IZSnlV/Ho4Lec4GJRso12DjvDMx+gfMO5qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=TrccRNe4; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E9B5A103972A7;
-	Wed,  9 Jul 2025 10:18:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1752049089; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=cedKP5FELDjAWzwANcQdCs0mQOvaolg+wrJ11dvqRbU=;
-	b=TrccRNe4QeZECDf4jTL5oJQpYyrnh3/iIC0a9/2dz0cjd6sBLed6rgcPj/T0BLWtlCINJ/
-	A+XnJLY0FHKzGTXzG73y0Uy9Vc1xRqFmkuOcMuLCpSV7CcaWVz7OWYpf3HETUkJcVLb0i+
-	gcUs//3GkqWxKGGrP4ysp+XSbZVkOBFVQ6/hmTPwJi2COY7bmIjHwh4LC4ACKsELIoaNbf
-	kRebEz8HQsvEdBYHSpIEiBcOnBURyZ3H3PCNfvA6FymIGn5Rl2OddWaqisRHaOvjSgsUSv
-	OLQKluWVUpbynoZRAT/uLEJ381sxbgXROhB1R33vOsbhO9TgWOmsUf7xvaYXmg==
-Date: Wed, 9 Jul 2025 10:18:02 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.15 000/178] 6.15.6-rc1 review
-Message-ID: <aG4lussFC45kuFAD@duo.ucw.cz>
-References: <20250708162236.549307806@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GLiX885N4PFGrTomAPmaY3dEByhy6wDvmDeziRcDXklQGHVzJ7fScQFJpWN9CwOyflUz41NrGk7Q6h9SWNfDecH+G0i4F6dG9DwJ96I0dlXw0PCM7zL7y1DFds9tdXIBEWct31e61nwcmkzQbE5CcuKZjbStV/l4bHsrwfEeknM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=K3uPXDRV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=P55Cnqb6; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 0FC3E14002D1;
+	Wed,  9 Jul 2025 04:18:16 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Wed, 09 Jul 2025 04:18:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1752049096; x=1752135496; bh=ZOIP/PK4Of
+	02wFHsSrYd0YQrkxDF3i1HbgPLPbMZXqc=; b=K3uPXDRVC0ytw6bGgAdXvWDxdm
+	kO1UFHJdmkJDEHm2PWV/FE8pm0rX419L166slce+eXJrTqciYJU8n0u68TagnTHP
+	SCheS+TWWlJ2YR5ePhk75r4TTJjzMigjSs4zfrjRx1zQN9e2snvcQ/DKkxhGpYA/
+	nrOdcKDTuGC1U10ZsLjE/vL1Dc6IhXNlDk5YrCc0931elgx+QZaxUrBt9YZSTf1a
+	oNj8NsRnk7uHCR0OcZfK+0engag7Aqd4/oR75cwOE2eqVI9kOsimDvJsLz7uYE/V
+	yTjb9r4LvbttGgpqLoYCeWo+DLvPADRLAqZ1ntC9PoM5zQ4/gBcq23qERwcA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1752049096; x=1752135496; bh=ZOIP/PK4Of02wFHsSrYd0YQrkxDF3i1HbgP
+	LPbMZXqc=; b=P55Cnqb6NJOxWTFdyjQLA8gXP9LKYSy/QC0AKjmwFHWwz5ygIPF
+	s/qo0vuy3Tayct/tH11N53jcxp7wuUbs/qkZ71iSGsrIpsm0LtEsox7llZX/8ebx
+	Bbq6fMHB2L0AT2ZbUomxpfw6aphkHJ8m8inmCDWuwcTLf/uLqATOpIL28MJdQizt
+	20VvjQZ2ahP2m8TLQre6byI/xtqEtqEsnqgYPSFmmrbQBwia/36diUgyAw9QUSeG
+	sNvlRAlSMDyhtLJqQlUTin59pQsgtGuKd9u1lN+j5IbO109NQC/WFQ0MnVptM22I
+	OD4U6XHzhvAoiEGoH0uePQu59NW5QQLBQrg==
+X-ME-Sender: <xms:xyVuaANbzD4eGOivR6_uHTTtFZ9oKFutjubs5bkUU6JsKMtAUh_NkA>
+    <xme:xyVuaMeRKiJs7_ljGWL5t-Uc-83pesKTbYWsNKr6zjwIlVoknrY9hbVczRGh-aJAn
+    SvoxmslQKLnrA>
+X-ME-Received: <xmr:xyVuaPlypyJeztpl_khTmGtv0ySIW6pFfJAQSsio-IAEfhxcMQcKO26Ns0Sz>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefjedtiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcumffj
+    uceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehgedvvedvle
+    ejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhushhtvghr
+    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtg
+    homhdpnhgspghrtghpthhtohepudeipdhmohguvgepshhmthhpohhuthdprhgtphhtthho
+    pehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgruhdprhgtphhtthhopehshhgrfihngh
+    huoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhdrtggrrhhpvghnthgvrhes
+    lhhinhgrrhhordhorhhgpdhrtghpthhtohepjhgrmhgvshdrtghlrghrkheslhhinhgrrh
+    hordhorhhgpdhrtghpthhtoheplhgrrhhishgrrdhgrhhighhorhgvsehngihprdgtohhm
+    pdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheprhgrughuqdhnihgtohhlrggvrdhpihhrvggrsehoshhsrdhngihprd
+    gtohhm
+X-ME-Proxy: <xmx:xyVuaGxp2rlmJkVwF91q-0zyVFqVRE5Uq0s6gvEZiPT7Hqd7PIQ7JA>
+    <xmx:xyVuaKOhPDjavM4UjqZ6NNCLTlB6mOwK8sAgVsOf-fJsqhlX3i_VZQ>
+    <xmx:xyVuaPhN89wXHm_QtJbcksCWka33q7gwHVt_Ic9VzcFwBbA9DQTKkg>
+    <xmx:xyVuaC9gKLFc4cnXA0aQets8ZaTlCe7g1jT-NmKOD31mThTA3QYwoQ>
+    <xmx:yCVuaCyzhksSF136bh5I3FAWtJRaj6V8pnScMLLe3UB9mdNdLvsieBbX>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 9 Jul 2025 04:18:14 -0400 (EDT)
+Date: Wed, 9 Jul 2025 10:18:11 +0200
+From: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Larisa Grigore <Larisa.Grigore@nxp.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	"Radu Pirea (NXP OSS)" <radu-nicolae.pirea@oss.nxp.com>
+Subject: Re: linux-next: manual merge of the usb tree with the imx-mxs tree
+Message-ID: <2025070903-census-heavily-929a@gregkh>
+References: <20250709172138.34ffb49f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="PU+46YvjpyCCLK9V"
-Content-Disposition: inline
-In-Reply-To: <20250708162236.549307806@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
-
-
---PU+46YvjpyCCLK9V
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250709172138.34ffb49f@canb.auug.org.au>
 
-Hi!
+On Wed, Jul 09, 2025 at 05:21:38PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the usb tree got conflicts in:
+> 
+>   arch/arm64/boot/dts/freescale/s32g2.dtsi
+>   arch/arm64/boot/dts/freescale/s32g3.dtsi
+> 
+> between commit:
+> 
+>   06ee2f0e2180 ("arm64: dts: Add DSPI entries for S32G platforms")
+> 
+> from the imx-mxs tree and commit:
+> 
+>   d1b07cc0868f ("arm64: dts: s32g: Add USB device tree information for s32g2/s32g3")
+> 
+> from the usb tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-> This is the start of the stable review cycle for the 6.15.6 release.
-> There are 178 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Looks good to me, thanks!
 
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.15.y
-
-6.6 passes our testing, too:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.6.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
-Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---PU+46YvjpyCCLK9V
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaG4lugAKCRAw5/Bqldv6
-8gKKAJ9sHeCAAZfqZwE6K5CerdwSK5UKrACgoLgVS19oYrMr5BDH2FbDJPAOwhs=
-=m83F
------END PGP SIGNATURE-----
-
---PU+46YvjpyCCLK9V--
+greg k-h
 
