@@ -1,99 +1,106 @@
-Return-Path: <linux-kernel+bounces-723883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC634AFEBF9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:31:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E27EFAFEC0C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D3C6189032D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:29:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A4BB564080
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DB02E541B;
-	Wed,  9 Jul 2025 14:29:16 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41F92E6D33;
+	Wed,  9 Jul 2025 14:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="BU0Lh4cV"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CE42749D1;
-	Wed,  9 Jul 2025 14:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C892D2E610F;
+	Wed,  9 Jul 2025 14:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752071356; cv=none; b=RVkjctqcaZzjlj6Ywc5ytdDJbk/WZPeD/wBiaOBctvEfUHxDR1Xa11x7vtBvoaTmMm+4i8baV7C4DAxjtji2XjVNEv/hnU4sTDBxITox2DjKDWxYJwh2e1ToUWLZVqI8TkgRy7FfbJNI+7kHzRZ9eCQXSzDyqU3EhzcSQDeuwBo=
+	t=1752071415; cv=none; b=jPS3ivRyWwyMkhvYE4Rpb0tmWje3nXQFhaxtguvWYcoHgPhVPtzclk5cxs0j3PhEm5m3/o5ppTXcOraHizNgK/4bYV7q9ezV5nKpsnBdlVYEpkBXhGGAi67+fRQwIpJunVlLARv4DWet5DAQxQ9AxPwWBUi1MdzYGY0F0l4bFyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752071356; c=relaxed/simple;
-	bh=V0lpzKxUMlOgRWszx6Dn8TT6IP+mzIDuesFXdmIcfGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ajYzOIgrSfy7+hG5KPI1/ohZFJ/myTDEIrMOmTkKUEjkqx5Gqro5Fu4VlApjcCuCWdSHiQRLGcVhixrWpNfd0SvN2TbeRdNVz78RvwTdHcY3ot6uNGheocFPd+9tT1S0sSpvaSdfUqVb73uBIt2Dh8KfHa2cPDneXUboHsCBeio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf11.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id DF48E80209;
-	Wed,  9 Jul 2025 14:29:10 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf11.hostedemail.com (Postfix) with ESMTPA id D48272002C;
-	Wed,  9 Jul 2025 14:29:05 +0000 (UTC)
-Date: Wed, 9 Jul 2025 10:29:04 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Jens Remus <jremus@linux.ibm.com>, Steven Rostedt <rostedt@kernel.org>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa
- <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat
- <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
- Belgrave <beaub@linux.microsoft.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
- Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>, Sam
- James <sam@gentoo.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
- <gor@linux.ibm.com>
-Subject: Re: [PATCH v8 06/12] unwind_user/sframe: Wire up unwind_user to
- sframe
-Message-ID: <20250709102904.18cfd2ff@batman.local.home>
-In-Reply-To: <939e13b0-be32-4ec9-a40f-0ad421f63233@efficios.com>
-References: <20250708021115.894007410@kernel.org>
-	<20250708021159.386608979@kernel.org>
-	<d7d840f6-dc79-471e-9390-a58da20b6721@efficios.com>
-	<20250708161124.23d775f4@gandalf.local.home>
-	<a52c508c-2596-49d1-bbe8-8a92599714f6@linux.ibm.com>
-	<39cf3aab-7073-443b-8876-9de65f4c315e@efficios.com>
-	<7250b957-2139-4c03-9566-a6ed9713584e@efficios.com>
-	<20250709100601.3989235d@batman.local.home>
-	<939e13b0-be32-4ec9-a40f-0ad421f63233@efficios.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1752071415; c=relaxed/simple;
+	bh=YAldq9AC0L1eKgqS1rWvXdOf4l7f9PE1yyWoJp1WpLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l5TxZlSPo0kT0KnqhKe3ef8VtEyzWYzRXSltCmT8l3c3vmzoE0Djc4rupyOcE+QaOIEDHxp4QUXwjhTQCVG0vCvzSUPOivaxzDs5ZevxczN9v0YqGdKigrGWbYEgsUt8XTnzTThetxsz58KLzpHaQCHh6cR1H2Z2TpEnMPUtLjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=BU0Lh4cV; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ajTS+ah2xlTtyM+2OdyBW0mQCdQADRwx6tcLGItIUGs=; b=BU0Lh4cVcC9JYAhMHeec6iLzAT
+	8B5BDM6aSsgVyvlRIMF6YCm8hNDqSUb2nGDVOWOmgXMvbpfgML81+XLGjklzaaYdNmPIpIZNnReXE
+	XlOqfQTEeMzFTwwOKatkqx/5Kn5NqNQT5YPQalMmTq4IzcFAVHjTJG9Q5S2RwwqWa9at6i13H580M
+	bku1dmWB+UoihrDFufqoiIoFAmKf8H+67IYEVLSeyIScCP9VR+z3Jx01MAHmZYnaK5BC8EaDKx2Qy
+	gfctDV+yS+iGIo50Y7Si6JdllgeBE9inn4Dlo+524ULJ8HmSVIK2IM9sgxHLbjlNPBBddZkkO16va
+	GPhq0umw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:51968)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uZVo2-00086d-16;
+	Wed, 09 Jul 2025 15:29:54 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uZVnv-0002hv-0I;
+	Wed, 09 Jul 2025 15:29:47 +0100
+Date: Wed, 9 Jul 2025 15:29:46 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: lizhe <sensor1010@163.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, vladimir.oltean@nxp.com,
+	maxime.chevallier@bootlin.com, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: Re: Re: Re: [PATCH] net: stmmac: Support gpio high-level reset
+ for devices requiring it
+Message-ID: <aG582lPgpOr8oyyx@shell.armlinux.org.uk>
+References: <20250708165044.3923-1-sensor1010@163.com>
+ <52b71fe7-d10a-4680-9549-ca55fd2e2864@lunn.ch>
+ <5c7adfef.1876.197ece74c25.Coremail.sensor1010@163.com>
+ <aG3vj1WYn3TjcBZe@shell.armlinux.org.uk>
+ <5bb49dc0.6933.197ee28444e.Coremail.sensor1010@163.com>
+ <aG5ORmbgMYd08eNR@shell.armlinux.org.uk>
+ <4cfb4aab.9588.197eefef55f.Coremail.sensor1010@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 9b6yjpr56b45kor6fbfeph1db1oynkyn
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: D48272002C
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/SrnEA40U3P0LAAyelCmkzNpM/l8l8jIM=
-X-HE-Tag: 1752071345-248144
-X-HE-Meta: U2FsdGVkX1+E22O0aliM1G0Lz0JqUW910NYsNWRxXRhUA/5nfjua72CF06pff9Q7sWK0hUUE0N0YtndxRUUEpQ38cjQ+b7b5v/dy7wT1jmzOuC1nrAR362VDnaDz8rNFAiz2f4v248eHSfCKfhxWuhCL3Kj1iP3cy+bTc+c2XJM3I8C4c/CWvRhZwcOtNHE6EHd50GM21VRVZgSgY/b9cbPeVM0OySTBZYc4O9Sd4R1wuT6yHZsSI07KRLPRl0Ea3xhhgCFTqkJFuCmUTi8Gxh8Yp7Gv9s9L564Ql9SLoXekdrpJju8t4Da66qB2U/TgtvGWAr7Xxh7KA09Wsn41suNTUPbRO/QJJ9kGib94e/4xal40YOy7km9ktjM3Lh4X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4cfb4aab.9588.197eefef55f.Coremail.sensor1010@163.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, 9 Jul 2025 10:10:30 -0400
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+On Wed, Jul 09, 2025 at 07:42:55PM +0800, lizhe wrote:
+> Hi,
+>     i have already declared it in the DTS.
+> 
+>     &gmac {
+>             snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_HIGH>;
+>     };
 
-> Indeed it's only kernel internal API, but this is API that will be
-> expected by each architecture supporting unwind_user. Changing
-> this later on will cause a lot of friction and cross-architecture churn
-> compared to doing it right in the first place.
+Active high means that the reset is in effect when the output is at the
+logic '1' state. So, gpiod_get_value*() will return the same as
+gpiod_get_raw_value*().
 
-The changes you are suggesting is added info if an architecture needs
-it. That is easy to do. All you need is to add an extra field in the
-state structure and the architectures that need it can use it, and the
-rest can ignore it.
+Active low means that the reset is in effect when the output is at the
+logic '0' state, and in that case the return value of
+gpiod_get_value*() will return true when the reset is active (at logic
+'0' state) whereas gpiod_get_raw_value*() will return zero.
 
-Again, I'm not worried about it. If you want to send me a patch, feel
-free, but I'm not doing this extra work, until I see a real problem.
-
--- Steve.
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
