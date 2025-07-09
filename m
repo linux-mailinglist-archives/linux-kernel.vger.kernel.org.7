@@ -1,115 +1,109 @@
-Return-Path: <linux-kernel+bounces-724647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97554AFF55F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:27:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58834AFF567
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 01:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ECEA3B02C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:26:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 522871C465F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 23:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F24F26A0E0;
-	Wed,  9 Jul 2025 23:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16D82609D9;
+	Wed,  9 Jul 2025 23:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2g1Q+zI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cirGtbSo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5280E55B;
-	Wed,  9 Jul 2025 23:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472D733993;
+	Wed,  9 Jul 2025 23:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752103618; cv=none; b=ATnfS/vCSPQtBs6wTdS2WGFNVi8P016N0NTPS8qMHJfedD9lAHARpvUEN1RXV0TRxfdO66gesD2HGSYCvHBxGh6n8Rfdi+pCt16ktC7qe+4cjDfIGUKLpW/cibDNZf59tWNi+1w+I8ujQdesoIDvB2PSvfDPqR9vhcRKrRfO78w=
+	t=1752103835; cv=none; b=Kt+NUV68O5iqWttNbeODPeb+KwwUEC3PlqsUkMlB01/aJDsRMM7LWCq2vXz0KmUOChb3skPDXyxIWv1yW2a4kvC+nmGZYUauG5eomdD0fcKIMoAPCLycQPIzuxq1yvQfPwO+YaW4omV+gpuQe+r7J/G5IfzakBiVyssTipgJOpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752103618; c=relaxed/simple;
-	bh=IPEkOrMLiuYPZNTOAJdwlYClp6f/Px6JZvPwRaELaS0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=ZFtgBOjGWKfV/HlciPzMb9BdRoTH8eoRKtyq6MYxq/wRnwsDFtGCL3yAbS2/wR6VI/3lSvacWvgsAU+Pj2/lws4LZkuADwE6HAbZ71DUo3pcWKNhXCxLOw/FIaC17Zzk0DHl4rGZCymJT4i3pZKYeGjlP3OdvPuDwXaAmPz3aiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2g1Q+zI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FF2DC4CEEF;
-	Wed,  9 Jul 2025 23:26:55 +0000 (UTC)
+	s=arc-20240116; t=1752103835; c=relaxed/simple;
+	bh=XuaRcAgoN0AxdCzQdQl12wDD/O9qp7Ie+TcWhj5ipYw=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=ZUAcgAN2F/YvMRyMPtTxaM7g8DLTi9gj2IXtWTBT0DDq7VE8E3h4FXevGSwwhLaXCN5VllYW0F9/oEuEEENK/cUrYy1EA1J38h3Q3a1qvihU7lJnbvdjzHJ+eUpEx5LAUE5x93MRV9Lfb7mdXazJRLDIsjvJJ2yrp3piw7/cmSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cirGtbSo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9515BC4CEEF;
+	Wed,  9 Jul 2025 23:30:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752103618;
-	bh=IPEkOrMLiuYPZNTOAJdwlYClp6f/Px6JZvPwRaELaS0=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=b2g1Q+zIZl/+BRBTP5p6IPueQ9i/noMS14SUk6j/a4rs6rm+xarisc4yVYbX3CvTa
-	 b/PTn9nuKDQSjB90es6LVAdiO7XZoLirdDYVav//SYbp6B6rVYx6YiVpRly0bx/1Ee
-	 uM6l57S4G/17nCoGXyASois71bPjvogxbE4JSKheGnN8PAd52n2VT5ytybnE7l54fb
-	 tiwvzwoa1E9R8juCK7Tqd0Bkx1Sm+i1IHwhvSE+Qhp5GDK0s0/50osQAnF3ZCuWVmW
-	 a+4oWt23yWtzwNE6dIGKbL9tdXh9+qNZh3r+Gsxp5ZOBjvZDEeV+iHFPidD2t5BZbv
-	 77sm08E8miyGg==
+	s=k20201202; t=1752103834;
+	bh=XuaRcAgoN0AxdCzQdQl12wDD/O9qp7Ie+TcWhj5ipYw=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=cirGtbSoLuEJcfpwna9P4x6JMFaId24y2UJdczDxKpWwiCg9WqZ666J9+JNccM45J
+	 waVTWcURXNCjfngjTk4gERXXI/gNIRb9I/XblhDlq2fv1ZZIpe9/5cfXKX/L0RlGCy
+	 +wdRWgeFANN2xogqpl89vQFMkucl4aWeOSL9eObhap39QBpWUMbjlYWJeSsOxnM/yc
+	 qnyb/hE1YuFc/qQGeoB1GibvoGF+ZEiyWxbiwcuW65Hy6qCq6wCFOOEBzQzLMrY0uw
+	 KnVO3f9r2kd1EXumnByvoEdjXafq0VTJXKOPWAAi+5seFWbN+swkgmT9sW4y+/8/Br
+	 524ltuSgdFGtA==
+Date: Wed, 09 Jul 2025 18:30:33 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 10 Jul 2025 01:26:53 +0200
-Message-Id: <DB7WW886UVAJ.I58517CYL8G7@kernel.org>
-Subject: Re: [PATCH v12 1/4] mm/vmalloc: allow to set node and align in
- vrealloc
-Cc: "Vitaly Wool" <vitaly.wool@konsulko.se>, "linux-mm"
- <linux-mm@kvack.org>, "Andrew Morton" <akpm@linux-foundation.org>, "LKML"
- <linux-kernel@vger.kernel.org>, "Uladzislau Rezki" <urezki@gmail.com>,
- "Alice Ryhl" <aliceryhl@google.com>, "Vlastimil Babka" <vbabka@suse.cz>,
- "rust-for-linux" <rust-for-linux@vger.kernel.org>, "Lorenzo Stoakes"
- <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- "Kent Overstreet" <kent.overstreet@linux.dev>,
- <linux-bcachefs@vger.kernel.org>, "bpf" <bpf@vger.kernel.org>, "Herbert Xu"
- <herbert@gondor.apana.org.au>, "Jann Horn" <jannh@google.com>, "Pedro
- Falcato" <pfalcato@suse.de>
-To: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250709172345.1031907-1-vitaly.wool@konsulko.se>
- <20250709172416.1031970-1-vitaly.wool@konsulko.se>
- <CAADnVQ+bikqCO7D+5_rAtiJXv3F6xn=0_hgGH5CkoTPpdi8j6Q@mail.gmail.com>
- <14b08e7c-c2e8-435c-a1dd-bd51cfb42060@kernel.org>
- <CAADnVQ+qCNfm3aucBrkXRXrUjjYeYQb09Oobx+pgOXNDny4s8w@mail.gmail.com>
-In-Reply-To: <CAADnVQ+qCNfm3aucBrkXRXrUjjYeYQb09Oobx+pgOXNDny4s8w@mail.gmail.com>
+MIME-Version: 1.0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: vkoul@kernel.org, linux-phy@lists.infradead.org, conor+dt@kernel.org, 
+ jyxiong@amazon.com, devicetree@vger.kernel.org, anishkmr@amazon.com, 
+ kishon@kernel.org, linux-kernel@vger.kernel.org, miguel.lopes@synopsys.com, 
+ krzk+dt@kernel.org
+To: Karthik Poduval <kpoduval@lab126.com>
+In-Reply-To: <20250709221724.1276428-2-kpoduval@lab126.com>
+References: <20250709221724.1276428-1-kpoduval@lab126.com>
+ <20250709221724.1276428-2-kpoduval@lab126.com>
+Message-Id: <175210383317.4144520.12202639911629037597.robh@kernel.org>
+Subject: Re: [PATCH 2/2] phy: dw-dphy-rx: Add dt bindings for Synopsys MIPI
+ D-PHY RX
 
-On Thu Jul 10, 2025 at 1:14 AM CEST, Alexei Starovoitov wrote:
-> On Wed, Jul 9, 2025 at 3:57=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
- wrote:
->>
->> On 7/10/25 12:53 AM, Alexei Starovoitov wrote:
->> > On Wed, Jul 9, 2025 at 10:25=E2=80=AFAM Vitaly Wool <vitaly.wool@konsu=
-lko.se> wrote:
->> >>
->> >>
->> >> -void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
->> >> +void *vrealloc_node_align_noprof(const void *p, size_t size, unsigne=
-d long align,
->> >> +                                gfp_t flags, int node)
->> >>   {
->> >
->> > imo this is a silly pattern to rename functions because they
->> > got new arguments.
->> > The names of the args are clear enough "align" and "node".
->> > I see no point in adding the same suffixes to a function name.
->> > In the future this function will receive another argument and
->> > the function would be renamed again?!
->> > "_noprof" suffix makes sense, since it's there for alloc_hooks,
->> > but "_node_align_" is unnecessary.
->>
->> Do you have an alternative proposal given that we also have vrealloc() a=
-nd
->> vrealloc_node()?
->
-> vrealloc_node()?! There is no such thing in the tree.
-> There are various k[zm]alloc_node() which are artifacts of the past
-> when NUMA just appeared and people cared about CONFIG_NUMA vs not.
-> Nowadays NUMA is everywhere and any new code must support NUMA
-> from the start. Hence no point in carrying old baggage and obsolete names=
-.
 
-This patch adds it; do you suggest to redefine vrealloc_noprof() to take al=
-ign
-and nid? If we don't mind being inconsistent with krealloc_noprof() and
-kvrealloc_noprof() that's fine I guess.
+On Wed, 09 Jul 2025 15:17:24 -0700, Karthik Poduval wrote:
+> Add DT Bindings for Synopsys D-PHY RX, presently tested on version 1.2
+> 
+> Signed-off-by: Karthik Poduval <kpoduval@lab126.com>
+> ---
+>  .../bindings/phy/snps,dw-dphy-rx.yaml         | 44 +++++++++++++++++++
+>  MAINTAINERS                                   |  7 +++
+>  2 files changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/snps,dw-dphy-rx.yaml
+> 
 
-FWIW, I prefer consistency.
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/snps,dw-dphy-rx.yaml: ignoring, error in schema: properties: reg
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/snps,dw-dphy-rx.yaml: properties:reg: [{'minItems': 2}, {'maxItems': 2}] is not of type 'object', 'boolean'
+	from schema $id: http://json-schema.org/draft-07/schema#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/snps,dw-dphy-rx.yaml: properties:reg: [{'minItems': 2}, {'maxItems': 2}] is not of type 'object', 'boolean'
+	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/snps,dw-dphy-rx.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
+ 	 $id: http://devicetree.org/schemas/phy/snps,mipi-dphy-rx.yaml
+ 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/snps,dw-dphy-rx.yaml
+Documentation/devicetree/bindings/phy/snps,dw-dphy-rx.example.dtb: /example-0/dw-dphy@900000040: failed to match any schema with compatible: ['snps,dw-dphy-1p2']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250709221724.1276428-2-kpoduval@lab126.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
