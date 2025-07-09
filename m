@@ -1,107 +1,100 @@
-Return-Path: <linux-kernel+bounces-723842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE597AFEB57
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:10:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8904CAFEB91
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 16:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3069B401C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:09:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 150A05C30EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FCD2E7F35;
-	Wed,  9 Jul 2025 14:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976D52E8894;
+	Wed,  9 Jul 2025 14:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="sNp28bkW"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J3OokrYm"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461FE2E7F21
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20A92E7F21
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 14:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752070002; cv=none; b=NpDIDL/r7qJRjLOQVUz7W07VNQA+yxkFKeBAlpdT3/d5jPYyzyBCdY9+ArhoFzQLXNY7ix30M9BvMYdlSIRv2VoqF6/RrYKzPad9rA0cUDDCGS9adLi4GYfFhIy+7XIM1jfoFxv5PUo5PySNkRnXu32G70VWfKcLx2yBXmb7uEM=
+	t=1752070016; cv=none; b=c/F3zV0dUomXl7/VPhG/k4VCcNR0U7q+omQWaJCFnd0yBSuagi+RoerwR5HpaaGaubhdHjyHvIi7pBIKCJRBVD4BG2QTRhRuMdBFQyVbkYj1IG7KFaVqEtRQhiEobbA5Dl9td3ld0KXm9DypyO/RTCdSMcTWnLn1WSJNaHvXUjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752070002; c=relaxed/simple;
-	bh=656Vgjt0F/Iys54NK/hbJwcusVSIdUYU+XtWq40qi18=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eoTeXyqziFaxyEyXz+lrWBkpanUaPBW4imWJgAEGnz8JKs/jy0Yw0nN1YNjikaHbPINNMBSmAbhv6kISYtTy5S6RKZyseN5cQY9nEL+I1NYjXRdFK6yIjdciEcqPPVqWGR2vpFX0HZHIVPw3mXUZfaf/a0I/q4p5wMZpYDuu+kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=sNp28bkW; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6fada2dd785so78262636d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 07:06:38 -0700 (PDT)
+	s=arc-20240116; t=1752070016; c=relaxed/simple;
+	bh=hkntFlFAHX/8LClrortGJsunMQhI9Rf+tcTEWjk0YoQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=tGLYoGNASKWkdR/GEwhFrcrwrp9SfWFyf13Ie19mBv21YMoTs4iqzK46UAInKkM+GScij7AGyh96j1lTYYjMYswOGrYZL2LxKuL+IXBSW46xzjmHx3yl1nRbS3bjhL5L+uDP3CWaQ+pBkh9WF2At958Veb/Og/Mag5pto/+AIQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J3OokrYm; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-311e98ee3fcso1005037a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jul 2025 07:06:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1752069998; x=1752674798; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=656Vgjt0F/Iys54NK/hbJwcusVSIdUYU+XtWq40qi18=;
-        b=sNp28bkWQ/FcVJcbScMzJKE8f+EP/jK/3Usj+HPwvme/PcSuc88PSxYQQNDKhWuG0U
-         HcBRcb3wcM1PTeQ08RqiEAN+kRea8b6zsJv9+CDpLY6NuxkpE/hrwcSRra3LktpL0bv5
-         sCsamtwUy1oj0ojxlK8hFTBfZnsVjFV9zEu6mRNQE/5mmcnGmXSQZ5RvsUmcV6PNcma2
-         btvyF7C8rr8NoLleJNslYL7HXRqfmcIB7fgwA0b6E3SpCDHgbfOVoKm+mK9v2jYX6wCz
-         pxbx01HXRrTLjMafPpco4jF/OUc8LJToqMEWKfcwTZOHgEMBtPjlngpf1LwJFGjAExzj
-         Igng==
+        d=google.com; s=20230601; t=1752070014; x=1752674814; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=w8fWPt2BfkTPkJ9RpJOZFh1liGwFojbw+uk1VvqODzg=;
+        b=J3OokrYmX6HWOzk9nRg/w+JEis1zh89IA6vQ0vjsG3C1JXQBLB8+V5vqVFp//q03DB
+         6CFlmbWqfvVgiz7fwoFDkssgbM5LvzaFsLOdmlzKO1RQnQiSHrJJMNb6QgW5xauC7E0G
+         KRGEWX2smoIWPYM0uxPYKsNY6gjEYjrpUeCAczZzGK9D8zYbram4J9Luzj0CZQbK1M0h
+         ijAX7u4cON4dhGX4YQ/pW4BT9YplgHSnAdb74vrXgxIXdKCQyOmKY6Y0fXdabp6V8CBa
+         UBcOICRQV0rDtgfm+PSNNCcJzhuo4y7FaFtz0oDW0U3GlJ4Hbp2+yrv1bq9eTplen0t1
+         EifA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752069998; x=1752674798;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=656Vgjt0F/Iys54NK/hbJwcusVSIdUYU+XtWq40qi18=;
-        b=t5i3+5YjvwmU8TvXh1Q3Vua3pakNxY3CtJGOCynCuxLuGilC5tZ1i40qj7i6K9zFRR
-         WKZwIhcgbBDiI2d6SU62jvFcZSiLuZmGYBOJlK5CE4vHSKzwxFF+fwt+g5N+rzta8o7Z
-         m8gtnhVi6CIWpI73z9S+9BKTuIfsonDpjQxwhqPDa8RGijd0Z2fOlJ9bMbuPSPr9uzIo
-         tqjvNNPoJxQzsWxguCL/6yF3M8Acg6TaKoz5SkckgI5osfk9o/HqVGkLIUCPAzwhiMOc
-         P2W5WkZcGKirg4OUyjljhmx6KRx9/oS+Z7bKByLv+ALIiw+ru1KsZf7HwzlY5x9T3ADz
-         qajw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtFfrBaYLS8I0UpQ007PMbvfChArftZ68i0oSH4Cs00slR/XlUG+ou2qioMt/Xst0ZmlKiaAWRk1XLBvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYXoUPvnptr9s0J95Sji0+uQJYTmfOXbet0Kbbsu1KJwwR/fOU
-	H1/EXAacogLLxt0ed0f2PTjV4lCT6NQ9pFSu345QotkDcBHlGheQQZL8RWRnrx6G4OE=
-X-Gm-Gg: ASbGncs/PMuxBaIBxw+ZMVbE4BbNKJKK1qJu1vOQYdL602q2qQ4CMA/M1TjA8jx9Rn0
-	LSeJCuO7wD4+1pqmOZGohCZH7U43hEOLTeWh4kr/HbUnWQ8fLueQm+lHBiNQhQHeQh+mUQGIqxT
-	OKohBWC09fFeXKGqkHCnZtajcJzuL03vfVC1f5TeISC4pe8ULNJ1ROSyiz/hB/fYvzzQHJlCozv
-	0pAFMBgYvOp08qPn9oMbYP0SP+20/WODvWpgEHiBeUh1M7Ru8XJV0EJ0rfTl2M5z5Rjn2/wliB9
-	BRcCXf5YiLNeh4VY+FUloukrRakHSyAlN9sjxhgweCw=
-X-Google-Smtp-Source: AGHT+IGXZd6H4Kkpfx6dM+K4pFtqC4HUPrp+lQt3iGZRub8DP9kRV2d9wVb5zcj0U+N0mplxba6xWA==
-X-Received: by 2002:a05:6214:3bc8:b0:6fb:5f1d:bf8c with SMTP id 6a1803df08f44-70494e89f20mr923456d6.11.1752069997580;
-        Wed, 09 Jul 2025 07:06:37 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:600::1:587e])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-702c4ccd65dsm91355526d6.37.2025.07.09.07.06.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 07:06:36 -0700 (PDT)
-Date: Wed, 9 Jul 2025 10:06:35 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Vitaly Wool <vitaly.wool@konsulko.se>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, Nhat Pham <nphamcs@gmail.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>
-Subject: Re: [PATCH] mm: zswap: add myself back to MAINTAINERS
-Message-ID: <20250709140635.GA56533@cmpxchg.org>
-References: <20250709123438.794466-1-vitaly.wool@konsulko.se>
+        d=1e100.net; s=20230601; t=1752070014; x=1752674814;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w8fWPt2BfkTPkJ9RpJOZFh1liGwFojbw+uk1VvqODzg=;
+        b=PT9c3Ir3YSF7uNV8cKS9BX3nico8CKwaoiC10a+/dc0F1Ersu2Ep4BVBjHF1yyFy6C
+         7IwIu49vw9v2mZ4WPA2ZsEDrR9TU/NT5ZFqliEa+Tiidsnjc3e2ZRbRHVC4OTsbdxq6s
+         Xh8faoFiI6fbQl4x0Nz0+BKDlYY7KjE/WOzFjZimefyaSKqV5zDZCHbyVwjIcpSKjaNe
+         JrVRKozRTRoFfInaA65RA5uX+5tvAeUAt/ggMMeBjXaP+SVYtgaecibmqM29TKFmkvXz
+         nxTyeN0TNmhl3KBiuAfJjFY/NRuyaZ8tg8Zz2MZ4/Lo7AAKB76R+Xz0/LeQBr/jaTDlB
+         E8lA==
+X-Gm-Message-State: AOJu0Yzq3p3JDCEp/nBYfHsnfWC7bNgJHGkuXvKvQ3GK/qPofbzRkW95
+	gUXef8Flh5Kf8SHYp/xFpH2vl9C9JQgearoF4WxhZ2LtUXWFjbySk1dTKVLy6vPGhMusL4Nkh+t
+	sd/Y16g==
+X-Google-Smtp-Source: AGHT+IGIWsx7d/E56vX8/ELK8FvDCsCc7kZDsZlRa7N3LnxbBm/kaiz6qFgCJN+q7ZZTN94p0dGqXi8ZWKw=
+X-Received: from pjbof13.prod.google.com ([2002:a17:90b:39cd:b0:30a:31eb:ec8e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:ec85:b0:302:fc48:4f0a
+ with SMTP id 98e67ed59e1d1-31c3050462dmr4342914a91.0.1752070013937; Wed, 09
+ Jul 2025 07:06:53 -0700 (PDT)
+Date: Wed, 9 Jul 2025 07:06:52 -0700
+In-Reply-To: <20250709033242.267892-12-Neeraj.Upadhyay@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250709123438.794466-1-vitaly.wool@konsulko.se>
+Mime-Version: 1.0
+References: <20250709033242.267892-1-Neeraj.Upadhyay@amd.com> <20250709033242.267892-12-Neeraj.Upadhyay@amd.com>
+Message-ID: <aG53fJ9VlLxurnKW@google.com>
+Subject: Re: [RFC PATCH v8 11/35] x86/apic: KVM: Move lapic get/set helpers to
+ common code
+From: Sean Christopherson <seanjc@google.com>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: linux-kernel@vger.kernel.org, bp@alien8.de, tglx@linutronix.de, 
+	mingo@redhat.com, dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, 
+	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com, 
+	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org, 
+	hpa@zytor.com, peterz@infradead.org, pbonzini@redhat.com, kvm@vger.kernel.org, 
+	kirill.shutemov@linux.intel.com, huibo.wang@amd.com, naveen.rao@amd.com, 
+	kai.huang@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Jul 09, 2025 at 02:34:38PM +0200, Vitaly Wool wrote:
-> The patch removing me from MAINTAINERS was sent when I was on a
-> winter vacation. Missed it then, my bad, but never acked it either.
+On Wed, Jul 09, 2025, Neeraj Upadhyay wrote:
+> Move the apic_get_reg(), apic_set_reg(), apic_get_reg64() and
+> apic_set_reg64() helper functions to apic.h in order to reuse them in the
+> Secure AVIC guest APIC driver in later patches to read/write registers
+> from/to the APIC backing page.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> ---
 
-The maintainer change was based on an influx of code contributions by
-new shareholders, but also an extended period of unresponsiveness by
-the previous maintainers on these new changes.
-
-You flagging this change 1.5 years later is sort of a case in point.
-
-Anyway, the other two maintainers acked it. I'm comfortable going with
-majority vote, and keeping the maintainer list as-is.
-
-Thanks
+Acked-by: Sean Christopherson <seanjc@google.com>
 
