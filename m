@@ -1,264 +1,711 @@
-Return-Path: <linux-kernel+bounces-724578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C8D1AFF483
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:16:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52BC9AFF486
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Jul 2025 00:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE6D75A0EB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:16:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FCEE5871FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 22:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5940323B61D;
-	Wed,  9 Jul 2025 22:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00F024418F;
+	Wed,  9 Jul 2025 22:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="U8KtgA7f"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=lab126.com header.i=@lab126.com header.b="nj81taxy"
+Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261A6801
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 22:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3302F801;
+	Wed,  9 Jul 2025 22:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752099400; cv=none; b=jGYg8l14MUOtnhn2khhznvDCB3XGPEGAWiQAXY+OBpihmn/tft8QosE73ET9bow4ZeWPQFn8W+bLNrmeGah66iwAQ3Aca/oZ9FBTZirw8l4Mafx9AusJil/cVHGDHNpO7U2BC9/jZYwhXB78Z3Wln35cLnhxdxndpimXDR3cOxc=
+	t=1752099457; cv=none; b=cb0UxBKUfx5zLnbCn9y8F0DyRoXitK3/Nn3Pka4FV7QbyAySE4crfevj7N8yz+khWyJRgH2YPldaNs3LNxu1wn/bqpxwyU96TMyyDSBZfzoq4Q+ezYzYB3lWP0fL03nPJ2TFku/CRc+nQHTNNDB/VQdx/JUcL6l+MwxAgVh/dok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752099400; c=relaxed/simple;
-	bh=8zdAVsojbnQtCEVi9cTOyfUNw8mbMpmwW+XR6xMrJEw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BWVroLTDFQ4T1uw/qz/foU7QaHk+3EdPOMg531zU+i6bC6u/aP4JMjBHWhMFZ7cxYkM2EO+WvEoHhkCpAEu2GNWUcE8mNYX/wE7tBbU3GE8tIKt1VWrYxHOFQQuAebOTaP5r+RE+TzApY+AQKi4mRxV2jQ7bGj566fsJpsCR+4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=U8KtgA7f; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 569MGKFP1326375;
-	Wed, 9 Jul 2025 17:16:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752099380;
-	bh=JIbyMx4pUQJaQizBCeoW8CblQcIuSEi6aEA0o/7zXuo=;
-	h=From:To:CC:Subject:Date;
-	b=U8KtgA7f0G7/Q5k60eGmmtYwDl/dSwlZeQt7UoYwuDwgLDO2fv4ctxpiOIX2KqO3F
-	 mVYDjZZJ9NqtZQJP8uCH9N2w6CjEDY5dtRyADMVEU+5cDbIlAGOwoNS3p++sK0pR/m
-	 sFykixi1k3aX3DmGfA0RuSDl0VHwJAuvynKW7Qww=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 569MGKxe555986
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 9 Jul 2025 17:16:20 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 9
- Jul 2025 17:16:19 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 9 Jul 2025 17:16:19 -0500
-Received: from uda0506412.dhcp.ti.com (uda0506412.dhcp.ti.com [128.247.81.19])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 569MGJuI207024;
-	Wed, 9 Jul 2025 17:16:19 -0500
-From: Kendall Willis <k-willis@ti.com>
-To: <nm@ti.com>, <kristo@kernel.org>, <ssantosh@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <ulf.hansson@linaro.org>, <vigneshr@ti.com>, <d-gole@ti.com>,
-        <vishalm@ti.com>, <sebin.francis@ti.com>, <msp@baylibre.com>,
-        <khilman@baylibre.com>, <k-willis@ti.com>
-Subject: [PATCH v3] firmware: ti_sci: Enable abort handling of entry to LPM
-Date: Wed, 9 Jul 2025 17:16:19 -0500
-Message-ID: <20250709221619.2237699-1-k-willis@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1752099457; c=relaxed/simple;
+	bh=IPE/QsHlsag4SiKmbP4tnOiUX/t6IBwNmnBMMwAzH8o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L4bCogyHjZGk5oFueOnUEkQdyuSSm5DNusA2v9wk3GyE+ly+GXcqCtEQDzToc7Pk+alAQqt/DyocYgth/vJXwyu+wNCxbEWt72SZKC8Pyh51Seg2AcBoxZ8p/z5UUrUuFEXKyzWVPC8f7XCofU/7rUu71cgnnIL7b81tzAs4EOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lab126.com; spf=pass smtp.mailfrom=lab126.com; dkim=pass (2048-bit key) header.d=lab126.com header.i=@lab126.com header.b=nj81taxy; arc=none smtp.client-ip=99.78.197.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lab126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lab126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=lab126.com; i=@lab126.com; q=dns/txt; s=amazoncorp2;
+  t=1752099455; x=1783635455;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=6I0/pA1YJ4nL2BLkVcWVaXIQ5lSfcGJfu8j65+5jWWM=;
+  b=nj81taxyms502kdNVY7XiGO8+UxyAfKsH+8lfcuzflpcxCIUMsMPOCMg
+   KzCqZ2xWYEofRIi1KwSp5Q+2Ffqnr4hU4q/nMn2YElXQFIU6/AFpb0R8S
+   amm391d6YNtOjM8RNiFOqK8/n0YnE2zb7liNRQIpaJ6tNCYAQzNFKrMWh
+   bfSmVyL8k8SZ3Z2UmvG9d1BPE2If8fx6hXfKJse+2j30s5qgYIinThwIC
+   H4gByWsI6ydWXtzCHYm5Nx1DCF0d8dRZm8GheHIh+xLWJkUqU+LPMh/ej
+   JDqkt5ubiEkpLQmZAvjrYVffZ9ozbls3zEk03llOk2lXoFCRR+tGViqfL
+   g==;
+X-IronPort-AV: E=Sophos;i="6.16,299,1744070400"; 
+   d="scan'208";a="213696453"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 22:17:34 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:61978]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.61.144:2525] with esmtp (Farcaster)
+ id c331c799-ffc8-443a-9eca-e1219f9f9c10; Wed, 9 Jul 2025 22:17:34 +0000 (UTC)
+X-Farcaster-Flow-ID: c331c799-ffc8-443a-9eca-e1219f9f9c10
+Received: from EX19D007UWB001.ant.amazon.com (10.13.138.75) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 9 Jul 2025 22:17:34 +0000
+Received: from u1cb251c9c70150.ant.amazon.com (10.68.99.17) by
+ EX19D007UWB001.ant.amazon.com (10.13.138.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 9 Jul 2025 22:17:33 +0000
+From: Karthik Poduval <kpoduval@lab126.com>
+To: <jyxiong@amazon.com>, <miguel.lopes@synopsys.com>, <anishkmr@amazon.com>,
+	<vkoul@kernel.org>, <kishon@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-phy@lists.infradead.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>
+CC: Karthik Poduval <kpoduval@lab126.com>
+Subject: [PATCH 1/2] phy: dw-dphy-rx: Add Synopsys DesignWare D-PHY RX
+Date: Wed, 9 Jul 2025 15:17:23 -0700
+Message-ID: <20250709221724.1276428-1-kpoduval@lab126.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-ClientProxiedBy: EX19D039UWA001.ant.amazon.com (10.13.139.110) To
+ EX19D007UWB001.ant.amazon.com (10.13.138.75)
 
-The PM co-processor (device manager or DM) adds the ability to abort
-entry to a low power mode by clearing the mode selection in the
-latest version of its firmware (11.x). The following power management
-operation defined in the TISCI Low Power Mode API [1] is implemented to
-enable aborting entry to LPM:
+Add support for Synopsys DesignWare MIPI D-PHY RX v1.2. The driver
+supports data rates from 80Mbps to 2500Mbps.
 
-TISCI_MSG_LPM_ABORT
-Abort the current low power mode entry by clearing the current mode
-selection.
-
-Introduce LPM abort call that enables the ti_sci driver to support abort
-by clearing the low power mode selection of the DM. This fixes behavior
-from the DM where if system suspend failed, the next time system suspend
-is entered, it will fail because DM did not have the low power mode
-selection cleared. Instead of this behavior, the low power mode selection
-will be cleared after Linux resume which will allow subsequent system
-suspends to work correctly.
-
-When Linux suspends, the TI SCI ->suspend() call will send a prepare_sleep
-message to the DM. The DM will choose what low power mode to enter once
-Linux is suspended based on constraints given by devices in the TI SCI PM
-domain. After system suspend completes, regardless of if system suspend
-succeeds or fails, the ->complete() hook in TI SCI will be called. In the
-->complete() hook, a message will be sent to the DM to clear the current
-low power mode selection. This is necessary because if suspend fails, the
-low power mode selection in the DM is not cleared and the next system
-suspend will fail due to the low power mode not having been cleared from
-the previous failed system suspend.
-
-Clearing the mode selection unconditionally acts as a cleanup from sending
-the prepare_sleep message in ->suspend(). The DM already clears the low
-power selection automatically when resuming from system suspend. If
-suspend/resume executed without failure, clearing the low power mode
-selection will not cause an error in the DM.
-
-The flow for the abort sequence is the following:
-   1. User sends a command to enter sleep
-   2. Linux starts to suspend drivers
-   3. TI SCI suspends and sends prepare_sleep message to DM
-   4. A driver fails to suspend
-   5. Linux resumes the drivers that have already suspended
-   6. Linux sends DM to clear the current low power mode selection from
-      TI SCI ->complete() hook
-   7. DM aborts LPM entry by clearing the current mode selection
-   8. Linux works as normal
-
-[1] https://software-dl.ti.com/tisci/esd/latest/2_tisci_msgs/pm/lpm.html
-
-Signed-off-by: Kendall Willis <k-willis@ti.com>
+Signed-off-by: Karthik Poduval <kpoduval@lab126.com>
 ---
-Series has been tested on an SK-AM62B-P1 board. Normal suspend/resume
-has been verified. Abort was tested by adding an error into the TI SCI
-suspend hook.
+ drivers/phy/Kconfig       |  11 +
+ drivers/phy/Makefile      |   1 +
+ drivers/phy/phy-dw-dphy.c | 575 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 587 insertions(+)
+ create mode 100644 drivers/phy/phy-dw-dphy.c
 
-Link to v2:
-https://lore.kernel.org/all/20250709205332.2235072-1-k-willis@ti.com/
-Link to v1:
-https://lore.kernel.org/all/20250627204821.1150459-1-k-willis@ti.com/
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index 58c911e1b2d2..34c245ca5d12 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -101,6 +101,17 @@ config PHY_NXP_PTN3222
+ 	  schemes. It supports all three USB 2.0 data rates: Low Speed, Full
+ 	  Speed and High Speed.
 
-Changes from v2 to v3:
-  - added links to previous series and the changes between them
-
-Changes from v1 to v2:
-   - rebase on linux-next
-   - drop the following patch:
-     pmdomain: ti_sci: Add LPM abort sequence to suspend path
-   - remove lpm_abort from ti_sci_pm_ops
-   - add ->complete() hook with ti_sci_cmd_lpm_abort to be called
-     unconditionally within it
-   - remove ti_sci_cmd_lpm_abort from the ->suspend() and
-     ->suspend_noirq() hooks
-   - reword commit message
----
- drivers/firmware/ti_sci.c | 61 +++++++++++++++++++++++++++++++++++++++
- drivers/firmware/ti_sci.h |  3 +-
- 2 files changed, 63 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-index ae5fd1936ad32..63c405f7037f0 100644
---- a/drivers/firmware/ti_sci.c
-+++ b/drivers/firmware/ti_sci.c
-@@ -2015,6 +2015,58 @@ static int ti_sci_cmd_set_latency_constraint(const struct ti_sci_handle *handle,
- 	return ret;
- }
- 
-+/**
-+ * ti_sci_cmd_lpm_abort() - Abort entry to LPM by clearing selection of LPM to enter
-+ * @handle:     pointer to TI SCI handle
-+ *
-+ * Return: 0 if all went well, else returns appropriate error value.
-+ */
-+static int ti_sci_cmd_lpm_abort(const struct ti_sci_handle *handle)
-+{
-+	struct ti_sci_info *info;
-+	struct ti_sci_msg_hdr *req;
-+	struct ti_sci_msg_hdr *resp;
-+	struct ti_sci_xfer *xfer;
-+	struct device *dev;
-+	int ret = 0;
++config PHY_SYNOPSYS_DW_DPHY_RX
++	tristate "Synopsys DesignWare D-PHY Rx Support"
++	depends on HAS_IOMEM && REGMAP_MMIO
++	select GENERIC_PHY
++	select GENERIC_PHY_MIPI_DPHY
++	help
++	  This option enables support for Synopsys DW MIPI D-PHY RX IP. This driver
++	  provides D-PHY functionality using Generic PHY framework and is meant to
++	  be used by MIPI CSI2 receivers over the PPI hardware interface. MIPI CSI2
++	  receivers may find this driver and use it via Generic PHY Framework API.
 +
-+	if (IS_ERR(handle))
-+		return PTR_ERR(handle);
-+	if (!handle)
+ source "drivers/phy/allwinner/Kconfig"
+ source "drivers/phy/amlogic/Kconfig"
+ source "drivers/phy/broadcom/Kconfig"
+diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+index c670a8dac468..ed0836adb835 100644
+--- a/drivers/phy/Makefile
++++ b/drivers/phy/Makefile
+@@ -13,6 +13,7 @@ obj-$(CONFIG_PHY_SNPS_EUSB2)		+= phy-snps-eusb2.o
+ obj-$(CONFIG_USB_LGM_PHY)		+= phy-lgm-usb.o
+ obj-$(CONFIG_PHY_AIROHA_PCIE)		+= phy-airoha-pcie.o
+ obj-$(CONFIG_PHY_NXP_PTN3222)		+= phy-nxp-ptn3222.o
++obj-$(CONFIG_PHY_SYNOPSYS_DW_DPHY_RX)	+= phy-dw-dphy.o
+ obj-y					+= allwinner/	\
+ 					   amlogic/	\
+ 					   broadcom/	\
+diff --git a/drivers/phy/phy-dw-dphy.c b/drivers/phy/phy-dw-dphy.c
+new file mode 100644
+index 000000000000..2248f690b861
+--- /dev/null
++++ b/drivers/phy/phy-dw-dphy.c
+@@ -0,0 +1,575 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright © 2025 Amazon.com, Inc. or its affiliates.
++ * Copyright © 2025 Synopsys, Inc. (www.synopsys.com)
++ */
++#include <linux/bitops.h>
++#include <linux/clk.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/reset.h>
++#include <linux/regmap.h>
++
++#include <linux/phy/phy.h>
++#include <linux/phy/phy-mipi-dphy.h>
++
++#define KHZ (1000)
++#define MHZ (KHZ * KHZ)
++
++enum dw_dphy_reg_fields_cfg1 {
++	PHY_SHUTDOWNZ,
++	DPHY_RSTZ,
++	TEST_CLR,
++	TEST_CLK,
++	TEST_IN,
++	TEST_OUT,
++	TEST_EN,
++	DW_DPHY_RF_CFG1_MAX
++};
++
++enum dw_dphy_reg_fields_cfg2 {
++	EN_CONT_REG_UPDATE,
++	TURN_REQUEST_0,
++	TURN_DISABLE_0,
++	ENABLE_CLK,
++	FORCE_TX_STOP_MODE_0,
++	FORCE_RX_MODE,
++	BASE_DIR_0,
++	CFG_CLK_FREQ_RANGE,
++	HS_FREQ_RANGE,
++	CONT_EN,
++	DW_DPHY_RF_CFG2_MAX
++};
++
++static const struct reg_field dw_dphy_v1_2_cfg1[DW_DPHY_RF_CFG1_MAX] = {
++	[PHY_SHUTDOWNZ] = REG_FIELD(0x0, 0, 0),
++	[DPHY_RSTZ] = REG_FIELD(0x4, 0, 0),
++	[TEST_CLR] = REG_FIELD(0x10, 0, 0),
++	[TEST_CLK] = REG_FIELD(0x10, 1, 1),
++	[TEST_IN] = REG_FIELD(0x14, 0, 7),
++	[TEST_OUT] = REG_FIELD(0x14, 8, 15),
++	[TEST_EN] = REG_FIELD(0x14, 16, 16),
++};
++
++static const struct reg_field dw_dphy_v1_2_cfg2[DW_DPHY_RF_CFG2_MAX] = {
++	[EN_CONT_REG_UPDATE] = REG_FIELD(0x0, 23, 23),
++	[TURN_REQUEST_0] = REG_FIELD(0x0, 22, 22),
++	[TURN_DISABLE_0] = REG_FIELD(0x0, 21, 21),
++	[ENABLE_CLK] = REG_FIELD(0x0, 20, 20),
++	[FORCE_TX_STOP_MODE_0] = REG_FIELD(0x0, 19, 19),
++	[FORCE_RX_MODE] = REG_FIELD(0x0, 15, 18),
++	[BASE_DIR_0] = REG_FIELD(0x0, 14, 14),
++	[CFG_CLK_FREQ_RANGE] = REG_FIELD(0x0, 8, 13),
++	[HS_FREQ_RANGE] = REG_FIELD(0x0, 1, 7),
++	[CONT_EN] = REG_FIELD(0x0, 0, 0),
++};
++
++enum dphy_12bit_interface_addr {
++	RX_SYS_0 = 0x01,
++	RX_SYS_1 = 0x02,
++	RX_SYS_7 = 0x08,
++	RX_RX_STARTUP_OVR_0 = 0xe0,
++	RX_RX_STARTUP_OVR_1 = 0xe1,
++	RX_RX_STARTUP_OVR_2 = 0xe2,
++	RX_RX_STARTUP_OVR_3 = 0xe3,
++	RX_RX_STARTUP_OVR_4 = 0xe4,
++};
++
++/**
++ * struct range_dphy_gen3 - frequency range calibration structure
++ *
++ * @freq: input freqency to calibration table
++ * @hsfregrange: corresponding clock to configure DW D-PHY IP
++ * @osc_freq_target: corresponding clock to configure DW D-PHY IP
++ *
++ **/
++struct range_dphy_gen3 {
++	u32 freq;
++	u8 hsfregrange;
++	u32 osc_freq_target;
++};
++
++/**
++ * struct dt_data_dw_dphy - DPHY configuration data structure
++ * @table: Pointer to array of DPHY Gen3 timing range configurations
++ * @table_size: Number of entries in the timing range table
++ * @phy_ops: Pointer to PHY operations structure containing callback functions
++ *
++ **/
++struct dt_data_dw_dphy {
++	struct range_dphy_gen3 *table;
++	int table_size;
++	const struct phy_ops *phy_ops;
++};
++
++/*
++ * DW DPHY Gen3 calibration table
++ *
++ */
++struct range_dphy_gen3 range_gen3[] = {
++	{ 80, 0b0000000, 460 },	  { 90, 0b0010000, 460 },
++	{ 100, 0b0100000, 460 },  { 110, 0b0110000, 460 },
++	{ 120, 0b0000001, 460 },  { 130, 0b0010001, 460 },
++	{ 140, 0b0100001, 460 },  { 150, 0b0110001, 460 },
++	{ 160, 0b0000010, 460 },  { 170, 0b0010010, 460 },
++	{ 180, 0b0100010, 460 },  { 190, 0b0110010, 460 },
++	{ 205, 0b0000011, 460 },  { 220, 0b0010011, 460 },
++	{ 235, 0b0100011, 460 },  { 250, 0b0110011, 460 },
++	{ 275, 0b0000100, 460 },  { 300, 0b0010100, 460 },
++	{ 325, 0b0100101, 460 },  { 350, 0b0110101, 460 },
++	{ 400, 0b0000101, 460 },  { 450, 0b0010110, 460 },
++	{ 500, 0b0100110, 460 },  { 550, 0b0110111, 460 },
++	{ 600, 0b0000111, 460 },  { 650, 0b0011000, 460 },
++	{ 700, 0b0101000, 460 },  { 750, 0b0111001, 460 },
++	{ 800, 0b0001001, 460 },  { 850, 0b0011001, 460 },
++	{ 900, 0b0101001, 460 },  { 950, 0b0111010, 460 },
++	{ 1000, 0b0001010, 460 }, { 1050, 0b0011010, 460 },
++	{ 1110, 0b0101010, 460 }, { 1150, 0b0111011, 460 },
++	{ 1200, 0b0001011, 460 }, { 1250, 0b0011011, 460 },
++	{ 1300, 0b0101011, 460 }, { 1350, 0b0111100, 460 },
++	{ 1400, 0b0001100, 460 }, { 1450, 0b0011100, 460 },
++	{ 1500, 0b0101100, 460 }, { 1550, 0b0111101, 285 },
++	{ 1600, 0b0001101, 295 }, { 1650, 0b0011101, 304 },
++	{ 1700, 0b0101110, 313 }, { 1750, 0b0111110, 322 },
++	{ 1800, 0b0001110, 331 }, { 1850, 0b0011110, 341 },
++	{ 1900, 0b0101111, 350 }, { 1950, 0b0111111, 359 },
++	{ 2000, 0b0001111, 368 }, { 2050, 0b1000000, 377 },
++	{ 2100, 0b1000001, 387 }, { 2150, 0b1000010, 396 },
++	{ 2200, 0b1000011, 405 }, { 2250, 0b1000100, 414 },
++	{ 2300, 0b1000101, 423 }, { 2350, 0b1000110, 432 },
++	{ 2400, 0b1000111, 442 }, { 2450, 0b1001000, 451 },
++	{ 2500, 0b1001001, 460 }
++};
++
++/**
++ * struct dw_dphy - DW D-PHY driver private structure
++ *
++ * @regmap: pointer to regmap
++ * @regmap_cfg1: pointer to config1 regmap
++ * @regmap_cfg2: pointer to config2 regmap
++ * @rf_cfg1: array of regfields for config1
++ * @rf_cfg2: array of regfields for config2
++ * @iomem_cfg1: MMIO address for cfg1 section
++ * @iomem_cfg2: MMIO address for cfg2 section
++ * @phy: pointer to the phy data structure
++ * @hs_clk_rate: high speed clock rate as per image sensor configuration
++ * @dt_data_dw_dphy: device tree specific data
++ *
++ **/
++struct dw_dphy {
++	struct regmap *regmap_cfg1;
++	struct regmap *regmap_cfg2;
++	struct regmap_field *rf_cfg1[DW_DPHY_RF_CFG1_MAX];
++	struct regmap_field *rf_cfg2[DW_DPHY_RF_CFG2_MAX];
++	void __iomem *iomem_cfg1;
++	void __iomem *iomem_cfg2;
++	struct phy *phy;
++	struct device *dev;
++	unsigned long hs_clk_rate;
++	struct dt_data_dw_dphy *dt_data;
++};
++
++/**
++ * dw_dphy_te_write - write register into test enable interface
++ *
++ * @dphy: pointer to the dw_dphy private data structure
++ * @addr: 12 bit TE address register (16 bit container)
++ * @data: 8 bit data to be written to TE register
++ *
++ **/
++static void dw_dphy_te_write(struct dw_dphy *dphy, u16 addr, u8 data)
++{
++	/* For writing the 4-bit testcode MSBs */
++
++	/* Ensure that testclk and testen is set to low */
++	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 0);
++	regmap_field_write(dphy->rf_cfg1[TEST_EN], 0);
++
++	/* Set testen to high */
++	regmap_field_write(dphy->rf_cfg1[TEST_EN], 1);
++
++	/* Set testclk to high */
++	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 1);
++
++	/* Place 0x00 in testdin */
++	regmap_field_write(dphy->rf_cfg1[TEST_IN], 0);
++
++	/*
++	 * Set testclk to low (with the falling edge on testclk, the testdin signal
++	 * content is latched internally)
++	 */
++	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 0);
++
++	/* Set testen to low */
++	regmap_field_write(dphy->rf_cfg1[TEST_EN], 0);
++
++	/* Place the 8-bit word corresponding to the testcode MSBs in testdin */
++	regmap_field_write(dphy->rf_cfg1[TEST_IN], (addr >> 8));
++
++	/* Set testclk to high */
++	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 1);
++
++	/* For writing the 8-bit testcode LSBs */
++
++	/* Set testclk to low */
++	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 0);
++
++	/* Set testen to high */
++	regmap_field_write(dphy->rf_cfg1[TEST_EN], 1);
++
++	/* Set testclk to high */
++	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 1);
++
++	/* Place the 8-bit word test data in testdin */
++	regmap_field_write(dphy->rf_cfg1[TEST_IN], (addr & 0xff));
++
++	/*
++	 * Set testclk to low (with the falling edge on testclk, the testdin signal
++	 * content is latched internally)
++	 */
++	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 0);
++
++	/* Set testen to low */
++	regmap_field_write(dphy->rf_cfg1[TEST_EN], 0);
++
++	/* For writing the data */
++
++	/* Place the 8-bit word corresponding to the page offset in testdin */
++	regmap_field_write(dphy->rf_cfg1[TEST_IN], data);
++
++	/* Set testclk to high (test data is programmed internally) */
++	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 1);
++}
++
++/**
++ * dw_dphy_te_read - read register from test enable interface
++ *
++ * @dphy: pointer to the dw_dphy private data structure
++ * @addr: 12 bit TE address register (16 bit container)
++ * @returns: 8 bit data from TE register
++ **/
++static u8 dw_dphy_te_read(struct dw_dphy *dphy, u16 addr)
++{
++	u32 data;
++
++	/* For writing the 4-bit testcode MSBs */
++
++	/* Ensure that testclk and testen is set to low */
++	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 0);
++	regmap_field_write(dphy->rf_cfg1[TEST_EN], 0);
++
++	/* Set testen to high */
++	regmap_field_write(dphy->rf_cfg1[TEST_EN], 1);
++
++	/* Set testclk to high */
++	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 1);
++
++	/* Place 0x00 in testdin */
++	regmap_field_write(dphy->rf_cfg1[TEST_IN], 0);
++
++	/*
++	 * Set testclk to low (with the falling edge on testclk, the testdin signal
++	 * content is latched internally)
++	 */
++	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 0);
++
++	/* Set testen to low */
++	regmap_field_write(dphy->rf_cfg1[TEST_EN], 0);
++
++	/* Place the 8-bit word corresponding to the testcode MSBs in testdin */
++	regmap_field_write(dphy->rf_cfg1[TEST_IN], (addr >> 8));
++
++	/* Set testclk to high */
++	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 1);
++
++	/* For writing the 8-bit testcode LSBs */
++
++	/* Set testclk to low */
++	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 0);
++
++	/* Set testen to high */
++	regmap_field_write(dphy->rf_cfg1[TEST_EN], 1);
++
++	/* Set testclk to high */
++	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 1);
++
++	/* Place the 8-bit word test data in testdin */
++	regmap_field_write(dphy->rf_cfg1[TEST_IN], (addr & 0xff));
++
++	/*
++	 * Set testclk to low (with the falling edge on testclk, the testdin signal
++	 * content is latched internally)
++	 */
++	regmap_field_write(dphy->rf_cfg1[TEST_CLK], 0);
++
++	/* Set testen to low */
++	regmap_field_write(dphy->rf_cfg1[TEST_EN], 0);
++
++	regmap_field_read(dphy->rf_cfg1[TEST_OUT], &data);
++
++	return (u8)data;
++}
++
++/**
++ * dw_dphy_configure - configure the D-PHY
++ *
++ * @phy: pointer to the phy data structure
++ * @opts: pointer to the phy configuration options
++ * @returns 0 if success else appropriate error code
++ *
++ **/
++static int dw_dphy_configure(struct phy *phy, union phy_configure_opts *opts)
++{
++	struct dw_dphy *dphy = phy_get_drvdata(phy);
++
++	dphy->hs_clk_rate = opts->mipi_dphy.hs_clk_rate;
++	dev_dbg(dphy->dev, "hs_clk_rate=%ld\n", dphy->hs_clk_rate);
++
++	return 0;
++}
++
++/**
++ * dw_dphy_power_on_1p2 - power on the DPHY version 1.2
++ *
++ * @phy: pointer to the phy data structure
++ * @returns 0 if success else appropriate error code
++ *
++ **/
++static int dw_dphy_power_on_1p2(struct phy *phy)
++{
++	struct dw_dphy *dphy = phy_get_drvdata(phy);
++
++	uint8_t counter_for_des_en_config_if_rw = 0x1;
++	u8 range = 0;
++
++	for (range = 0;
++	     (range < dphy->dt_data->table_size - 1) &&
++	     ((dphy->hs_clk_rate) > dphy->dt_data->table[range].freq);
++	     range++)
++		;
++
++	/* in case requested hs_clk_rate is out of range, return -EINVAL */
++	if (range >= dphy->dt_data->table_size)
 +		return -EINVAL;
 +
-+	info = handle_to_ti_sci_info(handle);
-+	dev = info->dev;
++	dev_dbg(dphy->dev, "12bit: PHY GEN 3: Freq: %ld %x\n", dphy->hs_clk_rate,
++		 range_gen3[range].hsfregrange);
 +
-+	xfer = ti_sci_get_one_xfer(info, TI_SCI_MSG_LPM_ABORT,
-+				   TI_SCI_FLAG_REQ_ACK_ON_PROCESSED,
-+				   sizeof(*req), sizeof(*resp));
-+	if (IS_ERR(xfer)) {
-+		ret = PTR_ERR(xfer);
-+		dev_err(dev, "Message alloc failed(%d)\n", ret);
++	regmap_field_write(dphy->rf_cfg1[DPHY_RSTZ], 0);
++	regmap_field_write(dphy->rf_cfg1[PHY_SHUTDOWNZ], 0);
++	regmap_field_write(dphy->rf_cfg1[TEST_CLR], 0);
++	regmap_field_write(dphy->rf_cfg1[TEST_CLR], 1);
++	regmap_field_write(dphy->rf_cfg1[TEST_CLR], 0);
++	regmap_field_write(dphy->rf_cfg2[CFG_CLK_FREQ_RANGE], 0x28);
++	dw_dphy_te_write(dphy, RX_SYS_1,
++			 dphy->dt_data->table[range].hsfregrange);
++	dw_dphy_te_write(dphy, RX_SYS_0, 0x20);
++	dw_dphy_te_write(dphy, RX_RX_STARTUP_OVR_2,
++			 (u8)dphy->dt_data->table[range].osc_freq_target);
++	dw_dphy_te_write(dphy, RX_RX_STARTUP_OVR_3,
++			 (u8)(dphy->dt_data->table[range].osc_freq_target >>
++			      8));
++	dw_dphy_te_write(dphy, 0xe4,
++			 (counter_for_des_en_config_if_rw << 4) | 0b1);
++
++	dw_dphy_te_write(dphy, RX_RX_STARTUP_OVR_1, 0x01);
++	dw_dphy_te_write(dphy, RX_RX_STARTUP_OVR_0, 0x80);
++
++	regmap_field_write(dphy->rf_cfg2[BASE_DIR_0], 1);
++	regmap_field_write(dphy->rf_cfg2[ENABLE_CLK], 1);
++	regmap_field_write(dphy->rf_cfg2[FORCE_RX_MODE], 0x0);
++
++	regmap_field_write(dphy->rf_cfg1[PHY_SHUTDOWNZ], 1);
++	regmap_field_write(dphy->rf_cfg1[DPHY_RSTZ], 1);
++
++	return 0;
++}
++
++/**
++ * dw_dphy_power_off - power off the DPHY
++ *
++ * @phy: pointer to the phy data structure
++ * @returns 0 if success else appropriate error code
++ *
++ **/
++static int dw_dphy_power_off(struct phy *phy)
++{
++	struct dw_dphy *dphy = phy_get_drvdata(phy);
++
++	regmap_field_write(dphy->rf_cfg1[DPHY_RSTZ], 0);
++	regmap_field_write(dphy->rf_cfg1[PHY_SHUTDOWNZ], 0);
++	return 0;
++}
++
++/**
++ * dw_dphy_ops_1p2 - PHY operations for DWC DPHY v1.2
++ * @configure: Configures DPHY timing and operation parameters
++ * @power_on: Powers on the DPHY using v1.2 specific sequence
++ * @power_off: Powers off the DPHY
++ *
++ **/
++static const struct phy_ops dw_dphy_ops_1p2 = {
++	.configure = dw_dphy_configure,
++	.power_on = dw_dphy_power_on_1p2,
++	.power_off = dw_dphy_power_off,
++};
++
++/**
++ * dw_dphy_1p2 - DWC DPHY v1.2 configuration instance
++ * @table: Points to range_gen3 timing parameters table
++ * @table_size: Size of range_gen3 table calculated at compile time
++ * @phy_ops: Points to v1.2 specific PHY operations structure
++ *
++ **/
++struct dt_data_dw_dphy dw_dphy_1p2 = {
++	.table = range_gen3,
++	.table_size = ARRAY_SIZE(range_gen3),
++	.phy_ops = &dw_dphy_ops_1p2,
++};
++
++/**
++ * dw_dphy_regmap_cfg1 - Register map configuration for DW DPHY
++ * @reg_bits: Width of register address in bits (32)
++ * @val_bits: Width of register value in bits (32)
++ * @reg_stride: Number of bytes between registers (4)
++ * @name: Name identifier for this register map
++ * @fast_io: Flag to indicate fast I/O operations are supported
++ *
++ **/
++static const struct regmap_config dw_dphy_regmap_cfg1 = {
++	.reg_bits = 32,
++	.val_bits = 32,
++	.reg_stride = 4,
++	.name = "dw-dhpy-cfg1",
++	.fast_io = true,
++};
++
++/**
++ * dw_dphy_regmap_cfg2 - Register map configuration for DW DPHY
++ * @reg_bits: Width of register address in bits (32)
++ * @val_bits: Width of register value in bits (32)
++ * @reg_stride: Number of bytes between registers (4)
++ * @name: Name identifier for this register map
++ * @fast_io: Flag to indicate fast I/O operations are supported
++ *
++ **/
++static const struct regmap_config dw_dphy_regmap_cfg2 = {
++	.reg_bits = 32,
++	.val_bits = 32,
++	.reg_stride = 4,
++	.name = "dw-dhpy-cfg2",
++	.fast_io = true,
++};
++
++/**
++ * dw_dphy_probe - Probe and initialize DW DPHY device
++ * @pdev: Platform device pointer
++ * Return: 0 on success, negative error code on failure
++ *
++ **/
++static int dw_dphy_probe(struct platform_device *pdev)
++{
++	struct dw_dphy *dphy;
++	struct resource *res;
++	struct device *dev = &pdev->dev;
++	struct phy_provider *phy_provider;
++	int ret;
++
++	dphy = devm_kzalloc(&pdev->dev, sizeof(*dphy), GFP_KERNEL);
++	if (!dphy)
++		return -ENOMEM;
++
++	dphy->dt_data =
++		(struct dt_data_dw_dphy *)of_device_get_match_data(&pdev->dev);
++	dev_set_drvdata(&pdev->dev, dphy);
++	dphy->dev = &pdev->dev;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	dphy->iomem_cfg1 = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(dphy->iomem_cfg1))
++		return PTR_ERR(dphy->iomem_cfg1);
++
++	dphy->regmap_cfg1 =
++		devm_regmap_init_mmio(dev, dphy->iomem_cfg1, &dw_dphy_regmap_cfg1);
++	if (IS_ERR(dphy->regmap_cfg1))
++		return PTR_ERR(dphy->regmap_cfg1);
++
++	ret = devm_regmap_field_bulk_alloc(dev, dphy->regmap_cfg1, dphy->rf_cfg1,
++					   dw_dphy_v1_2_cfg1, DW_DPHY_RF_CFG1_MAX);
++	if (ret < 0) {
++		dev_err(dev, "Could not alloc RF\n");
 +		return ret;
 +	}
-+	req = (struct ti_sci_msg_hdr *)xfer->xfer_buf;
 +
-+	ret = ti_sci_do_xfer(info, xfer);
-+	if (ret) {
-+		dev_err(dev, "Mbox send fail %d\n", ret);
-+		goto fail;
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
++	dphy->iomem_cfg2 = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(dphy->iomem_cfg2))
++		return PTR_ERR(dphy->iomem_cfg2);
++
++	dphy->regmap_cfg2 = devm_regmap_init_mmio(dev, dphy->iomem_cfg2,
++						 &dw_dphy_regmap_cfg2);
++	if (IS_ERR(dphy->regmap_cfg2))
++		return PTR_ERR(dphy->regmap_cfg2);
++
++	ret = devm_regmap_field_bulk_alloc(dev, dphy->regmap_cfg2, dphy->rf_cfg2,
++					   dw_dphy_v1_2_cfg2, DW_DPHY_RF_CFG2_MAX);
++	if (ret < 0) {
++		dev_err(dev, "Could not alloc RF\n");
++		return ret;
 +	}
 +
-+	resp = (struct ti_sci_msg_hdr *)xfer->xfer_buf;
++	dphy->phy = devm_phy_create(&pdev->dev, NULL, dphy->dt_data->phy_ops);
++	if (IS_ERR(dphy->phy)) {
++		dev_err(dev, "failed to create PHY\n");
++		return PTR_ERR(dphy->phy);
++	}
 +
-+	if (!ti_sci_is_response_ack(resp))
-+		ret = -ENODEV;
-+	else
-+		ret = 0;
++	phy_set_drvdata(dphy->phy, dphy);
++	phy_provider =
++		devm_of_phy_provider_register(&pdev->dev, of_phy_simple_xlate);
 +
-+fail:
-+	ti_sci_put_one_xfer(&info->minfo, xfer);
-+
-+	return ret;
++	return PTR_ERR_OR_ZERO(phy_provider);
 +}
 +
- static int ti_sci_cmd_core_reboot(const struct ti_sci_handle *handle)
- {
- 	struct ti_sci_info *info;
-@@ -3739,11 +3791,20 @@ static int __maybe_unused ti_sci_resume_noirq(struct device *dev)
- 	return 0;
- }
- 
-+static void __maybe_unused ti_sci_complete(struct device *dev)
-+{
-+	struct ti_sci_info *info = dev_get_drvdata(dev);
++/**
++ * dw_dphy_of_match - Device tree match table for DW DPHY
++ * @compatible: Compatible string to match device tree node
++ * @data: Pointer to configuration data for matched device
++ *
++ * Table of compatible strings and associated configuration data
++ * for supported DW DPHY variants.
++ * Currently supports:
++ * - DW DPHY v1.2 ("snps,dw-dphy-1p2")
++ *
++ **/
++static const struct of_device_id dw_dphy_of_match[] = {
++	{ .compatible = "snps,dw-dphy-1p2", .data = &dw_dphy_1p2 },
++	{ /* sentinel */ },
++};
++MODULE_DEVICE_TABLE(of, dw_dphy_of_match);
 +
-+	if (ti_sci_cmd_lpm_abort(&info->handle))
-+		dev_err(dev, "LPM clear selection failed.\n");
-+}
++/**
++ * dw_dphy_platform_driver - Platform driver structure for DW DPHY
++ * @probe: Pointer to probe function called on device discovery
++ * @driver: Core driver structure containing:
++ *         - name: Driver name used for matching and debugging
++ *         - of_match_table: Table of compatible device tree matches
++ *
++ **/
++static struct platform_driver dw_dphy_platform_driver = {
++	.probe		= dw_dphy_probe,
++	.driver		= {
++		.name		= "dw-dphy",
++		.of_match_table	= dw_dphy_of_match,
++	},
++};
++module_platform_driver(dw_dphy_platform_driver);
 +
- static const struct dev_pm_ops ti_sci_pm_ops = {
- #ifdef CONFIG_PM_SLEEP
- 	.suspend = ti_sci_suspend,
- 	.suspend_noirq = ti_sci_suspend_noirq,
- 	.resume_noirq = ti_sci_resume_noirq,
-+	.complete = ti_sci_complete,
- #endif
- };
- 
-diff --git a/drivers/firmware/ti_sci.h b/drivers/firmware/ti_sci.h
-index 053387d7baa06..51d77f90a32cc 100644
---- a/drivers/firmware/ti_sci.h
-+++ b/drivers/firmware/ti_sci.h
-@@ -6,7 +6,7 @@
-  * The system works in a message response protocol
-  * See: https://software-dl.ti.com/tisci/esd/latest/index.html for details
-  *
-- * Copyright (C)  2015-2024 Texas Instruments Incorporated - https://www.ti.com/
-+ * Copyright (C)  2015-2025 Texas Instruments Incorporated - https://www.ti.com/
-  */
- 
- #ifndef __TI_SCI_H
-@@ -42,6 +42,7 @@
- #define TI_SCI_MSG_SET_IO_ISOLATION	0x0307
- #define TI_SCI_MSG_LPM_SET_DEVICE_CONSTRAINT	0x0309
- #define TI_SCI_MSG_LPM_SET_LATENCY_CONSTRAINT	0x030A
-+#define TI_SCI_MSG_LPM_ABORT	0x0311
- 
- /* Resource Management Requests */
- #define TI_SCI_MSG_GET_RESOURCE_RANGE	0x1500
-
-base-commit: 835244aba90de290b4b0b1fa92b6734f3ee7b3d9
--- 
-2.34.1
++MODULE_AUTHOR("Karthik Poduval <kpoduval@lab126.com>");
++MODULE_AUTHOR("Jason Xiong <jyxiong@amazon.com>");
++MODULE_AUTHOR("Miguel Lopes <miguel.lopes@synopsys.com>");
++MODULE_DESCRIPTION("DW D-PHY RX Driver");
++MODULE_LICENSE("GPL");
+--
+2.43.0
 
 
