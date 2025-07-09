@@ -1,136 +1,206 @@
-Return-Path: <linux-kernel+bounces-723634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 984E9AFE953
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:48:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D69AAFE961
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 14:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92B423A4B99
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:47:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E309565374
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 12:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E346242D62;
-	Wed,  9 Jul 2025 12:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE31B2E0937;
+	Wed,  9 Jul 2025 12:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="r3K1GZtF"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9cN77tY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B651DA55
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Jul 2025 12:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4403828DF42;
+	Wed,  9 Jul 2025 12:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752065247; cv=none; b=P81RM/9//kWjM6JgdYdiY9UckqStF/bzDjSuJyJ4etdpLvgOJOB4RMlUiD0gN+crACP9guX0b6+K9LsDICJewMU5izhJ1vZFOPht4RfNxaXJK2QIIssqkSgRUT3VIQiKzDjR9Uea0HDPvJJAmM/E0W9jVB4Rlwush1RNiXvxyRY=
+	t=1752065292; cv=none; b=U52J8/s6w3E5kq/tk4GR14AvGM8gtZL34Ybse3v+wEJjW9neD0G1JW4Ujk9w5/uOJofY64xvLHL1i+rqkSeRbYbemvRf/aPZfG++dtx8ojh/1iiF1cyWTqNp4qy/FcCoOBgqUkxDmd+LkJIfaerxxUIYu5PswLsv95QQQ7YVDpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752065247; c=relaxed/simple;
-	bh=y4NrmxktK96RvpueAIOtkQgDlv4tt+9si4kpOaLhKrk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XJnX0SDhujqiTZx7IlsMEbjWvLPvX5PWtrP26Sneur13weu6Er3EHKTWb4iGB024KY7q0hRJSWMW6j7wS9o3t7y+Ux+3L6kYHEZK6F7FRCOOLsAWnp7Y33osSIjgXLIRxdtWq3lnzcgMNE034HfQUxxNRg6ELHWijeABHJARkfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=r3K1GZtF; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1752065240;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RPgHFEL7MONUQhUTsvtqoOvB09WJYipCR6ISmSzlGHg=;
-	b=r3K1GZtFCwiP0TZnff/qWHSdc3h7HujXstvuqvO3QIoxmnbpjRMSeSECMgAJ3mRlsl2TpG
-	5W3UnYfDcunr3yjcu73mqsmLjUGQFcPybd5/WbYJNxKsVZU/eeUYgGfJbWj9T5/wf0NNmx
-	uyyirOiSuSPDyCcFtM0x3p+kCctK5nw=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	Andres Urian Florez <andres.emb.sys@gmail.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	Takashi Iwai <tiwai@suse.de>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: echoaudio: Replace deprecated strcpy() with strscpy()
-Date: Wed,  9 Jul 2025 14:46:52 +0200
-Message-ID: <20250709124655.1195-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1752065292; c=relaxed/simple;
+	bh=IjKafDrSKpDO3jWbUE5S33Zi4PuRIjRGcR1MuBt2QsE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qoCpoeMVq6UtFAgfO3xBNhi786G93OEQW7aUZYqJ240DNM60Y1StCba3FVm6h1764Z1SnLTnD5shlPSaxr8Aimx0oVIicPFsAGkiFDZnxDD0vKdTx4Lx3bTiCznmjpN5zOcMT0H4CQZ4lqjThEWsfTyJB6J4uq1Eui95G9B1wTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D9cN77tY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23D06C4CEEF;
+	Wed,  9 Jul 2025 12:48:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752065292;
+	bh=IjKafDrSKpDO3jWbUE5S33Zi4PuRIjRGcR1MuBt2QsE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=D9cN77tYsBx7RnFEQtcP4Bqg1Wqu7kNoj0aF+UP7qcq0dJWw0wCH/uUhGBWaopshB
+	 71+AniRIHP/d22+LXp3v7RXvyA4YwdTkD8ibDgnyirVs+cuNS0NxjKoNeYLsA897Ot
+	 WIFTJiLckNxn4uBd1fNhlsJ+C3ByidIxbZ4S5MK9LrPMZ5AKjOqBSOYDwrihKy83DK
+	 P1GRWBp6f3kx61RTLxjHCqTPhvQtQ/yhpLXeIq9sJhXuI6NM2zD1s9W6Ojm6o3LQ5l
+	 4FkJH3UWBZiFFqotlbIMb+Rz82nGTFUC6vHDRRisicM9mQKmD1Y7y8bZmvCJGrC0hO
+	 KqdlO2NFtVTHA==
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-60f0a92391bso2844156eaf.0;
+        Wed, 09 Jul 2025 05:48:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW6r4vVFNkc30NJX0m2fRJViOA+MMRSgPXN8Yw37BTaVfZNrwoTNBbvKsNW7LBT10YvOBzv0rKQL7c=@vger.kernel.org, AJvYcCWyi5i+Hl5qmt+Ep8guV523/zUnpRAw65cITBNwRE+GHtXhWPEdgdjemkJOBJrynf2qwat31vjbC8xpmig=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhm5get1mugcWesDBz2Zlr4lSu31T0iJos24tlZnOHuxYv0gMd
+	PA4KglA/JMK43t8f0E+yb9nM3KTJyM/44O/LFz2Dt2xl+LDZMBiChnb3lk7QKA+NGvlQU0rDLZt
+	beRUXwYvE0EfF7DrA1SlUU9kI2EimwfI=
+X-Google-Smtp-Source: AGHT+IEG7HX5l8eAamULm2qP4yxYrJlancU7qVZt40GWX3GoE5XQFna5v28re8xxoiPRwNMzlWvYRZDAzqoG/O0+7g4=
+X-Received: by 2002:a4a:e912:0:b0:613:cafd:610 with SMTP id
+ 006d021491bc7-613ccedd834mr1557919eaf.7.1752065291018; Wed, 09 Jul 2025
+ 05:48:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <12700973.O9o76ZdvQC@rjwysocki.net> <CAPDyKFpGH=ZUyQ0wbkEKVLxknm59hDX6DNm9hXpuqzHCpoe-KQ@mail.gmail.com>
+ <CAJZ5v0how7VXTjuxtd533zNeqKwCqnJDVVKK=Vpww_HbQkwxKw@mail.gmail.com>
+In-Reply-To: <CAJZ5v0how7VXTjuxtd533zNeqKwCqnJDVVKK=Vpww_HbQkwxKw@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 9 Jul 2025 14:48:00 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0isuV-HDyGCrLeFp0WFcCQoQpi9dMEbJnWrsOdvk4Bf1A@mail.gmail.com>
+X-Gm-Features: Ac12FXxWzmeQz1W1fKJ2C4G3hUpEArUz5F_Y7Bx1Mk9dwdcqkFiQ4FUOOpZ0ei0
+Message-ID: <CAJZ5v0isuV-HDyGCrLeFp0WFcCQoQpi9dMEbJnWrsOdvk4Bf1A@mail.gmail.com>
+Subject: Re: [PATCH v1] PM: runtime: Take active children into account in pm_runtime_get_if_in_use()
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Alex Elder <elder@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-strcpy() is deprecated; use strscpy() instead.
+On Wed, Jul 9, 2025 at 2:06=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
+> wrote:
+>
+> On Wed, Jul 9, 2025 at 1:47=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.or=
+g> wrote:
+> >
+> > On Wed, 9 Jul 2025 at 12:41, Rafael J. Wysocki <rjw@rjwysocki.net> wrot=
+e:
+> > >
+> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > >
+> > > For all practical purposes, there is no difference between the situat=
+ion
+> > > in which a given device is not ignoring children and its active child
+> > > count is nonzero and the situation in which its runtime PM usage coun=
+ter
+> > > is nonzero.  However, pm_runtime_get_if_in_use() will only increment =
+the
+> > > device's usage counter and return 1 in the latter case.
+> > >
+> > > For consistency, make it do so in the former case either by adjusting
+> > > pm_runtime_get_conditional() and update the related kerneldoc comment=
+s
+> > > accordingly.
+> > >
+> > > Fixes: c0ef3df8dbae ("PM: runtime: Simplify pm_runtime_get_if_active(=
+) usage")
+> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > ---
+> > >  drivers/base/power/runtime.c |   27 ++++++++++++++++++---------
+> > >  1 file changed, 18 insertions(+), 9 deletions(-)
+> > >
+> > > --- a/drivers/base/power/runtime.c
+> > > +++ b/drivers/base/power/runtime.c
+> > > @@ -1203,10 +1203,12 @@
+> > >   *
+> > >   * Return -EINVAL if runtime PM is disabled for @dev.
+> > >   *
+> > > - * Otherwise, if the runtime PM status of @dev is %RPM_ACTIVE and ei=
+ther
+> > > - * @ign_usage_count is %true or the runtime PM usage counter of @dev=
+ is not
+> > > - * zero, increment the usage counter of @dev and return 1. Otherwise=
+, return 0
+> > > - * without changing the usage counter.
+> > > + * Otherwise, if its runtime PM status is %RPM_ACTIVE and (1) @ign_u=
+sage_count
+> > > + * is set, or (2) @dev is not ignoring children and its active child=
+ count is
+> > > + * nonero, or (3) the runtime PM usage counter of @dev is not zero, =
+increment
+> > > + * the usage counter of @dev and return 1.
+> > > + *
+> > > + * Otherwise, return 0 without changing the usage counter.
+> > >   *
+> > >   * If @ign_usage_count is %true, this function can be used to preven=
+t suspending
+> > >   * the device when its runtime PM status is %RPM_ACTIVE.
+> > > @@ -1228,7 +1230,8 @@
+> > >                 retval =3D -EINVAL;
+> > >         } else if (dev->power.runtime_status !=3D RPM_ACTIVE) {
+> > >                 retval =3D 0;
+> > > -       } else if (ign_usage_count) {
+> > > +       } else if (ign_usage_count || (!dev->power.ignore_children &&
+> > > +                  atomic_read(&dev->power.child_count) > 0)) {
+> >
+> > I am not sure I understand why this is needed, sorry.
+> >
+> > If someone and somehow we have "dev->power.runtime_status =3D=3D
+> > RPM_ACTIVE", then the dev's parents/childrens and suppliers/consumers
+> > should have been reference counted correctly already.
+>
+> Sure.
+>
+> > Otherwise it should not have been possible to set the runtime_status to=
+ RPM_ACTIVE
+> > in the first place, right?
+>
+> Right.
+>
+> runtime_status must be RPM_ACTIVE, but pm_runtime_get_if_in_use() only
+> wants to bump it up if the device is in use in addition to that.
 
-No functional changes intended.
+I mean pm_runtime_get_if_in_use() only wants to bump up the device's
+usage counter if it is in use already.
 
-Link: https://github.com/KSPP/linux/issues/88
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- sound/pci/echoaudio/echoaudio.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+> So far it's been checking the usage counter only though.
 
-diff --git a/sound/pci/echoaudio/echoaudio.c b/sound/pci/echoaudio/echoaudio.c
-index 80d8ce75fdbb..2b33ef588ac3 100644
---- a/sound/pci/echoaudio/echoaudio.c
-+++ b/sound/pci/echoaudio/echoaudio.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/module.h>
-+#include <linux/string.h>
- 
- MODULE_AUTHOR("Giuliano Pochini <pochini@shiny.it>");
- MODULE_LICENSE("GPL v2");
-@@ -916,7 +917,7 @@ static int snd_echo_new_pcm(struct echoaudio *chip)
- 		return err;
- 	pcm->private_data = chip;
- 	chip->analog_pcm = pcm;
--	strcpy(pcm->name, chip->card->shortname);
-+	strscpy(pcm->name, chip->card->shortname);
- 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK, &analog_playback_ops);
- 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_CAPTURE, &analog_capture_ops);
- 	snd_echo_preallocate_pages(pcm, &chip->pci->dev);
-@@ -929,7 +930,7 @@ static int snd_echo_new_pcm(struct echoaudio *chip)
- 		return err;
- 	pcm->private_data = chip;
- 	chip->digital_pcm = pcm;
--	strcpy(pcm->name, chip->card->shortname);
-+	strscpy(pcm->name, chip->card->shortname);
- 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_CAPTURE, &digital_capture_ops);
- 	snd_echo_preallocate_pages(pcm, &chip->pci->dev);
- #endif /* ECHOCARD_HAS_DIGITAL_IO */
-@@ -949,7 +950,7 @@ static int snd_echo_new_pcm(struct echoaudio *chip)
- 		return err;
- 	pcm->private_data = chip;
- 	chip->analog_pcm = pcm;
--	strcpy(pcm->name, chip->card->shortname);
-+	strscpy(pcm->name, chip->card->shortname);
- 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK, &analog_playback_ops);
- 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_CAPTURE, &analog_capture_ops);
- 	snd_echo_preallocate_pages(pcm, &chip->pci->dev);
-@@ -963,7 +964,7 @@ static int snd_echo_new_pcm(struct echoaudio *chip)
- 		return err;
- 	pcm->private_data = chip;
- 	chip->digital_pcm = pcm;
--	strcpy(pcm->name, chip->card->shortname);
-+	strscpy(pcm->name, chip->card->shortname);
- 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK, &digital_playback_ops);
- 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_CAPTURE, &digital_capture_ops);
- 	snd_echo_preallocate_pages(pcm, &chip->pci->dev);
-@@ -1985,8 +1986,8 @@ static int __snd_echo_probe(struct pci_dev *pci,
- 	if (err < 0)
- 		return err;
- 
--	strcpy(card->driver, "Echo_" ECHOCARD_NAME);
--	strcpy(card->shortname, chip->card_name);
-+	strscpy(card->driver, "Echo_" ECHOCARD_NAME);
-+	strscpy(card->shortname, chip->card_name);
- 
- 	dsp = "56301";
- 	if (pci_id->device == 0x3410)
--- 
-2.50.0
+And the above is correct.
 
+> >
+> > >                 retval =3D 1;
+> > >                 atomic_inc(&dev->power.usage_count);
+> > >         } else {
+> > > @@ -1261,10 +1264,16 @@
+> > >   * @dev: Target device.
+> > >   *
+> > >   * Increment the runtime PM usage counter of @dev if its runtime PM =
+status is
+> > > - * %RPM_ACTIVE and its runtime PM usage counter is greater than 0, i=
+n which case
+> > > - * it returns 1. If the device is in a different state or its usage_=
+count is 0,
+> > > - * 0 is returned. -EINVAL is returned if runtime PM is disabled for =
+the device,
+> > > - * in which case also the usage_count will remain unmodified.
+> > > + * %RPM_ACTIVE and its runtime PM usage counter is greater than 0 or=
+ it is not
+> > > + * ignoring children and its active child count is nonzero.  1 is re=
+turned in
+> > > + * this case.
+> > > + *
+> > > + * If @dev is in a different state or it is not in use (that is, its=
+ usage
+> > > + * counter is 0, or it is ignoring children, or its active child cou=
+nt is 0),
+> > > + * 0 is returned.
+> > > + *
+> > > + * -EINVAL is returned if runtime PM is disabled for the device, in =
+which case
+> > > + * also the usage counter of @dev is not updated.
+> > >   */
+> > >  int pm_runtime_get_if_in_use(struct device *dev)
+> > >  {
+> > >
+> > >
+> > >
+> >
+> > Kind regards
+> > Uffe
+> >
 
