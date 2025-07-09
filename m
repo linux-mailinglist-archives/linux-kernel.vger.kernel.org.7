@@ -1,96 +1,186 @@
-Return-Path: <linux-kernel+bounces-724005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-724006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C5D6AFED7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:18:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 065C6AFED73
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 17:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 606E2188F31B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:17:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AF3448010C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 15:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396912DA743;
-	Wed,  9 Jul 2025 15:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BCA2E717F;
+	Wed,  9 Jul 2025 15:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Doa8gnht"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GkS//Q1k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909D3187346;
-	Wed,  9 Jul 2025 15:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9952E6D22;
+	Wed,  9 Jul 2025 15:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752074213; cv=none; b=C0KdRE5IYIyEcYrKHCxR2XG8dFKiOR68wRZJMeknVLHczIxio1tvZF+QgEN+vyzb4WfkI3BYpmiedBI0J+wNnrR70dxUoee0RP+LUiF76JoJax24QBMG/CwYO5Bo5/dqPlDwj4uvVdYkQ9FehNCIeIdwZqAPPry9n65gJ7NEYRU=
+	t=1752074215; cv=none; b=B+8fWsCqT8MCLSB+mIa7WL703+KuEv4MwcoqfwWAhz75ZClDkq2C1vvYJn9KDo5HjG8wez9qo4d7anwJYcuCZOI495XgNqR5tQx2L1T8Q9VAoVyklzH+/V/s8R/r6VsRJSX+2iy7zl1x+XO6ja7hcGFZXHICvHV84GOsAcYc19o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752074213; c=relaxed/simple;
-	bh=9AcA8FN43fJBx8LusdgIy2znb19PC6dO/zaPyYir+qE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WsKDkfD8wiDazSSR4g0U4mj7wj6CPeWOJvNKvmN3ncF3vzke5NTUOVMSmcQj3pOFIO30j4jaKCPHeEvMZc45KqhWLF3q6grSbn8XbwLIDyQWRZIUia25zPHl3BJasFpKVNINz++KrqTBpgDrEXRzC9tCNCpe94hmWskPyUOHPs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Doa8gnht; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF0C7C4CEF1;
-	Wed,  9 Jul 2025 15:16:48 +0000 (UTC)
+	s=arc-20240116; t=1752074215; c=relaxed/simple;
+	bh=iWKG7shbDgcr0xClHM4lQkPVA2iCWBv/0OhRqHv7AWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lPErNlIwZ7+sCUswYXa5OeLf/3Tpvx9mrzqdUz7p2vvlc80WidUqidhBB3XNn9+lHVmkEY75sjht2PRA8T1b49kmxNBTBbxk3DoLbQ5EMkPRiQBFFM7WxBER2p8U8D/1nbLP7gmz0eV/lOT9E9F7PuVLa18d8J5HnIXh69WwDto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GkS//Q1k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCB1FC4CEEF;
+	Wed,  9 Jul 2025 15:16:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752074213;
-	bh=9AcA8FN43fJBx8LusdgIy2znb19PC6dO/zaPyYir+qE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Doa8gnhttnjl407qrGT58kEVY+7j2u41jrrNPMt+AHj8dgJM4thVhdivrOvFskLew
-	 LVY8w5TbDZ7r+uOZ4cYVpV5VymaT6yL7DHcNPlJaIztGJc21Hxjv5aqSEVNZpfLETd
-	 gb5K8xiH6d3tJ1zSJEPq+vZB0XNd4IYDhhvZAs7WyRp3ZucSt8366nRo0OQKl7gi0V
-	 F+9SwzR24DKiIWEHnjQaWM24M5nEycYKH2QMI4/LL4ojlJovhDlpddoEzTjVg52RWR
-	 F7jkKgfy8skL3Pe3a2h+1OgXrcZQTN1FgmHB/3Kyb1JoHemzeysdqpXMXSEPDVAEbt
-	 HZEk+GpFwrvsA==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	hargar@microsoft.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	srw@sladewatkins.net,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org,
-	Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: [PATCH 6.12 000/232] 6.12.37-rc1 review
-Date: Wed,  9 Jul 2025 17:16:40 +0200
-Message-ID: <20250709151640.840820-1-ojeda@kernel.org>
-In-Reply-To: <20250708162241.426806072@linuxfoundation.org>
-References: <20250708162241.426806072@linuxfoundation.org>
+	s=k20201202; t=1752074215;
+	bh=iWKG7shbDgcr0xClHM4lQkPVA2iCWBv/0OhRqHv7AWk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GkS//Q1kfZOyfDxjhC+1vi1io1WNzEf6bcxavk3NU/3B4bTWSO82svc6M1LQsUbgF
+	 FNPUhl22NNaHF+PbmE1Q0rCGfOY8w1km+KA9ZGwD+CtuZ9LqL2UmLumNx3X3Q6eqUm
+	 VGLhr5JeC7LN3VQ5iSle93WE9kJMqPD9zb6lkKStKb/m3D2L9MFXcjaSN4JFN5o8OI
+	 V9gFt1BlUqUsdF8RLrV9T1kini4bMQSnBl3ujAUrugaznia2w7OefNL3uGNyQnRAQO
+	 JcdeB7fRA8jDnOIGr2OZOU7iwJcknj/qf+QmO2Yu6MWvieLxThMHS6hEPORhB3XMO2
+	 p8x2/aCLLYKfA==
+Date: Wed, 9 Jul 2025 17:16:43 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Akira Yokosawa <akiyks@gmail.com>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Matthew Wilcox
+ <willy@infradead.org>
+Subject: Re: [PATCH v8 13/13] docs: parser_yaml.py: fix backward
+ compatibility with old docutils
+Message-ID: <20250709171643.1780011f@sal.lan>
+In-Reply-To: <57be9f77-9a94-4cde-aacb-184cae111506@gmail.com>
+References: <cover.1750925410.git.mchehab+huawei@kernel.org>
+	<d00a73776167e486a1804cf87746fa342294c943.1750925410.git.mchehab+huawei@kernel.org>
+	<ebdb0f12-0573-4023-bb7f-c51a94dedb27@gmail.com>
+	<20250627084814.7f4a43d4@foz.lan>
+	<57be9f77-9a94-4cde-aacb-184cae111506@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 08 Jul 2025 18:19:56 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.12.37 release.
-> There are 232 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 10 Jul 2025 16:22:09 +0000.
-> Anything received after that time might be too late.
+Em Fri, 27 Jun 2025 17:37:16 +0900
+Akira Yokosawa <akiyks@gmail.com> escreveu:
 
-Boot-tested under QEMU for Rust x86_64, arm64 and riscv64; built-tested
-for loongarch64:
+> [Dropping most CCs, +CC: Matthew]
+> 
+> Hi Mauro,
+> 
+> On Fri, 27 Jun 2025 08:48:14 +0200, Mauro Carvalho Chehab wrote:
+> > Hi Akira,
+> > 
+> > Em Fri, 27 Jun 2025 08:59:16 +0900
+> > Akira Yokosawa <akiyks@gmail.com> escreveu:  
+> [...]
+> 
+> >>
+> >> opensuse/leap:15.6's Sphinx 4.2.0 has docutils 0.16 with it, but it is
+> >> python 3.6 base and it does't work with the ynl integration.
+> >> As opensuse/leap:15.6 provides Sphinx 7.2.6 (on top of python 3.11) as
+> >> an alternative, obsoleting it should be acceptable.    
+> > 
+> > Thank you for the tests! At changes.rst we updated the minimum
+> > python requirement to:
+> > 
+> > 	Python (optional)      3.9.x            python3 --version
+> > 
+> > So, I guess we can keep this way. 
+> > 
+> > The 3.9 requirement reflects the needs of most scripts. Still, for doc build, 
+> > the min requirement was to support f-string, so Python 3.6.
+> >   
+> 
+> Sorry, I was barking up the wrong tree.
+> 
+> An example of messages from opensuse/leap:15.6's Sphinx looks like this:
+> 
+> WARNING: kernel-doc './scripts/kernel-doc.py -rst -enable-lineno -export ./fs/pstore/blk.c' processing failed with: AttributeError("'str' object has no attribute 'removesuffix'",)
+> 
+> The "removesuffix" is already there in scripts/lib/kdoc/kdoc_parser.py at
+> current docs-next.  It was added by commit 27ad33b6b349 ("kernel-doc: Fix
+> symbol matching for dropped suffixes") submitted by Matthew.
+> 
+> But I have to ask, do we really want the compatibility with python <3.9
+> restored?
 
-Tested-by: Miguel Ojeda <ojeda@kernel.org>
+I actually wrote a patch addressing that. Yet, looking at the results 
+from the tests I did for the sphinx-pre-install script, what we have is:
 
-Thanks!
+  PASSED 1 - OS: AlmaLinux release 9.6 (Sage Margay), Python: 3.9.21, hostname: almalinux-test
+  PASSED 1 - OS: Arch Linux, Python: 3.13.5
+  PASSED 1 - OS: CentOS Stream release 9, Python: 3.9.23, hostname: centos-test
+  PASSED 1 - OS: Debian GNU/Linux 12, Python: 3.11.2, hostname: debian-test
+  PASSED 1 - OS: Devuan GNU/Linux 5, Python: 3.11.2, hostname: devuan-test
+  PASSED 1 - OS: Fedora release 42 (Adams), Python: 3.13.5
+  PASSED 1 - OS: Gentoo Base System release 2.17, Python: 3.13.3
+  PASSED 1 - OS: Kali GNU/Linux 2025.2, Python: 3.13.3, hostname: kali-test
+  PASSED 1 - OS: Mageia 9, Python: 3.10.11, hostname: mageia-test
+  PASSED 1 - OS: Linux Mint 22, Python: 3.10.12, hostname: mint-test
+  PASSED 1 - OS: openEuler release 25.03, Python: 3.11.11, hostname: openeuler-test
+  PASSED 1 - OS: OpenMandriva Lx 4.3, Python: 3.9.8, hostname: openmandriva-test
+  PASSED 1 - OS: openSUSE Tumbleweed, Python: 3.13.5, hostname: opensuse-test
+  PASSED 1 - OS: Rocky Linux release 8.9 (Green Obsidian), Python: 3.6.8, hostname: rockylinux8-test
+  PASSED 3 - Sphinx on venv: Sphinx Sphinx 7.4.7, Docutils 0.21.2, Python3.9.20
+  PASSED 1 - OS: Rocky Linux release 9.6 (Blue Onyx), Python: 3.9.21, hostname: rockylinux-test
+  PASSED 1 - OS: Springdale Open Enterprise Linux release 9.2 (Parma), Python: 3.9.16, hostname: springdalelinux-test
+  PASSED 1 - OS: Ubuntu 24.04.2 LTS, Python: 3.12.3, hostname: ubuntu-lts-test
+  PASSED 1 - OS: Ubuntu 25.04, Python: 3.13.3, hostname: ubuntu-test
 
-Cheers,
-Miguel
+This is after running the script a second time after installing
+either python 311 or python39 on openSUSE and OpenMandriva. On
+both, it is possible to install distro-provided packages with
+Python 3.9 or 3.11.
+
+The only exception for RHEL8-based distros. On those, the
+installed version is 3.6.x, which doesn't have f-strings. So,
+it won't work anyway. Yet, RHEL8 powertools/epel repositories
+have enough to install python 3.9 and Sphinx via venv.
+
+With that in mind, I don't see any reason why restoring
+backward-compatibility with 3.7.
+
+But, someone things otherwise, the patch addressing it is
+enclosed.
+
+
+---
+
+[PATCH] scripts: kdoc: make it backward-compatible with Python 3.7
+
+There was a change at kdoc that ended breaking compatibility
+with Python 3.7: str.removesuffix() was introduced on version
+3.9.
+
+Restore backward compatibility.
+
+Reported-by: Akira Yokosawa <akiyks@gmail.com>
+Closes: https://lore.kernel.org/linux-doc/57be9f77-9a94-4cde-aacb-184cae111506@gmail.com/
+Fixes: 27ad33b6b349 ("kernel-doc: Fix symbol matching for dropped suffixes")
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+
+diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+index 831f061f61b8..6273141033a8 100644
+--- a/scripts/lib/kdoc/kdoc_parser.py
++++ b/scripts/lib/kdoc/kdoc_parser.py
+@@ -1214,7 +1214,9 @@ class KernelDoc:
+         # Found an export, trim out any special suffixes
+         #
+         for suffix in suffixes:
+-            symbol = symbol.removesuffix(suffix)
++            # Be backward compatible with Python < 3.9
++            if symbol.endswith(suffix):
++                symbol = symbol[:-len(suffix)]
+         function_set.add(symbol)
+         return True
+ 
+
+
+
 
