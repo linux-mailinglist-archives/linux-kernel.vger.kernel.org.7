@@ -1,276 +1,118 @@
-Return-Path: <linux-kernel+bounces-723020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-723014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 157ECAFE1D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:04:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C23AFE1C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 10:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FA247B189F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:03:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21B0D17F31A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Jul 2025 08:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1A426FD99;
-	Wed,  9 Jul 2025 08:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="HT6kxBQ4"
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F9A23534D;
-	Wed,  9 Jul 2025 08:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CC023B632;
+	Wed,  9 Jul 2025 08:02:43 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045A92222D0;
+	Wed,  9 Jul 2025 08:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752048200; cv=none; b=nNeK/z1hGGijERKEHPLMxFDQ40M0KMybrrNTmEqLB2kcpmBFicCryP7B9Qva7zqpyg9Fj8kqDfLfAYbtZs6OkGMTz4ZTAa2Pgh2gpjj9A0dYxzmhyTyWZlUVqf44fpvcx521Pc6q8UGlWJHW7Nx9yDjkzO7AE1DLdDM41BvP75w=
+	t=1752048162; cv=none; b=RSiWBhTh1zhmJy3VpRIIkN2QdH1olFX8jdSzf2zhDuuaaqt4dHcWqMr49Mcc3JLYTf9ac9btvUhbfwFpc9c7OsSknN9YPBVP3VOLB7l+i2G6f9DAnJhR3gtH5Xelzc641Ng9aK2eHLqOAHDXVa+ROiJnt0kmKGhr84IYoJWDlyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752048200; c=relaxed/simple;
-	bh=4JJLPTYx8q0+pQ+uuk33YSsvu+67oscs+9zmj+yPkTw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nJXPRMLMl5iuVMyuVXvW8O8Jl6NC7hRIVSLyO24Xcl2f6C5MT+ywQZvnnsxLD2RAaDudzt1zRtEK7ZAuLP2hlUVMR1QBFtQlNFCCZCPu9sFf2iVw61Fjti4FD+xaJqI5AbCRCWokE06rwqOJEI6+VSpooaiCPMgOREZcRrcR17U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=HT6kxBQ4; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from sec2-plucky-amd64.. (lau06-h06-176-136-128-80.dsl.sta.abo.bbox.fr [176.136.128.80])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id EAA7C40B92;
-	Wed,  9 Jul 2025 08:03:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1752048187;
-	bh=NAj0RMMcIgbyb5/RDFYXtmxJLkjCwS5SYe3TagY2Tko=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type;
-	b=HT6kxBQ48v4c9BP3H0TtRcmUltEcRT74DOk+oNsY/+AgFid3l+L9m+raQxETNM7VN
-	 xc8CCHxqlUGhBp+lTV0yi235osvOw2swTIdCQePqcfE3gmB82Dtd/KUhkJNSv3BBjE
-	 GQIb2U+pjm3KpF4TClwaf0JMGnZTvxlx5yPTClZ4vuo/N7sGN/hef/DHFi6wW6NvpA
-	 FNfaCtQ/d/xCBEusEYaUfkN9k3lWFQdO0zyHCAQmF/UTihW8lKWkMFvbLSjSSSXs2J
-	 wfumA/JdOle7UK9q6lsMergNoV5M0iS3sITZ+nuaAtRr94E8YSghJgREovaU5XSrhm
-	 T7GG44u3Y4V3Q==
-From: =?UTF-8?q?Maxime=20B=C3=A9lair?= <maxime.belair@canonical.com>
-To: linux-security-module@vger.kernel.org
-Cc: john.johansen@canonical.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	mic@digikod.net,
-	kees@kernel.org,
-	stephen.smalley.work@gmail.com,
-	casey@schaufler-ca.com,
-	takedakn@nttdata.co.jp,
-	penguin-kernel@I-love.SAKURA.ne.jp,
-	song@kernel.org,
-	rdunlap@infradead.org,
-	linux-api@vger.kernel.org,
-	apparmor@lists.ubuntu.com,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Maxime=20B=C3=A9lair?= <maxime.belair@canonical.com>
-Subject: [PATCH v5 3/3] AppArmor: add support for lsm_config_self_policy and lsm_config_system_policy
-Date: Wed,  9 Jul 2025 10:00:56 +0200
-Message-ID: <20250709080220.110947-4-maxime.belair@canonical.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250709080220.110947-1-maxime.belair@canonical.com>
-References: <20250709080220.110947-1-maxime.belair@canonical.com>
+	s=arc-20240116; t=1752048162; c=relaxed/simple;
+	bh=BUgPGjWpn/5cTFdXjgeSnXucpvBBjqJ1G3jY8tlkWnc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qFdOjUL+4lYYh4y53/riKQYgWoIH8qd6YAe8cTKlk0vKaZkwBHhxnxiFAK1xvrYENoNosz/uImdgWSZkPfYvvFWjcaHYYFvABxgfc5ynFQqcF4oBjHc0E26xKgl44LPW/C3xzgQ+xJSSM840emP0jLK9J3zG8oF3EkP+gXbGSag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8Axx2kaIm5oTyklAQ--.44988S3;
+	Wed, 09 Jul 2025 16:02:34 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by front1 (Coremail) with SMTP id qMiowJBxpeQZIm5oS6cPAA--.24964S2;
+	Wed, 09 Jul 2025 16:02:34 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Xianglai Li <lixianglai@loongson.cn>
+Cc: kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/8] LoongArch: KVM: Enhancement with eiointc emulation
+Date: Wed,  9 Jul 2025 16:02:25 +0800
+Message-Id: <20250709080233.3948503-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJBxpeQZIm5oS6cPAA--.24964S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-Enable users to manage AppArmor policies through the new hooks
-lsm_config_self_policy and lsm_config_system_policy.
+This series add generic eiointc 8 bytes access interface, so that 1/2/4/8
+bytes access can use the generic 8 bytes access interface. It reduce
+about 500 lines redundant code and make eiointc emulation driver
+simpler than ever.
 
-lsm_config_self_policy allows stacking existing policies in the kernel.
-This ensures that it can only further restrict the caller and can never
-be used to gain new privileges.
-
-lsm_config_system_policy allows loading or replacing AppArmor policies in
-any AppArmor namespace.
-
-Signed-off-by: Maxime Bélair <maxime.belair@canonical.com>
 ---
- security/apparmor/apparmorfs.c         | 31 ++++++++++
- security/apparmor/include/apparmor.h   |  4 ++
- security/apparmor/include/apparmorfs.h |  3 +
- security/apparmor/lsm.c                | 84 ++++++++++++++++++++++++++
- 4 files changed, 122 insertions(+)
+v5 ... v6:
+  1. Merge previous patch 5 & 6 into one, patch 7 & 10 into into one and
+     patch 12 and patch 13 into one.
+  2. Use sign extension with destination register for IOCSRRD.{B/H/W}
+     kernel emulation.
 
-diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-index 6039afae4bfc..6df43299b045 100644
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -439,6 +439,37 @@ static ssize_t policy_update(u32 mask, const char __user *buf, size_t size,
- 	return error;
- }
- 
-+/**
-+ * aa_profile_load_ns_name - load a profile into the current namespace identified by name
-+ * @name: The name of the namesapce to load the policy in. "" for root_ns
-+ * @name_size: size of @name. 0 For root ns
-+ * @buf: buffer containing the user-provided policy
-+ * @size: size of @buf
-+ * @ppos: position pointer in the file
-+ *
-+ * Returns: 0 on success, negative value on error
-+ */
-+ssize_t aa_profile_load_ns_name(char *name, size_t name_size, const void __user *buf,
-+				size_t size, loff_t *ppos)
-+{
-+	struct aa_ns *ns;
-+
-+	if (name_size == 0)
-+		ns = aa_get_ns(root_ns);
-+	else
-+		ns = aa_lookupn_ns(root_ns, name, name_size);
-+
-+	if (!ns)
-+		return -EINVAL;
-+
-+	int error = policy_update(AA_MAY_LOAD_POLICY | AA_MAY_REPLACE_POLICY,
-+				  buf, size, ppos, ns);
-+
-+	aa_put_ns(ns);
-+
-+	return error >= 0 ? 0 : error;
-+}
-+
- /* .load file hook fn to load policy */
- static ssize_t profile_load(struct file *f, const char __user *buf, size_t size,
- 			    loff_t *pos)
-diff --git a/security/apparmor/include/apparmor.h b/security/apparmor/include/apparmor.h
-index f83934913b0f..1d9a2881a8b9 100644
---- a/security/apparmor/include/apparmor.h
-+++ b/security/apparmor/include/apparmor.h
-@@ -62,5 +62,9 @@ extern unsigned int aa_g_path_max;
- #define AA_DEFAULT_CLEVEL 0
- #endif /* CONFIG_SECURITY_APPARMOR_EXPORT_BINARY */
- 
-+/* Syscall-related buffer size limits */
-+
-+#define AA_PROFILE_NAME_MAX_SIZE (1 << 9)
-+#define AA_PROFILE_MAX_SIZE (1 << 28)
- 
- #endif /* __APPARMOR_H */
-diff --git a/security/apparmor/include/apparmorfs.h b/security/apparmor/include/apparmorfs.h
-index 1e94904f68d9..fd415afb7659 100644
---- a/security/apparmor/include/apparmorfs.h
-+++ b/security/apparmor/include/apparmorfs.h
-@@ -112,6 +112,9 @@ int __aafs_profile_mkdir(struct aa_profile *profile, struct dentry *parent);
- void __aafs_ns_rmdir(struct aa_ns *ns);
- int __aafs_ns_mkdir(struct aa_ns *ns, struct dentry *parent, const char *name,
- 		     struct dentry *dent);
-+ssize_t aa_profile_load_ns_name(char *name, size_t name_len, const void __user *buf,
-+				size_t size, loff_t *ppos);
-+
- 
- struct aa_loaddata;
- 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 9b6c2f157f83..0ce40290f44e 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1275,6 +1275,86 @@ static int apparmor_socket_shutdown(struct socket *sock, int how)
- 	return aa_sock_perm(OP_SHUTDOWN, AA_MAY_SHUTDOWN, sock);
- }
- 
-+/**
-+ * apparmor_lsm_config_self_policy - Stack a profile
-+ * @lsm_id: AppArmor ID (LSM_ID_APPARMOR). Unused here
-+ * @op: operation to perform. Currently, only LSM_POLICY_LOAD is supported
-+ * @buf: buffer containing the user-provided name of the profile to stack
-+ * @size: size of @buf
-+ * @flags: reserved for future use; must be zero
-+ *
-+ * Returns: 0 on success, negative value on error
-+ */
-+static int apparmor_lsm_config_self_policy(u32 lsm_id, u32 op, void __user *buf,
-+				      size_t size, u32 flags)
-+{
-+	char *name;
-+	long name_size;
-+	int ret;
-+
-+	if (op != LSM_POLICY_LOAD || flags)
-+		return -EOPNOTSUPP;
-+	if (size == 0)
-+		return -EINVAL;
-+	if (size > AA_PROFILE_NAME_MAX_SIZE)
-+		return -E2BIG;
-+
-+	name = kmalloc(size, GFP_KERNEL);
-+	if (!name)
-+		return -ENOMEM;
-+
-+
-+	name_size = strncpy_from_user(name, buf, size);
-+	if (name_size < 0) {
-+		kfree(name);
-+		return name_size;
-+	}
-+
-+	ret = aa_change_profile(name, AA_CHANGE_STACK);
-+
-+	kfree(name);
-+
-+	return ret;
-+}
-+
-+/**
-+ * apparmor_lsm_config_system_policy - Load or replace a system policy
-+ * @lsm_id: AppArmor ID (LSM_ID_APPARMOR). Unused here
-+ * @op: operation to perform. Currently, only LSM_POLICY_LOAD is supported
-+ * @buf: user-supplied buffer in the form "<ns>\0<policy>"
-+ *        <ns> is the namespace to load the policy into (empty string for root)
-+ *        <policy> is the policy to load
-+ * @size: size of @buf
-+ * @flags: reserved for future uses; must be zero
-+ *
-+ * Returns: 0 on success, negative value on error
-+ */
-+static int apparmor_lsm_config_system_policy(u32 lsm_id, u32 op, void __user *buf,
-+				      size_t size, u32 flags)
-+{
-+	loff_t pos = 0; // Partial writing is not currently supported
-+	char ns_name[AA_PROFILE_NAME_MAX_SIZE];
-+	size_t ns_size;
-+	size_t max_ns_size = min(size, AA_PROFILE_NAME_MAX_SIZE);
-+
-+	if (op != LSM_POLICY_LOAD || flags)
-+		return -EOPNOTSUPP;
-+	if (size < 2)
-+		return -EINVAL;
-+	if (size > AA_PROFILE_MAX_SIZE)
-+		return -E2BIG;
-+
-+	ns_size = strncpy_from_user(ns_name, buf, max_ns_size);
-+	if (ns_size < 0)
-+		return ns_size;
-+	if (ns_size == max_ns_size)
-+		return -E2BIG;
-+
-+	return aa_profile_load_ns_name(ns_name, ns_size, buf + ns_size + 1,
-+				       size - ns_size - 1, &pos);
-+}
-+
-+
- #ifdef CONFIG_NETWORK_SECMARK
- /**
-  * apparmor_socket_sock_rcv_skb - check perms before associating skb to sk
-@@ -1483,6 +1563,10 @@ static struct security_hook_list apparmor_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(socket_getsockopt, apparmor_socket_getsockopt),
- 	LSM_HOOK_INIT(socket_setsockopt, apparmor_socket_setsockopt),
- 	LSM_HOOK_INIT(socket_shutdown, apparmor_socket_shutdown),
-+
-+	LSM_HOOK_INIT(lsm_config_self_policy, apparmor_lsm_config_self_policy),
-+	LSM_HOOK_INIT(lsm_config_system_policy,
-+		      apparmor_lsm_config_system_policy),
- #ifdef CONFIG_NETWORK_SECMARK
- 	LSM_HOOK_INIT(socket_sock_rcv_skb, apparmor_socket_sock_rcv_skb),
- #endif
+v4 ... v5
+  1. Rebase patch on latest kernel where bugfix of eiointc has been
+     merged.
+  2. Add generic eiointc 8 bytes access interface, 1/2/4/8 bytes access
+     uses generic 8 bytes access interface.
+
+v3 ... v4:
+  1. Remove patch about enhancement and only keep bugfix relative
+     patches.
+  2. Remove INTC indication in the patch title.
+  3. With access size, keep default case unchanged besides 1/2/4/8 since
+     here all patches are bugfix
+  4. Firstly check return value of copy_from_user() with error path,
+     keep the same order with old patch in patch 4.
+
+v2 ... v3:
+  1. Add prefix INTC: in title of every patch.
+  2. Fix array index overflow when emulate register EIOINTC_ENABLE
+     writing operation.
+  3. Add address alignment check with eiointc register access operation.
+
+v1 ... v2:
+  1. Add extra fix in patch 3 and patch 4, add num_cpu validation check
+  2. Name of stat information keeps unchanged, only move it from VM stat
+     to vCPU stat.
+---
+Bibo Mao (8):
+  LoongArch: KVM: Use standard bitops API with eiointc
+  LoongArch: KVM: Remove unused parameter len
+  LoongArch: KVM: Add stat information with kernel irqchip
+  LoongArch: KVM: Remove never called default case statement
+  LoongArch: KVM: Use generic function loongarch_eiointc_read()
+  LoongArch: KVM: Remove some unnecessary local variables
+  LoongArch: KVM: Replace eiointc_enable_irq() with eiointc_update_irq()
+  LoongArch: KVM: Add generic function loongarch_eiointc_write()
+
+ arch/loongarch/include/asm/kvm_host.h |  12 +-
+ arch/loongarch/kvm/intc/eiointc.c     | 558 ++++----------------------
+ arch/loongarch/kvm/intc/ipi.c         |  28 +-
+ arch/loongarch/kvm/intc/pch_pic.c     |   4 +-
+ arch/loongarch/kvm/vcpu.c             |   8 +-
+ 5 files changed, 102 insertions(+), 508 deletions(-)
+
+
+base-commit: 733923397fd95405a48f165c9b1fbc8c4b0a4681
 -- 
-2.48.1
+2.39.3
 
 
